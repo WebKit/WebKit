@@ -26,6 +26,7 @@
 #pragma once
 
 #include <optional>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MathExtras.h>
@@ -41,7 +42,9 @@ namespace WTF {
 //
 // add() and findOrAdd() never replace a present entry.
 // overlay() shadows any existing entry until the current layer is dropped.
-template<typename KeyArg, typename MappedArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg>>
+//
+// No key value is reserved, so KeyTraits only supplies minimumTableSize.
+template<typename KeyArg, typename MappedArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>>
 class LayeredHashMap {
     WTF_MAKE_NONCOPYABLE(LayeredHashMap);
 public:
@@ -49,7 +52,6 @@ public:
     using MappedType = MappedArg;
     using HashFunctions = HashArg;
     using KeyTraits = KeyTraitsArg;
-    using MappedTraits = MappedTraitsArg;
 
     LayeredHashMap()
     {
@@ -60,27 +62,23 @@ public:
 
     void startLayer()
     {
-        appendLayerMarker();
-        ++m_layerCount;
+        m_layerStarts.append(m_entries.size());
     }
 
     void dropLastLayer()
     {
-        ASSERT(m_layerCount);
-        for (unsigned index = m_entries.size() - 1; m_layerStart < index; --index) {
+        unsigned layerStart = m_layerStarts.takeLast();
+        for (unsigned index = m_entries.size(); index-- > layerStart;) {
             const Entry& entry = m_entries[index];
             unsigned& slot = slotHolding(entry.hash, index);
             slot = entry.previous;
             if (slot == emptyIndex)
                 --m_keyCount;
         }
-        unsigned markerIndex = m_layerStart;
-        m_layerStart = m_entries[markerIndex].previous;
-        m_entries.shrink(markerIndex);
-        --m_layerCount;
+        m_entries.shrink(layerStart);
     }
 
-    unsigned layerCount() const { return m_layerCount; }
+    unsigned layerCount() const { return m_layerStarts.size(); }
 
     void clearEntries()
     {
@@ -88,9 +86,7 @@ public:
             return;
         m_table.fill(emptyIndex);
         m_entries.shrink(0);
-        m_layerStart = emptyIndex;
-        for (unsigned layer = 0; layer < m_layerCount; ++layer)
-            appendLayerMarker();
+        m_layerStarts.fill(0);
         m_keyCount = 0;
     }
 
@@ -99,14 +95,12 @@ public:
         if (m_keyCount)
             m_table.fill(emptyIndex);
         m_entries.shrink(0);
-        m_layerStart = emptyIndex;
-        m_layerCount = 0;
+        m_layerStarts.shrink(0);
         m_keyCount = 0;
     }
 
     std::optional<MappedType> find(const KeyType& key)
     {
-        ASSERT(!isEmptyKey(key));
         unsigned index = findSlot(key, HashFunctions::hash(key));
         if (index == emptyIndex)
             return std::nullopt;
@@ -115,8 +109,7 @@ public:
 
     std::optional<MappedType> findOrAdd(const KeyType& key, const MappedType& value)
     {
-        ASSERT(m_layerCount);
-        ASSERT(!isEmptyKey(key));
+        ASSERT(layerCount());
         unsigned hash = HashFunctions::hash(key);
         unsigned& slot = findSlot(key, hash);
         if (slot != emptyIndex)
@@ -135,12 +128,11 @@ public:
 
     void overlay(const KeyType& key, const MappedType& value)
     {
-        ASSERT(m_layerCount);
-        ASSERT(!isEmptyKey(key));
+        ASSERT(layerCount());
         unsigned hash = HashFunctions::hash(key);
         unsigned& slot = findSlot(key, hash);
         unsigned previous = slot;
-        if (previous != emptyIndex && previous > m_layerStart) {
+        if (previous != emptyIndex && previous >= m_layerStarts.last()) {
             m_entries[previous].value = value;
             return;
         }
@@ -155,27 +147,15 @@ public:
 private:
     static constexpr unsigned emptyIndex = UINT_MAX;
 
-    static bool isEmptyKey(const KeyType& key) { return isHashTraitsEmptyValue<KeyTraits>(key); }
-
-    // An entry with the empty key marks where a layer starts, and its previous is the index of the
-    // enclosing layer's marker. Any other entry's previous is the index of the entry for the same
-    // key that it shadows. Either is emptyIndex when there is none.
+    // previous is the index of the entry for the same key that this one shadows, or emptyIndex.
     struct Entry {
-        KeyType key { KeyTraits::emptyValue() };
-        MappedType value { MappedTraits::emptyValue() };
-        unsigned hash { 0 };
-        unsigned previous { emptyIndex };
-
-        bool isLayerMarker() const { return isEmptyKey(key); }
+        KeyType key;
+        MappedType value;
+        unsigned hash;
+        unsigned previous;
     };
     static_assert(hasOneBitSet(KeyTraits::minimumTableSize), "findSlot() masks instead of dividing.");
-
-    void appendLayerMarker()
-    {
-        unsigned markerIndex = m_entries.size();
-        m_entries.append(Entry { KeyTraits::emptyValue(), MappedTraits::emptyValue(), 0, m_layerStart });
-        m_layerStart = markerIndex;
-    }
+    static_assert(!isValidCapacityForVector<Entry>(emptyIndex), "Vector must crash before an entry index reaches emptyIndex.");
 
     unsigned& findSlot(const KeyType& key, unsigned hash)
     {
@@ -208,7 +188,7 @@ private:
         if (m_keyCount * 2 < m_table.size())
             return;
 
-        unsigned capacity = m_table.size() * 2;
+        unsigned capacity = Checked<unsigned>(m_table.size()) * 2;
         m_table.fill(emptyIndex, capacity);
         m_mask = capacity - 1;
 
@@ -217,8 +197,6 @@ private:
         // keys were first added.
         for (unsigned index = 0; index < m_entries.size(); ++index) {
             const Entry& entry = m_entries[index];
-            if (entry.isLayerMarker())
-                continue;
             if (entry.previous == emptyIndex)
                 findSlot(entry.key, entry.hash) = index;
             else
@@ -228,10 +206,9 @@ private:
 
     unsigned m_mask { 0 };
     unsigned m_keyCount { 0 };
-    unsigned m_layerCount { 0 };
-    unsigned m_layerStart { emptyIndex };
     Vector<unsigned> m_table;
     Vector<Entry> m_entries;
+    Vector<unsigned> m_layerStarts;
 };
 
 } // namespace WTF

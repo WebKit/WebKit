@@ -28,6 +28,7 @@
 //     Source/WTF/benchmarks/HashSetVariantsBenchmark.cpp \
 //     -std=c++23 -O3 -DNDEBUG=1 -fno-exceptions -fno-rtti \
 //     -ISource/WTF \
+//     -ISource/bmalloc \
 //     -IWebKitBuild/cmake-mac/Release \
 //     -IWebKitBuild/cmake-mac/Release/WTF/DerivedSources \
 //     -FWebKitBuild/cmake-mac/Release \
@@ -49,7 +50,10 @@
 #include <wtf/OrderedHashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
+#include <wtf/URL.h>
+#include <wtf/URLHash.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -149,13 +153,30 @@ template<> WTF::String makeKey<WTF::String>(unsigned i)
 {
     return WTF::String::number(i + 1);
 }
+template<> WTF::URL makeKey<WTF::URL>(unsigned i)
+{
+    return WTF::URL { makeString("https://www.example.com/assets/images/"_s, i + 1, ".png"_s) };
+}
 
 template<typename T>
-WTF::Vector<T> makeKeys(unsigned n)
+uintptr_t sinkValue(const T& value)
+{
+    if constexpr (std::is_same_v<T, WTF::String>)
+        return value.impl() ? value.impl()->hash() : 0u;
+    else if constexpr (std::is_same_v<T, WTF::URL>)
+        return value.string().length();
+    else if constexpr (std::is_same_v<T, void*>)
+        return std::bit_cast<uintptr_t>(value);
+    else
+        return static_cast<uintptr_t>(value);
+}
+
+template<typename T>
+WTF::Vector<T> makeKeys(unsigned n, unsigned offset = 0)
 {
     WTF::Vector<T> v(ReserveCapacityTag { }, n);
     for (unsigned i = 0; i < n; ++i)
-        v.append(makeKey<T>(i));
+        v.append(makeKey<T>(i + offset));
     return v;
 }
 
@@ -217,6 +238,66 @@ NEVER_INLINE void benchContainsHit(unsigned n, const char* container, const char
 }
 
 template<template<typename...> class SetTemplate, typename T>
+NEVER_INLINE void benchContainsMiss(unsigned n, const char* container, const char* keyType)
+{
+    if (!matchesFilter(container, "ContainsMiss", keyType))
+        return;
+
+    auto keys = makeKeys<T>(n);
+    auto absentKeys = makeKeys<T>(n, n);
+    SetTemplate<T> set;
+    for (unsigned i = 0; i < n; ++i)
+        set.add(keys[i]);
+
+    unsigned reps = repsForLookup(n);
+    unsigned hitCount = 0;
+
+    auto before = WTF::MonotonicTime::now();
+    for (unsigned r = 0; r < reps; ++r) {
+        for (unsigned i = 0; i < n; ++i) {
+            if (set.contains(absentKeys[i]))
+                ++hitCount;
+        }
+        WTF::compilerFence();
+    }
+    auto after = WTF::MonotonicTime::now();
+
+    if (hitCount)
+        WTF::dataLog("WARNING: unexpected hit (", container, "/", keyType, "/n=", n, ")\n");
+
+    double totalNs = (after - before).nanoseconds();
+    g_rows.append({ container, "ContainsMiss", keyType, n, totalNs / (static_cast<double>(reps) * n) });
+}
+
+template<template<typename...> class SetTemplate, typename T>
+NEVER_INLINE void benchCopy(unsigned n, const char* container, const char* keyType)
+{
+    if (!matchesFilter(container, "Copy", keyType))
+        return;
+
+    auto keys = makeKeys<T>(n);
+    SetTemplate<T> set;
+    for (unsigned i = 0; i < n; ++i)
+        set.add(keys[i]);
+
+    unsigned reps = repsForInsert(n);
+    uintptr_t sink = 0;
+
+    auto before = WTF::MonotonicTime::now();
+    for (unsigned r = 0; r < reps; ++r) {
+        SetTemplate<T> copy = set;
+        sink += copy.size();
+        WTF::compilerFence();
+    }
+    auto after = WTF::MonotonicTime::now();
+
+    asm volatile("" : : "r"(sink) : "memory");
+
+    double totalNs = (after - before).nanoseconds();
+    g_rows.append({ container, "Copy", keyType, n, totalNs / (static_cast<double>(reps) * n) });
+}
+
+template<template<typename...> class SetTemplate, typename T>
 NEVER_INLINE void benchIterate(unsigned n, const char* container, const char* keyType)
 {
     if (!matchesFilter(container, "Iterate", keyType))
@@ -232,14 +313,8 @@ NEVER_INLINE void benchIterate(unsigned n, const char* container, const char* ke
 
     auto before = WTF::MonotonicTime::now();
     for (unsigned r = 0; r < reps; ++r) {
-        for (const auto& v : set) {
-            if constexpr (std::is_same_v<T, WTF::String>)
-                sink ^= v.impl() ? v.impl()->hash() : 0u;
-            else if constexpr (std::is_same_v<T, void*>)
-                sink ^= std::bit_cast<uintptr_t>(v);
-            else
-                sink ^= static_cast<uintptr_t>(v);
-        }
+        for (const auto& v : set)
+            sink ^= sinkValue(v);
         WTF::compilerFence();
     }
     auto after = WTF::MonotonicTime::now();
@@ -292,6 +367,8 @@ void runAllOps(const char* container, const char* keyType)
     for (unsigned n : kCapacities) {
         benchInsert<SetTemplate, T>(n, container, keyType);
         benchContainsHit<SetTemplate, T>(n, container, keyType);
+        benchContainsMiss<SetTemplate, T>(n, container, keyType);
+        benchCopy<SetTemplate, T>(n, container, keyType);
         benchIterate<SetTemplate, T>(n, container, keyType);
         benchChurn<SetTemplate, T>(n, container, keyType);
     }
@@ -340,9 +417,9 @@ const Row* findRow(const char* container, const char* op, const char* keyType, u
 
 void printMatrix()
 {
-    static const char* kOps[] = { "Insert", "ContainsHit", "Iterate", "Churn" };
+    static const char* kOps[] = { "Insert", "ContainsHit", "ContainsMiss", "Copy", "Iterate", "Churn" };
     static const char* kContainers[] = { "HashSet", "OrderedHashSet", "ListHashSet" };
-    static const char* kKeyTypes[] = { "uint32_t", "void*", "String" };
+    static const char* kKeyTypes[] = { "uint32_t", "void*", "String", "URL" };
 
     for (const char* op : kOps) {
         WTF::dataLog("\n=== ", op, " (ns/op) ===\n");
@@ -417,6 +494,10 @@ int main(int argc, char** argv)
     runAllOps<HashSetT, WTF::String>("HashSet", "String");
     runAllOps<OrderedHashSetT, WTF::String>("OrderedHashSet", "String");
     runAllOps<ListHashSetT, WTF::String>("ListHashSet", "String");
+
+    runAllOps<HashSetT, WTF::URL>("HashSet", "URL");
+    runAllOps<OrderedHashSetT, WTF::URL>("OrderedHashSet", "URL");
+    runAllOps<ListHashSetT, WTF::URL>("ListHashSet", "URL");
 
     auto wallEnd = WTF::MonotonicTime::now();
 

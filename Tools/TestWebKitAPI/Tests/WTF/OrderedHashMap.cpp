@@ -29,6 +29,7 @@
 #include "Helpers/Test.h"
 #include "MoveOnly.h"
 #include <string>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -539,7 +540,7 @@ TEST(WTF_OrderedHashMap, CompactInPlacePreservesOrderAndCapacity)
 {
     // Fills the initial entries array (capacity=6, bucketCount=8), deletes most,
     // then adds to trigger rehashForAdd on a table that cannot shrink below
-    // initialBucketCount — forcing the compactInPlace branch.
+    // initialBucketCount, forcing the compactInPlace branch.
     OrderedHashMap<int, int> map;
     for (int i = 0; i < 6; ++i)
         map.add(i, i * 10);
@@ -753,128 +754,281 @@ TEST(WTF_OrderedHashMap, HashTranslatorFindContainsGet)
 
 namespace {
 
-// Mirrors TrackedValue in OrderedHashSet.cpp — a value type whose operator=
-// requires the LHS to be in a constructed state (one of the known sentinels).
-// Used as the key in a map-shaped OrderedHashTable to exercise the same
-// translator-on-raw-storage path for KeyValuePair entries.
-class TrackedKey {
+// Counts constructions and destructions, flags a second destruction of the same storage, and has
+// neither a default constructor nor a deleted-value constructor.
+class CountedKey {
 public:
-    enum State : uint32_t { Garbage = 0xDEADBEEF, Empty = 0xE11E, Deleted = 0xDEAD, Live = 0xA11E };
-
     static int liveCount;
 
-    TrackedKey() : m_state(Empty), m_value(0) { }
-    explicit TrackedKey(int v) : m_state(Live), m_value(v) { ++liveCount; }
-    TrackedKey(const TrackedKey& other) : m_state(other.m_state), m_value(other.m_value)
+    explicit CountedKey(int value)
+        : m_value(value)
     {
-        if (m_state == Live)
-            ++liveCount;
+        ++liveCount;
     }
-    TrackedKey(TrackedKey&& other) noexcept : m_state(other.m_state), m_value(other.m_value)
+    CountedKey(const CountedKey& other)
+        : m_value(other.m_value)
     {
-        if (m_state == Live)
-            ++liveCount;
+        ++liveCount;
     }
-    TrackedKey(WTF::HashTableDeletedValueType) : m_state(Deleted), m_value(0) { }
-
-    ~TrackedKey()
+    CountedKey(CountedKey&& other)
+        : m_value(other.m_value)
     {
-        if (m_state == Live)
-            --liveCount;
-        m_state = Garbage;
+        ++liveCount;
     }
-
-    TrackedKey& operator=(const TrackedKey& other)
+    ~CountedKey()
     {
-        EXPECT_TRUE(m_state == Empty || m_state == Live || m_state == Deleted);
-        if (m_state == Live)
-            --liveCount;
-        m_state = other.m_state;
-        m_value = other.m_value;
-        if (m_state == Live)
-            ++liveCount;
-        return *this;
+        EXPECT_NE(m_value, destroyedMarker);
+        m_value = destroyedMarker;
+        --liveCount;
     }
-
-    bool isHashTableDeletedValue() const { return m_state == Deleted; }
-    bool operator==(const TrackedKey& other) const { return m_state == other.m_state && m_value == other.m_value; }
+    CountedKey& operator=(const CountedKey&) = delete;
 
     int value() const { return m_value; }
+    friend bool operator==(const CountedKey& a, const CountedKey& b) { return a.m_value == b.m_value; }
 
 private:
-    uint32_t m_state;
+    static constexpr int destroyedMarker = 0x5ead5ead;
     int m_value;
 };
 
-int TrackedKey::liveCount = 0;
+int CountedKey::liveCount = 0;
 
-struct TrackedKeyHash {
-    static unsigned hash(const TrackedKey& k) { return IntHash<int>::hash(k.value()); }
-    static bool equal(const TrackedKey& a, const TrackedKey& b) { return a == b; }
+struct CountedKeyHash {
+    static unsigned hash(const CountedKey& key) { return IntHash<int>::hash(key.value()); }
+    static bool equal(const CountedKey& a, const CountedKey& b) { return a == b; }
 };
 
-struct TrackedKeyTraits : WTF::SimpleClassHashTraits<TrackedKey> {
-    static constexpr bool emptyValueIsZero = false;
-};
+using CountedKVP = KeyValuePair<CountedKey, int>;
+using CountedKVPTraits = WTF::KeyValuePairHashTraits<WTF::GenericHashTraits<CountedKey>, HashTraits<int>>;
 
-using TrackedKVP = KeyValuePair<TrackedKey, int>;
-
-// KeyValuePairHashTraits already computes emptyValueIsZero = KeyTraits::emptyValueIsZero &&
-// ValueTraits::emptyValueIsZero, which is false for TrackedKey, so constructEmptyValue runs.
-using TrackedKVPTraits = WTF::KeyValuePairHashTraits<TrackedKeyTraits, HashTraits<int>>;
-
-struct TrackedKVPTranslator {
-    static unsigned hash(int v) { return IntHash<int>::hash(v); }
-    static bool equal(const TrackedKey& a, int b) { return a.value() == b; }
-    static void translate(TrackedKVP& location, int v, NOESCAPE const auto&)
+struct CountedKVPTranslator {
+    static unsigned hash(int value) { return IntHash<int>::hash(value); }
+    static bool equal(const CountedKey& a, int b) { return a.value() == b; }
+    static void translate(CountedKVP* location, int value, NOESCAPE const auto&)
     {
-        // Standard WTF translator convention: assign. Both key and value
-        // assignments require the LHS to be a constructed KeyValuePair.
-        location.key = TrackedKey(v);
-        location.value = v * 10;
+        std::construct_at(location, CountedKey(value), value * 10);
     }
 };
 
-using TrackedOrderedHashTable = WTF::OrderedHashTable<TrackedKey, TrackedKVP, WTF::KeyValuePairKeyExtractor<TrackedKVP>, TrackedKeyHash, TrackedKVPTraits, TrackedKeyTraits, WTF::HashTableMalloc>;
+using CountedOrderedHashTable = WTF::OrderedHashTable<CountedKey, CountedKVP, WTF::KeyValuePairKeyExtractor<CountedKVP>, CountedKeyHash, CountedKVPTraits, WTF::GenericHashTraits<CountedKey>, WTF::HashTableMalloc>;
+using CountedOrderedHashMap = OrderedHashMap<CountedKey, int, CountedKeyHash, WTF::GenericHashTraits<CountedKey>>;
 
+template<typename Map>
+Vector<std::pair<int, int>> contentsOf(const Map& map)
+{
+    Vector<std::pair<int, int>> result;
+    for (auto& entry : map)
+        result.append({ entry.key, entry.value });
+    return result;
 }
 
-TEST(WTF_OrderedHashMap, HashTranslatorAddConstructsEmptyBeforeAssign)
+} // anonymous namespace
+
+TEST(WTF_OrderedHashMap, HashTranslatorAddConstructsIntoRawStorage)
 {
-    // Map-side equivalent of the OrderedHashSet test. Without the pre-translate
-    // constructEmptyValue, `location.key = ...` would assign into raw malloc
-    // storage and TrackedKey::operator= would EXPECT-fail because m_state would
-    // be random bits rather than one of the known sentinels.
-    TrackedKey::liveCount = 0;
-    auto noFunctor = []() ALWAYS_INLINE_LAMBDA -> TrackedKVP { return { }; };
+    CountedKey::liveCount = 0;
+    auto noFunctor = [] {
+        return CountedKVP { CountedKey(-1), -1 };
+    };
     {
-        TrackedOrderedHashTable table;
-        for (int i = 0; i < 32; ++i) {
-            auto r = table.add<TrackedKVPTranslator>(i, noFunctor);
-            EXPECT_TRUE(r.isNewEntry);
-        }
+        CountedOrderedHashTable table;
+        for (int i = 0; i < 32; ++i)
+            EXPECT_TRUE(table.add<CountedKVPTranslator>(i, noFunctor).isNewEntry);
         EXPECT_EQ(32u, table.size());
 
-        // Remove half, then re-add via the translator so the path also runs
-        // after internal compact/rehash activity.
+        // Re-adding through the translator after removals lands in storage whose previous
+        // occupant was destroyed.
         for (int i = 0; i < 32; i += 2)
-            table.remove(TrackedKey(i));
+            EXPECT_TRUE(table.remove(CountedKey(i)));
         EXPECT_EQ(16u, table.size());
-        for (int i = 0; i < 32; i += 2) {
-            auto r = table.add<TrackedKVPTranslator>(i, noFunctor);
-            EXPECT_TRUE(r.isNewEntry);
-        }
+        EXPECT_EQ(16, CountedKey::liveCount);
+        for (int i = 0; i < 32; i += 2)
+            EXPECT_TRUE(table.add<CountedKVPTranslator>(i, noFunctor).isNewEntry);
         EXPECT_EQ(32u, table.size());
 
-        // Verify values survived correctly.
         int seen = 0;
         for (auto it = table.begin(); it != table.end(); ++it) {
             EXPECT_EQ(it->key.value() * 10, it->value);
             ++seen;
         }
         EXPECT_EQ(32, seen);
+        EXPECT_EQ(32, CountedKey::liveCount);
     }
-    EXPECT_EQ(0, TrackedKey::liveCount);
+    EXPECT_EQ(0, CountedKey::liveCount);
+}
+
+TEST(WTF_OrderedHashMap, HashTraitsEmptyAndDeletedValuesAreOrdinaryKeys)
+{
+    // HashTraits<int> reserves 0 as empty and -1 as deleted for WTF::HashTable. This table must
+    // treat them like any other key.
+    OrderedHashMap<int, int> map;
+    EXPECT_EQ(0, map.get(0));
+    EXPECT_FALSE(map.contains(-1));
+    EXPECT_TRUE(map.add(0, 100).isNewEntry);
+    EXPECT_TRUE(map.add(-1, 200).isNewEntry);
+    EXPECT_FALSE(map.add(0, 300).isNewEntry);
+    EXPECT_FALSE(map.set(-1, 400).isNewEntry);
+    EXPECT_EQ(100, map.get(0));
+    EXPECT_EQ(400, map.get(-1));
+    Vector<std::pair<int, int>> expected { { 0, 100 }, { -1, 400 } };
+    EXPECT_EQ(expected, contentsOf(map));
+
+    EXPECT_EQ(400, map.take(-1));
+    EXPECT_FALSE(map.contains(-1));
+    EXPECT_TRUE(map.remove(0));
+    EXPECT_FALSE(map.remove(0));
+    EXPECT_TRUE(map.isEmpty());
+
+    EXPECT_TRUE(map.ensure(-1, [] {
+        return 5;
+    }).isNewEntry);
+    EXPECT_TRUE(map.ensure(0, [] {
+        return 6;
+    }).isNewEntry);
+    expected = { { -1, 5 }, { 0, 6 } };
+    EXPECT_EQ(expected, contentsOf(map));
+}
+
+TEST(WTF_OrderedHashMap, IsValidKey)
+{
+    EXPECT_TRUE((OrderedHashMap<int, int>::isValidKey(0)));
+    EXPECT_TRUE((OrderedHashMap<int, int>::isValidKey(-1)));
+
+    // StringHash cannot hash a null String or the deleted-value sentinel.
+    EXPECT_TRUE((OrderedHashMap<String, int>::isValidKey("key"_s)));
+    EXPECT_FALSE((OrderedHashMap<String, int>::isValidKey(String())));
+    // Destroying a String holding the deleted-value sentinel would deref an invalid pointer.
+    static NeverDestroyed<String> deletedString(WTF::HashTableDeletedValue);
+    EXPECT_FALSE((OrderedHashMap<String, int>::isValidKey(deletedString.get())));
+}
+
+TEST(WTF_OrderedHashMap, KeyWithoutReservedValues)
+{
+    CountedKey::liveCount = 0;
+    {
+        CountedOrderedHashMap map;
+        for (int i = 0; i < 100; ++i)
+            EXPECT_TRUE(map.add(CountedKey(i), i * 2).isNewEntry);
+        EXPECT_FALSE(map.add(CountedKey(10), 0).isNewEntry);
+        EXPECT_EQ(20, map.get(CountedKey(10)));
+        EXPECT_EQ(100, CountedKey::liveCount);
+
+        for (int i = 0; i < 100; i += 2)
+            EXPECT_TRUE(map.remove(CountedKey(i)));
+        EXPECT_EQ(50u, map.size());
+        EXPECT_EQ(50, CountedKey::liveCount);
+
+        EXPECT_EQ(2, map.take(CountedKey(1)));
+        EXPECT_EQ(std::optional<int>(6), map.takeOptional(CountedKey(3)));
+        EXPECT_EQ(std::nullopt, map.takeOptional(CountedKey(3)));
+        EXPECT_TRUE(map.removeIf([](auto& entry) {
+            return entry.key.value() > 50;
+        }));
+        EXPECT_EQ(23u, map.size());
+
+        CountedOrderedHashMap copy = map;
+        EXPECT_EQ(46, CountedKey::liveCount);
+        int expected = 5;
+        for (auto& entry : copy) {
+            EXPECT_EQ(expected, entry.key.value());
+            EXPECT_EQ(expected * 2, entry.value);
+            expected += 2;
+        }
+        EXPECT_EQ(51, expected);
+
+        map.clear();
+        EXPECT_EQ(23, CountedKey::liveCount);
+    }
+    EXPECT_EQ(0, CountedKey::liveCount);
+}
+
+TEST(WTF_OrderedHashMap, TakeKeepsKeyIntact)
+{
+    // take() moves the mapped value out and must still be able to find and clear the entry.
+    OrderedHashMap<String, String> map;
+    for (unsigned i = 0; i < 64; ++i)
+        map.add(makeString("key"_s, i), makeString("value"_s, i));
+    for (unsigned i = 0; i < 64; i += 3)
+        EXPECT_EQ(makeString("value"_s, i), map.take(makeString("key"_s, i)));
+    for (unsigned i = 0; i < 64; ++i)
+        EXPECT_EQ(!!(i % 3), map.contains(makeString("key"_s, i)));
+    while (!map.isEmpty()) {
+        String firstKey = map.begin()->key;
+        String firstValue = map.begin()->value;
+        EXPECT_EQ(firstValue, map.takeFirst());
+        EXPECT_FALSE(map.contains(firstKey));
+    }
+}
+
+TEST(WTF_OrderedHashMap, RandomizedAgainstModel)
+{
+    // A shuffled mix of set, add, remove, take and removeIf over a small key space, checked
+    // against a plain vector after each step.
+    constexpr int keyCount = 89;
+    OrderedHashMap<int, int> map;
+    Vector<std::pair<int, int>> model;
+    uint32_t randomState = 20261113;
+    auto nextRandom = [&] {
+        randomState = randomState * 1664525 + 1013904223;
+        return randomState >> 8;
+    };
+    auto modelFind = [&](int key) -> std::pair<int, int>* {
+        for (auto& entry : model) {
+            if (entry.first == key)
+                return &entry;
+        }
+        return nullptr;
+    };
+    auto modelRemove = [&](int key) {
+        model.removeFirstMatching([&](auto& entry) {
+            return entry.first == key;
+        });
+    };
+
+    for (unsigned step = 0; step < 6000; ++step) {
+        int key = static_cast<int>(nextRandom() % keyCount) - 1;
+        int value = static_cast<int>(step);
+        unsigned action = nextRandom() % 10;
+        auto* existing = modelFind(key);
+        if (action < 3) {
+            EXPECT_EQ(!existing, map.add(key, value).isNewEntry);
+            if (!existing)
+                model.append({ key, value });
+        } else if (action < 5) {
+            EXPECT_EQ(!existing, map.set(key, value).isNewEntry);
+            if (existing)
+                existing->second = value;
+            else
+                model.append({ key, value });
+        } else if (action < 8) {
+            EXPECT_EQ(!!existing, map.remove(key));
+            modelRemove(key);
+        } else if (action == 8) {
+            EXPECT_EQ(existing ? std::optional<int>(existing->second) : std::nullopt, map.takeOptional(key));
+            modelRemove(key);
+        } else if (!(nextRandom() % 8)) {
+            int modulus = 2 + nextRandom() % 5;
+            auto modelMatches = [&](auto& entry) {
+                return !(entry.first % modulus);
+            };
+            auto mapMatches = [&](auto& entry) {
+                return !(entry.key % modulus);
+            };
+            bool expectChange = model.containsIf(modelMatches);
+            EXPECT_EQ(expectChange, map.removeIf(mapMatches));
+            model.removeAllMatching(modelMatches);
+        }
+
+        EXPECT_EQ(model.size(), map.size());
+        if (!(step % 16)) {
+            EXPECT_EQ(model, contentsOf(map));
+            for (int k = -1; k < keyCount - 1; ++k) {
+                auto* entry = modelFind(k);
+                EXPECT_EQ(entry ? std::optional<int>(entry->second) : std::nullopt, map.getOptional(k));
+            }
+        }
+    }
+    EXPECT_EQ(model, contentsOf(map));
 }
 
 TEST(WTF_OrderedHashMap, EqualIgnoringOrder)
