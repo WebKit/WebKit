@@ -267,6 +267,13 @@ bool NetworkResourceLoader::canUseCachedRedirect(const ResourceRequest& request)
     return true;
 }
 
+StoredCredentialsPolicy NetworkResourceLoader::storedCredentialsPolicy() const
+{
+    if (m_parameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use && m_networkLoadChecker)
+        return m_networkLoadChecker->storedCredentialsPolicy();
+    return m_parameters.storedCredentialsPolicy;
+}
+
 bool NetworkResourceLoader::isSynchronous() const
 {
     return !!m_synchronousLoadData;
@@ -368,23 +375,23 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
             if (auto entry = session->prefetchCache().take(request.url())) {
                 LOADER_RELEASE_LOG("retrieveCacheEntry: retrieved an entry from the prefetch cache (isRedirect=%d)", !entry->redirectRequest.isNull());
                 if (!entry->redirectRequest.isNull()) {
-                    auto cacheEntry = cache->makeRedirectEntry(request, entry->response, entry->redirectRequest);
+                    auto cacheEntry = cache->makeRedirectEntry(request, storedCredentialsPolicy(), entry->response, entry->redirectRequest);
                     retrieveCacheEntryInternal(WTF::move(cacheEntry), ResourceRequest { request });
                     auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, entry->redirectRequest, entry->response);
-                    cache->storeRedirect(request, entry->response, entry->redirectRequest, maxAgeCap);
+                    cache->storeRedirect(request, storedCredentialsPolicy(), entry->response, entry->redirectRequest, maxAgeCap);
                     return;
                 }
                 auto buffer = entry->releaseBuffer();
-                auto cacheEntry = cache->makeEntry(request, entry->response, entry->privateRelayed, buffer.copyRef());
+                auto cacheEntry = cache->makeEntry(request, storedCredentialsPolicy(), entry->response, entry->privateRelayed, buffer.copyRef());
                 retrieveCacheEntryInternal(WTF::move(cacheEntry), ResourceRequest { request });
-                cache->store(request, entry->response, entry->privateRelayed, WTF::move(buffer));
+                cache->store(request, storedCredentialsPolicy(), entry->response, entry->privateRelayed, WTF::move(buffer));
                 return;
             }
         }
     }
 
     LOADER_RELEASE_LOG("retrieveCacheEntry: Checking the HTTP disk cache");
-    cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
+    cache->retrieve(request, storedCredentialsPolicy(), globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -479,8 +486,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
     NetworkLoadParameters parameters = m_parameters.networkLoadParameters();
     parameters.networkActivityTracker = m_networkActivityTracker;
-    if (parameters.storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && m_networkLoadChecker)
-        parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
+    parameters.storedCredentialsPolicy = storedCredentialsPolicy();
     // NetworkLoadChecker::check() normally turns cookies off, but it doesn't run when
     // serviceWorkerDidNotHandle() restarts a load because its service worker didn't respond.
     // FIXME: Restart those loads through NetworkLoadChecker::check() instead, so that their
@@ -792,7 +798,7 @@ void NetworkResourceLoader::abort()
         if (canUseCache(networkLoad->currentRequest())) {
             // We might already have used data from this incomplete load. Ensure older versions don't remain in the cache after cancel.
             if (!m_response.isNull())
-                protect(m_cache)->remove(networkLoad->currentRequest());
+                protect(m_cache)->remove(networkLoad->currentRequest(), storedCredentialsPolicy());
         }
         LOADER_RELEASE_LOG("abort: Cancelling network load");
         networkLoad->cancel();
@@ -2040,7 +2046,7 @@ void NetworkResourceLoader::continueWillSendRedirectedRequestAfterLocalNetworkAc
     if (isFromServiceWorker == IsFromServiceWorker::No) {
         auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, redirectRequest, redirectResponse);
         if (redirectResponse.source() == ResourceResponse::Source::Network && canUseCachedRedirect(request))
-            protect(m_cache)->storeRedirect(request, redirectResponse, redirectRequest, maxAgeCap);
+            protect(m_cache)->storeRedirect(request, storedCredentialsPolicy(), redirectResponse, redirectRequest, maxAgeCap);
     }
 
     if (auto error = doCrossOriginOpenerHandlingOfResponse(redirectResponse)) {
@@ -2509,7 +2515,7 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     storeCompressionDictionaryIfNeeded(m_response, m_bufferedDataForCache.copyBuffer());
 
     LOADER_RELEASE_LOG("tryStoreAsCacheEntry: Storing entry in HTTP disk cache");
-    protect(m_cache)->store(m_networkLoad->currentRequest(), m_response, m_privateRelayed, m_bufferedDataForCache.takeBuffer(), [loader = Ref { *this }](auto&& mappedBody) mutable {
+    protect(m_cache)->store(m_networkLoad->currentRequest(), storedCredentialsPolicy(), m_response, m_privateRelayed, m_bufferedDataForCache.takeBuffer(), [loader = Ref { *this }](auto&& mappedBody) mutable {
 #if ENABLE(SHAREABLE_RESOURCE)
         if (!mappedBody.shareableResourceHandle)
             return;

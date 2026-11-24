@@ -255,6 +255,7 @@ private:
 
     bool canUseCache(const WebCore::ResourceRequest&) const;
     bool canUseCachedRedirect(const WebCore::ResourceRequest&) const;
+    WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const;
 
     void tryStoreAsCacheEntry();
     void retrieveCacheEntry(const WebCore::ResourceRequest&);
