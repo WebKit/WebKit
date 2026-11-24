@@ -29,6 +29,7 @@
 #import "Logging.h"
 #import "UserNotificationsSPI.h"
 #import "WebPushDaemonConstants.h"
+#import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS)
@@ -111,21 +112,21 @@ static RetainPtr<NSUUID> uuidFromPushPartition(NSString *pushPartition)
     if (!notificationData)
         return nil;
 
-    _WKWebPushAction *result = [[[_WKWebPushAction alloc] init] autorelease];
-    result.webClipIdentifier = webClipIdentifier.get();
+    RetainPtr result = adoptNS([[_WKWebPushAction alloc] init]);
+    result.get().webClipIdentifier = webClipIdentifier.get();
 
     if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier])
-        result.type = _WKWebPushActionTypeNotificationClick;
+        result.get().type = _WKWebPushActionTypeNotificationClick;
     else if ([response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier])
-        result.type = _WKWebPushActionTypeNotificationClose;
+        result.get().type = _WKWebPushActionTypeNotificationClose;
     else {
         RELEASE_LOG_ERROR(Push, "Unknown notification response action identifier encountered: %@", response.actionIdentifier);
         return nil;
     }
 
-    result.coreNotificationData = WTF::move(notificationData);
+    result.get().coreNotificationData = WTF::move(notificationData);
 
-    return result;
+    return result.autorelease();
 #else
     return nil;
 #endif // PLATFORM(IOS)

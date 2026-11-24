@@ -53,7 +53,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    return retainPtr(self).leakRef();
 }
 
 @end
