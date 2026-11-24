@@ -97,7 +97,7 @@ private:
 
 class Iterator {
 public:
-    Iterator(const PlacedFloats::List&, std::optional<AxisPosition<ParentFormattingContextRoot>> blockStart);
+    Iterator(const PlacedFloats&, std::optional<AxisPosition<ParentFormattingContextRoot>> blockStart);
 
     NODELETE const FloatPair& operator*() const { return m_current; }
     Iterator& operator++();
@@ -106,19 +106,20 @@ public:
 private:
     void set(AxisPosition<ParentFormattingContextRoot> blockAxisPosition);
 
+    const PlacedFloats& m_placedFloats;
     const PlacedFloats::List& m_floats;
     FloatPair m_current;
 };
 
-static Iterator begin(const PlacedFloats::List& floats, AxisPosition<ParentFormattingContextRoot> initialBlockStart)
+static Iterator begin(const PlacedFloats& placedFloats, AxisPosition<ParentFormattingContextRoot> initialBlockStart)
 {
     // Start with the inner-most floating pair for the initial vertical position.
-    return Iterator(floats, initialBlockStart);
+    return Iterator(placedFloats, initialBlockStart);
 }
 
-static Iterator end(const PlacedFloats::List& floats)
+static Iterator end(const PlacedFloats& placedFloats)
 {
-    return Iterator(floats, { });
+    return Iterator(placedFloats, { });
 }
 
 #if ASSERT_ENABLED
@@ -153,12 +154,12 @@ static bool areFloatsHorizontallySorted(const PlacedFloats& placedFloats)
 }
 #endif
 
-static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats::List& floats, AxisRange<ParentFormattingContextRoot> containingBlockContentBoxEdges)
+static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats& placedFloats, AxisRange<ParentFormattingContextRoot> containingBlockContentBoxEdges)
 {
     auto lowestBlockAxisPosition = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
     auto innerMostInlineStartAndEnd = std::optional<FloatPair::InlineStartEndIndex> { };
-    auto end = Layout::end(floats);
-    for (auto iterator = begin(floats, floatAvoider.blockStart()); iterator != end; ++iterator) {
+    auto end = Layout::end(placedFloats);
+    for (auto iterator = begin(placedFloats, floatAvoider.blockStart()); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
         auto inlineStartEndFloatPair = *iterator;
         innerMostInlineStartAndEnd = innerMostInlineStartAndEnd.value_or(*inlineStartEndFloatPair);
@@ -267,7 +268,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     absoluteTopLeft.setY(blockStartCandidate);
     auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, true, isFloatingCandidateStartPositionedInBlockFormattingContext(layoutBox) };
-    findAvailablePosition(floatBox, placedFloats().list(), absoluteCoordinates.containingBlockContentBox);
+    findAvailablePosition(floatBox, placedFloats(), absoluteCoordinates.containingBlockContentBox);
     // Convert box coordinates from formatting root back to containing block.
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
     return { floatBox.inlineStart() + margins.horizontal.start - containingBlockTopLeft.x(), floatBox.blockStart() + margins.vertical.before - containingBlockTopLeft.y() };
@@ -494,7 +495,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
     // 3. Align the box with the intersected float and probe for placement again (#1). 
     auto& floats = m_placedFloats.list();
     while (true) {
-        auto innerMostInlineStartAndEnd = findAvailablePosition(floatAvoider, floats, containingBlockContentBoxEdges);
+        auto innerMostInlineStartAndEnd = findAvailablePosition(floatAvoider, m_placedFloats, containingBlockContentBoxEdges);
         if (innerMostInlineStartAndEnd.isEmpty())
             return;
 
@@ -684,9 +685,10 @@ AxisPosition<ParentFormattingContextRoot> FloatPair::lowestBlockAxisPosition() c
     return *lowestBlockAxisPositionAtInlineEnd;
 }
 
-Iterator::Iterator(const PlacedFloats::List& floats, std::optional<AxisPosition<ParentFormattingContextRoot>> blockStart)
-    : m_floats(floats)
-    , m_current(floats)
+Iterator::Iterator(const PlacedFloats& placedFloats, std::optional<AxisPosition<ParentFormattingContextRoot>> blockStart)
+    : m_placedFloats(placedFloats)
+    , m_floats(placedFloats.list())
+    , m_current(placedFloats.list())
 {
     if (blockStart)
         set(*blockStart);
@@ -781,6 +783,10 @@ void Iterator::set(AxisPosition<ParentFormattingContextRoot> blockAxisPosition)
         ASSERT(floatingType == Float::InlineStart || floatingType == Float::InlineEnd);
 
         ASSERT(!m_floats.isEmpty());
+        // When no float on this side reaches down to this position, the search below would walk the whole list.
+        auto lowestPositionOnBlockAxis = m_placedFloats.lowestPositionOnBlockAxis(floatingType == Float::InlineStart ? Clear::InlineStart : Clear::InlineEnd);
+        if (!lowestPositionOnBlockAxis || *lowestPositionOnBlockAxis <= blockAxisPosition)
+            return { };
 
         auto index = floatingType == Float::InlineStart ? m_current.m_floatPair.inlineStart : m_current.m_floatPair.inlineEnd;
         // Start from the end if we don't have current yet.

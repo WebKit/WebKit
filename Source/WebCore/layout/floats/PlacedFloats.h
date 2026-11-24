@@ -102,6 +102,8 @@ public:
     void shrinkToFit();
 
 private:
+    void computeLowestPositionsOnBlockAxis();
+
     CheckedRef<const ElementBox> m_blockFormattingContextRoot;
     List m_list;
     enum class PositionType : bool {
@@ -109,14 +111,20 @@ private:
         End
     };
     EnumSet<PositionType> m_positionTypes;
+    // The lowest margin box bottom of the start and of the end positioned floats.
+    std::optional<AxisPosition<ParentFormattingContextRoot>> m_lowestStartPositionOnBlockAxis;
+    std::optional<AxisPosition<ParentFormattingContextRoot>> m_lowestEndPositionOnBlockAxis;
     WritingMode m_writingMode;
 };
 
 inline bool PlacedFloats::remove(const Box& floatBox)
 {
-    return m_list.removeFirstMatching([&floatBox](auto& placedFloatItem) {
+    auto removed = m_list.removeFirstMatching([&floatBox](auto& placedFloatItem) {
         return placedFloatItem.layoutBox() == &floatBox;
     });
+    if (removed)
+        computeLowestPositionsOnBlockAxis();
+    return removed;
 }
 
 inline bool PlacedFloats::hasStartPositioned() const

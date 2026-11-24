@@ -74,6 +74,8 @@ void PlacedFloats::add(Item newFloatItem)
 {
     auto isStartPositioned = newFloatItem.isStartPositioned();
     m_positionTypes.add(isStartPositioned ? PositionType::Start : PositionType::End);
+    auto& lowestPositionOnBlockAxis = isStartPositioned ? m_lowestStartPositionOnBlockAxis : m_lowestEndPositionOnBlockAxis;
+    lowestPositionOnBlockAxis = std::max(lowestPositionOnBlockAxis.value_or(newFloatItem.marginBoxBottom()), newFloatItem.marginBoxBottom());
 
     if (m_list.isEmpty())
         return m_list.append(newFloatItem);
@@ -130,6 +132,18 @@ void PlacedFloats::clear()
 {
     m_list.clear();
     m_positionTypes = { };
+    m_lowestStartPositionOnBlockAxis = { };
+    m_lowestEndPositionOnBlockAxis = { };
+}
+
+void PlacedFloats::computeLowestPositionsOnBlockAxis()
+{
+    m_lowestStartPositionOnBlockAxis = { };
+    m_lowestEndPositionOnBlockAxis = { };
+    for (auto& floatItem : m_list) {
+        auto& lowestPositionOnBlockAxis = floatItem.isStartPositioned() ? m_lowestStartPositionOnBlockAxis : m_lowestEndPositionOnBlockAxis;
+        lowestPositionOnBlockAxis = std::max(lowestPositionOnBlockAxis.value_or(floatItem.marginBoxBottom()), floatItem.marginBoxBottom());
+    }
 }
 
 std::optional<AxisPosition<ParentFormattingContextRoot>> PlacedFloats::highestPositionOnBlockAxis() const
@@ -142,15 +156,13 @@ std::optional<AxisPosition<ParentFormattingContextRoot>> PlacedFloats::highestPo
 
 std::optional<AxisPosition<ParentFormattingContextRoot>> PlacedFloats::lowestPositionOnBlockAxis(Clear type) const
 {
-    // TODO: Currently this is only called once for each formatting context root with floats per layout.
-    // Cache the value if we end up calling it more frequently (and update it at append/remove).
-    auto lowestBlockAxisPosition = std::optional<AxisPosition<ParentFormattingContextRoot>> { };
-    for (auto& floatItem : m_list) {
-        if ((type == Clear::InlineStart && !floatItem.isStartPositioned()) || (type == Clear::InlineEnd && floatItem.isStartPositioned()))
-            continue;
-        lowestBlockAxisPosition = !lowestBlockAxisPosition ? floatItem.marginBoxBottom() : std::max(*lowestBlockAxisPosition, floatItem.marginBoxBottom());
-    }
-    return lowestBlockAxisPosition;
+    if (type == Clear::InlineStart)
+        return m_lowestStartPositionOnBlockAxis;
+    if (type == Clear::InlineEnd)
+        return m_lowestEndPositionOnBlockAxis;
+    if (!m_lowestStartPositionOnBlockAxis || !m_lowestEndPositionOnBlockAxis)
+        return m_lowestStartPositionOnBlockAxis ? m_lowestStartPositionOnBlockAxis : m_lowestEndPositionOnBlockAxis;
+    return std::max(*m_lowestStartPositionOnBlockAxis, *m_lowestEndPositionOnBlockAxis);
 }
 
 void PlacedFloats::shrinkToFit()
