@@ -195,7 +195,6 @@ private:
     const RetainPtr<CGContextRef> m_cgContext;
     mutable std::optional<ColorSpace> m_colorSpace;
 
-    // The CGGradient of the last painted gradient, for repeated draws with the same gradient.
     struct LastGradient {
         GradientIdentifier gradientIdentifier;
         std::optional<ColorSpace> colorSpace;

@@ -36,13 +36,7 @@ class Gradient;
 // Looks up the CGGradients of Gradients. A CGGradient is immutable, so it can be shared across threads.
 class GradientCacheCG {
 public:
-    // Returns the renderer color space for painting into a destination of the given color space.
     static std::optional<ColorSpace> colorSpaceForDestination(const ColorSpace&);
-
-    // Returns the CGGradient of the gradient in the renderer color space. The CGGradients of non-transient
-    // gradients, and of gradients that are created by sampling, are cached process-wide and shared by the
-    // gradients with the same color interpolation method and color stops. The other CGGradients of transient
-    // gradients are created on each call.
     static RetainPtr<CGGradientRef> cgGradient(const Gradient&, const std::optional<ColorSpace>&);
 };
 

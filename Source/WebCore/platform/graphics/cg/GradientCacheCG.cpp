@@ -40,6 +40,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -59,6 +60,10 @@ std::optional<ColorSpace> GradientCacheCG::colorSpaceForDestination(const ColorS
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
     case PredefinedColorSpace::DisplayP3Linear:
 #endif
+        // A CGGradient interpolates in its color space. Creating it in the color space of the destination
+        // avoids converting the colors on each draw, and interpolates nearly like sRGB when that color space
+        // is not linear. In a linear color space it would interpolate visibly differently, so the CGGradient
+        // is created in sRGB instead and converted when drawn.
         return std::nullopt;
     default:
         return colorSpace;
@@ -239,7 +244,6 @@ static RetainPtr<CGGradientRef> createGradientBySampling(ColorInterpolationMetho
 
 namespace {
 
-// What a CGGradient is created from. Gradients with equal keys share a CGGradient.
 struct CGGradientKey {
     ColorInterpolationMethod colorInterpolationMethod;
     GradientColorStopVector stops;
@@ -251,25 +255,21 @@ struct CGGradientKey {
     }
 };
 
-// Hashes what a CGGradient is created from, except the renderer color space. Never 0 or the maximum value.
+// The renderer color space is left out of the hash, so that the CGGradients of the same color stops in
+// different renderer color spaces are in the same bucket, and are evicted together.
 unsigned computeCGGradientHash(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops)
 {
     Hasher hasher;
     add(hasher, colorInterpolationMethod);
     for (auto& stop : stops)
         add(hasher, stop.offset, stop.color);
-    // Hasher never returns 0. Also avoid the maximum value, so that the hash can be a key with the default hash traits.
-    return std::min(hasher.hash(), std::numeric_limits<unsigned>::max() - 1);
+    return AlreadyHashed::avoidDeletedValue(hasher.hash());
 }
 
-// Process-wide cache of the CGGradients of non-transient gradients, and of all gradients created by sampling.
-// Non-transient gradients are painted across frames and contexts, in the GPU process also concurrently from
-// the rendering backend work queues and the main thread. Sampling is expensive also for transient gradients,
-// e.g. CSS gradients that are created for each paint. The CGGradients are keyed by what they are created
-// from, so gradients with the same color stops share a CGGradient, and the cache holds no reference to the
-// gradients. The CGGradients of non-transient gradients are also keyed by the gradient identifier, so that a
-// gradient painted again is found without hashing and comparing its color stops. Unused entries are evicted
-// as least recently used.
+// Process-wide LRU cache of the CGGradients of non-transient gradients, and of all gradients created by
+// sampling. The CGGradients are keyed by what they are created from, so gradients with the same color stops
+// share a CGGradient. Non-transient gradients are first looked up by the gradient identifier, so that a
+// gradient painted again is found without hashing and comparing its color stops.
 class CGGradientCache {
     WTF_MAKE_NONCOPYABLE(CGGradientCache);
 public:
@@ -284,8 +284,9 @@ public:
     RetainPtr<CGGradientRef> cgGradient(const Gradient& gradient, const std::optional<ColorSpace>& colorSpace)
     {
         // Gradients are immutable and identifiers are not reused, so a CGGradient found by the identifier is
-        // the one of the gradient. Transient gradients are not looked up by the identifier, as those are
-        // created for each paint and would only evict the identifiers of the non-transient gradients.
+        // the one of the gradient. Transient gradients are created for each paint, so their identifiers are
+        // never looked up again. Adding them would push the entries of non-transient gradients out of the
+        // identifier entries.
         if (!gradient.isTransient()) {
             Locker locker { m_lock };
             if (RetainPtr cgGradient = findByIdentifier(gradient.identifier(), colorSpace))
@@ -377,9 +378,9 @@ private:
     static constexpr size_t capacity = 512;
 
     Lock m_lock;
-    HashMap<unsigned, Entries> m_entries WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<unsigned, Entries, AlreadyHashed> m_entries WTF_GUARDED_BY_LOCK(m_lock);
     // Least recently used first.
-    ListHashSet<unsigned> m_hashes WTF_GUARDED_BY_LOCK(m_lock);
+    ListHashSet<unsigned, AlreadyHashed> m_hashes WTF_GUARDED_BY_LOCK(m_lock);
     HashMap<GradientIdentifier, IdentifierEntries> m_identifierEntries WTF_GUARDED_BY_LOCK(m_lock);
     // Least recently used first.
     ListHashSet<GradientIdentifier> m_identifiers WTF_GUARDED_BY_LOCK(m_lock);
