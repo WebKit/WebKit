@@ -10,14 +10,14 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_source_cancel.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_inputSources.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_inputSources_gripSpace.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_optional_offsetRay.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_refSpaces.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_regular.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_transient.https.html

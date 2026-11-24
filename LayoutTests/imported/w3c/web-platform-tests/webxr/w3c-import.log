@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/META.yml
@@ -27,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/getInputPose_handedness.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/getViewerPose_emulatedPosition.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/idlharness.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_update.https.html

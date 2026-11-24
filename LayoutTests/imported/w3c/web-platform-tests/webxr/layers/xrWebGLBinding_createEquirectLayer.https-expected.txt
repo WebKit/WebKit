@@ -1,0 +1,5 @@
+
+
+PASS Ensure XrWebGLBinding::createEquirectLayer throws the appropriate errors - webgl
+PASS Ensure XrWebGLBinding::createEquirectLayer throws the appropriate errors - webgl2
+

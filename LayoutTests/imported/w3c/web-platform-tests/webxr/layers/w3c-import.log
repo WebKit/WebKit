@@ -10,12 +10,32 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/layers/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/webxr/layers/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webxr/layers/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrCompositionLayer_destroy.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrCylinderLayer_paramValidation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrCylinderLayer_textureType.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrEquirectLayer_paramValidation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrEquirectLayer_textureType.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrGPUProjectionLayer_destroy.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrGPUProjectionLayer_ignoreDepthValues.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrLayerInit.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_createCylinderLayer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_createEquirectLayer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_createQuadLayer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrProjectionLayer_ignoreDepthValues.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrProjectionLayer_initialTextureSize.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrProjectionLayer_textureType.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrQuadLayer_textureType.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrSession_updateRenderState.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrSession_updateRenderState_preservesLayers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_constructor.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createCubeLayer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createCylinderLayer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createEquirectLayer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createQuadLayer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_maxLayers.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/layers/xr_layer_promise_test.js

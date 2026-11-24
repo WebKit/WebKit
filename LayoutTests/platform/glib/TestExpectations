@@ -3012,6 +3012,14 @@ imported/w3c/web-platform-tests/webxr/hand-input/ [ Pass ]
 imported/w3c/web-platform-tests/webxr/hit-test [ Pass ]
 
 imported/w3c/web-platform-tests/webxr/layers [ Pass ]
+webkit.org/b/332806 imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_createCylinderLayer.https.html [ Skip ]
+webkit.org/b/332806 imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_createEquirectLayer.https.html [ Skip ]
+webkit.org/b/332806 imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_createQuadLayer.https.html [ Skip ]
+webkit.org/b/332810 imported/w3c/web-platform-tests/webxr/layers/xrSession_updateRenderState.https.html [ Failure ]
+webkit.org/b/332808 imported/w3c/web-platform-tests/webxr/layers/xrLayerInit.https.html [ Skip ]
+webkit.org/b/332808 imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createCubeLayer.https.html [ Skip ]
+webkit.org/b/332808 imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createCylinderLayer.https.html [ Skip ]
+webkit.org/b/332808 imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createQuadLayer.https.html [ Skip ]
 
 imported/w3c/web-platform-tests/webxr/plane-detection [ Pass ]
 

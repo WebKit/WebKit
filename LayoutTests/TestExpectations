@@ -5835,6 +5835,8 @@ webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_input_events
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html [ Skip ]
 webkit.org/b/302409 imported/w3c/web-platform-tests/webxr/xrView_visibility_mask_change.https.html [ Skip ]
+webkit.org/b/332811 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html [ Failure ]
+webkit.org/b/332812 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html [ Failure ]
 
 # rdar://79306047
 webkit.org/b/227084 http/wpt/webxr/xrSession_ended_by_system.https.html [ Skip ]

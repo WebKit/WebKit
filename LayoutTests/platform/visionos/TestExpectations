@@ -166,6 +166,8 @@ imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.htt
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Failure ]
 
+webkit.org/b/332812 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html [ Failure ]
+
 webkit.org/b/274980 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Failure ]
 
 # webkit.org/b/275009 [VisionOS] 3 tests in fast/events/pointer/iOS tests are timing out constantly

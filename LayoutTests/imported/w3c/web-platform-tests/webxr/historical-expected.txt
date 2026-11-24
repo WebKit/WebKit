@@ -1,0 +1,19 @@
+
+PASS Historical WebVR features must be removed: VRDisplay
+PASS Historical WebVR features must be removed: VRDisplayCapabilities
+PASS Historical WebVR features must be removed: VRDisplayEvent
+PASS Historical WebVR features must be removed: VREyeParameters
+PASS Historical WebVR features must be removed: VRFrameData
+PASS Historical WebVR features must be removed: VRPose
+PASS Historical WebVR features must be removed: VRStageParameters
+PASS Historical WebVR navigator member must be removed: getVRDisplays
+PASS Historical WebVR navigator member must be removed: activeVRDisplays
+PASS Historical WebVR navigator member must be removed: vrEnabled
+PASS Historical WebVR window event handler must be removed: onvrdisplayactivate
+PASS Historical WebVR window event handler must be removed: onvrdisplayblur
+PASS Historical WebVR window event handler must be removed: onvrdisplayconnect
+PASS Historical WebVR window event handler must be removed: onvrdisplaydeactivate
+PASS Historical WebVR window event handler must be removed: onvrdisplaydisconnect
+PASS Historical WebVR window event handler must be removed: onvrdisplayfocus
+PASS Historical WebVR window event handler must be removed: onvrdisplaypresentchange
+
