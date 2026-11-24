@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AudioContext remote control commands honor Media Session action handlers</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const stateChangeTimeout = 2000;
+
+function waitFor(predicate, timeout)
+{
+    return new Promise((resolve, reject) => {
+        const start = performance.now();
+        const tick = () => {
+            if (predicate())
+                resolve();
+            else if (performance.now() - start >= timeout)
+                reject(new Error("timed out"));
+            else
+                setTimeout(tick, 50);
+        };
+        tick();
+    });
+}
+
+function waitForState(context, expected)
+{
+    if (context.state === expected)
+        return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        let timer;
+        const listener = () => {
+            if (context.state !== expected)
+                return;
+            clearTimeout(timer);
+            context.removeEventListener("statechange", listener);
+            resolve();
+        };
+        timer = setTimeout(() => {
+            context.removeEventListener("statechange", listener);
+            reject(new Error("state stayed " + context.state));
+        }, stateChangeTimeout);
+        context.addEventListener("statechange", listener);
+    });
+}
+
+function postUntilAction(actionName)
+{
+    let action = null;
+    navigator.mediaSession.setActionHandler(actionName, details => {
+        action = details.action;
+    });
+    return waitFor(() => {
+        if (action === actionName)
+            return true;
+        navigator.audioSession.type = "playback";
+        internals.postRemoteControlCommand(actionName);
+        return action === actionName;
+    }, stateChangeTimeout).then(() => action);
+}
+
+promise_test(async () => {
+    if (!navigator.audioSession)
+        return;
+    assert_true(!!window.internals);
+    internals.clearBackForwardCache();
+    internals.applicationWillEnterForeground();
+    internals.setMediaSessionRestrictions("webaudio", "");
+    internals.useMockAudioDestinationCocoa();
+
+    navigator.audioSession.type = "playback";
+    assert_equals(navigator.audioSession.type, "playback");
+    const context = new AudioContext();
+    const gain = context.createGain();
+    gain.gain.value = 0.1;
+    const oscillator = context.createOscillator();
+    oscillator.connect(gain);
+    try {
+        internals.withUserGesture(() => {
+            context.resume();
+        });
+        gain.connect(context.destination);
+        await waitForState(context, "running");
+        gain.connect(context.destination);
+        navigator.audioSession.type = "playback";
+
+        assert_equals(await postUntilAction("pause"), "pause");
+        await new Promise(resolve => setTimeout(resolve, 0));
+        assert_equals(context.state, "running");
+
+        navigator.mediaSession.setActionHandler("pause", null);
+        internals.postRemoteControlCommand("pause");
+        await waitForState(context, "suspended");
+
+        assert_equals(await postUntilAction("play"), "play");
+        await new Promise(resolve => setTimeout(resolve, 0));
+        assert_equals(context.state, "suspended");
+
+        navigator.mediaSession.setActionHandler("play", null);
+        internals.postRemoteControlCommand("play");
+        await waitForState(context, "running");
+    } finally {
+        navigator.mediaSession.setActionHandler("pause", null);
+        navigator.mediaSession.setActionHandler("play", null);
+        if (context.state !== "closed")
+            await context.close();
+        navigator.audioSession.type = "auto";
+    }
+}, "A Media Session action handler receives an AudioContext media key");
+</script>
+</body>
+</html>
