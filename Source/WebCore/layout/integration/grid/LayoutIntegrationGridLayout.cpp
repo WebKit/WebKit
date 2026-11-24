@@ -226,12 +226,26 @@ static MinMaxSizeConstraints inlineAxisMinMaxSizeConstraints(const RenderGrid& g
     auto stretchedContentBoxWidth = [&](auto& size) -> LayoutUnit {
         return std::max(0_lu, gridContainerRenderer.computeSizingKeywordLogicalWidthUsing(size, *containingBlockSize, borderAndPaddingWidth) - borderAndPaddingWidth);
     };
+    // https://drafts.csswg.org/css-sizing-4/#funcdef-width-stretch
+    auto stretchFunctionContentBoxWidth = [&](auto& size, LayoutUnit argumentResolutionSize) -> LayoutUnit {
+        auto argument = Style::evaluate<LayoutUnit>(size, argumentResolutionSize, gridContainerZoom);
+        auto marginResolutionSize = containingBlockSize ? gridContainerRenderer.containingBlockLogicalWidthForBoxSizing(size) : 0_lu;
+        return gridContainerRenderer.adjustContentBoxLogicalWidthForBoxSizing(size, argument, marginResolutionSize);
+    };
     // Without a known size a percentage in a minimum size resolves against zero, and one in a maximum size is no constraint.
     auto constraint = [&](auto& size, std::optional<LayoutUnit> percentageResolutionSize) -> std::optional<LayoutUnit> {
         if (size.isStretch()) {
             if (!containingBlockSize)
                 return { };
             return stretchedContentBoxWidth(size);
+        }
+        if (size.isStretchFunction()) {
+            if constexpr (std::same_as<std::remove_cvref_t<decltype(size)>, Style::MaximumSize>) {
+                if (!percentageResolutionSize && size.isPercentOrCalculated())
+                    return { };
+            }
+            // Resolved against 0 when the containing block's size is not known.
+            return stretchFunctionContentBoxWidth(size, percentageResolutionSize.value_or(0_lu));
         }
         if constexpr (std::same_as<std::remove_cvref_t<decltype(size)>, Style::MinimumSize>)
             return minimumSizeConstraint(size, percentageResolutionSize.value_or(0_lu), boxSizing, borderAndPaddingWidth, gridContainerZoom);
