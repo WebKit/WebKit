@@ -24,7 +24,9 @@ layer at (0,0) size 785x1496
       RenderBlock {DIV} at (0,34) size 769x0 [bgcolor=#009900]
       RenderBlock {OL} at (0,34) size 769x1398
         RenderListItem {LI} at (40,0) size 616x214 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "1"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "1. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x77 [bgcolor=#FFFFFF]
@@ -40,7 +42,9 @@ layer at (0,0) size 785x1496
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 137: "element of this type"
         RenderListItem {LI} at (40,261) size 616x229 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "2"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "2. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,24) size 584x0 [bgcolor=#009900]
@@ -59,7 +63,9 @@ layer at (0,0) size 785x1496
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 137: "element of this type"
         RenderListItem {LI} at (40,538) size 616x259 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "3"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "3. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,24) size 584x0 [bgcolor=#009900]
@@ -83,7 +89,9 @@ layer at (0,0) size 785x1496
               text run at (0,0) width 551: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 230: "element of this type in this scope"
         RenderListItem {LI} at (40,844) size 616x229 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "4"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "4. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0
@@ -102,7 +110,9 @@ layer at (0,0) size 785x1496
               text run at (0,0) width 569: "The CSS selector should not match the marked div element, because it is not the"
               text run at (0,18) width 171: "only element of this type"
         RenderListItem {LI} at (40,1121) size 616x277 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "5"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "5. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0

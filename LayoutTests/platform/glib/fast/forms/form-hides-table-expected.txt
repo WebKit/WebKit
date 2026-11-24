@@ -34,7 +34,9 @@ layer at (0,0) size 785x640
                       text run at (1,1) width 88: "display: block"
       RenderBlock {DIV} at (0,148) size 769x24
         RenderListItem {DIV} at (0,0) size 769x24
-          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderBlock (generated) at (-17,-1) size 7x19
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderBlock {FORM} at (0,0) size 769x24
             RenderTable {TABLE} at (0,0) size 109x24
               RenderTableSection {TBODY} at (0,0) size 109x24

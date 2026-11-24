@@ -663,7 +663,8 @@ LayoutUnit outsideMarkerMarginStart(const RenderBlockFlow& marker)
     return -marker.logicalWidth();
 }
 
-LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow& marker)
+// The offset from the block-start edge of an outside marker's primary font box (its image, for an image marker) to the marker's own block-start edge, so that box can be placed instead of the marker. A marker with `content` is placed by its own box, so this is 0.
+static LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow& marker)
 {
     ASSERT(marker.isOutsideListMarker());
     if (CheckedPtr image = imageForMarker(marker))

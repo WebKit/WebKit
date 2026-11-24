@@ -147,8 +147,6 @@ void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode l
 
 // How far an outside marker's start edge is from the start edge of the line it goes on, in its list item's inline direction. It is negative: the marker hangs off the start of the line.
 LayoutUnit outsideMarkerMarginStart(const RenderBlockFlow&);
-// The offset from the block-start edge of an outside marker's primary font box (its image, for an image marker) to the marker's own block-start edge, so that box can be placed instead of the marker. A marker with `content` is placed by its own box, so this is 0.
-LayoutUnit outsideMarkerContentLogicalTop(const RenderBlockFlow&);
 
 inline int RenderListItem::value() const
 {

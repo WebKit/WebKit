@@ -5,12 +5,16 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
       RenderBlock {UL} at (0,0) size 108x584 [bgcolor=#808080] [border: (25px solid #008000) none]
         RenderListItem {LI} at (0,50) size 36x534
-          RenderListMarker at (0,-17) size 18x7: bullet
+          RenderBlock (generated) at (0,-17) size 18x7
+            RenderText at (0,0) size 18x7
+              text run at (0,0) width 8: "\x{2022}"
           RenderText {#text} at (0,0) size 36x520
             text run at (0,0) width 521: "The top padding on this unordered list has been set to 25 pixels, which will require"
             text run at (18,0) width 192: "some extra test in order to test."
         RenderListItem {LI} at (36,50) size 72x534 [bgcolor=#FFFFFF] [border: (25px solid #008000) none]
-          RenderListMarker at (0,-17) size 18x7: bullet
+          RenderBlock (generated) at (0,-17) size 18x7
+            RenderText at (0,0) size 18x7
+              text run at (0,0) width 8: "\x{2022}"
           RenderText {#text} at (0,50) size 72x473
             text run at (0,50) width 473: "Another list item might not be such a bad idea, either, considering that such"
             text run at (18,50) width 240: "things do need to be double-checked. "

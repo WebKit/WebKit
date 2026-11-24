@@ -169,7 +169,9 @@ layer at (0,0) size 800x4035
           text run at (0,18) width 241: "standards (e.g., font names or URLs.)"
       RenderBlock {OL} at (0,1451) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-16,0) size 16x18: "1"
+          RenderBlock (generated) at (-16,0) size 16x18
+            RenderText at (0,0) size 16x18
+              text run at (0,0) width 16: "1. "
           RenderText {#text} at (0,0) size 635x18
             text run at (0,0) width 635: "This ordered list item should be black, because the declaration has an invalid pseudo-class selector."
       RenderBlock {P} at (0,1485) size 784x36
@@ -178,7 +180,9 @@ layer at (0,0) size 800x4035
           text run at (0,18) width 114: "not the first child."
       RenderBlock {UL} at (0,1537) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 704x36
             text run at (0,0) width 704: "This unordered list item should be black, because, according to CSS1, the selector is invalid, and according to"
             text run at (0,18) width 232: "CSS2, the selector should not apply."
@@ -389,7 +393,9 @@ layer at (0,0) size 800x4035
                   text run at (0,18) width 278: "other standards (e.g., font names or URLs.)"
               RenderBlock {OL} at (4,580) size 762x18
                 RenderListItem {LI} at (40,0) size 722x18
-                  RenderListMarker at (-16,0) size 16x18: "1"
+                  RenderBlock (generated) at (-16,0) size 16x18
+                    RenderText at (0,0) size 16x18
+                      text run at (0,0) width 16: "1. "
                   RenderText {#text} at (0,0) size 635x18
                     text run at (0,0) width 635: "This ordered list item should be black, because the declaration has an invalid pseudo-class selector."
               RenderBlock {P} at (4,614) size 762x36
@@ -398,7 +404,9 @@ layer at (0,0) size 800x4035
                   text run at (0,18) width 129: "is not the first child."
               RenderBlock {UL} at (4,666) size 762x36
                 RenderListItem {LI} at (40,0) size 722x36
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderBlock (generated) at (-17,0) size 7x18
+                    RenderText at (0,0) size 7x18
+                      text run at (0,0) width 7: "\x{2022}"
                   RenderText {#text} at (0,0) size 704x36
                     text run at (0,0) width 704: "This unordered list item should be black, because, according to CSS1, the selector is invalid, and according to"
                     text run at (0,18) width 232: "CSS2, the selector should not apply."

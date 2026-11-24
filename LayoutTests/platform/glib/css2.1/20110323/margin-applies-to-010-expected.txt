@@ -10,4 +10,6 @@ layer at (0,0) size 800x68
 layer at (8,68) size 340x340
   RenderBlock (positioned) {DIV} at (8,68) size 340x340 [border: (10px solid #0000FF)]
     RenderListItem {DIV} at (60,60) size 220x220 [border: (10px solid #FFA500)]
-      RenderListMarker at (-17,10) size 7x18: bullet
+      RenderBlock (generated) at (-17,10) size 7x18
+        RenderText at (0,0) size 7x18
+          text run at (0,0) width 7: "\x{2022}"

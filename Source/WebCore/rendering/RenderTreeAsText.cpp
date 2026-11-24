@@ -58,7 +58,6 @@
 #include "RenderElementInlines.h"
 #include "RenderFileUploadControl.h"
 #include "RenderFragmentContainer.h"
-#include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerInlines.h"
@@ -190,31 +189,9 @@ NODELETE inline bool shouldEnableSubpixelPrecisionForTextDump(const Document& do
     return document.settings().layerBasedSVGEngineEnabled() && document.mayHaveRenderedSVGRootElements();
 }
 
-// FIXME: Dump the outside marker as the block it is, and rebaseline the results that expect a RenderListMarker the
-// size of its primary font or image.
-static LayoutRect listMarkerRectForRenderTreeAsText(const RenderListItem& listItem, const RenderBlockFlow& marker)
-{
-    auto boxLogicalHeight = [&] {
-        if (CheckedPtr image = listItem.markerImage())
-            return image->logicalHeight();
-        CheckedRef markerStyle = marker.style();
-        if (listMarkerHasContent(markerStyle, protect(marker.document())))
-            return marker.logicalHeight();
-        return LayoutUnit { markerStyle->metricsOfPrimaryFont().intHeight() };
-    }();
-    // Like the marker's location, the rect is block-start relative, so in every writing mode, flipped ones included, the
-    // primary font or image box starts this far after the marker on the block axis.
-    auto boxOffset = -outsideMarkerContentLogicalTop(marker);
-    auto rect = marker.borderBoxRectInContainer();
-    if (listItem.isHorizontalWritingMode())
-        return { rect.x(), rect.y() + boxOffset, rect.width(), boxLogicalHeight };
-    return { rect.x() + boxOffset, rect.y(), boxLogicalHeight, rect.height() };
-}
-
 void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
 {
-    CheckedPtr markerListItem = o.isOutsideListMarker() ? downcast<RenderListItem>(o.parent()) : nullptr;
-    ts << (markerListItem ? "RenderListMarker"_s : o.renderName()).characters();
+    ts << o.renderName().characters();
 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
         ts << ' ' << &o;
@@ -246,8 +223,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         r = br->linesBoundingBox();
     else if (o.isInlineBox())
         r = downcast<RenderBoxModelObject>(o).borderBoxRectInContainer();
-    else if (markerListItem)
-        r = listMarkerRectForRenderTreeAsText(*markerListItem, downcast<RenderBlockFlow>(o));
     else if (auto* cell = dynamicDowncast<RenderTableCell>(o)) {
         // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
         // to clean up the results to dump both the outer box and the intrinsic padding so that both bits of information are
@@ -390,30 +365,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (auto* cell = dynamicDowncast<RenderTableCell>(o))
         ts << " [r="_s << cell->rowIndex() << " c="_s << cell->col() << " rs="_s << cell->rowSpan() << " cs="_s << cell->colSpan() << ']';
 
-    if (markerListItem) {
-        auto text = markerListItem->markerText(ListMarkerIncludeSuffix::No);
-        if (!text.isEmpty()) {
-            if (text.length() != 1)
-                text = quoteAndEscapeNonPrintables(text);
-            else {
-                switch (text[0]) {
-                    case bullet:
-                        text = "bullet"_s;
-                        break;
-                    case blackSquare:
-                        text = "black square"_s;
-                        break;
-                    case whiteBullet:
-                        text = "white bullet"_s;
-                        break;
-                    default:
-                        text = quoteAndEscapeNonPrintables(text);
-                }
-            }
-            ts << ": "_s << text;
-        }
-    }
-    
     writeDebugInfo(ts, o, behavior);
 }
 
@@ -574,9 +525,6 @@ void write(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextF
         writeTextRuns(ts, *textRenderer);
         return;
     }
-
-    if (renderer.isOutsideListMarker())
-        return;
 
     for (CheckedRef child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
         if (child->hasLayer())

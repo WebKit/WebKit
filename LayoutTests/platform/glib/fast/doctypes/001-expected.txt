@@ -10,10 +10,14 @@ layer at (0,0) size 800x600
           text run at (159,0) width 188: "We should be in quirks mode."
       RenderBlock {UL} at (0,134) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
-          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderBlock (generated) at (-17,-1) size 7x19
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderBlock {UL} at (0,18) size 744x18
             RenderListItem {LI} at (40,0) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderBlock (generated) at (-17,0) size 7x18
+                RenderText at (0,0) size 7x18
+                  text run at (0,0) width 7: "\x{25E6}"
               RenderText {#text} at (0,0) size 238x18
                 text run at (0,0) width 238: "I should be underneath the first bullet."
 layer at (10,10) size 80x80

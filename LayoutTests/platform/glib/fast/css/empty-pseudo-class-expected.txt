@@ -24,7 +24,9 @@ layer at (0,0) size 785x1619
       RenderBlock {DIV} at (0,34) size 769x0 [bgcolor=#009900]
       RenderBlock {OL} at (0,34) size 769x1521
         RenderListItem {LI} at (40,0) size 616x196 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "1"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "1. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x77 [bgcolor=#FFFFFF]
@@ -39,7 +41,9 @@ layer at (0,0) size 785x1619
             RenderText {#text} at (0,0) size 481x18
               text run at (0,0) width 481: "The CSS selector should match the div element, because it is empty"
         RenderListItem {LI} at (40,243) size 616x196 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "2"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "2. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x77 [bgcolor=#FFFFFF]
@@ -54,7 +58,9 @@ layer at (0,0) size 785x1619
             RenderText {#text} at (0,0) size 481x18
               text run at (0,0) width 481: "The CSS selector should match the div element, because it is empty"
         RenderListItem {LI} at (40,487) size 616x196 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "3"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "3. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
           RenderBlock {PRE} at (16,53) size 584x77 [bgcolor=#FFFFFF]
@@ -69,7 +75,9 @@ layer at (0,0) size 785x1619
             RenderText {#text} at (0,0) size 533x18
               text run at (0,0) width 533: "The CSS selector should not match the div element, because it is not empty"
         RenderListItem {LI} at (40,730) size 616x241 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,28) size 17x18: "4"
+          RenderBlock (generated) at (-17,28) size 17x18
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "4. "
           RenderBlock {DIV} at (16,16) size 584x42 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x42
               RenderText {#text} at (12,12) size 4x18
@@ -90,7 +98,9 @@ layer at (0,0) size 785x1619
             RenderText {#text} at (0,0) size 533x18
               text run at (0,0) width 533: "The CSS selector should not match the div element, because it is not empty"
         RenderListItem {LI} at (40,1018) size 616x196 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "5"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "5. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
               RenderBlock {BLOCKQUOTE} at (12,12) size 560x0 [bgcolor=#990000]
@@ -106,7 +116,9 @@ layer at (0,0) size 785x1619
             RenderText {#text} at (0,0) size 533x18
               text run at (0,0) width 533: "The CSS selector should not match the div element, because it is not empty"
         RenderListItem {LI} at (40,1262) size 616x259 [bgcolor=#AAAAAA]
-          RenderListMarker at (-17,60) size 17x17: "6"
+          RenderBlock (generated) at (-17,59) size 17x19
+            RenderText at (0,0) size 17x18
+              text run at (0,0) width 17: "6. "
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
               RenderBlock {DIV} at (12,12) size 560x0 [bgcolor=#990000]

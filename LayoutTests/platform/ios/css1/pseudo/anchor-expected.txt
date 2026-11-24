@@ -24,50 +24,66 @@ layer at (0,0) size 800x683
           text run at (0,0) width 508: "The following anchors should appear as described; none of them should be red."
       RenderBlock {UL} at (0,189) size 784x144
         RenderListItem {LI} at (40,0) size 744x108
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderBlock (anonymous) at (0,0) size 744x18
             RenderText {#text} at (0,0) size 583x18
               text run at (0,0) width 583: "Purple unvisited, lime (light green) visited, maroon (dark red) while active (being clicked):"
           RenderBlock {UL} at (0,18) size 744x90
             RenderListItem {LI} at (40,0) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderBlock (generated) at (-17,0) size 7x18
+                RenderText at (0,0) size 7x18
+                  text run at (0,0) width 7: "\x{25E6}"
               RenderInline {A} at (0,0) size 110x18 [color=#800080]
                 RenderText {#text} at (0,0) size 110x18
                   text run at (0,0) width 110: "W3C Web server"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,18) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderBlock (generated) at (-17,0) size 7x18
+                RenderText at (0,0) size 7x18
+                  text run at (0,0) width 7: "\x{25E6}"
               RenderInline {A} at (0,0) size 112x18 [color=#800080]
                 RenderText {#text} at (0,0) size 112x18
                   text run at (0,0) width 112: "NIST Web server"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,36) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderBlock (generated) at (-17,0) size 7x18
+                RenderText at (0,0) size 7x18
+                  text run at (0,0) width 7: "\x{25E6}"
               RenderInline {A} at (0,0) size 125x18 [color=#800080]
                 RenderText {#text} at (0,0) size 125x18
                   text run at (0,0) width 125: "CWRU Web server"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,54) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderBlock (generated) at (-17,0) size 7x18
+                RenderText at (0,0) size 7x18
+                  text run at (0,0) width 7: "\x{25E6}"
               RenderInline {A} at (0,0) size 47x18 [color=#800080]
                 RenderText {#text} at (0,0) size 47x18
                   text run at (0,0) width 47: "Yahoo!"
               RenderText {#text} at (0,0) size 0x0
             RenderListItem {LI} at (40,72) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderBlock (generated) at (-17,0) size 7x18
+                RenderText at (0,0) size 7x18
+                  text run at (0,0) width 7: "\x{25E6}"
               RenderInline {A} at (0,0) size 58x18 [color=#800080]
                 RenderText {#text} at (0,0) size 58x18
                   text run at (0,0) width 58: "Erewhon"
               RenderText {#text} at (57,0) size 225x18
                 text run at (57,0) width 225: " (don't click on it, it goes nowhere)"
         RenderListItem {LI} at (40,108) size 744x36
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderBlock (anonymous) at (0,0) size 744x18
             RenderText {#text} at (0,0) size 208x18
               text run at (0,0) width 208: "Dark green in any circumstance:"
           RenderBlock {UL} at (0,18) size 744x18
             RenderListItem {LI} at (40,0) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderBlock (generated) at (-17,0) size 7x18
+                RenderText at (0,0) size 7x18
+                  text run at (0,0) width 7: "\x{25E6}"
               RenderInline {A} at (0,0) size 125x18 [color=#006600]
                 RenderText {#text} at (0,0) size 125x18
                   text run at (0,0) width 125: "CWRU Web server"
@@ -100,50 +116,66 @@ layer at (0,0) size 800x683
                   text run at (0,0) width 508: "The following anchors should appear as described; none of them should be red."
               RenderBlock {UL} at (4,38) size 762x144
                 RenderListItem {LI} at (40,0) size 722x108
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderBlock (generated) at (-17,0) size 7x18
+                    RenderText at (0,0) size 7x18
+                      text run at (0,0) width 7: "\x{2022}"
                   RenderBlock (anonymous) at (0,0) size 722x18
                     RenderText {#text} at (0,0) size 583x18
                       text run at (0,0) width 583: "Purple unvisited, lime (light green) visited, maroon (dark red) while active (being clicked):"
                   RenderBlock {UL} at (0,18) size 722x90
                     RenderListItem {LI} at (40,0) size 682x18
-                      RenderListMarker at (-17,0) size 7x18: white bullet
+                      RenderBlock (generated) at (-17,0) size 7x18
+                        RenderText at (0,0) size 7x18
+                          text run at (0,0) width 7: "\x{25E6}"
                       RenderInline {A} at (0,0) size 110x18 [color=#800080]
                         RenderText {#text} at (0,0) size 110x18
                           text run at (0,0) width 110: "W3C Web server"
                       RenderText {#text} at (0,0) size 0x0
                     RenderListItem {LI} at (40,18) size 682x18
-                      RenderListMarker at (-17,0) size 7x18: white bullet
+                      RenderBlock (generated) at (-17,0) size 7x18
+                        RenderText at (0,0) size 7x18
+                          text run at (0,0) width 7: "\x{25E6}"
                       RenderInline {A} at (0,0) size 112x18 [color=#800080]
                         RenderText {#text} at (0,0) size 112x18
                           text run at (0,0) width 112: "NIST Web server"
                       RenderText {#text} at (0,0) size 0x0
                     RenderListItem {LI} at (40,36) size 682x18
-                      RenderListMarker at (-17,0) size 7x18: white bullet
+                      RenderBlock (generated) at (-17,0) size 7x18
+                        RenderText at (0,0) size 7x18
+                          text run at (0,0) width 7: "\x{25E6}"
                       RenderInline {A} at (0,0) size 125x18 [color=#800080]
                         RenderText {#text} at (0,0) size 125x18
                           text run at (0,0) width 125: "CWRU Web server"
                       RenderText {#text} at (0,0) size 0x0
                     RenderListItem {LI} at (40,54) size 682x18
-                      RenderListMarker at (-17,0) size 7x18: white bullet
+                      RenderBlock (generated) at (-17,0) size 7x18
+                        RenderText at (0,0) size 7x18
+                          text run at (0,0) width 7: "\x{25E6}"
                       RenderInline {A} at (0,0) size 47x18 [color=#800080]
                         RenderText {#text} at (0,0) size 47x18
                           text run at (0,0) width 47: "Yahoo!"
                       RenderText {#text} at (0,0) size 0x0
                     RenderListItem {LI} at (40,72) size 682x18
-                      RenderListMarker at (-17,0) size 7x18: white bullet
+                      RenderBlock (generated) at (-17,0) size 7x18
+                        RenderText at (0,0) size 7x18
+                          text run at (0,0) width 7: "\x{25E6}"
                       RenderInline {A} at (0,0) size 58x18 [color=#800080]
                         RenderText {#text} at (0,0) size 58x18
                           text run at (0,0) width 58: "Erewhon"
                       RenderText {#text} at (57,0) size 225x18
                         text run at (57,0) width 225: " (don't click on it, it goes nowhere)"
                 RenderListItem {LI} at (40,108) size 722x36
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderBlock (generated) at (-17,0) size 7x18
+                    RenderText at (0,0) size 7x18
+                      text run at (0,0) width 7: "\x{2022}"
                   RenderBlock (anonymous) at (0,0) size 722x18
                     RenderText {#text} at (0,0) size 208x18
                       text run at (0,0) width 208: "Dark green in any circumstance:"
                   RenderBlock {UL} at (0,18) size 722x18
                     RenderListItem {LI} at (40,0) size 682x18
-                      RenderListMarker at (-17,0) size 7x18: white bullet
+                      RenderBlock (generated) at (-17,0) size 7x18
+                        RenderText at (0,0) size 7x18
+                          text run at (0,0) width 7: "\x{25E6}"
                       RenderInline {A} at (0,0) size 125x18 [color=#006600]
                         RenderText {#text} at (0,0) size 125x18
                           text run at (0,0) width 125: "CWRU Web server"

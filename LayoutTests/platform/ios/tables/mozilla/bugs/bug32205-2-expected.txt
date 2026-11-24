@@ -16,16 +16,22 @@ layer at (0,0) size 800x1299
           text run at (0,36) width 112: "a number of bugs"
       RenderBlock {OL} at (0,104) size 784x72
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-16,0) size 16x18: "1"
+          RenderBlock (generated) at (-16,0) size 16x18
+            RenderText at (0,0) size 16x18
+              text run at (0,0) width 16: "1. "
           RenderText {#text} at (0,0) size 467x18
             text run at (0,0) width 467: "If a height is specified for only one row (not both) then it will be ignored"
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-16,0) size 16x18: "2"
+          RenderBlock (generated) at (-16,0) size 16x18
+            RenderText at (0,0) size 16x18
+              text run at (0,0) width 16: "2. "
           RenderText {#text} at (0,0) size 686x18
             text run at (0,0) width 442: "If specified heights are insufficient (because the content is too large) "
             text run at (441,0) width 245: "then the entire table will be expanded."
         RenderListItem {LI} at (40,36) size 744x36
-          RenderListMarker at (-16,0) size 16x18: "3"
+          RenderBlock (generated) at (-16,0) size 16x18
+            RenderText at (0,0) size 16x18
+              text run at (0,0) width 16: "3. "
           RenderText {#text} at (0,0) size 738x36
             text run at (0,0) width 471: "Percentage heights appear to simply be translated into pixel heights prior "
             text run at (470,0) width 268: "to other processing, so offer no additional"

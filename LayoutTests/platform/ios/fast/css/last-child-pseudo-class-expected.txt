@@ -24,7 +24,9 @@ layer at (0,0) size 800x2270
       RenderBlock {DIV} at (0,34) size 784x0 [bgcolor=#009900]
       RenderBlock {OL} at (0,34) size 784x2172
         RenderListItem {LI} at (40,0) size 628x243 [bgcolor=#AAAAAA]
-          RenderListMarker at (-18,59) size 18x18: "1"
+          RenderBlock (generated) at (-18,59) size 18x19
+            RenderText at (0,0) size 18x18
+              text run at (0,0) width 18: "1. "
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 596x106 [bgcolor=#FFFFFF]
@@ -44,7 +46,9 @@ layer at (0,0) size 800x2270
               text run at (0,0) width 592: "The CSS selector should match the inner div element, because it is the only child of"
               text run at (0,18) width 150: "the outer div element"
         RenderListItem {LI} at (40,291) size 628x258 [bgcolor=#AAAAAA]
-          RenderListMarker at (-18,59) size 18x18: "2"
+          RenderBlock (generated) at (-18,59) size 18x19
+            RenderText at (0,0) size 18x18
+              text run at (0,0) width 18: "2. "
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {BLOCKQUOTE} at (0,0) size 596x0
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
@@ -67,7 +71,9 @@ layer at (0,0) size 800x2270
               text run at (0,0) width 587: "The CSS selector should match the inner div element, because it is the last child of"
               text run at (0,18) width 150: "the outer div element"
         RenderListItem {LI} at (40,597) size 628x276 [bgcolor=#AAAAAA]
-          RenderListMarker at (-18,59) size 18x18: "3"
+          RenderBlock (generated) at (-18,59) size 18x19
+            RenderText at (0,0) size 18x18
+              text run at (0,0) width 18: "3. "
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 596x121 [bgcolor=#FFFFFF]
@@ -91,7 +97,9 @@ layer at (0,0) size 800x2270
               text run at (153,18) width 363: "Comments are not elements, so they should not be"
               text run at (0,36) width 307: "considered when determining the last child."
         RenderListItem {LI} at (40,921) size 628x291 [bgcolor=#AAAAAA]
-          RenderListMarker at (-18,40) size 18x18: "4"
+          RenderBlock (generated) at (-18,40) size 18x18
+            RenderText at (0,0) size 18x18
+              text run at (0,0) width 18: "4. "
           RenderBlock {DIV} at (16,16) size 596x42 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
             RenderBlock (anonymous) at (0,24) size 596x18
@@ -118,7 +126,9 @@ layer at (0,0) size 800x2270
               text run at (158,18) width 435: "Regular text is not an element, so it should not be considered"
               text run at (0,36) width 225: "when determining the last child."
         RenderListItem {LI} at (40,1260) size 628x258 [bgcolor=#AAAAAA]
-          RenderListMarker at (-18,59) size 18x18: "5"
+          RenderBlock (generated) at (-18,59) size 18x19
+            RenderText at (0,0) size 18x18
+              text run at (0,0) width 18: "5. "
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 596x24
             RenderBlock {BLOCKQUOTE} at (0,24) size 596x0 [bgcolor=#990000]
@@ -141,7 +151,9 @@ layer at (0,0) size 800x2270
               text run at (0,0) width 560: "The CSS selector should not match the inner div element, because it is the first"
               text run at (0,18) width 205: "child of the outer div element"
         RenderListItem {LI} at (40,1566) size 628x288 [bgcolor=#AAAAAA]
-          RenderListMarker at (-18,59) size 18x18: "6"
+          RenderBlock (generated) at (-18,59) size 18x19
+            RenderText at (0,0) size 18x18
+              text run at (0,0) width 18: "6. "
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x0
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
@@ -167,7 +179,9 @@ layer at (0,0) size 800x2270
               text run at (0,0) width 571: "The CSS selector should match the div element that is inserted by the Javascript"
               text run at (0,18) width 40: "code."
         RenderListItem {LI} at (40,1902) size 628x270 [bgcolor=#AAAAAA]
-          RenderListMarker at (-18,59) size 18x18: "7"
+          RenderBlock (generated) at (-18,59) size 18x19
+            RenderText at (0,0) size 18x18
+              text run at (0,0) width 18: "7. "
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 596x24
             RenderBlock {DIV} at (0,24) size 596x0 [bgcolor=#990000]

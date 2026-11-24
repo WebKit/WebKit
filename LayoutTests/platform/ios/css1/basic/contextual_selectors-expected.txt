@@ -28,7 +28,9 @@ layer at (0,0) size 800x600
           text run at (605,0) width 5: "."
       RenderBlock {UL} at (0,193) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderBlock (anonymous) at (0,0) size 744x18
             RenderInline {EM} at (0,0) size 40x18 [color=#008000]
               RenderText {#text} at (0,0) size 40x18
@@ -38,7 +40,9 @@ layer at (0,0) size 800x600
               text run at (43,0) width 403: "The first \"hello\" should be green, but this part should be black."
           RenderBlock {UL} at (0,18) size 744x18
             RenderListItem {LI} at (40,0) size 704x18 [color=#008000]
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderBlock (generated) at (-17,0) size 7x18
+                RenderText at (0,0) size 7x18
+                  text run at (0,0) width 7: "\x{25E6}"
               RenderText {#text} at (0,0) size 138x18
                 text run at (0,0) width 138: "This should be green."
       RenderTable {TABLE} at (0,245) size 730x156 [border: (1px outset #000000)]
@@ -66,7 +70,9 @@ layer at (0,0) size 800x600
                   text run at (668,0) width 6: "."
               RenderBlock {UL} at (4,72) size 708x36
                 RenderListItem {LI} at (40,0) size 668x36
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderBlock (generated) at (-17,0) size 7x18
+                    RenderText at (0,0) size 7x18
+                      text run at (0,0) width 7: "\x{2022}"
                   RenderBlock (anonymous) at (0,0) size 668x18
                     RenderInline {EM} at (0,0) size 40x18 [color=#008000]
                       RenderText {#text} at (0,0) size 40x18
@@ -76,7 +82,9 @@ layer at (0,0) size 800x600
                       text run at (43,0) width 403: "The first \"hello\" should be green, but this part should be black."
                   RenderBlock {UL} at (0,18) size 668x18
                     RenderListItem {LI} at (40,0) size 628x18 [color=#008000]
-                      RenderListMarker at (-17,0) size 7x18: white bullet
+                      RenderBlock (generated) at (-17,0) size 7x18
+                        RenderText at (0,0) size 7x18
+                          text run at (0,0) width 7: "\x{25E6}"
                       RenderText {#text} at (0,0) size 138x18
                         text run at (0,0) width 138: "This should be green."
 layer at (8,115) size 784x2 clip at (0,0) size 0x0

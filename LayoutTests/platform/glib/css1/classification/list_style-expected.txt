@@ -22,7 +22,8 @@ layer at (0,0) size 800x600
             text run at (0,18) width 286: "leaving no blank space beneath the capital-A."
       RenderBlock {UL} at (0,147) size 784x37
         RenderListItem {LI} at (40,0) size 744x37
-          RenderListMarker at (-22,0) size 15x15
+          RenderBlock (generated) at (-22,0) size 15x15
+            RenderImage at (0,0) size 15x15
           RenderText {#text} at (0,1) size 736x35
             text run at (0,1) width 476: "The text in this item have an orange square for its bullet; failing that, a disc. "
             text run at (476,1) width 260: "Also, the bullet should be outside the text"
@@ -49,7 +50,8 @@ layer at (0,0) size 800x600
                     text run at (0,18) width 338: "margin, leaving no blank space beneath the capital-A."
               RenderBlock {UL} at (4,56) size 762x37
                 RenderListItem {LI} at (40,0) size 722x37
-                  RenderListMarker at (-22,0) size 15x15
+                  RenderBlock (generated) at (-22,0) size 15x15
+                    RenderImage at (0,0) size 15x15
                   RenderText {#text} at (0,1) size 709x35
                     text run at (0,1) width 476: "The text in this item have an orange square for its bullet; failing that, a disc. "
                     text run at (476,1) width 233: "Also, the bullet should be outside the"

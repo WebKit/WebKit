@@ -39,7 +39,9 @@ layer at (0,0) size 800x816
             text run at (403,36) width 112: " is being ignored."
         RenderText {#text} at (0,0) size 0x0
       RenderListItem {P} at (48,244) size 736x54
-        RenderListMarker at (-17,0) size 7x18: black square
+        RenderBlock (generated) at (-17,0) size 7x18
+          RenderText at (0,0) size 7x18
+            text run at (0,0) width 7: "\x{25A0}"
         RenderText {#text} at (0,0) size 733x36
           text run at (0,0) width 733: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list items"
           text run at (0,18) width 20: "(if "
@@ -100,7 +102,9 @@ layer at (0,0) size 800x816
                     text run at (434,36) width 112: " is being ignored."
                 RenderText {#text} at (0,0) size 0x0
               RenderListItem {P} at (52,108) size 714x54
-                RenderListMarker at (-17,0) size 7x18: black square
+                RenderBlock (generated) at (-17,0) size 7x18
+                  RenderText at (0,0) size 7x18
+                    text run at (0,0) width 7: "\x{25A0}"
                 RenderText {#text} at (0,0) size 694x36
                   text run at (0,0) width 694: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list"
                   text run at (0,18) width 58: "items (if "

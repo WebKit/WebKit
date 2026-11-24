@@ -15,28 +15,37 @@ layer at (0,0) size 800x600
           text run at (0,30) width 0: " "
       RenderBlock {UL} at (0,110) size 784x56
         RenderListItem {LI} at (40,0) size 744x19
-          RenderListMarker at (-22,0) size 15x15
+          RenderBlock (generated) at (-22,0) size 15x15
+            RenderImage at (0,0) size 15x15
           RenderText {#text} at (0,0) size 65x19
             text run at (0,0) width 65: "This list..."
         RenderListItem {LI} at (40,18) size 744x20
-          RenderListMarker at (-22,0) size 15x15
+          RenderBlock (generated) at (-22,0) size 15x15
+            RenderImage at (0,0) size 15x15
           RenderText {#text} at (0,0) size 116x19
             text run at (0,0) width 116: "...should feature..."
         RenderListItem {LI} at (40,37) size 744x19
-          RenderListMarker at (-22,0) size 15x15
+          RenderBlock (generated) at (-22,0) size 15x15
+            RenderImage at (0,0) size 15x15
           RenderText {#text} at (0,0) size 150x19
             text run at (0,0) width 150: "...images for each item."
       RenderBlock {UL} at (0,181) size 784x55
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 65x18
             text run at (0,0) width 65: "This list..."
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 116x18
             text run at (0,0) width 116: "...should feature..."
         RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderBlock (generated) at (-17,0) size 7x18
+            RenderText at (0,0) size 7x18
+              text run at (0,0) width 7: "\x{2022}"
           RenderText {#text} at (0,0) size 238x18
             text run at (0,0) width 238: "...standard list markers for each item."
       RenderTable {TABLE} at (0,251) size 300x179 [border: (1px outset #000000)]
@@ -53,28 +62,37 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (12,26) size 286x150 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {UL} at (4,4) size 278x56
                 RenderListItem {LI} at (40,0) size 238x19
-                  RenderListMarker at (-22,0) size 15x15
+                  RenderBlock (generated) at (-22,0) size 15x15
+                    RenderImage at (0,0) size 15x15
                   RenderText {#text} at (0,0) size 65x19
                     text run at (0,0) width 65: "This list..."
                 RenderListItem {LI} at (40,18) size 238x20
-                  RenderListMarker at (-22,0) size 15x15
+                  RenderBlock (generated) at (-22,0) size 15x15
+                    RenderImage at (0,0) size 15x15
                   RenderText {#text} at (0,0) size 116x19
                     text run at (0,0) width 116: "...should feature..."
                 RenderListItem {LI} at (40,37) size 238x19
-                  RenderListMarker at (-22,0) size 15x15
+                  RenderBlock (generated) at (-22,0) size 15x15
+                    RenderImage at (0,0) size 15x15
                   RenderText {#text} at (0,0) size 150x19
                     text run at (0,0) width 150: "...images for each item."
               RenderBlock {UL} at (4,75) size 278x55
                 RenderListItem {LI} at (40,0) size 238x18
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderBlock (generated) at (-17,0) size 7x18
+                    RenderText at (0,0) size 7x18
+                      text run at (0,0) width 7: "\x{2022}"
                   RenderText {#text} at (0,0) size 65x18
                     text run at (0,0) width 65: "This list..."
                 RenderListItem {LI} at (40,18) size 238x18
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderBlock (generated) at (-17,0) size 7x18
+                    RenderText at (0,0) size 7x18
+                      text run at (0,0) width 7: "\x{2022}"
                   RenderText {#text} at (0,0) size 116x18
                     text run at (0,0) width 116: "...should feature..."
                 RenderListItem {LI} at (40,36) size 238x18
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderBlock (generated) at (-17,0) size 7x18
+                    RenderText at (0,0) size 7x18
+                      text run at (0,0) width 7: "\x{2022}"
                   RenderText {#text} at (0,0) size 238x18
                     text run at (0,0) width 238: "...standard list markers for each item."
 layer at (8,100) size 784x2 clip at (0,0) size 0x0

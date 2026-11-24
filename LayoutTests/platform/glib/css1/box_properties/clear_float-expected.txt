@@ -30,19 +30,27 @@ layer at (0,0) size 785x793
             text run at (0,0) width 85: "Top menu"
         RenderBlock {UL} at (24,33) size 156x73
           RenderListItem {LI} at (0,0) size 156x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderBlock (generated) at (-17,0) size 7x18
+              RenderText at (0,0) size 7x18
+                text run at (0,0) width 7: "\x{2022}"
             RenderText {#text} at (0,0) size 35x18
               text run at (0,0) width 35: "green"
           RenderListItem {LI} at (0,18) size 156x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderBlock (generated) at (-17,0) size 7x18
+              RenderText at (0,0) size 7x18
+                text run at (0,0) width 7: "\x{2022}"
             RenderText {#text} at (0,0) size 62x18
               text run at (0,0) width 62: "white text"
           RenderListItem {LI} at (0,36) size 156x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderBlock (generated) at (-17,0) size 7x18
+              RenderText at (0,0) size 7x18
+                text run at (0,0) width 7: "\x{2022}"
             RenderText {#text} at (0,0) size 94x18
               text run at (0,0) width 94: "0.5em padding"
           RenderListItem {LI} at (0,54) size 156x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderBlock (generated) at (-17,0) size 7x18
+              RenderText at (0,0) size 7x18
+                text run at (0,0) width 7: "\x{2022}"
             RenderText {#text} at (0,0) size 87x18
               text run at (0,0) width 87: "0.5em margin"
       RenderBlock (floating) {DIV} at (0,315) size 192x117 [color=#FFFFFF] [bgcolor=#0000FF]
@@ -51,19 +59,27 @@ layer at (0,0) size 785x793
             text run at (0,0) width 113: "Bottom menu"
         RenderBlock {UL} at (24,33) size 156x73
           RenderListItem {LI} at (0,0) size 156x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderBlock (generated) at (-17,0) size 7x18
+              RenderText at (0,0) size 7x18
+                text run at (0,0) width 7: "\x{2022}"
             RenderText {#text} at (0,0) size 106x18
               text run at (0,0) width 106: "blue background"
           RenderListItem {LI} at (0,18) size 156x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderBlock (generated) at (-17,0) size 7x18
+              RenderText at (0,0) size 7x18
+                text run at (0,0) width 7: "\x{2022}"
             RenderText {#text} at (0,0) size 62x18
               text run at (0,0) width 62: "white text"
           RenderListItem {LI} at (0,36) size 156x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderBlock (generated) at (-17,0) size 7x18
+              RenderText at (0,0) size 7x18
+                text run at (0,0) width 7: "\x{2022}"
             RenderText {#text} at (0,0) size 94x18
               text run at (0,0) width 94: "0.5em padding"
           RenderListItem {LI} at (0,54) size 156x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderBlock (generated) at (-17,0) size 7x18
+              RenderText at (0,0) size 7x18
+                text run at (0,0) width 7: "\x{2022}"
             RenderText {#text} at (0,0) size 87x18
               text run at (0,0) width 87: "0.5em margin"
       RenderBlock {DIV} at (224,189) size 513x222 [bgcolor=#FFFF00]
@@ -100,19 +116,27 @@ layer at (0,0) size 785x793
                     text run at (0,0) width 85: "Top menu"
                 RenderBlock {UL} at (24,33) size 156x73
                   RenderListItem {LI} at (0,0) size 156x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBlock (generated) at (-17,0) size 7x18
+                      RenderText at (0,0) size 7x18
+                        text run at (0,0) width 7: "\x{2022}"
                     RenderText {#text} at (0,0) size 35x18
                       text run at (0,0) width 35: "green"
                   RenderListItem {LI} at (0,18) size 156x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBlock (generated) at (-17,0) size 7x18
+                      RenderText at (0,0) size 7x18
+                        text run at (0,0) width 7: "\x{2022}"
                     RenderText {#text} at (0,0) size 62x18
                       text run at (0,0) width 62: "white text"
                   RenderListItem {LI} at (0,36) size 156x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBlock (generated) at (-17,0) size 7x18
+                      RenderText at (0,0) size 7x18
+                        text run at (0,0) width 7: "\x{2022}"
                     RenderText {#text} at (0,0) size 94x18
                       text run at (0,0) width 94: "0.5em padding"
                   RenderListItem {LI} at (0,54) size 156x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBlock (generated) at (-17,0) size 7x18
+                      RenderText at (0,0) size 7x18
+                        text run at (0,0) width 7: "\x{2022}"
                     RenderText {#text} at (0,0) size 87x18
                       text run at (0,0) width 87: "0.5em margin"
               RenderBlock (floating) {DIV} at (4,130) size 192x117 [color=#FFFFFF] [bgcolor=#0000FF]
@@ -121,19 +145,27 @@ layer at (0,0) size 785x793
                     text run at (0,0) width 113: "Bottom menu"
                 RenderBlock {UL} at (24,33) size 156x73
                   RenderListItem {LI} at (0,0) size 156x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBlock (generated) at (-17,0) size 7x18
+                      RenderText at (0,0) size 7x18
+                        text run at (0,0) width 7: "\x{2022}"
                     RenderText {#text} at (0,0) size 106x18
                       text run at (0,0) width 106: "blue background"
                   RenderListItem {LI} at (0,18) size 156x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBlock (generated) at (-17,0) size 7x18
+                      RenderText at (0,0) size 7x18
+                        text run at (0,0) width 7: "\x{2022}"
                     RenderText {#text} at (0,0) size 62x18
                       text run at (0,0) width 62: "white text"
                   RenderListItem {LI} at (0,36) size 156x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBlock (generated) at (-17,0) size 7x18
+                      RenderText at (0,0) size 7x18
+                        text run at (0,0) width 7: "\x{2022}"
                     RenderText {#text} at (0,0) size 94x18
                       text run at (0,0) width 94: "0.5em padding"
                   RenderListItem {LI} at (0,54) size 156x18
-                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBlock (generated) at (-17,0) size 7x18
+                      RenderText at (0,0) size 7x18
+                        text run at (0,0) width 7: "\x{2022}"
                     RenderText {#text} at (0,0) size 87x18
                       text run at (0,0) width 87: "0.5em margin"
               RenderBlock {DIV} at (228,4) size 299x330 [bgcolor=#FFFF00]

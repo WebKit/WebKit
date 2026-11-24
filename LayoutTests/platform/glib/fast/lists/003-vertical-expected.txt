@@ -42,18 +42,24 @@ layer at (0,0) size 459x600
             text run at (36,76) width 5: "."
         RenderBlock {OL} at (175,0) size 252x351
           RenderListItem {LI} at (0,40) size 36x311
-            RenderListMarker at (0,-16) size 18x16: "1"
+            RenderBlock (generated) at (0,-16) size 18x16
+              RenderText at (0,0) size 18x16
+                text run at (0,0) width 17: "1. "
             RenderText {#text} at (0,0) size 36x302
               text run at (0,0) width 160: "New larger PowerBook. "
               text run at (0,158) width 144: "Still 1 GHz, but with a"
               text run at (18,0) width 145: "17-inch screen. $3299."
           RenderListItem {LI} at (36,40) size 36x311
-            RenderListMarker at (0,-16) size 18x16: "2"
+            RenderBlock (generated) at (0,-16) size 18x16
+              RenderText at (0,0) size 18x16
+                text run at (0,0) width 17: "2. "
             RenderText {#text} at (0,0) size 36x307
               text run at (0,0) width 308: "New smaller PowerBook, with a 12-inch screen."
               text run at (18,0) width 45: "$1799."
           RenderListItem {LI} at (72,40) size 90x311
-            RenderListMarker at (0,-16) size 18x16: "3"
+            RenderBlock (generated) at (0,-16) size 18x16
+              RenderText at (0,0) size 18x16
+                text run at (0,0) width 17: "3. "
             RenderText {#text} at (0,0) size 18x94
               text run at (0,0) width 95: "New browser: "
             RenderInline {A} at (0,94) size 18x37 [color=#0000EE]
@@ -83,13 +89,17 @@ layer at (0,0) size 459x600
               text run at (54,180) width 120: "Currently in public"
               text run at (72,0) width 31: "beta."
           RenderListItem {LI} at (162,40) size 36x311
-            RenderListMarker at (0,-16) size 18x16: "4"
+            RenderBlock (generated) at (0,-16) size 18x16
+              RenderText at (0,0) size 18x16
+                text run at (0,0) width 17: "4. "
             RenderText {#text} at (0,0) size 36x264
               text run at (0,0) width 240: "New presentation software: Keynote. "
               text run at (0,239) width 26: "The"
               text run at (18,0) width 161: "software Steve Jobs uses."
           RenderListItem {LI} at (198,40) size 36x311
-            RenderListMarker at (0,-16) size 18x16: "5"
+            RenderBlock (generated) at (0,-16) size 18x16
+              RenderText at (0,0) size 18x16
+                text run at (0,0) width 17: "5. "
             RenderText {#text} at (0,0) size 18x108
               text run at (0,0) width 109: "New versions of "
             RenderInline {A} at (0,108) size 18x45 [color=#0000EE]
@@ -114,7 +124,9 @@ layer at (0,0) size 459x600
             RenderText {#text} at (18,196) size 18x58
               text run at (18,196) width 59: ", for $49."
           RenderListItem {LI} at (234,40) size 18x311
-            RenderListMarker at (0,-16) size 18x16: "6"
+            RenderBlock (generated) at (0,-16) size 18x16
+              RenderText at (0,0) size 18x16
+                text run at (0,0) width 17: "6. "
             RenderInline {A} at (0,0) size 18x113 [color=#0000EE]
               RenderText {#text} at (0,0) size 18x113
                 text run at (0,0) width 114: "Final Cut Express"
@@ -124,42 +136,58 @@ layer at (0,0) size 459x600
       RenderBlock {DIV} at (0,0) size 302x584
         RenderBlock {UL} at (0,0) size 144x584
           RenderListItem {LI} at (0,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,504) size 18x40 [color=#0000EE]
               RenderText {#text} at (0,504) size 18x40
                 text run at (0,504) width 41: "About"
           RenderListItem {LI} at (18,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,489) size 18x55 [color=#0000EE]
               RenderText {#text} at (0,489) size 18x55
                 text run at (0,489) width 56: "Site map"
           RenderListItem {LI} at (36,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,487) size 18x57 [color=#0000EE]
               RenderText {#text} at (0,487) size 18x57
                 text run at (0,487) width 58: "Archives"
           RenderListItem {LI} at (54,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,494) size 18x50 [color=#0000EE]
               RenderText {#text} at (0,494) size 18x50
                 text run at (0,494) width 51: "Projects"
           RenderListItem {LI} at (72,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,501) size 18x43 [color=#0000EE]
               RenderText {#text} at (0,501) size 18x43
                 text run at (0,501) width 44: "Photos"
           RenderListItem {LI} at (90,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,489) size 18x55 [color=#0000EE]
               RenderText {#text} at (0,489) size 18x55
                 text run at (0,489) width 56: "Statistics"
           RenderListItem {LI} at (108,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,400) size 18x144 [color=#0000EE]
               RenderText {#text} at (0,400) size 18x144
                 text run at (0,400) width 145: "Accessibility statement"
           RenderListItem {LI} at (126,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,432) size 18x29 [color=#0000EE]
               RenderText {#text} at (0,432) size 18x29
                 text run at (0,432) width 30: "RSS"
@@ -172,38 +200,52 @@ layer at (0,0) size 459x600
               text run at (0,539) width 6: ")"
         RenderBlock {UL} at (160,0) size 18x584
           RenderListItem {LI} at (0,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,456) size 18x88 [color=#0000EE]
               RenderText {#text} at (0,456) size 18x88
                 text run at (0,456) width 89: "What is RSS?"
         RenderBlock {UL} at (194,0) size 108x584
           RenderListItem {LI} at (0,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,453) size 18x91 [color=#0000EE]
               RenderText {#text} at (0,453) size 18x91
                 text run at (0,453) width 91: "RSS Validator"
           RenderListItem {LI} at (18,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,399) size 18x145 [color=#0000EE]
               RenderText {#text} at (0,399) size 18x145
                 text run at (0,399) width 146: "Dive Into Accessibility"
           RenderListItem {LI} at (36,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,443) size 18x101 [color=#0000EE]
               RenderText {#text} at (0,443) size 18x101
                 text run at (0,443) width 102: "Dive Into OS X"
           RenderListItem {LI} at (54,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,446) size 18x98 [color=#0000EE]
               RenderText {#text} at (0,446) size 18x98
                 text run at (0,446) width 99: "Dive Into J2EE"
           RenderListItem {LI} at (72,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,435) size 18x109 [color=#0000EE]
               RenderText {#text} at (0,435) size 18x109
                 text run at (0,435) width 110: "Dive Into Python"
           RenderListItem {LI} at (90,40) size 18x544
-            RenderListMarker at (0,293) size 18x7: bullet
+            RenderBlock (generated) at (0,293) size 18x7
+              RenderText at (0,0) size 18x7
+                text run at (0,0) width 8: "\x{2022}"
             RenderInline {A} at (0,499) size 18x45 [color=#0000EE]
               RenderText {#text} at (0,499) size 18x45
                 text run at (0,499) width 46: "r\x{E9}sum\x{E9}"
