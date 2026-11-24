@@ -2186,6 +2186,15 @@ void WebPageProxy::close()
     flushPendingMouseEventCallbacks();
     internals().keyEventQueue.clear();
     flushPendingKeyEventCallbacks();
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    if (m_wheelEventCoalescer)
+        m_wheelEventCoalescer->clear();
+    flushPendingWheelEventCallbacks();
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    internals().touchEventQueue.clear();
+#endif
+    flushPendingTouchEventCallbacks();
+#endif
 
     Ref process = m_legacyMainFrameProcess;
     Ref processPool = m_configuration->processPool();
@@ -5367,7 +5376,7 @@ void WebPageProxy::flushPendingKeyEventCallbacks()
 }
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-void WebPageProxy::doAfterProcessingAllPendingWheelEvents(WTF::Function<void ()>&& action)
+void WebPageProxy::doAfterProcessingAllPendingWheelEvents(CompletionHandler<void()>&& action)
 {
     if (!isProcessingWheelEvents()) {
         action();
@@ -5393,7 +5402,7 @@ bool WebPageProxy::isProcessingTouchEvents() const
     return !internals().touchEventQueue.isEmpty();
 }
 
-void WebPageProxy::doAfterProcessingAllPendingTouchEvents(WTF::Function<void ()>&& action)
+void WebPageProxy::doAfterProcessingAllPendingTouchEvents(CompletionHandler<void()>&& action)
 {
     if (!isProcessingTouchEvents()) {
         action();
@@ -6114,6 +6123,26 @@ void WebPageProxy::handleUnpreventableTouchEvent(NativeWebTouchEvent& event)
 }
 
 #elif ENABLE(COORDINATED_TOUCH_EVENTS)
+static void doneWithTouchEvents(PageClient& pageClient, const QueuedTouchEvents& queuedEvents, bool handled)
+{
+    // Unlike the ENABLE(TOUCH_EVENTS) implementation, which defers the events received after the
+    // forwarded one, handleTouchEvent() replaces the forwarded touch move with the newer one and
+    // defers the replaced ones. So the deferred events are older and must be reported first.
+    for (auto& event : queuedEvents.deferredTouchEvents)
+        pageClient.doneWithTouchEvent(event, handled);
+    pageClient.doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
+}
+
+void WebPageProxy::discardQueuedTouchEvents()
+{
+    RefPtr pageClient = this->pageClient();
+    while (!internals().touchEventQueue.isEmpty()) {
+        auto queuedEvents = internals().touchEventQueue.takeFirst();
+        if (pageClient)
+            doneWithTouchEvents(*pageClient, queuedEvents, false);
+    }
+}
+
 void WebPageProxy::processNextQueuedTouchEvent()
 {
     if (!hasRunningProcess())
@@ -6124,36 +6153,33 @@ void WebPageProxy::processNextQueuedTouchEvent()
 
     ASSERT(!internals().touchEventQueue.isEmpty());
 
-    auto& queuedEvent = internals().touchEventQueue.first();
+    Ref sentEvent = internals().touchEventQueue.first().forwardedEvent;
     protect(legacyMainFrameProcess())->startResponsivenessTimer();
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, queuedEvent.forwardedEvent.copyRef()), [this, protectedThis = Ref { *this }] (IPC::Connection* connection, WebKit::WebEventType eventType, bool handled) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, sentEvent.copyRef()), [this, protectedThis = Ref { *this }, sentEvent](IPC::Connection* connection, WebKit::WebEventType eventType, bool handled) mutable {
+        if (connection)
+            WebProcessProxy::fromConnection(*connection)->stopResponsivenessTimer();
+
+        // Ignore replies for events that have already been discarded, e.g. because the page was closed or the
+        // web process exited. handleTouchEvent() never replaces the event at the head of the queue.
+        auto& touchEventQueue = internals().touchEventQueue;
+        if (touchEventQueue.isEmpty() || touchEventQueue.first().forwardedEvent.ptr() != sentEvent.ptr())
+            return;
+
         RefPtr pageClient = this->pageClient();
         if (!pageClient)
             return;
 
-        auto doneWithTouchEvents = [&](const QueuedTouchEvents& queuedEvents, bool handled) {
-            // Unlike the ENABLE(TOUCH_EVENTS) implementation, which defers the events received after the
-            // forwarded one, handleTouchEvent() replaces the forwarded touch move with the newer one and
-            // defers the replaced ones. So the deferred events are older and must be reported first.
-            for (auto& event : queuedEvents.deferredTouchEvents)
-                pageClient->doneWithTouchEvent(event, handled);
-            pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
-        };
-
         if (!connection) {
-            while (!internals().touchEventQueue.isEmpty())
-                doneWithTouchEvents(internals().touchEventQueue.takeFirst(), false);
+            discardQueuedTouchEvents();
             didFinishProcessingAllPendingTouchEvents();
             return;
         }
 
-        MESSAGE_CHECK_BASE(!internals().touchEventQueue.isEmpty(), connection);
-        auto queuedEvents = internals().touchEventQueue.takeFirst();
+        auto queuedEvents = touchEventQueue.takeFirst();
 
         MESSAGE_CHECK_BASE(eventType == queuedEvents.forwardedEvent->type(), connection);
-        protect(legacyMainFrameProcess())->stopResponsivenessTimer();
 
-        doneWithTouchEvents(queuedEvents, handled);
+        doneWithTouchEvents(*pageClient, queuedEvents, handled);
 
         if (!internals().touchEventQueue.isEmpty())
             processNextQueuedTouchEvent();
@@ -17193,6 +17219,13 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     flushPendingKeyEventCallbacks();
     if (m_wheelEventCoalescer)
         m_wheelEventCoalescer->clear();
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    flushPendingWheelEventCallbacks();
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    discardQueuedTouchEvents();
+#endif
+    flushPendingTouchEventCallbacks();
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     invalidateAllAttachments();

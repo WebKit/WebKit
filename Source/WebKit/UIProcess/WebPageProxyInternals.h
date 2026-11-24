@@ -274,8 +274,8 @@ public:
     Vector<CompletionHandler<void()>> callbackHandlersAfterProcessingPendingMouseEvents;
     Vector<CompletionHandler<void()>> callbackHandlersAfterProcessingPendingKeyEvents;
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    Vector<Function<void()>> callbackHandlersAfterProcessingPendingWheelEvents;
-    Vector<Function<void()>> callbackHandlersAfterProcessingPendingTouchEvents;
+    Vector<CompletionHandler<void()>> callbackHandlersAfterProcessingPendingWheelEvents;
+    Vector<CompletionHandler<void()>> callbackHandlersAfterProcessingPendingTouchEvents;
 #endif
     ContentInversion contentInversion { ContentInversion::System };
     WebCore::FloatSize defaultUnobscuredSize;

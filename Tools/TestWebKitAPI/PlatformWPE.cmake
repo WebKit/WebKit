@@ -69,6 +69,8 @@ list(APPEND TestWebCore_LIBRARIES
 
 # TestWebKit
 list(APPEND TestWebKit_SOURCES
+    Tests/WebKit/WKPage/glib/PendingTouchAndWheelEventCallbacks.cpp
+
     wpe/PlatformUtilitiesWPE.cpp
     wpe/PlatformWebViewWPE.cpp
     wpe/WebKitTestMain.cpp

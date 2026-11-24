@@ -1629,12 +1629,12 @@ public:
     void flushPendingKeyEventCallbacks();
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    void doAfterProcessingAllPendingWheelEvents(Function<void()>&&);
+    void doAfterProcessingAllPendingWheelEvents(CompletionHandler<void()>&&);
     void didFinishProcessingAllPendingWheelEvents();
     void flushPendingWheelEventCallbacks();
 
     bool isProcessingTouchEvents() const;
-    void doAfterProcessingAllPendingTouchEvents(Function<void()>&&);
+    void doAfterProcessingAllPendingTouchEvents(CompletionHandler<void()>&&);
     void didFinishProcessingAllPendingTouchEvents();
     void flushPendingTouchEventCallbacks();
 #endif
@@ -3840,6 +3840,7 @@ private:
 
 #if ENABLE(COORDINATED_TOUCH_EVENTS)
     void processNextQueuedTouchEvent();
+    void discardQueuedTouchEvents();
 #endif
 #if ENABLE(TOUCH_EVENTS)
     void touchEventHandlingCompleted(IPC::Connection*, std::optional<WebEventType>, bool handled);
