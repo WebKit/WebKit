@@ -183,14 +183,12 @@ void SharedAudioDestinationAdapter::configureRenderThread(CompletionHandler<void
         Locker locker { m_renderLock };
         m_newRenderers = m_renderers;
         m_needsConfiguration = true;
-        if (onlyNeedsConfiguration) {
-            // The destination is already running, but needs configuration. Assume
-            // the configuration will succeed and call the completionHandler early.
-            callOnMainThread([completionHandler = WTF::move(completionHandler)] () mutable {
-                completionHandler(true);
-            });
-            return;
-        }
+    }
+
+    // The audio unit can stop while renderers are still installed. Starting a running unit is a no-op.
+    if (onlyNeedsConfiguration) {
+        m_destination->start(nullptr, WTF::move(completionHandler));
+        return;
     }
 
     if (shouldStart) {

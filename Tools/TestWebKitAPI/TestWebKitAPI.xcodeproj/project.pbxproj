@@ -987,6 +987,7 @@
 				WebCore/SerializedScriptValue.cpp,
 				WebCore/ServiceWorkerRoutines.cpp,
 				WebCore/ShareableBitmap.cpp,
+				WebCore/SharedAudioDestinationTest.cpp,
 				WebCore/SharedBuffer.cpp,
 				WebCore/SharedBufferTest.cpp,
 				WebCore/SharedMemoryTests.cpp,

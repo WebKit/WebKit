@@ -69,7 +69,8 @@ void AudioDestinationResampler::start(Function<void(Function<void()>&&)>&& dispa
         Locker locker { m_dispatchToRenderThreadLock };
         m_dispatchToRenderThread = WTF::move(dispatchToRenderThread);
     }
-    {
+    // Restarting a live destination must not drop samples still queued in the FIFO.
+    if (!m_isPlaying) {
         Locker locker { m_fifoLock };
         m_fifo.reset();
     }
