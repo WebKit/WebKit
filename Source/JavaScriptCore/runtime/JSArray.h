@@ -143,6 +143,8 @@ public:
 
     JSString* fastToString(JSGlobalObject*);
 
+    JSArray* fastFlatForNoHoles(JSGlobalObject*, uint64_t length);
+
     JSArray* fastFlat(JSGlobalObject*, uint64_t depth, uint64_t length);
 
     ALWAYS_INLINE bool definitelyNegativeOneMiss() const;

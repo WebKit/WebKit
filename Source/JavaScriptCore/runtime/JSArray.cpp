@@ -2573,6 +2573,51 @@ static uint64_t calculateFlattenedLength(JSGlobalObject* globalObject, JSArray* 
     return resultLength;
 }
 
+ALWAYS_INLINE JSArray* JSArray::fastFlatForNoHoles(JSGlobalObject* globalObject, uint64_t length)
+{
+    if (holesMustForwardToPrototype()) [[unlikely]]
+        return nullptr;
+
+    VM& vm = globalObject->vm();
+
+    IndexingType sourceType = this->indexingType();
+    ASSERT(sourceType == ArrayWithInt32 || sourceType == ArrayWithDouble);
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(sourceType);
+    IndexingType indexingType = resultStructure->indexingType();
+
+    if (hasAnyArrayStorage(indexingType)) [[unlikely]]
+        return nullptr;
+
+    ASSERT(!globalObject->isHavingABadTime());
+    ASSERT(length <= MAX_STORAGE_VECTOR_LENGTH);
+
+    auto vectorLength = Butterfly::optimalContiguousVectorLength(resultStructure, length);
+
+    void* memory = vm.auxiliarySpace().allocate(
+        vm,
+        Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)),
+        nullptr, AllocationFailureMode::ReturnNull);
+    if (!memory) [[unlikely]]
+        return nullptr;
+
+    auto* butterfly = Butterfly::fromBase(memory, 0, 0);
+    butterfly->setVectorLength(vectorLength);
+    butterfly->setPublicLength(length);
+
+    if (sourceType == ArrayWithDouble) {
+        auto* resultBuffer = butterfly->contiguousDouble().data();
+        auto* sourceBuffer = this->butterfly()->contiguousDouble().data();
+        copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, 0, sourceBuffer, 0, length, sourceType);
+    } else {
+        auto* resultBuffer = butterfly->contiguousInt32().data();
+        auto* sourceBuffer = this->butterfly()->contiguousInt32().data();
+        copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, 0, sourceBuffer, 0, length, sourceType);
+    }
+
+    Butterfly::clearRange(indexingType, butterfly, length, vectorLength);
+    return createWithButterfly(vm, nullptr, resultStructure, butterfly);
+}
+
 template<typename T>
 static uint64_t fastFlatIntoBuffer(JSGlobalObject* globalObject, T* resultBuffer, uint64_t startIndex, JSArray* sourceArray, uint64_t sourceLength, uint64_t depth, uint64_t vectorLength)
 {
@@ -2662,11 +2707,27 @@ JSArray* JSArray::fastFlat(JSGlobalObject* globalObject, uint64_t depth, uint64_
 
     IndexingType sourceType = this->indexingType();
 
-    switch (sourceType) {
-    case ArrayWithInt32:
-    case ArrayWithDouble:
-    case ArrayWithContiguous: {
+    // ArrayWithDouble and ArrayWithInt32 don't depend on the depth when then don't have holes.
+    // So they can enter the fast path.
+    bool int32OrDouble = false;
+    if (sourceType == ArrayWithInt32) {
         if (length > this->butterfly()->vectorLength()) [[unlikely]]
+            return nullptr;
+        if (!containsHole(this->butterfly()->contiguousInt32().data(), static_cast<uint32_t>(length))) [[likely]]
+            return fastFlatForNoHoles(globalObject, length);
+        int32OrDouble = true;
+    }
+
+    if (sourceType == ArrayWithDouble) {
+        if (length > this->butterfly()->vectorLength()) [[unlikely]]
+            return nullptr;
+        if (!containsHole(this->butterfly()->contiguousDouble().data(), static_cast<uint32_t>(length))) [[likely]]
+            return fastFlatForNoHoles(globalObject, length);
+        int32OrDouble = true;
+    }
+
+    if (int32OrDouble || sourceType == ArrayWithContiguous) {
+        if (!int32OrDouble && length > this->butterfly()->vectorLength()) [[unlikely]]
             return nullptr;
 
         if (holesMustForwardToPrototype()) [[unlikely]]
@@ -2714,10 +2775,8 @@ JSArray* JSArray::fastFlat(JSGlobalObject* globalObject, uint64_t depth, uint64_
         Butterfly::clearRange(indexingType, butterfly, resultIndex, vectorLength);
         return createWithButterfly(vm, nullptr, resultStructure, butterfly);
     }
-    default: {
-        return nullptr;
-    }
-    }
+
+    return nullptr;
 }
 
 } // namespace JSC
