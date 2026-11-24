@@ -62,7 +62,7 @@ RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(GPUConnectionToWe
     , m_identifier(identifier)
     , m_connection(WTF::move(connection))
     , m_sampleBufferDisplayLayer(LocalSampleBufferDisplayLayer::create(*this))
-    , m_sharedVideoFrameReader(Ref { gpuConnection.videoFrameObjectHeap() }, gpuConnection.webProcessIdentity())
+    , m_videoFrameObjectHeap(gpuConnection.videoFrameObjectHeap())
     , m_remoteSampleBufferDisplayLayerManager(remoteSampleBufferDisplayLayerManager)
 {
     ASSERT(m_sampleBufferDisplayLayer);
@@ -155,10 +155,16 @@ void RemoteSampleBufferDisplayLayer::pause()
     m_sampleBufferDisplayLayer->pause();
 }
 
-void RemoteSampleBufferDisplayLayer::enqueueVideoFrame(SharedVideoFrame&& frame)
+void RemoteSampleBufferDisplayLayer::enqueueVideoFrame(RemoteVideoFrameReadReference&& read, MediaTime presentationTime)
 {
-    if (auto videoFrame = m_sharedVideoFrameReader.read(WTF::move(frame)))
-        protect(m_sampleBufferDisplayLayer)->enqueueVideoFrame(*videoFrame);
+    // The Web process adds the frame to the heap on the same connection, before this message, so the
+    // wait is at most one heap queue hop.
+    RefPtr videoFrame = m_videoFrameObjectHeap->get(WTF::move(read));
+    if (!videoFrame)
+        return;
+    // The frame in the heap may have an older presentation time than the Web process frame.
+    Ref timedVideoFrame = videoFrame->updateTimestamp(presentationTime, VideoFrame::ShouldClone::Yes);
+    protect(m_sampleBufferDisplayLayer)->enqueueVideoFrame(timedVideoFrame);
 }
 
 void RemoteSampleBufferDisplayLayer::clearVideoFrames()
@@ -179,16 +185,6 @@ void RemoteSampleBufferDisplayLayer::sampleBufferDisplayLayerStatusDidFail()
 void RemoteSampleBufferDisplayLayer::updateVideoFrameCounters(uint64_t totalFrameCount, uint64_t droppedFrameCount)
 {
     send(Messages::SampleBufferDisplayLayer::UpdateVideoFrameCounters { totalFrameCount,  droppedFrameCount });
-}
-
-void RemoteSampleBufferDisplayLayer::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
-{
-    m_sharedVideoFrameReader.setSemaphore(WTF::move(semaphore));
-}
-
-void RemoteSampleBufferDisplayLayer::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
-{
-    m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
 }
 
 void RemoteSampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)

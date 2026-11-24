@@ -70,7 +70,7 @@ async function run()
     // An external texture with a null pixel buffer is enough to exercise the guard.
     const externalTexture = freshId();
     remoteDevice.ImportExternalTextureFromVideoFrame({
-        descriptor: { label: '', mediaIdentifier: {}, colorSpace: srgb, visibleSize: { width: 0, height: 0 }, sharedFrame: {} },
+        descriptor: { label: '', mediaIdentifier: {}, colorSpace: srgb, visibleSize: { width: 0, height: 0 }, videoFrame: {} },
         identifier: externalTexture,
     });
 

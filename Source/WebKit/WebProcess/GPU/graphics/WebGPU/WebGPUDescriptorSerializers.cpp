@@ -203,8 +203,8 @@ std::optional<ImageCopyExternalImageVideoSource> serializeVideoSource(const WebC
     if (auto* identifier = std::get_if<std::optional<WebCore::MediaPlayerIdentifier>>(&*imageCopyExternalImage.videoSource))
         mediaIdentifier = *identifier;
 
-    // A frame which has no media player behind it has to travel through the shared video frame
-    // memory instead, which only RemoteQueueProxy can write to, so it fills sharedFrame in.
+    // A frame which has no media player behind it goes through the video frame object heap instead,
+    // which only RemoteQueueProxy can reach, so it fills videoFrame in.
     return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, mediaIdentifier, imageCopyExternalImage.videoSourceSize, std::nullopt } };
 }
 #endif

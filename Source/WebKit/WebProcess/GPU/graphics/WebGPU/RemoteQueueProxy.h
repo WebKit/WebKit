@@ -29,7 +29,6 @@
 
 #include "RemoteAdapterProxy.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
-#include "SharedVideoFrame.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUImageCopyExternalImage.h>
@@ -106,9 +105,6 @@ private:
     ThreadSafeWeakPtr<::WebGPU::Device> m_device;
 #if ENABLE(VIDEO)
     const RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
-#endif
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    WebKit::SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif
 };
 

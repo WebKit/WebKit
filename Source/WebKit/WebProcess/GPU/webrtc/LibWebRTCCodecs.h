@@ -199,7 +199,7 @@ public:
 #endif
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
-        SharedVideoFrameWriter sharedVideoFrameWriter;
+        RefPtr<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy;
         WebCore::H264BitstreamParser h264BitstreamParser; // Used in LibWebRTCCodecs work queue.
         WebCore::HEVCBitstreamParser hevcBitstreamParser; // Used in LibWebRTCCodecs work queue.
     };
@@ -265,7 +265,7 @@ private:
     void clearConnection();
 
     NODELETE IPC::Connection* encoderConnection(Encoder&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
-    void setEncoderConnection(Encoder&, Ref<IPC::Connection>&&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
+    void setEncoderConnection(Encoder&, Ref<IPC::Connection>&&, Ref<RemoteVideoFrameObjectHeapProxy>&&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
     std::optional<EncoderInitializationData>& encoderInitializationData(Encoder&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
     void setEncoderInitializationData(Encoder&, EncoderInitializationData&&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
     NODELETE IPC::Connection* decoderConnection(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);

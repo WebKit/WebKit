@@ -32,16 +32,13 @@
 
 #if PLATFORM(COCOA)
 #include "RemoteVideoFrameObjectHeapProxyProcessor.h"
+#include "RemoteVideoFrameProxy.h"
 #include <WebCore/NativeImage.h>
 #endif
 
 namespace WebKit {
 
 class GPUProcessConnection;
-
-#if PLATFORM(COCOA)
-class RemoteVideoFrameProxy;
-#endif
 
 // Wrapper around RemoteVideoFrameObjectHeapProxyProcessor that will always be destroyed on main thread.
 class RemoteVideoFrameObjectHeapProxy : public ThreadSafeRefCounted<RemoteVideoFrameObjectHeapProxy, WTF::DestructionThread::MainRunLoop> {
@@ -51,6 +48,23 @@ public:
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, WTF::move(callback)); }
     RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame, ShouldApplyRotation shouldApplyRotation = ShouldApplyRotation::No) { return m_processor->getNativeImage(frame, shouldApplyRotation); }
+
+    // Any thread. The frame in the GPU process of this connection:
+    // - `frame` itself, if it is a RemoteVideoFrameProxy of this connection whose rotation, mirroring and alpha
+    //   still match its frame in the GPU process;
+    // - a RemoteVideoFrameProxy derived from it if they do not match. It is cached in `frame`, so that repeated
+    //   uses derive once;
+    // - otherwise a new RemoteVideoFrameProxy for a copy of `frame` sent to the GPU process.
+    // Null if the frame belongs to another GPU process or sending it fails. The consumer messages that carry a
+    // read reference of the result can be sent once this returns.
+    RefPtr<RemoteVideoFrameProxy> remoteFrame(const WebCore::VideoFrame& frame) { return m_processor->remoteFrame(*this, frame); }
+#if USE(LIBWEBRTC)
+    // Any thread. A new RemoteVideoFrameProxy for a copy of the pixels of `frame`. Its rotation, mirroring
+    // and time are not set: the consumers of these frames send them separately.
+    RefPtr<RemoteVideoFrameProxy> remoteFrame(const webrtc::VideoFrame& frame, WebCore::IntSize size) { return m_processor->remoteFrame(*this, frame, size); }
+#endif
+    // Any thread. A new RemoteVideoFrameProxy for a black frame that the GPU process creates.
+    RefPtr<RemoteVideoFrameProxy> remoteBlackFrame(MediaTime presentationTime, WebCore::VideoFrameRotation rotation, WebCore::IntSize size) { return m_processor->remoteBlackFrame(*this, presentationTime, rotation, size); }
 #endif
 
 private:

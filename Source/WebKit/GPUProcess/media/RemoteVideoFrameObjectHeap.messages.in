@@ -29,6 +29,7 @@
 ]
 messages -> RemoteVideoFrameObjectHeap {
 #if PLATFORM(COCOA)
+    AddVideoFrame(WebKit::RemoteVideoFrameReference reference, struct WebKit::SharedVideoFrame frame)
     GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference read) AllowedWhenWaitingForSyncReply
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
     SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle)

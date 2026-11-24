@@ -33,7 +33,7 @@
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteSnapshotRecorderMessages.h"
-#include "SharedVideoFrame.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "StreamClientConnection.h"
 #include "WebProcess.h"
 #include <WebCore/DisplayList.h>
@@ -647,18 +647,11 @@ void RemoteGraphicsContextProxy::drawVideoFrame(const VideoFrame& frame, const F
     if (!gpuProcessIPCConnection)
         return;
 
-    Locker locker { m_sharedVideoFrameWriterLock };
-    if (!m_sharedVideoFrameWriter)
-        m_sharedVideoFrameWriter = makeUnique<SharedVideoFrameWriter>();
-
-    auto sharedVideoFrame = m_sharedVideoFrameWriter->write(frame, *gpuProcessIPCConnection, [&](auto& semaphore) {
-        send(Messages::RemoteGraphicsContext::SetSharedVideoFrameSemaphore { semaphore });
-    }, [&](SharedMemory::Handle&& handle) {
-        send(Messages::RemoteGraphicsContext::SetSharedVideoFrameMemory { WTF::move(handle) });
-    });
-    if (!sharedVideoFrame)
+    RefPtr remoteFrame = backend->videoFrameObjectHeapProxy()->remoteFrame(frame);
+    auto reference = remoteFrame ? remoteFrame->newReadReference(*gpuProcessIPCConnection) : std::nullopt;
+    if (!reference)
         return;
-    send(Messages::RemoteGraphicsContext::DrawVideoFrame(WTF::move(*sharedVideoFrame), destination, shouldDiscardAlpha, options));
+    send(Messages::RemoteGraphicsContext::DrawVideoFrame(WTF::move(*reference), destination, shouldDiscardAlpha, options));
 #endif
 }
 #endif
@@ -1090,13 +1083,6 @@ std::optional<RemoteGraphicsContextProxy::InlineStrokeData> RemoteGraphicsContex
 void RemoteGraphicsContextProxy::disconnect()
 {
     m_connection = nullptr;
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    Locker locker { m_sharedVideoFrameWriterLock };
-    if (m_sharedVideoFrameWriter) {
-        m_sharedVideoFrameWriter->disable();
-        m_sharedVideoFrameWriter = nullptr;
-    }
-#endif
 }
 
 void RemoteGraphicsContextProxy::abandon()

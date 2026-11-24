@@ -36,7 +36,6 @@
 #include "RemoteSharedResourceCache.h"
 #include "SharedFont.h"
 #include "SharedPreferencesForWebProcess.h"
-#include "SharedVideoFrame.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FEImage.h>
 #include <WebCore/FilterResults.h>
@@ -54,7 +53,6 @@
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-#include "IPCSemaphore.h"
 #include "RemoteVideoFrameObjectHeap.h"
 #endif
 
@@ -661,29 +659,17 @@ void RemoteGraphicsContext::fillEllipse(const FloatRect& rect)
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-SharedVideoFrameReader& RemoteGraphicsContext::sharedVideoFrameReader()
+void RemoteGraphicsContext::drawVideoFrame(RemoteVideoFrameReadReference&& read, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, RasterDrawingOptions options)
 {
-    if (!m_sharedVideoFrameReader) {
-        Ref gpuConnectionToWebProcess = m_renderingBackend->gpuConnectionToWebProcess();
-        lazyInitialize(m_sharedVideoFrameReader, makeUnique<SharedVideoFrameReader>(Ref { gpuConnectionToWebProcess->videoFrameObjectHeap() }, gpuConnectionToWebProcess->webProcessIdentity()));
+    Ref streamConnection = m_renderingBackend->streamConnection();
+    // The Web process adds the frame to the heap on another connection. Wait without blocking the queue.
+    auto videoFrame = protect(m_renderingBackend->gpuConnectionToWebProcess().videoFrameObjectHeap())->read(streamConnection, WTF::move(read));
+    if (!videoFrame) {
+        streamConnection->markCurrentlyDispatchedMessageAsDeferred();
+        return;
     }
-    return *m_sharedVideoFrameReader;
-}
-
-void RemoteGraphicsContext::drawVideoFrame(SharedVideoFrame&& frame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, RasterDrawingOptions options)
-{
-    if (auto videoFrame = sharedVideoFrameReader().read(WTF::move(frame)))
-        context().drawVideoFrame(*videoFrame, destination, shouldDiscardAlpha, options);
-}
-
-void RemoteGraphicsContext::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
-{
-    sharedVideoFrameReader().setSemaphore(WTF::move(semaphore));
-}
-
-void RemoteGraphicsContext::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
-{
-    sharedVideoFrameReader().setSharedMemory(WTF::move(handle));
+    if (RefPtr frame = WTF::move(*videoFrame))
+        context().drawVideoFrame(*frame, destination, shouldDiscardAlpha, options);
 }
 #endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 

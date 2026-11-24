@@ -31,12 +31,12 @@
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 # CustomHeader because this lives beside ImageCopyExternalImage in WebGPUImageCopyExternalImage.h, which
 # the struct above has already pulled in, rather than in a header of its own.
-[CustomHeader, RValue] struct WebKit::WebGPU::ImageCopyExternalImageVideoSource {
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::ImageCopyExternalImageVideoSource {
     std::optional<WebKit::WebGPU::Origin2D> origin;
     bool flipY;
     std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
     [Validator='sourceSize->width() >= 0 && sourceSize->height() >= 0'] WebCore::IntSize sourceSize;
-    std::optional<WebKit::SharedVideoFrame> sharedFrame;
+    std::optional<WebKit::RemoteVideoFrameReadReference> videoFrame;
 };
 #endif
 #endif

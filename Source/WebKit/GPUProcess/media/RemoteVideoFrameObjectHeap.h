@@ -30,6 +30,7 @@
 #include "RemoteVideoFrameProxy.h"
 #include "ThreadSafeObjectHeap.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/ProcessIdentity.h>
 
 #if PLATFORM(COCOA)
 #include "SharedVideoFrame.h"
@@ -47,7 +48,7 @@ namespace WebKit {
 // Holds references to all VideoFrame instances that are mapped from GPU process to Web process.
 class RemoteVideoFrameObjectHeap final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
 public:
-    static Ref<RemoteVideoFrameObjectHeap> create(Ref<IPC::Connection>&&);
+    static Ref<RemoteVideoFrameObjectHeap> create(Ref<IPC::Connection>&&, const WebCore::ProcessIdentity& webProcessIdentity);
     ~RemoteVideoFrameObjectHeap();
 
     void ref() const final { IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::ref(); }
@@ -59,12 +60,14 @@ public:
     // Adds `frame` under `reference`.
     void add(RemoteVideoFrameReference, Ref<WebCore::VideoFrame>&&);
     RefPtr<WebCore::VideoFrame> get(RemoteVideoFrameReadReference&&);
+    // For stream message handlers: std::nullopt means that the handler should defer the message.
+    std::optional<RefPtr<WebCore::VideoFrame>> read(IPC::StreamServerConnection&, RemoteVideoFrameReadReference&&);
 
     void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&&) { close(); }
     void lowMemoryHandler();
 
 private:
-    explicit RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&);
+    RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&, const WebCore::ProcessIdentity& webProcessIdentity);
 
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -73,6 +76,7 @@ private:
     // Messages.
     void releaseVideoFrame(RemoteVideoFrameWriteReference&&);
 #if PLATFORM(COCOA)
+    void addVideoFrame(RemoteVideoFrameReference&&, SharedVideoFrame&&);
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&);
     void convertFrameBuffer(SharedVideoFrame&&, bool shouldApplyRotation, CompletionHandler<void(WebCore::ColorSpace)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
