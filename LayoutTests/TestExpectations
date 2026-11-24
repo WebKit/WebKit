@@ -493,19 +493,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-cooki
 # This test is timing out in all browsers.
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-frozen.https.html [ Skip ]
 
-# These tests fail with messages that include a random identifier or timestamp.
-imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/internal-import-stylesheet.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/child-css/processing-instruction.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/font-face/external-import-stylesheet.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/font-face/external-stylesheet.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/font-face/internal-import-stylesheet.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/font-face/processing-instruction.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/image/external-import-stylesheet.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/image/external-stylesheet.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/image/internal-import-stylesheet.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/image/processing-instruction.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/external-stylesheet.html [ Skip ]
-imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/processing-instruction.html [ Skip ]
+# This test fails with a message that includes a random identifier or timestamp.
 imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/image-decoding.html [ Skip ]
 
 # These tests print the request's headers, including User-Agent and Accept-Language, which differ by platform.
@@ -543,8 +531,6 @@ webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/ge
 webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/xhr.https.html [ Failure Pass ]
 webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/fetch.https.html [ Failure Pass ]
 webkit.org/b/332751 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/xhr.https.html [ Failure Pass ]
-
-imported/w3c/web-platform-tests/referrer-policy/css-integration/svg/filter-no-referrer.html [ ImageOnlyFailure ]
 
 # These tests times out. We should fix that.
 imported/w3c/web-platform-tests/selection/collapse-30.html [ Skip ]

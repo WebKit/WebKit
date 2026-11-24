@@ -24,6 +24,7 @@
 
 #include "CachedResource.h"
 #include "FrameLoaderTypes.h"
+#include "ReferrerPolicy.h"
 
 namespace WebCore {
 
@@ -49,6 +50,8 @@ public:
     void saveParsedStyleSheet(Ref<StyleSheetContents>&&);
 
     bool mimeTypeAllowedByNosniff() const;
+
+    ReferrerPolicy referrerPolicy() const;
 
 private:
     String responseMIMEType() const;

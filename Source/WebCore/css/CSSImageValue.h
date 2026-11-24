@@ -69,8 +69,6 @@ public:
 
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 
-    NODELETE bool isLoadedFromOpaqueSource() const;
-
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {
         if (m_unresolvedValue) {

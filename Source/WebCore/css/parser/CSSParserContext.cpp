@@ -28,6 +28,7 @@
 #include "CSSParserContext.h"
 
 #include "CSSPropertyNames.h"
+#include "CSSURLProvenance.h"
 #include "CSSValuePool.h"
 #include "DocumentLoader.h"
 #include "DocumentQuirks.h"
@@ -80,12 +81,14 @@ CSSParserContext::CSSParserContext(const Document& document)
     *this = document.cssParserContext();
 }
 
-CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, ASCIILiteral charset, IsExternalStyleSheet isExternalStyleSheet)
+CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBaseURL, ASCIILiteral charset, IsExternalStyleSheet isExternalStyleSheet, ReferrerPolicy referrerPolicy, LoadedFromOpaqueSource loadedFromOpaqueSource)
     : CSSParserContext(document.settings())
 {
     baseURL = sheetBaseURL.isNull() ? document.baseURL() : sheetBaseURL;
     this->charset = charset;
     this->isExternalStyleSheet = isExternalStyleSheet == IsExternalStyleSheet::Yes;
+    this->referrerPolicy = referrerPolicy;
+    this->loadedFromOpaqueSource = loadedFromOpaqueSource;
     mode = document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode;
     isHTMLDocument = document.isHTMLDocument();
     hasDocumentSecurityOrigin = sheetBaseURL.isNull() || protect(document.securityOrigin())->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
@@ -150,6 +153,15 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     StaticCSSValuePool::init();
 }
 
+CSS::URLProvenance CSSParserContext::provenance() const
+{
+    return {
+        .styleSheetURL = isExternalStyleSheet ? baseURL : URL { },
+        .styleSheetReferrerPolicy = referrerPolicy,
+        .isStyleSheetOriginClean = loadedFromOpaqueSource == LoadedFromOpaqueSource::No,
+    };
+}
+
 void add(Hasher& hasher, const CSSParserContext& context)
 {
     auto bits = WTF::packBools(
@@ -210,7 +222,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.legacyFontFaceAttributeMode,
         context.viewportSegmentsAPIEnabled
     );
-    add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, context.enclosingRuleType, bits);
+    add(hasher, context.baseURL, context.charset, context.referrerPolicy, context.propertySettings, context.mode, context.enclosingRuleType, bits);
 }
 
 void CSSParserContext::setUASheetMode()

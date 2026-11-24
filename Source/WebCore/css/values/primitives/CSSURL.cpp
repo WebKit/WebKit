@@ -104,10 +104,7 @@ std::optional<URL> completeURL(const WTF::String& string, const CSSParserContext
     if (context.mode == WebVTTMode && !result.resolved.protocolIsData())
         return { };
 
-    result.provenance = {
-        .styleSheetURL = context.isExternalStyleSheet ? context.baseURL : WTF::URL { },
-        .loadedFromOpaqueSource = context.loadedFromOpaqueSource,
-    };
+    result.provenance = context.provenance();
 
     return result;
 }

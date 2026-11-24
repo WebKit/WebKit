@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/LoadedFromOpaqueSource.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
 
@@ -37,7 +37,13 @@ struct URLProvenance {
     // https://drafts.csswg.org/cssom/#concept-css-style-sheet-location
     WTF::URL styleSheetURL { };
 
-    LoadedFromOpaqueSource loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
+    // The referrer policy of the style sheet containing the url().
+    // https://w3c.github.io/webappsec-referrer-policy/#integration-with-css
+    ReferrerPolicy styleSheetReferrerPolicy { ReferrerPolicy::EmptyString };
+
+    // The origin-clean flag of the style sheet containing the url().
+    // https://drafts.csswg.org/cssom/#concept-css-style-sheet-origin-clean-flag
+    bool isStyleSheetOriginClean { true };
 
     bool operator==(const URLProvenance&) const = default;
 };
