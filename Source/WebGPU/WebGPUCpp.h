@@ -1628,7 +1628,9 @@ public:
     // Null once the device is gone: the device owns its queue.
     virtual RefPtr<Device> device() const = 0;
     virtual void submit(Vector<Ref<CommandBuffer>>&&) = 0;
-    virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
+    // Completes with true once the work submitted before the call has completed, and with false when
+    // it cannot complete because the device is lost.
+    virtual void onSubmittedWorkDone(CompletionHandler<void(bool)>&&) = 0;
     // A write of at least largeBufferSize bytes may alias `data` rather than copy it, until the work
     // submitted after it has completed. The caller keeps it alive until then, for example with
     // onSubmittedWorkDone().

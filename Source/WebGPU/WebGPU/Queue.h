@@ -87,8 +87,7 @@ public:
 
     ~Queue();
 
-    // The callback is called with false when the device is lost.
-    void onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback);
+    void onSubmittedWorkDone(CompletionHandler<void(bool)>&&) final;
     void submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands);
     void writeBuffer(Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
@@ -99,7 +98,6 @@ public:
     void setLabel(String&&) final;
 
     void submit(Vector<Ref<WebGPU::CommandBuffer>>&&) final;
-    void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
     void writeBuffer(WebGPU::Buffer&, uint64_t bufferOffset, std::span<const uint8_t> data) final;
     void writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::span<const uint8_t> data, const WebGPU::TexelCopyBufferLayout&, const WebGPU::Extent3D& writeSize) final;
 

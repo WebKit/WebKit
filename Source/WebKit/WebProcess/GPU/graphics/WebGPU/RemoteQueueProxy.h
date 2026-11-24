@@ -61,7 +61,7 @@ public:
     void setDevice(::WebGPU::Device& device) { m_device = device; }
 
     void submit(Vector<Ref<::WebGPU::CommandBuffer>>&&) final;
-    void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
+    void onSubmittedWorkDone(CompletionHandler<void(bool)>&&) final;
     void writeBuffer(::WebGPU::Buffer&, uint64_t bufferOffset, std::span<const uint8_t> data) final;
     void writeTexture(const ::WebGPU::TexelCopyTextureInfo& destination, std::span<const uint8_t> data, const ::WebGPU::TexelCopyBufferLayout&, const ::WebGPU::Extent3D& writeSize) final;
 #if PLATFORM(COCOA)

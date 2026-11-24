@@ -116,7 +116,8 @@ void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
 
 void GPUQueue::onSubmittedWorkDone(OnSubmittedWorkDonePromise&& promise)
 {
-    m_backing->onSubmittedWorkDone([promise = WTF::move(promise)]() mutable {
+    // The promise resolves also when the work cannot complete because the device is lost.
+    m_backing->onSubmittedWorkDone([promise = WTF::move(promise)](bool) mutable {
         promise.resolve();
     });
 }
