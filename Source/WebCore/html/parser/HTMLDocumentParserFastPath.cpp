@@ -221,7 +221,8 @@ enum class HTMLFastPathResult : uint8_t {
     FailedOnAttribute,
     FailedMaxDepth,
     FailedBigText,
-    FailedCssPseudoDirEnabledAndDirAttributeDirty
+    FailedCssPseudoDirEnabledAndDirAttributeDirty,
+    FailedCustomElementRegistryAttribute
 };
 
 template<typename CharacterType> NODELETE static inline bool isQuoteCharacter(CharacterType character)
@@ -962,6 +963,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 }
                 return didFail(HTMLFastPathResult::FailedParsingAttributes);
             }
+            if (attributeName == HTMLNames::customelementregistryAttr) [[unlikely]]
+                return didFail(HTMLFastPathResult::FailedCustomElementRegistryAttribute);
             skipWhile<isASCIIWhitespace>(m_parsingBuffer);
             AtomString attributeValue;
             if (skipExactly(m_parsingBuffer, '=')) {

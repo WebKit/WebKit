@@ -144,6 +144,7 @@ PASS HTMLElement interface: attribute spellcheck
 PASS HTMLElement interface: attribute writingSuggestions
 FAIL HTMLElement interface: attribute autocapitalize assert_true: The prototype object must have a property "autocapitalize" expected true got false
 PASS HTMLElement interface: attribute autocorrect
+PASS HTMLElement interface: attribute htmlCustomElementRegistry
 PASS HTMLElement interface: attribute innerText
 PASS HTMLElement interface: attribute outerText
 PASS HTMLElement interface: operation attachInternals()
@@ -255,6 +256,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "writingSuggestions" with the proper type
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "autocapitalize" with the proper type assert_inherits: property "autocapitalize" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "autocorrect" with the proper type
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "htmlCustomElementRegistry" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "innerText" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "outerText" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "attachInternals()" with the proper type

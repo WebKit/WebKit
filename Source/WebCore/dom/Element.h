@@ -488,6 +488,12 @@ public:
     void enqueueToUpgrade(JSCustomElementInterface&);
     NODELETE CustomElementReactionQueue* reactionQueue() const;
     CustomElementRegistry* customElementRegistry() const;
+    bool keepsCustomElementRegistryNull() const { return hasStateFlag(StateFlag::KeepsCustomElementRegistryNull); }
+    void setKeepsCustomElementRegistryNull()
+    {
+        ASSERT(usesNullCustomElementRegistry());
+        setStateFlag(StateFlag::KeepsCustomElementRegistryNull);
+    }
 
     CustomElementDefaultARIA& customElementDefaultARIA();
     NODELETE CustomElementDefaultARIA* customElementDefaultARIAIfExists() const;

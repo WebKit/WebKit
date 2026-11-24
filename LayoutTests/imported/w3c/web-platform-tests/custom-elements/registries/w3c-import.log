@@ -51,7 +51,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/per-document.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/pseudo-class-defined.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-custom-element-registry-customelementregistry-attribute-in-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-custom-element-registry-customelementregistry-attribute-keep-null-in-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-custom-element-registry-customelementregistry-attribute-keep-null.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-custom-element-registry-customelementregistry-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-custom-element-registry-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-append.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-define-upgrade-criteria.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-define-upgrade-order.html

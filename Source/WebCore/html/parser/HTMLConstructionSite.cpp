@@ -841,6 +841,8 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
 Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
 {
     SUPPRESS_UNCOUNTED_ARG auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
+    if (containerForCurrentNode().usesNullCustomElementRegistry() && element->document().customElementRegistry()) [[unlikely]]
+        element->setUsesNullCustomElementRegistry();
     setAttributes(element, token, m_parserContentPolicy);
     return element;
 }

@@ -903,8 +903,10 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         customElementReactionStack.emplace(document->globalObject());
     }
 
-    RefPtr registry = shouldUseNullCustomElementRegistry ? nullptr : CustomElementRegistry::registryForNodeOrTreeScope(*currentNode, protect(currentNode->treeScope()));
+    RefPtr registry = shouldUseNullCustomElementRegistry && uri == HTMLNames::xhtmlNamespaceURI ? nullptr : CustomElementRegistry::registryForNodeOrTreeScope(*currentNode, protect(currentNode->treeScope()));
     auto newElement = document->createElement(qName, true, registry.get());
+    if (!registry && document->customElementRegistry() && currentNode->usesNullCustomElementRegistry()) [[unlikely]]
+        newElement->setUsesNullCustomElementRegistry();
 
     if (!handledAttributes) {
         setAttributes(newElement.ptr(), prefixedAttributes, parserContentPolicy());
