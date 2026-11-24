@@ -209,6 +209,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Golden-Gate-Debug-API-Tests-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -844,6 +845,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'API-Tests-iOS-Simulator-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -864,6 +866,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'API-Tests-macOS-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -885,6 +888,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'API-Tests-GTK-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -908,6 +912,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'API-Tests-WPE-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',

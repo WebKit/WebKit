@@ -67,7 +67,14 @@ NO_BUILD_INPUTS = [
     re.compile(rb'^(?!Source/).*\.md$', re.IGNORECASE),
 ]
 
+# Changes that only touch these paths can't change API test results.
+NO_API_TEST_INPUTS = NO_BUILD_INPUTS + [
+    re.compile(rb'^LayoutTests/', re.IGNORECASE),
+]
+
 BUILD = Relevance(exclude=NO_BUILD_INPUTS)
+
+API_TESTS = Relevance(exclude=NO_API_TEST_INPUTS)
 
 BINDINGS_TESTS = Relevance(include=[
     re.compile(rb'Source/WebCore', re.IGNORECASE),

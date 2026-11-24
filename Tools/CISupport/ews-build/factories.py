@@ -275,6 +275,7 @@ class JSCTestsFactory(Factory):
 
 class APITestsFactory(TestFactory):
     APITestClass = RunAPITests
+    changeRelevance = relevance.API_TESTS
 
 
 class WebDriverTestsFactory(TestFactory):
