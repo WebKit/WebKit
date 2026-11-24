@@ -517,6 +517,8 @@ void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomStrin
         parseBeginOrEnd(newValue, Begin);
         if (isConnected())
             connectConditions();
+        if (m_timeContainer)
+            listChanged(Begin, elapsed());
         break;
     case AttributeNames::endAttr:
         if (!m_conditions.isEmpty()) {
@@ -527,6 +529,8 @@ void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomStrin
         parseBeginOrEnd(newValue, End);
         if (isConnected())
             connectConditions();
+        if (m_timeContainer)
+            listChanged(End, elapsed());
         break;
     case AttributeNames::onendAttr:
         setAttributeEventListener(eventNames().endEventEvent, name, newValue);
