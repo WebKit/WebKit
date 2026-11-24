@@ -78,6 +78,14 @@ add_custom_command(
 add_custom_target(JSC-fake-api-headers
     DEPENDS ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}/jsc
 )
+
+# Generates the API headers (<jsc/jsc.h>) without building JavaScriptCore.
+# The Swift Clang importer of WebKit needs them.
+add_custom_target(JavaScriptCore_GLibAPIHeaders
+    DEPENDS ${JavaScriptCore_INSTALLED_HEADERS}
+)
+add_dependencies(JavaScriptCore_GLibAPIHeaders JSC-fake-api-headers)
+
 set(JavaScriptCore_EXTRA_DEPENDENCIES
     JSC-fake-api-headers
 )
