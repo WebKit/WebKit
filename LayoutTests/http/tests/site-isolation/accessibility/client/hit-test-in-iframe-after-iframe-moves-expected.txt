@@ -1,0 +1,14 @@
+Tests that the accessibility frames of elements in a cross-site iframe follow the iframe when it moves in its parent, so hit-testing their centers via the client accessibility APIs finds them.
+
+Inner fields inside iframe before move: PASS
+Inner fields inside iframe after move: PASS
+Inner first: PASS
+Inner second: PASS
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Iframe
+
+
