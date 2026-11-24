@@ -84,7 +84,8 @@ bool SocketConnection::read()
                 break;
             }
 
-            g_warning("Error reading from socket connection: %s\n", error->message);
+            if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_CLOSED))
+                g_warning("Error reading from socket connection: %s\n", error->message);
             didClose();
             return G_SOURCE_REMOVE;
         }
@@ -236,7 +237,8 @@ void SocketConnection::write()
             return;
         }
 
-        g_warning("Error sending message on socket connection: %s\n", error->message);
+        if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_CLOSED))
+            g_warning("Error sending message on socket connection: %s\n", error->message);
         didClose();
         return;
     }

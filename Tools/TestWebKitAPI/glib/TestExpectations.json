@@ -65,6 +65,13 @@
     "TestInspectorServer": {
         "expected": {"all": {"slow": true}}
     },
+    "TestAutomationSession": {
+        "subtests": {
+            "/webkit/WebKitAutomationSession/request-session": {
+                "expected": {"all": {"slow": true }}
+            }
+        }
+    },
     "TestLoaderClient": {
         "subtests": {
             "/webkit/WebKitWebPage/get-uri": {
