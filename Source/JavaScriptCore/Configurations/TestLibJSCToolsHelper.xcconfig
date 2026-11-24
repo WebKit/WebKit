@@ -27,3 +27,6 @@
 #include "TestExecutable.xcconfig"
 
 EXCLUDED_SOURCE_FILE_NAMES = $(WK_JAVASCRIPTCORE_TOOLS_EXCLUDED_SOURCE_FILE_NAMES);
+
+// This target does not depend on bmalloc, whose build generates the availability overlay.
+WK_AVAILABILITY_OVERLAY_FLAGS = ;
