@@ -26,10 +26,12 @@
 #include "config.h"
 #include "GPUAdapter.h"
 
+#include "EventLoop.h"
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUAdapterInfo.h"
 #include "JSGPUDevice.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 
@@ -274,27 +276,33 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
 {
     auto& existingFeatures = m_features->backing().features();
     if (deviceDescriptor && !isSubset(deviceDescriptor->requiredFeatures, existingFeatures)) {
-        promise.reject(Exception(ExceptionCode::TypeError));
+        protect(scriptExecutionContext.eventLoop())->queueTask(TaskSource::WebGPU, [promise = WTF::move(promise)] mutable {
+            promise.reject(Exception(ExceptionCode::TypeError));
+        });
         return;
     }
 
     auto descriptor = convertToBacking(deviceDescriptor);
     auto limits = requiredLimits(descriptor, m_backing->limits());
     if (!limits) {
-        promise.reject(Exception(ExceptionCode::OperationError));
+        protect(scriptExecutionContext.eventLoop())->queueTask(TaskSource::WebGPU, [promise = WTF::move(promise)] mutable {
+            promise.reject(Exception(ExceptionCode::OperationError));
+        });
         return;
     }
 
     auto features = requiredFeatures(descriptor);
     m_backing->requestDevice({ .label = descriptor.label, .requiredFeatures = features.span(), .requiredLimits = *limits }, [protectedThis = protect(*this), label = descriptor.label, deviceDescriptor, promise = WTF::move(promise), scriptExecutionContextRef = protect(scriptExecutionContext)](std::expected<Ref<WebGPU::Device>, String>&& device) mutable {
-        if (!device)
-            promise.reject(Exception(ExceptionCode::OperationError));
-        else {
-            auto queueLabel = deviceDescriptor->defaultQueue.label;
-            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), WTF::move(*device), protectedThis->m_gpu.copyRef(), WTF::move(label), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
-            gpuDevice->suspendIfNeeded();
-            promise.resolve(WTF::move(gpuDevice));
-        }
+        protect(scriptExecutionContextRef->eventLoop())->queueTask(TaskSource::WebGPU, [protectedThis = WTF::move(protectedThis), label = WTF::move(label), deviceDescriptor, promise = WTF::move(promise), scriptExecutionContextRef, device = WTF::move(device)] mutable {
+            if (!device)
+                promise.reject(Exception(ExceptionCode::OperationError));
+            else {
+                auto queueLabel = deviceDescriptor->defaultQueue.label;
+                Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), WTF::move(*device), protectedThis->m_gpu.copyRef(), WTF::move(label), deviceDescriptor ? WTF::move(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name(), protectedThis->m_info->subgroupMinSize(), protectedThis->m_info->subgroupMaxSize()));
+                gpuDevice->suspendIfNeeded();
+                promise.resolve(WTF::move(gpuDevice));
+            }
+        });
     });
 }
 

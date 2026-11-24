@@ -40,6 +40,7 @@ namespace WebCore {
 
 class DeferredPromise;
 class GPUDevice;
+class ScriptExecutionContext;
 
 class GPUShaderModule : public RefCountedAndCanMakeWeakPtr<GPUShaderModule> {
 public:
@@ -52,7 +53,7 @@ public:
     void setLabel(String&&);
 
     using CompilationInfoPromise = DOMPromiseDeferred<IDLInterface<GPUCompilationInfo>>;
-    void getCompilationInfo(CompilationInfoPromise&&);
+    void getCompilationInfo(ScriptExecutionContext&, CompilationInfoPromise&&);
 
     ::WebGPU::ShaderModule& backing() { return m_backing; }
     const ::WebGPU::ShaderModule& backing() const { return m_backing; }

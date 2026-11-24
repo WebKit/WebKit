@@ -1,0 +1,26 @@
+[Worker] Checks that each WebGPU promise settles from a task on the WebGPU task source, after the tasks queued before it, and not directly when the GPU process replies or during the call.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/promise-settlement-task-source.js
+PASS [Worker] requestAdapter() resolved in a later task
+PASS [Worker] requestAdapter() with an unknown feature level resolved in a later task
+PASS [Worker] requestDevice() resolved in a later task
+PASS [Worker] requestDevice() with a limit above the adapter's rejected in a later task
+PASS [Worker] createComputePipelineAsync() resolved after the earlier uncapturederror events and their microtasks
+PASS [Worker] createComputePipelineAsync() with a missing entry point rejected after the earlier uncapturederror events and their microtasks
+PASS [Worker] createRenderPipelineAsync() resolved after the earlier uncapturederror events and their microtasks
+PASS [Worker] createRenderPipelineAsync() with a missing entry point rejected after the earlier uncapturederror events and their microtasks
+PASS [Worker] popErrorScope() of a scope without errors resolved after the earlier uncapturederror events and their microtasks
+PASS [Worker] popErrorScope() of a scope with an error resolved after the earlier uncapturederror events and their microtasks
+PASS [Worker] popErrorScope() without a scope rejected after the earlier uncapturederror events and their microtasks
+PASS [Worker] mapAsync() resolved after the earlier uncapturederror events and their microtasks
+PASS [Worker] mapAsync() with a mode the buffer cannot be mapped for rejected after the earlier uncapturederror events and their microtasks
+PASS [Worker] onSubmittedWorkDone() resolved after the earlier uncapturederror events and their microtasks
+PASS [Worker] getCompilationInfo() resolved after the earlier uncapturederror events and their microtasks
+PASS [Worker] lost resolved after the earlier uncapturederror events and their microtasks
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

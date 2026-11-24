@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPU.h"
 
+#include "EventLoop.h"
 #include "GPUAdapter.h"
 #include "GPUPresentationContext.h"
 #include "GPUPresentationContextDescriptor.h"
@@ -34,6 +35,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUAdapter.h"
 #include "JSWGSLLanguageFeatures.h"
+#include "ScriptExecutionContext.h"
 #include "WGSLLanguageFeatures.h"
 
 namespace WebCore {
@@ -60,17 +62,19 @@ struct GPU::PendingRequestAdapterArguments {
     RequestAdapterPromise promise;
 };
 
-void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options, RequestAdapterPromise&& promise)
+void GPU::requestAdapter(ScriptExecutionContext& context, const std::optional<GPURequestAdapterOptions>& options, RequestAdapterPromise&& promise)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpu-requestadapter
     // A feature level that is spelled out but is not one we recognize gets no adapter at all, rather
     // than being treated as if it had been left out.
     if (options && !options->featureLevel.isNull() && options->featureLevel != "core"_s && options->featureLevel != "compatibility"_s) {
-        promise.resolve(nullptr);
+        protect(context.eventLoop())->queueTask(TaskSource::WebGPU, [promise = WTF::move(promise)] mutable {
+            promise.resolve(nullptr);
+        });
         return;
     }
 
-    requestAdapter(convertToBacking(options), WTF::move(promise), true);
+    requestAdapter(context, convertToBacking(options), WTF::move(promise), true);
 }
 
 Ref<WebGPUIntegration> GPU::backing()
@@ -86,23 +90,24 @@ Ref<WebGPUIntegration> GPU::backing()
     return m_backing;
 }
 
-void GPU::requestAdapter(WebGPU::RequestAdapterOptions&& options, RequestAdapterPromise&& promise, bool retryIfBackingIsLost)
+void GPU::requestAdapter(ScriptExecutionContext& context, WebGPU::RequestAdapterOptions&& options, RequestAdapterPromise&& promise, bool retryIfBackingIsLost)
 {
     Ref backing = this->backing();
-    backing->requestAdapter(options, [protectedThis = Ref { *this }, options, promise = WTF::move(promise), backing, retryIfBackingIsLost](RefPtr<WebGPU::Adapter>&& adapter) mutable {
-        if (adapter) {
-            promise.resolve(GPUAdapter::create(adapter.releaseNonNull(), WTF::move(backing)).ptr());
-            return;
-        }
-        // The GPU process can exit after backing() checked it, and then nothing else was wrong with
-        // the request. A failing RemoteGPUProxy::requestAdapter() calls back before it returns, so
-        // this can run inside the outer backing->requestAdapter() call above; that is safe, as the
-        // outer call holds its own reference to the old backing and the retry only replaces m_backing.
-        if (retryIfBackingIsLost && backing->isLost()) {
-            protectedThis->requestAdapter(WTF::move(options), WTF::move(promise), false);
-            return;
-        }
-        promise.resolve(nullptr);
+    // RemoteGPUProxy calls back before requestAdapter() returns, and the promise still settles from a task.
+    backing->requestAdapter(options, [protectedThis = Ref { *this }, protectedContext = Ref { context }, options, promise = WTF::move(promise), backing, retryIfBackingIsLost](RefPtr<WebGPU::Adapter>&& adapter) mutable {
+        protect(protectedContext->eventLoop())->queueTask(TaskSource::WebGPU, [protectedThis = WTF::move(protectedThis), protectedContext, options = WTF::move(options), promise = WTF::move(promise), backing = WTF::move(backing), retryIfBackingIsLost, adapter = WTF::move(adapter)] mutable {
+            if (adapter) {
+                promise.resolve(GPUAdapter::create(adapter.releaseNonNull(), WTF::move(backing)).ptr());
+                return;
+            }
+            // The GPU process can exit after backing() checked it, and then nothing else was wrong with
+            // the request.
+            if (retryIfBackingIsLost && backing->isLost()) {
+                protectedThis->requestAdapter(protectedContext, WTF::move(options), WTF::move(promise), false);
+                return;
+            }
+            promise.resolve(nullptr);
+        });
     });
 }
 

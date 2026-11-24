@@ -9,6 +9,8 @@
 
 <body>
     <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         (async () => {
             if (!navigator.gpu)
                 throw new Error("WebGPU unavailable");
@@ -50,7 +52,7 @@
             }
 
             await queue.onSubmittedWorkDone();
-        })();
+        })().finally(() => window.testRunner?.notifyDone());
 
     </script>
 </body>

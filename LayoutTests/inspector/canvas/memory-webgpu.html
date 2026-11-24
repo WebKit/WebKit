@@ -10,6 +10,9 @@ let buffer = null;
 let texture = null;
 
 async function load() {
+    // The adapter and the device come in later tasks, after the load event.
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     adapter = await navigator.gpu.requestAdapter();
     device = await adapter.requestDevice();
     runTest();

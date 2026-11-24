@@ -39,7 +39,7 @@ typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
 ] interface GPUQueue {
     undefined submit(sequence<GPUCommandBuffer> commandBuffers);
 
-    Promise<undefined> onSubmittedWorkDone();
+    [CallWith=RelevantScriptExecutionContext] Promise<undefined> onSubmittedWorkDone();
 
     undefined writeBuffer(
         GPUBuffer buffer,

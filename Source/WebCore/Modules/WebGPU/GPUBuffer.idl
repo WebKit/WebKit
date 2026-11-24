@@ -42,7 +42,7 @@ typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
 
     readonly attribute GPUBufferMapState mapState;
 
-    Promise<undefined> mapAsync(GPUMapModeFlags mode, optional GPUSize64 offset = 0, optional GPUSize64 size);
+    [CallWith=RelevantScriptExecutionContext] Promise<undefined> mapAsync(GPUMapModeFlags mode, optional GPUSize64 offset = 0, optional GPUSize64 size);
     ArrayBuffer getMappedRange(optional GPUSize64 offset = 0, optional GPUSize64 size);
     [CallWith=CurrentScriptExecutionContext] undefined unmap();
 

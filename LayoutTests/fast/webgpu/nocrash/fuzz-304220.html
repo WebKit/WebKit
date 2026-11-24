@@ -1,6 +1,8 @@
 <html>
 <head>
 <script type="text/javascript">
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var fuzzervars = {};
 
@@ -24,5 +26,5 @@ console.log('Pass')
 }
 </script>
 
-<body onload="trigger()"></body>
+<body onload="trigger().finally(() => window.testRunner?.notifyDone())"></body>
 </html>

@@ -39,6 +39,7 @@ class GPUAdapter;
 class GPUCompositorIntegration;
 class GPUPresentationContext;
 struct GPUPresentationContextDescriptor;
+class ScriptExecutionContext;
 class WGSLLanguageFeatures;
 
 enum class GPUTextureFormat : uint8_t;
@@ -58,7 +59,7 @@ public:
     WEBCORE_EXPORT ~GPU();
 
     using RequestAdapterPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUAdapter>>>;
-    void requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
+    void requestAdapter(ScriptExecutionContext&, const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
 
     NODELETE GPUTextureFormat getPreferredCanvasFormat() const;
     WGSLLanguageFeatures& wgslLanguageFeatures() const { return m_wgslLanguageFeatures; }
@@ -75,7 +76,7 @@ public:
 private:
     GPU(Ref<WebGPUIntegration>&&, CreateBacking&&);
 
-    void requestAdapter(::WebGPU::RequestAdapterOptions&&, RequestAdapterPromise&&, bool retryIfBackingIsLost);
+    void requestAdapter(ScriptExecutionContext&, ::WebGPU::RequestAdapterOptions&&, RequestAdapterPromise&&, bool retryIfBackingIsLost);
 
     struct PendingRequestAdapterArguments;
     Ref<WebGPUIntegration> m_backing;

@@ -1,0 +1,25 @@
+Checks that each WebGPU promise settles from a task on the WebGPU task source, after the tasks queued before it, and not directly when the GPU process replies or during the call.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS requestAdapter() resolved in a later task
+PASS requestAdapter() with an unknown feature level resolved in a later task
+PASS requestDevice() resolved in a later task
+PASS requestDevice() with a limit above the adapter's rejected in a later task
+PASS createComputePipelineAsync() resolved after the earlier uncapturederror events and their microtasks
+PASS createComputePipelineAsync() with a missing entry point rejected after the earlier uncapturederror events and their microtasks
+PASS createRenderPipelineAsync() resolved after the earlier uncapturederror events and their microtasks
+PASS createRenderPipelineAsync() with a missing entry point rejected after the earlier uncapturederror events and their microtasks
+PASS popErrorScope() of a scope without errors resolved after the earlier uncapturederror events and their microtasks
+PASS popErrorScope() of a scope with an error resolved after the earlier uncapturederror events and their microtasks
+PASS popErrorScope() without a scope rejected after the earlier uncapturederror events and their microtasks
+PASS mapAsync() resolved after the earlier uncapturederror events and their microtasks
+PASS mapAsync() with a mode the buffer cannot be mapped for rejected after the earlier uncapturederror events and their microtasks
+PASS onSubmittedWorkDone() resolved after the earlier uncapturederror events and their microtasks
+PASS getCompilationInfo() resolved after the earlier uncapturederror events and their microtasks
+PASS lost resolved after the earlier uncapturederror events and their microtasks
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

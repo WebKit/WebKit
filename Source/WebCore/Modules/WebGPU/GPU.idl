@@ -31,7 +31,7 @@
     SecureContext
 ]
 interface GPU {
-    Promise<GPUAdapter?> requestAdapter(optional GPURequestAdapterOptions options = {});
+    [CallWith=RelevantScriptExecutionContext] Promise<GPUAdapter?> requestAdapter(optional GPURequestAdapterOptions options = {});
     GPUTextureFormat getPreferredCanvasFormat();
     [SameObject] readonly attribute WGSLLanguageFeatures wgslLanguageFeatures;
 };

@@ -26,10 +26,12 @@
 #include "config.h"
 #include "GPUShaderModule.h"
 
+#include "EventLoop.h"
 #include "GPUDevice.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUCompilationInfo.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -62,10 +64,15 @@ void GPUShaderModule::setLabel(String&& label)
     m_backing->setLabel(WTF::move(label));
 }
 
-void GPUShaderModule::getCompilationInfo(CompilationInfoPromise&& promise)
+void GPUShaderModule::getCompilationInfo(ScriptExecutionContext& scriptExecutionContext, CompilationInfoPromise&& promise)
 {
-    m_backing->compilationInfo([promise = WTF::move(promise)](WebGPU::CompilationInfo&& compilationInfo) mutable {
-        promise.resolve(GPUCompilationInfo::create(WTF::move(compilationInfo)));
+    m_backing->compilationInfo([weakContext = WeakPtr { scriptExecutionContext }, promise = WTF::move(promise)](WebGPU::CompilationInfo&& compilationInfo) mutable {
+        RefPtr context = weakContext;
+        if (!context)
+            return;
+        protect(context->eventLoop())->queueTask(TaskSource::WebGPU, [promise = WTF::move(promise), compilationInfo = WTF::move(compilationInfo)] mutable {
+            promise.resolve(GPUCompilationInfo::create(WTF::move(compilationInfo)));
+        });
     });
 }
 

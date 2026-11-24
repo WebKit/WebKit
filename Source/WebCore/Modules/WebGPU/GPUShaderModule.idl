@@ -32,6 +32,6 @@
     CallTracer=InspectorCanvasCallTracer,
 ]
 interface GPUShaderModule {
-    Promise<GPUCompilationInfo> getCompilationInfo();
+    [CallWith=RelevantScriptExecutionContext] Promise<GPUCompilationInfo> getCompilationInfo();
 };
 GPUShaderModule includes GPUObjectBase;
