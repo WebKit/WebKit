@@ -27,6 +27,7 @@ import WebKit
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 import RealityKit
 import USDKit
+import _USDKit_RealityKit
 #endif
 
 @objc

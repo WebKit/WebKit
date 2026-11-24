@@ -26,6 +26,7 @@
 import Foundation
 import struct Foundation.URL
 @_spi(Testing) @_spi(CrossImportOverlay) import WebKit
+import _WebKit_SwiftUI
 private import WebKit_Private.WKPreferencesPrivate
 import SwiftUI
 import struct Swift.String

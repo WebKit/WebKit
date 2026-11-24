@@ -28,6 +28,7 @@ import Foundation
 import SwiftUI
 import Testing
 @_spi(Testing) @_spi(CrossImportOverlay) import WebKit
+import _WebKit_SwiftUI
 private import TestWebKitAPILibrary
 
 // Certain event delivery (such as mouseMove) is gated behind -isKeyWindow.

@@ -28,6 +28,7 @@ import Metal
 import SwiftUI
 import Synchronization
 import UIKit
+import _CompositorServices_SwiftUI
 import os
 
 @objc

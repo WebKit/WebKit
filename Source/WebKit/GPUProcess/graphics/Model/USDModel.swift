@@ -31,6 +31,7 @@ typealias NodeIdentifier = UInt64
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 import USDKit
 import RealityKit
+import _USDKit_RealityKit
 internal import Spatial
 import UniformTypeIdentifiers
 
