@@ -1397,7 +1397,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
         staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
         boxGeometry.setTopLeft(staticPosition);
         // Compute float position by running float layout.
-        auto floatingPosition = floatingContext.positionForFloat(floatBox, boxGeometry, rootHorizontalConstraints());
+        auto floatingPosition = floatingContext.positionForFloat(floatBox, boxGeometry, { { }, rootHorizontalConstraints() });
         boxGeometry.setTopLeft(floatingPosition);
     };
     computeFloatBoxPosition();
@@ -1431,7 +1431,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 
     auto placeFloatBox = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
-        auto floatItem = floatingContext.makeFloatItem(floatBox, boxGeometry, lineIndex);
+        auto floatItem = floatingContext.makeFloatItem(floatBox, boxGeometry, { { }, rootHorizontalConstraints() }, lineIndex);
         layoutState().placedFloats().add(floatItem);
         m_placedFloats.append(floatItem);
     };
