@@ -39,8 +39,8 @@ _CMAKE_FILE = _TEST_DIRECTORY + '/PlatformCocoa.cmake'
 
 _CMAKE_DIRECTORY_VARIABLE = '${TESTWEBKITAPI_DIR}/'
 
-# Importing SwiftUI alongside WebKit pulls in the _WebKit_SwiftUI cross-import overlay,
-# which the CMake build cannot link yet.
+# Tests that import SwiftUI or WebKit's _WebKit_SwiftUI overlay don't have to be in the CMake build,
+# which cannot link the overlay yet.
 _SWIFTUI_MODULES = ('SwiftUI', '_WebKit_SwiftUI')
 
 # The folders holding Swift tests and their helpers, with the Xcode target a new source

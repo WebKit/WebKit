@@ -916,8 +916,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WebPage/WebViewTests.swift
 )
 
-# Tests importing both WebKit and SwiftUI load the _WebKit_SwiftUI cross-import
-# overlay; ensure it builds first.
+# Tests that use WebKit's SwiftUI API import the _WebKit_SwiftUI overlay, so build and link it.
 list(APPEND TestWebKit_FRAMEWORKS _WebKit_SwiftUI)
 
 # TestWebKitAPIBase needs framework headers for config.h includes.

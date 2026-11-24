@@ -172,6 +172,12 @@ set(WEBKIT_SWIFT_DEBUG_INFO_FLAGS
     "-Xfrontend -disable-round-trip-debug-types"
 )
 
+# Mirrors WK_SWIFT_CROSS_IMPORT_OVERLAY_FLAGS in CommonBase.xcconfig's OTHER_SWIFT_FLAGS.
+# Swift code imports the cross-import overlays it uses (e.g. `import _WebKit_SwiftUI`).
+set(WEBKIT_SWIFT_CROSS_IMPORT_OVERLAY_FLAGS
+    "-Xfrontend -disable-cross-import-overlays"
+)
+
 set(WEBKIT_SWIFT_CONCURRENCY_FLAGS
     "-default-isolation nonisolated"
     -strict-concurrency=complete
@@ -194,6 +200,7 @@ webkit_add_swift_options(
     ${WEBKIT_SWIFT_CLANG_IMPORTER_FLAGS}
     ${WEBKIT_SWIFT_MACRO_FLAGS}
     ${WEBKIT_SWIFT_DEBUG_INFO_FLAGS}
+    ${WEBKIT_SWIFT_CROSS_IMPORT_OVERLAY_FLAGS}
 )
 
 webkit_add_swift_options(
