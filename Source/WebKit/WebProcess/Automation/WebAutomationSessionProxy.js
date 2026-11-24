@@ -503,6 +503,8 @@ let AutomationSessionProxy = class AutomationSessionProxy
         case "array":
             return localValue.value.map(value => this._deserializeBidiLocalValue(value));
         case "date": {
+            // FIXME: <https://webkit.org/b/328581> RegExp.prototype.test calls the regular expression's exec, which
+            // page script can replace to make any string pass this check.
             if (typeof localValue.value !== "string" || !reflectApply(regExpTest, dateTimeStringFormat, [localValue.value]))
                 throw new InvalidArgumentError("Invalid date LocalValue.");
             let value = new Date(localValue.value);

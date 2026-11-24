@@ -3705,58 +3705,58 @@
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
             "test_drag_and_drop[20-0-0]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[20-0-300]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[20-0-800]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[0-15-0]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[0-15-300]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[0-15-800]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[10-15-0]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[10-15-300]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[10-15-800]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[-20-0-0]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[-20-0-300]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[-20-0-800]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[10--15-0]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[10--15-300]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[10--15-800]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[-10--15-0]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[-10--15-300]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop[-10--15-800]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             },
             "test_drag_and_drop_with_draggable_element[0]": {
                 "expected": {"mac": {"status": ["SKIP"], "bug": "webkit.org/b/331482"}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
@@ -3814,7 +3814,7 @@
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
             "test_tripleclick_at_coordinates": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
             }
         }
     },
@@ -4669,7 +4669,7 @@
         "expected": { "all": { "status": ["PASS"] }}
     },
     "imported/w3c/webdriver/tests/bidi/script/call_function/remote_reference.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+        "expected": { "all": { "status": ["FAIL"], "note": "script.callFunction doesn't support remote reference arguments yet"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/call_function/remote_values.py": {
         "expected": { "all": { "status": ["PASS"] }},
@@ -5910,12 +5910,6 @@
 
     "imported/w3c/webdriver/tests/bidi/emulation/set_scrollbar_type_override/contexts.py": {
         "subtests": {
-            "test_iframe[same_origin]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058", "note": "create_iframe passes a string argument to script.callFunction"}}
-            },
-            "test_iframe[cross_origin]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288058", "note": "create_iframe passes a string argument to script.callFunction"}}
-            },
             "test_overrides_user_contexts[Custom user context]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"}}
             }

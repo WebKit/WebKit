@@ -188,7 +188,6 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
 static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* deserializedValue, bool* usesUnsupportedType, bool* usesHandle)
 {
     // FIXME: Implement RemoteReference and Channel types instead of using null placeholders.
-    // https://bugs.webkit.org/show_bug.cgi?id=288058
     if (deserializedValue)
         *deserializedValue = nullptr;
 
