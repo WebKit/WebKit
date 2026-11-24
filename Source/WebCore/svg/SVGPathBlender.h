@@ -61,6 +61,8 @@ private:
 
     NODELETE float blendAnimatedDimensonalFloat(float from, float to, FloatBlendMode, float progress);
     NODELETE FloatPoint blendAnimatedFloatPoint(const FloatPoint& from, const FloatPoint& to, float progress);
+    NODELETE FloatPoint blendAnimatedFloatPointSameCoordinates(const FloatPoint& from, const FloatPoint& to, float progress);
+    NODELETE float blendAnimatedAngle(float fromAngle, float toAngle, float progress);
 
     SingleThreadWeakRef<SVGPathSource> m_fromSource;
     SingleThreadWeakRef<SVGPathSource> m_toSource;

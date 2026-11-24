@@ -88,17 +88,29 @@ float SVGPathBlender::blendAnimatedDimensonalFloat(float from, float to, FloatBl
     return m_toMode == AbsoluteCoordinates ? animValue + currentValue : animValue - currentValue;
 }
 
-FloatPoint SVGPathBlender::blendAnimatedFloatPoint(const FloatPoint& fromPoint, const FloatPoint& toPoint, float progress)
+FloatPoint SVGPathBlender::blendAnimatedFloatPointSameCoordinates(const FloatPoint& fromPoint, const FloatPoint& toPoint, float progress)
 {
     if (m_addTypesCount) {
-        ASSERT(m_fromMode == m_toMode);
         FloatPoint repeatedToPoint = toPoint;
         repeatedToPoint.scale(m_addTypesCount);
         return fromPoint + repeatedToPoint;
     }
+    return blendFloatPoint(fromPoint, toPoint, progress);
+}
 
+float SVGPathBlender::blendAnimatedAngle(float fromAngle, float toAngle, float progress)
+{
+    if (m_addTypesCount)
+        return fromAngle + toAngle * m_addTypesCount;
+    BlendingContext context { progress };
+    return blend(fromAngle, toAngle, context);
+}
+
+FloatPoint SVGPathBlender::blendAnimatedFloatPoint(const FloatPoint& fromPoint, const FloatPoint& toPoint, float progress)
+{
+    ASSERT(!m_addTypesCount || m_fromMode == m_toMode);
     if (m_fromMode == m_toMode)
-        return blendFloatPoint(fromPoint, toPoint, progress);
+        return blendAnimatedFloatPointSameCoordinates(fromPoint, toPoint, progress);
 
     // Transform toPoint to the coordinate mode of fromPoint
     FloatPoint animatedPoint = toPoint;
@@ -298,33 +310,27 @@ bool SVGPathBlender::blendArcToSegment(float progress)
 
     auto [from, to] = *result;
 
+    ASSERT(!m_addTypesCount || m_fromMode == m_toMode);
+    FloatPoint blendedRadii = blendAnimatedFloatPointSameCoordinates(FloatPoint(from.rx, from.ry), FloatPoint(to.rx, to.ry), progress);
+    float blendedAngle = blendAnimatedAngle(from.angle, to.angle, progress);
+    bool blendedLargeArc = false;
+    bool blendedSweep = false;
+
     if (m_addTypesCount) {
-        ASSERT(m_fromMode == m_toMode);
-        auto scaledToTargetPoint = to.targetPoint;
-        scaledToTargetPoint.scale(m_addTypesCount);
-        m_consumer->arcTo(from.rx + to.rx * m_addTypesCount,
-            from.ry + to.ry * m_addTypesCount,
-            from.angle + to.angle * m_addTypesCount,
-            from.largeArc || to.largeArc,
-            from.sweep || to.sweep,
-            from.targetPoint + scaledToTargetPoint,
-            m_fromMode);
+        blendedLargeArc = from.largeArc || to.largeArc;
+        blendedSweep = from.sweep || to.sweep;
     } else {
-        BlendingContext context { progress };
         // Per spec, the arc flags interpolate as numbers (with progress clamped to
         // [0, 1]) and any non-zero result is treated as a set flag, matching <path>.
         // https://w3c.github.io/svgwg/specs/paths/#PathElement
         BlendingContext flagContext { clampTo<float>(progress, 0.0f, 1.0f) };
-        bool largeArc = blend(from.largeArc ? 1.0f : 0.0f, to.largeArc ? 1.0f : 0.0f, flagContext);
-        bool sweep = blend(from.sweep ? 1.0f : 0.0f, to.sweep ? 1.0f : 0.0f, flagContext);
-        m_consumer->arcTo(blend(from.rx, to.rx, context),
-            blend(from.ry, to.ry, context),
-            blend(from.angle, to.angle, context),
-            largeArc,
-            sweep,
-            blendAnimatedFloatPoint(from.targetPoint, to.targetPoint, progress),
-            m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
+        blendedLargeArc = blend(from.largeArc ? 1.0f : 0.0f, to.largeArc ? 1.0f : 0.0f, flagContext);
+        blendedSweep = blend(from.sweep ? 1.0f : 0.0f, to.sweep ? 1.0f : 0.0f, flagContext);
     }
+    m_consumer->arcTo(
+        blendedRadii.x(), blendedRadii.y(), blendedAngle, blendedLargeArc, blendedSweep,
+        blendAnimatedFloatPoint(from.targetPoint, to.targetPoint, progress),
+        m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint = m_fromMode == AbsoluteCoordinates ? from.targetPoint : m_fromCurrentPoint + from.targetPoint;
     m_toCurrentPoint = m_toMode == AbsoluteCoordinates ? to.targetPoint : m_toCurrentPoint + to.targetPoint;
     return true;
