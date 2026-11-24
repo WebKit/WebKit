@@ -1372,6 +1372,7 @@ fast/webgpu/nocrash/fuzz-286820.html [ Skip ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-283196.html [ Skip ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-283943.html [ Skip ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-284326.html [ Skip ]
+[ x86_64 ] fast/webgpu/nocrash/fuzz-287519.html [ Skip ]
 [ x86_64 ] fast/webgpu/nocrash/fuzz-293750.html [ Skip ]
 
 [ x86_64 ] fast/webgpu/nocrash/fuzz-145583179.html [ Pass Failure ]
