@@ -1198,11 +1198,29 @@ void WebProcessPool::prewarmProcess(WebsiteDataStore* websiteDataStore)
         return;
     }
 
-    WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Prewarming a WebProcess for performance");
-
     auto lockdownMode = lockdownModeEnabledBySystem() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
     auto enhancedSecurity = defaultEnhancedSecurity(*this, lockdownMode, protect(m_defaultPageGroup->preferences()));
+    if (shouldPrewarmEnhancedSecurityProcessForSharedProcess(lockdownMode, enhancedSecurity))
+        enhancedSecurity = EnhancedSecurity::EnabledPolicy;
+
+    WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Prewarming a WebProcess for performance (enhancedSecurity=%d)", isEnhancedSecurityEnabledForState(enhancedSecurity));
     createNewWebProcess(websiteDataStore, lockdownMode, enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed::Yes);
+}
+
+bool WebProcessPool::shouldPrewarmEnhancedSecurityProcessForSharedProcess(WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
+{
+    if (!m_hasUsedSharedProcessEnhancedSecurity || lockdownMode == WebProcessProxy::LockdownMode::Enabled || isEnhancedSecurityEnabledForState(enhancedSecurity))
+        return false;
+
+    bool hasStandardProcess = false;
+    for (Ref process : m_prewarmedProcesses) {
+        if (process->wasTerminated() || process->lockdownMode() == WebProcessProxy::LockdownMode::Enabled)
+            continue;
+        if (isEnhancedSecurityEnabledForState(process->enhancedSecurity()))
+            return false;
+        hasStandardProcess = true;
+    }
+    return hasStandardProcess;
 }
 
 void WebProcessPool::enableProcessTermination()
@@ -2501,6 +2519,9 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         }
         m_webProcessCache->updateCapacity(*this);
     }
+
+    if (!m_hasUsedSharedProcessEnhancedSecurity && BrowsingContextGroup::shouldUseEnhancedSecurityForSharedProcess(protect(page.preferences()), lockdownMode))
+        m_hasUsedSharedProcessEnhancedSecurity = true;
 
     bool isMainFrameNavigation = frame.isMainFrame();
     Ref sourceProcess = frame.process();
