@@ -52,7 +52,7 @@ Memory::MapResult Memory::Region::create(Memory& memory, Address remoteBase, siz
     vm_prot_t maximumProtection = VM_PROT_READ;
     boolean_t copyTheMemory = false; // i.e. share the corpse's pages instead of copying into new pages for this process.
     kern_return_t kr = mach_vm_remap_new(mach_task_self(), &target, pageCount * pageSize(), 0, VM_FLAGS_ANYWHERE,
-        memory.m_corpsePort, remoteBase.toMachVMAddress(), copyTheMemory, &currentProtection, &maximumProtection, VM_INHERIT_NONE);
+        memory.m_snapshotCookie, remoteBase.primitive(), copyTheMemory, &currentProtection, &maximumProtection, VM_INHERIT_NONE);
 
     if (kr != KERN_SUCCESS) {
         Error error;
@@ -70,7 +70,7 @@ Memory::MapResult Memory::Region::create(Memory& memory, Address remoteBase, siz
             error = Error::Unknown;
             break;
         }
-        return MapResult { .error = error, .kernResult = kr };
+        return MapResult { .error = error, .kernelResult = kr };
     }
 
     auto* localBase = reinterpret_cast<const uint8_t*>(target);
@@ -117,8 +117,8 @@ size_t Memory::pageSize()
     return vm_kernel_page_size;
 }
 
-Memory::Memory(mach_port_t corpsePort)
-    : m_corpsePort(corpsePort)
+Memory::Memory(TaskHandle::Cookie snapshotCookie)
+    : m_snapshotCookie(snapshotCookie)
 {
     // Placed here so we can assert this invariant only once on construction.
     size_t page = pageSize();
@@ -138,20 +138,20 @@ Memory::MapResult Memory::map(Address objAddress, size_t objSizeInBytes)
     if (!objSizeInBytes)
         return MapResult { .error = Error::InvalidRequest };
 
-    mach_vm_address_t objBase = objAddress.toMachVMAddress();
-    mach_vm_address_t objEnd = objBase + objSizeInBytes;
+    Address::Primitive objBase = objAddress.primitive();
+    Address::Primitive objEnd = objBase + objSizeInBytes;
     if (objEnd < objBase)
         return MapResult { .error = Error::InvalidRequest }; // objEnd overflows.
 
     size_t page = pageSize();
-    mach_vm_address_t pageMask = static_cast<mach_vm_address_t>(page) - 1;
+    Address::Primitive pageMask = static_cast<Address::Primitive>(page) - 1;
 
-    if (objEnd > std::numeric_limits<mach_vm_address_t>::max() - pageMask)
+    if (objEnd > std::numeric_limits<Address::Primitive>::max() - pageMask)
         return MapResult { .error = Error::InvalidRequest };
 
     // Compute Region that object resides in.
-    mach_vm_address_t regionBase = objBase & ~pageMask;
-    mach_vm_address_t regionEnd = (objEnd + pageMask) & ~pageMask;
+    Address::Primitive regionBase = objBase & ~pageMask;
+    Address::Primitive regionEnd = (objEnd + pageMask) & ~pageMask;
 
     // Reject "Page 0". A null Address is reserved as the empty value in the m_regions map.
     if (!regionBase)
@@ -230,7 +230,7 @@ void Memory::dump(const char* indent) const
     dataLogLn(indent, "m_regions: ", regionCount(), " region(s) at ", m_regions.size(), " base(s), ",
         mappedPageCount(), " page(s) mapped");
     for (auto& entry : m_regions) {
-        dataLog(indent, "  corpse ", RawHex(entry.key.toMachVMAddress()), " ->");
+        dataLog(indent, "  corpse ", RawHex(entry.key.primitive()), " ->");
         for (auto& region : entry.value) {
             const char* baseNote = region->remoteBase() == entry.key ? "" : " <base disagrees with its key>";
             dataLog(" [", region->pageCount(), " page(s), local ",

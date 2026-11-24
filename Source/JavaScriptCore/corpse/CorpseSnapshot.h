@@ -31,8 +31,8 @@
 #include <JavaScriptCore/CorpseMemory.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSymbol.h>
+#include <JavaScriptCore/CorpseTaskHandle.h>
 #include <JavaScriptCore/CorpseThread.h>
-#include <mach/mach.h>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -59,20 +59,19 @@ class Snapshot : public DoublyLinkedListNode<Snapshot> {
     WTF_MAKE_TZONE_ALLOCATED(Snapshot);
 public:
     explicit Snapshot(RefPtr<Process>);
-    ~Snapshot();
 
     Snapshot(const Snapshot&) = delete;
     Snapshot& operator=(const Snapshot&) = delete;
     Snapshot(Snapshot&& other) = delete;
 
-    bool isValid() const { return MACH_PORT_VALID(m_corpsePort); }
+    bool isValid() const { return m_corpseHandle.isValid(); }
 
     // A monotonically increasing identifier assigned at construction. IDs are
     // never reused, so they stay stable as snapshots are added and removed.
     unsigned id() const { return m_id; }
 
     Process* process() const { return m_process.get(); }
-    mach_port_t corpsePort() const { return m_corpsePort; }
+    TaskHandle::Cookie cookie() const { return m_corpseHandle.cookie(); }
 
     Memory& memory() LIFETIME_BOUND
     {
@@ -90,7 +89,7 @@ private:
     static unsigned s_nextId;
 
     RefPtr<Process> m_process;
-    mach_port_t m_corpsePort { MACH_PORT_NULL };
+    TaskHandle m_corpseHandle;
     unsigned m_id;
 
     std::optional<Vector<Thread>> m_threads;

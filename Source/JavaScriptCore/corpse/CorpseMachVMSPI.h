@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(LIB_JSC_TOOLS) && OS(DARWIN)
+
 // The Mach VM SPI this library needs on top of what the rest of WebKit uses, kept
 // here so that what libJavaScriptCoreTools adds stays separate and distinct from
 // wtf/spi/cocoa/MachVMSPI.h.
@@ -33,8 +35,6 @@ DECLARE_SYSTEM_HEADER
 
 #include <wtf/spi/cocoa/MachVMSPI.h>
 
-#if ENABLE(LIB_JSC_TOOLS)
-
 WTF_EXTERN_C_BEGIN
 
 kern_return_t mach_vm_remap_new(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t, mach_vm_offset_t mask, int flags,
@@ -42,4 +42,4 @@ kern_return_t mach_vm_remap_new(vm_map_t targetTask, mach_vm_address_t*, mach_vm
 
 WTF_EXTERN_C_END
 
-#endif // ENABLE(LIB_JSC_TOOLS)
+#endif // ENABLE(LIB_JSC_TOOLS) && OS(DARWIN)

@@ -273,7 +273,7 @@ Address Symbol::lookUpName(Snapshot& snapshot)
     auto doLookUp = [&] () -> Address {
         std::string name = "_" + m_name; // Use Mach-O symbol name for look up.
 
-        mach_port_t task = snapshot.corpsePort();
+        mach_port_t task = snapshot.cookie();
         Memory& memory = snapshot.memory();
 
         // dyld publishes the list of loaded images; search each one in turn.
@@ -357,18 +357,18 @@ void Symbol::reportFailure(const Snapshot& snapshot) const
     }
     if (!d.readAllImageInfos) {
         Error::report("  could not read dyld_all_image_infos at 0x%llx",
-            d.allImageInfosAddress.toMachVMAddress());
+            d.allImageInfosAddress.primitive());
         return;
     }
 
     // A sane version says the struct read probably landed on real data, which is what
     // makes the image count and array address below worth printing.
     Error::report("  dyld_all_image_infos v%u at 0x%llx lists %u images at 0x%llx",
-        d.version, d.allImageInfosAddress.toMachVMAddress(),
-        d.images, d.imageArrayAddress.toMachVMAddress());
+        d.version, d.allImageInfosAddress.primitive(),
+        d.images, d.imageArrayAddress.primitive());
     if (d.rawImageArrayAddress != d.imageArrayAddress) {
         Error::report("  that address was ptrauth-signed as 0x%llx; the signature was stripped",
-            d.rawImageArrayAddress.toMachVMAddress());
+            d.rawImageArrayAddress.primitive());
     }
     if (!d.imageArrayAddress || !d.images) {
         Error::report("  that list is empty, so there was nothing to search");

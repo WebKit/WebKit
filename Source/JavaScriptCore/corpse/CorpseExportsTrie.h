@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(LIB_JSC_TOOLS)
+#if ENABLE(LIB_JSC_TOOLS) && OS(DARWIN)
 
 #include <JavaScriptCore/CorpseByteParser.h>
 #include <expected>
@@ -66,4 +66,4 @@ public:
 } // namespace Corpse
 } // namespace JSC
 
-#endif // ENABLE(LIB_JSC_TOOLS)
+#endif // ENABLE(LIB_JSC_TOOLS) && OS(DARWIN)

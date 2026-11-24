@@ -27,7 +27,7 @@
 
 #if ENABLE(LIB_JSC_TOOLS)
 
-#include <mach/mach.h>
+#include <JavaScriptCore/CorpseTaskHandle.h>
 #include <sys/types.h>
 #include <wtf/Assertions.h>
 #include <wtf/Ref.h>
@@ -36,24 +36,22 @@
 namespace JSC {
 namespace Corpse {
 
-// Represents a target corpse process identified by PID. It manages the Mach task
-// port for that process: attach() acquires it, detach() releases it (but keeps the
-// PID so the same Process can be reattached later).
+// Represents a target corpse process identified by PID. It manages the task handle
+// for that process: attach() acquires it, detach() releases it (but keeps the PID so
+// the same Process can be reattached later).
 class Process final : public RefCounted<Process> {
 public:
     static Ref<Process> create(pid_t pid) { return adoptRef(*new Process(pid)); }
 
-    ~Process() { detach(); }
-
     bool attach();
-    void detach();
+    void detach() { m_taskHandle = { }; }
 
     pid_t pid() const { return m_pid; }
-    mach_port_t taskPort() const { return m_taskPort; }
+    TaskHandle::Cookie cookie() const { return m_taskHandle.cookie(); }
 
-    bool isAttached() const { return MACH_PORT_VALID(m_taskPort); }
+    bool isAttached() const { return m_taskHandle.isValid(); }
 
-    // The target process may have terminated while we still hold the port.
+    // The target process may have terminated while we still hold its handle.
     bool holdsLiveTask() const;
 
     // True if the target runs under Rosetta translation. Such a process executes as
@@ -69,7 +67,7 @@ private:
     }
 
     pid_t m_pid;
-    mach_port_t m_taskPort { MACH_PORT_NULL };
+    TaskHandle m_taskHandle;
 };
 
 } // namespace Corpse

@@ -70,7 +70,7 @@ static pid_t reapedChildPid()
     return child;
 }
 
-#if CPU(ARM64)
+#if OS(DARWIN) && CPU(ARM64)
 // Launches /bin/sh as x86_64, which on Apple silicon means under translation.
 // Returns 0 if this machine cannot run x86_64 code.
 static pid_t spawnTranslatedChild()
@@ -97,7 +97,7 @@ static pid_t spawnTranslatedChild()
         return 0;
     return child;
 }
-#endif // CPU(ARM64)
+#endif // OS(DARWIN) && CPU(ARM64)
 
 void testProcess()
 {
@@ -125,6 +125,7 @@ void testProcess()
         TEST_ASSERT(!process->isAttached(), "detaching twice is harmless");
     }
 
+#if OS(DARWIN)
     // Test 2 things:
     // 1. leak test:
     //    - attach and detach handle Mach send right refCounts correctly, and do not produce leaks.
@@ -151,13 +152,13 @@ void testProcess()
             RefPtr<Process> anchor = Process::create(getpid());
             TEST_ASSERT(anchor->attach(), "an anchor Process attaches to this process");
             if (anchor->isAttached()) {
-                mach_port_t port = anchor->taskPort();
+                mach_port_t port = anchor->cookie();
                 unsigned refsAttached = 0;
                 {
                     RefPtr<Process> process = Process::create(getpid());
                     TEST_ASSERT(process->attach(), "attaching to this process succeeds");
                     if (process->isAttached()) {
-                        TEST_ASSERT_HEX_EQ(process->taskPort(), port, "attaching shares the anchor's name for the task port");
+                        TEST_ASSERT_HEX_EQ(process->cookie(), port, "attaching shares the anchor's name for the task port");
                         refsAttached = machPortSendRightCount(port);
                         TEST_ASSERT(refsAttached >= 2, "the anchor and an attached Process each hold a reference to the name");
 
@@ -173,7 +174,7 @@ void testProcess()
                             "no double release: detaching twice gives back only what one attach took");
 
                         process->attach(); // Left attached, so the destructor has to release it.
-                        TEST_ASSERT_HEX_EQ(process->taskPort(), port, "attaching again shares the anchor's name");
+                        TEST_ASSERT_HEX_EQ(process->cookie(), port, "attaching again shares the anchor's name");
                     }
                 }
                 if (refsAttached) {
@@ -185,17 +186,22 @@ void testProcess()
         TEST_ASSERT_EQ(machPortNameCount(), namesBefore,
             "leak test: attaching and detaching leaves no port name behind");
     }
+#endif // OS(DARWIN)
     {
         pid_t gone = reapedChildPid();
         if (!gone)
             TEST_ASSERT(gone, "a child could be forked and reaped");
         else {
             dataLogLn("    (the next line is the failure this test asks for)");
+#if OS(DARWIN)
             unsigned namesBefore = machPortNameCount();
+#endif
             RefPtr<Process> process = Process::create(gone);
             TEST_ASSERT(!process->attach(), "attaching to a process that has exited fails");
             TEST_ASSERT(!process->isAttached(), "a failed attach leaves the Process unattached");
+#if OS(DARWIN)
             TEST_ASSERT_EQ(machPortNameCount(), namesBefore, "a failed attach leaves no port name behind");
+#endif
         }
     }
     {
@@ -215,7 +221,7 @@ void testProcess()
             TEST_ASSERT(!process->isTranslated(), "a process that has exited is not translated");
         }
     }
-#if CPU(ARM64)
+#if OS(DARWIN) && CPU(ARM64)
     {
         pid_t translated = spawnTranslatedChild();
         if (!translated)
@@ -226,7 +232,7 @@ void testProcess()
             killChild(translated);
         }
     }
-#endif // CPU(ARM64)
+#endif // OS(DARWIN) && CPU(ARM64)
 }
 
 } // namespace JSCToolsTest

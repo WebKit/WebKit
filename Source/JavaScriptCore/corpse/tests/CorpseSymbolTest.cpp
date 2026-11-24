@@ -38,7 +38,6 @@
 #include <errno.h>
 #include <limits.h>
 #include <mach-o/dyld.h>
-#include <mach/mach.h>
 #include <spawn.h>
 #include <stdlib.h>
 #include <string>
@@ -135,7 +134,7 @@ void testSymbol()
         auto expected = reinterpret_cast<uintptr_t>(WebConfig::g_config);
         Address found = snapshot.symbol("g_config");
         TEST_ASSERT(found, "a symbol exported by JavaScriptCore is found");
-        TEST_ASSERT_HEX_EQ(found.toMachVMAddress(), expected,
+        TEST_ASSERT_HEX_EQ(found.primitive(), expected,
             "g_config resolves to the address this process uses for it");
     }
     {
@@ -166,8 +165,8 @@ void testSymbol()
         TEST_ASSERT(found, "a symbol exported by a shared cache image is found");
         // A function pointer arrives signed on arm64e; only the address it names is
         // being compared here.
-        TEST_ASSERT_HEX_EQ(found.stripped().toMachVMAddress(),
-            Address(expected).stripped().toMachVMAddress(),
+        TEST_ASSERT_HEX_EQ(found.stripped().primitive(),
+            Address(expected).stripped().primitive(),
             "tolower resolves to the address this process uses for it");
     }
     {
@@ -178,8 +177,8 @@ void testSymbol()
         else {
             Address found = snapshot.symbol("environ");
             TEST_ASSERT(found, "a data symbol in the shared cache is found");
-            TEST_ASSERT_HEX_EQ(found.stripped().toMachVMAddress(),
-                Address(expected).stripped().toMachVMAddress(),
+            TEST_ASSERT_HEX_EQ(found.stripped().primitive(),
+                Address(expected).stripped().primitive(),
                 "environ resolves to the address this process uses for it");
         }
     }
