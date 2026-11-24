@@ -656,6 +656,10 @@ void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, const String& alertT
 
     auto relay = AXRelayProcessSuspendedNotification(*page);
 
+    if (RefPtr document = frame.document()) {
+        if (RefPtr documentFullscreen = document->fullscreenIfExists(); documentFullscreen && documentFullscreen->fullscreenElement())
+            documentFullscreen->exitFullscreen([](auto) { });
+    }
     page->sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), webFrame->info(), alertText), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
 }
 
@@ -679,6 +683,10 @@ bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& mess
 
     auto relay = AXRelayProcessSuspendedNotification(*page);
 
+    if (RefPtr document = frame.document()) {
+        if (RefPtr documentFullscreen = document->fullscreenIfExists(); documentFullscreen && documentFullscreen->fullscreenElement())
+            documentFullscreen->exitFullscreen([&](auto) { });
+    }
     auto sendResult = page->sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), webFrame->info(), message), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
     auto [result] = sendResult.takeReplyOr(false);
     return result;
@@ -704,6 +712,10 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& messa
 
     auto relay = AXRelayProcessSuspendedNotification(*page);
 
+    if (RefPtr document = frame.document()) {
+        if (RefPtr documentFullscreen = document->fullscreenIfExists(); documentFullscreen && documentFullscreen->fullscreenElement())
+            documentFullscreen->exitFullscreen([&](auto) { });
+    }
     auto sendResult = page->sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), webFrame->info(), message, defaultValue), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
     if (!sendResult.succeeded())
         return false;
