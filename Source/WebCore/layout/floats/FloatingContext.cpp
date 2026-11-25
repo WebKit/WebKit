@@ -268,7 +268,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     absoluteTopLeft.setY(blockStartCandidate);
     auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, true, isFloatingCandidateStartPositionedInBlockFormattingContext(layoutBox) };
-    findAvailablePosition(floatBox, placedFloats(), absoluteCoordinates.containingBlockContentBox, root());
+    findAvailablePosition(floatBox, placedFloats(), absoluteCoordinates.containingBlockContentBox, protect(root()));
     // Convert box coordinates from formatting root back to containing block.
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
     return { floatBox.inlineStart() + margins.horizontal.start - containingBlockTopLeft.x(), floatBox.blockStart() + margins.vertical.before - containingBlockTopLeft.y() };
@@ -495,7 +495,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
     // 3. Align the box with the intersected float and probe for placement again (#1). 
     auto& floats = m_placedFloats.list();
     while (true) {
-        auto innerMostInlineStartAndEnd = findAvailablePosition(floatAvoider, m_placedFloats, containingBlockContentBoxEdges, root());
+        auto innerMostInlineStartAndEnd = findAvailablePosition(floatAvoider, m_placedFloats, containingBlockContentBoxEdges, protect(root()));
         if (innerMostInlineStartAndEnd.isEmpty())
             return;
 
