@@ -35,7 +35,7 @@ namespace WTF {
 template<typename T>
 class ListDump {
 public:
-    ListDump(const T& list, ASCIILiteral comma)
+    ListDump(const T& list LIFETIME_BOUND, ASCIILiteral comma)
         : m_list(list)
         , m_comma(comma)
     {
@@ -55,7 +55,7 @@ private:
 template<typename T>
 class PointerListDump {
 public:
-    PointerListDump(const T& list, ASCIILiteral comma)
+    PointerListDump(const T& list LIFETIME_BOUND, ASCIILiteral comma)
         : m_list(list)
         , m_comma(comma)
     {
@@ -75,7 +75,7 @@ private:
 template<typename T>
 class MapDump {
 public:
-    MapDump(const T& map, ASCIILiteral arrow, ASCIILiteral comma)
+    MapDump(const T& map LIFETIME_BOUND, ASCIILiteral arrow, ASCIILiteral comma)
         : m_map(map)
         , m_arrow(arrow)
         , m_comma(comma)
@@ -95,13 +95,13 @@ private:
 };
 
 template<typename T>
-ListDump<T> listDump(const T& list, ASCIILiteral comma = ", "_s)
+ListDump<T> listDump(const T& list LIFETIME_BOUND, ASCIILiteral comma = ", "_s)
 {
     return ListDump<T>(list, comma);
 }
 
 template<typename T>
-PointerListDump<T> pointerListDump(const T& list, ASCIILiteral comma = ", "_s)
+PointerListDump<T> pointerListDump(const T& list LIFETIME_BOUND, ASCIILiteral comma = ", "_s)
 {
     return PointerListDump<T>(list, comma);
 }
@@ -126,7 +126,7 @@ UTF8CString sortedListDump(const T& list, ASCIILiteral comma = ", "_s)
 }
 
 template<typename T>
-MapDump<T> mapDump(const T& map, ASCIILiteral arrow = "=>"_s, ASCIILiteral comma = ", "_s)
+MapDump<T> mapDump(const T& map LIFETIME_BOUND, ASCIILiteral arrow = "=>"_s, ASCIILiteral comma = ", "_s)
 {
     return MapDump<T>(map, arrow, comma);
 }
@@ -148,7 +148,7 @@ UTF8CString sortedMapDump(const T& map, NOESCAPE const Comparator& comparator, A
 template<typename T, typename U>
 class ListDumpInContext {
 public:
-    ListDumpInContext(const T& list, U* context, ASCIILiteral comma)
+    ListDumpInContext(const T& list LIFETIME_BOUND, U* context, ASCIILiteral comma)
         : m_list(list)
         , m_context(context)
         , m_comma(comma)
@@ -169,7 +169,7 @@ private:
 
 template<typename T, typename U>
 ListDumpInContext<T, U> listDumpInContext(
-    const T& list, U* context, ASCIILiteral comma = ", "_s)
+    const T& list LIFETIME_BOUND, U* context, ASCIILiteral comma = ", "_s)
 {
     return ListDumpInContext<T, U>(list, context, comma);
 }

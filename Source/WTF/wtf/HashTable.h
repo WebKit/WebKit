@@ -668,9 +668,9 @@ static_assert(std::is_trivial_v<StatusBytes>);
             }
         }
 
-        ValueType* lookup(const Key& key) { return lookup<IdentityTranslatorType>(key); }
-        template<typename HashTranslator, typename T> ValueType* lookup(const T&);
-        template<typename HashTranslator, typename T> ValueType* inlineLookup(const T&);
+        ValueType* lookup(const Key& key) LIFETIME_BOUND { return lookup<IdentityTranslatorType>(key); }
+        template<typename HashTranslator, typename T> ValueType* lookup(const T&) LIFETIME_BOUND;
+        template<typename HashTranslator, typename T> ValueType* inlineLookup(const T&) LIFETIME_BOUND;
 
         ALWAYS_INLINE bool isNullStorage() const { return !m_table; }
 
@@ -825,14 +825,14 @@ static_assert(std::is_trivial_v<StatusBytes>);
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
     template<typename HashTranslator, typename T>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::lookup(const T& key) -> ValueType*
+    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::lookup(const T& key) LIFETIME_BOUND -> ValueType*
     {
         return inlineLookup<HashTranslator>(key);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
     template<typename HashTranslator, typename T>
-    ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::inlineLookup(const T& key) -> ValueType*
+    ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::inlineLookup(const T& key) LIFETIME_BOUND -> ValueType*
     {
         static_assert(sizeof(Value) <= 150, "Your HashTable types are too big to efficiently move when rehashing.  Consider using UniqueRef instead");
 

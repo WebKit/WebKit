@@ -36,6 +36,7 @@
 #include "DFGGraph.h"
 #include "DFGMayExit.h"
 #include "DFGPhase.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {
@@ -232,7 +233,7 @@ private:
             forAllKilledOperands(
                 m_graph, node, block->tryAt(nodeIndex + 1),
                 [&] (Operand operand) {
-                    dataLogLnIf(verbose, "    Killing ", operand, " while we are interested in ", listDump(relevantLocals));
+                    dataLogLnIf(verbose, "    Killing ", operand, " while we are interested in ", listDump(borrow(relevantLocals)));
                     for (unsigned i = 0; i < relevantLocals.size(); ++i) {
                         if (operand == relevantLocals[i]) {
                             relevantLocals[i--] = relevantLocals.last();

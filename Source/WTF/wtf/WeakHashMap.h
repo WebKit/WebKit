@@ -39,6 +39,7 @@ public:
     using WeakKeyType = WeakPtr<KeyType, WeakPtrImplType>;
     using ValueTraits = HashTraits<ValueType>;
     using MapType = HashMap<WeakKeyType, ValueType>;
+    static constexpr bool hasLifetimeBoundPeek = HasLifetimeBoundPeek<ValueTraits>;
 
     struct PeekType {
         // PeekType is a short-lived view created during iteration and never stored, so a raw reference is safe.
@@ -269,16 +270,11 @@ public:
         return takeOptional(&key);
     }
 
-    typename ValueTraits::PeekType get(const KeyType* key) const
-    {
-        increaseOperationCountSinceLastCleanup();
-        return m_map.get(key);
-    }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> typename ValueTraits::PeekType get(const KeyType* key) const LIFETIME_BOUND requires (lifetimeBound) { return getImpl(key); }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> typename ValueTraits::PeekType get(const KeyType* key) const requires (!lifetimeBound) { return getImpl(key); }
 
-    typename ValueTraits::PeekType get(const KeyType& key) const
-    {
-        return get(&key);
-    }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> typename ValueTraits::PeekType get(const KeyType& key) const LIFETIME_BOUND requires (lifetimeBound) { return getImpl(&key); }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> typename ValueTraits::PeekType get(const KeyType& key) const requires (!lifetimeBound) { return getImpl(&key); }
 
     std::optional<ValueType> getOptional(const KeyType* key) const
     {
@@ -382,6 +378,12 @@ public:
 #endif
 
 private:
+    typename ValueTraits::PeekType getImpl(const KeyType* key) const
+    {
+        increaseOperationCountSinceLastCleanup();
+        return m_map.get(key);
+    }
+
     ALWAYS_INLINE void cleanupHappened() const
     {
         m_operationCountSinceLastCleanup = 0;

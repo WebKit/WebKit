@@ -121,7 +121,7 @@ public:
 
     template<std::predicate<T&> Predicate> iterator findIf(NOESCAPE const Predicate&) LIFETIME_BOUND;
     template<std::predicate<const T&> Predicate> const_iterator findIf(NOESCAPE const Predicate&) const LIFETIME_BOUND;
-    template<std::predicate<const T&> Predicate> bool containsIf(NOESCAPE const Predicate& predicate) const LIFETIME_BOUND
+    template<std::predicate<const T&> Predicate> bool containsIf(NOESCAPE const Predicate& predicate) const
     {
         return findIf(predicate) != end();
     }

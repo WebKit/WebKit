@@ -42,37 +42,37 @@
 
 namespace WTF {
 
-inline std::span<const Latin1Character> span(const Latin1Character& character)
+inline std::span<const Latin1Character> span(const Latin1Character& character LIFETIME_BOUND)
 {
     return unsafeMakeSpan(&character, 1);
 }
 
-inline std::span<const char16_t> span(const char16_t& character)
+inline std::span<const char16_t> span(const char16_t& character LIFETIME_BOUND)
 {
     return unsafeMakeSpan(&character, 1);
 }
 
-inline std::span<const char> unsafeSpan(const char* string)
+inline std::span<const char> unsafeSpan(const char* string LIFETIME_BOUND)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return unsafeMakeSpan(string, string ? strlen(string) : 0);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
-inline std::span<const char> unsafeSpanIncludingNullTerminator(const char* string)
+inline std::span<const char> unsafeSpanIncludingNullTerminator(const char* string LIFETIME_BOUND)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return unsafeMakeSpan(string, string ? strlen(string) + 1 : 0);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
-inline std::span<const char8_t> unsafeSpan(const char8_t* string)
+inline std::span<const char8_t> unsafeSpan(const char8_t* string LIFETIME_BOUND)
 {
     return byteCast<char8_t>(unsafeSpan(byteCast<char>(string)));
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-inline std::span<const char16_t> unsafeSpan(const char16_t* string)
+inline std::span<const char16_t> unsafeSpan(const char16_t* string LIFETIME_BOUND)
 {
     if (!string)
         return { };
@@ -84,7 +84,7 @@ inline std::span<const char16_t> unsafeSpan(const char16_t* string)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if !HAVE(MISSING_U8STRING)
-inline std::span<const char8_t> span(const std::u8string& string)
+inline std::span<const char8_t> span(const std::u8string& string LIFETIME_BOUND)
 {
     return unsafeMakeSpan(string.data(), string.length());
 }

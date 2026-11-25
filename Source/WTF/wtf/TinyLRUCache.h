@@ -129,7 +129,7 @@ public:
         Cache* m_cache { nullptr };
     };
 
-    const ValueType& get(const KeyType& key)
+    const ValueType& get(const KeyType& key) LIFETIME_BOUND
     {
         invalidateIterators();
 

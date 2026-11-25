@@ -35,6 +35,7 @@
 #include "B3SwitchValue.h"
 #include "B3UseCounts.h"
 #include "B3ValueInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 {
@@ -243,7 +244,7 @@ private:
                 ", branch = ", pointerDump(branch),
                 ", extra = ", pointerDump(extra),
                 ", source = ", pointerDump(source),
-                ", cases = ", listDump(cases),
+                ", cases = ", listDump(borrow(cases)),
                 ", fallThrough = ", fallThrough, "}");
         }
 

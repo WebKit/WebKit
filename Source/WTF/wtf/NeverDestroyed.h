@@ -82,15 +82,15 @@ public:
         new (storagePointer()) T(WTF::move(*other.objectPointer()));
     }
 
-    operator T&() { return *objectPointer(); }
-    T& get() { return *objectPointer(); }
+    operator T&() LIFETIME_BOUND { return *objectPointer(); }
+    T& get() LIFETIME_BOUND { return *objectPointer(); }
 
-    T* operator->() { return objectPointer(); }
+    T* operator->() LIFETIME_BOUND { return objectPointer(); }
 
-    operator const T&() const { return *objectPointer(); }
-    const T& get() const { return *objectPointer(); }
+    operator const T&() const LIFETIME_BOUND { return *objectPointer(); }
+    const T& get() const LIFETIME_BOUND { return *objectPointer(); }
 
-    const T* operator->() const { return objectPointer(); }
+    const T* operator->() const LIFETIME_BOUND { return objectPointer(); }
 
 private:
     using PointerType = typename std::remove_const<T>::type*;
@@ -135,15 +135,15 @@ public:
         new (storagePointerWithoutAccessCheck()) T(std::forward<Args>(args)...);
     }
 
-    operator T&() { return *objectPointer(); }
-    T& get() { return *objectPointer(); }
+    operator T&() LIFETIME_BOUND { return *objectPointer(); }
+    T& get() LIFETIME_BOUND { return *objectPointer(); }
 
-    T* operator->() { return objectPointer(); }
+    T* operator->() LIFETIME_BOUND { return objectPointer(); }
 
-    operator const T&() const { return *objectPointer(); }
-    const T& get() const { return *objectPointer(); }
+    operator const T&() const LIFETIME_BOUND { return *objectPointer(); }
+    const T& get() const LIFETIME_BOUND { return *objectPointer(); }
 
-    const T* operator->() const { return objectPointer(); }
+    const T* operator->() const LIFETIME_BOUND { return objectPointer(); }
 
 #if ASSERT_ENABLED
     bool isConstructed() const { return m_isConstructed; }

@@ -190,7 +190,7 @@ bool IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::contains(unsig
 }
 
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
-auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::get(unsigned value) -> EntryType*
+auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::get(unsigned value) LIFETIME_BOUND -> EntryType*
 {
     unsigned position = m_map[value];
     if (position >= m_values.size())
@@ -204,7 +204,7 @@ auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::get(unsigned v
 }
 
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
-auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::get(unsigned value) const -> const EntryType*
+auto IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::get(unsigned value) const LIFETIME_BOUND -> const EntryType*
 {
     return const_cast<IndexSparseSet*>(this)->get(value);
 }

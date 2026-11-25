@@ -44,6 +44,7 @@
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
 #include <wtf/IndexSet.h>
@@ -110,7 +111,7 @@ public:
     {
         dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "        Looking for ", pointerDump(ptr), " in ", *this);
         if (Matches* matches = find(ptr)) {
-            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "        Matches: ", pointerListDump(*matches));
+            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "        Matches: ", pointerListDump(borrow(*matches)));
             for (Value* candidateValue : *matches) {
                 dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "        Having candidate: ", pointerDump(candidateValue));
                 if (MemoryValue* candidateMemory = candidateValue->as<MemoryValue>()) {
@@ -127,7 +128,7 @@ public:
         out.print("{"_s);
         CommaPrinter comma;
         for (auto& entry : m_map)
-            out.print(comma, pointerDump(entry.key), "=>"_s, pointerListDump(entry.value));
+            out.print(comma, pointerDump(entry.key), "=>"_s, pointerListDump(borrow(entry.value)));
         out.print("}"_s);
     }
     
@@ -723,7 +724,7 @@ private:
         if (matches.isEmpty())
             return false;
 
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "Eliminating ", *m_value, " due to ", pointerListDump(matches));
+        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "Eliminating ", *m_value, " due to ", pointerListDump(borrow(matches)));
         
         m_changed = true;
 
@@ -831,7 +832,7 @@ private:
             worklist.pushAll(block->predecessors());
         }
 
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Got matches: ", pointerListDump(matches));
+        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Got matches: ", pointerListDump(borrow(matches)));
         return matches;
     }
 

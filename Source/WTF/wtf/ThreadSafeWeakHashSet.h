@@ -57,13 +57,13 @@ public:
             : m_strongReferences(WTF::move(strongReferences)) { }
 
     public:
-        T* get() const
+        T* get() const LIFETIME_BOUND
         {
             RELEASE_ASSERT(m_position < m_strongReferences.size());
             return m_strongReferences[m_position].ptr();
         }
-        T& operator*() const { return *get(); }
-        T* operator->() const { return get(); }
+        T& operator*() const LIFETIME_BOUND { return *get(); }
+        T* operator->() const LIFETIME_BOUND { return get(); }
 
         const_iterator& operator++()
         {

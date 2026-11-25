@@ -80,14 +80,14 @@ public:
         }
     }
 
-    T* operator->()
+    T* operator->() LIFETIME_BOUND
     {
         DATA_MUTEX_CHECK(m_isLocked && mutex().isHeld());
         assertIsHeld(m_dataMutex.m_mutex);
         return &m_dataMutex.m_data;
     }
 
-    T& operator*()
+    T& operator*() LIFETIME_BOUND
     {
         DATA_MUTEX_CHECK(m_isLocked && mutex().isHeld());
         assertIsHeld(m_dataMutex.m_mutex);

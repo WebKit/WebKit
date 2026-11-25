@@ -97,7 +97,7 @@ public:
     }
     
     template<typename... Args>
-    T* add(Args&&... args)
+    T* add(Args&&... args) LIFETIME_BOUND
     {
         Node* newNode = static_cast<Node*>(Malloc::malloc(sizeof(Node)));
         new (NotNull, newNode) Node(std::forward<Args>(args)...);

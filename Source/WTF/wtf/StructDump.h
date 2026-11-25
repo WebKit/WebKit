@@ -34,7 +34,7 @@ namespace WTF {
 template<typename T>
 class StructDump {
 public:
-    StructDump(const T& data)
+    StructDump(const T& data LIFETIME_BOUND)
         : m_data(data)
     {
     }
@@ -63,7 +63,7 @@ private:
 };
 
 template<typename T>
-StructDump<T> structDump(const T& data)
+StructDump<T> structDump(const T& data LIFETIME_BOUND)
 {
     return StructDump<T>(data);
 }

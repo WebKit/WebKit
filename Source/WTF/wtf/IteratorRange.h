@@ -67,7 +67,7 @@ template<typename Container, typename Iterator>
 class SizedIteratorRange {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SizedIteratorRange);
 public:
-    SizedIteratorRange(const Container& container, Iterator begin, Iterator end)
+    SizedIteratorRange(const Container& container LIFETIME_BOUND, Iterator begin, Iterator end)
         : m_container(container)
         , m_begin(WTF::move(begin))
         , m_end(WTF::move(end))
@@ -92,7 +92,7 @@ IteratorRange<Iterator> makeIteratorRange(Iterator&& begin, Iterator&& end)
 }
 
 template<SizedContainer Container, typename Iterator>
-SizedIteratorRange<Container, Iterator> makeSizedIteratorRange(const Container& container, Iterator&& begin, Iterator&& end)
+SizedIteratorRange<Container, Iterator> makeSizedIteratorRange(const Container& container LIFETIME_BOUND, Iterator&& begin, Iterator&& end)
 {
     return SizedIteratorRange<Container, Iterator>(container, std::forward<Iterator>(begin), std::forward<Iterator>(end));
 }

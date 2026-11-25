@@ -707,7 +707,7 @@ String pathFileName(const String& path)
     return fromStdFileSystemPath(toStdFileSystemPath(path).filename());
 }
 
-StringView pathExtension(StringView path)
+StringView pathExtension(StringView path LIFETIME_BOUND)
 {
     if (auto separator = path.reverseFind(pathSeparator); separator != notFound)
         path = path.substring(separator + 1);

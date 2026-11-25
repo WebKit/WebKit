@@ -88,6 +88,9 @@ template<typename T> struct GenericHashTraits : GenericHashTraitsBase<std::is_in
 
 template<typename T> struct HashTraits : GenericHashTraits<T> { };
 
+// Traits set hasLifetimeBoundPeek when peek() returns a pointer to an object owned by the stored value.
+template<typename Traits> concept HasLifetimeBoundPeek = requires { requires Traits::hasLifetimeBoundPeek; };
+
 template<typename T> struct FloatHashTraits : GenericHashTraits<T> {
     static T emptyValue() { return std::numeric_limits<T>::infinity(); }
     static void constructDeletedValue(T& slot) { slot = -std::numeric_limits<T>::infinity(); }
@@ -159,6 +162,7 @@ template<typename T, typename Deleter> struct HashTraits<std::unique_ptr<T, Dele
     static bool isDeletedValue(const std::unique_ptr<T, Deleter>& value) { return value.get() == reinterpret_cast<T*>(-1); }
 
     typedef T* PeekType;
+    static constexpr bool hasLifetimeBoundPeek = true;
     static T* peek(const std::unique_ptr<T, Deleter>& value) { return value.get(); }
     static T* peek(std::nullptr_t) { return nullptr; }
 
@@ -203,6 +207,7 @@ template<typename T> struct HashTraits<UniqueRef<T>> : SimpleClassHashTraits<Uni
     static bool isDeletedValue(const UniqueRef<T>& value) { return value.get() == reinterpret_cast<T*>(-1); }
 
     typedef T* PeekType;
+    static constexpr bool hasLifetimeBoundPeek = true;
     static const T* peek(const UniqueRef<T>& value) { return &value.get(); }
     static T* peek(UniqueRef<T>& value) { return &value.get(); }
     static T* peek(std::nullptr_t) { return nullptr; }
@@ -225,6 +230,7 @@ template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> 
     static bool isEmptyValue(const RefPtr<P, Q, R>& value) { return !value; }
 
     using PeekType = P*;
+    static constexpr bool hasLifetimeBoundPeek = true;
     static PeekType peek(const RefPtr<P, Q, R>& value) { return value; }
     static PeekType peek(P* value) { return value; }
 
@@ -252,6 +258,7 @@ template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
     static bool isEmptyValue(const Ref<P>& value) { return value.isHashTableEmptyValue(); }
 
     using PeekType = P*;
+    static constexpr bool hasLifetimeBoundPeek = true;
     static PeekType peek(const Ref<P>& value) { return const_cast<PeekType>(value.ptrAllowingHashTableEmptyValue()); }
     static PeekType peek(P* value) { return value; }
 

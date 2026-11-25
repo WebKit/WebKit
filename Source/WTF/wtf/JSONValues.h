@@ -99,7 +99,7 @@ public:
     NODELETE std::optional<bool> asBoolean() const;
     NODELETE std::optional<int> asInteger() const;
     NODELETE std::optional<double> asDouble() const;
-    NODELETE const String& asString() const;
+    NODELETE const String& asString() const LIFETIME_BOUND;
     RefPtr<Value> asValue();
     RefPtr<Object> asObject();
     RefPtr<const Object> asObject() const;
@@ -205,7 +205,7 @@ protected:
     const_iterator begin() const LIFETIME_BOUND { return m_map.begin(); }
     const_iterator end() const LIFETIME_BOUND { return m_map.end(); }
 
-    const OrderStorage& keys() const { return m_order; }
+    const OrderStorage& keys() const LIFETIME_BOUND { return m_order; }
 
     unsigned size() const { return m_map.size(); }
 

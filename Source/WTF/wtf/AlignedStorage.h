@@ -42,10 +42,10 @@ public:
     T* get() LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return reinterpret_cast_ptr<T*>(&m_storage); }
     const T* get() const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return reinterpret_cast_ptr<const T*>(&m_storage); }
 
-    T& operator*() { return *get(); }
-    T* operator->() { return get(); }
-    const T& operator*() const { return *get(); }
-    const T* operator->() const { return get(); }
+    T& operator*() LIFETIME_BOUND { return *get(); }
+    T* operator->() LIFETIME_BOUND { return get(); }
+    const T& operator*() const LIFETIME_BOUND { return *get(); }
+    const T* operator->() const LIFETIME_BOUND { return get(); }
 
 private:
     struct alignas(alignment) Storage {

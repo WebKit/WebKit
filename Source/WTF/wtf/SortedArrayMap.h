@@ -59,7 +59,7 @@ public:
     template<typename KeyArgument> ValueType get(const KeyArgument&, const ValueType& defaultValue = { }) const;
 
     // FIXME: Should add a function like this to HashMap so the two kinds of maps are more interchangable.
-    template<typename KeyArgument> const ValueType* tryGet(const KeyArgument&) const;
+    template<typename KeyArgument> const ValueType* tryGet(const KeyArgument&) const LIFETIME_BOUND;
 
     const std::array<ElementType, N>& array() const LIFETIME_BOUND { return m_array; }
 
@@ -175,7 +175,7 @@ constexpr SortedArrayMap<ElementType, N>::SortedArrayMap(std::array<ElementType,
     }));
 }
 
-template<typename ElementType, std::size_t N> template<typename KeyArgument> inline auto SortedArrayMap<ElementType, N>::tryGet(const KeyArgument& key) const -> const ValueType*
+template<typename ElementType, std::size_t N> template<typename KeyArgument> inline auto SortedArrayMap<ElementType, N>::tryGet(const KeyArgument& key) const LIFETIME_BOUND -> const ValueType*
 {
     using KeyType = typename ElementType::first_type;
     auto parsedKey = SortedArrayKeyTraits<KeyType>::parse(key);

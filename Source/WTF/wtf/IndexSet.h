@@ -84,7 +84,7 @@ public:
     class Iterable {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterable);
     public:
-        Iterable(const CollectionType& collection, const BitVector& set)
+        Iterable(const CollectionType& collection LIFETIME_BOUND, const BitVector& set LIFETIME_BOUND)
             : m_collection(collection)
             , m_set(set)
         {
@@ -139,7 +139,7 @@ public:
     // For values, you do:
     // indexSet.values(procedure.values());
     template<typename CollectionType>
-    Iterable<CollectionType> values(const CollectionType& collection) const LIFETIME_BOUND
+    Iterable<CollectionType> values(const CollectionType& collection LIFETIME_BOUND) const LIFETIME_BOUND
     {
         return Iterable<CollectionType>(collection, indices());
     }

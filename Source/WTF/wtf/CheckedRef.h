@@ -116,8 +116,8 @@ public:
     bool isHashTableEmptyValue() const { return m_ptr == hashTableEmptyValue(); }
     static T* hashTableEmptyValue() { return nullptr; }
 
-    const T* ptrAllowingHashTableEmptyValue() const { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
-    T* ptrAllowingHashTableEmptyValue() { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
+    const T* ptrAllowingHashTableEmptyValue() const LIFETIME_BOUND { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
+    T* ptrAllowingHashTableEmptyValue() LIFETIME_BOUND { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
 
     ALWAYS_INLINE T* ptr() const LIFETIME_BOUND
     {

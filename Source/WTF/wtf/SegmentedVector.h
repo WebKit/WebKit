@@ -180,7 +180,7 @@ namespace WTF {
         }
 
         template<typename... Args>
-        ALWAYS_INLINE T& alloc(Args&&... args)
+        ALWAYS_INLINE T& alloc(Args&&... args) LIFETIME_BOUND
         {
             size_t newIndex = m_size++;
             if constexpr (hasInlineStorage) {

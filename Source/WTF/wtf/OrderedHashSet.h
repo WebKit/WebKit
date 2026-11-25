@@ -206,8 +206,8 @@ public:
 
     TakeType takeAny() { return take(begin()); }
 
-    const ValueType& first() const { ASSERT(!isEmpty()); return *begin(); }
-    const ValueType& last() const { ASSERT(!isEmpty()); return *rbegin(); }
+    const ValueType& first() const LIFETIME_BOUND { ASSERT(!isEmpty()); return *begin(); }
+    const ValueType& last() const LIFETIME_BOUND { ASSERT(!isEmpty()); return *rbegin(); }
 
     static bool isValidValue(const ValueType& value)
     {

@@ -177,7 +177,7 @@ public:
         return const_reverse_iterator(this, 0);
     }
 
-    ValueType* lookup(const KeyType& key)
+    ValueType* lookup(const KeyType& key) LIFETIME_BOUND
     {
         if (!m_buckets)
             return nullptr;
@@ -195,13 +195,13 @@ public:
         }
     }
 
-    const ValueType* lookup(const KeyType& key) const
+    const ValueType* lookup(const KeyType& key) const LIFETIME_BOUND
     {
         return const_cast<OrderedHashTable*>(this)->lookup(key);
     }
 
     template<typename HashTranslator, typename T>
-    ValueType* lookup(const T& key)
+    ValueType* lookup(const T& key) LIFETIME_BOUND
     {
         if (!m_buckets)
             return nullptr;
@@ -220,7 +220,7 @@ public:
     }
 
     template<typename HashTranslator, typename T>
-    const ValueType* lookup(const T& key) const
+    const ValueType* lookup(const T& key) const LIFETIME_BOUND
     {
         return const_cast<OrderedHashTable*>(this)->template lookup<HashTranslator>(key);
     }
@@ -297,18 +297,18 @@ public:
         return const_cast<OrderedHashTable*>(this)->template lookup<HashTranslator>(key) != nullptr;
     }
 
-    AddResult add(const KeyType& key, NOESCAPE const auto& valueFunctor)
+    AddResult add(const KeyType& key, NOESCAPE const auto& valueFunctor) LIFETIME_BOUND
     {
         return internalAdd(key, valueFunctor);
     }
 
-    AddResult add(KeyType&& key, NOESCAPE const auto& valueFunctor)
+    AddResult add(KeyType&& key, NOESCAPE const auto& valueFunctor) LIFETIME_BOUND
     {
         return internalAdd(std::forward<KeyType>(key), valueFunctor);
     }
 
     template<typename HashTranslator, typename K>
-    AddResult add(K&& key, NOESCAPE const auto& valueFunctor)
+    AddResult add(K&& key, NOESCAPE const auto& valueFunctor) LIFETIME_BOUND
     {
         if (!m_buckets) {
             initializeBuckets(initialBucketCount);

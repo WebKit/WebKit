@@ -248,7 +248,7 @@ public:
 
     static void initializePlatformThreading();
 
-    const StackBounds& stack() const
+    const StackBounds& stack() const LIFETIME_BOUND
     {
         return m_stack;
     }

@@ -40,7 +40,7 @@ public:
     {
     }
 
-    IndexedContainerIterator(const Container& container, unsigned index)
+    IndexedContainerIterator(const Container& container LIFETIME_BOUND, unsigned index)
         : m_container(&container)
         , m_index(findNext(index))
     {

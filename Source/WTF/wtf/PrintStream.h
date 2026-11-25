@@ -246,7 +246,7 @@ void printInternal(PrintStream& out, const Dumpable auto& value)
 #define MAKE_PRINT_METHOD_ADAPTOR(Name, Type, method) \
     class Name {                                 \
     public:                                      \
-        Name(const Type& value)                  \
+        Name(const Type& value LIFETIME_BOUND)   \
             : m_value(value)                     \
         {                                        \
         }                                        \
@@ -260,7 +260,7 @@ void printInternal(PrintStream& out, const Dumpable auto& value)
 
 #define MAKE_PRINT_METHOD(Type, dumpMethod, method) \
     MAKE_PRINT_METHOD_ADAPTOR(DumperFor_##method, Type, dumpMethod);    \
-    DumperFor_##method method() const { return DumperFor_##method(*this); }
+    DumperFor_##method method() const LIFETIME_BOUND { return DumperFor_##method(*this); }
 
 // Use an adaptor-based dumper for characters to avoid situations where
 // you've "compressed" an integer to a character and it ends up printing
@@ -311,7 +311,7 @@ void printInternal(PrintStream& out, const Ref<T>& value)
 template<typename T, typename U>
 class ValueInContext {
 public:
-    ValueInContext(const T& value, U* context)
+    ValueInContext(const T& value LIFETIME_BOUND, U* context)
         : m_value(&value)
         , m_context(context)
     {
@@ -328,7 +328,7 @@ private:
 };
 
 template<typename T, typename U>
-ValueInContext<T, U> inContext(const T& value, U* context)
+ValueInContext<T, U> inContext(const T& value LIFETIME_BOUND, U* context)
 {
     return ValueInContext<T, U>(value, context);
 }
@@ -364,7 +364,7 @@ PointerDumpInContext<T, U> pointerDumpInContext(const T* ptr, U* context)
 template<typename T, typename U>
 class ValueIgnoringContext {
 public:
-    ValueIgnoringContext(const U& value)
+    ValueIgnoringContext(const U& value LIFETIME_BOUND)
         : m_value(&value)
     {
     }
@@ -380,7 +380,7 @@ private:
 };
 
 template<typename T, typename U>
-ValueIgnoringContext<T, U> ignoringContext(const U& value)
+ValueIgnoringContext<T, U> ignoringContext(const U& value LIFETIME_BOUND)
 {
     return ValueIgnoringContext<T, U>(value);
 }

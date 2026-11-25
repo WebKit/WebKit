@@ -407,9 +407,9 @@ public:
             return !isHashTraitsEmptyValue<KeyTraits>(key);
     }
 
-    ValueType* lookup(const Key& key) { return lookup<IdentityTranslatorType>(key); }
-    template<typename HashTranslator, typename T> ValueType* lookup(const T&);
-    template<typename HashTranslator, typename T> ValueType* inlineLookup(const T&);
+    ValueType* lookup(const Key& key) LIFETIME_BOUND { return lookup<IdentityTranslatorType>(key); }
+    template<typename HashTranslator, typename T> ValueType* lookup(const T&) LIFETIME_BOUND;
+    template<typename HashTranslator, typename T> ValueType* inlineLookup(const T&) LIFETIME_BOUND;
 
 #if ASSERT_ENABLED
         void checkTableConsistency() const;
@@ -528,14 +528,14 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy, typename Malloc>
 template<typename HashTranslator, typename T>
-inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::lookup(const T& key) -> ValueType*
+inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::lookup(const T& key) LIFETIME_BOUND -> ValueType*
 {
     return inlineLookup<HashTranslator>(key);
 }
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy, typename Malloc>
 template<typename HashTranslator, typename T>
-ALWAYS_INLINE auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::inlineLookup(const T& key) -> ValueType*
+ALWAYS_INLINE auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::inlineLookup(const T& key) LIFETIME_BOUND -> ValueType*
 {
     checkKey<HashTranslator>(key);
 

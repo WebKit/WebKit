@@ -28,13 +28,14 @@
 
 #if ENABLE(DFG_JIT)
 
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {
 
 void ObjectMaterializationData::dump(PrintStream& out) const
 {
-    out.print("[", listDump(m_properties), "]");
+    out.print("[", listDump(borrow(m_properties)), "]");
 }
 
 } } // namespace JSC::DFG
