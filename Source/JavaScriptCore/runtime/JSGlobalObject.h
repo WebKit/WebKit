@@ -40,7 +40,6 @@
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
-struct OpaqueJSWeakObjectMap;
 
 OBJC_CLASS JSWrapperMap;
 
@@ -1244,9 +1243,6 @@ public:
     void cachedFunctionExecutableForFunctionConstructor(FunctionExecutable*);
 
     static inline Structure* createStructure(VM&, JSValue prototype);
-
-    inline void registerWeakMap(OpaqueJSWeakObjectMap*);
-    inline void unregisterWeakMap(OpaqueJSWeakObjectMap*);
 
     inline std::unique_ptr<OpaqueJSClassContextData>& contextData(OpaqueJSClass*);
 

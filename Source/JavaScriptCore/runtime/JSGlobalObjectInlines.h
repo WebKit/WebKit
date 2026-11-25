@@ -512,12 +512,6 @@ inline unsigned JSGlobalObject::profileGroup() const
     return m_rareData->profileGroup;
 }
 
-inline void JSGlobalObject::registerWeakMap(OpaqueJSWeakObjectMap* map)
-{
-    // FIXME: This used to keep a set, but not clear why that was done.
-    map->ref();
-}
-
 inline std::unique_ptr<OpaqueJSClassContextData>& JSGlobalObject::contextData(OpaqueJSClass* key)
 {
     createRareDataIfNeeded();

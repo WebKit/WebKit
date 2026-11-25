@@ -1368,9 +1368,8 @@ TextIteratorPosition TextIterator::position() const
     return { *m_positionNode, m_positionOffsetBaseNode, static_cast<unsigned>(m_positionStartOffset), static_cast<unsigned>(m_positionEndOffset) };
 }
 
-SimpleRange TextIterator::range() const
+void TextIterator::resolvePositionOffsets() const
 {
-    ASSERT(!atEnd());
     // Use the current run information, if we have it.
     if (m_positionOffsetBaseNode) {
         unsigned index = m_positionOffsetBaseNode->computeNodeIndex();
@@ -1378,15 +1377,22 @@ SimpleRange TextIterator::range() const
         m_positionEndOffset += index;
         m_positionOffsetBaseNode = nullptr;
     }
+}
+
+SimpleRange TextIterator::range() const
+{
+    ASSERT(!atEnd());
+    resolvePositionOffsets();
     return { { *m_positionNode, static_cast<unsigned>(m_positionStartOffset) }, { *m_positionNode, static_cast<unsigned>(m_positionEndOffset) } };
 }
 
 Node* TextIterator::node() const
 {
-    auto start = this->range().start;
-    if (start.container->isCharacterDataNode())
-        return start.container.unsafePtr();
-    return start.container->traverseToChildAt(start.offset);
+    ASSERT(!atEnd());
+    if (m_positionNode->isCharacterDataNode())
+        return m_positionNode.get();
+    resolvePositionOffsets();
+    return m_positionNode->traverseToChildAt(static_cast<unsigned>(m_positionStartOffset));
 }
 
 #if ENABLE(TREE_DEBUGGING)

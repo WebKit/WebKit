@@ -152,6 +152,7 @@ private:
     void emitCharacter(char16_t, RefPtr<Node>&& characterNode, RefPtr<Node>&& offsetBaseNode, int textStartOffset, int textEndOffset);
     void emitText(Text& textNode, RenderText&, int textStartOffset, int textEndOffset);
     void revertToRemainingTextRun();
+    void resolvePositionOffsets() const;
 
     Node* baseNodeForEmittingNewLine() const;
 

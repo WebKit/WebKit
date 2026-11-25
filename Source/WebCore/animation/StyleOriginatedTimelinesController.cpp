@@ -97,7 +97,7 @@ ScrollTimeline& StyleOriginatedTimelinesController::inactiveNamedTimeline(const 
     return timelines.last();
 }
 
-ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vector<Ref<ScrollTimeline>>& ancestorTimelines, const Styleable& styleable, const Element* timelineScopeElement)
+RefPtr<ScrollTimeline> StyleOriginatedTimelinesController::determineTreeOrder(const Vector<Ref<ScrollTimeline>>& ancestorTimelines, const Styleable& styleable, const Element* timelineScopeElement)
 {
     RefPtr element = styleable.element.ptr();
     while (element) {
@@ -112,21 +112,21 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
                 // Naming conflict due to timeline-scope, see if the element declares a non-deferred timeline.
                 for (auto& matchedTimeline : matchedTimelines) {
                     if (element == originatingElement(matchedTimeline))
-                        return matchedTimeline.unsafePtr();
+                        return WTF::move(matchedTimeline);
                 }
                 // Prefer the nearest timeline in hierarchy.
                 for (auto& matchedTimeline : matchedTimelines | std::views::reverse) {
                     if (styleable.element->isComposedTreeDescendantOf(*originatingElement(matchedTimeline)))
-                        return matchedTimeline.unsafePtr();
+                        return WTF::move(matchedTimeline);
                 }
                 // Otherwise return the last of the matching timelines per https://github.com/w3c/csswg-drafts/issues/12581.
-                return matchedTimelines.last().unsafePtr();
+                return WTF::move(matchedTimelines.last());
             }
             ASSERT(matchedTimelines.size() <= 2);
             // Favor scroll timelines in case of conflict
             if (!is<ViewTimeline>(matchedTimelines.first()))
-                return matchedTimelines.first().unsafePtr();
-            return matchedTimelines.last().unsafePtr();
+                return WTF::move(matchedTimelines.first());
+            return WTF::move(matchedTimelines.last());
         }
         // Has blocking timeline scope element
         if (timelineScopeElement == element.get()) {
@@ -158,10 +158,10 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
 
         return compareStyleablePositionsInDocumentTreeOrder(*lhsStyleable, *rhsStyleable);
     });
-    return sortedTimelines.first().unsafePtr();
+    return WTF::move(sortedTimelines.first());
 }
 
-ScrollTimeline* StyleOriginatedTimelinesController::determineTimelineForElement(const Vector<Ref<ScrollTimeline>>& timelines, const Styleable& styleable, Style::ScopeOrdinal targetTimelineScopeOrdinal, const Element* timelineScopeElement)
+RefPtr<ScrollTimeline> StyleOriginatedTimelinesController::determineTimelineForElement(const Vector<Ref<ScrollTimeline>>& timelines, const Styleable& styleable, Style::ScopeOrdinal targetTimelineScopeOrdinal, const Element* timelineScopeElement)
 {
     // https://drafts.csswg.org/scroll-animations-1/#timeline-scoping
     // A named scroll progress timeline or view progress timeline is referenceable by:

@@ -232,9 +232,9 @@ WebKitDOMHTMLElement* webkit_dom_html_table_section_element_insert_row(WebKitDOM
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+        return nullptr;
     }
-    WebCore::HTMLElement* resultElement = result.releaseReturnValue().unsafePtr();
-    return WebKit::kit(resultElement);
+    return WEBKIT_DOM_HTML_ELEMENT(WebKit::kit(result.releaseReturnValue().ptr()));
 }
 
 void webkit_dom_html_table_section_element_delete_row(WebKitDOMHTMLTableSectionElement* self, glong index, GError** error)

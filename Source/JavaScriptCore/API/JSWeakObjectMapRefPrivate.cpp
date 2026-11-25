@@ -44,9 +44,8 @@ JSWeakObjectMapRef JSWeakObjectMapCreate(JSContextRef context, void* privateData
     JSGlobalObject* globalObject = toJS(context);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto map = OpaqueJSWeakObjectMap::create(vm, privateData, callback);
-    globalObject->registerWeakMap(map.ptr());
-    return map.unsafePtr();
+    // The map is intentionally leaked.
+    return &OpaqueJSWeakObjectMap::create(vm, privateData, callback).leakRef();
 }
 
 void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSObjectRef object)

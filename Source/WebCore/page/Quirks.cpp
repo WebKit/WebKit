@@ -1178,10 +1178,10 @@ bool Quirks::needsPointerTouchCompatibility(const Element& target) const
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
     if (WTF::IOSApplication::isFeedly()) {
-        RefPtr pageContainer = [&target] -> const HTMLElement* {
+        RefPtr pageContainer = [&target] -> RefPtr<const HTMLElement> {
             for (Ref ancestor : lineageOfType<HTMLElement>(target)) {
                 if (ancestor->hasClassName("PageContainer"_s))
-                    return ancestor.unsafePtr();
+                    return WTF::move(ancestor);
             }
             return nullptr;
         }();

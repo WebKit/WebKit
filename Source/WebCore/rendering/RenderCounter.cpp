@@ -53,7 +53,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderCounter);
 using CounterMap = HashMap<AtomString, Ref<CounterNode>>;
 using CounterMaps = SingleThreadWeakHashMap<RenderElement, std::unique_ptr<CounterMap>>;
 
-static CounterNode* makeCounterNode(RenderElement&, const AtomString& identifier, bool alwaysCreateCounter);
+static RefPtr<CounterNode> makeCounterNode(RenderElement&, const AtomString& identifier, bool alwaysCreateCounter);
 
 NODELETE static CounterMaps& counterMaps()
 {
@@ -361,7 +361,7 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
     return { };
 }
 
-static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& identifier, bool alwaysCreateCounter)
+static RefPtr<CounterNode> makeCounterNode(RenderElement& renderer, const AtomString& identifier, bool alwaysCreateCounter)
 {
     if (renderer.hasCounterNodeMap()) {
         ASSERT(counterMaps().contains(renderer));
@@ -386,7 +386,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
     renderer.setHasCounterNodeMap(true);
 
     if (newNode->parent() || renderer.shouldApplyStyleContainment())
-        return newNode.unsafePtr();
+        return newNode;
 
     // Check if some nodes that were previously root nodes should become children of this node now.
     CheckedPtr currentRenderer = &renderer;
@@ -407,7 +407,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
         newNode->insertAfter(*currentCounter, protect(newNode->lastChild()), identifier);
     }
 
-    return newNode.unsafePtr();
+    return newNode;
 }
 
 RenderCounter::RenderCounter(Document& document, const Style::Content::Counter& counter)

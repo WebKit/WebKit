@@ -89,7 +89,7 @@ Element* DocumentFullscreen::fullscreenElement() const
 {
     for (auto& element : document().topLayerElements() | std::views::reverse) {
         if (element->hasFullscreenFlag())
-            return element.unsafePtr();
+            return element.ptr();
     }
 
     return nullptr;
