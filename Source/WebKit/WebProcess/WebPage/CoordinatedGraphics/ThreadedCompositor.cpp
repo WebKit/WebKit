@@ -494,8 +494,17 @@ void ThreadedCompositor::renderLayerTree()
         deviceScaleFactor = m_attributes.deviceScaleFactor;
     }
 
-    if (viewportSize.isEmpty())
+    if (viewportSize.isEmpty()) {
+        // Nothing can be painted while the viewport is empty, for example while the view has no height.
+        // Still commit the layer state and complete the rendering update, so that the next one, which
+        // applies the new size when the view gets one, can run. No frame is sent, so frameComplete() is
+        // not called for this composition: call it here to leave the InProgress state.
+        flushCompositingState(reasons);
+        if (shouldNotifiyDidComposite)
+            m_didCompositeRunLoopObserver->schedule(&RunLoop::mainSingleton());
+        frameComplete();
         return;
+    }
 
     TransformationMatrix viewportTransform;
     viewportTransform.scale(deviceScaleFactor);

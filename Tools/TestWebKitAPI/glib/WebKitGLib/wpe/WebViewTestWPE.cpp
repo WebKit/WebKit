@@ -34,7 +34,27 @@ void WebViewTest::quitMainLoopAfterProcessingPendingEvents()
 
 void WebViewTest::resizeView(int width, int height)
 {
-    // FIXME: implement.
+#if ENABLE(WPE_PLATFORM)
+    if (m_display) {
+        auto* view = webkit_web_view_get_wpe_view(m_webView.get());
+        g_assert_true(WPE_IS_VIEW(view));
+        if (width == -1)
+            width = wpe_view_get_width(view);
+        if (height == -1)
+            height = wpe_view_get_height(view);
+        wpe_toplevel_resize(wpe_view_get_toplevel(view), width, height);
+        return;
+    }
+#endif
+#if USE(LIBWPE)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // The legacy backend has no getter for the current size, so both dimensions must be given.
+    g_assert_cmpint(width, !=, -1);
+    g_assert_cmpint(height, !=, -1);
+    auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView.get()));
+    wpe_view_backend_dispatch_set_size(backend, width, height);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 }
 
 void WebViewTest::showInWindow(int width, int height)

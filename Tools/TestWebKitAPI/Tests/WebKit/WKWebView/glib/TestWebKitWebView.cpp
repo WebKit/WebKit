@@ -1334,6 +1334,35 @@ static void testWebViewDocumentFocus(WebViewTest* test, gconstpointer)
     g_assert_false(WebViewTest::javascriptResultToBoolean(value));
 }
 
+static bool waitForAnimationFrames(WebViewTest* test)
+{
+    // Two frames, so that the composition of the rendering update that ran the first callback is done
+    // when this returns. The timeout keeps the test from hanging when rendering updates no longer run.
+    GUniqueOutPtr<GError> error;
+    JSCValue* value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(
+        "return await Promise.race(["
+        "    new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true)))),"
+        "    new Promise(resolve => setTimeout(() => resolve(false), 2000))"
+        "]);", nullptr, nullptr, &error.outPtr());
+    g_assert_nonnull(value);
+    g_assert_no_error(error.get());
+    return WebViewTest::javascriptResultToBoolean(value);
+}
+
+static void testWebViewRenderingAfterEmptySize(WebViewTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml("<html><body><p>Rendering after the view had no height</p></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+    g_assert_true(waitForAnimationFrames(test));
+
+    // Give the view no height, then its height back. Rendering updates must run again.
+    test->resizeView(800, 0);
+    test->wait(0.2);
+    test->resizeView(800, 600);
+    g_assert_true(waitForAnimationFrames(test));
+}
+
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 class SnapshotWebViewTest: public WebViewTest {
 public:
@@ -2835,6 +2864,7 @@ void beforeAll()
 #endif
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
     WebViewTest::add("WebKitWebView", "document-focus", testWebViewDocumentFocus);
+    WebViewTest::add("WebKitWebView", "rendering-after-empty-size", testWebViewRenderingAfterEmptySize);
 #if ENABLE(NOTIFICATIONS)
     NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
     NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-allowed", testWebViewNotificationInitialPermissionAllowed);
