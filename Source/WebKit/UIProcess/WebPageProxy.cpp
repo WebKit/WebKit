@@ -5219,8 +5219,14 @@ void WebPageProxy::handleMouseEvent(Ref<NativeWebMouseEvent>&& event)
 
     LOG_WITH_STREAM(MouseHandling, stream << "UIProcess: " << (removedEvent ? "replaced" : "enqueued") << " mouse event " << eventType << " (queue size " << internals().mouseEventQueue.size() << ", coalesced events size " << internals().coalescedMouseEvents.size() << ")");
 
-    if (eventType != WebEventType::MouseMove)
-        send(Messages::WebPage::FlushDeferredDidReceiveMouseEvent());
+    if (eventType != WebEventType::MouseMove) {
+        auto awaitedProcess = internals().processAwaitingMouseEventReply;
+        if (RefPtr process = awaitedProcess ? WebProcessProxy::processForIdentifier(*awaitedProcess) : nullptr)
+            process->send(Messages::WebPage::FlushDeferredDidReceiveMouseEvent(), webPageIDInProcess(*process));
+        else
+            // Cover replies orphaned by timeout or debugger park.
+            send(Messages::WebPage::FlushDeferredDidReceiveMouseEvent());
+    }
 
     if (internals().mouseEventQueue.size() == 1) // Otherwise, called from DidReceiveEvent message handler.
         processNextQueuedMouseEvent();
