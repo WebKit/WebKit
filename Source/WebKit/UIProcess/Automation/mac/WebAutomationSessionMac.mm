@@ -977,6 +977,7 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
 {
     static constexpr auto scrollWheelCount = 2;
     auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitPixel, scrollWheelCount, -delta.height(), -delta.width()));
+    CGEventSetFlags(cgScrollEvent.get(), static_cast<CGEventFlags>(WebEventFactory::toNSEventModifierFlags(kit(WebCore::modifiersForModifierFlags(m_currentModifiers)))));
 
     auto locationInWindow = viewportLocationToWindowLocation(locationInViewport, page);
     RetainPtr window = page.platformWindow();
