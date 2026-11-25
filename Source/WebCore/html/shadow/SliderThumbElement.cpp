@@ -138,15 +138,6 @@ void RenderSliderContainer::layout()
     ASSERT(element()->shadowHost());
     Ref input = downcast<HTMLInputElement>(*element()->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
-    CheckedRef mutableStyle = this->mutableStyle();
-    mutableStyle->setFlexDirection(isVertical && writingMode().isHorizontal() ? FlexDirection::Column : FlexDirection::Row);
-    auto oldTextDirection = writingMode().computedTextDirection();
-    if (isVertical) {
-        // FIXME: Work around rounding issues in RTL vertical sliders. We want them to
-        // render identically to LTR vertical sliders. We can remove this work around when
-        // subpixel rendering is enabled on all ports.
-        mutableStyle->setDirection(TextDirection::LTR);
-    }
 
     CheckedPtr thumb = input->sliderThumbElement() ? input->sliderThumbElement()->renderBox() : nullptr;
     CheckedPtr track = input->sliderTrackElement() ? input->sliderTrackElement()->renderBox() : nullptr;
@@ -157,7 +148,6 @@ void RenderSliderContainer::layout()
 
     RenderFlexibleBox::layout();
 
-    mutableStyle->setDirection(oldTextDirection);
     // These should always exist, unless someone mutates the shadow DOM (e.g., in the inspector).
     if (!thumb || !track)
         return;
@@ -621,9 +611,20 @@ Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
     return element;
 }
 
+std::optional<Style::UnadjustedStyle> SliderContainerElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* hostStyle)
+{
+    if (!hostStyle)
+        return std::nullopt;
+
+    auto elementStyle = resolveStyle(resolutionContext);
+    bool isVertical = !hostStyle->writingMode().isHorizontal() || hostStyle->usedAppearance() == StyleAppearance::SliderVertical;
+    protect(elementStyle.style)->setFlexDirection(isVertical && elementStyle.style->writingMode().isHorizontal() ? FlexDirection::Column : FlexDirection::Row);
+    return elementStyle;
+}
+
 RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSliderContainer>(*this, WTF::move(style));
 }
 
-}
+} // namespace WebCore
