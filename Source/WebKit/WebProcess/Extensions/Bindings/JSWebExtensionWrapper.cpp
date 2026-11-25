@@ -610,6 +610,46 @@ String toJSONString(JSContextRef context, JSValueRef value)
     return serializeJSObject(context, value, nullptr);
 }
 
+// The same value with the keys of every object in order, so that equal values give equal strings.
+Ref<JSON::Value> withSortedKeys(JSON::Value& value)
+{
+    if (RefPtr object = value.asObject()) {
+        auto keys = copyToVector(object->keys());
+        std::ranges::sort(keys, WTF::codePointCompareLessThan);
+
+        Ref sortedObject = JSON::Object::create();
+        for (const auto& key : borrow(keys)) {
+            if (RefPtr member = object->getValue(key))
+                sortedObject->setValue(key, withSortedKeys(*member));
+        }
+
+        return sortedObject;
+    }
+
+    if (RefPtr array = value.asArray()) {
+        Ref sortedArray = JSON::Array::create();
+        for (size_t i = 0; i < array->length(); ++i)
+            sortedArray->pushValue(withSortedKeys(array->get(i)));
+
+        return sortedArray;
+    }
+
+    return value;
+}
+
+String toSortedJSONString(JSContextRef context, JSValueRef value)
+{
+    auto json = toJSONString(context, value);
+    if (json.isEmpty())
+        return nullString();
+
+    RefPtr parsed = JSON::Value::parseJSON(json);
+    if (!parsed)
+        return nullString();
+
+    return withSortedKeys(*parsed)->toJSONString();
+}
+
 bool isFunction(JSContextRef context, JSValueRef value)
 {
     if (!context || !value || !JSValueIsObject(context, value))

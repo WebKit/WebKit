@@ -205,6 +205,7 @@ String serializeJSObject(JSContextRef, JSValueRef, JSValueRef* exception);
 std::optional<WebExtensionMessage> serializeMessage(JSContextRef, JSValueRef, bool useStructuredClone, JSValueRef* exception);
 
 String toJSONString(JSContextRef, JSValueRef);
+Ref<JSON::Value> withSortedKeys(JSON::Value&);
 String toSortedJSONString(JSContextRef, JSValueRef);
 bool isFunction(JSContextRef, JSValueRef);
 bool isDictionary(JSContextRef, JSValueRef);
