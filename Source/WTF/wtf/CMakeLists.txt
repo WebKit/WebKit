@@ -60,6 +60,7 @@ set(WTF_PUBLIC_HEADERS
     CompilationThread.h
     Compiler.h
     CompletionHandler.h
+    CompletionHandlerSwiftSupport.h
     ConcurrentBuffer.h
     ConcurrentPtrHashSet.h
     ConcurrentVector.h
@@ -859,6 +860,7 @@ endif ()
 
 if (SWIFT_REQUIRED AND APPLE)
     target_sources(WTF PRIVATE
+        ${WTF_DIR}/wtf/WTFCompletionHandler+Extras.swift
         ${WTF_DIR}/wtf/wtf.swift
         ${WTF_DIR}/wtf/cocoa/SoftLinking.swift
     )
@@ -871,6 +873,7 @@ if (SWIFT_REQUIRED AND APPLE)
 
     # Match the Swift flags WTF.xcconfig sets.
     webkit_target_add_swift_options(WTF
+        "-enable-library-evolution"
         "-library-level spi"
         "-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"

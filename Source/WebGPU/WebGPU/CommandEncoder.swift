@@ -45,6 +45,7 @@ import WebGPU_Internal.XRProjectionLayer
 import WebGPU_Internal.XRSubImage
 import WebGPU_Internal.XRView
 import WebGPU_Private.WebGPU
+import wtf
 
 typealias String = Swift.String
 

@@ -21,43 +21,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-// FIXME: (rdar://164119356) Move this file into WTF.
+public import wtf.Core.CompletionHandlerSwiftSupport
 
-#if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-
-import wtf.Core.CompletionHandler
-
-/// The machinery shared by ``CxxCompletionHandler``, ``CxxConsumingCompletionHandler``, and
-/// ``CxxVoidCompletionHandler``.
+/// A protocol that every specialization of `WTF::CompletionHandler` conforms to, which allows Swift to easily call functions
+/// that accept `WTF::CompletionHandler` parameters.
 ///
-/// - Important: Do not conform to this directly. Conform to one of those three instead.
-public protocol CxxCompletionHandlerBase: ~Copyable {
-    /// The type of the completion handler's only parameter, or `Void` if it has none.
-    ///
-    /// State this explicitly, matching the C++ parameter type:
-    ///
-    /// ```swift
-    /// typealias Argument = CInt
-    /// ```
-    associatedtype Argument: ~Copyable
-
-    /// Creates a completion handler from the C ABI a Swift closure reduces to: a function pointer, an opaque context, and
-    /// a destructor for that context.
-    ///
-    /// Every specialization of `WTF::CompletionHandler` already has this constructor, so conformances never implement it
-    /// themselves.
-    ///
-    /// - Parameters:
-    ///   - invoke: The function pointer.
-    ///   - destroy: The function describing how to destroy the closure.
-    ///   - context: An opaque context for the closure.
-    /// - Important: Do not implement or call this yourself.
-    init(invoke: WTF.SwiftClosureInvoke, destroy: WTF.SwiftClosureDestroy, context: UnsafeMutableRawPointer)
-}
-
-/// A protocol for concrete specializations of `WTF::CompletionHandler` that take one argument by value to conform to.
-///
-/// Conforming a specialization to this protocol allows Swift to easily call functions that accept `WTF::CompletionHandler` parameters.
 /// For example, this makes it possible to call a function like:
 ///
 /// ```cpp
@@ -65,15 +33,7 @@ public protocol CxxCompletionHandlerBase: ~Copyable {
 /// void doSomething(DoSomethingCompletionHandler&&);
 /// ```
 ///
-/// by creating this conformance:
-///
-/// ```swift
-/// extension DoSomethingCompletionHandler: @unsafe CxxCompletionHandler {
-///     typealias Argument = CInt
-/// }
-/// ```
-///
-/// Swift can then call this via the `init(_ body: @escaping (Argument) -> Void)` initializer:
+/// via the `init(_ body:)` initializer:
 ///
 /// ```swift
 /// doSomething(consuming: .init { number in ... })
@@ -87,50 +47,31 @@ public protocol CxxCompletionHandlerBase: ~Copyable {
 /// }
 /// ```
 ///
-/// Common specializations like `WTF::VoidCompletionHandler` and `WTF::BoolCompletionHandler` already conform.
+/// `WTF::CompletionHandler` conforms through `SWIFT_CONFORMS_TO_PROTOCOL`, and C++ derives both associated types from its
+/// parameter type, so there is nothing to declare. If the parameter is an rvalue reference (`T&&`) because `T` is not
+/// copyable, the closure takes a `consuming` argument.
 ///
-/// - Note: If the C++ parameter is an rvalue reference (`T&&`) rather than a value, conform to
-///   ``CxxConsumingCompletionHandler`` instead.
-/// - Important: Do not implement the protocol requirements yourself. It is unsafe if you do so.
-public protocol CxxCompletionHandler: CxxCompletionHandlerBase, ~Copyable where Argument: Copyable {
-    /// Invokes the completion handler.
+/// - Important: Do not conform anything else to this protocol, or implement its requirements yourself. It is unsafe to do so.
+public protocol CxxCompletionHandler: ~Copyable {
+    /// The type of the completion handler's only parameter, or `WTF.SwiftNoArgument` if it has none.
+    associatedtype SwiftArgument: ~Copyable
+
+    /// How the completion handler passes its argument to Swift: `WTF.SwiftNoArgument`, `WTF.SwiftCopiedArgument`, or
+    /// `WTF.SwiftTakenArgument`.
+    associatedtype SwiftArgumentPassing
+
+    /// Creates a completion handler from the C ABI a Swift closure reduces to: a function pointer, an opaque context, and
+    /// a destructor for that context.
     ///
-    /// This is implemented by the imported C++ `operator()`, which is what makes the compiler verify that `Argument` matches
-    /// the type C++ actually passes.
-    ///
-    /// - Important: Do not implement this yourself.
-    mutating func callAsFunction(_ argument: Argument)
+    /// - Parameters:
+    ///   - invoke: The function pointer.
+    ///   - destroy: The function describing how to destroy the closure.
+    ///   - context: An opaque context for the closure.
+    /// - Important: Do not implement or call this yourself.
+    init(invoke: WTF.SwiftClosureInvoke, destroy: WTF.SwiftClosureDestroy, context: UnsafeMutableRawPointer)
 }
 
-/// A protocol for concrete specializations of `WTF::CompletionHandler` that take one argument by rvalue reference to
-/// conform to.
-///
-/// This is the same as ``CxxCompletionHandler`` except that it matches a C++ signature like:
-///
-/// ```cpp
-/// using DoSomethingCompletionHandler = WTF::CompletionHandler<void(MoveOnlyThing&&)>;
-/// ```
-///
-/// - Important: Do not implement the protocol requirements yourself. It is unsafe if you do so.
-public protocol CxxConsumingCompletionHandler: CxxCompletionHandlerBase, ~Copyable {
-    /// Invokes the completion handler.
-    ///
-    /// This is implemented by the imported C++ `operator()`, which is what makes the compiler verify that `Argument` matches
-    /// the type C++ actually passes.
-    ///
-    /// - Important: Do not implement this yourself.
-    mutating func callAsFunction(consuming: consuming Argument)
-}
-
-/// A protocol for concrete specializations of `WTF::CompletionHandler` that take no argument to conform to.
-public protocol CxxVoidCompletionHandler: CxxCompletionHandlerBase, ~Copyable where Argument == Void {
-    /// Invokes the completion handler.
-    ///
-    /// - Important: Do not implement this yourself.
-    mutating func callAsFunction()
-}
-
-extension CxxCompletionHandlerBase where Self: ~Copyable {
+extension CxxCompletionHandler where Self: ~Copyable {
     /// Creates a completion handler that owns `box` and dispatches to it.
     ///
     /// - Parameter box: The box holding the Swift closure to call.
@@ -149,9 +90,21 @@ extension CxxCompletionHandlerBase where Self: ~Copyable {
             context: unsafe Unmanaged.passRetained(box).toOpaque()
         )
     }
+
+    /// Creates a completion handler that takes no argument from a Swift closure.
+    ///
+    /// - Parameters:
+    ///   - isolation: The isolation the closure must be called on.
+    ///   - body: The Swift closure to use.
+    @usableFromInline
+    init(isolation: isolated (any Actor)?, voidBody body: @escaping () -> Void) {
+        self.init(box: SwiftVoidClosureBox(isolation: isolation, body))
+    }
 }
 
-extension CxxCompletionHandler where Self: ~Copyable {
+// These are emitted into their clients because Swift 6.4 leaves them out of JavaScriptCore's TBD, which embeds WTF's
+// Swift symbols, so JavaScriptCore's InstallAPI would fail if WTF exported them.
+extension CxxCompletionHandler where Self: ~Copyable, SwiftArgumentPassing == WTF.SwiftNoArgument {
     // These functions are safe because its implementation is safe.
 
     /// Creates a `WTF::CompletionHandler` type from a Swift closure.
@@ -160,26 +113,39 @@ extension CxxCompletionHandler where Self: ~Copyable {
     ///   - isolation: The current isolation.
     ///   - body: The Swift closure to use.
     @safe
-    public init(isolation: isolated (any Actor)? = #isolation, _ body: @escaping (Argument) -> Void) {
+    @_alwaysEmitIntoClient
+    public init(isolation: isolated (any Actor)? = #isolation, _ body: @escaping () -> Void) {
+        self.init(isolation: isolation, voidBody: body)
+    }
+
+    /// A convenience initializer to create a completion handler from a `CheckedContinuation` directly to make bridging to a Swift `async`
+    /// context trivial.
+    ///
+    /// This should be preferred for most cases.
+    ///
+    /// - Parameter continuation: A continuation vended by `withCheckedContinuation`.
+    @safe
+    @_alwaysEmitIntoClient
+    public init(_ continuation: CheckedContinuation<Void, some Error>) {
+        self.init { continuation.resume() }
+    }
+}
+
+extension CxxCompletionHandler where Self: ~Copyable, SwiftArgument: Copyable, SwiftArgumentPassing == WTF.SwiftCopiedArgument {
+    // These functions are safe because its implementation is safe.
+
+    /// Creates a `WTF::CompletionHandler` type from a Swift closure.
+    ///
+    /// - Parameters:
+    ///   - isolation: The current isolation.
+    ///   - body: The Swift closure to use.
+    @safe
+    public init(isolation: isolated (any Actor)? = #isolation, _ body: @escaping (SwiftArgument) -> Void) {
         self.init(box: SwiftCopyingClosureBox(isolation: isolation, body))
     }
 }
 
-extension CxxConsumingCompletionHandler where Self: ~Copyable {
-    // These functions are safe because its implementation is safe.
-
-    /// Creates a `WTF::CompletionHandler` type from a Swift closure.
-    ///
-    /// - Parameters:
-    ///   - isolation: The current isolation.
-    ///   - body: The Swift closure to use.
-    @safe
-    public init(isolation: isolated (any Actor)? = #isolation, _ body: @escaping (consuming Argument) -> Void) {
-        self.init(box: SwiftTakingClosureBox(isolation: isolation, body))
-    }
-}
-
-extension CxxCompletionHandler where Self: ~Copyable, Argument: Sendable {
+extension CxxCompletionHandler where Self: ~Copyable, SwiftArgument: Copyable & Sendable, SwiftArgumentPassing == WTF.SwiftCopiedArgument {
     /// A convenience initializer to create a completion handler from a `CheckedContinuation` directly to make bridging to a Swift `async`
     /// context trivial.
     ///
@@ -187,12 +153,12 @@ extension CxxCompletionHandler where Self: ~Copyable, Argument: Sendable {
     ///
     /// - Parameter continuation: A continuation vended by `withCheckedContinuation`.
     @safe
-    public init(_ continuation: CheckedContinuation<Argument, some Error>) {
+    public init(_ continuation: CheckedContinuation<SwiftArgument, some Error>) {
         self.init { continuation.resume(returning: $0) }
     }
 }
 
-extension CxxVoidCompletionHandler where Self: ~Copyable {
+extension CxxCompletionHandler where Self: ~Copyable, SwiftArgumentPassing == WTF.SwiftTakenArgument {
     // These functions are safe because its implementation is safe.
 
     /// Creates a `WTF::CompletionHandler` type from a Swift closure.
@@ -201,19 +167,8 @@ extension CxxVoidCompletionHandler where Self: ~Copyable {
     ///   - isolation: The current isolation.
     ///   - body: The Swift closure to use.
     @safe
-    public init(isolation: isolated (any Actor)? = #isolation, _ body: @escaping () -> Void) {
-        self.init(box: SwiftVoidClosureBox(isolation: isolation, body))
-    }
-
-    /// A convenience initializer to create a completion handler from a `CheckedContinuation` directly to make bridging to a Swift `async`
-    /// context trivial.
-    ///
-    /// This should be preferred for most cases.
-    ///
-    /// - Parameter continuation: A continuation vended by `withCheckedContinuation`.
-    @safe
-    public init(_ continuation: CheckedContinuation<Void, some Error>) {
-        self.init { continuation.resume() }
+    public init(isolation: isolated (any Actor)? = #isolation, _ body: @escaping (consuming SwiftArgument) -> Void) {
+        self.init(box: SwiftTakingClosureBox(isolation: isolation, body))
     }
 }
 
@@ -268,9 +223,9 @@ private final class SwiftCopyingClosureBox<Argument>: SwiftClosureBoxBase {
         //
         // Non-null, initialized, aligned: guarded above, and C++ passes `std::addressof` of the live
         //     parameter object it was invoked with, so it is the address of a fully constructed object.
-        // Really an `Argument`: the `callAsFunction` requirement is witnessed by the imported C++
-        //     `operator()`, so a conformance whose `Argument` disagrees with the C++ parameter type does
-        //     not compile. The typealias is checked, not merely promised.
+        // Really an `Argument`: `SwiftArgument` is the C++ parameter type itself, without its
+        //     qualifiers, from `SwiftCompletionHandlerArgument` in CompletionHandler.h. Only a by-value
+        //     parameter makes `SwiftArgumentPassing` be `SwiftCopiedArgument`.
         // Lifetime: `invoke` is synchronous, so C++ is blocked inside the call for as long as this runs
         //     and cannot have released the object. This method never stores `pointer`; only the copied
         //     value may outlive the call.
@@ -317,12 +272,3 @@ private final class SwiftTakingClosureBox<Argument: ~Copyable>: SwiftClosureBoxB
         body(unsafe pointer.assumingMemoryBound(to: Argument.self).move())
     }
 }
-
-extension WTF.VoidCompletionHandler: @unsafe CxxVoidCompletionHandler {}
-
-extension WTF.BoolCompletionHandler: @unsafe CxxCompletionHandler {
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public typealias Argument = Bool
-}
-
-#endif // compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN

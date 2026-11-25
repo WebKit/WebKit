@@ -26,6 +26,7 @@
 private import CxxStdlib
 import WebGPU_Internal.Texture
 import WebGPU_Private.WebGPU
+import wtf
 
 // FIXME (rdar://162375123): This should be in the standard library.
 extension MutableSpan where Element: BitwiseCopyable {

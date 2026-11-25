@@ -208,7 +208,6 @@
 		0772811D21234FF600C8EF2E /* UserMediaPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F4319AF7B27002EBAB5 /* UserMediaPermissionRequestManager.h */; };
 		0773A93B3023B0FB002C57FE /* SpatialShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0773A93A3023B0FB002C57FE /* SpatialShim.swift */; };
 		077DBAFF303AAE74000AA8FC /* RunJavaScriptResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 077DBAFE303AAE74000AA8FC /* RunJavaScriptResult.h */; };
-		077DD8E7303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077DD8E6303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift */; };
 		077F49B63036DE1B00861A64 /* JavaScriptEvaluationResultDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F49B53036DE1B00861A64 /* JavaScriptEvaluationResultDecoder.swift */; };
 		077F49B83036DFD800861A64 /* JavaScriptEvaluationGraphDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F49B73036DFD800861A64 /* JavaScriptEvaluationGraphDecoder.swift */; };
 		077F49BA3036E01600861A64 /* JavaScriptEvaluationFieldDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F49B93036E01600861A64 /* JavaScriptEvaluationFieldDecoder.swift */; };
@@ -3626,7 +3625,6 @@
 		0779D7BC2EA8101800C389D5 /* RemoteMediaSessionProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaSessionProxy.cpp; sourceTree = "<group>"; };
 		077BA570260E8F630072F19F /* MediaSessionCoordinatorProxyPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionCoordinatorProxyPrivate.h; sourceTree = "<group>"; };
 		077DBAFE303AAE74000AA8FC /* RunJavaScriptResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RunJavaScriptResult.h; sourceTree = "<group>"; };
-		077DD8E6303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WTFCompletionHandler+Extras.swift"; sourceTree = "<group>"; };
 		077F49B53036DE1B00861A64 /* JavaScriptEvaluationResultDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationResultDecoder.swift; sourceTree = "<group>"; };
 		077F49B73036DFD800861A64 /* JavaScriptEvaluationGraphDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationGraphDecoder.swift; sourceTree = "<group>"; };
 		077F49B93036E01600861A64 /* JavaScriptEvaluationFieldDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationFieldDecoder.swift; sourceTree = "<group>"; };
@@ -10910,7 +10908,6 @@
 				E0E1E2E3E4E5E6E700000002 /* WriteWebArchiveToPasteBoardResult.h */,
 				E0E1E2E3E4E5E6E700000003 /* WriteWebArchiveToPasteBoardResult.serialization.in */,
 				5CA6A48B28F6621800F92B6E /* WTFArgumentCoders.serialization.in */,
-				077DD8E6303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift */,
 				0708B49330413DF90014BF6C /* WTFExpected+Extras.swift */,
 			);
 			path = Shared;
@@ -22945,7 +22942,6 @@
 				F4E038F82F230571003A8F3A /* WKWebView+SystemTextExtraction.swift in Sources */,
 				075369492DC589E1006446F8 /* WKWebView+TextExtraction.swift in Sources */,
 				079A4DA32D72CDB400CA387F /* WKWebViewConfiguration+Extras.swift in Sources */,
-				077DD8E7303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift in Sources */,
 				0708B49430413DF90014BF6C /* WTFExpected+Extras.swift in Sources */,
 				C14D306924B79BE000480387 /* XPCEndpoint.mm in Sources */,
 				C14D306A24B79BE400480387 /* XPCEndpointClient.mm in Sources */,

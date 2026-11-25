@@ -11,6 +11,7 @@
 		07B588172F74609A00E8AF32 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 07B588162F74607A00E8AF32 /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C913F32F820E86003A09D8 /* OptionCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C913F22F820E86003A09D8 /* OptionCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07D49BE82F41B5DC00263E9A /* wtf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D49BE72F41B5DC00263E9A /* wtf.swift */; };
+		07E5C1A22F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E5C1A12F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift */; };
 		07F5EA6F2EE8A7630085B185 /* generate-tapi-filelist.py in Headers */ = {isa = PBXBuildFile; fileRef = DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA702EE8A7660085B185 /* GenerateModuleVerifierInputsTask.py in Headers */ = {isa = PBXBuildFile; fileRef = 076382182EE550F300DB47BC /* GenerateModuleVerifierInputsTask.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA712EE8A76A0085B185 /* library-modules-verifier.py in Headers */ = {isa = PBXBuildFile; fileRef = 077FEABB2EE007FF0071F92D /* library-modules-verifier.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -387,6 +388,7 @@
 		DD3DC8A027A4BF8E007E5B61 /* OSLogPrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FC70CE23FB950C005B1990 /* OSLogPrintStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8A127A4BF8E007E5B61 /* StackShotProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9DAA051FD1C37B0079C5B2 /* StackShotProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8A227A4BF8E007E5B61 /* CompletionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07E5C1A62F43000100A1B2C3 /* CompletionHandlerSwiftSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E5C1A52F43000100A1B2C3 /* CompletionHandlerSwiftSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8A327A4BF8E007E5B61 /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47333151A825B004123FF /* Threading.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8A427A4BF8E007E5B61 /* RobinHoodHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C583C826127ADD00C57568 /* RobinHoodHashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8A527A4BF8E007E5B61 /* StreamBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6BB768162F300500DD16DB /* StreamBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1160,6 +1162,7 @@
 		07B588162F74607A00E8AF32 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		07C913F22F820E86003A09D8 /* OptionCountedSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptionCountedSet.h; sourceTree = "<group>"; };
 		07D49BE72F41B5DC00263E9A /* wtf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wtf.swift; sourceTree = "<group>"; };
+		07E5C1A12F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WTFCompletionHandler+Extras.swift"; sourceTree = "<group>"; };
 		0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddedFixedVector.cpp; sourceTree = "<group>"; };
 		0F0C03D7299820EB0064230A /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		0F0C03E6299828E50064230A /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
@@ -1412,6 +1415,7 @@
 		46B0FB5C2D24BFBA0012184C /* ParsingUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParsingUtilities.h; sourceTree = "<group>"; };
 		46B4C53B2D4F2D0A00BAA3FE /* NSStringExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSStringExtras.h; sourceTree = "<group>"; };
 		46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandler.h; sourceTree = "<group>"; };
+		07E5C1A52F43000100A1B2C3 /* CompletionHandlerSwiftSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompletionHandlerSwiftSupport.h; sourceTree = "<group>"; };
 		46BD41C92EC723B2002ED70B /* XPCObjectPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCObjectPtr.h; sourceTree = "<group>"; };
 		46BEB6E922FFDDD500269868 /* RefTrackerMixin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefTrackerMixin.cpp; sourceTree = "<group>"; };
 		46BEB6E922FFDDD50026DEAD /* RefTrackerMixin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RefTrackerMixin.h; sourceTree = "<group>"; };
@@ -2464,6 +2468,7 @@
 				0F8F2B90172E00F0007DBDA5 /* CompilationThread.h */,
 				A8A47270151A825A004123FF /* Compiler.h */,
 				46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */,
+				07E5C1A52F43000100A1B2C3 /* CompletionHandlerSwiftSupport.h */,
 				E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */,
 				0FB467821FDE282B003FCB09 /* ConcurrentBuffer.h */,
 				0F30CB581FCDF133004B5323 /* ConcurrentPtrHashSet.cpp */,
@@ -2947,6 +2952,7 @@
 				E4A0AD381A96245500536DF6 /* WorkQueue.h */,
 				07D49BE72F41B5DC00263E9A /* wtf.swift */,
 				FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */,
+				07E5C1A12F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift */,
 				FE032AD02463E43B0012D7C7 /* WTFConfig.cpp */,
 				FE032AD12463E43B0012D7C7 /* WTFConfig.h */,
 				E36BA9DC29E275DB00300057 /* WTFProcess.cpp */,
@@ -3614,6 +3620,7 @@
 				DD3DC90727A4BF8E007E5B61 /* CompilationThread.h in Headers */,
 				DD3DC99927A4BF8E007E5B61 /* Compiler.h in Headers */,
 				DD3DC8A227A4BF8E007E5B61 /* CompletionHandler.h in Headers */,
+				07E5C1A62F43000100A1B2C3 /* CompletionHandlerSwiftSupport.h in Headers */,
 				DD3DC8A927A4BF8E007E5B61 /* ConcurrentBuffer.h in Headers */,
 				DD3DC99D27A4BF8E007E5B61 /* ConcurrentPtrHashSet.h in Headers */,
 				DD3DC88F27A4BF8E007E5B61 /* ConcurrentVector.h in Headers */,
@@ -4770,6 +4777,7 @@
 				E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.mm in Sources */,
 				07D49BE82F41B5DC00263E9A /* wtf.swift in Sources */,
 				FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */,
+				07E5C1A22F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift in Sources */,
 				FE032AD22463E43B0012D7C7 /* WTFConfig.cpp in Sources */,
 				E36BA9DE29E275DB00300057 /* WTFProcess.cpp in Sources */,
 				A8A47445151A825B004123FF /* WTFString.cpp in Sources */,

@@ -1484,6 +1484,8 @@ webkit_target_add_swift_options(WebKit
     -I${WEBKIT_DIR}/Platform/spi/Cocoa
     -I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules
     -I${WEBKIT_DIR}/Platform/spi/ios
+    # WTF's Swift module, which shadows the wtf Clang module.
+    "-I$<TARGET_PROPERTY:WTF,BINARY_DIR>"
     "-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}"
     "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
     "-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}"

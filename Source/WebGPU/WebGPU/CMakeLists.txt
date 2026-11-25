@@ -167,6 +167,8 @@ if (SWIFT_REQUIRED)
 
     webkit_target_add_swift_options(WebGPU
         -I${CMAKE_CURRENT_SOURCE_DIR}/Internal
+        # WTF's Swift module, which shadows the wtf Clang module.
+        "-I$<TARGET_PROPERTY:WTF,BINARY_DIR>"
         "-library-level spi"
     )
 

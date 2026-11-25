@@ -69,6 +69,9 @@ list(APPEND _testwebkitapi_swift_options
     "-Xcc -I${ICU_INCLUDE_DIRS}"
 
     "-I${_testwebkitapi_swiftmodule_dir}"
+
+    # WTF's Swift module, which shadows the wtf Clang module.
+    "-I$<TARGET_PROPERTY:WTF,BINARY_DIR>"
 )
 # @Test and @Suite expand through libTestingMacros, in a `testing` subdirectory
 # swiftc does not search on its own. WebKitXcodeSDK.cmake finds the plugin from
@@ -730,7 +733,6 @@ endmacro()
 add_library(TestWTFLibrary OBJECT
     ${TESTWEBKITAPI_DIR}/TestWTFLibrary/SwiftCxxInteropTestbed.cpp
     ${TESTWEBKITAPI_DIR}/TestWTFLibrary/TestWTFLibrary.swift
-    ${TESTWEBKITAPI_DIR}/Helpers/WTFCompletionHandler+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/WTFExpected+Extras.swift
 )
 WEBKIT_TEST_SWIFT_HELPER_LIBRARY(TestWTFLibrary TestWTF)
@@ -742,7 +744,6 @@ list(APPEND TestWTF_SOURCES
 add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/TestWebKitAPILibrary/TestWebKitAPILibrary.swift
 
-    ${TESTWEBKITAPI_DIR}/Helpers/WTFCompletionHandler+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/WTFExpected+Extras.swift
 
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/AppKit+Extras.swift

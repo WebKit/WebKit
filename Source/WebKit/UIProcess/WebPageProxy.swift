@@ -26,20 +26,7 @@
 import Foundation
 import WebKit_Internal
 import WebCore_Private
-
-// This is safe because all conformances to the protocol are safe as long as they don't
-// implement any of the requirements themselves.
-extension WebKit.WebPageProxy.SelectWithGestureCompletionHandler: @unsafe CxxCompletionHandler {
-    typealias Argument = WebKit.SelectWithGestureResult
-}
-
-#if HAVE_NEW_CODABLE
-// This is safe because all conformances to the protocol are safe as long as they don't
-// implement any of the requirements themselves.
-extension WebKit.WebPageProxy.RunJavaScriptInFrameCompletionHandler: CxxConsumingCompletionHandler {
-    typealias Argument = WebKit.RunJavaScriptResult
-}
-#endif // HAVE_NEW_CODABLE
+import wtf
 
 extension WebKit.WebPageProxy {
     #if HAVE_NEW_CODABLE

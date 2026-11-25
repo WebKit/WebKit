@@ -32,39 +32,6 @@ private typealias Cxx = SwiftCxxInteropTestbed
 
 // MARK: - Conformances
 
-// This is safe because all conformances to the protocol are safe as long as they don't
-// implement any of the requirements themselves.
-extension Cxx.IntCompletionHandler: @unsafe TestWTFLibrary.CxxCompletionHandler {
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public typealias Argument = CInt
-}
-
-// `MoveOnlyProbe` is move-only in C++, so Swift imports it as `~Copyable`. This one takes it by rvalue
-// reference, which the importer spells as `callAsFunction(consuming:)`, hence `CxxConsumingCompletionHandler`.
-extension Cxx.MoveOnlyProbeCompletionHandler: @unsafe TestWTFLibrary.CxxConsumingCompletionHandler {
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public typealias Argument = SwiftCxxInteropTestbed.MoveOnlyProbe
-}
-
-// Copyable but not trivially copyable: this argument reaches Swift through its copy constructor.
-extension Cxx.CopyCountingProbeCompletionHandler: @unsafe TestWTFLibrary.CxxCompletionHandler {
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public typealias Argument = SwiftCxxInteropTestbed.CopyCountingProbe
-}
-
-// Trivially copyable in C++, but Swift imports the `probe` field as a managed reference, so the bridge
-// has to let Swift copy this argument rather than take it.
-extension Cxx.SharedProbeHolderCompletionHandler: @unsafe TestWTFLibrary.CxxCompletionHandler {
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public typealias Argument = SwiftCxxInteropTestbed.SharedProbeHolder
-}
-
-// Noncopyable, so it is transferred to Swift, and it notices if Swift relocates it byte-wise.
-extension Cxx.SelfReferentialProbeCompletionHandler: @unsafe TestWTFLibrary.CxxConsumingCompletionHandler {
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public typealias Argument = SwiftCxxInteropTestbed.SelfReferentialProbe
-}
-
 // The simplest `Expected` shape, and the one ``CxxExpected``'s documentation uses as its example.
 extension Cxx.IntExpected: TestWTFLibrary.CxxExpected {}
 
@@ -152,6 +119,18 @@ struct SwiftCxxInteropTests {
         #expect(result == 1)
     }
 
+    @Test
+    func completionHandlersPassTheirArgumentTheWayCxxDeclaresIt() async throws {
+        // A noncopyable argument is declared `&&`, so Swift takes it. Everything else is passed by value and
+        // copied, including `SharedProbeHolder`, which is trivially copyable in C++ but holds a managed
+        // reference in Swift.
+        #expect(Cxx.VoidCompletionHandler.SwiftArgumentPassing.self == WTF.SwiftNoArgument.self)
+        #expect(Cxx.IntCompletionHandler.SwiftArgumentPassing.self == WTF.SwiftCopiedArgument.self)
+        #expect(Cxx.CopyCountingProbeCompletionHandler.SwiftArgumentPassing.self == WTF.SwiftCopiedArgument.self)
+        #expect(Cxx.SharedProbeHolderCompletionHandler.SwiftArgumentPassing.self == WTF.SwiftCopiedArgument.self)
+        #expect(Cxx.MoveOnlyProbeCompletionHandler.SwiftArgumentPassing.self == WTF.SwiftTakenArgument.self)
+        #expect(Cxx.SelfReferentialProbeCompletionHandler.SwiftArgumentPassing.self == WTF.SwiftTakenArgument.self)
+    }
     @Test
     func completionHandlerReceivesItsArgument() async throws {
         let result = await withCheckedContinuation { continuation in

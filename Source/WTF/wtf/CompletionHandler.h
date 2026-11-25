@@ -32,17 +32,13 @@
 #include <utility>
 #include <wtf/AlignedStorage.h>
 #include <wtf/Compiler.h>
+#include <wtf/CompletionHandlerSwiftSupport.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/ThreadAssertions.h>
 
 namespace WTF {
-
-// The C ABI a Swift closure reduces to, used by the `CxxCompletionHandler` Swift protocol to build a
-// CompletionHandler out of a Swift closure.
-using SwiftClosureInvoke = void (* WTF_NONNULL)(void* WTF_NONNULL context, void* WTF_NULLABLE argument);
-using SwiftClosureDestroy = void (* WTF_NONNULL)(void* WTF_NONNULL context);
 
 template<typename> class CompletionHandler;
 class CompletionHandlerCallThread {
@@ -52,9 +48,16 @@ public:
     static inline constexpr auto AnyThread = anyThreadLike;
 };
 
+// WTF's Swift module, which declares the `CxxCompletionHandler` protocol, is only built for Apple platforms.
+#if defined(__APPLE__)
+#define WTF_CONFORMS_TO_CXX_COMPLETION_HANDLER SWIFT_CONFORMS_TO_PROTOCOL(wtf.CxxCompletionHandler)
+#else
+#define WTF_CONFORMS_TO_CXX_COMPLETION_HANDLER
+#endif
+
 // Wraps a Function to make sure it is always called once and only once.
 template <typename Out, typename... In>
-class CompletionHandler<Out(In...)> {
+class WTF_CONFORMS_TO_CXX_COMPLETION_HANDLER CompletionHandler<Out(In...)> {
 IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CompletionHandler);
 IGNORE_CLANG_WARNINGS_END
@@ -62,6 +65,12 @@ public:
     using OutType = Out;
     using InTypes = std::tuple<In...>;
     using Impl = typename Function<Out(In...)>::Impl;
+
+#ifdef __swift__
+    // The associated types of the `CxxCompletionHandler` Swift protocol.
+    using SwiftArgument = typename SwiftCompletionHandlerArgument<In...>::Type;
+    using SwiftArgumentPassing = typename SwiftCompletionHandlerArgument<In...>::Passing;
+#endif
 
     CompletionHandler() = default;
 
@@ -88,7 +97,7 @@ public:
     }
 
 #ifdef __swift__
-    // This should only be called within the initializers of the `CxxCompletionHandler` protocols.
+    // This should only be called within the initializers of the `CxxCompletionHandler` protocol.
     CompletionHandler(SwiftClosureInvoke invoke, SwiftClosureDestroy destroy, void* WTF_NONNULL context) SWIFT_NAME(init(invoke:destroy:context:))
         : CompletionHandler([invoke, owner = std::unique_ptr<void, SwiftClosureDestroy> { context, destroy }](In... arguments) -> Out {
             passArgumentToSwift(invoke, owner.get(), std::forward<In>(arguments)...);

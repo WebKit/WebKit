@@ -27,4 +27,8 @@
 
 @_exported public import JavaScriptCore
 
+// JavaScriptCore exports libWTF.a's Swift symbols. Importing WTF's Swift module lets `-embed-tbd-for-module wtf`
+// add them to JavaScriptCore's TBD.
+import wtf
+
 #endif

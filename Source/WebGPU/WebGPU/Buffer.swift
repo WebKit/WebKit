@@ -40,6 +40,7 @@ import WebGPU_Internal.XRProjectionLayer
 import WebGPU_Internal.XRSubImage
 import WebGPU_Internal.XRView
 import WebGPU_Private.CxxBridgingPublic
+import wtf
 
 extension WebGPU.Metal.Buffer {
     func copy(from source: Span<UInt8>, offset: Int) {

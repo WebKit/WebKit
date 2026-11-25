@@ -24,6 +24,7 @@
 import Metal
 import WebGPU_Internal.Queue
 import WebGPU_Private.WebGPUCpp
+import wtf
 
 private let largeBufferSize = Int(WebGPU.largeBufferSize)
 
