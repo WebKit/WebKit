@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+svg svg[width="50"] { fill: green; }
+svg[transform] { fill: green; }
+rect[x="50"] { fill: green; }
+</style>
+<svg id="outer" fill="blue">
+    <svg id="inner" width="10" fill="blue"><rect width="10" height="10"/></svg>
+    <rect id="rect" width="10" height="10" fill="blue"/>
+</svg>
+<script>
+function changeHint(element)
+{
+    element.setAttribute("fill", "red");
+    getComputedStyle(element).fill;
+}
+
+test(() => {
+    const inner = document.getElementById("inner");
+    changeHint(inner);
+    inner.width.baseVal.value = 50;
+    assert_equals(getComputedStyle(inner).fill, "rgb(0, 128, 0)");
+}, "Changing width on a nested svg through the SVG DOM updates attribute selectors");
+
+test(() => {
+    const outer = document.getElementById("outer");
+    changeHint(outer);
+    outer.transform.baseVal.appendItem(outer.createSVGTransform());
+    assert_equals(getComputedStyle(outer).fill, "rgb(0, 128, 0)");
+}, "Changing transform on the outermost svg through the SVG DOM updates attribute selectors");
+
+test(() => {
+    const rect = document.getElementById("rect");
+    changeHint(rect);
+    rect.x.baseVal.value = 50;
+    assert_equals(getComputedStyle(rect).fill, "rgb(0, 128, 0)");
+}, "Changing x on a rect through the SVG DOM updates attribute selectors");
+</script>

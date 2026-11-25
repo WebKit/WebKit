@@ -1,0 +1,195 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSDPropertyEnabled=true ] -->
+<title>Presentational hint changes reuse the cached match result</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.styled { d: path("M 1 1 H 2"); }
+.wide { stroke-width: 7px; }
+rect[x="30"] { fill: green; }
+</style>
+<svg id="svg" width="200" height="200"></svg>
+<table><tr><td id="cell" width="50" height="20"></td></tr></table>
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+
+function makePath(attributes)
+{
+    const path = document.createElementNS(svgNS, "path");
+    for (const [name, value] of Object.entries(attributes))
+        path.setAttribute(name, value);
+    svg.appendChild(path);
+    return path;
+}
+
+// A new element always gets a full style resolution.
+function expectedStyle(attributes, property, className)
+{
+    const reference = makePath(attributes);
+    if (className)
+        reference.className.baseVal = className;
+    const value = getComputedStyle(reference)[property];
+    reference.remove();
+    return value;
+}
+
+function pathData(i)
+{
+    return `M 0 0 L ${i} ${i * 2} L ${i * 3} 0 Z`;
+}
+
+test(() => {
+    const path = makePath({ d: pathData(1), fill: "red" });
+    for (let i = 2; i < 8; ++i) {
+        path.setAttribute("d", pathData(i));
+        assert_equals(getComputedStyle(path).d, expectedStyle({ d: pathData(i) }, "d"));
+        assert_equals(getComputedStyle(path).fill, "rgb(255, 0, 0)");
+        assert_equals(path.getTotalLength(), makePath({ d: pathData(i) }).getTotalLength());
+    }
+}, "Repeated d attribute changes");
+
+test(() => {
+    const path = makePath({ d: pathData(1), fill: "red", "stroke-width": "2" });
+    for (let i = 2; i < 6; ++i) {
+        path.setAttribute("d", pathData(i));
+        getComputedStyle(path).d;
+    }
+    path.setAttribute("fill", "blue");
+    assert_equals(getComputedStyle(path).fill, "rgb(0, 0, 255)");
+    path.setAttribute("d", pathData(9));
+    path.setAttribute("stroke-width", "5");
+    assert_equals(getComputedStyle(path).d, expectedStyle({ d: pathData(9) }, "d"));
+    assert_equals(getComputedStyle(path).strokeWidth, "5px");
+    assert_equals(getComputedStyle(path).fill, "rgb(0, 0, 255)");
+}, "Changing other presentation attributes between d changes");
+
+test(() => {
+    const path = makePath({ d: pathData(1), fill: "red" });
+    for (let i = 2; i < 5; ++i) {
+        path.setAttribute("d", pathData(i));
+        getComputedStyle(path).d;
+    }
+    path.removeAttribute("fill");
+    assert_equals(getComputedStyle(path).fill, "rgb(0, 0, 0)");
+    path.setAttribute("d", pathData(6));
+    assert_equals(getComputedStyle(path).d, expectedStyle({ d: pathData(6) }, "d"));
+    path.setAttribute("fill", "green");
+    assert_equals(getComputedStyle(path).fill, "rgb(0, 128, 0)");
+    path.removeAttribute("d");
+    assert_equals(getComputedStyle(path).d, expectedStyle({ fill: "green" }, "d"));
+    path.setAttribute("d", pathData(7));
+    assert_equals(getComputedStyle(path).d, expectedStyle({ d: pathData(7) }, "d"));
+}, "Adding and removing presentation attributes between d changes");
+
+test(() => {
+    const path = makePath({ d: pathData(1) });
+    for (let i = 2; i < 5; ++i) {
+        path.setAttribute("d", pathData(i));
+        getComputedStyle(path).d;
+    }
+    path.className.baseVal = "styled";
+    const styled = getComputedStyle(path).d;
+    assert_equals(styled, expectedStyle({ d: pathData(4) }, "d", "styled"));
+    for (let i = 5; i < 8; ++i) {
+        path.setAttribute("d", pathData(i));
+        assert_equals(getComputedStyle(path).d, styled);
+    }
+    path.className.baseVal = "";
+    assert_equals(getComputedStyle(path).d, expectedStyle({ d: pathData(7) }, "d"));
+}, "A stylesheet d wins over a changing d attribute");
+
+test(() => {
+    const path = makePath({ d: pathData(1), "stroke-width": "2" });
+    for (let i = 2; i < 5; ++i) {
+        path.setAttribute("stroke-width", String(i));
+        assert_equals(getComputedStyle(path).strokeWidth, `${i}px`);
+    }
+    path.className.baseVal = "wide";
+    assert_equals(getComputedStyle(path).strokeWidth, "7px");
+    path.setAttribute("stroke-width", "3");
+    assert_equals(getComputedStyle(path).strokeWidth, "7px");
+    path.className.baseVal = "";
+    assert_equals(getComputedStyle(path).strokeWidth, "3px");
+}, "A stylesheet rule wins over a changing presentation attribute");
+
+test(() => {
+    const path = makePath({ d: pathData(1), fill: "red" });
+    for (let i = 2; i < 6; ++i) {
+        path.setAttribute("d", pathData(i));
+        path.style.strokeWidth = `${i}px`;
+        assert_equals(getComputedStyle(path).d, expectedStyle({ d: pathData(i) }, "d"));
+        assert_equals(getComputedStyle(path).strokeWidth, `${i}px`);
+    }
+    path.style.d = `path("M 5 5 H 9")`;
+    const inline = getComputedStyle(path).d;
+    path.setAttribute("d", pathData(8));
+    assert_equals(getComputedStyle(path).d, inline);
+    path.style.d = "";
+    assert_equals(getComputedStyle(path).d, expectedStyle({ d: pathData(8) }, "d"));
+}, "Inline style and presentation attributes changing together");
+
+test(() => {
+    const path = makePath({ d: pathData(1), fill: "red" });
+    for (let i = 2; i < 6; ++i) {
+        path.setAttribute("fill", i % 2 ? "currentColor" : "blue");
+        path.setAttribute("color", i % 2 ? "lime" : "red");
+        assert_equals(getComputedStyle(path).fill, i % 2 ? "rgb(0, 255, 0)" : "rgb(0, 0, 255)");
+    }
+}, "Changing a high-priority presentation attribute");
+
+test(() => {
+    const rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("x", "10");
+    rect.setAttribute("fill", "red");
+    svg.appendChild(rect);
+    for (let i = 11; i < 14; ++i) {
+        rect.setAttribute("x", String(i));
+        assert_equals(getComputedStyle(rect).fill, "rgb(255, 0, 0)");
+    }
+    rect.x.baseVal.value = 30;
+    assert_equals(getComputedStyle(rect).fill, "rgb(0, 128, 0)");
+    rect.x.baseVal.value = 31;
+    assert_equals(getComputedStyle(rect).fill, "rgb(255, 0, 0)");
+}, "An attribute selector follows a presentation attribute changed through the SVG DOM");
+
+function tableBorderStyle(attributes)
+{
+    const table = document.createElement("table");
+    for (const [name, value] of Object.entries(attributes))
+        table.setAttribute(name, value);
+    document.body.appendChild(table);
+    const value = getComputedStyle(table).borderTopStyle;
+    table.remove();
+    return value;
+}
+
+test(() => {
+    // The border attribute also selects the table's additional presentational hint style.
+    const table = document.createElement("table");
+    table.setAttribute("rules", "all");
+    table.setAttribute("border", "1");
+    document.body.appendChild(table);
+    for (let i = 2; i < 5; ++i) {
+        table.setAttribute("border", String(i));
+        assert_equals(getComputedStyle(table).borderTopStyle, tableBorderStyle({ rules: "all", border: String(i) }));
+        assert_equals(getComputedStyle(table).borderTopWidth, `${i}px`);
+    }
+    table.removeAttribute("border");
+    assert_equals(getComputedStyle(table).borderTopStyle, tableBorderStyle({ rules: "all" }));
+    table.setAttribute("border", "1");
+    assert_equals(getComputedStyle(table).borderTopStyle, tableBorderStyle({ rules: "all", border: "1" }));
+    table.setAttribute("frame", "void");
+    assert_equals(getComputedStyle(table).borderTopStyle, tableBorderStyle({ rules: "all", border: "1", frame: "void" }));
+    table.remove();
+}, "A table's border attribute changing its additional presentational hint style");
+
+test(() => {
+    for (let i = 2; i < 6; ++i) {
+        cell.setAttribute("width", String(50 + i));
+        assert_equals(getComputedStyle(cell).width, `${50 + i}px`);
+        assert_equals(getComputedStyle(cell).height, "20px");
+    }
+    cell.removeAttribute("height");
+    cell.setAttribute("width", "80");
+    assert_equals(getComputedStyle(cell).width, "80px");
+}, "Repeated HTML presentation attribute changes");
+</script>

@@ -1,0 +1,12 @@
+
+PASS Repeated d attribute changes
+PASS Changing other presentation attributes between d changes
+PASS Adding and removing presentation attributes between d changes
+PASS A stylesheet d wins over a changing d attribute
+PASS A stylesheet rule wins over a changing presentation attribute
+PASS Inline style and presentation attributes changing together
+PASS Changing a high-priority presentation attribute
+PASS An attribute selector follows a presentation attribute changed through the SVG DOM
+PASS A table's border attribute changing its additional presentational hint style
+PASS Repeated HTML presentation attribute changes
+

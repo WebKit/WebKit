@@ -125,7 +125,8 @@ void StyledElement::invalidatePresentationalHintStyle()
 void StyledElement::presentationalHintsChanged()
 {
     elementData()->setPresentationalHintStyleIsDirty(true);
-    invalidateStyle();
+    // Selectors that depend on a changed attribute are invalidated separately, by Style::AttributeChangeInvalidation.
+    Node::invalidateStyle(Style::Validity::InlineOrPresentationalHintStyleInvalid);
 }
 
 CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()
@@ -181,7 +182,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
 
     elementData()->setStyleAttributeIsDirty(false);
 
-    Node::invalidateStyle(Style::Validity::InlineStyleInvalid);
+    Node::invalidateStyle(Style::Validity::InlineOrPresentationalHintStyleInvalid);
     InspectorInstrumentation::didInvalidateStyleAttr(*this);
 }
 
@@ -215,7 +216,7 @@ void StyledElement::invalidateStyleAttribute()
     // Inline style invalidation optimization does not work if there are selectors targeting the style attribute
     // as some rule may start or stop matching.
     auto selectorsForStyleAttribute = styleResolver().ruleSets().selectorsForStyleAttribute();
-    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineStyleInvalid : Style::Validity::ElementInvalid;
+    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineOrPresentationalHintStyleInvalid : Style::Validity::ElementInvalid;
 
     Node::invalidateStyle(validity);
 
