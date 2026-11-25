@@ -90,27 +90,23 @@ private:
 
 int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer)
 {
-    static int GST_AUTOPLUG_SELECT_SKIP;
-    static int GST_AUTOPLUG_SELECT_TRY;
+    static auto tryAutoPlug = *gstGetAutoplugSelectResult("try"_s);
+    static auto skipAutoPlug = *gstGetAutoplugSelectResult("skip"_s);
     static Vector<String> pluginsToSkip;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        GEnumClass* enumClass = G_ENUM_CLASS(g_type_class_ref(g_type_from_name("GstAutoplugSelectResult")));
-        GEnumValue* value = g_enum_get_value_by_name(enumClass, "GST_AUTOPLUG_SELECT_SKIP");
-        GST_AUTOPLUG_SELECT_SKIP = value->value;
-        value = g_enum_get_value_by_name(enumClass, "GST_AUTOPLUG_SELECT_TRY");
-        GST_AUTOPLUG_SELECT_TRY = value->value;
-        g_type_class_unref(enumClass);
-
         pluginsToSkip = GStreamerQuirksManager::singleton().disallowedWebAudioDecoders();
     });
 
-    auto factoryName = StringView::fromLatin1(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory)));
+    auto factoryName = StringView::fromLatin1(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(factory)));
+    if (factoryName == "webkitthunderparser"_s)
+        return skipAutoPlug;
+
     for (const auto& pluginToSkip : pluginsToSkip) {
         if (pluginToSkip == factoryName)
-            return GST_AUTOPLUG_SELECT_SKIP;
+            return skipAutoPlug;
     }
-    return GST_AUTOPLUG_SELECT_TRY;
+    return tryAutoPlug;
 }
 
 static void copyGstreamerBuffersToAudioChannel(const GRefPtr<GstBufferList>& buffers, AudioChannel* audioChannel)
