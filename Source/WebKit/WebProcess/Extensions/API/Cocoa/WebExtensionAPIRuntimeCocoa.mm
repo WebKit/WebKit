@@ -184,7 +184,7 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceW
             JSValueRef exception = nullptr;
             reply = serializeMessage(replyMessage.context.JSGlobalContextRef, replyMessage.JSValueRef, true, &exception);
         } else {
-            auto json = String { encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed) };
+            auto json = toJSONString(replyMessage.context.JSGlobalContextRef, replyMessage.JSValueRef);
             if (!json.isNull())
                 reply = WebExtensionMessage { WTF::move(json) };
         }
