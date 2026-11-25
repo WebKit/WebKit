@@ -680,7 +680,7 @@ std::optional<Style::UnadjustedStyle> SVGElement::resolveCustomStyle(const Style
         return styleElement->resolveStyle(styleElementResolutionContext);
     }
 
-    return resolveStyle(resolutionContext);
+    return std::nullopt;
 }
 
 MutableStyleProperties* SVGElement::animatedSMILStyleProperties() const
