@@ -1165,6 +1165,32 @@ TEST_P(ConnectionTestABBA, UnsentWaitForAndDispatchImmediatelyIsTimeout)
     EXPECT_EQ(IPC::Error::Timeout, error);
 }
 
+TEST_P(ConnectionTestABBA, UnsentWaitForAnyAsyncReplyAndDispatchImmediatelyIsTimeout)
+{
+    ASSERT_TRUE(openA());
+    IPC::Error error = a()->waitForAnyAsyncReplyAndDispatchImmediately(kWaitForAbsenceTimeout);
+    EXPECT_EQ(IPC::Error::Timeout, error);
+}
+
+TEST_P(ConnectionTestABBA, InvalidatedWaitForAnyAsyncReplyAndDispatchImmediatelyIsInvalidConnection)
+{
+    ASSERT_TRUE(openA());
+    a()->invalidate();
+    IPC::Error error = a()->waitForAnyAsyncReplyAndDispatchImmediately(kWaitForAbsenceTimeout);
+    EXPECT_EQ(IPC::Error::InvalidConnection, error);
+}
+
+// Tests that waiting for any async reply ends when the other end closes the connection.
+TEST_P(ConnectionTestABBA, ClosedWaitForAnyAsyncReplyAndDispatchImmediatelyFails)
+{
+    ASSERT_TRUE(openBoth());
+    b()->invalidate();
+    IPC::Error error = a()->waitForAnyAsyncReplyAndDispatchImmediately(kDefaultWaitForTimeout);
+    // InvalidConnection if A saw the close before the wait started, AttemptingToWaitOnClosedConnection if during it.
+    EXPECT_TRUE(error == IPC::Error::InvalidConnection || error == IPC::Error::AttemptingToWaitOnClosedConnection) << static_cast<unsigned>(error);
+    EXPECT_TRUE(aClient().waitForDidClose(kDefaultWaitForTimeout));
+}
+
 template<typename C>
 static void dispatchSync(RunLoop& runLoop, C&& function)
 {
@@ -2310,6 +2336,188 @@ TEST_P(ConnectionRunLoopTest, WaitForAndDispatchImmediatelyAsyncWithReplyNotHand
     EXPECT_EQ(reply, 0u); // Cancelled.
 
     runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+static void replyToAsyncWithReplyMessage(IPC::Connection& connection, IPC::Connection::AsyncReplyID replyID, uint64_t value)
+{
+    auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), replyID.toUInt64());
+    encoder.get() << value;
+    connection.sendSyncReply(WTF::move(encoder));
+}
+
+// Async message handler that replies with the destination ID.
+static bool replyWithDestinationID(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    decoder.markHandled();
+    replyToAsyncWithReplyMessage(connection, decoder.asyncReplyID(), decoder.destinationID());
+    return true;
+}
+
+// Tests that waiting for any async reply dispatches a reply that has already arrived, without waiting.
+TEST_P(ConnectionRunLoopTest, WaitForAnyAsyncReplyAndDispatchImmediatelyDispatchesArrivedReply)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler(replyWithDestinationID);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        std::optional<uint64_t> reply;
+        auto replyID = b()->sendWithAsyncReply(MockTestMessageWithAsyncReplyCanDispatchOutOfOrder { }, [&](uint64_t value) {
+            reply = value;
+        }, 5);
+        ASSERT_TRUE(replyID);
+        EXPECT_TRUE(waitForIncomingMessageCount(*b(), 1, kDefaultWaitForTimeout));
+        EXPECT_FALSE(reply);
+        IPC::Error error = b()->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+        EXPECT_EQ(IPC::Error::NoError, error);
+        EXPECT_EQ(reply.value_or(0), 5u);
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+// Tests that waiting for any async reply waits for a reply that arrives during the wait.
+TEST_P(ConnectionRunLoopTest, WaitForAnyAsyncReplyAndDispatchImmediatelyWaitsForReply)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler([](IPC::Connection& connection, IPC::Decoder& decoder) {
+        decoder.markHandled();
+        // Reply later, so that the reply arrives while B waits.
+        RunLoop::currentSingleton().dispatchAfter(100_ms, [connection = Ref { connection }, replyID = decoder.asyncReplyID(), value = decoder.destinationID()] {
+            replyToAsyncWithReplyMessage(connection, replyID, value);
+        });
+        return true;
+    });
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        std::optional<uint64_t> reply;
+        auto replyID = b()->sendWithAsyncReply(MockTestMessageWithAsyncReplyCanDispatchOutOfOrder { }, [&](uint64_t value) {
+            reply = value;
+        }, 5);
+        ASSERT_TRUE(replyID);
+        IPC::Error error = b()->waitForAnyAsyncReplyAndDispatchImmediately(kDefaultWaitForTimeout);
+        EXPECT_EQ(IPC::Error::NoError, error);
+        EXPECT_EQ(reply.value_or(0), 5u);
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+// Tests that waiting for any async reply times out when the reply does not arrive.
+TEST_P(ConnectionRunLoopTest, WaitForAnyAsyncReplyAndDispatchImmediatelyUnrepliedIsTimeout)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler([](IPC::Connection&, IPC::Decoder& decoder) {
+        decoder.markHandled(); // Never replies.
+        return true;
+    });
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        bool gotReply = false;
+        auto replyID = b()->sendWithAsyncReply(MockTestMessageWithAsyncReplyCanDispatchOutOfOrder { }, [&](uint64_t) {
+            gotReply = true;
+        }, 5);
+        ASSERT_TRUE(replyID);
+        IPC::Error error = b()->waitForAnyAsyncReplyAndDispatchImmediately(kWaitForAbsenceTimeout);
+        EXPECT_EQ(IPC::Error::Timeout, error);
+        EXPECT_FALSE(gotReply);
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+// Tests that waiting for any async reply dispatches a cancelled reply.
+TEST_P(ConnectionRunLoopTest, WaitForAnyAsyncReplyAndDispatchImmediatelyDispatchesCancelledReply)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler(replyUnlessDestination77);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        std::optional<uint64_t> reply;
+        auto replyID = b()->sendWithAsyncReply(MockTestMessageWithAsyncReplyCanDispatchOutOfOrder { }, [&](uint64_t value) {
+            reply = value;
+        }, 77);
+        ASSERT_TRUE(replyID);
+        IPC::Error error = b()->waitForAnyAsyncReplyAndDispatchImmediately(kDefaultWaitForTimeout);
+        EXPECT_EQ(IPC::Error::NoError, error);
+        EXPECT_EQ(reply.value_or(1), 0u); // Cancelled.
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+// Tests that waiting for any async reply does not dispatch the replies of messages without ReplyCanDispatchOutOfOrder,
+// and that these replies are then dispatched in the order they arrived in.
+TEST_P(ConnectionRunLoopTest, WaitForAnyAsyncReplyAndDispatchImmediatelySkipsInOrderReplies)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler(replyWithDestinationID);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        Vector<uint64_t> replies;
+        auto addReply = [&](uint64_t value) {
+            replies.append(value);
+        };
+        EXPECT_TRUE(!!b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, addReply, 1));
+        EXPECT_TRUE(!!b()->sendWithAsyncReply(MockTestMessageWithAsyncReplyCanDispatchOutOfOrder { }, addReply, 2));
+        EXPECT_TRUE(!!b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, addReply, 3));
+        EXPECT_TRUE(waitForIncomingMessageCount(*b(), 3, kDefaultWaitForTimeout));
+
+        IPC::Error error = b()->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+        EXPECT_EQ(IPC::Error::NoError, error);
+        EXPECT_EQ(replies, Vector<uint64_t>({ 2 }));
+
+        error = b()->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+        EXPECT_EQ(IPC::Error::Timeout, error);
+        EXPECT_EQ(replies, Vector<uint64_t>({ 2 }));
+        EXPECT_EQ(b()->pendingMessageCountForTesting(), 2u);
+
+        while (replies.size() < 3)
+            RunLoop::currentSingleton().cycle();
+        EXPECT_EQ(replies, Vector<uint64_t>({ 2, 1, 3 }));
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+// Tests that waiting for any async reply dispatches one reply per call, in the order the replies arrived in.
+TEST_P(ConnectionRunLoopTest, WaitForAnyAsyncReplyAndDispatchImmediatelyDispatchesOneReply)
+{
+    ASSERT_TRUE(openA());
+    aClient().setAsyncMessageHandler(replyWithDestinationID);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    dispatchAndWait(runLoop, [&] {
+        ASSERT_TRUE(openB());
+        Vector<uint64_t> replies;
+        for (uint64_t destinationID = 1; destinationID <= 3; ++destinationID) {
+            EXPECT_TRUE(!!b()->sendWithAsyncReply(MockTestMessageWithAsyncReplyCanDispatchOutOfOrder { }, [&](uint64_t value) {
+                replies.append(value);
+            }, destinationID));
+        }
+        EXPECT_TRUE(waitForIncomingMessageCount(*b(), 3, kDefaultWaitForTimeout));
+
+        for (uint64_t count = 1; count <= 3; ++count) {
+            IPC::Error error = b()->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+            EXPECT_EQ(IPC::Error::NoError, error);
+            ASSERT_EQ(replies.size(), count);
+            EXPECT_EQ(replies.last(), count);
+        }
+        IPC::Error error = b()->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+        EXPECT_EQ(IPC::Error::Timeout, error);
+        EXPECT_EQ(replies.size(), 3u);
         b()->invalidate();
     });
     localReferenceBarrier();

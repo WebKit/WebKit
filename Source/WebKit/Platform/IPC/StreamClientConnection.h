@@ -95,6 +95,11 @@ public:
     Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, OptionSet<WaitForOption> = { });
     template<typename>
     Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID);
+    // Dispatches one async reply of a message declared with ReplyCanDispatchOutOfOrder, a stream message or not. See
+    // Connection::waitForAnyAsyncReplyAndDispatchImmediately(). The overload without a timeout uses defaultTimeout().
+    // Call on the dispatcher of the connection.
+    Error waitForAnyAsyncReplyAndDispatchImmediately();
+    Error waitForAnyAsyncReplyAndDispatchImmediately(Timeout);
 
     // Ensures batched messages are processed sometime in the future. FIXME: Currently distinct from flushSentMessages().
     void flushBatch() { wakeUpServer(WakeUpServer::No); }

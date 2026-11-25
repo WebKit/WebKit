@@ -93,6 +93,7 @@ struct MockStreamTestMessageWithAsyncReply1 {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_AsyncPing; }
     // Just using IPCStreamTester_AsyncPingReply as something that is async message name.
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCStreamTester_AsyncPingReply; }
@@ -114,6 +115,7 @@ struct MockStreamTestMessageWithAsyncReply1 {
 struct MockStreamTestMessageWithAsyncReplyNotStreamEncodable {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_AsyncPing; }
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCStreamTester_AsyncPingReply; }
 
@@ -129,6 +131,16 @@ struct MockStreamTestMessageWithAsyncReplyNotStreamEncodable {
     {
     }
     uint64_t contents;
+};
+
+struct MockStreamTestMessageWithAsyncReplyCanDispatchOutOfOrder : MockStreamTestMessageWithAsyncReply1 {
+    using MockStreamTestMessageWithAsyncReply1::MockStreamTestMessageWithAsyncReply1;
+    static constexpr bool replyCanDispatchOutOfOrder = true;
+};
+
+struct MockStreamTestMessageWithAsyncReplyNotStreamEncodableCanDispatchOutOfOrder : MockStreamTestMessageWithAsyncReplyNotStreamEncodable {
+    using MockStreamTestMessageWithAsyncReplyNotStreamEncodable::MockStreamTestMessageWithAsyncReplyNotStreamEncodable;
+    static constexpr bool replyCanDispatchOutOfOrder = true;
 };
 
 class MockSyncMessage {
@@ -712,6 +724,158 @@ TEST_P(StreamMessageTest, SendAsyncReplyNotHandledIsCancelled)
         ASSERT_NE(reply, replies.end());
         EXPECT_EQ(reply->value, i % 2 ? uint64_t { 0 } : i); // Odd messages are cancelled.
     }
+}
+
+// Tests that waiting for any async reply dispatches a reply that has already arrived, without waiting.
+TEST_P(StreamMessageTest, WaitForAnyAsyncReplyAndDispatchImmediatelyDispatchesArrivedReply)
+{
+    auto cleanup = localReferenceBarrier();
+    std::optional<uint64_t> reply;
+    auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyCanDispatchOutOfOrder { 5 }, [&](uint64_t value) {
+        reply = value;
+    }, defaultDestinationID());
+    ASSERT_TRUE(!!result);
+    EXPECT_TRUE(waitForIncomingMessageCount(m_clientConnection->connectionForTesting(), 1, defaultTimeout));
+    EXPECT_FALSE(reply);
+    IPC::Error error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+    EXPECT_EQ(IPC::Error::NoError, error);
+    EXPECT_EQ(reply.value_or(0), 5u);
+}
+
+// Tests that waiting for any async reply, with the default timeout, waits for a reply that arrives during the wait.
+TEST_P(StreamMessageTest, WaitForAnyAsyncReplyAndDispatchImmediatelyWaitsForReply)
+{
+    auto cleanup = localReferenceBarrier();
+    // Block the server until the client waits.
+    std::atomic<bool> serverIsBlocked = false;
+    BinarySemaphore unblockServer;
+    serverQueue().dispatch([&] {
+        serverIsBlocked = true;
+        unblockServer.wait();
+    });
+    while (!serverIsBlocked)
+        RunLoop::currentSingleton().cycle();
+
+    std::optional<uint64_t> reply;
+    auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyCanDispatchOutOfOrder { 5 }, [&](uint64_t value) {
+        reply = value;
+    }, defaultDestinationID());
+    ASSERT_TRUE(!!result);
+    Ref unblocker = Thread::create("StreamMessageTest unblocker"_s, [&] {
+        sleep(100_ms);
+        unblockServer.signal();
+    });
+    IPC::Error error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately();
+    EXPECT_EQ(IPC::Error::NoError, error);
+    EXPECT_EQ(reply.value_or(0), 5u);
+    unblocker->waitForCompletion();
+}
+
+// Tests that waiting for any async reply times out when the reply does not arrive.
+TEST_P(StreamMessageTest, WaitForAnyAsyncReplyAndDispatchImmediatelyUnrepliedIsTimeout)
+{
+    auto cleanup = localReferenceBarrier();
+    std::atomic<bool> serverIsBlocked = false;
+    BinarySemaphore unblockServer;
+    serverQueue().dispatch([&] {
+        serverIsBlocked = true;
+        unblockServer.wait();
+    });
+    while (!serverIsBlocked)
+        RunLoop::currentSingleton().cycle();
+
+    std::optional<uint64_t> reply;
+    auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyCanDispatchOutOfOrder { 5 }, [&](uint64_t value) {
+        reply = value;
+    }, defaultDestinationID());
+    ASSERT_TRUE(!!result);
+    IPC::Error error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately(300_ms);
+    EXPECT_EQ(IPC::Error::Timeout, error);
+    EXPECT_FALSE(reply);
+
+    unblockServer.signal();
+    error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately();
+    EXPECT_EQ(IPC::Error::NoError, error);
+    EXPECT_EQ(reply.value_or(0), 5u);
+}
+
+TEST_P(StreamMessageTest, InvalidatedWaitForAnyAsyncReplyAndDispatchImmediatelyIsInvalidConnection)
+{
+    auto cleanup = localReferenceBarrier();
+    m_clientConnection->invalidate();
+    IPC::Error error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately(300_ms);
+    EXPECT_EQ(IPC::Error::InvalidConnection, error);
+}
+
+// Tests that waiting for any async reply dispatches a cancelled reply.
+TEST_P(StreamMessageTest, WaitForAnyAsyncReplyAndDispatchImmediatelyDispatchesCancelledReply)
+{
+    auto cleanup = localReferenceBarrier();
+    m_mockServerReceiver->setAsyncMessageHandler([](IPC::StreamServerConnection&, IPC::Decoder&) {
+        return true; // Unhandled message.
+    });
+    std::optional<uint64_t> reply;
+    auto result = m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyCanDispatchOutOfOrder { 5 }, [&](uint64_t value) {
+        reply = value;
+    }, defaultDestinationID());
+    ASSERT_TRUE(!!result);
+    IPC::Error error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately();
+    EXPECT_EQ(IPC::Error::NoError, error);
+    EXPECT_EQ(reply.value_or(1), 0u); // Cancelled.
+}
+
+// Tests that waiting for any async reply does not dispatch the replies of messages without ReplyCanDispatchOutOfOrder,
+// and that these replies are then dispatched in the order they arrived in.
+TEST_P(StreamMessageTest, WaitForAnyAsyncReplyAndDispatchImmediatelySkipsInOrderReplies)
+{
+    auto cleanup = localReferenceBarrier();
+    Vector<uint64_t> replies;
+    auto addReply = [&](uint64_t value) {
+        replies.append(value);
+    };
+    EXPECT_TRUE(!!m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { 1 }, addReply, defaultDestinationID()));
+    EXPECT_TRUE(!!m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyCanDispatchOutOfOrder { 2 }, addReply, defaultDestinationID()));
+    EXPECT_TRUE(!!m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReply1 { 3 }, addReply, defaultDestinationID()));
+    Ref connection = m_clientConnection->connectionForTesting();
+    EXPECT_TRUE(waitForIncomingMessageCount(connection, 3, defaultTimeout));
+
+    IPC::Error error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+    EXPECT_EQ(IPC::Error::NoError, error);
+    EXPECT_EQ(replies, Vector<uint64_t>({ 2 }));
+
+    error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+    EXPECT_EQ(IPC::Error::Timeout, error);
+    EXPECT_EQ(replies, Vector<uint64_t>({ 2 }));
+    EXPECT_EQ(connection->pendingMessageCountForTesting(), 2u);
+
+    while (replies.size() < 3)
+        RunLoop::currentSingleton().cycle();
+    EXPECT_EQ(replies, Vector<uint64_t>({ 2, 1, 3 }));
+}
+
+// Tests that waiting for any async reply dispatches one reply per call, in the order the replies arrived in, both for
+// messages sent through the stream and for messages sent out of stream.
+TEST_P(StreamMessageTest, WaitForAnyAsyncReplyAndDispatchImmediatelyDispatchesOneReply)
+{
+    auto cleanup = localReferenceBarrier();
+    Vector<uint64_t> replies;
+    auto addReply = [&](uint64_t value) {
+        replies.append(value);
+    };
+    EXPECT_TRUE(!!m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyCanDispatchOutOfOrder { 1 }, addReply, defaultDestinationID()));
+    EXPECT_TRUE(!!m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyNotStreamEncodableCanDispatchOutOfOrder { 2 }, addReply, defaultDestinationID()));
+    EXPECT_TRUE(!!m_clientConnection->sendWithAsyncReply(MockStreamTestMessageWithAsyncReplyCanDispatchOutOfOrder { 3 }, addReply, defaultDestinationID()));
+    EXPECT_TRUE(waitForIncomingMessageCount(m_clientConnection->connectionForTesting(), 3, defaultTimeout));
+
+    for (uint64_t count = 1; count <= 3; ++count) {
+        IPC::Error error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+        EXPECT_EQ(IPC::Error::NoError, error);
+        ASSERT_EQ(replies.size(), count);
+        EXPECT_EQ(replies.last(), count);
+    }
+    IPC::Error error = m_clientConnection->waitForAnyAsyncReplyAndDispatchImmediately(0_s);
+    EXPECT_EQ(IPC::Error::Timeout, error);
+    EXPECT_EQ(replies.size(), 3u);
 }
 
 TEST_P(StreamMessageTest, SendSyncMessage)

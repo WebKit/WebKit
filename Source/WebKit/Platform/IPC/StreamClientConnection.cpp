@@ -146,6 +146,17 @@ Error StreamClientConnection::flushSentMessages()
     return m_connection->flushSentMessages(WTF::move(timeout));
 }
 
+Error StreamClientConnection::waitForAnyAsyncReplyAndDispatchImmediately()
+{
+    return waitForAnyAsyncReplyAndDispatchImmediately(defaultTimeout());
+}
+
+Error StreamClientConnection::waitForAnyAsyncReplyAndDispatchImmediately(Timeout timeout)
+{
+    // The replies of the stream messages arrive on the connection, like the replies of the out-of-stream messages.
+    return m_connection->waitForAnyAsyncReplyAndDispatchImmediately(timeout);
+}
+
 void StreamClientConnection::invalidate()
 {
     m_connection->invalidate();

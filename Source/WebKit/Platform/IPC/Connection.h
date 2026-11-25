@@ -285,6 +285,8 @@ private:
 struct ConnectionAsyncReplyHandler {
     CompletionHandler<void(Connection*, Decoder*)> completionHandler;
     Markable<AsyncReplyID> replyID;
+    // Whether the message was declared with ReplyCanDispatchOutOfOrder.
+    bool replyCanDispatchOutOfOrder { false };
 };
 
 class Connection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Connection, WTF::DestructionThread::MainRunLoop> {
@@ -517,6 +519,8 @@ public:
     template<typename> Error waitForAndDispatchImmediately(uint64_t destinationID, Timeout, OptionSet<WaitForOption> waitForOptions = { }); // Main thread only.
     template<typename> Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout, OptionSet<WaitForOption> waitForOptions = { }); // Main thread only.
 
+    Error waitForAnyAsyncReplyAndDispatchImmediately(Timeout);
+
     // // Thread-safe, but the reply will be called on the Connection's dispatcher
     template<typename T, typename C>
     std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase& destinationID, OptionSet<SendOption> sendOptions = { })
@@ -679,7 +683,12 @@ private:
 
     bool isIncomingMessagesThrottlingEnabled() const { return m_incomingMessagesThrottlingLevel.has_value(); }
 
+    struct WaitForMessageState;
     DecoderOrError waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
+    DecoderOrError waitForAnyAsyncReplyThatCanDispatchOutOfOrder(Timeout);
+    DecoderOrError waitForMessage(WaitForMessageState&, Timeout);
+    bool isWaitedForMessage(const WaitForMessageState&, const Decoder&) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
+    bool isAsyncReplyThatCanDispatchOutOfOrder(const Decoder&) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
 
     SyncRequestID makeSyncRequestID() { return SyncRequestID::generate(); }
     bool pushPendingSyncRequestID(SyncRequestID);
@@ -861,14 +870,18 @@ private:
     Lock m_waitForMessageLock;
 
     struct WaitForMessageState {
-        WaitForMessageState(MessageName messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
+        WaitForMessageState(std::optional<MessageName> messageName, uint64_t destinationID, OptionSet<WaitForOption> waitForOptions)
             : messageName(messageName)
             , destinationID(destinationID)
             , waitForOptions(waitForOptions)
         {
         }
 
-        MessageName messageName;
+        ASCIILiteral description() const;
+
+        // Without a message name, waits for any async reply that can dispatch out of order, see
+        // isAsyncReplyThatCanDispatchOutOfOrder().
+        std::optional<MessageName> messageName;
         uint64_t destinationID;
         OptionSet<WaitForOption> waitForOptions;
         bool messageWaitingInterrupted = false;
@@ -888,7 +901,11 @@ private:
     const RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
     uint64_t m_nextIncomingSyncMessageCallbackID WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock) { 0 };
 
-    using AsyncReplyHandlerMap = HashMap<AsyncReplyID, CompletionHandler<void(Connection*, Decoder*)>>;
+    struct AsyncReplyHandlerEntry {
+        CompletionHandler<void(Connection*, Decoder*)> completionHandler;
+        bool replyCanDispatchOutOfOrder { false };
+    };
+    using AsyncReplyHandlerMap = HashMap<AsyncReplyID, AsyncReplyHandlerEntry>;
     AsyncReplyHandlerMap m_asyncReplyHandlers WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
     using AsyncReplyHandlerWithDispatcherMap = HashMap<AsyncReplyID, CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)>>;
     AsyncReplyHandlerWithDispatcherMap m_asyncReplyHandlerWithDispatchers WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
@@ -1170,7 +1187,8 @@ Connection::AsyncReplyHandler Connection::makeAsyncReplyHandler(C&& completionHa
     // API contract on invalid sends does not make sense.
     return {
         makeAsyncReplyCompletionHandler<T, C>(std::forward<C>(completionHandler), callThread),
-        AsyncReplyID::generate()
+        AsyncReplyID::generate(),
+        T::replyCanDispatchOutOfOrder
     };
 }
 

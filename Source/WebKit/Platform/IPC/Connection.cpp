@@ -827,17 +827,66 @@ Timeout Connection::timeoutRespectingIgnoreTimeoutsForTesting(Timeout timeout) c
     return m_ignoreTimeoutsForTesting ? Timeout::infinity() : timeout;
 }
 
-// Waiting for an async reply completes also when the reply is cancelled.
-static bool isWaitedForMessage(MessageName messageName, uint64_t destinationID, const Decoder& message)
+ASCIILiteral Connection::WaitForMessageState::description() const
 {
-    if (message.destinationID() != destinationID)
+    if (!messageName)
+        return "<any async reply that can dispatch out of order>"_s;
+    return IPC::description(*messageName);
+}
+
+// Waiting for an async reply completes also when the reply is cancelled.
+bool Connection::isWaitedForMessage(const WaitForMessageState& waitingForMessage, const Decoder& message)
+{
+    if (!waitingForMessage.messageName)
+        return isAsyncReplyThatCanDispatchOutOfOrder(message);
+    if (message.destinationID() != waitingForMessage.destinationID)
         return false;
-    if (message.messageName() == messageName)
+    if (message.messageName() == *waitingForMessage.messageName)
         return true;
-    return message.messageName() == MessageName::CancelAsyncReply && messageIsReplyToAsyncWithReply(messageName);
+    return message.messageName() == MessageName::CancelAsyncReply && messageIsReplyToAsyncWithReply(*waitingForMessage.messageName);
+}
+
+bool Connection::isAsyncReplyThatCanDispatchOutOfOrder(const Decoder& message)
+{
+    if (!message.isAsyncReplyMessage() && message.messageName() != MessageName::CancelAsyncReply)
+        return false;
+    if (!AtomicObjectIdentifier<AsyncReplyIDType>::isValidIdentifier(message.destinationID()))
+        return false;
+    auto it = m_asyncReplyHandlers.find(AtomicObjectIdentifier<AsyncReplyIDType>(message.destinationID()));
+    return it != m_asyncReplyHandlers.end() && it->value.replyCanDispatchOutOfOrder;
 }
 
 auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions) -> DecoderOrError
+{
+    WaitForMessageState waitingForMessage(messageName, destinationID, waitForOptions);
+    return waitForMessage(waitingForMessage, timeout);
+}
+
+auto Connection::waitForAnyAsyncReplyThatCanDispatchOutOfOrder(Timeout timeout) -> DecoderOrError
+{
+    WaitForMessageState waitingForMessage(std::nullopt, 0, { });
+    return waitForMessage(waitingForMessage, timeout);
+}
+
+Error Connection::waitForAnyAsyncReplyAndDispatchImmediately(Timeout timeout)
+{
+    auto decoderOrError = waitForAnyAsyncReplyThatCanDispatchOutOfOrder(timeout);
+    if (!decoderOrError.has_value())
+        return decoderOrError.error();
+
+    auto& decoder = decoderOrError.value().get();
+    bool isCancel = decoder.messageName() == MessageName::CancelAsyncReply;
+    ASSERT(decoder.isAsyncReplyMessage() || isCancel);
+    auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
+    if (!handler) {
+        ASSERT_NOT_REACHED();
+        return Error::FailedToFindReplyHandler;
+    }
+    handler(this, isCancel ? nullptr : &decoder);
+    return Error::NoError;
+}
+
+auto Connection::waitForMessage(WaitForMessageState& waitingForMessage, Timeout timeout) -> DecoderOrError
 {
     if (!isValid())
         return makeUnexpected(Error::InvalidConnection);
@@ -846,7 +895,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
     uintptr_t signpostIdentifier = 0;
     if (signpostsEnabled()) [[unlikely]] {
         signpostIdentifier = generateSignpostIdentifier();
-        WTFBeginSignpost(signpostIdentifier, IPCConnection, "waitForMessage: %" PUBLIC_LOG_STRING, description(messageName).characters());
+        WTFBeginSignpost(signpostIdentifier, IPCConnection, "waitForMessage: %" PUBLIC_LOG_STRING, waitingForMessage.description().characters());
     }
 
     auto endSignpost = makeScopeExit([signpostIdentifier] {
@@ -859,8 +908,6 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
     Ref protectedThis { *this };
 
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
-
-    WaitForMessageState waitingForMessage(messageName, destinationID, waitForOptions);
 
     {
         Locker locker { m_waitForMessageLock };
@@ -883,7 +930,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
             for (auto it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
                 UniqueRef<Decoder>& message = *it;
 
-                if (isWaitedForMessage(messageName, destinationID, message)) {
+                if (isWaitedForMessage(waitingForMessage, message)) {
                     UniqueRef<Decoder> returnedMessage = WTF::move(message);
 
                     m_incomingMessages.remove(it);
@@ -896,7 +943,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
         }
 
         // Don't even start waiting if we have InterruptWaitingIfSyncMessageArrives and there's a sync message already in the queue.
-        if (hasIncomingSynchronousMessage && waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives))
+        if (hasIncomingSynchronousMessage && waitingForMessage.waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives))
             return makeUnexpected(Error::SyncMessageInterruptedWait);
 
         m_waitingForMessage = &waitingForMessage;
@@ -907,7 +954,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
         // Handle any messages that are blocked on a response from us.
         bool wasMessageToWaitForAlreadyDispatched = false;
         protect(m_syncState)->dispatchMessages([&](auto nameOfMessageToDispatch, uint64_t destinationOfMessageToDispatch) {
-            wasMessageToWaitForAlreadyDispatched |= messageName == nameOfMessageToDispatch && destinationID == destinationOfMessageToDispatch;
+            wasMessageToWaitForAlreadyDispatched |= waitingForMessage.messageName == nameOfMessageToDispatch && waitingForMessage.destinationID == destinationOfMessageToDispatch;
         });
 
         Locker locker { m_waitForMessageLock };
@@ -918,7 +965,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
         }
 
         if (m_inDispatchSyncMessageCount && !timeout.isInfinity()) [[unlikely]] {
-            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%" PUBLIC_LOG_STRING "): Exiting immediately, since we're handling a sync message already", description(messageName).characters());
+            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%" PUBLIC_LOG_STRING "): Exiting immediately, since we're handling a sync message already", waitingForMessage.description().characters());
             m_waitingForMessage = nullptr;
             return makeUnexpected(Error::AttemptingToWaitInsideSyncMessageHandling);
         }
@@ -1226,7 +1273,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
 
     // Check if we're waiting for this message, or if we need to interrupt waiting due to an incoming sync message.
     if (m_waitingForMessage && !m_waitingForMessage->decoder) {
-        if (isWaitedForMessage(m_waitingForMessage->messageName, m_waitingForMessage->destinationID, message)) {
+        if (isWaitedForMessage(*m_waitingForMessage, message)) {
             m_waitingForMessage->decoder = message.moveToUniquePtr();
             ASSERT(m_waitingForMessage->decoder);
             shouldNotifyWaitForMessageCondition = true;
@@ -1824,7 +1871,7 @@ void Connection::dispatchIncomingMessages()
 void Connection::addAsyncReplyHandler(AsyncReplyHandler&& handler)
 {
     Locker locker { m_incomingMessagesLock };
-    auto result = m_asyncReplyHandlers.add(*handler.replyID, WTF::move(handler.completionHandler));
+    auto result = m_asyncReplyHandlers.add(*handler.replyID, AsyncReplyHandlerEntry { WTF::move(handler.completionHandler), handler.replyCanDispatchOutOfOrder });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
@@ -1846,8 +1893,8 @@ void Connection::cancelAsyncReplyHandlers()
     }
 
     for (auto& handler : map.values()) {
-        if (handler)
-            handler(nullptr, nullptr);
+        if (handler.completionHandler)
+            handler.completionHandler(nullptr, nullptr);
     }
 
     for (auto& handlerWithDispatcher : mapDispatcher.values()) {
@@ -1859,7 +1906,7 @@ void Connection::cancelAsyncReplyHandlers()
 CompletionHandler<void(Connection*, Decoder*)> Connection::takeAsyncReplyHandler(AsyncReplyID replyID)
 {
     Locker locker { m_incomingMessagesLock };
-    return m_asyncReplyHandlers.take(replyID);
+    return m_asyncReplyHandlers.take(replyID).completionHandler;
 }
 
 bool Connection::isAsyncReplyHandlerWithDispatcher(AsyncReplyID replyID)

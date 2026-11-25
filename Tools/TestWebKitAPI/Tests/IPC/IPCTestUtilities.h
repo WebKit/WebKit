@@ -31,6 +31,7 @@
 #include <optional>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -73,6 +74,19 @@ struct MockTestMessageWithAsyncReply1 {
     using ReplyArguments = std::tuple<uint64_t>;
     using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
 };
+
+// Waits until the connection has queued at least `count` incoming messages for its dispatcher, without running the
+// run loop, so that the messages stay queued.
+inline bool waitForIncomingMessageCount(IPC::Connection& connection, size_t count, Seconds timeout)
+{
+    auto deadline = MonotonicTime::now() + timeout;
+    while (connection.pendingMessageCountForTesting() < count) {
+        if (MonotonicTime::now() > deadline)
+            return false;
+        sleep(1_ms);
+    }
+    return true;
+}
 
 class WaitForMessageMixin {
 public:
