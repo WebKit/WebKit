@@ -46,20 +46,42 @@ struct UsedMargins;
 // callbacks — built with inlineAxis() for columns and blockAxis() for rows.
 // All three are outer sizes.
 struct GridItemSizingFunctions {
-    GridItemSizingFunctions(Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> minContentContributionFunction, Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> maxContentContributionFunction,
-        Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&, std::optional<LayoutUnit> oppositeAxisGridAreaMaximumSize)> usedMinimumSizeFunction)
-            : minContentContribution(WTF::move(minContentContributionFunction))
-            , maxContentContribution(WTF::move(maxContentContributionFunction))
-            , usedMinimumSize(WTF::move(usedMinimumSizeFunction))
+    // The per-item data each callback needs, pulled off the TrackSizingItem by the
+    // converting constructors so the callbacks never see the full TrackSizingItem.
+    struct ContentContributionItem {
+        ContentContributionItem(const TrackSizingItem&);
+
+        const PlacedGridItem& gridItem;
+        const std::optional<LayoutUnit> oppositeAxisConstraint;
+    };
+
+    struct UsedMinimumSizeItem {
+        UsedMinimumSizeItem(const TrackSizingItem&);
+
+        const PlacedGridItem& gridItem;
+        const LayoutUnit borderAndPadding;
+        const UsedMargins& usedMargins;
+        const std::optional<LayoutUnit> oppositeAxisConstraint;
+        const std::optional<LayoutUnit> oppositeAxisGridAreaMaximumSize;
+    };
+
+    // Shared by the min-content and max-content contributions.
+    using ContentContributionFunction = Function<MarginBoxSize(const ContentContributionItem&)>;
+    using UsedMinimumSizeFunction = Function<MarginBoxSize(const UsedMinimumSizeItem&, const TrackSizingFunctionsList&, LayoutUnit gapSize, const AxisConstraint&)>;
+
+    GridItemSizingFunctions(ContentContributionFunction minContentContributionFunction, ContentContributionFunction maxContentContributionFunction, UsedMinimumSizeFunction usedMinimumSizeFunction)
+        : minContentContribution(WTF::move(minContentContributionFunction))
+        , maxContentContribution(WTF::move(maxContentContributionFunction))
+        , usedMinimumSize(WTF::move(usedMinimumSizeFunction))
     {
     }
 
     static GridItemSizingFunctions inlineAxis(const IntegrationUtils&);
     static GridItemSizingFunctions blockAxis(const GridFormattingContext&);
 
-    Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> minContentContribution;
-    Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> maxContentContribution;
-    Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&, std::optional<LayoutUnit> oppositeAxisGridAreaMaximumSize)> usedMinimumSize;
+    ContentContributionFunction minContentContribution;
+    ContentContributionFunction maxContentContribution;
+    UsedMinimumSizeFunction usedMinimumSize;
 };
 
 } // namespace Layout
