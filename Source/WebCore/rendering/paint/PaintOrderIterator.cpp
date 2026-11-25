@@ -50,8 +50,9 @@ bool PaintOrderIterator::canIterate(const RenderBlock& block)
     return isIterableBlockType(block);
 }
 
-PaintOrderIterator::PaintOrderIterator(RenderBlock& root, const LayoutPoint& paintOffset, FloatOrder floatOrder)
-    : m_floatOrder(floatOrder)
+PaintOrderIterator::PaintOrderIterator(RenderBlock& root, const LayoutPoint& paintOffset, Direction direction, FloatOrder floatOrder)
+    : m_direction(direction)
+    , m_floatOrder(floatOrder)
 {
     ASSERT(canIterate(root));
     m_parentStack.append({ root, paintOffset + root.location() });
@@ -93,13 +94,13 @@ void PaintOrderIterator::skipBlock()
 
 void PaintOrderIterator::skipContents()
 {
-    ASSERT(event() == Event::BeforeContents);
+    ASSERT(event() == firstSelfEvent());
     parent().skip = Skip::Contents;
 }
 
 void PaintOrderIterator::skipToLeave()
 {
-    ASSERT(event() == Event::BeforeContents);
+    ASSERT(event() == firstSelfEvent());
     parent().skip = Skip::ToLeave;
 }
 
@@ -115,7 +116,19 @@ void PaintOrderIterator::beginContents()
         parent().event = Event::Children;
         return;
     }
-    advanceToChild(block->firstChildBox());
+    // Forward, the floats come in the second pass, in reverse in the first.
+    parent().isFloatsPass = m_floatOrder == FloatOrder::AfterOtherChildren && m_direction == Direction::Reverse;
+    advanceToChild(firstChild(block));
+}
+
+RenderBox* PaintOrderIterator::firstChild(const RenderBlock& block) const
+{
+    return m_direction == Direction::Forward ? block.firstChildBox() : block.lastChildBox();
+}
+
+RenderBox* PaintOrderIterator::nextChild(const RenderBox& child) const
+{
+    return m_direction == Direction::Forward ? child.nextSiblingBox() : child.previousSiblingBox();
 }
 
 bool PaintOrderIterator::isInCurrentPass(const RenderBox& child) const
@@ -127,7 +140,7 @@ bool PaintOrderIterator::isInCurrentPass(const RenderBox& child) const
 
 void PaintOrderIterator::advanceToChild(CheckedPtr<RenderBox> candidate)
 {
-    for (CheckedPtr child = WTF::move(candidate); child; child = child->nextSiblingBox()) {
+    for (CheckedPtr child = WTF::move(candidate); child; child = nextChild(*child)) {
         if (child->hasSelfPaintingLayer())
             continue;
         if (!isInCurrentPass(*child)) {
@@ -150,22 +163,25 @@ void PaintOrderIterator::advanceToChild(CheckedPtr<RenderBox> candidate)
         m_parentStack.append({ *childBlock, childPaintOffset });
         return;
     }
-    // Most blocks have no floats, so there is often nothing for the floats pass.
-    if (m_floatOrder == FloatOrder::AfterOtherChildren && !parent().isFloatsPass && parent().hasChildForOtherPass) {
-        parent().isFloatsPass = true;
-        CheckedRef block = parent().block;
-        advanceToChild(block->firstChildBox());
-        return;
+    if (m_floatOrder == FloatOrder::AfterOtherChildren) {
+        bool firstPassWasFloats = m_direction == Direction::Reverse;
+        // Most blocks have no floats, so there is often nothing for the second pass.
+        if (parent().isFloatsPass == firstPassWasFloats && parent().hasChildForOtherPass) {
+            parent().isFloatsPass = !firstPassWasFloats;
+            CheckedRef block = parent().block;
+            advanceToChild(firstChild(block));
+            return;
+        }
     }
     parent().child = nullptr;
-    parent().event = Event::AfterContents;
+    parent().event = lastSelfEvent();
 }
 
 void PaintOrderIterator::continueAfterChild()
 {
     // The current child was either entered as a parent or reported as an opaque item.
     CheckedPtr child = parent().child;
-    advanceToChild(child ? child->nextSiblingBox() : nullptr);
+    advanceToChild(child ? nextChild(*child) : nullptr);
 }
 
 void PaintOrderIterator::popParent()
@@ -177,21 +193,23 @@ void PaintOrderIterator::popParent()
 
 PaintOrderIterator& PaintOrderIterator::traverseNext()
 {
-    switch (parent().event) {
-    case Event::EnterBlock:
-        if (parent().skip == Skip::Block) {
+    // Forward: EnterBlock, BeforeContents, contents, AfterContents, LeaveBlock.
+    // Reverse: EnterBlock, AfterContents, contents in reverse, BeforeContents, LeaveBlock.
+    auto event = parent().event;
+    if (event == Event::EnterBlock) {
+        if (parent().skip == Skip::Block)
             popParent();
-            break;
-        }
-        parent().event = Event::BeforeContents;
-        break;
-    case Event::BeforeContents:
+        else
+            parent().event = firstSelfEvent();
+        return *this;
+    }
+    if (event == firstSelfEvent()) {
         switch (std::exchange(parent().skip, Skip::None)) {
         case Skip::None:
             beginContents();
             break;
         case Skip::Contents:
-            parent().event = Event::AfterContents;
+            parent().event = lastSelfEvent();
             break;
         case Skip::ToLeave:
             parent().event = Event::LeaveBlock;
@@ -200,19 +218,27 @@ PaintOrderIterator& PaintOrderIterator::traverseNext()
             ASSERT_NOT_REACHED();
             break;
         }
-        break;
+        return *this;
+    }
+    if (event == lastSelfEvent()) {
+        parent().event = Event::LeaveBlock;
+        return *this;
+    }
+    switch (event) {
     case Event::InlineContent:
     case Event::Children:
-        parent().event = Event::AfterContents;
+        parent().event = lastSelfEvent();
         break;
     case Event::Child:
         continueAfterChild();
         break;
-    case Event::AfterContents:
-        parent().event = Event::LeaveBlock;
-        break;
     case Event::LeaveBlock:
         popParent();
+        break;
+    case Event::EnterBlock:
+    case Event::BeforeContents:
+    case Event::AfterContents:
+        ASSERT_NOT_REACHED();
         break;
     }
     return *this;

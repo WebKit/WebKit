@@ -6930,6 +6930,7 @@
 		E444B0A128C7437900CA560E /* BorderPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E444B0A028C7437900CA560E /* BorderPainter.h */; };
 		9E73BBA26303CDD5AC0FC2BD /* BoxDecorationPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */; };
 		DED455D86AFC6F27CAED7FD0 /* MaskPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 67DCCCAC39DA40C5774677AC /* MaskPainter.h */; };
+		EAFC07D2A3474D9770485DDB /* BlockHitTester.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC04BA537D7C75DF1DE04B9 /* BlockHitTester.h */; };
 		9234214D6BA65E79F2D23B59 /* PaintOrderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B0934FEEB82F0746DB18450 /* PaintOrderIterator.h */; };
 		37E7335109FD761165A999E6 /* BlockPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = B141E4BFEA47122D7DBF2559 /* BlockPainter.h */; };
 		D5BED17B11A73E7021AA8090 /* TextPaintStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 273211FAAB837343D620CB8D /* TextPaintStyle.h */; };
@@ -22962,6 +22963,8 @@
 		E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxDecorationPainter.h; sourceTree = "<group>"; };
 		D14F6BB279C841B98039C41A /* MaskPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MaskPainter.cpp; sourceTree = "<group>"; };
 		67DCCCAC39DA40C5774677AC /* MaskPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskPainter.h; sourceTree = "<group>"; };
+		3AB22090812BA6BF98DEC93D /* BlockHitTester.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlockHitTester.cpp; sourceTree = "<group>"; };
+		CFC04BA537D7C75DF1DE04B9 /* BlockHitTester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockHitTester.h; sourceTree = "<group>"; };
 		BC1033E07661EE79FC603E12 /* PaintOrderIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PaintOrderIterator.cpp; sourceTree = "<group>"; };
 		2B0934FEEB82F0746DB18450 /* PaintOrderIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintOrderIterator.h; sourceTree = "<group>"; };
 		6A8FE8033371680FCD6A824D /* BlockPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlockPainter.cpp; sourceTree = "<group>"; };
@@ -28205,6 +28208,8 @@
 			children = (
 				E444B0AA28C8B1A800CA560E /* BackgroundPainter.cpp */,
 				E444B0A828C8B19900CA560E /* BackgroundPainter.h */,
+				3AB22090812BA6BF98DEC93D /* BlockHitTester.cpp */,
+				CFC04BA537D7C75DF1DE04B9 /* BlockHitTester.h */,
 				6A8FE8033371680FCD6A824D /* BlockPainter.cpp */,
 				B141E4BFEA47122D7DBF2559 /* BlockPainter.h */,
 				E444B0A228C7438400CA560E /* BorderPainter.cpp */,
@@ -44931,6 +44936,7 @@
 				46E3E4B42EA71559006D0735 /* BlobResourceHandleBase.h in Headers */,
 				976D6C7F122B8A3D001FD1F7 /* BlobURL.h in Headers */,
 				115CFA7A208B8D9D001E6991 /* BlockFormattingState.h in Headers */,
+				EAFC07D2A3474D9770485DDB /* BlockHitTester.h in Headers */,
 				DD8A30B4291DFC8F00AD537C /* BlockLayoutState.h in Headers */,
 				37E7335109FD761165A999E6 /* BlockPainter.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,

@@ -26,6 +26,7 @@
 #include "RenderBlock.h"
 
 #include "AXObjectCache.h"
+#include "BlockHitTester.h"
 #include "BlockPainter.h"
 #include "BorderShape.h"
 #include "BoxDecorationPainter.h"
@@ -57,6 +58,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PaintInfoInlines.h"
+#include "PaintOrderIterator.h"
 #include "PositionedLayoutConstraints.h"
 #include "RelayoutScopeForScrollbarChange.h"
 #include "RenderBlockFlow.h"
@@ -1656,6 +1658,9 @@ bool RenderBlock::hitTestChildren(const HitTestRequest& request, HitTestResult& 
 
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
+    if (Paint::PaintOrderIterator::canIterate(*this))
+        return Paint::BlockHitTester { *this, request, result, locationInContainer, accumulatedOffset, hitTestAction }.hitTest();
+
     const LayoutPoint adjustedLocation(accumulatedOffset + location());
     const LayoutSize localOffset = toLayoutSize(adjustedLocation);
 

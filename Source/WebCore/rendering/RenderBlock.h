@@ -40,6 +40,7 @@ struct PaintInfo;
 struct RenderBlockRareData;
 
 namespace Paint {
+class BlockHitTester;
 class BlockPainter;
 }
 
@@ -60,6 +61,7 @@ class RenderBlock : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBlock);
     friend class RelayoutScopeForScrollbarChange;
+    friend class Paint::BlockHitTester;
     friend class Paint::BlockPainter;
 public:
     // FIXME: This is temporary to allow us to move code from RenderBlock into RenderBlockFlow that accesses member variables that we haven't moved out of

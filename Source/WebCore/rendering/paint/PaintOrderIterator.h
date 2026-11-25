@@ -37,7 +37,7 @@ class RenderBox;
 
 namespace Paint {
 
-// Walks a block subtree in paint order, without recursion.
+// Walks a block subtree in paint order, or in reverse paint order for hit testing, without recursion.
 //
 // Each block that is painted by the generic block painting code is entered as a parent. The
 // iterator reports entering and leaving it, so the consumer can set up and tear down per-block state
@@ -63,12 +63,13 @@ public:
         LeaveBlock,
     };
 
+    enum class Direction : bool { Forward, Reverse };
     enum class FloatOrder : bool { TreeOrder, AfterOtherChildren };
 
     static bool canIterate(const RenderBlock&);
 
     // The paint offset is the one RenderBlock::paint() receives, before adding the block's location.
-    PaintOrderIterator(RenderBlock& root, const LayoutPoint& paintOffset, FloatOrder = FloatOrder::TreeOrder);
+    PaintOrderIterator(RenderBlock& root, const LayoutPoint& paintOffset, Direction = Direction::Forward, FloatOrder = FloatOrder::TreeOrder);
 
     bool atEnd() const { return m_parentStack.isEmpty(); }
     Event event() const { return parent().event; }
@@ -80,8 +81,10 @@ public:
     // The block whose contents the current block is part of, or null for the root.
     RenderBlock* enclosingBlock() const;
 
-    // The number of entered blocks, including the current one.
+    // The entered blocks, from the root (0) to the current one (depth() - 1).
     size_t depth() const { return m_parentStack.size(); }
+    RenderBlock& blockAt(size_t index) const { return m_parentStack[index].block; }
+    LayoutPoint paintOffsetAt(size_t index) const { return m_parentStack[index].paintOffset; }
 
     // For Event::Child, the child to paint and the offset to paint it at (before adding its location).
     RenderBox& child() const;
@@ -91,9 +94,9 @@ public:
 
     // From EnterBlock: continue after the block without reporting its contents or LeaveBlock.
     void skipBlock();
-    // From BeforeContents: continue with AfterContents.
+    // From the first of BeforeContents and AfterContents in the iteration direction: continue with the other one.
     void skipContents();
-    // From BeforeContents: continue with LeaveBlock.
+    // From the first of BeforeContents and AfterContents in the iteration direction: continue with LeaveBlock.
     void skipToLeave();
 
 private:
@@ -113,6 +116,10 @@ private:
     const Parent& parent() const { return m_parentStack.last(); }
     Parent& parent() { return m_parentStack.last(); }
 
+    Event firstSelfEvent() const { return m_direction == Direction::Forward ? Event::BeforeContents : Event::AfterContents; }
+    Event lastSelfEvent() const { return m_direction == Direction::Forward ? Event::AfterContents : Event::BeforeContents; }
+    RenderBox* firstChild(const RenderBlock&) const;
+    RenderBox* nextChild(const RenderBox&) const;
     bool isInCurrentPass(const RenderBox&) const;
 
     void beginContents();
@@ -121,6 +128,7 @@ private:
     void popParent();
 
     Vector<Parent, 16> m_parentStack;
+    const Direction m_direction;
     const FloatOrder m_floatOrder;
 };
 

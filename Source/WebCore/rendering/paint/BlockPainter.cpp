@@ -173,7 +173,7 @@ void BlockPainter::paintSubtree()
     auto& paintInfo = m_paintInfo;
     // The non-painting traversal phases walk the tree once, so they take the floats after the other children.
     auto floatOrder = isNonPaintingTraversalPhase(paintInfo.phase) ? PaintOrderIterator::FloatOrder::AfterOtherChildren : PaintOrderIterator::FloatOrder::TreeOrder;
-    for (auto iterator = PaintOrderIterator { m_root, m_paintOffset, floatOrder }; !iterator.atEnd(); iterator.traverseNext()) {
+    for (auto iterator = PaintOrderIterator { m_root, m_paintOffset, PaintOrderIterator::Direction::Forward, floatOrder }; !iterator.atEnd(); iterator.traverseNext()) {
         CheckedRef block = iterator.block();
         auto paintOffset = iterator.paintOffset();
 

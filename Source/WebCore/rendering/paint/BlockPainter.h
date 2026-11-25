@@ -94,7 +94,6 @@ private:
         CheckedPtr<RenderObject> subtreePaintRoot;
         OptionSet<PaintBehavior> paintBehavior;
     };
-    // An entered block.
     struct Parent {
         // The paint info state of the block's parent, restored by popParent(). Unset for the root.
         std::optional<PaintInfoState> savedPaintInfoState;
