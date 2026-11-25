@@ -1,0 +1,3 @@
+
+FAIL Use prefetched response as all query parameters except c can be ignored. Only the last except matters. promise_test: Unhandled rejection with value: object "TypeError: remoteAgent.forceSinglePrefetchAndWaitForStatus is not a function. (In 'remoteAgent.forceSinglePrefetchAndWaitForStatus(nextUrl)', 'remoteAgent.forceSinglePrefetchAndWaitForStatus' is undefined)"
+
