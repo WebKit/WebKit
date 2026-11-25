@@ -2212,6 +2212,8 @@ void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newReq
 {
     LOADER_RELEASE_LOG("restartNetworkLoad: (hasNetworkLoad=%d)", !!m_networkLoad);
 
+    m_isWaitingContinueWillSendRequestForCachedRedirect = false;
+
     if (RefPtr networkLoad = m_networkLoad) {
         LOADER_RELEASE_LOG("restartNetworkLoad: Cancelling existing network load so we can restart the load.");
         networkLoad->cancel();
