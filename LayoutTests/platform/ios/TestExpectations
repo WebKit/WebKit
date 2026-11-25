@@ -36,6 +36,7 @@ system-preview [ Pass ]
 remote-layer-tree [ Pass ]
 swipe [ Pass ]
 webanimations/threaded-animations [ Pass ]
+webanimations/threaded-animations/mac [ Skip ]
 
 fast/events/ios [ Pass ]
 fast/events/ios/single-tap-verify-user-gesture.html [ Skip ]

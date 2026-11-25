@@ -44,6 +44,7 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 #include "RemoteAnimationStack.h"
+#include "RemoteAnimationVisibility.h"
 #include "RemoteMonotonicTimelineRegistry.h"
 #endif
 
@@ -122,6 +123,8 @@ public:
     RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
     HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID);
     HashSet<Ref<RemoteMonotonicTimeline>> monotonicTimelinesForProcessForTesting(WebCore::ProcessIdentifier) const;
+    void updateAnimatedContentVisibilityAfterCommit();
+    bool hasVisibleMonotonicAnimations();
 #endif
 
 private:
@@ -170,6 +173,8 @@ private:
 #if ENABLE(THREADED_ANIMATIONS)
     enum class AnimationStacksToUpdate : bool { All, ProgressBasedOnly };
     bool updateAnimations(AnimationStacksToUpdate = AnimationStacksToUpdate::All);
+    enum class ApplyEffectsToAnimationsThatBecameVisible : bool { No, Yes };
+    bool updateAnimatedContentVisibilityIfNeeded(ApplyEffectsToAnimationsThatBecameVisible) WTF_REQUIRES_LOCK(m_animationLock);
 #endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
@@ -221,6 +226,9 @@ private:
     friend class RemoteScrollingCoordinatorProxyMac;
     Lock m_animationLock;
     HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteAnimationStack>> m_animationStacks WTF_GUARDED_BY_LOCK(m_animationLock);
+    HashMap<WebCore::PlatformLayerIdentifier, RetainPtr<CALayer>> m_animatedLayers WTF_GUARDED_BY_LOCK(m_animationLock);
+    RetainPtr<CALayer> m_rootLayer WTF_GUARDED_BY_LOCK(m_animationLock);
+    RemoteAnimationVisibility m_animationVisibility WTF_GUARDED_BY_LOCK(m_animationLock);
     std::unique_ptr<RemoteMonotonicTimelineRegistry> m_monotonicTimelineRegistry WTF_GUARDED_BY_LOCK(m_animationLock);
 #endif
 

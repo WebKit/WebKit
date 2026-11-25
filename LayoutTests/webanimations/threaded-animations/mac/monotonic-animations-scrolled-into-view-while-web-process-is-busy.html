@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../threaded-animations-utils.js"></script>
+<style>
+
+.box {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+<script>
+
+const presentationUpdate = async () => {
+    await threadedAnimationsCommit();
+    await UIHelper.ensurePresentationUpdate();
+};
+
+// Scrolls the page from the UI process and returns whether monotonic animations are updated as the display
+// refreshes, as soon as they are or once the provided timeout has elapsed. The script runs immediately rather
+// than after the next presentation update, since this must not require a commit from the web process.
+const scrollAndWaitForUpdatesForMonotonicAnimations = timeout => {
+    const events = { events: [
+        { type: "wheel", viewX: 50, viewY: 50, deltaY: -1, phase: "began" },
+        { type: "wheel", deltaY: -10, phase: "changed" },
+        { type: "wheel", deltaY: -10, phase: "changed" },
+        { type: "wheel", deltaY: -10, phase: "changed" },
+        { type: "wheel", phase: "ended" }
+    ] };
+
+    return new Promise(resolve => testRunner.runUIScriptImmediately(`(() => {
+        uiController.sendEventStream('${JSON.stringify(events)}', () => {
+            const start = Date.now();
+            const check = () => {
+                const schedulesUpdates = uiController.schedulesUpdatesForMonotonicAnimations();
+                if (schedulesUpdates || Date.now() - start > ${timeout})
+                    uiController.uiScriptComplete(String(schedulesUpdates));
+                else
+                    uiController.doAsyncTask(check);
+            };
+            check();
+        });
+    })()`, result => resolve(result === "true")));
+};
+
+promise_test(async test => {
+    const target = document.createElement("div");
+    target.className = "box";
+    target.style.top = `${innerHeight + 10}px`;
+    document.body.appendChild(target);
+
+    const animation = target.animate({ translate: "100px" }, 1000 * 1000);
+    await animationAcceleration(animation);
+    assert_true(internals.acceleratedAnimationsForElement(target)[0].isThreaded, "The animation runs in the remote layer tree");
+    await presentationUpdate();
+    assert_false(await UIHelper.schedulesUpdatesForMonotonicAnimations(), "An animation just out of view is not updated");
+
+    // Keep this thread busy for longer than the UI process waits so that the web process cannot commit
+    // in the meantime, leaving the scrolling thread alone to find that the animated element came into view.
+    const timeout = 1000;
+    const schedulesUpdates = scrollAndWaitForUpdatesForMonotonicAnimations(timeout);
+    const start = performance.now();
+    while (performance.now() - start < timeout * 1.5) { }
+
+    const schedulesUpdatesWhileBusy = await schedulesUpdates;
+    await presentationUpdate();
+    assert_greater_than(scrollY, 10, "The page scrolled");
+    assert_true(schedulesUpdatesWhileBusy, "Scrolling the animated element into view updates the animation while the web process is busy");
+}, "Monotonic animations scrolled into view are updated even if the web process does not commit.");
+
+</script>
+</body>

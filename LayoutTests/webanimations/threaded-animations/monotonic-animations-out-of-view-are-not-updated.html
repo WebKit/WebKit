@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <body>
-<script src="../../../resources/testharness.js"></script>
-<script src="../../../resources/testharnessreport.js"></script>
-<script src="../../../resources/ui-helper.js"></script>
-<script src="../threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
 <style>
 
 .box {
@@ -93,13 +93,24 @@ promise_test(async test => {
     });
 
     const target = createBox(test);
-    target.style.top = `${farOutOfView}px`;
-    await startMonotonicAnimation(target);
-    await assertSchedulesUpdates(false, "An animation far out of view is not updated");
+    if (UIHelper.isIOSFamily()) {
+        target.style.top = `${farOutOfView}px`;
+        await startMonotonicAnimation(target);
+        await assertSchedulesUpdates(false, "An animation far out of view is not updated");
 
-    await UIHelper.immediateScrollTo(0, farOutOfView - 100);
-    await presentationUpdate();
-    await assertSchedulesUpdates(true, "Scrolling to the animated element updates the animation again");
+        await UIHelper.immediateScrollTo(0, farOutOfView - 100);
+        await presentationUpdate();
+        await assertSchedulesUpdates(true, "Scrolling to the animated element updates the animation again");
+    } else {
+        target.style.top = `${innerHeight + 10}px`;
+        await startMonotonicAnimation(target);
+        await assertSchedulesUpdates(false, "An animation just out of view is not updated");
+
+        await UIHelper.mouseWheelScrollAt(50, 50, 0, -1, 0, -10);
+        await presentationUpdate();
+        assert_greater_than(scrollY, 10, "The page scrolled");
+        await assertSchedulesUpdates(true, "Scrolling the animated element into view updates the animation again");
+    }
 }, "Monotonic animations are updated as the page is scrolled by the user.");
 
 promise_test(async test => {

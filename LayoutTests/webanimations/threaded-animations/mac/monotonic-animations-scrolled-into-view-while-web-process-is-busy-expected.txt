@@ -1,0 +1,3 @@
+
+PASS Monotonic animations scrolled into view are updated even if the web process does not commit.
+
