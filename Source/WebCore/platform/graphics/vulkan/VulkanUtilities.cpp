@@ -200,6 +200,7 @@ void initializeIfNeeded()
     bool shouldInstallDebugMessenger = false;
 #endif // VK_EXT_debug_utils
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     if (LOG_CHANNEL(Vulkan).state != WTFLogChannelState::Off) [[unlikely]] {
         static constexpr auto validationLayerName = "VK_LAYER_KHRONOS_validation";
         if (Instance::hasLayer(validationLayerName)) {
@@ -230,6 +231,7 @@ void initializeIfNeeded()
         }
         RELEASE_LOG_DEBUG(Vulkan, "Requesting %zu extensions%s", extensionNames.size(), formattedExtensionList.toString().utf8().data());
     }
+#endif
 
 #if USE(GLIB)
     const String applicationName = makeString(getApplicationID(), '.', processTypeDescription(processType()));

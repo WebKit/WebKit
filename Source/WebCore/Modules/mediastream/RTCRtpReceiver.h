@@ -62,7 +62,7 @@ public:
     {
         return adoptRef(*new RTCRtpReceiver(connection, WTF::move(track), WTF::move(backend)));
     }
-    virtual ~RTCRtpReceiver();
+    ~RTCRtpReceiver();
 
     static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
@@ -74,10 +74,12 @@ public:
 
     MediaStreamTrack& track() { return m_track.get(); }
 
+    RTCRtpReceiverBackend& backend() LIFETIME_BOUND { return m_backend.get(); }
+
+    const Vector<WeakPtr<MediaStream>>& associatedStreams() const LIFETIME_BOUND { return m_associatedStreams; }
+
     RTCDtlsTransport* transport() { return m_transport.get(); }
     void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
-
-    RTCRtpReceiverBackend& backend() LIFETIME_BOUND { return m_backend.get(); }
     std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend();
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend();
     void getStats(Ref<DeferredPromise>&&);
@@ -86,8 +88,6 @@ public:
     ExceptionOr<void> setTransform(std::unique_ptr<RTCRtpTransform>&&);
 
     ExceptionOr<RTCEncodedStreams> createEncodedStreams(ScriptExecutionContext&);
-
-    const Vector<WeakPtr<MediaStream>>& associatedStreams() const LIFETIME_BOUND { return m_associatedStreams; }
     void setAssociatedStreams(Vector<WeakPtr<MediaStream>>&& streams) { m_associatedStreams = WTF::move(streams); }
 
     std::optional<double> jitterBufferTarget() const { return m_jitterBufferTarget; }
@@ -97,11 +97,11 @@ private:
     RTCRtpReceiver(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, UniqueRef<RTCRtpReceiverBackend>&&);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger.get(); }
-    uint64_t logIdentifier() const final { return m_logIdentifier; }
-    ASCIILiteral logClassName() const final { return "RTCRtpReceiver"_s; }
-    WTFLogChannel& NODELETE logChannel() const final;
-#endif
+        const Logger& logger() const final { return m_logger.get(); }
+        uint64_t logIdentifier() const final { return m_logIdentifier; }
+        ASCIILiteral logClassName() const final { return "RTCRtpReceiver"_s; }
+        WTFLogChannel& NODELETE logChannel() const final;
+    #endif
 
     bool m_isStopped { false };
     const Ref<MediaStreamTrack> m_track;
@@ -113,9 +113,9 @@ private:
     Vector<WeakPtr<MediaStream>> m_associatedStreams;
     std::optional<double> m_jitterBufferTarget;
 #if !RELEASE_LOG_DISABLED
-    const Ref<const Logger> m_logger;
-    uint64_t m_logIdentifier { 0 };
-#endif
+        const Ref<const Logger> m_logger;
+        uint64_t m_logIdentifier { 0 };
+    #endif
 };
 
 } // namespace WebCore

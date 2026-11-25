@@ -97,9 +97,9 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
                     RELEASE_LOG_ERROR(Extensions, "Unable to update %s rules for extension %s. Error: %s", storageType.utf8().data(), uniqueIdentifier().utf8().data(), errorMessage.utf8().data());
 
                     // Update was unsucessful, rollback the changes to the database.
-                    storage->rollbackToSavepoint(savepointIdentifier.value(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType, apiName, errorMessage](const String& savepointErrorMessage) mutable {
+                    storage->rollbackToSavepoint(savepointIdentifier.value(), [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType, apiName, errorMessage](const String& savepointErrorMessage) mutable {
                         if (!savepointErrorMessage.isEmpty())
-                            RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %s rules savepoint for extension %s. Error: %s", storageType.utf8().data(), uniqueIdentifier().utf8().data(), savepointErrorMessage.utf8().data());
+                            RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %s rules savepoint for extension %s. Error: %s", storageType.utf8().data(), protectedThis->uniqueIdentifier().utf8().data(), savepointErrorMessage.utf8().data());
 
                         completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
                     });
@@ -130,9 +130,9 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
                     }
 
                     // Load was successful, commit the changes to the database.
-                    storage->commitSavepoint(savepointIdentifier.value(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType](const String& savepointErrorMessage) mutable {
+                    storage->commitSavepoint(savepointIdentifier.value(), [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType](const String& savepointErrorMessage) mutable {
                         if (!savepointErrorMessage.isEmpty())
-                            RELEASE_LOG_ERROR(Extensions, "Unable to commit %s rules savepoint for extension %s. Error: %s", storageType.utf8().data(), uniqueIdentifier().utf8().data(), savepointErrorMessage.utf8().data());
+                            RELEASE_LOG_ERROR(Extensions, "Unable to commit %s rules savepoint for extension %s. Error: %s", storageType.utf8().data(), protectedThis->uniqueIdentifier().utf8().data(), savepointErrorMessage.utf8().data());
 
                         completionHandler({ });
                     });

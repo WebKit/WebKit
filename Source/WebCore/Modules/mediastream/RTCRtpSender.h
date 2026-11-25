@@ -64,7 +64,7 @@ class RTCRtpSender final : public RefCounted<RTCRtpSender>
 public:
     static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, Ref<RTCRtpSenderBackend>&&);
     static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
-    virtual ~RTCRtpSender();
+    ~RTCRtpSender();
 
     static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
@@ -75,6 +75,8 @@ public:
 
     const String& trackId() const LIFETIME_BOUND { return m_trackId; }
     const String& trackKind() const LIFETIME_BOUND { return m_trackKind; }
+
+    RTCRtpSenderBackend& backend() { return m_backend.get(); }
 
     ExceptionOr<void> setMediaStreamIds(const FixedVector<String>&);
     ExceptionOr<void> setStreams(const FixedVector<std::reference_wrapper<MediaStream>>&);
@@ -88,8 +90,6 @@ public:
 
     RTCRtpSendParameters getParameters();
     void setParameters(RTCRtpSendParameters&&, DOMPromiseDeferred<void>&&);
-
-    RTCRtpSenderBackend& backend() { return m_backend.get(); }
     std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend();
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend();
 
@@ -109,11 +109,11 @@ private:
     RTCRtpSender(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger.get(); }
-    uint64_t logIdentifier() const final { return m_logIdentifier; }
-    ASCIILiteral logClassName() const final { return "RTCRtpSender"_s; }
-    WTFLogChannel& NODELETE logChannel() const final;
-#endif
+        const Logger& logger() const final { return m_logger.get(); }
+        uint64_t logIdentifier() const final { return m_logIdentifier; }
+        ASCIILiteral logClassName() const final { return "RTCRtpSender"_s; }
+        WTFLogChannel& NODELETE logChannel() const final;
+    #endif
 
     bool m_isStopped { false };
     RefPtr<MediaStreamTrack> m_track;
@@ -126,9 +126,9 @@ private:
     std::unique_ptr<RTCRtpTransform> m_transform;
     const RefPtr<RTCEncodedStreamProducer> m_encodedStreamProducer;
 #if !RELEASE_LOG_DISABLED
-    const Ref<const Logger> m_logger;
-    uint64_t m_logIdentifier { 0 };
-#endif
+        const Ref<const Logger> m_logger;
+        uint64_t m_logIdentifier { 0 };
+    #endif
 };
 
 } // namespace WebCore

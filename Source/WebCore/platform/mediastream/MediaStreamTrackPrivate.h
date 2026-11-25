@@ -101,10 +101,15 @@ public:
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&& postTask = { });
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&& postTask = { });
 
-    WEBCORE_EXPORT virtual ~MediaStreamTrackPrivate();
+    WEBCORE_EXPORT ~MediaStreamTrackPrivate();
 
     const String& id() const LIFETIME_BOUND { return m_data.trackId; }
     const String& label() const LIFETIME_BOUND { return m_data.label; }
+
+    const RealtimeMediaSourceSettings& settings() const LIFETIME_BOUND { return m_data.settings; }
+    const RealtimeMediaSourceCapabilities& capabilities() const LIFETIME_BOUND { return m_data.capabilities; }
+
+    MediaStreamTrackPrivateSourceObserver& sourceObserver() { return m_sourceObserver; }
 
     bool isActive() const { return enabled() && !ended() && !muted(); }
 
@@ -149,9 +154,6 @@ public:
     void removeObserver(MediaStreamTrackPrivateObserver&);
     bool hasObserver(MediaStreamTrackPrivateObserver& observer) const { return m_observers.contains(observer); }
 
-    const RealtimeMediaSourceSettings& settings() const LIFETIME_BOUND { return m_data.settings; }
-    const RealtimeMediaSourceCapabilities& capabilities() const LIFETIME_BOUND { return m_data.capabilities; }
-
     Ref<RealtimeMediaSource::TakePhotoNativePromise> takePhoto(PhotoSettings&&);
     Ref<RealtimeMediaSource::PhotoCapabilitiesNativePromise> getPhotoCapabilities();
     Ref<RealtimeMediaSource::PhotoSettingsNativePromise> getPhotoSettings();
@@ -184,8 +186,6 @@ public:
     UniqueRef<MediaStreamTrackDataHolder> toDataHolder(ShouldClone = ShouldClone::No);
 
     void updateLabelIfRemoteTrack();
-
-    MediaStreamTrackPrivateSourceObserver& sourceObserver() { return m_sourceObserver; }
     size_t settingsCapabilitiesUpdateCount() const { return m_data.settingsCapabilitiesUpdateCount; }
 
 private:
