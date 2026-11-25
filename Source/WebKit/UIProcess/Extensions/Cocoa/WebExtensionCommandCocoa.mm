@@ -222,7 +222,11 @@ String WebExtensionCommand::userVisibleShortcut() const
         return emptyString();
 
 #if PLATFORM(MAC)
+#if HAVE(NSKEYBOARDSHORTCUT_MODIFIER_FLAGS)
+    NSKeyboardShortcut *shortcut = [NSKeyboardShortcut shortcutWithKeyEquivalent:key.createNSString().get() modifierFlags:flags.toRaw()];
+#else
     NSKeyboardShortcut *shortcut = [NSKeyboardShortcut shortcutWithKeyEquivalent:key.createNSString().get() modifierMask:flags.toRaw()];
+#endif
     return shortcut.localizedDisplayName ?: @"";
 #else
     static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
