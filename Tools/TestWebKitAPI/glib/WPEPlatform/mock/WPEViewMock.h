@@ -33,4 +33,7 @@ G_BEGIN_DECLS
 #define WPE_TYPE_VIEW_MOCK (wpe_view_mock_get_type())
 G_DECLARE_FINAL_TYPE(WPEViewMock, wpe_view_mock, WPE, VIEW_MOCK, WPEView)
 
+const char* wpeViewMockGetTooltipText(WPEViewMock*);
+const WPERectangle* wpeViewMockGetTooltipArea(WPEViewMock*);
+
 G_END_DECLS

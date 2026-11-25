@@ -28,6 +28,7 @@
 #include <wpe/WPEClipboard.h>
 #include <wpe/WPEDRMDevice.h>
 #include <wpe/WPEEvent.h>
+#include <wpe/WPETooltip.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WTF {
@@ -35,5 +36,6 @@ namespace WTF {
 WTF_DEFINE_GREF_TRAITS_INLINE(WPEEvent, wpe_event_ref, wpe_event_unref)
 WTF_DEFINE_GREF_TRAITS_INLINE(WPEClipboardContent, wpe_clipboard_content_ref, wpe_clipboard_content_unref)
 WTF_DEFINE_GREF_TRAITS_INLINE(WPEDRMDevice, wpe_drm_device_ref, wpe_drm_device_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(WPETooltip, wpe_tooltip_ref, wpe_tooltip_unref)
 
 } // namespace WTF

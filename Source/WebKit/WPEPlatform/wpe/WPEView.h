@@ -46,6 +46,7 @@ typedef struct _WPEDisplay WPEDisplay;
 typedef struct _WPEEvent WPEEvent;
 typedef struct _WPEScreen WPEScreen;
 typedef struct _WPERectangle WPERectangle;
+typedef struct _WPETooltip WPETooltip;
 typedef struct _WPEViewAccessible WPEViewAccessible;
 
 struct _WPEViewClass
@@ -84,8 +85,10 @@ struct _WPEViewClass
                                                              guint               hotspot_x,
                                                              guint               hotspot_y,
                                                              double              scale);
+    void               (* set_tooltip)                      (WPEView            *view,
+                                                             WPETooltip         *tooltip);
 
-    gpointer padding[31];
+    gpointer padding[30];
 };
 
 #define WPE_VIEW_ERROR (wpe_view_error_quark())
@@ -139,6 +142,8 @@ WPE_API void                  wpe_view_set_cursor_from_bytes_with_scale (WPEView
                                                                      guint               hotspot_x,
                                                                      guint               hotspot_y,
                                                                      double              scale);
+WPE_API void                  wpe_view_set_tooltip                  (WPEView            *view,
+                                                                     WPETooltip         *tooltip);
 WPE_API WPEToplevelState      wpe_view_get_toplevel_state           (WPEView            *view);
 WPE_API WPEScreen            *wpe_view_get_screen                   (WPEView            *view);
 WPE_API void                  wpe_view_buffers_changed              (WPEView            *view,

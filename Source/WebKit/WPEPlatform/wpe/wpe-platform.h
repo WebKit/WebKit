@@ -52,6 +52,7 @@
 #include <wpe/WPERectangle.h>
 #include <wpe/WPEScreen.h>
 #include <wpe/WPEScreenSyncObserver.h>
+#include <wpe/WPETooltip.h>
 #include <wpe/WPEToplevel.h>
 #include <wpe/WPEVersion.h>
 #include <wpe/WPEView.h>

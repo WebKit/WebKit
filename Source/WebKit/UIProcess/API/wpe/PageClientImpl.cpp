@@ -165,8 +165,9 @@ void PageClientImpl::preferencesDidChange()
 {
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String&)
+void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 {
+    m_view.setToolTip(newToolTip);
 }
 
 void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
