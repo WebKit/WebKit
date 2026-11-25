@@ -643,13 +643,19 @@ private:
         case WasmAddress: {
             WasmAddressValue* wasmAddress = address->as<WasmAddressValue>();
             Value* pointer = wasmAddress->child(0);
+            Tmp base = Tmp(wasmAddress->pinnedGPR());
+            if (pointer->hasInt64() && !sumOverflows<int64_t>(pointer->asInt64(), offset)) {
+                int64_t constantOffset = pointer->asInt64() + offset;
+                if (isRepresentableAs<Int>(constantOffset) && Arg::isValidAddrForm(Air::Move, static_cast<Int>(constantOffset), width))
+                    return Arg::addr(base, static_cast<Int>(constantOffset));
+            }
+
             // Why don't we need to check m_locked for the WasmAddressValue itself? It is purely used for address computation,
             // which is different from the other operations. And we already know that numUses(address) is below the threshold.
             // If we ensure that all use of WasmAddress gets indexArg form, we do not need to have WasmAddressValue's instruction actually.
             if (!Arg::isValidIndexForm(1, offset, width))
                 return fallback();
 
-            Tmp base = Tmp(wasmAddress->pinnedGPR());
             std::optional<unsigned> scale = scaleForShl(pointer, offset, width);
             if (scale && !m_locked.contains(pointer->child(0)))
                 return indexArg(base, pointer->child(0), *scale, offset);

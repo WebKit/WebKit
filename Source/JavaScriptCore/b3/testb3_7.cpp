@@ -1916,6 +1916,62 @@ void testWasmAddress()
         CHECK_EQ(numToStore, value);
 }
 
+void testWasmAddressWithConstantIndex()
+{
+    constexpr size_t bufferSize = (16 << 20) + 8192;
+    Vector<uint8_t> buffer(bufferSize);
+    GPRReg pinnedGPR = GPRInfo::argumentGPR1;
+    struct Access {
+        B3::Opcode loadOpcode;
+        B3::Opcode storeOpcode;
+        Type type;
+        unsigned size;
+    };
+    const Access accesses[] = {
+        { Load8Z, Store8, Int32, 1 },
+        { Load16Z, Store16, Int32, 2 },
+        { Load, Store, Int32, 4 },
+        { Load, Store, Int64, 8 },
+    };
+    const uint64_t constants[] = { 0, 4, 0x464, 0xffc, 0x3ffc, 0x7ff8, 0x1000, 0x1004, 0x1fff, 0x15cae0, 0x15cae4, 0x15cfff, 0xfffff8, 0x1000000, 0x1234567 };
+    const int32_t offsets[] = { 0, 4, 255, 4088 };
+    for (const auto& access : accesses) {
+        for (uint64_t constant : constants) {
+            for (int32_t offset : offsets) {
+                uint64_t effective = constant + offset;
+                if (effective + access.size > bufferSize)
+                    continue;
+                Procedure proc;
+                proc.pinRegister(pinnedGPR);
+                BasicBlock* root = proc.addBlock();
+                auto arguments = cCallArgumentValues<int64_t, void*>(proc, root);
+                Value* value = arguments[0];
+                if (access.type == Int32)
+                    value = root->appendNew<Value>(proc, Trunc, Origin(), value);
+                auto address = [&] {
+                    return root->appendNew<WasmAddressValue>(proc, Origin(), root->appendNew<Const64Value>(proc, Origin(), constant), pinnedGPR);
+                };
+                root->appendNew<MemoryValue>(proc, access.storeOpcode, Origin(), value, address(), offset);
+                Value* loaded = root->appendNew<MemoryValue>(proc, access.loadOpcode, access.type, Origin(), address(), offset);
+                if (access.type == Int32)
+                    loaded = root->appendNew<Value>(proc, ZExt32, Origin(), loaded);
+                root->appendNew<Value>(proc, Return, Origin(), loaded);
+                auto code = compileProc(proc);
+
+                std::ranges::fill(buffer, 0);
+                uint64_t pattern = 0x8877665544332211ULL;
+                uint64_t mask = access.size == 8 ? ~0ULL : (1ULL << (access.size * 8)) - 1;
+                CHECK_EQ(static_cast<uint64_t>(invoke<int64_t>(*code, static_cast<int64_t>(pattern), buffer.mutableSpan().data())), pattern & mask);
+                for (unsigned i = 0; i < access.size; ++i)
+                    CHECK_EQ(buffer[effective + i], static_cast<uint8_t>(pattern >> (i * 8)));
+                CHECK_EQ(buffer[effective + access.size], 0);
+                if (effective)
+                    CHECK_EQ(buffer[effective - 1], 0);
+            }
+        }
+    }
+}
+
 void testWasmAddressZeroExtendScaledIndex()
 {
     if (Options::defaultB3OptLevel() < 2)

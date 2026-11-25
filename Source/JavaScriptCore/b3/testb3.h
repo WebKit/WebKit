@@ -1336,6 +1336,7 @@ void testDepend32();
 void testDepend64();
 void testWasmBoundsCheck(unsigned offset);
 void testWasmAddress();
+void testWasmAddressWithConstantIndex();
 void testWasmAddressZeroExtendScaledIndex();
 void testWasmAddressZeroExtend32BitShiftWraps();
 void testWasmAddressScaledIndexWithLockedShlChild();

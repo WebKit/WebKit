@@ -1222,6 +1222,7 @@ void run(const TestConfig* config)
     RUN(testWasmBoundsCheck(std::numeric_limits<unsigned>::max() - 5));
 
     RUN(testWasmAddress());
+    RUN(testWasmAddressWithConstantIndex());
     RUN(testWasmAddressZeroExtendScaledIndex());
     RUN(testWasmAddressZeroExtend32BitShiftWraps());
     RUN(testWasmAddressScaledIndexWithLockedShlChild());
