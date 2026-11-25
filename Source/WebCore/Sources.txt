@@ -3968,7 +3968,6 @@ JSAriaNotifyOptions.cpp
 JSAttestationConveyancePreference.cpp
 JSAttr.cpp
 JSAudioBuffer.cpp
-JSAudioBufferCallback.cpp
 JSAudioBufferOptions.cpp
 JSAudioBufferSourceNode.cpp
 JSAudioBufferSourceOptions.cpp
@@ -4279,6 +4278,8 @@ JSDataTransferItem.cpp
 JSDataTransferItemList.cpp
 JSDatabase.cpp
 JSDatabaseCallback.cpp
+JSDecodeErrorCallback.cpp
+JSDecodeSuccessCallback.cpp
 JSDecompressionStream.cpp
 JSDecompressionStreamDecoder.cpp
 JSDedicatedWorkerGlobalScope.cpp

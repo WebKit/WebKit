@@ -22,35 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(WEB_AUDIO)
-
-#include "ActiveDOMCallback.h"
-#include "CallbackResult.h"
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class AudioBuffer;
-
-class AudioBufferCallback : public RefCounted<AudioBufferCallback>, public ActiveDOMCallback {
-public:
-    using ActiveDOMCallback::ActiveDOMCallback;
-
-    // ContextDestructionObserver.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
-    virtual bool isJSAudioBufferCallback() const { return false; }
-
-    virtual CallbackResult<void> invoke(AudioBuffer*) = 0;
-    virtual CallbackResult<void> invokeRethrowingException(AudioBuffer*) = 0;
-
-private:
-    virtual bool hasCallback() const = 0;
-};
-
-} // namespace WebCore
-
-#endif // ENABLE(WEB_AUDIO)
+[
+    Conditional=WEB_AUDIO,
+    GenerateIsReachable=ImplScriptExecutionContext
+] callback DecodeErrorCallback = undefined (DOMException error);

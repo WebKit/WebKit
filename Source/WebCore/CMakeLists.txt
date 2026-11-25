@@ -764,7 +764,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AnalyserNode.idl
     Modules/webaudio/AnalyserOptions.idl
     Modules/webaudio/AudioBuffer.idl
-    Modules/webaudio/AudioBufferCallback.idl
     Modules/webaudio/AudioBufferOptions.idl
     Modules/webaudio/AudioBufferSourceNode.idl
     Modules/webaudio/AudioBufferSourceOptions.idl
@@ -807,6 +806,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/ConstantSourceOptions.idl
     Modules/webaudio/ConvolverNode.idl
     Modules/webaudio/ConvolverOptions.idl
+    Modules/webaudio/DecodeErrorCallback.idl
+    Modules/webaudio/DecodeSuccessCallback.idl
     Modules/webaudio/DelayNode.idl
     Modules/webaudio/DelayOptions.idl
     Modules/webaudio/DistanceModelType.idl

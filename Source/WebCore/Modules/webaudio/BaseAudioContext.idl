@@ -50,7 +50,7 @@
     AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
 
     // Asynchronous audio file data decoding.
-    Promise<AudioBuffer> decodeAudioData(ArrayBuffer audioData, optional AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
+    Promise<AudioBuffer> decodeAudioData(ArrayBuffer audioData, optional DecodeSuccessCallback? successCallback, optional DecodeErrorCallback? errorCallback);
 
     // Sources
     AudioBufferSourceNode createBufferSource();

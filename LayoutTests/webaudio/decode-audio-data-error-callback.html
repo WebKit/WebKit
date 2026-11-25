@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("decodeAudioData's error callback receives the DOMException.");
+
+window.jsTestIsAsync = true;
+
+var context = new OfflineAudioContext(1, 128, 44100);
+
+var detached = new ArrayBuffer(4);
+structuredClone({}, { transfer: [detached] });
+var detachedCallbackName = null;
+var detachedPromiseName = null;
+var detachedCallbackError = null;
+var detachedPromiseError = null;
+var detachedEvents = [];
+var detachedSuccess = false;
+var invalidCallbackName = null;
+var invalidPromiseName = null;
+var invalidCallbackError = null;
+var invalidPromiseError = null;
+
+context.decodeAudioData(detached, function() {
+    detachedSuccess = true;
+}, function(error) {
+    detachedEvents.push("callback");
+    detachedCallbackError = error;
+    detachedCallbackName = error.name;
+    finishDetached();
+}).then(function() {
+    testFailed("decodeAudioData fulfilled a detached ArrayBuffer");
+    finishJSTest();
+}, function(error) {
+    detachedEvents.push("promise");
+    detachedPromiseError = error;
+    detachedPromiseName = error.name;
+    finishDetached();
+});
+
+function finishDetached() {
+    if (!detachedCallbackError || !detachedPromiseError)
+        return;
+    shouldBeFalse("detachedSuccess");
+    shouldBeEqualToString("detachedCallbackName", "DataCloneError");
+    shouldBeEqualToString("detachedPromiseName", "DataCloneError");
+    shouldBeEqualToString("detachedCallbackError.message", "Cannot decode detached ArrayBuffer");
+    shouldBeEqualToString("detachedPromiseError.message", "Cannot decode detached ArrayBuffer");
+    shouldBeTrue("detachedCallbackError === detachedPromiseError");
+    shouldBeEqualToString("detachedEvents.join(',')", "promise,callback");
+    decodeInvalid();
+}
+
+function decodeInvalid() {
+    context.decodeAudioData(new Uint8Array([0, 1, 2, 3]).buffer, function() {
+        testFailed("decodeAudioData called the success callback for bytes that are not an audio file");
+        finishJSTest();
+    }, function(error) {
+        invalidCallbackError = error;
+        invalidCallbackName = error.name;
+    }).then(function() {
+        testFailed("decodeAudioData fulfilled bytes that are not an audio file");
+        finishJSTest();
+    }, function(error) {
+        invalidPromiseError = error;
+        invalidPromiseName = error.name;
+        shouldBeEqualToString("invalidCallbackName", "EncodingError");
+        shouldBeEqualToString("invalidPromiseName", "EncodingError");
+        shouldBeTrue("invalidCallbackError === invalidPromiseError");
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

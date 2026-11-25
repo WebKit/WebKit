@@ -32,7 +32,6 @@
 #include "AnalyserNode.h"
 #include "AsyncAudioDecoder.h"
 #include "AudioBuffer.h"
-#include "AudioBufferCallback.h"
 #include "AudioBufferOptions.h"
 #include "AudioBufferSourceNode.h"
 #include "AudioDestination.h"
@@ -53,6 +52,9 @@
 #include "ConstantSourceOptions.h"
 #include "ContextDestructionObserverInlines.h"
 #include "ConvolverNode.h"
+#include "DOMException.h"
+#include "DecodeErrorCallback.h"
+#include "DecodeSuccessCallback.h"
 #include "DelayNode.h"
 #include "DelayOptions.h"
 #include "DocumentPage.h"
@@ -70,6 +72,7 @@
 #include "IIRFilterOptions.h"
 #include "JSAudioBuffer.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -322,11 +325,22 @@ ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfCh
     return AudioBuffer::create(AudioBufferOptions {numberOfChannels, length, sampleRate});
 }
 
-void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, Ref<DeferredPromise>&& promise)
+void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<DecodeSuccessCallback>&& successCallback, RefPtr<DecodeErrorCallback>&& errorCallback, Ref<DeferredPromise>&& promise)
 {
     RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
+        return;
+    }
+
+    if (audioData->isDetached()) {
+        Ref exception = DOMException::create(Exception { ExceptionCode::DataCloneError, "Cannot decode detached ArrayBuffer"_s });
+        promise->reject<IDLInterface<DOMException>>(exception);
+        if (errorCallback) {
+            queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [errorCallback = WTF::move(errorCallback), exception = WTF::move(exception)](auto&) mutable {
+                errorCallback->invoke(exception);
+            });
+        }
         return;
     }
 
@@ -337,20 +351,21 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
 
     auto p = m_audioDecoder->decodeAsync(audioData.copyRef(), sampleRate());
     p->whenSettled(RunLoop::currentSingleton(), [audioData = WTF::move(audioData), activity = makePendingActivity(*this), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise)] (DecodingTaskPromise::Result&& result) mutable {
-        activity->object().queueTaskKeepingObjectAlive(activity->object(), TaskSource::InternalAsyncTask, [audioData = WTF::move(audioData), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise), result = WTF::move(result)](auto&) mutable {
+        activity->object().queueTaskKeepingObjectAlive(activity->object(), TaskSource::MediaElement, [audioData = WTF::move(audioData), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise), result = WTF::move(result)](auto&) mutable {
 
             audioData->unpin();
 
             if (!result) {
-                promise->reject(WTF::move(result.error()));
+                Ref exception = DOMException::create(result.error());
+                promise->reject<IDLInterface<DOMException>>(exception);
                 if (errorCallback)
-                    errorCallback->invoke(nullptr);
+                    errorCallback->invoke(exception);
                 return;
             }
             auto audioBuffer = WTF::move(result.value());
             promise->resolve<IDLInterface<AudioBuffer>>(audioBuffer.get());
             if (successCallback)
-                successCallback->invoke(audioBuffer.ptr());
+                successCallback->invoke(audioBuffer);
         });
     });
 }
