@@ -1,5 +1,4 @@
 rendering/LayoutRepainter.h
-rendering/LogicalSelectionOffsetCaches.h
 rendering/PositionedLayoutConstraints.h
 rendering/RenderAncestorIterator.h
 rendering/RenderDescendantIterator.h
@@ -12,8 +11,6 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerScrollableArea.h
 rendering/RenderLayoutState.h
 rendering/RenderTableSection.h
-rendering/RenderText.cpp
-[ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/paint/BackgroundPainter.h
 rendering/paint/InlineBoxPainter.h
 rendering/paint/PaintInfo.h

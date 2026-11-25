@@ -861,12 +861,12 @@ void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer
 void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
     Vector<SingleThreadWeakPtr<RenderElement>, 10> toRemove;
-    for (auto& renderer : m_renderersWithPausedImageAnimation) {
-        if (renderer.repaintForPausedImageAnimationsIfNeeded(visibleRect))
-            toRemove.append(renderer);
+    for (CheckedRef renderer : m_renderersWithPausedImageAnimation) {
+        if (renderer->repaintForPausedImageAnimationsIfNeeded(visibleRect))
+            toRemove.append(renderer.get());
     }
     for (auto& renderer : toRemove)
-        removeRendererWithPausedImageAnimations(*renderer);
+        removeRendererWithPausedImageAnimations(protect(*renderer));
 
     m_SVGSVGElementsWithPausedImageAnimation.removeIf([&](auto& svgSvgElement) {
         return svgSvgElement.resumePausedAnimationsIfNeeded(visibleRect);
@@ -888,16 +888,16 @@ NODELETE static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
 void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
 {
     bool animationEnabled = page().imageAnimationEnabled();
-    for (auto& renderElement : descendantsOfType<RenderElement>(*this)) {
+    for (CheckedRef renderElement : descendantsOfType<RenderElement>(*this)) {
         bool needsRepaint = false;
-        bool shouldAnimate = animationEnabled && renderElement.isVisibleInDocumentRect(visibleRect);
-        bool hasPausedAnimation = renderElement.hasPausedImageAnimations();
+        bool shouldAnimate = animationEnabled && renderElement->isVisibleInDocumentRect(visibleRect);
+        bool hasPausedAnimation = renderElement->hasPausedImageAnimations();
         bool shouldResume = shouldAnimate && hasPausedAnimation;
         bool shouldPause = !hasPausedAnimation;
         bool hasAnimation = false;
 
-        RefPtr imageElement = dynamicDowncast<HTMLImageElement>(renderElement.element());
-        renderElement.forEachStyleImage([&](Style::Image& image) {
+        RefPtr imageElement = dynamicDowncast<HTMLImageElement>(renderElement->element());
+        renderElement->forEachStyleImage([&](Style::Image& image) {
             if (image.drawsSVGImage()) {
                 if (shouldResume)
                     image.startAnimation();
@@ -924,7 +924,7 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
             addRendererWithPausedImageAnimations(renderElement);
 
         if (needsRepaint)
-            renderElement.repaint();
+            renderElement->repaint();
 
         if (RefPtr svgSvgElement = svgSvgElementFrom(renderElement)) {
             if (shouldAnimate) {
@@ -1049,7 +1049,7 @@ void RenderView::unregisterPositionTryBox(const RenderBox& box)
     // ever comes back (i.e display: none to non-none), we don't accidentally reuse
     // the last successful position option.
     if (auto styleable = Styleable::fromRenderer(box))
-        document().styleScope().forgetLastSuccessfulPositionOptionIndex(*styleable);
+        protect(document().styleScope())->forgetLastSuccessfulPositionOptionIndex(*styleable);
 }
 
 void RenderView::addCounterNeedingUpdate(RenderCounter& renderer)

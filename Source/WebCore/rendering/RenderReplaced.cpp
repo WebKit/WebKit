@@ -248,7 +248,7 @@ Color RenderReplaced::calculateHighlightColor() const
                 if (!isHighlighted(state, renderHighlight))
                     continue;
 
-                if (auto highlightStyle = lazyPseudoElementStyle({ PseudoElementType::Highlight, highlight.key }, &style()))
+                if (CheckedPtr highlightStyle = lazyPseudoElementStyle({ PseudoElementType::Highlight, highlight.key }, protect(&style()).get()))
                     return highlightStyle->usedBackgroundColorResolvingCurrentColor();
             }
         }

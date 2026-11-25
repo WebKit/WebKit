@@ -1206,8 +1206,8 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
                 auto* outOfFlowBoxes = ancestor->outOfFlowBoxes();
                 if (!outOfFlowBoxes)
                     continue;
-                for (auto& outOfFlowBox : *outOfFlowBoxes) {
-                    auto borderBox = LayoutRect { absoluteToLocalQuad(outOfFlowBox.localToAbsoluteQuad(FloatRect { outOfFlowBox.borderBoxRect() })).boundingBox() };
+                for (CheckedRef outOfFlowBox : *outOfFlowBoxes) {
+                    auto borderBox = LayoutRect { absoluteToLocalQuad(outOfFlowBox->localToAbsoluteQuad(FloatRect { outOfFlowBox->borderBoxRect() })).boundingBox() };
                     borderBox.moveBy(borderBoxPosition);
                     paintInfo->context().clipOut(snapRectToDevicePixels(borderBox, document().deviceScaleFactor()));
                 }
@@ -1277,7 +1277,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
         return { };
 
     // Jump right to the first block child that contains some selected objects.
-    RenderBox* curr;
+    CheckedPtr<RenderBox> curr;
     for (curr = firstChildBox(); curr && curr->selectionState() == HighlightState::None; curr = curr->nextSiblingBox()) { }
     
     if (!curr)
@@ -1335,7 +1335,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
             lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, curr->logicalBottom(), cache);
             lastLogicalRight = logicalRightSelectionOffset(rootBlock, curr->logicalBottom(), cache);
         } else if (childState != HighlightState::None) {
-            if (auto* renderBlock = dynamicDowncast<RenderBlock>(*curr)) {
+            if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(*curr)) {
                 // We must be a block that has some selected object inside it, so recur.
                 result.unite(renderBlock->selectionGaps(rootBlock, rootBlockPhysicalPosition, LayoutSize(offsetFromRootBlock.width() + curr->x(), offsetFromRootBlock.height() + curr->y()),
                     lastLogicalTop, lastLogicalLeft, lastLogicalRight, childCache, paintInfo));
@@ -1843,8 +1843,8 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
             CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*this);
             if (!blockFlow || !blockFlow->hasBlocksInInlineLayout())
                 return { };
-            for (auto& childBox : childrenOfType<RenderBox>(*this)) {
-                if (!childBox.isFloating())
+            for (CheckedRef childBox : childrenOfType<RenderBox>(*this)) {
+                if (!childBox->isFloating())
                     return { };
                 if (!isChildHitTestCandidate(childBox, source))
                     continue;
@@ -1858,7 +1858,7 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
         return positionForPointWithInlineChildren(pointInLogicalContents, source);
     }
 
-    RenderBox* lastCandidateBox = lastChildBox();
+    CheckedPtr lastCandidateBox = lastChildBox();
 
     CheckedPtr fragmentAtPoint = fragmentAtBlockOffset(pointInLogicalContents.y());
     if (!fragment)
@@ -1885,7 +1885,7 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
             || (!boxesIncludeBlockEndEdge && pointInLogicalContents.y() == logicalTopForChild(*lastCandidateBox)))
             return positionForPointRespectingEditingBoundaries(*this, *lastCandidateBox, pointInContents, source);
 
-        for (auto& childBox : childrenOfType<RenderBox>(*this)) {
+        for (CheckedRef childBox : childrenOfType<RenderBox>(*this)) {
             if (!isChildHitTestCandidateInFragment(childBox))
                 continue;
             auto childLogicalBottom = logicalTopForChild(childBox) + logicalHeightForChild(childBox);
@@ -3054,7 +3054,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeIntrinsicLogicalWidthsForF
     if (!isFieldset())
         return { };
 
-    auto* legend = findFieldsetLegend();
+    CheckedPtr legend = findFieldsetLegend();
     if (!legend)
         return { };
 
@@ -3153,7 +3153,7 @@ String RenderBlock::updateSecurityDiscCharacters(const Style::ComputedStyle& sty
         return WTF::move(string);
     // This PUA character in the system font is used to render password field dots on Cocoa platforms.
     constexpr char16_t textSecurityDiscPUACodePoint = 0xF79A;
-    Ref font = style.fontCascade().primaryFont();
+    Ref font = protect(style.fontCascade())->primaryFont();
     if (!(font->platformData().isSystemFont() && font->glyphForCharacter(textSecurityDiscPUACodePoint)))
         return WTF::move(string);
 

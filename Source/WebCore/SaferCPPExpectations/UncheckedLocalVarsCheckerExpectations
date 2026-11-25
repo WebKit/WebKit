@@ -9,7 +9,6 @@ rendering/RenderElement.cpp
 rendering/RenderElementStyleInlines.h
 rendering/RenderFlexibleBox.cpp
 rendering/RenderGrid.cpp
-rendering/RenderImage.cpp
 rendering/RenderIterator.h
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
@@ -27,7 +26,6 @@ rendering/RenderText.h
 rendering/RenderView.cpp
 rendering/StyledMarkedText.cpp
 rendering/TextBoxTrimmer.cpp
-[ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/paint/BackgroundPainter.cpp
 rendering/paint/InlineBoxPainter.cpp
 rendering/paint/TextBoxPainter.cpp

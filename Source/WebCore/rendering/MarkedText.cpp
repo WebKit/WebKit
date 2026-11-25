@@ -253,7 +253,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
                 continue;
             break;
         case DocumentMarkerType::TextMatch:
-            if (!renderer.frame().editor().markedTextMatchesAreHighlighted())
+            if (!protect(renderer.frame())->editor().markedTextMatchesAreHighlighted())
                 continue;
             if (phase == MarkedText::PaintPhase::Decoration)
                 continue;
@@ -264,7 +264,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
             break;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
         case DocumentMarkerType::TelephoneNumber:
-            if (!renderer.frame().editor().markedTextMatchesAreHighlighted())
+            if (!protect(renderer.frame())->editor().markedTextMatchesAreHighlighted())
                 continue;
             if (phase != MarkedText::PaintPhase::Background)
                 continue;

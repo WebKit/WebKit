@@ -266,8 +266,10 @@ void PositionedLayoutConstraints::captureAnchorGeometry()
     if (!m_defaultAnchorBox)
         return;
 
+    CheckedRef containingBlock = *m_container;
+
     // Store the anchor geometry.
-    LayoutRect anchorRect = Style::AnchorPositionEvaluator::computeAnchorRectRelativeToContainingBlock(*m_defaultAnchorBox, *m_container, m_renderer.get());
+    LayoutRect anchorRect = Style::AnchorPositionEvaluator::computeAnchorRectRelativeToContainingBlock(*m_defaultAnchorBox, containingBlock, m_renderer.get());
     m_anchorArea = extractRange(anchorRect);
 
     // Adjust containing block for position-area.
@@ -282,7 +284,7 @@ void PositionedLayoutConstraints::captureAnchorGeometry()
     }
     // Else we're representing the block axis, but need the inline dimensions.
     auto inlineAxis = oppositeAxis(m_physicalAxis);
-    LayoutRange inlineContainingBlock(m_container->borderLogicalLeft(), m_containingInlineSize);
+    LayoutRange inlineContainingBlock(containingBlock->borderLogicalLeft(), m_containingInlineSize);
     auto inlineAnchorArea = BoxAxis::Horizontal == inlineAxis
         ? LayoutRange { anchorRect.x(), anchorRect.width() }
         : LayoutRange { anchorRect.y(), anchorRect.height() };

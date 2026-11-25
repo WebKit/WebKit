@@ -112,7 +112,7 @@ public:
 
 private:
     void fired() override;
-    RenderText& m_renderer;
+    const CheckedRef<RenderText> m_renderer;
     unsigned m_offsetAfterLastTypedCharacter { 0 };
 };
 
@@ -132,7 +132,7 @@ inline SecureTextTimer::SecureTextTimer(RenderText& renderer)
 inline void SecureTextTimer::restart(unsigned offsetAfterLastTypedCharacter)
 {
     m_offsetAfterLastTypedCharacter = offsetAfterLastTypedCharacter;
-    startOneShot(1_s * m_renderer.settings().passwordEchoDurationInSeconds());
+    startOneShot(1_s * m_renderer->settings().passwordEchoDurationInSeconds());
 }
 
 NODELETE inline unsigned SecureTextTimer::takeOffsetAfterLastTypedCharacter()
@@ -144,9 +144,9 @@ NODELETE inline unsigned SecureTextTimer::takeOffsetAfterLastTypedCharacter()
 
 void SecureTextTimer::fired()
 {
-    ASSERT(secureTextTimers().get(m_renderer) == this);
+    ASSERT(secureTextTimers().get(m_renderer.get()) == this);
     m_offsetAfterLastTypedCharacter = 0;
-    m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
+    m_renderer->setText(m_renderer->text(), true /* forcing setting text as it may be masked later */);
 }
 
 NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
@@ -394,7 +394,7 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
 
     auto textRun = textBox.textRun();
     if (clampedStart || clampedEnd != textRun.length())
-        textBox.fontCascade().adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring(), textRun, selectionRect, clampedStart, clampedEnd);
+        protect(textBox.fontCascade())->adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring(), textRun, selectionRect, clampedStart, clampedEnd);
 
     if (!textBox.writingMode().isLogicalLeftLineLeft())
         selectionRect.setX(textBox.logicalWidth() - selectionRect.maxX());
@@ -804,7 +804,7 @@ static Vector<LayoutRect> characterRects(const InlineIterator::TextBox& run, uns
 
     auto lineRect = run.lineBox().contentAreaLogicalRectAdjustedForAdjacentLineBoxes();
     auto selectionRect = LayoutRect { run.logicalLeftIgnoringInlineDirection(), lineRect.y(), run.logicalWidth(), lineRect.height() };
-    return run.fontCascade().characterSelectionRectsForText(run.textRun(), selectionRect, clampedStart, clampedEnd).map([&](auto& characterRect) {
+    return protect(run.fontCascade())->characterSelectionRectsForText(run.textRun(), selectionRect, clampedStart, clampedEnd).map([&](auto& characterRect) {
         return snappedSelectionRect(characterRect, run.logicalRightIgnoringInlineDirection(), run.writingMode());
     });
 }
@@ -945,7 +945,7 @@ static PositionWithAffinity createPositionWithAffinityForBox(const InlineIterato
         affinity = offset > run->minimumCaretOffset() ? Affinity::Upstream : Affinity::Downstream;
         break;
     }
-    return run->renderer().createPositionWithAffinity(offset, affinity);
+    return protect(run->renderer())->createPositionWithAffinity(offset, affinity);
 }
 
 static PositionWithAffinity createPositionWithAffinityAfterAdjustingOffsetForBiDi(const InlineIterator::TextBoxIterator& run, unsigned offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
@@ -1146,7 +1146,7 @@ void RenderText::setSelectionState(HighlightState state)
     RenderObject::setSelectionState(state);
 
     // The containing block can be null in case of an orphaned tree.
-    RenderBoxModelObject* containingBlock = this->containingBlock();
+    CheckedPtr<RenderBoxModelObject> containingBlock = this->containingBlock();
     if (containingBlock && !containingBlock->isRenderView())
         containingBlock->setSelectionState(state);
 }
@@ -1486,7 +1486,7 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
     if (style().textTransform().isNone())
         return originalText();
 
-    return applyTextTransform(style(), originalText(), previousCharacter());
+    return applyTextTransform(protect(style()), originalText(), previousCharacter());
 }
 
 IntRect RenderText::linesBoundingBox() const

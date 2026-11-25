@@ -735,7 +735,7 @@ void RenderBox::layout()
 int RenderBox::scrollWidth() const
 {
     if (hasPotentiallyScrollableOverflow() && layer())
-        return layer()->scrollWidth();
+        return protect(layer())->scrollWidth();
     // For objects with visible overflow, this matches IE.
     if (writingMode().isLogicalLeftInlineStart()) {
         // FIXME: This should use snappedIntSize() instead with absolute coordinates.
@@ -747,7 +747,7 @@ int RenderBox::scrollWidth() const
 int RenderBox::scrollHeight() const
 {
     if (hasPotentiallyScrollableOverflow() && layer())
-        return layer()->scrollHeight();
+        return protect(layer())->scrollHeight();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
     // FIXME: This should use snappedIntSize() instead with absolute coordinates.
@@ -1368,14 +1368,14 @@ bool RenderBox::usesCompositedScrolling() const
 void RenderBox::autoscroll(const IntPoint& position)
 {
     if (layer())
-        layer()->autoscroll(position);
+        protect(layer())->autoscroll(position);
 }
 
 // There are two kinds of renderer that can autoscroll.
 bool RenderBox::canAutoscroll() const
 {
     if (isRenderView())
-        return view().frameView().isScrollable();
+        return protect(view().frameView())->isScrollable();
 
     // Check for a box that can be scrolled in its own right.
     if (canBeScrolledAndHasScrollableArea())
@@ -1389,8 +1389,9 @@ bool RenderBox::canAutoscroll() const
 IntSize RenderBox::calculateAutoscrollDirection(const IntPoint& windowPoint) const
 {
     IntRect box(absoluteBoundingBoxRect());
-    box.moveBy(view().frameView().scrollPosition());
-    IntRect windowBox = view().frameView().contentsToWindow(box);
+    Ref frameView = view().frameView();
+    box.moveBy(frameView->scrollPosition());
+    IntRect windowBox = frameView->contentsToWindow(box);
 
     IntPoint windowAutoscrollPoint = windowPoint;
 
@@ -1410,7 +1411,7 @@ IntSize RenderBox::calculateAutoscrollDirection(const IntPoint& windowPoint) con
 RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
 {
     while (renderer) {
-        if (auto* box = dynamicDowncast<RenderBox>(*renderer); box && box->canAutoscroll())
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(*renderer); box && box->canAutoscroll())
             break;
         if (is<RenderView>(*renderer) && renderer->document().ownerElement())
             renderer = renderer->document().ownerElement()->renderer();
@@ -1496,7 +1497,7 @@ ScrollPosition RenderBox::constrainedScrollPosition() const
         return { 0, 0 };
 
     ASSERT(hasLayer());
-    auto* scrollableArea = layer()->scrollableArea();
+    CheckedPtr scrollableArea = layer()->scrollableArea();
     if (!scrollableArea)
         return { 0, 0 };
 
@@ -3000,7 +3001,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
 template<typename SizeType> LayoutUnit RenderBox::computeCalcSizeOnAutoLogicalWidth(const SizeType& logicalWidth, LayoutUnit autoLogicalWidth, LayoutUnit availableLogicalWidth) const
 {
     if (sizesLogicalWidthToFitContent()) {
-        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { protect(view().frameView().layoutContext()), *this };
         auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
         auto borderAndPadding = borderAndPaddingLogicalWidth();
         autoLogicalWidth = std::max(minContentLogicalWidth + borderAndPadding, std::min(maxContentLogicalWidth + borderAndPadding, autoLogicalWidth));
@@ -4610,24 +4611,24 @@ PositionWithAffinity RenderBox::positionForPoint(const LayoutPoint& point, HitTe
     LayoutUnit minDist = LayoutUnit::max();
     RenderBox* closestRenderer = nullptr;
 
-    for (auto& renderer : childrenOfType<RenderBox>(*this)) {
+    for (CheckedRef renderer : childrenOfType<RenderBox>(*this)) {
         if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this)) {
             ASSERT(fragment || fragmentedFlow->isSkippedContent());
-            if (!fragmentedFlow->objectShouldFragmentInFlowFragment(&renderer, fragment))
+            if (!fragmentedFlow->objectShouldFragmentInFlowFragment(renderer.ptr(), fragment))
                 continue;
         }
 
-        if ((!renderer.firstChild() && !renderer.isInline() && !is<RenderBlockFlow>(renderer))
-            || (source == HitTestSource::Script ? renderer.style().visibility() != Visibility::Visible : renderer.usedStyle().visibility() != UsedVisibility::Visible))
+        if ((!renderer->firstChild() && !renderer->isInline() && !is<RenderBlockFlow>(renderer))
+            || (source == HitTestSource::Script ? renderer->style().visibility() != Visibility::Visible : renderer->usedStyle().visibility() != UsedVisibility::Visible))
             continue;
 
-        LayoutUnit top = renderer.borderTop() + renderer.paddingTop() + renderer.y();
-        LayoutUnit bottom = top + renderer.contentBoxHeight();
-        LayoutUnit left = renderer.borderLeft() + renderer.paddingLeft() + renderer.x();
-        LayoutUnit right = left + renderer.contentBoxWidth();
+        LayoutUnit top = renderer->borderTop() + renderer->paddingTop() + renderer->y();
+        LayoutUnit bottom = top + renderer->contentBoxHeight();
+        LayoutUnit left = renderer->borderLeft() + renderer->paddingLeft() + renderer->x();
+        LayoutUnit right = left + renderer->contentBoxWidth();
         
         if (point.x() <= right && point.x() >= left && point.y() >= top && point.y() <= bottom) {
-            return renderer.positionForPoint(point - renderer.locationOffset(), source, fragment);
+            return renderer->positionForPoint(point - renderer->locationOffset(), source, fragment);
         }
 
         // Find the distance from (x, y) to the box.  Split the space around the box into 8 pieces
@@ -4658,7 +4659,7 @@ PositionWithAffinity RenderBox::positionForPoint(const LayoutPoint& point, HitTe
 
         LayoutUnit dist = difference.width() * difference.width() + difference.height() * difference.height();
         if (dist < minDist) {
-            closestRenderer = &renderer;
+            closestRenderer = renderer.ptr();
             minDist = dist;
         }
     }

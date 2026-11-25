@@ -664,7 +664,7 @@ IntPoint RenderLayerScrollableArea::convertFromContainingViewToScrollbar(const S
 
 IntSize RenderLayerScrollableArea::visibleSize() const
 {
-    return m_layer.visibleSize();
+    return protect(m_layer)->visibleSize();
 }
 
 IntSize RenderLayerScrollableArea::contentsSize() const
@@ -1011,7 +1011,7 @@ void RenderLayerScrollableArea::setHasVerticalScrollbar(bool hasScrollbar)
 
 ScrollableArea* RenderLayerScrollableArea::enclosingScrollableArea() const
 {
-    if (auto* scrollableLayer = m_layer.enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No))
+    if (auto* scrollableLayer = protect(m_layer)->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No))
         return scrollableLayer->scrollableArea();
 
     auto& renderer = m_layer.renderer();
@@ -2040,7 +2040,7 @@ void RenderLayerScrollableArea::logMockScrollbarsControllerMessage(const String&
 
 String RenderLayerScrollableArea::debugDescription() const
 {
-    return m_layer.debugDescription();
+    return protect(m_layer)->debugDescription();
 }
 
 void RenderLayerScrollableArea::didStartScrollAnimation()

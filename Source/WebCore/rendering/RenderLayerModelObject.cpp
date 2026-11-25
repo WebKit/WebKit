@@ -167,10 +167,10 @@ bool RenderLayerModelObject::requiresLayerForSVGIntrinsicReasons() const
 
 bool RenderLayerModelObject::hasSVG3DTransformRelatedProperty() const
 {
-    auto& style = this->style();
-    return style.has3DTransformOperation()
-        || style.transformStyle3D() == TransformStyle3D::Preserve3D
-        || !style.perspective().isNone()
+    CheckedRef style = this->style();
+    return style->has3DTransformOperation()
+        || style->transformStyle3D() == TransformStyle3D::Preserve3D
+        || !style->perspective().isNone()
         || hasHiddenBackface();
 }
 
@@ -413,7 +413,7 @@ auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRect
         return rects;
 
     bool containerIsSkipped;
-    auto* localContainer = this->container(container, containerIsSkipped);
+    CheckedPtr localContainer = this->container(container, containerIsSkipped);
     if (!localContainer)
         return rects;
 
@@ -462,7 +462,7 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
     ASSERT(ancestorContainer || !view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
     bool ancestorSkipped;
-    auto* container = this->container(ancestorContainer, ancestorSkipped);
+    CheckedPtr container = this->container(ancestorContainer, ancestorSkipped);
     if (!container)
         return;
 
@@ -478,7 +478,7 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
 
     auto containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
 
-    pushOntoTransformState(transformState, mode, nullptr, container, containerOffset, false);
+    pushOntoTransformState(transformState, mode, nullptr, container.get(), containerOffset, false);
 
     mode.remove(MapCoordinatesMode::ApplyContainerFlip);
 
@@ -587,13 +587,13 @@ RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() 
 
     return WTF::switchOn(style().clipPath(),
         [&](const Style::ReferencePath& clipPath) -> RenderSVGResourceClipper* {
-            if (RefPtr referencedClipPathElement = ReferencedSVGResources::referencedClipPathElement(treeScopeForSVGReferences(), clipPath)) {
+            if (RefPtr referencedClipPathElement = ReferencedSVGResources::referencedClipPathElement(protect(treeScopeForSVGReferences()), clipPath)) {
                 if (auto* referencedClipperRenderer = dynamicDowncast<RenderSVGResourceClipper>(referencedClipPathElement->renderer()))
                     return referencedClipperRenderer;
             }
 
             if (RefPtr svgElement = dynamicDowncast<SVGElement>(this->element()))
-                document().addPendingSVGResource(clipPath.fragment(), *svgElement);
+                protect(document())->addPendingSVGResource(clipPath.fragment(), *svgElement);
 
             return nullptr;
 
@@ -614,13 +614,13 @@ RenderSVGResourceFilter* RenderLayerModelObject::svgFilterResourceFromStyle() co
 
     return WTF::switchOn(style().filter().first(),
         [&](const Style::FilterReference& filterReference) -> RenderSVGResourceFilter* {
-            if (RefPtr referencedFilterElement = ReferencedSVGResources::referencedFilterElement(treeScopeForSVGReferences(), filterReference)) {
+            if (RefPtr referencedFilterElement = ReferencedSVGResources::referencedFilterElement(protect(treeScopeForSVGReferences()), filterReference)) {
                 if (auto* referencedFilterRenderer = dynamicDowncast<RenderSVGResourceFilter>(referencedFilterElement->renderer()))
                     return referencedFilterRenderer;
             }
 
             if (RefPtr svgElement = dynamicDowncast<SVGElement>(this->element()))
-                document().addPendingSVGResource(filterReference.cachedFragment, *svgElement);
+                protect(document())->addPendingSVGResource(filterReference.cachedFragment, *svgElement);
 
             return nullptr;
         },
@@ -641,13 +641,13 @@ RenderSVGResourceMasker* RenderLayerModelObject::svgMaskerResourceFromStyle() co
 
     auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(maskImage->url(), protect(document()));
 
-    if (RefPtr referencedMaskElement = ReferencedSVGResources::referencedMaskElement(treeScopeForSVGReferences(), *maskImage)) {
+    if (RefPtr referencedMaskElement = ReferencedSVGResources::referencedMaskElement(protect(treeScopeForSVGReferences()), *maskImage)) {
         if (auto* referencedMaskerRenderer = dynamicDowncast<RenderSVGResourceMasker>(referencedMaskElement->renderer()))
             return referencedMaskerRenderer;
     }
 
     if (RefPtr element = this->element())
-        document().addPendingSVGResource(resourceID, downcast<SVGElement>(*element));
+        protect(document())->addPendingSVGResource(resourceID, downcast<SVGElement>(*element));
 
     return nullptr;
 }
@@ -676,14 +676,15 @@ RenderSVGResourceMarker* RenderLayerModelObject::svgMarkerResourceFromStyle(cons
     if (!markerResourceURL)
         return nullptr;
 
-    if (RefPtr referencedMarkerElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), *markerResourceURL)) {
+    if (RefPtr referencedMarkerElement = ReferencedSVGResources::referencedMarkerElement(protect(treeScopeForSVGReferences()), *markerResourceURL)) {
         if (auto* referencedMarkerRenderer = dynamicDowncast<RenderSVGResourceMarker>(referencedMarkerElement->renderer()))
             return referencedMarkerRenderer;
     }
 
     if (RefPtr element = dynamicDowncast<SVGElement>(this->element())) {
-        auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerResourceURL->resolved.string(), document());
-        document().addPendingSVGResource(resourceID, *element);
+        Ref document = this->document();
+        auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerResourceURL->resolved.string(), document);
+        document->addPendingSVGResource(resourceID, *element);
     }
 
     return nullptr;
@@ -714,7 +715,7 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgPaintServerResourceFrom
     if (resourceID.isEmpty())
         cache = nullptr;
 
-    if (RefPtr referencedElement = ReferencedSVGResources::referencedPaintServerElement(treeScopeForSVGReferences(), *paintURL)) {
+    if (RefPtr referencedElement = ReferencedSVGResources::referencedPaintServerElement(protect(treeScopeForSVGReferences()), *paintURL)) {
         if (auto* referencedPaintServerRenderer = dynamicDowncast<RenderSVGResourcePaintServer>(referencedElement->renderer())) {
             if (cache)
                 cache->setPaintServer(paintType, *referencedPaintServerRenderer);
@@ -724,7 +725,7 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgPaintServerResourceFrom
 
     if (!resourceID.isEmpty()) {
         if (RefPtr element = dynamicDowncast<SVGElement>(this->element()))
-            treeScopeForSVGReferences().addPendingSVGResource(resourceID, *element);
+            protect(treeScopeForSVGReferences())->addPendingSVGResource(resourceID, *element);
     }
 
     return nullptr;
@@ -774,7 +775,7 @@ bool RenderLayerModelObject::pointInSVGClippingArea(const FloatPoint& point) con
         case CSSBoxType::ViewBox:
             if (element()) {
                 // FIXME: [LBSE] This should not need to use SVGLengthContext, RenderSVGRoot holds that information.
-                auto viewportSize = SVGLengthContext(downcast<SVGElement>(element())).viewportSize();
+                auto viewportSize = SVGLengthContext(protect(downcast<SVGElement>(element())).get()).viewportSize();
                 if (viewportSize)
                     referenceBox.setSize(*viewportSize);
                 break;
@@ -803,7 +804,7 @@ bool RenderLayerModelObject::pointInSVGClippingArea(const FloatPoint& point) con
             return FloatRoundedRect { referenceBox }.path().contains(point);
         },
         [&](const auto&) {
-            if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
+            if (CheckedPtr referencedClipperRenderer = svgClipperResourceFromStyle())
                 return referencedClipperRenderer->hitTestClipContent(objectBoundingBox(), point);
             return true;
         }
@@ -840,7 +841,7 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
             updateTransform();
             auto currentTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
             if (previousTransform.isIdentity() && !currentTransform.isIdentity())
-                layer()->forceStackingContextIfNeeded();
+                protect(layer())->forceStackingContextIfNeeded();
             layer()->setSelfAndDescendantsNeedPositionUpdate();
             return { previousTransform, currentTransform };
         }
@@ -917,7 +918,7 @@ bool RenderLayerModelObject::markSVGTextForRelayoutIfScaleChanged(const AffineTr
     }
 
     bool markedAny = false;
-    for (auto& text : descendantsOfType<RenderSVGText>(*this)) {
+    for (CheckedRef text : descendantsOfType<RenderSVGText>(*this)) {
         markTextForRelayout(text);
         markedAny = true;
     }
@@ -967,8 +968,8 @@ static void invalidateNonScalingStrokeCachesInSubtree(RenderElement& renderer)
         svgRenderer->invalidateCachedVisualOverflowRect();
     }
 
-    for (auto& child : childrenOfType<RenderElement>(renderer)) {
-        if (child.mayHaveNonScalingStrokeInSubtree())
+    for (CheckedRef child : childrenOfType<RenderElement>(renderer)) {
+        if (child->mayHaveNonScalingStrokeInSubtree())
             invalidateNonScalingStrokeCachesInSubtree(child);
     }
 }
@@ -1001,7 +1002,7 @@ void RenderLayerModelObject::paintSVGClippingMask(PaintInfo& paintInfo, const Fl
         return;
 
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
-    if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
+    if (CheckedPtr referencedClipperRenderer = svgClipperResourceFromStyle())
         referencedClipperRenderer->applyMaskClipping(paintInfo, *this, objectBoundingBox);
 }
 
@@ -1013,7 +1014,7 @@ void RenderLayerModelObject::paintSVGMask(PaintInfo& paintInfo, const LayoutPoin
         return;
 
     ASSERT(isSVGLayerAwareRenderer());
-    if (auto* referencedMaskerRenderer = svgMaskerResourceFromStyle())
+    if (CheckedPtr referencedMaskerRenderer = svgMaskerResourceFromStyle())
         referencedMaskerRenderer->applyMask(paintInfo, *this, adjustedPaintOffset);
 }
 
@@ -1027,7 +1028,7 @@ void RenderLayerModelObject::paintSVGEventRegion(PaintInfo& paintInfo, const Lay
     auto coordinateSystemOriginTranslation = adjustedPaintOffset - nominalSVGLayoutLocation();
     auto eventRegionBounds = strokeBoundingBox();
     eventRegionBounds.move(coordinateSystemOriginTranslation);
-    paintInfo.eventRegionContext()->unite(FloatRoundedRect(eventRegionBounds), *this, style(), false);
+    protect(paintInfo.eventRegionContext())->unite(FloatRoundedRect(eventRegionBounds), *this, protect(style()), false);
 }
 
 AffineTransform RenderLayerModelObject::computeNominalTransform() const

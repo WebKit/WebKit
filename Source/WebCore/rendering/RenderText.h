@@ -262,21 +262,21 @@ inline const Style::ComputedStyle* RenderText::lazyPseudoElementStyle(const Styl
 
 inline Color RenderText::selectionBackgroundColor() const
 {
-    if (auto* ancestor = firstNonAnonymousAncestor())
+    if (CheckedPtr ancestor = firstNonAnonymousAncestor())
         return ancestor->selectionBackgroundColor();
     return Color();
 }
 
 inline Color RenderText::selectionForegroundColor() const
 {
-    if (auto* ancestor = firstNonAnonymousAncestor())
+    if (CheckedPtr ancestor = firstNonAnonymousAncestor())
         return ancestor->selectionForegroundColor();
     return Color();
 }
 
 inline Color RenderText::selectionEmphasisMarkColor() const
 {
-    if (auto* ancestor = firstNonAnonymousAncestor())
+    if (CheckedPtr ancestor = firstNonAnonymousAncestor())
         return ancestor->selectionEmphasisMarkColor();
     return Color();
 }

@@ -1900,8 +1900,9 @@ bool RenderObject::setCapturedInViewTransition(bool captured)
 
     CheckedPtr<RenderLayer> layerToInvalidate;
     if (isDocumentElementRenderer()) {
-        layerToInvalidate = view().layer();
-        view().compositor().setRootElementCapturedInViewTransition(captured);
+        CheckedRef renderView = view();
+        layerToInvalidate = renderView->layer();
+        protect(renderView->compositor())->setRootElementCapturedInViewTransition(captured);
     } else if (hasLayer())
         layerToInvalidate = downcast<RenderLayerModelObject>(*this).layer();
 
@@ -2312,7 +2313,7 @@ bool RenderObject::hasEmptyVisibleRectRespectingParentFrames() const
             .options = { VisibleRectContext::Option::UseEdgeInclusiveIntersection, VisibleRectContext::Option::ApplyCompositedClips },
         };
         CheckedRef box = renderer.enclosingBoxModelObject();
-        auto clippedBounds = box->computeVisibleRectsInContainer({ box->borderBoundingBox() }, &box->view(), context, { });
+        auto clippedBounds = box->computeVisibleRectsInContainer({ box->borderBoundingBox() }, protect(box->view()).ptr(), context, { });
         return !clippedBounds || clippedBounds->clippedOverflowRect.isEmpty();
     };
 
@@ -2331,9 +2332,9 @@ Vector<FloatQuad> RenderObject::absoluteTextQuads(const SimpleRange& range, Opti
         CheckedPtr renderer = node->renderer();
         if (!renderer)
             continue;
-        if (auto* lineBreakRenderer = dynamicDowncast<RenderLineBreak>(*renderer); lineBreakRenderer && lineBreakRenderer->isBR())
+        if (CheckedPtr lineBreakRenderer = dynamicDowncast<RenderLineBreak>(*renderer); lineBreakRenderer && lineBreakRenderer->isBR())
             lineBreakRenderer->absoluteQuads(quads);
-        else if (auto* renderText = dynamicDowncast<RenderText>(*renderer)) {
+        else if (CheckedPtr renderText = dynamicDowncast<RenderText>(*renderer)) {
             auto offsetRange = characterDataOffsetRange(range, downcast<CharacterData>(node.get()));
             quads.appendVector(renderText->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior));
         }
@@ -2404,7 +2405,7 @@ Vector<IntRect> RenderObject::absoluteTextRects(const SimpleRange& range, Option
     Vector<LayoutRect> rects;
     for (Ref node : intersectingNodes(range)) {
         CheckedPtr renderer = node->renderer();
-        if (auto* lineBreakRenderer = dynamicDowncast<RenderLineBreak>(renderer.get()); lineBreakRenderer && lineBreakRenderer->isBR())
+        if (CheckedPtr lineBreakRenderer = dynamicDowncast<RenderLineBreak>(renderer); lineBreakRenderer && lineBreakRenderer->isBR())
             lineBreakRenderer->boundingRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
         else if (RefPtr textNode = dynamicDowncast<Text>(node)) {
             for (auto& rect : absoluteRectsForRangeInText(range, *textNode, behavior))
@@ -2459,7 +2460,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
                         continue;
                     auto snappedBounds = snapRectToDevicePixels(*rootClippedBounds, node->document().deviceScaleFactor());
                     if (space == CoordinateSpace::Client)
-                        protect(node->document())->convertAbsoluteToClientRect(snappedBounds, renderer->style());
+                        protect(node->document())->convertAbsoluteToClientRect(snappedBounds, protect(renderer->style()));
                     rects.append(snappedBounds);
                     continue;
                 }
@@ -2467,14 +2468,14 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
                 Vector<FloatQuad> elementQuads;
                 renderer->absoluteQuads(elementQuads);
                 if (space == CoordinateSpace::Client)
-                    protect(node->document())->convertAbsoluteToClientQuads(elementQuads, renderer->style());
+                    protect(node->document())->convertAbsoluteToClientQuads(elementQuads, protect(renderer->style()));
                 rects.appendVector(boundingBoxes(elementQuads));
             }
         } else if (RefPtr textNode = dynamicDowncast<Text>(node)) {
             if (CheckedPtr renderer = textNode->renderer()) {
                 auto clippedRects = absoluteRectsForRangeInText(range, *textNode, behavior);
                 if (space == CoordinateSpace::Client)
-                    protect(node->document())->convertAbsoluteToClientRects(clippedRects, renderer->style());
+                    protect(node->document())->convertAbsoluteToClientRects(clippedRects, protect(renderer->style()));
                 rects.appendVector(clippedRects);
             }
         }
@@ -2652,7 +2653,7 @@ static void makeBidiSelectionVisuallyContiguousIfNeeded(const SelectionEndpointD
     UNUSED_PARAM(range);
     UNUSED_PARAM(geometries);
 #else
-    if (!protect(range.startContainer().document())->editor().shouldDrawVisuallyContiguousBidiSelection())
+    if (!protect(protect(range.startContainer().document())->editor())->shouldDrawVisuallyContiguousBidiSelection())
         return;
 
     FloatPoint selectionStartTop;

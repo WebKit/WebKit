@@ -71,7 +71,7 @@ void RenderImageResource::willBeDestroyed()
     RefPtr cachedImage = this->cachedImage();
     RefPtr styleImage = m_styleImage;
     if (styleImage && m_renderer)
-        styleImage->removeClient(*m_renderer);
+        styleImage->removeClient(*protect(m_renderer));
     if (styleImage && styleImage->isAnimated() && cachedImage && !cachedImage->hasRendererClients())
         styleImage->stopAnimation();
 }
@@ -82,7 +82,7 @@ void RenderImageResource::clearCachedImage()
         return;
 
     if (m_renderer)
-        protect(m_styleImage)->removeClient(*m_renderer);
+        protect(m_styleImage)->removeClient(*protect(m_renderer));
 
     m_styleImage = nullptr;
 }
@@ -95,7 +95,7 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
 
     if (m_styleImage && m_renderer) {
         RefPtr styleImage = m_styleImage;
-        styleImage->removeClient(*m_renderer);
+        styleImage->removeClient(*protect(m_renderer));
     }
 
     if (!m_renderer) {
@@ -113,10 +113,11 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
         m_styleImage = Style::CachedImage::create(*newImage, WTF::move(authoredURL), { Style::SVGReferencingMode::AnimatedImageDocument });
 
         RefPtr styleImage = m_styleImage;
-        styleImage->addClient(*m_renderer);
+        CheckedPtr renderer = m_renderer;
+        styleImage->addClient(*renderer);
 
         if (styleImage->errorOccurred())
-            m_renderer->imageChanged(styleImage->cachedImage());
+            renderer->imageChanged(styleImage->cachedImage());
     }
 }
 
@@ -128,7 +129,7 @@ void RenderImageResource::resetAnimation()
     protect(m_styleImage)->resetAnimation();
 
     if (m_renderer && !m_renderer->needsLayout())
-        m_renderer->repaint();
+        protect(m_renderer)->repaint();
 }
 
 bool RenderImageResource::currentFrameIsComplete() const

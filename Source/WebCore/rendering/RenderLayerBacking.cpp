@@ -2943,7 +2943,7 @@ void RenderLayerBacking::ensureOverflowControlsHostLayerAncestorClippingStack(co
     auto clippingData = m_ancestorClippingStack->compositedClipData();
 
     if (m_overflowControlsHostLayerAncestorClippingStack)
-        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(compositor(), WTF::move(clippingData));
+        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(protect(compositor()), WTF::move(clippingData));
     else
         m_overflowControlsHostLayerAncestorClippingStack = makeUnique<LayerAncestorClippingStack>(WTF::move(clippingData));
 
@@ -3156,7 +3156,8 @@ void RenderLayerBacking::setBackgroundLayerPaintsFixedRootBackground(bool backgr
 
     if (m_backgroundLayerPaintsFixedRootBackground) {
         ASSERT(m_isFrameLayerWithTiledBacking);
-        renderer().view().frameView().removeSlowRepaintObject(*renderer().view().rendererForRootBackground());
+        CheckedRef view = renderer().view();
+        protect(view->frameView())->removeSlowRepaintObject(*protect(view->rendererForRootBackground()));
     }
 }
 
@@ -3949,19 +3950,21 @@ void RenderLayerBacking::updateRootLayerConfiguration()
         return;
 
     Color backgroundColor;
-    bool viewIsTransparent = compositor().viewHasTransparentBackground(&backgroundColor);
+    bool viewIsTransparent = protect(compositor())->viewHasTransparentBackground(&backgroundColor);
 
+    RefPtr graphicsLayer = m_graphicsLayer;
     if (m_backgroundLayerPaintsFixedRootBackground && m_backgroundLayer) {
         if (m_isMainFrameRenderViewLayer) {
-            m_backgroundLayer->setBackgroundColor(backgroundColor);
-            m_backgroundLayer->setContentsOpaque(!viewIsTransparent);
+            RefPtr backgroundLayer = m_backgroundLayer;
+            backgroundLayer->setBackgroundColor(backgroundColor);
+            backgroundLayer->setContentsOpaque(!viewIsTransparent);
         }
 
-        m_graphicsLayer->setBackgroundColor(Color());
-        m_graphicsLayer->setContentsOpaque(false);
+        graphicsLayer->setBackgroundColor(Color());
+        graphicsLayer->setContentsOpaque(false);
     } else if (m_isMainFrameRenderViewLayer) {
-        m_graphicsLayer->setBackgroundColor(backgroundColor);
-        m_graphicsLayer->setContentsOpaque(!viewIsTransparent);
+        graphicsLayer->setBackgroundColor(backgroundColor);
+        graphicsLayer->setContentsOpaque(!viewIsTransparent);
     }
 }
 
@@ -4525,7 +4528,7 @@ LayoutRect RenderLayerBacking::contentsBox() const
 LayoutRect RenderLayerBacking::inlineVideoContentsBox() const
 {
 #if ENABLE(VIDEO)
-    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderer())) {
+    if (CheckedPtr renderVideo = dynamicDowncast<RenderVideo>(renderer())) {
         auto contentsRect = renderVideo->inlineVideoBox();
         contentsRect.move(contentOffsetInCompositingLayer());
         return contentsRect;
@@ -5289,7 +5292,7 @@ bool RenderLayerBacking::delegatesScaling() const
 
 FloatSize RenderLayerBacking::enclosingFrameViewVisibleSize() const
 {
-    return compositor().enclosingFrameViewVisibleSize();
+    return protect(compositor())->enclosingFrameViewVisibleSize();
 }
 
 float RenderLayerBacking::deviceScaleFactor() const
@@ -5314,7 +5317,7 @@ bool RenderLayerBacking::paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*)
 
 void RenderLayerBacking::didChangePlatformLayerForLayer(const GraphicsLayer* layer)
 {
-    compositor().didChangePlatformLayerForLayer(m_owningLayer, layer);
+    protect(compositor())->didChangePlatformLayerForLayer(protect(m_owningLayer), layer);
 }
 
 bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer, TransformationMatrix& transform) const
@@ -5438,7 +5441,8 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
     if (!hasOpacity && !hasRotate && !hasScale && !hasTranslate && !hasTransform && !hasFilter && !hasBackdropFilter)
         return false;
 
-    auto referenceBoxRect = renderer().transformReferenceBoxRect(renderer().style());
+    CheckedRef rendererStyle = renderer().style();
+    auto referenceBoxRect = protect(renderer())->transformReferenceBoxRect(rendererStyle);
     if (!renderer().isSVGLayerAwareRenderer())
         referenceBoxRect = snappedIntRect(LayoutRect(referenceBoxRect));
 
@@ -5451,7 +5455,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
     GraphicsLayerKeyframeValueList backdropFilterVector(AnimatedProperty::WebkitBackdropFilter);
 
     for (auto& currentKeyframe : keyframes) {
-        const Style::ComputedStyle* keyframeStyle = currentKeyframe.style();
+        CheckedPtr keyframeStyle = currentKeyframe.style();
         if (!keyframeStyle)
             continue;
 
@@ -5476,34 +5480,35 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
             opacityVector.insert(makeUnique<GraphicsLayerFloatAnimationValue>(offset, Style::evaluate<float>(keyframeStyle->opacity()), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyID::Filter))
-            filterVector.insert(makeUnique<GraphicsLayerFilterAnimationValue>(offset, Style::toPlatform(keyframeStyle->filter(), renderer().style()), timingFunction));
+            filterVector.insert(makeUnique<GraphicsLayerFilterAnimationValue>(offset, Style::toPlatform(keyframeStyle->filter(), rendererStyle.get()), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyID::WebkitBackdropFilter) || currentKeyframe.animatesProperty(CSSPropertyID::BackdropFilter))
-            backdropFilterVector.insert(makeUnique<GraphicsLayerFilterAnimationValue>(offset, Style::toPlatform(keyframeStyle->backdropFilter(), renderer().style()), timingFunction));
+            backdropFilterVector.insert(makeUnique<GraphicsLayerFilterAnimationValue>(offset, Style::toPlatform(keyframeStyle->backdropFilter(), rendererStyle.get()), timingFunction));
     }
 
     bool didAnimate = false;
+    RefPtr graphicsLayer = m_graphicsLayer;
 
-    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
+    if (hasRotate && graphicsLayer->addAnimation(rotateVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
+    if (hasScale && graphicsLayer->addAnimation(scaleVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
+    if (hasTranslate && graphicsLayer->addAnimation(translateVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
+    if (hasTransform && graphicsLayer->addAnimation(transformVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
+    if (hasOpacity && graphicsLayer->addAnimation(opacityVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    bool didAnimateFilter = hasFilter && m_graphicsLayer->addAnimation(filterVector, &animation, keyframes.acceleratedAnimationName(), timeOffset);
+    bool didAnimateFilter = hasFilter && graphicsLayer->addAnimation(filterVector, &animation, keyframes.acceleratedAnimationName(), timeOffset);
     if (didAnimateFilter)
         didAnimate = true;
 
-    if (hasBackdropFilter && m_graphicsLayer->addAnimation(backdropFilterVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
+    if (hasBackdropFilter && graphicsLayer->addAnimation(backdropFilterVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
     if (didAnimate) {
@@ -5716,12 +5721,12 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
 
 void RenderLayerBacking::animationPaused(double timeOffset, const String& animationName)
 {
-    m_graphicsLayer->pauseAnimation(animationName, timeOffset);
+    protect(m_graphicsLayer)->pauseAnimation(animationName, timeOffset);
 }
 
 void RenderLayerBacking::animationFinished(const String& animationName)
 {
-    m_graphicsLayer->removeAnimation(animationName, std::nullopt);
+    protect(m_graphicsLayer)->removeAnimation(animationName, std::nullopt);
     m_owningLayer.setNeedsPostLayoutCompositingUpdate();
     m_owningLayer.setNeedsCompositingGeometryUpdate();
     if (m_filterAnimationOutsetsByName.remove(animationName))
@@ -5857,28 +5862,28 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
     double backingMemory;
     
     // Layers in m_ancestorClippingStack, m_contentsContainmentLayer and m_childContainmentLayer are just used for masking or containment, so have no backing.
-    backingMemory = m_graphicsLayer->backingStoreMemoryEstimate();
+    backingMemory = protect(m_graphicsLayer)->backingStoreMemoryEstimate();
     if (m_foregroundLayer)
-        backingMemory += m_foregroundLayer->backingStoreMemoryEstimate();
+        backingMemory += protect(m_foregroundLayer)->backingStoreMemoryEstimate();
     forEachSVGSegmentLayer([&](GraphicsLayer& segmentLayer) {
         backingMemory += segmentLayer.backingStoreMemoryEstimate();
     });
     if (m_backgroundLayer)
-        backingMemory += m_backgroundLayer->backingStoreMemoryEstimate();
+        backingMemory += protect(m_backgroundLayer)->backingStoreMemoryEstimate();
     if (m_maskLayer)
-        backingMemory += m_maskLayer->backingStoreMemoryEstimate();
+        backingMemory += protect(m_maskLayer)->backingStoreMemoryEstimate();
 
     if (m_scrolledContentsLayer)
-        backingMemory += m_scrolledContentsLayer->backingStoreMemoryEstimate();
+        backingMemory += protect(m_scrolledContentsLayer)->backingStoreMemoryEstimate();
 
     if (m_layerForHorizontalScrollbar)
-        backingMemory += m_layerForHorizontalScrollbar->backingStoreMemoryEstimate();
+        backingMemory += protect(m_layerForHorizontalScrollbar)->backingStoreMemoryEstimate();
 
     if (m_layerForVerticalScrollbar)
-        backingMemory += m_layerForVerticalScrollbar->backingStoreMemoryEstimate();
+        backingMemory += protect(m_layerForVerticalScrollbar)->backingStoreMemoryEstimate();
 
     if (m_layerForScrollCorner)
-        backingMemory += m_layerForScrollCorner->backingStoreMemoryEstimate();
+        backingMemory += protect(m_layerForScrollCorner)->backingStoreMemoryEstimate();
     
     return backingMemory;
 }
@@ -5981,7 +5986,7 @@ OptionSet<ContentsFormat> RenderLayerBacking::screenContentsFormats() const
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-    return WebCore::screenContentsFormats(&renderer().view().frameView());
+    return WebCore::screenContentsFormats(protect(renderer().view().frameView()).ptr());
 #else
     return { };
 #endif

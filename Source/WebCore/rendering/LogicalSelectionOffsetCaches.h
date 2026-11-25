@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
+
 namespace WebCore {
 
 class RenderBlock;
@@ -38,12 +40,12 @@ public:
         inline LayoutUnit logicalLeftSelectionOffset(RenderBlock&, LayoutUnit) const;
         inline LayoutUnit logicalRightSelectionOffset(RenderBlock&, LayoutUnit) const;
 
-        RenderBlock* block() const { return m_block; }
+        RenderBlock* block() const { return m_block.get(); }
         const LogicalSelectionOffsetCaches* cache() const LIFETIME_BOUND { return m_cache; }
         bool hasFloatsOrFragmentedFlows() const { return m_hasFloatsOrFragmentedFlows; }
 
     private:
-        RenderBlock* m_block { nullptr };
+        CheckedPtr<RenderBlock> m_block;
         const LogicalSelectionOffsetCaches* m_cache { nullptr };
         bool m_hasFloatsOrFragmentedFlows : 1;
         mutable bool m_cachedLogicalLeftSelectionOffset : 1;

@@ -110,7 +110,7 @@ void BorderData::dump(TextStream& ts, DumpStyleValues behavior) const
     if (behavior == DumpStyleValues::All || !Style::isKnownZero(bottomRightRadius()))
         ts.dumpProperty("bottom-right"_s, bottomRightRadius());
 
-    borderImage->dump(ts, behavior);
+    protect(borderImage.get())->dump(ts, behavior);
 }
 
 #if !LOG_DISABLED

@@ -1506,14 +1506,16 @@ NODELETE static inline double normalizedFlexFraction(const GridTrack& track)
 
 void IndefiniteSizeStrategy::accumulateFlexFractionGridLanes(double& flexFraction, GridIterator& iterator, Style::GridTrackSizingDirection direction, unsigned flexTrackIndex, SingleThreadWeakHashSet<RenderBox>& itemsSet, const Vector<SingleThreadWeakPtr<RenderBox>>& indefiniteItems, RenderGridLayoutState& gridLayoutState) const
 {
+    CheckedPtr grid = m_algorithm.renderGrid();
+
     // Definite Items
-    while (auto* gridItem = iterator.nextGridItem()) {
-        if (!Style::GridPositionsResolver::resolveGridPositionsFromStyle(*m_algorithm.renderGrid(), *gridItem, direction).isIndefinite()) {
+    while (CheckedPtr gridItem = iterator.nextGridItem()) {
+        if (!Style::GridPositionsResolver::resolveGridPositionsFromStyle(*grid, *gridItem, direction).isIndefinite()) {
             // Do not include already processed items.
             if (!itemsSet.add(*gridItem).isNewEntry)
                 continue;
 
-            auto span = m_algorithm.renderGrid()->gridSpanForGridItem(*gridItem, direction);
+            auto span = grid->gridSpanForGridItem(*gridItem, direction);
 
             // Removing gutters from the max-content contribution of the item, so they are not taken into account in FindFrUnitSize().
             auto leftOverSpace = maxContentContributionForGridItem(*gridItem, gridLayoutState) - renderGrid()->guttersSize(direction, span.startLine(), span.integerSpan(), availableSpace());
@@ -1524,8 +1526,9 @@ void IndefiniteSizeStrategy::accumulateFlexFractionGridLanes(double& flexFractio
     auto numTracks = m_algorithm.tracks(direction).size();
 
     // Indefinite Items
-    for (auto& gridItem : indefiniteItems) {
-        auto span = m_algorithm.renderGrid()->gridSpanForGridItem(*gridItem, direction);
+    for (auto& weakGridItem : indefiniteItems) {
+        CheckedRef gridItem = *weakGridItem;
+        auto span = grid->gridSpanForGridItem(gridItem, direction);
         auto spanLength = span.integerSpan();
 
         auto endLine = flexTrackIndex + spanLength;
@@ -1537,7 +1540,7 @@ void IndefiniteSizeStrategy::accumulateFlexFractionGridLanes(double& flexFractio
             continue;
 
         // Removing gutters from the max-content contribution of the item, so they are not taken into account in FindFrUnitSize().
-        auto leftOverSpace = maxContentContributionForGridItem(*gridItem, gridLayoutState) - renderGrid()->guttersSize(direction, span.startLine(), span.integerSpan(), availableSpace());
+        auto leftOverSpace = maxContentContributionForGridItem(gridItem, gridLayoutState) - renderGrid()->guttersSize(direction, span.startLine(), span.integerSpan(), availableSpace());
         flexFraction = std::max(flexFraction, findFrUnitSize(span, leftOverSpace));
     }
 }
@@ -1814,23 +1817,23 @@ static std::optional<LayoutUnit> extraMarginFromSubgridAncestorGutters(const Ren
 
     auto gutterTotal = 0_lu;
 
-    for (auto& currentAncestorSubgrid : ancestorSubgridsOfGridItem(gridItem, direction)) {
+    for (CheckedRef currentAncestorSubgrid : ancestorSubgridsOfGridItem(gridItem, direction)) {
         std::optional<LayoutUnit> availableSpace;
         if (!GridLayoutFunctions::hasRelativeOrKeywordOrAutoSizeForGridItem(currentAncestorSubgrid, direction))
-            availableSpace = currentAncestorSubgrid.availableSpaceForGutters(direction);
+            availableSpace = currentAncestorSubgrid->availableSpaceForGutters(direction);
 
-        auto gridItemSpanInAncestor = currentAncestorSubgrid.gridSpanForGridItem(gridItem, direction);
-        auto numTracksForCurrentAncestor = currentAncestorSubgrid.numTracks(direction);
+        auto gridItemSpanInAncestor = currentAncestorSubgrid->gridSpanForGridItem(gridItem, direction);
+        auto numTracksForCurrentAncestor = currentAncestorSubgrid->numTracks(direction);
 
-        const auto* currentAncestorSubgridParent = dynamicDowncast<RenderGrid>(currentAncestorSubgrid.parent());
+        CheckedPtr<const RenderGrid> currentAncestorSubgridParent = dynamicDowncast<RenderGrid>(currentAncestorSubgrid->parent());
         ASSERT(currentAncestorSubgridParent);
         if (!currentAncestorSubgridParent)
             return std::nullopt;
 
         if (gridItemSpanInAncestor.startLine())
-            gutterTotal += (currentAncestorSubgrid.gridGap(direction) - currentAncestorSubgridParent->gridGap(direction)) / 2;
+            gutterTotal += (currentAncestorSubgrid->gridGap(direction) - currentAncestorSubgridParent->gridGap(direction)) / 2;
         if (gridItemSpanInAncestor.endLine() != numTracksForCurrentAncestor)
-            gutterTotal += (currentAncestorSubgrid.gridGap(direction) - currentAncestorSubgridParent->gridGap(direction)) / 2;
+            gutterTotal += (currentAncestorSubgrid->gridGap(direction) - currentAncestorSubgridParent->gridGap(direction)) / 2;
         direction = GridLayoutFunctions::flowAwareDirection(currentAncestorSubgrid, *currentAncestorSubgridParent, direction);
     }
     return gutterTotal;
@@ -1948,7 +1951,7 @@ void GridTrackSizingAlgorithm::addGridLanesItemAtEveryStartLine(RenderBox& gridI
         if (spanningItemCrossesFlexibleSizedTracks(itemSpan))
             definiteItemSizesSpanFlexTrack.append(GridLanesMinMaxTrackSizeWithGridSpan { contribution, itemSpan });
         else if (spanLength == 1)
-            sizeTrackToFitSingleSpanGridLanesGroup(itemSpan, contribution, allTracks[startLine]);
+            sizeTrackToFitSingleSpanGridLanesGroup(itemSpan, contribution, protect(allTracks[startLine].get()));
         else
             definiteItemSizes[spanLength].append(GridLanesMinMaxTrackSizeWithGridSpan { contribution, itemSpan });
     }
@@ -1964,7 +1967,7 @@ void GridTrackSizingAlgorithm::computeDefiniteAndIndefiniteItemsForGridLanes(Std
         bool spansFlexTracks = spanningItemCrossesFlexibleSizedTracks(gridSpan);
 
         if (spanLength == 1 && !spansFlexTracks) {
-            sizeTrackToFitNonSpanningItem(gridSpan, gridItem, allTracks[gridSpan.startLine()], gridLayoutState);
+            sizeTrackToFitNonSpanningItem(gridSpan, gridItem, protect(allTracks[gridSpan.startLine()].get()), gridLayoutState);
             return;
         }
 
@@ -2281,7 +2284,7 @@ NODELETE static void removeSubgridMarginBorderPaddingFromTracks(Vector<UniqueRef
 
 bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
 {
-    auto* outer = downcast<RenderGrid>(m_renderGrid->parent());
+    CheckedPtr outer = downcast<RenderGrid>(m_renderGrid->parent());
     auto& parentAlgo = outer->m_trackSizingAlgorithm;
     auto direction = GridLayoutFunctions::flowAwareDirection(*m_renderGrid, *outer, m_direction);
     auto& parentTracks = parentAlgo.tracks(direction);
@@ -2292,8 +2295,11 @@ bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
     auto span = outer->gridSpanForGridItem(*m_renderGrid, direction);
     auto& allTracks = tracks(m_direction);
     int numTracks = allTracks.size();
-    for (int i = 0; i < numTracks; i++)
-        allTracks[i].get() = parentTracks[i + span.startLine()].get();
+    for (int i = 0; i < numTracks; i++) {
+        CheckedRef track = allTracks[i].get();
+        CheckedRef parentTrack = parentTracks[i + span.startLine()].get();
+        track.get() = parentTrack.get();
+    }
 
     if (GridLayoutFunctions::isSubgridReversedDirection(*outer, direction, *m_renderGrid))
         allTracks.reverse();

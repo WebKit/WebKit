@@ -97,7 +97,7 @@ SVGTextQuery::SVGTextQuery(const RenderElement& renderer)
             }
         };
 
-        auto ascent = text->scaledFont().metricsOfPrimaryFont().ascent() / text->scalingFactor();
+        auto ascent = protect(text->scaledFont())->metricsOfPrimaryFont().ascent() / text->scalingFactor();
         auto isVertical = text->writingMode().isVertical();
         auto isBackward = textBox->isInlineFlipped();
         for (auto& fragment : textBox->textFragments()) {

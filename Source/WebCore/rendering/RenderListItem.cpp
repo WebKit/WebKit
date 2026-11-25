@@ -324,14 +324,14 @@ static RenderListItem* previousListItem(const Element& list, const RenderListIte
 
 void RenderListItem::updateItemValuesForOrderedList(const HTMLOListElement& list)
 {
-    for (auto* listItem = firstListItem(list); listItem; listItem = nextListItem(list, *listItem))
+    for (CheckedPtr listItem = firstListItem(list); listItem; listItem = nextListItem(list, *listItem))
         listItem->updateValueAndMarkerContent();
 }
 
 unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& list)
 {
     unsigned itemCount = 0;
-    for (auto* listItem = firstListItem(list); listItem; listItem = nextListItem(list, *listItem))
+    for (CheckedPtr listItem = firstListItem(list); listItem; listItem = nextListItem(list, *listItem))
         ++itemCount;
     return itemCount;
 }
@@ -436,7 +436,7 @@ LayoutSize RenderListItem::markerImageSize(const Style::Image& image) const
     if (!marker)
         return { };
     // FIXME: The spec says this should be 1em - https://drafts.csswg.org/css-lists-3/#valdef-list-style-image-image
-    LayoutUnit bulletWidth = marker->style().metricsOfPrimaryFont().intAscent() / 2_lu;
+    LayoutUnit bulletWidth = protect(marker->style())->metricsOfPrimaryFont().intAscent() / 2_lu;
     return marker->calculateImageIntrinsicDimensions(image, Style::ListStyleImageSizing { bulletWidth }, ScaleByUsedZoom::Yes);
 }
 
@@ -820,7 +820,7 @@ void RenderListItem::usedCounterDirectivesChanged()
     RefPtr list = enclosingList(*this);
     if (!list)
         return;
-    auto* item = this;
+    CheckedPtr item = this;
     while ((item = nextListItem(*list, *item)))
         item->updateValueAndMarkerContent();
 }
@@ -1029,7 +1029,7 @@ bool listMarkerIsDisclosure(const RenderElement* renderer)
 {
     if (!renderer || !renderer->style().isListMarkerStyle())
         return false;
-    return listMarkerIsDisclosure(renderer->style(), protect(renderer->document()));
+    return listMarkerIsDisclosure(protect(renderer->style()), protect(renderer->document()));
 }
 
 RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle)

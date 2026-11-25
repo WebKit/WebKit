@@ -174,7 +174,7 @@ bool RenderThemeIOS::isControlStyled(const Style::ComputedStyle& style) const
 
 void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance appearance, Style::ComputedStyle& style) const
 {
-    auto minimumControlSize = this->minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
+    auto minimumControlSize = this->minimumControlSize(appearance, protect(style.fontCascade()), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
 
     // FIXME: The min-width/min-heigh value should use `calc-size()` when supported to make non-specified overrides work.
 
@@ -518,11 +518,11 @@ public:
     float measureText(const String& string) const override
     {
         TextRun run = RenderBlock::constructTextRun(string, m_style);
-        return m_font.width(run);
+        return m_font->width(run);
     }
 private:
-    const FontCascade& m_font;
-    const Style::ComputedStyle& m_style;
+    const CheckedRef<const FontCascade> m_font;
+    const CheckedRef<const Style::ComputedStyle> m_style;
 };
 
 static void adjustInputElementButtonStyle(Style::ComputedStyle& style, const HTMLInputElement& inputElement)
@@ -547,7 +547,7 @@ static void adjustInputElementButtonStyle(Style::ComputedStyle& style, const HTM
 #endif
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
-    FontCascade font = style.fontCascade();
+    FontCascade font { CheckedRef { style.fontCascade() } };
 
     float maximumWidth = localizedDateCache().estimatedMaximumWidthForDateType(dateType, font, RenderThemeMeasureTextClient(font, style));
 
@@ -786,7 +786,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderElement& box, const PaintInfo&
     }
 
     FloatRoundedRect fillRect(trackClip, cornerRadii);
-    context.fillRoundedRect(fillRect, controlTintColor(box.style(), styleColorOptions));
+    context.fillRoundedRect(fillRect, controlTintColor(protect(box.style()), styleColorOptions));
 
     return false;
 }
@@ -908,7 +908,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderElement& renderer, const Paint
     }
 
     FloatRect barRect(barInlineStart, barBlockStart, barInlineSize, barBlockSize);
-    context.fillRoundedRect(FloatRoundedRect(isHorizontalWritingMode ? barRect : barRect.transposedRect(), barCornerRadii), controlTintColor(renderer.style(), styleColorOptions).colorWithAlphaMultipliedBy(alpha));
+    context.fillRoundedRect(FloatRoundedRect(isHorizontalWritingMode ? barRect : barRect.transposedRect(), barCornerRadii), controlTintColor(protect(renderer.style()), styleColorOptions).colorWithAlphaMultipliedBy(alpha));
 
     return false;
 }
@@ -1062,7 +1062,7 @@ Color RenderThemeIOS::insertionPointColor()
 
 Color RenderThemeIOS::autocorrectionReplacementMarkerColor(const RenderText& renderer) const
 {
-    auto caretColor = CaretBase::computeCaretColor(renderer.style(), protect(renderer.textNode()));
+    auto caretColor = CaretBase::computeCaretColor(protect(renderer.style()), protect(renderer.textNode()));
     if (!caretColor.isValid())
         caretColor = insertionPointColor();
 
@@ -1191,11 +1191,11 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
 
 static inline std::optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance)
 {
-    UIColor *color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClassSingleton(), systemColorInformation.selector);
+    RetainPtr color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClassSingleton(), systemColorInformation.selector);
     if (!color)
         return std::nullopt;
 
-    Color systemColor(roundAndClampToSRGBALossy(color.CGColor), Color::Flags::Semantic);
+    Color systemColor(roundAndClampToSRGBALossy(protect(color.get().CGColor)), Color::Flags::Semantic);
 
     if (systemColorInformation.opacity < 1.0f)
         systemColor = systemColor.colorWithAlphaMultipliedBy(systemColorInformation.opacity);
@@ -1296,7 +1296,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
 Color RenderThemeIOS::pictureFrameColor(const RenderElement& buttonRenderer)
 {
-    return buttonRenderer.style().visitedDependentBorderTopColor();
+    return protect(buttonRenderer.style())->visitedDependentBorderTopColor();
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1588,7 +1588,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderElement& box, const PaintInfo& pa
     auto controlStates = extractControlStyleStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
-    auto backgroundColor = checkboxRadioBackgroundColor(box.style(), controlStates, styleColorOptions);
+    auto backgroundColor = checkboxRadioBackgroundColor(protect(box.style()), controlStates, styleColorOptions);
 
     bool checked = controlStates.contains(ControlStyle::State::Checked);
     bool indeterminate = controlStates.contains(ControlStyle::State::Indeterminate);
@@ -1673,7 +1673,7 @@ bool RenderThemeIOS::paintRadio(const RenderElement& box, const PaintInfo& paint
     auto controlStates = extractControlStyleStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
-    auto backgroundColor = checkboxRadioBackgroundColor(box.style(), controlStates, styleColorOptions);
+    auto backgroundColor = checkboxRadioBackgroundColor(protect(box.style()), controlStates, styleColorOptions);
 
     FloatRoundedRect radioRect { rect, CornerRadii(rect.width() / 2, rect.height() / 2) };
 
@@ -1784,18 +1784,18 @@ bool RenderThemeIOS::paintListButton(const RenderElement& box, const PaintInfo& 
         return RenderThemeCocoa::paintListButton(box, paintInfo, rect);
 #endif
 
-    auto& style = box.style();
-    if (style.content().isData() || style.hasUsedContentNone())
+    CheckedRef style = box.style();
+    if (style->content().isData() || style->hasUsedContentNone())
         return false;
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    const auto& zoomFactor = style.usedZoomForLength();
-    auto paddingTop = Style::evaluate<float>(style.paddingTop(), rect.height(), zoomFactor);
-    auto paddingRight = Style::evaluate<float>(style.paddingRight(), rect.width(), zoomFactor);
-    auto paddingBottom = Style::evaluate<float>(style.paddingBottom(), rect.height(), zoomFactor);
-    auto paddingLeft = Style::evaluate<float>(style.paddingLeft(), rect.width(), zoomFactor);
+    const auto& zoomFactor = style->usedZoomForLength();
+    auto paddingTop = Style::evaluate<float>(style->paddingTop(), rect.height(), zoomFactor);
+    auto paddingRight = Style::evaluate<float>(style->paddingRight(), rect.width(), zoomFactor);
+    auto paddingBottom = Style::evaluate<float>(style->paddingBottom(), rect.height(), zoomFactor);
+    auto paddingLeft = Style::evaluate<float>(style->paddingLeft(), rect.width(), zoomFactor);
 
     FloatRect indicatorRect = rect;
     indicatorRect.move(paddingLeft, paddingTop);
@@ -1881,7 +1881,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderElement& box, const PaintInfo&
                 tickRect.setY(rect.y() + tickRatio * (rect.height() - tickRect.height()));
 
             FloatRoundedRect roundedTickRect(snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor), tickCornerRadii);
-            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlTintColor(box.style(), styleColorOptions) : systemColor(CSSValueID::AppleSystemOpaqueSeparator, styleColorOptions));
+            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlTintColor(protect(box.style()), styleColorOptions) : systemColor(CSSValueID::AppleSystemOpaqueSeparator, styleColorOptions));
         }
     }
 }

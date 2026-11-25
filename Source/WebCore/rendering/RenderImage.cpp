@@ -116,7 +116,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderImage);
 // of the start and end, we need to know the whole Position.
 void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometries, unsigned, unsigned)
 {
-    RenderBlock* containingBlock = this->containingBlock();
+    CheckedPtr containingBlock = this->containingBlock();
 
     IntRect imageRect;
     // FIXME: It doesn't make sense to package line bounds into SelectionGeometry. We should find
@@ -231,7 +231,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
     FloatSize imageSize;
     if (newImage->willPaintBrokenImage()) {
         auto brokenImageAndImageScaleFactor = CachedImage::brokenImage(document().deviceScaleFactor());
-        imageSize = brokenImageAndImageScaleFactor.first->size();
+        imageSize = protect(brokenImageAndImageScaleFactor.first)->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
     } else if (newImage->hasImage()) {
         auto naturalDimensions = protect(newImage->image())->naturalDimensions(imageOrientation());
@@ -262,8 +262,9 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
 
     // we have an alt and the user meant it (its not a text we invented)
     if (auto alt = altText(); !alt.isEmpty()) {
-        const FontCascade& font = style().fontCascade();
-        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(alt, style()))), maxAltTextWidth), paddingHeight + std::min(font.metricsOfPrimaryFont().intHeight(), maxAltTextHeight));
+        CheckedRef style = this->style();
+        CheckedRef font = style->fontCascade();
+        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font->width(RenderBlock::constructTextRun(alt, style))), maxAltTextWidth), paddingHeight + std::min(font->metricsOfPrimaryFont().intHeight(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
 
@@ -726,13 +727,13 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
     if (altText.isEmpty())
         return;
 
-    auto& style = this->style();
-    auto& fontCascade = style.fontCascade();
-    auto& fontMetrics = fontCascade.metricsOfPrimaryFont();
+    CheckedRef style = this->style();
+    CheckedRef fontCascade = style->fontCascade();
+    auto& fontMetrics = fontCascade->metricsOfPrimaryFont();
     auto isHorizontal = writingMode().isHorizontal();
     auto encodedDisplayString = protect(document())->displayStringModifiedByEncoding(altText);
     auto textRun = RenderBlock::constructTextRun(encodedDisplayString, style, ExpansionBehavior::defaultBehavior(), RespectDirection | RespectDirectionOverride);
-    auto textWidth = LayoutUnit { fontCascade.width(textRun) };
+    auto textWidth = LayoutUnit { fontCascade->width(textRun) };
 
     auto hasRoomForAltText = [&] {
         // Only draw the alt text if it fits within the content box (content width) and above the error image (content height).
@@ -747,12 +748,12 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
     if (!hasRoomForAltText())
         return;
 
-    context.setFillColor(style.visitedDependentColorApplyingColorFilter());
+    context.setFillColor(style->visitedDependentColorApplyingColorFilter());
     if (isHorizontal) {
         auto altTextLocation = [&]() -> LayoutPoint {
             auto contentHorizontalOffset = LayoutUnit { borderWidths.left() + padding.left() + (paddingWidth / 2) - missingImageBorderWidth };
             auto contentVerticalOffset = LayoutUnit { borderWidths.top() + padding.top() + fontMetrics.ascent() + (paddingHeight / 2) - missingImageBorderWidth };
-            if (!style.writingMode().isInlineLeftToRight())
+            if (!style->writingMode().isInlineLeftToRight())
                 contentHorizontalOffset += contentSize.width() - textWidth;
             return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
         };
@@ -775,7 +776,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
 
         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
         context.concatCTM(Paint::rotation(rotationRect, RotationDirection::Clockwise));
-        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().ascent() };
+        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade->metricsOfPrimaryFont().ascent() };
         context.drawBidiText(fontCascade, textRun, roundPointToDevicePixels(textOrigin, document().deviceScaleFactor()));
         context.concatCTM(Paint::rotation(rotationRect, RotationDirection::Counterclockwise));
     }
@@ -885,7 +886,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     if (paintInfo.context().paintingDisabled() && !paintInfo.context().performingPaintInvalidation())
         return;
 
-    auto* areaElementStyle = areaElement->computedStyle();
+    CheckedPtr areaElementStyle = areaElement->computedStyle();
     if (!areaElementStyle)
         return;
 

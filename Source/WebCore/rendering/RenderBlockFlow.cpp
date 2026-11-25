@@ -2509,7 +2509,7 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset) const
 
     // See if we're in the last fragment.
     LayoutUnit pageOffset = offsetFromLogicalTopOfFirstPage() + logicalOffset;
-    RenderFragmentContainer* fragment = fragmentedFlow->fragmentAtBlockOffset(this, pageOffset, true);
+    CheckedPtr fragment = fragmentedFlow->fragmentAtBlockOffset(this, pageOffset, true);
     if (!fragment)
         return false;
 
@@ -2563,8 +2563,8 @@ LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutU
 bool RenderBlockFlow::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const
 {
     bool checkFragment = false;
-    auto* fragmentedFlow = enclosingFragmentedFlow();
-    RenderFragmentContainer* currentFragmentContainer = nullptr;
+    CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
+    CheckedPtr<RenderFragmentContainer> currentFragmentContainer;
     for (auto pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment); pageLogicalHeight; pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment)) {
         if (minimumLogicalHeight <= pageLogicalHeight)
             return true;
@@ -2573,7 +2573,7 @@ bool RenderBlockFlow::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustm
             return false;
         if (fragmentedFlow) {
             // While in layout and the columnsets are not balanced yet, we keep finding the same (infinite tall) column over and over again.
-            auto* nextFragmentContainer = fragmentedFlow->fragmentAtBlockOffset(this, adjustedOffset, true);
+            CheckedPtr nextFragmentContainer = fragmentedFlow->fragmentAtBlockOffset(this, adjustedOffset, true);
             ASSERT(nextFragmentContainer);
             if (nextFragmentContainer == currentFragmentContainer)
                 return false;
@@ -2761,8 +2761,8 @@ void RenderBlockFlow::styleDidChange(Style::Difference diff, const Style::Comput
 void RenderBlockFlow::updateStylesForColumnChildren(const Style::ComputedStyle* oldStyle)
 {
     auto columnsNeedLayout = oldStyle && (oldStyle->columnCount() != style().columnCount() || oldStyle->columnWidth() != style().columnWidth()); 
-    for (auto* child = firstChildBox(); child && (child->isRenderFragmentedFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox()) {
-        child->setStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(style(), Style::DisplayType::BlockFlow));
+    for (CheckedPtr child = firstChildBox(); child && (child->isRenderFragmentedFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox()) {
+        child->setStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(style()), Style::DisplayType::BlockFlow));
         if (columnsNeedLayout)
             child->setNeedsLayoutAndInvalidateContentLogicalWidths();
     }
@@ -3038,8 +3038,8 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
 
 void RenderBlockFlow::adjustInitialLetterPosition(RenderBox& childBox, LayoutUnit& logicalTopOffset, LayoutUnit& marginBeforeOffset)
 {
-    const Style::ComputedStyle& style = firstLineStyle();
-    const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
+    CheckedRef style = firstLineStyle();
+    const FontMetrics& fontMetrics = style->metricsOfPrimaryFont();
     if (!fontMetrics.capHeight())
         return;
 
@@ -3608,31 +3608,31 @@ LayoutUnit RenderBlockFlow::adjustEnclosingTopForPrecedingBlock(LayoutUnit top) 
 
     LayoutSize offsetToBlockBefore;
 
-    auto blockBeforeWithinSelectionRoot = [&]() -> const RenderBlockFlow* {
-        const RenderElement* object = this;
-        const RenderObject* sibling = nullptr;
+    auto blockBeforeWithinSelectionRoot = [&] -> CheckedPtr<const RenderBlockFlow> {
+        CheckedPtr<const RenderElement> object = this;
+        CheckedPtr<const RenderObject> sibling;
         do {
             sibling = object->previousInFlowSibling();
             while (sibling) {
-                auto* siblingBlock = dynamicDowncast<RenderBlock>(*sibling);
+                CheckedPtr siblingBlock = dynamicDowncast<RenderBlock>(*sibling);
                 if (siblingBlock && !siblingBlock->isSelectionRoot())
                     break;
                 sibling = sibling->previousInFlowSibling();
             }
 
-            auto& objectBlock = downcast<RenderBlock>(*object);
-            offsetToBlockBefore -= LayoutSize(objectBlock.logicalLeft(), objectBlock.logicalTop());
+            CheckedRef objectBlock = downcast<RenderBlock>(*object);
+            offsetToBlockBefore -= LayoutSize(objectBlock->logicalLeft(), objectBlock->logicalTop());
             object = object->parent();
         } while (!sibling && is<RenderBlock>(object) && !downcast<RenderBlock>(*object).isSelectionRoot());
 
         if (!sibling)
             return nullptr;
 
-        auto* beforeBlock = downcast<RenderBlock>(sibling);
+        CheckedPtr beforeBlock = downcast<RenderBlock>(sibling);
 
         offsetToBlockBefore += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
 
-        auto* child = beforeBlock->lastChild();
+        CheckedPtr child = beforeBlock->lastChild();
         while (auto* childBlock = dynamicDowncast<RenderBlock>(child)) {
             beforeBlock = childBlock;
             offsetToBlockBefore += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
@@ -3641,7 +3641,7 @@ LayoutUnit RenderBlockFlow::adjustEnclosingTopForPrecedingBlock(LayoutUnit top) 
         return dynamicDowncast<RenderBlockFlow>(beforeBlock);
     };
 
-    auto* blockBefore = blockBeforeWithinSelectionRoot();
+    CheckedPtr blockBefore = blockBeforeWithinSelectionRoot();
     if (!blockBefore)
         return top;
 
@@ -3721,11 +3721,11 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         };
 
         if (leftGap) {
-            result.uniteLeft(logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, firstSelectedBox->renderer().parent(), boxLogicalRect(firstSelectedBox).x(),
+            result.uniteLeft(logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, protect(firstSelectedBox->renderer().parent()).get(), boxLogicalRect(firstSelectedBox).x(),
                 selTop, selHeight, cache, paintInfo));
         }
         if (rightGap) {
-            result.uniteRight(logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastSelectedBox->renderer().parent(), boxLogicalRect(lastSelectedBox).maxX(),
+            result.uniteRight(logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, protect(lastSelectedBox->renderer().parent()).get(), boxLogicalRect(lastSelectedBox).maxX(),
                 selTop, selHeight, cache, paintInfo));
         }
 
@@ -3748,7 +3748,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
                     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
                     if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
                         if (paintInfo && box->renderer().parent()->usedStyle().visibility() == UsedVisibility::Visible)
-                            paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, document().deviceScaleFactor()), box->renderer().parent()->selectionBackgroundColor());
+                            paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, document().deviceScaleFactor()), protect(box->renderer().parent())->selectionBackgroundColor());
                         // VisibleSelection may be non-contiguous, see comment above.
                         result.uniteCenter(gapRect);
                     }
@@ -3780,13 +3780,13 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
         auto lineState = LineSelection::selectionState(*lineBox);
 
-        CheckedPtr blockContainerWithOwnGaps = [&]() -> RenderBlock* {
+        CheckedPtr blockContainerWithOwnGaps = [&] -> CheckedPtr<RenderBlock> {
             // A block level box on a line that lays out content of its own fills its own gaps, so ask it for them
             // instead of filling gaps around it, the way blockSelectionGaps chooses between the two per block child.
             auto blockLevelBox = lineBox->blockLevelBox();
             if (!blockLevelBox || blockLevelBox->selectionState() == RenderObject::HighlightState::None)
                 return { };
-            auto* blockContainer = dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockLevelBox->renderer()));
+            CheckedPtr blockContainer = dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockLevelBox->renderer()));
             if (!blockContainer || blockContainer->shouldPaintSelectionGaps() || blockContainer->canBeSelectionLeaf())
                 return { };
             return blockContainer;
@@ -3893,8 +3893,10 @@ static Position positionForRun(const RenderBlockFlow& flow, InlineIterator::BoxI
     if (!box->renderer().nonPseudoNode())
         return makeDeprecatedLegacyPosition(flow.nonPseudoElement(), start ? flow.caretMinOffset() : flow.caretMaxOffset());
 
-    if (!box->isText())
-        return makeDeprecatedLegacyPosition(box->renderer().nonPseudoNode(), start ? box->renderer().caretMinOffset() : box->renderer().caretMaxOffset());
+    if (!box->isText()) {
+        CheckedRef renderer = box->renderer();
+        return makeDeprecatedLegacyPosition(renderer->nonPseudoNode(), start ? renderer->caretMinOffset() : renderer->caretMaxOffset());
+    }
 
     auto textBox = InlineIterator::TextBoxIterator { box };
     return makeDeprecatedLegacyPosition(textBox->renderer().nonPseudoNode(), start ? textBox->start() : textBox->end());
@@ -3946,7 +3948,7 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
         localPoint = block->absoluteToLocal(point);
     }
     
-    RenderBlockFlow& blockFlow = downcast<RenderBlockFlow>(*block);
+    CheckedRef blockFlow = downcast<RenderBlockFlow>(*block);
     
     // Only check the gaps between the root line boxes. We deliberately ignore overflow because
     // experience has shown that hit tests on an exploded text node can fail when within the
@@ -4044,15 +4046,15 @@ PositionWithAffinity RenderBlockFlow::positionForPointWithInlineChildren(const L
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
         if (closestBox->renderer().isBlockLevelReplacedOrAtomicInline()) {
-            return positionForPointRespectingEditingBoundaries(*this, const_cast<RenderBox&>(downcast<RenderBox>(closestBox->renderer())), point, source);
+            return positionForPointRespectingEditingBoundaries(*this, protect(const_cast<RenderBox&>(downcast<RenderBox>(closestBox->renderer()))), point, source);
         }
-        return const_cast<RenderObject&>(closestBox->renderer()).positionForPoint(point, source, nullptr);
+        return protect(const_cast<RenderObject&>(closestBox->renderer()))->positionForPoint(point, source, nullptr);
     }
 
     if (lastLineBoxWithChildren) {
         // We hit this case for Mac behavior when the Y coordinate is below the last box.
         if (auto blockBox = lastLineBoxWithChildren->blockLevelBox()) {
-            auto& childBlockRenderer = const_cast<RenderBox&>(downcast<RenderBox>(blockBox->renderer()));
+            CheckedRef childBlockRenderer = const_cast<RenderBox&>(downcast<RenderBox>(blockBox->renderer()));
             return positionForPointRespectingEditingBoundaries(*this, childBlockRenderer, pointInLogicalContents, source);
         }
         ASSERT(moveCaretToBoundary);
@@ -4095,7 +4097,7 @@ bool RenderBlockFlow::relayoutForPagination()
         // passes than that, though, but the number of retries should not exceed the number of
         // columns, unless we have a bug.
         needsRelayout = false;
-        for (RenderMultiColumnSet* multicolSet = multiColumnFlow()->firstMultiColumnSet(); multicolSet; multicolSet = multicolSet->nextSiblingMultiColumnSet()) {
+        for (CheckedPtr multicolSet = multiColumnFlow()->firstMultiColumnSet(); multicolSet; multicolSet = multicolSet->nextSiblingMultiColumnSet()) {
             if (multicolSet->recalculateColumnHeight(firstPass))
                 needsRelayout = true;
             if (needsRelayout) {
@@ -4109,7 +4111,7 @@ bool RenderBlockFlow::relayoutForPagination()
         if (needsRelayout) {
             // Layout again. Column balancing resulted in a new height.
             neededRelayout = true;
-            multiColumnFlow()->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+            protect(multiColumnFlow())->setChildNeedsLayout(MarkingBehavior::OnlyThis);
             setChildNeedsLayout(MarkingBehavior::OnlyThis);
             layoutBlock(RelayoutChildren::No);
         }
@@ -4689,7 +4691,7 @@ void RenderBlockFlow::adjustFontSizes(float size, float visibleWidth)
     float scale = visibleWidth / actualWidth;
     float minFontSize = roundf(size / scale);
 
-    for (auto* descendant = RenderObjectTraversal::firstChild(*this); descendant; ) {
+    for (CheckedPtr descendant = RenderObjectTraversal::firstChild(*this); descendant; ) {
         if (!isNonBlocksOrNonFixedHeightListItems(*descendant)) {
             descendant = RenderObjectTraversal::nextSkippingChildren(*descendant, this);
             continue;
@@ -4699,9 +4701,9 @@ void RenderBlockFlow::adjustFontSizes(float size, float visibleWidth)
             continue;
         }
 
-        auto& text = downcast<RenderText>(*descendant);
-        auto& oldStyle = text.style();
-        auto& fontDescription = oldStyle.fontDescription();
+        CheckedRef text = downcast<RenderText>(*descendant);
+        CheckedRef oldStyle = text->style();
+        auto& fontDescription = oldStyle->fontDescription();
         float computedSize = fontDescription.computedSize();
         float scaledSize = roundf(computedSize * scale);
         if (scaledSize > 0 && scaledSize < minFontSize) {
@@ -4712,14 +4714,14 @@ void RenderBlockFlow::adjustFontSizes(float size, float visibleWidth)
             if (m_widthForTextAutosizing == -1)
                 m_widthForTextAutosizing = actualWidth;
 
-            float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(text, computedSize) : textMultiplier(text, computedSize);
+            float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(text.get(), computedSize) : textMultiplier(text.get(), computedSize);
             float candidateNewSize = roundf(std::min(minFontSize, computedSize * lineTextMultiplier));
 
-            if (candidateNewSize > computedSize && candidateNewSize != fontDescription.usedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
-                protect(document())->textAutoSizing().addTextNode(*protect(text.textNode()), candidateNewSize);
+            if (candidateNewSize > computedSize && candidateNewSize != fontDescription.usedSize() && text->textNode() && oldStyle->textSizeAdjust().isAuto())
+                protect(document())->textAutoSizing().addTextNode(*protect(text->textNode()), candidateNewSize);
         }
 
-        descendant = RenderObjectTraversal::nextSkippingChildren(text, this);
+        descendant = RenderObjectTraversal::nextSkippingChildren(text.get(), this);
     }
 }
 

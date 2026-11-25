@@ -3,7 +3,6 @@ rendering/CSSFilterRenderer.cpp
 rendering/FloatingObjects.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/LayoutRepainter.cpp
-rendering/LogicalSelectionOffsetCachesInlines.h
 rendering/PositionedLayoutConstraints.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp
@@ -15,7 +14,6 @@ rendering/RenderElement.h
 rendering/RenderElementStyleInlines.h
 rendering/RenderGeometryMap.cpp
 rendering/RenderGrid.cpp
-rendering/RenderImage.cpp
 rendering/RenderImageResource.cpp
 rendering/RenderIterator.h
 rendering/RenderLayer.cpp
@@ -33,13 +31,11 @@ rendering/RenderTableCellInlines.h
 rendering/RenderText.cpp
 rendering/RenderView.cpp
 rendering/TextBoxTrimmer.cpp
-[ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/paint/BackgroundPainter.cpp
 rendering/paint/EllipsisBoxPainter.cpp
 rendering/paint/InlineBoxPainter.cpp
 rendering/paint/TextBoxPainter.cpp
 rendering/paint/TextDecorationPainter.cpp
-rendering/svg/SVGTextQuery.cpp
 style/ElementRuleCollector.cpp
 style/MatchResultCache.cpp
 style/MatchedDeclarationsCache.cpp
