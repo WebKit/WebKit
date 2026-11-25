@@ -71,7 +71,7 @@ public:
     // https://html.spec.whatwg.org/#presentational-hints
     const StyleProperties* presentationalHintStyle() const;
     virtual void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) { }
-    virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
+    virtual const ImmutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
     virtual void collectExtraStyleForPresentationalHints(MutableStyleProperties&) { }
 
     // For presentational hints that change without the attribute changing through attributeChanged().
