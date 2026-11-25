@@ -247,8 +247,6 @@ static FloatRect strokedPathBoundingBox(CGContextRef context, NOESCAPE const Inv
 
 RetainPtr<CGGradientRef> GraphicsContextCG::cgGradient(const Gradient& gradient, const std::optional<ColorSpace>& colorSpace)
 {
-    // The CGGradient of the last painted gradient is kept for repeated draws with the same gradient, e.g. with an
-    // unchanged fill gradient. It is keyed by the gradient identifier, so no reference to the gradient is needed.
     if (!m_lastGradient || m_lastGradient->gradientIdentifier != gradient.identifier() || m_lastGradient->colorSpace != colorSpace)
         m_lastGradient = LastGradient { gradient.identifier(), colorSpace, GradientCacheCG::cgGradient(gradient, colorSpace) };
     return m_lastGradient->cgGradient;

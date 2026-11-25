@@ -100,8 +100,6 @@ public:
     const GradientColorStops& stops() const LIFETIME_BOUND { return m_stops; }
     bool isTransient() const { return m_isTransient; }
 
-    // Identifies the gradient. Caches of what is created from the gradient are keyed by it.
-    // Not serialized: a decoded gradient gets an identifier of its own process.
     GradientIdentifier identifier() const { return m_identifier; }
 
     bool isZeroSize() const;

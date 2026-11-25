@@ -29,8 +29,6 @@
 
 namespace WebCore {
 
-// Identifies a Gradient and its color stops within a process. Generated per process, so identifiers
-// of gradients in different processes may be equal.
 struct GradientIdentifierType;
 using GradientIdentifier = AtomicObjectIdentifier<GradientIdentifierType>;
 
