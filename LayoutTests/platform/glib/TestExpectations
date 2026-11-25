@@ -3636,6 +3636,7 @@ media/media-source/media-source-real-video-layer-size-after-leaving-viewport.htm
 webkit.org/b/279434 fast/canvas/image-buffer-resource-limits.html [ Skip ]
 webkit.org/b/279434 webkit.org/b/267218 webgl/webgl-worker.html [ Skip ]
 webkit.org/b/279434 webgl/webgl-fail-platform-context-creation-no-crash.html [ Skip ]
+fast/canvas/draw-unaccelerated-canvas-copies-gpu-process-crash.html [ Skip ]
 
 # Flaky crash on GCC builds.
 webkit.org/b/303133 [ Debug ] fast/mediastream/video-rotation-clone.html [ Pass Crash ]

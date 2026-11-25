@@ -136,7 +136,7 @@ private:
     void releaseLayerContentsDisplayDelegate() final;
 #endif
 
-    template<typename T> void send(T&& message) const;
+    template<typename T> bool send(T&& message) const;
     template<typename T> auto sendSync(T&& message) const;
     RefPtr<IPC::StreamClientConnection> connection() const;
     void didBecomeUnresponsive() const;

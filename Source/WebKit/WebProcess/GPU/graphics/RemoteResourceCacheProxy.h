@@ -70,6 +70,10 @@ public:
 
     [[nodiscard]] bool recordNativeImageUse(const WebCore::NativeImage&, const WebCore::ColorSpace&);
 
+    // Starts tracking a NativeImage of this process for which the rendering backend has made its own
+    // copy, so that drawing the image in the GPU process needs no upload.
+    void recordNativeImageCopiedToRemote(const WebCore::NativeImage&);
+
     // Starts tracking a shared NativeImage whose contents live in the GPU process's
     // RemoteSharedResourceCache, and returns the read reference the rendering backend uses to adopt it
     // into its own cache.
@@ -119,6 +123,9 @@ private:
     struct NativeImageEntry {
         RefPtr<WebCore::ShareableBitmap> bitmap; // Reused across GPUP crashes, held through the associated NativeImage lifetime.
         bool existsInRemote = true;
+        // The image holds its pixels in this process, so the bitmap can be created from its platform image
+        // when needed. False for RemoteNativeImageProxy, whose platform image is read back from the GPU process.
+        bool hasLocalPlatformImage = false;
     };
     HashMap<CheckedPtr<const WebCore::NativeImage>, NativeImageEntry> m_nativeImages;
     HashSet<WebCore::GradientIdentifier> m_gradients;

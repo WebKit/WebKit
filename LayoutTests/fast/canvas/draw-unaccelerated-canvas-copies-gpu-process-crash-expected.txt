@@ -1,0 +1,42 @@
+Copies of an unaccelerated canvas taken before the GPU process exits can be drawn after it is relaunched.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS HTMLCanvasElement source, drawImage(canvas), not drawn before the GPU process exits, drawn into a new accelerated canvas
+PASS HTMLCanvasElement source, drawImage(canvas), not drawn before the GPU process exits, drawn into a new unaccelerated canvas
+PASS HTMLCanvasElement source, drawImage(canvas), drawn before the GPU process exits, drawn into a new accelerated canvas
+PASS HTMLCanvasElement source, drawImage(canvas), drawn before the GPU process exits, drawn into a new unaccelerated canvas
+PASS HTMLCanvasElement source, createPattern(canvas), not drawn before the GPU process exits, drawn into a new accelerated canvas
+PASS HTMLCanvasElement source, createPattern(canvas), not drawn before the GPU process exits, drawn into a new unaccelerated canvas
+PASS HTMLCanvasElement source, createPattern(canvas), drawn before the GPU process exits, drawn into a new accelerated canvas
+PASS HTMLCanvasElement source, createPattern(canvas), drawn before the GPU process exits, drawn into a new unaccelerated canvas
+FAIL HTMLCanvasElement source, drawImage(createImageBitmap(canvas)), not drawn before the GPU process exits, drawn into a new accelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL HTMLCanvasElement source, drawImage(createImageBitmap(canvas)), not drawn before the GPU process exits, drawn into a new unaccelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL HTMLCanvasElement source, drawImage(createImageBitmap(canvas)), drawn before the GPU process exits, drawn into a new accelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL HTMLCanvasElement source, drawImage(createImageBitmap(canvas)), drawn before the GPU process exits, drawn into a new unaccelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL HTMLCanvasElement source, createPattern(createImageBitmap(canvas)), not drawn before the GPU process exits, drawn into a new accelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL HTMLCanvasElement source, createPattern(createImageBitmap(canvas)), not drawn before the GPU process exits, drawn into a new unaccelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL HTMLCanvasElement source, createPattern(createImageBitmap(canvas)), drawn before the GPU process exits, drawn into a new accelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL HTMLCanvasElement source, createPattern(createImageBitmap(canvas)), drawn before the GPU process exits, drawn into a new unaccelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+PASS OffscreenCanvas source, drawImage(canvas), not drawn before the GPU process exits, drawn into a new accelerated canvas
+PASS OffscreenCanvas source, drawImage(canvas), not drawn before the GPU process exits, drawn into a new unaccelerated canvas
+PASS OffscreenCanvas source, drawImage(canvas), drawn before the GPU process exits, drawn into a new accelerated canvas
+PASS OffscreenCanvas source, drawImage(canvas), drawn before the GPU process exits, drawn into a new unaccelerated canvas
+PASS OffscreenCanvas source, createPattern(canvas), not drawn before the GPU process exits, drawn into a new accelerated canvas
+PASS OffscreenCanvas source, createPattern(canvas), not drawn before the GPU process exits, drawn into a new unaccelerated canvas
+PASS OffscreenCanvas source, createPattern(canvas), drawn before the GPU process exits, drawn into a new accelerated canvas
+PASS OffscreenCanvas source, createPattern(canvas), drawn before the GPU process exits, drawn into a new unaccelerated canvas
+FAIL OffscreenCanvas source, drawImage(createImageBitmap(canvas)), not drawn before the GPU process exits, drawn into a new accelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL OffscreenCanvas source, drawImage(createImageBitmap(canvas)), not drawn before the GPU process exits, drawn into a new unaccelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL OffscreenCanvas source, drawImage(createImageBitmap(canvas)), drawn before the GPU process exits, drawn into a new accelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL OffscreenCanvas source, drawImage(createImageBitmap(canvas)), drawn before the GPU process exits, drawn into a new unaccelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL OffscreenCanvas source, createPattern(createImageBitmap(canvas)), not drawn before the GPU process exits, drawn into a new accelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL OffscreenCanvas source, createPattern(createImageBitmap(canvas)), not drawn before the GPU process exits, drawn into a new unaccelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL OffscreenCanvas source, createPattern(createImageBitmap(canvas)), drawn before the GPU process exits, drawn into a new accelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+FAIL OffscreenCanvas source, createPattern(createImageBitmap(canvas)), drawn before the GPU process exits, drawn into a new unaccelerated canvas: pixel 0 is 0,0,255,255, expected 0,128,0,255
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

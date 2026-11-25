@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/unaccelerated-canvas-copies.js"></script>
+</head>
+<body>
+<script>
+description("Copies of an unaccelerated canvas taken before the GPU process exits can be drawn after it is relaunched.");
+window.jsTestIsAsync = true;
+
+async function runTests()
+{
+    if (!window.testRunner) {
+        testFailed("This test needs testRunner.terminateGPUProcess().");
+        finishJSTest();
+        return;
+    }
+
+    const cases = [];
+    for (const sourceType of ["HTMLCanvasElement", "OffscreenCanvas"]) {
+        for (const copyTypeName of Object.keys(copyTypes)) {
+            for (const drawnBefore of [false, true]) {
+                for (const destinationName of ["accelerated canvas", "unaccelerated canvas"]) {
+                    const source = createSourceContext(sourceType);
+                    sourceOperations.fillRect(source, sourceColor);
+                    const copy = await copyTypes[copyTypeName].take(createCanvas("HTMLCanvasElement").getContext("2d"), source);
+                    let failureBefore = null;
+                    if (drawnBefore) {
+                        const destination = destinationTypes[destinationName](source);
+                        prepareDestination(destination, source);
+                        drawCopy(destination, copy);
+                        failureBefore = checkPixels(destination, sourceColor);
+                    }
+                    const name = `${sourceType} source, ${copyTypeName}, ${drawnBefore ? "drawn" : "not drawn"} before the GPU process exits, drawn into a new ${destinationName}`;
+                    cases.push({ name, source, copy, failureBefore, destinationName });
+                }
+            }
+        }
+    }
+
+    const lostCanvas = createCanvas("HTMLCanvasElement").getContext("2d");
+    sourceOperations.fillRect(lostCanvas, destinationColor);
+    checkPixels(lostCanvas, destinationColor);
+
+    testRunner.terminateGPUProcess();
+    if (!await waitForGPUProcessRelaunch(lostCanvas)) {
+        testFailed("The GPU process was not relaunched.");
+        finishJSTest();
+        return;
+    }
+
+    for (const { name, source, copy, failureBefore, destinationName } of cases) {
+        if (failureBefore) {
+            reportResult(name, `before the GPU process exits: ${failureBefore}`);
+            continue;
+        }
+        const destination = destinationTypes[destinationName](source);
+        prepareDestination(destination, source);
+        drawCopy(destination, copy);
+        reportResult(name, checkPixels(destination, sourceColor));
+    }
+    finishJSTest();
+}
+runTests();
+</script>
+</body>
+</html>

@@ -172,11 +172,23 @@ bool RemoteResourceCacheProxy::recordNativeImageUse(const NativeImage& image, co
     if (entry != m_nativeImages.end()) {
         if (entry->value.existsInRemote)
             return true;
+        bool isNewBitmap = false;
+        if (!entry->value.bitmap && entry->value.hasLocalPlatformImage) {
+            // The copy the GPU process made was lost with it. Upload the pixels of this process instead.
+            if (auto result = createShareableBitmapForNativeImage(image, fallbackColorSpace)) {
+                entry->value.bitmap = WTF::move(result->bitmap);
+                image.replacePlatformImage(WTF::move(result->platformImage));
+                isNewBitmap = true;
+            }
+        }
         if (!entry->value.bitmap)
             return false;
         handle = RefPtr { entry->value.bitmap }->createHandle();
-        if (handle)
+        if (handle) {
+            if (isNewBitmap)
+                handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
             entry->value.existsInRemote = true;
+        }
     } else {
         auto result = createShareableBitmapForNativeImage(image, fallbackColorSpace);
         if (result) {
@@ -204,6 +216,16 @@ bool RemoteResourceCacheProxy::recordNativeImageUse(const NativeImage& image, co
     }
     m_remoteRenderingBackendProxy->cacheNativeImage(WTF::move(*handle), image.renderingResourceIdentifier());
     return true;
+}
+
+void RemoteResourceCacheProxy::recordNativeImageCopiedToRemote(const NativeImage& image)
+{
+    auto result = m_nativeImages.add(&image, NativeImageEntry { nullptr, true, true });
+    // The image is new, so the caller has just generated its identifier.
+    ASSERT_UNUSED(result, result.isNewEntry);
+    // Set itself as an observer to NativeImage, so releaseNativeImage()
+    // gets called when NativeImage is being deleted.
+    image.addObserver(m_nativeImageResourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
 }
 
 RemoteNativeImageReadReference RemoteResourceCacheProxy::recordSharedNativeImageUse(RemoteNativeImageProxy& image)
