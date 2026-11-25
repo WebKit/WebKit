@@ -1881,7 +1881,12 @@ void beforeAll()
 #endif
     ColorChooserTest::add("WebKitWebView", "color-chooser-request", testWebViewColorChooserRequest);
 #if ENABLE(POINTER_LOCK)
-    UIClientTest::add("WebKitWebView", "pointer-lock-permission-request", testWebViewPointerLockPermissionRequest);
+    bool pointerLockPermissionRequestSupported = true;
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    pointerLockPermissionRequestSupported = !Test::s_useWPELegacyAPI;
+#endif
+    if (pointerLockPermissionRequestSupported)
+        UIClientTest::add("WebKitWebView", "pointer-lock-permission-request", testWebViewPointerLockPermissionRequest);
 #endif
     bool clipboardPermissionRequestSupported = true;
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)

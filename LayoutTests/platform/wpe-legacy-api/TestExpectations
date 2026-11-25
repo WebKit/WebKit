@@ -354,6 +354,12 @@ http/tests/inspector [ Skip ]
 # Skipped in platform/wpe until 2026-10; not yet triaged for the legacy API.
 editing/pasteboard [ Skip ]
 
+# Failing with the legacy API since Pointer Lock was enabled on WPE in 327108@main.
+webkit.org/b/332963 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy_with_pointerlock.html [ Failure ]
+webkit.org/b/332963 imported/w3c/web-platform-tests/pointerlock/movementX_Y_basic.html [ Failure ]
+webkit.org/b/332963 pointer-lock/mouse-event-delivery.html [ Failure ]
+webkit.org/b/332963 pointer-lock/pointermove-movement-delta.html [ Timeout ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 #//////////////////////////////////////////////////////////////////////////////////////////
