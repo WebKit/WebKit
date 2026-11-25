@@ -145,10 +145,6 @@ public:
     using ErrorScopePromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUError>>>;
     void popErrorScope(ErrorScopePromise&&);
 
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    using EventTarget::addEventListener;
-    void listenForUncapturedErrors();
-
     using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
     LostPromise& lost() LIFETIME_BOUND;
 
@@ -188,6 +184,9 @@ private:
     void willDestroyBuffer(GPUBuffer&);
     void willDestroyTexture(GPUTexture&);
     void notifyMemoryCostChanged();
+    void listenForUncapturedErrors();
+    void stopListeningForUncapturedErrorsIfUnused();
+    void dispatchUncapturedError(::WebGPU::Error&&);
 
     // FIXME: We probably need to override more methods to make this work properly.
     RefPtr<GPUPipelineLayout> createAutoPipelineLayout();
@@ -201,6 +200,7 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::GPUDevice; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    void eventListenersDidChange() final;
 
     static Lock s_instancesLock;
 
@@ -234,6 +234,7 @@ private:
 
     bool m_waitingForDeviceLostPromise { false };
     bool m_listeningForUncapturedErrors { false };
+    bool m_willStopListeningForUncapturedErrors { false };
     bool m_hasActiveInspectorCanvasCallTracer { false };
     bool m_isDestroyed { false };
 };

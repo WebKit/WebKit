@@ -28,6 +28,7 @@
 ]
 messages -> RemoteGPUProxy {
     void WasCreated(bool didSucceed) CanDispatchOutOfOrder
+    void DidGenerateUncapturedError(WebKit::WebGPUDeviceIdentifier deviceIdentifier, ::WebGPU::Error error)
 }
 
 #endif

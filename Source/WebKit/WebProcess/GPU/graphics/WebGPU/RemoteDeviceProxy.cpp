@@ -436,12 +436,28 @@ void RemoteDeviceProxy::popErrorScope(CompletionHandler<void(bool, std::optional
     UNUSED_PARAM(sendResult);
 }
 
-void RemoteDeviceProxy::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&& callback)
+void RemoteDeviceProxy::setUncapturedErrorCallback(Function<void(::WebGPU::Error&&)>&& callback)
 {
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::ResolveUncapturedErrorEvent(), [callback = WTF::move(callback)](bool success, auto error) mutable {
-        callback(success, WTF::move(error));
-    });
+    bool wasListening = !!m_uncapturedErrorCallback;
+    m_uncapturedErrorCallback = callback ? RefPtr { createSharedTask<void(::WebGPU::Error&&)>(WTF::move(callback)) } : nullptr;
+    bool listens = !!m_uncapturedErrorCallback;
+    if (listens == wasListening)
+        return;
+
+    // The GPU process sends each uncaptured error to RemoteGPUProxy, as soon as the device generates it.
+    Ref root = this->root();
+    if (listens)
+        root->addUncapturedErrorListener(m_backing, *this);
+    else
+        root->removeUncapturedErrorListener(m_backing);
+    auto sendResult = send(Messages::RemoteDevice::SetListensForUncapturedErrors(listens));
     UNUSED_PARAM(sendResult);
+}
+
+void RemoteDeviceProxy::didGenerateUncapturedError(::WebGPU::Error&& error)
+{
+    if (RefPtr callback = m_uncapturedErrorCallback)
+        callback->run(WTF::move(error));
 }
 
 void RemoteDeviceProxy::setLabel(String&& label)

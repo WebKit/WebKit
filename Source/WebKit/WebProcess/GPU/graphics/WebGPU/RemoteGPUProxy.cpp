@@ -170,6 +170,38 @@ void RemoteGPUProxy::wasCreated(bool didSucceed)
         abandonGPUProcess();
 }
 
+void RemoteGPUProxy::addUncapturedErrorListener(WebGPUDeviceIdentifier identifier, WebGPU::RemoteDeviceProxy& device)
+{
+    ASSERT(isCurrent());
+    // Forget the devices that went away while listening.
+    m_uncapturedErrorListeners.removeIf([](auto& entry) {
+        return !entry.value.get();
+    });
+    m_uncapturedErrorListeners.set(identifier, device);
+}
+
+void RemoteGPUProxy::removeUncapturedErrorListener(WebGPUDeviceIdentifier identifier)
+{
+    ASSERT(isCurrent());
+    m_uncapturedErrorListeners.remove(identifier);
+}
+
+void RemoteGPUProxy::didGenerateUncapturedError(WebGPUDeviceIdentifier identifier, ::WebGPU::Error&& error)
+{
+    ASSERT(isCurrent());
+    // This message and the replies to the messages of the stream come on the same connection, and the
+    // connection dispatches them in the order the GPU process sent them.
+    auto iterator = m_uncapturedErrorListeners.find(identifier);
+    if (iterator == m_uncapturedErrorListeners.end())
+        return;
+    RefPtr device = iterator->value;
+    if (!device) {
+        m_uncapturedErrorListeners.remove(iterator);
+        return;
+    }
+    device->didGenerateUncapturedError(WTF::move(error));
+}
+
 void RemoteGPUProxy::waitUntilInitialized()
 {
     if (m_didInitialize || m_lost)

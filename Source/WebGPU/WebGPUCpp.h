@@ -1499,9 +1499,10 @@ public:
     // Completes with true and no error when the scope caught none, or when the device is lost; with
     // false and the error when it caught one; and with false and no error when there is no scope.
     virtual void popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
-    // Completes once, with true and the error, when an error is not caught by any scope; or with false
-    // when the device is destroyed or the callback is replaced.
-    virtual void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
+    // Calls the callback with each error that no error scope catches, in the call that generates it,
+    // until the device is lost or the callback is replaced. Errors generated before the callback is set
+    // are not reported. An empty callback stops reporting.
+    virtual void setUncapturedErrorCallback(Function<void(Error&&)>&&) = 0;
     // An empty callback clears the current one. Setting a callback completes the current one.
     virtual void resolveDeviceLostPromise(CompletionHandler<void(DeviceLostReason, String&&)>&&) = 0;
     // Whether the device is lost, as it is once destroyed. A proxy of a device in another process may

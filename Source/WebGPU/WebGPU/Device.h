@@ -50,6 +50,7 @@
 #import <wtf/HashTable.h>
 #import <wtf/KeyValuePair.h>
 #import <wtf/Ref.h>
+#import <wtf/SharedTask.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeWeakHashSet.h>
@@ -149,7 +150,7 @@ public:
     void popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;
     void pushErrorScope(WebGPU::ErrorFilter) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostReason, String&&)>&&) final;
-    void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;
+    void setUncapturedErrorCallback(Function<void(WebGPU::Error&&)>&&) final;
     void pauseAllErrorReporting(bool pause) final;
 
     RefPtr<WebGPU::BindGroup> createInvalidBindGroup() final;
@@ -321,6 +322,7 @@ private:
     // Whether popping succeeds without a scope to pop: true for a lost device, false for an empty
     // stack. std::nullopt when there is a scope to pop.
     NODELETE std::optional<bool> validatePopErrorScope() const;
+    void dispatchUncapturedError(WebGPU::Error&&);
 
     NODELETE bool validateRenderPipeline(const WebGPU::RenderPipelineDescriptor&);
 
@@ -349,7 +351,8 @@ private:
     id<MTLDevice> _Nullable m_device { nil };
     const Ref<Queue> m_defaultQueue;
 
-    CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)> m_uncapturedErrorCallback;
+    // Shared, so that the callback stays alive while it runs even if it replaces itself or loses the device.
+    RefPtr<SharedTask<void(WebGPU::Error&&)>> m_uncapturedErrorCallback;
     Vector<ErrorScope> m_errorScopeStack;
     RefPtr<XRSubImage> m_xrSubImage;
 

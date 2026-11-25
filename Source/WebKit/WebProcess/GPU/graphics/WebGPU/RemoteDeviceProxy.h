@@ -33,6 +33,7 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUDevice.h>
 #include <WebCore/WebGPURenderBundleEncoderDescriptor.h>
+#include <wtf/SharedTask.h>
 #include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
@@ -93,7 +94,7 @@ public:
 
     void pushErrorScope(::WebGPU::ErrorFilter) final;
     void popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
-    void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
+    void setUncapturedErrorCallback(Function<void(::WebGPU::Error&&)>&&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&&) final;
     bool isLost() const final;
     void pauseAllErrorReporting(bool pause) final;
@@ -115,6 +116,9 @@ public:
 
     void setLabel(String&&) final;
     bool isValid() const final;
+
+    // Called by RemoteGPUProxy with each uncaptured error that the GPU process sends.
+    void didGenerateUncapturedError(::WebGPU::Error&&);
 
 private:
     RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&&, const ::WebGPU::Limits&, RemoteAdapterProxy&, WebGPUDeviceIdentifier, WebGPUQueueIdentifier);
@@ -141,6 +145,8 @@ private:
     const Ref<RemoteAdapterProxy> m_parent;
     const Ref<RemoteQueueProxy> m_queue;
     bool m_isLost { false };
+    // Shared, so that the callback stays alive while it runs even if it replaces itself.
+    RefPtr<SharedTask<void(::WebGPU::Error&&)>> m_uncapturedErrorCallback;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     WebKit::SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif

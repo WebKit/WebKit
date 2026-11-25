@@ -1,0 +1,13 @@
+Generates a burst of validation errors back to back and checks that each error fires one uncapturederror event. Then generates one more error and checks that it fires one more event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS events.length is burstSize
+PASS events.every(event => event.error instanceof GPUValidationError) is true
+PASS events.length is burstSize + 1
+PASS events[burstSize].error instanceof GPUValidationError is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

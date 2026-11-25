@@ -9,6 +9,18 @@ CONSOLE MESSAGE: device0.uncapturederror
 CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
 CONSOLE MESSAGE: device0.uncapturederror
 CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
+CONSOLE MESSAGE: device0.uncapturederror
+CONSOLE MESSAGE: [object GPUUncapturedErrorEvent]
 CONSOLE MESSAGE: error
 CONSOLE MESSAGE: GPUPipelineError: Vertex module is not valid
 CONSOLE MESSAGE: GPUPipelineError

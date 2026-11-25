@@ -38,6 +38,7 @@
 #include "RemoteDeviceMessages.h"
 #include "RemoteExternalTexture.h"
 #include "RemoteGPU.h"
+#include "RemoteGPUProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemotePipelineLayout.h"
 #include "RemoteQuerySet.h"
@@ -92,9 +93,10 @@ RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess,
 
 RemoteDevice::~RemoteDevice()
 {
-    // The device can outlive this receiver, so complete the callbacks that reply to the Web Process.
+    // The device can outlive this receiver, so complete the callback that replies to the Web Process,
+    // and stop sending uncaptured errors to it.
     m_backing->resolveDeviceLostPromise({ });
-    m_backing->resolveUncapturedErrorEvent({ });
+    m_backing->setUncapturedErrorCallback({ });
 }
 
 void RemoteDevice::stopListeningForIPC()
@@ -552,10 +554,38 @@ void RemoteDevice::popErrorScope(CompletionHandler<void(bool, std::optional<::We
     });
 }
 
-void RemoteDevice::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&& callback)
+// The specification lets the user agent limit the number of uncapturederror events that a device
+// raises (https://www.w3.org/TR/webgpu/#abstract-opdef-dispatch-error), so a device sends at most
+// this many uncaptured errors in each second, and a page that generates errors in a loop cannot
+// flood the Web process with messages.
+static constexpr unsigned maxUncapturedErrorsPerSecond = 1000;
+
+void RemoteDevice::setListensForUncapturedErrors(bool listens)
 {
-    m_backing->resolveUncapturedErrorEvent([callback = WTF::move(callback)](bool hasUncapturedError, std::optional<::WebGPU::Error>&& error) mutable {
-        callback(hasUncapturedError, WTF::move(error));
+    if (!listens) {
+        m_backing->setUncapturedErrorCallback({ });
+        return;
+    }
+
+    // The device generates errors while it handles the messages of the stream, on its work queue, and
+    // the replies to those messages are sent from there too. Sending each error right away, on the
+    // same connection, makes the Web process get it before the replies that are sent after it.
+    m_backing->setUncapturedErrorCallback([streamConnection = m_streamConnection, deviceIdentifier = m_identifier, gpuIdentifier = protect(m_gpu)->identifier(), windowStart = MonotonicTime::now(), errorCountInWindow = 0u, didLogDroppedError = false](::WebGPU::Error&& error) mutable {
+        auto now = MonotonicTime::now();
+        if (now - windowStart >= 1_s) {
+            windowStart = now;
+            errorCountInWindow = 0;
+        }
+        if (errorCountInWindow >= maxUncapturedErrorsPerSecond) {
+            if (!didLogDroppedError) {
+                RELEASE_LOG_ERROR(IPC, "RemoteDevice: Dropping uncaptured errors, the device generates more than %u per second", maxUncapturedErrorsPerSecond);
+                didLogDroppedError = true;
+            }
+            return;
+        }
+        ++errorCountInWindow;
+        auto sendResult = streamConnection->send(Messages::RemoteGPUProxy::DidGenerateUncapturedError(deviceIdentifier, WTF::move(error)), gpuIdentifier);
+        UNUSED_VARIABLE(sendResult);
     });
 }
 

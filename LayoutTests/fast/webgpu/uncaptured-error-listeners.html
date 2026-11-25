@@ -1,0 +1,313 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Checks which uncapturederror listeners receive which errors as listeners are added and removed " +
+            "in all the ways there are, and that several listeners all receive each error, in order.");
+
+function raiseErrors(device, phase, count)
+{
+    // Each shader fails to compile with an error that names its identifier.
+    const tags = [];
+    for (let i = 0; i < count; ++i) {
+        const tag = `${phase}_${i}`;
+        tags.push(tag);
+        device.createShaderModule({ code: `fn f() { let x = ${tag}; }` });
+    }
+    return tags;
+}
+
+function tagOf(event)
+{
+    const match = /unresolved identifier '([^']*)'/.exec(event.error.message);
+    return match ? match[1] : `unexpected error: ${event.error.message}`;
+}
+
+class Recorder {
+    constructor(name, log)
+    {
+        this.name = name;
+        this.tags = [];
+        this.events = [];
+        this.handler = event => {
+            this.tags.push(tagOf(event));
+            this.events.push(event);
+            if (log)
+                log.push(name);
+        };
+    }
+}
+
+// Each earlier error has fired its event when onSubmittedWorkDone() settles, as both are tasks on the
+// WebGPU task source, queued in the order the GPU process reported them.
+async function flush(device)
+{
+    await device.queue.onSubmittedWorkDone();
+}
+
+async function createDevice()
+{
+    return (await navigator.gpu.requestAdapter()).requestDevice();
+}
+
+function report(scenario, failures)
+{
+    if (failures.length)
+        testFailed(`${scenario}: ${failures.join("; ")}`);
+    else
+        testPassed(scenario);
+}
+
+function checkTags(failures, recorder, expected)
+{
+    const actual = recorder.tags.join(",");
+    if (actual != expected.join(","))
+        failures.push(`${recorder.name} received [${actual}], expected [${expected.join(",")}]`);
+}
+
+async function fanOut()
+{
+    const device = await createDevice();
+    const log = [];
+    const h1 = new Recorder("h1", log);
+    const h2 = new Recorder("h2", log);
+    const h3 = new Recorder("h3", log);
+    device.addEventListener('uncapturederror', h1.handler);
+    device.addEventListener('uncapturederror', h2.handler);
+    device.onuncapturederror = h3.handler;
+
+    let failures = [];
+    const a = raiseErrors(device, "a", 4);
+    await flush(device);
+    checkTags(failures, h1, a);
+    checkTags(failures, h2, a);
+    checkTags(failures, h3, a);
+    for (let i = 0; i < Math.min(h1.events.length, h2.events.length, h3.events.length); ++i) {
+        if (h1.events[i] !== h2.events[i] || h1.events[i] !== h3.events[i])
+            failures.push(`the listeners received different events for error ${i}`);
+        else if (h1.events[i].error !== h2.events[i].error || h1.events[i].error !== h3.events[i].error)
+            failures.push(`the listeners received different errors for error ${i}`);
+    }
+    const expectedLog = a.flatMap(() => ["h1", "h2", "h3"]).join(",");
+    if (log.join(",") != expectedLog)
+        failures.push(`the listeners ran in the order [${log.join(",")}], expected [${expectedLog}]`);
+    report("Three listeners each receive the same event for each error, in the order they were added", failures);
+
+    failures = [];
+    device.removeEventListener('uncapturederror', h2.handler);
+    const b = raiseErrors(device, "b", 3);
+    await flush(device);
+    checkTags(failures, h1, [...a, ...b]);
+    checkTags(failures, h2, a);
+    checkTags(failures, h3, [...a, ...b]);
+    report("Removing one of three listeners stops only its events", failures);
+    device.destroy();
+}
+
+async function propagation()
+{
+    const device = await createDevice();
+    const h1 = new Recorder("h1");
+    const h2 = new Recorder("h2");
+    const h3 = new Recorder("h3");
+    device.addEventListener('uncapturederror', event => {
+        h1.handler(event);
+        event.preventDefault();
+    });
+    device.addEventListener('uncapturederror', event => {
+        h2.handler(event);
+        event.stopImmediatePropagation();
+    });
+    device.addEventListener('uncapturederror', h3.handler);
+
+    const failures = [];
+    const a = raiseErrors(device, "a", 2);
+    await flush(device);
+    checkTags(failures, h1, a);
+    checkTags(failures, h2, a);
+    checkTags(failures, h3, []);
+    report("preventDefault() does not stop the later listeners and stopImmediatePropagation() does", failures);
+    device.destroy();
+}
+
+async function switchWithOverlap()
+{
+    const device = await createDevice();
+    const h1 = new Recorder("h1");
+    const h2 = new Recorder("h2");
+    const failures = [];
+    device.addEventListener('uncapturederror', h1.handler);
+    const a = raiseErrors(device, "a", 3);
+    await flush(device);
+    device.addEventListener('uncapturederror', h2.handler);
+    device.removeEventListener('uncapturederror', h1.handler);
+    const b = raiseErrors(device, "b", 5);
+    await flush(device);
+    checkTags(failures, h1, a);
+    checkTags(failures, h2, b);
+    report("Adding a listener and then removing the first one switches the errors to the new one", failures);
+    device.destroy();
+}
+
+async function switchWithGap()
+{
+    const device = await createDevice();
+    const h1 = new Recorder("h1");
+    const h2 = new Recorder("h2");
+    const failures = [];
+    device.addEventListener('uncapturederror', h1.handler);
+    const a = raiseErrors(device, "a", 3);
+    await flush(device);
+    device.removeEventListener('uncapturederror', h1.handler);
+    await null;
+    raiseErrors(device, "gap", 4);
+    await flush(device);
+    device.addEventListener('uncapturederror', h2.handler);
+    const c = raiseErrors(device, "c", 5);
+    await flush(device);
+    checkTags(failures, h1, a);
+    checkTags(failures, h2, c);
+    report("The errors raised while there are no listeners reach no listener, and a listener added later receives the later errors", failures);
+    device.destroy();
+}
+
+async function switchInSameTurn()
+{
+    const device = await createDevice();
+    const h1 = new Recorder("h1");
+    const h2 = new Recorder("h2");
+    let failures = [];
+    device.addEventListener('uncapturederror', h1.handler);
+    const a = raiseErrors(device, "a", 3);
+    await flush(device);
+    device.removeEventListener('uncapturederror', h1.handler);
+    device.addEventListener('uncapturederror', h2.handler);
+    const b = raiseErrors(device, "b", 5);
+    await flush(device);
+    checkTags(failures, h1, a);
+    checkTags(failures, h2, b);
+    report("Removing the only listener and adding another in the same turn switches the errors to the new one", failures);
+
+    // The events of the errors raised in between fire after this turn, when the new listener is there.
+    failures = [];
+    const h3 = new Recorder("h3");
+    device.removeEventListener('uncapturederror', h2.handler);
+    const between = raiseErrors(device, "between", 2);
+    device.addEventListener('uncapturederror', h3.handler);
+    const c = raiseErrors(device, "c", 3);
+    await flush(device);
+    checkTags(failures, h2, b);
+    checkTags(failures, h3, [...between, ...c]);
+    report("A listener added in the turn that removed the only listener receives the errors raised in between", failures);
+    device.destroy();
+}
+
+async function attributeSwitching()
+{
+    const device = await createDevice();
+    const h1 = new Recorder("h1");
+    const h2 = new Recorder("h2");
+    const failures = [];
+    device.onuncapturederror = h1.handler;
+    const a = raiseErrors(device, "a", 2);
+    await flush(device);
+    device.onuncapturederror = h2.handler;
+    const b = raiseErrors(device, "b", 3);
+    await flush(device);
+    device.onuncapturederror = null;
+    await null;
+    raiseErrors(device, "none", 4);
+    await flush(device);
+    device.onuncapturederror = h1.handler;
+    const d = raiseErrors(device, "d", 5);
+    await flush(device);
+    checkTags(failures, h1, [...a, ...d]);
+    checkTags(failures, h2, b);
+    report("Setting onuncapturederror to a function, another function, null and a function again", failures);
+    device.destroy();
+}
+
+async function mixed()
+{
+    const device = await createDevice();
+    const h1 = new Recorder("h1");
+    const h2 = new Recorder("h2");
+    const failures = [];
+    device.addEventListener('uncapturederror', h1.handler);
+    device.onuncapturederror = h2.handler;
+    const a = raiseErrors(device, "a", 2);
+    await flush(device);
+    device.onuncapturederror = null;
+    const b = raiseErrors(device, "b", 3);
+    await flush(device);
+    device.onuncapturederror = h2.handler;
+    device.removeEventListener('uncapturederror', h1.handler);
+    const c = raiseErrors(device, "c", 4);
+    await flush(device);
+    checkTags(failures, h1, [...a, ...b]);
+    checkTags(failures, h2, [...a, ...c]);
+    report("An added listener and onuncapturederror each keep receiving the errors when the other is removed", failures);
+    device.destroy();
+}
+
+async function once()
+{
+    const device = await createDevice();
+    const h1 = new Recorder("h1");
+    const h2 = new Recorder("h2");
+    const failures = [];
+    device.addEventListener('uncapturederror', h1.handler, { once: true });
+    const a = raiseErrors(device, "a", 4);
+    await flush(device);
+    device.addEventListener('uncapturederror', h2.handler);
+    const b = raiseErrors(device, "b", 3);
+    await flush(device);
+    checkTags(failures, h1, a.slice(0, 1));
+    checkTags(failures, h2, b);
+    report("A once listener receives one error, the rest reach no listener, and a listener added later receives the later errors", failures);
+    device.destroy();
+}
+
+async function abortSignal()
+{
+    const device = await createDevice();
+    const h1 = new Recorder("h1");
+    const h2 = new Recorder("h2");
+    const failures = [];
+    const controller = new AbortController();
+    device.addEventListener('uncapturederror', h1.handler, { signal: controller.signal });
+    const a = raiseErrors(device, "a", 3);
+    await flush(device);
+    controller.abort();
+    await null;
+    raiseErrors(device, "aborted", 4);
+    await flush(device);
+    device.addEventListener('uncapturederror', h2.handler);
+    const c = raiseErrors(device, "c", 5);
+    await flush(device);
+    checkTags(failures, h1, a);
+    checkTags(failures, h2, c);
+    report("Aborting the signal of the only listener removes it, and a listener added later receives the later errors", failures);
+    device.destroy();
+}
+
+async function main()
+{
+    await fanOut();
+    await propagation();
+    await switchWithOverlap();
+    await switchWithGap();
+    await switchInSameTurn();
+    await attributeSwitching();
+    await mixed();
+    await once();
+    await abortSignal();
+    finishJSTest();
+}
+
+main().catch(error => {
+    testFailed(`${error}`);
+    finishJSTest();
+});
+</script>

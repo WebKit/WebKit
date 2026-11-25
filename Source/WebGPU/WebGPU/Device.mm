@@ -380,9 +380,6 @@ Device::~Device()
 #endif
     if (m_deviceLostCallback)
         m_deviceLostCallback(WebGPU::DeviceLostReason::Destroyed, ""_s);
-
-    if (m_uncapturedErrorCallback)
-        m_uncapturedErrorCallback(false, std::nullopt);
 }
 
 RefPtr<WebGPU::Instance> Device::instance() const
@@ -429,6 +426,8 @@ void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
         m_deviceLostCallback(reason, "Device lost."_s);
 
     protect(m_defaultQueue)->makeInvalid();
+    // No errors are surfaced from a lost device.
+    m_uncapturedErrorCallback = nullptr;
 }
 
 static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
@@ -563,6 +562,16 @@ RefPtr<WebGPU::Texture> Device::createInvalidTexture()
     return Texture::createInvalid(*this);
 }
 
+void Device::dispatchUncapturedError(WebGPU::Error&& error)
+{
+    // https://www.w3.org/TR/webgpu/#abstract-opdef-dispatch-error
+    if (m_isLost)
+        return;
+
+    if (RefPtr callback = m_uncapturedErrorCallback)
+        callback->run(WTF::move(error));
+}
+
 void Device::generateAValidationError(NSString * message)
 {
     generateAValidationError(String { message });
@@ -581,8 +590,7 @@ void Device::generateAValidationError(String&& message)
         return;
     }
 
-    if (m_uncapturedErrorCallback)
-        m_uncapturedErrorCallback(true, WebGPU::Error { WebGPU::ErrorType::Validation, WTF::move(message) });
+    dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::Validation, WTF::move(message) });
 }
 
 void Device::generateAnOutOfMemoryError(String&& message)
@@ -600,8 +608,7 @@ void Device::generateAnOutOfMemoryError(String&& message)
         return;
     }
 
-    if (m_uncapturedErrorCallback)
-        m_uncapturedErrorCallback(true, WebGPU::Error { WebGPU::ErrorType::OutOfMemory, WTF::move(message) });
+    dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::OutOfMemory, WTF::move(message) });
 }
 
 void Device::generateAnInternalError(String&& message)
@@ -619,8 +626,7 @@ void Device::generateAnInternalError(String&& message)
         return;
     }
 
-    if (m_uncapturedErrorCallback)
-        m_uncapturedErrorCallback(true, WebGPU::Error { WebGPU::ErrorType::Internal, WTF::move(message) });
+    dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::Internal, WTF::move(message) });
 }
 
 id<MTLBuffer> Device::newBufferWithBytes(const void* pointer, size_t length, MTLResourceOptions options, bool skipAttribution) const
@@ -714,11 +720,14 @@ void Device::resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostR
         loseTheDevice(WebGPU::DeviceLostReason::Unknown);
 }
 
-void Device::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&& callback)
+void Device::setUncapturedErrorCallback(Function<void(WebGPU::Error&&)>&& callback)
 {
-    if (m_uncapturedErrorCallback)
-        m_uncapturedErrorCallback(false, std::nullopt);
-    m_uncapturedErrorCallback = WTF::move(callback);
+    // A lost device reports no errors, so it does not keep the callback.
+    if (!callback || m_isLost) {
+        m_uncapturedErrorCallback = nullptr;
+        return;
+    }
+    m_uncapturedErrorCallback = createSharedTask<void(WebGPU::Error&&)>(WTF::move(callback));
 }
 
 void Device::setLabel(String&&)

@@ -6,7 +6,7 @@ description("Checks that each WebGPU promise settles from a task on the WebGPU t
 
 // The validation errors to generate before each call. Their uncapturederror events are tasks on the
 // WebGPU task source, queued before the task that settles the promise of the call.
-const errorCount = 1;
+const errorCount = 20;
 
 let eventCount = 0;
 let listenerMicrotaskCount = 0;

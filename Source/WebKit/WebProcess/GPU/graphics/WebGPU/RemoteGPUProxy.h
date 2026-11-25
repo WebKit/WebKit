@@ -33,6 +33,7 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPU.h>
 #include <WebCore/WebGPUCppAPI.h>
+#include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -54,6 +55,7 @@ class WebPage;
 
 namespace WebGPU {
 class RemoteWebGPUInstanceProxy;
+class RemoteDeviceProxy;
 }
 
 class RemoteGPUProxy final : public WebCore::WebGPUIntegration, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy>, SerialFunctionDispatcher {
@@ -86,6 +88,9 @@ public:
 
     // The WebGPU::Instance that the adapters are created from. Called on the dispatcher thread.
     Ref<WebGPU::RemoteWebGPUInstanceProxy> ensureInstance();
+    // The devices that get the uncaptured errors that the GPU process sends. Called on the dispatcher.
+    void addUncapturedErrorListener(WebGPUDeviceIdentifier, WebGPU::RemoteDeviceProxy&);
+    void removeUncapturedErrorListener(WebGPUDeviceIdentifier);
 
 private:
     friend class WebGPU::RemoteWebGPUInstanceProxy;
@@ -107,6 +112,7 @@ private:
 
     // Messages to be received.
     void wasCreated(bool didSucceed);
+    void didGenerateUncapturedError(WebGPUDeviceIdentifier, ::WebGPU::Error&&);
 
     void waitUntilInitialized();
 
@@ -152,6 +158,7 @@ private:
     // Weak, because the instance holds a reference to this. The adapters hold the instance.
     ThreadSafeWeakPtr<WebGPU::RemoteWebGPUInstanceProxy> m_instance;
     RemoteGPUIdentifier m_backing { RemoteGPUIdentifier::generate() };
+    HashMap<WebGPUDeviceIdentifier, ThreadSafeWeakPtr<WebGPU::RemoteDeviceProxy>> m_uncapturedErrorListeners;
     bool m_didInitialize { false };
     bool m_lost { false };
 };

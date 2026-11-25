@@ -104,20 +104,15 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 // in the call that generates the error, on its thread.
 static void listenForUncapturedErrors(WebGPU::Device& device, const WGPUUncapturedErrorCallbackInfo& callbackInfo)
 {
-    device.resolveUncapturedErrorEvent({ [weakDevice = ThreadSafeWeakPtr { device }, callbackInfo](bool hasUncapturedError, std::optional<WebGPU::Error>&& error) {
-        // There is no error when the device is destroyed.
-        if (!hasUncapturedError || !error)
-            return;
+    device.setUncapturedErrorCallback([weakDevice = ThreadSafeWeakPtr { device }, callbackInfo](WebGPU::Error&& error) {
         RefPtr device = weakDevice;
         if (!device || device->isLost())
             return;
-        // The device calls its uncaptured error callback once, so listen for the next error before
-        // the callback can generate one.
-        listenForUncapturedErrors(*device, callbackInfo);
-        auto message = error->message.utf8();
+        auto message = error.message.utf8();
+        auto type = WebGPU::CAPI::toAPI(std::optional<WebGPU::Error> { WTF::move(error) });
         WGPUDevice handle = WebGPU::CAPI::toAPI(*device);
-        callbackInfo.callback(&handle, WebGPU::CAPI::toAPI(error), WebGPU::CAPI::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
-    }, CompletionHandlerCallThread::AnyThread });
+        callbackInfo.callback(&handle, type, WebGPU::CAPI::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
+    });
 }
 
 // The features for which wgpuAdapterHasFeature() is true, freed with

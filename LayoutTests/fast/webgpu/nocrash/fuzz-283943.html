@@ -1124,6 +1124,9 @@ try {
 renderPassEncoder0.setIndexBuffer(buffer4, 'uint32', 1_056, 99);
 } catch {}
 try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
 } catch {}
 document.body.prepend(canvas0);
@@ -2345,6 +2348,9 @@ try {
 renderBundleEncoder5.setVertexBuffer(2, buffer20);
 } catch {}
 try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
 } catch {}
 try {
@@ -2655,6 +2661,9 @@ renderPassEncoder0.setBindGroup(0, bindGroup9, new Uint32Array(113), 81, 0);
 } catch {}
 try {
 renderPassEncoder0.setVertexBuffer(0, buffer2, 9_800, 3_665);
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
 } catch {}
 try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
@@ -5394,6 +5403,9 @@ computePassEncoder49.setBindGroup(3, bindGroup23, []);
 } catch {}
 try {
 renderPassEncoder19.setIndexBuffer(buffer22, 'uint32', 256, 596);
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
 } catch {}
 try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
@@ -12591,6 +12603,9 @@ try {
 renderPassEncoder17.setBlendConstant({ r: -608.6, g: 359.1, b: -630.2, a: -503.3, });
 } catch {}
 try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
 } catch {}
 try {
@@ -16053,6 +16068,9 @@ try {
 renderPassEncoder19.setBindGroup(2, bindGroup97);
 } catch {}
 try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
 } catch {}
 try {
@@ -17637,6 +17655,9 @@ try {
   await shaderModule8.getCompilationInfo();
 } catch {}
 try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
 } catch {}
 let textureView216 = texture202.createView({});
@@ -18291,6 +18312,9 @@ renderPassEncoder8.setBindGroup(3, bindGroup62, new Uint32Array(2048), 1_160, 0)
 } catch {}
 try {
 renderPassEncoder25.setIndexBuffer(buffer93, 'uint16', 258, 521);
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
 } catch {}
 try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
@@ -19191,6 +19215,9 @@ renderPassEncoder72.setVertexBuffer(2, buffer53, 5_720, 687);
 } catch {}
 try {
 renderBundleEncoder48.setBindGroup(1, bindGroup23);
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
 } catch {}
 try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
@@ -22679,6 +22706,9 @@ renderPassEncoder16.setBindGroup(3, bindGroup15);
 } catch {}
 try {
 renderPassEncoder76.setPipeline(pipeline0);
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
 } catch {}
 try {
 device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });

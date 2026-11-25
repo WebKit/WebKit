@@ -50,7 +50,7 @@ messages -> RemoteDevice Stream {
     void CreateQuerySet(WebKit::WebGPU::QuerySetDescriptor descriptor, WebKit::WebGPUQuerySetIdentifier identifier)
     void PushErrorScope(::WebGPU::ErrorFilter errorFilter)
     void PopErrorScope() -> (bool success, std::optional<::WebGPU::Error> error)
-    void ResolveUncapturedErrorEvent() -> (bool hasUncapturedError, std::optional<::WebGPU::Error> error)
+    void SetListensForUncapturedErrors(bool listens)
     void ResolveDeviceLostPromise() -> (::WebGPU::DeviceLostReason reason, bool isLost)
     void SetLabel(String label)
     void PauseAllErrorReporting(bool pauseErrorReporting)

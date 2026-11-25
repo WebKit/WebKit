@@ -962,14 +962,29 @@ void GPUDevice::popErrorScope(ErrorScopePromise&& errorScopePromise)
     });
 }
 
-bool GPUDevice::addEventListener(const AtomString& eventType, Ref<EventListener>&& eventListener, const AddEventListenerOptions& options)
+// The backing device reports uncaptured errors only while the device has uncapturederror listeners, so
+// the GPU process does not send the errors that nothing would receive. Adding the first listener starts
+// listening right away, so the errors of all later commands are reported. Removing the last one stops
+// listening at the next microtask checkpoint, unless a listener was added by then, so that replacing
+// the listeners in one turn does not stop and start again, and does not miss the errors of the commands
+// issued in between. The errors of the commands issued after listening stops are not reported. The
+// errors reported before still fire their events, to the listeners there are when the events fire.
+void GPUDevice::eventListenersDidChange()
 {
-    auto result = EventTarget::addEventListener(eventType, WTF::move(eventListener), options);
-#if PLATFORM(COCOA)
-    if (eventType == WebCore::eventNames().uncapturederrorEvent)
+    if (hasEventListeners(eventNames().uncapturederrorEvent)) {
         listenForUncapturedErrors();
-#endif
-    return result;
+        return;
+    }
+    if (!m_listeningForUncapturedErrors || m_willStopListeningForUncapturedErrors)
+        return;
+    RefPtr context = scriptExecutionContext();
+    if (!context)
+        return;
+    m_willStopListeningForUncapturedErrors = true;
+    protect(context->eventLoop())->queueMicrotask(context->vm(), [weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->stopListeningForUncapturedErrorsIfUnused();
+    });
 }
 
 void GPUDevice::listenForUncapturedErrors()
@@ -978,21 +993,32 @@ void GPUDevice::listenForUncapturedErrors()
         return;
 #if PLATFORM(COCOA)
     m_listeningForUncapturedErrors = true;
-    m_backing->resolveUncapturedErrorEvent([weakThis = WeakPtr { *this }](bool hasUncapturedError, std::optional<::WebGPU::Error>&& error) {
-        RefPtr protectedThis { weakThis };
-        if (!protectedThis || !hasUncapturedError)
-            return;
-
-        protectedThis->m_listeningForUncapturedErrors = false;
-
-        RefPtr context = protectedThis->scriptExecutionContext();
-        if (!context)
-            return;
-
-        queueTaskToDispatchEvent(*protectedThis, TaskSource::WebGPU, GPUUncapturedErrorEvent::create(WebCore::eventNames().uncapturederrorEvent, GPUUncapturedErrorEventInit { .error = createGPUErrorFromWebGPUError(WTF::move(*error)) }));
-        protectedThis->listenForUncapturedErrors();
+    m_backing->setUncapturedErrorCallback([weakThis = WeakPtr { *this }](::WebGPU::Error&& error) {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->dispatchUncapturedError(WTF::move(error));
     });
 #endif
+}
+
+void GPUDevice::stopListeningForUncapturedErrorsIfUnused()
+{
+    m_willStopListeningForUncapturedErrors = false;
+    if (!m_listeningForUncapturedErrors || hasEventListeners(eventNames().uncapturederrorEvent))
+        return;
+    m_listeningForUncapturedErrors = false;
+    m_backing->setUncapturedErrorCallback({ });
+}
+
+void GPUDevice::dispatchUncapturedError(::WebGPU::Error&& error)
+{
+    if (isContextStopped())
+        return;
+
+    // https://www.w3.org/TR/webgpu/#abstract-opdef-dispatch-error
+    // The backing device reports each error in order with the completions of the other device commands.
+    // The tasks that fire the events and the tasks that settle the promises of those commands are queued
+    // on the WebGPU task source in that order, so the page sees them in that order.
+    queueTaskToDispatchEvent(*this, TaskSource::WebGPU, GPUUncapturedErrorEvent::create(WebCore::eventNames().uncapturederrorEvent, GPUUncapturedErrorEventInit { { }, createGPUErrorFromWebGPUError(WTF::move(error)) }));
 }
 
 #if ENABLE(VIDEO)

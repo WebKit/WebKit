@@ -1,0 +1,63 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Generates validation errors, then calls a device method whose promise the GPU process settles, " +
+           "and checks that every uncapturederror event fired before the promise settled.");
+
+const errorCount = 20;
+let events = [];
+let eventCountWhenSettled = -1;
+let rejection = null;
+
+function generateValidationErrors(device) {
+    // MAP_READ and MAP_WRITE cannot be combined.
+    for (let i = 0; i < errorCount; ++i)
+        device.createBuffer({ size: 4, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.MAP_WRITE });
+}
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+    device.addEventListener('uncapturederror', event => events.push(event));
+
+    const module = device.createShaderModule({ code: `
+        @vertex fn vs() -> @builtin(position) vec4f { return vec4f(); }
+        @fragment fn fs() -> @location(0) vec4f { return vec4f(); }
+    ` });
+
+    debug("A rejected createRenderPipelineAsync():");
+    generateValidationErrors(device);
+    try {
+        await device.createRenderPipelineAsync({
+            layout: 'auto',
+            vertex: { module, entryPoint: 'doesNotExist' },
+            fragment: { module, entryPoint: 'fs', targets: [{ format: 'rgba8unorm' }] },
+        });
+        testFailed("createRenderPipelineAsync() resolved");
+    } catch (error) {
+        eventCountWhenSettled = events.length;
+        rejection = error;
+    }
+    shouldBeTrue("rejection instanceof GPUPipelineError");
+    shouldBe("eventCountWhenSettled", "errorCount");
+
+    debug("A resolved onSubmittedWorkDone():");
+    events = [];
+    generateValidationErrors(device);
+    await device.queue.onSubmittedWorkDone();
+    eventCountWhenSettled = events.length;
+    shouldBe("eventCountWhenSettled", "errorCount");
+    shouldBeTrue("events.every(event => event.error instanceof GPUValidationError)");
+
+    device.destroy();
+    events = [];
+    finishJSTest();
+}
+
+main().catch(error => {
+    testFailed(`${error}`);
+    finishJSTest();
+});
+</script>

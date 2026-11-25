@@ -1,0 +1,20 @@
+Checks which uncapturederror listeners receive which errors as listeners are added and removed in all the ways there are, and that several listeners all receive each error, in order.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Three listeners each receive the same event for each error, in the order they were added
+PASS Removing one of three listeners stops only its events
+PASS preventDefault() does not stop the later listeners and stopImmediatePropagation() does
+PASS Adding a listener and then removing the first one switches the errors to the new one
+PASS The errors raised while there are no listeners reach no listener, and a listener added later receives the later errors
+PASS Removing the only listener and adding another in the same turn switches the errors to the new one
+PASS A listener added in the turn that removed the only listener receives the errors raised in between
+PASS Setting onuncapturederror to a function, another function, null and a function again
+PASS An added listener and onuncapturederror each keep receiving the errors when the other is removed
+PASS A once listener receives one error, the rest reach no listener, and a listener added later receives the later errors
+PASS Aborting the signal of the only listener removes it, and a listener added later receives the later errors
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

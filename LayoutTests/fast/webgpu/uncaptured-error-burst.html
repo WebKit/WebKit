@@ -1,0 +1,64 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Generates a burst of validation errors back to back and checks that each error fires one " +
+           "uncapturederror event. Then generates one more error and checks that it fires one more event.");
+
+const burstSize = 200;
+const timeoutMs = 5000;
+let events = [];
+let waiter = null;
+
+function waitForEventCount(count) {
+    if (events.length >= count)
+        return Promise.resolve();
+    return new Promise(resolve => {
+        const timer = setTimeout(() => {
+            waiter = null;
+            resolve();
+        }, timeoutMs);
+        waiter = { count, resolve: () => {
+            clearTimeout(timer);
+            waiter = null;
+            resolve();
+        } };
+    });
+}
+
+function generateAValidationError(device) {
+    // MAP_READ and MAP_WRITE cannot be combined.
+    device.createBuffer({ size: 4, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.MAP_WRITE });
+}
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+    device.addEventListener('uncapturederror', event => {
+        events.push(event);
+        if (waiter && events.length >= waiter.count)
+            waiter.resolve();
+    });
+
+    for (let i = 0; i < burstSize; ++i)
+        generateAValidationError(device);
+    await waitForEventCount(burstSize);
+    shouldBe("events.length", "burstSize");
+    shouldBeTrue("events.every(event => event.error instanceof GPUValidationError)");
+
+    generateAValidationError(device);
+    await waitForEventCount(burstSize + 1);
+    shouldBe("events.length", "burstSize + 1");
+    shouldBeTrue("events[burstSize].error instanceof GPUValidationError");
+
+    device.destroy();
+    events = [];
+    finishJSTest();
+}
+
+main().catch(error => {
+    testFailed(`${error}`);
+    finishJSTest();
+});
+</script>
