@@ -323,7 +323,7 @@ Attribute StyledElement::replaceURLsInAttributeValue(const Attribute& attribute,
     return Attribute { styleAttr, properties->asTextAtom(serializationContext) };
 }
 
-const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
+const StyleProperties* StyledElement::presentationalHintStyle() const
 {
     if (!elementData())
         return nullptr;
@@ -335,18 +335,29 @@ const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
 
 void StyledElement::rebuildPresentationalHintStyle()
 {
+    // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
+    Ref elementData = ensureUniqueElementData();
+
+    // A style that changes after it was first built becomes mutable and keeps its identity (like inline style does).
+    bool hadStyle = !!elementData->m_presentationalHintStyle;
+    RefPtr existingMutableStyle = dynamicDowncast<MutableStyleProperties>(elementData->m_presentationalHintStyle);
+    if (existingMutableStyle)
+        existingMutableStyle->clear();
+
     bool isSVG = isSVGElement();
-    auto style = MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
+    Ref style = existingMutableStyle ? existingMutableStyle.releaseNonNull() : MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
     for (auto& attribute : attributes())
         collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
     collectExtraStyleForPresentationalHints(style);
 
-    // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
-    Ref elementData = ensureUniqueElementData();
-
     elementData->setPresentationalHintStyleIsDirty(false);
     if (style->isEmpty()) {
         elementData->m_presentationalHintStyle = nullptr;
+        return;
+    }
+
+    if (hadStyle) {
+        elementData->m_presentationalHintStyle = WTF::move(style);
         return;
     }
 
