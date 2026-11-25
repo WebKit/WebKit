@@ -178,13 +178,32 @@ bool SkiaCompositingLayer::hasPendingBackingStoreTileUpdates() const
 
 void SkiaCompositingLayer::processPendingTileUpdates()
 {
-    if (m_backingStore)
-        m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::No);
+    if (!m_backingStore)
+        return;
+
+#if ENABLE(DAMAGE_TRACKING)
+    if (damagePropagationEnabled() && !m_layerDamage && !m_rect.isEmpty())
+        m_layerDamage.emplace(m_rect.size(), Damage::Mode::Rectangles, Damage::MaxRectanglesForHighResolution);
+    auto& damage = m_layerDamage;
+#else
+    std::optional<Damage> damage;
+#endif
+    m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::No, damage);
 }
 
 bool SkiaCompositingLayer::processPendingTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles)
 {
-    return m_backingStore ? m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::Yes, shouldStopProcessingTiles) : false;
+    if (!m_backingStore)
+        return false;
+
+#if ENABLE(DAMAGE_TRACKING)
+    if (damagePropagationEnabled() && !m_layerDamage && !m_rect.isEmpty())
+        m_layerDamage.emplace(m_rect.size(), Damage::Mode::Rectangles, Damage::MaxRectanglesForHighResolution);
+    auto& damage = m_layerDamage;
+#else
+    std::optional<Damage> damage;
+#endif
+    return m_backingStore->processPendingTileUpdates(SkiaBackingStore::ProcessHiddenTiles::Yes, damage, shouldStopProcessingTiles);
 }
 
 void SkiaCompositingLayer::setImageBackingStore(CoordinatedImageBackingStore* imageBackingStore)

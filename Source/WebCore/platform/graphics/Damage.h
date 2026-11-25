@@ -80,6 +80,7 @@ public:
     };
 
     static constexpr uint32_t NoMaxRectangles = 0;
+    static constexpr uint32_t MaxRectanglesForHighResolution = 32;
 
     // Clamp a preference-supplied rectangle threshold to a usable Damage limit.
     // The constructor treats 0 as NoMaxRectangles (the default 256px-cell grid),

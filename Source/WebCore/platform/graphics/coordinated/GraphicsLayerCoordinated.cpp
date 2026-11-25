@@ -50,8 +50,6 @@
 
 namespace WebCore {
 
-static constexpr uint32_t s_maxDamageRectanglesForHighResolutionDamage = 32;
-
 bool GraphicsLayer::supportsLayerType(Type type)
 {
     switch (type) {
@@ -138,7 +136,7 @@ void GraphicsLayerCoordinated::setNeedsDisplayInRect(const FloatRect& initialRec
     addRepaintRect(rect);
 
     if (!m_dirtyRegion)
-        m_dirtyRegion = Damage(m_size, Damage::Mode::Rectangles, s_maxDamageRectanglesForHighResolutionDamage);
+        m_dirtyRegion = Damage(m_size, Damage::Mode::Rectangles, Damage::MaxRectanglesForHighResolution);
 
     if (m_dirtyRegion->add(rect))
         noteLayerPropertyChanged(Change::DirtyRegion, ScheduleFlush::Yes);
@@ -394,7 +392,7 @@ void GraphicsLayerCoordinated::setContentsNeedsDisplayInRect(const FloatRect& re
 #if ENABLE(DAMAGE_TRACKING)
     if (!rect.isEmpty() && m_contentsVisible && !m_size.isEmpty()) {
         if (!m_contentsDirtyRegion)
-            m_contentsDirtyRegion = Damage(m_size, Damage::Mode::Rectangles, s_maxDamageRectanglesForHighResolutionDamage);
+            m_contentsDirtyRegion = Damage(m_size, Damage::Mode::Rectangles, Damage::MaxRectanglesForHighResolution);
 
         m_contentsDirtyRegion->add(rect);
     }

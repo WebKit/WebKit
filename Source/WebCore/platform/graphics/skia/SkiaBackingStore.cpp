@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "BitmapTexturePool.h"
 #include "CoordinatedTileBuffer.h"
+#include "Damage.h"
 #include "FontRenderOptions.h"
 #include "PlatformDisplay.h"
 #include "SkiaDamageRegion.h"
@@ -74,17 +75,17 @@ void SkiaBackingStore::update(const FloatSize& size, float scale, CoordinatedBac
         it->value.setIsVisible(item.value);
     }
 
-    for (const auto& tileUpdate : update.tilesToUpdate()) {
+    for (auto& tileUpdate : update.tilesToUpdate()) {
         auto it = m_tiles.find(tileUpdate.tileID);
         ASSERT(it != m_tiles.end());
         if (tileUpdate.buffer->paintingState() != CoordinatedTileBuffer::PaintingState::Cancelled) {
-            it->value.scheduleUpdate(tileUpdate.dirtyRect, tileUpdate.tileRect, tileUpdate.buffer);
+            it->value.scheduleUpdate(tileUpdate.dirtyRect, WTF::move(tileUpdate.damageRects), tileUpdate.tileRect, WTF::move(tileUpdate.buffer));
             m_hasPendingTileUpdates = true;
         }
     }
 }
 
-bool SkiaBackingStore::processPendingTileUpdates(ProcessHiddenTiles processHiddenTiles, const Function<bool()>& shouldStopProcessingTiles)
+bool SkiaBackingStore::processPendingTileUpdates(ProcessHiddenTiles processHiddenTiles, std::optional<Damage>& damage, const Function<bool()>& shouldStopProcessingTiles)
 {
     if (!m_hasPendingTileUpdates)
         return false;
@@ -94,7 +95,7 @@ bool SkiaBackingStore::processPendingTileUpdates(ProcessHiddenTiles processHidde
     bool wasStopped = false;
     for (auto& tile : m_tiles.values()) {
         if (!wasStopped)
-            wasStopped = tile.processPendingUpdateIfNeeded(processHiddenTiles, shouldStopProcessingTiles);
+            wasStopped = tile.processPendingUpdateIfNeeded(processHiddenTiles, damage, shouldStopProcessingTiles);
         m_hasPendingTileUpdates |= tile.hasPendingUpdates();
         m_hasPaddedTiles |= tile.isPadded();
     }
@@ -239,18 +240,23 @@ void SkiaBackingStore::drawDebugBorders(SkCanvas& canvas, const SkPaint& paint)
         canvas.drawRect(SkRect(tile.rect()), paint);
 }
 
-void SkiaBackingStore::Tile::scheduleUpdate(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer& buffer)
+void SkiaBackingStore::Tile::scheduleUpdate(const IntRect& dirtyRect, Vector<IntRect, 1>&& damageRects, const IntRect& tileRect, Ref<CoordinatedTileBuffer>&& buffer)
 {
+    Vector<IntRect, 1> mergedDamageRects = WTF::move(damageRects);
     if (!m_isVisible) {
         m_pendingUpdates.removeAllMatching([&](auto& update) {
-            return update.tileRect == tileRect && dirtyRect.contains(update.dirtyRect);
+            if (update.tileRect != tileRect || !dirtyRect.contains(update.dirtyRect))
+                return false;
+
+            mergedDamageRects.appendVector(WTF::move(update.damageRects));
+            return true;
         });
     }
 
-    m_pendingUpdates.append({ tileRect, dirtyRect, Ref { buffer } });
+    m_pendingUpdates.append({ tileRect, dirtyRect, WTF::move(mergedDamageRects), WTF::move(buffer) });
 }
 
-bool SkiaBackingStore::Tile::processPendingUpdateIfNeeded(ProcessHiddenTiles processHiddenTiles, const Function<bool()>& shouldStopProcessingTiles)
+bool SkiaBackingStore::Tile::processPendingUpdateIfNeeded(ProcessHiddenTiles processHiddenTiles, std::optional<Damage>& damage, const Function<bool()>& shouldStopProcessingTiles)
 {
     if (!m_isVisible && processHiddenTiles == ProcessHiddenTiles::No)
         return false;
@@ -274,6 +280,14 @@ bool SkiaBackingStore::Tile::processPendingUpdateIfNeeded(ProcessHiddenTiles pro
 
         update(pendingUpdate.dirtyRect, pendingUpdate.tileRect, pendingUpdate.buffer.get());
         processedCount++;
+
+        if (damage) {
+            for (const auto& rect : pendingUpdate.damageRects) {
+                FloatRect dirtyRect(rect);
+                dirtyRect.scale(1 / m_scale);
+                damage->add(dirtyRect);
+            }
+        }
 
         // When processing hidden tiles, flush the surface here to make sure the deadline
         // used in shouldStopProcessingTiles() takes into account the work done while flushing.

@@ -104,8 +104,8 @@ void CoordinatedBackingStoreProxy::Update::merge(Update&& other)
 CoordinatedBackingStoreProxy::Tile::Tile(uint32_t id, IntRect&& tileRect)
     : id(id)
     , rect(WTF::move(tileRect))
-    , dirtyRect(rect)
 {
+    markDirty();
 }
 
 CoordinatedBackingStoreProxy::Tile::~Tile() = default;
@@ -155,14 +155,14 @@ void CoordinatedBackingStoreProxy::setAffectedByTransformAnimation(bool affected
     }
 }
 
-std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
+std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, CoordinatedPlatformLayer& layer)
 {
     assertIsMainThread();
     ASSERT(layer.owner());
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
-        createOrDestroyTiles(layer, unscaledVisibleRect, unscaledCoverageRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
+        createOrDestroyTiles(layer, unscaledVisibleRect, unscaledCoverageRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), tilesToCreate, tilesToRemove);
 
     if (m_animatedBackingStoreClient)
         m_animatedBackingStoreClient->update(layer.owner(), unscaledViewportRect, m_coverRect, unscaledSize, contentsScale);
@@ -223,7 +223,7 @@ std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy
                     return buffer->paintingState() == CoordinatedTileBuffer::PaintingState::Cancelled;
                 });
                 if (cancelledCount) {
-                    tile.dirtyRect = tile.rect;
+                    tile.markDirty();
                     tileManager.didChangePaintingTaskPriorities();
                 }
             }
@@ -253,7 +253,7 @@ std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy
 
             IntRect updateRect(tile.dirtyRect);
             updateRect.move(-tile.rect.x(), -tile.rect.y());
-            tilesToUpdate.append({ tile.id, tile.rect, WTF::move(updateRect), WTF::move(buffer) });
+            tilesToUpdate.append({ tile.id, tile.rect, WTF::move(updateRect), WTF::move(tile.damageRects), WTF::move(buffer) });
             tile.markClean();
 
             WTFEndSignpost(this, UpdateTile);
@@ -299,7 +299,7 @@ void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& di
     }
 }
 
-void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer& layer, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage& damage, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
+void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer& layer, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
 {
     bool contentsScaleChanged = m_contentsScale != contentsScale;
     m_contentsScale = contentsScale;
@@ -398,14 +398,6 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
 
         auto tile = Tile(generateTileID(), tileRectForPosition(position));
         tile.setDistance(tileDistance(position));
-#if ENABLE(DAMAGE_TRACKING)
-        IntRect unscaledDirtyRect = tile.dirtyRect;
-        unscaledDirtyRect.scale(1 / contentsScale);
-        damage.add(unscaledDirtyRect);
-#else
-        UNUSED_PARAM(damage);
-#endif
-
         tilesToCreate.append(tile.id);
         m_tiles.add(WTF::move(position), WTF::move(tile));
     });

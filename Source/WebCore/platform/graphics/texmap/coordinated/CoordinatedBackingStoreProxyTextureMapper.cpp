@@ -134,14 +134,14 @@ void CoordinatedBackingStoreProxy::setAffectedByTransformAnimation(bool affected
     }
 }
 
-OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, Damage& damage, CoordinatedPlatformLayer& layer)
+OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, CoordinatedPlatformLayer& layer)
 {
     assertIsMainThread();
     ASSERT(layer.owner());
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
-        createOrDestroyTiles(layer, unscaledVisibleRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), damage, tilesToCreate, tilesToRemove);
+        createOrDestroyTiles(layer, unscaledVisibleRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), tilesToCreate, tilesToRemove);
 
     if (m_animatedBackingStoreClient)
         m_animatedBackingStoreClient->update(layer.owner(), unscaledViewportRect, m_coverRect, unscaledSize, contentsScale);
@@ -233,7 +233,7 @@ void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& di
     }
 }
 
-void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer& layer, const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage& damage, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
+void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer& layer, const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
 {
     UNUSED_PARAM(layer);
 
@@ -370,9 +370,6 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
 
         for (const auto& position : tilePositionsToCreate) {
             auto tile = Tile(generateTileID(), tileRectForPosition(position));
-
-            UNUSED_PARAM(damage);
-
             tilesToCreate.append(tile.id);
             m_tiles.add(position, WTF::move(tile));
         }

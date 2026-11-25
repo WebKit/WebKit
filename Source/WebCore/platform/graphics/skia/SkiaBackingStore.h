@@ -40,6 +40,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebCore {
 class BitmapTexture;
 class CoordinatedTileBuffer;
+class Damage;
 
 class SkiaBackingStore {
     WTF_MAKE_TZONE_ALLOCATED(SkiaBackingStore);
@@ -57,7 +58,7 @@ public:
     void update(const FloatSize&, float scale, CoordinatedBackingStoreProxy::Update&&);
 
     enum class ProcessHiddenTiles : bool { No, Yes };
-    bool processPendingTileUpdates(ProcessHiddenTiles, const Function<bool()>& shouldStopProcessingTiles = nullptr);
+    bool processPendingTileUpdates(ProcessHiddenTiles, std::optional<Damage>&, const Function<bool()>& shouldStopProcessingTiles = nullptr);
 
     void paintToCanvas(SkCanvas&, const SkPaint&, const SkiaDamageRegion* = nullptr);
     void appendImageSetEntries(SkCanvas&, const SkMatrix& ctm, size_t matrixIndex, float opacity, bool enableAntialias, Vector<SkCanvas::ImageSetEntry>& images, const SkiaDamageRegion* = nullptr) const;
@@ -81,8 +82,8 @@ private:
 
         void setIsVisible(bool isVisible) { m_isVisible = isVisible; }
 
-        void scheduleUpdate(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer&);
-        bool processPendingUpdateIfNeeded(ProcessHiddenTiles, const Function<bool()>& shouldStopProcessingTiles);
+        void scheduleUpdate(const IntRect& dirtyRect, Vector<IntRect, 1>&& damageRects, const IntRect& tileRect, Ref<CoordinatedTileBuffer>&&);
+        bool processPendingUpdateIfNeeded(ProcessHiddenTiles, std::optional<Damage>&, const Function<bool()>& shouldStopProcessingTiles);
 
         const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
         sk_sp<SkImage> image() const;
@@ -99,6 +100,7 @@ private:
         struct Update {
             IntRect tileRect;
             IntRect dirtyRect;
+            Vector<IntRect, 1> damageRects;
             Ref<CoordinatedTileBuffer> buffer;
         };
 

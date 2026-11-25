@@ -651,10 +651,6 @@ void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
 {
     assertIsMainThread();
     m_dirtyRegion = damage.rects();
-
-#if ENABLE(DAMAGE_TRACKING)
-    addDamage(WTF::move(damage));
-#endif
 }
 
 #if ENABLE(DAMAGE_TRACKING)
@@ -891,18 +887,14 @@ void CoordinatedPlatformLayer::updateBackingStore()
     if (!m_backingStoreProxy || (m_dirtyRegion.isEmpty() && !m_needsTilesUpdate))
         return;
 
-    Damage damage(sizeOnMainThread(), Damage::Mode::Rectangles);
     bool shouldCreateDestroyTiles = m_needsTilesUpdate;
-    auto tilesUpdate = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, m_transformedCoverageRect, sizeOnMainThread(), m_visibleRect, m_contentsScale, m_contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, damage, *this);
+    auto tilesUpdate = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, m_transformedCoverageRect, sizeOnMainThread(), m_visibleRect, m_contentsScale, m_contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, *this);
     m_dirtyRegion.clear();
     m_needsTilesUpdate = false;
 
     if (!tilesUpdate)
         return;
 
-#if ENABLE(DAMAGE_TRACKING)
-    addDamage(WTF::move(damage));
-#endif
     addPendingChange(Change::BackingStoreTiles);
 
     if (m_repaintCount != -1 && !tilesUpdate->tilesToUpdate().isEmpty()) {

@@ -30,6 +30,8 @@
 #if ENABLE(DAMAGE_TRACKING) && USE(SKIA)
 #include "Helpers/Test.h"
 #include <WebCore/Color.h>
+#include <WebCore/CoordinatedBackingStoreProxy.h>
+#include <WebCore/CoordinatedTileBuffer.h>
 #include <WebCore/Damage.h>
 #include <WebCore/SkiaCompositingLayer.h>
 #include <WebCore/TransformationMatrix.h>
@@ -398,6 +400,211 @@ TEST(SkiaCompositingLayerDamage, ReplicatedLayerIsDamagedWithItsReplica)
     auto moved = paintAndCollect(root, *surface->getCanvas());
     EXPECT_EQ(moved.bounds(), IntRect(100, 100, 240, 240));
     EXPECT_TRUE(paintAndCollect(root, *surface->getCanvas()).isEmpty());
+}
+
+static Ref<CoordinatedTileBuffer> createPaintedTileBuffer(const IntSize& size)
+{
+    Ref buffer = CoordinatedUnacceleratedTileBuffer::create(size, CoordinatedTileBuffer::NoFlags, 0, std::nullopt);
+    buffer->beginPainting();
+    buffer->completePainting();
+    static_cast<CoordinatedUnacceleratedTileBuffer&>(buffer.get()).takeData();
+    return buffer;
+}
+
+struct TiledTree {
+    Ref<SkiaCompositingLayer> root;
+    Ref<SkiaCompositingLayer> layer;
+};
+
+static TiledTree createSettledTiledTree(SkCanvas& canvas, const FloatSize& layerSize, bool tilesAreVisible, float scale = 1)
+{
+    auto root = SkiaCompositingLayer::create();
+    root->setDamagePropagationEnabled(true);
+    root->setSize({ 800, 600 });
+
+    auto layer = SkiaCompositingLayer::create();
+    layer->setDamagePropagationEnabled(true);
+    layer->setSize(layerSize);
+    layer->setPosition({ 100, 50 });
+    layer->setAnchorPoint({ 0, 0, 0 });
+    layer->setUseBackingStore(true);
+
+    HashMap<uint32_t, bool> tilesVisibility;
+    tilesVisibility.add(1, tilesAreVisible);
+    tilesVisibility.add(2, tilesAreVisible);
+    layer->updateBackingStore(CoordinatedBackingStoreProxy::Update(Vector<uint32_t> { 1, 2 }, { }, { }, WTF::move(tilesVisibility)), scale);
+
+    Vector<Ref<SkiaCompositingLayer>> children;
+    children.append(layer.copyRef());
+    root->setChildren(WTF::move(children));
+
+    paintAndCollect(root, canvas);
+    return { WTF::move(root), WTF::move(layer) };
+}
+
+static void scheduleTileUpdate(SkiaCompositingLayer& layer, uint32_t tileID, const IntRect& tileRect, const IntRect& dirtyRect, Vector<IntRect, 1>&& damageRects = { }, float scale = 1)
+{
+    if (damageRects.isEmpty()) {
+        IntRect damageRect(dirtyRect);
+        damageRect.moveBy(tileRect.location());
+        damageRects.append(damageRect);
+    }
+
+    Vector<CoordinatedBackingStoreProxy::Update::TileUpdate> tilesToUpdate;
+    tilesToUpdate.append({ tileID, tileRect, dirtyRect, WTF::move(damageRects), createPaintedTileBuffer(tileRect.size()) });
+    layer.updateBackingStore(CoordinatedBackingStoreProxy::Update({ }, WTF::move(tilesToUpdate), { }, { }), scale);
+}
+
+TEST(SkiaCompositingLayerDamage, TileUploadDamagesTheUploadedArea)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 600 }, true);
+    EXPECT_TRUE(paintAndCollect(tree.root, *surface->getCanvas()).isEmpty());
+
+    scheduleTileUpdate(tree.layer, 1, { 0, 0, 400, 300 }, { 10, 20, 30, 40 });
+    tree.layer->processPendingTileUpdates();
+
+    auto uploaded = paintAndCollect(tree.root, *surface->getCanvas());
+    EXPECT_EQ(uploaded.bounds(), IntRect(110, 70, 30, 40));
+    EXPECT_TRUE(paintAndCollect(tree.root, *surface->getCanvas()).isEmpty());
+}
+
+TEST(SkiaCompositingLayerDamage, PreRenderedTileUploadDamagesTheUploadedArea)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 600 }, false);
+
+    scheduleTileUpdate(tree.layer, 2, { 0, 300, 400, 300 }, { 50, 60, 20, 20 });
+    tree.layer->processPendingTileUpdates();
+    EXPECT_TRUE(paintAndCollect(tree.root, *surface->getCanvas()).isEmpty());
+
+    tree.layer->processPendingTileUpdatesIncludingPreRendered(nullptr);
+    auto uploaded = paintAndCollect(tree.root, *surface->getCanvas());
+    EXPECT_EQ(uploaded.bounds(), IntRect(150, 410, 20, 20));
+}
+
+TEST(SkiaCompositingLayerDamage, TileUploadInsideTheLayerDamageAddsNothing)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 600 }, true);
+
+    Damage layerDamage(IntSize { 400, 600 });
+    layerDamage.add(IntRect(0, 300, 100, 100));
+    tree.layer->addDamage(WTF::move(layerDamage));
+
+    scheduleTileUpdate(tree.layer, 2, { 0, 300, 400, 300 }, { 50, 60, 20, 20 });
+    tree.layer->processPendingTileUpdates();
+
+    auto damage = paintAndCollect(tree.root, *surface->getCanvas());
+    EXPECT_EQ(damage.bounds(), IntRect(100, 350, 100, 100));
+}
+
+TEST(SkiaCompositingLayerDamage, TileUploadOutsideTheLayerDamageIsAdded)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 600 }, true);
+
+    Damage layerDamage(IntSize { 400, 600 });
+    layerDamage.add(IntRect(0, 0, 20, 20));
+    tree.layer->addDamage(WTF::move(layerDamage));
+
+    scheduleTileUpdate(tree.layer, 2, { 0, 300, 400, 300 }, { 50, 60, 20, 20 });
+    tree.layer->processPendingTileUpdates();
+
+    auto damage = paintAndCollect(tree.root, *surface->getCanvas());
+    EXPECT_EQ(damage.bounds(), IntRect(100, 50, 70, 380));
+}
+
+TEST(SkiaCompositingLayerDamage, TileUploadsBeforeAPaintAreAllDamaged)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 600 }, true);
+
+    scheduleTileUpdate(tree.layer, 1, { 0, 0, 400, 300 }, { 10, 20, 30, 40 });
+    tree.layer->processPendingTileUpdates();
+    scheduleTileUpdate(tree.layer, 2, { 0, 300, 400, 300 }, { 50, 60, 20, 20 });
+    tree.layer->processPendingTileUpdates();
+
+    auto damage = paintAndCollect(tree.root, *surface->getCanvas());
+    EXPECT_EQ(damage.bounds(), IntRect(110, 70, 60, 360));
+}
+
+TEST(SkiaCompositingLayerDamage, OffscreenTileUploadAddsNoFrameDamage)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 2000 }, false);
+
+    scheduleTileUpdate(tree.layer, 2, { 0, 1500, 400, 300 }, { 0, 0, 400, 300 });
+    tree.layer->processPendingTileUpdatesIncludingPreRendered(nullptr);
+
+    EXPECT_TRUE(paintAndCollect(tree.root, *surface->getCanvas()).isEmpty());
+}
+
+// The tile is uploaded once for the union of its dirty rects, but the damage keeps each rect, so two
+// small changes far apart in the same tile don't damage everything between them.
+TEST(SkiaCompositingLayerDamage, TileUploadKeepsEachDamageRect)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 600 }, true);
+
+    scheduleTileUpdate(tree.layer, 1, { 0, 0, 400, 300 }, { 0, 0, 25, 25 }, { { 0, 0, 10, 10 }, { 15, 15, 10, 10 } });
+    tree.layer->processPendingTileUpdates();
+
+    auto damage = paintAndCollect(tree.root, *surface->getCanvas());
+    auto rects = damage.rects();
+    ASSERT_EQ(rects.size(), 2u);
+    EXPECT_EQ(rects[0], IntRect(100, 50, 10, 10));
+    EXPECT_EQ(rects[1], IntRect(115, 65, 10, 10));
+}
+
+// A pre-rendered update whose dirty rect covers a pending one replaces it. The replaced update's pixels
+// are repainted by the new one, so its damage must be kept.
+TEST(SkiaCompositingLayerDamage, CoalescedPreRenderedTileUpdateKeepsTheReplacedDamage)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 600 }, false);
+
+    scheduleTileUpdate(tree.layer, 2, { 0, 300, 400, 300 }, { 10, 10, 20, 20 });
+    scheduleTileUpdate(tree.layer, 2, { 0, 300, 400, 300 }, { 0, 0, 100, 100 }, { { 60, 360, 20, 20 } });
+    tree.layer->processPendingTileUpdatesIncludingPreRendered(nullptr);
+    EXPECT_FALSE(tree.layer->hasPendingBackingStoreTileUpdates());
+
+    auto damage = paintAndCollect(tree.root, *surface->getCanvas());
+    auto rects = damage.rects();
+    ASSERT_EQ(rects.size(), 2u);
+    EXPECT_EQ(rects[0], IntRect(160, 410, 20, 20));
+    EXPECT_EQ(rects[1], IntRect(110, 360, 20, 20));
+}
+
+// Tiles and their damage are in contents-scaled coordinates, the layer damage is not.
+TEST(SkiaCompositingLayerDamage, ScaledTileUploadDamagesTheUnscaledArea)
+{
+    auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+    ASSERT_TRUE(surface);
+
+    auto tree = createSettledTiledTree(*surface->getCanvas(), { 400, 600 }, true, 2);
+
+    scheduleTileUpdate(tree.layer, 1, { 0, 0, 800, 600 }, { 20, 40, 60, 80 }, { }, 2);
+    tree.layer->processPendingTileUpdates();
+
+    auto uploaded = paintAndCollect(tree.root, *surface->getCanvas());
+    EXPECT_EQ(uploaded.bounds(), IntRect(110, 70, 30, 40));
 }
 
 } // namespace TestWebKitAPI

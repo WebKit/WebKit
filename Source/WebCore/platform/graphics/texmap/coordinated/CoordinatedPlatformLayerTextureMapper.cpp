@@ -868,9 +868,8 @@ void CoordinatedPlatformLayer::updateBackingStore()
         backingStoreProxy = m_backingStoreProxy;
     }
 
-    Damage damage(size, Damage::Mode::Rectangles);
     bool shouldCreateDestroyTiles = m_pendingTilesCreation || m_needsTilesUpdate;
-    auto updateResult = backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, size, m_visibleRect, contentsScale, contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, damage, *this);
+    auto updateResult = backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, size, m_visibleRect, contentsScale, contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, *this);
     m_dirtyRegion.clear();
     m_needsTilesUpdate = false;
     m_pendingTilesCreation = updateResult.contains(CoordinatedBackingStoreProxy::UpdateResult::TilesPending);

@@ -34,7 +34,6 @@ namespace WebCore {
 class CoordinatedAnimatedBackingStoreClient;
 class CoordinatedPlatformLayer;
 class CoordinatedTileBuffer;
-class Damage;
 class GraphicsLayer;
 
 class CoordinatedBackingStoreProxy final : public ThreadSafeRefCounted<CoordinatedBackingStoreProxy> {
@@ -57,6 +56,9 @@ public:
             uint32_t tileID { 0 };
             IntRect tileRect;
             IntRect dirtyRect;
+#if USE(SKIA)
+            Vector<IntRect, 1> damageRects;
+#endif
             Ref<CoordinatedTileBuffer> buffer;
         };
 
@@ -69,10 +71,10 @@ public:
         Update& operator=(Update&&) = default;
         ~Update();
 
-        const Vector<uint32_t>& tilesToCreate() const LIFETIME_BOUND { return m_tilesToCreate; }
-        const Vector<TileUpdate>& tilesToUpdate() const LIFETIME_BOUND { return m_tilesToUpdate; }
-        const Vector<uint32_t>& tilesToRemove() const LIFETIME_BOUND { return m_tilesToRemove; }
-        const HashMap<uint32_t, bool>& tilesToUpdateVisibility() const LIFETIME_BOUND { return m_tilesToUpdateVisibility; }
+        Vector<uint32_t>& tilesToCreate() LIFETIME_BOUND { return m_tilesToCreate; }
+        Vector<TileUpdate>& tilesToUpdate() LIFETIME_BOUND { return m_tilesToUpdate; }
+        Vector<uint32_t>& tilesToRemove() LIFETIME_BOUND { return m_tilesToRemove; }
+        HashMap<uint32_t, bool>& tilesToUpdateVisibility() LIFETIME_BOUND { return m_tilesToUpdateVisibility; }
 
 #if USE(TEXTURE_MAPPER)
         void appendUpdate(Vector<uint32_t>&&, Vector<TileUpdate>&&, Vector<uint32_t>&&, HashMap<uint32_t, bool>&&);
@@ -95,10 +97,10 @@ public:
         TilesChanged = 1 << 1,
         TilesPending = 1 << 2
     };
-    OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
+    OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, CoordinatedPlatformLayer&);
     Update takePendingUpdate();
 #else
-    std::optional<Update> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, Damage&, CoordinatedPlatformLayer&);
+    std::optional<Update> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, CoordinatedPlatformLayer&);
 #endif
 
     void waitUntilPaintingFinished();
@@ -116,7 +118,7 @@ private:
         void resize(const IntSize& size)
         {
             rect.setSize(size);
-            dirtyRect = rect;
+            markDirty();
         }
 
         void addDirtyRect(const IntRect& dirty)
@@ -124,6 +126,17 @@ private:
             auto tileDirtyRect = intersection(dirty, rect);
             ASSERT(!tileDirtyRect.isEmpty());
             dirtyRect.unite(tileDirtyRect);
+#if USE(SKIA)
+            damageRects.append(tileDirtyRect);
+#endif
+        }
+
+        void markDirty()
+        {
+            dirtyRect = rect;
+#if USE(SKIA)
+            damageRects = { dirtyRect };
+#endif
         }
 
         bool isDirty() const
@@ -134,6 +147,9 @@ private:
         void markClean()
         {
             dirtyRect = { };
+#if USE(SKIA)
+            damageRects.clear();
+#endif
         }
 
 #if USE(SKIA)
@@ -153,6 +169,7 @@ private:
         IntRect rect;
         IntRect dirtyRect;
 #if USE(SKIA)
+        Vector<IntRect, 1> damageRects;
         unsigned distance { std::numeric_limits<unsigned>::max() };
         bool isVisible { false };
         bool distanceChanged { false };
@@ -164,11 +181,11 @@ private:
 
     void invalidateRegion(const Vector<IntRect, 1>&);
 #if USE(TEXTURE_MAPPER)
-    void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage&, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
+    void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
     std::pair<IntRect, IntRect> computeCoverAndKeepRect() const;
     void adjustForContentsRect(IntRect&) const;
 #else
-    void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Damage&, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
+    void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
 #endif
     IntSize computeTileSize(const IntSize& viewportSize, int maxTextureSize) const;
 
