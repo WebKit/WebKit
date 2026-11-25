@@ -173,8 +173,8 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     if (RefPtr parentLocalFrame = parent.coreLocalFrame())
         effectiveSandboxFlags.add(parentLocalFrame->effectiveSandboxFlags());
     auto effectiveReferrerPolicy = ownerElement.referrerPolicy();
-    if (RefPtr localTopDocument = page.localTopDocument(); effectiveReferrerPolicy == ReferrerPolicy::EmptyString && localTopDocument)
-        effectiveReferrerPolicy = localTopDocument->referrerPolicy();
+    if (effectiveReferrerPolicy == ReferrerPolicy::EmptyString)
+        effectiveReferrerPolicy = protect(ownerElement.document())->referrerPolicy();
 
     auto frameID = WebCore::generateFrameIdentifier();
     auto frame = create(page, frameID);

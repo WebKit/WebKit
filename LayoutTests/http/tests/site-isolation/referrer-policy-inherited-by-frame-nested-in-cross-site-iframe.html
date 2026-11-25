@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="referrer" content="no-referrer">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a frame nested inside a cross-site iframe inherits the same referrer policy as the cross-site iframe, as it does without site isolation. The main frame's policy is no-referrer, and neither iframe sets a policy, so neither should send a Referer header.");
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.setTrackingPreventionEnabled(false);
+
+let referrers = { };
+window.onmessage = event => {
+    referrers[event.data.frame] = event.data.referrer;
+    if (!("child" in referrers) || !("grandchild" in referrers))
+        return;
+    shouldBeEqualToString("referrers.child", "");
+    shouldBeEqualToString("referrers.grandchild", "");
+    if (window.internals)
+        internals.setTrackingPreventionEnabled(true);
+    finishJSTest();
+};
+</script>
+<iframe src="http://localhost:8000/site-isolation/resources/referrer-policy-nested-frame-parent.html"></iframe>
+</body>
+</html>

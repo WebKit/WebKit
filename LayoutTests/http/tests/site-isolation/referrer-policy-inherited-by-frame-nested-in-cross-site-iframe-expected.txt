@@ -1,0 +1,11 @@
+Tests that a frame nested inside a cross-site iframe inherits the same referrer policy as the cross-site iframe, as it does without site isolation. The main frame's policy is no-referrer, and neither iframe sets a policy, so neither should send a Referer header.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS referrers.child is ""
+PASS referrers.grandchild is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
