@@ -5106,6 +5106,9 @@ imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-functi
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-mask-large.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html [ Pass ImageOnlyFailure ]
 
+# Canvas content is upscaled from a 1x backing store at device scale 2, blurring the edge of the square.
+imported/w3c/web-platform-tests/css/filter-effects/fecolormatrix-display-p3.html [ ImageOnlyFailure ]
+
 http/tests/site-isolation/mouse-events/ [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/draw-after-navigation.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/draw-with-size-after-same-origin-navigation.html [ Skip ]

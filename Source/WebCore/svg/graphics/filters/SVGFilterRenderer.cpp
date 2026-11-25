@@ -27,6 +27,7 @@
 #include "FilterImage.h"
 #include "FilterResults.h"
 #include "GeometryUtilities.h"
+#include "GraphicsContext.h"
 #include "Logging.h"
 #include "SVGFilterEffectGraph.h"
 #include "SVGFilterElement.h"
@@ -53,6 +54,9 @@ RefPtr<SVGFilterRenderer> SVGFilterRenderer::create(SVGElement *contextElement, 
     ASSERT(!effects.isEmpty());
     filter->setExpression(WTF::move(expression));
     filter->setEffects(WTF::move(effects));
+
+    if (destinationContext.colorSpace() != ColorSpace::SRGB())
+        preferredRenderingModes.remove(FilterRenderingMode::GraphicsContext);
 
     filter->setFilterRenderingModes(preferredRenderingModes);
 

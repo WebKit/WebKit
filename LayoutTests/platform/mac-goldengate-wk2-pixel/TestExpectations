@@ -76,7 +76,6 @@ imported/w3c/web-platform-tests/css/filter-effects/animation/css-filters-animati
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-boundary.html                        [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-nested-border-radius-clip-3.html     [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2.html                   [ Pass ]
-imported/w3c/web-platform-tests/css/filter-effects/fecolormatrix-display-p3.html                        [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001.html             [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-linear-gradient.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder-canvasImageSource.https.html                    [ Pass ]
