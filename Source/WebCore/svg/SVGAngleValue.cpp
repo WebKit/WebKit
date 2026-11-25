@@ -23,12 +23,10 @@
 #include "SVGAngleValue.h"
 
 #include "CSSParserContext.h"
-#include "CSSParserTokenRange.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+MetaParser.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSTokenizer.h"
 #include "ExceptionOr.h"
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -126,22 +124,11 @@ ExceptionOr<void> SVGAngleValue::setValueAsString(StringView value)
         .context = parserContext
     };
 
-    CSSTokenizer tokenizer(value);
-    auto tokenRange = tokenizer.tokenRange();
-
-    // Leading whitespace is allowed; the consumers below take care of the trailing
-    // whitespace by way of CSSParserTokenRange::consumeIncludingWhitespace().
-    tokenRange.consumeWhitespace();
-
     // A unitless value must stay SVG_ANGLETYPE_UNSPECIFIED rather than becoming
     // SVG_ANGLETYPE_DEG, so consume <number> ahead of <angle>. The raw types are used
     // so that calc() is not consumed at all.
     // FIXME: Add support for calculated angles.
-    auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::NumberRaw<>, CSS::AngleRaw<>>::consume(tokenRange, parserState, { });
-    if (!parsedValue || !tokenRange.atEnd())
-        return Exception { ExceptionCode::SyntaxError };
-
-    return WTF::switchOn(*parsedValue,
+    auto result = CSSPropertyParserHelpers::MetaParser<CSS::NumberRaw<>, CSS::AngleRaw<>>::parse(value, parserState,
         [&](const CSS::NumberRaw<>& number) -> ExceptionOr<void> {
             if (isFloatOverflow(number.value))
                 return Exception { ExceptionCode::SyntaxError };
@@ -157,6 +144,9 @@ ExceptionOr<void> SVGAngleValue::setValueAsString(StringView value)
             return { };
         }
     );
+    if (!result)
+        return Exception { ExceptionCode::SyntaxError };
+    return WTF::move(*result);
 }
 
 ExceptionOr<void> SVGAngleValue::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)

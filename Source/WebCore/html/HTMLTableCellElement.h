@@ -66,7 +66,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
-    const MutableStyleProperties* additionalPresentationalHintStyle() const override;
+    const ImmutableStyleProperties* additionalPresentationalHintStyle() const override;
 
     NODELETE bool isURLAttribute(const Attribute&) const override;
 

@@ -26,46 +26,63 @@
 #include "config.h"
 #include "MatchResultCache.h"
 
+#include "ImmutableStyleProperties.h"
 #include "MatchResult.h"
+#include "MutableStyleProperties.h"
 #include "ResolvedStyle.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
 #include <wtf/BitSet.h>
+#include <wtf/ZippedRange.h>
 
 namespace WebCore::Style {
 
-// Cache entries contain a MatchResult object that references element's mutable inline style.
-// As a result the cache entry mutates when element's inline style mutates.
+// Cache entries contain a MatchResult object that references the element's mutable inline style
+// and mutable presentational hint style. As a result the cache entry mutates when either mutates.
 // We save the original properties and values so we can check which properties have changed.
 // If a property changes we null the value and assume it will change in the future too.
 //
 // It would be nicer if the cache entries were immutable but doing that in a sufficiently
 // performant way is tricky.
 
-struct OriginalInlineProperty {
+struct OriginalProperty {
     CSSPropertyID propertyID;
     bool wasImportant { false };
     RefPtr<const CSSValue> valueIfUnchanged;
 };
 
+static Vector<OriginalProperty> originalPropertiesIfMutable(const StyleProperties* style)
+{
+    RefPtr mutableStyle = dynamicDowncast<MutableStyleProperties>(style);
+    if (!mutableStyle)
+        return { };
+
+    return WTF::map(*mutableStyle, [](auto& property) {
+        return OriginalProperty {
+            .propertyID = property.id(),
+            .wasImportant = property.isImportant(),
+            .valueIfUnchanged = property.value(),
+        };
+    });
+}
+
 struct MatchResultCache::Entry : CanMakeCheckedPtr<MatchResultCache::Entry> {
     UnadjustedStyle unadjustedStyle;
-    Ref<const MutableStyleProperties> inlineStyle;
-    Vector<OriginalInlineProperty> originalInlineProperties;
+    RefPtr<const StyleProperties> inlineStyle;
+    Vector<OriginalProperty> originalInlineProperties;
+    RefPtr<const StyleProperties> presentationalHintStyle;
+    Vector<OriginalProperty> originalPresentationalHintProperties;
+    RefPtr<const StyleProperties> additionalPresentationalHintStyle;
 
-    Entry(UnadjustedStyle&& unadjustedStyle, const MutableStyleProperties& inlineStyle)
+    Entry(UnadjustedStyle&& unadjustedStyle, const StyledElement& element)
         : unadjustedStyle(WTF::move(unadjustedStyle))
-        , inlineStyle(inlineStyle)
+        , inlineStyle(element.inlineStyle())
+        , originalInlineProperties(originalPropertiesIfMutable(inlineStyle.get()))
+        , presentationalHintStyle(element.presentationalHintStyle())
+        , originalPresentationalHintProperties(originalPropertiesIfMutable(presentationalHintStyle.get()))
+        , additionalPresentationalHintStyle(element.additionalPresentationalHintStyle())
     {
-        originalInlineProperties.reserveInitialCapacity(inlineStyle.size());
-        for (auto property : inlineStyle) {
-            originalInlineProperties.append({
-                .propertyID = property.id(),
-                .wasImportant = property.isImportant(),
-                .valueIfUnchanged = property.value()
-            });
-        }
     }
 
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(Entry);
@@ -85,57 +102,70 @@ inline UnadjustedStyle copy(const UnadjustedStyle& other)
     };
 }
 
-bool MatchResultCache::isUsableAfterInlineStyleChange(const MatchResultCache::Entry& entry, const StyleProperties& currentInlineStyle)
+static bool isUsableAfterChange(const StyleProperties* cachedStyle, const Vector<OriginalProperty>& originalProperties, const StyleProperties* currentStyle)
 {
-    if (entry.inlineStyle.ptr() != &currentInlineStyle)
+    if (cachedStyle != currentStyle)
         return false;
 
-    auto& inlineStyle = entry.inlineStyle;
+    RefPtr mutableStyle = dynamicDowncast<MutableStyleProperties>(currentStyle);
+    if (!mutableStyle)
+        return true;
 
     // Only allow the same exact properties after a change. This way the previous values in ComputedStyle are guaranteed to get overwritten.
     // Adding properties could be allowed without other changes. Removal would require resetting the removed property to initial
     // value in the style builder.
 
-    auto size = entry.originalInlineProperties.size();
-    if (size != inlineStyle->size())
+    if (originalProperties.size() != mutableStyle->size())
         return false;
 
-    for (size_t index = 0; index < size; ++index) {
-        if (entry.originalInlineProperties[index].propertyID != inlineStyle->propertyAt(index).id())
+    for (auto [originalProperty, currentProperty] : zippedRange(originalProperties, *mutableStyle)) {
+        if (originalProperty.propertyID != currentProperty.id())
             return false;
     }
     return true;
 }
 
-PropertyCascade::IncludedProperties MatchResultCache::computeAndUpdateChangedProperties(MatchResultCache::Entry& entry)
+bool MatchResultCache::canApplyPartially(CSSPropertyID propertyID)
 {
-    auto& originalProperties = entry.originalInlineProperties;
-    Ref inlineStyle = entry.inlineStyle.get();
+    // FIXME: Support custom properties.
+    if (propertyID == CSSPropertyID::Custom)
+        return false;
+
+    // Only use partial applying with low-priority properties since we know changes to them can't
+    // affect values of other properties.
+    // FIXME: CSSPropertyID::LineHeight shouldn't be a low-priority property as others can depend on it via `lh` unit.
+    return propertyID >= firstLowPriorityProperty && propertyID != CSSPropertyID::LineHeight;
+}
+
+enum class ValueComparison : bool { Identity, Equality };
+
+static PropertyCascade::IncludedProperties computeAndUpdateChangedProperties(Vector<OriginalProperty>& originalProperties, const StyleProperties* style, ValueComparison comparison)
+{
+    RefPtr mutableStyle = dynamicDowncast<MutableStyleProperties>(style);
+    if (!mutableStyle)
+        return { };
 
     PropertyCascade::IncludedProperties result;
 
-    auto size = originalProperties.size();
-    for (size_t index = 0; index < size; ++index) {
-        auto currentProperty = inlineStyle->propertyAt(index);
+    ASSERT(originalProperties.size() == mutableStyle->size());
+    for (auto [originalProperty, currentProperty] : zippedRange(originalProperties, *mutableStyle)) {
         auto propertyID = currentProperty.id();
 
-        ASSERT(originalProperties[index].propertyID == propertyID);
+        ASSERT(originalProperty.propertyID == propertyID);
 
-        if (originalProperties[index].valueIfUnchanged == currentProperty.value()
-            && originalProperties[index].wasImportant == currentProperty.isImportant())
-            continue;
+        if (originalProperty.valueIfUnchanged && originalProperty.wasImportant == currentProperty.isImportant()) {
+            if (originalProperty.valueIfUnchanged == currentProperty.value())
+                continue;
+            if (comparison == ValueComparison::Equality && protect(*originalProperty.valueIfUnchanged)->equals(protect(*currentProperty.value()))) {
+                originalProperty.valueIfUnchanged = currentProperty.value();
+                continue;
+            }
+        }
 
         // Assume that if a value or priority changes once then it will change more. Don't track changes anymore.
-        originalProperties[index].valueIfUnchanged = nullptr;
+        originalProperty.valueIfUnchanged = nullptr;
 
-        // FIXME: Support custom properties.
-        if (propertyID == CSSPropertyID::Custom)
-            return PropertyCascade::normalProperties();
-
-        // Only use partial applying with low-priority properties since we know changes to them can't
-        // affect values of other properties.
-        // FIXME: CSSPropertyID::LineHeight shouldn't be a low-priority property as others can depend on it via `lh` unit.
-        if (propertyID < firstLowPriorityProperty || propertyID == CSSPropertyID::LineHeight)
+        if (!MatchResultCache::canApplyPartially(propertyID))
             return PropertyCascade::normalProperties();
 
         result.ids.append(cascadeAliasProperty(propertyID));
@@ -144,7 +174,7 @@ PropertyCascade::IncludedProperties MatchResultCache::computeAndUpdateChangedPro
     return result;
 }
 
-const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInlineStyle(const Element& element)
+const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentDeclarations(const Element& element)
 {
     auto it = m_entries.find(element);
     if (it == m_entries.end())
@@ -152,15 +182,32 @@ const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInline
 
     auto& entry = it->value;
 
-    auto* styledElement = dynamicDowncast<StyledElement>(element);
-    RefPtr inlineStyle = styledElement ? styledElement->inlineStyle() : nullptr;
+    bool isUsable = [&] {
+        auto* styledElement = dynamicDowncast<StyledElement>(element);
+        if (!styledElement)
+            return false;
+        if (entry->additionalPresentationalHintStyle != styledElement->additionalPresentationalHintStyle())
+            return false;
+        return isUsableAfterChange(entry->inlineStyle.get(), entry->originalInlineProperties, protect(styledElement->inlineStyle()).get())
+            && isUsableAfterChange(entry->presentationalHintStyle.get(), entry->originalPresentationalHintProperties, protect(styledElement->presentationalHintStyle()).get());
+    }();
 
-    if (!inlineStyle || !isUsableAfterInlineStyleChange(entry, *inlineStyle)) {
+    if (!isUsable) {
         m_entries.remove(it);
         return { };
     }
 
-    auto changedProperties = computeAndUpdateChangedProperties(entry);
+    auto changedProperties = computeAndUpdateChangedProperties(entry->originalInlineProperties, entry->inlineStyle.get(), ValueComparison::Identity);
+    auto changedHintProperties = computeAndUpdateChangedProperties(entry->originalPresentationalHintProperties, entry->presentationalHintStyle.get(), ValueComparison::Equality);
+
+    if (changedProperties.types || changedHintProperties.types)
+        changedProperties = PropertyCascade::normalProperties();
+    else {
+        for (auto propertyID : changedHintProperties.ids) {
+            if (!changedProperties.ids.contains(propertyID))
+                changedProperties.ids.append(propertyID);
+        }
+    }
 
     return CachedMatchResult {
         .unadjustedStyle = copy(entry->unadjustedStyle),
@@ -184,13 +231,16 @@ void MatchResultCache::updateForFastPathInherit(const Element& element, const St
 
 void MatchResultCache::set(const Element& element, const UnadjustedStyle& unadjustedStyle)
 {
-    // For now we cache match results if there is mutable inline style. This way we can avoid
-    // selector matching when it gets mutated again.
+    // For now we cache match results if there is mutable inline style or a mutable presentational hint style.
+    // This way we can avoid selector matching when either gets mutated again.
     auto* styledElement = dynamicDowncast<StyledElement>(element);
-    RefPtr inlineStyle = styledElement ? dynamicDowncast<MutableStyleProperties>(styledElement->inlineStyle()) : nullptr;
+    if (!styledElement) {
+        m_entries.remove(element);
+        return;
+    }
 
-    if (inlineStyle)
-        m_entries.set(element, makeUniqueRef<Entry>(copy(unadjustedStyle), *inlineStyle));
+    if (is<MutableStyleProperties>(styledElement->inlineStyle()) || is<MutableStyleProperties>(styledElement->presentationalHintStyle()))
+        m_entries.set(element, makeUniqueRef<Entry>(copy(unadjustedStyle), *styledElement));
     else
         m_entries.remove(element);
 }

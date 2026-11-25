@@ -159,6 +159,8 @@ public:
     CustomStateSet* customStateSet() { return m_customStateSet.get(); }
     void initializeCustomStateSet(Ref<CustomStateSet>&& customStateSet) { lazyInitialize(m_customStateSet, WTF::move(customStateSet)); }
 
+    Vector<QualifiedName>& dirtyPresentationalHintAttributes() LIFETIME_BOUND { return m_dirtyPresentationalHintAttributes; }
+
     OptionSet<VisibilityAdjustment> visibilityAdjustment() const { return m_visibilityAdjustment; }
     void setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment) { m_visibilityAdjustment = adjustment; }
 
@@ -231,6 +233,8 @@ public:
             result.add(UseType::UserInfo);
         if (m_invokedPopover)
             result.add(UseType::InvokedPopover);
+        if (!m_dirtyPresentationalHintAttributes.isEmpty())
+            result.add(UseType::DirtyPresentationalHintAttributes);
         return result;
     }
 #endif
@@ -280,6 +284,8 @@ private:
     SpaceSplitString m_partNames;
 
     AtomString m_nonce;
+
+    Vector<QualifiedName> m_dirtyPresentationalHintAttributes;
 
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
 

@@ -476,6 +476,15 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
 // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-parse
 ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(Document& document, String&& cssText)
 {
+    auto reifyNumericToken = [](const auto& token) -> ExceptionOr<Ref<CSSNumericValue>> {
+        if (token.type() == CSSParserTokenType::DimensionToken && !CSSNumericType::create(token.unitType()))
+            return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
+        return convertToExceptionOrNumericValue(CSSUnitValue::create(token.numericValue(), token.unitType()));
+    };
+
+    if (auto token = lexNumericToken(StringView { cssText }.trim(isASCIIWhitespace<char16_t>)))
+        return reifyNumericToken(*token);
+
     CSSTokenizer tokenizer(cssText);
     auto range = tokenizer.tokenRange();
     range.consumeWhitespace();
@@ -493,12 +502,8 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(Document& document, Str
     switch (componentValueRange.peek().type()) {
     case CSSParserTokenType::DimensionToken:
     case CSSParserTokenType::NumberToken:
-    case CSSParserTokenType::PercentageToken: {
-        auto& token = componentValueRange.consumeIncludingWhitespace();
-        if (token.type() == CSSParserTokenType::DimensionToken && !CSSNumericType::create(token.unitType()))
-            return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
-        return convertToExceptionOrNumericValue(CSSUnitValue::create(token.numericValue(), token.unitType()));
-    }
+    case CSSParserTokenType::PercentageToken:
+        return reifyNumericToken(componentValueRange.consumeIncludingWhitespace());
     case CSSParserTokenType::FunctionToken: {
         auto functionID = componentValueRange.peek().functionId();
         if (functionID == CSSValueID::Calc || functionID == CSSValueID::Min || functionID == CSSValueID::Max || functionID == CSSValueID::Clamp) {

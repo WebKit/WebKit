@@ -93,7 +93,7 @@ void HTMLTableColElement::attributeChanged(const QualifiedName& name, const Atom
     }
 }
 
-const MutableStyleProperties* HTMLTableColElement::additionalPresentationalHintStyle() const
+const ImmutableStyleProperties* HTMLTableColElement::additionalPresentationalHintStyle() const
 {
     if (!hasTagName(colgroupTag))
         return nullptr;

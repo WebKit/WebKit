@@ -74,19 +74,4 @@ void CSSTokenizerInputStream::advanceUntilNewlineOrNonWhitespace()
         advance(m_string.span16());
 }
 
-double CSSTokenizerInputStream::getDouble(unsigned start, unsigned end) const
-{
-    ASSERT(start <= end && ((m_offset + end) <= m_stringLength));
-    bool isResultOK = false;
-    double result = 0.0;
-    if (start < end) {
-        if (m_string.is8Bit())
-            result = charactersToDouble(m_string.span8().subspan(m_offset + start, end - start), &isResultOK);
-        else
-            result = charactersToDouble(m_string.span16().subspan(m_offset + start, end - start), &isResultOK);
-    }
-    // FIXME: It looks like callers ensure we have a valid number
-    return isResultOK ? result : 0.0;
-}
-
 } // namespace WebCore
