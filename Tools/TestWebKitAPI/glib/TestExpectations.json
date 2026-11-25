@@ -84,18 +84,6 @@
             "ImageBufferTests.ImageBufferSubPixelDrawing": {
                 "expected": {"all": {"slow": true}}
             },
-            "RunLoopObserver.CrossThread_MultipleScheduleAttempts": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/315297"}}
-            },
-            "RunLoopObserver.CrossThread_ScheduleOnSecondaryLoopFromMainThread": {
-                "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/315297"}}
-            },
-            "RunLoopObserver.CrossThread_ScheduleOnSecondaryLoopFromSecondaryThread": {
-                "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/315297"}}
-            },
-            "RunLoopObserver.CrossThread_TwoObserversOnDifferentLoops": {
-                "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/315297"}}
-            },
             "FontCascadeTest.ComplexTextRetainsSystemFallbackFonts": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323619"}}
             }

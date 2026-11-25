@@ -41,10 +41,8 @@ void RunLoopObserver::runLoopObserverFired()
 #if USE(CF)
     ASSERT(m_runLoopObserver);
 #elif USE(GLIB_EVENT_LOOP)
-    if (ASSERT_ENABLED) {
-        Locker locker { m_runLoopObserverLock };
-        ASSERT(m_runLoopObserver);
-    }
+    if (!isScheduled())
+        return;
 #endif
     m_callback();
 }
