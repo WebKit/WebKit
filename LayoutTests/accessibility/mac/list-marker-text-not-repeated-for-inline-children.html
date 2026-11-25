@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<ul>
+    <li id="unordered">Hello <strong>World</strong><span>!</span></li>
+</ul>
+<ol start="2">
+    <li id="ordered">Hello <strong>World</strong><span>!</span></li>
+</ol>
+</div>
+
+<script>
+let output = "This tests that a list item's marker text is only included with the text adjacent to the marker, not with every text object on the marker's line.\n\n";
+
+var markerText, string, attributedString;
+function markerCount(text) {
+    return text.split(markerText).length - 1;
+}
+
+function verifyListItem(id) {
+    const listItem = accessibilityController.accessibleElementById(id);
+    let textObjects = [];
+    for (let i = 0; i < listItem.childrenCount; i++) {
+        const child = listItem.childAtIndex(i);
+        if (child.role == "AXRole: AXStaticText")
+            textObjects.push(child);
+    }
+    output += `#${id} has ${textObjects.length} static text children.\n`;
+
+    for (let i = 0; i < textObjects.length; i++) {
+        const text = textObjects[i];
+        const range = text.textMarkerRangeForElement(text);
+        string = text.stringForTextMarkerRange(range);
+        attributedString = text.attributedStringForTextMarkerRange(range);
+        output += `#${id} text ${i}: "${string}"\n`;
+        const expectedCount = i ? "0" : "1";
+        output += expect("markerCount(string)", expectedCount);
+        output += expect("markerCount(attributedString)", expectedCount);
+    }
+
+    string = listItem.stringForTextMarkerRange(listItem.textMarkerRangeForElement(listItem));
+    output += `#${id} full text: "${string}"\n`;
+    output += expect("markerCount(string)", "1");
+    output += "\n";
+}
+
+if (window.accessibilityController) {
+    markerText = `${String.fromCharCode(0x2022)} `;
+    verifyListItem("unordered");
+    markerText = "2. ";
+    verifyListItem("ordered");
+    debug(output);
+    document.getElementById("content").style.visibility = "hidden";
+}
+</script>
+</body>
+</html>
