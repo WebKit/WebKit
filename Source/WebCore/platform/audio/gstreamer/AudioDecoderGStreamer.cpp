@@ -40,6 +40,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerAudioDecoder);
 GST_DEBUG_CATEGORY(webkit_audio_decoder_debug);
 #define GST_CAT_DEFAULT webkit_audio_decoder_debug
 
+#if GST_CHECK_VERSION(1, 22, 0)
+#define DEC_DEBUG(...) GST_DEBUG_ID(m_id.data(), __VA_ARGS__)
+#define DEC_WARNING(...) GST_WARNING_ID(m_id.data(), __VA_ARGS__)
+#else
+#define DEC_DEBUG(...) GST_DEBUG(__VA_ARGS__)
+#define DEC_WARNING(...) GST_WARNING(__VA_ARGS__)
+#endif
+
 static WorkQueue& gstDecoderWorkQueue()
 {
     static std::once_flag onceKey;
@@ -58,14 +66,12 @@ public:
     {
         return adoptRef(*new GStreamerInternalAudioDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     }
-    ~GStreamerInternalAudioDecoder() = default;
+    ~GStreamerInternalAudioDecoder() { DEC_DEBUG("Disposing"); }
 
     Ref<AudioDecoder::DecodePromise> decode(AudioEncodedData&&);
     void flush();
     void close() { m_isClosed = true; }
     bool isConfigured() const { return !!m_inputCaps; }
-
-    GstElement* harnessedElement() const { return m_harness->element(); }
 
 private:
     GStreamerInternalAudioDecoder(const String& codecName, const AudioDecoder::Config&, AudioDecoder::OutputCallback&&, GRefPtr<GstElement>&&);
@@ -76,6 +82,7 @@ private:
     GRefPtr<GstCaps> m_inputCaps;
     GRefPtr<GstBuffer> m_header;
     bool m_isClosed { false };
+    ASCIICString m_id;
 };
 
 void GStreamerAudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
@@ -102,14 +109,11 @@ void GStreamerAudioDecoder::create(const String& codecName, const Config& config
     Ref decoder = adoptRef(*new GStreamerAudioDecoder(codecName, config, WTF::move(outputCallback), WTF::move(element)));
     Ref internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {
-        GST_WARNING("Internal audio decoder failed to configure for codec %s", codecName.utf8());
         callback(makeUnexpected(makeString("Internal audio decoder failed to configure for codec "_s, codecName)));
         return;
     }
 
     gstDecoderWorkQueue().dispatch([callback = WTF::move(callback), decoder = WTF::move(decoder)]() mutable {
-        auto internalDecoder = decoder->m_internalDecoder;
-        GST_DEBUG_OBJECT(decoder->m_internalDecoder->harnessedElement(), "Audio decoder created");
         callback(Ref<AudioDecoder> { WTF::move(decoder) });
     });
 }
@@ -121,7 +125,6 @@ GStreamerAudioDecoder::GStreamerAudioDecoder(const String& codecName, const Conf
 
 GStreamerAudioDecoder::~GStreamerAudioDecoder()
 {
-    GST_DEBUG_OBJECT(m_internalDecoder->harnessedElement(), "Disposing");
     close();
 }
 
@@ -153,7 +156,10 @@ void GStreamerAudioDecoder::close()
 GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codecName, const AudioDecoder::Config& config, AudioDecoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
     : m_outputCallback(WTF::move(outputCallback))
 {
-    GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
+    static Atomic<uint64_t> uniqueId = 0;
+    m_id = makeString("webkit-audio-dec-"_s, uniqueId.exchangeAdd(1)).ascii();
+
+    DEC_DEBUG("Configuring decoder %" GST_PTR_FORMAT " for codec %s", element.get(), codecName.ascii().data());
 
     ASCIILiteral parser;
     if (codecName.startsWith("mp4a"_s)) {
@@ -178,7 +184,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     else if (codecName == "flac"_s) {
         m_header = wrapSpanData(config.description);
         if (!m_header) {
-            GST_WARNING("Decoder config description for flac codec is mandatory");
+            DEC_WARNING("Decoder config description for flac codec is mandatory");
             return;
         }
         parser = "flacparse"_s;
@@ -186,7 +192,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     } else if (codecName == "vorbis"_s) {
         m_header = wrapSpanData(config.description);
         if (!m_header) {
-            GST_WARNING("Decoder config description for vorbis codec is mandatory");
+            DEC_WARNING("Decoder config description for vorbis codec is mandatory");
             return;
         }
         parser = "oggparse"_s;
@@ -206,14 +212,16 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         else if (equalLettersIgnoringASCIICase(pcmFormat, "f32"_s))
             gstPcmFormat = GST_AUDIO_FORMAT_F32;
         else {
-            GST_WARNING("Invalid LPCM codec format: %s", pcmFormat.ascii().data());
+            DEC_WARNING("Invalid LPCM codec format: %s", pcmFormat.ascii().data());
             return;
         }
         m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "format", G_TYPE_STRING, gst_audio_format_to_string(gstPcmFormat),
             "rate", G_TYPE_INT, config.sampleRate, "channels", G_TYPE_INT, config.numberOfChannels,
             "layout", G_TYPE_STRING, "interleaved", nullptr));
-    } else
+    } else {
+        DEC_WARNING("Unsupported codec");
         return;
+    }
 
     configureAudioDecoderForHarnessing(element);
 
@@ -235,14 +243,14 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         // The decoder won't accept the input caps, so put a parser in front.
         auto* parserElement = makeGStreamerElement(parser);
         if (!parserElement) {
-            GST_WARNING_OBJECT(element.get(), "Required parser %s not found, decoding will fail", parser.characters());
+            DEC_WARNING("Required parser %s not found, decoding will fail", parser.characters());
             m_inputCaps.clear();
             return;
         }
 
         gst_bin_add(GST_BIN_CAST(harnessedElement.get()), parserElement);
         if (!gst_element_link(parserElement, element.get())) {
-            GST_WARNING_OBJECT(element.get(), "Unable to link parser to decoder");
+            DEC_WARNING("Unable to link parser to decoder");
             m_inputCaps.clear();
             return;
         }
@@ -250,7 +258,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     }
 
     if (!gst_element_link_many(element.get(), audioconvert, outputCapsFilter, nullptr)) {
-        GST_WARNING_OBJECT(element.get(), "Unable to link %" GST_PTR_FORMAT " to audioconvert", head.get());
+        DEC_WARNING("Unable to link %" GST_PTR_FORMAT " to audioconvert", head.get());
         m_inputCaps.clear();
         return;
     }
@@ -289,7 +297,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
 
 Ref<AudioDecoder::DecodePromise> GStreamerInternalAudioDecoder::decode(AudioEncodedData&& data)
 {
-    GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame with size %zu bytes", data.isKeyFrame ? " key" : "", data.data->size());
+    DEC_DEBUG("Decoding%s frame with size %zu bytes", data.isKeyFrame ? " key" : "", data.data->size());
 
     auto encodedData = wrapSharedBuffer(WTF::move(data.data));
     if (!encodedData)
@@ -301,7 +309,7 @@ Ref<AudioDecoder::DecodePromise> GStreamerInternalAudioDecoder::decode(AudioEnco
         segment.rate = -1.0;
 
     if (m_header) {
-        GST_DEBUG_OBJECT(m_harness->element(), "Pushing initial header");
+        DEC_DEBUG("Pushing initial header");
         m_harness->start(GRefPtr<GstCaps>(m_inputCaps), &segment);
         m_harness->pushBuffer(WTF::move(m_header));
     }
@@ -321,22 +329,25 @@ Ref<AudioDecoder::DecodePromise> GStreamerInternalAudioDecoder::decode(AudioEnco
 void GStreamerInternalAudioDecoder::flush()
 {
     if (m_isClosed) {
-        GST_DEBUG_OBJECT(m_harness->element(), "Decoder closed, nothing to flush");
+        DEC_DEBUG("Decoder closed, nothing to flush");
         return;
     }
 
     if (!m_harness->isStarted()) {
-        GST_DEBUG_OBJECT(m_harness->element(), "Decoder hasn't started yet, nothing to flush");
+        DEC_DEBUG("Decoder hasn't started yet, nothing to flush");
         return;
     }
 
-    GST_DEBUG_OBJECT(m_harness->element(), "Pushing an empty buffer with discont flag");
+    DEC_DEBUG("Pushing an empty buffer with discont flag");
     GRefPtr buffer = adoptGRef(gst_buffer_new());
     GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_DISCONT);
     m_harness->pushBuffer(WTF::move(buffer));
 
     m_harness->flushBuffers();
 }
+
+#undef DEC_DEBUG
+#undef DEC_WARNING
 
 #undef GST_CAT_DEFAULT
 
