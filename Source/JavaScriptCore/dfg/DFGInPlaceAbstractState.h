@@ -348,8 +348,9 @@ public:
     // block's head. Returns true if the second block's state changed. If so,
     // that block must be abstractly interpreted again. This also sets
     // to->cfaShouldRevisit to true, if it returns true, or if to has not been
-    // visited yet.
-    bool merge(BasicBlock* from, BasicBlock* to);
+    // visited yet. In SSA, knownTruthy's value is merged without null and
+    // undefined, so pass it only when it is truthy on every edge into to.
+    bool merge(BasicBlock* from, BasicBlock* to, NodeFlowProjection knownTruthy = { });
     
     // Merge the abstract state stored at the block's tail into all of its
     // successors. Returns true if any of the successors' states changed. Note
