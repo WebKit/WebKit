@@ -254,7 +254,7 @@ auto SectionParser::parseFunction() -> PartialResult
         size_t start = 0;
         size_t end = 0;
         m_info->internalFunctionTypeSignatureIndices.append(index);
-        m_info->functions.append({ start, end, Vector<uint8_t>() });
+        m_info->functions.append({ start, end, { }, { } });
     }
 
     return { };
@@ -868,7 +868,16 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
     const size_t offsetOfExprInSource = initialOffset + m_offsetInSource;
     WASM_FAIL_IF_HELPER_FAILS(parseExtendedConstExpr(source().subspan(initialOffset), offsetOfExprInSource, initExprOffset, maxStackHeight, m_info, expectedType));
     m_offset += (initExprOffset - (m_offset - initialOffset));
-    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(ModuleInformation::ConstantExpression { source().subspan(initialOffset, initExprOffset), offsetOfExprInSource, maxStackHeight }), "could not allocate memory for init expr"_s);
+    // A retained binary can be pointed into; anything else leaves nothing to point at once the
+    // section payload is gone, so those keep a copy.
+    auto exprBytes = source().subspan(initialOffset, initExprOffset);
+    Vector<uint8_t> ownedExprBytes;
+    if (!m_sourceIsRetained)
+        WASM_ALLOCATOR_FAIL_IF(!ownedExprBytes.tryAppend(exprBytes), "could not allocate memory for init expr"_s);
+    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(ModuleInformation::ConstantExpression { exprBytes, WTF::move(ownedExprBytes), offsetOfExprInSource, maxStackHeight }), "could not allocate memory for init expr"_s);
+    auto& appendedExpr = m_info->constantExpressions.last();
+    if (!m_sourceIsRetained)
+        appendedExpr.bytes = appendedExpr.ownedBytes.span();
     bitsOrImportNumber = m_info->constantExpressions.size() - 1;
     isExtendedConstantExpression = true;
     resultType = expectedType;
@@ -1371,12 +1380,10 @@ auto SectionParser::parseData() -> PartialResult
             WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get "_s, segmentNumber, "th Data segment's data byte length"_s);
             WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big "_s, dataByteLength, " maximum "_s, maxModuleSize);
 
-            auto segment = Segment::tryCreate(*initExpr, dataByteLength, Segment::Kind::Active);
-            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for "_s, segmentNumber, "th Data segment of size "_s, dataByteLength);
-
             WASM_PARSER_FAIL_IF(source().size() < dataByteLength || (source().size() - dataByteLength) < m_offset, "can't get data bytes from "_s, segmentNumber, "th Data segment"_s);
 
-            memcpySpan(segment->span(), source().subspan(m_offset, dataByteLength));
+            auto segment = Segment::tryCreate(*initExpr, source().subspan(m_offset, dataByteLength), m_sourceIsRetained, Segment::Kind::Active);
+            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for "_s, segmentNumber, "th Data segment of size "_s, dataByteLength);
             m_offset += dataByteLength;
             m_info->data.append(WTF::move(segment));
             continue;
@@ -1388,12 +1395,10 @@ auto SectionParser::parseData() -> PartialResult
             WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get "_s, segmentNumber, "th Data segment's data byte length"_s);
             WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big "_s, dataByteLength, " maximum "_s, maxModuleSize);
 
-            auto segment = Segment::tryCreate(std::nullopt, dataByteLength, Segment::Kind::Passive);
-            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for "_s, segmentNumber, "th Data segment of size "_s, dataByteLength);
-
             WASM_PARSER_FAIL_IF(source().size() < dataByteLength || (source().size() - dataByteLength) < m_offset, "can't get data bytes from "_s, segmentNumber, "th Data segment"_s);
 
-            memcpySpan(segment->span(), source().subspan(m_offset, dataByteLength));
+            auto segment = Segment::tryCreate(std::nullopt, source().subspan(m_offset, dataByteLength), m_sourceIsRetained, Segment::Kind::Passive);
+            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for "_s, segmentNumber, "th Data segment of size "_s, dataByteLength);
             m_offset += dataByteLength;
             m_info->data.append(WTF::move(segment));
             continue;
@@ -1415,12 +1420,10 @@ auto SectionParser::parseData() -> PartialResult
             WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get "_s, segmentNumber, "th Data segment's data byte length"_s);
             WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big "_s, dataByteLength, " maximum "_s, maxModuleSize);
 
-            auto segment = Segment::tryCreate(*initExpr, dataByteLength, Segment::Kind::Active, memoryIndex);
-            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for "_s, segmentNumber, "th Data segment of size "_s, dataByteLength);
-
             WASM_PARSER_FAIL_IF(source().size() < dataByteLength || (source().size() - dataByteLength) < m_offset, "can't get data bytes from "_s, segmentNumber, "th Data segment"_s);
 
-            memcpySpan(segment->span(), source().subspan(m_offset, dataByteLength));
+            auto segment = Segment::tryCreate(*initExpr, source().subspan(m_offset, dataByteLength), m_sourceIsRetained, Segment::Kind::Active, memoryIndex);
+            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for "_s, segmentNumber, "th Data segment of size "_s, dataByteLength);
             m_offset += dataByteLength;
             m_info->data.append(WTF::move(segment));
             continue;
@@ -1477,10 +1480,11 @@ auto SectionParser::parseCustom() -> PartialResult
     WASM_ALLOCATOR_FAIL_IF(!consumeUTF8String(section.name, nameLen), "nameLen get "_s, customSectionNumber, "th custom section's name of length "_s, nameLen);
 
     uint32_t payloadBytes = source().size() - m_offset;
-    WASM_ALLOCATOR_FAIL_IF(!section.payload.tryReserveInitialCapacity(payloadBytes), "can't allocate enough memory for "_s, customSectionNumber, "th custom section's "_s, payloadBytes, " bytes"_s);
-
-    section.payload.grow(payloadBytes);
-    memcpySpan(section.payload.mutableSpan(), source().subspan(m_offset, payloadBytes));
+    section.payload = source().subspan(m_offset, payloadBytes);
+    if (!m_sourceIsRetained) {
+        WASM_ALLOCATOR_FAIL_IF(!section.ownedPayload.tryAppend(section.payload), "can't allocate enough memory for "_s, customSectionNumber, "th custom section's "_s, payloadBytes, " bytes"_s);
+        section.payload = section.ownedPayload.span();
+    }
     m_offset += payloadBytes;
 
     if (WTF::Unicode::equal("name"_span8, section.name.span())) {

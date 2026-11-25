@@ -57,8 +57,4 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
-try {
-    main();
-} catch (error) {
-    assert.eq(error.message, "Module uses both legacy exceptions and try_table (evaluating 'new WebAssembly.Module(WASM_MODULE_CODE)')");
-}
+assert.compileError(WASM_MODULE_CODE, "Module uses both legacy exceptions and try_table");

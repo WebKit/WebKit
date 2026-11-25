@@ -18,7 +18,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: ref.is_null to type I32 expected a reference type, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.compileError(bin.get(), "WebAssembly.Module doesn't validate: ref.is_null to type I32 expected a reference type, in function at index 0");
 }
 
 {
@@ -42,7 +42,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, `WebAssembly.Module doesn't validate: table.set value to type I32 expected (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')`);
+    assert.compileError(bin.get(), `WebAssembly.Module doesn't validate: table.set value to type I32 expected (ref null func), in function at index 0`);
 }
 
 {
@@ -66,7 +66,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, `WebAssembly.Module doesn't validate: table.set value to type (ref null extern) expected (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')`);
+    assert.compileError(bin.get(), `WebAssembly.Module doesn't validate: table.set value to type (ref null extern) expected (ref null func), in function at index 0`);
 }
 
 {
@@ -89,7 +89,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, `WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')`);
+    assert.compileError(bin.get(), `WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref null func), in function at index 0`);
 }
 
 {

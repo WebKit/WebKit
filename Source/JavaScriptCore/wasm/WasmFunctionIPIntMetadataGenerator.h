@@ -39,7 +39,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
 #include <JavaScriptCore/SIMDInfo.h>
 #include <JavaScriptCore/WasmHandlerInfo.h>
-#include <JavaScriptCore/WasmIPIntGenerator.h>
 #include <JavaScriptCore/WasmIPIntTierUpCounter.h>
 #include <array>
 #include <limits>
@@ -75,9 +74,15 @@ public:
         : m_functionIndex(functionIndex)
         , m_bytecode(bytecode)
     {
+        // Metadata is a bit under one byte per body byte, so this usually avoids regrowing, and the
+        // buffer is short-lived. Failing to reserve is fine: the emitter grows it as it goes.
+        m_metadata.tryReserveInitialCapacity(std::max<size_t>(minimumMetadataCapacity, bytecode.size()));
     }
 
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
+    bool usesSIMD() const { return m_usesSIMD; }
+    bool usesLegacyExceptions() const { return m_usesLegacyExceptions; }
+    bool usesModernExceptions() const { return m_usesModernExceptions; }
 
     const uint8_t* getBytecode() const LIFETIME_BOUND { return m_bytecode.data(); }
     const uint8_t* getMetadata() const LIFETIME_BOUND { return m_metadata.span().data(); }
@@ -87,7 +92,7 @@ public:
     void addCallTarget(unsigned callProfileIndex, FunctionSpaceIndex target)
     {
         if (callProfileIndex >= m_callTargets.size())
-            m_callTargets.insertFill(m_callTargets.size(), FunctionSpaceIndex { }, callProfileIndex - m_callTargets.size() + 1);
+            m_callTargets.grow(callProfileIndex + 1);
         m_callTargets[callProfileIndex] = target;
     }
 
@@ -123,6 +128,8 @@ public:
     HotLocals hotLocals() const;
 
 private:
+    static constexpr size_t minimumMetadataCapacity = 32;
+
     struct MetadataBufferMalloc final : public FastMalloc {
         static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity; }
     };
@@ -163,6 +170,12 @@ private:
     unsigned m_numArguments { 0 };
     unsigned m_numArgumentsOnStack { 0 };
     unsigned m_nonArgLocalOffset { 0 };
+    // IPIntCallee arms its tier-up counter from this while initializing. It holds the same
+    // answer ModuleInformation::usesSIMD() gives, which includes the testing option that
+    // forces every function to count as using SIMD.
+    bool m_usesSIMD { false };
+    bool m_usesLegacyExceptions { false };
+    bool m_usesModernExceptions { false };
     Vector<FunctionSpaceIndex> m_callTargets { };
     Vector<uint8_t, 8> m_localInitBytecode { };
     Vector<int32_t, 8> m_localScores { };

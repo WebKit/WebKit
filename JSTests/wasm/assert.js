@@ -120,6 +120,46 @@ export const le = (lhs, rhs, msg) => {
         _fail(`Expected: "${lhs}" > "${rhs}"`, msg);
 };
 
+// Converts a string of raw bytes, as used by the wasm spec tests, into a buffer
+// that WebAssembly.Module accepts.
+export const stringToBytes = (string) => {
+    let buffer = new ArrayBuffer(string.length);
+    let view = new Uint8Array(buffer);
+    for (let i = 0; i < string.length; ++i)
+        view[i] = string.charCodeAt(i);
+    return buffer;
+};
+
+const _checkCompileError = (e, message) => {
+    if (!(e instanceof WebAssembly.CompileError) || (typeof(e.message) != "undefined" && e.message.indexOf(message) < 0))
+        _fail(`Expected to throw a WebAssembly.CompileError with message "${message}", got ${e.name} with message "${e.message}"`);
+    return e;
+};
+
+// Asserts that compiling `bytes` fails with `message`. Function bodies are validated
+// lazily, so an error inside a body would otherwise be reported on the first call
+// into the function instead of here; `eagerValidate` forces it to be reported at
+// its source.
+const _compileError = (bytes, message, options = {}) => {
+    try {
+        new WebAssembly.Module(bytes, Object.assign({ eagerValidate: true }, options));
+    } catch (e) {
+        return _checkCompileError(e, message);
+    }
+    _fail(`Expected to throw a WebAssembly.CompileError with message "${message}"`);
+};
+
+// compileError() for a promise of bytes, as produced by the asynchronous
+// watToWasm() in wabt-wrapper.js.
+const _compileErrorAsync = async (bytes, message, options = {}) => {
+    try {
+        new WebAssembly.Module(await bytes, Object.assign({ eagerValidate: true }, options));
+    } catch (e) {
+        return _checkCompileError(e, message);
+    }
+    _fail(`Expected to throw a WebAssembly.CompileError with message "${message}"`);
+};
+
 const _throws = (func, type, message, ...args) => {
     try {
         func(...args);
@@ -166,7 +206,7 @@ export async function throwsAsync(promise, type, message) {
 
 const _instanceof = (obj, type, msg) => {
     if (!(obj instanceof type))
-        _fail(`Expected a ${typeof(type)}, got ${typeof obj}`);
+        _fail(`Expected a ${type.name}, got ${obj}`, msg);
 };
 
 // Use underscore names to avoid clashing with builtin names.
@@ -174,6 +214,8 @@ export {
     _throws as throws,
     _throwsExactly as throwsExactly,
     _instanceof as instanceof,
+    _compileError as compileError,
+    _compileErrorAsync as compileErrorAsync,
 };
 
 function harnessCall(f) {

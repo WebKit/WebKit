@@ -23,7 +23,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 26: get_global's index 0 exceeds the number of globals 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.compileError(bin.get(), "WebAssembly.Module doesn't parse at byte 26: get_global's index 0 exceeds the number of globals 0");
 }
 
 
@@ -51,7 +51,7 @@ import Builder from '../Builder.js';
 
     const bin = builder.WebAssembly();
     bin.trim();
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 43: get_global import kind index 0 is mutable  (evaluating 'new WebAssembly.Module(bin.get())')`);
+    assert.compileError(bin.get(), `WebAssembly.Module doesn't parse at byte 43: get_global import kind index 0 is mutable`);
 }
 
 {
@@ -101,7 +101,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_global 0 is immutable, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.compileError(bin.get(), "WebAssembly.Module doesn't validate: set_global 0 is immutable, in function at index 0");
 }
 
 
@@ -128,7 +128,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: 1 of unknown global, limit is 1, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.compileError(bin.get(), "WebAssembly.Module doesn't validate: 1 of unknown global, limit is 1, in function at index 0");
 }
 
 
@@ -154,7 +154,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_global 0 with type F32 with a variable of type I32, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.compileError(bin.get(), "WebAssembly.Module doesn't validate: set_global 0 with type F32 with a variable of type I32, in function at index 0");
 }
 
 for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {

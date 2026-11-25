@@ -27,6 +27,8 @@
 #include "config.h"
 #include "WasmInliningDecision.h"
 
+#include "WasmCallee.h"
+#include "WasmIPIntGenerator.h"
 #include "WasmMergedProfile.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
@@ -38,6 +40,15 @@
 namespace JSC::Wasm {
 namespace WasmInliningDecisionInternal {
 static constexpr bool verbose = false;
+}
+
+bool ensureNotLazy(Module& module, const IPIntCallee& callee)
+{
+    if (!callee.isLazy())
+        return true;
+    Ref info = const_cast<ModuleInformation&>(module.moduleInformation());
+    Ref protectedCallee = const_cast<IPIntCallee&>(callee);
+    return parseAndInitializeIPIntCallee(protectedCallee.get(), info.get(), ExceptionProposalMode::SpeculativeInlining).has_value();
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InliningNode);
@@ -247,6 +258,16 @@ void InliningDecision::expand()
 
         if (!canInline(target, initialWasmSize, inlinedWasmSize)) {
             dataLogLnIf(WasmInliningDecisionInternal::verbose, "not enough inlining budget]");
+            continue;
+        }
+
+        // A direct call's target is a candidate even when the call site has never run, so a
+        // callee small enough to skip the score check above can reach here unparsed, with no
+        // metadata to describe the exception handlers the inlined body needs. Everything
+        // decided up to this point -- size, call count, budget -- is known without the body,
+        // so this is the first place worth paying for it.
+        SUPPRESS_UNCOUNTED_ARG if (!ensureNotLazy(m_module, target->callee())) {
+            dataLogLnIf(WasmInliningDecisionInternal::verbose, "callee body does not parse]");
             continue;
         }
 

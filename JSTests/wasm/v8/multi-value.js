@@ -1,3 +1,4 @@
+//@ requireOptions("--useWasmIPIntLazyParsing=false")
 
 // Failure:
 // Exception: Did not throw exception, expected CompileError

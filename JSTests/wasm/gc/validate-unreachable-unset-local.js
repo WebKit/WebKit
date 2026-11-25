@@ -1,4 +1,5 @@
-import { instantiate } from "./wast-wrapper.js";
+import { watToWasm } from "./wast-wrapper.js";
+import * as assert from "../assert.js";
 
 const wat = `
 (module
@@ -19,13 +20,4 @@ const wat = `
 )
 `;
 
-let caughtError;
-try {
-  await instantiate(wat);
-} catch (e) {
-  caughtError = e;
-}
-if (caughtError == undefined ||
-    caughtError.constructor !== WebAssembly.CompileError) {
-    throw new Error("Expected validation error");
-}
+assert.compileError(watToWasm(wat), "");

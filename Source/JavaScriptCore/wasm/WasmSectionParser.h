@@ -39,10 +39,16 @@ namespace JSC { namespace Wasm {
 
 class SectionParser final : public Parser<void> {
 public:
-    SectionParser(std::span<const uint8_t> data, size_t offsetInSource, ModuleInformation& info)
+    // `sourceIsRetained` says whether `data` is a subspan of the binary ModuleInformation
+    // retains, which is what decides whether anything parsed out of it can be pointed at
+    // rather than copied. It is not the same question as ModuleInformation::ownsSource():
+    // a module can retain its binary and still have this section handed over in a buffer
+    // assembled elsewhere, which dies as soon as the section has been parsed.
+    SectionParser(std::span<const uint8_t> data, size_t offsetInSource, ModuleInformation& info, bool sourceIsRetained)
         : Parser(data)
         , m_offsetInSource(offsetInSource)
         , m_info(info)
+        , m_sourceIsRetained(sourceIsRetained)
     {
     }
 
@@ -97,6 +103,7 @@ private:
 
     size_t m_offsetInSource;
     const Ref<ModuleInformation> m_info;
+    const bool m_sourceIsRetained;
     // Parser-local scaffolding for the type section. Only populated during
     // parseType(); the base class's m_typeSectionState pointer references
     // this member for the duration of that call.

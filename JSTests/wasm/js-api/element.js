@@ -18,7 +18,7 @@ import * as assert from '../assert.js';
             .End()
         .End();
 
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 24: Element section for Table 0 exceeds available Table 0");
+    assert.compileError(builder.WebAssembly().get(), "WebAssembly.Module doesn't parse at byte 24: Element section for Table 0 exceeds available Table 0");
 }
 
 {
@@ -41,7 +41,7 @@ import * as assert from '../assert.js';
             .End()
         .End();
 
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 31: Element section for Table 1 exceeds available Table 1");
+    assert.compileError(builder.WebAssembly().get(), "WebAssembly.Module doesn't parse at byte 31: Element section for Table 1 exceeds available Table 1");
 }
 
 {
@@ -112,7 +112,7 @@ import * as assert from '../assert.js';
             .End()
         .End();
 
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 38: Element section's 0th element's 2th index is 1 which exceeds the function index space size of 1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.compileError(builder.WebAssembly().get(), "WebAssembly.Module doesn't parse at byte 38: Element section's 0th element's 2th index is 1 which exceeds the function index space size of 1");
 }
 
 {
@@ -191,7 +191,7 @@ import * as assert from '../assert.js';
 }
 
 {
-    function badModule() {
+    function badModuleBytes() {
         const builder = new Builder()
             .Type().End()
             .Import()
@@ -211,9 +211,8 @@ import * as assert from '../assert.js';
                 .End()
             .End();
 
-        const bin = builder.WebAssembly().get();
-        return new WebAssembly.Module(bin);
+        return builder.WebAssembly().get();
     }
 
-    assert.throws(() => badModule(), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 58: Element init_expr must produce an i32");
+    assert.compileError(badModuleBytes(), "WebAssembly.Module doesn't parse at byte 58: Element init_expr must produce an i32");
 }

@@ -79,7 +79,7 @@ import * as assert from '../assert.js';
                 .CallIndirect(0, 1)
             .End()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 6: call_indirect's table index 1 invalid, limit is 1, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.compileError(builder.WebAssembly().get(), "WebAssembly.Module doesn't parse at byte 6: call_indirect's table index 1 invalid, limit is 1, in function at index 0");
 }
 
 {
@@ -113,7 +113,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 23: can't export Table 0 there are 0 Tables");
+    assert.compileError(builder.WebAssembly().get(), "WebAssembly.Module doesn't parse at byte 23: can't export Table 0 there are 0 Tables");
 }
 
 {
@@ -129,7 +129,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30: can't export Table 1 there are 1 Tables");
+    assert.compileError(builder.WebAssembly().get(), "WebAssembly.Module doesn't parse at byte 30: can't export Table 1 there are 1 Tables");
 }
 
 function assertBadTable(tableDescription, message) {
@@ -141,7 +141,7 @@ function assertBadTable(tableDescription, message) {
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, message);
+    assert.compileError(builder.WebAssembly().get(), message);
 }
 
 function assertBadTableImport(tableDescription, message) {
@@ -153,45 +153,45 @@ function assertBadTableImport(tableDescription, message) {
         .Function().End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, message);
+    assert.compileError(builder.WebAssembly().get(), message);
 }
 
 {
     let badDescriptions = [
         [{initial: 10, element: "i32"},
-         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got I32 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got I32 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got I32",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got I32"],
         [{initial: 10, element: "f32"},
-         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got F32 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got F32 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got F32",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got F32"],
         [{initial: 10, element: "f64"},
-         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got F64 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got F64 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got F64",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got F64"],
         [{initial: 10, element: "i64"},
-         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got I64 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got I64 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got I64",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got I64"],
         [{initial: 10, maximum: 20, element: "i32"},
-         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got I32 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got I32 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got I32",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got I32"],
         [{initial: 10, maximum: 20, element: "f32"},
-         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got F32 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got F32 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got F32",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got F32"],
         [{initial: 10, maximum: 20, element: "f64"},
-         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got F64 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got F64 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got F64",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got F64"],
         [{initial: 10, maximum: 20, element: "i64"},
-         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got I64 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got I64 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be a ref type, got I64",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be a ref type, got I64"],
 
         [{initial: 10, maximum: 9, element: "funcref"},
-         "WebAssembly.Module doesn't parse at byte 21: resizable limits has an initial page count of 10 which is greater than its maximum 9 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 29: resizable limits has an initial page count of 10 which is greater than its maximum 9 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 21: resizable limits has an initial page count of 10 which is greater than its maximum 9",
+         "WebAssembly.Module doesn't parse at byte 29: resizable limits has an initial page count of 10 which is greater than its maximum 9"],
         [{initial: 1, maximum: 0, element: "funcref"},
-         "WebAssembly.Module doesn't parse at byte 21: resizable limits has an initial page count of 1 which is greater than its maximum 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 29: resizable limits has an initial page count of 1 which is greater than its maximum 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 21: resizable limits has an initial page count of 1 which is greater than its maximum 0",
+         "WebAssembly.Module doesn't parse at byte 29: resizable limits has an initial page count of 1 which is greater than its maximum 0"],
         [{initial: 2**32 - 1, maximum: 2**32 - 2, element: "funcref"},
-         "WebAssembly.Module doesn't parse at byte 29: resizable limits has an initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 37: resizable limits has an initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 29: resizable limits has an initial page count of 4294967295 which is greater than its maximum 4294967294",
+         "WebAssembly.Module doesn't parse at byte 37: resizable limits has an initial page count of 4294967295 which is greater than its maximum 4294967294"],
     ];
 
     for (const d of badDescriptions) {

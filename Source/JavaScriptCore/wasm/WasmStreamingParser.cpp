@@ -171,17 +171,21 @@ auto StreamingParser::parseFunctionSize(uint32_t functionSize) -> State
 {
     m_functionSize = functionSize;
     WASM_STREAMING_PARSER_FAIL_IF(functionSize > maxFunctionSize, "Code function's size "_s, functionSize, " is too big"_s);
+    // A body holds at least a locals vector and a trailing End, so an empty one is malformed
+    // however it is validated. Rejecting it here also keeps IPIntCallee's "pointer to the
+    // trailing End" from being formed one byte before the body.
+    WASM_STREAMING_PARSER_FAIL_IF(!functionSize, m_functionIndex, "th Code function's size is 0"_s);
     if (functionSize < Options::wasmInliningSmallFunctionThreshold())
         ++m_info->m_numSmallFunctions;
     return State::FunctionPayload;
 }
 
-auto StreamingParser::parseFunctionPayload(Vector<uint8_t>&& data) -> State
+auto StreamingParser::parseFunctionPayload(std::span<const uint8_t> data) -> State
 {
     auto& function = m_info->functions[m_functionIndex];
     function.start = m_offset;
     function.end = m_offset + m_functionSize;
-    function.data = WTF::move(data);
+    function.data = data;
     dataLogLnIf(WasmStreamingParserInternal::verbose, "Processing function starting at: ", function.start, " and ending at: ", function.end);
     if (!m_client.didReceiveFunctionData(FunctionCodeIndex(m_functionIndex), function))
         return State::FatalError;
@@ -198,9 +202,9 @@ auto StreamingParser::parseFunctionPayload(Vector<uint8_t>&& data) -> State
     return State::FunctionSize;
 }
 
-auto StreamingParser::parseSectionPayload(Vector<uint8_t>&& data) -> State
+auto StreamingParser::parseSectionPayload(std::span<const uint8_t> data, bool payloadIsRetained) -> State
 {
-    SectionParser parser(data, m_offset, m_info.get());
+    SectionParser parser(data, m_offset, m_info.get(), payloadIsRetained);
     switch (m_section) {
 #define WASM_SECTION_PARSE(NAME, ID, ORDERING, DESCRIPTION) \
     case Section::NAME: { \
@@ -265,6 +269,20 @@ auto StreamingParser::consumeVarUInt32(std::span<const uint8_t> bytes, size_t& o
     constexpr size_t maxSize = WTF::LEBDecoder::maxByteLength<uint32_t>();
     size_t bytesRemainingSize = bytes.size() - offsetInBytes;
     size_t totalDataSize = m_remaining.size() + bytesRemainingSize;
+
+    // Buffering always copies maxSize bytes and leaves whatever the number did not use behind,
+    // which would make the payload that follows start in m_remaining rather than in the caller's
+    // bytes. Decoding in place keeps m_remaining empty so payloads can be taken as spans.
+    if (m_remaining.isEmpty() && bytesRemainingSize >= maxSize) {
+        size_t offset = offsetInBytes;
+        uint32_t result = 0;
+        if (!WTF::LEBDecoder::decodeUInt32(bytes, offset, result))
+            return makeUnexpected(State::FatalError);
+        m_nextOffset += offset - offsetInBytes;
+        offsetInBytes = offset;
+        return result;
+    }
+
     if (m_remaining.size() >= maxSize) {
         // Do nothing.
     } else if (totalDataSize >= maxSize) {
@@ -314,6 +332,12 @@ auto StreamingParser::addBytes(std::span<const uint8_t> bytes, IsEndOfStream isE
     if (Options::useEagerWasmModuleHashing()) [[unlikely]]
         m_hasher.addBytes(bytes);
 
+    // Sections and function bodies can be handed on as spans of `bytes` only when `bytes` is the
+    // retained binary, which outlives the module. Pointing into anything else -- a caller's
+    // streaming buffer, or a payload reassembled in m_remaining -- leaves a dangling span behind
+    // as soon as this call returns.
+    bool bytesAreRetainedSource = m_info->ownsSource() && m_info->source().data() == bytes.data() && m_info->source().size() == bytes.size();
+
     size_t offsetInBytes = 0;
     while (true) {
         ASSERT(offsetInBytes <= bytes.size());
@@ -348,10 +372,17 @@ auto StreamingParser::addBytes(std::span<const uint8_t> bytes, IsEndOfStream isE
         }
 
         case State::SectionPayload: {
+            if (bytesAreRetainedSource && m_remaining.isEmpty() && (bytes.size() - offsetInBytes) >= m_sectionLength) {
+                auto payload = bytes.subspan(offsetInBytes, m_sectionLength);
+                offsetInBytes += m_sectionLength;
+                m_nextOffset += m_sectionLength;
+                m_state = parseSectionPayload(payload, true);
+                break;
+            }
             auto result = consume(bytes, offsetInBytes, m_sectionLength);
             if (!result)
                 return m_state;
-            m_state = parseSectionPayload(WTF::move(*result));
+            m_state = parseSectionPayload(result->span(), false);
             break;
         }
 
@@ -382,10 +413,21 @@ auto StreamingParser::addBytes(std::span<const uint8_t> bytes, IsEndOfStream isE
         }
 
         case State::FunctionPayload: {
+            // When `bytes` is the retained binary itself, the body can be handed on as a span of
+            // it rather than copied out.
+            if (bytesAreRetainedSource && m_remaining.isEmpty() && (bytes.size() - offsetInBytes) >= m_functionSize) {
+                auto body = bytes.subspan(offsetInBytes, m_functionSize);
+                offsetInBytes += m_functionSize;
+                m_nextOffset += m_functionSize;
+                m_state = parseFunctionPayload(body);
+                break;
+            }
             auto result = consume(bytes, offsetInBytes, m_functionSize);
             if (!result)
                 return m_state;
-            m_state = parseFunctionPayload(WTF::move(*result));
+            auto& owned = m_info->functions[m_functionIndex].ownedData;
+            owned = WTF::move(*result);
+            m_state = parseFunctionPayload(owned.span());
             break;
         }
 

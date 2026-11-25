@@ -1,19 +1,4 @@
-function shouldThrow(run, errorType, message) {
-    let error;
-    let threw = false;
-    try {
-        run();
-    } catch (e) {
-        threw = true;
-        error = e;
-    }
-    if (!threw)
-        throw new Error(`Expected to throw ${errorType.name}, but did not throw.`);
-    if (!(error instanceof errorType))
-        throw new Error(`Expected to throw ${errorType.name}, but threw '${error}'`);
-    if (message !== void 0 && error.message !== message)
-        throw new Error(`Expected to throw '${message}', but threw '${error.message}'`);
-}
+import * as assert from "../assert.js";
 
 {
     // (module
@@ -50,7 +35,5 @@ function shouldThrow(run, errorType, message) {
       0, 10, 7, 1, 5, 0, 15, 208, 26, 11, 0, 17, 4, 110, 97, 109, 101, 4, 10, 3, 0,
       1, 48, 1, 1, 49, 2, 1, 50,
     ]);
-    shouldThrow(() => {
-        new WebAssembly.Module(wasm);
-    }, WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 4: can't get heap type for RefNull in unreachable context, in function at index 0 (evaluating 'new WebAssembly.Module(wasm)')")
+    assert.compileError(wasm, "WebAssembly.Module doesn't parse at byte 4: can't get heap type for RefNull in unreachable context, in function at index 0")
 }

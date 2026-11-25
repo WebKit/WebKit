@@ -53,7 +53,9 @@ const load64 = (offsetBytes) => [0x42, 0x00, 0x28, 0x02, ...offsetBytes, 0x1a];
 
 function assertValid(description, isMemory64, body) {
     try {
-        new WebAssembly.Module(moduleBytes(isMemory64, body));
+        // Function bodies are validated on first call unless asked for eagerly, and these
+        // modules are never instantiated.
+        new WebAssembly.Module(moduleBytes(isMemory64, body), { eagerValidate: true });
     } catch (error) {
         throw new Error(`${description}: expected to compile, got ${error}`);
     }
@@ -61,7 +63,7 @@ function assertValid(description, isMemory64, body) {
 
 function assertInvalid(description, isMemory64, body) {
     try {
-        new WebAssembly.Module(moduleBytes(isMemory64, body));
+        new WebAssembly.Module(moduleBytes(isMemory64, body), { eagerValidate: true });
     } catch (error) {
         assert.truthy(error instanceof WebAssembly.CompileError, `${description}: expected CompileError, got ${error}`);
         return;

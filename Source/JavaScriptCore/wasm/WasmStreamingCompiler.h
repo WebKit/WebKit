@@ -80,7 +80,8 @@ private:
     RefPtr<DeferredWorkTimer::Ticket> takeTicketIfActive();
 
     VM& m_vm;
-    CompilerMode m_compilerMode;
+    const CompilerMode m_compilerMode;
+    const ValidationMode m_validationMode;
     bool m_eagerFailed WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_finalized WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_threadedCompilationStarted { false };

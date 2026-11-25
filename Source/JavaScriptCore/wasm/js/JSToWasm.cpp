@@ -326,7 +326,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
 
         jit.call(GPRInfo::regWS0, WasmEntryPtrTag);
 
-        // Don't restore SP to original position — stack results are above calleeSP.
+        // Don't restore SP to original position -- stack results are above calleeSP.
         // After a tail call the callee's frame may differ, so derive from actual SP.
         // Just allocate register spill space below the callee's actual SP.
         jit.subPtr(CCallHelpers::TrustedImmPtr(JSToWasmCallee::RegisterStackSpaceAligned),
@@ -579,7 +579,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
 
                 isWasmFunction.link(&jit);
                 if (Wasm::isRefWithTypeIndex(type)) {
-                    auto targetRTT = TypeInformation::getCanonicalRTT(type.index());
+                    Ref targetRTT = TypeInformation::canonicalRTT(type.index());
                     jit.loadPtr(jsParam, scratchGPR);
                     jit.loadPtr(CCallHelpers::Address(scratchGPR, WebAssemblyFunctionBase::offsetOfRTT()), scratchGPR);
                     slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(targetRTT.ptr())));

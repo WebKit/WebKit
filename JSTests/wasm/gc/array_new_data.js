@@ -6,7 +6,7 @@
 // for that test configuration to avoid the crash as a result of exceeding that limit.
 
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -87,7 +87,7 @@ function testArrayNewCanonData() {
 // A data segment outside the range of declared data
 // segments should be a compile-time error
 function testBadDataSegment() {
-    assert.throws(() => compile(`
+    assert.compileError(watToWasm(`
       (module
         (memory (export "memory") 1)
         (data "foo")
@@ -98,10 +98,9 @@ function testBadDataSegment() {
           (array.new_data 0 2)
           (i32.const 0)
           (array.get_u 0)))`),
-                  WebAssembly.CompileError,
                   "WebAssembly.Module doesn't validate: array.new_data segment index 2 is out of bounds (maximum data segment index is 0)");
     // Test module with no data segments
-    assert.throws(() => compile(`
+    assert.compileError(watToWasm(`
       (module
         (type (array (mut i8)))
         (func (export "f") (result i32)
@@ -110,7 +109,6 @@ function testBadDataSegment() {
           (array.new_data 0 0)
           (i32.const 0)
           (array.get_u 0)))`),
-                  WebAssembly.CompileError,
                   "WebAssembly.Module doesn't validate: array.new_data in module with no data segments, in function at index 0");
 
 }
@@ -363,7 +361,7 @@ function testTypeErrors() {
     let refFuncType = "WebAssembly.Module doesn't validate: array.new_data expected numeric, packed, or vector type; found (ref null func)";
     let refExternType = "WebAssembly.Module doesn't validate: array.new_data expected numeric, packed, or vector type; found (ref null extern)";
     let erroneousCase = (ty, msg) => {
-        assert.throws(() => compile (`
+        assert.compileError(watToWasm(`
           (module
             (memory (export "memory") 1)
                (data "")
@@ -371,7 +369,7 @@ function testTypeErrors() {
                (func (export "f") (result i32)
                  (i32.const 0)
                  (i32.const 2)
-                 (array.new_data 0 0)))`), WebAssembly.CompileError, msg);
+                 (array.new_data 0 0)))`), msg);
     };
     /*
       `array.new_data $t $d` should be a type error if:
@@ -387,7 +385,7 @@ function testTypeErrors() {
 }
 
 function testBadOperands() {
-    assert.throws(() => compile (`
+    assert.compileError(watToWasm(`
           (module
             (memory (export "memory") 1)
                (data "")
@@ -396,9 +394,8 @@ function testBadOperands() {
                  (i64.const 0)
                  (i32.const 2)
                  (array.new_data 0 0) (drop) (i32.const 0)))`),
-                  WebAssembly.CompileError,
                   "WebAssembly.Module doesn't validate: array.new_data: offset has type I64 expected I32");
-    assert.throws(() => compile (`
+    assert.compileError(watToWasm(`
           (module
             (memory (export "memory") 1)
                (data "")
@@ -407,9 +404,8 @@ function testBadOperands() {
                  (i32.const 0)
                  (i64.const 2)
                  (array.new_data 0 0) (drop) (i32.const 0)))`),
-                  WebAssembly.CompileError,
                   "WebAssembly.Module doesn't validate: array.new_data: size has type I64 expected I32");
-    assert.throws(() => compile (`
+    assert.compileError(watToWasm(`
           (module
             (memory (export "memory") 1)
                (data "")
@@ -417,16 +413,14 @@ function testBadOperands() {
                (func (export "f") (result i32)
                  (i32.const 0)
                  (array.new_data 0 0) (drop) (i32.const 0)))`),
-                  WebAssembly.CompileError,
                   "WebAssembly.Module doesn't parse at byte 7: can't pop empty stack in array.new_data, in function at index 0");
-    assert.throws(() => compile (`
+    assert.compileError(watToWasm(`
           (module
             (memory (export "memory") 1)
                (data "")
                (type (array (mut i32)))
                (func (export "f") (result i32)
                  (array.new_data 0 0) (drop) (i32.const 0)))`),
-                  WebAssembly.CompileError,
                   "WebAssembly.Module doesn't parse at byte 5: can't pop empty stack in array.new_data, in function at index 0");
 }
 

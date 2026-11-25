@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -88,27 +88,21 @@ function testSubDeclaration() {
     )
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (func))
         (type (sub 0 (struct)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 23: cannot declare subtype of final supertype"
-  );
+    "WebAssembly.Module doesn't parse at byte 23: cannot declare subtype of final supertype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (func))
         (type (sub 0 (array i32)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 24: cannot declare subtype of final supertype"
-  );
+    "WebAssembly.Module doesn't parse at byte 24: cannot declare subtype of final supertype");
 
   /*
    * (module
@@ -117,55 +111,40 @@ function testSubDeclaration() {
    *   (type (sub (0 0) (struct)))
    * )
    */
-  assert.throws(
-    () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x02\x60\x00\x00\x50\x02\x00\x00\x5f\x00")),
-    WebAssembly.CompileError,
-    "number of supertypes for subtype at position 1 is too big"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x02\x60\x00\x00\x50\x02\x00\x00\x5f\x00"),
+    "number of supertypes for subtype at position 1 is too big");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (struct (field i32))))
         (type (sub 0 (struct)))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (struct (field (mut i32)))))
         (type (sub 0 (struct (field i32))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (struct (field i32))))
         (type (sub 0 (struct (field (mut i32)))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (struct (field i64))))
         (type (sub 0 (struct (field i32))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
   instantiate(`
     (module
@@ -175,17 +154,14 @@ function testSubDeclaration() {
     )
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (func))
         (type (sub (struct (field (mut funcref)))))
         (type (sub 1 (struct (field (mut (ref 0))))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
   instantiate(`
     (module
@@ -217,8 +193,7 @@ function testSubDeclaration() {
     )
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (struct)))
         (type (sub 0 (struct (field i32))))
@@ -228,12 +203,9 @@ function testSubDeclaration() {
         (func (result (ref null 3)) (ref.null 4))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <struct:4>) is not a (ref null <struct:3>), in function at index 0"
-  );
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <struct:4>) is not a (ref null <struct:3>), in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type $s (sub (func)))
         (type $t (sub $s (func)))
@@ -242,9 +214,7 @@ function testSubDeclaration() {
         (func (result (ref $t)) (ref.func 0))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref <func:0>) is not a (ref <func:1>), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref <func:0>) is not a (ref <func:1>), in function at index 1");
 
   instantiate(`
     (module
@@ -254,108 +224,81 @@ function testSubDeclaration() {
     )
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (rec
           (type (sub (struct (field f32))))
           (type (sub 0 (struct (field i32)))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (func)))
         (type (sub 0 (func (result i32))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (func)))
         (type (sub 0 (func (param i32))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (func (param i32))))
         (type (sub 0 (func)))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (func))
         (type (sub (func (param funcref))))
         (type (sub 1 (func (param (ref 0)))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (func))
         (type (sub (func (result (ref 0)))))
         (type (sub 1 (func (result funcref))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (array (mut i32))))
         (type (sub 0 (array i32)))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (array i32)))
         (type (sub 0 (array (mut i32))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (func))
         (type (sub (array (mut (ref func)))))
         (type (sub 1 (array (mut (ref 0)))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
   {
     let m1 = instantiate(`
@@ -442,20 +385,16 @@ function testSubDeclaration() {
   `);
 
   // Ensure a singleton recursive sub clause triggers structural subtype checking.
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub (struct (field i32))))
         (type (sub 0 (struct (field (ref 1)))))
       )
     `),
-    WebAssembly.CompileError,
-    "structural type is not a subtype"
-  );
+    "structural type is not a subtype");
 
   // Ensure recursion group identity matters for subtyping.
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (rec (type $f1 (sub (func)))
              (type (struct))
@@ -467,9 +406,7 @@ function testSubDeclaration() {
         (func (call 0 (ref.null $s2)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null <func:4>), expected (ref null <func:0>), in function at index 1"
-  );
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null <func:4>), expected (ref null <func:0>), in function at index 1");
 
   // Check cases with a single non-recursive sub in a recursion group.
   // These tests are binary tests because it's difficult to ensure the
@@ -485,11 +422,8 @@ function testSubDeclaration() {
   //    (rec (type (sub (struct (field i32)))))
   //    (rec (type (sub 0 (struct (field)))))
   //  )
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x90\x80\x80\x80\x00\x02\x4e\x01\x50\x00\x5f\x01\x7f\x00\x4e\x01\x50\x01\x00\x5f\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 30: structural type is not a subtype of the specified supertype"
-  )
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x90\x80\x80\x80\x00\x02\x4e\x01\x50\x00\x5f\x01\x7f\x00\x4e\x01\x50\x01\x00\x5f\x00"),
+    "WebAssembly.Module doesn't parse at byte 30: structural type is not a subtype of the specified supertype")
 }
 
 function testFinalSubDeclaration() {
@@ -506,27 +440,21 @@ function testFinalSubDeclaration() {
     )
   `);
 
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (type (sub final (struct)))
         (type (sub 0 (struct)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 22: cannot declare subtype of final supertype"
-  );
+    "WebAssembly.Module doesn't parse at byte 22: cannot declare subtype of final supertype");
 
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (type (struct))
         (type (sub 0 (struct)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 22: cannot declare subtype of final supertype"
-  );
+    "WebAssembly.Module doesn't parse at byte 22: cannot declare subtype of final supertype");
 }
 
 testSubDeclaration();

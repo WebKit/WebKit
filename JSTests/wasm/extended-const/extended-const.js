@@ -138,11 +138,8 @@ async function testExtendedConstGlobal() {
    *   (global (export "g") i32 (i32.add (i64.const 1) (i32.const 42)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7f\x00\x42\x01\x41\x2a\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: I32Add left value type mismatch"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7f\x00\x42\x01\x41\x2a\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't validate: I32Add left value type mismatch");
 
 
   /*
@@ -210,33 +207,24 @@ async function testExtendedConstGlobal() {
    *   (global (export "g") i32 (i32.div_s (i32.const 42) (i32.const 6)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7f\x00\x41\x2a\x41\x06\x6d\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 22: Invalid instruction for constant expression"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7f\x00\x41\x2a\x41\x06\x6d\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't parse at byte 22: Invalid instruction for constant expression");
 
   /*
    * (module
    *   (global (export "g") i32 (i32.add (i32.const 42) (v128.const i32x4 1 2 3 4)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x99\x80\x80\x80\x00\x01\x7f\x00\x41\x2a\xfd\x0c\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: I32Add right value type mismatch"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x99\x80\x80\x80\x00\x01\x7f\x00\x41\x2a\xfd\x0c\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't validate: I32Add right value type mismatch");
 
   /*
    * (module
    *   (global (export "g") v128 (i32.add (i32.const 42) (i32.const 6)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7b\x00\x41\x2a\x41\x06\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. I32 is not a V128"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7b\x00\x41\x2a\x41\x06\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. I32 is not a V128");
 
   /*
    * (module
@@ -354,99 +342,72 @@ async function testInvalidConstExprs() {
    *   (global (export "g") i32 (block (result i32) (i32.const 1)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7f\x00\x02\x7f\x41\x01\x0b\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 18: unknown init_expr opcode 2"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7f\x00\x02\x7f\x41\x01\x0b\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't parse at byte 18: unknown init_expr opcode 2");
 
   /*
    * (module
    *   (global (export "g") i32 (i32.const 42) (block (result i32) (i32.const 1)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x8b\x80\x80\x80\x00\x01\x7f\x00\x41\x2a\x02\x7f\x41\x01\x0b\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 21: Invalid instruction for constant expression"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x8b\x80\x80\x80\x00\x01\x7f\x00\x41\x2a\x02\x7f\x41\x01\x0b\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't parse at byte 21: Invalid instruction for constant expression");
 
   /*
    * (module
    *   (global (export "g") i32 (i32.add (i32.const 1) (i32.const 2)) end drop)
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x8b\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x41\x02\x6a\x0b\x1a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 14: parsing ended before the end of Global section"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x8b\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x41\x02\x6a\x0b\x1a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't parse at byte 14: parsing ended before the end of Global section");
 
   /*
    * (module
    *   (global (export "g") i32 (i32.add (i32.const 1) (i32.const 2)) (i32.add (i32.const 1) (i32.const 2)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x8e\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x41\x02\x6a\x41\x01\x41\x02\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 2 values"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x8e\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x41\x02\x6a\x41\x01\x41\x02\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 2 values");
 
   /*
    * (module
    *   (global (export "g") i32 (i32.add (i32.const 1) (i32.const 2)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x8e\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x41\x02\x6a\x41\x01\x41\x02\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 2 values"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x8e\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x41\x02\x6a\x41\x01\x41\x02\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 2 values");
 
   /*
    * (module
    *   (global (export "g") i32 (i32.const 1) (br 0))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x88\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x0c\x00\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 21: Invalid instruction for constant expression"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x88\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x0c\x00\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't parse at byte 21: Invalid instruction for constant expression");
 
   /*
    * (module
    *   (global (export "g") i32 (i32.const 1) unreachable (i32.const 1))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x00\x41\x01\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 20: Invalid instruction for constant expression"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x89\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x00\x41\x01\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't parse at byte 20: Invalid instruction for constant expression");
 
   /*
    * (module
    *   (global (export "g") i32 (local.tee 0 (i32.const 1)))
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x88\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x22\x00\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "attempt to use unknown local 0, the number of locals is 0"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x88\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x22\x00\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "attempt to use unknown local 0, the number of locals is 0");
 
   /*
    * (module
    *   (global (export "g") i32 (i32.const 1) i32.add)
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x87\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 3: can't pop empty stack in binary left"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x87\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x6a\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't parse at byte 3: can't pop empty stack in binary left");
 
   // This raises an error in terms of table.get validation instead of invalid instruction.
   // The error message could be better, but it would raise invalid instruction if the table.get were validly encoded.
@@ -455,11 +416,8 @@ async function testInvalidConstExprs() {
    *   (global (export "g") i32 (i32.const 1) table.get)
    *   )
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x88\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x25\x00\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: table index 0 is invalid, limit is 0"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x06\x88\x80\x80\x80\x00\x01\x7f\x00\x41\x01\x25\x00\x0b\x07\x85\x80\x80\x80\x00\x01\x01\x67\x03\x00"),
+    "WebAssembly.Module doesn't validate: table index 0 is invalid, limit is 0");
 }
 
 await assert.asyncTest(testConstExprFastPaths());

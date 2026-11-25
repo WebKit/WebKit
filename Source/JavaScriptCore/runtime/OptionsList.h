@@ -670,6 +670,8 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useBackgroundPrefaultForLargeBuffers, true, Normal, "have a helper thread fault in large buffers that are written from start to end, such as JSON.stringify results, while they are written; off in mini mode"_s) \
     v(Unsigned, thresholdForStringReplaceCache, 0x1000, Normal, nullptr) \
     v(Bool, useWasmIPInt, ipintEnabledByDefault(), Normal, "Use the in-place interpereter for WASM instead of LLInt."_s) \
+    v(Bool, useWasmIPIntLazyParsing, true, Normal, "IPInt should lazily generate metadata on first call to a function. This causes functions to validate lazily"_s) \
+    v(Bool, acceptEagerWasmValidationOption, false, Normal, "Enable the non-standard `eagerValidate: true` field in WebAssembly compile/instantiate/Module options bags, which forces eager validation."_s) \
     v(Bool, useWasmIPIntPrologueOSR, true, Normal, "Allow IPInt to tier up during function prologues"_s) \
     v(Bool, useWasmIPIntLoopOSR, true, Normal, "Allow IPInt to tier up during loop iterations"_s) \
     v(Bool, useWasmIPIntEpilogueOSR, true, Normal, "Allow IPInt to tier up during function epilogues"_s) \

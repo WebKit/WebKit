@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WasmFunctionIPIntMetadataGenerator.h"
 
+#include "WasmIPIntGenerator.h"
 #include "WasmTypeDefinition.h"
 #include <numeric>
 #include <wtf/TZoneMallocInlines.h>

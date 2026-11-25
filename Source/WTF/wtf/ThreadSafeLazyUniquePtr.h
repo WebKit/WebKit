@@ -34,7 +34,7 @@
 namespace WTF {
 
 // ThreadSafeLazyUniquePtr<T> is a unique-ownership pointer that is lazily installed
-// once, atomically, via a compare-and-swap — no lock required. If multiple
+// once, atomically, via a compare-and-swap -- no lock required. If multiple
 // threads race to install, only the first install wins and the losers delete
 // their candidate and observe the winner.
 template<typename T>
@@ -76,7 +76,11 @@ public:
         Dependency dependency = m_pointer.loadAndFence(value);
         return dependency.consume(value);
     }
-    explicit operator bool() const { return !!get(); }
+    T* getAcquire() const
+    {
+        return m_pointer.template load<MemoryOrder::Acquire>();
+    }
+    explicit operator bool() const { return !!getAcquire(); }
 
 private:
     static T* toRawOwned(std::unique_ptr<T>&& ptr) { return ptr.release(); }
