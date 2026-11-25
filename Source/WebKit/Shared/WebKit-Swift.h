@@ -82,7 +82,10 @@ IGNORE_CLANG_WARNINGS_BEGIN("arc-bridge-casts-disallowed-in-nonarc")
 IGNORE_CLANG_WARNINGS_BEGIN("objc-property-no-attribute")
 // rdar://175148090
 IGNORE_CLANG_WARNINGS_BEGIN("#warnings")
+// The generated header imports the WebKit umbrella header, which includes deprecated WebKitLegacy API.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #include "WebKit-Swift-Generated.h"
+ALLOW_DEPRECATED_DECLARATIONS_END
 IGNORE_CLANG_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END

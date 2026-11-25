@@ -30,7 +30,6 @@ PlatformXR::Pose PlatformXRPose::pose() const
     return pose;
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 PlatformXRPose::FloatMatrix4 PlatformXRPose::toColumnMajorFloatArray() const
 {
     const simd_float4 (&columns)[4] = m_simdTransform.columns;
@@ -41,7 +40,6 @@ PlatformXRPose::FloatMatrix4 PlatformXRPose::toColumnMajorFloatArray() const
         columns[3][0], columns[3][1], columns[3][2], columns[3][3],
     } };
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 float PlatformXRPose::distanceToPose(const PlatformXRPose& otherPose) const
 {
@@ -54,9 +52,7 @@ PlatformXRPose PlatformXRPose::verticalTransformPose() const
 {
     simd_float3 position = simdPosition();
     simd_float4x4 transform = matrix_identity_float4x4;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     transform.columns[3].y  = position.y;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return PlatformXRPose(transform);
 }
 

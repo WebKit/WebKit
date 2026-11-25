@@ -8962,6 +8962,55 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('#define WK_HEADER_AUDIT_BEGIN(...) NS_ASSUME_NONNULL_BEGIN', '',
                          'Source/WebKit/Shared/API/Cocoa/WKFoundation.h')
 
+    def test_unbalanced_diagnostic_pragmas(self):
+        missing_end = 'Diagnostic BEGIN / push without a matching END / pop in this file. This leaks warning suppressions of enclosing BEGIN / END pairs into the rest of the translation unit.  [build/unbalanced_diagnostic_pragma] [5]'
+        missing_begin = 'Diagnostic END / pop without a matching BEGIN / push in this file.  [build/unbalanced_diagnostic_pragma] [5]'
+
+        self.assert_multi_line_lint(
+            'WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN\n'
+            'int x;\n'
+            'WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n', '', 'foo.cpp')
+        self.assert_multi_line_lint(
+            'IGNORE_WARNINGS_BEGIN("dangling")\n'
+            'ALLOW_DEPRECATED_DECLARATIONS_BEGIN\n'
+            'int x;\n'
+            'ALLOW_DEPRECATED_DECLARATIONS_END\n'
+            'IGNORE_WARNINGS_END\n', '', 'foo.cpp')
+        self.assert_multi_line_lint(
+            '#pragma clang diagnostic push\n'
+            '#pragma clang diagnostic ignored "-Wdangling"\n'
+            '#pragma GCC diagnostic pop\n', '', 'foo.cpp')
+        self.assert_multi_line_lint(
+            'WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN return p[1]; WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n', '', 'foo.cpp')
+        # A bare "ignored" pragma does not push.
+        self.assert_multi_line_lint('#pragma clang diagnostic ignored "-Wdangling"\n', '', 'foo.cpp')
+        # Macro definitions are not uses, including multi-line ones.
+        self.assert_multi_line_lint(
+            '#define FOO_BEGIN IGNORE_WARNINGS_BEGIN("foo")\n'
+            '#define LOG_IT(x) \\\n'
+            '    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \\\n'
+            '    doSomething(x);\n'
+            'int x;\n', '', 'foo.cpp')
+
+        self.assert_multi_line_lint(
+            '#if defined(__clang__) && __clang_major__ < 22\n'
+            'IGNORE_WARNINGS_BEGIN("dangling")\n'
+            '#endif\n', missing_end, 'foo.cpp')
+        self.assert_multi_line_lint(
+            'ALLOW_DEPRECATED_DECLARATIONS_BEGIN\n'
+            'int x;\n', missing_end, 'foo.cpp')
+        self.assert_multi_line_lint(
+            '#pragma clang diagnostic push\n'
+            'int x;\n', missing_end, 'foo.cpp')
+        self.assert_multi_line_lint(
+            'int x;\n'
+            'IGNORE_WARNINGS_END\n', missing_begin, 'foo.cpp')
+        self.assert_multi_line_lint(
+            'int x;\n'
+            '#pragma clang diagnostic pop\n', missing_begin, 'foo.cpp')
+        # Commented-out uses are ignored.
+        self.assert_multi_line_lint('// IGNORE_WARNINGS_BEGIN("foo")\n', '', 'foo.cpp')
+
     def test_os_version_checks(self):
         self.assert_lint('#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')
         self.assert_lint('#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')

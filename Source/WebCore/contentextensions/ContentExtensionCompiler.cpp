@@ -373,9 +373,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime patternPartitioningEnd = MonotonicTime::now();
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    dataLogF("    Time spent partitioning the rules into groups: %f\n", (patternPartitioningEnd - patternPartitioningStart).seconds());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    dataLogLn("    Time spent partitioning the rules into groups: "_s, (patternPartitioningEnd - patternPartitioningStart).seconds());
 #endif
 
     LOG_LARGE_STRUCTURES(filtersWithoutConditions, filtersWithoutConditions.memoryUsed());
@@ -405,9 +403,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime totalNFAToByteCodeBuildTimeEnd = MonotonicTime::now();
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart).seconds());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    dataLogLn("    Time spent building and compiling the DFAs: "_s, (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart).seconds());
 #endif
 
     client.finalize();

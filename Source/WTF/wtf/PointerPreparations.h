@@ -32,6 +32,7 @@
 #include <ptrauth.h>
 #endif
 
+#include <cstddef>
 #include <type_traits>
 
 namespace WTF {
@@ -56,6 +57,18 @@ ALWAYS_INLINE const void* getVTablePointer(const T* o) { return (*(reinterpret_c
 
 #endif // not COMPILER_HAS_CLANG_BUILTIN(__builtin_get_vtable_pointer)
 
+// Returns the address point of an Itanium C++ ABI vtable, given its symbol (e.g. _ZTV...) and the
+// offset of the address point in pointer-sized slots (past offset-to-top, RTTI, ...). This is the value
+// stored in objects of that dynamic type and returned by getVTablePointer().
+template<size_t addressPointOffset>
+ALWAYS_INLINE const void* itaniumVTableAddressPoint(void* const* vtableSymbol)
+{
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    return vtableSymbol + addressPointOffset;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
 } // namespace WTF
 
 using WTF::getVTablePointer;
+using WTF::itaniumVTableAddressPoint;

@@ -62,9 +62,7 @@ void setLegacyPresentingApplicationPID(int pid)
 #if HAVE(AUDIT_TOKEN)
 ProcessID pidFromAuditToken(const audit_token_t& auditToken)
 {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return auditToken.val[5];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 #endif
 

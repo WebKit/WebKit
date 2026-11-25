@@ -16,9 +16,7 @@ class PlatformXRPose {
 
 public:
     simd_float4x4 simdTransform() const { return m_simdTransform; }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     simd_float3 simdPosition() const { return m_simdTransform.columns[3].xyz; }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     simd_quatf simdOrientation() const { return simd_quaternion(m_simdTransform); }
     WEBCORE_EXPORT WebCore::FloatPoint3D position() const;
     WEBCORE_EXPORT PlatformXR::FloatQuaternion orientation() const;

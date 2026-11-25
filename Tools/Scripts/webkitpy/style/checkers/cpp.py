@@ -1166,6 +1166,48 @@ def check_for_unicode_replacement_characters(lines, error):
                   'Line contains invalid UTF-8 (or Unicode replacement character).')
 
 
+_RE_PATTERN_DIAGNOSTIC_PRAGMA_SCOPE = re.compile(
+    r'\b[A-Z0-9_]*(?:IGNORE|ALLOW)[A-Z0-9_]*_(BEGIN|END)\b'
+    r'|#\s*pragma\s+(?:clang|GCC)\s+diagnostic\s+(push|pop)\b')
+
+
+def check_for_unbalanced_diagnostic_pragmas(clean_lines, error):
+    """Logs an error for each diagnostic BEGIN / push without a matching END / pop in the
+    same file, and vice versa.
+
+    This covers macros such as IGNORE_WARNINGS_BEGIN / IGNORE_WARNINGS_END and
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN / WTF_ALLOW_UNSAFE_BUFFER_USAGE_END, as well as raw
+    '#pragma clang diagnostic push / pop'. Since the diagnostic state is a single stack, an
+    unmatched push in a header makes the END of any enclosing pair (e.g. in a header that
+    includes it) pop the wrong entry, leaking that pair's suppressions into the rest of the
+    translation unit.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      error: The function to call with any errors found.
+    """
+    unmatched_begin_line_numbers = []
+    in_macro_definition = False
+    for line_number in range(clean_lines.num_lines()):
+        line = clean_lines.elided[line_number]
+        # Macro definitions (e.g. the definition of IGNORE_WARNINGS_BEGIN itself) are not uses.
+        if in_macro_definition or match(r'\s*#\s*define\b', line):
+            in_macro_definition = line.rstrip().endswith('\\')
+            continue
+        for begin_or_end, push_or_pop in _RE_PATTERN_DIAGNOSTIC_PRAGMA_SCOPE.findall(line):
+            if begin_or_end == 'BEGIN' or push_or_pop == 'push':
+                unmatched_begin_line_numbers.append(line_number)
+            elif unmatched_begin_line_numbers:
+                unmatched_begin_line_numbers.pop()
+            else:
+                error(line_number, 'build/unbalanced_diagnostic_pragma', 5,
+                      'Diagnostic END / pop without a matching BEGIN / push in this file.')
+    for line_number in unmatched_begin_line_numbers:
+        error(line_number, 'build/unbalanced_diagnostic_pragma', 5,
+              'Diagnostic BEGIN / push without a matching END / pop in this file. This leaks '
+              'warning suppressions of enclosing BEGIN / END pairs into the rest of the translation unit.')
+
+
 def check_for_missing_new_line_at_eof(lines, error):
     """Logs an error if there is not a newline character at the end of the file.
 
@@ -6166,6 +6208,8 @@ def _process_lines(filename, file_extension, lines, error, min_confidence, line_
 
     check_for_include_what_you_use(filename, clean_lines, include_state, error, line_numbers)
 
+    check_for_unbalanced_diagnostic_pragmas(clean_lines, error)
+
     # We check here rather than inside process_line so that we see raw
     # lines rather than "cleaned" lines.
     check_for_unicode_replacement_characters(lines, error)
@@ -6201,6 +6245,7 @@ class CppChecker(object):
         'build/printf_format',
         'build/storage_class',
         'build/using_std',
+        'build/unbalanced_diagnostic_pragma',
         'build/using_namespace',
         'build/variant',
         'build/cpp_comment',

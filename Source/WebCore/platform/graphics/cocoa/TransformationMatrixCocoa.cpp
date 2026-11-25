@@ -30,7 +30,6 @@
 
 #include <simd/simd.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -69,6 +68,5 @@ TransformationMatrix TransformationMatrix::makeLookAt(simd_float3 origin, simd_f
 
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(COCOA)

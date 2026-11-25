@@ -4398,8 +4398,11 @@ ALWAYS_INLINE void simde_mm_pause()
 
 IGNORE_WARNINGS_BEGIN("constant-conversion")
 IGNORE_WARNINGS_BEGIN("uninitialized")
+// The portable NEON emulation is third-party code that is not -Wunsafe-buffer-usage clean.
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/simde/arm/neon.h>
 #include <wtf/simde/arm/sve.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 IGNORE_WARNINGS_END
 IGNORE_WARNINGS_END
 

@@ -29,9 +29,7 @@
 #include <limits>
 #include <wtf/ParkingLot.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/simde/simde.h>
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WTF {
 

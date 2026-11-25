@@ -162,8 +162,12 @@ Borrow(T&) -> Borrow<T>;
 // have to suppress at every usage site.
 // FIXME: Remove this once all supported compilers have this fix.
 // Fixed in upstream Clang commit c86c815fc57c (July 2025).
+// This intentionally does not push the diagnostic state: an unbalanced push would
+// corrupt any enclosing push / pop pair (e.g. WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN / END
+// in a header that transitively includes this one), leaking its suppressions into the
+// rest of the translation unit.
 #if defined(__clang__) && defined(__clang_major__) && __clang_major__ < 22
-IGNORE_WARNINGS_BEGIN("dangling")
+#pragma clang diagnostic ignored "-Wdangling"
 #endif
 
 template<typename T>

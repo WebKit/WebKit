@@ -331,7 +331,6 @@ JSC::WeakHandleOwner::FinalizeResult JSTestIterableOwner::finalize(JSC::Handle<J
     return FinalizeResult::KeepImpl;
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -347,7 +346,7 @@ static inline void verifyVTable(TestIterable* ptr)
 #if PLATFORM(WIN)
         void* expectedVTablePointer = __identifier("??_7TestIterable@WebCore@@6B@");
 #else
-        void* expectedVTablePointer = &_ZTVN7WebCore12TestIterableE[2];
+        const void* expectedVTablePointer = itaniumVTableAddressPoint<2>(_ZTVN7WebCore12TestIterableE);
 #endif
 
         // If you hit this assertion you either have a use after free bug, or
@@ -358,7 +357,6 @@ static inline void verifyVTable(TestIterable* ptr)
     }
 }
 #endif
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<TestIterable>&& impl)
 {

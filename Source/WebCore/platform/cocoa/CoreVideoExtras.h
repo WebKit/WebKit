@@ -34,6 +34,7 @@ template<> struct DefaultRefDerefTraits<__CVDisplayLink> {
     static CVDisplayLinkRef refIfNotNull(CVDisplayLinkRef displayLink) { return CVDisplayLinkRetain(displayLink); }
     static void derefIfNotNull(CVDisplayLinkRef displayLink) { CVDisplayLinkRelease(displayLink); }
 };
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #endif // PLATFORM(MAC)
