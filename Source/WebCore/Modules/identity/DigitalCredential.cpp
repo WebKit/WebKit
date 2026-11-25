@@ -154,6 +154,7 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
             return Exception { ExceptionCode::TypeError, "The request is not JSON-serializable."_s };
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(OpenID4VPUnsignedRequest { jsonString });
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 ExceptionOr<Vector<UnvalidatedDigitalCredentialRequest>> DigitalCredential::convertObjectsToDigitalPresentationRequests(const Document& document, const Vector<DigitalCredentialGetRequest>& requests)

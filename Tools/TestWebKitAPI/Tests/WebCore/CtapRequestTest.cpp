@@ -32,7 +32,6 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoTestData.h"
-#include "Helpers/PlatformUtilities.h"
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorSelectionCriteria.h>
 #include <WebCore/DeviceRequestConverter.h>
@@ -202,6 +201,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestWithLargeBlob)
             .write = std::nullopt,
         },
         .prf = std::nullopt,
+        .crossDeviceFallbackURL = { },
     };
 
     PublicKeyCredentialCreationOptions options { testRp(), testUser(), testChallenge(), params, std::nullopt, { }, selection, AttestationConveyancePreference::None, extensionInputs };
@@ -226,6 +226,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestWithUnsupportedLargeBlob
             .write = std::nullopt,
         },
         .prf = std::nullopt,
+        .crossDeviceFallbackURL = { },
     };
 
     PublicKeyCredentialCreationOptions options { testRp(), testUser(), testChallenge(), params, std::nullopt, { }, selection, AttestationConveyancePreference::None, extensionInputs };
@@ -463,6 +464,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobRead)
             .write = std::nullopt,
         },
         .prf = std::nullopt,
+        .crossDeviceFallbackURL = { },
     };
 
     options.userVerification = UserVerificationRequirement::Required;
@@ -514,6 +516,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUnsupportedLargeBlobRead)
             .write = std::nullopt,
         },
         .prf = std::nullopt,
+        .crossDeviceFallbackURL = { },
     };
 
     options.userVerification = UserVerificationRequirement::Required;
@@ -569,6 +572,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobWrite)
             .write = WebCore::toBufferSource(blob),
         },
         .prf = std::nullopt,
+        .crossDeviceFallbackURL = { },
     };
 
     options.userVerification = UserVerificationRequirement::Required;

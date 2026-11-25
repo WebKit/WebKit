@@ -27,6 +27,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 struct PublicKeyCredentialDescriptorJSON {

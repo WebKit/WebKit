@@ -7360,6 +7360,7 @@ WebAuthenticationEnabled:
   humanReadableDescription: "Enable Web Authentication support"
   condition: ENABLE(WEB_AUTHN)
   defaultValue:
+    "PLATFORM(GTK) || PLATFORM(WPE)": false
     default: true
     WebKitLegacy: false
   sharedPreferenceForWebProcess: true
