@@ -672,7 +672,6 @@ UIProcess/mac/WKImmediateActionController.mm @nonARC
 UIProcess/mac/PositionInformationManager.cpp
 UIProcess/mac/WKPrintingView.mm @nonARC
 UIProcess/mac/WKQuickLookPreviewController.mm @nonARC
-UIProcess/mac/WKRevealItemPresenter.mm @nonARC
 UIProcess/mac/WKSharingServicePickerDelegate.mm @nonARC
 UIProcess/mac/WKTextFinderClient.mm @nonARC
 UIProcess/mac/WKTextAnimationManagerMac.mm @nonARC

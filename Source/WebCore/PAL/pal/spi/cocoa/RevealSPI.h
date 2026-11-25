@@ -73,10 +73,12 @@ DECLARE_SYSTEM_HEADER
 
 @protocol RVPresenterHighlightDelegate <NSObject>
 @required
-- (NSArray <NSValue *> *)revealContext:(RVPresentingContext *)context rectsForItem:(RVItem *)item;
+- (nonnull NSArray <NSValue *> *)revealContext:(nonnull RVPresentingContext *)context rectsForItem:(nonnull RVItem *)item;
 @optional
-- (void)revealContext:(RVPresentingContext *)context stopHighlightingItem:(RVItem *)item;
-- (void)revealContext:(RVPresentingContext *)context drawRectsForItem:(RVItem *)item;
+- (BOOL)revealContext:(nonnull RVPresentingContext *)context shouldUseDefaultHighlightForItem:(nonnull RVItem *)item;
+- (void)revealContext:(nonnull RVPresentingContext *)context startHighlightingItem:(nonnull RVItem *)item;
+- (void)revealContext:(nonnull RVPresentingContext *)context stopHighlightingItem:(nonnull RVItem *)item;
+- (void)revealContext:(nonnull RVPresentingContext *)context drawRectsForItem:(nonnull RVItem *)item;
 @end
 #endif
 

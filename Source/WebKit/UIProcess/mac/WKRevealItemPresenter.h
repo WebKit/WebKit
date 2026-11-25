@@ -25,24 +25,33 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(MAC) && ENABLE(REVEAL)
 
-#import <CoreGraphics/CoreGraphics.h>
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+#import <pal/spi/cocoa/RevealSPI.h>
 
-@class RVItem;
+@class WKWebView;
 
-namespace WebKit {
-class WebViewImpl;
-}
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-@interface WKRevealItemPresenter : NSObject
+NS_SWIFT_UI_ACTOR
+@interface WKRevealItemPresenter : NSObject <RVPresenterHighlightDelegate>
 
-- (instancetype)initWithWebViewImpl:(const WebKit::WebViewImpl&)webViewImpl item:(RVItem *)item frame:(CGRect)frameInView menuLocation:(CGPoint)menuLocationInView;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithWebView:(WKWebView *)webView item:(RVItem *)item frame:(CGRect)frameInView menuLocation:(CGPoint)menuLocationInView;
 - (void)showContextMenu;
 
 @property (nonatomic) BOOL shouldUseDefaultHighlight;
 
+// API tests read these with key-value coding.
+@property (nonatomic, readonly) CGRect frameInView;
+@property (nonatomic, readonly) CGPoint menuLocationInView;
+
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // PLATFORM(MAC) && ENABLE(REVEAL)

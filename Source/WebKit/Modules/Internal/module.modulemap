@@ -95,6 +95,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WKRevealItemPresenter {
+        requires objc
+        header "../../UIProcess/mac/WKRevealItemPresenter.h"
+        export *
+    }
+
     module WKTextSelectionController {
         requires cplusplus20,objc
         header "../../UIProcess/mac/WKTextSelectionController.h"

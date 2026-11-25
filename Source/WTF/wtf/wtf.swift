@@ -23,8 +23,4 @@
 
 // The Swift module shadows the Clang module and the Swift module therefore needs to publicly import and re-export the underlying Clang module.
 
-#if WTF_SWIFT_CXX_INTEROP
-
 @_exported public import wtf
-
-#endif

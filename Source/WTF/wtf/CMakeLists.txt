@@ -857,6 +857,27 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     file(WRITE "${WTF_HEADERS_DIR}/ios/WebCoreThread.h" "")
 endif ()
 
+if (SWIFT_REQUIRED AND APPLE)
+    target_sources(WTF PRIVATE
+        ${WTF_DIR}/wtf/wtf.swift
+        ${WTF_DIR}/wtf/cocoa/SoftLinking.swift
+    )
+
+    # WTF's Swift exposes nothing to C++, so there is no interop header to generate.
+    set(WTF_SWIFT_TYPECHECK_SOURCES "")
+    WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WTF wtf
+        "${WTF_HEADERS_DIR}"
+        "WTFSwift-Generated.h")
+
+    # Match the Swift flags WTF.xcconfig sets.
+    webkit_target_add_swift_options(WTF
+        "-library-level spi"
+        "-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}"
+        "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
+        "-Xcc -I${CMAKE_BINARY_DIR}"
+    )
+endif ()
+
 if (NOT MSVC)
     set_source_files_properties(FastMalloc.cpp PROPERTIES
         COMPILE_OPTIONS $<$<CONFIG:Debug>:-O3>
