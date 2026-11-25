@@ -5985,7 +5985,7 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
         RefPtr<RegisterID> iteratorSymbol = generator.emitGetById(generator.newTemporary(), iterable.get(), generator.propertyNames().iteratorSymbol.impl());
         CallArguments args(generator, nullptr, 0);
         generator.move(args.thisRegister(), iterable.get());
-        generator.emitIteratorOpen(iterator.get(), nextOrIndex.get(), iteratorSymbol.get(), args, this);
+        generator.emitIteratorOpen(iterator.get(), nextOrIndex.get(), iteratorSymbol.get(), args, this, /* isImmediatelyStepped */ false);
     }
 
     if (m_targetPatterns.isEmpty()) {

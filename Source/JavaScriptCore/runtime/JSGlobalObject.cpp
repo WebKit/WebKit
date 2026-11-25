@@ -1091,6 +1091,17 @@ void JSGlobalObject::init(VM& vm)
         [] (const Initializer<JSFunction>& init) {
             init.set(JSFunction::create(init.vm, init.owner, 0, init.vm.propertyNames->builtinNames().entriesPublicName().string(), mapProtoFuncEntries, ImplementationVisibility::Public, JSMapEntriesIntrinsic));
         });
+    // Shared by for-of loops and spreads over a Map or Set without storage, which finish on their first step.
+    m_exhaustedMapIterator.initLater(
+        [](const Initializer<JSMapIterator>& init) {
+            JSMap* map = JSMap::create(init.vm, init.owner->mapStructure());
+            init.set(JSMapIterator::create(init.vm, init.owner->mapIteratorStructure(), map, IterationKind::Entries));
+        });
+    m_exhaustedSetIterator.initLater(
+        [](const Initializer<JSSetIterator>& init) {
+            JSSet* set = JSSet::create(init.vm, init.owner->setStructure());
+            init.set(JSSetIterator::create(init.vm, init.owner->setIteratorStructure(), set, IterationKind::Values));
+        });
     m_setProtoValuesFunction.initLater(
         [] (const Initializer<JSFunction>& init) {
             init.set(JSFunction::create(init.vm, init.owner, 0, init.vm.propertyNames->builtinNames().valuesPublicName().string(), setProtoFuncValues, ImplementationVisibility::Public, JSSetValuesIntrinsic));
@@ -2944,6 +2955,8 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_arrayProtoValuesFunction.visit(visitor);
     thisObject->m_asyncFromSyncIteratorProtoNextFunction.visit(visitor);
     thisObject->m_mapProtoEntriesFunction.visit(visitor);
+    thisObject->m_exhaustedMapIterator.visit(visitor);
+    thisObject->m_exhaustedSetIterator.visit(visitor);
     thisObject->m_setProtoValuesFunction.visit(visitor);
     thisObject->m_stringProtoSymbolIteratorFunction.visit(visitor);
     visitor.append(thisObject->m_objectProtoValueOfFunction);

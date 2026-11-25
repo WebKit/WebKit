@@ -236,6 +236,9 @@ op :iterator_open,
         iterableValueProfile: unsigned,
         iteratorValueProfile: unsigned,
         nextValueProfile: unsigned,
+        # True when no user code runs between this op and the first iterator_next (for-of and spread),
+        # which lets an empty Map or Set share one exhausted iterator.
+        isImmediatelyStepped: bool,
     },
     metadata: {
         callLinkInfo: DataOnlyCallLinkInfo,

@@ -597,6 +597,7 @@ private:
 
     void handleIteratorOpen(const JSInstruction* pc, BytecodeIndex osrExitIndex);
     void handleIteratorNext(const JSInstruction* pc, BytecodeIndex osrExitIndex, std::optional<FusedBranch>);
+    bool isIteratorSavedAcrossSuspensions();
     void handleAsyncIteratorOpen(const JSInstruction* pc, BytecodeIndex osrExitIndex);
     void handleAsyncIteratorNext(const JSInstruction* pc, BytecodeIndex osrExitIndex);
 
@@ -1632,7 +1633,10 @@ private:
         
         // Pointers to the argument position trackers for this slice of code.
         Vector<ArgumentPosition*> m_argumentPositions;
-        
+
+        // Indexed by bytecode offset. Computed on first use.
+        std::optional<BitVector> m_iteratorOpensSavedAcrossSuspensions;
+
         InlineStackEntry* const m_caller;
         
         InlineStackEntry(
@@ -12106,6 +12110,41 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
     set(VirtualRegister(bytecode.m_dst), addToGraph(createOp, callee));
 }
 
+// Answers whether the iterator of the current iterator_open is saved to the generator frame. This follows
+// bytecode order, not control flow, so it is only a heuristic: the exhausted-iterator branch and the fresh
+// iterator behave the same, and a wrong answer costs performance, not correctness.
+bool ByteCodeParser::isIteratorSavedAcrossSuspensions()
+{
+    CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
+    if (!isGeneratorOrAsyncFunctionBodyParseMode(codeBlock->unlinkedCodeBlock()->parseMode()))
+        return false;
+
+    auto& saved = m_inlineStackTop->m_iteratorOpensSavedAcrossSuspensions;
+    if (!saved) {
+        saved.emplace();
+        VirtualRegister frame = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::Argument::Frame));
+        // A later loop may reuse a register for its own iterator, so a save belongs to the latest iterator_open of that register.
+        HashMap<int, unsigned, IntHash<int>, WTF::SignedWithZeroKeyHashTraits<int>> latestIteratorOpen;
+        auto& instructions = codeBlock->instructions();
+        for (auto offset = 0u; offset < instructions.size(); offset = instructions.at(offset).next().offset()) {
+            auto instruction = instructions.at(offset);
+            if (instruction->is<OpIteratorOpen>())
+                latestIteratorOpen.set(instruction->as<OpIteratorOpen>().m_iterator.offset(), offset);
+            else if (instruction->is<OpAsyncIteratorOpen>())
+                latestIteratorOpen.remove(instruction->as<OpAsyncIteratorOpen>().m_iterator.offset());
+            else if (instruction->is<OpPutToScope>()) {
+                auto bytecode = instruction->as<OpPutToScope>();
+                if (bytecode.m_scope != frame)
+                    continue;
+                auto iterator = latestIteratorOpen.find(bytecode.m_value.offset());
+                if (iterator != latestIteratorOpen.end())
+                    saved->set(iterator->value);
+            }
+        }
+    }
+    return saved->get(m_currentIndex.offset());
+}
+
 void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction, BytecodeIndex osrExitIndex)
 {
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
@@ -12464,6 +12503,41 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
         generatedCase = true;
     };
 
+    // Sharing the exhausted iterator merges it with the fresh one, which keeps allocation sinking from
+    // eliminating the fresh one. That is only a loss when the iterator is not saved across suspensions.
+    auto emitStorageWithExhaustedIteratorShortcut = [&](JSCell* exhaustedIterator, UseKind useKind, JSSentinel* sentinelCell) -> std::pair<Node*, Node*> {
+        Node* iterated = get(bytecode.m_iterable);
+        Node* storage = addToGraph(MapStorage, Edge(iterated, useKind));
+        if (!bytecode.m_isImmediatelyStepped || m_graph.hasDebuggerEnabled() || !exhaustedIterator || !isIteratorSavedAcrossSuspensions())
+            return { iterated, storage };
+
+        BasicBlock* noStorageBlock = allocateUntargetableBlock();
+        BasicBlock* hasStorageBlock = allocateUntargetableBlock();
+        BranchData* branchData = m_graph.m_branchData.add();
+        branchData->taken = BranchTarget(noStorageBlock);
+        branchData->notTaken = BranchTarget(hasStorageBlock);
+        emitExitOK();
+        addToGraph(Branch, OpInfo(branchData), addToGraph(IsEmpty, storage));
+
+        m_currentBlock = noStorageBlock;
+        clearCaches();
+        keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+        set(bytecode.m_iterator, weakJSConstant(exhaustedIterator));
+        set(bytecode.m_next, jsConstant(sentinelCell));
+        m_currentIndex = osrExitIndex;
+        m_exitOK = true;
+        processSetLocalQueue();
+        addToGraph(Jump, OpInfo(continuation));
+        m_currentIndex = startIndex;
+
+        m_currentBlock = hasStorageBlock;
+        clearCaches();
+        keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+        emitExitOK();
+        iterated = get(bytecode.m_iterable);
+        return { iterated, addToGraph(MapStorage, Edge(iterated, useKind)) };
+    };
+
     if (seenModes & IterationMode::FastMap) {
         auto& mapIteratorProtocolWatchpointSet = globalObject->mapIteratorProtocolWatchpointSet();
         m_graph.watchpoints().addLazily(mapIteratorProtocolWatchpointSet);
@@ -12500,10 +12574,9 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
         }
 
+        auto [iterated, storage] = emitStorageWithExhaustedIteratorShortcut(globalObject->exhaustedMapIteratorConcurrently(), MapObjectUse, m_vm->fastMapEntriesSentinel());
         Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(IterationKind::Entries)));
         Node* next = jsConstant(m_vm->fastMapEntriesSentinel());
-        Node* iterated = get(bytecode.m_iterable);
-        Node* storage = addToGraph(MapStorage, Edge(iterated, MapObjectUse));
         Node* iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->mapIteratorStructure())));
         addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::IteratedObject)), iterator, iterated);
         addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::Storage)), iterator, storage);
@@ -12572,10 +12645,9 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
         }
 
+        auto [iterated, storage] = emitStorageWithExhaustedIteratorShortcut(globalObject->exhaustedSetIteratorConcurrently(), SetObjectUse, m_vm->fastSetValuesSentinel());
         Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(IterationKind::Values)));
         Node* next = jsConstant(m_vm->fastSetValuesSentinel());
-        Node* iterated = get(bytecode.m_iterable);
-        Node* storage = addToGraph(MapStorage, Edge(iterated, SetObjectUse));
         Node* iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->setIteratorStructure())));
         addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::IteratedObject)), iterator, iterated);
         addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::Storage)), iterator, storage);

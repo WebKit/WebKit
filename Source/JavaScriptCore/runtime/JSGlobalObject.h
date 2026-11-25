@@ -82,12 +82,14 @@ class JSIterator;
 class JSIteratorConstructor;
 class JSIteratorHelperPrototype;
 class JSIteratorPrototype;
+class JSMapIterator;
 class JSModuleLoader;
 class JSModuleRecord;
 class JSPromise;
 class JSPromiseConstructor;
 class JSPromisePrototype;
 class JSPromiseReaction;
+class JSSetIterator;
 class JSTypedArrayViewConstructor;
 class JSTypedArrayViewPrototype;
 class MapIteratorPrototype;
@@ -311,6 +313,8 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoValuesFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_asyncFromSyncIteratorProtoNextFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_mapProtoEntriesFunction;
+    LazyProperty<JSGlobalObject, JSMapIterator> m_exhaustedMapIterator;
+    LazyProperty<JSGlobalObject, JSSetIterator> m_exhaustedSetIterator;
     LazyProperty<JSGlobalObject, JSFunction> m_setProtoValuesFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_stringProtoSymbolIteratorFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_numberProtoToStringFunction;
@@ -798,6 +802,10 @@ public:
     JSFunction* asyncFromSyncIteratorPrototypeNextFunction() const LIFETIME_BOUND { return m_asyncFromSyncIteratorProtoNextFunction.get(this); }
     JSFunction* mapProtoEntriesFunction() const LIFETIME_BOUND { return m_mapProtoEntriesFunction.get(this); }
     JSFunction* mapProtoEntriesFunctionConcurrently() const LIFETIME_BOUND { return m_mapProtoEntriesFunction.getConcurrently(); }
+    JSMapIterator* exhaustedMapIterator() const LIFETIME_BOUND { return m_exhaustedMapIterator.get(this); }
+    JSMapIterator* exhaustedMapIteratorConcurrently() const LIFETIME_BOUND { return m_exhaustedMapIterator.getConcurrently(); }
+    JSSetIterator* exhaustedSetIterator() const LIFETIME_BOUND { return m_exhaustedSetIterator.get(this); }
+    JSSetIterator* exhaustedSetIteratorConcurrently() const LIFETIME_BOUND { return m_exhaustedSetIterator.getConcurrently(); }
     JSFunction* setProtoValuesFunction() const LIFETIME_BOUND { return m_setProtoValuesFunction.get(this); }
     JSFunction* setProtoValuesFunctionConcurrently() const LIFETIME_BOUND { return m_setProtoValuesFunction.getConcurrently(); }
     JSFunction* stringProtoSymbolIteratorFunction() const LIFETIME_BOUND { return m_stringProtoSymbolIteratorFunction.get(this); }

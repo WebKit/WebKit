@@ -982,7 +982,7 @@ namespace JSC {
         void emitRequireObjectCoercible(RegisterID* value, ASCIILiteral error);
         void emitRequireObjectCoercibleForDestructuring(RegisterID* value, UniquedStringImpl* propertyName);
 
-        void emitIteratorOpen(RegisterID* iterator, RegisterID* nextOrIndex, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData*);
+        void emitIteratorOpen(RegisterID* iterator, RegisterID* nextOrIndex, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData*, bool isImmediatelyStepped);
         void emitIteratorNext(RegisterID* done, RegisterID* value, RegisterID* iterable, RegisterID* nextOrIndex, CallArguments& iterator, const ThrowableExpressionData*);
 
         RegisterID* emitGetGenericIterator(RegisterID*, ThrowableExpressionData*);
