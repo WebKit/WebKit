@@ -112,4 +112,5 @@ enum class WebCore::SkipScrollingTargetElement : bool;
     std::optional<WebCore::LayoutRect> visibilityCheckRect;
     WebCore::SkipScrollingTargetElement skipScrollingTargetElement;
     WebCore::ScrollIntoViewContainer container;
+    WebCore::RectEdges<WebCore::LayoutUnit> scrollMargin;
 };

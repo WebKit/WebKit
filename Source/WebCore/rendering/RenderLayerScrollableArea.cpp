@@ -1954,11 +1954,15 @@ LayoutRect RenderLayerScrollableArea::scrollRectToVisible(const LayoutRect& abso
     scrollingViewportWithPadding.contract(scrollPadding);
 
     auto localExposeRect = computeLocalExposeRect(absoluteRect, box);
+
+    auto localExposeRectWithMargin = localExposeRect;
+    localExposeRectWithMargin.expand(options.scrollMargin);
+
     std::optional<LayoutRect> localVisiblityRect;
     if (options.visibilityCheckRect)
         localVisiblityRect = computeLocalExposeRect(*options.visibilityCheckRect, box);
 
-    auto revealRect = getRectToExposeForScrollIntoView(scrollingViewportWithPadding, localExposeRect, options.alignX, options.alignY, localVisiblityRect);
+    auto revealRect = getRectToExposeForScrollIntoView(scrollingViewportWithPadding, localExposeRectWithMargin, options.alignX, options.alignY, localVisiblityRect);
     revealRect.move(-scrollingViewportWithPadding.x(), -scrollingViewportWithPadding.y());
 
     auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
