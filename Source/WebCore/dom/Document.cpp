@@ -7220,6 +7220,27 @@ void Document::nodeWillBeMoved(Node& node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
+    if (RefPtr element = dynamicDowncast<Element>(node); element && element->isComposedTreeInclusiveAncestorOf(m_hoveredElement.get())) {
+        for (Ref hoveredElement : composedTreeLineage(*m_hoveredElement)) {
+            hoveredElement->setHovered(false);
+            if (hoveredElement.ptr() == element)
+                break;
+        }
+        m_hoveredElement = element;
+        hoveredElementDidDetach(*element);
+    }
+
+    if (RefPtr element = dynamicDowncast<Element>(node); element && element->isComposedTreeInclusiveAncestorOf(m_activeElement.get())) {
+        for (Ref activeElement : composedTreeLineage(*m_activeElement)) {
+            activeElement->setActive(false);
+            m_userActionElements.setInActiveChain(activeElement, false);
+            if (activeElement.ptr() == element)
+                break;
+        }
+        m_activeElement = element;
+        elementInActiveChainDidDetach(*element);
+    }
+
     for (Ref nodeIterator : m_nodeIterators)
         nodeIterator->nodeWillBeRemoved(node);
 

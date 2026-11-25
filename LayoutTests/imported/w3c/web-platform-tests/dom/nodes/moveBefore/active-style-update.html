@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<title>moveBefore should update active style</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-parentnode-movebefore">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/semantics-other.html#selector-active">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<style>
+  .parent { background: blue; }
+  .parent:active { background: red; }
+</style>
+<body></body>
+<script>
+function createTestElements(t) {
+  const container = document.createElement("div");
+  container.innerHTML = `
+    <div class="parent" id="oldParent">
+      <div id="target">target</div>
+    </div>
+    <div class="parent" id="newParent">new parent</div>
+  `;
+  document.body.appendChild(container);
+  t.add_cleanup(async () => {
+    await new test_driver.Actions().pointerUp().send();
+    container.remove();
+  });
+
+  return {
+    oldParent: document.getElementById("oldParent"),
+    newParent: document.getElementById("newParent"),
+    target: document.getElementById("target"),
+  };
+}
+
+promise_test(async t => {
+  const { oldParent, newParent, target } = createTestElements(t);
+
+  await new test_driver.Actions()
+    .pointerMove(1, 1, {origin: target})
+    .pointerDown()
+    .send();
+  newParent.moveBefore(target, null);
+  await new test_driver.Actions().pointerUp().send();
+  await new Promise(requestAnimationFrame);
+
+  assert_false(target.matches(":active"), "the moved element is not active after release");
+  assert_false(oldParent.matches(":active"), "the old parent is not active after release");
+  assert_false(newParent.matches(":active"), "the new parent is not active after release");
+  assert_equals(getComputedStyle(oldParent).backgroundColor, "rgb(0, 0, 255)");
+  assert_equals(getComputedStyle(newParent).backgroundColor, "rgb(0, 0, 255)");
+}, "Releasing the pointer after moving the pressed element clears :active everywhere");
+</script>

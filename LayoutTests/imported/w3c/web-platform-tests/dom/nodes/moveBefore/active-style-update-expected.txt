@@ -1,0 +1,3 @@
+
+PASS Releasing the pointer after moving the pressed element clears :active everywhere
+
