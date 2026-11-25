@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# Generates bindings for the test IDL files with CodeGeneratorExtensions.pm and compares them with Expected.
+# The generated code is only compared, not compiled. Pass --reset-results to update the expected files.
+
+set -e
+
+testsDirectory="$(cd "$(dirname "$0")" && pwd)"
+scriptsDirectory="$(dirname "$testsDirectory")"
+webKitDirectory="$(cd "$scriptsDirectory/../../../.." && pwd)"
+bindingsScriptsDirectory="$webKitDirectory/../WebCore/bindings/scripts"
+
+outputDirectory="$(mktemp -d)"
+trap 'rm -rf "$outputDirectory"' EXIT
+
+idlFiles=("$testsDirectory"/*.idl)
+printf '%s\n' "${idlFiles[@]}" > "$outputDirectory/IDLFileNames.txt"
+: > "$outputDirectory/SupplementalDependencies.txt"
+
+for idlFile in "${idlFiles[@]}"; do
+    perl -I "$bindingsScriptsDirectory" -I "$scriptsDirectory" "$bindingsScriptsDirectory/generate-bindings.pl" \
+        --defines "LANGUAGE_OBJECTIVE_C ENABLE_WK_WEB_EXTENSIONS WK_WEB_EXTENSIONS" \
+        --outputDir "$outputDirectory" --generator Extensions \
+        --idlAttributesFile "$scriptsDirectory/IDLAttributes.json" \
+        --idlFileNamesList "$outputDirectory/IDLFileNames.txt" \
+        --supplementalDependencyFile "$outputDirectory/SupplementalDependencies.txt" \
+        "$idlFile"
+done
+
+rm -f "$outputDirectory/IDLFileNames.txt" "$outputDirectory/SupplementalDependencies.txt"
+
+if [ "$1" = "--reset-results" ]; then
+    rm -rf "$testsDirectory/Expected"
+    mkdir -p "$testsDirectory/Expected"
+    cp "$outputDirectory"/* "$testsDirectory/Expected/"
+    echo "Updated the expected results."
+    exit 0
+fi
+
+if diff -ru "$testsDirectory/Expected" "$outputDirectory"; then
+    echo "The generated bindings match the expected results."
+else
+    echo "The generated bindings differ from the expected results. Run with --reset-results to update them."
+    exit 1
+fi

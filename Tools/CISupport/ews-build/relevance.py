@@ -71,6 +71,7 @@ BUILD = Relevance(exclude=NO_BUILD_INPUTS)
 
 BINDINGS_TESTS = Relevance(include=[
     re.compile(rb'Source/WebCore', re.IGNORECASE),
+    re.compile(rb'Source/WebKit/WebProcess/Extensions/Bindings', re.IGNORECASE),
     re.compile(rb'Tools', re.IGNORECASE),
 ])
 

@@ -187,6 +187,7 @@ class TestBindingsTestsRelevance(RelevanceTestCase):
     def test_relevant(self):
         self.assertRelevant('+++ Source/WebCore/bindings/scripts/CodeGeneratorJS.pm')
         self.assertRelevant('+++ Tools/Scripts/run-bindings-tests')
+        self.assertRelevant('+++ Source/WebKit/WebProcess/Extensions/Bindings/Scripts/CodeGeneratorExtensions.pm')
 
     def test_irrelevant(self):
         self.assertIrrelevant('+++ Source/WebKit/UIProcess/WebPageProxy.cpp', '+++ LayoutTests/fast/dom/foo.html')

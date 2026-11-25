@@ -1,0 +1,61 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// Covers the Objective-C path of the generator: arguments converted to Foundation objects, exceptions, and what a call needs from its context.
+[
+    Conditional=WK_WEB_EXTENSIONS,
+    MainWorldOnly,
+    ReturnsPromiseWhenCallbackIsOmitted,
+] interface WebExtensionAPITestObjC {
+
+    // Arguments that are converted to Foundation objects.
+    [RaisesException] void setDictionary([NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [RaisesStringException] void getNullableDictionary([Optional, NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException] void enable([Optional, NSObject=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException] void registerScripts([NSArray=NSDictionary] array scripts, [Optional, CallbackHandler] function callback);
+    [RaisesStringException, ImplementedAs=createItem] void create([Optional] DOMString name, [JSONValue] any info, [Optional, CallbackHandler] function callback);
+    [RaisesStringException] void get([Optional, JSONObject=StopAtTopLevel, DOMString] any items, [Optional, CallbackHandler] function callback);
+    [JSONValue] any getManifest();
+    [RaisesException, NeedsFrame] void postMessage([Serialization=Message] any message);
+    DOMString getMessage([CannotBeEmpty] DOMString name, [Optional, ValuesAllowed] any substitutions);
+    [URL, ConvertNullStringTo=Null, RaisesException, Dynamic] DOMString getURL(DOMString resourcePath);
+    [NeedsScriptContext] any runTests([Vector=JSValueRef] array tests);
+
+    // What a call needs from its context.
+    [RaisesException, NeedsPageIdentifier] void openPopup([Optional, NSDictionary=NullAllowed] any options, [Optional, CallbackHandler] function callback);
+    [RaisesException, ImplementedAs=createMenu, NeedsPage, NeedsFrame] void createMenu([NSDictionary=NullAllowed] any properties, [Optional, CallbackHandler] function callback);
+    [ProcessArgumentsLeftToRight, RaisesException, Conditional=WK_WEB_EXTENSIONS_NOTIFICATIONS] void notify([Optional] DOMString notificationId, [NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [MainWorldOnly, NeedsScriptContext] any getBackgroundPage();
+    [NeedsFrameIdentifier] void addListener([CallbackHandler] function listener);
+    [NeedsFrameIdentifier] void removeListener([CallbackHandler] function listener);
+    boolean hasListener([CallbackHandler] function listener);
+
+    // Attributes.
+    readonly attribute WebExtensionAPIEvent onChanged;
+    [NeedsPage] readonly attribute double tabId;
+    [ImplementedAs=rootNodeIdentifier] readonly attribute DOMString ROOT_NODE_ID;
+    [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIAction action;
+
+};

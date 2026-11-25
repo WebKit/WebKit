@@ -198,6 +198,24 @@ class BindingsTests:
 
         return passed
 
+    def run_extension_tests(self):
+        # The web extension generator has its own test IDL files and its own attributes file, so it has its own script.
+        cmd = [os.path.join('WebKit', 'WebProcess', 'Extensions', 'Bindings', 'Scripts', 'Tests', 'run-tests')]
+        if self.reset_results:
+            cmd.append('--reset-results')
+
+        try:
+            output = self.executive.run_command(cmd, env=self.generator_env)
+            if output:
+                print(output)
+        except ScriptError as e:
+            print(e.output)
+            if self.json_file_name:
+                self.failures.append('(extensions) The generated bindings differ from the expected results')
+            return False
+
+        return True
+
     def run_dependency_tests(self):
         work_directory = tempfile.mkdtemp()
         idl_directory = os.path.join(work_directory, 'idl')
@@ -353,6 +371,9 @@ class BindingsTests:
             reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
             if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file, idl_files_list):
                 all_tests_passed = False
+
+        if self.test_matches_patterns('extensions') and not self.run_extension_tests():
+            all_tests_passed = False
 
         if not self.reset_results and self.test_matches_patterns('generate-bindings-all.pl'):
             if not self.run_dependency_tests():
