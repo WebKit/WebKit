@@ -120,14 +120,14 @@ static double resolveIc(const FontCascade& fontCascadeForUnit)
 static double resolveLh(const ComputedStyle* style, const FontCascade& fallbackFontCascadeForUnit, const auto& adaptor)
 {
     if (style) {
-        CheckedRef fontCascade = style->fontCascade();
-        auto& fontDescription = fontCascade->fontDescription();
+        auto& fontCascade = style->fontCascade();
+        auto& fontDescription = fontCascade.fontDescription();
 
         auto lineHeight = evaluate<float>(
             style->lineHeight(),
             LineHeightEvaluationContext {
                 fontDescription.computedSize(),
-                static_cast<float>(unzoomFontMetric(fontCascade->metricsOfPrimaryFont().lineSpacing(), fontDescription)),
+                static_cast<float>(unzoomFontMetric(fontCascade.metricsOfPrimaryFont().lineSpacing(), fontDescription)),
             },
             ZoomFactor::none()
         );
@@ -450,9 +450,12 @@ struct CSSToLengthConversionDataAdaptor {
 };
 
 struct DirectDataAdaptor {
+    // Stack-only: holds a reference to FontCascades that must outlive it.
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
     CSSPropertyID propertyToCompute;
-    const CheckedRef<const FontCascade> fontCascadeForUnit;
-    const CheckedRef<const FontCascade> rootFontCascadeForUnit;
+    const FontCascade& fontCascadeForUnit;
+    const FontCascade& rootFontCascadeForUnit;
     const CheckedPtr<const RenderView> renderViewForUnit;
 
     NODELETE void setUsesViewportUnits() const
@@ -491,12 +494,12 @@ struct DirectDataAdaptor {
 
     NODELETE const FontCascade& fontCascadeForFontUnits() const
     {
-        return fontCascadeForUnit.get();
+        return fontCascadeForUnit;
     }
 
     NODELETE const FontCascade& fontCascadeForRootFontUnits() const
     {
-        return rootFontCascadeForUnit.get();
+        return rootFontCascadeForUnit;
     }
 
     NODELETE const ComputedStyle* styleForLineHeightUnits() const
@@ -561,33 +564,33 @@ static double resolveLengthWithoutTextZoom(double value, CSS::LengthUnit lengthU
     case QuirkyEm:
         return value * resolveEm(adaptor.fontCascadeForFontUnits()) * adaptor.textSizeAdjustMultiplierForFontUnits();
     case Ex:
-        return value * resolveEx(protect(adaptor.fontCascadeForFontUnits()));
+        return value * resolveEx(adaptor.fontCascadeForFontUnits());
     case Cap:
-        return value * resolveCap(protect(adaptor.fontCascadeForFontUnits()));
+        return value * resolveCap(adaptor.fontCascadeForFontUnits());
 
     case Ch:
-        return value * resolveCh(protect(adaptor.fontCascadeForFontUnits()));
+        return value * resolveCh(adaptor.fontCascadeForFontUnits());
     case Ic:
-        return value * resolveIc(protect(adaptor.fontCascadeForFontUnits()));
+        return value * resolveIc(adaptor.fontCascadeForFontUnits());
 
     case Lh:
-        return value * resolveLh(protect(adaptor.styleForLineHeightUnits()), protect(adaptor.fontCascadeForFontUnits()), adaptor);
+        return value * resolveLh(protect(adaptor.styleForLineHeightUnits()), adaptor.fontCascadeForFontUnits(), adaptor);
 
     // MARK: "root font dependent" resolution
 
     case Rem:
         return value * resolveEm(adaptor.fontCascadeForRootFontUnits()) * adaptor.textSizeAdjustMultiplierForRootFontUnits();
     case Rcap:
-        return value * resolveCap(protect(adaptor.fontCascadeForRootFontUnits()));
+        return value * resolveCap(adaptor.fontCascadeForRootFontUnits());
     case Rch:
-        return value * resolveCh(protect(adaptor.fontCascadeForRootFontUnits()));
+        return value * resolveCh(adaptor.fontCascadeForRootFontUnits());
     case Rex:
-        return value * resolveEx(protect(adaptor.fontCascadeForRootFontUnits()));
+        return value * resolveEx(adaptor.fontCascadeForRootFontUnits());
     case Ric:
-        return value * resolveIc(protect(adaptor.fontCascadeForRootFontUnits()));
+        return value * resolveIc(adaptor.fontCascadeForRootFontUnits());
 
     case Rlh:
-        return value * resolveLh(protect(adaptor.styleForRootLineHeightUnits()), protect(adaptor.fontCascadeForRootFontUnits()), adaptor);
+        return value * resolveLh(protect(adaptor.styleForRootLineHeightUnits()), adaptor.fontCascadeForRootFontUnits(), adaptor);
 
     // MARK: "viewport-percentage" resolution
 

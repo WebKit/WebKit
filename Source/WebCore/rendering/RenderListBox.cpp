@@ -141,13 +141,13 @@ void RenderListBox::updateFromElement()
             if (text.isEmpty())
                 continue;
             if (isGroupLabel && !boldFont) {
-                FontCascade bolderFont = bolder(protect(document()), protect(style->fontCascade()));
+                FontCascade bolderFont = bolder(protect(document()), style->fontCascade());
                 boldFont = WTF::move(bolderFont);
             }
-            CheckedRef font = isGroupLabel ? *boldFont : style->fontCascade();
+            auto& font = isGroupLabel ? *boldFont : style->fontCascade();
             text = applyTextTransform(style, text);
             auto textRun = constructTextRun(text, style, ExpansionBehavior::allowRightOnly());
-            logicalWidth = std::max(logicalWidth, font->width(textRun));
+            logicalWidth = std::max(logicalWidth, font.width(textRun));
         }
         // FIXME: Is ceiling right here, or should we be doing some kind of rounding instead?
         m_optionsLogicalWidth = static_cast<int>(std::ceil(logicalWidth));
@@ -516,7 +516,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     paintInfo.context().setFillColor(textColor);
 
     TextRun textRun(itemText, 0, 0, ExpansionBehavior::allowRightOnly(), itemStyle->writingMode().bidiDirection(), isOverride(itemStyle->unicodeBidi()), true);
-    FontCascade itemFont { CheckedRef { style->fontCascade() } };
+    FontCascade itemFont { style->fontCascade() };
     LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, style, itemStyle, itemFont, r));
 

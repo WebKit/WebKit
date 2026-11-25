@@ -20,6 +20,7 @@
 #pragma once
 
 #include "FontCascade.h"
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -35,6 +36,8 @@ class ComputedStyle;
 // Helper class used by SVGTextLayoutAlgorithm to handle 'alignment-baseline' / 'dominant-baseline' and 'baseline-shift'.
 class SVGTextLayoutEngineBaseline {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutEngineBaseline);
+    // Stack-only: holds a reference to a FontCascade that must outlive it.
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     SVGTextLayoutEngineBaseline(const FontCascade&);
 
@@ -46,7 +49,7 @@ public:
 private:
     NODELETE AlignmentBaseline dominantBaselineToAlignmentBaseline(bool isVerticalText, const Style::ComputedStyle&) const;
 
-    const CheckedRef<const FontCascade> m_font;
+    const FontCascade& m_font;
 };
 
 } // namespace WebCore

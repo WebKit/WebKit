@@ -196,7 +196,7 @@ void BuilderState::updateFont()
     updateFontForOrientationChange();
     updateFontForSizeChange();
 
-    protect(m_style->fontCascade())->update(fontSelector.ptr());
+    m_style->fontCascade().update(fontSelector.ptr());
 
     m_fontDirty = false;
 }

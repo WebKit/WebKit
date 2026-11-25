@@ -166,7 +166,7 @@ std::optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::valid
 
 LayoutUnit RenderMathMLScripts::spaceAfterScript()
 {
-    Ref primaryFont = protect(style().fontCascade())->primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData())
         return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SpaceAfterScript));
     // https://w3c.github.io/mathml-core/#layout-constants-mathconstants suggests 1/24em.
@@ -236,7 +236,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderMathMLScripts::computeIntrinsicLogicalWi
 auto RenderMathMLScripts::verticalParameters() const -> VerticalParameters
 {
     VerticalParameters parameters;
-    Ref primaryFont = protect(style().fontCascade())->primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         parameters.subscriptShiftDown = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::SubscriptShiftDown);
         parameters.superscriptShiftUp = mathData->getMathConstant(primaryFont, style().mathShift() == MathShift::Compact ? OpenTypeMathData::MathConstant::SuperscriptShiftUpCramped : OpenTypeMathData::MathConstant::SuperscriptShiftUp);

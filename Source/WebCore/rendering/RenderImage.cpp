@@ -263,8 +263,8 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     // we have an alt and the user meant it (its not a text we invented)
     if (auto alt = altText(); !alt.isEmpty()) {
         CheckedRef style = this->style();
-        CheckedRef font = style->fontCascade();
-        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font->width(RenderBlock::constructTextRun(alt, style))), maxAltTextWidth), paddingHeight + std::min(font->metricsOfPrimaryFont().intHeight(), maxAltTextHeight));
+        auto& font = style->fontCascade();
+        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(alt, style))), maxAltTextWidth), paddingHeight + std::min(font.metricsOfPrimaryFont().intHeight(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
 
@@ -728,12 +728,12 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
         return;
 
     CheckedRef style = this->style();
-    CheckedRef fontCascade = style->fontCascade();
-    auto& fontMetrics = fontCascade->metricsOfPrimaryFont();
+    auto& fontCascade = style->fontCascade();
+    auto& fontMetrics = fontCascade.metricsOfPrimaryFont();
     auto isHorizontal = writingMode().isHorizontal();
     auto encodedDisplayString = protect(document())->displayStringModifiedByEncoding(altText);
     auto textRun = RenderBlock::constructTextRun(encodedDisplayString, style, ExpansionBehavior::defaultBehavior(), RespectDirection | RespectDirectionOverride);
-    auto textWidth = LayoutUnit { fontCascade->width(textRun) };
+    auto textWidth = LayoutUnit { fontCascade.width(textRun) };
 
     auto hasRoomForAltText = [&] {
         // Only draw the alt text if it fits within the content box (content width) and above the error image (content height).
@@ -776,7 +776,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
 
         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
         context.concatCTM(Paint::rotation(rotationRect, RotationDirection::Clockwise));
-        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade->metricsOfPrimaryFont().ascent() };
+        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().ascent() };
         context.drawBidiText(fontCascade, textRun, roundPointToDevicePixels(textOrigin, document().deviceScaleFactor()));
         context.concatCTM(Paint::rotation(rotationRect, RotationDirection::Counterclockwise));
     }

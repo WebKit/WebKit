@@ -65,7 +65,7 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Dat
 
 void DateTimeNumericFieldElement::adjustMinInlineSize(Style::ComputedStyle& style) const
 {
-    CheckedRef font = style.fontCascade();
+    auto& font = style.fontCascade();
 
     unsigned length = 2;
     if (m_range.maximum > 999)
@@ -79,7 +79,7 @@ void DateTimeNumericFieldElement::adjustMinInlineSize(Style::ComputedStyle& styl
     for (char c = '0'; c <= '9'; ++c) {
         auto numberString = locale->convertToLocalizedNumber(makeString(pad(c, length, makeString(c))));
         auto textRun = RenderBlock::constructTextRun(numberString, style);
-        inlineSize = std::max(inlineSize, font->width(textRun));
+        inlineSize = std::max(inlineSize, font.width(textRun));
     }
 
     style.setLogicalMinWidth(Style::MinimumSize::Fixed { inlineSize / style.usedZoomForLength().value });

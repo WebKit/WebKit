@@ -211,7 +211,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade.primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
         return;
     }
 
@@ -227,9 +227,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     // Kerning and vertical text are not handled as font features, so we only need to build a new
     // features vector when kerning is explicitly disabled or the font is vertically oriented.
     Vector<hb_feature_t> extraFeatures;
-    if (!m_fontCascade->enableKerning() || isVertical) {
+    if (!m_fontCascade.enableKerning() || isVertical) {
         extraFeatures.reserveInitialCapacity(featuresSize + 3);
-        if (!m_fontCascade->enableKerning()) {
+        if (!m_fontCascade.enableKerning()) {
             static hb_feature_t kernFeature { HB_TAG('k', 'e', 'r', 'n'), 0, 0, static_cast<unsigned>(-1) };
             extraFeatures.append(kernFeature);
         }
@@ -253,7 +253,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     // The computed "locale" equals the "lang" attribute. The latter must be a valid BCP 47 language tag,
     // according to <https://html.spec.whatwg.org/multipage/dom.html#attr-lang>.
     // This is exactly what hb_language_from_string() expects, so we can pass directly.
-    auto language = hb_language_from_string(makeUTF8CString(m_fontCascade->fontDescription().usedLocale().string()).legacyCStringPointer(), -1);
+    auto language = hb_language_from_string(makeUTF8CString(m_fontCascade.fontDescription().usedLocale().string()).legacyCStringPointer(), -1);
 
     auto shapeFunction = [&](const HBRun& run) {
         hb_buffer_set_cluster_level(buffer.get(), HB_BUFFER_CLUSTER_LEVEL_CHARACTERS);

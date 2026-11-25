@@ -891,7 +891,7 @@ static PlatformFont *_font(Element& element)
     CheckedPtr renderer = element.renderer();
     if (!renderer)
         return nil;
-    Ref primaryFont = protect(renderer->style().fontCascade())->primaryFont();
+    Ref primaryFont = renderer->style().fontCascade().primaryFont();
     if (primaryFont->attributes().origin == FontOrigin::Remote)
         return [PlatformFontClass systemFontOfSize:defaultFontSize];
     return (__bridge PlatformFont *)primaryFont->ctFont();

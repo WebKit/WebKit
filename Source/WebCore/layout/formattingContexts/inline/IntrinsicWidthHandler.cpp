@@ -394,7 +394,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
     for (CheckedPtr child = root.firstInFlowChild(); child; child = child->nextInFlowSibling()) {
         if (CheckedPtr inlineTextBox = dynamicDowncast<InlineTextBox>(*child)) {
             ASSERT(inlineTextBox->style().whiteSpaceCollapse() != WhiteSpaceCollapse::Preserve);
-            CheckedRef fontCascade = inlineTextBox->style().fontCascade();
+            auto& fontCascade = inlineTextBox->style().fontCascade();
             auto contentLength = inlineTextBox->content().length();
             size_t index = 0;
             auto isTreatedAsSpaceCharacter = [&](auto character) {
@@ -434,7 +434,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMaximumWidth(MayCacheLayoutRes
     auto contentLogicalWidth = [&] {
         if (auto width = inlineTextItem.width())
             return *width;
-        return TextUtil::width(inlineTextItem, protect(style->fontCascade()), { });
+        return TextUtil::width(inlineTextItem, style->fontCascade(), { });
     }();
     if (mayCacheLayoutResult == MayCacheLayoutResult::No)
         return contentLogicalWidth;

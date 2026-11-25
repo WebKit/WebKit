@@ -31,7 +31,6 @@ rendering/paint/InlineBoxPainter.cpp
 rendering/paint/TextBoxPainter.cpp
 rendering/paint/TextDecorationPainter.cpp
 style/ElementRuleCollector.cpp
-style/StyleBuilderStateInlines.h
 style/StyleResolver.cpp
 style/StyleTreeResolver.cpp
 style/Styleable.cpp

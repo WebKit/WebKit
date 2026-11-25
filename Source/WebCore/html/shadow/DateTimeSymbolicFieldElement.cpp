@@ -52,12 +52,12 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, D
 
 void DateTimeSymbolicFieldElement::adjustMinInlineSize(Style::ComputedStyle& style) const
 {
-    CheckedRef font = style.fontCascade();
+    auto& font = style.fontCascade();
 
     float inlineSize = 0;
     for (auto& symbol : m_symbols) {
         auto textRun = RenderBlock::constructTextRun(symbol, style);
-        inlineSize = std::max(inlineSize, font->width(textRun));
+        inlineSize = std::max(inlineSize, font.width(textRun));
     }
     style.setLogicalMinWidth(Style::MinimumSize::Fixed { inlineSize / style.usedZoomForLength().value });
 }

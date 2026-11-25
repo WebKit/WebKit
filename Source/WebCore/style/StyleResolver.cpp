@@ -227,7 +227,7 @@ void Resolver::appendAuthorStyleSheets(std::span<const Ref<CSSStyleSheet>> style
     m_ruleSets.appendAuthorStyleSheets(styleSheets, &m_mediaQueryEvaluator, m_inspectorCSSOMWrappers);
 
     if (CheckedPtr renderView = document().renderView())
-        protect(renderView->style().fontCascade())->update(&protect(document())->fontSelector());
+        renderView->style().fontCascade().update(&protect(document())->fontSelector());
 }
 
 KeyframesRuleMap& Resolver::userAgentKeyframes()

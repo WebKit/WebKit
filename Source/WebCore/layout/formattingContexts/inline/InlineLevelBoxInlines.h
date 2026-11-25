@@ -53,7 +53,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const WebCore::Style
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ protect(style.fontCascade())->metricsOfPrimaryFont(), style.textAutosizingAdjustedLineHeight(), style.textBoxTrim(), style.textBoxEdge(), style.lineFitEdge(), style.usedZoomForLength(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().usedSize()), toInlineBoxLevelVerticalAlign(style, [this] { return preferredLineHeight(); }), style.alignmentBaseline() })
+    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.textAutosizingAdjustedLineHeight(), style.textBoxTrim(), style.textBoxEdge(), style.lineFitEdge(), style.usedZoomForLength(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().usedSize()), toInlineBoxLevelVerticalAlign(style, [this] { return preferredLineHeight(); }), style.alignmentBaseline() })
 {
 }
 

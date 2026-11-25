@@ -226,13 +226,13 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
     auto emphasisMarkTextOrigin = textOrigin;
 
     if (m_isCombinedText) {
-        auto ascent = LayoutUnit(m_font->metricsOfPrimaryFont().ascent());
+        auto ascent = LayoutUnit(m_font.metricsOfPrimaryFont().ascent());
         emphasisMarkTextOrigin = { boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + ascent };
         m_context.concatCTM(rotation(boxRect, RotationDirection::Clockwise));
     }
 
     // FIXME: Truncate right-to-left text correctly.
-    paintTextWithShadows(&shadow, shadowColorFilter, CheckedRef { m_isCombinedText ? m_renderStyle->fontCascade() : m_font.get() }, emphasisMarkTextRun, boxRect, emphasisMarkTextOrigin, startOffset, endOffset,
+    paintTextWithShadows(&shadow, shadowColorFilter, m_isCombinedText ? m_renderStyle->fontCascade() : m_font, emphasisMarkTextRun, boxRect, emphasisMarkTextOrigin, startOffset, endOffset,
         m_emphasisMark, m_emphasisMarkOffset, paintStyle.strokeWidth > 0);
 
     if (m_isCombinedText)

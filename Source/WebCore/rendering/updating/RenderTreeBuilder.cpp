@@ -1152,7 +1152,7 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
 
     if (is<RenderText>(child)) {
         // FIXME: Find out how to increment the visually non empty character count when the font becomes available.
-        if (parent.usedStyle().visibility() == UsedVisibility::Visible && !protect(parent.style().fontCascade())->isLoadingCustomFonts())
+        if (parent.usedStyle().visibility() == UsedVisibility::Visible && !parent.style().fontCascade().isLoadingCustomFonts())
             m_view->frameView().incrementVisuallyNonEmptyCharacterCount(downcast<RenderText>(child).text());
         return;
     }

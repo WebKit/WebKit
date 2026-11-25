@@ -14,7 +14,6 @@ rendering/RenderTableSection.h
 rendering/paint/BackgroundPainter.h
 rendering/paint/InlineBoxPainter.h
 rendering/paint/PaintInfo.h
-rendering/paint/TextDecorationPainter.h
 style/PseudoClassChangeInvalidation.h
 style/StyleAdjuster.h
 style/StyleBuilderState.h

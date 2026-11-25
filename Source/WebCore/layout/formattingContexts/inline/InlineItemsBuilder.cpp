@@ -105,7 +105,7 @@ struct WidthAndGlyphOverflow {
 };
 static inline WidthAndGlyphOverflow nonWhitespaceContentWidth(const auto& inlineTextBox, auto startPosition, auto endPosition, auto mayHaveGlyphOverflow)
 {
-    CheckedRef fontCascade = inlineTextBox.style().fontCascade();
+    auto& fontCascade = inlineTextBox.style().fontCascade();
     if (!mayHaveGlyphOverflow)
         return { TextUtil::width(inlineTextBox, fontCascade, startPosition, endPosition, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes), { } };
 
@@ -114,7 +114,7 @@ static inline WidthAndGlyphOverflow nonWhitespaceContentWidth(const auto& inline
     glyphOverflow.computeBounds = true;
     auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, endPosition, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, { }, &glyphOverflow);
 
-    auto& fontMetrics = fontCascade->metricsOfPrimaryFont();
+    auto& fontMetrics = fontCascade.metricsOfPrimaryFont();
     glyphOverflow.top = std::max(0.f, glyphOverflow.top - fontMetrics.ascent(FontBaseline::Alphabetic));
     glyphOverflow.bottom = std::max(0.f, glyphOverflow.bottom - fontMetrics.descent(FontBaseline::Alphabetic));
     return { width, std::pair<LayoutUnit, LayoutUnit> { std::clamp(glyphOverflow.top, 0_lu, 31_lu), std::clamp(glyphOverflow.bottom, 0_lu, 7_lu) } };
@@ -436,7 +436,7 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         CheckedRef boundaryOwnerStyle = inlineItemList[boundaryIndex].layoutBox().parent().style();
         auto boundaryTextAutospace = boundaryOwnerStyle->textAutospace();
         if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(inlineTextBox->content().codePointAt(start), lastCharacterFromPreviousRun))
-            spacings.add(boundaryIndex, TextAutospace::textAutospaceSize(protect(boundaryOwnerStyle->fontCascade())->primaryFont()));
+            spacings.add(boundaryIndex, TextAutospace::textAutospaceSize(boundaryOwnerStyle->fontCascade().primaryFont()));
 
         lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(content);
         lastCharacterDepth = currentCharacterDepth;
@@ -1011,8 +1011,8 @@ static inline bool canCacheWidthOnInlineTextItem(const InlineTextBox& inlineText
 
 static bool textBoxMayHaveGlyphOverflow(const InlineTextBox& inlineTextBox)
 {
-    CheckedRef fontCascade = inlineTextBox.style().fontCascade();
-    return !inlineTextBox.canUseSimpleFontCodePath() || fontCascade->primaryFont().origin() == FontOrigin::Remote;
+    auto& fontCascade = inlineTextBox.style().fontCascade();
+    return !inlineTextBox.canUseSimpleFontCodePath() || fontCascade.primaryFont().origin() == FontOrigin::Remote;
 }
 
 static bool inlineTextBoxWidthsAreCacheable(const InlineTextBox& inlineTextBox, bool contentMayAdjustWidths, bool mayHaveGlyphOverflow)
@@ -1034,7 +1034,7 @@ static void handleTextSpacing(TextSpacing::SpacingState& spacingState, Trimmable
         // We need to store information about spacing added between inline text items since it needs to be trimmed during line breaking if the consecutive items are placed on different lines
         auto characterClass = TextSpacing::characterClass(inlineTextItem.content().codePointAt(0));
         if (autospace.shouldApplySpacing(spacingState.lastCharacterClassFromPreviousRun, characterClass))
-            trimmableTextSpacings.add(inlineItemIndex, TextAutospace::textAutospaceSize(protect(inlineTextItem.style().fontCascade())->primaryFont()));
+            trimmableTextSpacings.add(inlineItemIndex, TextAutospace::textAutospaceSize(inlineTextItem.style().fontCascade().primaryFont()));
 
         auto lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(inlineTextItem.content());
         spacingState.lastCharacterClassFromPreviousRun = TextSpacing::characterClass(lastCharacterFromPreviousRun);
@@ -1069,7 +1069,7 @@ void InlineItemsBuilder::computeInlineTextItemWidthsAndTextSpacing(InlineItemLis
                     if (auto inlineBoxBoundaryTextSpacing = inlineBoxBoundaryTextSpacings.find(potentialInlineBoxStartIndex); inlineBoxBoundaryTextSpacing != inlineBoxBoundaryTextSpacings.end())
                         extraInlineTextSpacing = inlineBoxBoundaryTextSpacing->value;
                 }
-                CheckedRef fontCascade = inlineTextItem->style().fontCascade();
+                auto& fontCascade = inlineTextItem->style().fontCascade();
                 auto width = InlineLayoutUnit { };
                 auto mayHaveGlyphOverflow = [&] {
                     if (currentInlineTextBox != &inlineTextItem->inlineTextBox()) {
@@ -1082,10 +1082,10 @@ void InlineItemsBuilder::computeInlineTextItemWidthsAndTextSpacing(InlineItemLis
                     // We don't need glyph overflow until after display boxes are created, but walking the content again is a major performance hit. See InlineDisplayContentBuilder::appendTextDisplayBox's addGlyphOverflow.
                     GlyphOverflow glyphOverflow;
                     glyphOverflow.computeBounds = true;
-                    width = TextUtil::width(*inlineTextItem, fontCascade.get(), start, start + inlineTextItem->length(), { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState, &glyphOverflow);
+                    width = TextUtil::width(*inlineTextItem, fontCascade, start, start + inlineTextItem->length(), { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState, &glyphOverflow);
                     inlineTextItem->setGlyphOverflow(std::clamp(glyphOverflow.top, 0_lu, 31_lu), std::clamp(glyphOverflow.bottom, 0_lu, 7_lu));
                 } else
-                    width = TextUtil::width(*inlineTextItem, fontCascade.get(), start, start + inlineTextItem->length(), { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState);
+                    width = TextUtil::width(*inlineTextItem, fontCascade, start, start + inlineTextItem->length(), { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState);
                 inlineTextItem->setWidth(width + extraInlineTextSpacing);
                 handleTextSpacing(spacingState, trimmableTextSpacings, *inlineTextItem, inlineItemIndex);
             }
@@ -1113,9 +1113,9 @@ bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(co
     auto contentLength = text.length();
     ASSERT(contentLength);
 
-    CheckedRef fontCascade = style->fontCascade();
+    auto& fontCascade = style->fontCascade();
     auto [ deferNonWhitespaceMeasurement, deferWhitespaceMeasurement ] = shouldDeferTextMeasurement(inlineTextBox);
-    auto singleSpaceWidth = !deferWhitespaceMeasurement ? std::optional(std::max(0.f, TextUtil::singleSpaceWidth(fontCascade.get(), inlineTextBox.canUseSimplifiedContentMeasuring()))) : std::nullopt;
+    auto singleSpaceWidth = !deferWhitespaceMeasurement ? std::optional(std::max(0.f, TextUtil::singleSpaceWidth(fontCascade, inlineTextBox.canUseSimplifiedContentMeasuring()))) : std::nullopt;
     auto mayHaveGlyphOverflow = textBoxMayHaveGlyphOverflow(inlineTextBox);
 
     auto widthCacheEligible = inlineTextBoxWidthsAreCacheable(inlineTextBox, contentRequiresVisualReordering() || m_hasTextAutospace, mayHaveGlyphOverflow);
@@ -1212,10 +1212,10 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 
     m_textContentPopulatedFromCache = false;
     CheckedRef style = inlineTextBox.style();
-    CheckedRef fontCascade = style->fontCascade();
+    auto& fontCascade = style->fontCascade();
     auto [ deferNonWhitespaceMeasurement, deferWhitespaceMeasurement ] = shouldDeferTextMeasurement(inlineTextBox);
     auto mayHaveGlyphOverflow = textBoxMayHaveGlyphOverflow(inlineTextBox);
-    auto singleSpaceWidth = !deferWhitespaceMeasurement ? std::optional(std::max(0.f, TextUtil::singleSpaceWidth(fontCascade.get(), inlineTextBox.canUseSimplifiedContentMeasuring()))) : std::nullopt;
+    auto singleSpaceWidth = !deferWhitespaceMeasurement ? std::optional(std::max(0.f, TextUtil::singleSpaceWidth(fontCascade, inlineTextBox.canUseSimplifiedContentMeasuring()))) : std::nullopt;
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
     auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { text, Style::toPlatform(style->usedLocale()), TextUtil::lineBreakIteratorMode(style->lineBreak()), TextUtil::contentAnalysis(style->wordBreak()) };
@@ -1232,7 +1232,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
         return true;
     };
     auto handleWhitespace = [&] {
-        auto stopAtWordSeparatorBoundary = shouldPreserveSpacesAndTabs && fontCascade->wordSpacing();
+        auto stopAtWordSeparatorBoundary = shouldPreserveSpacesAndTabs && fontCascade.wordSpacing();
         auto whitespaceContent = text.is8Bit()
             ? moveToNextNonWhitespacePosition(text.span8(), currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary)
             : moveToNextNonWhitespacePosition(text.span16(), currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary);
@@ -1440,7 +1440,7 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
             TextBreakingPositionCache::Key key { inlineTextBox->content(), context, securityOrigin->data() };
             breakingPositionCache.set(key, WTF::move(breakingPositionList));
             if (!widths.isEmpty()) {
-                CheckedRef fontCascade = inlineTextBox->style().fontCascade();
+                auto& fontCascade = inlineTextBox->style().fontCascade();
                 breakingPositionCache.addWidths(key, fontCascadeIdentifier(fontCascade), WTF::move(widths));
             }
         }

@@ -1640,9 +1640,9 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         }
 
         // Populate GlyphBuffer with all of the glyphs for the text runs, enabling us to measure character widths.
-        CheckedRef fontCascade = textBox->fontCascade();
+        auto& fontCascade = textBox->fontCascade();
         GlyphBuffer glyphBuffer;
-        if (fontCascade->codePath(textRun) == FontCascade::CodePath::Complex) {
+        if (fontCascade.codePath(textRun) == FontCascade::CodePath::Complex) {
             ComplexTextController complexTextController(fontCascade, textRun, true, nil);
             complexTextController.advance(text.length(), &glyphBuffer);
         } else {

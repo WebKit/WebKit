@@ -78,7 +78,7 @@ void tearDown(RenderBlock& rootRenderer)
 static bool canUseSimplifiedMeasuring(const RenderText& renderer, StringView content)
 {
     CheckedRef style = renderer.style();
-    return Layout::TextUtil::canUseSimplifiedTextMeasuring(content, protect(style->fontCascade()), style->collapseWhiteSpace(), protect(&renderer.firstLineStyle()));
+    return Layout::TextUtil::canUseSimplifiedTextMeasuring(content, style->fontCascade(), style->collapseWhiteSpace(), protect(&renderer.firstLineStyle()));
 }
 
 static bool synthesizesGlyph(const RenderText& textRenderer)
@@ -107,7 +107,7 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
 
     RefPtr fontSelector = style->fontCascade().fontSelector();
     auto fontFor = [&](const FontCascadeDescription& description) {
-        auto font = FontCascade { FontCascadeDescription { description }, protect(style->fontCascade()) };
+        auto font = FontCascade { FontCascadeDescription { description }, style->fontCascade() };
         font.update(fontSelector.copyRef());
         font.setLetterSpacing(0);
         return font;

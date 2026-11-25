@@ -88,7 +88,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderMathMLToken::computeIntrinsicLogicalWidt
         updateMathVariantGlyph();
 
     if (m_mathVariantCodePoint) {
-        auto mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+        auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font) {
             LayoutUnit glyphWidth { protect(mathVariantGlyph.font)->widthForGlyph(mathVariantGlyph.glyph) };
             return { glyphWidth, glyphWidth };
@@ -148,7 +148,7 @@ void RenderMathMLToken::updateFromElement()
 std::optional<LayoutUnit> RenderMathMLToken::firstLineBaseline() const
 {
     if (m_mathVariantCodePoint) {
-        auto mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+        auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font) {
             auto baseline = LayoutUnit(-protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y());
             return { borderAndPaddingBefore() + baseline };
@@ -170,7 +170,7 @@ void RenderMathMLToken::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     GlyphData mathVariantGlyph;
     if (m_mathVariantCodePoint)
-        mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+        mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
 
     if (!mathVariantGlyph.font) {
         RenderMathMLBlock::layoutBlock(relayoutChildren, pageLogicalHeight);
@@ -194,7 +194,7 @@ bool RenderMathMLToken::hasMathVariantGlyph() const
 {
     if (!m_mathVariantCodePoint)
         return false;
-    return protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored).font;
+    return style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored).font;
 }
 
 void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
@@ -205,7 +205,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || usedStyle().visibility() != UsedVisibility::Visible || !m_mathVariantCodePoint)
         return;
 
-    auto mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+    auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
     if (!mathVariantGlyph.font)
         return;
 

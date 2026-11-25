@@ -173,7 +173,7 @@ static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox
         textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragmentTransform.xScale()));
 
     const bool includePartialGlyphs = true;
-    return fragment.characterOffset - textBox.start() + protect(textBox.renderer().scaledFont())->offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
+    return fragment.characterOffset - textBox.start() + textBox.renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
 PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
@@ -266,7 +266,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     scalingFactor = computeScalingFactorForRenderer(renderer);
     if (!scalingFactor) {
         scalingFactor = 1;
-        scaledFont = protect(style.fontCascade());
+        scaledFont = style.fontCascade();
         return;
     }
 

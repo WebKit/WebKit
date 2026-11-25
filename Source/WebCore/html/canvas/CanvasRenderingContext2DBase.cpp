@@ -701,7 +701,7 @@ CanvasRenderingContext2DBase::FontProxy::~FontProxy()
 }
 
 CanvasRenderingContext2DBase::FontProxy::FontProxy(const FontProxy& other)
-    : m_font(protect(other.m_font))
+    : m_font(other.m_font)
 {
     if (realized())
         protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);
@@ -712,7 +712,7 @@ auto CanvasRenderingContext2DBase::FontProxy::operator=(const FontProxy& other) 
     if (realized())
         protect(m_font.fontSelector())->unregisterForInvalidationCallbacks(*this);
 
-    m_font = CheckedRef { other.m_font };
+    m_font = other.m_font;
 
     if (realized())
         protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);
@@ -3499,18 +3499,18 @@ static bool canUseCachedShapedText(const TextRun& textRun)
 void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, double x, double y, bool fill, std::optional<double> maxWidth)
 {
     RefPtr fontProxy = this->fontProxy();
-    CheckedRef fontCascade = fontProxy->fontCascade();
+    auto& fontCascade = fontProxy->fontCascade();
 
     auto* cachedShapedText = [&]() -> TextShapingResultAndDisplayList* {
         if (!canUseCachedShapedText(textRun))
             return nullptr;
 
-        RefPtr fonts = fontCascade->fonts();
+        RefPtr fonts = fontCascade.fonts();
         ASSERT(fonts);
         return fonts->getOrCreateCachedShapedText(textRun, fontCascade, 0, std::nullopt, ForTextEmphasis::No);
     }();
 
-    float fontWidth = cachedShapedText ? cachedShapedText->textShapingResult.width : fontCascade->width(textRun);
+    float fontWidth = cachedShapedText ? cachedShapedText->textShapingResult.width : fontCascade.width(textRun);
 
     bool useMaxWidth = maxWidth && maxWidth.value() < fontWidth;
     float width = useMaxWidth ? maxWidth.value() : fontWidth;
@@ -3537,7 +3537,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     bool cachedDisplayListNeedsStateSave = false;
     // Any shadow could add display list items to draw glyphs a 2nd time with different context attributes.
     if (cachedShapedText && !cachedShapedText->displayList && !cachedShapedText->textShapingResult.glyphBuffer.isEmpty() && !c->dropShadow()) {
-        cachedShapedText->displayList = fontCascade->displayListForGlyphBuffer(*c, cachedShapedText->textShapingResult.glyphBuffer, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+        cachedShapedText->displayList = fontCascade.displayListForGlyphBuffer(*c, cachedShapedText->textShapingResult.glyphBuffer, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
 
         if (cachedShapedText->displayList) {
             for (auto& item : cachedShapedText->displayList->items()) {
@@ -3566,7 +3566,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
                     }
                 } else {
                     FloatPoint startPoint = point + WebCore::size(glyphBuffer.initialAdvance());
-                    fontCascade->drawGlyphBuffer(context, glyphBuffer, startPoint, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+                    fontCascade.drawGlyphBuffer(context, glyphBuffer, startPoint, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
                 }
             }
         } else
@@ -3712,7 +3712,7 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
     metrics->setWidth(fontWidth);
 
     FloatPoint offset = textOffset(fontWidth, textRun.direction());
-    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(protect(fontProxy->fontCascade()));
+    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(fontProxy->fontCascade());
 
     // Bind the primary font's metrics only after width() has run, since it can rebuild the font cache.
     auto& fontMetrics = fontProxy->metricsOfPrimaryFont();
@@ -3747,7 +3747,7 @@ void CanvasRenderingContext2DBase::updateStateTransform(const AffineTransform& t
 
 FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection direction)
 {
-    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(protect(protect(fontProxy())->fontCascade()));
+    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(protect(fontProxy())->fontCascade());
 
     FloatPoint offset;
 
@@ -3994,7 +3994,7 @@ void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
         return;
 
     RefPtr fontProxy = this->fontProxy();
-    CheckedRef fontCascade = fontProxy->fontCascade();
+    auto& fontCascade = fontProxy->fontCascade();
     // FIXME: Passing the context's font as the root font means root font relative units ('rem', 'rex', ...) still
     //        resolve against the font of the context here, even though unitAllowedForSpacing() admits
     //        them. Fixing it needs this setter to update style first, so it is done separately.
@@ -4026,7 +4026,7 @@ void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
         return;
 
     RefPtr fontProxy = this->fontProxy();
-    CheckedRef fontCascade = fontProxy->fontCascade();
+    auto& fontCascade = fontProxy->fontCascade();
     // FIXME: Passing the context's font as the root font means root font relative units ('rem', 'rex', ...) still
     //        resolve against the font of the context here, even though unitAllowedForSpacing() admits
     //        them. Fixing it needs this setter to update style first, so it is done separately.

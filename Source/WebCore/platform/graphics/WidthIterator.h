@@ -26,6 +26,7 @@
 #include <WebCore/TextRun.h>
 #include <WebCore/WritingMode.h>
 #include <unicode/umachine.h>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -49,7 +50,8 @@ enum class CharacterClass : uint8_t;
 using CharactersTreatedAsSpace = Vector<OriginalAdvancesForCharacterTreatedAsSpace, 64>;
 
 struct WidthIterator {
-    WTF_MAKE_TZONE_ALLOCATED(WidthIterator);
+    // Stack-only: holds a reference to a FontCascade that must outlive it.
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     WidthIterator(const FontCascade&, const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
@@ -112,7 +114,7 @@ private:
     bool rtl() const { return m_direction == TextDirection::RTL; }
     bool ltr() const { return m_direction == TextDirection::LTR; }
 
-    const CheckedRef<const FontCascade> m_fontCascade;
+    const FontCascade& m_fontCascade;
     const TextRun m_run;
     SingleThreadWeakHashSet<const Font>* m_fallbackFonts { nullptr };
 

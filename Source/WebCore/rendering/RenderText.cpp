@@ -394,7 +394,7 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
 
     auto textRun = textBox.textRun();
     if (clampedStart || clampedEnd != textRun.length())
-        protect(textBox.fontCascade())->adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring(), textRun, selectionRect, clampedStart, clampedEnd);
+        textBox.fontCascade().adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring(), textRun, selectionRect, clampedStart, clampedEnd);
 
     if (!textBox.writingMode().isLogicalLeftLineLeft())
         selectionRect.setX(textBox.logicalWidth() - selectionRect.maxX());
@@ -804,7 +804,7 @@ static Vector<LayoutRect> characterRects(const InlineIterator::TextBox& run, uns
 
     auto lineRect = run.lineBox().contentAreaLogicalRectAdjustedForAdjacentLineBoxes();
     auto selectionRect = LayoutRect { run.logicalLeftIgnoringInlineDirection(), lineRect.y(), run.logicalWidth(), lineRect.height() };
-    return protect(run.fontCascade())->characterSelectionRectsForText(run.textRun(), selectionRect, clampedStart, clampedEnd).map([&](auto& characterRect) {
+    return run.fontCascade().characterSelectionRectsForText(run.textRun(), selectionRect, clampedStart, clampedEnd).map([&](auto& characterRect) {
         return snappedSelectionRect(characterRect, run.logicalRightIgnoringInlineDirection(), run.writingMode());
     });
 }

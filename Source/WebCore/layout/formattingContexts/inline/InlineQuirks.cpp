@@ -119,8 +119,8 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
     ASSERT(floatBox.isFloatingPositioned());
     if (!floatBox.style().lineBoxContain().contains(Style::WebkitLineBoxContainValue::InitialLetter))
         return { };
-    CheckedRef fontCascade = lineBoxStyle.fontCascade();
-    auto& primaryFontMetrics = fontCascade->metricsOfPrimaryFont();
+    auto& fontCascade = lineBoxStyle.fontCascade();
+    auto& primaryFontMetrics = fontCascade.metricsOfPrimaryFont();
     auto lineHeight = [&]() -> InlineLayoutUnit {
         if (lineBoxStyle.textAutosizingAdjustedLineHeight().isNormal())
             return primaryFontMetrics.ascent(FontBaseline::Alphabetic) + primaryFontMetrics.descent(FontBaseline::Alphabetic);

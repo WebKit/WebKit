@@ -128,21 +128,21 @@ static void appendRunMetrics(RenderSVGInlineText& text, unsigned runStart, unsig
     auto run = constructTextRun(StringView(text.text()).substring(runStart, runLength), direction, style);
     auto length = run.length();
 
-    CheckedRef scaledFont = text.scaledFont();
+    auto& scaledFont = text.scaledFont();
     auto scalingFactor = text.scalingFactor();
     ASSERT(scalingFactor);
-    auto height = scaledFont->metricsOfPrimaryFont().height() / scalingFactor;
+    auto height = scaledFont.metricsOfPrimaryFont().height() / scalingFactor;
 
     auto appendMetrics = [&](unsigned metricsLength, float width) {
         metrics.append(SVGTextMetrics(metricsLength, width / scalingFactor, height));
     };
 
     if (metricsLengthAt(run.text(), 0) == length) {
-        appendMetrics(length, scaledFont->width(run));
+        appendMetrics(length, scaledFont.width(run));
         return;
     }
 
-    auto glyphBuffer = scaledFont->layoutText(scaledFont->codePath(run), run, 0, length).glyphBuffer;
+    auto glyphBuffer = scaledFont.layoutText(scaledFont.codePath(run), run, 0, length).glyphBuffer;
     auto characterWidths = Vector<float, 64>(FillWith { }, length, 0.f);
     auto characterHasGlyph = Vector<bool, 64>(FillWith { }, length, false);
     if (auto offset = glyphBuffer.size() ? glyphBuffer.checkedStringOffsetAt(0, length) : std::nullopt)
@@ -366,7 +366,7 @@ void SVGTextLayoutAlgorithm::collectTextBoxes()
                     auto length = static_cast<unsigned>(displayBox.text().length());
 
                     CheckedRef style = parentBoxStyle(textContent.inlineTextBox);
-                    auto baselineLayout = SVGTextLayoutEngineBaseline { protect(style->fontCascade()) };
+                    auto baselineLayout = SVGTextLayoutEngineBaseline { style->fontCascade() };
                     auto baselineShift = baselineLayout.calculateBaselineShift(style) - baselineLayout.calculateAlignmentBaselineShift(m_isVertical, style);
 
                     // Characters outside the display boxes are not addressable:
@@ -411,7 +411,7 @@ void SVGTextLayoutAlgorithm::computeCSSPositions()
     for (auto& textBox : m_textBoxes) {
         CheckedRef style = textBox.inlineTextBox->style();
         auto& content = textBox.inlineTextBox->content();
-        auto baselineLayout = SVGTextLayoutEngineBaseline { protect(style->fontCascade()) };
+        auto baselineLayout = SVGTextLayoutEngineBaseline { style->fontCascade() };
 
         for (auto index = textBox.start; index < textBox.start + textBox.length; ++index) {
             auto& character = m_characters[index];
@@ -549,7 +549,7 @@ void SVGTextLayoutAlgorithm::computeShapingRunStarts()
     for (auto& textBox : m_textBoxes) {
         CheckedRef style = textBox.inlineTextBox->style();
         auto& content = textBox.inlineTextBox->content();
-        auto spacingLayout = SVGTextLayoutEngineSpacing { protect(style->fontCascade()) };
+        auto spacingLayout = SVGTextLayoutEngineSpacing { style->fontCascade() };
         auto previousHasSpacing = false;
 
         for (auto index = textBox.start; index < textBox.start + textBox.length; ++index) {

@@ -110,8 +110,7 @@ static void applyItemStyle(HTMLElement& item, const PopupMenuStyle& style)
     if (auto& language = style.language(); !language.isEmpty())
         item.setAttributeWithoutSynchronization(HTMLNames::langAttr, AtomString { language });
 
-    if (CheckedRef font = style.font())
-        applyFontCascade(item, font);
+    applyFontCascade(item, style.font());
 
     item.setInlineStyleProperty(CSSPropertyID::Direction, style.textDirection() == TextDirection::RTL ? CSSValueID::Rtl : CSSValueID::Ltr);
     if (style.hasTextDirectionOverride())
@@ -128,8 +127,7 @@ static void applyMenuStyle(HTMLElement& container, const PopupMenuStyle& style)
             container.setInlineStyleProperty(CSSPropertyID::BackgroundColor, serializationForCSS(background));
     }
 
-    if (CheckedRef font = style.font())
-        applyFontCascade(container, font);
+    applyFontCascade(container, style.font());
 
     container.setInlineStyleProperty(CSSPropertyID::Direction, style.textDirection() == TextDirection::RTL ? CSSValueID::Rtl : CSSValueID::Ltr);
     if (style.hasTextDirectionOverride())

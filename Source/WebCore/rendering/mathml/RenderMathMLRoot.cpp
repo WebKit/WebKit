@@ -113,7 +113,7 @@ RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters(La
     HorizontalParameters parameters;
 
     // We try and read constants to draw the radical from the OpenType MATH and use fallback values otherwise.
-    Ref primaryFont = protect(style().fontCascade())->primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         parameters.kernBeforeDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::RadicalKernBeforeDegree);
         parameters.kernAfterDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::RadicalKernAfterDegree);
@@ -133,7 +133,7 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters() cons
 {
     VerticalParameters parameters;
     // We try and read constants to draw the radical from the OpenType MATH and use fallback values otherwise.
-    Ref primaryFont = protect(style().fontCascade())->primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         parameters.ruleThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::RadicalRuleThickness);
         parameters.verticalGap = mathData->getMathConstant(primaryFont, style().mathStyle() == MathStyle::Normal ? OpenTypeMathData::MathConstant::RadicalDisplayStyleVerticalGap : OpenTypeMathData::MathConstant::RadicalVerticalGap);

@@ -217,7 +217,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderMathMLOperator::computeIntrinsicLogicalW
         if (isInvisibleOperator()) {
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
             // The glyph may eat into border and padding too, which computeIntrinsicLogicalWidthContributionsIfNeeded() adds afterwards.
-            GlyphData data = protect(style().fontCascade())->glyphDataForCharacter(singleCharCodePoint(), false);
+            GlyphData data = style().fontCascade().glyphDataForCharacter(singleCharCodePoint(), false);
             float glyphWidth = data.font ? protect(data.font)->widthForGlyph(data.glyph) : 0;
             preferredWidth -= std::min(LayoutUnit(glyphWidth), preferredWidth + borderAndPaddingLogicalWidth());
         }

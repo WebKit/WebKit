@@ -134,7 +134,7 @@ LayoutUnit MathOperator::stretchSize() const
 
 bool MathOperator::getGlyph(const Style::ComputedStyle& style, char32_t character, GlyphData& glyph) const
 {
-    glyph = protect(style.fontCascade())->glyphDataForCharacter(character, style.writingMode().isBidiRTL());
+    glyph = style.fontCascade().glyphDataForCharacter(character, style.writingMode().isBidiRTL());
     if (!glyph.font)
         return false;
 
@@ -145,7 +145,7 @@ bool MathOperator::getGlyph(const Style::ComputedStyle& style, char32_t characte
     if (m_operatorType == Type::NormalOperator)
         return true;
 
-    return glyph.font == &protect(style.fontCascade())->primaryFont();
+    return glyph.font == &style.fontCascade().primaryFont();
 }
 
 bool MathOperator::getBaseGlyph(const Style::ComputedStyle& style, GlyphData& glyph)
@@ -176,13 +176,13 @@ void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
 static GlyphData glyphDataForCodePointOrFallbackGlyph(const Style::ComputedStyle& style, char32_t codePoint, Glyph fallbackGlyph)
 {
     if (codePoint)
-        return protect(style.fontCascade())->glyphDataForCharacter(codePoint, false);
+        return style.fontCascade().glyphDataForCharacter(codePoint, false);
     
     GlyphData fallback;
     
     if (fallbackGlyph) {
         fallback.glyph = fallbackGlyph;
-        fallback.font = &protect(style.fontCascade())->primaryFont();
+        fallback.font = &style.fontCascade().primaryFont();
     }
     
     return fallback;

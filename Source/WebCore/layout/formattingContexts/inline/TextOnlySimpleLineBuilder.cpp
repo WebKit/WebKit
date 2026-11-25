@@ -58,8 +58,8 @@ InlineLayoutUnit TextOnlySimpleLineBuilder::measuredInlineTextItem(const InlineT
 {
     ASSERT(!inlineTextItem.width());
     if (!inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
-        return TextUtil::width(inlineTextItem, protect(style.fontCascade()), contentLogicalLeft);
-    return TextUtil::width(inlineTextItem, protect(style.fontCascade()), inlineTextItem.start(), inlineTextItem.start() + 1, contentLogicalLeft);
+        return TextUtil::width(inlineTextItem, style.fontCascade(), contentLogicalLeft);
+    return TextUtil::width(inlineTextItem, style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + 1, contentLogicalLeft);
 }
 
 NODELETE static inline InlineItemPosition placedInlineItemEnd(size_t layoutRangeStartIndex, size_t placedInlineItemCount, size_t overflowingContentLength, std::span<const InlineItem> inlineItemList)
@@ -175,7 +175,7 @@ std::optional<LineLayoutResult> TextOnlySimpleLineBuilder::placeSingleCharacterC
     auto contentWidth = [&] {
         if (auto width = inlineTextItem->width())
             return *width;
-        return TextUtil::width(*inlineTextItem, protect(style->fontCascade()), { });
+        return TextUtil::width(*inlineTextItem, style->fontCascade(), { });
     }();
     Line::RunList singleRun;
     singleRun.append({ Line::Run(*inlineTextItem, style, { }, contentWidth) });

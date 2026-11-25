@@ -892,7 +892,7 @@ Vector<std::pair<size_t, size_t>> LineBuilder::collectShapeRanges(const LineCand
     ASSERT(contentList.first().type == ShapingType::Content && contentList.last().type == ShapingType::Content);
     Vector<std::pair<size_t, size_t>> ranges;
 
-    CheckedPtr lastFontCascade = &rootStyle().fontCascade();
+    auto* lastFontCascade = &rootStyle().fontCascade();
     auto leadingContentRunIndex = std::optional<size_t> { };
     auto trailingContentRunIndex = std::optional<size_t> { };
     auto hasBoundaryBetween = false;
@@ -933,7 +933,7 @@ Vector<std::pair<size_t, size_t>> LineBuilder::collectShapeRanges(const LineCand
                     leadingContentRunIndex = entry.index;
                 lastFontCascade = &styleToUse->fontCascade();
             } else if (hasBoundaryBetween) {
-                auto hasMatchingFontCascade = *lastFontCascade.get() == styleToUse->fontCascade();
+                auto hasMatchingFontCascade = *lastFontCascade == styleToUse->fontCascade();
                 if (isEligibleText && hasMatchingFontCascade)
                     trailingContentRunIndex = entry.index;
                 else {
@@ -975,7 +975,7 @@ void LineBuilder::applyShapingOnRunRange(LineCandidate& lineCandidate, std::pair
     auto characterScanForCodePath = true;
     CheckedRef style = isFirstFormattedLineCandidate() ? runs[range.first].inlineItem.firstLineStyle() : runs[range.first].inlineItem.style();
     auto textRun = TextRun { textContent, m_lineLogicalRect.left(), { }, ExpansionBehavior::defaultBehavior(), TextDirection::RTL, style->rtlOrdering() == Order::Visual, characterScanForCodePath };
-    auto glyphAdvances = ComplexTextController::glyphAdvancesForTextRun(protect(style->fontCascade()), textRun);
+    auto glyphAdvances = ComplexTextController::glyphAdvancesForTextRun(style->fontCascade(), textRun);
 
     if (glyphAdvances.size() != textRun.length()) {
         ASSERT_NOT_REACHED();

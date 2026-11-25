@@ -69,8 +69,8 @@ FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, Text
     float scalingFactor = renderer.scalingFactor();
     ASSERT(scalingFactor);
 
-    CheckedRef scaledFont = renderer.scaledFont();
-    const FontMetrics& scaledFontMetrics = scaledFont->metricsOfPrimaryFont();
+    auto& scaledFont = renderer.scaledFont();
+    const FontMetrics& scaledFontMetrics = scaledFont.metricsOfPrimaryFont();
     FloatPoint textOrigin(fragment.x, fragment.y);
     if (scalingFactor != 1)
         textOrigin.scale(scalingFactor);
@@ -79,7 +79,7 @@ FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, Text
 
     LayoutRect selectionRect { textOrigin, LayoutSize(0, LayoutUnit(fragment.height * scalingFactor)) };
     TextRun run = constructTextRun(renderer.text(), direction, style, fragment);
-    scaledFont->adjustSelectionRectForText(false, run, selectionRect, startPosition, endPosition);
+    scaledFont.adjustSelectionRectForText(false, run, selectionRect, startPosition, endPosition);
     FloatRect snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer.document().deviceScaleFactor(), run.ltr());
     if (scalingFactor == 1)
         return snappedSelectionRect;
@@ -512,7 +512,7 @@ void SVGTextBoxPainter::paintTextWithShadows(const Style::ComputedStyle& style, 
     float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);
 
-    CheckedRef scaledFont = renderer().scaledFont();
+    auto& scaledFont = renderer().scaledFont();
     const auto& shadows = style.textShadow();
 
     FloatPoint textOrigin(fragment.x, fragment.y);
@@ -523,7 +523,7 @@ void SVGTextBoxPainter::paintTextWithShadows(const Style::ComputedStyle& style, 
         textSize.scale(scalingFactor);
     }
 
-    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont->metricsOfPrimaryFont().ascent()), textSize);
+    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.metricsOfPrimaryFont().ascent()), textSize);
 
     GraphicsContext* usedContext = &context;
     SVGPaintServerHandling paintServerHandling { context };
@@ -597,7 +597,7 @@ void SVGTextBoxPainter::paintTextWithShadows(const Style::ComputedStyle& style, 
             } else
                 adjustPaintServerForTextScale(*usedContext, scalingFactor);
 
-            scaledFont->drawText(*usedContext, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
+            scaledFont.drawText(*usedContext, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
 
             if (!shadowApplier.didSaveContext())
                 usedContext->restore();

@@ -397,16 +397,16 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     float maxCharWidth = 0.f;
 
 #if !PLATFORM(IOS_FAMILY)
-    CheckedRef fontCascade = style().fontCascade();
-    const auto& family = fontCascade->firstFamily().name;
+    auto& fontCascade = style().fontCascade();
+    const auto& family = fontCascade.firstFamily().name;
     // Since Lucida Grande is the default font, we want this to match the width
     // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and
     // IE for some encodings (in IE, the default font is encoding specific).
     // 4027 is the (xMax - xMin) value in the "head" font table for MS Shell Dlg.
     if (family == "Lucida Grande"_s)
         maxCharWidth = scaleEmToUnits(4027);
-    else if (fontCascade->hasValidAverageCharWidth())
-        maxCharWidth = roundf(fontCascade->primaryFont().maxCharWidth());
+    else if (fontCascade.hasValidAverageCharWidth())
+        maxCharWidth = roundf(fontCascade.primaryFont().maxCharWidth());
 #endif
 
     // For text inputs, IE adds some extra width.

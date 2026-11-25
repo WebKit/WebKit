@@ -174,7 +174,7 @@ bool RenderThemeIOS::isControlStyled(const Style::ComputedStyle& style) const
 
 void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance appearance, Style::ComputedStyle& style) const
 {
-    auto minimumControlSize = this->minimumControlSize(appearance, protect(style.fontCascade()), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
+    auto minimumControlSize = this->minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
 
     // FIXME: The min-width/min-heigh value should use `calc-size()` when supported to make non-specified overrides work.
 
@@ -509,6 +509,8 @@ static void adjustSelectListButtonStyle(Style::ComputedStyle& style)
 }
 
 class RenderThemeMeasureTextClient : public MeasureTextClient {
+    // Stack-only: holds a reference to a FontCascade that must outlive it.
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     RenderThemeMeasureTextClient(const FontCascade& font, const Style::ComputedStyle& style)
         : m_font(font)
@@ -518,10 +520,10 @@ public:
     float measureText(const String& string) const override
     {
         TextRun run = RenderBlock::constructTextRun(string, m_style);
-        return m_font->width(run);
+        return m_font.width(run);
     }
 private:
-    const CheckedRef<const FontCascade> m_font;
+    const FontCascade& m_font;
     const CheckedRef<const Style::ComputedStyle> m_style;
 };
 
@@ -547,7 +549,7 @@ static void adjustInputElementButtonStyle(Style::ComputedStyle& style, const HTM
 #endif
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
-    FontCascade font { CheckedRef { style.fontCascade() } };
+    FontCascade font { style.fontCascade() };
 
     float maximumWidth = localizedDateCache().estimatedMaximumWidthForDateType(dateType, font, RenderThemeMeasureTextClient(font, style));
 

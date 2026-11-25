@@ -28,6 +28,7 @@
 #include "PaintTextStyle.h"
 #include "RotationDirection.h"
 #include "TextFlags.h"
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -57,6 +58,8 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 }
 
 class TextPainter {
+    // Stack-only: holds a reference to a FontCascade that must outlive it.
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     TextPainter(GraphicsContext&, const FontCascade&, const Style::ComputedStyle&, const TextStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const AtomString& emphasisMark, float emphasisMarkOffset, bool isCombinedText);
 
@@ -78,7 +81,7 @@ private:
         const TextStyle&, const Style::TextShadows&, const Style::AppleColorFilter&);
 
     GraphicsContext& m_context;
-    const CheckedRef<const FontCascade> m_font;
+    const FontCascade& m_font;
     const CheckedRef<const Style::ComputedStyle> m_renderStyle;
     TextStyle m_style;
     AtomString m_emphasisMark;

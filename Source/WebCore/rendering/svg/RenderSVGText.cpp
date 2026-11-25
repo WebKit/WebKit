@@ -387,7 +387,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
             float scalingFactor = renderer->scalingFactor();
             ASSERT(scalingFactor);
 
-            float baseline = protect(renderer->scaledFont())->metricsOfPrimaryFont().ascent() / scalingFactor;
+            float baseline = renderer->scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
 
             AffineTransform fragmentTransform;
             for (auto& fragment : textBox.textFragments()) {

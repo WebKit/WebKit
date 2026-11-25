@@ -28,6 +28,7 @@
 #include <WebCore/GlyphBuffer.h>
 #include <WebCore/TextRun.h>
 #include <WebCore/TextSpacing.h>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashSet.h>
 #include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
@@ -57,7 +58,9 @@ enum class GlyphIterationStyle : bool { IncludePartialGlyphs, ByWholeGlyphs };
 
 // See https://trac.webkit.org/wiki/ComplexTextController for more information about ComplexTextController.
 class ComplexTextController {
-    WTF_MAKE_TZONE_ALLOCATED(ComplexTextController);
+    // Holds a reference to a FontCascade that must outlive it. Should only be allocated on the stack
+    // or as a member of an object that also owns the FontCascade (e.g. TextLayout).
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     ComplexTextController(const FontCascade&, const TextRun&, bool mayUseNaturalWritingDirection = false, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, bool forTextEmphasis = false);
 
@@ -208,7 +211,7 @@ private:
 
     SingleThreadWeakHashSet<const Font>* m_fallbackFonts { nullptr };
 
-    const CheckedRef<const FontCascade> m_fontCascade;
+    const FontCascade& m_fontCascade;
     const TextRun m_run;
 
     unsigned m_currentCharacter { 0 };
