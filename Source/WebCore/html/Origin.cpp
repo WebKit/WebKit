@@ -26,9 +26,7 @@
 #include "config.h"
 #include "Origin.h"
 
-#include "ElementInlines.h"
 #include "ExceptionOr.h"
-#include "HTMLNames.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMBindingSecurityInlines.h"
 #include "JSDOMGlobalObject.h"
@@ -43,14 +41,14 @@
 #include "JSSVGAElement.h"
 #include "JSWorkerGlobalScope.h"
 #include "LocalDOMWindow.h"
-#include "SVGNames.h"
 #include "SecurityOrigin.h"
-#include "XLinkNames.h"
 #include <wtf/URL.h>
 
-namespace WebCore {
+#if ENABLE(MATHML)
+#include "JSMathMLAnchorElement.h"
+#endif
 
-using namespace HTMLNames;
+namespace WebCore {
 
 Origin::Origin(Ref<SecurityOrigin>&& securityOrigin)
     : m_origin(WTF::move(securityOrigin))
@@ -108,17 +106,24 @@ ExceptionOr<Ref<Origin>> Origin::from(ScriptExecutionContext& context, JSC::JSVa
         return create(SecurityOrigin::create(domURL->href()));
     } else if (auto* jsAElement = dynamicDowncast<JSHTMLAnchorElement>(value)) {
         Ref aElement = jsAElement->wrapped();
-        if (aElement->hasAttributeWithoutSynchronization(hrefAttr))
-            return create(SecurityOrigin::create(aElement->href()));
+        if (RefPtr securityOrigin = aElement->extractOrigin())
+            return create(securityOrigin.releaseNonNull());
     } else if (auto* jsAreaElement = dynamicDowncast<JSHTMLAreaElement>(value)) {
         Ref areaElement = jsAreaElement->wrapped();
-        if (areaElement->hasAttributeWithoutSynchronization(hrefAttr))
-            return create(SecurityOrigin::create(areaElement->href()));
+        if (RefPtr securityOrigin = areaElement->extractOrigin())
+            return create(securityOrigin.releaseNonNull());
     } else if (auto* jsSVGAElement = dynamicDowncast<JSSVGAElement>(value)) {
         Ref svgAElement = jsSVGAElement->wrapped();
-        if (svgAElement->hasAttribute(SVGNames::hrefAttr) || svgAElement->hasAttribute(XLinkNames::hrefAttr))
-            return create(SecurityOrigin::create(svgAElement->hrefURL()));
+        if (RefPtr securityOrigin = svgAElement->extractOrigin())
+            return create(securityOrigin.releaseNonNull());
     }
+#if ENABLE(MATHML)
+    else if (auto* jsMathMLAnchorElement = dynamicDowncast<JSMathMLAnchorElement>(value)) {
+        Ref mathMLAnchorElement = jsMathMLAnchorElement->wrapped();
+        if (RefPtr securityOrigin = mathMLAnchorElement->extractOrigin())
+            return create(securityOrigin.releaseNonNull());
+    }
+#endif
     return Exception { ExceptionCode::TypeError };
 }
 

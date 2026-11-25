@@ -45,8 +45,6 @@ public:
     AtomString target() const final { return AtomString { m_target->currentValue() }; }
     SVGAnimatedString& targetAnimated() { return m_target; }
 
-    URL hrefURL() const;
-
     SharedStringHash visitedLinkHash() const;
 
     DOMTokenList& relList();

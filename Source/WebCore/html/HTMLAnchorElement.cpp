@@ -309,21 +309,6 @@ AtomString HTMLAnchorElement::target() const
     return attributeWithoutSynchronization(targetAttr);
 }
 
-String HTMLAnchorElement::origin() const
-{
-    auto url = href();
-    if (!url.isValid())
-        return emptyString();
-    return SecurityOrigin::create(url)->toString();
-}
-
-void HTMLAnchorElement::setProtocol(StringView value)
-{
-    if (auto url = href(); !url.isValid())
-        return;
-    URLDecomposition::setProtocol(value);
-}
-
 String HTMLAnchorElement::text()
 {
     return textContent();

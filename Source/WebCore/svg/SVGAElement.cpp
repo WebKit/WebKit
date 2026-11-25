@@ -245,11 +245,6 @@ SharedStringHash SVGAElement::visitedLinkHash() const
     return *m_storedVisitedLinkHash;
 }
 
-URL SVGAElement::hrefURL() const
-{
-    return protect(document())->encodingParseURL(href());
-}
-
 // https://w3c.github.io/svgwg/svg2-draft/linking.html#InterfaceSVGAElement
 URL SVGAElement::fullURL() const
 {

@@ -29,9 +29,12 @@
 
 namespace WebCore {
 
+class SecurityOrigin;
+
 class URLDecomposition {
 public:
-    String origin() const;
+    RefPtr<SecurityOrigin> extractOrigin() const;
+    WEBCORE_EXPORT String origin() const;
 
     WEBCORE_EXPORT String protocol() const;
     void setProtocol(StringView);

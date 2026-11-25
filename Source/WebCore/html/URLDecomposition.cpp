@@ -32,9 +32,20 @@
 
 namespace WebCore {
 
+// https://html.spec.whatwg.org/multipage/links.html#hyperlink-element
+RefPtr<SecurityOrigin> URLDecomposition::extractOrigin() const
+{
+    auto url = fullURL();
+    if (!url.isValid())
+        return nullptr;
+    return SecurityOrigin::create(url);
+}
+
 String URLDecomposition::origin() const
 {
-    return SecurityOrigin::create(fullURL())->toString();
+    if (RefPtr origin = extractOrigin())
+        return origin->toString();
+    return emptyString();
 }
 
 String URLDecomposition::protocol() const
@@ -45,6 +56,8 @@ String URLDecomposition::protocol() const
 void URLDecomposition::setProtocol(StringView value)
 {
     URL copy = fullURL();
+    if (!copy.isValid())
+        return;
     copy.setProtocol(value);
     setFullURL(copy);
 }
