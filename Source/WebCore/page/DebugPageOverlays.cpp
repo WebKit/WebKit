@@ -697,7 +697,7 @@ private:
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) final;
 };
 
-void EnhancedSecurityOverlay::drawRect(PageOverlay&, GraphicsContext& context, const IntRect& dirtyRect)
+void EnhancedSecurityOverlay::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
 {
     RefPtr page = m_page;
     if (!page)
@@ -709,11 +709,15 @@ void EnhancedSecurityOverlay::drawRect(PageOverlay&, GraphicsContext& context, c
     bool isEnhancedSecurityEnabled = false;
 #endif
 
-    Color overlayColor = isEnhancedSecurityEnabled
-        ? Color::green.colorWithAlphaByte(32) // Green overlay when enabled
-        : Color::red.colorWithAlphaByte(32); // Red overlay when disabled
+    auto color = isEnhancedSecurityEnabled ? Color::green : Color::red;
+    context.fillRect(dirtyRect, color.colorWithAlphaByte(32));
 
-    context.fillRect(dirtyRect, overlayColor);
+    constexpr float borderThickness = 8;
+    auto border = overlay.bounds();
+    border.inflate(-static_cast<int>(borderThickness / 2));
+    GraphicsContextStateSaver saver(context);
+    context.setStrokeColor(color);
+    context.strokeRect(border, borderThickness);
 }
 
 #if COMPILER(CLANG)
@@ -840,12 +844,25 @@ Ref<RegionOverlay> DebugPageOverlays::ensureRegionOverlayForPage(Page& page, Reg
 
 void DebugPageOverlays::showRegionOverlay(Page& page, RegionType regionType)
 {
+    if (regionType == RegionType::EnhancedSecurity) {
+        m_enhancedSecurityOverlays.ensure(page, [] {
+            return Vector<Ref<RegionOverlay>> { };
+        });
+        updateEnhancedSecurityOverlays(page);
+        return;
+    }
+
     Ref visualizer = ensureRegionOverlayForPage(page, regionType);
     page.pageOverlayController().installPageOverlay(protect(visualizer->overlay()), PageOverlay::FadeMode::DoNotFade);
 }
 
 void DebugPageOverlays::hideRegionOverlay(Page& page, RegionType regionType)
 {
+    if (regionType == RegionType::EnhancedSecurity) {
+        auto visualizers = m_enhancedSecurityOverlays.take(page);
+        return;
+    }
+
     auto it = m_pageRegionOverlays.find(page);
     if (it == m_pageRegionOverlays.end())
         return;
@@ -854,6 +871,41 @@ void DebugPageOverlays::hideRegionOverlay(Page& page, RegionType regionType)
         return;
     page.pageOverlayController().uninstallPageOverlay(protect(visualizer->overlay()), PageOverlay::FadeMode::DoNotFade);
     visualizer = nullptr;
+}
+
+void DebugPageOverlays::updateEnhancedSecurityOverlays(Page& page)
+{
+    auto it = m_enhancedSecurityOverlays.find(page);
+    if (it == m_enhancedSecurityOverlays.end())
+        return;
+
+    auto& visualizers = it->value;
+    auto& rootFrames = page.rootFrames();
+    visualizers.removeAllMatching([&](auto& visualizer) {
+        RefPtr frame = protect(visualizer->overlay())->associatedFrame();
+        return !frame || !rootFrames.contains(*frame);
+    });
+
+    for (auto& weakRootFrame : rootFrames) {
+        Ref rootFrame = weakRootFrame;
+        if (!rootFrame->view())
+            continue;
+
+        bool hasOverlay = visualizers.containsIf([&](auto& visualizer) {
+            return protect(visualizer->overlay())->associatedFrame() == rootFrame.ptr();
+        });
+        if (hasOverlay)
+            continue;
+
+        Ref visualizer = RegionOverlay::create(page, RegionType::EnhancedSecurity);
+        Ref overlay = visualizer->overlay();
+        overlay->setAssociatedFrame(rootFrame);
+        page.pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
+        visualizers.append(WTF::move(visualizer));
+    }
+
+    for (auto& visualizer : visualizers)
+        visualizer->recomputeRegion();
 }
 
 void DebugPageOverlays::regionChanged(LocalFrame& frame, RegionType regionType)
@@ -868,11 +920,16 @@ void DebugPageOverlays::regionChanged(LocalFrame& frame, RegionType regionType)
 
 bool DebugPageOverlays::hasOverlaysForPage(Page& page) const
 {
-    return m_pageRegionOverlays.contains(page);
+    return m_pageRegionOverlays.contains(page) || m_enhancedSecurityOverlays.contains(page);
 }
 
 void DebugPageOverlays::updateRegionIfNecessary(Page& page, RegionType regionType)
 {
+    if (regionType == RegionType::EnhancedSecurity) {
+        updateEnhancedSecurityOverlays(page);
+        return;
+    }
+
     if (RefPtr visualizer = regionOverlayForPage(page, regionType))
         visualizer->recomputeRegion();
 }
