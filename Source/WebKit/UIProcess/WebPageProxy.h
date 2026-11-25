@@ -2239,7 +2239,7 @@ public:
     void didHandleTapAsHover();
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     void setHoverActivatedByClickBounds(std::optional<WebCore::IntRect>&&);
-    const std::optional<WebCore::IntRect>& hoverActivatedByClickBounds() const { return m_hoverActivatedByClickBounds; }
+    std::optional<WebCore::IntRect> hoverActivatedByClickBounds() const { return m_hoverActivatedByClickBounds; }
 #endif
     void didCompleteSyntheticClick();
     void disableDoubleTapGesturesDuringTapIfNecessary(TapIdentifier);

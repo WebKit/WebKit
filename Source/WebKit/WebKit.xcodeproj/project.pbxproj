@@ -185,10 +185,22 @@
 		073A63CF2DC33DEC0057A3F5 /* WKIntelligenceSmartReplyTextEffectCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735F3232D38C7790003D029 /* WKIntelligenceSmartReplyTextEffectCoordinator.h */; };
 		073A63D02DC33DF80057A3F5 /* WKIntelligenceReplacementTextEffectCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735F31F2D3761A10003D029 /* WKIntelligenceReplacementTextEffectCoordinator.h */; };
 		073B199A2FEFB66B00BD5D69 /* WKAppKitGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073B19992FEFB66B00BD5D69 /* WKAppKitGestureController.swift */; };
+		2AB0AD37D6D841CB80BC6A27 /* WKAppKitGestureController+Arbitration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AF5045C5214A10AD83C0AF /* WKAppKitGestureController+Arbitration.swift */; };
+		F2AC4BE1E43849E3B7220761 /* WKAppKitGestureController+Clicks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A614530B059C483A8FF8B5FD /* WKAppKitGestureController+Clicks.swift */; };
+		2AB92BB13E8646739F2304E3 /* WKAppKitGestureController+Drag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD180E1D5A140659FA66F9E /* WKAppKitGestureController+Drag.swift */; };
+		69FC1FD1E0B34F689B6B8743 /* WKAppKitGestureController+ImageAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E25DD290FD4CA9BB61838F /* WKAppKitGestureController+ImageAnalysis.swift */; };
+		F3663966A09E492DBA264D35 /* WKAppKitGestureController+PositionInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7160B45B9C8478B911787C5 /* WKAppKitGestureController+PositionInformation.swift */; };
+		AA83F0A49EA34D448F1DEED7 /* WKAppKitGestureController+Scrolling.swift in Sources */ = {isa = PBXBuildFile; fileRef = C755B029BD60416BB54B4781 /* WKAppKitGestureController+Scrolling.swift */; };
+		9AAB63FDC60C4AE4AEDD17C9 /* WKAppKitGestureController+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744BDE229EFB4633873CC8A8 /* WKAppKitGestureController+Tracking.swift */; };
+		520AF53BFA8F4E1C867DBEED /* WKAppKitGestureController+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD57E6851BC14F60932B4AF3 /* WKAppKitGestureController+Transform.swift */; };
+		F226953F6D684CC595F7BAB5 /* WKAppKitGestureControllerSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC50156C71D4246B0DC6B94 /* WKAppKitGestureControllerSupport.swift */; };
+		ED3A3B98B95C4C62B26B894D /* PositionInformationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E9471F502E0405084EABF9B /* PositionInformationManager.swift */; };
 		07438C722D4C645600BD1E68 /* _WebKit_SwiftUI.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 07275C4F2D00C934002315A5 /* _WebKit_SwiftUI.framework */; };
 		074A6FC72D5F1FAF0027F958 /* KeyEventInterpretationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 074A6FC52D5F1DEA0027F958 /* KeyEventInterpretationContext.h */; };
 		074D6A652F385435006089F6 /* IntRectCG.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074D6A642F38542D006089F6 /* IntRectCG.swift */; };
 		074D6A672F3854F0006089F6 /* FloatRectCG.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074D6A662F3854D7006089F6 /* FloatRectCG.swift */; };
+		0ADBE5DEF5F74906894AA722 /* FloatSizeCG.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5476442D392847AFAE24CD3A /* FloatSizeCG.swift */; };
+		4FE57E1A10284A05A301B7AB /* IntPointCG.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA78295BA974B22B15E247F /* IntPointCG.swift */; };
 		074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */; };
 		074E87E12CF8EA3D0059E469 /* WebPage+NavigationDeciding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074E87E02CF8EA3D0059E469 /* WebPage+NavigationDeciding.swift */; };
 		074F34812CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 074F34802CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h */; };
@@ -2885,6 +2897,8 @@
 		FAE61CEC2D0A5608000D238D /* UnifiedSource131.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE61CE52D0A5607000D238D /* UnifiedSource131.cpp */; };
 		FAF27D302D2851EB00F1F0BB /* CoreIPCPKSecureElementPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = FAF27D2F2D2850D400F1F0BB /* CoreIPCPKSecureElementPass.mm */; };
 		FC7104542E0ED23800CC0B24 /* WebInspectorBackendProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = FC7104532E0ED23800CC0B24 /* WebInspectorBackendProxy.h */; };
+		FDD5F5A17E6E494DAEFF7AE1 /* WKAppKitGestureControllerCxxSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = FF395CD6FB7C47E5AE7C0E29 /* WKAppKitGestureControllerCxxSupport.h */; };
+		83CC78B9A71247B79D206B50 /* WKAppKitGestureControllerCxxSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6D6BC14EA0247C987651F65 /* WKAppKitGestureControllerCxxSupport.mm */; };
 		FEDBDCD71E68D20500A59F8F /* WebInspectorInterruptDispatcherMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDBDCD51E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessages.h */; };
 		FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */; };
 		FF0F70902E8242DB00D52BE1 /* WasmDebuggerDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF0F708D2E8242DB00D52BE1 /* WasmDebuggerDebuggable.h */; };
@@ -3594,6 +3608,16 @@
 		0739EAF9301563480066ED1B /* WKAlternatePDFHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKAlternatePDFHUDView.swift; sourceTree = "<group>"; };
 		073A63D72DC344F40057A3F5 /* WKWebView+TextExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+TextExtraction.swift"; sourceTree = "<group>"; };
 		073B19992FEFB66B00BD5D69 /* WKAppKitGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKAppKitGestureController.swift; sourceTree = "<group>"; };
+		C2AF5045C5214A10AD83C0AF /* WKAppKitGestureController+Arbitration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKAppKitGestureController+Arbitration.swift"; sourceTree = "<group>"; };
+		A614530B059C483A8FF8B5FD /* WKAppKitGestureController+Clicks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKAppKitGestureController+Clicks.swift"; sourceTree = "<group>"; };
+		8CD180E1D5A140659FA66F9E /* WKAppKitGestureController+Drag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKAppKitGestureController+Drag.swift"; sourceTree = "<group>"; };
+		39E25DD290FD4CA9BB61838F /* WKAppKitGestureController+ImageAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKAppKitGestureController+ImageAnalysis.swift"; sourceTree = "<group>"; };
+		E7160B45B9C8478B911787C5 /* WKAppKitGestureController+PositionInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKAppKitGestureController+PositionInformation.swift"; sourceTree = "<group>"; };
+		C755B029BD60416BB54B4781 /* WKAppKitGestureController+Scrolling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKAppKitGestureController+Scrolling.swift"; sourceTree = "<group>"; };
+		744BDE229EFB4633873CC8A8 /* WKAppKitGestureController+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKAppKitGestureController+Tracking.swift"; sourceTree = "<group>"; };
+		FD57E6851BC14F60932B4AF3 /* WKAppKitGestureController+Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKAppKitGestureController+Transform.swift"; sourceTree = "<group>"; };
+		4AC50156C71D4246B0DC6B94 /* WKAppKitGestureControllerSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKAppKitGestureControllerSupport.swift; sourceTree = "<group>"; };
+		7E9471F502E0405084EABF9B /* PositionInformationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionInformationManager.swift; sourceTree = "<group>"; };
 		073EFBB72D0F448500FAE7CF /* Foundation+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Foundation+Extras.swift"; sourceTree = "<group>"; };
 		074021602DDA651600BAEC91 /* GroupActivities_SPI.swiftinterface */ = {isa = PBXFileReference; lastKnownFileType = text; path = GroupActivities_SPI.swiftinterface; sourceTree = "<group>"; };
 		0744720525E5BD020054B231 /* MediaOverridesForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaOverridesForTesting.h; sourceTree = "<group>"; };
@@ -3603,6 +3627,8 @@
 		074A6FC82D5F20190027F958 /* KeyEventInterpretationContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = KeyEventInterpretationContext.serialization.in; sourceTree = "<group>"; };
 		074D6A642F38542D006089F6 /* IntRectCG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntRectCG.swift; sourceTree = "<group>"; };
 		074D6A662F3854D7006089F6 /* FloatRectCG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatRectCG.swift; sourceTree = "<group>"; };
+		5476442D392847AFAE24CD3A /* FloatSizeCG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatSizeCG.swift; sourceTree = "<group>"; };
+		9DA78295BA974B22B15E247F /* IntPointCG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntPointCG.swift; sourceTree = "<group>"; };
 		074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaProcessManager.h; sourceTree = "<group>"; };
 		074E75FC1DF2002400D318EC /* UserMediaProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaProcessManager.cpp; sourceTree = "<group>"; };
 		074E76001DF7075D00D318EC /* MediaDeviceSandboxExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDeviceSandboxExtensions.cpp; sourceTree = "<group>"; };
@@ -5486,7 +5512,6 @@
 		3366F02E3024FD10002EEB9A /* WebExtensionOffscreenDocumentParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionOffscreenDocumentParameters.serialization.in; sourceTree = "<group>"; };
 		3366F03130250860002EEB9A /* WebExtensionContextAPIOffscreenCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIOffscreenCocoa.mm; sourceTree = "<group>"; };
 		336E07462EBCC1C100B4D635 /* WKAppKitGestureController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAppKitGestureController.h; sourceTree = "<group>"; };
-		336E07472EBCC1C100B4D635 /* WKAppKitGestureController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAppKitGestureController.mm; sourceTree = "<group>"; };
 		337041FF2B5895C00077FF78 /* WebExtensionAPIWebRequestEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIWebRequestEvent.idl; sourceTree = "<group>"; };
 		337042002B58A0880077FF78 /* JSWebExtensionAPIWebRequestEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIWebRequestEvent.mm; sourceTree = "<group>"; };
 		337042012B58A0880077FF78 /* JSWebExtensionAPIWebRequestEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIWebRequestEvent.h; sourceTree = "<group>"; };
@@ -5529,8 +5554,6 @@
 		33E5A6B32C6F8F8D00F2CD04 /* ImageOptions.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageOptions.serialization.in; sourceTree = "<group>"; };
 		33EBE2852C98366200549FB9 /* PDFAnnotationTypeHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = PDFAnnotationTypeHelpers.h; path = PDF/PDFAnnotationTypeHelpers.h; sourceTree = "<group>"; tabWidth = 8; };
 		33EBE2872C9838F900549FB9 /* PDFAnnotationTypeHelpers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFAnnotationTypeHelpers.mm; path = PDF/PDFAnnotationTypeHelpers.mm; sourceTree = "<group>"; };
-		33F1A0102FEFB66B00BD5D70 /* PositionInformationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionInformationManager.h; sourceTree = "<group>"; };
-		33F1A0112FEFB66B00BD5D70 /* PositionInformationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PositionInformationManager.cpp; sourceTree = "<group>"; };
 		33F68335293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIWebNavigationEvent.h; sourceTree = "<group>"; };
 		33F68336293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIWebNavigationEvent.mm; sourceTree = "<group>"; };
 		33F6833D293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIWebNavigationEvent.h; sourceTree = "<group>"; };
@@ -9495,6 +9518,10 @@
 		FEE43FD21E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorInterruptDispatcher.messages.in; sourceTree = "<group>"; };
 		FF0F708D2E8242DB00D52BE1 /* WasmDebuggerDebuggable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmDebuggerDebuggable.h; sourceTree = "<group>"; };
 		FF0F708E2E8242DB00D52BE1 /* WasmDebuggerDebuggable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmDebuggerDebuggable.cpp; sourceTree = "<group>"; };
+		B193B284CB5D45F19FD4DC2C /* AppKitGestureMomentumEventGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppKitGestureMomentumEventGenerator.h; sourceTree = "<group>"; };
+		D22E543DDCBD4A098EE2CEBA /* AppKitGestureMomentumEventGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppKitGestureMomentumEventGenerator.mm; sourceTree = "<group>"; };
+		FF395CD6FB7C47E5AE7C0E29 /* WKAppKitGestureControllerCxxSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAppKitGestureControllerCxxSupport.h; sourceTree = "<group>"; };
+		F6D6BC14EA0247C987651F65 /* WKAppKitGestureControllerCxxSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAppKitGestureControllerCxxSupport.mm; sourceTree = "<group>"; };
 		FFCC7DFB2E95876C00D4A715 /* WasmDebuggerDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmDebuggerDispatcher.h; sourceTree = "<group>"; };
 		FFCC7DFC2E95876C00D4A715 /* WasmDebuggerDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmDebuggerDispatcher.cpp; sourceTree = "<group>"; };
 		FFF3D089B182017C30B8FA78 /* WebExtensionContentRuleListBlockedLoadInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContentRuleListBlockedLoadInfo.h; sourceTree = "<group>"; };
@@ -9802,9 +9829,22 @@
 		078074F53029A77E005492F5 /* AppKitGestures */ = {
 			isa = PBXGroup;
 			children = (
+				B193B284CB5D45F19FD4DC2C /* AppKitGestureMomentumEventGenerator.h */,
+				D22E543DDCBD4A098EE2CEBA /* AppKitGestureMomentumEventGenerator.mm */,
+				7E9471F502E0405084EABF9B /* PositionInformationManager.swift */,
 				336E07462EBCC1C100B4D635 /* WKAppKitGestureController.h */,
-				336E07472EBCC1C100B4D635 /* WKAppKitGestureController.mm */,
+				C2AF5045C5214A10AD83C0AF /* WKAppKitGestureController+Arbitration.swift */,
+				A614530B059C483A8FF8B5FD /* WKAppKitGestureController+Clicks.swift */,
+				8CD180E1D5A140659FA66F9E /* WKAppKitGestureController+Drag.swift */,
+				39E25DD290FD4CA9BB61838F /* WKAppKitGestureController+ImageAnalysis.swift */,
+				E7160B45B9C8478B911787C5 /* WKAppKitGestureController+PositionInformation.swift */,
+				C755B029BD60416BB54B4781 /* WKAppKitGestureController+Scrolling.swift */,
+				744BDE229EFB4633873CC8A8 /* WKAppKitGestureController+Tracking.swift */,
+				FD57E6851BC14F60932B4AF3 /* WKAppKitGestureController+Transform.swift */,
 				073B19992FEFB66B00BD5D69 /* WKAppKitGestureController.swift */,
+				FF395CD6FB7C47E5AE7C0E29 /* WKAppKitGestureControllerCxxSupport.h */,
+				F6D6BC14EA0247C987651F65 /* WKAppKitGestureControllerCxxSupport.mm */,
+				4AC50156C71D4246B0DC6B94 /* WKAppKitGestureControllerSupport.swift */,
 				07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */,
 				078074F83029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift */,
 				07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */,
@@ -14301,8 +14341,10 @@
 				A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */,
 				A141DF532B07069700E80B2D /* ExtensionCapabilityGrant.mm */,
 				074D6A662F3854D7006089F6 /* FloatRectCG.swift */,
+				5476442D392847AFAE24CD3A /* FloatSizeCG.swift */,
 				F4351B9D25EEC84C00D63892 /* ImageAnalysisUtilities.h */,
 				F4351B9F25EEC87800D63892 /* ImageAnalysisUtilities.mm */,
+				9DA78295BA974B22B15E247F /* IntPointCG.swift */,
 				074D6A642F38542D006089F6 /* IntRectCG.swift */,
 				BCE0937614FB128B001138D9 /* LayerHostingContext.h */,
 				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
@@ -17350,8 +17392,6 @@
 				7AFA6F682A9F57C50055322A /* DisplayLinkMac.cpp */,
 				0FCB4E5818BBE3D9000FCFC9 /* PageClientImplMac.h */,
 				0FCB4E5918BBE3D9000FCFC9 /* PageClientImplMac.mm */,
-				33F1A0112FEFB66B00BD5D70 /* PositionInformationManager.cpp */,
-				33F1A0102FEFB66B00BD5D70 /* PositionInformationManager.h */,
 				514D9F5519119D35000063A7 /* ServicesController.h */,
 				514D9F5619119D35000063A7 /* ServicesController.mm */,
 				0773A93A3023B0FB002C57FE /* SpatialShim.swift */,
@@ -19684,6 +19724,7 @@
 				2D12DAB520662C73006F00FB /* WKAnimationDelegate.h in Headers */,
 				BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */,
 				336E07482EBCC1E400B4D635 /* WKAppKitGestureController.h in Headers */,
+				FDD5F5A17E6E494DAEFF7AE1 /* WKAppKitGestureControllerCxxSupport.h in Headers */,
 				A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */,
 				BC4075F4124FF0270068F20A /* WKArray.h in Headers */,
 				577739952580388F0059348B /* WKASCAuthorizationPresenterDelegate.h in Headers */,
@@ -22473,6 +22514,7 @@
 				E31586CE2AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */,
 				E34DAD392B753FA700FABEE2 /* ExtensionProcess.mm in Sources */,
 				074D6A672F3854F0006089F6 /* FloatRectCG.swift in Sources */,
+				0ADBE5DEF5F74906894AA722 /* FloatSizeCG.swift in Sources */,
 				079A4DA72D72CEDC00CA387F /* Foundation+Extras.swift in Sources */,
 				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				D89CD6068EF808220467B402 /* GeneratedSerializers.swift in Sources */,
@@ -22496,6 +22538,7 @@
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
 				48E4FD912C91486DA934D031 /* InspectorPassthroughChannel.cpp in Sources */,
+				4FE57E1A10284A05A301B7AB /* IntPointCG.swift in Sources */,
 				074D6A652F385435006089F6 /* IntRectCG.swift in Sources */,
 				5CF250AF2EE06491006A7172 /* IPCTesterReceiver.swift in Sources */,
 				5C448C662EE06E11008931C7 /* IPCTesterReceiverMessageReceiver.swift in Sources */,
@@ -22532,6 +22575,7 @@
 				A1B849382F3D9F02004256A1 /* PlaybackSessionInterfaceAVKit.mm in Sources */,
 				A1D4D2092B7DE6D00008C40E /* PlaybackSessionInterfaceLMK.mm in Sources */,
 				07AE8FCA2F3BCFB400A4C0CA /* PositionInformationForWebPage.mm in Sources */,
+				ED3A3B98B95C4C62B26B894D /* PositionInformationManager.swift in Sources */,
 				C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
 				517B5F7B275E97A9002DC22D /* PushClientConnection.mm in Sources */,
@@ -22896,7 +22940,17 @@
 				9356F2E02152B75200E6D5DF /* WebSWServerToContextConnection.cpp in Sources */,
 				07F5FA2C3021E6CA00B40FEE /* WKAlternatePDFHUDView+Testing.swift in Sources */,
 				0739EAFA301563480066ED1B /* WKAlternatePDFHUDView.swift in Sources */,
+				2AB0AD37D6D841CB80BC6A27 /* WKAppKitGestureController+Arbitration.swift in Sources */,
+				F2AC4BE1E43849E3B7220761 /* WKAppKitGestureController+Clicks.swift in Sources */,
+				2AB92BB13E8646739F2304E3 /* WKAppKitGestureController+Drag.swift in Sources */,
+				69FC1FD1E0B34F689B6B8743 /* WKAppKitGestureController+ImageAnalysis.swift in Sources */,
+				F3663966A09E492DBA264D35 /* WKAppKitGestureController+PositionInformation.swift in Sources */,
+				AA83F0A49EA34D448F1DEED7 /* WKAppKitGestureController+Scrolling.swift in Sources */,
+				9AAB63FDC60C4AE4AEDD17C9 /* WKAppKitGestureController+Tracking.swift in Sources */,
+				520AF53BFA8F4E1C867DBEED /* WKAppKitGestureController+Transform.swift in Sources */,
 				073B199A2FEFB66B00BD5D69 /* WKAppKitGestureController.swift in Sources */,
+				83CC78B9A71247B79D206B50 /* WKAppKitGestureControllerCxxSupport.mm in Sources */,
+				F226953F6D684CC595F7BAB5 /* WKAppKitGestureControllerSupport.swift in Sources */,
 				A190E9422F3DB703009615AD /* WKAVContentSource.mm in Sources */,
 				C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */,
 				2D931169212F61B200044BFE /* WKContentView.mm in Sources */,

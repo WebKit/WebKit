@@ -30,6 +30,16 @@ import WebKit_Internal
 @implementation
 extension WKPointerTrackingGestureRecognizer {
     weak var pointerTrackingDelegate: (any WKPointerTrackingGestureRecognizerDelegate)?
+
+    override init(target: Any?, action: Selector?) {
+        super.init(target: target, action: action)
+    }
+
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @objc
+    public required dynamic init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
 }
 
 extension WKPointerTrackingGestureRecognizer {

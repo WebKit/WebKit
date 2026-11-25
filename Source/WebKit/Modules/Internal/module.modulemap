@@ -161,6 +161,84 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WebEventPhase {
+        requires cplusplus20,macos
+        header "../../Shared/WebEventPhase.h"
+        export *
+    }
+
+    module WebEvent {
+        requires cplusplus20,macos
+        header "../../Shared/WebEvent.h"
+        export *
+    }
+
+    module WebWheelEvent {
+        requires cplusplus20,macos
+        header "../../Shared/WebWheelEvent.h"
+        export *
+    }
+
+    module NativeWebWheelEvent {
+        requires cplusplus20,objc,macos
+        header "../../Shared/NativeWebWheelEvent.h"
+        export *
+    }
+
+    module ScrollingAccelerationCurve {
+        requires cplusplus20,macos
+        header "../../Shared/ScrollingAccelerationCurve.h"
+        export *
+    }
+
+    module MomentumEventDispatcher {
+        requires cplusplus20,macos
+        header "../../WebProcess/WebPage/MomentumEventDispatcher.h"
+        export *
+    }
+
+    module NativeWebGestureEvent {
+        requires cplusplus20,objc,macos
+        header "../../Shared/NativeWebGestureEvent.h"
+        export *
+    }
+
+    module WebMouseEvent {
+        requires cplusplus20,macos
+        header "../../Shared/WebMouseEvent.h"
+        export *
+    }
+
+    module WebEventFactory {
+        requires cplusplus20,objc,macos
+        header "../../Shared/mac/WebEventFactory.h"
+        export *
+    }
+
+    module TransactionID {
+        requires cplusplus20,macos
+        header "../../Shared/TransactionID.h"
+        export *
+    }
+
+    module IdentifierTypes {
+        requires cplusplus20,macos
+        header "../../Shared/IdentifierTypes.h"
+        export *
+    }
+
+    module InteractionInformationAtPosition {
+        requires cplusplus20,objc,macos
+        header "../../Shared/Cocoa/InteractionInformationAtPosition.h"
+        export *
+    }
+
+    module InteractionInformationRequest {
+        requires cplusplus20,macos
+        header "../../Shared/Cocoa/InteractionInformationRequest.h"
+        export *
+    }
+
     module WebNavigationState {
         requires cplusplus20
         header "../../UIProcess/WebNavigationState.h"
@@ -200,6 +278,12 @@ module WebKit_Internal [system] {
     module WebPushMessage {
         requires cplusplus20
         header "../../Shared/WebPushMessage.h"
+        export *
+    }
+
+    module ViewGestureController {
+        requires cplusplus20,objc,macos
+        header "../../UIProcess/ViewGestureController.h"
         export *
     }
 
@@ -474,6 +558,30 @@ module WebKit_Internal [system] {
     module WKPressGestureRecognizer {
         requires objc
         header "../../UIProcess/mac/AppKitGestures/WKPressGestureRecognizer.h"
+        export *
+    }
+
+    module AppKitGestureMomentumEventGenerator {
+        requires cplusplus20,objc,macos
+        header "../../UIProcess/mac/AppKitGestures/AppKitGestureMomentumEventGenerator.h"
+        export *
+    }
+
+    module WKAppKitGestureControllerCxxSupport {
+        requires cplusplus20,objc,macos
+        header "../../UIProcess/mac/AppKitGestures/WKAppKitGestureControllerCxxSupport.h"
+        export *
+    }
+
+    module WKClickHighlightController {
+        requires cplusplus20,objc,macos
+        header "../../UIProcess/Cocoa/WKClickHighlightController.h"
+        export *
+    }
+
+    module WKClickHighlightView {
+        requires cplusplus20,objc,macos
+        header "../../UIProcess/Cocoa/WKClickHighlightView.h"
         export *
     }
 

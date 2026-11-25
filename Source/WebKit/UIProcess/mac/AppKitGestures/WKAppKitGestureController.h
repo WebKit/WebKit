@@ -29,99 +29,57 @@
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
-#import "WKDeferringGestureRecognizer.h"
 #import <AppKit/NSGestureRecognizer.h>
-#import <wtf/Forward.h>
-#import <wtf/ObjectIdentifier.h>
-#import <wtf/Vector.h>
 
-#if !__has_feature(modules)
-#import "IdentifierTypes.h"
-#endif
-
-namespace WebCore {
-class Color;
-class CornerRadii;
-class FloatQuad;
-class IntPoint;
-}
-
-namespace WebKit {
-struct InteractionInformationAtPosition;
-}
-
-OBJC_CLASS NSPanGestureRecognizer;
 OBJC_CLASS WKClickHighlightController;
 OBJC_CLASS WKWebView;
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
-@interface WKAppKitGestureController : NSObject <NSGestureRecognizerDelegate>
+@interface WKAppKitGestureController : NSObject
 
-- (instancetype)initWithView:(WKWebView *)view;
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)initWithView:(WKWebView *)view NS_DESIGNATED_INITIALIZER;
 - (void)setUp;
 - (void)preferencesDidChange;
-- (void)beginSuppressingSingleClickGestureForTextSelection;
-- (void)endSuppressingSingleClickGestureForTextSelection;
-- (NSGestureRecognizer *)activeDragGestureRecognizer;
-- (void)didReceiveDragStart;
-- (void)setGestureDraggingSession:(NSDraggingSession *)session;
-- (void)clearGestureDragState;
-- (void)setTextSelectionDragGesture:(NSGestureRecognizer *)gesture completionHandler:(void (^)(NSDraggingSession *))completionHandler;
-- (void)positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
 - (void)didCommitLoadForMainFrame;
-- (void)transformGestureWasNotHandledByContent;
-- (void)interruptMomentumForScrollWheelEvent;
-- (void)cancelClickHighlight;
 - (void)reset;
 
-@property (nonatomic, readonly) BOOL everMagnifiedDuringCurrentGesture;
+@property (nonatomic, readonly, nullable) WKWebView *webView;
 
-#if ENABLE(TWO_PHASE_CLICKS)
+@end
+
+@interface WKAppKitGestureController (Clicks)
+- (void)beginSuppressingSingleClickGestureForTextSelection;
+- (void)endSuppressingSingleClickGestureForTextSelection;
+- (void)cancelClickHighlight;
 
 @property (nonatomic, readonly, getter=isPotentialTapInProgress) BOOL potentialTapInProgress;
-
-#if !__has_feature(modules)
-@property (nonatomic, readonly) WKClickHighlightController *clickHighlightController;
-- (void)didGetTapHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
-- (void)disableDoubleTapGesturesDuringTapIfNecessary:(WebKit::TapIdentifier)requestID;
+@property (nonatomic, readonly, nullable) WKClickHighlightController *clickHighlightController;
 - (void)commitPotentialTapFailed;
 - (void)didCompleteSyntheticClick;
 - (void)didHandleTapAsHover;
-- (void)didNotHandleTapAsClick:(const WebCore::IntPoint&)point;
-#endif // !__has_feature(modules)
-
-#endif // ENABLE(TWO_PHASE_CLICKS)
-
-// Exposed for Swift
-@property (nonatomic, readonly, nullable) WKWebView *webView;
-@property (nonatomic, strong, nullable) NSPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic, strong, nullable, setter=setDOMDoubleClickGestureRecognizer:) NSClickGestureRecognizer *domDoubleClickGestureRecognizer;
-- (void)configureForScrolling:(NSPanGestureRecognizer *)gesture;
-- (void)configureForDOMDoubleClick:(NSClickGestureRecognizer *)gesture;
-- (void)configureForImageAnalysisDeferral:(WKDeferringGestureRecognizer *)gesture;
-- (void)panGestureRecognized:(NSGestureRecognizer *)gesture;
-- (void)domDoubleClickGestureRecognized:(NSGestureRecognizer *)gesture;
-
+- (void)disableDoubleTapGesturesDuringTapIfNecessaryForRequest:(uint64_t)requestID;
+- (void)didNotHandleTapAsClickAtPoint:(NSPoint)point;
 @end
 
-@interface WKAppKitGestureController (Swift)
-
-- (void)setUpPanGestureRecognizer;
-- (void)setUpDOMDoubleClickGestureRecognizer;
-- (void)resetDOMDoubleClickGestureRecognizer;
-- (BOOL)takeCompletedDOMDoubleClick;
-- (WKDeferringGestureRecognizer *)makeImageAnalysisDeferringGestureRecognizerWithName:(NSString *)name;
-
-- (NSPoint)panVelocityInView:(nullable NSView *)view;
-
-+ (NSString *)loggingDescriptionForGestureRecognizer:(nullable NSGestureRecognizer *)gestureRecognizer;
-
+@interface WKAppKitGestureController (Drag)
+@property (nonatomic, readonly, nullable) NSGestureRecognizer *activeDragGestureRecognizer;
+- (void)setTextSelectionDragGesture:(NSGestureRecognizer *)gesture completionHandler:(void (^)(NSDraggingSession *))completionHandler;
+- (void)didReceiveDragStart;
+- (void)setGestureDraggingSession:(nullable NSDraggingSession *)session;
+- (void)clearGestureDragState;
 @end
 
-@interface WKAppKitGestureController (WKDeferringGestureRecognizerDelegate) <WKDeferringGestureRecognizerDelegate>
+@interface WKAppKitGestureController (Scrolling)
+- (void)interruptMomentumForScrollWheelEvent;
+@property (nonatomic, readonly) BOOL everMagnifiedDuringCurrentGesture;
+@end
 
+@interface WKAppKitGestureController (TransformGestures)
+- (void)transformGestureWasNotHandledByContent;
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

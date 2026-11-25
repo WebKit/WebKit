@@ -2614,12 +2614,12 @@ static void appendRecognizerIfNonNull(RetainPtr<NSMutableArray>& array, const Re
     return self.layer.transform.m11;
 }
 
-- (WebCore::FloatRect)clickHighlightControllerUnobscuredRect:(WKClickHighlightController *)controller
+- (CGRect)clickHighlightControllerUnobscuredRect:(WKClickHighlightController *)controller
 {
     return protect(_page)->unobscuredContentRect();
 }
 
-- (WebCore::FloatRect)clickHighlightControllerBoundaryRect:(WKClickHighlightController *)controller
+- (CGRect)clickHighlightControllerBoundaryRect:(WKClickHighlightController *)controller
 {
     return protect(_page)->exposedContentRect();
 }

@@ -46,6 +46,9 @@ public:
     // Declared here, not inherited: Swift's C++ interop importer mishandles
     // an `operator bool` inherited from a template base (rdar://181622867).
     explicit constexpr operator bool() const { return !!m_value; }
+
+    // Declared here, not inherited: Swift does not import a static member inherited from a template base.
+    static constexpr MonotonicTime fromRawSeconds(double value) { return GenericTimeMixin<MonotonicTime>::fromRawSeconds(value); }
     
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - MonotonicTime().
     constexpr MonotonicTime() = default;

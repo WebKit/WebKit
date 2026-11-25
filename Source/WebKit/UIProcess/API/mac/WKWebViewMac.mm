@@ -38,6 +38,7 @@
 #import "PDFPluginIdentifier.h"
 #import "WKAPICast.h"
 #import "WKAppKitGestureController.h"
+#import "WKClickHighlightController.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKTextFinderClient.h"
 #import "WKWebViewConfigurationPrivate.h"
@@ -1325,7 +1326,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point
 {
     if (RetainPtr gestureController = _impl->appKitGestureController())
-        [gestureController didNotHandleTapAsClick:point];
+        [gestureController didNotHandleTapAsClickAtPoint:point];
 }
 
 - (void)_didHandleTapAsHover
@@ -1348,8 +1349,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_didGetTapHighlightGeometries:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
 {
-    if (RetainPtr gestureController = _impl->appKitGestureController())
-        [gestureController didGetTapHighlightForRequest:requestID color:color quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
+    RetainPtr gestureController = _impl->appKitGestureController();
+    if (!gestureController)
+        return;
+
+    RELEASE_LOG(ViewGestures, "[pageProxyID=%llu] %s: Received tap highlight for request %llu, nodeHasBuiltInClickHandling=%d", _page->logIdentifier(), __PRETTY_FUNCTION__, requestID.toUInt64(), nodeHasBuiltInClickHandling);
+
+    [protect([gestureController clickHighlightController]) didReceiveHighlightForRequest:requestID color:color quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
 }
 
 - (BOOL)_isPotentialTapInProgress
@@ -1362,7 +1368,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)_disableDoubleTapGesturesDuringTapIfNecessary:(WebKit::TapIdentifier)requestID
 {
     if (RetainPtr gestureController = _impl->appKitGestureController())
-        [gestureController disableDoubleTapGesturesDuringTapIfNecessary:requestID];
+        [gestureController disableDoubleTapGesturesDuringTapIfNecessaryForRequest:requestID.toUInt64()];
 }
 
 - (void)_handleSmartMagnificationInformationForPotentialTap:(WebKit::TapIdentifier)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale nodeIsRootLevel:(BOOL)nodeIsRootLevel nodeIsPluginElement:(BOOL)nodeIsPluginElement
