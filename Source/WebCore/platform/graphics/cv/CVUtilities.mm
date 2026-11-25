@@ -221,6 +221,7 @@ void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef pixelBuffer, CGImageAlphaInfo
         CVBufferRemoveAttachment(pixelBuffer, kCVImageBufferAlphaChannelIsOpaque);
 }
 
+// The formats with alpha that decoders are asked to output.
 static constexpr std::array<OSType, 4> alphaPlanePixelFormats {
     kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar,
     kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar,
@@ -259,16 +260,16 @@ std::span<const OSType> pixelFormatsWithAlphaPlane()
 
 bool isPixelFormatWithAlphaPlane(OSType format)
 {
-    return std::ranges::find(alphaPlanePixelFormats, format) != alphaPlanePixelFormats.end();
+    auto description = PlanarImageConverter::pixelFormatDescription(format);
+    return description && description->alpha;
 }
 
 std::optional<int> bitDepthOfPixelFormatWithAlphaPlane(OSType format)
 {
-    if (!isPixelFormatWithAlphaPlane(format))
+    auto description = PlanarImageConverter::pixelFormatDescription(format);
+    if (!description || !description->alpha)
         return { };
-    if (auto description = PlanarImageConverter::pixelFormatDescription(format))
-        return description->color.bitDepth;
-    return { };
+    return description->color.bitDepth;
 }
 
 std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(CVPixelBufferRef colorBuffer, CVPixelBufferRef alphaBuffer, CVPixelBufferPoolRef pool)
@@ -368,13 +369,11 @@ bool copyAlphaFromLumaPlane(CVPixelBufferRef alphaBuffer, std::span<uint8_t> des
     return true;
 }
 
-RetainPtr<CVPixelBufferRef> createBiPlanarPixelBufferFromColorPlanes(CVPixelBufferRef source)
+RetainPtr<CVPixelBufferRef> createPixelBufferWithoutAlphaPlane(CVPixelBufferRef source)
 {
-    auto sourceFormat = CVPixelBufferGetPixelFormatType(source);
-    if (sourceFormat != kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar && sourceFormat != kCVPixelFormatType_422YpCbCr10VideoRange_8A_TriPlanar)
-        return nullptr;
-    auto description = PlanarImageConverter::pixelFormatDescription(sourceFormat);
-    if (!description)
+    auto description = PlanarImageConverter::pixelFormatDescription(CVPixelBufferGetPixelFormatType(source));
+    ASSERT(description && description->alpha);
+    if (!description || !description->alpha)
         return nullptr;
     auto colorFormat = PlanarImageConverter::pixelFormat(description->subsampling, description->color, description->isFullRange);
     if (!colorFormat)
@@ -396,9 +395,17 @@ RetainPtr<CVPixelBufferRef> createBiPlanarPixelBufferFromColorPlanes(CVPixelBuff
     return output;
 }
 
-bool copyAlphaPlaneToBGRAPixelBuffer(CVPixelBufferRef source, CVPixelBufferRef destination)
+// FIXME: Resizing and rotating MediaStream video frames should keep their alpha plane.
+RetainPtr<CVPixelBufferRef> pixelBufferForVideoToolbox(CVPixelBufferRef pixelBuffer)
 {
-    if (!isPixelFormatWithAlphaPlane(CVPixelBufferGetPixelFormatType(source)) || !PlanarImageConverter::copyAlphaPlaneToBGRA(source, destination))
+    if (!pixelBuffer || !PlanarImageConverter::isRegisteredPixelFormat(CVPixelBufferGetPixelFormatType(pixelBuffer)))
+        return pixelBuffer;
+    return createPixelBufferWithoutAlphaPlane(pixelBuffer);
+}
+
+bool copyAlphaPlaneToAlphaChannel(CVPixelBufferRef source, CVPixelBufferRef destination)
+{
+    if (!PlanarImageConverter::copyAlphaPlaneToAlphaChannel(source, destination))
         return false;
     setStraightAlpha(destination);
     return true;

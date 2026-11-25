@@ -123,15 +123,19 @@ bool ImageTransferSessionVT::setSize(const IntSize& size)
     return true;
 }
 
-RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBufferRef sourceBuffer, const IntSize& size)
+RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBufferRef buffer, const IntSize& size)
 {
-    if (!m_sourceCroppingDictionary && sourceBuffer && m_size == IntSize(CVPixelBufferGetWidth(sourceBuffer), CVPixelBufferGetHeight(sourceBuffer)) && m_pixelFormat == CVPixelBufferGetPixelFormatType(sourceBuffer))
-        return retainPtr(sourceBuffer);
+    RetainPtr sourceBuffer = pixelBufferForVideoToolbox(buffer);
+    if (!sourceBuffer)
+        return nullptr;
+
+    if (!m_sourceCroppingDictionary && m_size == IntSize(CVPixelBufferGetWidth(sourceBuffer), CVPixelBufferGetHeight(sourceBuffer)) && m_pixelFormat == CVPixelBufferGetPixelFormatType(sourceBuffer))
+        return sourceBuffer;
 
     if (m_sourceCroppingDictionary)
         CVBufferSetAttachment(sourceBuffer, kCVImageBufferCleanApertureKey, m_sourceCroppingDictionary.get(), kCVAttachmentMode_ShouldPropagate);
 
-    if (!sourceBuffer || !setSize(size))
+    if (!setSize(size))
         return nullptr;
 
     auto result = createCVPixelBufferFromPool(m_outputBufferPool.get(), m_maxBufferPoolSize);
@@ -426,18 +430,20 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
     if (!source)
         return nullptr;
 
-    if (targetPixelFormat == kCVPixelFormatType_32BGRA && isPixelFormatWithAlphaPlane(CVPixelBufferGetPixelFormatType(source))) {
-        // VTPixelTransferSession miscolours 'x0a8'/'x2a8' and rounds alpha down (rdar://192100290).
-        RetainPtr colorSource = createBiPlanarPixelBufferFromColorPlanes(source);
-        if (!colorSource)
-            colorSource = source;
-        RetainPtr target = transferPixelBuffer(colorSource, targetPixelFormat, colorSpace);
-        if (!target || !copyAlphaPlaneToBGRAPixelBuffer(source, target))
-            return nullptr;
-        return target;
-    }
+    if (!isPixelFormatWithAlphaPlane(CVPixelBufferGetPixelFormatType(source)))
+        return transferPixelBuffer(source, targetPixelFormat, colorSpace);
 
-    return transferPixelBuffer(source, targetPixelFormat, colorSpace);
+    // VTPixelTransferSession miscolours 10-bit Y'CbCr with an alpha plane, and rounds alpha down (rdar://192541461).
+    RetainPtr colorSource = createPixelBufferWithoutAlphaPlane(source);
+    if (!colorSource)
+        return nullptr;
+    RetainPtr target = transferPixelBuffer(colorSource, targetPixelFormat, colorSpace);
+    if (!target)
+        return nullptr;
+    bool hasAlphaChannel = targetPixelFormat == kCVPixelFormatType_32BGRA || targetPixelFormat == kCVPixelFormatType_32ARGB;
+    if (hasAlphaChannel && !copyAlphaPlaneToAlphaChannel(source, target))
+        return nullptr;
+    return target;
 }
 
 } // namespace WebCore

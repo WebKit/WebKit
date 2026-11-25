@@ -75,6 +75,9 @@ struct YUVPixelFormatDescription {
 WEBCORE_EXPORT std::optional<YUVPixelFormatDescription> pixelFormatDescription(OSType);
 WEBCORE_EXPORT std::optional<OSType> pixelFormat(ChromaSubsampling, SampleFormat color, bool isFullRange, std::optional<SampleFormat> alpha = { });
 
+// One of the formats registered with CoreVideo above. VideoToolbox and AVFoundation don't support them.
+WEBCORE_EXPORT bool isRegisteredPixelFormat(OSType);
+
 // The color sample format of the pixel buffer formats that hold samples of the given format without loss. 12-bit samples
 // use the 10-bit formats: stored MSB aligned, all 12 bits are kept.
 WEBCORE_EXPORT std::optional<SampleFormat> pixelBufferSampleFormat(SampleFormat);
@@ -177,8 +180,8 @@ WEBCORE_EXPORT bool copyColorPlanes(CVPixelBufferRef source, CVPixelBufferRef de
 WEBCORE_EXPORT bool copyLumaToAlphaPlane(CVPixelBufferRef alphaSource, CVPixelBufferRef destination);
 WEBCORE_EXPORT bool copyLumaToAlpha(CVPixelBufferRef alphaSource, const DestinationPlane&);
 
-// Overwrites the alpha of a 32BGRA pixel buffer with the 8-bit alpha plane of source.
-WEBCORE_EXPORT bool copyAlphaPlaneToBGRA(CVPixelBufferRef source, CVPixelBufferRef destination);
+// Overwrites the alpha of a 32BGRA or 32ARGB pixel buffer with the alpha plane of source. 16-bit alpha keeps its top 8 bits.
+WEBCORE_EXPORT bool copyAlphaPlaneToAlphaChannel(CVPixelBufferRef source, CVPixelBufferRef destination);
 
 } // namespace PlanarImageConverter
 

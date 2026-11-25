@@ -29,9 +29,11 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #import "Color.h"
+#import "ImageTransferSessionVT.h"
 #import "IntSize.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
+#import "PlanarImageConverterCV.h"
 #import "VideoFrame.h"
 #import "VideoFrameMetadata.h"
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
@@ -442,7 +444,15 @@ void LocalSampleBufferDisplayLayer::enqueueBufferInternal(CVPixelBufferRef pixel
 {
     assertIsCurrent(workQueue());
 
-    auto sampleBuffer = createVideoSampleBuffer(pixelBuffer, PAL::toCMTime(presentationTime));
+    // AVSampleBufferDisplayLayer doesn't support the pixel formats WebKit registers; 32BGRA keeps their alpha.
+    RetainPtr<CVPixelBufferRef> displayedBuffer = pixelBuffer;
+    if (PlanarImageConverter::isRegisteredPixelFormat(CVPixelBufferGetPixelFormatType(pixelBuffer))) {
+        displayedBuffer = ImageTransferSessionVT::convertPixelBuffer(pixelBuffer, kCVPixelFormatType_32BGRA, ImageTransferSessionVT::DestinationColorSpace::Unspecified);
+        if (!displayedBuffer)
+            return;
+    }
+
+    auto sampleBuffer = createVideoSampleBuffer(displayedBuffer, PAL::toCMTime(presentationTime));
     auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
     if (m_renderPolicy == RenderPolicy::Immediately || now >= presentationTime)
         setSampleBufferAsDisplayImmediately(sampleBuffer.get());

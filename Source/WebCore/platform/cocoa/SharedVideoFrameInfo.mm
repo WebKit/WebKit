@@ -31,6 +31,7 @@
 #include "CVUtilities.h"
 #include "IOSurface.h"
 #include "Logging.h"
+#include "PlanarImageConverterCV.h"
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/persistence/PersistentCoders.h>
@@ -59,7 +60,7 @@ SharedVideoFrameInfo SharedVideoFrameInfo::fromCVPixelBuffer(CVPixelBufferRef pi
         return { type, static_cast<uint32_t>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetHeight(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRow(pixelBuffer)) };
 
     return { type, static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1)),
-        type == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar ? static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 2)) : 0
+        isPixelFormatWithAlphaPlane(type) ? static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 2)) : 0
     };
 }
 
@@ -67,19 +68,7 @@ bool SharedVideoFrameInfo::isReadWriteSupported() const
 {
     return m_bufferType == kCVPixelFormatType_32BGRA
         || m_bufferType == kCVPixelFormatType_32ARGB
-        || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
-        || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
-        || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange
-        || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
-        || m_bufferType == kCVPixelFormatType_422YpCbCr8BiPlanarFullRange
-        || m_bufferType == kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange
-        || m_bufferType == kCVPixelFormatType_422YpCbCr10BiPlanarFullRange
-        || m_bufferType == kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange
-        || m_bufferType == kCVPixelFormatType_444YpCbCr8BiPlanarFullRange
-        || m_bufferType == kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange
-        || m_bufferType == kCVPixelFormatType_444YpCbCr10BiPlanarFullRange
-        || m_bufferType == kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange
-        || m_bufferType == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar;
+        || PlanarImageConverter::pixelFormatDescription(m_bufferType);
 }
 
 size_t SharedVideoFrameInfo::storageSize() const
@@ -99,7 +88,7 @@ size_t SharedVideoFrameInfo::storageSize() const
     if (!WTF::safeAdd(sizePlaneA, sizePlaneB, size) || !WTF::safeAdd(size, sizeof(SharedVideoFrameInfo), size))
         return 0;
 
-    if (m_bufferType == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar) {
+    if (isPixelFormatWithAlphaPlane(m_bufferType)) {
         size_t sizePlaneAlpha;
         if (!WTF::safeMultiply(m_bytesPerRowPlaneAlpha, m_height, sizePlaneAlpha) || !WTF::safeAdd(sizePlaneAlpha, size, size))
             return 0;

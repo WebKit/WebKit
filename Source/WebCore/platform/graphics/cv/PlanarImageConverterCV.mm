@@ -201,6 +201,13 @@ std::optional<OSType> pixelFormat(ChromaSubsampling subsampling, SampleFormat co
     return match->pixelFormat;
 }
 
+bool isRegisteredPixelFormat(OSType pixelFormat)
+{
+    return std::ranges::any_of(registeredPixelFormatDescriptions, [&](auto& description) {
+        return description.pixelFormat == pixelFormat;
+    });
+}
+
 std::optional<SampleFormat> pixelBufferSampleFormat(SampleFormat format)
 {
     if (format.bitDepth == 8)
@@ -400,9 +407,23 @@ static std::optional<DestinationPlane> packedPixelBufferPlane(CVPixelBufferRef p
     }
 }
 
-bool copyAlphaPlaneToBGRA(CVPixelBufferRef source, CVPixelBufferRef destination)
+static std::optional<uint8_t> alphaChannel(OSType pixelFormat)
 {
-    if (CVPixelBufferGetPixelFormatType(destination) != kCVPixelFormatType_32BGRA)
+    switch (pixelFormat) {
+    case kCVPixelFormatType_32BGRA:
+        return 3;
+    case kCVPixelFormatType_32ARGB:
+        return 0;
+    default:
+        return { };
+    }
+}
+
+bool copyAlphaPlaneToAlphaChannel(CVPixelBufferRef source, CVPixelBufferRef destination)
+{
+    auto channel = alphaChannel(CVPixelBufferGetPixelFormatType(destination));
+    // Null case exercised by API test PlanarImageConverterCV.CopyAlphaPlaneToAlphaChannel.
+    if (!channel)
         return false;
 
     ReadOnlyYUVPixelBufferPlanes lockedPlanes { source };
@@ -411,13 +432,18 @@ bool copyAlphaPlaneToBGRA(CVPixelBufferRef source, CVPixelBufferRef destination)
         return false;
     Borrow planes = lockedPlanes;
     auto& alpha = planes->alpha();
-    if (!alpha || alpha->format != eightBit)
-        return false;
-
     auto pixels = packedPixelBufferPlane(destination);
-    // Alpha is the last byte of a 32BGRA pixel.
-    constexpr uint8_t alphaChannel = 3;
-    return pixels && copyPlaneToChannel(*alpha, *pixels, alphaChannel);
+    // Null alpha case exercised by API test PlanarImageConverterCV.CopyAlphaPlaneToAlphaChannel.
+    if (!alpha || !pixels)
+        return false;
+    if (alpha->format == eightBit)
+        return copyPlaneToChannel(*alpha, *pixels, *channel);
+
+    Vector<uint8_t> storage(alpha->width * alpha->height);
+    Borrow borrowedStorage = storage;
+    auto eightBitAlpha = makePlane(borrowedStorage->mutableSpan(), 0, alpha->width, alpha->width, alpha->height, eightBit);
+    ASSERT(eightBitAlpha);
+    return eightBitAlpha && copyPlane(*alpha, *eightBitAlpha) && copyPlaneToChannel(asSource(*eightBitAlpha), *pixels, *channel);
 }
 
 bool copyToPixelBuffer(const SourcePlane& source, CVPixelBufferRef destination, std::array<uint8_t, 4> channelMap)
