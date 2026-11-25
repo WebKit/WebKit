@@ -59,18 +59,21 @@ sub applyPreprocessor
     }
 
     # The file has preprocessor directives. Evaluate simple
-    # #if defined(X) && X / #if !(defined(X) && X) / #elif / #else / #endif
+    # #if defined(X) && X / #if !(defined(X) && X) / #ifdef / #elif / #else / #endif
     # patterns in Perl instead of forking clang.
     my %macros;
     if ($defines) {
         $macros{$_} = 1 for grep { $_ } split(/\s+/, $defines =~ s/"//gr);
     }
-    return split(/^/m, _evaluatePreprocessorDirectives($content, \%macros));
+    return split(/^/m, _evaluatePreprocessorDirectives($content, \%macros, $fileName));
 }
 
-# Simple #if / #elif / #else / #endif evaluator. Supports:
+# Simple #if / #elif / #else / #endif evaluator. Any other condition is an error. Supports:
+#   #ifdef X
+#   #ifndef X
 #   #if defined(X) && X
-#   #if defined(X)
+#   #if defined(X) / #if !defined(X)
+#   #if X / #if !X
 #   #if defined(X) && X && defined(Y) && Y  (conjunctions)
 #   #if !(defined(X) && X)                  (negation)
 #   #elif <any of the #if conditions above>
@@ -80,25 +83,31 @@ sub applyPreprocessor
 #   Nesting
 sub _evaluatePreprocessorDirectives
 {
-    my ($content, $macros) = @_;
+    my ($content, $macros, $fileName) = @_;
     my $output = "";
     # Stack of [emittingBeforeThisIf, anyBranchWasTaken].
     my @ifStack = ();
     my $emitting = 1;
 
     for my $line (split(/^/m, $content)) {
-        if ($line =~ /^\s*#\s*if\s+(.*)/) {
-            my $cond = _evaluateCondition($1, $macros);
+        if ($line =~ /^\s*#\s*if(n?)def\s+(\w+)/) {
+            my $cond = $emitting && $macros->{$2} ? 1 : 0;
+            $cond = !$cond if $1 && $emitting;
+            push @ifStack, [$emitting, $cond];
+            $emitting = $emitting && $cond;
+        } elsif ($line =~ /^\s*#\s*if\s+(.*)/) {
+            # Like the C preprocessor, leave conditions inside an excluded block unevaluated.
+            my $cond = $emitting ? _evaluateCondition(_stripTrailingComment($1), $macros, $fileName) : 0;
             push @ifStack, [$emitting, $cond];
             $emitting = $emitting && $cond;
         } elsif ($line =~ /^\s*#\s*elif\s+(.*)/) {
             my $frame = $ifStack[-1];
-            if ($frame->[1]) {
+            if ($frame->[1] || !$frame->[0]) {
                 $emitting = 0;
             } else {
-                my $cond = _evaluateCondition($1, $macros);
+                my $cond = _evaluateCondition(_stripTrailingComment($1), $macros, $fileName);
                 $frame->[1] = $cond;
-                $emitting = $frame->[0] && $cond;
+                $emitting = $cond;
             }
         } elsif ($line =~ /^\s*#\s*else\b/) {
             my $frame = $ifStack[-1];
@@ -113,34 +122,41 @@ sub _evaluatePreprocessorDirectives
     return $output;
 }
 
+sub _stripTrailingComment
+{
+    my $expr = shift;
+    $expr =~ s{\s*//.*$}{}s;
+    return $expr;
+}
+
 sub _evaluateCondition
 {
-    my ($expr, $macros) = @_;
+    my ($expr, $macros, $fileName) = @_;
 
     # Handle negation: "!(defined(X) && X)"
     if ($expr =~ /^\s*!\s*\((.+)\)\s*$/) {
-        return _evaluateCondition($1, $macros) ? 0 : 1;
+        return _evaluateCondition($1, $macros, $fileName) ? 0 : 1;
     }
 
     # Handle parenthesized expression: "(defined(X) && X)"
     if ($expr =~ /^\s*\((.+)\)\s*$/) {
-        return _evaluateCondition($1, $macros);
+        return _evaluateCondition($1, $macros, $fileName);
     }
 
     # Handle conjunctions: "defined(X) && X && defined(Y) && Y"
     my @parts = split(/\s*&&\s*/, $expr);
+    my $result = 1;
     for my $part (@parts) {
         $part =~ s/^\s+|\s+$//g;
-        if ($part =~ /^\(?defined\((\w+)\)\)?$/) {
-            return 0 unless $macros->{$1};
-        } elsif ($part =~ /^(\w+)$/) {
-            return 0 unless $macros->{$1};
+        if ($part =~ /^(!?)\s*\(?defined\s*\(\s*(\w+)\s*\)\)?$/) {
+            $result = 0 unless $1 ? !$macros->{$2} : $macros->{$2};
+        } elsif ($part =~ /^(!?)\s*(\w+)$/) {
+            $result = 0 unless $1 ? !$macros->{$2} : $macros->{$2};
         } else {
-            # Unrecognized expression — conservatively treat as true.
-            next;
+            die "$fileName: cannot evaluate '$part' in '$expr'; use only the forms listed above _evaluatePreprocessorDirectives in preprocessor.pm\n";
         }
     }
-    return 1;
+    return $result;
 }
 
 1;
