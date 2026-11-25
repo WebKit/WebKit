@@ -111,11 +111,21 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
     if (oldValue != newValue) {
         if (name == styleAttr)
             styleAttributeChanged(newValue, reason);
-        else if (hasPresentationalHintsForAttribute(name)) {
-            elementData()->setPresentationalHintStyleIsDirty(true);
-            invalidateStyle();
-        }
+        else if (hasPresentationalHintsForAttribute(name))
+            presentationalHintsChanged();
     }
+}
+
+void StyledElement::invalidatePresentationalHintStyle()
+{
+    ensureUniqueElementData();
+    presentationalHintsChanged();
+}
+
+void StyledElement::presentationalHintsChanged()
+{
+    elementData()->setPresentationalHintStyleIsDirty(true);
+    invalidateStyle();
 }
 
 CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()

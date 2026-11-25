@@ -1185,8 +1185,7 @@ void HTMLImageElement::setSourceElement(HTMLSourceElement* sourceElement)
 
 void HTMLImageElement::invalidateAttributeMapping()
 {
-    ensureUniqueElementData().setPresentationalHintStyleIsDirty(true);
-    invalidateStyle();
+    invalidatePresentationalHintStyle();
 }
 
 Ref<Element> HTMLImageElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
