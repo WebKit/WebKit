@@ -33,6 +33,7 @@
 #include "APIOpenPanelParameters.h"
 #include "APIString.h"
 #include "AutomationProtocolObjects.h"
+#include "BidiBrowsingContextAgent.h"
 #include "CoordinateSystem.h"
 #include "ImageOptions.h"
 #include "InspectorPassthroughChannel.h"
@@ -408,6 +409,11 @@ String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPagePr
 
 void WebAutomationSession::didDestroyFrame(FrameIdentifier frameID)
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    // WebFrameProxy::disconnect() normally clears this; do it here when there is no proxy left to disconnect.
+    if (!WebFrameProxy::webFrame(frameID))
+        m_framesReportedDestroyed.remove(frameID);
+#endif
     auto handle = m_webFrameHandleMap.take(frameID);
     if (!handle.isEmpty())
         m_handleWebFrameMap.remove(handle);
@@ -1481,6 +1487,15 @@ void WebAutomationSession::forgetFrameHandles(NOESCAPE const Function<bool(const
         didDestroyFrame(frameID);
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+// A proxy that is gone, or that lost its page when its process shut down, gets no further notification.
+static bool isDiscardedFrame(WebCore::FrameIdentifier frameID)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    return !frame || !frame->page();
+}
+#endif
+
 void WebAutomationSession::forgetDestroyedFrames()
 {
     // Some frames go away without being reported destroyed, such as the child frames detached from the previous main
@@ -1491,6 +1506,9 @@ void WebAutomationSession::forgetDestroyedFrames()
     forgetFrameHandles([](const WebFrameProxy* frame) {
         return !frame;
     });
+#if ENABLE(WEBDRIVER_BIDI)
+    m_framesReportedDestroyed.removeIf(isDiscardedFrame);
+#endif
 }
 
 void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame, API::Navigation* finishedNavigation, NavigationNotification notification)
@@ -1648,6 +1666,9 @@ void WebAutomationSession::wheelEventsFlushedForPage(const WebPageProxy& page)
 #if ENABLE(WEBDRIVER_BIDI)
 void WebAutomationSession::didCreatePage(WebPageProxy& page)
 {
+    if (RefPtr openerPage = getOpenerPage(page))
+        m_originalOpenerHandles.set(page.identifier(), handleForWebPageProxy(*openerPage));
+
     m_bidiProcessor->browserAgent().didCreatePage(page);
     m_bidiProcessor->emulationAgent().didCreatePage(page);
     emitContextCreatedEvent(page);
@@ -1852,12 +1873,12 @@ void WebAutomationSession::didCreateFrame(const WebFrameProxy& frame)
 #endif
 }
 
-void WebAutomationSession::willDestroyFrame(const WebFrameProxy& frame)
-{
 #if ENABLE(WEBDRIVER_BIDI)
-    contextDestroyedForFrame(frame);
-#endif
+void WebAutomationSession::clearContextDestroyedStateForFrame(const WebFrameProxy& frame)
+{
+    m_framesReportedDestroyed.remove(frame.frameID());
 }
+#endif
 
 void WebAutomationSession::webProcessDidTerminate(WebCore::ProcessIdentifier processIdentifier)
 {
@@ -1921,22 +1942,32 @@ void WebAutomationSession::recursivelyEmitContextCreatedEvent(const FrameTreeNod
         recursivelyEmitContextCreatedEvent(child, contextHandle);
 }
 
+static Ref<JSON::Value> browsingContextHandleOrNull(const String& handle)
+{
+    // FIXME: Use the generated nullable parameter types once the protocol generator supports them.
+    // https://bugs.webkit.org/show_bug.cgi?id=310157
+    if (handle.isNull())
+        return JSON::Value::null();
+    return JSON::Value::create(handle);
+}
+
 void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
 {
+    // https://w3c.github.io/webdriver-bidi/#event-browsingContext-contextDestroyed
     auto contextHandle = handleForWebPageProxy(page);
     auto url = page.currentURL();
 
-    String parentContext = "null"_s;
-    if (RefPtr mainFrame = page.mainFrame()) {
-        if (RefPtr parentFrame = mainFrame->parentFrame())
-            parentContext = effectiveHandleForWebFrameProxy(*parentFrame);
+    auto originalOpenerHandle = m_originalOpenerHandles.take(page.identifier());
+    if (originalOpenerHandle.isNull()) {
+        if (RefPtr openerPage = this->getOpenerPage(page))
+            originalOpenerHandle = handleForWebPageProxy(*openerPage);
     }
 
-    String originalOpenerHandle = "null"_s;
-    if (RefPtr openerPage = this->getOpenerPage(page))
-        originalOpenerHandle = handleForWebPageProxy(*openerPage);
-
     auto [clientWindow, userContext] = clientWindowAndUserContextForPage(page);
+
+    auto children = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
+    if (RefPtr mainFrame = page.mainFrame())
+        children = m_bidiProcessor->browsingContextAgent().recordDestroyedChildNavigables(*mainFrame, m_framesReportedDestroyed);
 
     // Ensure the active realm is destroyed even if the WebProcess terminates first.
     m_bidiProcessor->scriptAgent().removeDedicatedWorkerRealmsForBrowsingContext(contextHandle);
@@ -1944,7 +1975,7 @@ void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
         m_bidiProcessor->scriptAgent().notifyRealmDestroyedFromBrowsingContext(*realmID, contextHandle);
 
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::ContextDestroyed, { handleForWebPageProxy(page) }, [&] {
-        m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, originalOpenerHandle, parentContext, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
+        m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, browsingContextHandleOrNull(originalOpenerHandle), JSON::Value::null(), WTF::move(children), clientWindow, userContext);
     });
 
     m_handleWebPageMap.remove(contextHandle);
@@ -1953,26 +1984,28 @@ void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
 
 void WebAutomationSession::contextDestroyedForFrame(const WebFrameProxy& frame)
 {
+    // https://w3c.github.io/webdriver-bidi/#event-browsingContext-contextDestroyed
+    RefPtr page = frame.page();
+    if (!page || page->isClosed())
+        return;
+
+    // Descendants included in an ancestor or page event must not emit again.
+    if (!m_framesReportedDestroyed.add(frame.frameID()).isNewEntry)
+        return;
+
     auto contextHandle = effectiveHandleForWebFrameProxy(frame);
     auto url = frame.url().string();
-    String parentHandle = "null"_s;
+
+    String parentHandle;
     if (RefPtr parentFrame = frame.parentFrame())
         parentHandle = effectiveHandleForWebFrameProxy(*parentFrame);
 
-    String clientWindow = "unknown-window"_s;
-    String userContext = "default"_s;
-
-    if (RefPtr page = frame.page()) {
-        auto [windowId, contextId] = clientWindowAndUserContextForPage(*page);
-        clientWindow = windowId;
-        userContext = contextId;
-    }
+    auto [clientWindow, userContext] = clientWindowAndUserContextForPage(*page);
+    auto children = m_bidiProcessor->browsingContextAgent().recordDestroyedChildNavigables(frame, m_framesReportedDestroyed);
 
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::ContextDestroyed, bidiSubscriptionScopeForFrame(frame), [&] {
-        m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, "null"_s, parentHandle, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
+        m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, JSON::Value::null(), browsingContextHandleOrNull(parentHandle), WTF::move(children), clientWindow, userContext);
     });
-
-    // Note: Frame handle cleanup is done by didDestroyFrame(), so we don't duplicate that here
 }
 
 void WebAutomationSession::setViewportForPage(WebPageProxy& page, std::optional<int> width, std::optional<int> height, std::optional<double> devicePixelRatio, CommandCallback<void>&& callback)
@@ -1996,6 +2029,23 @@ void WebAutomationSession::setViewportForPage(WebPageProxy& page, std::optional<
         });
     } else
         setDevicePixelRatioAndComplete();
+}
+
+void WebAutomationSession::contextDestroyedForChildFramesOfPreviousDocument(const WebFrameProxy& mainFrame)
+{
+    for (auto& childFrame : mainFrame.childFrames())
+        contextDestroyedForFrame(childFrame.get());
+}
+
+void WebAutomationSession::contextDestroyedForFramesRemovedByProcessTermination(const WebFrameProxy& frame, const WebProcessProxy& process)
+{
+    bool isFrameInTerminatedProcess = frame.process().coreProcessIdentifier() == process.coreProcessIdentifier();
+    for (auto& childFrame : frame.childFrames()) {
+        if (isFrameInTerminatedProcess)
+            contextDestroyedForFrame(childFrame.get());
+        else
+            contextDestroyedForFramesRemovedByProcessTermination(childFrame.get(), process);
+    }
 }
 
 #endif
@@ -2057,6 +2107,13 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     forgetFrameHandles([&](const WebFrameProxy* frame) {
         return !frame || frame->page() == &page;
     });
+#if ENABLE(WEBDRIVER_BIDI)
+    m_framesReportedDestroyed.removeIf([pageID = page.identifier()](auto frameID) {
+        RefPtr frame = WebFrameProxy::webFrame(frameID);
+        RefPtr framePage = frame ? frame->page() : nullptr;
+        return !framePage || framePage->identifier() == pageID;
+    });
+#endif
 
     // After the context is reported destroyed, so that browsingContext.close replies after its contextDestroyed event.
     for (auto& callback : m_pendingCloseBrowsingContextCallbacksPerPage.take(page.identifier()))

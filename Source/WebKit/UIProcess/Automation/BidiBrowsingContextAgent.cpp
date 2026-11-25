@@ -353,6 +353,21 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::cr
         .release();
 }
 
+Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>> BidiBrowsingContextAgent::recordDestroyedChildNavigables(const WebFrameProxy& frame, HashSet<WebCore::FrameIdentifier>& framesReportedDestroyed)
+{
+    auto childrenInfo = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
+    for (auto& childFrame : frame.childFrames()) {
+        // A frame stays attached between its own report and its DidDestroyFrame.
+        if (!framesReportedDestroyed.add(childFrame->frameID()).isNewEntry)
+            continue;
+
+        auto info = createNavigableInfoWithoutChildren(childFrame->frameID(), childFrame->url().string());
+        info->setChildren(recordDestroyedChildNavigables(childFrame.get(), framesReportedDestroyed));
+        childrenInfo->addItem(WTF::move(info));
+    }
+    return childrenInfo;
+}
+
 Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
 {
     auto info = createNavigableInfoWithoutChildren(tree.info.frameID, tree.info.request.url().string());
