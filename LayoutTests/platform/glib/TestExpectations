@@ -3016,9 +3016,6 @@ webkit.org/b/332806 imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_
 webkit.org/b/332806 imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_createEquirectLayer.https.html [ Skip ]
 webkit.org/b/332806 imported/w3c/web-platform-tests/webxr/layers/xrMediaBinding_createQuadLayer.https.html [ Skip ]
 webkit.org/b/332808 imported/w3c/web-platform-tests/webxr/layers/xrLayerInit.https.html [ Skip ]
-webkit.org/b/332808 imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createCubeLayer.https.html [ Skip ]
-webkit.org/b/332808 imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createCylinderLayer.https.html [ Skip ]
-webkit.org/b/332808 imported/w3c/web-platform-tests/webxr/layers/xrWebGLBinding_createQuadLayer.https.html [ Skip ]
 
 imported/w3c/web-platform-tests/webxr/plane-detection [ Pass ]
 

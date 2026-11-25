@@ -1,0 +1,5 @@
+
+
+PASS Ensure XrWebGLBinding::createQuadLayer throws the appropriate errors. - webgl
+PASS Ensure XrWebGLBinding::createQuadLayer throws the appropriate errors. - webgl2
+

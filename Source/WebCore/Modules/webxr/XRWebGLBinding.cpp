@@ -369,6 +369,9 @@ ExceptionOr<Ref<XRQuadLayer>> XRWebGLBinding::createQuadLayer(ScriptExecutionCon
             if (baseContext->isContextLost())
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create a quad layer with a lost WebGL context"_s };
 
+            if (init.width <= 0 || init.height <= 0)
+                return Exception { ExceptionCode::TypeError, "Quad layer width and height must be greater than 0."_s };
+
             auto validateInitResult = validateCompositionLayerInitParameters(init);
             if (validateInitResult.hasException())
                 return validateInitResult.releaseException();
@@ -591,6 +594,19 @@ ExceptionOr<Ref<XRCylinderLayer>> XRWebGLBinding::createCylinderLayer(ScriptExec
         [&](const Ref<WebGLRenderingContextBase>& baseContext) -> ExceptionOr<Ref<XRCylinderLayer>> {
             if (baseContext->isContextLost())
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create a cylinder layer with a lost WebGL context"_s };
+
+            if (!std::isfinite(init.radius) || !std::isfinite(init.aspectRatio) || !std::isfinite(init.centralAngle))
+                return Exception { ExceptionCode::TypeError, "Cylinder layer parameters must be finite."_s };
+
+            if (init.radius < 0)
+                return Exception { ExceptionCode::TypeError, "Cylinder layer radius must be >= 0."_s };
+
+            if (init.aspectRatio <= 0)
+                return Exception { ExceptionCode::TypeError, "Cylinder layer radius must be greater than 0."_s };
+
+            constexpr float twoPiFloat = static_cast<float>(std::numbers::pi * 2);
+            if (init.centralAngle < 0 || init.centralAngle > twoPiFloat)
+                return Exception { ExceptionCode::TypeError, "Cylinder layer central angle must be 0 < angle < 2*pi."_s };
 
             if (!protect(init.space)->isReferenceSpace())
                 return Exception { ExceptionCode::TypeError, "The space is not a reference space."_s };
