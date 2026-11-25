@@ -117,6 +117,7 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     auto propertyID = cssPropertyID(property);
     if (propertyID == CSSPropertyID::Invalid || !isExposed(propertyID, document.settings()))
         return Exception { ExceptionCode::TypeError, makeString("Invalid property "_s, property) };
+    propertyID = resolveVerticalAlignShorthand(propertyID, document.cssParserContext());
 
     if (!CSSProperty::isListValuedProperty(propertyID) && values.size() > 1)
         return Exception { ExceptionCode::TypeError, makeString(property, " is not a list-valued property but more than one value was provided"_s) };
@@ -235,7 +236,7 @@ ExceptionOr<void> StylePropertyMap::remove(Document& document, const AtomString&
     if (!isExposed(propertyID, document.settings()))
         return Exception { ExceptionCode::TypeError, makeString("Invalid property "_s, property) };
 
-    removeProperty(propertyID);
+    removeProperty(resolveVerticalAlignShorthand(propertyID, document.cssParserContext()));
     return { };
 }
 

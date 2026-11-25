@@ -376,7 +376,7 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::getPropertyCSSValue(
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return nullptr;
-    return wrapForDeprecatedCSSOM(protect(m_propertySet)->getPropertyCSSValue(propertyID).get());
+    return wrapForDeprecatedCSSOM(protect(m_propertySet)->getPropertyCSSValue(resolveVerticalAlignShorthand(propertyID)).get());
 }
 
 String PropertySetCSSStyleProperties::getPropertyValue(const String& propertyName)
@@ -398,7 +398,7 @@ String PropertySetCSSStyleProperties::getPropertyPriority(const String& property
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return emptyString();
-    return protect(m_propertySet)->propertyIsImportant(propertyID) ? "important"_s : emptyString();
+    return protect(m_propertySet)->propertyIsImportant(resolveVerticalAlignShorthand(propertyID)) ? "important"_s : emptyString();
 }
 
 String PropertySetCSSStyleProperties::getPropertyShorthand(const String& propertyName)
@@ -424,6 +424,7 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setProperty(const String& prope
 
     if (!isExposed(propertyID))
         return { };
+    propertyID = resolveVerticalAlignShorthand(propertyID);
 
     if (!willMutate())
         return { };
@@ -457,6 +458,7 @@ ExceptionOr<String> PropertySetCSSStyleProperties::removeProperty(const String& 
         propertyID = CSSPropertyID::Custom;
     if (!isExposed(propertyID))
         return String();
+    propertyID = resolveVerticalAlignShorthand(propertyID);
 
     if (!willMutate())
         return String();
@@ -476,7 +478,7 @@ String PropertySetCSSStyleProperties::getPropertyValueInternal(CSSPropertyID pro
     if (!isExposed(propertyID))
         return { };
 
-    auto value = protect(m_propertySet)->getPropertyValue(propertyID);
+    auto value = protect(m_propertySet)->getPropertyValue(resolveVerticalAlignShorthand(propertyID));
 
     if (!value.isEmpty())
         return value;
@@ -492,6 +494,7 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setPropertyInternal(CSSProperty
 
     if (!isExposed(propertyID))
         return { };
+    propertyID = resolveVerticalAlignShorthand(propertyID);
 
     SUPPRESS_UNCOUNTED_ARG if (m_propertySet->setProperty(propertyID, value, cssParserContext(), important)) {
         didMutate(MutationType::PropertyChanged);
@@ -512,6 +515,13 @@ bool PropertySetCSSStyleProperties::isExposed(CSSPropertyID propertyID) const
 
     return WebCore::isExposed(propertyID, &parserContext->propertySettings)
         && (!CSSProperty::isDescriptorOnly(propertyID) || parsingDescriptor);
+}
+
+CSSPropertyID PropertySetCSSStyleProperties::resolveVerticalAlignShorthand(CSSPropertyID propertyID) const
+{
+    if (propertyID != CSSPropertyID::VerticalAlign) [[likely]]
+        return propertyID;
+    return WebCore::resolveVerticalAlignShorthand(propertyID, cssParserContext());
 }
 
 RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::wrapForDeprecatedCSSOM(CSSValue* internalValue)

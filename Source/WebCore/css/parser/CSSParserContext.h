@@ -139,6 +139,19 @@ void add(Hasher&, const CSSParserContext&);
 
 WEBCORE_EXPORT const CSSParserContext& strictCSSParserContext();
 
+// With CSSVerticalAlignShorthandEnabled, 'vertical-align' is the CSS Inline 3 shorthand, which is implemented as an
+// internal property so that the CSS 2 longhand stays as it is with the setting disabled. Call this wherever the name
+// 'vertical-align' becomes a property ID, after checking that the ID is exposed.
+// User agent style sheets keep setting the CSS 2 longhand, since they are shared by documents with and without the
+// setting, which the user agent parser context enables unconditionally. verticalAlignShorthand.css sets the longhands.
+// FIXME: 'transition-property', 'will-change' and Web Inspector still resolve 'vertical-align' to the CSS 2 longhand.
+inline CSSPropertyID resolveVerticalAlignShorthand(CSSPropertyID propertyID, const CSSParserContext& context)
+{
+    if (propertyID == CSSPropertyID::VerticalAlign && context.cssVerticalAlignShorthandEnabled && !isUASheetBehavior(context.mode)) [[unlikely]]
+        return CSSPropertyID::InternalVerticalAlign;
+    return propertyID;
+}
+
 } // namespace WebCore
 
 namespace WTF {

@@ -454,6 +454,9 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.string());
         if (!isExposed(cssProperty, &document.settings()))
             cssProperty = CSSPropertyID::Invalid;
+        // Sort 'vertical-align' with the shorthands when it is the CSS Inline 3 shorthand, so that its longhands override it.
+        // The keyframe keeps the property as it was given, so that getKeyframes() reports it.
+        cssProperty = resolveVerticalAlignShorthand(cssProperty, document.cssParserContext());
         auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, WritingMode());
         if (Style::Interpolation::canInterpolate(resolvedCSSProperty)) {
             if (isDirectionAwareShorthand(cssProperty))

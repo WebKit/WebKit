@@ -87,7 +87,8 @@ private:
     {
         if (isCustomPropertyName(customIdent.value))
             return Kind { CustomProperty { .value = WTF::move(customIdent) } };
-        if (auto propertyID = cssPropertyID(customIdent.value); propertyID != CSSPropertyID::Invalid)
+        // Internal properties, like the CSS Inline 3 'vertical-align' shorthand, are not reachable by name.
+        if (auto propertyID = cssPropertyID(customIdent.value); propertyID != CSSPropertyID::Invalid && !isInternal(propertyID))
             return Kind { SingleProperty { .value = WTF::move(customIdent), .propertyID = propertyID } };
         return Kind { UnknownProperty { .value = WTF::move(customIdent) } };
     }

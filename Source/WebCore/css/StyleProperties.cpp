@@ -172,7 +172,11 @@ String StyleProperties::getPropertyShorthand(CSSPropertyID propertyID) const
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
         return String();
-    return nameString(propertyAt(foundPropertyIndex).shorthandID());
+    auto shorthandID = propertyAt(foundPropertyIndex).shorthandID();
+    // The CSS Inline 3 'vertical-align' shorthand is stored under an internal ID but exposed to authors as 'vertical-align'.
+    if (shorthandID == CSSPropertyID::InternalVerticalAlign)
+        return nameString(CSSPropertyID::VerticalAlign);
+    return nameString(shorthandID);
 }
 
 bool StyleProperties::isPropertyImplicit(CSSPropertyID propertyID) const
@@ -267,6 +271,23 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
     std::bitset<shorthandPropertyCount> shorthandPropertyUsed;
     std::bitset<shorthandPropertyCount> shorthandPropertyAppeared;
 
+    // Only collapse longhands into the CSS Inline 3 'vertical-align' shorthand when it set some of them, which can only happen
+    // when it is enabled. Otherwise 'vertical-align' is the CSS 2 longhand. Decide this for the whole block, so that a longhand
+    // set on its own after the shorthand is not serialized twice.
+    std::optional<bool> wasVerticalAlignShorthandUsed;
+    auto canUseVerticalAlignShorthand = [&] {
+        if (!wasVerticalAlignShorthandUsed) {
+            wasVerticalAlignShorthandUsed = false;
+            for (auto property : *this) {
+                if (property.shorthandID() == CSSPropertyID::InternalVerticalAlign) {
+                    wasVerticalAlignShorthandUsed = true;
+                    break;
+                }
+            }
+        }
+        return *wasVerticalAlignShorthandUsed;
+    };
+
     unsigned numDecls = 0;
     for (auto property : *this) {
         auto propertyID = property.id();
@@ -277,6 +298,8 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
             shorthands.append(substitutionValue->shorthandPropertyId());
         else {
             for (auto& shorthand : matchingShorthandsForLonghand(propertyID)) {
+                if (shorthand.id() == CSSPropertyID::InternalVerticalAlign && !canUseVerticalAlignShorthand())
+                    continue;
                 if (canUseShorthandForLonghand(shorthand.id(), propertyID))
                     shorthands.append(shorthand.id());
             }
@@ -318,6 +341,9 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
         else if (propertyID == CSSPropertyID::PageSize) {
             // `page-size` is stored under its own id but exposed to authors as `size`.
             result.append(nameLiteral(CSSPropertyID::Size));
+        } else if (propertyID == CSSPropertyID::InternalVerticalAlign) {
+            // The CSS Inline 3 'vertical-align' shorthand is stored under an internal ID but exposed to authors as 'vertical-align'.
+            result.append(nameLiteral(CSSPropertyID::VerticalAlign));
         } else
             result.append(nameLiteral(propertyID));
 

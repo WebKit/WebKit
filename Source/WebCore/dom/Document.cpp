@@ -12139,6 +12139,9 @@ const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
         auto end = std::copy_if(computedPropertyIDs.begin(), computedPropertyIDs.end(), exposed.begin(), [this, protectedThis = Ref { *this }](auto property) {
             if (!isExposed(property, m_settings.ptr()))
                 return false;
+            // With CSSVerticalAlignShorthandEnabled, 'vertical-align' is the CSS Inline 3 shorthand, and shorthands are not enumerated.
+            if (property == CSSPropertyID::VerticalAlign && m_settings->cssVerticalAlignShorthandEnabled())
+                return false;
             // If the standard property is exposed no need to expose the alias.
             if (auto standard = cascadeAliasProperty(property); standard != property && isExposed(standard, m_settings.ptr()))
                 return false;

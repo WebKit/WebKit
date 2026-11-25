@@ -155,6 +155,7 @@ private:
     String serializeLegacyLineClamp() const;
     String serializeTextBox() const;
     String serializeTextWrap() const;
+    String serializeVerticalAlign() const;
     String serializeWhiteSpace() const;
     String serializeAnimationRange() const;
     String serializeSingleAnimationRange(const CSSValue&, Style::SingleAnimationRangeType, CSSValueID = CSSValueID::Invalid) const;
@@ -496,6 +497,8 @@ String ShorthandSerializer::serialize()
     case CSSPropertyID::WebkitColumnBreakAfter:
     case CSSPropertyID::WebkitColumnBreakBefore:
         return serializeColumnBreak();
+    case CSSPropertyID::InternalVerticalAlign:
+        return serializeVerticalAlign();
     case CSSPropertyID::WhiteSpace:
         return serializeWhiteSpace();
     case CSSPropertyID::ScrollTimeline:
@@ -1807,6 +1810,47 @@ String ShorthandSerializer::serializeAnimationRange() const
     if (serializedEnd.isEmpty())
         return serializedStart;
     return makeString(serializedStart, ' ', serializedEnd);
+}
+
+String ShorthandSerializer::serializeVerticalAlign() const
+{
+    // https://drafts.csswg.org/css-inline-3/#transverse-alignment
+    auto baselineSource = longhandValueID(0);
+    auto alignmentBaseline = longhandValueID(1);
+    Ref baselineShift = longhandValue(2);
+
+    // The legacy SVG values of the longhands are not allowed in the shorthand, so it can't represent them,
+    // except for the legacy 'baseline' keyword of 'baseline-shift', which computes to its initial value of 0.
+    switch (alignmentBaseline) {
+    case CSSValueID::AfterEdge:
+    case CSSValueID::TextAfterEdge:
+    case CSSValueID::Hanging:
+    case CSSValueID::BeforeEdge:
+    case CSSValueID::TextBeforeEdge:
+        return String();
+    default:
+        break;
+    }
+
+    bool hasInitialBaselineShift = [&] {
+        if (isValueID(baselineShift, CSSValueID::Baseline))
+            return true;
+        RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(baselineShift);
+        return primitiveValue && primitiveValue->isLength() && primitiveValue->isZero().value_or(false);
+    }();
+
+    // Omit initial values, in the canonical order of the grammar.
+    StringBuilder result;
+    auto separator = ""_s;
+    if (baselineSource != CSSValueID::Auto)
+        result.append(std::exchange(separator, " "_s), nameLiteral(baselineSource));
+    if (alignmentBaseline != CSSValueID::Baseline)
+        result.append(std::exchange(separator, " "_s), nameLiteral(alignmentBaseline));
+    if (!hasInitialBaselineShift)
+        result.append(std::exchange(separator, " "_s), serializeLonghandValue(2));
+    if (result.isEmpty())
+        return nameString(CSSValueID::Baseline);
+    return result.toString();
 }
 
 String ShorthandSerializer::serializeWhiteSpace() const

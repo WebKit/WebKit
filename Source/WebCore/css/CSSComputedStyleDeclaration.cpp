@@ -114,12 +114,19 @@ const FixedVector<CSSPropertyID>& CSSComputedStyleDeclaration::exposedComputedCS
     return protect(element().document())->exposedComputedCSSPropertyIDs();
 }
 
+CSSPropertyID CSSComputedStyleDeclaration::resolveVerticalAlignShorthand(CSSPropertyID propertyID) const
+{
+    if (propertyID != CSSPropertyID::VerticalAlign) [[likely]]
+        return propertyID;
+    return WebCore::resolveVerticalAlignShorthand(propertyID, protect(element().document())->cssParserContext());
+}
+
 String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) const
 {
     if (m_isEmpty)
         return emptyString(); // FIXME: Should this be null instead, as it is in StyleProperties::getPropertyValue?
 
-    return extractor().propertyValueSerialization(propertyID, CSS::defaultSerializationContext());
+    return extractor().propertyValueSerialization(resolveVerticalAlignShorthand(propertyID), CSS::defaultSerializationContext());
 }
 
 unsigned CSSComputedStyleDeclaration::length() const
@@ -186,7 +193,11 @@ RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(co
     if (propertyID == CSSPropertyID::Invalid)
         return nullptr;
 
-    return extractor().propertyValueDeprecatedCSSOMValue(propertyID, *this);
+    // Check exposure before resolving, since the extractor accepts the internal 'vertical-align' shorthand.
+    if (!isExposed(propertyID, protect(settings()).get()))
+        return nullptr;
+
+    return extractor().propertyValueDeprecatedCSSOMValue(resolveVerticalAlignShorthand(propertyID), *this);
 }
 
 String CSSComputedStyleDeclaration::getPropertyValue(const String& propertyName)
@@ -201,7 +212,11 @@ String CSSComputedStyleDeclaration::getPropertyValue(const String& propertyName)
     if (propertyID == CSSPropertyID::Invalid)
         return String();
 
-    return extractor().propertyValueSerialization(propertyID, CSS::defaultSerializationContext());
+    // Check exposure before resolving, since the extractor accepts the internal 'vertical-align' shorthand.
+    if (!isExposed(propertyID, protect(settings()).get()))
+        return emptyString();
+
+    return extractor().propertyValueSerialization(resolveVerticalAlignShorthand(propertyID), CSS::defaultSerializationContext());
 }
 
 String CSSComputedStyleDeclaration::getPropertyPriority(const String&)

@@ -117,6 +117,9 @@ CSSParser::CSSParser(const CSSParserContext& context, StringView string, StyleSh
 
 auto CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, StringView string, IsImportant important, const CSSParserContext& context) -> ParseResult
 {
+    // Before the fast paths, which would otherwise parse 'vertical-align' keywords as the CSS 2 longhand.
+    propertyID = resolveVerticalAlignShorthand(propertyID, context);
+
     auto ruleType = context.enclosingRuleType.value_or(StyleRuleType::Style);
 
     auto state = CSS::PropertyParserState {
@@ -1886,6 +1889,7 @@ auto CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType rule
 
     if (!isExposed(propertyID, &m_context.propertySettings))
         propertyID = CSSPropertyID::Invalid;
+    propertyID = resolveVerticalAlignShorthand(propertyID, m_context);
 
     // @position-try doesn't allow custom properties.
     // FIXME: maybe make this logic more elegant?
