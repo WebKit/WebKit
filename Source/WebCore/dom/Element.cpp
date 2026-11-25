@@ -2240,9 +2240,11 @@ Ref<DOMRect> Element::getBoundingClientRect()
 
 IntRect Element::screenRect() const
 {
-    if (CheckedPtr renderer = this->renderer())
-        return protect(document().view())->contentsToScreen(renderer->absoluteBoundingBoxRect());
-    return IntRect();
+    CheckedPtr renderer = this->renderer();
+    RefPtr page = document().page();
+    if (!renderer || !page)
+        return IntRect();
+    return page->chrome().rootViewToScreen(boundingBoxInMainFrameViewCoordinates());
 }
 
 const AtomString& Element::getAttribute(const AtomString& qualifiedName) const

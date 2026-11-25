@@ -1330,6 +1330,45 @@ TEST(SiteIsolation, ToggleSmartInsertDeleteInCrossOriginIframe)
     [webView performSelector:@selector(toggleSmartInsertDelete:) withObject:nil];
 }
 
+TEST(SiteIsolation, KeyboardActivatedClickScreenPositionInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>"
+            "<iframe id='iframe' style='position: absolute; left: 400px; top: 100px; width: 300px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe>"
+            "<iframe style='position: absolute; left: 50px; top: 100px; width: 300px; height: 200px; border: none;' src='https://example.com/iframe'></iframe>"
+            "</body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'><button style='position: absolute; left: 10px; top: 10px; width: 50px; height: 20px'>button</button>"
+            "<script>var clickScreenOffset; document.querySelector('button').addEventListener('click', event => clickScreenOffset = [event.screenX - event.clientX, event.screenY - event.clientY]);</script></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto activateButtonWithSpaceBar = [](TestWKWebView *webView, WKFrameInfo *frame) {
+        [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('button').focus()" inFrame:frame];
+        [webView typeCharacter:' '];
+        RetainPtr<NSArray<NSNumber *>> offset;
+        EXPECT_TRUE(Util::waitFor([&] {
+            id result = [webView objectByEvaluatingJavaScript:@"clickScreenOffset ?? null" inFrame:frame];
+            offset = [result isKindOfClass:NSArray.class] ? result : nil;
+            return !!offset;
+        }));
+        return offset;
+    };
+
+    auto [webView, navigationDelegate, crossOriginFrame] = webViewWithFocusedCrossOriginIframe(server);
+    RetainPtr crossOriginOffset = activateButtonWithSpaceBar(webView.get(), crossOriginFrame.get());
+    ASSERT_NOT_NULL(crossOriginOffset.get());
+
+    RetainPtr<WKFrameInfo> sameOriginFrame = [webView mainFrame].childFrames[1].info;
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('button').focus()" inFrame:sameOriginFrame.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return ![[webView firstChildFrame] _isFocused];
+    }));
+    RetainPtr sameOriginOffset = activateButtonWithSpaceBar(webView.get(), sameOriginFrame.get());
+    ASSERT_NOT_NULL(sameOriginOffset.get());
+
+    EXPECT_EQ([crossOriginOffset objectAtIndex:0].intValue - [sameOriginOffset objectAtIndex:0].intValue, 350);
+    EXPECT_EQ([crossOriginOffset objectAtIndex:1].intValue, [sameOriginOffset objectAtIndex:1].intValue);
+}
+
 TEST(SiteIsolation, AlwaysShowsVerticalScrollerInCrossOriginIframe)
 {
     // A custom scrollbar takes up layout width, unlike an overlay scrollbar.
