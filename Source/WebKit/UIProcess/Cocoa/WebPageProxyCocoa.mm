@@ -1666,67 +1666,106 @@ WebCore::WritingTools::Behavior WebPageProxy::writingToolsBehavior() const
 
 void WebPageProxy::willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>& session, Vector<WebCore::JSHandleIdentifier>&& preservedNodeIdentifiers, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::WillBeginWritingToolsSession(session, WTF::move(preservedNodeIdentifiers)), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    m_writingToolsSessionFrame = focusedOrMainFrame();
+    RefPtr frame = m_writingToolsSessionFrame;
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::WillBeginWritingToolsSession(session, WTF::move(preservedNodeIdentifiers)), Messages::WebPage::WillBeginWritingToolsSession::Reply { WTF::move(completionHandler) });
 }
 
 void WebPageProxy::didBeginWritingToolsSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::DidBeginWritingToolsSession(session, contexts), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::DidBeginWritingToolsSession(session, contexts));
 }
 
 void WebPageProxy::proofreadingSessionDidReceiveSuggestions(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& suggestions, const WebCore::CharacterRange& processedRange, const WebCore::WritingTools::Context& context, bool finished, CompletionHandler<void()>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::ProofreadingSessionDidReceiveSuggestions(session, suggestions, processedRange, context, finished), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::ProofreadingSessionDidReceiveSuggestions(session, suggestions, processedRange, context, finished), WTF::move(completionHandler));
 }
 
 void WebPageProxy::proofreadingSessionDidUpdateStateForSuggestion(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& suggestion, const WebCore::WritingTools::Context& context)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::ProofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::ProofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context));
 }
 
 void WebPageProxy::willEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted, CompletionHandler<void()>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::WillEndWritingToolsSession(session, accepted), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::WillEndWritingToolsSession(session, accepted), WTF::move(completionHandler));
 }
 
 void WebPageProxy::didEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::DidEndWritingToolsSession(session, accepted), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::DidEndWritingToolsSession(session, accepted));
+    m_writingToolsSessionFrame = nullptr;
 }
 
 void WebPageProxy::compositionSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished, CompletionHandler<void()>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::CompositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::CompositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished), WTF::move(completionHandler));
 }
 
 void WebPageProxy::writingToolsSessionDidReceiveAction(const WebCore::WritingTools::Session& session, WebCore::WritingTools::Action action)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::WritingToolsSessionDidReceiveAction(session, action), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::WritingToolsSessionDidReceiveAction(session, action));
 }
 
-void WebPageProxy::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const WebCore::CharacterRange& enclosingRangeRelativeToSessionRange, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&& completionHandler) const
+void WebPageProxy::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const WebCore::CharacterRange& enclosingRangeRelativeToSessionRange, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::ProofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::ProofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange), WTF::move(completionHandler));
 }
 
 void WebPageProxy::updateTextVisibilityForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, bool visible, const WTF::UUID& identifier, CompletionHandler<void()>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::UpdateTextVisibilityForActiveWritingToolsSession(rangeRelativeToSessionRange, visible, identifier), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::UpdateTextVisibilityForActiveWritingToolsSession(rangeRelativeToSessionRange, visible, identifier), WTF::move(completionHandler));
 }
 
 void WebPageProxy::textPreviewDataForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::TextPreviewDataForActiveWritingToolsSession(rangeRelativeToSessionRange), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::TextPreviewDataForActiveWritingToolsSession(rangeRelativeToSessionRange), WTF::move(completionHandler));
 }
 
 void WebPageProxy::decorateTextReplacementsForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void()>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::DecorateTextReplacementsForActiveWritingToolsSession(rangeRelativeToSessionRange), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::DecorateTextReplacementsForActiveWritingToolsSession(rangeRelativeToSessionRange), WTF::move(completionHandler));
 }
 
 void WebPageProxy::setSelectionForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void()>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::SetSelectionForActiveWritingToolsSession(rangeRelativeToSessionRange), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendWithAsyncReplyToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::SetSelectionForActiveWritingToolsSession(rangeRelativeToSessionRange), WTF::move(completionHandler));
 }
 
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
@@ -1775,6 +1814,7 @@ void WebPageProxy::addTextAnimationForAnimationIDWithCompletionHandler(IPC::Conn
     }
 
     internals().textIndicatorForAnimationID.add(uuid, textIndicator);
+    internals().processForTextAnimationID.add(uuid, WebProcessProxy::fromConnection(connection));
 
     if (completionHandler)
         internals().completionHandlerForAnimationID.add(uuid, WTF::move(completionHandler));
@@ -1841,6 +1881,11 @@ void WebPageProxy::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::U
 {
     if (!hasRunningProcess()) {
         completionHandler();
+        return;
+    }
+
+    if (RefPtr process = internals().processForTextAnimationID.get(uuid)) {
+        protect(process)->sendWithAsyncReply(Messages::WebPage::UpdateUnderlyingTextVisibilityForTextAnimationID(uuid, visible), WTF::move(completionHandler), webPageIDInProcess(*process));
         return;
     }
 
@@ -1916,12 +1961,17 @@ void WebPageProxy::intelligenceTextAnimationsDidComplete()
     if (!hasRunningProcess())
         return;
 
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::IntelligenceTextAnimationsDidComplete(), webPageIDInMainFrameProcess());
+    RefPtr frame = m_writingToolsSessionFrame;
+    if (!frame)
+        frame = focusedOrMainFrame();
+    sendToProcessContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt, Messages::WebPage::IntelligenceTextAnimationsDidComplete());
 }
 
 void WebPageProxy::removeTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid)
 {
     MESSAGE_CHECK(uuid.isValid(), connection);
+
+    internals().processForTextAnimationID.remove(uuid);
 
     if (RefPtr pageClient = this->pageClient())
         pageClient->removeTextAnimationForAnimationID(uuid);
