@@ -109,10 +109,13 @@ void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<SuspendedPa
 {
     auto coreProcessIdentifier = suspendedPage->process().coreProcessIdentifier();
 
-    // Share the SuspendedPageProxy with existing entries in the same process.
-    // When a process is suspended, ALL items cached in that process need access
-    // to the SuspendedPageProxy to unsuspend it during back/forward navigation.
+    // Share the SuspendedPageProxy with existing entries of the same page in the same process.
+    // When a process is suspended, ALL items of that page cached in that process need access
+    // to the SuspendedPageProxy to unsuspend it during back/forward navigation. Entries of other
+    // pages are left alone: their suspended pages belong to those pages.
     for (RefPtr otherItem : m_itemsWithCachedPage) {
+        if (otherItem->pageID() != item.pageID())
+            continue;
         if (RefPtr entry = otherItem->backForwardCacheEntryForProcess(coreProcessIdentifier); entry && !entry->suspendedPage())
             entry->setSuspendedPage(suspendedPage.copyRef());
     }
@@ -150,11 +153,12 @@ Ref<SuspendedPageProxy> WebBackForwardCache::takeSuspendedPage(WebBackForwardLis
     auto processIdentifier = item.backForwardCacheEntry()->processIdentifier();
     Ref suspendedPage = protect(item.backForwardCacheEntry())->takeSuspendedPage();
 
-    // Clear SuspendedPageProxy from other entries in the same process.
+    // Clear SuspendedPageProxy from other entries of the same page in the same process.
     // The process is about to be unsuspended, so these entries become
-    // regular in-process BFCache entries.
+    // regular in-process BFCache entries. Entries of other pages keep their
+    // suspended pages: unsuspending this page does not restore those.
     for (RefPtr otherItem : m_itemsWithCachedPage) {
-        if (otherItem.get() == &item)
+        if (otherItem.get() == &item || otherItem->pageID() != item.pageID())
             continue;
         if (RefPtr entry = otherItem->backForwardCacheEntryForProcess(processIdentifier); entry && entry->suspendedPage())
             entry->clearSuspendedPage();
