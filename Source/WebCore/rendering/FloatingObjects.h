@@ -176,7 +176,6 @@ public:
     LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit* heightRemaining);
     LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit* heightRemaining);
 
-    LayoutUnit findNextFloatLogicalBottomBelow(LayoutUnit logicalHeight);
     LayoutUnit findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight);
 
     void shiftFloatsBy(LayoutUnit blockShift);

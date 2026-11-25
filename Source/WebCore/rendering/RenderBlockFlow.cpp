@@ -3247,14 +3247,6 @@ LayoutUnit RenderBlockFlow::logicalRightFloatOffsetForLine(LayoutUnit logicalTop
     return fixedOffset;
 }
 
-LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelow(LayoutUnit logicalHeight) const
-{
-    if (!m_floatingObjects)
-        return logicalHeight;
-
-    return m_floatingObjects->findNextFloatLogicalBottomBelow(logicalHeight);
-}
-
 LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight) const
 {
     if (!m_floatingObjects)

@@ -247,15 +247,6 @@ inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalTyp
     m_nextLogicalBottom = floatBottom;
 }
 
-LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelow(LayoutUnit logicalHeight)
-{
-    FindNextFloatLogicalBottomAdapter adapter(renderer(), logicalHeight);
-    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
-        placedFloatsTree->allOverlapsWithAdapter(adapter);
-
-    return adapter.nextShapeLogicalBottom();
-}
-
 LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight)
 {
     FindNextFloatLogicalBottomAdapter adapter(renderer(), logicalHeight);
