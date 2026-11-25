@@ -26,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/get-state-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/navigation-preload-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/read-after-respondwith-scope.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/read-after-respondwith-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/redirect-redirected.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/redirect-scope.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/redirect-worker.js

@@ -219,8 +219,8 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     };
     auto event = FetchEvent::create(*globalScope.globalObject(), eventNames().fetchEvent, WTF::move(init), Event::IsTrusted::Yes);
     if (isServiceWorkerNavigationPreloadEnabled) {
-        globalScope.addFetchEvent({ connectionIdentifier, fetchIdentifier }, event.get());
         event->setNavigationPreloadIdentifier(fetchIdentifier);
+        globalScope.addFetchEvent({ connectionIdentifier, fetchIdentifier }, event.get());
     }
 
     CertificateInfo certificateInfo = globalScope.certificateInfo();

@@ -142,6 +142,7 @@ private:
     void pendingStreamDataAvailable(WebCore::FetchIdentifier);
     void cancelPendingStreamUploadForwarding(WebCore::FetchIdentifier);
     void pendingStreamUploadNeedData(WebCore::FetchIdentifier);
+    void cancelNavigationPreload(WebCore::FetchIdentifier);
 
     void connectionClosed();
 

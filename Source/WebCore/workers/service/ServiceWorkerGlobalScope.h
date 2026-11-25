@@ -121,6 +121,7 @@ public:
     NODELETE RefPtr<ServiceWorkerFetch::Client> fetchTask(FetchKey);
     NODELETE bool hasFetchTask() const;
     void removeFetchTask(FetchKey);
+    void cancelNavigationPreload(FetchKey);
     RefPtr<ServiceWorkerFetch::Client> takeFetchTask(FetchKey);
     void navigationPreloadFailed(FetchKey, ResourceError&&);
     void navigationPreloadIsReady(FetchKey, ResourceResponse&&);
@@ -165,8 +166,10 @@ private:
     struct FetchTask {
         RefPtr<ServiceWorkerFetch::Client> client;
         Variant<std::nullptr_t, Ref<FetchEvent>, UniqueRef<ResourceError>, UniqueRef<ResourceResponse>> navigationPreload;
+        RefPtr<FetchEvent> navigationPreloadFetchEvent;
     };
     HashMap<FetchKey, FetchTask> m_ongoingFetchTasks;
+    HashMap<FetchKey, Ref<FetchEvent>> m_navigationPreloadFetchEvents;
 };
 
 } // namespace WebCore

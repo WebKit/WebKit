@@ -476,6 +476,13 @@ void WebSWServerToContextConnection::cancelPendingStreamUploadForwarding(WebCore
         fetch->cancelPendingStreamUpload();
 }
 
+void WebSWServerToContextConnection::cancelNavigationPreload(WebCore::FetchIdentifier fetchIdentifier)
+{
+    // The fetch task may have no loader anymore, so it cannot receive this message itself.
+    if (RefPtr fetch = m_ongoingFetches.get(fetchIdentifier))
+        fetch->cancelNavigationPreload();
+}
+
 void WebSWServerToContextConnection::pendingStreamUploadNeedData(WebCore::FetchIdentifier fetchIdentifier)
 {
     RefPtr fetch = m_ongoingFetches.get(fetchIdentifier);

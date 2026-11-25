@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/empty-preload-response-body.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/get-state.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/navigationPreload.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/read-after-respondwith.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/redirect.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/request-headers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resource-timing.https.html

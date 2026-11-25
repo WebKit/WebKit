@@ -103,6 +103,7 @@ private:
     void stop() final;
     void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
     void removeNavigationFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier) final;
+    void cancelNavigationPreload(WebCore::FetchIdentifier) final;
     void startPendingStreamUploadForwarding(WebCore::PendingStreamState&) final;
     void cancelPendingStreamUploadForwarding(WebCore::PendingStreamState&) final;
 

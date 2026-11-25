@@ -179,9 +179,16 @@ void ServiceWorkerGlobalScope::prepareForDestruction()
     // destructor may access the VM.
     m_extendedEvents.clear();
 
+    for (auto& key : m_navigationPreloadFetchEvents.keys())
+        cancelNavigationPreload(key);
+    m_navigationPreloadFetchEvents.clear();
+
     auto ongoingFetchTasks = std::exchange(m_ongoingFetchTasks, { });
-    for (auto& task : ongoingFetchTasks.values())
+    for (auto& [key, task] : ongoingFetchTasks) {
+        if (task.navigationPreloadFetchEvent)
+            cancelNavigationPreload(key);
         protect(task.client)->contextIsStopping();
+    }
 
     WorkerGlobalScope::prepareForDestruction();
 }
@@ -206,6 +213,13 @@ void ServiceWorkerGlobalScope::updateExtendedEventsSet(ExtendableEvent* newEvent
         // alive unnecessarily.
         newEvent->setTarget(nullptr);
     }
+
+    m_navigationPreloadFetchEvents.removeIf([&](auto& entry) {
+        if (entry.value->pendingPromiseCount())
+            return false;
+        cancelNavigationPreload(entry.key);
+        return true;
+    });
 
     bool hasPendingEvents = this->hasPendingEvents();
     if (hasPendingEvents == hadPendingEvents)
@@ -283,13 +297,14 @@ CookieStore& ServiceWorkerGlobalScope::cookieStore()
 void ServiceWorkerGlobalScope::addFetchTask(FetchKey key, Ref<ServiceWorkerFetch::Client>&& client)
 {
     ASSERT(!m_ongoingFetchTasks.contains(key));
-    m_ongoingFetchTasks.add(key, FetchTask { WTF::move(client), nullptr });
+    m_ongoingFetchTasks.add(key, FetchTask { WTF::move(client), nullptr, nullptr });
 }
 
 void ServiceWorkerGlobalScope::addFetchEvent(FetchKey key, FetchEvent& event)
 {
     ASSERT(m_ongoingFetchTasks.contains(key));
     auto iterator = m_ongoingFetchTasks.find(key);
+    iterator->value.navigationPreloadFetchEvent = &event;
 
     bool isHandled = WTF::switchOn(iterator->value.navigationPreload, [] (std::nullptr_t) {
         return false;
@@ -312,7 +327,24 @@ void ServiceWorkerGlobalScope::addFetchEvent(FetchKey key, FetchEvent& event)
 
 void ServiceWorkerGlobalScope::removeFetchTask(FetchKey key)
 {
-    m_ongoingFetchTasks.remove(key);
+    RefPtr event = m_ongoingFetchTasks.take(key).navigationPreloadFetchEvent;
+    if (!event)
+        return;
+
+    // The fetch event may still read preloadResponse in waitUntil() after respondWith() settled.
+    if (event->pendingPromiseCount()) {
+        m_navigationPreloadFetchEvents.add(key, event.releaseNonNull());
+        return;
+    }
+    cancelNavigationPreload(key);
+}
+
+void ServiceWorkerGlobalScope::cancelNavigationPreload(FetchKey key)
+{
+    callOnMainThread([fetchIdentifier = key.second] {
+        if (RefPtr connection = SWContextManager::singleton().connection())
+            connection->cancelNavigationPreload(fetchIdentifier);
+    });
 }
 
 RefPtr<ServiceWorkerFetch::Client> ServiceWorkerGlobalScope::fetchTask(FetchKey key)
@@ -333,6 +365,11 @@ bool ServiceWorkerGlobalScope::hasFetchTask() const
 
 void ServiceWorkerGlobalScope::navigationPreloadFailed(FetchKey key, ResourceError&& error)
 {
+    if (RefPtr event = m_navigationPreloadFetchEvents.get(key)) {
+        event->navigationPreloadFailed(WTF::move(error));
+        return;
+    }
+
     auto iterator = m_ongoingFetchTasks.find(key);
     if (iterator == m_ongoingFetchTasks.end())
         return;
@@ -348,6 +385,11 @@ void ServiceWorkerGlobalScope::navigationPreloadFailed(FetchKey key, ResourceErr
 
 void ServiceWorkerGlobalScope::navigationPreloadIsReady(FetchKey key, ResourceResponse&& response)
 {
+    if (RefPtr event = m_navigationPreloadFetchEvents.get(key)) {
+        event->navigationPreloadIsReady(WTF::move(response));
+        return;
+    }
+
     auto iterator = m_ongoingFetchTasks.find(key);
     if (iterator == m_ongoingFetchTasks.end())
         return;

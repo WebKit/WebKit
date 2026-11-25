@@ -95,6 +95,7 @@ public:
         bool isClosed() const { return m_isClosed; }
 
         virtual void removeNavigationFetch(SWServerConnectionIdentifier, FetchIdentifier) = 0;
+        virtual void cancelNavigationPreload(FetchIdentifier) = 0;
 
         virtual void startPendingStreamUploadForwarding(PendingStreamState&) = 0;
         virtual void cancelPendingStreamUploadForwarding(PendingStreamState&) = 0;
