@@ -3,9 +3,12 @@ This test ensures aria-labelledby correctly references display:contents elements
 PASS: testButton.role.toLowerCase().includes('button') === true
 PASS: platformValueForW3CName(testButton) === 'Shadow Label Text'
 PASS: platformValueForW3CName(testButton).includes('should NOT appear') === false
+PASS: platformValueForW3CName(styleButton).includes('color') === false
+PASS: platformValueForW3CName(hiddenButton).includes('Hidden Shadow Text') === false
+PASS: platformValueForW3CName(ariaHiddenButton).includes('ARIA Hidden Shadow Text') === false
 
 PASS successfullyParsed is true
 
 TEST COMPLETE
 Button Content
-
+Style Button Content  Hidden Button Content ARIA Hidden Button Content

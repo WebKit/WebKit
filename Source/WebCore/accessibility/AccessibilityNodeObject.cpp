@@ -4628,22 +4628,6 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode, DescendInt
     if (!title.isEmpty())
         return title;
 
-    if (element && element->hasDisplayContents()) {
-        // For display:contents elements with shadow roots, the element doesn't have a renderer,
-        // so textUnderElement() won't find any children via the render tree. We need to explicitly
-        // traverse the shadow root content to compute the accessible name.
-        // https://bugs.webkit.org/show_bug.cgi?id=275222
-        if (RefPtr shadowRoot = shadowRootIgnoringUserAgentShadow(node)) {
-            StringBuilder builder;
-            for (RefPtr child = shadowRoot->firstChild(); child; child = child->nextSibling())
-                appendNameToStringBuilder(builder, accessibleNameForNode(*child, nullptr, descendIntoContainers));
-
-            String shadowText = builder.toString();
-            if (!shadowText.isEmpty())
-                return shadowText;
-        }
-    }
-
     return { };
 }
 

@@ -20,6 +20,31 @@
   </template>
 </div>
 
+<div id="style-label" style="display: contents;">
+  <template shadowrootmode="open">
+    <style>div { color: green; }</style>
+    <slot></slot>
+  </template>
+</div>
+
+<button id="style-button" aria-labelledby="style-label">Style Button Content</button>
+
+<div id="hidden-label" style="display: contents;">
+  <template shadowrootmode="open">
+    <div hidden>Hidden Shadow Text</div>
+  </template>
+</div>
+
+<button id="hidden-button" aria-labelledby="hidden-label">Hidden Button Content</button>
+
+<div id="aria-hidden-label" style="display: contents;">
+  <template shadowrootmode="open">
+    <div aria-hidden="true">ARIA Hidden Shadow Text</div>
+  </template>
+</div>
+
+<button id="aria-hidden-button" aria-labelledby="aria-hidden-label">ARIA Hidden Button Content</button>
+
 <script>
 var output = "This test ensures aria-labelledby correctly references display:contents elements with shadow roots.\n\n";
 
@@ -28,6 +53,13 @@ if (window.accessibilityController) {
     output += expect("testButton.role.toLowerCase().includes('button')", "true");
     output += expect("platformValueForW3CName(testButton)", "'Shadow Label Text'");
     output += expect("platformValueForW3CName(testButton).includes('should NOT appear')", "false");
+
+    var styleButton = accessibilityController.accessibleElementById("style-button");
+    output += expect("platformValueForW3CName(styleButton).includes('color')", "false");
+    var hiddenButton = accessibilityController.accessibleElementById("hidden-button");
+    output += expect("platformValueForW3CName(hiddenButton).includes('Hidden Shadow Text')", "false");
+    var ariaHiddenButton = accessibilityController.accessibleElementById("aria-hidden-button");
+    output += expect("platformValueForW3CName(ariaHiddenButton).includes('ARIA Hidden Shadow Text')", "false");
 
     debug(output);
 }
