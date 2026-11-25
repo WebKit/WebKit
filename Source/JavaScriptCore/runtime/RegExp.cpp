@@ -771,9 +771,12 @@ static inline String escapePattern(const String& pattern, std::span<const Charac
 
 String RegExp::escapedPattern() const
 {
-    if (m_patternString.is8Bit())
-        return escapePattern(m_patternString, m_patternString.span8());
-    return escapePattern(m_patternString, m_patternString.span16());
+    if (m_sourceIsKnownToBePattern)
+        return m_patternString;
+    String source = m_patternString.is8Bit() ? escapePattern(m_patternString, m_patternString.span8()) : escapePattern(m_patternString, m_patternString.span16());
+    if (source.impl() == m_patternString.impl())
+        m_sourceIsKnownToBePattern = true;
+    return source;
 }
 
 String RegExp::toSourceString() const

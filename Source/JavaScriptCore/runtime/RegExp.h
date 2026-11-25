@@ -258,6 +258,7 @@ private:
     OptionSet<Yarr::Flags> m_flags;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
     bool m_isComingFromLiteral : 1 { false };
+    mutable bool m_sourceIsKnownToBePattern : 1 { false };
     unsigned m_numSubpatterns { 0 };
     unsigned m_minimumSize { 0 };
     std::unique_ptr<Yarr::BytecodePattern> m_regExpBytecode;
