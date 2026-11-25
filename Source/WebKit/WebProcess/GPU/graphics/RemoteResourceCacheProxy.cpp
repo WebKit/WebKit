@@ -106,10 +106,13 @@ Ref<RemoteNativeImageProxy> RemoteResourceCacheProxy::createNativeImage(const In
     return nativeImage;
 }
 
-GradientIdentifier RemoteResourceCacheProxy::recordGradientUse(const Gradient& gradient)
+RemoteGradientIdentifier RemoteResourceCacheProxy::recordGradientUse(const Gradient& gradient)
 {
-    auto identifier = gradient.identifier();
-    if (m_gradients.add(identifier).isNewEntry) {
+    auto result = m_gradients.ensure(&gradient, [] {
+        return RemoteGradientIdentifier::generate();
+    });
+    auto identifier = result.iterator->value;
+    if (result.isNewEntry) {
         gradient.addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
         m_remoteRenderingBackendProxy->cacheGradient(gradient, identifier);
     }
@@ -299,11 +302,11 @@ PlatformImagePtr RemoteResourceCacheProxy::platformImage(const RemoteNativeImage
     return RefPtr { entry.bitmap }->createPlatformImage();
 }
 
-void RemoteResourceCacheProxy::willDestroyGradient(GradientIdentifier identifier)
+void RemoteResourceCacheProxy::willDestroyGradient(const Gradient& gradient)
 {
-    bool removed = m_gradients.remove(identifier);
-    RELEASE_ASSERT(removed);
-    m_remoteRenderingBackendProxy->releaseGradient(identifier);
+    auto identifier = m_gradients.take(&gradient);
+    RELEASE_ASSERT(identifier);
+    m_remoteRenderingBackendProxy->releaseGradient(*identifier);
 }
 
 void RemoteResourceCacheProxy::willDestroyFreeformGradient(const FreeformGradient& gradient)

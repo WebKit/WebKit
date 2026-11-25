@@ -5100,10 +5100,9 @@
 		BC1777832F42513300E318C5 /* StyleImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1777752F42418A00E318C5 /* StyleImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1778262F49519F00E318C5 /* StyleContainmentChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1778222F494AD900E318C5 /* StyleContainmentChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1778272F49519F00E318C5 /* StyleContainmentCheckerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1778252F494F5800E318C5 /* StyleContainmentCheckerInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC19CDF2276FFC6D0053F734 /* GradientCacheCG.h in Headers */ = {isa = PBXBuildFile; fileRef = BC19CDF0276FFB260053F734 /* GradientCacheCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC19CDF2276FFC6D0053F734 /* GradientRendererCG.h in Headers */ = {isa = PBXBuildFile; fileRef = BC19CDF0276FFB260053F734 /* GradientRendererCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC19CDF4277106390053F734 /* GradientColorStop.h in Headers */ = {isa = PBXBuildFile; fileRef = BC19CDF3277106390053F734 /* GradientColorStop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC19CE2B2772BF7B0053F734 /* GradientColorStops.h in Headers */ = {isa = PBXBuildFile; fileRef = BC19CE292772BF770053F734 /* GradientColorStops.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B99D7B3091B4EA15FE1CD042 /* GradientIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = AF66810037643016B82AED07 /* GradientIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A7D9818FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7D9618FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.h */; };
 		BC2272870E82E70700E7F975 /* StyleWebKitBoxReflect.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272860E82E70700E7F975 /* StyleWebKitBoxReflect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2272AD0E82E8F300E7F975 /* StyleCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272AC0E82E8F300E7F975 /* StyleCursor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19318,11 +19317,10 @@
 		BC1778102F4908C500E318C5 /* StyleZoomPrimitivesInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleZoomPrimitivesInlines.h; sourceTree = "<group>"; };
 		BC1778222F494AD900E318C5 /* StyleContainmentChecker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleContainmentChecker.h; sourceTree = "<group>"; };
 		BC1778252F494F5800E318C5 /* StyleContainmentCheckerInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleContainmentCheckerInlines.h; sourceTree = "<group>"; };
-		BC19CDEF276FFB260053F734 /* GradientCacheCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GradientCacheCG.cpp; sourceTree = "<group>"; };
-		BC19CDF0276FFB260053F734 /* GradientCacheCG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GradientCacheCG.h; sourceTree = "<group>"; };
+		BC19CDEF276FFB260053F734 /* GradientRendererCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GradientRendererCG.cpp; sourceTree = "<group>"; };
+		BC19CDF0276FFB260053F734 /* GradientRendererCG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GradientRendererCG.h; sourceTree = "<group>"; };
 		BC19CDF3277106390053F734 /* GradientColorStop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GradientColorStop.h; sourceTree = "<group>"; };
 		BC19CE292772BF770053F734 /* GradientColorStops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GradientColorStops.h; sourceTree = "<group>"; };
-		AF66810037643016B82AED07 /* GradientIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GradientIdentifier.h; sourceTree = "<group>"; };
 		BC1A7D9518FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMultiColumnSpannerPlaceholder.cpp; sourceTree = "<group>"; };
 		BC1A7D9618FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMultiColumnSpannerPlaceholder.h; sourceTree = "<group>"; };
 		BC20FB7E0C0E8E6C00D1447F /* JSDeprecatedCSSOMValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeprecatedCSSOMValueCustom.cpp; sourceTree = "<group>"; };
@@ -36819,9 +36817,9 @@
 				B275352B0B053814002CE64F /* FloatPointCG.cpp */,
 				B275352C0B053814002CE64F /* FloatRectCG.cpp */,
 				B275352D0B053814002CE64F /* FloatSizeCG.cpp */,
-				BC19CDEF276FFB260053F734 /* GradientCacheCG.cpp */,
-				BC19CDF0276FFB260053F734 /* GradientCacheCG.h */,
 				BC53C60A0DA56CF10021EB5D /* GradientCG.cpp */,
+				BC19CDEF276FFB260053F734 /* GradientRendererCG.cpp */,
+				BC19CDF0276FFB260053F734 /* GradientRendererCG.h */,
 				B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */,
 				934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */,
 				6E21C6C11126339900A7BE02 /* GraphicsContextGLCG.cpp */,
@@ -37070,7 +37068,6 @@
 				BC19CDF3277106390053F734 /* GradientColorStop.h */,
 				32B17615285FDDA100ED6DB8 /* GradientColorStops.cpp */,
 				BC19CE292772BF770053F734 /* GradientColorStops.h */,
-				AF66810037643016B82AED07 /* GradientIdentifier.h */,
 				B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */,
 				B2A015930AF6CD53006BCE0E /* GraphicsContext.h */,
 				313DE86D23A96966008FC47B /* GraphicsContextGL.cpp */,
@@ -46328,10 +46325,9 @@
 				4119C191305A8F3500C31DB7 /* GPUVideoEncoder.h in Headers */,
 				BC53C5F50DA56B920021EB5D /* Gradient.h in Headers */,
 				B22279640D00BF220071B782 /* GradientAttributes.h in Headers */,
-				BC19CDF2276FFC6D0053F734 /* GradientCacheCG.h in Headers */,
 				BC19CDF4277106390053F734 /* GradientColorStop.h in Headers */,
 				BC19CE2B2772BF7B0053F734 /* GradientColorStops.h in Headers */,
-				B99D7B3091B4EA15FE1CD042 /* GradientIdentifier.h in Headers */,
+				BC19CDF2276FFC6D0053F734 /* GradientRendererCG.h in Headers */,
 				7BB680BA25BA1BE4002B8738 /* GraphicsChecksMac.h in Headers */,
 				A7D8E64A28C80F2A0019F92F /* GraphicsClient.h in Headers */,
 				B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */,

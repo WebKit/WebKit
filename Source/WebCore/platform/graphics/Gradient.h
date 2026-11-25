@@ -32,7 +32,6 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GradientColorStops.h>
-#include <WebCore/GradientIdentifier.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/RenderingResource.h>
 #include <wtf/CheckedRef.h>
@@ -45,8 +44,11 @@
 #endif
 
 #if USE(CG)
+#include <WebCore/GradientRendererCG.h>
+#endif
+
+#if USE(CG)
 typedef struct CGContext* CGContextRef;
-typedef struct CGGradient* CGGradientRef;
 #endif
 
 #if USE(CAIRO)
@@ -100,10 +102,6 @@ public:
     const GradientColorStops& stops() const LIFETIME_BOUND { return m_stops; }
     bool isTransient() const { return m_isTransient; }
 
-    // Identifies the gradient. Caches of what is created from the gradient are keyed by it.
-    // Not serialized: a decoded gradient gets an identifier of its own process.
-    GradientIdentifier identifier() const { return m_identifier; }
-
     bool isZeroSize() const;
 
     void fill(GraphicsContext&, const FloatRect&) const;
@@ -114,7 +112,8 @@ public:
 #endif
 
 #if USE(CG)
-    void paint(CGContextRef, CGGradientRef) const;
+    void paint(GraphicsContext&) const;
+    void paint(CGContextRef, std::optional<ColorSpace> = { }) const;
 #endif
 
 #if USE(SKIA)
@@ -133,7 +132,10 @@ private:
     ColorInterpolationMethod m_colorInterpolationMethod;
     GradientSpreadMethod m_spreadMethod;
     GradientColorStops m_stops;
-    GradientIdentifier m_identifier { GradientIdentifier::generate() };
+
+#if USE(CG)
+    mutable std::optional<GradientRendererCG> m_platformRenderer;
+#endif
 
     mutable WeakHashSet<RenderingResourceObserver> m_observers;
     bool m_isTransient { true };

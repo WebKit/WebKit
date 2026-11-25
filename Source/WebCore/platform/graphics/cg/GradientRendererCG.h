@@ -26,24 +26,36 @@
 #pragma once
 
 #include <CoreGraphics/CoreGraphics.h>
+#include <WebCore/ColorInterpolationMethod.h>
 #include <WebCore/ColorSpace.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-class Gradient;
+class GradientColorStops;
+struct GradientColorStop;
+using GradientColorStopVector = Vector<GradientColorStop, 2>;
 
-// Looks up the CGGradients of Gradients. A CGGradient is immutable, so it can be shared across threads.
-class GradientCacheCG {
+class GradientRendererCG {
 public:
-    // Returns the renderer color space for painting into a destination of the given color space.
-    static std::optional<ColorSpace> colorSpaceForDestination(const ColorSpace&);
+    GradientRendererCG(ColorInterpolationMethod, const GradientColorStops&, std::optional<ColorSpace> = { });
 
-    // Returns the CGGradient of the gradient in the renderer color space. The CGGradients of non-transient
-    // gradients, and of gradients that are created by sampling, are cached process-wide and shared by the
-    // gradients with the same color interpolation method and color stops. The other CGGradients of transient
-    // gradients are created on each call.
-    static RetainPtr<CGGradientRef> cgGradient(const Gradient&, const std::optional<ColorSpace>&);
+    void drawLinearGradient(CGContextRef, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions);
+    void drawRadialGradient(CGContextRef, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions);
+    void drawConicGradient(CGContextRef, CGPoint center, CGFloat angle);
+
+    const std::optional<ColorSpace>& colorSpace() const { return m_colorSpace; }
+
+    static RetainPtr<CGGradientRef> createGradientBySampling(ColorInterpolationMethod, const GradientColorStopVector&, const std::optional<ColorSpace>& = { });
+
+private:
+    using Gradient = RetainPtr<CGGradientRef>;
+
+    Gradient makeGradient(ColorInterpolationMethod, const GradientColorStops&) const;
+    Gradient makeGradientBySampling(ColorInterpolationMethod, const GradientColorStops&) const;
+
+    std::optional<ColorSpace> m_colorSpace;
+    Gradient m_gradient;
 };
 
 }

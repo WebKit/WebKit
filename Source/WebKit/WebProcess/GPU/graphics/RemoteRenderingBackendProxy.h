@@ -34,6 +34,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RemoteFreeformGradientIdentifier.h"
+#include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextMessages.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteMeshGradientIdentifier.h"
@@ -46,7 +47,6 @@
 #include "StreamClientConnection.h"
 #include "ThreadSafeObjectHeap.h"
 #include "WorkQueueMessageReceiver.h"
-#include <WebCore/GradientIdentifier.h>
 #include <WebCore/ImageBufferResourceLimits.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/SharedMemory.h>
@@ -136,8 +136,8 @@ public:
     void releaseFont(WebCore::RenderingResourceIdentifier);
     void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&);
     void releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
-    void cacheGradient(Ref<const WebCore::Gradient>&&, WebCore::GradientIdentifier);
-    void releaseGradient(WebCore::GradientIdentifier);
+    void cacheGradient(Ref<const WebCore::Gradient>&&, RemoteGradientIdentifier);
+    void releaseGradient(RemoteGradientIdentifier);
     void cacheFreeformGradient(Ref<WebCore::FreeformGradient>&&, RemoteFreeformGradientIdentifier);
     void releaseFreeformGradient(RemoteFreeformGradientIdentifier);
     void cacheMeshGradient(Ref<WebCore::MeshGradient>&&, RemoteMeshGradientIdentifier);
