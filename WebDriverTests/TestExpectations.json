@@ -2252,7 +2252,7 @@
                 "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"},  "all": { "status": ["PASS"]}, "glib": {"status": ["TIMEOUT"], "bug": "webkit.org/b/288104"}}
             },
             "test_file[ignore]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"},  "all": { "status": ["PASS"]}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"},  "all": { "status": ["PASS"]}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/291665"}}
             }
         }
     },
@@ -4962,17 +4962,6 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/bidi/script/evaluate/user_activation.py": {
-        "subtests": {
-            "test_userActivation[False]": {
-                "expected": { "mac": { "status": ["PASS"] }, "wpe": { "status": ["PASS"] } }
-            },
-            "test_userActivation_copy[False]": {
-                "expected": { "mac": { "status": ["PASS"] }, "wpe": { "status": ["PASS"] } }
-            }
-        },
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-    },
     "imported/w3c/webdriver/tests/bidi/script/get_realms/get_realms.py": {
         "subtests": {
             "test_iframes": {
@@ -5146,16 +5135,16 @@
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/291665"}},
         "subtests": {
             "test_default_accept": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
             },
             "test_file_accept": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
             },
             "test_string_accept": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
             },
             "test_string_accept_and_notify": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
             }
         }
     },
@@ -5163,18 +5152,21 @@
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/291665"}},
         "subtests": {
             "test_default_dismiss": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
             },
             "test_file_dismiss": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
             },
             "test_string_dismiss": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
             },
             "test_string_dismiss_and_notify": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/291665"}}
             }
         }
+    },
+    "imported/w3c/webdriver/tests/bidi/session/capabilities/unhandled_prompt_behavior/file/ignore.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/291665"}}
     },
     "imported/w3c/webdriver/tests/bidi/session/subscribe/contexts.py": {
         "subtests": {

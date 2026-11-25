@@ -128,9 +128,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
             });
     }
 
-    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)
+    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout).then(result => {
+        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, callbackTimeout).then(result => {
             let serializedResult;
             let serializationError;
             try {
@@ -304,7 +304,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             });
     }
 
-    _executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout)
+    _executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, callbackTimeout)
     {
         let timeoutPromise;
         let timeoutIdentifier = 0;
@@ -334,8 +334,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
             let result;
             try {
-                // Evaluate the expression in the target global scope.
-                result = globalThis.eval(expression);
+                // Evaluate the expression in the target global scope. Passing an arrow function rather than eval itself means
+                // that a page that replaced eval with a non-function gets an exception, as before, not an assertion failure.
+                result = callFunctionWithUserActivation(userActivation, () => globalThis.eval(expression), null);
             } catch (error) {
                 resolveWithExceptionResult(error);
                 return;
