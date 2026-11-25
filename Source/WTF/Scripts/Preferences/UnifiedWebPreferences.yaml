@@ -7811,6 +7811,15 @@ WebRTCVP9Profile2CodecEnabled:
     default: false
     WebKitLegacy: false
 
+WebRTCWebCoreVideoDecoderEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "WebRTC decoding with WebCore video decoders"
+  humanReadableDescription: "Enable WebRTC video decoding using WebCore VideoDecoder objects"
+  condition: ENABLE(WEB_RTC)
+  defaultValue: false
+
 WebSQLEnabled:
   type: bool
   status: embedder

@@ -91,6 +91,7 @@ public:
     LibWebRTCAudioModule* audioModule();
 
     void setUseL4S(bool);
+    void setUseWebCoreVideoDecoder(bool);
 
     // FIXME: Make these methods not static.
     static void callOnWebRTCNetworkThread(Function<void()>&&);
@@ -140,6 +141,8 @@ protected:
 
     virtual void startedNetworkThread();
 
+    bool useWebCoreVideoDecoder() const { return m_useWebCoreVideoDecoder; }
+
     PeerConnectionFactoryAndThreads& getStaticFactoryAndThreads(bool useNetworkThreadWithSocketServer);
 
     RefPtr<LibWebRTCAudioModule> m_audioModule;
@@ -161,6 +164,7 @@ private:
     std::optional<PlatformMediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration&) final;
 
     bool m_useL4S { false };
+    bool m_useWebCoreVideoDecoder { false };
     std::optional<bool> m_supportsVP9VTBForTesting { false };
     bool m_disableNonLocalhostConnections { false };
     bool m_enableEnumeratingAllNetworkInterfaces { false };

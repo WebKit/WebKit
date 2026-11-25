@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 
 #include "DeprecatedGlobalSettings.h"
+#include "LibWebRTCVideoDecoderFactoryCocoa.h"
 #include "PlatformMediaCapabilitiesInfo.h"
 #include "VP9UtilitiesCocoa.h"
 
@@ -65,6 +66,16 @@ std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderCocoa::createDecod
 
     if (!webRTCAvailable())
         return nullptr;
+
+    if (useWebCoreVideoDecoder()) {
+        return createLibWebRTCVideoDecoderFactoryCocoa({
+            .supportsH265 = isSupportingH265(),
+            .supportsVP9Profile0 = isSupportingVP9Profile0() || isSupportingVP9Profile2(),
+            .supportsVP9Profile2 = isSupportingVP9Profile2(),
+            .supportsAV1 = isSupportingAV1(),
+            .supportsHWVP9 = isSupportingVP9HardwareDecoder()
+        });
+    }
 
     auto vp9Support = isSupportingVP9Profile2() ? webrtc::WebKitVP9::Profile0And2 : isSupportingVP9Profile0() ? webrtc::WebKitVP9::Profile0 : webrtc::WebKitVP9::Off;
     return webrtc::createWebKitDecoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, vp9Support, isSupportingAV1() ? webrtc::WebKitAv1::On : webrtc::WebKitAv1::Off);

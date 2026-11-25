@@ -702,6 +702,8 @@ platform/mediastream/ios/AVAudioSessionCaptureDevice.mm @nonARC
 platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @nonARC @no-unify
 platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @nonARC
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
+platform/mediastream/libwebrtc/LibWebRTCVideoDecoderAdapter.cpp
+platform/mediastream/libwebrtc/LibWebRTCVideoDecoderFactoryCocoa.cpp
 platform/mock/MediaPlaybackTargetMock.cpp
 platform/mock/MediaPlaybackTargetPickerMock.cpp
 platform/mock/MockAudioDestinationCocoa.cpp
