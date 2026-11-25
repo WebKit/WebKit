@@ -95,6 +95,11 @@ bool CachedFrameBase::containsFrame(const Frame& frame) const
     });
 }
 
+bool CachedFrameBase::documentWasCreatedViaCrossOriginRedirects() const
+{
+    return m_documentLoader && m_documentLoader->hasCrossOriginRedirect();
+}
+
 void CachedFrameBase::pruneDetachedChildFrames()
 {
     m_childFrames.removeAllMatching([] (auto& childFrame) {

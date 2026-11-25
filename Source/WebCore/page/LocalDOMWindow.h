@@ -57,10 +57,12 @@ template <typename, ShouldStrongDestructorGrabLock> class Strong;
 namespace WebCore {
 
 class CloseWatcherManager;
+class HistoryItem;
 #if ENABLE(DOCUMENT_PIP)
 class DocumentPictureInPicture;
 #endif
 class JSDOMGlobalObject;
+class SecurityOrigin;
 class SecurityOriginData;
 class Viewport;
 struct ScrollToOptions;
@@ -71,6 +73,12 @@ struct WindowPostMessageOptions;
 enum class PlatformEventModifier : uint8_t;
 
 template<typename> class ExceptionOr;
+
+struct StickyActivationCarryOverTarget {
+    RefPtr<const HistoryItem> entry;
+    bool documentWasCreatedViaCrossOriginRedirects { false };
+    bool isReload { false };
+};
 
 class LocalDOMWindowObserver : public AbstractRefCountedAndCanMakeWeakPtr<LocalDOMWindowObserver> {
 public:
@@ -159,6 +167,8 @@ public:
     void notifyActivated(UserGestureToken&);
     WEBCORE_EXPORT bool hasTransientActivation() const;
     NODELETE bool hasStickyActivation() const;
+
+    void carryOverStickyActivationFromPreviousWindow(const LocalDOMWindow& previousWindow, const SecurityOrigin& previousOrigin, const StickyActivationCarryOverTarget&);
     WEBCORE_EXPORT bool consumeTransientActivation();
     NODELETE WEBCORE_EXPORT bool hasHistoryActionActivation() const;
     NODELETE WEBCORE_EXPORT bool consumeHistoryActionUserActivation();
@@ -524,11 +534,6 @@ private:
 
     std::optional<ReducedResolutionSeconds> m_frozenNowTimestamp;
 
-    // User activation data model. lastActivationTimestamp() drives transient
-    // activation only. m_hasStickyActivation and m_hasHistoryActionActivation
-    // replace the published spec's timestamp-derived states per the proposed
-    // whatwg/html#11454 (https://github.com/whatwg/html/pull/11454): sticky is
-    // monotonic (set once, never cleared), history-action is consumable.
     MonotonicTime m_lastActivationTimestamp { MonotonicTime::infinity() };
 
     struct ForcedActivation {

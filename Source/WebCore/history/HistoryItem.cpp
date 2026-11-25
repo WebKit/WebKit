@@ -92,6 +92,8 @@ HistoryItem::HistoryItem(const HistoryItem& item)
 #endif
     , m_itemID(item.m_itemID)
     , m_frameItemID(item.m_frameItemID)
+    , m_initiatorOrigin(item.m_initiatorOrigin)
+    , m_wasEverPopulatedViaCrossOriginRedirects(item.m_wasEverPopulatedViaCrossOriginRedirects)
     , m_client(item.m_client)
 {
 }
@@ -226,6 +228,22 @@ void HistoryItem::setTarget(const AtomString& target)
 void HistoryItem::setFrameID(std::optional<FrameIdentifier> frameID)
 {
     m_frameID = frameID;
+    notifyChanged();
+}
+
+void HistoryItem::setInitiatorOrigin(const std::optional<SecurityOriginData>& initiatorOrigin)
+{
+    if (m_initiatorOrigin == initiatorOrigin)
+        return;
+    m_initiatorOrigin = initiatorOrigin;
+    notifyChanged();
+}
+
+void HistoryItem::setWasEverPopulatedViaCrossOriginRedirects(bool wasEverPopulatedViaCrossOriginRedirects)
+{
+    if (m_wasEverPopulatedViaCrossOriginRedirects == wasEverPopulatedViaCrossOriginRedirects)
+        return;
+    m_wasEverPopulatedViaCrossOriginRedirects = wasEverPopulatedViaCrossOriginRedirects;
     notifyChanged();
 }
 

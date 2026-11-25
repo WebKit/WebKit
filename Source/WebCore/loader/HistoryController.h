@@ -81,6 +81,9 @@ public:
     NODELETE void updateForFrameLoadCompleted();
 
     HistoryItem* currentItem() const { return m_currentItem.get(); }
+    // The current item, if it was set or updated for the load committed last,
+    // rather than left over from the document that load replaced.
+    HistoryItem* currentItemForCommittedLoad() const { return m_currentItemIsForCommittedLoad ? m_currentItem.get() : nullptr; }
     WEBCORE_EXPORT void setCurrentItem(Ref<HistoryItem>&&);
     void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
@@ -110,7 +113,8 @@ private:
     void goToItemForNavigationAPI(HistoryItem&, FrameLoadType, LocalFrame& triggeringFrame, NavigationAPIMethodTracker*);
     void goToItemShared(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&, ShouldTreatAsContinuingLoad = ShouldTreatAsContinuingLoad::No);
 
-    void initializeItem(HistoryItem&, RefPtr<DocumentLoader>);
+    enum class DocumentStateHandling : bool { CreateNew, Keep };
+    void initializeItem(HistoryItem&, RefPtr<DocumentLoader>, DocumentStateHandling = DocumentStateHandling::CreateNew);
     Ref<HistoryItem> createItem(HistoryItemClient&, BackForwardItemIdentifier);
     Ref<HistoryItem> createItemTree(HistoryItemClient&, LocalFrame& targetFrame, bool clipAtTarget, BackForwardItemIdentifier);
 
@@ -137,6 +141,7 @@ private:
     RefPtr<HistoryItem> m_policyItem;
 
     bool m_frameLoadComplete;
+    bool m_currentItemIsForCommittedLoad { false };
 
     bool m_defersLoading;
     FrameLoadType m_deferredFrameLoadType;
