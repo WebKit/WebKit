@@ -97,6 +97,7 @@ private:
     std::unique_ptr<ProducerSharedCARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
     uint64_t m_currentFrame { 0 };
+    WebCore::AudioIOPosition m_lastPlaybackPosition;
 #endif
     IPC::Semaphore m_renderSemaphore;
 

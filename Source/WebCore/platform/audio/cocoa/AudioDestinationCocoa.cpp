@@ -112,6 +112,7 @@ void AudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& comple
 // Pulls on our provider to get rendered audio stream.
 OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
 {
+    UNUSED_PARAM(sampleTime);
     ASSERT(!isMainThread());
 
     auto numberOfBuffers = std::min<UInt32>(ioData->mNumberBuffers, m_outputBus->numberOfChannels());
@@ -125,13 +126,24 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
         m_outputBus->setChannelMemory(i, memory);
     }
     auto framesToRender = pullRendered(numberOfFrames);
-    bool success = AudioDestinationResampler::render(sampleTime, MonotonicTime::fromMachAbsoluteTime(hostTime), framesToRender);
+    double hardwareRate = AudioSession::singleton().sampleRate();
+    double contextTime = hardwareRate > 0 ? m_playedFrames / hardwareRate : 0;
+    MonotonicTime host = hostTime ? MonotonicTime::fromMachAbsoluteTime(hostTime) : MonotonicTime { };
+    bool success = AudioDestinationResampler::render(contextTime, host, framesToRender);
+    m_playedFrames += numberOfFrames;
     return success ? noErr : -1;
 }
 
 MediaTime AudioDestinationCocoa::outputLatency() const
 {
-    return MediaTime { static_cast<int64_t>(m_audioOutputUnitAdaptor.outputLatency()), static_cast<uint32_t>(sampleRate()) } + MediaTime { static_cast<int64_t>(AudioSession::singleton().outputLatency()), static_cast<uint32_t>(AudioSession::singleton().sampleRate()) };
+    // MediaTime(value, 0) is infinite, so skip a term whose sample rate is not known yet.
+    MediaTime latency;
+    if (auto rate = sampleRate())
+        latency = MediaTime { static_cast<int64_t>(m_audioOutputUnitAdaptor.outputLatency()), static_cast<uint32_t>(rate) };
+    auto sessionRate = AudioSession::singleton().sampleRate();
+    if (sessionRate > 0)
+        latency += MediaTime { static_cast<int64_t>(AudioSession::singleton().outputLatency()), static_cast<uint32_t>(sessionRate) };
+    return latency;
 }
 
 #if PLATFORM(IOS_FAMILY)

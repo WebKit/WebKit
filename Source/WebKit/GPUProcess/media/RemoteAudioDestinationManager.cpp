@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "Logging.h"
+#include "RemoteAudioOutputState.h"
 #include <WebCore/AudioUtilities.h>
 #include <wtf/FixedVector.h>
 #include <wtf/LoggerHelper.h>
@@ -192,7 +193,13 @@ private:
             return status;
 
         if (m_ringBuffer->fetchIfHasEnoughData(ioData, numberOfFrames, m_startFrame)) {
+            uint64_t firstFrame = m_startFrame;
             m_startFrame += numberOfFrames;
+            if (m_frameCount && hostTime) {
+                auto state = spanReinterpretCast<RemoteAudioOutputState>(m_frameCount->mutableSpan());
+                if (!state.empty())
+                    state[0].storePlayback(firstFrame, hostTime);
+            }
             rememberLastRenderedSamples(ioData, numberOfFrames);
             status = noErr;
         } else {

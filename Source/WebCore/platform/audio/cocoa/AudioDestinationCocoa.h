@@ -68,6 +68,7 @@ private:
     MediaTime outputLatency() const final;
 
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
+    uint64_t m_playedFrames { 0 };
 
 #if PLATFORM(IOS_FAMILY)
     String m_sceneIdentifier;
