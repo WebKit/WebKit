@@ -190,7 +190,7 @@ struct AnchorPositionedToAnchorEntry {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(AnchorPositionedToAnchorEntry);
 };
 
-using AnchorPositionedToAnchorMap = HashMap<WeakStyleable, AnchorPositionedToAnchorEntry>;
+using AnchorPositionedToAnchorMap = SingleThreadWeakHashMap<const RenderElement, AnchorPositionedToAnchorEntry>;
 using AnchorToAnchorPositionedMap = SingleThreadWeakHashMap<const RenderBoxModelObject, Vector<Ref<Element>>>;
 
 class AnchorPositionEvaluator {
