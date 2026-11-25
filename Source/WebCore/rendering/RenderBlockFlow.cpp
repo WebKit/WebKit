@@ -3285,6 +3285,19 @@ LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom(FloatingObject::Type floatT
 {
     if (!m_floatingObjects)
         return 0;
+    if (auto* placedFloats = m_floatingObjects->keptPlacedFloats()) {
+        // While the block lays out its children, its PlacedFloats list keeps the lowest float bottom on each side, the inline start
+        // and end (see placedFloatItem()).
+        auto isLeftToRight = writingMode().isLogicalLeftInlineStart();
+        auto side = Clear::Both;
+        if (floatType == FloatingObject::FloatLeft)
+            side = isLeftToRight ? Clear::InlineStart : Clear::InlineEnd;
+        else if (floatType == FloatingObject::FloatRight)
+            side = isLeftToRight ? Clear::InlineEnd : Clear::InlineStart;
+        // Like the walk below, which starts at 0.
+        auto lowestPosition = placedFloats->lowestPositionOnBlockAxis(side);
+        return lowestPosition ? std::max(0_lu, lowestPosition->value()) : 0_lu;
+    }
     LayoutUnit lowestFloatBottom;
     for (auto& floatingObject : m_floatingObjects->set()) {
         if (floatingObject->isPlaced() && floatingObject->type() & floatType)
