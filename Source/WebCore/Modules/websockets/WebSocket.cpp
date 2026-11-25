@@ -298,12 +298,6 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         return Exception { ExceptionCode::SecurityError };
     }
 
-    if (RefPtr provider = context->socketProvider())
-        m_channel = ThreadableWebSocketChannel::create(context.get(), *this, *provider);
-
-    // Every ScriptExecutionContext should have a SocketProvider.
-    RELEASE_ASSERT(m_channel);
-
     // FIXME: There is a disagreement about restriction of subprotocols between WebSocket API and hybi-10 protocol
     // draft. The former simply says "only characters in the range U+0021 to U+007E are allowed," while the latter
     // imposes a stricter rule: "the elements MUST be non-empty strings with characters as defined in [RFC2616],
@@ -326,6 +320,15 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
             return Exception { ExceptionCode::SyntaxError };
         }
     }
+
+    if (isContextStopped())
+        return { };
+
+    if (RefPtr provider = context->socketProvider())
+        m_channel = ThreadableWebSocketChannel::create(context.get(), *this, *provider);
+
+    // Every ScriptExecutionContext should have a SocketProvider.
+    RELEASE_ASSERT(m_channel);
 
     RunLoop::mainSingleton().dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context->url().isolatedCopy()]() {
         ResourceLoadObserver::singleton().logWebSocketLoading(targetURL, mainFrameURL);

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+description("Construct a WebSocket in a detached frame, then garbage collect the frame's document before the WebSocket fails. The test passes if there is no crash.");
+
+function constructInDetachedFrame()
+{
+    let iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    let webSocketClass = iframe.contentWindow.WebSocket;
+    iframe.remove();
+    new webSocketClass("ws://127.0.0.1:8880/websocket/tests/hybi/simple");
+}
+
+constructInDetachedFrame();
+gc();
+testPassed("No crash.");
+</script>
+</body>
