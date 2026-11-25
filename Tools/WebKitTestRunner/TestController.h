@@ -244,7 +244,7 @@ public:
     void dumpFullScreenOrigin() { m_dumpFullScreenOrigin = true; }
     void waitBeforeFinishingFullscreenExit() { m_waitBeforeFinishingFullscreenExit = true; }
     void scrollDuringEnterFullscreen() { m_scrollDuringEnterFullscreen = true; }
-    void finishFullscreenExit();
+    void finishFullscreenExit(CompletionHandler<void(WKTypeRef)>&&);
     void requestExitFullscreenFromUIProcess();
 
     static void willEnterFullScreen(WKPageRef, WKCompletionListenerRef, const void*);
@@ -936,6 +936,7 @@ private:
     };
     HashMap<String, AbandonedDocumentInfo> m_abandonedDocumentInfo;
     CompletionHandler<void()> m_finishExitFullscreenHandler;
+    CompletionHandler<void(WKTypeRef)> m_pendingFinishFullscreenExitCompletionHandler;
 
     class Callbacks {
     public:
