@@ -112,7 +112,7 @@ private:
 
     void setInkOverflow(const FloatRect& inkOverflow) { m_inkOverflow = inkOverflow; }
     void setScrollableOverflow(const FloatRect& scrollableOverflow) { m_scrollableOverflow = scrollableOverflow; }
-    void setHasMultilinePaintOverlap() { m_hasMultilinePaintOverlap = true; }
+    void setHasMultilinePaintOverlap(bool hasMultilinePaintOverlap) { m_hasMultilinePaintOverlap = hasMultilinePaintOverlap; }
     void setClearGapBeforeFirstLine(float clearGapBeforeFirstLine) { m_clearGapBeforeFirstLine = clearGapBeforeFirstLine; }
     void setClearGapAfterLastLine(float clearGapAfterLastLine) { m_clearGapAfterLastLine = clearGapAfterLastLine; }
     void setFirstLinePaginationOffset(float firstLinePaginationOffset) { m_firstLinePaginationOffset = firstLinePaginationOffset; }

@@ -366,10 +366,19 @@ void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent
     auto blockInkOverflowRect = FloatRect { };
     auto decoratingBoxesWithNegativePercentageInset = DecoratingBoxes { };
 
+    auto hasMultilinePaintOverlap = false;
+    auto paintOverlapsPreviousLine = [&](size_t lineIndex, const FloatRect& lineInkOverflowRect) {
+        if (!lineIndex)
+            return false;
+        auto& previousInkOverflow = lines[lineIndex - 1].inkOverflow();
+        return lineInkOverflowRect.y() <= previousInkOverflow.y() || previousInkOverflow.maxY() >= lineInkOverflowRect.maxY();
+    };
+
     for (size_t lineIndex = 0; lineIndex < startIndex; ++lineIndex) {
         auto& line = lines[lineIndex];
         blockScrollableOverflowRect.unite(line.scrollableOverflow());
         blockInkOverflowRect.unite(line.inkOverflow());
+        hasMultilinePaintOverlap = hasMultilinePaintOverlap || paintOverlapsPreviousLine(lineIndex, line.inkOverflow());
     }
 
     for (size_t lineIndex = startIndex; lineIndex < lines.size(); ++lineIndex) {
@@ -498,12 +507,9 @@ void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent
 
         ASSERT(line.boxCount() == boxIndex - firstBoxIndex);
 
-        if (lineIndex) {
-            auto& lastInkOverflow = lines[lineIndex - 1].inkOverflow();
-            if (lineInkOverflowRect.y() <= lastInkOverflow.y() || lastInkOverflow.maxY() >= lineInkOverflowRect.maxY())
-                inlineContent.setHasMultilinePaintOverlap();
-        }
+        hasMultilinePaintOverlap = hasMultilinePaintOverlap || paintOverlapsPreviousLine(lineIndex, lineInkOverflowRect);
     }
+    inlineContent.setHasMultilinePaintOverlap(hasMultilinePaintOverlap);
     inlineContent.setScrollableOverflow(blockScrollableOverflowRect);
     inlineContent.setInkOverflow(blockInkOverflowRect);
 
