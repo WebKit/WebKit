@@ -37,6 +37,7 @@ public:
     RenderCounter(Document&, const Style::Content::Counter&);
     virtual ~RenderCounter();
 
+    static void createCounterNodes(RenderElement&);
     static void destroyCounterNodes(RenderElement&);
     static void destroyCounterNode(RenderElement&, const AtomString& identifier);
     static void rendererStyleChanged(RenderElement&, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);

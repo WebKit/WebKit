@@ -28,6 +28,7 @@
 #include "RenderTreeBuilder.h"
 
 #include "AXObjectCache.h"
+#include "CounterDirectives.h"
 #include "DocumentView.h"
 #include "FrameSelection.h"
 #include "HTMLMarqueeElement.h"
@@ -539,6 +540,9 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
             for (auto& listItem : listItemRenderer->updateListMarkerNumbers())
                 addListItemNeedingMarkerUpdate(listItem);
         }
+        // Skip this until a renderer has counter nodes, as the first counter placed creates them for every renderer before it.
+        if (CheckedPtr renderer = dynamicDowncast<RenderElement>(*newChild); renderer && parent.view().hasRenderersWithCounterNodes() && !renderer->style().usedCounterDirectives().map.isEmpty())
+            protect(parent.view())->addRendererNeedingCounterNodes(*renderer);
     }
 
     newChild->setNeedsLayoutAndInvalidateContentLogicalWidths();

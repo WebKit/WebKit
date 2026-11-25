@@ -383,7 +383,10 @@ static RefPtr<CounterNode> makeCounterNode(RenderElement& renderer, const AtomSt
         protect(place.parent)->insertAfter(newNode, place.previousSibling.get(), identifier);
 
     maps.add(renderer, makeUnique<CounterMap>()).iterator->value->add(identifier, newNode.copyRef());
-    renderer.setHasCounterNodeMap(true);
+    if (!renderer.hasCounterNodeMap()) {
+        renderer.setHasCounterNodeMap(true);
+        renderer.view().incrementRenderersWithCounterNodes();
+    }
 
     if (newNode->parent() || renderer.shouldApplyStyleContainment())
         return newNode;
@@ -494,6 +497,12 @@ static void destroyCounterNodeWithoutMapRemoval(const AtomString& identifier, Co
         parent->removeChild(node);
 }
 
+void RenderCounter::createCounterNodes(RenderElement& owner)
+{
+    for (auto& identifier : owner.style().usedCounterDirectives().map.keys())
+        makeCounterNode(owner, identifier, false);
+}
+
 void RenderCounter::destroyCounterNodes(RenderElement& owner)
 {
     ASSERT(owner.hasCounterNodeMap());
@@ -503,6 +512,7 @@ void RenderCounter::destroyCounterNodes(RenderElement& owner)
     for (auto& counterMapEntry : *counterMap)
         destroyCounterNodeWithoutMapRemoval(counterMapEntry.key, counterMapEntry.value);
     owner.setHasCounterNodeMap(false);
+    owner.view().decrementRenderersWithCounterNodes();
 }
 
 void RenderCounter::destroyCounterNode(RenderElement& owner, const AtomString& identifier)
@@ -555,12 +565,10 @@ void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const 
         if (renderer.hasCounterNodeMap())
             RenderCounter::destroyCounterNodes(renderer);
 
-        for (auto& key : newStyle.usedCounterDirectives().map.keys()) {
-            // We must create this node here, because the added node may be a node with no display such as
-            // as those created by the increment or reset directives and the re-layout that will happen will
-            // not catch the change if the node had no children.
-            makeCounterNode(renderer, key, false);
-        }
+        // We must create these nodes here, because the added node may be a node with no display such as
+        // as those created by the increment or reset directives and the re-layout that will happen will
+        // not catch the change if the node had no children.
+        createCounterNodes(renderer);
     }
 }
 

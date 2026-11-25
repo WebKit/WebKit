@@ -169,6 +169,9 @@ public:
     void addCounterNeedingUpdate(RenderCounter&);
     SingleThreadWeakHashSet<RenderCounter> takeCountersNeedingUpdate();
 
+    void addRendererNeedingCounterNodes(RenderElement&);
+    SingleThreadWeakHashSet<RenderElement> takeRenderersNeedingCounterNodes();
+
     bool hasCounterTreeNeedingUpdate() const { return m_hasCounterTreeNeedingUpdate; }
     void setHasCounterTreeNeedingUpdate(bool hasCounterTreeNeedingUpdate) { m_hasCounterTreeNeedingUpdate = hasCounterTreeNeedingUpdate; }
 
@@ -178,6 +181,9 @@ public:
     void incrementRenderersWithPixelMovingFilter() { ++m_renderersWithPixelMovingFilterCount; }
     void decrementRenderersWithPixelMovingFilter() { ASSERT(m_renderersWithPixelMovingFilterCount > 0); --m_renderersWithPixelMovingFilterCount; }
     bool hasRenderersWithPixelMovingFilter() const { return m_renderersWithPixelMovingFilterCount; }
+    void incrementRenderersWithCounterNodes() { ++m_renderersWithCounterNodesCount; }
+    void decrementRenderersWithCounterNodes() { ASSERT(m_renderersWithCounterNodesCount > 0); --m_renderersWithCounterNodesCount; }
+    bool hasRenderersWithCounterNodes() const { return m_renderersWithCounterNodesCount; }
 
     ImageQualityController& imageQualityController() LIFETIME_BOUND;
 
@@ -281,9 +287,11 @@ private:
     bool m_hasQuotesNeedingUpdate { false };
 
     SingleThreadWeakHashSet<RenderCounter> m_countersNeedingUpdate;
+    SingleThreadWeakHashSet<RenderElement> m_renderersNeedingCounterNodes;
     bool m_hasCounterTreeNeedingUpdate { false };
     unsigned m_renderersWithOutlineCount { 0 };
     unsigned m_renderersWithPixelMovingFilterCount { 0 };
+    unsigned m_renderersWithCounterNodesCount { 0 };
     bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };
     bool m_needsEventRegionUpdateForNonCompositedFrame { false };
 

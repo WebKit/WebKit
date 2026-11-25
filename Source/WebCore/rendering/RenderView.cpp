@@ -1062,6 +1062,16 @@ SingleThreadWeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
     return std::exchange(m_countersNeedingUpdate, { });
 }
 
+void RenderView::addRendererNeedingCounterNodes(RenderElement& renderer)
+{
+    m_renderersNeedingCounterNodes.add(renderer);
+}
+
+SingleThreadWeakHashSet<RenderElement> RenderView::takeRenderersNeedingCounterNodes()
+{
+    return std::exchange(m_renderersNeedingCounterNodes, { });
+}
+
 SingleThreadWeakPtr<RenderBlockFlow> RenderView::viewTransitionContainingBlock() const
 {
     return m_viewTransitionContainingBlock;
