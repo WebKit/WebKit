@@ -369,7 +369,11 @@ WorkerDedicatedRunLoop::RunInModeResult WorkerDedicatedRunLoop::runInMode(Worker
             // wakeups to one per second.
             //
             // rdar://163967161 tracks fixing this correctly by using CFRunLoop to drive everything.
-            CFTimeInterval runLoopTimeoutInSeconds = (timeUntilNextCFRunLoopTimerInSeconds <= -1) ? 1 : 0;
+            // A message was just handled. Waiting a second here delays the next one.
+            // On an AudioWorklet that next message is the next render quantum.
+            bool timerIsLongOverdue = timeUntilNextCFRunLoopTimerInSeconds <= -1;
+            bool handledMessage = result == MessageQueueMessageReceived;
+            CFTimeInterval runLoopTimeoutInSeconds = (timerIsLongOverdue && !handledMessage) ? 1 : 0;
             CFRunLoopRunInMode(kCFRunLoopDefaultMode, runLoopTimeoutInSeconds, /*returnAfterSourceHandled*/ true);
             runInModeResult.activeRunLoopTimersAfterFiring = RunLoop::currentSingleton().listActiveTimersForLogging();
         }
