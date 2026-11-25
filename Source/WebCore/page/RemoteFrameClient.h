@@ -70,7 +70,7 @@ public:
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     virtual void updateRemoteFrameAccessibilityInheritedState(FrameIdentifier target, const InheritedFrameState&) = 0;
 #endif
-    virtual void focus() = 0;
+    virtual void focus(bool allowWindowFocus) = 0;
     virtual void unfocus() = 0;
     virtual void updateScrollingMode(ScrollbarMode scrollingMode) = 0;
     virtual void reportMixedContentViolation(bool blocked, const URL& target) = 0;

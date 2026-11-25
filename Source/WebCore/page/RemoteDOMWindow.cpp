@@ -38,6 +38,7 @@
 #include "RemoteFrameClient.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
+#include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -94,18 +95,25 @@ bool RemoteDOMWindow::frameDocumentIsSandboxedOrigin() const
     return m_isDetachedFrameDocumentSandboxedOrigin;
 }
 
-void RemoteDOMWindow::focus(LocalDOMWindow&)
+void RemoteDOMWindow::focus(LocalDOMWindow& incumbentWindow)
 {
-    // FIXME(264713): Add security checks here equivalent to LocalDOMWindow::focus().
-    if (m_frame && m_frame->isMainFrame())
-        m_frame->client().focus();
+    RefPtr frame = m_frame;
+    if (!frame || !frame->isMainFrame())
+        return;
+
+    frame->client().focus(isWindowFocusAllowed(incumbentWindow));
 }
 
 void RemoteDOMWindow::blur()
 {
-    // FIXME(268121): Add security checks here equivalent to LocalDOMWindow::blur().
-    if (m_frame && m_frame->isMainFrame())
-        m_frame->client().unfocus();
+    RefPtr frame = m_frame;
+    if (!frame || !frame->isMainFrame())
+        return;
+
+    if (frame->settings().windowFocusRestricted())
+        return;
+
+    frame->client().unfocus();
 }
 
 unsigned RemoteDOMWindow::length() const

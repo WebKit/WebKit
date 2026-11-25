@@ -22776,13 +22776,18 @@ INSTANTIATE_SEND_SYNC_TO_FOCUSED_OR_MAIN_FRAME_PROCESS(WebPage::GetDataSelection
 #endif
 #undef INSTANTIATE_SEND_SYNC_TO_FOCUSED_OR_MAIN_FRAME_PROCESS
 
-void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameIdentifier frameID, std::optional<WebCore::UserGestureTokenIdentifier> userGestureTokenIdentifier)
+void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameIdentifier frameID, bool allowWindowFocus, std::optional<WebCore::UserGestureTokenIdentifier> userGestureTokenIdentifier)
 {
     RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);
     if (!destinationFrame || !destinationFrame->isMainFrame() || !destinationFrame->page())
         return;
     // Sent on the WebPage mirroring the frame's page, so an opener's message arrives here too.
     MESSAGE_CHECK_BASE(destinationFrame->page() == this, connection);
+
+    broadcastFocusedFrameToOtherProcesses(connection, std::make_optional(frameID));
+
+    if (!allowWindowFocus)
+        return;
 
     if (userGestureTokenIdentifier) {
         if (RefPtr userInitiatedAction = WebProcessProxy::fromConnection(connection)->userInitiatedActivity(userGestureTokenIdentifier)) {
@@ -22792,7 +22797,6 @@ void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameI
         }
     }
 
-    broadcastFocusedFrameToOtherProcesses(connection, std::make_optional(frameID));
     setFocus(true);
 }
 

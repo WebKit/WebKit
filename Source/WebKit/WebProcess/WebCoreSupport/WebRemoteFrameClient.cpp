@@ -227,11 +227,11 @@ void WebRemoteFrameClient::closePage()
         page->sendClose();
 }
 
-void WebRemoteFrameClient::focus()
+void WebRemoteFrameClient::focus(bool allowWindowFocus)
 {
     if (RefPtr page = m_frame->page()) {
         auto tokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(page->identifier(), UserGestureIndicator::currentUserGesture());
-        page->send(Messages::WebPageProxy::FocusRemoteFrame(m_frame->frameID(), tokenIdentifier));
+        page->send(Messages::WebPageProxy::FocusRemoteFrame(m_frame->frameID(), allowWindowFocus, tokenIdentifier));
     }
 }
 

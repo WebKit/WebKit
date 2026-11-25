@@ -5702,8 +5702,8 @@ TEST(SiteIsolation, OpenedWindowFocusDelegates)
     [opener.webView.get() evaluateJavaScript:@"w.focus()" completionHandler:nil];
     Util::run(&calledFocusWebView);
 
-    [opener.webView.get() evaluateJavaScript:@"w.blur()" completionHandler:nil];
-    Util::run(&calledUnfocusWebView);
+    [opener.webView objectByEvaluatingJavaScript:@"w.blur()"];
+    EXPECT_FALSE(calledUnfocusWebView);
 }
 
 TEST(SiteIsolation, PopunderPreventedByConsumedAction)
@@ -5776,6 +5776,87 @@ TEST(SiteIsolation, PopunderPreventedByConsumedAction)
     // have called the focus delegate because the user gesture was already consumed
     // during popup creation. This exercises the FocusRemoteFrame IPC path.
     EXPECT_FALSE(focusCalled);
+}
+
+TEST(SiteIsolation, CrossOriginSubframeCannotFocusTopWindow)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    __block bool focusCalled = false;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [uiDelegate setFocusWebView:^(WKWebView *) {
+        focusCalled = true;
+    }];
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView objectByEvaluatingJavaScript:@"top.focus()" inFrame:[webView firstChildFrame]];
+    EXPECT_FALSE(focusCalled);
+
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"top.focus()" inFrame:[webView firstChildFrame]];
+    EXPECT_FALSE(focusCalled);
+}
+
+TEST(SiteIsolation, CrossOriginSubframeFocusingTopMovesFocusWithoutRaisingWindow)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body><input id='input'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    __block bool focusCalled = false;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [uiDelegate setFocusWebView:^(WKWebView *) {
+        focusCalled = true;
+    }];
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView waitForNextPresentationUpdate];
+    [webView focus];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.getElementById('input').focus()" inFrame:childFrame.get()];
+    ASSERT_TRUE(Util::waitFor([&] {
+        return [[webView firstChildFrame] _isFocused] && ![[[webView mainFrame] info] _isFocused];
+    }));
+
+    [webView objectByEvaluatingJavaScript:@"top.focus()" inFrame:childFrame.get()];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[[webView mainFrame] info] _isFocused];
+    }));
+    EXPECT_FALSE(focusCalled);
+}
+
+TEST(SiteIsolation, CrossOriginSubframeCannotBlurTopWindow)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    __block bool unfocusCalled = false;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [uiDelegate setUnfocusWebView:^(WKWebView *) {
+        unfocusCalled = true;
+    }];
+    webView.get().UIDelegate = uiDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView objectByEvaluatingJavaScript:@"top.blur()" inFrame:[webView firstChildFrame]];
+    EXPECT_FALSE(unfocusCalled);
 }
 #endif
 
