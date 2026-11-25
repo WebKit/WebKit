@@ -87,10 +87,28 @@ std::expected<WebExtensionTestObjCOptions, WebExtensionValueError> parseWebExten
 
     std::optional<Vector<String>> tagsValue = WTF::move(*tagsRead);
 
+    auto urlsRead = readDictionaryMember<Variant<String, Vector<String>>>(context, object, "urls"_s, path);
+    if (!urlsRead)
+        return makeUnexpected(WTF::move(urlsRead.error()));
+
+    std::optional<Variant<String, Vector<String>>> urlsValue = WTF::move(*urlsRead);
+
+    auto indexRead = readDictionaryNullableMember<double>(context, object, "index"_s, path);
+    if (!indexRead)
+        return makeUnexpected(WTF::move(indexRead.error()));
+
+    std::optional<std::optional<double>> indexValue = WTF::move(*indexRead);
+
+    auto headersRead = readDictionaryMember<HashMap<String, String>>(context, object, "headers"_s, path);
+    if (!headersRead)
+        return makeUnexpected(WTF::move(headersRead.error()));
+
+    std::optional<HashMap<String, String>> headersValue = WTF::move(*headersRead);
+
     if (!missingRequiredKeys.isEmpty())
         return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString("it is missing required keys: "_s, formatList(missingRequiredKeys)) });
 
-    return WebExtensionTestObjCOptions { .name = WTF::move(*nameValue), .count = WTF::move(countValue), .enabled = enabledValue.value_or(false), .tags = WTF::move(tagsValue) };
+    return WebExtensionTestObjCOptions { .name = WTF::move(*nameValue), .count = WTF::move(countValue), .enabled = enabledValue.value_or(false), .tags = WTF::move(tagsValue), .urls = WTF::move(urlsValue), .index = WTF::move(indexValue), .headers = WTF::move(headersValue) };
 }
 
 JSClassRef JSWebExtensionAPITestObjC::testObjCClassSingleton()
@@ -141,6 +159,7 @@ const JSStaticFunction* JSWebExtensionAPITestObjC::staticFunctions()
         { "getMessage", getMessage, kJSPropertyAttributeNone },
         { "runTests", runTests, kJSPropertyAttributeNone },
         { "configure", configure, kJSPropertyAttributeNone },
+        { "select", select, kJSPropertyAttributeNone },
         { "openPopup", openPopup, kJSPropertyAttributeNone },
         { "createMenu", createMenu, kJSPropertyAttributeNone },
         #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
@@ -847,6 +866,61 @@ JSValueRef JSWebExtensionAPITestObjC::configure(JSContextRef context, JSObjectRe
 
     if (exceptionString) [[unlikely]] {
         *exception = toJSError(context, "testObjC.configure()"_s, nullString(), String(exceptionString));
+        return JSValueMakeUndefined(context);
+    }
+
+    return promiseResult ?: JSValueMakeUndefined(context);
+}
+
+JSValueRef JSWebExtensionAPITestObjC::select(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef unsafeArguments[], JSValueRef* exception)
+{
+    RefPtr impl = toWebExtensionAPITestObjC(context, thisObject);
+    if (!impl || !impl->isForMainWorld()) [[unlikely]]
+        return JSValueMakeUndefined(context);
+
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.select() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
+
+    auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
+
+    std::expected<std::optional<WebExtensionTabIdentifier>, WebExtensionValueError> tabId;
+    RefPtr<WebExtensionCallbackHandler> callback;
+
+    if (argumentCount == 2) {
+        if (!((JSValueIsObject(context, arguments[1]) && JSObjectIsFunction(context, JSValueToObject(context, arguments[1], nullptr))) || JSValueIsNull(context, arguments[1]) || JSValueIsUndefined(context, arguments[1]))) [[unlikely]] {
+            *exception = toJSError(context, "testObjC.select()"_s, "callback"_s, "a function is expected"_s);
+            return JSValueMakeUndefined(context);
+        }
+
+        tabId = parseOptionalWebExtensionValue<WebExtensionTabIdentifier>(context, arguments[0]);
+        callback = toJSCallbackHandler(context, arguments[1], protect(impl->runtime()));
+    } else if (argumentCount == 1 && !((JSValueIsObject(context, arguments[0]) && JSObjectIsFunction(context, JSValueToObject(context, arguments[0], nullptr))) || JSValueIsNull(context, arguments[0]) || JSValueIsUndefined(context, arguments[0]))) {
+        tabId = parseOptionalWebExtensionValue<WebExtensionTabIdentifier>(context, arguments[0]);
+    } else if (argumentCount == 1) {
+        if (!((JSValueIsObject(context, arguments[0]) && JSObjectIsFunction(context, JSValueToObject(context, arguments[0], nullptr))) || JSValueIsNull(context, arguments[0]) || JSValueIsUndefined(context, arguments[0]))) [[unlikely]] {
+            *exception = toJSError(context, "testObjC.select()"_s, "callback"_s, "a function is expected"_s);
+            return JSValueMakeUndefined(context);
+        }
+
+        callback = toJSCallbackHandler(context, arguments[0], protect(impl->runtime()));
+    }
+
+    if (!tabId) [[unlikely]] {
+        *exception = toJSError(context, "testObjC.select()"_s, "tabId"_s, tabId.error());
+        return JSValueMakeUndefined(context);
+    }
+
+    JSObjectRef promiseResult = nullptr;
+    if (!callback) {
+        JSObjectRef resolveFunction, rejectFunction = nullptr;
+        promiseResult = JSObjectMakeDeferredPromise(context, &resolveFunction, &rejectFunction, nullptr);
+        callback = toJSPromiseCallbackHandler(context, resolveFunction, rejectFunction);
+    }
+
+    NSString *exceptionString;
+    impl->select(*tabId, callback.releaseNonNull(), &exceptionString);
+
+    if (exceptionString) [[unlikely]] {
+        *exception = toJSError(context, "testObjC.select()"_s, nullString(), String(exceptionString));
         return JSValueMakeUndefined(context);
     }
 

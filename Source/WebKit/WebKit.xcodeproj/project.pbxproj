@@ -11476,9 +11476,9 @@
 			children = (
 				1C5DC45929099F010061EC62 /* Cocoa */,
 				1C5DC45C2909A3680061EC62 /* Scripts */,
-				1C5DC45B29099F010061EC62 /* JSWebExtensionWrappable.h */,
 				1CDE0A062B5E3A0100A1B2C3 /* JSWebExtensionValueParser.cpp */,
 				1CDE0A052B5E3A0100A1B2C3 /* JSWebExtensionValueParser.h */,
+				1C5DC45B29099F010061EC62 /* JSWebExtensionWrappable.h */,
 				1C5DC45729099F010061EC62 /* JSWebExtensionWrapper.cpp */,
 				1C5DC45829099F010061EC62 /* JSWebExtensionWrapper.h */,
 			);
@@ -18842,8 +18842,8 @@
 				3399E1542B59EFD7008BFB60 /* JSWebExtensionAPIWebRequest.h in Headers */,
 				1C5ACFA52A96F8C400C041C0 /* JSWebExtensionAPIWindows.h in Headers */,
 				1C5ACFA82A96F8C400C041C0 /* JSWebExtensionAPIWindowsEvent.h in Headers */,
-				1C5DC46F290B27260061EC62 /* JSWebExtensionWrappable.h in Headers */,
 				1CDE0A072B5E3A0100A1B2C3 /* JSWebExtensionValueParser.h in Headers */,
+				1C5DC46F290B27260061EC62 /* JSWebExtensionWrappable.h in Headers */,
 				1C5DC46E290B27260061EC62 /* JSWebExtensionWrapper.h in Headers */,
 				074A6FC72D5F1FAF0027F958 /* KeyEventInterpretationContext.h in Headers */,
 				E385F3692E86D75800461B0C /* LaunchLogHook.h in Headers */,

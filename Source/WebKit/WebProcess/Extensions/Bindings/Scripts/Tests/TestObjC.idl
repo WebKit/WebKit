@@ -28,6 +28,9 @@ dictionary WebExtensionTestObjCOptions {
     double count;
     boolean enabled = false;
     sequence<DOMString> tags;
+    (DOMString or sequence<DOMString>) urls;
+    double? index;
+    record<DOMString, DOMString> headers;
 };
 
 // Covers the Objective-C path of the generator: arguments converted to Foundation objects, exceptions, and what a call needs from its context.
@@ -51,6 +54,7 @@ dictionary WebExtensionTestObjCOptions {
     [NeedsScriptContext] any runTests([Vector=JSValueRef] array tests);
 
     [RaisesException] void configure(WebExtensionTestObjCOptions options, [Optional, CallbackHandler] function callback);
+    [RaisesException] void select([CustomType=WebExtensionTabIdentifier] optional double tabId, [CallbackHandler] optional function callback);
 
     // What a call needs from its context.
     [RaisesException, NeedsPageIdentifier] void openPopup([Optional, NSDictionary=NullAllowed] any options, [Optional, CallbackHandler] function callback);

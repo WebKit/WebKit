@@ -39,6 +39,9 @@ struct WebExtensionTestObjCOptions {
     std::optional<double> count;
     bool enabled;
     std::optional<Vector<String>> tags;
+    std::optional<Variant<String, Vector<String>>> urls;
+    std::optional<std::optional<double>> index;
+    std::optional<HashMap<String, String>> headers;
 };
 
 std::expected<WebExtensionTestObjCOptions, WebExtensionValueError> parseWebExtensionTestObjCOptions(JSContextRef, JSValueRef, const String& path = { });
@@ -74,6 +77,7 @@ private:
     static JSValueRef getURL(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef runTests(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef configure(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    static JSValueRef select(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef openPopup(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef createMenu(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)

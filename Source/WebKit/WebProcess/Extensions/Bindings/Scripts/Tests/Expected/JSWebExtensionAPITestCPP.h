@@ -39,6 +39,9 @@ struct WebExtensionTestCPPOptions {
     std::optional<double> count;
     bool enabled;
     std::optional<Vector<String>> tags;
+    std::optional<Variant<String, Vector<String>>> urls;
+    std::optional<std::optional<double>> index;
+    std::optional<HashMap<String, String>> headers;
 };
 
 std::expected<WebExtensionTestCPPOptions, WebExtensionValueError> parseWebExtensionTestCPPOptions(JSContextRef, JSValueRef, const String& path = { });
@@ -80,6 +83,7 @@ private:
     static JSValueRef getManifest(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef sendRuntimeMessage(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef configure(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    static JSValueRef select(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
 
     // Attributes
 

@@ -28,6 +28,9 @@ dictionary WebExtensionTestCPPOptions {
     double count;
     boolean enabled = false;
     sequence<DOMString> tags;
+    (DOMString or sequence<DOMString>) urls;
+    double? index;
+    record<DOMString, DOMString> headers;
 };
 
 // Covers the C++ path of the generator, which UseCPPAPI selects: the same arguments as JSON values and JavaScript values, and String exceptions.
@@ -60,6 +63,7 @@ dictionary WebExtensionTestCPPOptions {
     [RaisesStringException, NeedsFrame, ProcessArgumentsLeftToRight] void sendRuntimeMessage([Optional] DOMString extensionID, [Serialization=Message] any message, [Optional, JSONValue] any options, [Optional, CallbackHandler] function callback);
 
     [RaisesStringException] void configure(WebExtensionTestCPPOptions options, [Optional, CallbackHandler] function callback);
+    [RaisesStringException] void select([CustomType=WebExtensionTabIdentifier] optional double tabId, [CallbackHandler] optional function callback);
 
     readonly attribute WebExtensionAPIEvent onAlarm;
     [ImplementedAs=quotaBytes] readonly attribute double QUOTA_BYTES;

@@ -29,13 +29,24 @@
 
 #include "JSWebExtensionWrapper.h"
 #include "Protected.h"
+#include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionMatchPattern.h"
+#include "WebExtensionTabIdentifier.h"
 #include "WebExtensionUtilities.h"
+#include "WebExtensionWindowIdentifier.h"
 #include <optional>
+#include <pal/SessionID.h>
+#include <wtf/HashMap.h>
+#include <wtf/URL.h>
+#include <wtf/UUID.h>
+#include <wtf/Variant.h>
 
 // Parsing of the JavaScript values that the IDL declares into C++ values, for arguments, dictionary members, sequence
-// elements. Only generated code includes this.
+// elements and union alternatives. Only generated code includes this.
 
 namespace WebKit {
+
+using WTF::UUID;
 
 // Describes a value for error messages, for example "a string", "an array", "null" or "NaN".
 String describeValueType(JSContextRef, JSValueRef);
@@ -70,12 +81,21 @@ String valuePathLeaf(const String& path);
 // Joins descriptions as "a", "a or b", or "a, b, or c".
 String joinValueChoices(const Vector<String>&);
 
-// Reads a member. The result is null when the member is undefined or null, which dictionaries treat as missing.
+// Reads a member. The value is nullptr when the member is undefined or JavaScript null, which dictionaries treat as missing.
 std::expected<JSValueRef, WebExtensionValueError> readDictionaryMemberValue(JSContextRef, JSObjectRef, ASCIILiteral key, const String& parentPath);
 
-// Converts a JavaScript value to T, for dictionary members, arguments and sequence elements. Generated code defines
-// this for dictionaries and enumerations. The description is for errors, like "a number". Matches is a cheap check
-// of the JavaScript type. The path names the value in errors, and is empty for an argument.
+// Reads a member. The value is nullptr only when the member is undefined, so a nullable member can tell JavaScript null apart.
+std::expected<JSValueRef, WebExtensionValueError> readDictionaryRawMemberValue(JSContextRef, JSObjectRef, ASCIILiteral key, const String& parentPath);
+
+// Converts a JavaScript value to T, for dictionary members, arguments, sequence elements and union alternatives.
+// Generated code defines this for dictionaries and enumerations, and a custom IDL type defines it by hand:
+//
+//   template<> struct WebExtensionValueParser<Foo> : WebExtensionNumberParserBase {
+//       static std::expected<Foo, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+//   };
+//
+// The description is for errors, like "a number". Matches is a cheap check of the JavaScript type that a union uses
+// to pick an alternative. The path names the value in errors, and is empty for an argument.
 template<typename T> struct WebExtensionValueParser;
 
 struct WebExtensionValueParserBase {
@@ -132,6 +152,50 @@ template<> struct WebExtensionValueParser<Protected<JSValueRef>> : WebExtensionV
     static std::expected<Protected<JSValueRef>, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
 };
 
+// A value converted to JSON, for members that are stored or sent as JSON, such as declarativeNetRequest rules.
+// The IDL names these with `[CustomType=WebExtensionJSONValue] any` or `[CustomType=WebExtensionJSONObject] any`,
+// and a sequence of them with `sequence<any>`.
+using WebExtensionJSONValue = Ref<JSON::Value>;
+using WebExtensionJSONObject = Ref<JSON::Object>;
+
+template<> struct WebExtensionValueParser<Ref<JSON::Value>> : WebExtensionValueParserBase {
+    static String pluralDescription() { return nullString(); }
+    static std::expected<Ref<JSON::Value>, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+template<> struct WebExtensionValueParser<Ref<JSON::Object>> : WebExtensionObjectParserBase {
+    static std::expected<Ref<JSON::Object>, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+// IDL `record<DOMString, any>`.
+template<> struct WebExtensionValueParser<HashMap<String, Protected<JSValueRef>>> : WebExtensionObjectParserBase {
+    static std::expected<HashMap<String, Protected<JSValueRef>>, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+// The names and values of an object's own properties, which a record parses from. A value that isn't an object is an error.
+std::expected<Vector<std::pair<String, Protected<JSValueRef>>>, WebExtensionValueError> readRecordEntries(JSContextRef, JSValueRef, const String& path);
+
+// IDL `record<DOMString, T>` for any other T.
+template<typename T> struct WebExtensionValueParser<HashMap<String, T>> : WebExtensionObjectParserBase {
+    static std::expected<HashMap<String, T>, WebExtensionValueError> parse(JSContextRef context, JSValueRef value, const String& path)
+    {
+        auto entries = readRecordEntries(context, value, path);
+        if (!entries)
+            return makeUnexpected(WTF::move(entries.error()));
+
+        HashMap<String, T> result;
+        for (auto& [key, entry] : *entries) {
+            auto parsed = WebExtensionValueParser<T>::parse(context, entry.get(), joinValuePath(path, String { key }));
+            if (!parsed)
+                return makeUnexpected(WTF::move(parsed.error()));
+
+            result.set(key, WTF::move(*parsed));
+        }
+
+        return result;
+    }
+};
+
 // IDL `sequence<T>`.
 template<typename T> struct WebExtensionValueParser<Vector<T>> {
     static String description()
@@ -172,11 +236,74 @@ template<typename T> struct WebExtensionValueParser<Vector<T>> {
     }
 };
 
+// IDL union types. The first alternative that matches the JavaScript value parses it.
+template<typename... Alternatives> struct WebExtensionValueParser<Variant<Alternatives...>> {
+    using Result = Variant<Alternatives...>;
+
+    static String description() { return joinValueChoices({ WebExtensionValueParser<Alternatives>::description()... }); }
+    static String pluralDescription()
+    {
+        // Elements of a union are described by what each alternative is made of, unless one of them has no description.
+        Vector<String> choices { WebExtensionValueParser<Alternatives>::pluralDescription()... };
+        if (choices.containsIf([](auto& choice) { return choice.isEmpty(); }))
+            return "values"_s;
+
+        return joinValueChoices(choices);
+    }
+
+    static bool matches(JSContextRef context, JSValueRef value) { return (WebExtensionValueParser<Alternatives>::matches(context, value) || ...); }
+
+    static std::expected<Result, WebExtensionValueError> parse(JSContextRef context, JSValueRef value, const String& path)
+    {
+        std::optional<std::expected<Result, WebExtensionValueError>> result;
+
+        (tryAlternative<Alternatives>(context, value, path, result), ...);
+
+        if (result)
+            return WTF::move(*result);
+
+        return makeUnexpected(WebExtensionValueError { constructExpectedMessage(path, description(), describeValueType(context, value)) });
+    }
+
+private:
+    template<typename Alternative>
+    static void tryAlternative(JSContextRef context, JSValueRef value, const String& path, std::optional<std::expected<Result, WebExtensionValueError>>& result)
+    {
+        if (result || !WebExtensionValueParser<Alternative>::matches(context, value))
+            return;
+
+        auto parsed = WebExtensionValueParser<Alternative>::parse(context, value, path);
+        if (!parsed)
+            result = makeUnexpected(WTF::move(parsed.error()));
+        else
+            result = Result { WTF::InPlaceType<Alternative>, WTF::move(*parsed) };
+    }
+};
+
 // Reads a member as T. The result is empty when the member is undefined or null.
 template<typename T>
 std::expected<std::optional<T>, WebExtensionValueError> readDictionaryMember(JSContextRef context, JSObjectRef object, ASCIILiteral key, const String& parentPath)
 {
     auto value = readDictionaryMemberValue(context, object, key, parentPath);
+    if (!value)
+        return makeUnexpected(WTF::move(value.error()));
+
+    if (!*value)
+        return std::nullopt;
+
+    auto parsed = WebExtensionValueParser<T>::parse(context, *value, joinValuePath(parentPath, String { key }));
+    if (!parsed)
+        return makeUnexpected(WTF::move(parsed.error()));
+
+    return std::optional<T> { WTF::move(*parsed) };
+}
+
+// Reads a member as T, where null is a value for the parser and not the same as undefined. The result is empty only when the
+// member is undefined.
+template<typename T>
+std::expected<std::optional<T>, WebExtensionValueError> readDictionaryMemberKeepingNull(JSContextRef context, JSObjectRef object, ASCIILiteral key, const String& parentPath)
+{
+    auto value = readDictionaryRawMemberValue(context, object, key, parentPath);
     if (!value)
         return makeUnexpected(WTF::move(value.error()));
 
@@ -197,6 +324,14 @@ bool webExtensionValueIsEmpty(const T& value)
     return value.isEmpty();
 }
 
+template<typename... Alternatives>
+bool webExtensionValueIsEmpty(const Variant<Alternatives...>& value)
+{
+    return WTF::visit([](const auto& alternative) {
+        return webExtensionValueIsEmpty(alternative);
+    }, value);
+}
+
 // Whether a sequence of strings, or a union that holds one, has an empty string in it.
 inline bool webExtensionValueHasEmptyString(const String&)
 {
@@ -208,6 +343,39 @@ inline bool webExtensionValueHasEmptyString(const Vector<String>& values)
     return values.containsIf([](const String& value) {
         return value.isEmpty();
     });
+}
+
+template<typename... Alternatives>
+bool webExtensionValueHasEmptyString(const Variant<Alternatives...>& value)
+{
+    return WTF::visit([](const auto& alternative) {
+        return webExtensionValueHasEmptyString(alternative);
+    }, value);
+}
+
+// Makes a type error from parsing a nullable member read "is expected to be a number or null".
+WebExtensionValueError addNullToExpectedType(WebExtensionValueError&&, const String& expected);
+
+// Reads a nullable member as T. The outer optional is empty when the member is undefined, and the inner one when it is null.
+template<typename T>
+std::expected<std::optional<std::optional<T>>, WebExtensionValueError> readDictionaryNullableMember(JSContextRef context, JSObjectRef object, ASCIILiteral key, const String& parentPath)
+{
+    auto value = readDictionaryRawMemberValue(context, object, key, parentPath);
+    if (!value)
+        return makeUnexpected(WTF::move(value.error()));
+
+    if (!*value)
+        return std::nullopt;
+
+    if (JSValueIsNull(context, *value))
+        return std::optional<std::optional<T>> { std::optional<T> { } };
+
+    auto path = joinValuePath(parentPath, String { key });
+    auto parsed = WebExtensionValueParser<T>::parse(context, *value, path);
+    if (!parsed)
+        return makeUnexpected(addNullToExpectedType(WTF::move(parsed.error()), WebExtensionValueParser<T>::description()));
+
+    return std::optional<std::optional<T>> { std::optional<T> { WTF::move(*parsed) } };
 }
 
 // Reads a member that must be a function.
@@ -230,6 +398,44 @@ std::expected<std::optional<T>, WebExtensionValueError> parseOptionalWebExtensio
 
     return std::optional<T> { WTF::move(*parsed) };
 }
+
+// Identifiers, which convert from numbers or strings and name the member in their errors. A tab identifier is a real tab,
+// so -1 (tabs.TAB_ID_NONE) is not valid here.
+template<> struct WebExtensionValueParser<WebExtensionTabIdentifier> : WebExtensionNumberParserBase {
+    static std::expected<WebExtensionTabIdentifier, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+// A cookie store is a session, which extensions name by a string like "persistent-1" or "ephemeral-2".
+using WebExtensionCookieStoreIdentifier = PAL::SessionID;
+
+template<> struct WebExtensionValueParser<WebExtensionCookieStoreIdentifier> : WebExtensionStringParserBase {
+    static std::expected<WebExtensionCookieStoreIdentifier, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+// A URL that parses. An empty string is an empty URL, so a member or an argument that needs one adds CannotBeEmpty.
+template<> struct WebExtensionValueParser<URL> : WebExtensionStringParserBase {
+    static std::expected<URL, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+template<> struct WebExtensionValueParser<WebExtensionFrameIdentifier> : WebExtensionNumberParserBase {
+    static std::expected<WebExtensionFrameIdentifier, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+// A window identifier is a real window or the current window, so -1 (windows.WINDOW_ID_NONE) is not valid here.
+template<> struct WebExtensionValueParser<WebExtensionWindowIdentifier> : WebExtensionNumberParserBase {
+    static std::expected<WebExtensionWindowIdentifier, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+// A UUID in its string form, such as a document identifier.
+template<> struct WebExtensionValueParser<UUID> : WebExtensionStringParserBase {
+    static std::expected<UUID, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
+
+// A match pattern string that the extension API supports. The IDL names this with `[CustomType=WebExtensionMatchPattern]`, and
+// the implementation receives the pattern.
+template<> struct WebExtensionValueParser<Ref<WebExtensionMatchPattern>> : WebExtensionStringParserBase {
+    static std::expected<Ref<WebExtensionMatchPattern>, WebExtensionValueError> parse(JSContextRef, JSValueRef, const String& path);
+};
 
 } // namespace WebKit
 

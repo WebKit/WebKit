@@ -126,7 +126,7 @@ String joinValueChoices(const Vector<String>& choices)
     return builder.toString();
 }
 
-std::expected<JSValueRef, WebExtensionValueError> readDictionaryMemberValue(JSContextRef context, JSObjectRef object, ASCIILiteral key, const String& parentPath)
+static std::expected<JSValueRef, WebExtensionValueError> readMemberValue(JSContextRef context, JSObjectRef object, ASCIILiteral key, const String& parentPath, bool treatNullAsMissing)
 {
     RefPtr jsKey = toJSString(String { key });
 
@@ -135,15 +135,31 @@ std::expected<JSValueRef, WebExtensionValueError> readDictionaryMemberValue(JSCo
     if (exception)
         return makeUnexpected(WebExtensionValueError { makeString("'"_s, joinValuePath(parentPath, String { key }), "' could not be read"_s) });
 
-    if (JSValueIsUndefined(context, value) || JSValueIsNull(context, value))
+    if (JSValueIsUndefined(context, value) || (treatNullAsMissing && JSValueIsNull(context, value)))
         return nullptr;
 
     return value;
 }
 
+std::expected<JSValueRef, WebExtensionValueError> readDictionaryMemberValue(JSContextRef context, JSObjectRef object, ASCIILiteral key, const String& parentPath)
+{
+    return readMemberValue(context, object, key, parentPath, true);
+}
+
+std::expected<JSValueRef, WebExtensionValueError> readDictionaryRawMemberValue(JSContextRef context, JSObjectRef object, ASCIILiteral key, const String& parentPath)
+{
+    return readMemberValue(context, object, key, parentPath, false);
+}
+
 static WebExtensionValueError typeMismatch(JSContextRef context, JSValueRef value, const String& path, const String& expected)
 {
     return WebExtensionValueError { constructExpectedMessage(path, expected, describeValueType(context, value)) };
+}
+
+WebExtensionValueError addNullToExpectedType(WebExtensionValueError&& error, const String& expected)
+{
+    error.message = makeStringByReplacingAll(error.message, makeString("be "_s, expected, ", but"_s), makeString("be "_s, expected, " or null, but"_s));
+    return WTF::move(error);
 }
 
 std::expected<String, WebExtensionValueError> WebExtensionValueParser<String>::parse(JSContextRef context, JSValueRef value, const String& path)
@@ -200,6 +216,57 @@ std::expected<Protected<JSValueRef>, WebExtensionValueError> WebExtensionValuePa
     return Protected<JSValueRef> { JSContextGetGlobalContext(context), value };
 }
 
+std::expected<Ref<JSON::Value>, WebExtensionValueError> WebExtensionValueParser<Ref<JSON::Value>>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    // toJSONValue only converts objects, and fromJSValue converts every kind of value.
+    RefPtr jsonValue = fromJSValue(context, value, NullValuePolicy::Allowed);
+    if (!jsonValue)
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), "it is not a value that JSON can represent"_s });
+
+    return jsonValue.releaseNonNull();
+}
+
+std::expected<Ref<JSON::Object>, WebExtensionValueError> WebExtensionValueParser<Ref<JSON::Object>>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    if (!matches(context, value))
+        return makeUnexpected(typeMismatch(context, value, path, description()));
+
+    RefPtr jsonValue = toJSONValue(context, value, NullValuePolicy::Allowed);
+    RefPtr object = jsonValue ? jsonValue->asObject() : nullptr;
+    if (!object)
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), "it is not an object that JSON can represent"_s });
+
+    return object.releaseNonNull();
+}
+
+std::expected<HashMap<String, Protected<JSValueRef>>, WebExtensionValueError> WebExtensionValueParser<HashMap<String, Protected<JSValueRef>>>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    if (!matches(context, value))
+        return makeUnexpected(typeMismatch(context, value, path, description()));
+
+    auto object = JSValueToObject(context, value, nullptr);
+    auto globalContext = JSContextGetGlobalContext(context);
+    auto propertyNames = JSObjectCopyPropertyNames(context, object);
+    auto releasePropertyNames = makeScopeExit([&] {
+        JSPropertyNameArrayRelease(propertyNames);
+    });
+
+    HashMap<String, Protected<JSValueRef>> result;
+    for (size_t i = 0; i < JSPropertyNameArrayGetCount(propertyNames); ++i) {
+        RefPtr propertyName = JSPropertyNameArrayGetNameAtIndex(propertyNames, i);
+        auto key = toString(propertyName.get());
+
+        JSValueRef exception = nullptr;
+        JSValueRef entry = JSObjectGetProperty(context, object, propertyName.get(), &exception);
+        if (exception || !entry)
+            return makeUnexpected(WebExtensionValueError { makeString("'"_s, joinValuePath(path, key), "' could not be read"_s) });
+
+        result.set(WTF::move(key), Protected<JSValueRef> { globalContext, entry });
+    }
+
+    return result;
+}
+
 std::expected<std::optional<Protected<JSValueRef>>, WebExtensionValueError> readDictionaryFunctionMember(JSContextRef context, JSObjectRef object, ASCIILiteral key, const String& parentPath)
 {
     auto value = readDictionaryMemberValue(context, object, key, parentPath);
@@ -236,6 +303,156 @@ std::expected<size_t, WebExtensionValueError> parseWebExtensionEnumValue(JSConte
         quotedValues.append(makeString('\'', value, '\''));
 
     return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString("it must specify either "_s, joinValueChoices(quotedValues)) });
+}
+
+std::expected<WebExtensionTabIdentifier, WebExtensionValueError> WebExtensionValueParser<WebExtensionTabIdentifier>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    auto number = WebExtensionValueParser<double>::parse(context, value, path);
+    if (!number)
+        return makeUnexpected(WTF::move(number.error()));
+
+    auto identifier = toWebExtensionTabIdentifier(*number);
+    if (isNone(identifier))
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), "'tabs.TAB_ID_NONE' is not allowed"_s });
+
+    if (!isValid(identifier))
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString('\'', String::number(*number), "' is not a tab identifier"_s) });
+
+    return *identifier;
+}
+
+std::expected<WebExtensionCookieStoreIdentifier, WebExtensionValueError> WebExtensionValueParser<WebExtensionCookieStoreIdentifier>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    auto string = WebExtensionValueParser<String>::parse(context, value, path);
+    if (!string)
+        return makeUnexpected(WTF::move(string.error()));
+
+    if (string->isEmpty())
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), "it must not be empty"_s });
+
+    auto invalid = [&] {
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString('\'', *string, "' is not a valid cookie store identifier"_s) });
+    };
+
+    uint64_t sessionMask = 0;
+    StringView remainder = *string;
+
+    if (remainder.startsWith("ephemeral-"_s)) {
+        sessionMask = PAL::SessionID::EphemeralSessionMask;
+        remainder = remainder.substring(10);
+    } else if (remainder.startsWith("persistent-"_s))
+        remainder = remainder.substring(11);
+    else
+        return invalid();
+
+    auto number = parseInteger<uint64_t>(remainder);
+    if (!number)
+        return invalid();
+
+    PAL::SessionID sessionID { *number | sessionMask };
+    if (!sessionID.isValid())
+        return invalid();
+
+    return sessionID;
+}
+
+std::expected<URL, WebExtensionValueError> WebExtensionValueParser<URL>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    auto string = WebExtensionValueParser<String>::parse(context, value, path);
+    if (!string)
+        return makeUnexpected(WTF::move(string.error()));
+
+    if (string->isEmpty())
+        return URL { };
+
+    URL url { *string };
+    if (!url.isValid())
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString('\'', *string, "' is not a valid URL"_s) });
+
+    return url;
+}
+
+std::expected<WebExtensionFrameIdentifier, WebExtensionValueError> WebExtensionValueParser<WebExtensionFrameIdentifier>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    auto number = WebExtensionValueParser<double>::parse(context, value, path);
+    if (!number)
+        return makeUnexpected(WTF::move(number.error()));
+
+    auto identifier = toWebExtensionFrameIdentifier(*number);
+    if (!isValid(identifier))
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString('\'', String::number(*number), "' is not a frame identifier"_s) });
+
+    return *identifier;
+}
+
+std::expected<WebExtensionWindowIdentifier, WebExtensionValueError> WebExtensionValueParser<WebExtensionWindowIdentifier>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    auto number = WebExtensionValueParser<double>::parse(context, value, path);
+    if (!number)
+        return makeUnexpected(WTF::move(number.error()));
+
+    auto identifier = toWebExtensionWindowIdentifier(*number);
+    if (isNone(identifier))
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), "'windows.WINDOW_ID_NONE' is not allowed"_s });
+
+    if (!isValid(identifier))
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString('\'', String::number(*number), "' is not a window identifier"_s) });
+
+    return *identifier;
+}
+
+std::expected<UUID, WebExtensionValueError> WebExtensionValueParser<UUID>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    auto string = WebExtensionValueParser<String>::parse(context, value, path);
+    if (!string)
+        return makeUnexpected(WTF::move(string.error()));
+
+    auto identifier = UUID::parse(*string);
+    if (!identifier)
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString('\'', *string, "' is not a valid UUID"_s) });
+
+    return *identifier;
+}
+
+std::expected<Vector<std::pair<String, Protected<JSValueRef>>>, WebExtensionValueError> readRecordEntries(JSContextRef context, JSValueRef value, const String& path)
+{
+    if (!isDictionary(context, value))
+        return makeUnexpected(typeMismatch(context, value, path, "an object"_s));
+
+    auto object = JSValueToObject(context, value, nullptr);
+    auto globalContext = JSContextGetGlobalContext(context);
+    auto propertyNames = JSObjectCopyPropertyNames(context, object);
+    auto releasePropertyNames = makeScopeExit([&] {
+        JSPropertyNameArrayRelease(propertyNames);
+    });
+
+    Vector<std::pair<String, Protected<JSValueRef>>> entries;
+    for (size_t i = 0; i < JSPropertyNameArrayGetCount(propertyNames); ++i) {
+        RefPtr propertyName = JSPropertyNameArrayGetNameAtIndex(propertyNames, i);
+        auto key = toString(propertyName.get());
+
+        JSValueRef exception = nullptr;
+        JSValueRef entry = JSObjectGetProperty(context, object, propertyName.get(), &exception);
+        if (exception || !entry)
+            return makeUnexpected(WebExtensionValueError { makeString("'"_s, joinValuePath(path, key), "' could not be read"_s) });
+
+        entries.append({ WTF::move(key), Protected<JSValueRef> { globalContext, entry } });
+    }
+
+    return entries;
+}
+
+std::expected<Ref<WebExtensionMatchPattern>, WebExtensionValueError> WebExtensionValueParser<Ref<WebExtensionMatchPattern>>::parse(JSContextRef context, JSValueRef value, const String& path)
+{
+    auto string = WebExtensionValueParser<String>::parse(context, value, path);
+    if (!string)
+        return makeUnexpected(WTF::move(string.error()));
+
+    RefPtr pattern = WebExtensionMatchPattern::getOrCreate(*string);
+    if (!pattern || !pattern->isSupported())
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString('\'', *string, "' is not a valid pattern"_s) });
+
+    return pattern.releaseNonNull();
 }
 
 } // namespace WebKit

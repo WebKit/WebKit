@@ -25,7 +25,14 @@ package CodeGeneratorExtensions;
 
 use strict;
 use warnings;
+use File::Basename qw(dirname);
 use File::Spec;
+
+# Custom types that are reference counted classes, which the implementation receives as a Ref. The IDL names the class, and
+# the parser for Ref<Class> does the conversion.
+my %refCountedCustomTypes = map { $_ => 1 } qw(
+    WebExtensionMatchPattern
+);
 
 sub new
 {
@@ -57,11 +64,21 @@ sub WriteData
     }
 }
 
+# The optional keyword is how WebIDL spells an argument that can be left out. The Optional attribute is still read for IDL
+# that hasn't moved to the keyword. An optional argument also accepts null and undefined, as other engines' extension
+# bindings do, so the generated parser treats both as left out.
+sub _isOptionalArgument
+{
+    my ($argument) = @_;
+
+    return $argument->isOptional || $argument->extendedAttributes->{"Optional"};
+}
+
 sub _isMatchableOptionalParameter
 {
     my ($self, $parameter) = @_;
 
-    return $parameter->extendedAttributes->{"Optional"} && !$parameter->extendedAttributes->{"CallbackHandler"} && $self->_isDictionaryType($parameter->type);
+    return _isOptionalArgument($parameter) && !$parameter->extendedAttributes->{"CallbackHandler"} && $self->_isDictionaryType($parameter->type);
 }
 
 sub _expectedTypeDescription
@@ -99,6 +116,36 @@ sub _isEnumerationType
     return $$self{codeGenerator}->IsEnumType($idlType) ? 1 : 0;
 }
 
+# Type names with their own handling, which a custom IDL type must not claim.
+my %builtInTypeNames = map { $_ => 1 } qw(DOMWindow Promise);
+
+# A custom type is any other capitalized name that no IDL file declares. It is parsed by a WebExtensionValueParser
+# specialization, and the generated code includes the header named after it.
+sub _isCustomType
+{
+    my ($self, $idlType) = @_;
+
+    return 0 unless ref($idlType) eq "IDLType";
+    return 0 if $idlType->isUnion;
+
+    my $name = $idlType->name;
+    return 0 unless $name =~ /^[A-Z]/;
+    return 0 if $builtInTypeNames{$name};
+
+    # Interfaces, including ones that Internal adds, are all named WebExtensionAPI.
+    return 0 if $name =~ /^WebExtensionAPI/;
+
+    my $codeGenerator = $$self{codeGenerator};
+    return 0 if $codeGenerator->IsStringType($idlType) || $codeGenerator->IsPrimitiveType($idlType);
+    return 0 if $self->_isEnumerationType($idlType) || $self->_isDictionaryType($idlType);
+    return 0 if defined $codeGenerator->IDLFileForInterface($name);
+
+    # The two lists of IDL files don't cover each other, so also look for an interface next to this IDL file.
+    return 0 if -e File::Spec->catfile(dirname($$self{idlFilePath}), "${name}.idl");
+
+    return 1;
+}
+
 my %numericCppTypes = (
     "double" => "double",
     "unrestricted double" => "double",
@@ -111,14 +158,25 @@ my %numericCppTypes = (
 # The C++ type a WebExtensionValueParser produces for an IDL type, or undef when the type isn't parsed that way.
 sub _parsedCppType
 {
-    my ($self, $idlType, $description) = @_;
+    my ($self, $idlType, $description, $customType) = @_;
 
     return undef unless ref($idlType) eq "IDLType";
 
     my $codeGenerator = $$self{codeGenerator};
+
+    if ($idlType->isUnion) {
+        my @alternatives = map { my $alternative = $_; $self->_parsedCppType($alternative, $description, $customType) // die "Unsupported union member type '" . $alternative->name . "': $description\n" } @{[ @{$idlType->subtypes} ]};
+        return "Variant<" . join(", ", @alternatives) . ">";
+    }
+
     my $name = $idlType->name;
 
+    $customType = "Ref<${customType}>" if $customType && $refCountedCustomTypes{$customType};
+
     die "Unsupported numeric type '$name': $description\n" if $codeGenerator->IsPrimitiveType($idlType) && $name ne "boolean" && !$numericCppTypes{$name};
+
+    # The IDL type says what JavaScript passes, and a custom type is what it is converted to.
+    return $customType if $customType && ($codeGenerator->IsStringType($idlType) || $numericCppTypes{$name} || $name eq "any");
 
     return "String" if $codeGenerator->IsStringType($idlType);
     return "bool" if $name eq "boolean";
@@ -129,34 +187,87 @@ sub _parsedCppType
         my $elementIDLType = $idlType->subtypes->[0];
         die "A sequence needs an element type: $description\n" unless defined $elementIDLType;
 
-        my $elementType = $self->_parsedCppType($elementIDLType, $description) // die "Unsupported sequence element type '" . $elementIDLType->name . "': $description\n";
+        my $elementType = $self->_parsedCppType($elementIDLType, $description, $customType) // die "Unsupported sequence element type '" . $elementIDLType->name . "': $description\n";
         return "Vector<${elementType}>";
     }
 
-    return $name if $self->_isEnumerationType($idlType) || $self->_isDictionaryType($idlType);
+    if ($name eq "record") {
+        my ($keyType, $valueType) = @{$idlType->subtypes};
+        die "A record needs a DOMString key: $description\n" unless $codeGenerator->IsStringType($keyType);
+
+        my $valueCppType = $self->_parsedCppType($valueType, $description, $customType) // die "Unsupported record value type '" . $valueType->name . "': $description\n";
+        return "HashMap<String, ${valueCppType}>";
+    }
+
+    return $self->_cppTypeName($name) if $self->_isEnumerationType($idlType) || $self->_isDictionaryType($idlType);
+
+    return $name if $self->_isCustomType($idlType);
 
     return undef;
 }
 
+# Whether an operation argument is parsed by a WebExtensionValueParser, which covers the types that aren't a plain string,
+# number, boolean, any or function.
 sub _isParsedArgumentType
 {
     my ($self, $idlType, $signature) = @_;
 
     return 0 unless ref($idlType) eq "IDLType";
+    return 1 if $signature && $signature->extendedAttributes->{"CustomType"};
 
-    return 1 if $$self{codeGenerator}->IsSequenceType($idlType);
-    return 1 if $self->_isEnumerationType($idlType) || $self->_isDictionaryType($idlType);
+    my $codeGenerator = $$self{codeGenerator};
+
+    return 1 if $idlType->isUnion;
+    return 1 if $codeGenerator->IsSequenceType($idlType) || $idlType->name eq "record";
+    return 1 if $self->_isEnumerationType($idlType) || $self->_isDictionaryType($idlType) || $self->_isCustomType($idlType);
 
     return 0;
 }
 
+# The type that holds the result of parsing an argument, which is empty when an optional argument is missing.
 sub _parsedArgumentResultType
 {
-    my ($self, $idlType, $isOptional, $description) = @_;
+    my ($self, $idlType, $isOptional, $description, $customType) = @_;
 
-    my $cppType = $self->_parsedCppType($idlType, $description);
+    my $cppType = $self->_parsedCppType($idlType, $description, $customType);
 
     return $isOptional ? "std::expected<std::optional<${cppType}>, WebExtensionValueError>" : "std::expected<${cppType}, WebExtensionValueError>";
+}
+
+# What generated C++ calls a dictionary, an enumeration or a member, which an ImplementedAs attribute can set apart from the
+# name in the IDL. The name in the IDL is the one JavaScript sees.
+sub _cppTypeName
+{
+    my ($self, $name) = @_;
+
+    my ($dictionary) = grep { $_->type->name eq $name } @{$$self{dictionaries}};
+    return $dictionary->extendedAttributes->{"ImplementedAs"} // $name if $dictionary;
+
+    my ($enumeration) = grep { $_->type->name eq $name } @{$$self{enumerations}};
+    return $enumeration->extendedAttributes->{"ImplementedAs"} // $name if $enumeration;
+
+    return $name;
+}
+
+sub _cppEnumerationName
+{
+    my ($self, $enumeration) = @_;
+
+    return $enumeration->extendedAttributes->{"ImplementedAs"} // $enumeration->type->name;
+}
+
+sub _cppDictionaryName
+{
+    my ($self, $dictionary) = @_;
+
+    return $dictionary->extendedAttributes->{"ImplementedAs"} // $dictionary->type->name;
+}
+
+sub _cppMemberName
+{
+    my ($self, $member) = @_;
+
+    return $member->extendedAttributes->{"ImplementedAs"} // $member->name;
 }
 
 sub _dictionaryByName
@@ -187,13 +298,14 @@ sub _dictionaryMembers
     return @members;
 }
 
+# Records the dictionaries, enumerations and custom types that an IDL type refers to.
 sub _collectTypeDependencies
 {
     my ($self, $idlType, $dependencies) = @_;
 
     return unless ref($idlType) eq "IDLType";
 
-    if ($$self{codeGenerator}->IsSequenceType($idlType)) {
+    if ($idlType->isUnion || $$self{codeGenerator}->IsSequenceType($idlType) || $idlType->name eq "record") {
         # A named variable, because callees that read files overwrite $_ and would clear an aliased element.
         foreach my $subtype (@{$idlType->subtypes}) {
             $self->_collectTypeDependencies($subtype, $dependencies);
@@ -208,9 +320,13 @@ sub _collectTypeDependencies
         push(@{$$dependencies{dictionaries}}, $name);
     } elsif ($self->_isEnumerationType($idlType)) {
         push(@{$$dependencies{enumerations}}, $name);
+    } elsif ($self->_isCustomType($idlType)) {
+        push(@{$$dependencies{customTypes}}, $name);
     }
 }
 
+# What the generated code needs for an interface's parsed arguments: the dictionaries (ordered so a dictionary comes
+# after the ones its members use), the enumerations, and the custom types.
 sub _parsedTypeDependencies
 {
     my ($self, $interface) = @_;
@@ -220,19 +336,24 @@ sub _parsedTypeDependencies
 
     my @dictionaries = ();
     my @enumerations = ();
+    my @customTypes = ();
     my %seen;
+
+    my $addUnique = sub {
+        my ($list, $kind, $name) = @_;
+
+        return if $seen{"$kind:$name"};
+        $seen{"$kind:$name"} = 1;
+
+        push(@$list, $name);
+    };
 
     my $visitDictionary;
     my $visitDependencies = sub {
         my ($dependencies) = @_;
 
-        foreach my $enumerationName (@{$$dependencies{enumerations} || []}) {
-            next if $seen{"enumeration:$enumerationName"};
-            $seen{"enumeration:$enumerationName"} = 1;
-
-            push(@enumerations, $enumerationName);
-        }
-
+        $addUnique->(\@enumerations, "enumeration", $_) foreach @{$$dependencies{enumerations} || []};
+        $addUnique->(\@customTypes, "custom", $_) foreach @{$$dependencies{customTypes} || []};
         $visitDictionary->($_) foreach @{$$dependencies{dictionaries} || []};
     };
 
@@ -247,6 +368,7 @@ sub _parsedTypeDependencies
         foreach my $member ($self->_dictionaryMembers($dictionary)) {
             my %dependencies;
             $self->_collectTypeDependencies($member->type, \%dependencies);
+            push(@{$dependencies{customTypes}}, $member->extendedAttributes->{"CustomType"}) if $member->extendedAttributes->{"CustomType"};
             $visitDependencies->(\%dependencies);
         }
 
@@ -259,6 +381,7 @@ sub _parsedTypeDependencies
 
             my %dependencies;
             $self->_collectTypeDependencies($argument->type, \%dependencies);
+            push(@{$dependencies{customTypes}}, $argument->extendedAttributes->{"CustomType"}) if $argument->extendedAttributes->{"CustomType"};
             $visitDependencies->(\%dependencies);
         }
     }
@@ -266,6 +389,7 @@ sub _parsedTypeDependencies
     my $result = {
         dictionaries => [ map { $self->_dictionaryByName($_) } @dictionaries ],
         enumerations => [ map { my $name = $_; my ($enumeration) = grep { $_->type->name eq $name } @{$$self{enumerations}}; die "Enumeration '$name' must be declared in the same IDL file as the interface\n" unless $enumeration; $enumeration } @enumerations ],
+        customTypes => \@customTypes,
     };
 
     $$self{parsedTypeDependencies}{$interface->type->name} = $result;
@@ -299,6 +423,8 @@ sub _isFunctionMember
     return $member->type->name eq "function" ? 1 : 0;
 }
 
+# The C++ type of a member. Required members are the bare type, optional ones wrap it in std::optional, a nullable
+# member adds a second std::optional for null, and a member with a default is the bare type.
 sub _dictionaryMemberBaseType
 {
     my ($self, $dictionary, $member) = @_;
@@ -307,7 +433,7 @@ sub _dictionaryMemberBaseType
 
     return "Protected<JSValueRef>" if $self->_isFunctionMember($member);
 
-    return $self->_parsedCppType($member->type, $description) // die "Unsupported dictionary member type '" . $member->type->name . "': $description\n";
+    return $self->_parsedCppType($member->type, $description, $member->extendedAttributes->{"CustomType"}) // die "Unsupported dictionary member type '" . $member->type->name . "': $description\n";
 }
 
 sub _dictionaryMemberType
@@ -315,9 +441,11 @@ sub _dictionaryMemberType
     my ($self, $dictionary, $member) = @_;
 
     my $baseType = $self->_dictionaryMemberBaseType($dictionary, $member);
+    my $isNullable = $member->type->isNullable;
 
-    return $baseType if defined $member->default || $member->isRequired;
-    return "std::optional<${baseType}>";
+    return $baseType if defined $member->default;
+    return $isNullable ? "std::optional<${baseType}>" : $baseType if $member->isRequired;
+    return $isNullable ? "std::optional<std::optional<${baseType}>>" : "std::optional<${baseType}>";
 }
 
 sub _enumerationValueName
@@ -334,14 +462,14 @@ sub _enumerationValuesName
 {
     my ($self, $enumeration) = @_;
 
-    return CodeGenerator::WK_lcfirst(undef, $enumeration->type->name) . "Values";
+    return CodeGenerator::WK_lcfirst(undef, $self->_cppEnumerationName($enumeration)) . "Values";
 }
 
 sub _enumerationDeclaration
 {
     my ($self, $enumeration) = @_;
 
-    my $name = $enumeration->type->name;
+    my $name = $self->_cppEnumerationName($enumeration);
 
     my $result = "enum class ${name} : uint8_t {\n";
     foreach my $value (@{$enumeration->values}) {
@@ -363,7 +491,7 @@ sub _enumerationImplementation
 {
     my ($self, $enumeration) = @_;
 
-    my $name = $enumeration->type->name;
+    my $name = $self->_cppEnumerationName($enumeration);
     my $valuesName = $self->_enumerationValuesName($enumeration);
     my @values = map { "\"" . lc($_) . "\"_s" } @{$enumeration->values};
 
@@ -387,7 +515,7 @@ sub _dictionaryParserSpecialization
 {
     my ($self, $dictionary) = @_;
 
-    my $name = $dictionary->type->name;
+    my $name = $self->_cppDictionaryName($dictionary);
 
     return <<EOF;
 template<> struct WebExtensionValueParser<${name}> : WebExtensionObjectParserBase {
@@ -411,11 +539,11 @@ sub _dictionaryDeclaration
 {
     my ($self, $dictionary) = @_;
 
-    my $name = $dictionary->type->name;
+    my $name = $self->_cppDictionaryName($dictionary);
 
     my $result = "struct ${name} {\n";
     foreach my $member ($self->_dictionaryMembers($dictionary)) {
-        $result .= $self->_conditionalBlock($member, "    " . $self->_dictionaryMemberType($dictionary, $member) . " " . $member->name . ";\n");
+        $result .= $self->_conditionalBlock($member, "    " . $self->_dictionaryMemberType($dictionary, $member) . " " . $self->_cppMemberName($member) . ";\n");
     }
     $result .= "};\n\n";
     $result .= "std::expected<${name}, WebExtensionValueError> parse${name}(JSContextRef, JSValueRef, const String& path = { });\n\n";
@@ -451,6 +579,8 @@ sub _defaultValueExpression
     my $type = $member->type;
     my $description = $dictionary->type->name . "." . $member->name;
 
+    die "A default value on a nullable member isn't supported: $description\n" if $type->isNullable;
+
     return $default if $type->name eq "boolean" && $default =~ /^(true|false)$/;
     return $default if $numericCppTypes{$type->name} && $default =~ /^-?[0-9.]+$/;
 
@@ -458,7 +588,7 @@ sub _defaultValueExpression
         my $value = $1;
 
         return "String { \"${value}\"_s }" if $$self{codeGenerator}->IsStringType($type);
-        return $type->name . "::" . $self->_enumerationValueName($value) if $self->_isEnumerationType($type);
+        return $self->_cppTypeName($type->name) . "::" . $self->_enumerationValueName($value) if $self->_isEnumerationType($type);
     }
 
     return "{ }" if $default eq "[]" && $$self{codeGenerator}->IsSequenceType($type);
@@ -470,7 +600,7 @@ sub _dictionaryImplementation
 {
     my ($self, $dictionary) = @_;
 
-    my $name = $dictionary->type->name;
+    my $name = $self->_cppDictionaryName($dictionary);
     my @members = $self->_dictionaryMembers($dictionary);
     my %membersByName = map { $_->name => $_ } @members;
     my $hasRequiredMembers = scalar(grep { $_->isRequired && !defined $_->default } @members) ? 1 : 0;
@@ -525,7 +655,7 @@ EOF
         $expression = "${variable}.value_or(" . $self->_defaultValueExpression($dictionary, $member) . ")" if defined $member->default;
         $expression = "WTF::move(*${variable})" if $member->isRequired && !defined $member->default;
 
-        [ $member, ".@{[$member->name]} = ${expression}" ];
+        [ $member, ".@{[$self->_cppMemberName($member)]} = ${expression}" ];
     } @members;
 
     if (grep { conditionalString($_->[0]) } @initializers) {
@@ -559,12 +689,16 @@ sub _dictionaryMemberReading
 EOF
     }
 
+    my $isNullable = $member->type->isNullable;
+    my $reader = $isNullable ? "readDictionaryNullableMember" : ($member->extendedAttributes->{"PreserveNull"} ? "readDictionaryMemberKeepingNull" : "readDictionaryMember");
+    my $localType = $isNullable ? "std::optional<std::optional<${baseType}>>" : "std::optional<${baseType}>";
+
     return <<EOF;
-    auto ${variablePrefix}Read = readDictionaryMember<${baseType}>(context, object, "${key}"_s, path);
+    auto ${variablePrefix}Read = ${reader}<${baseType}>(context, object, "${key}"_s, path);
     if (!${variablePrefix}Read)
         return makeUnexpected(WTF::move(${variablePrefix}Read.error()));
 
-    std::optional<${baseType}> ${variable} = WTF::move(*${variablePrefix}Read);
+    ${localType} ${variable} = WTF::move(*${variablePrefix}Read);
 
 EOF
 }
@@ -581,8 +715,8 @@ sub _dictionaryMemberChecks
     my %membersByName = map { $_->name => $_ } @members;
     my $result = "";
 
-    # A member counts as specified when it is present, and a boolean marked FalseIsDefault only when it is true, since
-    # false asks for the default.
+    # A member counts as specified when it is present. A nullable member counts only when it isn't null, and a boolean
+    # marked FalseIsDefault only when it is true, since null and false ask for the default.
     my $specified = sub {
         my ($name) = @_;
 
@@ -590,10 +724,12 @@ sub _dictionaryMemberChecks
         my $isFalseDefault = $member->extendedAttributes->{"FalseIsDefault"};
 
         if ($isFalseDefault) {
-            die "FalseIsDefault on $dictionaryName.$name needs a boolean member\n" unless $self->_dictionaryMemberBaseType($dictionary, $member) eq "bool";
+            die "FalseIsDefault on $dictionaryName.$name needs a boolean member\n" unless $self->_dictionaryMemberBaseType($dictionary, $member) eq "bool" && !$member->type->isNullable;
 
             return "${name}Value.value_or(false)";
         }
+
+        return "(${name}Value && *${name}Value)" if $member->type->isNullable && !$member->isRequired;
 
         return "${name}Value";
     };
@@ -696,7 +832,7 @@ EOF
 
     foreach my $member (@members) {
         my $name = $member->name;
-        my $isScalarNumber = $numericCppTypes{$member->type->name};
+        my $isScalarNumber = $numericCppTypes{$member->type->name} && !$member->type->isNullable;
 
         my $checks = "";
 
@@ -1235,17 +1371,17 @@ EOF
 
             foreach my $parameter (@specifiedParameters) {
                 $self->_includeHeaders(\%contentsIncludes, $parameter->type, $parameter);
-                $optionalArgumentCount++ if $parameter->extendedAttributes->{"Optional"};
+                $optionalArgumentCount++ if _isOptionalArgument($parameter);
                 $needsPage = 1 if $parameter->extendedAttributes->{"CallbackHandler"} && $interface->extendedAttributes->{"NeedsPageWithCallbackHandler"};
                 $needsPageIdentifier = 1 if $parameter->extendedAttributes->{"CallbackHandler"} && $interface->extendedAttributes->{"NeedsPageIdentifierWithCallbackHandler"};
                 $needsFrame = 1 if $parameter->extendedAttributes->{"CallbackHandler"} && $interface->extendedAttributes->{"NeedsFrameWithCallbackHandler"};
                 $needsFrameIdentifier = 1 if $parameter->extendedAttributes->{"CallbackHandler"} && $interface->extendedAttributes->{"NeedsFrameIdentifierWithCallbackHandler"};
-                $callbackHandlerArgument = $parameter->name if $parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"};
+                $callbackHandlerArgument = $parameter->name if $parameter->extendedAttributes->{"CallbackHandler"} && _isOptionalArgument($parameter);
             }
 
             my $processArgumentsLeftToRight = $function->extendedAttributes->{"ProcessArgumentsLeftToRight"};
             my $requiredArgumentCount = $argumentCount - $optionalArgumentCount;
-            my $hasOptionalAsLastArgument = 1 if $lastParameter && $lastParameter->extendedAttributes->{"Optional"};
+            my $hasOptionalAsLastArgument = 1 if $lastParameter && _isOptionalArgument($lastParameter);
             my $hasSimpleOptionalArgumentHandling = !$optionalArgumentCount || ($hasOptionalAsLastArgument && ($argumentCount <= 2 || $requiredArgumentCount >= $argumentCount - 1));
             my $argumentIndexConditon = undef;
 
@@ -1274,11 +1410,11 @@ EOF
 
                 foreach my $parameter (@specifiedParameters) {
                     push(@contents, "    " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name) . "\n");
-                    push(@parameters, $parameter->name . ".releaseNonNull()") if $parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"};
+                    push(@parameters, $parameter->name . ".releaseNonNull()") if $parameter->extendedAttributes->{"CallbackHandler"} && _isOptionalArgument($parameter);
                     push(@parameters, "*" . $parameter->name) if $parameter->extendedAttributes->{"Serialization"} && $parameter->extendedAttributes->{"Serialization"} eq "Message";
                     push(@parameters, "*" . $parameter->name) if $self->_isParsedArgumentType($parameter->type, $parameter);
                     push(@parameters, $parameter->name . ".createNSString().get()") if $parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"};
-                    push(@parameters, $parameter->name) unless $self->_isParsedArgumentType($parameter->type, $parameter) || ($parameter->extendedAttributes->{"Serialization"} && $parameter->extendedAttributes->{"Serialization"} eq "Message") || ($parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"}) || ($parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"});
+                    push(@parameters, $parameter->name) unless $self->_isParsedArgumentType($parameter->type, $parameter) || ($parameter->extendedAttributes->{"Serialization"} && $parameter->extendedAttributes->{"Serialization"} eq "Message") || ($parameter->extendedAttributes->{"CallbackHandler"} && _isOptionalArgument($parameter)) || ($parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"});
                 }
 
                 push(@contents, "\n");
@@ -1349,10 +1485,10 @@ EOF
 
                         push(@contents, "\n");
 
-                        my $optionalCondition = $requiredArgumentCount && $parameter->extendedAttributes->{"Optional"} ? " && processedOptionalArgumentCount < allowedOptionalArgumentCount" : "";
+                        my $optionalCondition = $requiredArgumentCount && _isOptionalArgument($parameter) ? " && processedOptionalArgumentCount < allowedOptionalArgumentCount" : "";
                         push(@contents, "        if ($argumentIndexConditon$optionalCondition && (currentArgument = arguments[argumentIndex])) {\n");
 
-                        if ($parameter->extendedAttributes->{"Optional"}) {
+                        if (_isOptionalArgument($parameter)) {
                             my $matchCondition = $self->_javaScriptTypeCondition($parameter, "currentArgument");
 
                             # Arguments are matched from the right, so a value that is not an object would be skipped and then matched
@@ -1398,11 +1534,11 @@ EOF
                         push(@contents, "    " . $self->_platformTypeVariableDeclaration($interface, $parameter, $parameter->name, $argument) . "\n");
                     }
 
-                    push(@parameters, $parameter->name . ".releaseNonNull()") if $parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"};
+                    push(@parameters, $parameter->name . ".releaseNonNull()") if $parameter->extendedAttributes->{"CallbackHandler"} && _isOptionalArgument($parameter);
                     push(@parameters, "*" . $parameter->name) if $parameter->extendedAttributes->{"Serialization"} && $parameter->extendedAttributes->{"Serialization"} eq "Message";
                     push(@parameters, "*" . $parameter->name) if $self->_isParsedArgumentType($parameter->type, $parameter);
                     push(@parameters, $parameter->name . ".createNSString().get()") if $parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"};
-                    push(@parameters, $parameter->name) unless $self->_isParsedArgumentType($parameter->type, $parameter) || ($parameter->extendedAttributes->{"Serialization"} && $parameter->extendedAttributes->{"Serialization"} eq "Message") || ($parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"}) || ($parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"});
+                    push(@parameters, $parameter->name) unless $self->_isParsedArgumentType($parameter->type, $parameter) || ($parameter->extendedAttributes->{"Serialization"} && $parameter->extendedAttributes->{"Serialization"} eq "Message") || ($parameter->extendedAttributes->{"CallbackHandler"} && _isOptionalArgument($parameter)) || ($parameter->type->name eq "DOMString" && !$parameter->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"});
                 }
             }
 
@@ -2050,7 +2186,7 @@ EOF
     }
 
     # A string, or a sequence of strings, that has nothing in it, or an empty string in it.
-    if ($signature->extendedAttributes->{"CannotBeEmpty"} && $self->_isParsedArgumentType($signature->type, $signature) && !$signature->extendedAttributes->{"Optional"}) {
+    if ($signature->extendedAttributes->{"CannotBeEmpty"} && $self->_isParsedArgumentType($signature->type, $signature) && !_isOptionalArgument($signature)) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2097,7 +2233,7 @@ EOF
 EOF
     }
 
-    if ($$self{codeGenerator}->IsStringType($signature->type) && !$signature->extendedAttributes->{"Optional"} && ($signature->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"})) {
+    if ($$self{codeGenerator}->IsStringType($signature->type) && !_isOptionalArgument($signature) && ($signature->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"})) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2110,7 +2246,7 @@ EOF
     }
 
     # A parsed argument, such as one with a custom type, has already been checked by its parser.
-    if ($$self{codeGenerator}->IsPrimitiveType($signature->type) && $signature->type->name ne "boolean" && !$signature->extendedAttributes->{"Optional"} && !$self->_isParsedArgumentType($signature->type, $signature)) {
+    if ($$self{codeGenerator}->IsPrimitiveType($signature->type) && $signature->type->name ne "boolean" && !_isOptionalArgument($signature) && !$self->_isParsedArgumentType($signature->type, $signature)) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2122,7 +2258,7 @@ EOF
 EOF
     }
 
-    if ($signature->type->name eq "any" && ($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"JSONValue"} || $signature->extendedAttributes->{"JSONObject"} || $signature->extendedAttributes->{"NSObject"}) && !$signature->extendedAttributes->{"Optional"}) {
+    if ($signature->type->name eq "any" && ($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"JSONValue"} || $signature->extendedAttributes->{"JSONObject"} || $signature->extendedAttributes->{"NSObject"}) && !_isOptionalArgument($signature)) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2134,7 +2270,7 @@ EOF
 EOF
     }
 
-    if (!$interface->extendedAttributes->{"UseCPPAPI"} && $signature->type->name eq "any" && !($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"JSONValue"} || $signature->extendedAttributes->{"JSONObject"} || $signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"Serialization"}) && !$signature->extendedAttributes->{"Optional"} && !$signature->extendedAttributes->{"ValuesAllowed"}) {
+    if (!$interface->extendedAttributes->{"UseCPPAPI"} && $signature->type->name eq "any" && !($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"JSONValue"} || $signature->extendedAttributes->{"JSONObject"} || $signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"Serialization"}) && !_isOptionalArgument($signature) && !$signature->extendedAttributes->{"ValuesAllowed"}) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2146,7 +2282,7 @@ EOF
 EOF
     }
 
-    if ($interface->extendedAttributes->{"UseCPPAPI"} && $signature->type->name eq "any" && !($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"JSONValue"} || $signature->extendedAttributes->{"JSONObject"} || $signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"Serialization"}) && !$signature->extendedAttributes->{"Optional"} && !$signature->extendedAttributes->{"ValuesAllowed"}) {
+    if ($interface->extendedAttributes->{"UseCPPAPI"} && $signature->type->name eq "any" && !($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"JSONValue"} || $signature->extendedAttributes->{"JSONObject"} || $signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"Serialization"}) && !_isOptionalArgument($signature) && !$signature->extendedAttributes->{"ValuesAllowed"}) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2158,7 +2294,7 @@ EOF
 EOF
     }
 
-    if (!$signature->extendedAttributes->{"Vector"} && $signature->type->name eq "array" && !$signature->extendedAttributes->{"Optional"}) {
+    if (!$signature->extendedAttributes->{"Vector"} && $signature->type->name eq "array" && !_isOptionalArgument($signature)) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2170,7 +2306,7 @@ EOF
 EOF
     }
 
-    if ($signature->extendedAttributes->{"CannotBeEmpty"}) {
+    if ($signature->extendedAttributes->{"CannotBeEmpty"} && !$self->_isParsedArgumentType($signature->type, $signature)) {
         $hasExceptions = 1;
 
         my $isEmptyCheck;
@@ -2191,7 +2327,7 @@ EOF
 EOF
     }
 
-    if ($signature->type->name eq "function" && !$signature->extendedAttributes->{"CallbackHandler"} && !$signature->extendedAttributes->{"Optional"}) {
+    if ($signature->type->name eq "function" && !$signature->extendedAttributes->{"CallbackHandler"} && !_isOptionalArgument($signature)) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2203,7 +2339,7 @@ EOF
 EOF
     }
 
-    if ($signature->type->name eq "function" && $signature->extendedAttributes->{"CallbackHandler"} && !$signature->extendedAttributes->{"Optional"}) {
+    if ($signature->type->name eq "function" && $signature->extendedAttributes->{"CallbackHandler"} && !_isOptionalArgument($signature)) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -2276,9 +2412,9 @@ sub _javaScriptTypeCondition
 
     my $idlTypeName = $idlType->name;
     my $nullOrUndefined = "";
-    $nullOrUndefined = " || JSValueIsNull(context, ${argument}) || JSValueIsUndefined(context, ${argument})" if $signature->extendedAttributes->{"Optional"};
+    $nullOrUndefined = " || JSValueIsNull(context, ${argument}) || JSValueIsUndefined(context, ${argument})" if _isOptionalArgument($signature);
 
-    return "WebExtensionValueParser<" . $self->_parsedCppType($idlType, "argument") . ">::matches(context, ${argument})${nullOrUndefined}" if $self->_isParsedArgumentType($idlType, $signature);
+    return "WebExtensionValueParser<" . $self->_parsedCppType($idlType, "argument", $signature->extendedAttributes->{"CustomType"}) . ">::matches(context, ${argument})${nullOrUndefined}" if $self->_isParsedArgumentType($idlType, $signature);
 
     return "isDictionary(context, ${argument}) || JSValueIsString(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && ($signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"JSONObject"}) && $signature->extendedAttributes->{"DOMString"};
     return "(!JSValueIsNull(context, ${argument}) && !JSValueIsUndefined(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"Serialization"};
@@ -2339,7 +2475,8 @@ sub _platformTypeConstructor
     my $nullStringPolicy = _nullStringPolicy($signature);
     my $arrayType = $interface->extendedAttributes->{"UseCPPAPI"} ? $signature->extendedAttributes->{"Vector"} : $signature->extendedAttributes->{"NSArray"};
 
-    if ($idlTypeName eq "any") {
+    # A custom type is parsed like any other, even when the IDL type is any.
+    if ($idlTypeName eq "any" && !$signature->extendedAttributes->{"CustomType"}) {
         return "serializeJSObject(context, $argumentName, exception)" if $signature->extendedAttributes->{"Serialization"} && $signature->extendedAttributes->{"Serialization"} eq "JSON";
         return "serializeMessage(context, $argumentName, impl->usesStructuredCloneMessageSerialization(), exception)" if $signature->extendedAttributes->{"Serialization"} && $signature->extendedAttributes->{"Serialization"} eq "Message";
         return "toNSDictionary(context, $argumentName, NullValuePolicy::Allowed, ValuePolicy::StopAtTopLevel)" if $signature->extendedAttributes->{"NSDictionary"} && $signature->extendedAttributes->{"NSDictionary"} eq "StopAtTopLevel";
@@ -2370,9 +2507,9 @@ sub _platformTypeConstructor
     return unless ref($idlType) eq "IDLType";
 
     if ($self->_isParsedArgumentType($idlType, $signature)) {
-        my $cppType = $self->_parsedCppType($idlType, "argument");
+        my $cppType = $self->_parsedCppType($idlType, "argument", $signature->extendedAttributes->{"CustomType"});
 
-        return "parseOptionalWebExtensionValue<${cppType}>(context, $argumentName)" if $signature->extendedAttributes->{"Optional"};
+        return "parseOptionalWebExtensionValue<${cppType}>(context, $argumentName)" if _isOptionalArgument($signature);
         return "WebExtensionValueParser<${cppType}>::parse(context, $argumentName, { })";
     }
 
@@ -2393,11 +2530,11 @@ sub _platformTypeVariableDeclaration
     my $constructor = $self->_platformTypeConstructor($interface, $signature, $argumentName) if $argumentName;
 
     if ($self->_isParsedArgumentType($idlType, $signature)) {
-        my $expectedType = $self->_parsedArgumentResultType($idlType, $signature->extendedAttributes->{"Optional"}, "argument");
+        my $expectedType = $self->_parsedArgumentResultType($idlType, _isOptionalArgument($signature), "argument", $signature->extendedAttributes->{"CustomType"});
 
         return "$variableName = $constructor;" if $constructor && $hideType;
         return "$expectedType $variableName = $constructor;" if $constructor;
-        return "$expectedType $variableName;" if $signature->extendedAttributes->{"Optional"};
+        return "$expectedType $variableName;" if _isOptionalArgument($signature);
 
         # A required argument is always assigned later, and its type may have no default constructor.
         return "$expectedType $variableName = makeUnexpected(WebExtensionValueError { \"a required argument is missing\"_s });";
