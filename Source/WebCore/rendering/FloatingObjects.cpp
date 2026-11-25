@@ -25,8 +25,11 @@
 #include "FloatingObjects.h"
 
 #include "PODIntervalTree.h"
+#include "PlacedFloats.h"
 #include "RenderBlockFlowInlines.h"
+#include "RenderBlockInlines.h"
 #include "RenderBox.h"
+#include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderView.h"
 #include <wtf/HexNumber.h>
@@ -262,6 +265,41 @@ LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelowForBlock(LayoutUnit l
     return adapter.nextLogicalBottom();
 }
 
+static Layout::PlacedFloats::Item placedFloatItem(const RenderBlockFlow& block, const FloatingObject& floatingObject)
+{
+    CheckedRef floatBox = *floatingObject.renderer();
+    auto isHorizontalWritingMode = block.isHorizontalWritingMode();
+    auto isLeftToRight = block.writingMode().isLogicalLeftInlineStart();
+
+    auto marginBoxLogicalLeft = block.logicalLeftForFloat(floatingObject);
+    auto marginBoxLogicalWidth = block.logicalWidthForFloat(floatingObject);
+    auto marginBoxLogicalHeight = block.logicalHeightForFloat(floatingObject);
+    auto borderBoxLogicalWidth = block.logicalWidthForChild(floatBox);
+    auto borderBoxLogicalHeight = block.logicalHeightForChild(floatBox);
+
+    auto marginOffset = floatingObject.marginOffset();
+    auto marginOnLogicalLeft = isHorizontalWritingMode ? marginOffset.width() : marginOffset.height();
+    auto marginOnLogicalRight = marginBoxLogicalWidth - marginOnLogicalLeft - borderBoxLogicalWidth;
+    auto marginStart = isLeftToRight ? marginOnLogicalLeft : marginOnLogicalRight;
+    auto marginEnd = isLeftToRight ? marginOnLogicalRight : marginOnLogicalLeft;
+    auto marginBefore = isHorizontalWritingMode ? marginOffset.height() : marginOffset.width();
+
+    auto marginBoxInlineStart = isLeftToRight ? marginBoxLogicalLeft : block.logicalWidth() - (marginBoxLogicalLeft + marginBoxLogicalWidth);
+    auto borderBoxTopLeft = LayoutPoint { marginBoxInlineStart + marginStart, block.logicalTopForFloat(floatingObject) + marginBefore };
+
+    auto boxGeometry = Layout::BoxGeometry { };
+    boxGeometry.setTopLeft(borderBoxTopLeft);
+    boxGeometry.setContentBoxWidth(borderBoxLogicalWidth);
+    boxGeometry.setContentBoxHeight(borderBoxLogicalHeight);
+    boxGeometry.setBorder({ });
+    boxGeometry.setPadding({ });
+    boxGeometry.setHorizontalMargin({ marginStart, marginEnd });
+    boxGeometry.setVerticalMargin({ marginBefore, marginBoxLogicalHeight - marginBefore - borderBoxLogicalHeight });
+
+    auto position = (floatBox->usedStyle().floating() == UsedFloat::Left) == isLeftToRight ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
+    return { floatBox->layoutBox(), position, boxGeometry, borderBoxTopLeft, { } };
+}
+
 FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
     : m_horizontalWritingMode(renderer.isHorizontalWritingMode())
     , m_renderer(renderer)
@@ -274,6 +312,7 @@ void FloatingObjects::clear()
 {
     m_set.clear();
     m_placedFloatsTree = nullptr;
+    m_placedFloats = nullptr;
     m_leftObjectsCount = 0;
     m_rightObjectsCount = 0;
 }
@@ -314,6 +353,8 @@ void FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
         floatingObject->setIsInPlacedTree(true);
 #endif
     }
+    if (m_placedFloats && floatingObject->renderer())
+        m_placedFloats->add(placedFloatItem(renderer(), *floatingObject));
 }
 
 void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
@@ -327,6 +368,8 @@ void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
         floatingObject->setIsInPlacedTree(false);
 #endif
     }
+    if (m_placedFloats && floatingObject->renderer())
+        m_placedFloats->remove(floatingObject->renderer()->layoutBox());
     floatingObject->setIsPlaced(false);
 }
 
@@ -379,6 +422,24 @@ inline const FloatingObjectTree* FloatingObjects::placedFloatsTree()
     if (!m_placedFloatsTree)
         computePlacedFloatsTree();
     return m_placedFloatsTree.get();
+}
+
+const Layout::PlacedFloats& FloatingObjects::placedFloats()
+{
+    if (m_placedFloats)
+        return *m_placedFloats;
+
+    m_placedFloats = makeUnique<Layout::PlacedFloats>(renderer().layoutBox());
+    for (auto& floatingObject : m_set) {
+        if (floatingObject->isPlaced() && floatingObject->renderer())
+            m_placedFloats->add(placedFloatItem(renderer(), *floatingObject));
+    }
+    return *m_placedFloats;
+}
+
+void FloatingObjects::clearPlacedFloats()
+{
+    m_placedFloats = nullptr;
 }
 
 LayoutUnit FloatingObjects::logicalLeftOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit *heightRemaining)

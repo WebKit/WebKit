@@ -30,6 +30,10 @@
 
 namespace WebCore {
 
+namespace Layout {
+class PlacedFloats;
+}
+
 class RenderBlockFlow;
 class RenderBox;
 class FloatingObjects;
@@ -153,7 +157,7 @@ public:
     void clear();
     FloatingObject* add(std::unique_ptr<FloatingObject>);
     void remove(FloatingObject*);
-    NODELETE void addPlacedObject(FloatingObject*);
+    void addPlacedObject(FloatingObject*);
     void removePlacedObject(FloatingObject*);
     void place(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
     void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
@@ -161,6 +165,10 @@ public:
     bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
     bool hasRightObjects() const { return m_rightObjectsCount > 0; }
     const FloatingObjectSet& set() const LIFETIME_BOUND { return m_set; }
+    const Layout::PlacedFloats& placedFloats() LIFETIME_BOUND;
+    // The list refers to the layout boxes of the floats, and a float's renderer can be destroyed without being removed from the set
+    // (when the whole render tree is), so the list is only kept while the block lays out its children.
+    void clearPlacedFloats();
 
     LayoutUnit logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight);
     LayoutUnit logicalRightOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight);
@@ -183,6 +191,7 @@ private:
 
     FloatingObjectSet m_set;
     std::unique_ptr<FloatingObjectTree> m_placedFloatsTree;
+    std::unique_ptr<Layout::PlacedFloats> m_placedFloats;
     unsigned m_leftObjectsCount { 0 };
     unsigned m_rightObjectsCount { 0 };
     bool m_horizontalWritingMode { false };

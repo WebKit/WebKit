@@ -67,7 +67,8 @@ PlacedFloats::PlacedFloats(const ElementBox& blockFormattingContextRoot)
     : m_blockFormattingContextRoot(blockFormattingContextRoot)
     , m_writingMode(blockFormattingContextRoot.writingMode())
 {
-    ASSERT(blockFormattingContextRoot.establishesBlockFormattingContext());
+    // Render tree layout keeps a float list on every block container, so the root may be a block container in a parent block formatting context.
+    ASSERT(blockFormattingContextRoot.establishesBlockFormattingContext() || blockFormattingContextRoot.isBlockContainer());
 }
 
 void PlacedFloats::add(Item newFloatItem)
@@ -75,6 +76,7 @@ void PlacedFloats::add(Item newFloatItem)
     auto isStartPositioned = newFloatItem.isStartPositioned();
     m_positionTypes.add(isStartPositioned ? PositionType::Start : PositionType::End);
     auto& lowestPositionOnBlockAxis = isStartPositioned ? m_lowestStartPositionOnBlockAxis : m_lowestEndPositionOnBlockAxis;
+    auto mayShareBlockAxisPositionWithEarlierFloat = lowestPositionOnBlockAxis && *lowestPositionOnBlockAxis > newFloatItem.marginBoxTop();
     lowestPositionOnBlockAxis = std::max(lowestPositionOnBlockAxis.value_or(newFloatItem.marginBoxBottom()), newFloatItem.marginBoxBottom());
     m_lowestTopPositionOnBlockAxis = std::max(m_lowestTopPositionOnBlockAxis.value_or(newFloatItem.marginBoxTop()), newFloatItem.marginBoxTop());
 
@@ -87,34 +89,33 @@ void PlacedFloats::add(Item newFloatItem)
     }) == notFound);
 
     // FloatingContext takes the last float in the list that covers a block axis position as the inner-most one there, so floats on the same side
-    // that share a block axis position have to stay in inline-axis order. A new float normally is the inner-most one, but a negative inline-axis
-    // margin can leave it outside an earlier float, in which case it goes right before the first such float.
-    auto inlineAxisMargin = newFloatItem.inlineAxisMargin();
-    auto hasNegativeInlineAxisMargin = (isStartPositioned && inlineAxisMargin.start < 0) || (!isStartPositioned && inlineAxisMargin.end < 0);
-    if (!hasNegativeInlineAxisMargin)
+    // that share a block axis position have to stay in inline-axis order. A new float normally is the inner-most one, but it can end up outside
+    // an earlier float: with a negative inline-axis margin, or when another formatting context placed it against the floored edge of that float
+    // (see LineLayout::preparePlacedFloats()). Then it goes right before the first such float.
+    if (!mayShareBlockAxisPositionWithEarlierFloat)
         return m_list.append(newFloatItem);
 
-    for (size_t i = 0; i < m_list.size(); ++i) {
-        auto& floatItem = m_list[i];
-        if (isStartPositioned != floatItem.isStartPositioned())
-            continue;
+    auto isOnSameSideAndSharesBlockAxisPosition = [&](auto& floatItem) {
+        return floatItem.isStartPositioned() == isStartPositioned && floatItem.marginBoxBottom() > newFloatItem.marginBoxTop() && floatItem.marginBoxTop() < newFloatItem.marginBoxBottom();
+    };
+    auto isFurtherInward = [&](auto& floatItem) {
+        return isStartPositioned ? floatItem.marginBoxRight() > newFloatItem.marginBoxRight() : floatItem.marginBoxLeft() < newFloatItem.marginBoxLeft();
+    };
+    // No earlier float starts below the new one (see FloatingContext::positionForFloat()), so the last one that shares a block axis position
+    // with it is the inner-most of those.
+    auto innerMostIndex = m_list.reverseFindIf(isOnSameSideAndSharesBlockAxisPosition);
+    if (innerMostIndex == notFound || !isFurtherInward(m_list[innerMostIndex]))
+        return m_list.append(newFloatItem);
 
-        auto isFurtherInward = [&] {
-            if (floatItem.marginBoxBottom() <= newFloatItem.marginBoxTop() || floatItem.marginBoxTop() >= newFloatItem.marginBoxBottom()) {
-                // This float does not share a block axis position with the new one.
-                return false;
-            }
-            return isStartPositioned ? floatItem.marginBoxRight() > newFloatItem.marginBoxRight() : floatItem.marginBoxLeft() < newFloatItem.marginBoxLeft();
-        };
-        if (isFurtherInward())
-            return m_list.insert(i, newFloatItem);
-    }
-    m_list.append(newFloatItem);
+    m_list.insert(m_list.findIf([&](auto& floatItem) {
+        return isOnSameSideAndSharesBlockAxisPosition(floatItem) && isFurtherInward(floatItem);
+    }), newFloatItem);
 }
 
 bool PlacedFloats::Item::isInFormattingContextOf(const ElementBox& formattingContextRoot) const
 {
-    ASSERT(formattingContextRoot.establishesFormattingContext());
+    // Render tree layout places a block-level float with a FloatingContext rooted at its containing block, which may be a block container in a parent block formatting context.
+    ASSERT(formattingContextRoot.establishesFormattingContext() || formattingContextRoot.isBlockContainer());
     // FIXME: No layout box means the render tree integration codepath put it here, which it only does for intruding floats from outside the inline formatting context.
     // This works as long as the incoming formattingContextRoot is the current IFC.
     if (!m_layoutBox)

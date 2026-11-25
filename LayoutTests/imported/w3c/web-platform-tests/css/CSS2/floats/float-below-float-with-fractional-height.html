@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<title>CSS Test: A float that does not fit next to an earlier float with a fractional height is placed below the whole earlier float</title>
+<link rel="help" href="https://drafts.csswg.org/css2/#float-position">
+<link rel="match" href="float-below-float-with-fractional-height-ref.html">
+<meta name="assert" content="The top of the blue float must be lower than the bottom of the earlier green float (rule 2), and as high as possible (rule 8), so it starts at 10.5px and does not cover the green float.">
+<style>
+#container {
+  width: 100px;
+}
+
+.float {
+  float: left;
+  width: 60px;
+}
+
+#green-float {
+  height: 10.5px;
+  background-color: green;
+}
+
+#blue-float {
+  height: 10px;
+  background-color: blue;
+}
+</style>
+<div id="container">
+  <div class="float" id="green-float"></div>
+  <div class="float" id="blue-float"></div>
+  <div></div>
+</div>
