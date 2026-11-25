@@ -80,6 +80,7 @@ private:
     struct UsedGlobals {
         UsedResources resources;
         UsedPrivateGlobals privateGlobals;
+        const Global* immediateGlobal { nullptr };
     };
 
     struct Insertion {
@@ -111,7 +112,7 @@ private:
     void insertDynamicOffsetsBufferIfNeeded(const SourceSpan&, const AST::Function&);
     void insertParameter(const SourceSpan&, const AST::Function&, unsigned, AST::Identifier&&, AST::Expression* = nullptr, AST::ParameterRole = AST::ParameterRole::BindGroup);
 
-    void insertParameters(AST::Function&, const Vector<unsigned>&);
+    void insertParameters(AST::Function&, const Vector<unsigned>&, const Global* immediateGlobal);
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
     const Global* readVariable(AST::IdentifierExpression&);
@@ -148,6 +149,11 @@ private:
     void addOverrideValidation(ShaderModule::OverrideValidator&&);
 
     AST::IdentifierExpression& getBase(AST::Expression&, unsigned&);
+    AST::Expression& computeBufferByteLength(AST::Expression&, AST::Function* callerFunction);
+    AST::Expression& computePointerRemainingByteLength(AST::Expression&, AST::Function* callerFunction);
+    AST::Expression& rewriteBufferViewCall(AST::CallExpression&, AST::Function* callerFunction);
+    uint64_t effectiveMinBindingSize(const AST::Variable&) const;
+    BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(const Global&) const;
 
     ShaderModule& m_shaderModule;
     HashMap<String, Global> m_globals;
@@ -178,6 +184,9 @@ private:
     CheckedUint32 m_combinedFunctionVariablesSize;
     bool m_isTopLevelExpression { true };
     Vector<AST::BinaryExpression*> m_shortCircuitedOperators;
+    HashMap<AST::CallExpression*, AST::Expression*> m_viewByteLengths;
+    HashSet<const AST::Function*> m_currentEntryPointFunctions;
+    HashMap<const AST::Variable*, uint64_t> m_currentEntryPointUnsizedMinSizes;
 };
 
 std::optional<Error> RewriteGlobalVariables::run()
@@ -285,44 +294,14 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
                 for (auto& [caller, call] : borrow(callee.callSites)) {
                     dataLogLnIf(shouldLogGlobalVariableRewriting, ">> Updating call site ("_s, caller->name(), ") to pass array length: ", lengthName);
                     auto& argument = call->arguments()[index];
-                    unsigned arrayOffset = 0;
-                    auto& base = getBase(argument, arrayOffset);
-                    auto& identifier = base.identifier();
-
-                    pendingLengthParameters.append({ caller, identifier });
-
-                    auto lengthName = makeString("__"_s, identifier, "_ArrayLength"_s);
-                    auto& length = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
-                        SourceSpan::empty(),
-                        AST::Identifier::make(lengthName)
-                    );
-                    length.m_inferredType = m_shaderModule.types().u32Type();
-                    AST::Expression* lhs = &length;
-                    if (arrayOffset) {
-                        auto& arrayOffsetExpression = m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(
-                            SourceSpan::empty(),
-                            arrayOffset
-                        );
-                        arrayOffsetExpression.m_inferredType = m_shaderModule.types().u32Type();
-                        lhs = &m_shaderModule.astBuilder().construct<AST::BinaryExpression>(
-                            SourceSpan::empty(),
-                            length,
-                            arrayOffsetExpression,
-                            AST::BinaryOperation::Subtract
-                        );
-                        lhs->m_inferredType = m_shaderModule.types().u32Type();
-                    }
-                    m_shaderModule.append(call->arguments(), *lhs);
+                    auto& lhs = computePointerRemainingByteLength(argument, caller);
+                    m_shaderModule.append(call->arguments(), lhs);
                 }
-            }
-
-            for (auto&  [caller, lengthParameter] : borrow(pendingLengthParameters)) {
-                auto result = m_lengthParameters.add(caller, ListHashSet<String> { });
-                result.iterator->value.add(lengthParameter);
             }
         }
     };
 
+    m_currentEntryPointFunctions.add(callee.target);
     dataLogLnIf(shouldLogGlobalVariableRewriting, "ENTER: ", callee.target->name());
     auto it = m_visitedFunctions.find(callee.target);
     if (it != m_visitedFunctions.end()) {
@@ -365,16 +344,37 @@ void RewriteGlobalVariables::visit(AST::Function& function)
     m_currentFunction = nullptr;
 
     // https://www.w3.org/TR/WGSL/#limits
-    constexpr unsigned maximumCombinedFunctionVariablesSize = 8192;
+    constexpr unsigned maximumCombinedFunctionVariablesSize = 32768;
     if (m_combinedFunctionVariablesSize.hasOverflowed() || m_combinedFunctionVariablesSize.value() > maximumCombinedFunctionVariablesSize) [[unlikely]]
         setError(Error(makeString("The combined byte size of all variables in this function exceeds "_s, String::number(maximumCombinedFunctionVariablesSize), " bytes"_s), function.span()));
+}
+
+static bool isPackedPointerType(const Types::Pointer& ptr, bool usesBufferView)
+{
+    return ptr.addressSpace == AddressSpace::Storage
+        || ptr.addressSpace == AddressSpace::Uniform
+        || ptr.addressSpace == AddressSpace::Immediate
+        || (ptr.addressSpace == AddressSpace::Workgroup && (ptr.element->containsRuntimeArray() || (usesBufferView && ptr.element->isHostShareable())));
 }
 
 void RewriteGlobalVariables::visit(AST::Parameter& parameter)
 {
     def(parameter.name(), nullptr);
     AST::Visitor::visit(parameter);
-    recordTypeReads(parameter.typeName().inferredType());
+    const Type* paramType = parameter.typeName().inferredType();
+    if (auto* ptrType = std::get_if<Types::Pointer>(paramType)) {
+        if (std::holds_alternative<Types::Buffer>(*ptrType->element))
+            m_shaderModule.setUsesBufferView();
+        else if (isPackedPointerType(*ptrType, m_shaderModule.usesBufferView())) {
+            packType(ptrType->element);
+            if (auto* vecType = std::get_if<Types::Vector>(ptrType->element); vecType && vecType->size == 3) {
+                m_shaderModule.setUsesPackedVec3();
+                m_shaderModule.setUsesPackVector();
+                m_shaderModule.setUsesUnpackVector();
+            }
+        }
+    }
+    recordTypeReads(paramType);
 }
 
 void RewriteGlobalVariables::visit(AST::Variable& variable)
@@ -554,10 +554,52 @@ Packing RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& e
 Packing RewriteGlobalVariables::getPacking(AST::IdentifierExpression& identifier)
 {
     auto* global = readVariable(identifier);
-    if (global && global->resource.has_value())
+    if (global && (global->resource.has_value() || global->declaration->role() == AST::VariableRole::PackedResource))
         return packingForType(identifier.inferredType());
 
     return Packing::Unpacked;
+}
+
+static bool isBufferViewCall(AST::Expression& expr)
+{
+    AST::Expression* current = &expr;
+    while (true) {
+        if (auto* identity = dynamicDowncast<AST::IdentityExpression>(*current)) {
+            current = &identity->expression();
+            continue;
+        }
+        if (auto* unary = dynamicDowncast<AST::UnaryExpression>(*current)) {
+            current = &unary->expression();
+            continue;
+        }
+        if (auto* deref = dynamicDowncast<AST::PointerDereferenceExpression>(*current)) {
+            current = &deref->target();
+            continue;
+        }
+        if (auto* field = dynamicDowncast<AST::FieldAccessExpression>(*current)) {
+            current = &field->base();
+            continue;
+        }
+        if (auto* index = dynamicDowncast<AST::IndexAccessExpression>(*current)) {
+            current = &index->base();
+            continue;
+        }
+        break;
+    }
+    if (auto* call = dynamicDowncast<AST::CallExpression>(*current)) {
+        if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call->target()))
+            return target->base() == "bufferView"_s || target->base() == "bufferArrayView"_s;
+    }
+    return false;
+}
+
+static bool isPackedPointerExpression(AST::Expression& expr, bool usesBufferView)
+{
+    if (isBufferViewCall(expr))
+        return true;
+    if (auto* ptr = std::get_if<Types::Pointer>(expr.inferredType()))
+        return isPackedPointerType(*ptr, usesBufferView);
+    return false;
 }
 
 Packing RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expression)
@@ -581,7 +623,10 @@ Packing RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expressio
     }
 
     if (std::holds_alternative<Types::Vector>(*baseType)) {
-        if (std::holds_alternative<Types::Vector>(*expression.inferredType())) {
+        auto* expressionType = expression.inferredType();
+        if (auto* referenceType = std::get_if<Types::Reference>(expressionType))
+            expressionType = referenceType->element;
+        if (std::holds_alternative<Types::Vector>(*expressionType)) {
             if (isPointer) {
                 auto& dereference = m_shaderModule.astBuilder().construct<AST::UnaryExpression>(
                     expression.base().span(),
@@ -606,7 +651,7 @@ Packing RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expressio
     }
 
     auto basePacking = pack(Packing::Either, expression.base());
-    if (basePacking & Packing::Unpacked)
+    if (!isPackedPointerExpression(expression.base(), m_shaderModule.usesBufferView()) && (basePacking & Packing::Unpacked))
         return Packing::Unpacked;
 
     ASSERT(std::holds_alternative<Types::Struct>(*baseType));
@@ -619,7 +664,7 @@ Packing RewriteGlobalVariables::getPacking(AST::IndexAccessExpression& expressio
 {
     auto basePacking = pack(Packing::Either, expression.base());
     pack(Packing::Unpacked, expression.index());
-    if (basePacking & Packing::Unpacked)
+    if (!isPackedPointerExpression(expression.base(), m_shaderModule.usesBufferView()) && (basePacking & Packing::Unpacked))
         return Packing::Unpacked;
     auto* baseType = expression.base().inferredType();
     if (auto* referenceType = std::get_if<Types::Reference>(baseType))
@@ -700,7 +745,7 @@ Packing RewriteGlobalVariables::getPacking(AST::UnaryExpression& expression)
         // packing of the resulting type from dereferencing
         pack(Packing::Either, expression.expression());
         auto* pointer = std::get_if<Types::Pointer>(expression.expression().inferredType());
-        if (pointer->addressSpace == AddressSpace::Storage || pointer->addressSpace == AddressSpace::Uniform)
+        if ((pointer && isPackedPointerType(*pointer, m_shaderModule.usesBufferView())) || isBufferViewCall(expression.expression()))
             return expression.inferredType()->packing();
         return Packing::Unpacked;
     }
@@ -714,23 +759,24 @@ Packing RewriteGlobalVariables::getPacking(AST::IdentityExpression& expression)
 
 Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
 {
+    if (auto* elaborated = dynamicDowncast<AST::ElaboratedTypeExpression>(call.target())) {
+        if (elaborated->base() == "bufferView"_s || elaborated->base() == "bufferArrayView"_s) {
+            rewriteBufferViewCall(call, m_currentFunction);
+            return Packing::Either;
+        }
+    }
+
     if (auto target = dynamicDowncast<AST::IdentifierExpression>(call.target())) {
+        if (target->identifier() == "bufferLength"_s) {
+            ASSERT(call.arguments().size() == 1);
+            auto& lenExpr = computeBufferByteLength(call.arguments()[0], m_currentFunction);
+            m_shaderModule.replace(call, lenExpr);
+            return Packing::Unpacked;
+        }
         if (target->identifier() == "arrayLength"_s) {
             ASSERT(call.arguments().size() == 1);
             auto& arrayPointer = call.arguments()[0];
-            unsigned arrayOffset = 0;
-            auto& base = getBase(arrayPointer, arrayOffset);
-            auto& identifier = base.identifier();
-            if (!m_globals.contains(identifier)) {
-                auto result = m_lengthParameters.add(m_currentFunction, ListHashSet<String> { });
-                result.iterator->value.add(identifier);
-            }
-            auto lengthName = makeString("__"_s, identifier, "_ArrayLength"_s);
-            auto& length = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
-                SourceSpan::empty(),
-                AST::Identifier::make(lengthName)
-            );
-            length.m_inferredType = m_shaderModule.types().u32Type();
+            auto& lhs = computePointerRemainingByteLength(arrayPointer, m_currentFunction);
 
             auto* arrayPointerType = arrayPointer.inferredType();
             ASSERT(std::holds_alternative<Types::Pointer>(*arrayPointerType));
@@ -746,35 +792,23 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
             );
             strideExpression.m_inferredType = m_shaderModule.types().u32Type();
 
-            AST::Expression* lhs = &length;
-            if (arrayOffset) {
-                auto& arrayOffsetExpression = m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(
-                    SourceSpan::empty(),
-                    arrayOffset
-                );
-                arrayOffsetExpression.m_inferredType = m_shaderModule.types().u32Type();
-                lhs = &m_shaderModule.astBuilder().construct<AST::BinaryExpression>(
-                    SourceSpan::empty(),
-                    length,
-                    arrayOffsetExpression,
-                    AST::BinaryOperation::Subtract
-                );
-                lhs->m_inferredType = m_shaderModule.types().u32Type();
-            }
-
             m_shaderModule.setUsesDivision();
             auto& elementCount = m_shaderModule.astBuilder().construct<AST::BinaryExpression>(
                 SourceSpan::empty(),
-                *lhs,
+                lhs,
                 strideExpression,
                 AST::BinaryOperation::Divide
             );
             elementCount.m_inferredType = m_shaderModule.types().u32Type();
 
             m_shaderModule.replace(call, elementCount);
-            // mark both the array and array length as read
-            readVariable(base);
-            readVariable(length);
+            return Packing::Unpacked;
+        }
+        if (target->identifier() == "workgroupUniformLoad"_s) {
+            ASSERT(call.arguments().size() == 1);
+            pack(Packing::Either, call.arguments()[0]);
+            if (auto* ptr = std::get_if<Types::Pointer>(call.arguments()[0].inferredType()); ptr && isPackedPointerType(*ptr, m_shaderModule.usesBufferView()))
+                return call.inferredType()->packing();
             return Packing::Unpacked;
         }
     }
@@ -814,6 +848,8 @@ AST::IdentifierExpression& RewriteGlobalVariables::getBase(AST::Expression& expr
 {
     if (auto* identityExpression = dynamicDowncast<AST::IdentityExpression>(expression))
         return getBase(identityExpression->expression(), arrayOffset);
+    if (auto* dereferenceExpression = dynamicDowncast<AST::PointerDereferenceExpression>(expression))
+        return getBase(dereferenceExpression->target(), arrayOffset);
     if (auto* unaryExpression = dynamicDowncast<AST::UnaryExpression>(expression))
         return getBase(unaryExpression->expression(), arrayOffset);
     if (auto* fieldAccess = dynamicDowncast<AST::FieldAccessExpression>(expression)) {
@@ -832,6 +868,227 @@ AST::IdentifierExpression& RewriteGlobalVariables::getBase(AST::Expression& expr
     if (auto* identifierExpression = dynamicDowncast<AST::IdentifierExpression>(expression))
         return *identifierExpression;
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+AST::Expression& RewriteGlobalVariables::computeBufferByteLength(AST::Expression& ptrExpr, AST::Function* callerFunction)
+{
+    m_shaderModule.setUsesBufferView();
+    AST::Expression* current = &ptrExpr;
+    while (auto* identity = dynamicDowncast<AST::IdentityExpression>(*current))
+        current = &identity->expression();
+
+    const Types::Buffer* resolvedBufType = nullptr;
+    AST::IdentifierExpression* baseIdent = nullptr;
+    if (auto* ident = dynamicDowncast<AST::IdentifierExpression>(*current))
+        baseIdent = ident;
+    else if (auto* unary = dynamicDowncast<AST::UnaryExpression>(*current); unary && unary->operation() == AST::UnaryOperation::AddressOf) {
+        baseIdent = dynamicDowncast<AST::IdentifierExpression>(unary->expression());
+        if (auto* ref = std::get_if<Types::Reference>(unary->expression().inferredType()))
+            resolvedBufType = std::get_if<Types::Buffer>(ref->element);
+    }
+    if (!resolvedBufType) {
+        const auto& ptrType = std::get<Types::Pointer>(*current->inferredType());
+        resolvedBufType = &std::get<Types::Buffer>(*ptrType.element);
+    }
+    const auto& bufType = *resolvedBufType;
+
+    if (baseIdent && callerFunction == m_currentFunction)
+        readVariable(*baseIdent);
+
+    if (bufType.isCreationFixed()) {
+        unsigned fixedSize = std::get<unsigned>(bufType.size);
+        auto& literal = m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(SourceSpan::empty(), fixedSize);
+        literal.m_inferredType = m_shaderModule.types().u32Type();
+        literal.setConstantValue(fixedSize);
+        return literal;
+    }
+
+    if (bufType.isOverrideSized()) {
+        AST::Expression& sizeExpr = *std::get<AST::Expression*>(bufType.size);
+        if (callerFunction == m_currentFunction)
+            AST::Visitor::visit(sizeExpr);
+        if (sizeExpr.inferredType() == m_shaderModule.types().u32Type())
+            return sizeExpr;
+        auto& u32Target = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
+        u32Target.m_inferredType = m_shaderModule.types().u32Type();
+        auto& u32Call = m_shaderModule.astBuilder().construct<AST::CallExpression>(SourceSpan::empty(), u32Target, AST::Expression::List { sizeExpr });
+        u32Call.m_inferredType = m_shaderModule.types().u32Type();
+        u32Call.m_isConstructor = true;
+        return u32Call;
+    }
+
+    RELEASE_ASSERT(baseIdent);
+    auto& identifier = baseIdent->identifier();
+    if (!m_globals.contains(identifier) && callerFunction) {
+        auto result = m_lengthParameters.add(callerFunction, ListHashSet<String> { });
+        result.iterator->value.add(identifier);
+    }
+    auto lengthName = makeString("__"_s, identifier, "_ArrayLength"_s);
+    auto& length = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(lengthName));
+    length.m_inferredType = m_shaderModule.types().u32Type();
+    if (callerFunction == m_currentFunction)
+        readVariable(length);
+    return length;
+}
+
+AST::Expression& RewriteGlobalVariables::rewriteBufferViewCall(AST::CallExpression& call, AST::Function* callerFunction)
+{
+    if (auto it = m_viewByteLengths.find(&call); it != m_viewByteLengths.end())
+        return *it->value;
+
+    m_shaderModule.setUsesBufferView();
+    auto& elaborated = downcast<AST::ElaboratedTypeExpression>(call.target());
+    bool isArrayView = elaborated.base() == "bufferArrayView"_s;
+    const Type* viewType = elaborated.arguments()[0].inferredType();
+
+    packType(viewType);
+    if (auto* vecType = std::get_if<Types::Vector>(viewType); vecType && vecType->size == 3) {
+        m_shaderModule.setUsesPackedVec3();
+        m_shaderModule.setUsesPackVector();
+        m_shaderModule.setUsesUnpackVector();
+    }
+
+    if (callerFunction == m_currentFunction) {
+        pack(Packing::Either, call.arguments()[0]);
+        pack(Packing::Unpacked, call.arguments()[1]);
+        if (isArrayView)
+            pack(Packing::Unpacked, call.arguments()[2]);
+    }
+
+    auto& bufLenExpr = computeBufferByteLength(call.arguments()[0], callerFunction);
+    unsigned minBytes = viewType->minBufferViewSize();
+    unsigned alignMask = ~(viewType->alignment() - 1u);
+
+    auto makeU32 = [&](unsigned val) -> AST::Unsigned32Literal& {
+        auto& lit = m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(SourceSpan::empty(), val);
+        lit.m_inferredType = m_shaderModule.types().u32Type();
+        lit.setConstantValue(val);
+        return lit;
+    };
+
+    if (!isArrayView) {
+        auto& helperTarget = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("__wgslBufferViewOffset"_s));
+        helperTarget.m_inferredType = m_shaderModule.types().u32Type();
+        auto& safeOffsetCall = m_shaderModule.astBuilder().construct<AST::CallExpression>(
+            SourceSpan::empty(),
+            helperTarget,
+            AST::Expression::List { call.arguments()[1], makeU32(alignMask), bufLenExpr, makeU32(minBytes) }
+        );
+        safeOffsetCall.m_inferredType = m_shaderModule.types().u32Type();
+        m_shaderModule.append(call.arguments(), safeOffsetCall);
+
+        auto& remLen = m_shaderModule.astBuilder().construct<AST::BinaryExpression>(
+            SourceSpan::empty(),
+            bufLenExpr,
+            safeOffsetCall,
+            AST::BinaryOperation::Subtract
+        );
+        remLen.m_inferredType = m_shaderModule.types().u32Type();
+        m_viewByteLengths.add(&call, &remLen);
+        return remLen;
+    }
+
+    auto& offsetHelper = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("__wgslBufferArrayViewOffset"_s));
+    offsetHelper.m_inferredType = m_shaderModule.types().u32Type();
+    auto& safeOffsetCall = m_shaderModule.astBuilder().construct<AST::CallExpression>(
+        SourceSpan::empty(),
+        offsetHelper,
+        AST::Expression::List { call.arguments()[1], call.arguments()[2], makeU32(alignMask), bufLenExpr, makeU32(minBytes) }
+    );
+    safeOffsetCall.m_inferredType = m_shaderModule.types().u32Type();
+    m_shaderModule.append(call.arguments(), safeOffsetCall);
+
+    auto& sizeHelper = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("__wgslBufferArrayViewSize"_s));
+    sizeHelper.m_inferredType = m_shaderModule.types().u32Type();
+    auto& safeSizeCall = m_shaderModule.astBuilder().construct<AST::CallExpression>(
+        SourceSpan::empty(),
+        sizeHelper,
+        AST::Expression::List { call.arguments()[1], call.arguments()[2], makeU32(alignMask), bufLenExpr, makeU32(minBytes) }
+    );
+    safeSizeCall.m_inferredType = m_shaderModule.types().u32Type();
+    m_viewByteLengths.add(&call, &safeSizeCall);
+    return safeSizeCall;
+}
+
+AST::Expression& RewriteGlobalVariables::computePointerRemainingByteLength(AST::Expression& ptrExpr, AST::Function* callerFunction)
+{
+    unsigned fieldByteOffset = 0;
+    AST::Expression* current = &ptrExpr;
+    while (true) {
+        if (auto* identity = dynamicDowncast<AST::IdentityExpression>(*current)) {
+            current = &identity->expression();
+            continue;
+        }
+        if (auto* deref = dynamicDowncast<AST::PointerDereferenceExpression>(*current)) {
+            current = &deref->target();
+            continue;
+        }
+        if (auto* unary = dynamicDowncast<AST::UnaryExpression>(*current)) {
+            current = &unary->expression();
+            continue;
+        }
+        if (auto* fieldAccess = dynamicDowncast<AST::FieldAccessExpression>(*current)) {
+            auto& base = fieldAccess->base();
+            auto* type = base.inferredType();
+            if (auto* reference = std::get_if<Types::Reference>(type))
+                type = reference->element;
+            if (auto* pointer = std::get_if<Types::Pointer>(type))
+                type = pointer->element;
+            auto& structure = std::get<Types::Struct>(*type).structure;
+            auto& lastMember = structure.members().last();
+            RELEASE_ASSERT(lastMember.name().id() == fieldAccess->fieldName().id());
+            fieldByteOffset += lastMember.offset();
+            current = &base;
+            continue;
+        }
+        break;
+    }
+
+    AST::Expression* baseByteLength = nullptr;
+    if (auto* call = dynamicDowncast<AST::CallExpression>(*current)) {
+        if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call->target()); target && (target->base() == "bufferView"_s || target->base() == "bufferArrayView"_s))
+            baseByteLength = &rewriteBufferViewCall(*call, callerFunction);
+    }
+
+    if (!baseByteLength) {
+        if (auto* ptrType = std::get_if<Types::Pointer>(current->inferredType()); ptrType && std::holds_alternative<Types::Buffer>(*ptrType->element))
+            baseByteLength = &computeBufferByteLength(*current, callerFunction);
+        else if (auto* refType = std::get_if<Types::Reference>(current->inferredType()); refType && std::holds_alternative<Types::Buffer>(*refType->element)) {
+            auto& addrOf = m_shaderModule.astBuilder().construct<AST::UnaryExpression>(SourceSpan::empty(), *current, AST::UnaryOperation::AddressOf);
+            addrOf.m_inferredType = m_shaderModule.types().pointerType(refType->addressSpace, refType->element, refType->accessMode);
+            baseByteLength = &computeBufferByteLength(addrOf, callerFunction);
+        } else {
+            auto& identExpr = downcast<AST::IdentifierExpression>(*current);
+            auto& identifier = identExpr.identifier();
+            if (!m_globals.contains(identifier) && callerFunction) {
+                auto result = m_lengthParameters.add(callerFunction, ListHashSet<String> { });
+                result.iterator->value.add(identifier);
+            }
+            auto lengthName = makeString("__"_s, identifier, "_ArrayLength"_s);
+            auto& length = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(lengthName));
+            length.m_inferredType = m_shaderModule.types().u32Type();
+            if (callerFunction == m_currentFunction) {
+                readVariable(identExpr);
+                readVariable(length);
+            }
+            baseByteLength = &length;
+        }
+    }
+
+    if (!fieldByteOffset)
+        return *baseByteLength;
+
+    auto& offsetLiteral = m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(SourceSpan::empty(), fieldByteOffset);
+    offsetLiteral.m_inferredType = m_shaderModule.types().u32Type();
+    offsetLiteral.setConstantValue(fieldByteOffset);
+    auto& sub = m_shaderModule.astBuilder().construct<AST::BinaryExpression>(
+        SourceSpan::empty(),
+        *baseByteLength,
+        offsetLiteral,
+        AST::BinaryOperation::Subtract
+    );
+    sub.m_inferredType = m_shaderModule.types().u32Type();
+    return sub;
 }
 
 NODELETE static unsigned buffersForStage(const Configuration& configuration, ShaderStage stage)
@@ -875,6 +1132,9 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
         });
         ASSERT_UNUSED(result, result.isNewEntry);
 
+        if (globalVar->storeType() && std::holds_alternative<Types::Buffer>(*globalVar->storeType()))
+            m_shaderModule.setUsesBufferView();
+
         if (resource.has_value()) {
             m_globalsByBinding.add({ resource->group + 1, resource->binding + 1 }, globalVar);
 
@@ -883,7 +1143,8 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
             packResource(*globalVar);
 
             bufferLengths.append({ globalVar, resource->group, resource->binding });
-        }
+        } else if (globalVar->addressSpace() == AddressSpace::Immediate || (m_shaderModule.usesBufferView() && globalVar->addressSpace() == AddressSpace::Workgroup && globalVar->storeType() && globalVar->storeType()->isHostShareable() && !std::holds_alternative<Types::Buffer>(*globalVar->storeType())))
+            packResource(*globalVar);
     }
 
     for (auto& [_, vector] : m_groupBindingMap)
@@ -975,6 +1236,17 @@ void RewriteGlobalVariables::packResource(AST::Variable& global)
             m_shaderModule.replace(&global.role(), AST::VariableRole::PackedResource);
         }
         return;
+    }
+
+    if (global.addressSpace() == AddressSpace::Immediate || global.addressSpace() == AddressSpace::Workgroup) {
+        if (auto* vectorType = std::get_if<Types::Vector>(resolvedType)) {
+            if (vectorType->size == 3) {
+                m_shaderModule.setUsesPackedVec3();
+                m_shaderModule.setUsesPackVector();
+                m_shaderModule.setUsesUnpackVector();
+                m_shaderModule.replace(&global.role(), AST::VariableRole::PackedResource);
+            }
+        }
     }
 }
 
@@ -1148,6 +1420,10 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     m_structTypes.clear();
     m_globalsUsingDynamicOffset.clear();
     m_generateLayoutGroupMapping.clear();
+    m_viewByteLengths.clear();
+    m_currentEntryPointFunctions.clear();
+    m_currentEntryPointUnsizedMinSizes.clear();
+    m_currentEntryPointFunctions.add(&entryPoint.function);
 
     auto result = m_entryPointInformations.add(entryPoint.originalName, Reflection::EntryPointInformation { });
     RELEASE_ASSERT(result.isNewEntry);
@@ -1201,6 +1477,76 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     if (hasError())
         return AST::Visitor::result().error();
 
+    unsigned minBufferSize = m_shaderModule.enabledExtensions().contains(Extension::F16) ? 2u : 4u;
+    for (const AST::Function* fn : m_currentEntryPointFunctions) {
+        if (const auto* minSizes = m_shaderModule.unsizedBufferMinSizes(fn)) {
+            for (const auto& [varPtr, minBytes] : *minSizes) {
+                auto addRes = m_currentEntryPointUnsizedMinSizes.add(varPtr, minBytes);
+                if (!addRes.isNewEntry)
+                    addRes.iterator->value = std::max<uint64_t>(addRes.iterator->value, minBytes);
+            }
+        }
+        if (const auto* resolvedChecks = m_shaderModule.resolvedBufferViewChecks(fn)) {
+            m_shaderModule.addOverrideValidation([&shaderModule = m_shaderModule, checks = *resolvedChecks, minBufferSize](const auto& overrideValues) -> std::optional<Error> {
+                for (const auto& resolved : borrow(checks)) {
+                    std::optional<uint64_t> bufSize;
+                    if (resolved.fixedBufferSize)
+                        bufSize = *resolved.fixedBufferSize;
+                    else if (resolved.overrideBufferSizeExpr) {
+                        auto evalBuf = evaluate(shaderModule, *resolved.overrideBufferSizeExpr, overrideValues);
+                        if (!evalBuf)
+                            return Error("Failed to evaluate buffer size override"_s, resolved.check.span);
+                        int64_t rawBuf = evalBuf->integerValue();
+                        if (rawBuf < static_cast<int64_t>(minBufferSize) || rawBuf > std::numeric_limits<uint32_t>::max())
+                            return Error("Override buffer size out of range"_s, resolved.check.span);
+                        bufSize = static_cast<uint64_t>(rawBuf);
+                    }
+
+                    const auto& check = resolved.check;
+                    if (bufSize && *bufSize < check.minBytes)
+                        return Error("Buffer size is smaller than minimum view size"_s, check.span);
+
+                    std::optional<uint64_t> evalOffset;
+                    if (check.offsetExpr) {
+                        if (auto val = evaluate(shaderModule, *check.offsetExpr, overrideValues)) {
+                            int64_t rawOff = val->integerValue();
+                            if (rawOff < 0 || rawOff > std::numeric_limits<uint32_t>::max())
+                                return Error("Buffer view offset out of range"_s, check.span);
+                            uint64_t uOff = static_cast<uint64_t>(rawOff);
+                            if (uOff % check.requiredAlign)
+                                return Error("Buffer view offset not aligned"_s, check.span);
+                            if (uOff + check.minBytes > std::numeric_limits<uint32_t>::max())
+                                return Error("Buffer view offset + type size overflows u32"_s, check.span);
+                            if (bufSize && uOff + check.minBytes > *bufSize)
+                                return Error("Buffer view offset + type size exceeds buffer size"_s, check.span);
+                            evalOffset = uOff;
+                        }
+                    }
+
+                    if (check.isArrayView && check.sizeExpr) {
+                        if (auto val = evaluate(shaderModule, *check.sizeExpr, overrideValues)) {
+                            int64_t rawSz = val->integerValue();
+                            if (rawSz < static_cast<int64_t>(check.minBytes) || rawSz > std::numeric_limits<uint32_t>::max())
+                                return Error("bufferArrayView size out of range"_s, check.span);
+                            uint64_t uSz = static_cast<uint64_t>(rawSz);
+                            if ((uSz - check.arrayOffset) % check.arrayStride)
+                                return Error("bufferArrayView trailing array size not a multiple of stride"_s, check.span);
+                            if (bufSize && uSz > *bufSize)
+                                return Error("bufferArrayView size exceeds buffer size"_s, check.span);
+                            if (evalOffset) {
+                                if (*evalOffset + uSz > std::numeric_limits<uint32_t>::max())
+                                    return Error("bufferArrayView offset + size overflows u32"_s, check.span);
+                                if (bufSize && *evalOffset + uSz > *bufSize)
+                                    return Error("bufferArrayView offset + size exceeds buffer size"_s, check.span);
+                            }
+                        }
+                    }
+                }
+                return std::nullopt;
+            });
+        }
+    }
+
     if (m_reads.isEmpty()) {
         insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return std::nullopt;
@@ -1223,7 +1569,7 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
         insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return maybeGroups.error();
     }
-    insertParameters(entryPoint.function, *maybeGroups);
+    insertParameters(entryPoint.function, *maybeGroups, usedGlobals.immediateGlobal);
     insertMaterializations(entryPoint.function, usedGlobals.resources);
     insertLocalDefinitions(entryPoint.function, usedGlobals.privateGlobals);
     validateUsedGlobals(usedGlobals);
@@ -1303,7 +1649,15 @@ NODELETE static WGSL::StorageTextureAccess convertAccess(const AccessMode access
     }
 }
 
-static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
+uint64_t RewriteGlobalVariables::effectiveMinBindingSize(const AST::Variable& variable) const
+{
+    uint64_t baseSize = variable.storeType()->size();
+    if (auto it = m_currentEntryPointUnsizedMinSizes.find(&variable); it != m_currentEntryPointUnsizedMinSizes.end())
+        return std::max<uint64_t>(baseSize, it->value);
+    return baseSize;
+}
+
+BindGroupLayoutEntry::BindingMember RewriteGlobalVariables::bindingMemberForGlobal(const Global& global) const
 {
     auto* variable = global.declaration;
     ASSERT(variable);
@@ -1469,6 +1823,12 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             .hasDynamicOffset = false,
             .minBindingSize = type->size()
         };
+    }, [&](const Types::Buffer&) -> BindGroupLayoutEntry::BindingMember {
+        return BufferBindingLayout {
+            .type = addressSpace(),
+            .hasDynamicOffset = false,
+            .minBindingSize = effectiveMinBindingSize(*variable)
+        };
     }, [&](const PrimitiveStruct&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Reference&) -> BindGroupLayoutEntry::BindingMember {
@@ -1482,13 +1842,65 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
     });
 }
 
+static uint64_t computeRequiredImmediateSlots(const Type* type, unsigned byteOffset)
+{
+    if (!type)
+        return 0;
+    return WTF::switchOn(*type,
+        [&](const Types::Primitive&) -> uint64_t {
+            unsigned size = type->size();
+            if (!size)
+                return 0;
+            uint64_t mask = 0;
+            unsigned firstSlot = byteOffset / 4;
+            unsigned lastSlot = (byteOffset + size - 1) / 4;
+            for (unsigned slot = firstSlot; slot <= lastSlot && slot < 64; ++slot)
+                mask |= (uint64_t { 1 } << slot);
+            return mask;
+        },
+        [&](const Types::Vector&) -> uint64_t {
+            unsigned size = type->size();
+            if (!size)
+                return 0;
+            uint64_t mask = 0;
+            unsigned firstSlot = byteOffset / 4;
+            unsigned lastSlot = (byteOffset + size - 1) / 4;
+            for (unsigned slot = firstSlot; slot <= lastSlot && slot < 64; ++slot)
+                mask |= (uint64_t { 1 } << slot);
+            return mask;
+        },
+        [&](const Types::Matrix& matrix) -> uint64_t {
+            unsigned elementSize = matrix.element->size();
+            unsigned columnSize = matrix.rows * elementSize;
+            unsigned columnStride = (matrix.rows == 3 ? 4 : matrix.rows) * elementSize;
+            uint64_t mask = 0;
+            for (unsigned col = 0; col < matrix.columns; ++col) {
+                unsigned colOffset = byteOffset + col * columnStride;
+                unsigned firstSlot = colOffset / 4;
+                unsigned lastSlot = (colOffset + columnSize - 1) / 4;
+                for (unsigned slot = firstSlot; slot <= lastSlot && slot < 64; ++slot)
+                    mask |= (uint64_t { 1 } << slot);
+            }
+            return mask;
+        },
+        [&](const Types::Struct& structure) -> uint64_t {
+            uint64_t mask = 0;
+            for (auto& member : structure.structure.members())
+                mask |= computeRequiredImmediateSlots(member.type().inferredType(), byteOffset + member.offset());
+            return mask;
+        },
+        [&](const auto&) -> uint64_t {
+            return 0;
+        });
+}
+
 auto RewriteGlobalVariables::determineUsedGlobals(const CallGraph::EntryPoint& entryPoint) -> Result<UsedGlobals>
 {
     UsedGlobals usedGlobals;
     const auto& function = entryPoint.function;
 
     // https://www.w3.org/TR/WGSL/#limits
-    constexpr unsigned maximumCombinedPrivateVariablesSize = 8192;
+    constexpr unsigned maximumCombinedPrivateVariablesSize = 32768;
     unsigned maximumCombinedWorkgroupVariablesSize = m_shaderModule.configuration().maximumCombinedWorkgroupVariablesSize;
     Vector<const Type*, 16> workgroupVariables;
     Vector<const Type*, 16> privateVariables;
@@ -1507,6 +1919,13 @@ auto RewriteGlobalVariables::determineUsedGlobals(const CallGraph::EntryPoint& e
         case AST::VariableFlavor::Let:
         case AST::VariableFlavor::Const:
             if (!global.resource.has_value()) {
+                if (variable.addressSpace() == AddressSpace::Immediate) {
+                    usedGlobals.immediateGlobal = &global;
+                    m_entryPointInformation->immediateSize = variable.storeType()->size();
+                    m_entryPointInformation->requiredImmediateSlots = computeRequiredImmediateSlots(variable.storeType(), 0);
+                    continue;
+                }
+
                 usedGlobals.privateGlobals.append(&global);
 
                 if (auto* qualifier = variable.maybeQualifier(); qualifier && qualifier->addressSpace() == AddressSpace::Workgroup)
@@ -1526,10 +1945,21 @@ auto RewriteGlobalVariables::determineUsedGlobals(const CallGraph::EntryPoint& e
             return makeUnexpected(Error(makeString("entry point '"_s, entryPoint.originalName, "' uses two variables with the same resource binding: @group("_s, group, ") @binding("_s, binding, ')'), function.span()));
     }
 
-    m_shaderModule.addOverrideValidation([span = function.span(), variables = WTF::move(workgroupVariables), maximumCombinedWorkgroupVariablesSize](auto&) -> std::optional<Error> {
+    unsigned minBufferSize = m_shaderModule.enabledExtensions().contains(Extension::F16) ? 2u : 4u;
+    m_shaderModule.addOverrideValidation([&shaderModule = m_shaderModule, span = function.span(), variables = WTF::move(workgroupVariables), maximumCombinedWorkgroupVariablesSize, minBufferSize](const auto& overrideValues) -> std::optional<Error> {
         CheckedUint32 combinedWorkgroupVariablesSize = 0;
-        for (const Type* type : borrow(variables))
-            combinedWorkgroupVariablesSize += type->size();
+        for (const Type* type : borrow(variables)) {
+            if (auto* bufType = std::get_if<Types::Buffer>(type); bufType && bufType->isOverrideSized()) {
+                auto val = evaluate(shaderModule, *std::get<AST::Expression*>(bufType->size), overrideValues);
+                if (!val)
+                    return { Error("Failed to evaluate workgroup buffer size override"_s, span) };
+                int64_t rawSize = val->integerValue();
+                if (rawSize < static_cast<int64_t>(minBufferSize) || rawSize > std::numeric_limits<uint32_t>::max())
+                    return { Error("Workgroup buffer size override out of range"_s, span) };
+                combinedWorkgroupVariablesSize += static_cast<uint32_t>(rawSize);
+            } else
+                combinedWorkgroupVariablesSize += type->size();
+        }
         if (combinedWorkgroupVariablesSize.hasOverflowed() || combinedWorkgroupVariablesSize.value() > maximumCombinedWorkgroupVariablesSize) [[unlikely]]
             return { Error(makeString("The combined byte size of all variables in the workgroup address space exceeds "_s, String::number(maximumCombinedWorkgroupVariablesSize), " bytes"_s), span) };
         return std::nullopt;
@@ -1677,6 +2107,9 @@ static BindingType bindingTypeForType(const Type* type)
             return texture.kind == Types::TextureDepth::Kind::TextureDepthMultisampled2d ? BindingType::TextureMultisampled : BindingType::Texture;
         },
         [&](const Types::Atomic&) -> BindingType {
+            return BindingType::Buffer;
+        },
+        [&](const Types::Buffer&) -> BindingType {
             return BindingType::Buffer;
         },
         [&](const Types::TypeConstructor&) -> BindingType {
@@ -2427,7 +2860,7 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
                     return makeUnexpected(Error(makeString("Shader is incompatible with layout pipeline: "_s, error), SourceSpan::empty()));
 
                 if (auto* bufferBindingLayout = std::get_if<BufferBindingLayout>(&entryIt->value->bindingMember))
-                    bufferBindingLayout->minBindingSize = variable->storeType()->size();
+                    bufferBindingLayout->minBindingSize = effectiveMinBindingSize(*variable);
             }
 
             if (!m_reads.contains(variable->name()))
@@ -2469,12 +2902,18 @@ void RewriteGlobalVariables::insertDynamicOffsetsBufferIfNeeded(const AST::Funct
     insertDynamicOffsetsBufferIfNeeded(function.span(), function);
 }
 
-void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vector<unsigned>& groups)
+void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vector<unsigned>& groups, const Global* immediateGlobal)
 {
     auto span = function.span();
     for (auto group : groups)
         insertParameter(span, function, group, argumentBufferParameterName(group));
     insertDynamicOffsetsBufferIfNeeded(span, function);
+    if (immediateGlobal) {
+        auto& immediateVar = *immediateGlobal->declaration;
+        unsigned immediateBufferIndex = buffersForStage(m_shaderModule.configuration(), m_stage) + 1;
+        auto parameterRole = immediateVar.role() == AST::VariableRole::PackedResource ? AST::ParameterRole::PackedResource : AST::ParameterRole::UserDefined;
+        insertParameter(span, function, immediateBufferIndex, AST::Identifier::make(immediateVar.name()), immediateVar.maybeReferenceType(), parameterRole);
+    }
 }
 
 void RewriteGlobalVariables::insertMaterializations(AST::Function& function, const UsedResources& usedResources)
@@ -2878,6 +3317,12 @@ void RewriteGlobalVariables::recordTypeReads(const Type* type)
         if (auto* size = std::get_if<AST::Expression*>(&array->size))
             visit(**size);
         recordTypeReads(array->element);
+        return;
+    }
+
+    if (auto* buffer = std::get_if<Types::Buffer>(type)) {
+        if (auto* size = std::get_if<AST::Expression*>(&buffer->size))
+            visit(**size);
         return;
     }
 

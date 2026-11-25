@@ -34,6 +34,8 @@
 #include "GPUImageCopyTextureTagged.h"
 #include "GPUImageDataLayout.h"
 #include "GPUIntegralTypes.h"
+#include "IntSize.h"
+#include "RenderingResourceIdentifier.h"
 #include "WebGPU.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <optional>
@@ -48,6 +50,7 @@ namespace WebCore {
 
 class GPUBuffer;
 class GPUDevice;
+class ImageBuffer;
 struct GPUImageCopyExternalImage;
 struct GPUDrawElementImageDestination;
 struct GPUDrawElementImageSource;
@@ -58,6 +61,7 @@ public:
     {
         return adoptRef(*new GPUQueue(WTF::move(backing), WTF::move(gpu), device));
     }
+    ~GPUQueue();
 
     NODELETE String label() const;
     void setLabel(String&&);
@@ -105,11 +109,19 @@ private:
         const GPUDrawElementImageSource&,
         const GPUDrawElementImageDestination&);
 
+    struct CachedExternalImageBuffer {
+        RenderingResourceIdentifier nativeImageIdentifier;
+        IntSize size;
+        bool premultipliedAlpha { true };
+        RefPtr<ImageBuffer> imageBuffer;
+    };
+
     const Ref<::WebGPU::Queue> m_backing;
     // The root, which has the commands that take WebCore sources.
     const Ref<WebGPUIntegration> m_gpu;
     String m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
+    Vector<CachedExternalImageBuffer, 4> m_cachedExternalImageBuffers;
 };
 
 }

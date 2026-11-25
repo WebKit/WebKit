@@ -65,7 +65,7 @@ RefPtr<::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPass(c
         return nullptr;
 
     auto result = RemoteRenderPassEncoderProxy::create(*this, identifier);
-    if (convertedDescriptor)
+    if (convertedDescriptor && !convertedDescriptor->label.isEmpty())
         result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
@@ -86,7 +86,7 @@ RefPtr<::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass
         return nullptr;
 
     auto result = RemoteComputePassEncoderProxy::create(*this, identifier);
-    if (convertedDescriptor)
+    if (convertedDescriptor && !convertedDescriptor->label.isEmpty())
         result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
@@ -232,7 +232,8 @@ RefPtr<::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const ::WebGPU
         return nullptr;
 
     auto result = RemoteCommandBufferProxy::create(m_root, identifier);
-    result->setLabel(String { descriptor.label });
+    if (!descriptor.label.isEmpty())
+        result->setLabel(String { descriptor.label });
     return result;
 }
 

@@ -32,13 +32,60 @@
 #import "Buffer.h"
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
+#import "Instance.h"
 #import "IsValidToUseWith.h"
 #import "Pipeline.h"
 #import "QuerySet.h"
 #import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/Variant.h>
 
 namespace WebGPU::Metal {
+
+struct ComputePassEncoder::DeferredState {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DeferredState);
+    struct UseResources {
+        Vector<RetainPtr<id<MTLResource>>> retainedResources;
+        Vector<id<MTLResource>> rawResources;
+        MTLResourceUsage usage;
+    };
+    struct SetPipeline {
+        RetainPtr<id<MTLComputePipelineState>> readyPSO;
+        std::shared_ptr<PendingComputePipelineCompilation> pending;
+    };
+    struct SetBuffer {
+        RetainPtr<id<MTLBuffer>> buffer;
+        NSUInteger offset;
+        uint32_t index;
+    };
+    struct SetBytes {
+        Vector<uint8_t, 64> bytes;
+        uint32_t index;
+    };
+    struct Dispatch {
+        MTLSize threadgroups;
+        MTLSize threadsPerThreadgroup;
+    };
+    using Command = Variant<UseResources, SetPipeline, SetBuffer, SetBytes, Dispatch>;
+    Vector<Command, 16> commands;
+
+    void appendBindGroupResources(const BindGroup& group)
+    {
+        for (const auto& resource : group.resources()) {
+            if (resource.renderStages == BindGroup::MTLRenderStageCompute && resource.mtlResources.size()) {
+                UseResources cmd;
+                cmd.usage = resource.usage;
+                cmd.retainedResources.reserveInitialCapacity(resource.mtlResources.size());
+                cmd.rawResources.reserveInitialCapacity(resource.mtlResources.size());
+                for (id<MTLResource> res : resource.mtlResources) {
+                    cmd.retainedResources.append(res);
+                    cmd.rawResources.append(res);
+                }
+                commands.append(WTF::move(cmd));
+            }
+        }
+    }
+};
 
 #define RETURN_IF_FINISHED() \
 if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
@@ -53,11 +100,17 @@ if (!m_computeCommandEncoder || !m_parentEncoder->isValid() || !protect(m_parent
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputePassEncoder);
 
-ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WebGPU::ComputePassDescriptor&, CommandEncoder& parentEncoder, Device& device)
+ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WebGPU::ComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
     , m_device(device)
     , m_parentEncoder(parentEncoder)
+#if PLATFORM(MAC)
+    , m_canDeferEncoding(!descriptor.timestampWrites.has_value() && !m_device->enableEncoderTimestamps())
+#endif
 {
+#if !PLATFORM(MAC)
+    UNUSED_PARAM(descriptor);
+#endif
     protect(m_parentEncoder)->lock(true);
     RELEASE_ASSERT(m_maxDynamicOffsetAtIndex.size() >= m_device->limits().maxBindGroups);
 }
@@ -190,7 +243,26 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         makeInvalid(error);
         return;
     }
-    [computeCommandEncoder() setComputePipelineState:pipeline->computePipelineState()];
+
+    if (!m_isDeferringEncoding && m_canDeferEncoding && !m_hasEncodedToMetalEncoder && !indirectBuffer && !m_debugGroupStackSize && !pipeline->isPipelineStateReady() && m_device->getQueue()->canDeferPass()) {
+        m_isDeferringEncoding = true;
+        m_deferredState = makeUnique<DeferredState>();
+        for (auto& kvp : m_bindGroups)
+            m_deferredState->appendBindGroupResources(kvp.value);
+    }
+
+    if (m_isDeferringEncoding) {
+        if (!m_parentEncoder->submitWillBeInvalid())
+            m_deferredState->commands.append(DeferredState::SetPipeline { pipeline->precompiledPipelineState(), pipeline->pendingCompilation() });
+    } else {
+        id<MTLComputePipelineState> computePipelineState = pipeline->computePipelineState();
+        if (!computePipelineState) {
+            makeInvalid(@"pipeline is not valid prior to dispatch");
+            return;
+        }
+        [computeCommandEncoder() setComputePipelineState:computePipelineState];
+        m_hasEncodedToMetalEncoder = true;
+    }
 
     EntryMapContainer usagesForResource;
     TextureEntryMapContainer textureUsagesForResource;
@@ -221,7 +293,11 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
             }
             group->validatedSuccessfully(bindGroupIndex, pipelineIdentifier, m_maxDynamicOffsetAtIndex[bindGroupIndex]);
         }
-        [computeCommandEncoder() setBuffer:group->computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];
+        if (m_isDeferringEncoding) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredState::SetBuffer { group->computeArgumentBuffer(), group->computeArgumentBufferOffset(), bindGroupIndex });
+        } else
+            [computeCommandEncoder() setBuffer:group->computeArgumentBuffer() offset:group->computeArgumentBufferOffset() atIndex:bindGroupIndex];
     }
 
     for (auto& kvp : m_bindGroupResources) {
@@ -253,6 +329,24 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
 
     m_bindGroupResources.clear();
 
+    auto requiredImmediateSlots = pipeline->requiredImmediateSlots();
+    if ((m_setImmediateSlots & requiredImmediateSlots) != requiredImmediateSlots) {
+        makeInvalid(@"Missing required immediate data slots prior to dispatch");
+        return;
+    }
+
+    if (pipeline->usesImmediates() && m_immediatesDirty) {
+        if (m_isDeferringEncoding) {
+            if (!m_parentEncoder->submitWillBeInvalid()) {
+                Vector<uint8_t, 64> bytes;
+                bytes.append(std::span<const uint8_t> { m_immediateData });
+                m_deferredState->commands.append(DeferredState::SetBytes { WTF::move(bytes), m_device->maxBuffersForComputeStage() + 1 });
+            }
+        } else
+            [computeCommandEncoder() setBytes:m_immediateData.data() length:m_immediateData.size() atIndex:m_device->maxBuffersForComputeStage() + 1];
+        m_immediatesDirty = false;
+    }
+
     if (!m_computeDynamicOffsets.size())
         return;
 
@@ -266,8 +360,60 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
     }
 
     if (m_computeDynamicOffsets != m_priorComputeDynamicOffsets) {
-        [computeCommandEncoder() setBytes:&borrow(m_computeDynamicOffsets)[0] length:m_computeDynamicOffsets.size() * sizeof(m_computeDynamicOffsets[0]) atIndex:m_device->maxBuffersForComputeStage()];
+        if (m_isDeferringEncoding) {
+            if (!m_parentEncoder->submitWillBeInvalid()) {
+                Vector<uint8_t, 64> bytes;
+                bytes.append(asBytes(borrow(m_computeDynamicOffsets)->span()));
+                m_deferredState->commands.append(DeferredState::SetBytes { WTF::move(bytes), m_device->maxBuffersForComputeStage() });
+            }
+        } else
+            [computeCommandEncoder() setBytes:&borrow(m_computeDynamicOffsets)[0] length:m_computeDynamicOffsets.size() * sizeof(m_computeDynamicOffsets[0]) atIndex:m_device->maxBuffersForComputeStage()];
         m_priorComputeDynamicOffsets = m_computeDynamicOffsets;
+    }
+}
+
+void ComputePassEncoder::flushDeferredStateToMetalEncoder()
+{
+    if (!m_isDeferringEncoding)
+        return;
+
+    auto deferredState = std::exchange(m_deferredState, nullptr);
+    m_isDeferringEncoding = false;
+    m_hasEncodedToMetalEncoder = true;
+    if (!deferredState)
+        return;
+
+    for (auto& command : deferredState->commands) {
+        bool failed = false;
+        WTF::switchOn(command,
+            [&](DeferredState::UseResources& cmd) {
+                if (cmd.rawResources.size())
+                    [computeCommandEncoder() useResources:borrow(cmd.rawResources)->span().data() count:cmd.rawResources.size() usage:cmd.usage];
+            },
+            [&](DeferredState::SetPipeline& cmd) {
+                id<MTLComputePipelineState> pso = cmd.readyPSO ? cmd.readyPSO.get() : (cmd.pending ? cmd.pending->wait() : nil);
+                if (!pso) {
+                    if (cmd.pending && cmd.pending->hadLibraryError)
+                        m_device->generateAValidationError(cmd.pending->libraryErrorMessage.get() ?: @"Compute library failed creation");
+                    else
+                        m_device->generateAnOutOfMemoryError("Compute pipeline failed compilation likely due to being too complex, please reduce its size"_s);
+                    makeInvalid(@"pipeline is not valid prior to dispatch");
+                    failed = true;
+                    return;
+                }
+                [computeCommandEncoder() setComputePipelineState:pso];
+            },
+            [&](DeferredState::SetBuffer& cmd) {
+                [computeCommandEncoder() setBuffer:cmd.buffer.get() offset:cmd.offset atIndex:cmd.index];
+            },
+            [&](DeferredState::SetBytes& cmd) {
+                [computeCommandEncoder() setBytes:borrow(cmd.bytes)->span().data() length:cmd.bytes.size() atIndex:cmd.index];
+            },
+            [&](DeferredState::Dispatch& cmd) {
+                [computeCommandEncoder() dispatchThreadgroups:cmd.threadgroups threadsPerThreadgroup:cmd.threadsPerThreadgroup];
+            });
+        if (failed)
+            return;
     }
 }
 
@@ -276,13 +422,21 @@ void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
     RETURN_IF_FINISHED();
     executePreDispatchCommands();
     auto dimensionMax = m_device->limits().maxComputeWorkgroupsPerDimension;
-    if (x > dimensionMax || y > dimensionMax || z > dimensionMax) {
+    auto maxLinearWorkgroups = m_pipeline ? m_pipeline->maxLinearIndexingWorkgroups() : std::numeric_limits<uint64_t>::max();
+    auto totalWorkgroups = checkedProduct<uint64_t>(x, y, z);
+    if (x > dimensionMax || y > dimensionMax || z > dimensionMax || totalWorkgroups.hasOverflowed() || totalWorkgroups.value() > maxLinearWorkgroups) {
         makeInvalid([NSString stringWithFormat:@"x(%u) > dimensionMax(%u) || y(%u) > dimensionMax(%u) || z(%u) > dimensionMax(%u)", x, dimensionMax, y, dimensionMax, z, dimensionMax]);
         return;
     }
 
     if (!(x * y * z))
         return;
+
+    if (m_isDeferringEncoding) {
+        if (m_deferredState && !m_parentEncoder->submitWillBeInvalid())
+            m_deferredState->commands.append(DeferredState::Dispatch { MTLSizeMake(x, y, z), m_threadsPerThreadgroup });
+        return;
+    }
 
     [computeCommandEncoder() dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
@@ -297,7 +451,7 @@ id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buf
         options.fastMathEnabled = YES;
         ALLOW_DEPRECATED_DECLARATIONS_END
         NSError *error = nil;
-        id<MTLLibrary> library = [mtlDevice newLibraryWithSource:[NSString stringWithFormat:@"[[kernel]] void csDispatchClamp(device const uint* indirectBuffer, device uint* dispatchCallBuffer, uint index [[thread_position_in_grid]]) { dispatchCallBuffer[index] = metal::select(indirectBuffer[index], 0u, indirectBuffer[index] > %u); }", dimensionMax] options:options error:&error];
+        id<MTLLibrary> library = [mtlDevice newLibraryWithSource:[NSString stringWithFormat:@"[[kernel]] void csDispatchClamp(device const uint* indirectBuffer [[buffer(0)]], device uint* dispatchCallBuffer [[buffer(1)]], constant ulong& maxLinearWorkgroups [[buffer(2)]], uint index [[thread_position_in_grid]]) { ulong totalWorkgroups = ulong(indirectBuffer[0]) * ulong(indirectBuffer[1]) * ulong(indirectBuffer[2]); dispatchCallBuffer[index] = metal::select(indirectBuffer[index], 0u, (indirectBuffer[index] > %u) || (totalWorkgroups > maxLinearWorkgroups)); }", dimensionMax] options:options error:&error];
         if (error)
             WTFLogAlways("%@", error); // NOLINT
 
@@ -308,9 +462,11 @@ id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buf
     auto device = m_device;
     id<MTLComputePipelineState> computePipelineState = device->dispatchCallPipelineState(function);
     id<MTLBuffer> dispatchCallBuffer = device->dispatchCallBuffer();
+    uint64_t maxLinearWorkgroups = m_pipeline ? m_pipeline->maxLinearIndexingWorkgroups() : std::numeric_limits<uint64_t>::max();
     [computeCommandEncoder() setComputePipelineState:computePipelineState];
     [computeCommandEncoder() setBuffer:indirectBuffer.buffer() offset:indirectOffset atIndex:0];
     [computeCommandEncoder() setBuffer:dispatchCallBuffer offset:0 atIndex:1];
+    [computeCommandEncoder() setBytes:&maxLinearWorkgroups length:sizeof(maxLinearWorkgroups) atIndex:2];
     [computeCommandEncoder() dispatchThreads:MTLSizeMake(3, 1, 1) threadsPerThreadgroup:MTLSizeMake(3, 1, 1)];
     return dispatchCallBuffer;
 }
@@ -318,6 +474,9 @@ id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buf
 void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!m_computeCommandEncoder)
+        return;
     if (!isValidToUseWith(indirectBuffer, *this)) {
         makeInvalid(@"GPUComputePassEncoder.dispatchIndirect: indirectBuffer is not valid to use with this GPUComputePassEncoder");
         return;
@@ -386,14 +545,80 @@ void ComputePassEncoder::endPass()
         return;
     }
 
+    RetainPtr<NSString> encoderLabel = m_computeCommandEncoder.label;
     parentEncoder->endEncoding(m_computeCommandEncoder);
     m_computeCommandEncoder = nil;
+    if (m_isDeferringEncoding && m_deferredState && !m_deferredState->commands.isEmpty() && !parentEncoder->submitWillBeInvalid()) {
+        auto deferredState = std::exchange(m_deferredState, nullptr);
+        m_isDeferringEncoding = false;
+        ThreadSafeWeakPtr<Instance> weakInstance = m_device->weakInstance();
+        ThreadSafeWeakPtr<Device> weakDevice { m_device };
+        parentEncoder->addDeferredPassReplay([deferredState = WTF::move(deferredState), encoderLabel = WTF::move(encoderLabel), weakInstance = WTF::move(weakInstance), weakDevice = WTF::move(weakDevice)](id<MTLCommandBuffer> deferredCommandBuffer) mutable {
+            for (auto& command : deferredState->commands) {
+                if (auto* setPipeline = std::get_if<DeferredState::SetPipeline>(&command)) {
+                    if (!setPipeline->readyPSO && setPipeline->pending) {
+                        setPipeline->readyPSO = setPipeline->pending->wait();
+                        if (!setPipeline->readyPSO) {
+                            if (RefPtr protectedInstance = weakInstance) {
+                                bool hadLibErr = setPipeline->pending->hadLibraryError;
+                                RetainPtr<NSString> errMsg = setPipeline->pending->libraryErrorMessage;
+                                protectedInstance->scheduleWork([weakDevice, hadLibErr, errMsg = WTF::move(errMsg)] mutable {
+                                    if (RefPtr device = weakDevice) {
+                                        if (hadLibErr)
+                                            device->generateAValidationError(errMsg.get() ?: @"Compute library failed creation");
+                                        else
+                                            device->generateAnOutOfMemoryError("Compute pipeline failed compilation likely due to being too complex, please reduce its size"_s);
+                                    }
+                                });
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+
+            MTLComputePassDescriptor* desc = [MTLComputePassDescriptor new];
+            desc.dispatchType = MTLDispatchTypeSerial;
+            id<MTLComputeCommandEncoder> enc = [deferredCommandBuffer computeCommandEncoderWithDescriptor:desc];
+            if (!enc)
+                return;
+            if (encoderLabel)
+                enc.label = encoderLabel.get();
+
+            for (auto& command : deferredState->commands) {
+                WTF::switchOn(command,
+                    [&](DeferredState::UseResources& cmd) {
+                        if (cmd.rawResources.size())
+                            [enc useResources:borrow(cmd.rawResources)->span().data() count:cmd.rawResources.size() usage:cmd.usage];
+                    },
+                    [&](DeferredState::SetPipeline& cmd) {
+                        [enc setComputePipelineState:cmd.readyPSO.get()];
+                    },
+                    [&](DeferredState::SetBuffer& cmd) {
+                        [enc setBuffer:cmd.buffer.get() offset:cmd.offset atIndex:cmd.index];
+                    },
+                    [&](DeferredState::SetBytes& cmd) {
+                        [enc setBytes:borrow(cmd.bytes)->span().data() length:cmd.bytes.size() atIndex:cmd.index];
+                    },
+                    [&](DeferredState::Dispatch& cmd) {
+                        [enc dispatchThreadgroups:cmd.threadgroups threadsPerThreadgroup:cmd.threadsPerThreadgroup];
+                    });
+            }
+            [enc endEncoding];
+        });
+    } else {
+        m_deferredState = nullptr;
+        m_isDeferringEncoding = false;
+    }
     parentEncoder->lock(false);
 }
 
 void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!m_computeCommandEncoder)
+        return;
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
 
     if (!prepareTheEncoderState())
@@ -416,6 +641,8 @@ bool ComputePassEncoder::validatePopDebugGroup() const
 void ComputePassEncoder::makeInvalid(NSString* errorString)
 {
     m_lastErrorString = errorString;
+    m_deferredState = nullptr;
+    m_isDeferringEncoding = false;
 
     auto parentEncoder = m_parentEncoder;
 
@@ -432,6 +659,9 @@ void ComputePassEncoder::makeInvalid(NSString* errorString)
 void ComputePassEncoder::popDebugGroup()
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!m_computeCommandEncoder)
+        return;
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup
 
     if (!prepareTheEncoderState())
@@ -449,6 +679,9 @@ void ComputePassEncoder::popDebugGroup()
 void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!m_computeCommandEncoder)
+        return;
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
 
     if (!prepareTheEncoderState())
@@ -490,6 +723,24 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const WebGPU::BindGro
     setBindGroup(groupIndex, downcast<BindGroup>(group), dynamicOffsets);
 }
 
+void ComputePassEncoder::setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data)
+{
+    RETURN_IF_FINISHED();
+
+    auto endOffset = checkedSum<uint64_t>(rangeOffset, data.size());
+    if ((rangeOffset % 4) || (data.size() % 4) || endOffset.hasOverflowed() || endOffset.value() > m_device->limits().maxImmediateSize) {
+        makeInvalid(@"GPUComputePassEncoder.setImmediates: invalid rangeOffset or contentSize");
+        return;
+    }
+
+    if (data.size()) {
+        memcpySpan(std::span { m_immediateData }.subspan(rangeOffset, data.size()), data);
+        for (size_t slot = rangeOffset / 4, endSlot = endOffset.value() / 4; slot < endSlot; ++slot)
+            m_setImmediateSlots |= (1ull << slot);
+        m_immediatesDirty = true;
+    }
+}
+
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* groupPtr, std::optional<std::span<const uint32_t>> apiDynamicOffsets)
 {
     // The encoder keeps the dynamic offsets.
@@ -499,7 +750,8 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* grou
 
     RETURN_IF_FINISHED();
 
-    auto dynamicOffsetCount = (groupPtr && groupPtr->bindGroupLayout()) ? groupPtr->bindGroupLayout()->dynamicBufferCount() : 0;
+    RefPtr groupLayout = groupPtr ? groupPtr->bindGroupLayout() : nullptr;
+    auto dynamicOffsetCount = groupLayout ? groupLayout->dynamicBufferCount() : 0;
     if (groupIndex >= m_device->limits().maxBindGroups || (dynamicOffsets && dynamicOffsetCount != dynamicOffsets->size())) {
         makeInvalid(@"GPUComputePassEncoder.setBindGroup: groupIndex >= limits.maxBindGroups");
         return;
@@ -536,8 +788,10 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* grou
         m_maxDynamicOffsetAtIndex[groupIndex] = 0;
 
     Vector<const BindableResources*> resourceList;
+    if (m_isDeferringEncoding && m_deferredState && !m_parentEncoder->submitWillBeInvalid())
+        m_deferredState->appendBindGroupResources(group);
     for (const auto& resource : group.resources()) {
-        if (resource.renderStages == BindGroup::MTLRenderStageCompute && resource.mtlResources.size())
+        if (!m_isDeferringEncoding && resource.renderStages == BindGroup::MTLRenderStageCompute && resource.mtlResources.size())
             [computeCommandEncoder() useResources:&borrow(resource.mtlResources)[0] count:resource.mtlResources.size() usage:resource.usage];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
@@ -566,7 +820,6 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
     m_computeDynamicOffsets.fill(0, protect(m_pipeline->pipelineLayout())->sizeOfComputeDynamicOffsets());
     m_maxDynamicOffsetAtIndex.fill(0);
 
-    ASSERT(pipeline.computePipelineState());
     m_threadsPerThreadgroup = pipeline.threadsPerThreadgroup();
 }
 

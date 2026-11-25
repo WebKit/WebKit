@@ -26,6 +26,8 @@
 #pragma once
 
 #include <wtf/HashMap.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 
 namespace WGSL {
 
@@ -35,42 +37,47 @@ class Identifier;
 
 template<typename ContextValue>
 class ContextProvider {
-    class Context;
     friend class ContextScope;
 
 protected:
     using ContextMap = HashMap<String, ContextValue>;
 
-    class ContextScope {
-    public:
-        ContextScope(ContextProvider*);
-        ~ContextScope();
-
-    private:
-        ContextProvider& m_provider;
-        Context* m_previousContext;
-    };
-
-    ContextProvider();
-
-    const ContextValue* introduceVariable(const String&, const ContextValue&);
-    const ContextValue* readVariable(const String&) const;
-
 private:
     class Context {
     public:
-        Context(const Context *const parent);
+        Context(const Context* parent, const ContextMap* fallbackMap = nullptr);
 
         const ContextValue* lookup(const String&) const;
         const ContextValue* add(const String&, const ContextValue&);
 
     private:
         const Context* m_parent { nullptr };
+        const ContextMap* m_fallbackMap { nullptr };
         ContextMap m_map;
     };
 
-    Context* m_context;
-    Vector<std::unique_ptr<Context>> m_contexts;
+protected:
+    class ContextScope {
+        WTF_MAKE_NONCOPYABLE(ContextScope);
+        WTF_MAKE_NONMOVABLE(ContextScope);
+    public:
+        ContextScope(ContextProvider*);
+        ContextScope(ContextProvider*, const ContextMap* fallbackMap);
+        ~ContextScope();
+
+    private:
+        ContextProvider& m_provider;
+        Context* m_previousContext;
+        Context m_scopeContext;
+    };
+
+    ContextProvider(const ContextMap* fallbackMap = nullptr);
+
+    const ContextValue* introduceVariable(const String&, const ContextValue&);
+    const ContextValue* readVariable(const String&) const;
+
+private:
+    Context* m_context { nullptr };
     ContextScope m_globalScope;
 };
 

@@ -267,7 +267,16 @@ void IOValidator::visit(AST::CallExpression& call)
 void IOValidator::validateResources(const CallGraph::EntryPoint& entryPoint)
 {
     HashMap<std::pair<unsigned, unsigned>, const CallGraph::Global*> usedGlobals;
+    const CallGraph::Global* usedImmediateGlobal = nullptr;
     for (auto* global : entryPoint.usedGlobals) {
+        if (global->declaration && global->declaration->addressSpace() == AddressSpace::Immediate) {
+            if (usedImmediateGlobal) [[unlikely]] {
+                error(global->declaration->span(), "entry point '"_s, entryPoint.originalName, "' uses multiple immediate variables: '"_s, usedImmediateGlobal->declaration->originalName(), "' and '"_s, global->declaration->originalName(), '\'');
+                return;
+            }
+            usedImmediateGlobal = global;
+        }
+
         if (!global->resource)
             continue;
 
@@ -396,6 +405,7 @@ case Builtin::__case: \
     CASE(FragDepth, TYPE_CHECK(f32), Fragment, Output)
     CASE(FrontFacing, TYPE_CHECK(bool), Fragment, Input)
     CASE(GlobalInvocationId, VEC_CHECK(3, u32), Compute, Input)
+    CASE(GlobalInvocationIndex, TYPE_CHECK(u32), Compute, Input)
     CASE(InstanceIndex, TYPE_CHECK(u32), Vertex, Input)
     CASE(LocalInvocationId, VEC_CHECK(3, u32), Compute, Input)
     CASE(LocalInvocationIndex, TYPE_CHECK(u32), Compute, Input)
@@ -457,6 +467,7 @@ case Builtin::__case: \
     }
     CASE(VertexIndex, TYPE_CHECK(u32), Vertex, Input)
     CASE(WorkgroupId, VEC_CHECK(3, u32), Compute, Input)
+    CASE(WorkgroupIndex, TYPE_CHECK(u32), Compute, Input)
     CASE2(SampleMask, TYPE_CHECK(u32), Fragment, Input, Fragment, Output)
     CASE2(Position, VEC_CHECK(4, f32), Vertex, Output, Fragment, Input)
     }

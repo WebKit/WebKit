@@ -57,6 +57,7 @@ struct SharedVideoFrame;
 
 namespace WebGPU {
 struct ImageCopyExternalImage;
+struct ImageCopyExternalImageData;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 struct ImageCopyExternalImageVideoSource;
 #endif
@@ -126,6 +127,12 @@ private:
         const WebGPU::ImageCopyTextureTagged& destination,
         const WebGPU::Extent3D& copySize,
         CompletionHandler<void()>&&);
+
+    void copyExternalImageDataToTexture(
+        const WebGPU::ImageCopyExternalImageData& source,
+        Vector<uint32_t>&& data,
+        const WebGPU::ImageCopyTextureTagged& destination,
+        const WebGPU::Extent3D& copySize);
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);

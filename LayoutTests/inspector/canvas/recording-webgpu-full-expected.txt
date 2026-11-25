@@ -71,7 +71,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   8: (duration)
-    0: pipelineLayout = createPipelineLayout({"bindGroupLayouts":["<bindGroupLayout>",null]})
+    0: pipelineLayout = createPipelineLayout({"immediateSize":0,"bindGroupLayouts":["<bindGroupLayout>",null]})
       swizzleTypes: [GPUPipelineLayoutDescriptor]
       trace:
         0: createPipelineLayout

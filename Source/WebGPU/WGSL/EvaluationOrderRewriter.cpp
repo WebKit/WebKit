@@ -195,6 +195,50 @@ void EvaluationOrderRewriter::hoistIndices(AST::Expression& expression)
             hoist(access);
         break;
     }
+    case AST::NodeKind::CallExpression: {
+        auto& call = uncheckedDowncast<AST::CallExpression>(expression);
+        if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call.target()); target && (target->base() == "bufferView"_s || target->base() == "bufferArrayView"_s)) {
+            hoistIndices(call.arguments()[0]);
+            bool replacedAny = false;
+            AST::Expression::List newArguments = call.arguments();
+            for (unsigned i = 1; i < newArguments.size(); ++i) {
+                if (mayHaveSideEffects(newArguments[i])) {
+                    AST::Expression& arg = newArguments[i];
+                    auto name = makeString("__evalOrder"_s, m_hoistCount++);
+                    auto& variable = m_shaderModule.astBuilder().construct<AST::Variable>(
+                        SourceSpan::empty(),
+                        AST::VariableFlavor::Let,
+                        AST::Identifier::make(name),
+                        nullptr,
+                        nullptr,
+                        &arg,
+                        AST::Attribute::List { }
+                    );
+                    m_hoisted.append(m_shaderModule.astBuilder().construct<AST::VariableStatement>(
+                        SourceSpan::empty(),
+                        variable
+                    ));
+                    auto& identifier = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+                        SourceSpan::empty(),
+                        AST::Identifier::make(name)
+                    );
+                    identifier.m_inferredType = arg.inferredType();
+                    newArguments[i] = identifier;
+                    replacedAny = true;
+                }
+            }
+            if (replacedAny) {
+                auto& newCall = m_shaderModule.astBuilder().construct<AST::CallExpression>(
+                    call.span(),
+                    call.target(),
+                    WTF::move(newArguments)
+                );
+                newCall.m_inferredType = call.inferredType();
+                m_shaderModule.replace(call, newCall);
+            }
+        }
+        break;
+    }
     default:
         break;
     }

@@ -67,8 +67,9 @@ public:
 
     const Type* inferredType() const { return m_inferredType; }
 
-    const std::optional<ConstantValue>& constantValue() const LIFETIME_BOUND { return m_constantValue; }
-    void setConstantValue(ConstantValue value) { m_constantValue = value; }
+    const OptionalConstantValue& constantValue() const LIFETIME_BOUND { return m_constantValue; }
+    void setConstantValue(ConstantValue value) { m_constantValue = WTF::move(value); }
+    void setConstantValue(const OptionalConstantValue& value) { m_constantValue = value; }
 
     const std::optional<Evaluation>& maybeEvaluation() const LIFETIME_BOUND { return m_evaluation; }
     Evaluation evaluation() const { return *m_evaluation; }
@@ -82,7 +83,7 @@ protected:
 
 private:
     std::optional<Evaluation> m_evaluation { std::nullopt };
-    std::optional<ConstantValue> m_constantValue { std::nullopt };
+    OptionalConstantValue m_constantValue;
 };
 
 } // namespace AST

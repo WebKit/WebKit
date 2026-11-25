@@ -66,4 +66,5 @@ interface GPUSupportedLimits {
     readonly attribute unsigned long maxStorageTexturesInFragmentStage;
     readonly attribute unsigned long maxStorageBuffersInVertexStage;
     readonly attribute unsigned long maxStorageTexturesInVertexStage;
+    readonly attribute unsigned long maxImmediateSize;
 };

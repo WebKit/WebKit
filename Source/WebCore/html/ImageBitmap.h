@@ -35,6 +35,7 @@
 #include <atomic>
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -48,6 +49,7 @@ class Blob;
 class CachedImage;
 class CanvasBase;
 class CSSStyleImageValue;
+class ArrayPixelBuffer;
 class ColorSpace;
 class HTMLCanvasElement;
 class HTMLImageElement;
@@ -150,6 +152,7 @@ public:
     ~ImageBitmap();
 
     NODELETE ImageBuffer* buffer() const;
+    ArrayPixelBuffer* cachedPixelData() const { return m_cachedPixelData.get(); }
 
     RefPtr<ImageBuffer> takeImageBuffer();
 
@@ -164,7 +167,7 @@ public:
     AlphaPremultiplication bufferAlphaFormat() const { return m_bufferAlphaFormat; }
 
     std::optional<DetachedImageBitmap> detach();
-    bool isDetached() const { return !m_bitmap; }
+    bool isDetached() const { return !m_bitmap && !m_cachedPixelData; }
     void close();
 
     NODELETE size_t memoryCost() const;
@@ -172,6 +175,8 @@ private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;
     ImageBitmap(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat);
+    ImageBitmap(ScriptExecutionContext&, Ref<ArrayPixelBuffer>&&, RenderingMode, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat);
+    static Ref<ImageBitmap> createWithCachedPixelData(ScriptExecutionContext&, Ref<ArrayPixelBuffer>&&, RenderingMode, bool originClean, bool premultiplyAlpha = false, bool forciblyPremultiplyAlpha = false, AlphaPremultiplication bufferAlphaFormat = AlphaPremultiplication::Premultiplied);
     static Ref<ImageBitmap> createBlankImageBuffer(ScriptExecutionContext&, bool originClean);
 
     static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
@@ -194,8 +199,11 @@ private:
     static void createCompletionHandler(ScriptExecutionContext&, Ref<CSSStyleImageValue>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 
-    RefPtr<ImageBuffer> m_bitmap;
+    mutable RefPtr<ImageBuffer> m_bitmap;
+    RefPtr<ArrayPixelBuffer> m_cachedPixelData;
+    WeakPtr<ScriptExecutionContext> m_scriptExecutionContext;
     std::atomic<size_t> m_memoryCost { 0 }; // Atomic, accessed from arbitrary thread by GC.
+    RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
     const bool m_originClean : 1 { false };
     const bool m_premultiplyAlpha : 1 { false };
     const bool m_forciblyPremultiplyAlpha : 1 { false };

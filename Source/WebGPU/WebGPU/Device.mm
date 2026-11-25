@@ -299,6 +299,7 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     , m_maxVerticesPerDrawCall(computeMaxCountForDevice(device))
 {
 #if PLATFORM(MAC)
+    m_device.shouldMaximizeConcurrentCompilation = YES;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
         RefPtr<Device> protectedThis = weakThis.get();
@@ -411,12 +412,19 @@ id<MTLTexture> Device::getXRViewSubImageDepthTexture() const
 void Device::makeInvalid()
 {
     m_device = nil;
+    m_argumentBufferSlab = nil;
+    m_argumentBufferSlabOffset = 0;
     protect(m_defaultQueue)->makeInvalid();
 }
 
 void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
 {
     m_device = nil;
+    m_argumentBufferSlab = nil;
+    m_argumentBufferSlabOffset = 0;
+    m_recycledBuffers.clear();
+    m_recycledBufferBytes = 0;
+    m_argumentEncoderCache.clear();
 
     m_adapter->makeInvalid();
 
@@ -428,6 +436,7 @@ void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
     protect(m_defaultQueue)->makeInvalid();
     // No errors are surfaced from a lost device.
     m_uncapturedErrorCallback = nullptr;
+    m_pendingShaderModules.clear();
 }
 
 static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
@@ -443,13 +452,19 @@ static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
 
 void Device::setOwnerWithIdentity(id<MTLResource> resource) const
 {
-    if (auto optionalWebProcessID = webProcessID()) {
-        auto webProcessID = optionalWebProcessID->sendRight();
-        if (!webProcessID)
-            return;
+    RefPtr scheduler = weakInstance();
+    if (!scheduler)
+        return;
 
-        WebGPU::Metal::setOwnerWithIdentity((id<MTLResourceSPI>)resource, webProcessID);
-    }
+    const auto& optionalWebProcessID = scheduler->webProcessID();
+    if (!optionalWebProcessID)
+        return;
+
+    auto sendRight = optionalWebProcessID->sendRight();
+    if (!sendRight)
+        return;
+
+    WebGPU::Metal::setOwnerWithIdentity((id<MTLResourceSPI>)resource, sendRight);
 }
 
 void Device::destroy()
@@ -486,13 +501,13 @@ bool Device::hasFeature(WebGPU::FeatureName feature) const
     return m_capabilities.features.contains(feature);
 }
 
-auto Device::currentErrorScope(WebGPU::ErrorFilter type) -> ErrorScope*
+auto Device::currentErrorScope(WebGPU::ErrorFilter type) -> Box<ErrorScope>
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-current-error-scope
 
     for (auto iterator = m_errorScopeStack.rbegin(); iterator != m_errorScopeStack.rend(); ++iterator) {
-        if (iterator->filter == type)
-            return &*iterator;
+        if ((*iterator)->filter == type)
+            return *iterator;
     }
     return nullptr;
 }
@@ -572,6 +587,36 @@ void Device::dispatchUncapturedError(WebGPU::Error&& error)
         callback->run(WTF::move(error));
 }
 
+void Device::reportUncapturedValidationError(String&& message)
+{
+    if (m_supressAllErrors || m_isLost)
+        return;
+    dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::Validation, WTF::move(message) });
+}
+
+void Device::completeReadyPendingShaderModules()
+{
+    while (!m_pendingShaderModules.isEmpty()) {
+        RefPtr shaderModule = m_pendingShaderModules.first();
+        if (!shaderModule) {
+            m_pendingShaderModules.takeFirst();
+            continue;
+        }
+        if (!shaderModule->hasCompletedPendingCheck())
+            break;
+        m_pendingShaderModules.takeFirst();
+        shaderModule->ensureCompiled();
+    }
+}
+
+void Device::drainPendingShaderModules()
+{
+    while (!m_pendingShaderModules.isEmpty()) {
+        if (RefPtr shaderModule = m_pendingShaderModules.takeFirst())
+            shaderModule->ensureCompiled();
+    }
+}
+
 void Device::generateAValidationError(NSString * message)
 {
     generateAValidationError(String { message });
@@ -579,53 +624,48 @@ void Device::generateAValidationError(NSString * message)
 
 void Device::generateAValidationError(String&& message)
 {
-    if (m_supressAllErrors)
+    if (m_supressAllErrors || m_isLost)
         return;
 
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-a-validation-error
-    auto* scope = currentErrorScope(WebGPU::ErrorFilter::Validation);
-    if (scope) {
-        if (!scope->error)
-            scope->error = WebGPU::Error { WebGPU::ErrorType::Validation, WTF::move(message) };
+    if (auto scope = currentErrorScope(WebGPU::ErrorFilter::Validation)) {
+        scope->recordErrorAt(scope->nextOperationIndex++, WebGPU::ErrorType::Validation, WTF::move(message));
         return;
     }
 
+    drainPendingShaderModules();
     dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::Validation, WTF::move(message) });
 }
 
 void Device::generateAnOutOfMemoryError(String&& message)
 {
-    if (m_supressAllErrors)
+    if (m_supressAllErrors || m_isLost)
         return;
 
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-out-of-memory-error
 
-    auto* scope = currentErrorScope(WebGPU::ErrorFilter::OutOfMemory);
-
-    if (scope) {
-        if (!scope->error)
-            scope->error = WebGPU::Error { WebGPU::ErrorType::OutOfMemory, WTF::move(message) };
+    if (auto scope = currentErrorScope(WebGPU::ErrorFilter::OutOfMemory)) {
+        scope->recordErrorAt(scope->nextOperationIndex++, WebGPU::ErrorType::OutOfMemory, WTF::move(message));
         return;
     }
 
+    drainPendingShaderModules();
     dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::OutOfMemory, WTF::move(message) });
 }
 
 void Device::generateAnInternalError(String&& message)
 {
-    if (m_supressAllErrors)
+    if (m_supressAllErrors || m_isLost)
         return;
 
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-internal-error
 
-    auto* scope = currentErrorScope(WebGPU::ErrorFilter::Internal);
-
-    if (scope) {
-        if (!scope->error)
-            scope->error = WebGPU::Error { WebGPU::ErrorType::Internal, WTF::move(message) };
+    if (auto scope = currentErrorScope(WebGPU::ErrorFilter::Internal)) {
+        scope->recordErrorAt(scope->nextOperationIndex++, WebGPU::ErrorType::Internal, WTF::move(message));
         return;
     }
 
+    drainPendingShaderModules();
     dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::Internal, WTF::move(message) });
 }
 
@@ -689,11 +729,15 @@ void Device::popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Er
     }
 
     auto scope = m_errorScopeStack.takeLast();
+    if (scope->pendingAsyncOperations) {
+        scope->popCallback = WTF::move(callback);
+        return;
+    }
 
     if (RefPtr inst = weakInstance()) {
         inst->scheduleWork([scope = WTF::move(scope), callback = WTF::move(callback)]() mutable {
-            bool caughtNoError = !scope.error;
-            callback(caughtNoError, WTF::move(scope.error));
+            bool caughtNoError = !scope->error;
+            callback(caughtNoError, WTF::move(scope->error));
         });
     } else
         callback(true, std::nullopt);
@@ -703,9 +747,7 @@ void Device::pushErrorScope(WebGPU::ErrorFilter filter)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-pusherrorscope
 
-    ErrorScope scope { std::nullopt, filter };
-
-    m_errorScopeStack.append(WTF::move(scope));
+    m_errorScopeStack.append(Box<ErrorScope>::create(filter));
 }
 
 void Device::resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostReason, String&&)>&& callback)
@@ -722,6 +764,7 @@ void Device::resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostR
 
 void Device::setUncapturedErrorCallback(Function<void(WebGPU::Error&&)>&& callback)
 {
+    drainPendingShaderModules();
     // A lost device reports no errors, so it does not keep the callback.
     if (!callback || m_isLost) {
         m_uncapturedErrorCallback = nullptr;
@@ -1276,10 +1319,7 @@ uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex) const
 
 id<MTLSharedEvent> Device::resolveTimestampsSharedEvent()
 {
-    if (!m_resolveTimestampsSharedEvent)
-        m_resolveTimestampsSharedEvent = [m_device newSharedEvent];
-
-    return m_resolveTimestampsSharedEvent;
+    return [m_device newSharedEvent];
 }
 
 void Device::trackTimestampsBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLCounterSampleBuffer> counterSampleBuffer)

@@ -2054,6 +2054,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::WebGPU::FragmentState': ['"WebGPUFragmentState.h"'],
         'WebKit::WebGPU::ImageCopyBuffer': ['"WebGPUImageCopyBuffer.h"'],
         'WebKit::WebGPU::ImageCopyExternalImage': ['"WebGPUImageCopyExternalImage.h"'],
+        'WebKit::WebGPU::ImageCopyExternalImageData': ['"WebGPUImageCopyExternalImage.h"'],
         'WebKit::WebGPU::ImageCopyExternalImageVideoSource': ['"WebGPUImageCopyExternalImage.h"'],
         'WebKit::WebGPU::ImageCopyTexture': ['"WebGPUImageCopyTexture.h"'],
         'WebKit::WebGPU::ImageCopyTextureTagged': ['"WebGPUImageCopyTextureTagged.h"'],

@@ -37,6 +37,7 @@ messages -> RemoteQueue Stream {
     void WriteTexture(WebKit::WebGPU::ImageCopyTexture destination, std::optional<WebCore::SharedMemory::Handle> dataHandle, WebKit::WebGPU::ImageDataLayout imageDataLayout, WebKit::WebGPU::Extent3D size) -> (bool success) NotStreamEncodable
     void WriteTextureWithCopy(WebKit::WebGPU::ImageCopyTexture destination, Vector<uint8_t> data, WebKit::WebGPU::ImageDataLayout imageDataLayout, WebKit::WebGPU::Extent3D size)
     void CopyExternalImageToTexture(WebKit::WebGPU::ImageCopyExternalImage source, WebKit::WebGPU::ImageCopyTextureTagged destination, WebKit::WebGPU::Extent3D copySize) -> () Synchronous
+    void CopyExternalImageDataToTexture(WebKit::WebGPU::ImageCopyExternalImageData source, Vector<uint32_t> data, WebKit::WebGPU::ImageCopyTextureTagged destination, WebKit::WebGPU::Extent3D copySize)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable

@@ -63,19 +63,19 @@ AbstractPointer::AbstractPointer(AbstractValue addressSpace, AbstractType elemen
 
 struct ViableOverload {
     const OverloadCandidate* candidate;
-    FixedVector<unsigned> ranks;
-    FixedVector<const Type*> parameters;
+    WTF::Vector<unsigned, 8> ranks;
+    WTF::Vector<const Type*, 8> parameters;
     const Type* result;
+    bool allRanksZero { true };
 };
 
 class OverloadResolver {
 public:
-    OverloadResolver(TypeStore&, const Vector<OverloadCandidate>&, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions);
+    OverloadResolver(TypeStore&, const Vector<OverloadCandidate>&, std::span<const Type* const> valueArguments, std::span<const Type* const> typeArguments);
 
     std::optional<SelectedOverload> resolve();
 
 private:
-    FixedVector<std::optional<ViableOverload>> considerCandidates();
     std::optional<ViableOverload> considerCandidate(const OverloadCandidate&);
     ConversionRank calculateRank(const AbstractType&, const Type*);
     ConversionRank conversionRank(const Type*, const Type*) const;
@@ -93,33 +93,34 @@ private:
 
     TypeStore& m_types;
     const Vector<OverloadCandidate>& m_candidates;
-    const Vector<const Type*>& m_valueArguments;
-    const Vector<const Type*>& m_typeArguments;
-    FixedVector<const Type*> m_typeSubstitutions;
-    FixedVector<std::optional<unsigned>> m_valueSubstitutions;
+    std::span<const Type* const> m_valueArguments;
+    std::span<const Type* const> m_typeArguments;
+    WTF::Vector<const Type*, 8> m_typeSubstitutions;
+    WTF::Vector<std::optional<unsigned>, 8> m_valueSubstitutions;
 };
 
-OverloadResolver::OverloadResolver(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions)
+OverloadResolver::OverloadResolver(TypeStore& types, const Vector<OverloadCandidate>& candidates, std::span<const Type* const> valueArguments, std::span<const Type* const> typeArguments)
     : m_types(types)
     , m_candidates(candidates)
     , m_valueArguments(valueArguments)
     , m_typeArguments(typeArguments)
-    , m_typeSubstitutions(numberOfTypeSubstitutions)
-    , m_valueSubstitutions(numberOfValueSubstitutions)
 {
 }
 
 std::optional<SelectedOverload> OverloadResolver::resolve()
 {
-    auto candidates = considerCandidates();
     std::optional<ViableOverload> selectedCandidate;
 
-    for (auto& candidate : candidates) {
+    auto candidatesSpan = m_candidates.span();
+    for (unsigned candidateIndex = 0; candidateIndex < candidatesSpan.size(); ++candidateIndex) {
+        auto candidate = considerCandidate(candidatesSpan[candidateIndex]);
         if (!candidate.has_value())
             continue;
 
         if (!selectedCandidate.has_value()) {
-            std::exchange(selectedCandidate, candidate);
+            selectedCandidate = WTF::move(candidate);
+            if (selectedCandidate->allRanksZero)
+                break;
             continue;
         }
         ASSERT(selectedCandidate->ranks.size() == candidate->ranks.size());
@@ -134,8 +135,11 @@ std::optional<SelectedOverload> OverloadResolver::resolve()
             if (candidate->ranks[i] < selectedCandidate->ranks[i])
                 hasStrictlyBetter = true;
         }
-        if (isBetterOrEqual && hasStrictlyBetter)
-            std::exchange(selectedCandidate, candidate);
+        if (isBetterOrEqual && hasStrictlyBetter) {
+            selectedCandidate = WTF::move(candidate);
+            if (selectedCandidate->allRanksZero)
+                break;
+        }
     }
 
     if (!selectedCandidate.has_value()) {
@@ -233,14 +237,6 @@ unsigned OverloadResolver::materialize(const AbstractValue& abstractValue) const
         });
 }
 
-FixedVector<std::optional<ViableOverload>> OverloadResolver::considerCandidates()
-{
-    FixedVector<std::optional<ViableOverload>> candidates(m_candidates.size());
-    for (unsigned i = 0; i < m_candidates.size(); ++i)
-        candidates[i] = considerCandidate(borrow(m_candidates)[i]);
-    return candidates;
-}
-
 std::optional<ViableOverload> OverloadResolver::considerCandidate(const OverloadCandidate& candidate)
 {
     if (candidate.parameters.size() != m_valueArguments.size())
@@ -249,48 +245,54 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     if (m_typeArguments.size() > candidate.typeVariables.size())
         return std::nullopt;
 
+    m_typeSubstitutions.resize(candidate.typeVariables.size());
     m_typeSubstitutions.fill(nullptr);
+    m_valueSubstitutions.resize(candidate.valueVariables.size());
     m_valueSubstitutions.fill(std::nullopt);
 
     for (unsigned i = 0; i < m_typeArguments.size(); ++i) {
-        if (!assign(candidate.typeVariables[i], borrow(m_typeArguments)[i]))
+        if (!assign(candidate.typeVariables[i], m_typeArguments[i]))
             return std::nullopt;
     }
 
     logLn("Considering overload: ", candidate);
 
-    ViableOverload viableOverload {
-        &candidate,
-        FixedVector<unsigned>(m_valueArguments.size()),
-        FixedVector<const Type*>(m_valueArguments.size()),
-        nullptr
-    };
     for (unsigned i = 0; i < m_valueArguments.size(); ++i) {
         auto& parameter = candidate.parameters[i];
-        auto* argument = borrow(m_valueArguments)[i];
+        auto* argument = m_valueArguments[i];
         logLn("matching parameter #", i, " '", parameter, "' with argument '", *argument, "'");
         if (!unify(parameter, argument)) {
             logLn("rejected on parameter #", i);
             return std::nullopt;
         }
     }
+
+    const Type* materializedResult = materialize(candidate.result);
+    if (!materializedResult)
+        return std::nullopt;
+
+    ViableOverload viableOverload;
+    viableOverload.candidate = &candidate;
+    viableOverload.result = materializedResult;
+    viableOverload.ranks.resize(m_valueArguments.size());
+    viableOverload.parameters.resize(m_valueArguments.size());
+
     for (unsigned i = 0; i < m_valueArguments.size(); ++i) {
         auto& parameter = candidate.parameters[i];
-        auto* argument = borrow(m_valueArguments)[i];
+        auto* argument = m_valueArguments[i];
         auto rank = calculateRank(parameter, argument);
         ASSERT(!!rank);
-        viableOverload.ranks[i] = *rank;
+        unsigned rankValue = *rank;
+        viableOverload.ranks[i] = rankValue;
+        if (rankValue)
+            viableOverload.allRanksZero = false;
         viableOverload.parameters[i] = materialize(parameter);
     }
-
-    viableOverload.result = materialize(candidate.result);
-    if (!viableOverload.result)
-        return std::nullopt;
 
     if (shouldDumpOverloadDebugInformation) {
         log("found a viable candidate '", candidate, "' materialized as '(");
         bool first = true;
-        for (auto& parameter : borrow(candidate.parameters)) {
+        for (auto& parameter : candidate.parameters.span()) {
             if (!first)
                 dataLog(", ");
             first = false;
@@ -559,16 +561,9 @@ ConversionRank OverloadResolver::conversionRank(const Type* from, const Type* to
     return rank;
 }
 
-std::optional<SelectedOverload> resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments)
+std::optional<SelectedOverload> resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, std::span<const Type* const> valueArguments, std::span<const Type* const> typeArguments)
 {
-
-    unsigned numberOfTypeSubstitutions = 0;
-    unsigned numberOfValueSubstitutions = 0;
-    for (const auto& candidate : candidates) {
-        numberOfTypeSubstitutions = std::max(numberOfTypeSubstitutions, static_cast<unsigned>(candidate.typeVariables.size()));
-        numberOfValueSubstitutions = std::max(numberOfValueSubstitutions, static_cast<unsigned>(candidate.valueVariables.size()));
-    }
-    OverloadResolver resolver(types, candidates, valueArguments, typeArguments, numberOfTypeSubstitutions, numberOfValueSubstitutions);
+    OverloadResolver resolver(types, candidates, valueArguments, typeArguments);
     return resolver.resolve();
 }
 
@@ -674,13 +669,13 @@ void printInternal(PrintStream& out, const WGSL::OverloadCandidate& candidate)
     if (candidate.typeVariables.size() || candidate.valueVariables.size()) {
         bool first = true;
         out.print("<");
-        for (auto& typeVariable : borrow(candidate.typeVariables)) {
+        for (auto& typeVariable : candidate.typeVariables.span()) {
             if (!first)
                 out.print(", ");
             first = false;
             printInternal(out, typeVariable);
         }
-        for (auto& valueVariable : borrow(candidate.valueVariables)) {
+        for (auto& valueVariable : candidate.valueVariables.span()) {
             if (!first)
                 out.print(", ");
             first = false;
@@ -690,7 +685,7 @@ void printInternal(PrintStream& out, const WGSL::OverloadCandidate& candidate)
     }
     out.print("(");
     bool first = true;
-    for (auto& parameter : borrow(candidate.parameters)) {
+    for (auto& parameter : candidate.parameters.span()) {
         if (!first)
             out.print(", ");
         first = false;

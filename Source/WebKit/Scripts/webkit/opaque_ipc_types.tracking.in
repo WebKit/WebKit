@@ -232,6 +232,7 @@
     [Legacy] MessageParamReply WebProcessProxy.SerializeAndWrapCryptoKey wrappedKey
     [Legacy] MessageParamReply WebProcessProxy.UnwrapCryptoKey key
     [Legacy] MessageParamReply RemoteBuffer.GetMappedRange data
+    [NotSentFromWebContent] MessageParamReply RemoteBuffer.MapAsync data
     [Legacy] StructureParam WebCore::CryptoKeyData.key
     [Legacy] StructureParam WebKit::FrameState.stateObjectData
     [Legacy] StructureParam WebKit::WebPushMessage.pushData

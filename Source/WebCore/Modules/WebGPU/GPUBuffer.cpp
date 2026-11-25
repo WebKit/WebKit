@@ -93,10 +93,11 @@ void GPUBuffer::mapAsync(ScriptExecutionContext& scriptExecutionContext, GPUMapM
         device->addBufferToUnmap(*this);
 
     m_pendingMapPromise = makeUnique<MapAsyncPromise>(promise);
+    std::optional<GPUSize64> effectiveSize = size ? size : (offset <= m_bufferSize ? std::optional<GPUSize64>(m_bufferSize - offset) : std::nullopt);
     // FIXME: Should this capture a weak pointer to |this| instead?
     // The buffer stays pending until the task that settles the promise, where the specification runs
     // the map success and map failure steps.
-    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, size, [weakContext = WeakPtr { scriptExecutionContext }, promise = WTF::move(promise), protectedThis = protect(*this), offset, size](bool success) mutable {
+    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, effectiveSize, [weakContext = WeakPtr { scriptExecutionContext }, promise = WTF::move(promise), protectedThis = protect(*this), offset, size](bool success) mutable {
         RefPtr context = weakContext;
         if (!context)
             return;
@@ -122,7 +123,10 @@ void GPUBuffer::mapAsync(ScriptExecutionContext& scriptExecutionContext, GPUMapM
                         device->removeBufferToUnmap(protectedThis.get());
                 }
 
-                promise.reject(Exception { ExceptionCode::OperationError, "map async was not successful"_s });
+                if (RefPtr device = protectedThis->m_device; device && device->m_isDestroyed)
+                    promise.reject(Exception { ExceptionCode::AbortError, "Device is destroyed"_s });
+                else
+                    promise.reject(Exception { ExceptionCode::OperationError, "map async was not successful"_s });
             }
         });
     });
@@ -205,6 +209,18 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(GPUSize64 offset, s
     else {
         m_mappedRanges.add({ static_cast<size_t>(offset), static_cast<size_t>(endOffset) });
         m_mappedRanges.compact();
+    }
+
+    if (m_mappedAtCreation) {
+        auto arrayBuffer = JSC::ArrayBuffer::tryCreate(size, 1);
+        if (!arrayBuffer)
+            return Exception { ExceptionCode::RangeError, "Out of memory"_s };
+
+        m_arrayBuffers.append({ arrayBuffer, static_cast<size_t>(offset) });
+        arrayBuffer->pin();
+        if (RefPtr protectedDevice = m_device)
+            protectedDevice->addBufferToUnmap(*this);
+        return arrayBuffer.releaseNonNull();
     }
 
     RefPtr<JSC::ArrayBuffer> result;
