@@ -949,7 +949,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
                 font = originalFont;
         }
 
-        String fontWeight = _caches->propertyValueForNode(element, CSSPropertyID::FontStyle);
+        String fontWeight = _caches->propertyValueForNode(element, CSSPropertyID::FontWeight);
         if (fontWeight.startsWith("bold"_s) || parseIntegerAllowingTrailingJunk<int>(fontWeight).value_or(0) >= 700) {
             // ??? handle weight properly using NSFontManager
             RetainPtr originalFont = font;
