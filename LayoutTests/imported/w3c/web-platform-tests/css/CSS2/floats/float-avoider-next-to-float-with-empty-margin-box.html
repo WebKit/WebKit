@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<title>CSS Test: A box that establishes a new block formatting context does not avoid a float with an empty margin box</title>
+<link rel="help" href="https://drafts.csswg.org/css2/#floats">
+<link rel="match" href="float-avoider-next-to-float-with-empty-margin-box-ref.html">
+<meta name="assert" content="The floats after the green float have no width (one has no width, the other a negative margin that makes its margin box narrower than nothing), so there is nothing for the blue boxes to avoid below the green float, and they start at the left edge of their container.">
+<style>
+.container {
+  display: flow-root;
+  width: 200px;
+  height: 40px;
+  margin-bottom: 10px;
+  background-color: lightgray;
+}
+
+.float {
+  float: left;
+  width: 50px;
+  height: 10px;
+  background-color: green;
+}
+
+.zero-width {
+  float: left;
+  width: 0;
+  height: 40px;
+}
+
+.negative-width {
+  float: left;
+  width: 50px;
+  height: 40px;
+  margin-right: -80px;
+}
+
+.spacer {
+  height: 20px;
+}
+
+.avoider {
+  overflow: hidden;
+  height: 10px;
+  background-color: blue;
+}
+
+.fixed-width {
+  width: 100px;
+}
+</style>
+<div class="container">
+  <div class="float"></div>
+  <div class="zero-width"></div>
+  <div class="spacer"></div>
+  <div class="avoider fixed-width"></div>
+</div>
+<div class="container">
+  <div class="float"></div>
+  <div class="negative-width"></div>
+  <div class="spacer"></div>
+  <div class="avoider fixed-width"></div>
+</div>
+<div class="container">
+  <div class="float"></div>
+  <div class="zero-width"></div>
+  <div class="spacer"></div>
+  <div class="avoider"></div>
+</div>
+<div class="container">
+  <div class="float"></div>
+  <div class="negative-width"></div>
+  <div class="spacer"></div>
+  <div class="avoider"></div>
+</div>

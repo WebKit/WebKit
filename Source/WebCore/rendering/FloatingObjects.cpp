@@ -552,10 +552,18 @@ inline void ComputeFloatOffsetAdapter<FloatTypeValue>::collectIfNeeded(const Int
         m_outermostFloat = &floatingObject;
 }
 
+// There is nothing to overlap in an empty margin box, so a float with one takes no room (see FloatingContext's floatContainsLine()).
+// FIXME: The frame rect is not always the margin box: its block size also covers the pagination strut and the initial-letter
+// sink (see RenderBlockFlow::positionNewFloats() and adjustInitialLetterPosition()).
+static bool hasEmptyMarginBox(const RenderBlockFlow& block, const FloatingObject& floatingObject)
+{
+    return block.logicalWidthForFloat(floatingObject) <= 0 || block.logicalHeightForFloat(floatingObject) <= 0;
+}
+
 template<>
 inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
-    if (!floatingObject.renderer())
+    if (!floatingObject.renderer() || hasEmptyMarginBox(*m_renderer, floatingObject))
         return false;
 
     LayoutUnit logicalRight = m_renderer->logicalRightForFloat(floatingObject);
@@ -577,7 +585,7 @@ inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::u
 template<>
 inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
-    if (!floatingObject.renderer())
+    if (!floatingObject.renderer() || hasEmptyMarginBox(*m_renderer, floatingObject))
         return false;
 
     LayoutUnit logicalLeft = m_renderer->logicalLeftForFloat(floatingObject);
