@@ -20127,6 +20127,8 @@
 		BC7C5E962BE2A8FB00AE645C /* SizesAttributeParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SizesAttributeParser.cpp; sourceTree = "<group>"; };
 		BC7C5E972BE2A8FB00AE645C /* SizesAttributeParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SizesAttributeParser.h; sourceTree = "<group>"; };
 		BC7C5E9A2BE2A9F500AE645C /* CSSPropertyParserConsumer+MetaConsumerDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"; sourceTree = "<group>"; };
+		BC7C5E9B2BE2A9F500AE645D /* CSSPropertyParserConsumer+MetaParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+MetaParser.h"; sourceTree = "<group>"; };
+		E056104FB89061459751DDEE /* CSSPropertyParserConsumer+MetaParserFastPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+MetaParserFastPath.h"; sourceTree = "<group>"; };
 		BC7C5E9B2BE2B54E00AE645C /* CSSFontVariantLigaturesParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFontVariantLigaturesParser.h; sourceTree = "<group>"; };
 		BC7C5E9C2BE2B54E00AE645C /* CSSFontVariantNumericParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFontVariantNumericParser.h; sourceTree = "<group>"; };
 		BC7C5E9D2BE2BAD500AE645C /* CSSPropertyParserConsumer+IntegerDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+IntegerDefinitions.h"; sourceTree = "<group>"; };
@@ -34042,6 +34044,8 @@
 				BCEA073D2CC720B9000AC148 /* CSSPropertyParserConsumer+Masking.h */,
 				BC7C5E6F2BE2A8FB00AE645C /* CSSPropertyParserConsumer+MetaConsumer.h */,
 				BC7C5E9A2BE2A9F500AE645C /* CSSPropertyParserConsumer+MetaConsumerDefinitions.h */,
+				BC7C5E9B2BE2A9F500AE645D /* CSSPropertyParserConsumer+MetaParser.h */,
+				E056104FB89061459751DDEE /* CSSPropertyParserConsumer+MetaParserFastPath.h */,
 				BCFE79A82BE2E01000114272 /* CSSPropertyParserConsumer+MetaResolver.h */,
 				BCEA073C2CC71FB6000AC148 /* CSSPropertyParserConsumer+Motion.cpp */,
 				BCEA073B2CC71F91000AC148 /* CSSPropertyParserConsumer+Motion.h */,

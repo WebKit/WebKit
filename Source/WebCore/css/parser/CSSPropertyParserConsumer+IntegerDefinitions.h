@@ -43,18 +43,25 @@ struct IntegerValidator {
 template<typename Primitive, typename Validator> struct NumberConsumerForIntegerValues {
     static constexpr CSSParserTokenType tokenType = NumberToken;
 
-    static std::optional<typename Primitive::Raw> consume(CSSParserTokenRange& range, CSS::PropertyParserState&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+    static std::optional<typename Primitive::Raw> interpret(const NumericToken auto& token, CSS::PropertyParserState&, CSSPropertyParserOptions options)
     {
-        ASSERT(range.peek().type() == NumberToken);
+        ASSERT(token.type() == NumberToken);
 
-        if (range.peek().numericValueType() != IntegerValueType)
+        if (token.numericValueType() != IntegerValueType)
             return std::nullopt;
 
-        auto rawValue = performOptionalParseTimeClamp(typename Primitive::Raw { CSS::IntegerUnit::Integer, range.peek().numericValue() });
+        auto rawValue = performOptionalParseTimeClamp(typename Primitive::Raw { CSS::IntegerUnit::Integer, token.numericValue() });
         if (!Validator::isValid(rawValue, options))
             return std::nullopt;
 
-        range.consumeIncludingWhitespace();
+        return rawValue;
+    }
+
+    static std::optional<typename Primitive::Raw> consume(CSSParserTokenRange& range, CSS::PropertyParserState& state, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+    {
+        auto rawValue = interpret(range.peek(), state, options);
+        if (rawValue)
+            range.consumeIncludingWhitespace();
         return rawValue;
     }
 };

@@ -32,6 +32,8 @@
 #include <WebCore/CSSParserToken.h>
 #include <WebCore/CSSTokenizerInputStream.h>
 #include <climits>
+#include <optional>
+#include <span>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -132,5 +134,13 @@ private:
     Vector<String> m_stringPool;
     CSSTokenizerInputStream m_input;
 };
+
+// Lexes `characters` as exactly one <number-token>, <percentage-token> or <dimension-token>,
+// producing the same type, value and unit as `CSSTokenizer::consumeNumericToken()` would.
+// Returns `std::nullopt` for anything else, including strings the tokenizer would still
+// accept (whitespace, comments, escapes or non-ASCII code points in the unit).
+std::optional<LexedNumericToken> lexNumericToken(std::span<const Latin1Character>);
+std::optional<LexedNumericToken> lexNumericToken(std::span<const char16_t>);
+std::optional<LexedNumericToken> lexNumericToken(StringView);
 
 } // namespace WebCore

@@ -1,0 +1,477 @@
+
+PASS "5" parses the same as a 16-bit string
+PASS "5" parses the same after a leading comment
+PASS setAttribute("orient", "5")
+PASS baseVal.valueAsString = "5"
+PASS "-5" parses the same as a 16-bit string
+PASS "-5" parses the same after a leading comment
+PASS setAttribute("orient", "-5")
+PASS baseVal.valueAsString = "-5"
+PASS "+5" parses the same as a 16-bit string
+PASS "+5" parses the same after a leading comment
+PASS setAttribute("orient", "+5")
+PASS baseVal.valueAsString = "+5"
+PASS "5.5" parses the same as a 16-bit string
+PASS "5.5" parses the same after a leading comment
+PASS setAttribute("orient", "5.5")
+PASS baseVal.valueAsString = "5.5"
+PASS ".5" parses the same as a 16-bit string
+PASS ".5" parses the same after a leading comment
+PASS setAttribute("orient", ".5")
+PASS baseVal.valueAsString = ".5"
+PASS "-.5" parses the same as a 16-bit string
+PASS "-.5" parses the same after a leading comment
+PASS setAttribute("orient", "-.5")
+PASS baseVal.valueAsString = "-.5"
+PASS "5." parses the same as a 16-bit string
+PASS "5." parses the same after a leading comment
+PASS setAttribute("orient", "5.")
+PASS baseVal.valueAsString = "5."
+PASS "5.deg" parses the same as a 16-bit string
+PASS "5.deg" parses the same after a leading comment
+PASS setAttribute("orient", "5.deg")
+PASS baseVal.valueAsString = "5.deg"
+PASS "1.e3" parses the same as a 16-bit string
+PASS "1.e3" parses the same after a leading comment
+PASS setAttribute("orient", "1.e3")
+PASS baseVal.valueAsString = "1.e3"
+PASS "1e3" parses the same as a 16-bit string
+PASS "1e3" parses the same after a leading comment
+PASS setAttribute("orient", "1e3")
+PASS baseVal.valueAsString = "1e3"
+PASS "1E3" parses the same as a 16-bit string
+PASS "1E3" parses the same after a leading comment
+PASS setAttribute("orient", "1E3")
+PASS baseVal.valueAsString = "1E3"
+PASS "1e+3" parses the same as a 16-bit string
+PASS "1e+3" parses the same after a leading comment
+PASS setAttribute("orient", "1e+3")
+PASS baseVal.valueAsString = "1e+3"
+PASS "1e-3" parses the same as a 16-bit string
+PASS "1e-3" parses the same after a leading comment
+PASS setAttribute("orient", "1e-3")
+PASS baseVal.valueAsString = "1e-3"
+PASS "1e" parses the same as a 16-bit string
+PASS "1e" parses the same after a leading comment
+PASS setAttribute("orient", "1e")
+PASS baseVal.valueAsString = "1e"
+PASS "1e3deg" parses the same as a 16-bit string
+PASS "1e3deg" parses the same after a leading comment
+PASS setAttribute("orient", "1e3deg")
+PASS baseVal.valueAsString = "1e3deg"
+PASS "1e3%" parses the same as a 16-bit string
+PASS "1e3%" parses the same after a leading comment
+PASS setAttribute("orient", "1e3%")
+PASS baseVal.valueAsString = "1e3%"
+PASS "5deg" parses the same as a 16-bit string
+PASS "5deg" parses the same after a leading comment
+PASS setAttribute("orient", "5deg")
+PASS baseVal.valueAsString = "5deg"
+PASS "5DEG" parses the same as a 16-bit string
+PASS "5DEG" parses the same after a leading comment
+PASS setAttribute("orient", "5DEG")
+PASS baseVal.valueAsString = "5DEG"
+PASS "5Deg" parses the same as a 16-bit string
+PASS "5Deg" parses the same after a leading comment
+PASS setAttribute("orient", "5Deg")
+PASS baseVal.valueAsString = "5Deg"
+PASS "5rad" parses the same as a 16-bit string
+PASS "5rad" parses the same after a leading comment
+PASS setAttribute("orient", "5rad")
+PASS baseVal.valueAsString = "5rad"
+PASS "5grad" parses the same as a 16-bit string
+PASS "5grad" parses the same after a leading comment
+PASS setAttribute("orient", "5grad")
+PASS baseVal.valueAsString = "5grad"
+PASS "5turn" parses the same as a 16-bit string
+PASS "5turn" parses the same after a leading comment
+PASS setAttribute("orient", "5turn")
+PASS baseVal.valueAsString = "5turn"
+PASS "5TURN" parses the same as a 16-bit string
+PASS "5TURN" parses the same after a leading comment
+PASS setAttribute("orient", "5TURN")
+PASS baseVal.valueAsString = "5TURN"
+PASS "-5deg" parses the same as a 16-bit string
+PASS "-5deg" parses the same after a leading comment
+PASS setAttribute("orient", "-5deg")
+PASS baseVal.valueAsString = "-5deg"
+PASS "+5rad" parses the same as a 16-bit string
+PASS "+5rad" parses the same after a leading comment
+PASS setAttribute("orient", "+5rad")
+PASS baseVal.valueAsString = "+5rad"
+PASS "5 deg" parses the same as a 16-bit string
+PASS "5 deg" parses the same after a leading comment
+PASS setAttribute("orient", "5 deg")
+PASS baseVal.valueAsString = "5 deg"
+PASS "5%" parses the same as a 16-bit string
+PASS "5%" parses the same after a leading comment
+PASS setAttribute("orient", "5%")
+PASS baseVal.valueAsString = "5%"
+PASS "5 %" parses the same as a 16-bit string
+PASS "5 %" parses the same after a leading comment
+PASS setAttribute("orient", "5 %")
+PASS baseVal.valueAsString = "5 %"
+PASS "5px" parses the same as a 16-bit string
+PASS "5px" parses the same after a leading comment
+PASS setAttribute("orient", "5px")
+PASS baseVal.valueAsString = "5px"
+PASS "5em" parses the same as a 16-bit string
+PASS "5em" parses the same after a leading comment
+PASS setAttribute("orient", "5em")
+PASS baseVal.valueAsString = "5em"
+PASS "5x" parses the same as a 16-bit string
+PASS "5x" parses the same after a leading comment
+PASS setAttribute("orient", "5x")
+PASS baseVal.valueAsString = "5x"
+PASS "0" parses the same as a 16-bit string
+PASS "0" parses the same after a leading comment
+PASS setAttribute("orient", "0")
+PASS baseVal.valueAsString = "0"
+PASS "-0" parses the same as a 16-bit string
+PASS "-0" parses the same after a leading comment
+PASS setAttribute("orient", "-0")
+PASS baseVal.valueAsString = "-0"
+PASS "0deg" parses the same as a 16-bit string
+PASS "0deg" parses the same after a leading comment
+PASS setAttribute("orient", "0deg")
+PASS baseVal.valueAsString = "0deg"
+PASS "0turn" parses the same as a 16-bit string
+PASS "0turn" parses the same after a leading comment
+PASS setAttribute("orient", "0turn")
+PASS baseVal.valueAsString = "0turn"
+PASS " 5" parses the same as a 16-bit string
+PASS " 5" parses the same after a leading comment
+PASS setAttribute("orient", " 5")
+PASS baseVal.valueAsString = " 5"
+PASS "5 " parses the same as a 16-bit string
+PASS "5 " parses the same after a leading comment
+PASS setAttribute("orient", "5 ")
+PASS baseVal.valueAsString = "5 "
+PASS " 5 " parses the same as a 16-bit string
+PASS " 5 " parses the same after a leading comment
+PASS setAttribute("orient", " 5 ")
+PASS baseVal.valueAsString = " 5 "
+PASS "\t5deg" parses the same as a 16-bit string
+PASS "\t5deg" parses the same after a leading comment
+PASS setAttribute("orient", "\t5deg")
+PASS baseVal.valueAsString = "\t5deg"
+PASS "\n5" parses the same as a 16-bit string
+PASS "\n5" parses the same after a leading comment
+PASS setAttribute("orient", "\n5")
+PASS baseVal.valueAsString = "\n5"
+PASS "\f5" parses the same as a 16-bit string
+PASS "\f5" parses the same after a leading comment
+PASS setAttribute("orient", "\f5")
+PASS baseVal.valueAsString = "\f5"
+PASS "\r5" parses the same as a 16-bit string
+PASS "\r5" parses the same after a leading comment
+PASS setAttribute("orient", "\r5")
+PASS baseVal.valueAsString = "\r5"
+PASS "\u000b5" parses the same as a 16-bit string
+PASS "\u000b5" parses the same after a leading comment
+PASS setAttribute("orient", "\u000b5")
+PASS baseVal.valueAsString = "\u000b5"
+PASS "5\u000b" parses the same as a 16-bit string
+PASS "5\u000b" parses the same after a leading comment
+PASS setAttribute("orient", "5\u000b")
+PASS baseVal.valueAsString = "5\u000b"
+PASS " 5" parses the same as a 16-bit string
+PASS " 5" parses the same after a leading comment
+PASS setAttribute("orient", " 5")
+PASS baseVal.valueAsString = " 5"
+PASS "5 " parses the same as a 16-bit string
+PASS "5 " parses the same after a leading comment
+PASS setAttribute("orient", "5 ")
+PASS baseVal.valueAsString = "5 "
+PASS "deg" parses the same as a 16-bit string
+PASS "deg" parses the same after a leading comment
+PASS setAttribute("orient", "deg")
+PASS baseVal.valueAsString = "deg"
+PASS "%" parses the same as a 16-bit string
+PASS "%" parses the same after a leading comment
+PASS setAttribute("orient", "%")
+PASS baseVal.valueAsString = "%"
+PASS "" parses the same as a 16-bit string
+PASS setAttribute("orient", "")
+PASS baseVal.valueAsString = ""
+PASS " " parses the same as a 16-bit string
+PASS " " parses the same after a leading comment
+PASS setAttribute("orient", " ")
+PASS baseVal.valueAsString = " "
+PASS "." parses the same as a 16-bit string
+PASS "." parses the same after a leading comment
+PASS setAttribute("orient", ".")
+PASS baseVal.valueAsString = "."
+PASS "-" parses the same as a 16-bit string
+PASS "-" parses the same after a leading comment
+PASS setAttribute("orient", "-")
+PASS baseVal.valueAsString = "-"
+PASS "+" parses the same as a 16-bit string
+PASS "+" parses the same after a leading comment
+PASS setAttribute("orient", "+")
+PASS baseVal.valueAsString = "+"
+PASS "--5" parses the same as a 16-bit string
+PASS "--5" parses the same after a leading comment
+PASS setAttribute("orient", "--5")
+PASS baseVal.valueAsString = "--5"
+PASS "+-5" parses the same as a 16-bit string
+PASS "+-5" parses the same after a leading comment
+PASS setAttribute("orient", "+-5")
+PASS baseVal.valueAsString = "+-5"
+PASS "5-" parses the same as a 16-bit string
+PASS "5-" parses the same after a leading comment
+PASS setAttribute("orient", "5-")
+PASS baseVal.valueAsString = "5-"
+PASS "0x10" parses the same as a 16-bit string
+PASS "0x10" parses the same after a leading comment
+PASS setAttribute("orient", "0x10")
+PASS baseVal.valueAsString = "0x10"
+PASS "1,5" parses the same as a 16-bit string
+PASS "1,5" parses the same after a leading comment
+PASS setAttribute("orient", "1,5")
+PASS baseVal.valueAsString = "1,5"
+PASS "Infinity" parses the same as a 16-bit string
+PASS "Infinity" parses the same after a leading comment
+PASS setAttribute("orient", "Infinity")
+PASS baseVal.valueAsString = "Infinity"
+PASS "NaN" parses the same as a 16-bit string
+PASS "NaN" parses the same after a leading comment
+PASS setAttribute("orient", "NaN")
+PASS baseVal.valueAsString = "NaN"
+PASS "1e39" parses the same as a 16-bit string
+PASS "1e39" parses the same after a leading comment
+PASS setAttribute("orient", "1e39")
+PASS baseVal.valueAsString = "1e39"
+PASS "-1e39" parses the same as a 16-bit string
+PASS "-1e39" parses the same after a leading comment
+PASS setAttribute("orient", "-1e39")
+PASS baseVal.valueAsString = "-1e39"
+PASS "1e39deg" parses the same as a 16-bit string
+PASS "1e39deg" parses the same after a leading comment
+PASS setAttribute("orient", "1e39deg")
+PASS baseVal.valueAsString = "1e39deg"
+PASS "-1e39deg" parses the same as a 16-bit string
+PASS "-1e39deg" parses the same after a leading comment
+PASS setAttribute("orient", "-1e39deg")
+PASS baseVal.valueAsString = "-1e39deg"
+PASS "1e400" parses the same as a 16-bit string
+PASS "1e400" parses the same after a leading comment
+PASS setAttribute("orient", "1e400")
+PASS baseVal.valueAsString = "1e400"
+PASS "1e400deg" parses the same as a 16-bit string
+PASS "1e400deg" parses the same after a leading comment
+PASS setAttribute("orient", "1e400deg")
+PASS baseVal.valueAsString = "1e400deg"
+PASS "1e-400" parses the same as a 16-bit string
+PASS "1e-400" parses the same after a leading comment
+PASS setAttribute("orient", "1e-400")
+PASS baseVal.valueAsString = "1e-400"
+PASS "3.4028235e38" parses the same as a 16-bit string
+PASS "3.4028235e38" parses the same after a leading comment
+PASS setAttribute("orient", "3.4028235e38")
+PASS baseVal.valueAsString = "3.4028235e38"
+PASS "3.4028236e38" parses the same as a 16-bit string
+PASS "3.4028236e38" parses the same after a leading comment
+PASS setAttribute("orient", "3.4028236e38")
+PASS baseVal.valueAsString = "3.4028236e38"
+PASS "3.4028235e38deg" parses the same as a 16-bit string
+PASS "3.4028235e38deg" parses the same after a leading comment
+PASS setAttribute("orient", "3.4028235e38deg")
+PASS baseVal.valueAsString = "3.4028235e38deg"
+PASS "1e-50deg" parses the same as a 16-bit string
+PASS "1e-50deg" parses the same after a leading comment
+PASS setAttribute("orient", "1e-50deg")
+PASS baseVal.valueAsString = "1e-50deg"
+PASS "0.1" parses the same as a 16-bit string
+PASS "0.1" parses the same after a leading comment
+PASS setAttribute("orient", "0.1")
+PASS baseVal.valueAsString = "0.1"
+PASS "0.1deg" parses the same as a 16-bit string
+PASS "0.1deg" parses the same after a leading comment
+PASS setAttribute("orient", "0.1deg")
+PASS baseVal.valueAsString = "0.1deg"
+PASS "0.30000000000000004" parses the same as a 16-bit string
+PASS "0.30000000000000004" parses the same after a leading comment
+PASS setAttribute("orient", "0.30000000000000004")
+PASS baseVal.valueAsString = "0.30000000000000004"
+PASS "123456789.123456789deg" parses the same as a 16-bit string
+PASS "123456789.123456789deg" parses the same after a leading comment
+PASS setAttribute("orient", "123456789.123456789deg")
+PASS baseVal.valueAsString = "123456789.123456789deg"
+PASS "16777217" parses the same as a 16-bit string
+PASS "16777217" parses the same after a leading comment
+PASS setAttribute("orient", "16777217")
+PASS baseVal.valueAsString = "16777217"
+PASS "00005" parses the same as a 16-bit string
+PASS "00005" parses the same after a leading comment
+PASS setAttribute("orient", "00005")
+PASS baseVal.valueAsString = "00005"
+PASS "5.000" parses the same as a 16-bit string
+PASS "5.000" parses the same after a leading comment
+PASS setAttribute("orient", "5.000")
+PASS baseVal.valueAsString = "5.000"
+PASS "5e0" parses the same as a 16-bit string
+PASS "5e0" parses the same after a leading comment
+PASS setAttribute("orient", "5e0")
+PASS baseVal.valueAsString = "5e0"
+PASS "5e" parses the same as a 16-bit string
+PASS "5e" parses the same after a leading comment
+PASS setAttribute("orient", "5e")
+PASS baseVal.valueAsString = "5e"
+PASS "5e+" parses the same as a 16-bit string
+PASS "5e+" parses the same after a leading comment
+PASS setAttribute("orient", "5e+")
+PASS baseVal.valueAsString = "5e+"
+PASS "5.5.5" parses the same as a 16-bit string
+PASS "5.5.5" parses the same after a leading comment
+PASS setAttribute("orient", "5.5.5")
+PASS baseVal.valueAsString = "5.5.5"
+PASS "5deg5" parses the same as a 16-bit string
+PASS "5deg5" parses the same after a leading comment
+PASS setAttribute("orient", "5deg5")
+PASS baseVal.valueAsString = "5deg5"
+PASS "5%%" parses the same as a 16-bit string
+PASS "5%%" parses the same after a leading comment
+PASS setAttribute("orient", "5%%")
+PASS baseVal.valueAsString = "5%%"
+PASS "5degdeg" parses the same as a 16-bit string
+PASS "5degdeg" parses the same after a leading comment
+PASS setAttribute("orient", "5degdeg")
+PASS baseVal.valueAsString = "5degdeg"
+PASS "5\u0000" parses the same as a 16-bit string
+PASS "5\u0000" parses the same after a leading comment
+PASS setAttribute("orient", "5\u0000")
+PASS baseVal.valueAsString = "5\u0000"
+PASS "calc(5deg)" parses the same as a 16-bit string
+PASS "calc(5deg)" parses the same after a leading comment
+PASS setAttribute("orient", "calc(5deg)")
+PASS baseVal.valueAsString = "calc(5deg)"
+PASS "calc(5)" parses the same as a 16-bit string
+PASS "calc(5)" parses the same after a leading comment
+PASS setAttribute("orient", "calc(5)")
+PASS baseVal.valueAsString = "calc(5)"
+PASS "5/**/" parses the same as a 16-bit string
+PASS "5/**/" parses the same after a leading comment
+PASS setAttribute("orient", "5/**/")
+PASS baseVal.valueAsString = "5/**/"
+PASS "/**/5" parses the same as a 16-bit string
+PASS "/**/5" parses the same after a leading comment
+PASS setAttribute("orient", "/**/5")
+PASS baseVal.valueAsString = "/**/5"
+PASS "5/**/deg" parses the same as a 16-bit string
+PASS "5/**/deg" parses the same after a leading comment
+PASS setAttribute("orient", "5/**/deg")
+PASS baseVal.valueAsString = "5/**/deg"
+PASS "1e3.5" parses the same as a 16-bit string
+PASS "1e3.5" parses the same after a leading comment
+PASS setAttribute("orient", "1e3.5")
+PASS baseVal.valueAsString = "1e3.5"
+PASS "1.5e3rad" parses the same as a 16-bit string
+PASS "1.5e3rad" parses the same after a leading comment
+PASS setAttribute("orient", "1.5e3rad")
+PASS baseVal.valueAsString = "1.5e3rad"
+PASS "-1.5E-3grad" parses the same as a 16-bit string
+PASS "-1.5E-3grad" parses the same after a leading comment
+PASS setAttribute("orient", "-1.5E-3grad")
+PASS baseVal.valueAsString = "-1.5E-3grad"
+PASS "5d" parses the same as a 16-bit string
+PASS "5d" parses the same after a leading comment
+PASS setAttribute("orient", "5d")
+PASS baseVal.valueAsString = "5d"
+PASS "5de" parses the same as a 16-bit string
+PASS "5de" parses the same after a leading comment
+PASS setAttribute("orient", "5de")
+PASS baseVal.valueAsString = "5de"
+PASS "5degr" parses the same as a 16-bit string
+PASS "5degr" parses the same after a leading comment
+PASS setAttribute("orient", "5degr")
+PASS baseVal.valueAsString = "5degr"
+PASS "+5deg" parses the same as a 16-bit string
+PASS "+5deg" parses the same after a leading comment
+PASS setAttribute("orient", "+5deg")
+PASS baseVal.valueAsString = "+5deg"
+PASS "5.%" parses the same as a 16-bit string
+PASS "5.%" parses the same after a leading comment
+PASS setAttribute("orient", "5.%")
+PASS baseVal.valueAsString = "5.%"
+PASS ".deg" parses the same as a 16-bit string
+PASS ".deg" parses the same after a leading comment
+PASS setAttribute("orient", ".deg")
+PASS baseVal.valueAsString = ".deg"
+PASS "-deg" parses the same as a 16-bit string
+PASS "-deg" parses the same after a leading comment
+PASS setAttribute("orient", "-deg")
+PASS baseVal.valueAsString = "-deg"
+PASS "+%" parses the same as a 16-bit string
+PASS "+%" parses the same after a leading comment
+PASS setAttribute("orient", "+%")
+PASS baseVal.valueAsString = "+%"
+PASS "5deg auto" parses the same as a 16-bit string
+PASS "5deg auto" parses the same after a leading comment
+PASS setAttribute("orient", "5deg auto")
+PASS baseVal.valueAsString = "5deg auto"
+PASS "5 5" parses the same as a 16-bit string
+PASS "5 5" parses the same after a leading comment
+PASS setAttribute("orient", "5 5")
+PASS baseVal.valueAsString = "5 5"
+PASS "5deg," parses the same as a 16-bit string
+PASS "5deg," parses the same after a leading comment
+PASS setAttribute("orient", "5deg,")
+PASS baseVal.valueAsString = "5deg,"
+PASS "5deg;" parses the same as a 16-bit string
+PASS "5deg;" parses the same after a leading comment
+PASS setAttribute("orient", "5deg;")
+PASS baseVal.valueAsString = "5deg;"
+PASS "5\\64 eg" parses the same as a 16-bit string
+PASS "5\\64 eg" parses the same after a leading comment
+PASS setAttribute("orient", "5\\64 eg")
+PASS baseVal.valueAsString = "5\\64 eg"
+PASS "5\\64\\65g" parses the same as a 16-bit string
+PASS "5\\64\\65g" parses the same after a leading comment
+PASS setAttribute("orient", "5\\64\\65g")
+PASS baseVal.valueAsString = "5\\64\\65g"
+PASS "5d\\65g" parses the same as a 16-bit string
+PASS "5d\\65g" parses the same after a leading comment
+PASS setAttribute("orient", "5d\\65g")
+PASS baseVal.valueAsString = "5d\\65g"
+PASS "5é" parses the same as a 16-bit string
+PASS "5é" parses the same after a leading comment
+PASS setAttribute("orient", "5é")
+PASS baseVal.valueAsString = "5é"
+PASS "5degé" parses the same as a 16-bit string
+PASS "5degé" parses the same after a leading comment
+PASS setAttribute("orient", "5degé")
+PASS baseVal.valueAsString = "5degé"
+PASS "-5e-2rad" parses the same as a 16-bit string
+PASS "-5e-2rad" parses the same after a leading comment
+PASS setAttribute("orient", "-5e-2rad")
+PASS baseVal.valueAsString = "-5e-2rad"
+PASS "+.5e+1turn" parses the same as a 16-bit string
+PASS "+.5e+1turn" parses the same after a leading comment
+PASS setAttribute("orient", "+.5e+1turn")
+PASS baseVal.valueAsString = "+.5e+1turn"
+PASS "5e-324" parses the same as a 16-bit string
+PASS "5e-324" parses the same after a leading comment
+PASS setAttribute("orient", "5e-324")
+PASS baseVal.valueAsString = "5e-324"
+PASS "5Q" parses the same as a 16-bit string
+PASS "5Q" parses the same after a leading comment
+PASS setAttribute("orient", "5Q")
+PASS baseVal.valueAsString = "5Q"
+PASS "5vw" parses the same as a 16-bit string
+PASS "5vw" parses the same after a leading comment
+PASS setAttribute("orient", "5vw")
+PASS baseVal.valueAsString = "5vw"
+PASS "5ms" parses the same as a 16-bit string
+PASS "5ms" parses the same after a leading comment
+PASS setAttribute("orient", "5ms")
+PASS baseVal.valueAsString = "5ms"
+PASS "5s" parses the same as a 16-bit string
+PASS "5s" parses the same after a leading comment
+PASS setAttribute("orient", "5s")
+PASS baseVal.valueAsString = "5s"
+PASS "5dpi" parses the same as a 16-bit string
+PASS "5dpi" parses the same after a leading comment
+PASS setAttribute("orient", "5dpi")
+PASS baseVal.valueAsString = "5dpi"
+

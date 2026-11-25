@@ -1,0 +1,65 @@
+
+PASS "5" -> CSSUnitValue 5
+PASS "-5" -> CSSUnitValue -5
+PASS "+5" -> CSSUnitValue 5
+PASS "+05" -> CSSUnitValue 5
+PASS "5." -> SyntaxError
+PASS "5.5" -> CSSUnitValue 5.5
+PASS ".5" -> CSSUnitValue 0.5
+PASS "-.5" -> CSSUnitValue -0.5
+PASS "1e3" -> CSSUnitValue 1000
+PASS "1E3" -> CSSUnitValue 1000
+PASS "1e+3" -> CSSUnitValue 1000
+PASS "1e-3" -> CSSUnitValue 0.001
+PASS "1e" -> SyntaxError
+PASS "1.e3" -> SyntaxError
+PASS "1e3.5" -> SyntaxError
+PASS "5e+" -> SyntaxError
+PASS "5px" -> CSSUnitValue 5px
+PASS "5PX" -> CSSUnitValue 5px
+PASS "-5.5e-1px" -> CSSUnitValue -0.55px
+PASS "5%" -> CSSUnitValue 5%
+PASS "-5%" -> CSSUnitValue -5%
+PASS "5deg" -> CSSUnitValue 5deg
+PASS "5s" -> CSSUnitValue 5s
+PASS "5dppx" -> CSSUnitValue 5dppx
+PASS "5x" -> CSSUnitValue 5x
+PASS "5e" -> SyntaxError
+PASS "5ex" -> CSSUnitValue 5ex
+PASS "5e2ex" -> CSSUnitValue 500ex
+PASS "5-x" -> SyntaxError
+PASS "5--" -> SyntaxError
+PASS "5 px" -> SyntaxError
+PASS "5 %" -> SyntaxError
+PASS "5px junk" -> SyntaxError
+PASS "5px)" -> SyntaxError
+PASS "5.5.5" -> SyntaxError
+PASS " 5px" -> CSSUnitValue 5px
+PASS "5px " -> CSSUnitValue 5px
+PASS " \t\n\r\f5px \t\n\r\f" -> CSSUnitValue 5px
+PASS "\u000b5px" -> SyntaxError
+PASS "5px\u000b" -> SyntaxError
+PASS " 5px" -> SyntaxError
+PASS "5\\70x" -> CSSUnitValue 5px
+PASS "5p\\78" -> CSSUnitValue 5px
+PASS "5px\\" -> SyntaxError
+PASS "5é" -> SyntaxError
+PASS "5pxĀ" -> SyntaxError
+PASS "5\u0000" -> SyntaxError
+PASS "calc(5px)" -> CSSUnitValue 5px
+PASS "min(5px)" -> CSSUnitValue 5px
+PASS "-" -> SyntaxError
+PASS "+" -> SyntaxError
+PASS "." -> SyntaxError
+PASS "px" -> SyntaxError
+PASS "%" -> SyntaxError
+PASS "" -> SyntaxError
+PASS " " -> SyntaxError
+PASS "1e39" -> CSSUnitValue 999999999999999939709166371603178586112
+PASS "1e400" -> CSSUnitValue infinity
+PASS "1e400px" -> CSSUnitValue infinitypx
+PASS "-1e400%" -> CSSUnitValue -infinity%
+PASS "1e-400" -> CSSUnitValue 0
+PASS "Infinity" -> SyntaxError
+PASS "NaN" -> SyntaxError
+
