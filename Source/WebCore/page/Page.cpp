@@ -6101,80 +6101,50 @@ void Page::respondToReappliedWritingToolsEditing(EditCommandComposition* command
 
 Vector<FloatRect> Page::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const CharacterRange& enclosingRangeRelativeToSessionRange) const
 {
-    RefPtr localTopDocument = this->localTopDocument();
-    if (!localTopDocument) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
     auto scope = m_writingToolsController->activeSessionRange();
     if (!scope) {
         ASSERT_NOT_REACHED();
         return { };
     }
 
-    return IntelligenceTextEffectsSupport::writingToolsTextSuggestionRectsInRootViewCoordinates(*localTopDocument, *scope, enclosingRangeRelativeToSessionRange);
+    return IntelligenceTextEffectsSupport::writingToolsTextSuggestionRectsInRootViewCoordinates(protect(scope->start.document()), *scope, enclosingRangeRelativeToSessionRange);
 }
 
 void Page::updateTextVisibilityForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange, bool visible, const WTF::UUID& identifier)
 {
-    RefPtr localTopDocument = this->localTopDocument();
-    if (!localTopDocument) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     auto scope = m_writingToolsController->activeSessionRange();
     if (!scope) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    IntelligenceTextEffectsSupport::updateTextVisibility(*localTopDocument, *scope, rangeRelativeToSessionRange, visible, identifier);
+    IntelligenceTextEffectsSupport::updateTextVisibility(protect(scope->start.document()), *scope, rangeRelativeToSessionRange, visible, identifier);
 }
 
 RefPtr<TextIndicator> Page::textPreviewDataForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
 {
-    RefPtr localTopDocument = this->localTopDocument();
-    if (!localTopDocument) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
     auto scope = m_writingToolsController->activeSessionRange();
     if (!scope) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    return IntelligenceTextEffectsSupport::textPreviewDataForRange(*localTopDocument, *scope, rangeRelativeToSessionRange);
+    return IntelligenceTextEffectsSupport::textPreviewDataForRange(protect(scope->start.document()), *scope, rangeRelativeToSessionRange);
 }
 
 void Page::decorateTextReplacementsForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
 {
-    RefPtr localTopDocument = this->localTopDocument();
-    if (!localTopDocument) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     auto scope = m_writingToolsController->activeSessionRange();
     if (!scope) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    IntelligenceTextEffectsSupport::decorateWritingToolsTextReplacements(*localTopDocument, *scope, rangeRelativeToSessionRange);
+    IntelligenceTextEffectsSupport::decorateWritingToolsTextReplacements(protect(scope->start.document()), *scope, rangeRelativeToSessionRange);
 }
 
 void Page::setSelectionForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
 {
-    RefPtr localTopDocument = this->localTopDocument();
-    if (!localTopDocument) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     auto scope = m_writingToolsController->activeSessionRange();
     if (!scope) {
         ASSERT_NOT_REACHED();
@@ -6186,7 +6156,7 @@ void Page::setSelectionForActiveWritingToolsSession(const CharacterRange& rangeR
     if (visibleSelection.isNoneOrOrphaned())
         return;
 
-    localTopDocument->selection().setSelection(visibleSelection);
+    protect(scope->start.document())->selection().setSelection(visibleSelection);
 }
 
 std::optional<SimpleRange> Page::contextRangeForActiveWritingToolsSession() const
