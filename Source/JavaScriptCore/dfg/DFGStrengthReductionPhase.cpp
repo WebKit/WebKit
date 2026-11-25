@@ -1916,6 +1916,17 @@ private:
         case Construct:
         case TailCallInlinedCaller:
         case TailCall: {
+            if (m_node->op() != Construct) {
+                while (true) {
+                    Node* boundFunction = m_graph.varArgChild(m_node, 0).node();
+                    if (!boundFunction->hasNumberOfBoundArguments() || boundFunction->numberOfBoundArguments())
+                        break;
+                    m_graph.varArgChild(m_node, 0) = Edge(m_graph.child(boundFunction, 0).node());
+                    m_graph.varArgChild(m_node, 1) = Edge(m_graph.child(boundFunction, 1).node());
+                    m_changed = true;
+                }
+            }
+
             ExecutableBase* executable = nullptr;
             Edge callee = m_graph.varArgChild(m_node, 0);
             CallVariant callVariant;
