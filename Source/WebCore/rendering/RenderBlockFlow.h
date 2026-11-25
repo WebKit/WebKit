@@ -472,7 +472,6 @@ private:
     // Called from lineWidth, to position the floats added in the last line.
     // Returns true if and only if it has positioned any floats.
     bool positionNewFloats();
-    void clearFloats(UsedClear);
 
     LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
     LayoutUnit logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;

@@ -3207,30 +3207,6 @@ bool RenderBlockFlow::positionNewFloats()
     return true;
 }
 
-void RenderBlockFlow::clearFloats(UsedClear usedClear)
-{
-    positionNewFloats();
-    // set y position
-    LayoutUnit newY;
-    switch (usedClear) {
-    case UsedClear::Left:
-        newY = lowestFloatLogicalBottom(FloatingObject::FloatLeft);
-        break;
-    case UsedClear::Right:
-        newY = lowestFloatLogicalBottom(FloatingObject::FloatRight);
-        break;
-    case UsedClear::Both:
-        newY = lowestFloatLogicalBottom();
-        break;
-    case UsedClear::None:
-        break;
-    }
-    // FIXME: The float search tree has floored float box position (see FloatingObjects::intervalForFloatingObject).
-    newY = newY.floor();
-    if (borderBoxHeight() < newY)
-        setLogicalHeight(newY);
-}
-
 LayoutUnit RenderBlockFlow::logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const
 {
     if (m_floatingObjects && m_floatingObjects->hasLeftObjects())
