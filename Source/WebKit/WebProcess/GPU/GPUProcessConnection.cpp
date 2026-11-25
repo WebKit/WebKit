@@ -127,6 +127,10 @@ GPUProcessConnection::GPUProcessConnection(Ref<IPC::Connection>&& connection)
 {
     connection->open(*this);
 
+#if ENABLE(VIDEO)
+    lazyInitialize(m_videoFrameObjectHeapProxy, RemoteVideoFrameObjectHeapProxy::create(*this));
+#endif
+
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::MediaPainting)) {
     }
 }
@@ -223,8 +227,6 @@ void GPUProcessConnection::resetAudioMediaStreamTrackRendererInternalUnit(AudioM
 #if ENABLE(VIDEO)
 RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy()
 {
-    if (!m_videoFrameObjectHeapProxy)
-        lazyInitialize(m_videoFrameObjectHeapProxy, RemoteVideoFrameObjectHeapProxy::create(*this));
     return *m_videoFrameObjectHeapProxy;
 }
 

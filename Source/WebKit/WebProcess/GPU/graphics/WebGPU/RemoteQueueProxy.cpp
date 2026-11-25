@@ -44,15 +44,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteQueueProxy);
 RemoteQueueProxy::RemoteQueueProxy(RemoteAdapterProxy& parent, WebGPUQueueIdentifier identifier)
     : m_backing(identifier)
     , m_parent(parent)
-{
-#if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
-    RefPtr<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy;
-    callOnMainRunLoopAndWait([&videoFrameObjectHeapProxy] {
-        videoFrameObjectHeapProxy = protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy();
-    });
-
-    lazyInitialize(m_videoFrameObjectHeapProxy, videoFrameObjectHeapProxy.releaseNonNull());
+#if ENABLE(VIDEO)
+    , m_videoFrameObjectHeapProxy(&parent.root().videoFrameObjectHeapProxy())
 #endif
+{
 }
 
 RemoteQueueProxy::~RemoteQueueProxy()

@@ -34,6 +34,7 @@
 #include "RemoteMeshGradientIdentifier.h"
 #include "RemotePathImplIdentifier.h"
 #include "RemoteRenderingBackend.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
 #include <WebCore/ControlFactory.h>
@@ -46,7 +47,6 @@ namespace WebKit {
 
 class RemoteRenderingBackend;
 class RemoteResourceCache;
-class SharedVideoFrameReader;
 struct SharedPreferencesForWebProcess;
 
 class RemoteGraphicsContext : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteGraphicsContext> {
@@ -113,7 +113,7 @@ public:
 #endif
     void drawSystemImage(Ref<WebCore::SystemImage>&&, const WebCore::FloatRect&);
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    void drawVideoFrame(SharedVideoFrame&&, const WebCore::FloatRect& destination, WebCore::ShouldDiscardAlpha, WebCore::RasterDrawingOptions);
+    void drawVideoFrame(RemoteVideoFrameReadReference&&, const WebCore::FloatRect& destination, WebCore::ShouldDiscardAlpha, WebCore::RasterDrawingOptions);
 #endif
     void drawPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, WebCore::RasterDrawingOptions);
     void drawPatternImageBuffer(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, WebCore::RasterDrawingOptions);
@@ -184,19 +184,10 @@ protected:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) override;
 
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    SharedVideoFrameReader& sharedVideoFrameReader();
-    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
-#endif
-
     WebCore::GraphicsContext& m_context;
     const Ref<RemoteRenderingBackend> m_renderingBackend;
     const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
     const RefPtr<WebCore::ControlFactory> m_controlFactory;
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    const std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;
-#endif
 };
 
 } // namespace WebKit

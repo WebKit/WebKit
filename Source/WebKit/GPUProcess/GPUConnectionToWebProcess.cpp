@@ -333,7 +333,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_captureOrigin(SecurityOrigin::createOpaque())
 #endif
 #if ENABLE(VIDEO)
-    , m_videoFrameObjectHeap(RemoteVideoFrameObjectHeap::create(m_connection.get()))
+    , m_videoFrameObjectHeap(RemoteVideoFrameObjectHeap::create(m_connection.get(), m_webProcessIdentity))
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     , m_libWebRTCCodecsProxy(LibWebRTCCodecsProxy::create(*this, parameters.sharedPreferencesForWebProcess))
