@@ -894,6 +894,8 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
             adjustForTextAutosizing(style, protect(*m_element));
     }
 
+    // Reset to the inherited value first, since animated styles are cloned from the base style, which may have been a skipped content root.
+    style.setUsedContentVisibility(m_parentStyle.usedContentVisibility());
     if (m_parentStyle.contentVisibility() != ContentVisibility::Hidden && m_element && ContainmentChecker { style, *m_element }.isSkippedContentRoot())
         style.setUsedContentVisibility(style.contentVisibility());
 

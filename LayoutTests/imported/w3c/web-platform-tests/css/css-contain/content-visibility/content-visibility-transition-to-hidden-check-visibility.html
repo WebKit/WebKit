@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<title>CSS Containment Test: checkVisibility() during a content-visibility transition to hidden</title>
+<link rel="help" href="https://drafts.csswg.org/css-contain-2/#content-visibility-animation">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/8627">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.transition {
+  transition: content-visibility 1000s allow-discrete;
+}
+#target {
+  width: 100px;
+  height: 100px;
+}
+#target.hidden {
+  content-visibility: hidden;
+}
+details::details-content {
+  transition: content-visibility 1000s allow-discrete;
+}
+</style>
+<div id="target" class="transition"><div id="targetChild">Text</div></div>
+<details id="details" open><summary>Summary</summary><div id="detailsChild">Text</div></details>
+<script>
+test(() => {
+  const target = document.getElementById("target");
+  const child = document.getElementById("targetChild");
+  assert_true(child.checkVisibility(), "child is visible before the transition");
+  target.classList.add("hidden");
+  assert_equals(getComputedStyle(target).contentVisibility, "visible", "content-visibility is visible while transitioning to hidden");
+  assert_true(child.checkVisibility(), "child is visible while transitioning to hidden");
+  assert_true(target.checkVisibility({ contentVisibilityAuto: true }), "target is visible while transitioning to hidden");
+  target.getAnimations()[0].finish();
+  assert_equals(getComputedStyle(target).contentVisibility, "hidden", "content-visibility is hidden after the transition");
+  assert_false(child.checkVisibility(), "child is hidden after the transition");
+}, "Contents of an element transitioning content-visibility to hidden are visible until the transition ends");
+
+test(() => {
+  const details = document.getElementById("details");
+  const child = document.getElementById("detailsChild");
+  assert_true(child.checkVisibility(), "child is visible while details is open");
+  details.open = false;
+  assert_true(child.checkVisibility(), "child is visible while ::details-content is transitioning to hidden");
+}, "Contents of a closing details element are visible until the ::details-content transition ends");
+</script>

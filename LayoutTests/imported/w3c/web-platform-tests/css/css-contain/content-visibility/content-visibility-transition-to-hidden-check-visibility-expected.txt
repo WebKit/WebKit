@@ -1,0 +1,6 @@
+Summary
+Text
+
+PASS Contents of an element transitioning content-visibility to hidden are visible until the transition ends
+PASS Contents of a closing details element are visible until the ::details-content transition ends
+
