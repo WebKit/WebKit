@@ -3002,6 +3002,7 @@ webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_input_events_end.https.html [ Pass ]
 webkit.org/b/227086 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Pass ]
+webkit.org/b/332811 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html [ Pass ]
 
 imported/w3c/web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html [ Pass ]
 
@@ -5238,6 +5239,8 @@ webkit.org/b/332135 [ Debug ] inspector/layers/layerTreeDidChange.html [ Failure
 webkit.org/b/332823 ipc/serialized-type-info.html [ Failure ]
 webkit.org/b/332824 http/wpt/webcodecs/videoEncoder-high-bit-depth.html [ Failure ]
 webkit.org/b/332825 imported/w3c/web-platform-tests/scroll-animations/crashtests/viewport-100vh.html [ Crash Pass ]
+
+webkit.org/b/329970 [ Debug ] media/video-orientation.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 

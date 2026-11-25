@@ -1228,3 +1228,6 @@ webkit.org/b/332136 [ x86_64 ] imported/w3c/web-platform-tests/html/browsers/ori
 webkit.org/b/332136 [ x86_64 ] imported/w3c/web-platform-tests/html/browsers/origin/api/origin-from-global.any.serviceworker.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-shape-table-part-background.html [ Pass ]
+
+webkit.org/b/333079 [ Release x86_64 ] http/tests/media/media-source/media-source-video-fit-fill.html [ Crash Pass ]
+webkit.org/b/333080 [ arm64 ] imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-customized-builtins.html [ Pass Timeout ]
