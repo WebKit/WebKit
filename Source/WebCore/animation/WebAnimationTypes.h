@@ -77,7 +77,8 @@ enum class AcceleratedEffectProperty : uint16_t {
     OffsetAnchor = 1 << 9,
     OffsetRotate = 1 << 10,
     Filter = 1 << 11,
-    BackdropFilter = 1 << 12
+    BackdropFilter = 1 << 12,
+    ClipPath = 1 << 13
 };
 
 constexpr OptionSet<AcceleratedEffectProperty> transformRelatedAcceleratedProperties = {
