@@ -669,7 +669,27 @@ IntSize RenderLayerScrollableArea::visibleSize() const
 
 IntSize RenderLayerScrollableArea::contentsSize() const
 {
-    return IntSize(scrollWidth(), scrollHeight());
+    // contentsSize() defines the scroll range, which normally covers all the overflow that
+    // scrollWidth()/scrollHeight() report. A clip axis of a single-axis scroll container has
+    // overflow but no scroll range, so it uses the visible size instead.
+    IntSize contentsSize { scrollWidth(), scrollHeight() };
+    if (isLockedToScrollOrigin(ScrollEventAxis::Horizontal))
+        contentsSize.setWidth(visibleSize().width());
+    if (isLockedToScrollOrigin(ScrollEventAxis::Vertical))
+        contentsSize.setHeight(visibleSize().height());
+    return contentsSize;
+}
+
+// overflow: clip "forbids scrolling entirely, through any mechanism". When the other axis is scrollable,
+// the box is a single-axis scroll container that stays at the scroll origin in the clip axis.
+// https://drafts.csswg.org/css-overflow-3/#valdef-overflow-clip
+bool RenderLayerScrollableArea::isLockedToScrollOrigin(ScrollEventAxis axis) const
+{
+    CheckedPtr box = m_layer.renderBox();
+    if (!box || !box->hasPotentiallyScrollableOverflow())
+        return false;
+    auto overflow = axis == ScrollEventAxis::Horizontal ? box->style().overflowX() : box->style().overflowY();
+    return overflow == Overflow::Clip;
 }
 
 IntSize RenderLayerScrollableArea::reachableTotalContentsSize() const
@@ -1192,11 +1212,13 @@ void RenderLayerScrollableArea::computeScrollOrigin()
     auto overflowRect = box->layoutOverflowRect();
     box->blockStartRelativeToPhysical(overflowRect);
 
-    int scrollableLeftOverflow = roundToInt(overflowRect.x() - box->borderLeft());
+    // Overflow in a clip axis is unreachable. Together with contentsSize(), ignoring it here makes the
+    // scroll origin the only scroll position in that axis.
+    int scrollableLeftOverflow = isLockedToScrollOrigin(ScrollEventAxis::Horizontal) ? 0 : roundToInt(overflowRect.x() - box->borderLeft());
     if (shouldPlaceVerticalScrollbarOnLeft())
         scrollableLeftOverflow -= verticalScrollbarWidth(OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, box->writingMode().isHorizontal());
 
-    int scrollableTopOverflow = roundToInt(overflowRect.y() - box->borderTop());
+    int scrollableTopOverflow = isLockedToScrollOrigin(ScrollEventAxis::Vertical) ? 0 : roundToInt(overflowRect.y() - box->borderTop());
     setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));
 
     // Horizontal scrollbar offsets depend on the scroll origin when vertical

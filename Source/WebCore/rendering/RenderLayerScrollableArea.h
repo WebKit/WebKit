@@ -286,6 +286,8 @@ private:
     void computeScrollDimensions();
     void computeScrollOrigin();
 
+    bool isLockedToScrollOrigin(ScrollEventAxis) const;
+
     void updateScrollableAreaSet(bool hasOverflow);
     void setNeedsLayoutForScrollbarsChange();
 
