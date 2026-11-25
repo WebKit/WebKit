@@ -113,7 +113,7 @@ public:
         if (builderState.applyPropertyToRegularStyle())
             builderState.style().setTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport()));
         if (builderState.applyPropertyToVisitedLinkStyle())
-            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport()));
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentStyle().visitedLinkTestColorPropertyWithVisitedLinkSupport()));
     }
     static void applyHighlightInheritTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
     {
@@ -125,7 +125,7 @@ public:
         if (builderState.applyPropertyToRegularStyle())
             builderState.style().setTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentHighlightStyle()->testColorPropertyWithVisitedLinkSupport()));
         if (builderState.applyPropertyToVisitedLinkStyle())
-            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentHighlightStyle()->testColorPropertyWithVisitedLinkSupport()));
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentHighlightStyle()->visitedLinkTestColorPropertyWithVisitedLinkSupport()));
     }
     static void applyValueTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState, CSSValue& value)
     {
