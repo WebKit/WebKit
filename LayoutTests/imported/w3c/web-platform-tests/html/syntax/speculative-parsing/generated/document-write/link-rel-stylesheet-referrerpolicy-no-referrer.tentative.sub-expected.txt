@@ -1,8 +1,8 @@
 
     <!-- speculative case in document.write -->
-    <link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=ff7c108f-699c-48ad-be65-19add4ef3007&amp;encodingcheck=&Gbreve;" referrerpolicy=no-referrer>
+    <link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=59e1596f-e618-45cd-ac27-91f903da5e7b&amp;encodingcheck=&Gbreve;" referrerpolicy=no-referrer>
 
 
 
-FAIL Speculative parsing, document.write(): link-rel-stylesheet-referrerpolicy-no-referrer Unhandled rejection: assert_not_equals: non-speculative case did not fetch got disallowed value ""
+PASS Speculative parsing, document.write(): link-rel-stylesheet-referrerpolicy-no-referrer
 
