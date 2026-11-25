@@ -30,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/css-transition-to-disconnected-document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/css-transition-trigger.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/custom-element-move-reactions.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/dialog-moveBefore-shadow-root.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/fieldset-child-blur-event.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/fieldset-child-date-input-blur-event.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/fire-focusin-focusout.html
@@ -38,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/focus-preserve-render.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/focus-preserve.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/focus-within.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/form-associated-custom-element-reset.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/fullscreen-preserve.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/hover-style-update.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/iframe-document-preserve.window.js
@@ -57,6 +59,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-image-map-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-image-map.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-img-usemap-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-input-list-target-inserted-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-input-list-target-removed-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-into-display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-lang.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-legend-input-crash.html
@@ -75,6 +79,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-shadow-inside.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-shadow-root.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-size-query.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-slot-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-slotted-element-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-slotted-text-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-subframe-count-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/mutation-observer-moved-subtree.window.js

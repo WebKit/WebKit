@@ -1,0 +1,6 @@
+
+PASS Moving a non-form ID match updates custom control form owners in a document
+PASS Moving a non-form ID match updates custom control form owners in a shadow tree
+PASS Moving an ancestor of an ID match across a shadow boundary updates custom control form owners in both trees
+FAIL Moving a custom control without an ID across a shadow boundary resets its form owner assert_equals: The previously unassociated control enters the form's tree expected Element node <form id="cross-tree-owner"></form> but got null
+

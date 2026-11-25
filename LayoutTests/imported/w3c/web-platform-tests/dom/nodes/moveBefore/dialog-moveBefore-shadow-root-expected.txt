@@ -1,0 +1,9 @@
+
+PASS moveBefore of an open non-modal dialog into a ShadowRoot updates :focus-within
+PASS moveBefore of an element containing an open non-modal dialog into a ShadowRoot updates :focus-within
+PASS moveBefore of an open non-modal dialog out of a ShadowRoot updates :focus-within
+FAIL moveBefore of a slotted open non-modal dialog into its host's ShadowRoot clears :focus-within on the old slot assert_false: expected false got true
+PASS moveBefore of an open non-modal dialog into a slotted position updates :focus-within on the slot and host
+PASS moveBefore into a shadow host with no matching slot clears :focus-within on old ancestors
+PASS moveBefore of a shadow host containing an open non-modal dialog updates :focus-within
+
