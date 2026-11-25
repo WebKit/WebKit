@@ -1077,7 +1077,8 @@ private:
         }
 
         case GetByVal:
-        case PutByVal: {
+        case PutByVal:
+        case PutByValDirectResolved: {
             ArrayMode arrayMode = node->arrayMode();
             Node* base = m_graph.varArgChild(node, 0).node();
             Node* index = m_graph.varArgChild(node, 1).node();
@@ -1116,7 +1117,7 @@ private:
                 && matchesIndexingTypeWithArrayMode(target->indexingType(), arrayMode.type())
                 && index->isInt32Constant()
                 && isWithinBounds(index->asInt32(), target->length())) {
-                if (node->op() == PutByVal) {
+                if (node->op() != GetByVal) {
                     Edge value = m_graph.varArgChild(node, 2);
                     if (!isProvenValidTypeForIndexingShapeStorage(target->indexingType(), typeFilterFor(value.useKind())))
                         goto escapeChildren;

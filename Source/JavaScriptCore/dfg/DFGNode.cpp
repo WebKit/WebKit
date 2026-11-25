@@ -276,13 +276,14 @@ void Node::convertToNewArrayWithSize()
     m_opInfo2 = vectorLengthHint;
 }
 
-void Node::convertToNewArrayWithButterfly(Graph&, Node* butterfly)
+void Node::convertToNewArrayWithButterfly(Edge size, Node* butterfly)
 {
-    ASSERT(op() == NewArrayWithSize);
+    ASSERT(op() == NewArray || op() == NewArrayWithSize);
+    ASSERT(size.useKind() == Int32Use);
+    ASSERT(size->asInt32() < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH);
     IndexingType indexingType = this->indexingType();
     setOpAndDefaultFlags(NewArrayWithButterfly);
-    ASSERT(child1()->asInt32() < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH);
-    children.child2() = Edge(butterfly, KnownStorageUse);
+    children = AdjacencyList(AdjacencyList::Fixed, size, Edge(butterfly, KnownStorageUse));
     ASSERT_UNUSED(indexingType, indexingType == this->indexingType());
 }
 

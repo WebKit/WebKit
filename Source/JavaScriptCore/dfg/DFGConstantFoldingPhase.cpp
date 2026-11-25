@@ -1153,6 +1153,58 @@ private:
                 break;
             }
 
+            case NewArray: {
+                // Splitting a small literal array into a butterfly, an array, and initializing stores
+                // is the form object allocation sinking can eliminate.
+                constexpr unsigned maxNewArraySizeToSplitForSinking = 8;
+                if (!m_graph.m_plan.isFTL() || m_graph.m_form != SSA)
+                    break;
+                if (!Options::useObjectAllocationSinking() || !Options::useArrayAllocationSinking())
+                    break;
+                unsigned length = node->numChildren();
+                if (!length || length > maxNewArraySizeToSplitForSinking || node->indexingType() != ArrayWithContiguous)
+                    break;
+
+                bool hasOnlyUntypedValues = true;
+                for (unsigned i = 0; i < length; ++i) {
+                    if (m_graph.varArgChild(node, i).useKind() != UntypedUse) {
+                        hasOnlyUntypedValues = false;
+                        break;
+                    }
+                }
+                if (!hasOnlyUntypedValues)
+                    break;
+                if (!m_graph.isWatchingHavingABadTimeWatchpoint(node) || !m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node))
+                    break;
+
+                m_interpreter.execute(indexInBlock);
+                alreadyHandled = true;
+
+                Node* size = m_insertionSet.insertConstant(indexInBlock, node->origin, jsNumber(length));
+                Edge sizeEdge(size, Int32Use, IsProved);
+                Node* butterfly = m_insertionSet.insertNode(indexInBlock, SpecNone, NewButterflyWithSize, node->origin, OpInfo(node->indexingType()), OpInfo(node->vectorLengthHint()), sizeEdge);
+
+                NodeOrigin storeOrigin = node->origin.withInvalidExit();
+                ArrayMode mode(Array::Contiguous, Array::Array, Array::Write);
+                for (unsigned i = 0; i < length; ++i) {
+                    Edge value = m_graph.varArgChild(node, i);
+                    Node* index = m_insertionSet.insertConstant(indexInBlock + 1, storeOrigin, jsNumber(i));
+                    unsigned start = m_graph.m_varArgChildren.size();
+                    m_graph.m_varArgChildren.append(Edge(node, KnownCellUse));
+                    m_graph.m_varArgChildren.append(Edge(index, KnownInt32Use));
+                    m_graph.m_varArgChildren.append(value);
+                    m_graph.m_varArgChildren.append(Edge(butterfly, KnownStorageUse));
+                    m_graph.m_varArgChildren.constructAndAppend();
+                    m_insertionSet.insertNode(indexInBlock + 1, SpecNone, Node::VarArg, PutByValDirectResolved, storeOrigin,
+                        OpInfo(mode.asWord()), OpInfo(ECMAMode::strict()), start, m_graph.m_varArgChildren.size() - start);
+                }
+                node->convertToNewArrayWithButterfly(sizeEdge, butterfly);
+                if (node->origin.exitOK)
+                    m_insertionSet.insertNode(indexInBlock + 1, SpecNone, ExitOK, node->origin);
+                changed = true;
+                break;
+            }
+
             case NewArrayWithSize: {
                 if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
                     if (node->child1().useKind() == Int32Use && node->child1()->isInt32Constant()) {
@@ -1164,7 +1216,7 @@ private:
                                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
 
                                 Node* butterfly = m_insertionSet.insertNode(indexInBlock, SpecNone, NewButterflyWithSize, node->origin, OpInfo(node->indexingType()), OpInfo(node->vectorLengthHint()), node->child1());
-                                node->convertToNewArrayWithButterfly(m_graph, butterfly);
+                                node->convertToNewArrayWithButterfly(node->child1(), butterfly);
                                 changed = true;
                         }
                     }

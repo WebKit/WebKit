@@ -564,6 +564,15 @@ private:
                     case MultiPutByOffset:
                         escape(m_node->child2().node());
                         break;
+                    case PutByValDirectResolved:
+                        if (m_node->arrayMode().isSpecific()) {
+                            escape(m_graph.varArgChild(m_node, 2).node());
+                            break;
+                        }
+                        m_graph.doToChildren(m_node, [&](Edge edge) {
+                            escape(edge.node());
+                        });
+                        break;
                     case PutClosureVar:
                         escape(m_node->child2().node());
                         break;
