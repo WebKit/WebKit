@@ -290,7 +290,7 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
             usedBlockSizes.append(formattingContext.geometryForGridItem(gridItem.layoutBox()).contentBoxHeight() + blockBorderAndPadding);
         }
     }
-    return { usedInlineSizes, usedBlockSizes };
+    return { WTF::move(usedInlineSizes), WTF::move(usedBlockSizes) };
 }
 
 } // namespace WebCore::Layout
