@@ -456,16 +456,16 @@ template<typename Functor> decltype(auto) Color::callOnUnderlyingType(NOESCAPE c
 
 template<typename ColorType> ColorType Color::toColorTypeLossy() const
 {
-    return callOnUnderlyingType([] (const auto& underlyingColor) {
-        return convertColor<ColorType>(underlyingColor);
-    });
+    if (isOutOfLine())
+        return convertColorComponents<ColorType>(colorSpace(), asOutOfLine().unresolvedComponents());
+    return convertColor<ColorType>(asInline());
 }
 
 template<typename ColorType> ColorType Color::toColorTypeLossyCarryingForwardMissing() const
 {
-    return callOnUnderlyingType([] (const auto& underlyingColor) {
-        return convertColorCarryingForwardMissing<ColorType>(underlyingColor);
-    });
+    if (isOutOfLine())
+        return convertColorComponentsCarryingForwardMissing<ColorType>(colorSpace(), asOutOfLine().unresolvedComponents());
+    return convertColorCarryingForwardMissing<ColorType>(asInline());
 }
 
 inline Color Color::invertedColorWithAlpha(std::optional<float> alpha) const

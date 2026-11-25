@@ -160,9 +160,7 @@ static std::pair<RetainPtr<CGColorSpaceRef>, ColorComponents<float, 4>> convertT
     if (RetainPtr cgColorSpace = cachedNullableCGColorSpaceSingleton(colorSpace))
         return { WTF::move(cgColorSpace), components };
 
-    auto componentsConvertedToFallbackColorSpace = callWithColorType(components, colorSpace, [] (const auto& color) {
-        return asColorComponents(convertColor<FallbackColorType>(color).resolved());
-    });
+    auto componentsConvertedToFallbackColorSpace = asColorComponents(convertColorComponents<FallbackColorType>(colorSpace, components).resolved());
     return { cachedCGColorSpaceSingleton<ColorSpaceFor<FallbackColorType>>(), componentsConvertedToFallbackColorSpace };
 }
 
@@ -231,21 +229,16 @@ ColorComponents<float, 4> platformConvertColorComponents(ColorSpaceName inputCol
         return cgCompatibleComponents;
 
     // Fast path: use built-in conversion for well-known destination color spaces.
-    auto builtin = callWithColorType(inputColorComponents, inputColorSpace, [&](const auto& inputColor) -> std::optional<ColorComponents<float, 4>> {
-        if (outputColorSpace == ColorSpace::SRGB())
-            return asColorComponents(convertColor<SRGBA<float>>(inputColor).resolved());
-        if (outputColorSpace == ColorSpace::LinearSRGB())
-            return asColorComponents(convertColor<LinearSRGBA<float>>(inputColor).resolved());
+    if (outputColorSpace == ColorSpace::SRGB())
+        return asColorComponents(convertColorComponents<SRGBA<float>>(inputColorSpace, inputColorComponents).resolved());
+    if (outputColorSpace == ColorSpace::LinearSRGB())
+        return asColorComponents(convertColorComponents<LinearSRGBA<float>>(inputColorSpace, inputColorComponents).resolved());
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        if (outputColorSpace == ColorSpace::DisplayP3())
-            return asColorComponents(convertColor<DisplayP3<float>>(inputColor).resolved());
-        if (outputColorSpace == ColorSpace::LinearDisplayP3())
-            return asColorComponents(convertColor<LinearDisplayP3<float>>(inputColor).resolved());
+    if (outputColorSpace == ColorSpace::DisplayP3())
+        return asColorComponents(convertColorComponents<DisplayP3<float>>(inputColorSpace, inputColorComponents).resolved());
+    if (outputColorSpace == ColorSpace::LinearDisplayP3())
+        return asColorComponents(convertColorComponents<LinearDisplayP3<float>>(inputColorSpace, inputColorComponents).resolved());
 #endif
-        return std::nullopt;
-    });
-    if (builtin)
-        return *builtin;
 
     // Slow path: fall back to CoreGraphics caching the transform to avoid
     // recreating the CGColorTransform on every call.

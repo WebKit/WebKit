@@ -332,13 +332,53 @@ OKLab<float> ColorConversion<OKLab<float>, OKLCHA<float>>::convert(const OKLCHA<
 
 // MARK: Conversion functions for raw color components with associated color spaces.
 
+// MARK: Conversions for color types known only at runtime.
+
+// The index of the component of `outputCategories` analogous to component `index` of `inputCategories`, or 3 for alpha.
+static std::optional<unsigned> analogousComponentIndexForCategories(const ColorComponentCategories& outputCategories, const ColorComponentCategories& inputCategories, unsigned index)
+{
+    if (index == 3)
+        return 3;
+    if (!inputCategories[index])
+        return std::nullopt;
+    for (unsigned outputIndex = 0; outputIndex < 3; ++outputIndex) {
+        if (inputCategories[index] == outputCategories[outputIndex])
+            return outputIndex;
+    }
+    return std::nullopt;
+}
+
+void carryForwardMissingComponents(const ColorComponentCategories& inputCategories, const ColorComponents<float, 4>& input, const ColorComponentCategories& outputCategories, ColorComponents<float, 4>& output)
+{
+    // https://drafts.csswg.org/css-color-4/#interpolation-missing
+
+    bool hasAnalogousSet = false;
+    bool allAnalogousSetComponentsAreMissing = true;
+    for (unsigned index = 0; index < 4; ++index) {
+        if (analogousComponentIndexForCategories(outputCategories, inputCategories, index))
+            continue;
+        hasAnalogousSet = true;
+        if (!std::isnan(input[index]))
+            allAnalogousSetComponentsAreMissing = false;
+    }
+
+    if (hasAnalogousSet && allAnalogousSetComponentsAreMissing) {
+        for (unsigned index = 0; index < 4; ++index) {
+            if (!analogousComponentIndexForCategories(inputCategories, outputCategories, index))
+                output[index] = std::numeric_limits<float>::quiet_NaN();
+        }
+    }
+
+    for (unsigned index = 0; index < 4; ++index) {
+        if (auto outputIndex = analogousComponentIndexForCategories(outputCategories, inputCategories, index); outputIndex && std::isnan(input[index]))
+            output[*outputIndex] = std::numeric_limits<float>::quiet_NaN();
+    }
+}
+
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpaceName outputColorSpace)
 {
-    return callWithColorType<float>(inputColorSpace, [&]<typename InputColorType>() {
-        auto inputColor = makeFromComponents<InputColorType>(inputColorComponents);
-        return callWithColorType<float>(outputColorSpace, [&]<typename OutputColorType>() {
-            return asColorComponents(convertColor<OutputColorType>(inputColor).resolved());
-        });
+    return callWithColorType<float>(outputColorSpace, [&]<typename OutputColorType> {
+        return asColorComponents(convertColorComponents<OutputColorType>(inputColorSpace, inputColorComponents).resolved());
     });
 }
 
@@ -347,21 +387,19 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputC
 #if ENABLE(DESTINATION_COLOR_SPACE_ARBITRARY_CONVERSION)
     return platformConvertColorComponents(inputColorSpace, inputColorComponents, outputColorSpace);
 #else
-    return callWithColorType(inputColorComponents, inputColorSpace, [outputColorSpace] (const auto& inputColor) {
-        if (outputColorSpace == ColorSpace::SRGB())
-            return asColorComponents(convertColor<SRGBA<float>>(inputColor).resolved());
-        if (outputColorSpace == ColorSpace::LinearSRGB())
-            return asColorComponents(convertColor<LinearSRGBA<float>>(inputColor).resolved());
+    if (outputColorSpace == ColorSpace::SRGB())
+        return asColorComponents(convertColorComponents<SRGBA<float>>(inputColorSpace, inputColorComponents).resolved());
+    if (outputColorSpace == ColorSpace::LinearSRGB())
+        return asColorComponents(convertColorComponents<LinearSRGBA<float>>(inputColorSpace, inputColorComponents).resolved());
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        if (outputColorSpace == ColorSpace::DisplayP3())
-            return asColorComponents(convertColor<DisplayP3<float>>(inputColor).resolved());
-        if (outputColorSpace == ColorSpace::LinearDisplayP3())
-            return asColorComponents(convertColor<LinearDisplayP3<float>>(inputColor).resolved());
+    if (outputColorSpace == ColorSpace::DisplayP3())
+        return asColorComponents(convertColorComponents<DisplayP3<float>>(inputColorSpace, inputColorComponents).resolved());
+    if (outputColorSpace == ColorSpace::LinearDisplayP3())
+        return asColorComponents(convertColorComponents<LinearDisplayP3<float>>(inputColorSpace, inputColorComponents).resolved());
 #endif
 
-        ASSERT_NOT_REACHED();
-        return asColorComponents(convertColor<SRGBA<float>>(inputColor).resolved());
-    });
+    ASSERT_NOT_REACHED();
+    return asColorComponents(convertColorComponents<SRGBA<float>>(inputColorSpace, inputColorComponents).resolved());
 #endif
 }
 

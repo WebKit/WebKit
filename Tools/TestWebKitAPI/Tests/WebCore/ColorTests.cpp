@@ -32,6 +32,7 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/ColorTypes.h>
 #include <WebCore/ColorUtilities.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 
@@ -758,7 +759,7 @@ TEST(Color, PackedColorFromPremultiplied)
 
 TEST(Color, TransferFunctionsKeepTheSignOfExtendedComponents)
 {
-    auto expectRoundTrip = [&]<typename ColorType>() {
+    auto expectRoundTrip = [&]<typename ColorType> {
         using TransferFunction = typename ColorType::TransferFunction;
         for (float component : { -0.01f, -0.09f, -0.5f, -1.5f, 0.5f, 1.5f })
             EXPECT_NEAR(TransferFunction::toGammaEncoded(TransferFunction::toLinear(component)), component, 0.0001f);
@@ -816,5 +817,78 @@ TEST(Color, Rec2020ConversionsMatchCoreGraphics)
 #endif
 }
 #endif
+
+// Components in the range of each component of `ColorType`, some of them missing.
+template<typename ColorType> static Vector<ColorComponents<float, 4>> sampleComponents()
+{
+    constexpr std::array fractions { 0.0f, 0.3f, 0.65f, 1.0f };
+    auto component = [&](unsigned index, float fraction) {
+        auto info = ColorType::Model::componentInfo[index];
+        if (std::isinf(info.min) || std::isinf(info.max))
+            return std::isinf(info.min) ? fraction * 2 - 0.6f : info.min + fraction * 1.3f;
+        return info.min + fraction * (info.max - info.min);
+    };
+
+    Vector<ColorComponents<float, 4>> samples;
+    for (unsigned i = 0; i < fractions.size(); ++i) {
+        ColorComponents<float, 4> sample { component(0, fractions[i]), component(1, fractions[(i + 1) % 4]), component(2, fractions[(i + 2) % 4]), i % 2 ? 0.5f : 1.0f };
+        samples.append(sample);
+        for (unsigned missing = 0; missing < 4; ++missing) {
+            auto withMissing = sample;
+            withMissing[missing] = std::numeric_limits<float>::quiet_NaN();
+            samples.append(withMissing);
+        }
+    }
+    ColorComponents<float, 4> allNonAlphaMissing { std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN(), 1.0f };
+    samples.append(allNonAlphaMissing);
+    return samples;
+}
+
+TEST(Color, ConvertColorComponentsIsIdenticalToConvertColor)
+{
+    WTF::EnumTraits<ColorSpaceName>::values::forEach([&](auto inputColorSpace) {
+        callWithColorType<float>(inputColorSpace, [&]<typename Input> {
+            for (auto& components : sampleComponents<Input>()) {
+                auto input = makeFromComponents<Input>(components);
+                WTF::EnumTraits<ColorSpaceName>::values::forEach([&](auto outputColorSpace) {
+                    callWithColorType<float>(outputColorSpace, [&]<typename Output> {
+                        SCOPED_TRACE(testing::Message() << "from " << static_cast<int>(inputColorSpace) << " to " << static_cast<int>(outputColorSpace) << ": " << components[0] << ' ' << components[1] << ' ' << components[2] << ' ' << components[3]);
+
+                        auto direct = asColorComponents(convertColor<Output>(input).unresolved());
+                        auto splitAtXYZ = asColorComponents(convertColorComponents<Output>(inputColorSpace, components).unresolved());
+                        EXPECT_TRUE(direct == splitAtXYZ) << direct[0] << ' ' << direct[1] << ' ' << direct[2] << ' ' << direct[3] << " vs " << splitAtXYZ[0] << ' ' << splitAtXYZ[1] << ' ' << splitAtXYZ[2] << ' ' << splitAtXYZ[3];
+
+                        auto directCarryingForwardMissing = asColorComponents(convertColorCarryingForwardMissing<Output>(input).unresolved());
+                        auto splitAtXYZCarryingForwardMissing = asColorComponents(convertColorComponentsCarryingForwardMissing<Output>(inputColorSpace, components).unresolved());
+                        EXPECT_TRUE(directCarryingForwardMissing == splitAtXYZCarryingForwardMissing) << directCarryingForwardMissing[0] << ' ' << directCarryingForwardMissing[1] << ' ' << directCarryingForwardMissing[2] << ' ' << directCarryingForwardMissing[3] << " vs " << splitAtXYZCarryingForwardMissing[0] << ' ' << splitAtXYZCarryingForwardMissing[1] << ' ' << splitAtXYZCarryingForwardMissing[2] << ' ' << splitAtXYZCarryingForwardMissing[3];
+                    });
+                });
+
+                auto directBytes = convertColor<SRGBA<uint8_t>>(input);
+                auto splitAtXYZBytes = convertColorComponents<SRGBA<uint8_t>>(inputColorSpace, components);
+                EXPECT_EQ(directBytes, splitAtXYZBytes);
+            }
+        });
+    });
+}
+
+TEST(Color, ConvertsWithoutXYZ)
+{
+    static_assert(ConvertsWithoutXYZ<HSLA<float>, SRGBA<float>>);
+    static_assert(ConvertsWithoutXYZ<HWBA<float>, LinearSRGBA<float>>);
+    static_assert(ConvertsWithoutXYZ<SRGBA<uint8_t>, ExtendedSRGBA<float>>);
+    static_assert(ConvertsWithoutXYZ<LCHA<float>, Lab<float>>);
+    static_assert(ConvertsWithoutXYZ<OKLCHA<float>, OKLab<float>>);
+    static_assert(ConvertsWithoutXYZ<DisplayP3<float>, ExtendedLinearDisplayP3<float>>);
+    static_assert(!ConvertsWithoutXYZ<SRGBA<float>, DisplayP3<float>>);
+    static_assert(!ConvertsWithoutXYZ<Lab<float>, XYZA<float, WhitePoint::D50>>);
+    static_assert(!ConvertsWithoutXYZ<OKLab<float>, Lab<float>>);
+    static_assert(!ConvertsWithoutXYZ<HSLA<float>, OKLCHA<float>>);
+
+    static_assert(std::same_as<XYZForColorType<HSLA<float>>, XYZA<float, WhitePoint::D65>>);
+    static_assert(std::same_as<XYZForColorType<LCHA<float>>, XYZA<float, WhitePoint::D50>>);
+    static_assert(std::same_as<XYZForColorType<ProPhotoRGB<float>>, XYZA<float, WhitePoint::D50>>);
+    static_assert(std::same_as<XYZForColorType<OKLCHA<float>>, XYZA<float, WhitePoint::D65>>);
+}
 
 } // namespace TestWebKitAPI
