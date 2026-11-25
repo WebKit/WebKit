@@ -57,7 +57,7 @@ public:
 
     // Determines which of the provided animated layers may be visible and returns those targeted
     // by monotonic animations that may be newly visible.
-    Vector<AnimatedLayer> update(CALayer *webViewLayer, const Vector<AnimatedLayer>&, NOESCAPE const AnimationStackForNode&);
+    Vector<AnimatedLayer> update(CALayer *rootLayer, const Vector<AnimatedLayer>&, NOESCAPE const AnimationStackForNode&);
 
     bool mayBeVisible(WebCore::PlatformLayerIdentifier layerID) const { return m_layerIDsThatMayBeVisible.contains(layerID); }
     bool hasVisibleMonotonicAnimations() const { return m_hasVisibleMonotonicAnimations; }
@@ -66,8 +66,8 @@ public:
 
 private:
     using VisibilityCache = HashMap<WebCore::PlatformLayerIdentifier, bool>;
-    static bool animatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
-    static bool computeAnimatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *webViewLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
+    static bool animatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *rootLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
+    static bool computeAnimatedContentMayBeVisible(const RemoteLayerTreeNode&, CALayer *rootLayer, VisibilityCache&, NOESCAPE const AnimationStackForNode&);
 
     HashSet<WebCore::PlatformLayerIdentifier> m_layerIDsThatMayBeVisible;
     bool m_hasVisibleMonotonicAnimations { true };

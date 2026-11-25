@@ -956,8 +956,7 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimatedContentVisibilityIfNeeded
         animatedLayers.append({ animatedNodeLayerID, WTF::move(animatedNode), animationStack.releaseNonNull() });
     }
 
-    RetainPtr<CALayer> webViewLayer = [protect(webPageProxy())->cocoaView() layer];
-    auto animatedLayersThatBecameVisible = m_animationVisibility.update(webViewLayer.get(), animatedLayers, [](auto& node) -> RefPtr<const RemoteAnimationStack> {
+    auto animatedLayersThatBecameVisible = m_animationVisibility.update(layerTreeHost.rootLayer(), animatedLayers, [](auto& node) -> RefPtr<const RemoteAnimationStack> {
         return node.animationStack();
     });
 
