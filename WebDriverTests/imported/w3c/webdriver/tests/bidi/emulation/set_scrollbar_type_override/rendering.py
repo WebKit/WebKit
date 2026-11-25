@@ -36,7 +36,9 @@ async def test_rendering(bidi_session, new_tab, inline, compare_png_bidi):
         context=new_tab["context"]
     )
 
-    comparison = await compare_png_bidi(classic_data, overlay_data)
+    # A classic scrollbar takes room from the viewport, so that screenshot is
+    # narrower. Compare the part of the page that both show.
+    comparison = await compare_png_bidi(classic_data, overlay_data, crop=True)
     assert not comparison.equal()
 
 

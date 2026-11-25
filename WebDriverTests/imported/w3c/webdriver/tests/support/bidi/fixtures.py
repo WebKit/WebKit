@@ -505,11 +505,13 @@ def assert_pdf_image(
 
 @pytest.fixture
 def compare_png_bidi(bidi_session, url):
-    async def compare_png_bidi(img1, img2):
+    async def compare_png_bidi(img1, img2, crop=False):
         """Calculate difference statistics between two PNG images.
 
         :param img1: Bytes of first PNG image
         :param img2: Bytes of second PNG image
+        :param crop: If the images differ in size, compare the area they have in
+                     common, from their top left corner, instead of failing.
         :returns: ImageDifference representing the total number of different pixels,
                 and maximum per-channel difference between the images.
         """
@@ -517,7 +519,11 @@ def compare_png_bidi(bidi_session, url):
             return ImageDifference(0, 0)
 
         width, height = png_dimensions(img1)
-        assert (width, height) == png_dimensions(img2)
+        if crop:
+            width2, height2 = png_dimensions(img2)
+            width, height = min(width, width2), min(height, height2)
+        else:
+            assert (width, height) == png_dimensions(img2)
 
         context = await bidi_session.browsing_context.create(type_hint="tab")
         await bidi_session.browsing_context.navigate(
