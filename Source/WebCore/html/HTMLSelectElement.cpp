@@ -643,6 +643,8 @@ void HTMLSelectElement::buttonElementChildrenChanged()
     setOptionsChangedOnRenderer();
     invalidateStyle();
     invalidateButtonText();
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+        cache->onSelectButtonContentChanged(*this);
 }
 
 void HTMLSelectElement::hidePickerPopoverElement()

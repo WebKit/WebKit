@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.base, .base::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="hide" class="base">
+    <button><span id="hideSpan">Fruit: </span><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+</select>
+
+<select id="unhide" class="base">
+    <button><span id="unhideSpan" aria-hidden="true">Fruit: </span><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+</select>
+
+<select id="displayNone" class="base">
+    <button><span id="displayNoneSpan">Fruit: </span><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+</select>
+
+<select id="alt" class="base">
+    <button><selectedcontent></selectedcontent><img id="altImage" alt="(ripe)" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></button>
+    <option>Apple</option>
+</select>
+
+<select id="label" class="base">
+    <button><span id="labelSpan" aria-label="Fruit:">Pick:</span><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+</select>
+
+<select id="textInsert" class="base">
+    <button id="textInsertButton"><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+</select>
+
+<select id="imageInsert" class="base">
+    <button id="imageInsertButton"><selectedcontent></selectedcontent></button>
+    <option>Apple</option>
+</select>
+
+<select id="nestedImageInsert" class="base">
+    <button><selectedcontent></selectedcontent><span id="nestedImageInsertSpan"></span></button>
+    <option>Apple</option>
+</select>
+
+<select id="imageRemove" class="base">
+    <button><selectedcontent></selectedcontent><img id="imageRemoveImage" alt="(ripe)" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></button>
+    <option>Apple</option>
+</select>
+
+<select id="nestedImageRemove" class="base">
+    <button><selectedcontent></selectedcontent><span><img id="nestedImageRemoveImage" alt="(ripe)" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></span></button>
+    <option>Apple</option>
+</select>
+
+<script>
+var output = "This test ensures that the value of a base appearance dropdown box updates when the content of its button changes.\n\n";
+
+async function expectValueUpdate(id, before, change, after)
+{
+    window.axSelect = await waitForElementById(id);
+    output += `${id}:\n`;
+    output += await expectAsync("axSelect.stringValue", `'AXValue: ${before}'`);
+    change();
+    output += await expectAsync("axSelect.stringValue", `'AXValue: ${after}'`);
+}
+
+function createImage()
+{
+    const image = document.createElement("img");
+    image.alt = "(ripe)";
+    image.src = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+    return image;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await expectValueUpdate("hide", "Fruit: Apple", () => document.getElementById("hideSpan").setAttribute("aria-hidden", "true"), "Apple");
+        await expectValueUpdate("unhide", "Apple", () => document.getElementById("unhideSpan").removeAttribute("aria-hidden"), "Fruit: Apple");
+        await expectValueUpdate("displayNone", "Fruit: Apple", () => document.getElementById("displayNoneSpan").style.display = "none", "Apple");
+        await expectValueUpdate("alt", "Apple (ripe)", () => document.getElementById("altImage").alt = "(green)", "Apple (green)");
+        await expectValueUpdate("label", "Fruit: Apple", () => document.getElementById("labelSpan").setAttribute("aria-label", "Choice:"), "Choice: Apple");
+        await expectValueUpdate("textInsert", "Apple", () => document.getElementById("textInsertButton").append(" (ripe)"), "Apple (ripe)");
+        await expectValueUpdate("imageInsert", "Apple", () => document.getElementById("imageInsertButton").append(createImage()), "Apple (ripe)");
+        await expectValueUpdate("nestedImageInsert", "Apple", () => document.getElementById("nestedImageInsertSpan").append(createImage()), "Apple (ripe)");
+        await expectValueUpdate("imageRemove", "Apple (ripe)", () => document.getElementById("imageRemoveImage").remove(), "Apple");
+        await expectValueUpdate("nestedImageRemove", "Apple (ripe)", () => document.getElementById("nestedImageRemoveImage").remove(), "Apple");
+
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
