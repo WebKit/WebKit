@@ -492,7 +492,13 @@ size_t AudioSessionMac::outputLatency() const
         AudioObjectGetPropertyData(streamID, &addr, 0, 0, &size, &streamLatency);
     }
 
-    return deviceLatency + streamLatency;
+    UInt32 safetyOffset = 0;
+    addr.mSelector = kAudioDevicePropertySafetyOffset;
+    size = sizeof(safetyOffset);
+    if (AudioObjectGetPropertyData(defaultDevice(), &addr, 0, 0, &size, &safetyOffset) != noErr)
+        safetyOffset = 0;
+
+    return deviceLatency + streamLatency + safetyOffset;
 }
 
 void AudioSessionMac::handleMutedStateChange()

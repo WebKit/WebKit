@@ -214,11 +214,16 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
 
 MediaTime RemoteAudioDestinationProxy::outputLatency() const
 {
-    return (MediaTime { static_cast<int64_t>(m_audioUnitLatency), static_cast<uint32_t>(sampleRate()) }
+    auto latency = MediaTime { static_cast<int64_t>(m_audioUnitLatency), static_cast<uint32_t>(sampleRate()) };
 #if USE(AUDIO_SESSION)
-            + MediaTime { static_cast<int64_t>(WebCore::AudioSession::singleton().outputLatency()), static_cast<uint32_t>(WebCore::AudioSession::singleton().sampleRate()) }
+    Ref session = WebCore::AudioSession::singleton();
+    auto sessionRate = static_cast<uint32_t>(session->sampleRate());
+    latency += MediaTime { static_cast<int64_t>(session->outputLatency()), sessionRate };
+#if PLATFORM(MAC)
+    latency += MediaTime { static_cast<int64_t>(session->bufferSize()), sessionRate };
 #endif
-            );
+#endif
+    return latency;
 }
 
 void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)

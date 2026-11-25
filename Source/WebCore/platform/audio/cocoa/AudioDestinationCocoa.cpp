@@ -131,7 +131,14 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
 
 MediaTime AudioDestinationCocoa::outputLatency() const
 {
-    return MediaTime { static_cast<int64_t>(m_audioOutputUnitAdaptor.outputLatency()), static_cast<uint32_t>(sampleRate()) } + MediaTime { static_cast<int64_t>(AudioSession::singleton().outputLatency()), static_cast<uint32_t>(AudioSession::singleton().sampleRate()) };
+    Ref session = AudioSession::singleton();
+    auto sessionRate = static_cast<uint32_t>(session->sampleRate());
+    auto latency = MediaTime { static_cast<int64_t>(m_audioOutputUnitAdaptor.outputLatency()), static_cast<uint32_t>(sampleRate()) }
+        + MediaTime { static_cast<int64_t>(session->outputLatency()), sessionRate };
+#if PLATFORM(MAC)
+    latency += MediaTime { static_cast<int64_t>(session->bufferSize()), sessionRate };
+#endif
+    return latency;
 }
 
 #if PLATFORM(IOS_FAMILY)
