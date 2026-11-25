@@ -42,14 +42,15 @@ RefPtr<WebGPU::ExternalTexture> Device::importExternalTexture(const WebGPU::Exte
         return ExternalTexture::createInvalid(*this);
 
     // The external texture keeps the C API color space, which the pixel buffer conversions take.
-    return ExternalTexture::create(descriptor.pixelBuffer.get(), descriptor.colorSpace, simd::uint2 { descriptor.visibleSize.width, descriptor.visibleSize.height }, *this);
+    return ExternalTexture::create(descriptor.pixelBuffer.get(), descriptor.colorSpace, descriptor.linearHeadroom, simd::uint2 { descriptor.visibleSize.width, descriptor.visibleSize.height }, *this);
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExternalTexture);
 
-ExternalTexture::ExternalTexture(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, simd::uint2 visibleSize, Device& device)
+ExternalTexture::ExternalTexture(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, float linearHeadroom, simd::uint2 visibleSize, Device& device)
     : m_pixelBuffer(pixelBuffer)
     , m_colorSpace(colorSpace)
+    , m_linearHeadroom(linearHeadroom)
     , m_visibleSize(visibleSize)
     , m_device(device)
 {

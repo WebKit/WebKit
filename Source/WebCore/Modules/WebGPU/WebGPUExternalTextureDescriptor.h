@@ -54,6 +54,7 @@ struct WebGPUExternalTextureDescriptor : public WebGPUObjectDescriptorBase {
     // WebCodecs frame carries a display size of its own, and a video element's intrinsic size accounts
     // for its aspect ratio. Empty when the source could not say, and then the decoded size stands in.
     IntSize visibleSize;
+    float linearHeadroom { 0 };
 };
 
 } // namespace WebCore

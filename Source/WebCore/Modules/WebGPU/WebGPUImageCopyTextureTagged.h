@@ -33,6 +33,7 @@ namespace WebCore {
 struct WebGPUImageCopyTextureTagged : public ::WebGPU::TexelCopyTextureInfo {
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
     bool premultipliedAlpha { false };
+    float linearHeadroom { 0 };
 };
 
 } // namespace WebCore

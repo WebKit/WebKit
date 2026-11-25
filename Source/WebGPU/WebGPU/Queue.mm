@@ -1523,8 +1523,10 @@ struct CopyExternalImageArguments {
     // arithmetic below would guess right.
     std::array<float, 6> uvRemapMatrix;
     std::array<float, 12> ycbcrMatrix;
+    // What shaderTargetHeadroom() gives, for an HDR video frame.
+    float targetHeadroom;
 };
-static_assert(sizeof(CopyExternalImageArguments) == 144, "CopyExternalImageArguments must match MSL WebKitCopyExternalImageArgs (9 x uint + 27 x float)");
+static_assert(sizeof(CopyExternalImageArguments) == 148, "CopyExternalImageArguments must match MSL WebKitCopyExternalImageArgs (9 x uint + 28 x float)");
 static_assert(!offsetof(CopyExternalImageArguments, sourceOriginX), "sourceOriginX must be at offset 0");
 static_assert(offsetof(CopyExternalImageArguments, sourceOriginY) == 4, "sourceOriginY must be at offset 4");
 static_assert(offsetof(CopyExternalImageArguments, destinationOriginX) == 8, "destinationOriginX must be at offset 8");
@@ -1537,6 +1539,7 @@ static_assert(offsetof(CopyExternalImageArguments, flags) == 32, "flags must be 
 static_assert(offsetof(CopyExternalImageArguments, colorMatrix) == 36, "colorMatrix must be at offset 36");
 static_assert(offsetof(CopyExternalImageArguments, uvRemapMatrix) == 72, "uvRemapMatrix must be at offset 72");
 static_assert(offsetof(CopyExternalImageArguments, ycbcrMatrix) == 96, "ycbcrMatrix must be at offset 96");
+static_assert(offsetof(CopyExternalImageArguments, targetHeadroom) == 144, "targetHeadroom must be at offset 144");
 
 // Mirrors the `webKitCopyExternalImage*` constants in the shader source below.
 enum CopyExternalImageFlags : uint32_t {
@@ -1708,6 +1711,13 @@ HDRTransferFunction hdrTransferFunctionForPixelBuffer(CVPixelBufferRef pixelBuff
     return HDRTransferFunction::None;
 }
 
+float shaderTargetHeadroom(float linearHeadroom)
+{
+    if (!(linearHeadroom >= 1))
+        return 1;
+    return std::isinf(linearHeadroom) ? 0 : linearHeadroom;
+}
+
 std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace destination)
 {
     bool destinationIsDisplayP3 = destination == WebGPU::PredefinedColorSpace::DisplayP3 || destination == WebGPU::PredefinedColorSpace::DisplayP3Linear;
@@ -1763,6 +1773,7 @@ id<MTLRenderPipelineState> Queue::copyExternalImagePipelineState(MTLPixelFormat 
     float colorMatrix[9];
     float uvRemapMatrix[6];
     float ycbcrMatrix[12];
+    float targetHeadroom;
 };
 constant uint webKitCopyExternalImageFlipY = 1;
 constant uint webKitCopyExternalImageForceOpaqueAlpha = 2;
@@ -1835,9 +1846,9 @@ struct WebKitCopyExternalImageVertexOut {
     if ((args.flags & webKitCopyExternalImageUnpremultiplySource) && color.a > 0.f)
         color.rgb /= color.a;
     bool sourceIsHDR = args.flags & (webKitCopyExternalImageSourceIsPQ | webKitCopyExternalImageSourceIsHLG);
-    if (sourceIsHDR)
-        color.rgb = __wgslToneMapHDR(__wgslDecodeHDR(saturate(color.rgb), args.flags & webKitCopyExternalImageSourceIsHLG));
-    else if (args.flags & webKitCopyExternalImageDecodeSourceTransferFunction)
+    if (sourceIsHDR) {
+        color.rgb = __wgslToneMapHDR(__wgslDecodeHDR(saturate(color.rgb), args.flags & webKitCopyExternalImageSourceIsHLG, args.targetHeadroom), args.targetHeadroom);
+    } else if (args.flags & webKitCopyExternalImageDecodeSourceTransferFunction)
         color.rgb = webKitSRGBToLinear(color.rgb);
     // Explicit dot products, so that the host's row-major storage order is unambiguous. The matrix is
     // the identity when the source and destination share primaries, which leaves the values alone.
@@ -2034,7 +2045,7 @@ void Queue::copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& sou
     if (RetainPtr pixelBuffer = source.pixelBuffer) {
         // The frame's planes are wrapped in MTLTextures exactly the way importExternalTexture() wraps
         // them, so a video reaches the destination without its pixels ever leaving the GPU.
-        auto frame = device->createExternalTextureFromPixelBuffer(pixelBuffer.get(), source.colorSpace, Device::PremultiplyAlpha::No);
+        auto frame = device->createExternalTextureFromPixelBuffer(pixelBuffer.get(), source.colorSpace, destination.linearHeadroom, Device::PremultiplyAlpha::No);
         sourceTexture = frame.texture0;
         sourceSecondPlaneTexture = frame.texture1;
         if (!sourceTexture || !sourceSecondPlaneTexture)
@@ -2124,7 +2135,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool primariesDiffer = colorMatrix != identityColorMatrix;
     bool transferFunctionsDiffer = isLinear(source.colorSpace) != isLinear(destination.colorSpace);
     // An HDR frame is never in the destination's transfer function, so it is always decoded, by the
-    // shader's HDR path rather than the sRGB one, and tone mapped on the way.
+    // shader's HDR path rather than the sRGB one, and tone mapped on the way to the headroom asked for.
     bool sourceIsHDR = flags & (CopyExternalImageSourceIsPQ | CopyExternalImageSourceIsHLG);
     bool convertsColor = primariesDiffer || transferFunctionsDiffer || sourceIsHDR;
     if (convertsColor) {
@@ -2203,6 +2214,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         .colorMatrix = colorMatrix,
         .uvRemapMatrix = uvRemapMatrix,
         .ycbcrMatrix = ycbcrMatrix,
+        .targetHeadroom = shaderTargetHeadroom(destination.linearHeadroom),
     };
 
     // The viewport is what confines the full-NDC quad to the destination rectangle, and it is also

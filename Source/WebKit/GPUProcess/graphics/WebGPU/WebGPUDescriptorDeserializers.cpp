@@ -210,7 +210,7 @@ std::optional<WebCore::WebGPUExternalTextureDescriptor> deserialize(ObjectHeap& 
     if (!base)
         return std::nullopt;
 
-    return { { WTF::move(*base), pixelBuffer, externalTextureDescriptor.colorSpace, externalTextureDescriptor.visibleSize } };
+    return { { WTF::move(*base), pixelBuffer, externalTextureDescriptor.colorSpace, externalTextureDescriptor.visibleSize, externalTextureDescriptor.linearHeadroom } };
 }
 
 std::optional<::WebGPU::FragmentState> deserialize(ObjectHeap& objectHeap, const FragmentState& fragmentState, RenderPipelineDescriptorStorage& storage)
@@ -266,7 +266,7 @@ std::optional<WebCore::WebGPUImageCopyTextureTagged> deserialize(ObjectHeap& obj
     if (!base)
         return std::nullopt;
 
-    return { { WTF::move(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
+    return { { WTF::move(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha, imageCopyTextureTagged.linearHeadroom } };
 }
 
 std::optional<WebCore::WebGPUObjectDescriptorBase> deserialize(ObjectHeap&, const ObjectDescriptorBase& objectDescriptorBase)

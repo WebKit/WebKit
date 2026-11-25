@@ -1,0 +1,3 @@
+Tests that with WebGPUImportLinearHeadroomEnabled off, GPUExternalTextureDescriptor and GPUImageCopyTextureTagged do not read linearHeadroom, so a value that would be rejected with it on is ignored.
+
+PASS Neither dictionary reads linearHeadroom

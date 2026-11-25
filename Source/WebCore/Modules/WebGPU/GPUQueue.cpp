@@ -53,6 +53,7 @@
 #include "SVGImage.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "VideoFrame.h"
 #include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/HeapCellInlines.h>
@@ -1451,6 +1452,9 @@ static MallocSpan<uint8_t> copyToDestinationFormat(std::span<const uint8_t> rgba
 
 ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& context, const GPUImageCopyExternalImage& source, const GPUImageCopyTextureTagged& destination, const GPUExtent3D& copySize)
 {
+    if (context.settingsValues().webGPUImportLinearHeadroomEnabled && !(destination.linearHeadroom >= 1))
+        return Exception { ExceptionCode::TypeError, "GPUQueue.copyExternalImageToTexture: linearHeadroom must be at least 1."_s };
+
     ExceptionCode outErrorCode;
     if (!isStateValid(source.source, source.origin, copySize, outErrorCode))
         return Exception { outErrorCode, "GPUQueue.copyExternalImageToTexture: External image state is not valid"_s };

@@ -30,10 +30,11 @@
 
 namespace WebCore {
 
-GPUExternalTexture::GPUExternalTexture(Ref<WebGPU::ExternalTexture>&& backing, String&& label, PredefinedColorSpace colorSpace, GPUDevice& device)
+GPUExternalTexture::GPUExternalTexture(Ref<WebGPU::ExternalTexture>&& backing, String&& label, PredefinedColorSpace colorSpace, float linearHeadroom, GPUDevice& device)
     : m_backing(WTF::move(backing))
     , m_label(WTF::move(label))
     , m_colorSpace(colorSpace)
+    , m_linearHeadroom(linearHeadroom)
     , m_device(device)
 {
 }

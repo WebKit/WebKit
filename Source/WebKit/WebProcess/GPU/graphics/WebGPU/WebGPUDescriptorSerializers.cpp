@@ -164,7 +164,7 @@ std::optional<ExternalTextureDescriptor> serialize(const WebCore::WebGPUExternal
     std::optional<WebCore::MediaPlayerIdentifier> optionalMediaIdentifier { std::nullopt };
     if (auto* mediaIdentifier = std::get_if<std::optional<WebCore::MediaPlayerIdentifier>>(&externalTextureDescriptor.videoBacking))
         optionalMediaIdentifier = *mediaIdentifier;
-    return { { WTF::move(*base), optionalMediaIdentifier, externalTextureDescriptor.colorSpace, externalTextureDescriptor.visibleSize
+    return { { WTF::move(*base), optionalMediaIdentifier, externalTextureDescriptor.colorSpace, externalTextureDescriptor.visibleSize, externalTextureDescriptor.linearHeadroom
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
         , std::nullopt
 #endif
@@ -222,7 +222,7 @@ std::optional<ImageCopyTextureTagged> serialize(const WebCore::WebGPUImageCopyTe
     if (!base)
         return std::nullopt;
 
-    return { { WTF::move(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
+    return { { WTF::move(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha, imageCopyTextureTagged.linearHeadroom } };
 }
 
 std::optional<ObjectDescriptorBase> serialize(const WebCore::WebGPUObjectDescriptorBase& objectDescriptorBase)

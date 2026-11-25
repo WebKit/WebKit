@@ -1,0 +1,384 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebGPUImportLinearHeadroomEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/video-formats/video-formats-manifest.js"></script>
+<script src="../../resources/video-formats/video-formats-test-utils.js"></script>
+</head>
+<body>
+<p>Tests the linearHeadroom prototype of https://github.com/gpuweb/gpuweb/issues/5236 on GPUExternalTextureDescriptor and GPUImageCopyTextureTagged: that GPUDevice.importExternalTexture and GPUQueue.copyExternalImageToTexture tone map an HDR (PQ or HLG) frame to SDR by default, even into a linear color space, to the headroom asked for when one is, and not at all for Infinity, and that a headroom below 1 is rejected.</p>
+<pre id="log"></pre>
+<script>
+"use strict";
+
+// The curve between SDR and Infinity is WebKit's own, since nothing specifies one yet, so this only holds
+// it to what any curve has to do: stay within the headroom, and give the highlights more of it the more
+// there is. At 1 it has to be the SDR mapping imports have always had; at Infinity, the frame decoded
+// where 1.0 is the 203 nit reference white of ITU-R BT.2408, and not tone mapped at all.
+//
+// Linear light is compared after being encoded back to a PQ signal, in 8-bit units, which covers the
+// whole range an HDR frame can reach.
+const headrooms = [1, 2, 4, Infinity];
+const cases = [
+    { name: "hevc-420-10bit-pq-videorange.mp4", mode: "pq", sources: ["decoder", "video"] },
+    { name: "hevc-420-10bit-hlg-videorange.mp4", mode: "hlg", sources: ["decoder"] },
+];
+const grays = new Set(["black", "gray16", "gray128", "gray235", "white"]);
+const grayTolerance = 5;
+const colorTolerance = 16;
+const pathTolerance = 2;
+// float16 holds about three decimal digits.
+const headroomTolerance = 0.005;
+
+const referenceWhiteNits = 203;
+const bt2020Luminance = [0.2627, 0.6780, 0.0593];
+// The luminance of the same light in sRGB primaries, which the readbacks are in.
+const srgbLuminance = [0.2126, 0.7152, 0.0722];
+const bt2020ToSRGB = [
+    [1.6604910, -0.5876411, -0.0728499],
+    [-0.1245505, 1.1328999, -0.0083494],
+    [-0.0181508, -0.1005789, 1.1187297],
+];
+
+function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+
+const pq = { m1: 0.1593017578125, m2: 78.84375, c1: 0.8359375, c2: 18.8515625, c3: 18.6875 };
+
+function decodeHDR(encoded, isHLG)
+{
+    if (!isHLG) {
+        return encoded.map(e => {
+            const p = Math.pow(e, 1 / pq.m2);
+            return Math.pow(Math.max(p - pq.c1, 0) / (pq.c2 - pq.c3 * p), 1 / pq.m1) * 10000 / referenceWhiteNits;
+        });
+    }
+    const a = 0.17883277, b = 0.28466892, c = 0.55991073;
+    const scene = encoded.map(e => e <= 0.5 ? e * e / 3 : (Math.exp((e - c) / a) + b) / 12);
+    // The HLG OOTF for a 1000 nit display.
+    const gain = Math.pow(Math.max(dot(scene, bt2020Luminance), 1e-6), 0.2) * 1000 / referenceWhiteNits;
+    return scene.map(v => v * gain);
+}
+
+// The frame's own R'G'B' (the manifest's "native" values, 0-255) to the linear light expected with all
+// of its headroom kept, in "srgb-linear".
+function expectedUnlimited(native, mode)
+{
+    const linear = decodeHDR(native.map(v => Math.min(Math.max(v / 255, 0), 1)), mode === "hlg");
+    return bt2020ToSRGB.map(row => dot(row, linear));
+}
+
+function encodePQ(nits)
+{
+    const y = Math.pow(nits / 10000, pq.m1);
+    return Math.pow((pq.c1 + pq.c2 * y) / (1 + pq.c3 * y), pq.m2);
+}
+
+// Sign-preserving, since a BT.2020 color can be out of the sRGB gamut.
+function toSignal(linear)
+{
+    return linear.map(v => Math.sign(v) * encodePQ(Math.abs(v) * referenceWhiteNits) * 255);
+}
+
+// The pure 2.4 gamma of ITU-R BT.1886, which HDR imported into an sRGB-encoded color space is encoded with.
+function fromBT1886(readback)
+{
+    const data = readback.data.map((v, i) => (i % 4 === 3) ? v : Math.sign(v) * Math.pow(Math.abs(v), 2.4));
+    return { width: readback.width, height: readback.height, data };
+}
+
+const shader = `
+struct VertexOut {
+    @builtin(position) position: vec4f,
+    @location(0) uv: vec2f,
+}
+
+@vertex fn vertexMain(@builtin(vertex_index) index: u32) -> VertexOut {
+    var positions = array<vec2f, 3>(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
+    var uvs = array<vec2f, 3>(vec2f(0, 1), vec2f(2, 1), vec2f(0, -1));
+    return VertexOut(vec4f(positions[index], 0, 1), uvs[index]);
+}
+
+@group(0) @binding(0) var videoSampler: sampler;
+@group(0) @binding(1) var videoTexture: texture_external;
+
+@fragment fn fragmentMain(@location(0) uv: vec2f) -> @location(0) vec4f {
+    return textureSampleBaseClampToEdge(videoTexture, videoSampler, uv);
+}
+`;
+
+const lines = [];
+function log(message) { lines.push(message); }
+function check(label, failures) { log(failures.length ? `FAIL ${label}: ${failures.join("; ")}` : `PASS ${label}`); }
+
+function halfToFloat(half)
+{
+    const sign = (half & 0x8000) ? -1 : 1;
+    const exponent = (half >> 10) & 0x1f;
+    const fraction = half & 0x3ff;
+    if (!exponent)
+        return sign * Math.pow(2, -14) * fraction / 1024;
+    if (exponent === 31)
+        return fraction ? NaN : sign * Infinity;
+    return sign * Math.pow(2, exponent - 15) * (1 + fraction / 1024);
+}
+
+async function readTexture(device, texture, width, height)
+{
+    const bytesPerPixel = 8;
+    const bytesPerRow = Math.ceil(width * bytesPerPixel / 256) * 256;
+    const buffer = device.createBuffer({ size: bytesPerRow * height, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow, rowsPerImage: height }, [width, height]);
+    device.queue.submit([encoder.finish()]);
+    await buffer.mapAsync(GPUMapMode.READ);
+    const mapped = new Uint16Array(buffer.getMappedRange());
+    const data = new Float32Array(width * height * 4);
+    for (let y = 0; y < height; ++y) {
+        for (let i = 0; i < width * 4; ++i)
+            data[y * width * 4 + i] = halfToFloat(mapped[y * bytesPerRow / 2 + i]);
+    }
+    buffer.unmap();
+    buffer.destroy();
+    return { width, height, data };
+}
+
+function createTarget(device, width, height)
+{
+    return device.createTexture({
+        size: [width, height],
+        format: "rgba16float",
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
+    });
+}
+
+// options is the colorSpace and, unless it is left to its default, the linearHeadroom.
+function encodeSample(device, pipeline, encoder, source, options, texture)
+{
+    // A GPUExternalTexture expires at the end of the task it was imported in, so the caller imports,
+    // encodes and submits without yielding.
+    const bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: device.createSampler() },
+            { binding: 1, resource: device.importExternalTexture(Object.assign({ source }, options)) },
+        ],
+    });
+    const pass = encoder.beginRenderPass({
+        colorAttachments: [{ view: texture.createView(), clearValue: [0, 0, 0, 1], loadOp: "clear", storeOp: "store" }],
+    });
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.draw(3);
+    pass.end();
+}
+
+async function sampleThroughExternalTexture(device, pipeline, source, options, width, height)
+{
+    const texture = createTarget(device, width, height);
+    const encoder = device.createCommandEncoder();
+    encodeSample(device, pipeline, encoder, source, options, texture);
+    device.queue.submit([encoder.finish()]);
+    return readTexture(device, texture, width, height);
+}
+
+async function copyFromSource(device, source, options, width, height)
+{
+    const texture = createTarget(device, width, height);
+    device.queue.copyExternalImageToTexture({ source }, Object.assign({ texture }, options), [width, height]);
+    return readTexture(device, texture, width, height);
+}
+
+function maximumLuminance(readback)
+{
+    let maximum = -Infinity;
+    for (let i = 0; i < readback.data.length; i += 4)
+        maximum = Math.max(maximum, dot([readback.data[i], readback.data[i + 1], readback.data[i + 2]], srgbLuminance));
+    return maximum;
+}
+
+function patchLinear(readback, patch) { return VideoFormats.samplePatch(readback, patch.rect).slice(0, 3); }
+function formatColor(color) { return "(" + color.map(v => Math.round(v)).join(",") + ")"; }
+function formatLinear(color) { return "(" + color.map(v => v.toFixed(3)).join(",") + ")"; }
+
+function comparePatches(first, second, patches)
+{
+    const failures = [];
+    for (const patch of patches) {
+        const a = toSignal(patchLinear(first, patch));
+        const b = toSignal(patchLinear(second, patch));
+        if (a.some((v, i) => Math.abs(v - b[i]) > pathTolerance))
+            failures.push(`${patch.cell} ${formatColor(a)} vs ${formatColor(b)}`);
+    }
+    return failures;
+}
+
+function checkUnlimited(readback, patches, mode)
+{
+    const failures = [];
+    for (const patch of patches) {
+        const observed = toSignal(patchLinear(readback, patch));
+        const expected = toSignal(expectedUnlimited(patch.expected.slice(0, 3), mode));
+        const tolerance = grays.has(patch.color) ? grayTolerance : colorTolerance;
+        if (observed.some((v, i) => Math.abs(v - expected[i]) > tolerance))
+            failures.push(`${patch.cell} ${formatColor(observed)}, expected ${formatColor(expected)} within ${tolerance}`);
+    }
+    return failures;
+}
+
+async function checkSource(device, pipeline, label, source, info, mode)
+{
+    const width = info.displayWidth, height = info.displayHeight;
+    const patches = VideoFormats.expectedPatches(info, { colorSpace: "native" }).filter(patch => patch.expected);
+    const white = patches.find(patch => patch.color === "white");
+
+    const results = { };
+    for (const headroom of [undefined, ...headrooms]) {
+        const options = headroom === undefined ? { colorSpace: "srgb-linear" } : { colorSpace: "srgb-linear", linearHeadroom: headroom };
+        results[headroom] = {
+            sampled: await sampleThroughExternalTexture(device, pipeline, source, options, width, height),
+            copied: await copyFromSource(device, source, options, width, height),
+        };
+    }
+    const srgb = {
+        sampled: await sampleThroughExternalTexture(device, pipeline, source, { colorSpace: "srgb" }, width, height),
+        copied: await copyFromSource(device, source, { colorSpace: "srgb" }, width, height),
+    };
+    const srgbWithHeadroom = {
+        sampled: await sampleThroughExternalTexture(device, pipeline, source, { colorSpace: "srgb", linearHeadroom: 4 }, width, height),
+        copied: await copyFromSource(device, source, { colorSpace: "srgb", linearHeadroom: 4 }, width, height),
+    };
+
+    for (const path of ["sampled", "copied"]) {
+        const call = path === "sampled" ? "importExternalTexture" : "copyExternalImageToTexture";
+        const prefix = `${label}: ${call}`;
+
+        check(`${prefix} defaults to a headroom of 1`, comparePatches(results[undefined][path], results[1][path], patches));
+        check(`${prefix} with a headroom of 1 into srgb-linear is the SDR mapping into srgb, linearized`, comparePatches(results[1][path], fromBT1886(srgb[path]), patches));
+
+        for (const headroom of headrooms.filter(Number.isFinite)) {
+            const maximum = maximumLuminance(results[headroom][path]);
+            check(`${prefix} with a headroom of ${headroom} stays within it`, maximum <= headroom * (1 + headroomTolerance) ? [] : [`luminance reaches ${maximum.toFixed(3)}`]);
+        }
+
+        const whites = headrooms.map(headroom => dot(patchLinear(results[headroom][path], white), srgbLuminance));
+        const increasing = whites.every((luminance, i) => !i || luminance > whites[i - 1] + 0.01);
+        check(`${prefix} gives white more of a larger headroom`, increasing ? [] : [`white luminance ${whites.map(v => v.toFixed(3)).join(", ")} for headrooms ${headrooms.join(", ")}`]);
+
+        const unlimited = results[Infinity][path];
+        const unlimitedWhite = patchLinear(unlimited, white);
+        check(`${prefix} with a headroom of Infinity keeps all of it`, [...checkUnlimited(unlimited, patches, mode), ...(Math.min(...unlimitedWhite) > 1 ? [] : [`white ${formatLinear(unlimitedWhite)} lost its headroom`])]);
+
+        const encodedWhite = patchLinear(srgbWithHeadroom[path], white);
+        check(`${prefix} with a headroom of 4 into srgb goes above 1`, Math.min(...encodedWhite) > 1 ? [] : [`white ${formatLinear(encodedWhite)}`]);
+    }
+
+    for (const headroom of headrooms)
+        check(`${label}: importExternalTexture and copyExternalImageToTexture agree for a headroom of ${headroom}`, comparePatches(results[headroom].sampled, results[headroom].copied, patches));
+
+    return white;
+}
+
+// A video element's external texture is handed out again when the same element is imported again,
+// which must not happen when the headroom asked for differs.
+async function checkReimportInOneTask(device, pipeline, label, video, info, white)
+{
+    const width = info.displayWidth, height = info.displayHeight;
+    const sdr = createTarget(device, width, height);
+    const unlimited = createTarget(device, width, height);
+    const encoder = device.createCommandEncoder();
+    encodeSample(device, pipeline, encoder, video, { colorSpace: "srgb-linear", linearHeadroom: 1 }, sdr);
+    encodeSample(device, pipeline, encoder, video, { colorSpace: "srgb-linear", linearHeadroom: Infinity }, unlimited);
+    device.queue.submit([encoder.finish()]);
+    const sdrWhite = dot(patchLinear(await readTexture(device, sdr, width, height), white), srgbLuminance);
+    const unlimitedWhite = dot(patchLinear(await readTexture(device, unlimited, width, height), white), srgbLuminance);
+    check(`${label}: importing it again in the same task with another headroom uses that headroom`, unlimitedWhite > sdrWhite + 0.5 ? [] : [`white luminance ${sdrWhite.toFixed(3)} for 1 and ${unlimitedWhite.toFixed(3)} for Infinity`]);
+}
+
+function checkValidation(device, frame)
+{
+    const texture = createTarget(device, 4, 4);
+    for (const [call, attempt] of [
+        ["importExternalTexture", linearHeadroom => device.importExternalTexture({ source: frame, linearHeadroom })],
+        ["copyExternalImageToTexture", linearHeadroom => device.queue.copyExternalImageToTexture({ source: frame }, { texture, linearHeadroom }, [4, 4])],
+    ]) {
+        const failures = [];
+        for (const value of [0.5, 0, -1, -Infinity, NaN]) {
+            try {
+                attempt(value);
+                failures.push(`${value} was accepted`);
+            } catch (error) {
+                if (error.name !== "TypeError")
+                    failures.push(`${value} threw ${error.name}`);
+            }
+        }
+        for (const value of [1, 2.5, Infinity]) {
+            try {
+                attempt(value);
+            } catch (error) {
+                failures.push(`${value} threw ${error.name}`);
+            }
+        }
+        check(`${call} accepts a linearHeadroom of at least 1 and throws a TypeError for anything else`, failures);
+    }
+
+    let reads = 0;
+    const descriptor = { source: frame, get linearHeadroom() { ++reads; return 2; } };
+    device.importExternalTexture(descriptor);
+    const destination = { texture, get linearHeadroom() { ++reads; return 2; } };
+    device.queue.copyExternalImageToTexture({ source: frame }, destination, [4, 4]);
+    check("Both dictionaries read linearHeadroom", reads === 2 ? [] : [`read ${reads} times`]);
+}
+
+async function run()
+{
+    const adapter = await navigator.gpu?.requestAdapter();
+    const device = await adapter?.requestDevice();
+    if (!device) {
+        log("FAIL: no WebGPU device");
+        return;
+    }
+
+    const module = device.createShaderModule({ code: shader });
+    const pipeline = device.createRenderPipeline({
+        layout: "auto",
+        vertex: { module },
+        fragment: { module, targets: [{ format: "rgba16float" }] },
+    });
+
+    let validated = false;
+    for (const { name, mode, sources } of cases) {
+        const info = VideoFormats.videoInfo(name);
+        for (const kind of sources) {
+            const label = `${name} from a ${kind === "video" ? "video element" : "VideoDecoder"}`;
+            if (kind === "video") {
+                const video = await VideoFormats.loadVideo(name);
+                const white = await checkSource(device, pipeline, label, video, info, mode);
+                await checkReimportInOneTask(device, pipeline, label, video, info, white);
+                VideoFormats.releaseVideo(video);
+                continue;
+            }
+            const frames = await VideoFormats.decodeFrames(name);
+            if (!validated) {
+                checkValidation(device, frames[0]);
+                validated = true;
+            }
+            await checkSource(device, pipeline, label, frames[0], info, mode);
+            for (const frame of frames)
+                frame.close();
+        }
+    }
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+run().catch(error => log(`FAIL: ${error}`)).finally(() => {
+    document.getElementById("log").textContent = lines.join("\n");
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

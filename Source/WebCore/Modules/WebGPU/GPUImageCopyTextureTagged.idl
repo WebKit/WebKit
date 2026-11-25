@@ -32,4 +32,8 @@
 ] dictionary GPUImageCopyTextureTagged : GPUImageCopyTexture {
     PredefinedColorSpace colorSpace = "srgb";
     boolean premultipliedAlpha = false;
+    // Prototype of https://github.com/gpuweb/gpuweb/issues/5236, with the linear units and the name
+    // https://github.com/w3c-cg/ColorWeb-CG/issues/129 settled on: 1 is SDR and Infinity keeps all of
+    // an HDR source's headroom.
+    [EnabledBySetting=WebGPUImportLinearHeadroomEnabled] unrestricted float linearHeadroom = 1;
 };

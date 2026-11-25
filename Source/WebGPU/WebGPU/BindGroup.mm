@@ -650,7 +650,7 @@ static id<MTLTexture> gbTextureFromRGB(id<MTLTexture> texture, bool alphaFirst, 
     return [texture newTextureViewWithPixelFormat:texture.pixelFormat textureType:texture.textureType levels:NSMakeRange(0, texture.mipmapLevelCount) slices:NSMakeRange(0, texture.arrayLength) swizzle:swizzle];
 }
 
-Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, PremultiplyAlpha premultiplyAlpha) const
+Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, float linearHeadroom, PremultiplyAlpha premultiplyAlpha) const
 {
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     // colorMatrixBetweenPrimaries() is row-major, and Metal indexes a float3x3 by column.
@@ -660,6 +660,9 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         primariesConversionMatrix = simd::float3x4(simd::make_float4(m[0], m[3], m[6], 0.f), simd::make_float4(m[1], m[4], m[7], 0.f), simd::make_float4(m[2], m[5], m[8], 0.f));
     }
     primariesConversionMatrix.columns[0].w = static_cast<float>(hdrTransferFunctionForPixelBuffer(pixelBuffer));
+    bool destinationIsLinear = colorSpace == WebGPU::PredefinedColorSpace::SRGBLinear || colorSpace == WebGPU::PredefinedColorSpace::DisplayP3Linear;
+    primariesConversionMatrix.columns[1].w = destinationIsLinear ? 1.f : 0.f;
+    primariesConversionMatrix.columns[2].w = shaderTargetHeadroom(linearHeadroom);
 
     auto premultiplyParameters = premultiplyAlpha == PremultiplyAlpha::Yes ? premultiplyAlphaParameters(pixelBuffer) : PremultiplyAlphaParameters { };
 
@@ -800,6 +803,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 #else
     UNUSED_PARAM(pixelBuffer);
     UNUSED_PARAM(colorSpace);
+    UNUSED_PARAM(linearHeadroom);
     UNUSED_PARAM(premultiplyAlpha);
     return { };
 #endif
@@ -1583,7 +1587,7 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
                     VALIDATION_ERROR(@"External texture was created from a different device");
                     return BindGroup::createInvalid(*this);
                 }
-                auto textureData = createExternalTextureFromPixelBuffer(protect(externalTexture->pixelBuffer()), externalTexture->colorSpace(), PremultiplyAlpha::Yes);
+                auto textureData = createExternalTextureFromPixelBuffer(protect(externalTexture->pixelBuffer()), externalTexture->colorSpace(), externalTexture->linearHeadroom(), PremultiplyAlpha::Yes);
                 id<MTLTexture> texture0 = textureData.texture0 ?: placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
                 auto metalStage = metalRenderStage(stage);
                 if (stage != ShaderStage::Undefined) {
@@ -1842,7 +1846,7 @@ bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTextu
         return false;
 
     Ref device = m_device;
-    auto textureData = device->createExternalTextureFromPixelBuffer(protect(externalTexture.pixelBuffer()), externalTexture.colorSpace(), Device::PremultiplyAlpha::Yes);
+    auto textureData = device->createExternalTextureFromPixelBuffer(protect(externalTexture.pixelBuffer()), externalTexture.colorSpace(), externalTexture.linearHeadroom(), Device::PremultiplyAlpha::Yes);
     id<MTLTexture> texture0 = textureData.texture0 ?: device->placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
     id<MTLTexture> texture1 = textureData.texture1 ?: device->placeholderTexture(WebGPU::TextureFormat::Bgra8unorm);
     externalTexture.updateExternalTextures(texture0, texture1);

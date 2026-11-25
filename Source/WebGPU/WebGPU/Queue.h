@@ -61,15 +61,23 @@ class TextureView;
 // the destination's, which has to stay a no-op rather than a transfer function round trip.
 std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPixelBufferRef, WebGPU::PredefinedColorSpace destination);
 
-// The HDR transfer functions which importExternalTexture() and copyExternalImageToTexture() decode
-// and tone map to SDR. Anything else is treated as SDR. The values are what the external texture
-// shader finds in the fourth column of its primaries conversion matrix, so they must not change.
+// The HDR transfer functions which importExternalTexture() and copyExternalImageToTexture() decode,
+// and tone map to the headroom shaderTargetHeadroom() gives. Anything else is treated as SDR.
+// The values are what the external texture shader finds in the fourth column of its primaries
+// conversion matrix, so they must not change.
 enum class HDRTransferFunction : uint8_t {
     None = 0,
     PQ = 1, // NOLINT
     HLG = 2, // NOLINT
 };
 HDRTransferFunction hdrTransferFunctionForPixelBuffer(CVPixelBufferRef);
+
+// The linear headroom the importExternalTexture() and copyExternalImageToTexture() shaders tone map
+// an HDR frame to, with 0 standing for no limit, from the linearHeadroom asked for. One below 1, or
+// NaN, tone maps to SDR, as before there was a headroom to ask for. That is what 0, which is what
+// WebCore sends while WebGPUImportLinearHeadroomEnabled is off, asks for, and it is also what anything else
+// arriving over IPC which no page could have passed gets.
+float shaderTargetHeadroom(float linearHeadroom);
 
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.

@@ -40,6 +40,7 @@ struct ExternalTextureDescriptor : public ObjectDescriptorBase {
     std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
     WebCore::PredefinedColorSpace colorSpace { WebCore::PredefinedColorSpace::SRGB };
     WebCore::IntSize visibleSize;
+    float linearHeadroom { 0 };
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::optional<WebKit::SharedVideoFrame> sharedFrame;
 #endif

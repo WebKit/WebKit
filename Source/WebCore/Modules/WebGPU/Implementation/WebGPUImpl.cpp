@@ -215,6 +215,7 @@ void WebGPUIntegrationImpl::copyExternalImageToTexture(WebGPU::Queue& queue, con
         .aspect = destination.aspect,
         .colorSpace = convertToWebGPU(destination.colorSpace),
         .premultipliedAlpha = destination.premultipliedAlpha,
+        .linearHeadroom = destination.linearHeadroom,
     }, copySize);
 }
 
@@ -235,6 +236,7 @@ RefPtr<WebGPU::ExternalTexture> WebGPUIntegrationImpl::importExternalTexture(Web
             .width = static_cast<uint32_t>(std::max(0, descriptor.visibleSize.width())),
             .height = static_cast<uint32_t>(std::max(0, descriptor.visibleSize.height())),
         },
+        .linearHeadroom = descriptor.linearHeadroom,
     });
 }
 

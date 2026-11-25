@@ -51,9 +51,9 @@ class CommandEncoder;
 class ExternalTexture final : public WebGPU::ExternalTexture, public TrackedResource {
     WTF_MAKE_TZONE_ALLOCATED(ExternalTexture);
 public:
-    static Ref<ExternalTexture> create(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, simd::uint2 visibleSize, Device& device)
+    static Ref<ExternalTexture> create(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, float linearHeadroom, simd::uint2 visibleSize, Device& device)
     {
-        return adoptRef(*new ExternalTexture(pixelBuffer, colorSpace, visibleSize, device));
+        return adoptRef(*new ExternalTexture(pixelBuffer, colorSpace, linearHeadroom, visibleSize, device));
     }
     static Ref<ExternalTexture> createInvalid(Device& device)
     {
@@ -64,6 +64,7 @@ public:
 
     CVPixelBufferRef pixelBuffer() const { return m_pixelBuffer.get(); }
     WebGPU::PredefinedColorSpace colorSpace() const { return m_colorSpace; }
+    float linearHeadroom() const { return m_linearHeadroom; }
     // The size the source presents the frame at, which is not the size its planes were decoded into.
     // Zero in either component means the source could not say.
     simd::uint2 visibleSize() const { return m_visibleSize; }
@@ -82,11 +83,12 @@ public:
     Device& device() const { return m_device; }
 
 private:
-    ExternalTexture(CVPixelBufferRef, WebGPU::PredefinedColorSpace, simd::uint2 visibleSize, Device&);
+    ExternalTexture(CVPixelBufferRef, WebGPU::PredefinedColorSpace, float linearHeadroom, simd::uint2 visibleSize, Device&);
     ExternalTexture(Device&);
 
     RetainPtr<CVPixelBufferRef> m_pixelBuffer;
     WebGPU::PredefinedColorSpace m_colorSpace;
+    float m_linearHeadroom { 0 };
     simd::uint2 m_visibleSize { 0, 0 };
     const Ref<Device> m_device;
     bool m_destroyed { false };

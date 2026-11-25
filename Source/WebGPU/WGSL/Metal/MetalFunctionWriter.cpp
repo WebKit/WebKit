@@ -52,12 +52,17 @@ namespace Metal {
 ASCIILiteral hdrToSDRMetalSource()
 {
     return
+        "// targetHeadroom is the linear headroom the result is tone mapped to, at least 1, which is SDR,\n"
+        "// or 0 for none at all, which keeps all of the frame's headroom.\n"
+        "//\n"
         "// Decodes PQ (SMPTE ST 2084) or HLG (ITU-R BT.2100) rgb to linear light in the frame's own primaries,\n"
-        "// scaled so that 1.0 is SDR white. An SDR canvas has no room above that, so __wgslToneMapHDR() then\n"
-        "// fits what is brighter into it.\n"
-        "static float3 __wgslDecodeHDR(float3 encoded, bool isHLG)\n"
+        "// scaled so that 1.0 is SDR white. Keeping all of the headroom, 1.0 is the 203 nit reference white\n"
+        "// of ITU-R BT.2408, as WebKit takes it to be for HDR images too, and what is brighter comes out above\n"
+        "// 1.0. Tone mapped to SDR, 1.0 is 440 nits, which is where that matches CoreGraphics. In between,\n"
+        "// which nothing specifies yet, it is 203 nits plus 237 divided by the headroom.\n"
+        "static float3 __wgslDecodeHDR(float3 encoded, bool isHLG, float targetHeadroom)\n"
         "{\n"
-        "    constexpr float referenceWhiteNits = 440.0f;\n"
+        "    float const referenceWhiteNits = targetHeadroom > 0.0f ? 203.0f + 237.0f / targetHeadroom : 203.0f;\n"
         "    if (!isHLG) {\n"
         "        constexpr float m1 = 0.1593017578125f, m2 = 78.84375f, c1 = 0.8359375f, c2 = 18.8515625f, c3 = 18.6875f;\n"
         "        float3 const p = pow(encoded, 1.0f / m2);\n"
@@ -70,17 +75,20 @@ ASCIILiteral hdrToSDRMetalSource()
         "    return scene * pow(max(sceneLuminance, 1e-6f), 0.2f) * (1000.0f / referenceWhiteNits);\n"
         "}\n"
         "\n"
-        "// Leaves everything up to half of SDR white alone, and rolls what is above it off towards 1.0 with a\n"
-        "// slope that starts out matching, so SDR-range content is not dimmed. It scales the color by its\n"
-        "// luminance, to keep the hue of what it compresses.\n"
-        "static float3 __wgslToneMapHDR(float3 linearLight)\n"
+        "// Leaves everything up to half of the target headroom alone, and rolls what is above it off towards\n"
+        "// the headroom with a slope that starts out matching, so what fits is not dimmed. To SDR, that is\n"
+        "// half of SDR white rolled off towards 1.0. It scales the color by its luminance, to keep the hue of\n"
+        "// what it compresses. A target headroom of 0 leaves everything alone.\n"
+        "static float3 __wgslToneMapHDR(float3 linearLight, float targetHeadroom)\n"
         "{\n"
-        "    constexpr float knee = 0.5f;\n"
+        "    if (targetHeadroom <= 0.0f)\n"
+        "        return linearLight;\n"
+        "    float const knee = 0.5f * targetHeadroom;\n"
         "    float const luminance = dot(linearLight, float3(0.2627f, 0.6780f, 0.0593f));\n"
         "    if (luminance <= knee)\n"
         "        return linearLight;\n"
         "    float const excess = luminance - knee;\n"
-        "    float const mapped = knee + (1.0f - knee) * excess / (excess + (1.0f - knee));\n"
+        "    float const mapped = knee + (targetHeadroom - knee) * excess / (excess + (targetHeadroom - knee));\n"
         "    return linearLight * (mapped / luminance);\n"
         "}\n"
         "\n"
@@ -629,28 +637,35 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
                 // of the YCbCr matrix and still carries the frame's own primaries, alpha is the frame's,
                 // and premultiplied says whether rgb already has that alpha applied. Reaching the color
                 // space the import named is a transfer function round trip, so it can only run on a
-                // straight color and the premultiply is undone around it. An all-zero matrix, which no
-                // real conversion can be, means the frame's primaries already are that color space, and
-                // has to skip the round trip rather than run it to arrive back where it started.
+                // straight color and the premultiply is undone around it. An all-zero 3x3 matrix, which
+                // no real conversion can be, means the frame's primaries already are that color space,
+                // and when the frame and that color space are both sRGB-encoded too, has to skip the
+                // round trip rather than run it to arrive back where it started.
                 m_indent, "float4 to_destination_color_space(float3 rgb, float alpha, float premultiplied) const\n"_s,
                 m_indent, "{\n"_s,
                 // The w of the matrix's first column says how the frame's rgb is encoded: 0 is SDR, which
-                // is taken to be sRGB-encoded, 1 is PQ and 2 is HLG.
+                // is taken to be sRGB-encoded, 1 is PQ and 2 is HLG. The w of its second column is 1 when
+                // the import named a linear color space, and the w of its third is the linear headroom HDR
+                // is tone mapped to, 0 for none.
                 m_indent, "    float const transfer = PrimariesConversionMatrix[0][3];\n"_s,
                 m_indent, "    bool const isHDR = transfer != 0.0f;\n"_s,
+                m_indent, "    bool const isLinearDestination = PrimariesConversionMatrix[1][3] != 0.0f;\n"_s,
+                m_indent, "    float const targetHeadroom = PrimariesConversionMatrix[2][3];\n"_s,
                 m_indent, "    bool const keepsPrimaries = PrimariesConversionMatrix[0][0] == 0.0f;\n"_s,
-                m_indent, "    if (keepsPrimaries && !isHDR)\n"_s,
+                m_indent, "    if (keepsPrimaries && !isHDR && !isLinearDestination)\n"_s,
                 m_indent, "        return float4(rgb * mix(alpha, 1.0f, premultiplied), alpha);\n"_s,
                 m_indent, "    float3 const straight = (premultiplied != 0.0f && alpha > 0.0f) ? rgb / alpha : rgb;\n"_s,
                 m_indent, "    float3 linearLight;\n"_s,
                 m_indent, "    if (isHDR)\n"_s,
-                m_indent, "        linearLight = __wgslToneMapHDR(__wgslDecodeHDR(clamp(straight, 0.0f, 1.0f), transfer == 2.0f));\n"_s,
+                m_indent, "        linearLight = __wgslToneMapHDR(__wgslDecodeHDR(clamp(straight, 0.0f, 1.0f), transfer == 2.0f, targetHeadroom), targetHeadroom);\n"_s,
                 m_indent, "    else {\n"_s,
                 m_indent, "        float3 const magnitude = abs(straight);\n"_s,
                 m_indent, "        linearLight = sign(straight) * select(pow((magnitude + 0.055f) / 1.055f, 2.4f), magnitude / 12.92f, magnitude <= 0.04045f);\n"_s,
                 m_indent, "    }\n"_s,
                 m_indent, "    float3x3 const primaries = keepsPrimaries ? float3x3(1.0f) : float3x3(PrimariesConversionMatrix[0].xyz, PrimariesConversionMatrix[1].xyz, PrimariesConversionMatrix[2].xyz);\n"_s,
                 m_indent, "    float3 const converted = primaries * linearLight;\n"_s,
+                m_indent, "    if (isLinearDestination)\n"_s,
+                m_indent, "        return float4(converted * alpha, alpha);\n"_s,
                 m_indent, "    float3 const convertedMagnitude = abs(converted);\n"_s,
                 // HDR is encoded the way a video signal is, with the pure 2.4 gamma of ITU-R BT.1886, rather
                 // than with the sRGB curve, as CoreGraphics does when it brings HDR video down to SDR.
