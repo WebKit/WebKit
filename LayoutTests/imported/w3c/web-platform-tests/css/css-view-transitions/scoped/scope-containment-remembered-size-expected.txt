@@ -1,0 +1,6 @@
+
+
+PASS Remembered size accounts for padding and border
+PASS Remembered size accounts for vertical writing mode
+PASS Remembered size accounts for zoom
+

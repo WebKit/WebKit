@@ -71,7 +71,7 @@ bool compareStyleablePositionsInDocumentTreeOrder(const Styleable& a, const Styl
     // list rather than appended at the end. For the "any other pseudo-elements" group, that place
     // is where its selector falls in ascending codepoint order: "-" sorts before "c", "c" before
     // "f", and so on.
-    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, WebKitScrollbar, Checkmark, FirstLetter, FirstLine, GrammarError, Highlight, PickerIcon, Selection, SpellingError, TargetText, After, ViewTransition, ViewTransitionGroup, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
+    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, WebKitScrollbar, Checkmark, FirstLetter, FirstLine, GrammarError, Highlight, PickerIcon, Selection, SpellingError, TargetText, After, ViewTransition, ViewTransitionGroup, ViewTransitionGroupChildren, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
     auto sortingIndex = [](const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) -> SortingIndex {
         if (!pseudoElementIdentifier)
             return NotPseudo;
@@ -107,6 +107,8 @@ bool compareStyleablePositionsInDocumentTreeOrder(const Styleable& a, const Styl
             return ViewTransition;
         case PseudoElementType::ViewTransitionGroup:
             return ViewTransitionGroup;
+        case PseudoElementType::ViewTransitionGroupChildren:
+            return ViewTransitionGroupChildren;
         case PseudoElementType::ViewTransitionImagePair:
             return ViewTransitionImagePair;
         case PseudoElementType::ViewTransitionOld:
@@ -124,7 +126,7 @@ bool compareStyleablePositionsInDocumentTreeOrder(const Styleable& a, const Styl
 
     if (aReferenceElement.ptr() == bReferenceElement.ptr()) {
         if (isNamedViewTransitionPseudoElement(a.pseudoElementIdentifier) && isNamedViewTransitionPseudoElement(b.pseudoElementIdentifier) && a.pseudoElementIdentifier->nameOrPart != b.pseudoElementIdentifier->nameOrPart) {
-            RefPtr activeViewTransition = aReferenceElement->document().activeViewTransition();
+            RefPtr activeViewTransition = aReferenceElement->activeViewTransition();
             ASSERT(activeViewTransition);
             if (!activeViewTransition)
                 return false;
@@ -373,6 +375,8 @@ String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementI
         return viewTransition;
     case PseudoElementType::ViewTransitionGroup:
         return makeString("::view-transition-group"_s, '(', pseudoElementIdentifier->nameOrPart, ')');
+    case PseudoElementType::ViewTransitionGroupChildren:
+        return makeString("::view-transition-group-children"_s, '(', pseudoElementIdentifier->nameOrPart, ')');
     case PseudoElementType::ViewTransitionImagePair:
         return makeString("::view-transition-image-pair"_s, '(', pseudoElementIdentifier->nameOrPart, ')');
     case PseudoElementType::ViewTransitionOld:

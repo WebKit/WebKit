@@ -267,6 +267,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
+#include "RenderViewTransitionCapture.h"
 #include "RenderWidgetInlines.h"
 #include "ReportingScope.h"
 #include "RequestAnimationFrameCallback.h"
@@ -12725,23 +12726,41 @@ void Document::flushDeferredRenderingIsSuppressedForViewTransitionChanges()
 }
 
 // https://drafts.csswg.org/css-view-transitions/#ViewTransition-prepare
-RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallbackOptions&& callbackOptions)
+RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallbackOptions&& callbackOptions, Element* scopeElement)
 {
     LOG_WITH_STREAM(ViewTransitions, stream << "Document " << this << " startViewTransition");
     if (!globalObject())
         return nullptr;
 
+    // A transition scoped to the root element is the document's view transition.
+    if (scopeElement && scopeElement == documentElement())
+        scopeElement = nullptr;
+
     Ref viewTransition  = WTF::switchOn(WTF::move(callbackOptions),
         [&](RefPtr<JSViewTransitionUpdateCallback>&& callback) {
-            return ViewTransition::createSamePage(*this, WTF::move(callback), { });
+            return ViewTransition::createSamePage(*this, scopeElement, WTF::move(callback), { });
         },
         [&](StartViewTransitionOptions&& options) {
-            return ViewTransition::createSamePage(*this, WTF::move(options.update), WTF::move(options.types).value_or(Vector<AtomString> { }));
+            auto shadowRoots = settings().scopedViewTransitionsEnabled() ? WTF::move(options.shadowRoots) : Vector<Ref<ShadowRoot>> { };
+            return ViewTransition::createSamePage(*this, scopeElement, WTF::move(options.update), WTF::move(options.types).value_or(Vector<AtomString> { }), WTF::move(shadowRoots));
         }
     );
 
     if (hidden()) {
         viewTransition->skipViewTransition(Exception { ExceptionCode::InvalidStateError, "View transition was skipped because document visibility state is hidden."_s });
+        return viewTransition;
+    }
+
+    if (scopeElement) {
+        if (RefPtr existingViewTransition = activeViewTransitionForScope(*scopeElement))
+            existingViewTransition->skipViewTransition(Exception { ExceptionCode::AbortError, "Old view transition aborted by new view transition."_s });
+
+        updateLayoutIgnorePendingStylesheets();
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(scopeElement->renderer()))
+            viewTransition->setScopeRememberedInnerSize(LayoutSize { box->contentBoxLogicalWidth(), box->contentBoxLogicalHeight() });
+
+        addActiveScopedViewTransition(viewTransition);
+        scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
         return viewTransition;
     }
 
@@ -12754,22 +12773,125 @@ RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallback
     return m_activeViewTransition;
 }
 
+ViewTransition* Document::activeViewTransitionForScope(const Element& scopeElement) const
+{
+    for (auto& viewTransition : m_activeScopedViewTransitions) {
+        if (viewTransition->scopeElement() == &scopeElement)
+            return viewTransition.ptr();
+    }
+    return nullptr;
+}
+
+RenderViewTransitionCapture* Document::viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject& renderer)
+{
+    if (RefPtr activeViewTransition = m_activeViewTransition) {
+        if (auto* capture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(renderer))
+            return capture;
+    }
+    for (auto& viewTransition : m_activeScopedViewTransitions) {
+        if (auto* capture = viewTransition->viewTransitionNewPseudoForCapturedElement(renderer))
+            return capture;
+    }
+    return nullptr;
+}
+
+void Document::addActiveScopedViewTransition(ViewTransition& viewTransition)
+{
+    ASSERT(viewTransition.scopeElement());
+    ASSERT(!m_activeScopedViewTransitions.containsIf([&](auto& entry) {
+        return entry.ptr() == &viewTransition;
+    }));
+    RefPtr scopeElement = viewTransition.scopeElement();
+    std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionInvalidation;
+    std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionTypeInvalidation;
+    activeViewTransitionInvalidation.emplace(*scopeElement, CSSSelector::PseudoClass::ActiveViewTransition, true);
+    activeViewTransitionTypeInvalidation.emplace(*scopeElement, CSSSelector::PseudoClass::ActiveViewTransitionType, Style::PseudoClassChangeInvalidation::AnyValue);
+    m_activeScopedViewTransitions.append(viewTransition);
+    if (CheckedPtr renderer = scopeElement->renderer()) {
+        renderer->invalidateContentLogicalWidths();
+        renderer->setNeedsLayout();
+    }
+}
+
+void Document::removeActiveScopedViewTransition(ViewTransition& viewTransition)
+{
+    RefPtr scopeElement = viewTransition.scopeElement();
+    std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionInvalidation;
+    std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionTypeInvalidation;
+    if (scopeElement && scopeElement->isConnected()) {
+        activeViewTransitionInvalidation.emplace(*scopeElement, CSSSelector::PseudoClass::ActiveViewTransition, false);
+        activeViewTransitionTypeInvalidation.emplace(*scopeElement, CSSSelector::PseudoClass::ActiveViewTransitionType, Style::PseudoClassChangeInvalidation::AnyValue);
+    }
+    m_activeScopedViewTransitions.removeFirstMatching([&](auto& entry) {
+        return entry.ptr() == &viewTransition;
+    });
+    if (scopeElement) {
+        if (CheckedPtr renderer = scopeElement->renderer()) {
+            renderer->invalidateContentLogicalWidths();
+            renderer->setNeedsLayout();
+        }
+    }
+}
+
+ViewTransition* Document::viewTransitionHostedOn(const Element& element) const
+{
+    if (&element == documentElement())
+        return m_hasViewTransitionPseudoElementTree ? m_activeViewTransition.get() : nullptr;
+    if (auto* viewTransition = activeViewTransitionForScope(element); viewTransition && viewTransition->hasPseudoElementTree())
+        return viewTransition;
+    return nullptr;
+}
+
+void Document::registerViewTransitionPseudoTreeHost(Element& element)
+{
+    m_viewTransitionPseudoTreeHosts.add(element);
+}
+
+void Document::unregisterViewTransitionPseudoTreeHost(Element& element)
+{
+    m_viewTransitionPseudoTreeHosts.remove(element);
+}
+
+bool Document::elementMayHostViewTransitionPseudoTree(const Element& element) const
+{
+    return !m_viewTransitionPseudoTreeHosts.isEmptyIgnoringNullReferences() && m_viewTransitionPseudoTreeHosts.contains(element);
+}
+
+void Document::reinstallActiveViewTransitionStyles()
+{
+    if (RefPtr viewTransition = m_activeViewTransition; viewTransition && viewTransition->hasPseudoElementTree())
+        viewTransition->reinstallDynamicStyles();
+    for (Ref viewTransition : m_activeScopedViewTransitions) {
+        if (viewTransition->hasPseudoElementTree())
+            viewTransition->reinstallDynamicStyles();
+    }
+}
+
 void Document::performPendingViewTransitions()
 {
-    if (!m_activeViewTransition) {
+    if (!m_activeViewTransition && m_activeScopedViewTransitions.isEmpty()) {
         if (renderingIsSuppressedForViewTransition()) {
             clearRenderingIsSuppressedForViewTransition();
             DOCUMENT_RELEASE_LOG_ERROR(ViewTransitions, "Rendering suppressed enabled without active view transition");
         }
         return;
     }
-    Ref activeViewTransition = *m_activeViewTransition;
-    if (activeViewTransition->phase() == ViewTransitionPhase::PendingCapture)
-        activeViewTransition->setupViewTransition();
-    else if (activeViewTransition->phase() == ViewTransitionPhase::Animating)
-        activeViewTransition->handleTransitionFrame();
 
-    if (m_activeViewTransition)
+    auto performPendingViewTransition = [](ViewTransition& viewTransition) {
+        if (viewTransition.phase() == ViewTransitionPhase::PendingCapture)
+            viewTransition.setupViewTransition();
+        else if (viewTransition.phase() == ViewTransitionPhase::Animating)
+            viewTransition.handleTransitionFrame();
+    };
+
+    if (RefPtr activeViewTransition = m_activeViewTransition)
+        performPendingViewTransition(*activeViewTransition);
+
+    // A transition may remove itself, or start another, while being handled.
+    for (Ref viewTransition : Vector { m_activeScopedViewTransitions })
+        performPendingViewTransition(viewTransition);
+
+    if (m_activeViewTransition || !m_activeScopedViewTransitions.isEmpty())
         scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
 }
 

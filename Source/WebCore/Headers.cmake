@@ -3548,6 +3548,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/ui/StyleResize.h
 
     style/values/view-transitions/StyleViewTransitionClass.h
+    style/values/view-transitions/StyleViewTransitionGroup.h
     style/values/view-transitions/StyleViewTransitionName.h
 
     style/values/viewport/StyleZoom.h

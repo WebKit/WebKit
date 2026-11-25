@@ -303,8 +303,8 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         if (!mayHaveRenderedDescendants) {
             it.traverseNextSkippingChildren();
-            if (element.ptr() == element->document().documentElement())
-                viewTransition().updatePseudoElementTree(nullptr, Style::DifferenceResult::Equal);
+            if (element.ptr() == element->document().documentElement() || protect(element->document())->elementMayHostViewTransitionPseudoTree(element))
+                viewTransition().updatePseudoElementTree(element, nullptr, Style::DifferenceResult::Equal);
             continue;
         }
 
@@ -375,8 +375,8 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
     {
         CheckedPtr renderer = element.renderer();
         if (!renderer) {
-            if (&element == element.document().documentElement())
-                viewTransition().updatePseudoElementTree(nullptr, Style::DifferenceResult::Equal);
+            if (&element == element.document().documentElement() || protect(element.document())->elementMayHostViewTransitionPseudoTree(element))
+                viewTransition().updatePseudoElementTree(element, nullptr, Style::DifferenceResult::Equal);
             return;
         }
 
@@ -386,8 +386,8 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
 
         generatedContent().updateBackdropRenderer(*renderer, minimalStyleDifference);
         generatedContent().updateWritingSuggestionsRenderer(*renderer, minimalStyleDifference);
-        if (&element == element.document().documentElement())
-            viewTransition().updatePseudoElementTree(renderer.get(), minimalStyleDifference);
+        if (&element == element.document().documentElement() || protect(element.document())->elementMayHostViewTransitionPseudoTree(element))
+            viewTransition().updatePseudoElementTree(element, renderer.get(), minimalStyleDifference);
 
         m_builder.updateAfterDescendants(*renderer);
     }

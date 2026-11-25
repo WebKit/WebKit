@@ -567,6 +567,15 @@ TextStream& operator<<(TextStream& ts, FieldSizing sizing)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ViewTransitionScope scope)
+{
+    switch (scope) {
+    case ViewTransitionScope::None: ts << "none"_s; break;
+    case ViewTransitionScope::All: ts << "all"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, BaselineSource source)
 {
     switch (source) {
@@ -958,6 +967,7 @@ TextStream& operator<<(TextStream& ts, PseudoElementType pseudoElementType)
     case PseudoElementType::ViewTransitionImagePair: ts << "view-transition-image-pair"_s; break;
     case PseudoElementType::ViewTransitionOld: ts << "view-transition-old"_s; break;
     case PseudoElementType::ViewTransitionNew: ts << "view-transition-new"_s; break;
+    case PseudoElementType::ViewTransitionGroupChildren: ts << "view-transition-group-children"_s; break;
     case PseudoElementType::WebKitResizer: ts << "-webkit-resizer"_s; break;
     case PseudoElementType::WebKitScrollbar: ts << "-webkit-scrollbar"_s; break;
     case PseudoElementType::WebKitScrollbarThumb: ts << "-webkit-scrollbar-thumb"_s; break;

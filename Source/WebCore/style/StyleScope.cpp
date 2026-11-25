@@ -30,6 +30,7 @@
 
 #include "CSSCounterStyleRegistry.h"
 #include "CSSFontSelector.h"
+#include "CSSKeyframesRule.h"
 #include "CSSStyleSheet.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
@@ -127,10 +128,14 @@ void Scope::createOrFindSharedShadowTreeResolver()
 
     auto key = makeResolverSharingKey();
 
-    if (RefPtr existingResolver = documentScope().m_sharedShadowTreeResolvers.get(key)) {
-        m_resolver = WTF::move(existingResolver);
-        m_resolver->setSharedBetweenShadowTrees();
-        return;
+    // A scope holding view transition keyframes cannot share its resolver, since the
+    // keyframes are specific to this scope's active transitions.
+    if (!m_hasViewTransitionStyles) {
+        if (RefPtr existingResolver = documentScope().m_sharedShadowTreeResolvers.get(key)) {
+            m_resolver = WTF::move(existingResolver);
+            m_resolver->setSharedBetweenShadowTrees();
+            return;
+        }
     }
 
     {
@@ -140,8 +145,13 @@ void Scope::createOrFindSharedShadowTreeResolver()
         m_resolver = Resolver::create(m_document, Resolver::ScopeType::ShadowTree);
 
         m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
+        for (auto& keyframes : m_viewTransitionKeyframes)
+            protect(m_resolver)->addKeyframeStyle(keyframes.copyRef());
         protect(m_resolver)->appendAuthorStyleSheets(m_activeStyleSheets);
     }
+
+    if (m_hasViewTransitionStyles)
+        return;
 
     auto result = documentScope().m_sharedShadowTreeResolvers.add(WTF::move(key), protect(*m_resolver));
 
@@ -154,6 +164,36 @@ void Scope::createOrFindSharedShadowTreeResolver()
     static constexpr auto maximimumSharedResolverCount = 256;
     if (documentScope().m_sharedShadowTreeResolvers.size() > maximimumSharedResolverCount)
         documentScope().m_sharedShadowTreeResolvers.remove(documentScope().m_sharedShadowTreeResolvers.random());
+}
+
+Resolver& Scope::resolverForViewTransition()
+{
+    if (!m_hasViewTransitionStyles) {
+        m_hasViewTransitionStyles = true;
+        if (m_resolver && m_shadowRoot) {
+            // The existing resolver may be shared with other shadow trees; rebuild it unshared.
+            unshareShadowTreeResolverBeforeMutation();
+            clearResolver();
+        }
+    }
+    return resolver();
+}
+
+void Scope::clearViewTransitionStyles()
+{
+    clearResolver();
+    m_hasViewTransitionStyles = false;
+    m_viewTransitionKeyframes.clear();
+}
+
+void Scope::addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&& rule)
+{
+    // Add to the existing resolver, if any, and retain the keyframes so they can be
+    // re-established when the resolver is recreated (e.g. by a stylesheet mutation)
+    // during the transition.
+    if (RefPtr resolver = resolverIfExists())
+        resolver->addKeyframeStyle(rule.copyRef());
+    m_viewTransitionKeyframes.append(WTF::move(rule));
 }
 
 void Scope::unshareShadowTreeResolverBeforeMutation()

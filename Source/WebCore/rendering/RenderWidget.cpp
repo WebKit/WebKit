@@ -249,6 +249,7 @@ void RenderWidget::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
+    layoutViewTransitionContainingBlock();
     clearNeedsLayout();
 }
 

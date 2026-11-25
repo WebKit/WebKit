@@ -253,6 +253,7 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
                     break;
 #endif
                 case CSSSelector::PseudoElement::ViewTransitionGroup:
+                case CSSSelector::PseudoElement::ViewTransitionGroupChildren:
                 case CSSSelector::PseudoElement::ViewTransitionImagePair:
                 case CSSSelector::PseudoElement::ViewTransitionOld:
                 case CSSSelector::PseudoElement::ViewTransitionNew:

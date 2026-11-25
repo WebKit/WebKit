@@ -1,0 +1,3 @@
+
+PASS View transition DOM callbacks triggered in creation order.
+

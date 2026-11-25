@@ -3664,6 +3664,7 @@ style/values/ui/StyleAccentColor.cpp
 style/values/ui/StyleCaretColor.cpp
 style/values/ui/StyleCursor.cpp
 style/values/ui/StyleResize.cpp
+style/values/view-transitions/StyleViewTransitionGroup.cpp
 style/values/view-transitions/StyleViewTransitionName.cpp
 style/values/will-change/StyleWillChange.cpp
 svg/DocumentSVG.cpp

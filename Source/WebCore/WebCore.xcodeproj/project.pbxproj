@@ -4542,6 +4542,7 @@
 		A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA595B0B27BD9E00FA021D /* DragController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CA59630B27C1F200FA021D /* DragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA59620B27C1F200FA021D /* DragClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CAEDA42CB740E200FE4677 /* StyleViewTransitionName.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CAEDA32CB740E200FE4677 /* StyleViewTransitionName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B0092A1D2E2DBC36002ACB3D /* StyleViewTransitionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = B0092A1C2E2DBC36002ACB3C /* StyleViewTransitionGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CFB3D00B7ED10A0070C32D /* DragImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */; };
 		A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */; };
@@ -14871,6 +14872,7 @@
 		7A6D3C8328A4056300C5C6EC /* NotificationResourcesLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationResourcesLoader.h; sourceTree = "<group>"; };
 		7A7946642978815C00750A1B /* Settings.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = Settings.yaml; sourceTree = "<group>"; };
 		7A7C8B5427F32D2B0008E234 /* Element+Typedom.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+Typedom.idl"; sourceTree = "<group>"; };
+		8C3CA7F81B1EAA73B5408DF6 /* Element+ViewTransition.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+ViewTransition.idl"; sourceTree = "<group>"; };
 		7A7C8B5627F32E690008E234 /* ComputedStylePropertyMapReadOnly.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ComputedStylePropertyMapReadOnly.cpp; sourceTree = "<group>"; };
 		7A7C8B5727F32E7D0008E234 /* ComputedStylePropertyMapReadOnly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComputedStylePropertyMapReadOnly.h; sourceTree = "<group>"; };
 		7A81DB9728F82C4800F66898 /* ScrollingTreePositionedNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreePositionedNode.cpp; sourceTree = "<group>"; };
@@ -19178,6 +19180,8 @@
 		BC092A042E2D5110002ACB2C /* StyleCursor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCursor.cpp; sourceTree = "<group>"; };
 		BC092A0C2E2D75E6002ACB2C /* StyleTextDecorationThickness.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleTextDecorationThickness.cpp; sourceTree = "<group>"; };
 		BC092A1B2E2DBC36002ACB2C /* StyleViewTransitionName.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleViewTransitionName.cpp; sourceTree = "<group>"; };
+		B0092A1C2E2DBC36002ACB3C /* StyleViewTransitionGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleViewTransitionGroup.h; sourceTree = "<group>"; };
+		B0092A1E2E2DBC36002ACB3E /* StyleViewTransitionGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleViewTransitionGroup.cpp; sourceTree = "<group>"; };
 		BC092A752E300E57002ACB2C /* StyleBlockStepSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBlockStepSize.h; sourceTree = "<group>"; };
 		BC092A782E3010BA002ACB2C /* StyleBlockStepSize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBlockStepSize.cpp; sourceTree = "<group>"; };
 		BC092AA02E3141F7002ACB2C /* StyleWebKitLineGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleWebKitLineGrid.h; sourceTree = "<group>"; };
@@ -38007,6 +38011,8 @@
 			isa = PBXGroup;
 			children = (
 				BC2A0EF52E12134D003CBA0E /* StyleViewTransitionClass.h */,
+				B0092A1E2E2DBC36002ACB3E /* StyleViewTransitionGroup.cpp */,
+				B0092A1C2E2DBC36002ACB3C /* StyleViewTransitionGroup.h */,
 				BC092A1B2E2DBC36002ACB2C /* StyleViewTransitionName.cpp */,
 				A7CAEDA32CB740E200FE4677 /* StyleViewTransitionName.h */,
 			);
@@ -43158,6 +43164,7 @@
 				7C6771242527D22200FDEF00 /* Element+PointerEvents.idl */,
 				7C6771222527D22100FDEF00 /* Element+PointerLock.idl */,
 				7A7C8B5427F32D2B0008E234 /* Element+Typedom.idl */,
+				8C3CA7F81B1EAA73B5408DF6 /* Element+ViewTransition.idl */,
 				3B7C4D1E5F60718293A4B5C6 /* Element+VolumetricScene.idl */,
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
@@ -49940,6 +49947,7 @@
 				BC17775A2F42383600E318C5 /* StyleViewTimelineInsetItem.h in Headers */,
 				BC2A0F0E2E12FFD5003CBA0E /* StyleViewTimelines.h in Headers */,
 				BC2A0EFA2E121665003CBA0E /* StyleViewTransitionClass.h in Headers */,
+				B0092A1D2E2DBC36002ACB3D /* StyleViewTransitionGroup.h in Headers */,
 				A7CAEDA42CB740E200FE4677 /* StyleViewTransitionName.h in Headers */,
 				BC63AD292F084C2F007B62C4 /* StyleVisitedLinkColorData.h in Headers */,
 				623C21972F529B6F00B6094B /* StyleVisualBox.h in Headers */,

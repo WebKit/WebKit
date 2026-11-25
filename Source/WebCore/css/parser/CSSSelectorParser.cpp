@@ -538,6 +538,7 @@ NODELETE static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoCla
     case CSSSelector::PseudoElement::Selection:
         return pseudoClass == CSSSelector::PseudoClass::WindowInactive;
     case CSSSelector::PseudoElement::ViewTransitionGroup:
+    case CSSSelector::PseudoElement::ViewTransitionGroupChildren:
     case CSSSelector::PseudoElement::ViewTransitionImagePair:
     case CSSSelector::PseudoElement::ViewTransitionNew:
     case CSSSelector::PseudoElement::ViewTransitionOld:
@@ -1071,6 +1072,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
         }
 
         case CSSSelector::PseudoElement::ViewTransitionGroup:
+        case CSSSelector::PseudoElement::ViewTransitionGroupChildren:
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionOld:
         case CSSSelector::PseudoElement::ViewTransitionNew: {
@@ -1565,6 +1567,7 @@ std::optional<Style::PseudoElementIdentifier> CSSSelectorParser::parsePseudoElem
     switch (*pseudoElement) {
     case CSSSelector::PseudoElement::Highlight:
     case CSSSelector::PseudoElement::ViewTransitionGroup:
+    case CSSSelector::PseudoElement::ViewTransitionGroupChildren:
     case CSSSelector::PseudoElement::ViewTransitionImagePair:
     case CSSSelector::PseudoElement::ViewTransitionOld:
     case CSSSelector::PseudoElement::ViewTransitionNew: {

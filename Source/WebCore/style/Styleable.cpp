@@ -101,16 +101,22 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
         break;
     }
     case PseudoElementType::ViewTransitionGroup:
+    case PseudoElementType::ViewTransitionGroupChildren:
     case PseudoElementType::ViewTransitionImagePair:
     case PseudoElementType::ViewTransitionNew:
     case PseudoElementType::ViewTransitionOld:
+    case PseudoElementType::ViewTransition: {
+        auto pseudoElementIdentifier = *pseudoElementType == PseudoElementType::ViewTransition ? Style::PseudoElementIdentifier { PseudoElementType::ViewTransition } : renderer.style().pseudoElementIdentifier();
+        // A scoped view transition hosts its pseudo-element tree on the scope element; the
+        // anonymous view transition containing block is a child of the scope's renderer.
+        for (CheckedPtr ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+            if (RefPtr element = ancestor->element())
+                return Styleable(*element, pseudoElementIdentifier);
+        }
         if (auto* documentElement = renderer.document().documentElement())
-            return Styleable(*documentElement, renderer.style().pseudoElementIdentifier());
+            return Styleable(*documentElement, pseudoElementIdentifier);
         break;
-    case PseudoElementType::ViewTransition:
-        if (auto* documentElement = renderer.document().documentElement())
-            return Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoElementType::ViewTransition });
-        break;
+    }
     case PseudoElementType::After:
     case PseudoElementType::Before:
         if (auto* element = renderer.element())
@@ -161,20 +167,31 @@ RenderElement* Styleable::renderer() const
         }
         break;
     case PseudoElementType::ViewTransition:
-        if (element->renderer() && element->renderer()->isDocumentElementRenderer()) {
-            if (WeakPtr containingBlock = element->renderer()->view().viewTransitionContainingBlock())
+        if (auto* renderer = element->renderer()) {
+            SingleThreadWeakPtr<RenderBlockFlow> containingBlock;
+            if (renderer->isDocumentElementRenderer())
+                containingBlock = renderer->view().viewTransitionContainingBlock();
+            else if (RefPtr viewTransition = element->document().viewTransitionHostedOn(element.get()))
+                containingBlock = viewTransition->scopedViewTransitionContainingBlock();
+            if (containingBlock)
                 return containingBlock->firstChildBox();
         }
         break;
     case PseudoElementType::ViewTransitionGroup:
+    case PseudoElementType::ViewTransitionGroupChildren:
     case PseudoElementType::ViewTransitionImagePair:
     case PseudoElementType::ViewTransitionNew:
     case PseudoElementType::ViewTransitionOld: {
-        if (!element->renderer() || !element->renderer()->isDocumentElementRenderer())
+        auto* renderer = element->renderer();
+        if (!renderer)
             return nullptr;
 
         // Find the right ::view-transition-group().
-        WeakPtr correctGroup = element->renderer()->view().viewTransitionGroupForName(pseudoElementIdentifier->nameOrPart);
+        SingleThreadWeakPtr<RenderBox> correctGroup;
+        if (renderer->isDocumentElementRenderer())
+            correctGroup = renderer->view().viewTransitionGroupForName(pseudoElementIdentifier->nameOrPart);
+        else if (RefPtr viewTransition = element->document().viewTransitionHostedOn(element.get()))
+            correctGroup = viewTransition->scopedViewTransitionGroupForName(pseudoElementIdentifier->nameOrPart);
         if (!correctGroup)
             return nullptr;
 

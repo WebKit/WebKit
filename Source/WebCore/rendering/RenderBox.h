@@ -459,6 +459,7 @@ public:
     NODELETE bool shouldIgnoreLogicalMinMaxHeightSizes() const;
 
     // The explicit intrinsic inner size of contain-intrinsic-size
+    std::optional<LayoutSize> scopedViewTransitionRememberedInnerSize() const;
     std::optional<LayoutUnit> explicitIntrinsicInnerWidth() const;
     std::optional<LayoutUnit> explicitIntrinsicInnerHeight() const;
     inline std::optional<LayoutUnit> explicitIntrinsicInnerLogicalWidth() const;

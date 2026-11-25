@@ -1918,11 +1918,9 @@ bool RenderObject::setCapturedInViewTransition(bool captured)
         renderBox->invalidateAncestorBackgroundObscurationStatus();
 
     if (CheckedPtr layerModelRenderer = dynamicDowncast<RenderLayerModelObject>(this)) {
-        if (RefPtr activeViewTransition = document().activeViewTransition()) {
-            if (CheckedPtr viewTransitionCapture = activeViewTransition->viewTransitionNewPseudoForCapturedElement(*layerModelRenderer)) {
-                if (viewTransitionCapture->hasLayer())
-                    viewTransitionCapture->layer()->setNeedsCompositingLayerConnection();
-            }
+        if (CheckedPtr viewTransitionCapture = protect(document())->viewTransitionNewPseudoForCapturedElement(*layerModelRenderer)) {
+            if (viewTransitionCapture->hasLayer())
+                viewTransitionCapture->layer()->setNeedsCompositingLayerConnection();
         }
     }
 

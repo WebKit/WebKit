@@ -673,6 +673,10 @@ void RenderBlock::addOverflowFromOutOfFlowBoxes()
         return;
 
     for (auto& outOfFlowBox : *outOfFlowDescendants) {
+        // The view transition pseudo-element tree is an overlay; it never contributes
+        // scrollable overflow to the scope that hosts it.
+        if (outOfFlowBox.isViewTransitionContainingBlock())
+            continue;
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (outOfFlowBox.isAbsolutelyPositioned())
             addOverflowWithRendererOffset(outOfFlowBox, offsetFromBlock(*this, outOfFlowBox));
@@ -1625,6 +1629,7 @@ Node* RenderBlock::nodeForHitTest() const
 
         case PseudoElementType::ViewTransition:
         case PseudoElementType::ViewTransitionGroup:
+        case PseudoElementType::ViewTransitionGroupChildren:
         case PseudoElementType::ViewTransitionImagePair:
             // The view transition pseudo-elements should hit-test to their originating element (the document element).
             return document().documentElement();
@@ -2582,7 +2587,18 @@ String RenderBlock::debugDescription() const
 
         builder.append(" ::view-transition"_s);
         if (style().pseudoElementType() != PseudoElementType::ViewTransition) {
-            builder.append("-"_s, style().pseudoElementType() == PseudoElementType::ViewTransitionGroup ? "group("_s : "image-pair("_s);
+            builder.append('-');
+            switch (*style().pseudoElementType()) {
+            case PseudoElementType::ViewTransitionGroup:
+                builder.append("group("_s);
+                break;
+            case PseudoElementType::ViewTransitionGroupChildren:
+                builder.append("group-children("_s);
+                break;
+            default:
+                builder.append("image-pair("_s);
+                break;
+            }
             builder.append(style().pseudoElementNameArgument(), ')');
         }
         return builder.toString();

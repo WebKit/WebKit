@@ -1,0 +1,3 @@
+
+PASS Sibling layout positions are preserved during the DOM callback due to scope size containment
+

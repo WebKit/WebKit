@@ -82,6 +82,7 @@
 #include <WebCore/StyleTranslate.h>
 #include <WebCore/StyleViewTimelines.h>
 #include <WebCore/StyleViewTransitionClass.h>
+#include <WebCore/StyleViewTransitionGroup.h>
 #include <WebCore/StyleViewTransitionName.h>
 #include <WebCore/StyleWebKitBoxReflect.h>
 #include <WebCore/StyleWebKitInitialLetter.h>
@@ -187,6 +188,7 @@ public:
     LinkParameters linkParameters;
 
     ViewTransitionClasses viewTransitionClasses;
+    ViewTransitionGroup viewTransitionGroup;
     ViewTransitionName viewTransitionName;
 
     GapGutter columnGap;
@@ -269,6 +271,7 @@ public:
     PREFERRED_TYPE(AppleVisualEffect) unsigned appleVisualEffect : 5;
 #endif
     PREFERRED_TYPE(FieldSizing) unsigned fieldSizing : 1;
+    PREFERRED_TYPE(ViewTransitionScope) unsigned viewTransitionScope : 1;
     PREFERRED_TYPE(bool) unsigned nativeAppearanceDisabled : 1;
 
     PREFERRED_TYPE(PositionTryOrder) unsigned positionTryOrder : 3;

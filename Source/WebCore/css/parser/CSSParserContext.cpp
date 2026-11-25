@@ -63,6 +63,8 @@ NODELETE static void applyUASheetBehaviorsToContext(CSSParserContext& context)
 #endif
     context.cssInternalAutoBaseParsingEnabled = true;
     context.htmlEnhancedSelectEnabled = true;
+    context.scopedViewTransitionsEnabled = true;
+    context.propertySettings.scopedViewTransitionsEnabled = true;
     context.openPseudoClassEnabled = true;
 }
 
@@ -120,6 +122,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , colorLayersEnabled { settings.cssColorLayersEnabled() }
     , cssPickerPseudoElementEnabled { settings.cssPickerPseudoElementEnabled() }
     , targetTextPseudoElementEnabled { settings.targetTextPseudoElementEnabled() }
+    , scopedViewTransitionsEnabled { settings.scopedViewTransitionsEnabled() }
     , htmlEnhancedSelectEnabled { settings.htmlEnhancedSelectEnabled() }
     , cssRandomFunctionEnabled { settings.cssRandomFunctionEnabled() }
     , cssRandomItemFunctionEnabled { settings.cssRandomItemFunctionEnabled() }
@@ -189,6 +192,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.colorLayersEnabled,
         context.cssPickerPseudoElementEnabled,
         context.targetTextPseudoElementEnabled,
+        context.scopedViewTransitionsEnabled,
         context.htmlEnhancedSelectEnabled,
         context.cssRandomFunctionEnabled,
         context.cssRandomItemFunctionEnabled,

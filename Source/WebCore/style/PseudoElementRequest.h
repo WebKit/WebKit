@@ -43,7 +43,7 @@ public:
     PseudoElementRequest(PseudoElementType type, const AtomString& nameOrPart)
         : m_identifier({ type, nameOrPart })
     {
-        ASSERT(type == PseudoElementType::Highlight || type == PseudoElementType::ViewTransitionGroup || type == PseudoElementType::ViewTransitionImagePair || type == PseudoElementType::ViewTransitionOld || type == PseudoElementType::ViewTransitionNew);
+        ASSERT(type == PseudoElementType::Highlight || type == PseudoElementType::ViewTransitionGroup || type == PseudoElementType::ViewTransitionGroupChildren || type == PseudoElementType::ViewTransitionImagePair || type == PseudoElementType::ViewTransitionOld || type == PseudoElementType::ViewTransitionNew);
     }
 
     PseudoElementRequest(const PseudoElementIdentifier& pseudoElementIdentifier)

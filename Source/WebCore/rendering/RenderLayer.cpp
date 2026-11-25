@@ -912,6 +912,20 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
             posZOrderList->append(viewTransitionContainingBlock->layer());
         }
     }
+
+    // The containing block of a scoped view transition paints on top of the rest
+    // of the scope's stacking context, like the document one does above.
+    if (!isRenderViewLayer()) {
+        if (RefPtr element = renderer().element()) {
+            if (RefPtr viewTransition = renderer().document().viewTransitionHostedOn(*element)) {
+                if (WeakPtr viewTransitionContainingBlock = viewTransition->scopedViewTransitionContainingBlock(); viewTransitionContainingBlock && viewTransitionContainingBlock->hasLayer()) {
+                    if (!posZOrderList)
+                        posZOrderList = makeUnique<Vector<RenderLayer*>>();
+                    posZOrderList->append(viewTransitionContainingBlock->layer());
+                }
+            }
+        }
+    }
 }
 
 void RenderLayer::removeSelfFromCompositor()
@@ -3538,6 +3552,17 @@ static inline DisplayList::RecorderImpl* canvasDrawableRecorder(const RenderLaye
 
 void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
 {
+    // A scope hosting a transition whose update callback is running paints from its
+    // frozen old-state snapshot instead of its live subtree.
+    if (!context.performingPaintInvalidation()) {
+        if (RefPtr element = renderer().element(); element && element->hasActiveScopedViewTransition()) {
+            if (RefPtr transition = protect(renderer().document())->activeViewTransitionForScope(*element)) {
+                if (transition->paintFrozenScopeSnapshot(context, *this, paintingInfo.rootLayer, paintingInfo.subpixelOffset))
+                    return;
+            }
+        }
+    }
+
     auto shouldContinuePaint = [&] () {
         return backing()->paintsIntoWindow()
             || backing()->paintsIntoCompositedAncestor()
@@ -5541,6 +5566,16 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
     else
         clipRects.reset();
 
+    // A scoped view transition containing block escapes the scope's own overflow
+    // clip; only clips from the scope's ancestors apply to the pseudo-element tree.
+    if (renderer().isViewTransitionContainingBlock() && !parent()->isRenderViewLayer()) {
+        ClipRect ancestorClip = LayoutRect::infiniteRect();
+        if (this != clipRectsContext.rootLayer && parent() != clipRectsContext.rootLayer && parent()->parent())
+            ancestorClip = parent()->backgroundClipRect(clipRectsContext);
+        clipRects.setOverflowClipRect(ancestorClip);
+        clipRects.setPosClipRect(ancestorClip);
+    }
+
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
     if (renderer().isFixedPositioned()) {
@@ -5659,6 +5694,15 @@ ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContex
     auto parentRects = parentClipRects(clipRectsContext);
     if (!parentRects) {
         backgroundClipRect.reset();
+        return backgroundClipRect;
+    }
+    // A scoped view transition containing block escapes the scope's own overflow
+    // clip; only clips from the scope's ancestors apply to the pseudo-element tree.
+    if (renderer().isViewTransitionContainingBlock() && !parent()->isRenderViewLayer()) {
+        if (this == clipRectsContext.rootLayer || parent() == clipRectsContext.rootLayer || !parent()->parent())
+            backgroundClipRect.reset();
+        else
+            backgroundClipRect = parent()->backgroundClipRect(clipRectsContext);
         return backgroundClipRect;
     }
     backgroundClipRect = backgroundClipRectForPosition(*parentRects, renderer().style().position());

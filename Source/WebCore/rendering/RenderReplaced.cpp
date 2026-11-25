@@ -117,6 +117,14 @@ RenderReplaced::RenderReplaced(Type type, Document& document, UniqueRef<Style::C
 
 RenderReplaced::~RenderReplaced() = default;
 
+// A scoped view transition hosts its pseudo-element tree under the scope's renderer,
+// even when the scope is replaced content.
+bool RenderReplaced::canHaveGeneratedChildren() const
+{
+    RefPtr element = this->element();
+    return element && element->hasActiveScopedViewTransition();
+}
+
 bool RenderReplaced::shouldRespectZeroIntrinsicWidth() const
 {
     return zoomedNaturalDimensions().width.has_value();
@@ -178,6 +186,7 @@ void RenderReplaced::layout()
     updateLayerTransform();
     invalidateBackgroundObscurationStatus();
     repainter.repaintAfterLayout();
+    layoutViewTransitionContainingBlock();
     clearNeedsLayout();
 
     if (replacedContentRect() != oldContentRect) {
@@ -1295,6 +1304,24 @@ void RenderReplaced::layoutShadowContent(const LayoutSize& oldSize)
     }
 
     clearChildNeedsLayout();
+}
+
+// Replaced renderers do not lay out children, so the scoped view transition
+// pseudo tree's containing block is laid out here; its inset: 0 absolute
+// position sizes it to the scope's padding box.
+void RenderReplaced::layoutViewTransitionContainingBlock()
+{
+    for (auto& child : childrenOfType<RenderBox>(*this)) {
+        auto* blockFlow = dynamicDowncast<RenderBlockFlow>(child);
+        if (!blockFlow || !blockFlow->isViewTransitionContainingBlock())
+            continue;
+
+        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
+        child.setLocation(LayoutPoint(borderLeft(), borderTop()));
+        child.setNeedsLayout(MarkingBehavior::OnlyThis);
+        child.layout();
+        clearChildNeedsLayout();
+    }
 }
 
 void RenderReplaced::computeReplacedOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValues& computedValues) const
