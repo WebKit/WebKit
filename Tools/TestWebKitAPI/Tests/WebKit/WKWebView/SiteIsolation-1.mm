@@ -4504,6 +4504,55 @@ TEST(SiteIsolation, ContextMenuRequestForFrameInAnotherProcessIsIgnored)
     EXPECT_EQ(menuCount, 2u);
 }
 
+TEST(SiteIsolation, FlushDeferredMouseEventReachesCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframeAtTopLeft } },
+        { "/iframe"_s, { "<script>"
+            "window.downCount = 0;"
+            "window.flushCount = 0;"
+            "IPC.addIncomingMessageListener('UI', message => {"
+            "    if (message.name === IPC.messages.WebPage_FlushDeferredDidReceiveMouseEvent.name)"
+            "        window.flushCount++;"
+            "});"
+            "addEventListener('mousedown', () => {"
+            "    if (++window.downCount > 1)"
+            "        return;"
+            "    window.webkit.messageHandlers.signal.postMessage('busy');"
+            "    const end = Date.now() + 500;"
+            "    while (Date.now() < end);"
+            "});"
+            "</script><body>iframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"IPCTestingAPIEnabled", true);
+
+    RetainPtr messageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"signal"];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, NSMakeRect(0, 0, 500, 500));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView mainFrame].info._processIdentifier);
+
+    NSPoint pointInWindow = [webView convertPoint:NSMakePoint(16, 16) toView:nil];
+
+    [webView mouseDownAtPoint:pointInWindow simulatePressure:NO];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[messageHandler receivedMessages] containsObject:@"busy"];
+    }));
+
+    [webView mouseDownAtPoint:pointInWindow simulatePressure:NO];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"downCount" inFrame:childFrame.get()] intValue] == 2;
+    }));
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"flushCount" inFrame:childFrame.get()] intValue]);
+}
+
 #endif // ENABLE(IPC_TESTING_API)
 
 static void selectActiveContextMenuItem(TestWKWebView *webView, NSString *title)
