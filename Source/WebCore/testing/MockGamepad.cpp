@@ -27,6 +27,7 @@
 #include "MockGamepad.h"
 
 #if ENABLE(GAMEPAD)
+
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -50,6 +51,7 @@ void MockGamepad::updateDetails(const String& gamepadID, const String& mapping, 
     m_buttonValues.clear();
     for (size_t i = 0; i < buttonCount; ++i)
         m_buttonValues.append({ });
+    setButtonTypesForStandardMapping(m_buttonValues.size());
     m_lastUpdateTime = MonotonicTime::now();
     if (supportsDualRumble)
         m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);

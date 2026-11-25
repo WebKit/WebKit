@@ -113,8 +113,8 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
         if (!serviceInfo.service)
             continue;
 
-        auto cfVendorID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDVendorIDKey)));
-        auto cfProductID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDProductIDKey)));
+        RetainPtr cfVendorID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDVendorIDKey)));
+        RetainPtr cfProductID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDProductIDKey)));
 
         int vendorID, productID;
         CFNumberGetValue(cfVendorID.get(), kCFNumberIntType, &vendorID);
@@ -206,7 +206,7 @@ void GameControllerGamepadProvider::prewarmGameControllerDevicesIfNecessary()
     init_GameController_GCInputRightTrigger();
     init_GameController_GCInputRightThumbstick();
     init_GameController_GCInputRightThumbstickButton();
-    
+
     prewarmed = true;
 }
 

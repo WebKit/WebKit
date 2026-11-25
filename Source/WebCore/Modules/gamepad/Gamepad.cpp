@@ -29,6 +29,7 @@
 #if ENABLE(GAMEPAD)
 
 #include "GamepadButton.h"
+#include "GamepadButtonType.h"
 #include "GamepadHapticActuator.h"
 #include "PlatformGamepad.h"
 #include "ScriptExecutionContext.h"
@@ -47,9 +48,11 @@ Gamepad::Gamepad(Document* document, const PlatformGamepad& platformGamepad)
     , m_axes(FillWith { }, platformGamepad.axisValues().size(), 0.0)
     , m_vibrationActuator(platformGamepad.supportedEffectTypes().contains(GamepadHapticEffectType::DualRumble) ? RefPtr { GamepadHapticActuator::create(document, GamepadHapticActuator::Type::DualRumble, *this) } : nullptr)
 {
-    unsigned buttonCount = platformGamepad.buttonValues().size();
-    m_buttons = Vector<Ref<GamepadButton>>(buttonCount, [](size_t) {
-        return GamepadButton::create();
+    auto buttonCount = platformGamepad.buttonValues().size();
+    const auto& buttonTypes = platformGamepad.buttonTypes();
+    m_buttons = Vector<Ref<GamepadButton>>(buttonCount, [&](size_t index) {
+        auto type = index < buttonTypes.size() ? buttonTypes[index] : GamepadButtonType::NonStandard;
+        return GamepadButton::create(type);
     });
 }
 
