@@ -41,7 +41,6 @@ http/tests/inspector/network/resource-sizes-network.html [ Pass Failure Timeout 
 http/tests/inspector/network/fetch-response-body-304.html [ Failure ]
 webkit.org/b/318430 http/tests/inspector/network/clear-non-buffered-resource-data-on-navigate.html [ Failure ]
 http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ Failure ]
-webkit.org/b/311836 http/tests/site-isolation/inspector/page/set-emulated-media-cross-origin-iframe.html [ Failure ]
 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 http/tests/navigation/cross-origin-navigation-fires-onload.html [ Failure ]
 http/tests/navigation/page-cache-xhr-in-loading-iframe.html [ Failure ]
@@ -50,7 +49,6 @@ http/tests/site-isolation/inspector/debugger/pause-in-cross-origin-iframe.html [
 http/tests/site-isolation/inspector/debugger/scriptParsed-frame-target.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/setBreakpoint-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/inspector/page/override-setting-cross-origin-iframe.html [ Pass Failure ]
-webkit.org/b/311836 http/tests/site-isolation/inspector/page/set-emulated-media-cross-origin-iframe.html [ Pass Failure ]
 http/tests/site-isolation/inspector/worker/worker-in-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/inspector/storage/storage-get-cookies-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/inspector/storage/storage-frontend-gate.html [ Pass ]
@@ -104,6 +102,10 @@ imported/w3c/web-platform-tests/svg/path/closepath/segment-completing.svg [ Imag
 # This test has different output with site isolation enabled. It is symlinked and run with site isolation
 # enabled at http/tests/site-isolation/inspector/unit-tests/target-manager.html.
 inspector/unit-tests/target-manager.html [ Failure ]
+
+# Checks the Print Styles toggle without frame targets; --site-isolation and --site-isolation-enabled-by-default
+# always create them. http/tests/site-isolation/inspector/page/set-emulated-media-print-styles-toggle.html covers them.
+inspector/css/setEmulatedMediaForPrintStyles.html [ Skip ]
 
 # rdar://178066625
 imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]

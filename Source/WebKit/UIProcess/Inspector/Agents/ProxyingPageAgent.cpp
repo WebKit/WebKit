@@ -37,6 +37,7 @@
 #include "ValidationProcedures.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorBackendMessages.h"
+#include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
@@ -231,6 +232,11 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
     // so the first document committed in a new process already sees the script.
     if (!m_bootstrapScript.isEmpty())
         webProcess.send(Messages::WebInspectorBackend::SetBootstrapScript { m_bootstrapScript }, pageID);
+
+    // A process created after the override was set already received it in WebPageCreationParameters.
+    // This send is the catch-up for an override set between CreateWebPage and this registration, and
+    // the path for processes that existed before enable().
+    m_syncState.sendTo(webProcess, pageID);
 }
 
 void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
@@ -314,12 +320,54 @@ CommandResult<void> ProxyingPageAgent::enable()
     return { };
 }
 
+// Nothing is instrumented while the Page domain is disabled, so only the main-frame process holds an override then:
+// one set on either target lands there. Send it the current overrides, so the main frame follows this replica.
+static void sendEmulationOverridesToMainFrameProcess(const InspectorBackendSyncState& syncState, WebPageProxy& inspectedPage)
+{
+    RefPtr mainFrame = inspectedPage.mainFrame();
+    if (!mainFrame)
+        return;
+
+    auto pageID = mainFrame->webPageIDInCurrentProcess();
+    if (!pageID)
+        return;
+
+    Ref process = mainFrame->process();
+    syncState.sendTo(process, *pageID);
+}
+
+static std::optional<ProcessIdentifier> mainFrameProcessIdentifier(WebPageProxy& inspectedPage)
+{
+    RefPtr mainFrame = inspectedPage.mainFrame();
+    if (!mainFrame)
+        return std::nullopt;
+
+    return protect(mainFrame->process())->coreProcessIdentifier();
+}
+
+static bool isMainFrameProcess(std::optional<ProcessIdentifier> process, WebPageProxy& inspectedPage)
+{
+    return process && process == mainFrameProcessIdentifier(inspectedPage);
+}
+
 CommandResult<void> ProxyingPageAgent::disable()
 {
     m_settingOverrides.clear();
 
-    if (!m_enabled)
+    // Clear even while disabled: a page-target override recorded while the Page domain was disabled
+    // must not be replayed to a later frontend, matching InspectorPageAgent::disable().
+    m_syncState.clear();
+    auto mainFrameProcessWithEmulatedMedia = std::exchange(m_mainFrameProcessWithEmulatedMedia, std::nullopt);
+
+    if (!m_enabled) {
+        // Send the main-frame process the cleared overrides, so the main frame returns to its real media too, but only
+        // if this agent sent that process an override or that process relayed one: a message creates the process's
+        // inspector backend if it has none. A main-frame process swapped in while disabled starts without an override.
+        Ref inspectedPage = m_inspectedPage;
+        if (isMainFrameProcess(mainFrameProcessWithEmulatedMedia, inspectedPage))
+            sendEmulationOverridesToMainFrameProcess(m_syncState, inspectedPage);
         return { };
+    }
 
     m_enabled = false;
     m_cachedFrameDocumentInfo.clear();
@@ -789,9 +837,62 @@ CommandResult<void> ProxyingPageAgent::setShowPaintRects(bool show)
     return { };
 }
 
-CommandResult<void> ProxyingPageAgent::setEmulatedMedia(const String&)
+CommandResult<void> ProxyingPageAgent::setEmulatedMedia(const String& media)
 {
+    // Accepted while the Page domain is disabled, as setShowPaintRects is: the override is stored and
+    // enable() sends it to every process.
+    applyEmulatedMedia(media, std::nullopt);
+
+    // While disabled that reached no process. Send the main-frame process the stored overrides too, as an override
+    // set on the page target lands there, so a later Page.disable or clear on the page target finds it there instead
+    // of leaving it stored here for the next enable() to replay. Send them, enabled or not, to a main-frame process that
+    // relayed a page-target override as well: it can hold a media type this replica stored as a clear, which a
+    // same-value set here would leave in place. A process ignores a value it already holds.
+    Ref inspectedPage = m_inspectedPage;
+    if (!m_enabled || isMainFrameProcess(m_mainFrameProcessWithEmulatedMedia, inspectedPage)) {
+        sendEmulationOverridesToMainFrameProcess(m_syncState, inspectedPage);
+        m_mainFrameProcessWithEmulatedMedia = mainFrameProcessIdentifier(inspectedPage);
+    }
     return { };
+}
+
+void ProxyingPageAgent::pageTargetEmulatedMediaChanged(const String& media, ProcessIdentifier relayingProcess)
+{
+    // Only a connected frontend sets this. Without one, a value relayed from the main-frame process would be
+    // stored here and sent to every process when the next frontend enables the Page domain.
+    Ref inspectedPage = m_inspectedPage;
+    if (!inspectedPage->inspectorController().hasFrontends())
+        return;
+
+    // The relaying process holds the value it applied, which may differ from the one relayed here.
+    m_mainFrameProcessWithEmulatedMedia = relayingProcess;
+
+    // The relaying process already applied the value. Sent back, it could arrive after that process moved on to a
+    // newer value, and apply the old one again. The cost: a web-page target write that reaches that process while this
+    // relay is in flight leaves it on the newer value and every other process on this one, until the next write. A
+    // per-write generation number that each WebContent process compares before applying would close both windows.
+    applyEmulatedMedia(media, relayingProcess);
+}
+
+void ProxyingPageAgent::applyEmulatedMedia(const String& media, std::optional<ProcessIdentifier> skippedProcess)
+{
+    // A same-value set changes nothing, so it is neither stored nor sent.
+    const auto& current = m_syncState.overrides().emulatedMedia;
+    if (media.isEmpty() ? !current : current == media)
+        return;
+
+    // Store the override so a late-joining process inherits it at the shared join seam, then
+    // broadcast it to every process already hosting a frame of the inspected page via the same
+    // SetEmulationOverrides message the join path sends. The WebContent WebInspectorBackend applies
+    // it to its local frames' media queries.
+    m_syncState.setEmulatedMedia(media);
+
+    // While the Page domain is disabled nothing is instrumented; enable() replays the stored value.
+    forEachInstrumentedProcess([&](WebProcessProxy& process, PageIdentifier pageID) {
+        if (process.coreProcessIdentifier() == skippedProcess)
+            return;
+        m_syncState.sendTo(process, pageID);
+    });
 }
 
 #if PLATFORM(COCOA)

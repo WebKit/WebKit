@@ -807,6 +807,27 @@ void WebInspectorUIProxy::showPaintRectsChanged(bool show)
         inspectedPage->inspectorController().setShowPaintRects(show);
 }
 
+void WebInspectorUIProxy::pageTargetEmulatedMediaChanged(IPC::Connection& connection, const String& media)
+{
+    RefPtr inspectedPage = m_inspectedPage;
+    if (!inspectedPage)
+        return;
+
+    // Only a connected frontend sets emulated media on the page target. A relay that arrives without one would be
+    // stored and sent to every process, including cross-site ones, when the next frontend connects.
+    if (!inspectedPage->inspectorController().hasFrontends())
+        return;
+
+    // The main-frame process sends this value, and it reaches other sites' processes, so a compromised renderer must
+    // not choose it freely. Any media type other than the ones the Print Styles toggle and automation clients set is
+    // relayed as a clear, so the other processes return to their real media; the main frame keeps the value it applied.
+    // The frontend's own Page.setEmulatedMedia on the web-page target does not come from a renderer and is not filtered.
+    auto relayedMedia = media.isEmpty() || media == "screen"_s || media == "print"_s ? media : emptyString();
+
+    Ref relayingProcess = WebProcessProxy::fromConnection(connection);
+    inspectedPage->inspectorController().pageTargetEmulatedMediaChanged(relayedMedia, relayingProcess->coreProcessIdentifier());
+}
+
 void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     switch (developerPreference) {

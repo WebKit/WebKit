@@ -312,6 +312,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     std::optional<bool> imageAnimationEnabledOverride;
 #endif
+    Inspector::EmulationOverrides emulationOverrides;
 }
 
 [Nested] struct WebKit::RemotePageParameters {

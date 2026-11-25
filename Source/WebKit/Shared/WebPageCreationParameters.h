@@ -48,6 +48,7 @@
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CornerRadii.h>
 #include <WebCore/DocumentSyncData.h>
+#include <WebCore/EmulationOverrides.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HighlightVisibility.h>
@@ -403,6 +404,7 @@ struct WebPageCreationParameters {
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     std::optional<bool> imageAnimationEnabledOverride { };
 #endif
+    Inspector::EmulationOverrides emulationOverrides { };
 };
 
 } // namespace WebKit

@@ -1,0 +1,289 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+body { color: blue; }
+@media print {
+    body { color: green; }
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/emulated-media-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function armMediaChange() {
+    matchMedia("print").addEventListener("change", () => { TestPage.dispatchEventToFrontend("MediaChanged"); }, { once: true });
+}
+
+function test() {
+    let target;
+
+    // Records the type of each target that is sent Page.setEmulatedMedia, as the Print Styles toggle
+    // (WI.CSSManager.prototype.setEmulatedMediaForPrintStyles) sends it, until restore() is called.
+    function recordEmulatedMediaWrites() {
+        let writes = [];
+        let replies = [];
+        let restores = [];
+        for (let candidate of [WI.backendTarget, ...WI.targets]) {
+            if (!candidate.hasCommand("Page.setEmulatedMedia"))
+                continue;
+            let agent = candidate.PageAgent;
+            let setEmulatedMedia = agent.setEmulatedMedia;
+            agent.setEmulatedMedia = (media) => {
+                writes.push(candidate.type);
+                let reply = setEmulatedMedia.call(agent, media).catch(() => { });
+                replies.push(reply);
+                return reply;
+            };
+            restores.push(() => { agent.setEmulatedMedia = setEmulatedMedia; });
+        }
+        return {
+            writes,
+            async repliesReceived() {
+                await Promise.all(replies);
+            },
+            restore() {
+                for (let restore of restores)
+                    restore();
+            },
+        };
+    }
+
+    async function addIFrameAndGetTarget() {
+        // Under Site Isolation, TargetAdded fires for the iframe's provisional about:blank target
+        // before the cross-origin document commits; evaluating then hits the empty realm. Await the
+        // committed target + its execution context, mirroring set-emulated-media-cross-origin-iframe.html.
+        let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await committedPromise;
+        let target = event.data.target;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
+    }
+
+    async function evaluateInTarget(target, expression) {
+        let response = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return response.result.value;
+    }
+
+    async function getComputedColorInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        return evaluateInTarget(target, "window.getComputedStyle(document.body).getPropertyValue('color')");
+    }
+
+    // The UIProcess sends the override to every process hosting a frame, which is not ordered against the
+    // targets' own RuntimeAgent channels. Arm a one-shot media change listener in each frame before issuing
+    // the command, then await it.
+    async function armMediaChangeInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: `window.__mediaChanged = new Promise(r => matchMedia("print").addEventListener("change", r, { once: true }))`,
+            objectGroup: "test",
+        });
+    }
+
+    async function awaitMediaChangeInTarget(target) {
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "window.__mediaChanged",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle.ReachesCrossOriginIFrame",
+        description: "The Web Inspector Print Styles toggle should set emulated media on the web-page target, and switch a cross-origin iframe to its print styles and back.",
+        async test() {
+            target = await addIFrameAndGetTarget();
+            let iframeColorBefore = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorBefore, "rgb(0, 0, 255)", "Cross-origin iframe should start with screen styles (blue).");
+
+            InspectorTest.expectFalse(WI.targets.includes(WI.backendTarget), "The web-page backend target should not be in WI.targets.");
+
+            InspectorTest.log("Toggling Print Styles on...");
+            let recorder = recordEmulatedMediaWrites();
+            let mainMediaChanged = InspectorTest.awaitEvent("MediaChanged");
+            await InspectorTest.evaluateInPage("armMediaChange()");
+            await armMediaChangeInTarget(target);
+            WI.cssManager.setEmulatedMediaForPrintStyles("print");
+            InspectorTest.expectEqual(recorder.writes.join(","), "web-page", "Print Styles toggle should set emulated media on the web-page target only.");
+            await recorder.repliesReceived();
+            await mainMediaChanged;
+            await awaitMediaChangeInTarget(target);
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(0, 128, 0)", "Main page should have print styles (green).");
+
+            let iframeColorPrint = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorPrint, "rgb(0, 128, 0)", "Cross-origin iframe should switch to print styles (green).");
+
+            InspectorTest.log("Toggling Print Styles off...");
+            await armMediaChangeInTarget(target);
+            WI.cssManager.setEmulatedMediaForPrintStyles("");
+            await recorder.repliesReceived();
+            await awaitMediaChangeInTarget(target);
+            recorder.restore();
+
+            let iframeColorAfter = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorAfter, "rgb(0, 0, 255)", "Cross-origin iframe should return to screen styles (blue).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle.ReplayedToWebPageTarget",
+        description: "Print Styles turned on before the first frame target should be set on the web-page target when frame targets appear. NetworkManager makes this call at the first frame target, which this test cannot recreate, so it makes the call itself.",
+        async test() {
+            InspectorTest.log("Replaying Print Styles to the web-page target...");
+            WI.printStylesEnabled = true;
+            let recorder = recordEmulatedMediaWrites();
+            await armMediaChangeInTarget(target);
+            WI.cssManager.initializeBackendTargetForSiteIsolation(WI.backendTarget);
+            InspectorTest.expectEqual(recorder.writes.join(","), "web-page", "Print Styles replay should set emulated media on the web-page target only.");
+            await recorder.repliesReceived();
+            recorder.restore();
+            WI.printStylesEnabled = false;
+
+            // The UIProcess sends the override to the main-frame process before it replies.
+            let printMatches = await InspectorTest.evaluateInPage(`matchMedia("print").matches`);
+            InspectorTest.expectEqual(printMatches, true, "Main page should match print media after the replay.");
+
+            // Only a replay that reached the frames changes the iframe's media. Wait for each change it makes, so the
+            // next case starts from screen media in every frame.
+            if (printMatches)
+                await awaitMediaChangeInTarget(target);
+            InspectorTest.log("Clearing emulated media on the web-page target...");
+            if (printMatches)
+                await armMediaChangeInTarget(target);
+            await WI.backendTarget.PageAgent.setEmulatedMedia("");
+            if (printMatches)
+                await awaitMediaChangeInTarget(target);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle.NotSentBackToMainFrame",
+        description: "Setting print and then no emulated media on the page target without waiting should change the main page's media only twice: the UIProcess should not send the main-frame process the values that process relayed.",
+        async test() {
+            await InspectorTest.evaluateInPage(`window.printMatches = []; matchMedia("print").addEventListener("change", (event) => { printMatches.push(event.matches); })`);
+
+            InspectorTest.log("Setting print and then no emulated media on the page target without waiting...");
+            let [pageTarget] = WI.targets.filter((target) => target.hasCommand("Page.setEmulatedMedia"));
+            // The evaluation keeps the main-frame process busy for 100 ms, so the UIProcess has forwarded both commands
+            // to that process before it relays the first value, and a value sent back lands after the second command.
+            await Promise.all([
+                InspectorTest.evaluateInPage(`(() => { let end = Date.now() + 100; while (Date.now() < end) { } })()`),
+                pageTarget.PageAgent.setEmulatedMedia("print"),
+                pageTarget.PageAgent.setEmulatedMedia(""),
+            ]);
+
+            // The main-frame process relays each value to the UIProcess before it replies, and the UIProcess handles a
+            // relay before it forwards the reply that follows it, so anything sent back arrives before this evaluation.
+            let printMatches = await InspectorTest.evaluateInPage("JSON.stringify(printMatches)");
+            InspectorTest.expectEqual(printMatches, "[true,false]", "Main page should match print media once and then stop matching it.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle.UnsupportedMediaTypeRelayedAsClear",
+        description: "A media type other than screen or print set on the page target should apply to the main page only: the UIProcess should send the cross-origin iframe a clear instead, and a later clear on the web-page target should still reach the main page.",
+        async test() {
+            let [pageTarget] = WI.targets.filter((target) => target.hasCommand("Page.setEmulatedMedia"));
+
+            InspectorTest.log("Setting emulated media to print on the page target...");
+            let mainMediaChanged = InspectorTest.awaitEvent("MediaChanged");
+            await InspectorTest.evaluateInPage("armMediaChange()");
+            await armMediaChangeInTarget(target);
+            await pageTarget.PageAgent.setEmulatedMedia("print");
+            await mainMediaChanged;
+            await awaitMediaChangeInTarget(target);
+            let iframeColorPrint = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorPrint, "rgb(0, 128, 0)", "Cross-origin iframe should switch to print styles (green).");
+
+            InspectorTest.log("Setting emulated media to an unsupported media type on the page target...");
+            await armMediaChangeInTarget(target);
+            await pageTarget.PageAgent.setEmulatedMedia("unsupported");
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(0, 0, 255)", "Main page should leave print styles (blue).");
+
+            // The iframe stops matching print media on a clear and on the unsupported media type alike; only the
+            // clear makes it match screen media again.
+            await awaitMediaChangeInTarget(target);
+            let iframeScreenMatches = await evaluateInTarget(target, `matchMedia("screen").matches`);
+            InspectorTest.expectEqual(iframeScreenMatches, true, "Cross-origin iframe should match screen media again.");
+
+            // The main page keeps the unsupported media type, which the UIProcess stored as a clear, so the clear below
+            // changes nothing the UIProcess holds. It must still reach the main page; the UIProcess sends to the
+            // main-frame process before it replies.
+            InspectorTest.log("Clearing emulated media on the web-page target...");
+            await WI.backendTarget.PageAgent.setEmulatedMedia("");
+            let mainScreenMatches = await InspectorTest.evaluateInPage(`matchMedia("screen").matches`);
+            InspectorTest.expectEqual(mainScreenMatches, true, "Main page should match screen media again after the web-page target clears emulated media.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle.UnsupportedMediaTypeClearedByWebPageDisable",
+        description: "A media type the UIProcess does not store should still be cleared from the main page by a web-page Page.disable while that target's Page domain is already disabled.",
+        async test() {
+            let [pageTarget] = WI.targets.filter((target) => target.hasCommand("Page.setEmulatedMedia"));
+
+            InspectorTest.log("Disabling the Page domain on the web-page target...");
+            await WI.backendTarget.PageAgent.disable();
+
+            InspectorTest.log("Setting emulated media to an unsupported media type on the page target...");
+            await pageTarget.PageAgent.setEmulatedMedia("unsupported");
+            let screenMatches = await InspectorTest.evaluateInPage(`matchMedia("screen").matches`);
+            InspectorTest.expectEqual(screenMatches, false, "Main page should stop matching screen media.");
+
+            // The UIProcess sends the clear before it replies, on the same connection as the evaluation below.
+            InspectorTest.log("Disabling the Page domain on the web-page target again...");
+            await WI.backendTarget.PageAgent.disable();
+            screenMatches = await InspectorTest.evaluateInPage(`matchMedia("screen").matches`);
+            InspectorTest.expectEqual(screenMatches, true, "Main page should match screen media again after a second web-page Page.disable.");
+
+            await WI.backendTarget.PageAgent.enable();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMediaPrintStylesToggle.WebPageOverrideClearedByWebPageDisable",
+        description: "Print set on the web-page target while its Page domain is disabled should be cleared from the main page by a second web-page Page.disable.",
+        async test() {
+            InspectorTest.log("Disabling the Page domain on the web-page target...");
+            await WI.backendTarget.PageAgent.disable();
+
+            // The UIProcess sends the override to the main-frame process before it replies.
+            InspectorTest.log("Setting emulated media to print on the web-page target...");
+            await WI.backendTarget.PageAgent.setEmulatedMedia("print");
+            let screenMatches = await InspectorTest.evaluateInPage(`matchMedia("screen").matches`);
+            InspectorTest.expectEqual(screenMatches, false, "Main page should stop matching screen media.");
+
+            // The UIProcess sends the clear before it replies, on the same connection as the evaluation below.
+            InspectorTest.log("Disabling the Page domain on the web-page target again...");
+            await WI.backendTarget.PageAgent.disable();
+            screenMatches = await InspectorTest.evaluateInPage(`matchMedia("screen").matches`);
+            InspectorTest.expectEqual(screenMatches, true, "Main page should match screen media again after a web-page Page.disable that follows a web-page override.");
+
+            await WI.backendTarget.PageAgent.enable();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that the Web Inspector Print Styles toggle and Page.setEmulatedMedia on the page target reach cross-origin iframes under site isolation.</p>
+</body>

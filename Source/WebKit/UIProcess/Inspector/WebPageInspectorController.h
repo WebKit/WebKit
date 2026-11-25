@@ -31,6 +31,7 @@
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
 #include <WebCore/DebuggerPauseSessionIdentifier.h>
+#include <WebCore/EmulationOverrides.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -115,8 +116,10 @@ public:
 
     bool isNetworkInstrumentationEnabled() const;
     bool isPageInstrumentationEnabled() const;
+    Inspector::EmulationOverrides emulationOverrides() const;
 
     void setShowPaintRects(bool);
+    void pageTargetEmulatedMediaChanged(const String&, WebCore::ProcessIdentifier relayingProcess);
 
     void timelineRecordingChanged(bool active);
     void takeTimelineScreenshot(const WebCore::IntRect&, double timestamp, CompletionHandler<void()>&&);
