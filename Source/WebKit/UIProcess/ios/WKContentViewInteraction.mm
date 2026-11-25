@@ -155,7 +155,6 @@
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebEventPrivate.h>
-#import <WebCore/WebTextIndicatorLayer.h>
 #import <WebCore/WindowsKeyboardCodes.h>
 #import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
@@ -12838,79 +12837,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (CALayer *)textIndicatorInstallationLayer
 {
     return [self layer];
-}
-
-- (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator
-{
-    if (_textIndicator == textIndicator.ptr())
-        return;
-    
-    [self teardownTextIndicatorLayer];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(startFadeOut) object:nil];
-    
-    _textIndicator = textIndicator.ptr();
-
-    CGRect frame = _textIndicator->textBoundingRectInRootViewCoordinates();
-    _textIndicatorLayer = adoptNS([[WebTextIndicatorLayer alloc] initWithFrame:frame
-        textIndicator:textIndicator.ptr() margin:CGSizeZero offset:CGPointZero]);
-    
-    [[self layer] addSublayer:_textIndicatorLayer.get()];
-
-    if (_textIndicator->presentationTransition() != WebCore::TextIndicatorPresentationTransition::None)
-        [_textIndicatorLayer present];
-    
-    [self performSelector:@selector(startFadeOut) withObject:self afterDelay:WebCore::timeBeforeFadeStarts.value()];
-}
-
-- (void)updateTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator
-{
-    if (_textIndicator != textIndicator.ptr())
-        return;
-
-    CGRect frame = _textIndicator->textBoundingRectInRootViewCoordinates();
-    _textIndicatorLayer = adoptNS([[WebTextIndicatorLayer alloc] initWithFrame:frame
-        textIndicator:textIndicator.ptr() margin:CGSizeZero offset:CGPointZero]);
-
-    [[self layer] addSublayer:_textIndicatorLayer.get()];
-}
-
-- (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation
-{
-    RefPtr<WebCore::TextIndicator> textIndicator = WTF::move(_textIndicator);
-    
-    if ([_textIndicatorLayer isFadingOut])
-        return;
-
-    if (textIndicator && textIndicator->wantsManualAnimation() && [_textIndicatorLayer hasCompletedAnimation] && animation == WebCore::TextIndicatorDismissalAnimation::FadeOut) {
-        [self startFadeOut];
-        return;
-    }
-
-    [self teardownTextIndicatorLayer];
-}
-
-- (void)setTextIndicatorAnimationProgress:(float)animationProgress
-{
-    if (!_textIndicator)
-        return;
-
-    [_textIndicatorLayer setAnimationProgress:animationProgress];
-}
-
-- (void)teardownTextIndicatorLayer
-{
-    [_textIndicatorLayer removeFromSuperlayer];
-    _textIndicatorLayer = nil;
-}
-
-- (void)startFadeOut
-{
-    [_textIndicatorLayer setFadingOut:YES];
-        
-    [_textIndicatorLayer hideWithCompletionHandler:[weakSelf = WeakObjCPtr<WKContentView>(self)] {
-        auto strongSelf = weakSelf.get();
-        [strongSelf teardownTextIndicatorLayer];
-    }];
 }
 
 #if HAVE(UIFINDINTERACTION)
