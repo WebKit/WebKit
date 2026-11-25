@@ -554,34 +554,16 @@ public:
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByEmpty() const { return hasStyleFlag(NodeStyleFlag::StyleAffectedByEmpty); }
     bool descendantsAffectedByPreviousSibling() const { return hasStyleFlag(NodeStyleFlag::DescendantsAffectedByPreviousSibling); }
-    bool childrenAffectedByFirstChildRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByFirstChildRules); }
-    bool childrenAffectedByLastChildRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByLastChildRules); }
-    bool childrenAffectedByForwardPositionalRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByForwardPositionalRules); }
-    bool descendantsAffectedByForwardPositionalRules() const { return hasStyleFlag(NodeStyleFlag::DescendantsAffectedByForwardPositionalRules); }
-    bool childrenAffectedByBackwardPositionalRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules); }
-    bool descendantsAffectedByBackwardPositionalRules() const { return hasStyleFlag(NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules); }
     bool affectsNextSiblingElementStyle() const { return hasStyleFlag(NodeStyleFlag::AffectsNextSiblingElementStyle); }
     bool styleIsAffectedByPreviousSibling() const { return hasStyleFlag(NodeStyleFlag::StyleIsAffectedByPreviousSibling); }
-    bool affectedByHasWithBackwardSiblingRelationship() const { return hasStyleFlag(NodeStyleFlag::AffectedByHasWithBackwardSiblingRelationship); }
-    bool affectedByHasWithForwardSiblingRelationship() const { return hasStyleFlag(NodeStyleFlag::AffectedByHasWithForwardSiblingRelationship); }
-    bool affectedByHasWithAdjacentSiblingRelationship() const { return hasStyleFlag(NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship); }
     inline unsigned childIndex() const;
 
     NODELETE bool hasFlagsSetDuringStylingOfChildren() const;
 
     void setStyleAffectedByEmpty() { setStyleFlag(NodeStyleFlag::StyleAffectedByEmpty); }
     void setDescendantsAffectedByPreviousSibling() { setStyleFlag(NodeStyleFlag::DescendantsAffectedByPreviousSibling); }
-    void setChildrenAffectedByFirstChildRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByFirstChildRules); }
-    void setChildrenAffectedByLastChildRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByLastChildRules); }
-    void setChildrenAffectedByForwardPositionalRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByForwardPositionalRules); }
-    void setDescendantsAffectedByForwardPositionalRules() { setStyleFlag(NodeStyleFlag::DescendantsAffectedByForwardPositionalRules); }
-    void setChildrenAffectedByBackwardPositionalRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules); }
-    void setDescendantsAffectedByBackwardPositionalRules() { setStyleFlag(NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules); }
     void setAffectsNextSiblingElementStyle() { setStyleFlag(NodeStyleFlag::AffectsNextSiblingElementStyle); }
     void setStyleIsAffectedByPreviousSibling() { setStyleFlag(NodeStyleFlag::StyleIsAffectedByPreviousSibling); }
-    void setAffectedByHasWithBackwardSiblingRelationship() { setStyleFlag(NodeStyleFlag::AffectedByHasWithBackwardSiblingRelationship); }
-    void setAffectedByHasWithForwardSiblingRelationship() { setStyleFlag(NodeStyleFlag::AffectedByHasWithForwardSiblingRelationship); }
-    void setAffectedByHasWithAdjacentSiblingRelationship() { setStyleFlag(NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship); }
     void setChildIndex(unsigned);
 
     const AtomString& effectiveLang() const;
@@ -832,9 +814,6 @@ public:
     void clearAfterPseudoElement();
     void resetComputedStyle();
     NODELETE void resetStyleRelations();
-    void resetChildStyleRelations();
-    void resetAllDescendantStyleRelations();
-    void resetHasSiblingFlags();
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
 
     WEBCORE_EXPORT URL absoluteLinkURL() const;

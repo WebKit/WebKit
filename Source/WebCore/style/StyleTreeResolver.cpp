@@ -1350,13 +1350,21 @@ void TreeResolver::resetDescendantStyleRelations(Element& element, DescendantsTo
         break;
     case DescendantsToResolve::Children:
         element.resetChildStyleRelations();
+        if (RefPtr shadowRoot = element.shadowRoot())
+            shadowRoot->resetChildStyleRelations();
         break;
     case DescendantsToResolve::All:
+        RefPtr shadowRoot = element.shadowRoot();
         element.resetAllDescendantStyleRelations();
+        if (shadowRoot)
+            shadowRoot->resetAllDescendantStyleRelations();
         if (&element == m_document->documentElement())
             m_isFullDocumentStyleRebuild = true;
-        if (m_isFullDocumentStyleRebuild)
+        if (m_isFullDocumentStyleRebuild) {
             element.resetHasSiblingFlags();
+            if (shadowRoot)
+                shadowRoot->resetHasSiblingFlags();
+        }
         break;
     };
 }

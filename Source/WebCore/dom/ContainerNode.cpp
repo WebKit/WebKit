@@ -1655,4 +1655,33 @@ ContainerNode& ContainerNode::traverseToRootNode() const
     return traverseToRootNodeInternal(*this);
 }
 
+void ContainerNode::resetChildStyleRelations()
+{
+    clearStyleFlags({
+        NodeStyleFlag::ChildrenAffectedByFirstChildRules,
+        NodeStyleFlag::ChildrenAffectedByLastChildRules,
+        NodeStyleFlag::ChildrenAffectedByForwardPositionalRules,
+        NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules
+    });
+}
+
+void ContainerNode::resetAllDescendantStyleRelations()
+{
+    resetChildStyleRelations();
+
+    clearStyleFlags({
+        NodeStyleFlag::DescendantsAffectedByForwardPositionalRules,
+        NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules
+    });
+}
+
+void ContainerNode::resetHasSiblingFlags()
+{
+    clearStyleFlags({
+        NodeStyleFlag::AffectedByHasWithBackwardSiblingRelationship,
+        NodeStyleFlag::AffectedByHasWithForwardSiblingRelationship,
+        NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship,
+    });
+}
+
 } // namespace WebCore

@@ -174,6 +174,11 @@ inline CCallHelpers::Jump branchTestIsElementFlagOnNode(MacroAssembler& jit, CCa
     return jit.branchTest16(condition, CCallHelpers::Address(nodeAddress, Node::typeFlagsMemoryOffset()), CCallHelpers::TrustedImm32(Node::flagIsElement()));
 }
 
+inline CCallHelpers::Jump branchTestIsElementOrShadowRootFlagOnNode(MacroAssembler& jit, CCallHelpers::ResultCondition condition, GPRReg nodeAddress)
+{
+    return jit.branchTest16(condition, CCallHelpers::Address(nodeAddress, Node::typeFlagsMemoryOffset()), CCallHelpers::TrustedImm32(Node::flagIsElement() | Node::flagIsShadowRootOrFormControlElement()));
+}
+
 inline CCallHelpers::Jump branchTestIsHTMLFlagOnNode(MacroAssembler& jit, CCallHelpers::ResultCondition condition, GPRReg nodeAddress)
 {
     return jit.branchTest16(condition, CCallHelpers::Address(nodeAddress, Node::typeFlagsMemoryOffset()), CCallHelpers::TrustedImm32(Node::flagIsHTML()));

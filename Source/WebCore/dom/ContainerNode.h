@@ -160,6 +160,31 @@ public:
     ExceptionOr<void> ensurePreInsertionValidityForPhantomDocumentFragment(NodeVector& newChildren, Node* refChild = nullptr, AcceptChildOperation = AcceptChildOperation::InsertOrAdd);
     ExceptionOr<void> insertChildrenBeforeWithoutPreInsertionValidityCheck(NodeVector&&, Node* nextChild = nullptr);
 
+    // Methods for indicating the style of element or shadow root children is affected by dynamic updates
+    bool childrenAffectedByFirstChildRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByFirstChildRules); }
+    bool childrenAffectedByLastChildRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByLastChildRules); }
+    bool childrenAffectedByForwardPositionalRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByForwardPositionalRules); }
+    bool descendantsAffectedByForwardPositionalRules() const { return hasStyleFlag(NodeStyleFlag::DescendantsAffectedByForwardPositionalRules); }
+    bool childrenAffectedByBackwardPositionalRules() const { return hasStyleFlag(NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules); }
+    bool descendantsAffectedByBackwardPositionalRules() const { return hasStyleFlag(NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules); }
+    bool affectedByHasWithBackwardSiblingRelationship() const { return hasStyleFlag(NodeStyleFlag::AffectedByHasWithBackwardSiblingRelationship); }
+    bool affectedByHasWithForwardSiblingRelationship() const { return hasStyleFlag(NodeStyleFlag::AffectedByHasWithForwardSiblingRelationship); }
+    bool affectedByHasWithAdjacentSiblingRelationship() const { return hasStyleFlag(NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship); }
+
+    void setChildrenAffectedByFirstChildRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByFirstChildRules); }
+    void setChildrenAffectedByLastChildRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByLastChildRules); }
+    void setChildrenAffectedByForwardPositionalRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByForwardPositionalRules); }
+    void setDescendantsAffectedByForwardPositionalRules() { setStyleFlag(NodeStyleFlag::DescendantsAffectedByForwardPositionalRules); }
+    void setChildrenAffectedByBackwardPositionalRules() { setStyleFlag(NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules); }
+    void setDescendantsAffectedByBackwardPositionalRules() { setStyleFlag(NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules); }
+    void setAffectedByHasWithBackwardSiblingRelationship() { setStyleFlag(NodeStyleFlag::AffectedByHasWithBackwardSiblingRelationship); }
+    void setAffectedByHasWithForwardSiblingRelationship() { setStyleFlag(NodeStyleFlag::AffectedByHasWithForwardSiblingRelationship); }
+    void setAffectedByHasWithAdjacentSiblingRelationship() { setStyleFlag(NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship); }
+
+    void resetChildStyleRelations();
+    void resetAllDescendantStyleRelations();
+    void resetHasSiblingFlags();
+
 protected:
     explicit inline ContainerNode(Document&, NodeType, OptionSet<TypeFlag> = { });
 

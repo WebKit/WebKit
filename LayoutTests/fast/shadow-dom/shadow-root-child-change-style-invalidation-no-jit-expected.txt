@@ -1,0 +1,16 @@
+
+PASS Appending an element without sibling-dependent rules invalidates nothing else
+PASS Removing an element without sibling-dependent rules invalidates nothing else
+PASS :first-child invalidates the previous first child
+PASS :last-child invalidates the previous last child
+PASS Direct sibling combinator invalidates the next sibling
+PASS Indirect sibling combinator invalidates the following siblings
+PASS :nth-child() invalidates the following siblings
+PASS :nth-last-child() invalidates the preceding siblings
+PASS :host:has() invalidates the host
+PASS Direct sibling combinator matches after inserting the previous sibling
+PASS :first-child matches after moving the previous sibling to the end
+PASS :host:has() matches after appending a matching child
+PASS Positional ancestor in a selector list matches after removing the previous sibling
+PASS Positional @scope root matches after removing the previous sibling
+

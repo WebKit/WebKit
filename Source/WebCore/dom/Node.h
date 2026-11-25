@@ -227,6 +227,7 @@ public:
     bool isMathMLUnknownElement() const { return isMathMLElement() && isUnknownElement(); }
 
     bool isFormControlElement() const { return isElementNode() && hasTypeFlag(TypeFlag::IsShadowRootOrFormControlElement); }
+    bool isElementOrShadowRoot() const { return isElementNode() || hasTypeFlag(TypeFlag::IsShadowRootOrFormControlElement); }
 
     bool isPseudoElement() const { return isElementNode() && hasTypeFlag(TypeFlag::IsPseudoElementOrSpecialInternalNode); }
     inline bool isBeforePseudoElement() const;
@@ -630,6 +631,7 @@ public:
     static auto flagIsText() { return std::to_underlying(TypeFlag::IsText); }
     static auto flagIsContainer() { return std::to_underlying(TypeFlag::IsContainerNode); }
     static auto flagIsElement() { return std::to_underlying(TypeFlag::IsElement); }
+    static auto flagIsShadowRootOrFormControlElement() { return std::to_underlying(TypeFlag::IsShadowRootOrFormControlElement); }
     static auto flagIsHTML() { return std::to_underlying(TypeFlag::IsHTMLElement); }
     static auto flagIsLink() { return std::to_underlying(StateFlag::IsLink); }
     static auto flagIsParsingChildren() { return std::to_underlying(StateFlag::IsParsingChildren); }

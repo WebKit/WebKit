@@ -120,20 +120,26 @@ struct SelectorChecker::LocalContext {
     bool isNegation { false };
 };
 
-static inline void addStyleRelation(SelectorChecker::CheckingContext& checkingContext, const Element& element, Style::Relation::Type type, unsigned value = 1)
+static inline void addStyleRelation(SelectorChecker::CheckingContext& checkingContext, const ContainerNode& node, Style::Relation::Type type, unsigned value = 1)
 {
     ASSERT(value == 1 || type == Style::Relation::NthChildIndex || type == Style::Relation::AffectedByEmpty);
     if (checkingContext.resolvingMode != SelectorChecker::Mode::ResolvingStyle)
         return;
     if (type == Style::Relation::AffectsNextSibling && !checkingContext.styleRelations.isEmpty()) {
         auto& last = checkingContext.styleRelations.last();
-        if (last.type == Style::Relation::AffectsNextSibling && last.element == element.nextElementSibling()) {
+        if (last.type == Style::Relation::AffectsNextSibling && last.node == downcast<Element>(node).nextElementSibling()) {
             ++last.value;
-            last.element = &element;
+            last.node = &node;
             return;
         }
     }
-    checkingContext.styleRelations.append({ element, type, value });
+    checkingContext.styleRelations.append({ node, type, value });
+}
+
+static inline ContainerNode* parentForChildStyleRelations(const Node& node)
+{
+    auto* parent = node.parentNode();
+    return parent && parent->isElementOrShadowRoot() ? parent : nullptr;
 }
 
 NODELETE static inline bool isFirstChildElement(const Element& element)
@@ -146,9 +152,10 @@ NODELETE static inline bool isLastChildElement(const Element& element)
     return !ElementTraversal::nextSibling(element);
 }
 
-NODELETE static inline bool doesNotMatchDuringParsing(const SelectorChecker::CheckingContext& checkingContext, const Element& parentElement)
+NODELETE static inline bool doesNotMatchDuringParsing(const SelectorChecker::CheckingContext& checkingContext, const ContainerNode& parent)
 {
-    return checkingContext.resolvingMode != SelectorChecker::Mode::QueryingRules && !parentElement.isFinishedParsingChildren();
+    auto* parentElement = dynamicDowncast<Element>(parent);
+    return checkingContext.resolvingMode != SelectorChecker::Mode::QueryingRules && parentElement && !parentElement->isFinishedParsingChildren();
 }
 
 NODELETE static inline bool isFirstOfType(const Element& element, const QualifiedName& type)
@@ -1005,8 +1012,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::FirstChild: {
             // first-child matches the first child that is an element
             bool isFirstChild = isFirstChildElement(element);
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode()))
-                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByFirstChildRules);
+            if (CheckedPtr parent = parentForChildStyleRelations(element))
+                addStyleRelation(checkingContext, *parent, Style::Relation::ChildrenAffectedByFirstChildRules);
             if (!isFirstChild)
                 break;
             addStyleRelation(checkingContext, element, Style::Relation::FirstChild);
@@ -1014,19 +1021,19 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         }
         case CSSSelector::PseudoClass::FirstOfType: {
             // first-of-type matches the first element of its type
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
+                addStyleRelation(checkingContext, *parent, relation);
             }
             return isFirstOfType(element, element->tagQName());
         }
         case CSSSelector::PseudoClass::LastChild: {
             // last-child matches the last child that is an element
             bool isLastChild = isLastChildElement(element);
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
-                if (doesNotMatchDuringParsing(checkingContext, *parentElement))
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
+                if (doesNotMatchDuringParsing(checkingContext, *parent))
                     isLastChild = false;
-                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
+                addStyleRelation(checkingContext, *parent, Style::Relation::ChildrenAffectedByLastChildRules);
             }
             if (!isLastChild)
                 break;
@@ -1035,10 +1042,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         }
         case CSSSelector::PseudoClass::LastOfType: {
             // last-of-type matches the last element of its type
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
-                if (doesNotMatchDuringParsing(checkingContext, *parentElement))
+                addStyleRelation(checkingContext, *parent, relation);
+                if (doesNotMatchDuringParsing(checkingContext, *parent))
                     return false;
             }
             return isLastOfType(element, element->tagQName());
@@ -1046,10 +1053,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::OnlyChild: {
             bool firstChild = isFirstChildElement(element);
             bool onlyChild = firstChild && isLastChildElement(element);
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
-                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByFirstChildRules);
-                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
-                if (doesNotMatchDuringParsing(checkingContext, *parentElement))
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
+                addStyleRelation(checkingContext, *parent, Style::Relation::ChildrenAffectedByFirstChildRules);
+                addStyleRelation(checkingContext, *parent, Style::Relation::ChildrenAffectedByLastChildRules);
+                if (doesNotMatchDuringParsing(checkingContext, *parent))
                     onlyChild = false;
             }
             if (firstChild)
@@ -1060,13 +1067,13 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         }
         case CSSSelector::PseudoClass::OnlyOfType: {
             // FIXME: This selector is very slow.
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
                 auto forwardRelation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, forwardRelation);
+                addStyleRelation(checkingContext, *parent, forwardRelation);
                 auto backwardRelation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, backwardRelation);
+                addStyleRelation(checkingContext, *parent, backwardRelation);
 
-                if (doesNotMatchDuringParsing(checkingContext, *parentElement))
+                if (doesNotMatchDuringParsing(checkingContext, *parent))
                     return false;
             }
             return isFirstOfType(element, element->tagQName()) && isLastOfType(element, element->tagQName());
@@ -1114,9 +1121,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                 return formControl->isPlaceholderVisible();
             return false;
         case CSSSelector::PseudoClass::NthChild: {
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
+                addStyleRelation(checkingContext, *parent, relation);
             }
 
             if (const CSSSelectorList* selectorList = selector.selectorList()) {
@@ -1142,9 +1149,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::Heading:
             return matchesHeadingPseudoClass(element, selector.integerList());
         case CSSSelector::PseudoClass::NthOfType: {
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
+                addStyleRelation(checkingContext, *parent, relation);
             }
 
             int count = 1 + countElementsOfTypeBefore(element, element->tagQName());
@@ -1153,17 +1160,17 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
             break;
         }
         case CSSSelector::PseudoClass::NthLastChild: {
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
                 if (const CSSSelectorList* selectorList = selector.selectorList()) {
                     if (!matchSelectorList(checkingContext, context, element, *selectorList))
                         return false;
 
-                    addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByBackwardPositionalRules);
+                    addStyleRelation(checkingContext, *parent, Style::Relation::ChildrenAffectedByBackwardPositionalRules);
                 } else {
                     auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                    addStyleRelation(checkingContext, *parentElement, relation);
+                    addStyleRelation(checkingContext, *parent, relation);
                 }
-                if (doesNotMatchDuringParsing(checkingContext, *parentElement))
+                if (doesNotMatchDuringParsing(checkingContext, *parent))
                     return false;
             }
 
@@ -1179,11 +1186,11 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
             return selector.matchNth(count);
         }
         case CSSSelector::PseudoClass::NthLastOfType: {
-            if (CheckedPtr parentElement = dynamicDowncast<Element>(element->parentNode())) {
+            if (CheckedPtr parent = parentForChildStyleRelations(element)) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, *parentElement, relation);
+                addStyleRelation(checkingContext, *parent, relation);
 
-                if (doesNotMatchDuringParsing(checkingContext, *parentElement))
+                if (doesNotMatchDuringParsing(checkingContext, *parent))
                     return false;
             }
             int count = 1 + countElementsOfTypeAfter(element, element->tagQName());
@@ -1854,10 +1861,10 @@ bool SelectorChecker::matchHasArgumentSelector(CheckingContext& checkingContext,
     auto forwardStyleRelation = [&](const Style::Relation& relation) {
         switch (relation.type) {
         case Style::Relation::ChildrenAffectedByForwardPositionalRules:
-            checkingContext.styleRelations.append(Style::Relation { *relation.element, Style::Relation::AffectedByHasWithForwardSiblingRelationship });
+            checkingContext.styleRelations.append(Style::Relation { *relation.node, Style::Relation::AffectedByHasWithForwardSiblingRelationship });
             return;
         case Style::Relation::ChildrenAffectedByBackwardPositionalRules:
-            checkingContext.styleRelations.append(Style::Relation { *relation.element, Style::Relation::AffectedByHasWithBackwardSiblingRelationship });
+            checkingContext.styleRelations.append(Style::Relation { *relation.node, Style::Relation::AffectedByHasWithBackwardSiblingRelationship });
             return;
         case Style::Relation::ChildrenAffectedByFirstChildRules:
         case Style::Relation::ChildrenAffectedByLastChildRules:
@@ -1868,18 +1875,18 @@ bool SelectorChecker::matchHasArgumentSelector(CheckingContext& checkingContext,
             return;
         case Style::Relation::AffectedByPreviousSibling:
         case Style::Relation::AffectsNextSibling:
-            if (CheckedPtr parent = relation.element->parentElement())
+            if (CheckedPtr parent = parentForChildStyleRelations(*relation.node))
                 checkingContext.styleRelations.append(Style::Relation { *parent, Style::Relation::AffectedByHasWithAdjacentSiblingRelationship });
             return;
         case Style::Relation::DescendantsAffectedByPreviousSibling:
-            if (CheckedPtr parent = relation.element->parentElement())
+            if (CheckedPtr parent = parentForChildStyleRelations(*relation.node))
                 checkingContext.styleRelations.append(Style::Relation { *parent, Style::Relation::AffectedByHasWithForwardSiblingRelationship });
             return;
         case Style::Relation::DescendantsAffectedByForwardPositionalRules:
-            checkingContext.styleRelations.append(Style::Relation { *relation.element, Style::Relation::AffectedByHasWithForwardSiblingRelationship });
+            checkingContext.styleRelations.append(Style::Relation { *relation.node, Style::Relation::AffectedByHasWithForwardSiblingRelationship });
             return;
         case Style::Relation::DescendantsAffectedByBackwardPositionalRules:
-            checkingContext.styleRelations.append(Style::Relation { *relation.element, Style::Relation::AffectedByHasWithBackwardSiblingRelationship });
+            checkingContext.styleRelations.append(Style::Relation { *relation.node, Style::Relation::AffectedByHasWithBackwardSiblingRelationship });
             return;
         case Style::Relation::FirstChild:
         case Style::Relation::LastChild:

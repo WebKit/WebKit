@@ -6166,35 +6166,6 @@ void Element::resetStyleRelations()
     elementRareData()->setChildIndex(0);
 }
 
-void Element::resetChildStyleRelations()
-{
-    clearStyleFlags({
-        NodeStyleFlag::ChildrenAffectedByFirstChildRules,
-        NodeStyleFlag::ChildrenAffectedByLastChildRules,
-        NodeStyleFlag::ChildrenAffectedByForwardPositionalRules,
-        NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules
-    });
-}
-
-void Element::resetAllDescendantStyleRelations()
-{
-    resetChildStyleRelations();
-
-    clearStyleFlags({
-        NodeStyleFlag::DescendantsAffectedByForwardPositionalRules,
-        NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules
-    });
-}
-
-void Element::resetHasSiblingFlags()
-{
-    clearStyleFlags({
-        NodeStyleFlag::AffectedByHasWithBackwardSiblingRelationship,
-        NodeStyleFlag::AffectedByHasWithForwardSiblingRelationship,
-        NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship,
-    });
-}
-
 void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()
 {
     if (!isUserActionElement())

@@ -45,7 +45,7 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(Style::ComputedStyle& st
     };
 
     for (auto& relation : relations) {
-        if (relation.element != &element) {
+        if (relation.node != &element) {
             appendStyleRelation(relation);
             continue;
         }
@@ -84,60 +84,60 @@ void commitRelations(std::unique_ptr<Relations> relations, Update* update)
     if (!relations)
         return;
     for (auto& relation : *relations) {
-        Ref element = const_cast<Element&>(*relation.element);
+        Ref node = const_cast<ContainerNode&>(*relation.node);
         switch (relation.type) {
         case Relation::AffectedByEmpty:
-            element->setStyleAffectedByEmpty();
+            downcast<Element>(node).setStyleAffectedByEmpty();
             break;
         case Relation::AffectedByPreviousSibling:
-            element->setStyleIsAffectedByPreviousSibling();
+            downcast<Element>(node).setStyleIsAffectedByPreviousSibling();
             break;
         case Relation::DescendantsAffectedByPreviousSibling:
-            element->setDescendantsAffectedByPreviousSibling();
+            downcast<Element>(node).setDescendantsAffectedByPreviousSibling();
             break;
         case Relation::AffectsNextSibling: {
-            auto* sibling = element.ptr();
+            auto* sibling = &downcast<Element>(node);
             for (unsigned i = 0; i < relation.value && sibling; ++i, sibling = sibling->nextElementSibling())
                 sibling->setAffectsNextSiblingElementStyle();
             break;
         }
         case Relation::ChildrenAffectedByForwardPositionalRules:
-            element->setChildrenAffectedByForwardPositionalRules();
+            node->setChildrenAffectedByForwardPositionalRules();
             break;
         case Relation::DescendantsAffectedByForwardPositionalRules:
-            element->setDescendantsAffectedByForwardPositionalRules();
+            node->setDescendantsAffectedByForwardPositionalRules();
             break;
         case Relation::ChildrenAffectedByBackwardPositionalRules:
-            element->setChildrenAffectedByBackwardPositionalRules();
+            node->setChildrenAffectedByBackwardPositionalRules();
             break;
         case Relation::DescendantsAffectedByBackwardPositionalRules:
-            element->setDescendantsAffectedByBackwardPositionalRules();
+            node->setDescendantsAffectedByBackwardPositionalRules();
             break;
         case Relation::ChildrenAffectedByFirstChildRules:
-            element->setChildrenAffectedByFirstChildRules();
+            node->setChildrenAffectedByFirstChildRules();
             break;
         case Relation::ChildrenAffectedByLastChildRules:
-            element->setChildrenAffectedByLastChildRules();
+            node->setChildrenAffectedByLastChildRules();
             break;
         case Relation::AffectedByHasWithBackwardSiblingRelationship:
-            element->setAffectedByHasWithBackwardSiblingRelationship();
+            node->setAffectedByHasWithBackwardSiblingRelationship();
             break;
         case Relation::AffectedByHasWithForwardSiblingRelationship:
-            element->setAffectedByHasWithForwardSiblingRelationship();
+            node->setAffectedByHasWithForwardSiblingRelationship();
             break;
         case Relation::AffectedByHasWithAdjacentSiblingRelationship:
-            element->setAffectedByHasWithAdjacentSiblingRelationship();
+            node->setAffectedByHasWithAdjacentSiblingRelationship();
             break;
         case Relation::FirstChild:
-            if (auto* style = update ? update->elementStyle(element) : nullptr)
+            if (auto* style = update ? update->elementStyle(downcast<Element>(node)) : nullptr)
                 style->setFirstChildState();
             break;
         case Relation::LastChild:
-            if (auto* style = update ? update->elementStyle(element) : nullptr)
+            if (auto* style = update ? update->elementStyle(downcast<Element>(node)) : nullptr)
                 style->setLastChildState();
             break;
         case Relation::NthChildIndex:
-            element->setChildIndex(relation.value);
+            downcast<Element>(node).setChildIndex(relation.value);
             break;
         }
     }
