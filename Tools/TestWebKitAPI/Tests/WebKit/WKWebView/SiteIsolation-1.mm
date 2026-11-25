@@ -2280,6 +2280,40 @@ TEST(SiteIsolation, AutocorrectionRectsInCrossOriginIframe)
     expectRectInPositionedCrossOriginIframe(lastRect);
 }
 
+TEST(SiteIsolation, MarkedTextRectsInSameSiteFrameInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithPositionedCrossOriginIframe } },
+        { "/iframe"_s, { "<body style='margin: 0'><iframe style='position: absolute; left: 50px; top: 80px; width: 300px; height: 200px; border: none;' src='https://example.com/editable'></iframe></body>"_s } },
+        { "/editable"_s, { editableIframeWithText } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [webView focusInWindow];
+
+    RetainPtr<WKFrameInfo> editableFrame;
+    EXPECT_TRUE(Util::waitFor([&] {
+        editableFrame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject.info;
+        return editableFrame && [[webView objectByEvaluatingJavaScript:@"document.readyState" inFrame:editableFrame.get()] isEqualToString:@"complete"];
+    }));
+    RetainPtr inputDelegate = startInputSessionInCrossOriginIframe(webView.get(), editableFrame.get());
+
+    id<UIWKInteractionViewProtocol> contentView = (id<UIWKInteractionViewProtocol>)[webView textInputContentView];
+    [[webView textInputContentView] setMarkedText:@"abc" selectedRange:NSMakeRange(3, 0)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !CGRectIsEmpty([contentView textFirstRect]);
+    }));
+
+    CGRect markedTextRect = [contentView textFirstRect];
+    EXPECT_GE(CGRectGetMinX(markedTextRect), 150);
+    EXPECT_GE(CGRectGetMinY(markedTextRect), 180);
+    EXPECT_LE(CGRectGetMaxX(markedTextRect), 450);
+    EXPECT_LE(CGRectGetMaxY(markedTextRect), 380);
+}
+
 #if HAVE(UI_EDIT_MENU_INTERACTION)
 
 // The edit menu shows beneath the selection when there are controls just above it, so it doesn't cover them. With the
