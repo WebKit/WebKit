@@ -318,9 +318,24 @@ int AdaptiveStringSearcher<PatternChar, SubjectChar>::initialSearch(AdaptiveStri
 
     int i = startIndex;
     int simdLimit = maxIndex - stride + 1;
+    int unrolledLimit = maxIndex - 4 * stride + 1;
     unsigned failureCount = 0;
     constexpr unsigned failureThreshold = 16;
     while (i <= simdLimit) {
+        // Candidates are rare, so skip four blocks at a time with a single reduction, and leave
+        // locating the candidate to the one-block step below.
+        while (i <= unrolledLimit) {
+            auto candidates0 = SIMD::bitAnd2(SIMD::equal(SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i)), firstVec), SIMD::equal(SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + patternLength - 1)), lastVec));
+            auto candidates1 = SIMD::bitAnd2(SIMD::equal(SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + stride)), firstVec), SIMD::equal(SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + stride + patternLength - 1)), lastVec));
+            auto candidates2 = SIMD::bitAnd2(SIMD::equal(SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + 2 * stride)), firstVec), SIMD::equal(SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + 2 * stride + patternLength - 1)), lastVec));
+            auto candidates3 = SIMD::bitAnd2(SIMD::equal(SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + 3 * stride)), firstVec), SIMD::equal(SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + 3 * stride + patternLength - 1)), lastVec));
+            if (SIMD::isNonZero(SIMD::bitOr(candidates0, candidates1, candidates2, candidates3)))
+                break;
+            i += 4 * stride;
+        }
+        if (i > simdLimit)
+            break;
+
         auto firstBlock = SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i));
         auto lastBlock = SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + patternLength - 1));
         auto mask1 = SIMD::equal(firstBlock, firstVec);
