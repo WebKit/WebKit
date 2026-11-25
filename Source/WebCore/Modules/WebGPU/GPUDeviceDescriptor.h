@@ -43,7 +43,7 @@ struct GPUDeviceDescriptor : public GPUObjectDescriptorBase {
     {
         // An entry whose value is explicitly undefined requests nothing, so drop it rather than
         // letting the backing layer reject it as an unsupported limit.
-        Vector<KeyValuePair<String, uint64_t>> specifiedLimits(ReserveCapacityTag { }, requiredLimits.size());
+        Vector<KeyValuePair<RefPtr<StringImpl>, uint64_t>> specifiedLimits(ReserveCapacityTag { }, requiredLimits.size());
         for (auto& requiredLimit : borrow(requiredLimits)) {
             if (auto* value = std::get_if<uint64_t>(&requiredLimit.value))
                 specifiedLimits.append({ requiredLimit.key, *value });
@@ -59,7 +59,7 @@ struct GPUDeviceDescriptor : public GPUObjectDescriptorBase {
     }
 
     Vector<GPUFeatureName> requiredFeatures;
-    Vector<KeyValuePair<String, Variant<uint64_t, std::monostate>>> requiredLimits;
+    Vector<KeyValuePair<RefPtr<StringImpl>, Variant<uint64_t, std::monostate>>> requiredLimits;
     GPUQueueDescriptor defaultQueue;
 };
 

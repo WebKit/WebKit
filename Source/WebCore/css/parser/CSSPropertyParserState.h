@@ -43,7 +43,7 @@ struct PropertyParserState {
     StyleRuleType currentRule { StyleRuleType::Style };
     CSSPropertyID currentProperty { CSSPropertyID::Invalid };
     // Set when currentProperty is CSSPropertyID::Custom, which every custom property shares.
-    AtomString currentCustomPropertyName { };
+    RefPtr<AtomStringImpl> currentCustomPropertyName { };
     IsImportant important { IsImportant::No };
 
     // Count of CSS random() functions seen so far for the current property.

@@ -53,10 +53,10 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
-    String typeMismatchText() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
+    RefPtr<StringImpl> typeMismatchText() const final;
     bool supportsSelectionAPI() const final;
-    ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const final;
+    ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* value LIFETIME_BOUND) const final;
     void attributeChanged(const QualifiedName&) final;
 };
 

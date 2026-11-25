@@ -33,27 +33,27 @@ class DocumentType final : public Node {
     WTF_MAKE_TZONE_ALLOCATED(DocumentType);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentType);
 public:
-    static Ref<DocumentType> create(Document& document, const String& name, const String& publicId, const String& systemId)
+    static Ref<DocumentType> create(Document& document, StringImpl* name, StringImpl* publicId, StringImpl* systemId)
     {
         return adoptRef(*new DocumentType(document, name, publicId, systemId));
     }
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    const String& publicId() const LIFETIME_BOUND { return m_publicId; }
-    const String& systemId() const LIFETIME_BOUND { return m_systemId; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& publicId() const LIFETIME_BOUND { return m_publicId; }
+    const RefPtr<StringImpl>& systemId() const LIFETIME_BOUND { return m_systemId; }
 
 private:
-    DocumentType(Document&, const String& name, const String& publicId, const String& systemId);
+    DocumentType(Document&, StringImpl* name, StringImpl* publicId, StringImpl* systemId);
 
-    String nodeName() const override;
+    RefPtr<StringImpl> nodeName() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
 
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
-    String m_name;
-    String m_publicId;
-    String m_systemId;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_publicId;
+    RefPtr<StringImpl> m_systemId;
 };
 
 } // namespace WebCore

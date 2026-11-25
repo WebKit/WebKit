@@ -33,7 +33,7 @@
 namespace WebKit {
 
 struct MediaDescriptionInfo {
-    MediaDescriptionInfo(const String& codec, bool isVideo, bool isAudio, bool isText)
+    MediaDescriptionInfo(StringImpl* codec, bool isVideo, bool isAudio, bool isText)
         : m_codec(codec)
         , m_isVideo(isVideo)
         , m_isAudio(isAudio)
@@ -49,7 +49,7 @@ struct MediaDescriptionInfo {
     {
     }
 
-    String m_codec;
+    RefPtr<StringImpl> m_codec;
     bool m_isVideo { false };
     bool m_isAudio { false };
     bool m_isText { false };

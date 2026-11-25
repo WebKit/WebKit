@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-String CSSBasicShapeValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSBasicShapeValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_shape);
 }

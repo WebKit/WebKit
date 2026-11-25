@@ -53,15 +53,15 @@ ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(Sc
     if (auto* trackHandle = std::get_if<Ref<MediaStreamTrackHandle>>(&init.track)) {
         handle = WTF::move(*trackHandle);
         if (handle->isDetached())
-            return Exception { ExceptionCode::TypeError, "Track handle is detached"_s };
+            return Exception { ExceptionCode::TypeError, "Track handle is detached"_si };
         if (!handle->trackSourceObserver().source().isVideo())
-            return Exception { ExceptionCode::TypeError, "Track is not video"_s };
+            return Exception { ExceptionCode::TypeError, "Track is not video"_si };
     } else {
         Ref track = std::get<Ref<MediaStreamTrack>>(init.track);
         if (!track->isVideo())
-            return Exception { ExceptionCode::TypeError, "Track is not video"_s };
+            return Exception { ExceptionCode::TypeError, "Track is not video"_si };
         if (track->ended())
-            return Exception { ExceptionCode::TypeError, "Track is ended"_s };
+            return Exception { ExceptionCode::TypeError, "Track is ended"_si };
         auto handleOrException = MediaStreamTrackHandle::create(track.get());
         if (handleOrException.hasException())
             return handleOrException.releaseException();

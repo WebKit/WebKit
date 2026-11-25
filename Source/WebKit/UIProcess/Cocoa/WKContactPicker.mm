@@ -172,7 +172,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
 #if HAVE(CNCONTACTPICKERVIEWCONTROLLER)
     _contactPickerViewController = adoptNS([allocCNContactPickerViewControllerInstance() init]);
     [_contactPickerViewController setDelegate:_contactPickerDelegate.get()];
-    [_contactPickerViewController setPrompt:requestData.url.createNSString().get()];
+    [_contactPickerViewController setPrompt:createNSString(requestData.url).get()];
 
     RetainPtr presentationViewController = [_webView.get() _wk_viewControllerForFullScreenPresentation];
 #if PLATFORM(VISION)
@@ -252,17 +252,17 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
 
     if (_properties.contains(WebCore::ContactProperty::Name)) {
         RetainPtr contactName = [getCNContactFormatterClassSingleton() stringFromContact:contact style:CNContactFormatterStyleFullName];
-        contactInfo.name = { contactName.get() };
+        contactInfo.name = { StringImpl::create(contactName.get()) };
     }
 
     if (_properties.contains(WebCore::ContactProperty::Email)) {
         for (CNLabeledValue<NSString *> *emailAddress in contact.emailAddresses)
-            contactInfo.email.append(emailAddress.value);
+            contactInfo.email.append(StringImpl::create(emailAddress.value));
     }
 
     if (_properties.contains(WebCore::ContactProperty::Tel)) {
         for (CNLabeledValue<CNPhoneNumber *> *phoneNumber in contact.phoneNumbers)
-            contactInfo.tel.append(phoneNumber.value.stringValue);
+            contactInfo.tel.append(StringImpl::create(phoneNumber.value.stringValue));
     }
 
     return contactInfo;

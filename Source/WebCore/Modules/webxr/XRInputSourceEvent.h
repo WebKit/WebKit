@@ -43,7 +43,7 @@ public:
         Ref<WebXRInputSource> inputSource;
     };
 
-    static Ref<XRInputSourceEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<XRInputSourceEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRInputSourceEvent();
 
     const WebXRFrame& frame() const;
@@ -51,7 +51,7 @@ public:
     void setFrameActive(bool);
 
 private:
-    XRInputSourceEvent(const AtomString&, Init&&, IsTrusted);
+    XRInputSourceEvent(AtomStringImpl*, Init&&, IsTrusted);
 
     const Ref<WebXRFrame> m_frame;
     const Ref<WebXRInputSource> m_inputSource;

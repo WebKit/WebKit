@@ -34,12 +34,12 @@ namespace WebCore {
 
 ContentSecurityPolicyResponseHeaders::ContentSecurityPolicyResponseHeaders(const ResourceResponse& response)
 {
-    String policyValue = response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy);
-    if (!policyValue.isEmpty())
+    RefPtr<StringImpl> policyValue = response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy);
+    if (!isEmpty(policyValue))
         m_headers.append({ policyValue, ContentSecurityPolicyHeaderType::Enforce });
 
     policyValue = response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicyReportOnly);
-    if (!policyValue.isEmpty())
+    if (!isEmpty(policyValue))
         m_headers.append({ policyValue, ContentSecurityPolicyHeaderType::Report });
 
     m_httpStatusCode = response.httpStatusCode();

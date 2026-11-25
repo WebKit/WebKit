@@ -57,7 +57,7 @@ using WebGLAny = Variant<
     long long,
     unsigned long long,
     float,
-    String,
+    RefPtr<StringImpl>,
     Vector<bool>,
     Vector<int>,
     Vector<unsigned>,

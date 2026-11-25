@@ -49,13 +49,13 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    virtual void addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&);
+    virtual void addModule(StringImpl* moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&);
 
     void finishPendingTasks(WorkletPendingTasks&);
     NODELETE Document* document();
 
     const Vector<Ref<WorkletGlobalScopeProxy>>& proxies() const LIFETIME_BOUND { return m_proxies; }
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     virtual bool isAudioWorklet() const { return false; }
 
@@ -65,7 +65,7 @@ protected:
 private:
     virtual Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() = 0;
 
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     Vector<Ref<WorkletGlobalScopeProxy>> m_proxies;
     HashSet<Ref<WorkletPendingTasks>> m_pendingTasksSet;
 };

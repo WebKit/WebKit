@@ -59,7 +59,7 @@ RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(Document& document, R
     return StylePropertyMapReadOnly::reifyValue(document, WTF::move(value), AssociatedProperty { propertyID });
 }
 
-RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(Document& document, RefPtr<CSSValue>&& value, AtomString&& customPropertyName)
+RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(Document& document, RefPtr<CSSValue>&& value, RefPtr<AtomStringImpl>&& customPropertyName)
 {
     return StylePropertyMapReadOnly::reifyValue(document, WTF::move(value), AssociatedProperty { WTF::move(customPropertyName) });
 }
@@ -70,7 +70,7 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Docum
         [&](CSSPropertyID propertyID) {
             return StylePropertyMapReadOnly::reifyValueToVector(document, WTF::move(value), propertyID);
         },
-        [&](AtomString&& customPropertyName) {
+        [&](RefPtr<AtomStringImpl>&& customPropertyName) {
             return StylePropertyMapReadOnly::reifyValueToVector(document, WTF::move(value), WTF::move(customPropertyName));
         }
     );
@@ -92,14 +92,14 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Docum
     return { StylePropertyMapReadOnly::reifyValue(document, WTF::move(value), propertyID) };
 }
 
-Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Document& document, RefPtr<CSSValue>&& value, AtomString&& customPropertyName)
+Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Document& document, RefPtr<CSSValue>&& value, RefPtr<AtomStringImpl>&& customPropertyName)
 {
     if (!value)
         return { };
 
     if (RefPtr valueList = dynamicDowncast<CSSValueList>(*value)) {
         return WTF::map(*valueList, [&](auto& item) {
-            return StylePropertyMapReadOnly::reifyValue(document, protect(const_cast<CSSValue&>(item)), AtomString { customPropertyName });
+            return StylePropertyMapReadOnly::reifyValue(document, protect(const_cast<CSSValue&>(item)), RefPtr<AtomStringImpl> { customPropertyName });
         });
     }
 

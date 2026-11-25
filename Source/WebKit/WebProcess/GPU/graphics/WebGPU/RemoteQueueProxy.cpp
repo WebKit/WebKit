@@ -198,7 +198,7 @@ void RemoteQueueProxy::copyExternalImageFromVideoFrameToTexture(
 }
 #endif
 
-void RemoteQueueProxy::setLabel(String&& label)
+void RemoteQueueProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteQueue::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

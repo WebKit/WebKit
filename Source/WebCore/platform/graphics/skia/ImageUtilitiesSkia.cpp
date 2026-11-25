@@ -79,7 +79,7 @@ static SkWebpEncoder::Options webpEncoderOptions(std::optional<double> quality)
     return options;
 }
 
-static sk_sp<SkData> encodeAcceleratedImage(const NativeImage& nativeImage, const String& mimeType, std::optional<double> quality)
+static sk_sp<SkData> encodeAcceleratedImage(const NativeImage& nativeImage, StringImpl* mimeType, std::optional<double> quality)
 {
     if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
         return nullptr;
@@ -103,7 +103,7 @@ static sk_sp<SkData> encodeAcceleratedImage(const NativeImage& nativeImage, cons
     return nullptr;
 }
 
-static Vector<uint8_t> encodeUnacceleratedImage(const SkPixmap& pixmap, const String& mimeType, std::optional<double> quality)
+static Vector<uint8_t> encodeUnacceleratedImage(const SkPixmap& pixmap, StringImpl* mimeType, std::optional<double> quality)
 {
     Vector<uint8_t> result;
     VectorSkiaWritableStream stream(result);
@@ -125,7 +125,7 @@ static Vector<uint8_t> encodeUnacceleratedImage(const SkPixmap& pixmap, const St
     return result;
 }
 
-Vector<uint8_t> platformEncodeData(const NativeImage& nativeImage, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> platformEncodeData(const NativeImage& nativeImage, StringImpl* mimeType, std::optional<double> quality)
 {
     auto image = nativeImage.platformImage();
     if (!image)

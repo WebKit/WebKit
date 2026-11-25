@@ -43,9 +43,6 @@
 
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
 
-// Workaround for rdar://162358154
-using SpanConstChar = std::span<const char>;
-
 // Workaround for rdar://162357139
 template<typename T>
 inline bool contentsMatch(const T& lhs, const T& rhs)

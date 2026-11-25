@@ -51,24 +51,24 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     , callAsConstructor(definition->callAsConstructor)
     , hasInstance(definition->hasInstance)
     , convertToType(definition->convertToType)
-    , m_className(String::fromUTF8(definition->className))
+    , m_className(StringImpl::fromUTF8(definition->className))
 {
     JSC::initialize();
 
     if (const JSStaticValue* staticValue = definition->staticValues) {
         while (staticValue->name) {
-            String valueName = String::fromUTF8(staticValue->name);
-            if (!valueName.isNull())
-                m_staticValues.add(valueName.impl(), makeUnique<StaticValueEntry>(staticValue->getProperty, staticValue->setProperty, staticValue->attributes, valueName));
+            RefPtr<StringImpl> valueName = StringImpl::fromUTF8(staticValue->name);
+            if (valueName)
+                m_staticValues.add(valueName.get(), makeUnique<StaticValueEntry>(staticValue->getProperty, staticValue->setProperty, staticValue->attributes, valueName));
             ++staticValue;
         }
     }
 
     if (const JSStaticFunction* staticFunction = definition->staticFunctions) {
         while (staticFunction->name) {
-            String functionName = String::fromUTF8(staticFunction->name);
-            if (!functionName.isNull())
-                m_staticFunctions.add(functionName.impl(), makeUnique<StaticFunctionEntry>(staticFunction->callAsFunction, staticFunction->attributes));
+            RefPtr<StringImpl> functionName = StringImpl::fromUTF8(staticFunction->name);
+            if (functionName)
+                m_staticFunctions.add(functionName.get(), makeUnique<StaticFunctionEntry>(staticFunction->callAsFunction, staticFunction->attributes));
             ++staticFunction;
         }
     }
@@ -82,7 +82,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
 OpaqueJSClass::~OpaqueJSClass()
 {
     // The empty string is shared across threads & is an identifier, in all other cases we should have done a deep copy in className(), below. 
-    ASSERT(!m_className.length() || !m_className.impl()->isAtom());
+    ASSERT(!length(m_className) || !m_className.get()->isAtom());
 
 #if ASSERT_ENABLED
     for (auto& key : m_staticValues.keys())
@@ -121,8 +121,8 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsCl
 {
     for (auto& it : jsClass->m_staticValues) {
         ASSERT(!it.key->isAtom());
-        String valueName = it.key->isolatedCopy();
-        staticValues.add(valueName.impl(), makeUnique<StaticValueEntry>(it.value->getProperty, it.value->setProperty, it.value->attributes, valueName));
+        RefPtr<StringImpl> valueName = it.key->isolatedCopy();
+        staticValues.add(valueName.get(), makeUnique<StaticValueEntry>(it.value->getProperty, it.value->setProperty, it.value->attributes, valueName));
     }
 
     for (auto& it : jsClass->m_staticFunctions) {
@@ -139,10 +139,10 @@ OpaqueJSClassContextData& OpaqueJSClass::contextData(JSGlobalObject* globalObjec
     return *contextData;
 }
 
-String OpaqueJSClass::className()
+RefPtr<StringImpl> OpaqueJSClass::className()
 {
     // Make a deep copy, so that the caller has no chance to put the original into AtomStringTable.
-    return m_className.isolatedCopy();
+    return isolatedCopy(m_className);
 }
 
 OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(JSC::JSGlobalObject* globalObject)

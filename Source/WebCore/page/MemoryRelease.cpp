@@ -271,10 +271,10 @@ void logMemoryStatistics(LogMemoryStatisticsReason reason)
         size_t dirty = pages[i].dirty * pageSize;
         if (!dirty)
             continue;
-        String tagName = displayNameForVMTag(i);
+        RefPtr<StringImpl> tagName = displayNameForVMTag(i);
         if (!tagName)
             tagName = makeString("Tag "_s, i);
-        RELEASE_LOG(MemoryPressure, "  %" PUBLIC_LOG_STRING ": %lu MB in %zu regions", tagName.utf8(), dirty / MB, pages[i].regionCount);
+        RELEASE_LOG(MemoryPressure, "  %" PUBLIC_LOG_STRING ": %lu MB in %zu regions", utf8(tagName), dirty / MB, pages[i].regionCount);
     }
 
     bool shouldLogJavaScriptObjectCounts = os_variant_allows_internal_security_policies("com.apple.WebKit");

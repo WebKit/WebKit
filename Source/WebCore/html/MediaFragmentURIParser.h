@@ -40,7 +40,7 @@ public:
 
     MediaTime startTime();
     MediaTime endTime();
-    Vector<String> trackIdentifiers();
+    Vector<RefPtr<StringImpl>> trackIdentifiers();
 
 private:
 
@@ -55,8 +55,8 @@ private:
     TimeFormat m_timeFormat;
     MediaTime m_startTime;
     MediaTime m_endTime;
-    Vector<String> m_trackIdentifiers;
-    Vector<std::pair<String, String>> m_fragments;
+    Vector<RefPtr<StringImpl>> m_trackIdentifiers;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> m_fragments;
 };
 
 } // namespace WebCore

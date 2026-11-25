@@ -59,7 +59,7 @@ IntlLocaleConstructor::IntlLocaleConstructor(VM& vm, Structure* structure)
 
 void IntlLocaleConstructor::finishCreation(VM& vm, IntlLocalePrototype* localePrototype)
 {
-    Base::finishCreation(vm, 1, "Locale"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Locale"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, localePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     localePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

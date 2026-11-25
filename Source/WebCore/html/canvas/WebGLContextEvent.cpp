@@ -34,13 +34,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLContextEvent);
 
-WebGLContextEvent::WebGLContextEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, const String& statusMessage)
+WebGLContextEvent::WebGLContextEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, StringImpl* statusMessage)
     : Event(EventInterfaceType::WebGLContextEvent, type, canBubble, cancelable)
     , m_statusMessage(statusMessage)
 {
 }
 
-WebGLContextEvent::WebGLContextEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+WebGLContextEvent::WebGLContextEvent(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::WebGLContextEvent, type, initializer, isTrusted)
     , m_statusMessage(initializer.statusMessage)
 {

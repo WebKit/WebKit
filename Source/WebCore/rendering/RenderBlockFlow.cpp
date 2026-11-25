@@ -2119,7 +2119,7 @@ static bool inNormalFlow(RenderBox& child)
 }
 
 // https://drafts.csswg.org/css-page-3/#using-named-pages
-static AtomString usedPageValue(const RenderElement& renderer)
+static RefPtr<AtomStringImpl> usedPageValue(const RenderElement& renderer)
 {
     for (CheckedRef ancestor : lineageOfType<RenderElement>(renderer)) {
         if (auto name = ancestor->style().pageName().tryValue())
@@ -2144,9 +2144,9 @@ static CheckedPtr<RenderBox> firstOrLastInFlowChild(const RenderBox& box, PageVa
     return child;
 }
 
-static AtomString startOrEndPageName(const RenderBox& box, PageValueEdge edge)
+static RefPtr<AtomStringImpl> startOrEndPageName(const RenderBox& box, PageValueEdge edge)
 {
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     for (CheckedPtr<const RenderBox> descendant = &box; descendant; descendant = firstOrLastInFlowChild(*descendant, edge)) {
         if (auto value = descendant->style().pageName().tryValue())
             name = value->value;
@@ -2167,7 +2167,7 @@ static bool pageValuesForceBreakBefore(const RenderBlockFlow& parent, const Rend
     if (endName == startName)
         return false;
     auto parentUsedValue = usedPageValue(parent);
-    return (endName.isNull() ? parentUsedValue : endName) != (startName.isNull() ? parentUsedValue : startName);
+    return (!endName ? parentUsedValue : endName) != (!startName ? parentUsedValue : startName);
 }
 
 LayoutUnit RenderBlockFlow::applyBeforeBreak(RenderBox& child, LayoutUnit logicalOffset)
@@ -2336,7 +2336,7 @@ static inline bool needsAppleMailPaginationQuirk(const RenderBlockFlow& renderer
         return false;
 
     RefPtr element = renderer.element();
-    if (element && element->idForStyleResolution() == "messageContentContainer"_s)
+    if (element && equal(element->idForStyleResolution(), "messageContentContainer"_s))
         return true;
 
     return false;
@@ -4611,7 +4611,7 @@ static inline bool isVisibleRenderText(const RenderObject& renderer)
     if (!renderText)
         return false;
 
-    return !renderText->linesBoundingBox().isEmpty() && !renderText->text().containsOnly<isASCIIWhitespace>();
+    return !renderText->linesBoundingBox().isEmpty() && !containsOnly<isASCIIWhitespace>(renderText->text());
 }
 
 NODELETE static inline bool resizeTextPermitted(const RenderObject& renderer)

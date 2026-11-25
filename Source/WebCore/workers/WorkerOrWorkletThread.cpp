@@ -63,7 +63,7 @@ static UniqueRef<WorkerRunLoop> constructRunLoop(WorkerThreadMode workerThreadMo
     return makeUniqueRef<WorkerDedicatedRunLoop>();
 }
 
-WorkerOrWorkletThread::WorkerOrWorkletThread(const String& inspectorIdentifier, WorkerThreadMode workerThreadMode)
+WorkerOrWorkletThread::WorkerOrWorkletThread(StringImpl* inspectorIdentifier, WorkerThreadMode workerThreadMode)
     : m_inspectorIdentifier(inspectorIdentifier)
     , m_runLoop(constructRunLoop(workerThreadMode))
 {
@@ -134,7 +134,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
             callback(protect(globalScope())->securityOrigin()->data().isolatedCopy());
 #endif
 
-        String exceptionMessage;
+        RefPtr<StringImpl> exceptionMessage;
         evaluateScriptIfNecessary(exceptionMessage);
 
         callOnMainThread([evaluateCallback = WTF::move(m_evaluateCallback), message = WTF::move(exceptionMessage)] {
@@ -193,10 +193,10 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
             protect(m_globalScope->script())->forbidExecution();
     }
 
-    String exceptionMessage;
+    RefPtr<StringImpl> exceptionMessage;
     evaluateScriptIfNecessary(exceptionMessage);
 
-    callOnMainThread([evaluateCallback = WTF::move(m_evaluateCallback), message = exceptionMessage.isolatedCopy()] {
+    callOnMainThread([evaluateCallback = WTF::move(m_evaluateCallback), message = isolatedCopy(exceptionMessage)] {
         if (evaluateCallback)
             evaluateCallback(message);
     });
@@ -258,9 +258,9 @@ void WorkerOrWorkletThread::destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallback, Function<void(SecurityOriginData&&)>&& globalScopeCreatedCallback)
+void WorkerOrWorkletThread::start(Function<void(StringImpl*)>&& evaluateCallback, Function<void(SecurityOriginData&&)>&& globalScopeCreatedCallback)
 #else
-void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallback)
+void WorkerOrWorkletThread::start(Function<void(StringImpl*)>&& evaluateCallback)
 #endif
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.

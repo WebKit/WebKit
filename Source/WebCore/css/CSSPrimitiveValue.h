@@ -85,7 +85,7 @@ public:
     NODELETE std::optional<bool> isPositive() const;
     NODELETE std::optional<bool> isNegative() const;
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPrimitiveValue&) const;
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
@@ -97,7 +97,7 @@ private:
     friend LazyNeverDestroyed<CSSPrimitiveValue>;
     friend bool CSSValue::addHash(Hasher&) const;
 
-    CSSPrimitiveValue(const String&, CSSUnitType);
+    CSSPrimitiveValue(StringImpl*, CSSUnitType);
     NODELETE CSSPrimitiveValue(double, CSSUnitType);
     NODELETE CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
     NODELETE CSSPrimitiveValue(CSS::UnevaluatedCalcBase&&);
@@ -107,9 +107,9 @@ private:
 
     NODELETE bool addDerivedHash(Hasher&) const;
 
-    ALWAYS_INLINE String serializeInternal(const CSS::SerializationContext&) const;
-    NEVER_INLINE String formatNumberValue(ASCIILiteral suffix) const;
-    NEVER_INLINE String formatIntegerValue(ASCIILiteral suffix) const;
+    ALWAYS_INLINE RefPtr<StringImpl> serializeInternal(const CSS::SerializationContext&) const;
+    NEVER_INLINE RefPtr<StringImpl> formatNumberValue(ASCIILiteral suffix) const;
+    NEVER_INLINE RefPtr<StringImpl> formatIntegerValue(ASCIILiteral suffix) const;
 
     static constexpr bool isLength(CSSUnitType);
     static constexpr bool isFontIndependentLength(CSSUnitType);

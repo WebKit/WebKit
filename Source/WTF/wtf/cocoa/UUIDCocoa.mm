@@ -36,7 +36,7 @@ namespace WTF {
 
 RetainPtr<NSUUID> UUID::createNSUUID() const
 {
-    return adoptNS([[NSUUID alloc] initWithUUIDString:toString().createNSString().get()]);
+    return adoptNS([[NSUUID alloc] initWithUUIDString:createNSString(toString()).get()]);
 }
 
 std::optional<UUID> UUID::fromNSUUID(NSUUID *nsUUID)
@@ -46,7 +46,7 @@ std::optional<UUID> UUID::fromNSUUID(NSUUID *nsUUID)
 
     // Use string instead of bytes to avoid consideration of endianess (NSUUID stores UUID as array of bytes,
     // and we store UUID as UInt128).
-    return parse(String([nsUUID UUIDString]));
+    return parse(StringImpl::create([nsUUID UUIDString]));
 }
 
 }

@@ -178,24 +178,24 @@ private:
 
 /* Special cases. */
 
-inline ProxyingRefPtr<API::String> toAPI(const String& string)
+inline ProxyingRefPtr<API::String> toAPI(StringImpl* string)
 {
     return ProxyingRefPtr<API::String>(API::String::create(string));
 }
 
-inline WKStringRef toCopiedAPI(const String& string)
+inline WKStringRef toCopiedAPI(StringImpl* string)
 {
     return toAPILeakingRef(API::String::create(string));
 }
 
-inline ProxyingRefPtr<API::URL> toURLRef(const String& string)
+inline ProxyingRefPtr<API::URL> toURLRef(StringImpl* string)
 {
     if (!string)
         return ProxyingRefPtr<API::URL>(nullptr);
     return ProxyingRefPtr<API::URL>(API::URL::create(string));
 }
 
-inline WKURLRef toCopiedURLAPI(const String& string)
+inline WKURLRef toCopiedURLAPI(StringImpl* string)
 {
     if (!string)
         return nullptr;
@@ -207,17 +207,17 @@ inline WKURLRef toCopiedURLAPI(const URL& url)
     return toCopiedURLAPI(url.string());
 }
 
-inline String toWTFString(WKStringRef stringRef)
+inline RefPtr<StringImpl> toWTFString(WKStringRef stringRef)
 {
     if (!stringRef)
-        return String();
+        return nullptr;
     return protect(toImpl(stringRef))->string();
 }
 
-inline String toWTFString(WKURLRef urlRef)
+inline RefPtr<StringImpl> toWTFString(WKURLRef urlRef)
 {
     if (!urlRef)
-        return String();
+        return nullptr;
     return toImpl(urlRef)->string();
 }
 

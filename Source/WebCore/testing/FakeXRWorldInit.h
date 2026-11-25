@@ -56,7 +56,7 @@ struct FakeXRWorldInit {
         XRPlaneOrientation orientation;
         FakeXRRigidTransformInit origin;
         Vector<PlanePointInit> polygon;
-        String semanticLabel;
+        RefPtr<StringImpl> semanticLabel;
     };
 #endif
     struct RegionInit {

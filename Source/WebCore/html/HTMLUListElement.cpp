@@ -57,7 +57,7 @@ bool HTMLUListElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLUListElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLUListElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == typeAttr) {
         if (equalLettersIgnoringASCIICase(value, "disc"_s))

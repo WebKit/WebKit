@@ -39,7 +39,7 @@ SuppressedErrorPrototype::SuppressedErrorPrototype(VM& vm, Structure* structure)
 
 void SuppressedErrorPrototype::finishCreation(VM& vm)
 {
-    Base::finishCreation(vm, errorTypeName(ErrorType::SuppressedError));
+    Base::finishCreation(vm, StringImpl::create(errorTypeName(ErrorType::SuppressedError)).ptr());
     ASSERT(inherits(info()));
 }
 

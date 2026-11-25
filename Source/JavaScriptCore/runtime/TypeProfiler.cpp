@@ -75,7 +75,7 @@ void TypeProfiler::insertNewLocation(TypeLocation* location)
     bucket.append(location);
 }
 
-String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor descriptor, unsigned offset, SourceID sourceID, VM& vm)
+RefPtr<StringImpl> TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor descriptor, unsigned offset, SourceID sourceID, VM& vm)
 {
     // This returns a JSON string representing an Object with the following properties:
     //     globalTypeSet: 'JSON<TypeSet> | null'

@@ -40,10 +40,10 @@ WKTypeID WKOpenPanelResultListenerGetTypeID()
     return toAPI(WebOpenPanelResultListenerProxy::APIType);
 }
 
-static Vector<String> filePathsFromFileURLs(const API::Array& fileURLs)
+static Vector<RefPtr<StringImpl>> filePathsFromFileURLs(const API::Array& fileURLs)
 {
     size_t size = fileURLs.size();
-    Vector<String> filePaths(ReserveCapacityTag { }, size);
+    Vector<RefPtr<StringImpl>> filePaths(ReserveCapacityTag { }, size);
 
     for (size_t i = 0; i < size; ++i) {
         RefPtr apiURL = fileURLs.at<API::URL>(i);

@@ -68,7 +68,7 @@ struct WebCacheStorageConnection::PromiseConverter {
     }
 };
 
-auto WebCacheStorageConnection::open(const WebCore::ClientOrigin& origin, const String& cacheName) -> Ref<OpenPromise>
+auto WebCacheStorageConnection::open(const WebCore::ClientOrigin& origin, StringImpl* cacheName) -> Ref<OpenPromise>
 {
     return connection()->sendWithPromisedReply<PromiseConverter>(Messages::NetworkStorageManager::CacheStorageOpenCache { origin, cacheName });
 }

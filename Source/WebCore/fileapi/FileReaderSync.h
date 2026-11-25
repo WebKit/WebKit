@@ -52,15 +52,15 @@ public:
     }
 
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> readAsArrayBuffer(ScriptExecutionContext&, Blob&);
-    ExceptionOr<String> readAsBinaryString(ScriptExecutionContext&, Blob&);
-    ExceptionOr<String> readAsText(ScriptExecutionContext&, Blob&, const String& encoding);
-    ExceptionOr<String> readAsDataURL(ScriptExecutionContext&, Blob&);
+    ExceptionOr<RefPtr<StringImpl>> readAsBinaryString(ScriptExecutionContext&, Blob&);
+    ExceptionOr<RefPtr<StringImpl>> readAsText(ScriptExecutionContext&, Blob&, StringImpl* encoding);
+    ExceptionOr<RefPtr<StringImpl>> readAsDataURL(ScriptExecutionContext&, Blob&);
 
 private:
     FileReaderSync();
 
     ExceptionOr<void> startLoading(ScriptExecutionContext&, FileReaderLoader&, Blob&);
-    ExceptionOr<String> startLoadingString(ScriptExecutionContext&, FileReaderLoader&, Blob&);
+    ExceptionOr<RefPtr<StringImpl>> startLoadingString(ScriptExecutionContext&, FileReaderLoader&, Blob&);
 };
 
 } // namespace WebCore

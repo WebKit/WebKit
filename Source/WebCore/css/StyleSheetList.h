@@ -45,9 +45,9 @@ public:
     WEBCORE_EXPORT unsigned length() const;
     WEBCORE_EXPORT RefPtr<StyleSheet> item(unsigned index) const;
 
-    CSSStyleSheet* namedItem(const AtomString&) const;
-    bool isSupportedPropertyName(const AtomString&) const;
-    NODELETE Vector<AtomString> supportedPropertyNames();
+    CSSStyleSheet* namedItem(AtomStringImpl*) const;
+    bool isSupportedPropertyName(AtomStringImpl*) const;
+    NODELETE Vector<RefPtr<AtomStringImpl>> supportedPropertyNames();
 
     NODELETE Node* ownerNode() const;
 

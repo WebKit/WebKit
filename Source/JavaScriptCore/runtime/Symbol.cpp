@@ -41,7 +41,7 @@ Symbol::Symbol(VM& vm)
 {
 }
 
-Symbol::Symbol(VM& vm, const String& string)
+Symbol::Symbol(VM& vm, StringImpl* string)
     : Base(vm, vm.symbolStructure.get())
     , m_privateName(PrivateName::Description, string)
 {
@@ -53,7 +53,7 @@ Symbol::Symbol(VM& vm, SymbolImpl& uid)
 {
 }
 
-Symbol::Symbol(VM& vm, const String& string, JSString* description)
+Symbol::Symbol(VM& vm, StringImpl* string, JSString* description)
     : Base(vm, vm.symbolStructure.get())
     , m_privateName(PrivateName::Description, string)
     , m_description(description, WriteBarrierEarlyInit)
@@ -120,9 +120,9 @@ void Symbol::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 }
 DEFINE_VISIT_CHILDREN(Symbol);
 
-std::expected<String, ErrorTypeWithExtension> Symbol::tryGetDescriptiveString() const
+std::expected<RefPtr<StringImpl>, ErrorTypeWithExtension> Symbol::tryGetDescriptiveString() const
 {
-    String description = tryMakeString("Symbol("_s, StringView(m_privateName.uid()), ')');
+    RefPtr<StringImpl> description = tryMakeString("Symbol("_s, StringView(m_privateName.uid()), ')');
     if (!description)
         return makeUnexpected(ErrorTypeWithExtension::OutOfMemoryError);
     return description;
@@ -137,7 +137,7 @@ JSString* Symbol::description(VM& vm)
     if (uid.isNullSymbol())
         return nullptr;
 
-    auto* string = jsString(vm, String(uid));
+    auto* string = jsString(vm, RefPtr<StringImpl>(&uid));
     m_description.set(vm, this, string);
     return string;
 }
@@ -149,14 +149,14 @@ Symbol* Symbol::create(VM& vm)
     return symbol;
 }
 
-Symbol* Symbol::createWithDescription(VM& vm, const String& description)
+Symbol* Symbol::createWithDescription(VM& vm, StringImpl* description)
 {
     Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm)) Symbol(vm, description);
     symbol->finishCreation(vm);
     return symbol;
 }
 
-Symbol* Symbol::createWithDescription(VM& vm, const String& description, JSString* string)
+Symbol* Symbol::createWithDescription(VM& vm, StringImpl* description, JSString* string)
 {
     Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm)) Symbol(vm, description, string);
     symbol->finishCreation(vm);

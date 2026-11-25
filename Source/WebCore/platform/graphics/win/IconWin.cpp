@@ -43,7 +43,7 @@ Icon::~Icon()
 }
 
 // FIXME: Move the code to ChromeClient::iconForFiles().
-RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
+RefPtr<Icon> Icon::createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames)
 {
     if (filenames.isEmpty())
         return nullptr;
@@ -52,8 +52,8 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         SHFILEINFO sfi;
         memset(&sfi, 0, sizeof(sfi));
 
-        String tmpFilename = filenames[0];
-        if (!SHGetFileInfo(tmpFilename.wideCharacters().span().data(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
+        RefPtr<StringImpl> tmpFilename = filenames[0];
+        if (!SHGetFileInfo(wideCharacters(tmpFilename).span().data(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
             return nullptr;
 
         return adoptRef(new Icon(sfi.hIcon));

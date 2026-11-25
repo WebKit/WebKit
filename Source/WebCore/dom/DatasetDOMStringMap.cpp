@@ -29,6 +29,7 @@
 #include "ElementInlines.h"
 #include "ScriptWrappableInlines.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/StringBuilder.h>
@@ -37,32 +38,32 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DatasetDOMStringMap);
 
-static bool isValidAttributeName(const String& name)
+static bool isValidAttributeName(StringImpl* name)
 {
-    if (!name.startsWith("data-"_s))
+    if (!startsWith(name, "data-"_s))
         return false;
 
-    unsigned length = name.length();
+    unsigned length = WTF::length(name);
     for (unsigned i = 5; i < length; ++i) {
-        if (isASCIIUpper(name[i]))
+        if (isASCIIUpper(codeUnitAt(name, i)))
             return false;
     }
 
     return true;
 }
 
-static String convertAttributeNameToPropertyName(const String& name)
+static RefPtr<StringImpl> convertAttributeNameToPropertyName(StringImpl* name)
 {
     StringBuilder stringBuilder;
 
-    unsigned length = name.length();
+    unsigned length = WTF::length(name);
     for (unsigned i = 5; i < length; ++i) {
-        char16_t character = name[i];
+        char16_t character = codeUnitAt(name, i);
         if (character != '-')
             stringBuilder.append(character);
         else {
-            if ((i + 1 < length) && isASCIILower(name[i + 1])) {
-                stringBuilder.append(toASCIIUpper(name[i + 1]));
+            if ((i + 1 < length) && isASCIILower(codeUnitAt(name, i + 1))) {
+                stringBuilder.append(toASCIIUpper(codeUnitAt(name, i + 1)));
                 ++i;
             } else
                 stringBuilder.append(character);
@@ -72,18 +73,18 @@ static String convertAttributeNameToPropertyName(const String& name)
     return stringBuilder.toString();
 }
 
-NODELETE static bool isValidPropertyName(const String& name)
+NODELETE static bool isValidPropertyName(StringImpl* name)
 {
-    unsigned length = name.length();
+    unsigned length = WTF::length(name);
     for (unsigned i = 0; i < length; ++i) {
-        if (name[i] == '-' && (i + 1 < length) && isASCIILower(name[i + 1]))
+        if (codeUnitAt(name, i) == '-' && (i + 1 < length) && isASCIILower(codeUnitAt(name, i + 1)))
             return false;
     }
     return true;
 }
 
 template<typename CharacterType>
-static inline AtomString convertPropertyNameToAttributeName(const StringImpl& name)
+static inline RefPtr<AtomStringImpl> convertPropertyNameToAttributeName(const StringImpl& name)
 {
     static constexpr auto dataPrefix = WTF::toArray<CharacterType>({ 'd', 'a', 't', 'a', '-' });
 
@@ -100,15 +101,15 @@ static inline AtomString convertPropertyNameToAttributeName(const StringImpl& na
         } else
             buffer.append(character);
     }
-    return buffer.span();
+    return AtomStringImpl::add(borrow(buffer)->span());
 }
 
-static AtomString convertPropertyNameToAttributeName(const String& name)
+static RefPtr<AtomStringImpl> convertPropertyNameToAttributeName(StringImpl* name)
 {
-    if (name.isNull())
+    if (!name)
         return nullAtom();
 
-    StringImpl* nameImpl = name.impl();
+    StringImpl* nameImpl = name;
     if (nameImpl->is8Bit())
         return convertPropertyNameToAttributeName<Latin1Character>(*nameImpl);
     return convertPropertyNameToAttributeName<char16_t>(*nameImpl);
@@ -124,7 +125,7 @@ void DatasetDOMStringMap::deref()
     m_element->deref();
 }
 
-bool DatasetDOMStringMap::isSupportedPropertyName(const String& propertyName) const
+bool DatasetDOMStringMap::isSupportedPropertyName(StringImpl* propertyName) const
 {
     Ref element = m_element.get();
     if (!element->hasAttributes())
@@ -134,7 +135,7 @@ bool DatasetDOMStringMap::isSupportedPropertyName(const String& propertyName) co
     if (attributes.size() == 1) {
         // Avoid creating AtomString when there is only one attribute.
         auto& attribute = attributes[0];
-        if (isValidAttributeName(attribute.localName()) && convertAttributeNameToPropertyName(attribute.localName()) == propertyName)
+        if (isValidAttributeName(attribute.localName()) && equal(convertAttributeNameToPropertyName(attribute.localName()), propertyName))
             return true;
     } else {
         if (!isValidPropertyName(propertyName))
@@ -149,9 +150,9 @@ bool DatasetDOMStringMap::isSupportedPropertyName(const String& propertyName) co
     return false;
 }
 
-Vector<String> DatasetDOMStringMap::supportedPropertyNames() const
+Vector<RefPtr<StringImpl>> DatasetDOMStringMap::supportedPropertyNames() const
 {
-    Vector<String> names;
+    Vector<RefPtr<StringImpl>> names;
 
     Ref element = m_element.get();
     if (!element->hasAttributes())
@@ -165,7 +166,7 @@ Vector<String> DatasetDOMStringMap::supportedPropertyNames() const
     return names;
 }
 
-const AtomString* DatasetDOMStringMap::item(const String& propertyName) const
+const RefPtr<AtomStringImpl>* DatasetDOMStringMap::item(StringImpl* propertyName) const
 {
     Ref element = m_element.get();
     if (element->hasAttributes()) {
@@ -174,12 +175,12 @@ const AtomString* DatasetDOMStringMap::item(const String& propertyName) const
         if (attributes.size() == 1) {
             // Avoid creating AtomString when there is only one attribute.
             auto& attribute = attributes[0];
-            if (isValidAttributeName(attribute.localName()) && convertAttributeNameToPropertyName(attribute.localName()) == propertyName)
+            if (isValidAttributeName(attribute.localName()) && equal(convertAttributeNameToPropertyName(attribute.localName()), propertyName))
                 return &attribute.value();
         } else {
             if (!isValidPropertyName(propertyName))
                 return nullptr;
-            AtomString attributeName = convertPropertyNameToAttributeName(propertyName);
+            RefPtr<AtomStringImpl> attributeName = convertPropertyNameToAttributeName(propertyName);
             for (auto& attribute : attributes) {
                 if (attribute.localName() == attributeName)
                     return &attribute.value();
@@ -190,21 +191,21 @@ const AtomString* DatasetDOMStringMap::item(const String& propertyName) const
     return nullptr;
 }
 
-String DatasetDOMStringMap::namedItem(const AtomString& name) const
+RefPtr<StringImpl> DatasetDOMStringMap::namedItem(AtomStringImpl* name) const
 {
     if (const auto* value = item(name))
         return *value;
-    return String { };
+    return nullptr;
 }
 
-ExceptionOr<void> DatasetDOMStringMap::setNamedItem(const String& name, const AtomString& value)
+ExceptionOr<void> DatasetDOMStringMap::setNamedItem(StringImpl* name, AtomStringImpl* value)
 {
     if (!isValidPropertyName(name))
         return Exception { ExceptionCode::SyntaxError };
     return protect(element())->setAttribute(convertPropertyNameToAttributeName(name), value);
 }
 
-bool DatasetDOMStringMap::deleteNamedProperty(const String& name)
+bool DatasetDOMStringMap::deleteNamedProperty(StringImpl* name)
 {
     return protect(element())->removeAttribute(convertPropertyNameToAttributeName(name));
 }

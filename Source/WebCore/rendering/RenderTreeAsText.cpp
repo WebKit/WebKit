@@ -133,12 +133,12 @@ static void printBorderStyle(TextStream& ts, const BorderStyle borderStyle)
     ts << ' ';
 }
 
-static String getTagName(Node* n)
+static RefPtr<StringImpl> getTagName(Node* n)
 {
     if (n->isDocumentNode())
-        return ""_s;
+        return ""_si;
     if (n->nodeType() == NodeType::Comment)
-        return "COMMENT"_s;
+        return "COMMENT"_si;
     return n->nodeName();
 }
 
@@ -148,7 +148,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     if (!element)
         return false;
 
-    if (element->getAttribute(classAttr) != "Apple-style-span"_s)
+    if (!equal(element->getAttribute(classAttr), "Apple-style-span"_s))
         return false;
 
     if (!node->hasChildNodes())
@@ -158,7 +158,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
 }
 
-String quoteAndEscapeNonPrintables(StringView s)
+RefPtr<StringImpl> quoteAndEscapeNonPrintables(StringView s)
 {
     StringBuilder result;
     result.append('"');
@@ -202,11 +202,11 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         ts << " zI: "_s << value->value;
 
     if (o.node()) {
-        String tagName = getTagName(protect(o.node()));
+        RefPtr<StringImpl> tagName = getTagName(protect(o.node()));
         // FIXME: Temporary hack to make tests pass by simulating the old generated content output.
         if (o.isPseudoElement() || (o.parent() && o.parent()->isPseudoElement()))
             tagName = emptyAtom();
-        if (!tagName.isEmpty()) {
+        if (!isEmpty(tagName)) {
             ts << " {"_s << tagName << '}';
             // flag empty or unstyled AppleStyleSpan because we never
             // want to leave them in the DOM
@@ -735,7 +735,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     }
 }
 
-static String nodePosition(Node* node)
+static RefPtr<StringImpl> nodePosition(Node* node)
 {
     StringBuilder result;
 
@@ -799,7 +799,7 @@ TextStream createTextStream(const RenderView& view)
     return createTextStream(protect(view.document()));
 }
 
-static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsTextFlag> behavior)
+static RefPtr<StringImpl> externalRepresentation(RenderBox& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
     auto ts = createTextStream(protect(renderer.document()));
     if (!renderer.hasLayer())
@@ -814,7 +814,7 @@ static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsText
     return ts.release();
 }
 
-String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> behavior)
+RefPtr<StringImpl> externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> behavior)
 {
     ASSERT(frame);
     ASSERT(frame->document());
@@ -824,7 +824,7 @@ String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> beh
 
     CheckedPtr renderer = frame->contentRenderer();
     if (!renderer)
-        return String();
+        return nullptr;
 
     Ref printContext = PrintContext::create(frame);
     if (behavior.contains(RenderAsTextFlag::PrintingMode))
@@ -843,7 +843,7 @@ void externalRepresentationForLocalFrame(TextStream &ts, LocalFrame& frame, Opti
     }
 }
 
-String externalRepresentation(Element* element, OptionSet<RenderAsTextFlag> behavior)
+RefPtr<StringImpl> externalRepresentation(Element* element, OptionSet<RenderAsTextFlag> behavior)
 {
     ASSERT(element);
 
@@ -855,7 +855,7 @@ String externalRepresentation(Element* element, OptionSet<RenderAsTextFlag> beha
 
     CheckedPtr renderer = dynamicDowncast<RenderBox>(element->renderer());
     if (!renderer)
-        return String();
+        return nullptr;
 
     return externalRepresentation(*renderer, behavior | RenderAsTextFlag::ShowAllLayers);
 }
@@ -868,12 +868,12 @@ static void writeCounterValuesFromChildren(TextStream& stream, const RenderEleme
         if (!isFirstCounter)
             stream << " ";
         isFirstCounter = false;
-        String str(counter->text());
+        RefPtr<StringImpl> str(counter->text());
         stream << str;
     }
 }
 
-String counterValueForElement(Element* element)
+RefPtr<StringImpl> counterValueForElement(Element* element)
 {
     // Make sure the element is not freed during the layout.
     RefPtr<Element> elementRef(element);
@@ -889,7 +889,7 @@ String counterValueForElement(Element* element)
     return stream.release();
 }
 
-String markerTextForListItem(Element* element)
+RefPtr<StringImpl> markerTextForListItem(Element* element)
 {
     // Make sure the element is not freed during the layout.
     RefPtr protectedElement { element };
@@ -897,7 +897,7 @@ String markerTextForListItem(Element* element)
 
     CheckedPtr renderer = dynamicDowncast<RenderListItem>(element->renderer());
     if (!renderer)
-        return String();
+        return nullptr;
     return renderer->markerText(ListMarkerIncludeSuffix::No);
 }
 

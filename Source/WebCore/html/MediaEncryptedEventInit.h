@@ -36,7 +36,7 @@
 namespace WebCore {
 
 struct MediaEncryptedEventInit : EventInit {
-    String initDataType;
+    RefPtr<StringImpl> initDataType;
     RefPtr<JSC::ArrayBuffer> initData;
 };
 

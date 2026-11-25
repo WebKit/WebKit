@@ -87,7 +87,7 @@ struct BuilderPositionTryFallback {
 };
 
 struct RegisteredSubstitutionAttribute {
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     WeakPtr<const Scope> targetScope;
 };
 
@@ -140,7 +140,7 @@ public:
     const Document& document() const { return m_context.document; }
     const Element* element() const { return m_context.element.get(); }
 
-    const CSSRegisteredCustomProperty* registeredProperty(const AtomString&) const;
+    const CSSRegisteredCustomProperty* registeredProperty(AtomStringImpl*) const;
 
     // The registrations of the custom function being evaluated, if any. These shadow the document's.
     const LocalPropertyRegistry* localPropertyRegistry() const { return m_context.localPropertyRegistry; }
@@ -171,7 +171,7 @@ public:
     RefPtr<Image> createStyleImage(const CSSValue&) const;
 
     const Vector<RegisteredSubstitutionAttribute>& registeredSubstitutionAttributes() const LIFETIME_BOUND { return m_registeredSubstitutionAttributes; }
-    void registerSubstitutionAttribute(const AtomString& attributeLocalName, const Scope* targetScope = nullptr);
+    void registerSubstitutionAttribute(AtomStringImpl* attributeLocalName, const Scope* targetScope = nullptr);
 
     const CSSToLengthConversionData& cssToLengthConversionData() const LIFETIME_BOUND { return m_cssToLengthConversionData; }
 
@@ -190,7 +190,7 @@ public:
     }
 
     NODELETE CSSPropertyID cssPropertyID() const;
-    AtomString customPropertyName() const;
+    RefPtr<AtomStringImpl> customPropertyName() const;
 
     NODELETE bool isCurrentPropertyInvalidAtComputedValueTime() const;
     NODELETE void setCurrentPropertyInvalidAtComputedValueTime();
@@ -290,7 +290,7 @@ private:
 
     CSSToLengthConversionData m_cssToLengthConversionData;
 
-    HashSet<AtomString> m_appliedCustomProperties;
+    HashSet<RefPtr<AtomStringImpl>> m_appliedCustomProperties;
     GuardedSubstitutionContexts m_guardedSubstitutionContexts;
     WTF::BitSet<cssPropertyIDEnumValueCount> m_inProgressProperties;
     WTF::BitSet<cssPropertyIDEnumValueCount> m_invalidAtComputedValueTimeProperties;

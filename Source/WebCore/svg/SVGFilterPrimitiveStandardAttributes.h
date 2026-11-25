@@ -53,7 +53,7 @@ public:
     const SVGLengthValue& y() const LIFETIME_BOUND { return m_y->currentValue(); }
     const SVGLengthValue& width() const LIFETIME_BOUND { return m_width->currentValue(); }
     const SVGLengthValue& height() const LIFETIME_BOUND { return m_height->currentValue(); }
-    String result() const { return m_result->currentValue(); }
+    RefPtr<StringImpl> result() const { return m_result->currentValue(); }
 
     SVGAnimatedLength& xAnimated() { return m_x; }
     SVGAnimatedLength& yAnimated() { return m_y; }
@@ -63,7 +63,7 @@ public:
 
     OptionSet<FilterEffectGeometry::Flags> effectGeometryFlags() const;
 
-    virtual Vector<AtomString> filterEffectInputsNames() const { return { }; }
+    virtual Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const { return { }; }
     virtual bool isIdentity() const { return false; }
     // §16.3: this element's own configuration introduces taint (e.g. flood-color is currentColor).
     virtual bool taintsOrigin() const { return false; }
@@ -80,7 +80,7 @@ public:
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&, const SVGPropertyRegistry&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
     void primitiveAttributeOnChildChanged(const Element&, const QualifiedName&);
@@ -106,10 +106,10 @@ private:
 
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
-    const Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width, "0%"_s) };
-    const Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height, "0%"_s) };
-    const Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };
-    const Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_s) };
+    const Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width, "0%"_si) };
+    const Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height, "0%"_si) };
+    const Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_si) };
+    const Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_si) };
     const Ref<SVGAnimatedString> m_result { SVGAnimatedString::create(this) };
 };
 

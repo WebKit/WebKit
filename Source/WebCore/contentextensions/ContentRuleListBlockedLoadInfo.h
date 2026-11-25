@@ -39,9 +39,9 @@ namespace WebCore {
 struct ContentRuleListBlockedLoadInfo {
     FrameIdentifier frameID;
     URL url;
-    String httpMethod;
+    RefPtr<StringImpl> httpMethod;
     OptionSet<ContentExtensions::ResourceType> resourceType;
-    Vector<String> blockingContentRuleListIdentifiers;
+    Vector<RefPtr<StringImpl>> blockingContentRuleListIdentifiers;
 };
 
 }

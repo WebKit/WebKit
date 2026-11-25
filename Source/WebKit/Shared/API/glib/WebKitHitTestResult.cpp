@@ -220,13 +220,13 @@ WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResultData& hitTe
 {
     unsigned context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
 
-    if (!hitTestResult.absoluteLinkURL.isEmpty())
+    if (!isEmpty(hitTestResult.absoluteLinkURL))
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
 
-    if (!hitTestResult.absoluteImageURL.isEmpty())
+    if (!isEmpty(hitTestResult.absoluteImageURL))
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE;
 
-    if (!hitTestResult.absoluteMediaURL.isEmpty())
+    if (!isEmpty(hitTestResult.absoluteMediaURL))
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
 
     if (hitTestResult.isContentEditable)
@@ -240,16 +240,16 @@ WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResultData& hitTe
 
     return WEBKIT_HIT_TEST_RESULT(gObjectNew(WEBKIT_TYPE_HIT_TEST_RESULT,
         "context", context,
-        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? hitTestResult.absoluteLinkURL.utf8() : UTF8CString { },
-        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? hitTestResult.absoluteImageURL.utf8() : UTF8CString { },
-        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? hitTestResult.absoluteMediaURL.utf8() : UTF8CString { },
-        "link-title", !hitTestResult.linkTitle.isEmpty() ? hitTestResult.linkTitle.utf8() : UTF8CString { },
-        "link-label", !hitTestResult.linkLabel.isEmpty() ? hitTestResult.linkLabel.utf8() : UTF8CString { }));
+        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? utf8(hitTestResult.absoluteLinkURL) : UTF8CString { },
+        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? utf8(hitTestResult.absoluteImageURL) : UTF8CString { },
+        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? utf8(hitTestResult.absoluteMediaURL) : UTF8CString { },
+        "link-title", !isEmpty(hitTestResult.linkTitle) ? utf8(hitTestResult.linkTitle) : UTF8CString { },
+        "link-label", !isEmpty(hitTestResult.linkLabel) ? utf8(hitTestResult.linkLabel) : UTF8CString { }));
 }
 
-static bool stringIsEqualToCString(const String& string, const UTF8CString& cString)
+static bool stringIsEqualToCString(StringImpl* string, const UTF8CString& cString)
 {
-    return ((string.isEmpty() && cString.isNull()) || (string.utf8() == cString));
+    return ((isEmpty(string) && cString.isNull()) || (utf8(string) == cString));
 }
 
 bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, const WebHitTestResultData& webHitTestResult)

@@ -57,7 +57,7 @@ public:
     void start(Ref<RTCRtpTransformBackend>&&, bool isVideo, RTCRtpScriptTransformer* = nullptr);
     void clear(bool shouldClearCallback);
 
-    void generateKeyFrame(ScriptExecutionContext&, const String&, Ref<DeferredPromise>&&);
+    void generateKeyFrame(ScriptExecutionContext&, StringImpl*, Ref<DeferredPromise>&&);
     void sendKeyFrameRequest();
 
     bool isVideo() const { return m_isVideo; }

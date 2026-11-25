@@ -141,11 +141,11 @@ public:
     // Can be called in worker threads.
     virtual Ref<RealtimeMediaSource> clone() { return *this; }
 
-    NODELETE const String& hashedId() const LIFETIME_BOUND;
-    const String& hashedGroupId() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& hashedId() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& hashedGroupId() const LIFETIME_BOUND;
     NODELETE const MediaDeviceHashSalts& deviceIDHashSalts() const LIFETIME_BOUND;
 
-    const String& persistentID() const LIFETIME_BOUND { return m_device.persistentId(); }
+    const RefPtr<StringImpl>& persistentID() const LIFETIME_BOUND { return m_device.persistentId(); }
 
     enum class Type : bool { Audio, Video };
     Type type() const { return m_type; }
@@ -168,7 +168,7 @@ public:
 
     virtual bool interrupted() const { return false; }
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
     double fitnessScore() const { return m_fitnessScore; }
 
@@ -222,19 +222,19 @@ public:
     virtual const RealtimeMediaSourceCapabilities& capabilities() = 0;
     virtual const RealtimeMediaSourceSettings& settings() = 0;
 
-    using TakePhotoNativePromise = NativePromise<std::pair<Vector<uint8_t>, String>, String>;
+    using TakePhotoNativePromise = NativePromise<std::pair<Vector<uint8_t>, RefPtr<StringImpl>>, RefPtr<StringImpl>>;
     virtual Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&);
 
-    using PhotoCapabilitiesNativePromise = NativePromise<PhotoCapabilities, String>;
+    using PhotoCapabilitiesNativePromise = NativePromise<PhotoCapabilities, RefPtr<StringImpl>>;
     virtual Ref<PhotoCapabilitiesNativePromise> getPhotoCapabilities();
 
-    using PhotoSettingsNativePromise = NativePromise<PhotoSettings, String>;
+    using PhotoSettingsNativePromise = NativePromise<PhotoSettings, RefPtr<StringImpl>>;
     virtual Ref<PhotoSettingsNativePromise> getPhotoSettings();
 
     struct ApplyConstraintsError {
         MediaConstraintType invalidConstraint;
-        String message;
-        ApplyConstraintsError isolatedCopy() && { return { invalidConstraint, WTF::move(message).isolatedCopy() }; }
+        RefPtr<StringImpl> message;
+        ApplyConstraintsError isolatedCopy() && { return { invalidConstraint, WTF::isolatedCopy(WTF::move(message)) }; }
     };
     using ApplyConstraintsHandler = CompletionHandler<void(std::optional<ApplyConstraintsError>&&)>;
     virtual void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&);
@@ -352,8 +352,8 @@ protected:
 
     void setType(Type);
 
-    void setName(const String&);
-    void setPersistentId(const String&);
+    void setName(StringImpl*);
+    void setPersistentId(StringImpl*);
 
     bool hasSeveralVideoFrameObserversWithAdaptors() const { return m_videoFrameObserversWithAdaptors > 1; }
 
@@ -382,11 +382,11 @@ private:
 
     Markable<PageIdentifier> m_pageIdentifier;
     MediaDeviceHashSalts m_idHashSalts;
-    String m_hashedID;
-    String m_ephemeralHashedID;
-    String m_hashedGroupId;
+    RefPtr<StringImpl> m_hashedID;
+    RefPtr<StringImpl> m_ephemeralHashedID;
+    RefPtr<StringImpl> m_hashedGroupId;
     Type m_type;
-    String m_name;
+    RefPtr<StringImpl> m_name;
     WeakHashSet<RealtimeMediaSourceObserver> m_observers;
 
     mutable Lock m_audioSampleObserversLock;
@@ -439,7 +439,7 @@ private:
 
 struct CaptureSourceError {
     CaptureSourceError() = default;
-    CaptureSourceError(String&& errorMessage, MediaAccessDenialReason denialReason, MediaConstraintType invalidConstraint = MediaConstraintType::Unknown)
+    CaptureSourceError(RefPtr<StringImpl>&& errorMessage, MediaAccessDenialReason denialReason, MediaConstraintType invalidConstraint = MediaConstraintType::Unknown)
         : errorMessage(WTF::move(errorMessage))
         , denialReason(denialReason)
         , invalidConstraint(invalidConstraint)
@@ -453,7 +453,7 @@ struct CaptureSourceError {
 
     operator bool() const { return denialReason != MediaAccessDenialReason::NoReason; }
 
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     MediaAccessDenialReason denialReason { MediaAccessDenialReason::NoReason };
     MediaConstraintType invalidConstraint { MediaConstraintType::Unknown };
 };
@@ -470,9 +470,9 @@ struct CaptureSourceOrError {
     CaptureSourceError error;
 };
 
-String convertEnumerationToString(RealtimeMediaSource::Type);
+RefPtr<StringImpl> convertEnumerationToString(RealtimeMediaSource::Type);
 
-inline void RealtimeMediaSource::setName(const String& name)
+inline void RealtimeMediaSource::setName(StringImpl* name)
 {
     m_name = name;
 }
@@ -491,7 +491,7 @@ inline void RealtimeMediaSource::setIsInBackground(bool)
 {
 }
 
-inline const String& RealtimeMediaSource::hashedGroupId() const
+inline const RefPtr<StringImpl>& RealtimeMediaSource::hashedGroupId() const
 {
     return m_hashedGroupId;
 }
@@ -522,7 +522,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::RealtimeMediaSource::Type> {
-    static String toString(const WebCore::RealtimeMediaSource::Type type)
+    static RefPtr<StringImpl> toString(const WebCore::RealtimeMediaSource::Type type)
     {
         return convertEnumerationToString(type);
     }

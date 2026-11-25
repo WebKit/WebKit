@@ -55,10 +55,10 @@ bool WebDebuggerAgent::enabled() const
     return Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent() == this && InspectorDebuggerAgent::enabled();
 }
 
-String WebDebuggerAgent::requestIdForScript(JSC::JSGlobalObject* globalObject, const JSC::Debugger::Script& script)
+RefPtr<StringImpl> WebDebuggerAgent::requestIdForScript(JSC::JSGlobalObject* globalObject, const JSC::Debugger::Script& script)
 {
     auto requestId = InspectorDebuggerAgent::requestIdForScript(globalObject, script);
-    if (requestId.isEmpty())
+    if (isEmpty(requestId))
         return requestId;
 
     if (RefPtr context = uncheckedDowncast<JSDOMGlobalObject>(globalObject)->scriptExecutionContext()) {
@@ -83,7 +83,7 @@ void WebDebuggerAgent::internalDisable(bool isBeingDestroyed)
     InspectorDebuggerAgent::internalDisable(isBeingDestroyed);
 }
 
-void WebDebuggerAgent::didAddEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
+void WebDebuggerAgent::didAddEventListener(EventTarget& target, AtomStringImpl* eventType, EventListener& listener, bool capture)
 {
     if (!breakpointsActive())
         return;
@@ -109,7 +109,7 @@ void WebDebuggerAgent::didAddEventListener(EventTarget& target, const AtomString
     didScheduleAsyncCall(globalObject, InspectorDebuggerAgent::AsyncCallType::EventListener, identifier, registeredListener->isOnce());
 }
 
-void WebDebuggerAgent::willRemoveEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
+void WebDebuggerAgent::willRemoveEventListener(EventTarget& target, AtomStringImpl* eventType, EventListener& listener, bool capture)
 {
     auto& eventListeners = target.eventListeners(eventType);
     size_t listenerIndex = eventListeners.findIf([&](auto& registeredListener) {

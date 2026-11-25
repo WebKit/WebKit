@@ -63,7 +63,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiBrowsingContextAgent);
 // Reads a serializationOptions depth, which is a js-uint or null. Validation happens in WebDriverBidiProcessor::validateSerializationOptions().
 static CommandResult<void> readSerializationDepth(const JSON::Object& serializationOptions, ASCIILiteral key, std::optional<double>& depth)
 {
-    auto value = serializationOptions.getValue(key);
+    auto value = serializationOptions.getValue(StringImpl::create(key).ptr());
     if (!value)
         return { };
     if (value->isNull()) {
@@ -78,7 +78,7 @@ static CommandResult<void> readSerializationDepth(const JSON::Object& serializat
     return { };
 }
 
-static CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>> parseLocateNodesResult(const String& resultString)
+static CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>> parseLocateNodesResult(StringImpl* resultString)
 {
     using RemoteValue = Inspector::Protocol::BidiScript::RemoteValue;
     using RemoteValueType = Inspector::Protocol::BidiScript::RemoteValueType;
@@ -88,19 +88,19 @@ static CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteVa
     if (!resultObject)
         return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, "Malformed browsingContext.locateNodes result"_s));
 
-    if (auto errorName = resultObject->getString("error"_s); !errorName.isNull()) {
+    if (auto errorName = resultObject->getString("error"_si); !!errorName) {
         // The web process names these errors after ErrorMessage values. Page script can interfere with the injected
         // script, so only the errors locateNodes can report are passed on, and anything else is an unknown error.
         using ErrorMessage = Inspector::Protocol::Automation::ErrorMessage;
         auto errorMessage = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<ErrorMessage>(errorName);
         bool isLocateNodesError = errorMessage && (*errorMessage == ErrorMessage::InvalidParameter || *errorMessage == ErrorMessage::InvalidSelector || *errorMessage == ErrorMessage::NodeNotFound);
-        auto details = resultObject->getString("message"_s);
+        auto details = resultObject->getString("message"_si);
         if (!isLocateNodesError)
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, details));
         return makeUnexpected(makeString(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(*errorMessage), errorNameAndDetailsSeparator, details));
     }
 
-    auto serializedNodes = resultObject->getArray("nodes"_s);
+    auto serializedNodes = resultObject->getArray("nodes"_si);
     if (!serializedNodes)
         return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, "Malformed browsingContext.locateNodes result"_s));
 
@@ -108,15 +108,15 @@ static CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteVa
     for (unsigned i = 0; i < serializedNodes->length(); ++i) {
         RefPtr serializedNodeValue = serializedNodes->get(i);
         auto serializedNode = serializedNodeValue ? serializedNodeValue->asObject() : nullptr;
-        if (!serializedNode || serializedNode->getString("type"_s) != "node"_s)
+        if (!serializedNode || !equal(serializedNode->getString("type"_si), "node"_s))
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, "Malformed browsingContext.locateNodes result"_s));
 
         auto node = RemoteValue::create()
             .setType(RemoteValueType::Node)
             .release();
-        if (auto sharedId = serializedNode->getString("sharedId"_s); !sharedId.isNull())
+        if (auto sharedId = serializedNode->getString("sharedId"_si); !!sharedId)
             node->setSharedId(sharedId);
-        if (auto value = serializedNode->getValue("value"_s))
+        if (auto value = serializedNode->getValue("value"_si))
             node->setValue(value.releaseNonNull());
         nodes->addItem(WTF::move(node));
     }
@@ -137,7 +137,7 @@ BidiBrowsingContextAgent::BidiBrowsingContextAgent(WebAutomationSession& session
 
 BidiBrowsingContextAgent::~BidiBrowsingContextAgent() = default;
 
-void BidiBrowsingContextAgent::activate(const BrowsingContext& browsingContext, CommandCallback<void>&& callback)
+void BidiBrowsingContextAgent::activate(StringImpl* browsingContext, CommandCallback<void>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
@@ -156,7 +156,7 @@ void BidiBrowsingContextAgent::activate(const BrowsingContext& browsingContext, 
     });
 }
 
-void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsingContext, const String& optionalOrigin, RefPtr<JSON::Object>&& optionalFormat, RefPtr<JSON::Object>&& optionalClip, RefPtr<JSON::Object>&& optionalImageSize, CommandCallback<String>&& callback)
+void BidiBrowsingContextAgent::captureScreenshot(StringImpl* browsingContext, StringImpl* optionalOrigin, RefPtr<JSON::Object>&& optionalFormat, RefPtr<JSON::Object>&& optionalClip, RefPtr<JSON::Object>&& optionalImageSize, CommandCallback<RefPtr<StringImpl>>&& callback)
 {
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-captureScreenshot
     RefPtr session = m_session.get();
@@ -164,22 +164,22 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
 
     // The "get a navigable" algorithm uses `no such frame` for both top-level and child contexts.
     // https://w3c.github.io/webdriver-bidi/#get-a-navigable
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(browsingContext), FrameNotFound);
 
     auto handles = session->extractBrowsingContextHandles(browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
     auto [pageHandle, frameHandle] = handles.value();
 
     // FIXME: implement the `document` origin; captures are always relative to the viewport. <https://webkit.org/b/323419>
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!optionalOrigin.isNull() && optionalOrigin != "viewport"_s && optionalOrigin != "document"_s, InvalidParameter);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!!optionalOrigin && !equal(optionalOrigin, "viewport"_s) && !equal(optionalOrigin, "document"_s), InvalidParameter);
 
     if (optionalFormat) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimageformat
-        RefPtr formatType = optionalFormat->getValue("type"_s);
+        RefPtr formatType = optionalFormat->getValue("type"_si);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!formatType, MissingParameter);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(formatType->asString().isNull(), InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!formatType->asString(), InvalidParameter);
 
-        if (RefPtr quality = optionalFormat->getValue("quality"_s)) {
+        if (RefPtr quality = optionalFormat->getValue("quality"_si)) {
             auto qualityValue = quality->asDouble();
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!qualityValue, InvalidParameter);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*qualityValue < 0 || *qualityValue > 1, InvalidParameter);
@@ -191,7 +191,7 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
     if (optionalImageSize) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimagesize
         for (auto key : { "maxWidth"_s, "maxHeight"_s }) {
-            if (RefPtr value = optionalImageSize->getValue(key)) {
+            if (RefPtr value = optionalImageSize->getValue(StringImpl::create(key).ptr())) {
                 // maxWidth and maxHeight are js-uint (0..2^53-1) constrained to be greater than 1.
                 // asInteger() truncates a JSON double, so validate integrality and both bounds
                 // against the raw double, matching the js-uint handling in getTree above.
@@ -207,33 +207,33 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
 
     if (optionalClip) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextcliprectangle
-        RefPtr clipTypeValue = optionalClip->getValue("type"_s);
+        RefPtr clipTypeValue = optionalClip->getValue("type"_si);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!clipTypeValue, MissingParameter);
 
         auto clipType = clipTypeValue->asString();
-        if (clipType == "element"_s) {
-            RefPtr elementValue = optionalClip->getValue("element"_s);
+        if (equal(clipType, "element"_s)) {
+            RefPtr elementValue = optionalClip->getValue("element"_si);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!elementValue, MissingParameter);
 
             RefPtr element = elementValue->asObject();
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!element, InvalidParameter);
 
-            RefPtr sharedIdValue = element->getValue("sharedId"_s);
+            RefPtr sharedIdValue = element->getValue("sharedId"_si);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!sharedIdValue, MissingParameter);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(sharedIdValue->asString().isNull(), InvalidParameter);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!sharedIdValue->asString(), InvalidParameter);
 
             // `handle` is an optional script.Handle (a string) on a script.SharedReference; reject
             // a malformed one as `invalid argument` before the deferred node-resolution result.
             // https://w3c.github.io/webdriver-bidi/#cddl-type-scriptsharedreference
-            if (RefPtr handleValue = element->getValue("handle"_s))
-                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(handleValue->asString().isNull(), InvalidParameter);
+            if (RefPtr handleValue = element->getValue("handle"_si))
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!handleValue->asString(), InvalidParameter);
 
             // FIXME: resolve shared references once the BiDi script module supports node serialization.
             // Until then, no shared reference can name a known node. <https://webkit.org/b/323423>
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(NodeNotFound);
-        } else if (clipType == "box"_s) {
+        } else if (equal(clipType, "box"_s)) {
             for (auto key : { "x"_s, "y"_s, "width"_s, "height"_s }) {
-                RefPtr value = optionalClip->getValue(key);
+                RefPtr value = optionalClip->getValue(StringImpl::create(key).ptr());
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!value, MissingParameter);
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!value->asDouble(), InvalidParameter);
             }
@@ -242,8 +242,8 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
             // width or height is valid input: the spec's "normalize rect" step flips it to a
             // positive extent, so only an exactly-zero dimension is rejected here.
             // https://w3c.github.io/webdriver-bidi/#normalize-rect
-            auto width = *optionalClip->getDouble("width"_s);
-            auto height = *optionalClip->getDouble("height"_s);
+            auto width = *optionalClip->getDouble("width"_si);
+            auto height = *optionalClip->getDouble("height"_si);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!width || !height, ScreenshotError);
 
             // FIXME: apply the clip rectangle to the captured image. <https://webkit.org/b/323419>
@@ -257,19 +257,19 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
     session->takeScreenshot(pageHandle, frameHandle, emptyString(), std::nullopt, std::nullopt, WTF::move(callback));
 }
 
-void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std::optional<bool>&& optionalPromptUnload, CommandCallback<void>&& callback)
+void BidiBrowsingContextAgent::close(StringImpl* browsingContext, std::optional<bool>&& optionalPromptUnload, CommandCallback<void>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     // FIXME: implement `promptUnload` option.
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(browsingContext), FrameNotFound);
 
     auto handles = session->extractBrowsingContextHandles(browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
     auto [pageHandle, frameHandle] = handles.value();
 
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!frameHandle.isEmpty(), InvalidParameter);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isEmpty(frameHandle), InvalidParameter);
 
     RefPtr webPageProxy = session->webPageProxyForHandle(pageHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, FrameNotFound);
@@ -292,12 +292,12 @@ NODELETE static Inspector::Protocol::Automation::BrowsingContextPresentation bro
     return defaultBrowsingContextPresentation;
 }
 
-void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::CreateType createType, const BrowsingContext& optionalReferenceContext, std::optional<bool>&& optionalBackground, const String& optionalUserContext, CommandCallback<BrowsingContext>&& callback)
+void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::CreateType createType, StringImpl* optionalReferenceContext, std::optional<bool>&& optionalBackground, StringImpl* optionalUserContext, CommandCallback<BrowsingContext>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    if (!optionalUserContext.isNull()) {
+    if (optionalUserContext) {
         bool isValid = session->isValidUserContext(optionalUserContext);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isValid, NoSuchUserContext);
     }
@@ -340,8 +340,8 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::ge
     auto info = Inspector::Protocol::BidiBrowsingContext::Info::create()
         .setContext(getBrowsingContextID(tree.info.frameID))
         .setUrl(tree.info.request.url().string())
-        .setClientWindow("placeholder_window"_s)
-        .setUserContext("default"_s)
+        .setClientWindow("placeholder_window"_si)
+        .setUserContext("default"_si)
         .setChildrenIsNull()
         .setOriginalOpenerIsNull()
         .release();
@@ -402,7 +402,7 @@ void BidiBrowsingContextAgent::getNextTree(Vector<Ref<WebPageProxy>>&& pagesToPr
     });
 }
 
-void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std::optional<double>&& optionalMaxDepth, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&& callback)
+void BidiBrowsingContextAgent::getTree(StringImpl* optionalRoot, std::optional<double>&& optionalMaxDepth, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&& callback)
 {
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-getTree
     RefPtr session = m_session.get();
@@ -417,7 +417,7 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
     }
 
     // A child frame as the root: the tree is that frame's subtree within its page.
-    if (!optionalRoot.isEmpty() && !session->webPageProxyForHandle(optionalRoot)) {
+    if (!isEmpty(optionalRoot) && !session->webPageProxyForHandle(optionalRoot)) {
         auto handles = session->extractBrowsingContextHandles(optionalRoot);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!handles, FrameNotFound);
         auto [pageHandle, frameHandle] = handles.value();
@@ -449,8 +449,8 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
             if (!page->isControlledByAutomation())
                 continue;
 
-            if (!optionalRoot.isEmpty()) {
-                if (session->handleForWebPageProxy(page) == optionalRoot) {
+            if (!isEmpty(optionalRoot)) {
+                if (equal(session->handleForWebPageProxy(page), optionalRoot)) {
                     pagesToProcess.append(page);
                     break;
                 }
@@ -459,7 +459,7 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
         }
     }
 
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!optionalRoot.isEmpty() && pagesToProcess.isEmpty(), FrameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isEmpty(optionalRoot) && pagesToProcess.isEmpty(), FrameNotFound);
 
     if (pagesToProcess.isEmpty()) {
         callback({ { JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create() } });
@@ -474,12 +474,12 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
     });
 }
 
-void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingContext, std::optional<bool>&& optionalShouldAccept, const String& optionalUserText, CommandCallback<void>&& callback)
+void BidiBrowsingContextAgent::handleUserPrompt(StringImpl* browsingContext, std::optional<bool>&& optionalShouldAccept, StringImpl* optionalUserText, CommandCallback<void>&& callback)
 {
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-handleUserPrompt
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(browsingContext), FrameNotFound);
 
     // User prompts belong to the top-level traversable, so a child context handles its page's prompt.
     auto handles = session->extractBrowsingContextHandles(browsingContext);
@@ -494,22 +494,22 @@ void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingC
     // A prompt is answered with userText, or the empty string when it is omitted, not with the dialog's default
     // text. userText only applies to prompt dialogs, so ignore the error that other dialog types report.
     // Accepting still fails with no such alert when no dialog is showing.
-    std::ignore = session->setUserInputForCurrentJavaScriptPrompt(pageHandle, optionalUserText.isNull() ? emptyString() : optionalUserText);
+    std::ignore = session->setUserInputForCurrentJavaScriptPrompt(pageHandle, !optionalUserText ? emptyString().get() : optionalUserText);
 
     callback(session->acceptCurrentJavaScriptDialog(pageHandle));
 }
 
-void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContext, Ref<JSON::Object>&& locator, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Array>&& optionalStartNodes, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&& callback)
+void BidiBrowsingContextAgent::locateNodes(StringImpl* browsingContext, Ref<JSON::Object>&& locator, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Array>&& optionalStartNodes, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&& callback)
 {
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-locateNodes
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    String locatorType;
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!locator->getString("type"_s, locatorType), InvalidParameter);
+    RefPtr<StringImpl> locatorType;
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!locator->getString("type"_si, locatorType), InvalidParameter);
 
     RefPtr<JSON::Value> locatorValue;
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!locator->getValue("value"_s, locatorValue), InvalidParameter);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!locator->getValue("value"_si, locatorValue), InvalidParameter);
 
     std::optional<uint64_t> maxNodeCount;
     if (optionalMaxNodeCount) {
@@ -522,7 +522,7 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
     // SerializationOptions defaults: DOM depth 0, object depth unlimited, and no shadow tree children.
     std::optional<double> maxObjectDepth;
     std::optional<double> maxDomDepth { 0 };
-    String includeShadowTree = "none"_s;
+    RefPtr<StringImpl> includeShadowTree = "none"_si;
     if (optionalSerializationOptions) {
         auto& serializationOptions = *optionalSerializationOptions;
         auto result = WebDriverBidiProcessor::validateSerializationOptions(serializationOptions);
@@ -534,8 +534,8 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
         if (auto depthResult = readSerializationDepth(serializationOptions, "maxObjectDepth"_s, maxObjectDepth); !depthResult)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, depthResult.error());
 
-        if (auto includeShadowTreeValue = serializationOptions.getValue("includeShadowTree"_s)) {
-            String includeShadowTreeString;
+        if (auto includeShadowTreeValue = serializationOptions.getValue("includeShadowTree"_si)) {
+            RefPtr<StringImpl> includeShadowTreeString;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTreeValue->asString(includeShadowTreeString), InvalidParameter);
             auto parsedIncludeShadowTree = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::SerializationOptions::IncludeShadowTree>(includeShadowTreeString);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedIncludeShadowTree, InvalidParameter);
@@ -544,35 +544,35 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
     }
 
     // https://w3c.github.io/webdriver-bidi/#type-script-SharedReference
-    std::optional<Vector<String>> startNodeIdentifiers;
+    std::optional<Vector<RefPtr<StringImpl>>> startNodeIdentifiers;
     if (optionalStartNodes) {
         if (!optionalStartNodes->length())
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "startNodes must not be empty"_s);
 
-        Vector<String> identifiers;
+        Vector<RefPtr<StringImpl>> identifiers;
         for (unsigned i = 0; i < optionalStartNodes->length(); ++i) {
             RefPtr startNodeValue = optionalStartNodes->get(i);
             auto startNode = startNodeValue ? startNodeValue->asObject() : nullptr;
-            String sharedId = startNode ? startNode->getString("sharedId"_s) : String();
-            if (sharedId.isNull())
+            RefPtr<StringImpl> sharedId = startNode ? startNode->getString("sharedId"_si) : nullptr;
+            if (!sharedId)
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Each item of startNodes must be a shared reference to a node"_s);
             identifiers.append(WTF::move(sharedId));
         }
         startNodeIdentifiers = WTF::move(identifiers);
     }
 
-    if (locatorType.isEmpty())
+    if (isEmpty(locatorType))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Locator type cannot be empty"_s);
 
-    String childContextForContextLocator;
+    RefPtr<StringImpl> childContextForContextLocator;
 
-    if (locatorType == "css"_s || locatorType == "xpath"_s || locatorType == "innerText"_s) {
-        String selector;
+    if (equal(locatorType, "css"_s) || equal(locatorType, "xpath"_s) || equal(locatorType, "innerText"_s)) {
+        RefPtr<StringImpl> selector;
         if (!locatorValue->asString(selector))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, makeString(locatorType, " locator value must be a string"_s));
-        if (selector.isEmpty())
+        if (isEmpty(selector))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidSelector, makeString(locatorType, " locator value must not be empty"_s));
-    } else if (locatorType == "accessibility"_s) {
+    } else if (equal(locatorType, "accessibility"_s)) {
         // https://w3c.github.io/webdriver-bidi/#type-browsingContext-Locator
         auto selector = locatorValue->asObject();
         if (!selector)
@@ -580,7 +580,7 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
 
         bool hasAccessibilityAttribute = false;
         for (auto key : { "role"_s, "name"_s }) {
-            auto attributeValue = selector->getValue(key);
+            auto attributeValue = selector->getValue(StringImpl::create(key).ptr());
             if (!attributeValue)
                 continue;
             if (attributeValue->type() != JSON::Value::Type::String)
@@ -589,29 +589,29 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
         }
         if (!hasAccessibilityAttribute)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidSelector, "accessibility locator must have a role or a name"_s);
-    } else if (locatorType == "context"_s) {
+    } else if (equal(locatorType, "context"_s)) {
         auto selector = locatorValue->asObject();
         if (!selector)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "context locator value must be an object"_s);
 
-        auto childContextValue = selector->getValue("context"_s);
+        auto childContextValue = selector->getValue("context"_si);
         if (!childContextValue || !childContextValue->asString(childContextForContextLocator))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "context locator context must be a string"_s);
     } else {
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, makeString("Invalid locator type: '"_s, locatorType, "'"_s));
     }
 
-    if (locatorType == "innerText"_s) {
-        if (auto ignoreCase = locator->getValue("ignoreCase"_s); ignoreCase && ignoreCase->type() != JSON::Value::Type::Boolean)
+    if (equal(locatorType, "innerText"_s)) {
+        if (auto ignoreCase = locator->getValue("ignoreCase"_si); ignoreCase && ignoreCase->type() != JSON::Value::Type::Boolean)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "innerText locator ignoreCase must be a boolean"_s);
 
-        if (auto matchType = locator->getValue("matchType"_s)) {
-            String matchTypeString;
-            if (!matchType->asString(matchTypeString) || (matchTypeString != "full"_s && matchTypeString != "partial"_s))
+        if (auto matchType = locator->getValue("matchType"_si)) {
+            RefPtr<StringImpl> matchTypeString;
+            if (!matchType->asString(matchTypeString) || (!equal(matchTypeString, "full"_s) && !equal(matchTypeString, "partial"_s)))
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "innerText locator matchType must be \"full\" or \"partial\""_s);
         }
 
-        if (auto maxDepth = locator->getValue("maxDepth"_s)) {
+        if (auto maxDepth = locator->getValue("maxDepth"_si)) {
             auto maxDepthNumber = maxDepth->asDouble();
             if (!maxDepthNumber || *maxDepthNumber < 0 || std::floor(*maxDepthNumber) != *maxDepthNumber || *maxDepthNumber > JSC::maxSafeInteger())
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "innerText locator maxDepth must be a non-negative integer"_s);
@@ -626,9 +626,9 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
     // browsing context's document also has the element, so resolve the child to its frame here. With
     // startNodes the command fails once the web process has checked them, so the child isn't looked at.
     std::optional<WebCore::FrameIdentifier> containerFrameID;
-    if (locatorType == "context"_s && !startNodeIdentifiers) {
+    if (equal(locatorType, "context"_s) && !startNodeIdentifiers) {
         // https://w3c.github.io/webdriver-bidi/#get-a-navigable: no navigable has an empty id, so it is "no such frame".
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(childContextForContextLocator.isEmpty(), FrameNotFound);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(childContextForContextLocator), FrameNotFound);
 
         auto childHandles = session->extractBrowsingContextHandles(childContextForContextLocator);
         ASYNC_FAIL_IF_UNEXPECTED_RESULT(childHandles);
@@ -642,7 +642,7 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
 
         // Compare frames rather than handles, since asking for a frame's handle creates one.
         bool isChildOfBrowsingContext = false;
-        if (parentFrame && frameHandle.isEmpty()) {
+        if (parentFrame && isEmpty(frameHandle)) {
             RefPtr page = session->webPageProxyForHandle(topLevelContextHandle);
             isChildOfBrowsingContext = page && parentFrame->isMainFrame() && parentFrame->page() == page.get();
         } else if (parentFrame) {
@@ -656,7 +656,7 @@ void BidiBrowsingContextAgent::locateNodes(const BrowsingContext& browsingContex
         containerFrameID = childFrameID;
     }
 
-    session->locateNodesForBidi(topLevelContextHandle, frameHandle, locator->toJSONString(), WTF::move(startNodeIdentifiers), maxNodeCount, maxObjectDepth, maxDomDepth, includeShadowTree, containerFrameID, [callback = WTF::move(callback)](Inspector::CommandResult<String>&& result) mutable {
+    session->locateNodesForBidi(topLevelContextHandle, frameHandle, locator->toJSONString(), WTF::move(startNodeIdentifiers), maxNodeCount, maxObjectDepth, maxDomDepth, includeShadowTree, containerFrameID, [callback = WTF::move(callback)](Inspector::CommandResult<RefPtr<StringImpl>>&& result) mutable {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
@@ -687,13 +687,13 @@ NODELETE static PageLoadStrategy pageLoadStrategyFromReadinessState(ReadinessSta
     return PageLoadStrategy::Normal;
 }
 
-void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, const String& url, const String& optionalWait, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
+void BidiBrowsingContextAgent::navigate(StringImpl* browsingContext, StringImpl* url, StringImpl* optionalWait, CommandCallbackOf<RefPtr<StringImpl>, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     // https://w3c.github.io/webdriver-bidi/#get-a-navigable: no navigable has an empty id, so it is "no such frame".
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(browsingContext), FrameNotFound);
 
     auto handles = session->extractBrowsingContextHandles(browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
@@ -704,7 +704,7 @@ void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, 
 
     // The URL is parsed against the navigable's active document.
     URL baseURL { webPageProxy->currentURL() };
-    if (!frameHandle.isEmpty()) {
+    if (!isEmpty(frameHandle)) {
         bool frameNotFound = false;
         auto frameID = session->webFrameIDForHandle(frameHandle, frameNotFound);
         RefPtr frame = frameID && !frameNotFound ? WebFrameProxy::webFrame(*frameID) : nullptr;
@@ -716,7 +716,7 @@ void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, 
 
     // `wait` is modeled as an optional string so we can reject invalid provided values (e.g. "" per WPT).
     std::optional<ReadinessState> waitCondition;
-    if (!optionalWait.isNull()) {
+    if (optionalWait) {
         waitCondition = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<ReadinessState>(optionalWait);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!waitCondition, InvalidParameter);
     }
@@ -726,14 +726,14 @@ void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, 
     session->navigateBrowsingContextForBidi(pageHandle, frameHandle, urlRecord.string(), pageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback));
 }
 
-void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, std::optional<bool>&& optionalIgnoreCache, const String& optionalWait, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
+void BidiBrowsingContextAgent::reload(StringImpl* browsingContext, std::optional<bool>&& optionalIgnoreCache, StringImpl* optionalWait, CommandCallbackOf<RefPtr<StringImpl>, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
 {
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-reload
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     // https://w3c.github.io/webdriver-bidi/#get-a-navigable: no navigable has an empty id, so it is "no such frame".
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(browsingContext), FrameNotFound);
 
     auto handles = session->extractBrowsingContextHandles(browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
@@ -741,7 +741,7 @@ void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, st
 
     // `wait` is modeled as an optional string so we can reject invalid provided values (e.g. "" per WPT).
     std::optional<ReadinessState> waitCondition;
-    if (!optionalWait.isNull()) {
+    if (optionalWait) {
         waitCondition = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<ReadinessState>(optionalWait);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!waitCondition, InvalidParameter);
     }
@@ -751,7 +751,7 @@ void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, st
     session->reloadBrowsingContextForBidi(pageHandle, frameHandle, ignoreCache, pageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback));
 }
 
-void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingContext, double delta, CommandCallback<void>&& callback)
+void BidiBrowsingContextAgent::traverseHistory(StringImpl* browsingContext, double delta, CommandCallback<void>&& callback)
 {
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-traverseHistory
     RefPtr session = m_session.get();
@@ -765,14 +765,14 @@ void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingCo
 
     // The "get a navigable" algorithm uses `no such frame` for both top-level and child contexts.
     // https://w3c.github.io/webdriver-bidi/#get-a-navigable
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(browsingContext), FrameNotFound);
 
     auto handles = session->extractBrowsingContextHandles(browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
     auto [pageHandle, frameHandle] = handles.value();
 
     // Only a top-level traversable has a session history to traverse.
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!frameHandle.isEmpty(), InvalidParameter, "The browsing context is not a top-level browsing context"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!isEmpty(frameHandle), InvalidParameter, "The browsing context is not a top-level browsing context"_s);
 
     // A safe integer can be as large as 2^53 - 1, beyond the range of int, so this guards the cast below.
     // No session history is anywhere near that long, so such a delta cannot name an entry.
@@ -781,7 +781,7 @@ void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingCo
     session->traverseHistoryInBrowsingContext(pageHandle, static_cast<int>(delta), WTF::move(callback));
 }
 
-static std::optional<int> parseNonNegativeInteger(const JSON::Object& object, const String& key)
+static std::optional<int> parseNonNegativeInteger(const JSON::Object& object, StringImpl* key)
 {
     auto value = object.getDouble(key);
     if (!value || !JSC::isInteger(*value))
@@ -793,12 +793,12 @@ static std::optional<int> parseNonNegativeInteger(const JSON::Object& object, co
     return static_cast<int>(*value);
 }
 
-void BidiBrowsingContextAgent::setViewport(const BrowsingContext& optionalContext, RefPtr<JSON::Object>&& optionalViewport, std::optional<double>&& optionalDevicePixelRatio, RefPtr<JSON::Array>&& optionalUserContexts, CommandCallback<void>&& callback)
+void BidiBrowsingContextAgent::setViewport(StringImpl* optionalContext, RefPtr<JSON::Object>&& optionalViewport, std::optional<double>&& optionalDevicePixelRatio, RefPtr<JSON::Array>&& optionalUserContexts, CommandCallback<void>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    bool hasContext = !optionalContext.isEmpty();
+    bool hasContext = !isEmpty(optionalContext);
     bool hasUserContexts = optionalUserContexts && optionalUserContexts->length() > 0;
 
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(hasContext && hasUserContexts, InvalidParameter);
@@ -807,8 +807,8 @@ void BidiBrowsingContextAgent::setViewport(const BrowsingContext& optionalContex
     std::optional<int> viewportWidth;
     std::optional<int> viewportHeight;
     if (optionalViewport) {
-        viewportWidth = parseNonNegativeInteger(*optionalViewport, "width"_s);
-        viewportHeight = parseNonNegativeInteger(*optionalViewport, "height"_s);
+        viewportWidth = parseNonNegativeInteger(*optionalViewport, "width"_si);
+        viewportHeight = parseNonNegativeInteger(*optionalViewport, "height"_si);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!viewportWidth || !viewportHeight, InvalidParameter);
     }
 
@@ -822,13 +822,13 @@ void BidiBrowsingContextAgent::setViewport(const BrowsingContext& optionalContex
         RefPtr mainFrame = page->mainFrame();
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!mainFrame, InvalidParameter);
         auto mainFrameID = getBrowsingContextID(mainFrame->frameID());
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(mainFrameID != optionalContext, InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!equal(mainFrameID, optionalContext), InvalidParameter);
 
         session->setViewportForPage(*page, viewportWidth, viewportHeight, optionalDevicePixelRatio, WTF::move(callback));
     } else {
         for (const auto& userContextValue : *optionalUserContexts) {
             auto userContext = userContextValue->asString();
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(userContext.isEmpty(), InvalidParameter);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(userContext), InvalidParameter);
         }
         // FIXME: Support applying the viewport to user contexts.
         // https://bugs.webkit.org/show_bug.cgi?id=288104

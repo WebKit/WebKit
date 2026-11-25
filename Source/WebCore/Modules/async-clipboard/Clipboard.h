@@ -56,12 +56,12 @@ public:
     using RefCounted::deref;
 
     void readText(Ref<DeferredPromise>&&);
-    void writeText(const String& data, Ref<DeferredPromise>&&);
+    void writeText(StringImpl* data, Ref<DeferredPromise>&&);
 
     void read(Ref<DeferredPromise>&&);
     void write(const Vector<Ref<ClipboardItem>>& data, Ref<DeferredPromise>&&);
 
-    void getType(ClipboardItem&, const String& type, Ref<DeferredPromise>&&);
+    void getType(ClipboardItem&, StringImpl* type, Ref<DeferredPromise>&&);
 
 private:
     Clipboard(Navigator&);

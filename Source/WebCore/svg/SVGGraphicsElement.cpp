@@ -229,7 +229,7 @@ AffineTransform* SVGGraphicsElement::ensureSupplementalTransform()
     return m_supplementalTransform.get();
 }
 
-void SVGGraphicsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGGraphicsElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::transformAttr)
         protect(protect(m_transform)->baseVal())->parse(newValue);

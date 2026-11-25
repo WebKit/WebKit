@@ -55,7 +55,7 @@ Value Number::evaluate() const
     return m_value;
 }
 
-StringExpression::StringExpression(String&& value)
+StringExpression::StringExpression(RefPtr<StringImpl>&& value)
     : m_value(WTF::move(value))
 {
 }
@@ -194,7 +194,7 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
             else if (lhs.isNumber() || rhs.isNumber())
                 equal = lhs.toNumber() == rhs.toNumber();
             else
-                equal = lhs.toString() == rhs.toString();
+                equal = WTF::equal(lhs.toString(), rhs.toString());
 
             if (m_opcode == Opcode::Eq)
                 return equal;
@@ -298,7 +298,7 @@ bool evaluatePredicate(const Expression& expression)
 
     // foo[3] means foo[position()=3]
     if (result.isNumber())
-        return EqTestOp(EqTestOp::Opcode::Eq, Function::create("position"_s), makeUnique<Number>(result.toNumber())).evaluate().toBoolean();
+        return EqTestOp(EqTestOp::Opcode::Eq, Function::create("position"_si), makeUnique<Number>(result.toNumber())).evaluate().toBoolean();
 
     return result.toBoolean();
 }

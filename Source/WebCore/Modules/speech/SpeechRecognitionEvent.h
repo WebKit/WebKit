@@ -39,8 +39,8 @@ public:
         Ref<SpeechRecognitionResultList> results;
     };
 
-    NODELETE static Ref<SpeechRecognitionEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    NODELETE static Ref<SpeechRecognitionEvent> create(const AtomString&, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
+    NODELETE static Ref<SpeechRecognitionEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<SpeechRecognitionEvent> create(AtomStringImpl*, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
 
     virtual ~SpeechRecognitionEvent();
 
@@ -48,8 +48,8 @@ public:
     const SpeechRecognitionResultList* results() const { return m_results.get(); }
 
 private:
-    SpeechRecognitionEvent(const AtomString&, Init&&, IsTrusted);
-    SpeechRecognitionEvent(const AtomString&, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
+    SpeechRecognitionEvent(AtomStringImpl*, Init&&, IsTrusted);
+    SpeechRecognitionEvent(AtomStringImpl*, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
 
     uint32_t m_resultIndex;
     const RefPtr<SpeechRecognitionResultList> m_results;

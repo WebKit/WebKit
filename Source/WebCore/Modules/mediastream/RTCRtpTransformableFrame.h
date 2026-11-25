@@ -40,7 +40,7 @@ struct RTCEncodedAudioFrameMetadata {
     std::optional<Vector<uint32_t>> contributingSources;
     std::optional<uint16_t> sequenceNumber;
     std::optional<uint32_t> rtpTimestamp;
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
 };
 
 struct RTCEncodedVideoFrameMetadata {
@@ -55,7 +55,7 @@ struct RTCEncodedVideoFrameMetadata {
     std::optional<Vector<uint32_t>> contributingSources;
     std::optional<int64_t> timestamp;
     std::optional<uint32_t> rtpTimestamp;
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
 };
 
 class RTCRtpScriptTransformer;

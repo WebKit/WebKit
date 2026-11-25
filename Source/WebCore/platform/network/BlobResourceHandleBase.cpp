@@ -149,7 +149,7 @@ void BlobResourceHandleBase::doStart()
     }
 
     // Parse the "Range" header we care about.
-    if (String range = firstRequest().httpHeaderField(HTTPHeaderName::Range); !range.isNull()) {
+    if (RefPtr<StringImpl> range = firstRequest().httpHeaderField(HTTPHeaderName::Range); range) {
         m_range = parseRange(range, RangeAllowWhitespace::Yes);
         if (!m_range) {
             didFail(Error::RangeError);
@@ -397,13 +397,13 @@ void BlobResourceHandleBase::dispatchDidReceiveResponse()
     if (shouldAbortDispatchDidReceiveResponse())
         return;
 
-    ResourceResponse response(URL { firstRequest().url() }, extractMIMETypeFromMediaType(m_blobData->contentType()), m_totalRemainingSize, String());
+    ResourceResponse response(URL { firstRequest().url() }, extractMIMETypeFromMediaType(m_blobData->contentType()), m_totalRemainingSize, nullptr);
     response.setHTTPStatusCode(m_isRangeRequest ? httpPartialContent : httpOK);
     response.setHTTPStatusText(m_isRangeRequest ? httpPartialContentText : httpOKText);
 
     response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_blobData->contentType());
     response.setTextEncodingName(extractCharsetFromMediaType(m_blobData->contentType()).toString());
-    response.setHTTPHeaderField(HTTPHeaderName::ContentLength, String::number(m_totalRemainingSize));
+    response.setHTTPHeaderField(HTTPHeaderName::ContentLength, makeString(m_totalRemainingSize));
     addPolicyContainerHeaders(response, m_blobData->policyContainer());
 
     if (m_isRangeRequest)

@@ -83,7 +83,7 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
             return { };
 
         CSS::URLLinkParameterList::Container linkParameters;
-        HashSet<String, ASCIICaseInsensitiveHash> unknownModifierNames;
+        HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> unknownModifierNames;
 
         while (!args.atEnd()) {
             switch (args.peek().functionId()) {

@@ -35,11 +35,11 @@
 
 namespace JSC { namespace DFG {
 
-LazyJSValue LazyJSValue::newString(Graph& graph, const String& string)
+LazyJSValue LazyJSValue::newString(Graph& graph, StringImpl* string)
 {
     LazyJSValue result;
     result.m_kind = NewStringImpl;
-    result.u.stringImpl = graph.m_localStrings.add(string).iterator->impl();
+    result.u.stringImpl = graph.m_localStrings.add(string).iterator->get();
     return result;
 }
 
@@ -51,7 +51,7 @@ JSValue LazyJSValue::getValue(VM& vm) const
     case SingleCharacterString:
         return jsSingleCharacterString(vm, u.character);
     case KnownStringImpl:
-        return jsString(vm, String { u.stringImpl });
+        return jsString(vm, RefPtr<StringImpl> { u.stringImpl });
     case NewStringImpl:
         return jsString(vm, AtomStringImpl::add(u.stringImpl));
     }
@@ -113,40 +113,40 @@ struct CrossThreadStringTranslator {
         return impl->concurrentHash();
     }
 
-    NODELETE static bool equal(const String& string, const StringImpl* impl)
+    NODELETE static bool equal(StringImpl* string, const StringImpl* impl)
     {
-        return WTF::equal(string.impl(), impl);
+        return WTF::equal(string, impl);
     }
 
-    static void translate(String* location, const StringImpl* impl, unsigned)
+    static void translate(RefPtr<StringImpl>* location, const StringImpl* impl, unsigned)
     {
-        new (NotNull, location) String(impl->isolatedCopy());
+        new (NotNull, location) RefPtr<StringImpl>(impl->isolatedCopy());
     }
 };
 
-String LazyJSValue::tryGetString(Graph& graph) const
+RefPtr<StringImpl> LazyJSValue::tryGetString(Graph& graph) const
 {
     switch (m_kind) {
     case NewStringImpl:
         return u.stringImpl;
 
     case SingleCharacterString:
-        return span(u.character);
+        return StringImpl::create(span(u.character));
 
     case KnownValue:
     case KnownStringImpl:
         if (const StringImpl* string = tryGetStringImpl()) {
             unsigned ginormousStringLength = 10000;
             if (string->length() > ginormousStringLength)
-                return String();
+                return nullptr;
             
             return *graph.m_copiedStrings.add<CrossThreadStringTranslator>(string).iterator;
         }
         
-        return String();
+        return nullptr;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 TriState LazyJSValue::strictEqual(const LazyJSValue& other) const

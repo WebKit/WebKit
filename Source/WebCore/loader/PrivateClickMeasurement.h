@@ -49,7 +49,7 @@ public:
 
     using SourceID = uint8_t;
 
-    PrivateClickMeasurement(SourceID sourceID, const PCM::SourceSite& sourceSite, const PCM::AttributionDestinationSite& destinationSite, const String& sourceApplicationBundleID, WallTime timeOfAdClick, PCM::AttributionEphemeral isEphemeral)
+    PrivateClickMeasurement(SourceID sourceID, const PCM::SourceSite& sourceSite, const PCM::AttributionDestinationSite& destinationSite, StringImpl* sourceApplicationBundleID, WallTime timeOfAdClick, PCM::AttributionEphemeral isEphemeral)
         : m_sourceID { sourceID }
         , m_sourceSite { sourceSite }
         , m_destinationSite { destinationSite }
@@ -59,7 +59,7 @@ public:
     {
     }
 
-    PrivateClickMeasurement(SourceID&& sourceID, PCM::SourceSite&& sourceSite, PCM::AttributionDestinationSite&& destinationSite, WallTime&& timeOfAdClick, PCM::AttributionEphemeral&& isEphemeral, std::optional<uint64_t>&& adamID, std::optional<PCM::AttributionTriggerData>&& attributionTriggerData, PCM::AttributionTimeToSendData&& timesToSend, std::optional<PCM::EphemeralNonce>&& ephemeralSourceNonce, String&& sourceApplicationBundleID)
+    PrivateClickMeasurement(SourceID&& sourceID, PCM::SourceSite&& sourceSite, PCM::AttributionDestinationSite&& destinationSite, WallTime&& timeOfAdClick, PCM::AttributionEphemeral&& isEphemeral, std::optional<uint64_t>&& adamID, std::optional<PCM::AttributionTriggerData>&& attributionTriggerData, PCM::AttributionTimeToSendData&& timesToSend, std::optional<PCM::EphemeralNonce>&& ephemeralSourceNonce, RefPtr<StringImpl>&& sourceApplicationBundleID)
         : m_sourceID(WTF::move(sourceID))
         , m_sourceSite(WTF::move(sourceSite))
         , m_destinationSite(WTF::move(destinationSite))
@@ -75,7 +75,7 @@ public:
     
     NODELETE WEBCORE_EXPORT static const Seconds maxAge();
     WEBCORE_EXPORT bool isNeitherSameSiteNorCrossSiteTriggeringEvent(const RegistrableDomain& redirectDomain, const URL& firstPartyURL, const PCM::AttributionTriggerData&);
-    WEBCORE_EXPORT static std::expected<PCM::AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
+    WEBCORE_EXPORT static std::expected<PCM::AttributionTriggerData, RefPtr<StringImpl>> parseAttributionRequest(const URL& redirectURL);
     WEBCORE_EXPORT PCM::AttributionSecondsUntilSendData attributeAndGetEarliestTimeToSend(PCM::AttributionTriggerData&&, IsRunningLayoutTest);
     NODELETE WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
     WEBCORE_EXPORT URL attributionReportClickSourceURL() const;
@@ -90,8 +90,8 @@ public:
     const SourceID& sourceID() const LIFETIME_BOUND { return m_sourceID; }
     const std::optional<PCM::AttributionTriggerData>& attributionTriggerData() const LIFETIME_BOUND { return m_attributionTriggerData; }
     void setAttribution(PCM::AttributionTriggerData&& attributionTriggerData) { m_attributionTriggerData = WTF::move(attributionTriggerData); }
-    const String& sourceApplicationBundleID() const LIFETIME_BOUND { return m_sourceApplicationBundleID; }
-    WEBCORE_EXPORT void setSourceApplicationBundleIDForTesting(const String&);
+    const RefPtr<StringImpl>& sourceApplicationBundleID() const LIFETIME_BOUND { return m_sourceApplicationBundleID; }
+    WEBCORE_EXPORT void setSourceApplicationBundleIDForTesting(StringImpl*);
 
     PCM::AttributionEphemeral isEphemeral() const { return m_isEphemeral; }
     void setEphemeral(PCM::AttributionEphemeral isEphemeral) { m_isEphemeral = isEphemeral; }
@@ -109,14 +109,14 @@ public:
     void clearEphemeralSourceNonce() { m_ephemeralSourceNonce.reset(); };
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT std::optional<String> calculateAndUpdateSourceUnlinkableToken(const String& serverPublicKeyBase64URL);
-    WEBCORE_EXPORT static std::expected<PCM::DestinationUnlinkableToken, String> calculateAndUpdateDestinationUnlinkableToken(const String& serverPublicKeyBase64URL);
-    WEBCORE_EXPORT std::optional<String> calculateAndUpdateSourceSecretToken(const String& serverResponseBase64URL);
-    WEBCORE_EXPORT static std::expected<PCM::DestinationSecretToken, String> calculateAndUpdateDestinationSecretToken(const String& serverResponseBase64URL, PCM::DestinationUnlinkableToken&);
+    WEBCORE_EXPORT std::optional<RefPtr<StringImpl>> calculateAndUpdateSourceUnlinkableToken(StringImpl* serverPublicKeyBase64URL);
+    WEBCORE_EXPORT static std::expected<PCM::DestinationUnlinkableToken, RefPtr<StringImpl>> calculateAndUpdateDestinationUnlinkableToken(StringImpl* serverPublicKeyBase64URL);
+    WEBCORE_EXPORT std::optional<RefPtr<StringImpl>> calculateAndUpdateSourceSecretToken(StringImpl* serverResponseBase64URL);
+    WEBCORE_EXPORT static std::expected<PCM::DestinationSecretToken, RefPtr<StringImpl>> calculateAndUpdateDestinationSecretToken(StringImpl* serverResponseBase64URL, PCM::DestinationUnlinkableToken&);
 #endif
 
     PCM::SourceUnlinkableToken& sourceUnlinkableToken() LIFETIME_BOUND { return m_sourceUnlinkableToken; }
-    void setSourceUnlinkableTokenValue(const String& value) { m_sourceUnlinkableToken.valueBase64URL = value; }
+    void setSourceUnlinkableTokenValue(StringImpl* value) { m_sourceUnlinkableToken.valueBase64URL = value; }
     const std::optional<PCM::SourceSecretToken>& sourceSecretToken() const LIFETIME_BOUND { return m_sourceSecretToken; }
     WEBCORE_EXPORT void setSourceSecretToken(PCM::SourceSecretToken&&);
     WEBCORE_EXPORT void setDestinationSecretToken(PCM::DestinationSecretToken&&);
@@ -130,12 +130,12 @@ public:
     WEBCORE_EXPORT PrivateClickMeasurement isolatedCopy() &&;
 
 private:
-    static std::expected<PCM::AttributionTriggerData, String> parseAttributionRequestQuery(const URL&);
+    static std::expected<PCM::AttributionTriggerData, RefPtr<StringImpl>> parseAttributionRequestQuery(const URL&);
     bool isValid() const;
 
 #if PLATFORM(COCOA)
-    static std::optional<String> calculateAndUpdateUnlinkableToken(const String& serverPublicKeyBase64URL, PCM::UnlinkableToken&, const String& contextForLogMessage);
-    static std::optional<String> calculateAndUpdateSecretToken(const String& serverResponseBase64URL, PCM::UnlinkableToken&, PCM::SecretToken&, const String& contextForLogMessage);
+    static std::optional<RefPtr<StringImpl>> calculateAndUpdateUnlinkableToken(StringImpl* serverPublicKeyBase64URL, PCM::UnlinkableToken&, StringImpl* contextForLogMessage);
+    static std::optional<RefPtr<StringImpl>> calculateAndUpdateSecretToken(StringImpl* serverResponseBase64URL, PCM::UnlinkableToken&, PCM::SecretToken&, StringImpl* contextForLogMessage);
 #endif
 
     SourceID m_sourceID;
@@ -151,7 +151,7 @@ private:
     std::optional<PCM::EphemeralNonce> m_ephemeralSourceNonce;
     PCM::SourceUnlinkableToken m_sourceUnlinkableToken;
     std::optional<PCM::SourceSecretToken> m_sourceSecretToken;
-    String m_sourceApplicationBundleID;
+    RefPtr<StringImpl> m_sourceApplicationBundleID;
 };
 
 } // namespace WebCore

@@ -101,7 +101,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorPrototypeNext, (JSGlobalObject* globalObj
     auto* generator = dynamicDowncast<JSAsyncGenerator>(callFrame->thisValue());
     if (!generator) [[unlikely]] {
         auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
-        promise->reject(vm, createTypeError(globalObject, "|this| should be an async generator"_s));
+        promise->reject(vm, createTypeError(globalObject, "|this| should be an async generator"_si));
         return JSValue::encode(promise);
     }
 
@@ -118,7 +118,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorPrototypeReturn, (JSGlobalObject* globalO
     // 4. IfAbruptRejectPromise(result, promiseCapability).
     auto* generator = dynamicDowncast<JSAsyncGenerator>(callFrame->thisValue());
     if (!generator) [[unlikely]] {
-        promise->reject(vm, createTypeError(globalObject, "|this| should be an async generator"_s));
+        promise->reject(vm, createTypeError(globalObject, "|this| should be an async generator"_si));
         return JSValue::encode(promise);
     }
 
@@ -158,7 +158,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorPrototypeThrow, (JSGlobalObject* globalOb
     // 4. IfAbruptRejectPromise(result, promiseCapability).
     auto* generator = dynamicDowncast<JSAsyncGenerator>(callFrame->thisValue());
     if (!generator) [[unlikely]] {
-        promise->reject(vm, createTypeError(globalObject, "|this| should be an async generator"_s));
+        promise->reject(vm, createTypeError(globalObject, "|this| should be an async generator"_si));
         return JSValue::encode(promise);
     }
 

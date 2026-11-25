@@ -142,7 +142,7 @@ static HTTPResponse wellKnownResponse(WellKnownBehavior behavior)
     case WellKnownBehavior::ValidList:
         return { 200, { { "Content-Type"_s, "application/json"_s } }, makeString("{\"origins\":[\""_s, callerOrigin, "\"]}"_s) };
     case WellKnownBehavior::NotFound:
-        return { 404, { { "Content-Type"_s, "application/json"_s } }, "{}"_s };
+        return { 404, { { "Content-Type"_s, "application/json"_s } }, "{}"_si };
     case WellKnownBehavior::WrongContentType:
         return { 200, { { "Content-Type"_s, "text/html"_s } }, makeString("{\"origins\":[\""_s, callerOrigin, "\"]}"_s) };
     case WellKnownBehavior::RedirectToHTTP:
@@ -164,7 +164,7 @@ static HTTPResponse wellKnownResponse(WellKnownBehavior behavior)
 
 static void loadAndWait(TestWKWebView *webView, TestNavigationDelegate *navigationDelegate, ASCIILiteral origin)
 {
-    RetainPtr url = adoptNS([[NSURL alloc] initWithString:makeString(origin, "/"_s).createNSString()]);
+    RetainPtr url = adoptNS([[NSURL alloc] initWithString:createNSString(makeString(origin, "/"_s))]);
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     [navigationDelegate waitForDidFinishNavigation];
 }
@@ -174,11 +174,11 @@ enum class SetRelyingPartyCookie : bool { No, Yes };
 enum class ProbeWaitFor : bool { Outcome, WellKnownRequest };
 
 struct ProbeResult {
-    String outcome;
+    RefPtr<StringImpl> outcome;
     bool outcomeArrived { false };
     bool wellKnownRequestObserved { false };
     size_t requestsDuringCeremony { 0 };
-    String cookiesOnLastRequest;
+    RefPtr<StringImpl> cookiesOnLastRequest;
     bool anyRequestCarriedAuthorization { false };
     bool relyingPartyCookieWasSet { false };
 };
@@ -186,7 +186,7 @@ struct ProbeResult {
 static ProbeResult runProbe(WellKnownBehavior behavior, size_t maxTries, RelyingPartyCertificateTrusted certificate = RelyingPartyCertificateTrusted::YesForSession, SetRelyingPartyCookie setCookie = SetRelyingPartyCookie::No, ProbeWaitFor waitFor = ProbeWaitFor::Outcome)
 {
     HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, String { probePage() } } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(protect(probePage()).get()) } },
         { wellKnownPath, wellKnownResponse(behavior) },
         { redirectTargetPath, { 200, { { "Content-Type"_s, "application/json"_s } }, "{\"origins\":[]}"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
@@ -229,7 +229,7 @@ static ProbeResult runProbe(WellKnownBehavior behavior, size_t maxTries, Relying
     }
 
     if (*outcome)
-        result.outcome = String { outcome->get() };
+        result.outcome = StringImpl::create(outcome->get());
     result.requestsDuringCeremony = server.totalRequests() - requestsBeforeCeremony;
     result.cookiesOnLastRequest = server.lastRequestCookies();
     result.anyRequestCarriedAuthorization = server.sawAuthorizationHeader();
@@ -241,14 +241,14 @@ TEST(WebAuthnRelatedOriginsFetch, ValidListIsAccepted)
     auto result = runProbe(WellKnownBehavior::ValidList, 100, RelyingPartyCertificateTrusted::YesForSession, SetRelyingPartyCookie::No, ProbeWaitFor::WellKnownRequest);
     EXPECT_TRUE(result.wellKnownRequestObserved);
     EXPECT_EQ(result.requestsDuringCeremony, 1u);
-    EXPECT_FALSE(result.outcome == "SecurityError"_s);
+    EXPECT_FALSE(equal(result.outcome, "SecurityError"_s));
 }
 
 TEST(WebAuthnRelatedOriginsFetch, NonSuccessStatusIsRejected)
 {
     auto result = runProbe(WellKnownBehavior::NotFound, 100);
     EXPECT_TRUE(result.outcomeArrived);
-    EXPECT_TRUE(result.outcome == "SecurityError"_s);
+    EXPECT_TRUE(equal(result.outcome, "SecurityError"_s));
     EXPECT_EQ(result.requestsDuringCeremony, 1u);
 }
 
@@ -256,7 +256,7 @@ TEST(WebAuthnRelatedOriginsFetch, NonJSONContentTypeIsRejected)
 {
     auto result = runProbe(WellKnownBehavior::WrongContentType, 100);
     EXPECT_TRUE(result.outcomeArrived);
-    EXPECT_TRUE(result.outcome == "SecurityError"_s);
+    EXPECT_TRUE(equal(result.outcome, "SecurityError"_s));
     EXPECT_EQ(result.requestsDuringCeremony, 1u);
 }
 
@@ -264,7 +264,7 @@ TEST(WebAuthnRelatedOriginsFetch, InsecureRedirectIsNotFollowed)
 {
     auto result = runProbe(WellKnownBehavior::RedirectToHTTP, 100);
     EXPECT_TRUE(result.outcomeArrived);
-    EXPECT_TRUE(result.outcome == "SecurityError"_s);
+    EXPECT_TRUE(equal(result.outcome, "SecurityError"_s));
     EXPECT_EQ(result.requestsDuringCeremony, 1u);
 }
 
@@ -272,7 +272,7 @@ TEST(WebAuthnRelatedOriginsFetch, UnresponsiveRelyingPartyTimesOut)
 {
     auto result = runProbe(WellKnownBehavior::NeverRespond, 200);
     EXPECT_TRUE(result.outcomeArrived);
-    EXPECT_TRUE(result.outcome == "SecurityError"_s);
+    EXPECT_TRUE(equal(result.outcome, "SecurityError"_s));
     EXPECT_EQ(result.requestsDuringCeremony, 1u);
 }
 
@@ -280,7 +280,7 @@ TEST(WebAuthnRelatedOriginsFetch, OversizedResourceIsRejected)
 {
     auto result = runProbe(WellKnownBehavior::Oversized, 100);
     EXPECT_TRUE(result.outcomeArrived);
-    EXPECT_TRUE(result.outcome == "SecurityError"_s);
+    EXPECT_TRUE(equal(result.outcome, "SecurityError"_s));
     EXPECT_EQ(result.requestsDuringCeremony, 1u);
 }
 
@@ -290,14 +290,14 @@ TEST(WebAuthnRelatedOriginsFetch, RequestCarriesNoCookies)
     EXPECT_TRUE(result.outcomeArrived);
     EXPECT_TRUE(result.relyingPartyCookieWasSet);
     EXPECT_EQ(result.requestsDuringCeremony, 1u);
-    EXPECT_TRUE(result.cookiesOnLastRequest.isEmpty());
+    EXPECT_TRUE(isEmpty(result.cookiesOnLastRequest));
 }
 
 TEST(WebAuthnRelatedOriginsFetch, UntrustedCertificateIsRejected)
 {
     auto result = runProbe(WellKnownBehavior::ValidList, 100, RelyingPartyCertificateTrusted::No);
     EXPECT_TRUE(result.outcomeArrived);
-    EXPECT_TRUE(result.outcome == "SecurityError"_s);
+    EXPECT_TRUE(equal(result.outcome, "SecurityError"_s));
     EXPECT_EQ(result.requestsDuringCeremony, 0u);
 }
 
@@ -305,7 +305,7 @@ TEST(WebAuthnRelatedOriginsFetch, HTTPAuthChallengeIsNotAnswered)
 {
     auto result = runProbe(WellKnownBehavior::HTTPAuthChallenge, 100);
     EXPECT_TRUE(result.outcomeArrived);
-    EXPECT_TRUE(result.outcome == "SecurityError"_s);
+    EXPECT_TRUE(equal(result.outcome, "SecurityError"_s));
     // Rejecting the protection space makes the request be retried without credentials.
     EXPECT_EQ(result.requestsDuringCeremony, 2u);
     EXPECT_FALSE(result.anyRequestCarriedAuthorization);
@@ -321,7 +321,7 @@ TEST(WebAuthnRelatedOriginsFetch, RelatedOriginsPassedToDelegate)
     [delegate setShouldConsent:YES];
 
     HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, String { conditionalCreatePage() } } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(protect(conditionalCreatePage()).get()) } },
         { wellKnownPath, { 200, { { "Content-Type"_s, "application/json"_s } }, makeString("{\"origins\":[\""_s, callerOrigin, "\"]}"_s) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -355,7 +355,7 @@ TEST(WebAuthnRelatedOriginsFetch, DelegateRejectsStopsCeremony)
     [delegate setShouldConsent:NO];
 
     HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, String { conditionalCreatePage() } } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(protect(conditionalCreatePage()).get()) } },
         { wellKnownPath, { 200, { { "Content-Type"_s, "application/json"_s } }, makeString("{\"origins\":[\""_s, callerOrigin, "\"]}"_s) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -384,7 +384,7 @@ TEST(WebAuthnRelatedOriginsFetch, FallbackToOldDelegateWithoutRelatedOrigins)
     RetainPtr delegate = adoptNS([RelatedOriginsLegacyDelegate new]);
 
     HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, String { conditionalCreatePage() } } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(protect(conditionalCreatePage()).get()) } },
         { wellKnownPath, { 200, { { "Content-Type"_s, "application/json"_s } }, makeString("{\"origins\":[\""_s, callerOrigin, "\"]}"_s) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -414,7 +414,7 @@ TEST(WebAuthnRelatedOriginsFetch, SameDomainConditionalCreatePassesOriginsToDele
     [delegate setShouldConsent:YES];
 
     HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, String { conditionalCreatePage() } } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(protect(conditionalCreatePage()).get()) } },
         { wellKnownPath, { 200, { { "Content-Type"_s, "application/json"_s } }, "{\"origins\":[\"https://login.live.com\",\"https://caller.example.net\"]}"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -443,7 +443,7 @@ TEST(WebAuthnRelatedOriginsFetch, SameDomainConditionalCreatePassesOriginsToDele
 TEST(WebAuthnRelatedOriginsFetch, ModalGetWithCrossDomainRPID)
 {
     HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, @"<!DOCTYPE html><script>window.modalGet = async function(rpId) { try { await navigator.credentials.get({ publicKey: { challenge: new Uint8Array(32), rpId: rpId, allowCredentials: [] } }); window.result = 'resolved'; } catch (e) { window.result = e.name; } };</script>" } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<!DOCTYPE html><script>window.modalGet = async function(rpId) { try { await navigator.credentials.get({ publicKey: { challenge: new Uint8Array(32), rpId: rpId, allowCredentials: [] } }); window.result = 'resolved'; } catch (e) { window.result = e.name; } };</script>"_s } },
         { wellKnownPath, { 200, { { "Content-Type"_s, "application/json"_s } }, makeString("{\"origins\":[\""_s, callerOrigin, "\"]}"_s) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -471,7 +471,7 @@ TEST(WebAuthnRelatedOriginsFetch, ModalGetWithCrossDomainRPID)
 TEST(WebAuthnRelatedOriginsFetch, ModalCreateWithCrossDomainRPID)
 {
     HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, @"<!DOCTYPE html><script>window.modalCreate = async function(rpId) { try { await navigator.credentials.create({ publicKey: { challenge: new Uint8Array(32), rp: { id: rpId, name: 'Test' }, user: { id: new Uint8Array(16), name: 'user', displayName: 'User' }, pubKeyCredParams: [{ type: 'public-key', alg: -7 }] } }); window.result = 'resolved'; } catch (e) { window.result = e.name; } };</script>" } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<!DOCTYPE html><script>window.modalCreate = async function(rpId) { try { await navigator.credentials.create({ publicKey: { challenge: new Uint8Array(32), rp: { id: rpId, name: 'Test' }, user: { id: new Uint8Array(16), name: 'user', displayName: 'User' }, pubKeyCredParams: [{ type: 'public-key', alg: -7 }] } }); window.result = 'resolved'; } catch (e) { window.result = e.name; } };</script>"_s } },
         { wellKnownPath, { 200, { { "Content-Type"_s, "application/json"_s } }, makeString("{\"origins\":[\""_s, callerOrigin, "\"]}"_s) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -503,7 +503,7 @@ TEST(WebAuthnRelatedOriginsFetch, UnauthorizedCallerConditionalCreateIsRejected)
     [delegate setShouldConsent:YES];
 
     HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, String { conditionalCreatePage() } } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(protect(conditionalCreatePage()).get()) } },
         { wellKnownPath, { 200, { { "Content-Type"_s, "application/json"_s } }, "{\"origins\":[\"https://other.example.org\"]}"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 

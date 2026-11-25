@@ -30,35 +30,35 @@
 namespace WebCore {
 
 struct ServerTiming {
-    String name;
+    RefPtr<StringImpl> name;
     double duration = 0;
-    String description;
+    RefPtr<StringImpl> description;
 
     bool durationSet = false;
     bool descriptionSet = false;
 
-    ServerTiming(String&& name);
-    ServerTiming(String&& name, double duration, String&& description);
-    ServerTiming(String&& name, double duration, String&& description, bool durationSet, bool descriptionSet);
+    ServerTiming(RefPtr<StringImpl>&& name);
+    ServerTiming(RefPtr<StringImpl>&& name, double duration, RefPtr<StringImpl>&& description);
+    ServerTiming(RefPtr<StringImpl>&& name, double duration, RefPtr<StringImpl>&& description, bool durationSet, bool descriptionSet);
 
-    void setParameter(const String&, const String&);
+    void setParameter(StringImpl*, StringImpl*);
     ServerTiming isolatedCopy() const &;
     ServerTiming isolatedCopy() &&;
 };
 
-inline ServerTiming::ServerTiming(String&& name)
+inline ServerTiming::ServerTiming(RefPtr<StringImpl>&& name)
     : name(WTF::move(name))
 {
 }
 
-inline ServerTiming::ServerTiming(String&& name, double duration, String&& description)
+inline ServerTiming::ServerTiming(RefPtr<StringImpl>&& name, double duration, RefPtr<StringImpl>&& description)
     : name(WTF::move(name))
     , duration(duration)
     , description(WTF::move(description))
 {
 }
 
-inline ServerTiming::ServerTiming(String&& name, double duration, String&& description, bool durationSet, bool descriptionSet)
+inline ServerTiming::ServerTiming(RefPtr<StringImpl>&& name, double duration, RefPtr<StringImpl>&& description, bool durationSet, bool descriptionSet)
     : name(WTF::move(name))
     , duration(duration)
     , description(WTF::move(description))

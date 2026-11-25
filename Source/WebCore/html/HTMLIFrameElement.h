@@ -42,11 +42,11 @@ public:
 
     DOMTokenList& sandbox();
 
-    String referrerPolicyForBindings() const;
+    RefPtr<StringImpl> referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
 
-    NODELETE String srcdoc() const;
-    ExceptionOr<void> setSrcdoc(Variant<Ref<TrustedHTML>, String>&&, SubstituteData::SessionHistoryVisibility = SubstituteData::SessionHistoryVisibility::Visible);
+    NODELETE RefPtr<StringImpl> srcdoc() const;
+    ExceptionOr<void> setSrcdoc(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&&, SubstituteData::SessionHistoryVisibility = SubstituteData::SessionHistoryVisibility::Visible);
     SubstituteData::SessionHistoryVisibility srcdocSessionHistoryVisibility() const { return m_srcdocSessionHistoryVisibility; };
 
     void loadDeferredFrame();
@@ -68,9 +68,9 @@ private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
     int defaultTabIndex() const final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 
     bool isInteractiveContent() const final { return true; }
 
@@ -83,7 +83,7 @@ private:
     bool isLazyLoadObserverActive() const final;
 
     const std::unique_ptr<DOMTokenList> m_sandbox;
-    AtomString m_deferredFrameURL;
+    RefPtr<AtomStringImpl> m_deferredFrameURL;
     ReferrerPolicy m_deferredReferrerPolicy { ReferrerPolicy::EmptyString };
     bool m_isLazyLoading { false };
 #if ENABLE(CONTENT_EXTENSIONS)

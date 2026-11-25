@@ -62,7 +62,7 @@ Color SVGStyleColorResolutionDelegate::currentColor() const
 
 } // anonymous namespace
 
-Color SVGPropertyTraits<Color>::fromString(SVGElement& targetElement, const String& string)
+Color SVGPropertyTraits<Color>::fromString(SVGElement& targetElement, StringImpl* string)
 {
     using namespace CSSPropertyParserHelpers;
 
@@ -83,12 +83,12 @@ Color SVGPropertyTraits<Color>::fromString(SVGElement& targetElement, const Stri
     return parseColorRawGeneral(trimmedString, cssParserContext, document, options, state);
 }
 
-int SVGPropertyTraits<int>::fromString(SVGElement&, const String& string)
+int SVGPropertyTraits<int>::fromString(SVGElement&, StringImpl* string)
 {
     return parseInteger<int>(string).value_or(0);
 }
 
-String SVGPropertyTraits<Color>::toString(const Color& type)
+RefPtr<StringImpl> SVGPropertyTraits<Color>::toString(const Color& type)
 {
     return serializationForHTML(type);
 }

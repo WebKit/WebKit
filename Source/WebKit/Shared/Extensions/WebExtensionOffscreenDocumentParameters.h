@@ -30,9 +30,9 @@
 namespace WebKit {
 
 struct WebExtensionOffscreenDocumentParameters {
-    String justification;
-    Vector<String> reasons;
-    String url;
+    RefPtr<StringImpl> justification;
+    Vector<RefPtr<StringImpl>> reasons;
+    RefPtr<StringImpl> url;
 };
 
 }

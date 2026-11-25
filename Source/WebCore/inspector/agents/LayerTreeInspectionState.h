@@ -56,8 +56,8 @@ public:
     ~LayerTreeInspectionState();
 
     Ref<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>> layersForRenderer(RenderElement&, NOESCAPE const NodeIdProvider&);
-    Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId&);
-    Inspector::CommandResult<String> requestContent(const Inspector::Protocol::LayerTree::LayerId&);
+    Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> reasonsForCompositingLayer(StringImpl* layerId);
+    Inspector::CommandResult<RefPtr<StringImpl>> requestContent(StringImpl* layerId);
 
     void renderLayerDestroyed(const RenderLayer&);
     void pseudoElementDestroyed(PseudoElement&);
@@ -69,11 +69,11 @@ private:
 
     Ref<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(RenderLayer*, const LocalFrameView& rootView, NOESCAPE const NodeIdProvider&);
 
-    String bind(const RenderLayer*);
+    RefPtr<StringImpl> bind(const RenderLayer*);
     void unbind(const RenderLayer*);
     void removeDestroyedLayers();
 
-    String bindPseudoElement(PseudoElement*);
+    RefPtr<StringImpl> bindPseudoElement(PseudoElement*);
     void unbindPseudoElement(PseudoElement*);
 
     const LayerTreeInspectionScope m_scope;

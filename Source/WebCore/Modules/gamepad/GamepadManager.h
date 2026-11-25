@@ -67,7 +67,7 @@ private:
     GamepadManager();
 
     void makeGamepadVisible(PlatformGamepad&, WeakHashSet<Navigator>&, WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData>&);
-    void dispatchGamepadEvent(const AtomString& eventName, PlatformGamepad&);
+    void dispatchGamepadEvent(AtomStringImpl* eventName, PlatformGamepad&);
 
     void maybeStartMonitoringGamepads();
     void maybeStopMonitoringGamepads();

@@ -30,7 +30,7 @@ namespace WebCore {
 
 std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTF::move(context), "PRIMARY"_s);
+    return makeUnique<Pasteboard>(WTF::move(context), "PRIMARY"_si);
 }
 
 
@@ -43,7 +43,7 @@ bool Pasteboard::canSmartReplace()
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
 {
-    text.text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain"_s);
+    text.text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain"_si);
 }
 
 } // namespace WebCore

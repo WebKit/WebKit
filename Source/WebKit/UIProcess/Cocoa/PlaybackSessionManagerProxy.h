@@ -92,7 +92,7 @@ public:
     void legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
     void audioMediaSelectionIndexChanged(uint64_t selectedIndex);
     void legibleMediaSelectionIndexChanged(uint64_t selectedIndex);
-    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&, const String&);
+    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, StringImpl*, StringImpl*);
     void wirelessVideoPlaybackDisabledChanged(bool);
     void mutedChanged(bool);
     void volumeChanged(double);
@@ -157,7 +157,7 @@ private:
     const std::optional<WebCore::VideoReceiverEndpointIdentifier>& videoReceiverEndpointIdentifier() const LIFETIME_BOUND { return m_videoReceiverEndpointIdentifier; }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    void setSpatialTrackingLabel(const String&) final;
+    void setSpatialTrackingLabel(StringImpl*) final;
 #endif
     void addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) final;
     void removeNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) final;
@@ -182,8 +182,8 @@ private:
     uint64_t legibleMediaSelectedIndex() const final { return m_legibleMediaSelectedIndex; }
     bool externalPlaybackEnabled() const final { return m_externalPlaybackEnabled; }
     PlaybackSessionModel::ExternalPlaybackTargetType externalPlaybackTargetType() const final { return m_externalPlaybackTargetType; }
-    String externalPlaybackLocalizedDeviceName() const final { return m_externalPlaybackLocalizedDeviceName; }
-    String externalPlaybackLocalizedRouteName() const final { return m_externalPlaybackLocalizedRouteName; }
+    RefPtr<StringImpl> externalPlaybackLocalizedDeviceName() const final { return m_externalPlaybackLocalizedDeviceName; }
+    RefPtr<StringImpl> externalPlaybackLocalizedRouteName() const final { return m_externalPlaybackLocalizedRouteName; }
     bool isMuted() const final { return m_muted; }
     double volume() const final { return m_volume; }
     bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
@@ -232,8 +232,8 @@ private:
     uint64_t m_legibleMediaSelectedIndex { 0 };
     bool m_externalPlaybackEnabled { false };
     PlaybackSessionModel::ExternalPlaybackTargetType m_externalPlaybackTargetType { PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone };
-    String m_externalPlaybackLocalizedDeviceName;
-    String m_externalPlaybackLocalizedRouteName;
+    RefPtr<StringImpl> m_externalPlaybackLocalizedDeviceName;
+    RefPtr<StringImpl> m_externalPlaybackLocalizedRouteName;
     bool m_wirelessVideoPlaybackDisabled { false };
     bool m_muted { false };
     double m_volume { 0 };
@@ -315,12 +315,12 @@ private:
     void legibleMediaSelectionOptionsChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);
     void audioMediaSelectionIndexChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, uint64_t selectedIndex);
     void legibleMediaSelectionIndexChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, uint64_t selectedIndex);
-    void externalPlaybackPropertiesChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName, String localizedRouteName);
+    void externalPlaybackPropertiesChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, RefPtr<StringImpl> localizedDeviceName, RefPtr<StringImpl> localizedRouteName);
     void wirelessVideoPlaybackDisabledChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
     void durationChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, double duration);
     void playbackStartedTimeChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, double playbackStartedTime);
     void rateChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, OptionSet<WebCore::PlaybackSessionModel::PlaybackState>, double rate, double defaultPlaybackRate);
-    void handleControlledElementIDResponse(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, String) const;
+    void handleControlledElementIDResponse(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, RefPtr<StringImpl>) const;
     void mutedChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool muted);
     void volumeChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, double volume);
     void pictureInPictureSupportedChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool pictureInPictureSupported);
@@ -371,7 +371,7 @@ private:
     NODELETE void setVideoReceiverEndpoint(PlaybackSessionContextIdentifier, const WebCore::VideoReceiverEndpoint&, WebCore::VideoReceiverEndpointIdentifier);
     NODELETE void swapVideoReceiverEndpoints(PlaybackSessionContextIdentifier, PlaybackSessionContextIdentifier);
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
+    void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, StringImpl*);
 #endif
     void addNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
     void removeNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);

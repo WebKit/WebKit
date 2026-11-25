@@ -121,17 +121,17 @@ public:
     }
 
 private:
-    void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount) override
+    void didCountStringMatches(WebPageProxy*, StringImpl*, uint32_t matchCount) override
     {
         g_signal_emit(m_findController, signals[COUNTED_MATCHES], 0, matchCount);
     }
 
-    void didFindString(WebPageProxy*, const String&, const Vector<IntRect>&, uint32_t matchCount, int32_t, bool /*didWrapAround*/) override
+    void didFindString(WebPageProxy*, StringImpl*, const Vector<IntRect>&, uint32_t matchCount, int32_t, bool /*didWrapAround*/) override
     {
         g_signal_emit(m_findController, signals[FOUND_TEXT], 0, matchCount);
     }
 
-    void didFailToFindString(WebPageProxy*, const String&) override
+    void didFailToFindString(WebPageProxy*, StringImpl*) override
     {
         g_signal_emit(m_findController, signals[FAILED_TO_FIND_TEXT], 0);
     }
@@ -375,7 +375,7 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
 {
     WebKitFindControllerPrivate* priv = findController->priv;
     if (operation == CountOperation) {
-        getPage(findController).countStringMatches(String { priv->searchText },
+        getPage(findController).countStringMatches(StringImpl::create(priv->searchText.span()).get(),
             priv->findOptions, priv->maxMatchCount);
         return;
     }
@@ -393,7 +393,7 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
         // extra unmarkAllTextMatches() + markAllTextMatches()
         findOptions.add(WebKit::FindOptions::ShowHighlight);
 
-    getPage(findController).findString(String { priv->searchText }, findOptions, priv->maxMatchCount);
+    getPage(findController).findString(StringImpl::create(priv->searchText.span()).get(), findOptions, priv->maxMatchCount);
 }
 
 static inline void webKitFindControllerSetSearchData(WebKitFindController* findController, const gchar* searchText, guint32 findOptions, guint maxMatchCount)

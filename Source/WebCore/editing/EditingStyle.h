@@ -99,7 +99,7 @@ public:
         return adoptRef(*new EditingStyle(style));
     }
 
-    static Ref<EditingStyle> create(CSSPropertyID propertyID, const String& value)
+    static Ref<EditingStyle> create(CSSPropertyID propertyID, StringImpl* value)
     {
         return adoptRef(*new EditingStyle(propertyID, value));
     }
@@ -166,7 +166,7 @@ public:
     void setStrikeThroughChange(TextDecorationChange change) { m_strikeThroughChange = static_cast<unsigned>(change); }
     TextDecorationChange strikeThroughChange() const { return static_cast<TextDecorationChange>(m_strikeThroughChange); }
 
-    WEBCORE_EXPORT bool hasStyle(CSSPropertyID, const String& value);
+    WEBCORE_EXPORT bool hasStyle(CSSPropertyID, StringImpl* value);
     WEBCORE_EXPORT bool fontWeightIsBold();
     WEBCORE_EXPORT bool fontStyleIsItalic();
     WEBCORE_EXPORT bool webkitTextDecorationsInEffectIsUnderline();
@@ -182,14 +182,14 @@ private:
     EditingStyle(const Position&, PropertiesToInclude);
     WEBCORE_EXPORT explicit EditingStyle(const CSSStyleProperties*);
     explicit EditingStyle(const StyleProperties*);
-    EditingStyle(CSSPropertyID, const String& value);
+    EditingStyle(CSSPropertyID, StringImpl* value);
     EditingStyle(CSSPropertyID, CSSValueID);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(const Style::ComputedStyle*);
     Ref<MutableStyleProperties> removeInlineStyleRedundantDueToMatchedRules(StyledElement&);
     void removeStyleInContextNotOverridenByMatchedRules(StyledElement&, Node*, MutableStyleProperties&);
     void removeDisplayPropertyFromSpanStyleIfRedundant(StyledElement&, MutableStyleProperties&);
-    void setProperty(CSSPropertyID, const String& value, IsImportant = IsImportant::No);
+    void setProperty(CSSPropertyID, StringImpl* value, IsImportant = IsImportant::No);
     void extractFontSizeDelta();
     template<typename T> TriState triStateOfStyle(T& styleToCompare, ShouldIgnoreTextOnlyProperties) const;
     bool conflictsWithInlineStyleOfElement(StyledElement&, RefPtr<MutableStyleProperties>* newInlineStyle, EditingStyle* extractedStyle) const;
@@ -221,13 +221,13 @@ public:
     bool applyLineThrough() const { return m_applyLineThrough; }
     bool applySubscript() const { return m_applySubscript; }
     bool applySuperscript() const { return m_applySuperscript; }
-    bool applyFontColor() const { return m_applyFontColor.length() > 0; }
-    bool applyFontFace() const { return m_applyFontFace.length() > 0; }
-    bool applyFontSize() const { return m_applyFontSize.length() > 0; }
+    bool applyFontColor() const { return length(m_applyFontColor) > 0; }
+    bool applyFontFace() const { return length(m_applyFontFace) > 0; }
+    bool applyFontSize() const { return length(m_applyFontSize) > 0; }
 
-    const AtomString& fontColor() const LIFETIME_BOUND { return m_applyFontColor; }
-    const AtomString& fontFace() const LIFETIME_BOUND { return m_applyFontFace; }
-    const AtomString& fontSize() const LIFETIME_BOUND { return m_applyFontSize; }
+    const RefPtr<AtomStringImpl>& fontColor() const LIFETIME_BOUND { return m_applyFontColor; }
+    const RefPtr<AtomStringImpl>& fontFace() const LIFETIME_BOUND { return m_applyFontFace; }
+    const RefPtr<AtomStringImpl>& fontSize() const LIFETIME_BOUND { return m_applyFontSize; }
 
     bool operator==(const StyleChange&);
 
@@ -241,9 +241,9 @@ private:
     bool m_applyLineThrough = false;
     bool m_applySubscript = false;
     bool m_applySuperscript = false;
-    AtomString m_applyFontColor;
-    AtomString m_applyFontFace;
-    AtomString m_applyFontSize;
+    RefPtr<AtomStringImpl> m_applyFontColor;
+    RefPtr<AtomStringImpl> m_applyFontFace;
+    RefPtr<AtomStringImpl> m_applyFontSize;
 };
 
 } // namespace WebCore

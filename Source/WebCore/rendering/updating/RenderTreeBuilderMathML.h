@@ -45,7 +45,7 @@ public:
 
 private:
     void makeFences(RenderMathMLFenced& parent);
-    RenderPtr<RenderMathMLFencedOperator> createMathMLOperator(RenderMathMLFenced& parent, const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
+    RenderPtr<RenderMathMLFencedOperator> createMathMLOperator(RenderMathMLFenced& parent, StringImpl* operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
 
     RenderTreeBuilder& m_builder;
 };

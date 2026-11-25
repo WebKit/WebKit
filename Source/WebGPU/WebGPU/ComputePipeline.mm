@@ -56,7 +56,7 @@ static MTLComputePipelineDescriptor *createComputePipelineDescriptor(id<MTLFunct
     return computePipelineDescriptor;
 }
 
-static std::optional<MTLSize> metalSize(WGSL::ShaderModule& shaderModule, auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
+static std::optional<MTLSize> metalSize(WGSL::ShaderModule& shaderModule, auto workgroupSize, const HashMap<RefPtr<StringImpl>, WGSL::ConstantValue>& wgslConstantValues)
 {
     auto width = WGSL::evaluate(shaderModule, *workgroupSize.width, wgslConstantValues);
     auto height = workgroupSize.height ? WGSL::evaluate(shaderModule, *workgroupSize.height, wgslConstantValues) : 1;
@@ -104,8 +104,8 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
         return callback(returnInvalidComputePipeline(*this, isAsync, @"GPUDevice.createComputePipeline: Pipeline layout is invalid"));
 
     auto& deviceLimits = limits();
-    auto label = descriptor.label.createNSString();
-    auto entryPointName = descriptor.compute.entryPoint.isNull() ? shaderModule->defaultComputeEntryPoint() : descriptor.compute.entryPoint;
+    auto label = createNSString(descriptor.label);
+    auto entryPointName = !descriptor.compute.entryPoint ? shaderModule->defaultComputeEntryPoint() : descriptor.compute.entryPoint;
     NSError *error;
     BufferBindingSizesForPipeline minimumBufferSizes;
     auto preparedLibrary = prepareLibrary(shaderModule.get(), pipelineLayout.get(), entryPointName, label.get(), descriptor.compute.constants, minimumBufferSizes, &error);
@@ -172,7 +172,7 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
             auto errorReporting = scopedErrorReporting(protectedThis, suppressErrors);
 
             if (!computePipelineState) {
-                protectedThis->generateAnOutOfMemoryError("Compute pipeline failed compilation likely due to being too complex, please reduce its size"_s);
+                protectedThis->generateAnOutOfMemoryError("Compute pipeline failed compilation likely due to being too complex, please reduce its size"_si);
                 return callback(returnInvalidComputePipeline(protectedThis, isAsync, @"GPUCompuePipeline could not compile"));
             }
 
@@ -186,7 +186,7 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
 static CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)> asyncComputePipelineCompletion(Device& device, CompletionHandler<void(std::expected<Ref<WebGPU::ComputePipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     return [protectedDevice = protect(device), callback = WTF::move(callback)](std::pair<Ref<ComputePipeline>, NSString*>&& pipelineAndError) mutable {
-        auto reportResult = [protectedDevice, callback = WTF::move(callback), pipeline = WTF::move(pipelineAndError.first), message = String { pipelineAndError.second }]() mutable {
+        auto reportResult = [protectedDevice, callback = WTF::move(callback), pipeline = WTF::move(pipelineAndError.first), message = StringImpl::create(pipelineAndError.second)]() mutable {
             // A lost device makes invalid objects without errors.
             if (pipeline->isValid() || protectedDevice->isDestroyed())
                 return callback(Ref<WebGPU::ComputePipeline> { WTF::move(pipeline) });
@@ -242,14 +242,14 @@ Ref<WebGPU::BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupI
     Ref pipelineLayout = m_pipelineLayout;
 
     if (!isValid()) {
-        device->generateAValidationError("getBindGroupLayout: ComputePipeline is invalid"_s);
+        device->generateAValidationError("getBindGroupLayout: ComputePipeline is invalid"_si);
         pipelineLayout->makeInvalid();
         return BindGroupLayout::createInvalid(device);
     }
 
     if (groupIndex >= pipelineLayout->numberOfBindGroupLayouts()) {
         if (groupIndex >= device->limits().maxBindGroups) {
-            device->generateAValidationError("getBindGroupLayout: groupIndex is out of range"_s);
+            device->generateAValidationError("getBindGroupLayout: groupIndex is out of range"_si);
             pipelineLayout->makeInvalid();
         }
         return BindGroupLayout::createInvalid(device);
@@ -258,7 +258,7 @@ Ref<WebGPU::BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupI
     return pipelineLayout->bindGroupLayout(groupIndex);
 }
 
-void ComputePipeline::setLabel(String&&)
+void ComputePipeline::setLabel(RefPtr<StringImpl>&&)
 {
     // MTLComputePipelineState's labels are read-only.
 }

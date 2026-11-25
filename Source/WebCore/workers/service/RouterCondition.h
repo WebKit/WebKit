@@ -51,7 +51,7 @@ struct RouterCondition {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RouterCondition);
 
     std::optional<URLPattern::Compatible> urlPattern;
-    String requestMethod;
+    RefPtr<StringImpl> requestMethod;
     std::optional<FetchRequestMode> requestMode;
     std::optional<FetchRequestDestination> requestDestination;
     std::optional<RunningStatus> runningStatus;

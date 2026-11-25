@@ -65,9 +65,9 @@ Ref<JSON::Object> RemoteAnimation::toJSONForTesting() const
         Ref convertedKeyframes = JSON::Array::create();
         for (auto& keyframe : borrow(keyframes)) {
             Ref convertedKeyframe = WebKit::toJSONForTesting(keyframe.values(), keyframe.animatedProperties());
-            convertedKeyframe->setDouble("offset"_s, keyframe.offset());
-            convertedKeyframe->setValue("composite"_s, WebKit::toJSONForTesting(keyframe.compositeOperation()));
-            convertedKeyframe->setValue("easing"_s, WebKit::toJSONForTesting(keyframe.timingFunction()));
+            convertedKeyframe->setDouble("offset"_si, keyframe.offset());
+            convertedKeyframe->setValue("composite"_si, WebKit::toJSONForTesting(keyframe.compositeOperation()));
+            convertedKeyframe->setValue("easing"_si, WebKit::toJSONForTesting(keyframe.timingFunction()));
             convertedKeyframes->pushObject(WTF::move(convertedKeyframe));
         }
         return convertedKeyframes;
@@ -76,17 +76,17 @@ Ref<JSON::Object> RemoteAnimation::toJSONForTesting() const
     auto resolvedTiming = m_effect->resolvedTimingForTesting(m_timeline->currentTime(), m_timeline->duration());
 
     Ref object = JSON::Object::create();
-    object->setValue("composite"_s, WebKit::toJSONForTesting(m_effect->compositeOperation()));
-    object->setBoolean("paused"_s, m_effect->paused());
-    object->setDouble("playbackRate"_s, m_effect->playbackRate());
-    object->setValue("startTime"_s, WebKit::toJSONForTesting(m_effect->startTime()));
-    object->setValue("holdTime"_s, WebKit::toJSONForTesting(m_effect->holdTime()));
-    object->setArray("properties"_s, convertProperties(animatedProperties()));
-    object->setArray("keyframes"_s, convertKeyframes(keyframes()));
-    object->setObject("timing"_s, WebKit::toJSONForTesting(m_effect->timing()));
-    object->setObject("timeline"_s, m_timeline->toJSONForTesting());
+    object->setValue("composite"_si, WebKit::toJSONForTesting(m_effect->compositeOperation()));
+    object->setBoolean("paused"_si, m_effect->paused());
+    object->setDouble("playbackRate"_si, m_effect->playbackRate());
+    object->setValue("startTime"_si, WebKit::toJSONForTesting(m_effect->startTime()));
+    object->setValue("holdTime"_si, WebKit::toJSONForTesting(m_effect->holdTime()));
+    object->setArray("properties"_si, convertProperties(animatedProperties()));
+    object->setArray("keyframes"_si, convertKeyframes(keyframes()));
+    object->setObject("timing"_si, WebKit::toJSONForTesting(m_effect->timing()));
+    object->setObject("timeline"_si, m_timeline->toJSONForTesting());
     if (auto progress = resolvedTiming.transformedProgress)
-        object->setDouble("progress"_s, *progress);
+        object->setDouble("progress"_si, *progress);
     return object;
 }
 

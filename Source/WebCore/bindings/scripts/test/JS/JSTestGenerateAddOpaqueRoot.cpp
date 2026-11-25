@@ -96,7 +96,7 @@ template<> JSValue JSTestGenerateAddOpaqueRootDOMConstructor::prototypeForStruct
 template<> void JSTestGenerateAddOpaqueRootDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    JSString* nameString = jsNontrivialString(vm, "TestGenerateAddOpaqueRoot"_s);
+    JSString* nameString = jsNontrivialString(vm, "TestGenerateAddOpaqueRoot"_si);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->prototype, JSTestGenerateAddOpaqueRoot::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);

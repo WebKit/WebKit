@@ -69,7 +69,7 @@ public:
     void setOverrideCursor(HCURSOR);
     void setScrollOffsetOnNextResize(const WebCore::IntSize&);
     void initialize();
-    void setToolTip(const String&);
+    void setToolTip(StringImpl*);
     void setUsesOffscreenRendering(bool);
     bool usesOffscreenRendering() const;
 
@@ -125,12 +125,12 @@ private:
     void updateChildWindowGeometries();
 
     void didCommitLoadForMainFrame(bool useCustomRepresentation);
-    void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, std::span<const uint8_t>);
+    void didFinishLoadingDataForCustomRepresentation(StringImpl* suggestedFilename, std::span<const uint8_t>);
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
 
-    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
-    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
+    virtual void findStringInCustomRepresentation(StringImpl*, FindOptions, unsigned maxMatchCount);
+    virtual void countStringMatchesInCustomRepresentation(StringImpl*, FindOptions, unsigned maxMatchCount);
 
     virtual HWND nativeWindow();
 
@@ -140,7 +140,7 @@ private:
     HWND m_window { nullptr };
     HWND m_topLevelParentWindow { nullptr };
     HWND m_toolTipWindow { nullptr };
-    WTF::String m_toolTip;
+    RefPtr<StringImpl> m_toolTip;
 
     WebCore::IntSize m_nextResizeScrollOffset;
 

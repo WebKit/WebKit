@@ -39,10 +39,10 @@ class CSSCustomIdentValue;
 namespace Style {
 
 struct CustomIdent {
-    AtomString value;
+    RefPtr<AtomStringImpl> value;
 
     bool operator==(const CustomIdent&) const = default;
-    bool operator==(const AtomString& other) const { return value == other; }
+    bool operator==(AtomStringImpl* other) const { return value == other; }
 };
 
 // MARK: - Conversion
@@ -82,7 +82,7 @@ namespace WTF {
 
 template<>
 struct MarkableTraits<WebCore::Style::CustomIdent> {
-    static bool isEmptyValue(const WebCore::Style::CustomIdent& value) { return value.value.isNull(); }
+    static bool isEmptyValue(const WebCore::Style::CustomIdent& value) { return !value.value; }
     static WebCore::Style::CustomIdent emptyValue() { return WebCore::Style::CustomIdent { nullAtom() }; }
 };
 
@@ -91,10 +91,10 @@ struct HashTraits<WebCore::Style::CustomIdent> : GenericHashTraits<WebCore::Styl
     using EmptyValueType = WebCore::Style::CustomIdent;
     static constexpr bool emptyValueIsZero = true;
     static constexpr bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const WebCore::Style::CustomIdent& value) { return value.value.isNull(); }
+    static bool isEmptyValue(const WebCore::Style::CustomIdent& value) { return !value.value; }
     static EmptyValueType emptyValue() { return WebCore::Style::CustomIdent { nullAtom() }; }
 
-    static void constructDeletedValue(WebCore::Style::CustomIdent& value) { new (NotNull, std::addressof(value.value)) AtomString { HashTableDeletedValue }; }
+    static void constructDeletedValue(WebCore::Style::CustomIdent& value) { new (NotNull, std::addressof(value.value)) RefPtr<AtomStringImpl> { HashTableDeletedValue }; }
     static bool isDeletedValue(const WebCore::Style::CustomIdent& value) { return value.value.isHashTableDeletedValue(); }
 };
 

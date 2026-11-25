@@ -200,8 +200,8 @@ void ImageDocument::finishedParsing()
         if (size.width()) {
             // Compute the title. We use the decoded filename of the resource, falling
             // back on the hostname if there is no path.
-            String name = PAL::decodeURLEscapeSequences(url().lastPathComponent());
-            if (name.isEmpty())
+            RefPtr<StringImpl> name = PAL::decodeURLEscapeSequences(url().lastPathComponent());
+            if (isEmpty(name))
                 name = url().host().toString();
             setTitle(imageTitle(name, size));
         }
@@ -250,7 +250,7 @@ Ref<DocumentParser> ImageDocument::createParser()
 void ImageDocument::createDocumentStructure()
 {
     Ref rootElement = HTMLHtmlElement::create(*this);
-    rootElement->setAttribute(styleAttr, "color-scheme: light dark; height: 100%"_s);
+    rootElement->setAttribute(styleAttr, "color-scheme: light dark; height: 100%"_atom);
     appendChild(rootElement);
 
     if (RefPtr localFrame = frame())
@@ -262,18 +262,18 @@ void ImageDocument::createDocumentStructure()
 
     RefPtr documentLoader = loader();
     Ref body = HTMLBodyElement::create(*this);
-    body->setAttribute(styleAttr, "margin: 0px; height: 100%"_s);
+    body->setAttribute(styleAttr, "margin: 0px; height: 100%"_atom);
     if (documentLoader && MIMETypeRegistry::isPDFMIMEType(documentLoader->responseMIMEType()))
-        body->setInlineStyleProperty(CSSPropertyID::BackgroundColor, "white"_s);
+        body->setInlineStyleProperty(CSSPropertyID::BackgroundColor, "white"_si);
     rootElement->appendChild(body);
     
     Ref imageElement = ImageDocumentElement::create(*this);
     if (m_shouldShrinkImage)
-        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; margin:auto; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_s);
+        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; margin:auto; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_atom);
     else
-        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_s);
+        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_atom);
     imageElement->setLoadManually(true);
-    imageElement->setAttributeWithoutSynchronization(srcAttr, AtomString { url().string() });
+    imageElement->setAttributeWithoutSynchronization(srcAttr, AtomStringImpl::add(url().string()).get());
     if (RefPtr cachedImage = imageElement->cachedImage(); documentLoader && cachedImage)
         cachedImage->setResponse(ResourceResponse { documentLoader->response() });
     body->appendChild(imageElement);
@@ -282,7 +282,7 @@ void ImageDocument::createDocumentStructure()
     if (m_shouldShrinkImage) {
 #if PLATFORM(IOS_FAMILY)
         // Set the viewport to be in device pixels (rather than the default of 980).
-        processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::Type::ImageDocument);
+        processViewport("width=device-width,viewport-fit=cover"_si, ViewportArguments::Type::ImageDocument);
 #else
         Ref listener = ImageEventListener::create(*this);
         imageElement->addEventListener(eventNames().clickEvent, WTF::move(listener));

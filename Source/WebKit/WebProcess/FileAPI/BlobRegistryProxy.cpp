@@ -39,21 +39,21 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobRegistryProxy);
 
-void BlobRegistryProxy::registerInternalFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, const String& path, const String& contentType)
+void BlobRegistryProxy::registerInternalFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, StringImpl* path, StringImpl* contentType)
 {
     SandboxExtension::Handle extensionHandle;
 
     // File path can be empty when submitting a form file input without a file, see bug 111778.
-    if (!file->path().isEmpty()) {
+    if (!isEmpty(file->path())) {
         if (auto handle = SandboxExtension::createHandle(file->path(), SandboxExtension::Type::ReadOnly))
             extensionHandle = WTF::move(*handle);
     }
 
-    String replacementPath = path == file->path() ? nullString() : file->path();
+    RefPtr<StringImpl> replacementPath = equal(path, file->path()) ? nullString() : file->path();
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::RegisterInternalFileBlobURL(url, path, replacementPath, WTF::move(extensionHandle), contentType), 0);
 }
 
-void BlobRegistryProxy::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
+void BlobRegistryProxy::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, StringImpl* contentType)
 {
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::RegisterInternalBlobURL(url, blobParts, contentType), 0);
 }
@@ -63,7 +63,7 @@ void BlobRegistryProxy::registerBlobURL(const URL& url, const URL& srcURL, const
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURL { url, srcURL, policyContainer, topOrigin }, 0);
 }
 
-void BlobRegistryProxy::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& file, const String& contentType)
+void BlobRegistryProxy::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& file, StringImpl* contentType)
 {
     ASSERT(file);
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::RegisterInternalBlobURLOptionallyFileBacked(url, srcURL, file->path(), contentType), 0);
@@ -74,7 +74,7 @@ void BlobRegistryProxy::unregisterBlobURL(const URL& url, const std::optional<Se
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURL(url, topOrigin), 0);
 }
 
-void BlobRegistryProxy::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType)
+void BlobRegistryProxy::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, StringImpl* contentType)
 {
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::RegisterInternalBlobURLForSlice(url, srcURL, start, end, contentType), 0);
 }
@@ -89,7 +89,7 @@ void BlobRegistryProxy::unregisterBlobURLHandle(const URL& url, const std::optio
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURLHandle(url, topOrigin), 0);
 }
 
-String BlobRegistryProxy::blobType(const URL& url)
+RefPtr<StringImpl> BlobRegistryProxy::blobType(const URL& url)
 {
     auto sendResult = protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendSync(Messages::NetworkConnectionToWebProcess::BlobType(url), 0);
     auto [result] = sendResult.takeReplyOr(emptyString());
@@ -103,7 +103,7 @@ unsigned long long BlobRegistryProxy::blobSize(const URL& url)
     return resultSize;
 }
 
-void BlobRegistryProxy::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
+void BlobRegistryProxy::writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&& filePaths)>&& completionHandler)
 {
     protect(WebProcess::singleton().ensureNetworkProcessConnection())->writeBlobsToTemporaryFilesForIndexedDB(blobURLs, WTF::move(completionHandler));
 }

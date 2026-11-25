@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePayCouponCodeChangedEvent);
 
-ApplePayCouponCodeChangedEvent::ApplePayCouponCodeChangedEvent(const AtomString& type, String&& couponCode)
+ApplePayCouponCodeChangedEvent::ApplePayCouponCodeChangedEvent(AtomStringImpl* type, RefPtr<StringImpl>&& couponCode)
     : Event(EventInterfaceType::ApplePayCouponCodeChangedEvent, type, CanBubble::No, IsCancelable::No)
     , m_couponCode(WTF::move(couponCode))
 {

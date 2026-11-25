@@ -30,6 +30,7 @@
 #include <span>
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringFunctions.h>
 
 namespace WTF {
 
@@ -203,7 +204,7 @@ private:
     {
         auto cacheBuffer = this->cacheBuffer();
         for (size_t i = m_size; i-- > 0;) {
-            if (cacheBuffer[i].first == key) {
+            if (contentEquals(cacheBuffer[i].first, key)) {
                 if (i < m_size - 1) {
                     auto entry = WTF::move(cacheBuffer[i]);
                     do {

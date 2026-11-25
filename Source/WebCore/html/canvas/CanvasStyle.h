@@ -54,7 +54,7 @@ public:
     CanvasStyle(Ref<CanvasPattern>&&);
 
     Color color() const;
-    String colorString() const;
+    RefPtr<StringImpl> colorString() const;
     RefPtr<CanvasGradient> canvasGradient() const;
     RefPtr<CanvasPattern> canvasPattern() const;
     bool isGradientOrPattern() const { return !std::holds_alternative<Color>(m_style); }
@@ -108,8 +108,8 @@ private:
     bool m_isCacheable;
 };
 
-ParsedCanvasColor parseColor(const String& colorString, CanvasBase&);
-ParsedCanvasColor parseColor(const String& colorString, ScriptExecutionContext&);
+ParsedCanvasColor parseColor(StringImpl* colorString, CanvasBase&);
+ParsedCanvasColor parseColor(StringImpl* colorString, ScriptExecutionContext&);
 
 inline CanvasStyle::CanvasStyle(Color color)
     : m_style(WTF::move(color))
@@ -140,10 +140,10 @@ inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
     return std::get<Ref<CanvasPattern>>(m_style).ptr();
 }
 
-inline String CanvasStyle::colorString() const
+inline RefPtr<StringImpl> CanvasStyle::colorString() const
 {
     if (!std::holds_alternative<Color>(m_style))
-        return String();
+        return nullptr;
     return serializationForHTML(std::get<Color>(m_style));
 }
 

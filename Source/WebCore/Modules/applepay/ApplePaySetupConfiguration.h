@@ -33,10 +33,10 @@
 namespace WebCore {
 
 struct ApplePaySetupConfiguration {
-    String merchantIdentifier;
-    String referrerIdentifier;
-    String signature;
-    Vector<String> signedFields;
+    RefPtr<StringImpl> merchantIdentifier;
+    RefPtr<StringImpl> referrerIdentifier;
+    RefPtr<StringImpl> signature;
+    Vector<RefPtr<StringImpl>> signedFields;
 };
 
 } // namespace WebCore

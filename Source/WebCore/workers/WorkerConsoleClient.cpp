@@ -77,7 +77,7 @@ WorkerConsoleClient::~WorkerConsoleClient() = default;
 
 void WorkerConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::JSGlobalObject* exec, Ref<Inspector::ScriptArguments>&& arguments)
 {
-    String messageText;
+    RefPtr<StringImpl> messageText;
     bool messageIsFirstArgument = arguments->getFirstArgumentAsString(messageText);
 
     auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), exec);
@@ -94,56 +94,56 @@ void WorkerConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel
         domGlobalObject->invokeScriptErrorCallbacks(messageText, url, line, column);
 }
 
-void WorkerConsoleClient::count(JSC::JSGlobalObject* exec, const String& label)
+void WorkerConsoleClient::count(JSC::JSGlobalObject* exec, StringImpl* label)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::consoleCount(*worker, exec, label);
 }
 
-void WorkerConsoleClient::countReset(JSC::JSGlobalObject* exec, const String& label)
+void WorkerConsoleClient::countReset(JSC::JSGlobalObject* exec, StringImpl* label)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::consoleCountReset(*worker, exec, label);
 }
 
-void WorkerConsoleClient::time(JSC::JSGlobalObject* exec, const String& label)
+void WorkerConsoleClient::time(JSC::JSGlobalObject* exec, StringImpl* label)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::startConsoleTiming(*worker, exec, label);
 }
 
-void WorkerConsoleClient::timeLog(JSC::JSGlobalObject* exec, const String& label, Ref<ScriptArguments>&& arguments)
+void WorkerConsoleClient::timeLog(JSC::JSGlobalObject* exec, StringImpl* label, Ref<ScriptArguments>&& arguments)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::logConsoleTiming(*worker, exec, label, WTF::move(arguments));
 }
 
-void WorkerConsoleClient::timeEnd(JSC::JSGlobalObject* exec, const String& label)
+void WorkerConsoleClient::timeEnd(JSC::JSGlobalObject* exec, StringImpl* label)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::stopConsoleTiming(*worker, exec, label);
 }
 
-void WorkerConsoleClient::profile(JSC::JSGlobalObject*, const String& title)
+void WorkerConsoleClient::profile(JSC::JSGlobalObject*, StringImpl* title)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::startProfiling(*worker, title);
 }
 
-void WorkerConsoleClient::profileEnd(JSC::JSGlobalObject*, const String& title)
+void WorkerConsoleClient::profileEnd(JSC::JSGlobalObject*, StringImpl* title)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
         InspectorInstrumentation::stopProfiling(*worker, title);
 }
 
-void WorkerConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)
+void WorkerConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, StringImpl* title)
 {
     // FIXME: <https://webkit.org/b/217724> Add support for WorkletGlobalScope.
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(m_globalScope.get()))
@@ -216,7 +216,7 @@ void WorkerConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, R
         return;
 
     JSC::VM& vm = lexicalGlobalObject->vm();
-    String dataURL;
+    RefPtr<StringImpl> dataURL;
     JSC::JSValue target;
 
     auto timestamp = WallTime::now();
@@ -229,14 +229,14 @@ void WorkerConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, R
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
                 if (RefPtr imageBuffer = ImageBuffer::create(imageData->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8)) {
                     imageBuffer->putPixelBuffer(imageData->byteArrayPixelBuffer().get(), IntRect(IntPoint(), imageData->size()));
-                    dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
+                    dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_si);
                 }
             }
         } else if (RefPtr imageBitmap = JSImageBitmap::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
                 if (RefPtr imageBuffer = imageBitmap->buffer())
-                    dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
+                    dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_si);
             }
         } else if (RefPtr context = canvasRenderingContext(vm, possibleTarget)) {
             target = possibleTarget;
@@ -245,8 +245,8 @@ void WorkerConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, R
                     dataURL = result.value();
             }
         } else {
-            String base64;
-            if (possibleTarget.getString(lexicalGlobalObject, base64) && base64.length() > 5 && startsWithLettersIgnoringASCIICase(base64, "data:"_s)) {
+            RefPtr<StringImpl> base64;
+            if (possibleTarget.getString(lexicalGlobalObject, base64) && length(base64) > 5 && startsWithLettersIgnoringASCIICase(base64, "data:"_s)) {
                 target = possibleTarget;
                 dataURL = base64;
             }
@@ -254,14 +254,14 @@ void WorkerConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, R
     }
 
     if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-        if (dataURL.isEmpty()) {
-            InspectorInstrumentation::addMessageToConsole(protect(globalScope()), makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Error, "Could not capture screenshot"_s, WTF::move(arguments)));
+        if (isEmpty(dataURL)) {
+            InspectorInstrumentation::addMessageToConsole(protect(globalScope()), makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Error, "Could not capture screenshot"_si, WTF::move(arguments)));
             return;
         }
     }
 
     Vector<JSC::Strong<JSC::Unknown>> adjustedArguments(ReserveCapacityTag { }, arguments->argumentCount() + !target);
-    adjustedArguments.append({ vm, target ? target : JSC::jsNontrivialString(vm, "Viewport"_s) });
+    adjustedArguments.append({ vm, target ? target : JSC::jsNontrivialString(vm, "Viewport"_si) });
     for (size_t i = (!target ? 0 : 1); i < arguments->argumentCount(); ++i)
         adjustedArguments.append({ vm, arguments->argumentAt(i) });
     InspectorInstrumentation::addMessageToConsole(protect(globalScope()), makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL, ScriptArguments::create(lexicalGlobalObject, WTF::move(adjustedArguments)), lexicalGlobalObject, /* requestIdentifier */ 0, timestamp));

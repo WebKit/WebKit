@@ -69,10 +69,10 @@ IDBKey::IDBKey(IndexedDB::KeyType type, double number)
 {
 }
 
-IDBKey::IDBKey(const String& value)
+IDBKey::IDBKey(StringImpl* value)
     : m_type(IndexedDB::KeyType::String)
     , m_value(value)
-    , m_sizeEstimate(OverheadSize + value.length() * sizeof(char16_t))
+    , m_sizeEstimate(OverheadSize + length(value) * sizeof(char16_t))
 {
 }
 
@@ -125,7 +125,7 @@ std::weak_ordering IDBKey::compare(const IDBKey& other) const
     case IndexedDB::KeyType::Binary:
         return compareBinaryKeyData(std::get<ThreadSafeDataBuffer>(m_value), std::get<ThreadSafeDataBuffer>(other.m_value));
     case IndexedDB::KeyType::String:
-        return codePointCompare(std::get<String>(m_value), std::get<String>(other.m_value));
+        return codePointCompare(std::get<RefPtr<StringImpl>>(m_value), std::get<RefPtr<StringImpl>>(other.m_value));
     case IndexedDB::KeyType::Date:
     case IndexedDB::KeyType::Number:
         return weakOrderingCast(std::get<double>(m_value) <=> std::get<double>(other.m_value));
@@ -151,7 +151,7 @@ bool IDBKey::isEqual(const IDBKey& other) const
 }
 
 #if !LOG_DISABLED
-String IDBKey::loggingString() const
+RefPtr<StringImpl> IDBKey::loggingString() const
 {
     return IDBKeyData(this).loggingString();
 }

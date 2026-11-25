@@ -115,10 +115,10 @@ private:
         WTF_MAKE_TZONE_ALLOCATED(HostInformation);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HostInformation);
     public:
-        HostInformation(const String&, unsigned);
+        HostInformation(StringImpl*, unsigned);
         ~HostInformation();
         
-        const String& name() const LIFETIME_BOUND { return m_name; }
+        const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
         void schedule(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriority::VeryLow);
         void addLoadInProgress(WebCore::ResourceLoader*);
         void remove(WebCore::ResourceLoader*);
@@ -134,7 +134,7 @@ private:
         std::array<RequestQueue, WebCore::resourceLoadPriorityCount> m_requestsPending;
         typedef HashSet<RefPtr<WebCore::ResourceLoader>> RequestMap;
         RequestMap m_requestsLoading;
-        const String m_name;
+        const RefPtr<StringImpl> m_name;
         const unsigned m_maxRequestsInFlight;
     };
 
@@ -146,7 +146,7 @@ private:
     CheckedPtr<HostInformation> hostForURL(const URL&, CreateHostPolicy = FindOnly);
     void servePendingRequests(CheckedRef<HostInformation>&&, WebCore::ResourceLoadPriority);
 
-    typedef HashMap<String, std::unique_ptr<HostInformation>, StringHash> HostMap;
+    typedef HashMap<RefPtr<StringImpl>, std::unique_ptr<HostInformation>, StringHash> HostMap;
     HostMap m_hosts;
     const UniqueRef<HostInformation> m_nonHTTPProtocolHost;
         

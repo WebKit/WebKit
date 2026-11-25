@@ -35,21 +35,21 @@ class SpeechRecognitionErrorEvent final : public Event {
 public:
     struct Init : EventInit {
         SpeechRecognitionErrorCode error;
-        String message;
+        RefPtr<StringImpl> message;
     };
 
-    NODELETE static Ref<SpeechRecognitionErrorEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    NODELETE static Ref<SpeechRecognitionErrorEvent> create(const AtomString&, SpeechRecognitionErrorCode, const String&);
+    NODELETE static Ref<SpeechRecognitionErrorEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<SpeechRecognitionErrorEvent> create(AtomStringImpl*, SpeechRecognitionErrorCode, StringImpl*);
 
     SpeechRecognitionErrorCode error() const { return m_error; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
 
 private:
-    SpeechRecognitionErrorEvent(const AtomString&, Init&&, IsTrusted);
-    SpeechRecognitionErrorEvent(const AtomString&, SpeechRecognitionErrorCode, const String&);
+    SpeechRecognitionErrorEvent(AtomStringImpl*, Init&&, IsTrusted);
+    SpeechRecognitionErrorEvent(AtomStringImpl*, SpeechRecognitionErrorCode, StringImpl*);
 
     SpeechRecognitionErrorCode m_error;
-    String m_message;
+    RefPtr<StringImpl> m_message;
 
 };
 

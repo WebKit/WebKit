@@ -55,7 +55,7 @@ public:
     void didCloseWebSocket() const;
     void didReceiveWebSocketFrame(const WebSocketFrame&) const;
     void didSendWebSocketFrame(const WebSocketFrame&) const;
-    void didReceiveWebSocketFrameError(const String& errorMessage) const;
+    void didReceiveWebSocketFrameError(StringImpl* errorMessage) const;
 
     WebSocketChannelIdentifier progressIdentifier() const { return m_progressIdentifier; }
 

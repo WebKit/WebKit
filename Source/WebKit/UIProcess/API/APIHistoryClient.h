@@ -41,9 +41,9 @@ public:
     virtual ~HistoryClient() { }
 
     virtual void didNavigateWithNavigationData(WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&) { }
-    virtual void didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&) { }
-    virtual void didPerformServerRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&) { }
-    virtual void didUpdateHistoryTitle(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&) { }
+    virtual void didPerformClientRedirect(WebKit::WebPageProxy&, StringImpl*, StringImpl*) { }
+    virtual void didPerformServerRedirect(WebKit::WebPageProxy&, StringImpl*, StringImpl*) { }
+    virtual void didUpdateHistoryTitle(WebKit::WebPageProxy&, StringImpl*, StringImpl*) { }
 };
 
 } // namespace API

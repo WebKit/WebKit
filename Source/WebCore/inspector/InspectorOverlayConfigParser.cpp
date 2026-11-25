@@ -37,24 +37,24 @@ std::optional<Color> parseInspectorColor(RefPtr<JSON::Object>&& colorObject)
     if (!colorObject)
         return std::nullopt;
 
-    auto r = colorObject->getInteger("r"_s);
-    auto g = colorObject->getInteger("g"_s);
-    auto b = colorObject->getInteger("b"_s);
+    auto r = colorObject->getInteger("r"_si);
+    auto g = colorObject->getInteger("g"_si);
+    auto b = colorObject->getInteger("b"_si);
     if (!r || !g || !b)
         return std::nullopt;
 
-    auto a = colorObject->getDouble("a"_s);
+    auto a = colorObject->getDouble("a"_si);
     if (!a)
         return { makeFromComponentsClamping<SRGBA<uint8_t>>(*r, *g, *b) };
     return { makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(*r, *g, *b, convertFloatAlphaTo<uint8_t>(*a)) };
 }
 
-static std::optional<Color> parseRequiredConfigColor(const String& fieldName, JSON::Object& configObject)
+static std::optional<Color> parseRequiredConfigColor(StringImpl* fieldName, JSON::Object& configObject)
 {
     return parseInspectorColor(configObject.getObject(fieldName));
 }
 
-static Color parseOptionalConfigColor(const String& fieldName, JSON::Object& configObject)
+static Color parseOptionalConfigColor(StringImpl* fieldName, JSON::Object& configObject)
 {
     return parseRequiredConfigColor(fieldName, configObject).value_or(Color::transparentBlack);
 }
@@ -78,58 +78,58 @@ bool parseInspectorQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
     return true;
 }
 
-std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&& highlightInspectorObject)
+std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfigFromInspectorObject(RefPtr<StringImpl>& errorString, RefPtr<JSON::Object>&& highlightInspectorObject)
 {
     if (!highlightInspectorObject) {
-        errorString = "Internal error: highlight configuration parameter is missing"_s;
+        errorString = "Internal error: highlight configuration parameter is missing"_si;
         return nullptr;
     }
 
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->showInfo = highlightInspectorObject->getBoolean("showInfo"_s).value_or(false);
-    highlightConfig->content = parseOptionalConfigColor("contentColor"_s, *highlightInspectorObject);
-    highlightConfig->padding = parseOptionalConfigColor("paddingColor"_s, *highlightInspectorObject);
-    highlightConfig->border = parseOptionalConfigColor("borderColor"_s, *highlightInspectorObject);
-    highlightConfig->margin = parseOptionalConfigColor("marginColor"_s, *highlightInspectorObject);
+    highlightConfig->showInfo = highlightInspectorObject->getBoolean("showInfo"_si).value_or(false);
+    highlightConfig->content = parseOptionalConfigColor("contentColor"_si, *highlightInspectorObject);
+    highlightConfig->padding = parseOptionalConfigColor("paddingColor"_si, *highlightInspectorObject);
+    highlightConfig->border = parseOptionalConfigColor("borderColor"_si, *highlightInspectorObject);
+    highlightConfig->margin = parseOptionalConfigColor("marginColor"_si, *highlightInspectorObject);
     return highlightConfig;
 }
 
-std::optional<InspectorOverlay::Grid::Config> gridOverlayConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&& gridOverlayInspectorObject)
+std::optional<InspectorOverlay::Grid::Config> gridOverlayConfigFromInspectorObject(RefPtr<StringImpl>& errorString, RefPtr<JSON::Object>&& gridOverlayInspectorObject)
 {
     if (!gridOverlayInspectorObject)
         return std::nullopt;
 
-    auto gridColor = parseRequiredConfigColor("gridColor"_s, *gridOverlayInspectorObject);
+    auto gridColor = parseRequiredConfigColor("gridColor"_si, *gridOverlayInspectorObject);
     if (!gridColor) {
-        errorString = "Internal error: grid color property of grid overlay configuration parameter is missing"_s;
+        errorString = "Internal error: grid color property of grid overlay configuration parameter is missing"_si;
         return std::nullopt;
     }
 
     InspectorOverlay::Grid::Config gridOverlayConfig;
     gridOverlayConfig.gridColor = *gridColor;
-    gridOverlayConfig.showLineNames = gridOverlayInspectorObject->getBoolean("showLineNames"_s).value_or(false);
-    gridOverlayConfig.showLineNumbers = gridOverlayInspectorObject->getBoolean("showLineNumbers"_s).value_or(false);
-    gridOverlayConfig.showExtendedGridLines = gridOverlayInspectorObject->getBoolean("showExtendedGridLines"_s).value_or(false);
-    gridOverlayConfig.showTrackSizes = gridOverlayInspectorObject->getBoolean("showTrackSizes"_s).value_or(false);
-    gridOverlayConfig.showAreaNames = gridOverlayInspectorObject->getBoolean("showAreaNames"_s).value_or(false);
-    gridOverlayConfig.showOrderNumbers = gridOverlayInspectorObject->getBoolean("showOrderNumbers"_s).value_or(false);
+    gridOverlayConfig.showLineNames = gridOverlayInspectorObject->getBoolean("showLineNames"_si).value_or(false);
+    gridOverlayConfig.showLineNumbers = gridOverlayInspectorObject->getBoolean("showLineNumbers"_si).value_or(false);
+    gridOverlayConfig.showExtendedGridLines = gridOverlayInspectorObject->getBoolean("showExtendedGridLines"_si).value_or(false);
+    gridOverlayConfig.showTrackSizes = gridOverlayInspectorObject->getBoolean("showTrackSizes"_si).value_or(false);
+    gridOverlayConfig.showAreaNames = gridOverlayInspectorObject->getBoolean("showAreaNames"_si).value_or(false);
+    gridOverlayConfig.showOrderNumbers = gridOverlayInspectorObject->getBoolean("showOrderNumbers"_si).value_or(false);
     return gridOverlayConfig;
 }
 
-std::optional<InspectorOverlay::Flex::Config> flexOverlayConfigFromInspectorObject(String& errorString, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
+std::optional<InspectorOverlay::Flex::Config> flexOverlayConfigFromInspectorObject(RefPtr<StringImpl>& errorString, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
 {
     if (!flexOverlayInspectorObject)
         return std::nullopt;
 
-    auto flexColor = parseRequiredConfigColor("flexColor"_s, *flexOverlayInspectorObject);
+    auto flexColor = parseRequiredConfigColor("flexColor"_si, *flexOverlayInspectorObject);
     if (!flexColor) {
-        errorString = "Internal error: flex color property of flex overlay configuration parameter is missing"_s;
+        errorString = "Internal error: flex color property of flex overlay configuration parameter is missing"_si;
         return std::nullopt;
     }
 
     InspectorOverlay::Flex::Config flexOverlayConfig;
     flexOverlayConfig.flexColor = *flexColor;
-    flexOverlayConfig.showOrderNumbers = flexOverlayInspectorObject->getBoolean("showOrderNumbers"_s).value_or(false);
+    flexOverlayConfig.showOrderNumbers = flexOverlayInspectorObject->getBoolean("showOrderNumbers"_si).value_or(false);
     return flexOverlayConfig;
 }
 

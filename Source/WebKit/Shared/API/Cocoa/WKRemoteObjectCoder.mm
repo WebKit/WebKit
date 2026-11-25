@@ -134,7 +134,7 @@ static void ensureObjectStream(WKRemoteObjectEncoder *encoder)
     Ref<API::Array> objectStream = API::Array::create();
     encoder->_objectStream = objectStream.ptr();
 
-    encoder->_rootDictionary->set(objectStreamKey, WTF::move(objectStream));
+    encoder->_rootDictionary->set(StringImpl::create(objectStreamKey).ptr(), WTF::move(objectStream));
 }
 
 static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
@@ -334,7 +334,7 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
 
 static void encodeString(WKRemoteObjectEncoder *encoder, NSString *string)
 {
-    Ref { *encoder->_currentDictionary }->set(stringKey, API::String::create(string));
+    Ref { *encoder->_currentDictionary }->set(StringImpl::create(stringKey).ptr(), API::String::create(StringImpl::create(string)));
 }
 
 static RetainPtr<id> decodeObjCObject(WKRemoteObjectDecoder *decoder, Class objectClass)
@@ -493,7 +493,7 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
         encoder->_objectsBeingEncoded.remove(object);
     });
 
-    Ref { *encoder->_currentDictionary }->set(classNameKey, API::String::create(String::fromLatin1(class_getName(objectClass))));
+    Ref { *encoder->_currentDictionary }->set(StringImpl::create(classNameKey).ptr(), API::String::create(StringImpl::fromLatin1(class_getName(objectClass))));
 
     if (RetainPtr invocation = dynamic_objc_cast<NSInvocation>(object)) {
         // We have to special case NSInvocation since we don't want to encode the target.
@@ -618,32 +618,32 @@ static NSString *escapeKey(NSString *key)
 
 - (void)encodeObject:(id)object forKey:(NSString *)key
 {
-    Ref { *_currentDictionary }->set(escapeKey(key), createEncodedObject(self, object));
+    Ref { *_currentDictionary }->set(StringImpl::create(protect(escapeKey(key)).get()).get(), createEncodedObject(self, object));
 }
 
 - (void)encodeBytes:(const uint8_t *)bytes length:(NSUInteger)length forKey:(NSString *)key
 {
-    Ref { *_currentDictionary }->set(escapeKey(key), API::Data::create(unsafeMakeSpan(bytes, length)));
+    Ref { *_currentDictionary }->set(StringImpl::create(protect(escapeKey(key)).get()).get(), API::Data::create(unsafeMakeSpan(bytes, length)));
 }
 
 - (void)encodeBool:(BOOL)value forKey:(NSString *)key
 {
-    Ref { *_currentDictionary }->set(escapeKey(key), API::Boolean::create(value));
+    Ref { *_currentDictionary }->set(StringImpl::create(protect(escapeKey(key)).get()).get(), API::Boolean::create(value));
 }
 
 - (void)encodeInt:(int)value forKey:(NSString *)key
 {
-    Ref { *_currentDictionary }->set(escapeKey(key), API::UInt64::create(value));
+    Ref { *_currentDictionary }->set(StringImpl::create(protect(escapeKey(key)).get()).get(), API::UInt64::create(value));
 }
 
 - (void)encodeInt32:(int32_t)value forKey:(NSString *)key
 {
-    Ref { *_currentDictionary }->set(escapeKey(key), API::UInt64::create(value));
+    Ref { *_currentDictionary }->set(StringImpl::create(protect(escapeKey(key)).get()).get(), API::UInt64::create(value));
 }
 
 - (void)encodeInt64:(int64_t)value forKey:(NSString *)key
 {
-    Ref { *_currentDictionary }->set(escapeKey(key), API::UInt64::create(value));
+    Ref { *_currentDictionary }->set(StringImpl::create(protect(escapeKey(key)).get()).get(), API::UInt64::create(value));
 }
 
 - (void)encodeInteger:(NSInteger)intv forKey:(NSString *)key
@@ -653,12 +653,12 @@ static NSString *escapeKey(NSString *key)
 
 - (void)encodeFloat:(float)value forKey:(NSString *)key
 {
-    Ref { *_currentDictionary }->set(escapeKey(key), API::Double::create(value));
+    Ref { *_currentDictionary }->set(StringImpl::create(protect(escapeKey(key)).get()).get(), API::Double::create(value));
 }
 
 - (void)encodeDouble:(double)value forKey:(NSString *)key
 {
-    Ref { *_currentDictionary }->set(escapeKey(key), API::Double::create(value));
+    Ref { *_currentDictionary }->set(StringImpl::create(protect(escapeKey(key)).get()).get(), API::Double::create(value));
 }
 
 - (BOOL)requiresSecureCoding
@@ -694,7 +694,7 @@ static NSString *escapeKey(NSString *key)
 
     _replyToSelector = replyToSelector;
 
-    if (RefPtr objectStream = _rootDictionary->get<API::Array>(objectStreamKey))
+    if (RefPtr objectStream = _rootDictionary->get<API::Array>(StringImpl::create(objectStreamKey).ptr()))
         lazyInitialize(_objectStream, objectStream.releaseNonNull());
 
     return self;
@@ -780,7 +780,7 @@ static NSString *escapeKey(NSString *key)
 
 - (BOOL)containsValueForKey:(NSString *)key
 {
-    return _currentDictionary->map().contains(escapeKey(key));
+    return _currentDictionary->map().contains(StringImpl::create(protect(escapeKey(key)).get()).get());
 }
 
 - (id)decodeObjectForKey:(NSString *)key
@@ -1065,7 +1065,7 @@ static RetainPtr<NSInvocation> decodeInvocation(WKRemoteObjectDecoder *decoder)
 
 static RetainPtr<NSString> decodeString(WKRemoteObjectDecoder *decoder)
 {
-    RefPtr string = Ref { *decoder->_currentDictionary }->get<API::String>(stringKey);
+    RefPtr string = Ref { *decoder->_currentDictionary }->get<API::String>(StringImpl::create(stringKey).ptr());
     if (!string)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"String missing"];
 
@@ -1074,11 +1074,11 @@ static RetainPtr<NSString> decodeString(WKRemoteObjectDecoder *decoder)
 
 static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder)
 {
-    RefPtr classNameString = Ref { *decoder->_currentDictionary }->get<API::String>(classNameKey);
+    RefPtr classNameString = Ref { *decoder->_currentDictionary }->get<API::String>(StringImpl::create(classNameKey).ptr());
     if (!classNameString)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Class name missing"];
 
-    auto className = classNameString->string().utf8();
+    auto className = utf8(classNameString->string());
 
     RetainPtr<Class> objectClass = objcLookUpClass(className);
     if (!objectClass)
@@ -1118,7 +1118,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dic
 
 - (BOOL)decodeBoolForKey:(NSString *)key
 {
-    RefPtr value = Ref { *_currentDictionary }->get<API::Boolean>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::Boolean>(StringImpl::create(protect(escapeKey(key)).get()).get());
     if (!value)
         return false;
     return value->value();
@@ -1126,7 +1126,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dic
 
 - (int)decodeIntForKey:(NSString *)key
 {
-    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(StringImpl::create(protect(escapeKey(key)).get()).get());
     if (!value)
         return 0;
     return static_cast<int>(value->value());
@@ -1134,7 +1134,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dic
 
 - (int32_t)decodeInt32ForKey:(NSString *)key
 {
-    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(StringImpl::create(protect(escapeKey(key)).get()).get());
     if (!value)
         return 0;
     return static_cast<int32_t>(value->value());
@@ -1142,7 +1142,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dic
 
 - (int64_t)decodeInt64ForKey:(NSString *)key
 {
-    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(StringImpl::create(protect(escapeKey(key)).get()).get());
     if (!value)
         return 0;
     return value->value();
@@ -1155,7 +1155,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dic
 
 - (float)decodeFloatForKey:(NSString *)key
 {
-    RefPtr value = Ref { *_currentDictionary }->get<API::Double>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::Double>(StringImpl::create(protect(escapeKey(key)).get()).get());
     if (!value)
         return 0;
     return value->value();
@@ -1163,7 +1163,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dic
 
 - (double)decodeDoubleForKey:(NSString *)key
 {
-    RefPtr value = Ref { *_currentDictionary }->get<API::Double>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::Double>(StringImpl::create(protect(escapeKey(key)).get()).get());
     if (!value)
         return 0;
     return value->value();
@@ -1171,7 +1171,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dic
 
 - (const uint8_t *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)length
 {
-    RefPtr data = Ref { *_currentDictionary }->get<API::Data>(escapeKey(key));
+    RefPtr data = Ref { *_currentDictionary }->get<API::Data>(StringImpl::create(protect(escapeKey(key)).get()).get());
     if (!data || !data->size()) {
         *length = 0;
         return nullptr;
@@ -1192,7 +1192,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dic
     for (Class allowedClass in classes)
         allowedClasses.add((__bridge CFTypeRef)allowedClass);
 
-    RefPtr dictionary = Ref { *_currentDictionary }->get<API::Dictionary>(escapeKey(key));
+    RefPtr dictionary = Ref { *_currentDictionary }->get<API::Dictionary>(StringImpl::create(protect(escapeKey(key)).get()).get());
     return decodeObject(self, dictionary.get(), allowedClasses).autorelease();
 }
 

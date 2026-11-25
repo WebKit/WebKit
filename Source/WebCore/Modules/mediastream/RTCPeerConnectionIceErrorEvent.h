@@ -39,30 +39,30 @@ public:
     virtual ~RTCPeerConnectionIceErrorEvent();
 
     struct Init : EventInit {
-        String address;
+        RefPtr<StringImpl> address;
         std::optional<uint16_t> port;
-        String url;
+        RefPtr<StringImpl> url;
         uint16_t errorCode { 0 };
-        String errorText;
+        RefPtr<StringImpl> errorText;
     };
 
-    NODELETE static Ref<RTCPeerConnectionIceErrorEvent> create(const AtomString& type, Init&&);
-    static Ref<RTCPeerConnectionIceErrorEvent> create(CanBubble, IsCancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText);
+    NODELETE static Ref<RTCPeerConnectionIceErrorEvent> create(AtomStringImpl* type, Init&&);
+    static Ref<RTCPeerConnectionIceErrorEvent> create(CanBubble, IsCancelable, RefPtr<StringImpl>&& address, std::optional<uint16_t> port, RefPtr<StringImpl>&& url, uint16_t errorCode, RefPtr<StringImpl>&& errorText);
 
-    const String& address() const LIFETIME_BOUND { return m_address; }
+    const RefPtr<StringImpl>& address() const LIFETIME_BOUND { return m_address; }
     std::optional<uint16_t> port() const { return m_port; }
-    const String& url() const LIFETIME_BOUND { return m_url; }
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_url; }
     uint16_t errorCode() const { return m_errorCode; }
-    const String& errorText() const LIFETIME_BOUND { return m_errorText; }
+    const RefPtr<StringImpl>& errorText() const LIFETIME_BOUND { return m_errorText; }
 
 private:
-    RTCPeerConnectionIceErrorEvent(const AtomString& type, CanBubble, IsCancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText);
+    RTCPeerConnectionIceErrorEvent(AtomStringImpl* type, CanBubble, IsCancelable, RefPtr<StringImpl>&& address, std::optional<uint16_t> port, RefPtr<StringImpl>&& url, uint16_t errorCode, RefPtr<StringImpl>&& errorText);
 
-    String m_address;
+    RefPtr<StringImpl> m_address;
     std::optional<uint16_t> m_port;
-    String m_url;
+    RefPtr<StringImpl> m_url;
     uint16_t m_errorCode { 0 };
-    String m_errorText;
+    RefPtr<StringImpl> m_errorText;
 };
 
 } // namespace WebCore

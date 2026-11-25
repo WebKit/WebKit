@@ -85,7 +85,7 @@ public:
     NODELETE std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
     void setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier>);
 
-    WEBCORE_EXPORT String linkSuggestedFilename() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> linkSuggestedFilename() const;
 
     // Forwarded from HitTestLocation
     bool isRectBasedTest() const { return m_hitTestLocation.isRectBasedTest(); }
@@ -113,13 +113,13 @@ public:
     WEBCORE_EXPORT bool isSelected() const;
     WEBCORE_EXPORT bool allowsFollowingLink() const;
     WEBCORE_EXPORT bool allowsFollowingImageURL() const;
-    WEBCORE_EXPORT String selectedText() const;
-    WEBCORE_EXPORT String spellingToolTip(TextDirection&) const;
-    String replacedString() const;
-    WEBCORE_EXPORT String title(TextDirection&) const;
-    WEBCORE_EXPORT String innerTextIfTruncated(TextDirection&) const;
-    WEBCORE_EXPORT String altDisplayString() const;
-    WEBCORE_EXPORT String titleDisplayString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> selectedText() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> spellingToolTip(TextDirection&) const;
+    RefPtr<StringImpl> replacedString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> title(TextDirection&) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> innerTextIfTruncated(TextDirection&) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> altDisplayString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> titleDisplayString() const;
     WEBCORE_EXPORT RenderImage* renderImage() const;
     WEBCORE_EXPORT Image* image() const;
     WEBCORE_EXPORT IntRect imageRect() const;
@@ -130,7 +130,7 @@ public:
     WEBCORE_EXPORT URL absoluteModelURL() const;
     WEBCORE_EXPORT URL absoluteLinkURL() const;
     WEBCORE_EXPORT bool hasLocalDataForLinkURL() const;
-    WEBCORE_EXPORT String textContent() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> textContent() const;
     NODELETE WEBCORE_EXPORT bool isOverLink() const;
     WEBCORE_EXPORT bool isContentEditable() const;
     void toggleMediaControlsDisplay() const;
@@ -174,7 +174,7 @@ public:
     // the same thing as mutableListBasedTestResult(), but here the return value is const.
     WEBCORE_EXPORT const NodeSet& listBasedTestResult() const LIFETIME_BOUND;
 
-    Vector<String> dictationAlternatives() const;
+    Vector<RefPtr<StringImpl>> dictationAlternatives() const;
 
     Node* targetNode() const { return innerNode(); }
     NODELETE WEBCORE_EXPORT Element* targetElement() const;
@@ -209,6 +209,6 @@ private:
     mutable std::unique_ptr<NodeSet> m_listBasedTestResult;
 };
 
-WEBCORE_EXPORT String displayString(const String&, const Node*);
+WEBCORE_EXPORT RefPtr<StringImpl> displayString(StringImpl*, const Node*);
 
 } // namespace WebCore

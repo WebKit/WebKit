@@ -39,7 +39,7 @@ public:
 
     virtual int indexOfSelectedOption() const = 0;
     virtual int optionCount() const = 0;
-    virtual String optionAtIndex(int index) const = 0;
+    virtual RefPtr<StringImpl> optionAtIndex(int index) const = 0;
 };
 
 class TypeAhead {

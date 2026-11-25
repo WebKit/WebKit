@@ -39,7 +39,7 @@ namespace WebCore {
 
 struct RTCSessionDescriptionInit {
     RTCSdpType type;
-    String sdp;
+    RefPtr<StringImpl> sdp;
 };
 
 } // namespace WebCore

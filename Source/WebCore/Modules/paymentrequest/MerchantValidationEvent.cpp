@@ -38,19 +38,19 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MerchantValidationEvent);
 
-Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomString& type, const String& methodName, URL&& validationURL)
+Ref<MerchantValidationEvent> MerchantValidationEvent::create(AtomStringImpl* type, StringImpl* methodName, URL&& validationURL)
 {
     return adoptRef(*new MerchantValidationEvent(type, methodName, WTF::move(validationURL)));
 }
 
-ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Document& document, const AtomString& type, Init&& eventInit)
+ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Document& document, AtomStringImpl* type, Init&& eventInit)
 {
     auto validationURL = document.parseURL(eventInit.validationURL);
     if (!validationURL.isValid())
         return Exception { ExceptionCode::TypeError };
 
     auto methodName = WTF::move(eventInit.methodName);
-    if (!methodName.isEmpty()) {
+    if (!isEmpty(methodName)) {
         auto validatedMethodName = convertAndValidatePaymentMethodIdentifier(methodName);
         if (!validatedMethodName)
             return Exception { ExceptionCode::RangeError, makeString('"', methodName, "\" is an invalid payment method identifier."_s) };
@@ -59,7 +59,7 @@ ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Docume
     return adoptRef(*new MerchantValidationEvent(type, WTF::move(methodName), WTF::move(validationURL), WTF::move(eventInit)));
 }
 
-MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, const String& methodName, URL&& validationURL)
+MerchantValidationEvent::MerchantValidationEvent(AtomStringImpl* type, StringImpl* methodName, URL&& validationURL)
     : Event { EventInterfaceType::MerchantValidationEvent, type, Event::CanBubble::No, Event::IsCancelable::No }
     , m_methodName { methodName }
     , m_validationURL { WTF::move(validationURL) }
@@ -68,7 +68,7 @@ MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, const S
     ASSERT(m_validationURL.isValid());
 }
 
-MerchantValidationEvent::MerchantValidationEvent(const AtomString& type, String&& methodName, URL&& validationURL, Init&& eventInit)
+MerchantValidationEvent::MerchantValidationEvent(AtomStringImpl* type, RefPtr<StringImpl>&& methodName, URL&& validationURL, Init&& eventInit)
     : Event { EventInterfaceType::MerchantValidationEvent, type, WTF::move(eventInit), IsTrusted::No }
     , m_methodName { WTF::move(methodName) }
     , m_validationURL { WTF::move(validationURL) }

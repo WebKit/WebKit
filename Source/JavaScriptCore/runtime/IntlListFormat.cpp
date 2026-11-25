@@ -71,7 +71,7 @@ void IntlListFormat::initializeListFormat(JSGlobalObject* globalObject, JSValue 
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto localeData = [](const String&, RelevantExtensionKey) -> Vector<String> {
+    auto localeData = [](StringImpl*, RelevantExtensionKey) -> Vector<RefPtr<StringImpl>> {
         return { };
     };
 
@@ -79,7 +79,7 @@ void IntlListFormat::initializeListFormat(JSGlobalObject* globalObject, JSValue 
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { }, localeData);
 
     m_locale = resolved.locale;
-    if (m_locale.isEmpty()) {
+    if (isEmpty(m_locale)) {
         throwTypeError(globalObject, scope, "failed to initialize ListFormat due to invalid locale"_s);
         return;
     }
@@ -90,16 +90,16 @@ void IntlListFormat::initializeListFormat(JSGlobalObject* globalObject, JSValue 
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "long"_s, Style::Long }, { "short"_s, Style::Short }, { "narrow"_s, Style::Narrow } }, "style must be either \"long\", \"short\", or \"narrow\""_s, Style::Long);
     RETURN_IF_EXCEPTION(scope, void());
 
-    m_listFormat = ListFormatter { m_locale.ascii(), m_type, m_style };
+    m_listFormat = ListFormatter { ascii(m_locale), m_type, m_style };
     if (!m_listFormat) {
         throwTypeError(globalObject, scope, "failed to initialize ListFormat"_s);
         return;
     }
 }
 
-static Vector<String, 4> stringListFromIterable(JSGlobalObject* globalObject, JSValue iterable)
+static Vector<RefPtr<StringImpl>, 4> stringListFromIterable(JSGlobalObject* globalObject, JSValue iterable)
 {
-    Vector<String, 4> result;
+    Vector<RefPtr<StringImpl>, 4> result;
 
     if (iterable.isUndefined())
         return result;
@@ -110,7 +110,7 @@ static Vector<String, 4> stringListFromIterable(JSGlobalObject* globalObject, JS
             throwTypeError(globalObject, scope, "Iterable passed to ListFormat includes non String"_s);
             return;
         }
-        String item = value.toWTFString(globalObject);
+        RefPtr<StringImpl> item = value.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
         result.append(item);
     });
@@ -152,8 +152,8 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
 
     StringView resultStringView = formattedList->string;
 
-    auto literalString = jsNontrivialString(vm, "literal"_s);
-    auto elementString = jsNontrivialString(vm, "element"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_si);
+    auto elementString = jsNontrivialString(vm, "element"_si);
 
     auto createPart = [&] (JSString* type, JSString* value) {
         return createIntlPartObject(globalObject, type, value);

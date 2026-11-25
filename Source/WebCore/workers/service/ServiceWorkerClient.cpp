@@ -70,7 +70,7 @@ auto ServiceWorkerClient::frameType() const -> FrameType
     return m_data.frameType;
 }
 
-String ServiceWorkerClient::id() const
+RefPtr<StringImpl> ServiceWorkerClient::id() const
 {
     return identifier().toString();
 }

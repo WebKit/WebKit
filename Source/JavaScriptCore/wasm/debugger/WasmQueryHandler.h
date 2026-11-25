@@ -66,7 +66,7 @@ private:
     DebugServer& m_debugServer;
 
     bool parseLibrariesReadPacket(StringView packet, size_t& offset, size_t& maxSize);
-    bool handleChunkedLibrariesResponse(size_t offset, size_t maxSize, String& response);
+    bool handleChunkedLibrariesResponse(size_t offset, size_t maxSize, RefPtr<StringImpl>& response);
     JSWebAssemblyInstance* instanceForFrame(uint32_t frameIndex);
 };
 

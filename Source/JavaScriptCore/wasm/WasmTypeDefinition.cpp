@@ -131,7 +131,7 @@ bool RTT::isStrictSubRTT(const RTT& parent) const
     return &parent == displayEntry(parent.displaySizeExcludingThis());
 }
 
-String RTT::toString() const
+RefPtr<StringImpl> RTT::toString() const
 {
     return WTF::toString(*this);
 }

@@ -186,7 +186,7 @@ static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WebGPU::S
     // https://developer.apple.com/documentation/metal/mtlsamplerdescriptor/1516164-maxanisotropy?language=objc
     // "Values must be between 1 and 16, inclusive."
     samplerDescriptor.maxAnisotropy = std::min<uint16_t>(descriptor.maxAnisotropy, 16);
-    samplerDescriptor.label = descriptor.label.createNSString().get();
+    samplerDescriptor.label = createNSString(descriptor.label).get();
 
     return samplerDescriptor;
 }
@@ -277,7 +277,7 @@ RefPtr<WebGPU::Sampler> Device::createSampler(const WebGPU::SamplerDescriptor& d
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createsampler
 
     if (!validateCreateSampler(*this, descriptor)) {
-        generateAValidationError("Validation failure."_s);
+        generateAValidationError("Validation failure."_si);
         return Sampler::createInvalid(*this);
     }
 
@@ -316,7 +316,7 @@ Sampler::~Sampler()
         uncacheSamplerState(*m_samplerIdentifier, samplerState);
 }
 
-void Sampler::setLabel(String&& label)
+void Sampler::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = WTF::move(label);
 }

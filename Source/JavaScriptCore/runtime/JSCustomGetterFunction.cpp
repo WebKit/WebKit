@@ -63,7 +63,7 @@ JSCustomGetterFunction::JSCustomGetterFunction(VM& vm, NativeExecutable* executa
 JSCustomGetterFunction* JSCustomGetterFunction::create(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, CustomFunctionPointer getter, std::optional<DOMAttributeAnnotation> domAttribute)
 {
     ASSERT(getter);
-    NativeExecutable* executable = vm.getHostFunction(customGetterFunctionCall, ImplementationVisibility::Public, callHostFunctionAsConstructor, 0, String(propertyName.publicName()));
+    NativeExecutable* executable = vm.getHostFunction(customGetterFunctionCall, ImplementationVisibility::Public, callHostFunctionAsConstructor, 0, RefPtr<StringImpl>(propertyName.publicName()));
     Structure* structure = globalObject->customGetterFunctionStructure();
     JSCustomGetterFunction* function = new (NotNull, allocateCell<JSCustomGetterFunction>(vm)) JSCustomGetterFunction(vm, executable, globalObject, structure, propertyName, getter, domAttribute);
     function->finishCreation(vm);

@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBuffer>&& buffer)
+void ClipboardImageReader::readBuffer(StringImpl*, StringImpl*, Ref<SharedBuffer>&& buffer)
 {
-    if (m_mimeType == "image/png"_s) {
+    if (equal(m_mimeType, "image/png"_s)) {
         auto image = adoptNS([[NSImage alloc] initWithData:buffer->createNSData().get()]);
         if (RetainPtr cgImage = [image CGImageForProposedRect:nil context:nil hints:nil]) {
             auto representation = adoptNS([[NSBitmapImageRep alloc] initWithCGImage:cgImage.get()]);
@@ -45,7 +45,7 @@ void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBu
             m_result = Blob::create(m_document.get(), makeVector(nsData.get()), m_mimeType);
         }
     }
-    if (m_mimeType == "image/svg+xml"_s)
+    if (equal(m_mimeType, "image/svg+xml"_s))
         readSVG(buffer);
 }
 

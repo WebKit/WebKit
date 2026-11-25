@@ -81,8 +81,8 @@ struct ThreadCPUInfo {
         WebKit,
     };
 
-    String name;
-    String identifier;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> identifier;
     float cpu { 0 };
     Type type { ThreadCPUInfo::Type::Unknown };
 };

@@ -522,29 +522,29 @@ public:
     {
     }
 
-    void setExact(const String& value)
+    void setExact(StringImpl* value)
     {
         m_exact.clear();
         m_exact.append(value);
     }
 
-    void appendExact(const String& value)
+    void appendExact(StringImpl* value)
     {
         m_exact.append(value);
     }
 
-    void setIdeal(const String& value)
+    void setIdeal(StringImpl* value)
     {
         m_ideal.clear();
         m_ideal.append(value);
     }
 
-    void appendIdeal(const String& value)
+    void appendIdeal(StringImpl* value)
     {
         m_ideal.append(value);
     }
 
-    bool getExact(Vector<String>& exact) const
+    bool getExact(Vector<RefPtr<StringImpl>>& exact) const
     {
         if (m_exact.isEmpty())
             return false;
@@ -553,7 +553,7 @@ public:
         return true;
     }
 
-    bool getIdeal(Vector<String>& ideal) const
+    bool getIdeal(Vector<RefPtr<StringImpl>>& ideal) const
     {
         if (m_ideal.isEmpty())
             return false;
@@ -562,10 +562,10 @@ public:
         return true;
     }
 
-    double fitnessDistance(const String&) const;
-    double fitnessDistance(const Vector<String>&) const;
+    double fitnessDistance(StringImpl*) const;
+    double fitnessDistance(const Vector<RefPtr<StringImpl>>&) const;
 
-    const String& find(NOESCAPE const Function<bool(const String&)>&) const;
+    const RefPtr<StringImpl>& find(NOESCAPE const Function<bool(StringImpl*)>&) const;
 
     bool isEmpty() const { return m_exact.isEmpty() && m_ideal.isEmpty(); }
     bool isMandatory() const { return !m_exact.isEmpty(); }
@@ -574,10 +574,10 @@ public:
     void removeEmptyStringConstraint()
     {
         m_exact.removeAllMatching([](auto& constraint) {
-            return constraint.isEmpty();
+            return WTF::isEmpty(constraint);
         });
         m_ideal.removeAllMatching([](auto& constraint) {
-            return constraint.isEmpty();
+            return WTF::isEmpty(constraint);
         });
     }
 
@@ -586,7 +586,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<StringConstraint>;
     
-    StringConstraint(MediaConstraint&& mediaConstraint, Vector<String>&& exact, Vector<String>&& ideal)
+    StringConstraint(MediaConstraint&& mediaConstraint, Vector<RefPtr<StringImpl>>&& exact, Vector<RefPtr<StringImpl>>&& ideal)
         : MediaConstraint(WTF::move(mediaConstraint))
         , m_exact(WTF::move(exact))
         , m_ideal(WTF::move(ideal))
@@ -595,8 +595,8 @@ private:
 
     bool isRequired() const final { return !m_exact.isEmpty(); }
 
-    Vector<String> m_exact;
-    Vector<String> m_ideal;
+    Vector<RefPtr<StringImpl>> m_exact;
+    Vector<RefPtr<StringImpl>> m_ideal;
 };
 
 class MediaTrackConstraintSetMap {

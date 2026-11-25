@@ -38,7 +38,7 @@ public:
     
     virtual ~WebDatabaseManagerClient();
     void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&) final;
-    void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WTF::String& databaseIdentifier) final;
+    void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, StringImpl* databaseIdentifier) final;
 
 #if PLATFORM(IOS_FAMILY)
     void dispatchDidAddNewOrigin() final;

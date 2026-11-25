@@ -48,7 +48,7 @@ public:
         FileSystem::deleteNonEmptyDirectory(m_cookieStorageDirectory);
     }
 
-    String m_cookieStorageDirectory;
+    RefPtr<StringImpl> m_cookieStorageDirectory;
 };
 
 static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* context)

@@ -169,7 +169,7 @@ void RemoteAudioSessionProxy::endInterruptionRemote(AudioSession::MayResume mayR
     protect(audioSessionManager())->endInterruptionRemote(mayResume);
 }
 
-void RemoteAudioSessionProxy::setSceneIdentifier(const String& sceneIdentifier)
+void RemoteAudioSessionProxy::setSceneIdentifier(StringImpl* sceneIdentifier)
 {
     m_sceneIdentifier = sceneIdentifier;
     protect(audioSessionManager())->updateSpatialExperience();
@@ -218,9 +218,9 @@ std::optional<SharedPreferencesForWebProcess> RemoteAudioSessionProxy::sharedPre
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RemoteAudioSessionProxy::setPreferredSpeakerID(const String& speakerID)
+void RemoteAudioSessionProxy::setPreferredSpeakerID(StringImpl* speakerID)
 {
-    if (m_speakerID == speakerID)
+    if (equal(m_speakerID, speakerID))
         return;
     
     m_speakerID = speakerID;

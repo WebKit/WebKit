@@ -56,8 +56,8 @@ public:
         enum Kind { TextNodeTest, CommentNodeTest, ProcessingInstructionNodeTest, AnyNodeTest, NameTest };
 
         explicit NodeTest(Kind kind) : m_kind(kind) { }
-        NodeTest(Kind kind, const AtomString& data) : m_kind(kind), m_data(data) { }
-        NodeTest(Kind kind, const AtomString& data, const AtomString& namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) { }
+        NodeTest(Kind kind, AtomStringImpl* data) : m_kind(kind), m_data(data) { }
+        NodeTest(Kind kind, AtomStringImpl* data, AtomStringImpl* namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) { }
 
     private:
         friend class Step;
@@ -66,8 +66,8 @@ public:
         friend bool nodeMatches(Node&, Axis, const NodeTest&);
 
         Kind m_kind;
-        AtomString m_data;
-        AtomString m_namespaceURI;
+        RefPtr<AtomStringImpl> m_data;
+        RefPtr<AtomStringImpl> m_namespaceURI;
         Vector<std::unique_ptr<Expression>> m_mergedPredicates;
     };
 
@@ -86,7 +86,7 @@ private:
 
     bool predicatesAreContextListInsensitive() const;
 
-    void parseNodeTest(const String&);
+    void parseNodeTest(StringImpl*);
     void nodesInAxis(Node& context, NodeSet&) const;
 
     Axis m_axis;

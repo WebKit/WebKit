@@ -73,13 +73,13 @@ void WebMemorySampler::start(const double interval)
     initializeTimers(interval);
 }
 
-void WebMemorySampler::start(SandboxExtension::Handle&& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)
+void WebMemorySampler::start(SandboxExtension::Handle&& sampleLogFileHandle, StringImpl* sampleLogFilePath, const double interval)
 {
     if (m_isRunning) 
         return;
     
     // If we are on a system without SandboxExtension the handle and filename will be empty
-    if (sampleLogFilePath.isEmpty()) {
+    if (isEmpty(sampleLogFilePath)) {
         start(interval);
         return;
     }
@@ -92,12 +92,12 @@ void WebMemorySampler::start(SandboxExtension::Handle&& sampleLogFileHandle, con
 void WebMemorySampler::initializeTimers(double interval)
 {
     m_sampleTimer.startRepeating(1_s);
-    SAFE_PRINTF("Started memory sampler for process %s %d", processName().utf8(), getCurrentProcessID());
+    SAFE_PRINTF("Started memory sampler for process %s %d", utf8(processName()), getCurrentProcessID());
     if (interval > 0) {
         m_stopTimer.startOneShot(1_s * interval);
         printf(" for a interval of %g seconds", interval);
     }
-    SAFE_PRINTF("; Sampler log file stored at: %s\n", m_sampleLogFilePath.utf8());
+    SAFE_PRINTF("; Sampler log file stored at: %s\n", utf8(m_sampleLogFilePath));
     m_runningTime = interval;
     m_isRunning = true;
 }
@@ -109,7 +109,7 @@ void WebMemorySampler::stop()
     m_sampleTimer.stop();
     m_sampleLogFile = { };
 
-    SAFE_PRINTF("Stopped memory sampler for process %s %d\n", processName().utf8(), getCurrentProcessID());
+    SAFE_PRINTF("Stopped memory sampler for process %s %d\n", utf8(processName()), getCurrentProcessID());
     // Flush stdout buffer so python script can be guaranteed to read up to this point.
     fflush(stdout);
     m_isRunning = false;
@@ -129,7 +129,7 @@ void WebMemorySampler::initializeTempLogFile()
     writeHeaders();
 }
 
-void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sampleLogSandboxHandle, const String& sampleLogFilePath)
+void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sampleLogSandboxHandle, StringImpl* sampleLogFilePath)
 {
     m_sampleLogSandboxExtension = SandboxExtension::create(WTF::move(sampleLogSandboxHandle));
     if (RefPtr extension = m_sampleLogSandboxExtension)
@@ -141,7 +141,7 @@ void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sam
 
 void WebMemorySampler::writeHeaders()
 {
-    auto processDetails = makeString("Process: "_s, processName(), " Pid: "_s, getCurrentProcessID(), '\n').utf8();
+    auto processDetails = utf8(makeString("Process: "_s, processName(), " Pid: "_s, getCurrentProcessID(), '\n'));
     m_sampleLogFile.write(byteCast<uint8_t>(processDetails.span()));
 }
 
@@ -171,13 +171,13 @@ void WebMemorySampler::appendCurrentMemoryUsageToFile()
         statString.append(separator);
         for (size_t i = 0; i < borrowedValues->size(); ++i) {
             statString.append('\n', separator, borrowedKeys[i]);
-            appendSpaces(statString, 35 - borrowedKeys[i].length());
+            appendSpaces(statString, 35 - length(borrowedKeys[i]));
             statString.append(borrowedValues[i]);
         }
     }
     statString.append('\n');
 
-    auto utf8String = statString.toString().utf8();
+    auto utf8String = utf8(statString.toString());
     m_sampleLogFile.write(byteCast<uint8_t>(utf8String.span()));
 }
 

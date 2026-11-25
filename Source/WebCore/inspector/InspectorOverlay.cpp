@@ -108,9 +108,9 @@ static bool isInNodeList(const Node& node, const NodeList& list)
     return false;
 }
 
-static void truncateWithEllipsis(String& string, size_t length)
+static void truncateWithEllipsis(RefPtr<StringImpl>& string, size_t length)
 {
-    if (string.length() > length)
+    if (WTF::length(string) > length)
         string = makeString(StringView(string).left(length), horizontalEllipsis);
 }
 
@@ -1079,7 +1079,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     // Draw lines.
     {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily(AtomString { page->settings().sansSerifFontFamily() });
+        fontDescription.setOneFamily(AtomStringImpl::add(page->settings().sansSerifFontFamily()).get());
         fontDescription.setUsedSize(10);
 
         FontCascade font(WTF::move(fontDescription));
@@ -1123,7 +1123,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
 
                 GraphicsContextStateSaver verticalLabelStateSaver(context);
                 context.translate(zoom(x) + 0.5f, scrollY);
-                context.drawText(font, TextRun { String::number(x) }, { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.metricsOfPrimaryFont().intHeight() - 1.0f });
+                context.drawText(font, TextRun { makeString(x) }, { 2, drawTopEdge ? rulerLabelSize : rulerLabelSize - rulerSize + font.metricsOfPrimaryFont().intHeight() - 1.0f });
             }
         }
 
@@ -1161,7 +1161,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
                 GraphicsContextStateSaver horizontalLabelStateSaver(context);
                 context.translate(scrollX, zoom(y) + 0.5f);
                 context.rotate(drawLeftEdge ? -piOverTwoFloat : piOverTwoFloat);
-                context.drawText(font, TextRun { String::number(y) }, { 2, drawLeftEdge ? rulerLabelSize : rulerLabelSize - rulerSize });
+                context.drawText(font, TextRun { makeString(y) }, { 2, drawLeftEdge ? rulerLabelSize : rulerLabelSize - rulerSize });
             }
         }
     }
@@ -1169,7 +1169,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     // Draw viewport size.
     {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily(AtomString { page->settings().sansSerifFontFamily() });
+        fontDescription.setOneFamily(AtomStringImpl::add(page->settings().sansSerifFontFamily()).get());
         fontDescription.setUsedSize(12);
 
         FontCascade font(WTF::move(fontDescription));
@@ -1252,15 +1252,15 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     if (!renderer || renderer->isSkippedContent())
         return { };
 
-    String elementTagName = element->nodeName();
+    RefPtr<StringImpl> elementTagName = element->nodeName();
     if (!element->document().isXHTMLDocument())
-        elementTagName = elementTagName.convertToASCIILowercase();
+        elementTagName = convertToASCIILowercase(elementTagName);
 
-    String elementIDValue;
+    RefPtr<StringImpl> elementIDValue;
     if (element->hasID())
         elementIDValue = makeString('#', DOMCSSNamespace::escape(element->getIdAttribute()));
 
-    String elementClassValue;
+    RefPtr<StringImpl> elementClassValue;
     if (element->hasClass()) {
         StringBuilder builder;
         Ref classList = element->classList();
@@ -1273,29 +1273,29 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         truncateWithEllipsis(elementClassValue, 50);
     }
 
-    String elementPseudoType;
+    RefPtr<StringImpl> elementPseudoType;
     if (node.isBeforePseudoElement())
-        elementPseudoType = "::before"_s;
+        elementPseudoType = "::before"_si;
     else if (node.isAfterPseudoElement())
-        elementPseudoType = "::after"_s;
+        elementPseudoType = "::after"_si;
 
-    String elementWidth;
-    String elementHeight;
+    RefPtr<StringImpl> elementWidth;
+    RefPtr<StringImpl> elementHeight;
     if (is<RenderBoxModelObject>(renderer)) {
         CheckedPtr modelObject = downcast<RenderBoxModelObject>(renderer.get());
-        elementWidth = String::number(Style::unapplyingZoom<int>(roundToInt(modelObject->offsetWidth()), *modelObject));
-        elementHeight = String::number(Style::unapplyingZoom<int>(roundToInt(modelObject->offsetHeight()), *modelObject));
+        elementWidth = makeString(Style::unapplyingZoom<int>(roundToInt(modelObject->offsetWidth()), *modelObject));
+        elementHeight = makeString(Style::unapplyingZoom<int>(roundToInt(modelObject->offsetHeight()), *modelObject));
     } else {
         // A missing view only costs one line of the tooltip; draw the rest.
         RefPtr containingFrame = document->frame();
         if (RefPtr containingView = containingFrame ? containingFrame->view() : nullptr) {
             IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
-            elementWidth = String::number(boundingBox.width());
-            elementHeight = String::number(boundingBox.height());
+            elementWidth = makeString(boundingBox.width());
+            elementHeight = makeString(boundingBox.height());
         }
     }
 
-    Vector<String> layoutContextBubbleStrings;
+    Vector<RefPtr<StringImpl>> layoutContextBubbleStrings;
     
     if (rendererIsFlexboxItem(*renderer))
         layoutContextBubbleStrings.append(WEB_UI_STRING_KEY("flex item", "flex item (Inspector Element Selection)", "Inspector element selection tooltip text for items inside a Flexbox Container."));
@@ -1316,7 +1316,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     // Need to enable AX to get the computed role.
     WebCore::AXObjectCache::enableAccessibility();
 
-    String elementRole;
+    RefPtr<StringImpl> elementRole;
     if (CheckedPtr<AXObjectCache> axObjectCache = document->axObjectCache()) {
         if (RefPtr axObject = axObjectCache->getOrCreate(node); axObject && !axObject->isIgnored())
             elementRole = axObject->computedRoleString();
@@ -1339,13 +1339,13 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         { "px"_s, Color::darkGray },
     };
 
-    if (!elementRole.isEmpty() || !layoutContextBubbleStrings.isEmpty()) {
+    if (!isEmpty(elementRole) || !layoutContextBubbleStrings.isEmpty()) {
         labelContents.append({ "\n"_s, Color::black });
 
-        if (!elementRole.isEmpty())
+        if (!isEmpty(elementRole))
             labelContents.append({ makeString("Role: "_s, elementRole), Color::black, { InspectorOverlayLabel::Content::Decoration::Type::Bordered, elementTitleRoleBubbleColor } });
 
-        auto isFirstBubble = elementRole.isEmpty();
+        auto isFirstBubble = isEmpty(elementRole);
         for (auto& layoutContextBubbleString : layoutContextBubbleStrings) {
             if (!isFirstBubble)
                 labelContents.append({ "  "_s, Color::black });
@@ -1513,7 +1513,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
         label.draw(context);
 }
 
-static Vector<String> authoredGridTrackSizes(Node* node, Style::GridTrackSizingDirection direction, unsigned expectedTrackCount)
+static Vector<RefPtr<StringImpl>> authoredGridTrackSizes(Node* node, Style::GridTrackSizingDirection direction, unsigned expectedTrackCount)
 {
     RefPtr element = dynamicDowncast<StyledElement>(node);
     if (!element)
@@ -1547,14 +1547,14 @@ static Vector<String> authoredGridTrackSizes(Node* node, Style::GridTrackSizingD
         return { };
 
     return WTF::switchOn(gridTemplateListValue->list(),
-        [&](CSS::Keyword::None) -> Vector<String> {
+        [&](CSS::Keyword::None) -> Vector<RefPtr<StringImpl>> {
             return { };
         },
-        [&](const CSS::GridSubgrid&) -> Vector<String> {
+        [&](const CSS::GridSubgrid&) -> Vector<RefPtr<StringImpl>> {
             return { };
         },
-        [&](const CSS::GridTrackList& trackList) -> Vector<String> {
-            Vector<String> trackSizes;
+        [&](const CSS::GridTrackList& trackList) -> Vector<RefPtr<StringImpl>> {
+            Vector<RefPtr<StringImpl>> trackSizes;
 
             for (auto& track : trackList.value) {
                 WTF::switchOn(track,
@@ -1838,7 +1838,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             previousColumnEndLine = columnEndLine;
             
             if (gridOverlay.config.showTrackSizes) {
-                auto authoredTrackSize = i < authoredTrackColumnSizes.size() ? authoredTrackColumnSizes[i] : "auto"_s;
+                auto authoredTrackSize = i < authoredTrackColumnSizes.size() ? authoredTrackColumnSizes[i] : "auto"_si;
                 FloatLine trackTopLine = { columnStartLine.start(), columnEndLine.start() };
                 gridHighlightOverlay.labels.append({ authoredTrackSize, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, { correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Up, Style::GridTrackSizingDirection::Columns), InspectorOverlayLabel::Arrow::Alignment::Middle } });
             }
@@ -1926,7 +1926,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             previousRowEndLine = rowEndLine;
 
             if (gridOverlay.config.showTrackSizes) {
-                auto authoredTrackSize = i < authoredTrackRowSizes.size() ? authoredTrackRowSizes[i] : "auto"_s;
+                auto authoredTrackSize = i < authoredTrackRowSizes.size() ? authoredTrackRowSizes[i] : "auto"_si;
                 FloatLine trackLeftLine = { rowStartLine.start(), rowEndLine.start() };
                 gridHighlightOverlay.labels.append({ authoredTrackSize, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, { correctedArrowDirection(InspectorOverlayLabel::Arrow::Direction::Left, Style::GridTrackSizingDirection::Rows), InspectorOverlayLabel::Arrow::Alignment::Middle } });
             }

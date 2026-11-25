@@ -50,16 +50,19 @@ public:
     {
     }
 
-    static RegistrableDomain fromRawString(String&& origin)
+    static RegistrableDomain fromRawString(RefPtr<StringImpl>&& origin)
     {
         return RegistrableDomain(WTF::move(origin));
     }
 
-    bool isEmpty() const { return m_registrableDomain.isEmpty() || m_registrableDomain == "nullOrigin"_s; }
-    const String& string() const LIFETIME_BOUND { return m_registrableDomain; }
+    bool isEmpty() const { return WTF::isEmpty(m_registrableDomain) || equal(m_registrableDomain, "nullOrigin"_s); }
+    const RefPtr<StringImpl>& string() const LIFETIME_BOUND { return m_registrableDomain; }
 
-    friend bool operator==(const RegistrableDomain&, const RegistrableDomain&) = default;
-    bool operator==(ASCIILiteral other) const { return m_registrableDomain == other; }
+    friend bool operator==(const RegistrableDomain& a, const RegistrableDomain& b)
+    {
+        return contentEquals(a.m_registrableDomain, b.m_registrableDomain);
+    }
+    bool operator==(ASCIILiteral other) const { return equal(m_registrableDomain, other); }
 
     bool matches(const URL& url) const
     {
@@ -71,51 +74,51 @@ public:
         return matches(origin.host());
     }
 
-    RegistrableDomain isolatedCopy() const & { return RegistrableDomain { m_registrableDomain.isolatedCopy() }; }
-    RegistrableDomain isolatedCopy() && { return RegistrableDomain { WTF::move(m_registrableDomain).isolatedCopy() }; }
+    RegistrableDomain isolatedCopy() const & { return RegistrableDomain { WTF::isolatedCopy(m_registrableDomain) }; }
+    RegistrableDomain isolatedCopy() && { return RegistrableDomain { WTF::isolatedCopy(WTF::move(m_registrableDomain)) }; }
 
     RegistrableDomain(WTF::HashTableDeletedValueType)
         : m_registrableDomain(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_registrableDomain.isHashTableDeletedValue(); }
-    unsigned hash() const { return m_registrableDomain.hash(); }
+    unsigned hash() const { return WTF::hash(m_registrableDomain); }
 
     struct RegistrableDomainHash {
-        static unsigned hash(const RegistrableDomain& registrableDomain) { return ASCIICaseInsensitiveHash::hash(registrableDomain.m_registrableDomain.impl()); }
+        static unsigned hash(const RegistrableDomain& registrableDomain) { return ASCIICaseInsensitiveHash::hash(registrableDomain.m_registrableDomain.get()); }
         static bool equal(const RegistrableDomain& a, const RegistrableDomain& b) { return equalIgnoringASCIICase(a.string(), b.string()); }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    static RegistrableDomain uncheckedCreateFromRegistrableDomainString(const String& domain)
+    static RegistrableDomain uncheckedCreateFromRegistrableDomainString(StringImpl* domain)
     {
-        return RegistrableDomain { String { domain } };
+        return RegistrableDomain { RefPtr<StringImpl> { domain } };
     }
     
-    static RegistrableDomain uncheckedCreateFromHost(const String& host)
+    static RegistrableDomain uncheckedCreateFromHost(StringImpl* host)
     {
         auto registrableDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(host);
-        if (registrableDomain.isEmpty())
+        if (WTF::isEmpty(registrableDomain))
             return uncheckedCreateFromRegistrableDomainString(host);
         return RegistrableDomain { WTF::move(registrableDomain) };
     }
 
 private:
-    explicit RegistrableDomain(String&& domain)
-        : m_registrableDomain { domain.isEmpty() ? "nullOrigin"_s : WTF::move(domain) }
+    explicit RegistrableDomain(RefPtr<StringImpl>&& domain)
+        : m_registrableDomain { WTF::isEmpty(domain) ? "nullOrigin"_si : WTF::move(domain) }
     {
     }
 
     bool matches(StringView host) const
     {
-        if (host.isEmpty() && m_registrableDomain == "nullOrigin"_s)
+        if (host.isEmpty() && equal(m_registrableDomain, "nullOrigin"_s))
             return true;
         if (!host.endsWith(m_registrableDomain))
             return false;
-        if (host.length() == m_registrableDomain.length())
+        if (host.length() == length(m_registrableDomain))
             return true;
-        return host[host.length() - m_registrableDomain.length() - 1] == '.';
+        return host[host.length() - length(m_registrableDomain) - 1] == '.';
     }
 
-    static inline String registrableDomainFromHost(const URL& url)
+    static inline RefPtr<StringImpl> registrableDomainFromHost(const URL& url)
     {
         if (url.protocolIsBlob())
             return registrableDomainFromHost(BlobURL::getOriginURL(url).host().toString());
@@ -123,17 +126,17 @@ private:
         return registrableDomainFromHost(url.host().toString());
     }
 
-    static inline String registrableDomainFromHost(const String& host)
+    static inline RefPtr<StringImpl> registrableDomainFromHost(StringImpl* host)
     {
         auto domain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(host);
-        if (host.isEmpty())
-            domain = "nullOrigin"_s;
-        else if (domain.isEmpty())
+        if (WTF::isEmpty(host))
+            domain = "nullOrigin"_si;
+        else if (WTF::isEmpty(domain))
             domain = host;
         return domain;
     }
 
-    String m_registrableDomain;
+    RefPtr<StringImpl> m_registrableDomain;
 };
 
 inline bool areRegistrableDomainsEqual(const URL& a, const URL& b)
@@ -147,10 +150,10 @@ namespace WTF {
 template<> struct DefaultHash<WebCore::RegistrableDomain> : WebCore::RegistrableDomain::RegistrableDomainHash { };
 template<> struct HashTraits<WebCore::RegistrableDomain> : SimpleClassHashTraits<WebCore::RegistrableDomain> { };
 
-template<> class StringTypeAdapter<WebCore::RegistrableDomain> : public StringTypeAdapter<String> {
+template<> class StringTypeAdapter<WebCore::RegistrableDomain> : public StringTypeAdapter<RefPtr<StringImpl>> {
 public:
     StringTypeAdapter(const WebCore::RegistrableDomain& domain)
-        : StringTypeAdapter<String>(domain.string())
+        : StringTypeAdapter<RefPtr<StringImpl>>(domain.string())
     { }
 };
 

@@ -44,8 +44,8 @@ static void testContentScriptsParsing(Test* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
     auto parseExtensionManifest = [&](const gchar* contentScripts) {
-        auto manifestString = makeString("{ \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"content_scripts\": "_s, String::fromUTF8(contentScripts), " }"_s);
-        GRefPtr extension = adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString.utf8()) } }, &error.outPtr()));
+        auto manifestString = makeString("{ \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"content_scripts\": "_s, StringImpl::fromUTF8(contentScripts), " }"_s);
+        GRefPtr extension = adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(utf8(manifestString)) } }, &error.outPtr()));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(extension.get()));
         return extension;
     };

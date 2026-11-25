@@ -70,8 +70,8 @@ public:
     WEBCORE_EXPORT explicit TileController(PlatformCALayer*, AllowScrollPerformanceLogging = AllowScrollPerformanceLogging::Yes);
     WEBCORE_EXPORT ~TileController();
     
-    WEBCORE_EXPORT static String tileGridContainerLayerName();
-    static String zoomedOutTileGridContainerLayerName();
+    WEBCORE_EXPORT static RefPtr<StringImpl> tileGridContainerLayerName();
+    static RefPtr<StringImpl> zoomedOutTileGridContainerLayerName();
 
     WEBCORE_EXPORT void tileCacheLayerBoundsChanged();
 

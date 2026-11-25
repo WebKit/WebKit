@@ -48,21 +48,21 @@ class WorkerRunLoop;
 class WorkerThreadableWebSocketChannel final : public RefCounted<WorkerThreadableWebSocketChannel>, public ThreadableWebSocketChannel {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(WorkerThreadableWebSocketChannel, WEBCORE_EXPORT);
 public:
-    static Ref<ThreadableWebSocketChannel> create(WorkerGlobalScope& workerGlobalScope, WebSocketChannelClient& client, const String& taskMode, SocketProvider& provider)
+    static Ref<ThreadableWebSocketChannel> create(WorkerGlobalScope& workerGlobalScope, WebSocketChannelClient& client, StringImpl* taskMode, SocketProvider& provider)
     {
         return adoptRef(*new WorkerThreadableWebSocketChannel(workerGlobalScope, client, taskMode, provider));
     }
     virtual ~WorkerThreadableWebSocketChannel();
 
     // ThreadableWebSocketChannel functions.
-    ConnectStatus connect(const URL&, const String& protocol) final;
-    String subprotocol() final;
-    String extensions() final;
+    ConnectStatus connect(const URL&, StringImpl* protocol) final;
+    RefPtr<StringImpl> subprotocol() final;
+    RefPtr<StringImpl> extensions() final;
     void send(UTF8CString&&) final;
     void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength) final;
     void send(Blob&) final;
-    void close(int code, const String& reason) final;
-    void fail(String&& reason) final;
+    void close(int code, StringImpl* reason) final;
+    void fail(RefPtr<StringImpl>&& reason) final;
     void disconnect() final; // Will suppress didClose().
     void suspend() final;
     void resume() final;
@@ -75,36 +75,36 @@ public:
         WTF_MAKE_TZONE_ALLOCATED(Peer);
         WTF_MAKE_NONCOPYABLE(Peer);
     public:
-        static Ref<Peer> create(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, const String& taskMode, SocketProvider&, IsInitiatedByWorker);
+        static Ref<Peer> create(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, StringImpl* taskMode, SocketProvider&, IsInitiatedByWorker);
         ~Peer();
 
-        ConnectStatus connect(const URL&, const String& protocol);
+        ConnectStatus connect(const URL&, StringImpl* protocol);
         void send(UTF8CString&&);
         void send(const JSC::ArrayBuffer&);
         void send(Blob&);
         void bufferedAmount();
-        void close(int code, const String& reason);
-        void fail(String&& reason);
+        void close(int code, StringImpl* reason);
+        void fail(RefPtr<StringImpl>&& reason);
         void disconnect();
         void suspend();
         void resume();
 
         // WebSocketChannelClient functions.
         void didConnect() final;
-        void didReceiveMessage(String&& message) final;
+        void didReceiveMessage(RefPtr<StringImpl>&& message) final;
         void didReceiveBinaryData(Vector<uint8_t>&&) final;
         void didUpdateBufferedAmount(uint64_t bufferedAmount) final;
         void didStartClosingHandshake() final;
-        void didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
-        void didReceiveMessageError(String&& reason) final;
+        void didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, StringImpl* reason) final;
+        void didReceiveMessageError(RefPtr<StringImpl>&& reason) final;
         void didUpgradeURL() final;
 
     private:
-        Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, const String& taskMode, SocketProvider&, IsInitiatedByWorker);
+        Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, StringImpl* taskMode, SocketProvider&, IsInitiatedByWorker);
 
         ThreadSafeWeakPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         RefPtr<ThreadableWebSocketChannel> m_mainWebSocketChannel;
-        String m_taskMode;
+        RefPtr<StringImpl> m_taskMode;
         ScriptExecutionContextIdentifier m_workerContextIdentifier;
     };
 
@@ -115,29 +115,29 @@ private:
     // Bridge for Peer.  Running on the worker thread.
     class Bridge : public RefCounted<Bridge> {
     public:
-        static Ref<Bridge> create(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, WorkerGlobalScope& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& provider)
+        static Ref<Bridge> create(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, WorkerGlobalScope& workerGlobalScope, StringImpl* taskMode, Ref<SocketProvider>&& provider)
         {
             return adoptRef(*new Bridge(WTF::move(workerClientWrapper), workerGlobalScope, taskMode, WTF::move(provider)));
         }
         ~Bridge();
         void initialize(WorkerGlobalScope&);
-        void connect(const URL&, const String& protocol);
+        void connect(const URL&, StringImpl* protocol);
         void send(UTF8CString&&);
         void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength);
         void send(Blob&);
-        void close(int code, const String& reason);
-        void fail(String&& reason);
+        void close(int code, StringImpl* reason);
+        void fail(RefPtr<StringImpl>&& reason);
         void disconnect();
         void suspend();
         void resume();
 
     private:
-        Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&&, WorkerGlobalScope&, const String& taskMode, Ref<SocketProvider>&&);
+        Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&&, WorkerGlobalScope&, StringImpl* taskMode, Ref<SocketProvider>&&);
 
         static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, Ref<ThreadableWebSocketChannelClientWrapper>&&);
 
         // Executed on the main thread to create a Peer for this bridge.
-        static RefPtr<Peer> mainThreadInitialize(ScriptExecutionContext&, WorkerThread&, ScriptExecutionContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&&, const String& taskMode, Ref<SocketProvider>&&, IsInitiatedByWorker);
+        static RefPtr<Peer> mainThreadInitialize(ScriptExecutionContext&, WorkerThread&, ScriptExecutionContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&&, StringImpl* taskMode, Ref<SocketProvider>&&, IsInitiatedByWorker);
 
         // Executed on the worker context's thread.
         NODELETE void clearClientWrapper();
@@ -145,12 +145,12 @@ private:
         const Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         RefPtr<WorkerGlobalScope> m_workerGlobalScope;
         const CheckedRef<WorkerLoaderProxy> m_loaderProxy;
-        String m_taskMode;
+        RefPtr<StringImpl> m_taskMode;
         ThreadSafeWeakPtr<Peer> m_peer;
         const Ref<SocketProvider> m_socketProvider;
     };
 
-    WEBCORE_EXPORT WorkerThreadableWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, const String& taskMode, SocketProvider&);
+    WEBCORE_EXPORT WorkerThreadableWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, StringImpl* taskMode, SocketProvider&);
 
     class WorkerGlobalScopeDidInitializeTask;
     

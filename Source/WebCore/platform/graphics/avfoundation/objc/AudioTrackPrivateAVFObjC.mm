@@ -82,7 +82,7 @@ void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
     // invariant, and properties like formatDescription should never move from
     // non-null to null. When this happens, ignore the configuration change.
     auto newConfiguration = m_impl->audioTrackConfiguration();
-    if (!configuration().codec.isEmpty() && newConfiguration.codec.isEmpty())
+    if (!isEmpty(configuration().codec) && isEmpty(newConfiguration.codec))
         return;
 
     setConfiguration(WTF::move(newConfiguration));

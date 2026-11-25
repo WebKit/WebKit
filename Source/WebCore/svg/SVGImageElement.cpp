@@ -113,7 +113,7 @@ bool SVGImageElement::renderingTaintsOrigin() const
     return cachedImage->isCORSCrossOrigin();
 }
 
-void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGImageElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
     switch (name.nodeName()) {
@@ -133,7 +133,7 @@ void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomStri
         Ref { m_height }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
         break;
     case AttributeNames::crossoriginAttr:
-        if (parseCORSSettingsAttribute(oldValue) != parseCORSSettingsAttribute(newValue))
+        if (!equal(parseCORSSettingsAttribute(oldValue), parseCORSSettingsAttribute(newValue)))
             m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         break;
     case AttributeNames::referrerpolicyAttr: {
@@ -226,22 +226,22 @@ Node::NeedsPostConnectionSteps SVGImageElement::insertionSteps(InsertionType ins
     return result;
 }
 
-String SVGImageElement::imageSourceURL() const
+RefPtr<StringImpl> SVGImageElement::imageSourceURL() const
 {
     return href();
 }
 
-void SVGImageElement::setCrossOrigin(const AtomString& value)
+void SVGImageElement::setCrossOrigin(AtomStringImpl* value)
 {
     setAttributeWithoutSynchronization(HTMLNames::crossoriginAttr, value);
 }
 
-String SVGImageElement::crossOrigin() const
+RefPtr<StringImpl> SVGImageElement::crossOrigin() const
 {
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(HTMLNames::crossoriginAttr));
 }
 
-String SVGImageElement::referrerPolicyForBindings() const
+RefPtr<StringImpl> SVGImageElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
 }

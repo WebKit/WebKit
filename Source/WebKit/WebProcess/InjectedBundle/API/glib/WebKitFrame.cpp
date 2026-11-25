@@ -73,9 +73,9 @@ static UTF8CString getURL(WebFrame* webFrame)
     ASSERT(documentLoader);
 
     if (!documentLoader->unreachableURL().isEmpty())
-        return documentLoader->unreachableURL().string().utf8();
+        return utf8(documentLoader->unreachableURL().string());
 
-    return documentLoader->url().string().utf8();
+    return utf8(documentLoader->url().string());
 }
 
 WebKitFrame* webkitFrameCreate(WebFrame* webFrame)
@@ -175,7 +175,7 @@ const gchar* webkit_frame_get_uri(WebKitFrame* frame)
     g_return_val_if_fail(WEBKIT_IS_FRAME(frame), 0);
 
     if (frame->priv->uri.isNull())
-        frame->priv->uri = frame->priv->webFrame->url().string().utf8();
+        frame->priv->uri = utf8(frame->priv->webFrame->url().string());
 
     return frame->priv->uri.legacyCStringPointer();
 }

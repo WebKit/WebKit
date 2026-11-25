@@ -41,10 +41,10 @@ class WebExtensionAPITest : public WebExtensionAPIObject, public JSWebExtensionW
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITest, test, test);
 
 public:
-    void notifyFail(JSContextRef, const String& message);
-    void notifyPass(JSContextRef, const String& message);
+    void notifyFail(JSContextRef, StringImpl* message);
+    void notifyPass(JSContextRef, StringImpl* message);
 
-    void sendMessage(JSContextRef, const String& message, JSValueRef argument);
+    void sendMessage(JSContextRef, StringImpl* message, JSValueRef argument);
     WebExtensionAPIEvent& onMessage();
     WebExtensionAPIEvent& onTestStarted();
     WebExtensionAPIEvent& onTestFinished();
@@ -54,22 +54,22 @@ public:
 
     void log(JSContextRef, JSValueRef);
 
-    void fail(JSContextRef, const String& message);
-    void succeed(JSContextRef, const String& message);
+    void fail(JSContextRef, StringImpl* message);
+    void succeed(JSContextRef, StringImpl* message);
 
-    void assertTrue(JSContextRef, bool testValue, const String& message, String& outExceptionString);
-    void assertFalse(JSContextRef, bool testValue, const String& message, String& outExceptionString);
+    void assertTrue(JSContextRef, bool testValue, StringImpl* message, RefPtr<StringImpl>& outExceptionString);
+    void assertFalse(JSContextRef, bool testValue, StringImpl* message, RefPtr<StringImpl>& outExceptionString);
 
-    void assertDeepEq(JSContextRef, JSValueRef actualValue, JSValueRef expectedValue, const String& message, String& outExceptionString);
-    void assertEq(JSContextRef, JSValueRef actualValue, JSValueRef expectedValue, const String& message, String& outExceptionString);
+    void assertDeepEq(JSContextRef, JSValueRef actualValue, JSValueRef expectedValue, StringImpl* message, RefPtr<StringImpl>& outExceptionString);
+    void assertEq(JSContextRef, JSValueRef actualValue, JSValueRef expectedValue, StringImpl* message, RefPtr<StringImpl>& outExceptionString);
 
-    JSValueRef assertRejects(JSContextRef, JSValueRef promise, JSValueRef expectedError, const String& message);
-    JSValueRef assertResolves(JSContextRef, JSValueRef promise, const String& message);
+    JSValueRef assertRejects(JSContextRef, JSValueRef promise, JSValueRef expectedError, StringImpl* message);
+    JSValueRef assertResolves(JSContextRef, JSValueRef promise, StringImpl* message);
 
-    void assertThrows(JSContextRef, JSValueRef function, JSValueRef expectedError, const String& message, String& outExceptionString);
-    JSValueRef assertSafe(JSContextRef, JSValueRef function, const String& message, String& outExceptionString);
+    void assertThrows(JSContextRef, JSValueRef function, JSValueRef expectedError, StringImpl* message, RefPtr<StringImpl>& outExceptionString);
+    JSValueRef assertSafe(JSContextRef, JSValueRef function, StringImpl* message, RefPtr<StringImpl>& outExceptionString);
 
-    JSValueRef assertSafeResolve(JSContextRef, JSValueRef function, const String& message, String& outExceptionString);
+    JSValueRef assertSafeResolve(JSContextRef, JSValueRef function, StringImpl* message, RefPtr<StringImpl>& outExceptionString);
 
     JSValueRef addTest(JSContextRef, JSValueRef testFunction);
     JSValueRef runTests(JSContextRef, Vector<Protected<JSValueRef>> testFunctions);
@@ -80,8 +80,8 @@ private:
     const RefPtr<WebExtensionAPIEvent> m_onTestFinished;
 
     struct Test {
-        String testName;
-        std::pair<String, unsigned> location;
+        RefPtr<StringImpl> testName;
+        std::pair<RefPtr<StringImpl>, unsigned> location;
         WebExtensionControllerIdentifier webExtensionControllerIdentifier;
         Protected<JSValueRef> testFunction;
         Protected<JSValueRef> resolveCallback;
@@ -93,23 +93,23 @@ private:
     bool m_testInProgress { false };
     bool m_notifiedFailure { false };
     bool m_hitAssertion { false };
-    String m_assertionMessage;
+    RefPtr<StringImpl> m_assertionMessage;
     unsigned m_testGeneration { 0 };
     unsigned m_pendingAsyncAssertions { 0 };
 
     template<size_t ArgumentCount>
-    JSValueRef invokeMethod(JSContextRef, JSValueRef, const String& method, std::array<JSValueRef, ArgumentCount>&& arguments, JSValueRef* exception = nullptr);
-    std::pair<String, unsigned> scriptLocation(JSContextRef);
-    String debugString(JSContextRef, JSValueRef);
-    String combineMessages(const String& messageOne, const String& messageTwo);
+    JSValueRef invokeMethod(JSContextRef, JSValueRef, StringImpl* method, std::array<JSValueRef, ArgumentCount>&& arguments, JSValueRef* exception = nullptr);
+    std::pair<RefPtr<StringImpl>, unsigned> scriptLocation(JSContextRef);
+    RefPtr<StringImpl> debugString(JSContextRef, JSValueRef);
+    RefPtr<StringImpl> combineMessages(StringImpl* messageOne, StringImpl* messageTwo);
 
-    JSValueRef addTest(JSContextRef, JSValueRef testFunction, String callingAPIName);
-    void assertEquals(JSContextRef, bool result, const String& expectedString, const String& actualString, const String& message, String& outExceptionString);
+    JSValueRef addTest(JSContextRef, JSValueRef testFunction, RefPtr<StringImpl> callingAPIName);
+    void assertEquals(JSContextRef, bool result, StringImpl* expectedString, StringImpl* actualString, StringImpl* message, RefPtr<StringImpl>& outExceptionString);
     void startNextTest();
     std::optional<unsigned> beginAsyncAssertion();
     void settleAsyncAssertion(std::optional<unsigned> generation, NOESCAPE const Function<void()>& recordAssertions);
-    void recordAssertionIfNeeded(bool result, const String& message, std::pair<String, unsigned> location, String& outExceptionString);
-    void failRunOutsideTestIfNeeded(WebExtensionControllerIdentifier, bool result, const String& message, std::pair<String, unsigned> location);
+    void recordAssertionIfNeeded(bool result, StringImpl* message, std::pair<RefPtr<StringImpl>, unsigned> location, RefPtr<StringImpl>& outExceptionString);
+    void failRunOutsideTestIfNeeded(WebExtensionControllerIdentifier, bool result, StringImpl* message, std::pair<RefPtr<StringImpl>, unsigned> location);
 };
 
 } // namespace WebKit

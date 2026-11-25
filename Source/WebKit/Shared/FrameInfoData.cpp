@@ -35,7 +35,7 @@ FrameInfoData legacyEmptyFrameInfo(WebCore::ResourceRequest&& request)
 
     return FrameInfoData {
         WTF::move(request),
-        String { },
+        nullptr,
         WebCore::generateFrameIdentifier(),
         std::nullopt,
         isFocused,

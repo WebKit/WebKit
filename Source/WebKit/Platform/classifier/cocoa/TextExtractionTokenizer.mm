@@ -85,9 +85,9 @@ void TextExtractionTokenizer::loadEmbeddingsIfNeeded()
     }
 }
 
-static Vector<String> tokenize(StringView input)
+static Vector<RefPtr<StringImpl>> tokenize(StringView input)
 {
-    Vector<String> tokens;
+    Vector<RefPtr<StringImpl>> tokens;
     StringBuilder current;
 
     auto flushIfMeaningful = [&] {
@@ -106,7 +106,7 @@ static Vector<String> tokenize(StringView input)
         if (allDigits)
             return;
 
-        tokens.append(candidate.convertToASCIILowercase());
+        tokens.append(convertToASCIILowercase(candidate));
     };
 
     for (size_t i = 0; i < input.length(); ++i) {
@@ -152,11 +152,11 @@ std::optional<double> TextExtractionTokenizer::recognizedFraction(StringView inp
     size_t totalLength = 0;
     size_t recognizedLength = 0;
     for (auto& token : tokens) {
-        totalLength += token.length();
-        RetainPtr nsToken = token.createNSString();
+        totalLength += length(token);
+        RetainPtr nsToken = createNSString(token);
         for (auto& embedding : borrow(m_embeddings)) {
             if ([embedding.get() containsString:nsToken.get()]) {
-                recognizedLength += token.length();
+                recognizedLength += length(token);
                 break;
             }
         }

@@ -167,7 +167,7 @@ template<> JSValue JSTestOverloadedConstructorsWithSequenceDOMConstructor::proto
 template<> void JSTestOverloadedConstructorsWithSequenceDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    JSString* nameString = jsNontrivialString(vm, "TestOverloadedConstructorsWithSequence"_s);
+    JSString* nameString = jsNontrivialString(vm, "TestOverloadedConstructorsWithSequence"_si);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructorsWithSequence::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);

@@ -44,22 +44,22 @@ public:
 #endif
     };
 
-    static Ref<MediaError> create(Code code, String&& message)
+    static Ref<MediaError> create(Code code, RefPtr<StringImpl>&& message)
     {
         return adoptRef(*new MediaError(code, WTF::move(message)));
     }
 
     Code code() const { return m_code; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
 
 private:
-    MediaError(Code code, String&& message)
+    MediaError(Code code, RefPtr<StringImpl>&& message)
         : m_code(code)
         , m_message(WTF::move(message))
     { }
 
     Code m_code;
-    String m_message;
+    RefPtr<StringImpl> m_message;
 };
 
 } // namespace WebCore

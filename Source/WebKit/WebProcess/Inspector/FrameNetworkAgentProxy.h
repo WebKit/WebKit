@@ -99,7 +99,7 @@ public:
     void willDestroyCachedResource(WebCore::CachedResource&) final;
 
     void mainFrameNavigated(WebCore::DocumentLoader&) final;
-    void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, const String& sourceString) final;
+    void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, StringImpl* sourceString) final;
 
     void didCreateWebSocket(WebCore::WebSocketChannelIdentifier, const URL& requestURL) final;
     void willSendWebSocketHandshakeRequest(WebCore::WebSocketChannelIdentifier, WebCore::ResourceRequest&) final;
@@ -108,7 +108,7 @@ public:
     void didCloseWebSocket(WebCore::WebSocketChannelIdentifier) final;
     void didReceiveWebSocketFrame(WebCore::WebSocketChannelIdentifier, const WebCore::WebSocketFrame&) final;
     void didSendWebSocketFrame(WebCore::WebSocketChannelIdentifier, const WebCore::WebSocketFrame&) final;
-    void didReceiveWebSocketFrameError(WebCore::WebSocketChannelIdentifier, const String& errorMessage) final;
+    void didReceiveWebSocketFrameError(WebCore::WebSocketChannelIdentifier, StringImpl* errorMessage) final;
 
     // Web Inspector interception under Site Isolation; see NetworkInterceptionSink.
     bool willIntercept(const WebCore::ResourceRequest&) final;

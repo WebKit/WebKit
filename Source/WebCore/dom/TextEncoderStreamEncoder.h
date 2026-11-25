@@ -36,7 +36,7 @@ class TextEncoderStreamEncoder : public RefCounted<TextEncoderStreamEncoder> {
 public:
     static Ref<TextEncoderStreamEncoder> create() { return adoptRef(*new TextEncoderStreamEncoder); }
 
-    RefPtr<Uint8Array> encode(const String&);
+    RefPtr<Uint8Array> encode(StringImpl*);
     RefPtr<Uint8Array> flush();
 
 private:

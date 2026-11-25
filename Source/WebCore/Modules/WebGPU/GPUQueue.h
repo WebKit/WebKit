@@ -59,8 +59,8 @@ public:
         return adoptRef(*new GPUQueue(WTF::move(backing), WTF::move(gpu), device));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     void submit(Vector<Ref<GPUCommandBuffer>>&&);
 
@@ -108,7 +108,7 @@ private:
     const Ref<::WebGPU::Queue> m_backing;
     // The root, which has the commands that take WebCore sources.
     const Ref<WebGPUIntegration> m_gpu;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 

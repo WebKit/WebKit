@@ -44,7 +44,7 @@ CSSFontPaletteValue::CSSFontPaletteValue(CSS::FontPalette&& fontPalette)
 {
 }
 
-String CSSFontPaletteValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFontPaletteValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_fontPalette);
 }

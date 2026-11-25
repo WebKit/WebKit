@@ -40,6 +40,6 @@ NODELETE WTF_EXPORT_PRIVATE uint64_t lastTimeZoneID();
 NODELETE WTF_EXPORT_PRIVATE void timeZoneDidChange();
 WTF_EXPORT_PRIVATE void listenForTimeZoneChangeNotifications();
 
-WTF_EXPORT_PRIVATE bool setHostTimeZoneForTesting(const String&);
+WTF_EXPORT_PRIVATE bool setHostTimeZoneForTesting(StringImpl*);
 
 } // namespace WTF

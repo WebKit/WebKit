@@ -40,12 +40,12 @@ void DNSResolveQueueCurl::updateIsUsingProxy()
     notImplemented();
 }
 
-void DNSResolveQueueCurl::platformResolve(const String& /* hostname */)
+void DNSResolveQueueCurl::platformResolve(StringImpl* /* hostname */)
 {
     notImplemented();
 }
 
-void DNSResolveQueueCurl::resolve(const String& /* hostname */, uint64_t /* identifier */, DNSCompletionHandler&& /* completionHandler */)
+void DNSResolveQueueCurl::resolve(StringImpl* /* hostname */, uint64_t /* identifier */, DNSCompletionHandler&& /* completionHandler */)
 {
     notImplemented();
 }

@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<MediaPlaybackTargetMock> MediaPlaybackTargetMock::create(const String& mockDeviceName, State mockState)
+Ref<MediaPlaybackTargetMock> MediaPlaybackTargetMock::create(StringImpl* mockDeviceName, State mockState)
 {
     return adoptRef(*new MediaPlaybackTargetMock(mockDeviceName, mockState));
 }
 
-MediaPlaybackTargetMock::MediaPlaybackTargetMock(const String& mockDeviceName, State mockState)
+MediaPlaybackTargetMock::MediaPlaybackTargetMock(StringImpl* mockDeviceName, State mockState)
     : MediaPlaybackTarget { Type::Mock }
     , m_mockDeviceName { mockDeviceName }
     , m_mockState { mockState }

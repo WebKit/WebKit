@@ -80,7 +80,7 @@ TEST(HistoryDelegate, NonpersistentDataStoreDoesNotSendHistoryEvents)
     [webView _setHistoryDelegate:historyDelegate.get()];
 
     auto mainURL = makeString("http://localhost:"_s, server.port(), "/"_s);
-    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:mainURL.createNSString().get()]).get()]);
+    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(mainURL).get()]).get()]);
     [webView loadRequest:request.get()];
     [webView _test_waitForDidFinishNavigation];
     TestWebKitAPI::Util::spinRunLoop();
@@ -107,7 +107,7 @@ TEST(HistoryDelegate, NonpersistentDataStoreSendsHistoryEventsWhenAllowingPrivac
     [webView _setHistoryDelegate:historyDelegate.get()];
 
     auto mainURL = makeString("http://localhost:"_s, server.port(), "/"_s);
-    RetainPtr url = adoptNS([[NSURL alloc] initWithString:mainURL.createNSString().get()]);
+    RetainPtr url = adoptNS([[NSURL alloc] initWithString:createNSString(mainURL).get()]);
     RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:url.get()]);
     [webView loadRequest:request.get()];
 
@@ -121,7 +121,7 @@ TEST(HistoryDelegate, NonpersistentDataStoreSendsHistoryEventsWhenAllowingPrivac
 
     auto sourceURL = makeString("http://localhost:"_s, server.port(), "/server_redirect_source"_s);
     auto destinationURL = makeString("http://localhost:"_s, server.port(), "/server_redirect_destination"_s);
-    url = adoptNS([[NSURL alloc] initWithString:sourceURL.createNSString().get()]);
+    url = adoptNS([[NSURL alloc] initWithString:createNSString(sourceURL).get()]);
     request = adoptNS([[NSURLRequest alloc] initWithURL:url.get()]);
     [webView loadRequest:request.get()];
     [webView _test_waitForDidFinishNavigation];
@@ -152,7 +152,7 @@ TEST(HistoryDelegate, PersistentDataStoreSendsHistoryEvents)
     [webView _setHistoryDelegate:historyDelegate.get()];
 
     auto mainURL = makeString("http://localhost:"_s, server.port(), "/"_s);
-    RetainPtr url = adoptNS([[NSURL alloc] initWithString:mainURL.createNSString().get()]);
+    RetainPtr url = adoptNS([[NSURL alloc] initWithString:createNSString(mainURL).get()]);
     RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:url.get()]);
     [webView loadRequest:request.get()];
 
@@ -166,7 +166,7 @@ TEST(HistoryDelegate, PersistentDataStoreSendsHistoryEvents)
 
     auto sourceURL = makeString("http://localhost:"_s, server.port(), "/server_redirect_source"_s);
     auto destinationURL = makeString("http://localhost:"_s, server.port(), "/server_redirect_destination"_s);
-    url = adoptNS([[NSURL alloc] initWithString:sourceURL.createNSString().get()]);
+    url = adoptNS([[NSURL alloc] initWithString:createNSString(sourceURL).get()]);
     request = adoptNS([[NSURLRequest alloc] initWithURL:url.get()]);
     [webView loadRequest:request.get()];
     [webView _test_waitForDidFinishNavigation];

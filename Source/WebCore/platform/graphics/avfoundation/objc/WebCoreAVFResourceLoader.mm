@@ -362,7 +362,7 @@ void WebCoreAVFResourceLoader::startLoading()
 
     if (dataRequest && m_requestedLength > 0
         && !request.hasHTTPHeaderField(HTTPHeaderName::Range)) {
-        String rangeEnd = dataRequest.get().requestsAllDataToEndOfResource ? emptyString() : makeString(m_requestedOffset + m_requestedLength - 1);
+        RefPtr<StringImpl> rangeEnd = dataRequest.get().requestsAllDataToEndOfResource ? emptyString() : makeString(m_requestedOffset + m_requestedLength - 1);
         request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, m_requestedOffset, '-', rangeEnd));
     }
 
@@ -404,7 +404,7 @@ void WebCoreAVFResourceLoader::stopLoading()
     });
 }
 
-bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int status, const ParsedContentRange& contentRange, size_t expectedContentLength)
+bool WebCoreAVFResourceLoader::responseReceived(StringImpl* mimeType, int status, const ParsedContentRange& contentRange, size_t expectedContentLength)
 {
     assertIsCurrent(m_targetDispatcher.get());
 
@@ -418,9 +418,9 @@ bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int stat
     m_responseOffset = contentRange.isValid() ? static_cast<NSUInteger>(contentRange.firstBytePosition()) : 0;
 
     if (RetainPtr<AVAssetResourceLoadingContentInformationRequest> contentInfo = [m_avRequest contentInformationRequest]) {
-        String uti = UTIFromMIMEType(mimeType);
+        RefPtr<StringImpl> uti = UTIFromMIMEType(mimeType);
 
-        [contentInfo setContentType:uti.createNSString().get()];
+        [contentInfo setContentType:createNSString(uti).get()];
 
         [contentInfo setContentLength:contentRange.isValid() ? contentRange.instanceLength() : expectedContentLength];
         [contentInfo setByteRangeAccessSupported:YES];

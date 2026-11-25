@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Characterizes empty-string names, key paths and keys in IndexedDB after the metadata and records round-trip "
+    + "through the IndexedDB server: a null key path (no key path) must stay distinct from the empty key path (the value is the key), "
+    + "and empty-string object store names, index names, keys and values must be preserved.");
+
+window.jsTestIsAsync = true;
+
+function promiseForRequest(request)
+{
+    return new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+function openDatabase(name, version, upgrade)
+{
+    return new Promise((resolve, reject) => {
+        const request = version ? indexedDB.open(name, version) : indexedDB.open(name);
+        request.onupgradeneeded = () => upgrade?.(request.result, request.transaction);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+        request.onblocked = () => reject(new Error("blocked"));
+    });
+}
+
+function describeKeyPath(keyPath)
+{
+    return keyPath === null ? "null" : JSON.stringify(keyPath);
+}
+
+var db;
+var databaseName = "empty-string-names-and-key-paths-" + Date.now();
+
+async function dumpDatabase(label)
+{
+    debug(label + ":");
+    debug("    objectStoreNames: " + JSON.stringify(Array.from(db.objectStoreNames)));
+    const transaction = db.transaction(Array.from(db.objectStoreNames), "readonly");
+    for (const storeName of db.objectStoreNames) {
+        const store = transaction.objectStore(storeName);
+        debug(`    store ${JSON.stringify(storeName)}: keyPath ${describeKeyPath(store.keyPath)}, autoIncrement ${store.autoIncrement}, indexNames ${JSON.stringify(Array.from(store.indexNames))}`);
+        for (const indexName of store.indexNames) {
+            const index = store.index(indexName);
+            const indexKeys = await promiseForRequest(index.getAllKeys());
+            debug(`        index ${JSON.stringify(indexName)}: keyPath ${describeKeyPath(index.keyPath)}, unique ${index.unique}, multiEntry ${index.multiEntry}, primary keys ${JSON.stringify(indexKeys)}`);
+        }
+        const keys = await promiseForRequest(store.getAllKeys());
+        // Reading records back from a store whose key path is the empty string would require injecting the key into
+        // primitive values, which fails with UnknownError; only list the keys there.
+        if (store.keyPath === "") {
+            debug(`        keys ${JSON.stringify(keys)}`);
+            continue;
+        }
+        const values = await promiseForRequest(store.getAll());
+        debug(`        keys ${JSON.stringify(keys)}, values ${JSON.stringify(values)}`);
+    }
+}
+
+(async () => {
+    try {
+        await promiseForRequest(indexedDB.deleteDatabase(databaseName));
+
+        db = await openDatabase(databaseName, 1, (database) => {
+            const noKeyPath = database.createObjectStore("noKeyPath");
+            noKeyPath.createIndex("", "");
+            noKeyPath.put("", "");
+            noKeyPath.put("value", "key");
+            noKeyPath.put({ "": "x" }, "object");
+
+            const emptyKeyPath = database.createObjectStore("emptyKeyPath", { keyPath: "" });
+            emptyKeyPath.createIndex("byValue", "", { unique: true });
+            emptyKeyPath.put("");
+            emptyKeyPath.put("b");
+
+            const emptyName = database.createObjectStore("", { keyPath: "id" });
+            emptyName.createIndex("name", "name");
+            emptyName.put({ id: "", name: "" });
+            emptyName.put({ id: "a", name: "A" });
+
+            const arrayKeyPath = database.createObjectStore("arrayKeyPath", { keyPath: ["a", "b"] });
+            arrayKeyPath.put({ a: "", b: "" });
+        });
+        await dumpDatabase("After creation");
+        db.close();
+
+        db = await openDatabase(databaseName);
+        await dumpDatabase("After reopening");
+
+        const transaction = db.transaction(["emptyKeyPath", "noKeyPath"], "readonly");
+        window.emptyKeyResult = await promiseForRequest(transaction.objectStore("noKeyPath").get(""));
+        shouldBeEqualToString("emptyKeyResult", "");
+        window.missingKeyResult = await promiseForRequest(transaction.objectStore("noKeyPath").get("missing"));
+        shouldBeUndefined("missingKeyResult");
+        window.emptyKeyPathStoreKeyPath = transaction.objectStore("emptyKeyPath").keyPath;
+        shouldBeEqualToString("emptyKeyPathStoreKeyPath", "");
+        window.noKeyPathStoreKeyPath = transaction.objectStore("noKeyPath").keyPath;
+        shouldBeNull("noKeyPathStoreKeyPath");
+        db.close();
+
+        await promiseForRequest(indexedDB.deleteDatabase(databaseName));
+    } catch (e) {
+        testFailed("Unexpected error: " + e);
+    }
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

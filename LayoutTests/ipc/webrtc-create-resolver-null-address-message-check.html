@@ -47,7 +47,7 @@ async function waitForError(CoreIPC, substring) {
     await new Promise(resolve => CoreIPC.Networking.NetworkConnectionToWebProcess.CreateRTCProvider(0, {}, resolve));
 
     CoreIPC.Networking.NetworkRTCProvider.CreateResolver(0, { identifier: 393216, address: null });
-    const error = await waitForError(CoreIPC, "address.isNull");
+    const error = await waitForError(CoreIPC, "Message check failed: address");
     out(error ? "PASS: CreateResolver with a null address was rejected"
               : "FAIL: CreateResolver with a null address was accepted");
 

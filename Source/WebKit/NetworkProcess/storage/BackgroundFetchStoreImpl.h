@@ -48,40 +48,40 @@ public:
     static Ref<BackgroundFetchStoreImpl> create(ThreadSafeWeakPtr<NetworkStorageManager>&& manager, WeakPtr<WebCore::SWServer>&& server) { return adoptRef(*new BackgroundFetchStoreImpl(WTF::move(manager), WTF::move(server))); }
     ~BackgroundFetchStoreImpl();
 
-    void getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&&);
-    void getBackgroundFetchState(const String&, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&&);
-    void abortBackgroundFetch(const String&, CompletionHandler<void()>&&);
-    void pauseBackgroundFetch(const String&, CompletionHandler<void()>&&);
-    void resumeBackgroundFetch(const String&, CompletionHandler<void()>&&);
-    void clickBackgroundFetch(const String&, CompletionHandler<void()>&&);
+    void getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
+    void getBackgroundFetchState(StringImpl*, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&&);
+    void abortBackgroundFetch(StringImpl*, CompletionHandler<void()>&&);
+    void pauseBackgroundFetch(StringImpl*, CompletionHandler<void()>&&);
+    void resumeBackgroundFetch(StringImpl*, CompletionHandler<void()>&&);
+    void clickBackgroundFetch(StringImpl*, CompletionHandler<void()>&&);
 
 private:
     BackgroundFetchStoreImpl(ThreadSafeWeakPtr<NetworkStorageManager>&&, WeakPtr<WebCore::SWServer>&&);
 
     void initializeFetches(const WebCore::ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) final;
-    void clearFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, CompletionHandler<void()>&&) final;
+    void clearFetch(const WebCore::ServiceWorkerRegistrationKey&, StringImpl*, CompletionHandler<void()>&&) final;
     void clearAllFetches(const WebCore::ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) final;
-    void storeFetch(const WebCore::ServiceWorkerRegistrationKey&, const String&, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) final;
-    void storeFetchResponseBodyChunk(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&) final;
-    void retrieveResponseBody(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, RetrieveRecordResponseBodyCallback&&) final;
+    void storeFetch(const WebCore::ServiceWorkerRegistrationKey&, StringImpl*, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) final;
+    void storeFetchResponseBodyChunk(const WebCore::ServiceWorkerRegistrationKey&, StringImpl*, size_t, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&) final;
+    void retrieveResponseBody(const WebCore::ServiceWorkerRegistrationKey&, StringImpl*, size_t, RetrieveRecordResponseBodyCallback&&) final;
 
-    void initializeFetchesInternal(const WebCore::ClientOrigin&, CompletionHandler<void(Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&&)>&&);
-    void clearFetchInternal(const WebCore::ClientOrigin&, const String&, CompletionHandler<void()>&&);
-    void clearAllFetchesInternal(const WebCore::ClientOrigin&, const Vector<String>&, CompletionHandler<void()>&&);
-    void storeFetchInternal(const WebCore::ClientOrigin&, const String&, uint64_t, uint64_t, std::optional<size_t>, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
-    void storeFetchResponseBodyChunkInternal(const WebCore::ClientOrigin&, const String&, size_t index, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&);
+    void initializeFetchesInternal(const WebCore::ClientOrigin&, CompletionHandler<void(Vector<std::pair<RefPtr<WebCore::SharedBuffer>, RefPtr<StringImpl>>>&&)>&&);
+    void clearFetchInternal(const WebCore::ClientOrigin&, StringImpl*, CompletionHandler<void()>&&);
+    void clearAllFetchesInternal(const WebCore::ClientOrigin&, const Vector<RefPtr<StringImpl>>&, CompletionHandler<void()>&&);
+    void storeFetchInternal(const WebCore::ClientOrigin&, StringImpl*, uint64_t, uint64_t, std::optional<size_t>, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
+    void storeFetchResponseBodyChunkInternal(const WebCore::ClientOrigin&, StringImpl*, size_t index, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&);
 
-    String getFilename(const WebCore::ServiceWorkerRegistrationKey&, const String&);
-    void registerFetch(const WebCore::ClientOrigin&, const WebCore::ServiceWorkerRegistrationKey&, const String& backgroundFetchIdentifier, String&& fetchStorageIdentifier);
+    RefPtr<StringImpl> getFilename(const WebCore::ServiceWorkerRegistrationKey&, StringImpl*);
+    void registerFetch(const WebCore::ClientOrigin&, const WebCore::ServiceWorkerRegistrationKey&, StringImpl* backgroundFetchIdentifier, RefPtr<StringImpl>&& fetchStorageIdentifier);
     void loadAllFetches(CompletionHandler<void()>&&);
-    void fetchInformationFromFilename(const String&, CompletionHandler<void(const WebCore::ServiceWorkerRegistrationKey&, const String&)>&&);
+    void fetchInformationFromFilename(StringImpl*, CompletionHandler<void(const WebCore::ServiceWorkerRegistrationKey&, StringImpl*)>&&);
     void initializeFetches(const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
 
     ThreadSafeWeakPtr<NetworkStorageManager> m_manager;
 
-    using FetchIdentifier = std::pair<String, String>; // < service worker registration scope, background fetch identifier >
+    using FetchIdentifier = std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>; // < service worker registration scope, background fetch identifier >
     struct PerClientOriginFetches {
-        HashMap<FetchIdentifier, String> fetchToFilenames;
+        HashMap<FetchIdentifier, RefPtr<StringImpl>> fetchToFilenames;
         Vector<CompletionHandler<void()>> initializationCallbacks;
     };
     HashMap<WebCore::ClientOrigin, PerClientOriginFetches> m_perClientOriginFetches;
@@ -90,7 +90,7 @@ private:
         WebCore::ClientOrigin origin;
         FetchIdentifier identifier;
     };
-    HashMap<String, FetchInformation> m_filenameToFetch;
+    HashMap<RefPtr<StringImpl>, FetchInformation> m_filenameToFetch;
     WeakPtr<WebCore::SWServer> m_server;
 };
 

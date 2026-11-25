@@ -37,7 +37,7 @@ namespace CSS {
 
 // https://drafts.csswg.org/css-values-4/#url-value
 struct URL {
-    WTF::String specified;
+    RefPtr<StringImpl> specified;
     WTF::URL resolved;
     URLModifiers modifiers;
 
@@ -45,9 +45,15 @@ struct URL {
     URLProvenance provenance { };
 
     static URL none() { return { .specified = { }, .resolved = { }, .modifiers = { } }; }
-    bool isNone() const { return specified.isNull(); }
+    bool isNone() const { return !specified; }
 
-    bool operator==(const URL&) const = default;
+    bool operator==(const URL& other) const
+    {
+        return contentEquals(specified, other.specified)
+            && resolved == other.resolved
+            && modifiers == other.modifiers
+            && provenance == other.provenance;
+    }
 };
 
 template<size_t I> const auto& get(const URL& value)
@@ -67,8 +73,8 @@ template<> struct Serialize<URL> { void operator()(StringBuilder&, const Seriali
 template<> struct CSSValueCreation<URL> { Ref<CSSValue> operator()(CSSValuePool&, const URL&); };
 template<> struct DeprecatedCSSOMValueCreation<URL> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const URL&); };
 
-std::optional<URL> completeURL(const WTF::String&, const CSSParserContext&);
-std::optional<URL> completeURL(const WTF::String&, const Document&);
+std::optional<URL> completeURL(StringImpl*, const CSSParserContext&);
+std::optional<URL> completeURL(StringImpl*, const Document&);
 
 URL resolve(URL&&);
 

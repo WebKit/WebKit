@@ -73,29 +73,29 @@ public:
         return CommandResult(WTF::move(result), CommandResult::ErrorCode::UnknownError);
     }
 
-    static CommandResult fail(ErrorCode errorCode, std::optional<String> errorMessage = std::nullopt)
+    static CommandResult fail(ErrorCode errorCode, std::optional<RefPtr<StringImpl>> errorMessage = std::nullopt)
     {
         return CommandResult(errorCode, errorMessage);
     }
 
     unsigned httpStatusCode() const;
     static unsigned errorCodeToHTTPStatusCode(ErrorCode);
-    static String errorCodeToString(ErrorCode);
+    static RefPtr<StringImpl> errorCodeToString(ErrorCode);
     const RefPtr<JSON::Value>& result() const { return m_result; };
     void setAdditionalErrorData(RefPtr<JSON::Object>&& errorData) { m_errorAdditionalData = WTF::move(errorData); }
     bool isError() const { return !!m_errorCode; }
     ErrorCode errorCode() const { ASSERT(isError()); return m_errorCode.value_or(ErrorCode::UnknownError); }
-    String errorString() const;
-    std::optional<String> errorMessage() const { ASSERT(isError()); return m_errorMessage; }
+    RefPtr<StringImpl> errorString() const;
+    std::optional<RefPtr<StringImpl>> errorMessage() const { ASSERT(isError()); return m_errorMessage; }
     const RefPtr<JSON::Object>& additionalErrorData() const { return m_errorAdditionalData; }
 
 private:
     explicit CommandResult(RefPtr<JSON::Value>&&, std::optional<ErrorCode> = std::nullopt);
-    explicit CommandResult(ErrorCode, std::optional<String> = std::nullopt);
+    explicit CommandResult(ErrorCode, std::optional<RefPtr<StringImpl>> = std::nullopt);
 
     RefPtr<JSON::Value> m_result;
     std::optional<ErrorCode> m_errorCode;
-    std::optional<String> m_errorMessage;
+    std::optional<RefPtr<StringImpl>> m_errorMessage;
     RefPtr<JSON::Object> m_errorAdditionalData;
 };
 

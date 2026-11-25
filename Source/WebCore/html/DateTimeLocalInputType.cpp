@@ -54,7 +54,7 @@ static const int dateTimeLocalDefaultStepBase = 0;
 static const int dateTimeLocalStepScaleFactor = 1000;
 static const StepRange::StepDescription dateTimeLocalStepDescription { dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::StepValueShouldBe::ScaledInteger };
 
-const AtomString& DateTimeLocalInputType::formControlType() const
+const RefPtr<AtomStringImpl>& DateTimeLocalInputType::formControlType() const
 {
     return InputTypeNames::datetimelocal();
 }
@@ -105,10 +105,10 @@ bool DateTimeLocalInputType::isValidFormat(OptionSet<DateTimeFormatValidationRes
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay, DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute, DateTimeFormatValidationResults::HasMeridiem });
 }
 
-ValueOrReference<String> DateTimeLocalInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> DateTimeLocalInputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
-    if (proposedValue.isEmpty())
-        return proposedValue;
+    if (isEmpty(proposedValue))
+        return RefPtr { proposedValue };
 
     if (auto components = DateComponents::fromParsingDateTimeLocal(proposedValue))
         return components->toString();
@@ -116,7 +116,7 @@ ValueOrReference<String> DateTimeLocalInputType::sanitizeValue(const String& pro
     return emptyString();
 }
 
-String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
+RefPtr<StringImpl> DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
 {
     if (!state.year || !state.month || !state.dayOfMonth || !state.hour || !state.minute || !state.meridiem)
         return emptyString();
@@ -139,10 +139,10 @@ void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutPa
 
     if (layoutParameters.shouldHaveMillisecondField || shouldHaveSecondField(date)) {
         layoutParameters.dateTimeFormat = layoutParameters.locale->dateTimeFormatWithSeconds();
-        layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss"_s;
+        layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss"_si;
     } else {
         layoutParameters.dateTimeFormat = layoutParameters.locale->dateTimeFormatWithoutSeconds();
-        layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm"_s;
+        layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm"_si;
     }
 }
 

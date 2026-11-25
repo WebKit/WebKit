@@ -61,7 +61,7 @@ private:
 
     // Messages
     using SupportsMIMETypeCallback = CompletionHandler<void(bool)>;
-    void supportsMIMEType(const String&, SupportsMIMETypeCallback&&);
+    void supportsMIMEType(StringImpl*, SupportsMIMETypeCallback&&);
     using CreateSessionCallback = CompletionHandler<void(std::optional<RemoteLegacyCDMSessionIdentifier>&&)>;
     void createSession(uint64_t, CreateSessionCallback&&);
     void setPlayerId(std::optional<WebCore::MediaPlayerIdentifier> playerId) { m_playerId = playerId; }

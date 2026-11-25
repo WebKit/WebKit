@@ -41,17 +41,17 @@ public:
     void invalidate() { m_nativeWidget = nullptr; }
 
 #if USE(GTK4)
-    Vector<String> commandsForKeyEvent(GtkEventControllerKey*);
+    Vector<RefPtr<StringImpl>> commandsForKeyEvent(GtkEventControllerKey*);
 #else
-    Vector<String> commandsForKeyEvent(GdkEventKey*);
+    Vector<RefPtr<StringImpl>> commandsForKeyEvent(GdkEventKey*);
 #endif
-    Vector<String> commandsForKeyval(unsigned keyval, unsigned modifiers);
+    Vector<RefPtr<StringImpl>> commandsForKeyval(unsigned keyval, unsigned modifiers);
 
-    void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(String::fromLatin1(command)); }
+    void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(StringImpl::fromLatin1(command)); }
 
 private:
     GRefPtr<GtkWidget> m_nativeWidget;
-    Vector<String> m_pendingEditorCommands;
+    Vector<RefPtr<StringImpl>> m_pendingEditorCommands;
 };
 
 } // namespace WebKit

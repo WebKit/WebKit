@@ -37,7 +37,7 @@ namespace TestWebKitAPI {
 
 struct FrameFindState {
     Vector<unsigned> path; // Child indices from the main frame; the main frame's path is empty.
-    String selectedText;
+    RefPtr<StringImpl> selectedText;
     CGPoint scrollPosition { };
     bool hasFocus { false };
 };

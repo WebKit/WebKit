@@ -42,7 +42,7 @@ inline XPathExpression::XPathExpression(std::unique_ptr<XPath::Expression> expre
 {
 }
 
-ExceptionOr<Ref<XPathExpression>> XPathExpression::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver)
+ExceptionOr<Ref<XPathExpression>> XPathExpression::createExpression(StringImpl* expression, RefPtr<XPathNSResolver>&& resolver)
 {
     auto parseResult = XPath::Parser::parseStatement(expression, WTF::move(resolver));
     if (parseResult.hasException())

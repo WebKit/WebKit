@@ -39,8 +39,8 @@ class SecurityOrigin;
 class Storage;
 
 namespace StorageEventDispatcher {
-WEBCORE_EXPORT void dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, Page&, const SecurityOrigin&, const String& url, NOESCAPE const Function<bool(Storage&)>& isSourceStorage);
-WEBCORE_EXPORT void dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, PageGroup*, const SecurityOrigin&, const String& url, NOESCAPE const Function<bool(Storage&)>& isSourceStorage);
+WEBCORE_EXPORT void dispatchSessionStorageEvents(StringImpl* key, StringImpl* oldValue, StringImpl* newValue, Page&, const SecurityOrigin&, StringImpl* url, NOESCAPE const Function<bool(Storage&)>& isSourceStorage);
+WEBCORE_EXPORT void dispatchLocalStorageEvents(StringImpl* key, StringImpl* oldValue, StringImpl* newValue, PageGroup*, const SecurityOrigin&, StringImpl* url, NOESCAPE const Function<bool(Storage&)>& isSourceStorage);
 }
 
 } // namespace WebCore

@@ -25,11 +25,11 @@
 #include <wtf/text/UTF8CStringView.h>
 
 WebKitFaviconDatabase* webkitFaviconDatabaseCreate();
-void webkitFaviconDatabaseOpen(WebKitFaviconDatabase*, const String& path, bool isEphemeral);
+void webkitFaviconDatabaseOpen(WebKitFaviconDatabase*, StringImpl* path, bool isEphemeral);
 void webkitFaviconDatabaseClose(WebKitFaviconDatabase*);
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
-void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase*, const WebCore::LinkIcon&, const String&, bool isEphemeral, Function<void(bool)>&&);
-void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase*, const WebCore::LinkIcon&, API::Data&, const String&, bool isEphemeral);
+void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase*, const WebCore::LinkIcon&, StringImpl*, bool isEphemeral, Function<void(bool)>&&);
+void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase*, const WebCore::LinkIcon&, API::Data&, StringImpl*, bool isEphemeral);
 #endif
 #if PLATFORM(GTK)
 void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase*, UTF8CStringView pageURI, bool isEphemeral, GCancellable*, GAsyncReadyCallback, gpointer);

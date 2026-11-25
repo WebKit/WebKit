@@ -41,7 +41,7 @@ CSSEasingFunctionValue::CSSEasingFunctionValue(CSS::EasingFunction easingFunctio
 {
 }
 
-String CSSEasingFunctionValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSEasingFunctionValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_easingFunction);
 }

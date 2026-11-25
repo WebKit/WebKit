@@ -55,8 +55,8 @@ public:
 
 private:
     unsigned m_index;
-    String m_id;
-    String m_mapping;
+    RefPtr<StringImpl> m_id;
+    RefPtr<StringImpl> m_mapping;
     Vector<WebCore::SharedGamepadValue> m_axisValues;
     Vector<WebCore::SharedGamepadValue> m_buttonValues;
     MonotonicTime m_lastUpdateTime;

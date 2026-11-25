@@ -54,23 +54,23 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    void initializeLocale(JSGlobalObject*, const String& tag, JSValue optionsValue);
+    void initializeLocale(JSGlobalObject*, StringImpl* tag, JSValue optionsValue);
     void initializeLocale(JSGlobalObject*, JSValue tagValue, JSValue optionsValue);
-    const String& maximal();
-    const String& minimal();
-    const String& toString();
-    const String& baseName();
-    const String& language();
-    const String& script();
-    const String& region();
-    const String& variants();
+    const RefPtr<StringImpl>& maximal();
+    const RefPtr<StringImpl>& minimal();
+    const RefPtr<StringImpl>& toString();
+    const RefPtr<StringImpl>& baseName();
+    const RefPtr<StringImpl>& language();
+    const RefPtr<StringImpl>& script();
+    const RefPtr<StringImpl>& region();
+    const RefPtr<StringImpl>& variants();
 
-    const String& calendar();
-    const String& caseFirst();
-    const String& collation();
-    const String& firstDayOfWeek();
-    const String& hourCycle();
-    const String& numberingSystem();
+    const RefPtr<StringImpl>& calendar();
+    const RefPtr<StringImpl>& caseFirst();
+    const RefPtr<StringImpl>& collation();
+    const RefPtr<StringImpl>& firstDayOfWeek();
+    const RefPtr<StringImpl>& hourCycle();
+    const RefPtr<StringImpl>& numberingSystem();
     TriState numeric();
 
     JSArray* calendars(JSGlobalObject*);
@@ -85,25 +85,25 @@ private:
     IntlLocale(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    String keywordValue(ASCIILiteral, bool isBoolean = false) const;
+    RefPtr<StringImpl> keywordValue(ASCIILiteral, bool isBoolean = false) const;
 
     ASCIICString m_localeID;
 
-    String m_maximal;
-    String m_minimal;
-    String m_fullString;
-    String m_baseName;
-    String m_language;
-    String m_script;
-    String m_region;
-    String m_variants;
-    String m_nonUnicodeExtensions;
-    std::optional<String> m_calendar;
-    std::optional<String> m_caseFirst;
-    std::optional<String> m_collation;
-    std::optional<String> m_firstDayOfWeek;
-    std::optional<String> m_hourCycle;
-    std::optional<String> m_numberingSystem;
+    RefPtr<StringImpl> m_maximal;
+    RefPtr<StringImpl> m_minimal;
+    RefPtr<StringImpl> m_fullString;
+    RefPtr<StringImpl> m_baseName;
+    RefPtr<StringImpl> m_language;
+    RefPtr<StringImpl> m_script;
+    RefPtr<StringImpl> m_region;
+    RefPtr<StringImpl> m_variants;
+    RefPtr<StringImpl> m_nonUnicodeExtensions;
+    std::optional<RefPtr<StringImpl>> m_calendar;
+    std::optional<RefPtr<StringImpl>> m_caseFirst;
+    std::optional<RefPtr<StringImpl>> m_collation;
+    std::optional<RefPtr<StringImpl>> m_firstDayOfWeek;
+    std::optional<RefPtr<StringImpl>> m_hourCycle;
+    std::optional<RefPtr<StringImpl>> m_numberingSystem;
     TriState m_numeric { TriState::Indeterminate };
 };
 

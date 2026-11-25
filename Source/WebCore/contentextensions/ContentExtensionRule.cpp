@@ -36,7 +36,7 @@ ContentExtensionRule::ContentExtensionRule(Trigger&& trigger, Action&& action)
     : m_trigger(WTF::move(trigger))
     , m_action(WTF::move(action))
 {
-    ASSERT(!m_trigger.urlFilter.isEmpty());
+    ASSERT(!isEmpty(m_trigger.urlFilter));
 }
 
 template<size_t index, typename... Types>
@@ -100,12 +100,12 @@ size_t DeserializedAction::serializedLength(std::span<const uint8_t> serializedA
 
 Trigger Trigger::isolatedCopy() const &
 {
-    return { urlFilter.isolatedCopy(), urlFilterIsCaseSensitive, topURLFilterIsCaseSensitive, frameURLFilterIsCaseSensitive, flags, crossThreadCopy(conditions) };
+    return { WTF::isolatedCopy(urlFilter), urlFilterIsCaseSensitive, topURLFilterIsCaseSensitive, frameURLFilterIsCaseSensitive, flags, crossThreadCopy(conditions) };
 }
 
 Trigger Trigger::isolatedCopy() &&
 {
-    return { WTF::move(urlFilter).isolatedCopy(), urlFilterIsCaseSensitive, topURLFilterIsCaseSensitive, frameURLFilterIsCaseSensitive, flags, crossThreadCopy(WTF::move(conditions)) };
+    return { WTF::isolatedCopy(WTF::move(urlFilter)), urlFilterIsCaseSensitive, topURLFilterIsCaseSensitive, frameURLFilterIsCaseSensitive, flags, crossThreadCopy(WTF::move(conditions)) };
 }
 
 Action Action::isolatedCopy() const &

@@ -59,13 +59,13 @@
 
 namespace WebGPU::CAPI {
 
-inline String fromAPI(WGPUStringView string)
+inline RefPtr<StringImpl> fromAPI(WGPUStringView string)
 {
     if (!string.data)
         return { };
     if (string.length == WGPU_STRLEN)
-        return String::fromUTF8(string.data);
-    return String::fromUTF8(unsafeMakeSpan(string.data, string.length));
+        return StringImpl::fromUTF8(string.data);
+    return StringImpl::fromUTF8(unsafeMakeSpan(string.data, string.length));
 }
 
 // Associates a chainable extension struct with its sType tag. Specialize for each struct
@@ -109,9 +109,9 @@ inline const T* findChainedStruct(const WGPUChainedStruct* chain)
     return nullptr;
 }
 
-inline String fromAPI(const char* string)
+inline RefPtr<StringImpl> fromAPI(const char* string)
 {
-    return String::fromUTF8(string);
+    return StringImpl::fromUTF8(string);
 }
 
 constexpr std::optional<WebGPU::AddressMode> fromAPI(WGPUAddressMode value)
@@ -2184,7 +2184,7 @@ inline std::optional<WebGPU::ShaderModuleDescriptor> fromAPI(const WGPUShaderMod
         return std::nullopt;
 
     auto code = fromAPI(wgsl->code);
-    if (code.isNull())
+    if (!code)
         return std::nullopt;
 
     UNUSED_PARAM(storage);
@@ -2201,7 +2201,7 @@ inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compi
 {
     messageStorage.clear();
     for (auto& message : borrow(compilationInfo.messages))
-        messageStorage.append(message.message.utf8());
+        messageStorage.append(WTF::utf8(message.message));
     Vector<WGPUCompilationMessage> result(ReserveCapacityTag { }, compilationInfo.messages.size());
     for (auto [i, message] : indexedRange(compilationInfo.messages)) {
         auto utf8 = byteCast<char>(messageStorage[i].span());
@@ -2220,12 +2220,12 @@ inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compi
 
 // The null string view is the only entry point of the module for the stage. Any other one names
 // an entry point even if it does not convert to a string.
-inline String entryPointFromAPI(WGPUStringView entryPoint)
+inline RefPtr<StringImpl> entryPointFromAPI(WGPUStringView entryPoint)
 {
     if (!entryPoint.data && entryPoint.length == WGPU_STRLEN)
         return { };
     auto result = fromAPI(entryPoint);
-    return result.isNull() ? emptyString() : result;
+    return !result ? emptyString() : result;
 }
 
 inline std::optional<WebGPU::ProgrammableStage> programmableStageFromAPI(WGPUShaderModule module, WGPUStringView entryPoint, std::span<const WGPUConstantEntry> constants, Vector<WebGPU::ConstantEntry>& constantsStorage LIFETIME_BOUND)
@@ -2771,9 +2771,9 @@ inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
 
 // A string that the caller of the C API frees, with fastFree() of its data. The *FreeMembers
 // functions free the strings of the structs they are for.
-inline WGPUStringView toAPIAllocated(const String& string)
+inline WGPUStringView toAPIAllocated(StringImpl* string)
 {
-    auto utf8 = string.utf8();
+    auto utf8 = WTF::utf8(string);
     auto source = utf8.spanIncludingNullTerminator();
     auto* data = static_cast<char*>(fastMalloc(source.size()));
     memcpySpan(unsafeMakeSpan(data, source.size()), source);

@@ -33,9 +33,9 @@ namespace WebCore {
 Ref<JSON::Object> GPUExtent3DDict::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setDouble("width"_s, width);
-    json->setDouble("height"_s, height);
-    json->setDouble("depthOrArrayLayers"_s, depthOrArrayLayers);
+    json->setDouble("width"_si, width);
+    json->setDouble("height"_si, height);
+    json->setDouble("depthOrArrayLayers"_si, depthOrArrayLayers);
     return json;
 }
 

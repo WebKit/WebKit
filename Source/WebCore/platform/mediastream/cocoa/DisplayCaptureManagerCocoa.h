@@ -42,9 +42,9 @@ private:
 
     const Vector<CaptureDevice>& captureDevices() final;
 
-    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) final;
-    std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
-    std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
+    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, StringImpl*) final;
+    std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(StringImpl*);
+    std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(StringImpl*);
 
     Vector<CaptureDevice> m_devices;
 };

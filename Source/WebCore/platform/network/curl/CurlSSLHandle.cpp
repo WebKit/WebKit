@@ -44,9 +44,9 @@ CurlSSLHandle::CurlSSLHandle()
     platformInitialize();
 }
 
-void CurlSSLHandle::setCACertPath(String&& caCertPath)
+void CurlSSLHandle::setCACertPath(RefPtr<StringImpl>&& caCertPath)
 {
-    RELEASE_ASSERT(!caCertPath.isEmpty());
+    RELEASE_ASSERT(!isEmpty(caCertPath));
     m_caCertInfo = WTF::move(caCertPath);
 }
 

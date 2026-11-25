@@ -190,7 +190,7 @@ bool DatabaseContext::allowDatabaseAccess() const
     return true;
 }
 
-void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails details)
+void DatabaseContext::databaseExceededQuota(StringImpl* name, DatabaseDetails details)
 {
     RefPtr context = scriptExecutionContext();
     if (RefPtr document = dynamicDowncast<Document>(*context)) {

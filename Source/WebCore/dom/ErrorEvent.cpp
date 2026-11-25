@@ -43,7 +43,7 @@ using namespace JSC;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ErrorEvent);
 
-ErrorEvent::ErrorEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+ErrorEvent::ErrorEvent(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::ErrorEvent, type, initializer, isTrusted)
     , m_message(initializer.message)
     , m_fileName(initializer.filename)
@@ -53,7 +53,7 @@ ErrorEvent::ErrorEvent(JSC::JSGlobalObject& globalObject, const AtomString& type
 {
 }
 
-ErrorEvent::ErrorEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
+ErrorEvent::ErrorEvent(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
     : Event(EventInterfaceType::ErrorEvent, type, CanBubble::No, IsCancelable::Yes)
     , m_message(message)
     , m_fileName(fileName)
@@ -63,17 +63,17 @@ ErrorEvent::ErrorEvent(JSC::JSGlobalObject& globalObject, const AtomString& type
 {
 }
 
-ErrorEvent::ErrorEvent(JSC::JSGlobalObject& globalObject, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
+ErrorEvent::ErrorEvent(JSC::JSGlobalObject& globalObject, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
     : ErrorEvent(globalObject, eventNames().errorEvent, message, fileName, lineNumber, columnNumber, error)
 {
 }
 
-ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
+ErrorEvent::ErrorEvent(StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber)
     : ErrorEvent(eventNames().errorEvent, message, fileName, lineNumber, columnNumber)
 {
 }
 
-ErrorEvent::ErrorEvent(const AtomString& type, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
+ErrorEvent::ErrorEvent(AtomStringImpl* type, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber)
     : Event(EventInterfaceType::ErrorEvent, type, CanBubble::No, IsCancelable::Yes)
     , m_message(message)
     , m_fileName(fileName)

@@ -60,7 +60,7 @@ static dispatch_queue_t tcpSocketQueueSingleton()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkRTCTCPSocketCocoa);
 
-std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCTCPSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const webrtc::SocketAddress& remoteAddress, int tcpOptions, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
+std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCTCPSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const webrtc::SocketAddress& remoteAddress, int tcpOptions, StringImpl* attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
 {
     // FIXME: We should support ssltcp candidates, maybe support OPT_TLS_INSECURE as well.
     return makeUnique<NetworkRTCTCPSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, attributedBundleIdentifier, flags, domain, WTF::move(connection));
@@ -87,7 +87,7 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
     }).get());
 }
 
-static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProvider, UTF8CStringView hostName, UTF8CStringView port, bool isTLS, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
+static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProvider, UTF8CStringView hostName, UTF8CStringView port, bool isTLS, StringImpl* attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
     RetainPtr host = adoptNS(nw_endpoint_create_host(hostName.utf8(), port.utf8()));
     // FIXME: Handle TLS certificate validation like for other network code paths, using sec_protocol_options_set_verify_block
@@ -106,7 +106,7 @@ static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProv
     return adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
 }
 
-NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const webrtc::SocketAddress& remoteAddress, int options, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
+NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const webrtc::SocketAddress& remoteAddress, int options, StringImpl* attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
     : m_identifier(identifier)
     , m_rtcProvider(rtcProvider)
     , m_connection(WTF::move(connection))
@@ -117,7 +117,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     if (hostName.empty())
         hostName = remoteAddress.ipaddr().ToString();
     bool isTLS = options & webrtc::PacketSocketFactory::OPT_TLS;
-    lazyInitialize(m_nwConnection, createNWConnection(rtcProvider, UTF8CStringView::unsafeFromUTF8(hostName.c_str()), String::number(remoteAddress.port()).utf8(), isTLS, attributedBundleIdentifier, flags, domain));
+    lazyInitialize(m_nwConnection, createNWConnection(rtcProvider, UTF8CStringView::unsafeFromUTF8(hostName.c_str()), utf8(makeString(remoteAddress.port())), isTLS, attributedBundleIdentifier, flags, domain));
 
     nw_connection_set_queue(m_nwConnection.get(), tcpSocketQueueSingleton());
     nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([weakNWConnection = WeakObjCPtr { m_nwConnection.get() }, identifier = m_identifier, rtcProvider = Ref { rtcProvider }, connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {
@@ -133,7 +133,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
                     return;
                 RetainPtr path = adoptNS(nw_connection_copy_current_path(nwConnection.get()));
                 RetainPtr interface = adoptNS(nw_path_copy_interface(path.get()));
-                if (auto name = String::fromUTF8(nw_interface_get_name(interface.get())); !name.isNull())
+                if (auto name = StringImpl::fromUTF8(nw_interface_get_name(interface.get())); name)
                     connection->send(Messages::LibWebRTCNetwork::SignalUsedInterface(identifier, WTF::move(name)), 0);
             });
             connection->send(Messages::LibWebRTCNetwork::SignalConnect(identifier), 0);
@@ -227,13 +227,13 @@ void NetworkRTCTCPSocketCocoa::sendTo(std::span<const uint8_t> data, const webrt
     }).get());
 }
 
-auto NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider, const URL& url, const String& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain) -> Ref<NamePromise>
+auto NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider, const URL& url, StringImpl* attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain) -> Ref<NamePromise>
 {
     ASSERT(!isMainRunLoop());
 
     bool isHTTPS = url.protocolIs("https"_s);
     auto port = url.port().value_or(isHTTPS ? 443 : 80);
-    auto nwConnection = createNWConnection(rtcProvider, url.host().toString().utf8(), String::number(port).utf8(), isHTTPS, attributedBundleIdentifier, flags, domain);
+    auto nwConnection = createNWConnection(rtcProvider, utf8(url.host().toString()), utf8(makeString(port)), isHTTPS, attributedBundleIdentifier, flags, domain);
 
     NamePromise::AutoRejectProducer promiseProducer;
     Ref promise = promiseProducer.promise();
@@ -248,7 +248,7 @@ auto NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
             auto interface = adoptNS(nw_path_copy_interface(path.get()));
 
             auto* name = nw_interface_get_name(interface.get());
-            promiseProducer.resolve(name ? String::fromUTF8(name) : String { });
+            promiseProducer.resolve(name ? StringImpl::fromUTF8(name) : nullptr);
             nw_connection_cancel(std::exchange(nwConnection, { }).get());
         };
 

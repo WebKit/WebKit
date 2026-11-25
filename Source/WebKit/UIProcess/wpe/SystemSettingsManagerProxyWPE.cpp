@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-static String getString(WPESettings* settings, const char* key, const String& defaultValue)
+static RefPtr<StringImpl> getString(WPESettings* settings, const char* key, StringImpl* defaultValue)
 {
     GUniqueOutPtr<GError> error;
     const char* value;
@@ -44,7 +44,7 @@ static String getString(WPESettings* settings, const char* key, const String& de
         return defaultValue;
     }
 
-    return String::fromUTF8(value);
+    return StringImpl::fromUTF8(value);
 }
 
 static bool getBool(WPESettings* settings, const char* key, bool defaultValue)
@@ -95,7 +95,7 @@ static double getDouble(WPESettings* settings, const char* key, double defaultVa
     return value;
 }
 
-String SystemSettingsManagerProxy::themeName() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::themeName() const
 {
     return emptyString();
 }
@@ -105,9 +105,9 @@ bool SystemSettingsManagerProxy::darkMode() const
     return getBool(m_settings, WPE_SETTING_DARK_MODE, false);
 }
 
-String SystemSettingsManagerProxy::fontName() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::fontName() const
 {
-    return getString(m_settings, WPE_SETTING_FONT_NAME, "Sans 10"_s);
+    return getString(m_settings, WPE_SETTING_FONT_NAME, "Sans 10"_si);
 }
 
 int SystemSettingsManagerProxy::xftAntialias() const
@@ -120,35 +120,35 @@ int SystemSettingsManagerProxy::xftHinting() const
     return getUint8(m_settings, WPE_SETTING_FONT_HINTING_STYLE, WPE_SETTINGS_HINTING_STYLE_SLIGHT) != WPE_SETTINGS_HINTING_STYLE_NONE;
 }
 
-String SystemSettingsManagerProxy::xftHintStyle() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::xftHintStyle() const
 {
     switch (getUint8(m_settings, WPE_SETTING_FONT_HINTING_STYLE, WPE_SETTINGS_HINTING_STYLE_SLIGHT)) {
     case WPE_SETTINGS_HINTING_STYLE_NONE:
-        return "hintnone"_s;
+        return "hintnone"_si;
     case WPE_SETTINGS_HINTING_STYLE_SLIGHT:
-        return "hintslight"_s;
+        return "hintslight"_si;
     case WPE_SETTINGS_HINTING_STYLE_MEDIUM:
-        return "hintmedium"_s;
+        return "hintmedium"_si;
     case WPE_SETTINGS_HINTING_STYLE_FULL:
-        return "hintfull"_s;
+        return "hintfull"_si;
     }
     ASSERT_NOT_REACHED();
-    return "hintslight"_s;
+    return "hintslight"_si;
 }
 
-String SystemSettingsManagerProxy::xftRGBA() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::xftRGBA() const
 {
     switch (getUint8(m_settings, WPE_SETTING_FONT_SUBPIXEL_LAYOUT, WPE_SETTINGS_SUBPIXEL_LAYOUT_NONE)) {
     case WPE_SETTINGS_SUBPIXEL_LAYOUT_NONE:
         return { };
     case WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB:
-        return "rgb"_s;
+        return "rgb"_si;
     case WPE_SETTINGS_SUBPIXEL_LAYOUT_BGR:
-        return "bgr"_s;
+        return "bgr"_si;
     case WPE_SETTINGS_SUBPIXEL_LAYOUT_VRGB:
-        return "vrgb"_s;
+        return "vrgb"_si;
     case WPE_SETTINGS_SUBPIXEL_LAYOUT_VBGR:
-        return "vbgr"_s;
+        return "vbgr"_si;
     }
     ASSERT_NOT_REACHED();
     return { };

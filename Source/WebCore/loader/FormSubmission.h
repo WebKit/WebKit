@@ -51,31 +51,31 @@ public:
     class Attributes {
     public:
         Method method() const { return m_method; }
-        static Method parseMethodType(const String&);
-        void updateMethodType(const String&);
+        static Method parseMethodType(StringImpl*);
+        void updateMethodType(StringImpl*);
         static ASCIILiteral methodString(Method);
 
-        const String& action() const LIFETIME_BOUND { return m_action; }
-        void parseAction(const String&);
+        const RefPtr<StringImpl>& action() const LIFETIME_BOUND { return m_action; }
+        void parseAction(StringImpl*);
 
-        const AtomString& target() const LIFETIME_BOUND { return m_target; }
-        void setTarget(const AtomString& target) { m_target = target; }
+        const RefPtr<AtomStringImpl>& target() const LIFETIME_BOUND { return m_target; }
+        void setTarget(AtomStringImpl* target) { m_target = target; }
 
-        const String& encodingType() const LIFETIME_BOUND { return m_encodingType; }
-        static String parseEncodingType(const String&);
-        void updateEncodingType(const String&);
+        const RefPtr<StringImpl>& encodingType() const LIFETIME_BOUND { return m_encodingType; }
+        static RefPtr<StringImpl> parseEncodingType(StringImpl*);
+        void updateEncodingType(StringImpl*);
         bool isMultiPartForm() const { return m_isMultiPartForm; }
 
-        const String& acceptCharset() const LIFETIME_BOUND { return m_acceptCharset; }
-        void setAcceptCharset(const String& value) { m_acceptCharset = value; }
+        const RefPtr<StringImpl>& acceptCharset() const LIFETIME_BOUND { return m_acceptCharset; }
+        void setAcceptCharset(StringImpl* value) { m_acceptCharset = value; }
 
     private:
         Method m_method { Method::Get };
         bool m_isMultiPartForm { false };
-        String m_action;
-        AtomString m_target;
-        String m_encodingType { "application/x-www-form-urlencoded"_s };
-        String m_acceptCharset;
+        RefPtr<StringImpl> m_action;
+        RefPtr<AtomStringImpl> m_target;
+        RefPtr<StringImpl> m_encodingType { "application/x-www-form-urlencoded"_si };
+        RefPtr<StringImpl> m_acceptCharset;
     };
 
     static RefPtr<FormSubmission> create(HTMLFormElement&, HTMLFormControlElement* overrideSubmitter, const Attributes&, Event*, LockHistory, FormSubmissionTrigger);
@@ -85,22 +85,22 @@ public:
 
     Method method() const { return m_method; }
     const URL& action() const LIFETIME_BOUND { return m_action; }
-    const AtomString& target() const LIFETIME_BOUND { return m_target; }
-    const String& contentType() const LIFETIME_BOUND { return m_contentType; }
+    const RefPtr<AtomStringImpl>& target() const LIFETIME_BOUND { return m_target; }
+    const RefPtr<StringImpl>& contentType() const LIFETIME_BOUND { return m_contentType; }
     FormState* state() const { return m_formState.get(); }
     FormData& data() const { return *m_formData; }
-    const String& boundary() const LIFETIME_BOUND { return m_boundary; }
+    const RefPtr<StringImpl>& boundary() const LIFETIME_BOUND { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
-    const String& referrer() const LIFETIME_BOUND { return m_referrer; }
-    const String& origin() const LIFETIME_BOUND { return m_origin; }
+    const RefPtr<StringImpl>& referrer() const LIFETIME_BOUND { return m_referrer; }
+    const RefPtr<StringImpl>& origin() const LIFETIME_BOUND { return m_origin; }
 
-    const String& returnValue() const LIFETIME_BOUND { return m_returnValue; }
+    const RefPtr<StringImpl>& returnValue() const LIFETIME_BOUND { return m_returnValue; }
 
-    void clearTarget() { m_target = { }; }
-    void setReferrer(const String& referrer) { m_referrer = referrer; }
-    void setReferrer(String&& referrer) { m_referrer = WTF::move(referrer); }
-    void setOrigin(String&& origin) { m_origin = WTF::move(origin); }
+    void clearTarget() { m_target = nullptr; }
+    void setReferrer(StringImpl* referrer) { m_referrer = referrer; }
+    void setReferrer(RefPtr<StringImpl>&& referrer) { m_referrer = WTF::move(referrer); }
+    void setOrigin(RefPtr<StringImpl>&& origin) { m_origin = WTF::move(origin); }
 
     void cancel() { m_wasCancelled = true; }
     bool wasCancelled() const { return m_wasCancelled; }
@@ -113,26 +113,26 @@ public:
 
 private:
     // dialog form submissions
-    FormSubmission(Method, const String& returnValue, const URL& action, const AtomString& target, const String& contentType, LockHistory, Event*);
+    FormSubmission(Method, StringImpl* returnValue, const URL& action, AtomStringImpl* target, StringImpl* contentType, LockHistory, Event*);
 
     // get/post form submissions
-    FormSubmission(Method, const URL& action, const AtomString& target, const String& contentType, Ref<FormState>&&, Ref<FormData>&&, const String& boundary, LockHistory, Event*);
+    FormSubmission(Method, const URL& action, AtomStringImpl* target, StringImpl* contentType, Ref<FormState>&&, Ref<FormData>&&, StringImpl* boundary, LockHistory, Event*);
 
     // FIXME: Hold an instance of Attributes instead of individual members.
     Method m_method;
     bool m_wasCancelled { false };
     URL m_action;
-    AtomString m_target;
-    String m_contentType;
+    RefPtr<AtomStringImpl> m_target;
+    RefPtr<StringImpl> m_contentType;
     const RefPtr<FormState> m_formState;
     const RefPtr<FormData> m_formData;
-    String m_boundary;
+    RefPtr<StringImpl> m_boundary;
     LockHistory m_lockHistory;
     const RefPtr<Event> m_event;
-    String m_referrer;
-    String m_origin;
+    RefPtr<StringImpl> m_referrer;
+    RefPtr<StringImpl> m_origin;
 
-    String m_returnValue; // for form[method=dialog]
+    RefPtr<StringImpl> m_returnValue; // for form[method=dialog]
 
     NewFrameOpenerPolicy m_newFrameOpenerPolicy { NewFrameOpenerPolicy::Allow };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };

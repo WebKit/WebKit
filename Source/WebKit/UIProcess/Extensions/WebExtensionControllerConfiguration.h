@@ -54,16 +54,16 @@ public:
     Ref<WebExtensionControllerConfiguration> copy() const;
 
     explicit WebExtensionControllerConfiguration(IsPersistent);
-    explicit WebExtensionControllerConfiguration(TemporaryTag, const String& storageDirectory = nullString());
+    explicit WebExtensionControllerConfiguration(TemporaryTag, StringImpl* storageDirectory = nullString());
     explicit WebExtensionControllerConfiguration(const WTF::UUID&);
 
     std::optional<WTF::UUID> identifier() const { return m_identifier; }
 
-    bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
+    bool storageIsPersistent() const { return !isEmpty(m_storageDirectory); }
     bool storageIsTemporary() const { return m_temporary; }
 
-    const String& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
-    void setStorageDirectory(const String& directory) { m_storageDirectory = directory; }
+    const RefPtr<StringImpl>& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
+    void setStorageDirectory(StringImpl* directory) { m_storageDirectory = directory; }
 
 #if PLATFORM(COCOA)
     WKWebViewConfiguration *webViewConfiguration();
@@ -80,12 +80,12 @@ public:
 #endif
 
 private:
-    static String createStorageDirectoryPath(std::optional<WTF::UUID> = std::nullopt);
-    static String createTemporaryStorageDirectoryPath();
+    static RefPtr<StringImpl> createStorageDirectoryPath(std::optional<WTF::UUID> = std::nullopt);
+    static RefPtr<StringImpl> createTemporaryStorageDirectoryPath();
 
     Markable<WTF::UUID> m_identifier;
     bool m_temporary { false };
-    String m_storageDirectory;
+    RefPtr<StringImpl> m_storageDirectory;
 #if PLATFORM(COCOA)
     RetainPtr<WKWebViewConfiguration> m_webViewConfiguration;
 #endif

@@ -160,7 +160,9 @@ public:
     void reject(std::nullptr_t, RejectAsHandled = RejectAsHandled::No);
     void reject(Exception, RejectAsHandled, JSC::JSValue&);
     WEBCORE_EXPORT void reject(Exception, RejectAsHandled = RejectAsHandled::No);
-    WEBCORE_EXPORT void reject(ExceptionCode, const String& = { }, RejectAsHandled = RejectAsHandled::No);
+    WEBCORE_EXPORT void reject(ExceptionCode, StringImpl* = nullptr, RejectAsHandled = RejectAsHandled::No);
+    // For literal messages forwarded through DOMPromiseDeferredBase::reject(ErrorType&&...).
+    void reject(ExceptionCode code, ASCIILiteral message, RejectAsHandled rejectAsHandled = RejectAsHandled::No) { reject(code, RefPtr<StringImpl> { message }.get(), rejectAsHandled); }
 
     template<typename Callback>
     void resolveWithCallback(Callback callback)
@@ -369,7 +371,7 @@ public:
     }
 };
 
-void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
+void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, StringImpl*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
 void fulfillPromiseWithUint8Array(Ref<DeferredPromise>&&, Uint8Array*);
@@ -378,7 +380,7 @@ WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMG
 WEBCORE_EXPORT void rejectPromisesWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::JSPromise&, JSC::TopExceptionScope&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
-JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject&, const String&, RejectedPromiseWithTypeErrorCause);
+JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject&, StringImpl*, RejectedPromiseWithTypeErrorCause);
 
 std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(Document&);
 std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(JSDOMGlobalObject&);

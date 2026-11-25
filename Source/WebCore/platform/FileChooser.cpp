@@ -51,12 +51,12 @@ void FileChooser::invalidate()
     m_client = nullptr;
 }
 
-void FileChooser::chooseFile(const String& filename)
+void FileChooser::chooseFile(StringImpl* filename)
 {
     chooseFiles({ filename });
 }
 
-void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<String>& replacementNames)
+void FileChooser::chooseFiles(const Vector<RefPtr<StringImpl>>& filenames, const Vector<RefPtr<StringImpl>>& replacementNames)
 {
     if (!m_client)
         return;
@@ -77,7 +77,7 @@ void FileChooser::cancelFileChoosing()
 
 #if PLATFORM(IOS_FAMILY)
 
-void FileChooser::chooseMediaFiles(const Vector<String>& filenames, const String& displayString, Icon* icon)
+void FileChooser::chooseMediaFiles(const Vector<RefPtr<StringImpl>>& filenames, StringImpl* displayString, Icon* icon)
 {
     if (!m_client)
         return;

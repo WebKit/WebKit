@@ -34,13 +34,13 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NameNodeList);
 
-NameNodeList::NameNodeList(ContainerNode& rootNode, const AtomString& name)
+NameNodeList::NameNodeList(ContainerNode& rootNode, AtomStringImpl* name)
     : CachedLiveNodeList(rootNode, LiveNodeListType::NameNodeList, NodeListInvalidationType::InvalidateOnNameAttrChange)
     , m_name(name)
 {
 }
 
-Ref<NameNodeList> NameNodeList::create(ContainerNode& rootNode, const AtomString& name)
+Ref<NameNodeList> NameNodeList::create(ContainerNode& rootNode, AtomStringImpl* name)
 {
     return adoptRef(*new NameNodeList(rootNode, name));
 }

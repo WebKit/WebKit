@@ -54,14 +54,14 @@
 namespace WebKit {
 namespace NetworkCache {
 
-void traverseDirectory(const String& path, NOESCAPE const Function<void (const String&, DirectoryEntryType)>& function)
+void traverseDirectory(StringImpl* path, NOESCAPE const Function<void (StringImpl*, DirectoryEntryType)>& function)
 {
-    FileSystem::traverseDirectory(path, [&](const String& fileName, FileSystem::FileType type) {
+    FileSystem::traverseDirectory(path, [&](StringImpl* fileName, FileSystem::FileType type) {
         function(fileName, type == FileSystem::FileType::Directory ? DirectoryEntryType::Directory : DirectoryEntryType::File);
     });
 }
 
-FileTimes fileTimes(const String& path)
+FileTimes fileTimes(StringImpl* path)
 {
 #if HAVE(STAT_BIRTHTIME)
     struct stat fileInfo;
@@ -86,7 +86,7 @@ FileTimes fileTimes(const String& path)
 #endif
 }
 
-void updateFileModificationTimeIfNeeded(const String& path)
+void updateFileModificationTimeIfNeeded(StringImpl* path)
 {
     auto times = fileTimes(path);
     if (times.creation != times.modification) {

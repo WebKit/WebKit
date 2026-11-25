@@ -50,7 +50,7 @@ struct Unicode16BitEscapeSequence {
         }
         return runEnd;
     }
-    static String decodeRun(StringView run, const TextEncoding&)
+    static RefPtr<StringImpl> decodeRun(StringView run, const TextEncoding&)
     {
         // Each %u-escape sequence represents a UTF-16 code unit.
         // See <http://www.w3.org/International/iri-edit/draft-duerst-iri.html#anchor29>.
@@ -116,7 +116,7 @@ struct URLEscapeSequence {
         return buffer;
     }
 
-    static String decodeRun(StringView run, const TextEncoding& encoding)
+    static RefPtr<StringImpl> decodeRun(StringView run, const TextEncoding& encoding)
     {
         auto buffer = decodeRun(run);
         if (!encoding.isValid())
@@ -126,7 +126,7 @@ struct URLEscapeSequence {
 };
 
 template<typename EscapeSequence>
-String decodeEscapeSequences(StringView string, const TextEncoding& encoding)
+RefPtr<StringImpl> decodeEscapeSequences(StringView string, const TextEncoding& encoding)
 {
     StringBuilder result;
     size_t length = string.length();
@@ -141,8 +141,8 @@ String decodeEscapeSequences(StringView string, const TextEncoding& encoding)
             continue;
         }
 
-        String decoded = EscapeSequence::decodeRun(string.substring(encodedRunPosition, encodedRunEnd - encodedRunPosition), encoding);
-        if (decoded.isEmpty())
+        RefPtr<StringImpl> decoded = EscapeSequence::decodeRun(string.substring(encodedRunPosition, encodedRunEnd - encodedRunPosition), encoding);
+        if (isEmpty(decoded))
             continue;
 
         result.append(string.substring(decodedPosition, encodedRunPosition - decodedPosition), decoded);

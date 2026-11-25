@@ -95,7 +95,7 @@ void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* hand
 {
     // We cannot handle the size that is more than maximum integer.
     if (response.expectedContentLength() > INT_MAX) {
-        m_error = ResourceError(webKitBlobResourceDomain, static_cast<int>(BlobResourceHandle::Error::NotReadableError), response.url(), "File is too large"_s);
+        m_error = ResourceError(StringImpl::create(webKitBlobResourceDomain).ptr(), static_cast<int>(BlobResourceHandle::Error::NotReadableError), response.url(), "File is too large"_si);
         completionHandler();
         return;
     }
@@ -126,7 +126,7 @@ Ref<BlobResourceHandle> BlobResourceHandle::createAsync(BlobData* blobData, cons
 void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get"_s)) {
-        error = ResourceError(webKitBlobResourceDomain, static_cast<int>(Error::MethodNotAllowed), response.url(), "Request method must be GET"_s);
+        error = ResourceError(StringImpl::create(webKitBlobResourceDomain).ptr(), static_cast<int>(Error::MethodNotAllowed), response.url(), "Request method must be GET"_si);
         return;
     }
 
@@ -286,7 +286,7 @@ bool BlobResourceHandle::didReceiveData(std::span<const uint8_t> data)
 void BlobResourceHandle::didFail(Error errorCode)
 {
     if (client())
-        client()->didFail(this, ResourceError(webKitBlobResourceDomain, static_cast<int>(errorCode), firstRequest().url(), String()));
+        client()->didFail(this, ResourceError(StringImpl::create(webKitBlobResourceDomain).ptr(), static_cast<int>(errorCode), firstRequest().url(), nullString()));
 
     closeFileIfOpen();
 }

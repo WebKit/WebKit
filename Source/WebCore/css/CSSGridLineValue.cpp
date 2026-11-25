@@ -47,7 +47,7 @@ bool CSSGridLineValue::equals(const CSSGridLineValue& other) const
     return m_line == other.m_line;
 }
 
-String CSSGridLineValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSGridLineValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_line);
 }

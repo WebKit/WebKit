@@ -265,7 +265,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding)
 {
     auto errorMessage = makeString("Received invalid message: '"_s, description(messageName), "' ("_s, messageName, ')');
-    logAndSetCrashLogMessage(errorMessage.utf8());
+    logAndSetCrashLogMessage(utf8(errorMessage));
 
     ASSERT(indicesOfObjectsFailingDecoding.size() <= 6);
     auto index = [&](size_t i) -> int32_t {
@@ -336,12 +336,12 @@ void AuxiliaryProcess::registerWithStateDumper(ASCIILiteral title)
 #endif // USE(OS_STATE)
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-RetainPtr<id> AuxiliaryProcess::decodePreferenceValue(const std::optional<String>& encodedValue)
+RetainPtr<id> AuxiliaryProcess::decodePreferenceValue(const std::optional<RefPtr<StringImpl>>& encodedValue)
 {
     if (!encodedValue)
         return nil;
     
-    RetainPtr encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:encodedValue->createNSString().get() options:0]);
+    RetainPtr encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(*encodedValue).get() options:0]);
     RetainPtr classes = [NSSet setWithObjects:
         NSString.class,
         NSMutableString.class,
@@ -360,19 +360,19 @@ RetainPtr<id> AuxiliaryProcess::decodePreferenceValue(const std::optional<String
     return result;
 }
 
-void AuxiliaryProcess::setPreferenceValue(const String& domain, const String& key, id value)
+void AuxiliaryProcess::setPreferenceValue(StringImpl* domain, StringImpl* key, id value)
 {
-    if (domain.isEmpty()) {
-        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    if (isEmpty(domain)) {
+        CFPreferencesSetValue(createCFString(key).get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 #if ASSERT_ENABLED
-        RetainPtr valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key.createNSString().get()];
-        ASSERT(valueAfterSetting.get() == value || [valueAfterSetting.get() isEqual:value] || key == "AppleLanguages"_s || key == "PayloadUUID"_s);
+        RetainPtr valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:createNSString(key).get()];
+        ASSERT(valueAfterSetting.get() == value || [valueAfterSetting.get() isEqual:value] || equal(key, "AppleLanguages"_s) || equal(key, "PayloadUUID"_s));
 #endif
     } else
-        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+        CFPreferencesSetValue(createCFString(key).get(), (__bridge CFPropertyListRef)value, createCFString(domain).get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 }
 
-void AuxiliaryProcess::preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue)
+void AuxiliaryProcess::preferenceDidUpdate(StringImpl* domain, StringImpl* key, const std::optional<RefPtr<StringImpl>>& encodedValue)
 {
     RetainPtr<id> value;
     if (encodedValue) {
@@ -384,55 +384,55 @@ void AuxiliaryProcess::preferenceDidUpdate(const String& domain, const String& k
     handlePreferenceChange(domain, key, value.get());
 }
 
-const WTF::String& AuxiliaryProcess::increaseContrastPreferenceKey()
+const RefPtr<StringImpl>& AuxiliaryProcess::increaseContrastPreferenceKey()
 {
 #if PLATFORM(MAC)
-    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("increaseContrast"));
+    static NeverDestroyed<RefPtr<StringImpl>> key(MAKE_STATIC_STRING_IMPL("increaseContrast"));
 #else
-    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("DarkenSystemColors"));
+    static NeverDestroyed<RefPtr<StringImpl>> key(MAKE_STATIC_STRING_IMPL("DarkenSystemColors"));
 #endif
     return key;
 }
 
 #if USE(APPKIT)
-static const WTF::String& invertColorsPreferenceKey()
+static const RefPtr<StringImpl>& invertColorsPreferenceKey()
 {
-    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("whiteOnBlack"));
+    static NeverDestroyed<RefPtr<StringImpl>> key(MAKE_STATIC_STRING_IMPL("whiteOnBlack"));
     return key;
 }
 #endif
 
-void AuxiliaryProcess::handleAXPreferenceChange(const String& domain, const String& key, id value)
+void AuxiliaryProcess::handleAXPreferenceChange(StringImpl* domain, StringImpl* key, id value)
 {
 #if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
     if (!WebKit::islibAccessibilityLibraryAvailable())
         return;
 #endif
 
-    if (domain == String(kAXSAccessibilityPreferenceDomain)) {
+    if (equal(domain, StringImpl::create(kAXSAccessibilityPreferenceDomain).get())) {
 #if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
         if (WebKit::canLoad_libAccessibility__AXSUpdateWebAccessibilitySettings())
             WebKit::softLink_libAccessibility__AXSUpdateWebAccessibilitySettings();
 #elif PLATFORM(IOS_FAMILY)
         // If the update method is not available, to update the cache inside AccessibilitySupport,
         // these methods need to be called directly.
-        if (CFEqual(key.createCFString().get(), kAXSReduceMotionPreference) && [value isKindOfClass:[NSNumber class]])
+        if (CFEqual(createCFString(key).get(), kAXSReduceMotionPreference) && [value isKindOfClass:[NSNumber class]])
             _AXSSetReduceMotionEnabled([(NSNumber *)value boolValue]);
-        else if (key == increaseContrastPreferenceKey() && [value isKindOfClass:[NSNumber class]])
+        else if (equal(key, increaseContrastPreferenceKey()) && [value isKindOfClass:[NSNumber class]])
             _AXSSetDarkenSystemColors([(NSNumber *)value boolValue]);
 #endif
     }
 
 #if USE(APPKIT)
-    auto cfKey = key.createCFString();
-    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || CFEqual(cfKey.get(), kAXInterfaceDifferentiateWithoutColorKey) || key == invertColorsPreferenceKey()) {
+    auto cfKey = createCFString(key);
+    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || CFEqual(cfKey.get(), kAXInterfaceDifferentiateWithoutColorKey) || equal(key, invertColorsPreferenceKey())) {
         [NSWorkspace _invalidateAccessibilityDisplayValues];
         accessibilitySettingsDidChange();
     }
 #endif
 }
 
-void AuxiliaryProcess::handlePreferenceChange(const String& domain, const String& key, id value)
+void AuxiliaryProcess::handlePreferenceChange(StringImpl* domain, StringImpl* key, id value)
 {
     handleAXPreferenceChange(domain, key, value);
     dispatchSimulatedNotificationsForPreferenceChange(key);

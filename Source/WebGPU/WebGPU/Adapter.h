@@ -70,9 +70,9 @@ public:
     WebGPU::AdapterInfo info() final;
     // The C API adapter info, which has members that WebGPU::AdapterInfo does not have.
     bool hasFeature(WebGPU::FeatureName);
-    void requestDevice(const WebGPU::DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<WebGPU::Device>, String>&&)>&&) final;
+    void requestDevice(const WebGPU::DeviceDescriptor&, CompletionHandler<void(std::expected<Ref<WebGPU::Device>, RefPtr<StringImpl>>&&)>&&) final;
 
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final { return m_device; }
     id<MTLDevice> device() const { return m_device; }
     void makeInvalid() { m_device = nil; }

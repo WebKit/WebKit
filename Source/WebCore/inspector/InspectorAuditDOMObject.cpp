@@ -48,18 +48,18 @@ InspectorAuditDOMObject::InspectorAuditDOMObject(PageAuditAgent& auditAgent)
 {
 }
 
-ExceptionOr<bool> InspectorAuditDOMObject::hasEventListeners(Node& node, const String& type)
+ExceptionOr<bool> InspectorAuditDOMObject::hasEventListeners(Node& node, StringImpl* type)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
     if (EventTargetData* eventTargetData = node.eventTargetData()) {
-        Vector<AtomString> eventTypes;
-        if (type.isNull())
+        Vector<RefPtr<AtomStringImpl>> eventTypes;
+        if (!type)
             eventTypes = eventTargetData->eventListenerMap.eventTypes();
         else
-            eventTypes.append(type);
+            eventTypes.append(AtomStringImpl::add(type));
 
-        for (AtomString& type : eventTypes) {
+        for (RefPtr<AtomStringImpl>& type : eventTypes) {
             for (auto& listener : node.eventListeners(type)) {
                 if (listener->callback().type() == EventListener::JSEventListenerType)
                     return true;

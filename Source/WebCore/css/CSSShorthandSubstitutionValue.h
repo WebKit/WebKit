@@ -48,7 +48,7 @@ public:
     CSSPropertyID shorthandPropertyId() const { return m_shorthandPropertyId; }
 
     bool equals(const CSSShorthandSubstitutionValue& other) const { return m_shorthandValue.ptr() == other.m_shorthandValue.ptr(); }
-    static String customCSSText(const CSS::SerializationContext&) { return emptyString(); }
+    static RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) { return emptyString(); }
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {

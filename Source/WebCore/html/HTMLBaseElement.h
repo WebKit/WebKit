@@ -32,14 +32,14 @@ class HTMLBaseElement final : public HTMLElement {
 public:
     static Ref<HTMLBaseElement> create(const QualifiedName&, Document&);
 
-    WEBCORE_EXPORT String href() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> href() const;
 
 private:
     HTMLBaseElement(const QualifiedName&, Document&);
 
-    AtomString target() const final;
+    RefPtr<AtomStringImpl> target() const final;
     NODELETE bool isURLAttribute(const Attribute&) const final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
 };

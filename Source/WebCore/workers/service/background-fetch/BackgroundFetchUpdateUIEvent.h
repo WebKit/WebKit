@@ -36,14 +36,14 @@ class BackgroundFetchUpdateUIEvent final : public BackgroundFetchEvent {
     WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchUpdateUIEvent);
 public:
     using Init = BackgroundFetchEventInit;
-    static Ref<BackgroundFetchUpdateUIEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<BackgroundFetchUpdateUIEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
 
     ~BackgroundFetchUpdateUIEvent();
 
     NODELETE void updateUI(BackgroundFetchUIOptions&&, DOMPromiseDeferred<void>&&);
 
 private:
-    BackgroundFetchUpdateUIEvent(const AtomString&, ExtendableEventInit&&, Ref<BackgroundFetchRegistration>&&, IsTrusted);
+    BackgroundFetchUpdateUIEvent(AtomStringImpl*, ExtendableEventInit&&, Ref<BackgroundFetchRegistration>&&, IsTrusted);
 };
 
 } // namespace WebCore

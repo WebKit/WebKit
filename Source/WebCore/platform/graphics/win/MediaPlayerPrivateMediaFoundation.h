@@ -66,11 +66,11 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    static void getSupportedTypes(HashSet<String>& types);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool isAvailable();
 
-    void load(const String& url) final;
+    void load(StringImpl* url) final;
     void cancelLoad() final;
 
     void play() final;
@@ -155,7 +155,7 @@ private:
     bool createSession();
     bool startSession();
     bool endSession();
-    bool startCreateMediaSource(const String& url);
+    bool startCreateMediaSource(StringImpl* url);
     bool createTopologyFromSource();
     bool addBranchToPartialTopology(int stream);
     bool createOutputNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>&);

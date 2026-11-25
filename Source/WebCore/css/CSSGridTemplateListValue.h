@@ -35,7 +35,7 @@ public:
 
     const CSS::GridTemplateList& list() const LIFETIME_BOUND { return m_list; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSGridTemplateListValue&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;

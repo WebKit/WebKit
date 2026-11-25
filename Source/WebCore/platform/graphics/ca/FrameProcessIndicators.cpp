@@ -52,17 +52,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameProcessIndicators);
 FrameProcessIndicators::FrameProcessIndicators(GraphicsLayerCA& graphicsLayer)
     : m_graphicsLayer(graphicsLayer)
     , m_backgroundColor(borderColor())
-    , m_text(makeString("pid="_s, getCurrentProcessID(), "("_s, Process::identifier(), ") frame=("_s, graphicsLayer.frameID() ? frameIdentifierString(*graphicsLayer.frameID()) : "0"_s, ")"_s))
+    , m_text(makeString("pid="_s, getCurrentProcessID(), "("_s, Process::identifier(), ") frame=("_s, graphicsLayer.frameID() ? frameIdentifierString(*graphicsLayer.frameID()) : "0"_si, ")"_s))
     , m_borderLayer(graphicsLayer.createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_indicatorLayer(graphicsLayer.createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeWebLayer, this))
 {
-    m_borderLayer->setName(MAKE_STATIC_STRING_IMPL("frame process border"));
+    m_borderLayer->setName("frame process border"_si);
     m_borderLayer->setAnchorPoint({ });
     m_borderLayer->setBorderColor(m_backgroundColor);
     m_borderLayer->setBorderWidth(borderWidth);
     m_borderLayer->setUserInteractionEnabled(false);
 
-    m_indicatorLayer->setName(MAKE_STATIC_STRING_IMPL("frame process indicator"));
+    m_indicatorLayer->setName("frame process indicator"_si);
     m_indicatorLayer->setAnchorPoint({ });
     m_indicatorLayer->setBounds({ { }, size() });
     RefPtr layer = graphicsLayer.m_layer;
@@ -119,7 +119,7 @@ Color FrameProcessIndicators::borderColor()
 FontCascade FrameProcessIndicators::makeFont()
 {
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica"_s);
+    fontDescription.setOneFamily("Helvetica"_atom);
     fontDescription.setComputedSize(fontSize);
     fontDescription.setUsedSize(fontSize);
 

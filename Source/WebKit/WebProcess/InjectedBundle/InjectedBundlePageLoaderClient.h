@@ -49,7 +49,7 @@ public:
     explicit InjectedBundlePageLoaderClient(const WKBundlePageLoaderClientBase*);
 
     void willLoadURLRequest(WebPage&, const WebCore::ResourceRequest&, API::Object*) override;
-    void willLoadDataRequest(WebPage&, const WebCore::ResourceRequest&, RefPtr<WebCore::FragmentedSharedBuffer>, const WTF::String&, const WTF::String&, const URL&, API::Object*) override;
+    void willLoadDataRequest(WebPage&, const WebCore::ResourceRequest&, RefPtr<WebCore::FragmentedSharedBuffer>, StringImpl*, StringImpl*, const URL&, API::Object*) override;
 
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
@@ -60,7 +60,7 @@ public:
     void didFinishProgress(WebPage&) override;
     void didFailLoadWithErrorForFrame(WebPage&, WebFrame&, const WebCore::ResourceError&, RefPtr<API::Object>&) override;
     void didSameDocumentNavigationForFrame(WebPage&, WebFrame&, SameDocumentNavigationType, RefPtr<API::Object>&) override;
-    void didReceiveTitleForFrame(WebPage&, const WTF::String&, WebFrame&, RefPtr<API::Object>&) override;
+    void didReceiveTitleForFrame(WebPage&, StringImpl*, WebFrame&, RefPtr<API::Object>&) override;
     void didRemoveFrameFromHierarchy(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
 
     void didFirstLayoutForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
@@ -70,7 +70,7 @@ public:
 
     void didClearWindowObjectForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&) override;
     void didCancelClientRedirectForFrame(WebPage&, WebFrame&) override;
-    void willPerformClientRedirectForFrame(WebPage&, WebFrame&, const WTF::String&, double /*delay*/, WallTime /*date*/) override;
+    void willPerformClientRedirectForFrame(WebPage&, WebFrame&, StringImpl*, double /*delay*/, WallTime /*date*/) override;
     void didHandleOnloadEventsForFrame(WebPage&, WebFrame&) override;
 
     void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&) override;
@@ -81,9 +81,9 @@ public:
 
     void willInjectUserScriptForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) final;
 
-    bool shouldForceUniversalAccessFromLocalURL(WebPage&, const WTF::String&) override;
+    bool shouldForceUniversalAccessFromLocalURL(WebPage&, StringImpl*) override;
 
-    void featuresUsedInPage(WebPage&, const Vector<WTF::String>&) override;
+    void featuresUsedInPage(WebPage&, const Vector<RefPtr<StringImpl>>&) override;
 
     OptionSet<WebCore::LayoutMilestone> layoutMilestones() const override;
 };

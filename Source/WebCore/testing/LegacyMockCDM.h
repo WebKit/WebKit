@@ -43,12 +43,12 @@ public:
     { }
 
     // CDMFactory support:
-    static bool supportsKeySystem(const String&);
-    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
+    static bool supportsKeySystem(StringImpl*);
+    static bool supportsKeySystemAndMimeType(StringImpl* keySystem, StringImpl* mimeType);
 
     virtual ~LegacyMockCDM() = default;
 
-    bool supportsMIMEType(const String& mimeType) const override;
+    bool supportsMIMEType(StringImpl* mimeType) const override;
     RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
     void ref() const final;

@@ -42,24 +42,24 @@ protected:
     static void applyTextInsertionCommand(LocalFrame*, TextInsertionBaseCommand&, const VisibleSelection& selectionForInsertion, const VisibleSelection& endingSelection);
 };
 
-String dispatchBeforeTextInsertedEvent(const String& text, const VisibleSelection& selectionForInsertion, bool insertionIsForUpdatingComposition);
+RefPtr<StringImpl> dispatchBeforeTextInsertedEvent(StringImpl* text, const VisibleSelection& selectionForInsertion, bool insertionIsForUpdatingComposition);
 bool canAppendNewLineFeedToSelection(const VisibleSelection&);
 
 // LineOperation should define member function "opeartor (size_t lineOffset, size_t lineLength, bool isLastLine)".
 // lienLength doesn't include the newline character. So the value of lineLength could be 0.
 template <class LineOperation>
-void forEachLineInString(const String& string, NOESCAPE const LineOperation& operation)
+void forEachLineInString(StringImpl* string, NOESCAPE const LineOperation& operation)
 {
     unsigned offset = 0;
     size_t newline;
-    while ((newline = string.find('\n', offset)) != notFound) {
+    while ((newline = find(string, '\n', offset)) != notFound) {
         operation(offset, newline - offset, false);
         offset = newline + 1;
     }
     if (!offset)
-        operation(0, string.length(), true);
+        operation(0, WTF::length(string), true);
     else {
-        unsigned length = string.length();
+        unsigned length = WTF::length(string);
         if (length != offset)
             operation(offset, length - offset, true);
     }

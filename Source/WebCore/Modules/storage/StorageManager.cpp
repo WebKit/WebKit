@@ -67,14 +67,14 @@ struct ConnectionInfo {
 static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator, ExceptionCode exceptionCodeForNoAccess)
 {
     if (!navigator)
-        return Exception { ExceptionCode::InvalidStateError, "Navigator does not exist"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Navigator does not exist"_si };
 
     RefPtr context = navigator->scriptExecutionContext();
     if (!context)
-        return Exception { ExceptionCode::InvalidStateError, "Context is invalid"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Context is invalid"_si };
 
     if (context->canAccessResource(ScriptExecutionContext::ResourceType::StorageManager) == ScriptExecutionContext::HasResourceAccess::No)
-        return Exception { exceptionCodeForNoAccess, "Context not access storage"_s };
+        return Exception { exceptionCodeForNoAccess, "Context not access storage"_si };
 
     ASSERT(context->securityOrigin());
 
@@ -82,7 +82,7 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator, Exce
         if (RefPtr connection = document->storageConnection())
             return ConnectionInfo { *connection, document->storageClientOrigin() };
 
-        return Exception { ExceptionCode::InvalidStateError, "Connection is invalid"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Connection is invalid"_si };
     }
 
     if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(*context))
@@ -142,10 +142,10 @@ void StorageManager::fileSystemGetDirectory(DOMPromiseDeferred<IDLInterface<File
         RefPtr context = weakNavigator ? weakNavigator->scriptExecutionContext() : nullptr;
         if (!context) {
             protect(info.connection)->closeHandle(info.identifier);
-            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
+            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_si });
         }
 
-        Ref handle = FileSystemDirectoryHandle::create(*context, String { emptyString() }, info.globalIdentifier, info.identifier, protect(*info.connection));
+        Ref handle = FileSystemDirectoryHandle::create(*context, RefPtr<StringImpl> { emptyString() }, info.globalIdentifier, info.identifier, protect(*info.connection));
         promise.resolve(handle);
     });
 }

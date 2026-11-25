@@ -55,8 +55,8 @@ class WebKitWebResourceLoadManager;
 WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
 void webkitWebViewWillStartLoad(WebKitWebView*);
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent, API::Navigation* = nullptr);
-void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const String& failingURI, GError*);
-void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const String& failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);
+void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, StringImpl* failingURI, GError*);
+void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, StringImpl* failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 void webkitWebViewGetLoadDecisionForIcons(WebKitWebView*, const Vector<std::pair<WebKit::CallbackID, WebCore::LinkIcon>>&, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&&);
 void webkitWebViewSetIcon(WebKitWebView*, const WebCore::LinkIcon&, API::Data&);
@@ -68,12 +68,12 @@ void webkitWebViewRunAsModal(WebKitWebView*);
 void webkitWebViewClosePage(WebKitWebView*);
 void webkitWebViewRunJavaScriptAlert(WebKitWebView*, const UTF8CString& message, Function<void()>&& completionHandler);
 void webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const UTF8CString& message, Function<void(bool)>&& completionHandler);
-void webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const UTF8CString& message, const UTF8CString& defaultText, Function<void(const String&)>&& completionHandler);
+void webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const UTF8CString& message, const UTF8CString& defaultText, Function<void(StringImpl*)>&& completionHandler);
 void webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView*, const UTF8CString& message, Function<void(bool)>&& completionHandler);
 bool webkitWebViewIsShowingScriptDialog(WebKitWebView*);
 bool webkitWebViewIsScriptDialogRunning(WebKitWebView*, WebKitScriptDialog*);
-String webkitWebViewGetCurrentScriptDialogMessage(WebKitWebView*);
-void webkitWebViewSetCurrentScriptDialogUserInput(WebKitWebView*, const String&);
+RefPtr<StringImpl> webkitWebViewGetCurrentScriptDialogMessage(WebKitWebView*);
+void webkitWebViewSetCurrentScriptDialogUserInput(WebKitWebView*, StringImpl*);
 void webkitWebViewAcceptCurrentScriptDialog(WebKitWebView*);
 void webkitWebViewDismissCurrentScriptDialog(WebKitWebView*);
 std::optional<WebKitScriptDialogType> webkitWebViewGetCurrentScriptDialogType(WebKitWebView*);
@@ -126,9 +126,9 @@ void webkitWebViewDenyPointerLockRequest(CompletionHandler<void(bool)>&&);
 void webkitWebViewDidLosePointerLock(WebKitWebView*);
 #endif
 
-void webkitWebViewSetComposition(WebKitWebView*, const String&, const Vector<WebCore::CompositionUnderline>&, WebKit::EditingRange&&);
-void webkitWebViewConfirmComposition(WebKitWebView*, const String&);
-void webkitWebViewCancelComposition(WebKitWebView*, const String&);
+void webkitWebViewSetComposition(WebKitWebView*, StringImpl*, const Vector<WebCore::CompositionUnderline>&, WebKit::EditingRange&&);
+void webkitWebViewConfirmComposition(WebKitWebView*, StringImpl*);
+void webkitWebViewCancelComposition(WebKitWebView*, StringImpl*);
 void webkitWebViewDeleteSurrounding(WebKitWebView*, int offset, unsigned characterCount);
 void webkitWebViewSetIsWebProcessResponsive(WebKitWebView*, bool);
 

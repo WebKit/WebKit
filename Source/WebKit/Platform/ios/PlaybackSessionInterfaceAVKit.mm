@@ -98,7 +98,7 @@ void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const WebCore::Platfor
 
 static RetainPtr<AVPlaybackUserInterfaceMediaSelectionOption> mediaSelectionOptionSource(const WebCore::MediaSelectionOption& option)
 {
-    return adoptNS([PAL::allocAVPlaybackUserInterfaceMediaSelectionOptionInstance() initWithDisplayName:option.displayName.createNSString().get() identifier:[NSUUID UUID].UUIDString extendedLanguageTag:option.languageTag.createNSString().get() mediaCharacteristics:[NSArray array]]);
+    return adoptNS([PAL::allocAVPlaybackUserInterfaceMediaSelectionOptionInstance() initWithDisplayName:createNSString(option.displayName).get() identifier:[NSUUID UUID].UUIDString extendedLanguageTag:createNSString(option.languageTag).get() mediaCharacteristics:[NSArray array]]);
 }
 
 void PlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex)
@@ -161,7 +161,7 @@ void PlaybackSessionInterfaceAVKit::stopObservingNowPlayingMetadata()
 
 void PlaybackSessionInterfaceAVKit::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& metadata)
 {
-    [m_contentSource setMetadata:createPlatformMetadata(metadata.title.createNSString().get(), metadata.artist.createNSString().get())];
+    [m_contentSource setMetadata:createPlatformMetadata(createNSString(metadata.title).get(), createNSString(metadata.artist).get())];
 }
 
 #if !RELEASE_LOG_DISABLED

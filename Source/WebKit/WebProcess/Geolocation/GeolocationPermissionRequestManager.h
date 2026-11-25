@@ -48,9 +48,9 @@ public:
 
     void startRequestForGeolocation(WebCore::Geolocation&);
     void cancelRequestForGeolocation(WebCore::Geolocation&);
-    void revokeAuthorizationToken(const String&);
+    void revokeAuthorizationToken(StringImpl*);
 
-    void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
+    void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, StringImpl* authorizationToken);
 
     NODELETE void ref() const;
     void deref() const;

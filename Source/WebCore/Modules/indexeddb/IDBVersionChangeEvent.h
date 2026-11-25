@@ -33,12 +33,12 @@ namespace WebCore {
 class IDBVersionChangeEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(IDBVersionChangeEvent);
 public:
-    static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType)
+    static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion, uint64_t newVersion, AtomStringImpl* eventType)
     {
         return adoptRef(*new IDBVersionChangeEvent(std::nullopt, oldVersion, newVersion, eventType));
     }
 
-    static Ref<IDBVersionChangeEvent> create(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType)
+    static Ref<IDBVersionChangeEvent> create(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, AtomStringImpl* eventType)
     {
         return adoptRef(*new IDBVersionChangeEvent(requestIdentifier, oldVersion, newVersion, eventType));
     }
@@ -48,7 +48,7 @@ public:
         std::optional<uint64_t> newVersion;
     };
 
-    static Ref<IDBVersionChangeEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<IDBVersionChangeEvent> create(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new IDBVersionChangeEvent(type, initializer, isTrusted));
     }
@@ -59,8 +59,8 @@ public:
     std::optional<uint64_t> newVersion() const { return m_newVersion; }
 
 private:
-    IDBVersionChangeEvent(std::optional<IDBResourceIdentifier> requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType);
-    IDBVersionChangeEvent(const AtomString&, const Init&, IsTrusted);
+    IDBVersionChangeEvent(std::optional<IDBResourceIdentifier> requestIdentifier, uint64_t oldVersion, uint64_t newVersion, AtomStringImpl* eventType);
+    IDBVersionChangeEvent(AtomStringImpl*, const Init&, IsTrusted);
 
     std::optional<IDBResourceIdentifier> m_requestIdentifier;
     uint64_t m_oldVersion;

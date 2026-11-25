@@ -52,12 +52,12 @@ public:
     using CallbackIdentifier = WorkerFileSystemStorageConnectionCallbackIdentifier;
     void didIsSameEntry(CallbackIdentifier, ExceptionOr<bool>&&);
     void didGetHandle(CallbackIdentifier, ExceptionOr<Ref<FileSystemHandleCloseScope>>&&);
-    void didResolve(CallbackIdentifier, ExceptionOr<std::optional<Vector<String>>>&&);
-    void completeStringCallback(CallbackIdentifier, ExceptionOr<String>&&);
+    void didResolve(CallbackIdentifier, ExceptionOr<std::optional<Vector<RefPtr<StringImpl>>>>&&);
+    void completeStringCallback(CallbackIdentifier, ExceptionOr<RefPtr<StringImpl>>&&);
     void didResolveGlobalIdentifier(CallbackIdentifier, ExceptionOr<FileSystemHandleIdentifier>&&);
     void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<FileSystemStorageConnection::SyncAccessHandleInfo>&&);
     void completeVoidCallback(CallbackIdentifier, ExceptionOr<void>&& result);
-    void didGetHandleNames(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
+    void didGetHandleNames(CallbackIdentifier, ExceptionOr<Vector<RefPtr<StringImpl>>>&&);
 
 private:
     WorkerFileSystemStorageConnection(WorkerGlobalScope&, Ref<FileSystemStorageConnection>&&);
@@ -66,13 +66,13 @@ private:
     bool isWorker() const final { return true; }
     void closeHandle(FileSystemHandleIdentifier) final;
     void isSameEntry(FileSystemHandleIdentifier, FileSystemHandleIdentifier, FileSystemStorageConnection::SameEntryCallback&&) final;
-    void move(FileSystemHandleIdentifier, FileSystemHandleIdentifier, const String& newName, VoidCallback&&) final;
-    void getFileHandle(FileSystemHandleIdentifier, const String& name, bool createIfNecessary, FileSystemStorageConnection::GetHandleCallback&&) final;
-    void getDirectoryHandle(FileSystemHandleIdentifier, const String& name, bool createIfNecessary, FileSystemStorageConnection::GetHandleCallback&&) final;
-    void removeEntry(FileSystemHandleIdentifier, const String& name, bool deleteRecursively, FileSystemStorageConnection::VoidCallback&&) final;
+    void move(FileSystemHandleIdentifier, FileSystemHandleIdentifier, StringImpl* newName, VoidCallback&&) final;
+    void getFileHandle(FileSystemHandleIdentifier, StringImpl* name, bool createIfNecessary, FileSystemStorageConnection::GetHandleCallback&&) final;
+    void getDirectoryHandle(FileSystemHandleIdentifier, StringImpl* name, bool createIfNecessary, FileSystemStorageConnection::GetHandleCallback&&) final;
+    void removeEntry(FileSystemHandleIdentifier, StringImpl* name, bool deleteRecursively, FileSystemStorageConnection::VoidCallback&&) final;
     void resolve(FileSystemHandleIdentifier, FileSystemHandleIdentifier, FileSystemStorageConnection::ResolveCallback&&) final;
     void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) final;
-    void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleCallback&&) final;
+    void getHandle(FileSystemHandleIdentifier, StringImpl* name, GetHandleCallback&&) final;
     void addGlobalIdentifierReference(ClientOrigin&&, FileSystemHandleGlobalIdentifier) final;
     void removeGlobalIdentifierReferences(ClientOrigin&&, Vector<FileSystemHandleGlobalIdentifier>&&) final;
     void resolveGlobalIdentifier(ClientOrigin&&, FileSystemHandleGlobalIdentifier, ResolveGlobalIdentifierCallback&&) final;

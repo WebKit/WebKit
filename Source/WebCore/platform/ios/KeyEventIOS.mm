@@ -303,13 +303,13 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
         return;
 
     if (type == PlatformEvent::Type::RawKeyDown) {
-        m_text = String();
-        m_unmodifiedText = String();
+        m_text = nullptr;
+        m_unmodifiedText = nullptr;
     } else {
-        m_keyIdentifier = String();
-        if (m_text.length() == 1 && isFunctionKey(m_text[0U])) {
-            m_text = String();
-            m_unmodifiedText = String();
+        m_keyIdentifier = nullptr;
+        if (length(m_text) == 1 && isFunctionKey(codeUnitAt(m_text, 0U))) {
+            m_text = nullptr;
+            m_unmodifiedText = nullptr;
         }
     }
 }

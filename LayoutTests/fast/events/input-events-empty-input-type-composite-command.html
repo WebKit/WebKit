@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="editable" contenteditable onbeforeinput="handleInput(event)" oninput="handleInput(event)"></div>
+<script>
+description("Tests the inputType of input events for editing commands whose editing action has no input type name (it is the empty string). "
+    + "These go through CompositeEditCommand::inputEventTypeName().");
+
+var editable = document.getElementById("editable");
+var log = [];
+
+function handleInput(event)
+{
+    log.push(`${event.type}: inputType="${event.inputType}" data=${JSON.stringify(event.data)}`);
+}
+
+function runCommand(label, markup, command)
+{
+    editable.innerHTML = markup;
+    log = [];
+    editable.focus();
+    getSelection().selectAllChildren(editable);
+    command();
+    debug(label + ":");
+    for (let entry of log)
+        debug("    " + entry);
+    if (!log.length)
+        debug("    (no events)");
+    debug("    result: " + editable.innerHTML);
+}
+
+// UnlinkCommand (EditAction::Unlink).
+runCommand("unlink", "Hello <a href='#target'>link</a> world", () => document.execCommand("unlink"));
+// RemoveFormatCommand (EditAction::Unspecified).
+runCommand("removeFormat", "Hello <b>bold</b> world", () => document.execCommand("removeFormat"));
+// FormatBlockCommand (EditAction::FormatBlock).
+runCommand("formatBlock", "Hello world", () => document.execCommand("formatBlock", false, "h1"));
+
+if (window.testRunner) {
+    runCommand("Unlink (testRunner)", "Hello <a href='#target'>link</a> world", () => testRunner.execCommand("Unlink", "", ""));
+    runCommand("RemoveFormat (testRunner)", "Hello <i>italic</i> world", () => testRunner.execCommand("RemoveFormat", "", ""));
+}
+
+// A mapped action for comparison.
+runCommand("insertOrderedList", "Hello world", () => document.execCommand("insertOrderedList"));
+</script>
+</body>
+</html>

@@ -29,49 +29,49 @@
 
 namespace WebCore {
 
-String convertToString(MediaConstraintType type)
+RefPtr<StringImpl> convertToString(MediaConstraintType type)
 {
     switch (type) {
     case MediaConstraintType::Unknown:
-        return ""_s;
+        return ""_si;
     case MediaConstraintType::Width:
-        return "width"_s;
+        return "width"_si;
     case MediaConstraintType::Height:
-        return "height"_s;
+        return "height"_si;
     case MediaConstraintType::AspectRatio:
-        return "aspectRatio"_s;
+        return "aspectRatio"_si;
     case MediaConstraintType::FrameRate:
-        return "frameRate"_s;
+        return "frameRate"_si;
     case MediaConstraintType::FacingMode:
-        return "facingMode"_s;
+        return "facingMode"_si;
     case MediaConstraintType::Volume:
-        return "volume"_s;
+        return "volume"_si;
     case MediaConstraintType::SampleRate:
-        return "sampleRate"_s;
+        return "sampleRate"_si;
     case MediaConstraintType::SampleSize:
-        return "sampleSize"_s;
+        return "sampleSize"_si;
     case MediaConstraintType::EchoCancellation:
-        return "echoCancellation"_s;
+        return "echoCancellation"_si;
     case MediaConstraintType::DeviceId:
-        return "deviceId"_s;
+        return "deviceId"_si;
     case MediaConstraintType::GroupId:
-        return "groupId"_s;
+        return "groupId"_si;
     case MediaConstraintType::DisplaySurface:
-        return "displaySurface"_s;
+        return "displaySurface"_si;
     case MediaConstraintType::LogicalSurface:
-        return "logicalSurface"_s;
+        return "logicalSurface"_si;
     case MediaConstraintType::FocusDistance:
-        return "focusDistance"_s;
+        return "focusDistance"_si;
     case MediaConstraintType::WhiteBalanceMode:
-        return "whiteBalanceMode"_s;
+        return "whiteBalanceMode"_si;
     case MediaConstraintType::Zoom:
-        return "zoom"_s;
+        return "zoom"_si;
     case MediaConstraintType::Torch:
-        return "torch"_s;
+        return "torch"_si;
     case MediaConstraintType::BackgroundBlur:
-        return "backgroundBlur"_s;
+        return "backgroundBlur"_si;
     case MediaConstraintType::PowerEfficient:
-        return "powerEfficient"_s;
+        return "powerEfficient"_si;
     }
 
     ASSERT_NOT_REACHED();

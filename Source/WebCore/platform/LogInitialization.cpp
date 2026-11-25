@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    String logLevelString() final
+    RefPtr<StringImpl> logLevelString() final
     {
         return WebCore::logLevelString();
     }
@@ -56,14 +56,14 @@ WTF::LogChannels& logChannels()
     return logChannels.get();
 }
 
-WTFLogChannel* getLogChannel(const String& name)
+WTFLogChannel* getLogChannel(StringImpl* name)
 {
     return logChannels().getLogChannel(name);
 }
 
 #else
 
-WTFLogChannel* getLogChannel(const String& name)
+WTFLogChannel* getLogChannel(StringImpl* name)
 {
     UNUSED_PARAM(name);
     return nullptr;

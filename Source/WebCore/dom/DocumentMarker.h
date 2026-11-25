@@ -113,12 +113,12 @@ public:
 
     struct DictationData {
         DictationContext context;
-        String originalText;
+        RefPtr<StringImpl> originalText;
     };
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
     struct PlatformTextCheckingData {
-        String key;
-        String value;
+        RefPtr<StringImpl> key;
+        RefPtr<StringImpl> value;
     };
 #endif
 
@@ -134,7 +134,7 @@ public:
             Underline,
         };
 
-        String originalText;
+        RefPtr<StringImpl> originalText;
         WritingTools::TextSuggestionID suggestionID;
         State state { State::Accepted };
         Decoration decoration { Decoration::None };
@@ -151,15 +151,15 @@ public:
     };
 
     struct GrammarData {
-        String description;
-        String uuid;
+        RefPtr<StringImpl> description;
+        RefPtr<StringImpl> uuid;
     };
 
     using Data = Variant<
-        String
+        RefPtr<StringImpl>
         , DictationData // DictationAlternatives
 #if PLATFORM(IOS_FAMILY)
-        , Vector<String> // DictationPhraseWithAlternatives
+        , Vector<RefPtr<StringImpl>> // DictationPhraseWithAlternatives
         , RetainPtr<id> // DictationResult
 #endif
         , RefPtr<Node> // DraggedContent
@@ -180,10 +180,10 @@ public:
     unsigned startOffset() const { return m_range.start; }
     unsigned endOffset() const { return m_range.end; }
 
-    String description() const;
+    RefPtr<StringImpl> description() const;
 
     const Data& data() const LIFETIME_BOUND { return m_data; }
-    void clearData() { m_data = String { }; }
+    void clearData() { m_data = RefPtr<StringImpl> { }; }
 
     // Offset modifications are done by DocumentMarkerController.
     // Other classes should not call following setters.
@@ -244,9 +244,9 @@ inline void DocumentMarker::shiftOffsets(int delta)
     m_range.end += delta;
 }
 
-inline String DocumentMarker::description() const
+inline RefPtr<StringImpl> DocumentMarker::description() const
 {
-    if (auto* description = std::get_if<String>(&m_data))
+    if (auto* description = std::get_if<RefPtr<StringImpl>>(&m_data))
         return *description;
 
     if (auto* data = std::get_if<DocumentMarker::GrammarData>(&m_data))

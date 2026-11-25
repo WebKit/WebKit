@@ -96,7 +96,7 @@ public:
     // The strength of the value itself. The structure is almost always weak.
     ValueStrength strength() const { return m_strength; }
 
-    String tryGetString(Graph&);
+    RefPtr<StringImpl> tryGetString(Graph&);
     
     void dumpInContext(PrintStream& out, DumpContext* context) const;
     void dump(PrintStream& out) const;

@@ -42,14 +42,14 @@ struct CookieFilter {
 
     bool matches(const WebCore::Cookie&) const;
 
-    String name;
-    String value;
-    String domain;
-    String path;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> value;
+    RefPtr<StringImpl> domain;
+    RefPtr<StringImpl> path;
     std::optional<bool> httpOnly;
     std::optional<bool> secure;
     // Unset matches any partition; an empty string matches only unpartitioned cookies.
-    std::optional<String> partitionKey;
+    std::optional<RefPtr<StringImpl>> partitionKey;
 };
 
 } // namespace WebKit

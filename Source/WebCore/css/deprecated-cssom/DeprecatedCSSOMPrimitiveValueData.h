@@ -44,7 +44,7 @@ namespace WebCore {
 struct DeprecatedCSSOMPrimitiveValueData {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(DeprecatedCSSOMPrimitiveValueData);
 
-    using TypeErasedValue = Function<String(const CSS::SerializationContext&)>;
+    using TypeErasedValue = Function<RefPtr<StringImpl>(const CSS::SerializationContext&)>;
     using NumericRaw = CSS::UnconstrainedPrimitiveNumericRaw;
     using NumericCalc = CSS::UnevaluatedCalcBase;
 

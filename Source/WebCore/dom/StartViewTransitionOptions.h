@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct StartViewTransitionOptions {
     RefPtr<ViewTransitionUpdateCallback> update;
-    std::optional<Vector<AtomString>> types;
+    std::optional<Vector<RefPtr<AtomStringImpl>>> types;
 };
 
 } // namespace WebCore

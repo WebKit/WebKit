@@ -134,8 +134,8 @@ void LaunchServicesDatabaseObserver::handleEvent(xpc_connection_t connection, xp
         return;
     }
     if (xpc_get_type(event) == XPC_TYPE_DICTIONARY) {
-        String messageName = xpcDictionaryGetString(event, xpcMessageNameKey);
-        if (messageName != LaunchServicesDatabaseXPCConstants::xpcRequestLaunchServicesDatabaseUpdateMessageName)
+        RefPtr<StringImpl> messageName = xpcDictionaryGetString(event, xpcMessageNameKey);
+        if (!equal(messageName, LaunchServicesDatabaseXPCConstants::xpcRequestLaunchServicesDatabaseUpdateMessageName))
             return;
         startObserving(connection);
     }

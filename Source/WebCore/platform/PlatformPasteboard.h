@@ -63,10 +63,10 @@ enum class PasteboardDataLifetime : bool { Persistent, Ephemeral };
 
 class PlatformPasteboard {
 public:
-    WEBCORE_EXPORT explicit PlatformPasteboard(const String& pasteboardName);
+    WEBCORE_EXPORT explicit PlatformPasteboard(StringImpl* pasteboardName);
 #if PLATFORM(IOS_FAMILY) || USE(LIBWPE)
     WEBCORE_EXPORT PlatformPasteboard();
-    WEBCORE_EXPORT void updateSupportedTypeIdentifiers(const Vector<String>& types);
+    WEBCORE_EXPORT void updateSupportedTypeIdentifiers(const Vector<RefPtr<StringImpl>>& types);
 #endif
     WEBCORE_EXPORT std::optional<PasteboardItemInfo> informationForItemAtIndex(size_t index, int64_t changeCount);
     WEBCORE_EXPORT std::optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(int64_t changeCount);
@@ -74,40 +74,40 @@ public:
     WEBCORE_EXPORT static void performAsDataOwner(DataOwnerType, NOESCAPE const Function<void()>&);
 
     enum class IncludeImageTypes : bool { No, Yes };
-    static String platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes = IncludeImageTypes::No);
+    static RefPtr<StringImpl> platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(StringImpl* domType, IncludeImageTypes = IncludeImageTypes::No);
 
-    WEBCORE_EXPORT void getTypes(Vector<String>& types) const;
-    WEBCORE_EXPORT PasteboardBuffer bufferForType(const String& pasteboardType) const;
-    WEBCORE_EXPORT void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const;
-    WEBCORE_EXPORT String stringForType(const String& pasteboardType) const;
-    WEBCORE_EXPORT Vector<String> allStringsForType(const String& pasteboardType) const;
+    WEBCORE_EXPORT void getTypes(Vector<RefPtr<StringImpl>>& types) const;
+    WEBCORE_EXPORT PasteboardBuffer bufferForType(StringImpl* pasteboardType) const;
+    WEBCORE_EXPORT void getPathnamesForType(Vector<RefPtr<StringImpl>>& pathnames, StringImpl* pasteboardType) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> stringForType(StringImpl* pasteboardType) const;
+    WEBCORE_EXPORT Vector<RefPtr<StringImpl>> allStringsForType(StringImpl* pasteboardType) const;
     WEBCORE_EXPORT int64_t changeCount() const;
     WEBCORE_EXPORT Color color();
     WEBCORE_EXPORT URL url();
 
     // Take ownership of the pasteboard, and return new change count.
-    WEBCORE_EXPORT int64_t addTypes(const Vector<String>& pasteboardTypes);
-    WEBCORE_EXPORT int64_t setTypes(const Vector<String>& pasteboardTypes, PasteboardDataLifetime = PasteboardDataLifetime::Persistent);
+    WEBCORE_EXPORT int64_t addTypes(const Vector<RefPtr<StringImpl>>& pasteboardTypes);
+    WEBCORE_EXPORT int64_t setTypes(const Vector<RefPtr<StringImpl>>& pasteboardTypes, PasteboardDataLifetime = PasteboardDataLifetime::Persistent);
 
     // These methods will return 0 if pasteboard ownership has been taken from us.
-    WEBCORE_EXPORT int64_t copy(const String& fromPasteboard);
-    WEBCORE_EXPORT int64_t setBufferForType(SharedBuffer*, const String& pasteboardType);
+    WEBCORE_EXPORT int64_t copy(StringImpl* fromPasteboard);
+    WEBCORE_EXPORT int64_t setBufferForType(SharedBuffer*, StringImpl* pasteboardType);
     WEBCORE_EXPORT int64_t setURL(const PasteboardURL&);
     WEBCORE_EXPORT int64_t setColor(const Color&);
-    WEBCORE_EXPORT int64_t setStringForType(const String&, const String& pasteboardType);
+    WEBCORE_EXPORT int64_t setStringForType(StringImpl*, StringImpl* pasteboardType);
     WEBCORE_EXPORT void write(const PasteboardWebContent&);
     WEBCORE_EXPORT void write(const PasteboardImage&);
-    WEBCORE_EXPORT void write(const String& pasteboardType, const String&);
+    WEBCORE_EXPORT void write(StringImpl* pasteboardType, StringImpl*);
     WEBCORE_EXPORT void write(const PasteboardURL&);
-    WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(std::optional<size_t> index, const String& pasteboardType) const;
-    WEBCORE_EXPORT String readString(size_t index, const String& pasteboardType) const;
-    WEBCORE_EXPORT URL readURL(size_t index, String& title) const;
+    WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(std::optional<size_t> index, StringImpl* pasteboardType) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> readString(size_t index, StringImpl* pasteboardType) const;
+    WEBCORE_EXPORT URL readURL(size_t index, RefPtr<StringImpl>& title) const;
     WEBCORE_EXPORT int count() const;
     WEBCORE_EXPORT int numberOfFiles() const;
     WEBCORE_EXPORT int64_t write(const Vector<PasteboardCustomData>&, PasteboardDataLifetime = PasteboardDataLifetime::Persistent);
     WEBCORE_EXPORT int64_t write(const PasteboardCustomData&, PasteboardDataLifetime = PasteboardDataLifetime::Persistent);
-    WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite(const String& origin) const;
-    WEBCORE_EXPORT bool containsStringSafeForDOMToReadForType(const String&) const;
+    WEBCORE_EXPORT Vector<RefPtr<StringImpl>> typesSafeForDOMToReadAndWrite(StringImpl* origin) const;
+    WEBCORE_EXPORT bool containsStringSafeForDOMToReadForType(StringImpl*) const;
 
 #if PLATFORM(WIN)
     WEBCORE_EXPORT std::optional<PasteboardCustomData> readCustomData() const;
@@ -115,11 +115,11 @@ public:
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT bool containsURLStringSuitableForLoading();
-    WEBCORE_EXPORT String urlStringSuitableForLoading(String& title);
+    WEBCORE_EXPORT RefPtr<StringImpl> urlStringSuitableForLoading(RefPtr<StringImpl>& title);
 #endif
 
 #if PLATFORM(MAC)
-    WEBCORE_EXPORT static bool isFilePasteboardType(const String&);
+    WEBCORE_EXPORT static bool isFilePasteboardType(StringImpl*);
 #endif
 
 private:

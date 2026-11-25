@@ -84,7 +84,7 @@ private:
     std::optional<WebCore::ExceptionData> processLargeBlobExtension(const WebCore::PublicKeyCredentialCreationOptions&, WebCore::AuthenticationExtensionsClientOutputs& extensionOutputs);
     std::optional<WebCore::ExceptionData> processLargeBlobExtension(const WebCore::PublicKeyCredentialRequestOptions&, WebCore::AuthenticationExtensionsClientOutputs& extensionOutputs, const Ref<WebCore::AuthenticatorAssertionResponse>&);
 
-    std::optional<Vector<Ref<WebCore::AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId);
+    std::optional<Vector<Ref<WebCore::AuthenticatorAssertionResponse>>> getExistingCredentials(StringImpl* rpId);
 
     State m_state { State::Init };
     const Ref<LocalConnection> m_connection;

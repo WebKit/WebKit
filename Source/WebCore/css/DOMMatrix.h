@@ -33,7 +33,7 @@ class ScriptExecutionContext;
 
 class DOMMatrix : public DOMMatrixReadOnly {
 public:
-    static ExceptionOr<Ref<DOMMatrix>> create(ScriptExecutionContext&, std::optional<Variant<String, Vector<double>>>&&);
+    static ExceptionOr<Ref<DOMMatrix>> create(ScriptExecutionContext&, std::optional<Variant<RefPtr<StringImpl>, Vector<double>>>&&);
 
     static Ref<DOMMatrix> create(const TransformationMatrix& matrix, Is2D is2D)
     {
@@ -62,7 +62,7 @@ public:
     Ref<DOMMatrix> skewYSelf(double sy = 0); // Angle is in degrees.
     Ref<DOMMatrix> invertSelf();
 
-    ExceptionOr<Ref<DOMMatrix>> setMatrixValueForBindings(Document&, const String&);
+    ExceptionOr<Ref<DOMMatrix>> setMatrixValueForBindings(Document&, StringImpl*);
 
     void setA(double f) { m_matrix.setA(f); }
     void setB(double f) { m_matrix.setB(f); }

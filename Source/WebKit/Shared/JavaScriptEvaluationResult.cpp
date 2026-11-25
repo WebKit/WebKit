@@ -126,7 +126,7 @@ RefPtr<API::Object> JavaScriptEvaluationResult::APIInserter::toAPI(Value&& root)
         return API::Boolean::create(value);
     }, [] (double value) -> RefPtr<API::Object> {
         return API::Double::create(value);
-    }, [] (String&& value) -> RefPtr<API::Object> {
+    }, [] (RefPtr<StringImpl>&& value) -> RefPtr<API::Object> {
         return API::String::create(value);
     }, [] (Seconds value) -> RefPtr<API::Object> {
         return API::Double::create(value.seconds());
@@ -446,7 +446,7 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
         return JSValueMakeBoolean(context, value);
     }, [&] (double value) -> JSValueRef {
         return JSValueMakeNumber(context, value);
-    }, [&] (String&& value) -> JSValueRef {
+    }, [&] (RefPtr<StringImpl>&& value) -> JSValueRef {
         auto string = OpaqueJSString::tryCreate(WTF::move(value));
         return JSValueMakeString(context, string.get());
     }, [&] (Seconds value) -> JSValueRef {
@@ -531,12 +531,12 @@ JavaScriptEvaluationResult& JavaScriptEvaluationResult::operator=(JavaScriptEval
 
 JavaScriptEvaluationResult::~JavaScriptEvaluationResult() = default;
 
-String JavaScriptEvaluationResult::toString() const
+RefPtr<StringImpl> JavaScriptEvaluationResult::toString() const
 {
     auto it = m_map.find(m_root);
     if (it == m_map.end())
         return { };
-    auto* string = std::get_if<String>(&it->value);
+    auto* string = std::get_if<RefPtr<StringImpl>>(&it->value);
     if (!string)
         return { };
     return *string;

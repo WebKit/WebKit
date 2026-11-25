@@ -1167,12 +1167,12 @@ RefPtr<Node> findStartOfParagraph(Node* startNode, Node* highestRoot, Node* star
             type = Position::PositionIsOffsetInAnchor;
             if (style->preserveNewline()) {
                 auto& text = renderText->text();
-                int i = text.length();
+                int i = length(text);
                 int o = offset;
                 if (n == startNode && o < i)
                     i = std::max(0, o);
                 while (--i >= 0) {
-                    if (text[i] == '\n') {
+                    if (codeUnitAt(text, i) == '\n') {
                         offset = i + 1;
                         return n;
                     }
@@ -1229,9 +1229,9 @@ RefPtr<Node> findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayIn
             if (style->preserveNewline()) {
                 auto& text = renderText->text();
                 int o = n == startNode ? offset : 0;
-                int length = text.length();
+                int length = WTF::length(text);
                 for (int i = o; i < length; ++i) {
-                    if (text[i] == '\n') {
+                    if (codeUnitAt(text, i) == '\n') {
                         offset = i;
                         return n;
                     }
@@ -1869,11 +1869,11 @@ void charactersAroundPosition(const VisiblePosition& position, char32_t& oneAfte
     }
 
     if (startPosition != endPosition) {
-        String characterString = makeStringByReplacingAll(plainText(*makeSimpleRange(startPosition, endPosition)), noBreakSpace, ' ');
-        for (int i = characterString.length() - 1, index = 0; i >= 0 && index < maxCharacters; --i) {
+        RefPtr<StringImpl> characterString = makeStringByReplacingAll(plainText(*makeSimpleRange(startPosition, endPosition)), noBreakSpace, ' ');
+        for (int i = length(characterString) - 1, index = 0; i >= 0 && index < maxCharacters; --i) {
             if (!index && nextPosition.isNull())
                 index++;
-            characters[index++] = characterString[i];
+            characters[index++] = codeUnitAt(characterString, i);
         }
     }
     oneAfter = characters[0];

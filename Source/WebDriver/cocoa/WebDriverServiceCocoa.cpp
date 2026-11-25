@@ -62,14 +62,14 @@ void WebDriverService::platformInit()
 Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;
-    capabilities.platformName = String("mac"_s);
+    capabilities.platformName = "mac"_si;
     capabilities.setWindowRect = true;
     return capabilities;
 }
 
-bool WebDriverService::platformValidateCapability(const String& name, const Ref<JSON::Value>& value) const
+bool WebDriverService::platformValidateCapability(StringImpl* name, const Ref<JSON::Value>& value) const
 {
-    if (name != "webkit:browserOptions"_s)
+    if (!equal(name, "webkit:browserOptions"_s))
         return true;
 
     auto browserOptions = value->asObject();
@@ -77,10 +77,10 @@ bool WebDriverService::platformValidateCapability(const String& name, const Ref<
         return false;
 
     // minidriver always launches the MiniBrowser next to it.
-    if (browserOptions->getValue("binary"_s))
+    if (browserOptions->getValue("binary"_si))
         return false;
 
-    if (auto argsValue = browserOptions->getValue("args"_s)) {
+    if (auto argsValue = browserOptions->getValue("args"_si)) {
         auto args = argsValue->asArray();
         if (!args)
             return false;
@@ -93,23 +93,23 @@ bool WebDriverService::platformValidateCapability(const String& name, const Ref<
     return true;
 }
 
-bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Value>&) const
+bool WebDriverService::platformMatchCapability(StringImpl*, const Ref<JSON::Value>&) const
 {
     return true;
 }
 
 void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
 {
-    capabilities.browserArguments = Vector<String> { };
+    capabilities.browserArguments = Vector<RefPtr<StringImpl>> { };
 
-    auto browserOptions = matchedCapabilities.getObject("webkit:browserOptions"_s);
+    auto browserOptions = matchedCapabilities.getObject("webkit:browserOptions"_si);
     if (!browserOptions)
         return;
 
-    auto browserArguments = browserOptions->getArray("args"_s);
+    auto browserArguments = browserOptions->getArray("args"_si);
     if (browserArguments && browserArguments->length()) {
         unsigned browserArgumentsLength = browserArguments->length();
-        capabilities.browserArguments = Vector<String>();
+        capabilities.browserArguments = Vector<RefPtr<StringImpl>>();
         capabilities.browserArguments->reserveInitialCapacity(browserArgumentsLength);
         for (unsigned i = 0; i < browserArgumentsLength; ++i) {
             auto argument = browserArguments->get(i)->asString();
@@ -118,12 +118,12 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
     }
 }
 
-bool WebDriverService::platformCompareBrowserVersions(const String& requiredVersion, const String& proposedVersion)
+bool WebDriverService::platformCompareBrowserVersions(StringImpl* requiredVersion, StringImpl* proposedVersion)
 {
     // Simple major.minor.micro version comparison.
-    auto parseVersion = [](const String& version, uint64_t& major, uint64_t& minor, uint64_t& micro) -> bool {
+    auto parseVersion = [](StringImpl* version, uint64_t& major, uint64_t& minor, uint64_t& micro) -> bool {
         major = minor = micro = 0;
-        Vector<String> tokens = version.split('.');
+        Vector<RefPtr<StringImpl>> tokens = split(version, '.');
         switch (tokens.size()) {
         case 3:
             if (auto parsed = parseIntegerAllowingTrailingJunk<uint64_t>(tokens[2]))
@@ -162,7 +162,7 @@ bool WebDriverService::platformCompareBrowserVersions(const String& requiredVers
         || (proposedMajor == requiredMajor && proposedMinor == requiredMinor && proposedMicro >= requiredMicro);
 }
 
-bool WebDriverService::platformSupportProxyType(const String&) const
+bool WebDriverService::platformSupportProxyType(StringImpl*) const
 {
     return false;
 }

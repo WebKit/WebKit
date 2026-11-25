@@ -106,7 +106,7 @@ void PageCanvasAgent::internalDisable()
     InspectorCanvasAgent::internalDisable();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> PageCanvasAgent::requestNodes(const Inspector::Protocol::Canvas::CanvasId& canvasId)
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> PageCanvasAgent::requestNodes(StringImpl* canvasId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -137,7 +137,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::N
     return nodeIds;
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> PageCanvasAgent::requestCSSCanvasClientNodes(const Inspector::Protocol::Canvas::CanvasId& canvasId)
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> PageCanvasAgent::requestCSSCanvasClientNodes(StringImpl* canvasId)
 {
     Inspector::Protocol::ErrorString errorString;
 

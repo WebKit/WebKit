@@ -66,7 +66,7 @@ public:
     }
 
 private:
-    const AtomString& type() override;
+    const RefPtr<AtomStringImpl>& type() override;
     Node& target() override { return m_target; }
     NodeList& addedNodes() override { return m_addedNodes; }
     NodeList& removedNodes() override { return m_removedNodes; }
@@ -93,7 +93,7 @@ private:
 
 class RecordWithEmptyNodeLists : public MutationRecord {
 public:
-    RecordWithEmptyNodeLists(Node& target, const String& oldValue)
+    RecordWithEmptyNodeLists(Node& target, StringImpl* oldValue)
         : m_target(target)
         , m_oldValue(oldValue)
     {
@@ -101,7 +101,7 @@ public:
 
 private:
     Node& target() override { return m_target; }
-    String oldValue() override { return m_oldValue; }
+    RefPtr<StringImpl> oldValue() override { return m_oldValue; }
     NodeList& addedNodes() override { return lazilyInitializeEmptyNodeList(m_addedNodes); }
     NodeList& removedNodes() override { return lazilyInitializeEmptyNodeList(m_removedNodes); }
 
@@ -118,14 +118,14 @@ private:
     }
 
     const Ref<Node> m_target;
-    String m_oldValue;
+    RefPtr<StringImpl> m_oldValue;
     const RefPtr<NodeList> m_addedNodes;
     const RefPtr<NodeList> m_removedNodes;
 };
 
 class AttributesRecord final : public RecordWithEmptyNodeLists {
 public:
-    AttributesRecord(Element& target, const QualifiedName& name, const AtomString& oldValue)
+    AttributesRecord(Element& target, const QualifiedName& name, AtomStringImpl* oldValue)
         : RecordWithEmptyNodeLists(target, oldValue)
         , m_attributeName(name.localName())
         , m_attributeNamespace(name.namespaceURI())
@@ -133,23 +133,23 @@ public:
     }
 
 private:
-    const AtomString& type() override;
-    const AtomString& attributeName() override { return m_attributeName; }
-    const AtomString& attributeNamespace() override { return m_attributeNamespace; }
+    const RefPtr<AtomStringImpl>& type() override;
+    const RefPtr<AtomStringImpl>& attributeName() override { return m_attributeName; }
+    const RefPtr<AtomStringImpl>& attributeNamespace() override { return m_attributeNamespace; }
 
-    AtomString m_attributeName;
-    AtomString m_attributeNamespace;
+    RefPtr<AtomStringImpl> m_attributeName;
+    RefPtr<AtomStringImpl> m_attributeNamespace;
 };
 
 class CharacterDataRecord : public RecordWithEmptyNodeLists {
 public:
-    CharacterDataRecord(CharacterData& target, const String& oldValue)
+    CharacterDataRecord(CharacterData& target, StringImpl* oldValue)
         : RecordWithEmptyNodeLists(target, oldValue)
     {
     }
 
 private:
-    const AtomString& type() override;
+    const RefPtr<AtomStringImpl>& type() override;
 };
 
 class MutationRecordWithNullOldValue final : public MutationRecord {
@@ -160,16 +160,16 @@ public:
     }
 
 private:
-    const AtomString& type() override { return m_record->type(); }
+    const RefPtr<AtomStringImpl>& type() override { return m_record->type(); }
     Node& target() override { return m_record->target(); }
     NodeList& addedNodes() override { return m_record->addedNodes(); }
     NodeList& removedNodes() override { return m_record->removedNodes(); }
     Node* previousSibling() override { return m_record->previousSibling(); }
     Node* nextSibling() override { return m_record->nextSibling(); }
-    const AtomString& attributeName() override { return m_record->attributeName(); }
-    const AtomString& attributeNamespace() override { return m_record->attributeNamespace(); }
+    const RefPtr<AtomStringImpl>& attributeName() override { return m_record->attributeName(); }
+    const RefPtr<AtomStringImpl>& attributeNamespace() override { return m_record->attributeNamespace(); }
 
-    String oldValue() override { return String(); }
+    RefPtr<StringImpl> oldValue() override { return nullptr; }
 
     void visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
@@ -179,21 +179,21 @@ private:
     const Ref<MutationRecord> m_record;
 };
 
-const AtomString& ChildListRecord::type()
+const RefPtr<AtomStringImpl>& ChildListRecord::type()
 {
-    static MainThreadNeverDestroyed<const AtomString> childList("childList"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> childList("childList"_s);
     return childList;
 }
 
-const AtomString& AttributesRecord::type()
+const RefPtr<AtomStringImpl>& AttributesRecord::type()
 {
-    static MainThreadNeverDestroyed<const AtomString> attributes("attributes"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> attributes("attributes"_s);
     return attributes;
 }
 
-const AtomString& CharacterDataRecord::type()
+const RefPtr<AtomStringImpl>& CharacterDataRecord::type()
 {
-    static MainThreadNeverDestroyed<const AtomString> characterData("characterData"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> characterData("characterData"_s);
     return characterData;
 }
 
@@ -204,12 +204,12 @@ Ref<MutationRecord> MutationRecord::createChildList(ContainerNode& target, Ref<N
     return adoptRef(static_cast<MutationRecord&>(*new ChildListRecord(target, WTF::move(added), WTF::move(removed), WTF::move(previousSibling), WTF::move(nextSibling))));
 }
 
-Ref<MutationRecord> MutationRecord::createAttributes(Element& target, const QualifiedName& name, const AtomString& oldValue)
+Ref<MutationRecord> MutationRecord::createAttributes(Element& target, const QualifiedName& name, AtomStringImpl* oldValue)
 {
     return adoptRef(static_cast<MutationRecord&>(*new AttributesRecord(target, name, oldValue)));
 }
 
-Ref<MutationRecord> MutationRecord::createCharacterData(CharacterData& target, const String& oldValue)
+Ref<MutationRecord> MutationRecord::createCharacterData(CharacterData& target, StringImpl* oldValue)
 {
     return adoptRef(static_cast<MutationRecord&>(*new CharacterDataRecord(target, oldValue)));
 }

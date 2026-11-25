@@ -224,7 +224,7 @@ void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element
     enqueueElementOnAppropriateElementQueue(element);
 }
 
-void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
+void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, AtomStringImpl* oldValue, AtomStringImpl* newValue)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());

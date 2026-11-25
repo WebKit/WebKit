@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AXTextRuns);
 
-String AXTextRuns::debugDescription() const
+RefPtr<StringImpl> AXTextRuns::debugDescription() const
 {
     StringBuilder builder;
     builder.append('[');

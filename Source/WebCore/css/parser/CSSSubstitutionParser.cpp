@@ -477,7 +477,7 @@ bool CSSSubstitutionParser::containsSubstitutionFunctions(CSSParserTokenRange ra
     return type->classifyBlockResult.hasSubstitutionFunctions && !type->classifyBlockResult.hasTopLevelBraceBlockMixedWithOtherValues;
 }
 
-RefPtr<CSSCustomPropertyValue> CSSSubstitutionParser::parseDeclarationValue(const AtomString& variableName, CSSParserTokenRange range, const CSSParserContext& parserContext, const CSSNamespacePrefixMap& namespaceMap)
+RefPtr<CSSCustomPropertyValue> CSSSubstitutionParser::parseDeclarationValue(AtomStringImpl* variableName, CSSParserTokenRange range, const CSSParserContext& parserContext, const CSSNamespacePrefixMap& namespaceMap)
 {
     auto type = classifyVariableRange(range, parserContext);
     if (!type)
@@ -492,7 +492,7 @@ RefPtr<CSSCustomPropertyValue> CSSSubstitutionParser::parseDeclarationValue(cons
     return CSSCustomPropertyValue::createSyntaxAll(variableName, CSSVariableData::create(range, parserContext));
 }
 
-RefPtr<const Style::CustomProperty> CSSSubstitutionParser::parseInitialValueForUniversalSyntax(const AtomString& variableName, CSSParserTokenRange range)
+RefPtr<const Style::CustomProperty> CSSSubstitutionParser::parseInitialValueForUniversalSyntax(AtomStringImpl* variableName, CSSParserTokenRange range)
 {
     auto type = classifyVariableRange(range, strictCSSParserContext());
 

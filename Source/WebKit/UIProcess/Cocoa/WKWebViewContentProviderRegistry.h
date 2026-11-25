@@ -36,9 +36,9 @@
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
-- (Class <WKWebViewContentProvider>)providerForMIMEType:(const String&)mimeType;
+- (Class <WKWebViewContentProvider>)providerForMIMEType:(StringImpl*)mimeType;
 
-- (Vector<String>)_mimeTypesWithCustomContentProviders;
+- (Vector<RefPtr<StringImpl>>)_mimeTypesWithCustomContentProviders;
 
 @end
 

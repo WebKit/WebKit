@@ -72,9 +72,9 @@ void WebsiteDataStore::setNetworkProxySettings(WebCore::SoupNetworkProxySettings
     networkProcess().send(Messages::NetworkProcess::SetNetworkProxySettings(m_sessionID, m_networkProxySettings), 0);
 }
 
-void WebsiteDataStore::setCookiePersistentStorage(const String& storagePath, SoupCookiePersistentStorageType storageType)
+void WebsiteDataStore::setCookiePersistentStorage(StringImpl* storagePath, SoupCookiePersistentStorageType storageType)
 {
-    if (m_cookiePersistentStoragePath == storagePath && m_cookiePersistentStorageType == storageType)
+    if (equal(m_cookiePersistentStoragePath, storagePath) && m_cookiePersistentStorageType == storageType)
         return;
 
     m_cookiePersistentStoragePath = storagePath;

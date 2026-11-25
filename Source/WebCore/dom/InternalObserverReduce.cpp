@@ -98,7 +98,7 @@ private:
         InternalObserver::complete();
 
         if (!m_accumulator) [[unlikely]] {
-            protect(m_promise)->reject(Exception { ExceptionCode::TypeError, "No inital value for Observable with no values"_s });
+            protect(m_promise)->reject(Exception { ExceptionCode::TypeError, "No inital value for Observable with no values"_si });
             return;
         }
 

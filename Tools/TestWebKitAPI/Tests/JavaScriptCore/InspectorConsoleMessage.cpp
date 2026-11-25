@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 
 TEST(Inspector, ConsoleMessageBasicMessage)
 {
-    Inspector::ConsoleMessage msg(JSC::MessageSource::JS, JSC::MessageType::Log, JSC::MessageLevel::Debug, "Basic error message"_s);
+    Inspector::ConsoleMessage msg(JSC::MessageSource::JS, JSC::MessageType::Log, JSC::MessageLevel::Debug, "Basic error message"_si);
     EXPECT_EQ("Basic error message"_s, msg.message());
     EXPECT_EQ("Basic error message"_s, msg.toString());
 }

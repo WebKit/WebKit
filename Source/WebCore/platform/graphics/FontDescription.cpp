@@ -70,15 +70,15 @@ FontDescription::FontDescription()
 {
 }
 
-void FontDescription::setComputedLocale(const AtomString& computedLocale)
+void FontDescription::setComputedLocale(AtomStringImpl* computedLocale)
 {
     m_computedLocale = computedLocale;
     m_script = localeToScriptCode(m_computedLocale);
-    m_usedLocale = m_script == USCRIPT_HAN ? AtomString { userPreferredChineseLocale() } : m_computedLocale;
+    m_usedLocale = m_script == USCRIPT_HAN ? AtomStringImpl::add(userPreferredChineseLocale()) : m_computedLocale;
 }
 
 #if !PLATFORM(COCOA)
-AtomString FontDescription::platformResolveGenericFamily(UScriptCode, const AtomString&, const AtomString&)
+RefPtr<AtomStringImpl> FontDescription::platformResolveGenericFamily(UScriptCode, AtomStringImpl*, AtomStringImpl*)
 {
     return nullAtom();
 }

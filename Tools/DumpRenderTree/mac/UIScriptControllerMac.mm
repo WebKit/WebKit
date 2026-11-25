@@ -176,7 +176,7 @@ void UIScriptControllerMac::copyText(JSStringRef text)
 {
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
     [pasteboard declareTypes:@[NSPasteboardTypeString] owner:nil];
-    [pasteboard setString:text->string().createNSString().get() forType:NSPasteboardTypeString];
+    [pasteboard setString:createNSString(text->string()).get() forType:NSPasteboardTypeString];
 }
 
 void UIScriptControllerMac::setSpellCheckerResults(JSValueRef results)
@@ -248,7 +248,7 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     auto jsonString = eventsJSON->string();
-    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[jsonString.createNSString() dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
+    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[createNSString(jsonString) dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
     if (!eventInfo || ![eventInfo isKindOfClass:[NSDictionary class]]) {
         WTFLogAlways("JSON is not convertible to a dictionary");
         return;

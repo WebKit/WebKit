@@ -101,9 +101,9 @@ LocalFrame* lexicalFrameFromCommonVM()
     return nullptr;
 }
 
-void addImpureProperty(const AtomString& propertyName)
+void addImpureProperty(AtomStringImpl* propertyName)
 {
-    commonVM().addImpureProperty(propertyName.impl());
+    commonVM().addImpureProperty(propertyName);
 }
 
 } // namespace WebCore

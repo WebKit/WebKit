@@ -97,18 +97,18 @@ public:
     void doSetRemoteDescription(const RTCSessionDescription&);
     void doCreateOffer(const RTCOfferOptions&);
     void doCreateAnswer();
-    void gatherDecoderImplementationName(Function<void(String&&)>&&);
+    void gatherDecoderImplementationName(Function<void(RefPtr<StringImpl>&&)>&&);
     void getStats(Ref<DeferredPromise>&&);
     void getStats(webrtc::RtpReceiverInterface&, Ref<DeferredPromise>&&);
     void getStats(webrtc::RtpSenderInterface&, Ref<DeferredPromise>&&);
-    std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
+    std::unique_ptr<RTCDataChannelHandler> createDataChannel(StringImpl*, const RTCDataChannelInit&);
     void addIceCandidate(std::unique_ptr<webrtc::IceCandidate>&&, PeerConnectionBackend::AddIceCandidateCallback&&);
 
     void close();
     void stop();
     bool isStopped() const { return m_isStopped; }
 
-    bool addTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&, const FixedVector<String>&);
+    bool addTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&, const FixedVector<RefPtr<StringImpl>>&);
     void removeTrack(LibWebRTCRtpSenderBackend&);
 
     struct Backends {
@@ -116,7 +116,7 @@ public:
         LibWebRTCRtpReceiverBackendAndSource receiverBackendAndSource;
         UniqueRef<LibWebRTCRtpTransceiverBackend> transceiverBackend;
     };
-    ExceptionOr<Backends> addTransceiver(const String& trackKind, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
+    ExceptionOr<Backends> addTransceiver(StringImpl* trackKind, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
     ExceptionOr<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
     std::unique_ptr<LibWebRTCRtpTransceiverBackend> transceiverBackendFromSender(LibWebRTCRtpSenderBackend&);
 
@@ -167,7 +167,7 @@ private:
 
     webrtc::scoped_refptr<LibWebRTCStatsCollector> createStatsCollector(Ref<DeferredPromise>&&);
 
-    Vector<Ref<MediaStream>> mediaStreamsFromRTCStreamIds(const Vector<String>&);
+    Vector<Ref<MediaStream>> mediaStreamsFromRTCStreamIds(const Vector<RefPtr<StringImpl>>&);
     PeerConnectionBackend::TransceiverStates generateTransceiverStates(const Vector<LibWebRTCMediaEndpointTransceiverState>&);
 
     void AddRef() const { ref(); }
@@ -202,7 +202,7 @@ private:
     SetLocalSessionDescriptionObserver<LibWebRTCMediaEndpoint> m_setLocalSessionDescriptionObserver;
     SetRemoteSessionDescriptionObserver<LibWebRTCMediaEndpoint> m_setRemoteSessionDescriptionObserver;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<MediaStream>> m_remoteStreamsById;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<MediaStream>> m_remoteStreamsById;
 
     bool m_isInitiator { false };
     Timer m_statsLogTimer;

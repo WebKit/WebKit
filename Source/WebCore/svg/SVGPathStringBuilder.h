@@ -30,7 +30,7 @@ public:
     WEBCORE_EXPORT SVGPathStringBuilder();
     WEBCORE_EXPORT virtual ~SVGPathStringBuilder();
 
-    WEBCORE_EXPORT String result();
+    WEBCORE_EXPORT RefPtr<StringImpl> result();
 
     void incrementPathSegmentCount() final;
     bool continueConsuming() final;

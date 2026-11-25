@@ -319,7 +319,7 @@ const gchar* webkit_authentication_request_get_host(WebKitAuthenticationRequest*
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
     if (request->priv->host.isNull())
-        request->priv->host = request->priv->authenticationChallenge->core().protectionSpace().host().utf8();
+        request->priv->host = utf8(request->priv->authenticationChallenge->core().protectionSpace().host());
     return request->priv->host.legacyCStringPointer();
 }
 
@@ -355,7 +355,7 @@ WebKitSecurityOrigin* webkit_authentication_request_get_security_origin(WebKitAu
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), nullptr);
 
     const auto& protectionSpace = request->priv->authenticationChallenge->core().protectionSpace();
-    String protocol;
+    RefPtr<StringImpl> protocol;
     switch (protectionSpace.serverType()) {
     case ProtectionSpace::ServerType::HTTP:
     case ProtectionSpace::ServerType::ProxyHTTP:
@@ -394,7 +394,7 @@ const gchar* webkit_authentication_request_get_realm(WebKitAuthenticationRequest
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), 0);
 
     if (request->priv->realm.isNull())
-        request->priv->realm = request->priv->authenticationChallenge->core().protectionSpace().realm().utf8();
+        request->priv->realm = utf8(request->priv->authenticationChallenge->core().protectionSpace().realm());
     return request->priv->realm.legacyCStringPointer();
 }
 

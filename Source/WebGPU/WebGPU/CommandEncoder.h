@@ -102,11 +102,11 @@ public:
     // std::nullopt is the rest of the buffer after the offset.
     void clearBuffer(Buffer&, uint64_t offset, std::optional<uint64_t> size);
     RefPtr<WebGPU::CommandBuffer> finish(const WebGPU::CommandBufferDescriptor&) final;
-    RefPtr<WebGPU::RenderPassEncoder> beginInvalidRenderPass(String&& error) final;
-    RefPtr<WebGPU::ComputePassEncoder> beginInvalidComputePass(String&& error) final;
-    void insertDebugMarker(String&& markerLabel) final;
+    RefPtr<WebGPU::RenderPassEncoder> beginInvalidRenderPass(RefPtr<StringImpl>&& error) final;
+    RefPtr<WebGPU::ComputePassEncoder> beginInvalidComputePass(RefPtr<StringImpl>&& error) final;
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) final;
     void popDebugGroup() final;
-    void pushDebugGroup(String&& groupLabel) final;
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) final;
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(QuerySet&, uint32_t queryIndex);
 
@@ -117,7 +117,7 @@ public:
     void clearBuffer(WebGPU::Buffer&, uint64_t offset, std::optional<uint64_t> size) final;
     void writeTimestamp(WebGPU::QuerySet&, uint32_t queryIndex) final;
     void resolveQuerySet(const WebGPU::QuerySet&, uint32_t firstQuery, uint32_t queryCount, WebGPU::Buffer& destination, uint64_t destinationOffset) final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     Device& device() const { return m_device; }
 
@@ -138,7 +138,7 @@ public:
     static void clearTextureIfNeeded(Texture&, NSUInteger, NSUInteger, const Device&, id<MTLBlitCommandEncoder>, const CommandEncoder* _Nullable owningCommandEncoder = nullptr);
     void clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo&, NSUInteger);
     void makeInvalid(NSString*);
-    void makeInvalid(String&& error) final;
+    void makeInvalid(RefPtr<StringImpl>&& error) final;
     void makeSubmitInvalid(NSString* = nil);
     void incrementBufferMapCount();
     void decrementBufferMapCount();

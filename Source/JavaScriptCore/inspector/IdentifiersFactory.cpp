@@ -35,19 +35,19 @@ namespace {
 static unsigned long s_lastUsedIdentifier = 0;
 }
 
-static String addPrefixToIdentifier(unsigned long identifier)
+static RefPtr<StringImpl> addPrefixToIdentifier(unsigned long identifier)
 {
     return makeString("0."_s, identifier);
 }
 
-String IdentifiersFactory::createIdentifier()
+RefPtr<StringImpl> IdentifiersFactory::createIdentifier()
 {
     return addPrefixToIdentifier(++s_lastUsedIdentifier);
 }
 
-String IdentifiersFactory::requestId(unsigned long identifier)
+RefPtr<StringImpl> IdentifiersFactory::requestId(unsigned long identifier)
 {
-    return identifier ? addPrefixToIdentifier(identifier) : String();
+    return identifier ? addPrefixToIdentifier(identifier) : nullptr;
 }
 
 } // namespace Inspector

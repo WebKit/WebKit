@@ -49,8 +49,8 @@ public:
 
     RefPtr<::WebGPU::RenderPassEncoder> beginRenderPass(const ::WebGPU::RenderPassDescriptor&) final;
     RefPtr<::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<::WebGPU::ComputePassDescriptor>&) final;
-    RefPtr<::WebGPU::RenderPassEncoder> beginInvalidRenderPass(String&& error) final;
-    RefPtr<::WebGPU::ComputePassEncoder> beginInvalidComputePass(String&& error) final;
+    RefPtr<::WebGPU::RenderPassEncoder> beginInvalidRenderPass(RefPtr<StringImpl>&& error) final;
+    RefPtr<::WebGPU::ComputePassEncoder> beginInvalidComputePass(RefPtr<StringImpl>&& error) final;
     void copyBufferToBuffer(
         const ::WebGPU::Buffer& source,
         uint64_t sourceOffset,
@@ -73,9 +73,9 @@ public:
         ::WebGPU::Buffer&,
         uint64_t offset = 0,
         std::optional<uint64_t> = std::nullopt) final;
-    void pushDebugGroup(String&& groupLabel) final;
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) final;
     void popDebugGroup() final;
-    void insertDebugMarker(String&& markerLabel) final;
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) final;
     void writeTimestamp(::WebGPU::QuerySet&, uint32_t queryIndex) final;
     void resolveQuerySet(
         const ::WebGPU::QuerySet&,
@@ -85,8 +85,8 @@ public:
         uint64_t destinationOffset) final;
     RefPtr<::WebGPU::CommandBuffer> finish(const ::WebGPU::CommandBufferDescriptor&) final;
 
-    void makeInvalid(String&& error) final;
-    void setLabel(String&&) final;
+    void makeInvalid(RefPtr<StringImpl>&& error) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

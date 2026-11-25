@@ -34,7 +34,7 @@ namespace WebCore::ShapeDetection {
 
 struct DetectedText {
     FloatRect boundingBox;
-    String rawValue;
+    RefPtr<StringImpl> rawValue;
     Vector<FloatPoint> cornerPoints;
 };
 

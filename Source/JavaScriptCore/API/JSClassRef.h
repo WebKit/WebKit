@@ -39,7 +39,7 @@
 struct StaticValueEntry {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StaticValueEntry);
 public:
-    StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes, String& propertyName)
+    StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes, RefPtr<StringImpl>& propertyName)
         : getProperty(_getProperty)
         , setProperty(_setProperty)
         , attributes(_attributes)
@@ -105,7 +105,7 @@ struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     static Ref<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
     JS_EXPORT_PRIVATE ~OpaqueJSClass();
     
-    String className();
+    RefPtr<StringImpl> className();
     OpaqueJSClassStaticValuesTable* staticValues(JSC::JSGlobalObject*);
     OpaqueJSClassStaticFunctionsTable* staticFunctions(JSC::JSGlobalObject*);
     JSC::JSObject* prototype(JSC::JSGlobalObject*);
@@ -135,7 +135,7 @@ private:
     OpaqueJSClassContextData& contextData(JSC::JSGlobalObject*);
 
     // Strings in these data members should not be put into any AtomStringTable.
-    String m_className;
+    RefPtr<StringImpl> m_className;
     OpaqueJSClassStaticValuesTable m_staticValues;
     OpaqueJSClassStaticFunctionsTable m_staticFunctions;
 };

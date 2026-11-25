@@ -67,8 +67,8 @@ void AccessibilityController::setRetainedElement(AccessibilityUIElement* uiEleme
 void AccessibilityController::printToStderr(JSStringRef jsMessage) const
 {
     auto message = toWTFString(jsMessage);
-    if (!message.isEmpty())
-        SAFE_FPRINTF(stderr, "%s\n", message.utf8());
+    if (!isEmpty(message))
+        SAFE_FPRINTF(stderr, "%s\n", utf8(message));
     else
         SAFE_FPRINTF(stderr, ">>> AccessibilityController::printToStderr <<<\n");
 }

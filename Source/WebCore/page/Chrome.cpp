@@ -138,7 +138,7 @@ IntRect Chrome::rootViewToAccessibilityScreen(const IntRect& rect) const
 }
 
 #if PLATFORM(IOS_FAMILY)
-void Chrome::relayAccessibilityNotification(String&& notificationName, RetainPtr<NSData>&& notificationData) const
+void Chrome::relayAccessibilityNotification(RefPtr<StringImpl>&& notificationName, RetainPtr<NSData>&& notificationData) const
 {
     return m_client->relayAccessibilityNotification(WTF::move(notificationName), WTF::move(notificationData));
 }
@@ -224,7 +224,7 @@ void Chrome::focusedFrameChanged(Frame* frame)
     m_client->focusedFrameChanged(frame);
 }
 
-RefPtr<Page> Chrome::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& features, const NavigationAction& action)
+RefPtr<Page> Chrome::createWindow(LocalFrame& frame, StringImpl* openedMainFrameName, const WindowFeatures& features, const NavigationAction& action)
 {
     RefPtr newPage = m_client->createWindow(frame, openedMainFrameName, features, action);
     if (!newPage)
@@ -277,7 +277,7 @@ bool Chrome::canRunBeforeUnloadConfirmPanel()
     return m_client->canRunBeforeUnloadConfirmPanel();
 }
 
-bool Chrome::runBeforeUnloadConfirmPanel(String&& message, LocalFrame& frame)
+bool Chrome::runBeforeUnloadConfirmPanel(RefPtr<StringImpl>&& message, LocalFrame& frame)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -291,19 +291,19 @@ void Chrome::closeWindow()
     m_client->closeWindow();
 }
 
-void Chrome::runJavaScriptAlert(LocalFrame& frame, const String& message)
+void Chrome::runJavaScriptAlert(LocalFrame& frame, StringImpl* message)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(protect(m_page), true);
 
     notifyPopupOpeningObservers();
-    String displayMessage = frame.displayStringModifiedByEncoding(message);
+    RefPtr<StringImpl> displayMessage = frame.displayStringModifiedByEncoding(message);
 
     m_client->runJavaScriptAlert(frame, displayMessage);
 }
 
-bool Chrome::runJavaScriptConfirm(LocalFrame& frame, const String& message)
+bool Chrome::runJavaScriptConfirm(LocalFrame& frame, StringImpl* message)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -313,14 +313,14 @@ bool Chrome::runJavaScriptConfirm(LocalFrame& frame, const String& message)
     return m_client->runJavaScriptConfirm(frame, frame.displayStringModifiedByEncoding(message));
 }
 
-bool Chrome::runJavaScriptPrompt(LocalFrame& frame, const String& prompt, const String& defaultValue, String& result)
+bool Chrome::runJavaScriptPrompt(LocalFrame& frame, StringImpl* prompt, StringImpl* defaultValue, RefPtr<StringImpl>& result)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(protect(m_page), true);
 
     notifyPopupOpeningObservers();
-    String displayPrompt = frame.displayStringModifiedByEncoding(prompt);
+    RefPtr<StringImpl> displayPrompt = frame.displayStringModifiedByEncoding(prompt);
 
     bool ok = m_client->runJavaScriptPrompt(frame, displayPrompt, frame.displayStringModifiedByEncoding(defaultValue), result);
     if (ok)
@@ -331,7 +331,7 @@ bool Chrome::runJavaScriptPrompt(LocalFrame& frame, const String& prompt, const 
 
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
-    String toolTip;
+    RefPtr<StringImpl> toolTip;
     TextDirection toolTipDirection;
     getToolTip(result, toolTip, toolTipDirection);
     m_client->mouseDidMoveOverElement(result, modifiers, toolTip, toolTipDirection);
@@ -339,13 +339,13 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<Plat
     InspectorInstrumentation::mouseDidMoveOverElement(protect(m_page), result, modifiers);
 }
 
-void Chrome::getToolTip(const HitTestResult& result, String& toolTip, TextDirection& toolTipDirection)
+void Chrome::getToolTip(const HitTestResult& result, RefPtr<StringImpl>& toolTip, TextDirection& toolTipDirection)
 {
     // First priority is a potential toolTip representing a spelling or grammar error
     toolTip = result.spellingToolTip(toolTipDirection);
 
     // Next priority is a toolTip from a URL beneath the mouse (if preference is set to show those).
-    if (toolTip.isEmpty() && m_page->settings().showsURLsInToolTips()) {
+    if (isEmpty(toolTip) && m_page->settings().showsURLsInToolTips()) {
         if (RefPtr element = result.innerNonSharedElement()) {
             // Get tooltip representing form action, if relevant
             if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element)) {
@@ -362,7 +362,7 @@ void Chrome::getToolTip(const HitTestResult& result, String& toolTip, TextDirect
         }
 
         // Get tooltip representing link's URL
-        if (toolTip.isEmpty()) {
+        if (isEmpty(toolTip)) {
             // FIXME: Need to pass this URL through userVisibleString once that's in WebCore
             toolTip = result.absoluteLinkURL().string();
             // URL always display as LTR.
@@ -371,14 +371,14 @@ void Chrome::getToolTip(const HitTestResult& result, String& toolTip, TextDirect
     }
 
     // Next we'll consider a tooltip for element with "title" attribute
-    if (toolTip.isEmpty())
+    if (isEmpty(toolTip))
         toolTip = result.title(toolTipDirection);
 
-    if (toolTip.isEmpty() && m_page->settings().showsToolTipOverTruncatedText())
+    if (isEmpty(toolTip) && m_page->settings().showsToolTipOverTruncatedText())
         toolTip = result.innerTextIfTruncated(toolTipDirection);
 
     // Lastly, for <input type="file"> that allow multiple files, we'll consider a tooltip for the selected filenames
-    if (toolTip.isEmpty()) {
+    if (isEmpty(toolTip)) {
         if (RefPtr element = result.innerNonSharedElement()) {
             if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element)) {
                 toolTip = input->defaultToolTip();
@@ -399,7 +399,7 @@ bool Chrome::print(LocalFrame& frame)
     // FIXME: This should have PageGroupLoadDeferrer, like runModal() or runJavaScriptAlert(), because it's no different from those.
 
     if (frame.document()->isSandboxed(SandboxFlag::Modals)) {
-        protect(frame.document()->window())->printErrorMessage("Use of window.print is not allowed in a sandboxed frame when the allow-modals flag is not set."_s, MessageSource::Security);
+        protect(frame.document()->window())->printErrorMessage("Use of window.print is not allowed in a sandboxed frame when the allow-modals flag is not set."_si, MessageSource::Security);
         return false;
     }
 
@@ -452,7 +452,7 @@ void Chrome::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
     m_client->runOpenPanel(frame, fileChooser);
 }
 
-void Chrome::transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&& completion)
+void Chrome::transcodeChosenFiles(Vector<RefPtr<StringImpl>>&& transcodingPaths, RefPtr<StringImpl>&& destinationUTI, RefPtr<StringImpl>&& destinationExtension, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completion)
 {
     m_client->transcodeChosenFiles(WTF::move(transcodingPaths), WTF::move(destinationUTI), WTF::move(destinationExtension), WTF::move(completion));
 }
@@ -479,7 +479,7 @@ void Chrome::dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&& ca
 }
 #endif
 
-void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
+void Chrome::loadIconForFiles(const Vector<RefPtr<StringImpl>>& filenames, FileIconLoader& loader)
 {
     m_client->loadIconForFiles(filenames, loader);
 }

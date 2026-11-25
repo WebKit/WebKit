@@ -40,22 +40,22 @@ class SharedWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_TZONE_ALLOCATED(SharedWorkerGlobalScope);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedWorkerGlobalScope);
 public:
-    static Ref<SharedWorkerGlobalScope> create(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
+    static Ref<SharedWorkerGlobalScope> create(StringImpl* name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
     ~SharedWorkerGlobalScope();
 
     Type type() const final { return Type::SharedWorker; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     Ref<SharedWorkerThread> thread();
 
     void postConnectEvent(TransferredMessagePort&&, const SecurityOriginData&);
 
 private:
-    SharedWorkerGlobalScope(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
+    SharedWorkerGlobalScope(StringImpl* name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SharedWorkerGlobalScope; }
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Sharedworker; }
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
 };
 
 } // namespace WebCore

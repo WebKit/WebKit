@@ -34,13 +34,13 @@ namespace WebCore {
 class Site {
 public:
     WEBCORE_EXPORT explicit Site(const URL&);
-    WEBCORE_EXPORT explicit Site(String&& protocol, RegistrableDomain&&);
+    WEBCORE_EXPORT explicit Site(RefPtr<StringImpl>&& protocol, RegistrableDomain&&);
     WEBCORE_EXPORT explicit Site(const SecurityOriginData&);
 
-    WEBCORE_EXPORT const String& protocol() const;
+    WEBCORE_EXPORT const RefPtr<StringImpl>& protocol() const;
     const RegistrableDomain& domain() const LIFETIME_BOUND { return m_domain; }
-    WEBCORE_EXPORT String toString() const;
-    WEBCORE_EXPORT String loggingString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> loggingString() const;
     bool isEmpty() const { return m_domain.isEmpty(); }
     WEBCORE_EXPORT bool matches(const URL&) const;
 
@@ -50,10 +50,14 @@ public:
     bool isHashTableDeletedValue() const { return m_protocol.isHashTableDeletedValue(); }
     WEBCORE_EXPORT unsigned hash() const;
 
-    bool operator==(const Site&) const = default;
+    bool operator==(const Site& other) const
+    {
+        return contentEquals(m_protocol, other.m_protocol)
+            && m_domain == other.m_domain;
+    }
 
 private:
-    String m_protocol;
+    RefPtr<StringImpl> m_protocol;
     RegistrableDomain m_domain;
 };
 

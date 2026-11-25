@@ -99,7 +99,7 @@ void MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets()
         if (checkedThis->m_state == MediaPlaybackTargetMock::State::OutputDeviceAvailable)
             checkedThis->availableDevicesDidChange();
 
-        if (!checkedThis->m_deviceName.isEmpty() && checkedThis->m_state != MediaPlaybackTargetMock::State::Unknown)
+        if (!isEmpty(checkedThis->m_deviceName) && checkedThis->m_state != MediaPlaybackTargetMock::State::Unknown)
             checkedThis->currentDeviceDidChange();
     });
 }
@@ -115,16 +115,16 @@ void MediaPlaybackTargetPickerMock::invalidatePlaybackTargets()
     setState(emptyString(), MediaPlaybackTargetMock::State::Unknown);
 }
 
-void MediaPlaybackTargetPickerMock::setState(const String& deviceName, MediaPlaybackTargetMock::State state)
+void MediaPlaybackTargetPickerMock::setState(StringImpl* deviceName, MediaPlaybackTargetMock::State state)
 {
-    LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", deviceName.utf8(), (unsigned)state);
+    LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", utf8(deviceName), (unsigned)state);
 
-    callOnMainThread([weakThis = WeakPtr { *this }, state, deviceName] {
+    callOnMainThread([weakThis = WeakPtr { *this }, state, deviceName = RefPtr { deviceName }] {
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis)
             return;
 
-        if (deviceName != checkedThis->m_deviceName && state != MediaPlaybackTargetMock::State::Unknown) {
+        if (!equal(deviceName, checkedThis->m_deviceName) && state != MediaPlaybackTargetMock::State::Unknown) {
             checkedThis->m_deviceName = deviceName;
             checkedThis->currentDeviceDidChange();
         }

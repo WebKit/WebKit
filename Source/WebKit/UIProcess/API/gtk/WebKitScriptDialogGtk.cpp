@@ -37,7 +37,7 @@ void webkitScriptDialogDismiss(WebKitScriptDialog* scriptDialog)
     webkitScriptDialogImplCancel(WEBKIT_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog));
 }
 
-void webkitScriptDialogSetUserInput(WebKitScriptDialog* scriptDialog, const String& userInput)
+void webkitScriptDialogSetUserInput(WebKitScriptDialog* scriptDialog, StringImpl* userInput)
 {
     if (!WEBKIT_IS_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog))
         return;

@@ -51,7 +51,7 @@ public:
     NODELETE bool debugModeEnabled() const;
     void setConnectedNetworkProcessHasPrivateRelayEnforcementEnabled(const Daemon::Connection&, bool);
     NODELETE bool privateRelayEnforcementEnabled() const;
-    void broadcastConsoleMessage(JSC::MessageLevel, const String&);
+    void broadcastConsoleMessage(JSC::MessageLevel, StringImpl*);
     
 private:
     struct ConnectionState {

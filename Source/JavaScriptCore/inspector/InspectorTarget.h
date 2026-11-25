@@ -48,11 +48,11 @@ public:
     virtual ~InspectorTarget() = default;
 
     // State.
-    virtual String identifier() const = 0;
+    virtual RefPtr<StringImpl> identifier() const = 0;
     virtual InspectorTargetType type() const = 0;
 
     virtual bool isProvisional() const { return false; }
-    virtual String processIdentifier() const { return { }; }
+    virtual RefPtr<StringImpl> processIdentifier() const { return { }; }
     bool isPaused() const { return m_isPaused; }
     NODELETE void pause();
     JS_EXPORT_PRIVATE void resume();
@@ -61,7 +61,7 @@ public:
     // Connection management.
     virtual void connect(FrontendChannel::ConnectionType) = 0;
     virtual void disconnect() = 0;
-    virtual void sendMessageToTargetBackend(const String&) = 0;
+    virtual void sendMessageToTargetBackend(StringImpl*) = 0;
 
 private:
     WTF::Function<void()> m_resumeCallback;

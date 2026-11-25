@@ -106,12 +106,12 @@ void WebSocketTask::readNextMessage()
                     channel->didReceiveHandshakeResponse(WTF::move(response));
             }
 
-            channel->didReceiveMessageError([error localizedDescription]);
+            channel->didReceiveMessageError(StringImpl::create([error localizedDescription]));
             protectedThis->didClose(WebCore::ThreadableWebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
             return;
         }
         if (message.type == NSURLSessionWebSocketMessageTypeString)
-            channel->didReceiveText(message.string);
+            channel->didReceiveText(StringImpl::create(message.string).get());
         else
             channel->didReceiveBinaryData(span(message.data));
 
@@ -141,14 +141,14 @@ void WebSocketTask::resume()
     [m_task resume];
 }
 
-void WebSocketTask::didConnect(const String& protocol)
+void WebSocketTask::didConnect(StringImpl* protocol)
 {
     reportHandshakeRequest();
 
-    String extensionsValue;
+    RefPtr<StringImpl> extensionsValue;
     RetainPtr response = [m_task response];
     if (RetainPtr httpResponse  = dynamic_objc_cast<NSHTTPURLResponse>(response.get()))
-        extensionsValue = [httpResponse valueForHTTPHeaderField:@"Sec-WebSocket-Extensions"];
+        extensionsValue = StringImpl::create([httpResponse valueForHTTPHeaderField:@"Sec-WebSocket-Extensions"]);
 
     m_receivedDidConnect = true;
     RefPtr channel = m_channel.get();
@@ -156,7 +156,7 @@ void WebSocketTask::didConnect(const String& protocol)
     channel->didReceiveHandshakeResponse(ResourceResponse { [m_task response] });
 }
 
-void WebSocketTask::didClose(unsigned short code, const String& reason)
+void WebSocketTask::didClose(unsigned short code, StringImpl* reason)
 {
     if (m_receivedDidClose)
         return;
@@ -188,11 +188,11 @@ void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<vo
     }).get()];
 }
 
-void WebSocketTask::close(int32_t code, const String& reason)
+void WebSocketTask::close(int32_t code, StringImpl* reason)
 {
     if (code == WebCore::ThreadableWebSocketChannel::CloseEventCodeNotSpecified)
         code = NSURLSessionWebSocketCloseCodeInvalid;
-    auto utf8 = reason.utf8();
+    auto utf8 = WTF::utf8(reason);
     RetainPtr nsData = toNSData(byteCast<uint8_t>(utf8.span()));
     if ([m_task respondsToSelector:@selector(_sendCloseCode:reason:)]) {
         [m_task _sendCloseCode:(NSURLSessionWebSocketCloseCode)code reason:nsData.get()];

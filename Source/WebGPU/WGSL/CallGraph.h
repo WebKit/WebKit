@@ -77,7 +77,7 @@ public:
     struct EntryPoint {
         AST::Function& function;
         ShaderStage stage;
-        String originalName;
+        RefPtr<StringImpl> originalName;
         HashSet<const Global*> usedGlobals { };
         Vector<TextureSamplerPair> textureSamplerPairs { };
     };
@@ -96,7 +96,7 @@ private:
 
     mutable Vector<std::unique_ptr<Global>> m_globals;
     Vector<EntryPoint> m_entrypoints;
-    HashMap<String, AST::Function*> m_functionsByName;
+    HashMap<RefPtr<StringImpl>, AST::Function*> m_functionsByName;
     HashMap<AST::Function*, Vector<Callee>> m_calleeMap;
 };
 

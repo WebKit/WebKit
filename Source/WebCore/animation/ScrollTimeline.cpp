@@ -93,7 +93,7 @@ Ref<ScrollTimeline> ScrollTimeline::create(Scroller scroller, ScrollAxis axis)
     return adoptRef(*new ScrollTimeline(scroller, axis));
 }
 
-Ref<ScrollTimeline> ScrollTimeline::createInactiveStyleOriginatedTimeline(const AtomString& name)
+Ref<ScrollTimeline> ScrollTimeline::createInactiveStyleOriginatedTimeline(AtomStringImpl* name)
 {
     Ref timeline = adoptRef(*new ScrollTimeline({ name }, ScrollAxis::Block));
     timeline->m_isInactiveStyleOriginatedTimeline = true;
@@ -419,7 +419,7 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
 
 bool ScrollTimeline::matchesAnonymousScrollFunctionForSource(const Style::ScrollFunction& scrollFunction, const Styleable& source) const
 {
-    return m_isStyleOriginated && m_name.name.isEmpty() && m_scroller == scrollFunction->scroller && m_axis == scrollFunction->axis && m_source.styleable() == source;
+    return m_isStyleOriginated && isEmpty(m_name.name) && m_scroller == scrollFunction->scroller && m_axis == scrollFunction->axis && m_source.styleable() == source;
 }
 
 #if ENABLE(THREADED_ANIMATIONS)

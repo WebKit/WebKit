@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-String loadQuirkTableJSON()
+RefPtr<StringImpl> loadQuirkTableJSON()
 {
     GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(QUIRK_TABLE_GRESOURCE_PATH, G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     if (!data)
         return { };
 
-    return String::fromUTF8(span(data));
+    return StringImpl::fromUTF8(span(data));
 }
 
 } // namespace WebCore

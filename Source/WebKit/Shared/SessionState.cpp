@@ -44,11 +44,11 @@ FrameState::FrameState()
     RELEASE_ASSERT(RunLoop::isMain());
 }
 
-FrameState::FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, String&& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, std::optional<WebCore::PolicyContainer>&& policyContainer,
+FrameState::FrameState(RefPtr<StringImpl>&& urlString, RefPtr<StringImpl>&& originalURLString, RefPtr<StringImpl>&& referrer, RefPtr<AtomStringImpl>&& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, RefPtr<StringImpl>&& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, std::optional<WebCore::PolicyContainer>&& policyContainer,
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
-    Vector<Ref<FrameState>>&& children, Vector<AtomString>&& documentState
+    Vector<Ref<FrameState>>&& children, Vector<RefPtr<AtomStringImpl>>&& documentState
 )
     : urlString(WTF::move(urlString))
     , originalURLString(WTF::move(originalURLString))
@@ -85,11 +85,11 @@ FrameState::FrameState(String&& urlString, String&& originalURLString, String&& 
 {
 }
 
-FrameState::FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier> frameID, const std::optional<Vector<uint8_t>>& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, const String& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, const std::optional<WebCore::PolicyContainer>& policyContainer, const std::optional<WebCore::Site>& inheritedSite,
+FrameState::FrameState(StringImpl* urlString, StringImpl* originalURLString, StringImpl* referrer, AtomStringImpl* target, std::optional<WebCore::FrameIdentifier> frameID, const std::optional<Vector<uint8_t>>& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, StringImpl* title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, const std::optional<WebCore::PolicyContainer>& policyContainer, const std::optional<WebCore::Site>& inheritedSite,
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
-    const Vector<Ref<FrameState>>& children, const Vector<AtomString>& documentState
+    const Vector<Ref<FrameState>>& children, const Vector<RefPtr<AtomStringImpl>>& documentState
 )
     : urlString(urlString)
     , originalURLString(originalURLString)
@@ -215,23 +215,23 @@ void FrameState::replacePayloadFrom(Ref<FrameState>&& other)
     m_documentState = WTF::move(other->m_documentState);
 }
 
-bool FrameState::validateDocumentState(const Vector<AtomString>& documentState)
+bool FrameState::validateDocumentState(const Vector<RefPtr<AtomStringImpl>>& documentState)
 {
     for (auto& stateString : documentState) {
-        if (stateString.isNull())
+        if (!stateString)
             continue;
 
-        if (!stateString.is8Bit())
+        if (!is8Bit(stateString))
             continue;
 
         // rdar://48634553 indicates 8-bit string can be invalid.
-        for (auto character : stateString.span8())
+        for (auto character : span8(stateString))
             RELEASE_ASSERT(isLatin1(character));
     }
     return true;
 }
 
-void FrameState::setDocumentState(const Vector<AtomString>& documentState, ShouldValidate shouldValidate)
+void FrameState::setDocumentState(const Vector<RefPtr<AtomStringImpl>>& documentState, ShouldValidate shouldValidate)
 {
     m_documentState = documentState;
 
@@ -293,19 +293,19 @@ bool BackForwardListItemState::isEqualForTesting(const BackForwardListItemState&
 
 bool FrameState::isEqualForTesting(const FrameState& other) const
 {
-    if (urlString != other.urlString)
+    if (!equal(urlString, other.urlString))
         return false;
 
-    if (originalURLString != other.originalURLString)
+    if (!equal(originalURLString, other.originalURLString))
         return false;
 
-    if (referrer != other.referrer)
+    if (!equal(referrer, other.referrer))
         return false;
 
     if (target != other.target)
         return false;
 
-    if (title != other.title)
+    if (!equal(title, other.title))
         return false;
 
     if (children.size() != other.children.size())

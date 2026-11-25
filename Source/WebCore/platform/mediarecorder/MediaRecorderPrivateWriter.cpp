@@ -43,9 +43,9 @@ namespace WebCore {
 MediaRecorderPrivateWriter::MediaRecorderPrivateWriter() = default;
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter() = default;
 
-std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(String type, MediaRecorderPrivateWriterListener& listener)
+std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(RefPtr<StringImpl> type, MediaRecorderPrivateWriterListener& listener)
 {
-    auto containerType = [](const String& type) -> std::optional<MediaRecorderContainerType> {
+    auto containerType = [](StringImpl* type) -> std::optional<MediaRecorderContainerType> {
         if (equalLettersIgnoringASCIICase(type, "video/mp4"_s) || equalLettersIgnoringASCIICase(type, "audio/mp4"_s))
             return MediaRecorderContainerType::Mp4;
 #if ENABLE(MEDIA_RECORDER_WEBM)

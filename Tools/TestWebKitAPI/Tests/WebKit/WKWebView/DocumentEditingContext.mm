@@ -904,12 +904,10 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_LimitContextToEdi
         EXPECT_NULL([context contextAfter]);
     }
     {
-        [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(String {
-            "<body style='width: 100%; height: 100%;'>"
+        [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(createNSString(StringImpl::create("<body style='width: 100%; height: 100%;'>"
             "  <p style='font-size:500px;'>hello world</p>"
             "  <input style='position: absolute; top: 100px; left: 100px;' value='foo' />"
-            "</body>"_s
-        }.createNSString().get())];
+            "</body>"_s)).get())];
         [webView stringByEvaluatingJavaScript:@"document.querySelector('input').focus()"];
         [webView stringByEvaluatingJavaScript:@"document.querySelector('input').select()"];
 
@@ -923,8 +921,7 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_LimitContextToEdi
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_LimitContextToVisibleText)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 980, 600)]);
-    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(String {
-        "<body style='font-size: 16px; width: 100%; height: 100%;'>"
+    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(createNSString(StringImpl::create("<body style='font-size: 16px; width: 100%; height: 100%;'>"
         "    <p>Here's to the crazy ones.</p>"
         "    <p id='target' style='color: tomato'>The misfits.</p>"
         "    <p>The rebels.</p>"
@@ -935,23 +932,22 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_LimitContextToVis
         "    <script>"
         "        getSelection().selectAllChildren(document.getElementById('target'));"
         "    </script>"
-        "</body>"_s
-    }.createNSString().get())];
+        "</body>"_s)).get())];
 
-    auto trimmedComponentsSeparatedByNewlines = [](const String& string) {
-        auto components = string.split('\n');
-        return WTF::compactMap(components, [](auto& component) -> std::optional<String> {
-            auto result = component.trim(isASCIIWhitespace);
-            if (result.isEmpty())
+    auto trimmedComponentsSeparatedByNewlines = [](StringImpl* string) {
+        auto components = split(string, '\n');
+        return WTF::compactMap(components, [](auto& component) -> std::optional<RefPtr<StringImpl>> {
+            auto result = trim(component, isASCIIWhitespace);
+            if (isEmpty(result))
                 return std::nullopt;
             return { result };
         });
     };
 
     RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityCharacter, 0, CGRectMake(1, 1, 978, 598))];
-    String selectedText = dynamic_objc_cast<NSString>([context selectedText]);
-    auto contextBeforeParts = trimmedComponentsSeparatedByNewlines(dynamic_objc_cast<NSString>([context contextBefore]));
-    auto contextAfterParts = trimmedComponentsSeparatedByNewlines(dynamic_objc_cast<NSString>([context contextAfter]));
+    RefPtr<StringImpl> selectedText = StringImpl::create(dynamic_objc_cast<NSString>([context selectedText]));
+    auto contextBeforeParts = trimmedComponentsSeparatedByNewlines(StringImpl::create(dynamic_objc_cast<NSString>([context contextBefore])));
+    auto contextAfterParts = trimmedComponentsSeparatedByNewlines(StringImpl::create(dynamic_objc_cast<NSString>([context contextAfter])));
 
     EXPECT_EQ(contextBeforeParts.size(), 1U);
     EXPECT_WK_STREQ("Here's to the crazy ones.", contextBeforeParts[0]);
@@ -1584,7 +1580,7 @@ TEST(DocumentEditingContext, CharacterRectsInEditableWebView)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 320, 568)]);
     [webView _setEditable:YES];
-    [webView synchronouslyLoadHTMLString:makeString("<meta name='viewport' content='width=device-width, initial-scale=1'><body>"_s, longTextString, "</body>"_s).createNSString().get()];
+    [webView synchronouslyLoadHTMLString:createNSString(makeString("<meta name='viewport' content='width=device-width, initial-scale=1'><body>"_s, longTextString, "</body>"_s)).get()];
     [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 0)"];
     [webView waitForNextPresentationUpdate];
 
@@ -1677,33 +1673,33 @@ TEST(DocumentEditingContext, RequestAnnotationsForTextChecking)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     auto loadWebViewAndGetContext = [&] {
-        [webView synchronouslyLoadHTMLString:makeString("<body>"_s, longTextString, "</body>"_s).createNSString().get()];
+        [webView synchronouslyLoadHTMLString:createNSString(makeString("<body>"_s, longTextString, "</body>"_s)).get()];
         [webView objectByEvaluatingJavaScript:@"(() => {"
             "    let text = document.body.childNodes[0];"
             "    getSelection().setBaseAndExtent(text, 90, text, 94);"
             "})()"];
         [webView waitForNextPresentationUpdate];
         auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestAnnotation, UITextGranularitySentence, 3)];
-        auto annotatedText = String { dynamic_objc_cast<NSAttributedString>(context.annotatedText).string };
+        auto annotatedText = StringImpl::create(dynamic_objc_cast<NSAttributedString>(context.annotatedText).string);
         auto combinedContext = makeString(
-            String { dynamic_objc_cast<NSString>(context.contextBefore) },
-            String { dynamic_objc_cast<NSString>(context.selectedText) },
-            String { dynamic_objc_cast<NSString>(context.contextAfter) }
+            StringImpl::create(dynamic_objc_cast<NSString>(context.contextBefore)),
+            StringImpl::create(dynamic_objc_cast<NSString>(context.selectedText)),
+            StringImpl::create(dynamic_objc_cast<NSString>(context.contextAfter))
         );
         return std::pair { WTF::move(combinedContext), WTF::move(annotatedText) };
     };
     {
         [webView _setEditable:YES];
         auto [combinedContext, annotatedText] = loadWebViewAndGetContext();
-        EXPECT_GT(combinedContext.length(), 0U);
-        EXPECT_GT(annotatedText.length(), 0U);
+        EXPECT_GT(length(combinedContext), 0U);
+        EXPECT_GT(length(annotatedText), 0U);
         EXPECT_WK_STREQ(annotatedText, combinedContext);
     }
     {
         [webView _setEditable:NO];
         auto [combinedContext, annotatedText] = loadWebViewAndGetContext();
-        EXPECT_GT(combinedContext.length(), 0U);
-        EXPECT_EQ(annotatedText.length(), 0U);
+        EXPECT_GT(length(combinedContext), 0U);
+        EXPECT_EQ(length(annotatedText), 0U);
     }
 }
 

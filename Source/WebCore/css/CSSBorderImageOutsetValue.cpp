@@ -43,7 +43,7 @@ Ref<CSSBorderImageOutsetValue> CSSBorderImageOutsetValue::create(CSS::BorderImag
     return adoptRef(*new CSSBorderImageOutsetValue(WTF::move(outsets)));
 }
 
-String CSSBorderImageOutsetValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSBorderImageOutsetValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_outsets);
 }

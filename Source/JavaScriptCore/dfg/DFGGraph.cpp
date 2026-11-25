@@ -104,10 +104,10 @@ Graph::Graph(VM& vm, Plan& plan)
         m_ionGraphFunction = JSON::Object::create();
         auto passes = JSON::Array::create();
         m_ionGraphPasses = passes.get();
-        m_ionGraphFunction->setString("name"_s, m_codeBlock->inferredNameWithHash());
-        m_ionGraphFunction->setString("tier"_s, m_plan.isFTL() ? "FTL"_s : "DFG"_s);
-        m_ionGraphFunction->setBoolean("osr"_s, m_plan.mode() == JITCompilationMode::FTLForOSREntry);
-        m_ionGraphFunction->setArray("passes"_s, WTF::move(passes));
+        m_ionGraphFunction->setString("name"_si, m_codeBlock->inferredNameWithHash());
+        m_ionGraphFunction->setString("tier"_si, StringImpl::create(m_plan.isFTL() ? "FTL"_s : "DFG"_s).ptr());
+        m_ionGraphFunction->setBoolean("osr"_si, m_plan.mode() == JITCompilationMode::FTLForOSREntry);
+        m_ionGraphFunction->setArray("passes"_si, WTF::move(passes));
     }
 }
 
@@ -2263,21 +2263,21 @@ void Graph::freeDFGIRAfterLowering()
     m_controlEquivalenceAnalysis = nullptr;
 }
 
-const BoyerMooreHorspoolTable<uint8_t>* Graph::tryAddStringSearchTable8(const String& string)
+const BoyerMooreHorspoolTable<uint8_t>* Graph::tryAddStringSearchTable8(StringImpl* string)
 {
     constexpr unsigned minPatternLength = 9;
-    if (string.length() > BoyerMooreHorspoolTable<uint8_t>::maxPatternLength)
+    if (length(string) > BoyerMooreHorspoolTable<uint8_t>::maxPatternLength)
         return nullptr;
-    if (string.length() < minPatternLength)
+    if (length(string) < minPatternLength)
         return nullptr;
     return m_stringSearchTable8.ensure(string, [&]() {
         return makeUnique<BoyerMooreHorspoolTable<uint8_t>>(string);
     }).iterator->value.get();
 }
 
-const ConcatKeyAtomStringCache* Graph::tryAddConcatKeyAtomStringCache(const String& s0, const String& s1, ConcatKeyAtomStringCache::Mode mode)
+const ConcatKeyAtomStringCache* Graph::tryAddConcatKeyAtomStringCache(StringImpl* s0, StringImpl* s1, ConcatKeyAtomStringCache::Mode mode)
 {
-    if ((s0.length() + s1.length()) > ConcatKeyAtomStringCache::maxStringLengthForCache)
+    if ((length(s0) + length(s1)) > ConcatKeyAtomStringCache::maxStringLengthForCache)
         return nullptr;
     m_concatKeyAtomStringCaches.append(makeUnique<ConcatKeyAtomStringCache>(m_codeBlock, mode));
     return m_concatKeyAtomStringCaches.last().get();
@@ -2317,17 +2317,17 @@ void Graph::dumpAndReleaseIonGraph()
     }
 }
 
-void Graph::appendIonGraphPass(const String& passName)
+void Graph::appendIonGraphPass(ASCIILiteral passName)
 {
     if (m_form == LoadStore) // This is even not setting up predecessors. It is not meaningful to have a graph at this point yet.
         return;
 
     auto pass = JSON::Object::create();
-    pass->setString("name"_s, makeString("DFG: "_s, passName));
+    pass->setString("name"_si, makeString("DFG: "_s, passName));
     {
         auto ionGraph = JSON::Object::create();
         auto ionBlocks = JSON::Array::create();
-        ionGraph->setArray("blocks"_s, ionBlocks);
+        ionGraph->setArray("blocks"_si, ionBlocks);
 
         DumpContext context;
         context.graph = this;
@@ -2343,10 +2343,10 @@ void Graph::appendIonGraphPass(const String& passName)
             auto instructions = JSON::Array::create();
 
             if (block->isOSRTarget)
-                attributes->pushString("osr"_s);
+                attributes->pushString("osr"_si);
 
             if (block->isCatchEntrypoint)
-                attributes->pushString("catch"_s);
+                attributes->pushString("catch"_si);
 
             for (size_t i = 0; i < block->size(); ++i) {
                 auto instruction = JSON::Object::create();
@@ -2369,14 +2369,14 @@ void Graph::appendIonGraphPass(const String& passName)
                     }
                 }
 
-                instruction->setInteger("ptr"_s, node->index() + 1);
-                instruction->setInteger("id"_s, node->index());
-                instruction->setString("opcode"_s, stream.toString());
-                instruction->setArray("attributes"_s, JSON::Array::create());
-                instruction->setArray("inputs"_s, WTF::move(inputs));
-                instruction->setArray("uses"_s, JSON::Array::create());
-                instruction->setArray("memInputs"_s, JSON::Array::create());
-                instruction->setString("type"_s, ""_s);
+                instruction->setInteger("ptr"_si, node->index() + 1);
+                instruction->setInteger("id"_si, node->index());
+                instruction->setString("opcode"_si, stream.toString());
+                instruction->setArray("attributes"_si, JSON::Array::create());
+                instruction->setArray("inputs"_si, WTF::move(inputs));
+                instruction->setArray("uses"_si, JSON::Array::create());
+                instruction->setArray("memInputs"_si, JSON::Array::create());
+                instruction->setString("type"_si, ""_si);
 
                 instructions->pushObject(WTF::move(instruction));
             }
@@ -2387,22 +2387,22 @@ void Graph::appendIonGraphPass(const String& passName)
             for (auto* successor : block->successors())
                 successors->pushInteger(successor->index());
 
-            ionBlock->setInteger("ptr"_s, block->index() + 1);
-            ionBlock->setInteger("id"_s, block->index());
-            ionBlock->setInteger("loopDepth"_s, 0);
-            ionBlock->setArray("attributes"_s, WTF::move(attributes));
-            ionBlock->setArray("predecessors"_s, WTF::move(predecessors));
-            ionBlock->setArray("successors"_s, WTF::move(successors));
-            ionBlock->setArray("instructions"_s, WTF::move(instructions));
+            ionBlock->setInteger("ptr"_si, block->index() + 1);
+            ionBlock->setInteger("id"_si, block->index());
+            ionBlock->setInteger("loopDepth"_si, 0);
+            ionBlock->setArray("attributes"_si, WTF::move(attributes));
+            ionBlock->setArray("predecessors"_si, WTF::move(predecessors));
+            ionBlock->setArray("successors"_si, WTF::move(successors));
+            ionBlock->setArray("instructions"_si, WTF::move(instructions));
             ionBlocks->pushObject(ionBlock);
         }
 
-        pass->setObject("mir"_s, WTF::move(ionGraph)); // MIR stands for SpiderMonkey's middle-level IR.
+        pass->setObject("mir"_si, WTF::move(ionGraph)); // MIR stands for SpiderMonkey's middle-level IR.
     }
     {
         auto ionGraph = JSON::Object::create();
-        ionGraph->setArray("blocks"_s, JSON::Array::create());
-        pass->setObject("lir"_s, WTF::move(ionGraph)); // LIR stands for SpiderMonkey's low-level IR.
+        ionGraph->setArray("blocks"_si, JSON::Array::create());
+        pass->setObject("lir"_si, WTF::move(ionGraph)); // LIR stands for SpiderMonkey's low-level IR.
     }
     m_ionGraphPasses->pushObject(pass);
 }

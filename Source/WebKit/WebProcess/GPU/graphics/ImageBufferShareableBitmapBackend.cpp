@@ -208,7 +208,7 @@ void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBufferSourceVi
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_bitmap->mutableSpan());
 }
 
-String ImageBufferShareableBitmapBackend::debugDescription() const
+RefPtr<StringImpl> ImageBufferShareableBitmapBackend::debugDescription() const
 {
     TextStream stream;
     stream << "ImageBufferShareableBitmapBackend " << this;

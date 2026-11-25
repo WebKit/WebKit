@@ -44,7 +44,7 @@ void InspectorThreadableLoaderClient::didReceiveResponse(ScriptExecutionContextI
     m_statusCode = response.httpStatusCode();
 
     // FIXME: This assumes text only responses. We should support non-text responses as well.
-    PAL::TextEncoding textEncoding(response.textEncodingName());
+    PAL::TextEncoding textEncoding(response.textEncodingName().get());
     bool useDetector = false;
     if (!textEncoding.isValid()) {
         textEncoding = PAL::UTF8Encoding();
@@ -68,7 +68,7 @@ void InspectorThreadableLoaderClient::didFinishLoading(ScriptExecutionContextIde
         m_responseText.append(decoder->flush());
 
     auto completionHandler = WTF::move(m_completionHandler);
-    std::tuple<String, String, int> result { m_responseText.toString(), m_mimeType, m_statusCode };
+    std::tuple<RefPtr<StringImpl>, RefPtr<StringImpl>, int> result { m_responseText.toString(), m_mimeType, m_statusCode };
     dispose();
     if (completionHandler)
         completionHandler(WTF::move(result));
@@ -83,7 +83,7 @@ void InspectorThreadableLoaderClient::didFail(std::optional<ScriptExecutionConte
         completionHandler(makeUnexpected(errorMessage));
 }
 
-void InspectorThreadableLoaderClient::failWithMessage(const String& message)
+void InspectorThreadableLoaderClient::failWithMessage(StringImpl* message)
 {
     auto completionHandler = WTF::move(m_completionHandler);
     dispose();

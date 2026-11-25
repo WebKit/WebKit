@@ -45,25 +45,25 @@ EnterKeyHint enterKeyHintForAttributeValue(StringView value)
     return enterKeyHints.get(value, EnterKeyHint::Unspecified);
 }
 
-String attributeValueForEnterKeyHint(EnterKeyHint hint)
+RefPtr<StringImpl> attributeValueForEnterKeyHint(EnterKeyHint hint)
 {
     switch (hint) {
     case EnterKeyHint::Unspecified:
         return emptyAtom();
     case EnterKeyHint::Enter:
-        return "enter"_s;
+        return "enter"_si;
     case EnterKeyHint::Done:
-        return "done"_s;
+        return "done"_si;
     case EnterKeyHint::Go:
-        return "go"_s;
+        return "go"_si;
     case EnterKeyHint::Next:
-        return "next"_s;
+        return "next"_si;
     case EnterKeyHint::Previous:
-        return "previous"_s;
+        return "previous"_si;
     case EnterKeyHint::Search:
         return searchAtom();
     case EnterKeyHint::Send:
-        return "send"_s;
+        return "send"_si;
     }
     ASSERT_NOT_REACHED();
     return nullAtom();

@@ -66,7 +66,7 @@ bool isWellKnownRedirectAllowed(const URL& url)
     return url.isValid() && url.protocolIs("https"_s);
 }
 
-static String registrableOriginLabel(StringView host)
+static RefPtr<StringImpl> registrableOriginLabel(StringView host)
 {
     return PublicSuffixStore::singleton().topPrivatelyControlledDomainWithoutPublicSuffix(host);
 }
@@ -76,7 +76,7 @@ static RefPtr<JSON::Array> parseCandidatesArray(std::span<const uint8_t> resourc
     if (resource.empty() || resource.size() > maxResourceSize)
         return nullptr;
 
-    RefPtr parsedValue = JSON::Value::parseJSON(String::fromUTF8(resource));
+    RefPtr parsedValue = JSON::Value::parseJSON(StringImpl::fromUTF8(resource));
     if (!parsedValue)
         return nullptr;
 
@@ -84,7 +84,7 @@ static RefPtr<JSON::Array> parseCandidatesArray(std::span<const uint8_t> resourc
     if (!object)
         return nullptr;
 
-    RefPtr member = object->getValue(memberName);
+    RefPtr member = object->getValue(StringImpl::create(memberName).ptr());
     if (!member)
         return nullptr;
 
@@ -103,7 +103,7 @@ static RefPtr<JSON::Array> parseCandidatesArray(std::span<const uint8_t> resourc
 template<typename Visitor>
 static void forEachValidOrigin(JSON::Array& candidates, const WellKnownOriginListPolicy& policy, NOESCAPE const Visitor& visitor)
 {
-    Vector<String> labelsSeen(ReserveCapacityTag { }, policy.maxRegistrableOriginLabels);
+    Vector<RefPtr<StringImpl>> labelsSeen(ReserveCapacityTag { }, policy.maxRegistrableOriginLabels);
     size_t examined = 0;
 
     for (Ref candidate : candidates) {
@@ -119,12 +119,14 @@ static void forEachValidOrigin(JSON::Array& candidates, const WellKnownOriginLis
             continue;
 
         auto label = registrableOriginLabel(url.host());
-        if (label.isEmpty())
+        if (isEmpty(label))
             continue;
 
         ++examined;
 
-        bool alreadySeen = labelsSeen.contains(label);
+        bool alreadySeen = labelsSeen.containsIf([&](auto& item) {
+            return equal(item, label);
+        });
         if (labelsSeen.size() >= policy.maxRegistrableOriginLabels && !alreadySeen)
             continue;
 
@@ -143,7 +145,7 @@ WellKnownOriginListResult findOriginInWellKnownList(const SecurityOriginData& ca
         return WellKnownOriginListResult::Malformed;
 
     WellKnownOriginListResult result = WellKnownOriginListResult::NotFound;
-    forEachValidOrigin(*candidates, policy, [&](const URL& url, const String&) {
+    forEachValidOrigin(*candidates, policy, [&](const URL& url, StringImpl*) {
         if (SecurityOriginData::fromURL(url) == callerOrigin) {
             result = WellKnownOriginListResult::Found;
             return IterationStatus::Done;
@@ -153,15 +155,15 @@ WellKnownOriginListResult findOriginInWellKnownList(const SecurityOriginData& ca
     return result;
 }
 
-Vector<String> parseOriginsFromWellKnownList(std::span<const uint8_t> resource, ASCIILiteral memberName, WellKnownOriginListPolicy&& policy)
+Vector<RefPtr<StringImpl>> parseOriginsFromWellKnownList(std::span<const uint8_t> resource, ASCIILiteral memberName, WellKnownOriginListPolicy&& policy)
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
 
     RefPtr candidates = parseCandidatesArray(resource, memberName, policy.maxResourceSize);
     if (!candidates)
         return result;
 
-    forEachValidOrigin(*candidates, policy, [&](const URL&, const String& candidateString) {
+    forEachValidOrigin(*candidates, policy, [&](const URL&, StringImpl* candidateString) {
         result.append(candidateString);
         return IterationStatus::Continue;
     });

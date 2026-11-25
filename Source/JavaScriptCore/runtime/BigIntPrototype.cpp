@@ -108,11 +108,11 @@ JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncToString, (JSGlobalObject* globalObject,
     int32_t radix = extractToStringRadixArgument(globalObject, callFrame->argument(0), scope);
     RETURN_IF_EXCEPTION(scope, { });
 
-    String resultString = value->toString(globalObject, radix);
+    RefPtr<StringImpl> resultString = value->toString(globalObject, radix);
     RETURN_IF_EXCEPTION(scope, { });
     scope.release();
-    if (resultString.length() == 1)
-        return JSValue::encode(vm.smallStrings.singleCharacterString(resultString[0]));
+    if (length(resultString) == 1)
+        return JSValue::encode(vm.smallStrings.singleCharacterString(codeUnitAt(resultString, 0)));
 
     return JSValue::encode(jsNontrivialString(vm, resultString));
 }

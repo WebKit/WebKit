@@ -166,7 +166,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions&)
 
 static bool shouldEnableAsyncOverflowScrolling(const std::string& pathOrURL)
 {
-    return isWebPlatformTestURL({ { }, String::fromUTF8(pathOrURL.c_str()) });
+    return isWebPlatformTestURL({ { }, StringImpl::fromUTF8(pathOrURL.c_str()) });
 }
 
 TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand& command) const

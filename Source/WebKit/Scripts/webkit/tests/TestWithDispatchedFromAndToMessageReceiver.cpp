@@ -31,6 +31,7 @@
 #include "TestWithDispatchedFromAndToMessages.h" // NOLINT
 #include "Untrusted.h" // NOLINT
 #include <WebCore/SecurityOriginData.h> // NOLINT
+#include <wtf/text/StringView.h> // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)

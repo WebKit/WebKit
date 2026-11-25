@@ -152,7 +152,7 @@ public:
 
     NODELETE WEBCORE_EXPORT ResourceRequest& firstRequest();
     NODELETE WEBCORE_EXPORT const ResourceRequest& firstRequest() const;
-    NODELETE const String& lastHTTPMethod() const;
+    NODELETE const RefPtr<StringImpl>& lastHTTPMethod() const;
 
     void failureTimerFired();
 
@@ -167,10 +167,10 @@ public:
 #endif
 
     typedef Ref<ResourceHandle> (*BuiltinConstructor)(const ResourceRequest& request, ResourceHandleClient* client);
-    static void registerBuiltinConstructor(const AtomString& protocol, BuiltinConstructor);
+    static void registerBuiltinConstructor(AtomStringImpl* protocol, BuiltinConstructor);
 
     typedef void (*BuiltinSynchronousLoader)(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
-    static void registerBuiltinSynchronousLoader(const AtomString& protocol, BuiltinSynchronousLoader);
+    static void registerBuiltinSynchronousLoader(AtomStringImpl* protocol, BuiltinSynchronousLoader);
 
 protected:
     ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, ContentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation);

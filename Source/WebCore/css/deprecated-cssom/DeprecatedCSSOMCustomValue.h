@@ -36,11 +36,11 @@ struct SerializationContext;
 
 class DeprecatedCSSOMCustomValue final : public DeprecatedCSSOMValue {
 public:
-    using SerializationFunctor = Function<String(const CSS::SerializationContext&)>;
+    using SerializationFunctor = Function<RefPtr<StringImpl>(const CSS::SerializationContext&)>;
 
     NODELETE static Ref<DeprecatedCSSOMCustomValue> create(SerializationFunctor&&, CSSStyleDeclaration&);
 
-    String cssText() const override;
+    RefPtr<StringImpl> cssText() const override;
     NODELETE unsigned short cssValueType() const override;
     bool isCustomValue() const override { return true; }
 

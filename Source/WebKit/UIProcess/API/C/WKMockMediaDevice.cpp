@@ -39,9 +39,9 @@ using namespace WebKit;
 void WKAddMockMediaDevice(WKContextRef context, WKStringRef persistentId, WKStringRef label, WKStringRef type, WKDictionaryRef properties, bool isDefault)
 {
 #if ENABLE(MEDIA_STREAM)
-    String typeString = protect(WebKit::toImpl(type))->string();
+    RefPtr<StringImpl> typeString = protect(WebKit::toImpl(type))->string();
     Variant<WebCore::MockMicrophoneProperties, WebCore::MockSpeakerProperties, WebCore::MockCameraProperties, WebCore::MockDisplayProperties> deviceProperties;
-    if (typeString == "camera"_s) {
+    if (equal(typeString, "camera"_s)) {
         WebCore::MockCameraProperties cameraProperties;
         if (properties) {
             auto facingModeKey = adoptWK(WKStringCreateWithUTF8CString("facingMode"));
@@ -56,11 +56,11 @@ void WKAddMockMediaDevice(WKContextRef context, WKStringRef persistentId, WKStri
             }
         }
         deviceProperties = WTF::move(cameraProperties);
-    } else if (typeString == "screen"_s)
+    } else if (equal(typeString, "screen"_s))
         deviceProperties = WebCore::MockDisplayProperties { };
-    else if (typeString == "speaker"_s)
+    else if (equal(typeString, "speaker"_s))
         deviceProperties = WebCore::MockSpeakerProperties { };
-    else if (typeString != "microphone"_s)
+    else if (!equal(typeString, "microphone"_s))
         return;
 
     WebCore::MockMediaDevice::Flags flags;

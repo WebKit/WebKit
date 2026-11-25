@@ -36,13 +36,13 @@ namespace WebKit {
 
 struct WebsiteDataStoreParameters {
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
-    String cookieStoragePath;
+    RefPtr<StringImpl> cookieStoragePath;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     NetworkSessionCreationParameters networkSessionParameters;
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
-    String containerCachesDirectory;
+    RefPtr<StringImpl> containerCachesDirectory;
     std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
     std::optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
     std::optional<SandboxExtension::Handle> tempDirectoryExtensionHandle;

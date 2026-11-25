@@ -46,7 +46,7 @@ inline DOMURL::DOMURL(URL&& completeURL)
     ASSERT(m_url.isValid());
 }
 
-ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
+ExceptionOr<Ref<DOMURL>> DOMURL::create(StringImpl* url, const URL& base)
 {
     ASSERT(base.isValid() || base.isNull());
     URL completeURL { base, url };
@@ -55,25 +55,25 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
     return adoptRef(*new DOMURL(WTF::move(completeURL)));
 }
 
-ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
+ExceptionOr<Ref<DOMURL>> DOMURL::create(StringImpl* url, StringImpl* base)
 {
     URL baseURL { base };
-    if (!base.isNull() && !baseURL.isValid())
+    if (base && !baseURL.isValid())
         return Exception { ExceptionCode::TypeError, makeString('"', url, "\" cannot be parsed as a URL against \""_s, base, "\"."_s) };
     return create(url, baseURL);
 }
 
 DOMURL::~DOMURL() = default;
 
-static URL parseInternal(const String& url, const String& base)
+static URL parseInternal(StringImpl* url, StringImpl* base)
 {
     URL baseURL { base };
-    if (!base.isNull() && !baseURL.isValid())
+    if (base && !baseURL.isValid())
         return { };
     return { baseURL, url };
 }
 
-RefPtr<DOMURL> DOMURL::parse(const String& url, const String& base)
+RefPtr<DOMURL> DOMURL::parse(StringImpl* url, StringImpl* base)
 {
     auto completeURL = parseInternal(url, base);
     if (!completeURL.isValid())
@@ -81,12 +81,12 @@ RefPtr<DOMURL> DOMURL::parse(const String& url, const String& base)
     return adoptRef(*new DOMURL(WTF::move(completeURL)));
 }
 
-bool DOMURL::canParse(const String& url, const String& base)
+bool DOMURL::canParse(StringImpl* url, StringImpl* base)
 {
     return parseInternal(url, base).isValid();
 }
 
-ExceptionOr<void> DOMURL::setHref(const String& url)
+ExceptionOr<void> DOMURL::setHref(StringImpl* url)
 {
     URL completeURL { url };
     if (!completeURL.isValid())
@@ -97,16 +97,16 @@ ExceptionOr<void> DOMURL::setHref(const String& url)
     return { };
 }
 
-String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
+RefPtr<StringImpl> DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
     return createPublicURL(scriptExecutionContext, blob);
 }
 
-String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, URLRegistrable& registrable)
+RefPtr<StringImpl> DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, URLRegistrable& registrable)
 {
     URL publicURL = BlobURL::createPublicURL(protect(scriptExecutionContext.securityOrigin()).get());
     if (publicURL.isEmpty())
-        return String();
+        return nullptr;
 
     protect(scriptExecutionContext.publicURLManager())->registerURL(publicURL, registrable);
 
@@ -120,7 +120,7 @@ URLSearchParams& DOMURL::searchParams()
     return *m_searchParams;
 }
 
-void DOMURL::revokeObjectURL(ScriptExecutionContext& scriptExecutionContext, const String& urlString)
+void DOMURL::revokeObjectURL(ScriptExecutionContext& scriptExecutionContext, StringImpl* urlString)
 {
     URL url { urlString };
     ResourceRequest request(WTF::move(url));

@@ -39,24 +39,24 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSOMVariableReferenceValue);
 
-ExceptionOr<Ref<CSSOMVariableReferenceValue>> CSSOMVariableReferenceValue::create(String&& variable, RefPtr<CSSUnparsedValue>&& fallback)
+ExceptionOr<Ref<CSSOMVariableReferenceValue>> CSSOMVariableReferenceValue::create(RefPtr<StringImpl>&& variable, RefPtr<CSSUnparsedValue>&& fallback)
 {
-    if (!variable.startsWith("--"_s))
-        return Exception { ExceptionCode::TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
+    if (!startsWith(variable, "--"_s))
+        return Exception { ExceptionCode::TypeError, "Custom Variable Reference needs to have \"--\" prefix."_si };
     
     return adoptRef(*new CSSOMVariableReferenceValue(WTF::move(variable), WTF::move(fallback)));
 }
 
-ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(String&& variable)
+ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(RefPtr<StringImpl>&& variable)
 {
-    if (!variable.startsWith("--"_s))
-        return Exception { ExceptionCode::TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
+    if (!startsWith(variable, "--"_s))
+        return Exception { ExceptionCode::TypeError, "Custom Variable Reference needs to have \"--\" prefix."_si };
     
     m_variable = WTF::move(variable);
     return { };
 }
 
-String CSSOMVariableReferenceValue::toString() const
+RefPtr<StringImpl> CSSOMVariableReferenceValue::toString() const
 {
     StringBuilder builder;
     serialize(builder, { });

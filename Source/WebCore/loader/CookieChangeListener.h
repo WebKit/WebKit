@@ -34,8 +34,8 @@ struct Cookie;
 
 class CookieChangeListener : public AbstractRefCountedAndCanMakeWeakPtr<CookieChangeListener> {
 public:
-    virtual void cookiesAdded(const String& host, const Vector<Cookie>&) = 0;
-    virtual void cookiesDeleted(const String& host, const Vector<Cookie>&) = 0;
+    virtual void cookiesAdded(StringImpl* host, const Vector<Cookie>&) = 0;
+    virtual void cookiesDeleted(StringImpl* host, const Vector<Cookie>&) = 0;
 
     virtual ~CookieChangeListener() { }
 };

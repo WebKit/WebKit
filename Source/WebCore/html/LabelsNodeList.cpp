@@ -42,7 +42,7 @@ LabelsNodeList::LabelsNodeList(HTMLElement& element)
 {
 }
 
-Ref<LabelsNodeList> LabelsNodeList::create(HTMLElement& element, const AtomString&)
+Ref<LabelsNodeList> LabelsNodeList::create(HTMLElement& element, AtomStringImpl*)
 {
     return adoptRef(*new LabelsNodeList(element));
 }

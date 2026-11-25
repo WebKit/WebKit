@@ -113,7 +113,7 @@ NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValu
         if (nullPolicy == NullValuePolicy::NotAllowed && JSValueIsNull(context, item))
             continue;
 
-        auto *key = toString(propertyName.get()).createNSString().get();
+        auto *key = createNSString(toString(propertyName.get())).get();
         auto *itemValue = toJSValue(context, item);
 
         if (valuePolicy == ValuePolicy::StopAtTopLevel) {
@@ -138,7 +138,7 @@ JSValueRef toJSValueRef(JSContextRef context, NSURL *url, NullOrEmptyString null
 {
     ASSERT(context);
 
-    return toJSValueRef(context, url.absoluteURL.absoluteString, nullOrEmptyString);
+    return toJSValueRef(context, StringImpl::create(url.absoluteURL.absoluteString).get(), nullOrEmptyString);
 }
 
 JSValueRef toJSValueRefOrJSNull(JSContextRef context, id object)
@@ -184,7 +184,7 @@ JSValueRef toJSValueRef(JSContextRef context, id object)
 
 // This function lexicographically sorts the JSON output. The WTF JSON implementation does not yet support sorting keys,
 // so this function has to stay on Cocoa for now.
-String toSortedJSONString(JSContextRef context, JSValueRef value)
+RefPtr<StringImpl> toSortedJSONString(JSContextRef context, JSValueRef value)
 {
     // This double-JSON approach works best since it avoids JSC's Cocoa object conversion, which can produce JSValue's that NSJSONSerialization can't convert.
     auto* data = [nsStringNilIfEmpty(toJSONString(context, value)).autorelease() dataUsingEncoding:NSUTF8StringEncoding];
@@ -199,7 +199,7 @@ String toSortedJSONString(JSContextRef context, JSValueRef value)
     if (!data)
         return nullString();
 
-    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    return StringImpl::create([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 }
 
 } // namespace WebKit

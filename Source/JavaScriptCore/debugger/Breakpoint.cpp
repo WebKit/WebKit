@@ -38,12 +38,12 @@ Breakpoint::Action::Action(Breakpoint::Action::Type type)
 {
 }
 
-Ref<Breakpoint> Breakpoint::create(BreakpointID id, const String& condition, ActionsVector&& actions, bool autoContinue, size_t ignoreCount)
+Ref<Breakpoint> Breakpoint::create(BreakpointID id, StringImpl* condition, ActionsVector&& actions, bool autoContinue, size_t ignoreCount)
 {
     return adoptRef(*new Breakpoint(id, condition, WTF::move(actions), autoContinue, ignoreCount));
 }
 
-Breakpoint::Breakpoint(BreakpointID id, String condition, ActionsVector&& actions, bool autoContinue, size_t ignoreCount)
+Breakpoint::Breakpoint(BreakpointID id, RefPtr<StringImpl> condition, ActionsVector&& actions, bool autoContinue, size_t ignoreCount)
     : m_id(id)
     , m_condition(condition)
     , m_actions(WTF::move(actions))

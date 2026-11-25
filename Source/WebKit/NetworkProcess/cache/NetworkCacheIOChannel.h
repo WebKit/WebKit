@@ -44,7 +44,7 @@ namespace NetworkCache {
 class IOChannel : public ThreadSafeRefCounted<IOChannel> {
 public:
     enum class Type { Read, Write, Create };
-    static Ref<IOChannel> open(const String& filePath, Type type, std::optional<WorkQueue::QOS> qos = { }) { return adoptRef(*new IOChannel(filePath, type, qos)); }
+    static Ref<IOChannel> open(StringImpl* filePath, Type type, std::optional<WorkQueue::QOS> qos = { }) { return adoptRef(*new IOChannel(filePath, type, qos)); }
 
     void read(size_t offset, size_t, Ref<WTF::WorkQueueBase>&&, Function<void(Data&&, int error)>&&);
     void write(size_t offset, const Data&, Ref<WTF::WorkQueueBase>&&, Function<void(int error)>&&);
@@ -52,7 +52,7 @@ public:
     ~IOChannel();
 
 private:
-    IOChannel(const String& filePath, IOChannel::Type, std::optional<WorkQueue::QOS>);
+    IOChannel(StringImpl* filePath, IOChannel::Type, std::optional<WorkQueue::QOS>);
 
 #if !PLATFORM(COCOA)
     Lock m_lock;

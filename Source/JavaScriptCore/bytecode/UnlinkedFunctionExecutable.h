@@ -200,23 +200,23 @@ public:
 
     InlineAttribute inlineAttribute() const { return static_cast<InlineAttribute>(m_inlineAttribute); }
 
-    String sourceURLDirective() const
+    RefPtr<StringImpl> sourceURLDirective() const
     {
         if (m_rareData)
             return m_rareData->m_sourceURLDirective;
-        return String();
+        return nullptr;
     }
-    String sourceMappingURLDirective() const
+    RefPtr<StringImpl> sourceMappingURLDirective() const
     {
         if (m_rareData)
             return m_rareData->m_sourceMappingURLDirective;
-        return String();
+        return nullptr;
     }
-    void setSourceURLDirective(const String& sourceURL)
+    void setSourceURLDirective(StringImpl* sourceURL)
     {
         ensureRareData().m_sourceURLDirective = sourceURL;
     }
-    void setSourceMappingURLDirective(const String& sourceMappingURL)
+    void setSourceMappingURLDirective(StringImpl* sourceMappingURL)
     {
         ensureRareData().m_sourceMappingURLDirective = sourceMappingURL;
     }
@@ -243,8 +243,8 @@ public:
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(RareData);
 
         SourceCode m_classSource;
-        String m_sourceURLDirective;
-        String m_sourceMappingURLDirective;
+        RefPtr<StringImpl> m_sourceURLDirective;
+        RefPtr<StringImpl> m_sourceMappingURLDirective;
         FixedVector<Identifier> m_generatorOrAsyncWrapperFunctionParameterNames;
         FixedVector<ClassElementDefinition> m_classElementDefinitions;
         PrivateNameEnvironment m_parentPrivateNameEnvironment;

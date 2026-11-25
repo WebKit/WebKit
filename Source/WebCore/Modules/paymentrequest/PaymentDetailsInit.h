@@ -34,7 +34,7 @@
 namespace WebCore {
     
 struct PaymentDetailsInit final : public PaymentDetailsBase {
-    String id;
+    RefPtr<StringImpl> id;
     PaymentItem total;
 };
     

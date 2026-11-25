@@ -67,7 +67,7 @@ void RenderVTTCue::layout()
     // any positioning parameters. Also, in this case, the regions themselves
     // have positioning information.
     RefPtr cue = m_cue.get();
-    if (!cue || !cue->regionId().isEmpty())
+    if (!cue || !isEmpty(cue->regionId()))
         return;
 
     LayoutStateMaintainer statePusher(*this, locationOffset(), true);

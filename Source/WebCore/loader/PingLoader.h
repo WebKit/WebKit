@@ -56,7 +56,7 @@ public:
     WEBCORE_EXPORT static void sendViolationReport(LocalFrame&, URL&& reportURL, Ref<FormData>&& report, ViolationReportType);
     static void startDeferredFetch(LocalFrame&, ResourceRequest&, const ResourceLoaderOptions&);
 
-    static String sanitizeURLForReport(const URL&);
+    static RefPtr<StringImpl> sanitizeURLForReport(const URL&);
 
 private:
     enum class ShouldFollowRedirects : bool { No, Yes };

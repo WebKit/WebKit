@@ -38,8 +38,8 @@ class PreventSourceFromEndingObserverWrapper;
 struct MediaStreamTrackData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MediaStreamTrackData);
 
-    String trackId;
-    String label;
+    RefPtr<StringImpl> trackId;
+    RefPtr<StringImpl> label;
     RealtimeMediaSource::Type type;
     CaptureDevice::DeviceType deviceType;
     bool isEnabled { true };

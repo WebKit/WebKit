@@ -35,7 +35,7 @@ using namespace WebCore;
 
 ResourceError invalidPageRangeToPrint(const URL& failingURL)
 {
-    return ResourceError(API::Error::webKitPrintErrorDomain(), API::Error::Print::InvalidPageRange, failingURL, String::fromUTF8(_("Invalid page range")));
+    return ResourceError(API::Error::webKitPrintErrorDomain(), API::Error::Print::InvalidPageRange, failingURL, StringImpl::fromUTF8(_("Invalid page range")));
 }
 
 } // namespace WebKit

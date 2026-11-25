@@ -44,6 +44,7 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -65,7 +66,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class LoadURL {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadURL; }
     static constexpr bool isSync = false;
@@ -73,7 +74,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit LoadURL(const String& url)
+    explicit LoadURL(StringView url)
         : m_url(url)
     {
     }
@@ -85,13 +86,13 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 #if ENABLE(TOUCH_EVENTS)
 class LoadSomething {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadSomething; }
     static constexpr bool isSync = false;
@@ -99,7 +100,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit LoadSomething(const String& url)
+    explicit LoadSomething(StringView url)
         : m_url(url)
     {
     }
@@ -111,7 +112,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 #endif
 
@@ -172,7 +173,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
 class LoadSomethingElse {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadSomethingElse; }
     static constexpr bool isSync = false;
@@ -180,7 +181,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit LoadSomethingElse(const String& url)
+    explicit LoadSomethingElse(StringView url)
         : m_url(url)
     {
     }
@@ -192,7 +193,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 #endif
 
@@ -365,7 +366,7 @@ private:
 
 class RunJavaScriptAlert {
 public:
-    using Arguments = std::tuple<uint64_t, String>;
+    using Arguments = std::tuple<uint64_t, RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlert; }
     static constexpr bool isSync = false;
@@ -378,7 +379,7 @@ public:
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
-    RunJavaScriptAlert(uint64_t frameID, const String& message)
+    RunJavaScriptAlert(uint64_t frameID, StringView message)
         : m_frameID(frameID)
         , m_message(message)
     {
@@ -393,7 +394,7 @@ public:
 
 private:
     uint64_t m_frameID;
-    const String& m_message;
+    StringView m_message;
 };
 
 class GetPlugins {
@@ -428,7 +429,7 @@ private:
 
 class GetPluginProcessConnection {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection; }
     static constexpr bool isSync = true;
@@ -439,7 +440,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
     using Reply = CompletionHandler<void(IPC::Connection::Handle&&)>;
-    explicit GetPluginProcessConnection(const String& pluginPath)
+    explicit GetPluginProcessConnection(StringView pluginPath)
         : m_pluginPath(pluginPath)
     {
     }
@@ -451,7 +452,7 @@ public:
     }
 
 private:
-    const String& m_pluginPath;
+    StringView m_pluginPath;
 };
 
 class TestMultipleAttributes {
@@ -512,7 +513,7 @@ private:
 
 class TemplateTest {
 public:
-    using Arguments = std::tuple<HashMap<String, std::pair<String, uint64_t>>>;
+    using Arguments = std::tuple<HashMap<RefPtr<StringImpl>, std::pair<RefPtr<StringImpl>, uint64_t>>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TemplateTest; }
     static constexpr bool isSync = false;
@@ -520,7 +521,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit TemplateTest(const HashMap<String, std::pair<String, uint64_t>>& a)
+    explicit TemplateTest(const HashMap<RefPtr<StringImpl>, std::pair<RefPtr<StringImpl>, uint64_t>>& a)
         : m_a(a)
     {
     }
@@ -532,7 +533,7 @@ public:
     }
 
 private:
-    SUPPRESS_FORWARD_DECL_MEMBER const HashMap<String, std::pair<String, uint64_t>>& m_a;
+    SUPPRESS_FORWARD_DECL_MEMBER const HashMap<RefPtr<StringImpl>, std::pair<RefPtr<StringImpl>, uint64_t>>& m_a;
 };
 
 class SetVideoLayerID {

@@ -102,11 +102,11 @@ public:
         // These are simple fields so they are easier for SelectorCompiler to generate code against.
         bool hasRequestedPseudoElement { false };
         PseudoElementType pseudoElementType { };
-        AtomString pseudoElementNameArgument;
+        RefPtr<AtomStringImpl> pseudoElementNameArgument;
 
     public:
         std::optional<StyleScrollbarState> scrollbarState;
-        Vector<AtomString> classList;
+        Vector<RefPtr<AtomStringImpl>> classList;
         RefPtr<const ContainerNode> scope;
         CheckedPtr<const Element> hasScope;
         bool matchesAllHasScopes { false };
@@ -127,7 +127,7 @@ public:
     bool matchHostPseudoClass(const CSSSelector&, const Element&, CheckingContext&) const;
 
     static bool isCommonPseudoClassSelector(const CSSSelector*);
-    static bool attributeSelectorMatches(const Element&, const QualifiedName&, const AtomString& attributeValue, const CSSSelector&);
+    static bool attributeSelectorMatches(const Element&, const QualifiedName&, AtomStringImpl* attributeValue, const CSSSelector&);
     static void clearCompiledHasArgumentSelectors();
 
     // Takes the first simple selector of the compound. https://drafts.csswg.org/selectors-4/#featureless

@@ -446,8 +446,8 @@ TEST(WTF_FixedVector, SizeAndValueConstructorPOD)
 
 TEST(WTF_FixedVector, SizeAndValueConstructorNonPOD)
 {
-    String value = "hello"_s;
-    FixedVector<String> vec(FillWith { }, 3, value);
+    RefPtr<StringImpl> value = "hello"_si;
+    FixedVector<RefPtr<StringImpl>> vec(FillWith { }, 3, value);
     EXPECT_EQ(3U, vec.size());
     for (unsigned i = 0; i < vec.size(); ++i)
         EXPECT_EQ("hello"_s, vec[i]);

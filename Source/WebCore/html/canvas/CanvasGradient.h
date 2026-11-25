@@ -49,7 +49,7 @@ public:
         return createGradient();
     }
 
-    ExceptionOr<void> addColorStop(ScriptExecutionContext&, double value, const String& color);
+    ExceptionOr<void> addColorStop(ScriptExecutionContext&, double value, StringImpl* color);
 
 private:
     explicit CanvasGradient(Gradient::Data&&);

@@ -38,18 +38,18 @@ namespace WebPushD {
 class WebClipCache {
     WTF_MAKE_TZONE_ALLOCATED(WebClipCache);
 public:
-    WebClipCache(const String& path);
+    WebClipCache(StringImpl* path);
 
-    String preferredWebClipIdentifier(const String& bundleIdentifier, const WebCore::SecurityOriginData&);
-    HashSet<String> visibleWebClipIdentifiers(const String& bundleIdentifier);
-    bool isWebClipVisible(const String& bundleIdentifier, const String& webClipIdentifier);
+    RefPtr<StringImpl> preferredWebClipIdentifier(StringImpl* bundleIdentifier, const WebCore::SecurityOriginData&);
+    HashSet<RefPtr<StringImpl>> visibleWebClipIdentifiers(StringImpl* bundleIdentifier);
+    bool isWebClipVisible(StringImpl* bundleIdentifier, StringImpl* webClipIdentifier);
 
 private:
     void load();
     void persist();
 
-    String m_path;
-    HashMap<std::tuple<String, WebCore::SecurityOriginData>, String> m_preferredWebClipIdentifiers;
+    RefPtr<StringImpl> m_path;
+    HashMap<std::tuple<RefPtr<StringImpl>, WebCore::SecurityOriginData>, RefPtr<StringImpl>> m_preferredWebClipIdentifiers;
 };
 
 } // namespace WebPushD

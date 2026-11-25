@@ -34,14 +34,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnimationPlaybackEvent);
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+AnimationPlaybackEvent::AnimationPlaybackEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, WTF::move(initializer), isTrusted, nullptr)
     , m_timelineTime(initializer.timelineTime)
     , m_currentTime(initializer.currentTime)
 {
 }
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime)
+AnimationPlaybackEvent::AnimationPlaybackEvent(AtomStringImpl* type, WebAnimation* animation, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime)
     : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, animation, scheduledTime)
 {
     if (timelineTime)

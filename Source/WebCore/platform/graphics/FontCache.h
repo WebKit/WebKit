@@ -107,8 +107,8 @@ using IMLangFontLinkType = IMLangFontLink;
 #endif
 
 struct FontCachePrewarmInformation {
-    Vector<String> seenFamilies;
-    Vector<String> fontNamesRequiringSystemFallback;
+    Vector<RefPtr<StringImpl>> seenFamilies;
+    Vector<RefPtr<StringImpl>> fontNamesRequiringSystemFallback;
 
     bool isEmpty() const;
     FontCachePrewarmInformation isolatedCopy() const & { return { crossThreadCopy(seenFamilies), crossThreadCopy(fontNamesRequiringSystemFallback) }; }
@@ -138,7 +138,7 @@ struct SkiaTypefaceCacheKeyHashTraits : SimpleClassHashTraits<SkiaTypefaceCacheK
     static constexpr bool emptyValueIsZero = false;
     static void constructDeletedValue(SkiaTypefaceCacheKey& slot)
     {
-        new (NotNull, &slot) SkiaTypefaceCacheKey { AtomString { WTF::HashTableDeletedValue }, { } };
+        new (NotNull, &slot) SkiaTypefaceCacheKey { RefPtr<AtomStringImpl> { WTF::HashTableDeletedValue }.get(), { } };
     }
     static bool isDeletedValue(const SkiaTypefaceCacheKey& key)
     {
@@ -162,13 +162,13 @@ public:
     // These methods are implemented by the platform.
     enum class PreferColoredFont : bool { No, Yes };
     RefPtr<Font> systemFallbackForCharacterCluster(const FontDescription&, const Font& originalFontData, IsForPlatformFont, PreferColoredFont, StringView);
-    Vector<String> systemFontFamilies();
+    Vector<RefPtr<StringImpl>> systemFontFamilies();
     void platformInit();
 
-    NODELETE static bool isSystemFontForbiddenForEditing(const String&);
+    NODELETE static bool isSystemFontForbiddenForEditing(StringImpl*);
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT static void setFontAllowlist(const Vector<String>&);
+    WEBCORE_EXPORT static void setFontAllowlist(const Vector<RefPtr<StringImpl>>&);
 #endif
 
 #if PLATFORM(WIN)
@@ -180,12 +180,12 @@ public:
 
     // This function exists so CSSFontSelector can have a unified notion of preinstalled fonts and @font-face.
     // It comes into play when you create an @font-face which shares a family name as a preinstalled font.
-    Vector<FontSelectionCapabilities> getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts);
+    Vector<FontSelectionCapabilities> getFontSelectionCapabilitiesInFamily(AtomStringImpl*, AllowUserInstalledFonts);
 
-    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const String&, const FontCreationContext& = { }, OptionSet<FontLookupOptions> = { });
+    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, StringImpl*, const FontCreationContext& = { }, OptionSet<FontLookupOptions> = { });
     WEBCORE_EXPORT Ref<Font> lastResortFallbackFont(const FontDescription&);
     WEBCORE_EXPORT Ref<Font> fontForPlatformData(const FontPlatformData&);
-    RefPtr<Font> similarFont(const FontDescription&, const String& family);
+    RefPtr<Font> similarFont(const FontDescription&, StringImpl* family);
 
     void addClient(FontSelector&);
     void removeClient(FontSelector&);
@@ -213,14 +213,14 @@ public:
     void updateFontCascade(const FontCascade&);
 
 #if PLATFORM(WIN)
-    RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, String& outFontFamilyName);
+    RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, RefPtr<StringImpl>& outFontFamilyName);
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> verticalData(const FontPlatformData&);
 #endif
 
-    std::unique_ptr<FontPlatformData> createFontPlatformDataForTesting(const FontDescription&, const AtomString& family);
+    std::unique_ptr<FontPlatformData> createFontPlatformDataForTesting(const FontDescription&, AtomStringImpl* family);
 
     using PrewarmInformation = FontCachePrewarmInformation;
 
@@ -237,7 +237,7 @@ public:
     SystemFontDatabase& systemFontDatabase() LIFETIME_BOUND { return m_systemFontDatabase; }
 #endif
 
-    bool useBackslashAsYenSignForFamily(const AtomString& family);
+    bool useBackslashAsYenSignForFamily(AtomStringImpl* family);
 
 #if USE(FREETYPE)
     static bool configurePatternForFontDescription(FcPattern*, const FontDescription&);
@@ -245,7 +245,7 @@ public:
 
 #if USE(SKIA)
     static Vector<hb_feature_t> computeFeatures(const FontDescription&, const FontCreationContext&);
-    sk_sp<SkTypeface> matchFamilyStyle(const AtomString&, const SkFontStyle&);
+    sk_sp<SkTypeface> matchFamilyStyle(AtomStringImpl*, const SkFontStyle&);
 
     WEBCORE_EXPORT SkFontMgr& fontManager() const;
     SkiaHarfBuzzFontCache& harfBuzzFontCache() LIFETIME_BOUND { return m_harfBuzzFontCache; }
@@ -259,16 +259,16 @@ private:
     void platformInvalidate();
     WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
 
-    FontPlatformData* cachedFontPlatformData(const FontDescription&, const String& family, const FontCreationContext& = { }, OptionSet<FontLookupOptions> = { });
+    FontPlatformData* cachedFontPlatformData(const FontDescription&, StringImpl* family, const FontCreationContext& = { }, OptionSet<FontLookupOptions> = { });
 
     // These functions are implemented by each platform (unclear which functions this comment applies to).
-    WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomString& family, const FontCreationContext&, OptionSet<FontLookupOptions>);
+    WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, AtomStringImpl* family, const FontCreationContext&, OptionSet<FontLookupOptions>);
 
-    static ASCIILiteral alternateFamilyName(const String&);
-    static ASCIILiteral platformAlternateFamilyName(const String&);
+    static ASCIILiteral alternateFamilyName(StringImpl*);
+    static ASCIILiteral platformAlternateFamilyName(StringImpl*);
 
 #if PLATFORM(MAC)
-    bool shouldAutoActivateFontIfNeeded(const AtomString& family);
+    bool shouldAutoActivateFontIfNeeded(AtomStringImpl* family);
 #endif
 
 #if PLATFORM(COCOA)
@@ -282,7 +282,7 @@ private:
     const UniqueRef<FontDataCaches> m_fontDataCaches;
     FontCascadeCache m_fontCascadeCache;
     SystemFallbackFontCache m_systemFallbackFontCache;
-    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> m_familiesUsingBackslashAsYenSign;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>> m_familiesUsingBackslashAsYenSign;
 
     unsigned short m_generation { 0 };
 
@@ -291,7 +291,7 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    HashSet<AtomString> m_knownFamilies;
+    HashSet<RefPtr<AtomStringImpl>> m_knownFamilies;
 #endif
 
 #if PLATFORM(COCOA)
@@ -301,8 +301,8 @@ private:
     using FallbackFontSet = HashSet<RetainPtr<CTFontRef>, WTF::RetainPtrObjectHash<CTFontRef>, WTF::RetainPtrObjectHashTraits<CTFontRef>>;
     FallbackFontSet m_fallbackFonts;
 
-    OrderedHashSet<String> m_seenFamiliesForPrewarming;
-    OrderedHashSet<String> m_fontNamesRequiringSystemFallbackForPrewarming;
+    OrderedHashSet<RefPtr<StringImpl>> m_seenFamiliesForPrewarming;
+    OrderedHashSet<RefPtr<StringImpl>> m_fontNamesRequiringSystemFallbackForPrewarming;
     const RefPtr<WorkQueue> m_prewarmQueue;
 
     FontFamilySpecificationCoreTextCache m_fontFamilySpecificationCoreTextCache;
@@ -337,7 +337,7 @@ private:
     friend class Font;
 };
 
-inline std::unique_ptr<FontPlatformData> FontCache::createFontPlatformDataForTesting(const FontDescription& fontDescription, const AtomString& family)
+inline std::unique_ptr<FontPlatformData> FontCache::createFontPlatformDataForTesting(const FontDescription& fontDescription, AtomStringImpl* family)
 {
     return createFontPlatformData(fontDescription, family, { }, FontLookupOptions::ExactFamilyNameMatch);
 }

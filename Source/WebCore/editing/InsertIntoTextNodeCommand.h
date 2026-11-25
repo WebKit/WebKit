@@ -33,15 +33,15 @@ class Text;
 
 class InsertIntoTextNodeCommand : public SimpleEditCommand {
 public:
-    static Ref<InsertIntoTextNodeCommand> create(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho = AllowPasswordEcho::Yes, EditAction editingAction = EditAction::Insert)
+    static Ref<InsertIntoTextNodeCommand> create(Ref<Text>&& node, unsigned offset, StringImpl* text, AllowPasswordEcho allowPasswordEcho = AllowPasswordEcho::Yes, EditAction editingAction = EditAction::Insert)
     {
         return adoptRef(*new InsertIntoTextNodeCommand(WTF::move(node), offset, text, allowPasswordEcho, editingAction));
     }
 
-    const String& insertedText() LIFETIME_BOUND;
+    const RefPtr<StringImpl>& insertedText() LIFETIME_BOUND;
 
 protected:
-    InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho, EditAction editingAction);
+    InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, StringImpl* text, AllowPasswordEcho, EditAction editingAction);
 
 private:
     void doApply() override;
@@ -56,11 +56,11 @@ private:
     
     const Ref<Text> m_node;
     unsigned m_offset;
-    String m_text;
+    RefPtr<StringImpl> m_text;
     AllowPasswordEcho m_allowPasswordEcho { AllowPasswordEcho::Yes };
 };
 
-inline const String& InsertIntoTextNodeCommand::insertedText()
+inline const RefPtr<StringImpl>& InsertIntoTextNodeCommand::insertedText()
 {
     return m_text;
 }

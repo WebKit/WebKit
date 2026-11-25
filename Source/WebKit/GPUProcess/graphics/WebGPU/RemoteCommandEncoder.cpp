@@ -99,7 +99,7 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
     objectHeap->addObject(identifier, computeRenderPassEncoder);
 }
 
-void RemoteCommandEncoder::beginInvalidRenderPass(String&& error, WebGPURenderPassEncoderIdentifier identifier)
+void RemoteCommandEncoder::beginInvalidRenderPass(RefPtr<StringImpl>&& error, WebGPURenderPassEncoderIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap;
     RefPtr renderPassEncoder = protect(m_backing)->beginInvalidRenderPass(WTF::move(error));
@@ -108,7 +108,7 @@ void RemoteCommandEncoder::beginInvalidRenderPass(String&& error, WebGPURenderPa
     objectHeap->addObject(identifier, remoteRenderPassEncoder);
 }
 
-void RemoteCommandEncoder::beginInvalidComputePass(String&& error, WebGPUComputePassEncoderIdentifier identifier)
+void RemoteCommandEncoder::beginInvalidComputePass(RefPtr<StringImpl>&& error, WebGPUComputePassEncoderIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap;
     RefPtr computePassEncoder = protect(m_backing)->beginInvalidComputePass(WTF::move(error));
@@ -196,7 +196,7 @@ void RemoteCommandEncoder::clearBuffer(
     protect(m_backing)->clearBuffer(protect(*convertedBuffer), offset, size);
 }
 
-void RemoteCommandEncoder::pushDebugGroup(String&& groupLabel)
+void RemoteCommandEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     protect(m_backing)->pushDebugGroup(WTF::move(groupLabel));
 }
@@ -206,7 +206,7 @@ void RemoteCommandEncoder::popDebugGroup()
     protect(m_backing)->popDebugGroup();
 }
 
-void RemoteCommandEncoder::insertDebugMarker(String&& markerLabel)
+void RemoteCommandEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     protect(m_backing)->insertDebugMarker(WTF::move(markerLabel));
 }
@@ -248,12 +248,12 @@ void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descrip
     objectHeap->addObject(identifier, remoteCommandBuffer);
 }
 
-void RemoteCommandEncoder::makeInvalid(String&& error)
+void RemoteCommandEncoder::makeInvalid(RefPtr<StringImpl>&& error)
 {
     protect(m_backing)->makeInvalid(WTF::move(error));
 }
 
-void RemoteCommandEncoder::setLabel(String&& label)
+void RemoteCommandEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

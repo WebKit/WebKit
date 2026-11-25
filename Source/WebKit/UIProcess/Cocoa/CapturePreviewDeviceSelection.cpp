@@ -35,16 +35,16 @@ namespace WebKit {
 static bool isSameList(const Vector<WebCore::CaptureDevice>& a, const Vector<WebCore::CaptureDevice>& b)
 {
     return std::ranges::equal(a, b, [](auto& deviceA, auto& deviceB) {
-        return deviceA.persistentId() == deviceB.persistentId() && deviceA.label() == deviceB.label();
+        return equal(deviceA.persistentId(), deviceB.persistentId()) && equal(deviceA.label(), deviceB.label());
     });
 }
 
-static size_t indexOfDevice(const Vector<WebCore::CaptureDevice>& devices, const String& deviceID)
+static size_t indexOfDevice(const Vector<WebCore::CaptureDevice>& devices, StringImpl* deviceID)
 {
-    if (deviceID.isEmpty())
+    if (isEmpty(deviceID))
         return 0;
     size_t index = devices.findIf([&deviceID](auto& device) {
-        return device.persistentId() == deviceID;
+        return equal(device.persistentId(), deviceID);
     });
     return index == notFound ? 0 : index;
 }
@@ -66,10 +66,10 @@ std::optional<WebCore::CaptureDevice> CapturePreviewDeviceSelection::selectedDev
     return devices[index];
 }
 
-String CapturePreviewDeviceSelection::selectedDeviceID(CapturePreviewDeviceType type) const
+RefPtr<StringImpl> CapturePreviewDeviceSelection::selectedDeviceID(CapturePreviewDeviceType type) const
 {
     auto device = selectedDevice(type);
-    return device ? device->persistentId() : String { };
+    return device ? device->persistentId() : nullptr;
 }
 
 void CapturePreviewDeviceSelection::select(CapturePreviewDeviceType type, size_t index)
@@ -93,8 +93,8 @@ bool CapturePreviewDeviceSelection::hasSameDevices(const Vector<WebCore::Capture
 
 bool CapturePreviewDeviceSelection::update(Vector<WebCore::CaptureDevice>&& videoDevices, Vector<WebCore::CaptureDevice>&& audioDevices)
 {
-    String previousVideoDeviceID = selectedDeviceID(CapturePreviewDeviceType::Camera);
-    String previousAudioDeviceID = selectedDeviceID(CapturePreviewDeviceType::Microphone);
+    RefPtr<StringImpl> previousVideoDeviceID = selectedDeviceID(CapturePreviewDeviceType::Camera);
+    RefPtr<StringImpl> previousAudioDeviceID = selectedDeviceID(CapturePreviewDeviceType::Microphone);
 
     m_videoDevices = WTF::move(videoDevices);
     m_audioDevices = WTF::move(audioDevices);
@@ -102,8 +102,8 @@ bool CapturePreviewDeviceSelection::update(Vector<WebCore::CaptureDevice>&& vide
     m_selectedVideoIndex = indexOfDevice(m_videoDevices, previousVideoDeviceID);
     m_selectedAudioIndex = indexOfDevice(m_audioDevices, previousAudioDeviceID);
 
-    return selectedDeviceID(CapturePreviewDeviceType::Camera) != previousVideoDeviceID
-        || selectedDeviceID(CapturePreviewDeviceType::Microphone) != previousAudioDeviceID;
+    return !equal(selectedDeviceID(CapturePreviewDeviceType::Camera), previousVideoDeviceID)
+        || !equal(selectedDeviceID(CapturePreviewDeviceType::Microphone), previousAudioDeviceID);
 }
 
 } // namespace WebKit

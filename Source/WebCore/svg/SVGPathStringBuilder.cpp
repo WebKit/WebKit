@@ -29,11 +29,11 @@ SVGPathStringBuilder::SVGPathStringBuilder() = default;
 
 SVGPathStringBuilder::~SVGPathStringBuilder() = default;
 
-String SVGPathStringBuilder::result()
+RefPtr<StringImpl> SVGPathStringBuilder::result()
 {
     unsigned size = m_stringBuilder.length();
     if (!size)
-        return String();
+        return nullptr;
 
     // Remove trailing space.
     m_stringBuilder.shrink(size - 1);

@@ -105,7 +105,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
     JSValue nextPrototype = globalObject->getPrototypeDirect();
     while (nextPrototype && nextPrototype.isObject()) {
         if (asObject(nextPrototype)->type() == ProxyObjectType) [[unlikely]]
-            return createTypeError(globalObject, "Proxy is not allowed in the global prototype chain."_s);
+            return createTypeError(globalObject, "Proxy is not allowed in the global prototype chain."_si);
         nextPrototype = asObject(nextPrototype)->getPrototypeDirect();
     }
     

@@ -31,50 +31,50 @@
 
 namespace WebCore {
 
-URLSearchParams::URLSearchParams(const String& init, DOMURL* associatedURL)
+URLSearchParams::URLSearchParams(StringImpl* init, DOMURL* associatedURL)
     : m_associatedURL(associatedURL)
-    , m_pairs(init.startsWith('?') ? WTF::URLParser::parseURLEncodedForm(StringView(init).substring(1)) : WTF::URLParser::parseURLEncodedForm(init))
+    , m_pairs(startsWith(init, '?') ? WTF::URLParser::parseURLEncodedForm(StringView(init).substring(1)) : WTF::URLParser::parseURLEncodedForm(init))
 {
 }
 
-URLSearchParams::URLSearchParams(const Vector<KeyValuePair<String, String>>& pairs)
+URLSearchParams::URLSearchParams(const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& pairs)
     : m_pairs(pairs)
 {
 }
 
 URLSearchParams::~URLSearchParams() = default;
 
-ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(Variant<Vector<Vector<String>>, Vector<KeyValuePair<String, String>>, String>&& variant)
+ExceptionOr<Ref<URLSearchParams>> URLSearchParams::create(Variant<Vector<Vector<RefPtr<StringImpl>>>, Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>, RefPtr<StringImpl>>&& variant)
 {
-    auto visitor = WTF::makeVisitor([&](const Vector<Vector<String>>& vector) -> ExceptionOr<Ref<URLSearchParams>> {
-        Vector<KeyValuePair<String, String>> pairs;
+    auto visitor = WTF::makeVisitor([&](const Vector<Vector<RefPtr<StringImpl>>>& vector) -> ExceptionOr<Ref<URLSearchParams>> {
+        Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> pairs;
         for (const auto& pair : vector) {
             if (pair.size() != 2)
                 return Exception { ExceptionCode::TypeError };
             pairs.append({pair[0], pair[1]});
         }
         return adoptRef(*new URLSearchParams(WTF::move(pairs)));
-    }, [&](const Vector<KeyValuePair<String, String>>& pairs) -> ExceptionOr<Ref<URLSearchParams>> {
+    }, [&](const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& pairs) -> ExceptionOr<Ref<URLSearchParams>> {
         return adoptRef(*new URLSearchParams(pairs));
-    }, [&](const String& string) -> ExceptionOr<Ref<URLSearchParams>> {
+    }, [&](StringImpl* string) -> ExceptionOr<Ref<URLSearchParams>> {
         return adoptRef(*new URLSearchParams(string, nullptr));
     });
     return WTF::visit(visitor, variant);
 }
 
-String URLSearchParams::get(const String& name) const
+RefPtr<StringImpl> URLSearchParams::get(StringImpl* name) const
 {
     for (const auto& pair : m_pairs) {
-        if (pair.key == name)
+        if (equal(pair.key, name))
             return pair.value;
     }
-    return String();
+    return nullptr;
 }
 
-bool URLSearchParams::has(const String& name, const String& value) const
+bool URLSearchParams::has(StringImpl* name, StringImpl* value) const
 {
     for (const auto& pair : m_pairs) {
-        if (pair.key == name && (value.isNull() || pair.value == value))
+        if (equal(pair.key, name) && (!value || equal(pair.value, value)))
             return true;
     }
     return false;
@@ -86,16 +86,16 @@ void URLSearchParams::sort()
     updateURL();
 }
 
-void URLSearchParams::set(const String& name, const String& value)
+void URLSearchParams::set(StringImpl* name, StringImpl* value)
 {
     for (auto& pair : m_pairs) {
-        if (pair.key != name)
+        if (!equal(pair.key, name))
             continue;
-        if (pair.value != value)
+        if (!equal(pair.value, value))
             pair.value = value;
         bool skippedFirstMatch = false;
         m_pairs.removeAllMatching([&] (const auto& pair) {
-            if (pair.key == name) {
+            if (equal(pair.key, name)) {
                 if (skippedFirstMatch)
                     return true;
                 skippedFirstMatch = true;
@@ -109,30 +109,30 @@ void URLSearchParams::set(const String& name, const String& value)
     updateURL();
 }
 
-void URLSearchParams::append(const String& name, const String& value)
+void URLSearchParams::append(StringImpl* name, StringImpl* value)
 {
     m_pairs.append({name, value});
     updateURL();
 }
 
-Vector<String> URLSearchParams::getAll(const String& name) const
+Vector<RefPtr<StringImpl>> URLSearchParams::getAll(StringImpl* name) const
 {
-    return WTF::compactMap(m_pairs, [&](auto& pair) -> std::optional<String> {
-        if (pair.key == name)
+    return WTF::compactMap(m_pairs, [&](auto& pair) -> std::optional<RefPtr<StringImpl>> {
+        if (equal(pair.key, name))
             return pair.value;
         return std::nullopt;
     });
 }
 
-void URLSearchParams::remove(const String& name, const String& value)
+void URLSearchParams::remove(StringImpl* name, StringImpl* value)
 {
     m_pairs.removeAllMatching([&] (const auto& pair) {
-        return pair.key == name && (value.isNull() || pair.value == value);
+        return equal(pair.key, name) && (!value || equal(pair.value, value));
     });
     updateURL();
 }
 
-String URLSearchParams::toString() const
+RefPtr<StringImpl> URLSearchParams::toString() const
 {
     return WTF::URLParser::serialize(m_pairs);
 }
@@ -146,18 +146,18 @@ void URLSearchParams::updateURL()
 void URLSearchParams::updateFromAssociatedURL()
 {
     ASSERT(m_associatedURL);
-    String search = m_associatedURL->search();
-    m_pairs = search.startsWith('?') ? WTF::URLParser::parseURLEncodedForm(StringView(search).substring(1)) : WTF::URLParser::parseURLEncodedForm(search);
+    RefPtr<StringImpl> search = m_associatedURL->search();
+    m_pairs = startsWith(search, '?') ? WTF::URLParser::parseURLEncodedForm(StringView(search).substring(1)) : WTF::URLParser::parseURLEncodedForm(search);
 }
 
-std::optional<KeyValuePair<String, String>> URLSearchParams::Iterator::next()
+std::optional<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> URLSearchParams::Iterator::next()
 {
     auto& pairs = m_target->pairs();
     if (m_index >= pairs.size())
         return std::nullopt;
 
     auto& pair = pairs[m_index++];
-    return KeyValuePair<String, String> { pair.key, pair.value };
+    return KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>> { pair.key, pair.value };
 }
 
 URLSearchParams::Iterator::Iterator(URLSearchParams& params)

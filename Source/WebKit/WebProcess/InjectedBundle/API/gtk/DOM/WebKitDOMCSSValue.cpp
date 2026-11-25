@@ -180,7 +180,7 @@ void webkit_dom_css_value_set_css_text(WebKitDOMCSSValue* self, const gchar* val
     g_return_if_fail(value);
     g_return_if_fail(!error || !*error);
     WebCore::DeprecatedCSSOMValue* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     auto result = item->setCssText(convertedValue);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());

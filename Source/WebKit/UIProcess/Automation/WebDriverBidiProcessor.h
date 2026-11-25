@@ -54,15 +54,15 @@ class WebDriverBidiProcessor final : public Inspector::FrontendChannel {
     WTF_MAKE_TZONE_ALLOCATED(WebDriverBidiProcessor);
 public:
     struct RemoteReference {
-        String sharedId;
-        String handle;
+        RefPtr<StringImpl> sharedId;
+        RefPtr<StringImpl> handle;
     };
 
     explicit WebDriverBidiProcessor(WebAutomationSession&);
     ~WebDriverBidiProcessor() override;
 
-    void processBidiMessage(const String&);
-    void sendBidiMessage(const String&);
+    void processBidiMessage(StringImpl*);
+    void sendBidiMessage(StringImpl*);
 
     BidiBrowserAgent& browserAgent() const LIFETIME_BOUND { return m_browserAgent; }
     BidiDigitalCredentialsAgent& digitalCredentialsAgent() const LIFETIME_BOUND { return m_digitalCredentialsAgent; }
@@ -73,7 +73,7 @@ public:
     // Inspector::FrontendChannel methods. Domain events sent via WebDriverBidi domain notifiers are packaged up
     // by FrontendRouter and are then sent back out-of-process via WebAutomationSession::sendBidiMessage().
     Inspector::FrontendChannel::ConnectionType connectionType() const override { return Inspector::FrontendChannel::ConnectionType::Local; };
-    void sendMessageToFrontend(const String&) override;
+    void sendMessageToFrontend(StringImpl*) override;
 
     // Event entry points called from the owning WebAutomationSession.
     Inspector::BidiBrowsingContextFrontendDispatcher& browsingContextDomainNotifier() const LIFETIME_BOUND { return m_browsingContextDomainNotifier; }
@@ -81,8 +81,8 @@ public:
     Inspector::BidiLogFrontendDispatcher& logDomainNotifier() const LIFETIME_BOUND { return m_logDomainNotifier; }
     Inspector::BidiScriptFrontendDispatcher& scriptDomainNotifier() const LIFETIME_BOUND { return m_scriptDomainNotifier; }
 
-    bool eventIsEnabled(const String& eventName, const HashSet<String>& contexts);
-    void emitEventIfEnabled(const String& eventName, const HashSet<String>& browsingContexts, NOESCAPE const Function<void()>&);
+    bool eventIsEnabled(StringImpl* eventName, const HashSet<RefPtr<StringImpl>>& contexts);
+    void emitEventIfEnabled(StringImpl* eventName, const HashSet<RefPtr<StringImpl>>& browsingContexts, NOESCAPE const Function<void()>&);
 
     // Shared parsing and validation helpers for the BiDi protocol.
     static std::optional<double> integerValue(const JSON::Value&, double minimum, double maximum);

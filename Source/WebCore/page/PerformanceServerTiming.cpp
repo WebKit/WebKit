@@ -29,12 +29,12 @@
 
 namespace WebCore {
 
-Ref<PerformanceServerTiming> PerformanceServerTiming::create(String&& name, double duration, String&& description)
+Ref<PerformanceServerTiming> PerformanceServerTiming::create(RefPtr<StringImpl>&& name, double duration, RefPtr<StringImpl>&& description)
 {
     return adoptRef(*new PerformanceServerTiming(WTF::move(name), duration, WTF::move(description)));
 }
 
-PerformanceServerTiming::PerformanceServerTiming(String&& name, double duration, String&& description)
+PerformanceServerTiming::PerformanceServerTiming(RefPtr<StringImpl>&& name, double duration, RefPtr<StringImpl>&& description)
     : m_name(WTF::move(name))
     , m_duration(duration)
     , m_description(WTF::move(description))

@@ -70,15 +70,15 @@ void WebCookieManager::deref() const
     m_process->deref();
 }
 
-void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
-    HashSet<String> hostnames;
+    HashSet<RefPtr<StringImpl>> hostnames;
     if (CheckedPtr storageSession = m_process->storageSession(sessionID))
         storageSession->getHostnamesWithCookies(hostnames);
     completionHandler(copyToVector(hostnames));
 }
 
-void WebCookieManager::deleteCookiesForHostnames(PAL::SessionID sessionID, const Vector<String>& hostnames, CompletionHandler<void()>&& completionHandler)
+void WebCookieManager::deleteCookiesForHostnames(PAL::SessionID sessionID, const Vector<RefPtr<StringImpl>>& hostnames, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr storageSession = m_process->storageSession(sessionID))
         storageSession->deleteCookiesForHostnames(borrow(hostnames)->span(), WTF::move(completionHandler));

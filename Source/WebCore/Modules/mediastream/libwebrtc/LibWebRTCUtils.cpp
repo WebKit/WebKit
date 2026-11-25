@@ -120,7 +120,7 @@ NODELETE static inline RTCPriorityType fromWebRTCBitRatePriority(double priority
     return RTCPriorityType::High;
 }
 
-static String toFMTPLine(const webrtc::RtpCodec rtcCodec)
+static RefPtr<StringImpl> toFMTPLine(const webrtc::RtpCodec rtcCodec)
 {
     if (rtcCodec.parameters.empty())
         return { };
@@ -182,7 +182,7 @@ static inline RTCRtpEncodingParameters toRTCEncodingParameters(const webrtc::Rtp
 static inline webrtc::RtpCodec fromRTCRtpCodec(const RTCRtpCodec& codec, webrtc::MediaType type)
 {
     // FIXME: We should throw an OperationError exception.
-    if (codec.mimeType.length() < 7)
+    if (length(codec.mimeType) < 7)
         return { };
 
     webrtc::RtpCodec rtcCodec;
@@ -218,11 +218,11 @@ static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCR
         rtcParameters.max_bitrate_bps = parameters.maxBitrate;
     if (parameters.maxFramerate)
         rtcParameters.max_framerate = parameters.maxFramerate;
-    rtcParameters.rid = parameters.rid.utf8().toStdString();
+    rtcParameters.rid = utf8(parameters.rid).toStdString();
     if (parameters.scaleResolutionDownBy)
         rtcParameters.scale_resolution_down_by = parameters.scaleResolutionDownBy;
-    if (!parameters.scalabilityMode.isNull())
-        rtcParameters.scalability_mode = parameters.scalabilityMode.utf8().toStdString();
+    if (parameters.scalabilityMode)
+        rtcParameters.scalability_mode = utf8(parameters.scalabilityMode).toStdString();
 
     rtcParameters.bitrate_priority = toWebRTCBitRatePriority(parameters.priority);
     if (parameters.networkPriority)
@@ -245,7 +245,7 @@ static inline webrtc::RtpExtension fromRTCHeaderExtensionParameters(const RTCRtp
 {
     webrtc::RtpExtension rtcParameters;
 
-    rtcParameters.uri = parameters.uri.utf8().toStdString();
+    rtcParameters.uri = utf8(parameters.uri).toStdString();
     rtcParameters.id = webrtc::RtpHeaderExtensionId { parameters.id };
     rtcParameters.encrypt = parameters.encrypted;
 
@@ -303,7 +303,7 @@ RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcPara
 
 void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::RtpParameters& rtcParameters, webrtc::MediaType mediaType)
 {
-    rtcParameters.transaction_id = parameters.transactionId.utf8().toStdString();
+    rtcParameters.transaction_id = utf8(parameters.transactionId).toStdString();
 
     if (parameters.encodings.size() != rtcParameters.encodings.size()) {
         // If encodings size is different, setting parameters will fail. Let's make it so.
@@ -358,8 +358,8 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
 
     if (parameters.rtcp.reducedSize)
         rtcParameters.rtcp.reduced_size = *parameters.rtcp.reducedSize;
-    if (!parameters.rtcp.cname.isNull())
-        rtcParameters.rtcp.cname = parameters.rtcp.cname.utf8().toStdString();
+    if (parameters.rtcp.cname)
+        rtcParameters.rtcp.cname = utf8(parameters.rtcp.cname).toStdString();
 }
 
 RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection rtcDirection)
@@ -403,7 +403,7 @@ webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& i
     webrtc::RtpTransceiverInit rtcInit;
     rtcInit.direction = fromRTCRtpTransceiverDirection(init.direction);
     for (auto& stream : borrow(init.streams))
-        rtcInit.stream_ids.push_back(stream->id().utf8().toStdString());
+        rtcInit.stream_ids.push_back(utf8(stream->id()).toStdString());
 
     if (type == webrtc::MediaType::AUDIO) {
         if (!init.sendEncodings.isEmpty())
@@ -439,7 +439,7 @@ Exception toException(const webrtc::RTCError& error)
 {
     ASSERT(!error.ok());
 
-    return Exception { toExceptionCode(error.type()), String::fromLatin1(error.message()) };
+    return Exception { toExceptionCode(error.type()), StringImpl::fromLatin1(error.message()) };
 }
 
 NODELETE static inline RTCIceComponent toRTCIceComponent(int component)
@@ -534,7 +534,7 @@ RefPtr<RTCError> toRTCError(const webrtc::RTCError& rtcError)
     auto detail = toRTCErrorDetailType(rtcError.error_detail());
     if (!detail)
         return nullptr;
-    return RTCError::create(*detail, String::fromLatin1(rtcError.message()));
+    return RTCError::create(*detail, StringImpl::fromLatin1(rtcError.message()));
 }
 
 webrtc::VideoTrackInterface::ContentHint toWebRTCContentHint(MediaStreamTrackHintValue value)

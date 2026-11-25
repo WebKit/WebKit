@@ -34,23 +34,23 @@ namespace RFC8941 {
 
 class Token {
 public:
-    explicit Token(String&& token) : m_token(WTF::move(token)) { }
-    const String& string() const LIFETIME_BOUND { return m_token; }
+    explicit Token(RefPtr<StringImpl>&& token) : m_token(WTF::move(token)) { }
+    const RefPtr<StringImpl>& string() const LIFETIME_BOUND { return m_token; }
 private:
-    String m_token;
+    RefPtr<StringImpl> m_token;
 };
 
-using BareItem = Variant<int64_t, double, String, Token, Vector<uint8_t>, bool>;
+using BareItem = Variant<int64_t, double, RefPtr<StringImpl>, Token, Vector<uint8_t>, bool>;
 
 class Parameters {
 public:
     Parameters() = default;
-    explicit Parameters(HashMap<String, BareItem>&& parameters)
+    explicit Parameters(HashMap<RefPtr<StringImpl>, BareItem>&& parameters)
         : m_parameters(WTF::move(parameters)) { }
-    const HashMap<String, BareItem>& map() const LIFETIME_BOUND { return m_parameters; }
+    const HashMap<RefPtr<StringImpl>, BareItem>& map() const LIFETIME_BOUND { return m_parameters; }
     template<typename T> const T* getIf(ASCIILiteral key) const;
 private:
-    HashMap<String, BareItem> m_parameters;
+    HashMap<RefPtr<StringImpl>, BareItem> m_parameters;
 };
 
 template<typename T> const T* Parameters::getIf(ASCIILiteral key) const
@@ -66,8 +66,8 @@ using ItemOrInnerList = Variant<BareItem, InnerList>;
 
 WEBCORE_EXPORT std::optional<std::pair<BareItem, Parameters>> parseItemStructuredFieldValue(StringView header);
 WEBCORE_EXPORT std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> parseListStructuredFieldValue(StringView header);
-WEBCORE_EXPORT std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header);
-WEBCORE_EXPORT std::optional<String> escapeString(StringView);
+WEBCORE_EXPORT std::optional<HashMap<RefPtr<StringImpl>, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header);
+WEBCORE_EXPORT std::optional<RefPtr<StringImpl>> escapeString(StringView);
 
 } // namespace RFC8941
 

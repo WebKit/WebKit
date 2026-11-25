@@ -36,11 +36,11 @@ namespace TestWebKitAPI {
 
 using WebCore::areValidWebTransportHeaders;
 
-static Vector<KeyValuePair<String, String>> makeHeaders(std::initializer_list<std::pair<ASCIILiteral, ASCIILiteral>> pairs)
+static Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> makeHeaders(std::initializer_list<std::pair<ASCIILiteral, ASCIILiteral>> pairs)
 {
-    Vector<KeyValuePair<String, String>> headers(ReserveCapacityTag { }, pairs.size());
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> headers(ReserveCapacityTag { }, pairs.size());
     for (auto& pair : pairs)
-        headers.constructAndAppend(String(pair.first), String(pair.second));
+        headers.constructAndAppend(StringImpl::create(pair.first), StringImpl::create(pair.second));
     return headers;
 }
 
@@ -77,7 +77,7 @@ TEST(WebTransportHeaderValidation, AcceptsHighByteValues)
     StringBuilder builder;
     for (unsigned i = 0x80; i <= 0xFF; ++i)
         builder.append(static_cast<char16_t>(i));
-    Vector<KeyValuePair<String, String>> headers;
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> headers;
     headers.constructAndAppend("x-bytes"_s, builder.toString());
     EXPECT_TRUE(areValidWebTransportHeaders(headers));
 }

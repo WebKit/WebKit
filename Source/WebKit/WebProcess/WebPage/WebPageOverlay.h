@@ -72,9 +72,9 @@ public:
 
         virtual bool isPageOverlayClientImpl() const { return false; }
 
-        virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& /* value */) { return false; }
-        virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& /* value */) { return false; }
-        virtual Vector<String> copyAccessibilityAttributeNames(WebPageOverlay&, bool /* parameterizedNames */) { return Vector<String>(); }
+        virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay&, RefPtr<StringImpl> /* attribute */, WebCore::FloatPoint /* parameter */, RefPtr<StringImpl>& /* value */) { return false; }
+        virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay&, RefPtr<StringImpl> /* attribute */, WebCore::FloatPoint /* parameter */, bool& /* value */) { return false; }
+        virtual Vector<RefPtr<StringImpl>> copyAccessibilityAttributeNames(WebPageOverlay&, bool /* parameterizedNames */) { return Vector<RefPtr<StringImpl>>(); }
     };
 
     static Ref<WebPageOverlay> create(std::unique_ptr<Client>, WebCore::PageOverlay::OverlayType = WebCore::PageOverlay::OverlayType::View);
@@ -110,9 +110,9 @@ private:
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
     void didScrollFrame(WebCore::PageOverlay&, WebCore::LocalFrame&) override;
 
-    bool copyAccessibilityAttributeStringValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& value) override;
-    bool copyAccessibilityAttributeBoolValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) override;
-    Vector<String> copyAccessibilityAttributeNames(WebCore::PageOverlay&, bool /* parameterizedNames */) override;
+    bool copyAccessibilityAttributeStringValueForPoint(WebCore::PageOverlay&, RefPtr<StringImpl> /* attribute */, WebCore::FloatPoint /* parameter */, RefPtr<StringImpl>& value) override;
+    bool copyAccessibilityAttributeBoolValueForPoint(WebCore::PageOverlay&, RefPtr<StringImpl> /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) override;
+    Vector<RefPtr<StringImpl>> copyAccessibilityAttributeNames(WebCore::PageOverlay&, bool /* parameterizedNames */) override;
 
     RefPtr<WebCore::PageOverlay> m_overlay;
     const std::unique_ptr<Client> m_client;

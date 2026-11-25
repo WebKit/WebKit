@@ -41,7 +41,7 @@ class StorageAreaImpl;
 class StorageNamespaceImpl final : public WebCore::StorageNamespace, public CanMakeWeakPtr<StorageNamespaceImpl> {
 public:
     static Ref<StorageNamespaceImpl> createSessionStorageNamespace(unsigned quota, PAL::SessionID);
-    static Ref<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota, PAL::SessionID);
+    static Ref<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(StringImpl* databasePath, unsigned quota, PAL::SessionID);
     virtual ~StorageNamespaceImpl();
 
     void close();
@@ -60,7 +60,7 @@ public:
     const WebCore::SecurityOrigin* topLevelOrigin() const final { return nullptr; };
 
 private:
-    StorageNamespaceImpl(WebCore::StorageType, const String& path, unsigned quota, PAL::SessionID);
+    StorageNamespaceImpl(WebCore::StorageType, StringImpl* path, unsigned quota, PAL::SessionID);
 
     Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOrigin&) final;
     Ref<StorageNamespace> copy(WebCore::Page& newPage) final;
@@ -71,7 +71,7 @@ private:
     WebCore::StorageType m_storageType;
 
     // Only used if m_storageType == LocalStorage and the path was not "" in our constructor.
-    String m_path;
+    RefPtr<StringImpl> m_path;
     const RefPtr<WebCore::StorageSyncManager> m_syncManager;
 
     // The default quota for each new storage area.

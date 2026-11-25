@@ -44,27 +44,27 @@ static RetainPtr<NSPasteboard> findPasteboard()
 
 #else
 
-static String& globalStringForFind()
+static RefPtr<StringImpl>& globalStringForFind()
 {
-    static NeverDestroyed<String> string;
+    static NeverDestroyed<RefPtr<StringImpl>> string;
     return string.get();
 }
 
 #endif
 
-void updateStringForFind(const String& string)
+void updateStringForFind(StringImpl* string)
 {
 #if PLATFORM(MAC)
-    [findPasteboard() setString:string.createNSString().get() forType:WebCore::legacyStringPasteboardTypeSingleton()];
+    [findPasteboard() setString:createNSString(string).get() forType:WebCore::legacyStringPasteboardTypeSingleton()];
 #else
     globalStringForFind() = string;
 #endif
 }
 
-String stringForFind()
+RefPtr<StringImpl> stringForFind()
 {
 #if PLATFORM(MAC)
-    return [findPasteboard() stringForType:WebCore::legacyStringPasteboardTypeSingleton()];
+    return StringImpl::create([findPasteboard() stringForType:WebCore::legacyStringPasteboardTypeSingleton()]);
 #else
     return globalStringForFind();
 #endif

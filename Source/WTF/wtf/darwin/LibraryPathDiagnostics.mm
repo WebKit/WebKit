@@ -63,11 +63,11 @@ static char const * const loggingCategory = "LibraryPathDiagnostics";
 static char const * const libraryListEnvironmentVariableName = "LIBRARY_PATH_DIAGNOSTICS_LIBRARIES";
 static char const * const bundleListEnvironmentVariableName = "LIBRARY_PATH_DIAGNOSTICS_BUNDLES";
 
-static String uuidToString(const uuid_t& uuid)
+static RefPtr<StringImpl> uuidToString(const uuid_t& uuid)
 {
     uuid_string_t uuid_string = { };
     uuid_unparse(uuid, uuid_string);
-    return String::fromUTF8(uuid_string);
+    return StringImpl::fromUTF8(uuid_string);
 }
 
 class LibraryPathDiagnosticsLogger final {
@@ -76,18 +76,18 @@ public:
     void log(void);
 private:
     void logJSONPayload(const JSON::Object&);
-    void logString(std::span<const String> path, const String&);
-    void logObject(std::span<const String> path, Ref<JSON::Object>&&);
+    void logString(std::span<const RefPtr<StringImpl>> path, StringImpl*);
+    void logObject(std::span<const RefPtr<StringImpl>> path, Ref<JSON::Object>&&);
     void logError(const char*, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
 
     void logExecutablePath(void);
     void logDYLDSharedCacheInfo(void);
-    void logDynamicLibraryInfo(const String&);
+    void logDynamicLibraryInfo(StringImpl*);
     void logDynamicLibraryInfo(void);
-    void logBundleInfo(const String&);
+    void logBundleInfo(StringImpl*);
     void logBundleInfo(void);
 #if HAVE(CHIRP_SPI)
-    void logCryptexCanaryInfo(canary_cryptex_t, const String&);
+    void logCryptexCanaryInfo(canary_cryptex_t, StringImpl*);
     void logCryptexCanaryInfo(void);
 #endif
 
@@ -102,12 +102,12 @@ LibraryPathDiagnosticsLogger::LibraryPathDiagnosticsLogger()
 void LibraryPathDiagnosticsLogger::logJSONPayload(const JSON::Object &object)
 {
     auto textRepresentation = object.toJSONString();
-    auto utf8 = textRepresentation.utf8();
+    auto utf8 = WTF::utf8(textRepresentation);
     auto span = byteCast<char>(utf8.span());
     os_log(m_osLog, "%{public}.*s", static_cast<int>(span.size()), span.data());
 }
 
-void LibraryPathDiagnosticsLogger::logString(std::span<const String> path, const String& string)
+void LibraryPathDiagnosticsLogger::logString(std::span<const RefPtr<StringImpl>> path, StringImpl* string)
 {
     auto payload = JSON::Object::create();
     auto iter = path.rbegin();
@@ -121,7 +121,7 @@ void LibraryPathDiagnosticsLogger::logString(std::span<const String> path, const
     logJSONPayload(payload);
 }
 
-void LibraryPathDiagnosticsLogger::logObject(std::span<const String> path, Ref<JSON::Object>&& object)
+void LibraryPathDiagnosticsLogger::logObject(std::span<const RefPtr<StringImpl>> path, Ref<JSON::Object>&& object)
 {
     auto payload = JSON::Object::create();
     auto iter = path.rbegin();
@@ -150,7 +150,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void LibraryPathDiagnosticsLogger::logExecutablePath(void)
 {
-    logString(std::initializer_list<String> { "Path"_s }, FileSystem::realPath(String::fromUTF8(_CFProcessPath())));
+    logString(std::initializer_list<RefPtr<StringImpl>> { "Path"_si }, FileSystem::realPath(StringImpl::fromUTF8(_CFProcessPath())));
 }
 
 void LibraryPathDiagnosticsLogger::logDYLDSharedCacheInfo(void)
@@ -159,10 +159,10 @@ void LibraryPathDiagnosticsLogger::logDYLDSharedCacheInfo(void)
     _dyld_get_shared_cache_uuid(uuid);
 
     auto sharedCacheInfo = JSON::Object::create();
-    sharedCacheInfo->setString("Path"_s, FileSystem::realPath(String::fromUTF8(dyld_shared_cache_file_path())));
-    sharedCacheInfo->setString("UUID"_s, uuidToString(uuid));
+    sharedCacheInfo->setString("Path"_si, FileSystem::realPath(StringImpl::fromUTF8(dyld_shared_cache_file_path())));
+    sharedCacheInfo->setString("UUID"_si, uuidToString(uuid));
 
-    logObject(std::initializer_list<String> { "SharedCache"_s }, WTF::move(sharedCacheInfo));
+    logObject(std::initializer_list<RefPtr<StringImpl>> { "SharedCache"_si }, WTF::move(sharedCacheInfo));
 }
 
 #if HAVE(SHARED_REGION_SPI)
@@ -172,15 +172,15 @@ NODELETE static bool isAddressInSharedRegion(const void* addr)
 }
 #endif // HAVE(SHARED_REGION_SPI)
 
-void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installName)
+void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(StringImpl* installName)
 {
-    void *handle = posixDlopen(installName.utf8(), RTLD_NOLOAD);
+    void *handle = posixDlopen(WTF::utf8(installName), RTLD_NOLOAD);
     if (!handle)
         return;
 
     const struct mach_header *header = _dyld_get_dlopen_image_header(handle);
     if (!header) {
-        auto utf8 = installName.utf8();
+        auto utf8 = WTF::utf8(installName);
         auto span = byteCast<char>(utf8.span());
         logError("Unable to locate mach header for %.*s", static_cast<int>(span.size()), span.data());
         return;
@@ -189,7 +189,7 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
     Dl_info info = { };
     int dladdr_ret = dladdr(header, &info);
     if (!dladdr_ret) {
-        auto utf8 = installName.utf8();
+        auto utf8 = WTF::utf8(installName);
         auto span = byteCast<char>(utf8.span());
         logError("No info returned from dladdr() for %.*s", static_cast<int>(span.size()), span.data());
         return;
@@ -197,7 +197,7 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
 
     uuid_t uuid = { 0 };
     if (!_dyld_get_image_uuid(header, uuid)) {
-        auto utf8 = installName.utf8();
+        auto utf8 = WTF::utf8(installName);
         auto span = byteCast<char>(utf8.span());
         logError("No UUID found for %.*s", static_cast<int>(span.size()), span.data());
         return;
@@ -205,14 +205,14 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
 
     auto libraryObject = JSON::Object::create();
 
-    libraryObject->setString("Path"_s, FileSystem::realPath(String::fromUTF8(info.dli_fname)));
-    libraryObject->setString("UUID"_s, uuidToString(uuid));
+    libraryObject->setString("Path"_si, FileSystem::realPath(StringImpl::fromUTF8(info.dli_fname)));
+    libraryObject->setString("UUID"_si, uuidToString(uuid));
 
 #if HAVE(SHARED_REGION_SPI)
-    libraryObject->setBoolean("InSharedCache"_s, isAddressInSharedRegion(header));
+    libraryObject->setBoolean("InSharedCache"_si, isAddressInSharedRegion(header));
 #endif
 
-    logObject(std::initializer_list<String> { "Libraries"_s, installName }, WTF::move(libraryObject));
+    logObject(std::initializer_list<RefPtr<StringImpl>> { "Libraries"_si, installName }, WTF::move(libraryObject));
 }
 
 void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(void)
@@ -221,14 +221,14 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(void)
     if (!libraryNames)
         return;
 
-    auto libraries = String::fromUTF8(libraryNames).split(',');
+    auto libraries = split(StringImpl::fromUTF8(libraryNames), ',');
     for (const auto& installName : libraries)
         logDynamicLibraryInfo(installName);
 }
 
-void LibraryPathDiagnosticsLogger::logBundleInfo(const String& bundleIdentifier)
+void LibraryPathDiagnosticsLogger::logBundleInfo(StringImpl* bundleIdentifier)
 {
-    RetainPtr bundle = CFBundleGetBundleWithIdentifier(bundleIdentifier.createCFString().get());
+    RetainPtr bundle = CFBundleGetBundleWithIdentifier(createCFString(bundleIdentifier).get());
     if (!bundle)
         return;
 
@@ -236,14 +236,14 @@ void LibraryPathDiagnosticsLogger::logBundleInfo(const String& bundleIdentifier)
 
     auto bundleCFURL = adoptCF(CFBundleCopyBundleURL(bundle.get()));
     auto bundleURL = URL(bundleCFURL.get());
-    bundleInfo->setString("Path"_s, FileSystem::realPath(bundleURL.fileSystemPath()));
+    bundleInfo->setString("Path"_si, FileSystem::realPath(bundleURL.fileSystemPath()));
 
     if (RetainPtr version = dynamic_cf_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle.get(), kCFBundleVersionKey)))
-        bundleInfo->setString("Version"_s, String(version.get()));
+        bundleInfo->setString("Version"_si, StringImpl::create(version.get()));
     else
-        bundleInfo->setValue("Version"_s, JSON::Value::null());
+        bundleInfo->setValue("Version"_si, JSON::Value::null());
 
-    logObject(std::initializer_list<String> { "Bundles"_s, bundleIdentifier }, WTF::move(bundleInfo));
+    logObject(std::initializer_list<RefPtr<StringImpl>> { "Bundles"_si, bundleIdentifier }, WTF::move(bundleInfo));
 }
 
 void LibraryPathDiagnosticsLogger::logBundleInfo(void)
@@ -252,28 +252,28 @@ void LibraryPathDiagnosticsLogger::logBundleInfo(void)
     if (!bundleIdentifiers)
         return;
 
-    auto bundles = String::fromUTF8(bundleIdentifiers).split(',');
+    auto bundles = split(StringImpl::fromUTF8(bundleIdentifiers), ',');
     for (const auto& bundleIdentifier : bundles)
         logBundleInfo(bundleIdentifier);
 }
 
 #if HAVE(CHIRP_SPI)
-void LibraryPathDiagnosticsLogger::logCryptexCanaryInfo(canary_cryptex_t which, const String& description)
+void LibraryPathDiagnosticsLogger::logCryptexCanaryInfo(canary_cryptex_t which, StringImpl* description)
 {
     const canary_meta_t *metadata = canary_metadata(which);
 
     if (!metadata) {
-        auto utf8 = description.utf8();
+        auto utf8 = WTF::utf8(description);
         auto span = byteCast<char>(utf8.span());
         logError("Unable to load canary metadata for '%.*s' cryptex", static_cast<int>(span.size()), span.data());
         return;
     }
 
     auto cryptex = JSON::Object::create();
-    cryptex->setString("Version"_s, String::fromUTF8(metadata->cm_get_version()));
-    cryptex->setString("Variant"_s, String::fromUTF8(metadata->cm_get_variant()));
+    cryptex->setString("Version"_si, StringImpl::fromUTF8(metadata->cm_get_version()));
+    cryptex->setString("Variant"_si, StringImpl::fromUTF8(metadata->cm_get_variant()));
 
-    logObject(std::initializer_list<String> { "Canary"_s, description }, WTF::move(cryptex));
+    logObject(std::initializer_list<RefPtr<StringImpl>> { "Canary"_si, description }, WTF::move(cryptex));
 }
 
 void LibraryPathDiagnosticsLogger::logCryptexCanaryInfo(void)
@@ -281,8 +281,8 @@ void LibraryPathDiagnosticsLogger::logCryptexCanaryInfo(void)
     if (_CANARY_CRYPTEX_CNT != (2))
         logError("Unexpected cryptex count reported by chirp: %llu", _CANARY_CRYPTEX_CNT);
 
-    logCryptexCanaryInfo(CANARY_CRYPTEX_OS, "OS"_s);
-    logCryptexCanaryInfo(CANARY_CRYPTEX_APP, "App"_s);
+    logCryptexCanaryInfo(CANARY_CRYPTEX_OS, "OS"_si);
+    logCryptexCanaryInfo(CANARY_CRYPTEX_APP, "App"_si);
 }
 #endif // HAVE(CHIRP_SPI)
 

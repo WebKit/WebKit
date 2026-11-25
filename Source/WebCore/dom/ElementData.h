@@ -54,9 +54,9 @@ public:
     const SpaceSplitString& classNames() const LIFETIME_BOUND { return m_classNames; }
     static constexpr ptrdiff_t classNamesMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_classNames); }
 
-    const AtomString& idForStyleResolution() const LIFETIME_BOUND { return m_idForStyleResolution; }
+    const RefPtr<AtomStringImpl>& idForStyleResolution() const LIFETIME_BOUND { return m_idForStyleResolution; }
     static constexpr ptrdiff_t idForStyleResolutionMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_idForStyleResolution); }
-    void setIdForStyleResolution(const AtomString& newId) const { m_idForStyleResolution = newId; }
+    void setIdForStyleResolution(AtomStringImpl* newId) const { m_idForStyleResolution = newId; }
 
     const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }
     const ImmutableStyleProperties* presentationalHintStyle() const;
@@ -68,9 +68,9 @@ public:
     NODELETE const Attribute& attributeAt(unsigned index) const;
     NODELETE const Attribute* findAttributeByName(const QualifiedName&) const;
     NODELETE unsigned findAttributeIndexByName(const QualifiedName&) const;
-    NODELETE unsigned findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
+    NODELETE unsigned findAttributeIndexByName(AtomStringImpl* name, bool shouldIgnoreAttributeCase) const;
 
-    bool hasID() const { return !m_idForStyleResolution.isNull(); }
+    bool hasID() const { return !!m_idForStyleResolution; }
     bool hasClass() const { return !m_classNames.isEmpty(); }
     bool hasName() const { return m_arraySizeAndFlags & s_flagHasNameAttribute; }
 
@@ -127,7 +127,7 @@ protected:
 
     mutable RefPtr<StyleProperties> m_inlineStyle;
     mutable SpaceSplitString m_classNames;
-    mutable AtomString m_idForStyleResolution;
+    mutable RefPtr<AtomStringImpl> m_idForStyleResolution;
 
 private:
     friend class Element;
@@ -141,7 +141,7 @@ private:
 
     const Attribute* attributeBase() const;
     std::span<const Attribute> attributeSpan() const { return unsafeMakeSpan(attributeBase(), length()); }
-    const Attribute* findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
+    const Attribute* findAttributeByName(AtomStringImpl* name, bool shouldIgnoreAttributeCase) const;
 
     Ref<UniqueElementData> makeUniqueCopy() const;
 };
@@ -170,7 +170,7 @@ public:
     Ref<ShareableElementData> makeShareableCopy() const;
 
     // These functions do no error/duplicate checking.
-    void addAttribute(const QualifiedName&, const AtomString&);
+    void addAttribute(const QualifiedName&, AtomStringImpl*);
     void removeAttributeAt(unsigned index);
 
     NODELETE Attribute& attributeAt(unsigned index);
@@ -224,7 +224,7 @@ inline std::span<const Attribute> ElementData::attributes() const LIFETIME_BOUND
     return uncheckedDowncast<ShareableElementData>(*this).attributes();
 }
 
-NODELETE ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
+NODELETE ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(AtomStringImpl* name, bool shouldIgnoreAttributeCase) const
 {
     unsigned index = findAttributeIndexByName(name, shouldIgnoreAttributeCase);
     if (index != attributeNotFound)
@@ -244,20 +244,20 @@ NODELETE SUPPRESS_NODELETE ALWAYS_INLINE unsigned ElementData::findAttributeInde
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-NODELETE SUPPRESS_NODELETE ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
+NODELETE SUPPRESS_NODELETE ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(AtomStringImpl* name, bool shouldIgnoreAttributeCase) const
 {
     auto attributes = attributeSpan();
     if (attributes.empty())
         return attributeNotFound;
 
-    auto& caseAdjustedName = shouldIgnoreAttributeCase ? name.convertToASCIILowercase() : name;
+    RefPtr caseAdjustedName = shouldIgnoreAttributeCase ? convertToASCIILowercase(name) : RefPtr { name };
 
     for (auto [i, attribute] : indexedRange(attributes)) {
         if (!attribute.name().hasPrefix()) {
             if (attribute.localName() == caseAdjustedName)
                 return i;
         } else {
-            if (attribute.name().toString() == caseAdjustedName)
+            if (equal(attribute.name().toString(), caseAdjustedName))
                 return i;
         }
     }
@@ -279,7 +279,7 @@ NODELETE inline const Attribute& ElementData::attributeAt(unsigned index) const
     return attributeSpan()[index];
 }
 
-inline void UniqueElementData::addAttribute(const QualifiedName& attributeName, const AtomString& value)
+inline void UniqueElementData::addAttribute(const QualifiedName& attributeName, AtomStringImpl* value)
 {
     m_attributeVector.append(Attribute(attributeName, value));
 }

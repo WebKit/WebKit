@@ -41,7 +41,7 @@ private:
     void movingSteps(MovingType, ContainerNode& oldParent) final;
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
     bool canContainRangeEndPoint() const final;
 
     WeakPtr<HTMLSelectElement, WeakPtrImplWithEventTargetData> m_ownerSelect;

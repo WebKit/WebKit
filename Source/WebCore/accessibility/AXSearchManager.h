@@ -89,7 +89,7 @@ struct AccessibilitySearchCriteria {
     CharacterRange startRange;
     AccessibilitySearchDirection searchDirection { AccessibilitySearchDirection::Next };
     Vector<AccessibilitySearchKey> searchKeys;
-    String searchText;
+    RefPtr<StringImpl> searchText;
     unsigned resultsLimit { 0 };
     bool visibleOnly { false };
     bool immediateDescendantsOnly { false };
@@ -104,7 +104,7 @@ struct AccessibilitySearchCriteriaIPC {
 
     AccessibilitySearchDirection searchDirection { AccessibilitySearchDirection::Next };
     Vector<AccessibilitySearchKey> searchKeys;
-    String searchText;
+    RefPtr<StringImpl> searchText;
     unsigned resultsLimit { 0 };
     bool visibleOnly { false };
     bool immediateDescendantsOnly { false };
@@ -125,7 +125,7 @@ struct AccessibilitySearchCriteriaIPC {
     { }
 
     // Constructor for IPC deserialization
-    AccessibilitySearchCriteriaIPC(AccessibilitySearchDirection direction, Vector<AccessibilitySearchKey> keys, String text, unsigned limit, bool visible, bool immediateDescendants, std::optional<MonotonicTime> deadline)
+    AccessibilitySearchCriteriaIPC(AccessibilitySearchDirection direction, Vector<AccessibilitySearchKey> keys, RefPtr<StringImpl> text, unsigned limit, bool visible, bool immediateDescendants, std::optional<MonotonicTime> deadline)
         : searchDirection(direction)
         , searchKeys(WTF::move(keys))
         , searchText(WTF::move(text))
@@ -289,7 +289,7 @@ public:
 private:
     AccessibilitySearchResultStream findMatchingObjectsInternalAsStream(const AccessibilitySearchCriteria&, NOESCAPE const RemoteFrameSearchCallback&);
     bool match(Ref<AXCoreObject>, const AccessibilitySearchCriteria&);
-    bool matchText(Ref<AXCoreObject>, const String&);
+    bool matchText(Ref<AXCoreObject>, StringImpl*);
     bool matchForSearchKeyAtIndex(Ref<AXCoreObject>, const AccessibilitySearchCriteria&, size_t);
     DidTimeout revealHiddenMatchWithTimeout(AXCoreObject&, Seconds);
 

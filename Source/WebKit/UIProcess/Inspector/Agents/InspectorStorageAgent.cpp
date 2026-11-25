@@ -70,11 +70,11 @@ static CookieSameSitePolicy toProtocol(WebCore::Cookie::SameSitePolicy policy)
     return CookieSameSitePolicy::None;
 }
 
-static WebCore::Cookie::SameSitePolicy fromProtocol(const String& sameSite)
+static WebCore::Cookie::SameSitePolicy fromProtocol(StringImpl* sameSite)
 {
-    if (sameSite == "Strict"_s)
+    if (equal(sameSite, "Strict"_s))
         return WebCore::Cookie::SameSitePolicy::Strict;
-    if (sameSite == "Lax"_s)
+    if (equal(sameSite, "Lax"_s))
         return WebCore::Cookie::SameSitePolicy::Lax;
     return WebCore::Cookie::SameSitePolicy::None;
 }
@@ -93,7 +93,7 @@ static Ref<Cookie> buildObjectForCookie(const WebCore::Cookie& cookie)
         .setSameSite(toProtocol(cookie.sameSite))
         .release();
 
-    if (!cookie.partitionKey.isEmpty())
+    if (!isEmpty(cookie.partitionKey))
         result->setPartitionKey(cookie.partitionKey);
 
     return result;
@@ -108,7 +108,7 @@ static Ref<JSON::ArrayOf<Cookie>> buildArrayForCookies(const Vector<WebCore::Coo
 }
 
 InspectorStorageAgent::InspectorStorageAgent(WebPageAgentContext& context)
-    : InspectorAgentBase("Storage"_s, context)
+    : InspectorAgentBase("Storage"_si, context)
     , m_backendDispatcher(Inspector::StorageBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
 {
@@ -137,8 +137,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorStorageAgent::disable()
 Inspector::Protocol::ErrorStringOr<Ref<API::HTTPCookieStore>> InspectorStorageAgent::cookieStoreForPartition(const RefPtr<JSON::Object>& partition)
 {
     if (partition) {
-        auto type = partition->getString("type"_s);
-        if (type != "context"_s)
+        auto type = partition->getString("type"_si);
+        if (!equal(type, "context"_s))
             return makeUnexpected("Invalid partition descriptor"_s);
     }
 
@@ -148,8 +148,8 @@ Inspector::Protocol::ErrorStringOr<Ref<API::HTTPCookieStore>> InspectorStorageAg
 Inspector::Protocol::ErrorStringOr<Ref<PartitionKey>> InspectorStorageAgent::makePartitionKey(const RefPtr<JSON::Object>& partition)
 {
     if (partition) {
-        auto type = partition->getString("type"_s);
-        if (type != "context"_s)
+        auto type = partition->getString("type"_si);
+        if (!equal(type, "context"_s))
             return makeUnexpected("Invalid partition descriptor"_s);
     }
 
@@ -252,11 +252,11 @@ void InspectorStorageAgent::setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::O
         return;
     }
 
-    auto name = cookie->getString("name"_s);
-    auto value = cookie->getString("value"_s);
-    auto domain = cookie->getString("domain"_s);
-    if (name.isEmpty() || domain.isEmpty()) {
-        callback->sendFailure("Cookie must have a name and a domain"_s);
+    auto name = cookie->getString("name"_si);
+    auto value = cookie->getString("value"_si);
+    auto domain = cookie->getString("domain"_si);
+    if (isEmpty(name) || isEmpty(domain)) {
+        callback->sendFailure("Cookie must have a name and a domain"_si);
         return;
     }
 
@@ -264,27 +264,27 @@ void InspectorStorageAgent::setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::O
     webCoreCookie.name = name;
     webCoreCookie.value = value;
     webCoreCookie.domain = domain;
-    webCoreCookie.path = cookie->getString("path"_s);
-    webCoreCookie.secure = cookie->getBoolean("secure"_s).value_or(false);
-    webCoreCookie.httpOnly = cookie->getBoolean("httpOnly"_s).value_or(false);
-    webCoreCookie.session = cookie->getBoolean("session"_s).value_or(false);
+    webCoreCookie.path = cookie->getString("path"_si);
+    webCoreCookie.secure = cookie->getBoolean("secure"_si).value_or(false);
+    webCoreCookie.httpOnly = cookie->getBoolean("httpOnly"_si).value_or(false);
+    webCoreCookie.session = cookie->getBoolean("session"_si).value_or(false);
     // A session cookie has no expiry, but getCookies must emit the required `expires` field, so it
     // serializes a session cookie's absent expiry as 0. Echoing that back must not set expires to 0
     // (the 1970 epoch, i.e. already expired). Treat session (and any non-positive timestamp) as "no
     // expiry", matching WI.Cookie's own `(!session && expires)` rule.
     if (!webCoreCookie.session) {
-        if (auto expires = cookie->getDouble("expires"_s); expires && *expires > 0)
+        if (auto expires = cookie->getDouble("expires"_si); expires && *expires > 0)
             webCoreCookie.expires = *expires;
     }
-    if (auto sameSite = cookie->getString("sameSite"_s); !sameSite.isEmpty())
+    if (auto sameSite = cookie->getString("sameSite"_si); !isEmpty(sameSite))
         webCoreCookie.sameSite = fromProtocol(sameSite);
 
     // Only partition when the caller asks; a synthesized key would break the set/get/delete round-trip.
-    if (auto explicitPartitionKey = cookie->getString("partitionKey"_s); !explicitPartitionKey.isEmpty())
+    if (auto explicitPartitionKey = cookie->getString("partitionKey"_si); !isEmpty(explicitPartitionKey))
         webCoreCookie.partitionKey = explicitPartitionKey;
 
     auto resolvedPartitionKey = PartitionKey::create().release();
-    if (!webCoreCookie.partitionKey.isEmpty())
+    if (!isEmpty(webCoreCookie.partitionKey))
         resolvedPartitionKey->setSourceOrigin(webCoreCookie.partitionKey);
 
     Vector<WebCore::Cookie> cookiesToSet;
@@ -313,7 +313,7 @@ void InspectorStorageAgent::deleteCookies(RefPtr<JSON::Object>&& filter, RefPtr<
 {
     // Require an explicit filter: an empty request would clear the entire store (matches BidiStorageAgent).
     if (!filter) {
-        callback->sendFailure("A filter is required to delete cookies"_s);
+        callback->sendFailure("A filter is required to delete cookies"_si);
         return;
     }
 

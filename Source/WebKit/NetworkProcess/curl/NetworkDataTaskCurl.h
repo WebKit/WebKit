@@ -96,8 +96,8 @@ private:
 
     void updateNetworkLoadMetrics(WebCore::NetworkLoadMetrics&);
 
-    void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
-    String suggestedFilename() const override;
+    void setPendingDownloadLocation(StringImpl*, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
+    RefPtr<StringImpl> suggestedFilename() const override;
     void deleteDownloadFile();
 
     Markable<WebCore::FrameIdentifier> m_frameID;

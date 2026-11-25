@@ -47,7 +47,7 @@ void WebExtensionContext::addListener(WebCore::FrameIdentifier frameIdentifier, 
     if (!frame)
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %" PUBLIC_LOG "hhu in %" PUBLIC_LOG_STRING " world", std::to_underlying(listenerType), toDebugString(contentWorldType).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %" PUBLIC_LOG "hhu in %" PUBLIC_LOG_STRING " world", std::to_underlying(listenerType), utf8(toDebugString(contentWorldType)));
 
     if (!protect(extension())->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier))
         m_backgroundContentEventListeners.add(listenerType);
@@ -87,7 +87,7 @@ void WebExtensionContext::removeListener(WebCore::FrameIdentifier frameIdentifie
     if (!frame)
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Unregistered %" PUBLIC_LOG PRIu64 " event listener(s) for type %" PUBLIC_LOG "hhu in %" PUBLIC_LOG_STRING " world", removedCount, std::to_underlying(listenerType), toDebugString(contentWorldType).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Unregistered %" PUBLIC_LOG PRIu64 " event listener(s) for type %" PUBLIC_LOG "hhu in %" PUBLIC_LOG_STRING " world", removedCount, std::to_underlying(listenerType), utf8(toDebugString(contentWorldType)));
 
     if (!protect(extension())->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier)) {
         for (size_t i = 0; i < removedCount; ++i)

@@ -87,7 +87,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     if (!(self = [self init]))
         return nil;
 
-    RetainPtr trimmedText = adoptNS([item.text.createNSString() mutableCopy]);
+    RetainPtr trimmedText = adoptNS([createNSString(item.text) mutableCopy]);
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
     [[self titleLabel] setText:checked_objc_cast<NSString>(trimmedText)];
@@ -113,7 +113,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     if (!(self = [self init]))
         return nil;
 
-    RetainPtr trimmedText = adoptNS([item.text.createNSString() mutableCopy]);
+    RetainPtr trimmedText = adoptNS([createNSString(item.text) mutableCopy]);
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
     [[self titleLabel] setText:checked_objc_cast<NSString>(trimmedText)];
@@ -442,7 +442,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     Borrow options { [view focusedSelectElementOptions] };
     const OptionItem& option = options[row];
-    RetainPtr trimmedText = adoptNS([option.text.createNSString() mutableCopy]);
+    RetainPtr trimmedText = adoptNS([createNSString(option.text) mutableCopy]);
     CFStringTrimWhitespace((CFMutableStringRef)trimmedText.get());
 
     RetainPtr attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:checked_objc_cast<NSString>(trimmedText)]);
@@ -603,7 +603,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 {
     RetainPtr view = _view.get();
     if (![view focusedSelectElementOptions].size()) {
-        RetainPtr emptyAction = [UIAction actionWithTitle:WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list").createNSString().get() image:nil identifier:nil handler:^(__kindof UIAction *action) { }];
+        RetainPtr emptyAction = [UIAction actionWithTitle:createNSString(WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list")).get() image:nil identifier:nil handler:^(__kindof UIAction *action) { }];
         emptyAction.get().attributes = UIMenuElementAttributesDisabled;
         return [UIMenu menuWithTitle:@"" children:@[emptyAction.get()]];
     }
@@ -617,7 +617,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
         auto& optionItem = options[currentIndex];
         if (optionItem.isGroup) {
             auto groupID = optionItem.parentGroupID;
-            RetainPtr groupText = optionItem.text.createNSString();
+            RetainPtr groupText = createNSString(optionItem.text);
             NSMutableArray *groupedItems = [NSMutableArray array];
 
             currentIndex++;
@@ -648,7 +648,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (UIAction *)actionForOptionItem:(const OptionItem&)option withIndex:(NSInteger)optionIndex
 {
-    RetainPtr optionAction = [UIAction actionWithTitle:option.text.createNSString().get() image:nil identifier:nil handler:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), optionIndex] (__kindof UIAction *action) {
+    RetainPtr optionAction = [UIAction actionWithTitle:createNSString(option.text).get() image:nil identifier:nil handler:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), optionIndex] (__kindof UIAction *action) {
         if (RetainPtr strongSelf = weakSelf.get())
             [strongSelf didSelectOptionIndex:optionIndex];
     }];
@@ -1077,7 +1077,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
         groupCount++;
         if (option.isGroup && groupCount == section)
-            return option.text.createNSString().autorelease();
+            return createNSString(option.text).autorelease();
     }
 
     return nil;
@@ -1173,7 +1173,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
     if ([protect(_contentView) focusedSelectElementOptions].isEmpty()) {
         [cell textLabel].enabled = NO;
-        [cell textLabel].text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list").createNSString().get();
+        [cell textLabel].text = createNSString(WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list")).get();
         [cell setUserInteractionEnabled:NO];
         [cell imageView].image = nil;
         return cell.autorelease();
@@ -1183,7 +1183,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     if (!option)
         return cell.autorelease();
 
-    [cell textLabel].text = option->text.createNSString().get();
+    [cell textLabel].text = createNSString(option->text).get();
     [cell textLabel].enabled = !option->disabled;
     [cell setUserInteractionEnabled:!option->disabled];
     [cell imageView].preferredSymbolConfiguration = [UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleBody scale:UIImageSymbolScaleLarge];

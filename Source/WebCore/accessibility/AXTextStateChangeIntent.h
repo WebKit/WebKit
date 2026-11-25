@@ -70,17 +70,17 @@ enum class AXTextSelectionGranularity : uint8_t {
     All // All granularity represents the action of selecting the whole document as a single action. Extending selection by some other granularity until it encompasses the whole document will not result in a all granularity notification.
 };
 
-String debugDescription(AXTextStateChangeType);
-String debugDescription(AXTextEditType);
-String debugDescription(AXTextSelectionDirection);
-String debugDescription(AXTextSelectionGranularity);
+RefPtr<StringImpl> debugDescription(AXTextStateChangeType);
+RefPtr<StringImpl> debugDescription(AXTextEditType);
+RefPtr<StringImpl> debugDescription(AXTextSelectionDirection);
+RefPtr<StringImpl> debugDescription(AXTextSelectionGranularity);
 
 struct AXTextSelection {
     AXTextSelectionDirection direction { AXTextSelectionDirection::Unknown };
     AXTextSelectionGranularity granularity { AXTextSelectionGranularity::Unknown };
     bool focusChange { false };
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 };
 
 struct AXTextStateChangeIntent {
@@ -100,7 +100,7 @@ struct AXTextStateChangeIntent {
         , editType(editType)
     { }
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 };
 
 } // namespace WebCore

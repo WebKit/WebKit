@@ -83,7 +83,7 @@ public:
     bool muted() const final { return m_muted; }
     void setMuted(bool) final;
 
-    const AtomString& playbackState() const;
+    const RefPtr<AtomStringImpl>& playbackState() const;
 
 private:
     explicit MediaController(ScriptExecutionContext&);
@@ -93,7 +93,7 @@ private:
     void updatePlaybackState();
     void updateMediaElements();
     void bringElementUpToSpeed(HTMLMediaElement&);
-    void scheduleEvent(const AtomString& eventName);
+    void scheduleEvent(AtomStringImpl* eventName);
     void asyncEventTimerFired();
     NODELETE void clearPositionTimerFired();
     bool hasEnded() const;

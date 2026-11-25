@@ -43,11 +43,11 @@ namespace WebKit {
 
 class CacheStorageDiskStore final : public CacheStorageStore {
 public:
-    static Ref<CacheStorageDiskStore> create(const String& cacheName, const String& path, Ref<WorkQueue>&&);
+    static Ref<CacheStorageDiskStore> create(StringImpl* cacheName, StringImpl* path, Ref<WorkQueue>&&);
     static size_t computeRealBodySizeForStorage(const WebCore::DOMCacheEngine::ResponseBody&);
 
 private:
-    CacheStorageDiskStore(const String& cacheName, const String& path, Ref<WorkQueue>&&);
+    CacheStorageDiskStore(StringImpl* cacheName, StringImpl* path, Ref<WorkQueue>&&);
 
     struct SafeFileData {
         Variant<std::monostate, FileSystem::MappedFileData, Vector<uint8_t>> data;
@@ -55,7 +55,7 @@ private:
         std::span<const uint8_t> span() const;
         RefPtr<WebCore::SharedBuffer> convertToSharedBuffer() &&;
         NODELETE explicit operator bool() const;
-        static SafeFileData read(const String& filePath);
+        static SafeFileData read(StringImpl* filePath);
     };
 
     // CacheStorageStore
@@ -64,19 +64,19 @@ private:
     void deleteRecords(const Vector<CacheStorageRecordInformation>&, WriteRecordsCallback&&) final;
     void writeRecords(Vector<CacheStorageRecord>&&, WriteRecordsCallback&&) final;
 
-    String versionDirectoryPath() const;
-    String saltFilePath() const;
-    String recordsDirectoryPath() const;
-    String recordFilePath(const NetworkCache::Key&) const;
-    String recordBlobFilePath(const String&) const;
-    String blobsDirectoryPath() const;
-    String blobFilePath(const String&) const;
+    RefPtr<StringImpl> versionDirectoryPath() const;
+    RefPtr<StringImpl> saltFilePath() const;
+    RefPtr<StringImpl> recordsDirectoryPath() const;
+    RefPtr<StringImpl> recordFilePath(const NetworkCache::Key&) const;
+    RefPtr<StringImpl> recordBlobFilePath(StringImpl*) const;
+    RefPtr<StringImpl> blobsDirectoryPath() const;
+    RefPtr<StringImpl> blobFilePath(StringImpl*) const;
     std::optional<CacheStorageRecord> readRecordFromFileData(std::span<const uint8_t>, SafeFileData&&);
     void readAllRecordInfosInternal(ReadAllRecordInfosCallback&&);
     void readRecordsInternal(const Vector<CacheStorageRecordInformation>&, ReadRecordsCallback&&);
 
-    String m_cacheName;
-    String m_path;
+    RefPtr<StringImpl> m_cacheName;
+    RefPtr<StringImpl> m_path;
     FileSystem::Salt m_salt;
     const Ref<WorkQueue> m_callbackQueue;
     const Ref<WorkQueue> m_ioQueue;

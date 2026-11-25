@@ -38,7 +38,7 @@
 namespace TestWebKitAPI {
 
 #if PLATFORM(MAC)
-static void testWindowOpenMouseEvent(const String& event, bool expectOpenedWindow)
+static void testWindowOpenMouseEvent(StringImpl* event, bool expectOpenedWindow)
 {
     auto openerHTML = makeString("<script>"
     "addEventListener('"_s, event, "', () => {"
@@ -89,22 +89,22 @@ static void testWindowOpenMouseEvent(const String& event, bool expectOpenedWindo
 
 TEST(VerifyUserGesture, WindowOpenMouseDown)
 {
-    testWindowOpenMouseEvent("mousedown"_s, true);
+    testWindowOpenMouseEvent("mousedown"_si, true);
 }
 
 TEST(VerifyUserGesture, WindowOpenMouseUp)
 {
-    testWindowOpenMouseEvent("mouseup"_s, true);
+    testWindowOpenMouseEvent("mouseup"_si, true);
 }
 
 TEST(VerifyUserGesture, WindowOpenMouseMove)
 {
-    testWindowOpenMouseEvent("mousemove"_s, false);
+    testWindowOpenMouseEvent("mousemove"_si, false);
 }
 
 TEST(VerifyUserGesture, WindowOpenMouseOver)
 {
-    testWindowOpenMouseEvent("mouseover"_s, false);
+    testWindowOpenMouseEvent("mouseover"_si, false);
 }
 
 TEST(VerifyUserGesture, WindowOpenKeyEvent)

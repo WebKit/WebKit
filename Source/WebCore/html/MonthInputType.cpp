@@ -57,7 +57,7 @@ static const int monthDefaultStepBase = 0;
 static const int monthStepScaleFactor = 1;
 static const StepRange::StepDescription monthStepDescription { monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::StepValueShouldBe::ParsedInteger };
 
-const AtomString& MonthInputType::formControlType() const
+const RefPtr<AtomStringImpl>& MonthInputType::formControlType() const
 {
     return InputTypeNames::month();
 }
@@ -78,7 +78,7 @@ WallTime MonthInputType::valueAsDate() const
     return WallTime::fromRawSeconds(Seconds::fromMilliseconds(msec).value());
 }
 
-String MonthInputType::serializeWithMilliseconds(double value) const
+RefPtr<StringImpl> MonthInputType::serializeWithMilliseconds(double value) const
 {
     auto date = DateComponents::fromMillisecondsSinceEpochForMonth(value);
     if (!date)
@@ -148,7 +148,7 @@ bool MonthInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> re
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth });
 }
 
-String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
+RefPtr<StringImpl> MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
 {
     if (!state.year || !state.month)
         return emptyString();
@@ -159,7 +159,7 @@ String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState& stat
 void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents&) const
 {
     layoutParameters.dateTimeFormat = layoutParameters.locale->shortMonthFormat();
-    layoutParameters.fallbackDateTimeFormat = "yyyy-MM"_s;
+    layoutParameters.fallbackDateTimeFormat = "yyyy-MM"_si;
 }
 
 } // namespace WebCore

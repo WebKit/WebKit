@@ -55,13 +55,13 @@
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::typeAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::typeAttr)).autorelease();
 }
 
 - (void)setType:(NSString *)newType
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, newType);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, AtomStringImpl::add((__bridge CFStringRef)newType).get());
 }
 
 @end

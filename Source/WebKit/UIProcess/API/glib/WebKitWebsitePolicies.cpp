@@ -128,7 +128,7 @@ static void webkitWebsitePoliciesSetProperty(GObject* object, guint propID, cons
         break;
     case PROP_CUSTOM_USER_AGENT:
         if (const auto* customUserAgent = g_value_get_string(value))
-            policies->priv->websitePolicies->setCustomUserAgent(String::fromUTF8(customUserAgent));
+            policies->priv->websitePolicies->setCustomUserAgent(StringImpl::fromUTF8(customUserAgent));
         break;
     case PROP_UPGRADE_TO_HTTPS_POLICY:
         webkitWebsitePoliciesSetUpgradeToHTTPSPolicy(policies, static_cast<WebKitUpgradeToHTTPSPolicy>(g_value_get_enum(value)));
@@ -298,7 +298,7 @@ const gchar* webkit_website_policies_get_custom_user_agent(WebKitWebsitePolicies
 
     if (policies->priv->customUserAgent.isNull()) {
         const auto& newCustomUserAgent = policies->priv->websitePolicies->customUserAgent();
-        policies->priv->customUserAgent = newCustomUserAgent.isEmpty() ? UTF8CString() : newCustomUserAgent.utf8();
+        policies->priv->customUserAgent = isEmpty(newCustomUserAgent) ? UTF8CString() : utf8(newCustomUserAgent);
     }
     return policies->priv->customUserAgent.legacyCStringPointer();
 }

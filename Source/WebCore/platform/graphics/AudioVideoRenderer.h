@@ -64,7 +64,7 @@ public:
     virtual void setMuted(bool) = 0;
     virtual void setPreservesPitchAndCorrectionAlgorithm(bool, std::optional<PitchCorrectionAlgorithm>) { }
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-    virtual void setOutputDeviceId(const String&) { }
+    virtual void setOutputDeviceId(StringImpl*) { }
 #endif
 };
 
@@ -180,7 +180,7 @@ public:
     virtual void notifyWhenErrorOccurs(Function<void(PlatformMediaError)>&&) = 0;
 
     using SoundStageSize = MediaPlayerSoundStageSize;
-    virtual void setSpatialTrackingInfo(bool /* prefersSpatialAudioExperience */, SoundStageSize, const String& /* sceneIdentifier */, const String& /* defaultLabel */, const String& /* label */) { }
+    virtual void setSpatialTrackingInfo(bool /* prefersSpatialAudioExperience */, SoundStageSize, StringImpl* /* sceneIdentifier */, StringImpl* /* defaultLabel */, StringImpl* /* label */) { }
 
 #if ENABLE(ENCRYPTED_MEDIA)
     virtual void setCDMInstance(CDMInstance*) { }

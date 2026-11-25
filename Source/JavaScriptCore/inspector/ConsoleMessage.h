@@ -56,11 +56,11 @@ class ConsoleMessage {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ConsoleMessage, JS_EXPORT_PRIVATE);
     WTF_MAKE_NONCOPYABLE(ConsoleMessage);
 public:
-    JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0, WallTime timestamp = { });
-    JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, WallTime timestamp = { });
-    JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0, WallTime timestamp = { });
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0, WallTime timestamp = { });
-    JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, StringImpl* message, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, StringImpl* message, StringImpl* url, unsigned line, unsigned column, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, StringImpl* message, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, StringImpl* message, Ref<ScriptArguments>&&, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, StringImpl* message, Ref<ScriptArguments>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, WallTime timestamp = { });
     JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, Vector<JSONLogValue>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier = 0, WallTime timestamp = { });
     JS_EXPORT_PRIVATE ~ConsoleMessage();
 
@@ -70,8 +70,8 @@ public:
     MessageSource source() const { return m_source; }
     MessageType type() const { return m_type; }
     MessageLevel level() const { return m_level; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
-    const String& url() const LIFETIME_BOUND { return m_url; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_url; }
     unsigned line() const { return m_line; }
     unsigned column() const { return m_column; }
     WallTime timestamp() const { return m_timestamp; }
@@ -89,7 +89,7 @@ public:
 
     JS_EXPORT_PRIVATE void clear();
 
-    JS_EXPORT_PRIVATE String toString() const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> toString() const;
 
 private:
     void autogenerateMetadata(JSC::JSGlobalObject* = nullptr);
@@ -97,16 +97,16 @@ private:
     MessageSource m_source;
     MessageType m_type;
     MessageLevel m_level;
-    String m_message;
+    RefPtr<StringImpl> m_message;
     RefPtr<ScriptArguments> m_arguments;
     RefPtr<ScriptCallStack> m_callStack;
     Vector<JSONLogValue> m_jsonLogValues;
-    String m_url;
+    RefPtr<StringImpl> m_url;
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
     unsigned m_line { 0 };
     unsigned m_column { 0 };
     unsigned m_repeatCount { 1 };
-    String m_requestId;
+    RefPtr<StringImpl> m_requestId;
     WallTime m_timestamp;
     bool m_messageIsFirstArgument { false };
 };

@@ -35,20 +35,20 @@ class TextCheckerEnchant {
 public:
     static TextCheckerEnchant& singleton();
 
-    void ignoreWord(const String&);
-    void learnWord(const String&);
-    void checkSpellingOfString(const String&, int& misspellingLocation, int& misspellingLength);
-    Vector<String> getGuessesForWord(const String&);
-    void updateSpellCheckingLanguages(const Vector<String>& languages);
-    Vector<String> loadedSpellCheckingLanguages() const;
+    void ignoreWord(StringImpl*);
+    void learnWord(StringImpl*);
+    void checkSpellingOfString(StringImpl*, int& misspellingLocation, int& misspellingLength);
+    Vector<RefPtr<StringImpl>> getGuessesForWord(StringImpl*);
+    void updateSpellCheckingLanguages(const Vector<RefPtr<StringImpl>>& languages);
+    Vector<RefPtr<StringImpl>> loadedSpellCheckingLanguages() const;
     bool hasDictionary() const { return !m_enchantDictionaries.isEmpty(); }
-    Vector<String> availableSpellCheckingLanguages() const;
+    Vector<RefPtr<StringImpl>> availableSpellCheckingLanguages() const;
 
 private:
     TextCheckerEnchant();
     ~TextCheckerEnchant() = delete;
 
-    void checkSpellingOfWord(const String&, int start, int end, int& misspellingLocation, int& misspellingLength);
+    void checkSpellingOfWord(StringImpl*, int start, int end, int& misspellingLocation, int& misspellingLength);
 
     struct EnchantDictDeleter {
         void operator()(EnchantDict*) const;

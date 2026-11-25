@@ -36,12 +36,12 @@ public:
     NODELETE static Ref<CSSPropertyRule> create(StyleRuleProperty&, CSSStyleSheet* parent);
     virtual ~CSSPropertyRule();
 
-    NODELETE String name() const;
-    NODELETE String syntax() const;
+    NODELETE RefPtr<StringImpl> name() const;
+    NODELETE RefPtr<StringImpl> syntax() const;
     NODELETE bool inherits() const;
-    String initialValue() const;
+    RefPtr<StringImpl> initialValue() const;
 
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
 
 private:
     CSSPropertyRule(StyleRuleProperty&, CSSStyleSheet*);

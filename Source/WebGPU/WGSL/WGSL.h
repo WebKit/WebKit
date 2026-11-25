@@ -75,10 +75,10 @@ struct Configuration {
     uint32_t maxBuffersForFragmentStage = 8;
     uint32_t maxBuffersForComputeStage = 8;
     uint32_t maximumCombinedWorkgroupVariablesSize = 16384;
-    const HashSet<String> supportedFeatures = { };
+    const HashSet<RefPtr<StringImpl>> supportedFeatures = { };
 };
 
-Variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration&);
+Variant<SuccessfulCheck, FailedCheck> staticCheck(StringImpl* wgsl, const std::optional<SourceMap>&, const Configuration&);
 
 //
 // Step 2
@@ -151,7 +151,7 @@ struct BindGroupLayoutEntry {
     OptionSet<ShaderStage> visibility;
     using BindingMember = Variant<BufferBindingLayout, SamplerBindingLayout, TextureBindingLayout, StorageTextureBindingLayout, ExternalTextureBindingLayout>;
     BindingMember bindingMember;
-    String name;
+    RefPtr<StringImpl> name;
     std::optional<uint32_t> vertexArgumentBufferIndex;
     std::optional<uint32_t> vertexArgumentBufferSizeIndex;
     std::optional<uint32_t> vertexBufferDynamicOffset;
@@ -206,16 +206,16 @@ enum class SpecializationConstantType : uint8_t {
 };
 
 struct SpecializationConstant {
-    String mangledName;
+    RefPtr<StringImpl> mangledName;
     SpecializationConstantType type;
     AST::Expression* defaultValue;
 };
 
 struct EntryPointInformation {
-    String originalName;
-    String mangledName;
+    RefPtr<StringImpl> originalName;
+    RefPtr<StringImpl> mangledName;
     std::optional<PipelineLayout> defaultLayout; // If the input PipelineLayout is nullopt, the compiler computes a layout and returns it. https://gpuweb.github.io/gpuweb/#default-pipeline-layout
-    HashMap<String, SpecializationConstant> specializationConstants;
+    HashMap<RefPtr<StringImpl>, SpecializationConstant> specializationConstants;
     Variant<Vertex, Fragment, Compute> typedEntryPoint;
     size_t sizeForWorkgroupVariables { 0 };
     size_t bindingCount { 0 };
@@ -225,7 +225,7 @@ struct EntryPointInformation {
 } // namespace Reflection
 
 struct PrepareResult {
-    HashMap<String, Reflection::EntryPointInformation> entryPoints;
+    HashMap<RefPtr<StringImpl>, Reflection::EntryPointInformation> entryPoints;
     CompilationScope compilationScope;
 };
 
@@ -235,11 +235,11 @@ struct DeviceState {
     bool usesInvariant { false };
 };
 
-Variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<String, PipelineLayout*>&);
-Variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPointName, PipelineLayout*);
+Variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<RefPtr<StringImpl>, PipelineLayout*>&);
+Variant<PrepareResult, Error> prepare(ShaderModule&, StringImpl* entryPointName, PipelineLayout*);
 
-Variant<String, Error> generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&, DeviceState&&);
+Variant<RefPtr<StringImpl>, Error> generate(ShaderModule&, PrepareResult&, HashMap<RefPtr<StringImpl>, ConstantValue>&, DeviceState&&);
 
-std::optional<ConstantValue> evaluate(const ShaderModule&, const AST::Expression&, const HashMap<String, ConstantValue>&);
+std::optional<ConstantValue> evaluate(const ShaderModule&, const AST::Expression&, const HashMap<RefPtr<StringImpl>, ConstantValue>&);
 
 } // namespace WGSL

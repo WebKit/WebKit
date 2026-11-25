@@ -85,7 +85,7 @@ public:
 
     WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&);
 
-    WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) final;
+    WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, RefPtr<StringImpl>)>&&) final;
     WEBCORE_EXPORT void setRequiresTextTrackRepresentation(bool) final;
     WEBCORE_EXPORT void setTextTrackRepresentationBounds(const IntRect&) final;
 
@@ -124,11 +124,11 @@ private:
     void willExitPictureInPicture() final;
     void didExitPictureInPicture() final;
 
-    static std::span<const AtomString> observedEventNames();
-    static std::span<const AtomString> documentObservedEventNames();
-    const AtomString& eventNameAll();
+    static std::span<const RefPtr<AtomStringImpl>> observedEventNames();
+    static std::span<const RefPtr<AtomStringImpl>> documentObservedEventNames();
+    const RefPtr<AtomStringImpl>& eventNameAll();
     friend class VideoListener;
-    void updateForEventName(const AtomString&);
+    void updateForEventName(AtomStringImpl*);
     void cleanVideoListeners();
     void documentVisibilityChanged();
 #if ENABLE(FULLSCREEN_API)
@@ -138,7 +138,7 @@ private:
 
     // HTMLMediaElementClient
     void audioSessionCategoryChanged(AudioSessionCategory, AudioSessionMode, RouteSharingPolicy) final;
-    void routingContextUIDChanged(const String&) final;
+    void routingContextUIDChanged(StringImpl*) final;
     void hasObjectViewBoxChanged(bool) final;
 
     const Ref<VideoListener> m_videoListener;

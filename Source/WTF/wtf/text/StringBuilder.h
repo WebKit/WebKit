@@ -48,7 +48,7 @@ public:
     void swap(StringBuilder&);
 
     NODELETE void didOverflow();
-    bool hasOverflowed() const { return m_length > String::MaxLength; }
+    bool hasOverflowed() const { return m_length > StringImpl::MaxLength; }
     bool crashesOnOverflow() const { return m_shouldCrashOnOverflow; }
 
     template<StringTypeAdaptable... StringTypes> void append(const StringTypes&...);
@@ -56,8 +56,8 @@ public:
     // FIXME: We should keep these overloads only if optimizations make them more efficient than the single-argument form of the variadic append above.
     WTF_EXPORT_PRIVATE void append(std::span<const char16_t>);
     WTF_EXPORT_PRIVATE void append(std::span<const Latin1Character>);
-    void append(const AtomString& string) { append(string.string()); }
-    void append(const String&);
+    // Retains the string rather than copying it when appending to an empty builder.
+    template<StringImplPointerLike T> void append(const T&);
     void append(StringView);
     void append(ASCIILiteral);
     void append(const char*) = delete; // Pass ASCIILiteral or span instead.
@@ -71,13 +71,14 @@ public:
     // FIXME: Add a StringTypeAdapter so we can append one string builder to another with variadic append.
     void append(const StringBuilder&);
 
-    void appendSubstring(const String&, unsigned offset, unsigned length = String::MaxLength);
-    WTF_EXPORT_PRIVATE void appendQuotedJSONString(const String&);
+    void appendSubstring(StringImpl*, unsigned offset, unsigned length = StringImpl::MaxLength);
+    WTF_EXPORT_PRIVATE void appendQuotedJSONString(StringImpl*);
 
-    const String& toString() & LIFETIME_BOUND;
-    String toString() && { toString(); auto string = WTF::move(m_string); clear(); return string; }
-    const String& toStringPreserveCapacity() const LIFETIME_BOUND;
-    AtomString toAtomString() const;
+    // Never null.
+    const RefPtr<StringImpl>& toString() & LIFETIME_BOUND;
+    RefPtr<StringImpl> toString() && { toString(); auto string = WTF::move(m_string); clear(); return string; }
+    const RefPtr<StringImpl>& toStringPreserveCapacity() const LIFETIME_BOUND;
+    RefPtr<AtomStringImpl> toAtomString() const;
 
 #if USE(FOUNDATION) && defined(__OBJC__)
     RetainPtr<NSString> createNSString() const;
@@ -121,7 +122,7 @@ private:
     template<typename StringTypeAdapter, typename... StringTypeAdapters> void appendFromAdaptersSlow(const StringTypeAdapter&, const StringTypeAdapters&...);
     template<typename StringTypeAdapter> void appendFromAdapterSlow(const StringTypeAdapter&);
 
-    mutable String m_string;
+    mutable RefPtr<StringImpl> m_string;
     RefPtr<StringImpl> m_buffer;
     unsigned m_length { 0 };
     bool m_shouldCrashOnOverflow { true };
@@ -141,7 +142,7 @@ inline StringBuilder::StringBuilder(OverflowPolicy policy)
 
 inline void StringBuilder::clear()
 {
-    m_string = { };
+    m_string = nullptr;
     m_buffer = nullptr;
     m_length = 0;
     // We intentionally do not change m_shouldCrashOnOverflow.
@@ -164,7 +165,7 @@ inline StringBuilder::operator StringView() const LIFETIME_BOUND
 
 inline void StringBuilder::append(char16_t character)
 {
-    if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
+    if (m_buffer && m_length < m_buffer->length() && !m_string) {
         if (!m_buffer->is8Bit()) {
             spanConstCast<char16_t>(m_buffer->span16())[m_length++] = character;
             return;
@@ -179,7 +180,7 @@ inline void StringBuilder::append(char16_t character)
 
 inline void StringBuilder::append(Latin1Character character)
 {
-    if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
+    if (m_buffer && m_length < m_buffer->length() && !m_string) {
         if (m_buffer->is8Bit())
             spanConstCast<Latin1Character>(m_buffer->span8())[m_length++] = character;
         else
@@ -189,24 +190,25 @@ inline void StringBuilder::append(Latin1Character character)
     append(WTF::span(character));
 }
 
-inline void StringBuilder::append(const String& string)
+template<StringImplPointerLike T> inline void StringBuilder::append(const T& string)
 {
+    auto* impl = toStringImplPointer(string);
     // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
     // then just retain the string.
     if (!m_length && !m_buffer) {
-        m_string = string;
-        m_length = string.length();
+        m_string = impl;
+        m_length = impl ? impl->length() : 0;
         return;
     }
 
-    append(StringView { string });
+    append(StringView { impl });
 }
 
 inline void StringBuilder::append(const StringBuilder& other)
 {
     // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
     // then just retain the string.
-    if (!m_length && !m_buffer && !other.m_string.isNull()) {
+    if (!m_length && !m_buffer && other.m_string) {
         // Use the length function here so we crash on overflow without explicit overflow checks.
         m_string = other.m_string;
         m_length = other.length();
@@ -229,42 +231,42 @@ inline void StringBuilder::append(ASCIILiteral string)
     append(string.span8());
 }
 
-inline void StringBuilder::appendSubstring(const String& string, unsigned offset, unsigned length)
+inline void StringBuilder::appendSubstring(StringImpl* string, unsigned offset, unsigned length)
 {
     append(StringView { string }.substring(offset, length));
 }
 
-inline const String& StringBuilder::toString() & LIFETIME_BOUND
+inline const RefPtr<StringImpl>& StringBuilder::toString() & LIFETIME_BOUND
 {
-    if (m_string.isNull()) {
+    if (!m_string) {
         shrinkToFit();
         reifyString();
     }
     return m_string;
 }
 
-inline const String& StringBuilder::toStringPreserveCapacity() const LIFETIME_BOUND
+inline const RefPtr<StringImpl>& StringBuilder::toStringPreserveCapacity() const LIFETIME_BOUND
 {
-    if (m_string.isNull())
+    if (!m_string)
         reifyString();
     return m_string;
 }
 
-inline AtomString StringBuilder::toAtomString() const
+inline RefPtr<AtomStringImpl> StringBuilder::toAtomString() const
 {
     if (isEmpty())
         return emptyAtom();
 
-    // If the buffer is sufficiently over-allocated, make a new AtomString from a copy so its buffer is not so large.
+    // If the buffer is sufficiently over-allocated, make a new atom from a copy so its buffer is not so large.
     if (shouldShrinkToFit())
         return StringView { *this }.toAtomString();
 
-    if (!m_string.isNull())
-        return AtomString { m_string };
+    if (m_string)
+        return AtomStringImpl::add(m_string.get());
 
     // Use the length function here so we crash on overflow without explicit overflow checks.
     ASSERT(m_buffer);
-    return { m_buffer.get(), 0, length() };
+    return AtomStringImpl::add(m_buffer.get(), 0, length());
 }
 
 #if USE(FOUNDATION) && defined(__OBJC__)
@@ -277,8 +279,8 @@ inline RetainPtr<NSString> StringBuilder::createNSString() const
     if (shouldShrinkToFit())
         return StringView { *this }.createNSString();
 
-    if (!m_string.isNull())
-        return m_string.createNSString();
+    if (m_string)
+        return WTF::createNSString(m_string);
 
     // Use the length function here so we crash on overflow without explicit overflow checks.
     return StringView { *m_buffer }.left(length()).createNSString();
@@ -303,16 +305,16 @@ inline char16_t StringBuilder::operator[](unsigned i) const
 
 inline bool StringBuilder::is8Bit() const
 {
-    return m_buffer ? m_buffer->is8Bit() : m_string.is8Bit();
+    return m_buffer ? m_buffer->is8Bit() : WTF::is8Bit(m_string);
 }
 
 template<typename CharacterType> inline std::span<const CharacterType> StringBuilder::span() const LIFETIME_BOUND
 {
     if (!m_length || hasOverflowed())
         return { };
-    if (!m_string.isNull()) {
-        ASSERT(m_string.length() == m_length);
-        return m_string.span<CharacterType>();
+    if (m_string) {
+        ASSERT(m_string->length() == m_length);
+        return m_string->span<CharacterType>();
     }
     return m_buffer->span<CharacterType>().first(m_length);
 }

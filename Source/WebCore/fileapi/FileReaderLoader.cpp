@@ -110,7 +110,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, con
 
     // Construct and load the request.
     ResourceRequest request(URL { m_urlForReading });
-    request.setHTTPMethod("GET"_s);
+    request.setHTTPMethod("GET"_si);
     request.setHiddenFromInspector(true);
 
     ThreadableLoaderOptions options;
@@ -342,7 +342,7 @@ RefPtr<ArrayBuffer> FileReaderLoader::arrayBufferResult() const
     return ArrayBuffer::create(*protect(m_rawData));
 }
 
-String FileReaderLoader::stringResult()
+RefPtr<StringImpl> FileReaderLoader::stringResult()
 {
     ASSERT(m_readType != ReadAsArrayBuffer && m_readType != ReadAsBlob);
 
@@ -359,7 +359,7 @@ String FileReaderLoader::stringResult()
         // No conversion is needed.
         break;
     case ReadAsBinaryString:
-        m_stringResult = byteCast<Latin1Character>(protect(m_rawData)->span().first(m_bytesLoaded));
+        m_stringResult = StringImpl::createOrNull(byteCast<Latin1Character>(protect(m_rawData)->span().first(m_bytesLoaded)));
         break;
     case ReadAsText:
         convertToText();
@@ -405,7 +405,7 @@ void FileReaderLoader::convertToText()
 
 void FileReaderLoader::convertToDataURL()
 {
-    m_stringResult = makeString("data:"_s, m_dataType.isEmpty() ? "application/octet-stream"_s : m_dataType, ";base64,"_s, base64Encoded(m_rawData ? protect(m_rawData)->span().first(m_bytesLoaded) : std::span<const uint8_t>()));
+    m_stringResult = makeString("data:"_s, isEmpty(m_dataType) ? "application/octet-stream"_si : m_dataType, ";base64,"_s, base64Encoded(m_rawData ? protect(m_rawData)->span().first(m_bytesLoaded) : std::span<const uint8_t>()));
 }
 
 bool FileReaderLoader::isCompleted() const

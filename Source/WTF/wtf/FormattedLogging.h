@@ -49,7 +49,7 @@ struct std::formatter<T> : std::formatter<std::string_view> {
     {
         WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine);
         stream << value;
-        auto utf8 = stream.release().utf8();
+        auto utf8 = WTF::utf8(stream.release());
         return std::formatter<std::string_view>::format(std::string_view(byteCast<char>(utf8.span())), ctx);
     }
 };

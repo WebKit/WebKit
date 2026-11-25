@@ -163,9 +163,9 @@ public:
     void repaintAnnotationsForFormField(NSString *fieldName);
 
     Vector<WebCore::FloatRect> annotationRectsForTesting() const final;
-    void setTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) final;
+    void setTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, StringImpl* value) final;
 
-    void attemptToUnlockPDF(const String& password) final;
+    void attemptToUnlockPDF(StringImpl* password) final;
     void windowActivityDidChange() final;
 
     void didSameDocumentNavigationForFrame(WebFrame&) final;
@@ -235,7 +235,7 @@ public:
 
     RetainPtr<PDFPage> pageAtIndex(PDFDocumentLayout::PageIndex) const;
 
-    void setPDFDisplayModeForTesting(const String&) final;
+    void setPDFDisplayModeForTesting(StringImpl*) final;
 
     double minScaleFactor() const final;
     double maxScaleFactor() const final;
@@ -352,10 +352,10 @@ private:
     bool handleMouseEvent(const WebCore::PlatformMouseEvent&);
 
     // Editing commands
-    bool handleEditingCommand(const String& commandName, const String& argument) override;
-    bool isEditingCommandEnabled(const String& commandName) override;
+    bool handleEditingCommand(StringImpl* commandName, StringImpl* argument) override;
+    bool isEditingCommandEnabled(StringImpl* commandName) override;
     bool takeFindStringFromSelection();
-    bool forwardEditingCommandToEditor(const String& commandName, const String& argument) const;
+    bool forwardEditingCommandToEditor(StringImpl* commandName, StringImpl* argument) const;
     void selectAll();
     [[maybe_unused]] bool performCopyEditingOperation() const;
     void performCopyLinkOperation(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
@@ -388,7 +388,7 @@ private:
 
     std::optional<PDFContextMenu> createContextMenu(const WebCore::IntPoint& contextMenuEventRootViewPoint, WebEventInputSource) const;
     PDFContextMenuItem contextMenuItem(ContextMenuItemTag, bool hasAction = true) const;
-    String titleForContextMenuItemTag(ContextMenuItemTag) const;
+    RefPtr<StringImpl> titleForContextMenuItemTag(ContextMenuItemTag) const;
     NODELETE bool isDisplayModeContextMenuItemTag(ContextMenuItemTag) const;
     NODELETE PDFContextMenuItem separatorContextMenuItem() const;
     Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
@@ -402,7 +402,7 @@ private:
     NODELETE ContextMenuItemTag contextMenuItemTagFromDisplayMode(const PDFPluginDisplayMode&) const;
     NODELETE PDFPluginDisplayMode displayModeFromContextMenuItemTag(const ContextMenuItemTag&) const;
 
-    Vector<String> contextMenuItemTitlesForTesting(const WebCore::IntPoint& contextMenuEventRootViewPoint) const final;
+    Vector<RefPtr<StringImpl>> contextMenuItemTitlesForTesting(const WebCore::IntPoint& contextMenuEventRootViewPoint) const final;
 #endif
 
     // Autoscroll
@@ -440,21 +440,21 @@ private:
     void repaintOnSelectionChange(ActiveStateChangeReason, PDFSelection *previousSelection = nil);
     void showOrHideSelectionLayerAsNecessary();
 
-    String fullDocumentString() const override;
+    RefPtr<StringImpl> fullDocumentString() const override;
     PDFPluginTextExtractionContent textExtractionContent() const override;
-    String selectionString() const override;
-    std::pair<String, String> stringsBeforeAndAfterSelection(int characterCount) const override;
+    RefPtr<StringImpl> selectionString() const override;
+    std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> stringsBeforeAndAfterSelection(int characterCount) const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
 
     // Find in PDF
     enum class HideFindIndicator : bool { No, Yes };
-    bool findString(const String&, WebCore::FindOptions, unsigned maxMatchCount) override;
+    bool findString(StringImpl*, WebCore::FindOptions, unsigned maxMatchCount) override;
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const final;
     bool drawsFindOverlay() const final { return false; }
-    void collectFindMatchRects(const String&, WebCore::FindOptions);
+    void collectFindMatchRects(StringImpl*, WebCore::FindOptions);
     void updateFindOverlay(HideFindIndicator = HideFindIndicator::No);
 
-    Vector<WebFoundTextRange::PDFData> findTextMatches(const String&, WebCore::FindOptions) final;
+    Vector<WebFoundTextRange::PDFData> findTextMatches(StringImpl*, WebCore::FindOptions) final;
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect&) final;
     RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition) final;
     void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&) final;
@@ -476,7 +476,7 @@ private:
     PDFPageCoverage pageCoverageForSelection(PDFSelection *, FirstPageOnly = FirstPageOnly::No) const;
 
     bool showDefinitionForSelection(PDFSelection *);
-    std::pair<String, RetainPtr<PDFSelection>> textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint&, WebHitTestResultData&) override;
+    std::pair<RefPtr<StringImpl>, RetainPtr<PDFSelection>> textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint&, WebHitTestResultData&) override;
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) override;
 
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
@@ -601,7 +601,7 @@ private:
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() const;
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&, WebCore::GraphicsLayerType);
-    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayerType);
+    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(StringImpl* name, WebCore::GraphicsLayerType);
 
     void setNeedsRepaintForIncrementalLoad();
     void setNeedsRepaintForAnnotation(PDFAnnotation *, RepaintRequirements);

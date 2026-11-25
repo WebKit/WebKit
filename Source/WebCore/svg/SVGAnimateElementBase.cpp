@@ -100,7 +100,7 @@ void SVGAnimateElementBase::resetAnimation()
     m_hasInvalidCSSAttributeType = { };
 }
 
-bool SVGAnimateElementBase::setFromAndToValues(const String& fromString, const String& toString)
+bool SVGAnimateElementBase::setFromAndToValues(StringImpl* fromString, StringImpl* toString)
 {
     RefPtr target = targetElement();
     if (!target)
@@ -111,7 +111,7 @@ bool SVGAnimateElementBase::setFromAndToValues(const String& fromString, const S
     return false;
 }
 
-bool SVGAnimateElementBase::setFromAndByValues(const String& fromString, const String& byString)
+bool SVGAnimateElementBase::setFromAndByValues(StringImpl* fromString, StringImpl* byString)
 {
     RefPtr target = targetElement();
     if (!target)
@@ -129,10 +129,10 @@ bool SVGAnimateElementBase::setFromAndByValues(const String& fromString, const S
     return false;
 }
 
-bool SVGAnimateElementBase::setToAtEndOfDurationValue(const String& toAtEndOfDurationString)
+bool SVGAnimateElementBase::setToAtEndOfDurationValue(StringImpl* toAtEndOfDurationString)
 {
     RefPtr target = targetElement();
-    if (!target || toAtEndOfDurationString.isEmpty())
+    if (!target || isEmpty(toAtEndOfDurationString))
         return false;
 
     if (isDiscreteAnimator())
@@ -191,7 +191,7 @@ void SVGAnimateElementBase::stopAnimation(SVGElement* targetElement)
         animator->stop(*target);
 }
 
-std::optional<float> SVGAnimateElementBase::calculateDistance(const String& fromString, const String& toString)
+std::optional<float> SVGAnimateElementBase::calculateDistance(StringImpl* fromString, StringImpl* toString)
 {
     // FIXME: A return value of float is not enough to support paced animations on lists.
     RefPtr target = targetElement();

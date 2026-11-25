@@ -31,10 +31,10 @@
 
 namespace TestWebKitAPI {
 
-static String format(const ListFormatter& formatter, Vector<String>&& strings)
+static RefPtr<StringImpl> format(const ListFormatter& formatter, Vector<RefPtr<StringImpl>>&& strings)
 {
     auto result = formatter.format(strings.span());
-    return result ? *result : String { "<failure>"_s };
+    return result ? *result : RefPtr<StringImpl> { "<failure>"_si };
 }
 
 TEST(WTF_ListFormatter, Conjunction)
@@ -42,32 +42,32 @@ TEST(WTF_ListFormatter, Conjunction)
     ListFormatter formatter { "en"_s, ListFormatter::Type::Conjunction, ListFormatter::Style::Long };
     ASSERT_TRUE(!!formatter);
     EXPECT_EQ(format(formatter, { }), ""_s);
-    EXPECT_EQ(format(formatter, { "Cheese"_s }), "Cheese"_s);
-    EXPECT_EQ(format(formatter, { "Cheese"_s, "Olives"_s }), "Cheese and Olives"_s);
-    EXPECT_EQ(format(formatter, { "Cheese"_s, "Ham"_s, "Olives"_s }), "Cheese, Ham, and Olives"_s);
+    EXPECT_EQ(format(formatter, { "Cheese"_si }), "Cheese"_s);
+    EXPECT_EQ(format(formatter, { "Cheese"_si, "Olives"_si }), "Cheese and Olives"_s);
+    EXPECT_EQ(format(formatter, { "Cheese"_si, "Ham"_si, "Olives"_si }), "Cheese, Ham, and Olives"_s);
 }
 
 TEST(WTF_ListFormatter, TypesAndStyles)
 {
     ListFormatter disjunction { "en"_s, ListFormatter::Type::Disjunction, ListFormatter::Style::Long };
-    EXPECT_EQ(format(disjunction, { "Cheese"_s, "Olives"_s }), "Cheese or Olives"_s);
+    EXPECT_EQ(format(disjunction, { "Cheese"_si, "Olives"_si }), "Cheese or Olives"_s);
 
     ListFormatter unit { "en"_s, ListFormatter::Type::Unit, ListFormatter::Style::Narrow };
-    EXPECT_EQ(format(unit, { "1h"_s, "5m"_s }), "1h 5m"_s);
+    EXPECT_EQ(format(unit, { "1h"_si, "5m"_si }), "1h 5m"_s);
 }
 
 TEST(WTF_ListFormatter, Locale)
 {
     ListFormatter formatter { "es"_s, ListFormatter::Type::Conjunction, ListFormatter::Style::Long };
-    EXPECT_EQ(format(formatter, { "Queso"_s, "Aceitunas"_s }), "Queso y Aceitunas"_s);
+    EXPECT_EQ(format(formatter, { "Queso"_si, "Aceitunas"_si }), "Queso y Aceitunas"_s);
 }
 
 TEST(WTF_ListFormatter, Spans)
 {
     ListFormatter formatter { "en"_s, ListFormatter::Type::Conjunction, ListFormatter::Style::Long };
-    String characters = "CheeseHamOlives"_s;
-    characters.convertTo16Bit();
-    auto buffer = characters.span16();
+    RefPtr<StringImpl> characters = "CheeseHamOlives"_si;
+    convertTo16Bit(characters);
+    auto buffer = span16(characters);
     Vector<std::span<const char16_t>> strings { buffer.subspan(0, 6), buffer.subspan(6, 3), buffer.subspan(9, 6) };
     auto result = formatter.format(strings.span());
     ASSERT_TRUE(!!result);
@@ -77,14 +77,14 @@ TEST(WTF_ListFormatter, Spans)
 TEST(WTF_ListFormatter, FormatToParts)
 {
     ListFormatter formatter { "en"_s, ListFormatter::Type::Conjunction, ListFormatter::Style::Long };
-    Vector<String> strings { "Cheese"_s, "Ham"_s, "Olives"_s };
+    Vector<RefPtr<StringImpl>> strings { "Cheese"_si, "Ham"_si, "Olives"_si };
     auto formattedList = formatter.formatToParts(strings.span());
     ASSERT_TRUE(!!formattedList);
     EXPECT_EQ(formattedList->string, "Cheese, Ham, and Olives"_s);
     Vector<Range<unsigned>> expectedRanges { { 0, 6 }, { 8, 11 }, { 17, 23 } };
     EXPECT_EQ(formattedList->elementRanges, expectedRanges);
 
-    Vector<String> stringsWithEmpty { "Cheese"_s, emptyString(), "Olives"_s };
+    Vector<RefPtr<StringImpl>> stringsWithEmpty { "Cheese"_si, emptyString(), "Olives"_si };
     formattedList = formatter.formatToParts(stringsWithEmpty.span());
     ASSERT_TRUE(!!formattedList);
     EXPECT_EQ(formattedList->string, "Cheese, , and Olives"_s);
@@ -96,7 +96,7 @@ TEST(WTF_ListFormatter, Empty)
 {
     ListFormatter formatter;
     EXPECT_FALSE(!!formatter);
-    Vector<String> strings { "Cheese"_s };
+    Vector<RefPtr<StringImpl>> strings { "Cheese"_si };
     EXPECT_FALSE(formatter.format(strings.span()));
     EXPECT_FALSE(formatter.formatToParts(strings.span()));
 }

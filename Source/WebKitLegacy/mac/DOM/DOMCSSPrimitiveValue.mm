@@ -66,13 +66,13 @@
 - (void)setStringValue:(unsigned short)stringType stringValue:(NSString *)stringValue
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setStringValue(stringType, stringValue));
+    raiseOnDOMError(IMPL->setStringValue(stringType, StringImpl::create(stringValue).get()));
 }
 
 - (NSString *)getStringValue
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->getStringValue()).createNSString().autorelease();
+    return createNSString(raiseOnDOMError(IMPL->getStringValue())).autorelease();
 }
 
 - (DOMCounter *)getCounterValue

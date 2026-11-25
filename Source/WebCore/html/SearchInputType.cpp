@@ -81,7 +81,7 @@ void SearchInputType::valueChanged(unsigned listIndex, bool fireEvents)
     if (static_cast<int>(listIndex) == (listSize() - 1)) {
         if (fireEvents) {
             m_recentSearches.clear();
-            if (!inputElement->attributeWithoutSynchronization(nameAttr).isEmpty())
+            if (!isEmpty(inputElement->attributeWithoutSynchronization(nameAttr)))
                 saveRecentSearches();
         }
     } else {
@@ -90,7 +90,7 @@ void SearchInputType::valueChanged(unsigned listIndex, bool fireEvents)
     }
 }
 
-String SearchInputType::itemText(unsigned listIndex) const
+RefPtr<StringImpl> SearchInputType::itemText(unsigned listIndex) const
 {
 #if !PLATFORM(IOS_FAMILY)
     int size = listSize();
@@ -102,7 +102,7 @@ String SearchInputType::itemText(unsigned listIndex) const
         return searchMenuRecentSearchesText();
 #endif
     if (itemIsSeparator(listIndex))
-        return String();
+        return nullptr;
 #if !PLATFORM(IOS_FAMILY)
     if (static_cast<int>(listIndex) == (size - 1))
         return searchMenuClearRecentSearchesText();
@@ -223,8 +223,8 @@ void SearchInputType::addSearchResult()
     if (inputElement->maxResults() <= 0)
         return;
 
-    String value = inputElement->value();
-    if (value.isEmpty())
+    RefPtr<StringImpl> value = inputElement->value();
+    if (isEmpty(value))
         return;
 
     RefPtr page = inputElement->document().page();
@@ -232,7 +232,7 @@ void SearchInputType::addSearchResult()
         return;
 
     m_recentSearches.removeAllMatching([value] (const RecentSearch& recentSearch) {
-        return recentSearch.string == value;
+        return equal(recentSearch.string, value);
     });
 
     RecentSearch recentSearch = { value, WallTime::now() };
@@ -283,7 +283,7 @@ void SearchInputType::showPopup()
 
     m_searchPopupIsVisible = true;
 
-    const AtomString& name = element->attributeWithoutSynchronization(nameAttr);
+    const RefPtr<AtomStringImpl>& name = element->attributeWithoutSynchronization(nameAttr);
     popup->loadRecentSearches(name, m_recentSearches);
 
     // Trim the recent searches list if the maximum size has changed since we last saved.
@@ -347,7 +347,7 @@ RenderPtr<RenderElement> SearchInputType::createInputRenderer(UniqueRef<Style::C
     return createRenderer<RenderSearchField>(*protect(element()), WTF::move(style));
 }
 
-const AtomString& SearchInputType::formControlType() const
+const RefPtr<AtomStringImpl>& SearchInputType::formControlType() const
 {
     return InputTypeNames::search();
 }
@@ -400,8 +400,8 @@ auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBase
     if (!element->isMutable())
         return TextFieldInputType::handleKeydownEvent(event);
 
-    const String& key = event.keyIdentifier();
-    if (key == "U+001B"_s) {
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (equal(key, "U+001B"_s)) {
         element->setValue(emptyString(), DispatchChangeEvent);
         event.setDefaultHandled();
         return ShouldCallBaseEventHandler::Yes;
@@ -460,9 +460,9 @@ float SearchInputType::decorationWidth(float) const
     return width;
 }
 
-void SearchInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void SearchInputType::setValue(StringImpl* sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
-    bool emptinessChanged = valueChanged && sanitizedValue.isEmpty() != protect(element())->value()->isEmpty();
+    bool emptinessChanged = valueChanged && isEmpty(sanitizedValue) != isEmpty(protect(element())->value().get());
 
     BaseTextInputType::setValue(sanitizedValue, valueChanged, eventBehavior, selection);
 

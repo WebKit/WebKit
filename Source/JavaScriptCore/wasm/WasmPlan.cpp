@@ -109,14 +109,14 @@ bool Plan::tryRemoveContextAndCancelIfLast(VM& vm)
 
     // FIXME: Make 0 index not so magical: https://bugs.webkit.org/show_bug.cgi?id=171395
     if (m_completionTasks.isEmpty() || (m_completionTasks.size() == 1 && !m_completionTasks[0].first)) {
-        fail("WebAssembly Plan was cancelled. If you see this error message please file a bug at bugs.webkit.org!"_s);
+        fail("WebAssembly Plan was cancelled. If you see this error message please file a bug at bugs.webkit.org!"_si);
         return true;
     }
 
     return false;
 }
 
-void Plan::fail(String&& errorMessage, CompilationError error)
+void Plan::fail(RefPtr<StringImpl>&& errorMessage, CompilationError error)
 {
     if (failed())
         return;
@@ -127,7 +127,7 @@ void Plan::fail(String&& errorMessage, CompilationError error)
     complete();
 }
 
-void Plan::failAtFunction(FunctionCodeIndex functionIndex, String&& errorMessage, CompilationError error)
+void Plan::failAtFunction(FunctionCodeIndex functionIndex, RefPtr<StringImpl>&& errorMessage, CompilationError error)
 {
     ASSERT(errorMessage);
     // Non-function failures (OOM, parse, cancel) win over function validation errors.

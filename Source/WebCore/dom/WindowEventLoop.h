@@ -48,7 +48,7 @@ class WindowEventLoop final : public EventLoop, public CanMakeCheckedPtr<WindowE
     WTF_MAKE_TZONE_ALLOCATED(WindowEventLoop);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WindowEventLoop);
 public:
-    static Ref<WindowEventLoop> eventLoopForAgentCluster(const String& agentClusterID);
+    static Ref<WindowEventLoop> eventLoopForAgentCluster(StringImpl* agentClusterID);
 
     virtual ~WindowEventLoop();
 
@@ -70,8 +70,8 @@ public:
     WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
 
 private:
-    NODELETE static Ref<WindowEventLoop> create(const String&);
-    WindowEventLoop(const String&);
+    NODELETE static Ref<WindowEventLoop> create(StringImpl*);
+    WindowEventLoop(StringImpl*);
 
     void scheduleToRun() final;
     bool isContextThread() const final;
@@ -86,7 +86,7 @@ private:
 
     void decayIdleCallbackDuration() { m_expectedIdleCallbackDuration /= 2; }
 
-    String m_agentClusterKey;
+    RefPtr<StringImpl> m_agentClusterKey;
     Timer m_timer;
     Timer m_idleTimer;
     const RefPtr<MicrotaskQueue> m_microtaskQueue;

@@ -38,14 +38,14 @@
 
 namespace WebCore {
 
-Ref<FileSystemDirectoryEntry> FileSystemDirectoryEntry::create(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
+Ref<FileSystemDirectoryEntry> FileSystemDirectoryEntry::create(ScriptExecutionContext& context, DOMFileSystem& filesystem, StringImpl* virtualPath)
 {
     auto result = adoptRef(*new FileSystemDirectoryEntry(context, filesystem, virtualPath));
     result->suspendIfNeeded();
     return result;
 }
 
-FileSystemDirectoryEntry::FileSystemDirectoryEntry(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
+FileSystemDirectoryEntry::FileSystemDirectoryEntry(ScriptExecutionContext& context, DOMFileSystem& filesystem, StringImpl* virtualPath)
     : FileSystemEntry(context, filesystem, virtualPath)
 {
 }
@@ -55,7 +55,7 @@ Ref<FileSystemDirectoryReader> FileSystemDirectoryEntry::createReader(ScriptExec
     return FileSystemDirectoryReader::create(context, *this);
 }
 
-void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const String& path, const Flags& flags, EntryMatchingFunction&& matches, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
+void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, StringImpl* path, const Flags& flags, EntryMatchingFunction&& matches, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
     if (!successCallback && !errorCallback)
         return;
@@ -74,7 +74,7 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         if (!matches(entry)) {
             if (errorCallback && document) {
                 protect(document->eventLoop())->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), pendingActivity = WTF::move(pendingActivity)]() mutable {
-                    errorCallback->invoke(DOMException::create(Exception { ExceptionCode::TypeMismatchError, "Entry at given path does not match expected type"_s }));
+                    errorCallback->invoke(DOMException::create(Exception { ExceptionCode::TypeMismatchError, "Entry at given path does not match expected type"_si }));
                 });
             }
             return;
@@ -87,12 +87,12 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
     });
 }
 
-void FileSystemDirectoryEntry::getFile(ScriptExecutionContext& context, const String& path, const Flags& flags, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
+void FileSystemDirectoryEntry::getFile(ScriptExecutionContext& context, StringImpl* path, const Flags& flags, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
     getEntry(context, path, flags, [](auto& entry) { return entry.isFile(); }, WTF::move(successCallback), WTF::move(errorCallback));
 }
 
-void FileSystemDirectoryEntry::getDirectory(ScriptExecutionContext& context, const String& path, const Flags& flags, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
+void FileSystemDirectoryEntry::getDirectory(ScriptExecutionContext& context, StringImpl* path, const Flags& flags, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
     getEntry(context, path, flags, [](auto& entry) { return entry.isDirectory(); }, WTF::move(successCallback), WTF::move(errorCallback));
 }

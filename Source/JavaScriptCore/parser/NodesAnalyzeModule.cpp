@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-static std::expected<RefPtr<ScriptFetchParameters>, std::tuple<ErrorType, String>> tryCreateAttributes(VM& vm, ImportAttributesListNode* attributesList)
+static std::expected<RefPtr<ScriptFetchParameters>, std::tuple<ErrorType, RefPtr<StringImpl>>> tryCreateAttributes(VM& vm, ImportAttributesListNode* attributesList)
 {
     if (!attributesList)
         return RefPtr<ScriptFetchParameters> { };

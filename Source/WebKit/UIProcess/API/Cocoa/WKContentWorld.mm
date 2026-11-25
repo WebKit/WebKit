@@ -58,7 +58,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 + (WKContentWorld *)worldWithName:(NSString *)name
 {
-    Ref world = API::ContentWorld::sharedWorldWithName(name);
+    Ref world = API::ContentWorld::sharedWorldWithName(StringImpl::create(name).get());
     checkContentWorldOptions(world, nil);
     return wrapper(WTF::move(world)).autorelease();
 }
@@ -72,7 +72,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
     if ([configuration isKindOfClass:_WKContentWorldConfiguration.class]) {
         auto *spiConfiguration = (_WKContentWorldConfiguration *)configuration;
-        apiWorld = API::ContentWorld::sharedWorldWithName(spiConfiguration.name, optionSet);
+        apiWorld = API::ContentWorld::sharedWorldWithName(StringImpl::create(spiConfiguration.name).get(), optionSet);
         checkContentWorldOptions(*apiWorld, spiConfiguration);
     } else
         apiWorld = API::ContentWorld::createNamelessWorld(optionSet);
@@ -92,10 +92,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSString *)name
 {
-    if (_contentWorld->name().isNull())
+    if (!_contentWorld->name())
         return nil;
 
-    return _contentWorld->name().createNSString().autorelease();
+    return createNSString(_contentWorld->name()).autorelease();
 }
 
 #pragma mark WKObject protocol implementation

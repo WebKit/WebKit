@@ -145,7 +145,7 @@ const UTF8CString& sandboxedUserRuntimeDirectory()
 #else
         static constexpr ASCIILiteral baseDirectory = "javascriptcore"_s;
 #endif
-        userRuntimeDirectory.construct(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_runtime_dir()), baseDirectory).utf8());
+        userRuntimeDirectory.construct(utf8(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_runtime_dir()), baseDirectory)));
     });
     return userRuntimeDirectory.get();
 }

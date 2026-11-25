@@ -183,7 +183,7 @@ void LibWebRTCIceTransportBackendObserver::onNetworkRouteChanged(std::optional<w
 
 void LibWebRTCIceTransportBackendObserver::processSelectedCandidatePairChanged(const webrtc::Candidate& local, const webrtc::Candidate& remote)
 {
-    callOnMainThread([protectedThis = Ref { *this }, localSdp = fromStdString(local.ToString()).isolatedCopy(), remoteSdp = fromStdString(remote.ToString()).isolatedCopy(), localFields = convertIceCandidate(local).isolatedCopy(), remoteFields = convertIceCandidate(remote).isolatedCopy()]() mutable {
+    callOnMainThread([protectedThis = Ref { *this }, localSdp = isolatedCopy(fromStdString(local.ToString())), remoteSdp = isolatedCopy(fromStdString(remote.ToString())), localFields = convertIceCandidate(local).isolatedCopy(), remoteFields = convertIceCandidate(remote).isolatedCopy()]() mutable {
         RefPtr client = protectedThis->m_client.get();
         if (!client)
             return;

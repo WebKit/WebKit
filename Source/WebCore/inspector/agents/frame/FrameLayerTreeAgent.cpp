@@ -43,7 +43,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameLayerTreeAgent);
 
 FrameLayerTreeAgent::FrameLayerTreeAgent(FrameAgentContext& context)
-    : InspectorAgentBase("LayerTree"_s, context)
+    : InspectorAgentBase("LayerTree"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::LayerTreeFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::LayerTreeBackendDispatcher::create(Ref { context.backendDispatcher }, this))
     , m_inspectedFrame(context.inspectedFrame)
@@ -148,12 +148,12 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer
     });
 }
 
-Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> FrameLayerTreeAgent::reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId& layerId)
+Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> FrameLayerTreeAgent::reasonsForCompositingLayer(StringImpl* layerId)
 {
     return m_state.reasonsForCompositingLayer(layerId);
 }
 
-Inspector::CommandResult<String> FrameLayerTreeAgent::requestContent(const Inspector::Protocol::LayerTree::LayerId& layerId)
+Inspector::CommandResult<RefPtr<StringImpl>> FrameLayerTreeAgent::requestContent(StringImpl* layerId)
 {
     return m_state.requestContent(layerId);
 }

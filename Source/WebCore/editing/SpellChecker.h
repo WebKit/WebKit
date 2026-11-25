@@ -61,7 +61,7 @@ private:
     void didSucceed(const Vector<TextCheckingResult>&) final;
     void didCancel() final;
 
-    SpellCheckRequest(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange, const String&, OptionSet<TextCheckingType>, TextCheckingProcessType);
+    SpellCheckRequest(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange, StringImpl*, OptionSet<TextCheckingType>, TextCheckingProcessType);
 
     SingleThreadWeakPtr<SpellChecker> m_checker;
     SimpleRange m_checkingRange;

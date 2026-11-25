@@ -73,7 +73,7 @@ ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& co
     if (RefPtr document = dynamicDowncast<Document>(context)) {
         auto lastNavigationWasAppInitiated = document->loader() && document->loader()->lastNavigationWasAppInitiated() ? LastNavigationWasAppInitiated::Yes : LastNavigationWasAppInitiated::No;
 
-        Vector<String> ancestorOrigins;
+        Vector<RefPtr<StringImpl>> ancestorOrigins;
         if (RefPtr frame = document->frame()) {
             for (Ref ancestor : ancestorFrames(*frame)) {
                 if (RefPtr origin = ancestor->frameDocumentSecurityOrigin())

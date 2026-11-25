@@ -142,40 +142,40 @@ void AccessibilityUndoReplacedText::captureTextForReapply()
     m_replacedText = textDeletedByUnapply();
 }
 
-static String stringForVisiblePositionIndexRange(const VisiblePositionIndexRange& range)
+static RefPtr<StringImpl> stringForVisiblePositionIndexRange(const VisiblePositionIndexRange& range)
 {
     if (range.isNull())
-        return String();
+        return nullptr;
     VisiblePosition start = visiblePositionForIndex(range.startIndex.value, range.startIndex.scope.get());
     VisiblePosition end = visiblePositionForIndex(range.endIndex.value, range.endIndex.scope.get());
     return AccessibilityObject::stringForVisiblePositionRange({ WTF::move(start), WTF::move(end) });
 }
 
-String AccessibilityUndoReplacedText::textDeletedByUnapply()
+RefPtr<StringImpl> AccessibilityUndoReplacedText::textDeletedByUnapply()
 {
     if (!AXObjectCache::accessibilityEnabled())
-        return String();
+        return nullptr;
     return stringForVisiblePositionIndexRange(m_rangeDeletedByUnapply);
 }
 
-String AccessibilityUndoReplacedText::textDeletedByReapply()
+RefPtr<StringImpl> AccessibilityUndoReplacedText::textDeletedByReapply()
 {
     if (!AXObjectCache::accessibilityEnabled())
-        return String();
+        return nullptr;
     return stringForVisiblePositionIndexRange(m_rangeDeletedByReapply);
 }
 
-static void postTextStateChangeNotification(AXObjectCache* cache, const VisiblePosition& position, const String& deletedText, const String& insertedText)
+static void postTextStateChangeNotification(AXObjectCache* cache, const VisiblePosition& position, StringImpl* deletedText, StringImpl* insertedText)
 {
     ASSERT(cache);
     RefPtr node { highestEditableRoot(position.deepEquivalent(), EditableType::AXRole) };
     if (!node)
         return;
-    if (insertedText.length() && deletedText.length())
+    if (length(insertedText) && length(deletedText))
         cache->postTextReplacementNotification(node.get(), AXTextEditType::Delete, insertedText, AXTextEditType::Insert, deletedText, position);
-    else if (deletedText.length())
+    else if (length(deletedText))
         cache->postTextStateChangeNotification(node.get(), AXTextEditType::Insert, deletedText, position);
-    else if (insertedText.length())
+    else if (length(insertedText))
         cache->postTextStateChangeNotification(node.get(), AXTextEditType::Delete, insertedText, position);
 }
 
@@ -191,7 +191,7 @@ void AccessibilityUndoReplacedText::postTextStateChangeNotificationForUnapply(AX
     if (position.isNull())
         return;
     postTextStateChangeNotification(cache, position, textDeletedByUnapply(), m_replacedText);
-    m_replacedText = String();
+    m_replacedText = nullptr;
 }
 
 void AccessibilityUndoReplacedText::postTextStateChangeNotificationForReapply(AXObjectCache* cache)
@@ -206,7 +206,7 @@ void AccessibilityUndoReplacedText::postTextStateChangeNotificationForReapply(AX
     if (position.isNull())
         return;
     postTextStateChangeNotification(cache, position, textDeletedByReapply(), m_replacedText);
-    m_replacedText = String();
+    m_replacedText = nullptr;
 }
 
 Ref<EditCommandComposition> EditCommandComposition::create(Document& document,
@@ -352,7 +352,7 @@ void EditCommandComposition::getNodesInCommand(NodeSet& nodes)
 }
 #endif
 
-String EditCommandComposition::label() const
+RefPtr<StringImpl> EditCommandComposition::label() const
 {
     return undoRedoLabel(m_editAction);
 }
@@ -496,9 +496,9 @@ void CompositeEditCommand::setShouldRetainAutocorrectionIndicator(bool)
 {
 }
 
-AtomString CompositeEditCommand::inputEventTypeName() const
+RefPtr<AtomStringImpl> CompositeEditCommand::inputEventTypeName() const
 {
-    return inputTypeNameForEditingAction(editingAction());
+    return RefPtr<AtomStringImpl> { inputTypeNameForEditingAction(editingAction()) };
 }
 
 bool CompositeEditCommand::isInputMethodComposing() const
@@ -724,7 +724,7 @@ void CompositeEditCommand::splitListElement(Element& listNode, Node& listChild)
 {
     splitElement(listNode, *splitTreeToNode(listChild, listNode));
     if (listNode.hasTagName(olTag) && listNode.hasAttribute(startAttr))
-        setNodeAttribute(listNode, startAttr, AtomString::number(1));
+        setNodeAttribute(listNode, startAttr, AtomStringImpl::number(1));
 }
 
 void CompositeEditCommand::mergeIdenticalElements(Element& first, Element& second)
@@ -749,20 +749,20 @@ void CompositeEditCommand::splitTextNodeContainingElement(Text& text, unsigned o
     applyCommandToComposite(SplitTextNodeContainingElementCommand::create(text, offset));
 }
 
-void CompositeEditCommand::inputText(const String& text, bool selectInsertedText)
+void CompositeEditCommand::inputText(StringImpl* text, bool selectInsertedText)
 {
     unsigned offset = 0;
-    unsigned length = text.length();
+    unsigned length = WTF::length(text);
     
     RefPtr<ContainerNode> scope;
     unsigned startIndex = indexForVisiblePosition(endingSelection().visibleStart(), scope);
     
     size_t newline;
     do {
-        newline = text.find('\n', offset);
+        newline = find(text, '\n', offset);
         if (newline != offset) {
             int substringLength = newline == notFound ? length - offset : newline - offset;
-            applyCommandToComposite(InsertTextCommand::create(document(), text.substring(offset, substringLength), AllowPasswordEcho::Yes, false));
+            applyCommandToComposite(InsertTextCommand::create(document(), substring(text, offset, substringLength), AllowPasswordEcho::Yes, false));
         }
         if (newline != notFound) {
             VisiblePosition caret(endingSelection().visibleStart());
@@ -789,9 +789,9 @@ void CompositeEditCommand::inputText(const String& text, bool selectInsertedText
         setEndingSelection(VisibleSelection(visiblePositionForIndex(startIndex, scope.get()), visiblePositionForIndex(startIndex + length, scope.get())));
 }
 
-void CompositeEditCommand::insertTextIntoNode(Text& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho)
+void CompositeEditCommand::insertTextIntoNode(Text& node, unsigned offset, StringImpl* text, AllowPasswordEcho allowPasswordEcho)
 {
-    if (!text.isEmpty())
+    if (!isEmpty(text))
         applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, text, allowPasswordEcho, editingAction()));
 }
 
@@ -800,14 +800,14 @@ void CompositeEditCommand::deleteTextFromNode(Text& node, unsigned offset, unsig
     applyCommandToComposite(DeleteFromTextNodeCommand::create(node, offset, count, editingAction()));
 }
 
-void CompositeEditCommand::replaceTextInNode(Text& node, unsigned offset, unsigned count, const String& replacementText, AllowPasswordEcho allowPasswordEcho)
+void CompositeEditCommand::replaceTextInNode(Text& node, unsigned offset, unsigned count, StringImpl* replacementText, AllowPasswordEcho allowPasswordEcho)
 {
     applyCommandToComposite(DeleteFromTextNodeCommand::create(node, offset, count));
-    if (!replacementText.isEmpty())
+    if (!isEmpty(replacementText))
         applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, replacementText, allowPasswordEcho, editingAction()));
 }
 
-Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
+Position CompositeEditCommand::replaceSelectedTextInNode(StringImpl* text)
 {
     Position start = endingSelection().start();
     Position end = endingSelection().end();
@@ -819,7 +819,7 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
         return Position();
     replaceTextInNode(*textNode, start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
 
-    return Position(textNode.get(), start.offsetInContainerNode() + text.length());
+    return Position(textNode.get(), start.offsetInContainerNode() + length(text));
 }
 
 static Vector<RenderedDocumentMarker> copyMarkers(const Vector<WeakPtr<RenderedDocumentMarker>>& markerPointers)
@@ -829,12 +829,12 @@ static Vector<RenderedDocumentMarker> copyMarkers(const Vector<WeakPtr<RenderedD
     });
 }
 
-void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsigned offset, unsigned count, const String& replacementText)
+void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsigned offset, unsigned count, StringImpl* replacementText)
 {
     auto range = SimpleRange { { node, offset }, { node, offset + count } };
     auto markers = copyMarkers(protect(document().markers())->markersInRange(range, DocumentMarker::allMarkers()));
     replaceTextInNode(node, offset, count, replacementText);
-    range.end.offset = range.start.offset + replacementText.length();
+    range.end.offset = range.start.offset + length(replacementText);
     for (auto& marker : markers)
         addMarker(range, marker.type(), marker.data());
 }
@@ -902,21 +902,21 @@ void CompositeEditCommand::removeNodeAttribute(Element& element, const Qualified
     setNodeAttribute(element, attribute, nullAtom());
 }
 
-void CompositeEditCommand::setNodeAttribute(Element& element, const QualifiedName& attribute, const AtomString& value)
+void CompositeEditCommand::setNodeAttribute(Element& element, const QualifiedName& attribute, AtomStringImpl* value)
 {
     applyCommandToComposite(SetNodeAttributeCommand::create(element, attribute, value));
 }
 
-NODELETE static inline bool containsOnlyDeprecatedEditingWhitespace(const String& text)
+NODELETE static inline bool containsOnlyDeprecatedEditingWhitespace(StringImpl* text)
 {
-    for (unsigned i = 0; i < text.length(); ++i) {
-        if (!deprecatedIsEditingWhitespace(text[i]))
+    for (unsigned i = 0; i < length(text); ++i) {
+        if (!deprecatedIsEditingWhitespace(codeUnitAt(text, i)))
             return false;
     }
     return true;
 }
 
-bool CompositeEditCommand::shouldRebalanceLeadingWhitespaceFor(const String& text) const
+bool CompositeEditCommand::shouldRebalanceLeadingWhitespaceFor(StringImpl* text) const
 {
     return containsOnlyDeprecatedEditingWhitespace(text);
 }
@@ -950,10 +950,10 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
 
     // If the rebalance is for the single offset, and neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
     int offset = position.deprecatedEditingOffset();
-    String text = textNode->data();
-    if (!deprecatedIsEditingWhitespace(text[offset])) {
+    RefPtr<StringImpl> text = textNode->data();
+    if (!deprecatedIsEditingWhitespace(codeUnitAt(text, offset))) {
         offset--;
-        if (offset < 0 || !deprecatedIsEditingWhitespace(text[offset]))
+        if (offset < 0 || !deprecatedIsEditingWhitespace(codeUnitAt(text, offset)))
             return;
     }
 
@@ -967,16 +967,16 @@ NODELETE static bool isWhitespaceForRebalance(Text& textNode, char16_t character
 
 void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, int startOffset, int endOffset)
 {
-    String text = textNode.data();
-    ASSERT(!text.isEmpty());
+    RefPtr<StringImpl> text = textNode.data();
+    ASSERT(!isEmpty(text));
 
     // Set upstream and downstream to define the extent of the whitespace surrounding text[offset].
     unsigned upstream = std::max(0, startOffset);
-    while (upstream > 0 && isWhitespaceForRebalance(textNode, text[upstream - 1]))
+    while (upstream > 0 && isWhitespaceForRebalance(textNode, codeUnitAt(text, upstream - 1)))
         upstream--;
     
     unsigned downstream = std::max(0, endOffset);
-    while (downstream < text.length() && isWhitespaceForRebalance(textNode, text[downstream]))
+    while (downstream < WTF::length(text) && isWhitespaceForRebalance(textNode, codeUnitAt(text, downstream)))
         downstream++;
     
     int length = downstream - upstream;
@@ -986,17 +986,17 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, in
     VisiblePosition visibleUpstreamPos(Position(&textNode, upstream));
     VisiblePosition visibleDownstreamPos(Position(&textNode, downstream));
     
-    String string = text.substring(upstream, length);
+    RefPtr<StringImpl> string = substring(text, upstream, length);
     // FIXME: Because of the problem mentioned at the top of this function, we must also use nbsps at the start/end of the string because
     // this function doesn't get all surrounding whitespace, just the whitespace in the current text node.
     RefPtr nextSiblingTextNode = dynamicDowncast<Text>(textNode.nextSibling());
     const bool nextSiblingIsTextNodeWithoutLeadingSpace = nextSiblingTextNode
-        && nextSiblingTextNode->data().length()
-        && !deprecatedIsEditingWhitespace(nextSiblingTextNode->data()[0]);
-    String rebalancedString = stringWithRebalancedWhitespace(string, isStartOfParagraph(visibleUpstreamPos) || !upstream,
-        (isEndOfParagraph(visibleDownstreamPos) || downstream == text.length()) && !nextSiblingIsTextNodeWithoutLeadingSpace);
+        && WTF::length(nextSiblingTextNode->data())
+        && !deprecatedIsEditingWhitespace(codeUnitAt(nextSiblingTextNode->data(), 0));
+    RefPtr<StringImpl> rebalancedString = stringWithRebalancedWhitespace(string, isStartOfParagraph(visibleUpstreamPos) || !upstream,
+        (isEndOfParagraph(visibleDownstreamPos) || downstream == WTF::length(text)) && !nextSiblingIsTextNodeWithoutLeadingSpace);
 
-    if (string != rebalancedString)
+    if (!equal(string, rebalancedString))
         replaceTextInNodePreservingMarkers(textNode, upstream, length, rebalancedString);
 }
 
@@ -1057,7 +1057,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
     protect(document())->updateLayout();
 
     bool wholeTextNodeIsEmpty = false;
-    String string;
+    RefPtr<StringImpl> string;
     auto determineRemovalMode = [&] {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         CheckedPtr textRenderer = textNode.renderer();
@@ -1090,8 +1090,8 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
             if (indicesIntersect && gapLength > 0) {
                 gapStart = std::max(gapStart, start);
                 gapEnd = std::min(gapEnd, end);
-                if (string.isNull())
-                    string = textNode.data().substring(start, end - start);
+                if (!string)
+                    string = substring(textNode.data(), start, end - start);
                 // Remove text in the gap.
                 string = makeStringByRemoving(string, gapStart - start - removed, gapLength);
                 removed += gapLength;
@@ -1109,9 +1109,9 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
         return;
     }
 
-    if (!string.isNull()) {
+    if (string) {
         // Replace the text between start and end with our pruned version.
-        if (!string.isEmpty())
+        if (!isEmpty(string))
             replaceTextInNode(textNode, start, end - start, string);
         else {
             // Assert that we are not going to delete all of the text in the node.

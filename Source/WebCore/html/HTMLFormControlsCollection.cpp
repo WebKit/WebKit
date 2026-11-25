@@ -53,7 +53,7 @@ Ref<HTMLFormControlsCollection> HTMLFormControlsCollection::create(ContainerNode
 
 HTMLFormControlsCollection::~HTMLFormControlsCollection() = default;
 
-std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> HTMLFormControlsCollection::namedItemOrItems(const AtomString& name) const
+std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> HTMLFormControlsCollection::namedItemOrItems(AtomStringImpl* name) const
 {
     auto namedItems = this->namedItems(name);
 
@@ -116,7 +116,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
 
     auto cache = makeUnique<CollectionNamedElementCache>();
 
-    HashSet<AtomString> foundInputElements;
+    HashSet<RefPtr<AtomStringImpl>> foundInputElements;
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (auto& weakElement : ownerNode().unsafeListedElements()) {
@@ -126,12 +126,12 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
         ASSERT(associatedElement);
         if (associatedElement->isEnumeratable()) {
             auto& id = element->getIdAttribute();
-            if (!id.isEmpty()) {
+            if (!isEmpty(id)) {
                 cache->appendToIdCache(id, *element);
                 foundInputElements.add(id);
             }
             auto& name = element->getNameAttribute();
-            if (!name.isEmpty() && id != name) {
+            if (!isEmpty(name) && id != name) {
                 cache->appendToNameCache(name, *element);
                 foundInputElements.add(name);
             }
@@ -143,10 +143,10 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
         if (!element)
             continue;
         auto& id = element->getIdAttribute();
-        if (!id.isEmpty() && !foundInputElements.contains(id))
+        if (!isEmpty(id) && !foundInputElements.contains(id))
             cache->appendToIdCache(id, *element);
         auto& name = element->getNameAttribute();
-        if (!name.isEmpty() && id != name && !foundInputElements.contains(name))
+        if (!isEmpty(name) && id != name && !foundInputElements.contains(name))
             cache->appendToNameCache(name, *element);
     }
 

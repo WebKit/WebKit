@@ -2239,13 +2239,13 @@ void testLea32()
     CHECK(r == a + b);
 }
 
-inline Vector<String> matchAll(const UTF8CString& source, std::regex regex)
+inline Vector<RefPtr<StringImpl>> matchAll(const UTF8CString& source, std::regex regex)
 {
-    Vector<String> matches;
+    Vector<RefPtr<StringImpl>> matches;
     std::smatch match;
     for (std::string str = source.toStdString(); std::regex_search(str, match, regex); str = match.suffix()) {
         ASSERT(match.size() == 1);
-        matches.append(String::fromUTF8(match[0].str().c_str()));
+        matches.append(StringImpl::fromUTF8(match[0].str().c_str()));
     }
     return matches;
 }

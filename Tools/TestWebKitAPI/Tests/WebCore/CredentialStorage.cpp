@@ -35,20 +35,20 @@ namespace TestWebKitAPI {
 
 static WebCore::Credential testCredential()
 {
-    return WebCore::Credential { "user"_s, "password"_s, WebCore::CredentialPersistence::None };
+    return WebCore::Credential { "user"_si, "password"_si, WebCore::CredentialPersistence::None };
 }
 
 TEST(CredentialStorage, RemoveCredentialsWithHTTPSOriginDefaultPort)
 {
     WebCore::CredentialStorage storage;
-    WebCore::ProtectionSpace protectionSpace { "example.com"_s, 443, WebCore::ProtectionSpace::ServerType::HTTPS, "realm"_s, WebCore::ProtectionSpace::AuthenticationScheme::Default };
+    WebCore::ProtectionSpace protectionSpace { "example.com"_si, 443, WebCore::ProtectionSpace::ServerType::HTTPS, "realm"_si, WebCore::ProtectionSpace::AuthenticationScheme::Default };
     storage.set(emptyString(), testCredential(), protectionSpace, URL { "https://example.com/index.html"_str });
 
     EXPECT_FALSE(storage.get(emptyString(), protectionSpace).isEmpty());
 
     // An origin built from a URL has its default port stripped to std::nullopt, mirroring what the
     // NetworkProcess passes in when clearing website data by origin.
-    WebCore::SecurityOriginData origin { "https"_s, "example.com"_s, std::nullopt };
+    WebCore::SecurityOriginData origin { "https"_si, "example.com"_si, std::nullopt };
     storage.removeCredentialsWithOrigin(origin);
 
     EXPECT_TRUE(storage.get(emptyString(), protectionSpace).isEmpty());
@@ -57,12 +57,12 @@ TEST(CredentialStorage, RemoveCredentialsWithHTTPSOriginDefaultPort)
 TEST(CredentialStorage, RemoveCredentialsWithHTTPOriginDefaultPort)
 {
     WebCore::CredentialStorage storage;
-    WebCore::ProtectionSpace protectionSpace { "example.com"_s, 80, WebCore::ProtectionSpace::ServerType::HTTP, "realm"_s, WebCore::ProtectionSpace::AuthenticationScheme::Default };
+    WebCore::ProtectionSpace protectionSpace { "example.com"_si, 80, WebCore::ProtectionSpace::ServerType::HTTP, "realm"_si, WebCore::ProtectionSpace::AuthenticationScheme::Default };
     storage.set(emptyString(), testCredential(), protectionSpace, URL { "http://example.com/index.html"_str });
 
     EXPECT_FALSE(storage.get(emptyString(), protectionSpace).isEmpty());
 
-    WebCore::SecurityOriginData origin { "http"_s, "example.com"_s, std::nullopt };
+    WebCore::SecurityOriginData origin { "http"_si, "example.com"_si, std::nullopt };
     storage.removeCredentialsWithOrigin(origin);
 
     EXPECT_TRUE(storage.get(emptyString(), protectionSpace).isEmpty());
@@ -71,12 +71,12 @@ TEST(CredentialStorage, RemoveCredentialsWithHTTPOriginDefaultPort)
 TEST(CredentialStorage, RemoveCredentialsWithExplicitPort)
 {
     WebCore::CredentialStorage storage;
-    WebCore::ProtectionSpace protectionSpace { "example.com"_s, 8443, WebCore::ProtectionSpace::ServerType::HTTPS, "realm"_s, WebCore::ProtectionSpace::AuthenticationScheme::Default };
+    WebCore::ProtectionSpace protectionSpace { "example.com"_si, 8443, WebCore::ProtectionSpace::ServerType::HTTPS, "realm"_si, WebCore::ProtectionSpace::AuthenticationScheme::Default };
     storage.set(emptyString(), testCredential(), protectionSpace, URL { "https://example.com:8443/index.html"_str });
 
     EXPECT_FALSE(storage.get(emptyString(), protectionSpace).isEmpty());
 
-    WebCore::SecurityOriginData origin { "https"_s, "example.com"_s, 8443 };
+    WebCore::SecurityOriginData origin { "https"_si, "example.com"_si, 8443 };
     storage.removeCredentialsWithOrigin(origin);
 
     EXPECT_TRUE(storage.get(emptyString(), protectionSpace).isEmpty());
@@ -85,11 +85,11 @@ TEST(CredentialStorage, RemoveCredentialsWithExplicitPort)
 TEST(CredentialStorage, RemoveCredentialsWithOriginDoesNotAffectOtherScheme)
 {
     WebCore::CredentialStorage storage;
-    WebCore::ProtectionSpace httpsSpace { "example.com"_s, 443, WebCore::ProtectionSpace::ServerType::HTTPS, "realm"_s, WebCore::ProtectionSpace::AuthenticationScheme::Default };
+    WebCore::ProtectionSpace httpsSpace { "example.com"_si, 443, WebCore::ProtectionSpace::ServerType::HTTPS, "realm"_si, WebCore::ProtectionSpace::AuthenticationScheme::Default };
     storage.set(emptyString(), testCredential(), httpsSpace, URL { "https://example.com/index.html"_str });
 
     // Removing the http origin must not purge the https credential.
-    WebCore::SecurityOriginData httpOrigin { "http"_s, "example.com"_s, std::nullopt };
+    WebCore::SecurityOriginData httpOrigin { "http"_si, "example.com"_si, std::nullopt };
     storage.removeCredentialsWithOrigin(httpOrigin);
 
     EXPECT_FALSE(storage.get(emptyString(), httpsSpace).isEmpty());

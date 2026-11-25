@@ -53,7 +53,7 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
         return false;
 
     auto path = protect(processPool())->configuration().injectedBundlePath();
-    return !path.isEmpty() && !path.startsWith("/System/"_s);
+    return !isEmpty(path) && !startsWith(path, "/System/"_s);
 }
 
 } // namespace WebKit

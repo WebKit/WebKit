@@ -49,9 +49,9 @@ private:
         
     WEBCORE_EXPORT unsigned itemCount() const;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 
     std::optional<int> m_start;
     mutable std::optional<unsigned> m_itemCount;

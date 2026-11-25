@@ -42,54 +42,54 @@ RetainPtr<NSString> localizedDescriptionForErrorCode(WKErrorCode errorCode)
 {
     switch (errorCode) {
     case WKErrorUnknown:
-        return WEB_UI_STRING("An unknown error occurred", "WKErrorUnknown description").createNSString();
+        return createNSString(WEB_UI_STRING("An unknown error occurred", "WKErrorUnknown description"));
 
     case WKErrorWebContentProcessTerminated:
-        return WEB_UI_STRING("The Web Content process was terminated", "WKErrorWebContentProcessTerminated description").createNSString();
+        return createNSString(WEB_UI_STRING("The Web Content process was terminated", "WKErrorWebContentProcessTerminated description"));
 
     case WKErrorWebViewInvalidated:
-        return WEB_UI_STRING("The WKWebView was invalidated", "WKErrorWebViewInvalidated description").createNSString();
+        return createNSString(WEB_UI_STRING("The WKWebView was invalidated", "WKErrorWebViewInvalidated description"));
 
     case WKErrorJavaScriptExceptionOccurred:
-        return WEB_UI_STRING("A JavaScript exception occurred", "WKErrorJavaScriptExceptionOccurred description").createNSString();
+        return createNSString(WEB_UI_STRING("A JavaScript exception occurred", "WKErrorJavaScriptExceptionOccurred description"));
     case WKErrorJavaScriptResultTypeIsUnsupported:
-        return WEB_UI_STRING("JavaScript execution returned a result of an unsupported type", "WKErrorJavaScriptResultTypeIsUnsupported description").createNSString();
+        return createNSString(WEB_UI_STRING("JavaScript execution returned a result of an unsupported type", "WKErrorJavaScriptResultTypeIsUnsupported description"));
 
     case WKErrorContentRuleListStoreLookUpFailed:
-        return WEB_UI_STRING("Looking up a WKContentRuleList failed", "WKErrorContentRuleListStoreLookupFailed description").createNSString();
+        return createNSString(WEB_UI_STRING("Looking up a WKContentRuleList failed", "WKErrorContentRuleListStoreLookupFailed description"));
 
     case WKErrorContentRuleListStoreVersionMismatch:
-        return WEB_UI_STRING("Looking up a WKContentRuleList found a binary that is incompatible", "WKErrorContentRuleListStoreVersionMismatch description").createNSString();
+        return createNSString(WEB_UI_STRING("Looking up a WKContentRuleList found a binary that is incompatible", "WKErrorContentRuleListStoreVersionMismatch description"));
 
     case WKErrorContentRuleListStoreCompileFailed:
-        return WEB_UI_STRING("Compiling a WKContentRuleList failed", "WKErrorContentRuleListStoreCompileFailed description").createNSString();
+        return createNSString(WEB_UI_STRING("Compiling a WKContentRuleList failed", "WKErrorContentRuleListStoreCompileFailed description"));
 
     case WKErrorContentRuleListStoreRemoveFailed:
-        return WEB_UI_STRING("Removing a WKContentRuleList failed", "WKErrorContentRuleListStoreRemoveFailed description").createNSString();
+        return createNSString(WEB_UI_STRING("Removing a WKContentRuleList failed", "WKErrorContentRuleListStoreRemoveFailed description"));
 
     case WKErrorAttributedStringContentFailedToLoad:
-        return WEB_UI_STRING("Attributed string content failed to load", "WKErrorAttributedStringContentFailedToLoad description").createNSString();
+        return createNSString(WEB_UI_STRING("Attributed string content failed to load", "WKErrorAttributedStringContentFailedToLoad description"));
 
     case WKErrorAttributedStringContentLoadTimedOut:
-        return WEB_UI_STRING("Timed out while loading attributed string content", "WKErrorAttributedStringContentLoadTimedOut description").createNSString();
+        return createNSString(WEB_UI_STRING("Timed out while loading attributed string content", "WKErrorAttributedStringContentLoadTimedOut description"));
 
     case WKErrorJavaScriptInvalidFrameTarget:
-        return WEB_UI_STRING("JavaScript execution targeted an invalid frame", "WKErrorJavaScriptInvalidFrameTarget description").createNSString();
+        return createNSString(WEB_UI_STRING("JavaScript execution targeted an invalid frame", "WKErrorJavaScriptInvalidFrameTarget description"));
 
     case WKErrorNavigationAppBoundDomain:
-        return WEB_UI_STRING("Attempted to navigate away from an app-bound domain or navigate after using restricted APIs", "WKErrorNavigationAppBoundDomain description").createNSString();
+        return createNSString(WEB_UI_STRING("Attempted to navigate away from an app-bound domain or navigate after using restricted APIs", "WKErrorNavigationAppBoundDomain description"));
 
     case WKErrorJavaScriptAppBoundDomain:
-        return WEB_UI_STRING("JavaScript execution targeted a frame that is not in an app-bound domain", "WKErrorJavaScriptAppBoundDomain description").createNSString();
+        return createNSString(WEB_UI_STRING("JavaScript execution targeted a frame that is not in an app-bound domain", "WKErrorJavaScriptAppBoundDomain description"));
 
     case WKErrorDuplicateCredential:
-        return WEB_UI_STRING("This credential is already present", "WKErrorDuplicateCredential description").createNSString();
+        return createNSString(WEB_UI_STRING("This credential is already present", "WKErrorDuplicateCredential description"));
 
     case WKErrorMalformedCredential:
-        return WEB_UI_STRING("This credential is malformed", "WKErrorMalformedCredential description").createNSString();
+        return createNSString(WEB_UI_STRING("This credential is malformed", "WKErrorMalformedCredential description"));
             
     case WKErrorCredentialNotFound:
-        return WEB_UI_STRING("Credential could not be found", "WKErrorCredentialNotFound description").createNSString();
+        return createNSString(WEB_UI_STRING("Credential could not be found", "WKErrorCredentialNotFound description"));
     }
 }
 

@@ -53,16 +53,16 @@ struct RevealItemRange {
 class RevealItem {
 public:
     RevealItem() = default;
-    RevealItem(const String& text, RevealItemRange selectedRange);
+    RevealItem(StringImpl* text, RevealItemRange selectedRange);
 
-    const String& text() const LIFETIME_BOUND { return m_text; }
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_text; }
     const RevealItemRange& selectedRange() const LIFETIME_BOUND { return m_selectedRange; }
     NSRange highlightRange() const;
 
     RVItem *item() const;
 
 private:
-    String m_text;
+    RefPtr<StringImpl> m_text;
     RevealItemRange m_selectedRange;
 
     mutable RetainPtr<RVItem> m_item;

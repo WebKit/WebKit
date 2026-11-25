@@ -67,9 +67,9 @@ private:
 
     struct Notification {
         uint32_t id { 0 };
-        String portalID;
-        String tag;
-        String iconURL;
+        RefPtr<StringImpl> portalID;
+        RefPtr<StringImpl> tag;
+        RefPtr<StringImpl> iconURL;
     };
 
     enum class Capabilities : uint16_t {
@@ -88,7 +88,7 @@ private:
 
     void setNotificationID(WebNotificationIdentifier, uint32_t);
     std::optional<WebNotificationIdentifier> findNotification(uint32_t);
-    std::optional<WebNotificationIdentifier> findNotification(const String&);
+    std::optional<WebNotificationIdentifier> findNotification(StringImpl*);
 
     static void handleSignal(GDBusProxy*, char*, char*, GVariant*, NotificationService*);
     void didClickNotification(std::optional<WebNotificationIdentifier>);

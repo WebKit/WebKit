@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebEditCommandProxy::WebEditCommandProxy(WebUndoStepID commandID, String&& label, WebPageProxy& page, WebProcessProxy& process, WebCore::PageIdentifier pageIDInProcess)
+WebEditCommandProxy::WebEditCommandProxy(WebUndoStepID commandID, RefPtr<StringImpl>&& label, WebPageProxy& page, WebProcessProxy& process, WebCore::PageIdentifier pageIDInProcess)
     : m_commandID(commandID)
     , m_label(WTF::move(label))
     , m_page(page)

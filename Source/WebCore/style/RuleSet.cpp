@@ -66,9 +66,9 @@ RuleSet::~RuleSet()
     RELEASE_ASSERT(!m_isBuilding);
 }
 
-void RuleSet::addToRuleSet(const AtomString& key, AtomRuleMap& map, const RuleData& ruleData)
+void RuleSet::addToRuleSet(AtomStringImpl* key, AtomRuleMap& map, const RuleData& ruleData)
 {
-    if (key.isNull())
+    if (!key)
         return;
     auto& rules = map.add(key, nullptr).iterator->value;
     if (!rules)
@@ -76,7 +76,7 @@ void RuleSet::addToRuleSet(const AtomString& key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-NODELETE static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomString& name)
+NODELETE static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, AtomStringImpl* name)
 {
     if (const auto* rules = map.get(name))
         return rules->size();
@@ -364,7 +364,7 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
 
         if (pickerPseudoElementSelector) [[unlikely]] {
             // Look up useragentpart="picker(...)".
-            addToRuleSet(AtomString(makeString("picker("_s, pickerPseudoElementSelector->stringList()->at(0), ')')), m_userAgentPartRules, ruleData);
+            addToRuleSet(AtomStringImpl::add(makeString("picker("_s, pickerPseudoElementSelector->stringList()->at(0), ')')).get(), m_userAgentPartRules, ruleData);
             return;
         }
 
@@ -728,21 +728,21 @@ Vector<Ref<const StyleRuleScope>> RuleSet::scopeRulesFor(const RuleData& ruleDat
     return queries;
 }
 
-const RefPtr<const StyleRulePositionTry> RuleSet::positionTryRuleForName(const AtomString& name) const
+const RefPtr<const StyleRulePositionTry> RuleSet::positionTryRuleForName(AtomStringImpl* name) const
 {
     return m_positionTryRules.get(name);
 }
 
 #if ENABLE(SPATIAL_PORTAL)
 
-RefPtr<const StyleRuleEnvironmentMap> RuleSet::environmentMapRuleForName(const AtomString& name) const
+RefPtr<const StyleRuleEnvironmentMap> RuleSet::environmentMapRuleForName(AtomStringImpl* name) const
 {
     return m_environmentMapRules.get(name);
 }
 
 #endif // ENABLE(SPATIAL_PORTAL)
 
-WTF::String RuleSet::selectorsForDebugging() const
+RefPtr<StringImpl> RuleSet::selectorsForDebugging() const
 {
     TextStream ts;
     ts << "RuleSet size " << ruleCount();

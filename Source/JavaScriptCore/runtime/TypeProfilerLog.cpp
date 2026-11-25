@@ -59,7 +59,7 @@ TypeProfilerLog::~TypeProfilerLog()
     delete[] m_logStartPtr;
 }
 
-void TypeProfilerLog::processLogEntries(VM& vm, const String& reason)
+void TypeProfilerLog::processLogEntries(VM& vm, StringImpl* reason)
 {
     // We need to do this because this code will call into calculatedDisplayName.
     // calculatedDisplayName will clear any exception it sees (because it thinks

@@ -1008,9 +1008,9 @@ void ContainerNode::replaceAll(Node* node)
 }
 
 // https://dom.spec.whatwg.org/#string-replace-all
-void ContainerNode::stringReplaceAll(String&& string)
+void ContainerNode::stringReplaceAll(RefPtr<StringImpl>&& string)
 {
-    replaceAll(string.isEmpty() ? nullptr : protect(document())->createTextNode(WTF::move(string)).ptr());
+    replaceAll(isEmpty(string) ? nullptr : protect(document())->createTextNode(WTF::move(string)).ptr());
 }
 
 inline void ContainerNode::rebuildSVGExtensionsElementsIfNecessary()
@@ -1344,7 +1344,7 @@ static void dispatchChildRemovalEvents(Ref<Node>& child)
     }
 }
 
-ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
+ExceptionOr<Element*> ContainerNode::querySelector(StringImpl* selectors)
 {
     Ref document = this->document();
     if (auto result = document->resultForSelector(*this, selectors))
@@ -1359,7 +1359,7 @@ ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
     return result.get();
 }
 
-ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selectors)
+ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(StringImpl* selectors)
 {
     Ref document = this->document();
     if (auto results = document->resultForSelectorAll(*this, selectors))
@@ -1374,16 +1374,16 @@ ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selecto
         document->addResultForSelectorAll(*this, selectors, nodeList, classNameToMatch);
 
 #if ENABLE(MEDIA_STREAM)
-    if (document->quirks().shouldEnableFacebookFlagQuirk() && nodeList->length() && selectors == "script[data-sjs]:not([data-processed])"_s)
+    if (document->quirks().shouldEnableFacebookFlagQuirk() && nodeList->length() && equal(selectors, "script[data-sjs]:not([data-processed])"_s))
         nodeList = document->quirks().applyFacebookFlagQuirk(document, nodeList);
 #endif
 
     return nodeList;
 }
 
-Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomString& qualifiedName)
+Ref<HTMLCollection> ContainerNode::getElementsByTagName(AtomStringImpl* qualifiedName)
 {
-    ASSERT(!qualifiedName.isNull());
+    ASSERT(qualifiedName);
 
     if (qualifiedName == starAtom())
         return ensureRareData().ensureNodeLists().addCachedCollection<AllDescendantsCollection>(*this);
@@ -1393,18 +1393,18 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomString& qualif
     return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, qualifiedName);
 }
 
-Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomString& namespaceURI, const AtomString& localName)
+Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName)
 {
-    ASSERT(!localName.isNull());
-    return ensureRareData().ensureNodeLists().addCachedTagCollectionNS(*this, namespaceURI.isEmpty() ? nullAtom() : namespaceURI, localName);
+    ASSERT(localName);
+    return ensureRareData().ensureNodeLists().addCachedTagCollectionNS(*this, isEmpty(namespaceURI) ? nullptr : namespaceURI, localName);
 }
 
-Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomString& classNames)
+Ref<HTMLCollection> ContainerNode::getElementsByClassName(AtomStringImpl* classNames)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, classNames);
 }
 
-Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomString& name)
+Ref<RadioNodeList> ContainerNode::radioNodeList(AtomStringImpl* name)
 {
     ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
     return ensureRareData().ensureNodeLists().addCacheWithAtomName<RadioNodeList>(*this, name);

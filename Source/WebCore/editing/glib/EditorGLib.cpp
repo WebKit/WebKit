@@ -75,7 +75,7 @@ void Editor::platformPasteFont()
 {
 }
 
-static String elementURL(Element& element)
+static RefPtr<StringImpl> elementURL(Element& element)
 {
     if (is<HTMLImageElement>(element) || is<HTMLInputElement>(element))
         return element.attributeWithoutSynchronization(HTMLNames::srcAttr);
@@ -86,7 +86,7 @@ static String elementURL(Element& element)
     return nullString();
 }
 
-void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL&, const String& title)
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL&, StringImpl* title)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
     if (!renderImage)

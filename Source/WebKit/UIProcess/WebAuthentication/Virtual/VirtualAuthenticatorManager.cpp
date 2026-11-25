@@ -46,7 +46,7 @@ Ref<VirtualAuthenticatorManager> VirtualAuthenticatorManager::create()
 
 VirtualAuthenticatorManager::VirtualAuthenticatorManager() = default;
 
-String VirtualAuthenticatorManager::createAuthenticator(const VirtualAuthenticatorConfiguration& config)
+RefPtr<StringImpl> VirtualAuthenticatorManager::createAuthenticator(const VirtualAuthenticatorConfiguration& config)
 {
     auto id = createVersion4UUIDString();
     m_virtualAuthenticators.set(id, makeUniqueRef<VirtualAuthenticatorConfiguration>(config));
@@ -56,22 +56,22 @@ String VirtualAuthenticatorManager::createAuthenticator(const VirtualAuthenticat
     return id;
 }
 
-bool VirtualAuthenticatorManager::removeAuthenticator(const String& id)
+bool VirtualAuthenticatorManager::removeAuthenticator(StringImpl* id)
 {
     return m_virtualAuthenticators.remove(id);
 }
 
-void VirtualAuthenticatorManager::addCredential(const String& authenticatorId, VirtualCredential& credential)
+void VirtualAuthenticatorManager::addCredential(StringImpl* authenticatorId, VirtualCredential& credential)
 {
     m_credentialsByAuthenticator.find(authenticatorId)->value.append(WTF::move(credential));
 }
 
-Vector<VirtualCredential> VirtualAuthenticatorManager::credentialsMatchingList(const String& authenticatorId, const String& rpId, const Vector<Vector<uint8_t>>& credentialIds)
+Vector<VirtualCredential> VirtualAuthenticatorManager::credentialsMatchingList(StringImpl* authenticatorId, StringImpl* rpId, const Vector<Vector<uint8_t>>& credentialIds)
 {
     Vector<VirtualCredential> matching;
     auto it = m_credentialsByAuthenticator.find(authenticatorId);
     for (auto& credential : borrow(it->value)) {
-        if (credential.rpId == rpId && ((credentialIds.isEmpty() && credential.isResidentCredential) || credentialIds.contains(credential.credentialId)))
+        if (equal(credential.rpId, rpId) && ((credentialIds.isEmpty() && credential.isResidentCredential) || credentialIds.contains(credential.credentialId)))
             matching.append(credential);
     }
     return matching;
@@ -79,7 +79,7 @@ Vector<VirtualCredential> VirtualAuthenticatorManager::credentialsMatchingList(c
 
 Ref<AuthenticatorTransportService> VirtualAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
 {
-    Vector<std::pair<String, VirtualAuthenticatorConfiguration>> configs;
+    Vector<std::pair<RefPtr<StringImpl>, VirtualAuthenticatorConfiguration>> configs;
     for (auto& id : m_virtualAuthenticators.keys()) {
         auto config = m_virtualAuthenticators.get(id);
         if (config->transport == transport)

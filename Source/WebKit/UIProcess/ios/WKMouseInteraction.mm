@@ -246,7 +246,7 @@ struct PointerLockState {
     return _mouseHoverGestureRecognizer.get();
 }
 
-inline static String pointerType(UITouchType type)
+inline static RefPtr<StringImpl> pointerType(UITouchType type)
 {
 #if ENABLE(PENCIL_HOVER)
     if (type == UITouchTypePencil)

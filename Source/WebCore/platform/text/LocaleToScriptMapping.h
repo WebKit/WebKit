@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT UScriptCode localeToScriptCode(const String&);
+WEBCORE_EXPORT UScriptCode localeToScriptCode(StringImpl*);
 WEBCORE_EXPORT UScriptCode scriptNameToCode(StringView);
 
 }

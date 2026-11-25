@@ -33,12 +33,12 @@
 
 - (NSString *)data
 {
-    return downcast<WebCore::Text>(*_impl).data().createNSString().autorelease();
+    return createNSString(downcast<WebCore::Text>(*_impl).data()).autorelease();
 }
 
 - (void)setData:(NSString *)data
 {
-    protect(downcast<WebCore::Text>(*_impl))->setData(data);
+    protect(downcast<WebCore::Text>(*_impl))->setData(StringImpl::create(data).get());
 }
 
 @end

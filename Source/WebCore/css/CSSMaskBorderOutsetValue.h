@@ -37,7 +37,7 @@ public:
 
     const CSS::MaskBorderOutset& outsets() const LIFETIME_BOUND { return m_outsets; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSMaskBorderOutsetValue&) const;
 
 private:

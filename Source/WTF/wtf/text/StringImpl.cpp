@@ -610,31 +610,44 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale16Bit(std::span<const
     return newImpl;
 }
 
-NODELETE static inline bool needsTurkishCasingRules(const AtomString& locale)
+// Null-safe, bounds-checked like String::operator[].
+NODELETE static inline char16_t localeCodeUnitAt(StringImpl* locale, unsigned index)
+{
+    if (!locale || index >= locale->length())
+        return 0;
+    return locale->at(index);
+}
+
+NODELETE static inline unsigned localeLength(StringImpl* locale)
+{
+    return locale ? locale->length() : 0;
+}
+
+NODELETE static inline bool needsTurkishCasingRules(StringImpl* locale)
 {
     // Either "tr" or "az" locale, with ASCII case insensitive comparison and allowing for an ignored subtag.
-    char16_t first = locale[0];
-    char16_t second = locale[1];
+    char16_t first = localeCodeUnitAt(locale, 0);
+    char16_t second = localeCodeUnitAt(locale, 1);
     return ((isASCIIAlphaCaselessEqual(first, 't') && isASCIIAlphaCaselessEqual(second, 'r'))
         || (isASCIIAlphaCaselessEqual(first, 'a') && isASCIIAlphaCaselessEqual(second, 'z')))
-        && (locale.length() == 2 || locale[2] == '-');
+        && (localeLength(locale) == 2 || localeCodeUnitAt(locale, 2) == '-');
 }
 
-NODELETE static inline bool needsGreekUppercasingRules(const AtomString& locale)
+NODELETE static inline bool needsGreekUppercasingRules(StringImpl* locale)
 {
     // The "el" locale, with ASCII case insensitive comparison and allowing for an ignored subtag.
-    return isASCIIAlphaCaselessEqual(locale[0], 'e') && isASCIIAlphaCaselessEqual(locale[1], 'l')
-        && (locale.length() == 2 || locale[2] == '-');
+    return isASCIIAlphaCaselessEqual(localeCodeUnitAt(locale, 0), 'e') && isASCIIAlphaCaselessEqual(localeCodeUnitAt(locale, 1), 'l')
+        && (localeLength(locale) == 2 || localeCodeUnitAt(locale, 2) == '-');
 }
 
-NODELETE static inline bool needsLithuanianCasingRules(const AtomString& locale)
+NODELETE static inline bool needsLithuanianCasingRules(StringImpl* locale)
 {
     // The "lt" locale, with ASCII case insensitive comparison and allowing for an ignored subtag.
-    return isASCIIAlphaCaselessEqual(locale[0], 'l') && isASCIIAlphaCaselessEqual(locale[1], 't')
-        && (locale.length() == 2 || locale[2] == '-');
+    return isASCIIAlphaCaselessEqual(localeCodeUnitAt(locale, 0), 'l') && isASCIIAlphaCaselessEqual(localeCodeUnitAt(locale, 1), 't')
+        && (localeLength(locale) == 2 || localeCodeUnitAt(locale, 2) == '-');
 }
 
-Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomString& localeIdentifier)
+Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(AtomStringImpl* localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
     const char* locale;
@@ -670,7 +683,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomString& local
     return newString;
 }
 
-Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomString& localeIdentifier)
+Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(AtomStringImpl* localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
     const char* locale;

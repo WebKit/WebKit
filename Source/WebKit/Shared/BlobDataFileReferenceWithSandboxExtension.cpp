@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-BlobDataFileReferenceWithSandboxExtension::BlobDataFileReferenceWithSandboxExtension(const String& path, const String& replacementPath, RefPtr<SandboxExtension>&& sandboxExtension)
+BlobDataFileReferenceWithSandboxExtension::BlobDataFileReferenceWithSandboxExtension(StringImpl* path, StringImpl* replacementPath, RefPtr<SandboxExtension>&& sandboxExtension)
     : BlobDataFileReference(path, replacementPath)
     , m_sandboxExtension(WTF::move(sandboxExtension))
 {

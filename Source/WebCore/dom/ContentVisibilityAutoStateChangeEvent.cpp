@@ -32,7 +32,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentVisibilityAutoStateChangeEvent);
 
-ContentVisibilityAutoStateChangeEvent::ContentVisibilityAutoStateChangeEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+ContentVisibilityAutoStateChangeEvent::ContentVisibilityAutoStateChangeEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::ContentVisibilityAutoStateChangeEvent, type, WTF::move(initializer), isTrusted)
     , m_skipped(initializer.skipped)
 {

@@ -43,7 +43,7 @@ static std::optional<Style::SingleAnimationRangeEdgeOffset> convertToOffset(Ref<
 template<typename RangeEdge>
 static std::optional<RangeEdge> convertToRangeEdge(TimelineRangeOffset&& rangeOffset)
 {
-    if (!rangeOffset.rangeName.isNull()) {
+    if (rangeOffset.rangeName) {
         auto rangeName = CSSPropertyParserHelpers::parseTimelineRangeNameRaw(rangeOffset.rangeName);
         if (!rangeName)
             return std::nullopt;
@@ -85,7 +85,7 @@ static std::optional<RangeEdge> convertToRangeEdge(Ref<CSSNumericValue>&& rangeV
 std::optional<Style::SingleAnimationRangeStart> validateTimelineRangeStart(TimelineRangeValue&& value, const Document& document)
 {
     return WTF::switchOn(WTF::move(value),
-        [&](String&& rangeString) -> std::optional<Style::SingleAnimationRangeStart> {
+        [&](RefPtr<StringImpl>&& rangeString) -> std::optional<Style::SingleAnimationRangeStart> {
             return CSSPropertyParserHelpers::parseAbsoluteSingleAnimationRangeStartRaw(rangeString, document.cssParserContext(), document);
         },
         [](auto&& value) -> std::optional<Style::SingleAnimationRangeStart> {
@@ -97,7 +97,7 @@ std::optional<Style::SingleAnimationRangeStart> validateTimelineRangeStart(Timel
 std::optional<Style::SingleAnimationRangeEnd> validateTimelineRangeEnd(TimelineRangeValue&& value, const Document& document)
 {
     return WTF::switchOn(WTF::move(value),
-        [&](String&& rangeString) -> std::optional<Style::SingleAnimationRangeEnd> {
+        [&](RefPtr<StringImpl>&& rangeString) -> std::optional<Style::SingleAnimationRangeEnd> {
             return CSSPropertyParserHelpers::parseAbsoluteSingleAnimationRangeEndRaw(rangeString, document.cssParserContext(), document);
         },
         [](auto&& value) -> std::optional<Style::SingleAnimationRangeEnd> {

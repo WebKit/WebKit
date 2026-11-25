@@ -157,7 +157,7 @@ bool CheckboxSwitch::handleTouchEvent(TouchEvent& event)
         return false;
     }
 
-    const AtomString& eventType = event.type();
+    const RefPtr<AtomStringImpl>& eventType = event.type();
     auto& eventNames = WebCore::eventNames();
     if (eventType == eventNames.touchstartEvent) {
         RefPtr targetTouches = event.targetTouches();

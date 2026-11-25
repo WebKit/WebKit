@@ -176,7 +176,7 @@ void RenderEmbeddedObject::didAttachScrollingNode()
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static String unavailablePluginReplacementText(PluginUnavailabilityReason pluginUnavailabilityReason)
+static RefPtr<StringImpl> unavailablePluginReplacementText(PluginUnavailabilityReason pluginUnavailabilityReason)
 {
     switch (pluginUnavailabilityReason) {
     case PluginUnavailabilityReason::PluginMissing:
@@ -194,7 +194,7 @@ static String unavailablePluginReplacementText(PluginUnavailabilityReason plugin
     }
 
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 #endif
 

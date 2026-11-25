@@ -70,7 +70,7 @@ Structure* WebAssemblyStructConstructor::createStructure(VM& vm, JSGlobalObject*
 
 void WebAssemblyStructConstructor::finishCreation(VM& vm, WebAssemblyStructPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "Struct"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Struct"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 

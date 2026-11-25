@@ -206,10 +206,10 @@ void WebProcess::initializeVulkanIfNeeded()
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    if (!parameters.applicationID.isEmpty())
+    if (!isEmpty(parameters.applicationID))
         WebCore::setApplicationID(parameters.applicationID);
 
-    if (!parameters.applicationName.isEmpty())
+    if (!isEmpty(parameters.applicationName))
         WebCore::setApplicationName(parameters.applicationName);
 
     const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");

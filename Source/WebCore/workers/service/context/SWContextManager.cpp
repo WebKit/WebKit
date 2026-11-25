@@ -83,16 +83,16 @@ void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerTh
         });
     }
 
-    threadProxy->thread().start([jobDataIdentifier, serviceWorkerIdentifier](const String& exceptionMessage, bool doesHandleFetch) {
+    threadProxy->thread().start([jobDataIdentifier, serviceWorkerIdentifier](StringImpl* exceptionMessage, bool doesHandleFetch) {
         SWContextManager::singleton().startedServiceWorker(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage, doesHandleFetch);
     });
     if (m_serviceWorkerCreationCallback)
         m_serviceWorkerCreationCallback(serviceWorkerIdentifier.toUInt64());
 }
 
-void SWContextManager::startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage, bool doesHandleFetch)
+void SWContextManager::startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, StringImpl* exceptionMessage, bool doesHandleFetch)
 {
-    if (!exceptionMessage.isEmpty()) {
+    if (!isEmpty(exceptionMessage)) {
         protect(connection())->serviceWorkerFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
         return;
     }
@@ -271,7 +271,7 @@ bool SWContextManager::stopRunningDebuggerTasksOnServiceWorker(ServiceWorkerIden
 void SWContextManager::serviceWorkerFailedToTerminate(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     UNUSED_PARAM(serviceWorkerIdentifier);
-    RELEASE_LOG_ERROR(ServiceWorker, "Failed to terminate service worker with identifier %s, killing the service worker process", serviceWorkerIdentifier.loggingString().utf8());
+    RELEASE_LOG_ERROR(ServiceWorker, "Failed to terminate service worker with identifier %s, killing the service worker process", utf8(serviceWorkerIdentifier.loggingString()));
 #if ASAN_ENABLED && PLATFORM(COCOA)
     // Abort with a reason instead of exiting so the crash report names this termination path
     // and captures the backtrace of the worker thread that failed to stop.

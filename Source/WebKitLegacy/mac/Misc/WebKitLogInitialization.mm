@@ -45,10 +45,10 @@ public:
     }
 
 private:
-    String logLevelString() final
+    RefPtr<StringImpl> logLevelString() final
     {
         static NSString * const defaultsDomain = @"WebKitLogging";
-        return [[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain];
+        return StringImpl::create([[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain]);
     }
 };
 

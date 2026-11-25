@@ -60,7 +60,7 @@ bool XMLHttpRequestUpload::hasRelevantEventListener() const
         || hasEventListeners(eventNames().timeoutEvent);
 }
 
-void XMLHttpRequestUpload::dispatchProgressEvent(const AtomString& type, unsigned long long loaded, unsigned long long total)
+void XMLHttpRequestUpload::dispatchProgressEvent(AtomStringImpl* type, unsigned long long loaded, unsigned long long total)
 {
     ASSERT(type == eventNames().loadstartEvent || type == eventNames().progressEvent || type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 

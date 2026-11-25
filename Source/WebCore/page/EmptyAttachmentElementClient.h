@@ -38,7 +38,7 @@ public:
     EmptyAttachmentElementClient() = default;
 
 private:
-    void requestAttachmentIcon(const String&, const FloatSize&) final { }
+    void requestAttachmentIcon(StringImpl*, const FloatSize&) final { }
 };
 
 } // namespace WebCore

@@ -64,7 +64,7 @@ public:
     }
     ~RTCRtpReceiver();
 
-    static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
+    static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, StringImpl* kind);
 
     void stop();
 

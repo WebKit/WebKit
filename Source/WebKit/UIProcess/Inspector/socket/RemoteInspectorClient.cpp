@@ -76,12 +76,12 @@ public:
 
     // MARK: RemoteWebInspectorUIProxyClient methods
 
-    void sendMessageToFrontend(const String& message)
+    void sendMessageToFrontend(StringImpl* message)
     {
         m_proxy->sendMessageToFrontend(message);
     }
 
-    void sendMessageToBackend(const String& message) override
+    void sendMessageToBackend(StringImpl* message) override
     {
         m_inspectorClient->sendMessageToBackend(m_connectionID, m_targetID, message);
     }
@@ -108,13 +108,13 @@ RemoteInspectorClient::RemoteInspectorClient(URL url, RemoteInspectorObserver& o
     : m_observer(observer)
 {
     if (!url.host() || !url.port()) {
-        LOG_ERROR("Invalid inspector url: %s", url.string().utf8());
+        LOG_ERROR("Invalid inspector url: %s", utf8(url.string()));
         return;
     }
 
     m_connectionID = connectInet(url.host().utf8(), url.port().value());
     if (!m_connectionID) {
-        LOG_ERROR("Inspector client could not connect to %s", url.string().utf8());
+        LOG_ERROR("Inspector client could not connect to %s", utf8(url.string()));
         return;
     }
 
@@ -123,16 +123,16 @@ RemoteInspectorClient::RemoteInspectorClient(URL url, RemoteInspectorObserver& o
 
 RemoteInspectorClient::~RemoteInspectorClient() = default;
 
-void RemoteInspectorClient::sendWebInspectorEvent(const String& event)
+void RemoteInspectorClient::sendWebInspectorEvent(StringImpl* event)
 {
     ASSERT(isMainRunLoop());
     ASSERT(m_connectionID);
-    send(m_connectionID.value(), byteCast<uint8_t>(event.utf8().span()));
+    send(m_connectionID.value(), byteCast<uint8_t>(utf8(event).span()));
 }
 
-HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorClient::dispatchMap()
+HashMap<RefPtr<StringImpl>, Inspector::RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorClient::dispatchMap()
 {
-    static NeverDestroyed<HashMap<String, CallHandler>> dispatchMap = HashMap<String, CallHandler>({
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, CallHandler>> dispatchMap = HashMap<RefPtr<StringImpl>, CallHandler>({
         { "BackendCommands"_s, static_cast<CallHandler>(&RemoteInspectorClient::setBackendCommands) },
         { "SetTargetList"_s, static_cast<CallHandler>(&RemoteInspectorClient::setTargetList) },
         { "SendMessageToFrontend"_s, static_cast<CallHandler>(&RemoteInspectorClient::sendMessageToFrontend) },
@@ -144,7 +144,7 @@ HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& Remote
 void RemoteInspectorClient::startInitialCommunication()
 {
     auto event = JSON::Object::create();
-    event->setString("event"_s, "SetupInspectorClient"_s);
+    event->setString("event"_si, "SetupInspectorClient"_si);
     sendWebInspectorEvent(event->toJSONString());
 }
 
@@ -175,30 +175,30 @@ void RemoteInspectorClient::inspect(ConnectionID connectionID, TargetID targetID
     }
 
     auto setupEvent = JSON::Object::create();
-    setupEvent->setString("event"_s, "Setup"_s);
-    setupEvent->setInteger("connectionID"_s, connectionID);
-    setupEvent->setInteger("targetID"_s, targetID);
+    setupEvent->setString("event"_si, "Setup"_si);
+    setupEvent->setInteger("connectionID"_si, connectionID);
+    setupEvent->setInteger("targetID"_si, targetID);
     sendWebInspectorEvent(setupEvent->toJSONString());
 
     addResult.iterator->value->initialize();
 }
 
-void RemoteInspectorClient::sendMessageToBackend(ConnectionID connectionID, TargetID targetID, const String& message)
+void RemoteInspectorClient::sendMessageToBackend(ConnectionID connectionID, TargetID targetID, StringImpl* message)
 {
     auto backendEvent = JSON::Object::create();
-    backendEvent->setString("event"_s, "SendMessageToBackend"_s);
-    backendEvent->setInteger("connectionID"_s, connectionID);
-    backendEvent->setInteger("targetID"_s, targetID);
-    backendEvent->setString("message"_s, message);
+    backendEvent->setString("event"_si, "SendMessageToBackend"_si);
+    backendEvent->setInteger("connectionID"_si, connectionID);
+    backendEvent->setInteger("targetID"_si, targetID);
+    backendEvent->setString("message"_si, message);
     sendWebInspectorEvent(backendEvent->toJSONString());
 }
 
 void RemoteInspectorClient::closeFromFrontend(ConnectionID connectionID, TargetID targetID)
 {
     auto closedEvent = JSON::Object::create();
-    closedEvent->setString("event"_s, "FrontendDidClose"_s);
-    closedEvent->setInteger("connectionID"_s, connectionID);
-    closedEvent->setInteger("targetID"_s, targetID);
+    closedEvent->setString("event"_si, "FrontendDidClose"_si);
+    closedEvent->setInteger("connectionID"_si, connectionID);
+    closedEvent->setInteger("targetID"_si, targetID);
     sendWebInspectorEvent(closedEvent->toJSONString());
 
     m_inspectorProxyMap.remove(std::make_pair(connectionID, targetID));
@@ -206,10 +206,10 @@ void RemoteInspectorClient::closeFromFrontend(ConnectionID connectionID, TargetI
 
 void RemoteInspectorClient::setBackendCommands(const Event& event)
 {
-    if (!event.message || event.message->isEmpty())
+    if (!event.message || isEmpty(*event.message))
         return;
 
-    m_backendCommandsURL = makeString("data:text/javascript;base64,"_s, base64Encoded(byteCast<uint8_t>(event.message->utf8().span())));
+    m_backendCommandsURL = makeString("data:text/javascript;base64,"_s, base64Encoded(byteCast<uint8_t>(utf8(*event.message).span())));
 }
 
 void RemoteInspectorClient::setTargetList(const Event& event)
@@ -233,21 +233,21 @@ void RemoteInspectorClient::setTargetList(const Event& event)
 
         Target target;
 
-        auto targetID = itemObject->getInteger("targetID"_s);
+        auto targetID = itemObject->getInteger("targetID"_si);
         if (!targetID)
             continue;
 
         target.id = *targetID;
 
-        target.name = itemObject->getString("name"_s);
+        target.name = itemObject->getString("name"_si);
         if (!target.name)
             continue;
 
-        target.url = itemObject->getString("url"_s);
+        target.url = itemObject->getString("url"_si);
         if (!target.url)
             continue;
 
-        target.type = itemObject->getString("type"_s);
+        target.type = itemObject->getString("type"_si);
         if (!target.type)
             continue;
 

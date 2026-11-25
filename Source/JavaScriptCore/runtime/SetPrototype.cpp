@@ -90,7 +90,7 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().keysPublicName(), values, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().keysPrivateName(), values, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* sizeGetter = JSFunction::create(vm, globalObject, 0, "get size"_s, setProtoFuncSize, ImplementationVisibility::Public, JSSetSizeIntrinsic);
+    JSFunction* sizeGetter = JSFunction::create(vm, globalObject, 0, "get size"_si, setProtoFuncSize, ImplementationVisibility::Public, JSSetSizeIntrinsic);
     GetterSetter* sizeAccessor = GetterSetter::create(vm, globalObject, sizeGetter, nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->size, sizeAccessor, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->builtinNames().sizePrivateName(), sizeAccessor, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
@@ -210,7 +210,7 @@ static uint32_t getSetSizeAsInt(JSGlobalObject* globalObject, JSValue value)
     double intOrInfSize = jsNumber(numSize).toIntegerOrInfinity(globalObject);
 
     if (intOrInfSize < 0) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "Set operation expects first argument to have non-negative 'size' property"_s);
+        return throwVMRangeError(globalObject, scope, "Set operation expects first argument to have non-negative 'size' property"_si);
 
     if (std::isinf(intOrInfSize)) [[unlikely]]
         return std::numeric_limits<uint32_t>::max();

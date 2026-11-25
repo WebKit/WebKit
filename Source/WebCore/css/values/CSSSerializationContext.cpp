@@ -32,7 +32,7 @@ namespace WebCore::CSS {
 SerializationContext::SerializationContext() = default;
 SerializationContext::~SerializationContext() = default;
 
-SerializationContext::SerializationContext(HashMap<WTF::String, WTF::String>&& replacementURLStrings, HashMap<Ref<CSSStyleSheet>, WTF::String>&& replacementURLStringsForCSSStyleSheet, bool shouldUseResolvedURLInCSSText)
+SerializationContext::SerializationContext(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& replacementURLStrings, HashMap<Ref<CSSStyleSheet>, RefPtr<StringImpl>>&& replacementURLStringsForCSSStyleSheet, bool shouldUseResolvedURLInCSSText)
     : replacementURLStrings { WTF::move(replacementURLStrings) }
     , replacementURLStringsForCSSStyleSheet { WTF::move(replacementURLStringsForCSSStyleSheet) }
     , shouldUseResolvedURLInCSSText { shouldUseResolvedURLInCSSText }

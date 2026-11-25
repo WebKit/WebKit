@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeScope& treeScope, const AtomString& id)
+inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeScope& treeScope, AtomStringImpl* id)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return nullptr;
 
     if (LegacyRenderSVGResourceContainer* renderResource = treeScope.lookupLegacySVGResoureById(id))
@@ -42,7 +42,7 @@ inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeS
 }
 
 template<typename Renderer>
-Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
+Renderer* getRenderSVGResourceById(TreeScope& treeScope, AtomStringImpl* id)
 {
     // Using the LegacyRenderSVGResource type here avoids ambiguous casts for types that
     // descend from both RenderObject and LegacyRenderSVGResourceContainer.

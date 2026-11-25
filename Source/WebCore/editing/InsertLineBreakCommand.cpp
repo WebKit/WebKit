@@ -91,7 +91,7 @@ void InsertLineBreakCommand::doApply()
     Ref nodeToInsert = [&] -> Ref<Node> {
         if (shouldUseBreakElement(position))
             return HTMLBRElement::create(document);
-        return document->createTextNode("\n"_s);
+        return document->createTextNode("\n"_si);
     }();
 
     // FIXME: Need to merge text nodes when inserting just after or before text.
@@ -136,7 +136,7 @@ void InsertLineBreakCommand::doApply()
             if (textNode->isConnected())
                 insertTextIntoNode(*textNode, 0, nonBreakingSpaceString());
             else {
-                auto nbspNode = document->createTextNode(String { nonBreakingSpaceString() });
+                auto nbspNode = document->createTextNode(RefPtr<StringImpl> { nonBreakingSpaceString() });
                 insertNodeAt(nbspNode.copyRef(), positionBeforeTextNode);
                 endingPosition = firstPositionInNode(nbspNode);
             }

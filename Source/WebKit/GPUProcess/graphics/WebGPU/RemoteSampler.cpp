@@ -60,7 +60,7 @@ void RemoteSampler::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteSampler::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteSampler::setLabel(String&& label)
+void RemoteSampler::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

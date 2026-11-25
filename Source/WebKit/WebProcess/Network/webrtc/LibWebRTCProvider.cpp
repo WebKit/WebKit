@@ -106,7 +106,7 @@ bool LibWebRTCProvider::isSupportingAV1HardwareDecoder() const
 class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactory {
     WTF_MAKE_TZONE_ALLOCATED(RTCSocketFactory);
 public:
-    RTCSocketFactory(WebPageProxyIdentifier, String&& userAgent, ScriptExecutionContextIdentifier, bool isFirstParty, bool isRelayBypassDisabled, RegistrableDomain&&);
+    RTCSocketFactory(WebPageProxyIdentifier, RefPtr<StringImpl>&& userAgent, ScriptExecutionContextIdentifier, bool isFirstParty, bool isRelayBypassDisabled, RegistrableDomain&&);
 
     void disableRelay() final
     {
@@ -127,7 +127,7 @@ private:
 
 private:
     WebPageProxyIdentifier m_pageIdentifier;
-    String m_userAgent;
+    RefPtr<StringImpl> m_userAgent;
     ScriptExecutionContextIdentifier m_contextIdentifier;
     RTCSocketCreationFlags m_flags;
     RegistrableDomain m_domain;
@@ -136,7 +136,7 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCSocketFactory);
 
-RTCSocketFactory::RTCSocketFactory(WebPageProxyIdentifier pageIdentifier, String&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, bool isRelayBypassDisabled, RegistrableDomain&& domain)
+RTCSocketFactory::RTCSocketFactory(WebPageProxyIdentifier pageIdentifier, RefPtr<StringImpl>&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, bool isRelayBypassDisabled, RegistrableDomain&& domain)
     : m_pageIdentifier(pageIdentifier)
     , m_userAgent(WTF::move(userAgent))
     , m_contextIdentifier(identifier)
@@ -153,7 +153,7 @@ std::unique_ptr<webrtc::AsyncPacketSocket> RTCSocketFactory::CreateUdpSocket(con
 
 std::unique_ptr<webrtc::AsyncPacketSocket> RTCSocketFactory::CreateClientTcpSocket(const webrtc::Environment&, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, const webrtc::PacketSocketTcpOptions& options)
 {
-    return protect(WebProcess::singleton().libWebRTCNetwork().socketFactory())->createClientTcpSocket(m_contextIdentifier, localAddress, remoteAddress, String { m_userAgent }, options, m_pageIdentifier, m_flags, m_domain);
+    return protect(WebProcess::singleton().libWebRTCNetwork().socketFactory())->createClientTcpSocket(m_contextIdentifier, localAddress, remoteAddress, RefPtr<StringImpl> { m_userAgent }, options, m_pageIdentifier, m_flags, m_domain);
 }
 
 std::unique_ptr<webrtc::AsyncDnsResolverInterface> RTCSocketFactory::CreateAsyncDnsResolver()
@@ -184,7 +184,7 @@ void LibWebRTCProvider::startedNetworkThread()
     protect(WebProcess::singleton().libWebRTCNetwork())->setAsActive();
 }
 
-std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, RegistrableDomain&& domain, bool enableServiceClass)
+std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(RefPtr<StringImpl>&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, RegistrableDomain&& domain, bool enableServiceClass)
 {
     Ref webPage { m_webPage.get() };
     RefPtr page = webPage->corePage();

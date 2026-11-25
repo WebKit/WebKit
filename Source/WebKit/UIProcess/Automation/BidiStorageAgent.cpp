@@ -88,10 +88,10 @@ Inspector::Protocol::ErrorStringOr<Ref<PartitionKey>> BidiStorageAgent::makePart
     if (!partitionDescriptor)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
 
-    auto type = partitionDescriptor->getString("type"_s);
-    if (type == "context"_s) {
-        auto browsingContextHandle = partitionDescriptor->getString("context"_s);
-        if (browsingContextHandle.isEmpty())
+    auto type = partitionDescriptor->getString("type"_si);
+    if (equal(type, "context"_s)) {
+        auto browsingContextHandle = partitionDescriptor->getString("context"_si);
+        if (isEmpty(browsingContextHandle))
             SYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
         auto page = session->webPageProxyForHandle(browsingContextHandle);
 
@@ -102,7 +102,7 @@ Inspector::Protocol::ErrorStringOr<Ref<PartitionKey>> BidiStorageAgent::makePart
         if (pageURL.isValid())
             partitionKey->setSourceOrigin(pageURL.string());
 
-    } else if (type == "storageKey"_s) {
+    } else if (equal(type, "storageKey"_s)) {
         // FIXME: support storage key https://bugs.webkit.org/show_bug.cgi?id=292393
         SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
     } else {
@@ -118,16 +118,16 @@ Inspector::Protocol::ErrorStringOr<Ref<API::HTTPCookieStore>> BidiStorageAgent::
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     if (!partitionDescriptor) {
-        auto page = session->webPageProxyForHandle("default"_s);
+        auto page = session->webPageProxyForHandle("default"_si);
         if (!page)
             SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
         return { protect(page->websiteDataStore())->cookieStore() };
     }
 
-    auto type = partitionDescriptor->getString("type"_s);
-    if (type == "context"_s) {
-        auto browsingContextHandle = partitionDescriptor->getString("context"_s);
-        if (browsingContextHandle.isEmpty())
+    auto type = partitionDescriptor->getString("type"_si);
+    if (equal(type, "context"_s)) {
+        auto browsingContextHandle = partitionDescriptor->getString("context"_si);
+        if (isEmpty(browsingContextHandle))
             SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
 
         auto page = session->webPageProxyForHandle(browsingContextHandle);
@@ -181,24 +181,24 @@ void BidiStorageAgent::setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::Object
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedCookieStore, InternalError);
     auto cookieStore = parsedCookieStore.value();
 
-    String name = cookie->getString("name"_s);
-    String value = cookie->getString("value"_s);
-    String domain = cookie->getString("domain"_s);
+    RefPtr<StringImpl> name = cookie->getString("name"_si);
+    RefPtr<StringImpl> value = cookie->getString("value"_si);
+    RefPtr<StringImpl> domain = cookie->getString("domain"_si);
 
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(name.isEmpty(), InternalError);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(value.isEmpty(), InternalError);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(domain.isEmpty(), InternalError);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(name), InternalError);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(value), InternalError);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(isEmpty(domain), InternalError);
 
     WebCore::Cookie webCoreCookie;
     webCoreCookie.name = name;
     webCoreCookie.value = value;
     webCoreCookie.domain = domain;
-    webCoreCookie.path = cookie->getString("path"_s);
+    webCoreCookie.path = cookie->getString("path"_si);
 
-    auto secureOptional = cookie->getBoolean("secure"_s);
+    auto secureOptional = cookie->getBoolean("secure"_si);
     webCoreCookie.secure = secureOptional.value_or(false);
 
-    auto httpOnlyOptional = cookie->getBoolean("httpOnly"_s);
+    auto httpOnlyOptional = cookie->getBoolean("httpOnly"_si);
     webCoreCookie.httpOnly = httpOnlyOptional.value_or(false);
 
     Vector<WebCore::Cookie> cookiesToSet;

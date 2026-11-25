@@ -39,13 +39,13 @@ public:
         Ref<WebXRLayer> layer;
     };
 
-    static Ref<XRLayerEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<XRLayerEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRLayerEvent();
 
     const WebXRLayer& layer() const;
 
 protected:
-    XRLayerEvent(const AtomString&, Init&&, IsTrusted);
+    XRLayerEvent(AtomStringImpl*, Init&&, IsTrusted);
 
     // Event.
     EventInterfaceType eventInterfaceType() const;

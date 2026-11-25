@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-std::unique_ptr<WebCore::KeyedDecoder> createForFile(const String& path);
-void writeToDisk(std::unique_ptr<WebCore::KeyedEncoder>&&, String&& path);
+std::unique_ptr<WebCore::KeyedDecoder> createForFile(StringImpl* path);
+void writeToDisk(std::unique_ptr<WebCore::KeyedEncoder>&&, RefPtr<StringImpl>&& path);
 
 } // namespace WebKit

@@ -124,7 +124,7 @@ UTF8CString CodeBlock::inferredName() const
     }
 }
 
-String CodeBlock::inferredNameWithHash() const
+RefPtr<StringImpl> CodeBlock::inferredNameWithHash() const
 {
     return makeString(inferredName(), "#"_s, hash());
 }
@@ -3240,7 +3240,7 @@ size_t CodeBlock::predictedMachineCodeSize()
     return static_cast<size_t>(doubleResult);
 }
 
-String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
+RefPtr<StringImpl> CodeBlock::nameForRegister(VirtualRegister virtualRegister)
 {
     for (auto& constantRegister : m_constantRegisters) {
         if (constantRegister.get().isEmpty())

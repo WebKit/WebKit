@@ -49,7 +49,7 @@ public:
     virtual void seekSessionToTime(double, CompletionHandler<void(bool)>&&) = 0;
     virtual void playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&&) = 0;
     virtual void pauseSession(CompletionHandler<void(bool)>&&) = 0;
-    virtual void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void setSessionTrack(StringImpl*, CompletionHandler<void(bool)>&&) = 0;
     virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) = 0;
 };
 
@@ -57,7 +57,7 @@ class MediaSessionCoordinatorPrivate : public RefCounted<MediaSessionCoordinator
 public:
     virtual ~MediaSessionCoordinatorPrivate() = default;
 
-    virtual String identifier() const = 0;
+    virtual RefPtr<StringImpl> identifier() const = 0;
 
     virtual void join(CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
     virtual void leave() = 0;
@@ -65,12 +65,12 @@ public:
     virtual void seekTo(double, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
     virtual void play(CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
     virtual void pause(CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
-    virtual void setTrack(const String&, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
+    virtual void setTrack(StringImpl*, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
 
     virtual void positionStateChanged(const std::optional<MediaPositionState>&) = 0;
     virtual void readyStateChanged(MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(MediaSessionPlaybackState) = 0;
-    virtual void trackIdentifierChanged(const String&) = 0;
+    virtual void trackIdentifierChanged(StringImpl*) = 0;
 
     void setLogger(const Logger&, uint64_t);
     virtual void setClient(WeakPtr<MediaSessionCoordinatorClient> client) { m_client = client;}

@@ -39,12 +39,12 @@ class ResourceMonitorThrottlerHolder final : public ThreadSafeRefCountedAndCanMa
 public:
     WEBCORE_EXPORT static Ref<ResourceMonitorThrottlerHolder> create();
     WEBCORE_EXPORT static Ref<ResourceMonitorThrottlerHolder> create(size_t count, Seconds duration, size_t maxHosts);
-    WEBCORE_EXPORT static Ref<ResourceMonitorThrottlerHolder> create(const String& databaseDirectoryPath);
-    WEBCORE_EXPORT static Ref<ResourceMonitorThrottlerHolder> create(const String& databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts);
+    WEBCORE_EXPORT static Ref<ResourceMonitorThrottlerHolder> create(StringImpl* databaseDirectoryPath);
+    WEBCORE_EXPORT static Ref<ResourceMonitorThrottlerHolder> create(StringImpl* databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts);
 
     WEBCORE_EXPORT ~ResourceMonitorThrottlerHolder();
 
-    WEBCORE_EXPORT void tryAccess(const String& host, ContinuousApproximateTime, CompletionHandler<void(bool)>&&);
+    WEBCORE_EXPORT void tryAccess(StringImpl* host, ContinuousApproximateTime, CompletionHandler<void(bool)>&&);
     WEBCORE_EXPORT void clearAllData(CompletionHandler<void()>&&);
 
     WEBCORE_EXPORT void setCountPerDuration(size_t, Seconds);
@@ -53,7 +53,7 @@ private:
     // Shared WorkQueue is used to prevent race condition when delete and create Throttler for same database file.
     static Ref<WorkQueue> sharedWorkQueueSingleton();
 
-    ResourceMonitorThrottlerHolder(const String& databasePath, size_t count, Seconds duration, size_t maxHosts);
+    ResourceMonitorThrottlerHolder(StringImpl* databasePath, size_t count, Seconds duration, size_t maxHosts);
 
     std::unique_ptr<ResourceMonitorThrottler> m_throttler;
 };

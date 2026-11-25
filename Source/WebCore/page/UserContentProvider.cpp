@@ -109,7 +109,7 @@ static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilte
 {
     RefPtr mainLoader = mainDocumentLoader(documentLoader);
     if (!mainLoader) {
-        return [](const String&) {
+        return [](StringImpl*) {
             return ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
         };
     }
@@ -121,13 +121,13 @@ static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilte
     auto& exceptions = policySourceLoader->contentExtensionEnablement().second;
     switch (policySourceLoader->contentExtensionEnablement().first) {
     case ContentExtensionDefaultEnablement::Disabled:
-        return [&](auto& identifier) {
+        return [&](auto* identifier) {
             return exceptions.contains(identifier)
                 ? ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No
                 : ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::Yes;
         };
     case ContentExtensionDefaultEnablement::Enabled:
-        return [&](auto& identifier) {
+        return [&](auto* identifier) {
             return exceptions.contains(identifier)
                 ? ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::Yes
                 : ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;

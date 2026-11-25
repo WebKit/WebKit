@@ -45,12 +45,12 @@ public:
 
     ~EphemeralStore();
 
-    using ApplicationBundleIdentifier = String;
+    using ApplicationBundleIdentifier = RefPtr<StringImpl>;
 
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, WebKit::PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&) final;
     void attributePrivateClickMeasurement(WebCore::PCM::SourceSite&&, WebCore::PCM::AttributionDestinationSite&&, const ApplicationBundleIdentifier&, WebCore::PCM::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest, CompletionHandler<void(std::optional<WebCore::PCM::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&) final;
 
-    void privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&&) const final;
+    void privateClickMeasurementToStringForTesting(CompletionHandler<void(RefPtr<StringImpl>)>&&) const final;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() final;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) final;
 

@@ -43,8 +43,8 @@ public:
     virtual QualifiedName propertyAttributeName(const SVGElement&, const SVGProperty&) const = 0;
     virtual QualifiedName animatedPropertyAttributeName(const SVGElement&, const SVGAnimatedPropertyBase&) const = 0;
     virtual void setAnimatedPropertyDirty(const SVGElement&, const QualifiedName&, SVGAnimatedPropertyBase&) const = 0;
-    virtual std::optional<String> synchronize(const SVGElement&, const QualifiedName&) const = 0;
-    virtual HashMap<QualifiedName, String> synchronizeAllAttributes(const SVGElement&) const = 0;
+    virtual std::optional<RefPtr<StringImpl>> synchronize(const SVGElement&, const QualifiedName&) const = 0;
+    virtual HashMap<QualifiedName, RefPtr<StringImpl>> synchronizeAllAttributes(const SVGElement&) const = 0;
 
     // Puts one property back to the value it was born with. Called by
     // SVGAnimatedPrimitiveProperty::setBaseValInternal() when parsing produced nothing, which

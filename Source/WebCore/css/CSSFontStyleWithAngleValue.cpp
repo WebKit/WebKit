@@ -43,7 +43,7 @@ Ref<CSSFontStyleWithAngleValue> CSSFontStyleWithAngleValue::create(ObliqueAngle&
     return adoptRef(*new CSSFontStyleWithAngleValue(WTF::move(obliqueAngle)));
 }
 
-String CSSFontStyleWithAngleValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFontStyleWithAngleValue::customCSSText(const CSS::SerializationContext& context) const
 {
     if (m_obliqueAngle.isKnownZero())
         return nameLiteralForSerialization(CSSValueID::Normal);

@@ -68,7 +68,7 @@ private:
     RunLoop::Timer m_restartTimer;
     RefPtr<CcidConnection> m_connection;
     RetainPtr<_WKSmartCardSlotObserver> m_slotsObserver;
-    HashMap<String, RetainPtr<_WKSmartCardSlotStateObserver>> m_slotObservers;
+    HashMap<RefPtr<StringImpl>, RetainPtr<_WKSmartCardSlotStateObserver>> m_slotObservers;
 };
 
 } // namespace WebKit

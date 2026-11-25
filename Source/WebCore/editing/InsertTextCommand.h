@@ -35,14 +35,14 @@ class Text;
 class TextInsertionMarkerSupplier : public RefCounted<TextInsertionMarkerSupplier> {
 public:
     virtual ~TextInsertionMarkerSupplier() = default;
-    virtual void addMarkersToTextNode(Text&, unsigned offsetOfInsertion, const String& textInserted) = 0;
+    virtual void addMarkersToTextNode(Text&, unsigned offsetOfInsertion, StringImpl* textInserted) = 0;
 protected:
     TextInsertionMarkerSupplier() = default;
 };
 
 struct SmartListUndoData {
-    String previousLineText;
-    String currentLineText;
+    RefPtr<StringImpl> previousLineText;
+    RefPtr<StringImpl> currentLineText;
     RefPtr<HTMLElement> listElement;
 };
 
@@ -53,20 +53,20 @@ public:
         RebalanceAllWhitespaces
     };
 
-    static Ref<InsertTextCommand> create(Ref<Document>&& document, const String& text, AllowPasswordEcho allowPasswordEcho
+    static Ref<InsertTextCommand> create(Ref<Document>&& document, StringImpl* text, AllowPasswordEcho allowPasswordEcho
         , bool selectInsertedText = false, RebalanceType rebalanceType = RebalanceLeadingAndTrailingWhitespaces, EditAction editingAction = EditAction::Insert)
     {
         return adoptRef(*new InsertTextCommand(WTF::move(document), text, allowPasswordEcho, selectInsertedText, rebalanceType, editingAction));
     }
 
-    static Ref<InsertTextCommand> createWithMarkerSupplier(Ref<Document>&& document, const String& text, Ref<TextInsertionMarkerSupplier>&& markerSupplier, EditAction editingAction = EditAction::Insert)
+    static Ref<InsertTextCommand> createWithMarkerSupplier(Ref<Document>&& document, StringImpl* text, Ref<TextInsertionMarkerSupplier>&& markerSupplier, EditAction editingAction = EditAction::Insert)
     {
         return adoptRef(*new InsertTextCommand(WTF::move(document), text, WTF::move(markerSupplier), editingAction));
     }
 
 protected:
-    InsertTextCommand(Ref<Document>&&, const String& text, Ref<TextInsertionMarkerSupplier>&&, EditAction);
-    InsertTextCommand(Ref<Document>&&, const String& text, AllowPasswordEcho, bool selectInsertedText, RebalanceType, EditAction);
+    InsertTextCommand(Ref<Document>&&, StringImpl* text, Ref<TextInsertionMarkerSupplier>&&, EditAction);
+    InsertTextCommand(Ref<Document>&&, StringImpl* text, AllowPasswordEcho, bool selectInsertedText, RebalanceType, EditAction);
 
 private:
 
@@ -77,15 +77,15 @@ private:
     Position positionInsideTextNode(const Position&);
     Position insertTab(const Position&);
     
-    bool performTrivialReplace(const String&, bool selectInsertedText);
-    bool performOverwrite(const String&, bool selectInsertedText);
+    bool performTrivialReplace(StringImpl*, bool selectInsertedText);
+    bool performOverwrite(StringImpl*, bool selectInsertedText);
     void setEndingSelectionWithoutValidation(const Position& startPosition, const Position& endPosition);
 
     bool applySmartListsIfNeeded();
 
     friend class TypingCommand;
 
-    String m_text;
+    RefPtr<StringImpl> m_text;
     AllowPasswordEcho m_allowPasswordEcho { AllowPasswordEcho::Yes };
     bool m_selectInsertedText;
     RebalanceType m_rebalanceType;

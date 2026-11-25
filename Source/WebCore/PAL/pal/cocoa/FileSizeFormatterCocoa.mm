@@ -30,9 +30,9 @@
 
 namespace PAL {
 
-AtomString fileSizeDescription(uint64_t size)
+RefPtr<AtomStringImpl> fileSizeDescription(uint64_t size)
 {
-    return NSLocalizedFileSizeDescription(size, 0, 0);
+    return AtomStringImpl::add(protect((__bridge CFStringRef)NSLocalizedFileSizeDescription(size, 0, 0)).get());
 }
 
 } // namespace PAL

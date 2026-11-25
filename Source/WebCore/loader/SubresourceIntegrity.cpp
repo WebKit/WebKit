@@ -73,7 +73,7 @@ static bool isBase64OrBase64URLValue(StringView value)
 }
 
 // https://w3c.github.io/webappsec-subresource-integrity/#parse-metadata-section
-Vector<EncodedResourceCryptographicDigest> parseIntegrityMetadata(const String& metadata)
+Vector<EncodedResourceCryptographicDigest> parseIntegrityMetadata(StringImpl* metadata)
 {
     // 1. Let result be the empty set.
     Vector<EncodedResourceCryptographicDigest> result;
@@ -81,7 +81,7 @@ Vector<EncodedResourceCryptographicDigest> parseIntegrityMetadata(const String& 
     // 2. For each item returned by splitting metadata on spaces:
     // FIXME: The spec links "splitting" to strictly splitting on U+0020 SPACE; this splits on ASCII whitespace,
     // as earlier drafts did, so that values spanning several lines keep working.
-    auto metadataWithSingleSpaces = metadata.simplifyWhiteSpace(isASCIIWhitespace);
+    auto metadataWithSingleSpaces = simplifyWhiteSpace(metadata, isASCIIWhitespace);
     for (auto item : StringView { metadataWithSingleSpaces }.split(' ')) {
         // 1. Let expression-and-options be the result of splitting item on U+003F (?).
         // 2. Let algorithm-expression be expression-and-options[0].
@@ -207,30 +207,30 @@ static Vector<EncodedResourceCryptographicDigest> strongestMetadataFromSet(Vecto
     return result;
 }
 
-static Ref<FormData> createReportFormData(const String& type, const URL& url, const String& userAgent, NOESCAPE const Function<void(JSON::Object&)>& populateBody)
+static Ref<FormData> createReportFormData(StringImpl* type, const URL& url, StringImpl* userAgent, NOESCAPE const Function<void(JSON::Object&)>& populateBody)
 {
     auto body = JSON::Object::create();
     populateBody(body);
 
     // https://www.w3.org/TR/reporting-1/#queue-report, step 2.3.1.
     auto reportObject = JSON::Object::create();
-    reportObject->setObject("body"_s, WTF::move(body));
-    reportObject->setString("type"_s, type);
-    reportObject->setString("user_agent"_s, userAgent);
+    reportObject->setObject("body"_si, WTF::move(body));
+    reportObject->setString("type"_si, type);
+    reportObject->setString("user_agent"_si, userAgent);
     // The spec allows user agents to delay report sending, in order to reduce impact on the user and potential overhead. See https://www.w3.org/TR/reporting-1/#delivery
     // Currently we're not taking advantage of that, so setting the `age` to 0 to indicate immediate delivery.
-    reportObject->setInteger("age"_s, 0);
-    reportObject->setInteger("attempts"_s, 0);
+    reportObject->setInteger("age"_si, 0);
+    reportObject->setInteger("attempts"_si, 0);
     if (url.isValid())
-        reportObject->setString("url"_s, url.strippedForUseAsReferrer().string);
+        reportObject->setString("url"_si, url.strippedForUseAsReferrer().string);
 
     auto reportList = JSON::Array::create();
     reportList->pushObject(reportObject);
 
-    return FormData::create(reportList->toJSONString().utf8().span());
+    return FormData::create(utf8(reportList->toJSONString()).span());
 }
 
-static String addHashPrefix(ResourceCryptographicDigest::Algorithm algorithm, StringView hash)
+static RefPtr<StringImpl> addHashPrefix(ResourceCryptographicDigest::Algorithm algorithm, StringView hash)
 {
     switch (algorithm) {
     case ResourceCryptographicDigest::Algorithm::SHA256:
@@ -241,7 +241,7 @@ static String addHashPrefix(ResourceCryptographicDigest::Algorithm algorithm, St
         return makeString("sha512-"_s, hash);
     }
     ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 NODELETE static std::optional<ResourceCryptographicDigest::Algorithm> findStrongestAlgorithm(HashAlgorithmSet algorithmSet)
@@ -282,23 +282,23 @@ void reportHashesIfNeeded(const CachedResource& resource)
         if (!hashAlgorithm)
             return;
 
-        String hash = ""_s;
+        RefPtr<StringImpl> hash = ""_si;
         if (canExposeHashes) {
             auto digest = resource.cryptographicDigest(hashAlgorithm.value());
             hash = addHashPrefix(hashAlgorithm.value(), base64EncodeToString(borrow(digest.value)->span()));
         }
-        Ref report = createReportFormData("csp-hash"_s, documentURL, document->httpUserAgent(), [&](auto& body) {
-            body.setString("documentURL"_s, documentURL.strippedForUseAsReferrer().string);
-            body.setString("subresourceURL"_s, resource.url().strippedForUseAsReferrer().string);
-            body.setString("hash"_s, hash);
-            body.setString("type"_s, "subresource"_s);
-            body.setString("destination"_s, "script"_s);
+        Ref report = createReportFormData("csp-hash"_si, documentURL, document->httpUserAgent(), [&](auto& body) {
+            body.setString("documentURL"_si, documentURL.strippedForUseAsReferrer().string);
+            body.setString("subresourceURL"_si, resource.url().strippedForUseAsReferrer().string);
+            body.setString("hash"_si, hash);
+            body.setString("type"_si, "subresource"_si);
+            body.setString("destination"_si, "script"_si);
         });
         document->sendReportToEndpoints(documentURL, { }, fixedEndpoints, WTF::move(report), ViolationReportType::CSPHashReport);
     }
 }
 
-bool doBytesMatchMetadataList(ResourceResponse::Tainting tainting, NOESCAPE const ScopedLambda<ResourceCryptographicDigest(ResourceCryptographicDigest::Algorithm)>& digestForAlgorithm, const String& metadataList)
+bool doBytesMatchMetadataList(ResourceResponse::Tainting tainting, NOESCAPE const ScopedLambda<ResourceCryptographicDigest(ResourceCryptographicDigest::Algorithm)>& digestForAlgorithm, StringImpl* metadataList)
 {
     // 1. Let parsedMetadata be the result of parsing metadataList.
     auto parsedMetadata = parseIntegrityMetadata(metadataList);
@@ -331,7 +331,7 @@ bool doBytesMatchMetadataList(ResourceResponse::Tainting tainting, NOESCAPE cons
         auto actualValue = base64EncodeToString(borrow(digest.value)->span());
 
         // 4. If actualValue is a case-sensitive match for expectedValue, return true.
-        if (actualValue == expectedValue)
+        if (equal(actualValue, expectedValue))
             return true;
 
         // FIXME: The spec only matches padded base64; this also accepts unpadded base64 and base64url, as other engines do and WPT expects.
@@ -345,7 +345,7 @@ bool doBytesMatchMetadataList(ResourceResponse::Tainting tainting, NOESCAPE cons
     return false;
 }
 
-bool doBytesMatchMetadataList(ResourceResponse::Tainting tainting, const FragmentedSharedBuffer* bytes, const String& metadataList)
+bool doBytesMatchMetadataList(ResourceResponse::Tainting tainting, const FragmentedSharedBuffer* bytes, StringImpl* metadataList)
 {
     return doBytesMatchMetadataList(tainting, [bytes = RefPtr { bytes }](auto algorithm) {
         return cryptographicDigestForSharedBuffer(algorithm, bytes.get());
@@ -356,7 +356,7 @@ static constexpr int integrityMismatchErrorCode = 1;
 
 bool isIntegrityMismatchError(const ResourceError& error)
 {
-    return error.isAccessControl() && error.domain() == errorDomainWebKitInternal && error.errorCode() == integrityMismatchErrorCode;
+    return error.isAccessControl() && equal(error.domain(), errorDomainWebKitInternal) && error.errorCode() == integrityMismatchErrorCode;
 }
 
 static ASCIILiteral cannotLoadPrefix(FetchOptionsDestination destination)
@@ -380,15 +380,15 @@ static ASCIILiteral cannotLoadPrefix(FetchOptionsDestination destination)
     }
 }
 
-std::optional<ResourceError> checkResponseBodyIntegrity(const ResourceResponse& response, ResourceResponse::Tainting tainting, FetchOptionsDestination destination, const FragmentedSharedBuffer* body, const String& integrityMetadata)
+std::optional<ResourceError> checkResponseBodyIntegrity(const ResourceResponse& response, ResourceResponse::Tainting tainting, FetchOptionsDestination destination, const FragmentedSharedBuffer* body, StringImpl* integrityMetadata)
 {
-    ASSERT(!integrityMetadata.isEmpty());
+    ASSERT(!isEmpty(integrityMetadata));
 
     // 23. If request's integrity metadata is not the empty string, then:
     // (The caller fully reads response's body (step 23.4) before calling this, and hands the body over itself when this returns no error.)
     //   1. Let processBodyError be this step: run fetch response handover given fetchParams and a network error.
     auto networkError = [&] {
-        return ResourceError { errorDomainWebKitInternal, integrityMismatchErrorCode, response.url(), makeString(cannotLoadPrefix(destination), integrityMismatchDescription(response.url(), response, body, integrityMetadata)), ResourceError::Type::AccessControl };
+        return ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), integrityMismatchErrorCode, response.url(), makeString(cannotLoadPrefix(destination), integrityMismatchDescription(response.url(), response, body, integrityMetadata)), ResourceError::Type::AccessControl };
     };
 
     //   2. If response's body is null, then run processBodyError and abort these steps.
@@ -404,7 +404,7 @@ std::optional<ResourceError> checkResponseBodyIntegrity(const ResourceResponse& 
     return std::nullopt;
 }
 
-String integrityMismatchDescription(const URL& url, const ResourceResponse& response, const FragmentedSharedBuffer* body, const String& integrityMetadata)
+RefPtr<StringImpl> integrityMismatchDescription(const URL& url, const ResourceResponse& response, const FragmentedSharedBuffer* body, StringImpl* integrityMetadata)
 {
     auto resourceURL = url.stringCenterEllipsizedToLength();
     if (body)
@@ -412,7 +412,7 @@ String integrityMismatchDescription(const URL& url, const ResourceResponse& resp
     return makeString(resourceURL, ". Failed integrity metadata check. Content length: (no content), Expected content length: "_s, response.expectedContentLength(), ", Expected metadata: "_s, integrityMetadata);
 }
 
-bool matchIntegrityMetadataWithoutReportingHashes(const CachedResource& resource, const String& integrityMetadata)
+bool matchIntegrityMetadataWithoutReportingHashes(const CachedResource& resource, StringImpl* integrityMetadata)
 {
     if (resource.loadFailedOrCanceled())
         return parseIntegrityMetadata(integrityMetadata).isEmpty();
@@ -422,9 +422,9 @@ bool matchIntegrityMetadataWithoutReportingHashes(const CachedResource& resource
     }, integrityMetadata);
 }
 
-bool matchIntegrityMetadata(const CachedResource& resource, const String& integrityMetadata)
+bool matchIntegrityMetadata(const CachedResource& resource, StringImpl* integrityMetadata)
 {
-    if (integrityMetadata.isEmpty() && !resource.isHashReportingNeeded()) [[likely]]
+    if (isEmpty(integrityMetadata) && !resource.isHashReportingNeeded()) [[likely]]
         return true;
     bool result = matchIntegrityMetadataWithoutReportingHashes(resource, integrityMetadata);
     if (result)
@@ -432,7 +432,7 @@ bool matchIntegrityMetadata(const CachedResource& resource, const String& integr
     return result;
 }
 
-String integrityMismatchDescription(const CachedResource& resource, const String& integrityMetadata)
+RefPtr<StringImpl> integrityMismatchDescription(const CachedResource& resource, StringImpl* integrityMetadata)
 {
     return integrityMismatchDescription(resource.url(), resource.response(), protect(resource.resourceBuffer()).get(), integrityMetadata);
 }

@@ -39,13 +39,13 @@ using namespace WebCore;
 
 RetainPtr<PKRecurringPaymentRequest> platformRecurringPaymentRequest(const ApplePayRecurringPaymentRequest& webRecurringPaymentRequest)
 {
-    auto pkRecurringPaymentRequest = adoptNS([PAL::allocPKRecurringPaymentRequestInstance() initWithPaymentDescription:webRecurringPaymentRequest.paymentDescription.createNSString().get() regularBilling:platformRecurringSummaryItem(webRecurringPaymentRequest.regularBilling).get() managementURL:adoptNS([[NSURL alloc] initWithString:webRecurringPaymentRequest.managementURL.createNSString().get()]).get()]);
+    auto pkRecurringPaymentRequest = adoptNS([PAL::allocPKRecurringPaymentRequestInstance() initWithPaymentDescription:createNSString(webRecurringPaymentRequest.paymentDescription).get() regularBilling:platformRecurringSummaryItem(webRecurringPaymentRequest.regularBilling).get() managementURL:adoptNS([[NSURL alloc] initWithString:createNSString(webRecurringPaymentRequest.managementURL).get()]).get()]);
     if (auto& trialBilling = webRecurringPaymentRequest.trialBilling)
         [pkRecurringPaymentRequest setTrialBilling:platformRecurringSummaryItem(*trialBilling).get()];
-    if (auto& billingAgreement = webRecurringPaymentRequest.billingAgreement; !billingAgreement.isNull())
-        [pkRecurringPaymentRequest setBillingAgreement:billingAgreement.createNSString().get()];
-    if (auto& tokenNotificationURL = webRecurringPaymentRequest.tokenNotificationURL; !tokenNotificationURL.isNull())
-        [pkRecurringPaymentRequest setTokenNotificationURL:adoptNS([[NSURL alloc] initWithString:tokenNotificationURL.createNSString().get()]).get()];
+    if (auto& billingAgreement = webRecurringPaymentRequest.billingAgreement; billingAgreement)
+        [pkRecurringPaymentRequest setBillingAgreement:createNSString(billingAgreement).get()];
+    if (auto& tokenNotificationURL = webRecurringPaymentRequest.tokenNotificationURL; tokenNotificationURL)
+        [pkRecurringPaymentRequest setTokenNotificationURL:adoptNS([[NSURL alloc] initWithString:createNSString(tokenNotificationURL).get()]).get()];
     return pkRecurringPaymentRequest;
 }
 

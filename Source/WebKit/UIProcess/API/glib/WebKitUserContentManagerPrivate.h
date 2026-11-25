@@ -26,6 +26,6 @@
 #include <WebCore/SerializedScriptValue.h>
 
 WebKit::WebUserContentControllerProxy* webkitUserContentManagerGetUserContentControllerProxy(WebKitUserContentManager*);
-WebKitScriptMessageReply* webKitScriptMessageReplyCreate(WebCore::SerializedScriptValue&, WTF::Function<void(API::SerializedScriptValue*, const String&)>&&);
+WebKitScriptMessageReply* webKitScriptMessageReplyCreate(WebCore::SerializedScriptValue&, WTF::Function<void(API::SerializedScriptValue*, StringImpl*)>&&);
 
 #endif // WebKitUserContentManagerPrivate_h

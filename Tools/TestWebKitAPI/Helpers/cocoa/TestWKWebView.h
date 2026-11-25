@@ -73,10 +73,10 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 namespace TestWebKitAPI {
 
 struct AutocorrectionContext {
-    String contextBeforeSelection;
-    String selectedText;
-    String contextAfterSelection;
-    String markedText;
+    RefPtr<StringImpl> contextBeforeSelection;
+    RefPtr<StringImpl> selectedText;
+    RefPtr<StringImpl> contextAfterSelection;
+    RefPtr<StringImpl> markedText;
     NSRange selectedRangeInMarkedText;
 };
 

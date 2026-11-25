@@ -388,15 +388,15 @@ void NonCompositedFrameRenderer::fillGLInformation(RenderProcessInfo&& info, Com
 
     {
         GLContext::ScopedGLContextCurrent currentContext(*m_context);
-        info.glRenderer = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
-        info.glVendor = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-        info.glVersion = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-        info.glShadingVersion = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-        info.glExtensions = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
+        info.glRenderer = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+        info.glVendor = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        info.glVersion = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        info.glShadingVersion = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+        info.glExtensions = StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
 
         auto eglDisplay = eglGetCurrentDisplay();
-        info.eglVersion = String::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION));
-        info.eglVendor = String::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR));
+        info.eglVersion = StringImpl::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION));
+        info.eglVendor = StringImpl::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR));
         info.eglExtensions = makeString(unsafeSpan(eglQueryString(nullptr, EGL_EXTENSIONS)), ' ', unsafeSpan(eglQueryString(eglDisplay, EGL_EXTENSIONS)));
     }
 

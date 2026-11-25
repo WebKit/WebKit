@@ -166,7 +166,7 @@ struct FontPlatformSerializedTraits {
     static std::optional<FontPlatformSerializedTraits> fromCF(CFDictionaryRef);
     RetainPtr<CFDictionaryRef> toCFDictionary() const;
 
-    String uiFontDesign;
+    RefPtr<StringImpl> uiFontDesign;
     RetainPtr<CFNumberRef> weight;
     RetainPtr<CFNumberRef> width;
     RetainPtr<CFNumberRef> symbolic;
@@ -176,7 +176,7 @@ struct FontPlatformSerializedTraits {
 struct FontPlatformOpticalSize {
     static std::optional<FontPlatformOpticalSize> fromCF(CFTypeRef);
     RetainPtr<CFTypeRef> toCF() const;
-    Variant<RetainPtr<CFNumberRef>, String> opticalSize;
+    Variant<RetainPtr<CFNumberRef>, RefPtr<StringImpl>> opticalSize;
 };
 
 struct FontPlatformFeatureSetting {
@@ -190,9 +190,9 @@ struct FontPlatformSerializedAttributes {
     static std::optional<FontPlatformSerializedAttributes> fromCF(CFDictionaryRef);
     RetainPtr<CFDictionaryRef> toCFDictionary() const;
 
-    String fontName;
-    String descriptorLanguage;
-    String descriptorTextStyle;
+    RefPtr<StringImpl> fontName;
+    RefPtr<StringImpl> descriptorLanguage;
+    RefPtr<StringImpl> descriptorTextStyle;
 
     RetainPtr<CFDataRef> matrix;
 
@@ -232,12 +232,12 @@ struct FontPlatformSerializedData {
 struct InstalledFont {
     struct SystemUIFont {
         SystemUIFontType systemUIFontType { SystemUIFontTypeNone };
-        String language;
+        RefPtr<StringImpl> language;
         RetainPtr<CTFontRef> toCTFont(float pointSize) const;
     };
 
     struct PostScriptFont {
-        String postScriptName;
+        RefPtr<StringImpl> postScriptName;
         CTFontDescriptorOptions fontDescriptorOptions;
         std::optional<FontPlatformSerializedAttributes> fontSerializedAttributes;
         RetainPtr<CTFontRef> toCTFont(float pointSize) const;
@@ -253,13 +253,13 @@ struct CustomFontCreationData {
     FontMetadata metadata;
     Vector<uint8_t> fontFaceData;
     std::optional<FontPlatformSerializedAttributes> attributes;
-    String itemInCollection;
+    RefPtr<StringImpl> itemInCollection;
 };
 
 #elif USE(SKIA)
 struct CustomFontCreationData {
     Vector<uint8_t> fontFaceData;
-    String itemInCollection;
+    RefPtr<StringImpl> itemInCollection;
 };
 
 struct FontPlatformSerializedData {
@@ -268,7 +268,7 @@ struct FontPlatformSerializedData {
 #elif USE(CAIRO)
 struct CustomFontCreationData {
     Vector<uint8_t> fontFaceData;
-    String itemInCollection;
+    RefPtr<StringImpl> itemInCollection;
 };
 
 struct FontPlatformSerializedData {
@@ -284,7 +284,7 @@ class FontPlatformData {
 public:
     struct CreationData;
     struct FontVariationAxis {
-        FontVariationAxis(const String& name, const String& tag, float defaultValue, float minimumValue, float maximumValue)
+        FontVariationAxis(StringImpl* name, StringImpl* tag, float defaultValue, float minimumValue, float maximumValue)
             : m_name(name)
             , m_tag(tag)
             , m_defaultValue(defaultValue)
@@ -293,17 +293,24 @@ public:
         {
         }
 
-        const String& name() const LIFETIME_BOUND { return m_name; }
-        const String& tag() const LIFETIME_BOUND { return m_tag; }
+        const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+        const RefPtr<StringImpl>& tag() const LIFETIME_BOUND { return m_tag; }
         float defaultValue() const { return m_defaultValue; }
         float minimumValue() const { return m_minimumValue; }
         float maximumValue() const { return m_maximumValue; }
 
-        friend bool operator==(const FontVariationAxis&, const FontVariationAxis&) = default;
+        friend bool operator==(const FontVariationAxis& a, const FontVariationAxis& b)
+        {
+            return contentEquals(a.m_name, b.m_name)
+                && contentEquals(a.m_tag, b.m_tag)
+                && a.m_defaultValue == b.m_defaultValue
+                && a.m_minimumValue == b.m_minimumValue
+                && a.m_maximumValue == b.m_maximumValue;
+        }
 
     private:
-        const String m_name;
-        const String m_tag;
+        const RefPtr<StringImpl> m_name;
+        const RefPtr<StringImpl> m_tag;
         float m_defaultValue;
         float m_minimumValue;
         float m_maximumValue;
@@ -389,7 +396,7 @@ public:
     const FontMetadata& metadata() const { return m_metadata; }
     bool isForTextCombine() const { return widthVariant() != FontWidthVariant::RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
 
-    String familyName() const;
+    RefPtr<StringImpl> familyName() const;
     Vector<FontVariationAxis> variationAxes(ShouldLocalizeAxisNames) const;
 
 #if USE(CAIRO)
@@ -431,11 +438,11 @@ public:
     RefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
     NODELETE RefPtr<SharedBuffer> platformOpenTypeTable(uint32_t table) const;
 
-    String description() const;
+    RefPtr<StringImpl> description() const;
 
     struct CreationData {
         const Ref<SharedBuffer> fontFaceData;
-        String itemInCollection;
+        RefPtr<StringImpl> itemInCollection;
 #if PLATFORM(WIN) && USE(CAIRO)
         const Ref<FontMemoryResource> m_fontResource;
 #endif

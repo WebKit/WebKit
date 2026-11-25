@@ -54,7 +54,7 @@ using namespace JSC;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorRuntimeAgent);
 
 InspectorRuntimeAgent::InspectorRuntimeAgent(AgentContext& context)
-    : InspectorAgentBase("Runtime"_s)
+    : InspectorAgentBase("Runtime"_si)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_debugger(CheckedRef { context.environment }->debugger())
     , m_vm(CheckedRef { context.environment }->vm())
@@ -85,7 +85,7 @@ Protocol::ErrorStringOr<void> InspectorRuntimeAgent::disable()
     return { };
 }
 
-Protocol::ErrorStringOr<std::tuple<Protocol::Runtime::SyntaxErrorType, String /* message */, RefPtr<Protocol::Runtime::ErrorRange>>> InspectorRuntimeAgent::parse(const String& expression)
+Protocol::ErrorStringOr<std::tuple<Protocol::Runtime::SyntaxErrorType, RefPtr<StringImpl> /* message */, RefPtr<Protocol::Runtime::ErrorRange>>> InspectorRuntimeAgent::parse(StringImpl* expression)
 {
     JSLockHolder lock(m_vm);
 
@@ -93,7 +93,7 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Runtime::SyntaxErrorType, String /*
     checkSyntax(m_vm, JSC::makeSource(expression, { }, SourceTaintedOrigin::Untainted), error);
 
     std::optional<Protocol::Runtime::SyntaxErrorType> result;
-    String message;
+    RefPtr<StringImpl> message;
     RefPtr<Protocol::Runtime::ErrorRange> range;
 
     switch (error.syntaxErrorType()) {
@@ -122,7 +122,7 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Runtime::SyntaxErrorType, String /*
     return { { *result, message, WTF::move(range) } };
 }
 
-Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorRuntimeAgent::evaluate(const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
+Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorRuntimeAgent::evaluate(StringImpl* expression, StringImpl* objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
     Protocol::ErrorString errorString;
 
@@ -133,7 +133,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
     return evaluate(injectedScript, expression, objectGroup, WTF::move(includeCommandLineAPI), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(saveResult), WTF::move(emulateUserGesture));
 }
 
-Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorRuntimeAgent::evaluate(InjectedScript& injectedScript, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& /* emulateUserGesture */)
+Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorRuntimeAgent::evaluate(InjectedScript& injectedScript, StringImpl* expression, StringImpl* objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& /* emulateUserGesture */)
 {
     ASSERT(!injectedScript.hasNoValue());
 
@@ -165,11 +165,11 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
     return { {result.releaseNonNull(), WTF::move(wasThrown), WTF::move(savedResultIndex) } };
 }
 
-void InspectorRuntimeAgent::awaitPromise(const Protocol::Runtime::RemoteObjectId& promiseObjectId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, Ref<AwaitPromiseCallback>&& callback)
+void InspectorRuntimeAgent::awaitPromise(StringImpl* promiseObjectId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, Ref<AwaitPromiseCallback>&& callback)
 {
     auto injectedScript = injectedScriptManager().injectedScriptForObjectId(promiseObjectId);
     if (injectedScript.hasNoValue()) {
-        callback->sendFailure("Missing injected script for given promiseObjectId"_s);
+        callback->sendFailure("Missing injected script for given promiseObjectId"_si);
         return;
     }
 
@@ -181,18 +181,18 @@ void InspectorRuntimeAgent::awaitPromise(const Protocol::Runtime::RemoteObjectId
     });
 }
 
-void InspectorRuntimeAgent::callFunctionOn(const Protocol::Runtime::RemoteObjectId& objectId, const String& functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
+void InspectorRuntimeAgent::callFunctionOn(StringImpl* objectId, StringImpl* functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
 {
     auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        callback->sendFailure("Missing injected script for given objectId"_s);
+        callback->sendFailure("Missing injected script for given objectId"_si);
         return;
     }
 
     callFunctionOn(injectedScript, objectId, functionDeclaration, WTF::move(arguments), WTF::move(doNotPauseOnExceptionsAndMuteConsole), WTF::move(returnByValue), WTF::move(generatePreview), WTF::move(emulateUserGesture), WTF::move(awaitPromise), WTF::move(callback));
 }
 
-void InspectorRuntimeAgent::callFunctionOn(InjectedScript& injectedScript, const Protocol::Runtime::RemoteObjectId& objectId, const String& functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& /* emulateUserGesture */, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
+void InspectorRuntimeAgent::callFunctionOn(InjectedScript& injectedScript, StringImpl* objectId, StringImpl* functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& /* emulateUserGesture */, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
 {
     ASSERT(!injectedScript.hasNoValue());
 
@@ -219,7 +219,7 @@ void InspectorRuntimeAgent::callFunctionOn(InjectedScript& injectedScript, const
         unmuteConsole();
 }
 
-Protocol::ErrorStringOr<Ref<Protocol::Runtime::ObjectPreview>> InspectorRuntimeAgent::getPreview(const Protocol::Runtime::RemoteObjectId& objectId)
+Protocol::ErrorStringOr<Ref<Protocol::Runtime::ObjectPreview>> InspectorRuntimeAgent::getPreview(StringImpl* objectId)
 {
     Protocol::ErrorString errorString;
 
@@ -247,7 +247,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::ObjectPreview>> InspectorRuntimeA
     return preview.releaseNonNull();
 }
 
-Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>>> InspectorRuntimeAgent::getProperties(const Protocol::Runtime::RemoteObjectId& objectId, std::optional<bool>&& ownProperties, std::optional<int>&& fetchStart, std::optional<int>&& fetchCount, std::optional<bool>&& generatePreview)
+Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>>> InspectorRuntimeAgent::getProperties(StringImpl* objectId, std::optional<bool>&& ownProperties, std::optional<int>&& fetchStart, std::optional<int>&& fetchCount, std::optional<bool>&& generatePreview)
 {
     Protocol::ErrorString errorString;
 
@@ -288,7 +288,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
     return { { properties.releaseNonNull(), WTF::move(internalProperties) } };
 }
 
-Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>>> InspectorRuntimeAgent::getDisplayableProperties(const Protocol::Runtime::RemoteObjectId& objectId, std::optional<int>&& fetchStart, std::optional<int>&& fetchCount, std::optional<bool>&& generatePreview)
+Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>>> InspectorRuntimeAgent::getDisplayableProperties(StringImpl* objectId, std::optional<int>&& fetchStart, std::optional<int>&& fetchCount, std::optional<bool>&& generatePreview)
 {
     Protocol::ErrorString errorString;
 
@@ -329,7 +329,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
     return { { properties.releaseNonNull(), WTF::move(internalProperties) } };
 }
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>> InspectorRuntimeAgent::getCollectionEntries(const Protocol::Runtime::RemoteObjectId& objectId, const String& objectGroup, std::optional<int>&& fetchStart, std::optional<int>&& fetchCount)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>> InspectorRuntimeAgent::getCollectionEntries(StringImpl* objectId, StringImpl* objectGroup, std::optional<int>&& fetchStart, std::optional<int>&& fetchCount)
 {
     Protocol::ErrorString errorString;
 
@@ -361,7 +361,7 @@ Protocol::ErrorStringOr<std::optional<int> /* saveResultIndex */> InspectorRunti
 
     InjectedScript injectedScript;
 
-    auto objectId = callArgument->getString("objectId"_s);
+    auto objectId = callArgument->getString("objectId"_si);
     if (!objectId) {
         injectedScript = injectedScriptForEval(errorString, WTF::move(executionContextId));
         if (injectedScript.hasNoValue())
@@ -382,14 +382,14 @@ Protocol::ErrorStringOr<std::optional<int> /* saveResultIndex */> InspectorRunti
     return savedResultIndex;
 }
 
-Protocol::ErrorStringOr<void> InspectorRuntimeAgent::setSavedResultAlias(const String& savedResultAlias)
+Protocol::ErrorStringOr<void> InspectorRuntimeAgent::setSavedResultAlias(StringImpl* savedResultAlias)
 {
     injectedScriptManager().injectedScriptHost().setSavedResultAlias(savedResultAlias);
 
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObject(const Protocol::Runtime::RemoteObjectId& objectId)
+Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObject(StringImpl* objectId)
 {
     auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (!injectedScript.hasNoValue())
@@ -398,7 +398,7 @@ Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObject(const Protoco
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObjectGroup(const String& objectGroup)
+Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObjectGroup(StringImpl* objectGroup)
 {
     injectedScriptManager().releaseObjectGroup(objectGroup);
 
@@ -417,16 +417,16 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
     auto types = JSON::ArrayOf<Protocol::Runtime::TypeDescription>::create();
 
     MonotonicTime start = MonotonicTime::now();
-    m_vm.typeProfilerLog()->processLogEntries(m_vm, "User Query"_s);
+    m_vm.typeProfilerLog()->processLogEntries(m_vm, "User Query"_si);
 
     for (size_t i = 0; i < locations->length(); i++) {
         auto location = locations->get(i)->asObject();
         if (!location)
             return makeUnexpected("Unexpected non-object item in locations"_s);
 
-        auto descriptor = location->getInteger("typeInformationDescriptor"_s).value_or(TypeProfilerSearchDescriptorNormal);
-        auto sourceIDString = location->getString("sourceID"_s);
-        auto divot = location->getInteger("divot"_s).value_or(0);
+        auto descriptor = location->getInteger("typeInformationDescriptor"_si).value_or(TypeProfilerSearchDescriptorNormal);
+        auto sourceIDString = location->getString("sourceID"_si);
+        auto divot = location->getInteger("divot"_si).value_or(0);
 
         auto typeLocation = m_vm.typeProfiler()->findLocation(divot, parseInteger<uintptr_t>(sourceIDString).value(), static_cast<TypeProfilerSearchDescriptor>(descriptor), m_vm);
 
@@ -531,7 +531,7 @@ void InspectorRuntimeAgent::setControlFlowProfilerEnabledState(bool isControlFlo
     });
 }
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>> InspectorRuntimeAgent::getBasicBlocks(const String& sourceID)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>> InspectorRuntimeAgent::getBasicBlocks(StringImpl* sourceID)
 {
     if (!m_vm.controlFlowProfiler())
         return makeUnexpected("VM has no control flow information"_s);

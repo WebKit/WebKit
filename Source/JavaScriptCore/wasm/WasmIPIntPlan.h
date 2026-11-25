@@ -66,7 +66,7 @@ public:
 
     void completeInStreaming();
     void didCompileFunctionInStreaming();
-    void didFailInStreaming(String&&);
+    void didFailInStreaming(RefPtr<StringImpl>&&);
 
 private:
     bool prepareImpl() final;

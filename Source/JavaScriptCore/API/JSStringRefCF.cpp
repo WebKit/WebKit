@@ -38,7 +38,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 JSStringRef JSStringCreateWithCFString(CFStringRef string)
 {
     JSC::initialize();
-    RefPtr result = OpaqueJSString::tryCreate(String { string });
+    RefPtr result = OpaqueJSString::tryCreate(StringImpl::create(string));
     if (!result)
         result = OpaqueJSString::create(""_span8);
     return result.leakRef();

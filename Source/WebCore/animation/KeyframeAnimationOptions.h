@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct KeyframeAnimationOptions : KeyframeEffectOptions {
-    String id;
+    RefPtr<StringImpl> id;
     std::optional<RefPtr<AnimationTimeline>> timeline;
     Variant<FramesPerSecond, AnimationFrameRatePreset> frameRate;
     TimelineRangeValue rangeStart;

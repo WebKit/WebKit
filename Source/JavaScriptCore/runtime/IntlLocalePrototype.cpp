@@ -157,8 +157,8 @@ JSC_DEFINE_HOST_FUNCTION(intlLocalePrototypeFuncToString, (JSGlobalObject* globa
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.toString called on value that's not a Locale"_s);
 
-    const String& fullString = locale->toString();
-    RELEASE_AND_RETURN(scope, JSValue::encode(fullString.isEmpty() ? jsUndefined() : jsString(vm, fullString)));
+    const RefPtr<StringImpl>& fullString = locale->toString();
+    RELEASE_AND_RETURN(scope, JSValue::encode(isEmpty(fullString) ? jsUndefined() : jsString(vm, fullString)));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.baseName
@@ -171,8 +171,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterBaseName, (JSGlobalObject* glo
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.baseName called on value that's not a Locale"_s);
 
-    const String& baseName = locale->baseName();
-    RELEASE_AND_RETURN(scope, JSValue::encode(baseName.isEmpty() ? jsUndefined() : jsString(vm, baseName)));
+    const RefPtr<StringImpl>& baseName = locale->baseName();
+    RELEASE_AND_RETURN(scope, JSValue::encode(isEmpty(baseName) ? jsUndefined() : jsString(vm, baseName)));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.calendar
@@ -185,8 +185,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCalendar, (JSGlobalObject* glo
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.calendar called on value that's not a Locale"_s);
 
-    const String& calendar = locale->calendar();
-    RELEASE_AND_RETURN(scope, JSValue::encode(calendar.isNull() ? jsUndefined() : jsString(vm, calendar)));
+    const RefPtr<StringImpl>& calendar = locale->calendar();
+    RELEASE_AND_RETURN(scope, JSValue::encode(!calendar ? jsUndefined() : jsString(vm, calendar)));
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.getCalendars
@@ -212,8 +212,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCaseFirst, (JSGlobalObject* gl
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.caseFirst called on value that's not a Locale"_s);
 
-    const String& caseFirst = locale->caseFirst();
-    RELEASE_AND_RETURN(scope, JSValue::encode(caseFirst.isNull() ? jsUndefined() : jsString(vm, caseFirst)));
+    const RefPtr<StringImpl>& caseFirst = locale->caseFirst();
+    RELEASE_AND_RETURN(scope, JSValue::encode(!caseFirst ? jsUndefined() : jsString(vm, caseFirst)));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.collation
@@ -226,8 +226,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCollation, (JSGlobalObject* gl
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.collation called on value that's not a Locale"_s);
 
-    const String& collation = locale->collation();
-    RELEASE_AND_RETURN(scope, JSValue::encode(collation.isNull() ? jsUndefined() : jsString(vm, collation)));
+    const RefPtr<StringImpl>& collation = locale->collation();
+    RELEASE_AND_RETURN(scope, JSValue::encode(!collation ? jsUndefined() : jsString(vm, collation)));
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.getCollations
@@ -253,8 +253,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterFirstDayOfWeek, (JSGlobalObjec
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.firstDayOfWeek called on value that's not a Locale"_s);
 
-    const String& firstDayOfWeek = locale->firstDayOfWeek();
-    RELEASE_AND_RETURN(scope, JSValue::encode(firstDayOfWeek.isNull() ? jsUndefined() : jsString(vm, firstDayOfWeek)));
+    const RefPtr<StringImpl>& firstDayOfWeek = locale->firstDayOfWeek();
+    RELEASE_AND_RETURN(scope, JSValue::encode(!firstDayOfWeek ? jsUndefined() : jsString(vm, firstDayOfWeek)));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.hourCycle
@@ -267,8 +267,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterHourCycle, (JSGlobalObject* gl
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.hourCycle called on value that's not a Locale"_s);
 
-    const String& hourCycle = locale->hourCycle();
-    RELEASE_AND_RETURN(scope, JSValue::encode(hourCycle.isNull() ? jsUndefined() : jsString(vm, hourCycle)));
+    const RefPtr<StringImpl>& hourCycle = locale->hourCycle();
+    RELEASE_AND_RETURN(scope, JSValue::encode(!hourCycle ? jsUndefined() : jsString(vm, hourCycle)));
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.getHourCycles
@@ -307,8 +307,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystem, (JSGlobalObje
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.numberingSystem called on value that's not a Locale"_s);
 
-    const String& numberingSystem = locale->numberingSystem();
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberingSystem.isNull() ? jsUndefined() : jsString(vm, numberingSystem)));
+    const RefPtr<StringImpl>& numberingSystem = locale->numberingSystem();
+    RELEASE_AND_RETURN(scope, JSValue::encode(!numberingSystem ? jsUndefined() : jsString(vm, numberingSystem)));
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.getNumberingSystems
@@ -334,8 +334,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterLanguage, (JSGlobalObject* glo
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.language called on value that's not a Locale"_s);
 
-    const String& language = locale->language();
-    RELEASE_AND_RETURN(scope, JSValue::encode(language.isEmpty() ? jsUndefined() : jsString(vm, language)));
+    const RefPtr<StringImpl>& language = locale->language();
+    RELEASE_AND_RETURN(scope, JSValue::encode(isEmpty(language) ? jsUndefined() : jsString(vm, language)));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.script
@@ -348,8 +348,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterScript, (JSGlobalObject* globa
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.script called on value that's not a Locale"_s);
 
-    const String& script = locale->script();
-    RELEASE_AND_RETURN(scope, JSValue::encode(script.isEmpty() ? jsUndefined() : jsString(vm, script)));
+    const RefPtr<StringImpl>& script = locale->script();
+    RELEASE_AND_RETURN(scope, JSValue::encode(isEmpty(script) ? jsUndefined() : jsString(vm, script)));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.region
@@ -362,8 +362,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterRegion, (JSGlobalObject* globa
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.region called on value that's not a Locale"_s);
 
-    const String& region = locale->region();
-    RELEASE_AND_RETURN(scope, JSValue::encode(region.isEmpty() ? jsUndefined() : jsString(vm, region)));
+    const RefPtr<StringImpl>& region = locale->region();
+    RELEASE_AND_RETURN(scope, JSValue::encode(isEmpty(region) ? jsUndefined() : jsString(vm, region)));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.variants
@@ -376,8 +376,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterVariants, (JSGlobalObject* glo
     if (!locale) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.variants called on value that's not a Locale"_s);
 
-    const String& variants = locale->variants();
-    RELEASE_AND_RETURN(scope, JSValue::encode(variants.isEmpty() ? jsUndefined() : jsString(vm, variants)));
+    const RefPtr<StringImpl>& variants = locale->variants();
+    RELEASE_AND_RETURN(scope, JSValue::encode(isEmpty(variants) ? jsUndefined() : jsString(vm, variants)));
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.getTimezones

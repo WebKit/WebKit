@@ -47,7 +47,7 @@ auto SystemFontDatabase::systemFontShorthandInfo(FontShorthand fontShorthand) ->
     return *m_systemFontShorthandCache[fontShorthand];
 }
 
-const AtomString& SystemFontDatabase::systemFontShorthandFamily(FontShorthand fontShorthand)
+const RefPtr<AtomStringImpl>& SystemFontDatabase::systemFontShorthandFamily(FontShorthand fontShorthand)
 {
     return systemFontShorthandInfo(fontShorthand).family;
 }

@@ -139,7 +139,7 @@ void WebGLRenderingContext::detachAndRemoveAllObjects()
     m_activeQuery = nullptr;
 }
 
-std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const String& name)
+std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(StringImpl* name)
 {
     if (isContextLost())
         return std::nullopt;
@@ -203,12 +203,12 @@ std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const Strin
     return std::nullopt;
 }
 
-std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
+std::optional<Vector<RefPtr<StringImpl>>> WebGLRenderingContext::getSupportedExtensions()
 {
     if (isContextLost())
         return std::nullopt;
 
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
 
     RefPtr executionContext = scriptExecutionContext();
     [[maybe_unused]] const bool enableDraftExtensions = executionContext->settingsValues().webGLDraftExtensionsEnabled;

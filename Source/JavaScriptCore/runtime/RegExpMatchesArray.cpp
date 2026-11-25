@@ -205,8 +205,8 @@ JSArray* createRegExpMatchesArrayWithGroupsOrIndices(VM& vm, JSGlobalObject* glo
         bool hasDuplicateNamedCaptureGroups = regExp->hasDuplicateNamedCaptureGroups();
         PropertyOffset groupOffset = 0;
         for (unsigned i = 1; i <= numSubpatterns; ++i) {
-            const AtomString& groupName = regExp->getCaptureGroupNameForSubpatternId(i);
-            if (!groupName.isEmpty()) {
+            const RefPtr<AtomStringImpl>& groupName = regExp->getCaptureGroupNameForSubpatternId(i);
+            if (!isEmpty(groupName)) {
                 unsigned captureIndex = i;
                 if (hasDuplicateNamedCaptureGroups) [[unlikely]]
                     captureIndex = regExp->subpatternIdForGroupName(groupName, subpatternResults);

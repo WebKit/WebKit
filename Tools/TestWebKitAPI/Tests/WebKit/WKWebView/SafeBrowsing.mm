@@ -1181,9 +1181,9 @@ TEST(SafeBrowsing, MultipleDeferredModalsShownInOrder)
     [webView configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
 
     RetainPtr modalDelegate = adoptNS([ModalDeferralDelegate new]);
-    __block Vector<String> modalMessages;
+    __block Vector<RefPtr<StringImpl>> modalMessages;
     modalDelegate.get().onAlert = ^(NSString *message) {
-        modalMessages.append(String(message));
+        modalMessages.append(StringImpl::create(message));
     };
     [webView setUIDelegate:modalDelegate.get()];
 
@@ -1298,7 +1298,7 @@ TEST(SafeBrowsing, AllModalTypesProperlyDeferred)
     [webView configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
 
     RetainPtr modalDelegate = adoptNS([ModalDeferralDelegate new]);
-    __block Vector<String> modalTypes;
+    __block Vector<RefPtr<StringImpl>> modalTypes;
     modalDelegate.get().onAlert = ^(NSString *message) {
         modalTypes.append("alert"_s);
     };

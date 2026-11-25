@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-const String& FontChanges::platformFontFamilyNameForCSS() const
+const RefPtr<StringImpl>& FontChanges::platformFontFamilyNameForCSS() const
 {
     // The family name may not be specific enough to get us the font specified.
     // In some cases, the only way to get exactly what we are looking for is to use
@@ -43,7 +43,7 @@ const String& FontChanges::platformFontFamilyNameForCSS() const
     // then we'll have to use the Postscript name to make the CSS specific enough.
     // This logic was originally from WebHTMLView, and is now in WebCore so that it can
     // be shared between WebKitLegacy and WebKit.
-    auto cfFontName = m_fontName.createCFString();
+    auto cfFontName = createCFString(m_fontName);
     if (fontNameIsSystemFont(cfFontName.get()))
         return m_fontFamily;
     RetainPtr<CFStringRef> fontNameFromDescription;

@@ -69,18 +69,18 @@ static Vector<Ref<WebPageProxy>> allPageProxiesFor(const WebAutomationSession& s
     return pages;
 }
 
-void BidiPermissionsAgent::setPermission(Ref<JSON::Object>&& descriptor, const String& origin, Inspector::Protocol::BidiPermissions::PermissionState state, const String& optionalUserContext, CommandCallback<void>&& callback)
+void BidiPermissionsAgent::setPermission(Ref<JSON::Object>&& descriptor, StringImpl* origin, Inspector::Protocol::BidiPermissions::PermissionState state, StringImpl* optionalUserContext, CommandCallback<void>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    auto permissionName = descriptor->getString("name"_s);
+    auto permissionName = descriptor->getString("name"_si);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!permissionName, MissingParameter, "The parameter 'name' was not found."_s);
 
-    if (permissionName == "storage-access"_s) {
+    if (equal(permissionName, "storage-access"_s)) {
         auto topFrameOrigin = RegistrableDomain { URL { origin } };
-        auto subFrameURLString = descriptor->getString("subFrameURL"_s);
-        bool embeddedOriginIsWildcard = subFrameURLString == "*"_s;
+        auto subFrameURLString = descriptor->getString("subFrameURL"_si);
+        bool embeddedOriginIsWildcard = equal(subFrameURLString, "*"_s);
         auto embeddedOrigin = RegistrableDomain { URL { subFrameURLString } };
 
         Ref callbackAggregator = CallbackAggregator::create([callback = WTF::move(callback)]() {

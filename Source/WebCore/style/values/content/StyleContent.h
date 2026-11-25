@@ -145,7 +145,7 @@ struct Content {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }
 
-    NODELETE WTF::String altText() const;
+    NODELETE RefPtr<StringImpl> altText() const;
 
     bool operator==(const Content&) const = default;
 
@@ -166,7 +166,7 @@ template<typename... F> decltype(auto) ContentCounter::switchOn(NOESCAPE F&&... 
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
-    if (separator.value.isEmpty()) {
+    if (isEmpty(separator.value)) {
         return visitor(CounterFunction {
             .parameters = {
                 identifier,

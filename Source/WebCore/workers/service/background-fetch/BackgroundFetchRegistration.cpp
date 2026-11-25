@@ -166,7 +166,7 @@ static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, 
 void BackgroundFetchRegistration::match(ScriptExecutionContext& context, RequestInfo&& info, const CacheQueryOptions& options, DOMPromiseDeferred<IDLInterface<BackgroundFetchRecord>>&& promise)
 {
     if (!recordsAvailable()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Records are not available"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Records are not available"_si });
         return;
     }
 
@@ -185,7 +185,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
             return;
 
         if (!results.size()) {
-            promise.reject(Exception { ExceptionCode::TypeError, "No matching record"_s });
+            promise.reject(Exception { ExceptionCode::TypeError, "No matching record"_si });
             return;
         }
 
@@ -196,7 +196,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
 void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std::optional<RequestInfo>&& info, const CacheQueryOptions& options, DOMPromiseDeferred<IDLSequence<IDLInterface<BackgroundFetchRecord>>>&& promise)
 {
     if (!recordsAvailable()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Records are not available"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Records are not available"_si });
         return;
     }
 
@@ -224,7 +224,7 @@ void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std:
 void BackgroundFetchRegistration::updateInformation(const BackgroundFetchInformation& information)
 {
     ASSERT(m_information.registrationIdentifier == information.registrationIdentifier);
-    ASSERT(m_information.identifier == information.identifier);
+    ASSERT(equal(m_information.identifier, information.identifier));
     ASSERT(m_information.recordsAvailable);
 
     if (m_information.downloaded == information.downloaded && m_information.uploaded == information.uploaded && m_information.result == information.result && m_information.failureReason == information.failureReason)

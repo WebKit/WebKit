@@ -44,7 +44,7 @@ WebOpenPanelResultListener::WebOpenPanelResultListener(WebPage& page, Ref<WebCor
 
 WebOpenPanelResultListener::~WebOpenPanelResultListener() = default;
 
-void WebOpenPanelResultListener::didChooseFiles(const Vector<String>& files, const Vector<String>& replacementFiles)
+void WebOpenPanelResultListener::didChooseFiles(const Vector<RefPtr<StringImpl>>& files, const Vector<RefPtr<StringImpl>>& replacementFiles)
 {
     m_fileChooser->chooseFiles(files, replacementFiles);
 }
@@ -55,7 +55,7 @@ void WebOpenPanelResultListener::didCancelFileChoosing()
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebOpenPanelResultListener::didChooseFilesWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, WebCore::Icon* displayIcon)
+void WebOpenPanelResultListener::didChooseFilesWithDisplayStringAndIcon(const Vector<RefPtr<StringImpl>>& files, StringImpl* displayString, WebCore::Icon* displayIcon)
 {
     m_fileChooser->chooseMediaFiles(files, displayString, displayIcon);
 }

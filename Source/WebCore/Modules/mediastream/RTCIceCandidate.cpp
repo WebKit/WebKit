@@ -44,26 +44,26 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCIceCandidate);
 
-RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex, Fields&& fields)
+RTCIceCandidate::RTCIceCandidate(StringImpl* candidate, StringImpl* sdpMid, std::optional<unsigned short> sdpMLineIndex, Fields&& fields)
     : m_candidate(candidate)
     , m_sdpMid(sdpMid)
     , m_sdpMLineIndex(sdpMLineIndex)
     , m_fields(WTF::move(fields))
 {
-    ASSERT(!sdpMid.isNull() || sdpMLineIndex);
+    ASSERT(sdpMid || sdpMLineIndex);
 }
 
 ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const RTCIceCandidateInit& dictionary)
 {
-    if (dictionary.sdpMid.isNull() && !dictionary.sdpMLineIndex)
-        return Exception { ExceptionCode::TypeError, "Candidate must not have both null sdpMid and sdpMLineIndex"_s };
+    if (!dictionary.sdpMid && !dictionary.sdpMLineIndex)
+        return Exception { ExceptionCode::TypeError, "Candidate must not have both null sdpMid and sdpMLineIndex"_si };
 
     auto fields = valueOrDefault(parseIceCandidateSDP(dictionary.candidate));
     fields.usernameFragment = dictionary.usernameFragment;
     return adoptRef(*new RTCIceCandidate(dictionary.candidate, dictionary.sdpMid, dictionary.sdpMLineIndex, WTF::move(fields)));
 }
 
-Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
+Ref<RTCIceCandidate> RTCIceCandidate::create(StringImpl* candidate, StringImpl* sdpMid, std::optional<unsigned short> sdpMLineIndex)
 {
     auto fields = parseIceCandidateSDP(candidate);
     return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex, WTF::move(*fields)));

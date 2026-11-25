@@ -162,9 +162,9 @@ WebIDBResult IDBStorageConnectionToClient::prepareCursorResult(const WebCore::ID
     });
 }
 
-static Vector<String> resultBlobFilePaths(const WebCore::IDBResultData& resultData)
+static Vector<RefPtr<StringImpl>> resultBlobFilePaths(const WebCore::IDBResultData& resultData)
 {
-    Vector<String> paths;
+    Vector<RefPtr<StringImpl>> paths;
     switch (resultData.type()) {
     case WebCore::IDBResultType::GetRecordSuccess:
     case WebCore::IDBResultType::OpenCursorSuccess:
@@ -245,7 +245,7 @@ void IDBStorageConnectionToClient::generateIndexKeyForRecord(const WebCore::IDBR
     RefPtr networkStorageManager = m_networkStorageManager.get();
     if (!networkStorageManager)
         return sendResult();
-    networkStorageManager->allowAccessToBlobFilesForProcess(m_identifier, Vector<String> { value.blobFilePaths() }, WTF::move(sendResult));
+    networkStorageManager->allowAccessToBlobFilesForProcess(m_identifier, Vector<RefPtr<StringImpl>> { value.blobFilePaths() }, WTF::move(sendResult));
 }
 
 void IDBStorageConnectionToClient::didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection& connection, const WebCore::IDBError& error)

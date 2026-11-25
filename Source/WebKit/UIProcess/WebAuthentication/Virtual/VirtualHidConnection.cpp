@@ -47,12 +47,12 @@ using namespace WebCore;
 
 const size_t CtapChannelIdSize = 4;
 
-Ref<VirtualHidConnection> VirtualHidConnection::create(const String& authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)
+Ref<VirtualHidConnection> VirtualHidConnection::create(StringImpl* authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)
 {
     return adoptRef(*new VirtualHidConnection(authenticatorId, configuration, manager));
 }
 
-VirtualHidConnection::VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)
+VirtualHidConnection::VirtualHidConnection(StringImpl* authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)
     : HidConnection(nullptr)
     , m_manager(manager)
     , m_configuration(configuration)
@@ -228,7 +228,7 @@ void VirtualHidConnection::parseRequest()
             CBORValue::MapValue response;
             response[CBORValue(1)] = CBORValue("none");
             response[CBORValue(2)] = CBORValue(authenticatorData);
-            auto attObj = buildAttestationMap(WTF::move(authenticatorData), String { emptyString() }, { }, AttestationConveyancePreference::None);
+            auto attObj = buildAttestationMap(WTF::move(authenticatorData), RefPtr<StringImpl> { emptyString() }, { }, AttestationConveyancePreference::None);
             response[CBORValue(3)] = CBORValue(attObj);
             auto payload = CBORWriter::write(CBORValue(response));
             Vector<uint8_t> buffer;

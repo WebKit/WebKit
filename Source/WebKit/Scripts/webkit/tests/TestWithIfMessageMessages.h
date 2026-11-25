@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -44,7 +45,7 @@ static inline IPC::ReceiverName messageReceiverName()
 #if PLATFORM(COCOA)
 class LoadURL {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
     static constexpr bool isSync = false;
@@ -52,7 +53,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit LoadURL(const String& url)
+    explicit LoadURL(StringView url)
         : m_url(url)
     {
     }
@@ -64,14 +65,14 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 #endif
 
 #if PLATFORM(GTK)
 class LoadURL {
 public:
-    using Arguments = std::tuple<String, int64_t>;
+    using Arguments = std::tuple<RefPtr<StringImpl>, int64_t>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
     static constexpr bool isSync = false;
@@ -79,7 +80,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    LoadURL(const String& url, int64_t value)
+    LoadURL(StringView url, int64_t value)
         : m_url(url)
         , m_value(value)
     {
@@ -93,7 +94,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
     int64_t m_value;
 };
 #endif

@@ -46,8 +46,8 @@ class PlatformGamepad : public CanMakeWeakPtr<PlatformGamepad>, public CanMakeCh
 public:
     virtual ~PlatformGamepad() = default;
 
-    const String& id() const LIFETIME_BOUND { return m_id; }
-    const String& mapping() const LIFETIME_BOUND { return m_mapping; }
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_id; }
+    const RefPtr<StringImpl>& mapping() const LIFETIME_BOUND { return m_mapping; }
     unsigned index() const { return m_index; }
     virtual MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
     MonotonicTime connectTime() const { return m_connectTime; }
@@ -66,8 +66,8 @@ protected:
     {
     }
 
-    String m_id;
-    String m_mapping;
+    RefPtr<StringImpl> m_id;
+    RefPtr<StringImpl> m_mapping;
     unsigned m_index;
     MonotonicTime m_lastUpdateTime;
     MonotonicTime m_connectTime;

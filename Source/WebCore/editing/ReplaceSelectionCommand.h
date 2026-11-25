@@ -55,14 +55,14 @@ public:
     virtual ~ReplaceSelectionCommand();
 
     VisibleSelection visibleSelectionForInsertedText() const { return m_visibleSelectionForInsertedText; }
-    String documentFragmentPlainText() const { return m_documentFragmentPlainText; }
+    RefPtr<StringImpl> documentFragmentPlainText() const { return m_documentFragmentPlainText; }
 
     std::optional<SimpleRange> insertedContentRange() const;
 
 private:
     ReplaceSelectionCommand(Ref<Document>&&, RefPtr<DocumentFragment>&&, OptionSet<CommandOption>, EditAction);
 
-    String inputEventData() const final;
+    RefPtr<StringImpl> inputEventData() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
     bool willApplyCommand() final;
     void doApply() override;
@@ -138,8 +138,8 @@ private:
     bool m_matchStyle;
     const RefPtr<DocumentFragment> m_documentFragment;
     const std::unique_ptr<ReplacementFragment> m_replacementFragment;
-    String m_documentFragmentHTMLMarkup;
-    String m_documentFragmentPlainText;
+    RefPtr<StringImpl> m_documentFragmentHTMLMarkup;
+    RefPtr<StringImpl> m_documentFragmentPlainText;
     bool m_preventNesting;
     bool m_movingParagraph;
     bool m_sanitizeFragment;

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-SessionRequestNotifier::SessionRequestNotifier(RefPtr<RTCSessionDescriptionRequest>&& request, RefPtr<RTCSessionDescriptionDescriptor>&& descriptor, const String& errorName)
+SessionRequestNotifier::SessionRequestNotifier(RefPtr<RTCSessionDescriptionRequest>&& request, RefPtr<RTCSessionDescriptionDescriptor>&& descriptor, StringImpl* errorName)
     : m_request(WTF::move(request))
     , m_descriptor(WTF::move(descriptor))
     , m_errorName(errorName)
@@ -52,7 +52,7 @@ void SessionRequestNotifier::fire()
         m_request->requestFailed(m_errorName);
 }
 
-VoidRequestNotifier::VoidRequestNotifier(RefPtr<RTCVoidRequest>&& request, bool success, const String& errorName)
+VoidRequestNotifier::VoidRequestNotifier(RefPtr<RTCVoidRequest>&& request, bool success, StringImpl* errorName)
     : m_request(WTF::move(request))
     , m_success(success)
     , m_errorName(errorName)
@@ -98,7 +98,7 @@ RemoteDataChannelNotifier::RemoteDataChannelNotifier(RTCPeerConnectionHandlerCli
 
 void RemoteDataChannelNotifier::fire()
 {
-    m_client->didAddRemoteDataChannel(makeUnique<RTCDataChannelHandlerMock>("RTCDataChannelHandlerMock"_s, RTCDataChannelInit()));
+    m_client->didAddRemoteDataChannel(makeUnique<RTCDataChannelHandlerMock>("RTCDataChannelHandlerMock"_si, RTCDataChannelInit()));
 }
 
 DataChannelStateNotifier::DataChannelStateNotifier(RTCDataChannelHandlerClient* client, RTCDataChannelState state)

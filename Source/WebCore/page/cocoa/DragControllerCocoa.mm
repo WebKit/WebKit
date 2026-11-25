@@ -133,33 +133,33 @@ DragOperation DragController::platformGenericDragOperation()
 
 void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod dragHandlingMethod, const DragData& dragData) const
 {
-    Vector<String> supportedTypes;
+    Vector<RefPtr<StringImpl>> supportedTypes;
     switch (dragHandlingMethod) {
     case DragHandlingMethod::PageLoad:
-        supportedTypes.append(UTTypeURL.identifier);
+        supportedTypes.append(StringImpl::create(UTTypeURL.identifier));
         break;
     case DragHandlingMethod::EditPlainText:
-        supportedTypes.append(UTTypeURL.identifier);
-        supportedTypes.append(UTTypePlainText.identifier);
+        supportedTypes.append(StringImpl::create(UTTypeURL.identifier));
+        supportedTypes.append(StringImpl::create(UTTypePlainText.identifier));
         break;
     case DragHandlingMethod::EditRichText:
         if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
-            supportedTypes.append(WebArchivePboardType);
-            supportedTypes.append(UTTypeContent.identifier);
-            supportedTypes.append(UTTypeItem.identifier);
+            supportedTypes.append(StringImpl::create(protect(WebArchivePboardType).get()));
+            supportedTypes.append(StringImpl::create(UTTypeContent.identifier));
+            supportedTypes.append(StringImpl::create(UTTypeItem.identifier));
         } else {
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString *type in Pasteboard::supportedWebContentPasteboardTypes())
-                supportedTypes.append(type);
+                supportedTypes.append(StringImpl::create(type));
         }
         break;
     case DragHandlingMethod::SetColor:
-        supportedTypes.append(UIColorPboardType);
+        supportedTypes.append(StringImpl::create(protect(UIColorPboardType).get()));
         break;
     default:
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSString *type in Pasteboard::supportedFileUploadPasteboardTypes())
-            supportedTypes.append(type);
+            supportedTypes.append(StringImpl::create(type));
         break;
     }
 
@@ -169,7 +169,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
 
 #endif // PLATFORM(IOS_FAMILY)
 
-void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
+void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, StringImpl* label)
 {
     client().declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, protect(protect(element.document())->frame()));
 }
@@ -184,7 +184,7 @@ constexpr CGFloat linkImageFontSize = 11;
 constexpr CFIndex linkImageTitleMaximumLineCount = 2;
 
 struct LinkImageLayout {
-    LinkImageLayout(URL&, const String& title);
+    LinkImageLayout(URL&, StringImpl* title);
 
     struct Label {
         FloatPoint origin;
@@ -195,7 +195,7 @@ struct LinkImageLayout {
     FloatRect boundingRect;
 };
 
-LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
+LinkImageLayout::LinkImageLayout(URL& url, StringImpl* titleString)
 {
     RetainPtr title = nsStringNilIfEmpty(titleString);
     RetainPtr nsURL = url.createNSURL();
@@ -290,7 +290,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     boundingRect.setHeight((static_cast<int>(boundingRect.height() / 2) * 2));
 }
 
-std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& element, URL& url, const String& title, float deviceScaleFactor)
+std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& element, URL& url, StringImpl* title, float deviceScaleFactor)
 {
     LinkImageLayout layout(url, title);
 
@@ -333,7 +333,7 @@ static RetainPtr<CGImageRef> cgImageFromTextIndicator(const TextIndicator& textI
     return nativeImage->platformImage();
 }
 
-std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& linkElement, URL&, const String&, float)
+std::pair<DragImage, RefPtr<TextIndicator>> DragController::dragImageAndTextIndicatorForLink(Element& linkElement, URL&, StringImpl*, float)
 {
     constexpr OptionSet<TextIndicatorOption> defaultLinkIndicatorOptions {
         TextIndicatorOption::TightlyFitContent,

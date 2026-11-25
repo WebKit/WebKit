@@ -239,7 +239,7 @@ bool Device::isDestroyed() const
     return m_destroyed;
 }
 
-Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
+Ref<Device> Device::create(id<MTLDevice> device, RefPtr<StringImpl>&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
 {
     id<MTLCommandQueue> commandQueue = [device newCommandQueueWithMaxCommandBufferCount:4096];
     if (!commandQueue)
@@ -248,8 +248,8 @@ Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareC
     // See the comment in Device::setLabel() about why we're not setting the label on the MTLDevice here.
 
     commandQueue.label = @"Default queue";
-    if (!deviceLabel.isEmpty())
-        commandQueue.label = [NSString stringWithFormat:@"Default queue for device %@", deviceLabel.createNSString().get()];
+    if (!isEmpty(deviceLabel))
+        commandQueue.label = [NSString stringWithFormat:@"Default queue for device %@", createNSString(deviceLabel).get()];
 
     return adoptRef(*new Device(device, commandQueue, WTF::move(capabilities), adapter));
 }
@@ -379,7 +379,7 @@ Device::~Device()
     ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     if (m_deviceLostCallback)
-        m_deviceLostCallback(WebGPU::DeviceLostReason::Destroyed, ""_s);
+        m_deviceLostCallback(WebGPU::DeviceLostReason::Destroyed, ""_si);
 }
 
 RefPtr<WebGPU::Instance> Device::instance() const
@@ -423,7 +423,7 @@ void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
     // The callback sees that the device is lost.
     m_isLost = true;
     if (m_deviceLostCallback)
-        m_deviceLostCallback(reason, "Device lost."_s);
+        m_deviceLostCallback(reason, "Device lost."_si);
 
     protect(m_defaultQueue)->makeInvalid();
     // No errors are surfaced from a lost device.
@@ -537,9 +537,9 @@ RefPtr<WebGPU::QuerySet> Device::createInvalidQuerySet()
     return QuerySet::createInvalid(*this);
 }
 
-RefPtr<WebGPU::RenderBundleEncoder> Device::createInvalidRenderBundleEncoder(String&& error)
+RefPtr<WebGPU::RenderBundleEncoder> Device::createInvalidRenderBundleEncoder(RefPtr<StringImpl>&& error)
 {
-    return RenderBundleEncoder::createInvalid(*this, error.createNSString().get());
+    return RenderBundleEncoder::createInvalid(*this, createNSString(error).get());
 }
 
 RefPtr<WebGPU::RenderPipeline> Device::createInvalidRenderPipeline()
@@ -574,10 +574,10 @@ void Device::dispatchUncapturedError(WebGPU::Error&& error)
 
 void Device::generateAValidationError(NSString * message)
 {
-    generateAValidationError(String { message });
+    generateAValidationError(StringImpl::create(message));
 }
 
-void Device::generateAValidationError(String&& message)
+void Device::generateAValidationError(RefPtr<StringImpl>&& message)
 {
     if (m_supressAllErrors)
         return;
@@ -593,7 +593,7 @@ void Device::generateAValidationError(String&& message)
     dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::Validation, WTF::move(message) });
 }
 
-void Device::generateAnOutOfMemoryError(String&& message)
+void Device::generateAnOutOfMemoryError(RefPtr<StringImpl>&& message)
 {
     if (m_supressAllErrors)
         return;
@@ -611,7 +611,7 @@ void Device::generateAnOutOfMemoryError(String&& message)
     dispatchUncapturedError(WebGPU::Error { WebGPU::ErrorType::OutOfMemory, WTF::move(message) });
 }
 
-void Device::generateAnInternalError(String&& message)
+void Device::generateAnInternalError(RefPtr<StringImpl>&& message)
 {
     if (m_supressAllErrors)
         return;
@@ -708,10 +708,10 @@ void Device::pushErrorScope(WebGPU::ErrorFilter filter)
     m_errorScopeStack.append(WTF::move(scope));
 }
 
-void Device::resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostReason, String&&)>&& callback)
+void Device::resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostReason, RefPtr<StringImpl>&&)>&& callback)
 {
     if (m_deviceLostCallback)
-        m_deviceLostCallback(WebGPU::DeviceLostReason::Destroyed, ""_s);
+        m_deviceLostCallback(WebGPU::DeviceLostReason::Destroyed, ""_si);
 
     m_deviceLostCallback = WTF::move(callback);
     if (m_isLost)
@@ -730,7 +730,7 @@ void Device::setUncapturedErrorCallback(Function<void(WebGPU::Error&&)>&& callba
     m_uncapturedErrorCallback = createSharedTask<void(WebGPU::Error&&)>(WTF::move(callback));
 }
 
-void Device::setLabel(String&&)
+void Device::setLabel(RefPtr<StringImpl>&&)
 {
     // Because MTLDevices are process-global, we can't set the label on it, because 2 contexts' labels would fight each other.
 }

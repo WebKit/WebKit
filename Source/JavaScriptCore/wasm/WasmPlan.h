@@ -67,10 +67,10 @@ public:
     void setMode(MemoryMode mode) { m_mode = mode; }
     ALWAYS_INLINE MemoryMode mode() const { return m_mode; }
 
-    String errorMessage() const { return crossThreadCopy(m_errorMessage); }
+    RefPtr<StringImpl> errorMessage() const { return crossThreadCopy(m_errorMessage); }
     CompilationError error() const { return m_error; }
 
-    [[nodiscard]] bool failed() const { return !m_errorMessage.isNull(); }
+    [[nodiscard]] bool failed() const { return !!m_errorMessage; }
     virtual bool hasWork() const = 0;
     virtual void work() = 0;
     virtual bool multiThreaded() const = 0;
@@ -81,8 +81,8 @@ public:
 
 protected:
     void runCompletionTasks() WTF_REQUIRES_LOCK(m_lock);
-    void fail(String&& errorMessage, CompilationError = CompilationError::Default) WTF_REQUIRES_LOCK(m_lock);
-    void failAtFunction(FunctionCodeIndex, String&& errorMessage, CompilationError = CompilationError::Default) WTF_REQUIRES_LOCK(m_lock);
+    void fail(RefPtr<StringImpl>&& errorMessage, CompilationError = CompilationError::Default) WTF_REQUIRES_LOCK(m_lock);
+    void failAtFunction(FunctionCodeIndex, RefPtr<StringImpl>&& errorMessage, CompilationError = CompilationError::Default) WTF_REQUIRES_LOCK(m_lock);
 
     virtual bool isComplete() const = 0;
     virtual void complete() WTF_REQUIRES_LOCK(m_lock) = 0;
@@ -101,7 +101,7 @@ protected:
 
     Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks WTF_GUARDED_BY_LOCK(m_lock);
 
-    String m_errorMessage;
+    RefPtr<StringImpl> m_errorMessage;
     std::optional<FunctionCodeIndex> m_errorFunctionIndex;
     CompilationError m_error { CompilationError::Default };
 };

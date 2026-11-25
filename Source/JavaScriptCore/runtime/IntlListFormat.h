@@ -71,7 +71,7 @@ private:
     static ASCIILiteral styleString(Style);
 
     ListFormatter m_listFormat;
-    String m_locale;
+    RefPtr<StringImpl> m_locale;
     Type m_type { Type::Conjunction };
     Style m_style { Style::Long };
 };

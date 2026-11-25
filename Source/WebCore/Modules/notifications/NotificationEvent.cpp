@@ -34,12 +34,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationEvent);
 
-Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
+Ref<NotificationEvent> NotificationEvent::create(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
 {
     return adoptRef(*new NotificationEvent(type, WTF::move(init), isTrusted));
 }
 
-Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Ref<Notification>&& notification, const String& action, IsTrusted isTrusted)
+Ref<NotificationEvent> NotificationEvent::create(AtomStringImpl* type, Ref<Notification>&& notification, StringImpl* action, IsTrusted isTrusted)
 {
     auto init = Init {
         { false, false, false },
@@ -49,7 +49,7 @@ Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Ref<Not
     return adoptRef(*new NotificationEvent(type, WTF::move(init), isTrusted));
 }
 
-NotificationEvent::NotificationEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+NotificationEvent::NotificationEvent(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::NotificationEvent, type, WTF::move(init), isTrusted)
     , m_notification(WTF::move(init.notification))
     , m_action(WTF::move(init.action))

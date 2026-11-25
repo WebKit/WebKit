@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioInputType);
 
 using namespace HTMLNames;
 
-const AtomString& RadioInputType::formControlType() const
+const RefPtr<AtomStringImpl>& RadioInputType::formControlType() const
 {
     return InputTypeNames::radio();
 }
@@ -56,7 +56,7 @@ bool RadioInputType::valueMissing(StringView) const
     if (auto* buttons = element->radioButtonGroups())
         return !buttons->checkedButtonForGroup(name) && buttons->isInRequiredGroup(*element);
 
-    if (name.isEmpty())
+    if (isEmpty(name))
         return false;
 
     ASSERT(!element->isConnected());
@@ -76,9 +76,9 @@ bool RadioInputType::valueMissing(StringView) const
     return isRequired && !foundCheckedRadio;
 }
 
-void RadioInputType::forEachButtonInDetachedGroup(ContainerNode& rootNode, const String& groupName, NOESCAPE const Function<bool(HTMLInputElement&)>& apply)
+void RadioInputType::forEachButtonInDetachedGroup(ContainerNode& rootNode, StringImpl* groupName, NOESCAPE const Function<bool(HTMLInputElement&)>& apply)
 {
-    ASSERT(!groupName.isEmpty());
+    ASSERT(!isEmpty(groupName));
 
     auto next = [&](auto& current) {
         if (is<HTMLFormElement>(current)) {
@@ -92,7 +92,7 @@ void RadioInputType::forEachButtonInDetachedGroup(ContainerNode& rootNode, const
         if (is<HTMLFormElement>(*descendant))
             continue;
         auto* input = dynamicDowncast<HTMLInputElement>(*descendant);
-        if (input && input->isRadioButton() && !input->form() && input->name() == groupName) {
+        if (input && input->isRadioButton() && !input->form() && equal(input->name(), groupName)) {
             bool shouldContinue = apply(*input);
             if (!shouldContinue)
                 return;
@@ -113,7 +113,7 @@ void RadioInputType::willUpdateCheckedness(bool nowChecked, WasSetByJavaScript)
         input->setChecked(false);
 }
 
-String RadioInputType::valueMissingText() const
+RefPtr<StringImpl> RadioInputType::valueMissingText() const
 {
     return validationMessageValueMissingForRadioText();
 }
@@ -129,8 +129,8 @@ auto RadioInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
         return ShouldCallBaseEventHandler::No;
     if (event.defaultHandled())
         return ShouldCallBaseEventHandler::Yes;
-    const String& key = event.keyIdentifier();
-    if (key != "Up"_s && key != "Down"_s && key != "Left"_s && key != "Right"_s)
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (!equal(key, "Up"_s) && !equal(key, "Down"_s) && !equal(key, "Left"_s) && !equal(key, "Right"_s))
         return ShouldCallBaseEventHandler::Yes;
 
     RefPtr element = this->element();
@@ -142,7 +142,7 @@ auto RadioInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     // However, when using Spatial Navigation, we need to be able to navigate without changing the selection.
     if (element->document().settings().spatialNavigationEnabled())
         return ShouldCallBaseEventHandler::Yes;
-    bool forward = (key == "Down"_s || key == "Right"_s);
+    bool forward = (equal(key, "Down"_s) || equal(key, "Right"_s));
 
     // We can only stay within the form's children if the form hasn't been demoted to a leaf because
     // of malformed HTML.
@@ -171,8 +171,8 @@ auto RadioInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
 
 void RadioInputType::handleKeyupEvent(KeyboardEvent& event)
 {
-    const String& key = event.keyIdentifier();
-    if (key != "U+0020"_s)
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (!equal(key, "U+0020"_s))
         return;
 
     RefPtr element = this->element();

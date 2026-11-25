@@ -33,9 +33,9 @@ namespace WebCore {
 Ref<JSON::Object> GPUBufferDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
-    json->setDouble("size"_s, size);
-    json->setDouble("usage"_s, usage);
-    json->setBoolean("mappedAtCreation"_s, mappedAtCreation);
+    json->setDouble("size"_si, size);
+    json->setDouble("usage"_si, usage);
+    json->setBoolean("mappedAtCreation"_si, mappedAtCreation);
     return json;
 }
 

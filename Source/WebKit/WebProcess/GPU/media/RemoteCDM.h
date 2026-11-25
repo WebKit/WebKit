@@ -39,11 +39,11 @@ class RemoteCDM final : public WebCore::CDMPrivate {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCDM);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteCDM);
 public:
-    static std::unique_ptr<RemoteCDM> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMIdentifier&&, RemoteCDMConfiguration&&, const String& mediaKeysHashSalt);
+    static std::unique_ptr<RemoteCDM> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMIdentifier&&, RemoteCDMConfiguration&&, StringImpl* mediaKeysHashSalt);
     virtual ~RemoteCDM() = default;
 
 private:
-    RemoteCDM(WeakPtr<RemoteCDMFactory>&&, RemoteCDMIdentifier&&, RemoteCDMConfiguration&&, const String& mediaKeysHashSalt);
+    RemoteCDM(WeakPtr<RemoteCDMFactory>&&, RemoteCDMIdentifier&&, RemoteCDMConfiguration&&, StringImpl* mediaKeysHashSalt);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(uint64_t) final;
@@ -54,24 +54,24 @@ private:
     bool supportsConfiguration(const WebCore::CDMKeySystemConfiguration&) const final;
     bool supportsConfigurationWithRestrictions(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     bool supportsSessionTypeWithConfiguration(const WebCore::CDMSessionType&, const WebCore::CDMKeySystemConfiguration&) const final;
-    bool supportsInitData(const String&, const WebCore::SharedBuffer&) const final;
+    bool supportsInitData(StringImpl*, const WebCore::SharedBuffer&) const final;
     WebCore::CDMRequirement distinctiveIdentifiersRequirement(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     WebCore::CDMRequirement persistentStateRequirement(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const WebCore::CDMKeySystemConfiguration&) const final;
     RefPtr<WebCore::CDMInstance> createInstance() final;
     void loadAndInitialize() final;
     RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer&) const final;
-    std::optional<String> sanitizeSessionId(const String&) const final;
+    std::optional<RefPtr<StringImpl>> sanitizeSessionId(StringImpl*) const final;
 
-    Vector<String> supportedInitDataTypes() const final { return m_configuration.supportedInitDataTypes; }
-    Vector<String> supportedRobustnesses() const final { return m_configuration.supportedRobustnesses; }
+    Vector<RefPtr<StringImpl>> supportedInitDataTypes() const final { return m_configuration.supportedInitDataTypes; }
+    Vector<RefPtr<StringImpl>> supportedRobustnesses() const final { return m_configuration.supportedRobustnesses; }
     bool supportsServerCertificates() const final { return m_configuration.supportsServerCertificates; }
     bool supportsSessions() const final { return m_configuration.supportsSessions; }
 
     WeakPtr<RemoteCDMFactory> m_factory;
     RemoteCDMIdentifier m_identifier;
     RemoteCDMConfiguration m_configuration;
-    String m_mediaKeysHashSalt;
+    RefPtr<StringImpl> m_mediaKeysHashSalt;
 };
 
 }

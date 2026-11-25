@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-Ref<WebAuthnOperationException> WebAuthnOperationException::create(WebAuthnOperationErrorCode operationError, const String& message)
+Ref<WebAuthnOperationException> WebAuthnOperationException::create(WebAuthnOperationErrorCode operationError, StringImpl* message)
 {
     return adoptRef(*new WebAuthnOperationException(operationError, message));
 }
 
-WebAuthnOperationException::WebAuthnOperationException(WebAuthnOperationErrorCode operationError, const String& message)
-    : DOMException(0, "WebAuthnOperationException"_s, message, Type::WebAuthnOperationException)
+WebAuthnOperationException::WebAuthnOperationException(WebAuthnOperationErrorCode operationError, StringImpl* message)
+    : DOMException(0, "WebAuthnOperationException"_si, message, Type::WebAuthnOperationException)
     , m_operationError(operationError)
 {
 }

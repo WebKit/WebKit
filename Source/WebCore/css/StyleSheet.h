@@ -44,10 +44,10 @@ public:
     virtual void setDisabled(bool) = 0;
     virtual Node* ownerNode() const = 0;
     virtual StyleSheet* parentStyleSheet() const { return nullptr; }
-    virtual String href() const = 0;
-    virtual String title() const = 0;
+    virtual RefPtr<StringImpl> href() const = 0;
+    virtual RefPtr<StringImpl> title() const = 0;
     virtual MediaList* media() const { return nullptr; }
-    virtual String type() const = 0;
+    virtual RefPtr<StringImpl> type() const = 0;
 
     virtual CSSImportRule* ownerRule() const { return nullptr; }
     virtual void clearOwnerNode() = 0;
@@ -57,7 +57,7 @@ public:
     virtual bool isCSSStyleSheet() const { return false; }
     virtual bool isXSLStyleSheet() const { return false; }
 
-    virtual String debugDescription() const = 0;
+    virtual RefPtr<StringImpl> debugDescription() const = 0;
 };
 
 TextStream& operator<<(TextStream&, const StyleSheet&);

@@ -94,21 +94,21 @@ ScriptExecutionContext* FileReader::scriptExecutionContext() const
 
 ExceptionOr<void> FileReader::readAsArrayBuffer(Blob& blob)
 {
-    LOG_WITH_STREAM(FileAPI, stream << "FileReader: reading as array buffer: "_s << blob.url().string() << " "_s << (is<File>(blob) ? downcast<File>(blob).path() : ""_s));
+    LOG_WITH_STREAM(FileAPI, stream << "FileReader: reading as array buffer: "_s << blob.url().string() << " "_s << (is<File>(blob) ? downcast<File>(blob).path() : ""_si));
 
     return readInternal(blob, FileReaderLoader::ReadAsArrayBuffer);
 }
 
 ExceptionOr<void> FileReader::readAsBinaryString(Blob& blob)
 {
-    LOG_WITH_STREAM(FileAPI, stream << "FileReader: reading as binary: "_s << blob.url().string() << " "_s << (is<File>(blob) ? downcast<File>(blob).path() : ""_s));
+    LOG_WITH_STREAM(FileAPI, stream << "FileReader: reading as binary: "_s << blob.url().string() << " "_s << (is<File>(blob) ? downcast<File>(blob).path() : ""_si));
 
     return readInternal(blob, FileReaderLoader::ReadAsBinaryString);
 }
 
-ExceptionOr<void> FileReader::readAsText(Blob& blob, const String& encoding)
+ExceptionOr<void> FileReader::readAsText(Blob& blob, StringImpl* encoding)
 {
-    LOG_WITH_STREAM(FileAPI, stream << "FileReader: reading as text: "_s << blob.url().string() << " "_s << (is<File>(blob) ? downcast<File>(blob).path() : ""_s));
+    LOG_WITH_STREAM(FileAPI, stream << "FileReader: reading as text: "_s << blob.url().string() << " "_s << (is<File>(blob) ? downcast<File>(blob).path() : ""_si));
 
     m_encoding = encoding;
     return readInternal(blob, FileReaderLoader::ReadAsText);
@@ -116,7 +116,7 @@ ExceptionOr<void> FileReader::readAsText(Blob& blob, const String& encoding)
 
 ExceptionOr<void> FileReader::readAsDataURL(Blob& blob)
 {
-    LOG_WITH_STREAM(FileAPI, stream << "FileReader: reading as data URL: "_s << blob.url().string() << " "_s << (is<File>(blob) ? downcast<File>(blob).path() : ""_s));
+    LOG_WITH_STREAM(FileAPI, stream << "FileReader: reading as data URL: "_s << blob.url().string() << " "_s << (is<File>(blob) ? downcast<File>(blob).path() : ""_si));
 
     return readInternal(blob, FileReaderLoader::ReadAsDataURL);
 }
@@ -209,13 +209,13 @@ void FileReader::didFail(ExceptionCode errorCode)
     });
 }
 
-void FileReader::fireEvent(const AtomString& type)
+void FileReader::fireEvent(AtomStringImpl* type)
 {
     ASSERT(isAllowedToRunScript());
     dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
 }
 
-std::optional<Variant<String, Ref<JSC::ArrayBuffer>>> FileReader::result() const
+std::optional<Variant<RefPtr<StringImpl>, Ref<JSC::ArrayBuffer>>> FileReader::result() const
 {
     RefPtr loader = m_loader;
     if (!loader || m_error || m_state != DONE)
@@ -226,8 +226,8 @@ std::optional<Variant<String, Ref<JSC::ArrayBuffer>>> FileReader::result() const
             return std::nullopt;
         return { result.releaseNonNull() };
     }
-    String result = loader->stringResult();
-    if (result.isNull())
+    RefPtr<StringImpl> result = loader->stringResult();
+    if (!result)
         return std::nullopt;
     return { WTF::move(result) };
 }

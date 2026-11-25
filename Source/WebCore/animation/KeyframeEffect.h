@@ -69,24 +69,24 @@ public:
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);
     NODELETE static Ref<KeyframeEffect> create(const Element&, const std::optional<Style::PseudoElementIdentifier>&);
 
-    using KeyframeOffset = Variant<std::nullptr_t, double, TimelineRangeOffset, String>;
+    using KeyframeOffset = Variant<std::nullptr_t, double, TimelineRangeOffset, RefPtr<StringImpl>>;
 
     struct BasePropertyIndexedKeyframe {
-        Variant<std::nullptr_t, Vector<KeyframeOffset>, double, TimelineRangeOffset, String> offset = Vector<KeyframeOffset>();
-        Variant<Vector<String>, String> easing = Vector<String>();
+        Variant<std::nullptr_t, Vector<KeyframeOffset>, double, TimelineRangeOffset, RefPtr<StringImpl>> offset = Vector<KeyframeOffset>();
+        Variant<Vector<RefPtr<StringImpl>>, RefPtr<StringImpl>> easing = Vector<RefPtr<StringImpl>>();
         Variant<Vector<CompositeOperationOrAuto>, CompositeOperationOrAuto> composite = Vector<CompositeOperationOrAuto>();
     };
 
     struct BaseKeyframe {
         KeyframeOffset offset;
-        String easing { "linear"_s };
+        RefPtr<StringImpl> easing { "linear"_si };
         CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
     };
 
     struct PropertyAndValues {
         CSSPropertyID property;
-        AtomString customProperty;
-        Vector<String> values;
+        RefPtr<AtomStringImpl> customProperty;
+        Vector<RefPtr<StringImpl>> values;
     };
 
     struct KeyframeLikeObject {
@@ -99,8 +99,8 @@ public:
     };
 
     struct ComputedKeyframe : BaseComputedKeyframe {
-        HashMap<CSSPropertyID, String> styleStrings;
-        HashMap<AtomString, String> customStyleStrings;
+        HashMap<CSSPropertyID, RefPtr<StringImpl>> styleStrings;
+        HashMap<RefPtr<AtomStringImpl>, RefPtr<StringImpl>> customStyleStrings;
     };
 
     struct ParsedKeyframe : ComputedKeyframe {
@@ -117,8 +117,8 @@ public:
     void setTarget(RefPtr<Element>&&);
 
     NODELETE bool targetsPseudoElement() const;
-    const String pseudoElement() const;
-    ExceptionOr<void> setPseudoElement(const String&);
+    const RefPtr<StringImpl> pseudoElement() const;
+    ExceptionOr<void> setPseudoElement(StringImpl*);
 
     NODELETE const std::optional<const Styleable> targetStyleable() const;
 
@@ -177,7 +177,7 @@ public:
 
     NODELETE bool requiresPseudoElement() const;
 
-    void customPropertyRegistrationDidChange(const AtomString&);
+    void customPropertyRegistrationDidChange(AtomStringImpl*);
 
     bool canBeAccelerated() const;
     bool isCompletelyAccelerated() const { return m_acceleratedPropertiesState == AcceleratedProperties::All; }
@@ -192,7 +192,7 @@ public:
     void lastStyleChangeEventStyleDidChange(const Style::ComputedStyle* previousStyle, const Style::ComputedStyle* currentStyle);
     void acceleratedPropertiesOverriddenByCascadeDidChange();
 
-    static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
+    static RefPtr<StringImpl> CSSPropertyIDToIDLAttributeName(CSSPropertyID);
 
     WebAnimationType animationType() const { return m_animationType; }
 

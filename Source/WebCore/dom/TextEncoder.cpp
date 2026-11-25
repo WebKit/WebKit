@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-RefPtr<Uint8Array> TextEncoder::encode(String&& input) const
+RefPtr<Uint8Array> TextEncoder::encode(RefPtr<StringImpl>&& input) const
 {
-    auto result = input.tryGetUTF8([&](std::span<const char8_t> span) -> RefPtr<Uint8Array> {
+    auto result = tryGetUTF8(input, [&](std::span<const char8_t> span) -> RefPtr<Uint8Array> {
         return Uint8Array::tryCreate(byteCast<uint8_t>(span));
     });
     if (result)
@@ -42,7 +42,7 @@ RefPtr<Uint8Array> TextEncoder::encode(String&& input) const
     return Uint8Array::tryCreate(nullptr, 0);
 }
 
-auto TextEncoder::encodeInto(String&& input, Ref<Uint8Array>&& array) -> EncodeIntoResult
+auto TextEncoder::encodeInto(RefPtr<StringImpl>&& input, Ref<Uint8Array>&& array) -> EncodeIntoResult
 {
     auto destinationBytes = array->mutableSpan();
 

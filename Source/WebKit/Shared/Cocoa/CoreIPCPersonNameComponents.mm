@@ -36,11 +36,11 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCPersonNameComponents);
 
 CoreIPCPersonNameComponents::CoreIPCPersonNameComponents(NSPersonNameComponents *components)
-    : m_namePrefix(components.namePrefix)
-    , m_givenName(components.givenName)
-    , m_middleName(components.middleName)
-    , m_familyName(components.familyName)
-    , m_nickname(components.nickname)
+    : m_namePrefix(StringImpl::create(components.namePrefix))
+    , m_givenName(StringImpl::create(components.givenName))
+    , m_middleName(StringImpl::create(components.middleName))
+    , m_familyName(StringImpl::create(components.familyName))
+    , m_nickname(StringImpl::create(components.nickname))
 {
     if (components.phoneticRepresentation)
         m_phoneticRepresentation = makeUnique<CoreIPCPersonNameComponents>(components.phoneticRepresentation);

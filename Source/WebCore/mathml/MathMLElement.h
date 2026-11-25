@@ -70,11 +70,11 @@ public:
 protected:
     MathMLElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     bool childShouldCreateRenderer(const Node&) const override;
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) override;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
     void defaultEventHandler(Event&) override;

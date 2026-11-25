@@ -43,10 +43,10 @@ enum class RunAsAsyncFunction : bool { No, Yes };
 enum class ForceUserGesture : bool { No, Yes };
 enum class RemoveTransientActivation : bool { No, Yes };
 
-using ArgumentMap = HashMap<String, Function<JSC::JSValue(JSC::JSGlobalObject&)>>;
+using ArgumentMap = HashMap<RefPtr<StringImpl>, Function<JSC::JSValue(JSC::JSGlobalObject&)>>;
 
 struct RunJavaScriptParameters {
-    RunJavaScriptParameters(String&& source, JSC::SourceTaintedness taintedness, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(RefPtr<StringImpl>&& source, JSC::SourceTaintedness taintedness, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)
         : source(WTF::move(source))
         , taintedness(taintedness)
         , sourceURL(WTF::move(sourceURL))
@@ -57,7 +57,7 @@ struct RunJavaScriptParameters {
     {
     }
 
-    RunJavaScriptParameters(const String& source, JSC::SourceTaintedness taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(StringImpl* source, JSC::SourceTaintedness taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
         : source(source)
         , taintedness(taintedness)
         , sourceURL(WTF::move(sourceURL))
@@ -68,7 +68,7 @@ struct RunJavaScriptParameters {
     {
     }
 
-    RunJavaScriptParameters(String&& source, JSC::SourceTaintedness taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(RefPtr<StringImpl>&& source, JSC::SourceTaintedness taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
         : source(WTF::move(source))
         , taintedness(taintedness)
         , sourceURL(WTF::move(sourceURL))
@@ -79,7 +79,7 @@ struct RunJavaScriptParameters {
     {
     }
 
-    String source;
+    RefPtr<StringImpl> source;
     JSC::SourceTaintedness taintedness;
     URL sourceURL;
     RunAsAsyncFunction runAsAsyncFunction;

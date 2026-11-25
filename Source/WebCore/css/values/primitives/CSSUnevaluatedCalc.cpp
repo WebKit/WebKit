@@ -245,7 +245,7 @@ bool UnevaluatedCalcBase::requiresConversionData() const
     return calcValue().tree().requiresConversionData;
 }
 
-WTF::String UnevaluatedCalcBase::serializationForCSS(const SerializationContext& context) const
+RefPtr<StringImpl> UnevaluatedCalcBase::serializationForCSS(const SerializationContext& context) const
 {
     auto options = CSSCalc::SerializationOptions {
         .range = calcValue().range(),

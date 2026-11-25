@@ -133,7 +133,7 @@ private:
 
 class ScheduledURLNavigation : public ScheduledNavigation {
 protected:
-    ScheduledURLNavigation(Document& initiatingDocument, double delay, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, bool isLocationChange)
+    ScheduledURLNavigation(Document& initiatingDocument, double delay, SecurityOrigin* securityOrigin, const URL& url, StringImpl* referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, bool isLocationChange)
         : ScheduledNavigation(delay, lockHistory, lockBackForwardList, duringLoad, isLocationChange, initiatingDocument.shouldOpenExternalURLsPolicyToPropagate())
         , m_initiatingDocument { initiatingDocument }
         , m_securityOrigin { securityOrigin }
@@ -175,7 +175,7 @@ protected:
     NODELETE Document& initiatingDocument() const { return m_initiatingDocument.get(); }
     NODELETE SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
     NODELETE const URL& url() const { return m_url; }
-    NODELETE const String& referrer() const { return m_referrer; }
+    NODELETE const RefPtr<StringImpl>& referrer() const { return m_referrer; }
 
     bool isSameDocumentNavigation(Frame&) const final { return equalIgnoringFragmentIdentifier(initiatingDocument().url(), url()); }
 
@@ -183,14 +183,14 @@ private:
     const Ref<Document> m_initiatingDocument;
     const RefPtr<SecurityOrigin> m_securityOrigin;
     URLKeepingBlobAlive m_url;
-    const String m_referrer;
+    const RefPtr<StringImpl> m_referrer;
     bool m_haveToldClient { false };
 };
 
 class ScheduledRedirect : public ScheduledURLNavigation {
 public:
     ScheduledRedirect(Document& initiatingDocument, double delay, SecurityOrigin* securityOrigin, const URL& url, LockHistory lockHistory, LockBackForwardList lockBackForwardList, IsMetaRefresh isMetaRefresh)
-        : ScheduledURLNavigation(initiatingDocument, delay, securityOrigin, url, String(), lockHistory, lockBackForwardList, false, false)
+        : ScheduledURLNavigation(initiatingDocument, delay, securityOrigin, url, nullString(), lockHistory, lockBackForwardList, false, false)
         , m_isMetaRefresh(isMetaRefresh)
     {
         clearUserGesture();
@@ -210,7 +210,7 @@ public:
 
         if (m_isMetaRefresh == IsMetaRefresh::Yes) {
             if (RefPtr document = localFrame->document(); document && document->isSandboxed(SandboxFlag::AutomaticFeatures)) {
-                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Unable to do meta refresh due to sandboxing"_s);
+                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Unable to do meta refresh due to sandboxing"_si);
                 return;
             }
         }
@@ -229,10 +229,10 @@ public:
             && url().hasFragmentIdentifier()
             && currentURL.fragmentIdentifier() != url().fragmentIdentifier();
         bool refresh = equalIgnoringFragmentIdentifier(currentURL, url()) && !isSameDocumentFragmentChange;
-        ResourceRequest resourceRequest { URL { url() }, String { referrer() }, refresh ? ResourceRequestCachePolicy::ReloadIgnoringCacheData : ResourceRequestCachePolicy::UseProtocolCachePolicy };
+        ResourceRequest resourceRequest { URL { url() }, RefPtr<StringImpl> { referrer() }, refresh ? ResourceRequestCachePolicy::ReloadIgnoringCacheData : ResourceRequestCachePolicy::UseProtocolCachePolicy };
         if (initiatedByMainFrame() == InitiatedByMainFrame::Yes)
             resourceRequest.setRequester(ResourceRequestRequester::Main);
-        FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), WTF::move(resourceRequest), selfTargetFrameName(), initiatedByMainFrame() };
+        FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), WTF::move(resourceRequest), AtomStringImpl::add(selfTargetFrameName()).ptr(), initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.disableNavigationToInvalidURL();
@@ -247,7 +247,7 @@ private:
 
 class ScheduledLocationChange : public ScheduledURLNavigation {
 public:
-    ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, NavigationHistoryBehavior navigationHandling, ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded, bool hasDispatchedNavigateEvent, CompletionHandler<void(bool)>&& completionHandler)
+    ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, StringImpl* referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, NavigationHistoryBehavior navigationHandling, ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded, bool hasDispatchedNavigateEvent, CompletionHandler<void(bool)>&& completionHandler)
         : ScheduledURLNavigation(initiatingDocument, 0.0, securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, true)
         , m_completionHandler(WTF::move(completionHandler))
         , m_navigationHistoryBehavior(navigationHandling)
@@ -266,8 +266,8 @@ public:
     {
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
-        ResourceRequest resourceRequest { URL { url() }, String { referrer() }, ResourceRequestCachePolicy::UseProtocolCachePolicy };
-        FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), WTF::move(resourceRequest), selfTargetFrameName(), initiatedByMainFrame() };
+        ResourceRequest resourceRequest { URL { url() }, RefPtr<StringImpl> { referrer() }, ResourceRequestCachePolicy::UseProtocolCachePolicy };
+        FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), WTF::move(resourceRequest), AtomStringImpl::add(selfTargetFrameName()).ptr(), initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.disableNavigationToInvalidURL();
@@ -290,7 +290,7 @@ private:
 
 class ScheduledRefresh : public ScheduledURLNavigation {
 public:
-    ScheduledRefresh(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer)
+    ScheduledRefresh(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, StringImpl* referrer)
         : ScheduledURLNavigation(initiatingDocument, 0.0, securityOrigin, url, referrer, LockHistory::Yes, LockBackForwardList::Yes, false, true)
     {
     }
@@ -299,8 +299,8 @@ public:
     {
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
-        ResourceRequest resourceRequest { URL { url() }, String { referrer() }, ResourceRequestCachePolicy::ReloadIgnoringCacheData };
-        FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), WTF::move(resourceRequest), selfTargetFrameName(), initiatedByMainFrame() };
+        ResourceRequest resourceRequest { URL { url() }, RefPtr<StringImpl> { referrer() }, ResourceRequestCachePolicy::ReloadIgnoringCacheData };
+        FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), WTF::move(resourceRequest), AtomStringImpl::add(selfTargetFrameName()).ptr(), initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
@@ -331,7 +331,7 @@ public:
 
         // history.go(0) is a reload, not a back-forward navigation.
         if (!m_steps) {
-            localFrame->loader().changeLocation(protect(localFrame->document())->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+            localFrame->loader().changeLocation(protect(localFrame->document())->url(), AtomStringImpl::add(selfTargetFrameName()).ptr(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;
         }
 
@@ -409,7 +409,7 @@ private:
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#she-navigation-api-key
 class ScheduledHistoryNavigationByKey : public ScheduledNavigation {
 public:
-    explicit ScheduledHistoryNavigationByKey(const String& key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&& completionHandler)
+    explicit ScheduledHistoryNavigationByKey(StringImpl* key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&& completionHandler)
         : ScheduledNavigation(0, LockHistory::No, LockBackForwardList::No, false, true)
         , m_key(key)
         , m_completionHandler(WTF::move(completionHandler))
@@ -486,7 +486,7 @@ public:
 
         if (RefPtr currentItem = protect(page->backForward())->currentItem(); currentItem && currentItem->itemID() == (*historyItem)->itemID()) {
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                localFrame->loader().changeLocation(protect(localFrame->document())->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+                localFrame->loader().changeLocation(protect(localFrame->document())->url(), AtomStringImpl::add(selfTargetFrameName()).ptr(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;
         }
 
@@ -515,7 +515,7 @@ public:
     }
 
 private:
-    String m_key;
+    RefPtr<StringImpl> m_key;
     CompletionHandler<void(ScheduleHistoryNavigationResult)> m_completionHandler;
 };
 
@@ -545,7 +545,7 @@ public:
         Ref requestingDocument = m_submission->state()->sourceDocument();
         if (requestingDocument->canNavigate(&frame) != CanNavigateState::Able)
             return;
-        FrameLoadRequest frameLoadRequest { requestingDocument.copyRef(), protect(requestingDocument->securityOrigin()), { }, { }, initiatedByMainFrame() };
+        FrameLoadRequest frameLoadRequest { requestingDocument.copyRef(), protect(requestingDocument->securityOrigin()), { }, nullptr, initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.setReferrerPolicy(m_submission->referrerPolicy());
@@ -625,13 +625,13 @@ public:
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
         Ref originDocument = m_originDocument.get();
-        ResourceResponse replacementResponse { URL { originDocument->url() }, String { textPlainContentTypeAtom() }, 0, "UTF-8"_s };
+        ResourceResponse replacementResponse { URL { originDocument->url() }, RefPtr<StringImpl> { textPlainContentTypeAtom() }, 0, "UTF-8"_si };
         SubstituteData replacementData { SharedBuffer::create(), URL { originDocument->url() }, WTF::move(replacementResponse), SubstituteData::SessionHistoryVisibility::Hidden };
 
         ResourceRequest resourceRequest { URL { originDocument->url() }, emptyString(), ResourceRequestCachePolicy::ReloadIgnoringCacheData };
         if (RefPtr documentLoader = originDocument->loader())
             resourceRequest.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
-        FrameLoadRequest frameLoadRequest { originDocument.copyRef(), protect(originDocument->securityOrigin()), WTF::move(resourceRequest), { }, initiatedByMainFrame() };
+        FrameLoadRequest frameLoadRequest { originDocument.copyRef(), protect(originDocument->securityOrigin()), WTF::move(resourceRequest), nullptr, initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.setSubstituteData(WTF::move(replacementData));
@@ -717,7 +717,7 @@ LockBackForwardList NavigationScheduler::mustLockBackForwardList(Frame& targetFr
     return LockBackForwardList::No;
 }
 
-void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, SecurityOrigin& securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, NavigationHistoryBehavior historyHandling, ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded, CompletionHandler<void(ScheduleLocationChangeResult)>&& completionHandler)
+void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, SecurityOrigin& securityOrigin, const URL& url, StringImpl* referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, NavigationHistoryBehavior historyHandling, ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded, CompletionHandler<void(ScheduleLocationChangeResult)>&& completionHandler)
 {
     if (!shouldScheduleNavigation(url))
         return completionHandler(ScheduleLocationChangeResult::Stopped);
@@ -743,7 +743,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
         RefPtr frame = lexicalFrameFromCommonVM();
         auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
         
-        FrameLoadRequest frameLoadRequest { initiatingDocument, securityOrigin, WTF::move(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };
+        FrameLoadRequest frameLoadRequest { initiatingDocument, securityOrigin, WTF::move(resourceRequest), AtomStringImpl::add(selfTargetFrameName()).ptr(), initiatedByMainFrame };
         frameLoadRequest.setLockHistory(lockHistory);
         frameLoadRequest.setLockBackForwardList(lockBackForwardList);
         frameLoadRequest.disableNavigationToInvalidURL();
@@ -908,7 +908,7 @@ void NavigationScheduler::scheduleHistoryNavigation(Frame& originatingFrame, int
     schedule(makeUnique<ScheduledHistoryNavigation>(steps));
 }
 
-void NavigationScheduler::scheduleHistoryNavigationByKey(const String& key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&& completionHandler)
+void NavigationScheduler::scheduleHistoryNavigationByKey(StringImpl* key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&& completionHandler)
 {
     if (!shouldScheduleNavigation()) {
         completionHandler(ScheduleHistoryNavigationResult::Aborted);

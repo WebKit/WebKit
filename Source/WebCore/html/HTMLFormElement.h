@@ -51,20 +51,20 @@ public:
 
     Ref<HTMLFormControlsCollection> elements();
     WEBCORE_EXPORT Ref<HTMLCollection> elementsForNativeBindings();
-    Vector<Ref<Element>> namedElements(const AtomString&);
-    bool isSupportedPropertyName(const AtomString&);
+    Vector<Ref<Element>> namedElements(AtomStringImpl*);
+    bool isSupportedPropertyName(AtomStringImpl*);
 
     bool isSupportedPropertyIndex(unsigned index) { return index < length(); }
     WEBCORE_EXPORT unsigned length();
     HTMLElement* item(unsigned index);
-    std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> namedItem(const AtomString&);
-    NODELETE Vector<AtomString> supportedPropertyNames() const;
+    std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> namedItem(AtomStringImpl*);
+    NODELETE Vector<RefPtr<AtomStringImpl>> supportedPropertyNames() const;
 
-    String enctype() const { return m_attributes.encodingType(); }
+    RefPtr<StringImpl> enctype() const { return m_attributes.encodingType(); }
 
     bool shouldAutocomplete() const;
 
-    WEBCORE_EXPORT const AtomString& autocomplete() const;
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& autocomplete() const;
 
     void registerFormListedElement(FormListedElement&);
     void unregisterFormListedElement(FormListedElement&);
@@ -83,21 +83,21 @@ public:
 
     void submitImplicitly(Event&, bool fromImplicitSubmissionTrigger);
 
-    NODELETE String name() const;
+    NODELETE RefPtr<StringImpl> name() const;
 
     NODELETE bool noValidate() const;
 
-    String acceptCharset() const { return m_attributes.acceptCharset(); }
-    void setAcceptCharset(const String&);
+    RefPtr<StringImpl> acceptCharset() const { return m_attributes.acceptCharset(); }
+    void setAcceptCharset(StringImpl*);
 
-    WEBCORE_EXPORT String action() const;
-    WEBCORE_EXPORT String method() const;
-    bool isMethodPost() const { return method() == "post"_s; }
+    WEBCORE_EXPORT RefPtr<StringImpl> action() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> method() const;
+    bool isMethodPost() const { return equal(method(), "post"_s); }
 
     DOMTokenList& relList();
 
-    AtomString target() const final;
-    AtomString effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
+    RefPtr<AtomStringImpl> target() const final;
+    RefPtr<AtomStringImpl> effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
 
     NODELETE bool wasUserSubmitted() const;
 
@@ -130,7 +130,7 @@ private:
     void removingSteps(RemovalType, ContainerNode&) final;
     void finishParsingChildren() final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     NODELETE bool isURLAttribute(const Attribute&) const final;
 
     void resumeFromDocumentSuspension() final;
@@ -153,8 +153,8 @@ private:
     // are any invalid controls in this form.
     bool checkInvalidControlsAndCollectUnhandled(Vector<Ref<ValidatedFormListedElement>>&);
 
-    NODELETE RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
-    void addToPastNamesMap(FormAssociatedElement&, const AtomString& pastName);
+    NODELETE RefPtr<HTMLElement> elementFromPastNamesMap(AtomStringImpl*) const;
+    void addToPastNamesMap(FormAssociatedElement&, AtomStringImpl* pastName);
 #if ASSERT_ENABLED
     void assertItemCanBeInPastNamesMap(FormAssociatedElement&) const;
 #endif
@@ -168,7 +168,7 @@ private:
     RefPtr<HTMLFormControlElement> findSubmitButton(HTMLFormControlElement* submitter, bool needButtonActivation);
 
     FormSubmission::Attributes m_attributes;
-    HashMap<AtomString, WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_pastNamesMap;
+    HashMap<RefPtr<AtomStringImpl>, WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_pastNamesMap;
 
     RadioButtonGroups m_radioButtonGroups;
     mutable WeakPtr<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_defaultButton;

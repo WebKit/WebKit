@@ -50,7 +50,7 @@ public:
 protected:
     RefPtr<WebCore::URLPattern> makePattern(ASCIILiteral pattern, WebCore::URLPatternOptions options = { }) const
     {
-        auto result = WebCore::URLPattern::create(String(pattern), String(), WTF::move(options));
+        auto result = WebCore::URLPattern::create(RefPtr<StringImpl> { pattern }, nullptr, WTF::move(options));
         if (result.hasException())
             return nullptr;
         return result.releaseReturnValue().ptr();
@@ -66,7 +66,7 @@ protected:
 
     RefPtr<WebCore::URLPattern> makePatternWithoutRegExp(ASCIILiteral pattern, ASCIILiteral baseURL = { }, WebCore::URLPatternOptions options = { }) const
     {
-        auto result = WebCore::URLPattern::createWithoutRegExpSupport(String(pattern), String(baseURL), WTF::move(options));
+        auto result = WebCore::URLPattern::createWithoutRegExpSupport(RefPtr<StringImpl> { pattern }, RefPtr<StringImpl> { baseURL }, WTF::move(options));
         if (result.hasException())
             return nullptr;
         return result.releaseReturnValue().ptr();
@@ -77,19 +77,19 @@ protected:
     {
         SCOPED_TRACE(makeString("pattern="_s, pattern, " baseURL="_s, baseURL, " url="_s, url, " ignoreCase="_s, options.ignoreCase ? "true"_s : "false"_s));
 
-        auto regexResult = WebCore::URLPattern::create(String(pattern), String(baseURL), WebCore::URLPatternOptions { options });
+        auto regexResult = WebCore::URLPattern::create(RefPtr<StringImpl> { pattern }, RefPtr<StringImpl> { baseURL }, WebCore::URLPatternOptions { options });
         ASSERT_FALSE(regexResult.hasException());
-        auto withoutRegExpResult = WebCore::URLPattern::createWithoutRegExpSupport(String(pattern), String(baseURL), WebCore::URLPatternOptions { options });
+        auto withoutRegExpResult = WebCore::URLPattern::createWithoutRegExpSupport(RefPtr<StringImpl> { pattern }, RefPtr<StringImpl> { baseURL }, WebCore::URLPatternOptions { options });
         ASSERT_FALSE(withoutRegExpResult.hasException());
 
         auto regexPattern = regexResult.releaseReturnValue();
         auto withoutRegExpPattern = withoutRegExpResult.releaseReturnValue();
         ASSERT_FALSE(withoutRegExpPattern->hasRegExpGroups());
 
-        auto regexTest = regexPattern->test(String(url), String());
+        auto regexTest = regexPattern->test(RefPtr<StringImpl> { url }, nullptr);
         ASSERT_FALSE(regexTest.hasException());
 
-        EXPECT_EQ(withoutRegExpPattern->testWithoutRegExp(WTF::URL { String(url) }), regexTest.returnValue());
+        EXPECT_EQ(withoutRegExpPattern->testWithoutRegExp(WTF::URL { RefPtr<StringImpl> { url } }), regexTest.returnValue());
     }
 };
 
@@ -101,7 +101,7 @@ TEST_F(URLPatternTest, BasicAccessors)
     EXPECT_EQ(pattern->protocol(), "https"_s);
     EXPECT_EQ(pattern->hostname(), "example.com"_s);
     EXPECT_EQ(pattern->port(), emptyString());
-    EXPECT_FALSE(pattern->pathname().isEmpty());
+    EXPECT_FALSE(isEmpty(pattern->pathname()));
 }
 
 TEST_F(URLPatternTest, TestMatchesExactURL)
@@ -109,7 +109,7 @@ TEST_F(URLPatternTest, TestMatchesExactURL)
     auto pattern = makePattern("https://example.com/foo/:id"_s);
     ASSERT_NE(pattern, nullptr);
 
-    auto result = pattern->test(String("https://example.com/foo/bar"_s), String());
+    auto result = pattern->test("https://example.com/foo/bar"_si, nullptr);
     ASSERT_FALSE(result.hasException());
     EXPECT_TRUE(result.returnValue());
 }
@@ -119,7 +119,7 @@ TEST_F(URLPatternTest, TestNoMatchDifferentHost)
     auto pattern = makePattern("https://example.com/foo/:id"_s);
     ASSERT_NE(pattern, nullptr);
 
-    auto result = pattern->test(String("https://other.com/foo/bar"_s), String());
+    auto result = pattern->test("https://other.com/foo/bar"_si, nullptr);
     ASSERT_FALSE(result.hasException());
     EXPECT_FALSE(result.returnValue());
 }
@@ -129,7 +129,7 @@ TEST_F(URLPatternTest, TestNoMatchDifferentProtocol)
     auto pattern = makePattern("https://example.com/foo/:id"_s);
     ASSERT_NE(pattern, nullptr);
 
-    auto result = pattern->test(String("http://example.com/foo/bar"_s), String());
+    auto result = pattern->test("http://example.com/foo/bar"_si, nullptr);
     ASSERT_FALSE(result.hasException());
     EXPECT_FALSE(result.returnValue());
 }
@@ -139,17 +139,17 @@ TEST_F(URLPatternTest, ExecReturnsNamedGroup)
     auto pattern = makePattern("https://example.com/foo/:id"_s);
     ASSERT_NE(pattern, nullptr);
 
-    auto result = pattern->exec(String("https://example.com/foo/bar"_s), String());
+    auto result = pattern->exec("https://example.com/foo/bar"_si, nullptr);
     ASSERT_FALSE(result.hasException());
     ASSERT_TRUE(result.returnValue().has_value());
 
     const auto& match = *result.returnValue();
     bool foundId = false;
     for (const auto& group : match.pathname.groups) {
-        if (group.key == "id"_s) {
+        if (equal(group.key, "id"_s)) {
             foundId = true;
-            ASSERT_TRUE(std::holds_alternative<String>(group.value));
-            EXPECT_EQ(std::get<String>(group.value), "bar"_s);
+            ASSERT_TRUE(std::holds_alternative<RefPtr<StringImpl>>(group.value));
+            EXPECT_EQ(std::get<RefPtr<StringImpl>>(group.value), "bar"_s);
         }
     }
     EXPECT_TRUE(foundId);
@@ -160,7 +160,7 @@ TEST_F(URLPatternTest, ExecNoMatch)
     auto pattern = makePattern("https://example.com/foo/:id"_s);
     ASSERT_NE(pattern, nullptr);
 
-    auto result = pattern->exec(String("https://example.com/other/bar"_s), String());
+    auto result = pattern->exec("https://example.com/other/bar"_si, nullptr);
     ASSERT_FALSE(result.hasException());
     EXPECT_FALSE(result.returnValue().has_value());
 }
@@ -168,13 +168,13 @@ TEST_F(URLPatternTest, ExecNoMatch)
 TEST_F(URLPatternTest, WildcardPathMatches)
 {
     WebCore::URLPatternInit init;
-    init.protocol = "https"_s;
-    init.hostname = "example.com"_s;
-    init.pathname = "*"_s;
+    init.protocol = "https"_si;
+    init.hostname = "example.com"_si;
+    init.pathname = "*"_si;
     auto pattern = makePattern(WTF::move(init));
     ASSERT_NE(pattern, nullptr);
 
-    auto result = pattern->test(String("https://example.com/anything/at/all"_s), String());
+    auto result = pattern->test("https://example.com/anything/at/all"_si, nullptr);
     ASSERT_FALSE(result.hasException());
     EXPECT_TRUE(result.returnValue());
 }
@@ -186,7 +186,7 @@ TEST_F(URLPatternTest, IgnoreCaseOption)
     auto pattern = makePattern("https://example.com/Foo/:id"_s, WTF::move(options));
     ASSERT_NE(pattern, nullptr);
 
-    auto result = pattern->test(String("https://example.com/foo/bar"_s), String());
+    auto result = pattern->test("https://example.com/foo/bar"_si, nullptr);
     ASSERT_FALSE(result.hasException());
     EXPECT_TRUE(result.returnValue());
 }
@@ -201,9 +201,9 @@ TEST_F(URLPatternTest, HasRegExpGroupsFalseForNamedSegments)
 TEST_F(URLPatternTest, HasRegExpGroupsTrueForExplicitRegex)
 {
     WebCore::URLPatternInit init;
-    init.protocol = "https"_s;
-    init.hostname = "example.com"_s;
-    init.pathname = "/(\\d+)"_s;
+    init.protocol = "https"_si;
+    init.hostname = "example.com"_si;
+    init.pathname = "/(\\d+)"_si;
     auto pattern = makePattern(WTF::move(init));
     ASSERT_NE(pattern, nullptr);
     EXPECT_TRUE(pattern->hasRegExpGroups());
@@ -212,33 +212,33 @@ TEST_F(URLPatternTest, HasRegExpGroupsTrueForExplicitRegex)
 TEST_F(URLPatternTest, ExplicitRegexGroupMatchesAndReturnsCapture)
 {
     WebCore::URLPatternInit init;
-    init.protocol = "https"_s;
-    init.hostname = "example.com"_s;
-    init.pathname = "/(\\d+)"_s;
+    init.protocol = "https"_si;
+    init.hostname = "example.com"_si;
+    init.pathname = "/(\\d+)"_si;
     auto pattern = makePattern(WTF::move(init));
     ASSERT_NE(pattern, nullptr);
     ASSERT_TRUE(pattern->hasRegExpGroups());
 
-    auto testResult = pattern->test(String("https://example.com/42"_s), String());
+    auto testResult = pattern->test("https://example.com/42"_si, nullptr);
     ASSERT_FALSE(testResult.hasException());
     EXPECT_TRUE(testResult.returnValue());
 
-    auto execResult = pattern->exec(String("https://example.com/42"_s), String());
+    auto execResult = pattern->exec("https://example.com/42"_si, nullptr);
     ASSERT_FALSE(execResult.hasException());
     ASSERT_TRUE(execResult.returnValue().has_value());
 
     const auto& match = *execResult.returnValue();
     ASSERT_FALSE(match.pathname.groups.isEmpty());
-    ASSERT_TRUE(std::holds_alternative<String>(match.pathname.groups[0].value));
-    EXPECT_EQ(std::get<String>(match.pathname.groups[0].value), "42"_s);
+    ASSERT_TRUE(std::holds_alternative<RefPtr<StringImpl>>(match.pathname.groups[0].value));
+    EXPECT_EQ(std::get<RefPtr<StringImpl>>(match.pathname.groups[0].value), "42"_s);
 }
 
 TEST_F(URLPatternTest, InvalidPatternReturnsException)
 {
     WebCore::URLPatternInit init;
-    init.protocol = "https"_s;
-    init.hostname = "example.com"_s;
-    init.pathname = "/([invalid"_s;
+    init.protocol = "https"_si;
+    init.hostname = "example.com"_si;
+    init.pathname = "/([invalid"_si;
     auto result = WebCore::URLPattern::create(WTF::move(init), WebCore::URLPatternOptions { });
     EXPECT_TRUE(result.hasException());
 }
@@ -246,23 +246,23 @@ TEST_F(URLPatternTest, InvalidPatternReturnsException)
 TEST_F(URLPatternTest, UnclosedGroupReturnsException)
 {
     WebCore::URLPatternInit init;
-    init.protocol = "https"_s;
-    init.hostname = "example.com"_s;
-    init.pathname = "/foo{bar"_s;
+    init.protocol = "https"_si;
+    init.hostname = "example.com"_si;
+    init.pathname = "/foo{bar"_si;
     EXPECT_TRUE(WebCore::URLPattern::create(WebCore::URLPatternInit { init }, WebCore::URLPatternOptions { }).hasException());
-    EXPECT_TRUE(WebCore::URLPattern::createWithoutRegExpSupport(WTF::move(init), String(), WebCore::URLPatternOptions { }).hasException());
-    EXPECT_TRUE(WebCore::URLPattern::create(String("https://example.com/foo{bar"_s), String(), WebCore::URLPatternOptions { }).hasException());
+    EXPECT_TRUE(WebCore::URLPattern::createWithoutRegExpSupport(WTF::move(init), nullptr, WebCore::URLPatternOptions { }).hasException());
+    EXPECT_TRUE(WebCore::URLPattern::create("https://example.com/foo{bar"_si, nullptr, WebCore::URLPatternOptions { }).hasException());
 }
 
 TEST_F(URLPatternTest, BaseURLRelativePattern)
 {
     auto result = WebCore::URLPattern::create(
-        String("/foo/:id"_s),
-        String("https://example.com"_s),
+        "/foo/:id"_si,
+        "https://example.com"_si,
         WebCore::URLPatternOptions { });
     ASSERT_FALSE(result.hasException());
     auto pattern = result.releaseReturnValue();
-    auto testResult = pattern->test(String("https://example.com/foo/42"_s), String());
+    auto testResult = pattern->test("https://example.com/foo/42"_si, nullptr);
     ASSERT_FALSE(testResult.hasException());
     EXPECT_TRUE(testResult.returnValue());
 }
@@ -270,8 +270,8 @@ TEST_F(URLPatternTest, BaseURLRelativePattern)
 TEST_F(URLPatternTest, RelativePatternWithoutBaseURLThrows)
 {
     auto result = WebCore::URLPattern::create(
-        String("/foo/:id"_s),
-        String(),
+        "/foo/:id"_si,
+        nullptr,
         WebCore::URLPatternOptions { });
     EXPECT_TRUE(result.hasException());
 }
@@ -420,21 +420,21 @@ TEST_F(URLPatternTest, WithoutRegExpIgnoreCaseUnicodeAgreesWithRegExpPath)
     WebCore::URLPatternOptions ignoreCase;
     ignoreCase.ignoreCase = true;
 
-    auto pattern = String::fromUTF8("https://example.com/Caf\xC3\x89/*"); // "CafÉ"
-    auto matchingURL = String::fromUTF8("https://example.com/caf\xC3\xA9/x"); // "café"
-    auto nonMatchingURL = String::fromUTF8("https://example.com/other/x");
+    auto pattern = StringImpl::fromUTF8("https://example.com/Caf\xC3\x89/*"); // "CafÉ"
+    auto matchingURL = StringImpl::fromUTF8("https://example.com/caf\xC3\xA9/x"); // "café"
+    auto nonMatchingURL = StringImpl::fromUTF8("https://example.com/other/x");
 
     for (auto& url : { matchingURL, nonMatchingURL }) {
         SCOPED_TRACE(makeString("url="_s, url));
 
-        auto regexResult = WebCore::URLPattern::create(String { pattern }, String(), WebCore::URLPatternOptions { ignoreCase });
+        auto regexResult = WebCore::URLPattern::create(RefPtr { pattern }, nullptr, WebCore::URLPatternOptions { ignoreCase });
         ASSERT_FALSE(regexResult.hasException());
-        auto withoutRegExpResult = WebCore::URLPattern::createWithoutRegExpSupport(String { pattern }, String(), WebCore::URLPatternOptions { ignoreCase });
+        auto withoutRegExpResult = WebCore::URLPattern::createWithoutRegExpSupport(RefPtr { pattern }, nullptr, WebCore::URLPatternOptions { ignoreCase });
         ASSERT_FALSE(withoutRegExpResult.hasException());
 
-        auto regexTest = regexResult.releaseReturnValue()->test(String { url }, String());
+        auto regexTest = regexResult.releaseReturnValue()->test(RefPtr { url }, nullptr);
         ASSERT_FALSE(regexTest.hasException());
-        EXPECT_EQ(withoutRegExpResult.releaseReturnValue()->testWithoutRegExp(WTF::URL { String { url } }), regexTest.returnValue());
+        EXPECT_EQ(withoutRegExpResult.releaseReturnValue()->testWithoutRegExp(WTF::URL { RefPtr { url } }), regexTest.returnValue());
     }
 }
 
@@ -443,10 +443,10 @@ TEST_F(URLPatternTest, WithoutRegExpRejectsRegExpGroups)
     // A pattern with explicit regexp groups cannot be matched without a regular-expression engine,
     // so the regex-free constructor must fail rather than produce an unusable pattern.
     WebCore::URLPatternInit init;
-    init.protocol = "https"_s;
-    init.hostname = "example.com"_s;
-    init.pathname = "/(\\d+)"_s;
-    auto result = WebCore::URLPattern::createWithoutRegExpSupport(WTF::move(init), String(), WebCore::URLPatternOptions { });
+    init.protocol = "https"_si;
+    init.hostname = "example.com"_si;
+    init.pathname = "/(\\d+)"_si;
+    auto result = WebCore::URLPattern::createWithoutRegExpSupport(WTF::move(init), nullptr, WebCore::URLPatternOptions { });
     EXPECT_TRUE(result.hasException());
 }
 
@@ -454,50 +454,50 @@ TEST_F(URLPatternTest, WithoutRegExpRejectsRegExpGroupFromConstructorString)
 {
     // The same pattern is valid for the regex-based path (it just has regexp groups), which proves
     // the regex-free constructor is rejecting specifically because of the group, not a parse error.
-    auto regex = WebCore::URLPattern::create(String("https://example.com/(\\d+)"_s), String(), WebCore::URLPatternOptions { });
+    auto regex = WebCore::URLPattern::create("https://example.com/(\\d+)"_si, nullptr, WebCore::URLPatternOptions { });
     ASSERT_FALSE(regex.hasException());
     EXPECT_TRUE(regex.releaseReturnValue()->hasRegExpGroups());
 
-    auto withoutRegExp = WebCore::URLPattern::createWithoutRegExpSupport(String("https://example.com/(\\d+)"_s), String(), WebCore::URLPatternOptions { });
+    auto withoutRegExp = WebCore::URLPattern::createWithoutRegExpSupport("https://example.com/(\\d+)"_si, nullptr, WebCore::URLPatternOptions { });
     EXPECT_TRUE(withoutRegExp.hasException());
 }
 
 TEST_F(URLPatternTest, WithoutRegExpRejectsNamedRegExpGroup)
 {
     // A named group with a custom regexp (":id(\\d+)") is still a regexp group.
-    auto result = WebCore::URLPattern::createWithoutRegExpSupport(String("https://example.com/:id(\\d+)"_s), String(), WebCore::URLPatternOptions { });
+    auto result = WebCore::URLPattern::createWithoutRegExpSupport("https://example.com/:id(\\d+)"_si, nullptr, WebCore::URLPatternOptions { });
     EXPECT_TRUE(result.hasException());
 }
 
 TEST_F(URLPatternTest, WithoutRegExpRejectsRegExpGroupInHostname)
 {
     WebCore::URLPatternInit init;
-    init.protocol = "https"_s;
-    init.hostname = "(sub|www).example.com"_s;
-    init.pathname = "/*"_s;
-    auto result = WebCore::URLPattern::createWithoutRegExpSupport(WTF::move(init), String(), WebCore::URLPatternOptions { });
+    init.protocol = "https"_si;
+    init.hostname = "(sub|www).example.com"_si;
+    init.pathname = "/*"_si;
+    auto result = WebCore::URLPattern::createWithoutRegExpSupport(WTF::move(init), nullptr, WebCore::URLPatternOptions { });
     EXPECT_TRUE(result.hasException());
 }
 
 TEST_F(URLPatternTest, WithoutRegExpRejectsRegExpGroupInSearch)
 {
     WebCore::URLPatternInit init;
-    init.protocol = "https"_s;
-    init.hostname = "example.com"_s;
-    init.pathname = "/*"_s;
-    init.search = "(a|b)"_s;
-    auto result = WebCore::URLPattern::createWithoutRegExpSupport(WTF::move(init), String(), WebCore::URLPatternOptions { });
+    init.protocol = "https"_si;
+    init.hostname = "example.com"_si;
+    init.pathname = "/*"_si;
+    init.search = "(a|b)"_si;
+    auto result = WebCore::URLPattern::createWithoutRegExpSupport(WTF::move(init), nullptr, WebCore::URLPatternOptions { });
     EXPECT_TRUE(result.hasException());
 }
 
 TEST_F(URLPatternTest, WithoutRegExpAllowsWildcardsAndNamedSegments)
 {
     // Wildcards ("*") and bare named segments (":id") are not regexp groups and must still succeed.
-    auto wildcard = WebCore::URLPattern::createWithoutRegExpSupport(String("https://example.com/*"_s), String(), WebCore::URLPatternOptions { });
+    auto wildcard = WebCore::URLPattern::createWithoutRegExpSupport("https://example.com/*"_si, nullptr, WebCore::URLPatternOptions { });
     ASSERT_FALSE(wildcard.hasException());
     EXPECT_FALSE(wildcard.releaseReturnValue()->hasRegExpGroups());
 
-    auto namedSegment = WebCore::URLPattern::createWithoutRegExpSupport(String("https://example.com/:id"_s), String(), WebCore::URLPatternOptions { });
+    auto namedSegment = WebCore::URLPattern::createWithoutRegExpSupport("https://example.com/:id"_si, nullptr, WebCore::URLPatternOptions { });
     ASSERT_FALSE(namedSegment.hasException());
     EXPECT_FALSE(namedSegment.releaseReturnValue()->hasRegExpGroups());
 }

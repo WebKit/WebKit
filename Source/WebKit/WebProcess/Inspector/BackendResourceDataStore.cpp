@@ -54,7 +54,7 @@ BackendResourceDataStore::ResourceData::ResourceData(ResourceID resourceID, Insp
 
 BackendResourceDataStore::ResourceData::~ResourceData() = default;
 
-void BackendResourceDataStore::ResourceData::setContent(const String& content, bool base64Encoded)
+void BackendResourceDataStore::ResourceData::setContent(StringImpl* content, bool base64Encoded)
 {
     ASSERT(!hasData());
     ASSERT(!hasContent());
@@ -73,8 +73,8 @@ unsigned BackendResourceDataStore::ResourceData::removeContent()
 
     if (hasContent()) {
         ASSERT(!hasData());
-        result = m_content.sizeInBytes();
-        m_content = String();
+        result = sizeInBytes(m_content);
+        m_content = nullptr;
     }
     return result;
 }
@@ -190,8 +190,8 @@ void BackendResourceDataStore::responseReceived(ResourceLoaderIdentifier resourc
     resourceData->m_responseTimestamp = WallTime::now();
 
     // Capture the source map URL header now, since the response is not retained.
-    String sourceMapURL = response.httpHeaderField(HTTPHeaderName::SourceMap);
-    if (sourceMapURL.isEmpty())
+    RefPtr<StringImpl> sourceMapURL = response.httpHeaderField(HTTPHeaderName::SourceMap);
+    if (isEmpty(sourceMapURL))
         sourceMapURL = response.httpHeaderField(HTTPHeaderName::XSourceMap);
     resourceData->setSourceMapURL(sourceMapURL);
 
@@ -212,16 +212,16 @@ void BackendResourceDataStore::setResourceType(ResourceLoaderIdentifier resource
     resourceData->setType(type);
 }
 
-void BackendResourceDataStore::setResourceContent(ResourceLoaderIdentifier resourceID, const String& content, bool base64Encoded)
+void BackendResourceDataStore::setResourceContent(ResourceLoaderIdentifier resourceID, StringImpl* content, bool base64Encoded)
 {
-    if (content.isNull())
+    if (!content)
         return;
 
     ResourceData* resourceData = resourceDataForId(resourceID);
     if (!resourceData)
         return;
 
-    size_t dataLength = content.sizeInBytes();
+    size_t dataLength = sizeInBytes(content);
     if (dataLength > m_settings.maximumSingleResourceContentSize)
         return;
     if (resourceData->isContentEvicted())
@@ -271,7 +271,7 @@ void BackendResourceDataStore::maybeDecodeDataToContent(ResourceLoaderIdentifier
     m_contentSize -= rawByteCount;
 
     resourceData->decodeDataToContent();
-    auto decodedByteCount = resourceData->content().sizeInBytes();
+    auto decodedByteCount = sizeInBytes(resourceData->content());
     if (decodedByteCount > m_settings.maximumSingleResourceContentSize) {
         resourceData->evictContent();
         return;
@@ -287,7 +287,7 @@ void BackendResourceDataStore::maybeDecodeDataToContent(ResourceLoaderIdentifier
         m_resourceIdsDeque.appendOrMoveToLast(resourceID);
 }
 
-void BackendResourceDataStore::addResourceSharedBuffer(ResourceLoaderIdentifier resourceID, RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName)
+void BackendResourceDataStore::addResourceSharedBuffer(ResourceLoaderIdentifier resourceID, RefPtr<FragmentedSharedBuffer>&& buffer, StringImpl* textEncodingName)
 {
     ResourceData* resourceData = resourceDataForId(resourceID);
     if (!resourceData)
@@ -308,28 +308,28 @@ void BackendResourceDataStore::clear()
     m_contentSize = 0;
 }
 
-std::expected<std::pair<String, bool>, String> BackendResourceDataStore::getResponseBody(ResourceLoaderIdentifier resourceID)
+std::expected<std::pair<RefPtr<StringImpl>, bool>, RefPtr<StringImpl>> BackendResourceDataStore::getResponseBody(ResourceLoaderIdentifier resourceID)
 {
     ResourceData const* resourceData = data(resourceID);
     if (!resourceData)
         return makeUnexpected("Missing resource for given requestId"_s);
 
     if (resourceData->hasContent())
-        return std::pair<String, bool> { resourceData->content(), resourceData->base64Encoded() };
+        return std::pair<RefPtr<StringImpl>, bool> { resourceData->content(), resourceData->base64Encoded() };
 
     if (resourceData->isContentEvicted())
         return makeUnexpected("Resource content was evicted from inspector cache"_s);
 
-    if (resourceData->buffer() && !resourceData->textEncodingName().isNull()) {
-        String body;
+    if (resourceData->buffer() && resourceData->textEncodingName()) {
+        RefPtr<StringImpl> body;
         if (ResourceUtilities::sharedBufferContent(resourceData->buffer(), resourceData->textEncodingName(), false, &body))
-            return std::pair<String, bool> { body, false };
+            return std::pair<RefPtr<StringImpl>, bool> { body, false };
     }
 
     return makeUnexpected("Missing content of resource for given requestId"_s);
 }
 
-std::expected<String, String> BackendResourceDataStore::getSerializedCertificate(ResourceLoaderIdentifier resourceID)
+std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>> BackendResourceDataStore::getSerializedCertificate(ResourceLoaderIdentifier resourceID)
 {
     ResourceData const* resourceData = data(resourceID);
     if (!resourceData)

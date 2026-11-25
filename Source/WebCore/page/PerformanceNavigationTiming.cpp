@@ -51,7 +51,7 @@ NODELETE static PerformanceNavigationTiming::NavigationType toPerformanceNavigat
 }
 
 PerformanceNavigationTiming::PerformanceNavigationTiming(MonotonicTime timeOrigin, CachedResource& resource, const DocumentLoadTiming& documentLoadTiming, const NetworkLoadMetrics& metrics, const DocumentEventTiming& documentEventTiming, const SecurityOrigin& origin, WebCore::NavigationType navigationType)
-    : PerformanceResourceTiming(timeOrigin, ResourceTiming::fromLoad(resource, resource.response().url(), "navigation"_s, documentLoadTiming, metrics, origin))
+    : PerformanceResourceTiming(timeOrigin, ResourceTiming::fromLoad(resource, resource.response().url(), "navigation"_si, documentLoadTiming, metrics, origin))
     , m_documentEventTiming(documentEventTiming)
     , m_documentLoadTiming(documentLoadTiming)
     , m_navigationType(toPerformanceNavigationTimingNavigationType(navigationType)) { }

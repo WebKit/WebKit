@@ -116,7 +116,7 @@ auto NotificationPermissionRequestManager::permissionLevel(const SecurityOriginD
 #endif
 }
 
-void NotificationPermissionRequestManager::setPermissionLevelForTesting(const String& originString, bool allowed)
+void NotificationPermissionRequestManager::setPermissionLevelForTesting(StringImpl* originString, bool allowed)
 {
 #if ENABLE(NOTIFICATIONS)
     protect(WebProcess::singleton().notificationManager())->didUpdateNotificationDecision(originString, allowed);

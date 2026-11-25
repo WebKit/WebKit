@@ -31,7 +31,7 @@
 namespace WebCore::CSS {
 
 struct FontFamilyName {
-    WTF::AtomString value;
+    RefPtr<AtomStringImpl> value;
 
     bool operator==(const FontFamilyName&) const = default;
 };

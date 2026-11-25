@@ -37,7 +37,7 @@ namespace WebCore {
 class IDBDatabaseInfo {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBDatabaseInfo, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT explicit IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, HashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>&& objectStoreMap = { });
+    WEBCORE_EXPORT explicit IDBDatabaseInfo(StringImpl* name, uint64_t version, uint64_t maxIndexID, HashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>&& objectStoreMap = { });
     IDBDatabaseInfo() = default;
 
     enum IsolatedCopyTag { IsolatedCopy };
@@ -45,40 +45,40 @@ public:
 
     IDBDatabaseInfo isolatedCopy() const;
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
     void setVersion(uint64_t version) { m_version = version; }
     uint64_t version() const { return m_version; }
 
-    NODELETE bool hasObjectStore(const String& name) const;
-    IDBObjectStoreInfo createNewObjectStore(const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement);
+    NODELETE bool hasObjectStore(StringImpl* name) const;
+    IDBObjectStoreInfo createNewObjectStore(StringImpl* name, std::optional<IDBKeyPath>&&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
     NODELETE IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier);
-    NODELETE IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName);
+    NODELETE IDBObjectStoreInfo* infoForExistingObjectStore(StringImpl* objectStoreName);
     NODELETE const IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
-    NODELETE const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
+    NODELETE const IDBObjectStoreInfo* infoForExistingObjectStore(StringImpl* objectStoreName) const;
 
-    void renameObjectStore(IDBObjectStoreIdentifier, const String& newName);
+    void renameObjectStore(IDBObjectStoreIdentifier, StringImpl* newName);
 
-    Vector<String> objectStoreNames() const;
+    Vector<RefPtr<StringImpl>> objectStoreNames() const;
     const HashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>& objectStoreMap() const LIFETIME_BOUND { return m_objectStoreMap; }
 
-    void deleteObjectStore(const String& objectStoreName);
+    void deleteObjectStore(StringImpl* objectStoreName);
     void deleteObjectStore(IDBObjectStoreIdentifier);
 
     NODELETE void setMaxIndexID(uint64_t maxIndexID);
     IDBIndexIdentifier generateNextIndexID() { return IDBIndexIdentifier { ++m_maxIndexID }; }
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 
 private:
     friend struct IPC::ArgumentCoder<IDBDatabaseInfo>;
-    NODELETE IDBObjectStoreInfo* getInfoForExistingObjectStore(const String& objectStoreName);
+    NODELETE IDBObjectStoreInfo* getInfoForExistingObjectStore(StringImpl* objectStoreName);
     NODELETE IDBObjectStoreInfo* getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     uint64_t m_version { 0 };
     uint64_t m_maxIndexID { 0 };
 

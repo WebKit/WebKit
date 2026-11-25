@@ -671,7 +671,7 @@ public:
 
     void prepareForTypeProfiling(const ConcurrentJSLocker&);
 
-    NODELETE String inferredName();
+    NODELETE RefPtr<StringImpl> inferredName();
     NODELETE DebuggerLocation debuggerLocation();
     void collectDebuggerInfo(CodeBlock*);
 
@@ -695,7 +695,7 @@ public:
         UniqueIDMap m_uniqueIDMap;
         OffsetToVariableMap m_offsetToVariableMap;
         UniqueTypeSetMap m_uniqueTypeSetMap;
-        String m_inferredName;
+        RefPtr<StringImpl> m_inferredName;
         SourceID m_debuggerSourceID { 0 };
         LineColumn m_debuggerLineColumn;
         PrivateNameEnvironment m_privateNames;

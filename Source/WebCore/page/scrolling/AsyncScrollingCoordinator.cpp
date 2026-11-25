@@ -1356,7 +1356,7 @@ std::optional<ScrollingNodeID> AsyncScrollingCoordinator::scrollableContainerNod
     return std::nullopt;
 }
 
-String AsyncScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
+RefPtr<StringImpl> AsyncScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     StringBuilder stateTree;
     m_scrollingStateTrees.forEach([&](auto& key, auto& tree) {
@@ -1372,7 +1372,7 @@ String AsyncScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingSt
     return stateTree.toString();
 }
 
-String AsyncScrollingCoordinator::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
+RefPtr<StringImpl> AsyncScrollingCoordinator::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     if (!m_scrollingTree)
         return emptyString();

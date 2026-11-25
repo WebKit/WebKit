@@ -84,7 +84,7 @@ TEST(CSSParser, ParseCustomPropertyWithNewlineInput)
 
     ASSERT_TRUE(is<CSSCustomPropertyValue>(customPropValue));
     auto customText = customPropValue->cssText(CSS::defaultSerializationContext());
-    customText.convertTo16Bit();
+    convertTo16Bit(customText);
 
     EXPECT_EQ("ValueHere\nWithAnotherValue"_s, customText);
 }
@@ -98,7 +98,7 @@ TEST(CSSParser, ParseCustomPropertyWithNewlineAndWhitespacesInput)
 
     ASSERT_TRUE(is<CSSCustomPropertyValue>(customPropValue));
     auto customText = customPropValue->cssText(CSS::defaultSerializationContext());
-    customText.convertTo16Bit();
+    convertTo16Bit(customText);
 
     EXPECT_EQ("ValueHere\nWithAnotherValue         ShouldPreserveAllWhitespace"_s, customText);
 }
@@ -112,7 +112,7 @@ TEST(CSSParser, ParseCustomPropertyWithNewlineBetweenIdentInput)
 
     ASSERT_TRUE(is<CSSCustomPropertyValue>(customPropValue));
     auto customText = customPropValue->cssText(CSS::defaultSerializationContext());
-    customText.convertTo16Bit();
+    convertTo16Bit(customText);
 
     EXPECT_EQ("foo\nbar"_s, customText);
 }
@@ -179,7 +179,7 @@ NEVER_INLINE static uintptr_t paintStackBelow(uintptr_t stackTop, size_t paintSi
     return paintBottom;
 }
 
-NEVER_INLINE static void parseStyleSheet(StyleSheetContents& styleSheet, const String& text)
+NEVER_INLINE static void parseStyleSheet(StyleSheetContents& styleSheet, StringImpl* text)
 {
     styleSheet.parseString(text);
 }

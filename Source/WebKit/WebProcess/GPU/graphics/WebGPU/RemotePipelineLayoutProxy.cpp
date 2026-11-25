@@ -47,7 +47,7 @@ RemotePipelineLayoutProxy::~RemotePipelineLayoutProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemotePipelineLayoutProxy::setLabel(String&& label)
+void RemotePipelineLayoutProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemotePipelineLayout::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

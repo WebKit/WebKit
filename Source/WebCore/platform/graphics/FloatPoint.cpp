@@ -102,13 +102,13 @@ Ref<JSON::Object> FloatPoint::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    object->setDouble("x"_s, m_x);
-    object->setDouble("y"_s, m_y);
+    object->setDouble("x"_si, m_x);
+    object->setDouble("y"_si, m_y);
 
     return object;
 }
 
-String FloatPoint::toJSONString() const
+RefPtr<StringImpl> FloatPoint::toJSONString() const
 {
     return toJSONObject()->toJSONString();
 }

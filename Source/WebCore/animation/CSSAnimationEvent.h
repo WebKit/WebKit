@@ -33,19 +33,19 @@ namespace WebCore {
 class CSSAnimationEvent final : public StyleOriginatedAnimationEvent {
     WTF_MAKE_TZONE_ALLOCATED(CSSAnimationEvent);
 public:
-    static Ref<CSSAnimationEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String& animationName)
+    static Ref<CSSAnimationEvent> create(AtomStringImpl* type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, StringImpl* animationName)
     {
         return adoptRef(*new CSSAnimationEvent(type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier, animationName));
     }
 
     struct Init : EventInit {
         RefPtr<CSSAnimation> animation;
-        String animationName { emptyString() };
+        RefPtr<StringImpl> animationName { emptyString() };
         double elapsedTime { 0 };
-        String pseudoElement { emptyString() };
+        RefPtr<StringImpl> pseudoElement { emptyString() };
     };
 
-    static Ref<CSSAnimationEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<CSSAnimationEvent> create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new CSSAnimationEvent(type, WTF::move(initializer), isTrusted));
     }
@@ -53,13 +53,13 @@ public:
     virtual ~CSSAnimationEvent();
 
     RefPtr<CSSAnimation> cssAnimation() const { return dynamicDowncast<CSSAnimation>(animation()); }
-    const String& animationName() const LIFETIME_BOUND { return m_animationName; }
+    const RefPtr<StringImpl>& animationName() const LIFETIME_BOUND { return m_animationName; }
 
 private:
-    CSSAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&, const String& animationName);
-    CSSAnimationEvent(const AtomString&, Init&&, IsTrusted);
+    CSSAnimationEvent(AtomStringImpl* type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&, StringImpl* animationName);
+    CSSAnimationEvent(AtomStringImpl*, Init&&, IsTrusted);
 
-    String m_animationName;
+    RefPtr<StringImpl> m_animationName;
 };
 
 } // namespace WebCore

@@ -34,26 +34,26 @@
 namespace TestWebKitAPI {
 namespace Util {
 
-static String moduleDirectory()
+static RefPtr<StringImpl> moduleDirectory()
 {
     constexpr size_t bufferLength = _MAX_PATH + 1;
     wchar_t filename[bufferLength];
     auto len = GetModuleFileName(nullptr, filename, bufferLength);
     ASSERT(len > 0);
-    return FileSystem::parentPath(String(filename, len));
+    return FileSystem::parentPath(StringImpl::create(filename, len).get());
 }
 
 WKStringRef createInjectedBundlePath()
 {
     auto path = FileSystem::pathByAppendingComponent(moduleDirectory(), "TestWebKitAPIInjectedBundle.dll"_s);
-    return WKStringCreateWithUTF8CString(path.utf8().legacyCStringPointer());
+    return WKStringCreateWithUTF8CString(utf8(path).legacyCStringPointer());
 }
 
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
-    String filename = makeString("..\\..\\..\\Tools\\TestWebKitAPI\\Tests\\WebKit\\"_s, unsafeSpan(resource), '.', unsafeSpan(extension));
+    RefPtr<StringImpl> filename = makeString("..\\..\\..\\Tools\\TestWebKitAPI\\Tests\\WebKit\\"_s, unsafeSpan(resource), '.', unsafeSpan(extension));
     auto url = URL::fileURLWithFileSystemPath(FileSystem::pathByAppendingComponent(moduleDirectory(), filename));
-    return WKURLCreateWithUTF8CString(url.string().utf8().legacyCStringPointer());
+    return WKURLCreateWithUTF8CString(utf8(url.string()).legacyCStringPointer());
 }
 
 WKURLRef URLForNonExistentResource()

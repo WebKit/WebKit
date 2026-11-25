@@ -75,7 +75,7 @@ protected:
     RenderBlock(Type, Document&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
 
 public:
-    String debugDescription() const override;
+    RefPtr<StringImpl> debugDescription() const override;
 
     virtual void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu);
 
@@ -131,10 +131,14 @@ public:
 
     static TextRun constructTextRun(StringView, const Style::ComputedStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const String&, const Style::ComputedStyle&,
+    static TextRun constructTextRun(StringImpl*, const Style::ComputedStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const AtomString&, const Style::ComputedStyle&,
-        ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
+    template<typename T> requires (WTF::StringImplPointerLike<T> && !std::is_pointer_v<std::remove_cvref_t<T>>)
+    static TextRun constructTextRun(const T& string, const Style::ComputedStyle& style,
+        ExpansionBehavior expansion = ExpansionBehavior::defaultBehavior(), TextRunFlags flags = DefaultTextRunFlags)
+    {
+        return constructTextRun(WTF::getPtr(string), style, expansion, flags);
+    }
     static TextRun constructTextRun(const RenderText&, const Style::ComputedStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
     static TextRun constructTextRun(const RenderText&, unsigned offset, unsigned length, const Style::ComputedStyle&,
@@ -226,7 +230,7 @@ public:
     bool hasDefiniteLogicalHeight() const;
     bool hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const final;
 
-    static String updateSecurityDiscCharacters(const Style::ComputedStyle&, String&&);
+    static RefPtr<StringImpl> updateSecurityDiscCharacters(const Style::ComputedStyle&, RefPtr<StringImpl>&&);
 
     virtual bool hasLineIfEmpty() const;
 

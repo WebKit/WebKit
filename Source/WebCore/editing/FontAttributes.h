@@ -56,9 +56,15 @@ struct BlockPresentationIntent {
     Kind kind { Kind::Paragraph };
     uint8_t headerLevel { 0 };
     int ordinal { 0 };
-    String languageHint { };
+    RefPtr<StringImpl> languageHint { };
 
-    friend bool operator==(const BlockPresentationIntent&, const BlockPresentationIntent&) = default;
+    friend bool operator==(const BlockPresentationIntent& a, const BlockPresentationIntent& b)
+    {
+        return a.kind == b.kind
+            && a.headerLevel == b.headerLevel
+            && a.ordinal == b.ordinal
+            && contentEquals(a.languageHint, b.languageHint);
+    }
 
 #if PLATFORM(COCOA)
     // Uses the innermost intent, making a list item, or a paragraph in one, its list, and clamping header levels to 1-6.

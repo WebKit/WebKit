@@ -74,10 +74,10 @@ void UserMessageHandler::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSV
         return promise->reject(Exception { ExceptionCode::InvalidAccessError });
 
     if (!passesSameOriginCheck(globalObject, m_frame.get()))
-        return promise->reject(Exception { ExceptionCode::InvalidAccessError, "Failed same-origin check."_s });
+        return promise->reject(Exception { ExceptionCode::InvalidAccessError, "Failed same-origin check."_si });
 
-    descriptor->didPostMessage(*this, globalObject, value, [promise = WTF::move(promise)](JSC::JSValue result, const String& errorMessage) {
-        if (errorMessage.isNull())
+    descriptor->didPostMessage(*this, globalObject, value, [promise = WTF::move(promise)](JSC::JSValue result, StringImpl* errorMessage) {
+        if (!errorMessage)
             return promise->resolveWithJSValue(result);
 
         auto* globalObject = promise->globalObject();
@@ -95,7 +95,7 @@ ExceptionOr<JSC::JSValue> UserMessageHandler::postLegacySynchronousMessage(JSC::
         return Exception { ExceptionCode::InvalidAccessError };
 
     if (!passesSameOriginCheck(globalObject, m_frame.get()))
-        return Exception { ExceptionCode::InvalidAccessError, "Failed same-origin check."_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Failed same-origin check."_si };
 
     return descriptor->didPostLegacySynchronousMessage(*this, globalObject, value);
 }

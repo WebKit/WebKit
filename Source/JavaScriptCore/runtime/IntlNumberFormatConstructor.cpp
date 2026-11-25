@@ -74,7 +74,7 @@ IntlNumberFormatConstructor::IntlNumberFormatConstructor(VM& vm, Structure* stru
 
 void IntlNumberFormatConstructor::finishCreation(VM& vm, IntlNumberFormatPrototype* numberFormatPrototype)
 {
-    Base::finishCreation(vm, 0, "NumberFormat"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "NumberFormat"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
@@ -129,7 +129,7 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatConstructorFuncSupportedLocalesOf, (JSG
     const auto& availableLocales = intlNumberFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).

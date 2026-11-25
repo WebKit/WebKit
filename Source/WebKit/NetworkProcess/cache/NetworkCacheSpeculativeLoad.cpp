@@ -188,10 +188,10 @@ static void dumpHTTPHeadersDiff(const HTTPHeaderMap& headersA, const HTTPHeaderM
 {
     auto aEnd = headersA.end();
     for (auto it = headersA.begin(); it != aEnd; ++it) {
-        String valueB = headersB.get(it->key);
-        if (valueB.isNull())
+        RefPtr<StringImpl> valueB = headersB.get(it->key);
+        if (!valueB)
             LOG_WITH_STREAM(NetworkCacheSpeculativePreloading, stream << "* '"_s << it->key << "' HTTP header is only in first request (value: "_s << it->value << ")"_s);
-        else if (it->value != valueB)
+        else if (!equal(it->value, valueB))
             LOG_WITH_STREAM(NetworkCacheSpeculativePreloading, stream << "* '"_s << it->key << "' HTTP header differs in both requests: "_s << it->value << " != "_s << valueB);
     }
     auto bEnd = headersB.end();

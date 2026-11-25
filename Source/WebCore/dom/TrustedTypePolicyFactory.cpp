@@ -55,7 +55,7 @@ TrustedTypePolicyFactory::TrustedTypePolicyFactory(ScriptExecutionContext& conte
     : ContextDestructionObserver(&context)
 { }
 
-ExceptionOr<Ref<TrustedTypePolicy>> TrustedTypePolicyFactory::createPolicy(ScriptExecutionContext& context, const String& policyName, const TrustedTypePolicyOptions& options)
+ExceptionOr<Ref<TrustedTypePolicy>> TrustedTypePolicyFactory::createPolicy(ScriptExecutionContext& context, StringImpl* policyName, const TrustedTypePolicyOptions& options)
 {
     CheckedPtr csp = context.contentSecurityPolicy();
     ASSERT(csp);
@@ -75,7 +75,7 @@ ExceptionOr<Ref<TrustedTypePolicy>> TrustedTypePolicyFactory::createPolicy(Scrip
         };
     default:
         auto policy = TrustedTypePolicy::create(policyName, options);
-        if (policyName == "default"_s)
+        if (equal(policyName, "default"_s))
             m_defaultPolicy = policy.ptr();
 
         m_createdPolicyNames.add(policyName);
@@ -100,34 +100,34 @@ bool TrustedTypePolicyFactory::isScriptURL(JSC::JSValue value) const
 
 Ref<TrustedHTML> TrustedTypePolicyFactory::emptyHTML() const
 {
-    return TrustedHTML::create(""_s);
+    return TrustedHTML::create(""_si);
 }
 
 Ref<TrustedScript> TrustedTypePolicyFactory::emptyScript() const
 {
-    return TrustedScript::create(""_s);
+    return TrustedScript::create(""_si);
 }
 
-String TrustedTypePolicyFactory::getAttributeType(const String& tagName, const String& attributeParameter, const String& elementNamespace, const String& attributeNamespace) const
+RefPtr<StringImpl> TrustedTypePolicyFactory::getAttributeType(StringImpl* tagName, StringImpl* attributeParameter, StringImpl* elementNamespace, StringImpl* attributeNamespace) const
 {
-    return trustedTypeForAttribute(tagName, attributeParameter.convertToASCIILowercase(), elementNamespace, attributeNamespace).attributeType;
+    return trustedTypeForAttribute(tagName, convertToASCIILowercase(attributeParameter), elementNamespace, attributeNamespace).attributeType;
 }
 
-String TrustedTypePolicyFactory::getPropertyType(const String& tagName, const String& property, const String& elementNamespace) const
+RefPtr<StringImpl> TrustedTypePolicyFactory::getPropertyType(StringImpl* tagName, StringImpl* property, StringImpl* elementNamespace) const
 {
-    auto localName = tagName.convertToASCIILowercase();
-    AtomString elementNS = elementNamespace.isEmpty() ? HTMLNames::xhtmlNamespaceURI : AtomString(elementNamespace);
+    auto localName = convertToASCIILowercase(tagName);
+    RefPtr<AtomStringImpl> elementNS = isEmpty(elementNamespace) ? HTMLNames::xhtmlNamespaceURI : AtomStringImpl::add(elementNamespace);
 
-    if (property == "innerHTML"_s || property == "outerHTML"_s)
+    if (equal(property, "innerHTML"_s) || equal(property, "outerHTML"_s))
         return trustedTypeToString(TrustedType::TrustedHTML);
 
-    const QualifiedName element(nullAtom(), AtomString(localName), elementNS);
+    const QualifiedName element(nullAtom(), AtomStringImpl::add(localName).get(), elementNS);
 
-    if (element.matches(HTMLNames::iframeTag) && property == "srcdoc"_s)
+    if (element.matches(HTMLNames::iframeTag) && equal(property, "srcdoc"_s))
         return trustedTypeToString(TrustedType::TrustedHTML);
-    if (element.matches(HTMLNames::scriptTag) && property == "src"_s)
+    if (element.matches(HTMLNames::scriptTag) && equal(property, "src"_s))
         return trustedTypeToString(TrustedType::TrustedScriptURL);
-    if (element.matches(HTMLNames::scriptTag) && (property == "innerText"_s || property == "textContent"_s || property == "text"_s))
+    if (element.matches(HTMLNames::scriptTag) && (equal(property, "innerText"_s) || equal(property, "textContent"_s) || equal(property, "text"_s)))
         return trustedTypeToString(TrustedType::TrustedScript);
 
     return nullString();

@@ -42,11 +42,11 @@
 
 namespace WebCore {
 
-static bool skipLinesUntilBoundaryFound(SharedBufferChunkReader& lineReader, const String& boundary)
+static bool skipLinesUntilBoundaryFound(SharedBufferChunkReader& lineReader, StringImpl* boundary)
 {
-    String line;
-    while (!(line = lineReader.nextChunkAsUTF8StringWithLatin1Fallback()).isNull()) {
-        if (line == boundary)
+    RefPtr<StringImpl> line;
+    while ((line = lineReader.nextChunkAsUTF8StringWithLatin1Fallback())) {
+        if (equal(line, boundary))
             return true;
     }
     return false;
@@ -73,7 +73,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
     if (!header->isMultipart()) {
         // With IE a page with no resource is not multi-part.
         bool endOfArchiveReached = false;
-        RefPtr<ArchiveResource> resource = parseNextPart(*header, String(), String(), endOfArchiveReached);
+        RefPtr<ArchiveResource> resource = parseNextPart(*header, nullptr, nullptr, endOfArchiveReached);
         if (!resource)
             return nullptr;
         archive->setMainResource(resource.releaseNonNull());
@@ -90,7 +90,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
             LOG_ERROR("Failed to parse MHTML, invalid MIME header.");
             return nullptr;
         }
-        if (resourceHeader->contentType() == "multipart/alternative"_s) {
+        if (equal(resourceHeader->contentType(), "multipart/alternative"_s)) {
             // Ignore IE nesting which makes little sense (IE seems to nest only some of the frames).
             RefPtr<MHTMLArchive> subframeArchive = parseArchiveWithHeader(resourceHeader.get());
             if (!subframeArchive) {
@@ -119,8 +119,8 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
 
 void MHTMLParser::addResourceToArchive(ArchiveResource* resource, MHTMLArchive* archive)
 {
-    const String& mimeType = resource->mimeType();
-    if (!MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType) || mimeType == cssContentTypeAtom()) {
+    const RefPtr<StringImpl>& mimeType = resource->mimeType();
+    if (!MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType) || equal(mimeType, cssContentTypeAtom())) {
         m_resources.append(resource);
         return;
     }
@@ -137,19 +137,19 @@ void MHTMLParser::addResourceToArchive(ArchiveResource* resource, MHTMLArchive* 
     m_frames.append(WTF::move(subframe));
 }
 
-RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader, const String& endOfPartBoundary, const String& endOfDocumentBoundary, bool& endOfArchiveReached)
+RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader, StringImpl* endOfPartBoundary, StringImpl* endOfDocumentBoundary, bool& endOfArchiveReached)
 {
-    ASSERT(endOfPartBoundary.isEmpty() == endOfDocumentBoundary.isEmpty());
+    ASSERT(isEmpty(endOfPartBoundary) == isEmpty(endOfDocumentBoundary));
 
     SharedBufferBuilder content;
-    const bool checkBoundary = !endOfPartBoundary.isEmpty();
+    const bool checkBoundary = !isEmpty(endOfPartBoundary);
     bool endOfPartReached = false;
     if (mimeHeader.contentTransferEncoding() == MIMEHeader::Binary) {
         if (!checkBoundary) {
             LOG_ERROR("Binary contents requires end of part");
             return nullptr;
         }
-        m_lineReader.setSeparator(endOfPartBoundary.utf8());
+        m_lineReader.setSeparator(utf8(endOfPartBoundary));
         Vector<uint8_t> part;
         if (!m_lineReader.nextChunk(part)) {
             LOG_ERROR("Binary contents requires end of part");
@@ -166,22 +166,22 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
         ASSERT(nextChars.size() == 2);
         endOfArchiveReached = (nextChars[0] == '-' && nextChars[1] == '-');
         if (!endOfArchiveReached) {
-            String line = m_lineReader.nextChunkAsUTF8StringWithLatin1Fallback();
-            if (!line.isEmpty()) {
+            RefPtr<StringImpl> line = m_lineReader.nextChunkAsUTF8StringWithLatin1Fallback();
+            if (!isEmpty(line)) {
                 LOG_ERROR("No CRLF at end of binary section.");
                 return nullptr;
             }
         }
     } else {
-        String line;
-        while (!(line = m_lineReader.nextChunkAsUTF8StringWithLatin1Fallback()).isNull()) {
-            endOfArchiveReached = (line == endOfDocumentBoundary);
-            if (checkBoundary && (line == endOfPartBoundary || endOfArchiveReached)) {
+        RefPtr<StringImpl> line;
+        while ((line = m_lineReader.nextChunkAsUTF8StringWithLatin1Fallback())) {
+            endOfArchiveReached = (equal(line, endOfDocumentBoundary));
+            if (checkBoundary && (equal(line, endOfPartBoundary) || endOfArchiveReached)) {
                 endOfPartReached = true;
                 break;
             }
             // Note that we use line.utf8() and not line.ascii() as ascii turns special characters (such as tab, line-feed...) into '?'.
-            content.append(line.utf8().span());
+            content.append(utf8(line).span());
             if (mimeHeader.contentTransferEncoding() == MIMEHeader::QuotedPrintable) {
                 // The line reader removes the \r\n, but we need them for the content in this case as the QuotedPrintable decoder expects CR-LF terminated lines.
                 content.append("\r\n"_span);
@@ -221,7 +221,7 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
     // The specs mentions 5 ways to resolve a URL: http://tools.ietf.org/html/rfc2557#section-5
     // IE and Firefox (UNMht) seem to generate only absolute URLs.
     URL location { mimeHeader.contentLocation() };
-    return ArchiveResource::create(WTF::move(contentBuffer), location, mimeHeader.contentType(), mimeHeader.charset(), String());
+    return ArchiveResource::create(WTF::move(contentBuffer), location, mimeHeader.contentType(), mimeHeader.charset(), nullptr);
 }
 
 size_t MHTMLParser::frameCount() const

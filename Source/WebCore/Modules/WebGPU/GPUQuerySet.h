@@ -45,8 +45,8 @@ public:
         return adoptRef(*new GPUQuerySet(WTF::move(backing), descriptor, device));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     void destroy();
 
@@ -65,7 +65,7 @@ private:
 
     const Ref<::WebGPU::QuerySet> m_backing;
     const GPUQuerySetDescriptor m_descriptor;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
 };
 

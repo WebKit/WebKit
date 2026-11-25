@@ -231,7 +231,7 @@ NSData* MockNfcService::transceive()
     if (m_configuration.nfc->payloadBase64.isEmpty())
         return nil;
 
-    RetainPtr result = adoptNS([[NSData alloc] initWithBase64EncodedString:borrow(m_configuration.nfc->payloadBase64)[0].createNSString().get() options:NSDataBase64DecodingIgnoreUnknownCharacters]);
+    RetainPtr result = adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(borrow(m_configuration.nfc->payloadBase64)[0]).get() options:NSDataBase64DecodingIgnoreUnknownCharacters]);
     m_configuration.nfc->payloadBase64.removeAt(0);
     return result.autorelease();
 }

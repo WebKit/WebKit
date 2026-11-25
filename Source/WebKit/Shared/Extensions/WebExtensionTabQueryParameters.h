@@ -34,8 +34,8 @@
 namespace WebKit {
 
 struct WebExtensionTabQueryParameters {
-    std::optional<Vector<String>> urlPatterns;
-    std::optional<String> titlePattern;
+    std::optional<Vector<RefPtr<StringImpl>>> urlPatterns;
+    std::optional<RefPtr<StringImpl>> titlePattern;
 
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<OptionSet<WebExtensionWindow::TypeFilter>> windowType;

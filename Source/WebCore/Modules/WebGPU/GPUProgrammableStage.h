@@ -49,8 +49,8 @@ struct GPUProgrammableStage {
     Ref<JSON::Object> toJSON() const;
 
     Ref<GPUShaderModule> module;
-    String entryPoint;
-    Vector<KeyValuePair<String, GPUPipelineConstantValue>> constants;
+    RefPtr<StringImpl> entryPoint;
+    Vector<KeyValuePair<RefPtr<StringImpl>, GPUPipelineConstantValue>> constants;
 };
 
 }

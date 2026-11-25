@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-Ref<StyleRulePositionTry> StyleRulePositionTry::create(AtomString&& name, Ref<StyleProperties>&& properties)
+Ref<StyleRulePositionTry> StyleRulePositionTry::create(RefPtr<AtomStringImpl>&& name, Ref<StyleProperties>&& properties)
 {
     return adoptRef(*new StyleRulePositionTry(WTF::move(name), WTF::move(properties)));
 }
 
-StyleRulePositionTry::StyleRulePositionTry(AtomString&& name, Ref<StyleProperties>&& properties)
+StyleRulePositionTry::StyleRulePositionTry(RefPtr<AtomStringImpl>&& name, Ref<StyleProperties>&& properties)
     : StyleRuleBase(StyleRuleType::PositionTry)
     , m_name(name)
     , m_properties(properties)
@@ -75,14 +75,14 @@ CSSPositionTryRule::CSSPositionTryRule(StyleRulePositionTry& rule, CSSStyleSheet
 
 CSSPositionTryRule::~CSSPositionTryRule() = default;
 
-String CSSPositionTryRule::cssText() const
+RefPtr<StringImpl> CSSPositionTryRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@position-try "_s, name(), " {"_s);
 
     Ref properties = m_positionTryRule->properties();
 
-    if (auto declarations = properties->asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
+    if (auto declarations = properties->asText(CSS::defaultSerializationContext()); !isEmpty(declarations))
         builder.append(' ', declarations, ' ');
     else
         builder.append(' ');
@@ -99,7 +99,7 @@ void CSSPositionTryRule::reattach(StyleRuleBase& rule)
         propertiesCSSOMWrapper->reattach(protect(protect(positionTryRule())->mutableProperties()));
 }
 
-String CSSPositionTryRule::name() const
+RefPtr<StringImpl> CSSPositionTryRule::name() const
 {
     StringBuilder builder;
     serializeIdentifier(builder, m_positionTryRule->name());

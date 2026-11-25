@@ -30,15 +30,15 @@
 namespace WebKit {
 
 struct WebExtensionNotificationButton {
-    String title;
+    RefPtr<StringImpl> title;
 };
 
 struct WebExtensionNotificationParameters {
-    String identifier;
+    RefPtr<StringImpl> identifier;
 
-    String title;
-    String message;
-    String contextMessage;
+    RefPtr<StringImpl> title;
+    RefPtr<StringImpl> message;
+    RefPtr<StringImpl> contextMessage;
 
     std::optional<Vector<WebExtensionNotificationButton>> buttons;
 };

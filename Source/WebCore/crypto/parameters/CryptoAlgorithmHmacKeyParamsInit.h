@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct CryptoAlgorithmHmacKeyParamsInit : CryptoAlgorithmParametersInit {
-    Variant<JSC::Strong<JSC::JSObject>, String> hash;
+    Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>> hash;
     std::optional<size_t> length;
 };
 

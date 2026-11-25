@@ -41,16 +41,16 @@ public:
 
 private:
 #if USE(AUTOCORRECTION_PANEL)
-    void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;
+    void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, StringImpl* replacedString, StringImpl* replacementString, const Vector<RefPtr<StringImpl>>& alternativeReplacementStrings) override;
     void dismissAlternative(WebCore::ReasonForDismissingAlternativeText) override;
-    String dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) override;
-    void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, const String& replacedString, const String& replacementString) override;
+    RefPtr<StringImpl> dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) override;
+    void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, StringImpl* replacedString, StringImpl* replacementString) override;
 #endif
 
 #if USE(DICTATION_ALTERNATIVES)
     void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) final;
     void removeDictationAlternatives(WebCore::DictationContext) final;
-    Vector<String> dictationAlternatives(WebCore::DictationContext) final;
+    Vector<RefPtr<StringImpl>> dictationAlternatives(WebCore::DictationContext) final;
 #endif
 
 #if !(USE(AUTOCORRECTION_PANEL) || USE(DICTATION_ALTERNATIVES))

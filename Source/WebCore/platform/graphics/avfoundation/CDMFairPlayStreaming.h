@@ -48,8 +48,8 @@ public:
     void ref() const final { }
     void deref() const final { }
 
-    std::unique_ptr<CDMPrivate> createCDM(const String& keySystem, const String& mediaKeysHashSalt, const CDMPrivateClient&) override;
-    bool supportsKeySystem(const String&) override;
+    std::unique_ptr<CDMPrivate> createCDM(StringImpl* keySystem, StringImpl* mediaKeysHashSalt, const CDMPrivateClient&) override;
+    bool supportsKeySystem(StringImpl*) override;
 
 private:
     friend class NeverDestroyed<CDMFactoryFairPlayStreaming>;
@@ -60,7 +60,7 @@ class CDMPrivateFairPlayStreaming final : public CDMPrivate {
     WTF_MAKE_TZONE_ALLOCATED(CDMPrivateFairPlayStreaming);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMPrivateFairPlayStreaming);
 public:
-    CDMPrivateFairPlayStreaming(const String& mediaKeysHashSalt, const CDMPrivateClient&);
+    CDMPrivateFairPlayStreaming(StringImpl* mediaKeysHashSalt, const CDMPrivateClient&);
     virtual ~CDMPrivateFairPlayStreaming();
 
 #if !RELEASE_LOG_DISABLED
@@ -70,11 +70,11 @@ public:
     ASCIILiteral logClassName() const { return "CDMPrivateFairPlayStreaming"_s; }
 #endif
 
-    Vector<String> supportedInitDataTypes() const override;
+    Vector<RefPtr<StringImpl>> supportedInitDataTypes() const override;
     bool supportsConfiguration(const CDMKeySystemConfiguration&) const override;
     bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const override;
-    Vector<String> supportedRobustnesses() const override;
+    Vector<RefPtr<StringImpl>> supportedRobustnesses() const override;
     CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const override;
@@ -82,20 +82,20 @@ public:
     void loadAndInitialize() override;
     bool supportsServerCertificates() const override;
     bool supportsSessions() const override;
-    bool supportsInitData(const String&, const SharedBuffer&) const override;
+    bool supportsInitData(StringImpl*, const SharedBuffer&) const override;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const override;
-    std::optional<String> sanitizeSessionId(const String&) const override;
+    std::optional<RefPtr<StringImpl>> sanitizeSessionId(StringImpl*) const override;
 
-    static const String& sinfName();
+    static const RefPtr<StringImpl>& sinfName();
     static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSinf(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSinf(const SharedBuffer&);
 
-    static const String& skdName();
+    static const RefPtr<StringImpl>& skdName();
     static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
 
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
-    static const String& mptsName();
+    static const RefPtr<StringImpl>& mptsName();
     static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsMpts(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeMpts(const SharedBuffer&);
     static const Vector<Ref<SharedBuffer>>& mptsKeyIDs();
@@ -107,10 +107,10 @@ public:
     static Vector<Ref<SharedBuffer>> keyIDsForRequest(AVContentKeyRequest *);
 #endif
 
-    const String& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
+    const RefPtr<StringImpl>& mediaKeysHashSalt() const LIFETIME_BOUND { return m_mediaKeysHashSalt; }
 
 private:
-    String m_mediaKeysHashSalt;
+    RefPtr<StringImpl> m_mediaKeysHashSalt;
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;

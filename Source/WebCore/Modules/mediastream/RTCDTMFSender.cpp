@@ -80,7 +80,7 @@ bool RTCDTMFSender::canInsertDTMF() const
     return m_backend && m_backend->canInsertDTMF();
 }
 
-String RTCDTMFSender::toneBuffer() const
+RefPtr<StringImpl> RTCDTMFSender::toneBuffer() const
 {
     return m_tones;
 }
@@ -94,20 +94,20 @@ NODELETE static inline bool isToneCharacterInvalid(char16_t character)
     return character != '#' && character != '*' && character != ',';
 }
 
-ExceptionOr<void> RTCDTMFSender::insertDTMF(const String& tones, size_t duration, size_t interToneGap)
+ExceptionOr<void> RTCDTMFSender::insertDTMF(StringImpl* tones, size_t duration, size_t interToneGap)
 {
     if (!canInsertDTMF())
-        return Exception { ExceptionCode::InvalidStateError, "Cannot insert DTMF"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Cannot insert DTMF"_si };
 
-    auto normalizedTones = tones.convertToUppercaseWithoutLocale();
-    if (normalizedTones.find(isToneCharacterInvalid) != notFound)
-        return Exception { ExceptionCode::InvalidCharacterError, "Tones are not valid"_s };
+    auto normalizedTones = convertToUppercaseWithoutLocale(tones);
+    if (find(normalizedTones, isToneCharacterInvalid) != notFound)
+        return Exception { ExceptionCode::InvalidCharacterError, "Tones are not valid"_si };
 
     m_tones = WTF::move(normalizedTones);
     m_duration = clampTo(duration, minToneDurationMs, maxToneDurationMs);
     m_interToneGap = std::max(interToneGap, minInterToneGapMs);
 
-    if (m_tones.isEmpty() || m_isPendingPlayoutTask)
+    if (isEmpty(m_tones) || m_isPendingPlayoutTask)
         return { };
 
     m_isPendingPlayoutTask = true;
@@ -124,9 +124,9 @@ ScriptExecutionContext* RTCDTMFSender::scriptExecutionContext() const
 
 void RTCDTMFSender::playNextTone()
 {
-    if (m_tones.isEmpty()) {
+    if (isEmpty(m_tones)) {
         m_isPendingPlayoutTask = false;
-        dispatchEvent(RTCDTMFToneChangeEvent::create({ }));
+        dispatchEvent(RTCDTMFToneChangeEvent::create(nullptr));
         return;
     }
 
@@ -135,10 +135,10 @@ void RTCDTMFSender::playNextTone()
         return;
     }
 
-    auto currentTone = m_tones.left(1);
-    m_tones = m_tones.substring(1);
+    auto currentTone = left(m_tones, 1);
+    m_tones = substring(m_tones, 1);
 
-    m_backend->playTone(currentTone[0], m_duration, m_interToneGap);
+    m_backend->playTone(codeUnitAt(currentTone, 0), m_duration, m_interToneGap);
     dispatchEvent(RTCDTMFToneChangeEvent::create(currentTone));
 }
 

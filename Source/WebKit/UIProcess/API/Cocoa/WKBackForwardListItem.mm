@@ -57,7 +57,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (!item->title())
         return nil;
 
-    return item->title().createNSString().autorelease();
+    return createNSString(item->title()).autorelease();
 }
 
 - (NSURL *)initialURL
@@ -79,7 +79,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSString *)_loggingStringForTesting
 {
-    return protect(*_item)->loggingString().createNSString().autorelease();
+    return createNSString(protect(*_item)->loggingString()).autorelease();
 }
 
 - (CGPoint)_scrollPosition

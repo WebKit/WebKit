@@ -31,14 +31,14 @@ OBJC_CLASS UTType;
 
 namespace WebCore {
 
-WEBCORE_EXPORT String MIMETypeFromUTI(const String&);
-WEBCORE_EXPORT HashSet<String> RequiredMIMETypesFromUTI(const String&);
+WEBCORE_EXPORT RefPtr<StringImpl> MIMETypeFromUTI(StringImpl*);
+WEBCORE_EXPORT HashSet<RefPtr<StringImpl>> RequiredMIMETypesFromUTI(StringImpl*);
 RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef);
 #ifdef __OBJC__
 RetainPtr<NSString> mimeTypeFromUTITree(UTType *);
 #endif
-WEBCORE_EXPORT String UTIFromMIMEType(const String&);
-bool isDeclaredUTI(const String&);
-WEBCORE_EXPORT void setImageSourceAllowableTypes(const Vector<String>&);
+WEBCORE_EXPORT RefPtr<StringImpl> UTIFromMIMEType(StringImpl*);
+bool isDeclaredUTI(StringImpl*);
+WEBCORE_EXPORT void setImageSourceAllowableTypes(const Vector<RefPtr<StringImpl>>&);
 
 } // namespace WebCore

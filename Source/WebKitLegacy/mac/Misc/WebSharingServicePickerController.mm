@@ -146,7 +146,7 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
 
     if (RefPtr node = page->contextMenuController().context().hitTestResult().innerNode()) {
         if (RefPtr frame = node->document().frame())
-            protect(frame->editor())->replaceNodeFromPasteboard(*node, serviceControlsPasteboardName);
+            protect(frame->editor())->replaceNodeFromPasteboard(*node, StringImpl::create(serviceControlsPasteboardName).get());
     }
 
     [self clear];

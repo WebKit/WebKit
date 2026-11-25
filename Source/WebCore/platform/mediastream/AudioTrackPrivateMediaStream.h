@@ -52,7 +52,7 @@ public:
     ~AudioTrackPrivateMediaStream();
 
     void setTrackIndex(int index) { m_index = index; }
-    void setAudioOutputDevice(const String&);
+    void setAudioOutputDevice(StringImpl*);
 
     void ref() const final { AudioTrackPrivate::ref(); }
     void deref() const final { AudioTrackPrivate::deref(); }
@@ -90,8 +90,8 @@ private:
 
     // AudioTrackPrivate
     Kind kind() const final { return Kind::Main; }
-    std::optional<String> trackUID() const { return m_streamTrack->id(); }
-    String label() const final { return m_streamTrack->label(); }
+    std::optional<RefPtr<StringImpl>> trackUID() const { return m_streamTrack->id(); }
+    RefPtr<StringImpl> label() const final { return m_streamTrack->label(); }
     int trackIndex() const final { return m_index; }
     bool isBackedByMediaStreamTrack() const final { return true; }
 

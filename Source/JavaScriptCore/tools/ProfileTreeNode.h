@@ -34,7 +34,7 @@
 namespace JSC {
 
 class ProfileTreeNode {
-    typedef HashMap<String, ProfileTreeNode> Map;
+    typedef HashMap<RefPtr<StringImpl>, ProfileTreeNode> Map;
     typedef Map::KeyValuePairType MapEntry;
 
 public:
@@ -55,7 +55,7 @@ public:
             m_children = new Map();
     
         ProfileTreeNode newEntry;
-        Map::AddResult result = m_children->add(String(name), newEntry);
+        Map::AddResult result = m_children->add(StringImpl::fromLatin1(name), newEntry);
         ProfileTreeNode* childInMap = &result.iterator->value;
         ++childInMap->m_count;
         return childInMap;

@@ -165,7 +165,7 @@ void AuxiliaryProcessProxy::populateOverrideLanguagesLaunchOptions(ProcessLaunch
 void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX")) {
-        if (auto userDirectorySuffixString = String::fromUTF8(userDirectorySuffix); !userDirectorySuffixString.isNull())
+        if (auto userDirectorySuffixString = StringImpl::fromUTF8(userDirectorySuffix); userDirectorySuffixString)
             launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("user-directory-suffix"_s, userDirectorySuffixString);
     }
 
@@ -199,7 +199,7 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
     }
     const char* processCmdPrefix = getenv(varname);
     if (processCmdPrefix && *processCmdPrefix)
-        launchOptions.processCmdPrefix = String::fromUTF8(processCmdPrefix);
+        launchOptions.processCmdPrefix = StringImpl::fromUTF8(processCmdPrefix);
 #endif // ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(WPE))
 
     populateOverrideLanguagesLaunchOptions(launchOptions);
@@ -232,23 +232,23 @@ void AuxiliaryProcessProxy::terminate(std::optional<IPC::MessageName> invalidMes
 
     // FIXME: We should really merge process launching into IPC connection creation and get rid of the process launcher.
     if (RefPtr processLauncher = m_processLauncher) {
-        String terminationReason;
+        RefPtr<StringImpl> terminationReason;
         if (invalidMessageName)
             terminationReason = makeString("Received invalid IPC message: "_s, IPC::description(*invalidMessageName));
         processLauncher->terminateProcess(terminationReason);
     }
 }
 
-String AuxiliaryProcessProxy::stateString() const
+RefPtr<StringImpl> AuxiliaryProcessProxy::stateString() const
 {
     auto currentState = state();
     switch (currentState) {
     case AuxiliaryProcessProxy::State::Launching:
-        return "Launching"_s;
+        return "Launching"_si;
     case AuxiliaryProcessProxy::State::Running:
-        return "Running"_s;
+        return "Running"_si;
     case AuxiliaryProcessProxy::State::Terminated:
-        return "Terminated"_s;
+        return "Terminated"_si;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -682,7 +682,7 @@ std::optional<SandboxExtensionHandle> AuxiliaryProcessProxy::createMobileGestalt
 }
 
 #if !PLATFORM(COCOA)
-Vector<String> AuxiliaryProcessProxy::platformOverrideLanguages() const
+Vector<RefPtr<StringImpl>> AuxiliaryProcessProxy::platformOverrideLanguages() const
 {
     return { };
 }
@@ -726,7 +726,7 @@ void AuxiliaryProcessProxy::updateJetsamBoostAssertion()
         return;
 
     if (shouldHoldAssertion)
-        m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
+        m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_si, ProcessAssertionType::BoostedJetsam);
     else
         m_boostedJetsamAssertion = nullptr;
 }
@@ -770,9 +770,9 @@ AuxiliaryProcessProxy::InitializationActivityAndGrant AuxiliaryProcessProxy::ini
     };
 }
 
-String AuxiliaryProcessProxy::environmentIdentifier()
+RefPtr<StringImpl> AuxiliaryProcessProxy::environmentIdentifier()
 {
-    if (m_environmentIdentifier.isEmpty()) {
+    if (isEmpty(m_environmentIdentifier)) {
         StringBuilder builder;
         builder.append(m_clientName);
         builder.append(processID());

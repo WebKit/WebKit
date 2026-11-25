@@ -36,7 +36,7 @@ struct MediaPositionState {
     double playbackRate = 1;
     double position = 0;
 
-    String toJSONString() const;
+    RefPtr<StringImpl> toJSONString() const;
 
     friend bool operator==(const MediaPositionState&, const MediaPositionState&) = default;
 };
@@ -48,7 +48,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::MediaPositionState> {
-    static String toString(const WebCore::MediaPositionState& state) { return state.toJSONString(); }
+    static RefPtr<StringImpl> toString(const WebCore::MediaPositionState& state) { return state.toJSONString(); }
 };
 
 } // namespace WTF

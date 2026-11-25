@@ -65,17 +65,17 @@ std::optional<bool> AudioTrackPrivateWebM::defaultEnabled() const
     return std::nullopt;
 }
 
-String AudioTrackPrivateWebM::label() const
+RefPtr<StringImpl> AudioTrackPrivateWebM::label() const
 {
-    if (m_label.isNull())
-        m_label = m_track.name.is_present() ? String::fromUTF8(m_track.name.value()) : emptyString();
+    if (!m_label)
+        m_label = m_track.name.is_present() ? StringImpl::fromUTF8(m_track.name.value()) : emptyString();
     return m_label;
 }
 
-String AudioTrackPrivateWebM::language() const
+RefPtr<StringImpl> AudioTrackPrivateWebM::language() const
 {
-    if (m_language.isNull())
-        m_language = m_track.language.is_present() ? String::fromUTF8(m_track.language.value()) : emptyString();
+    if (!m_language)
+        m_language = m_track.language.is_present() ? StringImpl::fromUTF8(m_track.language.value()) : emptyString();
     return m_language;
 }
 
@@ -106,12 +106,12 @@ std::optional<MediaTime> AudioTrackPrivateWebM::discardPadding() const
     return m_discardPadding;
 }
 
-String AudioTrackPrivateWebM::codec() const
+RefPtr<StringImpl> AudioTrackPrivateWebM::codec() const
 {
     if (m_formatDescription) {
-        if (!m_formatDescription->codecString().isEmpty())
+        if (!isEmpty(m_formatDescription->codecString()))
             return m_formatDescription->codecString();
-        return String::fromLatin1(m_formatDescription->codecName().string().data());
+        return StringImpl::fromLatin1(m_formatDescription->codecName().string().data());
     }
 
     if (!m_track.codec_id.is_present())
@@ -120,13 +120,13 @@ String AudioTrackPrivateWebM::codec() const
     StringView codecID { std::span { m_track.codec_id.value() } };
 
     if (codecID == "A_VORBIS"_s)
-        return "vorbis"_s;
+        return "vorbis"_si;
 
     if (codecID == "A_OPUS"_s)
-        return "opus"_s;
+        return "opus"_si;
 
     if (codecID == "A_PCM/FLOAT/IEEE"_s)
-        return "pcm"_s;
+        return "pcm"_si;
 
     return emptyString();
 }

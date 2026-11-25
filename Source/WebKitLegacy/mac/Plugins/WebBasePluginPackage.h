@@ -57,7 +57,7 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 {
     RetainPtr<NSMutableSet> pluginDatabases;
     
-    WTF::String path;
+    RefPtr<StringImpl> path;
     WebCore::PluginInfo pluginInfo;
 
     RetainPtr<CFBundleRef> cfBundle;
@@ -73,17 +73,17 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (BOOL)load;
 - (void)unload;
 
-- (const WTF::String&)path;
+- (const RefPtr<StringImpl>&)path;
 
 - (const WebCore::PluginInfo&)pluginInfo;
 
-- (String)bundleIdentifier;
-- (String)bundleVersion;
+- (RefPtr<StringImpl>)bundleIdentifier;
+- (RefPtr<StringImpl>)bundleVersion;
 
-- (BOOL)supportsExtension:(const WTF::String&)extension;
-- (BOOL)supportsMIMEType:(const WTF::String&)MIMEType;
+- (BOOL)supportsExtension:(StringImpl*)extension;
+- (BOOL)supportsMIMEType:(StringImpl*)MIMEType;
 
-- (NSString *)MIMETypeForExtension:(const WTF::String&)extension;
+- (NSString *)MIMETypeForExtension:(StringImpl*)extension;
 
 - (BOOL)isQuickTimePlugIn;
 - (BOOL)isJavaPlugIn;

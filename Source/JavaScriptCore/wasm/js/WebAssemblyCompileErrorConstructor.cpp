@@ -75,7 +75,7 @@ Structure* WebAssemblyCompileErrorConstructor::createStructure(VM& vm, JSGlobalO
 
 void WebAssemblyCompileErrorConstructor::finishCreation(VM& vm, WebAssemblyCompileErrorPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "CompileError"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "CompileError"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 

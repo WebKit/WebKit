@@ -41,7 +41,7 @@ public:
     void ref() { m_request->ref(); }
     void deref() { m_request->deref(); }
 
-    void dispatchProgressEvent(const AtomString& type, unsigned long long loaded, unsigned long long total);
+    void dispatchProgressEvent(AtomStringImpl* type, unsigned long long loaded, unsigned long long total);
 
     bool hasRelevantEventListener() const;
 

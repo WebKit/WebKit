@@ -252,7 +252,7 @@ private:
     };
     HashMap<WeakStyleable, PositionOptions> m_positionOptions;
 
-    HashSet<AtomString> m_changedAnchorNames;
+    HashSet<RefPtr<AtomStringImpl>> m_changedAnchorNames;
     bool m_allAnchorNamesInvalid { false };
 
     std::unique_ptr<Update> m_update;

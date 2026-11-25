@@ -263,8 +263,8 @@ static std::optional<MediaPlaybackSourceError> convert(NSError * _Nullable error
 
     return MediaPlaybackSourceError {
         error.code,
-        error.domain,
-        error.localizedDescription,
+        StringImpl::create(error.domain),
+        StringImpl::create(error.localizedDescription),
     };
 }
 
@@ -274,9 +274,9 @@ static Vector<MediaSelectionOption> convert(NSArray * _Nullable options)
         id option = options[i];
         return MediaSelectionOption {
             MediaSelectionOption::MediaType::Audio,
-            [option displayName],
+            StringImpl::create([option displayName]),
             MediaSelectionOption::LegibleType::Regular,
-            [option extendedLanguageTag],
+            StringImpl::create([option extendedLanguageTag]),
         };
     });
 }
@@ -309,14 +309,14 @@ void MediaDeviceRoute::disconnectFromSession()
 #endif
 }
 
-String MediaDeviceRoute::deviceName() const
+RefPtr<StringImpl> MediaDeviceRoute::deviceName() const
 {
-    return [m_platformRoute routeDisplayName];
+    return StringImpl::create([m_platformRoute routeDisplayName]);
 }
 
-String MediaDeviceRoute::routeName() const
+RefPtr<StringImpl> MediaDeviceRoute::routeName() const
 {
-    return [m_platformRoute protocolType].localizedDescription;
+    return StringImpl::create([m_platformRoute protocolType].localizedDescription);
 }
 
 WebMediaDevicePlatformRoute *MediaDeviceRoute::platformRoute() const

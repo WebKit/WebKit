@@ -67,7 +67,7 @@ public:
 
     RefPtr<FragmentedSharedBuffer> takeData();
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
-    String takeAsText();
+    RefPtr<StringImpl> takeAsText();
 
     NODELETE bool hasPendingActivity() const;
 
@@ -76,13 +76,13 @@ public:
     void clean();
 
     void extract(ReadableStream&, ReadableStreamToSharedBufferSink::Callback&&);
-    void resolve(Ref<DeferredPromise>&&, const String& contentType, FetchBodyOwner*, ReadableStream*);
-    void resolveWithData(Ref<DeferredPromise>&&, const String& contentType, std::span<const uint8_t>);
-    void resolveWithFormData(Ref<DeferredPromise>&&, const String& contentType, const FormData&, ScriptExecutionContext*);
+    void resolve(Ref<DeferredPromise>&&, StringImpl* contentType, FetchBodyOwner*, ReadableStream*);
+    void resolveWithData(Ref<DeferredPromise>&&, StringImpl* contentType, std::span<const uint8_t>);
+    void resolveWithFormData(Ref<DeferredPromise>&&, StringImpl* contentType, const FormData&, ScriptExecutionContext*);
     void consumeFormDataAsStream(const FormData&, FetchBodySource&, ScriptExecutionContext*);
 
     void loadingFailed(const Exception&);
-    void loadingSucceeded(const String& contentType);
+    void loadingSucceeded(StringImpl* contentType);
 
     void setConsumePromise(Ref<DeferredPromise>&&);
     void setSource(Ref<FetchBodySource>&&);
@@ -90,10 +90,10 @@ public:
 
     void setAsLoading() { m_isLoading = true; }
 
-    static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext*, const String& contentType, std::span<const uint8_t> data);
+    static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext*, StringImpl* contentType, std::span<const uint8_t> data);
 
 private:
-    Ref<Blob> takeAsBlob(ScriptExecutionContext*, const String& contentType);
+    Ref<Blob> takeAsBlob(ScriptExecutionContext*, StringImpl* contentType);
     void resetConsumePromise();
 
     Type m_type;

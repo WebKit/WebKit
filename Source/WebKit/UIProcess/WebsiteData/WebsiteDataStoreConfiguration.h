@@ -48,7 +48,7 @@ public:
     enum class ShouldInitializePaths : bool { No, Yes };
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, ShouldInitializePaths::Yes)); }
     WebsiteDataStoreConfiguration(IsPersistent, ShouldInitializePaths = ShouldInitializePaths::Yes);
-    WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory);
+    WebsiteDataStoreConfiguration(StringImpl* baseCacheDirectory, StringImpl* baseDataDirectory);
 
 #if PLATFORM(COCOA)
     static Ref<WebsiteDataStoreConfiguration> create(const WTF::UUID& identifier) { return adoptRef(*new WebsiteDataStoreConfiguration(identifier)); }
@@ -58,7 +58,7 @@ public:
 #if !PLATFORM(COCOA)
     // All cache and data directories are initialized relative to baseCacheDirectory and
     // baseDataDirectory, respectively, if provided. On Cocoa ports, these are always null.
-    static Ref<WebsiteDataStoreConfiguration> createWithBaseDirectories(const String& baseCacheDirectory, const String& baseDataDirectory) { return adoptRef(*new WebsiteDataStoreConfiguration(baseCacheDirectory, baseDataDirectory)); }
+    static Ref<WebsiteDataStoreConfiguration> createWithBaseDirectories(StringImpl* baseCacheDirectory, StringImpl* baseDataDirectory) { return adoptRef(*new WebsiteDataStoreConfiguration(baseCacheDirectory, baseDataDirectory)); }
 #endif
 
     Ref<WebsiteDataStoreConfiguration> copy() const;
@@ -98,40 +98,40 @@ public:
     void setIsDeclarativeWebPushEnabled(bool enabled) { m_isDeclarativeWebPushEnabled = enabled; }
 #endif
     
-    const String& mediaCacheDirectory() const LIFETIME_BOUND { return m_directories.mediaCacheDirectory; }
-    void setMediaCacheDirectory(String&& directory) { m_directories.mediaCacheDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& mediaCacheDirectory() const LIFETIME_BOUND { return m_directories.mediaCacheDirectory; }
+    void setMediaCacheDirectory(RefPtr<StringImpl>&& directory) { m_directories.mediaCacheDirectory = WTF::move(directory); }
     
-    const String& mediaKeysStorageDirectory() const LIFETIME_BOUND { return m_directories.mediaKeysStorageDirectory; }
-    void setMediaKeysStorageDirectory(String&& directory) { m_directories.mediaKeysStorageDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& mediaKeysStorageDirectory() const LIFETIME_BOUND { return m_directories.mediaKeysStorageDirectory; }
+    void setMediaKeysStorageDirectory(RefPtr<StringImpl>&& directory) { m_directories.mediaKeysStorageDirectory = WTF::move(directory); }
     
-    const String& alternativeServicesDirectory() const LIFETIME_BOUND { return m_directories.alternativeServicesDirectory; }
-    void setAlternativeServicesDirectory(String&& directory) { m_directories.alternativeServicesDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& alternativeServicesDirectory() const LIFETIME_BOUND { return m_directories.alternativeServicesDirectory; }
+    void setAlternativeServicesDirectory(RefPtr<StringImpl>&& directory) { m_directories.alternativeServicesDirectory = WTF::move(directory); }
 
-    const String& javaScriptConfigurationDirectory() const LIFETIME_BOUND { return m_directories.javaScriptConfigurationDirectory; }
-    void setJavaScriptConfigurationDirectory(String&& directory) { m_directories.javaScriptConfigurationDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& javaScriptConfigurationDirectory() const LIFETIME_BOUND { return m_directories.javaScriptConfigurationDirectory; }
+    void setJavaScriptConfigurationDirectory(RefPtr<StringImpl>&& directory) { m_directories.javaScriptConfigurationDirectory = WTF::move(directory); }
 
-    const String& searchFieldHistoryDirectory() const LIFETIME_BOUND { return m_directories.searchFieldHistoryDirectory; }
-    void setSearchFieldHistoryDirectory(String&& directory) { m_directories.searchFieldHistoryDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& searchFieldHistoryDirectory() const LIFETIME_BOUND { return m_directories.searchFieldHistoryDirectory; }
+    void setSearchFieldHistoryDirectory(RefPtr<StringImpl>&& directory) { m_directories.searchFieldHistoryDirectory = WTF::move(directory); }
 
     // indexedDBDatabaseDirectory is sort of deprecated. Data is migrated from here to
     // generalStoragePath unless useCustomStoragePaths is true.
-    const String& indexedDBDatabaseDirectory() const LIFETIME_BOUND { return m_directories.indexedDBDatabaseDirectory; }
-    void setIndexedDBDatabaseDirectory(String&& directory) { m_directories.indexedDBDatabaseDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& indexedDBDatabaseDirectory() const LIFETIME_BOUND { return m_directories.indexedDBDatabaseDirectory; }
+    void setIndexedDBDatabaseDirectory(RefPtr<StringImpl>&& directory) { m_directories.indexedDBDatabaseDirectory = WTF::move(directory); }
 
-    const String& webSQLDatabaseDirectory() const LIFETIME_BOUND { return m_directories.webSQLDatabaseDirectory; }
-    void setWebSQLDatabaseDirectory(String&& directory) { m_directories.webSQLDatabaseDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& webSQLDatabaseDirectory() const LIFETIME_BOUND { return m_directories.webSQLDatabaseDirectory; }
+    void setWebSQLDatabaseDirectory(RefPtr<StringImpl>&& directory) { m_directories.webSQLDatabaseDirectory = WTF::move(directory); }
 
-    const String& hstsStorageDirectory() const LIFETIME_BOUND { return m_directories.hstsStorageDirectory; }
-    void setHSTSStorageDirectory(String&& directory) { m_directories.hstsStorageDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& hstsStorageDirectory() const LIFETIME_BOUND { return m_directories.hstsStorageDirectory; }
+    void setHSTSStorageDirectory(RefPtr<StringImpl>&& directory) { m_directories.hstsStorageDirectory = WTF::move(directory); }
 
     // localStorageDirectory is sort of deprecated. Data is migrated from here to
     // generalStoragePath unless useCustomStoragePaths is true.
-    const String& localStorageDirectory() const LIFETIME_BOUND { return m_directories.localStorageDirectory; }
-    void setLocalStorageDirectory(String&& directory) { m_directories.localStorageDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& localStorageDirectory() const LIFETIME_BOUND { return m_directories.localStorageDirectory; }
+    void setLocalStorageDirectory(RefPtr<StringImpl>&& directory) { m_directories.localStorageDirectory = WTF::move(directory); }
 
 
-    const String& boundInterfaceIdentifier() const LIFETIME_BOUND { return m_boundInterfaceIdentifier; }
-    void setBoundInterfaceIdentifier(String&& identifier) { m_boundInterfaceIdentifier = WTF::move(identifier); }
+    const RefPtr<StringImpl>& boundInterfaceIdentifier() const LIFETIME_BOUND { return m_boundInterfaceIdentifier; }
+    void setBoundInterfaceIdentifier(RefPtr<StringImpl>&& identifier) { m_boundInterfaceIdentifier = WTF::move(identifier); }
 
     bool allowsCellularAccess() const { return m_allowsCellularAccess; }
     void setAllowsCellularAccess(bool allows) { m_allowsCellularAccess = allows; }
@@ -165,50 +165,50 @@ public:
     void setProxyConfiguration(CFDictionaryRef configuration) { m_proxyConfiguration = configuration; }
 #endif
     
-    const String& deviceIdHashSaltsStorageDirectory() const LIFETIME_BOUND { return m_directories.deviceIdHashSaltsStorageDirectory; }
-    void setDeviceIdHashSaltsStorageDirectory(String&& directory) { m_directories.deviceIdHashSaltsStorageDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& deviceIdHashSaltsStorageDirectory() const LIFETIME_BOUND { return m_directories.deviceIdHashSaltsStorageDirectory; }
+    void setDeviceIdHashSaltsStorageDirectory(RefPtr<StringImpl>&& directory) { m_directories.deviceIdHashSaltsStorageDirectory = WTF::move(directory); }
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    const String& mediaKeysHashSaltsStorageDirectory() const LIFETIME_BOUND { return m_directories.mediaKeysHashSaltsStorageDirectory; }
-    void setMediaKeysHashSaltsStorageDirectory(String&& directory) { m_directories.mediaKeysHashSaltsStorageDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& mediaKeysHashSaltsStorageDirectory() const LIFETIME_BOUND { return m_directories.mediaKeysHashSaltsStorageDirectory; }
+    void setMediaKeysHashSaltsStorageDirectory(RefPtr<StringImpl>&& directory) { m_directories.mediaKeysHashSaltsStorageDirectory = WTF::move(directory); }
 #endif
 
-    const String& cookieStorageFile() const LIFETIME_BOUND { return m_directories.cookieStorageFile; }
-    void setCookieStorageFile(String&& directory) { m_directories.cookieStorageFile = WTF::move(directory); }
+    const RefPtr<StringImpl>& cookieStorageFile() const LIFETIME_BOUND { return m_directories.cookieStorageFile; }
+    void setCookieStorageFile(RefPtr<StringImpl>&& directory) { m_directories.cookieStorageFile = WTF::move(directory); }
     
-    const String& resourceLoadStatisticsDirectory() const LIFETIME_BOUND { return m_directories.resourceLoadStatisticsDirectory; }
-    void setResourceLoadStatisticsDirectory(String&& directory) { m_directories.resourceLoadStatisticsDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& resourceLoadStatisticsDirectory() const LIFETIME_BOUND { return m_directories.resourceLoadStatisticsDirectory; }
+    void setResourceLoadStatisticsDirectory(RefPtr<StringImpl>&& directory) { m_directories.resourceLoadStatisticsDirectory = WTF::move(directory); }
 
-    const String& networkCacheDirectory() const LIFETIME_BOUND { return m_directories.networkCacheDirectory; }
-    void setNetworkCacheDirectory(String&& directory) { m_directories.networkCacheDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& networkCacheDirectory() const LIFETIME_BOUND { return m_directories.networkCacheDirectory; }
+    void setNetworkCacheDirectory(RefPtr<StringImpl>&& directory) { m_directories.networkCacheDirectory = WTF::move(directory); }
     
-    const String& cacheStorageDirectory() const LIFETIME_BOUND { return m_directories.cacheStorageDirectory; }
-    void setCacheStorageDirectory(String&& directory) { m_directories.cacheStorageDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& cacheStorageDirectory() const LIFETIME_BOUND { return m_directories.cacheStorageDirectory; }
+    void setCacheStorageDirectory(RefPtr<StringImpl>&& directory) { m_directories.cacheStorageDirectory = WTF::move(directory); }
 
-    const String& generalStorageDirectory() const LIFETIME_BOUND { return m_directories.generalStorageDirectory; }
-    void setGeneralStorageDirectory(String&& directory) { m_directories.generalStorageDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& generalStorageDirectory() const LIFETIME_BOUND { return m_directories.generalStorageDirectory; }
+    void setGeneralStorageDirectory(RefPtr<StringImpl>&& directory) { m_directories.generalStorageDirectory = WTF::move(directory); }
 
     UnifiedOriginStorageLevel unifiedOriginStorageLevel() const { return m_unifiedOriginStorageLevel; }
     void setUnifiedOriginStorageLevel(UnifiedOriginStorageLevel level) { m_unifiedOriginStorageLevel = level; }
 
-    const String& webPushPartitionString() const LIFETIME_BOUND { return m_webPushPartitionString; }
-    void setWebPushPartitionString(String&& string) { m_webPushPartitionString = WTF::move(string); }
+    const RefPtr<StringImpl>& webPushPartitionString() const LIFETIME_BOUND { return m_webPushPartitionString; }
+    void setWebPushPartitionString(RefPtr<StringImpl>&& string) { m_webPushPartitionString = WTF::move(string); }
     
-    const String& serviceWorkerRegistrationDirectory() const LIFETIME_BOUND { return m_directories.serviceWorkerRegistrationDirectory; }
-    void setServiceWorkerRegistrationDirectory(String&& directory) { m_directories.serviceWorkerRegistrationDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& serviceWorkerRegistrationDirectory() const LIFETIME_BOUND { return m_directories.serviceWorkerRegistrationDirectory; }
+    void setServiceWorkerRegistrationDirectory(RefPtr<StringImpl>&& directory) { m_directories.serviceWorkerRegistrationDirectory = WTF::move(directory); }
     
     bool serviceWorkerProcessTerminationDelayEnabled() const { return m_serviceWorkerProcessTerminationDelayEnabled; }
     void setServiceWorkerProcessTerminationDelayEnabled(bool enabled) { m_serviceWorkerProcessTerminationDelayEnabled = enabled; }
 
-    const String& sourceApplicationBundleIdentifier() const LIFETIME_BOUND { return m_sourceApplicationBundleIdentifier; }
-    void setSourceApplicationBundleIdentifier(String&& identifier) { m_sourceApplicationBundleIdentifier = WTF::move(identifier); }
+    const RefPtr<StringImpl>& sourceApplicationBundleIdentifier() const LIFETIME_BOUND { return m_sourceApplicationBundleIdentifier; }
+    void setSourceApplicationBundleIdentifier(RefPtr<StringImpl>&& identifier) { m_sourceApplicationBundleIdentifier = WTF::move(identifier); }
 
-    const String& sourceApplicationSecondaryIdentifier() const LIFETIME_BOUND { return m_sourceApplicationSecondaryIdentifier; }
-    void setSourceApplicationSecondaryIdentifier(String&& identifier) { m_sourceApplicationSecondaryIdentifier = WTF::move(identifier); }
+    const RefPtr<StringImpl>& sourceApplicationSecondaryIdentifier() const LIFETIME_BOUND { return m_sourceApplicationSecondaryIdentifier; }
+    void setSourceApplicationSecondaryIdentifier(RefPtr<StringImpl>&& identifier) { m_sourceApplicationSecondaryIdentifier = WTF::move(identifier); }
     
 #if ENABLE(CONTENT_EXTENSIONS)
-    const String& resourceMonitorThrottlerDirectory() const LIFETIME_BOUND { return m_directories.resourceMonitorThrottlerDirectory; }
-    void setResourceMonitorThrottlerDirectory(String&& directory) { m_directories.resourceMonitorThrottlerDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& resourceMonitorThrottlerDirectory() const LIFETIME_BOUND { return m_directories.resourceMonitorThrottlerDirectory; }
+    void setResourceMonitorThrottlerDirectory(RefPtr<StringImpl>&& directory) { m_directories.resourceMonitorThrottlerDirectory = WTF::move(directory); }
 #endif
 
     const URL& httpProxy() const LIFETIME_BOUND { return m_httpProxy; }
@@ -225,11 +225,11 @@ public:
 
     NODELETE WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration() const;
 
-    const String& dataConnectionServiceType() const LIFETIME_BOUND { return m_dataConnectionServiceType; }
-    void setDataConnectionServiceType(String&& type) { m_dataConnectionServiceType = WTF::move(type); }
+    const RefPtr<StringImpl>& dataConnectionServiceType() const LIFETIME_BOUND { return m_dataConnectionServiceType; }
+    void setDataConnectionServiceType(RefPtr<StringImpl>&& type) { m_dataConnectionServiceType = WTF::move(type); }
 
-    const String& ipAddressSpaceOverridesForTesting() const LIFETIME_BOUND { return m_ipAddressSpaceOverridesForTesting; }
-    void setIPAddressSpaceOverridesForTesting(String&& overrides) { m_ipAddressSpaceOverridesForTesting = WTF::move(overrides); }
+    const RefPtr<StringImpl>& ipAddressSpaceOverridesForTesting() const LIFETIME_BOUND { return m_ipAddressSpaceOverridesForTesting; }
+    void setIPAddressSpaceOverridesForTesting(RefPtr<StringImpl>&& overrides) { m_ipAddressSpaceOverridesForTesting = WTF::move(overrides); }
 
     bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
     void setSuppressesConnectionTerminationOnSystemChange(bool suppresses) { m_suppressesConnectionTerminationOnSystemChange = suppresses; }
@@ -260,57 +260,57 @@ public:
     bool qualifiedServerTrustDebugEnabledForTesting() const { return m_qualifiedServerTrustDebugEnabledForTesting; }
     void setQualifiedServerTrustDebugEnabledForTesting(bool enabled) { m_qualifiedServerTrustDebugEnabledForTesting = enabled; }
     
-    void setPCMMachServiceName(String&& name) { m_pcmMachServiceName = WTF::move(name); }
-    const String& pcmMachServiceName() const LIFETIME_BOUND { return m_pcmMachServiceName; }
+    void setPCMMachServiceName(RefPtr<StringImpl>&& name) { m_pcmMachServiceName = WTF::move(name); }
+    const RefPtr<StringImpl>& pcmMachServiceName() const LIFETIME_BOUND { return m_pcmMachServiceName; }
 
-    void setWebPushMachServiceName(String&& name) { m_webPushMachServiceName = WTF::move(name); }
-    const String& webPushMachServiceName() const LIFETIME_BOUND { return m_webPushMachServiceName; }
+    void setWebPushMachServiceName(RefPtr<StringImpl>&& name) { m_webPushMachServiceName = WTF::move(name); }
+    const RefPtr<StringImpl>& webPushMachServiceName() const LIFETIME_BOUND { return m_webPushMachServiceName; }
 
     void setMemoryFootprintNotificationThresholds(Vector<size_t>&& thresholds) { m_memoryFootprintNotificationThresholds = WTF::move(thresholds); }
     const Vector<size_t>& memoryFootprintNotificationThresholds() LIFETIME_BOUND { return m_memoryFootprintNotificationThresholds; }
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    void setWebContentRestrictionsConfigurationFile(String&& file) { m_webContentRestrictionsConfigurationFile = WTF::move(file); }
-    const String& webContentRestrictionsConfigurationFile() const LIFETIME_BOUND { return m_webContentRestrictionsConfigurationFile; }
+    void setWebContentRestrictionsConfigurationFile(RefPtr<StringImpl>&& file) { m_webContentRestrictionsConfigurationFile = WTF::move(file); }
+    const RefPtr<StringImpl>& webContentRestrictionsConfigurationFile() const LIFETIME_BOUND { return m_webContentRestrictionsConfigurationFile; }
 #endif
 
-    void setAdditionalDomainsWithUserInteractionForTesting(String&& domains) { m_additionalDomainsWithUserInteractionForTesting = WTF::move(domains); }
-    const String& additionalDomainsWithUserInteractionForTesting() const LIFETIME_BOUND { return m_additionalDomainsWithUserInteractionForTesting; }
+    void setAdditionalDomainsWithUserInteractionForTesting(RefPtr<StringImpl>&& domains) { m_additionalDomainsWithUserInteractionForTesting = WTF::move(domains); }
+    const RefPtr<StringImpl>& additionalDomainsWithUserInteractionForTesting() const LIFETIME_BOUND { return m_additionalDomainsWithUserInteractionForTesting; }
 
-    const String& enhancedSecurityDirectory() const LIFETIME_BOUND { return m_directories.enhancedSecurityDirectory; }
-    void setEnhancedSecurityDirectory(String&& directory) { m_directories.enhancedSecurityDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& enhancedSecurityDirectory() const LIFETIME_BOUND { return m_directories.enhancedSecurityDirectory; }
+    void setEnhancedSecurityDirectory(RefPtr<StringImpl>&& directory) { m_directories.enhancedSecurityDirectory = WTF::move(directory); }
 
-    const String& isolatedSitesDirectory() const LIFETIME_BOUND { return m_directories.isolatedSitesDirectory; }
-    void setIsolatedSitesDirectory(String&& directory) { m_directories.isolatedSitesDirectory = WTF::move(directory); }
+    const RefPtr<StringImpl>& isolatedSitesDirectory() const LIFETIME_BOUND { return m_directories.isolatedSitesDirectory; }
+    void setIsolatedSitesDirectory(RefPtr<StringImpl>&& directory) { m_directories.isolatedSitesDirectory = WTF::move(directory); }
 
     std::optional<unsigned> overridePersistentNotificationMinimumLifetimeForTesting() const { return m_overrideServiceWorkerRegistrationCountTestingValue; }
     void setOverridePersistentNotificationMinimumLifetimeForTesting(unsigned count) { m_overrideServiceWorkerRegistrationCountTestingValue = count; }
 
     struct Directories {
-        String alternativeServicesDirectory;
-        String cacheStorageDirectory;
-        String cookieStorageFile;
-        String deviceIdHashSaltsStorageDirectory;
+        RefPtr<StringImpl> alternativeServicesDirectory;
+        RefPtr<StringImpl> cacheStorageDirectory;
+        RefPtr<StringImpl> cookieStorageFile;
+        RefPtr<StringImpl> deviceIdHashSaltsStorageDirectory;
 #if ENABLE(ENCRYPTED_MEDIA)
-        String mediaKeysHashSaltsStorageDirectory;
+        RefPtr<StringImpl> mediaKeysHashSaltsStorageDirectory;
 #endif
-        String generalStorageDirectory;
-        String hstsStorageDirectory;
-        String indexedDBDatabaseDirectory;
-        String isolatedSitesDirectory;
-        String javaScriptConfigurationDirectory;
-        String localStorageDirectory;
-        String mediaCacheDirectory;
-        String mediaKeysStorageDirectory;
-        String networkCacheDirectory;
-        String resourceLoadStatisticsDirectory;
-        String searchFieldHistoryDirectory;
-        String serviceWorkerRegistrationDirectory;
-        String webSQLDatabaseDirectory;
+        RefPtr<StringImpl> generalStorageDirectory;
+        RefPtr<StringImpl> hstsStorageDirectory;
+        RefPtr<StringImpl> indexedDBDatabaseDirectory;
+        RefPtr<StringImpl> isolatedSitesDirectory;
+        RefPtr<StringImpl> javaScriptConfigurationDirectory;
+        RefPtr<StringImpl> localStorageDirectory;
+        RefPtr<StringImpl> mediaCacheDirectory;
+        RefPtr<StringImpl> mediaKeysStorageDirectory;
+        RefPtr<StringImpl> networkCacheDirectory;
+        RefPtr<StringImpl> resourceLoadStatisticsDirectory;
+        RefPtr<StringImpl> searchFieldHistoryDirectory;
+        RefPtr<StringImpl> serviceWorkerRegistrationDirectory;
+        RefPtr<StringImpl> webSQLDatabaseDirectory;
 #if ENABLE(CONTENT_EXTENSIONS)
-        String resourceMonitorThrottlerDirectory;
+        RefPtr<StringImpl> resourceMonitorThrottlerDirectory;
 #endif
-        String enhancedSecurityDirectory;
+        RefPtr<StringImpl> enhancedSecurityDirectory;
         Directories isolatedCopy() const&;
         Directories isolatedCopy() &&;
     };
@@ -325,8 +325,8 @@ private:
 
     UnifiedOriginStorageLevel m_unifiedOriginStorageLevel;
     Markable<WTF::UUID> m_identifier;
-    String m_baseCacheDirectory;
-    String m_baseDataDirectory;
+    RefPtr<StringImpl> m_baseCacheDirectory;
+    RefPtr<StringImpl> m_baseDataDirectory;
     Directories m_directories;
     uint64_t m_perOriginStorageQuota;
     std::optional<double> m_originQuotaRatio;
@@ -344,11 +344,11 @@ private:
     bool m_networkCacheSpeculativeValidationEnabled { false };
 #endif
     bool m_staleWhileRevalidateEnabled { true };
-    String m_sourceApplicationBundleIdentifier;
-    String m_sourceApplicationSecondaryIdentifier;
-    String m_boundInterfaceIdentifier;
-    String m_dataConnectionServiceType;
-    String m_ipAddressSpaceOverridesForTesting;
+    RefPtr<StringImpl> m_sourceApplicationBundleIdentifier;
+    RefPtr<StringImpl> m_sourceApplicationSecondaryIdentifier;
+    RefPtr<StringImpl> m_boundInterfaceIdentifier;
+    RefPtr<StringImpl> m_dataConnectionServiceType;
+    RefPtr<StringImpl> m_ipAddressSpaceOverridesForTesting;
     URL m_httpProxy;
     URL m_httpsProxy;
     bool m_deviceManagementRestrictionsEnabled { false };
@@ -377,18 +377,18 @@ private:
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool m_isDeclarativeWebPushEnabled { false };
 #endif
-    String m_pcmMachServiceName;
-    String m_webPushMachServiceName;
-    String m_webPushPartitionString;
+    RefPtr<StringImpl> m_pcmMachServiceName;
+    RefPtr<StringImpl> m_webPushMachServiceName;
+    RefPtr<StringImpl> m_webPushPartitionString;
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif
     Vector<size_t> m_memoryFootprintNotificationThresholds;
     std::optional<bool> m_defaultTrackingPreventionEnabledOverride;
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    String m_webContentRestrictionsConfigurationFile;
+    RefPtr<StringImpl> m_webContentRestrictionsConfigurationFile;
 #endif
-    String m_additionalDomainsWithUserInteractionForTesting;
+    RefPtr<StringImpl> m_additionalDomainsWithUserInteractionForTesting;
 };
 
 }

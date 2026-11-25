@@ -159,12 +159,12 @@ void PDFJSDocument::createDocumentStructure()
     frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 
     Ref body = HTMLBodyElement::create(*this);
-    body->setAttribute(styleAttr, "margin: 0px;height: 100vh;"_s);
+    body->setAttribute(styleAttr, "margin: 0px;height: 100vh;"_atom);
     rootElement->appendChild(body);
 
     lazyInitialize(m_iframe, HTMLIFrameElement::create(HTMLNames::iframeTag, *this));
-    m_iframe->setAttribute(srcAttr, AtomString(viewerURL));
-    m_iframe->setAttribute(styleAttr, "width: 100%; height: 100%; border: 0; display: block;"_s);
+    m_iframe->setAttribute(srcAttr, AtomStringImpl::add(viewerURL).ptr());
+    m_iframe->setAttribute(styleAttr, "width: 100%; height: 100%; border: 0; display: block;"_atom);
 
     m_listener = PDFJSDocumentEventListener::create(*this);
     m_iframe->addEventListener(eventNames().loadEvent, *m_listener);
@@ -186,7 +186,7 @@ void PDFJSDocument::finishedParsing()
         finishLoadingPDF();
 }
 
-void PDFJSDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
+void PDFJSDocument::postMessageToIframe(StringImpl* name, JSC::JSObject* data)
 {
     auto globalObject = this->globalObject();
     auto& vm = globalObject->vm();
@@ -220,7 +220,7 @@ void PDFJSDocument::sendPDFArrayBuffer()
             auto& vm = globalObject()->vm();
             JSC::JSLockHolder lock(vm);
             auto* dataObject = JSC::JSArrayBuffer::create(vm, globalObject()->arrayBufferStructure(arrayBuffer->sharingMode()), WTF::move(arrayBuffer));
-            postMessageToIframe("open-pdf"_s, dataObject);
+            postMessageToIframe("open-pdf"_si, dataObject);
         }
     }
 }
@@ -245,11 +245,11 @@ void PDFJSDocument::injectStyleAndContentScript()
     auto* contentDocument = m_iframe->contentDocument();
     ASSERT(contentDocument->head());
     Ref link = HTMLLinkElement::create(HTMLNames::linkTag, *contentDocument, false);
-    link->setAttribute(relAttr, "stylesheet"_s);
+    link->setAttribute(relAttr, "stylesheet"_atom);
 #if PLATFORM(COCOA)
-    link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/cocoa/style.css"_s);
+    link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/cocoa/style.css"_atom);
 #elif PLATFORM(GTK) || PLATFORM(WPE)
-    link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/adwaita/style.css"_s);
+    link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/adwaita/style.css"_atom);
 #endif
     contentDocument->head()->appendChild(link);
 
@@ -257,7 +257,7 @@ void PDFJSDocument::injectStyleAndContentScript()
     m_script = HTMLScriptElement::create(scriptTag, *contentDocument, false);
     ASSERT(m_listener);
     m_script->addEventListener(eventNames().loadEvent, *m_listener);
-    m_script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js"_s);
+    m_script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js"_atom);
     contentDocument->body()->appendChild(*m_script);
 
     m_injectedStyleAndScript = true;

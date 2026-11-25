@@ -33,6 +33,6 @@ namespace WebCore {
 class Font;
 enum class FontOrientation : bool;
 
-RetainPtr<CFDictionaryRef> getCFStringAttributes(const Font&, bool enableKerning, FontOrientation, const AtomString& locale);
+RetainPtr<CFDictionaryRef> getCFStringAttributes(const Font&, bool enableKerning, FontOrientation, AtomStringImpl* locale);
 
 }

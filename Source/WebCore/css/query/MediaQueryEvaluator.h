@@ -31,8 +31,8 @@ namespace WebCore::MQ {
 
 class MediaQueryEvaluator : public GenericMediaQueryEvaluator<MediaQueryEvaluator> {
 public:
-    NODELETE MediaQueryEvaluator(const AtomString& mediaType, const Document&);
-    NODELETE MediaQueryEvaluator(const AtomString& mediaType = nullAtom(), EvaluationResult mediaConditionResult = EvaluationResult::False);
+    NODELETE MediaQueryEvaluator(AtomStringImpl* mediaType, const Document&);
+    NODELETE MediaQueryEvaluator(AtomStringImpl* mediaType = nullAtom(), EvaluationResult mediaConditionResult = EvaluationResult::False);
 
     bool evaluate(const MediaQueryList&) const;
     bool evaluate(const MediaQuery&) const;
@@ -45,7 +45,7 @@ public:
     NODELETE bool isPrintMedia() const;
 
 private:
-    AtomString m_mediaType;
+    RefPtr<AtomStringImpl> m_mediaType;
     WeakPtr<const Document, WeakPtrImplWithEventTargetData> m_document;
     EvaluationResult m_staticMediaConditionResult { EvaluationResult::Unknown };
 };

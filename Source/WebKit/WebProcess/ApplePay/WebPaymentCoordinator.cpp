@@ -75,7 +75,7 @@ void WebPaymentCoordinator::networkProcessConnectionClosed()
 #endif
 }
 
-std::optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork) const
+std::optional<RefPtr<StringImpl>> WebPaymentCoordinator::validatedPaymentNetwork(StringImpl* paymentNetwork) const
 {
     if (!m_availablePaymentNetworks)
         m_availablePaymentNetworks = platformAvailablePaymentNetworks();
@@ -105,12 +105,12 @@ bool WebPaymentCoordinator::canMakePayments()
     return *lastCanMakePaymentsResult;
 }
 
-void WebPaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinator::canMakePaymentsWithActiveCard(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::CanMakePaymentsWithActiveCard(merchantIdentifier, domainName), WTF::move(completionHandler));
 }
 
-void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinator::openPaymentSetup(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::OpenPaymentSetup(merchantIdentifier, domainName), WTF::move(completionHandler));
 }
@@ -196,7 +196,7 @@ WebCore::PaymentCoordinator& WebPaymentCoordinator::paymentCoordinator() const
     return m_webPage->corePage()->paymentCoordinator();
 }
 
-void WebPaymentCoordinator::validateMerchant(const String& validationURLString)
+void WebPaymentCoordinator::validateMerchant(StringImpl* validationURLString)
 {
     protect(paymentCoordinator())->validateMerchant(URL { validationURLString });
 }
@@ -223,7 +223,7 @@ void WebPaymentCoordinator::didSelectPaymentMethod(const WebCore::PaymentMethod&
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinator::didChangeCouponCode(String&& couponCode)
+void WebPaymentCoordinator::didChangeCouponCode(RefPtr<StringImpl>&& couponCode)
 {
     protect(paymentCoordinator())->didChangeCouponCode(WTF::move(couponCode));
 }

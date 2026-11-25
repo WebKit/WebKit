@@ -552,7 +552,7 @@ class ProcessIdentity;
 
 namespace WebModel {
 
-using NumberOrString = Variant<String, double>;
+using NumberOrString = Variant<RefPtr<StringImpl>, double>;
 
 struct ImageAssetSwizzle {
     uint8_t red { 0 };
@@ -638,10 +638,10 @@ struct MeshDescriptor {
 };
 
 struct Edge {
-    String outputNode;
-    String outputPort;
-    String inputNode;
-    String inputPort;
+    RefPtr<StringImpl> outputNode;
+    RefPtr<StringImpl> outputPort;
+    RefPtr<StringImpl> inputNode;
+    RefPtr<StringImpl> inputPort;
 };
 
 enum class DataType : uint8_t {
@@ -680,8 +680,8 @@ enum class DataType : uint8_t {
 };
 
 struct Primvar {
-    String name;
-    String referencedGeomPropName;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> referencedGeomPropName;
     uint64_t attributeFormat;
 };
 
@@ -738,21 +738,21 @@ enum class NodeType : uint8_t {
 
 struct ConstantContainer {
     Constant constant;
-    Vector<Variant<String, double>> constantValues;
-    String name;
-    std::optional<String> colorSpaceName;
+    Vector<Variant<RefPtr<StringImpl>, double>> constantValues;
+    RefPtr<StringImpl> name;
+    std::optional<RefPtr<StringImpl>> colorSpaceName;
 };
 
 struct InputOutput {
     DataType type;
-    String name;
-    std::optional<String> semanticTypeName;
+    RefPtr<StringImpl> name;
+    std::optional<RefPtr<StringImpl>> semanticTypeName;
     std::optional<ConstantContainer> defaultValue;
 };
 
 struct Builtin {
-    String definition;
-    String name;
+    RefPtr<StringImpl> definition;
+    RefPtr<StringImpl> name;
 };
 
 struct Node {
@@ -762,24 +762,29 @@ struct Node {
 };
 
 struct MaterialGraph {
-    String graphName;
+    RefPtr<StringImpl> graphName;
     Vector<Node> nodes;
     Vector<Edge> edges;
     Node arguments;
     Node results;
     Vector<InputOutput> inputs;
     Vector<InputOutput> outputs;
-    Vector<String> primvarMappingPrimvarNames;
-    Vector<String> primvarMappingTexcoordNames;
-    Vector<String> functionConstantInputNames;
+    Vector<RefPtr<StringImpl>> primvarMappingPrimvarNames;
+    Vector<RefPtr<StringImpl>> primvarMappingTexcoordNames;
+    Vector<RefPtr<StringImpl>> functionConstantInputNames;
 };
 
 struct TypedResourceId {
-    String value;
-    String path;
+    RefPtr<StringImpl> value;
+    RefPtr<StringImpl> path;
     int64_t hashValue;
 
-    bool operator==(const TypedResourceId&) const = default;
+    bool operator==(const TypedResourceId& other) const
+    {
+        return contentEquals(value, other.value)
+            && contentEquals(path, other.path)
+            && hashValue == other.hashValue;
+    }
 };
 
 #if ENABLE(SPATIAL_PORTAL)
@@ -811,7 +816,7 @@ struct TextureLevelInfo {
 struct UpdateTextureDescriptor {
     ImageAsset imageAsset;
     TypedResourceId identifier;
-    String hashString;
+    RefPtr<StringImpl> hashString;
     Vector<TextureLevelInfo> layout;
 };
 

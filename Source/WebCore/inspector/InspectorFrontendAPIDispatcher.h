@@ -69,13 +69,13 @@ public:
     WEBCORE_EXPORT void unsuspend();
     bool isSuspended() const { return m_suspended; }
 
-    EvaluationResult dispatchCommandWithResultSync(const String& command, Vector<Ref<JSON::Value>>&& arguments = { });
-    WEBCORE_EXPORT void dispatchCommandWithResultAsync(const String& command, Vector<Ref<JSON::Value>>&& arguments = { }, EvaluationResultHandler&& handler = { });
+    EvaluationResult dispatchCommandWithResultSync(StringImpl* command, Vector<Ref<JSON::Value>>&& arguments = { });
+    WEBCORE_EXPORT void dispatchCommandWithResultAsync(StringImpl* command, Vector<Ref<JSON::Value>>&& arguments = { }, EvaluationResultHandler&& handler = { });
 
     // Used to forward messages from the backend connection to the frontend.
-    WEBCORE_EXPORT void dispatchMessageAsync(const String& message);
+    WEBCORE_EXPORT void dispatchMessageAsync(StringImpl* message);
 
-    WEBCORE_EXPORT void evaluateExpressionForTesting(const String&);
+    WEBCORE_EXPORT void evaluateExpressionForTesting(StringImpl*);
     
     // Convenience method to obtain a JSDOMGlobalObject for the frontend page.
     // This is used to convert between C++ values and frontend JSC::JSValue objects.
@@ -83,14 +83,14 @@ public:
 private:
     WEBCORE_EXPORT InspectorFrontendAPIDispatcher(Page&);
 
-    void evaluateOrQueueExpression(const String&, EvaluationResultHandler&& handler = { });
+    void evaluateOrQueueExpression(StringImpl*, EvaluationResultHandler&& handler = { });
     void evaluateQueuedExpressions();
     void invalidateQueuedExpressions();
     void invalidatePendingResponses();
-    ValueOrException evaluateExpression(const String&);
+    ValueOrException evaluateExpression(StringImpl*);
 
     WeakPtr<Page> m_frontendPage;
-    Vector<std::pair<String, EvaluationResultHandler>> m_queuedEvaluations;
+    Vector<std::pair<RefPtr<StringImpl>, EvaluationResultHandler>> m_queuedEvaluations;
     HashMap<Ref<DOMPromise>, EvaluationResultHandler> m_pendingResponses;
     bool m_frontendLoaded { false };
     bool m_suspended { false };

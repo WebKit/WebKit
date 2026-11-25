@@ -35,7 +35,7 @@
 
 namespace WTF {
 
-String logLevelString()
+RefPtr<StringImpl> logLevelString()
 {
 #if !LOG_DISABLED
     static constexpr const char* loggingEnvironmentVariable = "WTFLogging";
@@ -48,9 +48,9 @@ String logLevelString()
     if (!GetEnvironmentVariableA(loggingEnvironmentVariable, buffer.mutableSpan().data(), length))
         return emptyString();
 
-    return String::fromLatin1(buffer.span().data());
+    return StringImpl::fromLatin1(buffer.span().data());
 #else
-    return String();
+    return nullptr;
 #endif
 }
 

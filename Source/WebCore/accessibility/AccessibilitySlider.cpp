@@ -123,7 +123,7 @@ RefPtr<AccessibilityObject> AccessibilitySlider::elementAccessibilityHitTest(con
 float AccessibilitySlider::valueForRange() const
 {
     if (RefPtr input = inputElement())
-        return input->value()->toFloat();
+        return toFloat(input->value().get());
     return 0;
 }
 
@@ -141,13 +141,13 @@ float AccessibilitySlider::minValueForRange() const
     return 0;
 }
 
-bool AccessibilitySlider::setValue(const String& value)
+bool AccessibilitySlider::setValue(StringImpl* value)
 {
     RefPtr input = inputElement();
     if (!input)
         return false;
 
-    if (input->value() != value)
+    if (!equal(input->value(), value))
         input->setValue(value, DispatchInputAndChangeEvent);
     return true;
 }

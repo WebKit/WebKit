@@ -52,7 +52,7 @@ enum class NetworkInterceptOwner : uint8_t {
 
 // A Web Inspector URL filter: a literal URL or the source of a regular expression.
 struct InspectorURLPattern {
-    String url;
+    RefPtr<StringImpl> url;
     bool caseSensitive { true };
     bool isRegex { false };
 
@@ -62,7 +62,7 @@ struct InspectorURLPattern {
 
     friend bool operator==(const InspectorURLPattern& a, const InspectorURLPattern& b)
     {
-        return a.url == b.url && a.caseSensitive == b.caseSensitive && a.isRegex == b.isRegex;
+        return equal(a.url, b.url) && a.caseSensitive == b.caseSensitive && a.isRegex == b.isRegex;
     }
 
     // Whether the request URL, without its fragment, matches. An empty request URL never matches.
@@ -125,15 +125,15 @@ enum class NetworkInterceptionErrorType : uint8_t {
 struct NetworkInterceptionResolution {
     NetworkInterceptionAction action { NetworkInterceptionAction::Continue };
     std::optional<URL> url;
-    String method;
+    RefPtr<StringImpl> method;
     // Replaces every header of the request or response.
-    std::optional<Vector<std::pair<String, String>>> headers;
+    std::optional<Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>> headers;
     // The body of the request, or of the response when fulfilling.
     RefPtr<WebCore::SharedBuffer> body;
     std::optional<int> statusCode;
-    String reasonPhrase;
+    RefPtr<StringImpl> reasonPhrase;
     // The MIME type of the response when fulfilling, or when replacing a paused response.
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
     NetworkInterceptionErrorType errorType { NetworkInterceptionErrorType::General };
 };
 

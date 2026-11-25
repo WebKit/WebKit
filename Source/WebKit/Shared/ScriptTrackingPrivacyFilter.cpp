@@ -41,7 +41,7 @@ static void initializeFilterRules(Vector<ScriptTrackingPrivacyHost>&& source, Ho
 {
     target.reserveInitialCapacity(source.size());
     for (auto&& [host, allowedCategories] : borrow(source)) {
-        if (host.isEmpty()) {
+        if (isEmpty(host)) {
             ASSERT_NOT_REACHED();
             continue;
         }
@@ -64,11 +64,11 @@ auto ScriptTrackingPrivacyFilter::lookup(const URL& url, const WebCore::Security
     WebCore::RegistrableDomain scriptTopDomain { url };
 
     auto scriptTopDomainName = scriptTopDomain.string();
-    if (scriptTopDomainName.isEmpty())
+    if (isEmpty(scriptTopDomainName))
         return { };
 
     auto hostName = url.host().toStringWithoutCopying();
-    if (hostName.isEmpty())
+    if (isEmpty(hostName))
         return { };
 
     if (!scriptTopDomain.matches(topOrigin.data())) {

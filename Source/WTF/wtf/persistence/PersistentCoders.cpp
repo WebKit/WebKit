@@ -33,57 +33,57 @@
 
 namespace WTF::Persistence {
 
-void Coder<AtomString>::encodeForPersistence(Encoder& encoder, const AtomString& atomString)
+void Coder<RefPtr<AtomStringImpl>>::encodeForPersistence(Encoder& encoder, AtomStringImpl* atomString)
 {
-    encoder << atomString.string();
+    Coder<RefPtr<StringImpl>>::encodeForPersistence(encoder, atomString);
 }
 
-// FIXME: Constructing a String and then looking it up in the AtomStringTable is inefficient.
+// FIXME: Constructing a string and then looking it up in the AtomStringTable is inefficient.
 // Ideally, we wouldn't need to allocate a String when it is already in the AtomStringTable.
-std::optional<AtomString> Coder<AtomString>::decodeForPersistence(Decoder& decoder)
+std::optional<RefPtr<AtomStringImpl>> Coder<RefPtr<AtomStringImpl>>::decodeForPersistence(Decoder& decoder)
 {
-    std::optional<String> string;
+    std::optional<RefPtr<StringImpl>> string;
     decoder >> string;
     if (!string)
         return std::nullopt;
 
-    return { AtomString { WTF::move(*string) } };
+    return { AtomStringImpl::add(WTF::move(*string)) };
 }
 
-void Coder<String>::encodeForPersistence(Encoder& encoder, const String& string)
+void Coder<RefPtr<StringImpl>>::encodeForPersistence(Encoder& encoder, StringImpl* string)
 {
     // Special case the null string.
-    if (string.isNull()) {
+    if (!string) {
         encoder << std::numeric_limits<uint32_t>::max();
         return;
     }
 
-    bool is8Bit = string.is8Bit();
+    bool is8Bit = WTF::is8Bit(string);
 
-    encoder << string.length() << is8Bit;
+    encoder << length(string) << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData(asBytes(string.span8()));
+        encoder.encodeFixedLengthData(asBytes(span8(string)));
     else
-        encoder.encodeFixedLengthData(asBytes(string.span16()));
+        encoder.encodeFixedLengthData(asBytes(span16(string)));
 }
 
 template <typename CharacterType>
-static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t length)
+static inline std::optional<RefPtr<StringImpl>> decodeStringText(Decoder& decoder, uint32_t length)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
     if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
         return std::nullopt;
 
     std::span<CharacterType> buffer;
-    String string = String::createUninitialized(length, buffer);
+    RefPtr<StringImpl> string = StringImpl::createUninitialized(length, buffer);
     if (!decoder.decodeFixedLengthData(asMutableByteSpan(buffer)))
         return std::nullopt;
     
     return string;
 }
 
-std::optional<String> Coder<String>::decodeForPersistence(Decoder& decoder)
+std::optional<RefPtr<StringImpl>> Coder<RefPtr<StringImpl>>::decodeForPersistence(Decoder& decoder)
 {
     std::optional<uint32_t> length;
     decoder >> length;
@@ -92,7 +92,7 @@ std::optional<String> Coder<String>::decodeForPersistence(Decoder& decoder)
 
     if (*length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
-        return String();
+        return nullString();
     }
 
     std::optional<bool> is8Bit;
@@ -112,7 +112,7 @@ void Coder<URL>::encodeForPersistence(Encoder& encoder, const URL& url)
 
 std::optional<URL> Coder<URL>::decodeForPersistence(Decoder& decoder)
 {
-    std::optional<String> string;
+    std::optional<RefPtr<StringImpl>> string;
     decoder >> string;
     if (!string)
         return std::nullopt;

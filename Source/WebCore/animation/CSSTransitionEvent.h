@@ -34,19 +34,19 @@ namespace WebCore {
 class CSSTransitionEvent final : public StyleOriginatedAnimationEvent {
     WTF_MAKE_TZONE_ALLOCATED(CSSTransitionEvent);
 public:
-    static Ref<CSSTransitionEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime,  double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String propertyName)
+    static Ref<CSSTransitionEvent> create(AtomStringImpl* type, WebAnimation* animation, std::optional<Seconds> scheduledTime,  double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const RefPtr<StringImpl> propertyName)
     {
         return adoptRef(*new CSSTransitionEvent(type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier, propertyName));
     }
 
     struct Init : EventInit {
         RefPtr<CSSTransition> animation;
-        String propertyName { emptyString() };
+        RefPtr<StringImpl> propertyName { emptyString() };
         double elapsedTime { 0 };
-        String pseudoElement { emptyString() };
+        RefPtr<StringImpl> pseudoElement { emptyString() };
     };
 
-    static Ref<CSSTransitionEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<CSSTransitionEvent> create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new CSSTransitionEvent(type, WTF::move(initializer), isTrusted));
     }
@@ -54,13 +54,13 @@ public:
     virtual ~CSSTransitionEvent();
 
     RefPtr<CSSTransition> cssTransition() const { return dynamicDowncast<CSSTransition>(animation()); }
-    const String& propertyName() const LIFETIME_BOUND { return m_propertyName; }
+    const RefPtr<StringImpl>& propertyName() const LIFETIME_BOUND { return m_propertyName; }
 
 private:
-    CSSTransitionEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&, const String propertyName);
-    CSSTransitionEvent(const AtomString& type, Init&&, IsTrusted);
+    CSSTransitionEvent(AtomStringImpl* type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&, const RefPtr<StringImpl> propertyName);
+    CSSTransitionEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
-    String m_propertyName;
+    RefPtr<StringImpl> m_propertyName;
 };
 
 } // namespace WebCore

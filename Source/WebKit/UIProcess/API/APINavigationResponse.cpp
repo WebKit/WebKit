@@ -34,7 +34,7 @@
 
 namespace API {
 
-NavigationResponse::NavigationResponse(API::FrameInfo& frame, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, bool canShowMIMEType, WTF::String&& downloadAttribute, Navigation* navigation)
+NavigationResponse::NavigationResponse(API::FrameInfo& frame, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, bool canShowMIMEType, RefPtr<StringImpl>&& downloadAttribute, Navigation* navigation)
     : m_frame(frame)
     , m_request(request)
     , m_response(response)

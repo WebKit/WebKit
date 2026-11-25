@@ -90,9 +90,9 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
                 RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionNumber.get(), nil]);
                 [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
-            if (!items[i].m_language.isEmpty())
-                [attributes setObject:items[i].m_language.createNSString().get() forKey:NSLanguageIdentifierAttributeName];
-            RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:items[i].m_text.createNSString().get() attributes:attributes.get()]);
+            if (!isEmpty(items[i].m_language))
+                [attributes setObject:createNSString(items[i].m_language).get() forKey:NSLanguageIdentifierAttributeName];
+            RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:createNSString(items[i].m_text).get() attributes:attributes.get()]);
 
             [menuItem setAttributedTitle:string.get()];
             // We set the title as well as the attributed title here. The attributed title will be displayed in the menu,
@@ -100,7 +100,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
             [menuItem setTitle:[retainPtr([string string]) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
             [menuItem setEnabled:items[i].m_isEnabled];
             [menuItem setState:items[i].m_isSelected ? NSControlStateValueOn : NSControlStateValueOff];
-            [menuItem setToolTip:items[i].m_toolTip.createNSString().get()];
+            [menuItem setToolTip:createNSString(items[i].m_toolTip).get()];
         }
     }
 }

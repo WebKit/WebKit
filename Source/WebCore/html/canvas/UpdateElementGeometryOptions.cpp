@@ -33,7 +33,7 @@ namespace WebCore {
 Ref<JSON::Object> UpdateElementGeometryOptions::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setBoolean("preserveHitTestOrder"_s, preserveHitTestOrder);
+    json->setBoolean("preserveHitTestOrder"_si, preserveHitTestOrder);
     return json;
 }
 

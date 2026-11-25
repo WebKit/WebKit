@@ -35,10 +35,10 @@ enum class CanvasContent : bool {
     Drawable
 };
 
-inline CanvasContent toValidCanvasContent(const AtomString& value)
+inline CanvasContent toValidCanvasContent(AtomStringImpl* value)
 {
-    static MainThreadNeverDestroyed<const AtomString> fallbackValue("fallback"_s);
-    static MainThreadNeverDestroyed<const AtomString> drawableValue("drawable"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> fallbackValue("fallback"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> drawableValue("drawable"_s);
     if (equalLettersIgnoringASCIICase(value, "fallback"_s))
         return CanvasContent::Fallback;
     if (equalLettersIgnoringASCIICase(value, "drawable"_s))

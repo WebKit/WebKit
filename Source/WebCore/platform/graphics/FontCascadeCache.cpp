@@ -44,12 +44,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FontCascadeCache);
 
 FontFamilyName::FontFamilyName() = default;
 
-FontFamilyName::FontFamilyName(const AtomString& name)
+FontFamilyName::FontFamilyName(AtomStringImpl* name)
     : m_name { name }
 {
 }
 
-const AtomString& FontFamilyName::string() const
+const RefPtr<AtomStringImpl>& FontFamilyName::string() const
 {
     return m_name;
 }
@@ -57,13 +57,13 @@ const AtomString& FontFamilyName::string() const
 void add(Hasher& hasher, const FontFamilyName& name)
 {
     // FIXME: Would be better to hash the characters in the name instead of hashing a hash.
-    if (!name.string().isNull())
+    if (name.string())
         add(hasher, FontCascadeDescription::familyNameHash(name.string()));
 }
 
 bool operator==(const FontFamilyName& a, const FontFamilyName& b)
 {
-    return (a.string().isNull() || b.string().isNull()) ? a.string() == b.string() : FontCascadeDescription::familyNamesAreEqual(a.string(), b.string());
+    return (!a.string() || !b.string()) ? a.string() == b.string() : FontCascadeDescription::familyNamesAreEqual(a.string(), b.string());
 }
 
 FontCascadeCache& FontCascadeCache::forCurrentThread()

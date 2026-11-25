@@ -307,10 +307,10 @@ TEST(ResourceLoadDelegate, LoadInfo)
     checkFrames(7, sub, main, _WKResourceLoadInfoResourceTypeFetch);
     checkFrames(8, sub, main, _WKResourceLoadInfoResourceTypeFetch);
 
-    String requestClass = NSStringFromClass([otherParameters[0] class]);
+    RefPtr<StringImpl> requestClass = StringImpl::create(NSStringFromClass([otherParameters[0] class]));
 
     EXPECT_EQ(otherParameters.size(), 12ull);
-    EXPECT_TRUE(requestClass == "NSURLRequest"_s || requestClass == "NSMutableURLRequest"_s);
+    EXPECT_TRUE(equal(requestClass, "NSURLRequest"_s) || equal(requestClass, "NSMutableURLRequest"_s));
     EXPECT_WK_STREQ([otherParameters[0] URL].path, "/");
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[1] class]), "NSHTTPURLResponse");
     EXPECT_WK_STREQ([otherParameters[1] URL].path, "/");

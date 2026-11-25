@@ -33,7 +33,7 @@ namespace WebCore {
 
 struct WEBCORE_EXPORT CustomHeaderFields {
     Vector<HTTPHeaderField> fields;
-    Vector<String> thirdPartyDomains;
+    Vector<RefPtr<StringImpl>> thirdPartyDomains;
 
     bool thirdPartyDomainsMatch(const URL&) const;
 };

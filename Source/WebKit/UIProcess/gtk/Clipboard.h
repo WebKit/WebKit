@@ -49,7 +49,7 @@ class Clipboard {
     WTF_MAKE_TZONE_ALLOCATED(Clipboard);
     WTF_MAKE_NONCOPYABLE(Clipboard);
 public:
-    static Clipboard& get(const String& name);
+    static Clipboard& get(StringImpl* name);
 
     enum class Type { Clipboard, Primary };
     explicit Clipboard(Type);
@@ -58,10 +58,10 @@ public:
     enum class ReadMode : uint8_t { Asynchronous, Synchronous };
 
     Type type() const;
-    void formats(CompletionHandler<void(Vector<String>&&)>&&);
-    void readText(CompletionHandler<void(String&&)>&&, ReadMode = ReadMode::Asynchronous);
-    void readFilePaths(CompletionHandler<void(Vector<String>&&)>&&, ReadMode = ReadMode::Asynchronous);
-    void readURL(CompletionHandler<void(String&& url, String&& title)>&&, ReadMode = ReadMode::Asynchronous);
+    void formats(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
+    void readText(CompletionHandler<void(RefPtr<StringImpl>&&)>&&, ReadMode = ReadMode::Asynchronous);
+    void readFilePaths(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&, ReadMode = ReadMode::Asynchronous);
+    void readURL(CompletionHandler<void(RefPtr<StringImpl>&& url, RefPtr<StringImpl>&& title)>&&, ReadMode = ReadMode::Asynchronous);
     void readBuffer(UTF8CStringView, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&&, ReadMode = ReadMode::Asynchronous);
     void write(WebCore::SelectionData&&, CompletionHandler<void(int64_t)>&&);
     void clear();

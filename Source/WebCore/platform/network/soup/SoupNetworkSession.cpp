@@ -70,8 +70,8 @@ class HostTLSCertificateSet {
 public:
     void add(GTlsCertificate* certificate)
     {
-        String certificateHash = computeCertificateHash(certificate);
-        if (!certificateHash.isEmpty())
+        RefPtr<StringImpl> certificateHash = computeCertificateHash(certificate);
+        if (!isEmpty(certificateHash))
             m_certificates.add(certificateHash);
     }
 
@@ -81,12 +81,12 @@ public:
     }
 
 private:
-    static String computeCertificateHash(GTlsCertificate* certificate)
+    static RefPtr<StringImpl> computeCertificateHash(GTlsCertificate* certificate)
     {
         GRefPtr<GByteArray> certificateData;
         g_object_get(G_OBJECT(certificate), "certificate", &certificateData.outPtr(), nullptr);
         if (!certificateData)
-            return String();
+            return nullptr;
 
         auto digest = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
         digest->addBytes(span(certificateData));
@@ -94,7 +94,7 @@ private:
         return base64EncodeToString(digest->computeHash());
     }
 
-    HashSet<String> m_certificates;
+    HashSet<RefPtr<StringImpl>> m_certificates;
 };
 
 SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
@@ -177,13 +177,13 @@ SoupCookieJar* SoupNetworkSession::cookieJar() const
     return SOUP_COOKIE_JAR(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_COOKIE_JAR));
 }
 
-void SoupNetworkSession::setHSTSPersistentStorage(const String& directory)
+void SoupNetworkSession::setHSTSPersistentStorage(StringImpl* directory)
 {
     if (m_sessionID.isEphemeral())
         return;
 
     if (!FileSystem::makeAllDirectories(directory)) {
-        RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", directory.utf8());
+        RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", utf8(directory));
         return;
     }
 
@@ -194,7 +194,7 @@ void SoupNetworkSession::setHSTSPersistentStorage(const String& directory)
     soup_session_add_feature(m_soupSession.get(), SOUP_SESSION_FEATURE(enforcer.get()));
 }
 
-void SoupNetworkSession::getHostNamesWithHSTSCache(HashSet<String>& hostNames)
+void SoupNetworkSession::getHostNamesWithHSTSCache(HashSet<RefPtr<StringImpl>>& hostNames)
 {
     auto* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
     ASSERT(enforcer);
@@ -202,17 +202,17 @@ void SoupNetworkSession::getHostNamesWithHSTSCache(HashSet<String>& hostNames)
     GUniquePtr<GList> domains(soup_hsts_enforcer_get_domains(enforcer, FALSE));
     for (GList* iter = domains.get(); iter; iter = iter->next) {
         GUniquePtr<gchar> domain(static_cast<gchar*>(iter->data));
-        hostNames.add(String::fromUTF8(domain.get()));
+        hostNames.add(StringImpl::fromUTF8(domain.get()));
     }
 }
 
-void SoupNetworkSession::deleteHSTSCacheForHostNames(const Vector<String>& hostNames)
+void SoupNetworkSession::deleteHSTSCacheForHostNames(const Vector<RefPtr<StringImpl>>& hostNames)
 {
     auto* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
     ASSERT(enforcer);
 
     for (const auto& hostName : hostNames) {
-        GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new(hostName.utf8().legacyCStringPointer(), SOUP_HSTS_POLICY_MAX_AGE_PAST, FALSE));
+        GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new(utf8(hostName).legacyCStringPointer(), SOUP_HSTS_POLICY_MAX_AGE_PAST, FALSE));
         soup_hsts_enforcer_set_policy(enforcer, policy.get());
     }
 }
@@ -241,7 +241,7 @@ static inline bool stringIsNumeric(const std::string_view& str)
 }
 
 // Old versions of WebKit created this cache.
-void SoupNetworkSession::clearOldSoupCache(const String& cacheDirectory)
+void SoupNetworkSession::clearOldSoupCache(StringImpl* cacheDirectory)
 {
     auto cachePath = FileSystem::fileSystemRepresentation(cacheDirectory);
     auto cacheFile = gBuildFilename(cachePath, "soup.cache2");
@@ -344,7 +344,7 @@ std::optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& reque
     return ResourceError::tlsError(requestURL, tlsErrors, certificate);
 }
 
-void SoupNetworkSession::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+void SoupNetworkSession::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, StringImpl* host)
 {
     m_allowedCertificates.add(host, HostTLSCertificateSet()).iterator->value.add(certificateInfo.certificate().get());
 }

@@ -34,10 +34,10 @@
 namespace WebCore {
 
 struct ApplePayShippingMethod final {
-    String label;
-    String detail;
-    String amount;
-    String identifier;
+    RefPtr<StringImpl> label;
+    RefPtr<StringImpl> detail;
+    RefPtr<StringImpl> amount;
+    RefPtr<StringImpl> identifier;
 
 #if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
     std::optional<ApplePayDateComponentsRange> dateComponentsRange;

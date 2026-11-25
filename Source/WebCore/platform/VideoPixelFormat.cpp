@@ -131,9 +131,9 @@ std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bo
     return { };
 }
 
-String convertVideoPixelFormatToString(VideoPixelFormat format)
+RefPtr<StringImpl> convertVideoPixelFormatToString(VideoPixelFormat format)
 {
-    static const std::array<NeverDestroyed<String>, 23> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 23> values {
         MAKE_STATIC_STRING_IMPL("I420"),
         MAKE_STATIC_STRING_IMPL("I420P10"),
         MAKE_STATIC_STRING_IMPL("I420P12"),

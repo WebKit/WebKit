@@ -43,12 +43,12 @@ static void platformInvalidate(const PlatformGrant& platformGrant)
         RELEASE_LOG_ERROR(ProcessCapabilities, "Invalidating grant %{public}@ failed", platformGrant.get());
 }
 
-ExtensionCapabilityGrant::ExtensionCapabilityGrant(String environmentIdentifier)
+ExtensionCapabilityGrant::ExtensionCapabilityGrant(RefPtr<StringImpl> environmentIdentifier)
     : m_environmentIdentifier { WTF::move(environmentIdentifier) }
 {
 }
 
-ExtensionCapabilityGrant::ExtensionCapabilityGrant(String&& environmentIdentifier, PlatformGrant&& platformGrant)
+ExtensionCapabilityGrant::ExtensionCapabilityGrant(RefPtr<StringImpl>&& environmentIdentifier, PlatformGrant&& platformGrant)
     : m_environmentIdentifier { WTF::move(environmentIdentifier) }
     , m_platformGrant { WTF::move(platformGrant) }
 {

@@ -68,7 +68,7 @@ Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFilterElement(tagName, document));
 }
 
-void SVGFilterElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFilterElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
 

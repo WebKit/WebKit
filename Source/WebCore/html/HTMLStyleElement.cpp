@@ -81,7 +81,7 @@ Ref<HTMLStyleElement> HTMLStyleElement::create(Document& document)
     return adoptRef(*new HTMLStyleElement(styleTag, document, false));
 }
 
-void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLStyleElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::titleAttr:
@@ -160,7 +160,7 @@ void HTMLStyleElement::dispatchPendingLoadEvents(Page* page)
     styleLoadEventSenderSingleton().dispatchPendingEvents(page);
 }
 
-void HTMLStyleElement::dispatchPendingEvent(StyleEventSender* eventSender, const AtomString& eventType)
+void HTMLStyleElement::dispatchPendingEvent(StyleEventSender* eventSender, AtomStringImpl* eventType)
 {
     ASSERT_UNUSED(eventSender, eventSender == &styleLoadEventSenderSingleton());
     dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));

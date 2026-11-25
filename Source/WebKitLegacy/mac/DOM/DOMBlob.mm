@@ -59,7 +59,7 @@
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->type().createNSString().autorelease();
+    return createNSString(IMPL->type()).autorelease();
 }
 
 @end

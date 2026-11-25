@@ -32,7 +32,7 @@ namespace WebKit {
 
 struct ContentWorldData {
     ContentWorldIdentifier identifier;
-    String name;
+    RefPtr<StringImpl> name;
     OptionSet<WebKit::ContentWorldOption> options;
 };
 

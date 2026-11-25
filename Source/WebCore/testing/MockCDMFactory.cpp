@@ -80,30 +80,30 @@ void MockCDMFactory::unregister()
     }
 }
 
-bool MockCDMFactory::supportsKeySystem(const String& keySystem)
+bool MockCDMFactory::supportsKeySystem(StringImpl* keySystem)
 {
-    return keySystem == "org.webkit.mock"_s;
+    return equal(keySystem, "org.webkit.mock"_s);
 }
 
-bool MockCDMFactory::hasSessionWithID(const String& id)
+bool MockCDMFactory::hasSessionWithID(StringImpl* id)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return false;
 
     return m_sessions.contains(id);
 }
 
-void MockCDMFactory::removeSessionWithID(const String& id)
+void MockCDMFactory::removeSessionWithID(StringImpl* id)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return;
     m_sessions.remove(id);
     m_sessionTypes.remove(id);
 }
 
-void MockCDMFactory::addKeysToSessionWithID(const String& id, Vector<Ref<SharedBuffer>>&& keys)
+void MockCDMFactory::addKeysToSessionWithID(StringImpl* id, Vector<Ref<SharedBuffer>>&& keys)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return;
 
     auto addResult = m_sessions.add(id, WTF::move(keys));
@@ -115,9 +115,9 @@ void MockCDMFactory::addKeysToSessionWithID(const String& id, Vector<Ref<SharedB
         value.append(WTF::move(key));
 }
 
-Vector<Ref<SharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(const String& id)
+Vector<Ref<SharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(StringImpl* id)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return { };
 
     auto it = m_sessions.find(id);
@@ -127,9 +127,9 @@ Vector<Ref<SharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(const Stri
     return WTF::move(it->value);
 }
 
-const Vector<Ref<SharedBuffer>>* MockCDMFactory::keysForSessionWithID(const String& id) const
+const Vector<Ref<SharedBuffer>>* MockCDMFactory::keysForSessionWithID(StringImpl* id) const
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return { };
 
     auto it = m_sessions.find(id);
@@ -138,9 +138,9 @@ const Vector<Ref<SharedBuffer>>* MockCDMFactory::keysForSessionWithID(const Stri
     return &it->value;
 }
 
-size_t MockCDMFactory::keyCountForSession(const String& id) const
+size_t MockCDMFactory::keyCountForSession(StringImpl* id) const
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return 0;
 
     auto it = m_sessions.find(id);
@@ -149,9 +149,9 @@ size_t MockCDMFactory::keyCountForSession(const String& id) const
     return it->value.size();
 }
 
-std::optional<CDMSessionType> MockCDMFactory::sessionType(const String& id) const
+std::optional<CDMSessionType> MockCDMFactory::sessionType(StringImpl* id) const
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return std::nullopt;
 
     auto it = m_sessionTypes.find(id);
@@ -160,32 +160,32 @@ std::optional<CDMSessionType> MockCDMFactory::sessionType(const String& id) cons
     return it->value;
 }
 
-void MockCDMFactory::setSupportedDataTypes(Vector<String>&& types)
+void MockCDMFactory::setSupportedDataTypes(Vector<RefPtr<StringImpl>>&& types)
 {
     m_supportedDataTypes.clear();
     for (auto& type : types)
         m_supportedDataTypes.append(type);
 }
 
-std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM(const String&, const String& mediaKeysHashSalt, const CDMPrivateClient&)
+std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM(StringImpl*, StringImpl* mediaKeysHashSalt, const CDMPrivateClient&)
 {
     return makeUnique<MockCDM>(*this, mediaKeysHashSalt);
 }
 
-MockCDM::MockCDM(WeakPtr<MockCDMFactory> factory, const String& mediaKeysHashSalt)
+MockCDM::MockCDM(WeakPtr<MockCDMFactory> factory, StringImpl* mediaKeysHashSalt)
     : m_factory(WTF::move(factory))
     , m_mediaKeysHashSalt { mediaKeysHashSalt }
 {
 }
 
-Vector<String> MockCDM::supportedInitDataTypes() const
+Vector<RefPtr<StringImpl>> MockCDM::supportedInitDataTypes() const
 {
     if (RefPtr factory = this->factory())
         return factory->supportedDataTypes();
     return { };
 }
 
-Vector<String> MockCDM::supportedRobustnesses() const
+Vector<RefPtr<StringImpl>> MockCDM::supportedRobustnesses() const
 {
     if (RefPtr factory = this->factory())
         return factory->supportedRobustness();
@@ -228,8 +228,8 @@ bool MockCDM::supportsConfigurationWithRestrictions(const MediaKeySystemConfigur
         auto contentType = ParsedContentType::create(capability.contentType);
         if (!contentType)
             continue;
-        auto codecs = contentType->parameterValueForName("codecs"_s);
-        if (!codecs.isEmpty() && unsupportedVideoCodecs.contains(codecs))
+        auto codecs = contentType->parameterValueForName("codecs"_si);
+        if (!isEmpty(codecs) && unsupportedVideoCodecs.containsIf([&](auto& item) { return equal(item, codecs); }))
             return false;
     }
 
@@ -291,9 +291,9 @@ bool MockCDM::supportsSessions() const
     return false;
 }
 
-bool MockCDM::supportsInitData(const String& initDataType, const SharedBuffer& initData) const
+bool MockCDM::supportsInitData(StringImpl* initDataType, const SharedBuffer& initData) const
 {
-    if (!supportedInitDataTypes().contains(initDataType))
+    if (!supportedInitDataTypes().containsIf([&](auto& item) { return equal(item, initDataType); }))
         return false;
 
     UNUSED_PARAM(initData);
@@ -314,7 +314,7 @@ RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) con
     return nullptr;
 }
 
-std::optional<String> MockCDM::sanitizeSessionId(const String& sessionId) const
+std::optional<RefPtr<StringImpl>> MockCDM::sanitizeSessionId(StringImpl* sessionId) const
 {
     if (equalLettersIgnoringASCIICase(sessionId, "valid-loaded-session"_s))
         return sessionId;
@@ -375,13 +375,13 @@ void MockCDMInstance::setServerCertificate(Ref<SharedBuffer>&& certificate, Succ
     callback(equalLettersIgnoringASCIICase(StringView { byteCast<Latin1Character>(contiguousData->span()) }, "valid"_s) ? CDMInstanceSuccessValue::Succeeded : CDMInstanceSuccessValue::Failed);
 }
 
-void MockCDMInstance::setStorageDirectory(const String&)
+void MockCDMInstance::setStorageDirectory(StringImpl*)
 {
 }
 
-const String& MockCDMInstance::keySystem() const
+const RefPtr<StringImpl>& MockCDMInstance::keySystem() const
 {
-    static const NeverDestroyed<String> s_keySystem = MAKE_STATIC_STRING_IMPL("org.webkit.mock");
+    static const NeverDestroyed<RefPtr<StringImpl>> s_keySystem = MAKE_STATIC_STRING_IMPL("org.webkit.mock");
 
     return s_keySystem;
 }
@@ -410,7 +410,7 @@ RefPtr<MockCDMFactory> MockCDMInstanceSession::factory() const
     return nullptr;
 }
 
-void MockCDMInstanceSession::requestLicense(LicenseType licenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void MockCDMInstanceSession::requestLicense(LicenseType licenseType, KeyGroupingStrategy, StringImpl* initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     RefPtr factory = this->factory();
     if (!factory) {
@@ -418,7 +418,7 @@ void MockCDMInstanceSession::requestLicense(LicenseType licenseType, KeyGrouping
         return;
     }
 
-    if (!factory->supportedSessionTypes().contains(licenseType) || !factory->supportedDataTypes().contains(initDataType)) {
+    if (!factory->supportedSessionTypes().contains(licenseType) || !factory->supportedDataTypes().containsIf([&](auto& item) { return equal(item, initDataType); })) {
         callback(SharedBuffer::create(), emptyString(), false, SuccessValue::Failed);
         return;
     }
@@ -429,14 +429,14 @@ void MockCDMInstanceSession::requestLicense(LicenseType licenseType, KeyGrouping
         return;
     }
 
-    String sessionID = createVersion4UUIDString();
+    RefPtr<StringImpl> sessionID = createVersion4UUIDString();
     factory->addKeysToSessionWithID(sessionID, WTF::move(keyIDs.value()));
     factory->setSessionType(sessionID, licenseType);
 
     callback(SharedBuffer::create("license"_span8), sessionID, false, SuccessValue::Succeeded);
 }
 
-void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
+void MockCDMInstanceSession::updateLicense(StringImpl* sessionID, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
 {
     RefPtr factory = this->factory();
     if (!factory) {
@@ -444,15 +444,15 @@ void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType,
         return;
     }
 
-    Vector<String> responseVector = String(byteCast<Latin1Character>(response->makeContiguous()->span())).split(' ');
+    Vector<RefPtr<StringImpl>> responseVector = split(StringImpl::create(byteCast<Latin1Character>(response->makeContiguous()->span())), ' ');
 
-    if (responseVector.contains(String("invalid-format"_s))) {
+    if (responseVector.containsIf([&](auto& item) { return equal(item, "invalid-format"_si); })) {
         callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
         return;
     }
 
     std::optional<KeyStatusVector> changedKeys;
-    if (responseVector.contains(String("keys-changed"_s))) {
+    if (responseVector.containsIf([&](auto& item) { return equal(item, "keys-changed"_si); })) {
         const auto* keys = factory->keysForSessionWithID(sessionID);
         if (keys) {
             changedKeys = keys->map([](auto& key) {
@@ -468,7 +468,7 @@ void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType,
     callback(false, WTF::move(changedKeys), WTF::move(changedExpiration), std::nullopt, SuccessValue::Succeeded);
 }
 
-void MockCDMInstanceSession::loadSession(LicenseType, const String& sessionID, const String&, LoadSessionCallback&& callback)
+void MockCDMInstanceSession::loadSession(LicenseType, StringImpl* sessionID, StringImpl*, LoadSessionCallback&& callback)
 {
     RefPtr factory = this->factory();
     if (!factory) {
@@ -492,7 +492,7 @@ void MockCDMInstanceSession::loadSession(LicenseType, const String& sessionID, c
     callback(WTF::move(knownKeys), std::nullopt, WTF::move(message), SuccessValue::Succeeded, SessionLoadFailure::None);
 }
 
-void MockCDMInstanceSession::closeSession(const String& sessionID, CloseSessionCallback&& callback)
+void MockCDMInstanceSession::closeSession(StringImpl* sessionID, CloseSessionCallback&& callback)
 {
     RefPtr factory = this->factory();
     if (!factory) {
@@ -508,7 +508,7 @@ void MockCDMInstanceSession::closeSession(const String& sessionID, CloseSessionC
     callback();
 }
 
-void MockCDMInstanceSession::removeSessionData(const String& id, LicenseType, RemoveSessionDataCallback&& callback)
+void MockCDMInstanceSession::removeSessionData(StringImpl* id, LicenseType, RemoveSessionDataCallback&& callback)
 {
     RefPtr factory = this->factory();
     if (!factory) {
@@ -524,7 +524,7 @@ void MockCDMInstanceSession::removeSessionData(const String& id, LicenseType, Re
     callback(WTF::move(keyStatusVector), SharedBuffer::create("remove-message"_span8), SuccessValue::Succeeded);
 }
 
-void MockCDMInstanceSession::storeRecordOfKeyUsage(const String&)
+void MockCDMInstanceSession::storeRecordOfKeyUsage(StringImpl*)
 {
     // FIXME: This should be implemented along with the support for persistent-usage-record sessions.
 }

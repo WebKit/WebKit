@@ -180,7 +180,7 @@ const gchar* webkit_uri_response_get_uri(WebKitURIResponse* response)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
-    response->priv->uri = response->priv->resourceResponse.url().string().utf8();
+    response->priv->uri = utf8(response->priv->resourceResponse.url().string());
     return response->priv->uri.legacyCStringPointer();
 }
 
@@ -233,7 +233,7 @@ const gchar* webkit_uri_response_get_mime_type(WebKitURIResponse* response)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
-    response->priv->mimeType = response->priv->resourceResponse.mimeType().utf8();
+    response->priv->mimeType = utf8(response->priv->resourceResponse.mimeType());
     return response->priv->mimeType.legacyCStringPointer();
 }
 
@@ -254,10 +254,10 @@ const gchar* webkit_uri_response_get_suggested_filename(WebKitURIResponse* respo
 {
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
-    if (response->priv->resourceResponse.suggestedFilename().isEmpty())
+    if (isEmpty(response->priv->resourceResponse.suggestedFilename()))
         return 0;
 
-    response->priv->suggestedFilename = response->priv->resourceResponse.suggestedFilename().utf8();
+    response->priv->suggestedFilename = utf8(response->priv->resourceResponse.suggestedFilename());
     return response->priv->suggestedFilename.legacyCStringPointer();
 }
 

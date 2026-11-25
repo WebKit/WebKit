@@ -41,8 +41,8 @@ public:
     ~WorkerCanvasAgent();
 
     // CanvasBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestNodes(const Inspector::Protocol::Canvas::CanvasId&) override;
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestCSSCanvasClientNodes(const Inspector::Protocol::Canvas::CanvasId&) override;
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestNodes(StringImpl*) override;
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestCSSCanvasClientNodes(StringImpl*) override;
 
 private:
     bool matchesCurrentContext(ScriptExecutionContext*) const override;

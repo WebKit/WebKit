@@ -45,7 +45,7 @@ CSSKeywordValue::CSSKeywordValue(StaticCSSValueTag, ImplicitInitialValueTag)
     m_isImplicitInitialValue = true;
 }
 
-String CSSKeywordValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSKeywordValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_keyword);
 }

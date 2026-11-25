@@ -153,12 +153,12 @@ inline double JSFunction::originalLength(VM& vm)
 }
 
 template<typename... StringTypes>
-ALWAYS_INLINE String makeNameWithOutOfMemoryCheck(JSGlobalObject* globalObject, ThrowScope& throwScope, ASCIILiteral messagePrefix, StringTypes... strings)
+ALWAYS_INLINE RefPtr<StringImpl> makeNameWithOutOfMemoryCheck(JSGlobalObject* globalObject, ThrowScope& throwScope, ASCIILiteral messagePrefix, StringTypes... strings)
 {
-    String name = tryMakeString(strings...);
+    RefPtr<StringImpl> name = tryMakeString(strings...);
     if (!name) [[unlikely]] {
         throwOutOfMemoryError(globalObject, throwScope, makeString(messagePrefix, "name is too long"_s));
-        return String();
+        return nullptr;
     }
     return name;
 }
@@ -184,7 +184,7 @@ inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
     }
 
     const Identifier& ecmaName = jsExecutable()->ecmaName();
-    String name;
+    RefPtr<StringImpl> name;
     // https://tc39.github.io/ecma262/#sec-exports-runtime-semantics-evaluation
     // When the ident is "*default*", we need to set "default" for the ecma name.
     // This "*default*" name is never shown to users.

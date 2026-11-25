@@ -127,12 +127,12 @@ public:
         fail(URLFilterParser::BackReference);
     }
 
-    NODELETE void atomNamedBackReference(const String&)
+    NODELETE void atomNamedBackReference(StringImpl*)
     {
         fail(URLFilterParser::BackReference);
     }
 
-    NODELETE void atomNamedForwardReference(const String&)
+    NODELETE void atomNamedForwardReference(StringImpl*)
     {
         fail(URLFilterParser::ForwardReference);
     }
@@ -253,7 +253,7 @@ public:
         fail(URLFilterParser::AtomCharacter);
     }
 
-    void atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt)
+    void atomParenthesesSubpatternBegin(bool = true, std::optional<RefPtr<StringImpl>> = std::nullopt)
     {
         if (hasError())
             return;

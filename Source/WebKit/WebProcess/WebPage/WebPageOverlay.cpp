@@ -136,17 +136,17 @@ void WebPageOverlay::dataDetectorsDidHideUI()
 }
 #endif // PLATFORM(MAC)
 
-bool WebPageOverlay::copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String attribute, FloatPoint parameter, String& value)
+bool WebPageOverlay::copyAccessibilityAttributeStringValueForPoint(PageOverlay&, RefPtr<StringImpl> attribute, FloatPoint parameter, RefPtr<StringImpl>& value)
 {
     return m_client->copyAccessibilityAttributeStringValueForPoint(*this, attribute, parameter, value);
 }
 
-bool WebPageOverlay::copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String attribute, FloatPoint parameter, bool& value)
+bool WebPageOverlay::copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, RefPtr<StringImpl> attribute, FloatPoint parameter, bool& value)
 {
     return m_client->copyAccessibilityAttributeBoolValueForPoint(*this, attribute, parameter, value);
 }
 
-Vector<String> WebPageOverlay::copyAccessibilityAttributeNames(PageOverlay&, bool parameterizedNames)
+Vector<RefPtr<StringImpl>> WebPageOverlay::copyAccessibilityAttributeNames(PageOverlay&, bool parameterizedNames)
 {
     return m_client->copyAccessibilityAttributeNames(*this, parameterizedNames);
 }

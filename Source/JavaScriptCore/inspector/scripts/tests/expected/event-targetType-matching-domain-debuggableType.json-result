@@ -194,7 +194,7 @@ protected:
 class DomainBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<DomainBackendDispatcher> create(BackendDispatcher&, DomainBackendDispatcherHandler*);
-    void dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message) final;
+    void dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message) final;
 private:
     void Command(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -265,16 +265,16 @@ DomainBackendDispatcher::DomainBackendDispatcher(BackendDispatcher& backendDispa
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain("Domain"_s, this);
+    m_backendDispatcher->registerDispatcherForDomain("Domain"_si, this);
 }
 
-void DomainBackendDispatcher::dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message)
+void DomainBackendDispatcher::dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message)
 {
     Ref<DomainBackendDispatcher> protect(*this);
 
-    auto protocol_parameters = protocol_message->getObject("params"_s);
+    auto protocol_parameters = protocol_message->getObject("params"_si);
 
-    if (protocol_method == "Command"_s) {
+    if (equal(protocol_method, "Command"_s)) {
         Command(protocol_requestId, WTF::move(protocol_parameters));
         return;
     }
@@ -293,7 +293,7 @@ void DomainBackendDispatcher::Command(long protocol_requestId, RefPtr<JSON::Obje
 
     auto result = m_agent->Command();
     if (!result) {
-        ASSERT(!result.error().isEmpty());
+        ASSERT(!isEmpty(result.error()));
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, result.error());
         return;
     }
@@ -408,7 +408,7 @@ DomainFrontendDispatcher::~DomainFrontendDispatcher() = default;
 void DomainFrontendDispatcher::Event()
 {
     auto protocol_jsonMessage = JSON::Object::create();
-    protocol_jsonMessage->setString("method"_s, "Domain.Event"_s);
+    protocol_jsonMessage->setString("method"_si, "Domain.Event"_si);
 
     m_frontendRouter->sendEvent(protocol_jsonMessage->toJSONString());
 }
@@ -611,13 +611,13 @@ namespace Inspector {
 void ObjCInspectorDomainBackendDispatcher::Command(long protocol_requestId)
 {
     if (![m_delegate respondsToSelector:@selector(CommandWithErrorCallback:successCallback:)]) {
-        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Domain.Command' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'Domain.Command' was not found"_si);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, StringImpl::create(error).get());
     };
 
     id successCallback = ^{
@@ -739,7 +739,7 @@ using namespace Inspector;
     _domainHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorDomainBackendDispatcher>(handler);
-    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<DomainBackendDispatcher, AlternateDomainBackendDispatcher>>("Domain"_s, *_controller, WTF::move(alternateDispatcher));
+    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<DomainBackendDispatcher, AlternateDomainBackendDispatcher>>("Domain"_si, *_controller, WTF::move(alternateDispatcher));
     _controller->registerAlternateAgent(WTF::move(alternateAgent));
 }
 
@@ -817,7 +817,7 @@ using namespace Inspector;
     const FrontendRouter& router = _controller->frontendRouter();
 
     auto protocol_jsonMessage = JSON::Object::create();
-    protocol_jsonMessage->setString("method"_s, "Domain.Event"_s);
+    protocol_jsonMessage->setString("method"_si, "Domain.Event"_si);
     router.sendEvent(protocol_jsonMessage->toJSONString());
 }
 
@@ -961,7 +961,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
 } // namespace Inspector
 

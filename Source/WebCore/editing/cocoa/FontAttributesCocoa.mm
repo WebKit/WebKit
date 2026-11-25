@@ -97,7 +97,7 @@ static RetainPtr<NSString> cocoaTextListMarkerName(const Style::ListStyleType& s
             // The marker for the marker format `{<identifier>}` is `n` where `n` is the item ordinal, and the list is considered ordered.
             // The marker for the marker format `<identifier>` is `<identifier>`, and the list is considered unordered.
             auto format = ordered ? makeString("{"_s, identifier.value, "}"_s) : identifier.value;
-            return format.createNSString();
+            return createNSString(format);
         },
         [&](const Style::ListStyleType::SymbolsFunction&) {
             // The anonymous counter style defined by `symbols()` has no Cocoa equivalent.
@@ -180,7 +180,7 @@ std::optional<BlockPresentationIntent> BlockPresentationIntent::fromPresentation
     case NSPresentationIntentKindListItem:
         return listIntentEnclosingListItem(intent);
     case NSPresentationIntentKindCodeBlock:
-        return BlockPresentationIntent { Kind::CodeBlock, 0, 0, intent.languageHint };
+        return BlockPresentationIntent { Kind::CodeBlock, 0, 0, StringImpl::create(intent.languageHint) };
     case NSPresentationIntentKindBlockQuote:
         return BlockPresentationIntent { Kind::BlockQuote };
     case NSPresentationIntentKindThematicBreak:

@@ -229,17 +229,17 @@ void WebInspectorFrontendClient::startWindowDrag()
     [[m_frontendWindowController window] performWindowDragWithEvent:[NSApp currentEvent]];
 }
 
-String WebInspectorFrontendClient::localizedStringsURL() const
+RefPtr<StringImpl> WebInspectorFrontendClient::localizedStringsURL() const
 {
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
     if (!bundle)
-        return String();
+        return nullptr;
 
     NSString *path = [bundle pathForResource:@"localizedStrings" ofType:@"js"];
     if (!path.length)
-        return String();
+        return nullptr;
     
-    return [NSURL fileURLWithPath:path isDirectory:NO].absoluteString;
+    return StringImpl::create([NSURL fileURLWithPath:path isDirectory:NO].absoluteString);
 }
 
 void WebInspectorFrontendClient::bringToFront()
@@ -341,7 +341,7 @@ void WebInspectorFrontendClient::setSheetRect(const WebCore::FloatRect& rect)
     m_sheetRect = rect;
 }
 
-void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
+void WebInspectorFrontendClient::inspectedURLChanged(StringImpl* newURL)
 {
     m_inspectedURL = newURL;
     updateWindowTitle();
@@ -374,16 +374,16 @@ bool WebInspectorFrontendClient::supportsDiagnosticLogging()
     return page ? page->settings().diagnosticLoggingEnabled() : false;
 }
 
-void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary& dictionary)
+void WebInspectorFrontendClient::logDiagnosticEvent(StringImpl* eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
     if (RefPtr page = frontendPage())
-        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(eventName, "Legacy Web Inspector Frontend Diagnostics"_s, dictionary, WebCore::ShouldSample::No);
+        protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(eventName, "Legacy Web Inspector Frontend Diagnostics"_si, dictionary, WebCore::ShouldSample::No);
 }
 #endif
 
 void WebInspectorFrontendClient::updateWindowTitle() const
 {
-    RetainPtr title = WEB_UI_FORMAT_CFSTRING("Web Inspector — %@", "Web Inspector window title", m_inspectedURL.createNSString().get()).createNSString();
+    RetainPtr title = createNSString(WEB_UI_FORMAT_CFSTRING("Web Inspector — %@", "Web Inspector window title", createNSString(m_inspectedURL).get()));
     [[m_frontendWindowController.get() window] setTitle:title.get()];
 }
 
@@ -408,11 +408,11 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     ASSERT(saveDatas.size() == 1);
 
     auto suggestedURL = saveDatas[0].url;
-    ASSERT(!suggestedURL.isEmpty());
+    ASSERT(!isEmpty(suggestedURL));
 
     RetainPtr<NSURL> platformURL = m_suggestedToActualURLMap.get(suggestedURL);
     if (!platformURL) {
-        platformURL = [NSURL URLWithString:suggestedURL.createNSString().get()];
+        platformURL = [NSURL URLWithString:createNSString(suggestedURL).get()];
         // The user must confirm new filenames before we can save to them.
         forceSaveAs = true;
     }
@@ -422,8 +422,8 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         return;
 
     // Necessary for the block below.
-    String suggestedURLCopy = suggestedURL;
-    String contentCopy = saveDatas[0].content;
+    RefPtr<StringImpl> suggestedURLCopy = suggestedURL;
+    RefPtr<StringImpl> contentCopy = saveDatas[0].content;
     bool base64Encoded = saveDatas[0].base64Encoded;
 
     auto saveToURL = ^(NSURL *actualURL) {
@@ -438,7 +438,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
             RetainPtr dataContent = toNSData(borrow(*decodedData)->span());
             [dataContent writeToURL:actualURL atomically:YES];
         } else
-            [contentCopy.createNSString() writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+            [createNSString(contentCopy) writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     };
 
     if (!forceSaveAs) {
@@ -470,7 +470,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         completionHandler([panel runModal]);
 }
 
-void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
+void WebInspectorFrontendClient::sendMessageToBackend(StringImpl* message)
 {
     if (RefPtr controller = m_webPageInspectorController.get())
         controller->dispatchMessageFromFrontend(message);

@@ -99,7 +99,7 @@ public:
     // 1. Direct TCP socket mode (JSC shell debugging)
     // 2. Remote Web Inspector integration mode (WebKit debugging)
     bool isRWIMode() const { return !!m_rwiResponseHandler; }
-    JS_EXPORT_PRIVATE void startRWI(Function<bool(const String&)>&& rwiResponseHandler);
+    JS_EXPORT_PRIVATE void startRWI(Function<bool(StringImpl*)>&& rwiResponseHandler);
 #endif
 
     void trackInstance(JSWebAssemblyInstance*);
@@ -196,7 +196,7 @@ private:
     GDBPacketParser m_packetParser;
 
 #if ENABLE(REMOTE_INSPECTOR)
-    Function<bool(const String&)> m_rwiResponseHandler;
+    Function<bool(StringImpl*)> m_rwiResponseHandler;
 #endif
 };
 

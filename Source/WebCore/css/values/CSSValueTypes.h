@@ -58,7 +58,7 @@ struct SerializeInvoker {
         Serialize<CSSType>{}(builder, context, value, std::forward<Rest>(rest)...);
    }
 
-    template<typename CSSType, typename... Rest> [[nodiscard]] WTF::String operator()(const SerializationContext& context, const CSSType& value, Rest&&... rest) const
+    template<typename CSSType, typename... Rest> [[nodiscard]] RefPtr<StringImpl> operator()(const SerializationContext& context, const CSSType& value, Rest&&... rest) const
     {
         StringBuilder builder;
         this->operator()(builder, context, value, std::forward<Rest>(rest)...);

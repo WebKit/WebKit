@@ -58,18 +58,18 @@ public:
     virtual StyledElement* parentElement() const { return nullptr; }
     virtual CSSRule* parentRule() const = 0;
     virtual CSSRuleList* cssRules() const = 0;
-    virtual String cssText() const = 0;
-    virtual ExceptionOr<void> setCssText(const String&) = 0;
+    virtual RefPtr<StringImpl> cssText() const = 0;
+    virtual ExceptionOr<void> setCssText(StringImpl*) = 0;
     virtual unsigned length() const = 0;
-    virtual String item(unsigned index) const = 0;
+    virtual RefPtr<StringImpl> item(unsigned index) const = 0;
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
-    virtual RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) = 0;
-    virtual String getPropertyValue(const String& propertyName) = 0;
-    virtual String getPropertyPriority(const String& propertyName) = 0;
-    virtual String getPropertyShorthand(const String& propertyName) = 0;
-    virtual bool isPropertyImplicit(const String& propertyName) = 0;
-    virtual ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) = 0;
-    virtual ExceptionOr<String> removeProperty(const String& propertyName) = 0;
+    virtual RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(StringImpl* propertyName) = 0;
+    virtual RefPtr<StringImpl> getPropertyValue(StringImpl* propertyName) = 0;
+    virtual RefPtr<StringImpl> getPropertyPriority(StringImpl* propertyName) = 0;
+    virtual RefPtr<StringImpl> getPropertyShorthand(StringImpl* propertyName) = 0;
+    virtual bool isPropertyImplicit(StringImpl* propertyName) = 0;
+    virtual ExceptionOr<void> setProperty(StringImpl* propertyName, StringImpl* value, StringImpl* priority) = 0;
+    virtual ExceptionOr<RefPtr<StringImpl>> removeProperty(StringImpl* propertyName) = 0;
 
     virtual CSSStyleSheet* parentStyleSheet() const { return nullptr; }
 

@@ -35,9 +35,9 @@ namespace WebKit {
 
 struct TextTrackPrivateRemoteConfiguration {
     WebCore::TrackID trackId;
-    String label;
-    String language;
-    String inBandMetadataTrackDispatchType;
+    RefPtr<StringImpl> label;
+    RefPtr<StringImpl> language;
+    RefPtr<StringImpl> inBandMetadataTrackDispatchType;
     MediaTime startTimeVariance { MediaTime::zeroTime() };
     int trackIndex;
 

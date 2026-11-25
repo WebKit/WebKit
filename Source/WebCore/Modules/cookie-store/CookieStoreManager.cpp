@@ -54,7 +54,7 @@ void CookieStoreManager::subscribe(Vector<CookieStoreGetOptions>&& subscriptions
         return;
     }
 
-    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_s });
+    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_si });
 }
 
 void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
@@ -64,7 +64,7 @@ void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&& subscriptio
         return;
     }
 
-    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_s });
+    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_si });
 }
 
 void CookieStoreManager::getSubscriptions(Ref<DeferredPromise>&& promise)
@@ -74,7 +74,7 @@ void CookieStoreManager::getSubscriptions(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_s });
+    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_si });
 }
 
 } // namespace WebCore

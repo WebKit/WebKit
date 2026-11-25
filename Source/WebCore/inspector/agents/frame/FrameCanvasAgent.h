@@ -45,8 +45,8 @@ public:
     ~FrameCanvasAgent();
 
     // CanvasBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestNodes(const Inspector::Protocol::Canvas::CanvasId&) override;
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestCSSCanvasClientNodes(const Inspector::Protocol::Canvas::CanvasId&) override;
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestNodes(StringImpl*) override;
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestCSSCanvasClientNodes(StringImpl*) override;
 
     // InspectorInstrumentation
     void frameNavigated(LocalFrame&);

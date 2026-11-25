@@ -45,15 +45,15 @@ class RemoteImageDecoderAVF final
     : public WebCore::ImageDecoder
     , public CanMakeWeakPtr<RemoteImageDecoderAVF> {
 public:
-    static Ref<RemoteImageDecoderAVF> create(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, WebCore::FragmentedSharedBuffer&, const String& mimeType)
+    static Ref<RemoteImageDecoderAVF> create(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, WebCore::FragmentedSharedBuffer&, StringImpl* mimeType)
     {
         return adoptRef(*new RemoteImageDecoderAVF(manager, identifier, mimeType));
     }
-    RemoteImageDecoderAVF(RemoteImageDecoderAVFManager&, const WebCore::ImageDecoderIdentifier&, const String& mimeType);
+    RemoteImageDecoderAVF(RemoteImageDecoderAVFManager&, const WebCore::ImageDecoderIdentifier&, StringImpl* mimeType);
 
     virtual ~RemoteImageDecoderAVF();
 
-    static bool canDecodeType(const String& mimeType);
+    static bool canDecodeType(StringImpl* mimeType);
     static bool supportsMediaType(MediaType);
 
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
@@ -63,10 +63,10 @@ public:
     WebCore::IntSize size() const final;
     size_t frameCount() const final;
     WebCore::RepetitionCount repetitionCount() const final;
-    String uti() const final;
-    String filenameExtension() const final;
+    RefPtr<StringImpl> uti() const final;
+    RefPtr<StringImpl> filenameExtension() const final;
     std::optional<WebCore::IntPoint> hotSpot() const final { return std::nullopt; }
-    String accessibilityDescription() const final { return String(); }
+    RefPtr<StringImpl> accessibilityDescription() const final { return nullptr; }
 
     WebCore::IntSize frameSizeAtIndex(size_t, WebCore::SubsamplingLevel = WebCore::SubsamplingLevel::Default) const final;
     bool frameIsCompleteAtIndex(size_t) const final;
@@ -92,8 +92,8 @@ private:
     ThreadSafeWeakRef<RemoteImageDecoderAVFManager> m_manager;
     WebCore::ImageDecoderIdentifier m_identifier;
 
-    String m_mimeType;
-    String m_uti;
+    RefPtr<StringImpl> m_mimeType;
+    RefPtr<StringImpl> m_uti;
     bool m_isAllDataReceived { false };
     WTF::Function<void(WebCore::EncodedDataStatus)> m_encodedDataStatusChangedCallback;
     mutable Lock m_frameImagesLock;

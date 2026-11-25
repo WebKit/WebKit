@@ -81,7 +81,7 @@ ContextMenuContextData::ContextMenuContextData(const IntPoint& menuLocation, con
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, RefPtr<WebCore::ShareableBitmap>&& controlledImage, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<ElementContext>&& elementContext, const String& sourceImageMIMEType)
+ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, RefPtr<WebCore::ShareableBitmap>&& controlledImage, bool isEditable, const WebCore::IntRect& imageRect, StringImpl* attachmentID, std::optional<ElementContext>&& elementContext, StringImpl* sourceImageMIMEType)
     : m_type(Type::ServicesMenu)
     , m_menuLocation(menuLocation)
     , m_controlledImage(WTF::move(controlledImage))
@@ -139,16 +139,16 @@ ContextMenuContextData::ContextMenuContextData(WebCore::ContextMenuContext::Type
     , WebCore::IntPoint&& menuLocation
     , Vector<WebContextMenuItemData>&& menuItems
     , std::optional<WebKit::WebHitTestResultData>&& webHitTestResultData
-    , String&& selectedText
+    , RefPtr<StringImpl>&& selectedText
 #if ENABLE(SERVICE_CONTROLS)
     , std::optional<WebCore::ShareableBitmapHandle>&& controlledImageHandle
     , WebCore::AttributedString&& controlledSelection
-    , Vector<String>&& selectedTelephoneNumbers
+    , Vector<RefPtr<StringImpl>>&& selectedTelephoneNumbers
     , bool selectionIsEditable
     , WebCore::IntRect&& controlledImageBounds
-    , String&& controlledImageAttachmentID
+    , RefPtr<StringImpl>&& controlledImageAttachmentID
     , std::optional<WebCore::ElementContext>&& controlledImageElementContext
-    , String&& controlledImageMIMEType
+    , RefPtr<StringImpl>&& controlledImageMIMEType
 #endif // ENABLE(SERVICE_CONTROLS)
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     , std::optional<WebCore::ShareableBitmapHandle>&& potentialQRCodeNodeSnapshotImageHandle
@@ -200,7 +200,7 @@ ContextMenuContextData::ContextMenuContextData(WebCore::ContextMenuContext::Type
 #if ENABLE(SERVICE_CONTROLS)
 bool ContextMenuContextData::controlledDataIsEditable() const
 {
-    if (!m_controlledSelection.isNull() || m_controlledImage || !m_controlledImageAttachmentID.isNull())
+    if (!m_controlledSelection.isNull() || m_controlledImage || m_controlledImageAttachmentID)
         return m_selectionIsEditable;
 
     return false;

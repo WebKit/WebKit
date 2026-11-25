@@ -49,8 +49,8 @@ Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document,
     auto element = adoptRef(*new DateTimeDayFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditDayField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldDayText() });
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(AXDateFieldDayText()).get());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     return element;
 }
 
@@ -79,8 +79,8 @@ Ref<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document& documen
     auto element = adoptRef(*new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditHourField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldHourText() });
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(AXTimeFieldHourText()).get());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     return element;
 }
 
@@ -136,25 +136,25 @@ void DateTimeHourFieldElement::setValueAsDate(const DateComponents& date)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DateTimeMeridiemFieldElement);
 
-DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
+DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<RefPtr<StringImpl>>& labels)
     : DateTimeSymbolicFieldElement(document, fieldOwner, labels, labels.size() - 1)
 {
 }
 
-Ref<DateTimeMeridiemFieldElement> DateTimeMeridiemFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
+Ref<DateTimeMeridiemFieldElement> DateTimeMeridiemFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<RefPtr<StringImpl>>& labels)
 {
     auto element = adoptRef(*new DateTimeMeridiemFieldElement(document, fieldOwner, labels));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMeridiemField());
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     element->updateAriaValueAttributes();
     return element;
 }
 
 void DateTimeMeridiemFieldElement::updateAriaValueAttributes()
 {
-    setAttributeWithoutSynchronization(HTMLNames::aria_valuenowAttr, AtomString::number(valueAsInteger()));
-    setAttributeWithoutSynchronization(HTMLNames::aria_valuetextAttr, AtomString { visibleValue() });
+    setAttributeWithoutSynchronization(HTMLNames::aria_valuenowAttr, AtomStringImpl::number(valueAsInteger()));
+    setAttributeWithoutSynchronization(HTMLNames::aria_valuetextAttr, AtomStringImpl::add(visibleValue()).get());
 }
 
 void DateTimeMeridiemFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
@@ -195,8 +195,8 @@ Ref<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Doc
     auto element = adoptRef(*new DateTimeMillisecondFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMillisecondField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldMillisecondText() });
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(AXTimeFieldMillisecondText()).get());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     return element;
 }
 
@@ -225,8 +225,8 @@ Ref<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document& doc
     auto element = adoptRef(*new DateTimeMinuteFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMinuteField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldMinuteText() });
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(AXTimeFieldMinuteText()).get());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     return element;
 }
 
@@ -255,8 +255,8 @@ Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& docum
     auto element = adoptRef(*new DateTimeMonthFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMonthField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldMonthText() });
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(AXDateFieldMonthText()).get());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     return element;
 }
 
@@ -286,8 +286,8 @@ Ref<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document& doc
     auto element = adoptRef(*new DateTimeSecondFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditSecondField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldSecondText() });
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(AXTimeFieldSecondText()).get());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     return element;
 }
 
@@ -306,18 +306,18 @@ void DateTimeSecondFieldElement::setValueAsDate(const DateComponents& date)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DateTimeSymbolicMonthFieldElement);
 
-DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
+DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<RefPtr<StringImpl>>& labels)
     : DateTimeSymbolicFieldElement(document, fieldOwner, labels, fieldOwner.placeholderDate().month())
 {
 }
 
-Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<String>& labels)
+Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Vector<RefPtr<StringImpl>>& labels)
 {
     auto element = adoptRef(*new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMonthField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldMonthText() });
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(AXDateFieldMonthText()).get());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     return element;
 }
 
@@ -346,8 +346,8 @@ Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& documen
     auto element = adoptRef(*new DateTimeYearFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditYearField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldYearText() });
-    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomStringImpl::add(AXDateFieldYearText()).get());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, "spinbutton"_atom);
     return element;
 }
 

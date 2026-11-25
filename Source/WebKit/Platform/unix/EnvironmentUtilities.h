@@ -35,7 +35,7 @@ namespace WebKit {
 
 namespace EnvironmentUtilities {
 
-WK_EXPORT String stripEntriesEndingWith(StringView input, StringView suffix);
+WK_EXPORT RefPtr<StringImpl> stripEntriesEndingWith(StringView input, StringView suffix);
 WK_EXPORT void removeValuesEndingWith(const char* environmentVariable, const char* search);
 
 } // namespace EnvironmentUtilities

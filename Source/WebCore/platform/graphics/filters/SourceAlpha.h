@@ -30,7 +30,7 @@ class SourceAlpha final : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<SourceAlpha> create(const ColorSpace& = ColorSpace::SRGB());
 
-    static AtomString effectName() { return FilterEffect::sourceAlphaName(); }
+    static RefPtr<AtomStringImpl> effectName() { return FilterEffect::sourceAlphaName(); }
 
 private:
     explicit SourceAlpha(ColorSpace);

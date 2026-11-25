@@ -52,8 +52,8 @@ public:
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     static Symbol* create(VM&);
-    static Symbol* createWithDescription(VM&, const String&);
-    static Symbol* createWithDescription(VM&, const String&, JSString*);
+    static Symbol* createWithDescription(VM&, StringImpl*);
+    static Symbol* createWithDescription(VM&, StringImpl*, JSString*);
     JS_EXPORT_PRIVATE static Symbol* create(VM&, SymbolImpl& uid);
 
     SymbolImpl& uid() const { return m_privateName.uid(); }
@@ -75,12 +75,12 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    std::expected<String, ErrorTypeWithExtension> tryGetDescriptiveString() const;
+    std::expected<RefPtr<StringImpl>, ErrorTypeWithExtension> tryGetDescriptiveString() const;
 
 private:
     Symbol(VM&);
-    Symbol(VM&, const String&);
-    Symbol(VM&, const String&, JSString*);
+    Symbol(VM&, StringImpl*);
+    Symbol(VM&, StringImpl*, JSString*);
     Symbol(VM&, SymbolImpl& uid);
 
     static void destroy(JSCell*);

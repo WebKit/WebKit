@@ -69,7 +69,7 @@ private:
     void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions) override;
     void focusedFrameChanged(WebCore::Frame*) final;
 
-    RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, const String& openedMainFrameName, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
+    RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, StringImpl* openedMainFrameName, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
 
     bool canRunModal() const final;
@@ -79,19 +79,19 @@ private:
 
     void setResizable(bool) final;
 
-    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceURL) final;
+    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, StringImpl* message, unsigned lineNumber, unsigned columnNumber, StringImpl* sourceURL) final;
 
     bool canRunBeforeUnloadConfirmPanel() final;
-    bool runBeforeUnloadConfirmPanel(String&& message, WebCore::LocalFrame&) final;
+    bool runBeforeUnloadConfirmPanel(RefPtr<StringImpl>&& message, WebCore::LocalFrame&) final;
 
     void closeWindow() final;
 
     void rootFrameAdded(const WebCore::LocalFrame&) final { }
     void rootFrameRemoved(const WebCore::LocalFrame&) final { }
 
-    void runJavaScriptAlert(WebCore::LocalFrame&, const String&) override;
-    bool runJavaScriptConfirm(WebCore::LocalFrame&, const String&) override;
-    bool runJavaScriptPrompt(WebCore::LocalFrame&, const String& message, const String& defaultValue, String& result) override;
+    void runJavaScriptAlert(WebCore::LocalFrame&, StringImpl*) override;
+    bool runJavaScriptConfirm(WebCore::LocalFrame&, StringImpl*) override;
+    bool runJavaScriptPrompt(WebCore::LocalFrame&, StringImpl* message, StringImpl* defaultValue, RefPtr<StringImpl>& result) override;
 
     void invalidateRootView(const WebCore::IntRect&) final;
     void invalidateContentsAndRootView(const WebCore::IntRect&) final;
@@ -115,18 +115,18 @@ private:
 
     bool shouldUnavailablePluginMessageBeButton(WebCore::PluginUnavailabilityReason) const final;
     void unavailablePluginButtonClicked(WebCore::Element&, WebCore::PluginUnavailabilityReason) const final;
-    void mouseDidMoveOverElement(const WebCore::HitTestResult&, OptionSet<WebCore::PlatformEventModifier>, const String&, WebCore::TextDirection) final;
+    void mouseDidMoveOverElement(const WebCore::HitTestResult&, OptionSet<WebCore::PlatformEventModifier>, StringImpl*, WebCore::TextDirection) final;
 
-    void setToolTip(const String&);
+    void setToolTip(StringImpl*);
 
     void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
-    void exceededDatabaseQuota(WebCore::LocalFrame&, const String& databaseName, WebCore::DatabaseDetails) final;
+    void exceededDatabaseQuota(WebCore::LocalFrame&, StringImpl* databaseName, WebCore::DatabaseDetails) final;
 
     void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) override;
     void showShareSheet(WebCore::ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) override;
 
-    void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
-    RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) override;
+    void loadIconForFiles(const Vector<RefPtr<StringImpl>>&, WebCore::FileIconLoader&) final;
+    RefPtr<WebCore::Icon> createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames) override;
 
 #if !PLATFORM(IOS_FAMILY)
     void setCursor(const WebCore::Cursor&) final;
@@ -216,7 +216,7 @@ private:
     void wheelEventHandlersChanged(bool) final { }
 
 #if ENABLE(SERVICE_CONTROLS)
-    void handleSelectionServiceClick(WebCore::FrameIdentifier, WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&) final;
+    void handleSelectionServiceClick(WebCore::FrameIdentifier, WebCore::FrameSelection&, const Vector<RefPtr<StringImpl>>& telephoneNumbers, const WebCore::IntPoint&) final;
     bool hasRelevantSelectionServices(bool isTextOnly) const final;
 #endif
 
@@ -226,7 +226,7 @@ private:
     void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::IntPoint& /* positionInMainFrameView */, bool /* hasVideo */) final;
     void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducerMediaStateFlags) final;
     void setMockMediaPlaybackTargetPickerEnabled(bool) final;
-    void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetMockState) final;
+    void setMockMediaPlaybackTargetPickerState(StringImpl*, WebCore::MediaPlaybackTargetMockState) final;
     void mockMediaPlaybackTargetPickerDismissPopup() override;
 #endif
 
@@ -241,7 +241,7 @@ private:
     RefPtr<WebCore::ShapeDetection::FaceDetector> createFaceDetector(const WebCore::ShapeDetection::FaceDetectorOptions&) const final;
     RefPtr<WebCore::ShapeDetection::TextDetector> createTextDetector() const final;
 
-    void registerBlobPathForTesting(const String&, CompletionHandler<void()>&&) final;
+    void registerBlobPathForTesting(StringImpl*, CompletionHandler<void()>&&) final;
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     void didFinishContentChangeObserving(WebCore::LocalFrame&, WebCore::ContentChange) final;

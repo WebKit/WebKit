@@ -127,7 +127,7 @@ GstElement* GStreamerVideoCapturer::createConverter()
         return nullptr;
 
     auto* bin = gst_bin_new(nullptr);
-    auto* videorate = makeGStreamerElement("videorate"_s, "videorate"_s);
+    auto* videorate = makeGStreamerElement("videorate"_s, "videorate"_si);
 
     // The capture pipeline runs with a zero base time (see GStreamerCapturer::setupPipeline), so buffer
     // timestamps are absolute clock times. videorate has to start counting at the first buffer it receives:
@@ -335,8 +335,8 @@ void GStreamerVideoCapturer::reconfigure()
         return;
 
     struct MimeTypeSelector {
-        String mimeType = "video/x-raw"_s;
-        String format;
+        RefPtr<StringImpl> mimeType = "video/x-raw"_s;
+        RefPtr<StringImpl> format;
         int maxWidth = 0;
         int maxHeight = 0;
         double maxFrameRate = 0;
@@ -382,10 +382,10 @@ void GStreamerVideoCapturer::reconfigure()
                 selector->maxWidth = *width;
                 selector->maxHeight = *height;
                 selector->maxFrameRate = *frameRate;
-                selector->mimeType = gstStructureGetName(structure).span();
+                selector->mimeType = StringImpl::create(gstStructureGetName(structure).span());
                 if (gst_structure_has_name(structure, "video/x-raw")) {
                     if (gst_structure_has_field(structure, "format"))
-                        selector->format = gstStructureGetString(structure, "format"_s).span();
+                        selector->format = StringImpl::create(gstStructureGetString(structure, "format"_s).span());
                     else
                         return TRUE;
                 }
@@ -396,10 +396,10 @@ void GStreamerVideoCapturer::reconfigure()
                 selector->maxWidth = *width;
                 selector->maxHeight = *height;
                 selector->maxFrameRate = *frameRate;
-                selector->mimeType = gstStructureGetName(structure).span();
+                selector->mimeType = StringImpl::create(gstStructureGetName(structure).span());
                 if (gst_structure_has_name(structure, "video/x-raw")) {
                     if (gst_structure_has_field(structure, "format"))
-                        selector->format = gstStructureGetString(structure, "format"_s).span();
+                        selector->format = StringImpl::create(gstStructureGetString(structure, "format"_s).span());
                     else
                         return TRUE;
                 }
@@ -408,7 +408,7 @@ void GStreamerVideoCapturer::reconfigure()
             return TRUE;
         }), &selector);
 
-    GRefPtr caps = adoptGRef(gst_caps_new_simple(selector.mimeType.ascii().data(), "width", G_TYPE_INT, selector.maxWidth,
+    GRefPtr caps = adoptGRef(gst_caps_new_simple(ascii(selector.mimeType).data(), "width", G_TYPE_INT, selector.maxWidth,
         "height", G_TYPE_INT, selector.maxHeight, nullptr));
 
     GST_INFO_OBJECT(m_pipeline.get(), "Setting video capture device caps to %" GST_PTR_FORMAT, caps.get());

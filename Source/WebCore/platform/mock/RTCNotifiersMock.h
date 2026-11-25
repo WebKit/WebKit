@@ -42,26 +42,26 @@ class RTCVoidRequest;
 
 class SessionRequestNotifier : public MockNotifier {
 public:
-    SessionRequestNotifier(RefPtr<RTCSessionDescriptionRequest>&&, RefPtr<RTCSessionDescriptionDescriptor>&&, const String& = emptyString());
+    SessionRequestNotifier(RefPtr<RTCSessionDescriptionRequest>&&, RefPtr<RTCSessionDescriptionDescriptor>&&, StringImpl* = emptyString());
 
     void fire() override;
 
 private:
     const RefPtr<RTCSessionDescriptionRequest> m_request;
     const RefPtr<RTCSessionDescriptionDescriptor> m_descriptor;
-    String m_errorName;
+    RefPtr<StringImpl> m_errorName;
 };
 
 class VoidRequestNotifier : public MockNotifier {
 public:
-    VoidRequestNotifier(RefPtr<RTCVoidRequest>&&, bool, const String& = emptyString());
+    VoidRequestNotifier(RefPtr<RTCVoidRequest>&&, bool, StringImpl* = emptyString());
 
     void fire() override;
 
 private:
     const RefPtr<RTCVoidRequest> m_request;
     bool m_success;
-    String m_errorName;
+    RefPtr<StringImpl> m_errorName;
 };
 
 class IceConnectionNotifier : public MockNotifier {

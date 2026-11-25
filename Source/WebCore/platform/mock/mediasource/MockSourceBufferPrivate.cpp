@@ -125,7 +125,7 @@ public:
 
 private:
     MockMediaDescription(const MockTrackBox& box)
-        : MediaDescription(box.codec().isolatedCopy())
+        : MediaDescription(isolatedCopy(box.codec()))
         , m_box(box)
     {
     }
@@ -163,11 +163,11 @@ Ref<MediaPromise> MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& da
         if (boxLength > buffer->byteLength())
             break;
 
-        String type = MockBox::peekType(buffer.ptr());
-        if (type == MockInitializationBox::type()) {
+        RefPtr<StringImpl> type = MockBox::peekType(buffer.ptr());
+        if (equal(type, MockInitializationBox::type())) {
             MockInitializationBox initBox = MockInitializationBox(buffer.ptr());
             didReceiveInitializationSegment(initBox);
-        } else if (type == MockSampleBox::type()) {
+        } else if (equal(type, MockSampleBox::type())) {
             MockSampleBox sampleBox = MockSampleBox(buffer.ptr());
             didReceiveSample(sampleBox);
         } else {

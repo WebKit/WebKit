@@ -166,7 +166,7 @@ public:
         m_worldSet.remove(&world);
     }
 
-    virtual String overrideSourceURL(const JSC::StackFrame&, const String& originalSourceURL) const;
+    virtual RefPtr<StringImpl> overrideSourceURL(const JSC::StackFrame&, StringImpl* originalSourceURL) const;
 
     JSHeapData& heapData() { return m_heapData.get(); }
 
@@ -232,7 +232,7 @@ private:
 
 // Returns the first non-native source URL from the exception's stack frames without applying
 // URL masking, unlike StackFrame::sourceURL(VM&) which goes through overrideSourceURL.
-String unmaskedSourceURLFromException(JSC::Exception&, JSC::VM&);
+RefPtr<StringImpl> unmaskedSourceURLFromException(JSC::Exception&, JSC::VM&);
 
 } // namespace WebCore
 

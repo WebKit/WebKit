@@ -48,7 +48,7 @@ namespace API {
 
 class WebPushDaemonConnection final : public ObjectImpl<Object::Type::WebPushDaemonConnection> {
 public:
-    WebPushDaemonConnection(const WTF::String& machServiceName, WebKit::WebPushD::WebPushDaemonConnectionConfiguration&&);
+    WebPushDaemonConnection(StringImpl* machServiceName, WebKit::WebPushD::WebPushDaemonConnectionConfiguration&&);
 
     void getPushPermissionState(const WTF::URL&, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void requestPushPermission(const WTF::URL&, CompletionHandler<void(bool)>&&);
@@ -59,7 +59,7 @@ public:
     void getNextPendingPushMessage(CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&&);
 
     void showNotification(const WebCore::NotificationData&, CompletionHandler<void()>&&);
-    void getNotifications(const WTF::URL&, const WTF::String& tag, CompletionHandler<void(const std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&)>&&);
+    void getNotifications(const WTF::URL&, StringImpl* tag, CompletionHandler<void(const std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&)>&&);
     void cancelNotification(const WTF::URL&, const WTF::UUID&);
 
 private:

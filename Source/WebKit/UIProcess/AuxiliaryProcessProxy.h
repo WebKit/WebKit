@@ -71,7 +71,7 @@ enum class ProcessThrottleState : uint8_t;
 enum class ShouldTakeUIBackgroundAssertion : bool { No, Yes };
 enum class AlwaysRunsAtBackgroundPriority : bool { No, Yes };
 
-using ExtensionCapabilityGrantMap = HashMap<String, ExtensionCapabilityGrant>;
+using ExtensionCapabilityGrantMap = HashMap<RefPtr<StringImpl>, ExtensionCapabilityGrant>;
 
 class AuxiliaryProcessProxy
     : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>
@@ -188,7 +188,7 @@ public:
     };
     inline State state() const;
 
-    String stateString() const;
+    RefPtr<StringImpl> stateString() const;
     bool isLaunching() const { return state() == State::Launching; }
     bool wasTerminated() const;
     bool isSuspended() const { return m_isSuspended; }
@@ -256,7 +256,7 @@ public:
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
+    void notifyPreferencesChanged(StringImpl* domain, StringImpl* key, const std::optional<RefPtr<StringImpl>>& encodedValue);
 #endif
 
     enum ResumeReason : bool { ForegroundActivity, BackgroundActivity };
@@ -264,7 +264,7 @@ public:
     virtual void sendProcessDidResume(ResumeReason) = 0;
     virtual void didChangeThrottleState(ProcessThrottleState);
     ASCIILiteral clientName() const { return m_clientName; }
-    String environmentIdentifier();
+    RefPtr<StringImpl> environmentIdentifier();
     virtual void prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void didDropLastAssertion() { }
 
@@ -342,7 +342,7 @@ private:
     void outgoingMessageQueueIsGrowingLarge();
 
     void populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions&) const;
-    Vector<String> platformOverrideLanguages() const;
+    Vector<RefPtr<StringImpl>> platformOverrideLanguages() const;
     void platformStartConnectionTerminationWatchdog();
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
@@ -383,7 +383,7 @@ private:
 #if ENABLE(EXTENSION_CAPABILITIES)
     ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
 #endif
-    String m_environmentIdentifier;
+    RefPtr<StringImpl> m_environmentIdentifier;
     const ASCIILiteral m_clientName;
     HashMap<Vector<uint8_t>, std::pair<unsigned, std::unique_ptr<IPC::Encoder>>> m_messagesToSendOnResume;
     unsigned m_messagesToSendOnResumeIndex { 0 };

@@ -54,7 +54,7 @@ JSValue Global::get(JSGlobalObject* globalObject) const
     case TypeKind::F64:
         return jsNumber(purifyNaN(std::bit_cast<double>(m_value.m_primitive)));
     case TypeKind::V128:
-        throwTypeError(globalObject, throwScope, "Cannot get value of v128 global"_s);
+        throwTypeError(globalObject, throwScope, "Cannot get value of v128 global"_si);
         return { };
     case TypeKind::Exnref:
     case TypeKind::Externref:
@@ -62,7 +62,7 @@ JSValue Global::get(JSGlobalObject* globalObject) const
     case TypeKind::Ref:
     case TypeKind::RefNull: {
         if (isExnref(m_type)) [[unlikely]] {
-            throwTypeError(globalObject, throwScope, "Cannot get value of exnref global"_s);
+            throwTypeError(globalObject, throwScope, "Cannot get value of exnref global"_si);
             return { };
         }
         return m_value.m_externref.get();

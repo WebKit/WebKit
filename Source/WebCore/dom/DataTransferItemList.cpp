@@ -69,12 +69,12 @@ RefPtr<DataTransferItem> DataTransferItemList::item(unsigned index)
     return items[index].copyRef();
 }
 
-static bool shouldExposeTypeInItemList(const String& type)
+static bool shouldExposeTypeInItemList(StringImpl* type)
 {
     return DeprecatedGlobalSettings::customPasteboardDataEnabled() || Pasteboard::isSafeTypeForDOMToReadAndWrite(type);
 }
 
-ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& document, const String& data, const String& type)
+ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& document, StringImpl* data, StringImpl* type)
 {
     Ref dataTransfer = m_dataTransfer.get();
     if (!dataTransfer->canWriteData())
@@ -85,7 +85,7 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& docume
             return Exception { ExceptionCode::NotSupportedError };
     }
 
-    String lowercasedType = type.convertToASCIILowercase();
+    RefPtr<StringImpl> lowercasedType = convertToASCIILowercase(type);
 
     if (!shouldExposeTypeInItemList(lowercasedType))
         return nullptr;
@@ -159,7 +159,7 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
     Ref dataTransfer = m_dataTransfer.get();
     Vector<Ref<DataTransferItem>> items;
     for (auto& type : dataTransfer->typesForItemList(document)) {
-        auto lowercasedType = type.convertToASCIILowercase();
+        auto lowercasedType = convertToASCIILowercase(type);
         if (shouldExposeTypeInItemList(lowercasedType))
             items.append(DataTransferItem::create(*this, lowercasedType, DataTransferItem::Kind::String));
     }
@@ -180,10 +180,10 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
     return *m_items;
 }
 
-static void removeStringItemOfLowercasedType(Vector<Ref<DataTransferItem>>& items, const String& lowercasedType)
+static void removeStringItemOfLowercasedType(Vector<Ref<DataTransferItem>>& items, StringImpl* lowercasedType)
 {
     auto index = items.findIf([&lowercasedType](auto& item) {
-        return !item->isFile() && item->type() == lowercasedType;
+        return !item->isFile() && equal(item->type(), lowercasedType);
     });
     if (index == notFound)
         return;
@@ -191,14 +191,14 @@ static void removeStringItemOfLowercasedType(Vector<Ref<DataTransferItem>>& item
     items.removeAt(index);
 }
 
-void DataTransferItemList::didClearStringData(const String& type)
+void DataTransferItemList::didClearStringData(StringImpl* type)
 {
     if (!m_items)
         return;
 
     auto& items = *m_items;
-    if (!type.isNull())
-        return removeStringItemOfLowercasedType(items, type.convertToASCIILowercase());
+    if (type)
+        return removeStringItemOfLowercasedType(items, convertToASCIILowercase(type));
 
     for (auto& item : items) {
         if (!item->isFile())
@@ -210,12 +210,12 @@ void DataTransferItemList::didClearStringData(const String& type)
 }
 
 // https://html.spec.whatwg.org/multipage/dnd.html#dom-datatransfer-setdata
-void DataTransferItemList::didSetStringData(const String& type)
+void DataTransferItemList::didSetStringData(StringImpl* type)
 {
     if (!m_items)
         return;
 
-    String lowercasedType = type.convertToASCIILowercase();
+    RefPtr<StringImpl> lowercasedType = convertToASCIILowercase(type);
     removeStringItemOfLowercasedType(*m_items, lowercasedType);
 
     m_items->append(DataTransferItem::create(*this, lowercasedType, DataTransferItem::Kind::String));

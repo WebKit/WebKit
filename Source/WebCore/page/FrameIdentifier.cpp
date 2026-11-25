@@ -46,7 +46,7 @@ TextStream& operator<<(TextStream& stream, FrameIdentifier identifier)
     return stream;
 }
 
-String frameIdentifierString(FrameIdentifier frameID)
+RefPtr<StringImpl> frameIdentifierString(FrameIdentifier frameID)
 {
     return makeString(frameID.toUInt64() >> 32, ","_s, static_cast<uint32_t>(frameID.toUInt64()));
 }

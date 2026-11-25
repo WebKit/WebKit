@@ -32,11 +32,11 @@ class RenderImage;
 enum class ListMarkerIncludeSuffix : bool { No, Yes };
 
 struct ListMarkerTextContent {
-    String textWithSuffix;
+    RefPtr<StringImpl> textWithSuffix;
     uint32_t textWithoutSuffixLength { 0 };
     bool isEmpty() const
     {
-        return textWithSuffix.isEmpty();
+        return WTF::isEmpty(textWithSuffix);
     }
 
     StringView textWithoutSuffix() const LIFETIME_BOUND
@@ -55,8 +55,8 @@ public:
     int value() const;
     void updateValue();
 
-    WEBCORE_EXPORT String markerText(ListMarkerIncludeSuffix = ListMarkerIncludeSuffix::Yes) const;
-    static String markerText(const RenderObject& marker, ListMarkerIncludeSuffix = ListMarkerIncludeSuffix::Yes);
+    WEBCORE_EXPORT RefPtr<StringImpl> markerText(ListMarkerIncludeSuffix = ListMarkerIncludeSuffix::Yes) const;
+    static RefPtr<StringImpl> markerText(const RenderObject& marker, ListMarkerIncludeSuffix = ListMarkerIncludeSuffix::Yes);
 
     Vector<CheckedRef<RenderListItem>> updateListMarkerNumbers();
 

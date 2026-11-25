@@ -408,7 +408,7 @@ public:
 
     WritingMode writingMode() const { return style().writingMode(); }
 
-    bool addReferencedSVGResourceIfNeeded(SVGElement&, const AtomString&);
+    bool addReferencedSVGResourceIfNeeded(SVGElement&, AtomStringImpl*);
 
     void scheduleRenderingUpdateForImage(CachedImage&) final;
 

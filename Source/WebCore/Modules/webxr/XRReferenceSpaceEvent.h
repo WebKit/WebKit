@@ -44,14 +44,14 @@ public:
         RefPtr<WebXRRigidTransform> transform;
     };
 
-    static Ref<XRReferenceSpaceEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<XRReferenceSpaceEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRReferenceSpaceEvent();
 
     const WebXRReferenceSpace& referenceSpace() const;
     NODELETE WebXRRigidTransform* transform() const;
 
 private:
-    XRReferenceSpaceEvent(const AtomString&, Init&&, IsTrusted);
+    XRReferenceSpaceEvent(AtomStringImpl*, Init&&, IsTrusted);
 
     const Ref<WebXRReferenceSpace> m_referenceSpace;
     const RefPtr<WebXRRigidTransform> m_transform;

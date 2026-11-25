@@ -62,7 +62,7 @@ struct TextAnimationUnanimatedRangeData {
 
 struct ReplacedRangeAndString {
     WebCore::CharacterRange range;
-    String string;
+    RefPtr<StringImpl> string;
 };
 
 class TextAnimationController final {
@@ -74,8 +74,8 @@ public:
 
     void removeInitialTextAnimationForActiveWritingToolsSession();
     void addInitialTextAnimationForActiveWritingToolsSession();
-    void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
-    void addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> sourceAnimationUUID, Markable<WTF::UUID> destinationAnimationUUID, const std::optional<WebCore::CharacterRange>&, const String&);
+    void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange&, StringImpl*, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
+    void addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> sourceAnimationUUID, Markable<WTF::UUID> destinationAnimationUUID, const std::optional<WebCore::CharacterRange>&, StringImpl*);
 
     void saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange&);
 

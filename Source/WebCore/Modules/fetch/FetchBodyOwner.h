@@ -81,7 +81,7 @@ public:
     ResourceError loadingError() const;
     std::optional<Exception> loadingException() const;
 
-    String contentType() const { return m_headers->fastGet(HTTPHeaderName::ContentType); }
+    RefPtr<StringImpl> contentType() const { return m_headers->fastGet(HTTPHeaderName::ContentType); }
 
     FetchBody& body() LIFETIME_BOUND { return *m_body; }
 

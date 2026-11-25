@@ -142,7 +142,7 @@ void ReadableStreamDefaultReader::read(JSDOMGlobalObject& globalObject, Ref<Read
         stream = m_stream;
     }
     if (!stream) {
-        readRequest->runErrorSteps(Exception { ExceptionCode::TypeError, "stream is undefined"_s });
+        readRequest->runErrorSteps(Exception { ExceptionCode::TypeError, "stream is undefined"_si });
         return;
     }
 
@@ -188,7 +188,7 @@ ExceptionOr<void> ReadableStreamDefaultReader::releaseLock(JSDOMGlobalObject& gl
     }
 
     genericRelease(globalObject);
-    errorReadRequests(Exception { ExceptionCode::TypeError, "lock released"_s });
+    errorReadRequests(Exception { ExceptionCode::TypeError, "lock released"_si });
     return { };
 }
 
@@ -202,10 +202,10 @@ ExceptionOr<void> ReadableStreamDefaultReader::setup(JSDOMGlobalObject& globalOb
     }
 
     if (!stream)
-        return Exception { ExceptionCode::TypeError, "stream is undefined"_s };
+        return Exception { ExceptionCode::TypeError, "stream is undefined"_si };
 
     if (stream->isLocked())
-        return Exception { ExceptionCode::TypeError, "ReadableStream is locked"_s };
+        return Exception { ExceptionCode::TypeError, "ReadableStream is locked"_si };
 
     stream->setDefaultReader(this);
 
@@ -238,10 +238,10 @@ void ReadableStreamDefaultReader::genericRelease(JSDOMGlobalObject& globalObject
         return;
 
     if (stream->state() == ReadableStream::State::Readable)
-        Ref { m_closedDeferred }->reject(Exception { ExceptionCode::TypeError, "releasing stream"_s }, RejectAsHandled::Yes);
+        Ref { m_closedDeferred }->reject(Exception { ExceptionCode::TypeError, "releasing stream"_si }, RejectAsHandled::Yes);
     else {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-        deferred->reject(Exception { ExceptionCode::TypeError, "releasing stream"_s }, RejectAsHandled::Yes);
+        deferred->reject(Exception { ExceptionCode::TypeError, "releasing stream"_si }, RejectAsHandled::Yes);
         m_closedDeferred = WTF::move(deferred);
         m_closedPromise = WTF::move(promise);
     }
@@ -273,7 +273,7 @@ Ref<DOMPromise> ReadableStreamDefaultReader::cancel(JSDOMGlobalObject& globalObj
     }
     if (!hasStream) {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-        deferred->reject(Exception { ExceptionCode::TypeError, "no stream"_s });
+        deferred->reject(Exception { ExceptionCode::TypeError, "no stream"_si });
         return promise;
     }
 
@@ -293,7 +293,7 @@ Ref<DOMPromise> ReadableStreamDefaultReader::genericCancel(JSDOMGlobalObject& gl
     ASSERT(stream->defaultReader() == this);
     if (!stream) [[unlikely]] {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-        deferred->reject(Exception { ExceptionCode::TypeError, "no stream"_s });
+        deferred->reject(Exception { ExceptionCode::TypeError, "no stream"_si });
         return promise;
     }
 

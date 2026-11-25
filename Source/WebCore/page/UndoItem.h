@@ -41,7 +41,7 @@ class UndoItem : public RefCountedAndCanMakeWeakPtr<UndoItem> {
     WTF_MAKE_TZONE_ALLOCATED(UndoItem);
 public:
     struct Init {
-        String label;
+        RefPtr<StringImpl> label;
         Ref<VoidCallback> undo;
         Ref<VoidCallback> redo;
     };
@@ -59,7 +59,7 @@ public:
     NODELETE UndoManager* undoManager() const;
     NODELETE void setUndoManager(UndoManager*);
 
-    const String& label() const LIFETIME_BOUND { return m_label; }
+    const RefPtr<StringImpl>& label() const LIFETIME_BOUND { return m_label; }
     VoidCallback& undoHandler() const { return m_undoHandler.get(); }
     VoidCallback& redoHandler() const { return m_redoHandler.get(); }
 
@@ -71,7 +71,7 @@ private:
     {
     }
 
-    String m_label;
+    RefPtr<StringImpl> m_label;
     const Ref<VoidCallback> m_undoHandler;
     const Ref<VoidCallback> m_redoHandler;
     WeakPtr<UndoManager> m_undoManager;

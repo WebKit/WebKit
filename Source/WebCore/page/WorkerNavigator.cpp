@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerNavigator);
 
-WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, const String& userAgent, const String& platform, bool isOnline)
+WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, StringImpl* userAgent, StringImpl* platform, bool isOnline)
     : NavigatorBase(&context)
     , m_userAgent(userAgent)
     , m_platform(platform)
@@ -56,14 +56,14 @@ WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, const String& 
 
 WorkerNavigator::~WorkerNavigator() = default;
 
-const String& WorkerNavigator::userAgent() const
+const RefPtr<StringImpl>& WorkerNavigator::userAgent() const
 {
     return m_userAgent;
 }
 
-String WorkerNavigator::platform() const
+RefPtr<StringImpl> WorkerNavigator::platform() const
 {
-    if (!m_platform.isEmpty())
+    if (!isEmpty(m_platform))
         return m_platform;
     return NavigatorBase::platform();
 }

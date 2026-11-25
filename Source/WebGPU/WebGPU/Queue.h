@@ -95,7 +95,7 @@ public:
     void copyBuffer(id<MTLBuffer> source, uint64_t sourceOffset, id<MTLBuffer> destination, uint64_t destinationOffset, uint64_t size);
     void writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::span<uint8_t> data, const WebGPU::TexelCopyBufferLayout&, const WebGPU::Extent3D& writeSize, bool skipValidation = false);
     void copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& source, const WebGPU::ImageCopyTextureTagged& destination, const WebGPU::Extent3D& copySize) final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     void submit(Vector<Ref<WebGPU::CommandBuffer>>&&) final;
     void writeBuffer(WebGPU::Buffer&, uint64_t bufferOffset, std::span<const uint8_t> data) final;

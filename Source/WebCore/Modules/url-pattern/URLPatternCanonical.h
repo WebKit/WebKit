@@ -36,16 +36,16 @@ enum class BaseURLStringType : bool;
 enum class EncodingCallbackType : uint8_t { Protocol, Username, Password, Host, IPv6Host, Port, Path, OpaquePath, Search, Hash };
 
 bool isAbsolutePathname(StringView input, BaseURLStringType inputType);
-ExceptionOr<String> canonicalizeProtocol(StringView, BaseURLStringType valueType);
-String canonicalizeUsername(StringView value, BaseURLStringType valueType);
-String canonicalizePassword(StringView value, BaseURLStringType valueType);
-ExceptionOr<String> canonicalizeHostname(StringView value, BaseURLStringType valueType);
-ExceptionOr<String> canonicalizeIPv6Hostname(StringView value, BaseURLStringType valueType);
-ExceptionOr<String> canonicalizePort(StringView portValue, StringView protocolValue, BaseURLStringType portValueType);
-ExceptionOr<String> processPathname(StringView pathnameValue, const StringView protocolValue, BaseURLStringType pathnameValueType);
-ExceptionOr<String> canonicalizePathname(StringView pathnameValue);
-ExceptionOr<String> canonicalizeOpaquePathname(StringView value);
-ExceptionOr<String> canonicalizeSearch(StringView value, BaseURLStringType valueType);
-ExceptionOr<String> canonicalizeHash(StringView value, BaseURLStringType valueType);
-ExceptionOr<String> callEncodingCallback(EncodingCallbackType, StringView input);
+ExceptionOr<RefPtr<StringImpl>> canonicalizeProtocol(StringView, BaseURLStringType valueType);
+RefPtr<StringImpl> canonicalizeUsername(StringView value, BaseURLStringType valueType);
+RefPtr<StringImpl> canonicalizePassword(StringView value, BaseURLStringType valueType);
+ExceptionOr<RefPtr<StringImpl>> canonicalizeHostname(StringView value, BaseURLStringType valueType);
+ExceptionOr<RefPtr<StringImpl>> canonicalizeIPv6Hostname(StringView value, BaseURLStringType valueType);
+ExceptionOr<RefPtr<StringImpl>> canonicalizePort(StringView portValue, StringView protocolValue, BaseURLStringType portValueType);
+ExceptionOr<RefPtr<StringImpl>> processPathname(StringView pathnameValue, const StringView protocolValue, BaseURLStringType pathnameValueType);
+ExceptionOr<RefPtr<StringImpl>> canonicalizePathname(StringView pathnameValue);
+ExceptionOr<RefPtr<StringImpl>> canonicalizeOpaquePathname(StringView value);
+ExceptionOr<RefPtr<StringImpl>> canonicalizeSearch(StringView value, BaseURLStringType valueType);
+ExceptionOr<RefPtr<StringImpl>> canonicalizeHash(StringView value, BaseURLStringType valueType);
+ExceptionOr<RefPtr<StringImpl>> callEncodingCallback(EncodingCallbackType, StringView input);
 }

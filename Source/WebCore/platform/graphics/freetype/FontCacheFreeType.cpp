@@ -144,16 +144,16 @@ void FontCache::platformPurgeInactiveFontData()
     m_fontSetCache.clear();
 }
 
-static Vector<String> patternToFamilies(FcPattern& pattern)
+static Vector<RefPtr<StringImpl>> patternToFamilies(FcPattern& pattern)
 {
     char* patternChars = reinterpret_cast<char*>(FcPatternFormat(&pattern, reinterpret_cast<const FcChar8*>("%{family}")));
-    String patternString = String::fromUTF8(patternChars);
+    RefPtr<StringImpl> patternString = StringImpl::fromUTF8(patternChars);
     free(patternChars);
 
-    return patternString.split(',');
+    return split(patternString, ',');
 }
 
-Vector<String> FontCache::systemFontFamilies()
+Vector<RefPtr<StringImpl>> FontCache::systemFontFamilies()
 {
     RefPtr<FcPattern> scalablesOnlyPattern = adoptRef(FcPatternCreate());
     FcPatternAddBool(scalablesOnlyPattern.get(), FC_SCALABLE, FcTrue);
@@ -161,7 +161,7 @@ Vector<String> FontCache::systemFontFamilies()
     FcUniquePtr<FcObjectSet> familiesOnly(FcObjectSetBuild(FC_FAMILY, nullptr));
     FcUniquePtr<FcFontSet> fontSet(FcFontList(nullptr, scalablesOnlyPattern.get(), familiesOnly.get()));
 
-    Vector<String> fontFamilies;
+    Vector<RefPtr<StringImpl>> fontFamilies;
     for (int i = 0; i < fontSet->nfont; i++) {
         FcPattern* pattern = fontSet->fonts[i];
         FcChar8* family = nullptr;
@@ -173,7 +173,7 @@ Vector<String> FontCache::systemFontFamilies()
     return fontFamilies;
 }
 
-bool FontCache::isSystemFontForbiddenForEditing(const String&)
+bool FontCache::isSystemFontForbiddenForEditing(StringImpl*)
 {
     return false;
 }
@@ -182,40 +182,45 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
 {
     // We want to return a fallback font here, otherwise the logic preventing FontConfig
     // matches for non-fallback fonts might return 0. See isFallbackFontAllowed.
-    if (RefPtr<Font> font = fontForFamily(fontDescription, "serif"_s))
+    if (RefPtr<Font> font = fontForFamily(fontDescription, "serif"_si))
         return font.releaseNonNull();
 
     // This could be reached due to improperly-installed or misconfigured fontconfig.
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts)
+Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(AtomStringImpl*, AllowUserInstalledFonts)
 {
     return { };
 }
 
-static String getFamilyNameStringFromFamily(const String& family)
+static bool equalFamilyName(StringImpl* family, FamilyNamesIndex index)
+{
+    return equal(family, &static_cast<const StringImpl&>(*familyNamesData->at(index)));
+}
+
+static RefPtr<StringImpl> getFamilyNameStringFromFamily(StringImpl* family)
 {
     // If we're creating a fallback font (e.g. "-webkit-monospace"), convert the name into
     // the fallback name (like "monospace") that fontconfig understands.
-    if (family.length() && !family.startsWith("-webkit-"_s))
+    if (length(family) && !startsWith(family, "-webkit-"_s))
         return family;
 
-    if (family == *familyNamesData->at(FamilyNamesIndex::StandardFamily) || family == *familyNamesData->at(FamilyNamesIndex::SerifFamily))
-        return "serif"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::SansSerifFamily))
-        return "sans-serif"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::MonospaceFamily))
-        return "monospace"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::CursiveFamily))
-        return "cursive"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::FantasyFamily))
-        return "fantasy"_s;
-    if (family == *familyNamesData->at(FamilyNamesIndex::MathFamily))
-        return "math"_s;
+    if (equalFamilyName(family, FamilyNamesIndex::StandardFamily) || equalFamilyName(family, FamilyNamesIndex::SerifFamily))
+        return "serif"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::SansSerifFamily))
+        return "sans-serif"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::MonospaceFamily))
+        return "monospace"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::CursiveFamily))
+        return "cursive"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::FantasyFamily))
+        return "fantasy"_si;
+    if (equalFamilyName(family, FamilyNamesIndex::MathFamily))
+        return "math"_si;
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
-    if (family == *familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font"_s)
+    if (equalFamilyName(family, FamilyNamesIndex::SystemUiFamily) || equal(family, "-webkit-system-font"_s))
         return SystemSettings::singleton().defaultSystemFont();
 #endif
 
@@ -291,11 +296,11 @@ static AliasStrength strengthOfFirstAlias(const FcPattern& original)
         ? AliasStrength::Weak : AliasStrength::Strong;
 }
 
-static Vector<String> strongAliasesForFamily(const String& family)
+static Vector<RefPtr<StringImpl>> strongAliasesForFamily(StringImpl* family)
 {
     RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
-    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(family.utf8().legacyCStringPointer())))
-        return Vector<String>();
+    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(utf8(family).legacyCStringPointer())))
+        return Vector<RefPtr<StringImpl>>();
 
     FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
     cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
@@ -323,35 +328,35 @@ static Vector<String> strongAliasesForFamily(const String& family)
         if (result == AliasStrength::Strong)
             lastStrongId = id;
         if (!FcPatternRemove(minimal.get(), FC_FAMILY, 0))
-            return Vector<String>();
+            return Vector<RefPtr<StringImpl>>();
     }
 
     // If they were all weak, then leave the pattern alone.
     if (lastStrongId < 0)
-        return Vector<String>();
+        return Vector<RefPtr<StringImpl>>();
 
     // Remove everything after the last strong.
     for (int id = lastStrongId + 1; id < numIds; ++id) {
         if (!FcPatternRemove(pattern.get(), FC_FAMILY, lastStrongId + 1)) {
             ASSERT_NOT_REACHED();
-            return Vector<String>();
+            return Vector<RefPtr<StringImpl>>();
         }
     }
 
     return patternToFamilies(*pattern);
 }
 
-static bool areStronglyAliased(const String& familyA, const String& familyB)
+static bool areStronglyAliased(StringImpl* familyA, StringImpl* familyB)
 {
     for (auto& family : strongAliasesForFamily(familyA)) {
-        if (family == familyB)
+        if (equal(family, familyB))
             return true;
     }
     return false;
 }
 #endif // FC_VERSION < 21395
 
-static inline bool isCommonlyUsedGenericFamily(const String& familyNameString)
+static inline bool isCommonlyUsedGenericFamily(StringImpl* familyNameString)
 {
     return equalLettersIgnoringASCIICase(familyNameString, "sans-serif"_s)
         || equalLettersIgnoringASCIICase(familyNameString, "serif"_s)
@@ -364,7 +369,7 @@ static inline bool isCommonlyUsedGenericFamily(const String& familyNameString)
         || equalLettersIgnoringASCIICase(familyNameString, "cursive"_s);
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, AtomStringImpl* family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
     // says that we must find an exact match for font family, slant (italic or oblique can be used)
@@ -375,8 +380,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 #if ENABLE(VARIATION_FONTS)
     FcPatternAddBool(pattern.get(), FC_VARIABLE, FcDontCare);
 #endif
-    String familyNameString(getFamilyNameStringFromFamily(family));
-    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(familyNameString.utf8().legacyCStringPointer())))
+    RefPtr<StringImpl> familyNameString(getFamilyNameStringFromFamily(family));
+    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(utf8(familyNameString).legacyCStringPointer())))
         return nullptr;
 
     if (!configurePatternForFontDescription(pattern.get(), fontDescription))
@@ -398,7 +403,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
     FcChar8* fontConfigFamilyNameAfterConfiguration;
     FcPatternGetString(pattern.get(), FC_FAMILY, 0, &fontConfigFamilyNameAfterConfiguration);
-    String familyNameAfterConfiguration = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterConfiguration));
+    RefPtr<StringImpl> familyNameAfterConfiguration = StringImpl::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterConfiguration));
 
     FcResult fontConfigResult;
     RefPtr<FcPattern> resultPattern = adoptRef(FcFontMatch(nullptr, pattern.get(), &fontConfigResult));
@@ -409,7 +414,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool matchedFontFamily = false;
     FcChar8* fontConfigFamilyNameAfterMatching;
     for (int i = 0; FcPatternGetString(resultPattern.get(), FC_FAMILY, i, &fontConfigFamilyNameAfterMatching) == FcResultMatch; ++i) {
-        String familyNameAfterMatching = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterMatching));
+        RefPtr<StringImpl> familyNameAfterMatching = StringImpl::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterMatching));
         if (equalIgnoringASCIICase(familyNameAfterConfiguration, familyNameAfterMatching) || isCommonlyUsedGenericFamily(familyNameString) || areStronglyAliased(familyNameAfterConfiguration, familyNameAfterMatching)) {
             matchedFontFamily = true;
             break;
@@ -422,7 +427,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     FcValueBinding binding;
     for (int i = 0; FcPatternGetWithBinding(resultPattern.get(), FC_FAMILY, i, &value, &binding) == FcResultMatch; ++i) {
         ASSERT(value.type == FcTypeString);
-        String familyNameAfterMatching = String::fromUTF8(reinterpret_cast<const char*>(value.u.s));
+        RefPtr<StringImpl> familyNameAfterMatching = StringImpl::fromUTF8(reinterpret_cast<const char*>(value.u.s));
         // If Fontconfig gave us a different font family than the one we requested, we should ignore it
         // and allow WebCore to give us the next font on the CSS fallback list. The exceptions are if
         // this family name is a commonly-used generic family, or if the families are strongly-aliased.
@@ -460,8 +465,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     CairoFtFaceLocker cairoFtFaceLocker(scaledFont.get());
     if (FT_Face freeTypeFace = cairoFtFaceLocker.ftFace()) {
         auto variants = buildVariationSettings(freeTypeFace, fontDescription, fontCreationContext);
-        if (!variants.isEmpty())
-            FcPatternAddString(resultPattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().legacyCStringPointer()));
+        if (!isEmpty(variants))
+            FcPatternAddString(resultPattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(utf8(variants).legacyCStringPointer()));
     }
 #endif
 
@@ -480,23 +485,23 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     return platformDataUniquePtr;
 }
 
-ASCIILiteral FontCache::platformAlternateFamilyName(const String&)
+ASCIILiteral FontCache::platformAlternateFamilyName(StringImpl*)
 {
     return { };
 }
 
 #if ENABLE(VARIATION_FONTS)
-static String fontNameMapName(FT_Face face, unsigned id)
+static RefPtr<StringImpl> fontNameMapName(FT_Face face, unsigned id)
 {
     auto nameCount = FT_Get_Sfnt_Name_Count(face);
     if (!nameCount)
         return { };
 
-    auto decodeName = [](FT_SfntName name) -> String {
+    auto decodeName = [](FT_SfntName name) -> RefPtr<StringImpl> {
         switch (name.platform_id) {
         case TT_PLATFORM_MACINTOSH:
             if (name.encoding_id == TT_MAC_ID_ROMAN)
-                return String({ byteCast<Latin1Character>(name.string), name.string_len });
+                return StringImpl::createOrNull(std::span { byteCast<Latin1Character>(name.string), name.string_len });
             // FIXME: implement other macintosh encodings.
             break;
         case TT_PLATFORM_APPLE_UNICODE:
@@ -538,11 +543,11 @@ VariationDefaultsMap defaultVariationValues(FT_Face face, ShouldLocalizeAxisName
         auto b4 = 0xFF & (tag >> 0);
         FontTag resultKey = {{ static_cast<char>(b1), static_cast<char>(b2), static_cast<char>(b3), static_cast<char>(b4) }};
 
-        String axisName;
+        RefPtr<StringImpl> axisName;
         if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
             axisName = fontNameMapName(face, ftMMVar->axis[i].strid);
-        if (axisName.isEmpty())
-            axisName = String::fromUTF8(ftMMVar->axis[i].name);
+        if (isEmpty(axisName))
+            axisName = StringImpl::fromUTF8(ftMMVar->axis[i].name);
 
         VariationDefaults resultValues = { WTF::move(axisName), narrowPrecisionToFloat(ftMMVar->axis[i].def / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].minimum / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].maximum / 65536.) };
         result.set(resultKey, resultValues);
@@ -551,7 +556,7 @@ VariationDefaultsMap defaultVariationValues(FT_Face face, ShouldLocalizeAxisName
     return result;
 }
 
-String buildVariationSettings(FT_Face face, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
+RefPtr<StringImpl> buildVariationSettings(FT_Face face, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
 {
     auto defaultValues = defaultVariationValues(face, ShouldLocalizeAxisNames::No);
     const auto& variations = fontDescription.variationSettings();

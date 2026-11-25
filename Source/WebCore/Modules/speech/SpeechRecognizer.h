@@ -77,7 +77,7 @@ private:
 #endif
     void stopCapture();
     void dataCaptured(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t sampleCount);
-    bool startRecognition(bool mockSpeechRecognitionEnabled, SpeechRecognitionConnectionClientIdentifier, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t alternatives);
+    bool startRecognition(bool mockSpeechRecognitionEnabled, SpeechRecognitionConnectionClientIdentifier, StringImpl* localeIdentifier, bool continuous, bool interimResults, uint64_t alternatives);
     void abortRecognition();
     void stopRecognition();
 

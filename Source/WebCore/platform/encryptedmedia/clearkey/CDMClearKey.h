@@ -64,8 +64,8 @@ public:
     void ref() const final { }
     void deref() const final { }
 
-    std::unique_ptr<CDMPrivate> createCDM(const String& keySystem, const String& mediaKeysHashSalt, const CDMPrivateClient&) final;
-    bool supportsKeySystem(const String&) final;
+    std::unique_ptr<CDMPrivate> createCDM(StringImpl* keySystem, StringImpl* mediaKeysHashSalt, const CDMPrivateClient&) final;
+    bool supportsKeySystem(StringImpl*) final;
 
 private:
     friend class NeverDestroyed<CDMFactoryClearKey>;
@@ -79,8 +79,8 @@ public:
     CDMPrivateClearKey();
     virtual ~CDMPrivateClearKey();
 
-    Vector<String> supportedInitDataTypes() const final;
-    Vector<String> supportedRobustnesses() const final;
+    Vector<RefPtr<StringImpl>> supportedInitDataTypes() const final;
+    Vector<RefPtr<StringImpl>> supportedRobustnesses() const final;
     bool supportsConfiguration(const CDMKeySystemConfiguration&) const final;
     bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
     bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const final;
@@ -91,9 +91,9 @@ public:
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
-    bool supportsInitData(const String&, const SharedBuffer&) const final;
+    bool supportsInitData(StringImpl*, const SharedBuffer&) const final;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
-    std::optional<String> sanitizeSessionId(const String&) const final;
+    std::optional<RefPtr<StringImpl>> sanitizeSessionId(StringImpl*) const final;
 };
 
 class CDMInstanceClearKey final : public CDMInstanceProxy {
@@ -109,8 +109,8 @@ public:
     ImplementationType implementationType() const final { return ImplementationType::ClearKey; }
     void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
-    void setStorageDirectory(const String&) final;
-    const String& keySystem() const final;
+    void setStorageDirectory(StringImpl*) final;
+    const RefPtr<StringImpl>& keySystem() const final;
     RefPtr<CDMInstanceSession> createSession() final;
 
 private:
@@ -121,16 +121,16 @@ class CDMInstanceSessionClearKey final : public CDMInstanceSessionProxy {
 public:
     CDMInstanceSessionClearKey(CDMInstanceClearKey& parent)
         : CDMInstanceSessionProxy(parent) { }
-    void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
-    void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
-    void closeSession(const String&, CloseSessionCallback&&) final;
-    void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
-    void storeRecordOfKeyUsage(const String&) final;
+    void requestLicense(LicenseType, KeyGroupingStrategy, StringImpl* initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(StringImpl*, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
+    void loadSession(LicenseType, StringImpl*, StringImpl*, LoadSessionCallback&&) final;
+    void closeSession(StringImpl*, CloseSessionCallback&&) final;
+    void removeSessionData(StringImpl*, LicenseType, RemoveSessionDataCallback&&) final;
+    void storeRecordOfKeyUsage(StringImpl*) final;
 private:
     NODELETE CDMInstanceClearKey* parentInstance() const;
 
-    String m_sessionID;
+    RefPtr<StringImpl> m_sessionID;
     KeyStore m_keyStore;
 };
 

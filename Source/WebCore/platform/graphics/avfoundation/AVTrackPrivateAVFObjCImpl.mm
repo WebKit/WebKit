@@ -290,7 +290,7 @@ TrackID AVTrackPrivateAVFObjCImpl::id() const
     return 0;
 }
 
-String AVTrackPrivateAVFObjCImpl::label() const
+RefPtr<StringImpl> AVTrackPrivateAVFObjCImpl::label() const
 {
     ASSERT(m_assetTrack || m_mediaSelectionOption);
 
@@ -307,28 +307,28 @@ String AVTrackPrivateAVFObjCImpl::label() const
     // If possible, return a title in one of the user's preferred languages.
     RetainPtr titlesForPreferredLanguages = [PAL::getAVMetadataItemClassSingleton() metadataItemsFromArray:titles.get() filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
     if ([titlesForPreferredLanguages count])
-        return [[titlesForPreferredLanguages objectAtIndex:0] stringValue];
-    return [[titles objectAtIndex:0] stringValue];
+        return StringImpl::create([[titlesForPreferredLanguages objectAtIndex:0] stringValue]);
+    return StringImpl::create([[titles objectAtIndex:0] stringValue]);
 }
 
-String AVTrackPrivateAVFObjCImpl::language() const
+RefPtr<StringImpl> AVTrackPrivateAVFObjCImpl::language() const
 {
     if (m_assetTrack) {
         auto language = languageForAVAssetTrack(m_assetTrack.get());
-        if (!language.isEmpty())
+        if (!isEmpty(language))
             return language;
     }
 
     if (m_mediaSelectionOption) {
         auto language = languageForAVMediaSelectionOption(m_mediaSelectionOption->avMediaSelectionOption().get());
-        if (!language.isEmpty())
+        if (!isEmpty(language))
             return language;
     }
 
     return emptyString();
 }
 
-String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(const AVAssetTrack *track)
+RefPtr<StringImpl> AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(const AVAssetTrack *track)
 {
     RetainPtr language = [track extendedLanguageTag];
 
@@ -342,10 +342,10 @@ String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(const AVAssetTrack *tr
     if (!language || [language isEqualToString:@"und"])
         return emptyString();
 
-    return language.get();
+    return StringImpl::create(language.get());
 }
 
-String AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(const AVMediaSelectionOption *option)
+RefPtr<StringImpl> AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(const AVMediaSelectionOption *option)
 {
     RetainPtr language = [option extendedLanguageTag];
 
@@ -359,7 +359,7 @@ String AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(const AVMedi
     if (!language || [language isEqualToString:@"und"])
         return emptyString();
 
-    return language.get();
+    return StringImpl::create(language.get());
 }
 
 PlatformVideoTrackConfiguration AVTrackPrivateAVFObjCImpl::videoTrackConfiguration() const
@@ -410,7 +410,7 @@ static RetainPtr<CMFormatDescriptionRef> formatDescriptionFor(const AVTrackPriva
     return static_cast<CMFormatDescriptionRef>(assetTrack.get().formatDescriptions.firstObject);
 }
 
-String AVTrackPrivateAVFObjCImpl::codec() const
+RefPtr<StringImpl> AVTrackPrivateAVFObjCImpl::codec() const
 {
     return codecFromFormatDescription(formatDescriptionFor(*this).get());
 }

@@ -65,14 +65,14 @@ public:
 
     static void discoverFromExternalSource(const Document&, CredentialPromise&&, CredentialRequestOptions&&);
 
-    static bool userAgentAllowsProtocol(const Document&, const String& protocol);
+    static bool userAgentAllowsProtocol(const Document&, StringImpl* protocol);
 
 private:
     DigitalCredential(JSC::Strong<JSC::JSObject>&&, DigitalCredentialPresentationProtocol);
 
     static ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> validateRequests(const Document&, Vector<UnvalidatedDigitalCredentialRequest>&&);
     static ExceptionOr<Vector<UnvalidatedDigitalCredentialRequest>> convertObjectsToDigitalPresentationRequests(const Document&, const Vector<DigitalCredentialGetRequest>&);
-    static bool parseResponseData(RefPtr<Document>, const String&, JSC::JSObject*&);
+    static bool parseResponseData(RefPtr<Document>, StringImpl*, JSC::JSObject*&);
 
     Type credentialType() const final { return Type::DigitalCredential; }
 

@@ -86,7 +86,7 @@ public:
             || m_status == CDMInstanceSession::KeyStatus::OutputDownscaled;
     }
 
-    String idAsString() const;
+    RefPtr<StringImpl> idAsString() const;
 
     // Two keys are equal if they have the same ID, ignoring key value and status.
     friend bool operator==(const KeyHandle &k1, const KeyHandle &k2) { return k1.m_id == k2.m_id; }
@@ -283,11 +283,11 @@ public:
 
     WEBCORE_EXPORT static void registerFactory(CDMProxyFactory&);
     WEBCORE_EXPORT static void unregisterFactory(CDMProxyFactory&);
-    [[nodiscard]] WEBCORE_EXPORT static RefPtr<CDMProxy> createCDMProxyForKeySystem(const String&);
+    [[nodiscard]] WEBCORE_EXPORT static RefPtr<CDMProxy> createCDMProxyForKeySystem(StringImpl*);
 
 protected:
-    virtual RefPtr<CDMProxy> createCDMProxy(const String&) = 0;
-    virtual bool supportsKeySystem(const String&) = 0;
+    virtual RefPtr<CDMProxy> createCDMProxy(StringImpl*) = 0;
+    virtual bool supportsKeySystem(StringImpl*) = 0;
 
 private:
     // Platform-specific function that's called when the list of
@@ -313,7 +313,7 @@ class CDMInstanceProxy : public CDMInstance, public CanMakeWeakPtr<CDMInstancePr
     WTF_MAKE_TZONE_ALLOCATED(CDMInstanceProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMInstanceProxy);
 public:
-    explicit CDMInstanceProxy(const String& keySystem)
+    explicit CDMInstanceProxy(StringImpl* keySystem)
         : m_cdmProxy(CDMProxyFactory::createCDMProxyForKeySystem(keySystem))
     {
         ASSERT(isMainThread());

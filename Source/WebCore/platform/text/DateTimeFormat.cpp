@@ -100,7 +100,7 @@ NODELETE static DateTimeFormat::FieldType mapCharacterToFieldType(const char16_t
     return DateTimeFormat::FieldTypeLiteral;
 }
 
-bool DateTimeFormat::parse(const String& source, TokenHandler& tokenHandler)
+bool DateTimeFormat::parse(StringImpl* source, TokenHandler& tokenHandler)
 {
     enum State {
         StateInQuote,
@@ -114,8 +114,8 @@ bool DateTimeFormat::parse(const String& source, TokenHandler& tokenHandler)
     StringBuilder literalBuffer;
     int fieldCounter = 0;
 
-    for (unsigned int index = 0; index < source.length(); ++index) {
-        const char16_t ch = source[index];
+    for (unsigned int index = 0; index < length(source); ++index) {
+        const char16_t ch = codeUnitAt(source, index);
         switch (state) {
         case StateInQuote:
             if (ch == '\'') {
@@ -245,26 +245,26 @@ NODELETE static bool isASCIIAlphabetOrQuote(char16_t ch)
     return isASCIIAlpha(ch) || ch == '\'';
 }
 
-void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder& buffer)
+void DateTimeFormat::quoteAndAppendLiteral(StringImpl* literal, StringBuilder& buffer)
 {
-    if (literal.length() <= 0)
+    if (length(literal) <= 0)
         return;
 
-    if (literal.find(isASCIIAlphabetOrQuote) == notFound) {
+    if (find(literal, isASCIIAlphabetOrQuote) == notFound) {
         buffer.append(literal);
         return;
     }
 
-    if (literal.find('\'') == notFound) {
+    if (find(literal, '\'') == notFound) {
         buffer.append('\'', literal, '\'');
         return;
     }
 
-    for (unsigned i = 0; i < literal.length(); ++i) {
-        if (literal[i] == '\'')
+    for (unsigned i = 0; i < length(literal); ++i) {
+        if (codeUnitAt(literal, i) == '\'')
             buffer.append("''"_s);
         else {
-            buffer.append('\'', makeStringByReplacingAll(literal.substring(i), '\'', "''"_s), '\'');
+            buffer.append('\'', makeStringByReplacingAll(substring(literal, i), '\'', "''"_s), '\'');
             return;
         }
     }

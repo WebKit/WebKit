@@ -60,10 +60,10 @@ LibWebRTCResolver::~LibWebRTCResolver()
     });
 }
 
-static bool canStart(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const String& name)
+static bool canStart(WebCore::ScriptExecutionContextIdentifier contextIdentifier, StringImpl* name)
 {
-    if (name.endsWithIgnoringASCIICase(".local"_s)) {
-        bool isValidUUID = WTF::isVersion4UUID(StringView { name }.left(name.length() - 6));
+    if (endsWithIgnoringASCIICase(name, ".local"_s)) {
+        bool isValidUUID = WTF::isVersion4UUID(StringView { name }.left(length(name) - 6));
         RELEASE_LOG_ERROR_IF(!isValidUUID, WebRTC, "mDNS candidate is not a Version 4 UUID");
         return isValidUUID;
     }
@@ -94,9 +94,9 @@ void LibWebRTCResolver::start(const webrtc::SocketAddress& address, Function<voi
     m_port = address.port();
 
     auto addressString = address.HostAsURIString();
-    String name = String::fromLatin1(std::span { addressString });
+    RefPtr<StringImpl> name = StringImpl::fromLatin1(std::span { addressString });
 
-    sendOnMainThread([identifier = this->identifier(), name = WTF::move(name).isolatedCopy(), contextIdentifier = m_contextIdentifier](IPC::Connection& connection) {
+    sendOnMainThread([identifier = this->identifier(), name = isolatedCopy(WTF::move(name)), contextIdentifier = m_contextIdentifier](IPC::Connection& connection) {
         if (!canStart(contextIdentifier, name)) {
             WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([identifier]() {
                 auto callback = [&] -> Function<void()> {

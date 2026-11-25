@@ -52,20 +52,20 @@ CSSFontFaceDescriptors& CSSFontFaceRule::style()
     return *m_propertiesCSSOMWrapper;
 }
 
-String CSSFontFaceRule::cssText() const
+RefPtr<StringImpl> CSSFontFaceRule::cssText() const
 {
     return cssTextInternal(protect(protect(m_fontFaceRule)->properties())->asText(CSS::defaultSerializationContext()));
 }
 
-String CSSFontFaceRule::cssText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFontFaceRule::cssText(const CSS::SerializationContext& context) const
 {
     return cssTextInternal(protect(protect(m_fontFaceRule)->properties())->asText(context));
 }
 
-String CSSFontFaceRule::cssTextInternal(const String& declarations) const
+RefPtr<StringImpl> CSSFontFaceRule::cssTextInternal(StringImpl* declarations) const
 {
-    if (declarations.isEmpty())
-        return "@font-face { }"_s;
+    if (isEmpty(declarations))
+        return "@font-face { }"_si;
 
     return makeString("@font-face { "_s, declarations, " }"_s);
 }

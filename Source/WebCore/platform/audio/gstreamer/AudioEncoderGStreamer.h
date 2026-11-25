@@ -33,7 +33,7 @@ class GStreamerInternalAudioEncoder;
 class GStreamerAudioEncoder : public AudioEncoder {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerAudioEncoder);
 public:
-    static Ref<CreatePromise> create(const String& codecName, const Config&, DescriptionCallback&&, OutputCallback&&);
+    static Ref<CreatePromise> create(StringImpl* codecName, const Config&, DescriptionCallback&&, OutputCallback&&);
 
     ~GStreamerAudioEncoder();
 

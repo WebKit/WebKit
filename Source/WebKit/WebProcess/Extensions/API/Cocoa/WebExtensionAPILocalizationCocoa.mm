@@ -59,19 +59,19 @@ NSString *WebExtensionAPILocalization::getMessage(NSString* messageName, JSValue
     if (!localization)
         return @"";
 
-    Vector<String> substitutionsVector;
+    Vector<RefPtr<StringImpl>> substitutionsVector;
 
     if (substitutions && !substitutions.isUndefined && !substitutions.isNull) {
         if (substitutions.isArray) {
             auto count = [[substitutions valueForProperty:@"length"] toUInt32];
             substitutionsVector.reserveInitialCapacity(count);
             for (unsigned i = 0; i < count; ++i)
-                substitutionsVector.append(String { [[substitutions valueAtIndex:i] toString] });
+                substitutionsVector.append(StringImpl::create([[substitutions valueAtIndex:i] toString]));
         } else
-            substitutionsVector.append(String { [substitutions toString] });
+            substitutionsVector.append(StringImpl::create([substitutions toString]));
     }
 
-    return localization->localizedStringForKey(messageName, WTF::move(substitutionsVector)).createNSString().autorelease();
+    return createNSString(localization->localizedStringForKey(StringImpl::create(messageName), WTF::move(substitutionsVector))).autorelease();
 }
 
 NSString *WebExtensionAPILocalization::getUILanguage()

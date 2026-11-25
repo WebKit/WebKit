@@ -67,7 +67,7 @@ private:
 
     bool isMeshImpl() const final { return true; }
 
-    void setLabelInternal(const String&) final;
+    void setLabelInternal(StringImpl*) final;
     void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&) final;
     void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&) final;
     void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&) final;

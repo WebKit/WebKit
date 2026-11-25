@@ -97,7 +97,7 @@ JSArray* constructArrayWithSizeQuirk(JSGlobalObject* globalObject, ArrayAllocati
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
         }
-        throwException(globalObject, scope, createRangeError(globalObject, ArrayInvalidLengthError));
+        throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(ArrayInvalidLengthError).ptr()));
         return nullptr;
     }
     RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, profile, n, newTarget));

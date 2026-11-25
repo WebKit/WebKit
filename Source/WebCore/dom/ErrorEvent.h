@@ -41,43 +41,43 @@ namespace WebCore {
 class ErrorEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ErrorEvent);
 public:
-    static Ref<ErrorEvent> create(JSC::JSGlobalObject& globalObject, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
+    static Ref<ErrorEvent> create(JSC::JSGlobalObject& globalObject, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
     {
         return adoptRef(*new ErrorEvent(globalObject, message, fileName, lineNumber, columnNumber, error));
     }
 
-    static Ref<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
+    static Ref<ErrorEvent> create(StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber)
     {
         return adoptRef(*new ErrorEvent(message, fileName, lineNumber, columnNumber));
     }
 
-    static Ref<ErrorEvent> create(const AtomString& type, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
+    static Ref<ErrorEvent> create(AtomStringImpl* type, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber)
     {
         return adoptRef(*new ErrorEvent(type, message, fileName, lineNumber, columnNumber));
     }
 
-    static Ref<ErrorEvent> create(JSC::JSGlobalObject& globalObject, const AtomString& type, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
+    static Ref<ErrorEvent> create(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
     {
         return adoptRef(*new ErrorEvent(globalObject, type, message, fileName, lineNumber, columnNumber, error));
     }
 
     struct Init : EventInit {
-        String message;
-        String filename;
+        RefPtr<StringImpl> message;
+        RefPtr<StringImpl> filename;
         unsigned lineno { 0 };
         unsigned colno { 0 };
         JSC::JSValue error { JSC::jsUndefined() };
     };
 
-    static Ref<ErrorEvent> create(JSC::JSGlobalObject& globalObject, const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<ErrorEvent> create(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new ErrorEvent(globalObject, type, initializer, isTrusted));
     }
 
     virtual ~ErrorEvent();
 
-    const String& message() const LIFETIME_BOUND { return m_message; }
-    const String& filename() const LIFETIME_BOUND { return m_fileName; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& filename() const LIFETIME_BOUND { return m_fileName; }
     unsigned lineno() const { return m_lineNumber; }
     unsigned colno() const { return m_columnNumber; }
 
@@ -85,14 +85,14 @@ public:
     JSValueInWrappedObject& cachedError() LIFETIME_BOUND { return m_cachedError; }
 
 private:
-    ErrorEvent(JSC::JSGlobalObject&, const AtomString& type, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
-    ErrorEvent(JSC::JSGlobalObject&, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
-    ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber);
-    ErrorEvent(const AtomString& type, const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber);
-    ErrorEvent(JSC::JSGlobalObject&, const AtomString&, const Init&, IsTrusted);
+    ErrorEvent(JSC::JSGlobalObject&, AtomStringImpl* type, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
+    ErrorEvent(JSC::JSGlobalObject&, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
+    ErrorEvent(StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber);
+    ErrorEvent(AtomStringImpl* type, StringImpl* message, StringImpl* fileName, unsigned lineNumber, unsigned columnNumber);
+    ErrorEvent(JSC::JSGlobalObject&, AtomStringImpl*, const Init&, IsTrusted);
 
-    String m_message;
-    String m_fileName;
+    RefPtr<StringImpl> m_message;
+    RefPtr<StringImpl> m_fileName;
     unsigned m_lineNumber;
     unsigned m_columnNumber;
     JSValueInWrappedObject m_error;

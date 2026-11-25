@@ -107,7 +107,7 @@ WebKitCredential* webkit_credential_new(const gchar* username, const gchar* pass
     g_return_val_if_fail(username, 0);
     g_return_val_if_fail(password, 0);
 
-    return webkitCredentialCreate(WebCore::Credential(String::fromUTF8(username), String::fromUTF8(password), toWebCoreCredentialPersistence(persistence)));
+    return webkitCredentialCreate(WebCore::Credential(StringImpl::fromUTF8(username), StringImpl::fromUTF8(password), toWebCoreCredentialPersistence(persistence)));
 }
 
 /**
@@ -132,7 +132,7 @@ WebKitCredential* webkit_credential_new_for_certificate_pin(const gchar* pin, We
         persistence = WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION;
     }
 
-    return webkitCredentialCreate(WebCore::Credential(emptyString(), String::fromUTF8(pin), toWebCoreCredentialPersistence(persistence)));
+    return webkitCredentialCreate(WebCore::Credential(emptyString(), StringImpl::fromUTF8(pin), toWebCoreCredentialPersistence(persistence)));
 }
 
 /**
@@ -208,7 +208,7 @@ const gchar* webkit_credential_get_username(WebKitCredential* credential)
     g_return_val_if_fail(credential, 0);
 
     if (credential->username.isNull())
-        credential->username = credential->credential.user().utf8();
+        credential->username = utf8(credential->credential.user());
     return credential->username.legacyCStringPointer();
 }
 
@@ -227,7 +227,7 @@ const gchar* webkit_credential_get_password(WebKitCredential* credential)
     g_return_val_if_fail(credential, 0);
 
     if (credential->password.isNull())
-        credential->password = credential->credential.password().utf8();
+        credential->password = utf8(credential->credential.password());
     return credential->password.legacyCStringPointer();
 }
 

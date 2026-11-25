@@ -120,7 +120,7 @@ void ScrollAnimationRubberBand::serviceAnimation(MonotonicTime currentTime)
         didEnd();
 }
 
-String ScrollAnimationRubberBand::debugDescription() const
+RefPtr<StringImpl> ScrollAnimationRubberBand::debugDescription() const
 {
     TextStream textStream;
     textStream << "ScrollAnimationRubberBand " << this << " active " << isActive() << " initial velocity " << m_initialVelocity << " initial overscroll " << m_initialOverscroll << " target overscroll " << m_targetOverscroll;

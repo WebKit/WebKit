@@ -42,13 +42,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LoadableTextTrack);
 
-LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
+LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, AtomStringImpl* kind, AtomStringImpl* label, AtomStringImpl* language)
     : TextTrack(track.scriptExecutionContext(), kind, emptyAtom(), label, language, TrackElement)
     , m_trackElement(track)
 {
 }
 
-Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
+Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, AtomStringImpl* kind, AtomStringImpl* label, AtomStringImpl* language)
 {
     auto textTrack = adoptRef(*new LoadableTextTrack(track, kind, label, language));
     textTrack->suspendIfNeeded();
@@ -145,7 +145,7 @@ void LoadableTextTrack::newStyleSheetsAvailable(TextTrackLoader& loader)
     addStyleSheets(loader.getNewStyleSheets());
 }
 
-AtomString LoadableTextTrack::id() const
+RefPtr<AtomStringImpl> LoadableTextTrack::id() const
 {
     auto* trackElement = m_trackElement.get();
     if (!trackElement)

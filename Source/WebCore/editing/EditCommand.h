@@ -77,8 +77,8 @@ protected:
 
     NODELETE bool isEditingTextAreaOrTextInput() const;
 
-    void postTextStateChangeNotification(AXTextEditType, const String&);
-    void postTextStateChangeNotification(AXTextEditType, const String&, const VisiblePosition&);
+    void postTextStateChangeNotification(AXTextEditType, StringImpl*);
+    void postTextStateChangeNotification(AXTextEditType, StringImpl*, const VisiblePosition&);
 
 private:
     const Ref<Document> m_document;

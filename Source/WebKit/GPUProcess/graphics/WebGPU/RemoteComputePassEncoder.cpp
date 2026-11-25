@@ -106,7 +106,7 @@ void RemoteComputePassEncoder::setBindGroup(uint32_t index, std::optional<WebGPU
     protect(m_backing)->setBindGroup(index, convertedBindGroup.get(), offsets ? std::optional { offsets->span() } : std::nullopt);
 }
 
-void RemoteComputePassEncoder::pushDebugGroup(String&& groupLabel)
+void RemoteComputePassEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     protect(m_backing)->pushDebugGroup(WTF::move(groupLabel));
 }
@@ -116,12 +116,12 @@ void RemoteComputePassEncoder::popDebugGroup()
     protect(m_backing)->popDebugGroup();
 }
 
-void RemoteComputePassEncoder::insertDebugMarker(String&& markerLabel)
+void RemoteComputePassEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     protect(m_backing)->insertDebugMarker(WTF::move(markerLabel));
 }
 
-void RemoteComputePassEncoder::setLabel(String&& label)
+void RemoteComputePassEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

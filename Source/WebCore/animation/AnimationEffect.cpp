@@ -186,7 +186,7 @@ ExceptionOr<void> AnimationEffect::updateTiming(Document& document, const Option
             if (durationAsDouble < 0 || std::isnan(durationAsDouble))
                 return Exception { ExceptionCode::TypeError };
         } else {
-            if (std::get<String>(timing.duration.value()) != autoAtom())
+            if (!equal(std::get<RefPtr<StringImpl>>(timing.duration.value()), autoAtom()))
                 return Exception { ExceptionCode::TypeError };
         }
     }
@@ -197,14 +197,14 @@ ExceptionOr<void> AnimationEffect::updateTiming(Document& document, const Option
             if (RefPtr animation = m_animation.get()) {
                 if (RefPtr timeline = animation->timeline()) {
                     if (timeline->isProgressBased())
-                        return Exception { ExceptionCode::TypeError, "The number of iterations cannot be set to Infinity for progress-based animations"_s };
+                        return Exception { ExceptionCode::TypeError, "The number of iterations cannot be set to Infinity for progress-based animations"_si };
                 }
             }
         }
     }
 
     // 4. If the easing member of input is present but cannot be parsed using the <timing-function> production [CSS-EASING-1], throw a TypeError and abort this procedure.
-    if (!timing.easing.isNull()) {
+    if (timing.easing) {
         CSSParserContext parsingContext(document);
         // FIXME: Determine the how calc() and relative units should be resolved and switch to the non-deprecated parsing function.
         auto timingFunctionResult = CSSPropertyParserHelpers::parseEasingFunctionDeprecated(timing.easing, parsingContext);

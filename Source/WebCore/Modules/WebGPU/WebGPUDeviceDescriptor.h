@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct WebGPUDeviceDescriptor : public WebGPUObjectDescriptorBase {
     Vector<::WebGPU::FeatureName> requiredFeatures;
-    Vector<KeyValuePair<String, uint64_t>> requiredLimits;
+    Vector<KeyValuePair<RefPtr<StringImpl>, uint64_t>> requiredLimits;
 };
 
 } // namespace WebCore

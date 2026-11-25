@@ -40,10 +40,10 @@ public:
     NODELETE unsigned length() const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_types.size(); }
     NODELETE RefPtr<DOMMimeType> item(unsigned index);
-    NODELETE RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
-    Vector<AtomString> supportedPropertyNames() const;
+    NODELETE RefPtr<DOMMimeType> namedItem(AtomStringImpl* propertyName);
+    Vector<RefPtr<AtomStringImpl>> supportedPropertyNames() const;
 
-    bool isSupportedPropertyName(const AtomString&) const;
+    bool isSupportedPropertyName(AtomStringImpl*) const;
 
     Navigator* navigator() { return m_navigator.get(); }
 

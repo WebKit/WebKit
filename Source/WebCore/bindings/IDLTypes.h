@@ -138,43 +138,43 @@ struct IDLUnrestrictedFloat : IDLFloatingPoint<float> { };
 struct IDLDouble : IDLFloatingPoint<double> { };
 struct IDLUnrestrictedDouble : IDLFloatingPoint<double> { };
 
-template<typename StringType> struct IDLString : IDLType<StringType> {
-    using ConversionResultType = StringType;
-    using NullableConversionResultType = StringType;
+template<typename StringImplType> struct IDLString : IDLType<RefPtr<StringImplType>> {
+    using ConversionResultType = RefPtr<StringImplType>;
+    using NullableConversionResultType = RefPtr<StringImplType>;
 
-    using ParameterType = const StringType&;
-    using NullableParameterType = const StringType&;
+    using ParameterType = StringImplType*;
+    using NullableParameterType = StringImplType*;
 
-    using NullableType = StringType;
-    static StringType nullValue() { return StringType(); }
-    static bool isNullValue(const String& value) { return value.isNull(); }
-    static bool isNullValue(const AtomString& value) { return value.isNull(); }
-    static bool isNullValue(const UncachedString& value) { return value.string.isNull(); }
-    static bool isNullValue(const OwnedString& value) { return value.string.isNull(); }
+    using NullableType = RefPtr<StringImplType>;
+    static RefPtr<StringImplType> nullValue() { return nullptr; }
+    static bool isNullValue(StringImpl* value) { return !value; }
+    static bool isNullValue(AtomStringImpl* value) { return !value; }
+    static bool isNullValue(const UncachedString& value) { return !value.string; }
+    static bool isNullValue(const OwnedString& value) { return !value.string; }
     static bool isNullValue(const URL& value) { return value.isNull(); }
     template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
-struct IDLDOMString : IDLString<String> { };
-struct IDLByteString : IDLString<String> { };
-struct IDLUSVString : IDLString<String> { };
+struct IDLDOMString : IDLString<StringImpl> { };
+struct IDLByteString : IDLString<StringImpl> { };
+struct IDLUSVString : IDLString<StringImpl> { };
 
-template<typename T> struct IDLLegacyNullToEmptyStringAdaptor : IDLString<String> {
+template<typename T> struct IDLLegacyNullToEmptyStringAdaptor : IDLString<StringImpl> {
     using InnerType = T;
 };
 
-template<typename T> struct IDLStringContextTrustedScriptAdaptor : IDLString<String> {
+template<typename T> struct IDLStringContextTrustedScriptAdaptor : IDLString<StringImpl> {
     using InnerType = T;
 };
 
-template<typename T> struct IDLLegacyNullToEmptyAtomStringAdaptor : IDLString<AtomString> {
+template<typename T> struct IDLLegacyNullToEmptyAtomStringAdaptor : IDLString<AtomStringImpl> {
     using InnerType = T;
 };
 
-template<typename T> struct IDLAtomStringAdaptor : IDLString<AtomString> {
+template<typename T> struct IDLAtomStringAdaptor : IDLString<AtomStringImpl> {
     using InnerType = T;
 };
 
-template<typename T> struct IDLRequiresExistingAtomStringAdaptor : IDLString<AtomString> {
+template<typename T> struct IDLRequiresExistingAtomStringAdaptor : IDLString<AtomStringImpl> {
     using InnerType = T;
 };
 
@@ -371,16 +371,16 @@ struct IDLDate : IDLType<WallTime> {
     static WallTime extractValueFromNullable(WallTime value) { return value; }
 };
 
-struct IDLJSON : IDLType<String> {
-    using ConversionResultType = String;
-    using NullableConversionResultType = String;
+struct IDLJSON : IDLType<RefPtr<StringImpl>> {
+    using ConversionResultType = RefPtr<StringImpl>;
+    using NullableConversionResultType = RefPtr<StringImpl>;
 
-    using ParameterType = const String&;
-    using NullableParameterType = const String&;
+    using ParameterType = StringImpl*;
+    using NullableParameterType = StringImpl*;
 
-    using NullableType = String;
-    static String nullValue() { return String(); }
-    static bool isNullValue(const String& value) { return value.isNull(); }
+    using NullableType = RefPtr<StringImpl>;
+    static RefPtr<StringImpl> nullValue() { return nullptr; }
+    static bool isNullValue(StringImpl* value) { return !value; }
     template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 

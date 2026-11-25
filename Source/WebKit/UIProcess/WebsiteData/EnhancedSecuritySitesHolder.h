@@ -39,7 +39,7 @@ class EnhancedSecuritySitesPersistence;
 
 class EnhancedSecuritySitesHolder final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EnhancedSecuritySitesHolder, WTF::DestructionThread::MainRunLoop> {
 public:
-    static Ref<EnhancedSecuritySitesHolder> create(const String& databaseDirectoryPath);
+    static Ref<EnhancedSecuritySitesHolder> create(StringImpl* databaseDirectoryPath);
 
     ~EnhancedSecuritySitesHolder();
 
@@ -55,7 +55,7 @@ private:
     // Shared WorkQueue is used to prevent race condition when delete and create Persistence for same database file.
     static WorkQueue& sharedWorkQueueSingleton();
 
-    explicit EnhancedSecuritySitesHolder(const String& databasePath);
+    explicit EnhancedSecuritySitesHolder(StringImpl* databasePath);
 
     std::unique_ptr<EnhancedSecuritySitesPersistence> m_enhancedSecurityPersistence WTF_GUARDED_BY_CAPABILITY(sharedWorkQueueSingleton());
 };

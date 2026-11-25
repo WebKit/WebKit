@@ -40,7 +40,7 @@ namespace Inspector {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAgent);
 
 InspectorAgent::InspectorAgent(AgentContext& context)
-    : InspectorAgentBase("Inspector"_s)
+    : InspectorAgentBase("Inspector"_si)
     , m_environment(context.environment)
     , m_frontendDispatcher(makeUniqueRef<InspectorFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(InspectorBackendDispatcher::create(protect(context.backendDispatcher), this))
@@ -102,7 +102,7 @@ void InspectorAgent::inspect(Ref<Protocol::Runtime::RemoteObject>&& object, Ref<
     m_pendingInspectData.second = WTF::move(hints);
 }
 
-void InspectorAgent::evaluateForTestInFrontend(const String& script)
+void InspectorAgent::evaluateForTestInFrontend(StringImpl* script)
 {
     if (m_enabled)
         m_frontendDispatcher->evaluateForTestInFrontend(script);

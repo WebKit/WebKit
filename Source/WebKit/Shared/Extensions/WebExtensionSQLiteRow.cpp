@@ -46,7 +46,7 @@ WebExtensionSQLiteRow::WebExtensionSQLiteRow(Ref<WebExtensionSQLiteStatement>&& 
     m_statement->database()->assertQueue();
 }
 
-String WebExtensionSQLiteRow::getString(int index)
+RefPtr<StringImpl> WebExtensionSQLiteRow::getString(int index)
 {
     m_statement->database()->assertQueue();
     if (isNullAtIndex(index))

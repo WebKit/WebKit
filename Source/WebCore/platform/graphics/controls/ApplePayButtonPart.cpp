@@ -37,12 +37,12 @@ Ref<ApplePayButtonPart> ApplePayButtonPart::create()
     return adoptRef(*new ApplePayButtonPart(ApplePayButtonType::Plain, ApplePayButtonStyle::White, { }));
 }
 
-Ref<ApplePayButtonPart> ApplePayButtonPart::create(ApplePayButtonType buttonType, ApplePayButtonStyle buttonStyle, const String& locale)
+Ref<ApplePayButtonPart> ApplePayButtonPart::create(ApplePayButtonType buttonType, ApplePayButtonStyle buttonStyle, StringImpl* locale)
 {
     return adoptRef(*new ApplePayButtonPart(buttonType, buttonStyle, locale));
 }
 
-ApplePayButtonPart::ApplePayButtonPart(ApplePayButtonType buttonType, ApplePayButtonStyle buttonStyle, const String& locale)
+ApplePayButtonPart::ApplePayButtonPart(ApplePayButtonType buttonType, ApplePayButtonStyle buttonStyle, StringImpl* locale)
     : ControlPart(StyleAppearance::ApplePayButton)
     , m_buttonType(buttonType)
     , m_buttonStyle(buttonStyle)

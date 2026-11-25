@@ -61,16 +61,16 @@ void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Conn
 void WebAuthenticatorCoordinatorProxy::getClientCapabilities(IPC::Connection&, IPC::Untrusted<SecurityOriginData>&&, CapabilitiesCompletionHandler&& handler)
 {
     // Keys must be sorted in lexicographic order.
-    Vector<KeyValuePair<String, bool>> capabilities;
-    capabilities.append({ "conditionalCreate"_s, false });
-    capabilities.append({ "conditionalGet"_s, false });
-    capabilities.append({ "hybridTransport"_s, false });
-    capabilities.append({ "passkeyPlatformAuthenticator"_s, false });
-    capabilities.append({ "relatedOrigins"_s, false });
-    capabilities.append({ "signalAllAcceptedCredentials"_s, false });
-    capabilities.append({ "signalCurrentUserDetails"_s, false });
-    capabilities.append({ "signalUnknownCredential"_s, false });
-    capabilities.append({ "userVerifyingPlatformAuthenticator"_s, false });
+    Vector<KeyValuePair<RefPtr<StringImpl>, bool>> capabilities;
+    capabilities.append({ "conditionalCreate"_si, false });
+    capabilities.append({ "conditionalGet"_si, false });
+    capabilities.append({ "hybridTransport"_si, false });
+    capabilities.append({ "passkeyPlatformAuthenticator"_si, false });
+    capabilities.append({ "relatedOrigins"_si, false });
+    capabilities.append({ "signalAllAcceptedCredentials"_si, false });
+    capabilities.append({ "signalCurrentUserDetails"_si, false });
+    capabilities.append({ "signalUnknownCredential"_si, false });
+    capabilities.append({ "userVerifyingPlatformAuthenticator"_si, false });
     handler(WTF::move(capabilities));
 }
 

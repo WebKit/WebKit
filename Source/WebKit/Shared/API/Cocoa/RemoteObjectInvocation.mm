@@ -34,7 +34,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteObjectInvocation::ReplyInfo);
 
 RemoteObjectInvocation::RemoteObjectInvocation() = default;
 
-RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&& replyInfo)
+RemoteObjectInvocation::RemoteObjectInvocation(StringImpl* interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&& replyInfo)
     : m_interfaceIdentifier(interfaceIdentifier)
     , m_encodedInvocation(WTF::move(encodedInvocation))
     , m_replyInfo(WTF::move(replyInfo))

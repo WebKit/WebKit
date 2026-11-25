@@ -53,9 +53,9 @@ namespace WebKit {
 static inline NSDictionary *toAPI(const WebExtensionCommandParameters& command)
 {
     return @{
-        @"name": command.identifier.createNSString().get(),
-        descriptionKey: command.description.createNSString().get(),
-        shortcutKey: command.shortcut.createNSString().get()
+        @"name": createNSString(command.identifier).get(),
+        descriptionKey: createNSString(command.description).get(),
+        shortcutKey: createNSString(command.shortcut).get()
     };
 }
 
@@ -98,13 +98,13 @@ WebExtensionAPIEvent& WebExtensionAPICommands::onChanged()
     return *m_onChanged;
 }
 
-void WebExtensionContextProxy::dispatchCommandsCommandEvent(const String& identifier, const std::optional<WebExtensionTabParameters>& tabParameters)
+void WebExtensionContextProxy::dispatchCommandsCommandEvent(StringImpl* identifier, const std::optional<WebExtensionTabParameters>& tabParameters)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onCommand
 
     auto *tab = tabParameters ? toWebAPI(tabParameters.value()) : nil;
 
-    RetainPtr nsIdentifier = identifier.createNSString();
+    RetainPtr nsIdentifier = createNSString(identifier);
     enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
         RefPtr coreFrame = frame.coreLocalFrame();
         WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, protect(coreFrame ? coreFrame->document() : nullptr));
@@ -112,12 +112,12 @@ void WebExtensionContextProxy::dispatchCommandsCommandEvent(const String& identi
     });
 }
 
-void WebExtensionContextProxy::dispatchCommandsChangedEvent(const String& identifier, const String& oldShortcut, const String& newShortcut)
+void WebExtensionContextProxy::dispatchCommandsChangedEvent(StringImpl* identifier, StringImpl* oldShortcut, StringImpl* newShortcut)
 {
     auto *changeInfo = @{
-        @"name": identifier.createNSString().get(),
-        oldShortcutKey: oldShortcut.createNSString().get(),
-        newShortcutKey: newShortcut.createNSString().get()
+        @"name": createNSString(identifier).get(),
+        oldShortcutKey: createNSString(oldShortcut).get(),
+        newShortcutKey: createNSString(newShortcut).get()
     };
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {

@@ -204,7 +204,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionWithAppIDToU2fSignReq
 
     // AppID
     WebCore::AuthenticationExtensionsClientInputs extensions;
-    extensions.appid = "https://www.example.com/appid"_s;
+    extensions.appid = "https://www.example.com/appid"_si;
     getAssertionReq.extensions = WTF::move(extensions);
 
     const auto u2fSignCommand = convertToU2fSignCommand(std::span { TestData::kClientDataHash }, getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle), true);

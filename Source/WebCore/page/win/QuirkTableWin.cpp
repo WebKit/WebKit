@@ -31,17 +31,17 @@
 
 namespace WebCore {
 
-String loadQuirkTableJSON()
+RefPtr<StringImpl> loadQuirkTableJSON()
 {
     auto path = webKitBundlePath("QuirkTable"_s, "json"_s, "quirks"_s);
-    if (path.isNull())
+    if (!path)
         return { };
 
     auto contents = FileSystem::readEntireFile(path);
     if (!contents)
         return { };
 
-    return String::fromUTF8(contents->span());
+    return StringImpl::fromUTF8(contents->span());
 }
 
 } // namespace WebCore

@@ -43,7 +43,7 @@ void WebCaptionPreferencesDelegate::setDisplayMode(WebCore::CaptionUserPreferenc
     WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(displayMode);
 }
 
-void WebCaptionPreferencesDelegate::setPreferredLanguage(const String& language)
+void WebCaptionPreferencesDelegate::setPreferredLanguage(StringImpl* language)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::SetCaptionLanguage(language), 0);
     WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages({ language });

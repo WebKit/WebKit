@@ -85,7 +85,7 @@ public:
 
     // Returns an ISO 8601 representation for this instance.
     // The format argument is valid for DateTimeLocal and Time types.
-    String toString(SecondFormat = SecondFormat::None) const;
+    RefPtr<StringImpl> toString(SecondFormat = SecondFormat::None) const;
 
     // Sets year and month.
     static std::optional<DateComponents> fromParsingMonth(StringView);
@@ -180,7 +180,7 @@ private:
     NODELETE double millisecondsSinceEpochForTime() const;
 
     // Helper for toString().
-    String toStringForTime(SecondFormat) const;
+    RefPtr<StringImpl> toStringForTime(SecondFormat) const;
 
     // m_weekDay values
     enum {

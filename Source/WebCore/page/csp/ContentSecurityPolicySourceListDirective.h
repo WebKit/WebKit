@@ -37,13 +37,13 @@ class ContentSecurityPolicyDirectiveList;
 class ContentSecurityPolicySourceListDirective : public ContentSecurityPolicyDirective {
     WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicySourceListDirective);
 public:
-    ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
+    ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList&, StringImpl* name, StringImpl* value);
 
     bool allows(const URL&, bool didReceiveRedirectResponse);
     bool allows(const Vector<ContentSecurityPolicyHash>&) const;
     bool containsAllHashes(const Vector<ContentSecurityPolicyHash>&) const;
     bool allowUnsafeHashes(const Vector<ContentSecurityPolicyHash>&) const;
-    bool allows(const String& nonce) const;
+    bool allows(StringImpl* nonce) const;
     bool allowInline() const { return m_sourceList.allowInline(); }
     bool allowEval() const { return m_sourceList.allowEval(); }
     bool allowTrustedEval() const { return m_sourceList.allowTrustedEval(); }
@@ -54,11 +54,11 @@ public:
 
     OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsUsed() const { return m_sourceList.hashAlgorithmsUsed(); }
 
-    void setNameForReporting(const String& name) { m_nameForReporting = name; }
-    const String& nameForReporting() const LIFETIME_BOUND final { return !m_nameForReporting.isEmpty() ? m_nameForReporting : name(); }
+    void setNameForReporting(StringImpl* name) { m_nameForReporting = name; }
+    const RefPtr<StringImpl>& nameForReporting() const LIFETIME_BOUND final { return !isEmpty(m_nameForReporting) ? m_nameForReporting : name(); }
 
 private:
-    String m_nameForReporting;
+    RefPtr<StringImpl> m_nameForReporting;
     ContentSecurityPolicySourceList m_sourceList;
 };
 

@@ -82,7 +82,7 @@ bool TestsController::run(int argc, char** argv, bool* didRunAnyTest)
 {
     bool useDefaultPrinter = false;
     for (int i = 1; i < argc; ++i) {
-        if (String::fromUTF8(argv[i]) == "--gtest_brief=0"_s)
+        if (equal(StringImpl::fromUTF8(argv[i]), "--gtest_brief=0"_s))
             useDefaultPrinter = true;
     }
 

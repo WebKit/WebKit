@@ -116,7 +116,7 @@ auto CSSValueConversion<PositionTryFallback>::operator()(BuilderState& state, co
                 }
 
                 auto customIdent = toStyleFromCSSValue<CustomIdent>(state, item.get());
-                if (!customIdent.value.isNull())
+                if (customIdent.value)
                     rule = ScopedName { WTF::move(customIdent.value), state.styleScopeOrdinal() };
                 else {
                     state.setCurrentPropertyInvalidAtComputedValueTime();

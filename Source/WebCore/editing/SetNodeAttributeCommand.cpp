@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-SetNodeAttributeCommand::SetNodeAttributeCommand(Ref<Element>&& element, const QualifiedName& attribute, const AtomString& value)
+SetNodeAttributeCommand::SetNodeAttributeCommand(Ref<Element>&& element, const QualifiedName& attribute, AtomStringImpl* value)
     : SimpleEditCommand(element->document())
     , m_element(WTF::move(element))
     , m_attribute(attribute)
@@ -50,7 +50,7 @@ void SetNodeAttributeCommand::doApply()
 void SetNodeAttributeCommand::doUnapply()
 {
     m_element->setAttribute(m_attribute, m_oldValue);
-    m_oldValue = { };
+    m_oldValue = nullptr;
 }
 
 #ifndef NDEBUG

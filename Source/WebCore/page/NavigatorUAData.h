@@ -43,23 +43,23 @@ public:
     static Ref<NavigatorUAData> create(Ref<UserAgentStringData>&&);
     const Vector<NavigatorUABrandVersion>& brands() const;
     NODELETE bool mobile() const;
-    String platform() const;
+    RefPtr<StringImpl> platform() const;
     UALowEntropyJSON toJSON() const;
 
     using ValuesPromise = DOMPromiseDeferred<IDLDictionary<UADataValues>>;
-    void getHighEntropyValues(const Vector<String>& hints, ValuesPromise&&) const;
+    void getHighEntropyValues(const Vector<RefPtr<StringImpl>>& hints, ValuesPromise&&) const;
     ~NavigatorUAData();
 
 private:
     NavigatorUAData();
     NavigatorUAData(Ref<UserAgentStringData>&&);
-    static String createArbitraryVersion();
-    static String createArbitraryBrand();
+    static RefPtr<StringImpl> createArbitraryVersion();
+    static RefPtr<StringImpl> createArbitraryBrand();
 
     bool overrideFromUserAgentString { false };
     bool mobileOverride { false };
     inline static LazyNeverDestroyed<Vector<NavigatorUABrandVersion>> m_brands;
 
-    String platformOverride;
+    RefPtr<StringImpl> platformOverride;
 };
 }

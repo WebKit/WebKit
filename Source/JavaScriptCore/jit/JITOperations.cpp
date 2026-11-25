@@ -4494,7 +4494,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveRope, StringImpl*, (JSGlobalObject* glo
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    OPERATION_RETURN(scope, string->value(globalObject)->impl());
+    OPERATION_RETURN(scope, string->value(globalObject)->get());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationResolveRopeString, JSString*, (JSGlobalObject* globalObject, JSRopeString* string))
@@ -4540,7 +4540,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
             auto value = string->value(globalObject);
             OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-            result = linkedTable.ctiForValue(unlinkedTable, value.data.impl()).taggedPtr();
+            result = linkedTable.ctiForValue(unlinkedTable, value.data.get()).taggedPtr();
         }
     } else
         result = linkedTable.ctiDefault().taggedPtr();
@@ -5279,7 +5279,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationProcessTypeProfilerLog, void, (VM* vm
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    vm.typeProfilerLog()->processLogEntries(vm, "Log Full, called from inside baseline JIT"_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "Log Full, called from inside baseline JIT"_si);
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationProcessShadowChickenLog, void, (VM* vmPointer))

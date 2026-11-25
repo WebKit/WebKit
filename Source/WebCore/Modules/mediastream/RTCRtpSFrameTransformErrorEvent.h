@@ -42,13 +42,13 @@ public:
         Type errorType;
     };
 
-    NODELETE static Ref<RTCRtpSFrameTransformErrorEvent> create(const AtomString& type, Init&&);
+    NODELETE static Ref<RTCRtpSFrameTransformErrorEvent> create(AtomStringImpl* type, Init&&);
     static Ref<RTCRtpSFrameTransformErrorEvent> create(CanBubble, IsCancelable, Type);
 
     Type errorType() const { return m_errorType; }
 
 private:
-    RTCRtpSFrameTransformErrorEvent(const AtomString& type, CanBubble, IsCancelable, Type);
+    RTCRtpSFrameTransformErrorEvent(AtomStringImpl* type, CanBubble, IsCancelable, Type);
 
     Type m_errorType;
 };

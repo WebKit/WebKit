@@ -69,9 +69,9 @@ public:
     NODELETE static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static JSC::JSObject* currentScriptExecutionOwner(JSC::JSGlobalObject*);
     NODELETE static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-    static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
+    static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, StringImpl*);
 
-    void printErrorMessage(const String&) const;
+    void printErrorMessage(StringImpl*) const;
 
     NODELETE JSWindowProxy& proxy() const;
 

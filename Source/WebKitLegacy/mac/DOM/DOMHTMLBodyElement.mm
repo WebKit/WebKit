@@ -42,73 +42,73 @@
 - (NSString *)aLink
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::alinkAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::alinkAttr)).autorelease();
 }
 
 - (void)setALink:(NSString *)newALink
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::alinkAttr, newALink);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::alinkAttr, AtomStringImpl::add((__bridge CFStringRef)newALink).get());
 }
 
 - (NSString *)background
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::backgroundAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::backgroundAttr)).autorelease();
 }
 
 - (void)setBackground:(NSString *)newBackground
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::backgroundAttr, newBackground);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::backgroundAttr, AtomStringImpl::add((__bridge CFStringRef)newBackground).get());
 }
 
 - (NSString *)bgColor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::bgcolorAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::bgcolorAttr)).autorelease();
 }
 
 - (void)setBgColor:(NSString *)newBgColor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::bgcolorAttr, newBgColor);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::bgcolorAttr, AtomStringImpl::add((__bridge CFStringRef)newBgColor).get());
 }
 
 - (NSString *)link
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::linkAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::linkAttr)).autorelease();
 }
 
 - (void)setLink:(NSString *)newLink
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::linkAttr, newLink);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::linkAttr, AtomStringImpl::add((__bridge CFStringRef)newLink).get());
 }
 
 - (NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::textAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::textAttr)).autorelease();
 }
 
 - (void)setText:(NSString *)newText
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::textAttr, newText);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::textAttr, AtomStringImpl::add((__bridge CFStringRef)newText).get());
 }
 
 - (NSString *)vLink
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::vlinkAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::vlinkAttr)).autorelease();
 }
 
 - (void)setVLink:(NSString *)newVLink
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::vlinkAttr, newVLink);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::vlinkAttr, AtomStringImpl::add((__bridge CFStringRef)newVLink).get());
 }
 
 @end

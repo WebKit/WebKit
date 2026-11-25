@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct ApplePayCouponCodeDetails {
-    String couponCode;
+    RefPtr<StringImpl> couponCode;
 };
 
 } // namespace WebCore

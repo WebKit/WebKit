@@ -266,7 +266,7 @@ NODELETE static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOpt
 static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
     return createNSArray(options, [] (auto& option) {
-        return adoptNS([PAL::allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:option.displayName.createNSString().get() type:toAVTouchBarMediaSelectionOptionType(option.legibleType)]);
+        return adoptNS([PAL::allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:createNSString(option.displayName).get() type:toAVTouchBarMediaSelectionOptionType(option.legibleType)]);
     });
 }
 

@@ -246,8 +246,8 @@ private:
     bool m_needsYouTubeCaptionsQuirk { false };
 };
 
-String convertEnumerationToString(MediaSessionPlaybackState);
-String convertEnumerationToString(MediaSessionAction);
+RefPtr<StringImpl> convertEnumerationToString(MediaSessionPlaybackState);
+RefPtr<StringImpl> convertEnumerationToString(MediaSessionAction);
 
 inline bool MediaSession::hasActiveActionHandlers() const
 {
@@ -270,11 +270,11 @@ void MediaSession::visitActionHandlersInGCThread(Visitor& visitor) const
 namespace WTF {
 
 template<> struct LogArgument<WebCore::MediaSessionPlaybackState> {
-    static String toString(WebCore::MediaSessionPlaybackState state) { return convertEnumerationToString(state); }
+    static RefPtr<StringImpl> toString(WebCore::MediaSessionPlaybackState state) { return convertEnumerationToString(state); }
 };
 
 template<> struct LogArgument<WebCore::MediaSessionAction> {
-    static String toString(WebCore::MediaSessionAction action) { return convertEnumerationToString(action); }
+    static RefPtr<StringImpl> toString(WebCore::MediaSessionAction action) { return convertEnumerationToString(action); }
 };
 
 }

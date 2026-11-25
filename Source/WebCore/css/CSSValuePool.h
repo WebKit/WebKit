@@ -76,13 +76,13 @@ public:
     void drain();
 
     Ref<CSSColorValue> createColorValue(const WebCore::Color&);
-    RefPtr<CSSValueList> createFontFaceValue(const AtomString&);
-    Ref<CSSValue> createFontFamilyNameValue(const AtomString&);
+    RefPtr<CSSValueList> createFontFaceValue(AtomStringImpl*);
+    Ref<CSSValue> createFontFamilyNameValue(AtomStringImpl*);
 
 private:
     HashMap<WebCore::Color, Ref<CSSColorValue>> m_colorValueCache;
-    HashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
-    HashMap<AtomString, Ref<CSSValue>> m_fontFamilyNameValueCache;
+    HashMap<RefPtr<AtomStringImpl>, RefPtr<CSSValueList>> m_fontFaceValueCache;
+    HashMap<RefPtr<AtomStringImpl>, Ref<CSSValue>> m_fontFamilyNameValueCache;
 };
 
 inline CSSKeywordValue& CSSKeywordValue::implicitInitialValue()

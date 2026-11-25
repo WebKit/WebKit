@@ -45,7 +45,7 @@ public:
     virtual ~GPUError() = default;
 
     virtual Type type() const = 0;
-    virtual const String& message() const LIFETIME_BOUND = 0;
+    virtual const RefPtr<StringImpl>& message() const LIFETIME_BOUND = 0;
 
 protected:
     GPUError() = default;

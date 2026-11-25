@@ -49,7 +49,7 @@ public:
 
     TrackID id() const final { return m_id; }
     InbandTextTrackPrivate::Kind kind() const final { return InbandTextTrackPrivate::Kind::Chapters; }
-    String language() const final;
+    RefPtr<StringImpl> language() const final;
 
     int trackIndex() const final { return m_index; }
     void setTextTrackIndex(int index) { m_index = index; }
@@ -59,20 +59,25 @@ public:
 private:
     InbandChapterTrackPrivateAVFObjC(RetainPtr<NSLocale>, TrackID);
 
-    String inBandMetadataTrackDispatchType() const final { return "com.apple.chapters"_s; }
+    RefPtr<StringImpl> inBandMetadataTrackDispatchType() const final { return "com.apple.chapters"_si; }
     ASCIILiteral logClassName() const final { return "InbandChapterTrackPrivateAVFObjC"_s; }
 
     struct ChapterData {
         MediaTime m_startTime;
         MediaTime m_duration;
-        String m_title;
+        RefPtr<StringImpl> m_title;
 
-        friend bool operator==(const ChapterData&, const ChapterData&) = default;
+        friend bool operator==(const ChapterData& a, const ChapterData& b)
+        {
+            return a.m_startTime == b.m_startTime
+                && a.m_duration == b.m_duration
+                && contentEquals(a.m_title, b.m_title);
+        }
     };
 
     Vector<ChapterData> m_processedChapters;
     const RetainPtr<NSLocale> m_locale;
-    mutable String m_language;
+    mutable RefPtr<StringImpl> m_language;
     const TrackID m_id;
     int m_index { 0 };
 };

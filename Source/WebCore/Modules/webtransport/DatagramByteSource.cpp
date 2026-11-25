@@ -159,7 +159,7 @@ void DatagramByteSource::tryEnqueuing(JSC::ArrayBuffer& buffer, ReadableByteStre
         RefPtr view = request->view();
         // If view’s byte length is less than the size of datagram, return a promise rejected with a RangeError.
         if (view->byteLength() < byteLength - m_currentOffset) {
-            promise->reject(Exception { ExceptionCode::RangeError, "BYOB request buffer is too small"_s });
+            promise->reject(Exception { ExceptionCode::RangeError, "BYOB request buffer is too small"_si });
             return;
         }
 
@@ -169,7 +169,7 @@ void DatagramByteSource::tryEnqueuing(JSC::ArrayBuffer& buffer, ReadableByteStre
             elementSize = JSC::elementSize(viewType);
 
         if (elementSize != 1) {
-            promise->reject(Exception { ExceptionCode::TypeError, "BYOB request view element size is not 1"_s });
+            promise->reject(Exception { ExceptionCode::TypeError, "BYOB request view element size is not 1"_si });
             return;
         }
     }

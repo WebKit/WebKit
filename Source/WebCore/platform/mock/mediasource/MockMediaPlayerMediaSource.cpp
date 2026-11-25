@@ -49,7 +49,7 @@ private:
 
     Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer& player) const final { return adoptRef(*new MockMediaPlayerMediaSource(player)); }
 
-    void getSupportedTypes(HashSet<String>& types) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types) const final
     {
         return MockMediaPlayerMediaSource::getSupportedTypes(types);
     }
@@ -67,16 +67,16 @@ void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar regist
 }
 
 // FIXME: What does the word "cache" mean here?
-static const HashSet<String>& mimeTypeCache()
+static const HashSet<RefPtr<StringImpl>>& mimeTypeCache()
 {
-    static NeverDestroyed cache = HashSet<String> {
+    static NeverDestroyed cache = HashSet<RefPtr<StringImpl>> {
         "video/mock"_s,
         "audio/mock"_s,
     };
     return cache;
 }
 
-void MockMediaPlayerMediaSource::getSupportedTypes(HashSet<String>& supportedTypes)
+void MockMediaPlayerMediaSource::getSupportedTypes(HashSet<RefPtr<StringImpl>>& supportedTypes)
 {
     supportedTypes = mimeTypeCache();
 }
@@ -86,18 +86,18 @@ MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEn
     if (parameters.platformType != PlatformMediaDecodingType::MediaSource)
         return MediaPlayer::SupportsType::IsNotSupported;
 
-    auto containerType = parameters.type.containerType().convertToASCIILowercase();
-    if (containerType.isEmpty() || !mimeTypeCache().contains(containerType))
+    auto containerType = convertToASCIILowercase(parameters.type.containerType());
+    if (isEmpty(containerType) || !mimeTypeCache().contains(containerType))
         return MediaPlayer::SupportsType::IsNotSupported;
 
     auto codecs = parameters.type.parameter(ContentType::codecsParameter());
-    if (codecs.isEmpty())
+    if (isEmpty(codecs))
         return MediaPlayer::SupportsType::MayBeSupported;
 
-    if (codecs == "mock"_s || codecs == "kcom"_s)
+    if (equal(codecs, "mock"_s) || equal(codecs, "kcom"_s))
         return MediaPlayer::SupportsType::IsSupported;
 
-    if (codecs == "unknown"_s || codecs == "invalid"_s)
+    if (equal(codecs, "unknown"_s) || equal(codecs, "invalid"_s))
         return MediaPlayer::SupportsType::IsNotSupported;
 
     return MediaPlayer::SupportsType::MayBeSupported;
@@ -110,7 +110,7 @@ MockMediaPlayerMediaSource::MockMediaPlayerMediaSource(MediaPlayer& player)
 
 MockMediaPlayerMediaSource::~MockMediaPlayerMediaSource() = default;
 
-void MockMediaPlayerMediaSource::load(const String&)
+void MockMediaPlayerMediaSource::load(StringImpl*)
 {
     ASSERT_NOT_REACHED();
 }

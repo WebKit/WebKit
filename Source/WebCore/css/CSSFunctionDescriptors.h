@@ -44,8 +44,8 @@ public:
 
     StyleDeclarationType styleDeclarationType() const final { return StyleDeclarationType::Function; }
 
-    String result() const;
-    ExceptionOr<void> setResult(const String&);
+    RefPtr<StringImpl> result() const;
+    ExceptionOr<void> setResult(StringImpl*);
 
     CSSFunctionDescriptors(MutableStyleProperties&, CSSFunctionDeclarations&);
 

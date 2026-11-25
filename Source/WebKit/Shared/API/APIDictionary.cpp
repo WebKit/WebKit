@@ -66,19 +66,19 @@ Ref<Array> Dictionary::keys() const
     return API::Array::create(WTF::move(keys));
 }
 
-bool Dictionary::add(const WTF::String& key, RefPtr<API::Object>&& item)
+bool Dictionary::add(StringImpl* key, RefPtr<API::Object>&& item)
 {
     MapType::AddResult result = m_map.add(key, WTF::move(item));
     return result.isNewEntry;
 }
 
-bool Dictionary::set(const WTF::String& key, RefPtr<API::Object>&& item)
+bool Dictionary::set(StringImpl* key, RefPtr<API::Object>&& item)
 {
     MapType::AddResult result = m_map.set(key, WTF::move(item));
     return result.isNewEntry;
 }
 
-void Dictionary::remove(const WTF::String& key)
+void Dictionary::remove(StringImpl* key)
 {
     m_map.remove(key);
 }

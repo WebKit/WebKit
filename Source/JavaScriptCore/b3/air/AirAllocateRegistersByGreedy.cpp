@@ -979,7 +979,7 @@ public:
         const char8_t* filter = Options::airGreedyRegAllocDumpFunction();
         if (!filter)
             return false;
-        return m_code.proc().name().find(String { filter }) != notFound;
+        return find(m_code.proc().name(), StringImpl::create(unsafeSpan(filter)).get()) != notFound;
     }
 
     void dump(PrintStream& out) const

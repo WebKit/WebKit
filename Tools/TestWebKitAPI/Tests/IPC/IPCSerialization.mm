@@ -785,7 +785,7 @@ private:
     $ openssl x509 -in cert.pem -outform DER | base64
  */
 
-String privateKeyDataBase64(""
+RefPtr<StringImpl> privateKeyDataBase64(""
     "MIIJKgIBAAKCAgEAu4RuNu7ekW19odDzXwgJBtHoQ9p4cy1iuzYiuGaXrvPUP5uR2MpyY9ptp8iHVn"
     "1tt9zMl1suwuAGXZtI5AZhgnL3prlD8eZIEbcbvN6JwdkzMt4aWwvSooNJTSucMXwpy/vEd8Q7AD/R"
     "bSNVuFtsl0ACuOpwdGCX1Pg+hak2WrPpZ+mUMnTH3AyQH0vnjsiiGo40L7vtpG3fFHwXpY4dI8lEgC"
@@ -828,7 +828,7 @@ String privateKeyDataBase64(""
     "qiViPFcuPO+jToizb9VX4TIgiSFUQ5ZlQ0O5RlPSqnjcSntLIdq0nKn8bcre/6CkAsMBytaHcEoDck"
     "6I0QC5zps4Kj7g=="_s);
 
-String certDataBase64(""
+RefPtr<StringImpl> certDataBase64(""
     "MIIFgDCCA2gCCQC9pt3ltu0TzTANBgkqhkiG9w0BAQsFADCBgTELMAkGA1UEBhMCVVMxEzARBgNVBA"
     "gMCk5ldyBNZXhpY28xETAPBgNVBAcMCFNhbnRhIEZlMQ0wCwYDVQQKDARTZWxmMQ8wDQYDVQQLDAZN"
     "eXNlbGYxCzAJBgNVBAMMAk1lMR0wGwYJKoZIhvcNAQkBFg5tZUBleGFtcGxlLmNvbTAeFw0yMzExMT"
@@ -857,7 +857,7 @@ String certDataBase64(""
 
 static RetainPtr<SecCertificateRef> createCertificate()
 {
-    RetainPtr certData = adoptNS([[NSData alloc] initWithBase64EncodedString:certDataBase64.createNSString().get() options:0]);
+    RetainPtr certData = adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(certDataBase64).get() options:0]);
     RetainPtr cert = adoptCF(SecCertificateCreateWithData(kCFAllocatorDefault, (CFDataRef)certData.get()));
     EXPECT_NOT_NULL(cert);
     return cert;
@@ -865,7 +865,7 @@ static RetainPtr<SecCertificateRef> createCertificate()
 
 static RetainPtr<SecKeyRef> createPrivateKey()
 {
-    RetainPtr keyData = adoptNS([[NSData alloc] initWithBase64EncodedString:privateKeyDataBase64.createNSString().get() options:0]);
+    RetainPtr keyData = adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(privateKeyDataBase64).get() options:0]);
 
     NSDictionary *keyAttrs = @{
         (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
@@ -1398,7 +1398,7 @@ TEST(IPCSerialization, NSErrorNetworkResolutionReport)
 }
 
 #if HAVE(WK_SECURE_CODING_SECTRUST)
-String cert1(""
+RefPtr<StringImpl> cert1(""
     "MIIHezCCBmOgAwIBAgIQfrZYqgaHdOKdEb5ZVqa0LTANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQGEw"
     "JVUzETMBEGA1UEChMKQXBwbGUgSW5jLjEtMCsGA1UEAxMkQXBwbGUgUHVibGljIEVWIFNlcnZlciBS"
     "U0EgQ0EgMiAtIEcxMB4XDTI0MTIwOTE3NTcwNFoXDTI1MDQwODE5NTY1NlowgccxHTAbBgNVBA8MFF"
@@ -1433,7 +1433,7 @@ String cert1(""
     "eS/MTE0gr+TxmY6N0bv7xYtSlEBLXSElz7VFcq7GqsrApEqoVkk24oOpfQ4xeEDhvulyDtEOW0DT8D"
     "l+UjuDVM264DL03VGGv1bidxXqf1ZtsLYiVfIFz+7GNj9xjKL+6JR7ir/XGGvyY="_s);
 
-String cert2(""
+RefPtr<StringImpl> cert2(""
     "MIIFMjCCBBqgAwIBAgIQBxd5EQBdImf2iJL2j4tQWDANBgkqhkiG9w0BAQsFADBsMQswCQYDVQQGEw"
     "JVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSswKQYD"
     "VQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5jZSBFViBSb290IENBMB4XDTIwMDQyOTEyNTQ1MFoXDT"
@@ -1458,7 +1458,7 @@ String cert2(""
     "d2rZ21Pim7LEJVY3OcRmtYNHaM/lunYx1ZQ+0fw7Hc5J/xR7vlRiuyP+fJ9ucuDYupLg333Di5R7JZ"
     "IfnX42ecX0Dd0wIeuFj0HBjH6c25FUov/Fa5Zjr0VPjmmgN6PnoMArUZXDkQe3M="_s);
 
-String chain1(""
+RefPtr<StringImpl> chain1(""
     "MIIHezCCBmOgAwIBAgIQfrZYqgaHdOKdEb5ZVqa0LTANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQGEw"
     "JVUzETMBEGA1UEChMKQXBwbGUgSW5jLjEtMCsGA1UEAxMkQXBwbGUgUHVibGljIEVWIFNlcnZlciBS"
     "U0EgQ0EgMiAtIEcxMB4XDTI0MTIwOTE3NTcwNFoXDTI1MDQwODE5NTY1NlowgccxHTAbBgNVBA8MFF"
@@ -1493,7 +1493,7 @@ String chain1(""
     "eS/MTE0gr+TxmY6N0bv7xYtSlEBLXSElz7VFcq7GqsrApEqoVkk24oOpfQ4xeEDhvulyDtEOW0DT8D"
     "l+UjuDVM264DL03VGGv1bidxXqf1ZtsLYiVfIFz+7GNj9xjKL+6JR7ir/XGGvyY="_s);
 
-String chain2(""
+RefPtr<StringImpl> chain2(""
     "MIIFMjCCBBqgAwIBAgIQBxd5EQBdImf2iJL2j4tQWDANBgkqhkiG9w0BAQsFADBsMQswCQYDVQQGEw"
     "JVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSswKQYD"
     "VQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5jZSBFViBSb290IENBMB4XDTIwMDQyOTEyNTQ1MFoXDT"
@@ -1518,7 +1518,7 @@ String chain2(""
     "d2rZ21Pim7LEJVY3OcRmtYNHaM/lunYx1ZQ+0fw7Hc5J/xR7vlRiuyP+fJ9ucuDYupLg333Di5R7JZ"
     "IfnX42ecX0Dd0wIeuFj0HBjH6c25FUov/Fa5Zjr0VPjmmgN6PnoMArUZXDkQe3M="_s);
 
-String chain3(""
+RefPtr<StringImpl> chain3(""
     "MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBsMQswCQYDVQQGEw"
     "JVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSswKQYD"
     "VQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5jZSBFViBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDT"
@@ -1537,10 +1537,10 @@ String chain3(""
     "3pjOLAEFe4yHYSkVXySGnYvCoCWw9E1CAx2/S6cCZdkGCevEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8"
     "nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep+OkuE6N36B9K"_s);
 
-String extendedKeyUsage1("VR0lAA=="_s);
-String extendedKeyUsage2("KwYBBQUHAwE="_s);
-String extendedKeyUsage3("KwYBBAGCNwoDAw=="_s);
-String extendedKeyUsage4("YIZIAYb4QgQB"_s);
+RefPtr<StringImpl> extendedKeyUsage1("VR0lAA=="_si);
+RefPtr<StringImpl> extendedKeyUsage2("KwYBBQUHAwE="_si);
+RefPtr<StringImpl> extendedKeyUsage3("KwYBBAGCNwoDAw=="_si);
+RefPtr<StringImpl> extendedKeyUsage4("YIZIAYb4QgQB"_si);
 
 TEST(IPCSerialization, SecTrustRef)
 {
@@ -1551,13 +1551,13 @@ TEST(IPCSerialization, SecTrustRef)
     NSDictionary *appleCertificatePlist = @{
         @"anchorsOnly" : @(NO),
         @"certificates" : @[
-            [[NSData alloc] initWithBase64EncodedString:cert1.createNSString().get() options:0],
-            [[NSData alloc] initWithBase64EncodedString:cert2.createNSString().get() options:0]
+            [[NSData alloc] initWithBase64EncodedString:createNSString(cert1).get() options:0],
+            [[NSData alloc] initWithBase64EncodedString:createNSString(cert2).get() options:0]
         ],
         @"chain" : @[
-            [[NSData alloc] initWithBase64EncodedString:chain1.createNSString().get() options:0],
-            [[NSData alloc] initWithBase64EncodedString:chain2.createNSString().get() options:0],
-            [[NSData alloc] initWithBase64EncodedString:chain3.createNSString().get() options:0],
+            [[NSData alloc] initWithBase64EncodedString:createNSString(chain1).get() options:0],
+            [[NSData alloc] initWithBase64EncodedString:createNSString(chain2).get() options:0],
+            [[NSData alloc] initWithBase64EncodedString:createNSString(chain3).get() options:0],
         ],
         @"details" : @[
             @{ },
@@ -1629,10 +1629,10 @@ TEST(IPCSerialization, SecTrustRef)
                     @"DuplicateExtension" : @(YES),
                     @"ExtendedKeyUsage" : @[
                         [NSData new],
-                        [[NSData alloc] initWithBase64EncodedString:extendedKeyUsage1.createNSString().get() options:0],
-                        [[NSData alloc] initWithBase64EncodedString:extendedKeyUsage2.createNSString().get() options:0],
-                        [[NSData alloc] initWithBase64EncodedString:extendedKeyUsage3.createNSString().get() options:0],
-                        [[NSData alloc] initWithBase64EncodedString:extendedKeyUsage4.createNSString().get() options:0],
+                        [[NSData alloc] initWithBase64EncodedString:createNSString(extendedKeyUsage1).get() options:0],
+                        [[NSData alloc] initWithBase64EncodedString:createNSString(extendedKeyUsage2).get() options:0],
+                        [[NSData alloc] initWithBase64EncodedString:createNSString(extendedKeyUsage3).get() options:0],
+                        [[NSData alloc] initWithBase64EncodedString:createNSString(extendedKeyUsage4).get() options:0],
                     ],
                     @"GrayListedLeaf" : @(YES),
                     @"IdLinkage" : @(YES),
@@ -1686,7 +1686,7 @@ TEST(IPCSerialization, SecTrustRef)
             [NSData dataWithBytes:"BBBB" length:strlen("BBBB")]
         ],
         @"anchors" : @[
-            [[NSData alloc] initWithBase64EncodedString:cert1.createNSString().get() options:0]
+            [[NSData alloc] initWithBase64EncodedString:createNSString(cert1).get() options:0]
         ],
         @"trustedLogs" : @[
             [NSData dataWithBytes:"CCCC" length:strlen("CCCC")]
@@ -1736,7 +1736,7 @@ TEST(IPCSerialization, SecTrustRef)
 // rdar://191576139: newer Security frameworks put an NSArray inside the SSL policy's KeySize option dictionary.
 TEST(IPCSerialization, SecTrustRefKeySizeWithArrayValue)
 {
-    RetainPtr certificate = adoptCF(SecCertificateCreateWithData(nullptr, (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:cert1.createNSString().get() options:0]).get()));
+    RetainPtr certificate = adoptCF(SecCertificateCreateWithData(nullptr, (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(cert1).get() options:0]).get()));
     ASSERT_NOT_NULL(certificate.get());
     RetainPtr policy = adoptCF(SecPolicyCreateSSL(true, CFSTR("example.local")));
     SecTrustRef trustRef = nullptr;

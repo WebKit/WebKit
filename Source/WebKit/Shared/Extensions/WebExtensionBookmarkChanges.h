@@ -33,10 +33,10 @@
 namespace WebKit {
 
 struct WebExtensionBookmarkChanges {
-    String identifier;
-    std::optional<String> parentIdentifier;
+    RefPtr<StringImpl> identifier;
+    std::optional<RefPtr<StringImpl>> parentIdentifier;
     std::optional<uint64_t> index;
-    std::optional<String> title;
+    std::optional<RefPtr<StringImpl>> title;
     std::optional<URL> url;
 };
 

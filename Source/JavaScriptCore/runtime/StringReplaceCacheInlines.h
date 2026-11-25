@@ -33,15 +33,15 @@
 
 namespace JSC {
 
-inline StringReplaceCache::Entry* StringReplaceCache::get(const String& subject, RegExp* regExp)
+inline StringReplaceCache::Entry* StringReplaceCache::get(StringImpl* subject, RegExp* regExp)
 {
     AssertNoGC assertNoGC;
-    if (!subject.impl() || !subject.impl()->isAtom())
+    if (!subject || !subject->isAtom())
         return nullptr;
     ASSERT(regExp->global());
-    ASSERT(subject.length() >= Options::thresholdForStringReplaceCache());
+    ASSERT(length(subject) >= Options::thresholdForStringReplaceCache());
 
-    auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
+    auto* subjectImpl = static_cast<AtomStringImpl*>(subject);
     unsigned index = subjectImpl->hash() & (cacheSize - 1);
     {
         auto& entry = m_entries[index];
@@ -56,13 +56,13 @@ inline StringReplaceCache::Entry* StringReplaceCache::get(const String& subject,
     return nullptr;
 }
 
-inline void StringReplaceCache::set(const String& subject, RegExp* regExp, JSCellButterfly* result, MatchResult matchResult, std::span<const int> lastMatch)
+inline void StringReplaceCache::set(StringImpl* subject, RegExp* regExp, JSCellButterfly* result, MatchResult matchResult, std::span<const int> lastMatch)
 {
     AssertNoGC assertNoGC;
-    if (!subject.impl() || !subject.impl()->isAtom())
+    if (!subject || !subject->isAtom())
         return;
 
-    auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
+    auto* subjectImpl = static_cast<AtomStringImpl*>(subject);
     unsigned index = subjectImpl->hash() & (cacheSize - 1);
     {
         auto& entry1 = m_entries[index];

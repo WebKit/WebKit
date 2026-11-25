@@ -107,11 +107,11 @@ const gchar* webkit_back_forward_list_item_get_uri(WebKitBackForwardListItem* li
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem), 0);
 
     WebKitBackForwardListItemPrivate* priv = listItem->priv;
-    String url = priv->webListItem->url();
-    if (url.isEmpty())
+    RefPtr<StringImpl> url = priv->webListItem->url();
+    if (isEmpty(url))
         return 0;
 
-    priv->uri = url.utf8();
+    priv->uri = utf8(url);
     return priv->uri.legacyCStringPointer();
 }
 
@@ -129,11 +129,11 @@ const gchar* webkit_back_forward_list_item_get_title(WebKitBackForwardListItem* 
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem), 0);
 
     WebKitBackForwardListItemPrivate* priv = listItem->priv;
-    String title = priv->webListItem->title();
-    if (title.isEmpty())
+    RefPtr<StringImpl> title = priv->webListItem->title();
+    if (isEmpty(title))
         return 0;
 
-    priv->title = title.utf8();
+    priv->title = utf8(title);
     return priv->title.legacyCStringPointer();
 }
 
@@ -153,10 +153,10 @@ const gchar* webkit_back_forward_list_item_get_original_uri(WebKitBackForwardLis
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem), 0);
 
     WebKitBackForwardListItemPrivate* priv = listItem->priv;
-    String originalURL = priv->webListItem->originalURL();
-    if (originalURL.isEmpty())
+    RefPtr<StringImpl> originalURL = priv->webListItem->originalURL();
+    if (isEmpty(originalURL))
         return 0;
 
-    priv->originalURI = originalURL.utf8();
+    priv->originalURI = utf8(originalURL);
     return priv->originalURI.legacyCStringPointer();
 }

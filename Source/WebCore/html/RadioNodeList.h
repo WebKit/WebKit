@@ -34,18 +34,18 @@ namespace WebCore {
 class RadioNodeList final : public CachedLiveNodeList<RadioNodeList> {
     WTF_MAKE_TZONE_ALLOCATED(RadioNodeList);
 public:
-    static Ref<RadioNodeList> create(ContainerNode& rootNode, const AtomString& name);
+    static Ref<RadioNodeList> create(ContainerNode& rootNode, AtomStringImpl* name);
     virtual ~RadioNodeList();
 
-    String value() const;
-    void setValue(const String&);
+    RefPtr<StringImpl> value() const;
+    void setValue(StringImpl*);
     bool elementMatches(Element&) const final;
 
 private:
-    RadioNodeList(ContainerNode&, const AtomString& name);
+    RadioNodeList(ContainerNode&, AtomStringImpl* name);
     bool isRootedAtTreeScope() const final { return m_isRootedAtTreeScope; }
 
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
     bool m_isRootedAtTreeScope;
 };
 

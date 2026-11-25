@@ -288,8 +288,8 @@
     if (!hitTestResult)
         return nil;
 
-    String absoluteLinkURL = hitTestResult->absoluteLinkURL();
-    if (!absoluteLinkURL.isEmpty()) {
+    RefPtr<StringImpl> absoluteLinkURL = hitTestResult->absoluteLinkURL();
+    if (!isEmpty(absoluteLinkURL)) {
         if (WTF::protocolIs(absoluteLinkURL, "file"_s)) {
             _type = kWKImmediateActionNone;
             return nil;
@@ -493,7 +493,7 @@
     if (!hitTestResult)
         return nil;
 
-    RetainPtr menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL().createNSString().get() actionContext:_currentActionContext.get()];
+    RetainPtr menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForTargetURL:createNSString(hitTestResult->absoluteLinkURL()).get() actionContext:_currentActionContext.get()];
 
     if (menuItems.get().count != 1)
         return nil;

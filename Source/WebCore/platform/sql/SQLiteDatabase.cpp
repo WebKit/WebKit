@@ -56,7 +56,7 @@ static constexpr auto notOpenErrorMessage = "database is not open"_s;
 static void unauthorizedSQLFunction(sqlite3_context *context, int, sqlite3_value **)
 {
     auto* functionName = static_cast<const char*>(sqlite3_user_data(context));
-    sqliteResultError(context, makeString("Function "_s, unsafeSpan(functionName), " is unauthorized"_s).utf8());
+    sqliteResultError(context, utf8(makeString("Function "_s, unsafeSpan(functionName), " is unauthorized"_s)));
 }
 
 static void initializeSQLiteIfNecessary()
@@ -126,7 +126,7 @@ SQLiteDatabase::~SQLiteDatabase()
     close();
 }
 
-bool SQLiteDatabase::open(const String& filename, OpenMode openMode, OptionSet<OpenOptions> options)
+bool SQLiteDatabase::open(StringImpl* filename, OpenMode openMode, OptionSet<OpenOptions> options)
 {
     initializeSQLiteIfNecessary();
     close();
@@ -188,13 +188,13 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode, OptionSet<O
             LOG_ERROR("SQLite database could not set temp_store to memory");
     }
 
-    if (filename != inMemoryPath()) {
+    if (!equal(filename, inMemoryPath())) {
         if (openMode != OpenMode::ReadOnly && !useWALJournalMode())
             return false;
 
         auto shmFileName = makeString(filename, "-shm"_s);
         if (FileSystem::fileExists(shmFileName) && !FileSystem::isSafeToUseMemoryMapForPath(shmFileName)) {
-            RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", shmFileName.utf8());
+            RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", utf8(shmFileName));
             if (!FileSystem::makeSafeToUseMemoryMapForPath(shmFileName))
                 return false;
         }
@@ -277,9 +277,9 @@ bool SQLiteDatabase::useWALJournalMode()
             return false;
 
 #ifndef NDEBUG
-        String mode = statement->columnText(0);
+        RefPtr<StringImpl> mode = statement->columnText(0);
         if (!equalLettersIgnoringASCIICase(mode, "wal"_s)) {
-            LOG_ERROR("SQLite database journal_mode should be 'WAL', but is '%s'", mode.utf8());
+            LOG_ERROR("SQLite database journal_mode should be 'WAL', but is '%s'", utf8(mode));
             return false;
         }
 #endif
@@ -484,15 +484,15 @@ bool SQLiteDatabase::executeCommand(ASCIILiteral query)
 
 bool SQLiteDatabase::tableExists(StringView tableName)
 {
-    return !tableSQL(tableName).isEmpty();
+    return !isEmpty(tableSQL(tableName));
 }
 
 bool SQLiteDatabase::indexExists(StringView indexName)
 {
-    return !indexSQL(indexName).isEmpty();
+    return !isEmpty(indexSQL(indexName));
 }
 
-String SQLiteDatabase::tableSQL(StringView tableName)
+RefPtr<StringImpl> SQLiteDatabase::tableSQL(StringView tableName)
 {
     if (!isOpen())
         return { };
@@ -506,7 +506,7 @@ String SQLiteDatabase::tableSQL(StringView tableName)
     return statement->columnText(0);
 }
 
-String SQLiteDatabase::indexSQL(StringView indexName)
+RefPtr<StringImpl> SQLiteDatabase::indexSQL(StringView indexName)
 {
     if (!isOpen())
         return { };
@@ -527,12 +527,12 @@ void SQLiteDatabase::clearAllTables()
         LOG(SQLDatabase, "Failed to prepare statement to retrieve list of tables from database");
         return;
     }
-    Vector<String> tables;
+    Vector<RefPtr<StringImpl>> tables;
     while (statement->step() == SQLITE_ROW)
         tables.append(statement->columnText(0));
     for (auto& table : tables) {
         if (!executeCommandSlow(makeString("DROP TABLE "_s, table)))
-            LOG(SQLDatabase, "Unable to drop table %s", table.utf8());
+            LOG(SQLDatabase, "Unable to drop table %s", utf8(table));
     }
 }
 
@@ -608,8 +608,8 @@ int SQLiteDatabase::authorizerFunction(void* userData, int actionCode, const cha
     DatabaseAuthorizer* auth = static_cast<DatabaseAuthorizer*>(userData);
     ASSERT(auth);
 
-    auto parameter1String = String::fromLatin1(parameter1);
-    auto parameter2String = String::fromLatin1(parameter2);
+    auto parameter1String = StringImpl::fromLatin1(parameter1);
+    auto parameter2String = StringImpl::fromLatin1(parameter2);
     switch (actionCode) {
         case SQLITE_CREATE_INDEX:
             return auth->createIndex(parameter1String, parameter2String);
@@ -757,10 +757,10 @@ static int callCollationFunction(void* arg, int aLength, const void* a, int bLen
     return (*f)(aLength, a, bLength, b);
 }
 
-void SQLiteDatabase::setCollationFunction(const String& collationName, Function<int(int, const void*, int, const void*)>&& collationFunction)
+void SQLiteDatabase::setCollationFunction(StringImpl* collationName, Function<int(int, const void*, int, const void*)>&& collationFunction)
 {
     auto functionObject = new Function<int(int, const void*, int, const void*)>(WTF::move(collationFunction));
-    sqliteCreateCollation(m_db, collationName.utf8(), SQLITE_UTF8, functionObject, callCollationFunction, destroyCollationFunction);
+    sqliteCreateCollation(m_db, utf8(collationName), SQLITE_UTF8, functionObject, callCollationFunction, destroyCollationFunction);
 }
 
 void SQLiteDatabase::releaseMemory()

@@ -198,22 +198,22 @@ void RemoteFrame::detachLocalDescendants()
     }
 }
 
-String RemoteFrame::renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag> behavior)
+RefPtr<StringImpl> RemoteFrame::renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag> behavior)
 {
     return m_client->renderTreeAsText(baseIndent, behavior);
 }
 
-String RemoteFrame::customUserAgent() const
+RefPtr<StringImpl> RemoteFrame::customUserAgent() const
 {
     return m_customUserAgent;
 }
 
-String RemoteFrame::customUserAgentAsSiteSpecificQuirks() const
+RefPtr<StringImpl> RemoteFrame::customUserAgentAsSiteSpecificQuirks() const
 {
     return m_customUserAgentAsSiteSpecificQuirks;
 }
 
-String RemoteFrame::customNavigatorPlatform() const
+RefPtr<StringImpl> RemoteFrame::customNavigatorPlatform() const
 {
     return m_customNavigatorPlatform;
 }
@@ -271,7 +271,7 @@ bool RemoteFrame::frameDocumentIsSandboxedOrigin() const
     return securityPolicy && securityPolicy->isSandboxedOrigin;
 }
 
-String RemoteFrame::frameURLProtocol() const
+RefPtr<StringImpl> RemoteFrame::frameURLProtocol() const
 {
     return frameTreeSyncData().frameURLProtocol;
 }
@@ -301,7 +301,7 @@ float RemoteFrame::frameOwnerZoomFactorForChild(const Frame& child) const
     return 1.0;
 }
 
-String RemoteFrame::debugDescription() const
+RefPtr<StringImpl> RemoteFrame::debugDescription() const
 {
     StringBuilder builder;
 

@@ -42,13 +42,13 @@
 - (NSString *)cite
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::citeAttr).string().createNSString().autorelease();
+    return createNSString(IMPL->getURLAttribute(WebCore::HTMLNames::citeAttr).string()).autorelease();
 }
 
 - (void)setCite:(NSString *)newCite
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::citeAttr, newCite);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::citeAttr, AtomStringImpl::add((__bridge CFStringRef)newCite).get());
 }
 
 @end

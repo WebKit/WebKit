@@ -147,7 +147,7 @@ void WellKnownResourceFetcher::fetch(WebPageProxy& page, URL&& url, const WellKn
     WebCore::ResourceRequest request { WTF::move(url) };
     request.setTimeoutInterval(limits.timeout.seconds());
     request.setAllowCookies(false);
-    request.setHTTPReferrer({ });
+    request.setHTTPReferrer(nullptr);
 
     Ref client = WellKnownResourceFetcherClient::create(limits.maxResourceSize, WTF::move(completionHandler));
 

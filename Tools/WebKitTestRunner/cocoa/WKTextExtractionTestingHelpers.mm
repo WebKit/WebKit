@@ -77,7 +77,7 @@ ASCIILiteral description(WKTextExtractionContainer container)
     }
 }
 
-static String descriptionForRect(CGRect rect)
+static RefPtr<StringImpl> descriptionForRect(CGRect rect)
 {
     auto roundedInt = [](CGFloat value) {
         return static_cast<int>(std::round(value));
@@ -98,7 +98,7 @@ static void buildDescriptionIgnoringChildren(TextStream& stream, WKTextExtractio
     }
 
     if (auto text = downcastItem(item, WKTextExtractionTextItem)) {
-        stream << "TEXT "_s << makeString("\""_s, makeStringByReplacingAll(text.content, '\n', "\\n"_s), "\""_s);
+        stream << "TEXT "_s << makeString("\""_s, makeStringByReplacingAll(StringImpl::create(text.content).get(), '\n', "\\n"_s), "\""_s);
         if (auto range = text.selectedRange; range.location != NSNotFound)
             stream << " {selected=["_s << range.location << ","_s << (range.location + range.length) << "]}";
 
@@ -164,7 +164,7 @@ NSString *recursiveDescription(WKTextExtractionItem *item, IncludeRects includeR
 {
     TextStream stream { TextStream::LineMode::MultipleLine };
     buildRecursiveDescription(stream, item, includeRects);
-    return stream.release().createNSString().autorelease();
+    return createNSString(stream.release()).autorelease();
 }
 
 } // namespace WTR

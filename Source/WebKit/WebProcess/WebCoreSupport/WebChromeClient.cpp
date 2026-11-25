@@ -405,7 +405,7 @@ void WebChromeClient::focusedFrameChanged(Frame* frame)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt), m_page->identifier());
 }
 
-RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
+RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, StringImpl* openedMainFrameName, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr document = frame.document())
@@ -467,7 +467,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         std::nullopt, /* navigationID */
         originalRequest, /* originalRequest */
         originalRequest, /* request */
-        originalRequest.url().isValid() ? String() : originalRequest.url().string(), /* invalidURLString */
+        originalRequest.url().isValid() ? nullptr : originalRequest.url().string(), /* invalidURLString */
         navigationAction.requester(), /* requester */
         { }, /* pendingNavigateEventID */
     };
@@ -550,7 +550,7 @@ void WebChromeClient::setResizable(bool resizable)
         page->send(Messages::WebPageProxy::SetIsResizable(resizable));
 }
 
-void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID)
+void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, StringImpl* message, unsigned lineNumber, unsigned columnNumber, StringImpl* sourceID)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -562,7 +562,7 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
 
     if (!page->shouldSendConsoleLogsToUIProcessForTesting())
         return;
-    page->send(Messages::WebPageProxy::AddMessageToConsoleForTesting(message.length() > String::MaxLength / 2 ? "Out of memory"_s : message), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    page->send(Messages::WebPageProxy::AddMessageToConsoleForTesting(length(message) > StringImpl::MaxLength / 2 ? "Out of memory"_si : RefPtr { message }), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
@@ -571,7 +571,7 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
     return page && page->canRunBeforeUnloadConfirmPanel();
 }
 
-bool WebChromeClient::runBeforeUnloadConfirmPanel(String&& message, LocalFrame& frame)
+bool WebChromeClient::runBeforeUnloadConfirmPanel(RefPtr<StringImpl>&& message, LocalFrame& frame)
 {
     RefPtr webFrame = WebFrame::fromCoreFrame(frame);
 
@@ -601,7 +601,7 @@ void WebChromeClient::closeWindow()
     if (!page)
         return;
 
-    protect(page->corePage())->setGroupName(String());
+    protect(page->corePage())->setGroupName(nullString());
 
     Ref frame = page->mainWebFrame();
     if (RefPtr coreFrame = frame->coreLocalFrame())
@@ -636,7 +636,7 @@ NODELETE static bool shouldSuppressJavaScriptDialogs(LocalFrame& frame)
     return false;
 }
 
-void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, const String& alertText)
+void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, StringImpl* alertText)
 {
     if (shouldSuppressJavaScriptDialogs(frame))
         return;
@@ -659,7 +659,7 @@ void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, const String& alertT
     page->sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), webFrame->info(), alertText), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
 }
 
-bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& message)
+bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, StringImpl* message)
 {
     if (shouldSuppressJavaScriptDialogs(frame))
         return false;
@@ -684,7 +684,7 @@ bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& mess
     return result;
 }
 
-bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& message, const String& defaultValue, String& result)
+bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, StringImpl* message, StringImpl* defaultValue, RefPtr<StringImpl>& result)
 {
     if (shouldSuppressJavaScriptDialogs(frame))
         return false;
@@ -709,7 +709,7 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& messa
         return false;
 
     std::tie(result) = sendResult.takeReply();
-    return !result.isNull();
+    return !!result;
 }
 
 KeyboardUIMode WebChromeClient::keyboardUIMode()
@@ -883,7 +883,7 @@ IntRect WebChromeClient::rootViewToAccessibilityScreen(const IntRect& rect) cons
     return page ? page->rootViewToAccessibilityScreen(rect) : IntRect();
 }
 
-void WebChromeClient::translateAccessibilityAnnouncementStrings(const Vector<String>& strings, const String& targetLocaleIdentifier, CompletionHandler<void(Vector<String>&&)>&& completion)
+void WebChromeClient::translateAccessibilityAnnouncementStrings(const Vector<RefPtr<StringImpl>>& strings, StringImpl* targetLocaleIdentifier, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completion)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1044,7 +1044,7 @@ void WebChromeClient::unavailablePluginButtonClicked(Element& element, PluginUna
     UNUSED_PARAM(pluginUnavailabilityReason);
 }
 
-void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult, OptionSet<WebCore::PlatformEventModifier> modifiers, const String& toolTip, TextDirection)
+void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult, OptionSet<WebCore::PlatformEventModifier> modifiers, StringImpl* toolTip, TextDirection)
 {
     auto wkModifiers = modifiersFromPlatformEventModifiers(modifiers);
 
@@ -1128,7 +1128,7 @@ void WebChromeClient::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
     page->send(Messages::WebPageProxy::RunOpenPanel(webFrame->frameID(), webFrame->info(), fileChooser.settings()));
 }
 
-void WebChromeClient::transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&& completion)
+void WebChromeClient::transcodeChosenFiles(Vector<RefPtr<StringImpl>>&& transcodingPaths, RefPtr<StringImpl>&& destinationUTI, RefPtr<StringImpl>&& destinationExtension, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completion)
 {
     RefPtr page = m_page.get();
     if (!page) {
@@ -1165,7 +1165,7 @@ void WebChromeClient::dismissDigitalCredentialsChooser(WTF::CompletionHandler<vo
 }
 #endif
 
-void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
+void WebChromeClient::loadIconForFiles(const Vector<RefPtr<StringImpl>>& filenames, FileIconLoader& loader)
 {
     loader.iconLoaded(createIconForFiles(filenames));
 }
@@ -1184,7 +1184,7 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 
 #if !PLATFORM(COCOA)
 
-RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
+RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames)
 {
     return Icon::createIconForFiles(filenames);
 }
@@ -1499,7 +1499,7 @@ unsigned WebChromeClient::remoteImagesCountForTesting() const
     return page ? page->remoteImagesCountForTesting() : 0;
 }
 
-void WebChromeClient::registerBlobPathForTesting(const String& path, CompletionHandler<void()>&& completionHandler)
+void WebChromeClient::registerBlobPathForTesting(StringImpl* path, CompletionHandler<void()>&& completionHandler)
 {
     protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RegisterBlobPathForTesting(path), WTF::move(completionHandler));
 }
@@ -1731,7 +1731,7 @@ void WebChromeClient::mediaEngineChanged(WebCore::HTMLMediaElement& mediaElement
 #endif
 
 #if ENABLE(MEDIA_USAGE)
-void WebChromeClient::addMediaUsageManagerSession(MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+void WebChromeClient::addMediaUsageManagerSession(MediaSessionIdentifier identifier, StringImpl* bundleIdentifier, const URL& pageURL)
 {
     if (RefPtr page = m_page.get())
         page->addMediaUsageManagerSession(identifier, bundleIdentifier, pageURL);
@@ -2033,7 +2033,7 @@ void WebChromeClient::isAnyAnimationAllowedToPlayDidChange(bool anyAnimationCanP
 }
 #endif
 
-void WebChromeClient::resolveAccessibilityHitTestForTesting(FrameIdentifier frameID, const IntPoint& point, CompletionHandler<void(String)>&& callback)
+void WebChromeClient::resolveAccessibilityHitTestForTesting(FrameIdentifier frameID, const IntPoint& point, CompletionHandler<void(RefPtr<StringImpl>)>&& callback)
 {
     if (RefPtr page = m_page.get())
         page->sendWithAsyncReply(Messages::WebPageProxy::ResolveAccessibilityHitTestForTesting(frameID, point), WTF::move(callback));
@@ -2091,7 +2091,7 @@ void WebChromeClient::updateTextIndicator(RefPtr<WebCore::TextIndicator>&& textI
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
-void WebChromeClient::handleTelephoneNumberClick(const String& number, const IntPoint& point, const IntRect& rect)
+void WebChromeClient::handleTelephoneNumberClick(StringImpl* number, const IntPoint& point, const IntRect& rect)
 {
     if (RefPtr page = m_page.get())
         page->handleTelephoneNumberClick(number, point, rect);
@@ -2111,7 +2111,7 @@ void WebChromeClient::handleClickForDataDetectionResult(const DataDetectorElemen
 
 #if ENABLE(SERVICE_CONTROLS)
 
-void WebChromeClient::handleSelectionServiceClick(WebCore::FrameIdentifier frameID, FrameSelection& selection, const Vector<String>& telephoneNumbers, const IntPoint& point)
+void WebChromeClient::handleSelectionServiceClick(WebCore::FrameIdentifier frameID, FrameSelection& selection, const Vector<RefPtr<StringImpl>>& telephoneNumbers, const IntPoint& point)
 {
     if (RefPtr page = m_page.get())
         page->handleSelectionServiceClick(frameID, selection, telephoneNumbers, point);
@@ -2195,7 +2195,7 @@ void WebChromeClient::handleAutoFillButtonClick(HTMLInputElement& inputElement)
 
     if (!userData) {
         auto userInfo = inputElement.userInfo();
-        if (!userInfo.isNull()) {
+        if (userInfo) {
             if (auto data = JSON::Value::parseJSON(inputElement.userInfo()))
                 userData = userDataFromJSONData(*data);
         }
@@ -2284,7 +2284,7 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
         page->send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerEnabled(enabled));
 }
 
-void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetMockState state)
+void WebChromeClient::setMockMediaPlaybackTargetPickerState(StringImpl* name, MediaPlaybackTargetMockState state)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerState(name, state));
@@ -2386,7 +2386,7 @@ WebCore::DevicePostureType WebChromeClient::devicePostureType() const
     return page ? page->devicePostureType() : WebCore::DevicePostureType::Continuous;
 }
 
-void WebChromeClient::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+void WebChromeClient::configureLoggingChannel(StringImpl* channelName, WTFLogChannelState state, WTFLogLevel level)
 {
     if (RefPtr page = m_page.get())
         page->configureLoggingChannel(channelName, state, level);
@@ -2418,7 +2418,7 @@ void WebChromeClient::postAccessibilityNotification(WebCore::AccessibilityObject
     notImplemented();
 }
 
-void WebChromeClient::postAccessibilityNodeTextChangeNotification(WebCore::AccessibilityObject*, WebCore::AXTextChange, unsigned, const String&)
+void WebChromeClient::postAccessibilityNodeTextChangeNotification(WebCore::AccessibilityObject*, WebCore::AXTextChange, unsigned, StringImpl*)
 {
     notImplemented();
 }
@@ -2577,7 +2577,7 @@ bool WebChromeClient::isInStableState() const
 #endif
 }
 
-void WebChromeClient::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
+void WebChromeClient::didAdjustVisibilityWithSelectors(Vector<RefPtr<StringImpl>>&& selectors)
 {
     if (RefPtr page = m_page.get())
         page->didAdjustVisibilityWithSelectors(WTF::move(selectors));
@@ -2623,13 +2623,13 @@ void WebChromeClient::addInitialTextAnimationForActiveWritingToolsSession()
         page->addInitialTextAnimationForActiveWritingToolsSession();
 }
 
-void WebChromeClient::addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+void WebChromeClient::addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const CharacterRange& range, StringImpl* string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
         page->addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, string, WTF::move(completionHandler));
 }
 
-void WebChromeClient::addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> sourceAnimationUUID, Markable<WTF::UUID> destinationAnimationUUID, const std::optional<CharacterRange>& range, const String& string)
+void WebChromeClient::addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> sourceAnimationUUID, Markable<WTF::UUID> destinationAnimationUUID, const std::optional<CharacterRange>& range, StringImpl* string)
 {
     if (RefPtr page = m_page.get())
         page->addDestinationTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, range, string);
@@ -2782,7 +2782,7 @@ void WebChromeClient::showCaptionDisplaySettings(HTMLMediaElement& element, cons
 {
     RefPtr page = m_page.get();
     if (!page) {
-        completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s });
+        completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_si });
         return;
     }
 

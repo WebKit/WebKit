@@ -102,9 +102,9 @@ Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, 
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, Variant<Ref<TrustedScriptURL>, String>&& url, WorkerOptions&& options)
+ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>&& url, WorkerOptions&& options)
 {
-    auto compliantScriptURLString = trustedTypeCompliantString(context, WTF::move(url), "Worker constructor"_s);
+    auto compliantScriptURLString = trustedTypeCompliantString(context, WTF::move(url), "Worker constructor"_si);
     if (compliantScriptURLString.hasException())
         return compliantScriptURLString.releaseException();
 
@@ -280,12 +280,12 @@ void Worker::dispatchEvent(Event& event)
         protect(scriptExecutionContext())->reportException(errorEvent->message(), errorEvent->lineno(), errorEvent->colno(), errorEvent->filename(), nullptr, nullptr);
 }
 
-void Worker::reportError(const String& errorMessage)
+void Worker::reportError(StringImpl* errorMessage)
 {
     if (m_wasTerminated)
         return;
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [errorMessage](auto& worker) {
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [errorMessage = RefPtr { errorMessage }](auto& worker) {
         if (worker.m_wasTerminated)
             return;
 

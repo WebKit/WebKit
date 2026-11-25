@@ -30,6 +30,6 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT bool stringMatchesWildcardString(const String& stringToBeMatched, const String& wildcardString);
+WEBCORE_EXPORT bool stringMatchesWildcardString(StringImpl* stringToBeMatched, StringImpl* wildcardString);
 
 }

@@ -46,7 +46,7 @@ void JSNativeStdFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSNativeStdFunction);
 
-NativeExecutable* JSNativeStdFunction::getHostFunction(VM& vm, Intrinsic intrinsic, NativeFunction nativeConstructor, unsigned length, const String& name)
+NativeExecutable* JSNativeStdFunction::getHostFunction(VM& vm, Intrinsic intrinsic, NativeFunction nativeConstructor, unsigned length, StringImpl* name)
 {
     return vm.getHostFunction(runStdFunction, ImplementationVisibility::Private, intrinsic, nativeConstructor, nullptr, length, name);
 }
@@ -58,7 +58,7 @@ JSC_DEFINE_HOST_FUNCTION(runStdFunction, (JSGlobalObject* globalObject, CallFram
     return function->function()(globalObject, callFrame);
 }
 
-JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
+JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, StringImpl* name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
     NativeExecutable* executable = vm.getHostFunction(runStdFunction, ImplementationVisibility::Private, intrinsic, nativeConstructor, nullptr, length, name);
     Structure* structure = globalObject->nativeStdFunctionStructure();

@@ -50,26 +50,26 @@ bool PaymentSession::isSecureForSession(const URL& url, const std::optional<cons
 ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
 {
     if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Payment, document))
-        return Exception { ExceptionCode::SecurityError, "Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)"_s };
+        return Exception { ExceptionCode::SecurityError, "Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)"_si };
 
     RefPtr<Frame> currentFrame = document.frame();
     if (!currentFrame)
-        return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from an inactive document."_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from an inactive document."_si };
 
     if (!currentFrame->frameCanCreatePaymentSession())
-        return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from an insecure document."_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from an insecure document."_si };
 
     if (!document.isTopDocument()) {
         do {
             RefPtr parent = currentFrame->tree().parent();
             if (!parent) {
                 if (!currentFrame->isMainFrame())
-                    return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from a document in an unparented frame"_s };
+                    return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from a document in an unparented frame"_si };
                 return { };
             }
 
             if (!parent->frameCanCreatePaymentSession())
-                return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from a document with an insecure parent frame."_s };
+                return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from a document with an insecure parent frame."_si };
 
             if (parent->isMainFrame())
                 break;

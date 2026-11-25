@@ -144,7 +144,7 @@ public:
         DidDispatch
     };
 
-    using EventObserver = Observer<void(Event, const String&)>;
+    using EventObserver = Observer<void(Event, StringImpl*)>;
     WTF_EXPORT_PRIVATE void observeEvent(const EventObserver&);
 #endif
 
@@ -306,7 +306,7 @@ public:
 
     void dispatchAfter(Seconds delay, Function<void()>&& function) final { scheduleTimer(delay, WTF::move(function)); }
 
-    WTF_EXPORT_PRIVATE String listActiveTimersForLogging() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> listActiveTimersForLogging() const;
 
 private:
     class Holder;

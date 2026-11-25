@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& text, AllowPasswordEcho allowPasswordEcho, bool selectInsertedText, RebalanceType rebalanceType, EditAction editingAction)
+InsertTextCommand::InsertTextCommand(Ref<Document>&& document, StringImpl* text, AllowPasswordEcho allowPasswordEcho, bool selectInsertedText, RebalanceType rebalanceType, EditAction editingAction)
     : CompositeEditCommand(WTF::move(document), editingAction)
     , m_text(text)
     , m_allowPasswordEcho(allowPasswordEcho)
@@ -56,7 +56,7 @@ InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& tex
 {
 }
 
-InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& text, Ref<TextInsertionMarkerSupplier>&& markerSupplier, EditAction editingAction)
+InsertTextCommand::InsertTextCommand(Ref<Document>&& document, StringImpl* text, Ref<TextInsertionMarkerSupplier>&& markerSupplier, EditAction editingAction)
     : CompositeEditCommand(WTF::move(document), editingAction)
     , m_text(text)
     , m_selectInsertedText(false)
@@ -69,7 +69,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
 {
     Position pos = p;
     if (parentTabSpanNode(pos.anchorNode())) {
-        auto textNode = document().createEditingTextNode(String { emptyString() });
+        auto textNode = document().createEditingTextNode(RefPtr<StringImpl> { emptyString() });
         insertNodeAtTabSpanPosition(textNode.copyRef(), pos);
         return firstPositionInNode(textNode);
     }
@@ -77,7 +77,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
     if (!pos.containerNode()->isTextNode()) {
-        auto textNode = document().createEditingTextNode(String { emptyString() });
+        auto textNode = document().createEditingTextNode(RefPtr<StringImpl> { emptyString() });
         insertNodeAt(textNode.copyRef(), pos);
         return firstPositionInNode(textNode);
     }
@@ -98,12 +98,12 @@ void InsertTextCommand::setEndingSelectionWithoutValidation(const Position& star
 
 // This avoids the expense of a full fledged delete operation, and avoids a layout that typically results
 // from text removal.
-bool InsertTextCommand::performTrivialReplace(const String& text, bool selectInsertedText)
+bool InsertTextCommand::performTrivialReplace(StringImpl* text, bool selectInsertedText)
 {
     if (!endingSelection().isRange())
         return false;
 
-    if (text.contains([](char16_t c) { return c == '\t' || c == ' ' || c == '\n'; }))
+    if (contains(text, [](char16_t c) { return c == '\t' || c == ' ' || c == '\n'; }))
         return false;
 
     Position start = endingSelection().start();
@@ -118,20 +118,20 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     return true;
 }
 
-bool InsertTextCommand::performOverwrite(const String& text, bool selectInsertedText)
+bool InsertTextCommand::performOverwrite(StringImpl* text, bool selectInsertedText)
 {
     Position start = endingSelection().start();
     RefPtr<Text> textNode = start.containerText();
     if (!textNode)
         return false;
 
-    unsigned count = std::min(text.length(), textNode->length() - start.offsetInContainerNode());
+    unsigned count = std::min(length(text), textNode->length() - start.offsetInContainerNode());
     if (!count)
         return false;
 
     replaceTextInNode(*textNode, start.offsetInContainerNode(), count, text);
 
-    Position endPosition = Position(textNode.get(), start.offsetInContainerNode() + text.length());
+    Position endPosition = Position(textNode.get(), start.offsetInContainerNode() + length(text));
     setEndingSelectionWithoutValidation(start, endPosition);
     if (!selectInsertedText)
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd(), endingSelection().directionality()));
@@ -185,7 +185,7 @@ bool InsertTextCommand::applySmartListsIfNeeded()
         return false;
 
     auto fullLineText = plainText(*fullLineRange);
-    if (fullLineText.find(' ') != notFound)
+    if (find(fullLineText, ' ') != notFound)
         return false;
 
     // Create and parse the smart list for the previous line, if possible.
@@ -232,7 +232,7 @@ bool InsertTextCommand::applySmartListsIfNeeded()
 
     if (RefPtr prevListChild = enclosingListChild(protect(endingSelection().base().anchorNode()))) {
         if (RefPtr textNode = dynamicDowncast<Text>(prevListChild->firstDescendant())) {
-            auto spaceIndex = previousLineText.find(' ');
+            auto spaceIndex = find(previousLineText, ' ');
             if (spaceIndex != WTF::notFound && spaceIndex + 1 <= textNode->length())
                 deleteTextFromNode(*textNode, 0, spaceIndex + 1);
         }
@@ -275,7 +275,7 @@ bool InsertTextCommand::applySmartListsIfNeeded()
 
 void InsertTextCommand::doApply()
 {
-    ASSERT(m_text.find('\n') == notFound);
+    ASSERT(find(m_text, '\n') == notFound);
 
     if (endingSelection().isNoneOrOrphaned())
         return;
@@ -351,7 +351,7 @@ void InsertTextCommand::doApply()
     }
 #endif // PLATFORM(COCOA)
 
-    if (m_text == "\t"_s) {
+    if (equal(m_text, "\t"_s)) {
         endPosition = insertTab(startPosition);
         startPosition = endPosition.previous();
         if (placeholder.isNotNull())
@@ -368,7 +368,7 @@ void InsertTextCommand::doApply()
         const unsigned offset = startPosition.offsetInContainerNode();
 
         insertTextIntoNode(*textNode, offset, m_text, m_allowPasswordEcho);
-        endPosition = Position(textNode.get(), offset + m_text.length());
+        endPosition = Position(textNode.get(), offset + length(m_text));
         if (m_markerSupplier)
             m_markerSupplier->addMarkersToTextNode(*textNode, offset, m_text);
 
@@ -422,7 +422,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     // keep tabs coalesced in tab span
     if (parentTabSpanNode(node.get())) {
         Ref textNode = downcast<Text>(node.releaseNonNull());
-        insertTextIntoNode(textNode, offset, "\t"_s);
+        insertTextIntoNode(textNode, offset, "\t"_si);
         return Position(WTF::move(textNode), offset + 1);
     }
     

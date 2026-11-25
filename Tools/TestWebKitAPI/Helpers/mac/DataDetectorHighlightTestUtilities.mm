@@ -145,29 +145,29 @@ testing::AssertionResult waitUntilWindowClipRectWidthIs(TestWKWebView *webView, 
     return testing::AssertionFailure() << "The frame's window clip rect is " << lastWidth << "px wide, not " << width << "px.";
 }
 
-String DataDetectorInSubframeTest::iframe(int left, const String& url)
+RefPtr<StringImpl> DataDetectorInSubframeTest::iframe(int left, StringImpl* url)
 {
     return makeString("<iframe style='position:absolute; left:"_s, left, "px; top:"_s, iframeTop, "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight,
         "px; border:"_s, iframeBorder, "px solid black; padding:"_s, iframePadding, "px' src='"_s, url, "'></iframe>"_s);
 }
 
-String DataDetectorInSubframeTest::mainHTML(const String& iframes)
+RefPtr<StringImpl> DataDetectorInSubframeTest::mainHTML(StringImpl* iframes)
 {
     return makeString("<body style='margin:0'>"_s, iframes, "<div style='height:2000px'></div></body>"_s);
 }
 
-String DataDetectorInSubframeTest::nestedFrameHTML(const String& url, int width, int height)
+RefPtr<StringImpl> DataDetectorInSubframeTest::nestedFrameHTML(StringImpl* url, int width, int height)
 {
     return makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, nestedFrameLeft, "px; top:"_s, nestedFrameTop, "px; width:"_s, width,
         "px; height:"_s, height, "px; border:0' src='"_s, url, "'></iframe></body>"_s);
 }
 
-HTTPResponse DataDetectorInSubframeTest::html(const String& body)
+HTTPResponse DataDetectorInSubframeTest::html(StringImpl* body)
 {
     return HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, body };
 }
 
-void DataDetectorInSubframeTest::setUpWebView(std::initializer_list<std::pair<String, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure)
+void DataDetectorInSubframeTest::setUpWebView(std::initializer_list<std::pair<RefPtr<StringImpl>, HTTPResponse>> routes, NOESCAPE const Function<void(WKWebViewConfiguration *)>& configure)
 {
     server = makeUnique<HTTPServer>(routes, HTTPServer::Protocol::HttpsProxy);
 

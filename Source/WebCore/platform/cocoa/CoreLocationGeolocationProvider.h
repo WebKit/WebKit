@@ -46,11 +46,11 @@ public:
     public:
         virtual ~Client() { }
 
-        virtual void geolocationAuthorizationGranted(const String& /*websiteIdentifier*/) { }
-        virtual void geolocationAuthorizationDenied(const String& /*websiteIdentifier*/) { }
-        virtual void positionChanged(const String& websiteIdentifier, GeolocationPositionData&&) = 0;
-        virtual void errorOccurred(const String& websiteIdentifier, const String& errorMessage) = 0;
-        virtual void resetGeolocation(const String& websiteIdentifier) = 0;
+        virtual void geolocationAuthorizationGranted(StringImpl* /*websiteIdentifier*/) { }
+        virtual void geolocationAuthorizationDenied(StringImpl* /*websiteIdentifier*/) { }
+        virtual void positionChanged(StringImpl* websiteIdentifier, GeolocationPositionData&&) = 0;
+        virtual void errorOccurred(StringImpl* websiteIdentifier, StringImpl* errorMessage) = 0;
+        virtual void resetGeolocation(StringImpl* websiteIdentifier) = 0;
     };
 
     enum class Mode : bool { AuthorizationOnly, AuthorizationAndLocationUpdates };

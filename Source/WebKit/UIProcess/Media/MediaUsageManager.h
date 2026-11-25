@@ -40,7 +40,7 @@ public:
     virtual ~MediaUsageManager() = default;
 
     virtual void reset();
-    virtual void addMediaSession(WebCore::MediaSessionIdentifier, const String&, const URL&);
+    virtual void addMediaSession(WebCore::MediaSessionIdentifier, StringImpl*, const URL&);
     virtual void removeMediaSession(WebCore::MediaSessionIdentifier);
     virtual void updateMediaUsage(WebCore::MediaSessionIdentifier, const WebCore::MediaUsageInfo&);
 #if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)

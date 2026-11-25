@@ -47,67 +47,67 @@ namespace WebCore {
 static Ref<JSON::Object> toJSONObject(const CDMMediaCapability& capability)
 {
     auto object = JSON::Object::create();
-    object->setString("contentType"_s, capability.contentType);
-    object->setString("robustness"_s, capability.robustness);
+    object->setString("contentType"_si, capability.contentType);
+    object->setString("robustness"_si, capability.robustness);
     if (capability.encryptionScheme)
-        object->setString("encryptionScheme"_s, convertEnumerationToString(capability.encryptionScheme.value()));
+        object->setString("encryptionScheme"_si, convertEnumerationToString(capability.encryptionScheme.value()));
     return object;
 }
 
 static Ref<JSON::Object> toJSONObject(const CDMRestrictions& restrictions)
 {
     auto object = JSON::Object::create();
-    object->setBoolean("distinctiveIdentifierDenied"_s, restrictions.distinctiveIdentifierDenied);
-    object->setBoolean("persistentStateDenied"_s, restrictions.persistentStateDenied);
+    object->setBoolean("distinctiveIdentifierDenied"_si, restrictions.distinctiveIdentifierDenied);
+    object->setBoolean("persistentStateDenied"_si, restrictions.persistentStateDenied);
     auto deniedSessionTypes = JSON::Array::create();
     for (auto type : restrictions.deniedSessionTypes)
         deniedSessionTypes->pushString(convertEnumerationToString(type));
-    object->setArray("deniedSessionTypes"_s, WTF::move(deniedSessionTypes));
+    object->setArray("deniedSessionTypes"_si, WTF::move(deniedSessionTypes));
     return object;
 }
 
 static Ref<JSON::Object> toJSONObject(const CDMKeySystemConfiguration& configuration)
 {
     auto object = JSON::Object::create();
-    object->setString("label"_s, configuration.label);
+    object->setString("label"_si, configuration.label);
 
     auto initDataTypes = JSON::Array::create();
     for (auto initDataType : configuration.initDataTypes)
         initDataTypes->pushString(initDataType);
-    object->setArray("initDataTypes"_s, WTF::move(initDataTypes));
+    object->setArray("initDataTypes"_si, WTF::move(initDataTypes));
 
     auto audioCapabilities = JSON::Array::create();
     for (auto capability : configuration.audioCapabilities)
         audioCapabilities->pushObject(toJSONObject(capability));
-    object->setArray("audioCapabilities"_s, WTF::move(audioCapabilities));
+    object->setArray("audioCapabilities"_si, WTF::move(audioCapabilities));
 
     auto videoCapabilities = JSON::Array::create();
     for (auto capability : configuration.videoCapabilities)
         videoCapabilities->pushObject(toJSONObject(capability));
-    object->setArray("videoCapabilities"_s, WTF::move(videoCapabilities));
+    object->setArray("videoCapabilities"_si, WTF::move(videoCapabilities));
 
-    object->setString("distinctiveIdentifier"_s, convertEnumerationToString(configuration.distinctiveIdentifier));
-    object->setString("persistentState"_s, convertEnumerationToString(configuration.persistentState));
+    object->setString("distinctiveIdentifier"_si, convertEnumerationToString(configuration.distinctiveIdentifier));
+    object->setString("persistentState"_si, convertEnumerationToString(configuration.persistentState));
 
     auto sessionTypes = JSON::Array::create();
     for (auto type : configuration.sessionTypes)
         sessionTypes->pushString(convertEnumerationToString(type));
-    object->setArray("sessionTypes"_s, WTF::move(sessionTypes));
+    object->setArray("sessionTypes"_si, WTF::move(sessionTypes));
 
     return object;
 }
 
-static String toJSONString(const CDMKeySystemConfiguration& configuration)
+static RefPtr<StringImpl> toJSONString(const CDMKeySystemConfiguration& configuration)
 {
     return toJSONObject(configuration)->toJSONString();
 }
 
-static String toJSONString(const CDMMediaCapability& capability)
+static RefPtr<StringImpl> toJSONString(const CDMMediaCapability& capability)
 {
     return toJSONObject(capability)->toJSONString();
 }
 
-static String toJSONString(const CDMRestrictions& restrictions)
+static RefPtr<StringImpl> toJSONString(const CDMRestrictions& restrictions)
 {
     return toJSONObject(restrictions)->toJSONString();
 }
@@ -116,52 +116,52 @@ static String toJSONString(const CDMRestrictions& restrictions)
 
 namespace WTF {
 
-String LogArgument<WebCore::CDMKeySystemConfiguration>::toString(const WebCore::CDMKeySystemConfiguration& configuration)
+RefPtr<StringImpl> LogArgument<WebCore::CDMKeySystemConfiguration>::toString(const WebCore::CDMKeySystemConfiguration& configuration)
 {
     return toJSONString(configuration);
 }
 
-String LogArgument<WebCore::CDMMediaCapability>::toString(const WebCore::CDMMediaCapability& capability)
+RefPtr<StringImpl> LogArgument<WebCore::CDMMediaCapability>::toString(const WebCore::CDMMediaCapability& capability)
 {
     return toJSONString(capability);
 }
 
-String LogArgument<WebCore::CDMRestrictions>::toString(const WebCore::CDMRestrictions& restrictions)
+RefPtr<StringImpl> LogArgument<WebCore::CDMRestrictions>::toString(const WebCore::CDMRestrictions& restrictions)
 {
     return toJSONString(restrictions);
 }
 
-String LogArgument<WebCore::CDMEncryptionScheme>::toString(const WebCore::CDMEncryptionScheme& type)
+RefPtr<StringImpl> LogArgument<WebCore::CDMEncryptionScheme>::toString(const WebCore::CDMEncryptionScheme& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::CDMKeyStatus>::toString(const WebCore::CDMKeyStatus& type)
+RefPtr<StringImpl> LogArgument<WebCore::CDMKeyStatus>::toString(const WebCore::CDMKeyStatus& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::CDMMessageType>::toString(const WebCore::CDMMessageType& type)
+RefPtr<StringImpl> LogArgument<WebCore::CDMMessageType>::toString(const WebCore::CDMMessageType& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::CDMRequirement>::toString(const WebCore::CDMRequirement& type)
+RefPtr<StringImpl> LogArgument<WebCore::CDMRequirement>::toString(const WebCore::CDMRequirement& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::CDMSessionType>::toString(const WebCore::CDMSessionType& type)
+RefPtr<StringImpl> LogArgument<WebCore::CDMSessionType>::toString(const WebCore::CDMSessionType& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::CDMKeyID>::toString(const WebCore::CDMKeyID& keyID)
+RefPtr<StringImpl> LogArgument<WebCore::CDMKeyID>::toString(const WebCore::CDMKeyID& keyID)
 {
     return keyID->toHexString();
 }
 
-String LogArgument<WebCore::CDMKeyIDs>::toString(const WebCore::CDMKeyIDs& keys)
+RefPtr<StringImpl> LogArgument<WebCore::CDMKeyIDs>::toString(const WebCore::CDMKeyIDs& keys)
 {
     StringBuilder builder;
     builder.append('[', interleave(keys, LogArgument<WebCore::CDMKeyID>::toString, ", "_s), ']');

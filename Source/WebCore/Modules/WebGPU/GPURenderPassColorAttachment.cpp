@@ -37,12 +37,12 @@ Ref<JSON::Object> GPURenderPassColorAttachment::toJSON() const
     Ref json = JSON::Object::create();
     // `GPURenderPassColorAttachmentView` is not JSON serializable.
     if (depthSlice)
-        json->setDouble("depthSlice"_s, *depthSlice);
+        json->setDouble("depthSlice"_si, *depthSlice);
     // `GPURenderPassResolveAttachmentView` is not JSON serializable.
     if (clearValue)
-        json->setValue("clearValue"_s, WebCore::toJSON(*clearValue));
-    json->setString("loadOp"_s, convertEnumerationToString(loadOp));
-    json->setString("storeOp"_s, convertEnumerationToString(storeOp));
+        json->setValue("clearValue"_si, WebCore::toJSON(*clearValue));
+    json->setString("loadOp"_si, convertEnumerationToString(loadOp));
+    json->setString("storeOp"_si, convertEnumerationToString(storeOp));
     return json;
 }
 

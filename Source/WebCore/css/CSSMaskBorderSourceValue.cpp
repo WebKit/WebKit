@@ -45,7 +45,7 @@ Ref<CSSMaskBorderSourceValue> CSSMaskBorderSourceValue::create(CSS::MaskBorderSo
     return adoptRef(*new CSSMaskBorderSourceValue(WTF::move(source)));
 }
 
-String CSSMaskBorderSourceValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSMaskBorderSourceValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_source);
 }

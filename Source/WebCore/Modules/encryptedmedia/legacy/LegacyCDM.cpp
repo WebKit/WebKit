@@ -91,7 +91,7 @@ void LegacyCDM::registerCDMFactory(CreateCDM&& constructor, CDMSupportsKeySystem
     installedCDMFactories().append({ WTF::move(constructor), WTF::move(supportsKeySystem), WTF::move(supportsKeySystemAndMimeType) });
 }
 
-static LegacyCDMFactory* CDMFactoryForKeySystem(const String& keySystem)
+static LegacyCDMFactory* CDMFactoryForKeySystem(StringImpl* keySystem)
 {
     auto& factories = installedCDMFactories();
     for (size_t i = 0; i < factories.size(); ++i) {
@@ -101,19 +101,19 @@ static LegacyCDMFactory* CDMFactoryForKeySystem(const String& keySystem)
     return nullptr;
 }
 
-bool LegacyCDM::supportsKeySystem(const String& keySystem)
+bool LegacyCDM::supportsKeySystem(StringImpl* keySystem)
 {
     return CDMFactoryForKeySystem(keySystem);
 }
 
-bool LegacyCDM::keySystemSupportsMimeType(const String& keySystem, const String& mimeType)
+bool LegacyCDM::keySystemSupportsMimeType(StringImpl* keySystem, StringImpl* mimeType)
 {
     if (LegacyCDMFactory* factory = CDMFactoryForKeySystem(keySystem))
         return factory->supportsKeySystemAndMimeType(keySystem, mimeType);
     return false;
 }
 
-RefPtr<LegacyCDM> LegacyCDM::create(const String& keySystem)
+RefPtr<LegacyCDM> LegacyCDM::create(StringImpl* keySystem)
 {
     if (!supportsKeySystem(keySystem))
         return nullptr;
@@ -121,7 +121,7 @@ RefPtr<LegacyCDM> LegacyCDM::create(const String& keySystem)
     return adoptRef(*new LegacyCDM(keySystem));
 }
 
-LegacyCDM::LegacyCDM(const String& keySystem)
+LegacyCDM::LegacyCDM(StringImpl* keySystem)
     : m_keySystem(keySystem)
     , m_private(CDMFactoryForKeySystem(keySystem)->constructor(*this))
 {
@@ -129,7 +129,7 @@ LegacyCDM::LegacyCDM(const String& keySystem)
 
 LegacyCDM::~LegacyCDM() = default;
 
-bool LegacyCDM::supportsMIMEType(const String& mimeType) const
+bool LegacyCDM::supportsMIMEType(StringImpl* mimeType) const
 {
     return protect(cdmPrivate())->supportsMIMEType(mimeType);
 }

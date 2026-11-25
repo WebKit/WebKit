@@ -37,7 +37,7 @@ struct PseudoElementIdentifier {
 
     // Highlight name for ::highlight, view transition name for view transition pseudo-elements,
     // or user agent part name for UserAgentPartFallback (e.g., "file-selector-button", "picker(select)").
-    AtomString nameOrPart { nullAtom() };
+    RefPtr<AtomStringImpl> nameOrPart { nullAtom() };
 
     friend bool operator==(const PseudoElementIdentifier& a, const PseudoElementIdentifier& b) = default;
 };
@@ -50,7 +50,7 @@ inline void add(Hasher& hasher, const PseudoElementIdentifier& pseudoElementIden
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const PseudoElementIdentifier& pseudoElementIdentifier)
 {
     ts << "::"_s << pseudoElementIdentifier.type;
-    if (!pseudoElementIdentifier.nameOrPart.isNull())
+    if (pseudoElementIdentifier.nameOrPart)
         ts << '(' << pseudoElementIdentifier.nameOrPart << ')';
     return ts;
 }
@@ -87,7 +87,7 @@ struct HashTraits<WebCore::Style::PseudoElementIdentifier> : GenericHashTraits<W
     static constexpr bool emptyValueIsZero = false;
     static EmptyValueType emptyValue() { return WebCore::Style::PseudoElementIdentifier { { }, emptyAtom() }; }
 
-    static void constructDeletedValue(WebCore::Style::PseudoElementIdentifier& identifer) { new (NotNull, &identifer.nameOrPart) AtomString { HashTableDeletedValue }; }
+    static void constructDeletedValue(WebCore::Style::PseudoElementIdentifier& identifer) { new (NotNull, &identifer.nameOrPart) RefPtr<AtomStringImpl> { HashTableDeletedValue }; }
     static bool isDeletedValue(const WebCore::Style::PseudoElementIdentifier& identifer) { return identifer.nameOrPart.isHashTableDeletedValue(); }
 };
 

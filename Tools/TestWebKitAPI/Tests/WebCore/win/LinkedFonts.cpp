@@ -30,7 +30,7 @@
 using namespace WebCore;
 
 namespace WebCore {
-void appendLinkedFonts(WCHAR* linkedFonts, unsigned length, Vector<String>* result);
+void appendLinkedFonts(WCHAR* linkedFonts, unsigned length, Vector<RefPtr<StringImpl>>* result);
 }
 
 namespace TestWebKitAPI {
@@ -39,22 +39,22 @@ namespace TestWebKitAPI {
 // Test the appendLinkedFonts function with normal input data (string with pairs of font filenames and font names separated with \0).
 TEST(WebCore, appendLinkedFontsTest)
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     WCHAR linkedFonts[] = L"MICROSS.TTF,Microsoft Sans Serif,128,140\0MICROSS.TTF,Microsoft Sans Serif\0MSGOTHIC.TTC,MS UI Gothic\0MINGLIU.TTC,PMingLiU\0SIMSUN.TTC,SimSun";
 
     appendLinkedFonts(linkedFonts,  sizeof(linkedFonts) / sizeof(WCHAR), &result);
     ASSERT(result.size() == 5);
-    ASSERT(result[0] == String(L"Microsoft Sans Serif,128,140"));
-    ASSERT(result[1] == String(L"Microsoft Sans Serif"));
-    ASSERT(result[2] == String(L"MS UI Gothic"));
-    ASSERT(result[3] == String(L"PMingLiU"));
-    ASSERT(result[4] == String(L"SimSun"));
+    ASSERT(equal(result[0], "Microsoft Sans Serif,128,140"_s));
+    ASSERT(equal(result[1], "Microsoft Sans Serif"_s));
+    ASSERT(equal(result[2], "MS UI Gothic"_s));
+    ASSERT(equal(result[3], "PMingLiU"_s));
+    ASSERT(equal(result[4], "SimSun"_s));
 }
 
 // Test the appendLinkedFonts function when the input data does not contain the expected comma separator.
 TEST(WebCore, appendLinkedFontsWithMissingCommaTest)
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     WCHAR linkedFonts[] = L"MICROSS.TTF Microsoft Sans Serif";
 
     appendLinkedFonts(linkedFonts, sizeof(linkedFonts) / sizeof(WCHAR), &result);

@@ -49,7 +49,7 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
 };
 
 } // namespace WebCore

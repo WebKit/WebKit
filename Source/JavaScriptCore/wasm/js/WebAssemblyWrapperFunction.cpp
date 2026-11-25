@@ -48,7 +48,7 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
 {
     ASSERT_WITH_MESSAGE(!function->inherits<WebAssemblyWrapperFunction>(), "We should never double wrap a wrapper function.");
 
-    String name = emptyString();
+    RefPtr<StringImpl> name = emptyString();
     NativeExecutable* executable = nullptr;
     unsigned length = signature->argumentCount();
     if (signature->argumentsOrResultsIncludeV128() || signature->argumentsOrResultsIncludeExnref()) [[unlikely]]

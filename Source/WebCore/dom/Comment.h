@@ -30,12 +30,12 @@ class Comment final : public CharacterData {
     WTF_MAKE_TZONE_ALLOCATED(Comment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Comment);
 public:
-    static Ref<Comment> create(Document&, String&&);
+    static Ref<Comment> create(Document&, RefPtr<StringImpl>&&);
 
 private:
-    Comment(Document&, String&&);
+    Comment(Document&, RefPtr<StringImpl>&&);
 
-    String nodeName() const override;
+    RefPtr<StringImpl> nodeName() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
 };

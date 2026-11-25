@@ -157,7 +157,7 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
 }
 
 ProxyingNetworkAgent::ProxyingNetworkAgent(WebKit::WebPageAgentContext& context)
-    : InspectorAgentBase("Network"_s, context)
+    : InspectorAgentBase("Network"_si, context)
     , m_frontendDispatcher(makeUniqueRef<NetworkFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(NetworkBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_inspectedPage(context.inspectedPage)
@@ -365,11 +365,11 @@ CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&
 // An empty error string on a reply is the AsyncReplyError synthesized on connection loss (the
 // target WebProcess is gone); report that explicitly instead of surfacing it to the frontend as a
 // spurious success. A non-empty error is a genuine backend failure and is forwarded verbatim.
-static String replyFailureString(const String& replyError)
+static RefPtr<StringImpl> replyFailureString(StringImpl* replyError)
 {
-    if (!replyError.isEmpty())
+    if (!isEmpty(replyError))
         return replyError;
-    return "Target WebProcess for requestId is no longer available"_s;
+    return "Target WebProcess for requestId is no longer available"_si;
 }
 
 // Resolve a requestId-routed command to the WebContent process that performed the load. The
@@ -377,7 +377,7 @@ static String replyFailureString(const String& replyError)
 // failure the returned string is the frontend-facing error. Shared by the requestId-routed
 // commands (getResponseBody, getSerializedCertificate), which then issue their own async IPC to the
 // resolved process.
-static CommandResultOf<Ref<WebKit::WebProcessProxy>, PageIdentifier, ResourceLoaderIdentifier> resolveRequestProcess(WebKit::WebPageProxy& inspectedPage, const Protocol::Network::RequestId& requestId)
+static CommandResultOf<Ref<WebKit::WebProcessProxy>, PageIdentifier, ResourceLoaderIdentifier> resolveRequestProcess(WebKit::WebPageProxy& inspectedPage, StringImpl* requestId)
 {
     auto parsed = IdentifierRegistry::parseProtocolRequestId(requestId);
     if (!parsed)
@@ -400,7 +400,7 @@ static CommandResultOf<Ref<WebKit::WebProcessProxy>, PageIdentifier, ResourceLoa
     return { { targetProcess.releaseNonNull(), *targetPageID, resourceID } };
 }
 
-void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& requestId, Ref<GetResponseBodyCallback>&& callback)
+void ProxyingNetworkAgent::getResponseBody(StringImpl* requestId, Ref<GetResponseBodyCallback>&& callback)
 {
     auto resolved = resolveRequestProcess(protect(m_inspectedPage), requestId);
     if (!resolved) {
@@ -411,7 +411,7 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
     auto [targetProcess, targetPageID, resourceID] = WTF::move(resolved.value());
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::GetResponseBody { resourceID },
-        [callback = WTF::move(callback)](std::expected<std::pair<String, bool>, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<std::pair<RefPtr<StringImpl>, bool>, RefPtr<StringImpl>>&& result) mutable {
             if (result) {
                 auto& [content, base64Encoded] = result.value();
                 callback->sendSuccess(content, base64Encoded);
@@ -421,7 +421,7 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
         targetPageID);
 }
 
-void ProxyingNetworkAgent::getSerializedCertificate(const Protocol::Network::RequestId& requestId, Ref<GetSerializedCertificateCallback>&& callback)
+void ProxyingNetworkAgent::getSerializedCertificate(StringImpl* requestId, Ref<GetSerializedCertificateCallback>&& callback)
 {
     auto resolved = resolveRequestProcess(protect(m_inspectedPage), requestId);
     if (!resolved) {
@@ -432,7 +432,7 @@ void ProxyingNetworkAgent::getSerializedCertificate(const Protocol::Network::Req
     auto [targetProcess, targetPageID, resourceID] = WTF::move(resolved.value());
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::GetSerializedCertificate { resourceID },
-        [callback = WTF::move(callback)](std::expected<String, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>>&& result) mutable {
             if (result)
                 callback->sendSuccess(result.value());
             else
@@ -458,13 +458,13 @@ CommandResult<void> ProxyingNetworkAgent::setClearResourceDataOnNavigate(bool)
     return { };
 }
 
-void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId& frameId, const String& url, Ref<LoadResourceCallback>&& callback)
+void ProxyingNetworkAgent::loadResource(StringImpl* frameId, StringImpl* url, Ref<LoadResourceCallback>&& callback)
 {
     // Routed by frame (frameId + URL), unlike getResponseBody which is routed by requestId: decode the
     // frame's hosting process from the frameId and forward the load to that process's WebInspectorBackend.
     auto parsed = IdentifierRegistry::parseProtocolFrameId(frameId);
     if (!parsed) {
-        callback->sendFailure("Invalid frameId format"_s);
+        callback->sendFailure("Invalid frameId format"_si);
         return;
     }
 
@@ -481,35 +481,35 @@ void ProxyingNetworkAgent::loadResource(const Protocol::Network::FrameId& frameI
     });
 
     if (!targetProcess || !targetPageID) {
-        callback->sendFailure("WebProcess not found for frameId"_s);
+        callback->sendFailure("WebProcess not found for frameId"_si);
         return;
     }
 
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::LoadResource { frameID, url },
-        [callback = WTF::move(callback)](std::expected<std::tuple<String, String, int>, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<std::tuple<RefPtr<StringImpl>, RefPtr<StringImpl>, int>, RefPtr<StringImpl>>&& result) mutable {
             if (result) {
                 auto& [content, mimeType, status] = result.value();
                 callback->sendSuccess(content, mimeType, status);
-            } else if (!result.error().isEmpty())
+            } else if (!isEmpty(result.error()))
                 callback->sendFailure(result.error());
             else {
                 // Empty error string == AsyncReplyError synthesized on connection loss (target
                 // WebProcess is gone), matching getResponseBody.
-                callback->sendFailure("Target WebProcess for frameId is no longer available"_s);
+                callback->sendFailure("Target WebProcess for frameId is no longer available"_si);
             }
         },
         *targetPageID);
 }
 
-void ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId& requestId, const String& objectGroup, Ref<ResolveWebSocketCallback>&& callback)
+void ProxyingNetworkAgent::resolveWebSocket(StringImpl* requestId, StringImpl* objectGroup, Ref<ResolveWebSocketCallback>&& callback)
 {
     // Routed by the process encoded in the requestId. The owning process wraps the socket with its frame's
     // injected script, so the returned object id is only meaningful on that frame's target; the frontend
     // pairs it with the frame target, as it does for DOM node ids.
     auto parsed = IdentifierRegistry::parseProtocolWebSocketRequestId(requestId);
     if (!parsed) {
-        callback->sendFailure("Missing web socket for given requestId"_s);
+        callback->sendFailure("Missing web socket for given requestId"_si);
         return;
     }
 
@@ -517,7 +517,7 @@ void ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId& 
 
     RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage) {
-        callback->sendFailure("Inspected page is gone"_s);
+        callback->sendFailure("Inspected page is gone"_si);
         return;
     }
 
@@ -531,13 +531,13 @@ void ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId& 
     });
 
     if (!targetProcess || !targetPageID) {
-        callback->sendFailure("WebProcess not found for requestId"_s);
+        callback->sendFailure("WebProcess not found for requestId"_si);
         return;
     }
 
     targetProcess->sendWithAsyncReply(
         Messages::WebInspectorBackend::ResolveWebSocket { channelID, objectGroup },
-        [callback = WTF::move(callback)](std::expected<String, String>&& result) mutable {
+        [callback = WTF::move(callback)](std::expected<RefPtr<StringImpl>, RefPtr<StringImpl>>&& result) mutable {
             if (!result) {
                 callback->sendFailure(replyFailureString(result.error()));
                 return;
@@ -545,7 +545,7 @@ void ProxyingNetworkAgent::resolveWebSocket(const Protocol::Network::RequestId& 
 
             RefPtr value = JSON::Value::parseJSON(result.value());
             if (!value || !value->asObject()) {
-                callback->sendFailure("Internal error: unable to cast WebSocket"_s);
+                callback->sendFailure("Internal error: unable to cast WebSocket"_si);
                 return;
             }
 
@@ -574,7 +574,7 @@ static NetworkInterceptionPhase toInterceptionPhase(Protocol::Network::NetworkSt
     return NetworkInterceptionPhase::ResponseStarted;
 }
 
-static InterceptPattern toInterceptPattern(const String& url, Protocol::Network::NetworkStage stage, const std::optional<bool>& caseSensitive, const std::optional<bool>& isRegex)
+static InterceptPattern toInterceptPattern(StringImpl* url, Protocol::Network::NetworkStage stage, const std::optional<bool>& caseSensitive, const std::optional<bool>& isRegex)
 {
     return InterceptPattern {
         NetworkInterceptOwner::Inspector,
@@ -637,10 +637,10 @@ void ProxyingNetworkAgent::setInterceptionEnabled(bool enabled, Ref<SetIntercept
         continuePendingInterceptions();
 }
 
-void ProxyingNetworkAgent::addInterception(const String& url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<AddInterceptionCallback>&& callback)
+void ProxyingNetworkAgent::addInterception(StringImpl* url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<AddInterceptionCallback>&& callback)
 {
     if (!m_interceptPatterns.appendIfNotContains(toInterceptPattern(url, stage, caseSensitive, isRegex))) {
-        callback->sendFailure("Intercept for given url, given isRegex, and given stage already exists"_s);
+        callback->sendFailure("Intercept for given url, given isRegex, and given stage already exists"_si);
         return;
     }
 
@@ -649,10 +649,10 @@ void ProxyingNetworkAgent::addInterception(const String& url, Protocol::Network:
     });
 }
 
-void ProxyingNetworkAgent::removeInterception(const String& url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<RemoveInterceptionCallback>&& callback)
+void ProxyingNetworkAgent::removeInterception(StringImpl* url, Protocol::Network::NetworkStage stage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<RemoveInterceptionCallback>&& callback)
 {
     if (!m_interceptPatterns.removeAll(toInterceptPattern(url, stage, caseSensitive, isRegex))) {
-        callback->sendFailure("Missing intercept for given url, given isRegex, and given stage"_s);
+        callback->sendFailure("Missing intercept for given url, given isRegex, and given stage"_si);
         return;
     }
 
@@ -666,7 +666,7 @@ static ASCIILiteral missingPendingInterceptError(NetworkInterceptionPhase phase)
     return phase == NetworkInterceptionPhase::BeforeRequestSent ? "Missing pending intercept request for given requestId"_s : "Missing pending intercept response for given requestId"_s;
 }
 
-CommandResult<void> ProxyingNetworkAgent::resolveInterception(const Protocol::Network::RequestId& requestId, NetworkInterceptionPhase phase, NetworkInterceptionResolution&& resolution)
+CommandResult<void> ProxyingNetworkAgent::resolveInterception(StringImpl* requestId, NetworkInterceptionPhase phase, NetworkInterceptionResolution&& resolution)
 {
     // Like InspectorNetworkAgent, a paused response can only go on or be replaced, never failed.
     if (phase == NetworkInterceptionPhase::ResponseStarted && resolution.action == NetworkInterceptionAction::Fail)
@@ -685,9 +685,9 @@ CommandResult<void> ProxyingNetworkAgent::resolveInterception(const Protocol::Ne
     return { };
 }
 
-static Vector<std::pair<String, String>> headerPairs(const JSON::Object& headers)
+static Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> headerPairs(const JSON::Object& headers)
 {
-    Vector<std::pair<String, String>> pairs;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> pairs;
     for (auto& [name, value] : headers) {
         auto headerValue = protect(value)->asString();
         if (!!headerValue)
@@ -696,20 +696,20 @@ static Vector<std::pair<String, String>> headerPairs(const JSON::Object& headers
     return pairs;
 }
 
-static std::optional<Vector<uint8_t>> decodeContent(const String& content, bool base64Encoded)
+static std::optional<Vector<uint8_t>> decodeContent(StringImpl* content, bool base64Encoded)
 {
     if (base64Encoded)
         return base64Decode(content);
-    auto utf8 = content.utf8();
+    auto utf8 = WTF::utf8(content);
     return Vector<uint8_t> { byteCast<uint8_t>(utf8.span()) };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Network::RequestId& requestId, Protocol::Network::NetworkStage networkStage)
+CommandResult<void> ProxyingNetworkAgent::interceptContinue(StringImpl* requestId, Protocol::Network::NetworkStage networkStage)
 {
     return resolveInterception(requestId, toInterceptionPhase(networkStage), { });
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId& requestId, const String& url, const String& method, RefPtr<JSON::Object>&& headers, const String& postData)
+CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(StringImpl* requestId, StringImpl* url, StringImpl* method, RefPtr<JSON::Object>&& headers, StringImpl* postData)
 {
     if (!m_pendingInterceptRequests.contains(requestId))
         return makeUnexpected(missingPendingInterceptError(NetworkInterceptionPhase::BeforeRequestSent));
@@ -731,7 +731,7 @@ CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::N
     return resolveInterception(requestId, NetworkInterceptionPhase::BeforeRequestSent, WTF::move(resolution));
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers)
+CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(StringImpl* requestId, StringImpl* content, bool base64Encoded, StringImpl* mimeType, std::optional<int>&& status, StringImpl* statusText, RefPtr<JSON::Object>&& headers)
 {
     if (!m_pendingInterceptResponses.contains(requestId))
         return makeUnexpected(missingPendingInterceptError(NetworkInterceptionPhase::ResponseStarted));
@@ -754,7 +754,7 @@ CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::
     return resolveInterception(requestId, NetworkInterceptionPhase::ResponseStarted, WTF::move(resolution));
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers)
+CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(StringImpl* requestId, StringImpl* content, bool base64Encoded, StringImpl* mimeType, int status, StringImpl* statusText, Ref<JSON::Object>&& headers)
 {
     if (!m_pendingInterceptRequests.contains(requestId))
         return makeUnexpected(missingPendingInterceptError(NetworkInterceptionPhase::BeforeRequestSent));
@@ -790,7 +790,7 @@ static NetworkInterceptionErrorType toInterceptionErrorType(Protocol::Network::R
     return NetworkInterceptionErrorType::General;
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId& requestId, Protocol::Network::ResourceErrorType errorType)
+CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(StringImpl* requestId, Protocol::Network::ResourceErrorType errorType)
 {
     NetworkInterceptionResolution resolution;
     resolution.action = NetworkInterceptionAction::Fail;
@@ -820,7 +820,7 @@ CommandResult<void> ProxyingNetworkAgent::setEmulatedConditions(std::optional<in
 
 // IPC message handlers from WebProcess FrameNetworkAgentProxy.
 
-void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& targetID, const String& documentURL, const ResourceRequest& request, const RequestExtras& requestExtras, std::optional<ResourceResponse>&& redirectResponse, ResourceType resourceType, double timestamp, double walltime, InitiatorData&& initiator)
+void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID frameID, StringImpl* loaderId, StringImpl* targetID, StringImpl* documentURL, const ResourceRequest& request, const RequestExtras& requestExtras, std::optional<ResourceResponse>&& redirectResponse, ResourceType resourceType, double timestamp, double walltime, InitiatorData&& initiator)
 {
     if (!m_enabled)
         return;
@@ -837,7 +837,7 @@ void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID fram
     m_frontendDispatcher->requestWillBeSent(requestId, frameIdString, loaderId, documentURL, WTF::move(requestObject), timestamp, walltime, WTF::move(initiatorObject), WTF::move(redirectResponseObject), toProtocolResourceType(resourceType), targetID);
 }
 
-void ProxyingNetworkAgent::responseReceived(ResourceID resourceID, FrameID frameID, const String& loaderId, const ResourceResponse& response, ResourceType resourceType, double timestamp, std::optional<MonotonicTime> resourceLoadStartTime)
+void ProxyingNetworkAgent::responseReceived(ResourceID resourceID, FrameID frameID, StringImpl* loaderId, const ResourceResponse& response, ResourceType resourceType, double timestamp, std::optional<MonotonicTime> resourceLoadStartTime)
 {
     if (!m_enabled)
         return;
@@ -859,7 +859,7 @@ void ProxyingNetworkAgent::dataReceived(ResourceID resourceID, int dataLength, i
     m_frontendDispatcher->dataReceived(requestId, timestamp, dataLength, encodedDataLength);
 }
 
-void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timestamp, const String& sourceMapURL, NetworkLoadMetrics&& metrics)
+void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timestamp, StringImpl* sourceMapURL, NetworkLoadMetrics&& metrics)
 {
     if (!m_enabled)
         return;
@@ -868,7 +868,7 @@ void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timesta
     m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, ResourceUtilities::buildObjectForMetrics(metrics));
 }
 
-void ProxyingNetworkAgent::loadingFailed(IPC::Connection& connection, ResourceID resourceID, double timestamp, const String& errorText, bool canceled)
+void ProxyingNetworkAgent::loadingFailed(IPC::Connection& connection, ResourceID resourceID, double timestamp, StringImpl* errorText, bool canceled)
 {
     // A failed load forgets the pause named by the resource id, so only the process that paused the load may name it.
     MESSAGE_CHECK_BASE(resourceID.processIdentifier() == WebKit::WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
@@ -883,7 +883,7 @@ void ProxyingNetworkAgent::loadingFailed(IPC::Connection& connection, ResourceID
     m_frontendDispatcher->loadingFailed(requestId, timestamp, errorText, canceled);
 }
 
-void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& documentURL, const URL& url, const ResourceResponse& response, ResourceType resourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&& initiator)
+void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, StringImpl* loaderId, StringImpl* documentURL, const URL& url, const ResourceResponse& response, ResourceType resourceType, StringImpl* sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&& initiator)
 {
     if (!m_enabled)
         return;
@@ -900,7 +900,7 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
     if (auto responseObject = buildObjectForResourceResponse(response, std::nullopt))
         cachedResourceObject->setResponse(responseObject.releaseNonNull());
 
-    if (!sourceMapURL.isEmpty())
+    if (!isEmpty(sourceMapURL))
         cachedResourceObject->setSourceMapURL(sourceMapURL);
 
     m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameIdString, loaderId, documentURL, timestamp, ResourceUtilities::buildInitiatorObject(initiator), WTF::move(cachedResourceObject));
@@ -909,7 +909,7 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
 // WebSocket events. Only FrameNetworkAgentProxy sends these, so each socket is reported once, by the process
 // whose document opened it; the frame and loader on webSocketCreated attribute it to that frame.
 
-static Ref<Protocol::Network::WebSocketFrame> buildObjectForWebSocketFrame(int opcode, bool mask, const String& payloadData, uint64_t payloadLength)
+static Ref<Protocol::Network::WebSocketFrame> buildObjectForWebSocketFrame(int opcode, bool mask, StringImpl* payloadData, uint64_t payloadLength)
 {
     return Protocol::Network::WebSocketFrame::create()
         .setOpcode(opcode)
@@ -919,7 +919,7 @@ static Ref<Protocol::Network::WebSocketFrame> buildObjectForWebSocketFrame(int o
         .release();
 }
 
-void ProxyingNetworkAgent::webSocketCreated(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, FrameID frameID, const String& loaderId, const String& requestURL)
+void ProxyingNetworkAgent::webSocketCreated(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, FrameID frameID, StringImpl* loaderId, StringImpl* requestURL)
 {
     // The requestId names the reporting process, so only that process may report the socket.
     MESSAGE_CHECK_BASE(processID == WebKit::WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
@@ -945,7 +945,7 @@ void ProxyingNetworkAgent::webSocketWillSendHandshakeRequest(IPC::Connection& co
     m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifierRegistry::protocolWebSocketRequestId(processID, channelID), timestamp, walltime, WTF::move(requestObject));
 }
 
-void ProxyingNetworkAgent::webSocketHandshakeResponseReceived(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int statusCode, const String& statusText, const HTTPHeaderMap& headers)
+void ProxyingNetworkAgent::webSocketHandshakeResponseReceived(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int statusCode, StringImpl* statusText, const HTTPHeaderMap& headers)
 {
     MESSAGE_CHECK_BASE(processID == WebKit::WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
 
@@ -960,7 +960,7 @@ void ProxyingNetworkAgent::webSocketHandshakeResponseReceived(IPC::Connection& c
     m_frontendDispatcher->webSocketHandshakeResponseReceived(IdentifierRegistry::protocolWebSocketRequestId(processID, channelID), timestamp, WTF::move(responseObject));
 }
 
-void ProxyingNetworkAgent::webSocketFrameReceived(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int opcode, bool mask, const String& payloadData, uint64_t payloadLength)
+void ProxyingNetworkAgent::webSocketFrameReceived(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int opcode, bool mask, StringImpl* payloadData, uint64_t payloadLength)
 {
     MESSAGE_CHECK_BASE(processID == WebKit::WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
 
@@ -970,7 +970,7 @@ void ProxyingNetworkAgent::webSocketFrameReceived(IPC::Connection& connection, W
     m_frontendDispatcher->webSocketFrameReceived(IdentifierRegistry::protocolWebSocketRequestId(processID, channelID), timestamp, buildObjectForWebSocketFrame(opcode, mask, payloadData, payloadLength));
 }
 
-void ProxyingNetworkAgent::webSocketFrameSent(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int opcode, bool mask, const String& payloadData, uint64_t payloadLength)
+void ProxyingNetworkAgent::webSocketFrameSent(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, int opcode, bool mask, StringImpl* payloadData, uint64_t payloadLength)
 {
     MESSAGE_CHECK_BASE(processID == WebKit::WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
 
@@ -980,7 +980,7 @@ void ProxyingNetworkAgent::webSocketFrameSent(IPC::Connection& connection, WebCo
     m_frontendDispatcher->webSocketFrameSent(IdentifierRegistry::protocolWebSocketRequestId(processID, channelID), timestamp, buildObjectForWebSocketFrame(opcode, mask, payloadData, payloadLength));
 }
 
-void ProxyingNetworkAgent::webSocketFrameError(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, const String& errorMessage)
+void ProxyingNetworkAgent::webSocketFrameError(IPC::Connection& connection, WebCore::ProcessIdentifier processID, uint64_t channelID, double timestamp, StringImpl* errorMessage)
 {
     MESSAGE_CHECK_BASE(processID == WebKit::WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), connection);
 

@@ -60,7 +60,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerThreadableWebSocketChannel);
 
-WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerGlobalScope& context, WebSocketChannelClient& client, const String& taskMode, SocketProvider& provider)
+WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerGlobalScope& context, WebSocketChannelClient& client, StringImpl* taskMode, SocketProvider& provider)
     : m_workerGlobalScope(context)
     , m_workerClientWrapper(ThreadableWebSocketChannelClientWrapper::create(context, client))
     , m_bridge(Bridge::create(m_workerClientWrapper.copyRef(), m_workerGlobalScope, taskMode, provider))
@@ -76,7 +76,7 @@ WorkerThreadableWebSocketChannel::~WorkerThreadableWebSocketChannel()
         bridge->disconnect();
 }
 
-WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::connect(const URL& url, const String& protocol)
+WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::connect(const URL& url, StringImpl* protocol)
 {
     if (RefPtr bridge = m_bridge)
         bridge->connect(url, protocol);
@@ -84,12 +84,12 @@ WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel
     return ConnectStatus::OK;
 }
 
-String WorkerThreadableWebSocketChannel::subprotocol()
+RefPtr<StringImpl> WorkerThreadableWebSocketChannel::subprotocol()
 {
     return m_workerClientWrapper->subprotocol();
 }
 
-String WorkerThreadableWebSocketChannel::extensions()
+RefPtr<StringImpl> WorkerThreadableWebSocketChannel::extensions()
 {
     return m_workerClientWrapper->extensions();
 }
@@ -112,13 +112,13 @@ void WorkerThreadableWebSocketChannel::send(Blob& binaryData)
         bridge->send(binaryData);
 }
 
-void WorkerThreadableWebSocketChannel::close(int code, const String& reason)
+void WorkerThreadableWebSocketChannel::close(int code, StringImpl* reason)
 {
     if (RefPtr bridge = m_bridge)
         bridge->close(code, reason);
 }
 
-void WorkerThreadableWebSocketChannel::fail(String&& reason)
+void WorkerThreadableWebSocketChannel::fail(RefPtr<StringImpl>&& reason)
 {
     if (RefPtr bridge = m_bridge)
         bridge->fail(WTF::move(reason));
@@ -145,7 +145,7 @@ void WorkerThreadableWebSocketChannel::resume()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerThreadableWebSocketChannel::Peer);
 
-WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider, IsInitiatedByWorker isInitiatedByWorker)
+WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, StringImpl* taskMode, SocketProvider& provider, IsInitiatedByWorker isInitiatedByWorker)
     : m_workerClientWrapper(clientWrapper.ptr())
     , m_mainWebSocketChannel(ThreadableWebSocketChannel::create(downcast<Document>(context), *this, provider, isInitiatedByWorker))
     , m_taskMode(taskMode)
@@ -154,7 +154,7 @@ WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClien
     RELEASE_ASSERT(isMainThread());
 }
 
-Ref<WorkerThreadableWebSocketChannel::Peer> WorkerThreadableWebSocketChannel::Peer::create(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider, IsInitiatedByWorker isInitiatedByWorker)
+Ref<WorkerThreadableWebSocketChannel::Peer> WorkerThreadableWebSocketChannel::Peer::create(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, StringImpl* taskMode, SocketProvider& provider, IsInitiatedByWorker isInitiatedByWorker)
 {
     return adoptRef(*new Peer(WTF::move(clientWrapper), context, workerContextIdentifier, taskMode, provider, isInitiatedByWorker));
 }
@@ -166,7 +166,7 @@ WorkerThreadableWebSocketChannel::Peer::~Peer()
         channel->disconnect();
 }
 
-WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::Peer::connect(const URL& url, const String& protocol)
+WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::Peer::connect(const URL& url, StringImpl* protocol)
 {
     RELEASE_ASSERT(isMainThread());
     RefPtr channel = m_mainWebSocketChannel;
@@ -197,14 +197,14 @@ void WorkerThreadableWebSocketChannel::Peer::send(Blob& binaryData)
         channel->send(binaryData);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::close(int code, const String& reason)
+void WorkerThreadableWebSocketChannel::Peer::close(int code, StringImpl* reason)
 {
     RELEASE_ASSERT(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->close(code, reason);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::fail(String&& reason)
+void WorkerThreadableWebSocketChannel::Peer::fail(RefPtr<StringImpl>&& reason)
 {
     RELEASE_ASSERT(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
@@ -242,9 +242,9 @@ void WorkerThreadableWebSocketChannel::Peer::didConnect()
         return;
 
     Ref channel = *m_mainWebSocketChannel;
-    String subprotocol = channel->subprotocol();
-    String extensions = channel->extensions();
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), subprotocol = WTF::move(subprotocol).isolatedCopy(), extensions = WTF::move(extensions).isolatedCopy()](ScriptExecutionContext& context) mutable {
+    RefPtr<StringImpl> subprotocol = channel->subprotocol();
+    RefPtr<StringImpl> extensions = channel->extensions();
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), subprotocol = isolatedCopy(WTF::move(subprotocol)), extensions = isolatedCopy(WTF::move(extensions))](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->setSubprotocol(subprotocol);
         workerClientWrapper->setExtensions(extensions);
@@ -252,7 +252,7 @@ void WorkerThreadableWebSocketChannel::Peer::didConnect()
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(String&& message)
+void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(RefPtr<StringImpl>&& message)
 {
     ASSERT(isMainThread());
 
@@ -260,7 +260,7 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(String&& message)
     if (!workerClientWrapper)
         return;
 
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), message = WTF::move(message).isolatedCopy()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), message = isolatedCopy(WTF::move(message))](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didReceiveMessage(WTF::move(message));
     }, m_taskMode);
@@ -308,7 +308,7 @@ void WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake()
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void WorkerThreadableWebSocketChannel::Peer::didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, StringImpl* reason)
 {
     RELEASE_ASSERT(isMainThread());
     m_mainWebSocketChannel = nullptr;
@@ -317,13 +317,13 @@ void WorkerThreadableWebSocketChannel::Peer::didClose(uint64_t unhandledBuffered
     if (!workerClientWrapper)
         return;
 
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), unhandledBufferedAmount, closingHandshakeCompletion, code, reason = reason.isolatedCopy()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), unhandledBufferedAmount, closingHandshakeCompletion, code, reason = isolatedCopy(reason)](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, reason);
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError(String&& reason)
+void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError(RefPtr<StringImpl>&& reason)
 {
     ASSERT(isMainThread());
 
@@ -331,7 +331,7 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError(String&& rea
     if (!workerClientWrapper)
         return;
 
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), reason = WTF::move(reason).isolatedCopy()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), reason = isolatedCopy(WTF::move(reason))](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didReceiveMessageError(WTF::move(reason));
     }, m_taskMode);
@@ -351,7 +351,7 @@ void WorkerThreadableWebSocketChannel::Peer::didUpgradeURL()
     }, m_taskMode);
 }
 
-WorkerThreadableWebSocketChannel::Bridge::Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, WorkerGlobalScope& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& socketProvider)
+WorkerThreadableWebSocketChannel::Bridge::Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, WorkerGlobalScope& workerGlobalScope, StringImpl* taskMode, Ref<SocketProvider>&& socketProvider)
     : m_workerClientWrapper(WTF::move(workerClientWrapper))
     , m_workerGlobalScope(workerGlobalScope)
     , m_loaderProxy(*workerGlobalScope.thread()->workerLoaderProxy())
@@ -365,7 +365,7 @@ WorkerThreadableWebSocketChannel::Bridge::~Bridge()
     disconnect();
 }
 
-auto WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext& context, WorkerThread& workerThread, ScriptExecutionContextIdentifier workerContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, const String& taskMode, Ref<SocketProvider>&& provider, IsInitiatedByWorker isInitiatedByWorker) -> RefPtr<Peer>
+auto WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext& context, WorkerThread& workerThread, ScriptExecutionContextIdentifier workerContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, StringImpl* taskMode, Ref<SocketProvider>&& provider, IsInitiatedByWorker isInitiatedByWorker) -> RefPtr<Peer>
 {
     ASSERT(isMainThread());
     ASSERT(context.isDocument());
@@ -385,7 +385,7 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize(WorkerGlobalScope& sco
     RefPtr<Peer> peer;
 
     BinarySemaphore semaphore;
-    m_loaderProxy->postTaskToLoader([&semaphore, &peer, workerThread = Ref { scope.thread() }, workerContextIdentifier = scope.identifier(), workerClientWrapper = m_workerClientWrapper, taskMode = m_taskMode.isolatedCopy(), provider = m_socketProvider](ScriptExecutionContext& context) mutable {
+    m_loaderProxy->postTaskToLoader([&semaphore, &peer, workerThread = Ref { scope.thread() }, workerContextIdentifier = scope.identifier(), workerClientWrapper = m_workerClientWrapper, taskMode = isolatedCopy(m_taskMode), provider = m_socketProvider](ScriptExecutionContext& context) mutable {
         peer = mainThreadInitialize(context, workerThread.get(), workerContextIdentifier, WTF::move(workerClientWrapper), taskMode, WTF::move(provider), IsInitiatedByWorker::Yes);
         semaphore.signal();
     });
@@ -400,13 +400,13 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize(WorkerGlobalScope& sco
     SUPPRESS_UNCOUNTED_ARG m_peer = m_workerClientWrapper->peer();
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const String& protocol)
+void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, StringImpl* protocol)
 {
     RefPtr peer = m_peer.get();
     if (!peer)
         return;
 
-    m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), url = url.isolatedCopy(), protocol = protocol.isolatedCopy()](ScriptExecutionContext& context) {
+    m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), url = url.isolatedCopy(), protocol = isolatedCopy(protocol)](ScriptExecutionContext& context) {
         RELEASE_ASSERT(isMainThread());
 
         auto& document = downcast<Document>(context);
@@ -417,7 +417,7 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         }
 
         if (peer->connect(url, protocol) == ThreadableWebSocketChannel::ConnectStatus::KO)
-            peer->didReceiveMessageError(String { });
+            peer->didReceiveMessageError(nullptr);
     });
 }
 
@@ -444,7 +444,7 @@ void WorkerThreadableWebSocketChannel::Bridge::send(const ArrayBuffer& binaryDat
     // ArrayBuffer isn't thread-safe, so its content is copied into a Vector to cross to the main thread.
     Vector<uint8_t> data;
     if (!data.tryGrow(byteLength)) {
-        fail("Failed to send WebSocket frame: payload is too large"_s);
+        fail("Failed to send WebSocket frame: payload is too large"_si);
         return;
     }
     if (binaryData.byteLength())
@@ -465,21 +465,21 @@ void WorkerThreadableWebSocketChannel::Bridge::send(Blob& binaryData)
     if (!peer)
         return;
 
-    m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), url = binaryData.url().isolatedCopy(), type = binaryData.type().isolatedCopy(), size = binaryData.size(), memoryCost = binaryData.memoryCost()](ScriptExecutionContext& context) {
+    m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), url = binaryData.url().isolatedCopy(), type = isolatedCopy(binaryData.type()), size = binaryData.size(), memoryCost = binaryData.memoryCost()](ScriptExecutionContext& context) {
         RELEASE_ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
 
-        peer->send(Blob::deserialize(&context, url, type, size, memoryCost, { }));
+        peer->send(Blob::deserialize(&context, url, type, size, memoryCost, nullptr));
     });
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::close(int code, const String& reason)
+void WorkerThreadableWebSocketChannel::Bridge::close(int code, StringImpl* reason)
 {
     RefPtr peer = m_peer.get();
     if (!peer)
         return;
 
-    m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), code, reason = reason.isolatedCopy()](ScriptExecutionContext& context) {
+    m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), code, reason = isolatedCopy(reason)](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
 
@@ -487,13 +487,13 @@ void WorkerThreadableWebSocketChannel::Bridge::close(int code, const String& rea
     });
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::fail(String&& reason)
+void WorkerThreadableWebSocketChannel::Bridge::fail(RefPtr<StringImpl>&& reason)
 {
     RefPtr peer = m_peer.get();
     if (!peer)
         return;
 
-    m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), reason = WTF::move(reason).isolatedCopy()](ScriptExecutionContext& context) mutable {
+    m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), reason = isolatedCopy(WTF::move(reason))](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
 

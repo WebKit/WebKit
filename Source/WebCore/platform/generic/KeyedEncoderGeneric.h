@@ -59,25 +59,25 @@ public:
 private:
     RefPtr<SharedBuffer> finishEncoding() override;
 
-    void encodeBytes(const String& key, std::span<const uint8_t>) override;
-    void encodeBool(const String& key, bool) override;
-    void encodeUInt32(const String& key, uint32_t) override;
-    void encodeUInt64(const String& key, uint64_t) override;
-    void encodeInt32(const String& key, int32_t) override;
-    void encodeInt64(const String& key, int64_t) override;
-    void encodeFloat(const String& key, float) override;
-    void encodeDouble(const String& key, double) override;
-    void encodeString(const String& key, const String&) override;
+    void encodeBytes(StringImpl* key, std::span<const uint8_t>) override;
+    void encodeBool(StringImpl* key, bool) override;
+    void encodeUInt32(StringImpl* key, uint32_t) override;
+    void encodeUInt64(StringImpl* key, uint64_t) override;
+    void encodeInt32(StringImpl* key, int32_t) override;
+    void encodeInt64(StringImpl* key, int64_t) override;
+    void encodeFloat(StringImpl* key, float) override;
+    void encodeDouble(StringImpl* key, double) override;
+    void encodeString(StringImpl* key, StringImpl*) override;
 
-    void beginObject(const String& key) override;
+    void beginObject(StringImpl* key) override;
     void endObject() override;
 
-    void beginArray(const String& key) override;
+    void beginArray(StringImpl* key) override;
     void beginArrayElement() override;
     void endArrayElement() override;
     void endArray() override;
 
-    void encodeString(const String&);
+    void encodeString(StringImpl*);
 
     WTF::Persistence::Encoder m_encoder;
 };

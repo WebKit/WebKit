@@ -152,7 +152,7 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
 
     static Atomic<uint64_t> uniqueStreamId;
     auto name = makeString("src"_s, uniqueStreamId.exchangeAdd(1));
-    m_srcPad = gst_pad_new_from_static_template(&s_harnessSrcPadTemplate, name.ascii().data());
+    m_srcPad = gst_pad_new_from_static_template(&s_harnessSrcPadTemplate, ascii(name).data());
     gst_pad_set_query_function_full(m_srcPad.get(), reinterpret_cast<GstPadQueryFunction>(+[](GstPad* pad, GstObject* parent, GstQuery* query) -> gboolean {
         auto& harness = *reinterpret_cast<GStreamerElementHarness*>(pad->querydata);
         return harness.srcQuery(pad, parent, query);
@@ -198,7 +198,7 @@ void GStreamerElementHarness::start(GRefPtr<GstCaps>&& inputCaps, std::optional<
 
     static Atomic<uint64_t> uniqueStreamId;
     auto streamId = makeString(unsafeSpan(GST_OBJECT_NAME(m_element.get())), '-', uniqueStreamId.exchangeAdd(1));
-    pushEvent(adoptGRef(gst_event_new_stream_start(streamId.ascii().data())));
+    pushEvent(adoptGRef(gst_event_new_stream_start(ascii(streamId).data())));
 
     pushStickyEvents(WTF::move(inputCaps), WTF::move(segment));
     m_playing.store(true);
@@ -307,9 +307,9 @@ GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad, RefPtr<GStreamerE
 
     if (m_allowedOutputCaps) {
         GRefPtr<GstPadTemplate> padTemplate = gst_pad_template_new("sink", GST_PAD_SINK, GST_PAD_ALWAYS, m_allowedOutputCaps.get());
-        m_targetPad = gst_pad_new_from_template(padTemplate.get(), name.ascii().data());
+        m_targetPad = gst_pad_new_from_template(padTemplate.get(), ascii(name).data());
     } else
-        m_targetPad = gst_pad_new_from_static_template(&s_harnessSinkPadTemplate, name.ascii().data());
+        m_targetPad = gst_pad_new_from_static_template(&s_harnessSinkPadTemplate, ascii(name).data());
 
     auto result = gst_pad_link(m_pad.get(), m_targetPad.get());
     if (GST_PAD_LINK_FAILED(result))
@@ -519,9 +519,9 @@ public:
     std::span<const uint8_t> span() const;
 
 private:
-    String generatePadId(GStreamerElementHarness&,  GstPad*);
-    String getPadClass(const GRefPtr<GstPad>&);
-    String describeCaps(const GRefPtr<GstCaps>&);
+    RefPtr<StringImpl> generatePadId(GStreamerElementHarness&,  GstPad*);
+    RefPtr<StringImpl> getPadClass(const GRefPtr<GstPad>&);
+    RefPtr<StringImpl> describeCaps(const GRefPtr<GstCaps>&);
     void dumpPad(GStreamerElementHarness&, GstPad* = nullptr);
     void dumpElement(GStreamerElementHarness&, GstElement* = nullptr);
 
@@ -536,7 +536,7 @@ MermaidBuilder::MermaidBuilder()
     m_stringBuilder.append("flowchart LR\n"_s);
 }
 
-String MermaidBuilder::generatePadId(GStreamerElementHarness& harness, GstPad* pad)
+RefPtr<StringImpl> MermaidBuilder::generatePadId(GStreamerElementHarness& harness, GstPad* pad)
 {
     GRefPtr parent = adoptGRef(gst_pad_get_parent(GST_OBJECT_CAST(pad)));
     if (!parent)
@@ -544,7 +544,7 @@ String MermaidBuilder::generatePadId(GStreamerElementHarness& harness, GstPad* p
     return makeString(unsafeSpan(GST_OBJECT_NAME(parent.get())), '_', unsafeSpan(GST_PAD_NAME(pad)));
 }
 
-String MermaidBuilder::getPadClass(const GRefPtr<GstPad>& pad)
+RefPtr<StringImpl> MermaidBuilder::getPadClass(const GRefPtr<GstPad>& pad)
 {
     auto direction = gst_pad_get_direction(pad.get());
     if (GST_IS_GHOST_PAD(pad.get()))
@@ -665,11 +665,11 @@ void MermaidBuilder::dumpElement(GStreamerElementHarness& harness, GstElement* e
     m_stringBuilder.append("class "_s, elementId, " elementClass\n"_s);
 }
 
-String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
+RefPtr<StringImpl> MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
 {
     if (gst_caps_is_any(caps.get()) || gst_caps_is_empty(caps.get())) {
         auto capsString = GMallocString::unsafeAdoptFromUTF8(gst_caps_to_string(caps.get()));
-        return capsString.span();
+        return StringImpl::create(capsString.span());
     }
 
     StringBuilder builder;
@@ -717,7 +717,7 @@ void GStreamerElementHarness::dumpGraph(ASCIILiteral filenamePrefix)
 
     MermaidBuilder builder;
     builder.process(*this);
-    auto path = FileSystem::pathByAppendingComponent(String(dumpPath.span()), filename);
+    auto path = FileSystem::pathByAppendingComponent(StringImpl::create(dumpPath.span()), filename);
     FileSystem::overwriteEntireFile(path, builder.span());
 #else
     UNUSED_PARAM(filenamePrefix);

@@ -45,7 +45,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
 
 template<typename CharacterType> NODELETE void CSSVariableData::updateBackingStringsInTokens()
 {
-    auto currentOffset = m_backingString.span<CharacterType>();
+    auto currentOffset = WTF::span<CharacterType>(m_backingString);
     for (auto& token : m_tokens) {
         if (!token.hasStringBacking() || token.isBackedByStringLiteral())
             continue;
@@ -82,14 +82,14 @@ CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, Style::IsAttr
 
     if (!stringBuilder.isEmpty()) {
         m_backingString = stringBuilder.toString();
-        if (m_backingString.is8Bit())
+        if (is8Bit(m_backingString))
             updateBackingStringsInTokens<Latin1Character>();
         else
             updateBackingStringsInTokens<char16_t>();
     }
 }
 
-String CSSVariableData::serialize() const
+RefPtr<StringImpl> CSSVariableData::serialize() const
 {
     return tokenRange().serialize(CSSParserToken::SerializationMode::CustomProperty);
 }

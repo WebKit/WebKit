@@ -66,7 +66,7 @@ ExceptionOr<Ref<CSSMatrixComponent>> CSSMatrixComponent::create(Ref<const CSSFun
         }
         if (components.size() != expectedNumberOfComponents) {
             ASSERT_NOT_REACHED();
-            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
+            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_si };
         }
         return create(WTF::move(components));
     };

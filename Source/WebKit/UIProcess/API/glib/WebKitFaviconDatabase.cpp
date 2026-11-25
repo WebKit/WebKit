@@ -114,7 +114,7 @@ static bool webkitFaviconDatabaseIsOpen(WebKitFaviconDatabase* database)
     return !!database->priv->iconDatabase;
 }
 
-void webkitFaviconDatabaseOpen(WebKitFaviconDatabase* database, const String& path, bool isEphemeral)
+void webkitFaviconDatabaseOpen(WebKitFaviconDatabase* database, StringImpl* path, bool isEphemeral)
 {
     if (webkitFaviconDatabaseIsOpen(database))
         return;
@@ -128,7 +128,7 @@ void webkitFaviconDatabaseClose(WebKitFaviconDatabase* database)
 }
 
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
-void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database, const LinkIcon& icon, const String& pageURL, bool isEphemeral, Function<void(bool)>&& completionHandler)
+void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database, const LinkIcon& icon, StringImpl* pageURL, bool isEphemeral, Function<void(bool)>&& completionHandler)
 {
     if (!webkitFaviconDatabaseIsOpen(database)) {
         completionHandler(false);
@@ -137,7 +137,7 @@ void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database
 
     database->priv->iconDatabase->checkIconURLAndSetPageURLIfNeeded(icon.url.string(), pageURL,
         isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
-            [database = GRefPtr<WebKitFaviconDatabase>(database), url = icon.url.string().isolatedCopy(), pageURL = pageURL.isolatedCopy(), completionHandler = WTF::move(completionHandler)](bool found, bool changed) {
+            [database = GRefPtr<WebKitFaviconDatabase>(database), url = isolatedCopy(icon.url.string()), pageURL = isolatedCopy(pageURL), completionHandler = WTF::move(completionHandler)](bool found, bool changed) {
             if (!webkitFaviconDatabaseIsOpen(database.get())) {
                 completionHandler(false);
                 return;
@@ -145,7 +145,7 @@ void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database
 
 #if PLATFORM(GTK)
             if (found && changed)
-                gSignalEmit(database.get(), signals[FAVICON_CHANGED], 0, pageURL.utf8(), url.utf8());
+                gSignalEmit(database.get(), signals[FAVICON_CHANGED], 0, utf8(pageURL), utf8(url));
 #else
             UNUSED_PARAM(changed);
 #endif
@@ -154,19 +154,19 @@ void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database
         });
 }
 
-void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase* database, const LinkIcon& icon, API::Data& iconData, const String& pageURL, bool isEphemeral)
+void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase* database, const LinkIcon& icon, API::Data& iconData, StringImpl* pageURL, bool isEphemeral)
 {
     if (!webkitFaviconDatabaseIsOpen(database))
         return;
 
     database->priv->iconDatabase->setIconForPageURL(icon.url.string(), iconData.span(), pageURL,
         isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
-        [database = GRefPtr<WebKitFaviconDatabase>(database), url = icon.url.string().isolatedCopy(), pageURL = pageURL.isolatedCopy()](bool success) {
+        [database = GRefPtr<WebKitFaviconDatabase>(database), url = isolatedCopy(icon.url.string()), pageURL = isolatedCopy(pageURL)](bool success) {
             if (!webkitFaviconDatabaseIsOpen(database.get()) || !success)
                 return;
 
 #if PLATFORM(GTK)
-            gSignalEmit(database.get(), signals[FAVICON_CHANGED], 0, pageURL.utf8(), url.utf8());
+            gSignalEmit(database.get(), signals[FAVICON_CHANGED], 0, utf8(pageURL), utf8(url));
 #endif
         });
 }
@@ -201,7 +201,7 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, UT
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(database, cancellable, callback, userData));
     WebKitFaviconDatabasePrivate* priv = database->priv;
-    priv->iconDatabase->loadIconsForPageURL(String::fromUTF8(pageURI.span()), isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
+    priv->iconDatabase->loadIconsForPageURL(StringImpl::fromUTF8(pageURI.span()), isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
         [task = WTF::move(task), pageURI = UTF8CString { pageURI.span() }](Vector<PlatformImagePtr>&& icons) {
             if (icons.isEmpty()) {
                 SAFE_G_TASK_RETURN_NEW_ERROR(task.get(), WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN,
@@ -257,11 +257,11 @@ gchar* webkit_favicon_database_get_favicon_uri(WebKitFaviconDatabase* database, 
     if (!webkitFaviconDatabaseIsOpen(database))
         return nullptr;
 
-    const auto& iconURLsForPageURL = database->priv->iconDatabase->iconURLsForPageURL(String::fromUTF8(pageURL));
+    const auto& iconURLsForPageURL = database->priv->iconDatabase->iconURLsForPageURL(StringImpl::fromUTF8(pageURL));
     if (iconURLsForPageURL.isEmpty())
         return nullptr;
 
-    return gStrdup(iconURLsForPageURL.last().utf8());
+    return gStrdup(utf8(iconURLsForPageURL.last()));
 }
 #endif // PLATFORM(GTK)
 
@@ -292,8 +292,8 @@ void webkit_favicon_database_get_page_icons(WebKitFaviconDatabase* database, con
     if (!webkitFaviconDatabaseIsOpen(database))
         return g_task_report_new_error(database, callback, userData, 0, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED, _("Favicons database not initialized yet"));
 
-    const auto uriString = String::fromUTF8(pageURI);
-    if (uriString.startsWith("about:"_s))
+    const auto uriString = StringImpl::fromUTF8(pageURI);
+    if (startsWith(uriString, "about:"_s))
         return g_task_report_new_error(database, callback, userData, 0, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND, _("Page %s does not have a favicon"), pageURI);
 
     auto task = adoptGRef(g_task_new(database, cancellable, callback, userData));

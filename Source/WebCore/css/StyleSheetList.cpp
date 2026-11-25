@@ -90,7 +90,7 @@ RefPtr<StyleSheet> StyleSheetList::item(unsigned index) const
     });
 }
 
-CSSStyleSheet* StyleSheetList::namedItem(const AtomString& name) const
+CSSStyleSheet* StyleSheetList::namedItem(AtomStringImpl* name) const
 {
     // Support the named getter on document for backwards compatibility.
     RefPtr document = m_document.get();
@@ -107,12 +107,12 @@ CSSStyleSheet* StyleSheetList::namedItem(const AtomString& name) const
     return nullptr;
 }
 
-bool StyleSheetList::isSupportedPropertyName(const AtomString& name) const
+bool StyleSheetList::isSupportedPropertyName(AtomStringImpl* name) const
 {
     return namedItem(name);
 }
 
-Vector<AtomString> StyleSheetList::supportedPropertyNames()
+Vector<RefPtr<AtomStringImpl>> StyleSheetList::supportedPropertyNames()
 {
     // FIXME: Should be implemented.
     return { };

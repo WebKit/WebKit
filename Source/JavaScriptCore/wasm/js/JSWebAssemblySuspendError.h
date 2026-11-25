@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-JSObject* createJSWebAssemblySuspendError(JSGlobalObject*, VM&, const String&);
+JSObject* createJSWebAssemblySuspendError(JSGlobalObject*, VM&, StringImpl*);
 
 } // namespace JSC
 

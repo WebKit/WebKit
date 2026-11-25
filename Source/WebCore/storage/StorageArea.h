@@ -44,12 +44,12 @@ public:
     virtual ~StorageArea() = default;
 
     virtual unsigned length() = 0;
-    virtual String key(unsigned index) = 0;
-    virtual String item(const String& key) = 0;
-    virtual void setItem(LocalFrame& sourceFrame, const String& key, const String& value, bool& quotaException) = 0;
-    virtual void removeItem(LocalFrame& sourceFrame, const String& key) = 0;
+    virtual RefPtr<StringImpl> key(unsigned index) = 0;
+    virtual RefPtr<StringImpl> item(StringImpl* key) = 0;
+    virtual void setItem(LocalFrame& sourceFrame, StringImpl* key, StringImpl* value, bool& quotaException) = 0;
+    virtual void removeItem(LocalFrame& sourceFrame, StringImpl* key) = 0;
     virtual void clear(LocalFrame& sourceFrame) = 0;
-    virtual bool contains(const String& key) = 0;
+    virtual bool contains(StringImpl* key) = 0;
 
     virtual StorageType storageType() const = 0;
     virtual bool isWebKit2StorageAreaImpl() const { return false; }

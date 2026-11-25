@@ -181,7 +181,7 @@ private:
     float m_size { 0 };
     FontSelectionRequest m_fontSelectionRequest;
     std::array<unsigned, 2> m_flags { { 0, 0 } };
-    AtomString m_locale;
+    RefPtr<AtomStringImpl> m_locale;
     RefPtr<FontDescriptionKeyRareData> m_rareData;
 };
 
@@ -207,12 +207,12 @@ namespace WebCore {
 class FontFamilyName {
 public:
     NODELETE FontFamilyName();
-    NODELETE FontFamilyName(const AtomString&);
-    NODELETE const AtomString& string() const;
+    NODELETE FontFamilyName(AtomStringImpl*);
+    NODELETE const RefPtr<AtomStringImpl>& string() const;
     friend void add(Hasher&, const FontFamilyName&);
 
 private:
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
 };
 
 NODELETE bool operator==(const FontFamilyName&, const FontFamilyName&);

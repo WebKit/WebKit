@@ -122,7 +122,7 @@ void WebPhoneNumberPossessionCoordinatorProxy::requestPhoneNumberPossession(IPC:
     }
 
     // FIXME: Support related origins.
-    request.relyingPartyIdentifier = request.relyingPartyIdentifier.convertToASCIILowercase();
+    request.relyingPartyIdentifier = convertToASCIILowercase(request.relyingPartyIdentifier);
     Ref origin = frame->documentSecurityOriginData().securityOrigin();
     if (URL::hostIsIPAddress(origin->host()) || !origin->isMatchingRegistrableDomainSuffix(request.relyingPartyIdentifier)) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s }));

@@ -142,7 +142,7 @@ bool XRWebGLBinding::colorFormatIsSupportedForProjectionLayer(GCGLenum textureFo
         },
         [&](const Ref<WebGLRenderingContext>& context) -> bool {
             const Vector<GCGLenum> additionalWebGLFormats = { GL::SRGB_EXT, GL::SRGB_ALPHA_EXT };
-            return supportedFormats.contains(textureFormat) || (additionalWebGLFormats.contains(textureFormat) && context->extensionIsEnabled("EXT_sRGB"_s));
+            return supportedFormats.contains(textureFormat) || (additionalWebGLFormats.contains(textureFormat) && context->extensionIsEnabled("EXT_sRGB"_si));
         },
         [](std::monostate) {
             ASSERT_NOT_REACHED();
@@ -160,7 +160,7 @@ bool XRWebGLBinding::depthFormatIsSupportedForProjectionLayer(GCGLenum textureFo
             return supportedFormats.contains(textureFormat) || supportedWebGL2Formats.contains(textureFormat);
         },
         [&](const Ref<WebGLRenderingContext>& context) -> bool {
-            return supportedFormats.contains(textureFormat) && context->extensionIsEnabled("WEBGL_depth_texture"_s);
+            return supportedFormats.contains(textureFormat) && context->extensionIsEnabled("WEBGL_depth_texture"_si);
         },
         [](std::monostate) {
             ASSERT_NOT_REACHED();
@@ -177,12 +177,12 @@ bool XRWebGLBinding::colorFormatIsSupportedForNonProjectionLayer(GCGLenum textur
 
     return WTF::switchOn(m_context,
         [&](const Ref<WebGLRenderingContextBase>& context) -> bool {
-            if (context->extensionIsEnabled("WEBGL_compressed_texture_etc"_s)) {
+            if (context->extensionIsEnabled("WEBGL_compressed_texture_etc"_si)) {
                 const Vector<GCGLenum> etcFormats = { GL::COMPRESSED_RGB8_ETC2, GL::COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, GL::COMPRESSED_RGBA8_ETC2_EAC, GL::COMPRESSED_SRGB8_ETC2, GL::COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, GL::COMPRESSED_SRGB8_ALPHA8_ETC2_EAC };
                 if (etcFormats.contains(textureFormat))
                     return true;
             }
-            if (context->extensionIsEnabled("WEBGL_compressed_texture_astc"_s)) {
+            if (context->extensionIsEnabled("WEBGL_compressed_texture_astc"_si)) {
                 const Vector<GCGLenum> astcFormats = { GL::COMPRESSED_RGBA_ASTC_4x4_KHR, GL::COMPRESSED_RGBA_ASTC_5x4_KHR, GL::COMPRESSED_RGBA_ASTC_5x5_KHR, GL::COMPRESSED_RGBA_ASTC_6x5_KHR, GL::COMPRESSED_RGBA_ASTC_6x6_KHR, GL::COMPRESSED_RGBA_ASTC_8x5_KHR, GL::COMPRESSED_RGBA_ASTC_8x6_KHR, GL::COMPRESSED_RGBA_ASTC_8x8_KHR, GL::COMPRESSED_RGBA_ASTC_10x5_KHR, GL::COMPRESSED_RGBA_ASTC_10x6_KHR, GL::COMPRESSED_RGBA_ASTC_10x8_KHR, GL::COMPRESSED_RGBA_ASTC_10x10_KHR, GL::COMPRESSED_RGBA_ASTC_12x10_KHR, GL::COMPRESSED_RGBA_ASTC_12x12_KHR };
                 const Vector<GCGLenum> astcSRGBFormats = { GL::COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR, GL::COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR };
                 if (astcFormats.contains(textureFormat) || astcSRGBFormats.contains(textureFormat))
@@ -491,7 +491,7 @@ ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> XRWebGLBinding::allocateDepthTex
             if (!textureFormat)
                 return textures;
 
-            if (baseContext->isWebGL1() && !baseContext->extensionIsEnabled("WEBGL_depth_texture"_s))
+            if (baseContext->isWebGL1() && !baseContext->extensionIsEnabled("WEBGL_depth_texture"_si))
                 return textures;
 
             Ref depthBacking = downcast<XRWebGLLayerBacking>(layer.backing());

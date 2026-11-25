@@ -49,7 +49,7 @@ namespace JSC::Wasm {
 class IPIntCallee;
 class Module;
 
-std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(CompilationContext&, IPIntCallee&, OptimizingJITCallee&, const FunctionData&, const RTT&, Vector<UnlinkedWasmToWasmCall>&, Module&, CalleeGroup&, const ModuleInformation&, MemoryMode, CompilationMode, FunctionCodeIndex functionIndex, uint32_t loopIndexForOSREntry);
+std::expected<std::unique_ptr<InternalFunction>, RefPtr<StringImpl>> parseAndCompileOMG(CompilationContext&, IPIntCallee&, OptimizingJITCallee&, const FunctionData&, const RTT&, Vector<UnlinkedWasmToWasmCall>&, Module&, CalleeGroup&, const ModuleInformation&, MemoryMode, CompilationMode, FunctionCodeIndex functionIndex, uint32_t loopIndexForOSREntry);
 
 } // namespace JSC::Wasm
 

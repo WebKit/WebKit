@@ -60,12 +60,12 @@ class ResourceErrorBase {
 public:
     WEBCORE_EXPORT ResourceError isolatedCopy() const;
 
-    const String& domain() const { lazyInit(); return m_domain; }
+    const RefPtr<StringImpl>& domain() const { lazyInit(); return m_domain; }
     int errorCode() const { lazyInit(); return m_errorCode; }
     const URL& failingURL() const { lazyInit(); return m_failingURL; }
-    const String& localizedDescription() const { lazyInit(); return m_localizedDescription; }
+    const RefPtr<StringImpl>& localizedDescription() const { lazyInit(); return m_localizedDescription; }
 
-    String sanitizedDescription() const { return m_isSanitized  == IsSanitized::Yes ? m_localizedDescription : "Load failed"_s; }
+    RefPtr<StringImpl> sanitizedDescription() const { return m_isSanitized  == IsSanitized::Yes ? m_localizedDescription : "Load failed"_si; }
 
     using Type = ResourceErrorBaseType;
 
@@ -93,7 +93,7 @@ public:
 protected:
     ResourceErrorBase(Type type) : m_type(type) { }
 
-    ResourceErrorBase(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type, IsSanitized isSanitized)
+    ResourceErrorBase(StringImpl* domain, int errorCode, const URL& failingURL, StringImpl* localizedDescription, Type type, IsSanitized isSanitized)
         : m_domain(domain)
         , m_failingURL(failingURL)
         , m_localizedDescription(localizedDescription)
@@ -111,9 +111,9 @@ protected:
     // The ResourceError subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceError&, const ResourceError&) { return true; }
 
-    String m_domain;
+    RefPtr<StringImpl> m_domain;
     URL m_failingURL;
-    String m_localizedDescription;
+    RefPtr<StringImpl> m_localizedDescription;
     int m_errorCode { 0 };
     Type m_type { Type::General };
     IsSanitized m_isSanitized { IsSanitized::No };

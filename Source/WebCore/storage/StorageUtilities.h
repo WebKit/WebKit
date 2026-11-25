@@ -35,9 +35,9 @@ struct ClientOrigin;
 
 namespace StorageUtilities {
 
-WEBCORE_EXPORT std::optional<ClientOrigin> readOriginFromFile(const String& path);
-WEBCORE_EXPORT bool writeOriginToFile(const String& path, const ClientOrigin&);
-WEBCORE_EXPORT String encodeSecurityOriginForFileName(FileSystem::Salt, const SecurityOriginData&);
+WEBCORE_EXPORT std::optional<ClientOrigin> readOriginFromFile(StringImpl* path);
+WEBCORE_EXPORT bool writeOriginToFile(StringImpl* path, const ClientOrigin&);
+WEBCORE_EXPORT RefPtr<StringImpl> encodeSecurityOriginForFileName(FileSystem::Salt, const SecurityOriginData&);
 
 } // namespace StorageUtilities
 } // namespace WebCore

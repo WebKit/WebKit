@@ -206,7 +206,7 @@ void BarcodeDetectorImpl::detect(const NativeImage& image, CompletionHandler<voi
     for (VNBarcodeObservation *observation in request.get().results) {
         results.append({
             convertRectFromVisionToWeb(imageSize, observation.boundingBox),
-            observation.payloadStringValue,
+            StringImpl::create(observation.payloadStringValue),
             convertSymbology(observation.symbology),
             convertCornerPoints(imageSize, observation),
         });

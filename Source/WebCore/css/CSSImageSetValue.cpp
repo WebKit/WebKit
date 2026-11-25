@@ -49,7 +49,7 @@ CSSImageSetValue::CSSImageSetValue(CSSValueListBuilder builder)
 {
 }
 
-String CSSImageSetValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSImageSetValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder result;
     result.append("image-set("_s);

@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomStateSet);
 
-bool CustomStateSet::addToSetLike(const AtomString& state)
+bool CustomStateSet::addToSetLike(AtomStringImpl* state)
 {
     if (m_states.contains(state))
         return false;
@@ -45,10 +45,10 @@ bool CustomStateSet::addToSetLike(const AtomString& state)
     if (RefPtr element = m_element.get())
         styleInvalidation.emplace(*element, CSSSelector::PseudoClass::State, Style::PseudoClassChangeInvalidation::AnyValue);
 
-    return m_states.add(AtomString(state)).isNewEntry;
+    return m_states.add(RefPtr<AtomStringImpl>(state)).isNewEntry;
 }
 
-bool CustomStateSet::removeFromSetLike(const AtomString& state)
+bool CustomStateSet::removeFromSetLike(AtomStringImpl* state)
 {
     if (!m_states.contains(state))
         return false;
@@ -57,7 +57,7 @@ bool CustomStateSet::removeFromSetLike(const AtomString& state)
     if (RefPtr element = m_element.get())
         styleInvalidation.emplace(*element, CSSSelector::PseudoClass::State, Style::PseudoClassChangeInvalidation::AnyValue);
 
-    return m_states.remove(AtomString(state));
+    return m_states.remove(RefPtr<AtomStringImpl>(state));
 }
 
 void CustomStateSet::clearFromSetLike()
@@ -69,7 +69,7 @@ void CustomStateSet::clearFromSetLike()
     m_states.clear();
 }
 
-bool CustomStateSet::has(const AtomString& state) const
+bool CustomStateSet::has(AtomStringImpl* state) const
 {
     return m_states.contains(state);
 }

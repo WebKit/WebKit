@@ -90,8 +90,8 @@ public:
 
     bool shouldScrollbarParticipateInHitTesting(Scrollbar*) final;
 
-    String horizontalScrollbarStateForTesting() const final;
-    String verticalScrollbarStateForTesting() const final;
+    RefPtr<StringImpl> horizontalScrollbarStateForTesting() const final;
+    RefPtr<StringImpl> verticalScrollbarStateForTesting() const final;
 
 
     // Public to be callable from Obj-C.

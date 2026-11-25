@@ -110,8 +110,8 @@ ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioC
 
 AudioBufferSourceNode::AudioBufferSourceNode(BaseAudioContext& context)
     : AudioScheduledSourceNode(context, NodeTypeAudioBufferSource)
-    , m_detune(AudioParam::create(context, "detune"_s, 0.0, -FLT_MAX, FLT_MAX, AutomationRate::KRate, AutomationRateMode::Fixed))
-    , m_playbackRate(AudioParam::create(context, "playbackRate"_s, 1.0, -FLT_MAX, FLT_MAX, AutomationRate::KRate, AutomationRateMode::Fixed))
+    , m_detune(AudioParam::create(context, "detune"_si, 0.0, -FLT_MAX, FLT_MAX, AutomationRate::KRate, AutomationRateMode::Fixed))
+    , m_playbackRate(AudioParam::create(context, "playbackRate"_si, 1.0, -FLT_MAX, FLT_MAX, AutomationRate::KRate, AutomationRateMode::Fixed))
     , m_grainDuration(DefaultGrainDuration)
 {
     // Default to mono.  A call to setBuffer() will set the number of output channels to that of the buffer.
@@ -537,7 +537,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
     Locker contextLocker { context().graphLock() };
 
     if (buffer && m_wasBufferSet)
-        return Exception { ExceptionCode::InvalidStateError, "The buffer was already set"_s };
+        return Exception { ExceptionCode::InvalidStateError, "The buffer was already set"_si };
 
     if (buffer) {
         m_wasBufferSet = true;
@@ -626,16 +626,16 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
     ALWAYS_LOG(LOGIDENTIFIER, "when = ", when, ", offset = ", grainOffset, ", duration = ", grainDuration.value_or(0));
 
     if (m_playbackState != UNSCHEDULED_STATE)
-        return Exception { ExceptionCode::InvalidStateError, "Cannot call start more than once."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Cannot call start more than once."_si };
 
     if (!std::isfinite(when) || (when < 0))
-        return Exception { ExceptionCode::RangeError, "when value should be positive"_s };
+        return Exception { ExceptionCode::RangeError, "when value should be positive"_si };
 
     if (!std::isfinite(grainOffset) || (grainOffset < 0))
-        return Exception { ExceptionCode::RangeError, "offset value should be positive"_s };
+        return Exception { ExceptionCode::RangeError, "offset value should be positive"_si };
 
     if (grainDuration && (!std::isfinite(*grainDuration) || (*grainDuration < 0)))
-        return Exception { ExceptionCode::RangeError, "duration value should be positive"_s };
+        return Exception { ExceptionCode::RangeError, "duration value should be positive"_si };
 
     Ref context = this->context();
     context->sourceNodeWillBeginPlayback(*this);

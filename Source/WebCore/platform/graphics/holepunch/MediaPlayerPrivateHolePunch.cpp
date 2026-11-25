@@ -76,9 +76,9 @@ void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
     proxy->setDisplayBuffer(CoordinatedPlatformLayerBufferHolePunch::create(m_size));
 }
 
-static HashSet<String>& mimeTypeCache()
+static HashSet<RefPtr<StringImpl>>& mimeTypeCache()
 {
-    static NeverDestroyed<HashSet<String>> cache;
+    static NeverDestroyed<HashSet<RefPtr<StringImpl>>> cache;
     static bool typeListInitialized = false;
 
     if (typeListInitialized)
@@ -96,7 +96,7 @@ static HashSet<String>& mimeTypeCache()
     return cache;
 }
 
-void MediaPlayerPrivateHolePunch::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateHolePunch::getSupportedTypes(HashSet<RefPtr<StringImpl>>& types)
 {
     types = mimeTypeCache();
 }
@@ -106,7 +106,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateHolePunch::supportsType(const MediaE
     auto containerType = parameters.type.containerType();
 
     // Spec says we should not return "probably" if the codecs string is empty.
-    if (!containerType.isEmpty() && mimeTypeCache().contains(containerType)) {
+    if (!isEmpty(containerType) && mimeTypeCache().contains(containerType)) {
         if (parameters.type.codecs().isEmpty())
             return MediaPlayer::SupportsType::MayBeSupported;
 
@@ -127,7 +127,7 @@ private:
         return adoptRef(*new MediaPlayerPrivateHolePunch(player));
     }
 
-    void getSupportedTypes(HashSet<String>& types) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types) const final
     {
         return MediaPlayerPrivateHolePunch::getSupportedTypes(types);
     }
@@ -157,14 +157,14 @@ void MediaPlayerPrivateHolePunch::setNetworkState(MediaPlayer::NetworkState netw
         player->networkStateChanged();
 }
 
-void MediaPlayerPrivateHolePunch::load(const String&)
+void MediaPlayerPrivateHolePunch::load(StringImpl*)
 {
     auto player = m_player.get();
     if (!player)
         return;
 
     auto mimeType = player->contentMIMEType();
-    if (mimeType.isEmpty() || !mimeTypeCache().contains(mimeType))
+    if (isEmpty(mimeType) || !mimeTypeCache().contains(mimeType))
         setNetworkState(MediaPlayer::NetworkState::FormatError);
 }
 

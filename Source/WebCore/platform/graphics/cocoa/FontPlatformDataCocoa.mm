@@ -60,7 +60,7 @@ Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(Shou
     
     return WTF::map(defaultVariationValues(platformFont.get(), shouldLocalizeAxisNames), [](auto&& entry) {
         auto& [tag, values] = entry;
-        return FontPlatformData::FontVariationAxis { values.axisName, String::fromLatin1(tag), values.defaultValue, values.minimumValue, values.maximumValue };
+        return FontPlatformData::FontVariationAxis { values.axisName.get(), StringImpl::fromLatin1(tag).get(), values.defaultValue, values.minimumValue, values.maximumValue };
     });
 }
 

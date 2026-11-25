@@ -50,7 +50,7 @@ namespace IPC {
 class FormDataReference;
 
 template<> struct AsyncReplyError<WebCore::ExceptionOr<bool>> {
-    static WebCore::ExceptionOr<bool> create() { return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Internal error"_s }; }
+    static WebCore::ExceptionOr<bool> create() { return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Internal error"_si }; }
 };
 
 }
@@ -103,8 +103,8 @@ public:
     void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
     std::optional<WebCore::SWServer::GatheredClientData> gatherClientData(WebCore::ScriptExecutionContextIdentifier);
 
-    void registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
-    void registerServiceWorkerClientInternal(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent, WebCore::SWServer::IsBeingCreatedClient);
+    void registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, RefPtr<StringImpl>&& userAgent);
+    void registerServiceWorkerClientInternal(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, RefPtr<StringImpl>&& userAgent, WebCore::SWServer::IsBeingCreatedClient);
     void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -163,7 +163,7 @@ private:
     using ExceptionOrVoidCallback = CompletionHandler<void(std::optional<WebCore::ExceptionData>&&)>;
     void enableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&);
     void disableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&);
-    void setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&);
+    void setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier, RefPtr<StringImpl>&&, ExceptionOrVoidCallback&&);
     using ExceptionOrNavigationPreloadStateCallback = CompletionHandler<void(std::expected<WebCore::NavigationPreloadState, WebCore::ExceptionData>&&)>;
     void getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&);
 
@@ -176,7 +176,7 @@ private:
     void addRoutes(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::ServiceWorkerRoute>&&, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&&);
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void getNotifications(const URL& registrationURL, StringImpl* tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
 #endif
 
     // checkTopOrigin() without its MESSAGE_CHECK, for validation procedures.

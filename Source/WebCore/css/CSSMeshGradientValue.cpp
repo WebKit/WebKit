@@ -39,7 +39,7 @@ RefPtr<Style::Image> CSSMeshGradientValue::createStyleImage(const Style::Builder
     return Style::MeshGradientImage::create(Style::toStyle(m_gradient, state));
 }
 
-String CSSMeshGradientValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSMeshGradientValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_gradient);
 }

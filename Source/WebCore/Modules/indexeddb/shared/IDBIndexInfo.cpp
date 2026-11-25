@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-IDBIndexInfo::IDBIndexInfo(IDBIndexIdentifier identifier, IDBObjectStoreIdentifier objectStoreIdentifier, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
+IDBIndexInfo::IDBIndexInfo(IDBIndexIdentifier identifier, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
     : m_identifier(identifier)
     , m_objectStoreIdentifier(objectStoreIdentifier)
     , m_name(name)
@@ -43,17 +43,17 @@ IDBIndexInfo::IDBIndexInfo(IDBIndexIdentifier identifier, IDBObjectStoreIdentifi
 
 IDBIndexInfo IDBIndexInfo::isolatedCopy() const &
 {
-    return { m_identifier, m_objectStoreIdentifier, m_name.isolatedCopy(), crossThreadCopy(m_keyPath), m_unique, m_multiEntry };
+    return { m_identifier, m_objectStoreIdentifier, WTF::isolatedCopy(m_name), crossThreadCopy(m_keyPath), m_unique, m_multiEntry };
 }
 
 IDBIndexInfo IDBIndexInfo::isolatedCopy() &&
 {
-    return { m_identifier, m_objectStoreIdentifier, WTF::move(m_name).isolatedCopy(), crossThreadCopy(WTF::move(m_keyPath)), m_unique, m_multiEntry };
+    return { m_identifier, m_objectStoreIdentifier, WTF::isolatedCopy(WTF::move(m_name)), crossThreadCopy(WTF::move(m_keyPath)), m_unique, m_multiEntry };
 }
 
 #if !LOG_DISABLED
 
-String IDBIndexInfo::loggingString(int indent) const
+RefPtr<StringImpl> IDBIndexInfo::loggingString(int indent) const
 {
     StringBuilder indentString;
     for (int i = 0; i < indent; ++i)
@@ -61,7 +61,7 @@ String IDBIndexInfo::loggingString(int indent) const
     return makeString(indentString.toString(), "Index: "_s, m_name, " ("_s, m_identifier, ") keyPath: "_s, WebCore::loggingString(m_keyPath), '\n');
 }
 
-String IDBIndexInfo::condensedLoggingString() const
+RefPtr<StringImpl> IDBIndexInfo::condensedLoggingString() const
 {
     return makeString("<Idx: "_s, m_name, " ("_s, m_identifier, "), OS ("_s, m_objectStoreIdentifier, ")>"_s);
 }

@@ -30,7 +30,7 @@
 
 @implementation NSURL (WKExtras)
 
-+ (instancetype)_web_URLWithWTFString:(const String&)string
++ (instancetype)_web_URLWithWTFString:(StringImpl*)string
 {
     URL url { URL { }, string };
     return url.createNSURL().autorelease();

@@ -110,7 +110,7 @@ public:
         ASSERT_TRUE(m_adapter);
 
         done = false;
-        protect(m_adapter)->requestDevice({ }, [&](std::expected<Ref<WebGPU::Device>, String>&& device) {
+        protect(m_adapter)->requestDevice({ }, [&](std::expected<Ref<WebGPU::Device>, RefPtr<StringImpl>>&& device) {
             if (device)
                 m_device = WTF::move(*device);
             done = true;
@@ -137,9 +137,9 @@ protected:
     };
 
     // A device-lost callback that records what it saw.
-    CompletionHandler<void(WebGPU::DeviceLostReason, String&&)> recordDeviceLost(std::optional<DeviceLost>& result)
+    CompletionHandler<void(WebGPU::DeviceLostReason, RefPtr<StringImpl>&&)> recordDeviceLost(std::optional<DeviceLost>& result)
     {
-        return [this, &result](WebGPU::DeviceLostReason reason, String&&) {
+        return [this, &result](WebGPU::DeviceLostReason reason, RefPtr<StringImpl>&&) {
             result = DeviceLost { reason, protect(m_device)->isLost() };
         };
     }

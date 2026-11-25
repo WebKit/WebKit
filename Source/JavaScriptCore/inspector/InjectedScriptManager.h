@@ -65,8 +65,8 @@ public:
     JS_EXPORT_PRIVATE InjectedScript injectedScriptFor(JSC::JSGlobalObject*);
     JS_EXPORT_PRIVATE InjectedScript injectedScriptForId(int);
     JS_EXPORT_PRIVATE int injectedScriptIdFor(JSC::JSGlobalObject*);
-    JS_EXPORT_PRIVATE InjectedScript injectedScriptForObjectId(const String& objectId);
-    void releaseObjectGroup(const String& objectGroup);
+    JS_EXPORT_PRIVATE InjectedScript injectedScriptForObjectId(StringImpl* objectId);
+    void releaseObjectGroup(StringImpl* objectGroup);
     void clearEventValue();
     void clearExceptionValue();
 

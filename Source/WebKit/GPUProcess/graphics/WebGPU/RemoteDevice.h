@@ -134,8 +134,8 @@ private:
     void createComputePipelineWithPipelineLayoutFromPipeline(const WebGPU::ComputePipelineDescriptor&, WebGPUComputePipelineIdentifier, WebGPUComputePipelineIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&&);
     void createRenderPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPURenderPipelineIdentifier);
     void createRenderPipelineWithPipelineLayoutFromPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPURenderPipelineIdentifier, WebGPURenderPipelineIdentifier pipelineToReplaceIdentifier, CompletionHandler<void(bool)>&&);
-    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUComputePipelineIdentifier, CompletionHandler<void(bool, String&&)>&&);
-    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPURenderPipelineIdentifier, CompletionHandler<void(bool, String&&)>&&);
+    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUComputePipelineIdentifier, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&&);
+    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPURenderPipelineIdentifier, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&&);
 
     void createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>&, WebGPUCommandEncoderIdentifier);
     void createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&, WebGPURenderBundleEncoderIdentifier);
@@ -147,7 +147,7 @@ private:
     void setListensForUncapturedErrors(bool);
     void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, bool isLost)>&&);
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&&);
     void pauseAllErrorReporting(bool pauseErrorReporting);
@@ -160,12 +160,12 @@ private:
     void createInvalidComputePipeline(WebGPUComputePipelineIdentifier);
     void createInvalidPipelineLayout(WebGPUPipelineLayoutIdentifier);
     void createInvalidQuerySet(WebGPUQuerySetIdentifier);
-    void createInvalidRenderBundleEncoder(String&& error, WebGPURenderBundleEncoderIdentifier);
+    void createInvalidRenderBundleEncoder(RefPtr<StringImpl>&& error, WebGPURenderBundleEncoderIdentifier);
     void createInvalidRenderPipeline(WebGPURenderPipelineIdentifier);
     void createInvalidSampler(WebGPUSamplerIdentifier);
     void createInvalidShaderModule(WebGPUShaderModuleIdentifier);
     void createInvalidTexture(WebGPUTextureIdentifier);
-    void generateAValidationError(String&& message);
+    void generateAValidationError(RefPtr<StringImpl>&& message);
 
     const Ref<::WebGPU::Device> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;

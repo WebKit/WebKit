@@ -100,7 +100,7 @@ void GeolocationController::removeObserver(Geolocation& observer)
         protect(client())->setEnableHighAccuracy(false);
 }
 
-void GeolocationController::revokeAuthorizationToken(const String& authorizationToken)
+void GeolocationController::revokeAuthorizationToken(StringImpl* authorizationToken)
 {
     protect(client())->revokeAuthorizationToken(authorizationToken);
 }

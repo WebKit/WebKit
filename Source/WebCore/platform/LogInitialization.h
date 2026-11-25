@@ -33,10 +33,10 @@ namespace WebCore {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 WEBCORE_EXPORT WTF::LogChannels& logChannels();
-WEBCORE_EXPORT String logLevelString();
+WEBCORE_EXPORT RefPtr<StringImpl> logLevelString();
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-WEBCORE_EXPORT WTFLogChannel* getLogChannel(const String& name);
+WEBCORE_EXPORT WTFLogChannel* getLogChannel(StringImpl* name);
 
 } // namespace WebCore

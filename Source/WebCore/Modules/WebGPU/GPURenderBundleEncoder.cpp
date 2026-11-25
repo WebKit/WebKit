@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-GPURenderBundleEncoder::GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing, String&& label, GPUDevice& device)
+GPURenderBundleEncoder::GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing, RefPtr<StringImpl>&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))
     , m_label(WTF::move(label))
     , m_device(device)
@@ -54,12 +54,12 @@ GPUDevice* GPURenderBundleEncoder::device() const
     return m_device;
 }
 
-String GPURenderBundleEncoder::label() const
+RefPtr<StringImpl> GPURenderBundleEncoder::label() const
 {
     return m_label;
 }
 
-void GPURenderBundleEncoder::setLabel(String&& label)
+void GPURenderBundleEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     m_backing->setLabel(WTF::move(label));
@@ -128,13 +128,13 @@ ExceptionOr<void> GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const G
 {
     auto offset = checkedSum<uint64_t>(dynamicOffsetsDataStart, dynamicOffsetsDataLength);
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
-        return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
+        return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_si };
 
     m_backing->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, std::optional { dynamicOffsetsData.typedSpan().subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength) });
     return { };
 }
 
-void GPURenderBundleEncoder::pushDebugGroup(String&& groupLabel)
+void GPURenderBundleEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     m_backing->pushDebugGroup(WTF::move(groupLabel));
 }
@@ -144,7 +144,7 @@ void GPURenderBundleEncoder::popDebugGroup()
     m_backing->popDebugGroup();
 }
 
-void GPURenderBundleEncoder::insertDebugMarker(String&& markerLabel)
+void GPURenderBundleEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     m_backing->insertDebugMarker(WTF::move(markerLabel));
 }
@@ -162,7 +162,7 @@ ExceptionOr<Ref<GPURenderBundle>> GPURenderBundleEncoder::finish(const std::opti
     RefPtr bundle = m_backing->finish(backingDescriptor);
     m_currentPipeline = nullptr;
     if (!bundle)
-        return Exception { ExceptionCode::InvalidStateError, "GPURenderBundleEncoder.finish: Unable to finish."_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPURenderBundleEncoder.finish: Unable to finish."_si };
     return GPURenderBundle::create(bundle.releaseNonNull(), WTF::move(backingDescriptor.label), *this);
 }
 

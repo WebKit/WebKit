@@ -32,12 +32,12 @@
 
 namespace WebKit {
 
-NODELETE String logLevelString()
+NODELETE RefPtr<StringImpl> logLevelString()
 {
 #if !LOG_DISABLED
-    return [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
+    return StringImpl::create([[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"]);
 #else
-    return String();
+    return nullptr;
 #endif
 }
 

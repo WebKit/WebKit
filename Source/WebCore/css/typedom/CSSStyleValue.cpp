@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStyleValue);
 
-ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(Document& document, const AtomString& property, const String& cssText)
+ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(Document& document, AtomStringImpl* property, StringImpl* cssText)
 {
     constexpr bool parseMultiple = false;
 
@@ -63,7 +63,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(Document& document, const A
     return WTF::move(returnValue.at(0));
 }
 
-ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValue::parseAll(Document& document, const AtomString& property, const String& cssText)
+ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValue::parseAll(Document& document, AtomStringImpl* property, StringImpl* cssText)
 {
     constexpr bool parseMultiple = true;
     return CSSStyleValueFactory::parseStyleValue(document, property, cssText, parseMultiple);
@@ -80,7 +80,7 @@ CSSStyleValue::CSSStyleValue(RefPtr<CSSValue>&& cssValue, std::optional<Associat
 {
 }
 
-String CSSStyleValue::toString() const
+RefPtr<StringImpl> CSSStyleValue::toString() const
 {
     StringBuilder builder;
     serialize(builder);

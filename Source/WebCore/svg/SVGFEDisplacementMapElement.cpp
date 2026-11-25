@@ -55,7 +55,7 @@ Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const Quali
     return adoptRef(*new SVGFEDisplacementMapElement(tagName, document));
 }
 
-void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::xChannelSelectorAttr:

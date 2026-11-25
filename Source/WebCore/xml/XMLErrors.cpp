@@ -84,19 +84,19 @@ void XMLErrors::appendErrorMessage(ASCIILiteral typeString, TextPosition positio
     m_errorMessages.append(typeString, " on line "_s, position.m_line.oneBasedInt(), " at column "_s, position.m_column.oneBasedInt(), ": "_s, unsafeSpan(message));
 }
 
-static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, String&& errorMessages)
+static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, RefPtr<StringImpl>&& errorMessages)
 {
-    Ref reportElement = document.createElement(QualifiedName(nullAtom(), "parsererror"_s, xhtmlNamespaceURI), true);
+    Ref reportElement = document.createElement(QualifiedName(nullAtom(), "parsererror"_atom, xhtmlNamespaceURI), true);
 
-    Attribute reportAttribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"_s);
+    Attribute reportAttribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"_atom);
     reportElement->parserSetAttributes(singleElementSpan(reportAttribute));
 
     Ref h3 = HTMLHeadingElement::create(h3Tag, document);
     reportElement->parserAppendChild(h3);
-    h3->parserAppendChild(Text::create(document, "This page contains the following errors:"_s));
+    h3->parserAppendChild(Text::create(document, "This page contains the following errors:"_si));
 
     Ref fixed = HTMLDivElement::create(document);
-    Attribute fixedAttribute(styleAttr, "font-family:monospace;font-size:12px"_s);
+    Attribute fixedAttribute(styleAttr, "font-family:monospace;font-size:12px"_atom);
     fixed->parserSetAttributes(singleElementSpan(fixedAttribute));
     reportElement->parserAppendChild(fixed);
 
@@ -104,7 +104,7 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, Stri
 
     h3 = HTMLHeadingElement::create(h3Tag, document);
     reportElement->parserAppendChild(h3);
-    h3->parserAppendChild(Text::create(document, "Below is a rendering of the page up to the first error."_s));
+    h3->parserAppendChild(Text::create(document, "Below is a rendering of the page up to the first error."_si));
 
     return reportElement;
 }
@@ -129,7 +129,7 @@ void XMLErrors::insertErrorMessageBlock()
         Ref head = HTMLHeadElement::create(document);
         Ref style = HTMLStyleElement::create(document);
         head->parserAppendChild(style);
-        style->parserAppendChild(document->createTextNode("html, body { height: 100% } parsererror + svg { width: 100%; height: 100% }"_s));
+        style->parserAppendChild(document->createTextNode("html, body { height: 100% } parsererror + svg { width: 100%; height: 100% }"_si));
         style->finishParsingChildren();
         rootElement->parserAppendChild(WTF::move(head));
         Ref body = HTMLBodyElement::create(document);
@@ -144,14 +144,14 @@ void XMLErrors::insertErrorMessageBlock()
         documentElement = WTF::move(body);
     }
 
-    Ref reportElement = createXHTMLParserErrorHeader(document, String { m_errorMessages.toString() });
+    Ref reportElement = createXHTMLParserErrorHeader(document, RefPtr<StringImpl> { m_errorMessages.toString() });
 
 #if ENABLE(XSLT)
     if (document->transformSourceDocument()) {
-        Attribute attribute(styleAttr, "white-space: normal"_s);
+        Attribute attribute(styleAttr, "white-space: normal"_atom);
         Ref paragraph = HTMLParagraphElement::create(document);
         paragraph->parserSetAttributes(singleElementSpan(attribute));
-        paragraph->parserAppendChild(document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."_s));
+        paragraph->parserAppendChild(document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."_si));
         reportElement->parserAppendChild(WTF::move(paragraph));
     }
 #endif

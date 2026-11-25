@@ -72,7 +72,7 @@ class MediaStreamPrivate final
 public:
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&);
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, RefPtr<RealtimeMediaSource>&& audioSource, RefPtr<RealtimeMediaSource>&& videoSource);
-    static Ref<MediaStreamPrivate> create(Ref<const Logger>&& logger, MediaStreamTrackPrivateVector&& tracks, String&& id = createVersion4UUIDString()) { return adoptRef(*new MediaStreamPrivate(WTF::move(logger), WTF::move(tracks), WTF::move(id))); }
+    static Ref<MediaStreamPrivate> create(Ref<const Logger>&& logger, MediaStreamTrackPrivateVector&& tracks, RefPtr<StringImpl>&& id = createVersion4UUIDString()) { return adoptRef(*new MediaStreamPrivate(WTF::move(logger), WTF::move(tracks), WTF::move(id))); }
 
     WEBCORE_EXPORT virtual ~MediaStreamPrivate();
 
@@ -82,7 +82,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    String id() const { return m_id; }
+    RefPtr<StringImpl> id() const { return m_id; }
 
     MediaStreamTrackPrivateVector tracks() const;
     bool hasTracks() const { return !m_tracks.isEmpty(); }
@@ -114,7 +114,7 @@ public:
 #endif
 
 private:
-    MediaStreamPrivate(Ref<const Logger>&&, MediaStreamTrackPrivateVector&&, String&&);
+    MediaStreamPrivate(Ref<const Logger>&&, MediaStreamTrackPrivateVector&&, RefPtr<StringImpl>&&);
 
     // MediaStreamTrackPrivateObserver
     void trackStarted(MediaStreamTrackPrivate&) override;
@@ -135,7 +135,7 @@ private:
 #endif
 
     WeakHashSet<MediaStreamPrivateObserver> m_observers;
-    String m_id;
+    RefPtr<StringImpl> m_id;
     WeakPtr<MediaStreamTrackPrivate> m_activeVideoTrack;
     Vector<Ref<MediaStreamTrackPrivate>> m_tracks;
     bool m_isActive { false };

@@ -66,11 +66,11 @@ public:
 
     WEBCORE_EXPORT static bool isAvailable();
 
-    static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
-    static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
+    static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(StringImpl*);
+    static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(StringImpl*);
 
     void streamDidOutputVideoSampleBuffer(RetainPtr<CMSampleBufferRef>);
-    void sessionFailedWithError(RetainPtr<NSError>&&, const String&);
+    void sessionFailedWithError(RetainPtr<NSError>&&, StringImpl*);
     void outputVideoEffectDidStartForStream() { m_isVideoEffectEnabled = true; }
     void outputVideoEffectDidStopForStream() { m_isVideoEffectEnabled = false; }
 

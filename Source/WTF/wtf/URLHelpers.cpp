@@ -635,32 +635,32 @@ static bool allCharactersAllowedByTLDRules(std::span<const char16_t> buffer)
 }
 
 // Return value of null means no mapping is necessary.
-std::optional<String> mapHostName(const String& hostName, URLDecodeFunction decodeFunction)
+std::optional<RefPtr<StringImpl>> mapHostName(StringImpl* hostName, URLDecodeFunction decodeFunction)
 {
     // destinationBuffer needs to be big enough to hold an IDN-encoded name.
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
-    if (hostName.length() > URLParser::hostnameBufferLength)
-        return String();
+    if (WTF::length(hostName) > URLParser::hostnameBufferLength)
+        return nullString();
     
-    if (!hostName.length())
-        return String();
+    if (!WTF::length(hostName))
+        return nullString();
 
-    String string;
-    if (decodeFunction && hostName.contains('%'))
+    RefPtr<StringImpl> string;
+    if (decodeFunction && contains(hostName, '%'))
         string = (*decodeFunction)(hostName);
     else
         string = hostName;
 
-    if (decodeFunction && string.containsOnlyASCII()) {
-        auto lowered = string.convertToASCIILowercase();
-        if (lowered == string)
-            return String();
+    if (decodeFunction && containsOnlyASCII(string)) {
+        auto lowered = convertToASCIILowercase(string);
+        if (equal(lowered, string))
+            return nullString();
         return lowered;
     }
 
-    unsigned length = string.length();
+    unsigned length = WTF::length(string);
 
-    auto expectedSourceBuffer = string.charactersWithNullTermination();
+    auto expectedSourceBuffer = charactersWithNullTermination(string);
     if (!expectedSourceBuffer)
         return std::nullopt;
     auto sourceBuffer = expectedSourceBuffer->span();
@@ -675,56 +675,56 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
 
     auto span = std::span { destinationBuffer }.first(numCharactersConverted);
     if (numCharactersConverted == length && equal(sourceBuffer.data(), span))
-        return String();
+        return nullString();
 
     if (!decodeFunction && !allCharactersInAllowedIDNScriptList(span) && !allCharactersAllowedByTLDRules(span))
-        return String();
+        return nullString();
 
-    return String { span };
+    return StringImpl::create(span);
 }
 
-using MappingRangesVector = std::optional<Vector<std::tuple<unsigned, unsigned, String>>>;
+using MappingRangesVector = std::optional<Vector<std::tuple<unsigned, unsigned, RefPtr<StringImpl>>>>;
 
-static void collectRangesThatNeedMapping(const String& string, unsigned location, unsigned length, MappingRangesVector& array, URLDecodeFunction decodeFunction)
+static void collectRangesThatNeedMapping(StringImpl* string, unsigned location, unsigned length, MappingRangesVector& array, URLDecodeFunction decodeFunction)
 {
     // Generally, we want to optimize for the case where there is one host name that does not need mapping.
     // Therefore, we use null to indicate no mapping here and an empty array to indicate error.
 
     // IPv6 addresses are bracketed and don't need IDN processing.
-    if (length && string[location] == '[')
+    if (length && codeUnitAt(string, location) == '[')
         return;
 
-    String substring = string.substringSharingImpl(location, length);
-    std::optional<String> host = mapHostName(substring, decodeFunction);
+    RefPtr<StringImpl> substring = substringSharingImpl(string, location, length);
+    std::optional<RefPtr<StringImpl>> host = mapHostName(substring, decodeFunction);
 
     if (host && !*host)
         return;
     
     if (!array)
-        array = Vector<std::tuple<unsigned, unsigned, String>>();
+        array = Vector<std::tuple<unsigned, unsigned, RefPtr<StringImpl>>>();
 
     if (host)
         array->constructAndAppend(location, length, *host);
 }
 
-static void applyHostNameFunctionToMailToURLString(const String& string, URLDecodeFunction decodeFunction, MappingRangesVector& array)
+static void applyHostNameFunctionToMailToURLString(StringImpl* string, URLDecodeFunction decodeFunction, MappingRangesVector& array)
 {
     // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' character.
     // Skip quoted strings so that characters in them don't confuse us.
     // When we find a '?' character, we are past the part of the URL that contains host names.
     
-    unsigned stringLength = string.length();
+    unsigned stringLength = length(string);
     unsigned current = 0;
     
     while (1) {
         // Find start of host name or of quoted string.
-        auto hostNameOrStringStart = string.find([](char16_t ch) {
+        auto hostNameOrStringStart = find(string, [](char16_t ch) {
             return ch == '"' || ch == '@' || ch == '?';
         }, current);
         if (hostNameOrStringStart == notFound)
             return;
 
-        char16_t c = string[hostNameOrStringStart];
+        char16_t c = codeUnitAt(string, hostNameOrStringStart);
         current = hostNameOrStringStart + 1;
         
         if (c == '?')
@@ -733,7 +733,7 @@ static void applyHostNameFunctionToMailToURLString(const String& string, URLDeco
         if (c == '@') {
             // Find end of host name.
             unsigned hostNameStart = current;
-            auto hostNameEnd = string.find([](char16_t ch) {
+            auto hostNameEnd = find(string, [](char16_t ch) {
                 return ch == '>' || ch == ',' || ch == '?';
             }, current);
 
@@ -755,13 +755,13 @@ static void applyHostNameFunctionToMailToURLString(const String& string, URLDeco
             // Skip quoted string.
             ASSERT(c == '"');
             while (1) {
-                auto escapedCharacterOrStringEnd = string.find([](char16_t ch) {
+                auto escapedCharacterOrStringEnd = find(string, [](char16_t ch) {
                     return ch == '"' || ch == '\\';
                 }, current);
                 if (escapedCharacterOrStringEnd == notFound)
                     return;
 
-                c = string[escapedCharacterOrStringEnd];
+                c = codeUnitAt(string, escapedCharacterOrStringEnd);
                 current = escapedCharacterOrStringEnd + 1;
 
                 // If we are the end of the string, then break from the string loop back to the host name loop.
@@ -779,7 +779,7 @@ static void applyHostNameFunctionToMailToURLString(const String& string, URLDeco
     }
 }
 
-static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunction decodeFunction, MappingRangesVector& array)
+static void applyHostNameFunctionToURLString(StringImpl* string, URLDecodeFunction decodeFunction, MappingRangesVector& array)
 {
     // Find hostnames. Too bad we can't use any real URL-parsing code to do this,
     // but we have to do it before doing all the %-escaping, and this is the only
@@ -796,7 +796,7 @@ static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunc
     // characters preceding. The authority ends at the end of the string or a "/", "?", or "#".
     // If there is a "@", the host is the part after the last one, up to a ":" port separator.
     static constexpr auto separator = "://"_s;
-    auto separatorIndex = string.find(separator);
+    auto separatorIndex = find(string, separator);
     if (separatorIndex == notFound)
         return;
 
@@ -808,18 +808,18 @@ static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunc
     }))
         return;
 
-    auto authorityTerminator = string.find([](char16_t character) {
+    auto authorityTerminator = find(string, [](char16_t character) {
         return character == '/' || character == '?' || character == '#';
     }, authorityStart);
-    unsigned authorityEnd = authorityTerminator == notFound ? string.length() : authorityTerminator;
+    unsigned authorityEnd = authorityTerminator == notFound ? length(string) : authorityTerminator;
 
     auto lastUserInfoTerminator = StringView { string }.left(authorityEnd).reverseFind('@');
     unsigned hostNameStart = lastUserInfoTerminator == notFound ? authorityStart : lastUserInfoTerminator + 1;
 
     // Skip IPv6 literals, whose brackets contain ":" characters that aren't a port separator.
     unsigned hostNameEnd = authorityEnd;
-    if (hostNameStart < authorityEnd && string[hostNameStart] != '[') {
-        auto portSeparator = string.find(':', hostNameStart);
+    if (hostNameStart < authorityEnd && codeUnitAt(string, hostNameStart) != '[') {
+        auto portSeparator = find(string, ':', hostNameStart);
         if (portSeparator != notFound && portSeparator < authorityEnd)
             hostNameEnd = portSeparator;
     }
@@ -827,11 +827,11 @@ static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunc
     collectRangesThatNeedMapping(string, hostNameStart, hostNameEnd - hostNameStart, array, decodeFunction);
 }
 
-String mapHostNames(const String& string, URLDecodeFunction decodeFunction)
+RefPtr<StringImpl> mapHostNames(StringImpl* string, URLDecodeFunction decodeFunction)
 {
     // Generally, we want to optimize for the case where there is one host name that does not need mapping.
     
-    if (decodeFunction && string.containsOnlyASCII() && !string.contains('%'))
+    if (decodeFunction && containsOnlyASCII(string) && !contains(string, '%'))
         return string;
     
     // Make a list of ranges that actually need mapping.
@@ -844,7 +844,7 @@ String mapHostNames(const String& string, URLDecodeFunction decodeFunction)
         return { };
 
     // Do the mapping.
-    String result = string;
+    RefPtr<StringImpl> result = string;
     while (!hostNameRanges->isEmpty()) {
         auto [location, length, mappedHostName] = hostNameRanges->takeLast();
         result = makeStringByReplacing(result, location, length, mappedHostName);
@@ -852,15 +852,15 @@ String mapHostNames(const String& string, URLDecodeFunction decodeFunction)
     return result;
 }
 
-static String escapeUnsafeCharacters(const String& sourceBuffer)
+static RefPtr<StringImpl> escapeUnsafeCharacters(StringImpl* sourceBuffer)
 {
-    unsigned length = sourceBuffer.length();
+    unsigned length = WTF::length(sourceBuffer);
 
     std::optional<char32_t> previousCodePoint;
 
     unsigned i;
     for (i = 0; i < length; ) {
-        char32_t c = sourceBuffer.codePointAt(i);
+        char32_t c = codePointAt(sourceBuffer, i);
         if (isLookalikeCharacter(previousCodePoint, c))
             break;
         previousCodePoint = c;
@@ -873,13 +873,13 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
     Vector<char16_t, urlBytesBufferLength> outBuffer;
 
     outBuffer.grow(i);
-    if (sourceBuffer.is8Bit())
-        StringImpl::copyCharacters(outBuffer.mutableSpan(), sourceBuffer.span8().first(i));
+    if (is8Bit(sourceBuffer))
+        StringImpl::copyCharacters(outBuffer.mutableSpan(), span8(sourceBuffer).first(i));
     else
-        StringImpl::copyCharacters(outBuffer.mutableSpan(), sourceBuffer.span16().first(i));
+        StringImpl::copyCharacters(outBuffer.mutableSpan(), span16(sourceBuffer).first(i));
 
     for (; i < length; ) {
-        char32_t c = sourceBuffer.codePointAt(i);
+        char32_t c = codePointAt(sourceBuffer, i);
         unsigned characterLength = U16_LENGTH(c);
         if (isLookalikeCharacter(previousCodePoint, c)) {
             std::array<uint8_t, 4> utf8Buffer;
@@ -895,16 +895,16 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
             }
         } else {
             for (unsigned j = 0; j < characterLength; ++j)
-                outBuffer.append(sourceBuffer[i + j]);
+                outBuffer.append(codeUnitAt(sourceBuffer, i + j));
         }
         previousCodePoint = c;
         i += characterLength;
     }
 
-    return String::adopt(WTF::move(outBuffer));
+    return StringImpl::adopt(WTF::move(outBuffer));
 }
 
-String userVisibleURL(std::span<const char8_t> url)
+RefPtr<StringImpl> userVisibleURL(std::span<const char8_t> url)
 {
     size_t length = url.size();
 
@@ -949,7 +949,7 @@ String userVisibleURL(std::span<const char8_t> url)
     }
     
     // Check string to see if it can be converted to display using UTF-8  
-    String result = String::fromUTF8(after.span().data());
+    RefPtr<StringImpl> result = StringImpl::fromUTF8(after.span().data());
     if (!result) {
         // Could not convert to UTF-8.
         // Convert characters greater than 0x7f to escape sequences.
@@ -972,7 +972,7 @@ String userVisibleURL(std::span<const char8_t> url)
         }
         after[afterIndex] = '\0';
         // Note: after.data() points to a null-terminated, pure ASCII string.
-        result = String::fromUTF8(after.span().data());
+        result = StringImpl::fromUTF8(after.span().data());
         ASSERT(!!result);
     }
 

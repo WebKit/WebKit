@@ -48,12 +48,12 @@
 
 namespace WebCore {
 
-OptionSet<Relation> relationsForRelAttribute(const AtomString& relValue)
+OptionSet<Relation> relationsForRelAttribute(AtomStringImpl* relValue)
 {
     // Update isSupportedRelToken() if more rel attributes values are supported.
-    static MainThreadNeverDestroyed<const AtomString> noReferrer("noreferrer"_s);
-    static MainThreadNeverDestroyed<const AtomString> noOpener("noopener"_s);
-    static MainThreadNeverDestroyed<const AtomString> opener("opener"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> noReferrer("noreferrer"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> noOpener("noopener"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> opener("opener"_s);
 
     OptionSet<Relation> relations;
     SpaceSplitString values(relValue, SpaceSplitString::ShouldFoldCase::Yes);
@@ -84,7 +84,7 @@ NODELETE inline bool hasRel(OptionSet<Relation> linkRelations, Relation relation
     return linkRelations.contains(relation);
 }
 
-AtomString parseDownloadAttribute(const Element& element, const URL& completedURL, const QualifiedName& downloadAttr)
+RefPtr<AtomStringImpl> parseDownloadAttribute(const Element& element, const URL& completedURL, const QualifiedName& downloadAttr)
 {
     Ref document = element.document();
     if (!document->settings().downloadAttributeEnabled())
@@ -92,10 +92,10 @@ AtomString parseDownloadAttribute(const Element& element, const URL& completedUR
 
     bool isSameOrigin = completedURL.protocolIsData() || protect(document->securityOrigin())->canRequest(completedURL, OriginAccessPatternsForWebProcess::singleton());
     if (isSameOrigin)
-        return AtomString { ResourceResponse::sanitizeSuggestedFilename(element.attributeWithoutSynchronization(downloadAttr)) };
+        return AtomStringImpl::add(ResourceResponse::sanitizeSuggestedFilename(element.attributeWithoutSynchronization(downloadAttr)));
 
     if (element.hasAttributeWithoutSynchronization(downloadAttr))
-        document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
+        document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_si);
 
     return nullAtom();
 }
@@ -103,7 +103,7 @@ AtomString parseDownloadAttribute(const Element& element, const URL& completedUR
 void sendPings(const Element& element, const QualifiedName& pingAttr, const URL& destinationURL)
 {
     const auto& pingValue = element.attributeWithoutSynchronization(pingAttr);
-    if (pingValue.isNull())
+    if (!pingValue)
         return;
 
     Ref document = element.document();
@@ -127,10 +127,10 @@ void navigateHyperlink(
     Element& sourceElement,
     Event& event,
     const URL& completedURL,
-    const AtomString& target,
+    AtomStringImpl* target,
     OptionSet<Relation> relations,
     ReferrerPolicy referrerPolicy,
-    const AtomString& downloadAttribute,
+    AtomStringImpl* downloadAttribute,
     std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
     Ref document = sourceElement.document();

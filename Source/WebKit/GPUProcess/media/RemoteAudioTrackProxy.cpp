@@ -107,12 +107,12 @@ void RemoteAudioTrackProxy::idChanged(TrackID)
     configurationChanged();
 }
 
-void RemoteAudioTrackProxy::labelChanged(const String&)
+void RemoteAudioTrackProxy::labelChanged(StringImpl*)
 {
     configurationChanged();
 }
 
-void RemoteAudioTrackProxy::languageChanged(const String&)
+void RemoteAudioTrackProxy::languageChanged(StringImpl*)
 {
     configurationChanged();
 }

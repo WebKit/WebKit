@@ -129,11 +129,11 @@ public:
             return;
 
         for (auto& attribute : attributes) {
-            auto knownAttributeName = AtomString::lookUp(attribute.name.span());
+            auto knownAttributeName = AtomStringImpl::lookUp(attribute.name.span());
             processAttribute(knownAttributeName, attribute.value.span(), pictureState);
         }
 
-        if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last().sourceMatched && m_mediaMatched && m_typeMatched && !m_srcSetAttribute.isEmpty()) {
+        if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last().sourceMatched && m_mediaMatched && m_typeMatched && !isEmpty(m_srcSetAttribute)) {
             auto sourceSize = SizesAttributeParser(m_sizesAttribute, m_document).effectiveSize();
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             if (!imageCandidate.isEmpty()) {
@@ -143,7 +143,7 @@ public:
         }
 
         // Resolve between src and srcSet if we have them and the tag is img.
-        if (m_tagId == TagId::Img && !m_srcSetAttribute.isEmpty()) {
+        if (m_tagId == TagId::Img && !isEmpty(m_srcSetAttribute)) {
             auto sourceSize = SizesAttributeParser(m_sizesAttribute, m_document).effectiveSize();
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             setURLToLoadAllowingReplacement(imageCandidate.string.view);
@@ -152,16 +152,16 @@ public:
         // Resolve between href and imagesrcset for <link rel=preload as=image>, the same way
         // LinkLoader::preloadIfNeeded does. Otherwise the scanner would fetch href while the
         // link element fetches the source set candidate, downloading the image twice.
-        if (m_tagId == TagId::Link && m_linkIsPreload && !m_srcSetAttribute.isEmpty() && resourceType() == CachedResource::Type::ImageResource) {
+        if (m_tagId == TagId::Link && m_linkIsPreload && !isEmpty(m_srcSetAttribute) && resourceType() == CachedResource::Type::ImageResource) {
             auto sourceSize = SizesAttributeParser(m_sizesAttribute, m_document).effectiveSize();
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             setURLToLoadAllowingReplacement(imageCandidate.string.view);
         }
 
-        if (m_metaIsViewport && !m_metaContent.isNull())
+        if (m_metaIsViewport && m_metaContent)
             m_document->processViewport(m_metaContent, ViewportArguments::Type::ViewportMeta);
 
-        if (m_metaIsDisabledAdaptations && !m_metaContent.isNull())
+        if (m_metaIsDisabledAdaptations && m_metaContent)
             m_document->processDisabledAdaptations(m_metaContent);
     }
 
@@ -208,14 +208,14 @@ public:
         return m_tagId == TagId::Img && LazyLoading::hasLazyAttributeValue(m_lazyloadAttribute);
     }
 
-    NODELETE static bool match(const AtomString& name, const QualifiedName& qName)
+    NODELETE static bool match(AtomStringImpl* name, const QualifiedName& qName)
     {
         ASSERT(isMainThread());
         return qName.localName() == name;
     }
 
 private:
-    void processImageAndScriptAttribute(const AtomString& attributeName, StringView attributeValue)
+    void processImageAndScriptAttribute(AtomStringImpl* attributeName, StringView attributeValue)
     {
         if (match(attributeName, srcAttr))
             setURLToLoad(attributeValue);
@@ -225,7 +225,7 @@ private:
             m_charset = attributeValue.toString();
     }
 
-    void processVideoAttribute(const AtomString& attributeName, StringView attributeValue)
+    void processVideoAttribute(AtomStringImpl* attributeName, StringView attributeValue)
     {
         if (match(attributeName, posterAttr))
             setURLToLoad(attributeValue);
@@ -233,7 +233,7 @@ private:
             m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<char16_t>).toString();
     }
 
-    void processAttribute(const AtomString& attributeName, StringView attributeValue, const Vector<PreloadScannerPictureState>& pictureState)
+    void processAttribute(AtomStringImpl* attributeName, StringView attributeValue, const Vector<PreloadScannerPictureState>& pictureState)
     {
         bool inPicture = !pictureState.isEmpty();
         bool alreadyMatchedSource = inPicture && pictureState.last().sourceMatched;
@@ -242,18 +242,18 @@ private:
             // Even when a sibling <source> already matched, the <img>'s loading attribute
             // still governs whether the matched source's preload should fire — read it first.
             if (m_document->settings().lazyImageLoadingEnabled()) {
-                if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
+                if (match(attributeName, loadingAttr) && !m_lazyloadAttribute) {
                     m_lazyloadAttribute = attributeValue.toString();
                     break;
                 }
             }
             if (inPicture && alreadyMatchedSource)
                 break;
-            if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull()) {
+            if (match(attributeName, srcsetAttr) && !m_srcSetAttribute) {
                 m_srcSetAttribute = attributeValue.toString();
                 break;
             }
-            if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull()) {
+            if (match(attributeName, sizesAttr) && !m_sizesAttribute) {
                 m_sizesAttribute = attributeValue.toString();
                 break;
             }
@@ -270,21 +270,21 @@ private:
         case TagId::Source:
             if (inPicture && alreadyMatchedSource)
                 break;
-            if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull()) {
+            if (match(attributeName, srcsetAttr) && !m_srcSetAttribute) {
                 m_srcSetAttribute = attributeValue.toString();
                 break;
             }
-            if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull()) {
+            if (match(attributeName, sizesAttr) && !m_sizesAttribute) {
                 m_sizesAttribute = attributeValue.toString();
                 break;
             }
-            if (match(attributeName, mediaAttr) && m_mediaAttribute.isNull()) {
+            if (match(attributeName, mediaAttr) && !m_mediaAttribute) {
                 m_mediaAttribute = attributeValue.toString();
                 auto mediaQueries = MQ::MediaQueryParser::parse(m_mediaAttribute, m_document->cssParserContext());
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
                 m_mediaMatched = MQ::MediaQueryEvaluator { m_document->printing() ? printAtom() : screenAtom(), m_document }.evaluate(mediaQueries);
             }
-            if (match(attributeName, typeAttr) && m_typeAttribute.isNull()) {
+            if (match(attributeName, typeAttr) && !m_typeAttribute) {
                 // when multiple type attributes present: first value wins, ignore subsequent (to match ImageElement parser and Blink behaviours)
                 m_typeAttribute = attributeValue.toString();
                 m_typeMatched &= HTMLImageElement::isSupportedImageSourceType(m_typeAttribute);
@@ -343,9 +343,9 @@ private:
                 m_fetchPriority = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
             else if (match(attributeName, disabledAttr))
                 m_linkIsDisabled = true;
-            else if (match(attributeName, imagesrcsetAttr) && m_srcSetAttribute.isNull())
+            else if (match(attributeName, imagesrcsetAttr) && !m_srcSetAttribute)
                 m_srcSetAttribute = attributeValue.toString();
-            else if (match(attributeName, imagesizesAttr) && m_sizesAttribute.isNull())
+            else if (match(attributeName, imagesizesAttr) && !m_sizesAttribute)
                 m_sizesAttribute = attributeValue.toString();
             break;
         case TagId::Input:
@@ -364,7 +364,7 @@ private:
             }
             break;
         case TagId::Video:
-            if (m_document->settings().lazyMediaLoadingEnabled() && match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull())
+            if (m_document->settings().lazyMediaLoadingEnabled() && match(attributeName, loadingAttr) && !m_lazyloadAttribute)
                 m_lazyloadAttribute = attributeValue.toString();
             else
                 processVideoAttribute(attributeName, attributeValue);
@@ -388,7 +388,7 @@ private:
     {
         // We only respect the first src/href, per HTML5:
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#attribute-name-state
-        if (!m_urlToLoad.isEmpty())
+        if (!isEmpty(m_urlToLoad))
             return;
         setURLToLoadAllowingReplacement(value);
     }
@@ -401,7 +401,7 @@ private:
         m_urlToLoad = trimmedURL.toString();
     }
 
-    NODELETE const String& charset() const
+    NODELETE const RefPtr<StringImpl>& charset() const
     {
         return m_charset;
     }
@@ -438,7 +438,7 @@ private:
 
     bool shouldPreload()
     {
-        if (m_urlToLoad.isEmpty())
+        if (isEmpty(m_urlToLoad))
             return false;
 
         if (protocolIs(m_urlToLoad, "data"_s) || protocolIs(m_urlToLoad, "about"_s))
@@ -458,24 +458,24 @@ private:
 
     const CheckedRef<Document> m_document;
     TagId m_tagId;
-    String m_urlToLoad;
-    String m_srcSetAttribute;
-    String m_sizesAttribute;
+    RefPtr<StringImpl> m_urlToLoad;
+    RefPtr<StringImpl> m_srcSetAttribute;
+    RefPtr<StringImpl> m_sizesAttribute;
     bool m_mediaMatched { true };
     bool m_typeMatched { true };
-    String m_charset;
-    String m_crossOriginMode;
+    RefPtr<StringImpl> m_charset;
+    RefPtr<StringImpl> m_crossOriginMode;
     bool m_linkIsStyleSheet;
     bool m_linkIsPreload;
     bool m_linkIsDisabled { false };
-    String m_mediaAttribute;
-    String m_nonceAttribute;
-    String m_metaContent;
-    String m_asAttribute;
-    String m_typeAttribute;
-    String m_languageAttribute;
-    String m_integrityAttribute;
-    String m_lazyloadAttribute;
+    RefPtr<StringImpl> m_mediaAttribute;
+    RefPtr<StringImpl> m_nonceAttribute;
+    RefPtr<StringImpl> m_metaContent;
+    RefPtr<StringImpl> m_asAttribute;
+    RefPtr<StringImpl> m_typeAttribute;
+    RefPtr<StringImpl> m_languageAttribute;
+    RefPtr<StringImpl> m_integrityAttribute;
+    RefPtr<StringImpl> m_lazyloadAttribute;
     bool m_metaIsViewport;
     bool m_metaIsDisabledAdaptations;
     bool m_inputIsImage;
@@ -618,7 +618,7 @@ void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token, bool sh
     auto* hrefAttribute = findAttribute(token.attributes(), hrefAsUTF16);
     if (!hrefAttribute)
         return;
-    URL temp { m_documentURL, StringImpl::create8BitIfPossible(hrefAttribute->value) };
+    URL temp { m_documentURL, StringImpl::create8BitIfPossible(hrefAttribute->value).ptr() };
     if (temp.isValid() && (!shouldRestrictBaseURLSchemes || SecurityPolicy::isBaseURLSchemeAllowed(temp)))
         m_predictedBaseElementURL = WTF::move(temp);
 }
@@ -648,7 +648,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
 
     while (auto token = m_tokenizer.nextToken(m_source)) {
         if (token->type() == HTMLToken::Type::StartTag)
-            m_tokenizer.updateStateFor(AtomString::lookUp(token->name().span()));
+            m_tokenizer.updateStateFor(AtomStringImpl::lookUp(token->name().span()));
         m_scanner.scan(*token, requests, document);
     }
 
@@ -661,7 +661,7 @@ bool testPreloadScannerViewportSupport(Document* document)
     HTMLParserOptions options(*document);
     HTMLPreloadScanner scanner(options, document->url());
     Ref preloader = HTMLResourcePreloader::create(*document);
-    scanner.appendToEnd(String("<meta name=viewport content='width=400'>"_s));
+    scanner.appendToEnd("<meta name=viewport content='width=400'>"_si);
     scanner.scan(preloader, *document);
     return document->viewportArguments().width == 400;
 }

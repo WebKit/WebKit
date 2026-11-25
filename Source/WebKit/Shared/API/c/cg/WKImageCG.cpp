@@ -70,7 +70,7 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
 
 WKStringRef WKImageCreateDataURLFromImage(CGImageRef imageRef)
 {
-    String mimeType { "image/png"_s };
+    RefPtr<StringImpl> mimeType { "image/png"_si };
     auto value = WebCore::encodeDataURL(imageRef, mimeType, { });
     return WebKit::toCopiedAPI(value);
 }

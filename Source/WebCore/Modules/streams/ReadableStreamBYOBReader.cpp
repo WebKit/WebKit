@@ -79,31 +79,31 @@ DOMPromise& ReadableStreamBYOBReader::closedPromise()
 void ReadableStreamBYOBReader::readForBindings(JSDOMGlobalObject& globalObject, JSC::ArrayBufferView& view, ReadOptions options, Ref<DeferredPromise>&& promise)
 {
     if (!view.byteLength())
-        return promise->reject(Exception { ExceptionCode::TypeError, "view byteLength is 0"_s });
+        return promise->reject(Exception { ExceptionCode::TypeError, "view byteLength is 0"_si });
 
     RefPtr buffer = view.possiblySharedBuffer();
     if (!buffer)
-        return promise->reject(Exception { ExceptionCode::TypeError, "view's buffer is detached"_s });
+        return promise->reject(Exception { ExceptionCode::TypeError, "view's buffer is detached"_si });
 
     if (!buffer->byteLength())
-        return promise->reject(Exception { ExceptionCode::TypeError, "view's buffer byteLength is 0"_s });
+        return promise->reject(Exception { ExceptionCode::TypeError, "view's buffer byteLength is 0"_si });
 
     if (!options.min)
-        return promise->reject(Exception { ExceptionCode::TypeError, "options min is 0"_s });
+        return promise->reject(Exception { ExceptionCode::TypeError, "options min is 0"_si });
 
     auto viewType = view.getType();
     if (viewType != JSC::TypedArrayType::TypeDataView) {
         if (options.min > view.byteLength() / JSC::elementSize(viewType))
-            return promise->reject(Exception { ExceptionCode::RangeError, "view's buffer is not large enough"_s });
+            return promise->reject(Exception { ExceptionCode::RangeError, "view's buffer is not large enough"_si });
     } else {
         if (options.min > view.byteLength())
-            return promise->reject(Exception { ExceptionCode::RangeError, "view's buffer is not large enough"_s });
+            return promise->reject(Exception { ExceptionCode::RangeError, "view's buffer is not large enough"_si });
     }
 
     {
         Locker locker { m_streamLock };
         if (!m_stream)
-            return promise->reject(Exception { ExceptionCode::TypeError, "reader has no stream"_s });
+            return promise->reject(Exception { ExceptionCode::TypeError, "reader has no stream"_si });
     }
     read(globalObject, view, options.min, ReadableStreamReadIntoRequest::create(WTF::move(promise)));
 }
@@ -118,7 +118,7 @@ void ReadableStreamBYOBReader::releaseLock(JSDOMGlobalObject& globalObject)
     }
     genericRelease(globalObject);
 
-    errorReadIntoRequests(Exception { ExceptionCode::TypeError, "releasing stream"_s });
+    errorReadIntoRequests(Exception { ExceptionCode::TypeError, "releasing stream"_si });
 }
 
 // https://streams.spec.whatwg.org/#generic-reader-cancel
@@ -131,7 +131,7 @@ Ref<DOMPromise> ReadableStreamBYOBReader::cancel(JSDOMGlobalObject& globalObject
     }
     if (!hasStream) {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-        deferred->reject(Exception { ExceptionCode::TypeError, "no stream"_s });
+        deferred->reject(Exception { ExceptionCode::TypeError, "no stream"_si });
         return promise;
     }
 
@@ -142,10 +142,10 @@ Ref<DOMPromise> ReadableStreamBYOBReader::cancel(JSDOMGlobalObject& globalObject
 ExceptionOr<void> ReadableStreamBYOBReader::setupBYOBReader(JSDOMGlobalObject& globalObject, ReadableStream& stream)
 {
     if (stream.isLocked())
-        return Exception { ExceptionCode::TypeError, "stream is locked"_s };
+        return Exception { ExceptionCode::TypeError, "stream is locked"_si };
 
     if (!stream.hasByteStreamController())
-        return Exception { ExceptionCode::TypeError, "stream is not a byte stream"_s };
+        return Exception { ExceptionCode::TypeError, "stream is not a byte stream"_si };
 
     initialize(globalObject, stream);
     return { };
@@ -204,10 +204,10 @@ void ReadableStreamBYOBReader::genericRelease(JSDOMGlobalObject& globalObject)
     ASSERT(stream->byobReader() == this);
 
     if (stream->state() == ReadableStream::State::Readable)
-        Ref { m_closedDeferred }->reject(Exception { ExceptionCode::TypeError, "releasing stream"_s }, RejectAsHandled::Yes);
+        Ref { m_closedDeferred }->reject(Exception { ExceptionCode::TypeError, "releasing stream"_si }, RejectAsHandled::Yes);
     else {
         auto [promise, deferred] = createPromiseAndWrapper(globalObject);
-        deferred->reject(Exception { ExceptionCode::TypeError, "releasing stream"_s }, RejectAsHandled::Yes);
+        deferred->reject(Exception { ExceptionCode::TypeError, "releasing stream"_si }, RejectAsHandled::Yes);
         m_closedDeferred = WTF::move(deferred);
         m_closedPromise = WTF::move(promise);
     }

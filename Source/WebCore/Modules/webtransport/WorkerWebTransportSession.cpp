@@ -74,7 +74,7 @@ void WorkerWebTransportSession::receiveDatagram(std::span<const uint8_t> span, b
     });
 }
 
-void WorkerWebTransportSession::didFail(std::optional<uint32_t>&& code, String&& message)
+void WorkerWebTransportSession::didFail(std::optional<uint32_t>&& code, RefPtr<StringImpl>&& message)
 {
     ASSERT(RunLoop::isMain());
     ScriptExecutionContext::postTaskTo(m_contextID, [weakClient = m_client, code = WTF::move(code), message = WTF::move(message)] (auto&) mutable {
@@ -151,7 +151,7 @@ void WorkerWebTransportSession::streamSendError(WebTransportStreamIdentifier ide
     });
 }
 
-Ref<WebTransportSessionInitializationPromise> WorkerWebTransportSession::initialize(ScriptExecutionContext& context, const URL& url, const WebTransportOptions& options, const Vector<KeyValuePair<String, String>>& additionalHeaders, const ClientOrigin& origin)
+Ref<WebTransportSessionInitializationPromise> WorkerWebTransportSession::initialize(ScriptExecutionContext& context, const URL& url, const WebTransportOptions& options, const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& additionalHeaders, const ClientOrigin& origin)
 {
     assertIsCurrent(m_workerThread);
     if (RefPtr session = m_session)

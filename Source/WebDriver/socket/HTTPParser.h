@@ -33,10 +33,10 @@ namespace WebDriver {
 class HTTPParser {
 public:
     struct Message {
-        String path;
-        String method;
-        String version;
-        Vector<String> requestHeaders;
+        RefPtr<StringImpl> path;
+        RefPtr<StringImpl> method;
+        RefPtr<StringImpl> version;
+        Vector<RefPtr<StringImpl>> requestHeaders;
         Vector<uint8_t> requestBody;
     };
 
@@ -59,8 +59,8 @@ public:
 private:
     Process handlePhase();
     Process abortProcess(const char* message = nullptr);
-    bool parseFirstLine(String&& line);
-    bool readLine(String& line);
+    bool parseFirstLine(RefPtr<StringImpl>&& line);
+    bool readLine(RefPtr<StringImpl>& line);
     size_t expectedBodyLength() const;
 
     Phase m_phase { Phase::Idle };

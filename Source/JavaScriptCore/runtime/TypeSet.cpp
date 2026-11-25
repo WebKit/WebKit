@@ -59,9 +59,9 @@ void TypeSet::addTypeInformation(RuntimeType type, RefPtr<StructureShape>&& pass
             // - We don't have two instances of the same shape. (Same shapes may have different Structures).
             // - We don't have two shapes that share the same prototype chain. If these shapes share the same 
             //   prototype chain, they will be merged into one shape.
-            String hash = newShape->propertyHash();
+            RefPtr<StringImpl> hash = newShape->propertyHash();
             for (auto& seenShape : m_structureHistory) {
-                if (seenShape->propertyHash() == hash)
+                if (equal(seenShape->propertyHash(), hash))
                     return;
                 if (seenShape->hasSamePrototypeChain(newShape.get())) {
                     seenShape = StructureShape::merge(seenShape.copyRef(), WTF::move(newShape));
@@ -88,10 +88,10 @@ void TypeSet::invalidateCache(VM& vm)
     m_structureSet.genericFilter(keepMarkedStructuresFilter);
 }
 
-String TypeSet::dumpTypes() const
+RefPtr<StringImpl> TypeSet::dumpTypes() const
 {
     if (m_seenTypes == TypeNothing)
-        return "(Unreached Statement)"_s;
+        return "(Unreached Statement)"_si;
 
     StringBuilder seen;
 
@@ -150,13 +150,13 @@ bool TypeSet::doesTypeConformTo(RuntimeTypeMask test) const
     return m_seenTypes != TypeNothing && (m_seenTypes & test) == m_seenTypes;
 }
 
-String TypeSet::displayName() const
+RefPtr<StringImpl> TypeSet::displayName() const
 {
     if (m_seenTypes == TypeNothing)
         return emptyString();
 
     if (m_structureHistory.size() && doesTypeConformTo(TypeObject | TypeNull | TypeUndefined)) {
-        String ctorName = leastCommonAncestor(); 
+        RefPtr<StringImpl> ctorName = leastCommonAncestor(); 
 
         if (doesTypeConformTo(TypeObject))
             return ctorName;
@@ -168,51 +168,51 @@ String TypeSet::displayName() const
     // Therefore, more specific types must be checked first.
 
     if (doesTypeConformTo(TypeFunction))
-        return "Function"_s;
+        return "Function"_si;
     if (doesTypeConformTo(TypeUndefined))
-        return "Undefined"_s;
+        return "Undefined"_si;
     if (doesTypeConformTo(TypeNull))
-        return "Null"_s;
+        return "Null"_si;
     if (doesTypeConformTo(TypeBoolean))
-        return "Boolean"_s;
+        return "Boolean"_si;
     if (doesTypeConformTo(TypeAnyInt))
-        return "Integer"_s;
+        return "Integer"_si;
     if (doesTypeConformTo(TypeNumber | TypeAnyInt))
-        return "Number"_s;
+        return "Number"_si;
     if (doesTypeConformTo(TypeString))
-        return "String"_s;
+        return "String"_si;
     if (doesTypeConformTo(TypeSymbol))
-        return "Symbol"_s;
+        return "Symbol"_si;
     if (doesTypeConformTo(TypeBigInt))
-        return "BigInt"_s;
+        return "BigInt"_si;
 
     if (doesTypeConformTo(TypeNull | TypeUndefined))
-        return "(?)"_s;
+        return "(?)"_si;
 
     if (doesTypeConformTo(TypeFunction | TypeNull | TypeUndefined))
-        return "Function?"_s;
+        return "Function?"_si;
     if (doesTypeConformTo(TypeBoolean | TypeNull | TypeUndefined))
-        return "Boolean?"_s;
+        return "Boolean?"_si;
     if (doesTypeConformTo(TypeAnyInt | TypeNull | TypeUndefined))
-        return "Integer?"_s;
+        return "Integer?"_si;
     if (doesTypeConformTo(TypeNumber | TypeAnyInt | TypeNull | TypeUndefined))
-        return "Number?"_s;
+        return "Number?"_si;
     if (doesTypeConformTo(TypeString | TypeNull | TypeUndefined))
-        return "String?"_s;
+        return "String?"_si;
     if (doesTypeConformTo(TypeSymbol | TypeNull | TypeUndefined))
-        return "Symbol?"_s;
+        return "Symbol?"_si;
     if (doesTypeConformTo(TypeBigInt | TypeNull | TypeUndefined))
-        return "BigInt?"_s;
+        return "BigInt?"_si;
    
     if (doesTypeConformTo(TypeObject | TypeFunction | TypeString))
-        return "Object"_s;
+        return "Object"_si;
     if (doesTypeConformTo(TypeObject | TypeFunction | TypeString | TypeNull | TypeUndefined))
-        return "Object?"_s;
+        return "Object?"_si;
 
-    return "(many)"_s;
+    return "(many)"_si;
 }
 
-String TypeSet::leastCommonAncestor() const
+RefPtr<StringImpl> TypeSet::leastCommonAncestor() const
 {
     return StructureShape::leastCommonAncestor(m_structureHistory);
 }
@@ -243,7 +243,7 @@ Ref<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
         .release();
 }
 
-String TypeSet::toJSONString() const
+RefPtr<StringImpl> TypeSet::toJSONString() const
 {
     // This returns a JSON string representing an Object with the following properties:
     //     displayTypeName: 'String'
@@ -321,7 +321,6 @@ StructureShape::StructureShape()
     : m_final(false)
     , m_isInDictionaryMode(false)
     , m_proto(nullptr)
-    , m_propertyHash(nullptr)
 {
 }
 
@@ -337,11 +336,11 @@ void StructureShape::addProperty(UniquedStringImpl& uid)
     m_fields.add(&uid);
 }
 
-String StructureShape::propertyHash()
+RefPtr<StringImpl> StructureShape::propertyHash()
 {
     ASSERT(m_final);
     if (m_propertyHash)
-        return *m_propertyHash;
+        return m_propertyHash;
 
     StringBuilder builder;
     builder.append(':');
@@ -349,18 +348,19 @@ String StructureShape::propertyHash()
     builder.append(':');
     for (auto& key : m_fields) {
         // Ensure that hash({"foo:", "bar"}) != hash({"foo", ":bar"}) because we're using colons as a separator and colons are legal characters in field names in JS.
-        String property = makeStringByReplacingAll(key.get(), ':', "\\:"_s);
+        RefPtr<StringImpl> property = makeStringByReplacingAll(key.get(), ':', "\\:"_s);
         builder.append(property);
     }
 
     if (m_proto)
         builder.append(":__proto__"_s, m_proto->propertyHash());
 
-    m_propertyHash = makeUnique<String>(builder.toString());
-    return *m_propertyHash;
+    m_propertyHash = builder.toString();
+    return m_propertyHash;
+
 }
 
-String StructureShape::leastCommonAncestor(const Vector<Ref<StructureShape>>& shapes)
+RefPtr<StringImpl> StructureShape::leastCommonAncestor(const Vector<Ref<StructureShape>>& shapes)
 {
     if (shapes.isEmpty())
         return emptyString();
@@ -370,9 +370,9 @@ String StructureShape::leastCommonAncestor(const Vector<Ref<StructureShape>>& sh
         bool foundLUB = false;
         while (!foundLUB) {
             StructureShape* check = shapes[i].ptr();
-            String curCtorName = origin->m_constructorName;
+            RefPtr<StringImpl> curCtorName = origin->m_constructorName;
             while (check) {
-                if (check->m_constructorName == curCtorName) {
+                if (equal(check->m_constructorName, curCtorName)) {
                     foundLUB = true;
                     break;
                 }
@@ -382,19 +382,19 @@ String StructureShape::leastCommonAncestor(const Vector<Ref<StructureShape>>& sh
                 // This is unlikely to happen, because we usually bottom out at "Object", but there are some sets of Objects
                 // that may cause this behavior. We fall back to "Object" because it's our version of Top.
                 if (!origin->m_proto)
-                    return "Object"_s;
+                    return "Object"_si;
                 origin = origin->m_proto.get();
             }
         }
 
-        if (origin->m_constructorName == "Object"_s)
+        if (equal(origin->m_constructorName, "Object"_s))
             break;
     }
 
     return origin->m_constructorName;
 }
 
-String StructureShape::stringRepresentation()
+RefPtr<StringImpl> StructureShape::stringRepresentation()
 {
     StringBuilder representation;
     RefPtr<StructureShape> curShape = this;
@@ -416,7 +416,7 @@ String StructureShape::stringRepresentation()
     return representation.toString();
 }
 
-String StructureShape::toJSONString() const
+RefPtr<StringImpl> StructureShape::toJSONString() const
 {
     // This returns a JSON string representing an Object with the following properties:
     //     constructorName: 'String'
@@ -445,7 +445,7 @@ String StructureShape::toJSONString() const
             json.append(',');
         hasAnItem = true;
 
-        String fieldName(field.get());
+        RefPtr<StringImpl> fieldName(field);
         json.appendQuotedJSONString(fieldName);
     }
     json.append("],"_s);
@@ -457,7 +457,7 @@ String StructureShape::toJSONString() const
             json.append(',');
         hasAnItem = true;
 
-        String fieldName(field.get());
+        RefPtr<StringImpl> fieldName(field);
         json.appendQuotedJSONString(fieldName);
     }
     json.append(']');
@@ -481,8 +481,8 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
     RefPtr<StructureShape> currentShape(this);
 
     while (currentShape) {
-        auto fields = JSON::ArrayOf<String>::create();
-        auto optionalFields = JSON::ArrayOf<String>::create();
+        auto fields = JSON::ArrayOf<RefPtr<StringImpl>>::create();
+        auto optionalFields = JSON::ArrayOf<RefPtr<StringImpl>>::create();
         for (const auto& field : currentShape->m_fields)
             fields->addItem(field.get());
         for (const auto& field : currentShape->m_optionalFields)
@@ -510,7 +510,7 @@ bool StructureShape::hasSamePrototypeChain(const StructureShape& otherRef)
     const StructureShape* self = this;
     const StructureShape* other = &otherRef;
     while (self && other) {
-        if (self->m_constructorName != other->m_constructorName)
+        if (!equal(self->m_constructorName, other->m_constructorName))
             return false;
         self = self->m_proto.get();
         other = other->m_proto.get();
@@ -543,7 +543,7 @@ Ref<StructureShape> StructureShape::merge(Ref<StructureShape>&& a, Ref<Structure
     for (const auto& field : b->m_optionalFields)
         merged->m_optionalFields.add(field);
 
-    ASSERT(a->m_constructorName == b->m_constructorName);
+    ASSERT(equal(a->m_constructorName, b->m_constructorName));
     merged->setConstructorName(a->m_constructorName);
 
     if (a->m_proto) {

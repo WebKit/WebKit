@@ -77,7 +77,7 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
     if (std::ranges::none_of(roundingIncrementCandidates, [&](auto candidate) {
         return candidate == roundingIncrement;
     })) {
-        throwRangeError(globalObject, scope, "roundingIncrement must be one of 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000"_s);
+        throwRangeError(globalObject, scope, "roundingIncrement must be one of 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000"_si);
         return;
     }
 
@@ -146,7 +146,7 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
             else if (maximumFractionDigits == undefinedValue)
                 maximumFractionDigits = std::max(maximumFractionDigitsDefault, minimumFractionDigits);
             else if (minimumFractionDigits > maximumFractionDigits) {
-                throwRangeError(globalObject, scope, "Computed minimumFractionDigits is larger than maximumFractionDigits"_s);
+                throwRangeError(globalObject, scope, "Computed minimumFractionDigits is larger than maximumFractionDigits"_si);
                 return;
             }
 
@@ -181,7 +181,7 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
             return;
         }
         if (intlInstance->m_maximumFractionDigits != intlInstance->m_minimumFractionDigits) {
-            throwRangeError(globalObject, scope, "maximumFractionDigits and minimumFractionDigits are different while roundingIncrement is specified"_s);
+            throwRangeError(globalObject, scope, "maximumFractionDigits and minimumFractionDigits are different while roundingIncrement is specified"_si);
             return;
         }
     }
@@ -381,7 +381,7 @@ inline IntlMathematicalValue toIntlMathematicalValue(JSGlobalObject* globalObjec
         return IntlMathematicalValue {
             IntlMathematicalValue::NumberType::Integer,
             bigInt->sign(),
-            string.ascii(),
+            ascii(string),
         };
     };
 

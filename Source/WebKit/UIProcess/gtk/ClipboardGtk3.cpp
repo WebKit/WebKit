@@ -68,23 +68,23 @@ Clipboard::Type Clipboard::type() const
 struct FormatsAsyncData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FormatsAsyncData);
 
-    explicit FormatsAsyncData(CompletionHandler<void(Vector<String>&&)>&& handler)
+    explicit FormatsAsyncData(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& handler)
         : completionHandler(WTF::move(handler))
     {
     }
 
-    CompletionHandler<void(Vector<String>&&)> completionHandler;
+    CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)> completionHandler;
 };
 
-void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void Clipboard::formats(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     gtk_clipboard_request_targets(m_clipboard, [](GtkClipboard* clipboard, GdkAtom* atoms, gint atomsCount, gpointer userData) {
         std::unique_ptr<FormatsAsyncData> data(static_cast<FormatsAsyncData*>(userData));
 
-        Vector<String> result;
+        Vector<RefPtr<StringImpl>> result;
         for (auto* atom : unsafeMakeSpan<GdkAtom>(atoms, static_cast<size_t>(std::max(0, atomsCount)))) {
             GUniquePtr<char> atomName(gdk_atom_name(atom));
-            result.append(String::fromUTF8(atomName.get()));
+            result.append(StringImpl::fromUTF8(atomName.get()));
         }
         data->completionHandler(WTF::move(result));
     }, new FormatsAsyncData(WTF::move(completionHandler)));
@@ -93,42 +93,42 @@ void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHa
 struct ReadTextAsyncData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReadTextAsyncData);
 
-    explicit ReadTextAsyncData(CompletionHandler<void(String&&)>&& handler)
+    explicit ReadTextAsyncData(CompletionHandler<void(RefPtr<StringImpl>&&)>&& handler)
         : completionHandler(WTF::move(handler))
     {
     }
 
-    CompletionHandler<void(String&&)> completionHandler;
+    CompletionHandler<void(RefPtr<StringImpl>&&)> completionHandler;
 };
 
-void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler, ReadMode)
+void Clipboard::readText(CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler, ReadMode)
 {
     gtk_clipboard_request_text(m_clipboard, [](GtkClipboard*, const char* text, gpointer userData) {
         std::unique_ptr<ReadTextAsyncData> data(static_cast<ReadTextAsyncData*>(userData));
-        data->completionHandler(String::fromUTF8(text));
+        data->completionHandler(StringImpl::fromUTF8(text));
     }, new ReadTextAsyncData(WTF::move(completionHandler)));
 }
 
 struct ReadFilePathsAsyncData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReadFilePathsAsyncData);
 
-    explicit ReadFilePathsAsyncData(CompletionHandler<void(Vector<String>&&)>&& handler)
+    explicit ReadFilePathsAsyncData(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& handler)
         : completionHandler(WTF::move(handler))
     {
     }
 
-    CompletionHandler<void(Vector<String>&&)> completionHandler;
+    CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)> completionHandler;
 };
 
-void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& completionHandler, ReadMode)
+void Clipboard::readFilePaths(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler, ReadMode)
 {
     gtk_clipboard_request_uris(m_clipboard, [](GtkClipboard*, char** uris, gpointer userData) {
         std::unique_ptr<ReadFilePathsAsyncData> data(static_cast<ReadFilePathsAsyncData*>(userData));
-        Vector<String> result;
+        Vector<RefPtr<StringImpl>> result;
         for (const auto* uri : span(uris)) {
             GUniquePtr<gchar> filename(g_filename_from_uri(uri, nullptr, nullptr));
             if (filename)
-                result.append(String::fromUTF8(filename.get()));
+                result.append(StringImpl::fromUTF8(filename.get()));
         }
         data->completionHandler(WTF::move(result));
     }, new ReadFilePathsAsyncData(WTF::move(completionHandler)));
@@ -148,19 +148,19 @@ struct ReadBufferAsyncData {
 struct ReadURLAsyncData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReadURLAsyncData);
 
-    explicit ReadURLAsyncData(CompletionHandler<void(String&& url, String&& title)>&& handler)
+    explicit ReadURLAsyncData(CompletionHandler<void(RefPtr<StringImpl>&& url, RefPtr<StringImpl>&& title)>&& handler)
         : completionHandler(WTF::move(handler))
     {
     }
 
-    CompletionHandler<void(String&& url, String&& title)> completionHandler;
+    CompletionHandler<void(RefPtr<StringImpl>&& url, RefPtr<StringImpl>&& title)> completionHandler;
 };
 
-void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& completionHandler, ReadMode)
+void Clipboard::readURL(CompletionHandler<void(RefPtr<StringImpl>&& url, RefPtr<StringImpl>&& title)>&& completionHandler, ReadMode)
 {
     gtk_clipboard_request_uris(m_clipboard, [](GtkClipboard*, char** uris, gpointer userData) {
         std::unique_ptr<ReadURLAsyncData> data(static_cast<ReadURLAsyncData*>(userData));
-        data->completionHandler(uris && uris[0] ? String::fromUTF8(uris[0]) : String(), { });
+        data->completionHandler(uris && uris[0] ? StringImpl::fromUTF8(uris[0]) : nullptr, { });
     }, new ReadURLAsyncData(WTF::move(completionHandler)));
 }
 
@@ -207,7 +207,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     if (selectionData.hasCustomData())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType().characters()), 0, ClipboardTargetType::Custom);
     for (const auto& type : selectionData.buffers().keys())
-        gtk_target_list_add(list.get(), gdk_atom_intern(type.utf8().legacyCStringPointer(), FALSE), 0, ClipboardTargetType::Buffer);
+        gtk_target_list_add(list.get(), gdk_atom_intern(utf8(type).legacyCStringPointer(), FALSE), 0, ClipboardTargetType::Buffer);
 
     int numberOfTargets;
     GtkTargetEntry* table = gtk_target_table_new_from_list(list.get(), &numberOfTargets);
@@ -223,12 +223,12 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
             auto& data = *static_cast<WriteAsyncData*>(userData);
             switch (info) {
             case ClipboardTargetType::Markup: {
-                auto markup = data.selectionData.markup().utf8();
+                auto markup = utf8(data.selectionData.markup());
                 gtk_selection_data_set(selection, gdk_atom_intern_static_string("text/html"), 8, reinterpret_cast<const guchar*>(markup.data()), markup.length());
                 break;
             }
             case ClipboardTargetType::Text:
-                gtk_selection_data_set_text(selection, data.selectionData.text().utf8().legacyCStringPointer(), -1);
+                gtk_selection_data_set_text(selection, utf8(data.selectionData.text()).legacyCStringPointer(), -1);
                 break;
             case ClipboardTargetType::Image: {
                 if (data.selectionData.hasImage()) {
@@ -238,7 +238,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
                 break;
             }
             case ClipboardTargetType::URIList: {
-                auto uriList = data.selectionData.uriList().utf8();
+                auto uriList = utf8(data.selectionData.uriList());
                 gtk_selection_data_set(selection, gdk_atom_intern_static_string("text/uri-list"), 8, reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
                 break;
             }
@@ -254,7 +254,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
             case ClipboardTargetType::Buffer: {
                 auto* atom = gtk_selection_data_get_target(selection);
                 GUniquePtr<char> type(gdk_atom_name(atom));
-                if (auto* buffer = data.selectionData.buffer(String::fromUTF8(type.get()))) {
+                if (auto* buffer = data.selectionData.buffer(StringImpl::fromUTF8(type.get()))) {
                     auto span = buffer->span();
                     gtk_selection_data_set(selection, atom, 8, reinterpret_cast<const guchar*>(span.data()), span.size());
                 }

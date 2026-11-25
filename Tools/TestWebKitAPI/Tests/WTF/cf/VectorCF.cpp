@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#include "Helpers/Test.h"
 #include <wtf/cf/VectorCF.h>
 
 namespace TestWebKitAPI {
@@ -31,7 +33,7 @@ namespace TestWebKitAPI {
 TEST(VectorCF, CreateCFArray_CFString)
 {
     const size_t elementCount = 3;
-    Vector<String> strings = { "one"_str, "two"_str, "three"_str };
+    Vector<RefPtr<StringImpl>> strings = { "one"_str, "two"_str, "three"_str };
 
     auto cfStrings = createCFArray(strings);
 
@@ -92,7 +94,7 @@ TEST(VectorCF, MakeVector_CFString)
     CFArrayAppendValue(cfStrings.get(), CFSTR("three"));
     CFIndex count = CFArrayGetCount(cfStrings.get());
 
-    auto strings = makeVector<String>(cfStrings.get());
+    auto strings = makeVector<RefPtr<StringImpl>>(cfStrings.get());
 
     EXPECT_EQ(elementCount, Checked<size_t>(count));
     EXPECT_EQ(elementCount, std::size(strings));

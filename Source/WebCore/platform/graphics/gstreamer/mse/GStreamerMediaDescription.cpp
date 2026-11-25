@@ -47,7 +47,7 @@ bool GStreamerMediaDescription::isText() const
     return false;
 }
 
-String GStreamerMediaDescription::extractCodecName(const GRefPtr<GstCaps>& caps) const
+RefPtr<StringImpl> GStreamerMediaDescription::extractCodecName(const GRefPtr<GstCaps>& caps) const
 {
     GRefPtr<GstCaps> originalCaps = caps;
 
@@ -56,7 +56,7 @@ String GStreamerMediaDescription::extractCodecName(const GRefPtr<GstCaps>& caps)
         GstStructure* structure = gst_caps_get_structure(originalCaps.get(), 0);
 
         if (!gst_structure_has_field(structure, "original-media-type"))
-            return String();
+            return nullptr;
 
         auto originalMediaType = WebCore::gstStructureGetString(structure, "original-media-type"_s);
         RELEASE_ASSERT(originalMediaType);
@@ -65,19 +65,19 @@ String GStreamerMediaDescription::extractCodecName(const GRefPtr<GstCaps>& caps)
         // Remove the DRM related fields from the caps.
         gstStructureFilterAndMapInPlace(structure, [](GstId id, GValue*) -> bool {
             auto idView = gstIdToString(id);
-            if (idView.startsWith("protection-system"_s) || idView.startsWith("original-media-type"_s))
+            if (startsWith(idView, "protection-system"_s) || startsWith(idView, "original-media-type"_s))
                 return false;
             return true;
         });
     }
 
-    auto codecName = String(GMallocString::unsafeAdoptFromUTF8(gst_pb_utils_get_codec_description(originalCaps.get())).span());
+    auto codecName = StringImpl::create(GMallocString::unsafeAdoptFromUTF8(gst_pb_utils_get_codec_description(originalCaps.get())).span());
 
     // Report "H.264 (Main Profile)" and "H.264 (High Profile)" just as "H.264" to allow changes between both variants
     // go unnoticed to the SourceBuffer layer.
-    if (codecName.startsWith("H.264"_s)) {
-        size_t braceStart = codecName.find(" ("_s);
-        size_t braceEnd = codecName.find(')', braceStart + 1);
+    if (startsWith(codecName, "H.264"_s)) {
+        size_t braceStart = find(codecName, " ("_s);
+        size_t braceEnd = find(codecName, ')', braceStart + 1);
         if (braceStart != notFound && braceEnd != notFound) {
             StringView codecNameView { codecName };
             codecName = makeString(codecNameView.left(braceStart), codecNameView.substring(braceEnd + 1));

@@ -59,7 +59,7 @@ static ALWAYS_INLINE JSWebAssemblyGlobal* getGlobal(JSGlobalObject* globalObject
     JSWebAssemblyGlobal* result = dynamicDowncast<JSWebAssemblyGlobal>(v);
     if (!result) {
         throwException(globalObject, throwScope,
-            createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Global"_s));
+            createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Global"_si));
         return nullptr;
     }
     Integrity::auditStructureID(result->structureID());
@@ -111,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue, (JSGlobalObject*
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (global->global()->mutability() == Wasm::Mutability::Immutable)
-        return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global.prototype.value attempts to modify immutable global value"_s)));
+        return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global.prototype.value attempts to modify immutable global value"_si)));
 
     global->global()->set(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -135,8 +135,8 @@ void WebAssemblyGlobalPrototype::finishCreation(VM& vm, JSGlobalObject* globalOb
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    JSFunction* valueGetterFunction = JSFunction::create(vm, globalObject, 0, "get value"_s, webAssemblyGlobalProtoGetterFuncValue, ImplementationVisibility::Public);
-    JSFunction* valueSetterFunction = JSFunction::create(vm, globalObject, 1, "set value"_s, webAssemblyGlobalProtoSetterFuncValue, ImplementationVisibility::Public);
+    JSFunction* valueGetterFunction = JSFunction::create(vm, globalObject, 0, "get value"_si, webAssemblyGlobalProtoGetterFuncValue, ImplementationVisibility::Public);
+    JSFunction* valueSetterFunction = JSFunction::create(vm, globalObject, 1, "set value"_si, webAssemblyGlobalProtoSetterFuncValue, ImplementationVisibility::Public);
     GetterSetter* valueAccessor = GetterSetter::create(vm, globalObject, valueGetterFunction, valueSetterFunction);
     putDirectNonIndexAccessorWithoutTransition(vm, Identifier::fromString(vm, "value"_s), valueAccessor, static_cast<unsigned>(PropertyAttribute::Accessor));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();

@@ -57,9 +57,9 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_imageFunctions = {
         atspiObject->updateBackingStore();
 
         if (!g_strcmp0(propertyName, "ImageDescription"))
-            return gVariantNewString(atspiObject->imageDescription().utf8());
+            return gVariantNewString(utf8(atspiObject->imageDescription()));
         if (!g_strcmp0(propertyName, "ImageLocale"))
-            return gVariantNewString(atspiObject->locale().utf8());
+            return gVariantNewString(utf8(atspiObject->locale()));
 
         g_set_error(error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED, "Unknown property '%s'", propertyName);
         return nullptr;
@@ -70,7 +70,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_imageFunctions = {
     { nullptr }
 };
 
-String AccessibilityObjectAtspi::imageDescription() const
+RefPtr<StringImpl> AccessibilityObjectAtspi::imageDescription() const
 {
     if (!m_coreObject)
         return { };

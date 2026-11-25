@@ -58,7 +58,7 @@ WebExtensionAPIWebPageRuntime& WebExtensionAPIWebPageNamespace::runtime()
 
     if (!m_runtime) {
         m_runtime = WebExtensionAPIWebPageRuntime::create(contentWorldType());
-        m_runtime->setPropertyPath("runtime"_s, this);
+        m_runtime->setPropertyPath("runtime"_si, this);
     }
 
     return *m_runtime;

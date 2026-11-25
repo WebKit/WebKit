@@ -72,8 +72,8 @@ public:
     static UniqueRef<IDBObjectStore> create(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
     ~IDBObjectStore();
 
-    NODELETE const String& name() const;
-    ExceptionOr<void> setName(const String&);
+    NODELETE const RefPtr<StringImpl>& name() const;
+    ExceptionOr<void> setName(StringImpl*);
     NODELETE const std::optional<IDBKeyPath>& keyPath() const;
     Ref<DOMStringList> indexNames() const;
     NODELETE IDBTransaction& transaction();
@@ -97,9 +97,9 @@ public:
     ExceptionOr<Ref<IDBRequest>> deleteFunction(IDBKeyRange*);
     ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::JSGlobalObject&, JSC::JSValue key);
     ExceptionOr<Ref<IDBRequest>> clear();
-    ExceptionOr<Ref<IDBIndex>> createIndex(const String& name, IDBKeyPath&&, const IndexParameters&);
-    ExceptionOr<Ref<IDBIndex>> index(const String& name);
-    ExceptionOr<void> deleteIndex(const String& name);
+    ExceptionOr<Ref<IDBIndex>> createIndex(StringImpl* name, IDBKeyPath&&, const IndexParameters&);
+    ExceptionOr<Ref<IDBIndex>> index(StringImpl* name);
+    ExceptionOr<void> deleteIndex(StringImpl* name);
     ExceptionOr<Ref<IDBRequest>> count(IDBKeyRange*);
     ExceptionOr<Ref<IDBRequest>> count(JSC::JSGlobalObject&, JSC::JSValue key);
     ExceptionOr<Ref<IDBRequest>> getAll(JSC::JSGlobalObject&, JSC::JSValue queryOrOptions, std::optional<uint32_t> count);
@@ -120,7 +120,7 @@ public:
     void deref() const final;
 
     template<typename Visitor> void visitReferencedIndexesInGCThread(Visitor&) const;
-    void renameReferencedIndex(IDBIndex&, const String& newName);
+    void renameReferencedIndex(IDBIndex&, StringImpl* newName);
 
 private:
     IDBObjectStore(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
@@ -146,7 +146,7 @@ private:
     bool m_deleted { false };
 
     mutable Lock m_referencedIndexLock;
-    HashMap<String, std::unique_ptr<IDBIndex>> m_referencedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<IDBIndex>> m_referencedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
     HashMap<IDBIndexIdentifier, std::unique_ptr<IDBIndex>> m_deletedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
 };
 

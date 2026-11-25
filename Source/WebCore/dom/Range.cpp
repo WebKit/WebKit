@@ -522,11 +522,11 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
     }
     case NodeType::ProcessingInstruction: {
         Ref instruction = uncheckedDowncast<ProcessingInstruction>(*container);
-        endOffset = std::min(endOffset, instruction->data().length());
+        endOffset = std::min(endOffset, length(instruction->data()));
         startOffset = std::min(startOffset, endOffset);
         if (action == Range::Extract || action == Range::Clone) {
             Ref processingInstruction = uncheckedDowncast<ProcessingInstruction>(instruction->cloneNode(CloneSubtree::Yes));
-            processingInstruction->setData(processingInstruction->data().substring(startOffset, endOffset - startOffset));
+            processingInstruction->setData(substring(processingInstruction->data(), startOffset, endOffset - startOffset));
             if (fragment) {
                 result = fragment;
                 auto appendResult = result->appendChild(processingInstruction);
@@ -743,7 +743,7 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
     return { };
 }
 
-String Range::toString() const
+RefPtr<StringImpl> Range::toString() const
 {
     auto range = makeSimpleRange(*this);
     StringBuilder builder;
@@ -757,10 +757,10 @@ String Range::toString() const
 }
 
 // https://w3c.github.io/DOM-Parsing/#widl-Range-createContextualFragment-DocumentFragment-DOMString-fragment
-ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<Ref<TrustedHTML>, String>&& markup)
+ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& markup)
 {
     Ref node = startContainer();
-    auto stringValueHolder = trustedTypeCompliantString(protect(node->document().contextDocument()), WTF::move(markup), "Range createContextualFragment"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(node->document().contextDocument()), WTF::move(markup), "Range createContextualFragment"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -925,7 +925,7 @@ ExceptionOr<void> Range::setStartBefore(Node& node)
 }
 
 #if ENABLE(TREE_DEBUGGING)
-String Range::debugDescription() const
+RefPtr<StringImpl> Range::debugDescription() const
 {
     assertIsOwnerThread();
     return makeString("from offset "_s, m_start.offset(), " of "_s, startContainer().debugDescription(), " to offset "_s, m_end.offset(), " of "_s, endContainer().debugDescription());
@@ -1092,20 +1092,20 @@ void Range::textNodeSplit(Text& oldNode)
     m_didChangeForHighlight = true;
 }
 
-ExceptionOr<void> Range::expand(const String& unit)
+ExceptionOr<void> Range::expand(StringImpl* unit)
 {
     auto start = VisiblePosition { makeContainerOffsetPosition(protect(startContainer()), startOffset()) };
     auto end = VisiblePosition { makeContainerOffsetPosition(protect(endContainer()), endOffset()) };
-    if (unit == "word"_s) {
+    if (equal(unit, "word"_s)) {
         start = startOfWord(start);
         end = endOfWord(end);
-    } else if (unit == "sentence"_s) {
+    } else if (equal(unit, "sentence"_s)) {
         start = startOfSentence(start);
         end = endOfSentence(end);
-    } else if (unit == "block"_s) {
+    } else if (equal(unit, "block"_s)) {
         start = startOfParagraph(start);
         end = endOfParagraph(end);
-    } else if (unit == "document"_s) {
+    } else if (equal(unit, "document"_s)) {
         start = startOfDocument(start);
         end = endOfDocument(end);
     } else

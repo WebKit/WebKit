@@ -101,19 +101,19 @@ private:
 };
 
 // A different shader every time, so that Metal compiles it rather than finds it in its cache.
-static String uniqueValue()
+static RefPtr<StringImpl> uniqueValue()
 {
     static unsigned counter;
     return makeString(cryptographicallyRandomNumber<uint32_t>(), "u + "_s, ++counter, 'u');
 }
 
-static String computeShader()
+static RefPtr<StringImpl> computeShader()
 {
     return makeString("@group(0) @binding(0) var<storage, read_write> output: u32;\n"
         "@compute @workgroup_size(1) fn main() { output = "_s, uniqueValue(), "; }\n"_s);
 }
 
-static String renderShader()
+static RefPtr<StringImpl> renderShader()
 {
     return makeString("@vertex fn vs() -> @builtin(position) vec4f { return vec4f(0, 0, 0, 1); }\n"
         "@fragment fn fs() -> @location(0) vec4f { return vec4f(f32("_s, uniqueValue(), "), 0, 0, 1); }\n"_s);
@@ -141,7 +141,7 @@ public:
         ASSERT_TRUE(m_adapter);
 
         done = false;
-        m_adapter->requestDevice({ }, [&](std::expected<Ref<WebGPU::Device>, String>&& device) {
+        m_adapter->requestDevice({ }, [&](std::expected<Ref<WebGPU::Device>, RefPtr<StringImpl>>&& device) {
             if (device)
                 m_device = WTF::move(*device);
             done = true;

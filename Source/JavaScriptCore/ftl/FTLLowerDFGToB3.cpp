@@ -664,7 +664,7 @@ private:
 
             unsigned highChildIndex = node->index();
 
-            String graphDump = m_graphDump;
+            RefPtr<StringImpl> graphDump = m_graphDump;
 
             PatchpointValue* patchpoint = m_out.patchpoint(Void);
             patchpoint->effects = Effects::none();
@@ -11930,10 +11930,10 @@ IGNORE_CLANG_WARNINGS_END
         case 2: {
             const ConcatKeyAtomStringCache* cache = nullptr;
             LValue variable = nullptr;
-            if (auto string = m_node->child1()->tryGetString(m_graph); !string.isNull()) {
+            if (auto string = m_node->child1()->tryGetString(m_graph); string) {
                 cache = m_graph.tryAddConcatKeyAtomStringCache(string, emptyString(), ConcatKeyAtomStringCache::Mode::Variable1);
                 variable = strings[1];
-            } else if (auto string = m_node->child2()->tryGetString(m_graph); !string.isNull()) {
+            } else if (auto string = m_node->child2()->tryGetString(m_graph); string) {
                 cache = m_graph.tryAddConcatKeyAtomStringCache(string, emptyString(), ConcatKeyAtomStringCache::Mode::Variable0);
                 variable = strings[0];
             }
@@ -11976,16 +11976,16 @@ IGNORE_CLANG_WARNINGS_END
         case 3: {
             const ConcatKeyAtomStringCache* cache = nullptr;
             LValue variable = nullptr;
-            if (auto s0 = m_node->child1()->tryGetString(m_graph); !s0.isNull()) {
-                if (auto s1 = m_node->child2()->tryGetString(m_graph); !s1.isNull()) {
+            if (auto s0 = m_node->child1()->tryGetString(m_graph); s0) {
+                if (auto s1 = m_node->child2()->tryGetString(m_graph); s1) {
                     cache = m_graph.tryAddConcatKeyAtomStringCache(s0, s1, ConcatKeyAtomStringCache::Mode::Variable2);
                     variable = strings[2];
-                } else if (auto s2 = m_node->child3()->tryGetString(m_graph); !s2.isNull()) {
+                } else if (auto s2 = m_node->child3()->tryGetString(m_graph); s2) {
                     cache = m_graph.tryAddConcatKeyAtomStringCache(s0, s2, ConcatKeyAtomStringCache::Mode::Variable1);
                     variable = strings[1];
                 }
-            } else if (auto s1 = m_node->child2()->tryGetString(m_graph); !s1.isNull()) {
-                if (auto s2 = m_node->child3()->tryGetString(m_graph); !s2.isNull()) {
+            } else if (auto s1 = m_node->child2()->tryGetString(m_graph); s1) {
+                if (auto s2 = m_node->child3()->tryGetString(m_graph); s2) {
                     cache = m_graph.tryAddConcatKeyAtomStringCache(s1, s2, ConcatKeyAtomStringCache::Mode::Variable0);
                     variable = strings[0];
                 }
@@ -12619,9 +12619,9 @@ IGNORE_CLANG_WARNINGS_END
     void compileStringIndexOf()
     {
         std::optional<char16_t> character;
-        String searchString = m_node->child2()->tryGetString(m_graph);
-        if (!!searchString && searchString.length() == 1)
-            character = searchString.codeUnitAt(0);
+        RefPtr<StringImpl> searchString = m_node->child2()->tryGetString(m_graph);
+        if (searchString && length(searchString) == 1)
+            character = codeUnitAt(searchString, 0);
 
         LValue base = lowString(m_node->child1());
         LValue search = lowString(m_node->child2());
@@ -12683,9 +12683,9 @@ IGNORE_CLANG_WARNINGS_END
     void compileStringLastIndexOf()
     {
         std::optional<char16_t> character;
-        String searchString = m_node->child2()->tryGetString(m_graph);
-        if (!!searchString && searchString.length() == 1)
-            character = searchString.codeUnitAt(0);
+        RefPtr<StringImpl> searchString = m_node->child2()->tryGetString(m_graph);
+        if (searchString && length(searchString) == 1)
+            character = codeUnitAt(searchString, 0);
 
         LValue base = lowString(m_node->child1());
         LValue search = lowString(m_node->child2());
@@ -12824,9 +12824,9 @@ IGNORE_CLANG_WARNINGS_END
         bool isStartsWith = m_node->op() == StringStartsWith;
 
         if (!m_node->child3()) {
-            String search = m_node->child2()->tryGetString(m_graph);
-            if (!search.isNull() && search.length() >= 1 && search.length() <= maxConstantSearchLength && search.is8Bit()) {
-                compileStringStartsOrEndsWithConstant(isStartsWith, search.span8());
+            RefPtr<StringImpl> search = m_node->child2()->tryGetString(m_graph);
+            if (search && length(search) >= 1 && length(search) <= maxConstantSearchLength && is8Bit(search)) {
+                compileStringStartsOrEndsWithConstant(isStartsWith, span8(search));
                 return;
             }
         }
@@ -20714,13 +20714,13 @@ IGNORE_CLANG_WARNINGS_END
 
         if (m_node->child3().useKind() == StringUse) {
             const BoyerMooreHorspoolTable<uint8_t>* tablePointer = nullptr;
-            String searchString = m_node->child2()->tryGetString(m_graph);
+            RefPtr<StringImpl> searchString = m_node->child2()->tryGetString(m_graph);
             if (!!searchString)
                 tablePointer = m_graph.tryAddStringSearchTable8(searchString);
 
-            String replacement = m_node->child3()->tryGetString(m_graph);
+            RefPtr<StringImpl> replacement = m_node->child3()->tryGetString(m_graph);
             if (!!replacement) {
-                if (!replacement.length()) {
+                if (!length(replacement)) {
                     LValue string = lowString(m_node->child1());
                     LValue search = lowString(m_node->child2());
                     if (tablePointer)
@@ -20730,7 +20730,7 @@ IGNORE_CLANG_WARNINGS_END
                     return;
                 }
 
-                if (replacement.find('$') == notFound) {
+                if (find(replacement, '$') == notFound) {
                     LValue string = lowString(m_node->child1());
                     LValue search = lowString(m_node->child2());
                     LValue replace = lowString(m_node->child3());
@@ -23268,17 +23268,17 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue stringsEqual(LValue leftJSString, LValue rightJSString, Edge leftJSStringEdge = Edge(), Edge rightJSStringEdge = Edge())
     {
-        String leftConst = leftJSStringEdge ? leftJSStringEdge->tryGetString(m_graph) : String();
-        String rightConst = rightJSStringEdge ? rightJSStringEdge->tryGetString(m_graph) : String();
-        bool leftAtom = !leftConst.isNull() && leftConst.impl()->isAtom();
-        bool rightAtom = !rightConst.isNull() && rightConst.impl()->isAtom();
+        RefPtr<StringImpl> leftConst = leftJSStringEdge ? leftJSStringEdge->tryGetString(m_graph) : nullptr;
+        RefPtr<StringImpl> rightConst = rightJSStringEdge ? rightJSStringEdge->tryGetString(m_graph) : nullptr;
+        bool leftAtom = !!leftConst && leftConst.get()->isAtom();
+        bool rightAtom = !!rightConst && rightConst.get()->isAtom();
 
-        auto isShortConstant = [](const String& string) {
-            return !string.isNull() && string.length() <= maxInlineConstantStringCompareLength;
+        auto isShortConstant = [](StringImpl* string) {
+            return !!string && WTF::length(string) <= maxInlineConstantStringCompareLength;
         };
-        if (isShortConstant(rightConst) && leftConst.isNull())
+        if (isShortConstant(rightConst) && !leftConst)
             return stringEqualsShortConstant(leftJSString, leftJSStringEdge, rightJSString, rightConst);
-        if (isShortConstant(leftConst) && rightConst.isNull())
+        if (isShortConstant(leftConst) && !rightConst)
             return stringEqualsShortConstant(rightJSString, rightJSStringEdge, leftJSString, leftConst);
 
         LBasicBlock notTriviallyUnequalCase = m_out.newBlock();
@@ -23314,10 +23314,10 @@ IGNORE_CLANG_WARNINGS_END
 
         LBasicBlock lastNext = m_out.appendTo(bothReadyCase, notTriviallyUnequalCase);
         LValue leftLength = leftAtom
-            ? m_out.constInt32(leftConst.length())
+            ? m_out.constInt32(WTF::length(leftConst))
             : m_out.load32(left, m_heaps.StringImpl_length);
         LValue rightLength = rightAtom
-            ? m_out.constInt32(rightConst.length())
+            ? m_out.constInt32(WTF::length(rightConst))
             : m_out.load32(right, m_heaps.StringImpl_length);
         m_out.branch(
             m_out.notEqual(leftLength, rightLength),
@@ -23330,10 +23330,10 @@ IGNORE_CLANG_WARNINGS_END
         // Mixed-width pairs bail to the slow path; the runtime helper handles cross-width equality.
         m_out.appendTo(notEmptyCase, widthMatchedCase);
         LValue leftFlags = leftAtom
-            ? m_out.constInt32(leftConst.is8Bit() ? StringImpl::flagIs8Bit() : 0)
+            ? m_out.constInt32(is8Bit(leftConst) ? StringImpl::flagIs8Bit() : 0)
             : m_out.load32(left, m_heaps.StringImpl_hashAndFlags);
         LValue rightFlags = rightAtom
-            ? m_out.constInt32(rightConst.is8Bit() ? StringImpl::flagIs8Bit() : 0)
+            ? m_out.constInt32(is8Bit(rightConst) ? StringImpl::flagIs8Bit() : 0)
             : m_out.load32(right, m_heaps.StringImpl_hashAndFlags);
         LValue leftIs8Bit = m_out.bitAnd(leftFlags, m_out.constInt32(StringImpl::flagIs8Bit()));
         m_out.branch(m_out.testNonZero32(m_out.bitXor(leftFlags, rightFlags), m_out.constInt32(StringImpl::flagIs8Bit())), rarely(slowCase), usually(widthMatchedCase));
@@ -23351,10 +23351,10 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(byteLengthReady, byteLoop);
         LValue byteLength = m_out.phi(Int32, byteLengthIf8Bit, byteLengthIf16Bit);
 
-        auto materializeAtomDataPtr = [&](const String& s) {
-            const void* data = s.is8Bit()
-                ? static_cast<const void*>(s.span8().data())
-                : static_cast<const void*>(s.span16().data());
+        auto materializeAtomDataPtr = [&](StringImpl* s) {
+            const void* data = is8Bit(s)
+                ? static_cast<const void*>(span8(s).data())
+                : static_cast<const void*>(span16(s).data());
             return m_out.constIntPtr(data);
         };
         LValue leftData = leftAtom
@@ -23483,12 +23483,12 @@ IGNORE_CLANG_WARNINGS_END
 
     // Substring ropes are decoded inline rather than calling out, so that a chain like
     // `id === "while" || id === "break"` on a sliced identifier stays free of calls.
-    LValue stringEqualsShortConstant(LValue jsString, Edge edge, LValue constantJSString, const String& constant)
+    LValue stringEqualsShortConstant(LValue jsString, Edge edge, LValue constantJSString, StringImpl* constant)
     {
-        unsigned length = constant.length();
+        unsigned length = WTF::length(constant);
         ASSERT(length <= maxInlineConstantStringCompareLength);
         // A constant outside Latin-1 can only equal 16-bit data, so the 16-bit path is not rare for it.
-        bool fitsIn8Bit = constant.containsOnlyLatin1();
+        bool fitsIn8Bit = containsOnlyLatin1(constant);
         auto to16BitCase = fitsIn8Bit ? rarely : unsure;
         auto to8BitCase = fitsIn8Bit ? usually : unsure;
 
@@ -23596,7 +23596,7 @@ IGNORE_CLANG_WARNINGS_END
         std::array<Latin1Character, maxInlineConstantStringCompareLength> characters8 { };
         std::array<char16_t, maxInlineConstantStringCompareLength> characters16 { };
         for (unsigned i = 0; i < length; ++i) {
-            characters16[i] = constant[i];
+            characters16[i] = codeUnitAt(constant, i);
             characters8[i] = static_cast<Latin1Character>(characters16[i]);
         }
 
@@ -26858,8 +26858,8 @@ IGNORE_CLANG_WARNINGS_END
             if (value.isCell() && value.asCell()->type() == StringType && !asString(value)->isRope())
                 return false;
         }
-        String value = edge->tryGetString(m_graph);
-        if (!value.isNull()) {
+        RefPtr<StringImpl> value = edge->tryGetString(m_graph);
+        if (value) {
             // If this value is LazyValue, it will be converted to JSString, and the result must be non-rope string.
             return false;
         }
@@ -26875,9 +26875,9 @@ IGNORE_CLANG_WARNINGS_END
 
     std::optional<unsigned> tryGetConstantStringLength(Edge edge)
     {
-        String string = edge->tryGetString(m_graph);
+        RefPtr<StringImpl> string = edge->tryGetString(m_graph);
         if (!!string)
-            return string.length();
+            return length(string);
         if (JSString* jsString = edge->dynamicCastConstant<JSString*>())
             return jsString->length();
         return std::nullopt;
@@ -28580,7 +28580,7 @@ IGNORE_CLANG_WARNINGS_END
     // These are used for validating AI state.
     HashMap<Node*, NodeSet> m_liveInToNode;
     HashMap<Node*, AbstractValue> m_aiCheckedNodes;
-    String m_graphDump;
+    RefPtr<StringImpl> m_graphDump;
 
     LType m_operationResultTuples[LType::numberOfPrimitiveTypes];
 };

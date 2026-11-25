@@ -40,7 +40,7 @@ struct PublicKeyCredentialRequestOptions {
 #if ENABLE(WEB_AUTHN)
     BufferSource challenge;
     std::optional<unsigned> timeout;
-    mutable String rpId;
+    mutable RefPtr<StringImpl> rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;

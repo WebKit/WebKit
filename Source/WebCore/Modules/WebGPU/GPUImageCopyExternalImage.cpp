@@ -35,8 +35,8 @@ Ref<JSON::Object> GPUImageCopyExternalImage::toJSON() const
     Ref json = JSON::Object::create();
     // `SourceType` is not JSON serializable.
     if (origin)
-        json->setValue("origin"_s, WebCore::toJSON(*origin));
-    json->setBoolean("flipY"_s, flipY);
+        json->setValue("origin"_si, WebCore::toJSON(*origin));
+    json->setBoolean("flipY"_si, flipY);
     return json;
 }
 

@@ -46,12 +46,12 @@
     RetainPtr updatedMIMEType = MIMEType;
     if ([MIMEType isEqualToString:@"application/octet-stream"]) {
         // FIXME: This is a workaround for <rdar://problem/36074429>, and can be removed once that is fixed.
-        auto mimeTypeFromURL = WebCore::MIMETypeRegistry::mimeTypeForExtension(String(URL.pathExtension));
-        if (!mimeTypeFromURL.isEmpty())
-            updatedMIMEType = mimeTypeFromURL.createNSString();
+        auto mimeTypeFromURL = WebCore::MIMETypeRegistry::mimeTypeForExtension(StringImpl::create(URL.pathExtension).get());
+        if (!isEmpty(mimeTypeFromURL))
+            updatedMIMEType = createNSString(mimeTypeFromURL);
     }
 
-    resource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(checked_objc_cast<NSData>(adoptNS([data copy]).get())), URL, updatedMIMEType.get(), textEncodingName, frameName, { });
+    resource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(checked_objc_cast<NSData>(adoptNS([data copy]).get())), URL, StringImpl::create(updatedMIMEType.get()).get(), StringImpl::create(textEncodingName).get(), StringImpl::create(frameName).get(), { });
     if (!resource) {
         [self release];
         return nil;
@@ -62,7 +62,7 @@
 
 - (NSString *)MIMEType
 {
-    return resource->mimeType().createNSString().autorelease();
+    return createNSString(resource->mimeType()).autorelease();
 }
 
 - (NSURL *)URL

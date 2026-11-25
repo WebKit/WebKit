@@ -161,7 +161,7 @@ void XRProjectionLayer::destroy()
         subImage->releaseTextures();
 }
 
-void XRProjectionLayer::setLabel(String&&)
+void XRProjectionLayer::setLabel(RefPtr<StringImpl>&&)
 {
 }
 

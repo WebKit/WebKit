@@ -67,13 +67,13 @@ NODELETE VirtualKey normalizedVirtualKey(VirtualKey);
 
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 // A CharKey must only ever represent a single unicode codepoint or a single grapheme cluster.
-using CharKey = String;
-using CharKeySet = ListHashSet<String>;
+using CharKey = RefPtr<StringImpl>;
+using CharKeySet = ListHashSet<RefPtr<StringImpl>>;
 #else
 using CharKey = char32_t;
 using CharKeySet = ListHashSet<uint32_t>;
 
-std::optional<CharKey> pressedCharKey(const String&);
+std::optional<CharKey> pressedCharKey(StringImpl*);
 #endif
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
@@ -103,7 +103,7 @@ struct SimulatedInputSourceState {
     std::optional<MouseButton> pressedMouseButton;
     std::optional<MouseInteraction> mouseInteraction;
     std::optional<MouseMoveOrigin> origin;
-    std::optional<String> nodeHandle;
+    std::optional<RefPtr<StringImpl>> nodeHandle;
     std::optional<WebCore::IntPoint> location;
     std::optional<WebCore::IntSize> scrollDelta;
     std::optional<Seconds> duration;
@@ -141,8 +141,8 @@ public:
     explicit SimulatedInputKeyFrame(Vector<StateEntry>&&, IsResetKeyFrame = IsResetKeyFrame::No);
     Seconds maximumDuration() const;
 
-    static SimulatedInputKeyFrame keyFrameFromStateOfInputSources(const HashMap<String, Ref<SimulatedInputSource>>&);
-    static SimulatedInputKeyFrame keyFrameToResetInputSources(const HashMap<String, Ref<SimulatedInputSource>>&);
+    static SimulatedInputKeyFrame keyFrameFromStateOfInputSources(const HashMap<RefPtr<StringImpl>, Ref<SimulatedInputSource>>&);
+    static SimulatedInputKeyFrame keyFrameToResetInputSources(const HashMap<RefPtr<StringImpl>, Ref<SimulatedInputSource>>&);
 
     Vector<StateEntry> states;
     IsResetKeyFrame isResetKeyFrame { IsResetKeyFrame::No };
@@ -168,7 +168,7 @@ public:
     public:
         virtual ~Client() { }
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-        virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, const String& pointerType, AutomationCompletionHandler&&) = 0;
+        virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, StringImpl* pointerType, AutomationCompletionHandler&&) = 0;
         virtual void clearDoubleClicks() = 0;
 #endif
 #if ENABLE(WEBDRIVER_TOUCH_INTERACTIONS)
@@ -180,7 +180,7 @@ public:
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         virtual void simulateWheelInteraction(WebPageProxy&, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta, AutomationCompletionHandler&&) = 0;
 #endif
-        virtual void viewportInViewCenterPointOfElement(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const String& nodeHandle, NodeHandleKind, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) = 0;
+        virtual void viewportInViewCenterPointOfElement(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, StringImpl* nodeHandle, NodeHandleKind, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) = 0;
     };
 
     static Ref<SimulatedInputDispatcher> create(WebPageProxy& page, SimulatedInputDispatcher::Client& client)
@@ -190,7 +190,7 @@ public:
 
     ~SimulatedInputDispatcher();
 
-    void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions, AutomationCompletionHandler&&);
+    void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<RefPtr<StringImpl>, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions, AutomationCompletionHandler&&);
     void cancel(AutomationCommandError);
 
     NODELETE bool isActive() const;
@@ -214,7 +214,7 @@ private:
     void failKeyFrameTransition(AutomationCommandError);
 
     WebCore::IntPoint currentLocationOfSource(const SimulatedInputSourceState&) const;
-    void resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin, std::optional<String> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&);
+    void resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin, std::optional<RefPtr<StringImpl>> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&);
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     struct PointerMoveInterpolation {
@@ -222,7 +222,7 @@ private:
         WebCore::IntPoint start;
         WebCore::IntPoint end;
         MouseButton button;
-        String pointerType;
+        RefPtr<StringImpl> pointerType;
         MonotonicTime startTime;
         Seconds duration;
         Seconds stepInterval;
@@ -231,18 +231,18 @@ private:
         WebCore::IntPoint lastDeliveredLocation;
     };
 
-    void startPointerMoveInterpolation(SimulatedInputSource&, const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton, const String& pointerType, Seconds duration);
+    void startPointerMoveInterpolation(SimulatedInputSource&, const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton, StringImpl* pointerType, Seconds duration);
     void pointerMoveInterpolationTimerFired();
 
     struct PendingMouseInteraction {
         MouseInteraction interaction;
         MouseButton button;
         WebCore::IntPoint location;
-        String pointerType;
+        RefPtr<StringImpl> pointerType;
         AutomationCompletionHandler completionHandler;
     };
 
-    void enqueueMouseInteraction(MouseInteraction, MouseButton, const WebCore::IntPoint&, const String& pointerType, AutomationCompletionHandler&&);
+    void enqueueMouseInteraction(MouseInteraction, MouseButton, const WebCore::IntPoint&, StringImpl* pointerType, AutomationCompletionHandler&&);
     void dispatchNextMouseInteraction();
 #endif
 

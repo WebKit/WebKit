@@ -43,9 +43,9 @@ ExceptionOr<Ref<DOMAsyncIterator>> DOMAsyncIterator::create(JSDOMGlobalObject& g
 
     auto* iteratorObject = iteratorRecord.iterator.getObject();
     if (!iteratorObject)
-        return Exception { ExceptionCode::TypeError, "iterator should be an object"_s };
+        return Exception { ExceptionCode::TypeError, "iterator should be an object"_si };
     if (!iteratorRecord.nextMethod.isCell())
-        return Exception { ExceptionCode::TypeError, "iterator next should be callable"_s };
+        return Exception { ExceptionCode::TypeError, "iterator next should be callable"_si };
 
     return adoptRef(*new DOMAsyncIterator(globalObject, *iteratorObject, *iteratorRecord.nextMethod.asCell()));
 }
@@ -96,7 +96,7 @@ void DOMAsyncIterator::callReturn(JSC::JSValue reason, Callback&& callback)
 
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::CallData callData;
-    auto returnMethod = m_iterator->object()->getMethod(globalObject, callData, vm->propertyNames->returnKeyword, "return property should be callable"_s);
+    auto returnMethod = m_iterator->object()->getMethod(globalObject, callData, vm->propertyNames->returnKeyword, "return property should be callable"_si);
     if (auto* exception = scope.exception()) {
         scope.clearException();
         callback(globalObject, false, exception->value());

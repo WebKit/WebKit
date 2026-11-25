@@ -130,15 +130,15 @@ void PipeWireCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void(
 
 CaptureSourceOrError PipeWireCaptureDeviceManager::createCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
 {
-    GST_DEBUG("Creating capture source for device %s", device.persistentId().ascii().data());
+    GST_DEBUG("Creating capture source for device %s", ascii(device.persistentId()).data());
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
-        return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTF::move(hashSalts), constraints);
+        return GStreamerVideoCaptureSource::create(RefPtr<StringImpl> { device.persistentId() }, WTF::move(hashSalts), constraints);
 
     // We don't support audio capture yet.
     if (!m_deviceTypes.contains(CaptureDevice::DeviceType::Camera))
         return CaptureSourceOrError({ { }, MediaAccessDenialReason::PermissionDenied });
 
-    return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTF::move(hashSalts), constraints);
+    return GStreamerVideoCaptureSource::create(RefPtr<StringImpl> { device.persistentId() }, WTF::move(hashSalts), constraints);
 }
 
 #undef GST_CAT_DEFAULT

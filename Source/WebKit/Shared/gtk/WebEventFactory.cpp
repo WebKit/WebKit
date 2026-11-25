@@ -310,7 +310,7 @@ WebMouseEventInit WebEventFactory::createWebMouseEvent(const DoublePoint& positi
     };
 }
 
-WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
+WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, StringImpl* text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<RefPtr<StringImpl>>&& commands)
 {
     guint keyval;
     gdk_event_get_keyval(event, &keyval);
@@ -321,7 +321,7 @@ WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(const GdkEvent* eve
     return {
         { type == GDK_KEY_RELEASE ? WebEventType::KeyUp : WebEventType::KeyDown, modifiersForEvent(event), monotonicTimeForEvent(event) },
         {
-            .text = text.isNull() ? WebKeyboardEvent::singleCharacterStringForGdkKeyval(keyval) : text,
+            .text = !text ? WebKeyboardEvent::singleCharacterStringForGdkKeyval(keyval) : RefPtr<StringImpl> { text },
             .key = WebKeyboardEvent::keyValueStringForGdkKeyval(keyval),
             .code = WebKeyboardEvent::keyCodeStringForGdkKeycode(keycode),
             .keyIdentifier = WebKeyboardEvent::keyIdentifierForGdkKeyval(keyval),

@@ -71,7 +71,7 @@ public:
 template <WorkQueueItem::Type type>
 class ScriptItem : public WorkQueueItem {
 public:
-    explicit ScriptItem(const String& script)
+    explicit ScriptItem(StringImpl* script)
         : m_script(toWK(script))
     {
     }
@@ -121,11 +121,11 @@ bool WorkQueueManager::processWorkQueue()
     return !m_processing;
 }
 
-void WorkQueueManager::queueLoad(const String& relativeURL, const String& target, bool shouldOpenExternalURLs)
+void WorkQueueManager::queueLoad(StringImpl* relativeURL, StringImpl* target, bool shouldOpenExternalURLs)
 {
     class LoadItem : public WorkQueueItem {
     public:
-        LoadItem(WKRetainPtr<WKURLRef>&& url, const String& target, bool shouldOpenExternalURLs)
+        LoadItem(WKRetainPtr<WKURLRef>&& url, StringImpl* target, bool shouldOpenExternalURLs)
             : m_url(WTF::move(url))
             , m_target(target)
             , m_shouldOpenExternalURLs(shouldOpenExternalURLs)
@@ -134,7 +134,7 @@ void WorkQueueManager::queueLoad(const String& relativeURL, const String& target
 
         WorkQueueItem::Type invoke() const
         {
-            if (!m_target.isEmpty()) {
+            if (!isEmpty(m_target)) {
                 // FIXME: Use target. Some layout tests cannot pass as they rely on this functionality.
                 fprintf(stderr, "queueLoad for a specific target is not implemented.\n");
                 return WorkQueueItem::NonLoading;
@@ -144,7 +144,7 @@ void WorkQueueManager::queueLoad(const String& relativeURL, const String& target
         }
 
         WKRetainPtr<WKURLRef> m_url;
-        String m_target;
+        RefPtr<StringImpl> m_target;
         bool m_shouldOpenExternalURLs;
     };
 
@@ -153,11 +153,11 @@ void WorkQueueManager::queueLoad(const String& relativeURL, const String& target
     enqueue(new LoadItem(WTF::move(url), target, shouldOpenExternalURLs));
 }
 
-void WorkQueueManager::queueLoadHTMLString(const String& content, const String& baseURL, const String& unreachableURL)
+void WorkQueueManager::queueLoadHTMLString(StringImpl* content, StringImpl* baseURL, StringImpl* unreachableURL)
 {
     class LoadHTMLStringItem : public WorkQueueItem {
     public:
-        LoadHTMLStringItem(const String& content, const String& baseURL, const String& unreachableURL)
+        LoadHTMLStringItem(StringImpl* content, StringImpl* baseURL, StringImpl* unreachableURL)
             : m_content(toWK(content))
             , m_baseURL(toWKURL(baseURL))
             , m_unreachableURL(toWKURL(unreachableURL))
@@ -205,12 +205,12 @@ void WorkQueueManager::queueReload()
     enqueue(new ReloadItem());
 }
 
-void WorkQueueManager::queueLoadingScript(const String& script)
+void WorkQueueManager::queueLoadingScript(StringImpl* script)
 {
     enqueue(new ScriptItem<WorkQueueItem::Loading>(script));
 }
 
-void WorkQueueManager::queueNonLoadingScript(const String& script)
+void WorkQueueManager::queueNonLoadingScript(StringImpl* script)
 {
     enqueue(new ScriptItem<WorkQueueItem::NonLoading>(script));
 }

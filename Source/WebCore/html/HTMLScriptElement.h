@@ -40,25 +40,25 @@ class HTMLScriptElement final : public HTMLElement, public ScriptElement {
 public:
     static Ref<HTMLScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted = false);
 
-    String text() const { return scriptContent(); }
-    WEBCORE_EXPORT void setText(String&&);
-    ExceptionOr<void> setText(Variant<Ref<TrustedScript>, String>&&);
+    RefPtr<StringImpl> text() const { return scriptContent(); }
+    WEBCORE_EXPORT void setText(RefPtr<StringImpl>&&);
+    ExceptionOr<void> setText(Variant<Ref<TrustedScript>, RefPtr<StringImpl>>&&);
 
     using Node::setTextContent;
-    ExceptionOr<void> setTextContent(std::optional<Variant<Ref<TrustedScript>, String>>&&);
+    ExceptionOr<void> setTextContent(std::optional<Variant<Ref<TrustedScript>, RefPtr<StringImpl>>>&&);
 
     using HTMLElement::setInnerText;
-    ExceptionOr<void> setInnerText(Variant<Ref<TrustedScript>, String>&&);
+    ExceptionOr<void> setInnerText(Variant<Ref<TrustedScript>, RefPtr<StringImpl>>&&);
 
-    String src() const;
-    ExceptionOr<void> setSrc(Variant<Ref<TrustedScriptURL>, String>&&);
+    RefPtr<StringImpl> src() const;
+    ExceptionOr<void> setSrc(Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>&&);
 
     WEBCORE_EXPORT void setAsync(bool);
     NODELETE WEBCORE_EXPORT bool async() const;
 
-    WEBCORE_EXPORT String crossOrigin() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> crossOrigin() const;
 
-    String referrerPolicyForBindings() const;
+    RefPtr<StringImpl> referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
 
     // ActiveDOMObject
@@ -67,7 +67,7 @@ public:
 
     static bool supports(StringView type) { return type == "classic"_s || type == "module"_s || type == "importmap"_s || type == "speculationrules"_s; }
 
-    String fetchPriorityForBindings() const;
+    RefPtr<StringImpl> fetchPriorityForBindings() const;
     RequestPriority fetchPriority() const final;
 
     WEBCORE_EXPORT DOMTokenList& blocking();
@@ -75,7 +75,7 @@ public:
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
     void childrenChanged(const ChildChange&) final;
@@ -87,16 +87,16 @@ private:
     void unblockRendering() final;
     bool isImplicitlyPotentiallyRenderBlocking() const;
 
-    ExceptionOr<void> setTextContent(ExceptionOr<String>);
+    ExceptionOr<void> setTextContent(ExceptionOr<RefPtr<StringImpl>>);
 
     NODELETE bool isURLAttribute(const Attribute&) const final;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
 
-    String sourceAttributeValue() const final;
-    AtomString charsetAttributeValue() const final;
-    String typeAttributeValue() const final;
-    String languageAttributeValue() const final;
+    RefPtr<StringImpl> sourceAttributeValue() const final;
+    RefPtr<AtomStringImpl> charsetAttributeValue() const final;
+    RefPtr<StringImpl> typeAttributeValue() const final;
+    RefPtr<StringImpl> languageAttributeValue() const final;
     bool hasAsyncAttribute() const final;
     bool hasDeferAttribute() const final;
     bool hasNoModuleAttribute() const final;

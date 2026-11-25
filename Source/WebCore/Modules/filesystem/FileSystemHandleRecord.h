@@ -34,11 +34,11 @@ namespace WebCore {
 struct FileSystemHandleRecord {
     FileSystemHandleGlobalIdentifier identifier;
     FileSystemHandleKind kind;
-    String path;
-    String name;
+    RefPtr<StringImpl> path;
+    RefPtr<StringImpl> name;
 
-    FileSystemHandleRecord isolatedCopy() const & { return { identifier, kind, path.isolatedCopy(), name.isolatedCopy() }; }
-    FileSystemHandleRecord isolatedCopy() && { return { identifier, kind, WTF::move(path).isolatedCopy(), WTF::move(name).isolatedCopy() }; }
+    FileSystemHandleRecord isolatedCopy() const & { return { identifier, kind, WTF::isolatedCopy(path), WTF::isolatedCopy(name) }; }
+    FileSystemHandleRecord isolatedCopy() && { return { identifier, kind, WTF::isolatedCopy(WTF::move(path)), WTF::isolatedCopy(WTF::move(name)) }; }
 };
 
 } // namespace WebCore

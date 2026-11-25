@@ -46,7 +46,7 @@ Ref<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLBaseElement(tagName, document));
 }
 
-void HTMLBaseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLBaseElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == hrefAttr || name == targetAttr) {
         if (isConnected())
@@ -76,16 +76,16 @@ bool HTMLBaseElement::isURLAttribute(const Attribute& attribute) const
     return hrefAttr->hasLocalName(attribute.name().localName()) || HTMLElement::isURLAttribute(attribute);
 }
 
-AtomString HTMLBaseElement::target() const
+RefPtr<AtomStringImpl> HTMLBaseElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }
 
 // https://html.spec.whatwg.org/#dom-base-href
-String HTMLBaseElement::href() const
+RefPtr<StringImpl> HTMLBaseElement::href() const
 {
-    AtomString url = attributeWithoutSynchronization(hrefAttr);
-    if (url.isNull())
+    RefPtr<AtomStringImpl> url = attributeWithoutSynchronization(hrefAttr);
+    if (!url)
         url = emptyAtom();
 
     Ref document = this->document();

@@ -46,7 +46,7 @@ bool addRow(GridNamedAreaMap& gridAreaMap, const GridNamedAreaMapRow& row)
         auto& gridAreaName = row[currentColumn];
 
         // Unnamed areas are always valid (we consider them to be 1x1).
-        if (gridAreaName == "."_s)
+        if (equal(gridAreaName, "."_s))
             continue;
 
         auto lookAheadColumn = currentColumn + 1;
@@ -88,7 +88,7 @@ bool addRow(GridNamedAreaMap& gridAreaMap, const GridNamedAreaMapRow& row)
 
 static void serializeGridNamedAreaMapPosition(StringBuilder& builder, const GridNamedAreaMap::Map& map, size_t row, size_t column)
 {
-    HashSet<WTF::String> candidates;
+    HashSet<RefPtr<StringImpl>> candidates;
     for (auto& [name, area] : map) {
         if (row >= area.rows.startLine() && row < area.rows.endLine())
             candidates.add(name);

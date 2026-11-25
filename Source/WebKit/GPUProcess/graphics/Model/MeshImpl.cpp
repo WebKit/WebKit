@@ -48,7 +48,7 @@ MeshImpl::MeshImpl(Ref<WebMesh>&& mesh, Vector<UniqueRef<WebCore::IOSurface>>&& 
 
 MeshImpl::~MeshImpl() = default;
 
-void MeshImpl::setLabelInternal(const String&)
+void MeshImpl::setLabelInternal(StringImpl*)
 {
     // FIXME: Implement this.
 }

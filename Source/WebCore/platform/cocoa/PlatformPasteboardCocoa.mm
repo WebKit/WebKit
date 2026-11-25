@@ -56,57 +56,57 @@ std::optional<Vector<PasteboardItemInfo>> PlatformPasteboard::allPasteboardItemI
     return itemInfo;
 }
 
-bool PlatformPasteboard::containsStringSafeForDOMToReadForType(const String& type) const
+bool PlatformPasteboard::containsStringSafeForDOMToReadForType(StringImpl* type) const
 {
-    return !stringForType(type).isEmpty();
+    return !isEmpty(stringForType(type));
 }
 
-String PlatformPasteboard::urlStringSuitableForLoading(String& title)
+RefPtr<StringImpl> PlatformPasteboard::urlStringSuitableForLoading(RefPtr<StringImpl>& title)
 {
 #if PLATFORM(MAC)
-    String URLTitleString = stringForType(String(WebURLNamePboardType));
-    if (!URLTitleString.isEmpty())
+    RefPtr<StringImpl> URLTitleString = stringForType(StringImpl::create(WebURLNamePboardType).ptr());
+    if (!isEmpty(URLTitleString))
         title = URLTitleString;
 #endif
 
-    Vector<String> types;
+    Vector<RefPtr<StringImpl>> types;
     getTypes(types);
 
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(title);
-    String urlPasteboardType = UTTypeURL.identifier;
-    String stringPasteboardType = UTTypeText.identifier;
+    RefPtr<StringImpl> urlPasteboardType = StringImpl::create(UTTypeURL.identifier);
+    RefPtr<StringImpl> stringPasteboardType = StringImpl::create(UTTypeText.identifier);
 #else
-    String urlPasteboardType = legacyURLPasteboardTypeSingleton();
-    String stringPasteboardType = legacyStringPasteboardTypeSingleton();
+    RefPtr<StringImpl> urlPasteboardType = StringImpl::create(legacyURLPasteboardTypeSingleton());
+    RefPtr<StringImpl> stringPasteboardType = StringImpl::create(legacyStringPasteboardTypeSingleton());
 #endif
 
-    if (types.contains(urlPasteboardType)) {
-        RetainPtr urlFromPasteboard = [NSURL URLWithString:stringForType(urlPasteboardType).createNSString().get()];
+    if (types.containsIf([&](auto& item) { return equal(item, urlPasteboardType); })) {
+        RetainPtr urlFromPasteboard = [NSURL URLWithString:createNSString(stringForType(urlPasteboardType)).get()];
         // Cannot drop other schemes unless <rdar://problem/10562662> and <rdar://problem/11187315> are fixed.
         if (URL { urlFromPasteboard }.protocolIsInHTTPFamily())
-            return [protect(URLByCanonicalizingURL(urlFromPasteboard)) absoluteString];
+            return StringImpl::create([protect(URLByCanonicalizingURL(urlFromPasteboard)) absoluteString]);
     }
 
-    if (types.contains(stringPasteboardType)) {
-        RetainPtr urlFromPasteboard = [NSURL URLWithString:stringForType(stringPasteboardType).createNSString().get()];
+    if (types.containsIf([&](auto& item) { return equal(item, stringPasteboardType); })) {
+        RetainPtr urlFromPasteboard = [NSURL URLWithString:createNSString(stringForType(stringPasteboardType)).get()];
         // Pasteboard content is not trusted, because JavaScript code can modify it. We can sanitize it for URLs and other typed content, but not for strings.
         // The result of this function is used to initiate navigation, so we shouldn't allow arbitrary file URLs.
         // FIXME: Should we allow only http family schemes, or anything non-local?
         if (URL { urlFromPasteboard }.protocolIsInHTTPFamily())
-            return [protect(URLByCanonicalizingURL(urlFromPasteboard)) absoluteString];
+            return StringImpl::create([protect(URLByCanonicalizingURL(urlFromPasteboard)) absoluteString]);
     }
 
 #if PLATFORM(MAC)
-    if (types.contains(String(legacyFilenamesPasteboardTypeSingleton()))) {
-        Vector<String> files;
-        getPathnamesForType(files, String(legacyFilenamesPasteboardTypeSingleton()));
+    if (types.containsIf([&](auto& item) { return equal(item, StringImpl::create(legacyFilenamesPasteboardTypeSingleton()).get()); })) {
+        Vector<RefPtr<StringImpl>> files;
+        getPathnamesForType(files, StringImpl::create(legacyFilenamesPasteboardTypeSingleton()).get());
         if (files.size() == 1) {
-            RetainPtr firstFile = files[0].createNSString();
+            RetainPtr firstFile = createNSString(files[0]);
             BOOL isDirectory;
             if ([[NSFileManager defaultManager] fileExistsAtPath:firstFile.get() isDirectory:&isDirectory] && isDirectory)
-                return String();
-            return [protect(URLByCanonicalizingURL([NSURL fileURLWithPath:firstFile.get()])) absoluteString];
+                return nullptr;
+            return StringImpl::create([protect(URLByCanonicalizingURL([NSURL fileURLWithPath:firstFile.get()])) absoluteString]);
         }
     }
 #endif

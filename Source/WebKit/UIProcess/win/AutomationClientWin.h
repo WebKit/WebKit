@@ -42,10 +42,10 @@ private:
     bool remoteAutomationAllowed() const override { return true; }
 
     // FIXME: should use valid value
-    String browserName() const override { return "MiniBrowser"_s; }
-    String browserVersion() const override { return "1.0"_s; }
+    RefPtr<StringImpl> browserName() const override { return "MiniBrowser"_s; }
+    RefPtr<StringImpl> browserVersion() const override { return "1.0"_s; }
 
-    void requestAutomationSession(const String&, const Inspector::RemoteInspector::Client::SessionCapabilities&) override;
+    void requestAutomationSession(StringImpl*, const Inspector::RemoteInspector::Client::SessionCapabilities&) override;
     void closeAutomationSession() override;
 
     WeakPtr<WebProcessPool> m_processPool;

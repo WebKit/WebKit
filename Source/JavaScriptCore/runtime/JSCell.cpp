@@ -70,7 +70,7 @@ void JSCell::analyzeHeap(JSCell*, HeapAnalyzer&)
 {
 }
 
-bool JSCell::getString(JSGlobalObject* globalObject, String& stringValue) const
+bool JSCell::getString(JSGlobalObject* globalObject, RefPtr<StringImpl>& stringValue) const
 {
     if (!isString())
         return false;
@@ -78,9 +78,11 @@ bool JSCell::getString(JSGlobalObject* globalObject, String& stringValue) const
     return true;
 }
 
-String JSCell::getString(JSGlobalObject* globalObject) const
+RefPtr<StringImpl> JSCell::getString(JSGlobalObject* globalObject) const
 {
-    return isString() ? static_cast<const JSString*>(this)->value(globalObject) : String();
+    if (!isString())
+        return nullptr;
+    return static_cast<const JSString*>(this)->value(globalObject);
 }
 
 JSObject* JSCell::getObject()
@@ -271,7 +273,7 @@ JSString* JSCell::toStringSlowCase(JSGlobalObject* globalObject) const
         // FIXME: we should rather have two cases here: one-character string vs jsNonTrivialString for everything else.
         auto string = bigInt->toString(globalObject, 10);
         RETURN_IF_EXCEPTION(scope, emptyString);
-        JSString* returnString = JSString::create(vm, string.releaseImpl().releaseNonNull());
+        JSString* returnString = JSString::create(vm, WTF::move(string).releaseNonNull());
         RETURN_IF_EXCEPTION(scope, emptyString);
         return returnString;
     }

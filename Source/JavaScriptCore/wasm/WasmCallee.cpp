@@ -187,7 +187,7 @@ void Callee::dumpSimpleName(PrintStream& out) const
         out.print(m_indexOrName);
 }
 
-String Callee::nameWithHash() const
+RefPtr<StringImpl> Callee::nameWithHash() const
 {
     StringPrintStream out;
     dumpSimpleName(out);

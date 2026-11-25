@@ -100,7 +100,7 @@ inline JSBigInt* JSBigInt::createWithLength(JSGlobalObject* nullOrGlobalObjectFo
     if (length > maxLength) [[unlikely]] {
         if (nullOrGlobalObjectForOOM) {
             auto scope = DECLARE_THROW_SCOPE(vm);
-            throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope, "BigInt generated from this operation is too big"_s);
+            throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope, "BigInt generated from this operation is too big"_si);
         }
         return nullptr;
     }
@@ -393,7 +393,7 @@ JSValue JSBigInt::stringToBigInt(JSGlobalObject* globalObject, StringView s)
     return parseInt(globalObject, s, ErrorParseMode::IgnoreExceptions);
 }
 
-String JSBigInt::toString(JSGlobalObject* globalObject, unsigned radix)
+RefPtr<StringImpl> JSBigInt::toString(JSGlobalObject* globalObject, unsigned radix)
 {
     if (this->isZero())
         return globalObject->vm().smallStrings.singleCharacterStringRep('0');
@@ -404,7 +404,7 @@ String JSBigInt::toString(JSGlobalObject* globalObject, unsigned radix)
     return toStringGeneric(globalObject->vm(), globalObject, this, radix);
 }
 
-String JSBigInt::tryGetString(VM& vm, JSBigInt* bigInt, unsigned radix)
+RefPtr<StringImpl> JSBigInt::tryGetString(VM& vm, JSBigInt* bigInt, unsigned radix)
 {
     if (bigInt->isZero())
         return vm.smallStrings.singleCharacterStringRep('0');
@@ -562,7 +562,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (exponent.sign()) {
-        throwRangeError(globalObject, scope, "Negative exponent is not allowed"_s);
+        throwRangeError(globalObject, scope, "Negative exponent is not allowed"_si);
         return nullptr;
     }
 
@@ -588,7 +588,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
     // results.
     static_assert(maxLengthBits < std::numeric_limits<Digit>::max(), "maxLengthBits needs to be less than digit::max()");
     if (exponent.length() > 1) {
-        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_si);
         return nullptr;
     }
 
@@ -596,7 +596,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
     if (expValue == 1)
         return { base };
     if (expValue >= maxLengthBits) {
-        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_si);
         return nullptr;
     }
 
@@ -2494,7 +2494,7 @@ JSBigInt::ImplResult JSBigInt::multiplyImpl(JSGlobalObject* globalObject, BigInt
     // It is not so wasteful if we just allocate JSBigInt with N + M here.
     // It is possible that we will hit the JSBigInt size limit, so let's validate it after all the computation.
     if (resultLength - 1 > maxLength) [[unlikely]] {
-        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_si);
         return nullptr;
     }
 
@@ -2507,7 +2507,7 @@ JSBigInt::ImplResult JSBigInt::multiplyImpl(JSGlobalObject* globalObject, BigInt
     // We still accept. And if the adjusted result is still larger, we will throw an OOM error.
     auto* cell = tryAllocateCell<JSBigInt>(vm, JSBigInt::allocationSize(resultLength));
     if (!cell) [[unlikely]] {
-        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_si);
         return nullptr;
     }
 
@@ -2521,7 +2521,7 @@ JSBigInt::ImplResult JSBigInt::multiplyImpl(JSGlobalObject* globalObject, BigInt
         result = result.first(result.size() - 1);
 
     if (result.size() > maxLength) [[unlikely]] {
-        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_si);
         return nullptr;
     }
     bigInt->setLength(result.size());
@@ -3271,7 +3271,7 @@ JSBigInt::ImplResult JSBigInt::divideImpl(JSGlobalObject* globalObject, BigIntIm
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (y.isZero()) {
-        throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
+        throwRangeError(globalObject, scope, "0 is an invalid divisor value."_si);
         return nullptr;
     }
 
@@ -4000,7 +4000,7 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (y.isZero()) {
-        throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
+        throwRangeError(globalObject, scope, "0 is an invalid divisor value."_si);
         return nullptr;
     }
 
@@ -5060,7 +5060,7 @@ JSBigInt::ImplResult JSBigInt::leftShiftByAbsolute(JSGlobalObject* globalObject,
 
     auto optionalShift = toShiftAmount(y);
     if (!optionalShift) {
-        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_si);
         return nullptr;
     }
 
@@ -5072,7 +5072,7 @@ JSBigInt::ImplResult JSBigInt::leftShiftByAbsolute(JSGlobalObject* globalObject,
     bool grow = bitsShift && (xSpan[length - 1] >> (digitBits - bitsShift));
     size_t resultLength = length + digitShift + grow;
     if (resultLength > maxLength) {
-        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_si);
         return nullptr;
     }
 
@@ -5241,7 +5241,7 @@ uint64_t JSBigInt::calculateMaximumCharactersRequired(unsigned length, unsigned 
     return maximumCharactersRequired;
 }
 
-String JSBigInt::toStringBasePowerOfTwo(VM& vm, JSGlobalObject* nullOrGlobalObjectForOOM, JSBigInt* x, unsigned radix)
+RefPtr<StringImpl> JSBigInt::toStringBasePowerOfTwo(VM& vm, JSGlobalObject* nullOrGlobalObjectForOOM, JSBigInt* x, unsigned radix)
 {
     ASSERT(hasOneBitSet(radix));
     ASSERT(radix >= 2 && radix <= 32);
@@ -5265,7 +5265,7 @@ String JSBigInt::toStringBasePowerOfTwo(VM& vm, JSGlobalObject* nullOrGlobalObje
             auto scope = DECLARE_THROW_SCOPE(vm);
             throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope);
         }
-        return String();
+        return nullptr;
     }
 
     Vector<Latin1Character> resultString(charsRequired);
@@ -5388,7 +5388,7 @@ size_t JSBigInt::ToStringFormatter::format(size_t depth, std::span<const Digit> 
     return format(depth - 1, quotient, start, scratch);
 }
 
-String JSBigInt::toStringGeneric(VM& vm, JSGlobalObject* nullOrGlobalObjectForOOM, JSBigInt* x, unsigned radix)
+RefPtr<StringImpl> JSBigInt::toStringGeneric(VM& vm, JSGlobalObject* nullOrGlobalObjectForOOM, JSBigInt* x, unsigned radix)
 {
     // FIXME: [JSC] Revisit usage of Vector into JSBigInt::toString
     // https://bugs.webkit.org/show_bug.cgi?id=180671
@@ -5408,7 +5408,7 @@ String JSBigInt::toStringGeneric(VM& vm, JSGlobalObject* nullOrGlobalObjectForOO
             auto scope = DECLARE_THROW_SCOPE(vm);
             throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope);
         }
-        return String();
+        return nullptr;
     }
 
     if (length >= toStringDivideAndConquerThreshold) {
@@ -5537,7 +5537,7 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
         ASSERT(nullOrGlobalObjectForOOM);
         if (errorParseMode == ErrorParseMode::ThrowExceptions) {
             auto scope = DECLARE_THROW_SCOPE(vm);
-            throwVMError(nullOrGlobalObjectForOOM, scope, createSyntaxError(nullOrGlobalObjectForOOM, "Failed to parse String to BigInt"_s));
+            throwVMError(nullOrGlobalObjectForOOM, scope, createSyntaxError(nullOrGlobalObjectForOOM, "Failed to parse String to BigInt"_si));
         }
         return JSValue();
     }
@@ -5606,7 +5606,7 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
                 if (errorParseMode == ErrorParseMode::ThrowExceptions) {
                     auto scope = DECLARE_THROW_SCOPE(vm);
                     ASSERT(nullOrGlobalObjectForOOM);
-                    throwVMError(nullOrGlobalObjectForOOM, scope, createSyntaxError(nullOrGlobalObjectForOOM, "Failed to parse String to BigInt"_s));
+                    throwVMError(nullOrGlobalObjectForOOM, scope, createSyntaxError(nullOrGlobalObjectForOOM, "Failed to parse String to BigInt"_si));
                 }
                 return JSValue();
             }
@@ -5647,7 +5647,7 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
             if (!length) [[unlikely]] {
                 if (nullOrGlobalObjectForOOM) {
                     auto scope = DECLARE_THROW_SCOPE(vm);
-                    throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope, "BigInt generated from this operation is too big"_s);
+                    throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope, "BigInt generated from this operation is too big"_si);
                 }
                 return JSValue();
             }
@@ -6050,7 +6050,7 @@ JSBigInt::ImplResult JSBigInt::asUintNImpl(JSGlobalObject* globalObject, uint64_
     // If bigInt is negative, simulate two's complement representation.
     if (bigInt.sign()) {
         if (n > maxLengthBits) {
-            throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+            throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_si);
             return nullptr;
         }
         RELEASE_AND_RETURN(scope, truncateAndSubFromPowerOfTwo(globalObject, static_cast<unsigned>(n), bigInt, false));

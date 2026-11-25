@@ -57,7 +57,7 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
     return adoptRef(*new SVGFETurbulenceElement(tagName, document));
 }
 
-void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:

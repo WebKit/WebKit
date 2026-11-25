@@ -40,9 +40,9 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     struct Logs {
-        String type;
-        String message;
-        String level;
+        RefPtr<StringImpl> type;
+        RefPtr<StringImpl> message;
+        RefPtr<StringImpl> level;
         RefPtr<RTCPeerConnection> connection;
     };
 

@@ -33,10 +33,10 @@
 namespace WebCore {
 
 struct ApplePayPaymentOrderDetails {
-    String orderTypeIdentifier; // required
-    String orderIdentifier; // required
-    String webServiceURL; // required
-    String authenticationToken; // required
+    RefPtr<StringImpl> orderTypeIdentifier; // required
+    RefPtr<StringImpl> orderIdentifier; // required
+    RefPtr<StringImpl> webServiceURL; // required
+    RefPtr<StringImpl> authenticationToken; // required
 };
 
 } // namespace WebCore

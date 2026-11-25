@@ -298,7 +298,7 @@ static bool isObservedPropertyForTransition(const AnimatableCSSProperty& propert
         [] (CSSPropertyID propertyId) {
             return propertyId == CSSPropertyID::Left || propertyId == CSSPropertyID::Opacity;
         },
-        [] (const AtomString&) {
+        [] (AtomStringImpl*) {
             return false;
         }
     );
@@ -547,7 +547,7 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
     elementDidBecomeHidden(element);
 }
 
-void ContentChangeObserver::didAddMouseMoveRelatedEventListener(const AtomString& eventType, const Node& node)
+void ContentChangeObserver::didAddMouseMoveRelatedEventListener(AtomStringImpl* eventType, const Node& node)
 {
     if (!isObservingContentChanges())
         return;

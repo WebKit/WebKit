@@ -41,7 +41,7 @@ struct SingleAnimationRangeStart;
 
 class Document;
 
-using TimelineRangeValue = Variant<TimelineRangeOffset, Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>, String>;
+using TimelineRangeValue = Variant<TimelineRangeOffset, Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>, RefPtr<StringImpl>>;
 
 std::optional<Style::SingleAnimationRangeStart> validateTimelineRangeStart(TimelineRangeValue&&, const Document&);
 std::optional<Style::SingleAnimationRangeEnd> validateTimelineRangeEnd(TimelineRangeValue&&, const Document&);

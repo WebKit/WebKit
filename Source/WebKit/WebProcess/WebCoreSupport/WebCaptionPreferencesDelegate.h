@@ -38,7 +38,7 @@ public:
     virtual ~WebCaptionPreferencesDelegate() = default;
 
     void setDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode) final;
-    void setPreferredLanguage(const String&) final;
+    void setPreferredLanguage(StringImpl*) final;
 };
 
 } // namespace WebKit

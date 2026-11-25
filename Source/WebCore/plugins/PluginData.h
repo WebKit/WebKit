@@ -33,31 +33,47 @@ namespace WebCore {
 class Page;
 
 struct MimeClassInfo {
-    AtomString type;
-    String desc;
-    Vector<String> extensions;
+    RefPtr<AtomStringImpl> type;
+    RefPtr<StringImpl> desc;
+    Vector<RefPtr<StringImpl>> extensions;
 
-    friend bool operator==(const MimeClassInfo&, const MimeClassInfo&) = default;
+    friend bool operator==(const MimeClassInfo& a, const MimeClassInfo& b)
+    {
+        return a.type == b.type
+            && contentEquals(a.desc, b.desc)
+            && contentEquals(a.extensions, b.extensions);
+    }
 };
 
 struct PluginInfo {
-    String name;
-    String file;
-    String desc;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> file;
+    RefPtr<StringImpl> desc;
     Vector<MimeClassInfo> mimes;
     bool isApplicationPlugin { false };
 
-    String bundleIdentifier;
+    RefPtr<StringImpl> bundleIdentifier;
 #if PLATFORM(MAC)
-    String versionString;
+    RefPtr<StringImpl> versionString;
 #endif
 
-    friend bool operator==(const PluginInfo&, const PluginInfo&) = default;
+    friend bool operator==(const PluginInfo& a, const PluginInfo& b)
+    {
+        return contentEquals(a.name, b.name)
+            && contentEquals(a.file, b.file)
+            && contentEquals(a.desc, b.desc)
+            && a.mimes == b.mimes
+            && a.isApplicationPlugin == b.isApplicationPlugin
+#if PLATFORM(MAC)
+            && contentEquals(a.versionString, b.versionString)
+#endif
+            && contentEquals(a.bundleIdentifier, b.bundleIdentifier);
+    }
 };
 
 struct SupportedPluginIdentifier {
-    String matchingDomain;
-    String pluginIdentifier;
+    RefPtr<StringImpl> matchingDomain;
+    RefPtr<StringImpl> pluginIdentifier;
 };
 
 // FIXME: merge with PluginDatabase in the future
@@ -73,11 +89,11 @@ public:
         AllPlugins,
         OnlyApplicationPlugins
     };
-    NODELETE WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
-    WEBCORE_EXPORT bool supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes) const;
-    WEBCORE_EXPORT bool supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes, const URL&) const;
+    NODELETE WEBCORE_EXPORT bool supportsMimeType(StringImpl* mimeType, const AllowedPluginTypes) const;
+    WEBCORE_EXPORT bool supportsWebVisibleMimeType(StringImpl* mimeType, const AllowedPluginTypes) const;
+    WEBCORE_EXPORT bool supportsWebVisibleMimeTypeForURL(StringImpl* mimeType, const AllowedPluginTypes, const URL&) const;
 
-    String pluginFileForWebVisibleMimeType(const String& mimeType) const;
+    RefPtr<StringImpl> pluginFileForWebVisibleMimeType(StringImpl* mimeType) const;
 
     const std::optional<PluginInfo>& builtInPDFPlugin() const LIFETIME_BOUND { return m_builtInPDFPluginInfo; }
 
@@ -100,10 +116,10 @@ protected:
     std::optional<PluginInfo> m_builtInPDFPluginInfo;
 };
 
-inline bool isSupportedPlugin(const Vector<SupportedPluginIdentifier>& pluginIdentifiers, const URL& pageURL, const String& pluginIdentifier)
+inline bool isSupportedPlugin(const Vector<SupportedPluginIdentifier>& pluginIdentifiers, const URL& pageURL, StringImpl* pluginIdentifier)
 {
     return pluginIdentifiers.findIf([&] (auto&& plugin) {
-        return pageURL.isMatchingDomain(plugin.matchingDomain) && plugin.pluginIdentifier == pluginIdentifier;
+        return pageURL.isMatchingDomain(plugin.matchingDomain) && equal(plugin.pluginIdentifier, pluginIdentifier);
     }) != notFound;
 }
 

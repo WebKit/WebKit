@@ -38,7 +38,7 @@ class WorkletGlobalScopeProxy : public ThreadSafeRefCounted<WorkletGlobalScopePr
 public:
     virtual ~WorkletGlobalScopeProxy() = default;
 
-    virtual bool postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) = 0;
+    virtual bool postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&&, StringImpl* mode) = 0;
     virtual bool isAudioWorkletMessagingProxy() const = 0;
 };
 

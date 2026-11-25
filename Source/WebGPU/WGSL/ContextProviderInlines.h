@@ -37,7 +37,7 @@ ContextProvider<Value>::Context::Context(const Context *const parent)
 }
 
 template<typename Value>
-const Value* ContextProvider<Value>::Context::lookup(const String& name) const
+const Value* ContextProvider<Value>::Context::lookup(StringImpl* name) const
 {
     auto it = m_map.find(name);
     if (it != m_map.end())
@@ -48,7 +48,7 @@ const Value* ContextProvider<Value>::Context::lookup(const String& name) const
 }
 
 template<typename Value>
-const Value* ContextProvider<Value>::Context::add(const String& name, const Value& value)
+const Value* ContextProvider<Value>::Context::add(StringImpl* name, const Value& value)
 {
     auto result = m_map.add(name, value);
     if (!result.isNewEntry) [[unlikely]]
@@ -81,13 +81,13 @@ ContextProvider<Value>::ContextProvider()
 }
 
 template<typename Value>
-auto ContextProvider<Value>::introduceVariable(const String& name, const Value& value) -> const Value*
+auto ContextProvider<Value>::introduceVariable(StringImpl* name, const Value& value) -> const Value*
 {
     return m_context->add(name, value);
 }
 
 template<typename Value>
-auto ContextProvider<Value>::readVariable(const String& name) const -> const Value*
+auto ContextProvider<Value>::readVariable(StringImpl* name) const -> const Value*
 {
     return m_context->lookup(name);
 }

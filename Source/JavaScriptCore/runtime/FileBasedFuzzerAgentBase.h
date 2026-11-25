@@ -40,8 +40,8 @@ class VM;
 struct PredictionTarget {
     ExpressionInfo::Entry info;
     OpcodeID opcodeId;
-    String sourceFilename;
-    String lookupKey;
+    RefPtr<StringImpl> sourceFilename;
+    RefPtr<StringImpl> lookupKey;
 };
 
 class FileBasedFuzzerAgentBase : public FuzzerAgent {
@@ -58,7 +58,7 @@ public:
     SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType original) final;
 
 protected:
-    static String createLookupKey(const String& sourceFilename, OpcodeID, int startLocation, int endLocation);
+    static RefPtr<StringImpl> createLookupKey(StringImpl* sourceFilename, OpcodeID, int startLocation, int endLocation);
     NODELETE static OpcodeID opcodeAliasForLookupKey(const OpcodeID&);
 };
 

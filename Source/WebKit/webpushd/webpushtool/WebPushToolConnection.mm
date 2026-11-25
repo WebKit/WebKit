@@ -49,7 +49,7 @@ namespace WebPushTool {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Connection);
 
-Ref<Connection> Connection::create(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
+Ref<Connection> Connection::create(PreferTestService preferTestService, RefPtr<StringImpl> bundleIdentifier, RefPtr<StringImpl> pushPartition)
 {
     return adoptRef(*new Connection(preferTestService, bundleIdentifier, pushPartition));
 }
@@ -70,7 +70,7 @@ static mach_port_t maybeConnectToService(const char* serviceName)
     return MACH_PORT_NULL;
 }
 
-Connection::Connection(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
+Connection::Connection(PreferTestService preferTestService, RefPtr<StringImpl> bundleIdentifier, RefPtr<StringImpl> pushPartition)
     : m_bundleIdentifier(bundleIdentifier)
     , m_pushPartition(pushPartition)
 {
@@ -111,23 +111,23 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
     sendAuditToken();
 }
 
-void Connection::sendPushMessage(PushMessageForTesting&& message, CompletionHandler<void(String)>&& completionHandler)
+void Connection::sendPushMessage(PushMessageForTesting&& message, CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler)
 {
     printf("Injecting push message\n");
 
     sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(WTF::move(message)), WTF::move(completionHandler));
 }
 
-void Connection::getPushPermissionState(const String& scope, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
+void Connection::getPushPermissionState(StringImpl* scope, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
 {
     printf("Getting push permission state\n");
 
     sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(WebCore::SecurityOriginData::fromURL(URL { scope })), WTF::move(completionHandler));
 }
 
-void Connection::requestPushPermission(const String& scope, CompletionHandler<void(bool)>&& completionHandler)
+void Connection::requestPushPermission(StringImpl* scope, CompletionHandler<void(bool)>&& completionHandler)
 {
-    SAFE_PRINTF("Request push permission state for %s\n", scope.utf8());
+    SAFE_PRINTF("Request push permission state for %s\n", utf8(scope));
 
     sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission(WebCore::SecurityOriginData::fromURL(URL { scope })), WTF::move(completionHandler));
 }

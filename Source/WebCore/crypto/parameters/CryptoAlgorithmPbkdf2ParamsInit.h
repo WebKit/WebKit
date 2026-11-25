@@ -35,7 +35,7 @@ namespace WebCore {
 struct CryptoAlgorithmPbkdf2ParamsInit : CryptoAlgorithmParametersInit {
     BufferSource salt;
     unsigned long iterations;
-    Variant<JSC::Strong<JSC::JSObject>, String> hash;
+    Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>> hash;
 };
 
 } // namespace WebCore

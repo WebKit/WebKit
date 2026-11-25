@@ -38,18 +38,18 @@ class CSSValue;
 
 template<typename> class ExceptionOr;
 
-using CSSOMKeywordish = Variant<String, Ref<CSSOMKeywordValue>>;
+using CSSOMKeywordish = Variant<RefPtr<StringImpl>, Ref<CSSOMKeywordValue>>;
 
 class CSSOMKeywordValue final : public CSSStyleValue {
     WTF_MAKE_TZONE_ALLOCATED(CSSOMKeywordValue);
 public:
-    static ExceptionOr<Ref<CSSOMKeywordValue>> create(const String&);
+    static ExceptionOr<Ref<CSSOMKeywordValue>> create(StringImpl*);
 
     static ExceptionOr<Ref<CSSOMKeywordValue>> reifyValue(Document&, const CSSValue&);
     static Ref<CSSOMKeywordValue> reifyValue(Document&, const CSSKeywordValue&);
 
-    const String& value() const LIFETIME_BOUND { return m_value; }
-    ExceptionOr<void> setValue(const String&);
+    const RefPtr<StringImpl>& value() const LIFETIME_BOUND { return m_value; }
+    ExceptionOr<void> setValue(StringImpl*);
 
     CSSStyleValueType styleValueType() const final { return CSSStyleValueType::CSSOMKeywordValue; }
 
@@ -59,12 +59,12 @@ public:
     RefPtr<CSSValue> toCSSValue() const final;
 
 private:
-    explicit CSSOMKeywordValue(const String& value)
+    explicit CSSOMKeywordValue(StringImpl* value)
         : m_value(value)
     {
     }
 
-    String m_value;
+    RefPtr<StringImpl> m_value;
 };
 
 } // namespace WebCore

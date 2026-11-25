@@ -195,7 +195,7 @@ Ref<LaunchGrant> LaunchGrant::create(ExtensionProcess& process)
 
 LaunchGrant::LaunchGrant(ExtensionProcess& process)
 {
-    AssertionCapability capability(emptyString(), "com.apple.webkit"_s, "Foreground"_s);
+    AssertionCapability capability(emptyString(), "com.apple.webkit"_si, "Foreground"_si);
     auto grant = process.grantCapability(capability.platformCapability());
     m_grant.setPlatformGrant(WTF::move(grant));
 }
@@ -347,12 +347,12 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
         LOG_ERROR("mach_port_request_notification failed: (%x) %s", mc, mach_error_string(mc));
     }
 
-    String clientIdentifier;
+    RefPtr<StringImpl> clientIdentifier;
 #if PLATFORM(MAC)
     clientIdentifier = codeSigningIdentifierForCurrentProcess();
 #endif
-    if (clientIdentifier.isNull())
-        clientIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    if (!clientIdentifier)
+        clientIdentifier = StringImpl::create([[NSBundle mainBundle] bundleIdentifier]);
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     OSObjectPtr bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
@@ -400,10 +400,10 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
 
-    auto clientIdentifierUTF8 = clientIdentifier.utf8();
-    xpcDictionarySetString(bootstrapMessage.get(), "client-identifier"_s, !clientIdentifier.isEmpty() ? UTF8CStringView { clientIdentifierUTF8 } : UTF8CStringView::unsafeFromUTF8(*_NSGetProgname()));
-    xpcDictionarySetString(bootstrapMessage.get(), "client-bundle-identifier"_s, applicationBundleIdentifier().utf8());
-    xpcDictionarySetString(bootstrapMessage.get(), "process-identifier"_s, String::number(m_launchOptions.processIdentifier.toUInt64()).utf8());
+    auto clientIdentifierUTF8 = utf8(clientIdentifier);
+    xpcDictionarySetString(bootstrapMessage.get(), "client-identifier"_s, !isEmpty(clientIdentifier) ? UTF8CStringView { clientIdentifierUTF8 } : UTF8CStringView::unsafeFromUTF8(*_NSGetProgname()));
+    xpcDictionarySetString(bootstrapMessage.get(), "client-bundle-identifier"_s, utf8(applicationBundleIdentifier()));
+    xpcDictionarySetString(bootstrapMessage.get(), "process-identifier"_s, utf8(makeString(m_launchOptions.processIdentifier.toUInt64())));
     RetainPtr processName = [&]() -> RetainPtr<NSString> {
 #if PLATFORM(MAC)
         if (RetainPtr<NSString> name = NSRunningApplication.currentApplication.localizedName; name.get().length)
@@ -446,7 +446,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     OSObjectPtr extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     for (const auto& keyValuePair : m_launchOptions.extraInitializationData)
-        xpcDictionarySetString(extraInitializationData.get(), keyValuePair.key.utf8(), keyValuePair.value.utf8());
+        xpcDictionarySetString(extraInitializationData.get(), utf8(keyValuePair.key), utf8(keyValuePair.value));
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
@@ -465,7 +465,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 #endif
 
         if (event)
-            LOG_ERROR("Error while launching %s: %s", name, xpcDictionaryGetString(event, xpcErrorDescriptionKey).utf8());
+            LOG_ERROR("Error while launching %s: %s", name, utf8(xpcDictionaryGetString(event, xpcErrorDescriptionKey)));
         else
             LOG_ERROR("Error while launching %s: No xpc_object_t event available.", name);
 
@@ -524,7 +524,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
         // launching and we already took care of cleaning things up.
         if (isLaunching() && xpc_get_type(reply) != XPC_TYPE_ERROR) {
             ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
-            ASSERT(xpcDictionaryGetString(reply, "message-name"_s) == "process-finished-launching"_s);
+            ASSERT(equal(xpcDictionaryGetString(reply, "message-name"_s), "process-finished-launching"_s));
 
 #if ASSERT_ENABLED
             mach_port_urefs_t sendRightCount = 0;
@@ -551,11 +551,11 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     });
 }
 
-void ProcessLauncher::terminateProcess([[maybe_unused]] const String& reason)
+void ProcessLauncher::terminateProcess([[maybe_unused]] StringImpl* reason)
 {
 #if USE(EXTENSIONKIT)
     if (m_process) {
-        if (reason.isEmpty())
+        if (isEmpty(reason))
             m_process->invalidate();
         else
             m_process->invalidate(reason);

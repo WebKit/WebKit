@@ -36,9 +36,9 @@ enum class ColorSpaceName : uint8_t;
 // serializationForHTML returns the color serialized according to HTML5 <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015).
 // serializationForRenderTreeAsText returns the color serialized for DumpRenderTree, #RRGGBB, #RRGGBBAA or the CSS serialization.
 
-WEBCORE_EXPORT String serializationForCSS(const Color&);
-WEBCORE_EXPORT String serializationForHTML(const Color&);
-WEBCORE_EXPORT String serializationForRenderTreeAsText(const Color&);
+WEBCORE_EXPORT RefPtr<StringImpl> serializationForCSS(const Color&);
+WEBCORE_EXPORT RefPtr<StringImpl> serializationForHTML(const Color&);
+WEBCORE_EXPORT RefPtr<StringImpl> serializationForRenderTreeAsText(const Color&);
 
 ASCIILiteral serialization(ColorSpaceName);
 

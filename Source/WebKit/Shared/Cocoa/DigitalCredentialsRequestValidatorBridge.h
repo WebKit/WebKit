@@ -43,7 +43,7 @@ struct ValidatedMobileDocumentRequest;
 namespace WebKit {
 namespace DigitalCredentials {
 
-Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> validateRequests(const WebCore::SecurityOriginData& topOrigin, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&, NOESCAPE const Function<void(const String&)>& reportFailure = { });
+Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> validateRequests(const WebCore::SecurityOriginData& topOrigin, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&, NOESCAPE const Function<void(StringImpl*)>& reportFailure = { });
 
 } // namespace DigitalCredentials
 } // namespace WebKit

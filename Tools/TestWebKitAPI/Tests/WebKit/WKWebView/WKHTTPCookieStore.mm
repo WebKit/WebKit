@@ -813,7 +813,7 @@ TEST(WKHTTPCookieStore, WebSocketCookies)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (path == "/com"_s) {
+        if (equal(path, "/com"_s)) {
             co_await connection.awaitableSend(
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Length: 0\r\n"
@@ -823,13 +823,13 @@ TEST(WKHTTPCookieStore, WebSocketCookies)
                 "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
                 "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
                 "\r\n"_s);
-        } else if (path == "/websocket"_s) {
+        } else if (equal(path, "/websocket"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             receivedThirdRequest = true;
-        } else if (path == "/ninja"_s) {
+        } else if (equal(path, "/ninja"_s)) {
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/websocket')</script>", serverPort];
-            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+            co_await connection.awaitableSend(HTTPResponse(StringImpl::create(html).get()).serialize());
         } else
             EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
     } });
@@ -852,7 +852,7 @@ TEST(WKHTTPCookieStore, WebSocketCookies2)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (path == "http://sitea.example/com"_s) {
+        if (equal(path, "http://sitea.example/com"_s)) {
             co_await connection.awaitableSend(
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Length: 0\r\n"
@@ -862,13 +862,13 @@ TEST(WKHTTPCookieStore, WebSocketCookies2)
                 "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
                 "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
                 "\r\n"_s);
-        } else if (path == "ws://sitea.example/websocket"_s) {
+        } else if (equal(path, "ws://sitea.example/websocket"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: sitea.example"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             receivedThirdRequest = true;
-        } else if (path == "http://siteb.example/ninja"_s) {
+        } else if (equal(path, "http://siteb.example/ninja"_s)) {
             auto html = @"<script>new WebSocket('ws://siteA.example/websocket')</script>";
-            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+            co_await connection.awaitableSend(HTTPResponse(StringImpl::create(html).get()).serialize());
         } else
             EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
     } });
@@ -897,14 +897,14 @@ TEST(WKHTTPCookieStore, WebSocketCookiesFromRedirect)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (path == "/redirect"_s) {
+        if (equal(path, "/redirect"_s)) {
             co_await connection.awaitableSend(
                 makeString(
                     "HTTP/1.1 302 Found\r\n"
                     "Location: http://localhost:"_s, serverPort, "/com\r\n"
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
-        } else if (path == "/com"_s) {
+        } else if (equal(path, "/com"_s)) {
             co_await connection.awaitableSend(
                 makeString(
                     "HTTP/1.1 302 Found\r\n"
@@ -916,21 +916,21 @@ TEST(WKHTTPCookieStore, WebSocketCookiesFromRedirect)
                     "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
-        } else if (path == "/destination"_s) {
+        } else if (equal(path, "/destination"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             co_await connection.awaitableSend(
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Length: 0\r\n"
                 "\r\n"_s);
-        } else if (path == "/websocket"_s) {
+        } else if (equal(path, "/websocket"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: localhost:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             EXPECT_TRUE(contains(request.span(), "Origin: http://127.0.0.1:"_span));
             receivedWebSocket = true;
-        } else if (path == "/ninja"_s) {
+        } else if (equal(path, "/ninja"_s)) {
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://localhost:%d/websocket')</script>", serverPort];
-            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+            co_await connection.awaitableSend(HTTPResponse(StringImpl::create(html).get()).serialize());
         } else
             EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
     } });
@@ -954,14 +954,14 @@ TEST(WKHTTPCookieStore, WebSocketCookiesThroughRedirect)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (path == "/redirect"_s) {
+        if (equal(path, "/redirect"_s)) {
             co_await connection.awaitableSend(
                 makeString(
                     "HTTP/1.1 302 Found\r\n"
                     "Location: http://localhost:"_s, serverPort, "/com\r\n"
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
-        } else if (path == "/com"_s) {
+        } else if (equal(path, "/com"_s)) {
             co_await connection.awaitableSend(
                 makeString(
                     "HTTP/1.1 302 Found\r\n"
@@ -973,16 +973,16 @@ TEST(WKHTTPCookieStore, WebSocketCookiesThroughRedirect)
                     "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
-        } else if (path == "/websocket"_s) {
+        } else if (equal(path, "/websocket"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: localhost:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             EXPECT_TRUE(contains(request.span(), "Origin: http://127.0.0.1:"_span));
             receivedWebSocket = true;
-        } else if (path == "/ninja"_s) {
+        } else if (equal(path, "/ninja"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://localhost:%d/websocket')</script>", serverPort];
-            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+            co_await connection.awaitableSend(HTTPResponse(StringImpl::create(html).get()).serialize());
         } else
             EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
     } });
@@ -1003,7 +1003,7 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughFirstPartyRedirect)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (path == "/redirect"_s) {
+        if (equal(path, "/redirect"_s)) {
             co_await connection.awaitableSend(
                 makeString(
                     "HTTP/1.1 302 Found\r\n"
@@ -1015,16 +1015,16 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughFirstPartyRedirect)
                     "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
-        } else if (path == "/websocket"_s) {
+        } else if (equal(path, "/websocket"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: localhost:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             EXPECT_FALSE(contains(request.span(), "Origin: http://127.0.0.1:"_span));
             receivedWebSocket = true;
-        } else if (path == "/ninja"_s) {
+        } else if (equal(path, "/ninja"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/redirect')</script>", serverPort];
-            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+            co_await connection.awaitableSend(HTTPResponse(StringImpl::create(html).get()).serialize());
         } else
             EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
     } });
@@ -1045,14 +1045,14 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughRedirectToThirdParty)
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
         request.append(0);
-        if (path == "/redirect"_s) {
+        if (equal(path, "/redirect"_s)) {
             co_await connection.awaitableSend(
                 makeString(
                     "HTTP/1.1 302 Found\r\n"
                     "Location: ws://localhost:"_s, serverPort, "/com\r\n"
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
-        } else if (path == "/com"_s) {
+        } else if (equal(path, "/com"_s)) {
             co_await connection.awaitableSend(
                 makeString(
                     "HTTP/1.1 302 Found\r\n"
@@ -1064,22 +1064,22 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughRedirectToThirdParty)
                     "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
-        } else if (path == "/redirect2"_s) {
+        } else if (equal(path, "/redirect2"_s)) {
             co_await connection.awaitableSend(
                 makeString(
                     "HTTP/1.1 302 Found\r\n"
                     "Location: ws://localhost:"_s, serverPort, "/websocket\r\n"
                     "Content-Length: 0\r\n"
                     "\r\n"_s));
-        } else if (path == "/websocket"_s) {
+        } else if (equal(path, "/websocket"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: localhost:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             receivedWebSocket = true;
-        } else if (path == "/ninja"_s) {
+        } else if (equal(path, "/ninja"_s)) {
             EXPECT_TRUE(contains(request.span(), "Host: 127.0.0.1:"_span));
             EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
             auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/redirect')</script>", serverPort];
-            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+            co_await connection.awaitableSend(HTTPResponse(StringImpl::create(html).get()).serialize());
         } else
             EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
     } });
@@ -1368,22 +1368,22 @@ TEST(WKHTTPCookieStore, SameSiteStrictCookieNotSentOnCrossSiteNavigation)
             auto path = HTTPServer::parsePath(request);
             request.append(0);
 
-            if (path.endsWith("/setcookie"_s)) {
+            if (endsWith(path, "/setcookie"_s)) {
                 co_await connection.awaitableSend(
                     "HTTP/1.1 200 OK\r\n"
                     "Content-Length: 4\r\n"
                     "Set-Cookie: id=secret; Path=/; SameSite=Strict\r\n"
                     "\r\n"
                     "Done"_s);
-            } else if (path.endsWith("/attacker"_s)) {
-                co_await connection.awaitableSend(HTTPResponse("<html><body>attacker page</body></html>"_s).serialize());
-            } else if (path.endsWith("/same-site-check"_s)) {
+            } else if (endsWith(path, "/attacker"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<html><body>attacker page</body></html>"_si).serialize());
+            } else if (endsWith(path, "/same-site-check"_s)) {
                 sameSiteCheckHasCookie = contains(request.span(), "id=secret"_span);
-                co_await connection.awaitableSend(HTTPResponse("checked"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse("checked"_si).serialize());
                 receivedSameSiteCheck = true;
-            } else if (path.endsWith("/cross-site-check"_s)) {
+            } else if (endsWith(path, "/cross-site-check"_s)) {
                 crossSiteCheckHasCookie = contains(request.span(), "id=secret"_span);
-                co_await connection.awaitableSend(HTTPResponse("checked"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse("checked"_si).serialize());
                 receivedCrossSiteCheck = true;
             }
         }

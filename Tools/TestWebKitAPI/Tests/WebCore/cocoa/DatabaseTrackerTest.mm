@@ -58,7 +58,7 @@ TEST(DatabaseTracker, DeleteDatabaseFileIfEmpty)
 
 #if PLATFORM(COCOA)
 
-static void addToDatabasesTable(const String& databasePath, const SecurityOriginData& origin, const String& newDatabaseName, const String& newDatabasePath)
+static void addToDatabasesTable(StringImpl* databasePath, const SecurityOriginData& origin, StringImpl* newDatabaseName, StringImpl* newDatabasePath)
 {
     auto database = makeUniqueRef<SQLiteDatabase>();
     database->open(databasePath);
@@ -73,7 +73,7 @@ static void addToDatabasesTable(const String& databasePath, const SecurityOrigin
     database->close();
 }
 
-static void removeDirectoryAndAllContents(const String& directoryPath)
+static void removeDirectoryAndAllContents(StringImpl* directoryPath)
 {
     for (auto& fileName : FileSystem::listDirectory(directoryPath))
         EXPECT_TRUE(FileSystem::deleteFile(FileSystem::pathByAppendingComponent(directoryPath, fileName)));
@@ -82,7 +82,7 @@ static void removeDirectoryAndAllContents(const String& directoryPath)
         EXPECT_TRUE(FileSystem::deleteEmptyDirectory(directoryPath));
 }
 
-static void createFileAtPath(const String& path)
+static void createFileAtPath(StringImpl* path)
 {
     auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Truncate);
     EXPECT_FALSE(!fileHandle);
@@ -97,26 +97,26 @@ TEST(DatabaseTracker, DeleteOrigin)
     // In this case, we should remove the origin's information from both the Origins
     // and Databases tables, and remove the database from disk.
     NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
-    String databaseDirectoryPath(webSQLDirectory);
+    RefPtr<StringImpl> databaseDirectoryPath(StringImpl::create(webSQLDirectory));
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
-    SecurityOriginData origin("https"_s, "webkit.org"_s, 443);
+    SecurityOriginData origin("https"_si, "webkit.org"_si, 443);
 
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
+    RefPtr<StringImpl> databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
-    String webDatabaseName = "database_name"_s;
-    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_s);
+    RefPtr<StringImpl> webDatabaseName = "database_name"_si;
+    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_si);
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    String originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    RefPtr<StringImpl> originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
     EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
     EXPECT_TRUE(FileSystem::fileExists(originPath));
 
-    String fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
+    RefPtr<StringImpl> fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     createFileAtPath(fullWebDatabasePath);
 
     EXPECT_TRUE(databaseTracker->deleteOrigin(origin));
@@ -142,22 +142,22 @@ TEST(DatabaseTracker, DeleteOriginWhenDatabaseDoesNotExist)
     // but not an actual database on disk.
     // The information should still be removed from the tables.
     NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
-    String databaseDirectoryPath(webSQLDirectory);
+    RefPtr<StringImpl> databaseDirectoryPath(StringImpl::create(webSQLDirectory));
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
-    SecurityOriginData origin("https"_s, "webkit.org"_s, 443);
+    SecurityOriginData origin("https"_si, "webkit.org"_si, 443);
 
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
+    RefPtr<StringImpl> databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
-    String webDatabaseName = "database_name"_s;
-    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_s);
+    RefPtr<StringImpl> webDatabaseName = "database_name"_si;
+    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_si);
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    String webDatabaseFullPath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
+    RefPtr<StringImpl> webDatabaseFullPath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     EXPECT_FALSE(FileSystem::fileExists(webDatabaseFullPath));
 
     EXPECT_TRUE(databaseTracker->deleteOrigin(origin));
@@ -178,32 +178,32 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     // In this case, we shouldn't remove the information from either the Databases or
     // Origins tables.
     NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
-    String databaseDirectoryPath(webSQLDirectory);
+    RefPtr<StringImpl> databaseDirectoryPath(StringImpl::create(webSQLDirectory));
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
-    SecurityOriginData origin("https"_s, "webkit.org"_s, 443);
+    SecurityOriginData origin("https"_si, "webkit.org"_si, 443);
 
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
+    RefPtr<StringImpl> databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
-    String webDatabaseName = "database_name"_s;
-    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_s);
+    RefPtr<StringImpl> webDatabaseName = "database_name"_si;
+    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_si);
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    String originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    RefPtr<StringImpl> originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
     EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
     EXPECT_TRUE(FileSystem::fileExists(originPath));
 
-    String fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
+    RefPtr<StringImpl> fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     createFileAtPath(fullWebDatabasePath);
 
-    posixChmod(fullWebDatabasePath.utf8(), 555);
+    posixChmod(utf8(fullWebDatabasePath), 555);
 
 #if !PLATFORM(IOS_FAMILY)
-    posixChflags(fullWebDatabasePath.utf8(), UF_IMMUTABLE);
+    posixChflags(utf8(fullWebDatabasePath), UF_IMMUTABLE);
 #endif
 
     EXPECT_FALSE(databaseTracker->deleteOrigin(origin));
@@ -214,10 +214,10 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    posixChmod(fullWebDatabasePath.utf8(), 666);
+    posixChmod(utf8(fullWebDatabasePath), 666);
 
 #if !PLATFORM(IOS_FAMILY)
-    posixChflags(fullWebDatabasePath.utf8(), 0);
+    posixChflags(utf8(fullWebDatabasePath), 0);
 #endif
 
     EXPECT_TRUE(FileSystem::deleteFile(fullWebDatabasePath));
@@ -235,24 +235,24 @@ TEST(DatabaseTracker, DeleteOriginWithMissingEntryInDatabasesTable)
     // The information should still be removed from the Origins table, and the
     // database should be deleted from disk.
     NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
-    String databaseDirectoryPath(webSQLDirectory);
+    RefPtr<StringImpl> databaseDirectoryPath(StringImpl::create(webSQLDirectory));
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
-    SecurityOriginData origin("https"_s, "webkit.org"_s, 443);
+    SecurityOriginData origin("https"_si, "webkit.org"_si, 443);
 
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
+    RefPtr<StringImpl> databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
 
-    String originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    RefPtr<StringImpl> originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
     EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
     EXPECT_TRUE(FileSystem::fileExists(originPath));
 
-    String webDatabasePath = FileSystem::pathByAppendingComponent(originPath, "database.db"_s);
+    RefPtr<StringImpl> webDatabasePath = FileSystem::pathByAppendingComponent(originPath, "database.db"_s);
     createFileAtPath(webDatabasePath);
 
     EXPECT_TRUE(databaseTracker->deleteOrigin(origin));
@@ -274,26 +274,26 @@ TEST(DatabaseTracker, DeleteDatabase)
     // and a database on disk. After the deletion, the database should be deleted
     // from disk, and the information should be gone from the Databases table.
     NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
-    String databaseDirectoryPath(webSQLDirectory);
+    RefPtr<StringImpl> databaseDirectoryPath(StringImpl::create(webSQLDirectory));
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
-    SecurityOriginData origin("https"_s, "webkit.org"_s, 443);
+    SecurityOriginData origin("https"_si, "webkit.org"_si, 443);
 
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
+    RefPtr<StringImpl> databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
-    String webDatabaseName = "database_name"_s;
-    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_s);
+    RefPtr<StringImpl> webDatabaseName = "database_name"_si;
+    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_si);
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    String originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    RefPtr<StringImpl> originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
     EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
     EXPECT_TRUE(FileSystem::fileExists(originPath));
 
-    String fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
+    RefPtr<StringImpl> fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     createFileAtPath(fullWebDatabasePath);
 
     EXPECT_TRUE(databaseTracker->deleteDatabase(origin, webDatabaseName));
@@ -318,22 +318,22 @@ TEST(DatabaseTracker, DeleteDatabaseWhenDatabaseDoesNotExist)
     // Test the case where we try to delete a database that doesn't exist on disk.
     // We should still remove the database information from the Databases table.
     NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
-    String databaseDirectoryPath(webSQLDirectory);
+    RefPtr<StringImpl> databaseDirectoryPath(StringImpl::create(webSQLDirectory));
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
-    SecurityOriginData origin("https"_s, "webkit.org"_s, 443);
+    SecurityOriginData origin("https"_si, "webkit.org"_si, 443);
 
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
+    RefPtr<StringImpl> databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
-    String webDatabaseName = "database_name"_s;
-    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_s);
+    RefPtr<StringImpl> webDatabaseName = "database_name"_si;
+    addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db"_si);
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    String webDatabaseFullPath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
+    RefPtr<StringImpl> webDatabaseFullPath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     EXPECT_FALSE(FileSystem::fileExists(webDatabaseFullPath));
 
     EXPECT_TRUE(databaseTracker->deleteDatabase(origin, webDatabaseName));

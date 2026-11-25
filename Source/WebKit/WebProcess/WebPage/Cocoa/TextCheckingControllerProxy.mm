@@ -131,12 +131,12 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::Attr
     auto& markers = frame->document()->markers();
     markers.removeMarkers(rangeAndOffset->range, relevantMarkerTypes());
 
-    RetainPtr annotatedNSString = annotatedString.string.createNSString();
+    RetainPtr annotatedNSString = createNSString(annotatedString.string);
     if (relativeReplacementLocation != NSNotFound) {
         if (auto rangeAndOffsetOfReplacement = rangeAndOffsetRelativeToSelection(selectionOffset + relativeReplacementLocation, relativeReplacementLength)) {
             bool restoreSelection = frameSelection.selection().isRange();
 
-            frame->editor().replaceRangeForSpellChecking(rangeAndOffsetOfReplacement->range, [annotatedNSString substringWithRange:NSMakeRange(relativeReplacementLocation, relativeReplacementLength + [annotatedNSString length] - length)]);
+            frame->editor().replaceRangeForSpellChecking(rangeAndOffsetOfReplacement->range, StringImpl::create([annotatedNSString substringWithRange:NSMakeRange(relativeReplacementLocation, relativeReplacementLength + [annotatedNSString length] - length)]).get());
 
             if (restoreSelection) {
                 uint64_t selectionLocationToRestore = locationInRoot - selectionOffset;
@@ -153,7 +153,7 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::Attr
             if (![value isKindOfClass:[NSString class]])
                 return;
             markers.addMarker(attributeCoreRange, WebCore::DocumentMarkerType::PlatformTextChecking,
-                WebCore::DocumentMarker::PlatformTextCheckingData { key, checked_objc_cast<NSString>(value) });
+                WebCore::DocumentMarker::PlatformTextCheckingData { StringImpl::create(key), StringImpl::create(checked_objc_cast<NSString>(value)) });
 
             // FIXME: Switch to constants after rdar://problem/48914153 is resolved.
             if ([key isEqualToString:@"NSSpellingState"]) {
@@ -162,14 +162,14 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::Attr
                     markers.addMarker(attributeCoreRange, DocumentMarkerType::Spelling);
                 if (spellingState & NSSpellingStateGrammarFlag) {
                     NSString *userDescription = [attrs objectForKey:@"NSGrammarUserDescription"];
-                    markers.addMarker(attributeCoreRange, DocumentMarkerType::Grammar, String { userDescription });
+                    markers.addMarker(attributeCoreRange, DocumentMarkerType::Grammar, StringImpl::create(userDescription));
                 }
             }
         }];
     }];
 }
 
-void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const String& annotation, int64_t selectionOffset, uint64_t length)
+void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(StringImpl* annotation, int64_t selectionOffset, uint64_t length)
 {
     auto rangeAndOffset = rangeAndOffsetRelativeToSelection(selectionOffset, length);
     if (!rangeAndOffset)
@@ -184,7 +184,7 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
     document->markers().filterMarkers(rangeAndOffset->range, [&] (const DocumentMarker& marker) {
         if (!std::holds_alternative<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()))
             return FilterMarkerResult::Keep;
-        return std::get<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()).key == annotation ? FilterMarkerResult::Remove : FilterMarkerResult::Keep;
+        return equal(std::get<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()).key, annotation) ? FilterMarkerResult::Remove : FilterMarkerResult::Keep;
     }, types);
 }
 
@@ -212,7 +212,7 @@ WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetween
             auto attributeRange = characterRange(*entireRange, subrange);
             ASSERT(attributeRange.location + attributeRange.length <= [string length]);
             if (attributeRange.location + attributeRange.length <= [string length])
-                [string addAttribute:data.key.createNSString().get() value:data.value.createNSString().get() range:WTF::move(attributeRange)];
+                [string addAttribute:createNSString(data.key).get() value:createNSString(data.value).get() range:WTF::move(attributeRange)];
         }
     }
 

@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Test.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/InitializeThreading.h>
@@ -67,12 +68,12 @@ struct MarkedVectorTestHelper<JSValue> {
     NEVER_INLINE static void populateForGC(VM& vm, JSGlobalObject*, MarkedVector<JSValue, testInlineCapacity>& vec, int count)
     {
         for (int i = 0; i < count; ++i)
-            vec.append(jsString(vm, String(String::number(i))));
+            vec.append(jsString(vm, makeString(i)));
     }
     static void createNoise(VM& vm, JSGlobalObject*)
     {
         for (int i = 0; i < 50; ++i)
-            jsString(vm, String(makeString("noise"_s, i)));
+            jsString(vm, makeString("noise"_s, i));
     }
     static void verifyAfterGC(VM&, MarkedVector<JSValue, testInlineCapacity>& vec, int count)
     {
@@ -80,7 +81,7 @@ struct MarkedVectorTestHelper<JSValue> {
         for (int i = 0; i < count; ++i) {
             EXPECT_TRUE(vec[i].isString());
             auto result = asString(vec[i])->tryGetValue();
-            EXPECT_EQ(static_cast<const String&>(result), String::number(i));
+            EXPECT_EQ(static_cast<const RefPtr<StringImpl>&>(result), makeString(i));
         }
     }
 };
@@ -130,12 +131,12 @@ struct MarkedVectorTestHelper<JSValueRef> {
     NEVER_INLINE static void populateForGC(VM& vm, JSGlobalObject*, MarkedVector<JSValueRef, testInlineCapacity>& vec, int count)
     {
         for (int i = 0; i < count; ++i)
-            vec.append(toRef(vm, static_cast<JSValue>(jsString(vm, String(String::number(i))))));
+            vec.append(toRef(vm, static_cast<JSValue>(jsString(vm, makeString(i)))));
     }
     static void createNoise(VM& vm, JSGlobalObject*)
     {
         for (int i = 0; i < 50; ++i)
-            jsString(vm, String(makeString("noise"_s, i)));
+            jsString(vm, makeString("noise"_s, i));
     }
     static void verifyAfterGC(VM&, MarkedVector<JSValueRef, testInlineCapacity>& vec, int count)
     {
@@ -145,7 +146,7 @@ struct MarkedVectorTestHelper<JSValueRef> {
             JSValue v = toJS(vec[i]);
             EXPECT_TRUE(v.isString());
             auto result = asString(v)->tryGetValue();
-            EXPECT_EQ(static_cast<const String&>(result), String::number(i));
+            EXPECT_EQ(static_cast<const RefPtr<StringImpl>&>(result), makeString(i));
         }
     }
 };

@@ -310,9 +310,9 @@ private:
         return returnValue;
     }
 
-    void inspectedURLChanged(WebInspectorUIProxy&, const String& url) override
+    void inspectedURLChanged(WebInspectorUIProxy&, StringImpl* url) override
     {
-        auto uri = url.utf8();
+        auto uri = utf8(url);
         if (uri == m_inspector->priv->inspectedURI)
             return;
         m_inspector->priv->inspectedURI = uri;

@@ -43,7 +43,7 @@ struct MockMicrophoneProperties {
 };
 
 struct MockSpeakerProperties {
-    String relatedMicrophoneId;
+    RefPtr<StringImpl> relatedMicrophoneId;
     int defaultSampleRate { 44100 };
 };
 
@@ -114,8 +114,8 @@ struct MockMediaDevice {
         return isCamera() ? &std::get<MockCameraProperties>(properties) : nullptr;
     }
 
-    String persistentId;
-    String label;
+    RefPtr<StringImpl> persistentId;
+    RefPtr<StringImpl> label;
     Flags flags;
     bool isDefault;
     Variant<MockMicrophoneProperties, MockSpeakerProperties, MockCameraProperties, MockDisplayProperties> properties;

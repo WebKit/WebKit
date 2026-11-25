@@ -58,8 +58,8 @@ private:
     }
     void handleEvent(xpc_connection_t connection, xpc_object_t event) final
     {
-        String messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
-        if (messageName == testMessageFromClient) {
+        RefPtr<StringImpl> messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
+        if (equal(messageName, testMessageFromClient)) {
             endpointReceivedMessageFromClient = true;
 
             OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
@@ -73,8 +73,8 @@ class XPCEndpointClient final : public WebKit::XPCEndpointClient {
 private:
     void handleEvent(xpc_object_t event) final
     {
-        String messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
-        if (messageName == testMessageFromEndpoint)
+        RefPtr<StringImpl> messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
+        if (equal(messageName, testMessageFromEndpoint))
             clientReceivedMessageFromEndpoint = true;
     }
     void didConnect() final

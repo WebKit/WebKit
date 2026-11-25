@@ -500,7 +500,7 @@ TEST(WTF_RobinHoodHashSet, RemoveRandom)
 
 TEST(WTF_RobinHoodHashSet, ReserveInitialCapacity)
 {
-    MemoryCompactLookupOnlyRobinHoodHashSet<String> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> set;
     EXPECT_EQ(0u, set.size());
     EXPECT_EQ(0u, set.capacity());
 
@@ -529,9 +529,9 @@ TEST(WTF_RobinHoodHashSet, ReserveInitialCapacity)
     EXPECT_EQ(0u, set.size());
     EXPECT_EQ(8u, set.capacity());
 
-    MemoryCompactLookupOnlyRobinHoodHashSet<String> set2;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> set2;
     set2.reserveInitialCapacity(9999);
-    EXPECT_FALSE(set2.remove("foo1"_s));
+    EXPECT_FALSE(set2.remove("foo1"_si));
 
     for (int i = 0; i < 2000; ++i)
         set2.add(makeString("foo"_s, i));
@@ -548,16 +548,16 @@ TEST(WTF_RobinHoodHashSet, AddAndIdentity)
 {
     MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> set;
     for (unsigned index = 0; index < 1e3; ++index) {
-        auto string = String::number(index);
-        auto result = set.add(string.impl());
+        auto string = makeString(index);
+        auto result = set.add(string.get());
         EXPECT_TRUE(result.isNewEntry);
-        EXPECT_EQ(*result.iterator, string.impl());
+        EXPECT_EQ(result.iterator->get(), string.get());
     }
     for (unsigned index = 0; index < 1e3; ++index) {
-        auto string = String::number(index);
-        auto result = set.add(string.impl());
+        auto string = makeString(index);
+        auto result = set.add(string.get());
         EXPECT_FALSE(result.isNewEntry);
-        EXPECT_NE(*result.iterator, string.impl());
+        EXPECT_NE(result.iterator->get(), string.get());
     }
 }
 
@@ -565,30 +565,30 @@ TEST(WTF_RobinHoodHashSet, LargeRemoval)
 {
     MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> set;
     for (unsigned index = 0; index < 1e4; ++index) {
-        auto string = String::number(index);
-        set.add(string.impl());
+        auto string = makeString(index);
+        set.add(string.get());
     }
     EXPECT_EQ(set.size(), 1e4);
     for (unsigned index = 0; index < 1e4; ++index) {
         if (index & 0x1) {
-            auto string = String::number(index);
-            bool removed = set.remove(string.impl());
+            auto string = makeString(index);
+            bool removed = set.remove(string.get());
             EXPECT_TRUE(removed);
         }
     }
     EXPECT_EQ(set.size(), 1e4 / 2);
     for (unsigned index = 0; index < 1e4; ++index) {
-        auto string = String::number(index);
+        auto string = makeString(index);
         if (index & 0x1)
-            EXPECT_FALSE(set.contains(string.impl()));
+            EXPECT_FALSE(set.contains(string.get()));
         else
-            EXPECT_TRUE(set.contains(string.impl()));
+            EXPECT_TRUE(set.contains(string.get()));
     }
 
     for (unsigned index = 0; index < 1e4; ++index) {
         if (!(index & 0x1)) {
-            auto string = String::number(index);
-            bool removed = set.remove(string.impl());
+            auto string = makeString(index);
+            bool removed = set.remove(string.get());
             EXPECT_TRUE(removed);
         }
     }

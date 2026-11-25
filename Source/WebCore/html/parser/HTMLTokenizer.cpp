@@ -1594,13 +1594,13 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     return false;
 }
 
-String HTMLTokenizer::bufferedCharacters() const
+RefPtr<StringImpl> HTMLTokenizer::bufferedCharacters() const
 {
     // FIXME: Add an assert about m_state.
     return makeString("</"_s, m_temporaryBuffer);
 }
 
-void HTMLTokenizer::updateStateFor(const AtomString& tagName)
+void HTMLTokenizer::updateStateFor(AtomStringImpl* tagName)
 {
     if (textareaTag->hasLocalName(tagName) || titleTag->hasLocalName(tagName))
         m_state = RCDATAState;

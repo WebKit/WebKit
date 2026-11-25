@@ -55,18 +55,18 @@ public:
     ~InspectorAuditResourcesObject();
 
     struct Resource {
-        String id;
-        String url;
-        String mimeType;
+        RefPtr<StringImpl> id;
+        RefPtr<StringImpl> url;
+        RefPtr<StringImpl> mimeType;
     };
 
     struct ResourceContent {
-        String data;
+        RefPtr<StringImpl> data;
         bool base64Encoded;
     };
 
     ExceptionOr<Vector<Resource>> getResources(Document&);
-    ExceptionOr<ResourceContent> getResourceContent(Document&, const String& id);
+    ExceptionOr<ResourceContent> getResourceContent(Document&, StringImpl* id);
 
 private:
     explicit InspectorAuditResourcesObject(Inspector::InspectorAuditAgent&);
@@ -165,8 +165,8 @@ private:
     };
     InspectorAuditCachedStyleSheetClient m_cachedStyleSheetClient;
 
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<CachedResource>> m_resources;
-    WeakHashMap<CachedResource, String> m_resourceIdentifiers;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, WeakPtr<CachedResource>> m_resources;
+    WeakHashMap<CachedResource, RefPtr<StringImpl>> m_resourceIdentifiers;
 };
 
 } // namespace WebCore

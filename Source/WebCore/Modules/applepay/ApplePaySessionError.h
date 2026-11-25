@@ -34,8 +34,8 @@
 namespace WebCore {
 
 struct ApplePaySessionError {
-    using InfoRecord = Vector<KeyValuePair<String, String>>;
-    String code;
+    using InfoRecord = Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>;
+    RefPtr<StringImpl> code;
     InfoRecord info;
 };
 

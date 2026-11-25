@@ -51,7 +51,7 @@ public:
     virtual ~RTCSessionDescriptionRequest() = default;
 
     virtual void requestSucceeded(RTCSessionDescriptionDescriptor&) = 0;
-    virtual void requestFailed(const String& error) = 0;
+    virtual void requestFailed(StringImpl* error) = 0;
 
     ExtraData* extraData() const { return m_extraData.get(); }
     void setExtraData(RefPtr<ExtraData>&& extraData) { m_extraData = extraData; }

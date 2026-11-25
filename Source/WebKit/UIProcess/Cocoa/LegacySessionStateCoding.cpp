@@ -127,13 +127,13 @@ public:
         return encodeArithmeticType(value);
     }
 
-    HistoryEntryDataEncoder& operator<<(const String& value)
+    HistoryEntryDataEncoder& operator<<(StringImpl* value)
     {
         // Special case the null string.
-        if (value.isNull())
+        if (!value)
             return *this << std::numeric_limits<uint32_t>::max();
 
-        uint32_t length = value.length();
+        uint32_t length = WTF::length(value);
         *this << length;
 
         *this << static_cast<uint64_t>(length * sizeof(char16_t));
@@ -282,7 +282,7 @@ static void encodeFormDataElement(HistoryEntryDataEncoder& encoder, const HTTPBo
         encoder << fileData.filePath;
 
         // Used to be generatedFilename.
-        encoder << String();
+        encoder << nullString();
 
         // Used to be shouldGenerateFile.
         encoder << false;
@@ -291,7 +291,7 @@ static void encodeFormDataElement(HistoryEntryDataEncoder& encoder, const HTTPBo
         encoder << fileData.fileLength.value_or(-1);
         encoder << fileData.expectedFileModificationTime.value_or(WallTime::nan()).secondsSinceEpoch().value();
 
-    }, [&] (const String& blobURLString) {
+    }, [&] (StringImpl* blobURLString) {
         encoder << blobURLString;
     });
 }
@@ -339,7 +339,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 
         encodeFormData(encoder, frameState.httpBody.value());
     } else {
-        encoder << String();
+        encoder << nullString();
         encoder << false;
     }
 
@@ -356,7 +356,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
     if (frameState.stateObjectData)
         encoder << frameState.stateObjectData.value();
 
-    if (frameState.target.length() < maximumFrameStateTargetLength)
+    if (length(frameState.target) < maximumFrameStateTargetLength)
         encoder << frameState.target;
     else
         encoder << emptyAtom();
@@ -433,9 +433,9 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
 
     for (auto& item : borrow(backForwardListState.items)) {
         auto& frameState = item.frameState;
-        auto url = frameState->urlString.createCFString();
-        auto title = frameState->title.createCFString();
-        auto originalURL = frameState->originalURLString.createCFString();
+        auto url = createCFString(frameState->urlString);
+        auto title = createCFString(frameState->title);
+        auto originalURL = createCFString(frameState->originalURLString);
         auto createdByJS = frameState->wasCreatedByJSWithoutUserInteraction ? kCFBooleanTrue : kCFBooleanFalse;
 
         auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(frameState->shouldOpenExternalURLsPolicy);
@@ -474,7 +474,7 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
 RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 {
     auto sessionHistoryDictionary = encodeSessionHistory(sessionState.backForwardListState);
-    auto provisionalURLString = sessionState.provisionalURL.isNull() ? nullptr : sessionState.provisionalURL.string().createCFString();
+    auto provisionalURLString = sessionState.provisionalURL.isNull() ? nullptr : createCFString(sessionState.provisionalURL.string());
     RetainPtr<CFNumberRef> renderTreeSizeNumber(adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &sessionState.renderTreeSize)));
     RetainPtr<CFBooleanRef> isAppInitiated = sessionState.isAppInitiated ? kCFBooleanTrue : kCFBooleanFalse;
 
@@ -562,16 +562,16 @@ public:
         return decodeArithmeticType(value);
     }
 
-    HistoryEntryDataDecoder& operator>>(String& value)
+    HistoryEntryDataDecoder& operator>>(RefPtr<StringImpl>& value)
     {
-        value = String();
+        value = nullptr;
 
         uint32_t length;
         *this >> length;
 
         if (length == std::numeric_limits<uint32_t>::max()) {
             // This is the null string.
-            value = String();
+            value = nullptr;
             return *this;
         }
 
@@ -589,19 +589,19 @@ public:
         }
 
         std::span<char16_t> buffer;
-        auto string = String::createUninitialized(length, buffer);
+        auto string = StringImpl::createUninitialized(length, buffer);
         decodeFixedLengthData(asMutableByteSpan(buffer), alignof(char16_t));
 
-        value = string;
+        value = WTF::move(string);
         return *this;
     }
 
-    HistoryEntryDataDecoder& operator>>(AtomString& value)
+    HistoryEntryDataDecoder& operator>>(RefPtr<AtomStringImpl>& value)
     {
         // FIXME: This could be more efficient but this matches what the IPC decoder currently does.
-        String string;
+        RefPtr<StringImpl> string;
         *this >> string;
-        value = AtomString { string };
+        value = AtomStringImpl::add(string);
         return *this;
     }
 
@@ -811,7 +811,7 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
         HTTPBody::Element::FileData fileData;
         decoder >> fileData.filePath;
 
-        String generatedFilename;
+        RefPtr<StringImpl> generatedFilename;
         decoder >> generatedFilename;
 
         bool shouldGenerateFile;
@@ -841,8 +841,8 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
         break;
     }
 
-    case WTF::alternativeIndexV<String, HTTPBody::Element::Data>: {
-        String blobURLString;
+    case WTF::alternativeIndexV<RefPtr<StringImpl>, HTTPBody::Element::Data>: {
+        RefPtr<StringImpl> blobURLString;
         decoder >> blobURLString;
         formDataElement.data = WTF::move(blobURLString);
         break;
@@ -901,9 +901,9 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     uint64_t documentStateVectorSize;
     decoder >> documentStateVectorSize;
 
-    Vector<AtomString> documentState;
+    Vector<RefPtr<AtomStringImpl>> documentState;
     for (uint64_t i = 0; i < documentStateVectorSize; ++i) {
-        AtomString state;
+        RefPtr<AtomStringImpl> state;
         decoder >> state;
 
         if (!decoder.isValid())
@@ -913,7 +913,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     }
     frameState.setDocumentState(documentState, FrameState::ShouldValidate::Yes);
 
-    String formContentType;
+    RefPtr<StringImpl> formContentType;
     decoder >> formContentType;
 
     bool hasFormData;
@@ -1011,10 +1011,10 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     if (historyEntryData && !decodeSessionHistoryEntryData(historyEntryData.get(), backForwardListItemState))
         return false;
 
-    backForwardListItemState.title = title.get();
+    backForwardListItemState.title = StringImpl::create(title.get());
     backForwardListItemState.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
-    backForwardListItemState.urlString = urlString.get();
-    backForwardListItemState.originalURLString = originalURLString.get();
+    backForwardListItemState.urlString = StringImpl::create(urlString.get());
+    backForwardListItemState.originalURLString = StringImpl::create(originalURLString.get());
 
     return true;
 }
@@ -1155,7 +1155,7 @@ bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState& sessi
     }
 
     if (RetainPtr provisionalURLString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(sessionStateDictionary.get(), provisionalURLKey))) {
-        sessionState.provisionalURL = URL { provisionalURLString.get() };
+        sessionState.provisionalURL = URL { StringImpl::create(provisionalURLString.get()) };
         if (!sessionState.provisionalURL.isValid())
             return false;
     }

@@ -39,7 +39,7 @@ public:
     static Ref<HTMLMapElement> create(const QualifiedName&, Document&);
     virtual ~HTMLMapElement();
 
-    const AtomString& getName() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<AtomStringImpl>& getName() const LIFETIME_BOUND { return m_name; }
 
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
     
@@ -49,14 +49,14 @@ public:
 private:
     HTMLMapElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
     void movingSteps(MovingType, ContainerNode&) final;
 
-    AtomString m_name;
-    AtomString m_registeredId;
+    RefPtr<AtomStringImpl> m_name;
+    RefPtr<AtomStringImpl> m_registeredId;
 };
 
 } // namespaces

@@ -33,30 +33,30 @@ namespace WebCore {
 
 class WebGPUSupportedFeatures final : public RefCounted<WebGPUSupportedFeatures> {
 public:
-    static Ref<WebGPUSupportedFeatures> create(Vector<String>&& features)
+    static Ref<WebGPUSupportedFeatures> create(Vector<RefPtr<StringImpl>>&& features)
     {
         return adoptRef(*new WebGPUSupportedFeatures(WTF::move(features)));
     }
 
-    static Ref<WebGPUSupportedFeatures> create(const Vector<String>& features)
+    static Ref<WebGPUSupportedFeatures> create(const Vector<RefPtr<StringImpl>>& features)
     {
         return adoptRef(*new WebGPUSupportedFeatures(features));
     }
 
     static Ref<WebGPUSupportedFeatures> clone(const WebGPUSupportedFeatures& features)
     {
-        return adoptRef(*new WebGPUSupportedFeatures(Vector<String>(features.features())));
+        return adoptRef(*new WebGPUSupportedFeatures(Vector<RefPtr<StringImpl>>(features.features())));
     }
 
-    const Vector<String>& features() const LIFETIME_BOUND { return m_features; }
+    const Vector<RefPtr<StringImpl>>& features() const LIFETIME_BOUND { return m_features; }
 
 private:
-    WebGPUSupportedFeatures(Vector<String>&& features)
+    WebGPUSupportedFeatures(Vector<RefPtr<StringImpl>>&& features)
         : m_features(WTF::move(features))
     {
     }
 
-    WebGPUSupportedFeatures(const Vector<String>& features)
+    WebGPUSupportedFeatures(const Vector<RefPtr<StringImpl>>& features)
         : m_features(features)
     {
     }
@@ -66,7 +66,7 @@ private:
     WebGPUSupportedFeatures& operator=(const WebGPUSupportedFeatures&) = delete;
     WebGPUSupportedFeatures& operator=(WebGPUSupportedFeatures&&) = delete;
 
-    Vector<String> m_features;
+    Vector<RefPtr<StringImpl>> m_features;
 };
 
 } // namespace WebCore

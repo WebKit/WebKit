@@ -39,7 +39,7 @@ MockPreviewLoaderClient& MockPreviewLoaderClient::singleton()
     return sharedClient.get();
 }
 
-void MockPreviewLoaderClient::didRequestPassword(Function<void(const String&)>&& completionHandler)
+void MockPreviewLoaderClient::didRequestPassword(Function<void(StringImpl*)>&& completionHandler)
 {
     ASSERT(isMainThread());
     RunLoop::currentSingleton().dispatch([completionHandler = WTF::move(completionHandler), password = m_password] {

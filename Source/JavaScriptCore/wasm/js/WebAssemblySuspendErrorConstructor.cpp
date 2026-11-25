@@ -75,7 +75,7 @@ Structure* WebAssemblySuspendErrorConstructor::createStructure(VM& vm, JSGlobalO
 
 void WebAssemblySuspendErrorConstructor::finishCreation(VM& vm, WebAssemblySuspendErrorPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "SuspendError"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "SuspendError"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 

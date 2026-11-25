@@ -50,7 +50,7 @@ public:
 
     void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&) { }
     void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&) { }
-    void close(int32_t code, const String& reason) { }
+    void close(int32_t code, StringImpl* reason) { }
 
     void cancel() { }
     void resume() { }

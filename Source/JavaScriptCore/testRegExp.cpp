@@ -54,8 +54,8 @@ struct CommandLine {
 
     bool interactive;
     bool verbose;
-    Vector<String> arguments;
-    Vector<String> files;
+    Vector<RefPtr<StringImpl>> arguments;
+    Vector<RefPtr<StringImpl>> files;
 };
 
 class StopWatch {
@@ -91,7 +91,7 @@ struct RegExpTest {
     {
     }
 
-    String subject;
+    RefPtr<StringImpl> subject;
     int offset;
     int result;
     Vector<int, 32> expectVector;
@@ -101,7 +101,7 @@ class GlobalObject final : public JSGlobalObject {
 public:
     using Base = JSGlobalObject;
 
-    static GlobalObject* create(VM& vm, Structure* structure, const Vector<String>& arguments)
+    static GlobalObject* create(VM& vm, Structure* structure, const Vector<RefPtr<StringImpl>>& arguments)
     {
         GlobalObject* globalObject = new (NotNull, allocateCell<GlobalObject>(vm)) GlobalObject(vm, structure, arguments);
         return globalObject;
@@ -115,9 +115,9 @@ public:
     }
 
 private:
-    GlobalObject(VM&, Structure*, const Vector<String>& arguments);
+    GlobalObject(VM&, Structure*, const Vector<RefPtr<StringImpl>>& arguments);
 
-    void finishCreation(VM& vm, const Vector<String>& arguments)
+    void finishCreation(VM& vm, const Vector<RefPtr<StringImpl>>& arguments)
     {
         Base::finishCreation(vm);
         UNUSED_PARAM(arguments);
@@ -127,7 +127,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(GlobalObject, JSGlobalObject);
 
 const ClassInfo GlobalObject::s_info = { "global"_s, &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
 
-GlobalObject::GlobalObject(VM& vm, Structure* structure, const Vector<String>& arguments)
+GlobalObject::GlobalObject(VM& vm, Structure* structure, const Vector<RefPtr<StringImpl>>& arguments)
     : JSGlobalObject(vm, structure)
 {
     finishCreation(vm, arguments);
@@ -381,10 +381,10 @@ static RegExpTest* parseTestLine(char* line, int lineLength)
     return result;
 }
 
-static bool runFromFiles(GlobalObject* globalObject, const Vector<String>& files, bool verbose)
+static bool runFromFiles(GlobalObject* globalObject, const Vector<RefPtr<StringImpl>>& files, bool verbose)
 {
-    String script;
-    String fileName;
+    RefPtr<StringImpl> script;
+    RefPtr<StringImpl> fileName;
     Vector<char> scriptBuffer;
     unsigned tests = 0;
     unsigned failures = 0;
@@ -394,10 +394,10 @@ static bool runFromFiles(GlobalObject* globalObject, const Vector<String>& files
 
     bool success = true;
     for (size_t i = 0; i < files.size(); i++) {
-        FILE* testCasesFile = posixFopen(files[i].utf8(), "rb"_s);
+        FILE* testCasesFile = posixFopen(utf8(files[i]), "rb"_s);
 
         if (!testCasesFile) {
-            SAFE_PRINTF("Unable to open test data file \"%s\"\n", files[i].utf8());
+            SAFE_PRINTF("Unable to open test data file \"%s\"\n", utf8(files[i]));
             continue;
         }
             
@@ -483,11 +483,11 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
         if (!strcmp(arg, "-v") || !strcmp(arg, "--verbose"))
             options.verbose = true;
         else
-            options.files.append(String::fromLatin1(argv[i]));
+            options.files.append(StringImpl::fromLatin1(argv[i]));
     }
 
     for (; i < argc; ++i)
-        options.arguments.append(String::fromLatin1(argv[i]));
+        options.arguments.append(StringImpl::fromLatin1(argv[i]));
 }
 
 int realMain(int argc, char** argv)

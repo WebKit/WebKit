@@ -48,7 +48,7 @@ void timeZoneDidChange()
 void listenForTimeZoneChangeNotifications() { }
 #endif
 
-bool setHostTimeZoneForTesting(const String& timeZone)
+bool setHostTimeZoneForTesting(StringImpl* timeZone)
 {
     if (!setTimeZoneOverride(timeZone))
         return false;

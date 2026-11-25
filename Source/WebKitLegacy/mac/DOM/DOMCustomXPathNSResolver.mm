@@ -35,13 +35,13 @@ DOMCustomXPathNSResolver::DOMCustomXPathNSResolver(id <DOMXPathNSResolver> custo
 
 DOMCustomXPathNSResolver::~DOMCustomXPathNSResolver() = default;
 
-AtomString DOMCustomXPathNSResolver::lookupNamespaceURI(const AtomString& prefix)
+RefPtr<AtomStringImpl> DOMCustomXPathNSResolver::lookupNamespaceURI(AtomStringImpl* prefix)
 {
     NSString *namespaceURI = nil;
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    namespaceURI = [protect(m_customResolver) lookupNamespaceURI:prefix.createNSString().get()];
+    namespaceURI = [protect(m_customResolver) lookupNamespaceURI:createNSString(prefix).get()];
     END_BLOCK_OBJC_EXCEPTIONS
     
-    return namespaceURI;
+    return AtomStringImpl::add((__bridge CFStringRef)namespaceURI);
 }

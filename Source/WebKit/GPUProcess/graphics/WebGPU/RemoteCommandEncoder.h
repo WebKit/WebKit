@@ -85,8 +85,8 @@ private:
 
     void beginRenderPass(const WebGPU::RenderPassDescriptor&, WebGPURenderPassEncoderIdentifier);
     void beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>&, WebGPUComputePassEncoderIdentifier);
-    void beginInvalidRenderPass(String&& error, WebGPURenderPassEncoderIdentifier);
-    void beginInvalidComputePass(String&& error, WebGPUComputePassEncoderIdentifier);
+    void beginInvalidRenderPass(RefPtr<StringImpl>&& error, WebGPURenderPassEncoderIdentifier);
+    void beginInvalidComputePass(RefPtr<StringImpl>&& error, WebGPUComputePassEncoderIdentifier);
 
     void copyBufferToBuffer(
         WebGPUBufferIdentifier source,
@@ -115,9 +115,9 @@ private:
         uint64_t offset = 0,
         std::optional<uint64_t> = std::nullopt);
 
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel);
     void popDebugGroup();
-    void insertDebugMarker(String&& markerLabel);
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel);
 
     void writeTimestamp(WebGPUQuerySetIdentifier, uint32_t queryIndex);
 
@@ -130,8 +130,8 @@ private:
 
     void finish(const WebGPU::CommandBufferDescriptor&, WebGPUCommandBufferIdentifier);
 
-    void makeInvalid(String&& error);
-    void setLabel(String&&);
+    void makeInvalid(RefPtr<StringImpl>&& error);
+    void setLabel(RefPtr<StringImpl>&&);
     void destruct();
 
     const Ref<::WebGPU::CommandEncoder> m_backing;

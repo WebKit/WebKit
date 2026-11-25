@@ -43,10 +43,10 @@ public:
     }
     virtual ~WebExtensionRegisteredScriptsSQLiteStore() = default;
 
-    void addScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(const String& errorMessage)>&&);
-    void deleteScriptsWithIDs(Vector<String> ids, CompletionHandler<void(const String& errorMessage)>&&);
-    void getScripts(CompletionHandler<void(Vector<Ref<JSON::Object>> scripts, const String& errorMessage)>&&);
-    void updateScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(const String& errorMessage)>&&);
+    void addScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(StringImpl* errorMessage)>&&);
+    void deleteScriptsWithIDs(Vector<RefPtr<StringImpl>> ids, CompletionHandler<void(StringImpl* errorMessage)>&&);
+    void getScripts(CompletionHandler<void(Vector<Ref<JSON::Object>> scripts, StringImpl* errorMessage)>&&);
+    void updateScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(StringImpl* errorMessage)>&&);
 
 protected:
     SchemaVersion migrateToCurrentSchemaVersionIfNeeded() override;
@@ -58,11 +58,11 @@ protected:
     URL databaseURL() override;
 
 private:
-    WebExtensionRegisteredScriptsSQLiteStore(const String& uniqueIdentifier, const String& directory, bool useInMemoryDatabase);
+    WebExtensionRegisteredScriptsSQLiteStore(StringImpl* uniqueIdentifier, StringImpl* directory, bool useInMemoryDatabase);
 
-    Vector<Ref<JSON::Object>> getScriptsWithErrorMessage(String& errorMessage);
+    Vector<Ref<JSON::Object>> getScriptsWithErrorMessage(RefPtr<StringImpl>& errorMessage);
     Vector<Ref<JSON::Object>> getKeysAndValuesFromRowIterator(Ref<WebExtensionSQLiteRowEnumerator> rows);
-    void insertScript(const String& scriptID, const String& scriptData, Ref<WebExtensionSQLiteDatabase>, String& errorMessage);
+    void insertScript(StringImpl* scriptID, StringImpl* scriptData, Ref<WebExtensionSQLiteDatabase>, RefPtr<StringImpl>& errorMessage);
 
 #if PLATFORM(COCOA)
     void migrateData();

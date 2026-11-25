@@ -37,7 +37,7 @@ class WebKitMediaKeyNeededEvent final : public Event {
 public:
     virtual ~WebKitMediaKeyNeededEvent();
 
-    static Ref<WebKitMediaKeyNeededEvent> create(const AtomString& type, Uint8Array* initData)
+    static Ref<WebKitMediaKeyNeededEvent> create(AtomStringImpl* type, Uint8Array* initData)
     {
         return adoptRef(*new WebKitMediaKeyNeededEvent(type, initData));
     }
@@ -46,7 +46,7 @@ public:
         RefPtr<Uint8Array> initData;
     };
 
-    static Ref<WebKitMediaKeyNeededEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<WebKitMediaKeyNeededEvent> create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new WebKitMediaKeyNeededEvent(type, WTF::move(initializer), isTrusted));
     }
@@ -54,8 +54,8 @@ public:
     Uint8Array* initData() const { return m_initData.get(); }
 
 private:
-    WebKitMediaKeyNeededEvent(const AtomString& type, Uint8Array* initData);
-    WebKitMediaKeyNeededEvent(const AtomString& type, Init&&, IsTrusted);
+    WebKitMediaKeyNeededEvent(AtomStringImpl* type, Uint8Array* initData);
+    WebKitMediaKeyNeededEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
     const RefPtr<Uint8Array> m_initData;
 };

@@ -46,7 +46,7 @@ namespace PCM {
 class Client {
 public:
     virtual ~Client() { }
-    virtual void broadcastConsoleMessage(JSC::MessageLevel, const String&) = 0;
+    virtual void broadcastConsoleMessage(JSC::MessageLevel, StringImpl*) = 0;
     virtual bool featureEnabled() const = 0;
     virtual bool debugModeEnabled() const = 0;
     virtual bool privateRelayEnforcementEnabled() const = 0;

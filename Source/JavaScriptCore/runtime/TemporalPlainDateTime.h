@@ -51,7 +51,7 @@ public:
     ISO8601::PlainDate plainDate() const { return m_plainDate; }
     ISO8601::PlainTime plainTime() const { return m_plainTime; }
     CalendarID calendarID() const { return m_calendarID; }
-    String calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+    RefPtr<StringImpl> calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD(name, capitalizedName) \
     decltype(auto) name() const { return m_plainDate.name(); }
@@ -63,13 +63,13 @@ public:
     JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD
 
-    String monthCode() const { return ISO8601::monthCode(m_plainDate.month()); }
+    RefPtr<StringImpl> monthCode() const { return ISO8601::monthCode(m_plainDate.month()); }
 
     template<DifferenceOperation>
     ISO8601::Duration differenceTemporalPlainDateTime(JSGlobalObject*, TemporalPlainDateTime*, JSValue optionsValue);
 
-    String toString(JSGlobalObject*, JSValue options) const;
-    String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const
+    RefPtr<StringImpl> toString(JSGlobalObject*, JSValue options) const;
+    RefPtr<StringImpl> toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const
     {
         return ISO8601::temporalDateTimeToString(m_plainDate, m_plainTime, precision);
     }

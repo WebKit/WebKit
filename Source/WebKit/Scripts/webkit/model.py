@@ -46,6 +46,27 @@ WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsAsyncDispatchMessage'
 # stored properties, so a parameter cannot have them.
 _SWIFT_TYPES_RESERVED_PARAMETER_NAMES = frozenset(['connection', 'decoder', 'replyEncoder', 'reply', 'target'])
 
+# .messages.in and .serialization.in files spell WTF's string types String and AtomString, and the
+# IPC testing API knows them by those names. In generated C++ they stand for these types.
+STRING_TYPE_ALIASES = {
+    'String': 'RefPtr<StringImpl>',
+    'AtomString': 'RefPtr<AtomStringImpl>',
+}
+
+_string_type_alias_pattern = re.compile(r'(?<![\w:])(?:WTF::)?(String|AtomString)\b(?!::)')
+
+
+def is_string_type_alias(type):
+    match = _string_type_alias_pattern.fullmatch(type.strip())
+    return match is not None
+
+
+def cpp_type_for_ipc_type(type):
+    """Returns the C++ spelling of a type from a .messages.in or .serialization.in file, including
+    string types nested in templates: Vector<String> is Vector<RefPtr<StringImpl>>."""
+    return _string_type_alias_pattern.sub(lambda match: STRING_TYPE_ALIASES[match.group(1)], type)
+
+
 class MessageReceiver(object):
     def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, condition, namespace, swift_receiver, swift_receiver_build_enabled_by, receiver_name, swift_types=False):
         self.name = name

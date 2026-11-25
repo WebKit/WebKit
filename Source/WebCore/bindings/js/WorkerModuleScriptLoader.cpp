@@ -131,7 +131,7 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
             fetchOptions.mode = FetchOptions::Mode::SameOrigin;
     }
 
-    String referrerForRequest;
+    RefPtr<StringImpl> referrerForRequest;
     if (!referrer.isEmpty())
         referrerForRequest = referrer.strippedForUseAsReferrer().string;
 
@@ -168,9 +168,9 @@ void WorkerModuleScriptLoader::notifyClientFinished()
         m_client->notifyFinished(*this, WTF::move(m_sourceURL), m_promise.releaseNonNull());
 }
 
-String WorkerModuleScriptLoader::taskMode()
+RefPtr<StringImpl> WorkerModuleScriptLoader::taskMode()
 {
-    return "loadModulesInWorkerOrWorkletMode"_s;
+    return "loadModulesInWorkerOrWorkletMode"_si;
 }
 
 }

@@ -59,12 +59,12 @@ bool HTMLBRElement::hasPresentationalHintsForAttribute(const QualifiedName& name
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLBRElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLBRElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == clearAttr) {
         // If the string is empty, then don't add the clear property.
         // <br clear> and <br clear=""> are just treated like <br> by Gecko, Mac IE, etc. -dwh
-        if (!value.isEmpty()) {
+        if (!isEmpty(value)) {
             if (equalLettersIgnoringASCIICase(value, "all"_s))
                 addPropertyToPresentationalHintStyle(style, CSSPropertyID::Clear, CSSValueID::Both);
             else

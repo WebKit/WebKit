@@ -456,23 +456,23 @@ TEST(WebKit, OverrideReferrer)
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
-        if (path == "/next_navigation"_s) {
+        if (equal(path, "/next_navigation"_s)) {
             EXPECT_FALSE(strnstr(request.span().data(), "\r\nReferer: overridereferer\r\n", request.size()));
-            co_await connection.awaitableSend(HTTPResponse("<script>alert('main frame loaded without referrer')</script>"_s).serialize());
+            co_await connection.awaitableSend(HTTPResponse("<script>alert('main frame loaded without referrer')</script>"_si).serialize());
             continue;
         }
         EXPECT_TRUE(strnstr(request.span().data(), "\r\nReferer: overridereferer\r\n", request.size()));
         EXPECT_FALSE(strnstr(request.span().data(), "eferrer", request.size()));
-        EXPECT_EQ(String::fromLatin1(request.span()).split("Referer"_s).size(), 2u);
-        if (path == "/example"_s) {
-            co_await connection.awaitableSend(HTTPResponse("<script>window.location = 'https://webkit.org/webkit'</script>"_s).serialize());
+        EXPECT_EQ(split(StringImpl::fromLatin1(request.span()), "Referer"_s).size(), 2u);
+        if (equal(path, "/example"_s)) {
+            co_await connection.awaitableSend(HTTPResponse("<script>window.location = 'https://webkit.org/webkit'</script>"_si).serialize());
             continue;
         }
-        if (path == "/webkit"_s) {
-            co_await connection.awaitableSend(HTTPResponse("<script>fetch('/subresource')</script>"_s).serialize());
+        if (equal(path, "/webkit"_s)) {
+            co_await connection.awaitableSend(HTTPResponse("<script>fetch('/subresource')</script>"_si).serialize());
             continue;
         }
-        if (path == "/subresource"_s) {
+        if (equal(path, "/subresource"_s)) {
             done = true;
             continue;
         }

@@ -58,9 +58,9 @@ Ref<DocumentFragment> DocumentFragment::createForInnerOuterHTML(Document& docume
     return node;
 }
 
-String DocumentFragment::nodeName() const
+RefPtr<StringImpl> DocumentFragment::nodeName() const
 {
-    return "#document-fragment"_s;
+    return "#document-fragment"_si;
 }
 
 bool DocumentFragment::childTypeAllowed(NodeType type) const
@@ -91,7 +91,7 @@ Ref<Node> DocumentFragment::cloneNodeInternal(Document& document, CloningOperati
     return clone;
 }
 
-void DocumentFragment::parseHTML(const String& source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
+void DocumentFragment::parseHTML(StringImpl* source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
 {
     Ref document = this->document();
     if ((!registry || !registry->isScoped()) && !usesNullCustomElementRegistry() && tryFastParsingHTMLFragment(source, document, *this, contextElement, parserContentPolicy)) {
@@ -100,7 +100,7 @@ void DocumentFragment::parseHTML(const String& source, Element& contextElement, 
         // As a sanity check for the fast-path, create another fragment using the full parser and compare the results.
         auto referenceFragment = DocumentFragment::create(document);
         HTMLDocumentParser::parseDocumentFragment(source, referenceFragment, contextElement, parserContentPolicy);
-        ASSERT(serializeFragment(*this, SerializedNodes::SubtreesOfChildren) == serializeFragment(referenceFragment, SerializedNodes::SubtreesOfChildren));
+        ASSERT(equal(serializeFragment(*this, SerializedNodes::SubtreesOfChildren), serializeFragment(referenceFragment, SerializedNodes::SubtreesOfChildren)));
 #endif
         return;
     }
@@ -111,14 +111,14 @@ void DocumentFragment::parseHTML(const String& source, Element& contextElement, 
     HTMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy, registry);
 }
 
-bool DocumentFragment::parseXML(const String& source, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
+bool DocumentFragment::parseXML(StringImpl* source, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     return XMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
 }
 
-RefPtr<Element> DocumentFragment::getElementById(const AtomString& id) const
+RefPtr<Element> DocumentFragment::getElementById(AtomStringImpl* id) const
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return nullptr;
 
     // Fast path for ShadowRoot, where we are both a DocumentFragment and a TreeScope.

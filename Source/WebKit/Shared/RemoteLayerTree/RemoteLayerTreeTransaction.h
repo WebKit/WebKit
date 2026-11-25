@@ -141,7 +141,7 @@ public:
     void setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::PlatformLayerIdentifier>);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
+    RefPtr<StringImpl> description() const;
     void dump() const;
 #endif
     

@@ -60,8 +60,8 @@ public:
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>> layersForNode(Inspector::Protocol::DOM::NodeId);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId&);
-    Inspector::CommandResult<String> requestContent(const Inspector::Protocol::LayerTree::LayerId&);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> reasonsForCompositingLayer(StringImpl*);
+    Inspector::CommandResult<RefPtr<StringImpl>> requestContent(StringImpl*);
 
     // InspectorInstrumentation
     void layerTreeDidChange();

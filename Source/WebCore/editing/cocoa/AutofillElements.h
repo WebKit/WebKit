@@ -34,7 +34,7 @@ class AutofillElements {
     WTF_MAKE_TZONE_ALLOCATED(AutofillElements);
 public:
     WEBCORE_EXPORT static std::optional<AutofillElements> computeAutofillElements(Ref<HTMLInputElement>);
-    WEBCORE_EXPORT void autofill(String, String);
+    WEBCORE_EXPORT void autofill(RefPtr<StringImpl>, RefPtr<StringImpl>);
 
     const HTMLInputElement* username() const { return m_username.get(); }
 private:

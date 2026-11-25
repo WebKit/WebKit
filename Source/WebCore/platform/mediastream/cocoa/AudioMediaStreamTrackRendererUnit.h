@@ -55,13 +55,13 @@ public:
 
     ~AudioMediaStreamTrackRendererUnit();
 
-    void setLastDeviceUsed(const String&);
+    void setLastDeviceUsed(StringImpl*);
     void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&);
 
     // BaseAudioMediaStreamTrackRendererUnit
-    void addSource(const String&, Ref<AudioSampleDataSource>&&) final;
-    void removeSource(const String&, AudioSampleDataSource&) final;
-    void addResetObserver(const String&, ResetObserver&) final;
+    void addSource(StringImpl*, Ref<AudioSampleDataSource>&&) final;
+    void removeSource(StringImpl*, AudioSampleDataSource&) final;
+    void addResetObserver(StringImpl*, ResetObserver&) final;
 
     WEBCORE_EXPORT void deleteUnitForTesting();
 
@@ -72,7 +72,7 @@ private:
 
     class Unit : public AudioMediaStreamTrackRendererInternalUnit::Client {
     public:
-        static Ref<Unit> create(const String& deviceID) { return adoptRef(*new Unit(deviceID)); }
+        static Ref<Unit> create(StringImpl* deviceID) { return adoptRef(*new Unit(deviceID)); }
         ~Unit();
 
         void addSource(Ref<AudioSampleDataSource>&&);
@@ -88,11 +88,11 @@ private:
 
         void close();
         void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&);
-        void setLastDeviceUsed(const String&);
+        void setLastDeviceUsed(StringImpl*);
         void deleteUnitForTesting();
 
     private:
-        explicit Unit(const String&);
+        explicit Unit(StringImpl*);
 
         void start();
         void stop();
@@ -114,10 +114,10 @@ private:
         const bool m_isDefaultUnit { false };
     };
 
-    Ref<Unit> ensureDeviceUnit(const String&);
-    RefPtr<Unit> getDeviceUnit(const String&);
+    Ref<Unit> ensureDeviceUnit(StringImpl*);
+    RefPtr<Unit> getDeviceUnit(StringImpl*);
 
-    HashMap<String, Ref<Unit>> m_units WTF_GUARDED_BY_CAPABILITY(mainThread);
+    HashMap<RefPtr<StringImpl>, Ref<Unit>> m_units WTF_GUARDED_BY_CAPABILITY(mainThread);
     Timer m_deleteUnitsTimer;
 };
 

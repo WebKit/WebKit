@@ -42,12 +42,12 @@ WorkQueue& EnhancedSecuritySitesHolder::sharedWorkQueueSingleton()
     return workQueue.get();
 }
 
-Ref<EnhancedSecuritySitesHolder> EnhancedSecuritySitesHolder::create(const String& databaseDirectoryPath)
+Ref<EnhancedSecuritySitesHolder> EnhancedSecuritySitesHolder::create(StringImpl* databaseDirectoryPath)
 {
     return adoptRef(*new EnhancedSecuritySitesHolder(databaseDirectoryPath));
 }
 
-EnhancedSecuritySitesHolder::EnhancedSecuritySitesHolder(const String& databaseDirectoryPath)
+EnhancedSecuritySitesHolder::EnhancedSecuritySitesHolder(StringImpl* databaseDirectoryPath)
 {
     ASSERT(isMainRunLoop());
 

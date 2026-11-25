@@ -87,10 +87,10 @@ public:
     bool isFilter() const override { return m_filterType == Type::CSSFilterRenderer || m_filterType == Type::SVGFilterRenderer; }
     bool isFilterEffect() const { return m_filterType >= Type::FEBlend && m_filterType <= Type::SourceGraphic; }
 
-    static AtomString filterName(Type);
-    static AtomString sourceAlphaName() { return filterName(Type::SourceAlpha); }
-    static AtomString sourceGraphicName() { return filterName(Type::SourceGraphic); }
-    AtomString filterName() const { return filterName(m_filterType); }
+    static RefPtr<AtomStringImpl> filterName(Type);
+    static RefPtr<AtomStringImpl> sourceAlphaName() { return filterName(Type::SourceAlpha); }
+    static RefPtr<AtomStringImpl> sourceGraphicName() { return filterName(Type::SourceGraphic); }
+    RefPtr<AtomStringImpl> filterName() const { return filterName(m_filterType); }
 
     virtual OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode>) const { return FilterRenderingMode::Software; }
     virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&, FilterResults&) { return nullptr; }

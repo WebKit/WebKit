@@ -38,7 +38,7 @@ enum class CallToActionLabel : uint8_t {
     VisitAppStore,
 };
 
-String convertEnumerationToString(CallToActionLabel);
+RefPtr<StringImpl> convertEnumerationToString(CallToActionLabel);
 
 } // namespace WebCore
 
@@ -47,7 +47,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::CallToActionLabel> {
-    static String toString(WebCore::CallToActionLabel label) { return convertEnumerationToString(label); }
+    static RefPtr<StringImpl> toString(WebCore::CallToActionLabel label) { return convertEnumerationToString(label); }
 };
 
 } // namespace WTF

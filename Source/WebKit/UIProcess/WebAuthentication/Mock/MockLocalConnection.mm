@@ -58,7 +58,7 @@ MockLocalConnection::MockLocalConnection(const MockWebAuthenticationConfiguratio
 {
 }
 
-void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&& callback)
+void MockLocalConnection::verifyUser(StringImpl*, ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&& callback)
 {
     // Mock async operations.
     RunLoop::mainSingleton().dispatch([configuration = m_configuration, callback = WTF::move(callback)]() mutable {
@@ -108,7 +108,7 @@ void MockLocalConnection::verifyUser(SecAccessControlRef, LAContext *, Completio
     });
 }
 
-RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const
+RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *, SecAccessControlRef, StringImpl* secAttrLabel, NSData *secAttrApplicationTag) const
 {
     ASSERT(m_configuration.local);
 
@@ -120,7 +120,7 @@ RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *
     };
     CFErrorRef errorRef = nullptr;
     auto key = adoptCF(SecKeyCreateWithData(
-        (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:m_configuration.local->privateKeyBase64.createNSString().get() options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
+        (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(m_configuration.local->privateKeyBase64).get() options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
         (__bridge CFDictionaryRef)options,
         &errorRef
     ));
@@ -130,7 +130,7 @@ RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *
     RetainPtr addQuery = @{
         (id)kSecValueRef: (id)key.get(),
         (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrLabel: secAttrLabel.createNSString().get(),
+        (id)kSecAttrLabel: createNSString(secAttrLabel).get(),
         (id)kSecAttrApplicationTag: secAttrApplicationTag,
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
         (id)kSecUseDataProtectionKeychain: @YES
@@ -147,7 +147,7 @@ RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *
 void MockLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionResponse>>& responses) const
 {
     const auto& preferredCredentialIdBase64 = m_configuration.local->preferredCredentialIdBase64;
-    if (preferredCredentialIdBase64.isEmpty())
+    if (isEmpty(preferredCredentialIdBase64))
         return;
 
     RefPtr<AuthenticatorAssertionResponse> matchingResponse;
@@ -155,7 +155,7 @@ void MockLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionRespo
         RefPtr rawId = response->rawId();
         ASSERT(rawId);
         auto rawIdBase64 = base64EncodeToString(rawId->span());
-        if (rawIdBase64 == preferredCredentialIdBase64) {
+        if (equal(rawIdBase64, preferredCredentialIdBase64)) {
             matchingResponse = response.copyRef();
             break;
         }
@@ -164,14 +164,14 @@ void MockLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionRespo
     responses.append(matchingResponse.releaseNonNull());
 }
 
-RetainPtr<NSArray> MockLocalConnection::getExistingCredentials(const String& rpId)
+RetainPtr<NSArray> MockLocalConnection::getExistingCredentials(StringImpl* rpId)
 {
     // Search Keychain for existing credential matched the RP ID.
     RetainPtr query = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
-        (id)kSecAttrLabel: rpId.createNSString().get(),
+        (id)kSecAttrLabel: createNSString(rpId).get(),
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
         (id)kSecUseDataProtectionKeychain: @YES

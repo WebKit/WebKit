@@ -64,16 +64,16 @@ enum class TextCheckingProcessType : bool {
 
 struct GrammarDetail {
     CharacterRange range;
-    Vector<String> guesses;
-    String userDescription;
-    String uuid;
+    Vector<RefPtr<StringImpl>> guesses;
+    RefPtr<StringImpl> userDescription;
+    RefPtr<StringImpl> uuid;
 
     GrammarDetail isolatedCopy() && {
         return {
             range,
             crossThreadCopy(WTF::move(guesses)),
-            WTF::move(userDescription).isolatedCopy(),
-            WTF::move(uuid).isolatedCopy()
+            WTF::isolatedCopy(WTF::move(userDescription)),
+            WTF::isolatedCopy(WTF::move(uuid))
         };
     }
 };
@@ -82,20 +82,20 @@ struct TextCheckingResult {
     OptionSet<TextCheckingType> type;
     CharacterRange range;
     Vector<GrammarDetail> details;
-    String replacement;
+    RefPtr<StringImpl> replacement;
 
     TextCheckingResult isolatedCopy() && {
         return {
             type,
             range,
             crossThreadCopy(WTF::move(details)),
-            WTF::move(replacement).isolatedCopy()
+            WTF::isolatedCopy(WTF::move(replacement))
         };
     }
 };
 
 struct TextCheckingGuesses {
-    Vector<String> guesses;
+    Vector<RefPtr<StringImpl>> guesses;
     bool misspelled { false };
     bool ungrammatical { false };
 };
@@ -105,7 +105,7 @@ class TextCheckingRequestData {
     friend class SpellCheckRequest; // For access to m_identifier.
 public:
     TextCheckingRequestData() = default;
-    TextCheckingRequestData(std::optional<TextCheckingRequestIdentifier> identifier, const String& text, OptionSet<TextCheckingType> checkingTypes, TextCheckingProcessType processType)
+    TextCheckingRequestData(std::optional<TextCheckingRequestIdentifier> identifier, StringImpl* text, OptionSet<TextCheckingType> checkingTypes, TextCheckingProcessType processType)
         : m_text { text }
         , m_identifier { identifier }
         , m_processType { processType }
@@ -114,12 +114,12 @@ public:
     }
 
     std::optional<TextCheckingRequestIdentifier> identifier() const { return m_identifier; }
-    const String& text() const LIFETIME_BOUND { return m_text; }
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_text; }
     OptionSet<TextCheckingType> checkingTypes() const { return m_checkingTypes; }
     TextCheckingProcessType processType() const { return m_processType; }
 
 private:
-    String m_text;
+    RefPtr<StringImpl> m_text;
     std::optional<TextCheckingRequestIdentifier> m_identifier;
     TextCheckingProcessType m_processType { TextCheckingProcessType::TextCheckingProcessIncremental };
     OptionSet<TextCheckingType> m_checkingTypes;

@@ -206,38 +206,38 @@ TEST(WTF_Vector, ConstructWithFrom)
 
 TEST(WTF_Vector, ConstructWithFromString)
 {
-    String s1 = "s1"_s;
-    String s2 = "s2"_s;
-    String s3 = s1;
-    auto vector = Vector<String>::from(s1, s2, WTF::move(s3));
+    RefPtr<StringImpl> s1 = StringImpl::create("s1"_s);
+    RefPtr<StringImpl> s2 = StringImpl::create("s2"_s);
+    RefPtr<StringImpl> s3 = s1;
+    auto vector = Vector<RefPtr<StringImpl>>::from(s1, s2, WTF::move(s3));
     EXPECT_EQ(3U, vector.size());
     EXPECT_EQ(3U, vector.capacity());
 
-    EXPECT_TRUE(s1 == vector[0]);
-    EXPECT_TRUE(s2 == vector[1]);
-    EXPECT_TRUE(s1 == vector[2]);
-    SUPPRESS_USE_AFTER_MOVE EXPECT_TRUE(s3.isNull());
+    EXPECT_TRUE(equal(s1, vector[0]));
+    EXPECT_TRUE(equal(s2, vector[1]));
+    EXPECT_TRUE(equal(s1, vector[2]));
+    SUPPRESS_USE_AFTER_MOVE EXPECT_TRUE(!s3);
 }
 
 TEST(WTF_Vector, IsolatedCopy)
 {
-    String s1 = "s1"_s;
-    String s2 = "s2"_s;
+    RefPtr<StringImpl> s1 = StringImpl::create("s1"_s);
+    RefPtr<StringImpl> s2 = StringImpl::create("s2"_s);
 
-    auto vector1 = Vector<String>::from(WTF::move(s1), s2);
+    auto vector1 = Vector<RefPtr<StringImpl>>::from(WTF::move(s1), s2);
     EXPECT_EQ(2U, vector1.size());
     EXPECT_EQ(2U, vector1.capacity());
 
-    auto* data1 = vector1[0].impl();
-    auto* data2 = vector1[1].impl();
+    auto* data1 = vector1[0].get();
+    auto* data2 = vector1[1].get();
 
     auto vector2 = crossThreadCopy(vector1);
 
     EXPECT_TRUE("s1"_s == vector2[0]);
     EXPECT_TRUE("s2"_s == vector2[1]);
 
-    EXPECT_FALSE(data1 == vector2[0].impl());
-    EXPECT_FALSE(data2 == vector2[1].impl());
+    EXPECT_FALSE(data1 == vector2[0].get());
+    EXPECT_FALSE(data2 == vector2[1].get());
 
     auto vector3 = crossThreadCopy(WTF::move(vector1));
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(0U, vector1.size());
@@ -245,8 +245,8 @@ TEST(WTF_Vector, IsolatedCopy)
     EXPECT_TRUE("s1"_s == vector3[0]);
     EXPECT_TRUE("s2"_s == vector3[1]);
 
-    EXPECT_TRUE(data1 == vector3[0].impl());
-    EXPECT_FALSE(data2 == vector3[1].impl());
+    EXPECT_TRUE(data1 == vector3[0].get());
+    EXPECT_FALSE(data2 == vector3[1].get());
 }
 
 TEST(WTF_Vector, ConstructWithFromMoveOnly)
@@ -1316,48 +1316,48 @@ TEST(WTF_Vector, MapLambdaMove)
 
 TEST(WTF_Vector, MapFromHashMap)
 {
-    HashMap<String, String> map;
-    map.set("k1"_s, "v1"_s);
-    map.set("k2"_s, "v2"_s);
-    map.set("k3"_s, "v3"_s);
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> map;
+    map.set("k1"_si, "v1"_s);
+    map.set("k2"_si, "v2"_s);
+    map.set("k3"_si, "v3"_s);
 
-    auto mapped = WTF::map(map, [&] (KeyValuePair<String, String>& pair) -> String {
+    auto mapped = WTF::map(map, [&] (KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>& pair) -> RefPtr<StringImpl> {
         return pair.value;
     });
     std::ranges::sort(mapped, WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "v1"_s);
-    EXPECT_TRUE(mapped[1] == "v2"_s);
-    EXPECT_TRUE(mapped[2] == "v3"_s);
+    EXPECT_TRUE(equal(mapped[0], "v1"_s));
+    EXPECT_TRUE(equal(mapped[1], "v2"_s));
+    EXPECT_TRUE(equal(mapped[2], "v3"_s));
 
-    mapped = WTF::map(map, [&] (const auto& pair) -> String {
+    mapped = WTF::map(map, [&] (const auto& pair) -> RefPtr<StringImpl> {
         return pair.key;
     });
     std::ranges::sort(mapped, WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "k1"_s);
-    EXPECT_TRUE(mapped[1] == "k2"_s);
-    EXPECT_TRUE(mapped[2] == "k3"_s);
+    EXPECT_TRUE(equal(mapped[0], "k1"_s));
+    EXPECT_TRUE(equal(mapped[1], "k2"_s));
+    EXPECT_TRUE(equal(mapped[2], "k3"_s));
 
-    mapped = WTF::map(WTF::move(map), [&] (KeyValuePair<String, String>&& pair) -> String {
+    mapped = WTF::map(WTF::move(map), [&] (KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>&& pair) -> RefPtr<StringImpl> {
         return WTF::move(pair.value);
     });
     std::ranges::sort(mapped, WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "v1"_s);
-    EXPECT_TRUE(mapped[1] == "v2"_s);
-    EXPECT_TRUE(mapped[2] == "v3"_s);
+    EXPECT_TRUE(equal(mapped[0], "v1"_s));
+    EXPECT_TRUE(equal(mapped[1], "v2"_s));
+    EXPECT_TRUE(equal(mapped[2], "v3"_s));
 
-    EXPECT_TRUE(map.contains("k1"_s));
-    EXPECT_TRUE(map.contains("k2"_s));
-    EXPECT_TRUE(map.contains("k3"_s));
+    EXPECT_TRUE(map.contains("k1"_si));
+    EXPECT_TRUE(map.contains("k2"_si));
+    EXPECT_TRUE(map.contains("k3"_si));
 
-    EXPECT_TRUE(map.get("k1"_s).isNull());
-    EXPECT_TRUE(map.get("k2"_s).isNull());
-    EXPECT_TRUE(map.get("k3"_s).isNull());
+    EXPECT_TRUE(!map.get("k1"_si));
+    EXPECT_TRUE(!map.get("k2"_si));
+    EXPECT_TRUE(!map.get("k3"_si));
 
 }
 
@@ -1474,21 +1474,21 @@ TEST(WTF_Vector, CompactMapStaticFunctionReturnOptionalRefPtr)
 
 TEST(WTF_Vector, CompactMapLambdaReturnOptional)
 {
-    Vector<String> vector { "a"_s, "b"_s, "hello"_s, "ciao"_s, "world"_s, "webkit"_s };
+    Vector<RefPtr<StringImpl>> vector { "a"_s, "b"_s, "hello"_s, "ciao"_s, "world"_s, "webkit"_s };
 
-    auto function = [](const String& value) -> std::optional<String> {
-        if (value.length() < 5)
+    auto function = [](StringImpl* value) -> std::optional<RefPtr<StringImpl>> {
+        if (length(value) < 5)
             return std::nullopt;
-        return value.convertToASCIIUppercase();
+        return convertToASCIIUppercase(value);
     };
-    static_assert(std::is_same<decltype(WTF::compactMap(vector, function)), typename WTF::Vector<String>>::value,
+    static_assert(std::is_same<decltype(WTF::compactMap(vector, function)), typename WTF::Vector<RefPtr<StringImpl>>>::value,
         "WTF::compactMap returns Vector<String> when the mapped function returns std::optional<String>");
     auto mapped = WTF::compactMap(vector, function);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_STREQ("HELLO", mapped[0].ascii().data());
-    EXPECT_STREQ("WORLD", mapped[1].ascii().data());
-    EXPECT_STREQ("WEBKIT", mapped[2].ascii().data());
+    EXPECT_STREQ("HELLO", ascii(mapped[0]).data());
+    EXPECT_STREQ("WORLD", ascii(mapped[1]).data());
+    EXPECT_STREQ("WEBKIT", ascii(mapped[2]).data());
 }
 
 class CountedObject {
@@ -1807,9 +1807,9 @@ TEST(WTF_Vector, CopyToVectorSizeRangeIterator)
 
 TEST(WTF_Vector, StringComparison)
 {
-    Vector<String> a = {{ "a"_s }};
-    Vector<String> b = {{ "a"_s }};
-    EXPECT_TRUE(a == b);
+    Vector<RefPtr<StringImpl>> a = {{ "a"_s }};
+    Vector<RefPtr<StringImpl>> b = {{ "a"_s }};
+    EXPECT_TRUE(contentEquals(a, b));
 }
 
 TEST(WTF_Vector, HashKey)
@@ -1927,10 +1927,10 @@ TEST(WTF_Vector, HashKeyInlineCapacity)
 
 TEST(WTF_Vector, HashKeyString)
 {
-    Vector<String> a = { "a"_s };
-    Vector<String> b = { "a"_s, "b"_s };
+    Vector<RefPtr<StringImpl>> a = { "a"_s };
+    Vector<RefPtr<StringImpl>> b = { "a"_s, "b"_s };
 
-    HashSet<Vector<String>> hash;
+    HashSet<Vector<RefPtr<StringImpl>>> hash;
 
     EXPECT_FALSE(hash.contains(a));
     EXPECT_FALSE(hash.contains(b));
@@ -2065,9 +2065,9 @@ TEST(WTF_Vector, MapStaticFromSpan)
 TEST(WTF_Vector, MoveConstructor)
 {
     {
-        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
-        Vector<String> strings2(WTF::move(strings));
+        Vector<RefPtr<StringImpl>> strings2(WTF::move(strings));
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
             EXPECT_EQ(strings.capacity(), 0U);
@@ -2086,10 +2086,10 @@ TEST(WTF_Vector, MoveConstructor)
     }
 
     {
-        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
         EXPECT_EQ(strings.capacity(), 10U);
-        Vector<String, 10> strings2(WTF::move(strings));
+        Vector<RefPtr<StringImpl>, 10> strings2(WTF::move(strings));
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
             EXPECT_EQ(strings.capacity(), 10U);
@@ -2108,10 +2108,10 @@ TEST(WTF_Vector, MoveConstructor)
     }
 
     {
-        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
         EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String, 2> strings2(WTF::move(strings));
+        Vector<RefPtr<StringImpl>, 2> strings2(WTF::move(strings));
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
             EXPECT_EQ(strings.capacity(), 2U);
@@ -2133,10 +2133,10 @@ TEST(WTF_Vector, MoveConstructor)
 TEST(WTF_Vector, MoveAssignmentOperator)
 {
     {
-        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
         EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String> strings2;
+        Vector<RefPtr<StringImpl>> strings2;
         strings2 = WTF::move(strings);
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
@@ -2156,9 +2156,9 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 
     {
-        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
-        Vector<String> strings2({ "foo"_str, "bar"_str });
+        Vector<RefPtr<StringImpl>> strings2({ "foo"_str, "bar"_str });
         strings2 = WTF::move(strings);
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
@@ -2178,10 +2178,10 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 
     {
-        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
         EXPECT_EQ(strings.capacity(), 10U);
-        Vector<String, 10> strings2;
+        Vector<RefPtr<StringImpl>, 10> strings2;
         strings2 = WTF::move(strings);
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
@@ -2201,10 +2201,10 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 
     {
-        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
         EXPECT_EQ(strings.capacity(), 10U);
-        Vector<String, 10> strings2({ "foo"_str, "bar"_str });
+        Vector<RefPtr<StringImpl>, 10> strings2({ "foo"_str, "bar"_str });
         strings2 = WTF::move(strings);
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
@@ -2224,10 +2224,10 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 
     {
-        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
         EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String, 2> strings2;
+        Vector<RefPtr<StringImpl>, 2> strings2;
         strings2 = WTF::move(strings);
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
@@ -2247,10 +2247,10 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 
     {
-        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
         EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String, 2> strings2({ "foo"_str, "bar"_str });
+        Vector<RefPtr<StringImpl>, 2> strings2({ "foo"_str, "bar"_str });
         strings2 = WTF::move(strings);
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
@@ -2270,10 +2270,10 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 
     {
-        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        Vector<RefPtr<StringImpl>, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
         EXPECT_EQ(strings.size(), 5U);
         EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String, 2> strings2({ "foo"_str, "bar"_str, "baz"_str });
+        Vector<RefPtr<StringImpl>, 2> strings2({ "foo"_str, "bar"_str, "baz"_str });
         strings2 = WTF::move(strings);
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
@@ -2293,10 +2293,10 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 
     {
-        Vector<String, 2> strings({ "a"_str, "b"_str });
+        Vector<RefPtr<StringImpl>, 2> strings({ "a"_str, "b"_str });
         EXPECT_EQ(strings.size(), 2U);
         EXPECT_EQ(strings.capacity(), 2U);
-        Vector<String, 2> strings2({ "foo"_str, "bar"_str, "baz"_str });
+        Vector<RefPtr<StringImpl>, 2> strings2({ "foo"_str, "bar"_str, "baz"_str });
         strings2 = WTF::move(strings);
         SUPPRESS_USE_AFTER_MOVE {
             EXPECT_EQ(strings.size(), 0U);
@@ -2519,22 +2519,22 @@ TEST(WTF_Vector, AppendSizedRangeEmpty)
 
 TEST(WTF_Vector, AppendSizedRangeMovesFromRvalue)
 {
-    Vector<String> wtfVec = { "a"_s };
-    Vector<String> other = { "b"_s, "c"_s };
+    Vector<RefPtr<StringImpl>> wtfVec = { "a"_s };
+    Vector<RefPtr<StringImpl>> other = { "b"_s, "c"_s };
     wtfVec.appendRange(WTF::move(other));
 
     EXPECT_EQ(3U, wtfVec.size());
     EXPECT_EQ("a"_s, wtfVec[0]);
     EXPECT_EQ("b"_s, wtfVec[1]);
     EXPECT_EQ("c"_s, wtfVec[2]);
-    SUPPRESS_USE_AFTER_MOVE EXPECT_TRUE(other[0].isNull());
-    SUPPRESS_USE_AFTER_MOVE EXPECT_TRUE(other[1].isNull());
+    SUPPRESS_USE_AFTER_MOVE EXPECT_TRUE(!other[0]);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_TRUE(!other[1]);
 }
 
 TEST(WTF_Vector, AppendSizedRangeCopiesFromLvalue)
 {
-    Vector<String> wtfVec = { "a"_s };
-    Vector<String> other = { "b"_s, "c"_s };
+    Vector<RefPtr<StringImpl>> wtfVec = { "a"_s };
+    Vector<RefPtr<StringImpl>> other = { "b"_s, "c"_s };
     wtfVec.appendRange(other);
 
     EXPECT_EQ(3U, wtfVec.size());
@@ -2544,10 +2544,10 @@ TEST(WTF_Vector, AppendSizedRangeCopiesFromLvalue)
 
 TEST(WTF_Vector, fromRangeStrings)
 {
-    Vector<String> stringVec = { "hello"_s, "world"_s };
-    Vector<String> upperStrings = stringVec | std::views::transform([](const String& str) {
-        return str.convertToUppercaseWithoutLocale();
-    }) | rangeTo<Vector<String>>();
+    Vector<RefPtr<StringImpl>> stringVec = { "hello"_s, "world"_s };
+    Vector<RefPtr<StringImpl>> upperStrings = stringVec | std::views::transform([](StringImpl* str) {
+        return convertToUppercaseWithoutLocale(str);
+    }) | rangeTo<Vector<RefPtr<StringImpl>>>();
 
     EXPECT_EQ(2U, stringVec.size());
     EXPECT_EQ("HELLO"_s, upperStrings[0]);
@@ -2598,7 +2598,7 @@ TEST(WTF_Vector, FillAliasingGrowth)
 {
     // Test that fill() works correctly when val references an element in the
     // vector and the fill triggers reallocation (clear + reserveCapacity).
-    Vector<String> v = { "a"_s, "b"_s, "c"_s };
+    Vector<RefPtr<StringImpl>> v = { "a"_s, "b"_s, "c"_s };
     v.fill(v[1], 10);
     EXPECT_EQ(10U, v.size());
     for (size_t i = 0; i < v.size(); ++i)
@@ -2609,7 +2609,7 @@ TEST(WTF_Vector, FillAliasingShrink)
 {
     // Test that fill() works correctly when val references an element that
     // would be destroyed by shrink (index >= newSize).
-    Vector<String> v = { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s };
+    Vector<RefPtr<StringImpl>> v = { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s };
     v.fill(v[4], 3);
     EXPECT_EQ(3U, v.size());
     for (size_t i = 0; i < v.size(); ++i)
@@ -2620,7 +2620,7 @@ TEST(WTF_Vector, FillAliasingNoReallocation)
 {
     // Test that fill() works when val aliases an element and newSize fits
     // within existing capacity.
-    Vector<String> v;
+    Vector<RefPtr<StringImpl>> v;
     v.reserveCapacity(10);
     v.append("a"_s);
     v.append("b"_s);
@@ -2633,7 +2633,7 @@ TEST(WTF_Vector, FillAliasingNoReallocation)
 
 TEST(WTF_Vector, FillAliasingSameSize)
 {
-    Vector<String> v = { "x"_s, "y"_s, "z"_s };
+    Vector<RefPtr<StringImpl>> v = { "x"_s, "y"_s, "z"_s };
     v.fill(v[0]);
     EXPECT_EQ(3U, v.size());
     for (size_t i = 0; i < v.size(); ++i)
@@ -2644,7 +2644,7 @@ TEST(WTF_Vector, InsertFillAliasingWithReallocation)
 {
     // Test that insertFill() works correctly when data references an element
     // in the vector and the insertion triggers reallocation.
-    Vector<String> v(ReserveCapacityTag { }, 3);
+    Vector<RefPtr<StringImpl>> v(ReserveCapacityTag { }, 3);
     v.append("a"_s);
     v.append("b"_s);
     v.append("c"_s);
@@ -2665,7 +2665,7 @@ TEST(WTF_Vector, InsertFillAliasingElementAfterPosition)
     // Test that insertFill() works correctly when data references an element
     // at index >= position. Without the fix, moveOverlapping shifts the
     // element and the reference reads the wrong value.
-    Vector<String> v;
+    Vector<RefPtr<StringImpl>> v;
     v.reserveCapacity(10);
     v.append("a"_s);
     v.append("b"_s);
@@ -2688,7 +2688,7 @@ TEST(WTF_Vector, InsertFillAliasingElementAtPosition)
 {
     // Test that insertFill() works when data references an element in the
     // gap [position, position+dataSize) that gets moved/destructed.
-    Vector<String> v;
+    Vector<RefPtr<StringImpl>> v;
     v.reserveCapacity(10);
     v.append("a"_s);
     v.append("b"_s);
@@ -2708,7 +2708,7 @@ TEST(WTF_Vector, InsertFillAliasingElementBeforePosition)
 {
     // Elements before position are not shifted, so aliasing should be safe
     // even without the fix. Verify it still works.
-    Vector<String> v;
+    Vector<RefPtr<StringImpl>> v;
     v.reserveCapacity(10);
     v.append("a"_s);
     v.append("b"_s);

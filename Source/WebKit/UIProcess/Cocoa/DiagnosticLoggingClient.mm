@@ -58,10 +58,10 @@ void DiagnosticLoggingClient::setDelegate(id <_WKDiagnosticLoggingDelegate> dele
     m_delegateMethods.webviewLogDiagnosticMessageWithDomain = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessageWithDomain:domain:)];
 }
 
-void DiagnosticLoggingClient::logDiagnosticMessage(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description)
+void DiagnosticLoggingClient::logDiagnosticMessage(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description)
 {
     if (m_delegateMethods.webviewLogDiagnosticMessage)
-        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessage:message.createNSString().get() description:description.createNSString().get()];
+        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessage:createNSString(message).get() description:createNSString(description).get()];
 }
 
 NODELETE static _WKDiagnosticLoggingResultType toWKDiagnosticLoggingResultType(WebCore::DiagnosticLoggingResultType result)
@@ -84,34 +84,34 @@ NODELETE static _WKDiagnosticLoggingDomain toWKDiagnosticLoggingDomain(WebCore::
     }
 }
 
-void DiagnosticLoggingClient::logDiagnosticMessageWithResult(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, WebCore::DiagnosticLoggingResultType result)
+void DiagnosticLoggingClient::logDiagnosticMessageWithResult(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description, WebCore::DiagnosticLoggingResultType result)
 {
     if (m_delegateMethods.webviewLogDiagnosticMessageWithResult)
-        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessageWithResult:message.createNSString().get() description:description.createNSString().get() result:toWKDiagnosticLoggingResultType(result)];
+        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessageWithResult:createNSString(message).get() description:createNSString(description).get() result:toWKDiagnosticLoggingResultType(result)];
 }
 
-void DiagnosticLoggingClient::logDiagnosticMessageWithValue(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, const WTF::String& value)
+void DiagnosticLoggingClient::logDiagnosticMessageWithValue(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description, StringImpl* value)
 {
     if (m_delegateMethods.webviewLogDiagnosticMessageWithValue)
-        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessageWithValue:message.createNSString().get() description:description.createNSString().get() value:value.createNSString().get()];
+        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessageWithValue:createNSString(message).get() description:createNSString(description).get() value:createNSString(value).get()];
 }
 
-void DiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description)
+void DiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description)
 {
     if (m_delegateMethods.webviewLogDiagnosticMessageWithEnhancedPrivacy)
-        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessageWithEnhancedPrivacy:message.createNSString().get() description:description.createNSString().get()];
+        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessageWithEnhancedPrivacy:createNSString(message).get() description:createNSString(description).get()];
 }
 
-void DiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(WebPageProxy*, const String& message, const String& description, Ref<API::Dictionary>&& valueDictionary)
+void DiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(WebPageProxy*, StringImpl* message, StringImpl* description, Ref<API::Dictionary>&& valueDictionary)
 {
     if (m_delegateMethods.webviewLogDiagnosticMessageWithValueDictionary)
-        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessage:message.createNSString().get() description:description.createNSString().get() valueDictionary:RetainPtr { checked_objc_cast<NSDictionary>(valueDictionary->wrapper()) }.get()];
+        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessage:createNSString(message).get() description:createNSString(description).get() valueDictionary:RetainPtr { checked_objc_cast<NSDictionary>(valueDictionary->wrapper()) }.get()];
 }
 
-void DiagnosticLoggingClient::logDiagnosticMessageWithDomain(WebPageProxy*, const String& message, WebCore::DiagnosticLoggingDomain domain)
+void DiagnosticLoggingClient::logDiagnosticMessageWithDomain(WebPageProxy*, StringImpl* message, WebCore::DiagnosticLoggingDomain domain)
 {
     if (m_delegateMethods.webviewLogDiagnosticMessageWithDomain)
-        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessageWithDomain:message.createNSString().get() domain:toWKDiagnosticLoggingDomain(domain)];
+        [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessageWithDomain:createNSString(message).get() domain:toWKDiagnosticLoggingDomain(domain)];
 }
 
 } // namespace WebKit

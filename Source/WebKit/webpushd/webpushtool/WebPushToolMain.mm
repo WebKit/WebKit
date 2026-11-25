@@ -102,9 +102,9 @@ static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumera
         return nullptr;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    PushMessageForTesting pushMessage = { { }, { }, registrationURL.get(), message.get(), WebKit::WebPushD::PushMessageDisposition::Legacy, std::nullopt };
+    PushMessageForTesting pushMessage = { { }, { }, registrationURL.get(), StringImpl::create(message.get()), WebKit::WebPushD::PushMessageDisposition::Legacy, std::nullopt };
 #else
-    PushMessageForTesting pushMessage = { { }, { }, registrationURL.get(), message.get(), WebKit::WebPushD::PushMessageDisposition::Legacy };
+    PushMessageForTesting pushMessage = { { }, { }, registrationURL.get(), StringImpl::create(message.get()), WebKit::WebPushD::PushMessageDisposition::Legacy };
 #endif
 
     return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTF::move(pushMessage));
@@ -187,11 +187,11 @@ public:
         pushMessage.targetAppCodeSigningIdentifier = connection.bundleIdentifier();
         pushMessage.pushPartitionString = connection.pushPartition();
 
-        connection.sendPushMessage(WTF::move(pushMessage), [this, bundleIdentifier = connection.bundleIdentifier(), webClipIdentifier = connection.pushPartition()](String error) mutable {
-            if (error.isEmpty())
-                SAFE_PRINTF("Successfully injected push message %s for [bundleID = %s, webClipIdentifier = %s, scope = %s]\n", m_pushMessage.payload.utf8(), bundleIdentifier.utf8(), webClipIdentifier.utf8(), m_pushMessage.registrationURL.string().utf8());
+        connection.sendPushMessage(WTF::move(pushMessage), [this, bundleIdentifier = connection.bundleIdentifier(), webClipIdentifier = connection.pushPartition()](RefPtr<StringImpl> error) mutable {
+            if (isEmpty(error))
+                SAFE_PRINTF("Successfully injected push message %s for [bundleID = %s, webClipIdentifier = %s, scope = %s]\n", utf8(m_pushMessage.payload), utf8(bundleIdentifier), utf8(webClipIdentifier), utf8(m_pushMessage.registrationURL.string()));
             else
-                SAFE_PRINTF("Injected push message with error: %s\n", error.utf8());
+                SAFE_PRINTF("Injected push message with error: %s\n", utf8(error));
             done();
         });
     }
@@ -203,7 +203,7 @@ private:
 class GetPushPermissionStateVerb : public WebPushToolVerb {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GetPushPermissionStateVerb);
 public:
-    GetPushPermissionStateVerb(const String& scope)
+    GetPushPermissionStateVerb(StringImpl* scope)
         : m_scope(scope) { }
 
     void run(WebPushTool::Connection& connection) override
@@ -215,13 +215,13 @@ public:
     }
 
 private:
-    String m_scope;
+    RefPtr<StringImpl> m_scope;
 };
 
 class RequestPushPermissionVerb : public WebPushToolVerb {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RequestPushPermissionVerb);
 public:
-    RequestPushPermissionVerb(const String& scope)
+    RequestPushPermissionVerb(StringImpl* scope)
         : m_scope(scope) { }
 
     void run(WebPushTool::Connection& connection) override
@@ -233,7 +233,7 @@ public:
     }
 
 private:
-    String m_scope;
+    RefPtr<StringImpl> m_scope;
 };
 
 int WebPushToolMain(int, char **)
@@ -272,10 +272,10 @@ int WebPushToolMain(int, char **)
                     printUsageAndTerminate(adoptNS([[NSString alloc] initWithFormat:@"Invalid push arguments specified"]).get());
                 verb = makeUnique<InjectPushMessageVerb>(WTF::move(*pushMessage));
             } else if ([argument isEqualToString:@"getPushPermissionState"]) {
-                String scope { [enumerator nextObject] };
+                RefPtr<StringImpl> scope { StringImpl::create([enumerator nextObject]) };
                 verb = makeUnique<GetPushPermissionStateVerb>(scope);
             } else if ([argument isEqualToString:@"requestPushPermission"]) {
-                String scope { [enumerator nextObject] };
+                RefPtr<StringImpl> scope { StringImpl::create([enumerator nextObject]) };
                 verb = makeUnique<RequestPushPermissionVerb>(scope);
             } else
                 printUsageAndTerminate(adoptNS([[NSString alloc] initWithFormat:@"Invalid option provided: %@", argument.get()]).get());
@@ -297,7 +297,7 @@ int WebPushToolMain(int, char **)
     if (!verb)
         printUsageAndTerminate(@"Nothing to do");
 
-    auto connection = WebPushTool::Connection::create(preferTestService, bundleIdentifier.get(), pushPartition.get());
+    auto connection = WebPushTool::Connection::create(preferTestService, StringImpl::create(bundleIdentifier.get()), StringImpl::create(pushPartition.get()));
     connection->connectToService(host ? WebPushTool::WaitForServiceToExist::No : WebPushTool::WaitForServiceToExist::Yes);
     verb->run(connection.get());
 

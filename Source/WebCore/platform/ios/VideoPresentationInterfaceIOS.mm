@@ -140,7 +140,7 @@ void VideoPresentationInterfaceIOS::setVideoPresentationModel(VideoPresentationM
 
     if (model) {
         model->addClient(*this);
-        model->requestRouteSharingPolicyAndContextUID([this, protectedThis = Ref { *this }] (RouteSharingPolicy policy, String contextUID) {
+        model->requestRouteSharingPolicyAndContextUID([this, protectedThis = Ref { *this }] (RouteSharingPolicy policy, RefPtr<StringImpl> contextUID) {
             m_routeSharingPolicy = policy;
             m_routingContextUID = contextUID;
 
@@ -261,9 +261,9 @@ void VideoPresentationInterfaceIOS::audioSessionCategoryChanged(WebCore::AudioSe
     updateRouteSharingPolicy();
 }
 
-void VideoPresentationInterfaceIOS::routingContextUIDChanged(const String& routingContextUID)
+void VideoPresentationInterfaceIOS::routingContextUIDChanged(StringImpl* routingContextUID)
 {
-    if (routingContextUID == m_routingContextUID)
+    if (equal(routingContextUID, m_routingContextUID))
         return;
 
     m_routingContextUID = routingContextUID;
@@ -401,7 +401,7 @@ void VideoPresentationInterfaceIOS::videoDimensionsChanged(const FloatSize& vide
 #endif
 }
 
-void VideoPresentationInterfaceIOS::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&, const String&)
+void VideoPresentationInterfaceIOS::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, StringImpl*, StringImpl*)
 {
     [protect(playerLayerView()) setHidden:enabled];
 }

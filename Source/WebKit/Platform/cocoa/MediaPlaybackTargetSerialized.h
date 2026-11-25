@@ -45,8 +45,8 @@ private:
 
     // MediaPlaybackTarget
     Type targetType() const final { return m_context.targetType(); }
-    String deviceName() const final { return m_context.deviceName(); }
-    String routeName() const final { return m_context.routeName(); }
+    RefPtr<StringImpl> deviceName() const final { return m_context.deviceName(); }
+    RefPtr<StringImpl> routeName() const final { return m_context.routeName(); }
     bool hasActiveRoute() const final { return m_context.hasActiveRoute(); }
     bool supportsRemoteVideoPlayback() const final { return m_context.supportsRemoteVideoPlayback(); }
 

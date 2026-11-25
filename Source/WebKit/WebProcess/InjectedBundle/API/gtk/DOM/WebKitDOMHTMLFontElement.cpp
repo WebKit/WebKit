@@ -203,7 +203,7 @@ void webkit_dom_html_font_element_set_color(WebKitDOMHTMLFontElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FONT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFontElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::colorAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::colorAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_font_element_get_face(WebKitDOMHTMLFontElement* self)
@@ -221,7 +221,7 @@ void webkit_dom_html_font_element_set_face(WebKitDOMHTMLFontElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FONT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFontElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::faceAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::faceAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_font_element_get_size(WebKitDOMHTMLFontElement* self)
@@ -239,7 +239,7 @@ void webkit_dom_html_font_element_set_size(WebKitDOMHTMLFontElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FONT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFontElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::sizeAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::sizeAttr, AtomStringImpl::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

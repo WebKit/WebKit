@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-bool contentTypeMeetsContainerAndCodecTypeRequirements(const ContentType& type, const std::optional<Vector<String>>& allowedMediaContainerTypes, const std::optional<Vector<String>>& allowedMediaCodecTypes)
+bool contentTypeMeetsContainerAndCodecTypeRequirements(const ContentType& type, const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaContainerTypes, const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaCodecTypes)
 {
-    if (allowedMediaContainerTypes && !allowedMediaContainerTypes->contains(type.containerType()))
+    if (allowedMediaContainerTypes && !allowedMediaContainerTypes->containsIf([&](auto& item) { return equal(item, type.containerType()); }))
         return false;
 
     if (!allowedMediaCodecTypes)
@@ -41,7 +41,7 @@ bool contentTypeMeetsContainerAndCodecTypeRequirements(const ContentType& type, 
 
     return std::ranges::all_of(type.codecs(), [&](auto& codec) {
         return std::ranges::any_of(*allowedMediaCodecTypes, [&](auto& allowedCodec) {
-            return codec.startsWith(allowedCodec);
+            return startsWith(codec, allowedCodec);
         });
     });
 }

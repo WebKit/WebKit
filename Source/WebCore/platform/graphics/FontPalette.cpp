@@ -42,7 +42,7 @@ FontPalette::FontPalette(Keyword keyword)
 {
 }
 
-FontPalette::FontPalette(AtomString&& ident)
+FontPalette::FontPalette(RefPtr<AtomStringImpl>&& ident)
     : m_value { WTF::move(ident) }
 {
 }
@@ -103,18 +103,18 @@ bool FontPalette::isDark() const
     return false;
 }
 
-std::optional<AtomString> FontPalette::ident() const
+std::optional<RefPtr<AtomStringImpl>> FontPalette::ident() const
 {
-    if (auto* ident = std::get_if<AtomString>(&m_value))
+    if (auto* ident = std::get_if<RefPtr<AtomStringImpl>>(&m_value))
         return std::optional { *ident };
     return std::nullopt;
 }
 
-static void collectReferencedIdentifiers(const FontPalette& fontPalette, OrderedHashSet<AtomString>& identifiers)
+static void collectReferencedIdentifiers(const FontPalette& fontPalette, OrderedHashSet<RefPtr<AtomStringImpl>>& identifiers)
 {
     WTF::switchOn(fontPalette,
         [&](const FontPalette::Keyword&) { },
-        [&](const AtomString& ident) {
+        [&](AtomStringImpl* ident) {
             identifiers.add(ident);
         },
         [&](const FontPaletteMixFunction& mix) {
@@ -124,9 +124,9 @@ static void collectReferencedIdentifiers(const FontPalette& fontPalette, Ordered
     );
 }
 
-OrderedHashSet<AtomString> FontPalette::referencedIdentifiers() const
+OrderedHashSet<RefPtr<AtomStringImpl>> FontPalette::referencedIdentifiers() const
 {
-    OrderedHashSet<AtomString> identifiers;
+    OrderedHashSet<RefPtr<AtomStringImpl>> identifiers;
     collectReferencedIdentifiers(*this, identifiers);
     return identifiers;
 }
@@ -137,7 +137,7 @@ void add(Hasher& hasher, const FontPalette& fontPalette)
         [&](const FontPalette::Keyword& keyword) {
             add(hasher, 1, keyword);
         },
-        [&](const AtomString& ident) {
+        [&](AtomStringImpl* ident) {
             add(hasher, 2, ident);
         },
         [&](const FontPaletteMixFunction& mix) {
@@ -162,7 +162,7 @@ TextStream& operator<<(TextStream& ts, const FontPalette& fontPalette)
                 break;
             }
         },
-        [&](const AtomString& ident) {
+        [&](AtomStringImpl* ident) {
             ts << "custom: "_s << ident;
         },
         [&](const FontPaletteMixFunction& mix) {

@@ -113,7 +113,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     FunctionDebugInfo& ensureFunctionDebugInfo(FunctionCodeIndex) const;
     bool isInstructionStart(uint32_t moduleOffset) const;
-    JS_EXPORT_PRIVATE String declaredName() const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> declaredName() const;
 #endif
 
 

@@ -79,11 +79,11 @@ public:
 #endif
 
     // Emulation hooks called from WebCore via InspectorInstrumentation
-    virtual void applyUserAgentOverride(String&) = 0;
-    virtual void applyEmulatedMedia(AtomString&) = 0;
+    virtual void applyUserAgentOverride(RefPtr<StringImpl>&) = 0;
+    virtual void applyEmulatedMedia(RefPtr<AtomStringImpl>&) = 0;
 
     // Bootstrap script injection: InspectorInstrumentation evaluates the returned script, because evaluating it here could destroy this agent.
-    virtual String bootstrapScriptToEvaluate(WebCore::DOMWrapperWorld&) = 0;
+    virtual RefPtr<StringImpl> bootstrapScriptToEvaluate(WebCore::DOMWrapperWorld&) = 0;
 
     // Overlay / paint rect hooks
     virtual void didPaint(WebCore::RenderObject&, const WebCore::LayoutRect&) = 0;
@@ -93,7 +93,7 @@ public:
 
 protected:
     PageAgentInstrumentation(WebCore::WebAgentContext& context)
-        : InspectorAgentBase("Page"_s, context)
+        : InspectorAgentBase("Page"_si, context)
     {
     }
 };

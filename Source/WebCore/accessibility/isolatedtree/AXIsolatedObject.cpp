@@ -105,7 +105,7 @@ void AXIsolatedObject::updateFromData(IsolatedObjectData&& data)
     m_propertyFlags = data.propertyFlags;
 }
 
-String AXIsolatedObject::debugDescriptionInternal(bool verbose, std::optional<OptionSet<AXDebugStringOption>> debugOptions) const
+RefPtr<StringImpl> AXIsolatedObject::debugDescriptionInternal(bool verbose, std::optional<OptionSet<AXDebugStringOption>> debugOptions) const
 {
     StringBuilder result;
     result.append("{"_s);
@@ -114,7 +114,7 @@ String AXIsolatedObject::debugDescriptionInternal(bool verbose, std::optional<Op
 
     if (debugOptions) {
         if (verbose || *debugOptions & AXDebugStringOption::Ignored)
-            result.append(isIgnored() ? ", ignored"_s : emptyString());
+            result.append(isIgnored() ? ", ignored"_si : emptyString());
 
         if (verbose || *debugOptions & AXDebugStringOption::RelativeFrame) {
             FloatRect frame = relativeFrame();
@@ -134,12 +134,12 @@ bool isDefaultValue(AXProperty property, AXPropertyValueVariant& value)
     return WTF::switchOn(value,
         [](std::nullptr_t&) { return true; },
         [](Markable<AXID> typedValue) { return !typedValue; },
-        [&](String& typedValue) {
+        [&](RefPtr<StringImpl>& typedValue) {
             // An absent invalid status reads back as "false", so as an optimization don't cache
             // anything in that case.
             if (property == AXProperty::InvalidStatus)
-                return typedValue.isEmpty() || typedValue == "false"_s;
-            return typedValue.isEmpty(); // null or empty
+                return isEmpty(typedValue) || equal(typedValue, "false"_s);
+            return isEmpty(typedValue); // null or empty
         },
         [](bool typedValue) { return !typedValue; },
         [](int typedValue) { return !typedValue; },
@@ -168,7 +168,7 @@ bool isDefaultValue(AXProperty property, AXPropertyValueVariant& value)
         [](Vector<AccessibilityText>& typedValue) { return typedValue.isEmpty(); },
         [](Vector<AXID>& typedValue) { return typedValue.isEmpty(); },
         [](Vector<std::pair<Markable<AXID>, Markable<AXID>>>& typedValue) { return typedValue.isEmpty(); },
-        [](Vector<String>& typedValue) { return typedValue.isEmpty(); },
+        [](Vector<RefPtr<StringImpl>>& typedValue) { return typedValue.isEmpty(); },
         [](OptionSet<AXAncestorFlag>& typedValue) { return typedValue.isEmpty(); },
 #if PLATFORM(COCOA)
         [](RetainPtr<NSAttributedString>& typedValue) { return !typedValue; },
@@ -661,18 +661,19 @@ void AXIsolatedObject::setValueIgnoringResult(float value)
     });
 }
 
-bool AXIsolatedObject::setValue(const String& value)
+bool AXIsolatedObject::setValue(StringImpl* value)
 {
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([&value, context = mainThreadContext()] () -> bool {
+    RefPtr protectedValue = value;
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([&protectedValue, context = mainThreadContext()] () -> bool {
         if (RefPtr axObject = context.axObjectOnMainThread())
-            return axObject->setValue(value);
+            return axObject->setValue(protectedValue.get());
         return false;
     }, Accessibility::InteractiveTimeout, false);
 }
 
-void AXIsolatedObject::setValueIgnoringResult(const String& value)
+void AXIsolatedObject::setValueIgnoringResult(StringImpl* value)
 {
-    performFunctionOnMainThread([value = value.isolatedCopy()] (auto* object) {
+    performFunctionOnMainThread([value = isolatedCopy(value)] (auto* object) {
         object->setValueIgnoringResult(value);
     });
 }
@@ -708,15 +709,15 @@ void AXIsolatedObject::setFocused(bool value)
     });
 }
 
-String AXIsolatedObject::selectedText() const
+RefPtr<StringImpl> AXIsolatedObject::selectedText() const
 {
     AX_ASSERT(!isMainThread());
     return selectedTextMarkerRange().toString();
 }
 
-void AXIsolatedObject::setSelectedText(const String& value)
+void AXIsolatedObject::setSelectedText(StringImpl* value)
 {
-    performFunctionOnMainThread([value = value.isolatedCopy()] (auto* object) {
+    performFunctionOnMainThread([value = isolatedCopy(value)] (auto* object) {
         object->setSelectedText(value);
     });
 }
@@ -1087,9 +1088,9 @@ static Vector<FloatRect> collectPaintedLineRects(const AXIsolatedObject& object,
 
     // Only skip the first/last whitespace, as multiple spaces may be intentional (e.g. &nbsp;)
     // and thus should have some representation.
-    if (trimLeading && start < end && start < runs->text.length() && runs->text[start] == ' ')
+    if (trimLeading && start < end && start < length(runs->text) && codeUnitAt(runs->text, start) == ' ')
         ++start;
-    if (trimTrailing && end > start && end - 1 < runs->text.length() && runs->text[end - 1] == ' ')
+    if (trimTrailing && end > start && end - 1 < length(runs->text) && codeUnitAt(runs->text, end - 1) == ' ')
         --end;
     if (start >= end)
         return { };
@@ -1405,26 +1406,26 @@ bool AXIsolatedObject::boolAttributeValue(AXProperty property) const
     return hasPropertyFlag(static_cast<AXPropertyFlag>(1 << propertyIndex));
 }
 
-String AXIsolatedObject::stringAttributeValue(AXProperty property) const
+RefPtr<StringImpl> AXIsolatedObject::stringAttributeValue(AXProperty property) const
 {
     size_t index = indexOfProperty(property);
     if (index == notFound)
         return emptyString();
 
     return WTF::switchOn(m_properties[index].second,
-        [] (const String& typedValue) { return typedValue; },
+        [] (const RefPtr<StringImpl>& typedValue) -> RefPtr<StringImpl> { return typedValue; },
         [] (auto&) { return emptyString(); }
     );
 }
 
-String AXIsolatedObject::stringAttributeValueNullIfMissing(AXProperty property) const
+RefPtr<StringImpl> AXIsolatedObject::stringAttributeValueNullIfMissing(AXProperty property) const
 {
     size_t index = indexOfProperty(property);
     if (index == notFound)
         return nullString();
 
     return WTF::switchOn(m_properties[index].second,
-        [] (const String& typedValue) { return typedValue; },
+        [] (const RefPtr<StringImpl>& typedValue) -> RefPtr<StringImpl> { return typedValue; },
         [] (auto&) { return nullString(); }
     );
 }
@@ -1467,10 +1468,10 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXProperty property)
 
         switch (property) {
         case AXProperty::InnerHTML:
-            value = axObject->innerHTML().isolatedCopy();
+            value = isolatedCopy(axObject->innerHTML());
             break;
         case AXProperty::OuterHTML:
-            value = axObject->outerHTML().isolatedCopy();
+            value = isolatedCopy(axObject->outerHTML());
             break;
         default:
             break;
@@ -1570,16 +1571,16 @@ Vector<SimpleRange> AXIsolatedObject::findTextRanges(const AccessibilitySearchTe
     }, Accessibility::InteractiveTimeout, Vector<SimpleRange> { });
 }
 
-Vector<String> AXIsolatedObject::performTextOperation(const AccessibilityTextOperation& textOperation)
+Vector<RefPtr<StringImpl>> AXIsolatedObject::performTextOperation(const AccessibilityTextOperation& textOperation)
 {
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([&textOperation, context = mainThreadContext()] () -> Vector<String> {
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([&textOperation, context = mainThreadContext()] () -> Vector<RefPtr<StringImpl>> {
         if (RefPtr object = context.axObjectOnMainThread())
             return object->performTextOperation(textOperation);
-        return Vector<String>();
-    }, Accessibility::InteractiveTimeout, Vector<String> { });
+        return Vector<RefPtr<StringImpl>>();
+    }, Accessibility::InteractiveTimeout, Vector<RefPtr<StringImpl>> { });
 }
 
-String AXIsolatedObject::textUnderElement(TextUnderElementMode) const
+RefPtr<StringImpl> AXIsolatedObject::textUnderElement(TextUnderElementMode) const
 {
     AX_ASSERT_NOT_REACHED();
     return { };
@@ -1834,22 +1835,22 @@ FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, Accessibi
     }, Accessibility::BoundingBoxTimeout, rect);
 }
 
-bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const CharacterRange& textRange)
+bool AXIsolatedObject::replaceTextInRange(StringImpl* replacementText, const CharacterRange& textRange)
 {
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([text = replacementText.isolatedCopy(), &textRange, context = mainThreadContext()] () -> bool {
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([text = isolatedCopy(replacementText), &textRange, context = mainThreadContext()] () -> bool {
         if (RefPtr axObject = context.axObjectOnMainThread())
             return axObject->replaceTextInRange(text, textRange);
         return false;
     }, Accessibility::InteractiveTimeout, false);
 }
 
-bool AXIsolatedObject::insertText(const String& text)
+bool AXIsolatedObject::insertText(StringImpl* text)
 {
     AXTRACE(makeString("AXIsolatedObject::insertText text = "_s, text));
 
     // Dispatch to the main thread without waiting since AXObject::insertText waits for the UI process that can be waiting resulting in a deadlock. That is the case when running LayoutTests.
     // The return value of insertText is not used, so not waiting does not result in any loss of functionality.
-    performFunctionOnMainThread([text = text.isolatedCopy()] (auto* axObject) {
+    performFunctionOnMainThread([text = isolatedCopy(text)] (auto* axObject) {
         axObject->insertText(text);
     });
     return true;
@@ -1950,14 +1951,14 @@ int AXIsolatedObject::insertionPointLineNumber() const
     return -1;
 }
 
-String AXIsolatedObject::identifierAttribute() const
+RefPtr<StringImpl> AXIsolatedObject::identifierAttribute() const
 {
     if (AXIsolatedTree::shouldCacheIdentifierAttribute())
         return stringAttributeValue(AXProperty::IdentifierAttribute);
 
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> String {
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> RefPtr<StringImpl> {
         if (RefPtr object = context.axObjectOnMainThread())
-            return object->identifierAttribute().isolatedCopy();
+            return isolatedCopy(object->identifierAttribute());
         return { };
     }, Accessibility::GeneralPropertyTimeout, emptyString());
 }
@@ -1968,10 +1969,10 @@ CharacterRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
     return AXTextMarker { *this, 0 }.characterRangeForLine(lineIndex);
 }
 
-String AXIsolatedObject::doAXStringForRange(const CharacterRange& range) const
+RefPtr<StringImpl> AXIsolatedObject::doAXStringForRange(const CharacterRange& range) const
 {
     AX_ASSERT(!isMainThread());
-    return textMarkerRange().toString().substring(range.location, range.length);
+    return substring(textMarkerRange().toString(), range.location, range.length);
 }
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::visibleChildren()
@@ -2270,13 +2271,13 @@ AXTextMarkerRange AXIsolatedObject::textInputMarkedTextMarkerRange() const
 
 // The attribute this value is exposed as is not used by VoiceOver or any other AX client on macOS, so we intentionally don't cache it.
 // Re-visit if ITM expands to more platforms, or if AX clients need to start using this.
-String AXIsolatedObject::linkRelValue() const
+RefPtr<StringImpl> AXIsolatedObject::linkRelValue() const
 {
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> String {
+    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> RefPtr<StringImpl> {
         if (RefPtr object = context.axObjectOnMainThread())
-            return object->linkRelValue().isolatedCopy();
+            return isolatedCopy(object->linkRelValue());
         return { };
-    }, Accessibility::GeneralPropertyTimeout, String { });
+    }, Accessibility::GeneralPropertyTimeout, nullString());
 }
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
@@ -2436,17 +2437,17 @@ bool AXIsolatedObject::inheritsPresentationalRole() const
     return false;
 }
 
-void AXIsolatedObject::setAccessibleName(const AtomString&)
+void AXIsolatedObject::setAccessibleName(AtomStringImpl*)
 {
     AX_ASSERT_NOT_REACHED();
 }
 
-String AXIsolatedObject::textContentPrefixFromListMarker() const
+RefPtr<StringImpl> AXIsolatedObject::textContentPrefixFromListMarker() const
 {
-    return propertyValue<String>(AXProperty::TextContentPrefixFromListMarker);
+    return propertyValue<RefPtr<StringImpl>>(AXProperty::TextContentPrefixFromListMarker);
 }
 
-String AXIsolatedObject::stringValue() const
+RefPtr<StringImpl> AXIsolatedObject::stringValue() const
 {
     size_t index = indexOfProperty(AXProperty::StringValue);
     if (index == notFound) {
@@ -2482,15 +2483,15 @@ String AXIsolatedObject::stringValue() const
     }
 
     return WTF::switchOn(m_properties[index].second,
-        [] (const String& typedValue) { return typedValue; },
+        [] (const RefPtr<StringImpl>& typedValue) -> RefPtr<StringImpl> { return typedValue; },
         [] (auto&) { return emptyString(); }
     );
 }
 
-String AXIsolatedObject::text() const
+RefPtr<StringImpl> AXIsolatedObject::text() const
 {
     AX_ASSERT_NOT_REACHED();
-    return String();
+    return nullptr;
 }
 
 #if !PLATFORM(COCOA)
@@ -2574,14 +2575,14 @@ AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::relatedObjects(AXRel
     return { };
 }
 
-String AXIsolatedObject::innerHTML() const
+RefPtr<StringImpl> AXIsolatedObject::innerHTML() const
 {
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXProperty::InnerHTML);
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<RefPtr<StringImpl>>(AXProperty::InnerHTML);
 }
 
-String AXIsolatedObject::outerHTML() const
+RefPtr<StringImpl> AXIsolatedObject::outerHTML() const
 {
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXProperty::OuterHTML);
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<RefPtr<StringImpl>>(AXProperty::OuterHTML);
 }
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::rowHeaders()
@@ -2605,7 +2606,7 @@ AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::rowHeaders()
             if (!tableCell || tableCell == this || headers.contains(Ref { *tableCell }))
                 continue;
 
-            if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(*tableCell))
+            if (equal(tableCell->cellScope(), "rowgroup"_s) && isTableCellInSameRowGroup(*tableCell))
                 headers.append(tableCell.releaseNonNull());
             else if (tableCell->isRowHeader())
                 headers.append(tableCell.releaseNonNull());
@@ -2630,7 +2631,7 @@ IntPoint AXIsolatedObject::clickPoint()
     return { };
 }
 
-Vector<String> AXIsolatedObject::determineDropEffects() const
+Vector<RefPtr<StringImpl>> AXIsolatedObject::determineDropEffects() const
 {
     AX_ASSERT_NOT_REACHED();
     return { };
@@ -2648,13 +2649,13 @@ int AXIsolatedObject::layoutCount() const
     return 0;
 }
 
-Vector<String> AXIsolatedObject::classList() const
+Vector<RefPtr<StringImpl>> AXIsolatedObject::classList() const
 {
     AX_ASSERT_NOT_REACHED();
     return { };
 }
 
-String AXIsolatedObject::computedRoleString() const
+RefPtr<StringImpl> AXIsolatedObject::computedRoleString() const
 {
     AX_ASSERT_NOT_REACHED();
     return { };

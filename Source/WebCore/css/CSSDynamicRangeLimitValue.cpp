@@ -43,7 +43,7 @@ CSSDynamicRangeLimitValue::CSSDynamicRangeLimitValue(CSS::DynamicRangeLimit&& dy
 {
 }
 
-String CSSDynamicRangeLimitValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSDynamicRangeLimitValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_dynamicRangeLimit);
 }

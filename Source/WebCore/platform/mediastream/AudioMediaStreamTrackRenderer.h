@@ -62,7 +62,7 @@ public:
     static RefPtr<AudioMediaStreamTrackRenderer> create(Init&&);
     virtual ~AudioMediaStreamTrackRenderer();
 
-    static String defaultDeviceID();
+    static RefPtr<StringImpl> defaultDeviceID();
 
     virtual void start(CompletionHandler<void()>&&) = 0;
     virtual void stop() = 0;
@@ -73,7 +73,7 @@ public:
     virtual void setVolume(float);
     float volume() const;
 
-    virtual void setAudioOutputDevice(const String&);
+    virtual void setAudioOutputDevice(StringImpl*);
 
 protected:
     explicit AudioMediaStreamTrackRenderer(Init&&);
@@ -130,7 +130,7 @@ inline LibWebRTCAudioModule* AudioMediaStreamTrackRenderer::audioModule()
 }
 #endif
 
-inline void AudioMediaStreamTrackRenderer::setAudioOutputDevice(const String&)
+inline void AudioMediaStreamTrackRenderer::setAudioOutputDevice(StringImpl*)
 {
 }
 

@@ -39,7 +39,7 @@ RefPtr<Style::Image> CSSFreeformGradientValue::createStyleImage(const Style::Bui
     return Style::FreeformGradientImage::create(Style::toStyle(m_gradient, state));
 }
 
-String CSSFreeformGradientValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFreeformGradientValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_gradient);
 }

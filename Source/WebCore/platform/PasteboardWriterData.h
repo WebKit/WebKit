@@ -46,7 +46,7 @@ public:
 
     struct PlainText {
         bool canSmartCopyOrDelete;
-        String text;
+        RefPtr<StringImpl> text;
     };
 
     struct WebContent {
@@ -54,15 +54,15 @@ public:
         WEBCORE_EXPORT ~WebContent();
 
 #if PLATFORM(COCOA)
-        String contentOrigin;
+        RefPtr<StringImpl> contentOrigin;
         bool canSmartCopyOrDelete;
         RefPtr<SharedBuffer> dataInWebArchiveFormat;
         RefPtr<SharedBuffer> dataInRTFDFormat;
         RefPtr<SharedBuffer> dataInRTFFormat;
         std::optional<WebCore::AttributedString> dataInAttributedStringFormat;
-        String dataInHTMLFormat;
-        String dataInStringFormat;
-        Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
+        RefPtr<StringImpl> dataInHTMLFormat;
+        RefPtr<StringImpl> dataInStringFormat;
+        Vector<std::pair<RefPtr<StringImpl>, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
 #endif
     };
 
@@ -71,11 +71,11 @@ public:
 
     struct URLData {
         URL url;
-        String title;
+        RefPtr<StringImpl> title;
 #if PLATFORM(MAC)
-        String userVisibleForm;
+        RefPtr<StringImpl> userVisibleForm;
 #elif PLATFORM(GTK)
-        String markup;
+        RefPtr<StringImpl> markup;
 #endif
     };
 

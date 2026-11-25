@@ -111,8 +111,8 @@ NSArray *RemoteLayerTreeScrollingPerformanceData::data()
 static CALayer *findTileGridContainerLayer(CALayer *layer)
 {
     for (CALayer *currLayer : [layer sublayers]) {
-        String layerName = [currLayer name];
-        if (layerName == TileController::tileGridContainerLayerName())
+        RefPtr<StringImpl> layerName = StringImpl::create([currLayer name]);
+        if (equal(layerName, TileController::tileGridContainerLayerName()))
             return currLayer;
 
         if (RetainPtr foundLayer = findTileGridContainerLayer(currLayer))

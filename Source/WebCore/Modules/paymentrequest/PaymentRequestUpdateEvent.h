@@ -49,8 +49,8 @@ public:
     bool didCallUpdateWith() const { return m_waitForUpdate; }
 
 protected:
-    explicit PaymentRequestUpdateEvent(enum EventInterfaceType, const AtomString& type);
-    PaymentRequestUpdateEvent(enum EventInterfaceType, const AtomString& type, const PaymentRequestUpdateEventInit&);
+    explicit PaymentRequestUpdateEvent(enum EventInterfaceType, AtomStringImpl* type);
+    PaymentRequestUpdateEvent(enum EventInterfaceType, AtomStringImpl* type, const PaymentRequestUpdateEventInit&);
 
 private:
     bool m_waitForUpdate { false };

@@ -30,13 +30,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ClipboardEvent);
 
-ClipboardEvent::ClipboardEvent(const AtomString& type, Ref<DataTransfer>&& dataTransfer)
+ClipboardEvent::ClipboardEvent(AtomStringImpl* type, Ref<DataTransfer>&& dataTransfer)
     : Event(EventInterfaceType::ClipboardEvent, type, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes)
     , m_clipboardData(WTF::move(dataTransfer))
 {
 }
 
-ClipboardEvent::ClipboardEvent(const AtomString& type, Init&& init)
+ClipboardEvent::ClipboardEvent(AtomStringImpl* type, Init&& init)
     : Event(EventInterfaceType::ClipboardEvent, type, WTF::move(init), IsTrusted::No)
     , m_clipboardData(WTF::move(init.clipboardData))
 {

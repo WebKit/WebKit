@@ -50,7 +50,7 @@ ExceptionOr<Ref<ConstantSourceNode>> ConstantSourceNode::create(BaseAudioContext
 
 ConstantSourceNode::ConstantSourceNode(BaseAudioContext& context, float offset)
     : AudioScheduledSourceNode(context, NodeTypeConstant)
-    , m_offset(AudioParam::create(context, "offset"_s, offset, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_offset(AudioParam::create(context, "offset"_si, offset, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
     , m_sampleAccurateValues(AudioUtilities::renderQuantumSize)
 {
     addOutput(1);

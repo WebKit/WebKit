@@ -37,9 +37,9 @@ IdTargetObserverRegistry::IdTargetObserverRegistry() = default;
 
 IdTargetObserverRegistry::~IdTargetObserverRegistry() = default;
 
-void IdTargetObserverRegistry::addObserver(const AtomString& id, IdTargetObserver& observer)
+void IdTargetObserverRegistry::addObserver(AtomStringImpl* id, IdTargetObserver& observer)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return;
     
     IdToObserverSetMap::AddResult result = m_registry.ensure(id, [] {
@@ -49,9 +49,9 @@ void IdTargetObserverRegistry::addObserver(const AtomString& id, IdTargetObserve
     result.iterator->value->observers.add(observer);
 }
 
-void IdTargetObserverRegistry::removeObserver(const AtomString& id, IdTargetObserver& observer)
+void IdTargetObserverRegistry::removeObserver(AtomStringImpl* id, IdTargetObserver& observer)
 {
-    if (id.isEmpty() || m_registry.isEmpty())
+    if (isEmpty(id) || m_registry.isEmpty())
         return;
 
     IdToObserverSetMap::iterator iter = m_registry.find(id);
@@ -64,7 +64,7 @@ void IdTargetObserverRegistry::removeObserver(const AtomString& id, IdTargetObse
     }
 }
 
-void IdTargetObserverRegistry::notifyObserversInternal(Element& element, const AtomString& id)
+void IdTargetObserverRegistry::notifyObserversInternal(Element& element, AtomStringImpl* id)
 {
     ASSERT(!m_registry.isEmpty());
 

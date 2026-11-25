@@ -46,7 +46,7 @@ struct WorkerOptions;
 class SharedWorker final : public AbstractWorker, public ActiveDOMObject, public Identified<SharedWorkerObjectIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(SharedWorker);
 public:
-    static ExceptionOr<Ref<SharedWorker>> create(Document&, Variant<Ref<TrustedScriptURL>, String>&&, std::optional<Variant<String, WorkerOptions>>&&);
+    static ExceptionOr<Ref<SharedWorker>> create(Document&, Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>&&, std::optional<Variant<RefPtr<StringImpl>, WorkerOptions>>&&);
     ~SharedWorker();
 
     // ContextDestructionObserver.
@@ -57,7 +57,7 @@ public:
     NODELETE static SharedWorker* fromIdentifier(SharedWorkerObjectIdentifier);
     MessagePort& port() const { return m_port.get(); }
 
-    const String& identifierForInspector() const LIFETIME_BOUND { return m_identifierForInspector; }
+    const RefPtr<StringImpl>& identifierForInspector() const LIFETIME_BOUND { return m_identifierForInspector; }
 
     void didFinishLoading(const ResourceError&);
 
@@ -80,7 +80,7 @@ private:
 
     SharedWorkerKey m_key;
     const Ref<MessagePort> m_port;
-    String m_identifierForInspector;
+    RefPtr<StringImpl> m_identifierForInspector;
     URLKeepingBlobAlive m_blobURLExtension;
     size_t m_bytesTransferredOverNetwork { 0 };
 

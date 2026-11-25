@@ -45,7 +45,7 @@ struct URLProvenance;
 ResourceLoaderOptions styleResourceLoaderOptions(bool isInitiatingElementInUserAgentShadowTree);
 
 // Steps 3 through 7, for loads that use a CachedResourceLoader.
-CachedResourceRequest createStyleResourceRequest(Document&, const WTF::URL&, const URLModifiers&, const URLProvenance&, FetchOptions::Mode, ResourceLoaderOptions, const AtomString& initiatorType = nullAtom());
+CachedResourceRequest createStyleResourceRequest(Document&, const WTF::URL&, const URLModifiers&, const URLProvenance&, FetchOptions::Mode, ResourceLoaderOptions, AtomStringImpl* initiatorType = nullptr);
 
 // Steps 3 through 7, for loads that use a ThreadableLoader.
 void applyStyleResourceRequestSteps(ThreadableLoaderOptions&, const URLModifiers&, const URLProvenance&, FetchOptions::Mode);

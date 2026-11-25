@@ -45,10 +45,10 @@ static const SchemaVersion currentSchemaVersion = 2;
 static constexpr auto idKey = "id"_s;
 static constexpr auto persistAcrossSessionsKey = "persistAcrossSessions"_s;
 
-static String rowFilterStringFromRowKeys(Vector<String> keys)
+static RefPtr<StringImpl> rowFilterStringFromRowKeys(Vector<RefPtr<StringImpl>> keys)
 {
     const auto escapedAndQuotedKeys = [&] {
-        Vector<String> escapedAndQuotedKeys;
+        Vector<RefPtr<StringImpl>> escapedAndQuotedKeys;
         for (const auto& key : borrow(keys)) {
             auto keyWithSingleQuotesEscaped = makeStringByReplacingAll(key, "'"_s, "''"_s);
             escapedAndQuotedKeys.append(makeString("'"_s, keyWithSingleQuotesEscaped, "'"_s));
@@ -56,42 +56,42 @@ static String rowFilterStringFromRowKeys(Vector<String> keys)
         return escapedAndQuotedKeys;
     }();
 
-    return makeStringByJoining(escapedAndQuotedKeys.span(), ", "_s);
+    return makeStringByJoining(escapedAndQuotedKeys.span(), ", "_si);
 }
 
-WebExtensionRegisteredScriptsSQLiteStore::WebExtensionRegisteredScriptsSQLiteStore(const String& uniqueIdentifier, const String& directory, bool useInMemoryDatabase)
+WebExtensionRegisteredScriptsSQLiteStore::WebExtensionRegisteredScriptsSQLiteStore(StringImpl* uniqueIdentifier, StringImpl* directory, bool useInMemoryDatabase)
     : WebExtensionSQLiteStore(uniqueIdentifier, directory, useInMemoryDatabase)
 {
 }
 
-void WebExtensionRegisteredScriptsSQLiteStore::updateScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
+void WebExtensionRegisteredScriptsSQLiteStore::updateScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(StringImpl* errorMessage)>&& completionHandler)
 {
-    Vector<String> ids;
+    Vector<RefPtr<StringImpl>> ids;
     for (const auto& script : borrow(scripts))
-        ids.append(script->getString(idKey));
+        ids.append(script->getString(StringImpl::create(idKey).ptr()));
 
-    deleteScriptsWithIDs(ids, [weakThis = ThreadSafeWeakPtr { *this }, scripts = WTF::move(scripts), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
+    deleteScriptsWithIDs(ids, [weakThis = ThreadSafeWeakPtr { *this }, scripts = WTF::move(scripts), completionHandler = WTF::move(completionHandler)](StringImpl* errorMessage) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler({ });
+            completionHandler(nullptr);
             return;
         }
 
-        if (!errorMessage.isEmpty()) {
+        if (!isEmpty(errorMessage)) {
             completionHandler(errorMessage);
             return;
         }
 
-        protectedThis->addScripts(scripts, [completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
+        protectedThis->addScripts(scripts, [completionHandler = WTF::move(completionHandler)](StringImpl* errorMessage) mutable {
             completionHandler(errorMessage);
         });
     });
 }
 
-void WebExtensionRegisteredScriptsSQLiteStore::deleteScriptsWithIDs(Vector<String> ids, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
+void WebExtensionRegisteredScriptsSQLiteStore::deleteScriptsWithIDs(Vector<RefPtr<StringImpl>> ids, CompletionHandler<void(StringImpl* errorMessage)>&& completionHandler)
 {
     if (ids.isEmpty()) {
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
 
@@ -99,12 +99,12 @@ void WebExtensionRegisteredScriptsSQLiteStore::deleteScriptsWithIDs(Vector<Strin
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ });
+                completionHandler(nullptr);
             });
             return;
         }
 
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, false)) {
             WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
@@ -112,34 +112,34 @@ void WebExtensionRegisteredScriptsSQLiteStore::deleteScriptsWithIDs(Vector<Strin
             return;
         }
 
-        ASSERT(errorMessage.isEmpty());
+        ASSERT(isEmpty(errorMessage));
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->database()), makeString("DELETE FROM registered_scripts WHERE key in ("_s, rowFilterStringFromRowKeys(ids), ")"_s));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to delete scripts for extension %s.", protectedThis->uniqueIdentifier().utf8());
-            errorMessage = "Failed to delete scripts from registered content scripts storage."_s;
+            RELEASE_LOG_ERROR(Extensions, "Failed to delete scripts for extension %s.", utf8(protectedThis->uniqueIdentifier()));
+            errorMessage = "Failed to delete scripts from registered content scripts storage."_si;
         }
 
-        String deleteDatabaseErrorMessage = protectedThis->deleteDatabaseIfEmpty();
+        RefPtr<StringImpl> deleteDatabaseErrorMessage = protectedThis->deleteDatabaseIfEmpty();
 
         WorkQueue::mainSingleton().dispatch([deleteDatabaseErrorMessage = crossThreadCopy(deleteDatabaseErrorMessage), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             // Errors from opening the database or deleting keys take precedence over an error deleting the database.
-            completionHandler(!errorMessage.isEmpty() ? errorMessage : deleteDatabaseErrorMessage);
+            completionHandler(!isEmpty(errorMessage) ? errorMessage : deleteDatabaseErrorMessage);
         });
     });
 }
 
-void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
+void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(StringImpl* errorMessage)>&& completionHandler)
 {
     // Only save persistent scripts to storage
-    Vector<std::pair<String, String>> persistentScripts;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> persistentScripts;
     for (Ref script : scripts) {
-        if (auto persistent = script->getBoolean(persistAcrossSessionsKey); persistent && persistent.value())
-            persistentScripts.append({ script->getString(idKey), script->toJSONString() });
+        if (auto persistent = script->getBoolean(StringImpl::create(persistAcrossSessionsKey).ptr()); persistent && persistent.value())
+            persistentScripts.append({ script->getString(StringImpl::create(idKey).ptr()), script->toJSONString() });
     }
 
     if (persistentScripts.isEmpty()) {
-        completionHandler({ });
+        completionHandler(nullptr);
         return;
     }
 
@@ -147,12 +147,12 @@ void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Objec
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
-                completionHandler({ });
+                completionHandler(nullptr);
             });
             return;
         }
 
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         if (!protectedThis->openDatabaseIfNecessary(errorMessage, true)) {
             WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(errorMessage);
@@ -160,7 +160,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Objec
             return;
         }
 
-        ASSERT(errorMessage.isEmpty());
+        ASSERT(isEmpty(errorMessage));
 
         for (auto& [scriptID, scriptData] : borrow(persistentScripts))
             protectedThis->insertScript(scriptID, scriptData, *(protectedThis->database()), errorMessage);
@@ -171,7 +171,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Objec
     });
 }
 
-void WebExtensionRegisteredScriptsSQLiteStore::getScripts(CompletionHandler<void(Vector<Ref<JSON::Object>> scripts, const String& errorMessage)>&& completionHandler)
+void WebExtensionRegisteredScriptsSQLiteStore::getScripts(CompletionHandler<void(Vector<Ref<JSON::Object>> scripts, StringImpl* errorMessage)>&& completionHandler)
 {
     queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
@@ -182,7 +182,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::getScripts(CompletionHandler<void
             return;
         }
 
-        String errorMessage;
+        RefPtr<StringImpl> errorMessage;
         auto scripts = protectedThis->getScriptsWithErrorMessage(errorMessage);
         WorkQueue::mainSingleton().dispatch([scripts = WTF::move(scripts), errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(scripts, errorMessage);
@@ -190,16 +190,16 @@ void WebExtensionRegisteredScriptsSQLiteStore::getScripts(CompletionHandler<void
     });
 }
 
-Vector<Ref<JSON::Object>> WebExtensionRegisteredScriptsSQLiteStore::getScriptsWithErrorMessage(String& errorMessage)
+Vector<Ref<JSON::Object>> WebExtensionRegisteredScriptsSQLiteStore::getScriptsWithErrorMessage(RefPtr<StringImpl>& errorMessage)
 {
     assertIsCurrent(queue());
 
     if (!openDatabaseIfNecessary(errorMessage, false))
         return { };
 
-    ASSERT(errorMessage.isEmpty());
+    ASSERT(isEmpty(errorMessage));
 
-    if (RefPtr rows = SQLiteDatabaseFetch(*database(), "SELECT * FROM registered_scripts"_s))
+    if (RefPtr rows = SQLiteDatabaseFetch(*database(), "SELECT * FROM registered_scripts"_si))
         return getKeysAndValuesFromRowIterator(*rows);
     return { };
 }
@@ -216,9 +216,9 @@ Vector<Ref<JSON::Object>> WebExtensionRegisteredScriptsSQLiteStore::getKeysAndVa
             if (RefPtr object = value->asObject())
                 results.append(*object);
             else
-                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize registered content scripts for extension %s", uniqueIdentifier().utf8());
+                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize registered content scripts for extension %s", utf8(uniqueIdentifier()));
         } else
-            RELEASE_LOG_ERROR(Extensions, "Failed to parse JSON for registered content scripts for extension %s", uniqueIdentifier().utf8());
+            RELEASE_LOG_ERROR(Extensions, "Failed to parse JSON for registered content scripts for extension %s", utf8(uniqueIdentifier()));
 
         row = rows->next();
     }
@@ -226,15 +226,15 @@ Vector<Ref<JSON::Object>> WebExtensionRegisteredScriptsSQLiteStore::getKeysAndVa
     return results;
 }
 
-void WebExtensionRegisteredScriptsSQLiteStore::insertScript(const String& scriptID, const String& scriptData, Ref<WebExtensionSQLiteDatabase> database, String& errorMessage)
+void WebExtensionRegisteredScriptsSQLiteStore::insertScript(StringImpl* scriptID, StringImpl* scriptData, Ref<WebExtensionSQLiteDatabase> database, RefPtr<StringImpl>& errorMessage)
 {
     assertIsCurrent(queue());
-    ASSERT(!scriptID.isEmpty());
+    ASSERT(!isEmpty(scriptID));
 
-    DatabaseResult result = SQLiteDatabaseExecute(database, "INSERT INTO registered_scripts (key, script) VALUES (?, ?)"_s, scriptID, scriptData);
+    DatabaseResult result = SQLiteDatabaseExecute(database, "INSERT INTO registered_scripts (key, script) VALUES (?, ?)"_si, scriptID, scriptData);
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to insert registered content script for extension %s.", uniqueIdentifier().utf8());
-        errorMessage = "Failed to add content script."_s;
+        RELEASE_LOG_ERROR(Extensions, "Failed to insert registered content script for extension %s.", utf8(uniqueIdentifier()));
+        errorMessage = "Failed to add content script."_si;
         return;
     }
 }
@@ -251,9 +251,9 @@ DatabaseResult WebExtensionRegisteredScriptsSQLiteStore::createFreshDatabaseSche
     assertIsCurrent(queue());
     ASSERT(database());
 
-    DatabaseResult result = SQLiteDatabaseExecute(*database(), "CREATE TABLE registered_scripts (key TEXT PRIMARY KEY NOT NULL, script BLOB NOT NULL)"_s);
+    DatabaseResult result = SQLiteDatabaseExecute(*database(), "CREATE TABLE registered_scripts (key TEXT PRIMARY KEY NOT NULL, script BLOB NOT NULL)"_si);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to create registered_scripts database for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create registered_scripts database for extension %s: %s (%d)", utf8(uniqueIdentifier()), lastErrorMessage(), result);
     return result;
 }
 
@@ -284,9 +284,9 @@ DatabaseResult WebExtensionRegisteredScriptsSQLiteStore::resetDatabaseSchema()
     assertIsCurrent(queue());
     ASSERT(database());
 
-    DatabaseResult result = SQLiteDatabaseExecute(*database(), "DROP TABLE IF EXISTS registered_scripts"_s);
+    DatabaseResult result = SQLiteDatabaseExecute(*database(), "DROP TABLE IF EXISTS registered_scripts"_si);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to reset registered_scripts database schema for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to reset registered_scripts database schema for extension %s: %s (%d)", utf8(uniqueIdentifier()), lastErrorMessage(), result);
 
     return result;
 }
@@ -296,7 +296,7 @@ bool WebExtensionRegisteredScriptsSQLiteStore::isDatabaseEmpty()
     assertIsCurrent(queue());
     ASSERT(database());
 
-    RefPtr rows = SQLiteDatabaseFetch(*database(), "SELECT COUNT(*) FROM registered_scripts"_s);
+    RefPtr rows = SQLiteDatabaseFetch(*database(), "SELECT COUNT(*) FROM registered_scripts"_si);
     if (RefPtr row = rows->next())
         return !row->getInt64(0);
     return true;
@@ -308,7 +308,7 @@ URL WebExtensionRegisteredScriptsSQLiteStore::databaseURL()
         return WebExtensionSQLiteDatabase::inMemoryDatabaseURL();
 
     ASSERT(!directory().isEmpty());
-    return URL(URL { makeString(directory().string(), "/"_s) }, "RegisteredContentScripts.db"_s);
+    return URL(URL { makeString(directory().string(), "/"_s) }, "RegisteredContentScripts.db"_si);
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

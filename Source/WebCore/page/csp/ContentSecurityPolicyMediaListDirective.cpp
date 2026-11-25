@@ -43,23 +43,23 @@ template<typename CharacterType> NODELETE static bool isMediaTypeCharacter(Chara
     return !isASCIIWhitespace(c) && c != '/';
 }
 
-ContentSecurityPolicyMediaListDirective::ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
+ContentSecurityPolicyMediaListDirective::ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList& directiveList, StringImpl* name, StringImpl* value)
     : ContentSecurityPolicyDirective(directiveList, name, value)
 {
     parse(value);
 }
 
-bool ContentSecurityPolicyMediaListDirective::allows(const String& type) const
+bool ContentSecurityPolicyMediaListDirective::allows(StringImpl* type) const
 {
     return m_pluginTypes.contains(type);
 }
 
-void ContentSecurityPolicyMediaListDirective::parse(const String& value)
+void ContentSecurityPolicyMediaListDirective::parse(StringImpl* value)
 {
     CheckedRef contentSecurityPolicy = directiveList().policy();
 
     // 'plugin-types ____;' OR 'plugin-types;'
-    if (value.isEmpty()) {
+    if (isEmpty(value)) {
         contentSecurityPolicy->reportInvalidPluginTypes(value);
         return;
     }
@@ -77,7 +77,8 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
             auto begin = buffer.position();
             if (!skipExactly<isMediaTypeCharacter>(buffer)) {
                 skipWhile<isNotASCIIWhitespace>(buffer);
-                contentSecurityPolicy->reportInvalidPluginTypes(String({ begin, buffer.position() }));
+                Ref<StringImpl> pluginType = StringImpl::create(std::span { begin, buffer.position() });
+                contentSecurityPolicy->reportInvalidPluginTypes(pluginType.ptr());
                 continue;
             }
             skipWhile<isMediaTypeCharacter>(buffer);
@@ -86,7 +87,8 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
             //      ^
             if (!skipExactly(buffer, '/')) {
                 skipWhile<isNotASCIIWhitespace>(buffer);
-                contentSecurityPolicy->reportInvalidPluginTypes(String({ begin, buffer.position() }));
+                Ref<StringImpl> pluginType = StringImpl::create(std::span { begin, buffer.position() });
+                contentSecurityPolicy->reportInvalidPluginTypes(pluginType.ptr());
                 continue;
             }
 
@@ -94,7 +96,8 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
             //       ^
             if (!skipExactly<isMediaTypeCharacter>(buffer)) {
                 skipWhile<isNotASCIIWhitespace>(buffer);
-                contentSecurityPolicy->reportInvalidPluginTypes(String({ begin, buffer.position() }));
+                Ref<StringImpl> pluginType = StringImpl::create(std::span { begin, buffer.position() });
+                contentSecurityPolicy->reportInvalidPluginTypes(pluginType.ptr());
                 continue;
             }
             skipWhile<isMediaTypeCharacter>(buffer);
@@ -103,10 +106,11 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
             //            ^                          ^               ^
             if (buffer.hasCharactersRemaining() && isNotASCIIWhitespace(*buffer)) {
                 skipWhile<isNotASCIIWhitespace>(buffer);
-                contentSecurityPolicy->reportInvalidPluginTypes(String({ begin, buffer.position() }));
+                Ref<StringImpl> pluginType = StringImpl::create(std::span { begin, buffer.position() });
+                contentSecurityPolicy->reportInvalidPluginTypes(pluginType.ptr());
                 continue;
             }
-            m_pluginTypes.add(String({ begin, buffer.position() }));
+            m_pluginTypes.add(StringImpl::create(std::span { begin, buffer.position() }));
 
             ASSERT(buffer.atEnd() || isASCIIWhitespace(*buffer));
         }

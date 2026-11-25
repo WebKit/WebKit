@@ -51,26 +51,26 @@ public:
     virtual WebCore::PushCrypto::ClientKeys generateClientKeys();
 
     using SubscribeHandler = CompletionHandler<void(NSString *, NSError *)>;
-    virtual void subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) = 0;
+    virtual void subscribe(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) = 0;
 
     using UnsubscribeHandler = CompletionHandler<void(bool, NSError *)>;
-    virtual void unsubscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&&) = 0;
+    virtual void unsubscribe(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&&) = 0;
 
-    virtual Vector<String> enabledTopics() = 0;
-    virtual Vector<String> ignoredTopics() = 0;
-    virtual Vector<String> opportunisticTopics() = 0;
-    virtual Vector<String> nonWakingTopics() = 0;
+    virtual Vector<RefPtr<StringImpl>> enabledTopics() = 0;
+    virtual Vector<RefPtr<StringImpl>> ignoredTopics() = 0;
+    virtual Vector<RefPtr<StringImpl>> opportunisticTopics() = 0;
+    virtual Vector<RefPtr<StringImpl>> nonWakingTopics() = 0;
 
-    virtual void setEnabledTopics(Vector<String>&&) = 0;
-    virtual void setIgnoredTopics(Vector<String>&&) = 0;
-    virtual void setOpportunisticTopics(Vector<String>&&) = 0;
-    virtual void setNonWakingTopics(Vector<String>&&) = 0;
+    virtual void setEnabledTopics(Vector<RefPtr<StringImpl>>&&) = 0;
+    virtual void setIgnoredTopics(Vector<RefPtr<StringImpl>>&&) = 0;
+    virtual void setOpportunisticTopics(Vector<RefPtr<StringImpl>>&&) = 0;
+    virtual void setNonWakingTopics(Vector<RefPtr<StringImpl>>&&) = 0;
 
     struct TopicLists {
-        Vector<String> enabledTopics;
-        Vector<String> ignoredTopics;
-        Vector<String> opportunisticTopics;
-        Vector<String> nonWakingTopics;
+        Vector<RefPtr<StringImpl>> enabledTopics;
+        Vector<RefPtr<StringImpl>> ignoredTopics;
+        Vector<RefPtr<StringImpl>> opportunisticTopics;
+        Vector<RefPtr<StringImpl>> nonWakingTopics;
     };
     virtual void setTopicLists(TopicLists&&) = 0;
 

@@ -46,12 +46,12 @@ class CSSStyleProperties : public CSSStyleDeclaration {
 public:
     StyleDeclarationType styleDeclarationType() const final { return StyleDeclarationType::Style; }
 
-    String cssFloat();
-    ExceptionOr<void> setCssFloat(const String&);
+    RefPtr<StringImpl> cssFloat();
+    ExceptionOr<void> setCssFloat(StringImpl*);
 
     // CSSPropertyID versions of the CSSOM functions to support bindings and editing.
-    virtual String getPropertyValueInternal(CSSPropertyID) = 0;
-    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) = 0;
+    virtual RefPtr<StringImpl> getPropertyValueInternal(CSSPropertyID) = 0;
+    virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, StringImpl* value, IsImportant) = 0;
     virtual Ref<MutableStyleProperties> copyProperties() const = 0;
 
     // FIXME: It would be more efficient, by virtue of avoiding the text transformation and hash lookup currently
@@ -59,23 +59,23 @@ public:
     // by encoding it into the HashTableValue and then passing it together with the PropertyName.
 
     // Shared implementation for all properties that match https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-camel_cased_attribute.
-    String propertyValueForCamelCasedIDLAttribute(const AtomString&);
-    ExceptionOr<void> setPropertyValueForCamelCasedIDLAttribute(const AtomString&, const String&);
+    RefPtr<StringImpl> propertyValueForCamelCasedIDLAttribute(AtomStringImpl*);
+    ExceptionOr<void> setPropertyValueForCamelCasedIDLAttribute(AtomStringImpl*, StringImpl*);
 
     // Shared implementation for all properties that match https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-webkit_cased_attribute.
-    String propertyValueForWebKitCasedIDLAttribute(const AtomString&);
-    ExceptionOr<void> setPropertyValueForWebKitCasedIDLAttribute(const AtomString&, const String&);
+    RefPtr<StringImpl> propertyValueForWebKitCasedIDLAttribute(AtomStringImpl*);
+    ExceptionOr<void> setPropertyValueForWebKitCasedIDLAttribute(AtomStringImpl*, StringImpl*);
 
     // Shared implementation for all properties that match https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-dashed_attribute.
-    String propertyValueForDashedIDLAttribute(const AtomString&);
-    ExceptionOr<void> setPropertyValueForDashedIDLAttribute(const AtomString&, const String&);
+    RefPtr<StringImpl> propertyValueForDashedIDLAttribute(AtomStringImpl*);
+    ExceptionOr<void> setPropertyValueForDashedIDLAttribute(AtomStringImpl*, StringImpl*);
 
     // Shared implementation for all properties that match non-standard Epub-cased.
-    String propertyValueForEpubCasedIDLAttribute(const AtomString&);
-    ExceptionOr<void> setPropertyValueForEpubCasedIDLAttribute(const AtomString&, const String&);
+    RefPtr<StringImpl> propertyValueForEpubCasedIDLAttribute(AtomStringImpl*);
+    ExceptionOr<void> setPropertyValueForEpubCasedIDLAttribute(AtomStringImpl*, StringImpl*);
 
     // FIXME: This needs to pass in a Settings& to work correctly.
-    static CSSPropertyID getCSSPropertyIDFromJavaScriptPropertyName(const AtomString&);
+    static CSSPropertyID getCSSPropertyIDFromJavaScriptPropertyName(AtomStringImpl*);
 };
 
 class PropertySetCSSStyleProperties : public CSSStyleProperties {
@@ -104,18 +104,18 @@ private:
     // FIXME: To implement.
     CSSRuleList* cssRules() const override { return nullptr; }
     unsigned length() const final;
-    String item(unsigned index) const final;
-    RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
-    String getPropertyValue(const String& propertyName) final;
-    String getPropertyPriority(const String& propertyName) final;
-    String getPropertyShorthand(const String& propertyName) final;
-    bool isPropertyImplicit(const String& propertyName) final;
-    ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) final;
-    ExceptionOr<String> removeProperty(const String& propertyName) final;
-    String cssText() const final;
-    ExceptionOr<void> setCssText(const String&) final;
-    String getPropertyValueInternal(CSSPropertyID) final;
-    ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) final;
+    RefPtr<StringImpl> item(unsigned index) const final;
+    RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(StringImpl* propertyName) final;
+    RefPtr<StringImpl> getPropertyValue(StringImpl* propertyName) final;
+    RefPtr<StringImpl> getPropertyPriority(StringImpl* propertyName) final;
+    RefPtr<StringImpl> getPropertyShorthand(StringImpl* propertyName) final;
+    bool isPropertyImplicit(StringImpl* propertyName) final;
+    ExceptionOr<void> setProperty(StringImpl* propertyName, StringImpl* value, StringImpl* priority) final;
+    ExceptionOr<RefPtr<StringImpl>> removeProperty(StringImpl* propertyName) final;
+    RefPtr<StringImpl> cssText() const final;
+    ExceptionOr<void> setCssText(StringImpl*) final;
+    RefPtr<StringImpl> getPropertyValueInternal(CSSPropertyID) final;
+    ExceptionOr<void> setPropertyInternal(CSSPropertyID, StringImpl* value, IsImportant) final;
     Ref<MutableStyleProperties> copyProperties() const final;
 
     bool isExposed(CSSPropertyID) const;

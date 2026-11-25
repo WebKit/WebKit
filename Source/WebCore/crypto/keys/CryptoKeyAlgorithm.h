@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct CryptoKeyAlgorithm {
-    String name;
+    RefPtr<StringImpl> name;
 };
 
 }

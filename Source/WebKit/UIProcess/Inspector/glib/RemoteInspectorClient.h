@@ -52,18 +52,18 @@ public:
 class RemoteInspectorClient {
     WTF_MAKE_TZONE_ALLOCATED(RemoteInspectorClient);
 public:
-    RemoteInspectorClient(String&& hostAndPort, RemoteInspectorObserver&);
+    RemoteInspectorClient(RefPtr<StringImpl>&& hostAndPort, RemoteInspectorObserver&);
     ~RemoteInspectorClient();
 
-    const String& hostAndPort() const LIFETIME_BOUND { return m_hostAndPort; }
-    const String& backendCommandsURL() const LIFETIME_BOUND { return m_backendCommandsURL; }
+    const RefPtr<StringImpl>& hostAndPort() const LIFETIME_BOUND { return m_hostAndPort; }
+    const RefPtr<StringImpl>& backendCommandsURL() const LIFETIME_BOUND { return m_backendCommandsURL; }
 
     enum class InspectorType { UI, HTTP };
     StringBuilder buildTargetListPage(InspectorType) const;
     enum class ShouldEscapeSingleQuote : bool { No, Yes };
     void appendTargetList(StringBuilder&, InspectorType, ShouldEscapeSingleQuote) const;
-    void inspect(uint64_t connectionID, uint64_t targetID, const String& targetType, InspectorType = InspectorType::UI);
-    void sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String&);
+    void inspect(uint64_t connectionID, uint64_t targetID, StringImpl* targetType, InspectorType = InspectorType::UI);
+    void sendMessageToBackend(uint64_t connectionID, uint64_t targetID, StringImpl*);
     void closeFromFrontend(uint64_t connectionID, uint64_t targetID);
 
 private:
@@ -82,8 +82,8 @@ private:
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char*);
 
-    String m_hostAndPort;
-    String m_backendCommandsURL;
+    RefPtr<StringImpl> m_hostAndPort;
+    RefPtr<StringImpl> m_backendCommandsURL;
     RemoteInspectorObserver& m_observer;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;

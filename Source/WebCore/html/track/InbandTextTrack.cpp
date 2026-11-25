@@ -60,7 +60,7 @@ Ref<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext& context, In
 }
 
 InbandTextTrack::InbandTextTrack(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
-    : TextTrack(&context, emptyAtom(), trackPrivate.id(), AtomString { trackPrivate.label().isolatedCopy() }, AtomString { trackPrivate.language().isolatedCopy() }, InBand)
+    : TextTrack(&context, emptyAtom(), trackPrivate.id(), AtomStringImpl::add(isolatedCopy(trackPrivate.label())).get(), AtomStringImpl::add(isolatedCopy(trackPrivate.language())).get(), InBand)
     , m_private(trackPrivate)
 {
     addClientToTrackPrivateBase(*this, trackPrivate);
@@ -151,7 +151,7 @@ size_t InbandTextTrack::inbandTrackIndex()
     return protect(m_private)->trackIndex();
 }
 
-String InbandTextTrack::inBandMetadataTrackDispatchType() const
+RefPtr<StringImpl> InbandTextTrack::inBandMetadataTrackDispatchType() const
 {
     return protect(m_private)->inBandMetadataTrackDispatchType();
 }
@@ -161,14 +161,14 @@ void InbandTextTrack::idChanged(TrackID id)
     setId(id);
 }
 
-void InbandTextTrack::labelChanged(const String& label)
+void InbandTextTrack::labelChanged(StringImpl* label)
 {
-    setLabel(AtomString { label.isolatedCopy() });
+    setLabel(AtomStringImpl::add(isolatedCopy(label)).get());
 }
 
-void InbandTextTrack::languageChanged(const String& language)
+void InbandTextTrack::languageChanged(StringImpl* language)
 {
-    setLanguage(AtomString { language.isolatedCopy() });
+    setLanguage(AtomStringImpl::add(isolatedCopy(language)).get());
 }
 
 void InbandTextTrack::willRemove()

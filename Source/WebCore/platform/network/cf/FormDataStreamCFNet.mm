@@ -154,7 +154,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
             if (!fileData.fileModificationTimeMatchesExpectation())
                 return false;
 
-            const String& path = fileData.filename;
+            const RefPtr<StringImpl>& path = fileData.filename;
             form->currentStream = adoptCF(CFReadStreamCreateWithFile(0, FileSystem::pathAsURL(path).get()));
             if (!form->currentStream) {
                 // The file must have been removed or become unreadable.

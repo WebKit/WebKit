@@ -94,7 +94,7 @@ Ref<CSSColorValue> CSSValuePool::createColorValue(const WebCore::Color& color)
     }).iterator->value;
 }
 
-Ref<CSSValue> CSSValuePool::createFontFamilyNameValue(const AtomString& familyName)
+Ref<CSSValue> CSSValuePool::createFontFamilyNameValue(AtomStringImpl* familyName)
 {
     // Remove one entry at random if the cache grows too large.
     // FIXME: Use TinyLRUCache instead?
@@ -107,7 +107,7 @@ Ref<CSSValue> CSSValuePool::createFontFamilyNameValue(const AtomString& familyNa
     }).iterator->value;
 }
 
-RefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomString& string)
+RefPtr<CSSValueList> CSSValuePool::createFontFaceValue(AtomStringImpl* string)
 {
     // Remove one entry at random if the cache grows too large.
     // FIXME: Use TinyLRUCache instead?

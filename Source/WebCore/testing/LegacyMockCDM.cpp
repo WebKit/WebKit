@@ -55,25 +55,25 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const String& sessionId() const override { return m_sessionId; }
-    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
+    const RefPtr<StringImpl>& sessionId() const override { return m_sessionId; }
+    RefPtr<Uint8Array> generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
-    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override { return nullptr; }
+    RefPtr<ArrayBuffer> cachedKeyForKeyID(StringImpl*) const override { return nullptr; }
 
 protected:
     MockCDMSession(LegacyCDMSessionClient&);
 
     WeakPtr<LegacyCDMSessionClient> m_client;
-    String m_sessionId;
+    RefPtr<StringImpl> m_sessionId;
 };
 
-bool LegacyMockCDM::supportsKeySystem(const String& keySystem)
+bool LegacyMockCDM::supportsKeySystem(StringImpl* keySystem)
 {
     return equalLettersIgnoringASCIICase(keySystem, "com.webcore.mock"_s);
 }
 
-bool LegacyMockCDM::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+bool LegacyMockCDM::supportsKeySystemAndMimeType(StringImpl* keySystem, StringImpl* mimeType)
 {
     if (!supportsKeySystem(keySystem))
         return false;
@@ -81,7 +81,7 @@ bool LegacyMockCDM::supportsKeySystemAndMimeType(const String& keySystem, const 
     return equalLettersIgnoringASCIICase(mimeType, "video/mock"_s);
 }
 
-bool LegacyMockCDM::supportsMIMEType(const String& mimeType) const
+bool LegacyMockCDM::supportsMIMEType(StringImpl* mimeType) const
 {
     return equalLettersIgnoringASCIICase(mimeType, "video/mock"_s);
 }
@@ -125,10 +125,10 @@ static Uint8Array* keyRequest()
     return request->ptr();
 }
 
-NODELETE static String generateSessionId()
+static RefPtr<StringImpl> generateSessionId()
 {
     static int monotonicallyIncreasingSessionId = 0;
-    return String::number(monotonicallyIncreasingSessionId++);
+    return makeString(monotonicallyIncreasingSessionId++);
 }
 
 MockCDMSession::MockCDMSession(LegacyCDMSessionClient& client)
@@ -137,7 +137,7 @@ MockCDMSession::MockCDMSession(LegacyCDMSessionClient& client)
 {
 }
 
-RefPtr<Uint8Array> MockCDMSession::generateKeyRequest(const String&, Uint8Array* initData, String&, unsigned short& errorCode, uint32_t&)
+RefPtr<Uint8Array> MockCDMSession::generateKeyRequest(StringImpl*, Uint8Array* initData, RefPtr<StringImpl>&, unsigned short& errorCode, uint32_t&)
 {
     Ref prefix = *initDataPrefix();
     for (unsigned i = 0; i < prefix->length(); ++i) {

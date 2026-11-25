@@ -38,14 +38,14 @@ class ContentSecurityPolicyDirectiveList;
 class ContentSecurityPolicyMediaListDirective : public ContentSecurityPolicyDirective {
     WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicyMediaListDirective);
 public:
-    ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
+    ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList&, StringImpl* name, StringImpl* value);
 
-    bool allows(const String& type) const;
+    bool allows(StringImpl* type) const;
 
 private:
-    void parse(const String&);
+    void parse(StringImpl*);
 
-    MemoryCompactLookupOnlyRobinHoodHashSet<String> m_pluginTypes;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> m_pluginTypes;
 };
 
 } // namespace WebCore

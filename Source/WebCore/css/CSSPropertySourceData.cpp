@@ -55,7 +55,7 @@ unsigned SourceRange::length() const
     return end - start;
 }
 
-CSSPropertySourceData::CSSPropertySourceData(const String& name, const String& value, bool important, bool disabled, bool parsedOk, const SourceRange& range)
+CSSPropertySourceData::CSSPropertySourceData(StringImpl* name, StringImpl* value, bool important, bool disabled, bool parsedOk, const SourceRange& range)
     : name(name)
     , value(value)
     , important(important)
@@ -81,10 +81,10 @@ CSSPropertySourceData::CSSPropertySourceData()
 {
 }
 
-String CSSPropertySourceData::toString() const
+RefPtr<StringImpl> CSSPropertySourceData::toString() const
 {
-    if (!name && value == "e"_s)
-        return String();
+    if (!name && equal(value, "e"_s))
+        return nullptr;
     return makeString(name, ": "_s, value, important ? " !important"_s : ""_s, ';');
 }
 

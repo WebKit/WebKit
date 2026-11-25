@@ -49,7 +49,7 @@ auto ImageDecoderFactoryAVF::platformDecoderInterface() -> DecoderInterface
     return {
         ImageDecoderAVFObjC::supportsMediaType,
         ImageDecoderAVFObjC::canDecodeType,
-        [](FragmentedSharedBuffer& buffer, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) {
+        [](FragmentedSharedBuffer& buffer, StringImpl* mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) {
             return ImageDecoderAVFObjC::create(buffer, mimeType, alphaOption, gammaAndColorProfileOption, ProcessIdentity { ProcessIdentity::CurrentProcess });
         }
     };
@@ -73,7 +73,7 @@ bool ImageDecoderFactoryAVF::supportsMediaType(ImageDecoder::MediaType type) con
     return m_decoderInterface.supportsMediaType(type);
 }
 
-RefPtr<ImageDecoder> ImageDecoderFactoryAVF::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) const
+RefPtr<ImageDecoder> ImageDecoderFactoryAVF::createImageDecoder(FragmentedSharedBuffer& data, StringImpl* mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) const
 {
     Locker locker { m_lock };
 

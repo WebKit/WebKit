@@ -171,7 +171,7 @@ NSString * const WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSear
 - (void)evaluateInFrontend:(id)sender script:(NSString *)script
 {
     if (RefPtr inspectedPage = core(_inspectedWebView))
-        inspectedPage->inspectorController().evaluateForTestInFrontend(script);
+        inspectedPage->inspectorController().evaluateForTestInFrontend(StringImpl::create(script).get());
 }
 
 - (void)setFrontend:(WebInspectorFrontend *)frontend

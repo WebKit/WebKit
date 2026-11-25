@@ -72,11 +72,11 @@ public:
     static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&, AllowEventTracks = AllowEventTracks::No);
     WEBCORE_EXPORT virtual ~MediaStream();
 
-    String id() const { return m_private->id(); }
+    RefPtr<StringImpl> id() const { return m_private->id(); }
 
     void addTrack(MediaStreamTrack&);
     void removeTrack(MediaStreamTrack&);
-    MediaStreamTrack* getTrackById(String);
+    MediaStreamTrack* getTrackById(RefPtr<StringImpl>);
 
     NODELETE MediaStreamTrack* getFirstAudioTrack() const;
     NODELETE MediaStreamTrack* getFirstVideoTrack() const;
@@ -124,7 +124,7 @@ protected:
 
 private:
     void internalAddTrack(Ref<MediaStreamTrack>&&);
-    WEBCORE_EXPORT RefPtr<MediaStreamTrack> internalTakeTrack(const String&);
+    WEBCORE_EXPORT RefPtr<MediaStreamTrack> internalTakeTrack(StringImpl*);
 
     // EventTarget
     void refEventTarget() final { ref(); }

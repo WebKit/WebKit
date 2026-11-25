@@ -120,7 +120,7 @@ private:
     bool m_hasPropertiesWithRevertRuleOrLayer { false };
 };
 
-using KeyframesIdentifier = Variant<AtomString, uint64_t>;
+using KeyframesIdentifier = Variant<RefPtr<AtomStringImpl>, uint64_t>;
 
 class BlendingKeyframes {
 public:
@@ -136,8 +136,8 @@ public:
     bool operator==(const BlendingKeyframes&) const;
 
     const KeyframesIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
-    const AtomString& keyframesName() const LIFETIME_BOUND { return std::holds_alternative<AtomString>(m_identifier) ? std::get<AtomString>(m_identifier) : nullAtom(); }
-    const String& acceleratedAnimationName() const LIFETIME_BOUND;
+    const RefPtr<AtomStringImpl>& keyframesName() const LIFETIME_BOUND { return std::holds_alternative<RefPtr<AtomStringImpl>>(m_identifier) ? std::get<RefPtr<AtomStringImpl>>(m_identifier) : nullAtom(); }
+    const RefPtr<StringImpl>& acceleratedAnimationName() const LIFETIME_BOUND;
 
     void insert(BlendingKeyframe&&);
 
@@ -190,7 +190,7 @@ private:
     static uint64_t nextAnonymousIdentifier();
 
     KeyframesIdentifier m_identifier;
-    mutable String m_acceleratedAnimationName;
+    mutable RefPtr<StringImpl> m_acceleratedAnimationName;
     Vector<BlendingKeyframe> m_keyframes; // Kept sorted by key.
     HashSet<AnimatableCSSProperty> m_properties; // The properties being animated.
     HashSet<AnimatableCSSProperty> m_explicitToProperties; // The properties with an explicit value for the 100% keyframe.

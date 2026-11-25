@@ -71,14 +71,14 @@ GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthes
     registerWebKitGStreamerElements();
 
     static Atomic<uint32_t> pipelineId;
-    m_pipeline = gst_pipeline_new(makeString("speech-synthesizer-"_s, pipelineId.exchangeAdd(1)).ascii().data());
+    m_pipeline = gst_pipeline_new(ascii(makeString("speech-synthesizer-"_s, pipelineId.exchangeAdd(1))).data());
     registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         this->handleMessage(message);
     });
 
     m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_FLITE_SRC, nullptr));
-    GRefPtr<GstElement> audioSink = createPlatformAudioSink("speech"_s);
+    GRefPtr<GstElement> audioSink = createPlatformAudioSink("speech"_si);
     if (!audioSink) {
         GST_ERROR("Failed to create GStreamer audio sink element");
         return;

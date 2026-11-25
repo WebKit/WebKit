@@ -40,16 +40,16 @@ public:
     ~Storage();
 
     unsigned length() const;
-    String key(unsigned index) const;
-    String getItem(const String& key) const;
-    ExceptionOr<void> setItem(const String& key, const String& value);
-    ExceptionOr<void> removeItem(const String& key);
+    RefPtr<StringImpl> key(unsigned index) const;
+    RefPtr<StringImpl> getItem(StringImpl* key) const;
+    ExceptionOr<void> setItem(StringImpl* key, StringImpl* value);
+    ExceptionOr<void> removeItem(StringImpl* key);
     ExceptionOr<void> clear();
-    bool contains(const String& key) const;
+    bool contains(StringImpl* key) const;
 
     // Bindings support functions.
-    bool isSupportedPropertyName(const String&) const;
-    Vector<AtomString> supportedPropertyNames() const;
+    bool isSupportedPropertyName(StringImpl*) const;
+    Vector<RefPtr<AtomStringImpl>> supportedPropertyNames() const;
 
     StorageArea& area() const { return m_storageArea.get(); }
 

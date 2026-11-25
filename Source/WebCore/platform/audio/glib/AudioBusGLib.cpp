@@ -38,7 +38,7 @@ namespace WebCore {
 
 RefPtr<AudioBus> AudioBus::loadPlatformResource(StringView name, float sampleRate)
 {
-    auto path = makeString(AUDIO_GRESOURCE_PATH "/"_s, name).utf8();
+    auto path = utf8(makeString(AUDIO_GRESOURCE_PATH "/"_s, name));
     GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.legacyCStringPointer(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     ASSERT(data);
     return createBusFromInMemoryAudioFile(span(data), false, sampleRate);

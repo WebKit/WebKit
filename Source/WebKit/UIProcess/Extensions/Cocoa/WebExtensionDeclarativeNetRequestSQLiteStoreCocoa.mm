@@ -46,33 +46,33 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::migrateData()
 
     assertIsCurrent(queue());
 
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (!openDatabaseIfNecessary(errorMessage, false))
         return;
 
-    ASSERT(errorMessage.isEmpty());
+    ASSERT(isEmpty(errorMessage));
 
     if (RefPtr rows = SQLiteDatabaseFetch(*database(), makeString("SELECT * FROM "_s, m_tableName))) {
         RefPtr row = rows->next();
         while (row != nullptr) {
             NSError *error;
-            String ruleID = row->getString(0);
-            ASSERT(!ruleID.isEmpty());
+            RefPtr<StringImpl> ruleID = row->getString(0);
+            ASSERT(!isEmpty(ruleID));
 
             NSDictionary<NSString *, id> *rule = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowedClasses fromData:wrapper(row->getData(1)).get() error:&error];
 
             if (error) {
-                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize dynamic declarative net request rule for extension %s", uniqueIdentifier().utf8());
+                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize dynamic declarative net request rule for extension %s", utf8(uniqueIdentifier()));
                 continue;
             }
 
             // Convert the NSDictionary to a JSON Object, which can be used to update the database to a new format
             // All original data should be a String, Number, Array, or Dictionary, and those are all
             // serializable to JSON
-            String jsonString = encodeJSONString(rule);
+            RefPtr<StringImpl> jsonString = StringImpl::create(encodeJSONString(rule));
             DatabaseResult result = SQLiteDatabaseExecute(*database(), makeString("UPDATE "_s, m_tableName, " SET rule = ? WHERE id = ?"_s), jsonString, ruleID);
             if (result != SQLITE_DONE)
-                RELEASE_LOG_ERROR(Extensions, "Failed to update dynamic declarative net request rule for extension %s.", uniqueIdentifier().utf8());
+                RELEASE_LOG_ERROR(Extensions, "Failed to update dynamic declarative net request rule for extension %s.", utf8(uniqueIdentifier()));
 
             row = rows->next();
         }

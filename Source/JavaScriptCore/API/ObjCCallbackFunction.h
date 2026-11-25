@@ -59,7 +59,7 @@ public:
         return vm.objCCallbackFunctionSpace<mode>();
     }
 
-    static ObjCCallbackFunction* create(VM&, JSGlobalObject*, const String& name, std::unique_ptr<ObjCCallbackFunctionImpl>);
+    static ObjCCallbackFunction* create(VM&, JSGlobalObject*, StringImpl* name, std::unique_ptr<ObjCCallbackFunctionImpl>);
     static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 

@@ -40,7 +40,7 @@ class StorageAreaSync;
 
 class StorageSyncManager : public ThreadSafeRefCounted<StorageSyncManager, WTF::DestructionThread::Main> {
 public:
-    static Ref<StorageSyncManager> create(const String& path);
+    static Ref<StorageSyncManager> create(StringImpl* path);
     ~StorageSyncManager();
 
     void dispatch(Function<void ()>&&);
@@ -50,17 +50,17 @@ public:
     void assertIsCurrent() const;
 
 private:
-    explicit StorageSyncManager(const String& path);
+    explicit StorageSyncManager(StringImpl* path);
 
     std::unique_ptr<StorageThread> m_thread;
 
 // The following members are subject to thread synchronization issues
 public:
     // To be called from the background thread:
-    String fullDatabaseFilename(const String& databaseIdentifier);
+    RefPtr<StringImpl> fullDatabaseFilename(StringImpl* databaseIdentifier);
 
 private:
-    String m_path;
+    RefPtr<StringImpl> m_path;
 };
 
 } // namespace WebCore

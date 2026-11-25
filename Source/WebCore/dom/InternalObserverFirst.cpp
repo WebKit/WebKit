@@ -66,7 +66,7 @@ private:
     void complete() final
     {
         InternalObserver::complete();
-        protect(m_promise)->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
+        protect(m_promise)->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_si });
     }
 
     void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&) const final

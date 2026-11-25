@@ -49,7 +49,7 @@ enum class RandomFunction : bool { Random, RandomItem };
 // FIXME: Same concept as AssociatedProperty and AnimatableCSSProperty.
 struct RandomScopedProperty {
     CSSPropertyID property { CSSPropertyID::Invalid };
-    AtomString customPropertyName { };
+    RefPtr<AtomStringImpl> customPropertyName { };
     RandomFunction function { RandomFunction::Random };
 
     bool operator==(const RandomScopedProperty&) const = default;

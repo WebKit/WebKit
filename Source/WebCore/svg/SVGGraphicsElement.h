@@ -90,7 +90,7 @@ public:
 protected:
     SVGGraphicsElement(const QualifiedName&, Document&, const SVGPropertyRegistry&, OptionSet<TypeFlag> = { });
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void didAttachRenderers() override;
 

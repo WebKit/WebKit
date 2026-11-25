@@ -142,7 +142,7 @@ public:
 
     static void windowPropertiesNotifyCallback(GObject*, GParamSpec* paramSpec, UIClientTest* test)
     {
-        test->m_windowPropertiesChanged.add(String::fromLatin1(g_param_spec_get_name(paramSpec)));
+        test->m_windowPropertiesChanged.add(StringImpl::fromLatin1(g_param_spec_get_name(paramSpec)));
     }
 
     static WebKitWebView* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction* navigation, UIClientTest* test)
@@ -598,7 +598,7 @@ public:
     gboolean m_expectedDisplayMedia;
     WindowProperties m_windowProperties;
     WindowProperties m_finalWindowProperties;
-    HashSet<WTF::String> m_windowPropertiesChanged;
+    HashSet<RefPtr<StringImpl>> m_windowPropertiesChanged;
     GRefPtr<WebKitHitTestResult> m_mouseTargetHitTestResult;
     unsigned m_mouseTargetModifiers;
     GUniquePtr<char> m_permissionResult;

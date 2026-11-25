@@ -42,7 +42,7 @@ WebContextInjectedBundleClient::WebContextInjectedBundleClient(const WKContextIn
     initialize(client);
 }
 
-void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebProcessPool& processPool, const String& messageName, API::Object* messageBody)
+void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebProcessPool& processPool, StringImpl* messageName, API::Object* messageBody)
 {
     if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
@@ -50,7 +50,7 @@ void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebProc
     m_client.didReceiveMessageFromInjectedBundle(toAPI(&processPool), toAPI(messageName), toAPI(messageBody), m_client.base.clientInfo);
 }
 
-void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool& processPool, const String& messageName, API::Object* messageBody, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
+void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool& processPool, StringImpl* messageName, API::Object* messageBody, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
 {
     if (!m_client.didReceiveSynchronousMessageFromInjectedBundle && !m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener)
         return completionHandler(nullptr);

@@ -72,12 +72,12 @@ private:
     void renderAudioChunk(uint64_t currentAudioSampleCount);
 
     // BaseAudioMediaStreamTrackRendererUnit
-    void addResetObserver(const String&, ResetObserver&) final;
-    void addSource(const String&, Ref<AudioSampleDataSource>&&) final;
-    void removeSource(const String&, AudioSampleDataSource&) final;
+    void addResetObserver(StringImpl*, ResetObserver&) final;
+    void addSource(StringImpl*, Ref<AudioSampleDataSource>&&) final;
+    void removeSource(StringImpl*, AudioSampleDataSource&) final;
 
-    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> addSourceToMixer(const String&, Ref<AudioSampleDataSource>&&);
-    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> removeSourceFromMixer(const String&, AudioSampleDataSource&);
+    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> addSourceToMixer(StringImpl*, Ref<AudioSampleDataSource>&&);
+    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> removeSourceFromMixer(StringImpl*, AudioSampleDataSource&);
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper.
@@ -93,7 +93,7 @@ private:
     struct Mixer {
         HashSet<Ref<AudioSampleDataSource>> sources;
         RefPtr<AudioSampleDataSource> registeredMixedSource;
-        String deviceID;
+        RefPtr<StringImpl> deviceID;
     };
 
     struct RenderMixer {
@@ -102,10 +102,10 @@ private:
         size_t writeCount { 0 };
     };
 
-    HashMap<String, Mixer> m_mixers WTF_GUARDED_BY_CAPABILITY(mainThread);
+    HashMap<RefPtr<StringImpl>, Mixer> m_mixers WTF_GUARDED_BY_CAPABILITY(mainThread);
 
     // Background thread variables.
-    HashMap<String, RenderMixer> m_renderMixers WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    HashMap<RefPtr<StringImpl>, RenderMixer> m_renderMixers WTF_GUARDED_BY_CAPABILITY(m_queue.get());
 
     std::optional<CAAudioStreamDescription> m_outputStreamDescription WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     std::unique_ptr<WebAudioBufferList> m_audioBufferList WTF_GUARDED_BY_CAPABILITY(m_queue.get());

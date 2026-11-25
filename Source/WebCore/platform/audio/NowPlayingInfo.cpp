@@ -36,7 +36,7 @@ RefPtr<ShareableBitmap> NowPlayingInfoArtwork::shareableBitmap() const
     return image ? ShareableBitmap::createFromImageDraw(*image, image->colorSpace()) : nullptr;
 }
 
-NowPlayingInfoArtwork NowPlayingInfoArtwork::fromIPCData(String&& src, String&& mimeType, RefPtr<ShareableBitmap>&& bitmap)
+NowPlayingInfoArtwork NowPlayingInfoArtwork::fromIPCData(RefPtr<StringImpl>&& src, RefPtr<StringImpl>&& mimeType, RefPtr<ShareableBitmap>&& bitmap)
 {
     RefPtr<NativeImage> image;
     if (bitmap)

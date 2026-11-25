@@ -202,7 +202,7 @@
 #include "SpatialPortalController.h"
 #endif
 
-template class mpark::variant<WebCore::CSSPropertyID, WTF::AtomString>;
+template class mpark::variant<WebCore::CSSPropertyID, RefPtr<AtomStringImpl>>;
 
 namespace WebCore {
 
@@ -277,7 +277,7 @@ static bool shouldAutofocus(const Element& element)
 
     if (document->isSandboxed(SandboxFlag::AutomaticFeatures)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
+        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_si);
         return false;
     }
 
@@ -305,7 +305,7 @@ static bool shouldAutofocus(const Element& element)
     }();
 
     if (!allAncestorsAreSameOrigin)
-        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
+        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_si);
 
     return allAncestorsAreSameOrigin;
 }
@@ -393,7 +393,7 @@ bool Element::isNonceable() const
 {
     // https://www.w3.org/TR/CSP3/#is-element-nonceable
     // '<link' is not in the published algorithm yet. See https://github.com/w3c/webappsec-csp/pull/810
-    if (elementRareData()->nonce().isNull())
+    if (!elementRareData()->nonce())
         return false;
 
     if (hasDuplicateAttribute())
@@ -407,12 +407,12 @@ bool Element::isNonceable() const
         for (auto& attribute : attributes()) {
             auto name = attribute.localNameLowercase();
             auto value = attribute.value();
-            if (name.contains(scriptString)
-                || name.contains(styleString)
-                || name.contains(linkString)
-                || value.containsIgnoringASCIICase(scriptString)
-                || value.containsIgnoringASCIICase(styleString)
-                || value.containsIgnoringASCIICase(linkString))
+            if (WTF::contains(name, scriptString)
+                || WTF::contains(name, styleString)
+                || WTF::contains(name, linkString)
+                || containsIgnoringASCIICase(value, scriptString)
+                || containsIgnoringASCIICase(value, styleString)
+                || containsIgnoringASCIICase(value, linkString))
                 return false;
         }
     }
@@ -420,7 +420,7 @@ bool Element::isNonceable() const
     return true;
 }
 
-const AtomString& Element::nonce() const
+const RefPtr<AtomStringImpl>& Element::nonce() const
 {
     if (hasRareData() && isNonceable())
         return elementRareData()->nonce();
@@ -428,7 +428,7 @@ const AtomString& Element::nonce() const
     return emptyAtom();
 }
 
-void Element::setNonce(const AtomString& newValue)
+void Element::setNonce(AtomStringImpl* newValue)
 {
     if (newValue == emptyAtom() && !hasRareData())
         return;
@@ -446,7 +446,7 @@ void Element::hideNonceSlow()
         return;
 
     // Retain previous IDL nonce.
-    AtomString currentNonce = nonce();
+    RefPtr<AtomStringImpl> currentNonce = nonce();
     setAttribute(nonceAttr, emptyAtom());
     setNonce(currentNonce);
 }
@@ -565,7 +565,7 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
     return ShouldIgnoreMouseEvent::No;
 }
 
-Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, IsSyntheticClick isSyntheticClick, ShouldDispatchPointerEvent shouldDispatchPointerEvent)
+Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, AtomStringImpl* eventType, int detail, Element* relatedTarget, IsSyntheticClick isSyntheticClick, ShouldDispatchPointerEvent shouldDispatchPointerEvent)
 {
     auto eventIsDefaultPrevented = Element::EventIsDefaultPrevented::No;
     if (isForceEvent(platformEvent) && !document().hasListenerTypeForEventType(platformEvent.type()))
@@ -581,7 +581,7 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
 
     Ref mouseEvent = MouseEvent::create(eventType, document().windowProxy(), platformEvent, childMouseEvents, predictedEvents, detail, relatedTarget);
 
-    if (mouseEvent->type().isEmpty())
+    if (isEmpty(mouseEvent->type()))
         return { Element::EventIsDispatched::Yes, eventIsDefaultPrevented }; // Shouldn't happen.
 
     Ref protectedThis { *this };
@@ -880,14 +880,14 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
     }
 }
 
-static ALWAYS_INLINE bool isStyleAttribute(const Element& element, const AtomString& attributeLocalName)
+static ALWAYS_INLINE bool isStyleAttribute(const Element& element, AtomStringImpl* attributeLocalName)
 {
     if (shouldIgnoreAttributeCase(element))
         return equalLettersIgnoringASCIICase(attributeLocalName, "style"_s);
     return attributeLocalName == styleAttr->localName();
 }
 
-ALWAYS_INLINE void Element::synchronizeAttribute(const AtomString& localName) const
+ALWAYS_INLINE void Element::synchronizeAttribute(AtomStringImpl* localName) const
 {
     // This version of synchronizeAttribute() is streamlined for the case where you don't have a full QualifiedName,
     // e.g when called from DOM API.
@@ -904,14 +904,14 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const AtomString& localName) co
     }
 }
 
-const AtomString& Element::getAttribute(const QualifiedName& name) const
+const RefPtr<AtomStringImpl>& Element::getAttribute(const QualifiedName& name) const
 {
     if (auto* attribute = getAttributeInternal(name))
         return attribute->value();
     return nullAtom();
 }
 
-AtomString Element::getAttributeForBindings(const QualifiedName& name, ResolveURLs resolveURLs) const
+RefPtr<AtomStringImpl> Element::getAttributeForBindings(const QualifiedName& name, ResolveURLs resolveURLs) const
 {
     auto* attribute = getAttributeInternal(name);
     if (!attribute)
@@ -924,7 +924,7 @@ AtomString Element::getAttributeForBindings(const QualifiedName& name, ResolveUR
     case ResolveURLs::Yes:
     case ResolveURLs::YesExcludingURLsForPrivacy:
     case ResolveURLs::NoExcludingURLsForPrivacy:
-        return AtomString(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
+        return AtomStringImpl::add(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
 
     case ResolveURLs::No:
         break;
@@ -933,7 +933,7 @@ AtomString Element::getAttributeForBindings(const QualifiedName& name, ResolveUR
     return attribute->value();
 }
 
-Vector<String> Element::getAttributeNames() const
+Vector<RefPtr<StringImpl>> Element::getAttributeNames() const
 {
     if (!hasAttributes())
         return { };
@@ -2277,14 +2277,14 @@ IntRect Element::screenRect() const
     return IntRect();
 }
 
-const AtomString& Element::getAttribute(const AtomString& qualifiedName) const
+const RefPtr<AtomStringImpl>& Element::getAttribute(AtomStringImpl* qualifiedName) const
 {
     if (auto* attribute = getAttributeInternal(qualifiedName))
         return attribute->value();
     return nullAtom();
 }
 
-AtomString Element::getAttributeForBindings(const AtomString& qualifiedName, ResolveURLs resolveURLs) const
+RefPtr<AtomStringImpl> Element::getAttributeForBindings(AtomStringImpl* qualifiedName, ResolveURLs resolveURLs) const
 {
     auto* attribute = getAttributeInternal(qualifiedName);
     if (!attribute)
@@ -2297,7 +2297,7 @@ AtomString Element::getAttributeForBindings(const AtomString& qualifiedName, Res
     case ResolveURLs::Yes:
     case ResolveURLs::YesExcludingURLsForPrivacy:
     case ResolveURLs::NoExcludingURLsForPrivacy:
-        return AtomString(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
+        return AtomStringImpl::add(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
 
     case ResolveURLs::No:
         break;
@@ -2306,7 +2306,7 @@ AtomString Element::getAttributeForBindings(const AtomString& qualifiedName, Res
     return attribute->value();
 }
 
-const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const
+const RefPtr<AtomStringImpl>& Element::getAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName) const
 {
     return getAttribute(QualifiedName(nullAtom(), localName, namespaceURI));
 }
@@ -2323,14 +2323,14 @@ ALWAYS_INLINE unsigned Element::validateAttributeIndex(unsigned index, const Qua
 }
 
 // https://dom.spec.whatwg.org/#dom-element-toggleattribute
-ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force)
+ExceptionOr<bool> Element::toggleAttribute(AtomStringImpl* qualifiedName, std::optional<bool> force)
 {
     if (!NameValidation::isValidAttributeName(qualifiedName))
         return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid attribute name: '"_s, qualifiedName, '\'') };
 
     synchronizeAttribute(qualifiedName);
 
-    auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
+    RefPtr caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? convertToASCIILowercase(qualifiedName) : RefPtr { qualifiedName };
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         if (!force || *force) {
@@ -2347,32 +2347,32 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
     return true;
 }
 
-ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const AtomString& value)
+ExceptionOr<void> Element::setAttribute(AtomStringImpl* qualifiedName, AtomStringImpl* value)
 {
     return setAttribute(qualifiedName, TrustedTypeOrString { value });
 }
 
-ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const TrustedTypeOrString& value)
+ExceptionOr<void> Element::setAttribute(AtomStringImpl* qualifiedName, const TrustedTypeOrString& value)
 {
     if (!NameValidation::isValidAttributeName(qualifiedName))
         return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid attribute name: '"_s, qualifiedName, '\'') };
 
     synchronizeAttribute(qualifiedName);
-    auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
+    RefPtr caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? convertToASCIILowercase(qualifiedName) : RefPtr { qualifiedName };
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     auto name = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
     if (!document().settings().trustedTypesEnabled())
-        setAttributeInternal(index, name, std::get<AtomString>(value), InSynchronizationOfLazyAttribute::No);
+        setAttributeInternal(index, name, std::get<RefPtr<AtomStringImpl>>(value), InSynchronizationOfLazyAttribute::No);
     else {
         AttributeTypeAndSink type;
         if (protect(document().contextDocument())->requiresTrustedTypes())
-            type = trustedTypeForAttribute(nodeName(), name.localName().convertToASCIILowercase(), this->namespaceURI(), name.namespaceURI());
+            type = trustedTypeForAttribute(nodeName(), convertToASCIILowercase(name.localName()), this->namespaceURI(), name.namespaceURI());
         auto compliantValue = trustedTypesCompliantAttributeValue(protect(document().contextDocument()), type.attributeType, value, type.sink);
 
         if (compliantValue.hasException())
             return compliantValue.releaseException();
 
-        if (!type.attributeType.isNull())
+        if (type.attributeType)
             index = validateAttributeIndex(index, name);
 
         setAttributeInternal(index, name, compliantValue.releaseReturnValue(), InSynchronizationOfLazyAttribute::No);
@@ -2380,37 +2380,37 @@ ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const T
     return { };
 }
 
-void Element::setAttribute(const QualifiedName& name, const AtomString& value)
+void Element::setAttribute(const QualifiedName& name, AtomStringImpl* value)
 {
     synchronizeAttribute(name);
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
     setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
 }
 
-void Element::setAttributeWithoutOverwriting(const QualifiedName& name, const AtomString& value)
+void Element::setAttributeWithoutOverwriting(const QualifiedName& name, AtomStringImpl* value)
 {
     synchronizeAttribute(name);
     if (!elementData() || elementData()->findAttributeIndexByName(name) == ElementData::attributeNotFound)
         addAttributeInternal(name, value, InSynchronizationOfLazyAttribute::No);
 }
 
-void Element::setAttributeWithoutSynchronization(const QualifiedName& name, const AtomString& value)
+void Element::setAttributeWithoutSynchronization(const QualifiedName& name, AtomStringImpl* value)
 {
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
     setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
 }
 
-void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const AtomString& value)
+void Element::setSynchronizedLazyAttribute(const QualifiedName& name, AtomStringImpl* value)
 {
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
     setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::Yes);
 }
 
-inline void Element::setAttributeInternal(unsigned index, const QualifiedName& name, const AtomString& newValue, InSynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+inline void Element::setAttributeInternal(unsigned index, const QualifiedName& name, AtomStringImpl* newValue, InSynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     ASSERT_WITH_MESSAGE(refCount() || parentNode(), "Attribute must not be set on an element before adoptRef");
 
-    if (newValue.isNull()) {
+    if (!newValue) {
         if (index != ElementData::attributeNotFound)
             removeAttributeInternal(index, inSynchronizationOfLazyAttribute);
         return;
@@ -2428,7 +2428,7 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
 
     const Attribute& attribute = attributeAt(index);
     QualifiedName attributeName = attribute.name();
-    AtomString oldValue = attribute.value();
+    RefPtr<AtomStringImpl> oldValue = attribute.value();
 
     willModifyAttribute(attributeName, oldValue, newValue);
 
@@ -2440,10 +2440,10 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
     didModifyAttribute(attributeName, oldValue, newValue);
 }
 
-static inline AtomString makeIdForStyleResolution(const AtomString& value, bool inQuirksMode)
+static inline RefPtr<AtomStringImpl> makeIdForStyleResolution(AtomStringImpl* value, bool inQuirksMode)
 {
     if (inQuirksMode)
-        return value.convertToASCIILowercase();
+        return convertToASCIILowercase(value);
     return value;
 }
 
@@ -2483,14 +2483,14 @@ void Element::setUserInfo(JSC::JSGlobalObject& globalObject, JSC::JSValue userIn
     ensureElementRareData().setUserInfo(WTF::move(serializedData));
 }
 
-String Element::userInfo() const
+RefPtr<StringImpl> Element::userInfo() const
 {
     if (!hasRareData())
         return { };
     return elementRareData()->userInfo();
 }
 
-ALWAYS_INLINE void Element::notifyAttributeChangedCommon(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+ALWAYS_INLINE void Element::notifyAttributeChangedCommon(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason reason)
 {
     attributeChanged(name, oldValue, newValue, reason);
 
@@ -2498,7 +2498,7 @@ ALWAYS_INLINE void Element::notifyAttributeChangedCommon(const QualifiedName& na
         CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
 }
 
-void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void Element::notifyAttributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason reason)
 {
     notifyAttributeChangedCommon(name, oldValue, newValue, reason);
 
@@ -2517,14 +2517,14 @@ void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString
     }
 }
 
-void Element::parserNotifyAttributeAdded(const QualifiedName& name, const AtomString& value, AttributeModificationReason reason)
+void Element::parserNotifyAttributeAdded(const QualifiedName& name, AtomStringImpl* value, AttributeModificationReason reason)
 {
     ASSERT(!isConnected());
     ASSERT(!parentNode());
     notifyAttributeChangedCommon(name, nullAtom(), value, reason);
 }
 
-void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void Element::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason reason)
 {
     if (oldValue == newValue)
         return;
@@ -2534,23 +2534,23 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         classAttributeChanged(newValue, reason);
         break;
     case AttributeNames::idAttr: {
-        AtomString oldId = elementData()->idForStyleResolution();
-        AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
+        RefPtr<AtomStringImpl> oldId = elementData()->idForStyleResolution();
+        RefPtr<AtomStringImpl> newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
         if (newId != oldId) {
             Style::IdChangeInvalidation styleInvalidation(*this, oldId, newId);
             protect(m_elementData)->setIdForStyleResolution(newId);
         }
 
         if (CheckedPtr observerRegistry = treeScope().idTargetObserverRegistryIfExists()) {
-            if (!oldValue.isEmpty())
+            if (!isEmpty(oldValue))
                 observerRegistry->notifyObservers(*this, oldValue);
-            if (!newValue.isEmpty())
+            if (!isEmpty(newValue))
                 observerRegistry->notifyObservers(*this, newValue);
         }
         break;
     }
     case AttributeNames::nameAttr:
-        elementData()->setHasNameAttribute(!newValue.isNull());
+        elementData()->setHasNameAttribute(!!newValue);
         break;
     case AttributeNames::nonceAttr:
 #if ENABLE(MATHML)
@@ -2558,7 +2558,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
 #else
         if (isAnyOf<HTMLElement, SVGElement>(*this))
 #endif
-            setNonce(newValue.isNull() ? emptyAtom() : newValue);
+            setNonce(!newValue ? emptyAtom().get() : newValue);
         break;
     case AttributeNames::useragentpartAttr:
         if (needsStyleInvalidation() && isInUserAgentShadowTree())
@@ -2588,9 +2588,9 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
     case AttributeNames::XML::langAttr:
     case AttributeNames::langAttr: {
         if (name == HTMLNames::langAttr)
-            setHasLangAttr(!newValue.isNull() && (isHTMLElement() || isSVGElement()));
+            setHasLangAttr(!!newValue && (isHTMLElement() || isSVGElement()));
         else
-            setHasXMLLangAttr(!newValue.isNull());
+            setHasXMLLangAttr(!!newValue);
         Ref document = this->document();
         if (document->documentElement() == this)
             document->setDocumentElementLanguage(langFromAttribute());
@@ -2646,9 +2646,9 @@ ExplicitlySetAttrElementsMap* Element::explicitlySetAttrElementsMapIfExists() co
     return hasRareData() ? &elementRareData()->explicitlySetAttrElementsMap() : nullptr;
 }
 
-static RefPtr<Element> getElementByIdIncludingDisconnected(const Element& startElement, const AtomString& id)
+static RefPtr<Element> getElementByIdIncludingDisconnected(const Element& startElement, AtomStringImpl* id)
 {
-    if (id.isEmpty())
+    if (isEmpty(id))
         return nullptr;
 
     if (startElement.isInTreeScope()) [[likely]]
@@ -2686,7 +2686,7 @@ RefPtr<Element> Element::elementForAttributeInternal(const QualifiedName& attrib
     }
 
     if (!hasExplicitlySetElement) {
-        const AtomString& id = getAttribute(attributeName);
+        const RefPtr<AtomStringImpl>& id = getAttribute(attributeName);
         element = getElementByIdIncludingDisconnected(*this, id);
     }
 
@@ -2809,7 +2809,7 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
     }
 }
 
-void Element::classAttributeChanged(const AtomString& newClassString, AttributeModificationReason reason)
+void Element::classAttributeChanged(AtomStringImpl* newClassString, AttributeModificationReason reason)
 {
     // Note: We'll need ElementData, but it doesn't have to be UniqueElementData.
     if (!elementData())
@@ -2839,7 +2839,7 @@ void Element::classAttributeChanged(const AtomString& newClassString, AttributeM
     protect(m_elementData)->setClassNames(WTF::move(newClassNames));
 }
 
-void Element::partAttributeChanged(const AtomString& newValue)
+void Element::partAttributeChanged(AtomStringImpl* newValue)
 {
     SpaceSplitString newParts(newValue, SpaceSplitString::ShouldFoldCase::No);
     if (!newParts.isEmpty() || !partNames().isEmpty())
@@ -2859,13 +2859,13 @@ URL Element::absoluteLinkURL() const
     if (!isLink())
         return URL();
 
-    AtomString linkAttribute;
+    RefPtr<AtomStringImpl> linkAttribute;
     if (hasTagName(SVGNames::aTag))
         linkAttribute = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
     else
         linkAttribute = getAttribute(HTMLNames::hrefAttr);
 
-    if (linkAttribute.isEmpty())
+    if (isEmpty(linkAttribute))
         return URL();
 
     return protect(document())->encodingParseURL(linkAttribute);
@@ -3035,7 +3035,7 @@ void Element::clearDisplayContentsOrNoneStyle()
 
 bool Element::isEventHandlerAttribute(const Attribute& attribute) const
 {
-    return attribute.name().namespaceURI().isNull() && attribute.name().localName().startsWith("on"_s);
+    return !attribute.name().namespaceURI() && startsWith(attribute.name().localName(), "on"_s);
 }
 
 bool Element::attributeContainsJavaScriptURL(const Attribute& attribute) const
@@ -3153,7 +3153,7 @@ void Element::updateEffectiveTextDirectionIfNeeded()
     setEffectiveTextDirection(parent->effectiveTextDirection());
 }
 
-void Element::dirAttributeChanged(const AtomString& newValue)
+void Element::dirAttributeChanged(AtomStringImpl* newValue)
 {
     auto textDirectionState = parseTextDirectionState(newValue);
     textDirectionStateChanged(*this, textDirectionState);
@@ -3175,7 +3175,7 @@ void Element::updateEffectiveLangStateFromParent()
 
     setEffectiveLangKnownToMatchDocumentElement(parent->effectiveLangKnownToMatchDocumentElement());
     if (parent->hasRareData()) [[unlikely]] {
-        if (!parent->elementRareData()->effectiveLang().isNull()) {
+        if (parent->elementRareData()->effectiveLang()) {
             ensureElementRareData().setEffectiveLang(parent->elementRareData()->effectiveLang());
             return;
         }
@@ -3238,19 +3238,19 @@ bool Element::hasEquivalentAttributes(const Element& other) const
     return true;
 }
 
-String Element::nodeName() const
+RefPtr<StringImpl> Element::nodeName() const
 {
     return m_tagName.toString();
 }
 
-void Element::setPrefixForCustomElementUpgrade(const AtomString& prefix)
+void Element::setPrefixForCustomElementUpgrade(AtomStringImpl* prefix)
 {
-    ASSERT(!prefix.isEmpty());
-    ASSERT(m_tagName.prefix().isNull());
+    ASSERT(!isEmpty(prefix));
+    ASSERT(!m_tagName.prefix());
     m_tagName.setPrefix(prefix);
 }
 
-String Element::imageSourceURL() const
+RefPtr<StringImpl> Element::imageSourceURL() const
 {
     return attributeWithoutSynchronization(srcAttr);
 }
@@ -3368,7 +3368,7 @@ void Element::setEffectiveLangStateOnOldDocumentElement()
 {
     setEffectiveLangKnownToMatchDocumentElement(false);
 
-    if (auto& lang = langFromAttribute(); !lang.isNull() || hasRareData())
+    if (auto& lang = langFromAttribute(); lang || hasRareData())
         ensureElementRareData().setEffectiveLang(lang);
 }
 
@@ -3378,7 +3378,7 @@ bool Element::hasEffectiveLangState() const
         return true;
 
     if (hasRareData()) [[unlikely]]
-        return !elementRareData()->effectiveLang().isNull();
+        return !!elementRareData()->effectiveLang();
 
     return false;
 }
@@ -3678,12 +3678,12 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, std::
         init.serializable ? ShadowRootSerializable::Yes : ShadowRootSerializable::No,
         isPrecustomizedOrDefinedCustomElement() ? ShadowRootAvailableToElementInternals::Yes : ShadowRootAvailableToElementInternals::No,
         WTF::move(registry), keepsRegistryNull);
-    shadow->setReferenceTarget(AtomString(init.referenceTarget));
+    shadow->setReferenceTarget(AtomStringImpl::add(init.referenceTarget).get());
     addShadowRoot(shadow.copyRef());
     return shadow.get();
 }
 
-ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, ShadowRootDelegatesFocus delegatesFocus, ShadowRootClonable clonable, ShadowRootSerializable serializable, SlotAssignmentMode slotAssignment, String referenceTarget, CustomElementRegistryKind registryKind)
+ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, ShadowRootDelegatesFocus delegatesFocus, ShadowRootClonable clonable, ShadowRootSerializable serializable, SlotAssignmentMode slotAssignment, RefPtr<StringImpl> referenceTarget, CustomElementRegistryKind registryKind)
 {
     if (this->shadowRoot())
         return Exception { ExceptionCode::NotSupportedError };
@@ -3947,7 +3947,7 @@ void Element::childrenChanged(const ChildChange& change)
     }
 }
 
-void Element::setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& attributeValue)
+void Element::setAttributeEventListener(AtomStringImpl* eventType, const QualifiedName& attributeName, AtomStringImpl* attributeValue)
 {
     setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue), mainThreadNormalWorldSingleton());
 }
@@ -3996,14 +3996,14 @@ static void appendAttributes(StringBuilder& builder, const Element& element)
     }
 }
 
-String Element::attributesForDescription() const
+RefPtr<StringImpl> Element::attributesForDescription() const
 {
     StringBuilder builder;
     appendAttributes(builder, *this);
     return builder.toString();
 }
 
-String Element::description() const
+RefPtr<StringImpl> Element::description() const
 {
     StringBuilder builder;
 
@@ -4013,7 +4013,7 @@ String Element::description() const
     return builder.toString();
 }
 
-String Element::debugDescription() const
+RefPtr<StringImpl> Element::debugDescription() const
 {
     StringBuilder builder;
 
@@ -4049,7 +4049,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
 
     if (protect(document().contextDocument())->requiresTrustedTypes()) {
         auto& name = attrNode.qualifiedName();
-        auto type = trustedTypeForAttribute(nodeName(), name.localName().convertToASCIILowercase(), this->namespaceURI(), name.namespaceURI());
+        auto type = trustedTypeForAttribute(nodeName(), convertToASCIILowercase(name.localName()), this->namespaceURI(), name.namespaceURI());
         auto compliantValue = trustedTypesCompliantAttributeValue(protect(document().contextDocument()), type.attributeType, attrNodeValue, type.sink);
 
         if (compliantValue.hasException())
@@ -4113,7 +4113,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
             return compliantValue.releaseException();
         attrNodeValue = compliantValue.releaseReturnValue();
 
-        if (!type.attributeType.isNull() && attrNode.ownerElement() && attrNode.ownerElement() != this)
+        if (type.attributeType && attrNode.ownerElement() && attrNode.ownerElement() != this)
             return Exception { ExceptionCode::InUseAttributeError };
     }
 
@@ -4173,12 +4173,12 @@ ExceptionOr<Ref<Attr>> Element::removeAttributeNode(Attr& attr)
     return oldAttrNode;
 }
 
-ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value)
+ExceptionOr<void> Element::setAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName, AtomStringImpl* value)
 {
     return setAttributeNS(namespaceURI, qualifiedName, TrustedTypeOrString { value });
 }
 
-ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedTypeOrString& value)
+ExceptionOr<void> Element::setAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* qualifiedName, const TrustedTypeOrString& value)
 {
     auto parseResult = NameValidation::parseQualifiedAttributeName(namespaceURI, qualifiedName);
     if (parseResult.hasException())
@@ -4187,7 +4187,7 @@ ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const 
     if (!NameValidation::hasValidNamespaceForAttributes(parsedAttributeName))
         return Exception { ExceptionCode::NamespaceError };
     if (!document().settings().trustedTypesEnabled())
-        setAttribute(parsedAttributeName, std::get<AtomString>(value));
+        setAttribute(parsedAttributeName, std::get<RefPtr<AtomStringImpl>>(value));
     else {
         AttributeTypeAndSink type;
         if (protect(document().contextDocument())->requiresTrustedTypes())
@@ -4210,7 +4210,7 @@ void Element::removeAttributeInternal(unsigned index, InSynchronizationOfLazyAtt
     Ref<UniqueElementData> elementData = ensureUniqueElementData();
 
     QualifiedName name = elementData->attributeAt(index).name();
-    AtomString valueBeingRemoved = elementData->attributeAt(index).value();
+    RefPtr<AtomStringImpl> valueBeingRemoved = elementData->attributeAt(index).value();
 
     if (RefPtr attrNode = attrIfExists(name))
         detachAttrNodeFromElementWithValue(attrNode.get(), elementData->attributeAt(index).value());
@@ -4220,7 +4220,7 @@ void Element::removeAttributeInternal(unsigned index, InSynchronizationOfLazyAtt
         return;
     }
 
-    ASSERT(!valueBeingRemoved.isNull());
+    ASSERT(valueBeingRemoved);
     willModifyAttribute(name, valueBeingRemoved, nullAtom());
     {
         Style::AttributeChangeInvalidation styleInvalidation(*this, name, valueBeingRemoved, nullAtom());
@@ -4230,7 +4230,7 @@ void Element::removeAttributeInternal(unsigned index, InSynchronizationOfLazyAtt
     didRemoveAttribute(name, valueBeingRemoved);
 }
 
-void Element::addAttributeInternal(const QualifiedName& name, const AtomString& value, InSynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+void Element::addAttributeInternal(const QualifiedName& name, AtomStringImpl* value, InSynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     if (inSynchronizationOfLazyAttribute == InSynchronizationOfLazyAttribute::Yes) {
         protect(ensureUniqueElementData())->addAttribute(name, value);
@@ -4245,12 +4245,12 @@ void Element::addAttributeInternal(const QualifiedName& name, const AtomString& 
     didAddAttribute(name, value);
 }
 
-bool Element::removeAttribute(const AtomString& qualifiedName)
+bool Element::removeAttribute(AtomStringImpl* qualifiedName)
 {
     if (!elementData())
         return false;
 
-    AtomString caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
+    RefPtr caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? convertToASCIILowercase(qualifiedName) : RefPtr { qualifiedName };
     unsigned index = elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false);
     if (index == ElementData::attributeNotFound) {
         // FIXME: Should this be a hasTagName(styleAttr) check to also enforce the namespace?
@@ -4267,12 +4267,12 @@ bool Element::removeAttribute(const AtomString& qualifiedName)
     return true;
 }
 
-bool Element::removeAttributeNS(const AtomString& namespaceURI, const AtomString& localName)
+bool Element::removeAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName)
 {
     return removeAttribute(QualifiedName(nullAtom(), localName, namespaceURI));
 }
 
-RefPtr<Attr> Element::getAttributeNode(const AtomString& qualifiedName)
+RefPtr<Attr> Element::getAttributeNode(AtomStringImpl* qualifiedName)
 {
     if (!elementData())
         return nullptr;
@@ -4283,7 +4283,7 @@ RefPtr<Attr> Element::getAttributeNode(const AtomString& qualifiedName)
     return ensureAttr(attribute->name());
 }
 
-RefPtr<Attr> Element::getAttributeNodeNS(const AtomString& namespaceURI, const AtomString& localName)
+RefPtr<Attr> Element::getAttributeNodeNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName)
 {
     if (!elementData())
         return nullptr;
@@ -4295,7 +4295,7 @@ RefPtr<Attr> Element::getAttributeNodeNS(const AtomString& namespaceURI, const A
     return ensureAttr(attribute->name());
 }
 
-bool Element::hasAttribute(const AtomString& qualifiedName) const
+bool Element::hasAttribute(AtomStringImpl* qualifiedName) const
 {
     if (!elementData())
         return false;
@@ -4303,7 +4303,7 @@ bool Element::hasAttribute(const AtomString& qualifiedName) const
     return elementData()->findAttributeByName(qualifiedName, shouldIgnoreAttributeCase(*this));
 }
 
-bool Element::hasAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const
+bool Element::hasAttributeNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName) const
 {
     if (!elementData())
         return false;
@@ -4607,7 +4607,7 @@ void Element::enqueueFocusedElementDisconnectedEvent()
 void Element::dispatchWebKitImageReadyEventForTesting()
 {
     if (document().settings().webkitImageReadyEventEnabled())
-        dispatchEvent(Event::create("webkitImageFrameReady"_s, Event::CanBubble::Yes, Event::IsCancelable::Yes));
+        dispatchEvent(Event::create("webkitImageFrameReady"_atom, Event::CanBubble::Yes, Event::IsCancelable::Yes));
 }
 
 bool Element::dispatchMouseForceWillBegin()
@@ -4640,7 +4640,7 @@ void Element::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventIn
     });
 }
 
-ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+ExceptionOr<void> Element::replaceChildrenWithMarkup(StringImpl* markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
 
@@ -4652,7 +4652,7 @@ ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, Optio
 
     // Parsing empty string creates additional elements only inside <html> container
     // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inhtml
-    if (markup.isEmpty() && !is<HTMLHtmlElement>(container)) {
+    if (isEmpty(markup) && !is<HTMLHtmlElement>(container)) {
         ChildListMutationScope mutation(container);
         container->removeChildren();
         return { };
@@ -4669,9 +4669,9 @@ ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, Optio
     return result;
 }
 
-ExceptionOr<void> Element::setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html)
+ExceptionOr<void> Element::setHTMLUnsafe(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element setHTMLUnsafe"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element setHTMLUnsafe"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -4679,7 +4679,7 @@ ExceptionOr<void> Element::setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& htm
     return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
 }
 
-String Element::getHTML(GetHTMLOptions&& options) const
+RefPtr<StringImpl> Element::getHTML(GetHTMLOptions&& options) const
 {
     return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy, SerializationSyntax::HTML, options.serializableShadowRoots ? SerializeShadowRoots::Serializable : SerializeShadowRoots::Explicit, WTF::move(options.shadowRoots));
 }
@@ -4693,19 +4693,19 @@ ExceptionOr<void> Element::mergeWithNextTextNode(Text& node)
     return textNext->remove();
 }
 
-String Element::innerHTML() const
+RefPtr<StringImpl> Element::innerHTML() const
 {
     return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy);
 }
 
-String Element::outerHTML() const
+RefPtr<StringImpl> Element::outerHTML() const
 {
     return serializeFragment(*this, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::NoExcludingURLsForPrivacy);
 }
 
-ExceptionOr<void> Element::setOuterHTML(Variant<Ref<TrustedHTML>, String>&& html)
+ExceptionOr<void> Element::setOuterHTML(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element outerHTML"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element outerHTML"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -4715,7 +4715,7 @@ ExceptionOr<void> Element::setOuterHTML(Variant<Ref<TrustedHTML>, String>&& html
     if (!parent)
         return { };
     if (is<Document>(*parent))
-        return Exception { ExceptionCode::NoModificationAllowedError, "Cannot set outerHTML on element because its parent is a Document"_s };
+        return Exception { ExceptionCode::NoModificationAllowedError, "Cannot set outerHTML on element because its parent is a Document"_si };
 
     RefPtr contextElement = dynamicDowncast<Element>(parent);
     if (!contextElement)
@@ -4746,9 +4746,9 @@ ExceptionOr<void> Element::setOuterHTML(Variant<Ref<TrustedHTML>, String>&& html
     return { };
 }
 
-ExceptionOr<void> Element::setInnerHTML(Variant<Ref<TrustedHTML>, String>&& html)
+ExceptionOr<void> Element::setInnerHTML(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element innerHTML"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element innerHTML"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -4756,7 +4756,7 @@ ExceptionOr<void> Element::setInnerHTML(Variant<Ref<TrustedHTML>, String>&& html
     return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { });
 }
 
-String Element::innerText()
+RefPtr<StringImpl> Element::innerText()
 {
     // We need to update layout, since plainText uses line boxes in the render tree.
     protect(document())->updateLayoutIgnorePendingStylesheets();
@@ -4768,7 +4768,7 @@ String Element::innerText()
     }
 
     if (CheckedPtr renderer = this->renderer(); renderer->isSkippedContent())
-        return String();
+        return nullptr;
 
     // When innerText is called directly on a <select>, we must collect option
     // text explicitly because the options have no renderers and would be skipped
@@ -4780,7 +4780,7 @@ String Element::innerText()
     return plainText(makeRangeSelectingNodeContents(*this), { TextIteratorBehavior::EmitsNewlinesPerInnerTextSpec });
 }
 
-String Element::outerText()
+RefPtr<StringImpl> Element::outerText()
 {
     // Getting outerText is the same as getting innerText, only
     // setting is different. You would think this should get the plain
@@ -4790,18 +4790,18 @@ String Element::outerText()
     return innerText();
 }
 
-String Element::title() const
+RefPtr<StringImpl> Element::title() const
 {
-    return String();
+    return nullptr;
 }
 
-const AtomString& Element::userAgentPart() const
+const RefPtr<AtomStringImpl>& Element::userAgentPart() const
 {
     ASSERT(isInUserAgentShadowTree());
     return attributeWithoutSynchronization(useragentpartAttr);
 }
 
-void Element::setUserAgentPart(const AtomString& value)
+void Element::setUserAgentPart(AtomStringImpl* value)
 {
     // We may set the useragentpart attribute on elements before appending them to the shadow tree.
     ASSERT(!isConnected() || isInUserAgentShadowTree());
@@ -5141,13 +5141,13 @@ unsigned Element::rareDataChildIndex() const
     return elementRareData()->childIndex();
 }
 
-const AtomString& Element::effectiveLang() const
+const RefPtr<AtomStringImpl>& Element::effectiveLang() const
 {
     if (effectiveLangKnownToMatchDocumentElement() && isConnected())
         return document().effectiveDocumentElementLanguage();
 
     if (hasRareData()) {
-        if (auto& lang = elementRareData()->effectiveLang(); !lang.isNull())
+        if (auto& lang = elementRareData()->effectiveLang(); lang)
             return lang;
     }
 
@@ -5161,7 +5161,7 @@ const AtomString& Element::effectiveLang() const
     return nullAtom();
 }
 
-const AtomString& Element::langFromAttribute() const
+const RefPtr<AtomStringImpl>& Element::langFromAttribute() const
 {
     // Spec: xml:lang takes precedence over html:lang -- http://www.w3.org/TR/xhtml1/#C_7
     if (hasXMLLangAttr())
@@ -5289,7 +5289,7 @@ bool Element::matchesDefaultPseudoClass() const
     return false;
 }
 
-ExceptionOr<bool> Element::matches(const String& selector)
+ExceptionOr<bool> Element::matches(StringImpl* selector)
 {
     auto query = protect(document())->selectorQueryForString(selector);
     if (query.hasException())
@@ -5297,7 +5297,7 @@ ExceptionOr<bool> Element::matches(const String& selector)
     return query.releaseReturnValue().matches(*this);
 }
 
-ExceptionOr<RefPtr<Element>> Element::closest(const String& selector)
+ExceptionOr<RefPtr<Element>> Element::closest(StringImpl* selector)
 {
     auto query = protect(document())->selectorQueryForString(selector);
     if (query.hasException())
@@ -5359,8 +5359,8 @@ URL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
             ASSERT(isURLAttribute(*attribute));
     }
 #endif
-    auto value = getAttribute(name).string().trim(isASCIIWhitespace);
-    if (value.isEmpty())
+    auto value = trim(getAttribute(name), isASCIIWhitespace);
+    if (isEmpty(value))
         return URL();
     return protect(document())->encodingParseURL(value);
 }
@@ -5372,7 +5372,7 @@ int Element::integralAttribute(const QualifiedName& attributeName) const
 
 void Element::setIntegralAttribute(const QualifiedName& attributeName, int value)
 {
-    setAttributeWithoutSynchronization(attributeName, AtomString::number(value));
+    setAttributeWithoutSynchronization(attributeName, AtomStringImpl::number(value));
 }
 
 unsigned Element::unsignedIntegralAttribute(const QualifiedName& attributeName) const
@@ -5382,7 +5382,7 @@ unsigned Element::unsignedIntegralAttribute(const QualifiedName& attributeName) 
 
 void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value)
 {
-    setAttributeWithoutSynchronization(attributeName, AtomString::number(limitToOnlyHTMLNonNegative(value)));
+    setAttributeWithoutSynchronization(attributeName, AtomStringImpl::number(limitToOnlyHTMLNonNegative(value)));
 }
 
 bool Element::childShouldCreateRenderer(const Node& child) const
@@ -5439,7 +5439,7 @@ void Element::requestFullscreen(FullscreenOptions&& options, RefPtr<DeferredProm
     }
     else {
         if (options.keyboardLock != FullscreenOptions::KeyboardLock::None) {
-            promise->reject(ExceptionCode::NotSupportedError, "options.keyboardLock is unavailable."_s);
+            promise->reject(ExceptionCode::NotSupportedError, "options.keyboardLock is unavailable."_si);
             return;
         }
     }
@@ -5546,12 +5546,14 @@ ElementAnimationRareData& Element::ensureAnimationRareData(const std::optional<S
     return ensureElementRareData().ensureAnimationRareData(pseudoElementIdentifier);
 }
 
-AtomString Element::viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+AtomStringImpl* Element::viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
-    return hasRareData() ? elementRareData()->viewTransitionCapturedName(pseudoElementIdentifier) : nullAtom();
+    if (!hasRareData())
+        return nullptr;
+    return elementRareData()->viewTransitionCapturedName(pseudoElementIdentifier);
 }
 
-void Element::setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, AtomString captureName)
+void Element::setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, RefPtr<AtomStringImpl> captureName)
 {
     return ensureElementRareData().setViewTransitionCapturedName(pseudoElementIdentifier, captureName);
 }
@@ -5768,9 +5770,9 @@ bool Element::isSpellCheckingEnabled() const
 {
     for (SUPPRESS_UNCHECKED_LOCAL auto* ancestor = this; ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
         auto& value = ancestor->attributeWithoutSynchronization(HTMLNames::spellcheckAttr);
-        if (value.isNull())
+        if (!value)
             continue;
-        if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"_s))
+        if (isEmpty(value) || equalLettersIgnoringASCIICase(value, "true"_s))
             return true;
         if (equalLettersIgnoringASCIICase(value, "false"_s))
             return false;
@@ -5782,7 +5784,7 @@ bool Element::computedWritingSuggestionsValue() const
 {
     for (Ref ancestor : composedTreeLineage(*this)) {
         auto& value = ancestor->attributeWithoutSynchronization(HTMLNames::writingsuggestionsAttr);
-        if (value.isNull())
+        if (!value)
             continue;
         if (equalLettersIgnoringASCIICase(value, "false"_s))
             return false;
@@ -5859,7 +5861,7 @@ bool Element::hasNamedNodeMap() const
 }
 #endif
 
-inline void Element::updateName(const AtomString& oldName, const AtomString& newName)
+inline void Element::updateName(AtomStringImpl* oldName, AtomStringImpl* newName)
 {
     if (!isInTreeScope())
         return;
@@ -5875,38 +5877,38 @@ inline void Element::updateName(const AtomString& oldName, const AtomString& new
         updateNameForDocument(*htmlDocument, oldName, newName);
 }
 
-void Element::updateNameForTreeScope(TreeScope& scope, const AtomString& oldName, const AtomString& newName)
+void Element::updateNameForTreeScope(TreeScope& scope, AtomStringImpl* oldName, AtomStringImpl* newName)
 {
     ASSERT(oldName != newName);
 
-    if (!oldName.isEmpty())
+    if (!isEmpty(oldName))
         scope.removeElementByName(oldName, *this);
-    if (!newName.isEmpty())
+    if (!isEmpty(newName))
         scope.addElementByName(newName, *this);
 }
 
-void Element::updateNameForDocument(HTMLDocument& document, const AtomString& oldName, const AtomString& newName)
+void Element::updateNameForDocument(HTMLDocument& document, AtomStringImpl* oldName, AtomStringImpl* newName)
 {
     ASSERT(oldName != newName);
 
     if (WindowNameCollection::elementMatchesIfNameAttributeMatch(*this)) {
-        const AtomString& id = WindowNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
-        if (!oldName.isEmpty() && oldName != id)
+        const RefPtr<AtomStringImpl>& id = WindowNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
+        if (!isEmpty(oldName) && oldName != id)
             document.removeWindowNamedItem(oldName, *this);
-        if (!newName.isEmpty() && newName != id)
+        if (!isEmpty(newName) && newName != id)
             document.addWindowNamedItem(newName, *this);
     }
 
     if (DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this)) {
-        const AtomString& id = DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
-        if (!oldName.isEmpty() && oldName != id)
+        const RefPtr<AtomStringImpl>& id = DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom();
+        if (!isEmpty(oldName) && oldName != id)
             document.removeDocumentNamedItem(oldName, *this);
-        if (!newName.isEmpty() && newName != id)
+        if (!isEmpty(newName) && newName != id)
             document.addDocumentNamedItem(newName, *this);
     }
 }
 
-inline void Element::updateId(const AtomString& oldId, const AtomString& newId, NotifyObservers notifyObservers)
+inline void Element::updateId(AtomStringImpl* oldId, AtomStringImpl* newId, NotifyObservers notifyObservers)
 {
     if (!isInTreeScope())
         return;
@@ -5922,45 +5924,45 @@ inline void Element::updateId(const AtomString& oldId, const AtomString& newId, 
         updateIdForDocument(*htmlDocument, oldId, newId, HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute);
 }
 
-void Element::updateIdForTreeScope(TreeScope& scope, const AtomString& oldId, const AtomString& newId, NotifyObservers notifyObservers)
+void Element::updateIdForTreeScope(TreeScope& scope, AtomStringImpl* oldId, AtomStringImpl* newId, NotifyObservers notifyObservers)
 {
     ASSERT(oldId != newId);
 
-    if (!oldId.isEmpty())
+    if (!isEmpty(oldId))
         scope.removeElementById(oldId, *this, notifyObservers == NotifyObservers::Yes);
-    if (!newId.isEmpty())
+    if (!isEmpty(newId))
         scope.addElementById(newId, *this, notifyObservers == NotifyObservers::Yes);
 }
 
-void Element::updateIdForDocument(HTMLDocument& document, const AtomString& oldId, const AtomString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
+void Element::updateIdForDocument(HTMLDocument& document, AtomStringImpl* oldId, AtomStringImpl* newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
 {
     ASSERT(oldId != newId);
 
     if (WindowNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
-        const AtomString& name = condition == HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute && WindowNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
-        if (!oldId.isEmpty() && oldId != name)
+        const RefPtr<AtomStringImpl>& name = condition == HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute && WindowNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
+        if (!isEmpty(oldId) && oldId != name)
             document.removeWindowNamedItem(oldId, *this);
-        if (!newId.isEmpty() && newId != name)
+        if (!isEmpty(newId) && newId != name)
             document.addWindowNamedItem(newId, *this);
     }
 
     if (DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
-        const AtomString& name = condition == HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute && DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
-        if (!oldId.isEmpty() && oldId != name)
+        const RefPtr<AtomStringImpl>& name = condition == HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute && DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
+        if (!isEmpty(oldId) && oldId != name)
             document.removeDocumentNamedItem(oldId, *this);
-        if (!newId.isEmpty() && newId != name)
+        if (!isEmpty(newId) && newId != name)
             document.addDocumentNamedItem(newId, *this);
     }
 }
 
 inline void Element::addToIdAndNameMaps(TreeScope& treeScope, HTMLDocument* htmlDocument)
 {
-    if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
+    if (auto& idValue = getIdAttribute(); !isEmpty(idValue)) {
         treeScope.addElementById(idValue, *this);
         if (htmlDocument)
             updateIdForDocument(*htmlDocument, nullAtom(), idValue, HTMLDocumentNamedItemMapsUpdatingCondition::Always);
     }
-    if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
+    if (auto& nameValue = getNameAttribute(); !isEmpty(nameValue)) {
         treeScope.addElementByName(nameValue, *this);
         if (htmlDocument)
             updateNameForDocument(*htmlDocument, nullAtom(), nameValue);
@@ -5969,12 +5971,12 @@ inline void Element::addToIdAndNameMaps(TreeScope& treeScope, HTMLDocument* html
 
 inline void Element::removeFromIdAndNameMaps(TreeScope& treeScope, HTMLDocument* htmlDocument)
 {
-    if (auto& idValue = getIdAttribute(); !idValue.isEmpty()) {
+    if (auto& idValue = getIdAttribute(); !isEmpty(idValue)) {
         treeScope.removeElementById(idValue, *this);
         if (htmlDocument)
             updateIdForDocument(*htmlDocument, idValue, nullAtom(), HTMLDocumentNamedItemMapsUpdatingCondition::Always);
     }
-    if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
+    if (auto& nameValue = getNameAttribute(); !isEmpty(nameValue)) {
         treeScope.removeElementByName(nameValue, *this);
         if (htmlDocument)
             updateNameForDocument(*htmlDocument, nameValue, nullAtom());
@@ -6038,7 +6040,7 @@ void Element::setVolumetricSceneEstablished(bool established)
 }
 #endif
 
-void Element::willModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
+void Element::willModifyAttribute(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue)
 {
     if (name == HTMLNames::idAttr)
         updateId(oldValue, newValue, NotifyObservers::No); // Will notify observers after the attribute is actually changed.
@@ -6058,21 +6060,21 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomString& o
     InspectorInstrumentation::willModifyDOMAttr(protect(document()), *this, oldValue, newValue);
 }
 
-void Element::didAddAttribute(const QualifiedName& name, const AtomString& value)
+void Element::didAddAttribute(const QualifiedName& name, AtomStringImpl* value)
 {
     notifyAttributeChanged(name, nullAtom(), value);
     InspectorInstrumentation::didModifyDOMAttr(protect(document()), *this, name.toAtomString(), value);
     dispatchSubtreeModifiedEvent();
 }
 
-void Element::didModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
+void Element::didModifyAttribute(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue)
 {
     notifyAttributeChanged(name, oldValue, newValue);
     InspectorInstrumentation::didModifyDOMAttr(protect(document()), *this, name.toAtomString(), newValue);
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
-void Element::didRemoveAttribute(const QualifiedName& name, const AtomString& oldValue)
+void Element::didRemoveAttribute(const QualifiedName& name, AtomStringImpl* oldValue)
 {
     notifyAttributeChanged(name, oldValue, nullAtom());
     InspectorInstrumentation::didRemoveDOMAttr(protect(document()), *this, name.toAtomString());
@@ -6109,7 +6111,7 @@ Ref<Attr> Element::ensureAttr(const QualifiedName& name)
     return attrNode;
 }
 
-void Element::detachAttrNodeFromElementWithValue(Attr* attrNode, const AtomString& value)
+void Element::detachAttrNodeFromElementWithValue(Attr* attrNode, AtomStringImpl* value)
 {
     ASSERT(hasSyntheticAttrChildNodes());
     attrNode->detachFromElementWithValue(value);
@@ -6267,16 +6269,16 @@ void Element::cloneAttributesFromElement(const Element& other)
     // Fortunately, those named item maps are only updated when this element is in the document, which should never be the case.
     ASSERT(!isConnected());
 
-    const AtomString& oldID = getIdAttribute();
-    const AtomString& newID = other.getIdAttribute();
+    const RefPtr<AtomStringImpl>& oldID = getIdAttribute();
+    const RefPtr<AtomStringImpl>& newID = other.getIdAttribute();
 
-    if (!oldID.isNull() || !newID.isNull())
+    if (oldID || newID)
         updateId(oldID, newID, NotifyObservers::No); // Will notify observers after the attribute is actually changed.
 
-    const AtomString& oldName = getNameAttribute();
-    const AtomString& newName = other.getNameAttribute();
+    const RefPtr<AtomStringImpl>& oldName = getNameAttribute();
+    const RefPtr<AtomStringImpl>& newName = other.getNameAttribute();
 
-    if (!oldName.isNull() || !newName.isNull())
+    if (oldName || newName)
         updateName(oldName, newName);
 
     // If 'other' has a mutable ElementData, convert it to an immutable one so we can share it between both elements.
@@ -6329,12 +6331,12 @@ bool Element::canContainRangeEndPoint() const
     return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(roleAttr), "img"_s);
 }
 
-String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs resolveURLs, const URL& base) const
+RefPtr<StringImpl> Element::resolveURLStringIfNeeded(StringImpl* urlString, ResolveURLs resolveURLs, const URL& base) const
 {
     if (resolveURLs == ResolveURLs::No)
         return urlString;
 
-    static MainThreadNeverDestroyed<const AtomString> maskedURLStringForBindings(document().maskedURLStringForBindings());
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> maskedURLStringForBindings(AtomStringImpl::add(document().maskedURLStringForBindings()));
     URL completeURL = base.isNull() ? protect(document())->encodingParseURL(urlString) : URL(base, urlString);
 
     switch (resolveURLs) {
@@ -6345,7 +6347,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
         if (protect(document())->shouldMaskURLForBindings(completeURL))
             return maskedURLStringForBindings.get();
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        return protect(document())->url().protocolIsFile() ? urlString : completeURL.string();
+        return protect(document())->url().protocolIsFile() ? RefPtr<StringImpl> { urlString } : completeURL.string();
 #else
         return completeURL.string();
 #endif
@@ -6364,7 +6366,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
     return urlString;
 }
 
-String Element::completeURLsInAttributeValue(const URL& base, const Attribute& attribute, ResolveURLs resolveURLs) const
+RefPtr<StringImpl> Element::completeURLsInAttributeValue(const URL& base, const Attribute& attribute, ResolveURLs resolveURLs) const
 {
     return resolveURLStringIfNeeded(attribute.value(), resolveURLs, base);
 }
@@ -6374,7 +6376,7 @@ Attribute Element::replaceURLsInAttributeValue(const Attribute& attribute, const
     return attribute;
 }
 
-ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newChild)
+ExceptionOr<Node*> Element::insertAdjacent(StringImpl* where, Ref<Node>&& newChild)
 {
     // In Internet Explorer if the element has no parent and where is "beforeBegin" or "afterEnd",
     // a document fragment is created and the elements appended in the correct order. This document
@@ -6420,7 +6422,7 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<Element*> Element::insertAdjacentElement(const String& where, Element& newChild)
+ExceptionOr<Element*> Element::insertAdjacentElement(StringImpl* where, Element& newChild)
 {
     auto result = insertAdjacent(where, newChild);
     if (result.hasException())
@@ -6429,7 +6431,7 @@ ExceptionOr<Element*> Element::insertAdjacentElement(const String& where, Elemen
 }
 
 // Step 1 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
-static ExceptionOr<ContainerNode&> contextNodeForInsertion(const String& where, Element& element)
+static ExceptionOr<ContainerNode&> contextNodeForInsertion(StringImpl* where, Element& element)
 {
     if (equalLettersIgnoringASCIICase(where, "beforebegin"_s) || equalLettersIgnoringASCIICase(where, "afterend"_s)) {
         RefPtr parent = element.parentNode();
@@ -6443,7 +6445,7 @@ static ExceptionOr<ContainerNode&> contextNodeForInsertion(const String& where, 
 }
 
 // Step 2 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
-static ExceptionOr<Ref<Element>> contextElementForInsertion(const String& where, Element& element)
+static ExceptionOr<Ref<Element>> contextElementForInsertion(StringImpl* where, Element& element)
 {
     auto contextNodeResult = contextNodeForInsertion(where, element);
     if (contextNodeResult.hasException())
@@ -6460,7 +6462,7 @@ static ExceptionOr<Ref<Element>> contextElementForInsertion(const String& where,
 }
 
 // https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml
-ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup, NodeVector* addedNodes)
+ExceptionOr<void> Element::insertAdjacentHTML(StringImpl* where, StringImpl* markup, NodeVector* addedNodes)
 {
     // Steps 1 and 2.
     auto contextElement = contextElementForInsertion(where, *this);
@@ -6486,9 +6488,9 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     return { };
 }
 
-ExceptionOr<void> Element::insertAdjacentHTML(const String& where, Variant<Ref<TrustedHTML>, String>&& markup)
+ExceptionOr<void> Element::insertAdjacentHTML(StringImpl* where, Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& markup)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(markup), "Element insertAdjacentHTML"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(markup), "Element insertAdjacentHTML"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -6496,7 +6498,7 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, Variant<Ref<T
     return insertAdjacentHTML(where, stringValueHolder.releaseReturnValue(), nullptr);
 }
 
-ExceptionOr<void> Element::insertAdjacentText(const String& where, String&& text)
+ExceptionOr<void> Element::insertAdjacentText(StringImpl* where, RefPtr<StringImpl>&& text)
 {
     auto result = insertAdjacent(where, protect(document())->createTextNode(WTF::move(text)));
     if (result.hasException())
@@ -6504,13 +6506,13 @@ ExceptionOr<void> Element::insertAdjacentText(const String& where, String&& text
     return { };
 }
 
-RefPtr<Element> Element::findAnchorElementForLink(String& outAnchorName)
+RefPtr<Element> Element::findAnchorElementForLink(RefPtr<StringImpl>& outAnchorName)
 {
     if (!isLink())
         return nullptr;
 
-    const AtomString& href = attributeWithoutSynchronization(HTMLNames::hrefAttr);
-    if (href.isNull())
+    const RefPtr<AtomStringImpl>& href = attributeWithoutSynchronization(HTMLNames::hrefAttr);
+    if (!href)
         return nullptr;
 
     Ref document = this->document();
@@ -6528,7 +6530,7 @@ RefPtr<Element> Element::findAnchorElementForLink(String& outAnchorName)
 
 ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Strong<JSC::JSObject>&& keyframes, Variant<double, KeyframeAnimationOptions>&& options)
 {
-    String id = emptyString();
+    RefPtr<StringImpl> id = emptyString();
     std::optional<RefPtr<AnimationTimeline>> timeline;
     Variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
     std::optional<TimelineRangeValue> animationRangeStart;
@@ -6739,14 +6741,14 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
     return true;
 }
 
-AtomString Element::makeTargetBlankIfHasDanglingMarkup(const AtomString& target)
+RefPtr<AtomStringImpl> Element::makeTargetBlankIfHasDanglingMarkup(AtomStringImpl* target)
 {
-    if ((target.contains('\n') || target.contains('\r') || target.contains('\t')) && target.contains('<'))
-        return "_blank"_s;
+    if ((WTF::contains(target, '\n') || WTF::contains(target, '\r') || WTF::contains(target, '\t')) && WTF::contains(target, '<'))
+        return "_blank"_atom;
     return target;
 }
 
-bool Element::hasCustomState(const AtomString& state) const
+bool Element::hasCustomState(AtomStringImpl* state) const
 {
     if (hasRareData()) {
         auto* customStates = elementRareData()->customStateSet();
@@ -6895,18 +6897,18 @@ bool Element::hasRandomCachingKeyMap() const
 
 void Element::setNumericAttribute(const QualifiedName& attributeName, double value)
 {
-    setAttributeWithoutSynchronization(attributeName, AtomString::number(value));
+    setAttributeWithoutSynchronization(attributeName, AtomStringImpl::number(value));
 }
 
-const AtomString& Element::ariaAtomic() const
+const RefPtr<AtomStringImpl>& Element::ariaAtomic() const
 {
-    const AtomString& value = getAttribute(aria_atomicAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_atomicAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return nullAtom();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -6915,20 +6917,20 @@ const AtomString& Element::ariaAtomic() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaAutoComplete() const
+const RefPtr<AtomStringImpl>& Element::ariaAutoComplete() const
 {
-    const AtomString& value = getAttribute(aria_autocompleteAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_autocompleteAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> inlineValue("inline"_s);
-        static MainThreadNeverDestroyed<const AtomString> listValue("list"_s);
-        static MainThreadNeverDestroyed<const AtomString> bothValue("both"_s);
-        static MainThreadNeverDestroyed<const AtomString> noneValue("none"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> inlineValue("inline"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> listValue("list"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> bothValue("both"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> noneValue("none"_s);
 
-        if (value.isNull())
+        if (!value)
             return noneValue.get();
         if (equalLettersIgnoringASCIICase(value, "inline"_s))
             return inlineValue.get();
@@ -6941,18 +6943,18 @@ const AtomString& Element::ariaAutoComplete() const
         return noneValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaBusy() const
+const RefPtr<AtomStringImpl>& Element::ariaBusy() const
 {
-    const AtomString& value = getAttribute(aria_busyAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_busyAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -6961,19 +6963,19 @@ const AtomString& Element::ariaBusy() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaChecked() const
+const RefPtr<AtomStringImpl>& Element::ariaChecked() const
 {
-    const AtomString& value = getAttribute(aria_checkedAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_checkedAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
-        static MainThreadNeverDestroyed<const AtomString> mixedValue("mixed"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> mixedValue("mixed"_s);
 
-        if (value.isNull())
+        if (!value)
             return nullAtom();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -6984,23 +6986,23 @@ const AtomString& Element::ariaChecked() const
         return nullAtom();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaCurrent() const
+const RefPtr<AtomStringImpl>& Element::ariaCurrent() const
 {
-    const AtomString& value = getAttribute(aria_currentAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_currentAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> pageValue("page"_s);
-        static MainThreadNeverDestroyed<const AtomString> stepValue("step"_s);
-        static MainThreadNeverDestroyed<const AtomString> locationValue("location"_s);
-        static MainThreadNeverDestroyed<const AtomString> dateValue("date"_s);
-        static MainThreadNeverDestroyed<const AtomString> timeValue("time"_s);
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> pageValue("page"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> stepValue("step"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> locationValue("location"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> dateValue("date"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> timeValue("time"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "page"_s))
             return pageValue.get();
@@ -7014,23 +7016,23 @@ const AtomString& Element::ariaCurrent() const
             return timeValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
-        if (equalLettersIgnoringASCIICase(value, "false"_s) || value.isEmpty())
+        if (equalLettersIgnoringASCIICase(value, "false"_s) || isEmpty(value))
             return falseValue.get();
         return trueValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaDisabled() const
+const RefPtr<AtomStringImpl>& Element::ariaDisabled() const
 {
-    const AtomString& value = getAttribute(aria_disabledAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_disabledAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7039,18 +7041,18 @@ const AtomString& Element::ariaDisabled() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaExpanded() const
+const RefPtr<AtomStringImpl>& Element::ariaExpanded() const
 {
-    const AtomString& value = getAttribute(aria_expandedAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_expandedAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return nullAtom();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7059,23 +7061,23 @@ const AtomString& Element::ariaExpanded() const
         return nullAtom();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaHasPopup() const
+const RefPtr<AtomStringImpl>& Element::ariaHasPopup() const
 {
-    const AtomString& value = getAttribute(aria_haspopupAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_haspopupAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
-        static MainThreadNeverDestroyed<const AtomString> menuValue("menu"_s);
-        static MainThreadNeverDestroyed<const AtomString> dialogValue("dialog"_s);
-        static MainThreadNeverDestroyed<const AtomString> listboxValue("listbox"_s);
-        static MainThreadNeverDestroyed<const AtomString> treeValue("tree"_s);
-        static MainThreadNeverDestroyed<const AtomString> gridValue("grid"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> menuValue("menu"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> dialogValue("dialog"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> listboxValue("listbox"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> treeValue("tree"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> gridValue("grid"_s);
 
-        if (value.isNull())
+        if (!value)
             return nullAtom();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7094,18 +7096,18 @@ const AtomString& Element::ariaHasPopup() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaHidden() const
+const RefPtr<AtomStringImpl>& Element::ariaHidden() const
 {
-    const AtomString& value = getAttribute(aria_hiddenAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_hiddenAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7114,20 +7116,20 @@ const AtomString& Element::ariaHidden() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaInvalid() const
+const RefPtr<AtomStringImpl>& Element::ariaInvalid() const
 {
-    const AtomString& value = getAttribute(aria_invalidAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_invalidAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> grammarValue("grammar"_s);
-        static MainThreadNeverDestroyed<const AtomString> spellingValue("spelling"_s);
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> grammarValue("grammar"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> spellingValue("spelling"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "grammar"_s))
             return grammarValue.get();
@@ -7135,24 +7137,24 @@ const AtomString& Element::ariaInvalid() const
             return spellingValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
-        if (equalLettersIgnoringASCIICase(value, "false"_s) || value.isEmpty())
+        if (equalLettersIgnoringASCIICase(value, "false"_s) || isEmpty(value))
             return falseValue.get();
         return trueValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaLive() const
+const RefPtr<AtomStringImpl>& Element::ariaLive() const
 {
-    const AtomString& value = getAttribute(aria_liveAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_liveAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> politeValue("polite"_s);
-        static MainThreadNeverDestroyed<const AtomString> assertiveValue("assertive"_s);
-        static MainThreadNeverDestroyed<const AtomString> offValue("off"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> politeValue("polite"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> assertiveValue("assertive"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> offValue("off"_s);
 
-        if (value.isNull())
+        if (!value)
             return offValue.get();
         if (equalLettersIgnoringASCIICase(value, "polite"_s))
             return politeValue.get();
@@ -7163,18 +7165,18 @@ const AtomString& Element::ariaLive() const
         return offValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaModal() const
+const RefPtr<AtomStringImpl>& Element::ariaModal() const
 {
-    const AtomString& value = getAttribute(aria_modalAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_modalAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7183,18 +7185,18 @@ const AtomString& Element::ariaModal() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaMultiLine() const
+const RefPtr<AtomStringImpl>& Element::ariaMultiLine() const
 {
-    const AtomString& value = getAttribute(aria_multilineAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_multilineAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7203,18 +7205,18 @@ const AtomString& Element::ariaMultiLine() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaMultiSelectable() const
+const RefPtr<AtomStringImpl>& Element::ariaMultiSelectable() const
 {
-    const AtomString& value = getAttribute(aria_multiselectableAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_multiselectableAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7223,18 +7225,18 @@ const AtomString& Element::ariaMultiSelectable() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaOrientation() const
+const RefPtr<AtomStringImpl>& Element::ariaOrientation() const
 {
-    const AtomString& value = getAttribute(aria_orientationAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_orientationAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> horizontalValue("horizontal"_s);
-        static MainThreadNeverDestroyed<const AtomString> verticalValue("vertical"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> horizontalValue("horizontal"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> verticalValue("vertical"_s);
 
-        if (value.isNull())
+        if (!value)
             return nullAtom();
         if (equalLettersIgnoringASCIICase(value, "horizontal"_s))
             return horizontalValue.get();
@@ -7243,19 +7245,19 @@ const AtomString& Element::ariaOrientation() const
         return nullAtom();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaPressed() const
+const RefPtr<AtomStringImpl>& Element::ariaPressed() const
 {
-    const AtomString& value = getAttribute(aria_pressedAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_pressedAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
-        static MainThreadNeverDestroyed<const AtomString> mixedValue("mixed"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> mixedValue("mixed"_s);
 
-        if (value.isNull())
+        if (!value)
             return nullAtom();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7266,18 +7268,18 @@ const AtomString& Element::ariaPressed() const
         return nullAtom();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaReadOnly() const
+const RefPtr<AtomStringImpl>& Element::ariaReadOnly() const
 {
-    const AtomString& value = getAttribute(aria_readonlyAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_readonlyAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7286,18 +7288,18 @@ const AtomString& Element::ariaReadOnly() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaRequired() const
+const RefPtr<AtomStringImpl>& Element::ariaRequired() const
 {
-    const AtomString& value = getAttribute(aria_requiredAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_requiredAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return falseValue.get();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7306,18 +7308,18 @@ const AtomString& Element::ariaRequired() const
         return falseValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaSelected() const
+const RefPtr<AtomStringImpl>& Element::ariaSelected() const
 {
-    const AtomString& value = getAttribute(aria_selectedAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_selectedAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> trueValue("true"_s);
-        static MainThreadNeverDestroyed<const AtomString> falseValue("false"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> trueValue("true"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> falseValue("false"_s);
 
-        if (value.isNull())
+        if (!value)
             return nullAtom();
         if (equalLettersIgnoringASCIICase(value, "true"_s))
             return trueValue.get();
@@ -7326,20 +7328,20 @@ const AtomString& Element::ariaSelected() const
         return nullAtom();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-const AtomString& Element::ariaSort() const
+const RefPtr<AtomStringImpl>& Element::ariaSort() const
 {
-    const AtomString& value = getAttribute(aria_sortAttr);
+    const RefPtr<AtomStringImpl>& value = getAttribute(aria_sortAttr);
 
     if (document().settings().enumeratedARIAAttributeReflectionEnabled()) {
-        static MainThreadNeverDestroyed<const AtomString> ascendingValue("ascending"_s);
-        static MainThreadNeverDestroyed<const AtomString> descendingValue("descending"_s);
-        static MainThreadNeverDestroyed<const AtomString> otherValue("other"_s);
-        static MainThreadNeverDestroyed<const AtomString> noneValue("none"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> ascendingValue("ascending"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> descendingValue("descending"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> otherValue("other"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> noneValue("none"_s);
 
-        if (value.isNull())
+        if (!value)
             return noneValue.get();
         if (equalLettersIgnoringASCIICase(value, "ascending"_s))
             return ascendingValue.get();
@@ -7352,10 +7354,10 @@ const AtomString& Element::ariaSort() const
         return noneValue.get();
     }
 
-    return value.isNull() ? nullAtom() : value;
+    return !value ? nullAtom() : value;
 }
 
-void Element::ariaNotify(const String& announcement)
+void Element::ariaNotify(StringImpl* announcement)
 {
     if (!document().settings().isARIANotifyEnabled())
         return;
@@ -7364,7 +7366,7 @@ void Element::ariaNotify(const String& announcement)
         cache->postARIANotifyNotification(*this, announcement, { });
 }
 
-void Element::ariaNotify(const String& announcement, const AriaNotifyOptions& options)
+void Element::ariaNotify(StringImpl* announcement, const AriaNotifyOptions& options)
 {
     if (!document().settings().isARIANotifyEnabled())
         return;

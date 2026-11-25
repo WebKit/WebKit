@@ -48,7 +48,7 @@ public:
     bool bind(T, Args&&...);
 
     WEBCORE_EXPORT int bindBlob(int index, std::span<const uint8_t>);
-    WEBCORE_EXPORT int bindBlob(int index, const String&);
+    WEBCORE_EXPORT int bindBlob(int index, StringImpl*);
     WEBCORE_EXPORT int bindText(int index, StringView);
     WEBCORE_EXPORT int bindInt(int index, int);
     WEBCORE_EXPORT int bindInt64(int index, int64_t);
@@ -70,13 +70,13 @@ public:
     bool isReadOnly();
     
     WEBCORE_EXPORT bool isColumnDeclaredAsBlob(int col);
-    String columnName(int col);
+    RefPtr<StringImpl> columnName(int col);
     SQLValue columnValue(int col);
-    WEBCORE_EXPORT String columnText(int col);
+    WEBCORE_EXPORT RefPtr<StringImpl> columnText(int col);
     WEBCORE_EXPORT double columnDouble(int col);
     WEBCORE_EXPORT int columnInt(int col);
     WEBCORE_EXPORT int64_t columnInt64(int col);
-    WEBCORE_EXPORT String columnBlobAsString(int col);
+    WEBCORE_EXPORT RefPtr<StringImpl> columnBlobAsString(int col);
     WEBCORE_EXPORT Vector<uint8_t> columnBlob(int col);
 
     // The returned Span stays valid until the next step() / reset() or destruction of the statement.

@@ -46,7 +46,7 @@ class AccessibilityObject;
 class Element;
 
 bool shouldLogFormActivity();
-void logFormActivity(const String&);
+void logFormActivity(StringImpl*);
 
 #define AXFORMLOG(...) do { \
     if (shouldLogFormActivity()) [[unlikely]] \
@@ -85,7 +85,7 @@ public:
     void onChangedContent(AccessibilityObject&);
 
     // Text that was announced, useful so we don't re-announce it as part of this class's repairs.
-    void onAnnouncedText(const String&);
+    void onAnnouncedText(StringImpl*);
 
     // Examines what onChangedContent() recorded and tries to discover error messages that need repair.
     void collectErrorMessagesFromChangedElements();
@@ -107,7 +107,7 @@ private:
     // Text the site added, and the element that holds it, so it can be paired with the field it is
     // most likely describing once the page has settled.
     struct CandidateErrorMessage {
-        String text;
+        RefPtr<StringImpl> text;
         WeakPtr<Element, WeakPtrImplWithEventTargetData> element;
     };
 
@@ -125,7 +125,7 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_submitter;
     WeakListHashSet<Element, WeakPtrImplWithEventTargetData> m_changedElements;
     Vector<CandidateErrorMessage> m_candidateErrorMessages;
-    HashSet<String> m_announcedText;
+    HashSet<RefPtr<StringImpl>> m_announcedText;
     // The fields rendered when the user acted, so a field the page reveals afterwards is not taken for one they left wrong.
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_fieldsRenderedAtAttempt;
     unsigned m_changedElementCount { 0 };

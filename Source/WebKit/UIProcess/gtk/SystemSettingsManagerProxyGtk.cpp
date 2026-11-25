@@ -34,20 +34,20 @@
 
 namespace WebKit {
 
-String SystemSettingsManagerProxy::themeName() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::themeName() const
 {
     if (auto* themeNameEnv = g_getenv("GTK_THEME")) {
-        String name = String::fromUTF8(themeNameEnv);
-        if (name.endsWithIgnoringASCIICase("-dark"_s) || name.endsWith(":dark"_s))
-            return name.left(name.length() - 5);
+        RefPtr<StringImpl> name = StringImpl::fromUTF8(themeNameEnv);
+        if (endsWithIgnoringASCIICase(name, "-dark"_s) || endsWith(name, ":dark"_s))
+            return left(name, length(name) - 5);
         return name;
     }
 
     GUniqueOutPtr<char> themeNameSetting;
     g_object_get(m_settings, "gtk-theme-name", &themeNameSetting.outPtr(), nullptr);
-    String name = String::fromUTF8(themeNameSetting.get());
-    if (name.endsWithIgnoringASCIICase("-dark"_s))
-        return name.left(name.length() - 5);
+    RefPtr<StringImpl> name = StringImpl::fromUTF8(themeNameSetting.get());
+    if (endsWithIgnoringASCIICase(name, "-dark"_s))
+        return left(name, length(name) - 5);
     return name;
 }
 
@@ -74,15 +74,15 @@ bool SystemSettingsManagerProxy::darkMode() const
         return true;
 
     if (const char* themeNameEnv = g_getenv("GTK_THEME")) {
-        String themeNameEnvString = String::fromUTF8(themeNameEnv);
-        return themeNameEnvString.endsWith("-dark"_s) || themeNameEnvString.endsWith("-Dark"_s) || themeNameEnvString.endsWith(":dark"_s);
+        RefPtr<StringImpl> themeNameEnvString = StringImpl::fromUTF8(themeNameEnv);
+        return endsWith(themeNameEnvString, "-dark"_s) || endsWith(themeNameEnvString, "-Dark"_s) || endsWith(themeNameEnvString, ":dark"_s);
     }
 
     GUniqueOutPtr<char> themeName;
     g_object_get(m_settings, "gtk-theme-name", &themeName.outPtr(), nullptr);
     if (themeName) {
-        String themeNameString = String::fromUTF8(themeName.get());
-        if (themeNameString.endsWith("-dark"_s) || themeNameString.endsWith("-Dark"_s))
+        RefPtr<StringImpl> themeNameString = StringImpl::fromUTF8(themeName.get());
+        if (endsWith(themeNameString, "-dark"_s) || endsWith(themeNameString, "-Dark"_s))
             return true;
     }
 
@@ -90,11 +90,11 @@ bool SystemSettingsManagerProxy::darkMode() const
 #endif
 }
 
-String SystemSettingsManagerProxy::fontName() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::fontName() const
 {
     GUniqueOutPtr<char> fontNameSetting;
     g_object_get(m_settings, "gtk-font-name", &fontNameSetting.outPtr(), nullptr);
-    return String::fromUTF8(fontNameSetting.get());
+    return StringImpl::fromUTF8(fontNameSetting.get());
 }
 
 int SystemSettingsManagerProxy::xftAntialias() const
@@ -111,18 +111,18 @@ int SystemSettingsManagerProxy::xftHinting() const
     return hintingSetting;
 }
 
-String SystemSettingsManagerProxy::xftHintStyle() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::xftHintStyle() const
 {
     GUniqueOutPtr<char> hintStyleSetting;
     g_object_get(m_settings, "gtk-xft-hintstyle", &hintStyleSetting.outPtr(), nullptr);
-    return String::fromUTF8(hintStyleSetting.get());
+    return StringImpl::fromUTF8(hintStyleSetting.get());
 }
 
-String SystemSettingsManagerProxy::xftRGBA() const
+RefPtr<StringImpl> SystemSettingsManagerProxy::xftRGBA() const
 {
     GUniqueOutPtr<char> rgbaSetting;
     g_object_get(m_settings, "gtk-xft-rgba", &rgbaSetting.outPtr(), nullptr);
-    return String::fromUTF8(rgbaSetting.get());
+    return StringImpl::fromUTF8(rgbaSetting.get());
 }
 
 int SystemSettingsManagerProxy::xftDPI() const
@@ -214,22 +214,22 @@ WebCore::InterfaceContrastPreference SystemSettingsManagerProxy::interfaceContra
     return WebCore::InterfaceContrastPreference::NoPreference;
 #else
     auto name = themeName();
-    if (name == "HighContrast"_s || name == "HighContrastInverse"_s)
+    if (equal(name, "HighContrast"_s) || equal(name, "HighContrastInverse"_s))
         return WebCore::InterfaceContrastPreference::MoreContrast;
     return WebCore::InterfaceContrastPreference::NoPreference;
 #endif
 }
 
-void SystemSettingsManagerProxy::updateFontProperties(const String& fontName, WebCore::SystemSettingsState& changedState)
+void SystemSettingsManagerProxy::updateFontProperties(StringImpl* fontName, WebCore::SystemSettingsState& changedState)
 {
     changedState.fontName = fontName;
     changedState.fontFamily = std::nullopt;
     changedState.fontSize = std::nullopt;
     changedState.fontWeight = std::nullopt;
-    if (fontName.isEmpty())
+    if (isEmpty(fontName))
         return;
 
-    PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.utf8().legacyCStringPointer());
+    PangoFontDescription* pangoDescription = pango_font_description_from_string(utf8(fontName).legacyCStringPointer());
     if (!pangoDescription)
         return;
 
@@ -237,7 +237,7 @@ void SystemSettingsManagerProxy::updateFontProperties(const String& fontName, We
     // If the size of the font is in points, we need to convert it to pixels.
     if (!pango_font_description_get_size_is_absolute(pangoDescription))
         size = size * (WebCore::fontDPI() / 72.0);
-    changedState.fontFamily = String { byteCast<char8_t>(unsafeSpan(pango_font_description_get_family(pangoDescription))) };
+    changedState.fontFamily = StringImpl::create(byteCast<char8_t>(unsafeSpan(pango_font_description_get_family(pangoDescription))));
     changedState.fontSize = static_cast<float>(size);
     changedState.fontWeight = pango_font_description_get_weight(pangoDescription);
     pango_font_description_free(pangoDescription);

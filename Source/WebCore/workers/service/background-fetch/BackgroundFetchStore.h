@@ -51,15 +51,15 @@ public:
     virtual ~BackgroundFetchStore() = default;
 
     virtual void initializeFetches(const ServiceWorkerRegistrationKey&, CompletionHandler<void()>&&) = 0;
-    virtual void clearFetch(const ServiceWorkerRegistrationKey&, const String&, CompletionHandler<void()>&& = [] { }) = 0;
+    virtual void clearFetch(const ServiceWorkerRegistrationKey&, StringImpl*, CompletionHandler<void()>&& = [] { }) = 0;
     virtual void clearAllFetches(const ServiceWorkerRegistrationKey&, CompletionHandler<void()>&& = [] { }) = 0;
 
     enum class StoreResult : uint8_t { OK, QuotaError, InternalError };
-    virtual void storeFetch(const ServiceWorkerRegistrationKey&, const String&, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) = 0;
-    virtual void storeFetchResponseBodyChunk(const ServiceWorkerRegistrationKey&, const String&, size_t, const SharedBuffer&, CompletionHandler<void(StoreResult)>&&) = 0;
+    virtual void storeFetch(const ServiceWorkerRegistrationKey&, StringImpl*, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&) = 0;
+    virtual void storeFetchResponseBodyChunk(const ServiceWorkerRegistrationKey&, StringImpl*, size_t, const SharedBuffer&, CompletionHandler<void(StoreResult)>&&) = 0;
 
     using RetrieveRecordResponseBodyCallback = Function<void(std::expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
-    virtual void retrieveResponseBody(const ServiceWorkerRegistrationKey&, const String&, size_t, RetrieveRecordResponseBodyCallback&&) = 0;
+    virtual void retrieveResponseBody(const ServiceWorkerRegistrationKey&, StringImpl*, size_t, RetrieveRecordResponseBodyCallback&&) = 0;
 };
 
 } // namespace WebCore

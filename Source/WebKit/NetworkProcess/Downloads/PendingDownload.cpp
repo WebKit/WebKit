@@ -46,7 +46,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingDownload);
 
-PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessID)
+PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, StringImpl* suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessID)
     : m_networkLoad(NetworkLoad::create(*this, WTF::move(parameters), networkSession))
     , m_downloadID(downloadID)
     , m_parentProcessConnection(parentProcessConnection)
@@ -67,7 +67,7 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Netwo
 #endif // HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
 #endif // HAVE(WEBCONTENTRESTRICTIONS)
 
-    auto startNetworkLoad = [this, protectedThis = Ref { *this }, downloadID, suggestedName] () {
+    auto startNetworkLoad = [this, protectedThis = Ref { *this }, downloadID, suggestedName = RefPtr { suggestedName }] () {
         m_networkLoad->start();
         m_isAllowedToAskUserForCredentials = m_networkLoad->parameters().clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;
 
@@ -81,7 +81,7 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Netwo
 #if HAVE(WEBCONTENTRESTRICTIONS)
     m_urlFilter->isURLAllowed(IsMainFrameLoad::Yes, mainDocumentURL(), m_networkLoad->currentRequest().url(), [this, protectedThis = Ref { *this }, startNetworkLoad = WTF::move(startNetworkLoad)] (bool allowed, NSData *) mutable {
         if (!allowed) {
-            blockDueToContentFilter(ResourceResponse { m_networkLoad->currentRequest().url(), "application/octet-stream"_s, 0, ""_s }, nullptr);
+            blockDueToContentFilter(ResourceResponse { m_networkLoad->currentRequest().url(), "application/octet-stream"_si, 0, ""_si }, nullptr);
             return;
         }
 
@@ -101,7 +101,7 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Ref<N
     m_isAllowedToAskUserForCredentials = m_networkLoad->isAllowedToAskUserForCredentials();
 
     m_networkLoad->setPendingDownloadID(downloadID);
-    send(Messages::DownloadProxy::DidStart(request, String()));
+    send(Messages::DownloadProxy::DidStart(request, nullString()));
 
     m_networkLoad->convertTaskToDownload(*this, request, response, WTF::move(completionHandler));
 }
@@ -203,7 +203,7 @@ IPC::Connection* PendingDownload::messageSenderConnection() const
     return m_parentProcessConnection.get();
 }
 
-void PendingDownload::setPendingDownloadLocation(const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+void PendingDownload::setPendingDownloadLocation(StringImpl* path, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
     m_networkLoad->setPendingDownloadLocation(path, WTF::move(sandboxExtensionHandle), allowOverwrite);
 }
@@ -251,7 +251,7 @@ void PendingDownload::blockDueToContentFilter(const WebCore::ResourceResponse& r
     // Therefore the UI client doesn't even know about the download yet, and can't track its
     // status of being "blocked"
     // So we ask it to decide the filename, after which we can report it being blocked.
-    sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, response.suggestedFilename()), [this, protectedThis = Ref { *this }, currentRequest, postBlockHandler = WTF::move(postBlockHandler)] (String&& name, SandboxExtension::Handle&&, AllowOverwrite, WebKit::UseDownloadPlaceholder, URL&&, SandboxExtension::Handle&&, std::span<const uint8_t>, std::span<const uint8_t>) mutable {
+    sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, response.suggestedFilename()), [this, protectedThis = Ref { *this }, currentRequest, postBlockHandler = WTF::move(postBlockHandler)] (RefPtr<StringImpl>&& name, SandboxExtension::Handle&&, AllowOverwrite, WebKit::UseDownloadPlaceholder, URL&&, SandboxExtension::Handle&&, std::span<const uint8_t>, std::span<const uint8_t>) mutable {
         didFailLoading(blockedByContentFilterError(currentRequest));
 
         m_networkLoad->cancel();

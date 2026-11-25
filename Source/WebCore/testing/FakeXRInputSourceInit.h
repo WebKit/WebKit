@@ -44,7 +44,7 @@ struct FakeXRInputSourceInit {
     XRHandedness handedness;
     XRTargetRayMode targetRayMode;
     FakeXRRigidTransformInit pointerOrigin;
-    Vector<String> profiles;
+    Vector<RefPtr<StringImpl>> profiles;
     bool selectionStarted { false };
     bool selectionClicked { false };
     Vector<FakeXRButtonStateInit> supportedButtons;

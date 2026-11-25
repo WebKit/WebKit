@@ -70,7 +70,7 @@ public:
     Inspector::CommandResult<void> disable() final;
 
     void setShowPaintRects(bool show) { m_showPaintRects = show; }
-    void setBootstrapScript(const String& source) { m_bootstrapScript = source; }
+    void setBootstrapScript(StringImpl* source) { m_bootstrapScript = source; }
 
     void domContentEventFired() final;
     void loadEventFired() final;
@@ -82,9 +82,9 @@ public:
 #if ENABLE(DARK_MODE_CSS)
     void defaultAppearanceDidChange() final;
 #endif
-    void applyUserAgentOverride(String&) final;
-    void applyEmulatedMedia(AtomString&) final;
-    String bootstrapScriptToEvaluate(WebCore::DOMWrapperWorld&) final;
+    void applyUserAgentOverride(RefPtr<StringImpl>&) final;
+    void applyEmulatedMedia(RefPtr<AtomStringImpl>&) final;
+    RefPtr<StringImpl> bootstrapScriptToEvaluate(WebCore::DOMWrapperWorld&) final;
     void didPaint(WebCore::RenderObject&, const WebCore::LayoutRect&) final;
     void didLayout() final;
     void didScroll() final;
@@ -95,7 +95,7 @@ private:
     WeakRef<WebPage> m_page;
 
     bool m_showPaintRects { false };
-    String m_bootstrapScript;
+    RefPtr<StringImpl> m_bootstrapScript;
 };
 
 } // namespace WebKit

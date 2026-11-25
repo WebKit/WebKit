@@ -33,17 +33,17 @@
 
 namespace WebCore {
 
-Ref<StorageSyncManager> StorageSyncManager::create(const String& path)
+Ref<StorageSyncManager> StorageSyncManager::create(StringImpl* path)
 {
     return adoptRef(*new StorageSyncManager(path));
 }
 
-StorageSyncManager::StorageSyncManager(const String& path)
+StorageSyncManager::StorageSyncManager(StringImpl* path)
     : m_thread(makeUnique<StorageThread>())
-    , m_path(path.isolatedCopy())
+    , m_path(isolatedCopy(path))
 {
     ASSERT(isMainThread());
-    ASSERT(!m_path.isEmpty());
+    ASSERT(!isEmpty(m_path));
     protect(m_thread)->start();
 }
 
@@ -54,11 +54,11 @@ StorageSyncManager::~StorageSyncManager()
 }
 
 // Called on a background thread.
-String StorageSyncManager::fullDatabaseFilename(const String& databaseIdentifier)
+RefPtr<StringImpl> StorageSyncManager::fullDatabaseFilename(StringImpl* databaseIdentifier)
 {
     if (!FileSystem::makeAllDirectories(m_path)) {
-        LOG_ERROR("Unabled to create LocalStorage database path %s", m_path.utf8());
-        return String();
+        LOG_ERROR("Unabled to create LocalStorage database path %s", utf8(m_path));
+        return nullptr;
     }
 
     return FileSystem::pathByAppendingComponent(m_path, makeString(databaseIdentifier, ".localstorage"_s));

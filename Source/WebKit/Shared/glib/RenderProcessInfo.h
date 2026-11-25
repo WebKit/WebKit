@@ -31,20 +31,20 @@
 namespace WebKit {
 
 struct RenderProcessInfo {
-    String platform;
-    String drmVersion;
-    String glRenderer;
-    String glVendor;
-    String glVersion;
-    String glShadingVersion;
-    String glExtensions;
-    String eglVersion;
-    String eglVendor;
-    String eglExtensions;
+    RefPtr<StringImpl> platform;
+    RefPtr<StringImpl> drmVersion;
+    RefPtr<StringImpl> glRenderer;
+    RefPtr<StringImpl> glVendor;
+    RefPtr<StringImpl> glVersion;
+    RefPtr<StringImpl> glShadingVersion;
+    RefPtr<StringImpl> glExtensions;
+    RefPtr<StringImpl> eglVersion;
+    RefPtr<StringImpl> eglVendor;
+    RefPtr<StringImpl> eglExtensions;
     unsigned paintingThreadsCount { 0 };
     unsigned msaaSampleCount { 0 };
     Vector<RendererBufferFormat::Format> supportedBufferFormats;
-    String dmabufExportStrategy;
+    RefPtr<StringImpl> dmabufExportStrategy;
     bool memoryMappedGPUBufferSupported { false };
 };
 

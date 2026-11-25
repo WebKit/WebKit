@@ -119,13 +119,13 @@ void DragImage::deletePlatformImage(PlatformDragImage image)
     deleteDragImage(WTF::move(image));
 }
 
-static PlatformDragImage createDragImageIconForCachedImageFilename(const String&)
+static PlatformDragImage createDragImageIconForCachedImageFilename(StringImpl*)
 {
     notImplemented();
     return nullptr;
 }
 
-DragImage DragImage::createIconForCachedImageFilename(const String& filename)
+DragImage DragImage::createIconForCachedImageFilename(StringImpl* filename)
 {
     return DragImage { createDragImageIconForCachedImageFilename(filename) };
 }

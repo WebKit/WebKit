@@ -37,7 +37,7 @@ namespace WebCore::Style {
 enum class ClassChangeType : bool { Add, Remove };
 
 struct ClassChange {
-    AtomString className;
+    RefPtr<AtomStringImpl> className;
     ClassChangeType type;
 };
 
@@ -146,7 +146,7 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
 
     auto collect = [&](auto& ruleSets, std::optional<MatchElement::Relation> onlyRelation = { }) {
         for (auto& classChange : classChanges) {
-            if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
+            if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(RefPtr { classChange.className }.get())) {
                 for (auto& invalidationRuleSet : *invalidationRuleSets) {
                     if (onlyRelation && invalidationRuleSet.matchElement.relation != onlyRelation)
                         continue;

@@ -38,16 +38,16 @@ namespace TestScripts {
 struct TestScript {
     ASCIILiteral name;
     ASCIILiteral description;
-    String (*scriptGenerator)(); // Function pointer to generate script
+    RefPtr<StringImpl> (*scriptGenerator)(); // Function pointer to generate script
     unsigned expectedVMs;
     unsigned expectedInstances; // Exceeds expectedVMs when a VM instantiates a module twice
     unsigned expectedFunctions; // For breakpoint tests
 };
 
 // Script generators
-String multiVMSameModuleDifferentFunction();
-String multiVMSameModuleSameFunction();
-String multiVMMultipleInstancesPerModule();
+RefPtr<StringImpl> multiVMSameModuleDifferentFunction();
+RefPtr<StringImpl> multiVMSameModuleSameFunction();
+RefPtr<StringImpl> multiVMMultipleInstancesPerModule();
 
 // Get all registered test scripts
 NODELETE std::span<const TestScript> getTestScripts();

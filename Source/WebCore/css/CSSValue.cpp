@@ -388,7 +388,7 @@ bool CSSValue::addDerivedHash(Hasher& hasher) const
     return false;
 }
 
-String CSSValue::cssText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSValue::cssText(const CSS::SerializationContext& context) const
 {
     return visitDerived([&](auto& value) {
         return value.customCSSText(context);

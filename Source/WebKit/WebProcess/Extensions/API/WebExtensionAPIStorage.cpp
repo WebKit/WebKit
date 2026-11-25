@@ -47,7 +47,7 @@ bool WebExtensionAPIStorage::isPropertyAllowed(const ASCIILiteral& propertyName,
     if (isForTrustedContext())
         return true;
 
-    return extensionContext().isStorageAllowedInUntrustedContexts(toWebExtensionDataType(propertyName));
+    return extensionContext().isStorageAllowedInUntrustedContexts(toWebExtensionDataType(StringImpl::create(propertyName).ptr()));
 }
 
 WebExtensionAPIStorageArea& WebExtensionAPIStorage::local()
@@ -105,7 +105,7 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
     return *m_onChanged;
 }
 
-void WebExtensionContextProxy::dispatchStorageChangedEvent(const Vector<String>& changesJSON, WebExtensionDataType dataType, WebExtensionContentWorldType contentWorldType)
+void WebExtensionContextProxy::dispatchStorageChangedEvent(const Vector<RefPtr<StringImpl>>& changesJSON, WebExtensionDataType dataType, WebExtensionContentWorldType contentWorldType)
 {
     if (!hasDOMWrapperWorld(contentWorldType))
         return;

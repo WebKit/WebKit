@@ -34,37 +34,17 @@
 namespace WTF {
 
     struct AtomStringHash {
-        static unsigned hash(const AtomString& key)
-        {
-            return key.impl()->existingHash();
-        }
-
-        static bool equal(const AtomString& a, const AtomString& b)
-        {
-            return a == b;
-        }
+        // Identity, with the existing hash. Same as DefaultHash<RefPtr<AtomStringImpl>>.
+        static unsigned hash(const RefPtr<AtomStringImpl>& key) { return AtomStringImplHash::hash(key); }
+        static unsigned hash(const AtomStringImpl* key) { return AtomStringImplHash::hash(key); }
+        static bool equal(const RefPtr<AtomStringImpl>& a, const RefPtr<AtomStringImpl>& b) { return a.get() == b.get(); }
+        static bool equal(const RefPtr<AtomStringImpl>& a, const AtomStringImpl* b) { return a.get() == b; }
+        static bool equal(const AtomStringImpl* a, const RefPtr<AtomStringImpl>& b) { return a == b.get(); }
 
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
         static constexpr bool hasHashInValue = true;
     };
 
-    template<> struct HashTraits<WTF::AtomString> : SimpleClassHashTraits<WTF::AtomString> {
-        static constexpr bool hasIsEmptyValueFunction = true;
-        static bool isEmptyValue(const AtomString& value)
-        {
-            return value.isNull();
-        }
-
-        static void customDeleteBucket(AtomString& value)
-        {
-            // See unique_ptr's customDeleteBucket() for an explanation.
-            ASSERT(!isDeletedValue(value));
-            AtomString valueToBeDestroyed = WTF::move(value);
-            constructDeletedValue(value);
-        }
-    };
-
-    template<> struct DefaultHash<AtomString> : AtomStringHash { };
 }
 
 using WTF::AtomStringHash;

@@ -56,7 +56,7 @@ class WebAudioSourceProviderAVFObjC;
 class CoreAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoreAudioCaptureSource, WTF::DestructionThread::MainRunLoop> {
 public:
     WEBCORE_EXPORT static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
-    static CaptureSourceOrError createForTesting(String&& persistentID, uint32_t deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>, std::optional<bool>);
+    static CaptureSourceOrError createForTesting(RefPtr<StringImpl>&& persistentID, uint32_t deviceID, RefPtr<AtomStringImpl>&& label, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>, std::optional<bool>);
 
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
@@ -64,7 +64,7 @@ public:
 
     void handleNewCurrentMicrophoneDevice(const CaptureDevice&);
 #if PLATFORM(MAC)
-    void vpioUnitWillChangeCaptureDeviceTo(const String&);
+    void vpioUnitWillChangeCaptureDeviceTo(StringImpl*);
 #endif
     void echoCancellationChanged();
 

@@ -97,9 +97,9 @@ static std::optional<Vector<uint8_t>> createAndStoreMasterKey()
         applicationName = [mainBundle objectForInfoDictionaryKey:bridge_cast(kCFBundleNameKey)];
     if (!applicationName)
         applicationName = [mainBundle bundleIdentifier];
-    RetainPtr localizedItemName = webCryptoMasterKeyKeychainLabel(applicationName).createNSString();
+    RetainPtr localizedItemName = createNSString(webCryptoMasterKeyKeychainLabel(StringImpl::create(applicationName).get()));
 #else
-    RetainPtr localizedItemName = webCryptoMasterKeyKeychainLabel([[NSRunningApplication currentApplication] localizedName]).createNSString();
+    RetainPtr localizedItemName = createNSString(webCryptoMasterKeyKeychainLabel(StringImpl::create([[NSRunningApplication currentApplication] localizedName]).get()));
 #endif
 
     OSStatus status;
@@ -150,7 +150,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(KEYCHAIN_ACCESS_CONTROL_LISTS)
         (id)kSecAttrAccess : (__bridge id)access.get(),
 #endif
-        (id)kSecAttrComment : webCryptoMasterKeyKeychainComment().createNSString().get(),
+        (id)kSecAttrComment : createNSString(webCryptoMasterKeyKeychainComment()).get(),
         (id)kSecAttrLabel : localizedItemName.get(),
         (id)kSecAttrAccount : masterKeyAccountNameForCurrentApplication(),
         (id)kSecValueData : toNSData(base64EncodedMasterKeyData).autorelease(),

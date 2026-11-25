@@ -157,7 +157,7 @@ UScriptCode scriptNameToCode(StringView scriptName)
     return map.get(scriptName, USCRIPT_INVALID_CODE);
 }
 
-UScriptCode localeToScriptCode(const String& locale)
+UScriptCode localeToScriptCode(StringImpl* locale)
 {
     using LocaleName = PackedASCIILowerCodes<uint64_t>;
     static_assert(LocaleName("aa"_s).value() == 0x6161000000000000ULL);
@@ -362,7 +362,7 @@ UScriptCode localeToScriptCode(const String& locale)
         { "zh_tw"_s, USCRIPT_TRADITIONAL_HAN },
         { "zu"_s, USCRIPT_LATIN },
     }) };
-    String canonicalLocaleString = makeStringByReplacingAll(locale, '-', '_');
+    RefPtr<StringImpl> canonicalLocaleString = makeStringByReplacingAll(locale, '-', '_');
     for (StringView canonicalLocale = canonicalLocaleString; !canonicalLocale.isEmpty(); ) {
         if (auto scriptCode = map.tryGet(canonicalLocale))
             return *scriptCode;

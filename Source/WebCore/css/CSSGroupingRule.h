@@ -36,7 +36,7 @@ public:
     virtual ~CSSGroupingRule();
 
     WEBCORE_EXPORT CSSRuleList& cssRules() const;
-    WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
+    WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(StringImpl* rule, unsigned index);
     WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
     NODELETE unsigned length() const;
     CSSRule* item(unsigned index) const;

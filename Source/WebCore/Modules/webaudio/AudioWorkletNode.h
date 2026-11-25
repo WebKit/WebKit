@@ -62,7 +62,7 @@ class AudioWorkletNode final : public AudioNode, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(AudioWorkletNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioWorkletNode);
 public:
-    static ExceptionOr<Ref<AudioWorkletNode>> create(JSC::JSGlobalObject&, BaseAudioContext&, String&& name, AudioWorkletNodeOptions&&);
+    static ExceptionOr<Ref<AudioWorkletNode>> create(JSC::JSGlobalObject&, BaseAudioContext&, RefPtr<StringImpl>&& name, AudioWorkletNodeOptions&&);
     ~AudioWorkletNode();
 
     // ActiveDOMObject.
@@ -74,10 +74,10 @@ public:
 
     void setProcessor(RefPtr<AudioWorkletProcessor>&&);
     RefPtr<AudioWorkletProcessor> takeProcessorForThreadShutdown();
-    void initializeAudioParameters(const Vector<AudioParamDescriptor>&, const std::optional<Vector<KeyValuePair<String, double>>>& paramValues);
+    void initializeAudioParameters(const Vector<AudioParamDescriptor>&, const std::optional<Vector<KeyValuePair<RefPtr<StringImpl>, double>>>& paramValues);
 
 private:
-    AudioWorkletNode(BaseAudioContext&, const String& name, AudioWorkletNodeOptions&&, Ref<MessagePort>&&);
+    AudioWorkletNode(BaseAudioContext&, StringImpl* name, AudioWorkletNodeOptions&&, Ref<MessagePort>&&);
 
     enum class ProcessorError { ConstructorError, ProcessError };
     void fireProcessorErrorOnMainThread(ProcessorError, std::optional<ExceptionDetails>&& = std::nullopt);
@@ -94,7 +94,7 @@ private:
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     const Ref<AudioParamMap> m_parameters;
     const Ref<MessagePort> m_port;
     Lock m_processLock;
@@ -105,7 +105,7 @@ private:
     NO_UNIQUE_ADDRESS ThreadLikeAssertion m_renderingThread { noneThreadLike };
 
     RefPtr<AudioWorkletProcessor> m_processor WTF_GUARDED_BY_LOCK(m_processLock); // Should only be used on the rendering thread.
-    MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>> m_paramValuesMap;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<AudioFloatArray>> m_paramValuesMap;
     RefPtr<WTF::Thread> m_workletThread WTF_GUARDED_BY_LOCK(m_processLock);
 
     // Keeps the reference of AudioBus objects from AudioNodeInput and AudioNodeOutput in order

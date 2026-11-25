@@ -111,7 +111,7 @@ bool WebXRInputSource::requiresInputSourceChange(const InputSource& source)
 {
     return m_source.handedness != source.handedness
         || m_source.targetRayMode != source.targetRayMode
-        || m_source.profiles != source.profiles
+        || !contentEquals(m_source.profiles, source.profiles)
         || static_cast<bool>(m_gripSpace) != source.gripOrigin.has_value();
 }
 
@@ -129,7 +129,7 @@ void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
     if (!session)
         return;
 
-    auto createEvent = [protectedThis = Ref { *this }, session](const AtomString& name) -> Ref<XRInputSourceEvent> {
+    auto createEvent = [protectedThis = Ref { *this }, session](AtomStringImpl* name) -> Ref<XRInputSourceEvent> {
         auto init = XRInputSourceEvent::Init {
             { false, false, false },
             WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No),

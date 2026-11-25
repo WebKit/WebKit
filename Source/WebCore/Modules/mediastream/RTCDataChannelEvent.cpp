@@ -35,23 +35,23 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelEvent);
 
-Ref<RTCDataChannelEvent> RTCDataChannelEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCDataChannel>&& channel)
+Ref<RTCDataChannelEvent> RTCDataChannelEvent::create(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCDataChannel>&& channel)
 {
     return adoptRef(*new RTCDataChannelEvent(type, canBubble, cancelable, WTF::move(channel)));
 }
 
-Ref<RTCDataChannelEvent> RTCDataChannelEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<RTCDataChannelEvent> RTCDataChannelEvent::create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new RTCDataChannelEvent(type, WTF::move(initializer), isTrusted));
 }
 
-RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCDataChannel>&& channel)
+RTCDataChannelEvent::RTCDataChannelEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCDataChannel>&& channel)
     : Event(EventInterfaceType::RTCDataChannelEvent, type, canBubble, cancelable)
     , m_channel(WTF::move(channel))
 {
 }
 
-RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+RTCDataChannelEvent::RTCDataChannelEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::RTCDataChannelEvent, type, WTF::move(initializer), isTrusted)
     , m_channel(WTF::move(initializer.channel))
 {

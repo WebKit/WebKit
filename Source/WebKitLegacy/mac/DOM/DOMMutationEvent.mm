@@ -49,19 +49,19 @@
 - (NSString *)prevValue
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->prevValue().createNSString().autorelease();
+    return createNSString(IMPL->prevValue()).autorelease();
 }
 
 - (NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->newValue().createNSString().autorelease();
+    return createNSString(IMPL->newValue()).autorelease();
 }
 
 - (NSString *)attrName
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->attrName().createNSString().autorelease();
+    return createNSString(IMPL->attrName()).autorelease();
 }
 
 - (unsigned short)attrChange
@@ -73,7 +73,7 @@
 - (void)initMutationEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable relatedNode:(DOMNode *)inRelatedNode prevValue:(NSString *)inPrevValue newValue:(NSString *)inNewValue attrName:(NSString *)inAttrName attrChange:(unsigned short)inAttrChange
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initMutationEvent(type, canBubble, cancelable, protect(core(inRelatedNode)), inPrevValue, inNewValue, inAttrName, inAttrChange);
+    IMPL->initMutationEvent(AtomStringImpl::add((__bridge CFStringRef)type).get(), canBubble, cancelable, protect(core(inRelatedNode)), StringImpl::create(inPrevValue).get(), StringImpl::create(inNewValue).get(), StringImpl::create(inAttrName).get(), inAttrChange);
 }
 
 @end

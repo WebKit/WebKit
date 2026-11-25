@@ -49,6 +49,6 @@ constexpr auto AppleDiscListClass = "Apple-disc-list"_s;
 // See https://trac.webkit.org/r8087 and https://trac.webkit.org/r8096.
 enum class AnnotateForInterchange : bool { No, Yes };
 
-String convertHTMLTextToInterchangeFormat(const String&, const Text*);
+RefPtr<StringImpl> convertHTMLTextToInterchangeFormat(StringImpl*, const Text*);
 
 } // namespace WebCore

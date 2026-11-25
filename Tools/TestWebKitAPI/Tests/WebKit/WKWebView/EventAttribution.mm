@@ -252,16 +252,16 @@ void runManualPCMTest(WKWebViewConfiguration *configuration, NSURL *sourceURL, N
 
 enum class TokenSigningParty : bool { Source, Destination };
 
-static void triggerAttributionWithSubresourceRedirect(Connection& connection, const String& attributionDestinationNonce)
+static void triggerAttributionWithSubresourceRedirect(Connection& connection, StringImpl* attributionDestinationNonce)
 {
-    auto optionalQueryString = attributionDestinationNonce.isEmpty() ? attributionDestinationNonce : makeString("?attributionDestinationNonce="_s, attributionDestinationNonce);
+    auto optionalQueryString = isEmpty(attributionDestinationNonce) ? RefPtr { attributionDestinationNonce } : makeString("?attributionDestinationNonce="_s, attributionDestinationNonce);
     auto location = makeString("/.well-known/private-click-measurement/trigger-attribution/12"_s, optionalQueryString);
     connection.receiveHTTPRequest([connection, location] (Vector<char>&& request1) {
         EXPECT_TRUE(contains(request1.span(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n"_span));
         auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: "_s, location, "\r\nContent-Length: 0\r\n\r\n"_s);
         connection.send(WTF::move(redirect), [connection, location] {
             connection.receiveHTTPRequest([connection, location] (Vector<char>&& request2) {
-                auto expectedHttpGetString = makeString("GET "_s, location, " HTTP/1.1\r\n"_s).utf8();
+                auto expectedHttpGetString = utf8(makeString("GET "_s, location, " HTTP/1.1\r\n"_s));
                 EXPECT_TRUE(contains(request2.span(), byteCast<uint8_t>(expectedHttpGetString.span())));
                 constexpr auto response = "HTTP/1.1 200 OK\r\n"
                     "Content-Length: 0\r\n\r\n"_s;
@@ -321,7 +321,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
         switch (++connectionCount) {
         case 1:
             EXPECT_TRUE(signingParty == TokenSigningParty::Destination);
-            triggerAttributionWithSubresourceRedirect(connection, "ABCDEFabcdef0123456789"_s);
+            triggerAttributionWithSubresourceRedirect(connection, "ABCDEFabcdef0123456789"_si);
             break;
         case 2:
             connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request1) {
@@ -330,18 +330,18 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
                 auto response = makeString("HTTP/1.1 200 OK\r\n"
                     "Content-Type: application/json\r\n"
-                    "Content-Length: "_s, 24 + keyData.length(), "\r\n\r\n"
+                    "Content-Length: "_s, 24 + length(keyData), "\r\n\r\n"
                     "{\"token_public_key\": \""_s, keyData, "\"}"_s);
                 connection.send(WTF::move(response), [signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
                     connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request2) {
                         EXPECT_TRUE(contains(request2.span(), "POST / HTTP/1.1\r\n"_span));
 
-                        auto request2String = String::fromLatin1(request2.span());
+                        auto request2String = StringImpl::fromLatin1(request2.span());
                         auto key = signingParty == TokenSigningParty::Source ? "source_unlinkable_token"_s : "destination_unlinkable_token"_s;
-                        auto start = request2String.find(key);
+                        auto start = find(request2String, key);
                         start += key.length() + 3;
-                        auto end = request2String.find('"', start);
-                        auto token = request2String.substring(start, end - start);
+                        auto end = find(request2String, '"', start);
+                        auto token = substring(request2String, start, end - start);
 
                         auto blindedMessage = base64URLDecode(token);
 
@@ -353,7 +353,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                         // Example response: { "unlinkable_token": "ABCD" }. "ABCD" should be Base64URL encoded.
                         auto response = makeString("HTTP/1.1 200 OK\r\n"
                             "Content-Type: application/json\r\n"
-                            "Content-Length: "_s, 24 + unlinkableToken.length(), "\r\n\r\n"
+                            "Content-Length: "_s, 24 + length(unlinkableToken), "\r\n\r\n"
                             "{\"unlinkable_token\": \""_s, unlinkableToken, "\"}"_s);
                         connection.send(WTF::move(response), [signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] {
                             connection.receiveHTTPRequest([signingParty, connection, &keyData, &done, unlinkableToken, token, &secKey] (Vector<char>&& request3) {
@@ -362,31 +362,31 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
                                 auto response = makeString("HTTP/1.1 200 OK\r\n"
                                     "Content-Type: application/json\r\n"
-                                    "Content-Length: "_s, 24 + keyData.length(), "\r\n\r\n"
+                                    "Content-Length: "_s, 24 + length(keyData), "\r\n\r\n"
                                     "{\"token_public_key\": \""_s, keyData, "\"}"_s);
                                 connection.send(WTF::move(response), [signingParty, connection, &done, unlinkableToken, token, &secKey] {
                                     connection.receiveHTTPRequest([signingParty, connection, &done, unlinkableToken, token, &secKey] (Vector<char>&& request4) {
                                         EXPECT_TRUE(contains(request4.span(), "POST / HTTP/1.1\r\n"_span));
                                         EXPECT_TRUE(contains(request4.span(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3,"_span));
 
-                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(token.utf8().span())));
-                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(unlinkableToken.utf8().span())));
+                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(utf8(token).span())));
+                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(utf8(unlinkableToken).span())));
 
-                                        auto request4String = String::fromLatin1(request4.span());
+                                        auto request4String = StringImpl::fromLatin1(request4.span());
 
                                         auto key = signingParty == TokenSigningParty::Source ? "source_secret_token"_s : "destination_secret_token"_s;
-                                        auto start = request4String.find(key);
+                                        auto start = find(request4String, key);
                                         start += key.length() + 3;
-                                        auto end = request4String.find('"', start);
-                                        auto token = request4String.substring(start, end - start);
+                                        auto end = find(request4String, '"', start);
+                                        auto token = substring(request4String, start, end - start);
                                         auto tokenVector = base64URLDecode(token);
                                         RetainPtr tokenData = toNSData(tokenVector->span());
 
                                         key = signingParty == TokenSigningParty::Source ? "source_secret_token_signature"_s : "destination_secret_token_signature"_s;
-                                        start = request4String.find(key);
+                                        start = find(request4String, key);
                                         start += key.length() + 3;
-                                        end = request4String.find('"', start);
-                                        auto signature = request4String.substring(start, end - start);
+                                        end = find(request4String, '"', start);
+                                        auto signature = substring(request4String, start, end - start);
                                         auto signatureVector = base64URLDecode(signature);
                                         RetainPtr signatureData = toNSData(signatureVector->span());
 
@@ -605,10 +605,10 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
 {
     auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
     configuration._shouldSendConsoleLogsToUIProcessForTesting = YES;
-    __block Vector<String> consoleMessages;
+    __block Vector<RefPtr<StringImpl>> consoleMessages;
     RetainPtr delegate = adoptNS([TestUIDelegate new]);
     delegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
-        consoleMessages.append(log);
+        consoleMessages.append(StringImpl::create(log));
     };
     auto webView = webViewWithOpenInspector(configuration, delegate.get());
 
@@ -627,10 +627,10 @@ TEST(PrivateClickMeasurement, DaemonPrivateRelayEnforcement)
 {
     auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
     configuration._shouldSendConsoleLogsToUIProcessForTesting = YES;
-    __block Vector<String> consoleMessages;
+    __block Vector<RefPtr<StringImpl>> consoleMessages;
     RetainPtr delegate = adoptNS([TestUIDelegate new]);
     delegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
-        consoleMessages.append(log);
+        consoleMessages.append(StringImpl::create(log));
     };
     auto webView = webViewWithOpenInspector(configuration, delegate.get());
 
@@ -645,7 +645,7 @@ TEST(PrivateClickMeasurement, DaemonPrivateRelayEnforcement)
     cleanUpDaemon(tempDir);
 }
 
-static HTTPServer setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigationDelegate> navigationDelegate, NSString *html, id<WKUIDelegate> uiDelegate)
+static HTTPServer setupSKAdNetworkTest(Vector<RefPtr<StringImpl>>& consoleMessages, id<WKNavigationDelegate> navigationDelegate, NSString *html, id<WKUIDelegate> uiDelegate)
 {
     HTTPServer server({ { "/app/id1234567890"_s, { "hello"_s } } }, HTTPServer::Protocol::HttpsProxy);
 
@@ -688,19 +688,24 @@ const char* expectedSKAdNetworkConsoleMessage = "Submitting potential install at
 static NSString *linkToAppStoreHTML = @"<body><a href='https://apps.apple.com/app/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a></body>";
 
 // The message can show up anywhere in the log, since apps.apple.com's quirks log messages of their own.
-static void expectSKAdNetworkConsoleMessage(const Vector<String>& consoleMessages)
+static void expectSKAdNetworkConsoleMessage(const Vector<RefPtr<StringImpl>>& consoleMessages)
 {
-    auto expectedMessage = String::fromUTF8(expectedSKAdNetworkConsoleMessage);
-    if (Util::waitFor([&] { return consoleMessages.contains(expectedMessage); }))
+    auto expectedMessage = StringImpl::fromUTF8(expectedSKAdNetworkConsoleMessage);
+    auto hasExpectedMessage = [&] {
+        return consoleMessages.containsIf([&](auto& item) {
+            return equal(item, expectedMessage);
+        });
+    };
+    if (Util::waitFor(hasExpectedMessage))
         return;
 
     // Compare against everything that was logged, so a failure shows what arrived instead.
-    EXPECT_WK_STREQ(makeStringByJoining(consoleMessages.span(), "\n"_s), expectedSKAdNetworkConsoleMessage);
+    EXPECT_WK_STREQ(makeStringByJoining(consoleMessages.span(), "\n"_si), expectedSKAdNetworkConsoleMessage);
 }
 
 TEST(PrivateClickMeasurement, SKAdNetwork)
 {
-    __block Vector<String> consoleMessages;
+    __block Vector<RefPtr<StringImpl>> consoleMessages;
     RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
@@ -708,7 +713,7 @@ TEST(PrivateClickMeasurement, SKAdNetwork)
     };
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
-        consoleMessages.append(log);
+        consoleMessages.append(StringImpl::create(log));
     };
     auto server = setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
     expectSKAdNetworkConsoleMessage(consoleMessages);
@@ -716,7 +721,7 @@ TEST(PrivateClickMeasurement, SKAdNetwork)
 
 TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
 {
-    __block Vector<String> consoleMessages;
+    __block Vector<RefPtr<StringImpl>> consoleMessages;
     RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     __block RetainPtr<TestWKWebView> openedWebView;
@@ -726,7 +731,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
         return openedWebView.get();
     };
     uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
-        consoleMessages.append(log);
+        consoleMessages.append(StringImpl::create(log));
     };
     [delegate allowAnyTLSCertificate];
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
@@ -741,7 +746,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
 
 TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
 {
-    __block Vector<String> consoleMessages;
+    __block Vector<RefPtr<StringImpl>> consoleMessages;
     RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
@@ -752,7 +757,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
     };
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
-        consoleMessages.append(log);
+        consoleMessages.append(StringImpl::create(log));
     };
     auto server = setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
 
@@ -763,10 +768,10 @@ TEST(PrivateClickMeasurement, NetworkProcessDebugMode)
 {
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
-    __block Vector<String> consoleMessages;
+    __block Vector<RefPtr<StringImpl>> consoleMessages;
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
-        consoleMessages.append(log);
+        consoleMessages.append(StringImpl::create(log));
     };
     auto webView = webViewWithOpenInspector(configuration.get(), uiDelegate.get());
     [configuration.get().websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
@@ -783,10 +788,10 @@ TEST(PrivateClickMeasurement, NetworkProcessPrivateRelayEnforcement)
 {
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
-    __block Vector<String> consoleMessages;
+    __block Vector<RefPtr<StringImpl>> consoleMessages;
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
-        consoleMessages.append(log);
+        consoleMessages.append(StringImpl::create(log));
     };
     auto webView = webViewWithOpenInspector(configuration.get(), uiDelegate.get());
     [configuration.get().websiteDataStore _setPrivateClickMeasurementPrivateRelayEnforcementEnabled:YES];
@@ -799,7 +804,7 @@ TEST(PrivateClickMeasurement, NetworkProcessPrivateRelayEnforcement)
     EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Private Relay Enforcement off.");
 }
 
-static void runPCMTestInDebugModeAndWaitForConsoleMessage(bool enforcePrivateRelay, const String& expectedMessage)
+static void runPCMTestInDebugModeAndWaitForConsoleMessage(bool enforcePrivateRelay, StringImpl* expectedMessage)
 {
     RetainPtr configuration = configurationWithoutUsingDaemon();
     configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
@@ -807,10 +812,10 @@ static void runPCMTestInDebugModeAndWaitForConsoleMessage(bool enforcePrivateRel
     [configuration.get().websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
     [configuration.get().websiteDataStore _setPrivateClickMeasurementPrivateRelayEnforcementEnabled:enforcePrivateRelay];
 
-    __block Vector<String> consoleMessages;
+    __block Vector<RefPtr<StringImpl>> consoleMessages;
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
-        consoleMessages.append(log);
+        consoleMessages.append(StringImpl::create(log));
     };
 
     RetainPtr<NSWindow> window;
@@ -828,18 +833,18 @@ static void runPCMTestInDebugModeAndWaitForConsoleMessage(bool enforcePrivateRel
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];
     });
 
-    while (!consoleMessages.contains(expectedMessage))
+    while (!consoleMessages.containsIf([&](auto& item) { return equal(item, expectedMessage); }))
         Util::spinRunLoop();
 }
 
 TEST(PrivateClickMeasurement, DebugModeBypassesPrivateRelayByDefault)
 {
-    runPCMTestInDebugModeAndWaitForConsoleMessage(false, "[Private Click Measurement] Private Relay is not required for the attribution request because Debug Mode is enabled."_s);
+    runPCMTestInDebugModeAndWaitForConsoleMessage(false, "[Private Click Measurement] Private Relay is not required for the attribution request because Debug Mode is enabled."_si);
 }
 
 TEST(PrivateClickMeasurement, DebugModeWithPrivateRelayEnforcement)
 {
-    runPCMTestInDebugModeAndWaitForConsoleMessage(true, "[Private Click Measurement] Private Relay is required for the attribution request."_s);
+    runPCMTestInDebugModeAndWaitForConsoleMessage(true, "[Private Click Measurement] Private Relay is required for the attribution request."_si);
 }
 #endif // PLATFORM(MAC)
 

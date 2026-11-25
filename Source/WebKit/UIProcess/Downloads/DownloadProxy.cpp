@@ -65,7 +65,7 @@ DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStor
     , m_originatingPage(originatingPage)
     , m_frameInfo(frameInfoData ? API::FrameInfo::create(FrameInfoData { *frameInfoData }) : API::FrameInfo::create(legacyEmptyFrameInfo(ResourceRequest { URL { aboutBlankURL() } })))
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    , m_assertion(ProcessAssertion::create(getCurrentProcessID(), "WebKit DownloadProxy DecideDestination"_s, ProcessAssertionType::FinishTaskInterruptable))
+    , m_assertion(ProcessAssertion::create(getCurrentProcessID(), "WebKit DownloadProxy DecideDestination"_si, ProcessAssertionType::FinishTaskInterruptable))
 #endif
 {
 }
@@ -117,7 +117,7 @@ WebPageProxy* DownloadProxy::originatingPage() const
     return m_originatingPage.get();
 }
 
-void DownloadProxy::didStart(const ResourceRequest& request, const String& suggestedFilename)
+void DownloadProxy::didStart(const ResourceRequest& request, StringImpl* suggestedFilename)
 {
     m_request = request;
     m_suggestedFilename = suggestedFilename;
@@ -161,7 +161,7 @@ enum class FilenameSource : uint8_t {
     UserAgent, // UA fallback
 };
 
-void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, String&& suggestedFilename, DecideDestinationCallback&& completionHandler)
+void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, RefPtr<StringImpl>&& suggestedFilename, DecideDestinationCallback&& completionHandler)
 {
     RELEASE_LOG_INFO_IF(!response.expectedContentLength(), Network, "DownloadProxy::decideDestinationWithSuggestedFilename expectedContentLength is null");
 
@@ -171,10 +171,10 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
     if (response.isAttachmentWithFilename()) {
         suggestedFilename = response.suggestedFilename();
         filenameSource = FilenameSource::ContentDisposition;
-    } else if (!m_suggestedFilename.isEmpty()) {
+    } else if (!isEmpty(m_suggestedFilename)) {
         suggestedFilename = m_suggestedFilename;
         filenameSource = FilenameSource::DownloadAttribute;
-    } else if (suggestedFilename.isEmpty())
+    } else if (isEmpty(suggestedFilename))
         suggestedFilename = response.suggestedFilename();
 
     // Correct the file extension to match the Content-Type for URL-derived filenames (rdar://147183354),
@@ -184,9 +184,9 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
     else
         suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(suggestedFilename, response.mimeType());
 
-    protect(client())->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
+    protect(client())->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (AllowOverwrite allowOverwrite, RefPtr<StringImpl> destination) mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
-        if (!destination.isNull()) {
+        if (destination) {
             if (auto handle = SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite))
                 sandboxExtensionHandle = WTF::move(*handle);
         }
@@ -210,7 +210,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
     });
 }
 
-void DownloadProxy::didCreateDestination(const String& path)
+void DownloadProxy::didCreateDestination(StringImpl* path)
 {
     protect(client())->didCreateDestination(*this, path);
 }
@@ -219,7 +219,7 @@ void DownloadProxy::didCreateDestination(const String& path)
 void DownloadProxy::updateQuarantinePropertiesIfPossible()
 {
     auto fileURL = URL::fileURLWithFileSystemPath(m_destinationFilename);
-    auto path = fileURL.fileSystemPath().utf8();
+    auto path = utf8(fileURL.fileSystemPath());
 
     auto file = std::unique_ptr<_qtn_file, QuarantineFileDeleter>(qtn_file_alloc());
     if (!file)

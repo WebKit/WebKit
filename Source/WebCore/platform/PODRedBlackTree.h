@@ -623,7 +623,7 @@ private:
             builder.append(stream.release());
             builder.append((node->color() == Black) ? " (black)" : " (red)");
         }
-        LOG_ERROR("%s", builder.toString().utf8());
+        LOG_ERROR("%s", utf8(builder.toString()));
         if (node) {
             dumpSubtree(node->left(), indentation + 2);
             dumpSubtree(node->right(), indentation + 2);

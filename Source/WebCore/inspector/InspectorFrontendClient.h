@@ -43,8 +43,8 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 namespace Inspector {
-using ExtensionID = String;
-using ExtensionTabID = String;
+using ExtensionID = RefPtr<StringImpl>;
+using ExtensionTabID = RefPtr<StringImpl>;
 }
 #endif
 
@@ -70,9 +70,9 @@ enum class InspectorFrontendClientAppearance : uint8_t {
 };
 
 struct InspectorFrontendClientSaveData {
-    String displayType;
-    String url;
-    String content;
+    RefPtr<StringImpl> displayType;
+    RefPtr<StringImpl> url;
+    RefPtr<StringImpl> content;
     bool base64Encoded;
 };
 
@@ -98,12 +98,12 @@ public:
 
     // Information about the debuggable.
     virtual bool isRemote() const = 0;
-    virtual String localizedStringsURL() const = 0;
-    virtual String backendCommandsURL() const = 0;
+    virtual RefPtr<StringImpl> localizedStringsURL() const = 0;
+    virtual RefPtr<StringImpl> backendCommandsURL() const = 0;
     virtual Inspector::DebuggableType debuggableType() const = 0;
-    virtual String targetPlatformName() const = 0;
-    virtual String targetBuildVersion() const = 0;
-    virtual String targetProductVersion() const = 0;
+    virtual RefPtr<StringImpl> targetPlatformName() const = 0;
+    virtual RefPtr<StringImpl> targetBuildVersion() const = 0;
+    virtual RefPtr<StringImpl> targetProductVersion() const = 0;
     virtual bool targetIsSimulator() const = 0;
     virtual unsigned inspectionLevel() const = 0;
 
@@ -125,8 +125,8 @@ public:
 
     WEBCORE_EXPORT virtual void changeSheetRect(const FloatRect&) = 0;
 
-    WEBCORE_EXPORT virtual void openURLExternally(const String& url) = 0;
-    WEBCORE_EXPORT virtual void revealFileExternally(const String& path) = 0;
+    WEBCORE_EXPORT virtual void openURLExternally(StringImpl* url) = 0;
+    WEBCORE_EXPORT virtual void revealFileExternally(StringImpl* path) = 0;
 
     // Site Isolation can't be safely toggled on a live page, so the embedding application decides how to
     // turn it off (e.g. by recreating the page).
@@ -144,12 +144,12 @@ public:
     virtual void save(Vector<SaveData>&&, bool forceSaveAs) = 0;
 
     virtual bool canLoad() = 0;
-    virtual void load(const String& path, CompletionHandler<void(const String&)>&&) = 0;
+    virtual void load(StringImpl* path, CompletionHandler<void(StringImpl*)>&&) = 0;
 
     virtual bool canPickColorFromScreen() = 0;
     virtual void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) = 0;
 
-    virtual void inspectedURLChanged(const String&) = 0;
+    virtual void inspectedURLChanged(StringImpl*) = 0;
     virtual void showCertificate(const CertificateInfo&) = 0;
 
     virtual void setInspectorPageDeveloperExtrasEnabled(bool) = 0;
@@ -160,7 +160,7 @@ public:
 #if ENABLE(INSPECTOR_TELEMETRY)
     virtual bool supportsDiagnosticLogging() { return false; }
     virtual bool diagnosticLoggingAvailable() { return false; }
-    virtual void logDiagnosticEvent(const String& /* eventName */, const DiagnosticLoggingDictionary&) { }
+    virtual void logDiagnosticEvent(StringImpl* /* eventName */, const DiagnosticLoggingDictionary&) { }
 #endif
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -171,7 +171,7 @@ public:
     virtual void inspectedPageDidNavigate(const URL&) { }
 #endif
 
-    WEBCORE_EXPORT virtual void sendMessageToBackend(const String&) = 0;
+    WEBCORE_EXPORT virtual void sendMessageToBackend(StringImpl*) = 0;
     WEBCORE_EXPORT virtual InspectorFrontendAPIDispatcher& frontendAPIDispatcher() = 0;
     WEBCORE_EXPORT virtual Page* frontendPage() = 0;
 

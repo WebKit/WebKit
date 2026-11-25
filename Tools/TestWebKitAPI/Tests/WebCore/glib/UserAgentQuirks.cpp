@@ -34,49 +34,49 @@ namespace TestWebKitAPI {
 
 static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
+    RefPtr<StringImpl> uaString = WebCore::standardUserAgentForURL(URL(StringImpl::fromLatin1(url)), type);
 
-    EXPECT_TRUE(uaString.contains("Chrome"_s));
-    EXPECT_TRUE(uaString.contains("Safari"_s));
-    EXPECT_FALSE(uaString.contains("Chromium"_s));
-    EXPECT_FALSE(uaString.contains("Firefox"_s));
-    EXPECT_FALSE(uaString.contains("Version"_s));
+    EXPECT_TRUE(contains(uaString, "Chrome"_s));
+    EXPECT_TRUE(contains(uaString, "Safari"_s));
+    EXPECT_FALSE(contains(uaString, "Chromium"_s));
+    EXPECT_FALSE(contains(uaString, "Firefox"_s));
+    EXPECT_FALSE(contains(uaString, "Version"_s));
 }
 
 static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
+    RefPtr<StringImpl> uaString = WebCore::standardUserAgentForURL(URL(StringImpl::fromLatin1(url)), type);
 
-    EXPECT_FALSE(uaString.contains("Chrome"_s));
-    EXPECT_FALSE(uaString.contains("Safari"_s));
-    EXPECT_FALSE(uaString.contains("Chromium"_s));
-    EXPECT_TRUE(uaString.contains("Firefox"_s));
-    EXPECT_FALSE(uaString.contains("Version"_s));
+    EXPECT_FALSE(contains(uaString, "Chrome"_s));
+    EXPECT_FALSE(contains(uaString, "Safari"_s));
+    EXPECT_FALSE(contains(uaString, "Chromium"_s));
+    EXPECT_TRUE(contains(uaString, "Firefox"_s));
+    EXPECT_FALSE(contains(uaString, "Version"_s));
 }
 
 static void assertUserAgentForURLHasMacPlatformQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
+    RefPtr<StringImpl> uaString = WebCore::standardUserAgentForURL(URL(StringImpl::fromLatin1(url)), type);
 
-    EXPECT_TRUE(uaString.contains("Macintosh"_s));
-    EXPECT_TRUE(uaString.contains("Mac OS X"_s));
-    EXPECT_FALSE(uaString.contains("Linux"_s));
-    EXPECT_FALSE(uaString.contains("Android"_s));
-    EXPECT_FALSE(uaString.contains("Chrome"_s));
-    EXPECT_FALSE(uaString.contains("FreeBSD"_s));
+    EXPECT_TRUE(contains(uaString, "Macintosh"_s));
+    EXPECT_TRUE(contains(uaString, "Mac OS X"_s));
+    EXPECT_FALSE(contains(uaString, "Linux"_s));
+    EXPECT_FALSE(contains(uaString, "Android"_s));
+    EXPECT_FALSE(contains(uaString, "Chrome"_s));
+    EXPECT_FALSE(contains(uaString, "FreeBSD"_s));
 }
 
 #if ENABLE(WEBXR) && PLATFORM(WPE)
 static void assertUserAgentForURLHasAndroidQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
+    RefPtr<StringImpl> uaString = WebCore::standardUserAgentForURL(URL(StringImpl::fromLatin1(url)), type);
 
-    EXPECT_FALSE(uaString.contains("Macintosh"_s));
-    EXPECT_FALSE(uaString.contains("Mac OS X"_s));
-    EXPECT_TRUE(uaString.contains("Linux"_s));
-    EXPECT_TRUE(uaString.contains("Android"_s));
-    EXPECT_FALSE(uaString.contains("Chrome"_s));
-    EXPECT_FALSE(uaString.contains("FreeBSD"_s));
+    EXPECT_FALSE(contains(uaString, "Macintosh"_s));
+    EXPECT_FALSE(contains(uaString, "Mac OS X"_s));
+    EXPECT_TRUE(contains(uaString, "Linux"_s));
+    EXPECT_TRUE(contains(uaString, "Android"_s));
+    EXPECT_FALSE(contains(uaString, "Chrome"_s));
+    EXPECT_FALSE(contains(uaString, "FreeBSD"_s));
 }
 #endif
 
@@ -87,15 +87,15 @@ static void assertUserAgentForURLHasAndroidQuirk(const char* url, UserAgentType 
 // that the standard user agent should be used.)
 static void assertUserAgentForURLHasEmptyQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
-    EXPECT_FALSE(uaString.isNull());
+    RefPtr<StringImpl> uaString = WebCore::standardUserAgentForURL(URL(StringImpl::fromLatin1(url)), type);
+    EXPECT_FALSE(!uaString);
 }
 
 static void assertUserAgentForURLHasNoQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
     // A site with no quirks should return a null String.
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
-    EXPECT_TRUE(uaString.isNull());
+    RefPtr<StringImpl> uaString = WebCore::standardUserAgentForURL(URL(StringImpl::fromLatin1(url)), type);
+    EXPECT_TRUE(!uaString);
 }
 
 TEST(UserAgentTest, Quirks)

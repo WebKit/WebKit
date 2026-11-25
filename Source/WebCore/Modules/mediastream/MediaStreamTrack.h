@@ -86,12 +86,12 @@ public:
 
     virtual bool isCanvas() const { return false; }
 
-    const AtomString& kind() const;
-    const String& id() const { return m_private->id(); }
-    NODELETE const String& label() const;
+    const RefPtr<AtomStringImpl>& kind() const;
+    const RefPtr<StringImpl>& id() const { return m_private->id(); }
+    NODELETE const RefPtr<StringImpl>& label() const;
 
-    const AtomString& contentHint() const;
-    void setContentHint(const String&);
+    const RefPtr<AtomStringImpl>& contentHint() const;
+    void setContentHint(StringImpl*);
         
     NODELETE bool enabled() const;
     void setEnabled(bool);
@@ -118,16 +118,16 @@ public:
         std::optional<int> height;
         std::optional<double> aspectRatio;
         std::optional<double> frameRate;
-        String facingMode;
+        RefPtr<StringImpl> facingMode;
         std::optional<double> volume;
         std::optional<int> sampleRate;
         std::optional<int> sampleSize;
         std::optional<bool> echoCancellation;
-        String deviceId;
-        String groupId;
-        String displaySurface;
+        RefPtr<StringImpl> deviceId;
+        RefPtr<StringImpl> groupId;
+        RefPtr<StringImpl> displaySurface;
 
-        String whiteBalanceMode;
+        RefPtr<StringImpl> whiteBalanceMode;
         std::optional<double> zoom;
         std::optional<bool> torch;
         std::optional<bool> backgroundBlur;
@@ -138,7 +138,7 @@ public:
     using TrackCapabilities = MediaTrackCapabilities;
     TrackCapabilities getCapabilities() const;
 
-    using TakePhotoPromise = NativePromise<std::pair<Vector<uint8_t>, String>, Exception>;
+    using TakePhotoPromise = NativePromise<std::pair<Vector<uint8_t>, RefPtr<StringImpl>>, Exception>;
     Ref<TakePhotoPromise> takePhoto(PhotoSettings&&);
 
     using PhotoCapabilitiesPromise = NativePromise<PhotoCapabilities, Exception>;
@@ -166,7 +166,7 @@ public:
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
-    void setIdForTesting(String&& id) { m_private->setIdForTesting(WTF::move(id)); }
+    void setIdForTesting(RefPtr<StringImpl>&& id) { m_private->setIdForTesting(WTF::move(id)); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
@@ -187,8 +187,8 @@ public:
     bool isDetached() const { return m_isDetached; }
     UniqueRef<MediaStreamTrackDataHolder> detach();
 
-    void setMediaStreamId(const String& id) { m_mediaStreamId = id; }
-    const String& mediaStreamId() const LIFETIME_BOUND { return m_mediaStreamId; }
+    void setMediaStreamId(StringImpl* id) { m_mediaStreamId = id; }
+    const RefPtr<StringImpl>& mediaStreamId() const LIFETIME_BOUND { return m_mediaStreamId; }
 
     NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
@@ -252,7 +252,7 @@ private:
     MediaTrackConstraints m_constraints;
 
     const Ref<MediaStreamTrackPrivate> m_private;
-    String m_mediaStreamId;
+    RefPtr<StringImpl> m_mediaStreamId;
     State m_readyState { State::Live };
     bool m_muted { false };
     bool m_ended { false };
@@ -261,8 +261,8 @@ private:
     bool m_shouldFireMuteEventImmediately { false };
     bool m_isConfigurationChangePending { false };
     bool m_isDetached { false };
-    mutable AtomString m_kind;
-    mutable AtomString m_contentHint;
+    mutable RefPtr<AtomStringImpl> m_kind;
+    mutable RefPtr<AtomStringImpl> m_contentHint;
     ThreadSafeWeakPtr<Keeper> m_keeper;
 };
 

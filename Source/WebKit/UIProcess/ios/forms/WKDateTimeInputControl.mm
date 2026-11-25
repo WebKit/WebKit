@@ -172,7 +172,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
     [self setDateTimePickerToInitialValue];
     RetainPtr view = _view.get();
     auto& focusedInfo = [view focusedElementInformation];
-    protect(*[view page])->setFocusedElementValue(focusedInfo.frameID(), focusedInfo.elementContext, { });
+    protect(*[view page])->setFocusedElementValue(focusedInfo.frameID(), focusedInfo.elementContext, nullptr);
 }
 
 - (void)handleDatePickerPresentationDismissal
@@ -357,7 +357,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 
     // Currently no value for the <input>. Start the picker with the current time.
     // Also, update the actual <input> value.
-    _initialValue = [view focusedElementInformation].value.createNSString().get();
+    _initialValue = createNSString([view focusedElementInformation].value).get();
     [self setDateTimePickerToInitialValue];
     [self showDateTimePicker];
 }

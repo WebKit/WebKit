@@ -45,7 +45,7 @@ class TextRun final {
     WTF_MAKE_TZONE_ALLOCATED(TextRun);
     friend void add(Hasher&, const TextRun&);
 public:
-    explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+    explicit TextRun(StringImpl* text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : m_text(text)
         , m_tabSize(0)
         , m_xpos(xpos)
@@ -58,11 +58,18 @@ public:
         , m_characterScanForCodePath(characterScanForCodePath)
         , m_disableSpacing(false)
     {
-        ASSERT(!m_text.isNull());
+        ASSERT(m_text);
+    }
+
+    // Smart pointers (RefPtr<StringImpl>, Ref<AtomStringImpl>, ...) would otherwise be ambiguous between the StringImpl* and StringView constructors.
+    template<typename T> requires (WTF::StringImplPointerLike<T> && !std::is_pointer_v<std::remove_cvref_t<T>>)
+    explicit TextRun(const T& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+        : TextRun(WTF::getPtr(text), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath)
+    {
     }
 
     explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = ExpansionBehavior::defaultBehavior(), TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
-        : TextRun(stringView.toStringWithoutCopying(), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath)
+        : TextRun(stringView.toStringWithoutCopying().get(), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath)
     {
     }
 
@@ -100,12 +107,12 @@ public:
     TextRun& operator=(const TextRun&) = default;
     bool operator==(const TextRun&) const;
 
-    bool isHashTableEmptyValue() const { return m_text.isNull(); }
+    bool isHashTableEmptyValue() const { return !m_text; }
     bool isHashTableDeletedValue() const { return m_text.isHashTableDeletedValue(); }
 
     TextRun subRun(unsigned startOffset, unsigned length) const
     {
-        ASSERT_WITH_SECURITY_IMPLICATION((startOffset + length) <= m_text.length());
+        ASSERT_WITH_SECURITY_IMPLICATION((startOffset + length) <= WTF::length(m_text));
 
         auto result { *this };
 
@@ -116,14 +123,14 @@ public:
         return result;
     }
 
-    char16_t operator[](unsigned i) const { RELEASE_ASSERT(i < m_text.length()); return m_text[i]; }
-    std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT(is8Bit()); return m_text.span8(); }
-    std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT_WITH_SECURITY_IMPLICATION(!is8Bit()); return m_text.span16(); }
+    char16_t operator[](unsigned i) const { RELEASE_ASSERT(i < WTF::length(m_text)); return codeUnitAt(m_text, i); }
+    std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT(is8Bit()); return WTF::span8(m_text); }
+    std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT_WITH_SECURITY_IMPLICATION(!is8Bit()); return WTF::span16(m_text); }
     std::span<const Latin1Character> subspan8(unsigned i) const LIFETIME_BOUND { return span8().subspan(i); }
     std::span<const char16_t> subspan16(unsigned i) const LIFETIME_BOUND { return span16().subspan(i); }
 
-    bool is8Bit() const { return m_text.is8Bit(); }
-    unsigned length() const { return m_text.length(); }
+    bool is8Bit() const { return WTF::is8Bit(m_text); }
+    unsigned length() const { return WTF::length(m_text); }
 
     void setText(StringView text) { ASSERT(!text.isNull()); m_text = text.toStringWithoutCopying(); }
 
@@ -153,13 +160,13 @@ public:
 
     TextRun isolatedCopy() const;
 
-    const String& textAsString() const LIFETIME_BOUND { return m_text; }
+    const RefPtr<StringImpl>& textAsString() const LIFETIME_BOUND { return m_text; }
 
     void setTextSpacingState(TextSpacing::SpacingState spacingState) { m_textSpacingState = spacingState; }
     TextSpacing::SpacingState textSpacingState() const { return m_textSpacingState; }
 
 private:
-    String m_text;
+    RefPtr<StringImpl> m_text;
 
     TabSize m_tabSize;
 
@@ -193,10 +200,10 @@ inline TextRun TextRun::isolatedCopy() const
     TextRun clone = *this;
     // We need to ensure a deep copy here, calling `clone.m_text.isolatedCopy()`
     // is insufficient (rdar://125823370).
-    if (clone.m_text.is8Bit())
-        clone.m_text = clone.m_text.span8();
+    if (WTF::is8Bit(clone.m_text))
+        clone.m_text = StringImpl::create(WTF::span8(clone.m_text));
     else
-        clone.m_text = clone.m_text.span16();
+        clone.m_text = StringImpl::create(WTF::span16(clone.m_text));
     return clone;
 }
 

@@ -60,13 +60,13 @@ public:
     ExceptionOr<void> leave();
     void close();
 
-    String identifier() const { return m_privateCoordinator ? protect(m_privateCoordinator)->identifier() : String(); }
+    RefPtr<StringImpl> identifier() const { return m_privateCoordinator ? protect(m_privateCoordinator)->identifier() : nullptr; }
     MediaSessionCoordinatorState state() const { return m_state; }
 
     void seekTo(double, DOMPromiseDeferred<void>&&);
     void play(DOMPromiseDeferred<void>&&);
     void pause(DOMPromiseDeferred<void>&&);
-    void setTrack(const String&, DOMPromiseDeferred<void>&&);
+    void setTrack(StringImpl*, DOMPromiseDeferred<void>&&);
 
     void setMediaSession(MediaSession*);
 
@@ -101,7 +101,7 @@ private:
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
     void playSession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime, CompletionHandler<void(bool)>&&) final;
     void pauseSession(CompletionHandler<void(bool)>&&) final;
-    void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
+    void setSessionTrack(StringImpl*, CompletionHandler<void(bool)>&&) final;
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
     bool currentPositionApproximatelyEqualTo(double) const;

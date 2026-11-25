@@ -72,7 +72,7 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
 
-    String message;
+    RefPtr<StringImpl> message;
     bool messageIsFirstArgument = arguments->getFirstArgumentAsString(message);
 
     auto consoleMessage = makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTF::move(arguments), globalObject);
@@ -85,7 +85,7 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
     }
 }
 
-void JSGlobalObjectConsoleClient::count(JSGlobalObject* globalObject, const String& label)
+void JSGlobalObjectConsoleClient::count(JSGlobalObject* globalObject, StringImpl* label)
 {
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
@@ -93,7 +93,7 @@ void JSGlobalObjectConsoleClient::count(JSGlobalObject* globalObject, const Stri
     m_consoleAgent->count(globalObject, label);
 }
 
-void JSGlobalObjectConsoleClient::countReset(JSGlobalObject* globalObject, const String& label)
+void JSGlobalObjectConsoleClient::countReset(JSGlobalObject* globalObject, StringImpl* label)
 {
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
@@ -101,17 +101,17 @@ void JSGlobalObjectConsoleClient::countReset(JSGlobalObject* globalObject, const
     m_consoleAgent->countReset(globalObject, label);
 }
 
-void JSGlobalObjectConsoleClient::profile(JSC::JSGlobalObject*, const String& title)
+void JSGlobalObjectConsoleClient::profile(JSC::JSGlobalObject*, StringImpl* title)
 {
     if (!m_consoleAgent->enabled()) [[likely]]
         return;
 
     // Allow duplicate unnamed profiles. Disallow duplicate named profiles.
-    if (!title.isEmpty()) {
+    if (!isEmpty(title)) {
         for (auto& existingTitle : m_profiles) {
-            if (existingTitle == title) {
+            if (equal(existingTitle, title)) {
                 // FIXME: Send an enum to the frontend for localization?
-                String warning = title.isEmpty() ? "Unnamed Profile already exists"_s : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" already exists"_s);
+                RefPtr<StringImpl> warning = isEmpty(title) ? "Unnamed Profile already exists"_si : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" already exists"_s);
                 m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
                 return;
             }
@@ -122,7 +122,7 @@ void JSGlobalObjectConsoleClient::profile(JSC::JSGlobalObject*, const String& ti
     startConsoleProfile();
 }
 
-void JSGlobalObjectConsoleClient::profileEnd(JSC::JSGlobalObject*, const String& title)
+void JSGlobalObjectConsoleClient::profileEnd(JSC::JSGlobalObject*, StringImpl* title)
 {
     if (!m_consoleAgent->enabled()) [[likely]]
         return;
@@ -130,7 +130,7 @@ void JSGlobalObjectConsoleClient::profileEnd(JSC::JSGlobalObject*, const String&
     // Stop profiles in reverse order. If the title is empty, then stop the last profile.
     // Otherwise, match the title of the profile to stop.
     for (ptrdiff_t i = m_profiles.size() - 1; i >= 0; --i) {
-        if (title.isEmpty() || m_profiles[i] == title) {
+        if (isEmpty(title) || equal(m_profiles[i], title)) {
             m_profiles.removeAt(i);
             if (m_profiles.isEmpty())
                 stopConsoleProfile();
@@ -139,7 +139,7 @@ void JSGlobalObjectConsoleClient::profileEnd(JSC::JSGlobalObject*, const String&
     }
 
     // FIXME: Send an enum to the frontend for localization?
-    String warning = title.isEmpty() ? "No profiles exist"_s : makeString("Profile \""_s, title, "\" does not exist"_s);
+    RefPtr<StringImpl> warning = isEmpty(title) ? "No profiles exist"_si : makeString("Profile \""_s, title, "\" does not exist"_s);
     m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::ProfileEnd, MessageLevel::Warning, warning));
 }
 
@@ -163,7 +163,7 @@ void JSGlobalObjectConsoleClient::stopConsoleProfile()
         std::ignore = agent->setBreakpointsActive(m_profileRestoreBreakpointActiveValue);
 }
 
-void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)
+void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, StringImpl* title)
 {
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
@@ -179,7 +179,7 @@ void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const S
     m_consoleAgent->reportHeapSnapshot(timestamp, snapshotData, title);
 }
 
-void JSGlobalObjectConsoleClient::time(JSGlobalObject* globalObject, const String& label)
+void JSGlobalObjectConsoleClient::time(JSGlobalObject* globalObject, StringImpl* label)
 {
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
@@ -187,7 +187,7 @@ void JSGlobalObjectConsoleClient::time(JSGlobalObject* globalObject, const Strin
     m_consoleAgent->startTiming(globalObject, label);
 }
 
-void JSGlobalObjectConsoleClient::timeLog(JSGlobalObject* globalObject, const String& label, Ref<ScriptArguments>&& arguments)
+void JSGlobalObjectConsoleClient::timeLog(JSGlobalObject* globalObject, StringImpl* label, Ref<ScriptArguments>&& arguments)
 {
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
@@ -195,7 +195,7 @@ void JSGlobalObjectConsoleClient::timeLog(JSGlobalObject* globalObject, const St
     m_consoleAgent->logTiming(globalObject, label, WTF::move(arguments));
 }
 
-void JSGlobalObjectConsoleClient::timeEnd(JSGlobalObject* globalObject, const String& label)
+void JSGlobalObjectConsoleClient::timeEnd(JSGlobalObject* globalObject, StringImpl* label)
 {
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
@@ -208,7 +208,7 @@ void JSGlobalObjectConsoleClient::timeStamp(JSGlobalObject*, Ref<ScriptArguments
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
 
-    warnUnimplemented("console.timeStamp"_s);
+    warnUnimplemented("console.timeStamp"_si);
 }
 
 void JSGlobalObjectConsoleClient::record(JSGlobalObject*, Ref<ScriptArguments>&&)
@@ -216,7 +216,7 @@ void JSGlobalObjectConsoleClient::record(JSGlobalObject*, Ref<ScriptArguments>&&
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
 
-    warnUnimplemented("console.record"_s);
+    warnUnimplemented("console.record"_si);
 }
 
 void JSGlobalObjectConsoleClient::recordEnd(JSGlobalObject*, Ref<ScriptArguments>&&)
@@ -224,7 +224,7 @@ void JSGlobalObjectConsoleClient::recordEnd(JSGlobalObject*, Ref<ScriptArguments
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
 
-    warnUnimplemented("console.recordEnd"_s);
+    warnUnimplemented("console.recordEnd"_si);
 }
 
 void JSGlobalObjectConsoleClient::screenshot(JSGlobalObject*, Ref<ScriptArguments>&&)
@@ -232,10 +232,10 @@ void JSGlobalObjectConsoleClient::screenshot(JSGlobalObject*, Ref<ScriptArgument
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
 
-    warnUnimplemented("console.screenshot"_s);
+    warnUnimplemented("console.screenshot"_si);
 }
 
-void JSGlobalObjectConsoleClient::warnUnimplemented(const String& method)
+void JSGlobalObjectConsoleClient::warnUnimplemented(StringImpl* method)
 {
     auto message = makeString(method, " is currently ignored in JavaScript context inspection."_s);
     m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Warning, message));

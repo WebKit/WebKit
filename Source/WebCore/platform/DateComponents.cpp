@@ -735,7 +735,7 @@ double DateComponents::monthsSinceEpoch() const
     return (m_year - 1970) * 12 + m_month;
 }
 
-String DateComponents::toStringForTime(SecondFormat format) const
+RefPtr<StringImpl> DateComponents::toStringForTime(SecondFormat format) const
 {
     ASSERT(m_type == DateComponentsType::DateTimeLocal || m_type == DateComponentsType::Time);
     SecondFormat effectiveFormat = format;
@@ -765,7 +765,7 @@ String DateComponents::toStringForTime(SecondFormat format) const
     }
 }
 
-String DateComponents::toString(SecondFormat format) const
+RefPtr<StringImpl> DateComponents::toString(SecondFormat format) const
 {
     switch (m_type) {
     case DateComponentsType::Date:

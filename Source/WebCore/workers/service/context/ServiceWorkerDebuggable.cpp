@@ -70,7 +70,7 @@ void ServiceWorkerDebuggable::disconnect(FrontendChannel& channel)
         serviceWorkerThreadProxy->inspectorProxy().disconnectFromWorker(channel);
 }
 
-void ServiceWorkerDebuggable::dispatchMessageFromRemote(String&& message)
+void ServiceWorkerDebuggable::dispatchMessageFromRemote(RefPtr<StringImpl>&& message)
 {
     if (RefPtr serviceWorkerThreadProxy = m_serviceWorkerThreadProxy.get())
         serviceWorkerThreadProxy->inspectorProxy().sendMessageToWorker(WTF::move(message));

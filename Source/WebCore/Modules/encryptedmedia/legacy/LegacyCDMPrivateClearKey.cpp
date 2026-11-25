@@ -39,7 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCDMPrivateClearKey);
 
-bool LegacyCDMPrivateClearKey::supportsKeySystem(const String& keySystem)
+bool LegacyCDMPrivateClearKey::supportsKeySystem(StringImpl* keySystem)
 {
     if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"_s))
         return false;
@@ -48,7 +48,7 @@ bool LegacyCDMPrivateClearKey::supportsKeySystem(const String& keySystem)
     return MediaPlayer::supportsKeySystem(keySystem, emptyString());
 }
 
-bool LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+bool LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType(StringImpl* keySystem, StringImpl* mimeType)
 {
     if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"_s))
         return false;
@@ -57,7 +57,7 @@ bool LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType(const String& keySys
     return MediaPlayer::supportsKeySystem(keySystem, mimeType);
 }
 
-bool LegacyCDMPrivateClearKey::supportsMIMEType(const String& mimeType) const
+bool LegacyCDMPrivateClearKey::supportsMIMEType(StringImpl* mimeType) const
 {
     return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
 }

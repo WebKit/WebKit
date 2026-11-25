@@ -57,14 +57,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TileController);
 
 static const Seconds tileSizeUpdateDelay { 500_ms };
 
-String TileController::tileGridContainerLayerName()
+RefPtr<StringImpl> TileController::tileGridContainerLayerName()
 {
-    return "TileGrid container"_s;
+    return "TileGrid container"_si;
 }
 
-String TileController::zoomedOutTileGridContainerLayerName()
+RefPtr<StringImpl> TileController::zoomedOutTileGridContainerLayerName()
 {
-    return "Zoomed-out TileGrid container"_s;
+    return "Zoomed-out TileGrid container"_si;
 }
 
 TileController::TileController(PlatformCALayer* rootPlatformLayer, AllowScrollPerformanceLogging shouldLogScrollingPerformance)

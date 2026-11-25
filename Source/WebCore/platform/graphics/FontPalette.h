@@ -42,7 +42,7 @@ struct FontPalette {
     };
 
     FontPalette(Keyword);
-    FontPalette(AtomString&&);
+    FontPalette(RefPtr<AtomStringImpl>&&);
     FontPalette(FontPaletteMixFunction&&);
 
     FontPalette(FontPalette&&);
@@ -55,9 +55,9 @@ struct FontPalette {
     NODELETE bool isNormal() const;
     NODELETE bool isLight() const;
     NODELETE bool isDark() const;
-    NODELETE std::optional<AtomString> ident() const;
+    NODELETE std::optional<RefPtr<AtomStringImpl>> ident() const;
 
-    OrderedHashSet<AtomString> referencedIdentifiers() const;
+    OrderedHashSet<RefPtr<AtomStringImpl>> referencedIdentifiers() const;
 
     template<typename... F> decltype(auto) switchOn(F&&...) const;
 
@@ -66,7 +66,7 @@ struct FontPalette {
 private:
     using Kind = Variant<
         Keyword,
-        AtomString,
+        RefPtr<AtomStringImpl>,
         UniqueRef<FontPaletteMixFunction>
     >;
     Kind copy(const Kind&);
@@ -83,7 +83,7 @@ template<typename... F> decltype(auto) FontPalette::switchOn(F&&... f) const
         [&](const Keyword& keyword) -> ResultType {
             return visitor(keyword);
         },
-        [&](const AtomString& ident) -> ResultType {
+        [&](AtomStringImpl* ident) -> ResultType {
             return visitor(ident);
         },
         [&](const UniqueRef<FontPaletteMixFunction>& mix) -> ResultType {

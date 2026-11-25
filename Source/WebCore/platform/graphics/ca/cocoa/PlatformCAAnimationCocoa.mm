@@ -150,7 +150,7 @@ RetainPtr<CAMediaTimingFunction> toCAMediaTimingFunction(const TimingFunction& t
     return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
 }
 
-Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(AnimationType type, StringImpl* keyPath)
 {
     return adoptRef(*new PlatformCAAnimationCocoa(type, keyPath));
 }
@@ -160,21 +160,21 @@ Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::create(PlatformAnimationRef a
     return adoptRef(*new PlatformCAAnimationCocoa(animation));
 }
 
-PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(AnimationType type, const String& keyPath)
+PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(AnimationType type, StringImpl* keyPath)
     : PlatformCAAnimation(type)
 {
     switch (type) {
     case AnimationType::Basic:
-        lazyInitialize(m_animation, retainPtr([CABasicAnimation animationWithKeyPath:keyPath.createNSString().get()]));
+        lazyInitialize(m_animation, retainPtr([CABasicAnimation animationWithKeyPath:createNSString(keyPath).get()]));
         break;
     case AnimationType::Group:
         lazyInitialize(m_animation, retainPtr([CAAnimationGroup animation]));
         break;
     case AnimationType::Keyframe:
-        lazyInitialize(m_animation, retainPtr([CAKeyframeAnimation animationWithKeyPath:keyPath.createNSString().get()]));
+        lazyInitialize(m_animation, retainPtr([CAKeyframeAnimation animationWithKeyPath:createNSString(keyPath).get()]));
         break;
     case AnimationType::Spring:
-        lazyInitialize(m_animation, retainPtr([CASpringAnimation animationWithKeyPath:keyPath.createNSString().get()]));
+        lazyInitialize(m_animation, retainPtr([CASpringAnimation animationWithKeyPath:createNSString(keyPath).get()]));
         break;
     }
 }
@@ -237,13 +237,13 @@ PlatformAnimationRef PlatformCAAnimationCocoa::platformAnimation() const
     return m_animation.get();
 }
 
-String PlatformCAAnimationCocoa::keyPath() const
+RefPtr<StringImpl> PlatformCAAnimationCocoa::keyPath() const
 {
     if (animationType() == AnimationType::Group)
         return emptyString();
 
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAPropertyAnimation class]]);
-    return [static_cast<CAPropertyAnimation *>(m_animation.get()) keyPath];
+    return StringImpl::create([static_cast<CAPropertyAnimation *>(m_animation.get()) keyPath]);
 }
 
 CFTimeInterval PlatformCAAnimationCocoa::beginTime() const

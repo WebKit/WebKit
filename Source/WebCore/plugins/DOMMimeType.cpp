@@ -39,12 +39,12 @@ DOMMimeType::DOMMimeType(Navigator& navigator, const MimeClassInfo& info, DOMPlu
 
 DOMMimeType::~DOMMimeType() = default;
 
-AtomString DOMMimeType::type() const
+const RefPtr<AtomStringImpl>& DOMMimeType::type() const
 {
     return m_info.type;
 }
 
-String DOMMimeType::suffixes() const
+RefPtr<StringImpl> DOMMimeType::suffixes() const
 {
     StringBuilder builder;
     for (size_t i = 0; i < m_info.extensions.size(); ++i) {
@@ -55,7 +55,7 @@ String DOMMimeType::suffixes() const
     return builder.toString();
 }
 
-String DOMMimeType::description() const
+RefPtr<StringImpl> DOMMimeType::description() const
 {
     return m_info.desc;
 }

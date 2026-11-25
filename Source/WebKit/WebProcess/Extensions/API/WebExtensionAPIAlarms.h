@@ -37,12 +37,12 @@ class WebExtensionAPIAlarms : public WebExtensionAPIObject, public JSWebExtensio
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIAlarms, alarms, alarms);
 
 public:
-    void createAlarm(const String& name, RefPtr<JSON::Value> alarmInfo, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void createAlarm(StringImpl* name, RefPtr<JSON::Value> alarmInfo, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
 
-    void get(const String& name, Ref<WebExtensionCallbackHandler>&&);
+    void get(StringImpl* name, Ref<WebExtensionCallbackHandler>&&);
     void getAll(Ref<WebExtensionCallbackHandler>&&);
 
-    void clear(const String& name, Ref<WebExtensionCallbackHandler>&&);
+    void clear(StringImpl* name, Ref<WebExtensionCallbackHandler>&&);
     void clearAll(Ref<WebExtensionCallbackHandler>&&);
 
     WebExtensionAPIEvent& onAlarm();

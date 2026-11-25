@@ -75,9 +75,9 @@ static constexpr std::array headerPrefixesToIgnoreAfterRevalidation {
     "x-webkit-"_s
 };
 
-static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)
+static inline bool shouldUpdateHeaderAfterRevalidation(StringImpl* header)
 {
-    if (header.startsWithIgnoringASCIICase("content-security-"_s))
+    if (startsWithIgnoringASCIICase(header, "content-security-"_s))
         return true;
 
     for (auto& headerToIgnore : headersToIgnoreAfterRevalidation) {
@@ -87,7 +87,7 @@ static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)
     for (auto& prefixToIgnore : headerPrefixesToIgnoreAfterRevalidation) {
         // FIXME: Would be more efficient if we added an overload of
         // startsWithIgnoringASCIICase that takes a const char*.
-        if (header.startsWithIgnoringASCIICase(prefixToIgnore))
+        if (startsWithIgnoringASCIICase(header, prefixToIgnore))
             return false;
     }
     return true;
@@ -292,9 +292,9 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
 {
     CacheControlDirectives result;
 
-    String cacheControlValue = headers.get(HTTPHeaderName::CacheControl);
-    if (!cacheControlValue.isEmpty()) {
-        auto safeHeaderString = cacheControlValue.removeCharacters([](auto character) {
+    RefPtr<StringImpl> cacheControlValue = headers.get(HTTPHeaderName::CacheControl);
+    if (!isEmpty(cacheControlValue)) {
+        auto safeHeaderString = removeCharacters(cacheControlValue, [](auto character) {
             return isControlCharacterOrSpace(character);
         });
         auto directives = parseCacheHeader(safeHeaderString);
@@ -362,15 +362,15 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
         // Handle Pragma: no-cache
         // This is deprecated and equivalent to Cache-control: no-cache
         // Don't bother tokenizing the value; handling that exactly right is not important.
-        result.noCache = headers.get(HTTPHeaderName::Pragma).containsIgnoringASCIICase("no-cache"_s);
+        result.noCache = containsIgnoringASCIICase(headers.get(HTTPHeaderName::Pragma), "no-cache"_s);
     }
 
     return result;
 }
 
-std::optional<SHA1::Digest> computeCookieHeaderDigestForVary(const String& cookieHeader, uint64_t salt)
+std::optional<SHA1::Digest> computeCookieHeaderDigestForVary(StringImpl* cookieHeader, uint64_t salt)
 {
-    if (cookieHeader.isNull())
+    if (!cookieHeader)
         return std::nullopt;
 
     SHA1 sha1;
@@ -384,14 +384,14 @@ std::optional<SHA1::Digest> computeCookieHeaderDigestForVary(const String& cooki
 }
 
 // Varying header values are stored and compared as strings.
-String encodeCookieHeaderDigestForVary(const std::optional<SHA1::Digest>& digest)
+RefPtr<StringImpl> encodeCookieHeaderDigestForVary(const std::optional<SHA1::Digest>& digest)
 {
     if (!digest)
         return { };
     return base64EncodeToString(*digest);
 }
 
-static String cookieRequestHeaderFieldValueForVary(const CookieJar* cookieJar, const ResourceRequest& request)
+static RefPtr<StringImpl> cookieRequestHeaderFieldValueForVary(const CookieJar* cookieJar, const ResourceRequest& request)
 {
     if (!cookieJar)
         return { };
@@ -399,7 +399,7 @@ static String cookieRequestHeaderFieldValueForVary(const CookieJar* cookieJar, c
     return encodeCookieHeaderDigestForVary(cookieJar->cookieRequestHeaderFieldValueDigest(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), CookieJar::shouldIncludeSecureCookies(request.url())));
 }
 
-String headerValueForVary(const ResourceRequest& request, StringView headerName, NOESCAPE const Function<String()>& cookieRequestHeaderFieldValueFunction)
+RefPtr<StringImpl> headerValueForVary(const ResourceRequest& request, StringView headerName, NOESCAPE const Function<RefPtr<StringImpl>()>& cookieRequestHeaderFieldValueFunction)
 {
     // Explicit handling for cookies is needed because they are added magically by the networking layer.
     // FIXME: The value might have changed between making the request and retrieving the cookie here.
@@ -410,13 +410,13 @@ String headerValueForVary(const ResourceRequest& request, StringView headerName,
     return request.httpHeaderField(headerName);
 }
 
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(const ResourceResponse& response, NOESCAPE const Function<String(StringView headerName)>& headerValueForVaryFunction)
+Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> collectVaryingRequestHeaders(const ResourceResponse& response, NOESCAPE const Function<RefPtr<StringImpl>(StringView headerName)>& headerValueForVaryFunction)
 {
     auto varyValue = response.httpHeaderField(HTTPHeaderName::Vary);
-    if (varyValue.isEmpty())
+    if (isEmpty(varyValue))
         return { };
 
-    Vector<std::pair<String, String>> headers;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> headers;
     for (auto varyHeaderName : StringView(varyValue).split(',')) {
         auto headerName = varyHeaderName.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
         headers.append(std::pair { headerName.toString(), headerValueForVaryFunction(headerName) });
@@ -424,7 +424,7 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(const ResourceRes
     return headers;
 }
 
-Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar* cookieJar, const ResourceRequest& request, const ResourceResponse& response)
+Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> collectVaryingRequestHeaders(const CookieJar* cookieJar, const ResourceRequest& request, const ResourceResponse& response)
 {
     return collectVaryingRequestHeaders(response, [&] (StringView headerName) {
         return headerValueForVary(request, headerName, [&] {
@@ -433,21 +433,21 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar* 
     });
 }
 
-bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, NOESCAPE const Function<String(const String&)>& headerValueForVary)
+bool verifyVaryingRequestHeaders(const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders, NOESCAPE const Function<RefPtr<StringImpl>(StringImpl*)>& headerValueForVary)
 {
     for (auto& varyingRequestHeader : varyingRequestHeaders) {
         // FIXME: Vary: * in response would ideally trigger a cache delete instead of a store.
-        if (varyingRequestHeader.first == "*"_s)
+        if (equal(varyingRequestHeader.first, "*"_s))
             return false;
-        if (headerValueForVary(varyingRequestHeader.first) != varyingRequestHeader.second)
+        if (!equal(headerValueForVary(varyingRequestHeader.first), varyingRequestHeader.second))
             return false;
     }
     return true;
 }
 
-bool verifyVaryingRequestHeaders(const CookieJar* cookieJar, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest& request)
+bool verifyVaryingRequestHeaders(const CookieJar* cookieJar, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders, const ResourceRequest& request)
 {
-    return verifyVaryingRequestHeaders(varyingRequestHeaders, [&] (const String& headerName) {
+    return verifyVaryingRequestHeaders(varyingRequestHeaders, [&] (StringImpl* headerName) {
         return headerValueForVary(request, headerName, [&] {
             return cookieRequestHeaderFieldValueForVary(cookieJar, request);
         });

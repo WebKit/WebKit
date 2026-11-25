@@ -130,7 +130,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
 
             auto& drop = *static_cast<DropTarget*>(userData);
             if (value && G_VALUE_HOLDS(value, G_TYPE_STRING))
-                drop.m_selectionData->setText(String::fromUTF8(g_value_get_string(value)));
+                drop.m_selectionData->setText(StringImpl::fromUTF8(g_value_get_string(value)));
             drop.didLoadData();
         }, this);
     }
@@ -162,7 +162,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
             ASSERT(gdk_content_formats_contain_gtype(formats, GDK_TYPE_FILE_LIST));
 
             m_dataRequestCount++;
-            loadData([this, cancellable = m_cancellable](Vector<String>&& fileUris) {
+            loadData([this, cancellable = m_cancellable](Vector<RefPtr<StringImpl>>&& fileUris) {
                 if (g_cancellable_is_cancelled(cancellable.get()))
                     return;
 
@@ -198,27 +198,27 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
             } else if (mimeType == "_NETSCAPE_URL"_s) {
                 auto urlData = span(data);
                 if (urlData.size()) {
-                    Vector<String> tokens = String::fromUTF8(urlData).split('\n');
+                    Vector<RefPtr<StringImpl>> tokens = split(StringImpl::fromUTF8(urlData), '\n');
                     URL url({ }, tokens[0]);
                     if (url.isValid())
-                        m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
+                        m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1].get() : nullptr);
                 }
             } else if (mimeType == "text/uri-list"_s) {
                 auto urlListData = span(data);
                 if (urlListData.size()) {
-                    String uriListString(String::fromUTF8(urlListData));
-                    for (auto& line : uriListString.split('\n')) {
-                        line = line.trim(deprecatedIsSpaceOrNewline);
-                        if (line.isEmpty())
+                    RefPtr<StringImpl> uriListString(StringImpl::fromUTF8(urlListData));
+                    for (auto& line : split(uriListString, '\n')) {
+                        line = trim(line, deprecatedIsSpaceOrNewline);
+                        if (isEmpty(line))
                             continue;
-                        if (line[0] == '#')
+                        if (codeUnitAt(line, 0) == '#')
                             continue;
 
                         // If we have file transfers from the portal, ignore file:// URIs.
                         URL url { line };
                         if (transferredFilesFromPortal && url.isValid()) {
                             GUniqueOutPtr<GError> error;
-                            GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().legacyCStringPointer(), 0, &error.outPtr()));
+                            GUniquePtr<gchar> filename(g_filename_from_uri(utf8(line).legacyCStringPointer(), 0, &error.outPtr()));
                             if (!error && filename)
                                 continue;
                         }
@@ -283,24 +283,24 @@ void DropTarget::loadData(const char* mimeType, CompletionHandler<void(GRefPtr<G
     }, new DropReadAsyncData<void(GRefPtr<GBytes>&&)>(m_cancellable.get(), WTF::move(completionHandler)));
 }
 
-void DropTarget::loadData(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void DropTarget::loadData(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     gdk_drop_read_value_async(m_drop.get(), GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* gdkDrop, GAsyncResult* result, gpointer userData) {
-        std::unique_ptr<DropReadAsyncData<void(Vector<String>&&)>> data(static_cast<DropReadAsyncData<void(Vector<String>&&)>*>(userData));
+        std::unique_ptr<DropReadAsyncData<void(Vector<RefPtr<StringImpl>>&&)>> data(static_cast<DropReadAsyncData<void(Vector<RefPtr<StringImpl>>&&)>*>(userData));
         GUniqueOutPtr<GError> error;
-        Vector<String> fileUris;
+        Vector<RefPtr<StringImpl>> fileUris;
         const GValue* value = gdk_drop_read_value_finish(GDK_DROP(gdkDrop), result, &error.outPtr());
 
         if (value) {
             GSList* fileList = static_cast<GSList*>(g_value_get_boxed(value));
             for (GSList *l = fileList; l; l = l->next) {
                 GUniquePtr<char> uri(g_file_get_uri(G_FILE(l->data)));
-                fileUris.append(String::fromUTF8(uri.get()));
+                fileUris.append(StringImpl::fromUTF8(uri.get()));
             }
         }
 
         data->completionHandler(WTF::move(fileUris));
-    }, new DropReadAsyncData<void(Vector<String>&&)>(m_cancellable.get(), WTF::move(completionHandler)));
+    }, new DropReadAsyncData<void(Vector<RefPtr<StringImpl>>&&)>(m_cancellable.get(), WTF::move(completionHandler)));
 }
 
 void DropTarget::didLoadData()

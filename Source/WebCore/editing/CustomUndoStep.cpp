@@ -65,7 +65,7 @@ bool CustomUndoStep::isValid() const
     return m_undoItem && m_undoItem->isValid();
 }
 
-String CustomUndoStep::label() const
+RefPtr<StringImpl> CustomUndoStep::label() const
 {
     if (!isValid()) {
         ASSERT_NOT_REACHED();

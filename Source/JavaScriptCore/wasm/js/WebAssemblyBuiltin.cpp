@@ -88,10 +88,10 @@ namespace JSC {
 
 JSFunction* WebAssemblyBuiltin::jsWrapper(JSGlobalObject* globalObject) const
 {
-    return JSFunction::create(globalObject->vm(), globalObject, 0, m_name, m_jsHostFunction, ImplementationVisibility::Public, JSC::NoIntrinsic);
+    return JSFunction::create(globalObject->vm(), globalObject, 0, StringImpl::create(m_name).ptr(), m_jsHostFunction, ImplementationVisibility::Public, JSC::NoIntrinsic);
 }
 
-const WebAssemblyBuiltin* WebAssemblyBuiltinSet::findBuiltin(const String& name) const
+const WebAssemblyBuiltin* WebAssemblyBuiltinSet::findBuiltin(StringImpl* name) const
 {
     auto it = m_builtinsByName.find(name);
     return it != m_builtinsByName.end() ? it->value : nullptr;
@@ -112,14 +112,14 @@ void WebAssemblyBuiltinSet::finalizeCreation()
     m_nameSection->functionNames.resize(builtinCount);
     for (size_t i = 0; i < builtinCount; i++) {
         auto& builtin = m_builtins[i];
-        String builtinName = String(builtin.name());
+        RefPtr<StringImpl> builtinName = StringImpl::create(builtin.name());
 
         // Enter the builtin into the lookup table
         m_builtinsByName.add(builtinName, &builtin);
 
         // Create a simulated wasm name section entry for the builtin
-        String fullName = makeString(String(m_qualifiedName), "."_s, builtinName);
-        auto span = fullName.span8();
+        RefPtr<StringImpl> fullName = makeString(StringImpl::create(m_qualifiedName), "."_s, builtinName);
+        auto span = span8(fullName);
         Wasm::Name name;
         name.grow(span.size());
         memcpySpan(name.mutableSpan(), span);
@@ -147,7 +147,7 @@ WebAssemblyBuiltinRegistry::WebAssemblyBuiltinRegistry()
 }
 
 // The registry is immutable once constructed so we don't worry about concurrency.
-const WebAssemblyBuiltinSet* WebAssemblyBuiltinRegistry::findByQualifiedName(const String& name) const
+const WebAssemblyBuiltinSet* WebAssemblyBuiltinRegistry::findByQualifiedName(StringImpl* name) const
 {
     size_t index = m_builtinSets.findIf([&](auto& builtinSet) {
         return name == builtinSet.qualifiedName();
@@ -524,7 +524,7 @@ DEFINE_BUILTIN_IMPLEMENTATION(jsstring, fromCharCodeArray, JSGlobalObject* globa
 
     auto chars = array->span<char16_t>();
     auto slice = chars.subspan(start, end - start);
-    JSString* result = jsString(vm, String(slice));
+    JSString* result = jsString(vm, StringImpl::create(slice));
     RELEASE_AND_RETURN(scope, JSValue::encode(result));
 }
 

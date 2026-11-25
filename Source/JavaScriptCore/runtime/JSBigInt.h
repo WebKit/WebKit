@@ -125,9 +125,9 @@ public:
     static JSValue parseInt(JSGlobalObject*, StringView, ErrorParseMode = ErrorParseMode::ThrowExceptions);
     static JSValue stringToBigInt(JSGlobalObject*, StringView);
 
-    static String tryGetString(VM&, JSBigInt*, unsigned radix);
+    static RefPtr<StringImpl> tryGetString(VM&, JSBigInt*, unsigned radix);
 
-    String toString(JSGlobalObject*, unsigned radix);
+    RefPtr<StringImpl> toString(JSGlobalObject*, unsigned radix);
     
     using ComparisonMode = JSBigIntComparisonMode;
 
@@ -478,9 +478,9 @@ private:
     static std::span<Digit> rightShift(std::span<Digit> z, std::span<const Digit> x, unsigned);
     static std::span<Digit> leftShift(std::span<Digit> z, std::span<const Digit> x, unsigned);
 
-    static String toStringBasePowerOfTwo(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
+    static RefPtr<StringImpl> toStringBasePowerOfTwo(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
     class ToStringFormatter;
-    static String toStringGeneric(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
+    static RefPtr<StringImpl> toStringGeneric(VM&, JSGlobalObject*, JSBigInt*, unsigned radix);
 
     template <typename CharType>
     static JSValue parseInt(JSGlobalObject*, std::span<const CharType> data, ErrorParseMode);

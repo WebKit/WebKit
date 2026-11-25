@@ -48,7 +48,7 @@ private:
     void willBeDestroyed() final;
     void registerResource();
 
-    AtomString m_id;
+    RefPtr<AtomStringImpl> m_id;
     bool m_registered { false };
 };
 

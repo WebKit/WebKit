@@ -124,7 +124,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         cases = []
 
         first_command_string = "\n".join([
-            '    if (protocol_method == "%s"_s) {' % commands[0].command_name,
+            '    if (equal(protocol_method, "%s"_s)) {' % commands[0].command_name,
             '        %s(protocol_requestId, WTF::move(protocol_parameters));' % commands[0].command_name,
             '        return;',
             '    }',
@@ -133,7 +133,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
         for command in commands[1:]:
             additional_command_string = "\n".join([
-                '    if (protocol_method == "%s"_s) {' % command.command_name,
+                '    if (equal(protocol_method, "%s"_s)) {' % command.command_name,
                 '        %s(protocol_requestId, WTF::move(protocol_parameters));' % command.command_name,
                 '        return;',
                 '    }',
@@ -206,9 +206,9 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
             if parameter.is_optional:
                 return_assignments.append('    if (!!%(parameterName)s)' % param_args)
-                return_assignments.append('        protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % param_args)
+                return_assignments.append('        protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_si, %(parameterValue)s);' % param_args)
             else:
-                return_assignments.append('    protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % param_args)
+                return_assignments.append('    protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_si, %(parameterValue)s);' % param_args)
 
         async_args = {
             'domainName': domain.domain_name,
@@ -258,7 +258,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 parameter_enum_resolutions.append('    auto %(enumVariableName)s = Protocol::%(helpersNamespace)s::parseEnumValueFromString<%(enumType)s>(%(stringVariableName)s);' % enum_args)
                 enum_args['enumErrorCode'] = enum_error_code
                 if parameter.is_optional:
-                    parameter_enum_resolutions.append('    if (!%(stringVariableName)s.isEmpty() && !%(enumVariableName)s) {' % enum_args)
+                    parameter_enum_resolutions.append('    if (!isEmpty(%(stringVariableName)s) && !%(enumVariableName)s) {' % enum_args)
                     parameter_enum_resolutions.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::%(enumErrorCode)s, makeString("Unknown %(parameterKey)s: "_s, %(stringVariableName)s));' % enum_args)
                     parameter_enum_resolutions.append('        return;')
                     parameter_enum_resolutions.append('    }')
@@ -287,7 +287,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 'keyedGetMethod': CppGenerator.cpp_getter_method_for_type(_type),
                 'required': 'false' if parameter.is_optional else 'true',
             }
-            parameter_declarations.append('    auto %(parameterName)s = m_backendDispatcher->%(keyedGetMethod)s(protocol_parameters.get(), "%(parameterKey)s"_s, %(required)s);' % param_args)
+            parameter_declarations.append('    auto %(parameterName)s = m_backendDispatcher->%(keyedGetMethod)s(protocol_parameters.get(), "%(parameterKey)s"_si, %(required)s);' % param_args)
 
         result_destructured_names = []
         result_conversion_lines = []
@@ -329,9 +329,9 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
             if parameter.is_optional:
                 result_conversion_lines.append('    if (!!%(parameterName)s)' % param_args)
-                result_conversion_lines.append('        protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % param_args)
+                result_conversion_lines.append('        protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_si, %(parameterValue)s);' % param_args)
             else:
-                result_conversion_lines.append('    protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterValue)s);' % param_args)
+                result_conversion_lines.append('    protocol_jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_si, %(parameterValue)s);' % param_args)
 
         if command.is_async:
             # FIXME: Remove legacy_async_callbacks when IndexedDBAgent moves off of it. <https://bugs.webkit.org/show_bug.cgi?id=288203>
@@ -354,7 +354,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 thunkLines = [
                     '[backendDispatcher = m_backendDispatcher.copyRef(), protocol_requestId](%s<%s> result) {' % (result_type_alias, ", ".join(type_arguments)),
                     '        if (!result) {',
-                    '           ASSERT(!result.error().isEmpty());',
+                    '           ASSERT(!isEmpty(result.error()));',
                     '           backendDispatcher->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, result.error());',
                     '           return;',
                     '        }',
@@ -410,7 +410,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         else:
             lines.append('    auto result = m_agent->%(commandName)s(%(invocationParameters)s);' % command_args)
             lines.append('    if (!result) {')
-            lines.append('        ASSERT(!result.error().isEmpty());')
+            lines.append('        ASSERT(!isEmpty(result.error()));')
             lines.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, result.error());')
             lines.append('        return;')
             lines.append('    }')

@@ -67,7 +67,7 @@ double PaintWorkletGlobalScope::devicePixelRatio() const
     return protect(document->window())->devicePixelRatio();
 }
 
-PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments)
+PaintDefinition::PaintDefinition(AtomStringImpl* name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<RefPtr<AtomStringImpl>>&& inputProperties, Vector<RefPtr<StringImpl>>&& inputArguments)
     : name(name)
     , paintConstructor(paintConstructor)
     , paintCallback(WTF::move(paintCallback))
@@ -77,7 +77,7 @@ PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintCon
 }
 
 // https://drafts.css-houdini.org/css-paint-api/#registering-custom-paint
-ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& globalObject, const AtomString& name, Strong<JSObject> paintConstructor)
+ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& globalObject, AtomStringImpl* name, Strong<JSObject> paintConstructor)
 {
     auto& vm = paintConstructor->vm();
     JSC::JSLockHolder lock(vm);
@@ -85,21 +85,21 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
 
     // Validate that paintConstructor is a VoidFunction
     if (!paintConstructor->isCallable())
-        return Exception { ExceptionCode::TypeError, "paintConstructor must be callable"_s };
+        return Exception { ExceptionCode::TypeError, "paintConstructor must be callable"_si };
 
-    if (name.isEmpty())
-        return Exception { ExceptionCode::TypeError, "The first argument must not be the empty string"_s };
+    if (isEmpty(name))
+        return Exception { ExceptionCode::TypeError, "The first argument must not be the empty string"_si };
 
     {
         Locker locker { paintDefinitionLock() };
 
         if (paintDefinitionMap().contains(name))
-            return Exception { ExceptionCode::InvalidModificationError, "This name has already been registered"_s };
+            return Exception { ExceptionCode::InvalidModificationError, "This name has already been registered"_si };
 
         JSValue inputPropertiesIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputProperties"_s));
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
-        Vector<AtomString> inputProperties;
+        Vector<RefPtr<AtomStringImpl>> inputProperties;
         if (!inputPropertiesIterableValue.isUndefined()) {
             auto inputPropertiesConversionResult = convert<IDLSequence<IDLAtomStringAdaptor<IDLDOMString>>>(globalObject, inputPropertiesIterableValue);
             if (inputPropertiesConversionResult.hasException(scope)) [[unlikely]]
@@ -112,7 +112,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
         JSValue inputArgumentsIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputArguments"_s));
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
-        Vector<String> inputArguments;
+        Vector<RefPtr<StringImpl>> inputArguments;
         if (!inputArgumentsIterableValue.isUndefined()) {
             auto inputArgumentsConversionResult = convert<IDLSequence<IDLDOMString>>(globalObject, inputArgumentsIterableValue);
             if (inputArgumentsConversionResult.hasException(scope)) [[unlikely]]
@@ -129,19 +129,19 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
         // FIXME: Convert to PaintRenderingContext2DSettings here (step 14).
 
         if (!paintConstructor->isConstructor())
-            return Exception { ExceptionCode::TypeError, "The second argument must be a constructor"_s };
+            return Exception { ExceptionCode::TypeError, "The second argument must be a constructor"_si };
 
         JSValue prototypeValue = paintConstructor->get(&globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         if (!prototypeValue.isObject())
-            return Exception { ExceptionCode::TypeError, "The second argument must have a prototype that is an object"_s };
+            return Exception { ExceptionCode::TypeError, "The second argument must have a prototype that is an object"_si };
 
         JSValue paintValue = prototypeValue.get(&globalObject, Identifier::fromString(vm, "paint"_s));
         RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         if (paintValue.isUndefined())
-            return Exception { ExceptionCode::TypeError, "The class must have a paint method"_s };
+            return Exception { ExceptionCode::TypeError, "The class must have a paint method"_si };
 
         auto paintCallback = convert<IDLCallbackFunction<JSCSSPaintCallback>>(globalObject, paintValue, downcast<JSDOMGlobalObject>(globalObject));
         if (paintCallback.hasException(scope)) [[unlikely]]

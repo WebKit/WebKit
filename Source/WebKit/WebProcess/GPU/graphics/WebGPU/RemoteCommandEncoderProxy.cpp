@@ -91,7 +91,7 @@ RefPtr<::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass
     return result;
 }
 
-RefPtr<::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginInvalidRenderPass(String&& error)
+RefPtr<::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginInvalidRenderPass(RefPtr<StringImpl>&& error)
 {
     auto identifier = WebGPURenderPassEncoderIdentifier::generate();
     auto sendResult = send(Messages::RemoteCommandEncoder::BeginInvalidRenderPass(WTF::move(error), identifier));
@@ -101,7 +101,7 @@ RefPtr<::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginInvalidRende
     return RemoteRenderPassEncoderProxy::create(*this, identifier);
 }
 
-RefPtr<::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginInvalidComputePass(String&& error)
+RefPtr<::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginInvalidComputePass(RefPtr<StringImpl>&& error)
 {
     auto identifier = WebGPUComputePassEncoderIdentifier::generate();
     auto sendResult = send(Messages::RemoteCommandEncoder::BeginInvalidComputePass(WTF::move(error), identifier));
@@ -184,7 +184,7 @@ void RemoteCommandEncoderProxy::clearBuffer(
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteCommandEncoderProxy::pushDebugGroup(String&& groupLabel)
+void RemoteCommandEncoderProxy::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     auto sendResult = send(Messages::RemoteCommandEncoder::PushDebugGroup(WTF::move(groupLabel)));
     UNUSED_VARIABLE(sendResult);
@@ -196,7 +196,7 @@ void RemoteCommandEncoderProxy::popDebugGroup()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteCommandEncoderProxy::insertDebugMarker(String&& markerLabel)
+void RemoteCommandEncoderProxy::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     auto sendResult = send(Messages::RemoteCommandEncoder::InsertDebugMarker(WTF::move(markerLabel)));
     UNUSED_VARIABLE(sendResult);
@@ -232,17 +232,17 @@ RefPtr<::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const ::WebGPU
         return nullptr;
 
     auto result = RemoteCommandBufferProxy::create(m_root, identifier);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
-void RemoteCommandEncoderProxy::makeInvalid(String&& error)
+void RemoteCommandEncoderProxy::makeInvalid(RefPtr<StringImpl>&& error)
 {
     auto sendResult = send(Messages::RemoteCommandEncoder::MakeInvalid(WTF::move(error)));
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteCommandEncoderProxy::setLabel(String&& label)
+void RemoteCommandEncoderProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteCommandEncoder::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

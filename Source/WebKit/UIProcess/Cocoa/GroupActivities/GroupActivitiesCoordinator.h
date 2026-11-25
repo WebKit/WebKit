@@ -61,17 +61,17 @@ private:
     void sessionStateChanged(const GroupActivitiesSession&, GroupActivitiesSession::State);
 
     using CoordinatorCompletionHandler = CompletionHandler<void(std::optional<WebCore::ExceptionData>&&)>;
-    String identifier() const final;
+    RefPtr<StringImpl> identifier() const final;
     void join(CoordinatorCompletionHandler&&) final;
     void leave() final;
     void seekTo(double, CoordinatorCompletionHandler&&) final;
     void play(CoordinatorCompletionHandler&&) final;
     void pause(CoordinatorCompletionHandler&&) final;
-    void setTrack(const String&, CoordinatorCompletionHandler&&) final;
+    void setTrack(StringImpl*, CoordinatorCompletionHandler&&) final;
     void positionStateChanged(const std::optional<WebCore::MediaPositionState>&) final;
     void readyStateChanged(WebCore::MediaSessionReadyState) final;
     void playbackStateChanged(WebCore::MediaSessionPlaybackState) final;
-    void trackIdentifierChanged(const String&) final;
+    void trackIdentifierChanged(StringImpl*) final;
 
     const Ref<GroupActivitiesSession> m_session;
     const RetainPtr<WKGroupActivitiesCoordinatorDelegate> m_delegate;

@@ -486,15 +486,15 @@ void RemoteLayerTreeHost::animationDidStart(std::optional<WebCore::PlatformLayer
     if (!layer)
         return;
 
-    String animationKey;
+    RefPtr<StringImpl> animationKey;
     for (NSString *key in [layer animationKeys]) {
         if ([layer animationForKey:key] == animation) {
-            animationKey = key;
+            animationKey = StringImpl::create(key);
             break;
         }
     }
 
-    if (!animationKey.isEmpty())
+    if (!isEmpty(animationKey))
         protect(drawingArea())->acceleratedAnimationDidStart(*layerID, animationKey, startTime);
 }
 
@@ -507,15 +507,15 @@ void RemoteLayerTreeHost::animationDidEnd(std::optional<WebCore::PlatformLayerId
     if (!layer)
         return;
 
-    String animationKey;
+    RefPtr<StringImpl> animationKey;
     for (NSString *key in [layer animationKeys]) {
         if ([layer animationForKey:key] == animation) {
-            animationKey = key;
+            animationKey = StringImpl::create(key);
             break;
         }
     }
 
-    if (!animationKey.isEmpty())
+    if (!isEmpty(animationKey))
         protect(drawingArea())->acceleratedAnimationDidEnd(*layerID, animationKey);
 }
 

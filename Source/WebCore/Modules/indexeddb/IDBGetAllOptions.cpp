@@ -45,18 +45,18 @@ ExceptionOr<ParsedGetAllQueryOrOptions> parseQueryOrOptions(JSC::JSGlobalObject&
     if (IDBKeyRange::isPotentiallyValidKeyRange(execState, queryOrOptions)) {
         auto keyRangeOrException = IDBKeyRange::fromValue(execState, queryOrOptions);
         if (keyRangeOrException.hasException())
-            return Exception(ExceptionCode::DataError, "The parameter is not a valid key range."_s);
+            return Exception(ExceptionCode::DataError, "The parameter is not a valid key range."_si);
 
         return ParsedGetAllQueryOrOptions { keyRangeOrException.releaseReturnValue(), count, IndexedDB::CursorDirection::Next };
     }
 
     if (!context || !context->settingsValues().indexedDBGetAllRecordsAndGetAllOptionsEnabled)
-        return Exception(ExceptionCode::DataError, "The parameter is not a valid key range."_s);
+        return Exception(ExceptionCode::DataError, "The parameter is not a valid key range."_si);
 
     auto throwScope = DECLARE_THROW_SCOPE(execState.vm());
     auto optionsOrException = convertDictionary<IDBGetAllOptions>(execState, queryOrOptions);
     if (throwScope.exception())
-        return Exception { ExceptionCode::DataError, "The parameter is not a valid options object."_s };
+        return Exception { ExceptionCode::DataError, "The parameter is not a valid options object."_si };
 
     return parseGetAllOptions(execState, optionsOrException.releaseReturnValue());
 }
@@ -66,7 +66,7 @@ ExceptionOr<ParsedGetAllQueryOrOptions> parseGetAllOptions(JSC::JSGlobalObject& 
 {
     auto keyRangeOrException = IDBKeyRange::fromValue(execState, options.query);
     if (keyRangeOrException.hasException())
-        return Exception(ExceptionCode::DataError, "The query specified in options is not a valid key range."_s);
+        return Exception(ExceptionCode::DataError, "The query specified in options is not a valid key range."_si);
 
     return ParsedGetAllQueryOrOptions { keyRangeOrException.releaseReturnValue(), options.count, options.direction };
 }

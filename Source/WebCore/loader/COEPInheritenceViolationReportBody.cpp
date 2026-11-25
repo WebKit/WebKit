@@ -33,19 +33,19 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(COEPInheritenceViolationReportBody);
 
-Ref<COEPInheritenceViolationReportBody> COEPInheritenceViolationReportBody::create(COEPDisposition disposition, const URL& blockedURL, const String& type)
+Ref<COEPInheritenceViolationReportBody> COEPInheritenceViolationReportBody::create(COEPDisposition disposition, const URL& blockedURL, StringImpl* type)
 {
     return adoptRef(*new COEPInheritenceViolationReportBody(disposition, blockedURL, type));
 }
 
-COEPInheritenceViolationReportBody::COEPInheritenceViolationReportBody(COEPDisposition disposition, const URL& blockedURL, const String& type)
+COEPInheritenceViolationReportBody::COEPInheritenceViolationReportBody(COEPDisposition disposition, const URL& blockedURL, StringImpl* type)
     : m_disposition(disposition)
     , m_blockedURL(blockedURL)
     , m_type(type)
 {
 }
 
-String COEPInheritenceViolationReportBody::disposition() const
+RefPtr<StringImpl> COEPInheritenceViolationReportBody::disposition() const
 {
     return m_disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s;
 }

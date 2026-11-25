@@ -32,28 +32,28 @@ namespace TestWebKitAPI {
 TEST(PlatformCAAnimation, makeKeyPath)
 {
     auto translate = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Translate);
-    EXPECT_STREQ(translate.ascii().data(), "transform");
+    EXPECT_STREQ(ascii(translate).data(), "transform");
 
     auto scale = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Scale);
-    EXPECT_STREQ(scale.ascii().data(), "transform");
+    EXPECT_STREQ(ascii(scale).data(), "transform");
 
     auto rotate = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Rotate);
-    EXPECT_STREQ(rotate.ascii().data(), "transform");
+    EXPECT_STREQ(ascii(rotate).data(), "transform");
 
     auto transform = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Transform);
-    EXPECT_STREQ(transform.ascii().data(), "transform");
+    EXPECT_STREQ(ascii(transform).data(), "transform");
 
     auto opacity = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Opacity);
-    EXPECT_STREQ(opacity.ascii().data(), "opacity");
+    EXPECT_STREQ(ascii(opacity).data(), "opacity");
 
     auto backgroundColor = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::BackgroundColor);
-    EXPECT_STREQ(backgroundColor.ascii().data(), "backgroundColor");
+    EXPECT_STREQ(ascii(backgroundColor).data(), "backgroundColor");
 
     auto filter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
-    EXPECT_STREQ(filter.ascii().data(), "filters.filter_2.inputAmount");
+    EXPECT_STREQ(ascii(filter).data(), "filters.filter_2.inputAmount");
 
     auto backdropFilter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::WebkitBackdropFilter);
-    EXPECT_STREQ(backdropFilter.ascii().data(), "backdropFilters");
+    EXPECT_STREQ(ascii(backdropFilter).data(), "backdropFilters");
 }
 
 static void validateGeneratedKeyPath(WebCore::AnimatedProperty animatedProperty, WebCore::FilterOperation::Type filterOperationType = WebCore::FilterOperation::Type::None, int index = 0)
@@ -71,18 +71,18 @@ TEST(PlatformCAAnimation, isValidKeyPath)
     validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Sepia, 22);
     validateGeneratedKeyPath(WebCore::AnimatedProperty::WebkitBackdropFilter);
 
-    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_"_s));
-    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_0"_s));
-    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_10"_s));
-    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_0.inputAmount."_s));
-    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_0.inputAmounts"_s));
-    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_-10.inputAmount"_s));
+    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_"_si));
+    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_0"_si));
+    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_10"_si));
+    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_0.inputAmount."_si));
+    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_0.inputAmounts"_si));
+    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_-10.inputAmount"_si));
 
     EXPECT_TRUE(WebCore::PlatformCAAnimation::isValidKeyPath(emptyString(), WebCore::PlatformCAAnimation::AnimationType::Group));
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath(WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Translate), WebCore::PlatformCAAnimation::AnimationType::Group));
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath(emptyString()));
 
-    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("dealloc"_s));
+    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("dealloc"_si));
 }
 
 }

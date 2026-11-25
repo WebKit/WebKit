@@ -46,7 +46,7 @@ public:
 
 private:
     ScrollClamping clamping() const final { return ScrollClamping::Unclamped; }
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;
 };

@@ -30,24 +30,24 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Comment);
 
-inline Comment::Comment(Document& document, String&& text)
+inline Comment::Comment(Document& document, RefPtr<StringImpl>&& text)
     : CharacterData(document, WTF::move(text), NodeType::Comment)
 {
 }
 
-Ref<Comment> Comment::create(Document& document, String&& text)
+Ref<Comment> Comment::create(Document& document, RefPtr<StringImpl>&& text)
 {
     return adoptRef(*new Comment(document, WTF::move(text)));
 }
 
-String Comment::nodeName() const
+RefPtr<StringImpl> Comment::nodeName() const
 {
-    return "#comment"_s;
+    return "#comment"_si;
 }
 
 Ref<Node> Comment::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*) const
 {
-    return create(document, String { data() });
+    return create(document, RefPtr<StringImpl> { data() });
 }
 
 SerializedNode Comment::serializeNode(CloningOperation) const

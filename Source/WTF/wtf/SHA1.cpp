@@ -214,7 +214,7 @@ void SHA1::addUTF8Bytes(StringView string)
         if (string.is8Bit())
             addBytes(asBytes(string.span8()));
         else
-            addBytes(asBytes(String::make8Bit(string.span16()).span8()));
+            addBytes(asBytes(span8(StringImpl::make8Bit(string.span16()))));
     } else
         addBytes(std::as_bytes(string.utf8().span()));
 }
@@ -238,7 +238,7 @@ void SHA1::addUTF8Bytes(CFStringRef string)
         }
     }
 
-    addUTF8Bytes(String(string));
+    addUTF8Bytes(StringImpl::create(string));
 }
 #endif // USE(CF)
 

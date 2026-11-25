@@ -87,12 +87,12 @@ NODELETE static WeakHashSet<Database>& allDatabases()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Database);
 
-Ref<Database> Database::create(WorkQueue& queue, const String& storageDirectory)
+Ref<Database> Database::create(WorkQueue& queue, StringImpl* storageDirectory)
 {
     return adoptRef(*new Database(queue, storageDirectory));
 }
 
-Database::Database(WorkQueue& queue, const String& storageDirectory)
+Database::Database(WorkQueue& queue, StringImpl* storageDirectory)
     : DatabaseUtilities(queue, FileSystem::pathByAppendingComponent(storageDirectory, "pcm.db"_s))
 {
     ASSERT(!RunLoop::isMain());
@@ -109,12 +109,12 @@ Database::~Database()
     allDatabases().remove(*this);
 }
 
-const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Database::expectedTableAndIndexQueries()
+const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, TableAndIndexPair>& Database::expectedTableAndIndexQueries()
 {
-    static NeverDestroyed expectedTableAndIndexQueries = MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair> {
-        { "PCMObservedDomains"_s, std::make_pair<String, std::optional<String>>(createPCMObservedDomain, std::nullopt) },
-        { "UnattributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createUnattributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexUnattributedPrivateClickMeasurement)) },
-        { "AttributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createAttributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexAttributedPrivateClickMeasurement)) },
+    static NeverDestroyed expectedTableAndIndexQueries = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, TableAndIndexPair> {
+        { "PCMObservedDomains"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createPCMObservedDomain, std::nullopt) },
+        { "UnattributedPrivateClickMeasurement"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createUnattributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexUnattributedPrivateClickMeasurement)) },
+        { "AttributedPrivateClickMeasurement"_s, std::make_pair<RefPtr<StringImpl>, std::optional<RefPtr<StringImpl>>>(createAttributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexAttributedPrivateClickMeasurement)) },
     };
 
     return expectedTableAndIndexQueries;
@@ -390,7 +390,7 @@ Vector<WebCore::PrivateClickMeasurement> Database::allAttributedPrivateClickMeas
     return attributions;
 }
 
-String Database::privateClickMeasurementToStringForTesting() const
+RefPtr<StringImpl> Database::privateClickMeasurementToStringForTesting() const
 {
     assertIsCurrent(m_queue);
     auto privateClickMeasurementDataExists = m_database->prepareStatement("SELECT (SELECT COUNT(*) FROM UnattributedPrivateClickMeasurement) as cnt1, (SELECT COUNT(*) FROM AttributedPrivateClickMeasurement) as cnt2"_s);
@@ -401,7 +401,7 @@ String Database::privateClickMeasurementToStringForTesting() const
     }
 
     if (!privateClickMeasurementDataExists->columnInt(0) && !privateClickMeasurementDataExists->columnInt(1))
-        return "\nNo stored Private Click Measurement data.\n"_s;
+        return "\nNo stored Private Click Measurement data.\n"_si;
 
     auto unattributedScopedStatement = this->scopedStatement(m_allUnattributedPrivateClickMeasurementAttributionsStatement, allUnattributedPrivateClickMeasurementAttributionsQuery, "privateClickMeasurementToStringForTesting"_s);
 
@@ -437,7 +437,7 @@ String Database::privateClickMeasurementToStringForTesting() const
     return builder.toString();
 }
 
-String Database::attributionToStringForTesting(const WebCore::PrivateClickMeasurement& pcm) const
+RefPtr<StringImpl> Database::attributionToStringForTesting(const WebCore::PrivateClickMeasurement& pcm) const
 {
     assertIsCurrent(m_queue);
     auto sourceSiteDomain = pcm.sourceSite().registrableDomain;
@@ -506,8 +506,8 @@ Vector<WebCore::RegistrableDomain> Database::fetchRegistrableDomains() const
 
     Vector<WebCore::RegistrableDomain> domains;
     while (statement->step() == SQLITE_ROW) {
-        String domainString = statement->columnText(0);
-        if (!domainString.isEmpty())
+        RefPtr<StringImpl> domainString = statement->columnText(0);
+        if (!isEmpty(domainString))
             domains.append(WebCore::RegistrableDomain::uncheckedCreateFromHost(domainString));
     }
     return domains;
@@ -518,15 +518,15 @@ void Database::clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDo
     assertIsCurrent(m_queue);
 
     // Default to clear all entries if no domain is specified.
-    String bindParameter;
+    RefPtr<StringImpl> bindParameter;
     if (domain) {
         auto domainIDToMatch = domainID(*domain);
         if (!domainIDToMatch)
             return;
 
-        bindParameter = String::number(*domainIDToMatch);
+        bindParameter = makeString(*domainIDToMatch);
     } else
-        bindParameter = "%"_s;
+        bindParameter = "%"_si;
 
     auto transactionScope = beginTransactionIfNecessary();
 
@@ -682,7 +682,7 @@ std::optional<Database::DomainID> Database::domainID(const WebCore::RegistrableD
     return scopedStatement->columnInt(0);
 }
 
-String Database::getDomainStringFromDomainID(DomainID domainID) const
+RefPtr<StringImpl> Database::getDomainStringFromDomainID(DomainID domainID) const
 {
     assertIsCurrent(m_queue);
     auto result = emptyString();
@@ -743,9 +743,9 @@ void Database::destroyStatements()
 void Database::addDestinationTokenColumnsIfNecessary()
 {
     constexpr auto attributedTableName = "AttributedPrivateClickMeasurement"_s;
-    String destinationKeyIDColumnName("destinationKeyID"_s);
+    RefPtr<StringImpl> destinationKeyIDColumnName("destinationKeyID"_si);
     auto columns = columnsForTable(attributedTableName);
-    if (!columns.size() || columns.last() != destinationKeyIDColumnName) {
+    if (!columns.size() || !equal(columns.last(), destinationKeyIDColumnName)) {
         addMissingColumnToTable(attributedTableName, "destinationToken TEXT"_s);
         addMissingColumnToTable(attributedTableName, "destinationSignature TEXT"_s);
         addMissingColumnToTable(attributedTableName, "destinationKeyID TEXT"_s);

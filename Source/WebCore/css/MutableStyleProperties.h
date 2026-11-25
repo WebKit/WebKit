@@ -65,21 +65,21 @@ public:
     bool addParsedProperty(const CSSProperty&);
 
     // These expand shorthand properties into multiple properties.
-    bool setProperty(CSSPropertyID, const String& value, CSSParserContext, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
-    bool setProperty(CSSPropertyID, const String& value, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
+    bool setProperty(CSSPropertyID, StringImpl* value, CSSParserContext, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
+    bool setProperty(CSSPropertyID, StringImpl* value, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
     void setProperty(CSSPropertyID, Ref<CSSValue>&&, IsImportant = IsImportant::No);
 
     // These do not. FIXME: This is too messy, we can do better.
     bool setProperty(CSSPropertyID, CSSValueID identifier, IsImportant = IsImportant::No);
     bool setProperty(const CSSProperty&, CSSProperty* slot = nullptr);
 
-    bool removeProperty(CSSPropertyID, String* returnText = nullptr);
+    bool removeProperty(CSSPropertyID, RefPtr<StringImpl>* returnText = nullptr);
     bool removeProperties(std::span<const CSSPropertyID>);
 
     bool mergeAndOverrideOnConflict(const StyleProperties&);
 
     void clear();
-    bool parseDeclaration(const String& styleDeclaration, CSSParserContext);
+    bool parseDeclaration(StringImpl* styleDeclaration, CSSParserContext);
 
     WEBCORE_EXPORT CSSStyleProperties& ensureCSSStyleProperties();
     CSSStyleProperties& ensureInlineCSSStyleProperties(StyledElement& parentElement);
@@ -88,19 +88,19 @@ public:
     NODELETE int findCustomPropertyIndex(StringView propertyName) const;
 
     // Methods for querying and altering CSS custom properties.
-    bool setCustomProperty(const String& propertyName, const String& value, CSSParserContext, IsImportant = IsImportant::No);
-    bool removeCustomProperty(const String& propertyName, String* returnText = nullptr);
+    bool setCustomProperty(StringImpl* propertyName, StringImpl* value, CSSParserContext, IsImportant = IsImportant::No);
+    bool removeCustomProperty(StringImpl* propertyName, RefPtr<StringImpl>* returnText = nullptr);
 
 private:
     explicit MutableStyleProperties(CSSParserMode);
     explicit MutableStyleProperties(const StyleProperties&);
     MutableStyleProperties(Vector<CSSProperty>&&);
 
-    bool removeLonghandProperty(CSSPropertyID, String* returnText);
-    bool removeShorthandProperty(CSSPropertyID, String* returnText);
-    bool removePropertyAtIndex(int index, String* returnText);
+    bool removeLonghandProperty(CSSPropertyID, RefPtr<StringImpl>* returnText);
+    bool removeShorthandProperty(CSSPropertyID, RefPtr<StringImpl>* returnText);
+    bool removePropertyAtIndex(int index, RefPtr<StringImpl>* returnText);
     NODELETE CSSProperty* findCSSPropertyWithID(CSSPropertyID);
-    NODELETE CSSProperty* findCustomCSSPropertyWithName(const String&);
+    NODELETE CSSProperty* findCustomCSSPropertyWithName(StringImpl*);
     bool canUpdateInPlace(const CSSProperty&, CSSProperty* toReplace) const;
 
     friend class StyleProperties;

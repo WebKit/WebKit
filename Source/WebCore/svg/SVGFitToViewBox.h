@@ -53,8 +53,8 @@ public:
     void setPreserveAspectRatio(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio->setBaseValInternal(preserveAspectRatio); }
     void resetPreserveAspectRatio() { m_preserveAspectRatio->setBaseValInternal({ }); }
 
-    String viewBoxString() const { return SVGPropertyTraits<FloatRect>::toString(viewBox()); }
-    String preserveAspectRatioString() const { return preserveAspectRatio().valueAsString(); }
+    RefPtr<StringImpl> viewBoxString() const { return SVGPropertyTraits<FloatRect>::toString(viewBox()); }
+    RefPtr<StringImpl> preserveAspectRatioString() const { return preserveAspectRatio().valueAsString(); }
 
     bool hasValidViewBox() const { return m_isViewBoxValid && viewBox().width() >= 0 && viewBox().height() >= 0; }
     bool hasEmptyViewBox() const { return hasValidViewBox() && viewBox().isEmpty(); }
@@ -65,7 +65,7 @@ protected:
     static bool isKnownAttribute(const QualifiedName& attributeName) { return PropertyRegistry::isKnownAttribute(attributeName); }
 
     void reset();
-    bool parseAttribute(const QualifiedName&, const AtomString&);
+    bool parseAttribute(const QualifiedName&, AtomStringImpl*);
 
     enum class ParsingContext : bool { Attribute, FragmentIdentifier };
     std::optional<FloatRect> parseViewBox(StringView, ParsingContext);

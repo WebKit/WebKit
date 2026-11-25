@@ -46,7 +46,7 @@ private:
     explicit ServiceWorkerDebuggableFrontendChannel(WebCore::ServiceWorkerIdentifier);
 
     ConnectionType connectionType() const final { return Inspector::FrontendChannel::ConnectionType::Remote; }
-    void sendMessageToFrontend(const String& message) final;
+    void sendMessageToFrontend(StringImpl* message) final;
 
     WebCore::ServiceWorkerIdentifier m_identifier;
 };

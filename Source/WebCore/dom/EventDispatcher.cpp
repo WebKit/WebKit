@@ -168,7 +168,7 @@ static Document::EventListenerCounts eventListenerCounts(const Document& documen
         return counts;
 
     auto legacyType = EventTarget::legacyTypeForEvent(event);
-    if (legacyType.isNull())
+    if (!legacyType)
         return counts;
 
     auto legacyCounts = document.eventListenerCountsOfType(legacyType);

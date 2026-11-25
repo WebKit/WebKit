@@ -111,7 +111,7 @@ void CyclicModuleRecord::initializeEnvironment(JSGlobalObject* globalObject, Ref
             return;
 
         case Resolution::Type::Error:
-            throwSyntaxError(globalObject, scope, "Indirectly exported binding name 'default' cannot be resolved by star export entries."_s);
+            throwSyntaxError(globalObject, scope, "Indirectly exported binding name 'default' cannot be resolved by star export entries."_si);
             return;
 
         default:
@@ -160,7 +160,7 @@ void CyclicModuleRecord::initializeEnvironment(JSGlobalObject* globalObject, Ref
                 RELEASE_ASSERT(vm.exceptionForInspection(), vm.traps().maybeNeedHandling(), vm.exceptionForInspection(), importedModule);
                 RELEASE_ASSERT(vm.traps().maybeNeedHandling(), vm.traps().maybeNeedHandling(), vm.exceptionForInspection(), importedModule);
                 if (!vm.exceptionForInspection() || !vm.traps().maybeNeedHandling()) {
-                    throwSyntaxError(globalObject, scope, makeString("Importing module '"_s, String(in.moduleRequest.impl()), "' is not found."_s));
+                    throwSyntaxError(globalObject, scope, makeString("Importing module '"_s, RefPtr<StringImpl>(in.moduleRequest.impl()), "' is not found."_s));
                     return;
                 }
             }
@@ -192,7 +192,7 @@ void CyclicModuleRecord::initializeEnvironment(JSGlobalObject* globalObject, Ref
                     return;
 
                 case Resolution::Type::Error:
-                    throwSyntaxError(globalObject, scope, "Importing binding name 'default' cannot be resolved by star export entries."_s);
+                    throwSyntaxError(globalObject, scope, "Importing binding name 'default' cannot be resolved by star export entries."_si);
                     return;
 
                 case Resolution::Type::Resolved:

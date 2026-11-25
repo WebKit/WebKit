@@ -95,7 +95,7 @@ public:
 
     const OptionSet<ShaderStage>& visibility() const LIFETIME_BOUND { return m_visibility; }
 
-    const String& resolvedTarget() const LIFETIME_BOUND { return m_resolvedTarget; }
+    const RefPtr<StringImpl>& resolvedTarget() const LIFETIME_BOUND { return m_resolvedTarget; }
 
     ValidationFunction validationFunction() const { return m_validationFunction; }
 
@@ -112,7 +112,7 @@ private:
     //   * Identifier that refers to a function.
     Expression::Ref m_target;
     Expression::List m_arguments;
-    String m_resolvedTarget;
+    RefPtr<StringImpl> m_resolvedTarget;
 
     bool m_isConstructor { false };
     OptionSet<ShaderStage> m_visibility { ShaderStage::Compute, ShaderStage::Vertex, ShaderStage::Fragment };

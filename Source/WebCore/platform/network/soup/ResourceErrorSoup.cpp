@@ -39,7 +39,7 @@ namespace WebCore {
 // Use the same value as in NSURLError.h
 static constexpr int errorCodeTimeout = -1001;
 
-ResourceError::ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type, IsSanitized isSanitized)
+ResourceError::ResourceError(StringImpl* domain, int errorCode, const URL& failingURL, StringImpl* localizedDescription, Type type, IsSanitized isSanitized)
     : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type, isSanitized)
 {
 }
@@ -78,9 +78,9 @@ auto ResourceError::ipcData() const -> std::optional<IPCData>
     };
 }
 
-ResourceError ResourceError::transportError(const URL& failingURL, int statusCode, const String& reasonPhrase)
+ResourceError ResourceError::transportError(const URL& failingURL, int statusCode, StringImpl* reasonPhrase)
 {
-    return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_SESSION_ERROR)), statusCode, failingURL, reasonPhrase);
+    return ResourceError(StringImpl::fromLatin1(g_quark_to_string(SOUP_SESSION_ERROR)), statusCode, failingURL, reasonPhrase);
 }
 
 ResourceError ResourceError::httpError(SoupMessage* message, GError* error)
@@ -92,18 +92,18 @@ ResourceError ResourceError::httpError(SoupMessage* message, GError* error)
 ResourceError ResourceError::authenticationError(SoupMessage* message)
 {
     ASSERT(message);
-    return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_SESSION_ERROR)), soup_message_get_status(message),
-        soup_message_get_uri(message), String::fromUTF8(soup_message_get_reason_phrase(message)));
+    return ResourceError(StringImpl::fromLatin1(g_quark_to_string(SOUP_SESSION_ERROR)), soup_message_get_status(message),
+        soup_message_get_uri(message), StringImpl::fromUTF8(soup_message_get_reason_phrase(message)));
 }
 
 ResourceError ResourceError::genericGError(const URL& failingURL, GError* error)
 {
-    return ResourceError(String::fromLatin1(g_quark_to_string(error->domain)), error->code, failingURL, String::fromUTF8(error->message));
+    return ResourceError(StringImpl::fromLatin1(g_quark_to_string(error->domain)), error->code, failingURL, StringImpl::fromUTF8(error->message));
 }
 
 ResourceError ResourceError::tlsError(const URL& failingURL, unsigned tlsErrors, GTlsCertificate* certificate)
 {
-    ResourceError resourceError(String::fromLatin1(g_quark_to_string(G_TLS_ERROR)), G_TLS_ERROR_BAD_CERTIFICATE, failingURL, unacceptableTLSCertificate());
+    ResourceError resourceError(StringImpl::fromLatin1(g_quark_to_string(G_TLS_ERROR)), G_TLS_ERROR_BAD_CERTIFICATE, failingURL, unacceptableTLSCertificate());
     resourceError.setTLSErrors(tlsErrors);
     resourceError.setCertificate(certificate);
     return resourceError;
@@ -111,7 +111,7 @@ ResourceError ResourceError::tlsError(const URL& failingURL, unsigned tlsErrors,
 
 ResourceError ResourceError::timeoutError(const URL& failingURL)
 {
-    return ResourceError(errorDomainWebKitNetwork, errorCodeTimeout, failingURL, "Request timed out"_s, ResourceError::Type::Timeout);
+    return ResourceError(StringImpl::create(errorDomainWebKitNetwork).ptr(), errorCodeTimeout, failingURL, "Request timed out"_si, ResourceError::Type::Timeout);
 }
 
 ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
@@ -119,13 +119,13 @@ ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
     if (!m_failingURL.protocolIs("https"_s) || isCancellation())
         return ErrorRecoveryMethod::NoRecovery;
 
-    static const NeverDestroyed<String> ioErrorDomain = String::fromLatin1(g_quark_to_string(G_IO_ERROR));
+    static const NeverDestroyed<RefPtr<StringImpl>> ioErrorDomain = StringImpl::fromLatin1(g_quark_to_string(G_IO_ERROR));
 
     // Only failures that suggest the host does not serve HTTPS at all are
     // recoverable. G_TLS_ERROR is deliberately absent: a TLS failure means
     // there is an HTTPS server, so retrying over cleartext is never right.
     bool isRecoverableError = false;
-    if (m_domain == ioErrorDomain.get()) {
+    if (equal(m_domain, ioErrorDomain.get())) {
         switch (m_errorCode) {
         case G_IO_ERROR_CONNECTION_REFUSED:
         case G_IO_ERROR_CONNECTION_CLOSED:

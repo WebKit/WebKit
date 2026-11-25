@@ -84,7 +84,7 @@ bool WebExtensionBookmark::isValid() const
     return m_extensionContext && (m_isRoot || m_delegate);
 }
 
-String WebExtensionBookmark::identifier() const
+RefPtr<StringImpl> WebExtensionBookmark::identifier() const
 {
     if (m_isRoot)
         return rootIdentifier();
@@ -92,17 +92,21 @@ String WebExtensionBookmark::identifier() const
     if (!isValid() || !m_respondsToIdentifier)
         return emptyString();
 
-    String identifier = [(id<_WKWebExtensionBookmark>)m_delegate identifierForWebExtensionContext:m_extensionContext->wrapper()];
-    return identifier.isNull() ? emptyString() : identifier;
+    RefPtr<StringImpl> identifier = StringImpl::create([(id<_WKWebExtensionBookmark>)m_delegate identifierForWebExtensionContext:m_extensionContext->wrapper()]);
+    if (!identifier)
+        return emptyString();
+    return identifier;
 }
 
-String WebExtensionBookmark::title() const
+RefPtr<StringImpl> WebExtensionBookmark::title() const
 {
     if (m_isRoot || !isValid() || !m_respondsToTitle)
         return emptyString();
 
-    String title = [(id<_WKWebExtensionBookmark>)m_delegate titleForWebExtensionContext:m_extensionContext->wrapper()];
-    return title.isNull() ? emptyString() : title;
+    RefPtr<StringImpl> title = StringImpl::create([(id<_WKWebExtensionBookmark>)m_delegate titleForWebExtensionContext:m_extensionContext->wrapper()]);
+    if (!title)
+        return emptyString();
+    return title;
 }
 
 std::optional<URL> WebExtensionBookmark::url() const
@@ -235,7 +239,7 @@ const Vector<Ref<WebExtensionBookmark>>& WebExtensionBookmark::children() const
 
         for (NSObject *node in nodes) {
             Ref child = WebExtensionBookmark::create(*extensionContext, node, const_cast<WebExtensionBookmark*>(this), children.size());
-            if (child->identifier().isEmpty())
+            if (isEmpty(child->identifier()))
                 continue;
 
             children.append(WTF::move(child));
@@ -246,9 +250,9 @@ const Vector<Ref<WebExtensionBookmark>>& WebExtensionBookmark::children() const
     return *m_children;
 }
 
-RefPtr<WebExtensionBookmark> WebExtensionBookmark::find(const String& identifier)
+RefPtr<WebExtensionBookmark> WebExtensionBookmark::find(StringImpl* identifier)
 {
-    if (this->identifier() == identifier)
+    if (equal(this->identifier(), identifier))
         return this;
 
     for (auto& child : children()) {
@@ -288,44 +292,44 @@ bool WebExtensionBookmark::isDescendantOf(const WebExtensionBookmark& ancestor) 
 {
     auto ancestorIdentifier = ancestor.identifier();
     for (RefPtr bookmark = parent(); bookmark; bookmark = bookmark->parent()) {
-        if (bookmark->identifier() == ancestorIdentifier)
+        if (equal(bookmark->identifier(), ancestorIdentifier))
             return true;
     }
 
     return false;
 }
 
-std::optional<WebExtensionError> WebExtensionBookmark::modificationError(const String& apiName) const
+std::optional<WebExtensionError> WebExtensionBookmark::modificationError(StringImpl* apiName) const
 {
     if (!isValid())
-        return toWebExtensionError(apiName, nullString(), @"the extension is not loaded").error();
+        return toWebExtensionError(apiName, nullString(), StringImpl::create(@"the extension is not loaded").get()).error();
 
     if (m_isRoot)
-        return toWebExtensionError(apiName, nullString(), @"the bookmark root cannot be modified").error();
+        return toWebExtensionError(apiName, nullString(), StringImpl::create(@"the bookmark root cannot be modified").get()).error();
 
     if (isManaged())
-        return toWebExtensionError(apiName, nullString(), @"managed bookmarks cannot be modified").error();
+        return toWebExtensionError(apiName, nullString(), StringImpl::create(@"managed bookmarks cannot be modified").get()).error();
 
     return std::nullopt;
 }
 
-std::optional<WebExtensionError> WebExtensionBookmark::readOnlyError(const String& apiName) const
+std::optional<WebExtensionError> WebExtensionBookmark::readOnlyError(StringImpl* apiName) const
 {
     if (!isReadOnly())
         return std::nullopt;
 
-    return toWebExtensionError(apiName, nullString(), @"read-only bookmarks cannot be modified").error();
+    return toWebExtensionError(apiName, nullString(), StringImpl::create(@"read-only bookmarks cannot be modified").get()).error();
 }
 
-std::optional<WebExtensionError> WebExtensionBookmark::contentsReadOnlyError(const String& apiName) const
+std::optional<WebExtensionError> WebExtensionBookmark::contentsReadOnlyError(StringImpl* apiName) const
 {
     if (!isContentsReadOnly())
         return std::nullopt;
 
-    return toWebExtensionError(apiName, nullString(), @"read-only folders cannot be added to").error();
+    return toWebExtensionError(apiName, nullString(), StringImpl::create(@"read-only folders cannot be added to").get()).error();
 }
 
-void WebExtensionBookmark::createChild(const String& apiName, std::optional<URL> url, const String& title, std::optional<size_t> index, CompletionHandler<void(std::expected<Ref<WebExtensionBookmark>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionBookmark::createChild(StringImpl* apiName, std::optional<URL> url, StringImpl* title, std::optional<size_t> index, CompletionHandler<void(std::expected<Ref<WebExtensionBookmark>, WebExtensionError>&&)>&& completionHandler)
 {
     if (auto error = modificationError(apiName)) {
         completionHandler(std::unexpected(WTF::move(*error)));
@@ -338,36 +342,36 @@ void WebExtensionBookmark::createChild(const String& apiName, std::optional<URL>
     }
 
     if (!isFolder()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the parent is not a folder"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"the parent is not a folder").get()));
         return;
     }
 
     size_t resolvedIndex = index.value_or(children().size());
     if (resolvedIndex > children().size()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"index out of bounds"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"index out of bounds").get()));
         return;
     }
 
     if (!m_respondsToCreateChild) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"it is not implemented").get()));
         return;
     }
 
     auto *configuration = [[_WKWebExtensionBookmarkConfiguration alloc] _init];
     configuration.type = url ? _WKWebExtensionBookmarkTypeBookmark : _WKWebExtensionBookmarkTypeFolder;
-    configuration.title = title.createNSString().get();
+    configuration.title = createNSString(title).get();
     configuration.url = url ? url->createNSURL().get() : nil;
     configuration.index = resolvedIndex;
 
-    [(id<_WKWebExtensionBookmark>)m_delegate createChildUsingConfiguration:configuration forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, apiName, resolvedIndex, completionHandler = WTF::move(completionHandler)](id<_WKWebExtensionBookmark> newBookmark, NSError *error) mutable {
+    [(id<_WKWebExtensionBookmark>)m_delegate createChildUsingConfiguration:configuration forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, apiName = RefPtr { apiName }, resolvedIndex, completionHandler = WTF::move(completionHandler)](id<_WKWebExtensionBookmark> newBookmark, NSError *error) mutable {
         if (error) {
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
         RefPtr extensionContext = protectedThis->extensionContext();
         if (!newBookmark || !extensionContext) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"an unknown error occurred"));
+            completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"an unknown error occurred").get()));
             return;
         }
 
@@ -375,7 +379,7 @@ void WebExtensionBookmark::createChild(const String& apiName, std::optional<URL>
     }).get()];
 }
 
-void WebExtensionBookmark::setTitle(const String& apiName, const String& title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionBookmark::setTitle(StringImpl* apiName, StringImpl* title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (auto error = modificationError(apiName)) {
         completionHandler(std::unexpected(WTF::move(*error)));
@@ -388,13 +392,13 @@ void WebExtensionBookmark::setTitle(const String& apiName, const String& title, 
     }
 
     if (!m_respondsToSetTitle) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'title'"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"it is not implemented for 'title'").get()));
         return;
     }
 
-    [(id<_WKWebExtensionBookmark>)m_delegate setTitle:title.createNSString().get() forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, apiName, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+    [(id<_WKWebExtensionBookmark>)m_delegate setTitle:createNSString(title).get() forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, apiName = RefPtr { apiName }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
@@ -402,7 +406,7 @@ void WebExtensionBookmark::setTitle(const String& apiName, const String& title, 
     }).get()];
 }
 
-void WebExtensionBookmark::setURL(const String& apiName, const URL& url, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionBookmark::setURL(StringImpl* apiName, const URL& url, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (auto error = modificationError(apiName)) {
         completionHandler(std::unexpected(WTF::move(*error)));
@@ -415,18 +419,18 @@ void WebExtensionBookmark::setURL(const String& apiName, const URL& url, Complet
     }
 
     if (isFolder()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the URL of a folder cannot be set"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"the URL of a folder cannot be set").get()));
         return;
     }
 
     if (!m_respondsToSetURL) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'url'"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"it is not implemented for 'url'").get()));
         return;
     }
 
-    [(id<_WKWebExtensionBookmark>)m_delegate setURL:url.createNSURL().get() forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, apiName, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+    [(id<_WKWebExtensionBookmark>)m_delegate setURL:url.createNSURL().get() forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, apiName = RefPtr { apiName }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
@@ -434,7 +438,7 @@ void WebExtensionBookmark::setURL(const String& apiName, const URL& url, Complet
     }).get()];
 }
 
-void WebExtensionBookmark::moveTo(const String& apiName, WebExtensionBookmark& newParent, std::optional<size_t> index, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionBookmark::moveTo(StringImpl* apiName, WebExtensionBookmark& newParent, std::optional<size_t> index, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (auto error = modificationError(apiName)) {
         completionHandler(std::unexpected(WTF::move(*error)));
@@ -457,29 +461,29 @@ void WebExtensionBookmark::moveTo(const String& apiName, WebExtensionBookmark& n
     }
 
     if (!newParent.isFolder()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the new parent is not a folder"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"the new parent is not a folder").get()));
         return;
     }
 
-    if (newParent.identifier() == identifier() || newParent.isDescendantOf(*this)) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"a folder cannot be moved into itself or its descendants"));
+    if (equal(newParent.identifier(), identifier()) || newParent.isDescendantOf(*this)) {
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"a folder cannot be moved into itself or its descendants").get()));
         return;
     }
 
     size_t resolvedIndex = index.value_or(newParent.children().size());
     if (resolvedIndex > newParent.children().size()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"index out of bounds"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"index out of bounds").get()));
         return;
     }
 
     if (!m_respondsToMoveToParent) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(@"it is not implemented").get()));
         return;
     }
 
-    [(id<_WKWebExtensionBookmark>)m_delegate moveToParent:(id<_WKWebExtensionBookmark>)newParent.delegate() atIndex:resolvedIndex forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, protectedNewParent = Ref { newParent }, apiName, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+    [(id<_WKWebExtensionBookmark>)m_delegate moveToParent:(id<_WKWebExtensionBookmark>)newParent.delegate() atIndex:resolvedIndex forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, protectedNewParent = Ref { newParent }, apiName = RefPtr { apiName }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
@@ -487,7 +491,7 @@ void WebExtensionBookmark::moveTo(const String& apiName, WebExtensionBookmark& n
     }).get()];
 }
 
-std::optional<WebExtensionError> WebExtensionBookmark::removalError(const String& apiName, Recursively recursively) const
+std::optional<WebExtensionError> WebExtensionBookmark::removalError(StringImpl* apiName, Recursively recursively) const
 {
     if (auto error = modificationError(apiName))
         return error;
@@ -496,24 +500,24 @@ std::optional<WebExtensionError> WebExtensionBookmark::removalError(const String
         return error;
 
     if (recursively == Recursively::No && isFolder() && !children().isEmpty())
-        return toWebExtensionError(apiName, nullString(), @"the folder is not empty, use removeTree() to remove it").error();
+        return toWebExtensionError(apiName, nullString(), StringImpl::create(@"the folder is not empty, use removeTree() to remove it").get()).error();
 
     if (!m_respondsToRemove)
-        return toWebExtensionError(apiName, nullString(), @"it is not implemented").error();
+        return toWebExtensionError(apiName, nullString(), StringImpl::create(@"it is not implemented").get()).error();
 
     return std::nullopt;
 }
 
-void WebExtensionBookmark::remove(const String& apiName, Recursively recursively, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionBookmark::remove(StringImpl* apiName, Recursively recursively, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (auto error = removalError(apiName, recursively)) {
         completionHandler(std::unexpected(WTF::move(*error)));
         return;
     }
 
-    [(id<_WKWebExtensionBookmark>)m_delegate removeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, apiName, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+    [(id<_WKWebExtensionBookmark>)m_delegate removeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, apiName = RefPtr { apiName }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 

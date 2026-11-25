@@ -48,8 +48,8 @@ public:
     enum class StateChanged : bool { No, Yes };
     StateChanged updateState(const VideoTrackConfigurationInit&);
 
-    String codec() const { return m_state.codec; }
-    void setCodec(String);
+    RefPtr<StringImpl> codec() const { return m_state.codec; }
+    void setCodec(RefPtr<StringImpl>);
 
     uint32_t width() const { return m_state.width; }
     void setWidth(uint32_t);

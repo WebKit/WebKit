@@ -88,7 +88,7 @@ public:
     void setInterrupted(bool);
 
     CaptureDevice::DeviceType deviceType() const { return m_deviceType; }
-    const String& devicePersistentId() const { return m_device ? m_device->persistentId() : emptyString(); }
+    const RefPtr<StringImpl>& devicePersistentId() const { return m_device ? m_device->persistentId() : emptyString(); }
 
     void stopDevice(bool disconnectSignals);
 

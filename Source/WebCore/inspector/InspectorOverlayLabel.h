@@ -86,18 +86,18 @@ public:
             Color color;
         };
 
-        String text;
+        RefPtr<StringImpl> text;
         Color textColor;
         Decoration decoration { Decoration::Type::None, Color::transparentBlack };
     };
 
     WEBCORE_EXPORT InspectorOverlayLabel(Vector<Content>&&, FloatPoint, Color backgroundColor, Arrow);
-    InspectorOverlayLabel(const String&, FloatPoint, Color backgroundColor, Arrow);
+    InspectorOverlayLabel(StringImpl*, FloatPoint, Color backgroundColor, Arrow);
 
     Path draw(GraphicsContext&, float maximumLineWidth = 0);
 
     static FloatSize expectedSize(const Vector<Content>&, Arrow::Direction);
-    static FloatSize expectedSize(const String&, Arrow::Direction);
+    static FloatSize expectedSize(StringImpl*, Arrow::Direction);
 
 private:
     friend struct IPC::ArgumentCoder<InspectorOverlayLabel>;

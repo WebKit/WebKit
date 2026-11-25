@@ -66,7 +66,7 @@ private:
     void getRetries();
     void continueGetKeyAgreementAfterGetRetries(Vector<uint8_t>&&);
     void continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&, uint64_t retries);
-    void continueGetPinTokenAfterRequestPin(const String& pin, const WebCore::CryptoKeyEC&);
+    void continueGetPinTokenAfterRequestPin(StringImpl* pin, const WebCore::CryptoKeyEC&);
     void continueRequestAfterGetPinToken(Vector<uint8_t>&&, const fido::pin::TokenRequest&);
     bool tryRestartPin(const fido::CtapDeviceResponseCode&);
 
@@ -77,13 +77,13 @@ private:
 
     Vector<WebCore::AuthenticatorTransport> transports() const;
 
-    String aaguidForDebugging() const;
+    RefPtr<StringImpl> aaguidForDebugging() const;
 
     fido::PINUVAuthProtocol selectPinProtocol() const;
     NODELETE bool isUVSetup() const;
 
-    void continueSetupPinAfterCommand(Vector<uint8_t>&&, const String& pin, Ref<WebCore::CryptoKeyEC> peerKey);
-    void continueSetupPinAfterGetKeyAgreement(Vector<uint8_t>&&, const String& pin);
+    void continueSetupPinAfterCommand(Vector<uint8_t>&&, StringImpl* pin, Ref<WebCore::CryptoKeyEC> peerKey);
+    void continueSetupPinAfterGetKeyAgreement(Vector<uint8_t>&&, StringImpl* pin);
     void performAuthenticatorSelectionForSetupPin();
     void setupPin();
 

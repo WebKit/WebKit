@@ -106,7 +106,7 @@ void OpacityCaretAnimator::start()
     didStart(m_lastTimeCaretOpacityWasToggled, keyframeTimeDelta());
 }
 
-String OpacityCaretAnimator::debugDescription() const
+RefPtr<StringImpl> OpacityCaretAnimator::debugDescription() const
 {
     TextStream textStream;
     textStream << "OpacityCaretAnimator " << this << " active " << isActive() << " opacity = " << m_presentationProperties.opacity;

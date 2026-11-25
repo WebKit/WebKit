@@ -89,7 +89,7 @@ public:
     void setActiveNowPlayingSession(bool) final;
 
 #if !RELEASE_LOG_DISABLED
-    String description() const override;
+    RefPtr<StringImpl> description() const override;
 #endif
 
 protected:
@@ -118,10 +118,10 @@ private:
 
 inline PlatformMediaSession::State PlatformMediaSession::state() const { return m_state; }
 
-String convertEnumerationToString(PlatformMediaSession::State);
-String convertEnumerationToString(PlatformMediaSession::InterruptionType);
-String convertEnumerationToString(PlatformMediaSession::MediaType);
-WEBCORE_EXPORT String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType);
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaSession::State);
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaSession::InterruptionType);
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaSession::MediaType);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType);
 
 } // namespace WebCore
 
@@ -132,7 +132,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::PlatformMediaSession::State> {
-    static String toString(const WebCore::PlatformMediaSession::State state)
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaSession::State state)
     {
         return convertEnumerationToString(state);
     }
@@ -140,7 +140,7 @@ struct LogArgument<WebCore::PlatformMediaSession::State> {
 
 template <>
 struct LogArgument<WebCore::PlatformMediaSession::InterruptionType> {
-    static String toString(const WebCore::PlatformMediaSession::InterruptionType state)
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaSession::InterruptionType state)
     {
         return convertEnumerationToString(state);
     }
@@ -148,7 +148,7 @@ struct LogArgument<WebCore::PlatformMediaSession::InterruptionType> {
 
 template <>
 struct LogArgument<WebCore::PlatformMediaSession::RemoteControlCommandType> {
-    static String toString(const WebCore::PlatformMediaSession::RemoteControlCommandType command)
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaSession::RemoteControlCommandType command)
     {
         return convertEnumerationToString(command);
     }
@@ -156,7 +156,7 @@ struct LogArgument<WebCore::PlatformMediaSession::RemoteControlCommandType> {
 
 template <>
 struct LogArgument<WebCore::PlatformMediaSession::MediaType> {
-    static String toString(const WebCore::PlatformMediaSession::MediaType mediaType)
+    static RefPtr<StringImpl> toString(const WebCore::PlatformMediaSession::MediaType mediaType)
     {
         return convertEnumerationToString(mediaType);
     }

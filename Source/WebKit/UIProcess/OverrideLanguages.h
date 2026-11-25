@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void setOverrideLanguages(Vector<String>&&);
-NODELETE const Vector<String>& overrideLanguages();
+void setOverrideLanguages(Vector<RefPtr<StringImpl>>&&);
+NODELETE const Vector<RefPtr<StringImpl>>& overrideLanguages();
 
 } // namespace WebKit

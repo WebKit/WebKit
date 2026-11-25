@@ -45,9 +45,9 @@ public:
     using KeysPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
 
     void match(DOMCache::RequestInfo&&, MultiCacheQueryOptions&&, Ref<DeferredPromise>&&);
-    void has(const String&, DOMPromiseDeferred<IDLBoolean>&&);
-    void open(const String&, DOMPromiseDeferred<IDLInterface<DOMCache>>&&);
-    void remove(const String&, DOMPromiseDeferred<IDLBoolean>&&);
+    void has(StringImpl*, DOMPromiseDeferred<IDLBoolean>&&);
+    void open(StringImpl*, DOMPromiseDeferred<IDLInterface<DOMCache>>&&);
+    void remove(StringImpl*, DOMPromiseDeferred<IDLBoolean>&&);
     void keys(KeysPromise&&);
 
 private:
@@ -56,8 +56,8 @@ private:
     // ActiveDOMObject
     NODELETE void stop() final;
 
-    void doOpen(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&&);
-    void doRemove(const String&, DOMPromiseDeferred<IDLBoolean>&&);
+    void doOpen(StringImpl* name, DOMPromiseDeferred<IDLInterface<DOMCache>>&&);
+    void doRemove(StringImpl*, DOMPromiseDeferred<IDLBoolean>&&);
     void doSequentialMatch(DOMCache::RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
     void retrieveCaches(CompletionHandler<void(std::optional<Exception>&&)>&&);
     Ref<DOMCache> findCacheOrCreate(DOMCacheEngine::CacheInfo&&, ScriptExecutionContext&);

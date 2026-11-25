@@ -38,12 +38,12 @@ namespace WebKit {
 static constexpr auto webAuthnWellKnownPath = "/.well-known/webauthn"_s;
 static constexpr auto webAuthnOriginsMember = "origins"_s;
 
-void RelatedOriginsValidation::validate(WebPageProxy& page, const WebCore::SecurityOriginData& callerOrigin, const String& relyingPartyIdentifier, CompletionHandler<void(Result&&)>&& completionHandler)
+void RelatedOriginsValidation::validate(WebPageProxy& page, const WebCore::SecurityOriginData& callerOrigin, StringImpl* relyingPartyIdentifier, CompletionHandler<void(Result&&)>&& completionHandler)
 {
     validate(page, Vector<WebCore::SecurityOriginData> { callerOrigin }, relyingPartyIdentifier, WTF::move(completionHandler));
 }
 
-void RelatedOriginsValidation::validate(WebPageProxy& page, Vector<WebCore::SecurityOriginData>&& originsToCheck, const String& relyingPartyIdentifier, CompletionHandler<void(Result&&)>&& completionHandler)
+void RelatedOriginsValidation::validate(WebPageProxy& page, Vector<WebCore::SecurityOriginData>&& originsToCheck, StringImpl* relyingPartyIdentifier, CompletionHandler<void(Result&&)>&& completionHandler)
 {
     auto url = WebCore::wellKnownURL(relyingPartyIdentifier, webAuthnWellKnownPath);
     if (!url.isValid()) {

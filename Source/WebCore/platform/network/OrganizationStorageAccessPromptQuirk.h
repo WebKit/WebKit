@@ -33,13 +33,13 @@
 namespace WebCore {
 
 struct OrganizationStorageAccessPromptQuirk {
-    String organizationName;
+    RefPtr<StringImpl> organizationName;
     HashMap<RegistrableDomain, Vector<RegistrableDomain>> quirkDomains;
     Vector<URL> triggerPages;
 
     bool isHashTableDeletedValue() const { return organizationName.isHashTableDeletedValue(); }
 
-    OrganizationStorageAccessPromptQuirk(String&& organizationName, HashMap<RegistrableDomain, Vector<RegistrableDomain>>&& quirkDomains, Vector<URL>&& triggerPages)
+    OrganizationStorageAccessPromptQuirk(RefPtr<StringImpl>&& organizationName, HashMap<RegistrableDomain, Vector<RegistrableDomain>>&& quirkDomains, Vector<URL>&& triggerPages)
         : organizationName { WTF::move(organizationName) }
         , quirkDomains { WTF::move(quirkDomains) }
         , triggerPages { WTF::move(triggerPages) }
@@ -71,7 +71,7 @@ struct OrganizationStorageAccessPromptQuirk {
 
 inline bool operator==(const OrganizationStorageAccessPromptQuirk& a, const OrganizationStorageAccessPromptQuirk& b)
 {
-    return a.organizationName == b.organizationName;
+    return equal(a.organizationName, b.organizationName);
 }
 
 inline void add(Hasher& hasher, const OrganizationStorageAccessPromptQuirk& quirk)
@@ -82,7 +82,7 @@ inline void add(Hasher& hasher, const OrganizationStorageAccessPromptQuirk& quir
 struct OrganizationStorageAccessPromptQuirkHashTraits : SimpleClassHashTraits<OrganizationStorageAccessPromptQuirk> {
     static const bool hasIsEmptyValueFunction = true;
     static const bool emptyValueIsZero = false;
-    static bool isEmptyValue(const OrganizationStorageAccessPromptQuirk& quirk) { return quirk.organizationName.isNull(); }
+    static bool isEmptyValue(const OrganizationStorageAccessPromptQuirk& quirk) { return !quirk.organizationName; }
 };
 
 } // namespace WebCore

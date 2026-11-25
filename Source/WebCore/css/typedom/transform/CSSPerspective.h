@@ -33,7 +33,7 @@ namespace WebCore {
 
 template<typename> class ExceptionOr;
 class CSSFunctionValue;
-using CSSPerspectiveValue = Variant<Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
+using CSSPerspectiveValue = Variant<Ref<CSSNumericValue>, RefPtr<StringImpl>, Ref<CSSOMKeywordValue>>;
 class Document;
 
 class CSSPerspective : public CSSTransformComponent {

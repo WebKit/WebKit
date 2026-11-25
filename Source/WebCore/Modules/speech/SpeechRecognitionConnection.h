@@ -40,7 +40,7 @@ public:
     virtual ~SpeechRecognitionConnection() { }
     virtual void registerClient(SpeechRecognitionConnectionClient&) = 0;
     virtual void unregisterClient(SpeechRecognitionConnectionClient&) = 0;
-    virtual void start(SpeechRecognitionConnectionClientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, ClientOrigin&&, FrameIdentifier) = 0;
+    virtual void start(SpeechRecognitionConnectionClientIdentifier, StringImpl* lang, bool continuous, bool interimResults, uint64_t maxAlternatives, ClientOrigin&&, FrameIdentifier) = 0;
     virtual void stop(SpeechRecognitionConnectionClientIdentifier) = 0;
     virtual void abort(SpeechRecognitionConnectionClientIdentifier) = 0;
     virtual void didReceiveUpdate(SpeechRecognitionUpdate&&) = 0;

@@ -90,7 +90,7 @@ extension WebCore.PhoneNumberPossessionResponse {
         // FIXME: rdar://192714761 Fill in carrierPubKey and portingZKP.
         self.init(
             encryptedResult: JSC.ArrayBuffer.createFromSpan(encryptedResult.span),
-            carrierDomain: WTF.String(carrierDomain as CFString),
+            carrierDomain: .init(WTF.StringImpl.create(from: carrierDomain)),
             carrierConfigurationID: carrierConfigurationID,
             encryptedDecryptionKey: encryptedDecryptionKey.map { .init(JSC.ArrayBuffer.createFromSpan($0.span).get()) } ?? .init(),
             carrierPubKey: .init(),

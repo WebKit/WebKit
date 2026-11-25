@@ -42,8 +42,8 @@ static inline void appendNumber(StringBuilder& builder, int value)
         builder.append('-');
         value = -value;
     }
-    String valueString = String::number(value);
-    int fillingZerosCount = width - valueString.length();
+    RefPtr<StringImpl> valueString = makeString(value);
+    int fillingZerosCount = width - length(valueString);
     for (int i = 0; i < fillingZerosCount; ++i)
         builder.append('0');
     builder.append(valueString);
@@ -57,7 +57,7 @@ void appendNumber<2>(StringBuilder& builder, int value)
     builder.append(static_cast<char>('0' + value % 10));
 }
 
-String formatDateTime(PlainGregorianDateTime t, DateTimeFormat format, bool asUTCVariant, DateCache& dateCache)
+RefPtr<StringImpl> formatDateTime(PlainGregorianDateTime t, DateTimeFormat format, bool asUTCVariant, DateCache& dateCache)
 {
     bool appendDate = static_cast<int>(format) & static_cast<int>(DateTimeFormat::Date);
     bool appendTime = static_cast<int>(format) & static_cast<int>(DateTimeFormat::Time);
@@ -95,8 +95,8 @@ String formatDateTime(PlainGregorianDateTime t, DateTimeFormat format, bool asUT
             builder.append(t.utcOffsetInMinute() < 0 ? '-' : '+');
             appendNumber<2>(builder, offset / 60);
             appendNumber<2>(builder, offset % 60);
-            String timeZoneName = dateCache.timeZoneDisplayName(t.isDST());
-            if (!timeZoneName.isEmpty())
+            RefPtr<StringImpl> timeZoneName = dateCache.timeZoneDisplayName(t.isDST());
+            if (!isEmpty(timeZoneName))
                 builder.append(" ("_s, timeZoneName, ')');
         }
     }

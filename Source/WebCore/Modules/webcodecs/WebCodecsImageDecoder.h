@@ -64,7 +64,7 @@ public:
     enum class ColorSpaceConversion : bool { None, Default };
 
     struct Init {
-        String type;
+        RefPtr<StringImpl> type;
         ImageBufferSource data;
         ColorSpaceConversion colorSpaceConversion { ColorSpaceConversion::Default };
         std::optional<size_t> desiredWidth;
@@ -80,7 +80,7 @@ public:
 
     static ExceptionOr<Ref<WebCodecsImageDecoder>> create(ScriptExecutionContext&, Init&&);
 
-    String type() const { return m_type; }
+    RefPtr<StringImpl> type() const { return m_type; }
     bool complete() const { return m_completedPromise->isFulfilled(); }
 
     using CompletedPromise = DOMPromiseProxy<IDLUndefined>;
@@ -93,8 +93,8 @@ public:
     ExceptionOr<void> reset();
     ExceptionOr<void> close();
 
-    static bool isTypeSupported(const String& type);
-    static void isTypeSupported(ScriptExecutionContext&, String&& type, DOMPromiseDeferred<IDLBoolean>&&);
+    static bool isTypeSupported(StringImpl* type);
+    static void isTypeSupported(ScriptExecutionContext&, RefPtr<StringImpl>&& type, DOMPromiseDeferred<IDLBoolean>&&);
 
 private:
     WebCodecsImageDecoder(ScriptExecutionContext&, Init&&, const WebCodecsTransferList&);
@@ -121,7 +121,7 @@ private:
     ExceptionOr<void> resetDecoder(const Exception&);
     ExceptionOr<void> closeDecoder(const Exception&);
 
-    String m_type;
+    RefPtr<StringImpl> m_type;
     const UniqueRef<CompletedPromise> m_completedPromise;
     mutable Ref<WebCodecsImageTrackList> m_tracks;
 

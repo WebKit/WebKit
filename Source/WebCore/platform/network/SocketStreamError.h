@@ -48,7 +48,7 @@ public:
     {
     }
 
-    SocketStreamError(int errorCode, const String& failingURL, const String& localizedDescription, bool isNull = false)
+    SocketStreamError(int errorCode, StringImpl* failingURL, StringImpl* localizedDescription, bool isNull = false)
         : m_errorCode(errorCode)
         , m_failingURL(failingURL)
         , m_localizedDescription(localizedDescription)
@@ -58,13 +58,13 @@ public:
 
     bool isNull() const { return m_isNull; }
     int errorCode() const { return m_errorCode; }
-    const String& failingURL() const LIFETIME_BOUND { return m_failingURL; }
-    const String& localizedDescription() const LIFETIME_BOUND { return m_localizedDescription; }
+    const RefPtr<StringImpl>& failingURL() const LIFETIME_BOUND { return m_failingURL; }
+    const RefPtr<StringImpl>& localizedDescription() const LIFETIME_BOUND { return m_localizedDescription; }
 
 private:
     int m_errorCode { 0 };
-    String m_failingURL;
-    String m_localizedDescription;
+    RefPtr<StringImpl> m_failingURL;
+    RefPtr<StringImpl> m_localizedDescription;
     bool m_isNull { true };
 };
 

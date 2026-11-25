@@ -48,25 +48,25 @@ std::optional<WebKit::NetworkCache::Key> Coder<WebKit::NetworkCache::Key>::decod
 {
     WebKit::NetworkCache::Key key;
 
-    std::optional<String> partition;
+    std::optional<RefPtr<StringImpl>> partition;
     decoder >> partition;
     if (!partition)
         return std::nullopt;
     key.m_partition = WTF::move(*partition);
 
-    std::optional<String> type;
+    std::optional<RefPtr<StringImpl>> type;
     decoder >> type;
     if (!type)
         return std::nullopt;
     key.m_type = WTF::move(*type);
 
-    std::optional<String> identifier;
+    std::optional<RefPtr<StringImpl>> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
     key.m_identifier = WTF::move(*identifier);
 
-    std::optional<String> range;
+    std::optional<RefPtr<StringImpl>> range;
     decoder >> range;
     if (!range)
         return std::nullopt;

@@ -29,8 +29,8 @@ namespace WebCore {
 class SegmentedString {
 public:
     SegmentedString() = default;
-    SegmentedString(String&&);
-    SegmentedString(const String&);
+    SegmentedString(RefPtr<StringImpl>&&);
+    SegmentedString(StringImpl*);
     explicit SegmentedString(StringView);
 
     SegmentedString(SegmentedString&&) = delete;
@@ -45,10 +45,10 @@ public:
     void append(SegmentedString&&);
     void append(const SegmentedString&);
 
-    void append(String&&);
-    void append(const String&);
+    void append(RefPtr<StringImpl>&&);
+    void append(StringImpl*);
 
-    void pushBack(String&&);
+    void pushBack(RefPtr<StringImpl>&&);
 
     NODELETE void setExcludeLineNumbers();
 
@@ -70,7 +70,7 @@ public:
 
     unsigned numberOfCharactersConsumed() const;
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 
     char16_t currentCharacter() const { return m_currentCharacter; }
 
@@ -84,7 +84,7 @@ public:
 private:
     struct Substring {
         Substring() = default;
-        Substring(String&&);
+        Substring(RefPtr<StringImpl>&&);
         explicit Substring(StringView);
 
         char16_t currentCharacter() const;
@@ -96,7 +96,7 @@ private:
         unsigned length() const { return s.currentCharacter8.size(); }
         void clear() { s.currentCharacter8 = { }; }
 
-        String underlyingString; // Optional, may be null.
+        RefPtr<StringImpl> underlyingString; // Optional, may be null.
         unsigned originalLength { 0 };
         union CharactersSpan {
             CharactersSpan()
@@ -165,16 +165,16 @@ inline SegmentedString::Substring::Substring(StringView passedStringView)
     }
 }
 
-inline SegmentedString::Substring::Substring(String&& passedString)
+inline SegmentedString::Substring::Substring(RefPtr<StringImpl>&& passedString)
     : underlyingString(WTF::move(passedString))
-    , originalLength(underlyingString.length())
+    , originalLength(WTF::length(underlyingString))
 {
-    if (!underlyingString.isEmpty()) {
-        is8Bit = underlyingString.impl()->is8Bit();
+    if (!WTF::isEmpty(underlyingString)) {
+        is8Bit = underlyingString.get()->is8Bit();
         if (is8Bit)
-            s.currentCharacter8 = underlyingString.impl()->span8();
+            s.currentCharacter8 = underlyingString.get()->span8();
         else
-            s.currentCharacter16 = underlyingString.impl()->span16();
+            s.currentCharacter16 = underlyingString.get()->span16();
     }
 }
 
@@ -209,7 +209,7 @@ inline SegmentedString::SegmentedString(StringView stringView)
     }
 }
 
-inline SegmentedString::SegmentedString(String&& string)
+inline SegmentedString::SegmentedString(RefPtr<StringImpl>&& string)
     : m_currentSubstring(WTF::move(string))
 {
     if (m_currentSubstring.length()) {
@@ -218,8 +218,8 @@ inline SegmentedString::SegmentedString(String&& string)
     }
 }
 
-inline SegmentedString::SegmentedString(const String& string)
-    : SegmentedString(String { string })
+inline SegmentedString::SegmentedString(StringImpl* string)
+    : SegmentedString(RefPtr<StringImpl> { string })
 {
 }
 

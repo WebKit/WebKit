@@ -42,13 +42,13 @@
 - (NSString *)align
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::alignAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::alignAttr)).autorelease();
 }
 
 - (void)setAlign:(NSString *)newAlign
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, newAlign);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, AtomStringImpl::add((__bridge CFStringRef)newAlign).get());
 }
 
 @end

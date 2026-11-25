@@ -224,7 +224,7 @@ header: <WebCore/FontAttributes.h>
     WebCore::BlockPresentationIntent::Kind kind
     [Validator='*kind == WebCore::BlockPresentationIntent::Kind::Header ? *headerLevel >= 1 && *headerLevel <= 6 : !*headerLevel'] uint8_t headerLevel
     [Validator='*kind == WebCore::BlockPresentationIntent::Kind::ListItem || !*ordinal'] int ordinal
-    [Validator='*kind == WebCore::BlockPresentationIntent::Kind::CodeBlock || languageHint->isEmpty()'] String languageHint
+    [Validator='*kind == WebCore::BlockPresentationIntent::Kind::CodeBlock || isEmpty(*languageHint)'] String languageHint
 };
 
 struct WebCore::FontShadow {

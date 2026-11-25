@@ -43,7 +43,7 @@ static constexpr int expireConsoleMessagesStep = 10;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorConsoleAgent);
 
 InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context)
-    : InspectorAgentBase("Console"_s)
+    : InspectorAgentBase("Console"_si)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(makeUniqueRef<ConsoleFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(ConsoleBackendDispatcher::create(protect(context.backendDispatcher), this))
@@ -128,7 +128,7 @@ void InspectorConsoleAgent::clearMessages(Inspector::Protocol::Console::ClearRea
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
 
-    m_injectedScriptManager->releaseObjectGroup("console"_s);
+    m_injectedScriptManager->releaseObjectGroup("console"_si);
 
     if (m_enabled)
         m_frontendDispatcher->messagesCleared(reason);
@@ -142,10 +142,10 @@ void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> 
     addConsoleMessage(WTF::move(message));
 }
 
-void InspectorConsoleAgent::startTiming(JSC::JSGlobalObject* globalObject, const String& label)
+void InspectorConsoleAgent::startTiming(JSC::JSGlobalObject* globalObject, StringImpl* label)
 {
-    ASSERT(!label.isNull());
-    if (label.isNull())
+    ASSERT(label);
+    if (!label)
         return;
 
     auto result = m_times.add(label, MonotonicTime::now());
@@ -157,10 +157,10 @@ void InspectorConsoleAgent::startTiming(JSC::JSGlobalObject* globalObject, const
     }
 }
 
-void InspectorConsoleAgent::logTiming(JSC::JSGlobalObject* globalObject, const String& label, Ref<ScriptArguments>&& arguments)
+void InspectorConsoleAgent::logTiming(JSC::JSGlobalObject* globalObject, StringImpl* label, Ref<ScriptArguments>&& arguments)
 {
-    ASSERT(!label.isNull());
-    if (label.isNull())
+    ASSERT(label);
+    if (!label)
         return;
 
     auto callStack = createScriptCallStackForConsole(globalObject, 1);
@@ -179,10 +179,10 @@ void InspectorConsoleAgent::logTiming(JSC::JSGlobalObject* globalObject, const S
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTF::move(arguments), WTF::move(callStack)));
 }
 
-void InspectorConsoleAgent::stopTiming(JSC::JSGlobalObject* globalObject, const String& label)
+void InspectorConsoleAgent::stopTiming(JSC::JSGlobalObject* globalObject, StringImpl* label)
 {
-    ASSERT(!label.isNull());
-    if (label.isNull())
+    ASSERT(label);
+    if (!label)
         return;
 
     auto callStack = createScriptCallStackForConsole(globalObject, 1);
@@ -203,12 +203,12 @@ void InspectorConsoleAgent::stopTiming(JSC::JSGlobalObject* globalObject, const 
     m_times.remove(it);
 }
 
-void InspectorConsoleAgent::reportHeapSnapshot(double timestamp, const String& snapshotData, const String& title)
+void InspectorConsoleAgent::reportHeapSnapshot(double timestamp, StringImpl* snapshotData, StringImpl* title)
 {
     m_frontendDispatcher->heapSnapshot(timestamp, snapshotData, title);
 }
 
-void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, const String& label)
+void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, StringImpl* label)
 {
     auto result = m_counts.add(label, 1);
     if (!result.isNewEntry)
@@ -220,7 +220,7 @@ void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, const Strin
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, createScriptCallStackForConsole(globalObject, 1)));
 }
 
-void InspectorConsoleAgent::countReset(JSC::JSGlobalObject* globalObject, const String& label)
+void InspectorConsoleAgent::countReset(JSC::JSGlobalObject* globalObject, StringImpl* label)
 {
     auto it = m_counts.find(label);
     if (it == m_counts.end()) {

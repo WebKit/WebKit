@@ -35,7 +35,10 @@ TextStream& operator<<(TextStream& textStream, const QuirkBehavior& quirkBehavio
     textStream << WTF::enumName(quirkBehavior.id);
     const auto printIfExists = [&](ASCIILiteral name, const auto& object, auto projection) {
         const auto& field = std::invoke(projection, object);
-        if (field.isEmpty())
+        if constexpr (WTF::StringImplPointerLike<std::remove_cvref_t<decltype(field)>>) {
+            if (WTF::isEmpty(field))
+                return;
+        } else if (field.isEmpty())
             return;
         textStream << "\n    " << name << ": " << field;
     };

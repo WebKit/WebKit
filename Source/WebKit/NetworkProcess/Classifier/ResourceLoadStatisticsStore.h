@@ -103,7 +103,7 @@ public:
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
     
-    static Ref<ResourceLoadStatisticsStore> create(WebResourceLoadStatisticsStore& webResourceLoadStatisticsStore, SuspendableWorkQueue& suspendableWorkQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
+    static Ref<ResourceLoadStatisticsStore> create(WebResourceLoadStatisticsStore& webResourceLoadStatisticsStore, SuspendableWorkQueue& suspendableWorkQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, StringImpl* storageDirectoryPath, PAL::SessionID sessionID)
     {
         return adoptRef(*new ResourceLoadStatisticsStore(webResourceLoadStatisticsStore, suspendableWorkQueue, shouldIncludeLocalhost, storageDirectoryPath, sessionID));
     }
@@ -118,7 +118,7 @@ public:
     NODELETE void cancelPendingStatisticsProcessingRequest();
     void mergeStatistics(Vector<ResourceLoadStatistics>&&);
     void runIncrementalVacuumCommand();
-    void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
+    void dumpResourceLoadStatistics(CompletionHandler<void(StringImpl*)>&&);
     bool isNewResourceLoadStatisticsDatabaseFile() const { return m_isNewResourceLoadStatisticsDatabaseFile; }
     void setIsNewResourceLoadStatisticsDatabaseFile(bool isNewResourceLoadStatisticsDatabaseFile) { m_isNewResourceLoadStatisticsDatabaseFile = isNewResourceLoadStatisticsDatabaseFile; }
 
@@ -151,7 +151,7 @@ public:
     void setTopFrameUniqueRedirectFrom(const TopFrameDomain&, const RedirectDomain&);
 
     NODELETE void setIsRunningTest(bool);
-    void logTestingEvent(String&&);
+    void logTestingEvent(RefPtr<StringImpl>&&);
     void setTimeAdvanceForTesting(Seconds);
 
     NODELETE void setMaxStatisticsEntries(size_t maximumEntryCount);
@@ -210,14 +210,14 @@ public:
 
     bool domainIDExistsInDatabase(int);
     bool observedDomainNavigationWithLinkDecoration(int);
-    std::optional<Vector<String>> checkForMissingTablesInSchema();
+    std::optional<Vector<RefPtr<StringImpl>>> checkForMissingTablesInSchema();
 
     void includeTodayAsOperatingDateIfNecessary();
     void insertExpiredStatisticForTesting(const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool);
     static void interruptAllDatabases();
 
 private:
-    ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, SuspendableWorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID);
+    ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, SuspendableWorkQueue&, ShouldIncludeLocalhost, StringImpl* storageDirectoryPath, PAL::SessionID);
 
     WebResourceLoadStatisticsStore& store() { return m_store.get(); }
 
@@ -241,7 +241,7 @@ private:
     void clearEndOfGrandfatheringTimeStamp() { m_endOfGrandfatheringTimestamp = { }; }
     const RegistrableDomain& debugManualPrevalentResource() const LIFETIME_BOUND { return m_debugManualPrevalentResource; }
     const RegistrableDomain& debugStaticPrevalentResource() const LIFETIME_BOUND { return m_debugStaticPrevalentResource; }
-    void debugBroadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
+    void debugBroadcastConsoleMessage(MessageSource, MessageLevel, StringImpl* message);
     void debugLogDomainsInBatches(ASCIILiteral action, const RegistrableDomainsToBlockCookiesFor&);
     bool debugLoggingEnabled() const { return m_debugLoggingEnabled; }
     bool debugModeEnabled() const { return m_debugModeEnabled; }
@@ -249,16 +249,16 @@ private:
 
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
     Vector<ITPThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
-    String getDomainStringFromDomainID(unsigned) const final;
-    void resourceToString(StringBuilder&, const String&) const;
+    RefPtr<StringImpl> getDomainStringFromDomainID(unsigned) const final;
+    void resourceToString(StringBuilder&, StringImpl*) const;
     ASCIILiteral getSubStatisticStatement(ASCIILiteral) const;
-    void appendSubStatisticList(StringBuilder&, ASCIILiteral tableName, const String& domain) const;
+    void appendSubStatisticList(StringBuilder&, ASCIILiteral tableName, StringImpl* domain) const;
     void mergeStatistic(const ResourceLoadStatistics&);
     void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&);
     [[nodiscard]] bool insertObservedDomain(const ResourceLoadStatistics&);
     void insertDomainRelationships(const ResourceLoadStatistics&);
-    void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);
+    void insertDomainRelationshipList(StringImpl*, const HashSet<RegistrableDomain>&, unsigned);
     bool relationshipExists(WebCore::SQLiteStatementAutoResetScope&, std::optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
     std::optional<unsigned> domainID(const RegistrableDomain&) const;
     bool domainExists(const RegistrableDomain&) const;
@@ -332,7 +332,7 @@ private:
     void updateClientSideCookiesAgeCap();
     void updateOperatingDatesParameters();
     Seconds getMostRecentlyUpdatedTimestamp(const RegistrableDomain&, const TopFrameDomain&) const;
-    const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
+    const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     std::span<const ASCIILiteral> sortedTables() final;
     Vector<RegistrableDomain> ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
     NODELETE std::optional<WallTime> mostRecentUserInteractionTime(const DomainData&);

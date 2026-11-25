@@ -49,24 +49,24 @@ static bool canDecodeMedia(const PlatformMediaDecodingConfiguration& configurati
 
     // Only the "mock-with-alpha" codec supports alphaChannel
     if (videoConfig && videoConfig->alphaChannel && videoConfig->alphaChannel.value()) {
-        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-alpha"_s)
+        if (!equal(ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()), "mock-with-alpha"_s))
             return false;
     }
 
     // Only the "mock-with-hdr" codec supports HDR)
     if (videoConfig && (videoConfig->colorGamut || videoConfig->hdrMetadataType || videoConfig->transferFunction)) {
-        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-hdr"_s)
+        if (!equal(ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()), "mock-with-hdr"_s))
             return false;
     }
 
     // Audio decoding support limited to audio/mp4.
     auto audioConfig = configuration.audio;
     if (audioConfig) {
-        if (ContentType(audioConfig->contentType).containerType() != "audio/mp4"_s)
+        if (!equal(ContentType(audioConfig->contentType).containerType(), "audio/mp4"_s))
             return false;
 
         // Can only support spatial rendering of tracks with multichannel audio:
-        if (audioConfig->spatialRendering.value_or(false) && audioConfig->channels.toDouble() <= 2)
+        if (audioConfig->spatialRendering.value_or(false) && toDouble(audioConfig->channels) <= 2)
             return false;
     }
 
@@ -80,8 +80,8 @@ static bool canSmoothlyDecodeMedia(const PlatformMediaDecodingConfiguration& con
         return false;
 
     auto audioConfig = configuration.audio;
-    if (audioConfig && !audioConfig->channels.isNull())
-        return audioConfig->channels == "2"_s;
+    if (audioConfig && audioConfig->channels)
+        return equal(audioConfig->channels, "2"_s);
 
     return true;
 }
@@ -89,7 +89,7 @@ static bool canSmoothlyDecodeMedia(const PlatformMediaDecodingConfiguration& con
 static bool canPowerEfficientlyDecodeMedia(const PlatformMediaDecodingConfiguration& configuration)
 {
     auto videoConfig = configuration.video;
-    if (videoConfig && ContentType(videoConfig->contentType).containerType() != "video/mp4"_s)
+    if (videoConfig && !equal(ContentType(videoConfig->contentType).containerType(), "video/mp4"_s))
         return false;
 
     auto audioConfig = configuration.audio;
@@ -112,13 +112,13 @@ static bool canEncodeMedia(const PlatformMediaEncodingConfiguration& configurati
 
     // Only the "mock-with-alpha" codec supports alphaChannel
     if (videoConfig && videoConfig->alphaChannel && videoConfig->alphaChannel.value()) {
-        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-alpha"_s)
+        if (!equal(ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()), "mock-with-alpha"_s))
             return false;
     }
 
     // Audio encoding support limited to audio/mp4.
     auto audioConfig = configuration.audio;
-    if (audioConfig && ContentType(audioConfig->contentType).containerType() != "audio/mp4"_s)
+    if (audioConfig && !equal(ContentType(audioConfig->contentType).containerType(), "audio/mp4"_s))
         return false;
 
     return true;
@@ -131,7 +131,7 @@ static bool canSmoothlyEncodeMedia(const PlatformMediaEncodingConfiguration& con
         return false;
 
     auto audioConfig = configuration.audio;
-    if (audioConfig && !audioConfig->channels.isNull() && audioConfig->channels != "2"_s)
+    if (audioConfig && !!audioConfig->channels && !equal(audioConfig->channels, "2"_s))
         return false;
 
     return true;
@@ -140,7 +140,7 @@ static bool canSmoothlyEncodeMedia(const PlatformMediaEncodingConfiguration& con
 static bool canPowerEfficientlyEncodeMedia(const PlatformMediaEncodingConfiguration& configuration)
 {
     auto videoConfig = configuration.video;
-    if (videoConfig && ContentType(videoConfig->contentType).containerType() != "video/mp4"_s)
+    if (videoConfig && !equal(ContentType(videoConfig->contentType).containerType(), "video/mp4"_s))
         return false;
 
     auto audioConfig = configuration.audio;

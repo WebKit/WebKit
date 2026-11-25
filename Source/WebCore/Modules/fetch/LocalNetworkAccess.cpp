@@ -47,7 +47,7 @@ LocalNetworkAccessPermissionRequestOutcome localNetworkAccessPermissionRequestOu
 
 static ResourceError localNetworkAccessRefusal(const URL& url, ASCIILiteral reason)
 {
-    return ResourceError { "WebKitErrorDomain"_s, 0, url, reason, ResourceError::Type::AccessControl };
+    return ResourceError { "WebKitErrorDomain"_si, 0, url, StringImpl::create(reason).ptr(), ResourceError::Type::AccessControl };
 }
 
 std::expected<LocalNetworkAccessRequirement, ResourceError> checkLocalNetworkAccess(const ResourceRequest& request, const URL& currentURL, IPAddressSpace connectionAddressSpace, IPAddressSpace clientPolicyContainerAddressSpace, bool clientIsSecureContext, const ClientOrigin& clientOrigin, bool localNetworkAllowedByPermissionsPolicy, bool loopbackNetworkAllowedByPermissionsPolicy)

@@ -1318,8 +1318,8 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
         static void flush() WTF_REQUIRES_LOCK(dumpJITMemoryLock)
         {
             if (fd == -1) {
-                String path { Options::dumpJITMemoryPath() };
-                path = makeStringByReplacingAll(path, "%pid"_s, String::number(getCurrentProcessID()));
+                RefPtr<StringImpl> path { StringImpl::create(unsafeSpan(Options::dumpJITMemoryPath())) };
+                path = makeStringByReplacingAll(path, "%pid"_s, makeString(getCurrentProcessID()));
                 fd = posixOpen(FileSystem::fileSystemRepresentation(path), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
                 RELEASE_ASSERT(fd != -1);
             }

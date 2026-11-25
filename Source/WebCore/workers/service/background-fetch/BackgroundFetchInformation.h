@@ -32,11 +32,11 @@
 namespace WebCore {
 
 struct BackgroundFetchInformation {
-    BackgroundFetchInformation isolatedCopy() const & { return { registrationIdentifier, identifier.isolatedCopy(), uploadTotal, uploaded, downloadTotal, downloaded, result, failureReason, recordsAvailable }; }
-    BackgroundFetchInformation isolatedCopy() && { return { registrationIdentifier, WTF::move(identifier).isolatedCopy(), uploadTotal, uploaded, downloadTotal, downloaded, result, failureReason, recordsAvailable }; }
+    BackgroundFetchInformation isolatedCopy() const & { return { registrationIdentifier, WTF::isolatedCopy(identifier), uploadTotal, uploaded, downloadTotal, downloaded, result, failureReason, recordsAvailable }; }
+    BackgroundFetchInformation isolatedCopy() && { return { registrationIdentifier, WTF::isolatedCopy(WTF::move(identifier)), uploadTotal, uploaded, downloadTotal, downloaded, result, failureReason, recordsAvailable }; }
 
     ServiceWorkerRegistrationIdentifier registrationIdentifier;
-    String identifier;
+    RefPtr<StringImpl> identifier;
     uint64_t uploadTotal { 0 };
     uint64_t uploaded { 0 };
     uint64_t downloadTotal { 0 };

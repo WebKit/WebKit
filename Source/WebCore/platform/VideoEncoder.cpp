@@ -60,7 +60,7 @@ bool VideoEncoder::isVPXSupported()
 #endif
 }
 
-Ref<VideoEncoder::CreatePromise> VideoEncoder::create(const String& codecName, const Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+Ref<VideoEncoder::CreatePromise> VideoEncoder::create(StringImpl* codecName, const Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     CreatePromise::Producer producer;
     Ref promise = producer.promise();
@@ -76,25 +76,25 @@ Ref<VideoEncoder::CreatePromise> VideoEncoder::create(const String& codecName, c
     return promise;
 }
 
-void VideoEncoder::createLocalEncoder(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+void VideoEncoder::createLocalEncoder(StringImpl* codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     ASSERT(isVPXSupported());
     if (isVPXSupported()) {
-        if (codecName == "vp8"_s) {
+        if (equal(codecName, "vp8"_s)) {
             LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP8, config, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(outputCallback));
             return;
         }
-        if (codecName.startsWith("vp09.00"_s)) {
+        if (startsWith(codecName, "vp09.00"_s)) {
             LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP9, config, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(outputCallback));
             return;
         }
-        if (codecName.startsWith("vp09.02"_s)) {
+        if (startsWith(codecName, "vp09.02"_s)) {
             LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP9_P2, config, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(outputCallback));
             return;
         }
 #if ENABLE(AV1)
-        if (codecName.startsWith("av01."_s)) {
+        if (startsWith(codecName, "av01."_s)) {
             auto parameters = parseAV1CodecParameters(codecName);
             if (!parameters || parameters->bitDepth != 8 || parameters->monochrome || parameters->chromaSubsampling < static_cast<uint8_t>(AV1ConfigurationChromaSubsampling::Subsampling_420_Unknown)) {
                 callback(makeUnexpected("AV1 encoding only supports 8-bit 4:2:0"_s));

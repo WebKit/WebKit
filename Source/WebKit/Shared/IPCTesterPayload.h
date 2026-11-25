@@ -64,12 +64,16 @@ enum class IPCTesterChoice : bool {
 
 struct IPCTesterInner {
     int32_t value { 0 };
-    String label;
+    RefPtr<StringImpl> label;
 
-    friend bool operator==(const IPCTesterInner&, const IPCTesterInner&) = default;
+    friend bool operator==(const IPCTesterInner& a, const IPCTesterInner& b)
+    {
+        return a.value == b.value
+            && contentEquals(a.label, b.label);
+    }
 };
 
-using IPCTesterVariant = Variant<uint64_t, String, IPCTesterInner>;
+using IPCTesterVariant = Variant<uint64_t, RefPtr<StringImpl>, IPCTesterInner>;
 
 struct IPCTesterPayload {
     bool flag { false };
@@ -83,10 +87,10 @@ struct IPCTesterPayload {
     int64_t i64 { 0 };
     float f { 0 };
     double d { 0 };
-    String text { };
-    String nullText { };
+    RefPtr<StringImpl> text { };
+    RefPtr<StringImpl> nullText { };
     Vector<uint32_t> numbers { };
-    Vector<String> strings { };
+    Vector<RefPtr<StringImpl>> strings { };
     std::optional<IPCTesterColor> color { };
     OptionSet<IPCTesterFlag> flags { };
     IPCTesterChoice choice { IPCTesterChoice::No };
@@ -95,27 +99,51 @@ struct IPCTesterPayload {
     IPCTesterVariant variant { };
     Markable<IPCConnectionTesterIdentifier> identifier { };
 
-    friend bool operator==(const IPCTesterPayload&, const IPCTesterPayload&) = default;
+    friend bool operator==(const IPCTesterPayload& a, const IPCTesterPayload& b)
+    {
+        return a.flag == b.flag
+            && a.u8 == b.u8
+            && a.u16 == b.u16
+            && a.u32 == b.u32
+            && a.u64 == b.u64
+            && a.i8 == b.i8
+            && a.i16 == b.i16
+            && a.i32 == b.i32
+            && a.i64 == b.i64
+            && a.f == b.f
+            && a.d == b.d
+            && contentEquals(a.text, b.text)
+            && contentEquals(a.nullText, b.nullText)
+            && a.numbers == b.numbers
+            && contentEquals(a.strings, b.strings)
+            && a.color == b.color
+            && a.flags == b.flags
+            && a.choice == b.choice
+            && a.inner == b.inner
+            && a.inners == b.inners
+            && contentEquals(a.variant, b.variant)
+            && a.identifier == b.identifier;
+    }
 };
 
 class IPCTesterNode final : public RefCounted<IPCTesterNode> {
 public:
-    static Ref<IPCTesterNode> create(String&& name, Vector<Ref<IPCTesterNode>>&& children)
+    static Ref<IPCTesterNode> create(RefPtr<StringImpl>&& name, Vector<Ref<IPCTesterNode>>&& children)
     {
         return adoptRef(*new IPCTesterNode(WTF::move(name), WTF::move(children)));
     }
 
-    const String& name() const { return m_name; }
+    const RefPtr<StringImpl>& name() const { return m_name; }
     const Vector<Ref<IPCTesterNode>>& children() const { return m_children; }
 
 private:
-    IPCTesterNode(String&& name, Vector<Ref<IPCTesterNode>>&& children)
+    IPCTesterNode(RefPtr<StringImpl>&& name, Vector<Ref<IPCTesterNode>>&& children)
         : m_name(WTF::move(name))
         , m_children(WTF::move(children))
     {
     }
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     Vector<Ref<IPCTesterNode>> m_children;
 };
 
@@ -123,9 +151,9 @@ private:
 // compute identically. Each changes every field, so that a field decoded or encoded in the wrong place
 // shows up even though it went through both a decoder and an encoder.
 
-inline String ipcTesterExclaimed(const String& string)
+inline RefPtr<StringImpl> ipcTesterExclaimed(StringImpl* string)
 {
-    return string.isNull() ? String() : makeString(string, '!');
+    return !string ? nullptr : makeString(string, '!');
 }
 
 inline IPCTesterInner ipcTesterTransformed(const IPCTesterInner& inner)
@@ -160,7 +188,7 @@ inline IPCTesterPayload ipcTesterTransformed(const IPCTesterPayload& payload)
     });
     result.variant = WTF::switchOn(payload.variant, [](uint64_t value) -> IPCTesterVariant {
         return value + 1;
-    }, [](const String& value) -> IPCTesterVariant {
+    }, [](StringImpl* value) -> IPCTesterVariant {
         return ipcTesterExclaimed(value);
     }, [](const IPCTesterInner& value) -> IPCTesterVariant {
         return ipcTesterTransformed(value);
@@ -185,10 +213,10 @@ inline uint32_t ipcTesterNodeCount(const IPCTesterNode& node)
     return count;
 }
 
-inline String ipcTesterDescription(IPCTesterColor color, OptionSet<IPCTesterFlag> flags, IPCTesterChoice choice, IPCConnectionTesterIdentifier identifier, const IPCTesterVariant& variant, bool flag)
+inline RefPtr<StringImpl> ipcTesterDescription(IPCTesterColor color, OptionSet<IPCTesterFlag> flags, IPCTesterChoice choice, IPCConnectionTesterIdentifier identifier, const IPCTesterVariant& variant, bool flag)
 {
-    auto describeString = [](const String& string) -> String {
-        return string.isNull() ? "null"_s : string;
+    auto describeString = [](StringImpl* string) -> RefPtr<StringImpl> {
+        return !string ? "null"_si : RefPtr<StringImpl> { string };
     };
     StringBuilder builder;
     builder.append("color="_s, color == IPCTesterColor::Red ? "red"_s : color == IPCTesterColor::Green ? "green"_s : "blue"_s);
@@ -209,7 +237,7 @@ inline String ipcTesterDescription(IPCTesterColor color, OptionSet<IPCTesterFlag
     builder.append(" variant="_s);
     WTF::switchOn(variant, [&](uint64_t value) {
         builder.append("uint64:"_s, value);
-    }, [&](const String& value) {
+    }, [&](StringImpl* value) {
         builder.append("string:"_s, describeString(value));
     }, [&](const IPCTesterInner& value) {
         builder.append("inner:"_s, value.value, ':', describeString(value.label));

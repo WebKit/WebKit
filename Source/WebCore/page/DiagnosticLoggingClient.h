@@ -39,26 +39,26 @@ enum DiagnosticLoggingResultType : uint8_t;
 enum class ShouldSample : bool { No, Yes };
 
 struct DiagnosticLoggingDictionary {
-    using Payload = Variant<String, uint64_t, int64_t, bool, double>;
-    using Dictionary = HashMap<String, Payload>;
+    using Payload = Variant<RefPtr<StringImpl>, uint64_t, int64_t, bool, double>;
+    using Dictionary = HashMap<RefPtr<StringImpl>, Payload>;
     Dictionary dictionary;
-    void set(String key, Payload value) { dictionary.set(WTF::move(key), WTF::move(value)); }
+    void set(RefPtr<StringImpl> key, Payload value) { dictionary.set(WTF::move(key), WTF::move(value)); }
 };
 
 class DiagnosticLoggingClient : public CanMakeCheckedPtr<DiagnosticLoggingClient> {
     WTF_MAKE_TZONE_ALLOCATED(DiagnosticLoggingClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DiagnosticLoggingClient);
 public:
-    virtual void logDiagnosticMessage(const String& message, const String& description, ShouldSample) = 0;
-    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, DiagnosticLoggingResultType, ShouldSample) = 0;
-    virtual void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample) = 0;
-    virtual void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, ShouldSample) = 0;
+    virtual void logDiagnosticMessage(StringImpl* message, StringImpl* description, ShouldSample) = 0;
+    virtual void logDiagnosticMessageWithResult(StringImpl* message, StringImpl* description, DiagnosticLoggingResultType, ShouldSample) = 0;
+    virtual void logDiagnosticMessageWithValue(StringImpl* message, StringImpl* description, double value, unsigned significantFigures, ShouldSample) = 0;
+    virtual void logDiagnosticMessageWithEnhancedPrivacy(StringImpl* message, StringImpl* description, ShouldSample) = 0;
 
     using ValuePayload = DiagnosticLoggingDictionary::Payload;
     using ValueDictionary = DiagnosticLoggingDictionary;
 
-    virtual void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, ShouldSample) = 0;
-    virtual void logDiagnosticMessageWithDomain(const String& message, DiagnosticLoggingDomain) = 0;
+    virtual void logDiagnosticMessageWithValueDictionary(StringImpl* message, StringImpl* description, const ValueDictionary&, ShouldSample) = 0;
+    virtual void logDiagnosticMessageWithDomain(StringImpl* message, DiagnosticLoggingDomain) = 0;
 
     static bool shouldLogAfterSampling(ShouldSample);
 

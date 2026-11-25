@@ -44,9 +44,9 @@ public:
     virtual ~LegacyContextHistoryClient() { }
 
     virtual void didNavigateWithNavigationData(WebKit::WebProcessPool&, WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy&) { }
-    virtual void didPerformClientRedirect(WebKit::WebProcessPool&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
-    virtual void didPerformServerRedirect(WebKit::WebProcessPool&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
-    virtual void didUpdateHistoryTitle(WebKit::WebProcessPool&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
+    virtual void didPerformClientRedirect(WebKit::WebProcessPool&, WebKit::WebPageProxy&, StringImpl*, StringImpl*, WebKit::WebFrameProxy&) { }
+    virtual void didPerformServerRedirect(WebKit::WebProcessPool&, WebKit::WebPageProxy&, StringImpl*, StringImpl*, WebKit::WebFrameProxy&) { }
+    virtual void didUpdateHistoryTitle(WebKit::WebProcessPool&, WebKit::WebPageProxy&, StringImpl*, StringImpl*, WebKit::WebFrameProxy&) { }
     virtual void populateVisitedLinks(WebKit::WebProcessPool&) { }
     virtual bool addsVisitedLinks() const { return false; }
 };

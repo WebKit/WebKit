@@ -86,8 +86,8 @@ private:
 
     bool updateCanDoASCIIUCADUCETComparison() const;
 
-    static Vector<String> sortLocaleData(const String&, RelevantExtensionKey);
-    static Vector<String> searchLocaleData(const String&, RelevantExtensionKey);
+    static Vector<RefPtr<StringImpl>> sortLocaleData(StringImpl*, RelevantExtensionKey);
+    static Vector<RefPtr<StringImpl>> searchLocaleData(StringImpl*, RelevantExtensionKey);
 
     enum class Usage : uint8_t { Sort, Search };
     enum class Sensitivity : uint8_t { Base, Accent, Case, Variant };
@@ -102,8 +102,8 @@ private:
     WriteBarrier<JSBoundFunction> m_boundCompare;
     std::unique_ptr<UCollator, UCollatorDeleter> m_collator;
 
-    String m_locale;
-    String m_collation;
+    RefPtr<StringImpl> m_locale;
+    RefPtr<StringImpl> m_collation;
     Usage m_usage;
     Sensitivity m_sensitivity;
     CaseFirst m_caseFirst;

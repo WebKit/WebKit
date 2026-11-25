@@ -53,7 +53,7 @@ public:
         return adoptRef(*new IDBKey(IndexedDB::KeyType::Number, number));
     }
 
-    static Ref<IDBKey> createString(const String& string)
+    static Ref<IDBKey> createString(StringImpl* string)
     {
         return adoptRef(*new IDBKey(string));
     }
@@ -87,10 +87,10 @@ public:
         return std::get<Vector<Ref<IDBKey>>>(m_value);
     }
 
-    const String& string() const LIFETIME_BOUND
+    const RefPtr<StringImpl>& string() const LIFETIME_BOUND
     {
         ASSERT(m_type == IndexedDB::KeyType::String);
-        return std::get<String>(m_value);
+        return std::get<RefPtr<StringImpl>>(m_value);
     }
 
     double date() const
@@ -118,7 +118,7 @@ public:
     size_t sizeEstimate() const { return m_sizeEstimate; }
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 
 private:
@@ -129,12 +129,12 @@ private:
     }
 
     IDBKey(IndexedDB::KeyType, double number);
-    explicit IDBKey(const String& value);
+    explicit IDBKey(StringImpl* value);
     IDBKey(Vector<Ref<IDBKey>>&& keyArray, size_t arraySize);
     explicit IDBKey(const ThreadSafeDataBuffer&);
 
     const IndexedDB::KeyType m_type;
-    Variant<Vector<Ref<IDBKey>>, String, double, ThreadSafeDataBuffer> m_value;
+    Variant<Vector<Ref<IDBKey>>, RefPtr<StringImpl>, double, ThreadSafeDataBuffer> m_value;
 
     const size_t m_sizeEstimate;
 

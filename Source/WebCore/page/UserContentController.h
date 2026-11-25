@@ -56,7 +56,7 @@ private:
     NODELETE void forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final;
 #endif
     bool hasBuffersForWorld(const DOMWrapperWorld&) const override { return false; }
-    WebKitBuffer* buffer(const DOMWrapperWorld&, const String&) const override { return nullptr; }
+    WebKitBuffer* buffer(const DOMWrapperWorld&, StringImpl*) const override { return nullptr; }
 #if ENABLE(CONTENT_EXTENSIONS)
     const ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const LIFETIME_BOUND override { return m_contentExtensionBackend; }
 #endif

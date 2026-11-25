@@ -97,7 +97,7 @@ using ApplicationManifestColor = WebKitColor;
 #endif
 
 struct _WebKitApplicationManifestPrivate {
-    String rawJSON;
+    RefPtr<StringImpl> rawJSON;
     GRefPtr<GVariant> fullManifest;
     UTF8CString name;
     UTF8CString shortName;
@@ -271,7 +271,7 @@ static GRefPtr<GVariant> variantFromJSONValue(JSON::Value& value)
     case Integer:
         return g_variant_new_int32(*value.asInteger());
     case String:
-        return gVariantNewString(value.asString().utf8());
+        return gVariantNewString(utf8(value.asString()));
     case Object: {
         GVariantBuilder builder;
         g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
@@ -279,7 +279,7 @@ static GRefPtr<GVariant> variantFromJSONValue(JSON::Value& value)
         for (const auto& key : object->keys()) {
             auto child = object->getValue(key);
             auto childVariant = variantFromJSONValue(*child);
-            gVariantBuilderAdd(&builder, "{sv}", key.utf8(), childVariant.get());
+            gVariantBuilderAdd(&builder, "{sv}", utf8(key), childVariant.get());
         }
         return g_variant_builder_end(&builder);
     }
@@ -331,15 +331,15 @@ static ASCIILiteral displayMode(WebCore::ApplicationManifest::Display display)
 static GRefPtr<WebKitApplicationManifestIcon> webkitApplicationManifestIconCreate(WebKitWebView* webView, const WebCore::ApplicationManifest::Icon& icon)
 {
     GRefPtr<WebKitApplicationManifestIcon> result = adoptGRef(WEBKIT_APPLICATION_MANIFEST_ICON(g_object_new(WEBKIT_TYPE_APPLICATION_MANIFEST_ICON, nullptr)));
-    result->priv->uri = icon.src.string().utf8();
-    result->priv->mimeType = icon.type.utf8();
+    result->priv->uri = utf8(icon.src.string());
+    result->priv->mimeType = utf8(icon.type);
     result->priv->webView = GWeakPtr { webView };
     result->priv->isMaskable = icon.purposes.contains(WebCore::ApplicationManifest::Icon::Purpose::Maskable);
     result->priv->isMonochrome = icon.purposes.contains(WebCore::ApplicationManifest::Icon::Purpose::Monochrome);
 
     result->priv->sizes = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (const auto& size : icon.sizes)
-        g_ptr_array_add(result->priv->sizes.get(), gStrdup(size.utf8()));
+        g_ptr_array_add(result->priv->sizes.get(), gStrdup(utf8(size)));
     g_ptr_array_add(result->priv->sizes.get(), nullptr);
 
     return result;
@@ -348,8 +348,8 @@ static GRefPtr<WebKitApplicationManifestIcon> webkitApplicationManifestIconCreat
 static GRefPtr<WebKitApplicationManifestShortcut> webkitApplicationManifestShortcutCreate(WebKitWebView* webView, const WebCore::ApplicationManifest::Shortcut& shortcut)
 {
     GRefPtr<WebKitApplicationManifestShortcut> result = adoptGRef(WEBKIT_APPLICATION_MANIFEST_SHORTCUT(g_object_new(WEBKIT_TYPE_APPLICATION_MANIFEST_SHORTCUT, nullptr)));
-    result->priv->name = shortcut.name.utf8();
-    result->priv->uri = shortcut.url.string().utf8();
+    result->priv->name = utf8(shortcut.name);
+    result->priv->uri = utf8(shortcut.url.string());
     result->priv->icons = adoptGRef(g_ptr_array_new_with_free_func([](gpointer object) {
         if (object)
             g_object_unref(object);
@@ -405,13 +405,13 @@ static void webkitApplicationManifestIconLoadAsync(GLoadableIcon* icon, int size
     std::optional<WebCore::FloatSize> sizeConstraint;
     if (size > 0)
         sizeConstraint = WebCore::FloatSize { static_cast<float>(size), static_cast<float>(size) };
-    WebCore::ResourceRequest request { URL { String::fromUTF8(manifestIcon->priv->uri.span()) } };
+    WebCore::ResourceRequest request { URL { StringImpl::fromUTF8(manifestIcon->priv->uri.span()) } };
     webkitWebViewGetPage(webView.get()).loadAndDecodeImage(WTF::move(request), sizeConstraint, maximumBytesFromNetwork, [task = WTF::move(task), webView = WTF::move(webView)](std::expected<Ref<WebCore::ShareableBitmap>, WebCore::ResourceError>&& result) mutable {
         if (g_task_return_error_if_cancelled(task.get()))
             return;
 
         if (!result) {
-            auto message = result.error().localizedDescription().utf8();
+            auto message = utf8(result.error().localizedDescription());
             g_task_return_new_error(task.get(), WEBKIT_APPLICATION_MANIFEST_ERROR, WEBKIT_APPLICATION_MANIFEST_ERROR_ICON_LOAD_FAILED, "%s", message.legacyCStringPointer());
             return;
         }
@@ -490,13 +490,13 @@ WebKitApplicationManifest* webkitApplicationManifestCreate(WebKitWebView* webVie
     GRefPtr<WebKitApplicationManifest> manifest = adoptGRef(WEBKIT_APPLICATION_MANIFEST(g_object_new(WEBKIT_TYPE_APPLICATION_MANIFEST, nullptr)));
     auto* priv = manifest->priv;
     priv->rawJSON = coreManifest.rawJSON;
-    priv->name = coreManifest.name.utf8();
-    priv->shortName = coreManifest.shortName.utf8();
-    priv->description = coreManifest.description.utf8();
-    priv->startURI = coreManifest.startURL.string().utf8();
-    priv->scope = coreManifest.scope.string().utf8();
-    priv->manifestURI = coreManifest.manifestURL.string().utf8();
-    priv->id = coreManifest.id.string().utf8();
+    priv->name = utf8(coreManifest.name);
+    priv->shortName = utf8(coreManifest.shortName);
+    priv->description = utf8(coreManifest.description);
+    priv->startURI = utf8(coreManifest.startURL.string());
+    priv->scope = utf8(coreManifest.scope.string());
+    priv->manifestURI = utf8(coreManifest.manifestURL.string());
+    priv->id = utf8(coreManifest.id.string());
     priv->displayMode = displayMode(coreManifest.display);
     priv->backgroundColor = applicationManifestColor(coreManifest.backgroundColor);
     priv->backgroundColorDark = applicationManifestColor(coreManifest.backgroundColorDark);

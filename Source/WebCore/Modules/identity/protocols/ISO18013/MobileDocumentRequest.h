@@ -30,8 +30,8 @@
 namespace WebCore {
 
 struct MobileDocumentRequest {
-    String deviceRequest;
-    String encryptionInfo;
+    RefPtr<StringImpl> deviceRequest;
+    RefPtr<StringImpl> encryptionInfo;
 };
 
 } // namespace WebCore

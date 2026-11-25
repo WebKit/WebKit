@@ -118,7 +118,7 @@ void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPositio
     }
 }
 
-void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)
+void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(StringImpl* errorMessage)
 {
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
         for (Ref proxy : perDomainData->watchers)
@@ -137,14 +137,14 @@ void WebGeolocationManagerProxy::resetPermissions()
 }
 #endif
 
-void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedRegistrableDomain, WebPageProxyIdentifier pageProxyID, const String& authorizationToken, bool enableHighAccuracy)
+void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedRegistrableDomain, WebPageProxyIdentifier pageProxyID, StringImpl* authorizationToken, bool enableHighAccuracy)
 {
     // Checked against the domain bound to the authorization token the permission manager issued.
     auto registrableDomain = WTF::move(untrustedRegistrableDomain).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     startUpdatingWithProxy(WebProcessProxy::fromConnection(connection), registrableDomain, pageProxyID, authorizationToken, enableHighAccuracy);
 }
 
-void WebGeolocationManagerProxy::startUpdatingWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain, WebPageProxyIdentifier pageProxyID, const String& authorizationToken, bool enableHighAccuracy)
+void WebGeolocationManagerProxy::startUpdatingWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain, WebPageProxyIdentifier pageProxyID, StringImpl* authorizationToken, bool enableHighAccuracy)
 {
     RefPtr page = WebProcessProxy::webPage(pageProxyID);
     MESSAGE_CHECK(proxy.connection(), !!page);

@@ -43,7 +43,7 @@ Ref<CSSBorderImageRepeatValue> CSSBorderImageRepeatValue::create(CSS::BorderImag
     return adoptRef(*new CSSBorderImageRepeatValue(WTF::move(repeats)));
 }
 
-String CSSBorderImageRepeatValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSBorderImageRepeatValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_repeats);
 }

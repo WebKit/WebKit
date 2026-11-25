@@ -39,7 +39,7 @@ class StyleRuleImport final : public StyleRuleBase, public CanMakeWeakPtr<StyleR
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleImport, StyleRuleImport);
 public:
     struct SupportsCondition {
-        String text;
+        RefPtr<StringImpl> text;
         bool conditionMatches { true };
     };
 
@@ -53,7 +53,7 @@ public:
     void clearParentStyleSheet() { m_parentStyleSheet = nullptr; }
     void cancelLoad();
 
-    String href() const { return m_url.specified; }
+    const RefPtr<StringImpl>& href() const LIFETIME_BOUND { return m_url.specified; }
     const CSS::URLModifiers& modifiers() const LIFETIME_BOUND { return m_url.modifiers; }
     StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
 
@@ -67,7 +67,7 @@ public:
     const CachedCSSStyleSheet* cachedCSSStyleSheet() const { return m_cachedSheet.get(); }
 
     const std::optional<CascadeLayerName>& cascadeLayerName() const LIFETIME_BOUND { return m_cascadeLayerName; }
-    const String& supportsText() const LIFETIME_BOUND { return m_supportsCondition.text; }
+    const RefPtr<StringImpl>& supportsText() const LIFETIME_BOUND { return m_supportsCondition.text; }
     bool supportsMatches() const { return m_supportsCondition.conditionMatches; }
 
 private:
@@ -79,7 +79,7 @@ private:
             : m_ownerRule(ownerRule)
         { }
         virtual ~ImportedStyleSheetClient() = default;
-        void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& sheet) final
+        void setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& sheet) final
         {
             protect(m_ownerRule)->setCSSStyleSheet(href, baseURL, charset, sheet);
         }
@@ -92,7 +92,7 @@ private:
         WeakRef<StyleRuleImport> m_ownerRule;
     };
 
-    void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&);
+    void setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&);
     friend class ImportedStyleSheetClient;
 
     StyleRuleImport(CSS::URL&&, MQ::MediaQueryList&&, std::optional<CascadeLayerName>&&, SupportsCondition&&);

@@ -135,7 +135,7 @@ public:
 
     double toDouble() const;
     // Note: toString method supports infinity and nan but fromString not.
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 
     WEBCORE_EXPORT static Decimal fromDouble(double);
     // fromString supports following syntax EBNF:

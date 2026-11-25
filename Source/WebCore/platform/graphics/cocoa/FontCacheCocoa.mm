@@ -40,18 +40,18 @@ CFStringRef getUIContentSizeCategoryDidChangeNotificationName()
 }
 #endif
 
-NODELETE static String& contentSizeCategoryStorage()
+NODELETE static RefPtr<StringImpl>& contentSizeCategoryStorage()
 {
-    static NeverDestroyed<String> contentSizeCategory;
+    static NeverDestroyed<RefPtr<StringImpl>> contentSizeCategory;
     return contentSizeCategory.get();
 }
 
 CFStringRef contentSizeCategory()
 {
-    if (!contentSizeCategoryStorage().isNull()) {
+    if (contentSizeCategoryStorage()) {
         // The contract of this function is that it returns a +0 autoreleased object (just like [[UIApplication sharedApplication] preferredContentSizeCategory] does).
         // createNSString().autorelease() returns a +0 autoreleased object, so we do that here, and then cast it to CFStringRef to return it.
-        return bridge_cast(contentSizeCategoryStorage().createNSString().autorelease());
+        return bridge_cast(createNSString(contentSizeCategoryStorage()).autorelease());
     }
 #if PLATFORM(IOS_FAMILY)
     return static_cast<CFStringRef>([[PAL::getUIApplicationClassSingleton() sharedApplication] preferredContentSizeCategory]);
@@ -120,9 +120,9 @@ void setTextScaleFactor(std::optional<float> textScaleFactor)
 }
 #endif
 
-void setContentSizeCategory(const String& contentSizeCategory)
+void setContentSizeCategory(StringImpl* contentSizeCategory)
 {
-    if (contentSizeCategory == contentSizeCategoryStorage())
+    if (equal(contentSizeCategory, contentSizeCategoryStorage()))
         return;
 
     contentSizeCategoryStorage() = contentSizeCategory;

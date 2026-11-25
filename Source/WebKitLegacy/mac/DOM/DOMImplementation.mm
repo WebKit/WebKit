@@ -68,13 +68,13 @@ static inline Ref<WebCore::DOMImplementation> unwrap(DOMImplementation& wrapper)
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName publicId:(NSString *)publicId systemId:(NSString *)systemId
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(unwrap(*self)->createDocumentType(qualifiedName, publicId, systemId)).ptr());
+    return kit(raiseOnDOMError(unwrap(*self)->createDocumentType(AtomStringImpl::add((__bridge CFStringRef)qualifiedName).get(), StringImpl::create(publicId).get(), StringImpl::create(systemId).get())).ptr());
 }
 
 - (DOMDocument *)createDocument:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName doctype:(DOMDocumentType *)doctype
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(unwrap(*self)->createDocument(namespaceURI, qualifiedName, protect(core(doctype)))).ptr());
+    return kit(raiseOnDOMError(unwrap(*self)->createDocument(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)qualifiedName).get(), protect(core(doctype)))).ptr());
 }
 
 - (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title media:(NSString *)media
@@ -85,7 +85,7 @@ static inline Ref<WebCore::DOMImplementation> unwrap(DOMImplementation& wrapper)
 - (DOMHTMLDocument *)createHTMLDocument:(NSString *)title
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self)->createHTMLDocument(title).ptr());
+    return kit(unwrap(*self)->createHTMLDocument(StringImpl::create(title)).ptr());
 }
 
 @end

@@ -39,9 +39,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-bool WebEditorClient::handleGtkEditorCommand(LocalFrame& frame, const String& command, bool allowTextInsertion)
+bool WebEditorClient::handleGtkEditorCommand(LocalFrame& frame, StringImpl* command, bool allowTextInsertion)
 {
-    if (command == "GtkInsertEmoji"_s) {
+    if (equal(command, "GtkInsertEmoji"_s)) {
         if (!allowTextInsertion)
             return false;
         if (RefPtr page = m_page.get())
@@ -52,11 +52,11 @@ bool WebEditorClient::handleGtkEditorCommand(LocalFrame& frame, const String& co
     return false;
 }
 
-bool WebEditorClient::executePendingEditorCommands(LocalFrame& frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
+bool WebEditorClient::executePendingEditorCommands(LocalFrame& frame, const Vector<RefPtr<StringImpl>>& pendingEditorCommands, bool allowTextInsertion)
 {
-    Vector<Variant<Editor::Command, String>> commands;
+    Vector<Variant<Editor::Command, RefPtr<StringImpl>>> commands;
     for (auto& commandString : pendingEditorCommands) {
-        if (commandString.startsWith("Gtk"_s))
+        if (startsWith(commandString, "Gtk"_s))
             commands.append(commandString);
         else {
             Editor::Command command = frame.editor().command(commandString);
@@ -68,8 +68,8 @@ bool WebEditorClient::executePendingEditorCommands(LocalFrame& frame, const Vect
     }
 
     for (auto& commandVariant : commands) {
-        if (std::holds_alternative<String>(commandVariant)) {
-            if (!handleGtkEditorCommand(frame, std::get<String>(commandVariant), allowTextInsertion))
+        if (std::holds_alternative<RefPtr<StringImpl>>(commandVariant)) {
+            if (!handleGtkEditorCommand(frame, std::get<RefPtr<StringImpl>>(commandVariant), allowTextInsertion))
                 return false;
         } else {
             auto& command = std::get<Editor::Command>(commandVariant);
@@ -95,7 +95,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
     auto* frame = downcast<Node>(event.target())->document().frame();
     ASSERT(frame);
 
-    const Vector<String> pendingEditorCommands = platformEvent->commands();
+    const Vector<RefPtr<StringImpl>> pendingEditorCommands = platformEvent->commands();
     if (!pendingEditorCommands.isEmpty()) {
 
         // During RawKeyDown events if an editor command will insert text, defer

@@ -55,8 +55,8 @@ public:
     NODELETE static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
     static void willDestroyDevice(GPUDevice&);
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
 
@@ -64,11 +64,11 @@ public:
     const ::WebGPU::RenderPipeline& backing() const { return m_backing; }
 
     NODELETE GPUDevice* device() const;
-    const String& vertexShaderSource() const { return m_vertexShaderModuleDescriptor.code; }
-    const String& fragmentShaderSource() const { return m_fragmentShaderModuleDescriptor ? m_fragmentShaderModuleDescriptor->code : nullString(); }
+    const RefPtr<StringImpl>& vertexShaderSource() const { return m_vertexShaderModuleDescriptor.code; }
+    const RefPtr<StringImpl>& fragmentShaderSource() const { return m_fragmentShaderModuleDescriptor ? m_fragmentShaderModuleDescriptor->code : nullString(); }
     bool sharesVertexFragmentShader() const { return m_sharesVertexFragmentShader; }
-    void updateVertexShader(const String&, CompletionHandler<void(bool)>&&);
-    void updateFragmentShader(const String&, CompletionHandler<void(bool)>&&);
+    void updateVertexShader(StringImpl*, CompletionHandler<void(bool)>&&);
+    void updateFragmentShader(StringImpl*, CompletionHandler<void(bool)>&&);
 
     void createPipelineForInspectorHighlight(unsigned canvasColorAttachmentMask, CompletionHandler<void(RefPtr<::WebGPU::RenderPipeline>&&)>&&) const;
 
@@ -77,7 +77,7 @@ public:
 private:
     GPURenderPipeline(Ref<::WebGPU::RenderPipeline>&&, uint64_t uniqueId, GPUDevice*, WebGPURenderPipelineDescriptor&&, const WebGPUShaderModuleDescriptor&, std::optional<WebGPUShaderModuleDescriptor>&&, bool sharesVertexFragmentShader);
 
-    void updateShader(const String&, bool updateVertexShader, CompletionHandler<void(bool)>&&);
+    void updateShader(StringImpl*, bool updateVertexShader, CompletionHandler<void(bool)>&&);
 
     static Lock s_instancesLock;
 

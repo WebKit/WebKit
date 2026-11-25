@@ -48,7 +48,7 @@ class WebSelectionServiceController : public WebSharingServicePickerClient {
 public:
     WebSelectionServiceController(WebView*);
 
-    void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);
+    void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<RefPtr<StringImpl>>& telephoneNumbers, const WebCore::IntPoint&);
     bool hasRelevantSelectionServices(bool isTextOnly) const;
 
     // WebSharingServicePickerClient

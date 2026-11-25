@@ -42,7 +42,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionMenuItem);
 
 bool WebExtensionMenuItem::operator==(const WebExtensionMenuItem& other) const
 {
-    return this == &other || (m_extensionContext == other.m_extensionContext && m_identifier == other.m_identifier);
+    return this == &other || (m_extensionContext == other.m_extensionContext && equal(m_identifier, other.m_identifier));
 }
 
 WebExtensionContext* WebExtensionMenuItem::extensionContext() const
@@ -50,7 +50,7 @@ WebExtensionContext* WebExtensionMenuItem::extensionContext() const
     return m_extensionContext.get();
 }
 
-String WebExtensionMenuItem::removeAmpersands(const String& title)
+RefPtr<StringImpl> WebExtensionMenuItem::removeAmpersands(StringImpl* title)
 {
     // The title may contain ampersands used to indicate shortcut keys for the item. We don't support keyboard
     // shortcuts this way, but we still remove the ampersands from the visible title of the item.
@@ -58,21 +58,21 @@ String WebExtensionMenuItem::removeAmpersands(const String& title)
     StringBuilder stringBuilder;
     size_t startIndex = 0;
 
-    while (startIndex < title.length()) {
-        size_t ampersandPosition = title.find('&', startIndex);
+    while (startIndex < length(title)) {
+        size_t ampersandPosition = find(title, '&', startIndex);
 
         // If no ampersand is found, append the rest of the string and break.
         if (ampersandPosition == notFound) {
-            stringBuilder.append(title.substring(startIndex));
+            stringBuilder.append(substring(title, startIndex));
             break;
         }
 
         // Append the part of the string before the ampersand.
         if (ampersandPosition > startIndex)
-            stringBuilder.append(title.substring(startIndex, ampersandPosition - startIndex));
+            stringBuilder.append(substring(title, startIndex, ampersandPosition - startIndex));
 
         // If a double ampersand is found, replace it with a single ampersand.
-        if (ampersandPosition < title.length() - 1 && title[ampersandPosition + 1] == '&') {
+        if (ampersandPosition < length(title) - 1 && codeUnitAt(title, ampersandPosition + 1) == '&') {
             stringBuilder.append('&');
             startIndex = ampersandPosition + 2;
             continue;
@@ -134,7 +134,7 @@ bool WebExtensionMenuItem::matches(const WebExtensionMenuItemContextParameters& 
             return false;
     }
 
-    if (matchesType(ContextType::Selection) && contextParameters.selectionString.isEmpty())
+    if (matchesType(ContextType::Selection) && isEmpty(contextParameters.selectionString))
         return false;
 
     if (matchesType(ContextType::Editable) && !contextParameters.editable)

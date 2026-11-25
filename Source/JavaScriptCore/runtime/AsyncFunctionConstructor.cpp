@@ -58,7 +58,7 @@ AsyncFunctionConstructor::AsyncFunctionConstructor(VM& vm, Structure* structure)
 
 void AsyncFunctionConstructor::finishCreation(VM& vm, AsyncFunctionPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "AsyncFunction"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "AsyncFunction"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

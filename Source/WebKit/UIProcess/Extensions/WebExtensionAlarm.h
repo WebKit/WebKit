@@ -50,17 +50,17 @@ public:
         return adoptRef(*new WebExtensionAlarm(std::forward<Args>(args)...));
     }
 
-    explicit WebExtensionAlarm(String name, Seconds initialInterval, Seconds repeatInterval, Function<void(WebExtensionAlarm&)>&& handler = nullptr)
+    explicit WebExtensionAlarm(RefPtr<StringImpl> name, Seconds initialInterval, Seconds repeatInterval, Function<void(WebExtensionAlarm&)>&& handler = nullptr)
         : m_parameters({ name, initialInterval, repeatInterval, MonotonicTime::nan() })
         , m_handler(WTF::move(handler))
     {
-        ASSERT(!name.isNull());
+        ASSERT(name);
         schedule();
     }
 
     const WebExtensionAlarmParameters& parameters() const LIFETIME_BOUND { return m_parameters; }
 
-    const String& name() const LIFETIME_BOUND { return m_parameters.name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_parameters.name; }
     Seconds initialInterval() const { return m_parameters.initialInterval; }
     Seconds repeatInterval() const { return m_parameters.repeatInterval; }
     MonotonicTime nextScheduledTime() const { return m_parameters.nextScheduledTime; }

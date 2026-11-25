@@ -62,7 +62,7 @@ void createMediaPlayerDecodingConfigurationGStreamer(PlatformMediaDecodingConfig
     info.smooth = lookupResult.isSupported;
 
     if (configuration.audio && configuration.audio->spatialRendering.value_or(false)) {
-        auto channelCount = configuration.audio->channels.toDouble();
+        auto channelCount = toDouble(configuration.audio->channels);
         info.supported &= channelCount > 2;
     }
 

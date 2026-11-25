@@ -60,8 +60,8 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
 
     int popupWidth = 0;
     for (size_t i = 0; i < itemCount; ++i) {
-        String text = m_popupClient->itemText(i);
-        if (text.isEmpty())
+        RefPtr<StringImpl> text = m_popupClient->itemText(i);
+        if (isEmpty(text))
             continue;
 
         auto itemFontCascade = font;
@@ -123,7 +123,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
             continue;
         }
 
-        String itemText = m_popupClient->itemText(index);
+        RefPtr<StringImpl> itemText = m_popupClient->itemText(index);
 
         TextRun textRun(itemText, 0, 0, ExpansionBehavior::allowRightOnly(), itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
 

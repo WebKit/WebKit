@@ -86,7 +86,7 @@ private:
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     TaskCancellationGroup m_errorEventCancellationGroup;
     bool m_shouldCallSourcesChanged { false };

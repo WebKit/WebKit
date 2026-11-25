@@ -52,13 +52,13 @@
 - (NSString *)htmlFor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::forAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::forAttr)).autorelease();
 }
 
 - (void)setHtmlFor:(NSString *)newHtmlFor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::forAttr, newHtmlFor);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::forAttr, AtomStringImpl::add((__bridge CFStringRef)newHtmlFor).get());
 }
 
 - (DOMHTMLElement *)control
@@ -70,13 +70,13 @@
 - (NSString *)accessKey
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::accesskeyAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::accesskeyAttr)).autorelease();
 }
 
 - (void)setAccessKey:(NSString *)newAccessKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, newAccessKey);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, AtomStringImpl::add((__bridge CFStringRef)newAccessKey).get());
 }
 
 @end

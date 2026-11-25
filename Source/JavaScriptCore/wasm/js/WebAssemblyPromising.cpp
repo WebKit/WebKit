@@ -90,7 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(runWebAssemblyPromisingFunction, (JSGlobalObject* globa
 
 JSFunctionWithFields* createWebAssemblyPromisingFunction(VM& vm, JSGlobalObject* globalObject, JSFunction* wrappedFunction)
 {
-    const String name = "WebAssembly.promising"_s;
+    const RefPtr<StringImpl> name = "WebAssembly.promising"_si;
     constexpr unsigned length = 1;
     NativeExecutable* executable = vm.getHostFunction(runWebAssemblyPromisingFunction, ImplementationVisibility::Private, NoIntrinsic, callHostFunctionAsConstructor, nullptr, length, name);
     JSFunctionWithFields* function = JSFunctionWithFields::create(vm, globalObject, executable);

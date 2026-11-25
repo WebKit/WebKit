@@ -42,15 +42,15 @@ TypeAhead::TypeAhead(TypeAheadDataSource* dataSource)
 
 static const Seconds typeAheadTimeout { 1_s };
 
-static String stripLeadingWhiteSpace(const String& string)
+static RefPtr<StringImpl> stripLeadingWhiteSpace(StringImpl* string)
 {
-    unsigned length = string.length();
+    unsigned length = WTF::length(string);
     unsigned i;
     for (i = 0; i < length; ++i) {
-        if (string[i] != noBreakSpace && !deprecatedIsSpaceOrNewline(string[i]))
+        if (codeUnitAt(string, i) != noBreakSpace && !deprecatedIsSpaceOrNewline(codeUnitAt(string, i)))
             break;
     }
-    return string.substring(i, length - i);
+    return substring(string, i, length - i);
 }
 
 int TypeAhead::handleEvent(KeyboardEvent* event, MatchModeFlags matchMode)
@@ -72,11 +72,11 @@ int TypeAhead::handleEvent(KeyboardEvent* event, MatchModeFlags matchMode)
         return -1;
 
     int searchStartOffset = 1;
-    String prefix;
+    RefPtr<StringImpl> prefix;
     if (matchMode & CycleFirstChar && c == m_repeatingChar) {
         // The user is likely trying to cycle through all the items starting
         // with this character, so just search on the character.
-        prefix = span(c);
+        prefix = StringImpl::create(span(c));
         m_repeatingChar = c;
     } else if (matchMode & MatchPrefix) {
         prefix = m_buffer.toString();
@@ -87,16 +87,16 @@ int TypeAhead::handleEvent(KeyboardEvent* event, MatchModeFlags matchMode)
             m_repeatingChar = c;
     }
 
-    if (!prefix.isEmpty()) {
+    if (!isEmpty(prefix)) {
         int selected = m_dataSource->indexOfSelectedOption();
         int index = (selected < 0 ? 0 : selected) + searchStartOffset;
         index %= optionCount;
 
-        String prefixWithCaseFolded(prefix.foldCase());
+        RefPtr<StringImpl> prefixWithCaseFolded(foldCase(prefix));
         for (int i = 0; i < optionCount; ++i, index = (index + 1) % optionCount) {
             // Fold the option string and check if its prefix is equal to the folded prefix.
-            String text = m_dataSource->optionAtIndex(index);
-            if (stripLeadingWhiteSpace(text).foldCase().startsWith(prefixWithCaseFolded))
+            RefPtr<StringImpl> text = m_dataSource->optionAtIndex(index);
+            if (startsWith(foldCase(stripLeadingWhiteSpace(text)), prefixWithCaseFolded))
                 return index;
         }
     }

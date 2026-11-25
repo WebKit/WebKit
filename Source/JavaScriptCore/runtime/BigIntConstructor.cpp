@@ -71,7 +71,7 @@ BigIntConstructor::BigIntConstructor(VM& vm, Structure* structure)
 
 void BigIntConstructor::finishCreation(VM& vm, BigIntPrototype* bigIntPrototype)
 {
-    Base::finishCreation(vm, 1, "BigInt"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "BigInt"_si, PropertyAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, bigIntPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
@@ -105,7 +105,7 @@ JSC_DEFINE_HOST_FUNCTION(callBigIntConstructor, (JSGlobalObject* globalObject, C
     if (primitive.isDouble()) {
         double number = primitive.asDouble();
         if (!isInteger(number))
-            return throwVMError(globalObject, scope, createRangeError(globalObject, "Not an integer"_s));
+            return throwVMError(globalObject, scope, createRangeError(globalObject, "Not an integer"_si));
         RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::createFrom(globalObject, primitive.asDouble())));
     }
 
@@ -287,7 +287,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorSqrt, (JSGlobalObject* globalObject, C
 
     JSBigInt* bigInt = bigIntValue.asHeapBigInt();
     if (bigInt->sign()) {
-        throwRangeError(globalObject, scope, "BigInt.sqrt requires the argument to be a positive BigInt"_s);
+        throwRangeError(globalObject, scope, "BigInt.sqrt requires the argument to be a positive BigInt"_si);
         return { };
     }
 

@@ -51,11 +51,11 @@ public:
 
     void didCommitProvisionalTarget() override;
     bool isProvisional() const override;
-    String processIdentifier() const override;
+    RefPtr<StringImpl> processIdentifier() const override;
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
     void disconnect() override;
-    void sendMessageToTargetBackend(const String&) override;
+    void sendMessageToTargetBackend(StringImpl*) override;
 
 private:
     WeakRef<WebProcessProxy> m_targetProcess;

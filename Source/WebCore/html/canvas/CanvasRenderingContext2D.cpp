@@ -93,7 +93,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, CanvasRen
 
 CanvasRenderingContext2D::~CanvasRenderingContext2D() = default;
 
-std::optional<Style::Filter> CanvasRenderingContext2D::setFilterStringWithoutUpdatingStyle(const String& filterString)
+std::optional<Style::Filter> CanvasRenderingContext2D::setFilterStringWithoutUpdatingStyle(StringImpl* filterString)
 {
     Ref canvas = this->canvas();
     Ref document = canvas->document();
@@ -206,7 +206,7 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
     }
 }
 
-void CanvasRenderingContext2D::setFont(const String& newFont)
+void CanvasRenderingContext2D::setFont(StringImpl* newFont)
 {
     Ref document = canvas().document();
     document->updateStyleIfNeeded();
@@ -214,7 +214,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     setFontWithoutUpdatingStyle(newFont);
 }
 
-void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont)
+void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(StringImpl* newFont)
 {
     // Intentionally don't update style here, because updating style can cause JS to run synchronously.
     // This function is called in the middle of processing, and running arbitrary JS in the middle of processing can cause unexpected behavior.
@@ -223,7 +223,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (newFont.isEmpty())
+    if (isEmpty(newFont))
         return;
 
     Ref canvas = this->canvas();
@@ -236,7 +236,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     if (CheckedPtr computedStyle = canvas->computedStyle())
         fontDescription = FontCascadeDescription { computedStyle->fontDescription() };
     else {
-        static NeverDestroyed<AtomString> family = DefaultFontFamily;
+        static NeverDestroyed<RefPtr<AtomStringImpl>> family = DefaultFontFamily;
         fontDescription.setOneFamily(family.get());
         fontDescription.setComputedSize(DefaultFontSize);
         fontDescription.setUsedSize(DefaultFontSize);
@@ -248,7 +248,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     // <length> values should behave here.
     CheckedPtr rootFontCascade = Style::rootFontCascadeForRootFontUnits(document.get());
 
-    if (newFont == state().unparsedFont && protect(state().font)->realized()
+    if (equal(newFont, state().unparsedFont) && protect(state().font)->realized()
         && fontDescription == state().fontResolutionBase
         && (!rootFontCascade || rootFontCascade->fontDescription() == state().rootFontResolutionBase))
         return;
@@ -268,7 +268,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     if (!fontCascade)
         return;
 
-    String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
+    RefPtr<StringImpl> newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
     modifiableState().fontResolutionBase = WTF::move(fontDescription);
@@ -279,9 +279,9 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     ASSERT(protect(state().font)->isPopulated());
 
     // Recompute the word and the letter spacing for the new font.
-    String letterSpacing;
+    RefPtr<StringImpl> letterSpacing;
     setLetterSpacing(std::exchange(modifiableState().letterSpacing, letterSpacing));
-    String wordSpacing;
+    RefPtr<StringImpl> wordSpacing;
     setWordSpacing(std::exchange(modifiableState().wordSpacing, wordSpacing));
 }
 
@@ -302,23 +302,23 @@ inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction directi
     return TextDirection::LTR;
 }
 
-AtomString CanvasRenderingContext2D::inheritedLanguage() const
+RefPtr<AtomStringImpl> CanvasRenderingContext2D::inheritedLanguage() const
 {
     return protect(canvas())->effectiveLang();
 }
 
-void CanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)
+void CanvasRenderingContext2D::fillText(StringImpl* text, double x, double y, std::optional<double> maxWidth)
 {
     protect(canvasBase())->recordLastFillText(text);
     drawTextInternal(text, x, y, true, maxWidth);
 }
 
-void CanvasRenderingContext2D::strokeText(const String& text, double x, double y, std::optional<double> maxWidth)
+void CanvasRenderingContext2D::strokeText(StringImpl* text, double x, double y, std::optional<double> maxWidth)
 {
     drawTextInternal(text, x, y, false, maxWidth);
 }
 
-Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
+Ref<TextMetrics> CanvasRenderingContext2D::measureText(StringImpl* text)
 {
     Ref document = canvas().document();
     document->updateStyleIfNeeded();
@@ -330,7 +330,7 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
         ResourceLoadObserver::singleton().logCanvasRead(document);
     }
 
-    String normalizedText = normalizeSpaces(text);
+    RefPtr<StringImpl> normalizedText = normalizeSpaces(text);
     CheckedPtr<const Style::ComputedStyle> computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
     bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
@@ -348,7 +348,7 @@ auto CanvasRenderingContext2D::fontProxy() -> const FontProxy*
 
     if (!protect(state().font)->realized())
         setFontWithoutUpdatingStyle(state().unparsedFont);
-    else if (state().lang == "inherit"_s && protect(state().font)->fontDescription().computedLocale() != inheritedLanguage()) {
+    else if (equal(state().lang, "inherit"_s) && protect(state().font)->fontDescription().computedLocale() != inheritedLanguage()) {
         realizeSaves();
         protect(modifiableState().font)->update([language = effectiveLanguage()](FontCascadeDescription& description) {
             description.setComputedLocale(language);
@@ -358,7 +358,7 @@ auto CanvasRenderingContext2D::fontProxy() -> const FontProxy*
     return state().font.ptr();
 }
 
-void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, double y, bool fill, std::optional<double> maxWidth)
+void CanvasRenderingContext2D::drawTextInternal(StringImpl* text, double x, double y, bool fill, std::optional<double> maxWidth)
 {
     Ref document = canvas().document();
     document->updateStyleIfNeeded();
@@ -371,7 +371,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, do
     if (!canDrawText(x, y, fill, maxWidth))
         return;
 
-    String normalizedText = normalizeSpaces(text);
+    RefPtr<StringImpl> normalizedText = normalizeSpaces(text);
     CheckedPtr<const Style::ComputedStyle> computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
     bool override = computedStyle && isOverride(computedStyle->unicodeBidi());

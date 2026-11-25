@@ -57,12 +57,12 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(FunctionConstructor, InternalFunction);
 
 ASCIILiteral functionConstructorPrefix(FunctionConstructionMode);
 
-JSObject* constructFunction(JSGlobalObject*, const ArgList&, const Identifier& functionName, const SourceOrigin&, const String& sourceURL, SourceTaintedness, const WTF::TextPosition&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
+JSObject* constructFunction(JSGlobalObject*, const ArgList&, const Identifier& functionName, const SourceOrigin&, StringImpl* sourceURL, SourceTaintedness, const WTF::TextPosition&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
 JSObject* constructFunction(JSGlobalObject*, CallFrame*, const ArgList&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
 
 JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(
-    JSGlobalObject*, String&& program, LexicallyScopedFeatures, const Identifier&, const SourceOrigin&,
-    const String&, SourceTaintedness, const WTF::TextPosition&, int overrideLineNumber = -1,
+    JSGlobalObject*, RefPtr<StringImpl>&& program, LexicallyScopedFeatures, const Identifier&, const SourceOrigin&,
+    StringImpl*, SourceTaintedness, const WTF::TextPosition&, int overrideLineNumber = -1,
     std::optional<int> functionConstructorParametersEndPosition = std::nullopt,
     FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
 

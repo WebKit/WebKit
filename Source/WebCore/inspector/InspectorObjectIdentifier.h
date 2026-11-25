@@ -36,7 +36,7 @@ struct InspectorObjectIdentifierType;
 using InspectorObjectIdentifier = ProcessQualified<AtomicObjectIdentifier<InspectorObjectIdentifierType>>;
 
 // "<processID>.<objectID>", not ProcessQualified's "<processID>-<objectID>", to match the frame, loader and request IDs.
-inline String generateInspectorObjectIdentifierString()
+inline RefPtr<StringImpl> generateInspectorObjectIdentifierString()
 {
     auto identifier = InspectorObjectIdentifier::generate();
     return makeString(identifier.processIdentifier().toUInt64(), '.', identifier.object().toUInt64());

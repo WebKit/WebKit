@@ -42,20 +42,20 @@ struct PresentationSize {
 };
 
 struct PasteboardItemInfo {
-    Vector<String> pathsForFileUpload;
-    Vector<String> platformTypesForFileUpload;
-    Vector<String> platformTypesByFidelity;
-    String suggestedFileName;
+    Vector<RefPtr<StringImpl>> pathsForFileUpload;
+    Vector<RefPtr<StringImpl>> platformTypesForFileUpload;
+    Vector<RefPtr<StringImpl>> platformTypesByFidelity;
+    RefPtr<StringImpl> suggestedFileName;
     PresentationSize preferredPresentationSize;
     bool isNonTextType { false };
     bool containsFileURLAndFileUploadContent { false };
-    Vector<String> webSafeTypesByFidelity;
+    Vector<RefPtr<StringImpl>> webSafeTypesByFidelity;
     PasteboardItemPresentationStyle preferredPresentationStyle { PasteboardItemPresentationStyle::Unspecified };
 
-    String pathForContentType(const String& type) const
+    RefPtr<StringImpl> pathForContentType(StringImpl* type) const
     {
         ASSERT(pathsForFileUpload.size() == platformTypesForFileUpload.size());
-        auto index = platformTypesForFileUpload.find(type);
+        auto index = platformTypesForFileUpload.findIf([&](auto& item) { return equal(item, type); });
         if (index == notFound)
             return { };
 
@@ -74,13 +74,13 @@ struct PasteboardItemInfo {
         case PasteboardItemPresentationStyle::Attachment:
             return true;
         case PasteboardItemPresentationStyle::Unspecified:
-            return !suggestedFileName.isEmpty();
+            return !isEmpty(suggestedFileName);
         }
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    String contentTypeForHighestFidelityItem() const
+    RefPtr<StringImpl> contentTypeForHighestFidelityItem() const
     {
         if (platformTypesForFileUpload.isEmpty())
             return { };
@@ -88,7 +88,7 @@ struct PasteboardItemInfo {
         return platformTypesForFileUpload.first();
     }
 
-    String pathForHighestFidelityItem() const
+    RefPtr<StringImpl> pathForHighestFidelityItem() const
     {
         if (pathsForFileUpload.isEmpty())
             return { };

@@ -79,21 +79,21 @@ void ProcessLauncher::launchProcess()
 
     StringBuilder commandLineBuilder;
     commandLineBuilder.append("\""_s);
-    commandLineBuilder.append(String(pathStr));
+    commandLineBuilder.append(StringImpl::create(pathStr));
     commandLineBuilder.append("\""_s);
     commandLineBuilder.append(" -type "_s);
-    commandLineBuilder.append(String::number(static_cast<int>(m_launchOptions.processType)));
+    commandLineBuilder.append(makeString(static_cast<int>(m_launchOptions.processType)));
     commandLineBuilder.append(" -processIdentifier "_s);
-    commandLineBuilder.append(String::number(m_launchOptions.processIdentifier.toUInt64()));
+    commandLineBuilder.append(makeString(m_launchOptions.processIdentifier.toUInt64()));
     commandLineBuilder.append(" -clientIdentifier "_s);
-    commandLineBuilder.append(String::number(reinterpret_cast<uintptr_t>(clientIdentifier)));
+    commandLineBuilder.append(makeString(reinterpret_cast<uintptr_t>(clientIdentifier)));
     if (m_client->shouldConfigureJSCForTesting())
         commandLineBuilder.append(" -configure-jsc-for-testing"_s);
     if (!m_client->isJITEnabled())
         commandLineBuilder.append(" -disable-jit"_s);
     commandLineBuilder.append('\0');
 
-    auto commandLine = commandLineBuilder.toString().wideCharacters();
+    auto commandLine = wideCharacters(commandLineBuilder.toString());
 
     STARTUPINFO startupInfo { };
     startupInfo.cb = sizeof(startupInfo);
@@ -123,7 +123,7 @@ void ProcessLauncher::launchProcess()
     });
 }
 
-void ProcessLauncher::terminateProcess(const String&)
+void ProcessLauncher::terminateProcess(StringImpl*)
 {
     if (!m_hProcess)
         return;

@@ -82,10 +82,10 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     constexpr auto rgba16FBackgroundColor = SRGBA<uint8_t> { 255, 215, 0 };
 #endif
 
-    TextRun textRun(String::number(repaintCount));
+    TextRun textRun(makeString(repaintCount));
 
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica"_s);
+    fontDescription.setOneFamily("Helvetica"_atom);
     fontDescription.setComputedSize(fontSize);
     fontDescription.setUsedSize(fontSize);
 

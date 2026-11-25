@@ -47,13 +47,13 @@ JSGlobalObjectAuditAgent::~JSGlobalObjectAuditAgent() = default;
 InjectedScript JSGlobalObjectAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
-        errorString = "executionContextId is not supported for JSContexts as there is only one execution context"_s;
+        errorString = "executionContextId is not supported for JSContexts as there is only one execution context"_si;
         return InjectedScript();
     }
 
     auto injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
     if (injectedScript.hasNoValue())
-        errorString = "Internal error: main world execution context not found"_s;
+        errorString = "Internal error: main world execution context not found"_si;
 
     return injectedScript;
 }

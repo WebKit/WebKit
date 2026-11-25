@@ -34,8 +34,8 @@ namespace WebCore {
 Ref<JSON::Object> GPUQuerySetDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
-    json->setString("type"_s, convertEnumerationToString(type));
-    json->setDouble("count"_s, count);
+    json->setString("type"_si, convertEnumerationToString(type));
+    json->setDouble("count"_si, count);
     return json;
 }
 

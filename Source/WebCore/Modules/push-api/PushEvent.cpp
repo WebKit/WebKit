@@ -45,13 +45,13 @@ static Vector<uint8_t> dataFromPushMessageDataInit(PushMessageDataInit& data)
         [](Ref<JSC::ArrayBufferView>& value) -> Vector<uint8_t> {
             return value->span();
         },
-        [](String& value) -> Vector<uint8_t> {
-            return value.utf8().span();
+        [](RefPtr<StringImpl>& value) -> Vector<uint8_t> {
+            return utf8(value).span();
         }
     );
 }
 
-Ref<PushEvent> PushEvent::create(const AtomString& type, PushEventInit&& initializer, IsTrusted isTrusted)
+Ref<PushEvent> PushEvent::create(AtomStringImpl* type, PushEventInit&& initializer, IsTrusted isTrusted)
 {
     std::optional<Vector<uint8_t>> data;
     if (initializer.data)
@@ -59,7 +59,7 @@ Ref<PushEvent> PushEvent::create(const AtomString& type, PushEventInit&& initial
     return adoptRef(*new PushEvent(type, WTF::move(initializer), WTF::move(data), isTrusted));
 }
 
-Ref<PushEvent> PushEvent::create(const AtomString& type, ExtendableEventInit&& initializer, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
+Ref<PushEvent> PushEvent::create(AtomStringImpl* type, ExtendableEventInit&& initializer, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
 {
     return adoptRef(*new PushEvent(type, WTF::move(initializer), WTF::move(data), isTrusted));
 }
@@ -74,7 +74,7 @@ NODELETE static inline RefPtr<PushMessageData> pushMessageDataFromOptionalVector
 
 PushEvent::~PushEvent() = default;
 
-PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
+PushEvent::PushEvent(AtomStringImpl* type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
 #if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
     : PushEvent(type, WTF::move(eventInit), WTF::move(data), nullptr, std::nullopt, isTrusted)
 #else
@@ -86,12 +86,12 @@ PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, st
 
 #if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
 
-Ref<PushEvent> PushEvent::create(const AtomString& type, ExtendableEventInit&& initializer, Ref<Notification> proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
+Ref<PushEvent> PushEvent::create(AtomStringImpl* type, ExtendableEventInit&& initializer, Ref<Notification> proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
 {
     return adoptRef(*new PushEvent(type, WTF::move(initializer), std::nullopt, WTF::move(proposedNotification), proposedAppBadge, isTrusted));
 }
 
-PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, RefPtr<Notification> proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
+PushEvent::PushEvent(AtomStringImpl* type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, RefPtr<Notification> proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::PushEvent, type, WTF::move(eventInit), isTrusted)
     , m_data(pushMessageDataFromOptionalVector(WTF::move(data)))
     , m_proposedNotification(proposedNotification)

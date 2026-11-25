@@ -47,14 +47,14 @@ TextStream& operator<<(TextStream& textStream, const QuirkMatchPattern& quirkMat
     return textStream;
 }
 
-const String& URLMatchContext::registrableDomain() const
+const RefPtr<StringImpl>& URLMatchContext::registrableDomain() const
 {
     if (!m_registrableDomain)
         m_registrableDomain = RegistrableDomain { m_url }.string();
     return *m_registrableDomain;
 }
 
-const String& URLMatchContext::domainWithoutPublicSuffix() const
+const RefPtr<StringImpl>& URLMatchContext::domainWithoutPublicSuffix() const
 {
     if (!m_domainWithoutPublicSuffix)
         m_domainWithoutPublicSuffix = PublicSuffixStore::singleton().domainWithoutPublicSuffix(registrableDomain());
@@ -108,14 +108,14 @@ bool evaluateURLEnvironment(URLEnvironment environment)
     return false;
 }
 
-QuirkMatchPattern::QuirkMatchPattern(String&& string, UserContentURLPattern&& pattern, bool matchesAnyPublicSuffix)
+QuirkMatchPattern::QuirkMatchPattern(RefPtr<StringImpl>&& string, UserContentURLPattern&& pattern, bool matchesAnyPublicSuffix)
     : m_string(WTF::move(string))
     , m_pattern(WTF::move(pattern))
     , m_matchesAnyPublicSuffix(matchesAnyPublicSuffix)
 {
 }
 
-QuirkMatchPattern::QuirkMatchPattern(String&& string)
+QuirkMatchPattern::QuirkMatchPattern(RefPtr<StringImpl>&& string)
     : m_string(WTF::move(string))
 {
     if (auto parsed = parse(m_string)) {
@@ -143,13 +143,13 @@ std::optional<QuirkMatchPattern> QuirkMatchPattern::parse(StringView string)
         return std::nullopt;
 
     auto& scheme = pattern.scheme();
-    if (scheme != "*"_s && scheme != "http"_s && scheme != "https"_s)
+    if (!equal(scheme, "*"_s) && !equal(scheme, "http"_s) && !equal(scheme, "https"_s))
         return std::nullopt;
 
-    if (pattern.host().isEmpty() && !pattern.matchAllHosts())
+    if (isEmpty(pattern.host()) && !pattern.matchAllHosts())
         return std::nullopt;
 
-    if (matchesAnyPublicSuffix && (pattern.host().isEmpty() || pattern.host().contains('.') || pattern.host().startsWith('[')))
+    if (matchesAnyPublicSuffix && (isEmpty(pattern.host()) || contains(pattern.host(), '.') || startsWith(pattern.host(), '[')))
         return std::nullopt;
 
     return QuirkMatchPattern { string.toString(), WTF::move(pattern), matchesAnyPublicSuffix };

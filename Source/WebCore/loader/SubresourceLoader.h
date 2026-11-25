@@ -89,7 +89,7 @@ private:
 
     void init(ResourceRequest&&, CompletionHandler<void(bool)>&&) final;
     
-    void updateReferrerPolicy(const String&);
+    void updateReferrerPolicy(StringImpl*);
 
 #if PLATFORM(COCOA)
     void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) final;
@@ -98,8 +98,8 @@ private:
     void releaseResources() final;
 
     bool responseHasHTTPStatusCodeError() const;
-    std::expected<void, String> checkResponseCrossOriginAccessControl(const ResourceResponse&);
-    std::expected<void, String> checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest);
+    std::expected<void, RefPtr<StringImpl>> checkResponseCrossOriginAccessControl(const ResourceResponse&);
+    std::expected<void, RefPtr<StringImpl>> checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest);
 
     void didReceiveDataOrBuffer(const FragmentedSharedBuffer&, long long encodedDataLength, DataPayloadType);
 

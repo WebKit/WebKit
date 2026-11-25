@@ -58,6 +58,6 @@ WEBCORE_EXPORT bool isWellKnownRedirectAllowed(const URL&);
 
 WEBCORE_EXPORT WellKnownOriginListResult findOriginInWellKnownList(const SecurityOriginData& callerOrigin, std::span<const uint8_t> resource, ASCIILiteral memberName, WellKnownOriginListPolicy&& = { });
 
-WEBCORE_EXPORT Vector<String> parseOriginsFromWellKnownList(std::span<const uint8_t> resource, ASCIILiteral memberName, WellKnownOriginListPolicy&& = { });
+WEBCORE_EXPORT Vector<RefPtr<StringImpl>> parseOriginsFromWellKnownList(std::span<const uint8_t> resource, ASCIILiteral memberName, WellKnownOriginListPolicy&& = { });
 
 } // namespace WebCore

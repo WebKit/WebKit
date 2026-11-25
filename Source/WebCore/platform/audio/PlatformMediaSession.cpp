@@ -44,9 +44,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformMediaSession);
 
-String convertEnumerationToString(PlatformMediaSession::State state)
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaSession::State state)
 {
-    static const std::array<NeverDestroyed<String>, 5> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 5> values {
         MAKE_STATIC_STRING_IMPL("Idle"),
         MAKE_STATIC_STRING_IMPL("Autoplaying"),
         MAKE_STATIC_STRING_IMPL("Playing"),
@@ -62,9 +62,9 @@ String convertEnumerationToString(PlatformMediaSession::State state)
     return values[static_cast<size_t>(state)];
 }
 
-String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaSession::InterruptionType type)
 {
-    static const std::array<NeverDestroyed<String>, 8> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 8> values {
         MAKE_STATIC_STRING_IMPL("NoInterruption"),
         MAKE_STATIC_STRING_IMPL("SystemSleep"),
         MAKE_STATIC_STRING_IMPL("EnteringBackground"),
@@ -86,9 +86,9 @@ String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
     return values[static_cast<size_t>(type)];
 }
 
-String convertEnumerationToString(PlatformMediaSession::MediaType mediaType)
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaSession::MediaType mediaType)
 {
-    static const std::array<NeverDestroyed<String>, 6> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 6> values {
         MAKE_STATIC_STRING_IMPL("None"),
         MAKE_STATIC_STRING_IMPL("Video"),
         MAKE_STATIC_STRING_IMPL("VideoAudio"),
@@ -107,9 +107,9 @@ String convertEnumerationToString(PlatformMediaSession::MediaType mediaType)
     return values[static_cast<size_t>(mediaType)];
 }
 
-String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType command)
+RefPtr<StringImpl> convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType command)
 {
-    static const std::array<NeverDestroyed<String>, 16> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 16> values {
         MAKE_STATIC_STRING_IMPL("NoCommand"),
         MAKE_STATIC_STRING_IMPL("PlayCommand"),
         MAKE_STATIC_STRING_IMPL("PauseCommand"),
@@ -497,7 +497,7 @@ WTFLogChannel& PlatformMediaSession::logChannel() const
     return LogMedia;
 }
 
-String PlatformMediaSession::description() const
+RefPtr<StringImpl> PlatformMediaSession::description() const
 {
     return makeString(convertEnumerationToString(mediaType()), ", "_s, convertEnumerationToString(state()));
 }

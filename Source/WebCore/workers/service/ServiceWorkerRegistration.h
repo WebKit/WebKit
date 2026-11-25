@@ -75,7 +75,7 @@ public:
 
     NODELETE ServiceWorker* getNewestWorker() const;
 
-    NODELETE const String& scope() const;
+    NODELETE const RefPtr<StringImpl>& scope() const;
 
     NODELETE ServiceWorkerUpdateViaCache updateViaCache() const;
     NODELETE void setUpdateViaCache(ServiceWorkerUpdateViaCache);
@@ -103,10 +103,10 @@ public:
 
 #if ENABLE(NOTIFICATION_EVENT)
     struct GetNotificationOptions {
-        String tag;
+        RefPtr<StringImpl> tag;
     };
 
-    void showNotification(ScriptExecutionContext&, String&& title, NotificationOptions&&, Ref<DeferredPromise>&&);
+    void showNotification(ScriptExecutionContext&, RefPtr<StringImpl>&& title, NotificationOptions&&, Ref<DeferredPromise>&&);
     void getNotifications(const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>);
 #endif
 

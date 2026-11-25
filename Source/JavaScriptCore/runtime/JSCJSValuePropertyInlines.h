@@ -179,7 +179,7 @@ inline JSString* JSValue::toStringOrNull(JSGlobalObject* globalObject) const
     return toStringSlowCase(globalObject, returnEmptyStringOnError);
 }
 
-inline String JSValue::toWTFString(JSGlobalObject* globalObject) const
+inline RefPtr<StringImpl> JSValue::toWTFString(JSGlobalObject* globalObject) const
 {
     if (isString())
         return asString(asCell())->value(globalObject);

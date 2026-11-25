@@ -66,7 +66,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     return platformData;
 }
 
-static RetainPtr<CFDataRef> extractFontCustomPlatformDataShared(RetainPtr<CFArrayRef>&& array, const String& itemInCollection)
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataShared(RetainPtr<CFArrayRef>&& array, StringImpl* itemInCollection)
 {
     if (!array)
         return nullptr;
@@ -76,8 +76,8 @@ static RetainPtr<CFDataRef> extractFontCustomPlatformDataShared(RetainPtr<CFArra
     auto length = CFArrayGetCount(array.get());
     if (length <= 0)
         return nullptr;
-    if (!itemInCollection.isNull()) {
-        if (auto desiredName = itemInCollection.createCFString()) {
+    if (itemInCollection) {
+        if (auto desiredName = createCFString(itemInCollection)) {
             for (CFIndex i = 0; i < length; ++i) {
                 auto candidate = static_cast<FPFontRef>(CFArrayGetValueAtIndex(array.get(), i));
                 auto postScriptName = adoptCF(FPFontCopyPostScriptName(candidate));
@@ -96,7 +96,7 @@ static RetainPtr<CFDataRef> extractFontCustomPlatformDataShared(RetainPtr<CFArra
     return adoptCF(FPFontCopySFNTData(font));
 }
 
-static RetainPtr<CFDataRef> extractFontCustomPlatformDataSystemParser(const SharedBuffer& buffer, const String& itemInCollection)
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataSystemParser(const SharedBuffer& buffer, StringImpl* itemInCollection)
 {
     RetainPtr bufferData = buffer.createCFData();
 
@@ -105,7 +105,7 @@ static RetainPtr<CFDataRef> extractFontCustomPlatformDataSystemParser(const Shar
 }
 
 #if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
-static RetainPtr<CFDataRef> extractFontCustomPlatformDataMemorySafe(const SharedBuffer& buffer, const String& itemInCollection)
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataMemorySafe(const SharedBuffer& buffer, StringImpl* itemInCollection)
 {
     RetainPtr bufferData = buffer.createCFData();
 
@@ -114,7 +114,7 @@ static RetainPtr<CFDataRef> extractFontCustomPlatformDataMemorySafe(const Shared
 }
 #endif
 
-RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, StringImpl* itemInCollection)
 {
     RetainPtr extractedData = extractFontCustomPlatformDataSystemParser(buffer, itemInCollection);
     if (!extractedData) {
@@ -129,7 +129,7 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
     return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTF::move(creationData)));
 }
 
-RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer& buffer, StringImpl* itemInCollection)
 {
 #if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
     RetainPtr extractedData = extractFontCustomPlatformDataMemorySafe(buffer, itemInCollection);
@@ -169,7 +169,7 @@ FontCustomPlatformSerializedData FontCustomPlatformData::serializedData() const
     return FontCustomPlatformSerializedData { creationData.fontFaceData, creationData.itemInCollection, m_renderingResourceIdentifier };
 }
 
-bool FontCustomPlatformData::supportsFormat(const String& format)
+bool FontCustomPlatformData::supportsFormat(StringImpl* format)
 {
     return equalLettersIgnoringASCIICase(format, "truetype"_s)
         || equalLettersIgnoringASCIICase(format, "opentype"_s)

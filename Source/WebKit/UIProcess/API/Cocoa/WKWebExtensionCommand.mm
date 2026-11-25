@@ -72,7 +72,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 - (NSString *)debugDescription
 {
     return [NSString stringWithFormat:@"<%@: %p; identifier = %@; shortcut = %@>", NSStringFromClass(self.class), self,
-        self.identifier, self.activationKey.length ? protect(*_webExtensionCommand)->shortcutString().createNSString().get() : @"(none)"];
+        self.identifier, self.activationKey.length ? createNSString(protect(*_webExtensionCommand)->shortcutString()).get() : @"(none)"];
 }
 
 - (WKWebExtensionContext *)webExtensionContext
@@ -84,25 +84,25 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 
 - (NSString *)identifier
 {
-    return _webExtensionCommand->identifier().createNSString().autorelease();
+    return createNSString(_webExtensionCommand->identifier()).autorelease();
 }
 
 - (NSString *)title
 {
-    return _webExtensionCommand->description().createNSString().autorelease();
+    return createNSString(_webExtensionCommand->description()).autorelease();
 }
 
 - (NSString *)activationKey
 {
     Ref command = *_webExtensionCommand;
-    if (auto& activationKey = command->activationKey(); !activationKey.isEmpty())
-        return activationKey.createNSString().autorelease();
+    if (auto& activationKey = command->activationKey(); !isEmpty(activationKey))
+        return createNSString(activationKey).autorelease();
     return nil;
 }
 
 - (void)setActivationKey:(NSString *)activationKey
 {
-    bool result = protect(*_webExtensionCommand)->setActivationKey(activationKey);
+    bool result = protect(*_webExtensionCommand)->setActivationKey(StringImpl::create(activationKey));
     NSAssert(result, @"Invalid parameter: an unsupported character was provided");
 }
 
@@ -133,12 +133,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 
 - (NSString *)_shortcut
 {
-    return protect(*_webExtensionCommand)->shortcutString().createNSString().autorelease();
+    return createNSString(protect(*_webExtensionCommand)->shortcutString()).autorelease();
 }
 
 - (NSString *)_userVisibleShortcut
 {
-    return protect(*_webExtensionCommand)->userVisibleShortcut().createNSString().autorelease();
+    return createNSString(protect(*_webExtensionCommand)->userVisibleShortcut()).autorelease();
 }
 
 - (BOOL)_isActionCommand

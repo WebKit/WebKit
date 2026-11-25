@@ -89,14 +89,14 @@ private:
 
 class ModePredicate {
 public:
-    explicit ModePredicate(String&& mode, bool allowEventLoopTasks)
+    explicit ModePredicate(RefPtr<StringImpl>&& mode, bool allowEventLoopTasks)
         : m_mode(WTF::move(mode))
-        , m_defaultMode(m_mode == WorkerRunLoop::defaultMode())
+        , m_defaultMode(equal(m_mode, WorkerRunLoop::defaultMode()))
         , m_allowEventLoopTasks(allowEventLoopTasks)
     {
     }
 
-    NODELETE const String mode() const
+    NODELETE const RefPtr<StringImpl> mode() const
     {
         return m_mode;
     }
@@ -108,11 +108,11 @@ public:
 
     bool operator()(const WorkerDedicatedRunLoop::Task& task) const
     {
-        return m_defaultMode || m_mode == task.mode() || (m_allowEventLoopTasks && task.mode() == WorkerEventLoop::taskMode());
+        return m_defaultMode || equal(m_mode, task.mode()) || (m_allowEventLoopTasks && equal(task.mode(), WorkerEventLoop::taskMode()));
     }
 
 private:
-    String m_mode;
+    RefPtr<StringImpl> m_mode;
     bool m_defaultMode;
     bool m_allowEventLoopTasks;
 };
@@ -124,14 +124,14 @@ WorkerDedicatedRunLoop::~WorkerDedicatedRunLoop()
     ASSERT(!m_nestedCount);
 }
 
-String WorkerRunLoop::defaultMode()
+RefPtr<StringImpl> WorkerRunLoop::defaultMode()
 {
-    return String();
+    return nullptr;
 }
 
-static String debuggerMode()
+static RefPtr<StringImpl> debuggerMode()
 {
-    return "debugger"_s;
+    return "debugger"_si;
 }
 
 class RunLoopSetup {
@@ -234,11 +234,11 @@ void WorkerDedicatedRunLoop::run(WorkerOrWorkletGlobalScope* context)
         if (currentRunLoopStatus.addRunLoopSpin() == RunLoopStatus::ShouldLogExcessiveRunLoopSpinning::No)
             continue;
 
-        RELEASE_LOG(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), m_sharedTimer->fireTimeDelay().seconds(), result.activeRunLoopTimersBeforeFiring.utf8(), result.activeRunLoopTimersAfterFiring.utf8());
+        RELEASE_LOG(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), m_sharedTimer->fireTimeDelay().seconds(), utf8(result.activeRunLoopTimersBeforeFiring), utf8(result.activeRunLoopTimersAfterFiring));
 
 #if PLATFORM(COCOA)
         if (WTF::CocoaApplication::isAppleApplication())
-            RELEASE_LOG_FAULT_WITH_PAYLOAD(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), protect(m_sharedTimer)->fireTimeDelay().seconds(), result.activeRunLoopTimersBeforeFiring.utf8(), result.activeRunLoopTimersAfterFiring.utf8());
+            RELEASE_LOG_FAULT_WITH_PAYLOAD(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), protect(m_sharedTimer)->fireTimeDelay().seconds(), utf8(result.activeRunLoopTimersBeforeFiring), utf8(result.activeRunLoopTimersAfterFiring));
 #endif
 
         // Reset status to start tracking a new sequence of spinning.
@@ -253,11 +253,11 @@ MessageQueueWaitResult WorkerDedicatedRunLoop::runInDebuggerMode(WorkerOrWorklet
     return runInMode(&context, ModePredicate { debuggerMode(), false }).messageQueueResult;
 }
 
-bool WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalScope* context, const String& mode, bool allowEventLoopTasks)
+bool WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalScope* context, StringImpl* mode, bool allowEventLoopTasks)
 {
-    ASSERT(mode != debuggerMode());
+    ASSERT(!equal(mode, debuggerMode()));
     RunLoopSetup setup(*this, RunLoopSetup::IsForDebugging::No);
-    ModePredicate modePredicate(String { mode }, allowEventLoopTasks);
+    ModePredicate modePredicate(RefPtr<StringImpl> { mode }, allowEventLoopTasks);
     return runInMode(context, modePredicate).messageQueueResult != MessageQueueWaitResult::MessageQueueTerminated;
 }
 
@@ -268,7 +268,7 @@ WorkerDedicatedRunLoop::RunInModeResult WorkerDedicatedRunLoop::runInMode(Worker
 
     AutodrainedPool pool;
 
-    const String predicateMode = predicate.mode();
+    const RefPtr<StringImpl> predicateMode = predicate.mode();
     JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this, predicateMode] {
         // We don't actually do anything here, we just want to loop around runInMode
         // to both recalculate our deadline and to potentially run the run loop.
@@ -408,7 +408,7 @@ void WorkerDedicatedRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&&
     m_messageQueue.appendAndKill(makeUnique<Task>(WTF::move(task), defaultMode()));
 }
 
-void WorkerDedicatedRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, const String& mode)
+void WorkerDedicatedRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, StringImpl* mode)
 {
     m_messageQueue.append(makeUnique<Task>(WTF::move(task), mode));
 }
@@ -437,9 +437,9 @@ void WorkerDedicatedRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* conte
     }
 }
 
-WorkerDedicatedRunLoop::Task::Task(ScriptExecutionContext::Task&& task, const String& mode)
+WorkerDedicatedRunLoop::Task::Task(ScriptExecutionContext::Task&& task, StringImpl* mode)
     : m_task(WTF::move(task))
-    , m_mode(mode.isolatedCopy())
+    , m_mode(isolatedCopy(mode))
 {
 }
 
@@ -471,7 +471,7 @@ void WorkerMainRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task&& task
     });
 }
 
-void WorkerMainRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, const String& /*mode*/)
+void WorkerMainRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, StringImpl* /*mode*/)
 {
     if (m_terminated)
         return;
@@ -490,7 +490,7 @@ void WorkerMainRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, con
     });
 }
 
-bool WorkerMainRunLoop::runInMode(WorkerOrWorkletGlobalScope*, const String&, bool)
+bool WorkerMainRunLoop::runInMode(WorkerOrWorkletGlobalScope*, StringImpl*, bool)
 {
     RunLoop::mainSingleton().cycle();
     return !terminated();

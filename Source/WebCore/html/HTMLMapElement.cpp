@@ -79,12 +79,12 @@ bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size,
 
 RefPtr<HTMLImageElement> HTMLMapElement::imageElement()
 {
-    if (m_name.isEmpty())
+    if (isEmpty(m_name))
         return nullptr;
     return protect(treeScope())->imageElementByUsemap(m_name);
 }
 
-void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLMapElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -92,8 +92,8 @@ void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomStrin
         auto oldMapName = m_name;
 
         if (name == HTMLNames::nameAttr) {
-            AtomString mapName = newValue;
-            if (mapName[0] == '#')
+            RefPtr<AtomStringImpl> mapName = newValue;
+            if (codeUnitAt(mapName, 0) == '#')
                 mapName = StringView(mapName).substring(1).toAtomString();
             m_name = WTF::move(mapName);
         }

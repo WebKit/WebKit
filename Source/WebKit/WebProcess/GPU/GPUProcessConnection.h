@@ -114,11 +114,11 @@ public:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    void setMediaPlaybackEnvironment(WebCore::PageIdentifier, const String&);
-    void setDisplayCaptureEnvironment(WebCore::PageIdentifier, const String&);
+    void setMediaPlaybackEnvironment(WebCore::PageIdentifier, StringImpl*);
+    void setDisplayCaptureEnvironment(WebCore::PageIdentifier, StringImpl*);
 #endif
 
-    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+    void configureLoggingChannel(StringImpl*, WTFLogChannelState, WTFLogLevel);
 
     void createRenderingBackend(RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseRenderingBackend(RemoteRenderingBackendIdentifier);

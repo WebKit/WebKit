@@ -37,7 +37,7 @@ public:
         REMOVAL = 3
     };
 
-    static Ref<MutationEvent> create(const AtomString& type, CanBubble canBubble, Node* relatedNode = nullptr, const String& prevValue = String(), const String& newValue = String())
+    static Ref<MutationEvent> create(AtomStringImpl* type, CanBubble canBubble, Node* relatedNode = nullptr, StringImpl* prevValue = nullptr, StringImpl* newValue = nullptr)
     {
         return adoptRef(*new MutationEvent(type, canBubble, IsCancelable::No, relatedNode, prevValue, newValue));
     }
@@ -47,22 +47,22 @@ public:
         return adoptRef(*new MutationEvent);
     }
 
-    WEBCORE_EXPORT void initMutationEvent(const AtomString& type, bool canBubble, bool cancelable, Node* relatedNode, const String& prevValue, const String& newValue, const String& attrName, unsigned short attrChange);
+    WEBCORE_EXPORT void initMutationEvent(AtomStringImpl* type, bool canBubble, bool cancelable, Node* relatedNode, StringImpl* prevValue, StringImpl* newValue, StringImpl* attrName, unsigned short attrChange);
 
     Node* relatedNode() const { return m_relatedNode.get(); }
-    String prevValue() const { return m_prevValue; }
-    String newValue() const { return m_newValue; }
-    String attrName() const { return m_attrName; }
+    RefPtr<StringImpl> prevValue() const { return m_prevValue; }
+    RefPtr<StringImpl> newValue() const { return m_newValue; }
+    RefPtr<StringImpl> attrName() const { return m_attrName; }
     unsigned short attrChange() const { return m_attrChange; }
 
 private:
     MutationEvent();
-    MutationEvent(const AtomString& type, CanBubble, IsCancelable, Node* relatedNode, const String& prevValue, const String& newValue);
+    MutationEvent(AtomStringImpl* type, CanBubble, IsCancelable, Node* relatedNode, StringImpl* prevValue, StringImpl* newValue);
 
     RefPtr<Node> m_relatedNode;
-    String m_prevValue;
-    String m_newValue;
-    String m_attrName;
+    RefPtr<StringImpl> m_prevValue;
+    RefPtr<StringImpl> m_newValue;
+    RefPtr<StringImpl> m_attrName;
     unsigned short m_attrChange { 0 };
 };
 

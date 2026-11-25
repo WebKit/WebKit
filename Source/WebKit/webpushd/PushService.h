@@ -56,29 +56,29 @@ public:
 
     using IncomingPushMessageHandler = Function<void(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&)>;
 
-    static void create(const String& incomingPushServiceName, const String& databasePath, IncomingPushMessageHandler&&, CompletionHandler<void(RefPtr<PushService>&&)>&&);
+    static void create(StringImpl* incomingPushServiceName, StringImpl* databasePath, IncomingPushMessageHandler&&, CompletionHandler<void(RefPtr<PushService>&&)>&&);
     static void createMockService(IncomingPushMessageHandler&&, CompletionHandler<void(RefPtr<PushService>&&)>&&);
     ~PushService();
 
     PushServiceConnection& connection() const { return m_connection; }
     WebCore::PushDatabase& database() const { return m_database; }
 
-    Vector<String> enabledTopics() { return m_connection->enabledTopics(); }
-    Vector<String> ignoredTopics() { return m_connection->ignoredTopics(); }
+    Vector<RefPtr<StringImpl>> enabledTopics() { return m_connection->enabledTopics(); }
+    Vector<RefPtr<StringImpl>> ignoredTopics() { return m_connection->ignoredTopics(); }
 
-    void getSubscription(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, CompletionHandler<void(const std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
-    void subscribe(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
-    void unsubscribe(const WebCore::PushSubscriptionSetIdentifier&, const String& scope, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const std::expected<bool, WebCore::ExceptionData>&)>&&);
+    void getSubscription(const WebCore::PushSubscriptionSetIdentifier&, StringImpl* scope, CompletionHandler<void(const std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
+    void subscribe(const WebCore::PushSubscriptionSetIdentifier&, StringImpl* scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
+    void unsubscribe(const WebCore::PushSubscriptionSetIdentifier&, StringImpl* scope, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const std::expected<bool, WebCore::ExceptionData>&)>&&);
 
-    void incrementSilentPushCount(const WebCore::PushSubscriptionSetIdentifier&, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
+    void incrementSilentPushCount(const WebCore::PushSubscriptionSetIdentifier&, StringImpl* securityOrigin, CompletionHandler<void(unsigned)>&&);
 
     void getAllPushSubscriptionOrigins(CompletionHandler<void(Vector<WebCore::SecurityOriginData>&&)>&&);
 
-    void setPushesEnabledForSubscriptionSetAndOrigin(const WebCore::PushSubscriptionSetIdentifier&, const String& securityOrigin, bool, CompletionHandler<void()>&&);
+    void setPushesEnabledForSubscriptionSetAndOrigin(const WebCore::PushSubscriptionSetIdentifier&, StringImpl* securityOrigin, bool, CompletionHandler<void()>&&);
 
     void removeRecordsForSubscriptionSet(const WebCore::PushSubscriptionSetIdentifier&, CompletionHandler<void(unsigned)>&&);
-    void removeRecordsForSubscriptionSetAndOrigin(const WebCore::PushSubscriptionSetIdentifier&, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
-    void removeRecordsForBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(unsigned)>&&);
+    void removeRecordsForSubscriptionSetAndOrigin(const WebCore::PushSubscriptionSetIdentifier&, StringImpl* securityOrigin, CompletionHandler<void(unsigned)>&&);
+    void removeRecordsForBundleIdentifierAndDataStore(StringImpl* bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(unsigned)>&&);
 
     void didCompleteGetSubscriptionRequest(GetSubscriptionRequest&);
     void didCompleteSubscribeRequest(SubscribeRequest&);
@@ -89,17 +89,17 @@ public:
     void didReceivePushMessage(NSString *topic, NSDictionary *userInfo, CompletionHandler<void()>&& = [] { });
 
 #if PLATFORM(IOS)
-    void updateSubscriptionSetState(const String& allowedBundleIdentifier, const HashSet<String>& webClipIdentifiers, CompletionHandler<void()>&&);
+    void updateSubscriptionSetState(StringImpl* allowedBundleIdentifier, const HashSet<RefPtr<StringImpl>>& webClipIdentifiers, CompletionHandler<void()>&&);
 #endif
 
 private:
     PushService(Ref<PushServiceConnection>&&, Ref<WebCore::PushDatabase>&&, IncomingPushMessageHandler&&);
 
-    using PushServiceRequestMap = HashMap<String, Deque<Ref<PushServiceRequest>>>;
+    using PushServiceRequestMap = HashMap<RefPtr<StringImpl>, Deque<Ref<PushServiceRequest>>>;
     void enqueuePushServiceRequest(PushServiceRequestMap&, Ref<PushServiceRequest>&&);
     void finishedPushServiceRequest(PushServiceRequestMap&, PushServiceRequest&);
 
-    void removeRecordsImpl(const WebCore::PushSubscriptionSetIdentifier&, const std::optional<String>& securityOrigin, CompletionHandler<void(unsigned)>&&);
+    void removeRecordsImpl(const WebCore::PushSubscriptionSetIdentifier&, const std::optional<RefPtr<StringImpl>>& securityOrigin, CompletionHandler<void(unsigned)>&&);
 
     void updateTopicLists(CompletionHandler<void()>&&);
 

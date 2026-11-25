@@ -77,12 +77,12 @@ public:
 
     bool isClosed() const { return m_closed; }
 
-    NODELETE const String& sessionId() const;
+    NODELETE const RefPtr<StringImpl>& sessionId() const;
     NODELETE double expiration() const;
     NODELETE Ref<MediaKeyStatusMap> keyStatuses() const;
 
-    void generateRequest(const AtomString&, const BufferSource&, Ref<DeferredPromise>&&);
-    void load(const String&, Ref<DeferredPromise>&&);
+    void generateRequest(AtomStringImpl*, const BufferSource&, Ref<DeferredPromise>&&);
+    void load(StringImpl*, Ref<DeferredPromise>&&);
     void update(const BufferSource&, Ref<DeferredPromise>&&);
     void close(Ref<DeferredPromise>&&);
     void remove(Ref<DeferredPromise>&&);
@@ -94,20 +94,20 @@ public:
 
     unsigned internalInstanceSessionObjectRefCount() const { return m_instanceSession->refCount(); }
 
-    bool hasSecurityOrigin(const String&) const;
+    bool hasSecurityOrigin(StringImpl*) const;
 
 private:
     MediaKeySession(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
     NODELETE void updateExpiration(double);
     void sessionClosed();
-    String mediaKeysStorageDirectory() const;
+    RefPtr<StringImpl> mediaKeysStorageDirectory() const;
     NODELETE CDMKeyGroupingStrategy keyGroupingStrategy() const;
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;
     void sendMessage(CDMMessageType, Ref<SharedBuffer>&& message) final;
-    void sessionIdChanged(const String&) final;
+    void sessionIdChanged(StringImpl*) final;
     PlatformDisplayID displayID() final;
 
     // EventTarget
@@ -135,7 +135,7 @@ private:
 #endif
 
     WeakPtr<MediaKeys> m_keys;
-    String m_sessionId;
+    RefPtr<StringImpl> m_sessionId;
     double m_expiration;
     const UniqueRef<ClosedPromise> m_closedPromise;
     const Ref<MediaKeyStatusMap> m_keyStatuses;

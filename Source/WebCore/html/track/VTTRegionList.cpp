@@ -38,13 +38,13 @@ VTTRegion* VTTRegionList::item(unsigned index) const
     return const_cast<VTTRegion*>(m_vector[index].ptr());
 }
 
-VTTRegion* VTTRegionList::getRegionById(const String& id) const
+VTTRegion* VTTRegionList::getRegionById(StringImpl* id) const
 {
     // FIXME: Why is this special case needed?
-    if (id.isEmpty())
+    if (isEmpty(id))
         return nullptr;
     for (auto& region : m_vector) {
-        if (region->id() == id)
+        if (equal(region->id(), id))
             return const_cast<VTTRegion*>(region.ptr());
     }
     return nullptr;

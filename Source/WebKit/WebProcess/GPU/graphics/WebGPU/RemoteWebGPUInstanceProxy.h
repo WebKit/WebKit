@@ -54,7 +54,7 @@ public:
     RefPtr<::WebGPU::PresentationContext> createPresentationContext(const ::WebGPU::PresentationContextDescriptor&) final;
 #endif
     // The instance has no GPU Process counterpart to label.
-    void setLabel(String&&) final { }
+    void setLabel(RefPtr<StringImpl>&&) final { }
     bool isValid() const final;
     // The instance only sends RequestAdapter, synchronously, so no work in flight on other threads
     // holds it.

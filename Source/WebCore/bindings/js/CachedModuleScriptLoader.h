@@ -68,7 +68,7 @@ private:
 
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     // CachedStyleSheetClient clients uses setCSSStyleSheet instead of notifyFinished.
-    void setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet&) final;
+    void setCSSStyleSheet(StringImpl*, const URL&, ASCIILiteral, const CachedCSSStyleSheet&) final;
     void notifyFinishedInternal(const CachedResource&);
 
     CachedResourceHandle<CachedResource> m_cachedResource;

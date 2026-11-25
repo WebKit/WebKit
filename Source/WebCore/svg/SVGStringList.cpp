@@ -76,7 +76,7 @@ void SVGStringList::parseSpaceSeparatedTokens(StringView data)
             if (buffer.position() == start)
                 break;
 
-            m_items.append(String({ start, buffer.position() }));
+            m_items.append(StringImpl::create(std::span { start, buffer.position() }));
             skipOptionalSVGSpaces(buffer);
         }
 
@@ -84,7 +84,7 @@ void SVGStringList::parseSpaceSeparatedTokens(StringView data)
     });
 }
 
-String SVGStringList::valueAsString() const
+RefPtr<StringImpl> SVGStringList::valueAsString() const
 {
     auto delimiter = m_delimiter == ',' ? ", "_s : " "_s;
     return makeString(interleave(m_items, delimiter));

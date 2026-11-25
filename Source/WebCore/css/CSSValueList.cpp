@@ -222,14 +222,14 @@ void CSSValueContainingVector::serializeItems(StringBuilder& builder, const CSS:
     builder.append(interleave(*this, [&](auto& value) { return value.cssText(context); }, separatorCSSText()));
 }
 
-String CSSValueContainingVector::serializeItems(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSValueContainingVector::serializeItems(const CSS::SerializationContext& context) const
 {
     StringBuilder result;
     serializeItems(result, context);
     return result.toString();
 }
 
-String CSSValueList::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSValueList::customCSSText(const CSS::SerializationContext& context) const
 {
     return serializeItems(context);
 }

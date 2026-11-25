@@ -38,7 +38,7 @@ FileBasedFuzzerAgentBase::FileBasedFuzzerAgentBase(VM&)
 {
 }
 
-String FileBasedFuzzerAgentBase::createLookupKey(const String& sourceFilename, OpcodeID opcodeId, int startLocation, int endLocation)
+RefPtr<StringImpl> FileBasedFuzzerAgentBase::createLookupKey(StringImpl* sourceFilename, OpcodeID opcodeId, int startLocation, int endLocation)
 {
     return makeString(sourceFilename, '|',
         opcodeNames[opcodeAliasForLookupKey(opcodeId)],
@@ -64,14 +64,14 @@ SpeculatedType FileBasedFuzzerAgentBase::getPrediction(CodeBlock* codeBlock, con
 
     ScriptExecutable* ownerExecutable = codeBlock->ownerExecutable();
     const auto& sourceURL = ownerExecutable->sourceURL();
-    if (sourceURL.isEmpty())
+    if (isEmpty(sourceURL))
         return original;
 
     PredictionTarget predictionTarget;
     BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
     predictionTarget.info = codeBlock->expressionInfoForBytecodeIndex(bytecodeIndex);
 
-    Vector<String> urlParts = sourceURL.split('/');
+    Vector<RefPtr<StringImpl>> urlParts = split(sourceURL, '/');
     predictionTarget.sourceFilename = urlParts.isEmpty() ? sourceURL : urlParts.last();
 
     const auto& instructions = codeBlock->instructions();

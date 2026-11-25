@@ -32,7 +32,7 @@ namespace WebCore {
 
 struct BackgroundFetchUIOptions {
     std::optional<Vector<ImageResource>> icons;
-    String title;
+    RefPtr<StringImpl> title;
 };
 
 } // namespace WebCore

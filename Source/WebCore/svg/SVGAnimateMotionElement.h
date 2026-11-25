@@ -39,17 +39,17 @@ private:
     bool hasValidAttributeType() const override;
     bool hasValidAttributeName() const override;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
 
     void startAnimation() override;
     void stopAnimation(SVGElement* targetElement) override;
-    bool setFromAndToValues(const String& fromString, const String& toString) override;
-    bool setFromAndByValues(const String& fromString, const String& byString) override;
-    bool setToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
+    bool setFromAndToValues(StringImpl* fromString, StringImpl* toString) override;
+    bool setFromAndByValues(StringImpl* fromString, StringImpl* byString) override;
+    bool setToAtEndOfDurationValue(StringImpl* toAtEndOfDurationString) override;
     void calculateAnimatedValue(float percentage, unsigned repeatCount) override;
     static void applyResultsToTarget(SVGElement&);
     void applyResultsToTarget() override;
-    std::optional<float> calculateDistance(const String& fromString, const String& toString) override;
+    std::optional<float> calculateDistance(StringImpl* fromString, StringImpl* toString) override;
 
     enum class RotateMode : bool {
         Auto,

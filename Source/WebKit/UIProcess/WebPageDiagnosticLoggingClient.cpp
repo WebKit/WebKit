@@ -37,7 +37,7 @@ WebPageDiagnosticLoggingClient::WebPageDiagnosticLoggingClient(const WKPageDiagn
     initialize(client);
 }
 
-void WebPageDiagnosticLoggingClient::logDiagnosticMessage(WebPageProxy* page, const String& message, const String& description)
+void WebPageDiagnosticLoggingClient::logDiagnosticMessage(WebPageProxy* page, StringImpl* message, StringImpl* description)
 {
     if (!m_client.logDiagnosticMessage)
         return;
@@ -45,7 +45,7 @@ void WebPageDiagnosticLoggingClient::logDiagnosticMessage(WebPageProxy* page, co
     m_client.logDiagnosticMessage(toAPI(page), toAPI(message), toAPI(description), m_client.base.clientInfo);
 }
 
-void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithResult(WebPageProxy* page, const String& message, const String& description, WebCore::DiagnosticLoggingResultType result)
+void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithResult(WebPageProxy* page, StringImpl* message, StringImpl* description, WebCore::DiagnosticLoggingResultType result)
 {
     if (!m_client.logDiagnosticMessageWithResult)
         return;
@@ -53,7 +53,7 @@ void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithResult(WebPageProxy
     m_client.logDiagnosticMessageWithResult(toAPI(page), toAPI(message), toAPI(description), toAPI(result), m_client.base.clientInfo);
 }
 
-void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPageProxy* page, const String& message, const String& description, const String& value)
+void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPageProxy* page, StringImpl* message, StringImpl* description, StringImpl* value)
 {
     if (!m_client.logDiagnosticMessageWithValue)
         return;
@@ -61,7 +61,7 @@ void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPageProxy*
     m_client.logDiagnosticMessageWithValue(toAPI(page), toAPI(message), toAPI(description), toAPI(value), m_client.base.clientInfo);
 }
 
-void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebPageProxy* page, const String& message, const String& description)
+void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebPageProxy* page, StringImpl* message, StringImpl* description)
 {
     if (!m_client.logDiagnosticMessageWithEnhancedPrivacy)
         return;

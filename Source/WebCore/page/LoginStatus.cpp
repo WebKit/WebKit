@@ -37,30 +37,30 @@ using CodeUnitMatchFunction = bool (*)(char16_t);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LoginStatus);
 
-ExceptionOr<UniqueRef<LoginStatus>> LoginStatus::create(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType)
+ExceptionOr<UniqueRef<LoginStatus>> LoginStatus::create(const RegistrableDomain& domain, StringImpl* username, CredentialTokenType tokenType, AuthenticationType authType)
 {
     return create(domain, username, tokenType, authType, authType == AuthenticationType::Unmanaged ? TimeToLiveShort : TimeToLiveLong);
 }
 
-ExceptionOr<UniqueRef<LoginStatus>> LoginStatus::create(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType, Seconds timeToLive)
+ExceptionOr<UniqueRef<LoginStatus>> LoginStatus::create(const RegistrableDomain& domain, StringImpl* username, CredentialTokenType tokenType, AuthenticationType authType, Seconds timeToLive)
 {
     if (domain.isEmpty())
-        return Exception { ExceptionCode::SecurityError, "LoginStatus status can only be set for origins with a registrable domain."_s };
+        return Exception { ExceptionCode::SecurityError, "LoginStatus status can only be set for origins with a registrable domain."_si };
 
-    unsigned length = username.length();
+    unsigned length = WTF::length(username);
     if (length > UsernameMaxLength)
         return Exception { ExceptionCode::SyntaxError, makeString("LoginStatus usernames cannot be longer than "_s, UsernameMaxLength) };
 
-    auto spaceOrNewline = username.find([](char16_t ch) {
+    auto spaceOrNewline = find(username, [](char16_t ch) {
         return deprecatedIsSpaceOrNewline(ch);
     });
     if (spaceOrNewline != notFound)
-        return Exception { ExceptionCode::InvalidCharacterError, "LoginStatus usernames cannot contain whitespace or newlines."_s };
+        return Exception { ExceptionCode::InvalidCharacterError, "LoginStatus usernames cannot contain whitespace or newlines."_si };
 
     return makeUniqueRef<LoginStatus>(*new LoginStatus(domain, username, tokenType, authType, timeToLive));
 }
 
-LoginStatus::LoginStatus(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType, Seconds timeToLive)
+LoginStatus::LoginStatus(const RegistrableDomain& domain, StringImpl* username, CredentialTokenType tokenType, AuthenticationType authType, Seconds timeToLive)
     : m_domain { domain }
     , m_username { username }
     , m_tokenType { tokenType }
@@ -70,7 +70,7 @@ LoginStatus::LoginStatus(const RegistrableDomain& domain, const String& username
     setTimeToLive(timeToLive);
 }
 
-LoginStatus::LoginStatus(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType, WallTime loggedInTime, Seconds timeToLive)
+LoginStatus::LoginStatus(const RegistrableDomain& domain, StringImpl* username, CredentialTokenType tokenType, AuthenticationType authType, WallTime loggedInTime, Seconds timeToLive)
     : m_domain { domain }
     , m_username { username }
     , m_tokenType { tokenType }

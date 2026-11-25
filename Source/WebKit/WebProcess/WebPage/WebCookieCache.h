@@ -60,8 +60,8 @@ public:
 
     NODELETE bool isSupported();
 
-    String cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebPageProxyIdentifier, WebCore::IncludeSecureCookies);
-    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebPageProxyIdentifier, const String& cookieString, WebCore::ShouldRelaxThirdPartyCookieBlocking);
+    RefPtr<StringImpl> cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebPageProxyIdentifier, WebCore::IncludeSecureCookies);
+    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebPageProxyIdentifier, StringImpl* cookieString, WebCore::ShouldRelaxThirdPartyCookieBlocking);
 
     [[nodiscard]] PendingCookieUpdateCounter::Token willSetCookieFromDOM();
     void didSetCookieFromDOM(PendingCookieUpdateCounter::Token, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebPageProxyIdentifier, const WebCore::Cookie&, WebCore::ShouldRelaxThirdPartyCookieBlocking);
@@ -69,7 +69,7 @@ public:
     void allCookiesDeleted();
 
     void clear();
-    void clearForHost(const String&);
+    void clearForHost(StringImpl*);
 
     void setOptInCookiePartitioningEnabled(bool);
 
@@ -82,10 +82,10 @@ private:
     NODELETE bool cacheMayBeOutOfSync() const;
 
     // CookieChangeListener
-    void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) final;
-    void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&) final;
+    void cookiesAdded(StringImpl* host, const Vector<WebCore::Cookie>&) final;
+    void cookiesDeleted(StringImpl* host, const Vector<WebCore::Cookie>&) final;
 
-    HashSet<String> m_hostsWithInMemoryStorage;
+    HashSet<RefPtr<StringImpl>> m_hostsWithInMemoryStorage;
     std::unique_ptr<NetworkStorageSession> m_inMemoryStorageSession;
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     bool m_optInCookiePartitioningEnabled { false };

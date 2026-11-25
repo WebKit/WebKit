@@ -75,20 +75,20 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
 
     Vector<GdkContentProvider*> providers;
     if (m_selectionData->hasMarkup()) {
-        auto markup = m_selectionData->markup().utf8();
+        auto markup = utf8(m_selectionData->markup());
         GRefPtr bytes = gBytesNew(markup.span());
         providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
     }
 
     if (m_selectionData->hasURIList()) {
-        auto uriList = m_selectionData->uriList().utf8();
+        auto uriList = utf8(m_selectionData->uriList());
         GRefPtr bytes = gBytesNew(uriList.span());
         providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
     }
 
     if (m_selectionData->hasURL()) {
         const auto& urlString = m_selectionData->url().string();
-        auto url = makeString(urlString, '\n', m_selectionData->hasText() ? m_selectionData->text() : urlString).utf8();
+        auto url = utf8(makeString(urlString, '\n', m_selectionData->hasText() ? m_selectionData->text() : urlString));
         GRefPtr bytes = gBytesNew(url.span());
         providers.append(gdk_content_provider_new_for_bytes("_NETSCAPE_URL", bytes.get()));
     }
@@ -99,7 +99,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     }
 
     if (m_selectionData->hasText())
-        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, m_selectionData->text().utf8().legacyCStringPointer()));
+        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, utf8(m_selectionData->text()).legacyCStringPointer()));
 
     if (m_selectionData->canSmartReplace()) {
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));

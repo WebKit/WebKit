@@ -33,7 +33,7 @@ namespace WebCore {
 class CryptoAlgorithmEcKeyParams final : public CryptoAlgorithmParameters {
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmEcKeyParams);
 public:
-    String namedCurve;
+    RefPtr<StringImpl> namedCurve;
 
     CryptoAlgorithmEcKeyParams(CryptoAlgorithmIdentifier identifier)
         : CryptoAlgorithmParameters { WTF::move(identifier) }
@@ -51,7 +51,7 @@ public:
     CryptoAlgorithmEcKeyParams isolatedCopy() const
     {
         CryptoAlgorithmEcKeyParams result { identifier };
-        result.namedCurve = namedCurve.isolatedCopy();
+        result.namedCurve = WTF::isolatedCopy(namedCurve);
 
         return result;
     }

@@ -217,7 +217,7 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
 
 ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& langList)
 {
-    AtomString language;
+    RefPtr<AtomStringImpl> language;
 #if ENABLE(VIDEO)
     if (auto* vttElement = dynamicDowncast<WebVTTElement>(element))
         language = vttElement->language();
@@ -225,12 +225,12 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
 #endif
         language = element.effectiveLang();
 
-    if (language.isEmpty())
+    if (isEmpty(language))
         return false;
 
     // Implement basic and extended filterings of given language tags as specified in www.ietf.org/rfc/rfc4647.txt.
     StringView languageStringView = language;
-    unsigned languageLength = language.length();
+    unsigned languageLength = length(language);
     for (auto& range : langList) {
         StringView rangeStringView = range.identifier;
         if (rangeStringView.isEmpty())
@@ -274,7 +274,7 @@ ALWAYS_INLINE bool matchesHeadingPseudoClass(const Element& element, const Fixed
     return integerList->contains(static_cast<int>(headingElement->level()));
 }
 
-ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, const AtomString& argument)
+ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, AtomStringImpl* argument)
 {
     switch (element.effectiveTextDirection()) {
     case TextDirection::LTR:

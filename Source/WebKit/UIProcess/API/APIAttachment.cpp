@@ -36,12 +36,12 @@
 
 namespace API {
 
-Ref<Attachment> Attachment::create(const WTF::String& identifier, WebKit::WebPageProxy& webPage)
+Ref<Attachment> Attachment::create(StringImpl* identifier, WebKit::WebPageProxy& webPage)
 {
     return adoptRef(*new Attachment(identifier, webPage));
 }
 
-Attachment::Attachment(const WTF::String& identifier, WebKit::WebPageProxy& webPage)
+Attachment::Attachment(StringImpl* identifier, WebKit::WebPageProxy& webPage)
     : m_identifier(identifier)
     , m_webPage(webPage)
 {
@@ -78,9 +78,9 @@ void Attachment::updateAttributes(CompletionHandler<void()>&& callback)
 
 void Attachment::invalidate()
 {
-    m_identifier = { };
-    m_filePath = { };
-    m_contentType = { };
+    m_identifier = nullptr;
+    m_filePath = nullptr;
+    m_contentType = nullptr;
     m_webPage.clear();
     m_insertionState = InsertionState::NotInserted;
 #if PLATFORM(COCOA)
@@ -96,12 +96,12 @@ bool Attachment::isEmpty() const
     return true;
 }
 
-WTF::String Attachment::mimeType() const
+RefPtr<StringImpl> Attachment::mimeType() const
 {
     return m_contentType;
 }
 
-WTF::String Attachment::fileName() const
+RefPtr<StringImpl> Attachment::fileName() const
 {
     return { };
 }
@@ -121,7 +121,7 @@ RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
     return nullptr;
 }
 
-void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, const WTF::String&)
+void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, StringImpl*)
 {
 }
 

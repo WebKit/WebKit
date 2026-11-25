@@ -65,7 +65,7 @@ void CDMProxyFactory::unregisterFactory(CDMProxyFactory& factory)
     registeredFactories().removeAll(&factory);
 }
 
-RefPtr<CDMProxy> CDMProxyFactory::createCDMProxyForKeySystem(const String& keySystem)
+RefPtr<CDMProxy> CDMProxyFactory::createCDMProxyForKeySystem(StringImpl* keySystem)
 {
     RefPtr<CDMProxy> cdmProxy;
     for (auto* factory : CDMProxyFactory::registeredFactories()) {
@@ -99,7 +99,7 @@ bool KeyHandle::takeValueIfDifferent(KeyHandleValueVariant&& value)
 
 namespace {
 
-static String vectorToHexString(const Vector<uint8_t>& vec)
+static RefPtr<StringImpl> vectorToHexString(const Vector<uint8_t>& vec)
 {
     StringBuilder stringBuilder;
     for (auto byte : vec)
@@ -109,7 +109,7 @@ static String vectorToHexString(const Vector<uint8_t>& vec)
 
 } // namespace {}
 
-String KeyHandle::idAsString() const
+RefPtr<StringImpl> KeyHandle::idAsString() const
 {
     return makeString('[', vectorToHexString(m_id), ']');
 }
@@ -213,7 +213,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
     auto stopWaitingForKeyOnReturn = makeScopeExit([this, protectedThis = Ref { *this }] {
         stoppedWaitingForKey();
     });
-    LOG(EME, "EME - CDMProxy - trying to wait for key ID %s", vectorToHexString(keyID).utf8());
+    LOG(EME, "EME - CDMProxy - trying to wait for key ID %s", utf8(vectorToHexString(keyID)));
     bool wasKeyAvailable = false;
     {
         Locker locker { m_keysLock };
@@ -230,11 +230,11 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
 
     if (wasKeyAvailable) {
         RefPtr<KeyHandle> handle = keyHandle(keyID);
-        LOG(EME, "EME - CDMProxy - successfully waited for key ID %s", vectorToHexString(keyID).utf8());
+        LOG(EME, "EME - CDMProxy - successfully waited for key ID %s", utf8(vectorToHexString(keyID)));
         return std::make_optional(handle.releaseNonNull());
     }
 
-    LOG(EME, "EME - CDMProxy - key ID %s not available or operation aborted", vectorToHexString(keyID).utf8());
+    LOG(EME, "EME - CDMProxy - key ID %s not available or operation aborted", utf8(vectorToHexString(keyID)));
     return std::nullopt;
 }
 
@@ -252,7 +252,7 @@ bool CDMProxy::isKeyAvailable(const KeyIDType& keyID) const
 std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
     if (!isKeyAvailable(keyID)) {
-        LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).utf8());
+        LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", utf8(vectorToHexString(keyID)));
         return tryWaitForKeyHandle(keyID, WTF::move(client));
     }
 

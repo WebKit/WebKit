@@ -3661,7 +3661,7 @@ class GenerateCSSPropertyNames:
                 return propertyNameData[index].literal();
             }
 
-            const AtomString& nameString(CSSPropertyID id)
+            const RefPtr<AtomStringImpl>& nameString(CSSPropertyID id)
             {
                 if (std::to_underlying(id) < firstCSSProperty)
                     return nullAtom();
@@ -3669,14 +3669,14 @@ class GenerateCSSPropertyNames:
                 if (index >= numCSSProperties)
                     return nullAtom();
 
-                static NeverDestroyed<std::array<AtomString, numCSSProperties>> atomStrings;
+                static NeverDestroyed<std::array<RefPtr<AtomStringImpl>, numCSSProperties>> atomStrings;
                 auto& string = atomStrings.get()[index];
-                if (string.isNull())
-                    string = propertyNameData[index];
+                if (!string)
+                    string = AtomStringImpl::add(propertyNameData[index]);
                 return string;
             }
 
-            String nameForIDL(CSSPropertyID id)
+            RefPtr<StringImpl> nameForIDL(CSSPropertyID id)
             {
                 Latin1Character characters[maxCSSPropertyNameLength];
                 const char* nameForCSS = nameLiteral(id);
@@ -3694,7 +3694,7 @@ class GenerateCSSPropertyNames:
                     }
                     *nextCharacter++ = character;
                 }
-                return std::span<const Latin1Character> { characters, nextCharacter };
+                return StringImpl::create(std::span<const Latin1Character> { characters, nextCharacter });
             }
 
             """)
@@ -4156,9 +4156,9 @@ class GenerateCSSPropertyNames:
 
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
-                signature="Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)",
+                signature="Vector<RefPtr<StringImpl>> CSSProperty::aliasesForProperty(CSSPropertyID id)",
                 iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.aliases),
-                mapping=lambda p: f"return {{ {', '.join(quote_iterable(p.codegen_properties.aliases, suffix='_s'))} }};",
+                mapping=lambda p: f"return {{ {', '.join(quote_iterable(p.codegen_properties.aliases, suffix='_si'))} }};",
                 default="return { };"
             )
 
@@ -4443,8 +4443,8 @@ class GenerateCSSPropertyNames:
 
             CSSPropertyID findCSSProperty(const char* characters, unsigned length);
             ASCIILiteral nameLiteral(CSSPropertyID);
-            const AtomString& nameString(CSSPropertyID);
-            String nameForIDL(CSSPropertyID);
+            const RefPtr<AtomStringImpl>& nameString(CSSPropertyID);
+            RefPtr<StringImpl> nameForIDL(CSSPropertyID);
 
             CSSPropertyID cascadeAliasProperty(CSSPropertyID);
 

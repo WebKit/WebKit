@@ -54,14 +54,14 @@ public:
         Action(Type);
 
         Type type;
-        String data;
+        RefPtr<StringImpl> data;
         BreakpointActionID id { noBreakpointActionID };
         bool emulateUserGesture { false };
     };
 
     using ActionsVector = Vector<Action>;
 
-    JS_EXPORT_PRIVATE static Ref<Breakpoint> create(BreakpointID, const String& condition = nullString(), ActionsVector&& = { }, bool autoContinue = false, size_t ignoreCount = 0);
+    JS_EXPORT_PRIVATE static Ref<Breakpoint> create(BreakpointID, StringImpl* condition = nullString(), ActionsVector&& = { }, bool autoContinue = false, size_t ignoreCount = 0);
 
     BreakpointID id() const { return m_id; }
 
@@ -69,7 +69,7 @@ public:
     unsigned lineNumber() const { return m_lineNumber; }
     unsigned columnNumber() const { return m_columnNumber; }
 
-    const String& condition() const LIFETIME_BOUND { return m_condition; }
+    const RefPtr<StringImpl>& condition() const LIFETIME_BOUND { return m_condition; }
     const ActionsVector& actions() const LIFETIME_BOUND { return m_actions; }
     bool isAutoContinue() const { return m_autoContinue; }
 
@@ -86,7 +86,7 @@ public:
     bool shouldPause(Debugger&, JSGlobalObject*);
 
 private:
-    Breakpoint(BreakpointID, String condition = nullString(), ActionsVector&& = { }, bool autoContinue = false, size_t ignoreCount = 0);
+    Breakpoint(BreakpointID, RefPtr<StringImpl> condition = nullString(), ActionsVector&& = { }, bool autoContinue = false, size_t ignoreCount = 0);
 
     BreakpointID m_id { noBreakpointID };
 
@@ -98,7 +98,7 @@ private:
 
     bool m_resolved { false };
 
-    String m_condition;
+    RefPtr<StringImpl> m_condition;
     ActionsVector m_actions;
     bool m_autoContinue { false };
     size_t m_ignoreCount { 0 };

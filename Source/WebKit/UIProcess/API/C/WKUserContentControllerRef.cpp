@@ -84,23 +84,23 @@ void WKUserContentControllerRemoveAllUserContentFilters(WKUserContentControllerR
 class WebScriptMessageClient : public WebScriptMessageHandler::Client {
     WTF_MAKE_TZONE_ALLOCATED(WebScriptMessageClient);
 public:
-    WebScriptMessageClient(const String& name, WKScriptMessageHandlerCallback callback, const void* context)
+    WebScriptMessageClient(StringImpl* name, WKScriptMessageHandlerCallback callback, const void* context)
         : m_name(name)
         , m_callback(callback)
         , m_context(context) { }
 private:
-    void didPostMessage(WebPageProxy& page, FrameInfoData&& frameInfo, API::ContentWorld&, JavaScriptEvaluationResult&& result, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&& frameInfo, API::ContentWorld&, JavaScriptEvaluationResult&& result, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& completionHandler) override
     {
         Ref message = API::ScriptMessage::create(result.toAPI(), page, API::FrameInfo::create(WTF::move(frameInfo)), m_name, API::ContentWorld::pageContentWorldSingleton());
         Ref listener = API::CompletionListener::create([completionHandler = WTF::move(completionHandler)] (WKTypeRef reply) mutable {
             if (auto result = JavaScriptEvaluationResult::extract(protect(toImpl(reply)).get()))
                 return completionHandler(WTF::move(*result));
-            completionHandler(makeUnexpected(String()));
+            completionHandler(makeUnexpected(nullString()));
         });
         m_callback(toAPI(message.ptr()), toAPI(listener.ptr()), m_context);
     }
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     WKScriptMessageHandlerCallback m_callback;
     const void* m_context;
 };
@@ -109,7 +109,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebScriptMessageClient);
 
 void WKUserContentControllerAddScriptMessageHandler(WKUserContentControllerRef userContentController, WKStringRef wkName, WKScriptMessageHandlerCallback callback, const void* context)
 {
-    String name = toWTFString(wkName);
+    RefPtr<StringImpl> name = toWTFString(wkName);
 
     auto handler = WebKit::WebScriptMessageHandler::create(makeUnique<WebScriptMessageClient>(name, callback, context), name, API::ContentWorld::pageContentWorldSingleton());
     protect(toImpl(userContentController))->addUserScriptMessageHandler(handler);

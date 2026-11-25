@@ -54,17 +54,17 @@ Ref<ResourceMonitorThrottlerHolder> ResourceMonitorThrottlerHolder::create(size_
     return create(emptyString(), count, duration, maxHosts);
 }
 
-Ref<ResourceMonitorThrottlerHolder> ResourceMonitorThrottlerHolder::create(const String& databaseDirectoryPath)
+Ref<ResourceMonitorThrottlerHolder> ResourceMonitorThrottlerHolder::create(StringImpl* databaseDirectoryPath)
 {
     return create(databaseDirectoryPath, ResourceMonitorThrottler::defaultThrottleAccessCount, ResourceMonitorThrottler::defaultThrottleDuration, ResourceMonitorThrottler::defaultMaxHosts);
 }
 
-Ref<ResourceMonitorThrottlerHolder> ResourceMonitorThrottlerHolder::create(const String& databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts)
+Ref<ResourceMonitorThrottlerHolder> ResourceMonitorThrottlerHolder::create(StringImpl* databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts)
 {
     return adoptRef(*new ResourceMonitorThrottlerHolder(databaseDirectoryPath, count, duration, maxHosts));
 }
 
-ResourceMonitorThrottlerHolder::ResourceMonitorThrottlerHolder(const String& databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts)
+ResourceMonitorThrottlerHolder::ResourceMonitorThrottlerHolder(StringImpl* databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts)
 {
     ASSERT(isMainThread());
 
@@ -81,11 +81,11 @@ ResourceMonitorThrottlerHolder::~ResourceMonitorThrottlerHolder()
     sharedWorkQueueSingleton()->dispatch([container = WTF::move(m_throttler)] { });
 }
 
-void ResourceMonitorThrottlerHolder::tryAccess(const String& host, ContinuousApproximateTime time, CompletionHandler<void(bool)>&& completionHandler)
+void ResourceMonitorThrottlerHolder::tryAccess(StringImpl* host, ContinuousApproximateTime time, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainThread());
 
-    if (host.isEmpty()) {
+    if (isEmpty(host)) {
         completionHandler(false);
         return;
     }

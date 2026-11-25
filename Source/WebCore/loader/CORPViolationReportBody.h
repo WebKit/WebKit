@@ -38,9 +38,9 @@ class CORPViolationReportBody : public ReportBody {
 public:
     NODELETE WEBCORE_EXPORT static Ref<CORPViolationReportBody> create(COEPDisposition, const URL& blockedURL, FetchOptions::Destination);
 
-    String disposition() const;
-    const String& type() const final;
-    const String& blockedURL() const LIFETIME_BOUND { return m_blockedURL.string(); }
+    RefPtr<StringImpl> disposition() const;
+    const RefPtr<StringImpl>& type() const final;
+    const RefPtr<StringImpl>& blockedURL() const LIFETIME_BOUND { return m_blockedURL.string(); }
     FetchOptions::Destination destination() const { return m_destination; }
 
 private:

@@ -47,8 +47,15 @@ public:
         : m_value(value)
     { }
 
-    Value(const String& value)
+    Value(StringImpl* value)
         : m_value(value)
+    { }
+    Value(RefPtr<StringImpl>&& value)
+        : m_value(WTF::move(value))
+    { }
+    template<typename T> requires std::derived_from<T, StringImpl>
+    Value(const RefPtr<T>& value)
+        : m_value(RefPtr<StringImpl> { value })
     { }
 
     explicit Value(NodeSet&& value)
@@ -57,13 +64,13 @@ public:
 
     bool isBoolean() const { return WTF::holdsAlternative<bool>(m_value); }
     bool isNumber() const { return WTF::holdsAlternative<double>(m_value); }
-    bool isString() const { return WTF::holdsAlternative<String>(m_value); }
+    bool isString() const { return WTF::holdsAlternative<RefPtr<StringImpl>>(m_value); }
     bool isNodeSet() const { return WTF::holdsAlternative<Ref<NodeSetHolder>>(m_value); }
 
     const NodeSet& toNodeSet() const;
     bool toBoolean() const;
     double toNumber() const;
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 
     // Note that the NodeSet is shared with other Values that this one was copied from or that are copies of this one.
     NodeSet& modifiableNodeSet();
@@ -78,7 +85,7 @@ public:
             [&](double value) {
                 return visitor(value);
             },
-            [&](const String& string) {
+            [&](StringImpl* string) {
                 return visitor(string);
             },
             [&](const Ref<NodeSetHolder>& holder) {
@@ -100,7 +107,7 @@ private:
         { }
     };
 
-    Variant<bool, double, String, Ref<NodeSetHolder>> m_value;
+    Variant<bool, double, RefPtr<StringImpl>, Ref<NodeSetHolder>> m_value;
 };
 
 } // namespace WebCore::XPath

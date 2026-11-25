@@ -47,7 +47,7 @@ RemoteRenderBundleProxy::~RemoteRenderBundleProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderBundleProxy::setLabel(String&& label)
+void RemoteRenderBundleProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteRenderBundle::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

@@ -45,7 +45,7 @@ NODELETE static bool elementIsEmptyForCSS(const Element& element)
         if (is<Element>(*node))
             return false;
         if (auto* textNode = dynamicDowncast<Text>(*node)) {
-            if (!textNode->data().isEmpty())
+            if (!isEmpty(textNode->data()))
                 return false;
         }
     }

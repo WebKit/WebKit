@@ -57,7 +57,7 @@ public:
     static constexpr double SmoothingConstant = 0.05;
     static constexpr double SnapThreshold = 0.001;
 
-    static Ref<AudioParam> create(BaseAudioContext& context, const String& name, float defaultValue, float minValue, float maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode = AutomationRateMode::Variable)
+    static Ref<AudioParam> create(BaseAudioContext& context, StringImpl* name, float defaultValue, float minValue, float maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode = AutomationRateMode::Variable)
     {
         return adoptRef(*new AudioParam(context, name, defaultValue, minValue, maxValue, automationRate, automationRateMode));
     }
@@ -81,7 +81,7 @@ public:
     // Must be called in the audio thread.
     float finalValue();
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
     float minValue() const { return m_minValue; }
     float maxValue() const { return m_maxValue; }
@@ -119,7 +119,7 @@ public:
     void disconnect(AudioNodeOutput*);
 
 protected:
-    AudioParam(BaseAudioContext&, const String&, float defaultValue, float minValue, float maxValue, AutomationRate, AutomationRateMode);
+    AudioParam(BaseAudioContext&, StringImpl*, float defaultValue, float minValue, float maxValue, AutomationRate, AutomationRateMode);
 
 private:
     // sampleAccurate corresponds to a-rate (audio rate) vs. k-rate in the Web Audio specification.
@@ -133,7 +133,7 @@ private:
     NODELETE WTFLogChannel& logChannel() const final;
 #endif
     
-    String m_name;
+    RefPtr<StringImpl> m_name;
     float m_value;
     float m_defaultValue;
     float m_minValue;

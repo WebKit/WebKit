@@ -44,7 +44,7 @@ CSSFilterValue::CSSFilterValue(CSS::Filter filter)
 {
 }
 
-String CSSFilterValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFilterValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_filter);
 }

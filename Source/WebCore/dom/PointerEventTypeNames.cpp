@@ -31,21 +31,21 @@
 
 namespace WebCore {
 
-const String& mousePointerEventType()
+const RefPtr<StringImpl>& mousePointerEventType()
 {
-    static NeverDestroyed<const String> mouseType(MAKE_STATIC_STRING_IMPL("mouse"));
+    static NeverDestroyed<const RefPtr<StringImpl>> mouseType(MAKE_STATIC_STRING_IMPL("mouse"));
     return mouseType;
 }
 
-const String& penPointerEventType()
+const RefPtr<StringImpl>& penPointerEventType()
 {
-    static NeverDestroyed<const String> penType(MAKE_STATIC_STRING_IMPL("pen"));
+    static NeverDestroyed<const RefPtr<StringImpl>> penType(MAKE_STATIC_STRING_IMPL("pen"));
     return penType;
 }
 
-const String& touchPointerEventType()
+const RefPtr<StringImpl>& touchPointerEventType()
 {
-    static NeverDestroyed<const String> touchType(MAKE_STATIC_STRING_IMPL("touch"));
+    static NeverDestroyed<const RefPtr<StringImpl>> touchType(MAKE_STATIC_STRING_IMPL("touch"));
     return touchType;
 }
 

@@ -34,22 +34,22 @@
 
 - (BOOL)hasAttribute:(NSString *)attribute
 {
-    return protect(downcast<WebCore::Element>(*_impl))->hasAttribute(attribute);
+    return protect(downcast<WebCore::Element>(*_impl))->hasAttribute(AtomStringImpl::add((__bridge CFStringRef)attribute).get());
 }
 
 - (NSString *)getAttribute:(NSString *)attribute
 {
-    return protect(downcast<WebCore::Element>(*_impl))->getAttribute(attribute).createNSString().autorelease();
+    return createNSString(protect(downcast<WebCore::Element>(*_impl))->getAttribute(AtomStringImpl::add((__bridge CFStringRef)attribute).get())).autorelease();
 }
 
 - (void)setAttribute:(NSString *)name value:(NSString *)value
 {
-    protect(downcast<WebCore::Element>(*_impl))->setAttribute(name, AtomString { value });
+    protect(downcast<WebCore::Element>(*_impl))->setAttribute(AtomStringImpl::add((__bridge CFStringRef)name).get(), AtomStringImpl::add((__bridge CFStringRef)value).get());
 }
 
 - (NSString *)tagName
 {
-    return protect(downcast<WebCore::Element>(*_impl))->tagName().createNSString().autorelease();
+    return createNSString(protect(downcast<WebCore::Element>(*_impl))->tagName()).autorelease();
 }
 
 @end

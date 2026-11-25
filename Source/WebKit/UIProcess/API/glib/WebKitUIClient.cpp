@@ -87,29 +87,29 @@ private:
         webkitWebViewClosePage(m_webView);
     }
 
-    void runJavaScriptAlert(WebPageProxy& page, const String& message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void()>&& completionHandler) final
+    void runJavaScriptAlert(WebPageProxy& page, StringImpl* message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void()>&& completionHandler) final
     {
         page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
-        webkitWebViewRunJavaScriptAlert(m_webView, message.utf8(), WTF::move(completionHandler));
+        webkitWebViewRunJavaScriptAlert(m_webView, utf8(message), WTF::move(completionHandler));
     }
 
-    void runJavaScriptConfirm(WebPageProxy& page, const String& message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) final
+    void runJavaScriptConfirm(WebPageProxy& page, StringImpl* message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) final
     {
         page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
-        webkitWebViewRunJavaScriptConfirm(m_webView, message.utf8(), WTF::move(completionHandler));
+        webkitWebViewRunJavaScriptConfirm(m_webView, utf8(message), WTF::move(completionHandler));
     }
 
-    void runJavaScriptPrompt(WebPageProxy& page, const String& message, const String& defaultValue, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(const String&)>&& completionHandler) final
+    void runJavaScriptPrompt(WebPageProxy& page, StringImpl* message, StringImpl* defaultValue, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(StringImpl*)>&& completionHandler) final
     {
         page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
-        webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8(), WTF::move(completionHandler));
+        webkitWebViewRunJavaScriptPrompt(m_webView, utf8(message), utf8(defaultValue), WTF::move(completionHandler));
     }
 
     bool canRunBeforeUnloadConfirmPanel() const final { return true; }
 
-    void runBeforeUnloadConfirmPanel(WebPageProxy&, String&& message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) final
+    void runBeforeUnloadConfirmPanel(WebPageProxy&, RefPtr<StringImpl>&& message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) final
     {
-        webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8(), WTF::move(completionHandler));
+        webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, utf8(message), WTF::move(completionHandler));
     }
 
     void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEventModifier> modifiers) final
@@ -273,7 +273,7 @@ private:
 #endif
     }
 
-    void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const String&, const String&, unsigned long long /*currentQuota*/, unsigned long long /*currentOriginUsage*/, unsigned long long /*currentDatabaseUsage*/, unsigned long long /*expectedUsage*/, Function<void(unsigned long long)>&& completionHandler) final
+    void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, StringImpl*, StringImpl*, unsigned long long /*currentQuota*/, unsigned long long /*currentOriginUsage*/, unsigned long long /*currentDatabaseUsage*/, unsigned long long /*expectedUsage*/, Function<void(unsigned long long)>&& completionHandler) final
     {
         static const unsigned long long defaultQuota = 5 * MB;
         // FIXME: Provide API for this.
@@ -293,7 +293,7 @@ private:
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(geolocationPermissionRequest.get()));
     }
 
-    void decidePolicyForMediaKeySystemPermissionRequest(WebPageProxy&, API::SecurityOrigin&, const WTF::String& keySystem, CompletionHandler<void(bool)>&& completionHandler) final
+    void decidePolicyForMediaKeySystemPermissionRequest(WebPageProxy&, API::SecurityOrigin&, StringImpl* keySystem, CompletionHandler<void(bool)>&& completionHandler) final
     {
         auto permissionRequest = adoptGRef(webkitMediaKeySystemPermissionRequestCreate(MediaKeySystemPermissionRequest::create(keySystem, WTF::move(completionHandler))));
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(permissionRequest.get()));
@@ -380,7 +380,7 @@ private:
     }
 #endif
 
-    void queryPermission(const WTF::String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler) final
+    void queryPermission(StringImpl* permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler) final
     {
         auto* query = webkitPermissionStateQueryCreate(permissionName, origin, WTF::move(completionHandler));
         webkitWebViewPermissionStateQuery(m_webView, query);

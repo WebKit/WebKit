@@ -90,8 +90,8 @@ void SplitElementCommand::doUnapply()
         element2->insertBefore(child, refChild.copyRef());
 
     // Recover the id attribute of the original element.
-    const AtomString& id = element1->getIdAttribute();
-    if (!id.isNull())
+    const RefPtr<AtomStringImpl>& id = element1->getIdAttribute();
+    if (id)
         element2->setIdAttribute(id);
 
     element1->remove();

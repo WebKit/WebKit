@@ -116,7 +116,7 @@ private:
 #if PLATFORM(MAC)
     void dismissModalSheetIfNecessary();
 #endif
-    void continueStartAfterGetAuthorizationHints(const String&);
+    void continueStartAfterGetAuthorizationHints(StringImpl*);
     void continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy&);
 
     virtual bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) { return false; }

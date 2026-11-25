@@ -37,7 +37,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorWorkerAgent);
 
 InspectorWorkerAgent::InspectorWorkerAgent(WebAgentContext& context)
-    : InspectorAgentBase("Worker"_s, context)
+    : InspectorAgentBase("Worker"_si, context)
     , m_pageChannel(PageChannel::create(*this))
     , m_frontendDispatcher(makeUniqueRef<Inspector::WorkerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::WorkerBackendDispatcher::create(protect(context.backendDispatcher), this))
@@ -85,7 +85,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::disable()
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const String& workerId)
+Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(StringImpl* workerId)
 {
     RefPtr proxy = m_connectedProxies.get(workerId);
     if (!proxy)
@@ -96,7 +96,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::sendMessageToWorker(const String& workerId, const String& message)
+Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::sendMessageToWorker(StringImpl* workerId, StringImpl* message)
 {
     if (!m_enabled)
         return makeUnexpected("Worker domain must be enabled"_s);
@@ -174,7 +174,7 @@ void InspectorWorkerAgent::PageChannel::detachFromParentAgent()
     m_parentAgent = nullptr;
 }
 
-void InspectorWorkerAgent::PageChannel::sendMessageFromWorkerToFrontend(WorkerInspectorProxy& proxy, String&& message)
+void InspectorWorkerAgent::PageChannel::sendMessageFromWorkerToFrontend(WorkerInspectorProxy& proxy, RefPtr<StringImpl>&& message)
 {
     Locker locker { m_parentAgentLock };
 

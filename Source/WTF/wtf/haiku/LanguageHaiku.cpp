@@ -54,7 +54,7 @@ void listenForLanguageChangeNotifications()
     });
 }
 
-Vector<String> platformUserPreferredLanguages(WTF::ShouldMinimizeLanguages)
+Vector<RefPtr<StringImpl>> platformUserPreferredLanguages(WTF::ShouldMinimizeLanguages)
 {
     BMessage languages;
     int32 count = 0;
@@ -63,13 +63,13 @@ Vector<String> platformUserPreferredLanguages(WTF::ShouldMinimizeLanguages)
     if (BLocaleRoster::Default()->GetPreferredLanguages(&languages) != B_OK
         || languages.GetInfo("language", nullptr, &count) != B_OK
         || !count)
-        return { "en"_s };
+        return { "en"_si };
 
-    Vector<String> preferredLanguages(count, [&](size_t i) {
+    Vector<RefPtr<StringImpl>> preferredLanguages(count, [&](size_t i) -> RefPtr<StringImpl> {
         BString language;
         languages.FindString("language", i, &language);
         language.ReplaceAll('_', '-');
-        return String::fromUTF8(language.String());
+        return StringImpl::fromUTF8(language.String());
     });
 
     return preferredLanguages;

@@ -140,14 +140,14 @@ JSWebAssemblyInstance* ModuleManager::jsInstance(uint32_t instanceId)
     return instance;
 }
 
-String ModuleManager::generateLibrariesXML() const
+RefPtr<StringImpl> ModuleManager::generateLibrariesXML() const
 {
     Locker locker { m_lock };
     StringBuilder xml;
     xml.append("<?xml version=\"1.0\"?>\n"_s);
     xml.append("<library-list>\n"_s);
 
-    auto appendXMLEscaped = [](StringBuilder& builder, const String& value) {
+    auto appendXMLEscaped = [](StringBuilder& builder, StringImpl* value) {
         for (UChar c : StringView(value).codeUnits()) {
             switch (c) {
             case '&':
@@ -195,8 +195,8 @@ String ModuleManager::generateLibrariesXML() const
         // FIXME: The name carries no module identity, so two modules declaring the same name look
         // like two instances of one. Fold in a hash of the module's bytes or its build_id section
         // — `<name>#<hash>@<instance>` — cached on ModuleDebugInfo, since this runs per qXfer chunk.
-        String libraryName = moduleInfo.declaredName();
-        if (libraryName.isEmpty()) {
+        RefPtr<StringImpl> libraryName = moduleInfo.declaredName();
+        if (isEmpty(libraryName)) {
             // No name to qualify: the base address already names the instance uniquely.
             libraryName = makeString("0x"_s, moduleBaseAddress.hex(), ".wasm"_s);
         } else
@@ -215,8 +215,8 @@ String ModuleManager::generateLibrariesXML() const
 
     xml.append("</library-list>\n"_s);
 
-    String result = xml.toString();
-    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][generateLibrariesXML] - generated library list XML: ", libraryCount, " instances, ", result.length(), " characters");
+    RefPtr<StringImpl> result = xml.toString();
+    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][generateLibrariesXML] - generated library list XML: ", libraryCount, " instances, ", length(result), " characters");
     return result;
 }
 

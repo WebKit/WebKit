@@ -380,9 +380,9 @@ using UncastedObjectId = int;
 
 namespace TestHelpers {
 
-String getEnumConstantValue(int code);
+RefPtr<StringImpl> getEnumConstantValue(int code);
 
-template<typename T> String getEnumConstantValue(T enumValue)
+template<typename T> RefPtr<StringImpl> getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
@@ -430,38 +430,38 @@ public:
         friend class TypeNeedingCast;
     public:
 
-        Builder<STATE | StringSet>& setString(const String& in_string)
+        Builder<STATE | StringSet>& setString(StringImpl* in_string)
         {
             static_assert(!(STATE & StringSet), "property string already set");
-            Ref { *m_result }->setString("string"_s, in_string);
+            Ref { *m_result }->setString("string"_si, in_string);
             return castState<StringSet>();
         }
 
         Builder<STATE | NumberSet>& setNumber(int in_number)
         {
             static_assert(!(STATE & NumberSet), "property number already set");
-            Ref { *m_result }->setInteger("number"_s, in_number);
+            Ref { *m_result }->setInteger("number"_si, in_number);
             return castState<NumberSet>();
         }
 
         Builder<STATE | AnimalsSet>& setAnimals(Protocol::Test::CastedAnimals in_animals)
         {
             static_assert(!(STATE & AnimalsSet), "property animals already set");
-            Ref { *m_result }->setString("animals"_s, Protocol::TestHelpers::getEnumConstantValue(in_animals));
+            Ref { *m_result }->setString("animals"_si, Protocol::TestHelpers::getEnumConstantValue(in_animals));
             return castState<AnimalsSet>();
         }
 
         Builder<STATE | IdSet>& setId(int in_id)
         {
             static_assert(!(STATE & IdSet), "property id already set");
-            Ref { *m_result }->setInteger("id"_s, in_id);
+            Ref { *m_result }->setInteger("id"_si, in_id);
             return castState<IdSet>();
         }
 
         Builder<STATE | TreeSet>& setTree(Ref<Protocol::Test::RecursiveObject1>&& in_tree)
         {
             static_assert(!(STATE & TreeSet), "property tree already set");
-            Ref { *m_result }->setObject("tree"_s, WTF::move(in_tree));
+            Ref { *m_result }->setObject("tree"_si, WTF::move(in_tree));
             return castState<TreeSet>();
         }
 
@@ -566,7 +566,7 @@ public:
 
     void setObj(Ref<Protocol::Test::RecursiveObject2>&& in_opt_obj)
     {
-        JSON::ObjectBase::setObject("obj"_s, WTF::move(in_opt_obj));
+        JSON::ObjectBase::setObject("obj"_si, WTF::move(in_opt_obj));
     }
 };
 
@@ -628,7 +628,7 @@ public:
 
     void setObj(Ref<Protocol::Test::RecursiveObject1>&& in_opt_obj)
     {
-        JSON::ObjectBase::setObject("obj"_s, WTF::move(in_opt_obj));
+        JSON::ObjectBase::setObject("obj"_si, WTF::move(in_opt_obj));
     }
 };
 
@@ -651,13 +651,13 @@ static void assertValueHasExpectedType(JSON::Value*);
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(StringImpl*);
 
 // Enums in the 'Test' Domain
 template<>
-std::optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(const String&);
+std::optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(StringImpl*);
 template<>
-std::optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(const String&);
+std::optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(StringImpl*);
 
 } // namespace TestHelpers
 
@@ -729,13 +729,13 @@ static const auto enum_constant_values = WTF::toArray<ASCIILiteral>({
     "Cats"_s,
 });
 
-String getEnumConstantValue(int code) {
-    return enum_constant_values[code];
+RefPtr<StringImpl> getEnumConstantValue(int code) {
+    return StringImpl::create(enum_constant_values[code]);
 }
 
 // Enums in the 'Test' Domain
 
-template<> std::optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(const String& protocolString)
+template<> std::optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Test::UncastedAnimals>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::Test::UncastedAnimals::Pigs,
@@ -744,13 +744,13 @@ template<> std::optional<Protocol::Test::UncastedAnimals> parseEnumValueFromStri
         (size_t)Protocol::Test::UncastedAnimals::Hens,
     });
     for (size_t i = 0; i < 4; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::Test::UncastedAnimals)constantValues[i];
 
     return std::nullopt;
 }
 
-template<> std::optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(const String& protocolString)
+template<> std::optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test::CastedAnimals>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::Test::CastedAnimals::Ducks,
@@ -759,7 +759,7 @@ template<> std::optional<Protocol::Test::CastedAnimals> parseEnumValueFromString
         (size_t)Protocol::Test::CastedAnimals::Flamingos,
     });
     for (size_t i = 0; i < 4; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::Test::CastedAnimals)constantValues[i];
 
     return std::nullopt;
@@ -773,7 +773,7 @@ void BindingTraits<Protocol::Test::CastedAnimals>::assertValueHasExpectedType(JS
 #if ASSERT_ENABLED
     auto result = value->asString();
     ASSERT(result);
-    ASSERT(result == "Ducks"_s || result == "Hens"_s || result == "Crows"_s || result == "Flamingos"_s);
+    ASSERT(equal(result, "Ducks"_s) || equal(result, "Hens"_s) || equal(result, "Crows"_s) || equal(result, "Flamingos"_s));
 #endif
 }
 
@@ -784,34 +784,34 @@ void BindingTraits<Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(
     auto object = value->asObject();
     ASSERT(object);
     {
-        auto stringPos = object->find("string"_s);
+        auto stringPos = object->find("string"_si);
         ASSERT(stringPos != object->end());
-        BindingTraits<String>::assertValueHasExpectedType(stringPos->value.ptr());
+        BindingTraits<RefPtr<StringImpl>>::assertValueHasExpectedType(stringPos->value.ptr());
     }
     {
-        auto numberPos = object->find("number"_s);
+        auto numberPos = object->find("number"_si);
         ASSERT(numberPos != object->end());
         BindingTraits<int>::assertValueHasExpectedType(numberPos->value.ptr());
     }
     {
-        auto animalsPos = object->find("animals"_s);
+        auto animalsPos = object->find("animals"_si);
         ASSERT(animalsPos != object->end());
         BindingTraits<Protocol::Test::CastedAnimals>::assertValueHasExpectedType(animalsPos->value.ptr());
     }
     {
-        auto idPos = object->find("id"_s);
+        auto idPos = object->find("id"_si);
         ASSERT(idPos != object->end());
         BindingTraits<int>::assertValueHasExpectedType(idPos->value.ptr());
     }
     {
-        auto treePos = object->find("tree"_s);
+        auto treePos = object->find("tree"_si);
         ASSERT(treePos != object->end());
         BindingTraits<Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(treePos->value.ptr());
     }
 
     size_t foundPropertiesCount = 5;
     if (foundPropertiesCount != object->size())
-        FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
+        FATAL("Unexpected properties in object: %s\n", ascii(object->toJSONString()).data());
 #endif
 }
 
@@ -833,14 +833,14 @@ void BindingTraits<Protocol::Test::RecursiveObject1>::assertValueHasExpectedType
 
     size_t foundPropertiesCount = 0;
     {
-        auto objPos = object->find("obj"_s);
+        auto objPos = object->find("obj"_si);
         if (objPos != object->end()) {
             BindingTraits<Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(objPos->value.ptr());
             ++foundPropertiesCount;
         }
     }
     if (foundPropertiesCount != object->size())
-        FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
+        FATAL("Unexpected properties in object: %s\n", ascii(object->toJSONString()).data());
 #endif
 }
 
@@ -853,14 +853,14 @@ void BindingTraits<Protocol::Test::RecursiveObject2>::assertValueHasExpectedType
 
     size_t foundPropertiesCount = 0;
     {
-        auto objPos = object->find("obj"_s);
+        auto objPos = object->find("obj"_si);
         if (objPos != object->end()) {
             BindingTraits<Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(objPos->value.ptr());
             ++foundPropertiesCount;
         }
     }
     if (foundPropertiesCount != object->size())
-        FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
+        FATAL("Unexpected properties in object: %s\n", ascii(object->toJSONString()).data());
 #endif
 }
 
@@ -1260,24 +1260,24 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
-inline String toProtocolString(TestProtocolTestUncastedAnimals value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolTestUncastedAnimals value)
 {
     switch(value) {
     case TestProtocolTestUncastedAnimalsPigs:
-        return "Pigs"_s;
+        return "Pigs"_si;
     case TestProtocolTestUncastedAnimalsCows:
-        return "Cows"_s;
+        return "Cows"_si;
     case TestProtocolTestUncastedAnimalsCats:
-        return "Cats"_s;
+        return "Cats"_si;
     case TestProtocolTestUncastedAnimalsHens:
-        return "Hens"_s;
+        return "Hens"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String& value)
+inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolTestUncastedAnimals>>({
         { "Cats"_s, TestProtocolTestUncastedAnimalsCats },
@@ -1290,22 +1290,22 @@ inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(const S
     return std::nullopt;
 }
 
-inline String toProtocolString(TestProtocolTestCastedAnimals value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolTestCastedAnimals value)
 {
     switch(value) {
     case TestProtocolTestCastedAnimalsDucks:
-        return "Ducks"_s;
+        return "Ducks"_si;
     case TestProtocolTestCastedAnimalsHens:
-        return "Hens"_s;
+        return "Hens"_si;
     case TestProtocolTestCastedAnimalsCrows:
-        return "Crows"_s;
+        return "Crows"_si;
     case TestProtocolTestCastedAnimalsFlamingos:
-        return "Flamingos"_s;
+        return "Flamingos"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& value)
+inline std::optional<TestProtocolTestCastedAnimals> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolTestCastedAnimals>>({
         { "Crows"_s, TestProtocolTestCastedAnimalsCrows },
@@ -1395,7 +1395,7 @@ using namespace Inspector;
 + (void)_parseUncastedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    auto result = Inspector::fromProtocolString<TestProtocolTestUncastedAnimals>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolTestUncastedAnimals>(StringImpl::create((__bridge CFStringRef)payload).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"UncastedAnimals");
     *outValue = @(result.value());
 }
@@ -1403,7 +1403,7 @@ using namespace Inspector;
 + (void)_parseCastedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    auto result = Inspector::fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolTestCastedAnimals>(StringImpl::create((__bridge CFStringRef)payload).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"CastedAnimals");
     *outValue = @(result.value());
 }
@@ -1478,7 +1478,7 @@ using namespace Inspector;
     self.number = [payload[@"number"] integerValue];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"animals"], @"animals");
-    auto animals = fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)payload[@"animals"]);
+    auto animals = fromProtocolString<TestProtocolTestCastedAnimals>(StringImpl::create((__bridge CFStringRef)payload[@"animals"]).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(animals, @"animals");
     self.animals = *animals;
 
@@ -1537,12 +1537,12 @@ using namespace Inspector;
 
 - (void)setAnimals:(TestProtocolTestCastedAnimals)animals
 {
-    [super setString:toProtocolString(animals).createNSString().get() forKey:@"animals"];
+    [super setString:createNSString(toProtocolString(animals)).get() forKey:@"animals"];
 }
 
 - (TestProtocolTestCastedAnimals)animals
 {
-    return fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)[super stringForKey:@"animals"]).value();
+    return fromProtocolString<TestProtocolTestCastedAnimals>(StringImpl::create((__bridge CFStringRef)[super stringForKey:@"animals"]).get()).value();
 }
 
 - (void)setIdentifier:(int)identifier

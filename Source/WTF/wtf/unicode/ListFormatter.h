@@ -52,14 +52,14 @@ public:
 
     explicit operator bool() const { return !!m_formatter; }
 
-    WTF_EXPORT_PRIVATE std::optional<String> format(std::span<const String>) const;
-    WTF_EXPORT_PRIVATE std::optional<String> format(std::span<const std::span<const char16_t>>) const;
+    WTF_EXPORT_PRIVATE std::optional<RefPtr<StringImpl>> format(std::span<const RefPtr<StringImpl>>) const;
+    WTF_EXPORT_PRIVATE std::optional<RefPtr<StringImpl>> format(std::span<const std::span<const char16_t>>) const;
 
     struct FormattedList {
-        String string;
+        RefPtr<StringImpl> string;
         Vector<Range<unsigned>> elementRanges;
     };
-    WTF_EXPORT_PRIVATE std::optional<FormattedList> formatToParts(std::span<const String>) const;
+    WTF_EXPORT_PRIVATE std::optional<FormattedList> formatToParts(std::span<const RefPtr<StringImpl>>) const;
 
 private:
     struct Deleter {

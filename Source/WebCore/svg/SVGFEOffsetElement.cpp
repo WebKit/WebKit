@@ -54,7 +54,7 @@ Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGFEOffsetElement(tagName, document));
 }
 
-void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::dxAttr:

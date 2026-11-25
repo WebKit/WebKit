@@ -30,7 +30,7 @@
 
 typedef struct _WebKitWebExtension WebKitWebExtension;
 
-WK_EXPORT WebKitWebExtension* webkitWebExtensionCreate(HashMap<String, GRefPtr<GBytes>>&& resources, GError**);
+WK_EXPORT WebKitWebExtension* webkitWebExtensionCreate(HashMap<RefPtr<StringImpl>, GRefPtr<GBytes>>&& resources, GError**);
 WK_EXPORT gboolean webkit_web_extension_get_has_service_worker_background_content(WebKitWebExtension*);
 WK_EXPORT gboolean webkit_web_extension_get_has_modular_background_content(WebKitWebExtension*);
 

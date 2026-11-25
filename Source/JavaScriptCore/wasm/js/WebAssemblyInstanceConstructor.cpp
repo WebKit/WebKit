@@ -48,18 +48,18 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyInstance, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto [taintedness, url] = sourceTaintednessFromStack(vm, callFrame);
-    RefPtr<SourceProvider> provider = StringSourceProvider::create("[wasm code]"_s, SourceOrigin(url), String(), taintedness, TextPosition(), SourceProviderSourceType::Program);
+    RefPtr<SourceProvider> provider = StringSourceProvider::create("[wasm code]"_si, SourceOrigin(url), nullString(), taintedness, TextPosition(), SourceProviderSourceType::Program);
 
     // If moduleObject is not a WebAssembly.Module instance, a TypeError is thrown.
     JSWebAssemblyModule* module = dynamicDowncast<JSWebAssemblyModule>(callFrame->argument(0));
     if (!module)
-        return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "first argument to WebAssembly.Instance must be a WebAssembly.Module"_s, defaultSourceAppender, runtimeTypeForValue(callFrame->argument(0)))));
+        return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "first argument to WebAssembly.Instance must be a WebAssembly.Module"_si, defaultSourceAppender, runtimeTypeForValue(callFrame->argument(0)))));
 
     // If the importObject parameter is not undefined and Type(importObject) is not Object, a TypeError is thrown.
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject)
-        return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "second argument to WebAssembly.Instance must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(importArgument))));
+        return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "second argument to WebAssembly.Instance must be undefined or an Object"_si, defaultSourceAppender, runtimeTypeForValue(importArgument))));
 
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* instanceStructure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyInstanceStructure, newTarget, callFrame->jsCallee());
@@ -97,7 +97,7 @@ Structure* WebAssemblyInstanceConstructor::createStructure(VM& vm, JSGlobalObjec
 
 void WebAssemblyInstanceConstructor::finishCreation(VM& vm, WebAssemblyInstancePrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "Instance"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Instance"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

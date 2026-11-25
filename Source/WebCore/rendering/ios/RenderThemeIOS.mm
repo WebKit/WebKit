@@ -515,7 +515,7 @@ public:
         , m_style(style)
     {
     }
-    float measureText(const String& string) const override
+    float measureText(StringImpl* string) const override
     {
         TextRun run = RenderBlock::constructTextRun(string, m_style);
         return m_font->width(run);
@@ -1301,23 +1301,23 @@ Color RenderThemeIOS::pictureFrameColor(const RenderElement& buttonRenderer)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-RenderThemeCocoa::IconAndSize RenderThemeIOS::iconForAttachment(const String& fileExtension, const String& attachmentType, const String& title)
+RenderThemeCocoa::IconAndSize RenderThemeIOS::iconForAttachment(StringImpl* fileExtension, StringImpl* attachmentType, StringImpl* title)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto documentInteractionController = adoptNS([PAL::allocUIDocumentInteractionControllerInstance() init]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    [documentInteractionController setName:fileExtension.isEmpty() ? title.createNSString().get() : makeString("attachment."_s, fileExtension).createNSString().get()];
+    [documentInteractionController setName:isEmpty(fileExtension) ? createNSString(title).get() : createNSString(makeString("attachment."_s, fileExtension)).get()];
 
-    if (!attachmentType.isEmpty()) {
-        String UTI;
+    if (!isEmpty(attachmentType)) {
+        RefPtr<StringImpl> UTI;
         if (isDeclaredUTI(attachmentType))
             UTI = attachmentType;
         else
             UTI = UTIFromMIMEType(attachmentType);
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-        [documentInteractionController setUTI:UTI.createNSString().get()];
+        [documentInteractionController setUTI:createNSString(UTI).get()];
 #endif
     }
 
@@ -1431,19 +1431,19 @@ bool RenderThemeIOS::paintAttachment(const RenderElement& renderer, const PaintI
     return true;
 }
 
-String RenderThemeIOS::attachmentStyleSheet() const
+RefPtr<StringImpl> RenderThemeIOS::attachmentStyleSheet() const
 {
     ASSERT(DeprecatedGlobalSettings::attachmentElementEnabled());
-    return "attachment { appearance: auto; color: -apple-system-blue; }"_s;
+    return "attachment { appearance: auto; color: -apple-system-blue; }"_si;
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if PLATFORM(WATCHOS)
 
-String RenderThemeIOS::extraDefaultStyleSheet()
+RefPtr<StringImpl> RenderThemeIOS::extraDefaultStyleSheet()
 {
-    return "* { -webkit-text-size-adjust: auto; -webkit-hyphens: auto !important; }"_s;
+    return "* { -webkit-text-size-adjust: auto; -webkit-hyphens: auto !important; }"_si;
 }
 
 #endif

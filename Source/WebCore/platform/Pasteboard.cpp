@@ -37,12 +37,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Pasteboard);
 
-bool Pasteboard::isSafeTypeForDOMToReadAndWrite(const String& type)
+bool Pasteboard::isSafeTypeForDOMToReadAndWrite(StringImpl* type)
 {
-    return type == textPlainContentTypeAtom() || type == textHTMLContentTypeAtom() || type == "text/uri-list"_s;
+    return equal(type, textPlainContentTypeAtom()) || equal(type, textHTMLContentTypeAtom()) || equal(type, "text/uri-list"_s);
 }
 
-bool Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(const String& urlString)
+bool Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(StringImpl* urlString)
 {
     URL url({ }, urlString);
     return url.protocolIsInHTTPFamilyOrBlob() || url.protocolIsData();
@@ -50,10 +50,10 @@ bool Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(const String& urlS
 
 #if !PLATFORM(COCOA)
 
-Vector<String> Pasteboard::readAllStrings(const String& type)
+Vector<RefPtr<StringImpl>> Pasteboard::readAllStrings(StringImpl* type)
 {
     auto result = readString(type);
-    if (result.isEmpty())
+    if (isEmpty(result))
         return { };
 
     return { result };
@@ -81,21 +81,21 @@ std::optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) c
     return std::nullopt;
 }
 
-String Pasteboard::readString(size_t index, const String& type)
+RefPtr<StringImpl> Pasteboard::readString(size_t index, StringImpl* type)
 {
     if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->readStringFromPasteboard(index, type, name(), context());
     return { };
 }
 
-RefPtr<WebCore::SharedBuffer> Pasteboard::readBuffer(std::optional<size_t> index, const String& type)
+RefPtr<WebCore::SharedBuffer> Pasteboard::readBuffer(std::optional<size_t> index, StringImpl* type)
 {
     if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->readBufferFromPasteboard(index, type, name(), context());
     return nullptr;
 }
 
-URL Pasteboard::readURL(size_t index, String& title)
+URL Pasteboard::readURL(size_t index, RefPtr<StringImpl>& title)
 {
     if (CheckedPtr strategy = platformStrategies()->pasteboardStrategy())
         return strategy->readURLFromPasteboard(index, name(), title, context());

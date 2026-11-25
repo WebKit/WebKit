@@ -75,7 +75,7 @@ void WebDateTimePickerGtk::endPicker()
     WebDateTimePicker::endPicker();
 }
 
-static String timeToString(const WebCore::DateComponents& time, WebCore::SecondFormat secondFormat)
+static RefPtr<StringImpl> timeToString(const WebCore::DateComponents& time, WebCore::SecondFormat secondFormat)
 {
     switch (secondFormat) {
     case WebCore::SecondFormat::None:
@@ -90,7 +90,7 @@ static String timeToString(const WebCore::DateComponents& time, WebCore::SecondF
     return { };
 }
 
-static String calendarDateToString(int year, int month, int day, const std::optional<WebCore::DateComponents>& date, WebCore::SecondFormat secondFormat)
+static RefPtr<StringImpl> calendarDateToString(int year, int month, int day, const std::optional<WebCore::DateComponents>& date, WebCore::SecondFormat secondFormat)
 {
     auto type = date ? date->type() : WebCore::DateComponentsType::Date;
     switch (type) {
@@ -165,14 +165,14 @@ void WebDateTimePickerGtk::platformShowDateTimePicker(WebCore::DateTimeChooserPa
 void WebDateTimePickerGtk::update(WebCore::DateTimeChooserParameters&& params)
 {
     SetForScope inUpdate(m_inUpdate, true);
-    if (params.type == "date"_s)
+    if (equal(params.type, "date"_s))
         m_currentDate = WebCore::DateComponents::fromParsingDate(params.currentValue);
-    else if (params.type == "datetime-local"_s)
+    else if (equal(params.type, "datetime-local"_s))
         m_currentDate = WebCore::DateComponents::fromParsingDateTimeLocal(params.currentValue);
 
     if (m_currentDate)
         g_object_set(m_calendar, "year", m_currentDate->fullYear(), "month", m_currentDate->month(), "day", m_currentDate->monthDay(), nullptr);
-    else if (params.type == "datetime-local"_s) {
+    else if (equal(params.type, "datetime-local"_s)) {
         GRefPtr<GDateTime> now = adoptGRef(g_date_time_new_now_local());
         Seconds unixTime = Seconds(g_date_time_to_unix(now.get())) + Seconds::fromMicroseconds(g_date_time_get_utc_offset(now.get()));
         m_currentDate = WebCore::DateComponents::fromMillisecondsSinceEpochForDateTimeLocal(unixTime.milliseconds());

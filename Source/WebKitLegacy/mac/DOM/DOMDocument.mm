@@ -123,19 +123,19 @@
 - (NSString *)xmlEncoding
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->xmlEncoding().createNSString().autorelease();
+    return createNSString(IMPL->xmlEncoding()).autorelease();
 }
 
 - (NSString *)xmlVersion
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->xmlVersion().createNSString().autorelease();
+    return createNSString(IMPL->xmlVersion()).autorelease();
 }
 
 - (void)setXmlVersion:(NSString *)newXmlVersion
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setXMLVersion(newXmlVersion));
+    raiseOnDOMError(IMPL->setXMLVersion(StringImpl::create(newXmlVersion).get()));
 }
 
 - (BOOL)xmlStandalone
@@ -153,13 +153,13 @@
 - (NSString *)documentURI
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->documentURI().createNSString().autorelease();
+    return createNSString(IMPL->documentURI()).autorelease();
 }
 
 - (void)setDocumentURI:(NSString *)newDocumentURI
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setDocumentURI(newDocumentURI);
+    IMPL->setDocumentURI(StringImpl::create(newDocumentURI).get());
 }
 
 - (DOMAbstractView *)defaultView
@@ -177,61 +177,61 @@
 - (NSString *)contentType
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->contentType().createNSString().autorelease();
+    return createNSString(IMPL->contentType()).autorelease();
 }
 
 - (NSString *)title
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->title().createNSString().autorelease();
+    return createNSString(IMPL->title()).autorelease();
 }
 
 - (void)setTitle:(NSString *)newTitle
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setTitle(newTitle);
+    IMPL->setTitle(StringImpl::create(newTitle));
 }
 
 - (NSString *)dir
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->dir().createNSString().autorelease();
+    return createNSString(IMPL->dir()).autorelease();
 }
 
 - (void)setDir:(NSString *)newDir
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setDir(newDir);
+    IMPL->setDir(AtomStringImpl::add((__bridge CFStringRef)newDir).get());
 }
 
 - (NSString *)referrer
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->referrer().createNSString().autorelease();
+    return createNSString(IMPL->referrer()).autorelease();
 }
 
 - (NSString *)domain
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->domain().createNSString().autorelease();
+    return createNSString(IMPL->domain()).autorelease();
 }
 
 - (NSString *)URL
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->urlForBindings().string().createNSString().autorelease();
+    return createNSString(IMPL->urlForBindings().string()).autorelease();
 }
 
 - (NSString *)cookie
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->cookie()).createNSString().autorelease();
+    return createNSString(raiseOnDOMError(IMPL->cookie())).autorelease();
 }
 
 - (void)setCookie:(NSString *)newCookie
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->setCookie(newCookie));
+    raiseOnDOMError(IMPL->setCookie(StringImpl::create(newCookie).get()));
 }
 
 - (DOMHTMLElement *)body
@@ -285,7 +285,7 @@
 - (NSString *)lastModified
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->lastModified().createNSString().autorelease();
+    return createNSString(IMPL->lastModified()).autorelease();
 }
 
 - (NSString *)charset
@@ -297,12 +297,12 @@
 - (void)setCharset:(NSString *)newCharset
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setCharset(newCharset);
+    IMPL->setCharset(StringImpl::create(newCharset).get());
 }
 
 - (NSString *)defaultCharset
 {
-    return IMPL->defaultCharsetForLegacyBindings().createNSString().autorelease();
+    return createNSString(IMPL->defaultCharsetForLegacyBindings()).autorelease();
 }
 
 - (NSString *)readyState
@@ -350,7 +350,7 @@
 - (NSString *)compatMode
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->compatMode().createNSString().autorelease();
+    return createNSString(IMPL->compatMode()).autorelease();
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -416,7 +416,7 @@
 - (NSString *)origin
 {
     WebCore::JSMainThreadNullState state;
-    return protect(IMPL->securityOrigin())->toString().createNSString().autorelease();
+    return createNSString(protect(IMPL->securityOrigin())->toString()).autorelease();
 }
 
 - (DOMElement *)scrollingElement
@@ -452,7 +452,7 @@
 - (DOMElement *)createElement:(NSString *)tagName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createElementForBindings(tagName)).ptr());
+    return kit(raiseOnDOMError(IMPL->createElementForBindings(AtomStringImpl::add((__bridge CFStringRef)tagName).get())).ptr());
 }
 
 - (DOMDocumentFragment *)createDocumentFragment
@@ -464,31 +464,31 @@
 - (DOMText *)createTextNode:(NSString *)data
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->createTextNode(data)));
+    return kit(WTF::getPtr(IMPL->createTextNode(StringImpl::create(data))));
 }
 
 - (DOMComment *)createComment:(NSString *)data
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->createComment(data)));
+    return kit(WTF::getPtr(IMPL->createComment(StringImpl::create(data))));
 }
 
 - (DOMCDATASection *)createCDATASection:(NSString *)data
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createCDATASection(data)).ptr());
+    return kit(raiseOnDOMError(IMPL->createCDATASection(StringImpl::create(data))).ptr());
 }
 
 - (DOMProcessingInstruction *)createProcessingInstruction:(NSString *)target data:(NSString *)data
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createProcessingInstruction(target, data)).ptr());
+    return kit(raiseOnDOMError(IMPL->createProcessingInstruction(StringImpl::create(target), StringImpl::create(data))).ptr());
 }
 
 - (DOMAttr *)createAttribute:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createAttribute(name)).ptr());
+    return kit(raiseOnDOMError(IMPL->createAttribute(AtomStringImpl::add((__bridge CFStringRef)name).get())).ptr());
 }
 
 - (DOMEntityReference *)createEntityReference:(NSString *)name
@@ -503,7 +503,7 @@
         return nullptr;
 
     WebCore::JSMainThreadNullState state;
-    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagName(tagname))));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagName(AtomStringImpl::add((__bridge CFStringRef)tagname).get()))));
 }
 
 - (DOMNode *)importNode:(DOMNode *)importedNode deep:(BOOL)deep
@@ -517,13 +517,13 @@
 - (DOMElement *)createElementNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createElementNS(namespaceURI, qualifiedName)).ptr());
+    return kit(raiseOnDOMError(IMPL->createElementNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)qualifiedName).get())).ptr());
 }
 
 - (DOMAttr *)createAttributeNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createAttributeNS(namespaceURI, qualifiedName)).ptr());
+    return kit(raiseOnDOMError(IMPL->createAttributeNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)qualifiedName).get())).ptr());
 }
 
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI localName:(NSString *)localName
@@ -531,7 +531,7 @@
     if (!localName)
         return nullptr;
     WebCore::JSMainThreadNullState state;
-    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagNameNS(namespaceURI, localName))));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByTagNameNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)localName).get()))));
 }
 
 - (DOMNode *)adoptNode:(DOMNode *)source
@@ -545,7 +545,7 @@
 - (DOMEvent *)createEvent:(NSString *)eventType
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createEvent(eventType)).ptr());
+    return kit(raiseOnDOMError(IMPL->createEvent(StringImpl::create(eventType).get())).ptr());
 }
 
 - (DOMRange *)createRange
@@ -593,7 +593,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
 - (DOMXPathExpression *)createExpression:(NSString *)expression resolver:(id <DOMXPathNSResolver>)resolver
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createExpression(expression, wrap(resolver))).ptr());
+    return kit(raiseOnDOMError(IMPL->createExpression(StringImpl::create(expression).get(), wrap(resolver))).ptr());
 }
 
 - (id <DOMXPathNSResolver>)createNSResolver:(DOMNode *)nodeResolver
@@ -611,13 +611,13 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
         return nullptr;
 
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->evaluate(expression, protect(*core(contextNode)), wrap(resolver), type, protect(core(inResult)))).ptr());
+    return kit(raiseOnDOMError(IMPL->evaluate(StringImpl::create(expression).get(), protect(*core(contextNode)), wrap(resolver), type, protect(core(inResult)))).ptr());
 }
 
 - (BOOL)execCommand:(NSString *)command userInterface:(BOOL)userInterface value:(NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    auto result = IMPL->execCommand(command, userInterface, value);
+    auto result = IMPL->execCommand(StringImpl::create(command).get(), userInterface, StringImpl::create(value));
     return result.hasException() ? NO : result.returnValue();
 }
 
@@ -634,42 +634,42 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
 - (BOOL)queryCommandEnabled:(NSString *)command
 {
     WebCore::JSMainThreadNullState state;
-    auto result = IMPL->queryCommandEnabled(command);
+    auto result = IMPL->queryCommandEnabled(StringImpl::create(command).get());
     return result.hasException() ? NO : result.returnValue();
 }
 
 - (BOOL)queryCommandIndeterm:(NSString *)command
 {
     WebCore::JSMainThreadNullState state;
-    auto result = IMPL->queryCommandIndeterm(command);
+    auto result = IMPL->queryCommandIndeterm(StringImpl::create(command).get());
     return result.hasException() ? NO : result.returnValue();
 }
 
 - (BOOL)queryCommandState:(NSString *)command
 {
     WebCore::JSMainThreadNullState state;
-    auto result = IMPL->queryCommandState(command);
+    auto result = IMPL->queryCommandState(StringImpl::create(command).get());
     return result.hasException() ? NO : result.returnValue();
 }
 
 - (BOOL)queryCommandSupported:(NSString *)command
 {
     WebCore::JSMainThreadNullState state;
-    auto result = IMPL->queryCommandSupported(command);
+    auto result = IMPL->queryCommandSupported(StringImpl::create(command).get());
     return result.hasException() ? NO : result.returnValue();
 }
 
 - (NSString *)queryCommandValue:(NSString *)command
 {
     WebCore::JSMainThreadNullState state;
-    auto result = IMPL->queryCommandValue(command);
-    return result.hasException() ? @"" : result.returnValue().createNSString().autorelease();
+    auto result = IMPL->queryCommandValue(StringImpl::create(command).get());
+    return result.hasException() ? @"" : createNSString(result.returnValue()).autorelease();
 }
 
 - (DOMNodeList *)getElementsByName:(NSString *)elementName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementsByName(elementName)));
+    return kit(WTF::getPtr(IMPL->getElementsByName(AtomStringImpl::add((__bridge CFStringRef)elementName).get())));
 }
 
 - (DOMElement *)elementFromPoint:(int)x y:(int)y
@@ -698,7 +698,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
     RefPtr dv = IMPL->window();
     if (!dv)
         return nil;
-    return kit(WTF::getPtr(dv->getComputedStyle(protect(*core(element)), pseudoElement)));
+    return kit(WTF::getPtr(dv->getComputedStyle(protect(*core(element)), StringImpl::create(pseudoElement).get())));
 }
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
@@ -712,13 +712,13 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
     RefPtr dv = IMPL->window();
     if (!dv)
         return nil;
-    return kit(WTF::getPtr(dv->getMatchedCSSRules(protect(core(element)), pseudoElement, authorOnly)));
+    return kit(WTF::getPtr(dv->getMatchedCSSRules(protect(core(element)), StringImpl::create(pseudoElement).get(), authorOnly)));
 }
 
 - (DOMNodeList *)getElementsByClassName:(NSString *)classNames
 {
     WebCore::JSMainThreadNullState state;
-    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByClassName(classNames))));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->getElementsByClassName(AtomStringImpl::add((__bridge CFStringRef)classNames).get()))));
 }
 
 - (BOOL)hasFocus
@@ -746,19 +746,19 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
 - (DOMElement *)getElementById:(NSString *)elementId
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementById(AtomString(elementId))));
+    return kit(WTF::getPtr(IMPL->getElementById(AtomStringImpl::add((__bridge CFStringRef)elementId).get())));
 }
 
 - (DOMElement *)querySelector:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->querySelector(selectors)));
+    return kit(raiseOnDOMError(IMPL->querySelector(StringImpl::create(selectors).get())));
 }
 
 - (DOMNodeList *)querySelectorAll:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->querySelectorAll(selectors)).ptr());
+    return kit(raiseOnDOMError(IMPL->querySelectorAll(StringImpl::create(selectors).get())).ptr());
 }
 
 @end

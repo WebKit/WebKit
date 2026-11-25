@@ -72,7 +72,7 @@ ExceptionOr<void> ElementInternals::setFormValue(CustomElementFormValue&& value,
     return Exception { ExceptionCode::NotSupportedError };
 }
 
-ExceptionOr<void> ElementInternals::setValidity(ValidityStateFlags validityStateFlags, String&& message, HTMLElement* validationAnchor)
+ExceptionOr<void> ElementInternals::setValidity(ValidityStateFlags validityStateFlags, RefPtr<StringImpl>&& message, HTMLElement* validationAnchor)
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->setValidity(validityStateFlags, WTF::move(message), validationAnchor);
@@ -93,7 +93,7 @@ ExceptionOr<ValidityState&> ElementInternals::validity()
     return Exception { ExceptionCode::NotSupportedError };
 }
 
-ExceptionOr<String> ElementInternals::validationMessage() const
+ExceptionOr<RefPtr<StringImpl>> ElementInternals::validationMessage() const
 {
     if (RefPtr element = elementAsFormAssociatedCustom())
         return element->validationMessage();
@@ -128,15 +128,15 @@ FormAssociatedCustomElement* ElementInternals::elementAsFormAssociatedCustom() c
     return nullptr;
 }
 
-static const AtomString& computeValueForAttribute(Element& element, const QualifiedName& name)
+static const RefPtr<AtomStringImpl>& computeValueForAttribute(Element& element, const QualifiedName& name)
 {
     auto& value = element.attributeWithoutSynchronization(name);
-    if (CheckedPtr defaultARIA = element.customElementDefaultARIAIfExists(); value.isNull() && defaultARIA)
+    if (CheckedPtr defaultARIA = element.customElementDefaultARIAIfExists(); !value && defaultARIA)
         return defaultARIA->valueForAttribute(element, name);
     return value;
 }
 
-void ElementInternals::setAttributeWithoutSynchronization(const QualifiedName& name, const AtomString& value)
+void ElementInternals::setAttributeWithoutSynchronization(const QualifiedName& name, AtomStringImpl* value)
 {
     RefPtr element = m_element.get();
     auto oldValue = computeValueForAttribute(*element, name);
@@ -147,7 +147,7 @@ void ElementInternals::setAttributeWithoutSynchronization(const QualifiedName& n
         cache->deferAttributeChangeIfNeeded(*element, name, oldValue, computeValueForAttribute(*element, name));
 }
 
-const AtomString& ElementInternals::attributeWithoutSynchronization(const QualifiedName& name) const
+const RefPtr<AtomStringImpl>& ElementInternals::attributeWithoutSynchronization(const QualifiedName& name) const
 {
     RefPtr element = m_element.get();
     CheckedPtr defaultARIA = element->customElementDefaultARIAIfExists();

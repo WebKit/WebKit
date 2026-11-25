@@ -62,13 +62,13 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
     // Returns std::nullopt if swizzle is not four characters, each of which is one of "rgba01".
     std::optional<::WebGPU::TextureViewDescriptor> convertToBacking() const
     {
-        if (swizzle.length() != 4)
+        if (length(swizzle) != 4)
             return std::nullopt;
 
-        auto r = convertSwizzleComponentToBacking(swizzle[0]);
-        auto g = convertSwizzleComponentToBacking(swizzle[1]);
-        auto b = convertSwizzleComponentToBacking(swizzle[2]);
-        auto a = convertSwizzleComponentToBacking(swizzle[3]);
+        auto r = convertSwizzleComponentToBacking(codeUnitAt(swizzle, 0));
+        auto g = convertSwizzleComponentToBacking(codeUnitAt(swizzle, 1));
+        auto b = convertSwizzleComponentToBacking(codeUnitAt(swizzle, 2));
+        auto a = convertSwizzleComponentToBacking(codeUnitAt(swizzle, 3));
         if (!r || !g || !b || !a)
             return std::nullopt;
 
@@ -96,7 +96,7 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
     std::optional<GPUIntegerCoordinate> mipLevelCount;
     GPUIntegerCoordinate baseArrayLayer { 0 };
     std::optional<GPUIntegerCoordinate> arrayLayerCount;
-    String swizzle { "rgba"_s };
+    RefPtr<StringImpl> swizzle { "rgba"_si };
 };
 
 }

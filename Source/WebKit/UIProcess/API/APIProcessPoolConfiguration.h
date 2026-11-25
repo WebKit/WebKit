@@ -73,17 +73,17 @@ public:
     bool usesBackForwardCache() const { return m_usesBackForwardCache; }
     static bool defaultUsesWebBackForwardCache();
 
-    const WTF::String& injectedBundlePath() const LIFETIME_BOUND { return m_injectedBundlePath; }
-    void setInjectedBundlePath(const WTF::String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
+    const RefPtr<StringImpl>& injectedBundlePath() const LIFETIME_BOUND { return m_injectedBundlePath; }
+    void setInjectedBundlePath(StringImpl* injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
 
-    const Vector<WTF::String>& cachePartitionedURLSchemes() LIFETIME_BOUND { return m_cachePartitionedURLSchemes; }
-    void setCachePartitionedURLSchemes(Vector<WTF::String>&& cachePartitionedURLSchemes) { m_cachePartitionedURLSchemes = WTF::move(cachePartitionedURLSchemes); }
+    const Vector<RefPtr<StringImpl>>& cachePartitionedURLSchemes() LIFETIME_BOUND { return m_cachePartitionedURLSchemes; }
+    void setCachePartitionedURLSchemes(Vector<RefPtr<StringImpl>>&& cachePartitionedURLSchemes) { m_cachePartitionedURLSchemes = WTF::move(cachePartitionedURLSchemes); }
 
-    const Vector<WTF::String>& alwaysRevalidatedURLSchemes() LIFETIME_BOUND { return m_alwaysRevalidatedURLSchemes; }
-    void setAlwaysRevalidatedURLSchemes(Vector<WTF::String>&& alwaysRevalidatedURLSchemes) { m_alwaysRevalidatedURLSchemes = WTF::move(alwaysRevalidatedURLSchemes); }
+    const Vector<RefPtr<StringImpl>>& alwaysRevalidatedURLSchemes() LIFETIME_BOUND { return m_alwaysRevalidatedURLSchemes; }
+    void setAlwaysRevalidatedURLSchemes(Vector<RefPtr<StringImpl>>&& alwaysRevalidatedURLSchemes) { m_alwaysRevalidatedURLSchemes = WTF::move(alwaysRevalidatedURLSchemes); }
 
-    const Vector<WTF::String>& additionalReadAccessAllowedPaths() LIFETIME_BOUND { return m_additionalReadAccessAllowedPaths; }
-    void setAdditionalReadAccessAllowedPaths(Vector<WTF::String>&& additionalReadAccessAllowedPaths) { m_additionalReadAccessAllowedPaths = additionalReadAccessAllowedPaths; }
+    const Vector<RefPtr<StringImpl>>& additionalReadAccessAllowedPaths() LIFETIME_BOUND { return m_additionalReadAccessAllowedPaths; }
+    void setAdditionalReadAccessAllowedPaths(Vector<RefPtr<StringImpl>>&& additionalReadAccessAllowedPaths) { m_additionalReadAccessAllowedPaths = additionalReadAccessAllowedPaths; }
 
     bool fullySynchronousModeIsAllowedForTesting() const { return m_fullySynchronousModeIsAllowedForTesting; }
     void setFullySynchronousModeIsAllowedForTesting(bool allowed) { m_fullySynchronousModeIsAllowedForTesting = allowed; }
@@ -133,11 +133,11 @@ public:
     void setProcessSwapsOnNavigationWithinSameNonHTTPFamilyProtocol(bool swaps) { m_processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = swaps; }
 
 #if PLATFORM(PLAYSTATION)
-    const WTF::String& webProcessPath() const LIFETIME_BOUND { return m_webProcessPath; }
-    void setWebProcessPath(const WTF::String& webProcessPath) { m_webProcessPath = webProcessPath; }
+    const RefPtr<StringImpl>& webProcessPath() const LIFETIME_BOUND { return m_webProcessPath; }
+    void setWebProcessPath(StringImpl* webProcessPath) { m_webProcessPath = webProcessPath; }
 
-    const WTF::String& networkProcessPath() const LIFETIME_BOUND { return m_networkProcessPath; }
-    void setNetworkProcessPath(const WTF::String& networkProcessPath) { m_networkProcessPath = networkProcessPath; }
+    const RefPtr<StringImpl>& networkProcessPath() const LIFETIME_BOUND { return m_networkProcessPath; }
+    void setNetworkProcessPath(StringImpl* networkProcessPath) { m_networkProcessPath = networkProcessPath; }
 
     int32_t userId() const { return m_userId; }
     void setUserId(const int32_t userId) { m_userId = userId; }
@@ -151,8 +151,8 @@ public:
     void setDisableFontHintingForTesting(bool override) { m_disableFontHintingForTesting = override; }
 #endif
 
-    void setTimeZoneOverride(const WTF::String& timeZoneOverride) { m_timeZoneOverride = timeZoneOverride; }
-    const WTF::String& timeZoneOverride() const LIFETIME_BOUND { return m_timeZoneOverride; }
+    void setTimeZoneOverride(StringImpl* timeZoneOverride) { m_timeZoneOverride = timeZoneOverride; }
+    const RefPtr<StringImpl>& timeZoneOverride() const LIFETIME_BOUND { return m_timeZoneOverride; }
 
     void setMemoryFootprintPollIntervalForTesting(Seconds interval) { m_memoryFootprintPollIntervalForTesting = interval; }
     Seconds memoryFootprintPollIntervalForTesting() const { return m_memoryFootprintPollIntervalForTesting; }
@@ -172,10 +172,10 @@ public:
     unsigned prewarmedProcessCountLimitForTesting() const { return m_prewarmedProcessCountLimitForTesting; }
 
 private:
-    WTF::String m_injectedBundlePath;
-    Vector<WTF::String> m_cachePartitionedURLSchemes;
-    Vector<WTF::String> m_alwaysRevalidatedURLSchemes;
-    Vector<WTF::String> m_additionalReadAccessAllowedPaths;
+    RefPtr<StringImpl> m_injectedBundlePath;
+    Vector<RefPtr<StringImpl>> m_cachePartitionedURLSchemes;
+    Vector<RefPtr<StringImpl>> m_alwaysRevalidatedURLSchemes;
+    Vector<RefPtr<StringImpl>> m_additionalReadAccessAllowedPaths;
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreSynchronousMessagingTimeoutsForTesting { false };
     bool m_attrStyleEnabled { false };
@@ -196,8 +196,8 @@ private:
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
 #if PLATFORM(PLAYSTATION)
-    WTF::String m_webProcessPath;
-    WTF::String m_networkProcessPath;
+    RefPtr<StringImpl> m_webProcessPath;
+    RefPtr<StringImpl> m_networkProcessPath;
     int32_t m_userId { -1 };
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -207,7 +207,7 @@ private:
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> m_presentingApplicationProcessToken;
 #endif
-    WTF::String m_timeZoneOverride;
+    RefPtr<StringImpl> m_timeZoneOverride;
     Seconds m_memoryFootprintPollIntervalForTesting;
     size_t m_memoryLimitForTesting { 0 };
     Vector<uint64_t> m_memoryFootprintNotificationThresholds;

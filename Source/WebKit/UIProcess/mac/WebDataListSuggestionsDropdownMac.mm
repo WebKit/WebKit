@@ -61,10 +61,10 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionVi
 - (id)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(NSView *)view;
 - (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac&)dropdown;
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information;
-- (void)moveSelectionByDirection:(const String&)direction;
+- (void)moveSelectionByDirection:(StringImpl*)direction;
 - (void)invalidate;
 
-- (String)currentSelectedString;
+- (RefPtr<StringImpl>)currentSelectedString;
 
 @end
 
@@ -94,7 +94,7 @@ void WebDataListSuggestionsDropdownMac::platformShow(WebCore::DataListSuggestion
     [m_dropdownUI showSuggestionsDropdown:*this];
 }
 
-void WebDataListSuggestionsDropdownMac::didSelectOption(const String& selectedOption)
+void WebDataListSuggestionsDropdownMac::didSelectOption(StringImpl* selectedOption)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -110,18 +110,18 @@ void WebDataListSuggestionsDropdownMac::selectOption()
     if (!page)
         return;
 
-    String selectedOption = [m_dropdownUI currentSelectedString];
-    if (!selectedOption.isNull())
+    RefPtr<StringImpl> selectedOption = [m_dropdownUI currentSelectedString];
+    if (selectedOption)
         page->didSelectOption(selectedOption, m_targetFrameID);
 
     close();
 }
 
-void WebDataListSuggestionsDropdownMac::handleKeydownWithIdentifier(const String& key)
+void WebDataListSuggestionsDropdownMac::handleKeydownWithIdentifier(StringImpl* key)
 {
-    if (key == "Enter"_s)
+    if (equal(key, "Enter"_s))
         selectOption();
-    else if (key == "Up"_s || key == "Down"_s)
+    else if (equal(key, "Up"_s) || equal(key, "Down"_s))
         [m_dropdownUI moveSelectionByDirection:key];
 }
 
@@ -320,7 +320,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggestion>& suggestions)
 {
     return notFound != suggestions.findIf([](auto& suggestion) {
-        return !suggestion.label.isEmpty();
+        return !isEmpty(suggestion.label);
     });
 }
 
@@ -381,14 +381,14 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     return self;
 }
 
-- (String)currentSelectedString
+- (RefPtr<StringImpl>)currentSelectedString
 {
     NSInteger selectedRow = [_table selectedRow];
 
     if (selectedRow >= 0 && static_cast<size_t>(selectedRow) < _suggestions.size())
         return _suggestions.at(selectedRow).value;
 
-    return String();
+    return nullptr;
 }
 
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information
@@ -409,16 +409,16 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     });
 }
 
-- (void)moveSelectionByDirection:(const String&)direction
+- (void)moveSelectionByDirection:(StringImpl*)direction
 {
     size_t size = _suggestions.size();
     NSInteger oldSelection = [_table selectedRow];
     NSInteger newSelection = -1;
 
     if (oldSelection == -1)
-        newSelection = (direction == "Up"_s) ? (size - 1) : 0;
+        newSelection = (equal(direction, "Up"_s)) ? (size - 1) : 0;
     else {
-        NSInteger adjustment = (direction == "Up"_s) ? -1 : 1;
+        NSInteger adjustment = (equal(direction, "Up"_s)) ? -1 : 1;
         newSelection = std::clamp<NSInteger>(oldSelection + adjustment, 0, size);
     }
 
@@ -429,7 +429,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     [_table scrollRowToVisible:newSelection];
 
     // Notify accessibility clients of new selection.
-    RetainPtr currentSelectedString = [self currentSelectedString].createNSString();
+    RetainPtr currentSelectedString = createNSString([self currentSelectedString]);
     [self notifyAccessibilityClients:currentSelectedString.get()];
 }
 
@@ -450,7 +450,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     _enclosingWindow = nil;
 
     // Notify accessibility clients that datalist went away.
-    RetainPtr info = WEB_UI_STRING("Suggestions list hidden.", "Accessibility announcement for the data list suggestions dropdown going away.").createNSString();
+    RetainPtr info = createNSString(WEB_UI_STRING("Suggestions list hidden.", "Accessibility announcement for the data list suggestions dropdown going away."));
     [self notifyAccessibilityClients:info.get()];
 }
 
@@ -466,7 +466,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 
     CGFloat totalCellHeight = 0;
     for (auto& suggestion : borrow(_suggestions))
-        totalCellHeight += suggestion.label.isEmpty() ? dropdownRowHeightWithoutLabel : dropdownRowHeightWithLabel;
+        totalCellHeight += isEmpty(suggestion.label) ? dropdownRowHeightWithoutLabel : dropdownRowHeightWithLabel;
 
     CGFloat totalIntercellSpacingAndPadding = dropdownVerticalPadding * 2;
     if (_suggestions.size() > 1)
@@ -489,7 +489,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     [_scrollView flashScrollers];
 
     // Notify accessibility clients of datalist becoming visible.
-    RetainPtr currentSelectedString = [self currentSelectedString].createNSString();
+    RetainPtr currentSelectedString = createNSString([self currentSelectedString]);
     SUPPRESS_UNRETAINED_ARG RetainPtr info = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Suggestions list visible, %@", "Accessibility announcement that the suggestions list became visible. The format argument is for the first option in the list."), currentSelectedString.get()]);
     [self notifyAccessibilityClients:info.get()];
 }
@@ -516,7 +516,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
         return 0;
     }
 
-    return _suggestions.at(suggestionIndex).label.isEmpty() ? dropdownRowHeightWithoutLabel : dropdownRowHeightWithLabel;
+    return isEmpty(_suggestions.at(suggestionIndex).label) ? dropdownRowHeightWithoutLabel : dropdownRowHeightWithLabel;
 }
 
 - (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row
@@ -536,7 +536,7 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     Borrow borrowedSuggestions = _suggestions;
     auto& suggestion = borrowedSuggestions->at(row);
     [result setShouldShowBottomDivider:_showDividersBetweenCells && row < static_cast<NSInteger>(_suggestions.size() - 1)];
-    [result setValue:suggestion.value.createNSString().get() label:suggestion.label.createNSString().get()];
+    [result setValue:createNSString(suggestion.value).get() label:createNSString(suggestion.label).get()];
 
     return result.autorelease();
 }

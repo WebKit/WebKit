@@ -598,8 +598,8 @@ static std::optional<WebModel::DeformationData> convert(WKBridgeDeformationData*
 static WebModel::TypedResourceId convert(WKBridgeTypedResourceId *update)
 {
     return WebModel::TypedResourceId {
-        .value = update.value,
-        .path = update.path,
+        .value = StringImpl::create(update.value),
+        .path = StringImpl::create(update.path),
         .hashValue = update.cachedHashValue
     };
 }
@@ -624,8 +624,8 @@ static WebModel::NodeType convert(WKBridgeNodeType nodeType)
 static WebModel::Builtin convert(WKBridgeBuiltin *builtin)
 {
     return WebModel::Builtin {
-        .definition = builtin.definition,
-        .name = builtin.name
+        .definition = StringImpl::create(builtin.definition),
+        .name = StringImpl::create(builtin.name)
     };
 }
 
@@ -728,7 +728,7 @@ static Vector<WebModel::NumberOrString> convert(NSArray<WKBridgeValueString *> *
     result.reserveCapacity(constantValues.count);
     for (WKBridgeValueString* v in constantValues) {
         if (v.isString)
-            result.append(String(v.string));
+            result.append(StringImpl::create(v.string));
         else
             result.append(v.number.doubleValue);
     }
@@ -741,8 +741,8 @@ static WebModel::ConstantContainer convert(WKBridgeConstantContainer *container)
     return WebModel::ConstantContainer {
         .constant = convert(container.constant),
         .constantValues = convert(container.constantValues),
-        .name = String(container.name),
-        .colorSpaceName = container.colorSpaceName ? std::optional<String>(String(container.colorSpaceName)) : std::nullopt
+        .name = StringImpl::create(container.name),
+        .colorSpaceName = container.colorSpaceName ? std::optional<RefPtr<StringImpl>>(StringImpl::create(container.colorSpaceName)) : std::nullopt
     };
 }
 
@@ -758,10 +758,10 @@ static WebModel::Node convert(WKBridgeNode *node)
 static WebModel::Edge convert(WKBridgeEdge *edge)
 {
     return WebModel::Edge {
-        .outputNode = String(edge.outputNode),
-        .outputPort = String(edge.outputPort),
-        .inputNode = String(edge.inputNode),
-        .inputPort = String(edge.inputPort)
+        .outputNode = StringImpl::create(edge.outputNode),
+        .outputPort = StringImpl::create(edge.outputPort),
+        .inputNode = StringImpl::create(edge.inputNode),
+        .inputPort = StringImpl::create(edge.inputPort)
     };
 }
 
@@ -837,9 +837,9 @@ static WebModel::DataType convert(WKBridgeDataType type)
 
 static WebModel::InputOutput convert(WKBridgeInputOutput *inputOutput)
 {
-    std::optional<String> semanticTypeName;
+    std::optional<RefPtr<StringImpl>> semanticTypeName;
     if (inputOutput.semanticTypeName)
-        semanticTypeName = String(inputOutput.semanticTypeName);
+        semanticTypeName = StringImpl::create(inputOutput.semanticTypeName);
 
     std::optional<WebModel::ConstantContainer> defaultValue;
     if (inputOutput.defaultValue)
@@ -847,7 +847,7 @@ static WebModel::InputOutput convert(WKBridgeInputOutput *inputOutput)
 
     return WebModel::InputOutput {
         .type = convert(inputOutput.type),
-        .name = String(inputOutput.name),
+        .name = StringImpl::create(inputOutput.name),
         .semanticTypeName = semanticTypeName,
         .defaultValue = defaultValue
     };
@@ -890,17 +890,17 @@ static WebModel::UpdateMeshDescriptor convert(WKBridgeUpdateMesh *update)
 
 static WebModel::MaterialGraph convert(WKBridgeMaterialGraph *materialGraph)
 {
-    Vector<String> primvarPrimvarNames;
+    Vector<RefPtr<StringImpl>> primvarPrimvarNames;
     for (NSString *s in materialGraph.primvarMappingPrimvarNames)
-        primvarPrimvarNames.append(String(s));
-    Vector<String> primvarTexcoordNames;
+        primvarPrimvarNames.append(StringImpl::create(s));
+    Vector<RefPtr<StringImpl>> primvarTexcoordNames;
     for (NSString *s in materialGraph.primvarMappingTexcoordNames)
-        primvarTexcoordNames.append(String(s));
-    Vector<String> functionConstantInputNames;
+        primvarTexcoordNames.append(StringImpl::create(s));
+    Vector<RefPtr<StringImpl>> functionConstantInputNames;
     for (NSString *s in materialGraph.functionConstantInputNames)
-        functionConstantInputNames.append(String(s));
+        functionConstantInputNames.append(StringImpl::create(s));
     return WebModel::MaterialGraph {
-        .graphName = String(materialGraph.graphName),
+        .graphName = StringImpl::create(materialGraph.graphName),
         .nodes = convert<WKBridgeNode, WebModel::Node>(materialGraph.nodes),
         .edges = convert<WKBridgeEdge, WebModel::Edge>(materialGraph.edges),
         .arguments = convert(materialGraph.arguments),
@@ -948,7 +948,7 @@ static WebModel::UpdateTextureDescriptor convert(WKBridgeUpdateTexture *update)
     return WebModel::UpdateTextureDescriptor {
         .imageAsset = convert(update.imageAsset),
         .identifier = convert(update.identifier),
-        .hashString = update.hashString,
+        .hashString = StringImpl::create(update.hashString),
         .layout = convert<WKBridgeTextureLevelInfo, WebModel::TextureLevelInfo>(update.layout)
     };
 }

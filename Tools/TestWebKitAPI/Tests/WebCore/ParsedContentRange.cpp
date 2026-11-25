@@ -35,43 +35,43 @@ namespace TestWebKitAPI {
 TEST(WebCore, ParsedContentRangeFromString)
 {
     // Basic parsing
-    ASSERT_TRUE(ParsedContentRange("bytes 0-1/2"_s).isValid());
-    ASSERT_TRUE(ParsedContentRange("bytes 0-1/*"_s).isValid());
-    ASSERT_EQ(0, ParsedContentRange("bytes 0-1/2"_s).firstBytePosition());
-    ASSERT_EQ(1, ParsedContentRange("bytes 0-1/2"_s).lastBytePosition());
-    ASSERT_EQ(2, ParsedContentRange("bytes 0-1/2"_s).instanceLength());
-    ASSERT_EQ(ParsedContentRange::unknownLength, ParsedContentRange("bytes 0-1/*"_s).instanceLength());
+    ASSERT_TRUE(ParsedContentRange("bytes 0-1/2"_si).isValid());
+    ASSERT_TRUE(ParsedContentRange("bytes 0-1/*"_si).isValid());
+    ASSERT_EQ(0, ParsedContentRange("bytes 0-1/2"_si).firstBytePosition());
+    ASSERT_EQ(1, ParsedContentRange("bytes 0-1/2"_si).lastBytePosition());
+    ASSERT_EQ(2, ParsedContentRange("bytes 0-1/2"_si).instanceLength());
+    ASSERT_EQ(ParsedContentRange::unknownLength, ParsedContentRange("bytes 0-1/*"_si).instanceLength());
 
     // Whitespace errors
-    ASSERT_FALSE(ParsedContentRange("bytes  0-1/*"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0 -1/*"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0- 1/*"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-1 /*"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-1/ *"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-1/* "_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-1/ 2"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-1/2 "_s).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes  0-1/*"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0 -1/*"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0- 1/*"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-1 /*"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-1/ *"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-1/* "_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-1/ 2"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-1/2 "_si).isValid());
 
     // Non-digit errors
-    ASSERT_FALSE(ParsedContentRange("bytes abcd-1/2"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-abcd/2"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-1/abcd"_s).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes abcd-1/2"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-abcd/2"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-1/abcd"_si).isValid());
 
     // Range requirement errors
-    ASSERT_FALSE(ParsedContentRange("bytes 1-0/2"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-2/1"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 2/0-1"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("abcd 0/1-2"_s).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 1-0/2"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-2/1"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 2/0-1"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("abcd 0/1-2"_si).isValid());
 
     // Negative value errors
-    ASSERT_FALSE(ParsedContentRange("bytes -0-1/*"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes -1/*"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0--0/2"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 0-1/-2"_s).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes -0-1/*"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes -1/*"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0--0/2"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 0-1/-2"_si).isValid());
 
     // Edge cases
-    ASSERT_TRUE(ParsedContentRange("bytes 9223372036854775805-9223372036854775806/9223372036854775807"_s).isValid());
-    ASSERT_FALSE(ParsedContentRange("bytes 9223372036854775808-9223372036854775809/9223372036854775810"_s).isValid());
+    ASSERT_TRUE(ParsedContentRange("bytes 9223372036854775805-9223372036854775806/9223372036854775807"_si).isValid());
+    ASSERT_FALSE(ParsedContentRange("bytes 9223372036854775808-9223372036854775809/9223372036854775810"_si).isValid());
 }
 
 TEST(WebCore, ParsedContentRangeFromValues)
@@ -92,7 +92,7 @@ TEST(WebCore, ParsedContentRangeToString)
 {
     ASSERT_EQ("bytes 0-1/2"_s, ParsedContentRange(0, 1, 2).headerValue());
     ASSERT_EQ("bytes 0-1/*"_s, ParsedContentRange(0, 1, ParsedContentRange::unknownLength).headerValue());
-    ASSERT_TRUE(ParsedContentRange().headerValue().isEmpty());
+    ASSERT_TRUE(isEmpty(ParsedContentRange().headerValue()));
 }
 
 } // namespace TestWebKitAPI

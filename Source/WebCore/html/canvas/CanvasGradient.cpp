@@ -62,7 +62,7 @@ Ref<const Gradient> CanvasGradient::createGradient() const
     return gradient;
 }
 
-ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExecutionContext, double value, const String& colorString)
+ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExecutionContext, double value, StringImpl* colorString)
 {
     if (!(value >= 0 && value <= 1))
         return Exception { ExceptionCode::IndexSizeError };

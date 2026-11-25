@@ -137,7 +137,7 @@ bool WebEditorClient::shouldInsertNode(Node& node, const std::optional<SimpleRan
     return page && page->injectedBundleEditorClient().shouldInsertNode(*page, node, rangeToReplace, action);
 }
 
-bool WebEditorClient::shouldInsertText(const String& text, const std::optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
+bool WebEditorClient::shouldInsertText(StringImpl* text, const std::optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
     RefPtr page = m_page.get();
     return page && page->injectedBundleEditorClient().shouldInsertText(*page, text, rangeToReplace, action);
@@ -157,7 +157,7 @@ bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const std::
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& data)
+void WebEditorClient::registerAttachmentIdentifier(StringImpl* identifier, StringImpl* contentType, StringImpl* preferredFileName, Ref<FragmentedSharedBuffer>&& data)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromData(identifier, contentType, preferredFileName, IPC::SharedBufferReference(WTF::move(data))));
@@ -169,37 +169,37 @@ void WebEditorClient::registerAttachments(Vector<WebCore::SerializedAttachmentDa
         page->send(Messages::WebPageProxy::RegisterAttachmentsFromSerializedData(WTF::move(data)));
 }
 
-void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& filePath)
+void WebEditorClient::registerAttachmentIdentifier(StringImpl* identifier, StringImpl* contentType, StringImpl* filePath)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromFilePath(identifier, contentType, filePath));
 }
 
-void WebEditorClient::registerAttachmentIdentifier(const String& identifier)
+void WebEditorClient::registerAttachmentIdentifier(StringImpl* identifier)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::RegisterAttachmentIdentifier(identifier));
 }
 
-void WebEditorClient::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
+void WebEditorClient::cloneAttachmentData(StringImpl* fromIdentifier, StringImpl* toIdentifier)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::CloneAttachmentData(fromIdentifier, toIdentifier));
 }
 
-void WebEditorClient::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, WebCore::AttachmentAssociatedElementType associatedElementType)
+void WebEditorClient::didInsertAttachmentWithIdentifier(StringImpl* identifier, StringImpl* source, WebCore::AttachmentAssociatedElementType associatedElementType)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::DidInsertAttachmentWithIdentifier(identifier, source, associatedElementType));
 }
 
-void WebEditorClient::didRemoveAttachmentWithIdentifier(const String& identifier)
+void WebEditorClient::didRemoveAttachmentWithIdentifier(StringImpl* identifier)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::DidRemoveAttachmentWithIdentifier(identifier));
 }
 
-Vector<SerializedAttachmentData> WebEditorClient::serializedAttachmentDataForIdentifiers(const Vector<String>& identifiers)
+Vector<SerializedAttachmentData> WebEditorClient::serializedAttachmentDataForIdentifiers(const Vector<RefPtr<StringImpl>>& identifiers)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -225,28 +225,28 @@ bool WebEditorClient::shouldMoveRangeAfterDelete(const SimpleRange&, const Simpl
 void WebEditorClient::didBeginEditing()
 {
     // FIXME: What good is a notification name, if it's always the same?
-    static NeverDestroyed<String> WebViewDidBeginEditingNotification(MAKE_STATIC_STRING_IMPL("WebViewDidBeginEditingNotification"));
+    static NeverDestroyed<RefPtr<StringImpl>> WebViewDidBeginEditingNotification(MAKE_STATIC_STRING_IMPL("WebViewDidBeginEditingNotification"));
     if (RefPtr page = m_page.get())
-        page->injectedBundleEditorClient().didBeginEditing(*page, WebViewDidBeginEditingNotification.get().impl());
+        page->injectedBundleEditorClient().didBeginEditing(*page, WebViewDidBeginEditingNotification.get().get());
 }
 
 void WebEditorClient::respondToChangedContents()
 {
-    static NeverDestroyed<String> WebViewDidChangeNotification(MAKE_STATIC_STRING_IMPL("WebViewDidChangeNotification"));
+    static NeverDestroyed<RefPtr<StringImpl>> WebViewDidChangeNotification(MAKE_STATIC_STRING_IMPL("WebViewDidChangeNotification"));
     RefPtr page = m_page.get();
     if (!page)
         return;
-    page->injectedBundleEditorClient().didChange(*page, WebViewDidChangeNotification.get().impl());
+    page->injectedBundleEditorClient().didChange(*page, WebViewDidChangeNotification.get().get());
     page->didChangeContents();
 }
 
 void WebEditorClient::respondToChangedSelection(LocalFrame* frame)
 {
-    static NeverDestroyed<String> WebViewDidChangeSelectionNotification(MAKE_STATIC_STRING_IMPL("WebViewDidChangeSelectionNotification"));
+    static NeverDestroyed<RefPtr<StringImpl>> WebViewDidChangeSelectionNotification(MAKE_STATIC_STRING_IMPL("WebViewDidChangeSelectionNotification"));
     RefPtr page = m_page.get();
     if (!page)
         return;
-    page->injectedBundleEditorClient().didChangeSelection(*page, WebViewDidChangeSelectionNotification.get().impl());
+    page->injectedBundleEditorClient().didChangeSelection(*page, WebViewDidChangeSelectionNotification.get().get());
     if (!frame)
         return;
 
@@ -289,9 +289,9 @@ void WebEditorClient::canceledComposition()
 
 void WebEditorClient::didEndEditing()
 {
-    static NeverDestroyed<String> WebViewDidEndEditingNotification(MAKE_STATIC_STRING_IMPL("WebViewDidEndEditingNotification"));
+    static NeverDestroyed<RefPtr<StringImpl>> WebViewDidEndEditingNotification(MAKE_STATIC_STRING_IMPL("WebViewDidEndEditingNotification"));
     if (RefPtr page = m_page.get())
-        page->injectedBundleEditorClient().didEndEditing(*page, WebViewDidEndEditingNotification.get().impl());
+        page->injectedBundleEditorClient().didEndEditing(*page, WebViewDidEndEditingNotification.get().get());
 }
 
 void WebEditorClient::didWriteSelectionToPasteboard()
@@ -306,9 +306,9 @@ void WebEditorClient::willWriteSelectionToPasteboard(const std::optional<SimpleR
         page->injectedBundleEditorClient().willWriteToPasteboard(*page, range);
 }
 
-void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>& range, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData)
+void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>& range, Vector<std::pair<RefPtr<StringImpl>, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData)
 {
-    Vector<String> pasteboardTypes;
+    Vector<RefPtr<StringImpl>> pasteboardTypes;
     Vector<RefPtr<WebCore::SharedBuffer>> pasteboardData;
     for (size_t i = 0; i < pasteboardTypesAndData.size(); ++i) {
         pasteboardTypes.append(pasteboardTypesAndData[i].first);
@@ -419,7 +419,7 @@ void WebEditorClient::redo()
     }
 }
 
-WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::FrameIdentifier frameID, const String& originIdentifier)
+WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::FrameIdentifier frameID, StringImpl* originIdentifier)
 {
     RefPtr page = m_page.get();
     return page ? page->requestDOMPasteAccess(pasteAccessCategory, frameID, originIdentifier) : WebCore::DOMPasteAccessResponse::DeniedForGesture;
@@ -533,19 +533,19 @@ HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> WebEditorClient::co
 
 static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionType& type)
 {
-    String key = event->keyIdentifier();
-    if (key == "Up"_s)
+    RefPtr<StringImpl> key = event->keyIdentifier();
+    if (equal(key, "Up"_s))
         type = WKInputFieldActionTypeMoveUp;
-    else if (key == "Down"_s)
+    else if (equal(key, "Down"_s))
         type = WKInputFieldActionTypeMoveDown;
-    else if (key == "U+001B"_s)
+    else if (equal(key, "U+001B"_s))
         type = WKInputFieldActionTypeCancel;
-    else if (key == "U+0009"_s) {
+    else if (equal(key, "U+0009"_s)) {
         if (event->shiftKey())
             type = WKInputFieldActionTypeInsertBacktab;
         else
             type = WKInputFieldActionTypeInsertTab;
-    } else if (key == "Enter"_s)
+    } else if (equal(key, "Enter"_s))
         type = WKInputFieldActionTypeInsertNewline;
     else
         return false;
@@ -617,13 +617,13 @@ bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextChecki
 #endif
 }
 
-void WebEditorClient::ignoreWordInSpellDocument(const String& word)
+void WebEditorClient::ignoreWordInSpellDocument(StringImpl* word)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::IgnoreWord(word));
 }
 
-void WebEditorClient::learnWord(const String& word)
+void WebEditorClient::learnWord(StringImpl* word)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::LearnWord(word));
@@ -675,13 +675,13 @@ Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stri
 
 #endif
 
-void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+void WebEditorClient::updateSpellingUIWithGrammarString(StringImpl* badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::UpdateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail));
 }
 
-void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+void WebEditorClient::updateSpellingUIWithMisspelledWord(StringImpl* misspelledWord)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::UpdateSpellingUIWithMisspelledWord(misspelledWord));
@@ -702,7 +702,7 @@ bool WebEditorClient::spellingUIIsShowing()
     return isShowing;
 }
 
-void WebEditorClient::getGuessesForWord(const String& word, const String& context, const VisibleSelection& currentSelection, Vector<String>& guesses)
+void WebEditorClient::getGuessesForWord(StringImpl* word, StringImpl* context, const VisibleSelection& currentSelection, Vector<RefPtr<StringImpl>>& guesses)
 {
     RefPtr page = m_page.get();
     if (!page)

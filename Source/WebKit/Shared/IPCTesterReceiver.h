@@ -60,15 +60,15 @@ private:
     void transformPayloadSwift(const IPCTesterPayload&, CompletionHandler<void(IPCTesterPayload&&)>&&);
     void transformPayloadSynchronouslySwift(const IPCTesterPayload&, CompletionHandler<void(IPCTesterPayload&&)>&&);
     void transformNodeSwift(Ref<IPCTesterNode>&&, RefPtr<IPCTesterNode>&&, CompletionHandler<void(RefPtr<IPCTesterNode>&&, uint32_t)>&&);
-    void describeSwift(IPCTesterColor, OptionSet<IPCTesterFlag>, IPCTesterChoice, IPCConnectionTesterIdentifier, const IPCTesterVariant&, bool, CompletionHandler<void(String&&)>&&);
+    void describeSwift(IPCTesterColor, OptionSet<IPCTesterFlag>, IPCTesterChoice, IPCConnectionTesterIdentifier, const IPCTesterVariant&, bool, CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
     void halveEvenNumberSwift(IPC::Connection&, uint32_t, CompletionHandler<void(uint32_t)>&&);
-    void recordSwift(const String&);
-    void takeRecordedSwift(CompletionHandler<void(Vector<String>&&)>&&);
+    void recordSwift(StringImpl*);
+    void takeRecordedSwift(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
     void clearRecordedSwift(CompletionHandler<void()>&&);
 
     CompletionHandler<void(uint64_t)> m_deferredReply;
     uint32_t m_deferredReplyArgument { 0 };
-    Vector<String> m_recordedTexts;
+    Vector<RefPtr<StringImpl>> m_recordedTexts;
 };
 
 }

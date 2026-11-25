@@ -145,7 +145,7 @@ public:
 
 #if ENABLE(TREE_DEBUGGING)
     void debugPosition() const;
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
     void showTreeForThis() const;
 #endif
 

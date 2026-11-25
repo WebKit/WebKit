@@ -47,7 +47,7 @@ struct DOMPointInit;
 class DOMMatrixReadOnly : public ScriptWrappable, public RefCounted<DOMMatrixReadOnly>, public NoVirtualDestructorBase {
     WTF_MAKE_TZONE_ALLOCATED(DOMMatrixReadOnly);
 public:
-    static ExceptionOr<Ref<DOMMatrixReadOnly>> create(ScriptExecutionContext&, std::optional<Variant<String, Vector<double>>>&&);
+    static ExceptionOr<Ref<DOMMatrixReadOnly>> create(ScriptExecutionContext&, std::optional<Variant<RefPtr<StringImpl>, Vector<double>>>&&);
 
     ~DOMMatrixReadOnly();
 
@@ -99,7 +99,7 @@ public:
     bool is2D() const { return m_is2D; }
     NODELETE bool isIdentity() const;
 
-    ExceptionOr<void> setMatrixValue(Document&, const String&);
+    ExceptionOr<void> setMatrixValue(Document&, StringImpl*);
 
     Ref<DOMMatrix> translate(double tx = 0, double ty = 0, double tz = 0);
     ExceptionOr<Ref<DOMMatrix>> multiply(DOMMatrixInit&& other) const;
@@ -120,7 +120,7 @@ public:
     ExceptionOr<Ref<Float32Array>> toFloat32Array() const;
     ExceptionOr<Ref<Float64Array>> toFloat64Array() const;
 
-    ExceptionOr<String> toString() const;
+    ExceptionOr<RefPtr<StringImpl>> toString() const;
 
     const TransformationMatrix& transformationMatrix() const LIFETIME_BOUND { return m_matrix; }
     
@@ -136,7 +136,7 @@ protected:
         bool is2D { true };
     };
 
-    static ExceptionOr<AbstractMatrix> parseStringIntoAbstractMatrix(Document&, const String&);
+    static ExceptionOr<AbstractMatrix> parseStringIntoAbstractMatrix(Document&, StringImpl*);
 
     template <typename T>
     static ExceptionOr<Ref<T>> fromMatrixHelper(DOMMatrixInit&&);

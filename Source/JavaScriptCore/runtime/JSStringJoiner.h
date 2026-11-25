@@ -58,7 +58,7 @@ public:
 private:
     bool appendWithoutSideEffects(JSGlobalObject*, JSValue);
     void append(JSString*, StringViewWithUnderlyingString&&);
-    void append8Bit(const String&);
+    void append8Bit(StringImpl*);
     unsigned joinedLength(JSGlobalObject*) const;
     JSString* joinImpl(JSGlobalObject*);
 
@@ -115,11 +115,11 @@ ALWAYS_INLINE void JSStringJoiner::append(JSString* jsString, StringViewWithUnde
     m_lastString = jsString;
 }
 
-ALWAYS_INLINE void JSStringJoiner::append8Bit(const String& string)
+ALWAYS_INLINE void JSStringJoiner::append8Bit(StringImpl* string)
 {
-    ASSERT(string.is8Bit());
+    ASSERT(is8Bit(string));
     ++m_stringsCount;
-    m_accumulatedStringsLength += string.length();
+    m_accumulatedStringsLength += length(string);
     m_hasOverflowed |= !m_strings.tryAppend({ { string, string }, 0 });
     m_lastString = nullptr;
 }

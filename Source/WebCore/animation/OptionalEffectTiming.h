@@ -38,9 +38,9 @@ struct OptionalEffectTiming {
     OptionalFillMode fill;
     Markable<double> iterationStart;
     std::optional<double> iterations; // This value cannot be a Markable<double> since we need to check for a NaN value.
-    std::optional<Variant<double, String>> duration;
+    std::optional<Variant<double, RefPtr<StringImpl>>> duration;
     OptionalPlaybackDirection direction;
-    String easing;
+    RefPtr<StringImpl> easing;
 };
 
 } // namespace WebCore

@@ -59,7 +59,7 @@ ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() &&
 
 bool ServiceWorkerRegistrationKey::isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
 {
-    return originIsMatching(topOrigin, clientURL) && clientURL.string().startsWith(m_scope.string());
+    return originIsMatching(topOrigin, clientURL) && startsWith(clientURL.string(), m_scope.string());
 }
 
 bool ServiceWorkerRegistrationKey::originIsMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
@@ -85,24 +85,24 @@ RegistrableDomain ServiceWorkerRegistrationKey::firstPartyForCookies() const
 
 static const char separatorCharacter = '_';
 
-String ServiceWorkerRegistrationKey::toDatabaseKey() const
+RefPtr<StringImpl> ServiceWorkerRegistrationKey::toDatabaseKey() const
 {
     if (m_topOrigin.port())
-        return makeString(m_topOrigin.protocol(), separatorCharacter, m_topOrigin.host(), separatorCharacter, String::number(m_topOrigin.port().value()), separatorCharacter, m_scope.string());
+        return makeString(m_topOrigin.protocol(), separatorCharacter, m_topOrigin.host(), separatorCharacter, makeString(m_topOrigin.port().value()), separatorCharacter, m_scope.string());
     return makeString(m_topOrigin.protocol(), separatorCharacter, m_topOrigin.host(), separatorCharacter, separatorCharacter, m_scope.string());
 }
 
-std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabaseKey(const String& key)
+std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabaseKey(StringImpl* key)
 {
-    auto first = key.find(separatorCharacter, 0);
+    auto first = find(key, separatorCharacter, 0);
     if (first == notFound)
         return std::nullopt;
 
-    auto second = key.find(separatorCharacter, first + 1);
+    auto second = find(key, separatorCharacter, first + 1);
     if (second == notFound)
         return std::nullopt;
 
-    auto third = key.find(separatorCharacter, second + 1);
+    auto third = find(key, separatorCharacter, second + 1);
     if (third == notFound)
         return std::nullopt;
 
@@ -122,7 +122,7 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDa
     if (!topOriginURL.isValid())
         return std::nullopt;
 
-    URL scope { key.substring(third + 1) };
+    URL scope { substring(key, third + 1) };
     if (!scope.isValid())
         return std::nullopt;
 
@@ -136,7 +136,7 @@ ClientOrigin ServiceWorkerRegistrationKey::clientOrigin() const
 }
 
 #if !LOG_DISABLED
-String ServiceWorkerRegistrationKey::loggingString() const
+RefPtr<StringImpl> ServiceWorkerRegistrationKey::loggingString() const
 {
     return makeString(m_topOrigin.debugString(), '-', m_scope.string());
 }

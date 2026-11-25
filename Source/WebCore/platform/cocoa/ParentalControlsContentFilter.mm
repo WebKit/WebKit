@@ -98,7 +98,7 @@ static inline bool canHandleResponse(const ResourceResponse& response)
     return response.url().protocolIsInHTTPFamily();
 }
 
-void ParentalControlsContentFilter::willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(String&&)>&& completionHandler)
+void ParentalControlsContentFilter::willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
 #if HAVE(WEBCONTENTRESTRICTIONS)
     if (redirectResponse.isNull() || !canHandleResponse(redirectResponse) || !enabled()) {

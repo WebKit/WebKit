@@ -47,9 +47,9 @@ PDFDocumentImage::PDFDocumentImage(ImageObserver* observer)
 
 PDFDocumentImage::~PDFDocumentImage() = default;
 
-String PDFDocumentImage::filenameExtension() const
+RefPtr<StringImpl> PDFDocumentImage::filenameExtension() const
 {
-    return "pdf"_s;
+    return "pdf"_si;
 }
 
 NaturalDimensions PDFDocumentImage::unorientedNaturalDimensions() const

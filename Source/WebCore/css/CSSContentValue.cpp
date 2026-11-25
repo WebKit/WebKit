@@ -46,7 +46,7 @@ Ref<CSSContentValue> CSSContentValue::create(CSS::Content&& content)
     return adoptRef(*new CSSContentValue(WTF::move(content)));
 }
 
-String CSSContentValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSContentValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_content);
 }

@@ -139,13 +139,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ReplacementFragment);
 NODELETE static bool isInterchangeNewlineNode(const Node& node)
 {
     auto* br = dynamicDowncast<HTMLBRElement>(node);
-    return br && br->attributeWithoutSynchronization(classAttr) == AppleInterchangeNewline;
+    return br && equal(br->attributeWithoutSynchronization(classAttr), AppleInterchangeNewline);
 }
 
 NODELETE static bool isInterchangeConvertedSpaceSpan(const Node& node)
 {
     auto* element = dynamicDowncast<HTMLElement>(node);
-    return element && element->attributeWithoutSynchronization(classAttr) == AppleConvertedSpace;
+    return element && equal(element->attributeWithoutSynchronization(classAttr), AppleConvertedSpace);
 }
 
 static Position positionAvoidingPrecedingNodes(Position position)
@@ -221,7 +221,7 @@ ReplacementFragment::ReplacementFragment(RefPtr<DocumentFragment>&& inputFragmen
     }
     
     auto range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
-    String text = range ? plainText(*range, { TextIteratorBehavior::EmitsOriginalText, TextIteratorBehavior::IgnoresStyleVisibility }) : emptyString();
+    RefPtr<StringImpl> text = range ? plainText(*range, { TextIteratorBehavior::EmitsOriginalText, TextIteratorBehavior::IgnoresStyleVisibility }) : emptyString();
 
     removeInterchangeNodes(holder.get());
     removeUnrenderedNodes(holder.get());
@@ -230,7 +230,7 @@ ReplacementFragment::ReplacementFragment(RefPtr<DocumentFragment>&& inputFragmen
     // Give the root a chance to change the text.
     auto event = BeforeTextInsertedEvent::create(text);
     editableRoot->dispatchEvent(event);
-    if (text != event->text() || !editableRoot->hasRichlyEditableStyle()) {
+    if (!equal(text, event->text()) || !editableRoot->hasRichlyEditableStyle()) {
         restoreAndRemoveTestRenderingNodesToFragment(holder.get());
 
         auto range = selection.toNormalizedRange();
@@ -259,7 +259,7 @@ void ReplacementFragment::removeContentsWithSideEffects()
     auto end = descendantsOfType<Element>(*m_fragment).end();
     while (it != end) {
         Ref element = *it;
-        if (isScriptElement(element) || (is<HTMLStyleElement>(element) && element->getAttribute(classAttr) != WebKitMSOListQuirksStyle)
+        if (isScriptElement(element) || (is<HTMLStyleElement>(element) && !equal(element->getAttribute(classAttr), WebKitMSOListQuirksStyle))
             || isAnyOf<HTMLBaseElement, HTMLLinkElement, HTMLMetaElement, HTMLTitleElement, SVGStyleElement>(element)) {
             elementsToRemove.append(WTF::move(element));
             it.traverseNextSkippingChildren();
@@ -540,7 +540,7 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
 
 NODELETE static bool isMailPasteAsQuotationNode(const Node& node)
 {
-    return node.hasTagName(blockquoteTag) && downcast<Element>(node).attributeWithoutSynchronization(classAttr) == ApplePasteAsQuotation;
+    return node.hasTagName(blockquoteTag) && equal(downcast<Element>(node).attributeWithoutSynchronization(classAttr), ApplePasteAsQuotation);
 }
 
 static bool haveSameTagName(Node& a, Node* b)
@@ -549,7 +549,7 @@ static bool haveSameTagName(Node& a, Node* b)
     if (!elementA)
         return false;
     RefPtr elementB = dynamicDowncast<Element>(b);
-    return elementB && elementA->tagName() == elementB->tagName();
+    return elementB && equal(elementA->tagName(), elementB->tagName());
 }
 
 bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const VisiblePosition& destination)
@@ -773,7 +773,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
 
             // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
             if (isBlock(*element))
-                protect(element->cssomStyle())->setPropertyInternal(CSSPropertyID::Display, "inline"_s, IsImportant::No);
+                protect(element->cssomStyle())->setPropertyInternal(CSSPropertyID::Display, "inline"_si, IsImportant::No);
             if (element->renderer() && element->renderer()->style().floating() != Float::None)
                 protect(element->cssomStyle())->setPropertyInternal(CSSPropertyID::Float, noneAtom(), IsImportant::No);
         }
@@ -990,7 +990,7 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
 
     // FIXME: This string comparison is a naive way of comparing two styles.
     // We should be taking the diff and check that the diff is empty.
-    if (styleText != wrappingStyleSpan->getAttribute(styleAttr))
+    if (!equal(styleText, wrappingStyleSpan->getAttribute(styleAttr)))
         return false;
 
     fragment.removeNodePreservingChildren(wrappingStyleSpan);
@@ -1130,10 +1130,10 @@ static bool isInlineNodeWithStyle(const Node& node)
 
     // We can skip over elements whose class attribute is
     // one of our internal classes.
-    const AtomString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
-    if (classAttributeValue == AppleTabSpanClass
-        || classAttributeValue == AppleConvertedSpace
-        || classAttributeValue == ApplePasteAsQuotation)
+    const RefPtr<AtomStringImpl>& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
+    if (equal(classAttributeValue, AppleTabSpanClass)
+        || equal(classAttributeValue, AppleConvertedSpace)
+        || equal(classAttributeValue, ApplePasteAsQuotation))
         return true;
 
     return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(*element);
@@ -1574,7 +1574,7 @@ void ReplaceSelectionCommand::doApply()
     completeHTMLReplacement(lastPositionToSelect);
 }
 
-String ReplaceSelectionCommand::inputEventData() const
+RefPtr<StringImpl> ReplaceSelectionCommand::inputEventData() const
 {
     if (isEditingTextAreaOrTextInput())
         return m_documentFragment->textContent();
@@ -1696,11 +1696,11 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     if (needsTrailingSpace && endNode) {
         bool collapseWhiteSpace = !endNode->renderer() || endNode->renderer()->style().collapseWhiteSpace();
         if (RefPtr text = dynamicDowncast<Text>(*endNode)) {
-            insertTextIntoNode(*text, endOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " "_s);
+            insertTextIntoNode(*text, endOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " "_si);
             if (m_endOfInsertedContent.containerNode() == endNode)
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
-            auto node = document().createEditingTextNode(collapseWhiteSpace ? String { nonBreakingSpaceString() } : " "_s);
+            auto node = document().createEditingTextNode(collapseWhiteSpace ? RefPtr<StringImpl> { nonBreakingSpaceString() } : " "_si);
             insertNodeAfter(node.copyRef(), *endNode);
             updateNodesInserted(node.ptr());
         }
@@ -1720,11 +1720,11 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     if (needsLeadingSpace && startNode) {
         bool collapseWhiteSpace = !startNode->renderer() || startNode->renderer()->style().collapseWhiteSpace();
         if (RefPtr text = dynamicDowncast<Text>(*startNode)) {
-            insertTextIntoNode(*text, startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " "_s);
+            insertTextIntoNode(*text, startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " "_si);
             if (m_endOfInsertedContent.containerNode() == startNode && m_endOfInsertedContent.offsetInContainerNode())
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
-            auto node = document().createEditingTextNode(collapseWhiteSpace ? String { nonBreakingSpaceString() } : " "_s);
+            auto node = document().createEditingTextNode(collapseWhiteSpace ? RefPtr<StringImpl> { nonBreakingSpaceString() } : " "_si);
             // Don't updateNodesInserted. Doing so would set m_endOfInsertedContent to be the node containing the leading space,
             // but m_endOfInsertedContent is supposed to mark the end of pasted content.
             insertNodeBefore(node, *startNode);
@@ -2014,7 +2014,7 @@ void ReplaceSelectionCommand::updateDirectionForStartOfInsertedContentIfNeeded(c
             auto directionValueID = toCSSValueID(*newDirection);
             Ref style = EditingStyle::create(CSSPropertyID::Direction, directionValueID);
             applyStyle(style.ptr(), paragraphEnd, paragraphEnd, EditAction::SetBlockWritingDirection, ApplyStylePropertyLevel::ForceBlock);
-            setNodeAttribute(*blockContainer, dirAttr, nameLiteral(directionValueID));
+            setNodeAttribute(*blockContainer, dirAttr, AtomStringImpl::add(nameLiteral(directionValueID)).ptr());
             restoreOriginalEndingSelection = true;
         }
 

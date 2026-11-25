@@ -79,7 +79,7 @@ static int CALLBACK linkedFontEnumProc(CONST LOGFONT* logFont, CONST TEXTMETRIC*
     return false;
 }
 
-WEBCORE_EXPORT void appendLinkedFonts(WCHAR* linkedFonts, unsigned length, Vector<String>* result)
+WEBCORE_EXPORT void appendLinkedFonts(WCHAR* linkedFonts, unsigned length, Vector<RefPtr<StringImpl>>* result)
 {
     unsigned i = 0;
     while (i < length) {
@@ -92,33 +92,33 @@ WEBCORE_EXPORT void appendLinkedFonts(WCHAR* linkedFonts, unsigned length, Vecto
         unsigned j = i;
         while (j < length && linkedFonts[j])
             j++;
-        result->append(String(linkedFonts + i, j - i));
+        result->append(StringImpl::create(linkedFonts + i, j - i));
         i = j + 1;
     }
 }
 
-static const Vector<String>* getLinkedFonts(String& family)
+static const Vector<RefPtr<StringImpl>>* getLinkedFonts(RefPtr<StringImpl>& family)
 {
-    static HashMap<String, Vector<String>*> systemLinkMap;
-    Vector<String>* result = systemLinkMap.get(family);
+    static HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>*> systemLinkMap;
+    Vector<RefPtr<StringImpl>>* result = systemLinkMap.get(family);
     if (result)
         return result;
 
-    result = new Vector<String>;
+    result = new Vector<RefPtr<StringImpl>>;
     systemLinkMap.set(family, result);
     HKEY fontLinkKey = nullptr;
     if (::RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\Windows NT\\CurrentVersion\\FontLink\\SystemLink", 0, KEY_READ, &fontLinkKey) != ERROR_SUCCESS)
         return result;
 
     DWORD linkedFontsBufferSize = 0;
-    if (::RegQueryValueEx(fontLinkKey, family.wideCharacters().data(), 0, nullptr, nullptr, &linkedFontsBufferSize) == ERROR_FILE_NOT_FOUND) {
-        SAFE_WTFLOGALWAYS("The font link key %s does not exist in the registry.", family.utf8());
+    if (::RegQueryValueEx(fontLinkKey, wideCharacters(family).data(), 0, nullptr, nullptr, &linkedFontsBufferSize) == ERROR_FILE_NOT_FOUND) {
+        SAFE_WTFLOGALWAYS("The font link key %s does not exist in the registry.", utf8(family));
         return result;
     }
 
     static const constexpr unsigned InitialBufferSize { 256 / sizeof(WCHAR) };
     Vector<WCHAR, InitialBufferSize> linkedFonts(roundUpToMultipleOf<sizeof(WCHAR)>(linkedFontsBufferSize) / sizeof(WCHAR));
-    if (::RegQueryValueEx(fontLinkKey, family.wideCharacters().data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts.data()), &linkedFontsBufferSize) == ERROR_SUCCESS) {
+    if (::RegQueryValueEx(fontLinkKey, wideCharacters(family).data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts.data()), &linkedFontsBufferSize) == ERROR_SUCCESS) {
         unsigned length = linkedFontsBufferSize / sizeof(WCHAR);
         appendLinkedFonts(linkedFonts.data(), length, result);
     }
@@ -287,14 +287,14 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
         DeleteEnhMetaFile(metaFile);
     }
 
-    String familyName;
-    const Vector<String>* linkedFonts = nullptr;
+    RefPtr<StringImpl> familyName;
+    const Vector<RefPtr<StringImpl>>* linkedFonts = nullptr;
     unsigned linkedFontIndex = 0;
     while (hfont) {
         SelectObject(hdc, hfont);
         WCHAR name[LF_FACESIZE];
         GetTextFace(hdc, LF_FACESIZE, name);
-        familyName = String(name);
+        familyName = StringImpl::create(name);
 
         if (containsCharacter || currentFontContainsCharacter(hdc, stringView))
             break;
@@ -317,7 +317,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     }
 
     if (hfont) {
-        if (!familyName.isEmpty()) {
+        if (!isEmpty(familyName)) {
             if (auto result = cachedFontPlatformData(description, familyName))
                 fontData = fontForPlatformData(*result);
         }
@@ -329,21 +329,21 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     return fontData;
 }
 
-Vector<String> FontCache::systemFontFamilies()
+Vector<RefPtr<StringImpl>> FontCache::systemFontFamilies()
 {
     // FIXME: <https://webkit.org/b/147017> Web Inspector: [Win] Allow inspector to retrieve a list of system fonts
-    Vector<String> fontFamilies;
+    Vector<RefPtr<StringImpl>> fontFamilies;
     return fontFamilies;
 }
 
-bool FontCache::isSystemFontForbiddenForEditing(const String&)
+bool FontCache::isSystemFontForbiddenForEditing(StringImpl*)
 {
     return false;
 }
 
-RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, String& outFontFamilyName)
+RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, RefPtr<StringImpl>& outFontFamilyName)
 {
-    String familyName(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
+    RefPtr<StringImpl> familyName = StringImpl::create(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
     RefPtr<Font> fontData = fontForFamily(fontDescription, familyName);
     if (fontData)
         outFontFamilyName = familyName;
@@ -352,7 +352,7 @@ RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fon
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
-    static NeverDestroyed<String> fallbackFontName;
+    static NeverDestroyed<RefPtr<StringImpl>> fallbackFontName;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&]() {
         // FIXME: Would be even better to somehow get the user's default font here. For now we'll pick
@@ -361,7 +361,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
         // Search all typical Windows-installed full Unicode fonts.
         // Sorted by most to least glyphs according to http://en.wikipedia.org/wiki/Unicode_typefaces
         // Start with Times New Roman also since it is the default if the user doesn't change prefs.
-        static NeverDestroyed<const String> fallbackFonts[] = {
+        static NeverDestroyed<const RefPtr<StringImpl>> fallbackFonts[] = {
             "Times New Roman"_str,
             "Microsoft Sans Serif"_str,
             "Tahoma"_str,
@@ -437,7 +437,7 @@ bool isGDIFontWeightBold(LONG gdiFontWeight)
     return gdiFontWeight >= FW_SEMIBOLD;
 }
 
-LONG adjustedGDIFontWeight(LONG gdiFontWeight, const String& family)
+LONG adjustedGDIFontWeight(LONG gdiFontWeight, StringImpl* family)
 {
     if (equalLettersIgnoringASCIICase(family, "lucida grande"_s)) {
         if (gdiFontWeight == FW_NORMAL)
@@ -495,7 +495,7 @@ static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTM
     return 1;
 }
 
-GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeight, bool desiredItalic, int size)
+GDIObject<HFONT> createGDIFont(AtomStringImpl* family, LONG desiredWeight, bool desiredItalic, int size)
 {
     HWndDC hdc(0);
 
@@ -544,12 +544,12 @@ GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeight, boo
 }
 
 struct TraitsInFamilyProcData {
-    TraitsInFamilyProcData(const AtomString& familyName)
+    TraitsInFamilyProcData(AtomStringImpl* familyName)
         : m_familyName(familyName)
     {
     }
 
-    const AtomString& m_familyName;
+    RefPtr<AtomStringImpl> m_familyName;
     Vector<FontSelectionCapabilities> m_capabilities;
 };
 
@@ -600,7 +600,7 @@ static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMET
     return 1;
 }
 
-Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomString& familyName, AllowUserInstalledFonts)
+Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(AtomStringImpl* familyName, AllowUserInstalledFonts)
 {
     HWndDC hdc(0);
 
@@ -618,9 +618,9 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
     });
 }
 
-ASCIILiteral FontCache::platformAlternateFamilyName(const String& familyName)
+ASCIILiteral FontCache::platformAlternateFamilyName(StringImpl* familyName)
 {
-    switch (familyName.length()) {
+    switch (length(familyName)) {
     // On Windows, we don't support bitmap fonts, but legacy content expects support.
     // Thus we allow Times New Roman as an alternative for the bitmap font MS Serif,
     // even if the webpage does not specify fallback.

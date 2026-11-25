@@ -67,14 +67,14 @@ Clipboard::Type Clipboard::type() const
     return m_clipboard == gdk_display_get_primary_clipboard(gdk_display_get_default()) ? Type::Primary : Type::Clipboard;
 }
 
-void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void Clipboard::formats(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     gsize mimeTypesCount;
     const char* const* mimeTypesPointer = gdk_content_formats_get_mime_types(gdk_clipboard_get_formats(m_clipboard), &mimeTypesCount);
     auto mimeTypes = unsafeMakeSpan(mimeTypesPointer, mimeTypesCount);
 
-    completionHandler(Vector<String>(mimeTypes.size(), [&mimeTypes](size_t i) {
-        return String::fromUTF8(mimeTypes[i]);
+    completionHandler(Vector<RefPtr<StringImpl>>(mimeTypes.size(), [&mimeTypes](size_t i) {
+        return StringImpl::fromUTF8(mimeTypes[i]);
     }));
 }
 
@@ -85,7 +85,7 @@ public:
         return adoptRef(*new ClipboardTask(clipboard, readMode));
     }
 
-    using ReadTextCompletionHandler = CompletionHandler<void(String&&)>;
+    using ReadTextCompletionHandler = CompletionHandler<void(RefPtr<StringImpl>&&)>;
 
     void readText(ReadTextCompletionHandler&& completionHandler)
     {
@@ -94,20 +94,20 @@ public:
             auto task = adoptRef(static_cast<ClipboardTask*>(userData));
             GUniqueOutPtr<GError> error;
             GUniquePtr<char> text(gdk_clipboard_read_text_finish(GDK_CLIPBOARD(clipboard), result, &error.outPtr()));
-            std::get<ReadTextCompletionHandler>(task->m_completionHandler)(String::fromUTF8(text.get()));
+            std::get<ReadTextCompletionHandler>(task->m_completionHandler)(StringImpl::fromUTF8(text.get()));
             task->done(error.get());
         }, protect(this).leakRef());
         run();
     }
 
-    using ReadFilePathsCompletionHandler = CompletionHandler<void(Vector<String>&&)>;
+    using ReadFilePathsCompletionHandler = CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>;
 
     void readFilePaths(ReadFilePathsCompletionHandler&& completionHandler)
     {
         m_completionHandler = WTF::move(completionHandler);
         gdk_clipboard_read_value_async(m_clipboard, GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
             auto task = adoptRef(static_cast<ClipboardTask*>(userData));
-            Vector<String> filePaths;
+            Vector<RefPtr<StringImpl>> filePaths;
             GUniqueOutPtr<GError> error;
             if (const GValue* value = gdk_clipboard_read_value_finish(GDK_CLIPBOARD(clipboard), result, &error.outPtr())) {
                 auto* list = static_cast<GSList*>(g_value_get_boxed(value));
@@ -118,7 +118,7 @@ public:
 
                     GUniquePtr<gchar> filename(g_file_get_path(file));
                     if (filename)
-                        filePaths.append(String::fromUTF8(filename.get()));
+                        filePaths.append(StringImpl::fromUTF8(filename.get()));
                 }
             }
             std::get<ReadFilePathsCompletionHandler>(task->m_completionHandler)(WTF::move(filePaths));
@@ -164,7 +164,7 @@ public:
         run();
     }
 
-    using ReadURLCompletionHandler = CompletionHandler<void(String&& url, String&& title)>;
+    using ReadURLCompletionHandler = CompletionHandler<void(RefPtr<StringImpl>&& url, RefPtr<StringImpl>&& title)>;
 
     void readURL(ReadURLCompletionHandler&& completionHandler)
     {
@@ -176,7 +176,7 @@ public:
             auto* list = static_cast<GSList*>(g_value_get_boxed(value));
             auto* file = list && list->data ? G_FILE(list->data) : nullptr;
             GUniquePtr<char> uri(g_file_get_uri(file));
-            std::get<ReadURLCompletionHandler>(task->m_completionHandler)(uri ? String::fromUTF8(uri.get()) : String(), { });
+            std::get<ReadURLCompletionHandler>(task->m_completionHandler)(uri ? StringImpl::fromUTF8(uri.get()) : nullptr, { });
             task->done(error.get());
         }, protect(this).leakRef());
         run();
@@ -232,12 +232,12 @@ private:
     Variant<ReadTextCompletionHandler, ReadFilePathsCompletionHandler, ReadBufferCompletionHandler, ReadURLCompletionHandler> m_completionHandler;
 };
 
-void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler, ReadMode readMode)
+void Clipboard::readText(CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler, ReadMode readMode)
 {
     ClipboardTask::create(m_clipboard, readMode)->readText(WTF::move(completionHandler));
 }
 
-void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& completionHandler, ReadMode readMode)
+void Clipboard::readFilePaths(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler, ReadMode readMode)
 {
     ClipboardTask::create(m_clipboard, readMode)->readFilePaths(WTF::move(completionHandler));
 }
@@ -247,7 +247,7 @@ void Clipboard::readBuffer(UTF8CStringView format, CompletionHandler<void(Ref<We
     ClipboardTask::create(m_clipboard, readMode)->readBuffer(format, WTF::move(completionHandler));
 }
 
-void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& completionHandler, ReadMode readMode)
+void Clipboard::readURL(CompletionHandler<void(RefPtr<StringImpl>&& url, RefPtr<StringImpl>&& title)>&& completionHandler, ReadMode readMode)
 {
     ClipboardTask::create(m_clipboard, readMode)->readURL(WTF::move(completionHandler));
 }
@@ -257,13 +257,13 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     Vector<GdkContentProvider*> providers;
 
     if (selectionData.hasURIList()) {
-        auto uriList = selectionData.uriList().utf8();
+        auto uriList = utf8(selectionData.uriList());
         GRefPtr bytes = gBytesNew(uriList.span());
         providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
     }
 
     if (selectionData.hasMarkup()) {
-        auto markup = selectionData.markup().utf8();
+        auto markup = utf8(selectionData.markup());
         GRefPtr bytes = gBytesNew(markup.span());
         providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
     }
@@ -274,7 +274,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     }
 
     if (selectionData.hasText())
-        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, selectionData.text().utf8().legacyCStringPointer()));
+        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, utf8(selectionData.text()).legacyCStringPointer()));
 
     if (selectionData.canSmartReplace()) {
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));
@@ -288,7 +288,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
 
     for (const auto& it : selectionData.buffers()) {
         GRefPtr<GBytes> bytes = it.value->createGBytes();
-        providers.append(gdk_content_provider_new_for_bytes(it.key.utf8().legacyCStringPointer(), bytes.get()));
+        providers.append(gdk_content_provider_new_for_bytes(utf8(it.key).legacyCStringPointer(), bytes.get()));
     }
 
     if (providers.isEmpty()) {

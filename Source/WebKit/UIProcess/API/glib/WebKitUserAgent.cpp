@@ -203,9 +203,9 @@ const gchar* webkit_user_agent_to_string(WebKitUserAgent* userAgent)
 {
     g_return_val_if_fail(userAgent, nullptr);
     if (userAgent->userAgentString.isNull()) {
-        String appName = userAgent->applicationName.isNull() ? String { } : String::fromUTF8(userAgent->applicationName.span());
-        String appVer = userAgent->applicationVersion.isNull() ? String { } : String::fromUTF8(userAgent->applicationVersion.span());
-        userAgent->userAgentString = WebCore::standardUserAgent(appName, appVer, toWebCoreUserAgentType(userAgent->type)).utf8();
+        RefPtr<StringImpl> appName = userAgent->applicationName.isNull() ? nullptr : StringImpl::fromUTF8(userAgent->applicationName.span());
+        RefPtr<StringImpl> appVer = userAgent->applicationVersion.isNull() ? nullptr : StringImpl::fromUTF8(userAgent->applicationVersion.span());
+        userAgent->userAgentString = utf8(WebCore::standardUserAgent(appName, appVer, toWebCoreUserAgentType(userAgent->type)));
     }
     return userAgent->userAgentString.legacyCStringPointer();
 }

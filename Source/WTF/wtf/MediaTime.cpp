@@ -534,7 +534,7 @@ void MediaTime::dump(PrintStream& out) const
     out.print(toDouble(), "}");
 }
 
-String MediaTime::toString() const
+RefPtr<StringImpl> MediaTime::toString() const
 {
     auto invalid = isInvalid() ? ", invalid"_s : ""_s;
     if (hasDoubleValue())
@@ -547,29 +547,29 @@ Ref<JSON::Object> MediaTime::toJSONObject() const
     auto object = JSON::Object::create();
 
     if (hasDoubleValue()) {
-        object->setDouble("value"_s, toDouble());
+        object->setDouble("value"_si, toDouble());
         return object;
     }
 
     if (isInvalid())
-        object->setBoolean("invalid"_s, true);
+        object->setBoolean("invalid"_si, true);
     else if (isIndefinite())
-        object->setString("value"_s, "NaN"_s);
+        object->setString("value"_si, "NaN"_si);
     else if (isPositiveInfinite())
-        object->setString("value"_s, "POSITIVE_INFINITY"_s);
+        object->setString("value"_si, "POSITIVE_INFINITY"_si);
     else if (isNegativeInfinite())
-        object->setString("value"_s, "NEGATIVE_INFINITY"_s);
+        object->setString("value"_si, "NEGATIVE_INFINITY"_si);
     else
-        object->setDouble("value"_s, toDouble());
+        object->setDouble("value"_si, toDouble());
 
-    object->setDouble("numerator"_s, static_cast<double>(m_timeValue));
-    object->setInteger("denominator"_s, m_timeScale);
-    object->setInteger("flags"_s, m_timeFlags);
+    object->setDouble("numerator"_si, static_cast<double>(m_timeValue));
+    object->setInteger("denominator"_si, m_timeScale);
+    object->setInteger("flags"_si, m_timeFlags);
 
     return object;
 }
 
-String MediaTime::toJSONString() const
+RefPtr<StringImpl> MediaTime::toJSONString() const
 {
     return toJSONObject()->toJSONString();
 }
@@ -588,12 +588,12 @@ MediaTime abs(const MediaTime& rhs)
     return val;
 }
 
-String MediaTimeRange::toJSONString() const
+RefPtr<StringImpl> MediaTimeRange::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    object->setObject("start"_s, start.toJSONObject());
-    object->setObject("end"_s, end.toJSONObject());
+    object->setObject("start"_si, start.toJSONObject());
+    object->setObject("end"_si, end.toJSONObject());
 
     return object->toJSONString();
 }

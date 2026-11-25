@@ -73,7 +73,7 @@ bool eq(StringView s1, StringView s2)
     return s1.utf8() == s2.utf8();
 }
 
-static String insertTabAtLocation(StringView string, size_t location)
+static RefPtr<StringImpl> insertTabAtLocation(StringView string, size_t location)
 {
     ASSERT(location <= string.length());
     return makeString(string.left(location), '\t', string.substring(location));
@@ -109,7 +109,7 @@ static void checkURL(StringView urlString, const ExpectedParts& parts, TestTabs 
         return;
 
     for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        RefPtr<StringImpl> urlStringWithTab = insertTabAtLocation(urlString, i);
         checkURL(urlStringWithTab,
             parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
             TestTabs::No);
@@ -137,7 +137,7 @@ static void checkRelativeURL(StringView urlString, StringView baseURL, const Exp
         return;
     
     for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        RefPtr<StringImpl> urlStringWithTab = insertTabAtLocation(urlString, i);
         checkRelativeURL(urlStringWithTab,
             baseURLString,
             parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
@@ -165,7 +165,7 @@ static void checkURLDifferences(StringView urlString, const ExpectedParts& parts
         return;
     
     for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        RefPtr<StringImpl> urlStringWithTab = insertTabAtLocation(urlString, i);
         checkURLDifferences(urlStringWithTab,
             parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
             TestTabs::No);
@@ -192,7 +192,7 @@ static void checkRelativeURLDifferences(StringView urlString, StringView baseURL
         return;
     
     for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
+        RefPtr<StringImpl> urlStringWithTab = insertTabAtLocation(urlString, i);
         checkRelativeURLDifferences(urlStringWithTab, baseURLString,
             parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
             TestTabs::No);
@@ -507,7 +507,7 @@ TEST_F(WTF_URLParser, Credentials)
     testUserPassword("%25"_s, "%"_s, "%25"_s);
     testUserPassword("%2525"_s, "%25"_s, "%2525"_s);
     testUserPassword("%FX"_s, "%FX"_s);
-    testUserPassword("%00"_s, String::fromUTF8({ "\0", 1 }), "%00"_s);
+    testUserPassword("%00"_s, StringImpl::fromUTF8({ "\0", 1 }), "%00"_s);
     testUserPassword("%F%25"_s, "%F%"_s, "%F%25"_s);
     testUserPassword("%X%25"_s, "%X%"_s, "%X%25"_s);
     testUserPassword("%%25"_s, "%%"_s, "%%25"_s);
@@ -584,10 +584,10 @@ TEST_F(WTF_URLParser, ParseRelative)
     checkRelativeURL("notspecial:/"_s, "http://host"_s, { "notspecial"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "notspecial:/"_s });
     checkRelativeURL("foo:/"_s, "http://example.org/foo/bar"_s, { "foo"_s, ""_s, ""_s, ""_s, 0, "/"_s, ""_s, ""_s, "foo:/"_s });
     checkRelativeURL("://:0/"_s, "http://webkit.org/"_s, { "http"_s, ""_s, ""_s, "webkit.org"_s, 0, "/://:0/"_s, ""_s, ""_s, "http://webkit.org/://:0/"_s });
-    checkRelativeURL(String(), "http://webkit.org/"_s, { "http"_s, ""_s, ""_s, "webkit.org"_s, 0, "/"_s, ""_s, ""_s, "http://webkit.org/"_s });
+    checkRelativeURL(nullString(), "http://webkit.org/"_s, { "http"_s, ""_s, ""_s, "webkit.org"_s, 0, "/"_s, ""_s, ""_s, "http://webkit.org/"_s });
     checkRelativeURL("https://@test@test@example:800\\path@end"_s, "http://doesnotmatter/"_s, { "https"_s, "@test@test"_s, ""_s, "example"_s, 800, "/path@end"_s, ""_s, ""_s, "https://%40test%40test@example:800/path@end"_s });
     checkRelativeURL("http://f:0/c"_s, "http://example.org/foo/bar"_s, { "http"_s, ""_s, ""_s, "f"_s, 0, "/c"_s, ""_s, ""_s, "http://f:0/c"_s });
-    checkRelativeURL(String(), "http://host/#fragment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
+    checkRelativeURL(nullString(), "http://host/#fragment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkRelativeURL(""_s, "http://host/#fragment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkRelativeURL("  "_s, "http://host/#fragment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/"_s, ""_s, ""_s, "http://host/"_s });
     checkRelativeURL("  "_s, "http://host/path?query#fra#gment"_s, { "http"_s, ""_s, ""_s, "host"_s, 0, "/path"_s, "query"_s, ""_s, "http://host/path?query"_s });
@@ -1045,9 +1045,9 @@ TEST_F(WTF_URLParser, ParserFailures)
     shouldFail("    "_s);
     shouldFail("  \a  "_s);
     shouldFail(""_s);
-    shouldFail(String());
+    shouldFail(nullString());
     shouldFail(""_s, "about:blank"_s);
-    shouldFail(String(), "about:blank"_s);
+    shouldFail(nullString(), "about:blank"_s);
     shouldFail("http://127.0.0.1:abc"_s);
     shouldFail("http://host:abc"_s);
     shouldFail("http://:abc"_s);

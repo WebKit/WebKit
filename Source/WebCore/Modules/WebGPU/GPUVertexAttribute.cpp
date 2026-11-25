@@ -34,9 +34,9 @@ namespace WebCore {
 Ref<JSON::Object> GPUVertexAttribute::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("format"_s, convertEnumerationToString(format));
-    json->setDouble("offset"_s, offset);
-    json->setDouble("shaderLocation"_s, shaderLocation);
+    json->setString("format"_si, convertEnumerationToString(format));
+    json->setDouble("offset"_si, offset);
+    json->setDouble("shaderLocation"_si, shaderLocation);
     return json;
 }
 

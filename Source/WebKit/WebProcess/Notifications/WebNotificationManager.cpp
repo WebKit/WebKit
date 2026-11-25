@@ -133,10 +133,10 @@ void WebNotificationManager::initialize(const WebProcessCreationParameters& para
 #endif
 }
 
-void WebNotificationManager::didUpdateNotificationDecision(const String& originString, bool allowed)
+void WebNotificationManager::didUpdateNotificationDecision(StringImpl* originString, bool allowed)
 {
 #if ENABLE(NOTIFICATIONS)
-    if (!originString.isEmpty())
+    if (!isEmpty(originString))
         m_permissionsMap.set(originString, allowed);
 #else
     UNUSED_PARAM(originString);
@@ -144,11 +144,11 @@ void WebNotificationManager::didUpdateNotificationDecision(const String& originS
 #endif
 }
 
-void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>& originStrings)
+void WebNotificationManager::didRemoveNotificationDecisions(const Vector<RefPtr<StringImpl>>& originStrings)
 {
 #if ENABLE(NOTIFICATIONS)
     for (auto& originString : borrow(originStrings)) {
-        if (!originString.isEmpty())
+        if (!isEmpty(originString))
             m_permissionsMap.remove(originString);
     }
 #else
@@ -156,7 +156,7 @@ void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>
 #endif
 }
 
-NotificationClient::Permission WebNotificationManager::policyForOrigin(const String& originString, WebPage* page) const
+NotificationClient::Permission WebNotificationManager::policyForOrigin(StringImpl* originString, WebPage* page) const
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS) && ENABLE(NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
@@ -164,7 +164,7 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(const Str
         auto origin = SecurityOriginData::fromURL(URL { originString });
         auto result = connection->sendSync(Messages::NotificationManagerMessageHandler::GetPermissionStateSync(WTF::move(origin)), WebProcess::singleton().sessionID().toUInt64());
         if (!result.succeeded())
-            RELEASE_LOG_ERROR(Notifications, "Could not look up notification permission for origin %" SENSITIVE_LOG_STRING": %u", originString.utf8(), static_cast<unsigned>(result.error()));
+            RELEASE_LOG_ERROR(Notifications, "Could not look up notification permission for origin %" SENSITIVE_LOG_STRING": %u", utf8(originString), static_cast<unsigned>(result.error()));
 
         auto [pushPermission] = result.takeReplyOr(PushPermissionState::Denied);
         switch (pushPermission) {
@@ -181,7 +181,7 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(const Str
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS) && ENABLE(NOTIFICATIONS)
 
 #if ENABLE(NOTIFICATIONS)
-    if (originString.isEmpty())
+    if (isEmpty(originString))
         return NotificationClient::Permission::Default;
 
     auto it = m_permissionsMap.find(originString);

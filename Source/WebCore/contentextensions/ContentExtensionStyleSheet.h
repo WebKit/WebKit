@@ -47,7 +47,7 @@ public:
     }
     virtual ~ContentExtensionStyleSheet();
 
-    bool addDisplayNoneSelector(const String& selector, uint32_t selectorID);
+    bool addDisplayNoneSelector(StringImpl* selector, uint32_t selectorID);
 
     CSSStyleSheet& styleSheet() { return m_styleSheet.get(); }
 

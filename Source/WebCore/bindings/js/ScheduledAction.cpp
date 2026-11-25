@@ -56,7 +56,7 @@ std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolat
     return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTF::move(function)));
 }
 
-std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, String&& code)
+std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, RefPtr<StringImpl>&& code)
 {
     return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTF::move(code)));
 }
@@ -68,7 +68,7 @@ ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, Strong<JSObject
 {
 }
 
-ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, String&& code)
+ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, RefPtr<StringImpl>&& code)
     : m_isolatedWorld(isolatedWorld)
     , m_function(isolatedWorld.vm())
     , m_code(WTF::move(code))

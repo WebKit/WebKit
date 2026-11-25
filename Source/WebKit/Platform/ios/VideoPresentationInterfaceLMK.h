@@ -92,7 +92,7 @@ private:
     RetainPtr<WKSPlayableViewControllerHost> m_playerViewController;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String m_spatialTrackingLabel;
+    RefPtr<StringImpl> m_spatialTrackingLabel;
     RetainPtr<CALayer> m_spatialTrackingLayer;
 #endif
 

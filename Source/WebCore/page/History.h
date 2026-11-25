@@ -71,13 +71,13 @@ public:
 
     NODELETE bool isSameAsCurrentState(SerializedScriptValue*) const;
 
-    ExceptionOr<void> pushState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString);
-    ExceptionOr<void> replaceState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString);
+    ExceptionOr<void> pushState(RefPtr<SerializedScriptValue>&& data, StringImpl*, StringImpl* urlString);
+    ExceptionOr<void> replaceState(RefPtr<SerializedScriptValue>&& data, StringImpl*, StringImpl* urlString);
 
 private:
     explicit History(LocalDOMWindow&);
 
-    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& url, NavigationHistoryBehavior);
+    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, StringImpl* url, NavigationHistoryBehavior);
     ExceptionOr<void> updateAndCheckStateObjectQuota(const URL&, SerializedScriptValue*, NavigationHistoryBehavior);
     NODELETE bool stateChanged() const;
 
@@ -98,12 +98,12 @@ private:
     uint64_t m_mostRecentStateObjectUsage { 0 };
 };
 
-inline ExceptionOr<void> History::pushState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
+inline ExceptionOr<void> History::pushState(RefPtr<SerializedScriptValue>&& data, StringImpl*, StringImpl* urlString)
 {
     return stateObjectAdded(WTF::move(data), urlString, NavigationHistoryBehavior::Push);
 }
 
-inline ExceptionOr<void> History::replaceState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
+inline ExceptionOr<void> History::replaceState(RefPtr<SerializedScriptValue>&& data, StringImpl*, StringImpl* urlString)
 {
     return stateObjectAdded(WTF::move(data), urlString, NavigationHistoryBehavior::Replace);
 }

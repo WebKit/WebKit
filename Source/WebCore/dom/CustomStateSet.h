@@ -43,12 +43,12 @@ public:
 
     ~CustomStateSet();
 
-    bool addToSetLike(const AtomString& state);
-    bool removeFromSetLike(const AtomString& state);
+    bool addToSetLike(AtomStringImpl* state);
+    bool removeFromSetLike(AtomStringImpl* state);
     void clearFromSetLike();
     void initializeSetLike(DOMSetAdapter&) { };
 
-    NODELETE bool has(const AtomString&) const;
+    NODELETE bool has(AtomStringImpl*) const;
 
 private:
     explicit CustomStateSet(Element& element)
@@ -56,7 +56,7 @@ private:
     {
     }
 
-    OrderedHashSet<AtomString> m_states;
+    OrderedHashSet<RefPtr<AtomStringImpl>> m_states;
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
 };

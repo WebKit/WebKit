@@ -42,7 +42,7 @@ public:
 
     const CSS::Color& color() const LIFETIME_BOUND { return m_color; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSColorImageValue&) const;
 
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;

@@ -54,8 +54,8 @@ private:
     SVGAnimatorType animatorType() const final { return SVGAnimatorType::CSSNumber; }
 };
 
-class SVGStringAnimator final : public SVGPrimitivePropertyAnimator<String, SVGAnimationStringFunction> {
-    using Base = SVGPrimitivePropertyAnimator<String, SVGAnimationStringFunction>;
+class SVGStringAnimator final : public SVGPrimitivePropertyAnimator<RefPtr<StringImpl>, SVGAnimationStringFunction> {
+    using Base = SVGPrimitivePropertyAnimator<RefPtr<StringImpl>, SVGAnimationStringFunction>;
 public:
     using Base::Base;
     static auto create(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)

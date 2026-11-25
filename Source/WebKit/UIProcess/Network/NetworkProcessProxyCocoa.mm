@@ -78,10 +78,10 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event)
         return false;
 
     auto messageName = xpcDictionaryGetString(event, XPCEndpoint::xpcMessageNameKey);
-    if (messageName.isEmpty())
+    if (isEmpty(messageName))
         return false;
 
-    if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
+    if (equal(messageName, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName)) {
         networkProcess->m_endpointMessage = event;
         for (auto& processPool : WebProcessPool::allProcessPools()) {
             for (Ref process : borrow(processPool->processes()).get())
@@ -146,10 +146,10 @@ void NetworkProcessProxy::setBackupExclusionPeriodForTesting(PAL::SessionID sess
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-void NetworkProcessProxy::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&& completionHandler)
+void NetworkProcessProxy::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(StringImpl*, StringImpl*)>&& completionHandler)
 {
-    auto sceneIdentifier = nullString();
-    auto bundleIdentifier = applicationBundleIdentifier();
+    RefPtr<StringImpl> sceneIdentifier;
+    RefPtr<StringImpl> bundleIdentifier = applicationBundleIdentifier();
     auto page = WebProcessProxy::webPage(webPageProxyIdentifier);
     if (!page || !page->pageClient()) {
         completionHandler(sceneIdentifier, bundleIdentifier);
@@ -160,9 +160,9 @@ void NetworkProcessProxy::getWindowSceneAndBundleIdentifierForPaymentPresentatio
     RetainPtr<WKWebView> webView = page->cocoaView();
     id webViewUIDelegate = [webView UIDelegate];
     if ([webViewUIDelegate respondsToSelector:@selector(_hostSceneIdentifierForWebView:)])
-        sceneIdentifier = [webViewUIDelegate _hostSceneIdentifierForWebView:webView.get()];
+        sceneIdentifier = StringImpl::create([webViewUIDelegate _hostSceneIdentifierForWebView:webView.get()]);
     if ([webViewUIDelegate respondsToSelector:@selector(_hostSceneBundleIdentifierForWebView:)])
-        bundleIdentifier = [webViewUIDelegate _hostSceneBundleIdentifierForWebView:webView.get()];
+        bundleIdentifier = StringImpl::create([webViewUIDelegate _hostSceneBundleIdentifierForWebView:webView.get()]);
 
     completionHandler(sceneIdentifier, bundleIdentifier);
 }
@@ -178,7 +178,7 @@ void NetworkProcessProxy::notifyWillPresentPaymentUI(WebPageProxyIdentifier webP
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-void NetworkProcessProxy::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkProcessProxy::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     RefPtr page = WebProcessProxy::webPage(webPageProxyIdentifier);
     if (!page)

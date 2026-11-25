@@ -37,12 +37,12 @@ public:
     void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;
     std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const final { return GST_ELEMENT_FACTORY_TYPE_PARSER; }
-    Vector<String> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
+    Vector<RefPtr<StringImpl>> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
     unsigned getAdditionalPlaybinFlags() const final { return getGstPlayFlag("text") | getGstPlayFlag("native-audio"); }
     bool needsCustomInstantRateChange() const final { return true; }
 
 private:
-    Vector<String> m_disallowedWebAudioDecoders;
+    Vector<RefPtr<StringImpl>> m_disallowedWebAudioDecoders;
 };
 
 } // namespace WebCore

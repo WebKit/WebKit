@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    String logLevelString() final
+    RefPtr<StringImpl> logLevelString() final
     {
         return WTF::logLevelString();
     }

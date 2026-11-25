@@ -37,13 +37,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PaymentRequestUpdateEvent);
 
-PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(enum EventInterfaceType eventInterface, const AtomString& type, const PaymentRequestUpdateEventInit& eventInit)
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, const PaymentRequestUpdateEventInit& eventInit)
     : Event { eventInterface, type, eventInit, IsTrusted::No }
 {
     ASSERT(!isTrusted());
 }
 
-PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(enum EventInterfaceType eventInterface, const AtomString& type)
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type)
     : Event { eventInterface, type, CanBubble::No, IsCancelable::No }
 {
     ASSERT(isTrusted());

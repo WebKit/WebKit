@@ -50,7 +50,7 @@ bool WindowNameCollection::elementMatchesIfNameAttributeMatch(const Element& ele
     return isAnyOf<HTMLEmbedElement, HTMLFormElement, HTMLImageElement, HTMLObjectElement>(element);
 }
 
-bool WindowNameCollection::elementMatches(const Element& element, const AtomString& name)
+bool WindowNameCollection::elementMatches(const Element& element, AtomStringImpl* name)
 {
     // Find only images, forms, applets, embeds and objects by name, but anything by id.
     return (elementMatchesIfNameAttributeMatch(element) && element.getNameAttribute() == name)
@@ -61,7 +61,7 @@ bool DocumentNameCollection::elementMatchesIfIdAttributeMatch(const Element& ele
 {
     // FIXME: We need to fix HTMLImageElement to update the hash map for us when the name attribute is removed.
     return is<HTMLObjectElement>(element)
-        || (is<HTMLImageElement>(element) && element.hasName() && !element.getNameAttribute().isEmpty());
+        || (is<HTMLImageElement>(element) && element.hasName() && !isEmpty(element.getNameAttribute()));
 }
 
 bool DocumentNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
@@ -69,7 +69,7 @@ bool DocumentNameCollection::elementMatchesIfNameAttributeMatch(const Element& e
     return isAnyOf<HTMLEmbedElement, HTMLFormElement, HTMLIFrameElement, HTMLImageElement, HTMLObjectElement>(element);
 }
 
-bool DocumentNameCollection::elementMatches(const Element& element, const AtomString& name)
+bool DocumentNameCollection::elementMatches(const Element& element, AtomStringImpl* name)
 {
     // https://html.spec.whatwg.org/multipage/dom.html#dom-document-nameditem
     if (is<HTMLObjectElement>(element))
@@ -77,7 +77,7 @@ bool DocumentNameCollection::elementMatches(const Element& element, const AtomSt
 
     if (is<HTMLImageElement>(element)) {
         const auto& nameValue = element.getNameAttribute();
-        return nameValue == name || (element.getIdAttribute() == name && !nameValue.isEmpty());
+        return nameValue == name || (element.getIdAttribute() == name && !isEmpty(nameValue));
     }
     return isAnyOf<HTMLEmbedElement, HTMLFormElement, HTMLIFrameElement>(element) && element.getNameAttribute() == name;
 }

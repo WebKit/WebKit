@@ -41,19 +41,19 @@ enum class InputMode : uint8_t {
     Search
 };
 
-InputMode inputModeForAttributeValue(const AtomString&);
-const AtomString& stringForInputMode(InputMode);
+InputMode inputModeForAttributeValue(AtomStringImpl*);
+const RefPtr<AtomStringImpl>& stringForInputMode(InputMode);
 
 namespace InputModeNames {
 
-NODELETE const AtomString& none();
-NODELETE const AtomString& text();
-NODELETE const AtomString& tel();
-NODELETE const AtomString& url();
-NODELETE const AtomString& email();
-const AtomString& numeric();
-const AtomString& decimal();
-NODELETE const AtomString& search();
+NODELETE const RefPtr<AtomStringImpl>& none();
+NODELETE const RefPtr<AtomStringImpl>& text();
+NODELETE const RefPtr<AtomStringImpl>& tel();
+NODELETE const RefPtr<AtomStringImpl>& url();
+NODELETE const RefPtr<AtomStringImpl>& email();
+const RefPtr<AtomStringImpl>& numeric();
+const RefPtr<AtomStringImpl>& decimal();
+NODELETE const RefPtr<AtomStringImpl>& search();
 
 } // namespace InputModeNames
 

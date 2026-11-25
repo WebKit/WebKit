@@ -82,7 +82,7 @@ struct RealNumberRenderSize {
 NODELETE static RealNumberRenderSize calculateRenderSize(const Decimal& value)
 {
     ASSERT(value.isFinite());
-    const unsigned sizeOfDigits = String::number(value.value().coefficient()).length();
+    const unsigned sizeOfDigits = lengthOfIntegerAsString(value.value().coefficient());
     const unsigned sizeOfSign = value.isNegative() ? 1 : 0;
     const int exponent = value.exponent();
     if (exponent >= 0)
@@ -100,15 +100,15 @@ NODELETE static RealNumberRenderSize calculateRenderSize(const Decimal& value)
     return { sizeOfSign + sizeOfZero , numberOfZeroAfterDecimalPoint + sizeOfDigits };
 }
 
-const AtomString& NumberInputType::formControlType() const
+const RefPtr<AtomStringImpl>& NumberInputType::formControlType() const
 {
     return InputTypeNames::number();
 }
 
-void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void NumberInputType::setValue(StringImpl* sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     ASSERT(element());
-    if (!valueChanged && sanitizedValue.isEmpty() && !protect(element())->innerTextValue().isEmpty())
+    if (!valueChanged && isEmpty(sanitizedValue) && !isEmpty(protect(element())->innerTextValue()))
         updateInnerTextValue();
     TextFieldInputType::setValue(sanitizedValue, valueChanged, eventBehavior, selection);
 }
@@ -145,15 +145,15 @@ bool NumberInputType::typeMismatch() const
     return false;
 }
 
-ValueOrReference<String> NumberInputType::stripInvalidNumberCharacters(const String& input)
+ValueOrReference<RefPtr<StringImpl>> NumberInputType::stripInvalidNumberCharacters(StringImpl* input)
 {
     auto allowedChars = StringView::fromLatin1("0123456789.Ee-+");
-    auto length = input.length();
+    auto length = WTF::length(input);
     LOG_WITH_STREAM(Editing, stream << "stripInvalidNumberCharacters: input=["_s << input << "], length="_s << length);
 
     auto needsFiltering = false;
     for (unsigned i = 0; i < length; ++i) {
-        auto character = input[i];
+        auto character = codeUnitAt(input, i);
         LOG(Editing, "Check char at %u: [%c] (code=%d)", i, character, character);
         if (allowedChars.find(character) == notFound) {
             LOG(Editing, "Character [%c] is not allowed, will filter", character);
@@ -164,14 +164,14 @@ ValueOrReference<String> NumberInputType::stripInvalidNumberCharacters(const Str
 
     if (!needsFiltering) {
         LOG(Editing, "No filtering needed, returning original");
-        return input;
+        return RefPtr { input };
     }
 
     LOG(Editing, "Filtering needed, building new string");
     StringBuilder builder;
     builder.reserveCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        auto character = input[i];
+        auto character = codeUnitAt(input, i);
         if (allowedChars.find(character) != notFound) {
             builder.append(character);
             LOG(Editing, "Appending allowed char: [%c]", character);
@@ -179,16 +179,16 @@ ValueOrReference<String> NumberInputType::stripInvalidNumberCharacters(const Str
             LOG(Editing, "Skipping disallowed char: [%c]", character);
     }
     LOG_WITH_STREAM(Editing, stream << "Filtering complete, result=["_s << builder.toString() << "]"_s);
-    return String { builder.toString() };
+    return RefPtr<StringImpl> { builder.toString() };
 }
 
-ValueOrReference<String> NumberInputType::normalizeFullWidthNumberChars(const String& input) const
+ValueOrReference<RefPtr<StringImpl>> NumberInputType::normalizeFullWidthNumberChars(StringImpl* input) const
 {
-    auto length = input.length();
+    auto length = WTF::length(input);
 
     auto needsNormalization = false;
     for (unsigned i = 0; i < length; ++i) {
-        auto character = input[i];
+        auto character = codeUnitAt(input, i);
         if ((character >= fullwidthDigitZero && character <= fullwidthDigitNine)
             || character == katakanaHiraganaProlongedSoundMark
             || character == fullwidthHyphenMinus
@@ -200,12 +200,12 @@ ValueOrReference<String> NumberInputType::normalizeFullWidthNumberChars(const St
     }
 
     if (!needsNormalization)
-        return input;
+        return RefPtr { input };
 
     StringBuilder result;
     result.reserveCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        auto character = input[i];
+        auto character = codeUnitAt(input, i);
         if (character >= fullwidthDigitZero && character <= fullwidthDigitNine) {
             // Convert full-width digits (０-９, U+FF10-U+FF19) to ASCII digits (0-9)
             result.append(static_cast<char16_t>(character - fullwidthDigitZero + digitZeroCharacter));
@@ -239,7 +239,7 @@ ValueOrReference<String> NumberInputType::normalizeFullWidthNumberChars(const St
             result.append(static_cast<char16_t>(character));
         }
     }
-    return String { result.toString() };
+    return RefPtr<StringImpl> { result.toString() };
 }
 
 StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) const
@@ -326,10 +326,10 @@ Decimal NumberInputType::parseToNumber(StringView src, const Decimal& defaultVal
     return parseToDecimalForNumberType(src, defaultValue);
 }
 
-String NumberInputType::serialize(const Decimal& value) const
+RefPtr<StringImpl> NumberInputType::serialize(const Decimal& value) const
 {
     if (!value.isFinite())
-        return String();
+        return nullptr;
     return serializeForNumberType(value);
 }
 
@@ -358,11 +358,11 @@ NODELETE static bool isDecimalSeparator(char16_t ch)
     return ch == '.';
 }
 
-NODELETE static bool hasTwoSignChars(const String& string)
+NODELETE static bool hasTwoSignChars(StringImpl* string)
 {
     unsigned count = 0;
-    for (unsigned i = 0; i < string.length(); ++i) {
-        auto character = string[i];
+    for (unsigned i = 0; i < length(string); ++i) {
+        auto character = codeUnitAt(string, i);
         if (isSignPrefix(character))
             ++count;
         if (count >= 2)
@@ -371,16 +371,16 @@ NODELETE static bool hasTwoSignChars(const String& string)
     return false;
 }
 
-NODELETE static bool hasDecimalSeparator(const String& string)
+NODELETE static bool hasDecimalSeparator(StringImpl* string)
 {
-    return string.find('.') != notFound;
+    return find(string, '.') != notFound;
 }
 
-NODELETE static bool hasSignNotAfterE(const String& string)
+NODELETE static bool hasSignNotAfterE(StringImpl* string)
 {
-    for (unsigned i = 0; i < string.length(); ++i) {
-        if (isSignPrefix(string[i]))
-            return !i || !isE(string[i - 1]);
+    for (unsigned i = 0; i < length(string); ++i) {
+        if (isSignPrefix(codeUnitAt(string, i)))
+            return !i || !isE(codeUnitAt(string, i - 1));
     }
     return false;
 }
@@ -396,10 +396,10 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
     CheckedRef locale = element->locale();
     auto& localizedSeparator = locale->localizedDecimalSeparator();
 
-    String updatedEventText;
+    RefPtr<StringImpl> updatedEventText;
     bool displayedTextUsesNonPeriodDecimalSeparator = false;
 
-    if (localizedSeparator == "."_s) {
+    if (equal(localizedSeparator, "."_s)) {
         const auto localizedText = locale->convertFromLocalizedNumber(normalizedText);
         updatedEventText = stripInvalidNumberCharacters(localizedText).get();
     } else {
@@ -407,8 +407,8 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
         // a period may still be used as the decimal separator in certain contexts.
         // For this reason, we allow both. If both are present in the inserted text,
         // use whichever comes last since the first instances may be group separators.
-        const auto lastPeriodPosition = normalizedText.reverseFind('.');
-        const auto lastLocalizedSeparatorPosition = normalizedText.reverseFind(localizedSeparator);
+        const auto lastPeriodPosition = reverseFind(normalizedText, '.');
+        const auto lastLocalizedSeparatorPosition = reverseFind(normalizedText, localizedSeparator);
 
         displayedTextUsesNonPeriodDecimalSeparator = lastLocalizedSeparatorPosition != notFound
             && (lastPeriodPosition == notFound || lastLocalizedSeparatorPosition > lastPeriodPosition);
@@ -433,22 +433,22 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
     // The inner text value may contain either '.' or the localized decimal
     // separator. Replace the localized separator with '.' so validation
     // works correctly for all locales.
-    auto leftHalf = originalValue.substring(0, selectionStart);
-    auto rightHalf = originalValue.substring(selectionEnd);
-    if (localizedSeparator != "."_s) {
+    auto leftHalf = substring(originalValue, 0, selectionStart);
+    auto rightHalf = substring(originalValue, selectionEnd);
+    if (!equal(localizedSeparator, "."_s)) {
         leftHalf = makeStringByReplacingAll(leftHalf, localizedSeparator, "."_s);
         rightHalf = makeStringByReplacingAll(rightHalf, localizedSeparator, "."_s);
     }
-    LOG(Editing, "leftHalf after length=%u", leftHalf.length());
+    LOG(Editing, "leftHalf after length=%u", WTF::length(leftHalf));
 
-    LOG(Editing, "rightHalf after length=%u", rightHalf.length());
+    LOG(Editing, "rightHalf after length=%u", WTF::length(rightHalf));
 
     // Process 1 char at a time
-    auto length = updatedEventText.length();
+    auto length = WTF::length(updatedEventText);
     StringBuilder finalEventText;
-    LOG(Editing, "Processing updatedEventText of length %u", updatedEventText.length());
+    LOG(Editing, "Processing updatedEventText of length %u", WTF::length(updatedEventText));
     for (unsigned i = 0; i < length; ++i) {
-        auto character = updatedEventText[i];
+        auto character = codeUnitAt(updatedEventText, i);
         LOG(Editing, "Loop index %u, char [%c] (code %d)", i, character, character);
         if (isDecimalSeparator(character)) {
             // For a decimal point input:
@@ -460,8 +460,8 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
             LOG(Editing, "isDecimalSeparator TRUE");
             if (hasDecimalSeparator(leftHalf)
                 || hasDecimalSeparator(rightHalf)
-                || leftHalf.find('e') != notFound
-                || leftHalf.find('E') != notFound
+                || find(leftHalf, 'e') != notFound
+                || find(leftHalf, 'E') != notFound
                 || hasSignNotAfterE(rightHalf))
                 continue;
         } else if (isE(character)) {
@@ -472,17 +472,17 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
             LOG(Editing, "isE TRUE");
 
             // Disallow inserting 'e' if the first character is '+'
-            if (!leftHalf.isEmpty() && isPlusSign(leftHalf[0]))
+            if (!isEmpty(leftHalf) && isPlusSign(codeUnitAt(leftHalf, 0)))
                 continue;
 
             // Reject inserting 'e' at the beginning if the first character is sign
-            if (leftHalf.isEmpty() && !rightHalf.isEmpty() && isSignPrefix(rightHalf[0]))
+            if (isEmpty(leftHalf) && !isEmpty(rightHalf) && isSignPrefix(codeUnitAt(rightHalf, 0)))
                 continue;
 
-            if (leftHalf.find('e') != notFound
-                || leftHalf.find('E') != notFound
-                || rightHalf.find('e') != notFound
-                || rightHalf.find('E') != notFound
+            if (find(leftHalf, 'e') != notFound
+                || find(leftHalf, 'E') != notFound
+                || find(rightHalf, 'e') != notFound
+                || find(rightHalf, 'E') != notFound
                 || hasDecimalSeparator(rightHalf))
                 continue;
         } else if (isSignPrefix(character)) {
@@ -494,16 +494,16 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
             StringBuilder bothHalvesBuilder;
             bothHalvesBuilder.append(leftHalf);
             bothHalvesBuilder.append(rightHalf);
-            String bothHalves = bothHalvesBuilder.toString();
+            RefPtr<StringImpl> bothHalves = bothHalvesBuilder.toString();
             if (hasTwoSignChars(bothHalves))
                 continue;
 
-            auto hasE = leftHalf.find('e') != notFound || leftHalf.find('E') != notFound
-                || rightHalf.find('e') != notFound || rightHalf.find('E') != notFound;
+            auto hasE = find(leftHalf, 'e') != notFound || find(leftHalf, 'E') != notFound
+                || find(rightHalf, 'e') != notFound || find(rightHalf, 'E') != notFound;
 
-            if (leftHalf.isEmpty()) {
+            if (isEmpty(leftHalf)) {
                 // Caret is at the start of the value
-                if (!rightHalf.isEmpty() && isSignPrefix(rightHalf[0])) {
+                if (!isEmpty(rightHalf) && isSignPrefix(codeUnitAt(rightHalf, 0))) {
                     // Reject if there's already a sign at the start (to avoid --1 or ++1)
                     continue;
                 }
@@ -512,14 +512,14 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
                     continue;
                 }
                 // Otherwise, allow inserting '-' or other allowed characters at the start
-            } else if (!leftHalf.isEmpty()) {
+            } else if (!isEmpty(leftHalf)) {
                 if (hasE) {
                     // Must be just after 'e'
-                    auto lastCharacterOnLeftHalf = leftHalf[leftHalf.length() - 1];
+                    auto lastCharacterOnLeftHalf = codeUnitAt(leftHalf, WTF::length(leftHalf) - 1);
                     if (!isE(lastCharacterOnLeftHalf))
                         continue;
                     // Reject if there is already a sign after 'e'
-                    if (!rightHalf.isEmpty() && isSignPrefix(rightHalf[0]))
+                    if (!isEmpty(rightHalf) && isSignPrefix(codeUnitAt(rightHalf, 0)))
                         continue;
                 } else {
                     // No 'e' and not at start: reject
@@ -533,14 +533,14 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
             // - Reject if the editing value contains 'e' + a sign, and the caret is
             // placed between them.
             LOG(Editing, "isDigit TRUE");
-            if (leftHalf.isEmpty() && !rightHalf.isEmpty()
-                && isSignPrefix(rightHalf[0]))
+            if (isEmpty(leftHalf) && !isEmpty(rightHalf)
+                && isSignPrefix(codeUnitAt(rightHalf, 0)))
                 continue;
 
-            if (!leftHalf.isEmpty()
-                && isE(leftHalf[leftHalf.length() - 1])
-                && !rightHalf.isEmpty()
-                && isSignPrefix(rightHalf[0]))
+            if (!isEmpty(leftHalf)
+                && isE(codeUnitAt(leftHalf, WTF::length(leftHalf) - 1))
+                && !isEmpty(rightHalf)
+                && isSignPrefix(codeUnitAt(rightHalf, 0)))
                 continue;
         } else
             LOG(Editing, "No condition matched for char [%c]", character);
@@ -557,51 +557,52 @@ void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& eve
     event.setText(displayedText);
 }
 
-String NumberInputType::localizeValue(const String& proposedValue) const
+RefPtr<StringImpl> NumberInputType::localizeValue(StringImpl* proposedValue) const
 {
-    if (proposedValue.isEmpty())
+    if (isEmpty(proposedValue))
         return proposedValue;
     // We don't localize scientific notations.
-    if (proposedValue.find(isE) != notFound)
+    if (find(proposedValue, isE) != notFound)
         return proposedValue;
     ASSERT(element());
     return protect(protect(element())->locale())->convertToLocalizedNumber(proposedValue);
 }
 
-String NumberInputType::visibleValue() const
+RefPtr<StringImpl> NumberInputType::visibleValue() const
 {
     ASSERT(element());
-    return localizeValue(protect(element())->value());
+    RefPtr<StringImpl> value = protect(element())->value();
+    return localizeValue(value);
 }
 
-String NumberInputType::convertFromVisibleValue(const String& visibleValue) const
+RefPtr<StringImpl> NumberInputType::convertFromVisibleValue(StringImpl* visibleValue) const
 {
-    if (visibleValue.isEmpty())
+    if (isEmpty(visibleValue))
         return visibleValue;
     // We don't localize scientific notations.
-    if (visibleValue.find(isE) != notFound)
+    if (find(visibleValue, isE) != notFound)
         return visibleValue;
     ASSERT(element());
     return protect(protect(element())->locale())->convertFromLocalizedNumber(visibleValue);
 }
 
-ValueOrReference<String> NumberInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> NumberInputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
-    if (proposedValue.isEmpty())
-        return proposedValue;
+    if (isEmpty(proposedValue))
+        return RefPtr { proposedValue };
     if (std::isfinite(parseToDoubleForNumberType(proposedValue)))
-        return proposedValue;
+        return RefPtr { proposedValue };
     return emptyString();
 }
 
 bool NumberInputType::hasBadInput() const
 {
     ASSERT(element());
-    String standardValue = convertFromVisibleValue(protect(element())->innerTextValue());
-    return !standardValue.isEmpty() && !std::isfinite(parseToDoubleForNumberType(standardValue));
+    RefPtr<StringImpl> standardValue = convertFromVisibleValue(protect(element())->innerTextValue());
+    return !isEmpty(standardValue) && !std::isfinite(parseToDoubleForNumberType(standardValue));
 }
 
-String NumberInputType::badInputText() const
+RefPtr<StringImpl> NumberInputType::badInputText() const
 {
     return validationMessageBadInputForNumberText();
 }

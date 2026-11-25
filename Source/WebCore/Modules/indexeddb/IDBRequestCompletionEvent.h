@@ -33,13 +33,13 @@ namespace WebCore {
 class IDBRequestCompletionEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(IDBRequestCompletionEvent);
 public:
-    static Ref<Event> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, IDBRequest& request)
+    static Ref<Event> create(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, IDBRequest& request)
     {
         return adoptRef(*new IDBRequestCompletionEvent(type, canBubble, cancelable, request));
     }
 
 private:
-    IDBRequestCompletionEvent(const AtomString& type, CanBubble, IsCancelable, IDBRequest&);
+    IDBRequestCompletionEvent(AtomStringImpl* type, CanBubble, IsCancelable, IDBRequest&);
 
     const Ref<IDBRequest> m_request;
 };

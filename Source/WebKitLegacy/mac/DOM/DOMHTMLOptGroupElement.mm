@@ -55,13 +55,13 @@
 - (NSString *)label
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::labelAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::labelAttr)).autorelease();
 }
 
 - (void)setLabel:(NSString *)newLabel
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::labelAttr, newLabel);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::labelAttr, AtomStringImpl::add((__bridge CFStringRef)newLabel).get());
 }
 
 @end

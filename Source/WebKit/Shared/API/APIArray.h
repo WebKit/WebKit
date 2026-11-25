@@ -39,9 +39,9 @@ public:
     static Ref<Array> create();
     static Ref<Array> createWithCapacity(size_t);
     static Ref<Array> create(Vector<RefPtr<Object>>&&);
-    static Ref<Array> createStringArray(const Vector<WTF::String>&);
-    static Ref<Array> createStringArray(const std::span<const WTF::String>);
-    Vector<WTF::String> toStringVector();
+    static Ref<Array> createStringArray(const Vector<RefPtr<StringImpl>>&);
+    static Ref<Array> createStringArray(const std::span<const RefPtr<StringImpl>>);
+    Vector<RefPtr<StringImpl>> toStringVector();
     Ref<Array> copy();
 
     template<typename T>

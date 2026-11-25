@@ -91,8 +91,8 @@ public:
     void setIconsDictionary(std::optional<Ref<JSON::Object>>);
 
     /// `title()` will return the overridden title of this sidebar, or the title of the first parent sidebar in which the title is set
-    String title() const;
-    void setTitle(std::optional<String>);
+    RefPtr<StringImpl> title() const;
+    void setTitle(std::optional<RefPtr<StringImpl>>);
 
     bool isEnabled() const;
 
@@ -100,12 +100,12 @@ public:
     bool opensSidebar()
     {
         auto path = resolvedSidebarPath();
-        return path && !path->isEmpty();
+        return path && !isEmpty(*path);
     }
 
     /// `sidebarPath()` will return the overriden path of this sidebar, or the path of the first parent sidebar in which the path is set
-    String sidebarPath() const;
-    void setOptions(std::optional<String> panelPath, std::optional<bool> enabled);
+    RefPtr<StringImpl> sidebarPath() const;
+    void setOptions(std::optional<RefPtr<StringImpl>> panelPath, std::optional<bool> enabled);
 
     void willOpenSidebar(FromUserInteraction);
     void willCloseSidebar();
@@ -139,11 +139,11 @@ private:
     void reloadDescendantWebViews();
 
     /// The configured panel path from this sidebar's override/parent chain
-    std::optional<String> resolvedSidebarPath() const;
+    std::optional<RefPtr<StringImpl>> resolvedSidebarPath() const;
 
     std::optional<Ref<JSON::Object>> m_iconsOverride;
-    std::optional<String> m_titleOverride;
-    std::optional<String> m_sidebarPathOverride;
+    std::optional<RefPtr<StringImpl>> m_titleOverride;
+    std::optional<RefPtr<StringImpl>> m_sidebarPathOverride;
     std::optional<bool> m_isEnabled;
 
     WeakPtr<WebExtensionContext> m_extensionContext;

@@ -73,7 +73,7 @@ NODELETE static unsigned categoryForVMTag(unsigned tag)
 struct ThreadInfo {
     MachSendRight sendRight;
     float usage { 0 };
-    String threadName;
+    RefPtr<StringImpl> threadName;
 };
 
 static std::span<const thread_t> task_threads_span()
@@ -122,7 +122,7 @@ static Vector<ThreadInfo> threadInfos()
         if (!(threadBasicInfo->flags & TH_FLAGS_IDLE))
             usage = threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
 
-        auto threadName = String::fromLatin1(threadExtendedInfo.pth_name);
+        auto threadName = StringImpl::fromLatin1(threadExtendedInfo.pth_name);
 
         infos.append(ThreadInfo { WTF::move(sendRight), usage, threadName });
     }
@@ -167,7 +167,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         }
     }
 
-    HashMap<mach_port_t, String> knownWorkerThreads;
+    HashMap<mach_port_t, RefPtr<StringImpl>> knownWorkerThreads;
     {
         for (Ref thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
             // Ignore worker threads that have not been fully started yet.
@@ -175,7 +175,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
                 continue;
             mach_port_t machThread = thread->thread()->machThread();
             if (MACH_PORT_VALID(machThread))
-                knownWorkerThreads.set(machThread, thread->inspectorIdentifier().isolatedCopy());
+                knownWorkerThreads.set(machThread, isolatedCopy(thread->inspectorIdentifier()));
         }
     }
 
@@ -196,7 +196,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
             return true;
 
         // The bmalloc scavenger thread is below WTF. Detect it by its name.
-        if (thread.threadName == "JavaScriptCore bmalloc scavenger"_s)
+        if (equal(thread.threadName, "JavaScriptCore bmalloc scavenger"_s))
             return true;
 
         return false;
@@ -211,12 +211,12 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
         mach_port_t machThread = thread.sendRight.sendRight();
         if (machThread == mainThreadMachThread) {
-            data.cpuThreads.append(ThreadCPUInfo { "Main Thread"_s, String(), thread.usage, ThreadCPUInfo::Type::Main});
+            data.cpuThreads.append(ThreadCPUInfo { "Main Thread"_s, nullString(), thread.usage, ThreadCPUInfo::Type::Main});
             continue;
         }
 
-        String threadIdentifier = knownWorkerThreads.get(machThread);
-        bool isWorkerThread = !threadIdentifier.isEmpty();
+        RefPtr<StringImpl> threadIdentifier = knownWorkerThreads.get(machThread);
+        bool isWorkerThread = !isEmpty(threadIdentifier);
         ThreadCPUInfo::Type type = (isWorkerThread || isWebKitThread(thread)) ? ThreadCPUInfo::Type::WebKit : ThreadCPUInfo::Type::Unknown;
         data.cpuThreads.append(ThreadCPUInfo { thread.threadName, threadIdentifier, thread.usage, type });
     }

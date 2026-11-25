@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Test.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/LocalNetworkAccess.h>
@@ -67,8 +68,8 @@ static std::optional<ResourceError> checkSynchronously(const ResourceRequest& re
 // imported/w3c/.../service-worker.tentative.https asserts.
 TEST(LocalNetworkAccess, AClientWithNoDocumentStillUsesARecordedGrant)
 {
-    ResourceRequest request { URL { "http://192.168.1.1/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "http://192.168.1.1/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
     bool consulted = false;
     PermissionAnswer recordingCheck = [&consulted](const ClientOrigin&, IPAddressSpace) {
@@ -83,8 +84,8 @@ TEST(LocalNetworkAccess, AClientWithNoDocumentStillUsesARecordedGrant)
 
 TEST(LocalNetworkAccess, PermissionsPolicyDenialBlocksWithoutConsultingPermission)
 {
-    ResourceRequest request { URL { "http://192.168.1.1/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "http://192.168.1.1/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
     bool consulted = false;
     PermissionAnswer recordingCheck = [&consulted](const ClientOrigin&, IPAddressSpace) {
@@ -100,8 +101,8 @@ TEST(LocalNetworkAccess, PermissionsPolicyDenialBlocksWithoutConsultingPermissio
 
 TEST(LocalNetworkAccess, LoopbackPermissionsPolicyIsSeparateFromLocal)
 {
-    ResourceRequest request { URL { "http://127.0.0.1/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "http://127.0.0.1/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
     // Loopback is allowed by policy while local is not, so a loopback target still reaches the
     // permission check.
@@ -116,27 +117,27 @@ TEST(LocalNetworkAccess, LoopbackPermissionsPolicyIsSeparateFromLocal)
 
 TEST(LocalNetworkAccess, RedirectIntoLocalNetworkIsNotExemptedByTheOriginalURL)
 {
-    ResourceRequest request { URL { "https://example.com/redirect"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "https://example.com/redirect"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
-    auto error = checkSynchronously(request, IPAddressSpace::Local, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied), URL { "http://192.168.1.1/admin"_s });
+    auto error = checkSynchronously(request, IPAddressSpace::Local, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied), URL { "http://192.168.1.1/admin"_si });
     ASSERT_TRUE(error.has_value());
     EXPECT_TRUE(error->isAccessControl());
 }
 
 TEST(LocalNetworkAccess, RedirectStayingSameOriginRemainsExempt)
 {
-    ResourceRequest request { URL { "https://example.com/redirect"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "https://example.com/redirect"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
-    auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied), URL { "https://example.com/target"_s });
+    auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied), URL { "https://example.com/target"_si });
     EXPECT_FALSE(error.has_value());
 }
 
 TEST(LocalNetworkAccess, SameOriginTrustworthyExemption)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     EXPECT_FALSE(error.has_value());
@@ -144,8 +145,8 @@ TEST(LocalNetworkAccess, SameOriginTrustworthyExemption)
 
 TEST(LocalNetworkAccess, SameOriginButNotTrustworthyIsNotExempt)
 {
-    ResourceRequest request { URL { "http://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "http://example.com/"_s });
+    ResourceRequest request { URL { "http://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "http://example.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     ASSERT_TRUE(error.has_value());
@@ -154,8 +155,8 @@ TEST(LocalNetworkAccess, SameOriginButNotTrustworthyIsNotExempt)
 
 TEST(LocalNetworkAccess, CrossOriginIsNotExempt)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     ASSERT_TRUE(error.has_value());
@@ -164,9 +165,9 @@ TEST(LocalNetworkAccess, CrossOriginIsNotExempt)
 
 TEST(LocalNetworkAccess, MatchingTargetAddressSpaceStillRequiresPermission)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
+    ResourceRequest request { URL { "https://example.com/"_si } };
     request.setTargetAddressSpace(IPAddressSpace::Loopback);
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     ASSERT_TRUE(error.has_value());
@@ -175,9 +176,9 @@ TEST(LocalNetworkAccess, MatchingTargetAddressSpaceStillRequiresPermission)
 
 TEST(LocalNetworkAccess, MatchingTargetAddressSpaceAllowedWithGrant)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
+    ResourceRequest request { URL { "https://example.com/"_si } };
     request.setTargetAddressSpace(IPAddressSpace::Loopback);
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     EXPECT_FALSE(error.has_value());
@@ -185,8 +186,8 @@ TEST(LocalNetworkAccess, MatchingTargetAddressSpaceAllowedWithGrant)
 
 TEST(LocalNetworkAccess, LoopbackToLoopbackIsAllowedWithoutExplicitTargetAddressSpace)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Loopback, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     EXPECT_FALSE(error.has_value());
@@ -201,8 +202,8 @@ TEST(LocalNetworkAccess, LoopbackToLoopbackIsAllowedWithoutExplicitTargetAddress
 // -- e.g. served from a cache entry stored without one -- must still be gated.
 TEST(LocalNetworkAccess, UndeterminedClientSpaceStillRequiresPermission)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Unknown, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     EXPECT_TRUE(error.has_value());
@@ -210,8 +211,8 @@ TEST(LocalNetworkAccess, UndeterminedClientSpaceStillRequiresPermission)
 
 TEST(LocalNetworkAccess, UndeterminedClientSpaceCanStillBeGranted)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Unknown, true, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     EXPECT_FALSE(error.has_value());
@@ -219,8 +220,8 @@ TEST(LocalNetworkAccess, UndeterminedClientSpaceCanStillBeGranted)
 
 TEST(LocalNetworkAccess, LocalToLoopbackRequiresPermission)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Local, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     EXPECT_TRUE(error.has_value());
@@ -228,8 +229,8 @@ TEST(LocalNetworkAccess, LocalToLoopbackRequiresPermission)
 
 TEST(LocalNetworkAccess, LocalToLoopbackAllowedWithGrant)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Local, true, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     EXPECT_FALSE(error.has_value());
@@ -237,8 +238,8 @@ TEST(LocalNetworkAccess, LocalToLoopbackAllowedWithGrant)
 
 TEST(LocalNetworkAccess, LocalToLocalIsAllowed)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Local, IPAddressSpace::Local, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     EXPECT_FALSE(error.has_value());
@@ -246,8 +247,8 @@ TEST(LocalNetworkAccess, LocalToLocalIsAllowed)
 
 TEST(LocalNetworkAccess, SecureContextGrantedByPermissionStub)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     EXPECT_FALSE(error.has_value());
@@ -255,8 +256,8 @@ TEST(LocalNetworkAccess, SecureContextGrantedByPermissionStub)
 
 TEST(LocalNetworkAccess, SecureContextPromptIsTreatedAsDenied)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Prompt));
     ASSERT_TRUE(error.has_value());
@@ -265,8 +266,8 @@ TEST(LocalNetworkAccess, SecureContextPromptIsTreatedAsDenied)
 
 TEST(LocalNetworkAccess, UndeterminedConnectionSpaceIsBlockedByDefaultPermission)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Unknown, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     ASSERT_TRUE(error.has_value());
@@ -279,8 +280,8 @@ TEST(LocalNetworkAccess, UndeterminedConnectionSpaceIsBlockedByDefaultPermission
 // Kept because the layering is the point -- the policy lives in the caller, not here.
 TEST(LocalNetworkAccess, UndeterminedConnectionSpaceCanStillBeGranted)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Unknown, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     EXPECT_FALSE(error.has_value());
@@ -288,8 +289,8 @@ TEST(LocalNetworkAccess, UndeterminedConnectionSpaceCanStillBeGranted)
 
 TEST(LocalNetworkAccess, UndeterminedConnectionSpaceStillHonorsSameOriginTrustworthyExemption)
 {
-    ResourceRequest request { URL { "https://example.com/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "https://example.com/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
     auto error = checkSynchronously(request, IPAddressSpace::Unknown, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     EXPECT_FALSE(error.has_value());
@@ -341,49 +342,49 @@ TEST(LocalNetworkAccess, UndeterminedSpaceOutranksARecordedDecision)
 // what the console message and the developer's next step hinge on.
 TEST(LocalNetworkAccess, NotAskedIsReportedDifferentlyFromDenied)
 {
-    ResourceRequest request { URL { "http://192.168.1.1/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "http://192.168.1.1/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
     auto notAsked = checkSynchronously(request, IPAddressSpace::Local, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Prompt));
     ASSERT_TRUE(notAsked.has_value());
     EXPECT_TRUE(notAsked->isAccessControl());
-    EXPECT_TRUE(notAsked->localizedDescription().contains("no document to ask in"_s));
+    EXPECT_TRUE(contains(notAsked->localizedDescription(), "no document to ask in"_s));
 
     auto denied = checkSynchronously(request, IPAddressSpace::Local, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied));
     ASSERT_TRUE(denied.has_value());
     EXPECT_TRUE(denied->isAccessControl());
-    EXPECT_TRUE(denied->localizedDescription().contains("was denied"_s));
-    EXPECT_FALSE(denied->localizedDescription().contains("no document to ask in"_s));
+    EXPECT_TRUE(contains(denied->localizedDescription(), "was denied"_s));
+    EXPECT_FALSE(contains(denied->localizedDescription(), "no document to ask in"_s));
 }
 
 // Each refusal reaching the console names its own cause, so a developer is not told the frame lacks
 // the feature when the real problem is that there is no document.
 TEST(LocalNetworkAccess, EachRefusalNamesItsOwnCause)
 {
-    ResourceRequest request { URL { "http://192.168.1.1/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "http://192.168.1.1/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
     auto policyRefused = checkSynchronously(request, IPAddressSpace::Local, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted), { }, false, true);
     ASSERT_TRUE(policyRefused.has_value());
-    EXPECT_TRUE(policyRefused->localizedDescription().contains("\"local-network\""_s));
+    EXPECT_TRUE(contains(policyRefused->localizedDescription(), "\"local-network\""_s));
 
     auto insecure = checkSynchronously(request, IPAddressSpace::Local, IPAddressSpace::Public, false, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     ASSERT_TRUE(insecure.has_value());
-    EXPECT_TRUE(insecure->localizedDescription().contains("not a secure context"_s));
+    EXPECT_TRUE(contains(insecure->localizedDescription(), "not a secure context"_s));
 
     // An undetermined connection space skips the publicness comparison entirely, so the refusal must
     // not claim a less-public relation that was never established.
     auto undetermined = checkSynchronously(request, IPAddressSpace::Unknown, IPAddressSpace::Public, false, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     ASSERT_TRUE(undetermined.has_value());
-    EXPECT_TRUE(undetermined->localizedDescription().contains("not a secure context"_s));
+    EXPECT_TRUE(contains(undetermined->localizedDescription(), "not a secure context"_s));
 }
 
 // A request that passes every policy check is not decided by the check itself: it reports that the
 // embedder has to be asked, and the answer is turned into the refusal separately.
 TEST(LocalNetworkAccess, AGatedRequestDefersToThePermissionAnswer)
 {
-    ResourceRequest request { URL { "http://192.168.1.1/"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "http://192.168.1.1/"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
     auto requirement = checkLocalNetworkAccess(request, request.url(), IPAddressSpace::Local, IPAddressSpace::Public, true, ClientOrigin { clientOrigin, clientOrigin }, true, true);
     ASSERT_TRUE(requirement.has_value());
@@ -393,7 +394,7 @@ TEST(LocalNetworkAccess, AGatedRequestDefersToThePermissionAnswer)
     auto denied = localNetworkAccessPermissionError(request.url(), PermissionState::Denied);
     ASSERT_TRUE(denied.has_value());
     EXPECT_TRUE(denied->isAccessControl());
-    EXPECT_TRUE(denied->localizedDescription().contains("was denied"_s));
+    EXPECT_TRUE(contains(denied->localizedDescription(), "was denied"_s));
     EXPECT_EQ(request.url().string(), denied->failingURL().string());
 }
 
@@ -402,10 +403,10 @@ TEST(LocalNetworkAccess, AGatedRequestDefersToThePermissionAnswer)
 // topOrigin is the member the grant store keys on, which makes it the plausible slip.
 TEST(LocalNetworkAccess, SameOriginExemptionComparesTheRequestingOriginNotTheTopLevelOne)
 {
-    ResourceRequest request { URL { "http://127.0.0.1/admin"_s } };
+    ResourceRequest request { URL { "http://127.0.0.1/admin"_si } };
     ClientOrigin embeddedInLoopbackPage {
-        SecurityOriginData::fromURL(URL { "http://127.0.0.1/"_s }),
-        SecurityOriginData::fromURL(URL { "https://example.com/"_s })
+        SecurityOriginData::fromURL(URL { "http://127.0.0.1/"_si }),
+        SecurityOriginData::fromURL(URL { "https://example.com/"_si })
     };
 
     // The connection URL is same-origin with the TOP origin but not the requesting one, so the
@@ -420,10 +421,10 @@ TEST(LocalNetworkAccess, SameOriginExemptionComparesTheRequestingOriginNotTheTop
 // trustworthiness conjunct short-circuiting.
 TEST(LocalNetworkAccess, RedirectIntoTrustworthyLoopbackIsNotExemptedByOrigin)
 {
-    ResourceRequest request { URL { "https://example.com/redirect"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest request { URL { "https://example.com/redirect"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
-    auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied), URL { "http://127.0.0.1/admin"_s });
+    auto error = checkSynchronously(request, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Denied), URL { "http://127.0.0.1/admin"_si });
     ASSERT_TRUE(error.has_value());
     EXPECT_TRUE(error->isAccessControl());
 }
@@ -434,23 +435,23 @@ TEST(LocalNetworkAccess, RedirectIntoTrustworthyLoopbackIsNotExemptedByOrigin)
 // mask the loss of this check entirely.
 TEST(LocalNetworkAccess, DeclaredTargetAddressSpaceMustMatchTheConnection)
 {
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
 
-    ResourceRequest declaredLoopback { URL { "https://other.com/resource"_s } };
+    ResourceRequest declaredLoopback { URL { "https://other.com/resource"_si } };
     declaredLoopback.setTargetAddressSpace(IPAddressSpace::Loopback);
     auto reachedLocal = checkSynchronously(declaredLoopback, IPAddressSpace::Local, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     ASSERT_TRUE(reachedLocal.has_value());
-    EXPECT_TRUE(reachedLocal->localizedDescription().contains("does not match"_s));
+    EXPECT_TRUE(contains(reachedLocal->localizedDescription(), "does not match"_s));
 
-    ResourceRequest declaredLocal { URL { "https://other.com/resource"_s } };
+    ResourceRequest declaredLocal { URL { "https://other.com/resource"_si } };
     declaredLocal.setTargetAddressSpace(IPAddressSpace::Local);
     auto reachedLoopback = checkSynchronously(declaredLocal, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted));
     ASSERT_TRUE(reachedLoopback.has_value());
-    EXPECT_TRUE(reachedLoopback->localizedDescription().contains("does not match"_s));
+    EXPECT_TRUE(contains(reachedLoopback->localizedDescription(), "does not match"_s));
 
     // Declaring Public is the default and asserts nothing, so any connection is allowed to proceed to
     // the permission check.
-    ResourceRequest declaredPublic { URL { "https://other.com/resource"_s } };
+    ResourceRequest declaredPublic { URL { "https://other.com/resource"_si } };
     declaredPublic.setTargetAddressSpace(IPAddressSpace::Public);
     EXPECT_FALSE(checkSynchronously(declaredPublic, IPAddressSpace::Loopback, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted)).has_value());
 }
@@ -467,13 +468,13 @@ TEST(LocalNetworkAccess, TheAllowPathsDoNotConsultThePermission)
     };
 
     // Same-origin and trustworthy.
-    ResourceRequest sameOrigin { URL { "https://example.com/resource"_s } };
-    auto sameOriginClient = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    ResourceRequest sameOrigin { URL { "https://example.com/resource"_si } };
+    auto sameOriginClient = SecurityOriginData::fromURL(URL { "https://example.com/"_si });
     EXPECT_FALSE(checkSynchronously(sameOrigin, IPAddressSpace::Loopback, IPAddressSpace::Public, true, sameOriginClient, recordingCheck).has_value());
     EXPECT_FALSE(consulted);
 
     // Not less public than the client.
-    ResourceRequest publicToPublic { URL { "https://other.com/resource"_s } };
+    ResourceRequest publicToPublic { URL { "https://other.com/resource"_si } };
     EXPECT_FALSE(checkSynchronously(publicToPublic, IPAddressSpace::Public, IPAddressSpace::Public, true, sameOriginClient, recordingCheck).has_value());
     EXPECT_FALSE(consulted);
 }
@@ -486,7 +487,7 @@ TEST(LocalNetworkAccess, TheAllowPathsDoNotConsultThePermission)
 // denied, so that any step after the scheme check would refuse it.
 TEST(LocalNetworkAccess, AURLWithoutANetworkHostIsNeverALocalNetworkRequest)
 {
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "http://example.com/"_s });
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "http://example.com/"_si });
     for (auto& string : { "blob:http://example.com/7b3a4c1e-2f6d-4b8a-9e0c-1d2f3a4b5c6d"_s, "data:text/plain,hello"_s }) {
         URL url { string };
         ResourceRequest request { URL { url } };
@@ -498,12 +499,12 @@ TEST(LocalNetworkAccess, AURLWithoutANetworkHostIsNeverALocalNetworkRequest)
 
 TEST(LocalNetworkAccess, AnUndeterminedConnectionConsultsTheLocalNetworkFeature)
 {
-    ResourceRequest request { URL { "https://example.com/resource"_s } };
-    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_s });
+    ResourceRequest request { URL { "https://example.com/resource"_si } };
+    auto clientOrigin = SecurityOriginData::fromURL(URL { "https://other.com/"_si });
 
     auto loopbackOnly = checkSynchronously(request, IPAddressSpace::Unknown, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted), { }, false, true);
     ASSERT_TRUE(loopbackOnly.has_value());
-    EXPECT_TRUE(loopbackOnly->localizedDescription().contains("not allowed to use"_s));
+    EXPECT_TRUE(contains(loopbackOnly->localizedDescription(), "not allowed to use"_s));
 
     auto localAllowed = checkSynchronously(request, IPAddressSpace::Unknown, IPAddressSpace::Public, true, clientOrigin, permissionCheckReturning(PermissionState::Granted), { }, true, false);
     EXPECT_FALSE(localAllowed.has_value());

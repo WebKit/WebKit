@@ -44,9 +44,9 @@ namespace WGSL {
 
 constexpr bool shouldLogGlobalSorting = false;
 
-inline String nameForDeclaration(AST::Declaration& declaration)
+inline RefPtr<StringImpl> nameForDeclaration(AST::Declaration& declaration)
 {
-    return is<AST::ConstAssert>(declaration) ? "const_assert"_s : declaration.name().id();
+    return is<AST::ConstAssert>(declaration) ? "const_assert"_si : declaration.name().id();
 }
 
 class Graph {
@@ -171,7 +171,7 @@ public:
 
 private:
     FixedVector<Node> m_nodes;
-    HashMap<String, Node*> m_nodeMap;
+    HashMap<RefPtr<StringImpl>, Node*> m_nodeMap;
     EdgeSet m_edges;
 };
 
@@ -231,7 +231,7 @@ void GraphBuilder::visit(AST::Expression& expression)
 {
     SetForScope expressionDepthScope(m_expressionDepth, m_expressionDepth + 1);
     if (m_expressionDepth > s_maxExpressionDepth) [[unlikely]] {
-        setError({ makeString("reached maximum expression depth of "_s, String::number(s_maxExpressionDepth)), expression.span() });
+        setError({ makeString("reached maximum expression depth of "_s, makeString(s_maxExpressionDepth)), expression.span() });
         return;
     }
 
@@ -245,12 +245,12 @@ void GraphBuilder::visit(AST::IdentifierExpression& identifier)
 
 void GraphBuilder::introduceVariable(AST::Identifier& name)
 {
-    ContextProvider::introduceVariable(name, { });
+    ContextProvider::introduceVariable(protect(name.id()), { });
 }
 
 void GraphBuilder::readVariable(AST::Identifier& name) const
 {
-    if (ContextProvider::readVariable(name))
+    if (ContextProvider::readVariable(protect(name.id())))
         return;
     if (auto* node = m_graph.getNode(name))
         m_graph.addEdge(m_currentNode, *node);

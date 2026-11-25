@@ -63,7 +63,7 @@ public:
         long twist { 0 };
         double altitudeAngle { piOverTwoDouble };
         double azimuthAngle { 0 };
-        String pointerType { mousePointerEventType() };
+        RefPtr<StringImpl> pointerType { mousePointerEventType() };
         bool isPrimary { false };
         Vector<Ref<PointerEvent>> coalescedEvents;
         Vector<Ref<PointerEvent>> predictedEvents;
@@ -71,12 +71,12 @@ public:
 
     enum class IsPrimary : bool { No, Yes };
 
-    static Ref<PointerEvent> create(const AtomString& type, Init&& initializer)
+    static Ref<PointerEvent> create(AtomStringImpl* type, Init&& initializer)
     {
         return adoptRef(*new PointerEvent(type, WTF::move(initializer), IsTrusted::No));
     }
 
-    static Ref<PointerEvent> createForPointerCapture(const AtomString& type, PointerID pointerId, bool isPrimary, String pointerType)
+    static Ref<PointerEvent> createForPointerCapture(AtomStringImpl* type, PointerID pointerId, bool isPrimary, RefPtr<StringImpl> pointerType)
     {
         Init initializer;
         initializer.bubbles = true;
@@ -92,17 +92,17 @@ public:
         return adoptRef(*new PointerEvent);
     }
 
-    static AtomString typeFromMouseEventType(const AtomString&);
+    static RefPtr<AtomStringImpl> typeFromMouseEventType(AtomStringImpl*);
 
-    static RefPtr<PointerEvent> create(std::expected<MouseButton, MouseButtonState>, const MouseEvent&, PointerID, const String& pointerType);
-    static Ref<PointerEvent> create(const AtomString& type, std::expected<MouseButton, MouseButtonState>, const MouseEvent&, PointerID, const String& pointerType);
-    static Ref<PointerEvent> create(const AtomString& type, std::expected<MouseButton, MouseButtonState>, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable);
-    NODELETE static Ref<PointerEvent> create(const AtomString& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
+    static RefPtr<PointerEvent> create(std::expected<MouseButton, MouseButtonState>, const MouseEvent&, PointerID, StringImpl* pointerType);
+    static Ref<PointerEvent> create(AtomStringImpl* type, std::expected<MouseButton, MouseButtonState>, const MouseEvent&, PointerID, StringImpl* pointerType);
+    static Ref<PointerEvent> create(AtomStringImpl* type, std::expected<MouseButton, MouseButtonState>, const MouseEvent&, PointerID, StringImpl* pointerType, CanBubble, IsCancelable);
+    NODELETE static Ref<PointerEvent> create(AtomStringImpl* type, PointerID, StringImpl* pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
     static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const DoublePoint& touchDelta = { });
     static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble, IsCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&& view, const DoublePoint& touchDelta = { });
-    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const DoublePoint& touchDelta = { });
+    static Ref<PointerEvent> create(AtomStringImpl* type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const DoublePoint& touchDelta = { });
 #endif
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(WPE) || PLATFORM(GTK))
@@ -121,7 +121,7 @@ public:
     long twist() const { return m_twist; }
     double altitudeAngle() const { return m_altitudeAngle; }
     double azimuthAngle() const { return m_azimuthAngle; }
-    String pointerType() const { return m_pointerType; }
+    RefPtr<StringImpl> pointerType() const { return m_pointerType; }
     bool isPrimary() const { return m_isPrimary; }
     bool fractionalCoordinatesAllowed() const { return m_fractionalCoordinatesAllowed; }
 
@@ -149,8 +149,8 @@ public:
     RefPtr<Node> toElement() const final { return nullptr; }
     RefPtr<Node> fromElement() const final { return nullptr; }
 
-    static bool typeRequiresResolvedButton(const AtomString& type);
-    static std::expected<MouseButton, MouseButtonState> buttonForType(const AtomString& type)
+    static bool typeRequiresResolvedButton(AtomStringImpl* type);
+    static std::expected<MouseButton, MouseButtonState> buttonForType(AtomStringImpl* type)
     {
         if (!typeRequiresResolvedButton(type))
             return std::unexpected { MouseButtonState::PointerHasNotChanged };
@@ -158,15 +158,15 @@ public:
     }
 
 protected:
-    static CanBubble typeCanBubble(const AtomString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
-    static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
-    static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
+    static CanBubble typeCanBubble(AtomStringImpl* type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
+    static IsCancelable typeIsCancelable(AtomStringImpl* type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
+    static IsComposed typeIsComposed(AtomStringImpl* type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
 
-    PointerEvent(const AtomString& type, std::expected<MouseButton, MouseButtonState>, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable, IsComposed);
+    PointerEvent(AtomStringImpl* type, std::expected<MouseButton, MouseButtonState>, const MouseEvent&, PointerID, StringImpl* pointerType, CanBubble, IsCancelable, IsComposed);
 
 private:
-    static bool typeIsEnterOrLeave(const AtomString& type);
-    static unsigned short buttonsForType(const AtomString& type)
+    static bool typeIsEnterOrLeave(AtomStringImpl* type);
+    static unsigned short buttonsForType(AtomStringImpl* type)
     {
         // We have contact with the touch surface for most events except when we've released the touch or canceled it.
         auto& eventNames = WebCore::eventNames();
@@ -193,14 +193,14 @@ private:
     static PointerEventAngle angleFromTilt(long tiltX, long tiltY);
     static PointerEventTilt tiltFromAngle(double altitudeAngle, double azimuthAngle);
 
-    static bool fractionalCoordinatesAllowedForType(const AtomString&);
+    static bool fractionalCoordinatesAllowedForType(AtomStringImpl*);
     double adjustedCoordinateForType(double) const;
 
     PointerEvent();
-    PointerEvent(const AtomString&, Init&&, IsTrusted);
-    PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
+    PointerEvent(AtomStringImpl*, Init&&, IsTrusted);
+    PointerEvent(AtomStringImpl* type, PointerID, StringImpl* pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
-    PointerEvent(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const DoublePoint& touchDelta = { });
+    PointerEvent(AtomStringImpl* type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const DoublePoint& touchDelta = { });
 #endif
 
     PointerID m_pointerId { mousePointerID };
@@ -213,20 +213,20 @@ private:
     long m_twist { 0 };
     double m_altitudeAngle { piOverTwoDouble };
     double m_azimuthAngle { 0 };
-    String m_pointerType { mousePointerEventType() };
+    RefPtr<StringImpl> m_pointerType { mousePointerEventType() };
     bool m_isPrimary { false };
     bool m_fractionalCoordinatesAllowed { true };
     Vector<Ref<PointerEvent>> m_coalescedEvents;
     Vector<Ref<PointerEvent>> m_predictedEvents;
 };
 
-inline bool PointerEvent::typeIsEnterOrLeave(const AtomString& type)
+inline bool PointerEvent::typeIsEnterOrLeave(AtomStringImpl* type)
 {
     auto& eventNames = WebCore::eventNames();
     return type == eventNames.pointerenterEvent || type == eventNames.pointerleaveEvent;
 }
 
-inline bool PointerEvent::typeRequiresResolvedButton(const AtomString& type)
+inline bool PointerEvent::typeRequiresResolvedButton(AtomStringImpl* type)
 {
     auto& eventNames = WebCore::eventNames();
     return type == eventNames.pointerupEvent

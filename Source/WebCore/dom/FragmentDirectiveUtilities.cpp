@@ -37,13 +37,13 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, const ParsedTextDirective& directive)
 {
     ts << "ParsedTextDirective [";
-    if (!directive.prefix.isEmpty())
+    if (!isEmpty(directive.prefix))
         ts << "prefix: " << directive.prefix << "; ";
-    if (!directive.startText.isEmpty())
+    if (!isEmpty(directive.startText))
         ts << "startText: " << directive.startText << "; ";
-    if (!directive.endText.isEmpty())
+    if (!isEmpty(directive.endText))
         ts << "endText: " << directive.endText << "; ";
-    if (!directive.suffix.isEmpty())
+    if (!isEmpty(directive.suffix))
         ts << "suffix: " << directive.suffix << "; ";
     ts << "]";
     return ts;

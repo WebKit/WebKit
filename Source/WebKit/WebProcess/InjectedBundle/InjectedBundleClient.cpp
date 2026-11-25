@@ -57,7 +57,7 @@ void InjectedBundleClient::willDestroyPage(InjectedBundle& bundle, WebPage& page
     m_client.willDestroyPage(toAPI(&bundle), toAPI(&page), m_client.base.clientInfo);
 }
 
-void InjectedBundleClient::didReceiveMessage(InjectedBundle& bundle, const String& messageName, RefPtr<API::Object>&& messageBody)
+void InjectedBundleClient::didReceiveMessage(InjectedBundle& bundle, StringImpl* messageName, RefPtr<API::Object>&& messageBody)
 {
     if (!m_client.didReceiveMessage)
         return;
@@ -65,7 +65,7 @@ void InjectedBundleClient::didReceiveMessage(InjectedBundle& bundle, const Strin
     m_client.didReceiveMessage(toAPI(&bundle), toAPI(messageName), toAPI(messageBody.get()), m_client.base.clientInfo);
 }
 
-void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle& bundle, WebPage& page, const String& messageName, RefPtr<API::Object>&& messageBody)
+void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle& bundle, WebPage& page, StringImpl* messageName, RefPtr<API::Object>&& messageBody)
 {
     if (!m_client.didReceiveMessageToPage)
         return;

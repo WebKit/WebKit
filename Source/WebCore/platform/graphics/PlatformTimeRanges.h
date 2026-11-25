@@ -93,7 +93,7 @@ public:
     MediaTime totalDuration() const;
 
     void dump(PrintStream&) const;
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 
     // We consider all the Ranges to be semi-bounded as follow: [start, end[
     struct Range {
@@ -157,7 +157,7 @@ private:
 WEBCORE_EXPORT RetainPtr<NSArray> makeNSArray(const PlatformTimeRanges&);
 #endif
 
-inline String toString(const PlatformTimeRanges& platformTimeRanges) { return platformTimeRanges.toString(); }
+inline RefPtr<StringImpl> toString(const PlatformTimeRanges& platformTimeRanges) { return platformTimeRanges.toString(); }
 
 } // namespace WebCore
 
@@ -165,7 +165,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::PlatformTimeRanges> {
-    static String toString(const WebCore::PlatformTimeRanges& platformTimeRanges) { return platformTimeRanges.toString(); }
+    static RefPtr<StringImpl> toString(const WebCore::PlatformTimeRanges& platformTimeRanges) { return platformTimeRanges.toString(); }
 };
 
 } // namespace WTF

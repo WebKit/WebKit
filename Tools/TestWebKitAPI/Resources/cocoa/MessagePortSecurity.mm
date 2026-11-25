@@ -562,7 +562,7 @@ TEST(MessagePortSecurity, MessagePortsSurviveNetworkProcessRestart)
     // Force a new Networking process to fire up and connect.
     NSString *fetchJS = [NSString stringWithFormat:
         @"fetch('%@/ping').then(r => r.text()).catch(e => 'err')",
-        server.origin().createNSString().get()];
+        createNSString(server.origin()).get()];
     __block bool fetchSettled = false;
     [webView evaluateJavaScript:fetchJS completionHandler:^(id, NSError *) {
         fetchSettled = true;
@@ -657,7 +657,7 @@ TEST(MessagePortSecurity, MessagePortsSurviveNetworkProcessRestartWithSiteIsolat
 
     NSString *fetchJS = [NSString stringWithFormat:
         @"fetch('%@/ping').then(r => r.text()).catch(e => 'err')",
-        server.origin().createNSString().get()];
+        createNSString(server.origin()).get()];
     __block bool fetchSettled = false;
     [webView evaluateJavaScript:fetchJS completionHandler:^(id, NSError *) {
         fetchSettled = true;
@@ -726,7 +726,7 @@ TEST(MessagePortSecurity, WorkerMessagePortsSurviveNetworkProcessRestart)
 
     NSString *fetchJS = [NSString stringWithFormat:
         @"fetch('%@/ping').then(r => r.text()).catch(e => 'err')",
-        server.origin().createNSString().get()];
+        createNSString(server.origin()).get()];
     __block bool fetchSettled = false;
     [webView evaluateJavaScript:fetchJS completionHandler:^(id, NSError *) {
         fetchSettled = true;
@@ -886,7 +886,7 @@ static void restartNetworkProcess(TestWKWebView *webView, TestWebKitAPI::HTTPSer
     // Force a new Networking process to fire up and connect.
     NSString *fetchJS = [NSString stringWithFormat:
         @"fetch('%@/ping').then(r => r.text()).catch(e => 'err')",
-        server.origin().createNSString().get()];
+        createNSString(server.origin()).get()];
     __block bool fetchSettled = false;
     [webView evaluateJavaScript:fetchJS completionHandler:^(id, NSError *) {
         fetchSettled = true;

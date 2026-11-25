@@ -82,7 +82,7 @@ HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& doc
 {
 }
 
-const AtomString& HTMLDialogElement::closedBy() const
+const RefPtr<AtomStringImpl>& HTMLDialogElement::closedBy() const
 {
     switch (computedClosedByState()) {
     case ClosedByState::None:
@@ -129,12 +129,12 @@ ExceptionOr<void> HTMLDialogElement::show()
     if (isOpen()) {
         if (!isModal())
             return { };
-        return Exception { ExceptionCode::InvalidStateError, "Cannot call show() on an open modal dialog."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Cannot call show() on an open modal dialog."_si };
     }
 
     ToggleEvent::Init init;
-    init.oldState = "closed"_s;
-    init.newState = "open"_s;
+    init.oldState = "closed"_si;
+    init.newState = "open"_si;
     init.source = nullptr;
     Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, init, Event::IsCancelable::Yes);
     dispatchEvent(event);
@@ -167,22 +167,22 @@ ExceptionOr<void> HTMLDialogElement::showModal(Element* source)
     if (isOpen()) {
         if (isModal())
             return { };
-        return Exception { ExceptionCode::InvalidStateError, "Cannot call showModal() on an open non-modal dialog."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Cannot call showModal() on an open non-modal dialog."_si };
     }
 
     if (!isConnected())
-        return Exception { ExceptionCode::InvalidStateError, "Element is not connected."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Element is not connected."_si };
 
     if (isPopoverShowing())
-        return Exception { ExceptionCode::InvalidStateError, "Element is already an open popover."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Element is already an open popover."_si };
 
     Ref document = this->document();
     if (!document->isFullyActive())
-        return Exception { ExceptionCode::InvalidStateError, "Invalid for dialogs within documents that are not fully active."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Invalid for dialogs within documents that are not fully active."_si };
 
     ToggleEvent::Init init;
-    init.oldState = "closed"_s;
-    init.newState = "open"_s;
+    init.oldState = "closed"_si;
+    init.newState = "open"_si;
     init.source = source;
     Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, init, Event::IsCancelable::Yes);
     dispatchEvent(event);
@@ -233,14 +233,14 @@ ExceptionOr<void> HTMLDialogElement::showModal(Element* source)
 }
 
 // https://html.spec.whatwg.org/multipage/interactive-elements.html#dom-dialog-close
-void HTMLDialogElement::close(const String& result, Element* source)
+void HTMLDialogElement::close(StringImpl* result, Element* source)
 {
     if (!isOpen())
         return;
 
     ToggleEvent::Init init;
-    init.oldState = "open"_s;
-    init.newState = "closed"_s;
+    init.oldState = "open"_si;
+    init.newState = "closed"_si;
     init.source = source;
     Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, init, Event::IsCancelable::No);
     dispatchEvent(event);
@@ -259,7 +259,7 @@ void HTMLDialogElement::close(const String& result, Element* source)
 
     setIsModal(false);
 
-    if (!result.isNull())
+    if (result)
         m_returnValue = result;
 
     if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get()) {
@@ -276,7 +276,7 @@ void HTMLDialogElement::close(const String& result, Element* source)
 }
 
 // https://html.spec.whatwg.org/multipage/interactive-elements.html#dom-dialog-requestclose
-void HTMLDialogElement::requestClose(const String& returnValue, Element* source)
+void HTMLDialogElement::requestClose(StringImpl* returnValue, Element* source)
 {
     if (!isOpen())
         return;
@@ -316,12 +316,12 @@ bool HTMLDialogElement::handleCommandInternal(HTMLButtonElement& invoker, const 
 
     if (isOpen()) {
         if (command == CommandType::Close) {
-            String value = invoker.value().string();
+            RefPtr<StringImpl> value = invoker.value();
             close(value, &invoker);
             return true;
         }
         if (command == CommandType::RequestClose) {
-            String value = invoker.value().string();
+            RefPtr<StringImpl> value = invoker.value();
             requestClose(value, &invoker);
             return true;
         }
@@ -411,23 +411,23 @@ void HTMLDialogElement::removingSteps(RemovalType removalType, ContainerNode& ol
     setIsModal(false);
 }
 
-void HTMLDialogElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLDialogElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     Ref document = this->document();
     if (name == openAttr) {
-        auto isOpen = !newValue.isNull();
+        auto isOpen = !!newValue;
         Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Open, isOpen);
         m_isOpen = isOpen;
 
         if (document->settings().closeWatcherEnabled()) {
-            if (newValue.isNull() && !oldValue.isNull())
+            if (!newValue && oldValue)
                 cleanupSteps();
             if (!document->isFullyActive())
                 return;
             if (!isConnected())
                 return;
-            if (!newValue.isNull() && oldValue.isNull())
+            if (newValue && !oldValue)
                 setupSteps();
         }
     } else if (name == closedbyAttr) {

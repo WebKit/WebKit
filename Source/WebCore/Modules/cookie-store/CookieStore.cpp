@@ -204,22 +204,22 @@ CookieStore::~CookieStore()
     m_mainThreadBridge->detach();
 }
 
-static String normalize(const String& string)
+static RefPtr<StringImpl> normalize(StringImpl* string)
 {
-    if (string.contains(isTabOrSpace<char16_t>))
-        return string.trim(isTabOrSpace);
+    if (contains(string, isTabOrSpace<char16_t>))
+        return trim(string, isTabOrSpace);
     return string;
 }
 
-static bool containsInvalidCharacters(const String& string)
+static bool containsInvalidCharacters(StringImpl* string)
 {
     // The invalid characters are specified at https://cookiestore.spec.whatwg.org/#set-a-cookie.
-    return string.contains([](char16_t character) {
+    return contains(string, [](char16_t character) {
         return character == 0x003B || character == 0x007F || (character <= 0x001F && character != 0x0009);
     });
 }
 
-void CookieStore::get(String&& name, Ref<DeferredPromise>&& promise)
+void CookieStore::get(RefPtr<StringImpl>&& name, Ref<DeferredPromise>&& promise)
 {
     getShared(GetType::Get, CookieStoreGetOptions { WTF::move(name), { } }, WTF::move(promise));
 }
@@ -229,7 +229,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
     getShared(GetType::Get, WTF::move(options), WTF::move(promise));
 }
 
-void CookieStore::getAll(String&& name, Ref<DeferredPromise>&& promise)
+void CookieStore::getAll(RefPtr<StringImpl>&& name, Ref<DeferredPromise>&& promise)
 {
     getShared(GetType::GetAll, CookieStoreGetOptions { WTF::move(name), { } }, WTF::move(promise));
 }
@@ -254,32 +254,32 @@ void CookieStore::getShared(GetType getType, CookieStoreGetOptions&& options, Re
     }
 
     if (origin->isOpaque()) {
-        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_si });
         return;
     }
 
-    if (getType == GetType::Get && options.name.isNull() && options.url.isNull()) {
-        promise->reject(Exception { ExceptionCode::TypeError, "CookieStoreGetOptions must not be empty"_s });
+    if (getType == GetType::Get && !options.name && !options.url) {
+        promise->reject(Exception { ExceptionCode::TypeError, "CookieStoreGetOptions must not be empty"_si });
         return;
     }
 
     auto url = context->cookieURL();
-    if (!options.url.isNull()) {
+    if (options.url) {
         auto parsed = context->parseURL(options.url);
         if (context->isDocument() && !equalIgnoringFragmentIdentifier(parsed, url)) {
-            promise->reject(Exception { ExceptionCode::TypeError, "URL must match the document URL"_s });
+            promise->reject(Exception { ExceptionCode::TypeError, "URL must match the document URL"_si });
             return;
         }
 
         if (!origin->isSameOriginAs(SecurityOrigin::create(parsed))) {
-            promise->reject(Exception { ExceptionCode::TypeError, "Origin must match the context's origin"_s });
+            promise->reject(Exception { ExceptionCode::TypeError, "Origin must match the context's origin"_si });
             return;
         }
         url = WTF::move(parsed);
         options.url = nullString();
     }
 
-    if (!options.name.isNull())
+    if (options.name)
         options.name = CookieUtil::cookieStringForStorage(normalize(options.name));
 
     m_promises.add(++m_nextPromiseIdentifier, WTF::move(promise));
@@ -312,7 +312,7 @@ void CookieStore::getShared(GetType getType, CookieStoreGetOptions&& options, Re
     m_mainThreadBridge->get(WTF::move(options), WTF::move(url), WTF::move(completionHandler));
 }
 
-void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& promise)
+void CookieStore::set(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& value, Ref<DeferredPromise>&& promise)
 {
     set(CookieInit { WTF::move(name), WTF::move(value) }, WTF::move(promise));
 }
@@ -332,7 +332,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     }
 
     if (origin->isOpaque()) {
-        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_si });
         return;
     }
 
@@ -351,38 +351,38 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     cookie.value = normalize(options.value);
 
     if (containsInvalidCharacters(cookie.name)) {
-        promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not contain '\u003B', '\u007F', or any C0 control character except '\u0009'."_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not contain '\u003B', '\u007F', or any C0 control character except '\u0009'."_si });
         return;
     }
 
     if (containsInvalidCharacters(cookie.value)) {
-        promise->reject(Exception { ExceptionCode::TypeError, "The cookie value must not contain '\u003B', '\u007F', or any C0 control character except '\u0009'."_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "The cookie value must not contain '\u003B', '\u007F', or any C0 control character except '\u0009'."_si });
         return;
     }
 
-    if (cookie.name.isEmpty()) {
-        if (cookie.value.contains('=')) {
-            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name and value must not both be set from the 'value' field."_s });
+    if (isEmpty(cookie.name)) {
+        if (contains(cookie.value, '=')) {
+            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name and value must not both be set from the 'value' field."_si });
             return;
         }
 
-        if (cookie.value.isEmpty()) {
-            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name and value must not both be empty."_s });
+        if (isEmpty(cookie.value)) {
+            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name and value must not both be empty."_si });
             return;
         }
 
-        if (cookie.value.startsWithIgnoringASCIICase("__Host-"_s)
-            || cookie.value.startsWithIgnoringASCIICase("__Host-Http-"_s)
-            || cookie.value.startsWithIgnoringASCIICase("__Http-"_s)
-            || cookie.value.startsWithIgnoringASCIICase("__Secure-"_s)) {
-            promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name is empty, the value must not begin with \"__Host-\", \"__Host-Http-\", \"__Http-\", or \"__Secure-\""_s });
+        if (startsWithIgnoringASCIICase(cookie.value, "__Host-"_s)
+            || startsWithIgnoringASCIICase(cookie.value, "__Host-Http-"_s)
+            || startsWithIgnoringASCIICase(cookie.value, "__Http-"_s)
+            || startsWithIgnoringASCIICase(cookie.value, "__Secure-"_s)) {
+            promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name is empty, the value must not begin with \"__Host-\", \"__Host-Http-\", \"__Http-\", or \"__Secure-\""_si });
             return;
         }
     }
 
-    if (cookie.name.startsWithIgnoringASCIICase("__Host-Http-"_s)
-        || cookie.name.startsWithIgnoringASCIICase("__Http-"_s)) {
-            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not begin with \"__Host-Http-\" or \"__Http-\""_s });
+    if (startsWithIgnoringASCIICase(cookie.name, "__Host-Http-"_s)
+        || startsWithIgnoringASCIICase(cookie.name, "__Http-"_s)) {
+            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not begin with \"__Host-Http-\" or \"__Http-\""_si });
             return;
     }
 
@@ -397,21 +397,21 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     cookie.value = CookieUtil::cookieStringForStorage(cookie.value);
 
     // FIXME: This should be further down.
-    if (!options.domain.isNull() && cookie.name.startsWithIgnoringASCIICase("__Host-"_s)) {
-        promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the domain must not be specified."_s });
+    if (!!options.domain && startsWithIgnoringASCIICase(cookie.name, "__Host-"_s)) {
+        promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the domain must not be specified."_si });
         return;
     }
 
     // FIXME: The specification does not perform this initialization of domain.
-    cookie.domain = options.domain.isNull() ? domain : options.domain;
-    if (!cookie.domain.isNull()) {
-        if (cookie.domain.startsWith('.')) {
-            promise->reject(Exception { ExceptionCode::TypeError, "The domain must not begin with a '.'"_s });
+    cookie.domain = !options.domain ? domain : options.domain;
+    if (cookie.domain) {
+        if (startsWith(cookie.domain, '.')) {
+            promise->reject(Exception { ExceptionCode::TypeError, "The domain must not begin with a '.'"_si });
             return;
         }
 
         if (!SecurityOrigin::create(url)->isMatchingRegistrableDomainSuffix(cookie.domain)) {
-            promise->reject(Exception { ExceptionCode::TypeError, "The domain must be a registrable domain suffix of or be equal to the current host"_s });
+            promise->reject(Exception { ExceptionCode::TypeError, "The domain must be a registrable domain suffix of or be equal to the current host"_si });
             return;
         }
 
@@ -423,22 +423,22 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         // In CFNetwork, a domain without a leading dot means host-only cookie.
         // If a non-null domain was passed in, prepend dot to domain to set
         // host-only to false and make the cookie accessible by subdomains.
-        if (!options.domain.isNull())
+        if (options.domain)
             cookie.domain = makeString('.', cookie.domain);
     }
 
     cookie.path = WTF::move(options.path);
-    ASSERT(!cookie.path.isNull());
-    if (cookie.path.isEmpty())
+    ASSERT(cookie.path);
+    if (isEmpty(cookie.path))
         cookie.path = CookieUtil::defaultPathForURL(url);
 
-    if (!cookie.path.startsWith('/')) {
-        promise->reject(Exception { ExceptionCode::TypeError, "The path must begin with a '/'"_s });
+    if (!startsWith(cookie.path, '/')) {
+        promise->reject(Exception { ExceptionCode::TypeError, "The path must begin with a '/'"_si });
         return;
     }
 
-    if (cookie.path != "/"_s && cookie.name.startsWithIgnoringASCIICase("__Host-"_s)) {
-        promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the path must be \"/\" or default to that."_s });
+    if (!equal(cookie.path, "/"_s) && startsWithIgnoringASCIICase(cookie.name, "__Host-"_s)) {
+        promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the path must be \"/\" or default to that."_si });
         return;
     }
 
@@ -449,7 +449,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
 
     if (options.expires) {
         if (options.maxAge) {
-            promise->reject(Exception { ExceptionCode::TypeError, "Only one of 'expires' or 'maxAge' may be specified"_s });
+            promise->reject(Exception { ExceptionCode::TypeError, "Only one of 'expires' or 'maxAge' may be specified"_si });
             return;
         }
 
@@ -502,7 +502,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     m_mainThreadBridge->set(WTF::move(cookie), WTF::move(url), WTF::move(completionHandler));
 }
 
-void CookieStore::remove(String&& name, Ref<DeferredPromise>&& promise)
+void CookieStore::remove(RefPtr<StringImpl>&& name, Ref<DeferredPromise>&& promise)
 {
     remove(CookieStoreDeleteOptions { WTF::move(name), { } }, WTF::move(promise));
 }
@@ -522,7 +522,7 @@ void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise
     }
 
     if (origin->isOpaque()) {
-        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_si });
         return;
     }
 
@@ -536,7 +536,7 @@ void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise
     set(WTF::move(initOptions), WTF::move(promise));
 }
 
-void CookieStore::cookiesAdded(const String& host, const Vector<Cookie>& cookies)
+void CookieStore::cookiesAdded(StringImpl* host, const Vector<Cookie>& cookies)
 {
     ASSERT(m_hasChangeEventListener);
 
@@ -544,7 +544,7 @@ void CookieStore::cookiesAdded(const String& host, const Vector<Cookie>& cookies
     if (!context)
         return;
 
-    ASSERT_UNUSED(host, host == downcast<Document>(context)->url().host().toString());
+    ASSERT_UNUSED(host, equal(host, downcast<Document>(context)->url().host().toString()));
 
     Vector<CookieListItem> deleted;
     Vector<CookieListItem> changed;
@@ -565,7 +565,7 @@ void CookieStore::cookiesAdded(const String& host, const Vector<Cookie>& cookies
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, CookieChangeEvent::create(eventNames().changeEvent, WTF::move(eventInit), CookieChangeEvent::IsTrusted::Yes));
 }
 
-void CookieStore::cookiesDeleted(const String& host, const Vector<Cookie>& cookies)
+void CookieStore::cookiesDeleted(StringImpl* host, const Vector<Cookie>& cookies)
 {
     ASSERT(m_hasChangeEventListener);
 
@@ -573,7 +573,7 @@ void CookieStore::cookiesDeleted(const String& host, const Vector<Cookie>& cooki
     if (!context)
         return;
 
-    ASSERT_UNUSED(host, host == downcast<Document>(context)->url().host().toString());
+    ASSERT_UNUSED(host, equal(host, downcast<Document>(context)->url().host().toString()));
 
     CookieChangeEventInit eventInit;
     eventInit.deleted = cookies.map([](auto cookie) {
@@ -599,7 +599,7 @@ void CookieStore::stop()
         cookieJar->removeChangeListener(m_host, *this);
 #endif
     m_hasChangeEventListener = false;
-    m_host = { };
+    m_host = nullptr;
     m_cookieJar = nullptr;
 }
 
@@ -635,7 +635,7 @@ void CookieStore::eventListenersDidChange()
     if (m_hasChangeEventListener) {
         auto host = document->url().host().toString();
         RefPtr page = document->page();
-        if (host.isEmpty() || !page) {
+        if (isEmpty(host) || !page) {
             m_hasChangeEventListener = false;
             return;
         }
@@ -647,7 +647,7 @@ void CookieStore::eventListenersDidChange()
     } else {
         if (RefPtr cookieJar = m_cookieJar)
             cookieJar->removeChangeListener(m_host, *this);
-        m_host = { };
+        m_host = nullptr;
         m_cookieJar = nullptr;
     }
 #endif

@@ -50,7 +50,7 @@ NavigationPrecommitController::NavigationPrecommitController(NavigateEvent& even
 NavigationPrecommitController::~NavigationPrecommitController() = default;
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigationprecommitcontroller-redirect
-ExceptionOr<void> NavigationPrecommitController::redirect(JSC::JSGlobalObject& globalObject, Document& document, const String& url, NavigationNavigateOptions&& options)
+ExceptionOr<void> NavigationPrecommitController::redirect(JSC::JSGlobalObject& globalObject, Document& document, StringImpl* url, NavigationNavigateOptions&& options)
 {
     Ref event = m_event;
 
@@ -60,18 +60,18 @@ ExceptionOr<void> NavigationPrecommitController::redirect(JSC::JSGlobalObject& g
         return checkResult;
 
     if (event->interceptionState() != InterceptionState::Intercepted)
-        return Exception { ExceptionCode::InvalidStateError, "Navigation has already been committed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Navigation has already been committed"_si };
 
     auto navigationType = event->navigationType();
     if (navigationType != NavigationNavigationType::Push && navigationType != NavigationNavigationType::Replace)
-        return Exception { ExceptionCode::InvalidStateError, "redirect() can only be called for push or replace navigations"_s };
+        return Exception { ExceptionCode::InvalidStateError, "redirect() can only be called for push or replace navigations"_si };
 
     URL destinationURL = document.parseURL(url);
     if (!destinationURL.isValid())
-        return Exception { ExceptionCode::SyntaxError, "Invalid URL"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid URL"_si };
 
     if (!Navigation::documentCanHaveURLRewritten(document, destinationURL))
-        return Exception { ExceptionCode::SecurityError, "The document cannot have its URL rewritten to the destination URL"_s };
+        return Exception { ExceptionCode::SecurityError, "The document cannot have its URL rewritten to the destination URL"_si };
 
     if (options.history == NavigationHistoryBehavior::Push || options.history == NavigationHistoryBehavior::Replace)
         event->setNavigationType(options.history == NavigationHistoryBehavior::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace);
@@ -79,7 +79,7 @@ ExceptionOr<void> NavigationPrecommitController::redirect(JSC::JSGlobalObject& g
     if (!options.state.isUndefined()) {
         RefPtr window = document.window();
         if (!window)
-            return Exception { ExceptionCode::InvalidStateError, "Invalid state"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Invalid state"_si };
 
         Ref navigation = window->navigation();
         auto serializedState = navigation->serializeState(options.state);
@@ -111,7 +111,7 @@ ExceptionOr<void> NavigationPrecommitController::addHandler(Document& document, 
         return checkResult;
 
     if (event->interceptionState() != InterceptionState::Intercepted)
-        return Exception { ExceptionCode::InvalidStateError, "Navigation has already been committed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Navigation has already been committed"_si };
 
     event->handlers().append(WTF::move(handler));
 

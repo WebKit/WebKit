@@ -250,7 +250,7 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     m_page->setIntrinsicDeviceScaleFactor(deviceScaleFactorForWindow(m_window));
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_page->setURLSchemeHandlerForScheme(RemoteInspectorProtocolHandler::create(*m_page), "inspector"_s);
+    m_page->setURLSchemeHandlerForScheme(RemoteInspectorProtocolHandler::create(*m_page), "inspector"_si);
 #endif
 
     // FIXME: Initializing the tooltip window here matches WebKit win, but seems like something
@@ -661,7 +661,7 @@ LRESULT WebView::onMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
     ::GetMenuItemInfo(hMenu, index, TRUE, &menuItemInfo);
 
-    String title(buffer.span().data(), menuItemInfo.cch);
+    RefPtr<StringImpl> title = StringImpl::create(buffer.span().data(), menuItemInfo.cch);
     ContextMenuAction action = static_cast<ContextMenuAction>(menuItemInfo.wID);
     bool enabled = !(menuItemInfo.fState & MFS_DISABLED);
     bool checked = menuItemInfo.fState & MFS_CHECKED;
@@ -901,11 +901,11 @@ void WebView::setCustomRepresentationZoomFactor(double)
 {
 }
 
-void WebView::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
+void WebView::findStringInCustomRepresentation(StringImpl*, FindOptions, unsigned)
 {
 }
 
-void WebView::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
+void WebView::countStringMatchesInCustomRepresentation(StringImpl*, FindOptions, unsigned)
 {
 }
 
@@ -927,11 +927,11 @@ void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)
     }
 }
 
-static Vector<wchar_t> truncatedString(const String& string)
+static Vector<wchar_t> truncatedString(StringImpl* string)
 {
     // Truncate tooltip texts because multiline mode of tooltip control does word-wrapping very slowly
     size_t maxLength = 1024;
-    auto buffer = string.wideCharacters();
+    auto buffer = wideCharacters(string);
     if (buffer.size() > maxLength) {
         buffer[maxLength - 4] = L'.';
         buffer[maxLength - 3] = L'.';
@@ -941,12 +941,12 @@ static Vector<wchar_t> truncatedString(const String& string)
     return buffer;
 }
 
-void WebView::setToolTip(const String& toolTip)
+void WebView::setToolTip(StringImpl* toolTip)
 {
     if (!m_toolTipWindow)
         return;
 
-    if (!toolTip.isEmpty()) {
+    if (!isEmpty(toolTip)) {
         TOOLINFO info { };
         info.cbSize = sizeof(info);
         info.uFlags = TTF_IDISHWND;
@@ -956,7 +956,7 @@ void WebView::setToolTip(const String& toolTip)
         ::SendMessage(m_toolTipWindow, TTM_UPDATETIPTEXT, 0, reinterpret_cast<LPARAM>(&info));
     }
 
-    ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !toolTip.isEmpty(), 0);
+    ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !isEmpty(toolTip), 0);
 }
 
 void WebView::setUsesOffscreenRendering(bool enabled)

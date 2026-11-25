@@ -89,14 +89,14 @@ void MediaList::setMediaQueries(MQ::MediaQueryList&& queries)
         rule->setMediaQueries(WTF::move(queries));
 }
 
-String MediaList::mediaText() const
+RefPtr<StringImpl> MediaList::mediaText() const
 {
     StringBuilder builder;
     MQ::serialize(builder, mediaQueries());
     return builder.toString();
 }
 
-void MediaList::setMediaText(const String& value)
+void MediaList::setMediaText(StringImpl* value)
 {
     setMediaQueries(MQ::MediaQueryParser::parse(value, strictCSSParserContext()));
 }
@@ -111,7 +111,7 @@ CSSStyleSheet* MediaList::parentStyleSheet() const
     return m_parentStyleSheet.get();
 }
 
-String MediaList::item(unsigned index) const
+RefPtr<StringImpl> MediaList::item(unsigned index) const
 {
     auto& queries = mediaQueries();
     if (index < queries.size()) {
@@ -122,7 +122,7 @@ String MediaList::item(unsigned index) const
     return { };
 }
 
-ExceptionOr<void> MediaList::deleteMedium(const String& value)
+ExceptionOr<void> MediaList::deleteMedium(StringImpl* value)
 {
     // https://drafts.csswg.org/cssom/#dom-medialist-deletemedium
     // The value is parsed as a single media query; bail unless parsing
@@ -139,7 +139,7 @@ ExceptionOr<void> MediaList::deleteMedium(const String& value)
     auto queryToRemove = serializeQuery(parsedQueries[0]);
     auto queries = mediaQueries();
     auto removedCount = queries.removeAllMatching([&](auto& query) {
-        return serializeQuery(query) == queryToRemove;
+        return equal(serializeQuery(query), queryToRemove);
     });
     if (!removedCount)
         return Exception { ExceptionCode::NotFoundError };
@@ -150,9 +150,9 @@ ExceptionOr<void> MediaList::deleteMedium(const String& value)
     return { };
 }
 
-void MediaList::appendMedium(const String& value)
+void MediaList::appendMedium(StringImpl* value)
 {
-    if (value.isEmpty())
+    if (isEmpty(value))
         return;
 
     // https://drafts.csswg.org/cssom/#dom-medialist-appendmedium
@@ -168,7 +168,7 @@ void MediaList::appendMedium(const String& value)
     bool alreadyPresent = queries.containsIf([&](auto& query) {
         StringBuilder existingQueryBuilder;
         MQ::serialize(existingQueryBuilder, query);
-        return existingQueryBuilder.toString() == newQueryText;
+        return equal(existingQueryBuilder.toString(), newQueryText);
     });
     if (alreadyPresent)
         return;

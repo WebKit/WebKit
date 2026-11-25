@@ -352,11 +352,11 @@ void Code::appendIonGraphPass(ASCIILiteral passName)
     // Right now, IonGraph cannot handle LIR visualization well: it is assuming MIR <-> LIR one on one, but B3/Air has ability to optimize and change Air after lowering from B3.
     // For now, we render Air as MIR too.
     auto pass = JSON::Object::create();
-    pass->setString("name"_s, makeString("Air: "_s, passName));
+    pass->setString("name"_si, makeString("Air: "_s, passName));
     {
         auto ionGraph = JSON::Object::create();
         auto ionBlocks = JSON::Array::create();
-        ionGraph->setArray("blocks"_s, ionBlocks);
+        ionGraph->setArray("blocks"_si, ionBlocks);
         unsigned globalIndex = 0;
 
         for (auto* block : *this) {
@@ -375,14 +375,14 @@ void Code::appendIonGraphPass(ASCIILiteral passName)
 
                 StringPrintStream stream;
                 inst.dump(stream);
-                instruction->setInteger("ptr"_s, index + 1);
-                instruction->setInteger("id"_s, index);
-                instruction->setArray("attributes"_s, JSON::Array::create());
-                instruction->setArray("inputs"_s, JSON::Array::create());
-                instruction->setString("opcode"_s, stream.toString());
-                instruction->setArray("uses"_s, JSON::Array::create());
-                instruction->setArray("memInputs"_s, JSON::Array::create());
-                instruction->setString("type"_s, ""_s);
+                instruction->setInteger("ptr"_si, index + 1);
+                instruction->setInteger("id"_si, index);
+                instruction->setArray("attributes"_si, JSON::Array::create());
+                instruction->setArray("inputs"_si, JSON::Array::create());
+                instruction->setString("opcode"_si, stream.toString());
+                instruction->setArray("uses"_si, JSON::Array::create());
+                instruction->setArray("memInputs"_si, JSON::Array::create());
+                instruction->setString("type"_si, ""_si);
 
                 instructions->pushObject(WTF::move(instruction));
             }
@@ -393,22 +393,22 @@ void Code::appendIonGraphPass(ASCIILiteral passName)
             for (auto successor : block->successors())
                 successors->pushInteger(successor.block()->index());
 
-            ionBlock->setInteger("ptr"_s, block->index() + 1);
-            ionBlock->setInteger("id"_s, block->index());
-            ionBlock->setInteger("loopDepth"_s, 0);
-            ionBlock->setArray("attributes"_s, JSON::Array::create());
-            ionBlock->setArray("predecessors"_s, WTF::move(predecessors));
-            ionBlock->setArray("successors"_s, WTF::move(successors));
-            ionBlock->setArray("instructions"_s, WTF::move(instructions));
+            ionBlock->setInteger("ptr"_si, block->index() + 1);
+            ionBlock->setInteger("id"_si, block->index());
+            ionBlock->setInteger("loopDepth"_si, 0);
+            ionBlock->setArray("attributes"_si, JSON::Array::create());
+            ionBlock->setArray("predecessors"_si, WTF::move(predecessors));
+            ionBlock->setArray("successors"_si, WTF::move(successors));
+            ionBlock->setArray("instructions"_si, WTF::move(instructions));
             ionBlocks->pushObject(ionBlock);
         }
 
-        pass->setObject("mir"_s, WTF::move(ionGraph)); // MIR stands for SpiderMonkey's middle-level IR.
+        pass->setObject("mir"_si, WTF::move(ionGraph)); // MIR stands for SpiderMonkey's middle-level IR.
     }
     {
         auto ionGraph = JSON::Object::create();
-        ionGraph->setArray("blocks"_s, JSON::Array::create());
-        pass->setObject("lir"_s, WTF::move(ionGraph)); // LIR stands for SpiderMonkey's low-level IR.
+        ionGraph->setArray("blocks"_si, JSON::Array::create());
+        pass->setObject("lir"_si, WTF::move(ionGraph)); // LIR stands for SpiderMonkey's low-level IR.
     }
     RefPtr { m_ionGraphPasses }->pushObject(pass);
 }

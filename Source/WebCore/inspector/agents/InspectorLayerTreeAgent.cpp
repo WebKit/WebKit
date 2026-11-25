@@ -38,7 +38,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorLayerTreeAgent);
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)
-    : InspectorAgentBase("LayerTree"_s, context)
+    : InspectorAgentBase("LayerTree"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::LayerTreeFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::LayerTreeBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_state(LayerTreeInspectionScope::Page)
@@ -136,12 +136,12 @@ Inspector::Protocol::DOM::NodeId InspectorLayerTreeAgent::idForNode(Node* node)
     return nodeId;
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> InspectorLayerTreeAgent::reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId& layerId)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> InspectorLayerTreeAgent::reasonsForCompositingLayer(StringImpl* layerId)
 {
     return m_state.reasonsForCompositingLayer(layerId);
 }
 
-Inspector::CommandResult<String> InspectorLayerTreeAgent::requestContent(const Inspector::Protocol::LayerTree::LayerId& layerId)
+Inspector::CommandResult<RefPtr<StringImpl>> InspectorLayerTreeAgent::requestContent(StringImpl* layerId)
 {
     return m_state.requestContent(layerId);
 }

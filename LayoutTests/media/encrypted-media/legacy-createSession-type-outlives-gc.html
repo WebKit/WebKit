@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/gc.js"></script>
+</head>
+<body>
+<script>
+description("Tests that WebKitMediaKeys.createSession() keeps its type string alive until the asynchronous permission request "
+    + "completes, even when the JavaScript string is garbage collected in the meantime. The key system string sent to the UI "
+    + "process for the permission request must also outlive the asynchronous request. Run with --guard-malloc to detect use-after-free.");
+
+window.jsTestIsAsync = true;
+
+function stringToUint8Array(string)
+{
+    return new Uint8Array(Array.from(string, (character) => character.charCodeAt(0)));
+}
+
+var mediaKeys;
+var sessions = [];
+var keyMessageCount = 0;
+var sessionCount = 4;
+
+function createSessionWithRuntimeType(index)
+{
+    // Build the strings at runtime so that they are not kept alive by the code block's constant pool.
+    let type = ["video", "mock"].join("/");
+    let session = mediaKeys.createSession(type, stringToUint8Array("mock" + index));
+    type = null;
+    return session;
+}
+
+function keyMessageReceived()
+{
+    if (++keyMessageCount < sessionCount)
+        return;
+    testPassed("Received a webkitkeymessage event for every session.");
+    finishJSTest();
+}
+
+if (window.internals)
+    internals.initializeMockCDM();
+
+mediaKeys = new WebKitMediaKeys(["com", "webcore", "mock"].join("."));
+for (let i = 0; i < sessionCount; ++i) {
+    let session = createSessionWithRuntimeType(i);
+    session.addEventListener("webkitkeymessage", keyMessageReceived);
+    session.addEventListener("webkitkeyerror", () => {
+        testFailed("Received a webkitkeyerror event.");
+        finishJSTest();
+    });
+    sessions.push(session);
+}
+
+// Collect the type strings before the permission requests complete.
+gc();
+gc();
+</script>
+</body>
+</html>

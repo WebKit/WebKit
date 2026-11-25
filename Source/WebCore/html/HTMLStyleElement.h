@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT bool disabled() const;
     WEBCORE_EXPORT void setDisabled(bool);
 
-    void dispatchPendingEvent(StyleEventSender*, const AtomString& eventType);
+    void dispatchPendingEvent(StyleEventSender*, AtomStringImpl* eventType);
     static void dispatchPendingLoadEvents(Page*);
 
     void finishParsingChildren() final;
@@ -58,7 +58,7 @@ public:
 private:
     HTMLStyleElement(const QualifiedName&, Document&, bool createdByParser);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
     void childrenChanged(const ChildChange&) final;

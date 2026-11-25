@@ -41,11 +41,11 @@ namespace WebCore {
 
 class RealtimeIncomingAudioSourceCocoa final : public RealtimeIncomingAudioSource {
 public:
-    NODELETE static Ref<RealtimeIncomingAudioSourceCocoa> create(Ref<webrtc::AudioTrackInterface>&&, String&&);
+    NODELETE static Ref<RealtimeIncomingAudioSourceCocoa> create(Ref<webrtc::AudioTrackInterface>&&, RefPtr<StringImpl>&&);
     ~RealtimeIncomingAudioSourceCocoa();
 
 private:
-    RealtimeIncomingAudioSourceCocoa(Ref<webrtc::AudioTrackInterface>&&, String&&);
+    RealtimeIncomingAudioSourceCocoa(Ref<webrtc::AudioTrackInterface>&&, RefPtr<StringImpl>&&);
 
     // RealtimeMediaSource API
     void startProducingData() final;

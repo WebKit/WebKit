@@ -94,9 +94,9 @@ private:
     void setBindGroup(uint32_t, std::optional<WebGPUBindGroupIdentifier>,
         std::optional<Vector<uint32_t>>&& dynamicOffsets);
 
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel);
     void popDebugGroup();
-    void insertDebugMarker(String&& markerLabel);
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel);
 
     void setViewport(float x, float y,
         float width, float height,
@@ -114,8 +114,8 @@ private:
     void executeBundles(Vector<WebGPURenderBundleIdentifier>&&);
     void end();
 
-    void makeInvalid(String&& error);
-    void setLabel(String&&);
+    void makeInvalid(RefPtr<StringImpl>&& error);
+    void setLabel(RefPtr<StringImpl>&&);
     void destruct();
 
     const Ref<::WebGPU::RenderPassEncoder> m_backing;

@@ -39,15 +39,15 @@ public:
     Type type() const final { return Type::Inline; }
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
-    String shorthandPropertySerialization(CSSPropertyID) const final;
-    RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final;
+    RefPtr<StringImpl> shorthandPropertySerialization(CSSPropertyID) const final;
+    RefPtr<CSSValue> customPropertyValue(AtomStringImpl* property) const final;
     NODELETE unsigned size() const final;
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
     void removeProperty(CSSPropertyID) final;
-    bool setShorthandProperty(CSSPropertyID, const String& value) final;
+    bool setShorthandProperty(CSSPropertyID, StringImpl* value) final;
     bool setProperty(CSSPropertyID, Ref<CSSValue>&&) final;
-    bool setCustomProperty(Document&, const AtomString& property, Ref<CSSSubstitutionValue>&&) final;
-    void removeCustomProperty(const AtomString& property) final;
+    bool setCustomProperty(Document&, AtomStringImpl* property, Ref<CSSSubstitutionValue>&&) final;
+    void removeCustomProperty(AtomStringImpl* property) final;
     void clear() final;
 
 private:

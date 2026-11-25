@@ -47,17 +47,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WindowEventLoop);
 
-NODELETE static MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>& windowEventLoopMap()
+NODELETE static MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, CheckedPtr<WindowEventLoop>>& windowEventLoopMap()
 {
     RELEASE_ASSERT(isMainThread());
-    static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>> map;
+    static NeverDestroyed<MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, CheckedPtr<WindowEventLoop>>> map;
     return map.get();
 }
 
-Ref<WindowEventLoop> WindowEventLoop::eventLoopForAgentCluster(const String& agentClusterID)
+Ref<WindowEventLoop> WindowEventLoop::eventLoopForAgentCluster(StringImpl* agentClusterID)
 {
-    if (agentClusterID.isEmpty())
-        return create({ });
+    if (isEmpty(agentClusterID))
+        return create(nullptr);
 
     auto addResult = windowEventLoopMap().add(agentClusterID, nullptr);
     if (addResult.isNewEntry) [[unlikely]] {
@@ -68,12 +68,12 @@ Ref<WindowEventLoop> WindowEventLoop::eventLoopForAgentCluster(const String& age
     return *addResult.iterator->value;
 }
 
-inline Ref<WindowEventLoop> WindowEventLoop::create(const String& agentClusterKey)
+inline Ref<WindowEventLoop> WindowEventLoop::create(StringImpl* agentClusterKey)
 {
     return adoptRef(*new WindowEventLoop(agentClusterKey));
 }
 
-inline WindowEventLoop::WindowEventLoop(const String& agentClusterKey)
+inline WindowEventLoop::WindowEventLoop(StringImpl* agentClusterKey)
     : m_agentClusterKey(agentClusterKey)
     , m_timer(*this, &WindowEventLoop::didReachTimeToRun)
     , m_idleTimer(*this, &WindowEventLoop::didFireIdleTimer)
@@ -83,7 +83,7 @@ inline WindowEventLoop::WindowEventLoop(const String& agentClusterKey)
 
 WindowEventLoop::~WindowEventLoop()
 {
-    if (m_agentClusterKey.isNull())
+    if (!m_agentClusterKey)
         return;
     auto didRemove = windowEventLoopMap().remove(m_agentClusterKey);
     RELEASE_ASSERT(didRemove);

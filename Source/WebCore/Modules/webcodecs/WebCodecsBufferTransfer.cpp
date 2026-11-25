@@ -49,10 +49,10 @@ ExceptionOr<void> WebCodecsTransferList::validate()
         ASSERT(!buffer->isShared());
 
         if (!m_buffers.add(buffer.ptr()).isNewEntry)
-            return Exception { ExceptionCode::DataCloneError, "Duplicate ArrayBuffer in transfer list"_s };
+            return Exception { ExceptionCode::DataCloneError, "Duplicate ArrayBuffer in transfer list"_si };
 
         if (buffer->isDetached())
-            return Exception { ExceptionCode::DataCloneError, "ArrayBuffer in transfer list is detached"_s };
+            return Exception { ExceptionCode::DataCloneError, "ArrayBuffer in transfer list is detached"_si };
 
         // A pinned buffer, such as one backing a WebAssembly.Memory, is silently copied rather
         // than detached by transferTo(), so it cannot be transferred.

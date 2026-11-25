@@ -85,7 +85,7 @@ public:
 
     // MediaPlayer Factory Methods
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String>& types);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types);
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
 
     using TrackIdentifier = AudioVideoRenderer::TrackIdentifier;
@@ -145,7 +145,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void initializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&);
+    void initializationDataEncountered(StringImpl*, RefPtr<ArrayBuffer>&&);
 #endif
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
@@ -177,7 +177,7 @@ public:
 
 private:
     // MediaPlayerPrivateInterface
-    void load(const String& url) override;
+    void load(StringImpl* url) override;
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override;
@@ -258,9 +258,9 @@ private:
 
     MediaPlayer::MovieLoadType movieLoadType() const override;
 
-    String engineDescription() const override;
+    RefPtr<StringImpl> engineDescription() const override;
 
-    String languageOfPrimaryAudioTrack() const override;
+    RefPtr<StringImpl> languageOfPrimaryAudioTrack() const override;
 
     size_t extraMemoryCost() const override;
 
@@ -298,10 +298,10 @@ private:
     void setShouldMaintainAspectRatio(bool) final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String defaultSpatialTrackingLabel() const final;
-    void setDefaultSpatialTrackingLabel(const String&) final;
-    String spatialTrackingLabel() const final;
-    void setSpatialTrackingLabel(const String&) final;
+    RefPtr<StringImpl> defaultSpatialTrackingLabel() const final;
+    void setDefaultSpatialTrackingLabel(StringImpl*) final;
+    RefPtr<StringImpl> spatialTrackingLabel() const final;
+    void setSpatialTrackingLabel(StringImpl*) final;
     void updateSpatialTrackingLabel();
 #endif
 
@@ -393,8 +393,8 @@ private:
     ProcessIdentity m_resourceOwner;
     LoadOptions m_loadOptions WTF_GUARDED_BY_CAPABILITY(mainThread);
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String m_defaultSpatialTrackingLabel;
-    String m_spatialTrackingLabel;
+    RefPtr<StringImpl> m_defaultSpatialTrackingLabel;
+    RefPtr<StringImpl> m_spatialTrackingLabel;
 #endif
 
     bool m_layerRequiresFlush WTF_GUARDED_BY_CAPABILITY(mainThread) { false };

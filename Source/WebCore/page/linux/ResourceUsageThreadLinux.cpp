@@ -120,7 +120,7 @@ void ResourceUsageThread::platformSaveStateBeforeStarting()
 }
 
 struct ThreadInfo {
-    std::optional<String> name;
+    std::optional<RefPtr<StringImpl>> name;
     std::optional<float> cpuUsage;
     unsigned long long previousUtime { 0 };
     unsigned long long previousStime { 0 };
@@ -135,8 +135,8 @@ static HashMap<pid_t, ThreadInfo>& threadInfoMap()
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
 {
-    String path = makeString("/proc/self/task/"_s, id, "/stat"_s);
-    int fd = posixOpen(path.utf8(), O_RDONLY);
+    RefPtr<StringImpl> path = makeString("/proc/self/task/"_s, id, "/stat"_s);
+    int fd = posixOpen(utf8(path), O_RDONLY);
     if (fd < 0)
         return false;
 
@@ -176,7 +176,7 @@ static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
         if (!name)
             return false;
         name++;
-        info.name = String::fromUTF8({ name, position });
+        info.name = StringImpl::fromUTF8({ name, position });
     }
 
     // Move after state.
@@ -254,7 +254,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         }
     }
 
-    HashMap<pid_t, String> knownWorkerThreads;
+    HashMap<pid_t, RefPtr<StringImpl>> knownWorkerThreads;
     {
         for (auto& thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
             // Ignore worker threads that have not been fully started yet.
@@ -262,7 +262,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
                 continue;
 
             if (auto id = thread.thread()->id())
-                knownWorkerThreads.set(id, thread.inspectorIdentifier().isolatedCopy());
+                knownWorkerThreads.set(id, isolatedCopy(thread.inspectorIdentifier()));
         }
     }
 
@@ -276,12 +276,12 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         return false;
     };
 
-    auto isWebKitThread = [&](pid_t id, const String& name) -> bool {
+    auto isWebKitThread = [&](pid_t id, StringImpl* name) -> bool {
         if (knownWebKitThreads.contains(id))
             return true;
 
         // The bmalloc scavenger thread is below WTF. Detect it by its name.
-        if (name == "BMScavenger"_s)
+        if (equal(name, "BMScavenger"_s))
             return true;
 
         return false;
@@ -302,9 +302,9 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         if (getpid() == id)
             data.cpuThreads.append(ThreadCPUInfo { "Main Thread"_s, { }, cpuUsage, ThreadCPUInfo::Type::Main});
         else {
-            String threadIdentifier = knownWorkerThreads.get(id);
-            bool isWorkerThread = !threadIdentifier.isEmpty();
-            String name = it.value.name.value_or(emptyString());
+            RefPtr<StringImpl> threadIdentifier = knownWorkerThreads.get(id);
+            bool isWorkerThread = !isEmpty(threadIdentifier);
+            RefPtr<StringImpl> name = it.value.name.value_or(emptyString());
             ThreadCPUInfo::Type type = (isWorkerThread || isWebKitThread(id, name)) ? ThreadCPUInfo::Type::WebKit : ThreadCPUInfo::Type::Unknown;
             data.cpuThreads.append(ThreadCPUInfo { name, threadIdentifier, cpuUsage, type });
         }

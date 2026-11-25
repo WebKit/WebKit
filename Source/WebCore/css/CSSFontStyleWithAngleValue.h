@@ -39,7 +39,7 @@ public:
 
     const ObliqueAngle& obliqueAngle() const LIFETIME_BOUND { return m_obliqueAngle; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSFontStyleWithAngleValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 

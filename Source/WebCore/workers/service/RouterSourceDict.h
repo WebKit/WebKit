@@ -30,10 +30,10 @@
 namespace WebCore {
 
 struct RouterSourceDict {
-    String cacheName;
+    RefPtr<StringImpl> cacheName;
 
-    RouterSourceDict isolatedCopy() && { return { WTF::move(cacheName).isolatedCopy() }; }
-    RouterSourceDict isolatedCopy() const & { return { cacheName.isolatedCopy() }; }
+    RouterSourceDict isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(cacheName)) }; }
+    RouterSourceDict isolatedCopy() const & { return { WTF::isolatedCopy(cacheName) }; }
 };
 
 } // namespace WebCore

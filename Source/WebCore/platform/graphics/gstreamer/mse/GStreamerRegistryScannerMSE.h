@@ -32,7 +32,7 @@ void teardownGStreamerRegistryScannerMSE();
 class GStreamerRegistryScannerMSE : public GStreamerRegistryScanner {
 public:
     static GStreamerRegistryScannerMSE& singleton();
-    static void getSupportedDecodingTypes(HashSet<String>&);
+    static void getSupportedDecodingTypes(HashSet<RefPtr<StringImpl>>&);
     GStreamerRegistryScannerMSE();
 };
 

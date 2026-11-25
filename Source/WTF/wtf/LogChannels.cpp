@@ -32,7 +32,7 @@ namespace WTF {
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-bool LogChannels::isLogChannelEnabled(const String& name)
+bool LogChannels::isLogChannelEnabled(StringImpl* name)
 {
     WTFLogChannel* channel = getLogChannel(name);
     if (!channel)
@@ -40,7 +40,7 @@ bool LogChannels::isLogChannelEnabled(const String& name)
     return channel->state != WTFLogChannelState::Off;
 }
 
-void LogChannels::setLogChannelToAccumulate(const String& name)
+void LogChannels::setLogChannelToAccumulate(StringImpl* name)
 {
     WTFLogChannel* channel = getLogChannel(name);
     if (!channel)
@@ -61,18 +61,18 @@ void LogChannels::clearAllLogChannelsToAccumulate()
     m_logChannelsNeedInitialization = true;
 }
 
-void LogChannels::initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
+void LogChannels::initializeLogChannelsIfNecessary(std::optional<RefPtr<StringImpl>> logChannelString)
 {
     if (!m_logChannelsNeedInitialization && !logChannelString)
         return;
 
     m_logChannelsNeedInitialization = false;
 
-    String enabledChannelsString = logChannelString ? logChannelString.value() : logLevelString();
+    RefPtr<StringImpl> enabledChannelsString = logChannelString ? logChannelString.value() : logLevelString();
     WTFInitializeLogChannelStatesFromString(m_logChannels.mutableSpan().data(), m_logChannels.size(), enabledChannelsString);
 }
 
-WTFLogChannel* LogChannels::getLogChannel(const String& name)
+WTFLogChannel* LogChannels::getLogChannel(StringImpl* name)
 {
     return WTFLogChannelByName(m_logChannels.mutableSpan().data(), m_logChannels.size(), name);
 }

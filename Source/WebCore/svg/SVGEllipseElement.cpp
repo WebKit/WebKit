@@ -57,7 +57,7 @@ Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGEllipseElement(tagName, document));
 }
 
-void SVGEllipseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGEllipseElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
 

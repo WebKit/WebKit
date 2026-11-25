@@ -41,11 +41,11 @@
 
 namespace WebCore::StorageUtilities {
 
-std::optional<ClientOrigin> readOriginFromFile(const String& filePath)
+std::optional<ClientOrigin> readOriginFromFile(StringImpl* filePath)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (filePath.isEmpty() || !FileSystem::fileExists(filePath))
+    if (isEmpty(filePath) || !FileSystem::fileExists(filePath))
         return std::nullopt;
 
     auto originContent = FileSystem::readEntireFile(filePath);
@@ -58,16 +58,16 @@ std::optional<ClientOrigin> readOriginFromFile(const String& filePath)
     return origin;
 }
 
-bool writeOriginToFile(const String& filePath, const ClientOrigin& origin)
+bool writeOriginToFile(StringImpl* filePath, const ClientOrigin& origin)
 {
-    if (filePath.isEmpty() || FileSystem::fileExists(filePath))
+    if (isEmpty(filePath) || FileSystem::fileExists(filePath))
         return false;
 
     FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
     auto originFileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::ReadWrite);
 
     if (!originFileHandle) {
-        LOG_ERROR("writeOriginToFile: Failed to open origin file '%s'", filePath.utf8());
+        LOG_ERROR("writeOriginToFile: Failed to open origin file '%s'", utf8(filePath));
         return false;
     }
 
@@ -77,10 +77,10 @@ bool writeOriginToFile(const String& filePath, const ClientOrigin& origin)
     return true;
 }
 
-String encodeSecurityOriginForFileName(FileSystem::Salt salt, const SecurityOriginData& origin)
+RefPtr<StringImpl> encodeSecurityOriginForFileName(FileSystem::Salt salt, const SecurityOriginData& origin)
 {
     auto crypto = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
-    auto originString = origin.toString().utf8();
+    auto originString = utf8(origin.toString());
     crypto->addBytes(std::as_bytes(originString.span()));
     crypto->addBytes(salt);
     return base64URLEncodeToString(crypto->computeHash());

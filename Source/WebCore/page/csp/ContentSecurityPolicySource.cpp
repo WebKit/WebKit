@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicySource);
 
-ContentSecurityPolicySource::ContentSecurityPolicySource(const ContentSecurityPolicy& policy, const String& scheme, const String& host, std::optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard, IsSelfSource isSelfSource)
+ContentSecurityPolicySource::ContentSecurityPolicySource(const ContentSecurityPolicy& policy, StringImpl* scheme, StringImpl* host, std::optional<uint16_t> port, StringImpl* path, bool hostHasWildcard, bool portHasWildcard, IsSelfSource isSelfSource)
     : m_policy(policy)
     , m_scheme(scheme)
     , m_host(host)
@@ -64,7 +64,7 @@ bool ContentSecurityPolicySource::matches(const URL& url, bool didReceiveRedirec
 SchemeMatchResult ContentSecurityPolicySource::schemeMatches(const URL& url) const
 {
     // https://www.w3.org/TR/CSP3/#match-schemes.
-    const auto& scheme = m_scheme.isEmpty() ? m_policy->selfProtocol() : m_scheme;
+    const auto& scheme = isEmpty(m_scheme) ? m_policy->selfProtocol() : m_scheme;
     auto urlScheme = url.protocol();
 
     // Step 1.1: A matches B.
@@ -72,11 +72,11 @@ SchemeMatchResult ContentSecurityPolicySource::schemeMatches(const URL& url) con
         return SchemeMatchResult::Match;
 
     // Step 1.2: A is "http" and B is "https".
-    if (scheme == "http"_s && urlScheme == "https"_s)
+    if (equal(scheme, "http"_s) && urlScheme == "https"_s)
         return SchemeMatchResult::InsecureUpgradeMatch;
 
     // Step 1.3: A is "ws" and B is "wss", "http", or "https".
-    if (scheme == "ws"_s) {
+    if (equal(scheme, "ws"_s)) {
         if (urlScheme == "wss"_s || urlScheme == "https"_s)
             return SchemeMatchResult::InsecureUpgradeMatch;
         if (urlScheme == "http"_s)
@@ -84,17 +84,17 @@ SchemeMatchResult ContentSecurityPolicySource::schemeMatches(const URL& url) con
     }
 
     // Step 1.4: A is "wss" and B is "https".
-    if (scheme == "wss"_s && urlScheme == "https"_s)
+    if (equal(scheme, "wss"_s) && urlScheme == "https"_s)
         return SchemeMatchResult::Match;
 
     // self-sources can always upgrade to secure protocols and side-grade insecure protocols. (§6.7.2.8 step 4 NOTE)
-    if (m_isSelfSource && !scheme.isEmpty()) {
+    if (m_isSelfSource && !isEmpty(scheme)) {
         if (urlScheme == "https"_s || urlScheme == "wss"_s) {
-            if (scheme == "http"_s || scheme == "ws"_s)
+            if (equal(scheme, "http"_s) || equal(scheme, "ws"_s))
                 return SchemeMatchResult::InsecureUpgradeMatch;
             return SchemeMatchResult::Match;
         }
-        if (scheme == "http"_s && urlScheme == "ws"_s)
+        if (equal(scheme, "http"_s) && urlScheme == "ws"_s)
             return SchemeMatchResult::Match;
     }
 
@@ -102,10 +102,10 @@ SchemeMatchResult ContentSecurityPolicySource::schemeMatches(const URL& url) con
     return SchemeMatchResult::NoMatch;
 }
 
-NODELETE static bool wildcardMatches(StringView host, const String& hostWithWildcard)
+NODELETE static bool wildcardMatches(StringView host, StringImpl* hostWithWildcard)
 {
     auto hostLength = host.length();
-    auto hostWithWildcardLength = hostWithWildcard.length();
+    auto hostWithWildcardLength = length(hostWithWildcard);
     return host.endsWithIgnoringASCIICase(hostWithWildcard)
         && hostLength > hostWithWildcardLength
         && host[hostLength - hostWithWildcardLength - 1] == '.';
@@ -115,7 +115,7 @@ bool ContentSecurityPolicySource::hostMatches(const URL& url) const
 {
     auto host = url.host();
     if (m_hostHasWildcard) {
-        if (m_host.isEmpty())
+        if (isEmpty(m_host))
             return true;
         return wildcardMatches(host, m_host);
     }
@@ -129,21 +129,21 @@ bool ContentSecurityPolicySource::pathMatches(const URL& url) const
     // Path B is the URL's path being checked against the policy.
 
     // Step 1: empty path automatically matches.
-    if (m_path.isEmpty())
+    if (isEmpty(m_path))
         return true;
 
     auto urlPath = url.path();
 
     // Step 2: "/" matches empty path.
-    if (m_path == "/"_s && urlPath.isEmpty())
+    if (equal(m_path, "/"_s) && urlPath.isEmpty())
         return true;
 
     // Step 3: directory match if path A ends with '/'.
-    bool exactMatch = !m_path.endsWith('/');
+    bool exactMatch = !endsWith(m_path, '/');
 
     // Step 4: strictly split both on '/'.
-    auto pathListA = m_path.splitAllowingEmptyEntries('/');
-    auto pathListB = urlPath.toString().splitAllowingEmptyEntries('/');
+    auto pathListA = splitAllowingEmptyEntries(m_path, '/');
+    auto pathListB = splitAllowingEmptyEntries(urlPath.toString(), '/');
 
     // Step 5: path A must not have more segments than path B.
     if (pathListA.size() > pathListB.size())
@@ -155,13 +155,13 @@ bool ContentSecurityPolicySource::pathMatches(const URL& url) const
 
     // Step 7: for directory match, remove trailing empty segment from A.
     if (!exactMatch) {
-        ASSERT(pathListA.last().isEmpty());
+        ASSERT(isEmpty(pathListA.last()));
         pathListA.removeLast();
     }
 
     // Step 8: compare each segment after percent-decoding.
     for (unsigned i = 0; i < pathListA.size(); ++i) {
-        if (PAL::decodeURLEscapeSequences(pathListA[i]) != PAL::decodeURLEscapeSequences(pathListB[i]))
+        if (!equal(PAL::decodeURLEscapeSequences(pathListA[i]), PAL::decodeURLEscapeSequences(pathListB[i])))
             return false;
     }
 
@@ -211,7 +211,7 @@ bool ContentSecurityPolicySource::portMatches(const URL& url, ShouldUpgradePorts
 
 bool ContentSecurityPolicySource::isSchemeOnly() const
 {
-    return m_host.isEmpty() && !m_hostHasWildcard;
+    return isEmpty(m_host) && !m_hostHasWildcard;
 }
 
 ContentSecurityPolicySource::operator SecurityOriginData() const

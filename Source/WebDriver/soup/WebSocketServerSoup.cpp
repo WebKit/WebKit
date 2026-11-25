@@ -42,19 +42,19 @@
 
 namespace WebDriver {
 
-static bool soupServerListen(SoupServer* server, const String& host, unsigned port, GError** error)
+static bool soupServerListen(SoupServer* server, StringImpl* host, unsigned port, GError** error)
 {
     static const auto options = static_cast<SoupServerListenOptions>(0);
 
-    if (!host || host == "local"_s)
+    if (!host || equal(host, "local"_s))
         return soup_server_listen_local(server, port, options, error);
 
-    if (host == "all"_s)
+    if (equal(host, "all"_s))
         return soup_server_listen_all(server, port, options, error);
 
-    GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(host.utf8().legacyCStringPointer(), port));
+    GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(utf8(host).legacyCStringPointer(), port));
     if (!address) {
-        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", host.utf8());
+        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", utf8(host));
         return false;
     }
 
@@ -67,15 +67,15 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
 
     // Setting a status here prevents libsoup from upgrading the connection.
     auto* requestHeaders = soup_server_message_get_request_headers(message);
-    auto hostHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Host"));
-    auto originHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Origin"));
-    auto result = webSocketServer->messageHandler().validateHandshakeHeaders(hostHeader, originHeader);
+    auto hostHeader = StringImpl::fromLatin1(soup_message_headers_get_one(requestHeaders, "Host"));
+    auto originHeader = StringImpl::fromLatin1(soup_message_headers_get_one(requestHeaders, "Origin"));
+    auto result = webSocketServer->messageHandler().validateHandshakeHeaders(hostHeader.get(), originHeader.get());
     if (!result) {
-        RELEASE_LOG_ERROR(WebDriverBiDi, "Rejected WebSocket handshake: %s", result.error().utf8());
-        auto response = HTTPRequestHandler::rejectedRequestResponse(result.error());
+        RELEASE_LOG_ERROR(WebDriverBiDi, "Rejected WebSocket handshake: %s", utf8(result.error()));
+        auto response = HTTPRequestHandler::rejectedRequestResponse(result.error().get());
         auto responseCharacters = byteCast<char>(response.data.span());
         soup_server_message_set_status(message, response.statusCode, nullptr);
-        soup_server_message_set_response(message, response.contentType.utf8().legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
+        soup_server_message_set_response(message, utf8(response.contentType).legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
         return;
     }
 
@@ -86,8 +86,8 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
     GRefPtr<SoupServerMessage> protectedMessage = message;
     auto* requestBody = soup_server_message_get_request_body(message);
     HTTPRequestHandler::Request handshakeMessage = {
-        String::fromUTF8(soup_server_message_get_method(message)),
-        String::fromUTF8(path),
+        StringImpl::fromUTF8(soup_server_message_get_method(message)),
+        StringImpl::fromUTF8(path),
         requestBody->data,
         static_cast<size_t>(requestBody->length)
     };
@@ -95,11 +95,11 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
     if (webSocketServer->messageHandler().acceptHandshake(WTF::move(handshakeMessage))) // Follow with handshake procedure
         return;
 
-    HTTPRequestHandler::Response errorResponse = { 503, "Service Unavailable"_s, "text/plain"_s };
+    HTTPRequestHandler::Response errorResponse = { 503, "Service Unavailable"_s, "text/plain"_si };
     RELEASE_LOG(WebDriverBiDi, "Error during handshake, sending error response: %s", errorResponse.data);
     soup_server_message_set_status(message, errorResponse.statusCode, nullptr);
     auto* responseHeaders = soup_server_message_get_response_headers(message);
-    soup_message_headers_append(responseHeaders, "Content-Type", errorResponse.contentType.utf8().legacyCStringPointer());
+    soup_message_headers_append(responseHeaders, "Content-Type", utf8(errorResponse.contentType).legacyCStringPointer());
     soup_message_headers_append(responseHeaders, "Cache-Control", "no-cache");
     auto* responseBody = soup_server_message_get_response_body(message);
     soup_message_body_append(responseBody, SOUP_MEMORY_COPY, errorResponse.data.data(), errorResponse.data.length());
@@ -110,7 +110,7 @@ static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebs
     // https://w3c.github.io/webdriver-bidi/#handle-an-incoming-message
     if (messageType != SOUP_WEBSOCKET_DATA_TEXT) {
         RELEASE_LOG(WebDriverBiDi, "websocket message handler received non-text message. error return");
-        auto errorReply = WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, { "Non-text message received"_s });
+        auto errorReply = WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, { "Non-text message received"_si });
         GRefPtr rawMessage = gBytesNew(errorReply.payload.span());
         soup_websocket_connection_send_message(connection, SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
         return;
@@ -138,7 +138,7 @@ static void handleWebSocketConnection(SoupServer*, SoupServerMessage*, const cha
     if ("/session"_s == path)
         webSocketServer->addStaticConnection({ connection });
     else {
-        auto sessionId = webSocketServer->getSessionID(String::fromLatin1(path));
+        auto sessionId = webSocketServer->getSessionID(StringImpl::fromLatin1(path).get());
         auto connectionForKey = WebSocketMessageHandler::Connection(connection);
         webSocketServer->addConnection({ connection }, sessionId);
     }
@@ -151,7 +151,7 @@ static void handleWebSocketConnection(SoupServer*, SoupServerMessage*, const cha
     g_signal_connect(connection, "message", G_CALLBACK(handleWebSocketMessage), webSocketServer);
 }
 
-std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
+std::optional<RefPtr<StringImpl>> WebSocketServer::listen(StringImpl* host, unsigned port)
 {
     m_soupServer = adoptGRef(soup_server_new("server-header", "WebKitWebDriver-WSS", nullptr));
     GUniqueOutPtr<GError> error;
@@ -183,19 +183,19 @@ std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
 
     // "/session" is the default resource to start bidi-only sessions
     m_listener = WebSocketListener::create(
-        host.isNull() ? "localhost"_s : host,
+        host ? RefPtr { host } : "localhost"_si,
         boundPort,
         false,
-        { "/session"_s }
+        { "/session"_si }
     );
-    return getWebSocketURL(m_listener, nullString());
+    return getWebSocketURL(m_listener, nullptr);
 }
 
-void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection, const String& message)
+void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection, StringImpl* message)
 {
     ASSERT(connection);
-    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8());
-    GRefPtr rawMessage = gBytesNew(message.utf8().span());
+    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", utf8(message));
+    GRefPtr rawMessage = gBytesNew(utf8(message).span());
     soup_websocket_connection_send_message(connection.get(), SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
 }
 
@@ -214,7 +214,7 @@ void WebSocketServer::disconnect()
     m_soupServer = nullptr;
 }
 
-void WebSocketServer::disconnectSession(const String& sessionId)
+void WebSocketServer::disconnectSession(StringImpl* sessionId)
 {
     auto connection = this->connection(sessionId);
     if (!connection || !connection->get())

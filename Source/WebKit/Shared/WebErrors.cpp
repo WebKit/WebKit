@@ -45,7 +45,7 @@ ResourceError blockedError(const ResourceRequest& request)
 
 bool isBlockedError(const ResourceError& error)
 {
-    return error.domain() == API::Error::webKitPolicyErrorDomain() && error.errorCode() == API::Error::Policy::CannotUseRestrictedPort;
+    return equal(error.domain(), API::Error::webKitPolicyErrorDomain()) && error.errorCode() == API::Error::Policy::CannotUseRestrictedPort;
 }
 
 ResourceError blockedByContentBlockerError(const ResourceRequest& request)
@@ -70,12 +70,12 @@ ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 
 ResourceError ftpDisabledError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainWebKitInternal, 0, request.url(), "FTP URLs are disabled"_s, ResourceError::Type::AccessControl);
+    return ResourceError(StringImpl::create(errorDomainWebKitInternal).ptr(), 0, request.url(), "FTP URLs are disabled"_si, ResourceError::Type::AccessControl);
 }
 
 ResourceError failedCustomProtocolSyncLoad(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainWebKitInternal, 0, request.url(), WEB_UI_STRING("Error handling synchronous load with custom protocol", "Custom protocol synchronous load failure description"));
+    return ResourceError(StringImpl::create(errorDomainWebKitInternal).ptr(), 0, request.url(), WEB_UI_STRING("Error handling synchronous load with custom protocol", "Custom protocol synchronous load failure description"));
 }
 
 #if ENABLE(CONTENT_FILTERING)
@@ -86,7 +86,7 @@ ResourceError blockedByContentFilterError(const ResourceRequest& request)
 
 bool isBlockedByContentFilterError(const WebCore::ResourceError& error)
 {
-    return error.domain() == API::Error::webKitPolicyErrorDomain() && error.errorCode() == API::Error::Policy::FrameLoadBlockedByContentFilter;
+    return equal(error.domain(), API::Error::webKitPolicyErrorDomain()) && error.errorCode() == API::Error::Policy::FrameLoadBlockedByContentFilter;
 }
 
 #endif
@@ -119,7 +119,7 @@ ResourceError decodeError(const URL&)
 
 ResourceError imageDataExceedsMaximumSizeError(const URL& url)
 {
-    return { errorDomainWebKitInternal, 0, url, "Image data exceeds maximum size"_s };
+    return { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, url, "Image data exceeds maximum size"_si };
 }
 #endif
 
@@ -135,7 +135,7 @@ ResourceError httpNavigationWithHTTPSOnlyError(const ResourceRequest& request)
 
 bool isHttpNavigationWithHTTPSOnlyError(const WebCore::ResourceError& error)
 {
-    return error.domain() == API::Error::webKitNetworkErrorDomain() && error.errorCode() == API::Error::Network::HTTPNavigationWithHTTPSOnlyError;
+    return equal(error.domain(), API::Error::webKitNetworkErrorDomain()) && error.errorCode() == API::Error::Network::HTTPNavigationWithHTTPSOnlyError;
 }
 
 } // namespace WebKit

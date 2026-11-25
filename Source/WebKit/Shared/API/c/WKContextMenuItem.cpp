@@ -110,7 +110,7 @@ WKContextMenuItemType WKContextMenuItemGetType(WKContextMenuItemRef itemRef)
 WKStringRef WKContextMenuItemCopyTitle(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return WebKit::toCopiedAPI(WebKit::toImpl(itemRef)->data().title().impl());
+    return WebKit::toCopiedAPI(WebKit::toImpl(itemRef)->data().title().get());
 #else
     UNUSED_PARAM(itemRef);
     return 0;

@@ -62,7 +62,7 @@ struct NavigationActionData {
     std::optional<WTF::UUID> userGestureAuthorizationToken;
     bool canHandleRequest { false };
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
-    WTF::String downloadAttribute;
+    RefPtr<StringImpl> downloadAttribute;
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
     WebCore::ResourceResponse redirectResponse;
     bool isRequestFromClientOrUserInput { false };
@@ -72,7 +72,7 @@ struct NavigationActionData {
     WebCore::NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior { WebCore::NavigationUpgradeToHTTPSBehavior::BasedOnPolicy };
     bool isInitialFrameSrcLoad { false };
     bool isContentRuleListRedirect { false };
-    String openedMainFrameName;
+    RefPtr<StringImpl> openedMainFrameName;
     WebCore::RegistrableDomain openedByScriptDomain;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
     std::optional<WebCore::BackForwardItemIdentifier> sourceBackForwardItemIdentifier;
@@ -80,7 +80,7 @@ struct NavigationActionData {
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     WebCore::NavigationHistoryBehavior navigationHistoryBehavior { WebCore::NavigationHistoryBehavior::Auto };
     WebCore::ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded { WebCore::ReplaceIfNotCompletelyLoaded::No };
-    WTF::String clientRedirectSourceForHistory;
+    RefPtr<StringImpl> clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
     WebCore::ReferrerPolicy effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
@@ -99,7 +99,7 @@ struct NavigationActionData {
     // very large URL twice. Resolve via originalRequestOrFallback() / fall back to `request`.
     std::optional<WebCore::ResourceRequest> originalRequest;
     WebCore::ResourceRequest request;
-    String invalidURLString;
+    RefPtr<StringImpl> invalidURLString;
     std::optional<WebCore::NavigationRequester> requester;
     Markable<WebCore::PendingNavigateEventIdentifier> pendingNavigateEventID;
 

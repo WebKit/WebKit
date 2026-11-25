@@ -146,12 +146,12 @@ FontCache::FontCache()
 
 FontCache::~FontCache() = default;
 
-ASCIILiteral FontCache::alternateFamilyName(const String& familyName)
+ASCIILiteral FontCache::alternateFamilyName(StringImpl* familyName)
 {
     if (auto platformSpecificAlternate = platformAlternateFamilyName(familyName))
         return platformSpecificAlternate;
 
-    switch (familyName.length()) {
+    switch (length(familyName)) {
     case 5:
         if (equalLettersIgnoringASCIICase(familyName, "arial"_s))
             return "Helvetica"_s;
@@ -186,7 +186,7 @@ ASCIILiteral FontCache::alternateFamilyName(const String& familyName)
     return { };
 }
 
-FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontDescription, StringImpl* passedFamilyName, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
 #if PLATFORM(IOS_FAMILY)
     Locker locker { m_fontLock };
@@ -196,9 +196,9 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
     // Leading "@" in the font name enables Windows vertical flow flag for the font.
     // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
     // IE disregards "@" regardless of the orientation, so we follow the behavior.
-    auto familyName = StringView(passedFamilyName).substring(passedFamilyName[0] == '@' ? 1 : 0).toAtomString();
+    auto familyName = StringView(passedFamilyName).substring(codeUnitAt(passedFamilyName, 0) == '@' ? 1 : 0).toAtomString();
 #else
-    AtomString familyName { passedFamilyName };
+    RefPtr<AtomStringImpl> familyName { AtomStringImpl::add(passedFamilyName) };
 #endif
 
     static std::once_flag onceFlag;
@@ -216,7 +216,7 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
             // We were unable to find a font. We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc. Try looking up the font under the aliased name.
             if (auto alternateName = alternateFamilyName(familyName)) {
-                auto* alternateData = cachedFontPlatformData(fontDescription, alternateName, fontCreationContext, options | FontLookupOptions::ExactFamilyNameMatch);
+                auto* alternateData = cachedFontPlatformData(fontDescription, StringImpl::create(alternateName).ptr(), fontCreationContext, options | FontLookupOptions::ExactFamilyNameMatch);
                 // Look up the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to cachedFontPlatformData().
                 it = m_fontDataCaches->platformData.find(key);
@@ -241,7 +241,7 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, StringImpl* family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(0_s);
@@ -454,15 +454,15 @@ void FontCache::releaseCriticalMemoryInAllFontCaches()
     });
 }
 
-bool FontCache::useBackslashAsYenSignForFamily(const AtomString& family)
+bool FontCache::useBackslashAsYenSignForFamily(AtomStringImpl* family)
 {
-    if (family.isEmpty())
+    if (isEmpty(family))
         return false;
 
     if (m_familiesUsingBackslashAsYenSign.isEmpty()) {
         auto add = [&] (ASCIILiteral name, std::initializer_list<char16_t> unicodeName) {
-            m_familiesUsingBackslashAsYenSign.add(AtomString { name });
-            m_familiesUsingBackslashAsYenSign.add(AtomString(std::span { unicodeName }));
+            m_familiesUsingBackslashAsYenSign.add(AtomStringImpl::add(name));
+            m_familiesUsingBackslashAsYenSign.add(AtomStringImpl::add(std::span { unicodeName }));
         };
         add("MS PGothic"_s, { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x30B4, 0x30B7, 0x30C3, 0x30AF });
         add("MS PMincho"_s, { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x660E, 0x671D });
@@ -489,7 +489,7 @@ void FontCache::prewarm(PrewarmInformation&&)
 {
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription&, const String&)
+RefPtr<Font> FontCache::similarFont(const FontDescription&, StringImpl*)
 {
     return nullptr;
 }

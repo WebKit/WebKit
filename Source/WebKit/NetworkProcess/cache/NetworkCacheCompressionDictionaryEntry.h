@@ -77,8 +77,8 @@ public:
     };
 
     struct Info {
-        String match;
-        String id;
+        RefPtr<StringImpl> match;
+        RefPtr<StringImpl> id;
         DestinationSet matchDest;
         WallTime expirationTime;
     };
@@ -106,6 +106,6 @@ private:
     mutable RefPtr<WebCore::SharedBuffer> m_buffer;
 };
 
-std::optional<WebCore::FetchOptions::Destination> parseFetchDestination(const String&);
+std::optional<WebCore::FetchOptions::Destination> parseFetchDestination(StringImpl*);
 
 }

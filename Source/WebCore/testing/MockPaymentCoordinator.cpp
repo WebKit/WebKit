@@ -62,18 +62,18 @@ Ref<MockPaymentCoordinator> MockPaymentCoordinator::create(Page& page)
 MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     : m_page { page }
 {
-    m_availablePaymentNetworks.add("amex"_s);
-    m_availablePaymentNetworks.add("carteBancaire"_s);
-    m_availablePaymentNetworks.add("chinaUnionPay"_s);
-    m_availablePaymentNetworks.add("discover"_s);
-    m_availablePaymentNetworks.add("interac"_s);
-    m_availablePaymentNetworks.add("jcb"_s);
-    m_availablePaymentNetworks.add("masterCard"_s);
-    m_availablePaymentNetworks.add("privateLabel"_s);
-    m_availablePaymentNetworks.add("visa"_s);
+    m_availablePaymentNetworks.add("amex"_si);
+    m_availablePaymentNetworks.add("carteBancaire"_si);
+    m_availablePaymentNetworks.add("chinaUnionPay"_si);
+    m_availablePaymentNetworks.add("discover"_si);
+    m_availablePaymentNetworks.add("interac"_si);
+    m_availablePaymentNetworks.add("jcb"_si);
+    m_availablePaymentNetworks.add("masterCard"_si);
+    m_availablePaymentNetworks.add("privateLabel"_si);
+    m_availablePaymentNetworks.add("visa"_si);
 }
 
-std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork) const
+std::optional<RefPtr<StringImpl>> MockPaymentCoordinator::validatedPaymentNetwork(StringImpl* paymentNetwork) const
 {
     auto result = m_availablePaymentNetworks.find(paymentNetwork);
     if (result == m_availablePaymentNetworks.end())
@@ -86,14 +86,14 @@ bool MockPaymentCoordinator::canMakePayments()
     return m_canMakePayments;
 }
 
-void MockPaymentCoordinator::canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
+void MockPaymentCoordinator::canMakePaymentsWithActiveCard(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&& completionHandler)
 {
     RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard]() mutable {
         completionHandler(canMakePaymentsWithActiveCard);
     });
 }
 
-void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
+void MockPaymentCoordinator::openPaymentSetup(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&& completionHandler)
 {
     RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(true);
@@ -299,7 +299,7 @@ void MockPaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCoup
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
-void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
+void MockPaymentCoordinator::changeShippingOption(RefPtr<StringImpl>&& shippingOption)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -325,7 +325,7 @@ void MockPaymentCoordinator::changePaymentMethod(ApplePayPaymentMethod&& payment
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void MockPaymentCoordinator::changeCouponCode(String&& couponCode)
+void MockPaymentCoordinator::changeCouponCode(RefPtr<StringImpl>&& couponCode)
 {
     RefPtr page = m_page.get();
     if (!page)

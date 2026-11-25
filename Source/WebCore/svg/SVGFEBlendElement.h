@@ -32,14 +32,14 @@ template<>
 struct SVGPropertyTraits<BlendMode> {
     static unsigned highestEnumValue() { return static_cast<unsigned>(BlendMode::Luminosity); }
 
-    static BlendMode fromString(SVGElement&, const String& string)
+    static BlendMode fromString(SVGElement&, StringImpl* string)
     {
         BlendMode mode = BlendMode::Normal;
         parseBlendMode(string, mode);
         return mode;
     }
 
-    static String toString(BlendMode type)
+    static RefPtr<StringImpl> toString(BlendMode type)
     {
         if (type < BlendMode::PlusDarker)
             return blendModeName(type);
@@ -54,8 +54,8 @@ class SVGFEBlendElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static Ref<SVGFEBlendElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1->currentValue(); }
-    String in2() const { return m_in2->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in2() const { return m_in2->currentValue(); }
     BlendMode mode() const { return m_mode->currentValue<BlendMode>(); }
 
     SVGAnimatedString& in1Animated() { return m_in1; }
@@ -67,11 +67,11 @@ public:
 private:
     SVGFEBlendElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName& attrName) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() }, AtomString { in2() } }; }
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override { return { AtomStringImpl::add(in1()), AtomStringImpl::add(in2()) }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

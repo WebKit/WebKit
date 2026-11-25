@@ -40,11 +40,11 @@ public:
     static Ref<AccessibilityRootAtspi> create(Page&);
     ~AccessibilityRootAtspi() = default;
 
-    void registerObject(CompletionHandler<void(const String&)>&&);
+    void registerObject(CompletionHandler<void(StringImpl*)>&&);
     void unregisterObject();
-    void setPath(String&&);
+    void setPath(RefPtr<StringImpl>&&);
 
-    const String& path() const LIFETIME_BOUND { return m_path; }
+    const RefPtr<StringImpl>& path() const LIFETIME_BOUND { return m_path; }
     GVariant* reference() const;
     GVariant* parentReference() const;
     GVariant* applicationReference() const;
@@ -65,9 +65,9 @@ private:
     static GDBusInterfaceVTable s_componentFunctions;
 
     WeakPtr<Page> m_page;
-    String m_path;
-    String m_parentUniqueName;
-    String m_parentPath;
+    RefPtr<StringImpl> m_path;
+    RefPtr<StringImpl> m_parentUniqueName;
+    RefPtr<StringImpl> m_parentPath;
 };
 
 } // namespace WebCore

@@ -121,7 +121,7 @@ static ParsedCanvasColor parseCanvasColor(StringView string, const CSSParserCont
     };
 }
 
-ParsedCanvasColor parseColor(const String& colorString, CanvasBase& canvasBase)
+ParsedCanvasColor parseColor(StringImpl* colorString, CanvasBase& canvasBase)
 {
     using namespace CSSPropertyParserHelpers;
     auto& cssParserContext = canvasBase.cssParserContext();
@@ -149,7 +149,7 @@ ParsedCanvasColor parseColor(const String& colorString, CanvasBase& canvasBase)
     return parseCanvasColor(colorString, cssParserContext, *scriptExecutionContext, options, state);
 }
 
-ParsedCanvasColor parseColor(const String& colorString, ScriptExecutionContext& scriptExecutionContext)
+ParsedCanvasColor parseColor(StringImpl* colorString, ScriptExecutionContext& scriptExecutionContext)
 {
     // FIXME: Add constructor for CSSParserContext that takes a ScriptExecutionContext to allow preferences to be
     //        checked correctly.

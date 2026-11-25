@@ -67,7 +67,7 @@ void FrameInspectorTargetProxy::disconnect()
     protect(m_targetProcess.get())->send(Messages::WebFrame::DisconnectInspector(), m_frameID);
 }
 
-void FrameInspectorTargetProxy::sendMessageToTargetBackend(const String& message)
+void FrameInspectorTargetProxy::sendMessageToTargetBackend(StringImpl* message)
 {
     protect(m_targetProcess.get())->send(Messages::WebFrame::SendMessageToInspectorTarget(message), m_frameID);
 }
@@ -82,9 +82,9 @@ bool FrameInspectorTargetProxy::isProvisional() const
     return m_isProvisional;
 }
 
-String FrameInspectorTargetProxy::processIdentifier() const
+RefPtr<StringImpl> FrameInspectorTargetProxy::processIdentifier() const
 {
-    return String::number(m_processID.toUInt64());
+    return makeString(m_processID.toUInt64());
 }
 
 } // namespace WebKit

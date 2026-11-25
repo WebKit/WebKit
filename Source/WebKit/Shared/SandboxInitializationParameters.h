@@ -62,32 +62,32 @@ public:
 
     ProfileSelectionMode mode() const { return m_profileSelectionMode; }
 
-    void setOverrideSandboxProfilePath(const String& path)
+    void setOverrideSandboxProfilePath(StringImpl* path)
     {
         m_profileSelectionMode = ProfileSelectionMode::UseOverrideSandboxProfilePath;
         m_overrideSandboxProfilePathOrSandboxProfile = path;
     }
 
-    const String& overrideSandboxProfilePath() const LIFETIME_BOUND
+    const RefPtr<StringImpl>& overrideSandboxProfilePath() const LIFETIME_BOUND
     {
         ASSERT(m_profileSelectionMode == ProfileSelectionMode::UseOverrideSandboxProfilePath);
         return m_overrideSandboxProfilePathOrSandboxProfile;
     }
 
-    void setSandboxProfile(const String& profile)
+    void setSandboxProfile(StringImpl* profile)
     {
         m_profileSelectionMode = ProfileSelectionMode::UseSandboxProfile;
         m_overrideSandboxProfilePathOrSandboxProfile = profile;
     }
 
-    const String& sandboxProfile() const LIFETIME_BOUND
+    const RefPtr<StringImpl>& sandboxProfile() const LIFETIME_BOUND
     {
         ASSERT(m_profileSelectionMode == ProfileSelectionMode::UseSandboxProfile);
         return m_overrideSandboxProfilePathOrSandboxProfile;
     }
 
-    void setUserDirectorySuffix(const String& suffix) { m_userDirectorySuffix = suffix; }
-    const String& userDirectorySuffix() const LIFETIME_BOUND { return m_userDirectorySuffix; }
+    void setUserDirectorySuffix(StringImpl* suffix) { m_userDirectorySuffix = suffix; }
+    const RefPtr<StringImpl>& userDirectorySuffix() const LIFETIME_BOUND { return m_userDirectorySuffix; }
 #endif
 
 private:
@@ -96,10 +96,10 @@ private:
 
     mutable Vector<ASCIILiteral> m_parameterNames;
     mutable Vector<UTF8CString> m_parameterValues;
-    String m_userDirectorySuffix;
+    RefPtr<StringImpl> m_userDirectorySuffix;
 
     ProfileSelectionMode m_profileSelectionMode;
-    String m_overrideSandboxProfilePathOrSandboxProfile;
+    RefPtr<StringImpl> m_overrideSandboxProfilePathOrSandboxProfile;
 #endif
 };
 

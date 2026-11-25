@@ -48,9 +48,9 @@ inline void SVGElement::setPresentationalHintStyleIsDirty()
     invalidateStyle();
 }
 
-inline AtomString SVGElement::className() const
+inline RefPtr<AtomStringImpl> SVGElement::className() const
 {
-    return AtomString { m_className->currentValue() };
+    return AtomStringImpl::add(m_className->currentValue());
 }
 
 inline bool Element::hasTagName(const SVGQualifiedName& tagName) const

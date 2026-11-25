@@ -123,7 +123,7 @@ RefPtr<BaselineJITCode> LOLJIT::compileAndLinkWithoutFinalizing(JITCompilationEf
 
     std::optional<JITSizeStatistics::Marker> sizeMarker;
     if (Options::dumpBaselineJITSizeStatistics()) [[unlikely]]
-        sizeMarker = m_vm->jitSizeStatistics->markStart("Baseline_prologue"_s, *this);
+        sizeMarker = m_vm->jitSizeStatistics->markStart("Baseline_prologue"_si, *this);
 
     Label entryLabel(this);
     if (m_disassembler)
@@ -285,7 +285,7 @@ void LOLJIT::privateCompileMainPass()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (Options::dumpBaselineJITSizeStatistics()) [[unlikely]] {
-            String id = makeString("Baseline_fast_"_s, opcodeNames[opcodeID]);
+            RefPtr<StringImpl> id = makeString("Baseline_fast_"_s, opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 
@@ -611,7 +611,7 @@ void LOLJIT::privateCompileSlowCases()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (Options::dumpBaselineJITSizeStatistics()) [[unlikely]] {
-            String id = makeString("Baseline_slow_"_s, opcodeNames[opcodeID]);
+            RefPtr<StringImpl> id = makeString("Baseline_slow_"_s, opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 

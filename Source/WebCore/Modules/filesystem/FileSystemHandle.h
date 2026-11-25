@@ -49,7 +49,7 @@ public:
 
     using Kind = FileSystemHandleKind;
     Kind kind() const { return m_kind; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     FileSystemHandleIdentifier identifier() const { return *m_identifier; }
     FileSystemHandleGlobalIdentifier globalIdentifier() const { return m_globalIdentifier; }
     bool isClosed() const { return m_isClosed; }
@@ -57,7 +57,7 @@ public:
     void close();
 
     void isSameEntry(FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&&);
-    void move(FileSystemHandle&, const String& newName, DOMPromiseDeferred<void>&&);
+    void move(FileSystemHandle&, StringImpl* newName, DOMPromiseDeferred<void>&&);
 
     void markAsUnresolved(ClientOrigin&&, Ref<FileSystemStorageConnection>&&);
     void ensureIdentifier(CompletionHandler<void(bool)>&&);
@@ -65,7 +65,7 @@ public:
     size_t connectionHandleCount() const { return m_connection ? m_connection->handleCount() : 0; }
 
 protected:
-    FileSystemHandle(ScriptExecutionContext&, Kind, String&& name, FileSystemHandleGlobalIdentifier, Markable<FileSystemHandleIdentifier>, RefPtr<FileSystemStorageConnection>&&);
+    FileSystemHandle(ScriptExecutionContext&, Kind, RefPtr<StringImpl>&& name, FileSystemHandleGlobalIdentifier, Markable<FileSystemHandleIdentifier>, RefPtr<FileSystemStorageConnection>&&);
     FileSystemStorageConnection& connection() { ASSERT(m_connection); return *m_connection; }
 
 private:
@@ -74,7 +74,7 @@ private:
     void resolveEnsureIdentifierCallbacks(bool);
 
     Kind m_kind { Kind::File };
-    String m_name;
+    RefPtr<StringImpl> m_name;
     Markable<FileSystemHandleIdentifier> m_identifier;
     RefPtr<FileSystemStorageConnection> m_connection;
     FileSystemHandleGlobalIdentifier m_globalIdentifier;

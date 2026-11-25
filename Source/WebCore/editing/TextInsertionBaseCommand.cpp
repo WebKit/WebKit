@@ -54,12 +54,12 @@ void TextInsertionBaseCommand::applyTextInsertionCommand(LocalFrame* frame, Text
     }
 }
 
-String dispatchBeforeTextInsertedEvent(const String& text, const VisibleSelection& selectionForInsertion, bool insertionIsForUpdatingComposition)
+RefPtr<StringImpl> dispatchBeforeTextInsertedEvent(StringImpl* text, const VisibleSelection& selectionForInsertion, bool insertionIsForUpdatingComposition)
 {
     if (insertionIsForUpdatingComposition)
         return text;
 
-    String newText = text;
+    RefPtr<StringImpl> newText = text;
     if (RefPtr startNode = selectionForInsertion.start().containerNode()) {
         if (startNode->rootEditableElement()) {
             // Send BeforeTextInsertedEvent. The event handler will update text if necessary.
@@ -77,9 +77,9 @@ bool canAppendNewLineFeedToSelection(const VisibleSelection& selection)
     if (!node)
         return false;
     
-    Ref event = BeforeTextInsertedEvent::create("\n"_s);
+    Ref event = BeforeTextInsertedEvent::create("\n"_si);
     node->dispatchEvent(event);
-    return event->text().length();
+    return length(event->text());
 }
 
 }

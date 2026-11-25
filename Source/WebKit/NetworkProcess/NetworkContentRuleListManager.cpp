@@ -87,7 +87,7 @@ void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIde
 
     for (auto&& pair : borrow(contentRuleLists)) {
         auto&& contentRuleList = WTF::move(pair.first);
-        String identifier = contentRuleList.identifier;
+        RefPtr<StringImpl> identifier = contentRuleList.identifier;
         if (RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTF::move(contentRuleList)))
             backend.addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), WTF::move(pair.second), ContentExtensions::ContentExtension::ShouldCompileCSS::No);
     }
@@ -98,7 +98,7 @@ void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIde
 
 }
 
-void NetworkContentRuleListManager::removeContentRuleList(UserContentControllerIdentifier identifier, const String& name)
+void NetworkContentRuleListManager::removeContentRuleList(UserContentControllerIdentifier identifier, StringImpl* name)
 {
     auto iterator = m_contentExtensionBackends.find(identifier);
     if (iterator == m_contentExtensionBackends.end())

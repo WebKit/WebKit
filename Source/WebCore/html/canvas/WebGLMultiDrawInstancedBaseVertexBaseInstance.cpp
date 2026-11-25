@@ -43,7 +43,7 @@ WebGLMultiDrawInstancedBaseVertexBaseInstance::WebGLMultiDrawInstancedBaseVertex
 
     // Spec requires WEBGL_multi_draw to be turned on implicitly here.
     // Enable it both in the backend and in WebKit.
-    context.getExtension("WEBGL_multi_draw"_s);
+    context.getExtension("WEBGL_multi_draw"_si);
 }
 
 WebGLMultiDrawInstancedBaseVertexBaseInstance::~WebGLMultiDrawInstancedBaseVertexBaseInstance() = default;

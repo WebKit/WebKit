@@ -73,18 +73,18 @@ void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
 void PaymentResponse::complete(Document& document, std::optional<PaymentComplete>&& result, std::optional<PaymentCompleteDetails>&& details, DOMPromiseDeferred<void>&& promise)
 {
     if (!document.isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_si });
         return;
     }
 
     if (m_state == State::Stopped) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_si });
         return;
     }
 
     RefPtr request = m_request.get();
     if (!request) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_si });
         return;
     }
 
@@ -93,7 +93,7 @@ void PaymentResponse::complete(Document& document, std::optional<PaymentComplete
         return;
     }
 
-    String serializedData;
+    RefPtr<StringImpl> serializedData;
     if (details) {
         if (auto data = details->data) {
             auto throwScope = DECLARE_THROW_SCOPE(document.globalObject()->vm());
@@ -119,18 +119,18 @@ void PaymentResponse::complete(Document& document, std::optional<PaymentComplete
 void PaymentResponse::retry(const Document& document, PaymentValidationErrors&& errors, DOMPromiseDeferred<void>&& promise)
 {
     if (!document.isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_si });
         return;
     }
 
     if (m_state == State::Stopped) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_si });
         return;
     }
 
     RefPtr request = m_request.get();
     if (!request) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The payment response object is closed."_si });
         return;
     }
 

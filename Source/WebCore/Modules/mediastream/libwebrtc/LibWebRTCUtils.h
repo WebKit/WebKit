@@ -87,9 +87,9 @@ NODELETE webrtc::Priority fromRTCPriorityType(RTCPriorityType);
 enum class MediaStreamTrackHintValue : uint8_t;
 NODELETE webrtc::VideoTrackInterface::ContentHint toWebRTCContentHint(MediaStreamTrackHintValue);
 
-inline String fromStdString(const std::string& value)
+inline RefPtr<StringImpl> fromStdString(const std::string& value)
 {
-    return String::fromUTF8(value);
+    return StringImpl::fromUTF8(value);
 }
 
 RTCIceCandidateFields convertIceCandidate(const webrtc::Candidate&);

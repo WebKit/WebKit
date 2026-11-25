@@ -41,7 +41,7 @@ namespace WebCore {
 
 RefPtr<SharedBuffer> loadPlatformResource(StringView name, StringView)
 {
-    auto path = makeString(IMAGES_GRESOURCE_PATH "/"_s, name).utf8();
+    auto path = utf8(makeString(IMAGES_GRESOURCE_PATH "/"_s, name));
     GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.legacyCStringPointer(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     ASSERT(data);
     if (!data)

@@ -121,13 +121,10 @@ void printInternal(PrintStream&, const CStringBase&) = delete;
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const UTF8CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const Latin1CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const ASCIICString&);
-WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const String&);
-WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const AtomString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringImpl*);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, std::span<const char8_t>);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const char8_t*);
 inline void printInternal(PrintStream& out, char* value) { printInternal(out, static_cast<const char*>(value)); }
-WTF_EXPORT_PRIVATE void printInternal(PrintStream&, String&);
 inline void printInternal(PrintStream& out, StringImpl* value) { printInternal(out, static_cast<const StringImpl*>(value)); }
 
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, bool);
@@ -306,6 +303,19 @@ template<typename T>
 void printInternal(PrintStream& out, const Ref<T>& value)
 {
     printInternal(out, value.get());
+}
+
+// Strings print their contents (a null string prints nothing), never their address.
+template<typename T> requires std::is_convertible_v<T*, const StringImpl*>
+void printInternal(PrintStream& out, const RefPtr<T>& value)
+{
+    printInternal(out, value.get());
+}
+
+template<typename T> requires std::is_convertible_v<T*, const StringImpl*>
+void printInternal(PrintStream& out, const Ref<T>& value)
+{
+    printInternal(out, value.ptr());
 }
 
 template<typename T, typename U>

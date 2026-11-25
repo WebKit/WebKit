@@ -77,7 +77,7 @@ private:
         InternalObserver::complete();
 
         if (!m_lastValue) [[unlikely]]
-            return protect(m_promise)->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
+            return protect(m_promise)->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_si });
 
         protect(m_promise)->resolve<IDLAny>(m_lastValue.getValue());
     }

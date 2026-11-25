@@ -32,24 +32,28 @@
 namespace WebCore {
 
 struct CookieChangeSubscription {
-    String name;
-    String url;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> url;
 
     CookieChangeSubscription() = default;
 
-    CookieChangeSubscription(String&& name, String&& url)
+    CookieChangeSubscription(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& url)
         : name(WTF::move(name))
         , url(WTF::move(url))
     { }
 
-    CookieChangeSubscription isolatedCopy() const & { return { name.isolatedCopy(), url.isolatedCopy() }; }
-    CookieChangeSubscription isolatedCopy() && { return { WTF::move(name).isolatedCopy(), WTF::move(url).isolatedCopy() }; }
+    CookieChangeSubscription isolatedCopy() const & { return { WTF::isolatedCopy(name), WTF::isolatedCopy(url) }; }
+    CookieChangeSubscription isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(name)), WTF::isolatedCopy(WTF::move(url)) }; }
 
     explicit CookieChangeSubscription(WTF::HashTableDeletedValueType deletedValue)
         : name(deletedValue)
     { }
 
-    bool operator==(const CookieChangeSubscription& other) const = default;
+    bool operator==(const CookieChangeSubscription& other) const
+    {
+        return contentEquals(name, other.name)
+            && contentEquals(url, other.url);
+    }
 
     bool isHashTableDeletedValue() const { return name.isHashTableDeletedValue(); }
 };

@@ -90,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)experienceController:(nonnull WKSExperienceController *)experienceController didToggleCaptionStylePreviewID:(NSString * _Nullable)captionStylePreviewID
 {
     if (RefPtr parent = _parent.get())
-        parent->didToggleCaptionStylePreviewID(captionStylePreviewID);
+        parent->didToggleCaptionStylePreviewID(StringImpl::create(captionStylePreviewID).get());
 }
 
 @end
@@ -114,13 +114,13 @@ VideoPresentationInterfaceAVKit::VideoPresentationInterfaceAVKit(WebCore::Playba
 
 VideoPresentationInterfaceAVKit::~VideoPresentationInterfaceAVKit() = default;
 
-void VideoPresentationInterfaceAVKit::didToggleCaptionStylePreviewID(const String& captionStylePreviewID)
+void VideoPresentationInterfaceAVKit::didToggleCaptionStylePreviewID(StringImpl* captionStylePreviewID)
 {
     RefPtr model = videoPresentationModel();
     if (!model)
         return;
 
-    if (captionStylePreviewID.isEmpty())
+    if (isEmpty(captionStylePreviewID))
         model->requestHideCaptionDisplaySettingsPreview();
     else
         model->requestShowCaptionDisplaySettingsPreview(captionStylePreviewID);

@@ -68,7 +68,7 @@ static ProtectionSpace protectionSpaceFromSoupAuthAndURL(SoupAuth* soupAuth, con
 
     return ProtectionSpace(host.toString(), static_cast<int>(port.value_or(0)),
         protectionSpaceServerTypeFromURL(url, soup_auth_is_for_proxy(soupAuth)),
-        String::fromUTF8(soup_auth_get_realm(soupAuth)), scheme);
+        StringImpl::fromUTF8(soup_auth_get_realm(soupAuth)), scheme);
 }
 
 AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, SoupAuth* soupAuth, bool retrying)
@@ -105,7 +105,7 @@ ProtectionSpace AuthenticationChallenge::protectionSpaceForClientCertificatePass
     if (!port)
         port = defaultPortForProtocol(url.protocol());
     return ProtectionSpace(url.host().toString(), static_cast<int>(port.value_or(0)), protectionSpaceServerTypeFromURL(url, false),
-        String::fromUTF8(g_tls_password_get_description(tlsPassword)), ProtectionSpace::AuthenticationScheme::ClientCertificatePINRequested);
+        StringImpl::fromUTF8(g_tls_password_get_description(tlsPassword)), ProtectionSpace::AuthenticationScheme::ClientCertificatePINRequested);
 }
 
 AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, GTlsPassword* tlsPassword)

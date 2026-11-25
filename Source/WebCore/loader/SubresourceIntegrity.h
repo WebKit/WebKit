@@ -42,26 +42,26 @@ enum class ResourceResponseBaseTainting : uint8_t;
 // The algorithms below do not depend on CachedResource, so that any loader can use them.
 
 // https://w3c.github.io/webappsec-subresource-integrity/#parse-metadata-section
-Vector<EncodedResourceCryptographicDigest> parseIntegrityMetadata(const String& metadata);
+Vector<EncodedResourceCryptographicDigest> parseIntegrityMetadata(StringImpl* metadata);
 
 // https://w3c.github.io/webappsec-subresource-integrity/#does-response-match-metadatalist
 // `digestForAlgorithm` lets callers that already hold digests of the bytes (e.g. CachedResource) avoid hashing them again.
-bool doBytesMatchMetadataList(ResourceResponseBaseTainting, NOESCAPE const ScopedLambda<ResourceCryptographicDigest(ResourceCryptographicDigest::Algorithm)>& digestForAlgorithm, const String& metadataList);
-bool doBytesMatchMetadataList(ResourceResponseBaseTainting, const FragmentedSharedBuffer* bytes, const String& metadataList);
+bool doBytesMatchMetadataList(ResourceResponseBaseTainting, NOESCAPE const ScopedLambda<ResourceCryptographicDigest(ResourceCryptographicDigest::Algorithm)>& digestForAlgorithm, StringImpl* metadataList);
+bool doBytesMatchMetadataList(ResourceResponseBaseTainting, const FragmentedSharedBuffer* bytes, StringImpl* metadataList);
 
 // Step 23 of https://fetch.spec.whatwg.org/#main-fetch, run once response's body has been fully read.
 // Returns the network error the response must be replaced with, if any.
-std::optional<ResourceError> checkResponseBodyIntegrity(const ResourceResponse&, ResourceResponseBaseTainting, FetchOptionsDestination, const FragmentedSharedBuffer* body, const String& integrityMetadata);
+std::optional<ResourceError> checkResponseBodyIntegrity(const ResourceResponse&, ResourceResponseBaseTainting, FetchOptionsDestination, const FragmentedSharedBuffer* body, StringImpl* integrityMetadata);
 
-String integrityMismatchDescription(const URL&, const ResourceResponse&, const FragmentedSharedBuffer* body, const String& integrityMetadata);
+RefPtr<StringImpl> integrityMismatchDescription(const URL&, const ResourceResponse&, const FragmentedSharedBuffer* body, StringImpl* integrityMetadata);
 
 // The network error returned by checkResponseBodyIntegrity(), distinguishable from other access control errors.
 bool isIntegrityMismatchError(const ResourceError&);
 
 // CachedResource conveniences, for consumers that check a resource that may have come from the memory cache.
-bool matchIntegrityMetadata(const CachedResource&, const String& integrityMetadata);
-bool matchIntegrityMetadataWithoutReportingHashes(const CachedResource&, const String& integrityMetadata);
+bool matchIntegrityMetadata(const CachedResource&, StringImpl* integrityMetadata);
+bool matchIntegrityMetadataWithoutReportingHashes(const CachedResource&, StringImpl* integrityMetadata);
 void reportHashesIfNeeded(const CachedResource&);
-String integrityMismatchDescription(const CachedResource&, const String& integrityMetadata);
+RefPtr<StringImpl> integrityMismatchDescription(const CachedResource&, StringImpl* integrityMetadata);
 
 }

@@ -410,40 +410,40 @@ ALWAYS_INLINE JSValue collectGlobalAtomMatches(JSGlobalObject* globalObject, JSS
     auto input = string->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    const String& pattern = regExp->atom();
-    ASSERT(!pattern.isEmpty());
+    const RefPtr<StringImpl>& pattern = regExp->atom();
+    ASSERT(!isEmpty(pattern));
 
     size_t lastResult = 0;
     bool oneCharacterMatch = false;
-    if (pattern.is8Bit()) {
+    if (is8Bit(pattern)) {
         if (input->is8Bit()) {
-            if (pattern.length() == 1) {
+            if (length(pattern) == 1) {
                 oneCharacterMatch = true;
-                numberOfMatches = WTF::countMatchedCharacters(input->span8(), pattern.span8()[0]);
+                numberOfMatches = WTF::countMatchedCharacters(input->span8(), span8(pattern)[0]);
             } else {
                 size_t startIndex = 0;
-                lastResult = genericMatches(vm, input->span8(), pattern.span8(), numberOfMatches, startIndex);
+                lastResult = genericMatches(vm, input->span8(), span8(pattern), numberOfMatches, startIndex);
             }
         } else {
-            if (pattern.length() == 1) {
+            if (length(pattern) == 1) {
                 oneCharacterMatch = true;
-                numberOfMatches = WTF::countMatchedCharacters(input->span16(), pattern.codeUnitAt(0));
+                numberOfMatches = WTF::countMatchedCharacters(input->span16(), codeUnitAt(pattern, 0));
             } else {
                 size_t startIndex = 0;
-                lastResult = genericMatches(vm, input->span16(), pattern.span8(), numberOfMatches, startIndex);
+                lastResult = genericMatches(vm, input->span16(), span8(pattern), numberOfMatches, startIndex);
             }
         }
     } else {
         if (input->is8Bit()) {
             size_t startIndex = 0;
-            lastResult = genericMatches(vm, input->span8(), pattern.span16(), numberOfMatches, startIndex);
+            lastResult = genericMatches(vm, input->span8(), span16(pattern), numberOfMatches, startIndex);
         } else {
-            if (pattern.length() == 1) {
+            if (length(pattern) == 1) {
                 oneCharacterMatch = true;
-                numberOfMatches = WTF::countMatchedCharacters(input->span16(), pattern.codeUnitAt(0));
+                numberOfMatches = WTF::countMatchedCharacters(input->span16(), codeUnitAt(pattern, 0));
             } else {
                 size_t startIndex = 0;
-                lastResult = genericMatches(vm, input->span16(), pattern.span16(), numberOfMatches, startIndex);
+                lastResult = genericMatches(vm, input->span16(), span16(pattern), numberOfMatches, startIndex);
             }
         }
     }
@@ -460,7 +460,7 @@ ALWAYS_INLINE JSValue collectGlobalAtomMatches(JSGlobalObject* globalObject, JSS
     RETURN_IF_EXCEPTION(scope, { });
 
     scope.release();
-    MatchResult matchResult { lastResult, lastResult + pattern.length() };
+    MatchResult matchResult { lastResult, lastResult + length(pattern) };
     globalObject->regExpGlobalData().recordMatch(vm, globalObject, regExp, string, matchResult, oneCharacterMatch);
 
     return array;

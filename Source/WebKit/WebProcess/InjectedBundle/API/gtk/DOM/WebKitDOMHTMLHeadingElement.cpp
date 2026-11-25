@@ -169,7 +169,7 @@ void webkit_dom_html_heading_element_set_align(WebKitDOMHTMLHeadingElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_HEADING_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLHeadingElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, AtomStringImpl::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

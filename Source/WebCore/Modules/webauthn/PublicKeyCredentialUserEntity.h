@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct PublicKeyCredentialUserEntity : public PublicKeyCredentialEntity {
     BufferSource id;
-    String displayName;
+    RefPtr<StringImpl> displayName;
 };
 
 }

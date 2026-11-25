@@ -63,8 +63,8 @@ class ParsedStyleSheet {
 public:
     ParsedStyleSheet();
 
-    NODELETE const String& text() const { ASSERT(m_hasText); return m_text; }
-    void setText(const String&);
+    NODELETE const RefPtr<StringImpl>& text() const { ASSERT(m_hasText); return m_text; }
+    void setText(StringImpl*);
     NODELETE bool hasText() const { return m_hasText; }
     NODELETE RuleSourceDataList* sourceData() const { return m_sourceData.get(); }
     void setSourceData(std::unique_ptr<RuleSourceDataList>);
@@ -73,7 +73,7 @@ public:
 
 private:
 
-    String m_text;
+    RefPtr<StringImpl> m_text;
     bool m_hasText;
     std::unique_ptr<RuleSourceDataList> m_sourceData;
 };
@@ -83,26 +83,26 @@ public:
     InspectorCSSId() = default;
 
     explicit InspectorCSSId(const JSON::Object& value)
-        : m_styleSheetId(value.getString("styleSheetId"_s))
+        : m_styleSheetId(value.getString("styleSheetId"_si))
     {
         if (!m_styleSheetId)
             return;
 
-        if (auto ordinal = value.getInteger("ordinal"_s))
+        if (auto ordinal = value.getInteger("ordinal"_si))
             m_ordinal = *ordinal;
         else
-            m_styleSheetId = String();
+            m_styleSheetId = nullptr;
     }
 
-    InspectorCSSId(const String& styleSheetId, unsigned ordinal)
+    InspectorCSSId(StringImpl* styleSheetId, unsigned ordinal)
         : m_styleSheetId(styleSheetId)
         , m_ordinal(ordinal)
     {
     }
 
-    bool isEmpty() const { return m_styleSheetId.isEmpty(); }
+    bool isEmpty() const { return WTF::isEmpty(m_styleSheetId); }
 
-    const String& styleSheetId() const LIFETIME_BOUND { return m_styleSheetId; }
+    const RefPtr<StringImpl>& styleSheetId() const LIFETIME_BOUND { return m_styleSheetId; }
     unsigned ordinal() const { return m_ordinal; }
 
     // ID type is either Inspector::Protocol::CSS::CSSStyleId or Inspector::Protocol::CSS::CSSRuleId.
@@ -119,7 +119,7 @@ public:
     }
 
 private:
-    String m_styleSheetId;
+    RefPtr<StringImpl> m_styleSheetId;
     unsigned m_ordinal = {0};
 };
 
@@ -137,21 +137,21 @@ struct InspectorStyleProperty {
     {
     }
 
-    void setRawTextFromStyleDeclaration(const String& styleDeclaration)
+    void setRawTextFromStyleDeclaration(StringImpl* styleDeclaration)
     {
         unsigned start = sourceData.range.start;
         unsigned end = sourceData.range.end;
         ASSERT_WITH_SECURITY_IMPLICATION(start < end);
-        ASSERT(end <= styleDeclaration.length());
-        rawText = styleDeclaration.substring(start, end - start);
+        ASSERT(end <= length(styleDeclaration));
+        rawText = substring(styleDeclaration, start, end - start);
     }
 
-    bool hasRawText() const { return !rawText.isEmpty(); }
+    bool hasRawText() const { return !isEmpty(rawText); }
 
     CSSPropertySourceData sourceData;
     bool hasSource;
     bool disabled;
-    String rawText;
+    RefPtr<StringImpl> rawText;
 };
 
 class InspectorStyle final : public RefCounted<InspectorStyle> {
@@ -163,7 +163,7 @@ public:
     Ref<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle();
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>> buildArrayForComputedStyle();
 
-    ExceptionOr<String> text();
+    ExceptionOr<RefPtr<StringImpl>> text();
 
 private:
     InspectorStyle(const InspectorCSSId& styleId, Ref<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
@@ -171,9 +171,9 @@ private:
     Vector<InspectorStyleProperty> collectProperties(bool includeAll);
     Ref<Inspector::Protocol::CSS::CSSStyle> styleWithProperties();
     RefPtr<CSSRuleSourceData> extractSourceData() const;
-    String shorthandValue(const String& shorthandProperty) const;
-    String shorthandPriority(const String& shorthandProperty) const;
-    Vector<String> longhandProperties(const String& shorthandProperty) const;
+    RefPtr<StringImpl> shorthandValue(StringImpl* shorthandProperty) const;
+    RefPtr<StringImpl> shorthandPriority(StringImpl* shorthandProperty) const;
+    Vector<RefPtr<StringImpl>> longhandProperties(StringImpl* shorthandProperty) const;
 
     InspectorCSSId m_styleId;
     const Ref<CSSStyleDeclaration> m_style;
@@ -191,19 +191,19 @@ public:
 
     using StyleDeclarationOrCSSRule = Variant<CSSStyleDeclaration*, CSSRule*>;
 
-    NODELETE static Ref<InspectorStyleSheet> create(Inspector::IdentifierRegistry&, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
-    NODELETE static String styleSheetURL(CSSStyleSheet* pageStyleSheet);
+    NODELETE static Ref<InspectorStyleSheet> create(Inspector::IdentifierRegistry&, StringImpl* id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, StringImpl* documentURL, Listener*);
+    NODELETE static RefPtr<StringImpl> styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
     virtual ~InspectorStyleSheet();
 
-    String id() const { return m_id; }
-    String finalURL() const;
+    RefPtr<StringImpl> id() const { return m_id; }
+    RefPtr<StringImpl> finalURL() const;
     CSSStyleSheet* pageStyleSheet() const { return m_pageStyleSheet.get(); }
-    void reparseStyleSheet(const String&);
-    ExceptionOr<void> setText(const String&);
-    ExceptionOr<String> ruleHeaderText(const InspectorCSSId&);
-    ExceptionOr<void> setRuleHeaderText(const InspectorCSSId&, const String& selector);
-    ExceptionOr<CSSStyleRule*> addRule(const String& selector);
+    void reparseStyleSheet(StringImpl*);
+    ExceptionOr<void> setText(StringImpl*);
+    ExceptionOr<RefPtr<StringImpl>> ruleHeaderText(const InspectorCSSId&);
+    ExceptionOr<void> setRuleHeaderText(const InspectorCSSId&, StringImpl* selector);
+    ExceptionOr<CSSStyleRule*> addRule(StringImpl* selector);
     ExceptionOr<void> deleteRule(const InspectorCSSId&);
     CSSRule* ruleForId(const InspectorCSSId&) const;
     RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> buildObjectForStyleSheet();
@@ -213,16 +213,16 @@ public:
     RefPtr<Inspector::Protocol::CSS::Grouping> buildObjectForGrouping(CSSRule*);
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRule&);
 
-    virtual ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, const String& newStyleDeclarationText, String* outOldStyleDeclarationText, const String* newRuleText, String* outOldRuleText);
+    virtual ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, StringImpl* newStyleDeclarationText, RefPtr<StringImpl>* outOldStyleDeclarationText, const RefPtr<StringImpl>* newRuleText, RefPtr<StringImpl>* outOldRuleText);
 
-    virtual ExceptionOr<String> text();
+    virtual ExceptionOr<RefPtr<StringImpl>> text();
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;
     void fireStyleSheetChanged();
 
     InspectorCSSId ruleOrStyleId(StyleDeclarationOrCSSRule) const;
 
 protected:
-    InspectorStyleSheet(Inspector::IdentifierRegistry&, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
+    InspectorStyleSheet(Inspector::IdentifierRegistry&, StringImpl* id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, StringImpl* documentURL, Listener*);
 
     bool canBind() const { return m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent && m_origin != Inspector::Protocol::CSS::StyleSheetOrigin::User; }
     virtual Document* ownerDocument() const;
@@ -243,11 +243,11 @@ private:
     bool ensureText();
     bool ensureSourceData();
     void ensureFlatRules() const;
-    bool originalStyleSheetText(String* result) const;
-    bool resourceStyleSheetText(String* result) const;
-    bool inlineStyleSheetText(String* result) const;
-    bool extensionStyleSheetText(String* result) const;
-    bool styleSheetTextFromCSSRuleSerialization(String* result) const;
+    bool originalStyleSheetText(RefPtr<StringImpl>* result) const;
+    bool resourceStyleSheetText(RefPtr<StringImpl>* result) const;
+    bool inlineStyleSheetText(RefPtr<StringImpl>* result) const;
+    bool extensionStyleSheetText(RefPtr<StringImpl>* result) const;
+    bool styleSheetTextFromCSSRuleSerialization(RefPtr<StringImpl>* result) const;
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> buildArrayForRuleList(CSSRuleList*);
     Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelector(const CSSSelector*);
     RefPtr<Inspector::Protocol::CSS::SelectorList> buildObjectForSelectorList(CSSRule*, int& endingLine);
@@ -256,10 +256,10 @@ private:
     Vector<const CSSSelector*> selectorsForCSSStyleRule(CSSStyleRule&);
 
     WeakRef<Inspector::IdentifierRegistry> m_identifierRegistry;
-    String m_id;
+    RefPtr<StringImpl> m_id;
     const RefPtr<CSSStyleSheet> m_pageStyleSheet;
     Inspector::Protocol::CSS::StyleSheetOrigin m_origin;
-    String m_documentURL;
+    RefPtr<StringImpl> m_documentURL;
     ParsedStyleSheet* m_parsedStyleSheet;
     mutable Vector<RefPtr<CSSRule>> m_flatRules;
     Listener* m_listener;
@@ -267,15 +267,15 @@ private:
 
 class InspectorStyleSheetForInlineStyle final : public InspectorStyleSheet {
 public:
-    static Ref<InspectorStyleSheetForInlineStyle> create(Inspector::IdentifierRegistry&, const String& id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
+    static Ref<InspectorStyleSheetForInlineStyle> create(Inspector::IdentifierRegistry&, StringImpl* id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
 
     void didModifyElementAttribute();
-    ExceptionOr<String> text() final;
+    ExceptionOr<RefPtr<StringImpl>> text() final;
     CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const final { ASSERT_UNUSED(id, !id.ordinal()); return &inlineStyle(); }
-    ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, const String& newStyleDeclarationText, String* outOldStyleDeclarationText, const String* newRuleText, String* outOldRuleText);
+    ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, StringImpl* newStyleDeclarationText, RefPtr<StringImpl>* outOldStyleDeclarationText, const RefPtr<StringImpl>* newRuleText, RefPtr<StringImpl>* outOldRuleText);
 
 private:
-    InspectorStyleSheetForInlineStyle(Inspector::IdentifierRegistry&, const String& id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
+    InspectorStyleSheetForInlineStyle(Inspector::IdentifierRegistry&, StringImpl* id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
 
     Document* ownerDocument() const final;
     RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const final { ASSERT_UNUSED(style, style == &inlineStyle()); return m_ruleSourceData; }
@@ -288,7 +288,7 @@ private:
     Vector<size_t> lineEndings() const final;
 
     CSSStyleDeclaration& inlineStyle() const;
-    const String& elementStyleText() const;
+    RefPtr<StringImpl> elementStyleText() const;
     Ref<CSSRuleSourceData> ruleSourceData() const;
 
     const Ref<StyledElement> m_element;
@@ -296,7 +296,7 @@ private:
     RefPtr<InspectorStyle> m_inspectorStyle;
 
     // Contains "style" attribute value.
-    mutable String m_styleText;
+    mutable RefPtr<StringImpl> m_styleText;
     mutable bool m_isStyleTextValid;
 };
 
@@ -316,7 +316,7 @@ protected:
 class SetStyleSheetTextAction final : public StyleSheetAction {
     WTF_MAKE_NONCOPYABLE(SetStyleSheetTextAction);
 public:
-    SetStyleSheetTextAction(InspectorStyleSheet* styleSheet, const String& text)
+    SetStyleSheetTextAction(InspectorStyleSheet* styleSheet, StringImpl* text)
         : StyleSheetAction(styleSheet)
         , m_text(text)
     {
@@ -361,7 +361,7 @@ private:
         return { };
     }
 
-    String mergeId() final
+    RefPtr<StringImpl> mergeId() final
     {
         RefPtr styleSheet = m_styleSheet.get();
         if (!styleSheet)
@@ -371,18 +371,18 @@ private:
 
     void merge(std::unique_ptr<Action> action) override
     {
-        ASSERT(action->mergeId() == mergeId());
+        ASSERT(equal(action->mergeId(), mergeId()));
         m_text = downcast<SetStyleSheetTextAction>(*action).m_text;
     }
 
-    String m_text;
-    String m_oldText;
+    RefPtr<StringImpl> m_text;
+    RefPtr<StringImpl> m_oldText;
 };
 
 class SetStyleTextAction final : public StyleSheetAction {
     WTF_MAKE_NONCOPYABLE(SetStyleTextAction);
 public:
-    SetStyleTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& text)
+    SetStyleTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, StringImpl* text)
         : StyleSheetAction(styleSheet)
         , m_cssId(cssId)
         , m_newStyleDeclarationText(text)
@@ -420,18 +420,18 @@ public:
             &m_oldRuleText);
     }
 
-    String mergeId() override
+    RefPtr<StringImpl> mergeId() override
     {
         RefPtr styleSheet = m_styleSheet.get();
         if (!styleSheet)
             return { };
-        ASSERT(styleSheet->id() == m_cssId.styleSheetId());
+        ASSERT(equal(styleSheet->id(), m_cssId.styleSheetId()));
         return makeString("SetStyleText "_s, styleSheet->id(), ':', m_cssId.ordinal());
     }
 
     void merge(std::unique_ptr<Action> action) override
     {
-        ASSERT(action->mergeId() == mergeId());
+        ASSERT(equal(action->mergeId(), mergeId()));
 
         SetStyleTextAction* other = static_cast<SetStyleTextAction*>(action.get());
         m_newStyleDeclarationText = other->m_newStyleDeclarationText;
@@ -439,15 +439,15 @@ public:
 
 private:
     InspectorCSSId m_cssId;
-    String m_newStyleDeclarationText;
-    String m_oldStyleDeclarationText;
-    String m_oldRuleText;
+    RefPtr<StringImpl> m_newStyleDeclarationText;
+    RefPtr<StringImpl> m_oldStyleDeclarationText;
+    RefPtr<StringImpl> m_oldRuleText;
 };
 
 class SetRuleHeaderTextAction final : public StyleSheetAction {
     WTF_MAKE_NONCOPYABLE(SetRuleHeaderTextAction);
 public:
-    SetRuleHeaderTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& newHeaderText)
+    SetRuleHeaderTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, StringImpl* newHeaderText)
         : StyleSheetAction(styleSheet)
         , m_cssId(cssId)
         , m_newHeaderText(newHeaderText)
@@ -484,14 +484,14 @@ private:
     }
 
     InspectorCSSId m_cssId;
-    String m_newHeaderText;
-    String m_oldHeaderText;
+    RefPtr<StringImpl> m_newHeaderText;
+    RefPtr<StringImpl> m_oldHeaderText;
 };
 
 class AddRuleAction final : public StyleSheetAction {
     WTF_MAKE_NONCOPYABLE(AddRuleAction);
 public:
-    AddRuleAction(InspectorStyleSheet* styleSheet, const String& selector)
+    AddRuleAction(InspectorStyleSheet* styleSheet, StringImpl* selector)
         : StyleSheetAction(styleSheet)
         , m_selector(selector)
     {
@@ -526,8 +526,8 @@ private:
     }
 
     InspectorCSSId m_newId;
-    String m_selector;
-    String m_oldSelector;
+    RefPtr<StringImpl> m_selector;
+    RefPtr<StringImpl> m_oldSelector;
 };
 
 } // namespace WebCore

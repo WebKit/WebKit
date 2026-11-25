@@ -34,7 +34,7 @@ namespace WebCore {
 
 class GStreamerVideoCaptureSource final : public RealtimeVideoCaptureSource, GStreamerCapturerObserver {
 public:
-    static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
+    static CaptureSourceOrError create(RefPtr<StringImpl>&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
     static CaptureSourceOrError createPipewireSource(const PipeWireCaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*);
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();

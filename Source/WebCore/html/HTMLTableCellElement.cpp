@@ -91,7 +91,7 @@ bool HTMLTableCellElement::hasPresentationalHintsForAttribute(const QualifiedNam
     return HTMLTablePartElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTableCellElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTableCellElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::nowrapAttr:
@@ -110,7 +110,7 @@ void HTMLTableCellElement::collectPresentationalHintsForAttribute(const Qualifie
     }
 }
 
-void HTMLTableCellElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLTableCellElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLTablePartElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -132,40 +132,40 @@ bool HTMLTableCellElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == backgroundAttr || HTMLTablePartElement::isURLAttribute(attribute);
 }
 
-String HTMLTableCellElement::abbr() const
+RefPtr<StringImpl> HTMLTableCellElement::abbr() const
 {
     return attributeWithoutSynchronization(abbrAttr);
 }
 
-String HTMLTableCellElement::axis() const
+RefPtr<StringImpl> HTMLTableCellElement::axis() const
 {
     return attributeWithoutSynchronization(axisAttr);
 }
 
 void HTMLTableCellElement::setColSpan(unsigned number)
 {
-    setAttributeWithoutSynchronization(colspanAttr, AtomString::number(limitToOnlyHTMLNonNegative(number, 1)));
+    setAttributeWithoutSynchronization(colspanAttr, AtomStringImpl::number(limitToOnlyHTMLNonNegative(number, 1)));
 }
 
-String HTMLTableCellElement::headers() const
+RefPtr<StringImpl> HTMLTableCellElement::headers() const
 {
     return attributeWithoutSynchronization(headersAttr);
 }
 
 void HTMLTableCellElement::setRowSpan(unsigned number)
 {
-    setAttributeWithoutSynchronization(rowspanAttr, AtomString::number(limitToOnlyHTMLNonNegative(number, 1)));
+    setAttributeWithoutSynchronization(rowspanAttr, AtomStringImpl::number(limitToOnlyHTMLNonNegative(number, 1)));
 }
 
-const AtomString& HTMLTableCellElement::scope() const
+const RefPtr<AtomStringImpl>& HTMLTableCellElement::scope() const
 {
     // https://html.spec.whatwg.org/multipage/tables.html#attr-th-scope
-    static MainThreadNeverDestroyed<const AtomString> row("row"_s);
-    static MainThreadNeverDestroyed<const AtomString> col("col"_s);
-    static MainThreadNeverDestroyed<const AtomString> rowgroup("rowgroup"_s);
-    static MainThreadNeverDestroyed<const AtomString> colgroup("colgroup"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> row("row"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> col("col"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> rowgroup("rowgroup"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> colgroup("colgroup"_s);
 
-    const AtomString& value = attributeWithoutSynchronization(HTMLNames::scopeAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(HTMLNames::scopeAttr);
 
     if (equalIgnoringASCIICase(value, row))
         return row;

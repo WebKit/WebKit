@@ -236,7 +236,7 @@ void MediaControlTextTrackContainerElement::updateDisplayedCaptionsForAccessibil
     if (!mediaElement)
         return;
 
-    Vector<String> captions;
+    Vector<RefPtr<StringImpl>> captions;
     if (mediaElement->closedCaptionsVisible()) {
         for (auto& interval : renderedCues) {
             Ref cue = *interval.data();
@@ -244,14 +244,14 @@ void MediaControlTextTrackContainerElement::updateDisplayedCaptionsForAccessibil
                 continue;
 
             // Cue text can contain markup, like WebVTT tags, so get the plain text.
-            String text;
+            RefPtr<StringImpl> text;
             if (RefPtr vttCue = dynamicDowncast<VTTCue>(cue))
                 text = vttCue->textWithoutMarkup();
             else if (RefPtr displayTree = cue->getDisplayTree())
                 text = displayTree->textContent();
 
-            text = text.simplifyWhiteSpace(isASCIIWhitespace);
-            if (!text.isEmpty())
+            text = simplifyWhiteSpace(text, isASCIIWhitespace);
+            if (!isEmpty(text))
                 captions.append(WTF::move(text));
         }
     }
@@ -313,7 +313,7 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
     if (!mediaElement)
         return;
 
-    String language;
+    RefPtr<StringImpl> language;
 
     // FIXME: Since it is possible to have more than one text track enabled, the following code may not find the correct language.
     // The default UI only allows a user to enable one track at a time, so it should be OK for now, but we should consider doing
@@ -585,7 +585,7 @@ CueList MediaControlTextTrackContainerElement::currentlyActiveCues() const
 VTTCue& MediaControlTextTrackContainerElement::ensurePreviewCue() const
 {
     if (!m_previewTrack) {
-        lazyInitialize(m_previewTrack, TextTrack::create(nullptr, "Preview Track"_s, emptyAtom(), emptyAtom(), emptyAtom()));
+        lazyInitialize(m_previewTrack, TextTrack::create(nullptr, "Preview Track"_atom, emptyAtom(), emptyAtom(), emptyAtom()));
         m_previewTrack->setMode(TextTrack::Mode::Showing);
     }
 

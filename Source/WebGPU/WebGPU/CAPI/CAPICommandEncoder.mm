@@ -122,7 +122,7 @@ void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(commandEncoder))->finish({ .label = descriptor ? WebGPU::CAPI::fromAPI(descriptor->label) : String() }));
+        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(commandEncoder))->finish({ .label = descriptor ? WebGPU::CAPI::fromAPI(descriptor->label) : RefPtr<StringImpl>() }));
     }
 }
 

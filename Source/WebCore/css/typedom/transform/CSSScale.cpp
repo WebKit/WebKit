@@ -79,7 +79,7 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(Ref<const CSSFunctionValue> cssFunct
         auto numberOfComponents = components.size();
         if (numberOfComponents < minNumberOfComponents || numberOfComponents > maxNumberOfComponents) {
             ASSERT_NOT_REACHED();
-            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
+            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_si };
         }
         return create(WTF::move(components));
     };

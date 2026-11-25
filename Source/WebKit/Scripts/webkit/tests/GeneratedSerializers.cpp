@@ -47,6 +47,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
+#include "StringMembers.h"
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
@@ -83,6 +84,7 @@
 #include <wtf/CreateUsingClass.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Seconds.h>
+#include <wtf/text/AtomString.h>
 #if USE(AVFOUNDATION)
 #include <pal/cocoa/AVFoundationSoftLink.h>
 #endif
@@ -1000,11 +1002,61 @@ std::optional<WebKit::CustomEncoded> ArgumentCoder<WebKit::CustomEncoded>::decod
     };
 }
 
+void ArgumentCoder<WebKit::StringMembers>::encode(Encoder& encoder, const WebKit::StringMembers& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.string)>, RefPtr<StringImpl>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.atom)>, RefPtr<AtomStringImpl>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.optionalString)>, std::optional<RefPtr<StringImpl>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.atoms)>, Vector<RefPtr<AtomStringImpl>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.map)>, HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>>);
+    struct ShouldBeSameSizeAsStringMembers : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::StringMembers>, false> {
+        RefPtr<StringImpl> string;
+        RefPtr<AtomStringImpl> atom;
+        std::optional<RefPtr<StringImpl>> optionalString;
+        Vector<RefPtr<AtomStringImpl>> atoms;
+        HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> map;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsStringMembers) == sizeof(WebKit::StringMembers));
+    static_assert(IsIncreasing < 0
+        , offsetof(WebKit::StringMembers, string)
+        , offsetof(WebKit::StringMembers, atom)
+        , offsetof(WebKit::StringMembers, optionalString)
+        , offsetof(WebKit::StringMembers, atoms)
+        , offsetof(WebKit::StringMembers, map)
+    >);
+
+    encoder << instance.string;
+    encoder << instance.atom;
+    encoder << instance.optionalString;
+    encoder << instance.atoms;
+    encoder << instance.map;
+}
+
+std::optional<WebKit::StringMembers> ArgumentCoder<WebKit::StringMembers>::decode(Decoder& decoder)
+{
+    auto string = decoder.decode<RefPtr<StringImpl>>();
+    auto atom = decoder.decode<RefPtr<AtomStringImpl>>();
+    auto optionalString = decoder.decode<std::optional<RefPtr<StringImpl>>>();
+    auto atoms = decoder.decode<Vector<RefPtr<AtomStringImpl>>>();
+    auto map = decoder.decode<HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebKit::StringMembers {
+            WTF::move(*string),
+            WTF::move(*atom),
+            WTF::move(*optionalString),
+            WTF::move(*atoms),
+            WTF::move(*map)
+        }
+    };
+}
+
 void ArgumentCoder<WebKit::LayerProperties>::encode(Encoder& encoder, const WebKit::LayerProperties& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.changedProperties)>, OptionSet<WebKit::LayerChange>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.nonSerializedMember)>, int>);
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.name)>, String>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.name)>, RefPtr<StringImpl>>);
 #if ENABLE(FEATURE)
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.featureEnabledMember)>, std::unique_ptr<WebCore::TransformationMatrix>>);
 #endif
@@ -1012,7 +1064,7 @@ void ArgumentCoder<WebKit::LayerProperties>::encode(Encoder& encoder, const WebK
     struct ShouldBeSameSizeAsLayerProperties : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::LayerProperties>, false> {
         OptionSet<WebKit::LayerChange> changedProperties;
         int nonSerializedMember;
-        String name;
+        RefPtr<StringImpl> name;
 #if ENABLE(FEATURE)
         std::unique_ptr<WebCore::TransformationMatrix> featureEnabledMember;
 #endif
@@ -1055,7 +1107,7 @@ std::optional<WebKit::LayerProperties> ArgumentCoder<WebKit::LayerProperties>::d
         return std::nullopt;
     result.changedProperties = *changedProperties;
     if (*changedProperties & WebKit::LayerChange::NameChanged) {
-        if (auto deserialized = decoder.decode<String>())
+        if (auto deserialized = decoder.decode<RefPtr<StringImpl>>())
             result.name = WTF::move(*deserialized);
         else
             return std::nullopt;
@@ -1846,10 +1898,10 @@ std::optional<WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType>
 void ArgumentCoder<Namespace::SwiftInner>::encode(Encoder& encoder, const Namespace::SwiftInner& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, int32_t>);
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.label)>, String>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.label)>, RefPtr<StringImpl>>);
     struct ShouldBeSameSizeAsSwiftInner : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::SwiftInner>, false> {
         int32_t value;
-        String label;
+        RefPtr<StringImpl> label;
     };
     static_assert(sizeof(ShouldBeSameSizeAsSwiftInner) == sizeof(Namespace::SwiftInner));
     static_assert(IsIncreasing < 0
@@ -1864,7 +1916,7 @@ void ArgumentCoder<Namespace::SwiftInner>::encode(Encoder& encoder, const Namesp
 std::optional<Namespace::SwiftInner> ArgumentCoder<Namespace::SwiftInner>::decode(Decoder& decoder)
 {
     auto value = decoder.decode<int32_t>();
-    auto label = decoder.decode<String>();
+    auto label = decoder.decode<RefPtr<StringImpl>>();
     if (!decoder.isValid()) [[unlikely]]
         return std::nullopt;
     return {
@@ -1878,9 +1930,9 @@ std::optional<Namespace::SwiftInner> ArgumentCoder<Namespace::SwiftInner>::decod
 void ArgumentCoder<Namespace::SwiftStruct>::encode(Encoder& encoder, const Namespace::SwiftStruct& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_flag)>, bool>);
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_name)>, String>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_name)>, RefPtr<StringImpl>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_numbers)>, Vector<uint64_t>>);
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_strings)>, Vector<String>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_strings)>, Vector<RefPtr<StringImpl>>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_optionalDouble)>, std::optional<double>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_markableFrameID)>, Markable<WebCore::FrameIdentifier>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_frameID)>, WebCore::FrameIdentifier>);
@@ -1916,9 +1968,9 @@ void ArgumentCoder<Namespace::SwiftStruct>::encode(Encoder& encoder, const Names
 std::optional<Namespace::SwiftStruct> ArgumentCoder<Namespace::SwiftStruct>::decode(Decoder& decoder)
 {
     auto m_flag = decoder.decode<bool>();
-    auto m_name = decoder.decode<String>();
+    auto m_name = decoder.decode<RefPtr<StringImpl>>();
     auto m_numbers = decoder.decode<Vector<uint64_t>>();
-    auto m_strings = decoder.decode<Vector<String>>();
+    auto m_strings = decoder.decode<Vector<RefPtr<StringImpl>>>();
     auto m_optionalDouble = decoder.decode<std::optional<double>>();
     auto m_markableFrameID = decoder.decode<Markable<WebCore::FrameIdentifier>>();
     auto m_frameID = decoder.decode<WebCore::FrameIdentifier>();
@@ -1957,7 +2009,7 @@ std::optional<Namespace::SwiftStruct> ArgumentCoder<Namespace::SwiftStruct>::dec
 
 void ArgumentCoder<Namespace::SwiftNode>::encode(Encoder& encoder, const Namespace::SwiftNode& instance)
 {
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.name())>, String>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.name())>, RefPtr<StringImpl>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.children())>, Vector<Ref<Namespace::SwiftNode>>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.optionalLeaf())>, RefPtr<Namespace::SwiftLeaf>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.leaf())>, Ref<Namespace::SwiftLeaf>>);
@@ -1970,7 +2022,7 @@ void ArgumentCoder<Namespace::SwiftNode>::encode(Encoder& encoder, const Namespa
 
 std::optional<Ref<Namespace::SwiftNode>> ArgumentCoder<Namespace::SwiftNode>::decode(Decoder& decoder)
 {
-    auto name = decoder.decode<String>();
+    auto name = decoder.decode<RefPtr<StringImpl>>();
     auto children = decoder.decode<Vector<Ref<Namespace::SwiftNode>>>();
     auto optionalLeaf = decoder.decode<RefPtr<Namespace::SwiftLeaf>>();
     auto leaf = decoder.decode<Ref<Namespace::SwiftLeaf>>();

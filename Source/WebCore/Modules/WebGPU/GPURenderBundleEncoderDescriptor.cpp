@@ -33,8 +33,8 @@ namespace WebCore {
 Ref<JSON::Object> GPURenderBundleEncoderDescriptor::toJSON() const
 {
     Ref json = GPURenderPassLayout::toJSON();
-    json->setBoolean("depthReadOnly"_s, depthReadOnly);
-    json->setBoolean("stencilReadOnly"_s, stencilReadOnly);
+    json->setBoolean("depthReadOnly"_si, depthReadOnly);
+    json->setBoolean("stencilReadOnly"_si, stencilReadOnly);
     return json;
 }
 

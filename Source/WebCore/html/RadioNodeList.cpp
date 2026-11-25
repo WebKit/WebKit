@@ -40,14 +40,14 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioNodeList);
 
-RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomString& name)
+RadioNodeList::RadioNodeList(ContainerNode& rootNode, AtomStringImpl* name)
     : CachedLiveNodeList(rootNode, LiveNodeListType::RadioNodeList, NodeListInvalidationType::InvalidateForFormControls)
     , m_name(name)
     , m_isRootedAtTreeScope(is<HTMLFormElement>(rootNode))
 {
 }
 
-Ref<RadioNodeList> RadioNodeList::create(ContainerNode& rootNode, const AtomString& name)
+Ref<RadioNodeList> RadioNodeList::create(ContainerNode& rootNode, AtomStringImpl* name)
 {
     return adoptRef(*new RadioNodeList(rootNode, name));
 }
@@ -63,12 +63,12 @@ static RefPtr<HTMLInputElement> nonEmptyRadioButton(Node& node)
     if (!inputElement)
         return nullptr;
 
-    if (!inputElement->isRadioButton() || inputElement->value()->isEmpty())
+    if (!inputElement->isRadioButton() || isEmpty(inputElement->value().get()))
         return nullptr;
     return inputElement;
 }
 
-String RadioNodeList::value() const
+RefPtr<StringImpl> RadioNodeList::value() const
 {
     auto length = this->length();
     for (unsigned i = 0; i < length; ++i) {
@@ -78,16 +78,16 @@ String RadioNodeList::value() const
                 return button->value();
         }
     }
-    return String();
+    return nullptr;
 }
 
-void RadioNodeList::setValue(const String& value)
+void RadioNodeList::setValue(StringImpl* value)
 {
     auto length = this->length();
     for (unsigned i = 0; i < length; ++i) {
         Ref node = *item(i);
         if (RefPtr button = nonEmptyRadioButton(node)) {
-            if (button->value() == value) {
+            if (equal(button->value(), value)) {
                 button->setChecked(true);
                 return;
             }

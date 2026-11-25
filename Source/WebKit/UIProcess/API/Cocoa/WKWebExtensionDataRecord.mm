@@ -54,12 +54,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionDataRecord, WebExtensionData
 
 - (NSString *)displayName
 {
-    return _webExtensionDataRecord->displayName().createNSString().autorelease();
+    return createNSString(_webExtensionDataRecord->displayName()).autorelease();
 }
 
 - (NSString *)uniqueIdentifier
 {
-    return _webExtensionDataRecord->uniqueIdentifier().createNSString().autorelease();
+    return createNSString(_webExtensionDataRecord->uniqueIdentifier()).autorelease();
 }
 
 - (NSSet<WKWebExtensionDataType> *)containedDataTypes

@@ -49,19 +49,19 @@ class SuffixTree {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(SuffixTree);
     WTF_MAKE_NONCOPYABLE(SuffixTree)
 public:
-    SuffixTree(const String& text, unsigned depth)
+    SuffixTree(StringImpl* text, unsigned depth)
         : m_depth(depth)
         , m_leaf(true)
     {
         build(text);
     }
 
-    bool mightContain(const String& query)
+    bool mightContain(StringImpl* query)
     {
         Node* current = &m_root;
-        int limit = std::min(m_depth, query.length());
+        int limit = std::min(m_depth, length(query));
         for (int i = 0; i < limit; ++i) {
-            auto it = current->find(Codebook::codeWord(query[i]));
+            auto it = current->find(Codebook::codeWord(codeUnitAt(query, i)));
             if (it == current->end())
                 return false;
             current = it->node;
@@ -106,14 +106,14 @@ private:
         bool m_isLeaf;
     };
 
-    void build(const String& text)
+    void build(StringImpl* text)
     {
-        for (unsigned base = 0; base < text.length(); ++base) {
+        for (unsigned base = 0; base < length(text); ++base) {
             Node* current = &m_root;
-            unsigned limit = std::min(base + m_depth, text.length());
+            unsigned limit = std::min(base + m_depth, length(text));
             for (unsigned offset = 0; base + offset < limit; ++offset) {
                 ASSERT(current != &m_leaf);
-                Node*& child = current->childAt(Codebook::codeWord(text[base + offset]));
+                Node*& child = current->childAt(Codebook::codeWord(codeUnitAt(text, base + offset)));
                 if (!child)
                     child = base + offset + 1 == limit ? &m_leaf : new Node();
                 current = child;

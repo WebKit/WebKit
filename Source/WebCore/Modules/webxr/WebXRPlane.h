@@ -60,7 +60,7 @@ public:
     const Vector<Ref<DOMPointReadOnly>>& polygon() const LIFETIME_BOUND { return m_polygon; }
     std::optional<XRPlaneOrientation> orientation() const { return m_orientation; }
     DOMHighResTimeStamp lastChangedTime() const { return m_lastChangedTime; }
-    String semanticLabel() const;
+    RefPtr<StringImpl> semanticLabel() const;
 
     void update(const PlatformXR::FrameData::Plane&, DOMHighResTimeStamp);
     void invalidate();

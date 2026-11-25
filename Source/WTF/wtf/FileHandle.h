@@ -98,7 +98,7 @@ public:
 
     // Appends the contents of the file found at 'path' to the FileHandle.
     // Returns true if the write was successful, false if it was not.
-    WTF_EXPORT_PRIVATE bool appendFileContents(const String& path);
+    WTF_EXPORT_PRIVATE bool appendFileContents(StringImpl* path);
 
     WTF_EXPORT_PRIVATE std::optional<MappedFileData> map(MappedFileMode);
     WTF_EXPORT_PRIVATE std::optional<MappedFileData> map(MappedFileMode, FileOpenMode);

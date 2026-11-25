@@ -59,7 +59,7 @@
     if (!(self = [self init]))
         return nil;
 
-    protect(*_request)->setSearchText(searchText);
+    protect(*_request)->setSearchText(StringImpl::create(searchText));
     return self;
 }
 
@@ -79,10 +79,10 @@
 
     WebCore::TargetedElementSelectors selectorsForElement(ReserveCapacityTag { }, nsSelectorsForElement.count);
     for (NSSet<NSString *> *nsSelectors in nsSelectorsForElement) {
-        HashSet<String> selectors;
+        HashSet<RefPtr<StringImpl>> selectors;
         selectors.reserveInitialCapacity(nsSelectors.count);
         for (NSString *selector in nsSelectors)
-            selectors.add(selector);
+            selectors.add(StringImpl::create(selector));
         selectorsForElement.append(WTF::move(selectors));
     }
 

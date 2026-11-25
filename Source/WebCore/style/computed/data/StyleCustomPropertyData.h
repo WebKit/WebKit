@@ -36,7 +36,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CustomPropertyData);
 class CustomPropertyData : public RefCounted<CustomPropertyData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CustomPropertyData, CustomPropertyData);
 private:
-    using CustomPropertyValueMap = HashMap<AtomString, Ref<const CustomProperty>>;
+    using CustomPropertyValueMap = HashMap<RefPtr<AtomStringImpl>, Ref<const CustomProperty>>;
 
 public:
     static Ref<CustomPropertyData> create() { return adoptRef(*new CustomPropertyData); }
@@ -48,14 +48,14 @@ public:
     void dumpDifferences(TextStream&, const CustomPropertyData&) const;
 #endif
 
-    NODELETE const CustomProperty* get(const AtomString&) const;
-    void set(const AtomString&, Ref<const CustomProperty>&&);
+    NODELETE const CustomProperty* get(AtomStringImpl*) const;
+    void set(AtomStringImpl*, Ref<const CustomProperty>&&);
 
     unsigned size() const { return m_size; }
     bool mayHaveAnimatableProperties() const { return m_mayHaveAnimatableProperties; }
 
-    void forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, Ref<const CustomProperty>>&)>&) const;
-    AtomString findKeyAtIndex(unsigned) const;
+    void forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<RefPtr<AtomStringImpl>, Ref<const CustomProperty>>&)>&) const;
+    RefPtr<AtomStringImpl> findKeyAtIndex(unsigned) const;
 
 private:
     CustomPropertyData() = default;

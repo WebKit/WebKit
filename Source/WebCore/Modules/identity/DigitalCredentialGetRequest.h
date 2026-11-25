@@ -34,7 +34,7 @@ class JSObject;
 namespace WebCore {
 
 struct DigitalCredentialGetRequest {
-    String protocol;
+    RefPtr<StringImpl> protocol;
     JSC::Strong<JSC::JSObject> data;
 };
 

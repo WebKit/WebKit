@@ -42,25 +42,25 @@
 - (NSString *)cite
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::citeAttr).string().createNSString().autorelease();
+    return createNSString(IMPL->getURLAttribute(WebCore::HTMLNames::citeAttr).string()).autorelease();
 }
 
 - (void)setCite:(NSString *)newCite
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::citeAttr, newCite);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::citeAttr, AtomStringImpl::add((__bridge CFStringRef)newCite).get());
 }
 
 - (NSString *)dateTime
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::datetimeAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::datetimeAttr)).autorelease();
 }
 
 - (void)setDateTime:(NSString *)newDateTime
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::datetimeAttr, newDateTime);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::datetimeAttr, AtomStringImpl::add((__bridge CFStringRef)newDateTime).get());
 }
 
 @end

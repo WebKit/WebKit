@@ -43,7 +43,7 @@ Ref<CSSMaskBorderWidthValue> CSSMaskBorderWidthValue::create(CSS::MaskBorderWidt
     return adoptRef(*new CSSMaskBorderWidthValue(WTF::move(widths)));
 }
 
-String CSSMaskBorderWidthValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSMaskBorderWidthValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_widths);
 }

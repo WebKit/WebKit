@@ -70,7 +70,7 @@ void LegacyWebSocketInspectorInstrumentation::didSendWebSocketFrame(Document* do
     InspectorInstrumentation::didSendWebSocketFrame(document, identifier, frame);
 }
 
-void LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketFrameError(Document* document, WebSocketChannelIdentifier identifier, const String& errorMessage)
+void LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketFrameError(Document* document, WebSocketChannelIdentifier identifier, StringImpl* errorMessage)
 {
     InspectorInstrumentation::didReceiveWebSocketFrameError(document, identifier, errorMessage);
 }

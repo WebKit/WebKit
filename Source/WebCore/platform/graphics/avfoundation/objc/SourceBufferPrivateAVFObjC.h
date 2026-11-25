@@ -129,7 +129,7 @@ public:
 private:
     SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC&, const MediaSourceConfiguration&, Ref<SourceBufferParser>&&, Ref<AudioVideoRenderer>&&);
 
-    void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, TrackID, const String& mediaType);
+    void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, TrackID, StringImpl* mediaType);
     bool isMediaSampleAllowed(const MediaSample&) const final;
 
     // SourceBufferPrivate overrides

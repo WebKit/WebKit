@@ -53,7 +53,7 @@ ExceptionOr<Ref<StereoPannerNode>> StereoPannerNode::create(BaseAudioContext& co
 
 StereoPannerNode::StereoPannerNode(BaseAudioContext& context, float pan)
     : AudioNode(context, NodeTypeStereoPanner)
-    , m_pan(AudioParam::create(context, "pan"_s, pan, -1, 1, AutomationRate::ARate))
+    , m_pan(AudioParam::create(context, "pan"_si, pan, -1, 1, AutomationRate::ARate))
     , m_sampleAccurateValues(AudioUtilities::renderQuantumSize)
 {
     addInput();
@@ -105,7 +105,7 @@ void StereoPannerNode::processOnlyAudioParams(size_t framesToProcess)
 ExceptionOr<void> StereoPannerNode::setChannelCount(unsigned channelCount)
 {
     if (channelCount > 2)
-        return Exception { ExceptionCode::NotSupportedError, "StereoPannerNode's channelCount cannot be greater than 2."_s };
+        return Exception { ExceptionCode::NotSupportedError, "StereoPannerNode's channelCount cannot be greater than 2."_si };
     
     return AudioNode::setChannelCount(channelCount);
 }
@@ -113,7 +113,7 @@ ExceptionOr<void> StereoPannerNode::setChannelCount(unsigned channelCount)
 ExceptionOr<void> StereoPannerNode::setChannelCountMode(ChannelCountMode mode)
 {
     if (mode == ChannelCountMode::Max)
-        return Exception { ExceptionCode::NotSupportedError, "StereoPannerNode's channelCountMode cannot be max."_s };
+        return Exception { ExceptionCode::NotSupportedError, "StereoPannerNode's channelCountMode cannot be max."_si };
     
     return AudioNode::setChannelCountMode(mode);
 }

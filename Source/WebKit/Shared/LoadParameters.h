@@ -64,12 +64,12 @@ struct LoadParameters {
     SandboxExtension::Handle sandboxExtensionHandle;
 
     RefPtr<WebCore::SharedBuffer> data;
-    String MIMEType;
-    String encodingName;
+    RefPtr<StringImpl> MIMEType;
+    RefPtr<StringImpl> encodingName;
 
-    String baseURLString;
-    String unreachableURLString;
-    String provisionalLoadErrorURLString;
+    RefPtr<StringImpl> baseURLString;
+    RefPtr<StringImpl> unreachableURLString;
+    RefPtr<StringImpl> provisionalLoadErrorURLString;
 
     std::optional<WebsitePoliciesData> websitePolicies;
     std::optional<FrameInfoData> originatingFrame;
@@ -83,7 +83,7 @@ struct LoadParameters {
     WebCore::NavigationHistoryBehavior navigationHistoryBehavior { WebCore::NavigationHistoryBehavior::Auto };
     WebCore::ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded { WebCore::ReplaceIfNotCompletelyLoaded::No };
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Visible };
-    String clientRedirectSourceForHistory;
+    RefPtr<StringImpl> clientRedirectSourceForHistory;
     std::optional<WebCore::SandboxFlags> effectiveSandboxFlags;
     WebCore::ReferrerPolicy effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;

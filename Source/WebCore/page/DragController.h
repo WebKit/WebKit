@@ -114,7 +114,7 @@ public:
     WEBCORE_EXPORT static DragImage dragImageForNode(LocalFrame&, Node&);
     WEBCORE_EXPORT static DragImage dragImageForRange(LocalFrame&, const SimpleRange&, bool forceBlackText = false);
     WEBCORE_EXPORT static std::pair<DragImage, RefPtr<TextIndicator>> dragImageAndTextIndicatorForSelection(LocalFrame&, bool forceBlackText = false);
-    static std::pair<DragImage, RefPtr<TextIndicator>> dragImageAndTextIndicatorForLink(Element&, URL&, const String& label, float deviceScaleFactor);
+    static std::pair<DragImage, RefPtr<TextIndicator>> dragImageAndTextIndicatorForLink(Element&, URL&, StringImpl* label, float deviceScaleFactor);
 
     NODELETE static const IntSize& maxDragImageSize();
     static const int MaxOriginalImageArea;
@@ -161,7 +161,7 @@ private:
     void removeAllDroppedImagePlaceholders();
 
     void cleanupAfterSystemDrag();
-    void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
+    void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, StringImpl* label);
 
     WeakRef<Page> m_page;
     const std::unique_ptr<DragClient> m_client;

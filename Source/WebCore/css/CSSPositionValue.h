@@ -35,7 +35,7 @@ public:
 
     const CSS::Position& position() const LIFETIME_BOUND { return m_position; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPositionValue&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
@@ -52,7 +52,7 @@ public:
 
     const CSS::PositionX& position() const LIFETIME_BOUND { return m_position; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPositionXValue&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
@@ -69,7 +69,7 @@ public:
 
     const CSS::PositionY& position() const LIFETIME_BOUND { return m_position; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPositionYValue&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;

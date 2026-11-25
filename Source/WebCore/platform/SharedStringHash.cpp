@@ -213,11 +213,11 @@ NODELETE static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(std
     return AlreadyHashed::avoidDeletedValue(SuperFastHash::computeHash(url));
 }
 
-SharedStringHash computeSharedStringHash(const String& url)
+SharedStringHash computeSharedStringHash(StringImpl* url)
 {
-    if (url.isEmpty() || url.is8Bit())
-        return computeSharedStringHashInline(url.span8());
-    return computeSharedStringHashInline(url.span16());
+    if (isEmpty(url) || is8Bit(url))
+        return computeSharedStringHashInline(span8(url));
+    return computeSharedStringHashInline(span16(url));
 }
 
 SharedStringHash computeSharedStringHash(std::span<const char16_t> url)
@@ -279,15 +279,15 @@ static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(const URL& b
     return computeSharedStringHashInline(buffer.span());
 }
 
-SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attributeURL)
+SharedStringHash computeVisitedLinkHash(const URL& base, AtomStringImpl* attributeURL)
 {
-    if (attributeURL.isEmpty())
+    if (isEmpty(attributeURL))
         return 0;
 
-    if ((base.string().isEmpty() || base.string().is8Bit()) && attributeURL.is8Bit())
-        return computeSharedStringHashInline(base, attributeURL.span8());
+    if ((isEmpty(base.string()) || is8Bit(base.string())) && is8Bit(attributeURL))
+        return computeSharedStringHashInline(base, span8(attributeURL));
 
-    auto upconvertedCharacters = StringView(attributeURL.string()).upconvertedCharacters();
+    auto upconvertedCharacters = StringView(attributeURL).upconvertedCharacters();
     return computeSharedStringHashInline(base, upconvertedCharacters.span());
 }
 

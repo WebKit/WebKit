@@ -62,7 +62,7 @@ public:
     virtual URL sourceURL() const { return { }; }
     virtual TextPosition sourcePosition() const { return TextPosition(); }
 
-    String functionName() const;
+    RefPtr<StringImpl> functionName() const;
 
     void replaceJSFunctionForAttributeListener(JSC::JSObject* function, JSC::JSObject* wrapper);
     static bool wasCreatedFromMarkup(const EventListener& listener)
@@ -79,7 +79,7 @@ private:
     template<typename Visitor> void visitJSFunctionImplInGCThread(Visitor&);
     void visitJSFunctionInGCThread(JSC::AbstractSlotVisitor&) final;
     void visitJSFunctionInGCThread(JSC::SlotVisitor&) final;
-    virtual String code() const { return String(); }
+    virtual RefPtr<StringImpl> code() const { return nullptr; }
 
     // JSVMClientDataClient
     void willDestroyVM() final;
@@ -103,21 +103,21 @@ private:
 };
 
 // For "onxxx" attributes that automatically set up JavaScript event listeners.
-JSC::JSValue eventHandlerAttribute(EventTarget&, const AtomString& eventType, DOMWrapperWorld&);
+JSC::JSValue eventHandlerAttribute(EventTarget&, AtomStringImpl* eventType, DOMWrapperWorld&);
 
 template<typename JSMaybeErrorEventListener>
-inline void setEventHandlerAttribute(EventTarget& eventTarget, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+inline void setEventHandlerAttribute(EventTarget& eventTarget, AtomStringImpl* eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
     eventTarget.setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, jsEventTarget);
 }
 
 // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
-inline JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+inline JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, AtomStringImpl* eventType, DOMWrapperWorld& isolatedWorld)
 {
     return eventHandlerAttribute(window, eventType, isolatedWorld);
 }
 
-inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, AtomStringImpl* eventType, DOMWrapperWorld& isolatedWorld)
 {
     if (RefPtr window = element.document().window())
         return eventHandlerAttribute(*window, eventType, isolatedWorld);
@@ -125,13 +125,13 @@ inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const Atom
 }
 
 template<typename JSMaybeErrorEventListener>
-inline void setWindowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+inline void setWindowEventHandlerAttribute(DOMWindow& window, AtomStringImpl* eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
     window.setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.realm());
 }
 
 template<typename JSMaybeErrorEventListener>
-inline void setWindowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+inline void setWindowEventHandlerAttribute(HTMLElement& element, AtomStringImpl* eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
     if (RefPtr window = element.document().window())
         window->setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.realm());

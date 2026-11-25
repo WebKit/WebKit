@@ -51,9 +51,9 @@ public:
 
     virtual ~UserMessageHandlersNamespace();
 
-    NODELETE Vector<AtomString> supportedPropertyNames() const;
-    RefPtr<UserMessageHandler> namedItem(DOMWrapperWorld&, const AtomString&);
-    NODELETE bool isSupportedPropertyName(const AtomString&);
+    NODELETE Vector<RefPtr<AtomStringImpl>> supportedPropertyNames() const;
+    RefPtr<UserMessageHandler> namedItem(DOMWrapperWorld&, AtomStringImpl*);
+    NODELETE bool isSupportedPropertyName(AtomStringImpl*);
 
     // UserContentProviderInvalidationClient, FrameDestructionObserver.
     void ref() const final { RefCounted::ref(); }
@@ -67,7 +67,7 @@ private:
 
     const Ref<UserContentProvider> m_userContentProvider;
 
-    HashMap<std::pair<AtomString, Ref<const DOMWrapperWorld>>, Ref<UserMessageHandler>> m_messageHandlers;
+    HashMap<std::pair<RefPtr<AtomStringImpl>, Ref<const DOMWrapperWorld>>, Ref<UserMessageHandler>> m_messageHandlers;
 };
 
 } // namespace WebCore

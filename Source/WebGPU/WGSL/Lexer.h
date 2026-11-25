@@ -55,7 +55,7 @@ private:
     NODELETE Token makeToken(TokenType);
     NODELETE Token makeFloatToken(TokenType, double);
     NODELETE Token makeIntegerToken(TokenType, int64_t);
-    NODELETE Token makeIdentifierToken(String&&);
+    NODELETE Token makeIdentifierToken(RefPtr<StringImpl>&&);
 
     NODELETE T shift(unsigned = 1);
     NODELETE T peek(unsigned = 0);

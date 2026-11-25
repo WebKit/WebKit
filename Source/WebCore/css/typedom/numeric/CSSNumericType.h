@@ -80,7 +80,7 @@ public:
         return matches<type>() || matches<CSSNumericBaseType::Percent>();
     }
 
-    String debugString() const;
+    RefPtr<StringImpl> debugString() const;
 };
 
 } // namespace WebCore

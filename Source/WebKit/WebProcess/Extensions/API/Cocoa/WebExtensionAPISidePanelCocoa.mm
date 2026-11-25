@@ -54,11 +54,11 @@ static std::expected<std::optional<WebExtensionTabIdentifier>, WebExtensionError
     if ([maybeTabId isKindOfClass:NSNumber.class]) {
         auto tabId = toWebExtensionTabIdentifier(((NSNumber *) maybeTabId).doubleValue);
         if (!isValid(tabId))
-            return makeUnexpected(toErrorString(nullString(), @"options", @"'tabId' is invalid"));
+            return makeUnexpected(toErrorString(nullString(), StringImpl::create(@"options").get(), StringImpl::create(@"'tabId' is invalid").get()));
         return std::optional(tabId.value());
     }
 
-    return makeUnexpected(toErrorString(nullString(), @"options", @"'tabId' must be a number"));
+    return makeUnexpected(toErrorString(nullString(), StringImpl::create(@"options").get(), StringImpl::create(@"'tabId' must be a number").get()));
 }
 
 static std::expected<std::optional<WebExtensionWindowIdentifier>, WebExtensionError> parseWindowIdentifier(NSDictionary *options)
@@ -71,11 +71,11 @@ static std::expected<std::optional<WebExtensionWindowIdentifier>, WebExtensionEr
     if ([maybeWindowId isKindOfClass:NSNumber.class]) {
         auto windowId = toWebExtensionWindowIdentifier(((NSNumber *) maybeWindowId).doubleValue);
         if (!isValid(windowId))
-            return makeUnexpected(toErrorString(nullString(), @"options", @"'windowId' is invalid"));
+            return makeUnexpected(toErrorString(nullString(), StringImpl::create(@"options").get(), StringImpl::create(@"'windowId' is invalid").get()));
         return std::optional(windowId.value());
     }
 
-    return makeUnexpected(toErrorString(nullString(), @"options", @"'windowId' must be a number"));
+    return makeUnexpected(toErrorString(nullString(), StringImpl::create(@"options").get(), StringImpl::create(@"'windowId' must be a number").get()));
 }
 
 static std::expected<std::optional<WebExtensionActionClickBehavior>, WebExtensionError> parseActionClickBehavior(NSDictionary *behavior)
@@ -86,7 +86,7 @@ static std::expected<std::optional<WebExtensionActionClickBehavior>, WebExtensio
 
     NSString *exceptionString;
     if (!validateDictionary(behavior, @"behavior", nil, types, &exceptionString))
-        return makeUnexpected(exceptionString);
+        return makeUnexpected(StringImpl::create(exceptionString));
 
     NSNumber *actionClickBehavior = behavior[actionClickBehaviorKey];
     if (!actionClickBehavior)
@@ -107,7 +107,7 @@ static std::expected<SidebarTargetIdentifiers, WebExtensionError> parseRequiredT
         return makeUnexpected(windowResult.error());
 
     if (!tabResult.value() && !windowResult.value())
-        return makeUnexpected(toErrorString(nullString(), @"options", @"it must specify at least one of 'tabId' or 'windowId'"));
+        return makeUnexpected(toErrorString(nullString(), StringImpl::create(@"options").get(), StringImpl::create(@"it must specify at least one of 'tabId' or 'windowId'").get()));
 
     return SidebarTargetIdentifiers { WTF::move(windowResult.value()), WTF::move(tabResult.value()) };
 }
@@ -117,7 +117,7 @@ static NSDictionary<NSString *, id> *serializeSidebarParameters(WebExtensionSide
     NSMutableDictionary *serializedParameters = [NSMutableDictionary new];
 
     serializedParameters[@"enabled"] = @(parameters.enabled);
-    serializedParameters[@"path"] = parameters.panelPath.createNSString().get();
+    serializedParameters[@"path"] = createNSString(parameters.panelPath).get();
 
     if (parameters.tabIdentifier)
         serializedParameters[@"tabId"] = @(toWebAPI(parameters.tabIdentifier.value()));
@@ -136,7 +136,7 @@ void WebExtensionAPISidePanel::getOptions(NSDictionary *options, Ref<WebExtensio
     WebProcess::singleton()
         .sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetOptions(std::nullopt, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionSidebarParameters, WebExtensionError>&& result) {
             if (!result) {
-                callback->reportError(result.error().createNSString().get());
+                callback->reportError(result.error().get());
                 return;
             }
 
@@ -159,9 +159,9 @@ void WebExtensionAPISidePanel::setOptions(NSDictionary *options, Ref<WebExtensio
     }
 
     // An empty path (`path: ""`) clears the panel, so it is sent as nullopt.
-    std::optional<String> panelPath;
+    std::optional<RefPtr<StringImpl>> panelPath;
     if (path.get().length)
-        panelPath = String { path.get() };
+        panelPath = StringImpl::create(path.get());
 
     std::optional<bool> enabledValue;
     if (enabled)
@@ -169,7 +169,7 @@ void WebExtensionAPISidePanel::setOptions(NSDictionary *options, Ref<WebExtensio
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(std::nullopt, tabIdentifierResult.value(), panelPath, enabledValue), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -181,7 +181,7 @@ void WebExtensionAPISidePanel::getPanelBehavior(Ref<WebExtensionCallbackHandler>
 {
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetActionClickBehavior(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionActionClickBehavior, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -207,7 +207,7 @@ void WebExtensionAPISidePanel::setPanelBehavior(NSDictionary *behavior, Ref<WebE
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetActionClickBehavior(*maybeClickBehavior), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -219,7 +219,8 @@ void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallb
 {
     if (!WebCore::UserGestureIndicator::processingUserGesture()) {
         // In Chrome, this error manifests as a rejected promise, so match this behavior.
-        callback->reportError(toErrorString(@"sidePanel.open()", nullString(), @"it must be called during a user gesture").createNSString().get());
+        RefPtr error = toErrorString(StringImpl::create(@"sidePanel.open()").get(), nullString(), StringImpl::create(@"it must be called during a user gesture").get());
+        callback->reportError(error.get());
         return;
     }
 
@@ -231,7 +232,7 @@ void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallb
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarOpen(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -249,7 +250,7 @@ void WebExtensionAPISidePanel::close(NSDictionary *options, Ref<WebExtensionCall
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarClose(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -261,7 +262,7 @@ void WebExtensionAPISidePanel::getLayout(Ref<WebExtensionCallbackHandler>&& call
 {
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetLayout(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionSidebarSide, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 

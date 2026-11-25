@@ -39,7 +39,7 @@ CSSFontFeatureValuesRule::CSSFontFeatureValuesRule(StyleRuleFontFeatureValues& f
 {
 }
 
-String CSSFontFeatureValuesRule::cssText() const
+RefPtr<StringImpl> CSSFontFeatureValuesRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@font-feature-values "_s);
@@ -56,7 +56,7 @@ String CSSFontFeatureValuesRule::cssText() const
     builder.append(" { "_s);
     const auto& value = m_fontFeatureValuesRule->value();
     
-    auto addVariant = [&builder] (const String& variantName, const auto& tags) {
+    auto addVariant = [&builder] (StringImpl* variantName, const auto& tags) {
         if (!tags.isEmpty()) {
             builder.append('@', variantName, " { "_s);
             for (auto tag : tags) {
@@ -72,12 +72,12 @@ String CSSFontFeatureValuesRule::cssText() const
     
     // WPT expects the order used in Servo.
     // https://searchfox.org/mozilla-central/source/servo/components/style/stylesheets/font_feature_values_rule.rs#430
-    addVariant("swash"_s, value->swash());
-    addVariant("stylistic"_s, value->stylistic());
-    addVariant("ornaments"_s, value->ornaments());
-    addVariant("annotation"_s, value->annotation());
-    addVariant("character-variant"_s, value->characterVariant());
-    addVariant("styleset"_s, value->styleset());
+    addVariant("swash"_si, value->swash());
+    addVariant("stylistic"_si, value->stylistic());
+    addVariant("ornaments"_si, value->ornaments());
+    addVariant("annotation"_si, value->annotation());
+    addVariant("character-variant"_si, value->characterVariant());
+    addVariant("styleset"_si, value->styleset());
     
     builder.append('}');
     return builder.toString();
@@ -89,7 +89,7 @@ void CSSFontFeatureValuesRule::reattach(StyleRuleBase& rule)
 }
 
 // https://drafts.csswg.org/css-fonts/#dom-cssfontfeaturevaluesrule-fontfamily
-void CSSFontFeatureValuesRule::setFontFamily(const String& fontFamily)
+void CSSFontFeatureValuesRule::setFontFamily(StringImpl* fontFamily)
 {
     CSSTokenizer tokenizer(fontFamily);
     auto tokenRange = tokenizer.tokenRange();
@@ -107,7 +107,7 @@ CSSFontFeatureValuesBlockRule::CSSFontFeatureValuesBlockRule(StyleRuleFontFeatur
 {
 }
 
-String CSSFontFeatureValuesBlockRule::cssText() const
+RefPtr<StringImpl> CSSFontFeatureValuesBlockRule::cssText() const
 {
     // This rule is always contained inside a FontFeatureValuesRule,
     // which is the only one we are expected to serialize to CSS.

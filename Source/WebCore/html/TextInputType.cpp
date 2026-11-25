@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TextInputType);
 
 using namespace HTMLNames;
 
-const AtomString& TextInputType::formControlType() const
+const RefPtr<AtomStringImpl>& TextInputType::formControlType() const
 {
     return InputTypeNames::text();
 }

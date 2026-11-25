@@ -108,7 +108,7 @@ static bool matchesAVIFSignature(std::span<const uint8_t> contents, FragmentedSh
     auto cfData = sharedBuffer->createCFData();
     auto imageSource = adoptCF(CGImageSourceCreateWithData(cfData.get(), nullptr));
     auto uti = ImageDecoderCG::decodeUTI(imageSource.get(), sharedBuffer.get());
-    return uti == "public.avif"_s || uti == "public.avis"_s;
+    return equal(uti, "public.avif"_s) || equal(uti, "public.avis"_s);
 #else
     UNUSED_PARAM(data);
     return spanHasPrefix(contents.subspan(4), unsafeMakeSpan("\x66\x74\x79\x70", 4));

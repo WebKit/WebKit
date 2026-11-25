@@ -57,7 +57,7 @@ public:
     virtual ~PageLoaderClient() = default;
 
     virtual void willLoadURLRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, API::Object*) { }
-    virtual void willLoadDataRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, RefPtr<WebCore::FragmentedSharedBuffer>, const WTF::String&, const WTF::String&, const WTF::URL&, API::Object*) { }
+    virtual void willLoadDataRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, RefPtr<WebCore::FragmentedSharedBuffer>, StringImpl*, StringImpl*, const WTF::URL&, API::Object*) { }
 
     virtual void didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
@@ -68,7 +68,7 @@ public:
     virtual void didFinishProgress(WebKit::WebPage&) { }
     virtual void didFailLoadWithErrorForFrame(WebKit::WebPage&, WebKit::WebFrame&, const WebCore::ResourceError&, RefPtr<API::Object>&) { }
     virtual void didSameDocumentNavigationForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebKit::SameDocumentNavigationType, RefPtr<API::Object>&) { }
-    virtual void didReceiveTitleForFrame(WebKit::WebPage&, const WTF::String&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
+    virtual void didReceiveTitleForFrame(WebKit::WebPage&, StringImpl*, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didRemoveFrameFromHierarchy(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didDisplayInsecureContentForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didRunInsecureContentForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
@@ -80,7 +80,7 @@ public:
 
     virtual void didClearWindowObjectForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) { }
     virtual void didCancelClientRedirectForFrame(WebKit::WebPage&, WebKit::WebFrame&) { }
-    virtual void willPerformClientRedirectForFrame(WebKit::WebPage&, WebKit::WebFrame&, const WTF::String&, double /*delay*/, WallTime /*date*/) { }
+    virtual void willPerformClientRedirectForFrame(WebKit::WebPage&, WebKit::WebFrame&, StringImpl*, double /*delay*/, WallTime /*date*/) { }
     virtual void didHandleOnloadEventsForFrame(WebKit::WebPage&, WebKit::WebFrame&) { }
 
     virtual void globalObjectIsAvailableForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) { }
@@ -91,9 +91,9 @@ public:
 
     virtual void willInjectUserScriptForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) { }
 
-    virtual bool shouldForceUniversalAccessFromLocalURL(WebKit::WebPage&, const WTF::String&) { return false; }
+    virtual bool shouldForceUniversalAccessFromLocalURL(WebKit::WebPage&, StringImpl*) { return false; }
 
-    virtual void featuresUsedInPage(WebKit::WebPage&, const Vector<WTF::String>&) { }
+    virtual void featuresUsedInPage(WebKit::WebPage&, const Vector<RefPtr<StringImpl>>&) { }
 
     virtual void willDestroyFrame(WebKit::WebPage&, WebKit::WebFrame&) { }
 

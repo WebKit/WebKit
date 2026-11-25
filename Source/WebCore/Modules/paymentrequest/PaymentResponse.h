@@ -68,11 +68,11 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    const String& requestId() const LIFETIME_BOUND { return m_requestId; }
-    void setRequestId(const String& requestId) { m_requestId = requestId; }
+    const RefPtr<StringImpl>& requestId() const LIFETIME_BOUND { return m_requestId; }
+    void setRequestId(StringImpl* requestId) { m_requestId = requestId; }
 
-    const String& methodName() const LIFETIME_BOUND { return m_methodName; }
-    void setMethodName(const String& methodName) { m_methodName = methodName; }
+    const RefPtr<StringImpl>& methodName() const LIFETIME_BOUND { return m_methodName; }
+    void setMethodName(StringImpl* methodName) { m_methodName = methodName; }
 
     const DetailsFunction& detailsFunction() const LIFETIME_BOUND { return m_detailsFunction; }
     void setDetailsFunction(DetailsFunction&&);
@@ -82,17 +82,17 @@ public:
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
     void setShippingAddress(PaymentAddress* shippingAddress) { m_shippingAddress = shippingAddress; }
 
-    const String& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }
-    void setShippingOption(const String& shippingOption) { m_shippingOption = shippingOption; }
+    const RefPtr<StringImpl>& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }
+    void setShippingOption(StringImpl* shippingOption) { m_shippingOption = shippingOption; }
 
-    const String& payerName() const LIFETIME_BOUND { return m_payerName; }
-    void setPayerName(const String& payerName) { m_payerName = payerName; }
+    const RefPtr<StringImpl>& payerName() const LIFETIME_BOUND { return m_payerName; }
+    void setPayerName(StringImpl* payerName) { m_payerName = payerName; }
 
-    const String& payerEmail() const LIFETIME_BOUND { return m_payerEmail; }
-    void setPayerEmail(const String& payerEmail) { m_payerEmail = payerEmail; }
+    const RefPtr<StringImpl>& payerEmail() const LIFETIME_BOUND { return m_payerEmail; }
+    void setPayerEmail(StringImpl* payerEmail) { m_payerEmail = payerEmail; }
 
-    const String& payerPhone() const LIFETIME_BOUND { return m_payerPhone; }
-    void setPayerPhone(const String& payerPhone) { m_payerPhone = payerPhone; }
+    const RefPtr<StringImpl>& payerPhone() const LIFETIME_BOUND { return m_payerPhone; }
+    void setPayerPhone(StringImpl* payerPhone) { m_payerPhone = payerPhone; }
 
     void complete(Document&, std::optional<PaymentComplete>&&, std::optional<PaymentCompleteDetails>&&, DOMPromiseDeferred<void>&&);
     void retry(const Document&, PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
@@ -121,15 +121,15 @@ private:
     };
 
     WeakPtr<PaymentRequest, WeakPtrImplWithEventTargetData> m_request;
-    String m_requestId;
-    String m_methodName;
+    RefPtr<StringImpl> m_requestId;
+    RefPtr<StringImpl> m_methodName;
     DetailsFunction m_detailsFunction;
     JSValueInWrappedObject m_cachedDetails;
     RefPtr<PaymentAddress> m_shippingAddress;
-    String m_shippingOption;
-    String m_payerName;
-    String m_payerEmail;
-    String m_payerPhone;
+    RefPtr<StringImpl> m_shippingOption;
+    RefPtr<StringImpl> m_payerName;
+    RefPtr<StringImpl> m_payerEmail;
+    RefPtr<StringImpl> m_payerPhone;
     State m_state { State::Created };
     std::unique_ptr<DOMPromiseDeferred<void>> m_retryPromise;
     RefPtr<PendingActivity<PaymentResponse>> m_pendingActivity;

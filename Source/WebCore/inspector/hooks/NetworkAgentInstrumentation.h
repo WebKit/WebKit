@@ -80,7 +80,7 @@ public:
     virtual void didFinishLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::NetworkLoadMetrics&, WebCore::ResourceLoader*) = 0;
     virtual void didFailLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceError&) = 0;
     virtual void didReceiveScriptResponse(WebCore::ResourceLoaderIdentifier) = 0;
-    virtual void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, const String& sourceString) = 0;
+    virtual void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, StringImpl* sourceString) = 0;
     virtual void didLoadResourceFromMemoryCache(WebCore::DocumentLoader*, WebCore::CachedResource&, const URL&) = 0;
     virtual void didReceiveThreadableLoaderResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentThreadableLoader&) = 0;
     virtual void willDestroyCachedResource(WebCore::CachedResource&) = 0;
@@ -93,7 +93,7 @@ public:
     virtual void didCloseWebSocket(WebCore::WebSocketChannelIdentifier) = 0;
     virtual void didReceiveWebSocketFrame(WebCore::WebSocketChannelIdentifier, const WebCore::WebSocketFrame&) = 0;
     virtual void didSendWebSocketFrame(WebCore::WebSocketChannelIdentifier, const WebCore::WebSocketFrame&) = 0;
-    virtual void didReceiveWebSocketFrameError(WebCore::WebSocketChannelIdentifier, const String& errorMessage) = 0;
+    virtual void didReceiveWebSocketFrameError(WebCore::WebSocketChannelIdentifier, StringImpl* errorMessage) = 0;
 
     virtual bool willIntercept(const WebCore::ResourceRequest&) = 0;
     virtual bool shouldInterceptRequest(const WebCore::ResourceLoader&) = 0;
@@ -103,7 +103,7 @@ public:
 
 protected:
     NetworkAgentInstrumentation(WebCore::WebAgentContext& context)
-        : InspectorAgentBase("Network"_s, context)
+        : InspectorAgentBase("Network"_si, context)
     {
     }
 };

@@ -63,7 +63,7 @@ void RemoteImageDecoderAVFProxy::deref() const
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageDecoderAVFProxy);
 
-void RemoteImageDecoderAVFProxy::createDecoder(const IPC::SharedBufferReference& data, const String& mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::createDecoder(const IPC::SharedBufferReference& data, StringImpl* mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
 {
     MESSAGE_CHECK_WITH_MESSAGE_BASE(ImageDecoderAVFObjC::canDecodeType(mimeType), m_connectionToWebProcess.get()->connection(), "createDecoder() should not be called with unsupported mime-type.");
 

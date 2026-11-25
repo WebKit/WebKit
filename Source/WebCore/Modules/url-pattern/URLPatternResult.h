@@ -30,9 +30,9 @@
 namespace WebCore {
 
 struct URLPatternComponentResult {
-    using NameMatchPair = KeyValuePair<String, Variant<std::monostate, String>>;
+    using NameMatchPair = KeyValuePair<RefPtr<StringImpl>, Variant<std::monostate, RefPtr<StringImpl>>>;
     using GroupsRecord = Vector<NameMatchPair>;
-    String input;
+    RefPtr<StringImpl> input;
     GroupsRecord groups;
 };
 

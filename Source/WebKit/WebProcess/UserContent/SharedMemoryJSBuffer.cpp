@@ -42,18 +42,18 @@ SharedMemoryJSBuffer::SharedMemoryJSBuffer(Ref<WebCore::SharedMemory>&& sharedMe
 {
 }
 
-WebCore::ExceptionOr<String> SharedMemoryJSBuffer::asUTF16String() const
+WebCore::ExceptionOr<RefPtr<StringImpl>> SharedMemoryJSBuffer::asUTF16String() const
 {
     if (m_sharedMemory->size() % sizeof(char16_t))
         return WebCore::Exception { WebCore::ExceptionCode::RangeError };
     Ref<StringImpl> impl = ExternalStringImpl::create(spanReinterpretCast<const char16_t>(m_sharedMemory->span()), [protectedMemory = Ref { m_sharedMemory }] (auto...) mutable { });
-    return String(WTF::move(impl));
+    return RefPtr<StringImpl>(WTF::move(impl));
 }
 
-String SharedMemoryJSBuffer::asLatin1String() const
+RefPtr<StringImpl> SharedMemoryJSBuffer::asLatin1String() const
 {
     Ref<StringImpl> impl = ExternalStringImpl::create(spanReinterpretCast<const Latin1Character>(m_sharedMemory->span()), [protectedMemory = Ref { m_sharedMemory }] (auto...) mutable { });
-    return String(WTF::move(impl));
+    return RefPtr<StringImpl>(WTF::move(impl));
 }
 
 }

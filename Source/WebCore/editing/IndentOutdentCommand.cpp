@@ -53,7 +53,7 @@ NODELETE static bool isListOrIndentBlockquote(const Node& node)
 }
 
 IndentOutdentCommand::IndentOutdentCommand(Ref<Document>&& document, IndentType typeOfAction)
-    : ApplyBlockElementCommand(WTF::move(document), blockquoteTag, "margin: 0 0 0 40px; border: none; padding: 0px;"_s)
+    : ApplyBlockElementCommand(WTF::move(document), blockquoteTag, "margin: 0 0 0 40px; border: none; padding: 0px;"_atom)
     , m_typeOfAction(typeOfAction)
 {
 }

@@ -61,13 +61,13 @@ public:
 
     ~ScriptMessageClient() { }
 
-    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& completionHandler) override
     {
         auto valueAsString = jsMessage.toString();
         auto tokens = StringView { valueAsString }.split(':');
         uint32_t connectionID = 0;
         uint32_t targetID = 0;
-        String type;
+        RefPtr<StringImpl> type;
         int i = 0;
         for (auto token : tokens) {
             if (!i)
@@ -77,15 +77,15 @@ public:
             else if (i == 2)
                 type = token.toString();
             else
-                return completionHandler(makeUnexpected(String()));
+                return completionHandler(makeUnexpected(nullptr));
             ++i;
         }
         if (i != 3)
-            return completionHandler(makeUnexpected(String()));
+            return completionHandler(makeUnexpected(nullptr));
 
         auto& requestURL = page.pageLoadState().url();
         m_inspectorProtocolHandler->inspect(requestURL.hostAndPort(), connectionID, targetID, type);
-        completionHandler(makeUnexpected(String()));
+        completionHandler(makeUnexpected(nullptr));
     }
 
 private:
@@ -111,29 +111,29 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LoaderClient);
 
-static std::optional<Inspector::DebuggableType> parseDebuggableTypeFromString(const String& debuggableTypeString)
+static std::optional<Inspector::DebuggableType> parseDebuggableTypeFromString(StringImpl* debuggableTypeString)
 {
-    if (debuggableTypeString == "itml"_s)
+    if (equal(debuggableTypeString, "itml"_s))
         return Inspector::DebuggableType::ITML;
-    if (debuggableTypeString == "javascript"_s)
+    if (equal(debuggableTypeString, "javascript"_s))
         return Inspector::DebuggableType::JavaScript;
-    if (debuggableTypeString == "page"_s)
+    if (equal(debuggableTypeString, "page"_s))
         return Inspector::DebuggableType::Page;
-    if (debuggableTypeString == "service-worker"_s)
+    if (equal(debuggableTypeString, "service-worker"_s))
         return Inspector::DebuggableType::ServiceWorker;
-    if (debuggableTypeString == "web-page"_s)
+    if (equal(debuggableTypeString, "web-page"_s))
         return Inspector::DebuggableType::WebPage;
-    if (debuggableTypeString == "wasm-debugger"_s)
+    if (equal(debuggableTypeString, "wasm-debugger"_s))
         return Inspector::DebuggableType::WasmDebugger;
 
     return std::nullopt;
 }
 
-void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, ConnectionID connectionID, TargetID targetID, const String& type)
+void RemoteInspectorProtocolHandler::inspect(StringImpl* hostAndPort, ConnectionID connectionID, TargetID targetID, StringImpl* type)
 {
     auto debuggableType = parseDebuggableTypeFromString(type);
     if (!debuggableType) {
-        LOG_ERROR("Unknown debuggable type: \"%s\"", type.utf8());
+        LOG_ERROR("Unknown debuggable type: \"%s\"", utf8(type));
         return;
     }
 
@@ -141,7 +141,7 @@ void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, Connecti
         m_inspectorClient->inspect(connectionID, targetID, debuggableType.value());
 }
 
-void RemoteInspectorProtocolHandler::runScript(const String& script)
+void RemoteInspectorProtocolHandler::runScript(StringImpl* script)
 {
     constexpr bool wantsResult = true;
     auto scriptString = IPC::TransferString::create(script);
@@ -159,7 +159,7 @@ void RemoteInspectorProtocolHandler::runScript(const String& script)
         RemoveTransientActivation::Yes
     }, wantsResult, [] (auto&& result) {
         if (!result && result.error())
-            LOG_ERROR("Exception running script \"%s\"", result.error()->message.utf8());
+            LOG_ERROR("Exception running script \"%s\"", utf8(result.error()->message));
     });
 }
 
@@ -189,9 +189,9 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
 
 void RemoteInspectorProtocolHandler::updateTargetList()
 {
-    if (!m_targetListsHtml.isEmpty()) {
+    if (!isEmpty(m_targetListsHtml)) {
         runScript(makeString("updateTargets(`"_s, m_targetListsHtml, "`);"_s));
-        m_targetListsHtml = { };
+        m_targetListsHtml = nullptr;
     }
 }
 
@@ -204,7 +204,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
     m_inspectorClient = makeUnique<RemoteInspectorClient>(requestURL, *this);
 
     // Setup target postMessage listener
-    auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector"_s, API::ContentWorld::pageContentWorldSingleton());
+    auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector"_si, API::ContentWorld::pageContentWorldSingleton());
     pageProxy.configuration().userContentController().addUserScriptMessageHandler(handler.get());
 
     // Setup loader client to get notified of page load
@@ -243,7 +243,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
         "</script>"_s);
     htmlBuilder.append("</html>"_s);
 
-    auto html = htmlBuilder.toString().utf8();
+    auto html = utf8(htmlBuilder.toString());
     auto data = SharedBuffer::create(html.span());
     ResourceResponse response(WTF::move(requestURL), "text/html"_s, html.length(), "UTF-8"_s);
     task.didReceiveResponse(WTF::move(response));

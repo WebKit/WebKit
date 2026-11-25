@@ -34,11 +34,11 @@ enum class ShouldSkipStartChecks : bool { No, Yes };
 void serializeIdentifier(StringBuilder&, StringView identifier, ShouldSkipStartChecks = ShouldSkipStartChecks::No);
 
 void serializeString(StringBuilder&, StringView);
-String serializeString(StringView);
+RefPtr<StringImpl> serializeString(StringView);
 
 void serializeURLTokenValue(StringBuilder&, StringView);
 
 void serializeFontFamily(StringBuilder&, StringView);
-String serializeFontFamily(const String&);
+RefPtr<StringImpl> serializeFontFamily(StringImpl*);
 
 } // namespace WebCore

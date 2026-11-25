@@ -450,7 +450,7 @@ static void testWebProcessExtensionPageID(WebViewTest* test, gconstpointer)
     // Register a custom URI scheme to test history navigation.
     webkit_web_context_register_uri_scheme(test->m_webContext.get(), "foo",
         [](WebKitURISchemeRequest* request, gpointer) {
-            URL url = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
+            URL url = URL(StringImpl::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
             GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
             auto html = GMallocString::unsafeAdoptFromUTF8(g_strdup_printf("<html><head><title>%s</title></head><body></body></html>", url.host() == "host5"_s ? "Title5" : "Title6"));
             auto htmlLength = html.lengthInBytes();

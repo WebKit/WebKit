@@ -358,7 +358,7 @@ NODELETE static const QuotesForLanguage* binaryFindQuotes(const QuotesForLanguag
     return binaryFindQuotes(key, subrange.subspan(subrange.size() / 2 + 1));
 }
 
-static const QuotesForLanguage* quotesForLanguage(const String& language)
+static const QuotesForLanguage* quotesForLanguage(StringImpl* language)
 {
 #if ASSERT_ENABLED
     // One time check that the table meets the constraints that the code below relies on.
@@ -385,13 +385,13 @@ static const QuotesForLanguage* quotesForLanguage(const String& language)
     }
 #endif // ASSERT_ENABLED
 
-    unsigned length = language.length();
+    unsigned length = WTF::length(language);
     if (!length)
         return nullptr;
 
     Vector<char> languageKeyBuffer(length);
     for (unsigned i = 0; i < length; ++i) {
-        char16_t character = toASCIILower(language[i]);
+        char16_t character = toASCIILower(codeUnitAt(language, i));
         if (!(isASCIILower(character) || character == '-'))
             return nullptr;
         languageKeyBuffer[i] = static_cast<char>(character);
@@ -435,7 +435,7 @@ static inline StringImpl* apostropheString()
 }
 
 // css-content-3: "If the depth is 0, the first pair is used, if the depth is 1, the second pair is used, etc."
-static String quoteMark(QuoteType quoteType, unsigned quoteDepth, const Style::ComputedStyle& style)
+static RefPtr<StringImpl> quoteMark(QuoteType quoteType, unsigned quoteDepth, const Style::ComputedStyle& style)
 {
     ASSERT(quoteType == QuoteType::OpenQuote || quoteType == QuoteType::CloseQuote);
     bool isOpenQuote = quoteType == QuoteType::OpenQuote;
@@ -452,7 +452,7 @@ static String quoteMark(QuoteType quoteType, unsigned quoteDepth, const Style::C
 // occurrence, minus the number of occurrences of close-quote in all generated text before and including the current occurence."
 // "A close-quote or no-close-quote that would make the quote depth negative is in error and is ignored (at rendering time):
 // the depth stays at 0 and no quote mark is inserted".
-static String quoteMarkAndAdvanceQuoteDepth(QuoteType quoteType, unsigned& quoteDepth, const Style::ComputedStyle& style)
+static RefPtr<StringImpl> quoteMarkAndAdvanceQuoteDepth(QuoteType quoteType, unsigned& quoteDepth, const Style::ComputedStyle& style)
 {
     switch (quoteType) {
     case QuoteType::OpenQuote:
@@ -539,7 +539,7 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderTextFragment* l
             m_quoteScopeStack.append({ scopeRoot.get(), m_quoteScopeStack.last().quoteDepth });
 
         auto newQuoteMark = quoteMarkAndAdvanceQuoteDepth(*quote->quoteType(), m_quoteScopeStack.last().quoteDepth, protect(quote->style()));
-        if (!equal(quote->contentString(), newQuoteMark.impl()))
+        if (!equal(quote->contentString(), newQuoteMark.get()))
             quote->setContentString(newQuoteMark);
 
         m_previousUpdatedQuote = *quote;
@@ -595,7 +595,7 @@ static bool needsPseudoElementForAnimation(const Element& element, PseudoElement
 
 static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, Document& document, const Style::ComputedStyle&)
 {
-    if (value.text.value.isEmpty())
+    if (isEmpty(value.text.value))
         return { };
 
     return createRenderer<RenderTextFragment>(document, value.text.value);
@@ -866,12 +866,12 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
     auto textWithoutSuggestion = nodeBeforeWritingSuggestionsTextRenderer->text();
 
-    auto [prefix, suffix] = [&] -> std::pair<String, String> {
+    auto [prefix, suffix] = [&] -> std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> {
         if (!writingSuggestionData->supportsSuffix())
             return { textWithoutSuggestion, emptyString() };
 
         auto offset = writingSuggestionData->offset();
-        return { textWithoutSuggestion.substring(0, offset), textWithoutSuggestion.substring(offset) };
+        return { substring(textWithoutSuggestion, 0, offset), substring(textWithoutSuggestion, offset) };
     }();
 
     protect(nodeBeforeWritingSuggestionsTextRenderer.get())->setText(prefix);
@@ -891,7 +891,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
             writingSuggestionsText->setText(writingSuggestionData->content());
 
-            if (!suffix.isEmpty()) {
+            if (!isEmpty(suffix)) {
                 CheckedPtr suffixText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->nextSibling());
                 if (!suffixText)
                     return false;
@@ -930,7 +930,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
             return;
         }
 
-        if (!suffix.isEmpty()) {
+        if (!isEmpty(suffix)) {
             auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
             // attach() may destroy the parent, so it cannot be protected.
             SUPPRESS_UNCHECKED_ARG m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(suffixRenderer), rendererAfterWritingSuggestions.get());

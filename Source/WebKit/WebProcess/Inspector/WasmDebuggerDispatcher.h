@@ -54,7 +54,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers - called on WorkQueue thread, safe to call while mutator is blocked.
-    void dispatchMessage(const String& message);
+    void dispatchMessage(StringImpl* message);
     void resetServer();
 
     const CheckedRef<WebProcess> m_process;

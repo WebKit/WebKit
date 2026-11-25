@@ -125,7 +125,7 @@ ALWAYS_INLINE const void* saltedDiscriminator(const void* address)
 // slices.
 class StackSlicerBase {
 public:
-    const String& errorMessage() const LIFETIME_BOUND { return m_errorMessage; }
+    const RefPtr<StringImpl>& errorMessage() const LIFETIME_BOUND { return m_errorMessage; }
     const Vector<std::unique_ptr<EvacuatedStackSlice>>& slices() const LIFETIME_BOUND { return m_slices; }
 
     // Return the accumulated slices in the order from top to bottom. This places the
@@ -146,7 +146,7 @@ protected:
     void commitPendingSliceWithAdditionalFrame(CallFrame*);
     void commitPendingSlice();
 
-    String m_errorMessage { "?"_s };
+    RefPtr<StringImpl> m_errorMessage { "?"_si };
     Vector<std::unique_ptr<EvacuatedStackSlice>> m_slices;
     const CallFrame* m_lastVisitedFrame { nullptr };
     const Register* m_futureSliceBottom { nullptr };

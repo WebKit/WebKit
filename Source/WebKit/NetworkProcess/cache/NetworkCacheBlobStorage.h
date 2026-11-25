@@ -39,20 +39,20 @@ class BlobStorage {
     WTF_MAKE_TZONE_ALLOCATED(BlobStorage);
     WTF_MAKE_NONCOPYABLE(BlobStorage);
 public:
-    BlobStorage(const String& blobDirectoryPath, Salt, unsigned memoryCacheFileLimit = 0);
+    BlobStorage(StringImpl* blobDirectoryPath, Salt, unsigned memoryCacheFileLimit = 0);
 
     struct Blob {
         Data data;
         SHA1::Digest hash;
     };
     // These are all synchronous and should not be used from the main thread.
-    Blob add(const String& path, const Data&, bool addToMemoryCache = false);
-    Blob get(const String& path);
+    Blob add(StringImpl* path, const Data&, bool addToMemoryCache = false);
+    Blob get(StringImpl* path);
 
     // Blob won't be removed until synchronization.
-    void remove(const String& path);
+    void remove(StringImpl* path);
 
-    unsigned shareCount(const String& path);
+    unsigned shareCount(StringImpl* path);
 
     size_t approximateSize() const { return m_approximateSize; }
 
@@ -64,22 +64,22 @@ public:
         WTF_MAKE_NONCOPYABLE(MemoryCache);
     public:
         explicit MemoryCache(unsigned fileLimit);
-        std::optional<Blob> get(const String& path);
-        void add(const String& path, const Blob&);
-        void remove(const String& path);
+        std::optional<Blob> get(StringImpl* path);
+        void add(StringImpl* path, const Blob&);
+        void remove(StringImpl* path);
 
     private:
         UnfairLock m_lock;
         unsigned m_limit;
-        HashMap<String, BlobStorage::Blob> m_cache;
+        HashMap<RefPtr<StringImpl>, BlobStorage::Blob> m_cache;
     };
 #endif
 
 private:
-    String blobDirectoryPathIsolatedCopy() const;
-    String blobPathForHash(const SHA1::Digest&) const;
+    RefPtr<StringImpl> blobDirectoryPathIsolatedCopy() const;
+    RefPtr<StringImpl> blobPathForHash(const SHA1::Digest&) const;
 
-    const String m_blobDirectoryPath;
+    const RefPtr<StringImpl> m_blobDirectoryPath;
     const Salt m_salt;
 
     std::atomic<size_t> m_approximateSize { 0 };

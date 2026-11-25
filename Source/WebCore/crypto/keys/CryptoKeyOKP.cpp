@@ -89,18 +89,18 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
     switch (namedCurve) {
     case NamedCurve::Ed25519:
         // FIXME: this is already done in the Algorithm's importKey method for each format, so it seems we can remoev this duplicated code.
-        if (!keyData.d.isEmpty()) {
+        if (!isEmpty(keyData.d)) {
             if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey))
                 return nullptr;
         } else {
             if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageSign | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey))
                 return nullptr;
         }
-        if (keyData.crv != "Ed25519"_s)
+        if (!equal(keyData.crv, "Ed25519"_s))
             return nullptr;
-        if (!keyData.alg.isEmpty() && (keyData.alg != "EdDSA"_s && keyData.alg != "Ed25519"_s))
+        if (!isEmpty(keyData.alg) && (!equal(keyData.alg, "EdDSA"_s) && !equal(keyData.alg, "Ed25519"_s)))
             return nullptr;
-        if (usages && !keyData.use.isEmpty() && keyData.use != "sign"_s)
+        if (usages && !isEmpty(keyData.use) && !equal(keyData.use, "sign"_s))
             return nullptr;
         if (keyData.key_ops && ((keyData.usages & usages) != usages))
             return nullptr;
@@ -108,7 +108,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
             return nullptr;
         break;
     case NamedCurve::X25519:
-        if (keyData.crv != "X25519"_s)
+        if (!equal(keyData.crv, "X25519"_s))
             return nullptr;
         if (keyData.key_ops && ((keyData.usages & usages) != usages))
             return nullptr;
@@ -117,17 +117,17 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
         break;
     }
 
-    if (keyData.kty != "OKP"_s)
+    if (!equal(keyData.kty, "OKP"_s))
         return nullptr;
 
-    if (keyData.x.isNull())
+    if (!keyData.x)
         return nullptr;
 
     auto x = base64URLDecode(keyData.x);
     if (!x)
         return nullptr;
 
-    if (!keyData.d.isNull()) {
+    if (keyData.d) {
         auto d = base64URLDecode(keyData.d);
         if (!d || !platformCheckPairedKeys(identifier, namedCurve, *d, *x))
             return nullptr;
@@ -151,14 +151,14 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportRaw() const
 ExceptionOr<JsonWebKey> CryptoKeyOKP::exportJwk() const
 {
     JsonWebKey result;
-    result.kty = "OKP"_s;
+    result.kty = "OKP"_si;
     switch (m_curve) {
     case NamedCurve::X25519:
         result.crv = X25519;
         break;
     case NamedCurve::Ed25519:
         result.crv = Ed25519;
-        result.alg = "Ed25519"_s;
+        result.alg = "Ed25519"_si;
         break;
     }
 
@@ -181,18 +181,18 @@ ExceptionOr<JsonWebKey> CryptoKeyOKP::exportJwk() const
     return result;
 }
 
-std::optional<CryptoKeyOKP::NamedCurve> CryptoKeyOKP::namedCurveFromString(const String& curveString)
+std::optional<CryptoKeyOKP::NamedCurve> CryptoKeyOKP::namedCurveFromString(StringImpl* curveString)
 {
-    if (curveString == X25519)
+    if (equal(curveString, X25519))
         return NamedCurve::X25519;
 
-    if (curveString == Ed25519)
+    if (equal(curveString, Ed25519))
         return NamedCurve::Ed25519;
 
     return std::nullopt;
 }
 
-String CryptoKeyOKP::namedCurveString() const
+RefPtr<StringImpl> CryptoKeyOKP::namedCurveString() const
 {
     switch (m_curve) {
     case NamedCurve::X25519:
@@ -271,12 +271,12 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
     return Exception { ExceptionCode::NotSupportedError };
 }
 
-String CryptoKeyOKP::generateJwkD() const
+RefPtr<StringImpl> CryptoKeyOKP::generateJwkD() const
 {
     return { };
 }
 
-String CryptoKeyOKP::generateJwkX() const
+RefPtr<StringImpl> CryptoKeyOKP::generateJwkX() const
 {
     return { };
 }

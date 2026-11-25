@@ -282,11 +282,11 @@ public:
 
     // Cached collator object for String#localeCompare
     WriteBarrier<IntlCollator> m_cachedLocaleCompareCollator;
-    String m_cachedLocaleCompareCollatorLocale;
+    RefPtr<StringImpl> m_cachedLocaleCompareCollatorLocale;
     uint64_t m_cachedLocaleCompareCollatorLanguagesEpoch { 0 };
 
     WriteBarrier<IntlNumberFormat> m_cachedToLocaleStringNumberFormat;
-    String m_cachedToLocaleStringNumberFormatLocale;
+    RefPtr<StringImpl> m_cachedToLocaleStringNumberFormatLocale;
     uint64_t m_cachedToLocaleStringNumberFormatLanguagesEpoch { 0 };
 
     LazyClassStructure m_durationStructure;
@@ -481,7 +481,7 @@ public:
     StructureCache m_structureCache;
     WeakGCMap<SymbolTable*, SymbolTable> m_symbolTableCache;
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
 
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
@@ -651,8 +651,8 @@ public:
     bool m_needsSiteSpecificQuirks { false };
     bool m_canDoASCIIUCADUCETLocaleCompare { false };
     unsigned m_globalLexicalBindingEpoch { 1 };
-    String m_evalDisabledErrorMessage;
-    String m_webAssemblyDisabledErrorMessage;
+    RefPtr<StringImpl> m_evalDisabledErrorMessage;
+    RefPtr<StringImpl> m_webAssemblyDisabledErrorMessage;
     RuntimeFlags m_runtimeFlags;
     WeakPtr<ConsoleClient> m_consoleClient;
     Weak<FunctionExecutable> m_executableForCachedFunctionExecutableForFunctionConstructor;
@@ -683,7 +683,7 @@ public:
 
     const Ref<SymbolImpl> m_intlLegacyConstructedSymbol;
 
-    HashMap<String, JSCJSGlobalObjectSignpostIdentifier> m_signposts;
+    HashMap<RefPtr<StringImpl>, JSCJSGlobalObjectSignpostIdentifier> m_signposts;
 
 #if ASSERT_ENABLED
     const JSGlobalObject* m_globalObjectAtDebuggerEntry { nullptr };
@@ -719,8 +719,8 @@ public:
 
     std::optional<unsigned> stackTraceLimit() const;
 
-    JS_EXPORT_PRIVATE void startSignpost(String&&);
-    JS_EXPORT_PRIVATE void stopSignpost(String&&);
+    JS_EXPORT_PRIVATE void startSignpost(RefPtr<StringImpl>&&);
+    JS_EXPORT_PRIVATE void stopSignpost(RefPtr<StringImpl>&&);
 
 protected:
     JS_EXPORT_PRIVATE explicit JSGlobalObject(VM&, Structure*, const GlobalObjectMethodTable* = nullptr);
@@ -1088,8 +1088,8 @@ public:
     NODELETE JS_EXPORT_PRIVATE void setConsoleClient(WeakPtr<ConsoleClient>&&);
     NODELETE JS_EXPORT_PRIVATE CheckedPtr<ConsoleClient> consoleClient() const;
 
-    void setName(const String&);
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    void setName(StringImpl*);
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
     StructureCache& structureCache() LIFETIME_BOUND { return m_structureCache; }
     WeakGCMap<SymbolTable*, SymbolTable>& symbolTableCache() { return m_symbolTableCache; }
@@ -1100,9 +1100,9 @@ public:
     NODELETE static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
     static JSObject* currentScriptExecutionOwner(JSGlobalObject* global) { return global; }
     static ScriptExecutionStatus scriptExecutionStatus(JSGlobalObject*, JSObject*) { return ScriptExecutionStatus::Running; }
-    static void reportViolationForUnsafeEval(JSGlobalObject*, const String&) { }
-    static String codeForEval(JSGlobalObject*, JSValue) { return nullString(); }
-    static bool canCompileStrings(JSGlobalObject*, CompilationType, String, const ArgList&) { return true; }
+    static void reportViolationForUnsafeEval(JSGlobalObject*, StringImpl*) { }
+    static RefPtr<StringImpl> codeForEval(JSGlobalObject*, JSValue) { return nullString(); }
+    static bool canCompileStrings(JSGlobalObject*, CompilationType, RefPtr<StringImpl>, const ArgList&) { return true; }
     static Structure* trustedScriptStructure(JSGlobalObject*) { return nullptr; }
 
     inline JSObject* arrayBufferPrototype(ArrayBufferSharingMode) const;
@@ -1199,19 +1199,19 @@ public:
 
     JS_EXPORT_PRIVATE static void queueMicrotaskToEventLoop(JSGlobalObject&, QueuedTask&&);
     JS_EXPORT_PRIVATE static void promiseRejectionTracker(JSGlobalObject*, JSPromise*, JSPromiseRejectionOperation);
-    static void reportViolationForUnsafeEval(const JSGlobalObject*, const String&) { }
+    static void reportViolationForUnsafeEval(const JSGlobalObject*, StringImpl*) { }
 
     bool evalEnabled() const { return m_evalEnabled; }
     bool webAssemblyEnabled() const { return m_webAssemblyEnabled; }
     TrustedTypesEnforcement trustedTypesEnforcement() const { return m_trustedTypesEnforcement; }
-    const String& evalDisabledErrorMessage() const LIFETIME_BOUND { return m_evalDisabledErrorMessage; }
-    const String& webAssemblyDisabledErrorMessage() const LIFETIME_BOUND { return m_webAssemblyDisabledErrorMessage; }
-    void setEvalEnabled(bool enabled, const String& errorMessage = String())
+    const RefPtr<StringImpl>& evalDisabledErrorMessage() const LIFETIME_BOUND { return m_evalDisabledErrorMessage; }
+    const RefPtr<StringImpl>& webAssemblyDisabledErrorMessage() const LIFETIME_BOUND { return m_webAssemblyDisabledErrorMessage; }
+    void setEvalEnabled(bool enabled, StringImpl* errorMessage = nullptr)
     {
         m_evalEnabled = enabled;
         m_evalDisabledErrorMessage = errorMessage;
     }
-    void setWebAssemblyEnabled(bool enabled, const String& errorMessage = String())
+    void setWebAssemblyEnabled(bool enabled, StringImpl* errorMessage = nullptr)
     {
         m_webAssemblyEnabled = enabled;
         m_webAssemblyDisabledErrorMessage = errorMessage;
@@ -1239,7 +1239,7 @@ public:
     WriteBarrier<JSObject>* addressOfGlobalThis() LIFETIME_BOUND { return &m_globalThis; }
     OptionSet<CodeGenerationMode> defaultCodeGenerationMode() const;
 
-    FunctionExecutable* tryGetCachedFunctionExecutableForFunctionConstructor(const Identifier& name, StringView program, const SourceOrigin&, SourceTaintedness, const String& sourceURL, const TextPosition& startPosition, LexicallyScopedFeatures, FunctionConstructionMode);
+    FunctionExecutable* tryGetCachedFunctionExecutableForFunctionConstructor(const Identifier& name, StringView program, const SourceOrigin&, SourceTaintedness, StringImpl* sourceURL, const TextPosition& startPosition, LexicallyScopedFeatures, FunctionConstructionMode);
     void cachedFunctionExecutableForFunctionConstructor(FunctionExecutable*);
 
     static inline Structure* createStructure(VM&, JSValue prototype);

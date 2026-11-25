@@ -53,15 +53,15 @@ private:
     void stopRecording(CompletionHandler<void()>&&) final;
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
-    String mimeType() const final;
+    RefPtr<StringImpl> mimeType() const final;
 
     void generateMockCounterString() WTF_REQUIRES_LOCK(m_bufferLock);
 
     mutable Lock m_bufferLock;
     StringBuilder m_buffer WTF_GUARDED_BY_LOCK(m_bufferLock);
     unsigned m_counter { 0 };
-    String m_audioTrackID;
-    String m_videoTrackID;
+    RefPtr<StringImpl> m_audioTrackID;
+    RefPtr<StringImpl> m_videoTrackID;
 };
 
 } // namespace WebCore

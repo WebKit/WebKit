@@ -77,7 +77,7 @@ private:
         auto chunkOrException = convert<IDLUint8Array>(*globalObject, value);
         if (chunkOrException.hasException(scope)) [[unlikely]] {
             TRY_CLEAR_EXCEPTION(scope, void());
-            sink->error(Exception { ExceptionCode::TypeError, "Unable to convert chunk to Uin8Array"_s });
+            sink->error(Exception { ExceptionCode::TypeError, "Unable to convert chunk to Uin8Array"_si });
             return;
         }
 
@@ -119,7 +119,7 @@ void ReadableStreamToSharedBufferSink::pipeFrom(ReadableStream& stream)
     RefPtr context = stream.scriptExecutionContext();
     auto* globalObject = context ? downcast<JSDOMGlobalObject>(context->globalObject()): nullptr;
     if (!globalObject) {
-        error(Exception { ExceptionCode::TypeError, "no global object"_s });
+        error(Exception { ExceptionCode::TypeError, "no global object"_si });
         return;
     }
 

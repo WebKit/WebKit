@@ -35,12 +35,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechSynthesisEvent);
 
-Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomString& type, Init&& initializer)
+Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(AtomStringImpl* type, Init&& initializer)
 {
     return adoptRef(*new SpeechSynthesisEvent(EventInterfaceType::SpeechSynthesisEvent, type, WTF::move(initializer)));
 }
 
-SpeechSynthesisEvent::SpeechSynthesisEvent(enum EventInterfaceType eventInterface, const AtomString& type, Init&& initializer)
+SpeechSynthesisEvent::SpeechSynthesisEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, Init&& initializer)
     : Event(eventInterface, type, CanBubble::No, IsCancelable::No)
     , m_utterance(WTF::move(initializer.utterance))
     , m_charIndex(initializer.charIndex)

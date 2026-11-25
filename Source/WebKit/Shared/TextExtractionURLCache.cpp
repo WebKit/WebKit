@@ -37,12 +37,12 @@ void TextExtractionURLCache::clear()
     m_shortenedStringCounts.clear();
 }
 
-String TextExtractionURLCache::add(const String& shortenedString, const URL& originalURL, ExtractedURLType type)
+RefPtr<StringImpl> TextExtractionURLCache::add(StringImpl* shortenedString, const URL& originalURL, ExtractedURLType type)
 {
-    if (shortenedString.isEmpty() || originalURL.isEmpty())
+    if (isEmpty(shortenedString) || originalURL.isEmpty())
         return shortenedString;
 
-    if (auto existingString = m_urlToShortenedStringMap.get(originalURL); !existingString.isEmpty())
+    if (auto existingString = m_urlToShortenedStringMap.get(originalURL); !isEmpty(existingString))
         return existingString;
 
     auto addSuffix = [&](StringView string, unsigned suffix) {
@@ -76,7 +76,7 @@ String TextExtractionURLCache::add(const String& shortenedString, const URL& ori
     }
 
     auto count = m_shortenedStringCounts.count(shortenedString);
-    String newShortenedString;
+    RefPtr<StringImpl> newShortenedString;
     do {
         newShortenedString = addSuffix(shortenedString, count++);
     } while (!m_shortenedStringToURLMap.add(newShortenedString, originalURL).isNewEntry);
@@ -85,9 +85,9 @@ String TextExtractionURLCache::add(const String& shortenedString, const URL& ori
     return newShortenedString;
 }
 
-URL TextExtractionURLCache::urlForShortenedString(const String& string) const
+URL TextExtractionURLCache::urlForShortenedString(StringImpl* string) const
 {
-    if (string.isEmpty())
+    if (isEmpty(string))
         return { };
 
     return m_shortenedStringToURLMap.get(string);

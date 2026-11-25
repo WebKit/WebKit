@@ -32,11 +32,11 @@
 namespace WebCore {
 
 struct ApplePayPaymentTokenContext {
-    String merchantIdentifier; // required
-    String externalIdentifier; // required
-    String merchantName; // required
-    String merchantDomain;
-    String amount; // required
+    RefPtr<StringImpl> merchantIdentifier; // required
+    RefPtr<StringImpl> externalIdentifier; // required
+    RefPtr<StringImpl> merchantName; // required
+    RefPtr<StringImpl> merchantDomain;
+    RefPtr<StringImpl> amount; // required
 };
 
 } // namespace WebCore

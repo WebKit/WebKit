@@ -59,7 +59,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RejectedPromiseTracker);
 class UnhandledPromise {
     WTF_MAKE_NONCOPYABLE(UnhandledPromise);
 public:
-    UnhandledPromise(JSDOMGlobalObject& globalObject, JSPromise& promise, RefPtr<ScriptCallStack>&& stack, String&& unmaskedSourceURL)
+    UnhandledPromise(JSDOMGlobalObject& globalObject, JSPromise& promise, RefPtr<ScriptCallStack>&& stack, RefPtr<StringImpl>&& unmaskedSourceURL)
         : m_promise(DOMPromise::create(globalObject, promise))
         , m_stack(WTF::move(stack))
         , m_unmaskedSourceURL(WTF::move(unmaskedSourceURL))
@@ -78,12 +78,12 @@ public:
         return m_promise.get();
     }
 
-    NODELETE const String& unmaskedSourceURL() const { return m_unmaskedSourceURL; }
+    NODELETE const RefPtr<StringImpl>& unmaskedSourceURL() const { return m_unmaskedSourceURL; }
 
 private:
     const Ref<DOMPromise> m_promise;
     const RefPtr<ScriptCallStack> m_stack;
-    String m_unmaskedSourceURL;
+    RefPtr<StringImpl> m_unmaskedSourceURL;
 };
 
 
@@ -116,7 +116,7 @@ void RejectedPromiseTracker::promiseRejected(JSDOMGlobalObject& globalObject, JS
 
     JSValue reason = promise.result();
 
-    String unmaskedURL;
+    RefPtr<StringImpl> unmaskedURL;
     if (globalObject.hasScriptErrorCallbacks()) {
         // Capture the unmasked source URL now while vm.lastException() is still set.
         // The JSC::Exception is not kept alive past this point, so it won't be available

@@ -102,13 +102,13 @@ public:
     bool hasPendingEvents() const { return m_hasPendingEvents; }
     void setHasPendingEvents(bool);
 
-    void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, const String& message);
+    void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, StringImpl* message);
     void scriptContextStarted(const std::optional<ServiceWorkerJobDataIdentifier>&, bool doesHandleFetch);
     void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, bool wasSuccessful);
     void didFinishActivation();
     void contextTerminated();
     WEBCORE_EXPORT std::optional<ServiceWorkerClientData> findClientByIdentifier(const ScriptExecutionContextIdentifier&) const;
-    WEBCORE_EXPORT void findClientByVisibleIdentifier(const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
+    WEBCORE_EXPORT void findClientByVisibleIdentifier(StringImpl* clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
     void matchAll(const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void setScriptResource(URL&&, ServiceWorkerContextData::ImportedScript&&);
     void didSaveScriptsToDisk(ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);
@@ -136,7 +136,7 @@ public:
     NODELETE bool shouldPersistToDisk() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
-    String userAgent() const;
+    RefPtr<StringImpl> userAgent() const;
 
     bool hasRouterRules() const { return !m_routes.isEmpty(); }
     WEBCORE_EXPORT std::optional<RouterSource> getRouterSource(const FetchOptions&, const ResourceRequest&) const;
@@ -174,7 +174,7 @@ public:
     std::optional<ExceptionData> addRoutes(Vector<ServiceWorkerRoute>&&);
 
 private:
-    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&, Vector<ServiceWorkerRoute>&& = { });
+    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, RefPtr<StringImpl>&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&, Vector<ServiceWorkerRoute>&& = { });
 
     void callWhenActivatedHandler(bool success);
 
@@ -195,7 +195,7 @@ private:
     CertificateInfo m_certificateInfo;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
-    String m_referrerPolicy;
+    RefPtr<StringImpl> m_referrerPolicy;
     bool m_hasPendingEvents { false };
     State m_state { State::NotRunning };
     mutable std::optional<ClientOrigin> m_origin;

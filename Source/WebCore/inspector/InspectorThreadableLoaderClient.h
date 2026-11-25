@@ -69,7 +69,7 @@ public:
     bool isActive() const { return !m_hasCalledDeref; }
 
     // Report a failure before a ThreadableLoader could even be created for the load.
-    void failWithMessage(const String&);
+    void failWithMessage(StringImpl*);
 
 private:
     explicit InspectorThreadableLoaderClient(LoadResourceCompletionHandler&& completionHandler)
@@ -84,7 +84,7 @@ private:
     LoadResourceCompletionHandler m_completionHandler;
     RefPtr<WebCore::ThreadableLoader> m_loader;
     RefPtr<WebCore::TextResourceDecoder> m_decoder;
-    String m_mimeType;
+    RefPtr<StringImpl> m_mimeType;
     StringBuilder m_responseText;
     int m_statusCode { 0 };
     bool m_hasCalledDeref { false };

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-BlobData::BlobData(const String& contentType)
+BlobData::BlobData(StringImpl* contentType)
     : m_contentType(contentType)
 {
     ASSERT(isMainThread());

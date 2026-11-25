@@ -55,15 +55,15 @@ TextEncoding::TextEncoding(StringView name)
 {
 }
 
-TextEncoding::TextEncoding(const String& name)
+TextEncoding::TextEncoding(StringImpl* name)
     : TextEncoding(StringView { name })
 {
 }
 
-String TextEncoding::decode(std::span<const uint8_t> data, bool stopOnError, bool& sawError) const
+RefPtr<StringImpl> TextEncoding::decode(std::span<const uint8_t> data, bool stopOnError, bool& sawError) const
 {
     if (m_name.isNull())
-        return String();
+        return nullptr;
 
     return newTextCodec(*this)->decode(data, true, stopOnError, sawError);
 }
@@ -187,7 +187,7 @@ const TextEncoding& WindowsLatin1Encoding()
     return globalWindowsLatin1Encoding;
 }
 
-String decodeURLEscapeSequences(StringView string, const TextEncoding& encoding)
+RefPtr<StringImpl> decodeURLEscapeSequences(StringView string, const TextEncoding& encoding)
 {
     if (string.isEmpty())
         return string.toString();

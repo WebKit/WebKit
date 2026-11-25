@@ -430,7 +430,7 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource, SynchronousMod
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protectedThis(*this);
 
-    String source { WTF::move(inputSource) };
+    RefPtr<StringImpl> source { WTF::move(inputSource) };
 
     if (m_preloadScanner) {
         if (m_input.current().isEmpty() && !isWaitingForScripts()) {
@@ -438,13 +438,13 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource, SynchronousMod
             // Clear the scanner so we know to scan starting from the current input point if we block again.
             m_preloadScanner = nullptr;
         } else {
-            m_preloadScanner->appendToEnd(source);
+            m_preloadScanner->appendToEnd(source.get());
             if (isWaitingForScripts())
                 m_preloadScanner->scan(*m_preloader, *protect(document()));
         }
     }
 
-    m_input.appendToEnd(source);
+    m_input.appendToEnd(WTF::move(source));
 
     if (inPumpSession()) {
         // We've gotten data off the network in a nested write.
@@ -659,7 +659,7 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
         resumeParsingAfterScriptExecution();
 }
 
-void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
+void HTMLDocumentParser::parseDocumentFragment(StringImpl* source, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
 {
     auto parser = create(fragment, contextElement, parserContentPolicy, registry);
     parser->insert(source); // Use insert() so that the parser will not yield.

@@ -129,7 +129,7 @@ void WebDatabaseManagerClient::dispatchDidModifyOrigin(const WebCore::SecurityOr
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyOriginNotification object:webSecurityOrigin.get()];
 }
 
-void WebDatabaseManagerClient::dispatchDidModifyDatabase(const WebCore::SecurityOriginData& origin, const String& databaseIdentifier)
+void WebDatabaseManagerClient::dispatchDidModifyDatabase(const WebCore::SecurityOriginData& origin, StringImpl* databaseIdentifier)
 {
     if (!isMainThread()) {
         DidModifyOriginData::dispatchToMainThread(*this, origin);
@@ -137,7 +137,7 @@ void WebDatabaseManagerClient::dispatchDidModifyDatabase(const WebCore::Security
     }
 
     auto webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
-    auto userInfo = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:databaseIdentifier.createNSString().get(), WebDatabaseIdentifierKey, nil]);
+    auto userInfo = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:createNSString(databaseIdentifier).get(), WebDatabaseIdentifierKey, nil]);
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyDatabaseNotification object:webSecurityOrigin.get() userInfo:userInfo.get()];
 }
 

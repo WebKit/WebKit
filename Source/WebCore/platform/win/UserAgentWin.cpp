@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-String standardUserAgent(const String& applicationName, const String& applicationVersion)
+RefPtr<StringImpl> standardUserAgent(StringImpl* applicationName, StringImpl* applicationVersion)
 {
-    auto version = applicationName.isEmpty() ? emptyString() : applicationVersion;
+    RefPtr<StringImpl> version = isEmpty(applicationName) ? emptyString() : RefPtr<StringImpl> { applicationVersion };
     return makeString("Mozilla/5.0 ("_s, windowsVersionForUAString(), ") AppleWebKit/605.1.15 (KHTML, like Gecko)"_s,
-        applicationName.isEmpty() ? ""_s : " "_s, applicationName, version.isEmpty() ? ""_s : "/"_s, version);
+        isEmpty(applicationName) ? ""_s : " "_s, applicationName, isEmpty(version) ? ""_s : "/"_s, version);
 }
 
 } // namespace WebCore

@@ -28,13 +28,12 @@
 #if PLATFORM(COCOA)
 
 namespace WTF {
-class String;
 }
 
 namespace WebKit {
 
-void updateStringForFind(const WTF::String&);
-WTF::String stringForFind();
+void updateStringForFind(StringImpl*);
+RefPtr<StringImpl> stringForFind();
 
 } // namespace WebKit
 

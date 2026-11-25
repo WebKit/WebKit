@@ -31,7 +31,7 @@ namespace WebCore {
 
 struct WebTransportCloseInfo {
     unsigned closeCode { 0 };
-    String reason { emptyString() };
+    RefPtr<StringImpl> reason { emptyString() };
 };
 
 }

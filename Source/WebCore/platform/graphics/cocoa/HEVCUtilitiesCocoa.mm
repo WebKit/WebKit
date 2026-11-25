@@ -54,7 +54,7 @@ std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCPa
         if (!PAL::isAVFoundationFrameworkAvailable() || !PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha())
             return std::nullopt;
 
-        auto codecCode = FourCC::fromString(String { AVVideoCodecTypeHEVCWithAlpha });
+        auto codecCode = FourCC::fromString(StringImpl::create(AVVideoCodecTypeHEVCWithAlpha).get());
         if (!codecCode)
             return std::nullopt;
 
@@ -99,7 +99,7 @@ std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCPa
     if (!perProfileSupport)
         return std::nullopt;
 
-    auto generalProfileIDCString = String::number(generalProfileIDC).createCFString();
+    auto generalProfileIDCString = createCFString(makeString(generalProfileIDC));
     RetainPtr profileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(perProfileSupport.get(), generalProfileIDCString.get()));
     if (!profileSupport)
         return std::nullopt;
@@ -149,7 +149,7 @@ static std::optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vec
         return std::nullopt;
     bool parseFailed = false;
     auto result = makeVector(bridge_cast(array.get()), [&] (id value) {
-        auto parseResult = parseInteger<uint16_t>(String(dynamic_objc_cast<NSString>(value)));
+        auto parseResult = parseInteger<uint16_t>(StringImpl::create(dynamic_objc_cast<NSString>(value)).get());
         parseFailed |= !parseResult;
         return parseResult;
     });

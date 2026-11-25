@@ -142,7 +142,7 @@ Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::JSGlobalObject* global
     return stack;
 }
 
-static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObject, JSObject* exceptionObject, LineColumn* lineColumn, String* sourceURL)
+static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObject, JSObject* exceptionObject, LineColumn* lineColumn, RefPtr<StringImpl>* sourceURL)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
@@ -162,8 +162,8 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
     } else if (ErrorInstance* error = dynamicDowncast<ErrorInstance>(exceptionObject))
         result = getLineColumnAndSource(vm, error->stackTrace(), *lineColumn, *sourceURL);
 
-    if (sourceURL->isEmpty())
-        *sourceURL = "undefined"_s;
+    if (isEmpty(*sourceURL))
+        *sourceURL = "undefined"_si;
 
     scope.clearException();
     return result;
@@ -176,7 +176,7 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* glo
     VM& vm = globalObject->vm();
     for (size_t i = 0; i < stackTrace.size() && i < maxStackSize; i++) {
         auto lineColumn = stackTrace[i].computeLineAndColumn();
-        String functionName = stackTrace[i].functionName(vm);
+        RefPtr<StringImpl> functionName = stackTrace[i].functionName(vm);
         frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL(vm), stackTrace[i].sourceID(), lineColumn));
     }
 
@@ -185,17 +185,17 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* glo
         JSObject* exceptionObject = exception->value().toObject(globalObject);
         ASSERT(exceptionObject);
         LineColumn lineColumn;
-        String exceptionSourceURL;
+        RefPtr<StringImpl> exceptionSourceURL;
         if (!frames.size()) {
             if (extractSourceInformationFromException(globalObject, exceptionObject, &lineColumn, &exceptionSourceURL))
-                frames.append(ScriptCallFrame(String(), exceptionSourceURL, noSourceID, lineColumn));
+                frames.append(ScriptCallFrame(nullString(), exceptionSourceURL, noSourceID, lineColumn));
         } else {
             // FIXME: The typical stack trace will have a native frame at the top, and consumers of
             // this code already know this (see JSDOMExceptionHandling.cpp's reportException, for
             // example - it uses firstNonNativeCallFrame). This looks like it splats something else
             // over it. That something else is probably already at stackTrace[1].
             // https://bugs.webkit.org/show_bug.cgi?id=176663
-            if (!stackTrace[0].hasLineAndColumnInfo() || stackTrace[0].sourceURL(vm).isEmpty()) {
+            if (!stackTrace[0].hasLineAndColumnInfo() || isEmpty(stackTrace[0].sourceURL(vm))) {
                 const ScriptCallFrame& firstCallFrame = frames.first();
                 if (extractSourceInformationFromException(globalObject, exceptionObject, &lineColumn, &exceptionSourceURL))
                     frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, stackTrace[0].sourceID(), lineColumn);

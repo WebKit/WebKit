@@ -48,9 +48,9 @@ public:
 
     using ClientQueryOptions = ServiceWorkerClientQueryOptions;
 
-    void get(ScriptExecutionContext&, const String& id, Ref<DeferredPromise>&&);
+    void get(ScriptExecutionContext&, StringImpl* id, Ref<DeferredPromise>&&);
     void matchAll(ScriptExecutionContext&, const ClientQueryOptions&, Ref<DeferredPromise>&&);
-    void openWindow(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&&);
+    void openWindow(ScriptExecutionContext&, StringImpl* url, Ref<DeferredPromise>&&);
     void claim(ScriptExecutionContext&, Ref<DeferredPromise>&&);
 
     enum PromiseIdentifierType { };

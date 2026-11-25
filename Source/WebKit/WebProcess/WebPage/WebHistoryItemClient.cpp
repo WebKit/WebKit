@@ -68,7 +68,7 @@ void WebHistoryItemClient::historyItemChanged(const WebCore::HistoryItem& item)
     if (m_shouldIgnoreChanges)
         return;
     // Until a load initializes an item, it has no URL and none of the entry's state.
-    if (item.urlString().isEmpty())
+    if (isEmpty(item.urlString()))
         return;
     if (RefPtr page = m_page.get())
         page->send(Messages::WebBackForwardList::BackForwardUpdateItem(toFrameState(item)));

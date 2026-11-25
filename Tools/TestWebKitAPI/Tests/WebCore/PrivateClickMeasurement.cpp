@@ -36,15 +36,15 @@ namespace TestWebKitAPI {
 
 constexpr uint32_t min6BitValue { 0 };
 
-const URL webKitURL { "https://webkit.org"_s };
-const URL exampleURL { "https://example.com"_s };
+const URL webKitURL { "https://webkit.org"_si };
+const URL exampleURL { "https://example.com"_si };
 const URL emptyURL { };
 
 // Positive test cases.
 
 TEST(PrivateClickMeasurement, WellKnownURLs)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { min6BitValue, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(min6BitValue), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     auto attributionSourceURL = attribution.attributionReportClickSourceURL();
@@ -55,7 +55,7 @@ TEST(PrivateClickMeasurement, WellKnownURLs)
 
 TEST(PrivateClickMeasurement, ValidMinValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { min6BitValue, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(min6BitValue), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":0,\"attributed_on_site\":\"example.com\",\"trigger_data\":0,\"version\":3}"_s);
@@ -63,7 +63,7 @@ TEST(PrivateClickMeasurement, ValidMinValues)
 
 TEST(PrivateClickMeasurement, ValidMidValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID((uint32_t)192), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID((uint32_t)192), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { (uint32_t)9, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue((uint32_t)22), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":192,\"attributed_on_site\":\"example.com\",\"trigger_data\":9,\"version\":3}"_s);
@@ -71,7 +71,7 @@ TEST(PrivateClickMeasurement, ValidMidValues)
 
 TEST(PrivateClickMeasurement, ValidMaxValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":255,\"attributed_on_site\":\"example.com\",\"trigger_data\":15,\"version\":3}"_s);
@@ -79,7 +79,7 @@ TEST(PrivateClickMeasurement, ValidMaxValues)
 
 TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     auto now = WallTime::now();
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
     auto earliestTimeToSend = attribution.timesToSend();
@@ -90,34 +90,34 @@ TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)
 
 TEST(PrivateClickMeasurement, ValidConversionURLs)
 {
-    const URL conversionURLWithoutPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10"_s };
+    const URL conversionURLWithoutPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10"_si };
     auto optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithoutPriority);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)10);
 
-    const URL conversionURLWithoutPriorityMaxEntropy { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/15"_s };
+    const URL conversionURLWithoutPriorityMaxEntropy { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/15"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithoutPriorityMaxEntropy);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)15);
     
-    const URL conversionURLWithoutPriorityAndLeadingZero { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/02"_s };
+    const URL conversionURLWithoutPriorityAndLeadingZero { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/02"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithoutPriorityAndLeadingZero);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)2);
 
-    const URL conversionURLWithPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_s };
+    const URL conversionURLWithPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithPriority);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)10);
     ASSERT_EQ(optionalConversion->priority, (uint32_t)12);
 
-    const URL conversionURLWithPriorityMaxEntropy { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/15/63"_s };
+    const URL conversionURLWithPriorityMaxEntropy { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/15/63"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithPriorityMaxEntropy);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)15);
     ASSERT_EQ(optionalConversion->priority, (uint32_t)63);
     
-    const URL conversionURLWithPriorityAndLeadingZero { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/02"_s };
+    const URL conversionURLWithPriorityAndLeadingZero { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/02"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithPriorityAndLeadingZero);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)10);
@@ -134,7 +134,7 @@ TEST(PrivateClickMeasurement, ValidSourceNonce)
 
 TEST(PrivateClickMeasurement, InvalidSourceHost)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { emptyURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { emptyURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
@@ -143,7 +143,7 @@ TEST(PrivateClickMeasurement, InvalidSourceHost)
 
 TEST(PrivateClickMeasurement, InvalidDestinationHost)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { emptyURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { emptyURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
@@ -152,7 +152,7 @@ TEST(PrivateClickMeasurement, InvalidDestinationHost)
 
 TEST(PrivateClickMeasurement, AttributionTriggerData)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { (WebCore::PCM::AttributionTriggerData::MaxEntropy + 1), WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
@@ -161,7 +161,7 @@ TEST(PrivateClickMeasurement, AttributionTriggerData)
 
 TEST(PrivateClickMeasurement, InvalidPriority)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy + 1), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
@@ -170,7 +170,7 @@ TEST(PrivateClickMeasurement, InvalidPriority)
 
 TEST(PrivateClickMeasurement, InvalidMissingConversion)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_si, WallTime::now(), PCM::AttributionEphemeral::No };
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
     ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
@@ -179,55 +179,55 @@ TEST(PrivateClickMeasurement, InvalidMissingConversion)
 
 TEST(PrivateClickMeasurement, InvalidConversionURLs)
 {
-    const URL conversionURLWithSingleDigitConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_s };
+    const URL conversionURLWithSingleDigitConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_si };
     auto optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithSingleDigitConversionData);
     ASSERT_FALSE(optionalConversion);
     
-    const URL conversionURLWithNonNumeralConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/2s"_s };
+    const URL conversionURLWithNonNumeralConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/2s"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithNonNumeralConversionData);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithNegativeConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/-2"_s };
+    const URL conversionURLWithNegativeConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/-2"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithNegativeConversionData);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithTooLargeConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16"_s };
+    const URL conversionURLWithTooLargeConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTooLargeConversionData);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithSingleDigitPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/2"_s };
+    const URL conversionURLWithSingleDigitPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/2"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithSingleDigitPriority);
     ASSERT_FALSE(optionalConversion);
     
-    const URL conversionURLWithNonNumeralPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/2s"_s };
+    const URL conversionURLWithNonNumeralPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/2s"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithNonNumeralPriority);
     ASSERT_FALSE(optionalConversion);
     
-    const URL conversionURLWithNegativePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/-2"_s };
+    const URL conversionURLWithNegativePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/-2"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithNegativePriority);
     ASSERT_FALSE(optionalConversion);
     
-    const URL conversionURLWithTooLargePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/64"_s };
+    const URL conversionURLWithTooLargePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/64"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTooLargePriority);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithTooLargeConversionDataAndPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16/22"_s };
+    const URL conversionURLWithTooLargeConversionDataAndPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16/22"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTooLargeConversionDataAndPriority);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithTooLargeConversionDataAndTooLargePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16/64"_s };
+    const URL conversionURLWithTooLargeConversionDataAndTooLargePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16/64"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTooLargeConversionDataAndTooLargePriority);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithExtraLeadingSlash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution//10/12"_s };
+    const URL conversionURLWithExtraLeadingSlash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution//10/12"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithExtraLeadingSlash);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithExtraTrailingSlash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12/"_s };
+    const URL conversionURLWithExtraTrailingSlash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12/"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithExtraTrailingSlash);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithTrailingQuestionMark = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?"_s };
+    const URL conversionURLWithTrailingQuestionMark = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTrailingQuestionMark);
     ASSERT_FALSE(optionalConversion);
 }
@@ -235,46 +235,46 @@ TEST(PrivateClickMeasurement, InvalidConversionURLs)
 TEST(PrivateClickMeasurement, InvalidConversionWithDisallowedURLComponents)
 {
     // Protocol.
-    const URL conversionURLWithHttpProtocol { { }, "http://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_s };
+    const URL conversionURLWithHttpProtocol { { }, "http://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_si };
     auto optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithHttpProtocol);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithWssProtocol { { }, "wss://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_s };
+    const URL conversionURLWithWssProtocol { { }, "wss://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithWssProtocol);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithFileProtocol { { }, "file:///.well-known/private-click-measurement/trigger-attribution/2"_s };
+    const URL conversionURLWithFileProtocol { { }, "file:///.well-known/private-click-measurement/trigger-attribution/2"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithFileProtocol);
     ASSERT_FALSE(optionalConversion);
 
     // Username and password.
-    const URL conversionURLWithUserName { { }, "https://user@webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_s };
+    const URL conversionURLWithUserName { { }, "https://user@webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithUserName);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithPassword = { { }, "https://:pwd@webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_s };
+    const URL conversionURLWithPassword = { { }, "https://:pwd@webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithPassword);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithUsernameAndPassword = { { }, "https://user:pwd@webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_s };
+    const URL conversionURLWithUsernameAndPassword = { { }, "https://user:pwd@webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithUsernameAndPassword);
     ASSERT_FALSE(optionalConversion);
 
     // Query string.
-    const URL conversionURLWithTrailingQuestionMark = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?"_s };
+    const URL conversionURLWithTrailingQuestionMark = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTrailingQuestionMark);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithQueryString = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?extra=data"_s };
+    const URL conversionURLWithQueryString = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?extra=data"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithQueryString);
     ASSERT_FALSE(optionalConversion);
     
     // Fragment.
-    const URL conversionURLWithTrailingHash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12#"_s };
+    const URL conversionURLWithTrailingHash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12#"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTrailingHash);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithFragment = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12#fragment"_s };
+    const URL conversionURLWithFragment = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12#fragment"_si };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithFragment);
     ASSERT_FALSE(optionalConversion);
 }
@@ -291,7 +291,7 @@ TEST(PrivateClickMeasurement, InvalidSourceNonce)
     ephemeralNonce = PCM::EphemeralNonce { "ABCDEFabcde/0123456789"_s };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Illegal, non-ASCII character 'å'.
-    ephemeralNonce = PCM::EphemeralNonce { String::fromLatin1("ABCDEFabcdeå0123456789") };
+    ephemeralNonce = PCM::EphemeralNonce { StringImpl::fromLatin1("ABCDEFabcdeå0123456789") };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Empty string.
     ephemeralNonce = PCM::EphemeralNonce { StringImpl::empty() };
@@ -322,7 +322,7 @@ TEST(PrivateClickMeasurement, InvalidBlindedSecret)
     EXPECT_TRUE(ephemeralNonce.isValid());
     pcm.setEphemeralSourceNonce(WTF::move(ephemeralNonce));
 
-    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(serverPublicKeyBase64URL);
+    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(StringImpl::create(serverPublicKeyBase64URL).ptr());
     EXPECT_FALSE(errorMessage);
     sourceUnlinkableToken = pcm.tokenSignatureJSON();
     EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 4ul);

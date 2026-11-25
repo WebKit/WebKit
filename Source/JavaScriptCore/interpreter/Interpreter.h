@@ -163,7 +163,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
         NEVER_INLINE CatchInfo unwind(VM&, CallFrame*&, Exception*);
         void notifyDebuggerOfExceptionToBeThrown(VM&, JSGlobalObject*, CallFrame*, Exception*);
         NEVER_INLINE void debug(CallFrame*, DebugHookType, JSValue data);
-        static String stackTraceAsString(VM&, const Vector<StackFrame>&);
+        static RefPtr<StringImpl> stackTraceAsString(VM&, const Vector<StackFrame>&);
 
         void getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip = 0, size_t maxStackSize = std::numeric_limits<size_t>::max(), JSCell* caller = nullptr, JSCell* ownerOfCallLinkInfo = nullptr, CallLinkInfo* = nullptr);
         bool isExceptionCaughtByUserCatchClause();

@@ -54,7 +54,7 @@ static double performanceNow(ScriptExecutionContext& scriptExecutionContext)
     return 0;
 }
 
-ExceptionOr<Ref<PerformanceMark>> PerformanceMark::create(JSC::JSGlobalObject& globalObject, ScriptExecutionContext& scriptExecutionContext, const String& name, std::optional<PerformanceMarkOptions>&& markOptions)
+ExceptionOr<Ref<PerformanceMark>> PerformanceMark::create(JSC::JSGlobalObject& globalObject, ScriptExecutionContext& scriptExecutionContext, StringImpl* name, std::optional<PerformanceMarkOptions>&& markOptions)
 {
     if (is<Document>(scriptExecutionContext) && PerformanceUserTiming::isRestrictedMarkName(name))
         return Exception { ExceptionCode::SyntaxError };
@@ -86,7 +86,7 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceMark::create(JSC::JSGlobalObject& g
     return adoptRef(*new PerformanceMark(name, startTime, serializedDetail.releaseReturnValue()));
 }
 
-PerformanceMark::PerformanceMark(const String& name, double startTime, Ref<SerializedScriptValue>&& serializedDetail)
+PerformanceMark::PerformanceMark(StringImpl* name, double startTime, Ref<SerializedScriptValue>&& serializedDetail)
     : PerformanceEntry(name, startTime, startTime)
     , m_serializedDetail(WTF::move(serializedDetail))
 {

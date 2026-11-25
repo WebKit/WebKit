@@ -132,7 +132,7 @@ bool CSSParserTokenRange::consumeAnyValue()
     return true;
 }
 
-String CSSParserTokenRange::serialize(CSSParserToken::SerializationMode mode) const
+RefPtr<StringImpl> CSSParserTokenRange::serialize(CSSParserToken::SerializationMode mode) const
 {
     StringBuilder builder;
     for (size_t i = 0; i < m_tokens.size(); ++i)

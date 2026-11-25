@@ -56,9 +56,9 @@ bool isHttpNavigationWithHTTPSOnlyError(const WebCore::ResourceError&);
 WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
 
 #if USE(SOUP)
-WebCore::ResourceError downloadNetworkError(const URL&, const WTF::String&);
+WebCore::ResourceError downloadNetworkError(const URL&, StringImpl*);
 WebCore::ResourceError downloadCancelledByUserError(const WebCore::ResourceResponse&);
-WebCore::ResourceError downloadDestinationError(const WebCore::ResourceResponse&, const WTF::String&);
+WebCore::ResourceError downloadDestinationError(const WebCore::ResourceResponse&, StringImpl*);
 #endif
 
 WebCore::ResourceError decodeError(const URL&);

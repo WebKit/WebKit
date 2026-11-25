@@ -132,21 +132,50 @@ template<typename T> inline void add(Hasher& hasher, T* ptr)
     add(hasher, std::bit_cast<uintptr_t>(ptr));
 }
 
-inline void add(Hasher& hasher, const String& string)
+// Strings hash their characters; a null pointer hashes like an empty string. Chose to hash the characters here.
+// Assuming this is better than hashing the possibly-already-computed hash of the characters.
+inline void addStringImplCharacters(Hasher& hasher, StringImpl* string)
 {
-    // Chose to hash the characters here. Assuming this is better than hashing the possibly-already-computed hash of the characters.
-    bool remainder = string.length() & 1;
-    unsigned roundedLength = string.length() - remainder;
+    unsigned length = string ? string->length() : 0;
+    bool remainder = length & 1;
+    unsigned roundedLength = length - remainder;
     for (unsigned i = 0; i < roundedLength; i += 2)
-        add(hasher, (string[i] << 16) | string[i + 1]);
+        add(hasher, (string->at(i) << 16) | string->at(i + 1));
     if (remainder)
-        add(hasher, string[roundedLength]);
+        add(hasher, string->at(roundedLength));
 }
 
-inline void add(Hasher& hasher, const AtomString& string)
+inline void add(Hasher& hasher, StringImpl* string)
 {
-    // Chose to hash the pointer here. Assuming this is better than hashing the characters or hashing the already-computed hash of the characters.
-    add(hasher, std::bit_cast<uintptr_t>(string.impl()));
+    addStringImplCharacters(hasher, string);
+}
+
+// Atoms hash their address. Chose to hash the pointer here. Assuming this is better than hashing the characters
+// or hashing the already-computed hash of the characters.
+inline void add(Hasher& hasher, AtomStringImpl* string)
+{
+    add(hasher, std::bit_cast<uintptr_t>(string));
+}
+
+// These are constrained templates so that they are exact matches only, and don't make Ref<Other> arguments ambiguous.
+template<std::same_as<StringImpl> T> inline void add(Hasher& hasher, const RefPtr<T>& string)
+{
+    addStringImplCharacters(hasher, string.get());
+}
+
+template<std::same_as<StringImpl> T> inline void add(Hasher& hasher, const Ref<T>& string)
+{
+    addStringImplCharacters(hasher, string.ptr());
+}
+
+template<std::same_as<AtomStringImpl> T> inline void add(Hasher& hasher, const RefPtr<T>& string)
+{
+    add(hasher, std::bit_cast<uintptr_t>(string.get()));
+}
+
+template<std::same_as<AtomStringImpl> T> inline void add(Hasher& hasher, const Ref<T>& string)
+{
+    add(hasher, std::bit_cast<uintptr_t>(string.ptr()));
 }
 
 inline void add(Hasher& hasher, ASCIILiteral literal)
@@ -252,15 +281,24 @@ template<typename T, typename U> void add(Hasher& hasher, const CheckedPtr<T, U>
 }
 
 // Default hash for any type that has add(Hasher&, const T&) standalone function so it works with computeHash().
+// Types without == that contain strings (e.g. Vector<RefPtr<StringImpl>>) compare with contentEquals().
 template<typename T> concept HashableWithHasher = requires(Hasher& hasher, const T& t) {
-    requires std::equality_comparable<T>;
+    requires std::equality_comparable<T> || requires {
+        { contentEquals(t, t) } -> std::same_as<bool>;
+    };
     // Don't enable if there is hash() member function.
     requires !HashableWithMemberFunction<T>;
     add(hasher, t);
 };
 template<HashableWithHasher T> struct HasherBasedHash {
     static unsigned hash(const T& key) { return computeHash(key); }
-    static bool equal(const T& a, const T& b) { return a == b; }
+    static bool equal(const T& a, const T& b)
+    {
+        if constexpr (std::equality_comparable<T>)
+            return a == b;
+        else
+            return contentEquals(a, b);
+    }
     static constexpr bool safeToCompareToEmptyOrDeleted = isSafeToCompareToHashTableEmptyOrDeletedValue<T>();
 };
 template<HashableWithHasher T> struct DefaultHash<T> : HasherBasedHash<T> { };

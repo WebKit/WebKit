@@ -190,7 +190,7 @@ Document* JSDOMWindowBase::scriptExecutionContext() const
     return m_wrapped->documentIfLocal();
 }
 
-void JSDOMWindowBase::printErrorMessage(const String& message) const
+void JSDOMWindowBase::printErrorMessage(StringImpl* message) const
 {
     printErrorMessageForFrame(protect(dynamicDowncast<LocalFrame>(wrapped().frame())), message);
 }
@@ -269,7 +269,7 @@ JSC::ScriptExecutionStatus JSDOMWindowBase::scriptExecutionStatus(JSC::JSGlobalO
     return uncheckedDowncast<JSDocument>(owner)->wrapped().jscScriptExecutionStatus();
 }
 
-void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, const String& source)
+void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, StringImpl* source)
 {
     auto* thisObject = uncheckedDowncast<JSDOMWindowBase>(object);
     CheckedPtr<ContentSecurityPolicy> contentSecurityPolicy;

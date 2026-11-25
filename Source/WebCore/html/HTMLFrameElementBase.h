@@ -43,21 +43,21 @@ protected:
 
     bool canLoad() const;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
     void didAttachRenderers() override;
 
-    WEBCORE_EXPORT void setLocation(const String&);
+    WEBCORE_EXPORT void setLocation(StringImpl*);
     void openURL(LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
 
-    AtomString frameURL() const { return m_frameURL; }
-    void setFrameURL(const AtomString& frameURL) { m_frameURL = frameURL; }
+    RefPtr<AtomStringImpl> frameURL() const { return m_frameURL; }
+    void setFrameURL(AtomStringImpl* frameURL) { m_frameURL = frameURL; }
 
 private:
     bool canLoadScriptURL(const URL&) const final;
 
-    bool canLoadURL(const String& relativeURL) const;
+    bool canLoadURL(StringImpl* relativeURL) const;
     bool canLoadURL(const URL&) const;
 
     bool canContainRangeEndPoint() const final { return false; }
@@ -68,7 +68,7 @@ private:
     NODELETE bool isURLAttribute(const Attribute&) const final;
     NODELETE bool isHTMLContentAttribute(const Attribute&) const final;
 
-    AtomString m_frameURL;
+    RefPtr<AtomStringImpl> m_frameURL;
     bool m_openingURLAfterInserting { false };
 };
 

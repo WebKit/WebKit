@@ -45,8 +45,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    String formattedStringForDuration(double);
-    RefPtr<HTMLImageElement> createImageForIconNameAndType(const String& iconName, const String& iconType);
+    RefPtr<StringImpl> formattedStringForDuration(double);
+    RefPtr<HTMLImageElement> createImageForIconNameAndType(StringImpl* iconName, StringImpl* iconType);
 
 private:
     NODELETE Document* document() const;

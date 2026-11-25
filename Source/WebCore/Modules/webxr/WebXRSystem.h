@@ -101,7 +101,7 @@ private:
     explicit WebXRSystem(Navigator&);
 
     using FeatureList = PlatformXR::Device::FeatureList;
-    void obtainCurrentDevice(XRSessionMode, const Vector<String>& requiredFeatures, const Vector<String>& optionalFeatures, CompletionHandler<void(ThreadSafeWeakPtr<PlatformXR::Device>)>&&);
+    void obtainCurrentDevice(XRSessionMode, const Vector<RefPtr<StringImpl>>& requiredFeatures, const Vector<RefPtr<StringImpl>>& optionalFeatures, CompletionHandler<void(ThreadSafeWeakPtr<PlatformXR::Device>)>&&);
 
     bool immersiveSessionRequestIsAllowedForGlobalObject(LocalDOMWindow&, Document&) const;
     bool inlineSessionRequestIsAllowedForGlobalObject(LocalDOMWindow&, Document&, const XRSessionInit&) const;

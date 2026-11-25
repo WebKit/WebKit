@@ -141,12 +141,12 @@ std::span<const GCGLAttribActiveInfo> WebGLProgram::activeAttribs() LIFETIME_BOU
     return *m_state.activeAttribs;
 }
 
-const HashMap<String, int>& WebGLProgram::attribLocations() LIFETIME_BOUND
+const HashMap<RefPtr<StringImpl>, int>& WebGLProgram::attribLocations() LIFETIME_BOUND
 {
     if (!m_state.attribLocations) {
         auto& locations = m_state.attribLocations.emplace();
         for (auto& activeAttrib : activeAttribs()) {
-            String name = String::fromUTF8(activeAttrib.name.span());
+            RefPtr<StringImpl> name = StringImpl::fromUTF8(activeAttrib.name.span());
             locations.add(name, activeAttrib.location);
         }
     }
@@ -164,18 +164,18 @@ std::span<const GCGLUniformActiveInfo> WebGLProgram::activeUniforms()
     return *m_state.activeUniforms;
 }
 
-const HashMap<String, int>& WebGLProgram::uniformLocations() LIFETIME_BOUND
+const HashMap<RefPtr<StringImpl>, int>& WebGLProgram::uniformLocations() LIFETIME_BOUND
 {
     if (!m_state.uniformLocations) {
         auto& locations = m_state.uniformLocations.emplace();
         for (auto& activeUniform : activeUniforms()) {
             if (activeUniform.blockIndex != -1)
                 continue;
-            String name { activeUniform.name };
+            RefPtr<StringImpl> name { StringImpl::create((activeUniform.name).span()) };
             if (activeUniform.locations[0] != -1)
                 locations.add(name, activeUniform.locations[0]);
-            if (name.endsWith("[0]"_s)) {
-                auto baseName = name.left(name.length() - 3);
+            if (endsWith(name, "[0]"_s)) {
+                auto baseName = left(name, length(name) - 3);
                 if (activeUniform.locations[0] != -1)
                     locations.add(baseName, activeUniform.locations[0]);
                 for (size_t i = 1; i < activeUniform.locations.size(); ++i) {
@@ -188,17 +188,17 @@ const HashMap<String, int>& WebGLProgram::uniformLocations() LIFETIME_BOUND
     return *m_state.uniformLocations;
 }
 
-const HashMap<String, unsigned>& WebGLProgram::uniformIndices() LIFETIME_BOUND
+const HashMap<RefPtr<StringImpl>, unsigned>& WebGLProgram::uniformIndices() LIFETIME_BOUND
 {
     if (!m_state.uniformIndices) {
         auto& indices = m_state.uniformIndices.emplace();
         auto activeUniforms = this->activeUniforms();
         for (unsigned i = 0; i < activeUniforms.size(); ++i) {
             auto& activeUniform = activeUniforms[i];
-            String name { activeUniform.name };
+            RefPtr<StringImpl> name { StringImpl::create((activeUniform.name).span()) };
             indices.add(name, i);
-            if (name.endsWith("[0]"_s)) {
-                auto baseName = name.left(name.length() - 3);
+            if (endsWith(name, "[0]"_s)) {
+                auto baseName = left(name, length(name) - 3);
                 indices.add(baseName, i);
             }
         }

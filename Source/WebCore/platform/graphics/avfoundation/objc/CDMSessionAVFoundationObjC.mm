@@ -65,7 +65,7 @@ CDMSessionAVFoundationObjC::~CDMSessionAVFoundationObjC()
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 
-RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
     UNUSED_PARAM(mimeType);
 
@@ -76,8 +76,8 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
         return nullptr;
     }
 
-    String keyURI;
-    String keyID;
+    RefPtr<StringImpl> keyURI;
+    RefPtr<StringImpl> keyID;
     RefPtr<Uint8Array> certificate;
     if (!MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromInitData(initData, keyURI, keyID, certificate)) {
         ERROR_LOG(LOGIDENTIFIER, "error: could not extract key info");
@@ -93,7 +93,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     }
 
     RetainPtr certificateData = WTF::toNSData(certificate->span());
-    RetainPtr assetString = keyID.createNSString();
+    RetainPtr assetString = createNSString(keyID);
     RetainPtr<NSData> assetID = [assetString dataUsingEncoding:NSUTF8StringEncoding];
     NSError* nsError = nullptr;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -109,7 +109,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     errorCode = MediaPlayer::NoError;
     systemCode = 0;
-    destinationURL = String();
+    destinationURL = nullptr;
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -134,7 +134,7 @@ bool CDMSessionAVFoundationObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nex
     return true;
 }
 
-RefPtr<ArrayBuffer> CDMSessionAVFoundationObjC::cachedKeyForKeyID(const String&) const
+RefPtr<ArrayBuffer> CDMSessionAVFoundationObjC::cachedKeyForKeyID(StringImpl*) const
 {
     return nullptr;
 }

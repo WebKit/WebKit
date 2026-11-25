@@ -408,7 +408,7 @@ void WebXRWebGLLayer::updateViewports()
     }
 }
 
-void WebXRWebGLLayer::addConsoleMessage(MessageLevel level, String&& message) const
+void WebXRWebGLLayer::addConsoleMessage(MessageLevel level, RefPtr<StringImpl>&& message) const
 {
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)

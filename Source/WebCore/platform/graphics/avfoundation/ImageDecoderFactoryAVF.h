@@ -37,8 +37,8 @@ class ImageDecoderFactoryAVF {
 public:
     struct DecoderInterface {
         using SupportsMediaTypeFunc = Function<bool(ImageDecoder::MediaType)>;
-        using CanDecodeTypeFunc = Function<bool(const String&)>;
-        using CreateImageDecoderFunc = Function<RefPtr<ImageDecoder>(FragmentedSharedBuffer&, const String&, AlphaOption, GammaAndColorProfileOption)>;
+        using CanDecodeTypeFunc = Function<bool(StringImpl*)>;
+        using CreateImageDecoderFunc = Function<RefPtr<ImageDecoder>(FragmentedSharedBuffer&, StringImpl*, AlphaOption, GammaAndColorProfileOption)>;
 
         SupportsMediaTypeFunc supportsMediaType;
         CanDecodeTypeFunc canDecodeType;
@@ -51,7 +51,7 @@ public:
     WEBCORE_EXPORT void reset();
 
     bool supportsMediaType(ImageDecoder::MediaType) const;
-    RefPtr<ImageDecoder> createImageDecoder(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption) const;
+    RefPtr<ImageDecoder> createImageDecoder(FragmentedSharedBuffer&, StringImpl* mimeType, AlphaOption, GammaAndColorProfileOption) const;
 
 private:
     friend NeverDestroyed<ImageDecoderFactoryAVF>;

@@ -42,7 +42,7 @@ WEBKIT_DEFINE_TYPE(GStreamerMockDevice, webkit_mock_device, GST_TYPE_DEVICE)
 static GstElement* webkitMockDeviceCreateElement([[maybe_unused]] GstDevice* device, const char* name)
 {
     GST_INFO_OBJECT(device, "Creating source element for device %s", name);
-    auto* element = makeGStreamerElement("appsrc"_s, String::fromLatin1(name));
+    auto* element = makeGStreamerElement("appsrc"_s, StringImpl::fromLatin1(name));
     g_object_set(element, "format", GST_FORMAT_TIME, "is-live", TRUE, "do-timestamp", TRUE, nullptr);
     return element;
 }
@@ -79,9 +79,9 @@ GstDevice* webkitMockDeviceCreate(const CaptureDevice& captureDevice)
     }
 
     auto displayName = captureDevice.label();
-    GUniquePtr<GstStructure> properties(gst_structure_new("webkit-mock-device", "persistent-id", G_TYPE_STRING, captureDevice.persistentId().ascii().data(), "is-default", G_TYPE_BOOLEAN, captureDevice.isDefault(), nullptr));
-    GST_DEBUG("Creating mock device with name %s and properties %" GST_PTR_FORMAT, displayName.utf8(), properties.get());
-    auto* device = WEBKIT_MOCK_DEVICE_CAST(gObjectNew(GST_TYPE_MOCK_DEVICE, "display-name", displayName.utf8(),
+    GUniquePtr<GstStructure> properties(gst_structure_new("webkit-mock-device", "persistent-id", G_TYPE_STRING, ascii(captureDevice.persistentId()).data(), "is-default", G_TYPE_BOOLEAN, captureDevice.isDefault(), nullptr));
+    GST_DEBUG("Creating mock device with name %s and properties %" GST_PTR_FORMAT, utf8(displayName), properties.get());
+    auto* device = WEBKIT_MOCK_DEVICE_CAST(gObjectNew(GST_TYPE_MOCK_DEVICE, "display-name", utf8(displayName),
         "device-class", deviceClass.characters(), "caps", caps.get(), "properties", properties.get()));
     gst_object_ref_sink(device);
     return GST_DEVICE_CAST(device);

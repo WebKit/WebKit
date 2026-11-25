@@ -237,7 +237,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 - (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController openURLExternally:(NSURL *)url
 {
     if (RefPtr proxy = _inspectorProxy.get())
-        proxy->openURLExternally(url.absoluteString);
+        proxy->openURLExternally(StringImpl::create(url.absoluteString).get());
 }
 
 @end
@@ -269,7 +269,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
     self.view = adoptNS([[NSView alloc] init]).get();
 
-    RetainPtr label = [NSTextField labelWithString:WEB_UI_STRING("Format:", "Label for the save data format selector when saving data in Web Inspector").createNSString().get()];
+    RetainPtr label = [NSTextField labelWithString:createNSString(WEB_UI_STRING("Format:", "Label for the save data format selector when saving data in Web Inspector")).get()];
     label.get().textColor = NSColor.secondaryLabelColor;
     label.get().font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
     label.get().alignment = NSTextAlignmentRight;
@@ -278,7 +278,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
     [_popUpButton setAction:@selector(_popUpButtonAction:)];
     [_popUpButton setTarget:self];
     [_popUpButton addItemsWithTitles:createNSArray(_saveDatas, [] (const auto& item) {
-        return item.displayType.createNSString();
+        return createNSString(item.displayType);
     }).get()];
     [_popUpButton selectItemAtIndex:0];
 
@@ -311,7 +311,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 - (NSString *)content
 {
-    return _saveDatas[[_popUpButton indexOfSelectedItem]].content.createNSString().autorelease();
+    return createNSString(_saveDatas[[_popUpButton indexOfSelectedItem]].content).autorelease();
 }
 
 - (BOOL)base64Encoded
@@ -321,7 +321,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 - (void)_updateSavePanel
 {
-    RetainPtr suggestedURL = _saveDatas[[_popUpButton indexOfSelectedItem]].url.createNSString();
+    RetainPtr suggestedURL = createNSString(_saveDatas[[_popUpButton indexOfSelectedItem]].url);
 
     if (RetainPtr<UTType> type = [UTType typeWithFilenameExtension:retainPtr(suggestedURL.get().pathExtension).get()])
         [_savePanel setAllowedContentTypes:@[ type.get() ]];
@@ -762,10 +762,10 @@ void WebInspectorUIProxy::updateInspectorWindowTitle() const
 
     unsigned level = inspectionLevel();
     if (level > 1) {
-        SUPPRESS_UNRETAINED_ARG RetainPtr debugTitle = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Web Inspector [%d] — %@", "Web Inspector window title when inspecting Web Inspector"), level, m_urlString.createNSString().get()]);
+        SUPPRESS_UNRETAINED_ARG RetainPtr debugTitle = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Web Inspector [%d] — %@", "Web Inspector window title when inspecting Web Inspector"), level, createNSString(m_urlString).get()]);
         [m_inspectorWindow setTitle:debugTitle.get()];
     } else {
-        SUPPRESS_UNRETAINED_ARG RetainPtr title = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Web Inspector — %@", "Web Inspector window title"), m_urlString.createNSString().get()]);
+        SUPPRESS_UNRETAINED_ARG RetainPtr title = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Web Inspector — %@", "Web Inspector window title"), createNSString(m_urlString).get()]);
         [m_inspectorWindow setTitle:title.get()];
     }
 }
@@ -811,7 +811,7 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
         ASSERT(actualURL);
 
         if ([controller base64Encoded]) {
-            String contentString = [controller content];
+            RefPtr<StringImpl> contentString = StringImpl::create([controller content]);
             const auto decodedData = base64Decode(contentString, { Base64DecodeOption::ValidatePadding });
             if (!decodedData)
                 return;
@@ -883,7 +883,7 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
 
     NSRect savedWindowFrame = NSZeroRect;
     if (RefPtr inspectedPage = this->inspectedPage()) {
-        RetainPtr savedWindowFrameString = inspectedPage->pageGroup().preferences().inspectorWindowFrame().createNSString();
+        RetainPtr savedWindowFrameString = createNSString(inspectedPage->pageGroup().preferences().inspectorWindowFrame());
         savedWindowFrame = NSRectFromString(savedWindowFrameString.get());
     }
 
@@ -1039,7 +1039,7 @@ void WebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::A
     applyForcedAppearance();
 }
 
-void WebInspectorUIProxy::platformInspectedURLChanged(const String& urlString)
+void WebInspectorUIProxy::platformInspectedURLChanged(StringImpl* urlString)
 {
     m_urlString = urlString;
 
@@ -1071,9 +1071,9 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certifi
     [certificateView setDetailsDisclosed:YES];
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String& path)
+void WebInspectorUIProxy::platformRevealFileExternally(StringImpl* path)
 {
-    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[ adoptNS([[NSURL alloc] initWithString:path.createNSString().get()]).get() ]];
+    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[ adoptNS([[NSURL alloc] initWithString:createNSString(path).get()]).get() ]];
 }
 
 void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -1081,14 +1081,14 @@ void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>
     RetainPtr<NSString> urlCommonPrefix;
     for (auto& item : borrow(saveDatas)) {
         if (!urlCommonPrefix)
-            urlCommonPrefix = item.url.createNSString();
+            urlCommonPrefix = createNSString(item.url);
         else
-            urlCommonPrefix = [urlCommonPrefix commonPrefixWithString:item.url.createNSString().get() options:0];
+            urlCommonPrefix = [urlCommonPrefix commonPrefixWithString:createNSString(item.url).get() options:0];
     }
     if ([urlCommonPrefix hasSuffix:@"."])
         urlCommonPrefix = [urlCommonPrefix substringToIndex:[urlCommonPrefix length] - 1];
 
-    RetainPtr platformURL = m_suggestedToActualURLMap.get(urlCommonPrefix.get());
+    RetainPtr platformURL = m_suggestedToActualURLMap.get(StringImpl::create(urlCommonPrefix.get()).get());
     if (!platformURL) {
         platformURL = adoptNS([[NSURL alloc] initWithString:urlCommonPrefix.get()]);
         // The user must confirm new filenames before we can save to them.
@@ -1096,14 +1096,14 @@ void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>
     }
 
     WebInspectorUIProxy::showSavePanel(m_inspectorWindow.get(), platformURL.get(), WTF::move(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
-        protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
+        protectedThis->m_suggestedToActualURLMap.set(StringImpl::create(urlCommonPrefix.get()), actualURL);
     });
 }
 
-void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::platformLoad(StringImpl* path, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     if (const auto contents = FileSystem::readEntireFile(path))
-        completionHandler(String::fromUTF8ReplacingInvalidSequences(byteCast<Latin1Character>(contents->span())));
+        completionHandler(StringImpl::fromUTF8ReplacingInvalidSequences(byteCast<Latin1Character>(contents->span())));
     else
         completionHandler(nullString());
 }
@@ -1132,7 +1132,7 @@ void WebInspectorUIProxy::windowFrameDidChange()
         return;
 
     RetainPtr frameString = NSStringFromRect([m_inspectorWindow frame]);
-    inspectedPage->pageGroup().preferences().setInspectorWindowFrame(frameString.get());
+    inspectedPage->pageGroup().preferences().setInspectorWindowFrame(StringImpl::create(frameString.get()).get());
 }
 
 void WebInspectorUIProxy::windowFullScreenDidChange()
@@ -1343,14 +1343,14 @@ void WebInspectorUIProxy::platformStartWindowDrag()
     }
 }
 
-String WebInspectorUIProxy::inspectorPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorPageURL()
 {
-    return [WKInspectorViewController URLForInspectorResource:@"Main.html"].absoluteString;
+    return StringImpl::create([WKInspectorViewController URLForInspectorResource:@"Main.html"].absoluteString);
 }
 
-String WebInspectorUIProxy::inspectorTestPageURL()
+RefPtr<StringImpl> WebInspectorUIProxy::inspectorTestPageURL()
 {
-    return [WKInspectorViewController URLForInspectorResource:@"Test.html"].absoluteString;
+    return StringImpl::create([WKInspectorViewController URLForInspectorResource:@"Test.html"].absoluteString);
 }
 
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
@@ -1359,9 +1359,9 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
 
     DebuggableInfoData result;
     result.debuggableType = Inspector::DebuggableType::WebPage;
-    result.targetPlatformName = "macOS"_s;
-    result.targetBuildVersion = checked_objc_cast<NSString>(plist.get()[static_cast<NSString *>(_kCFSystemVersionBuildVersionKey)]);
-    result.targetProductVersion = checked_objc_cast<NSString>(plist.get()[static_cast<NSString *>(_kCFSystemVersionProductUserVisibleVersionKey)]);
+    result.targetPlatformName = "macOS"_si;
+    result.targetBuildVersion = StringImpl::create(checked_objc_cast<NSString>(plist.get()[static_cast<NSString *>(_kCFSystemVersionBuildVersionKey)]));
+    result.targetProductVersion = StringImpl::create(checked_objc_cast<NSString>(plist.get()[static_cast<NSString *>(_kCFSystemVersionProductUserVisibleVersionKey)]));
     result.targetIsSimulator = false;
 
     return result;

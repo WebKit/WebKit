@@ -123,7 +123,7 @@ void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier iden
         connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
-void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     CheckedPtr engine = playbackEngineForConnection(engineIdentifier);
     if (!engine) {
@@ -132,7 +132,7 @@ void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEng
         return;
     }
 
-    HashSet<String> engineTypes;
+    HashSet<RefPtr<StringImpl>> engineTypes;
     engine->getSupportedTypes(engineTypes);
 
     auto result = WTF::map(engineTypes, [] (auto& type) {
@@ -155,7 +155,7 @@ void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::Medi
     completionHandler(result);
 }
 
-void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& keySystem, const String&& mimeType, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const RefPtr<StringImpl>&& keySystem, const RefPtr<StringImpl>&& mimeType, CompletionHandler<void(bool)>&& completionHandler)
 {
     CheckedPtr engine = playbackEngineForConnection(engineIdentifier);
     if (!engine) {

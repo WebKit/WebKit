@@ -34,7 +34,7 @@ namespace WebCore {
 
 struct PushSubscriptionData {
     Markable<PushSubscriptionIdentifier> identifier;
-    String endpoint;
+    RefPtr<StringImpl> endpoint;
     std::optional<WebCore::EpochTimeStamp> expirationTime;
     Vector<uint8_t> serverVAPIDPublicKey;
     Vector<uint8_t> clientECDHPublicKey;

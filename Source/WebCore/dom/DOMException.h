@@ -37,19 +37,19 @@ class Exception;
 
 class DOMException : public RefCounted<DOMException> {
 public:
-    static Ref<DOMException> create(ExceptionCode, const String& message = emptyString());
+    static Ref<DOMException> create(ExceptionCode, StringImpl* message = emptyString());
     static Ref<DOMException> create(const Exception&);
 
     // For DOM bindings.
-    NODELETE static Ref<DOMException> create(const String& message, const String& name);
+    NODELETE static Ref<DOMException> create(StringImpl* message, StringImpl* name);
 
     virtual ~DOMException() { }
 
     using LegacyCode = uint8_t;
     LegacyCode legacyCode() const { return m_legacyCode; }
 
-    String name() const { return m_name; }
-    String message() const { return m_message; }
+    RefPtr<StringImpl> name() const { return m_name; }
+    RefPtr<StringImpl> message() const { return m_message; }
 
     struct Description {
         const ASCIILiteral name;
@@ -66,13 +66,13 @@ public:
     Type type() const { return m_type; }
 
 protected:
-    DOMException(LegacyCode, const String& name, const String& message, Type = Type::Default);
+    DOMException(LegacyCode, StringImpl* name, StringImpl* message, Type = Type::Default);
 
 private:
     const Type m_type;
     const LegacyCode m_legacyCode;
-    const String m_name;
-    const String m_message;
+    const RefPtr<StringImpl> m_name;
+    const RefPtr<StringImpl> m_message;
 };
 
 } // namespace WebCore

@@ -41,7 +41,7 @@ public:
 
     const FontTag& tag() const LIFETIME_BOUND { return m_tag; }
     const CSS::Integer<CSS::Nonnegative>& value() const { return m_value; }
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
 
     bool equals(const CSSFontFeatureValue&) const;
 

@@ -41,7 +41,7 @@ namespace Curl {
 
 using namespace WebCore;
 
-static CurlResponse createCurlResponse(std::optional<String> contentType = "multipart/x-mixed-replace"_s, std::optional<String> boundary = "boundary"_s)
+static CurlResponse createCurlResponse(std::optional<RefPtr<StringImpl>> contentType = "multipart/x-mixed-replace"_s, std::optional<RefPtr<StringImpl>> boundary = "boundary"_s)
 {
     CurlResponse response;
 
@@ -63,7 +63,7 @@ class MultipartHandleClient final : public CurlMultipartHandleClient, public Can
 public:
     void setMultipartHandle();
 
-    void didReceiveHeaderFromMultipart(Vector<String>&& headers) final
+    void didReceiveHeaderFromMultipart(Vector<RefPtr<StringImpl>>&& headers) final
     {
         for (auto header : headers)
             m_headers.append(WTF::move(header));
@@ -86,7 +86,7 @@ public:
         m_didComplete = false;
     }
 
-    const Vector<String>& headers() { return m_headers; }
+    const Vector<RefPtr<StringImpl>>& headers() { return m_headers; }
     const Vector<uint8_t>& data() { return m_data; }
     bool complete() { return m_didComplete; }
 
@@ -98,7 +98,7 @@ private:
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
-    Vector<String> m_headers;
+    Vector<RefPtr<StringImpl>> m_headers;
     Vector<uint8_t> m_data;
     bool m_didComplete { false };
 };

@@ -53,8 +53,8 @@ class TextTrack : public TrackBase, public EventTarget, public ActiveDOMObject, 
     WTF_MAKE_TZONE_ALLOCATED(TextTrack);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrack);
 public:
-    static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, TrackID, const AtomString& label, const AtomString& language);
-    static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);
+    static Ref<TextTrack> create(ScriptExecutionContext*, AtomStringImpl* kind, TrackID, AtomStringImpl* label, AtomStringImpl* language);
+    static Ref<TextTrack> create(ScriptExecutionContext*, AtomStringImpl* kind, AtomStringImpl* id, AtomStringImpl* label, AtomStringImpl* language);
     virtual ~TextTrack();
 
     // ContextDestructionObserver.
@@ -69,7 +69,7 @@ public:
     static TextTrack& captionMenuOnItemSingleton();
     static TextTrack& captionMenuAutomaticItemSingleton();
 
-    static bool isValidKindKeyword(const AtomString&);
+    static bool isValidKindKeyword(AtomStringImpl*);
 
     NODELETE TextTrackList* textTrackList() const;
 
@@ -79,10 +79,10 @@ public:
     Kind kindForBindings() const;
     void setKindForBindings(Kind);
 
-    const AtomString& kindKeyword() const;
+    const RefPtr<AtomStringImpl>& kindKeyword() const;
     void setKindKeywordIgnoringASCIICase(StringView);
 
-    virtual String inBandMetadataTrackDispatchType() const { return emptyString(); }
+    virtual RefPtr<StringImpl> inBandMetadataTrackDispatchType() const { return emptyString(); }
 
     enum class Mode { Disabled, Hidden, Showing };
     Mode mode() const;
@@ -139,10 +139,10 @@ public:
 
     void removeAllCues();
 
-    void setLanguage(const AtomString&) final;
+    void setLanguage(AtomStringImpl*) final;
 
     void setId(TrackID) override;
-    void setLabel(const AtomString&) override;
+    void setLabel(AtomStringImpl*) override;
 
     virtual bool isInband() const { return false; }
 
@@ -157,8 +157,8 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const final;
 
 protected:
-    TextTrack(ScriptExecutionContext*, const AtomString& kind, TrackID, const AtomString& label, const AtomString& language, TextTrackType);
-    TextTrack(ScriptExecutionContext*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType);
+    TextTrack(ScriptExecutionContext*, AtomStringImpl* kind, TrackID, AtomStringImpl* label, AtomStringImpl* language, TextTrackType);
+    TextTrack(ScriptExecutionContext*, AtomStringImpl* kind, AtomStringImpl* id, AtomStringImpl* label, AtomStringImpl* language, TextTrackType);
 
     RefPtr<TextTrackCue> matchCue(TextTrackCue&, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
     bool hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules rules = TextTrackCue::MatchAllFields) { return matchCue(cue, rules); }
@@ -188,7 +188,7 @@ private:
     const RefPtr<VTTRegionList> m_regions;
 
     TextTrackCueList& ensureTextTrackCueList();
-    Kind convertKind(const AtomString&);
+    Kind convertKind(AtomStringImpl*);
 
     Mode m_mode { Mode::Disabled };
     Kind m_kind;
@@ -232,8 +232,8 @@ inline void TextTrack::setKindForBindings(Kind kind)
 
 #endif
 
-String convertEnumerationToString(TextTrack::Mode); // Defined in JSTextTrack.cpp
-String convertEnumerationToString(TextTrack::Kind);
+RefPtr<StringImpl> convertEnumerationToString(TextTrack::Mode); // Defined in JSTextTrack.cpp
+RefPtr<StringImpl> convertEnumerationToString(TextTrack::Kind);
 
 } // namespace WebCore
 
@@ -244,7 +244,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::TextTrack::Kind> {
-    static String toString(const WebCore::TextTrack::Kind kind)
+    static RefPtr<StringImpl> toString(const WebCore::TextTrack::Kind kind)
     {
         return convertEnumerationToString(kind);
     }
@@ -252,7 +252,7 @@ struct LogArgument<WebCore::TextTrack::Kind> {
 
 template <>
 struct LogArgument<WebCore::TextTrack::Mode> {
-    static String toString(const WebCore::TextTrack::Mode mode)
+    static RefPtr<StringImpl> toString(const WebCore::TextTrack::Mode mode)
     {
         return convertEnumerationToString(mode);
     }

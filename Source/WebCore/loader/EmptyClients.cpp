@@ -139,7 +139,7 @@ class EmptyContextMenuClient final : public ContextMenuClient {
     NODELETE void searchWithGoogle(const LocalFrame*) final { }
     NODELETE void lookUpInDictionary(LocalFrame*) final { }
     NODELETE bool isSpeaking() const final { return false; }
-    NODELETE void speak(const String&) final { }
+    NODELETE void speak(StringImpl*) final { }
     NODELETE void stopSpeaking() final { }
 
 #if HAVE(TRANSLATION_UI_SERVICES)
@@ -217,12 +217,12 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         NODELETE void commitTransaction(const IDBResourceIdentifier&, uint64_t) final { }
         NODELETE void didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&) final { }
         NODELETE void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) final { }
-        NODELETE void deleteObjectStore(const IDBRequestData&, const String&) final { }
-        NODELETE void renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, const String&) final { }
+        NODELETE void deleteObjectStore(const IDBRequestData&, StringImpl*) final { }
+        NODELETE void renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, StringImpl*) final { }
         NODELETE void clearObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier) final { }
         NODELETE void createIndex(const IDBRequestData&, const IDBIndexInfo&) final { }
-        NODELETE void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, const String&) final { }
-        NODELETE void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String&) final { }
+        NODELETE void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, StringImpl*) final { }
+        NODELETE void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, StringImpl*) final { }
         NODELETE void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexIDToIndexKeyMap&, const IndexedDB::ObjectStoreOverwriteMode) final { }
         NODELETE void getRecord(const IDBRequestData&, const IDBGetRecordData&) final { }
         NODELETE void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&) final { }
@@ -254,12 +254,12 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyDiagnosticLoggingClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EmptyDiagnosticLoggingClient);
 
-    NODELETE void logDiagnosticMessage(const String&, const String&, ShouldSample) final { }
-    NODELETE void logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) final { }
-    void logDiagnosticMessageWithValue(const String&, const String&, double, unsigned, ShouldSample) final { }
-    NODELETE void logDiagnosticMessageWithEnhancedPrivacy(const String&, const String&, ShouldSample) final { }
-    NODELETE void logDiagnosticMessageWithValueDictionary(const String&, const String&, const ValueDictionary&, ShouldSample) final { }
-    NODELETE void logDiagnosticMessageWithDomain(const String&, DiagnosticLoggingDomain) final { };
+    NODELETE void logDiagnosticMessage(StringImpl*, StringImpl*, ShouldSample) final { }
+    NODELETE void logDiagnosticMessageWithResult(StringImpl*, StringImpl*, DiagnosticLoggingResultType, ShouldSample) final { }
+    void logDiagnosticMessageWithValue(StringImpl*, StringImpl*, double, unsigned, ShouldSample) final { }
+    NODELETE void logDiagnosticMessageWithEnhancedPrivacy(StringImpl*, StringImpl*, ShouldSample) final { }
+    NODELETE void logDiagnosticMessageWithValueDictionary(StringImpl*, StringImpl*, const ValueDictionary&, ShouldSample) final { }
+    NODELETE void logDiagnosticMessageWithDomain(StringImpl*, DiagnosticLoggingDomain) final { };
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyDiagnosticLoggingClient);
@@ -291,7 +291,7 @@ private:
     NODELETE bool shouldBeginEditing(const SimpleRange&) final { return false; }
     NODELETE bool shouldEndEditing(const SimpleRange&) final { return false; }
     NODELETE bool shouldInsertNode(Node&, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
-    NODELETE bool shouldInsertText(const String&, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
+    NODELETE bool shouldInsertText(StringImpl*, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
     NODELETE bool shouldChangeSelectedRange(const std::optional<SimpleRange>&, const std::optional<SimpleRange>&, Affinity, bool) final { return false; }
 
     NODELETE bool shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&) final { return false; }
@@ -309,7 +309,7 @@ private:
     NODELETE void didEndUserTriggeredSelectionChanges() final { }
     NODELETE void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) final { }
     NODELETE void didWriteSelectionToPasteboard() final { }
-    NODELETE void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<String, RefPtr<SharedBuffer>>>&) final { }
+    NODELETE void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<RefPtr<StringImpl>, RefPtr<SharedBuffer>>>&) final { }
     NODELETE void requestCandidatesForSelection(const VisibleSelection&) final { }
     NODELETE void handleAcceptedCandidateWithSoftSpaces(const TextCheckingResult&) final { }
 
@@ -317,7 +317,7 @@ private:
     void registerRedoStep(UndoStep&) final;
     NODELETE void clearUndoRedoOperations() final { }
 
-    NODELETE DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
+    NODELETE DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, StringImpl*) final { return DOMPasteAccessResponse::DeniedForGesture; }
 #if PLATFORM(COCOA)
     HashMap<FrameIdentifier, AttributedString> collectAttributedStringsForRemoteFrames(FrameIdentifier, const Vector<FrameIdentifier>&) final { return { }; }
 #endif
@@ -349,22 +349,22 @@ private:
     int getPasteboardItemsCount() final { return 0; }
     RefPtr<DocumentFragment> documentFragmentFromDelegate(int) final { return nullptr; }
     bool performsTwoStepPaste(DocumentFragment*) final { return false; }
-    void updateStringForFind(const String&) final { }
+    void updateStringForFind(StringImpl*) final { }
 #endif
 
     NODELETE bool performTwoStepDrop(DocumentFragment&, const SimpleRange&, bool) final { return false; }
 
 #if PLATFORM(COCOA)
-    NODELETE void setInsertionPasteboard(const String&) final { };
+    NODELETE void setInsertionPasteboard(StringImpl*) final { };
 #endif
 
 #if USE(APPKIT)
     NODELETE void uppercaseWord() final { }
     NODELETE void lowercaseWord() final { }
     NODELETE void capitalizeWord() final { }
-    NODELETE bool canApplyCaseTransformations(const String&) final { return true; }
-    NODELETE bool canConvertToTraditionalChinese(const String&) final { return false; }
-    NODELETE bool canConvertToSimplifiedChinese(const String&) final { return false; }
+    NODELETE bool canApplyCaseTransformations(StringImpl*) final { return true; }
+    NODELETE bool canConvertToTraditionalChinese(StringImpl*) final { return false; }
+    NODELETE bool canConvertToSimplifiedChinese(StringImpl*) final { return false; }
     NODELETE void convertToTraditionalChinese() final { }
     NODELETE void convertToSimplifiedChinese() final { }
 #endif
@@ -393,8 +393,8 @@ private:
 
     NODELETE TextCheckerClient* textChecker() final { return &m_textCheckerClient; }
 
-    NODELETE void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) final { }
-    NODELETE void updateSpellingUIWithMisspelledWord(const String&) final { }
+    NODELETE void updateSpellingUIWithGrammarString(StringImpl*, const GrammarDetail&) final { }
+    NODELETE void updateSpellingUIWithMisspelledWord(StringImpl*) final { }
     NODELETE void showSpellingUI(bool) final { }
     NODELETE bool spellingUIIsShowing() final { return false; }
 
@@ -402,8 +402,8 @@ private:
 
     class EmptyTextCheckerClient final : public TextCheckerClient {
         NODELETE bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const final { return true; }
-        NODELETE void ignoreWordInSpellDocument(const String&) final { }
-        NODELETE void learnWord(const String&) final { }
+        NODELETE void ignoreWordInSpellDocument(StringImpl*) final { }
+        NODELETE void learnWord(StringImpl*) final { }
         NODELETE void checkSpellingOfString(StringView, int*, int*) final { }
         NODELETE void checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*) final { }
 
@@ -411,7 +411,7 @@ private:
         NODELETE Vector<TextCheckingResult> checkTextOfParagraph(StringView, OptionSet<TextCheckingType>, const VisibleSelection&) final { return { }; }
 #endif
 
-        NODELETE void getGuessesForWord(const String&, const String&, const VisibleSelection&, Vector<String>&) final { }
+        NODELETE void getGuessesForWord(StringImpl*, StringImpl*, const VisibleSelection&, Vector<RefPtr<StringImpl>>&) final { }
         void requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&) final;
         void requestExtendedCheckingOfString(TextCheckingRequest&, const VisibleSelection&) final;
     };
@@ -469,10 +469,10 @@ public:
 private:
     EmptyPaymentCoordinatorClient() = default;
 
-    NODELETE std::optional<String> validatedPaymentNetwork(const String&) const final { return std::nullopt; }
+    NODELETE std::optional<RefPtr<StringImpl>> validatedPaymentNetwork(StringImpl*) const final { return std::nullopt; }
     NODELETE bool canMakePayments() final { return false; }
-    void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable { completionHandler(false); }); }
-    void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable { completionHandler(false); }); }
+    void canMakePaymentsWithActiveCard(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable { completionHandler(false); }); }
+    void openPaymentSetup(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable { completionHandler(false); }); }
     NODELETE bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final { return false; }
     NODELETE void completeMerchantValidation(const PaymentMerchantSession&) final { }
     NODELETE void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final { }
@@ -555,8 +555,8 @@ public:
 
 private:
     NODELETE PopupMenu* popupMenu() final { return m_popup.ptr(); }
-    NODELETE void saveRecentSearches(const AtomString&, const Vector<RecentSearch>&) final { }
-    NODELETE void loadRecentSearches(const AtomString&, Vector<RecentSearch>&) final { }
+    NODELETE void saveRecentSearches(AtomStringImpl*, const Vector<RecentSearch>&) final { }
+    NODELETE void loadRecentSearches(AtomStringImpl*, Vector<RecentSearch>&) final { }
     NODELETE bool enabled() final { return false; }
 
     const Ref<EmptyPopupMenu> m_popup;
@@ -565,12 +565,12 @@ private:
 class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     struct EmptyStorageArea : public StorageArea {
         NODELETE unsigned length() final { return 0; }
-        NODELETE String key(unsigned) final { return { }; }
-        NODELETE String item(const String&) final { return { }; }
-        NODELETE void setItem(LocalFrame&, const String&, const String&, bool&) final { }
-        NODELETE void removeItem(LocalFrame&, const String&) final { }
+        NODELETE RefPtr<StringImpl> key(unsigned) final { return { }; }
+        NODELETE RefPtr<StringImpl> item(StringImpl*) final { return { }; }
+        NODELETE void setItem(LocalFrame&, StringImpl*, StringImpl*, bool&) final { }
+        NODELETE void removeItem(LocalFrame&, StringImpl*) final { }
         NODELETE void clear(LocalFrame&) final { }
-        NODELETE bool contains(const String&) final { return false; }
+        NODELETE bool contains(StringImpl*) final { return false; }
         NODELETE StorageType storageType() const final { return StorageType::Local; }
         NODELETE size_t memoryBytesUsedByCache() final { return 0; }
     };
@@ -604,18 +604,18 @@ class EmptyUserContentProvider final : public UserContentProvider {
     NODELETE void forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final { }
 #endif
     NODELETE bool hasBuffersForWorld(const DOMWrapperWorld&) const final { return false; }
-    NODELETE WebKitBuffer* buffer(const DOMWrapperWorld&, const String&) const final { return nullptr; }
+    NODELETE WebKitBuffer* buffer(const DOMWrapperWorld&, StringImpl*) const final { return nullptr; }
 #if ENABLE(CONTENT_EXTENSIONS)
     NODELETE const ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const final { static NeverDestroyed<ContentExtensions::ContentExtensionsBackend> backend; return backend.get(); };
 #endif
 };
 
 class EmptyVisitedLinkStore final : public VisitedLinkStore {
-    NODELETE bool isLinkVisited(Page&, SharedStringHash, const URL&, const AtomString&) final { return false; }
+    NODELETE bool isLinkVisited(Page&, SharedStringHash, const URL&, AtomStringImpl*) final { return false; }
     NODELETE void addVisitedLink(Page&, SharedStringHash) final { }
 };
 
-RefPtr<Page> EmptyChromeClient::createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&)
+RefPtr<Page> EmptyChromeClient::createWindow(LocalFrame&, StringImpl*, const WindowFeatures&, const NavigationAction&)
 {
     return nullptr;
 }
@@ -666,18 +666,18 @@ void EmptyChromeClient::showShareSheet(ShareDataWithParsedURL&&, CompletionHandl
 {
 }
 
-RefPtr<Icon> EmptyChromeClient::createIconForFiles(const Vector<String>& /* filenames */)
+RefPtr<Icon> EmptyChromeClient::createIconForFiles(const Vector<RefPtr<StringImpl>>& /* filenames */)
 {
     return nullptr;
 }
 
 // MARK: -
 
-void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, std::optional<HitTestResult>&&, FramePolicyFunction&&)
+void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, StringImpl*, std::optional<HitTestResult>&&, FramePolicyFunction&&)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse&, FormState*, const String&, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, NavigationUpgradeToHTTPSBehavior, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&)
+void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse&, FormState*, StringImpl*, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, NavigationUpgradeToHTTPSBehavior, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&)
 {
 }
 
@@ -697,7 +697,7 @@ void EmptyFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<FormState>&&)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchWillSubmitForm(FormState&, URL&&, String&&, CompletionHandler<void()>&& completionHandler)
+void EmptyFrameLoaderClient::dispatchWillSubmitForm(FormState&, URL&&, RefPtr<StringImpl>&&, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }
@@ -712,12 +712,12 @@ Ref<DocumentLoader> EmptyFrameLoaderClient::createDocumentLoader(ResourceRequest
     return DocumentLoader::create(WTF::move(request), WTF::move(substituteData), { });
 }
 
-RefPtr<LocalFrame> EmptyFrameLoaderClient::createFrame(const AtomString&, HTMLFrameOwnerElement&)
+RefPtr<LocalFrame> EmptyFrameLoaderClient::createFrame(AtomStringImpl*, HTMLFrameOwnerElement&)
 {
     return nullptr;
 }
 
-RefPtr<Widget> EmptyFrameLoaderClient::createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool)
+RefPtr<Widget> EmptyFrameLoaderClient::createPlugin(HTMLPlugInElement&, const URL&, const Vector<RefPtr<AtomStringImpl>>&, const Vector<RefPtr<AtomStringImpl>>&, StringImpl*, bool)
 {
     return nullptr;
 }
@@ -896,7 +896,7 @@ void EmptyFrameLoaderClient::dispatchDidReachVisuallyNonEmptyState()
 {
 }
 
-LocalFrame* EmptyFrameLoaderClient::dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, const String&)
+LocalFrame* EmptyFrameLoaderClient::dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, StringImpl*)
 {
     return nullptr;
 }
@@ -905,7 +905,7 @@ void EmptyFrameLoaderClient::dispatchShow()
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String&, FramePolicyFunction&&)
+void EmptyFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, StringImpl*, FramePolicyFunction&&)
 {
 }
 
@@ -929,7 +929,7 @@ void EmptyFrameLoaderClient::setMainFrameDocumentReady(bool)
 {
 }
 
-void EmptyFrameLoaderClient::startDownload(const ResourceRequest&, const String&, FromDownloadAttribute)
+void EmptyFrameLoaderClient::startDownload(const ResourceRequest&, StringImpl*, FromDownloadAttribute)
 {
 }
 
@@ -971,12 +971,12 @@ bool EmptyFrameLoaderClient::canHandleRequest(const ResourceRequest&) const
     return false;
 }
 
-bool EmptyFrameLoaderClient::canShowMIMEType(const String&) const
+bool EmptyFrameLoaderClient::canShowMIMEType(StringImpl*) const
 {
     return false;
 }
 
-bool EmptyFrameLoaderClient::canShowMIMETypeAsHTML(const String&) const
+bool EmptyFrameLoaderClient::canShowMIMETypeAsHTML(StringImpl*) const
 {
     return false;
 }
@@ -986,7 +986,7 @@ bool EmptyFrameLoaderClient::representationExistsForURLScheme(StringView) const
     return false;
 }
 
-String EmptyFrameLoaderClient::generatedMIMETypeForURLScheme(StringView) const
+RefPtr<StringImpl> EmptyFrameLoaderClient::generatedMIMETypeForURLScheme(StringView) const
 {
     return emptyString();
 }
@@ -1019,7 +1019,7 @@ void EmptyFrameLoaderClient::setTitle(const StringWithDirection&, const URL&)
 {
 }
 
-String EmptyFrameLoaderClient::userAgent(const URL&) const
+RefPtr<StringImpl> EmptyFrameLoaderClient::userAgent(const URL&) const
 {
     return emptyString();
 }
@@ -1093,12 +1093,12 @@ bool EmptyFrameLoaderClient::canCachePage() const
     return false;
 }
 
-ObjectContentType EmptyFrameLoaderClient::objectContentType(const URL&, const String&)
+ObjectContentType EmptyFrameLoaderClient::objectContentType(const URL&, StringImpl*)
 {
     return ObjectContentType::None;
 }
 
-AtomString EmptyFrameLoaderClient::overrideMediaType() const
+RefPtr<AtomStringImpl> EmptyFrameLoaderClient::overrideMediaType() const
 {
     return nullAtom();
 }
@@ -1146,7 +1146,7 @@ bool EmptyFrameLoaderClient::isEmptyFrameLoaderClient() const
     return true;
 }
 
-void EmptyFrameLoaderClient::prefetchDNS(const String&)
+void EmptyFrameLoaderClient::prefetchDNS(StringImpl*)
 {
 }
 
@@ -1157,7 +1157,7 @@ RefPtr<HistoryItem> EmptyFrameLoaderClient::createHistoryItemTree(bool, BackForw
 
 #if USE(QUICK_LOOK)
 
-RefPtr<LegacyPreviewLoaderClient> EmptyFrameLoaderClient::createPreviewLoaderClient(const String&, const String&)
+RefPtr<LegacyPreviewLoaderClient> EmptyFrameLoaderClient::createPreviewLoaderClient(StringImpl*, StringImpl*)
 {
     return nullptr;
 }
@@ -1237,16 +1237,16 @@ public:
 private:
     EmptyBroadcastChannelRegistry() = default;
 
-    NODELETE void registerChannel(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier) final { }
-    NODELETE void unregisterChannel(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier) final { }
-    NODELETE void postMessage(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
+    NODELETE void registerChannel(const PartitionedSecurityOrigin&, StringImpl*, BroadcastChannelIdentifier) final { }
+    NODELETE void unregisterChannel(const PartitionedSecurityOrigin&, StringImpl*, BroadcastChannelIdentifier) final { }
+    NODELETE void postMessage(const PartitionedSecurityOrigin&, StringImpl*, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
 class EmptyWebTransportSession final : public WebTransportSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EmptyWebTransportSession> {
 public:
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
-    Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const Vector<KeyValuePair<String, String>>&, const ClientOrigin&) final { return WebTransportSessionInitializationPromise::createAndReject(); }
+    Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&, const ClientOrigin&) final { return WebTransportSessionInitializationPromise::createAndReject(); }
     Ref<WebTransportSendPromise> sendDatagram(std::optional<WebTransportSendGroupIdentifier>, std::span<const uint8_t>) final { return WebTransportSendPromise::createAndReject(); }
     Ref<WebTransportStreamPromise> createOutgoingUnidirectionalStream() final { return WebTransportStreamPromise::createAndReject(); }
     Ref<WebTransportStreamPromise> createBidirectionalStream() final { return WebTransportStreamPromise::createAndReject(); }

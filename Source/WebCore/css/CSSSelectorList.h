@@ -97,7 +97,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     bool hasExplicitNestingParent() const;
 
-    String selectorsText() const;
+    RefPtr<StringImpl> selectorsText() const;
     void buildSelectorsText(StringBuilder&) const;
 
     unsigned componentCount() const { return m_selectorArray.size(); }

@@ -34,13 +34,13 @@ namespace WGSL {
 class CompilationMessage {
     WTF_MAKE_TZONE_ALLOCATED(CompilationMessage);
 public:
-    CompilationMessage(String&& message, SourceSpan span)
+    CompilationMessage(RefPtr<StringImpl>&& message, SourceSpan span)
         : m_message(WTF::move(message))
         , m_span(span)
     {
     }
 
-    CompilationMessage(const String& message, SourceSpan span)
+    CompilationMessage(StringImpl* message, SourceSpan span)
         : m_message(message)
         , m_span(span)
     {
@@ -48,14 +48,14 @@ public:
 
     void dump(PrintStream& out) const;
 
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
     unsigned lineNumber() const { return m_span.line; }
     unsigned lineOffset() const { return m_span.lineOffset; }
     unsigned offset() const { return m_span.offset; }
     unsigned length() const { return m_span.length; }
 
 private:
-    String m_message;
+    RefPtr<StringImpl> m_message;
     SourceSpan m_span;
 };
 

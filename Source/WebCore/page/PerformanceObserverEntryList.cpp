@@ -47,26 +47,26 @@ PerformanceObserverEntryList::PerformanceObserverEntryList(Vector<Ref<Performanc
     std::ranges::stable_sort(m_entries, PerformanceEntry::startTimeCompareLessThan);
 }
 
-Vector<Ref<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByType(const String& entryType) const
+Vector<Ref<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByType(StringImpl* entryType) const
 {
-    return getEntriesByName(String(), entryType);
+    return getEntriesByName(nullString(), entryType);
 }
 
-Vector<Ref<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByName(const String& name, const String& entryType) const
+Vector<Ref<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByName(StringImpl* name, StringImpl* entryType) const
 {
     Vector<Ref<PerformanceEntry>> entries;
 
     // PerformanceObservers can only be registered for valid types.
     // So if the incoming entryType is an unknown type, there will be no matches.
     std::optional<PerformanceEntry::Type> type;
-    if (!entryType.isNull()) {
+    if (entryType) {
         type = PerformanceEntry::parseEntryTypeString(entryType);
         if (!type)
             return entries;
     }
 
     for (auto& entry : m_entries) {
-        if (!name.isNull() && entry->name() != name)
+        if (name && !equal(entry->name(), name))
             continue;
         if (type && entry->performanceEntryType() != *type)
             continue;

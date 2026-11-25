@@ -38,7 +38,7 @@ class CSSImageSetValue final : public CSSValueContainingVector {
 public:
     static Ref<CSSImageSetValue> create(CSSValueListBuilder);
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSImageSetValue& other) const { return itemsEqual(other); }
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;

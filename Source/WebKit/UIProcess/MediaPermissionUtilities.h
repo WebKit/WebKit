@@ -114,7 +114,7 @@ CapturePreviewPromptHandles alertForPermissionForTesting(WebPageProxy&, CaptureP
 #if HAVE(SPEECHRECOGNIZER)
 void requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&&);
 MediaPermissionResult checkSpeechRecognitionServiceAccess();
-bool checkSpeechRecognitionServiceAvailability(const String& localeIdentifier);
+bool checkSpeechRecognitionServiceAvailability(StringImpl* localeIdentifier);
 #endif
 
 } // namespace WebKit

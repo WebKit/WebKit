@@ -98,7 +98,7 @@ void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype)
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("escape"_s, regExpConstructorEscape, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
 
-    GetterSetter* speciesGetterSetter = GetterSetter::create(vm, globalObject, JSFunction::create(vm, globalObject, 0, "get [Symbol.species]"_s, globalFuncSpeciesGetter, ImplementationVisibility::Public, SpeciesGetterIntrinsic), nullptr);
+    GetterSetter* speciesGetterSetter = GetterSetter::create(vm, globalObject, JSFunction::create(vm, globalObject, 0, "get [Symbol.species]"_si, globalFuncSpeciesGetter, ImplementationVisibility::Public, SpeciesGetterIntrinsic), nullptr);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesGetterSetter, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
@@ -304,14 +304,14 @@ inline OptionSet<Yarr::Flags> toFlags(JSGlobalObject* globalObject, JSValue flag
     RETURN_IF_EXCEPTION(scope, { });
     auto result = Yarr::parseFlags(view);
     if (!result) {
-        throwSyntaxError(globalObject, scope, "Invalid flags supplied to RegExp constructor."_s);
+        throwSyntaxError(globalObject, scope, "Invalid flags supplied to RegExp constructor."_si);
         return { };
     }
 
     return result.value();
 }
 
-RegExpObject* regExpCreate(JSGlobalObject* globalObject, JSValue newTarget, const String& pattern, OptionSet<Yarr::Flags> flags)
+RegExpObject* regExpCreate(JSGlobalObject* globalObject, JSValue newTarget, StringImpl* pattern, OptionSet<Yarr::Flags> flags)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -331,7 +331,7 @@ RegExpObject* regExpCreate(JSGlobalObject* globalObject, JSValue newTarget, JSVa
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
 
-    String pattern = patternArg.isUndefined() ? emptyString() : patternArg.toWTFString(globalObject);
+    RefPtr<StringImpl> pattern = patternArg.isUndefined() ? emptyString() : patternArg.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto flags = toFlags(globalObject, flagsArg);

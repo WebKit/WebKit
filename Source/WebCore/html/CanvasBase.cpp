@@ -305,7 +305,7 @@ bool CanvasBase::shouldInjectNoiseBeforeReadback() const
     return !!m_canvasNoiseHashSalt;
 }
 
-void CanvasBase::recordLastFillText(const String& text)
+void CanvasBase::recordLastFillText(StringImpl* text)
 {
     if (!shouldInjectNoiseBeforeReadback())
         return;

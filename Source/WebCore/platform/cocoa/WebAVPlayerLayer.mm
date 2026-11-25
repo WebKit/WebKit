@@ -421,7 +421,7 @@ NODELETE static bool areFramesEssentiallyEqualWithTolerance(const WebCore::Float
 {
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     if (RefPtr model = _presentationModel.get())
-        model->requestShowCaptionDisplaySettingsPreview(profileID);
+        model->requestShowCaptionDisplaySettingsPreview(StringImpl::create(profileID).get());
 #endif
 
     _showingCaptionPreview = YES;

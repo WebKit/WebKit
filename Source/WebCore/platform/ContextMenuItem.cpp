@@ -35,7 +35,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ContextMenuItem);
 
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, StringImpl* title, ContextMenu* subMenu)
     : m_type(type)
     , m_action(action)
     , m_title(title)
@@ -47,7 +47,7 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
         setSubMenu(subMenu);
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked, unsigned indentationLevel)
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, StringImpl* title, bool enabled, bool checked, unsigned indentationLevel)
     : m_type(type)
     , m_action(action)
     , m_title(title)
@@ -57,7 +57,7 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
 {
 }
         
-ContextMenuItem::ContextMenuItem(ContextMenuAction action, const String& title, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems, unsigned indentationLevel)
+ContextMenuItem::ContextMenuItem(ContextMenuAction action, StringImpl* title, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems, unsigned indentationLevel)
     : m_type(ContextMenuItemType::Submenu)
     , m_action(action)
     , m_title(title)
@@ -82,7 +82,7 @@ ContextMenuItem::~ContextMenuItem() = default;
 bool ContextMenuItem::isNull() const
 {
     // FIXME: This is a bit of a hack. Cross-platform ContextMenuItem users need a concrete way to track "isNull".
-    return m_action == ContextMenuItemTagNoAction && m_title.isNull() && m_subMenuItems.isEmpty();
+    return m_action == ContextMenuItemTagNoAction && !m_title && m_subMenuItems.isEmpty();
 }
 
 void ContextMenuItem::setSubMenu(ContextMenu* subMenu)

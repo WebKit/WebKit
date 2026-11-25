@@ -56,12 +56,12 @@ JSString* jsTypeStringForValue(JSGlobalObject*, JSValue);
 bool jsTypeofIsObject(JSGlobalObject*, JSValue);
 bool jsTypeofIsFunction(JSGlobalObject*, JSValue);
 
-JSString* jsString(JSGlobalObject*, const String&, JSString*);
-JSString* jsString(JSGlobalObject*, JSString*, const String&);
+JSString* jsString(JSGlobalObject*, StringImpl*, JSString*);
+JSString* jsString(JSGlobalObject*, JSString*, StringImpl*);
 JSString* jsString(JSGlobalObject*, JSString*, JSString*);
 JSString* jsString(JSGlobalObject*, JSString*, JSString*, JSString*);
-JSString* jsString(JSGlobalObject*, const String&, const String&);
-JSString* jsString(JSGlobalObject*, const String&, const String&, const String&);
+JSString* jsString(JSGlobalObject*, StringImpl*, StringImpl*);
+JSString* jsString(JSGlobalObject*, StringImpl*, StringImpl*, StringImpl*);
 JSValue jsStringFromRegisterArray(JSGlobalObject*, Register*, unsigned count);
 
 JSBigIntComparisonResult compareBigInt(JSValue, JSValue);

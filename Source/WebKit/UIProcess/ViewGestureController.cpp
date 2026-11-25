@@ -350,7 +350,7 @@ ViewGestureController::SnapshotRemovalTracker::SnapshotRemovalTracker()
 {
 }
 
-String ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events event)
+RefPtr<StringImpl> ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events event)
 {
     StringBuilder description;
 

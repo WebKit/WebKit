@@ -35,41 +35,41 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
-static String displayNameForLocalFiles()
+static RefPtr<StringImpl> displayNameForLocalFiles()
 {
     return WEB_UI_STRING("Local documents on your computer", "'Website' name displayed when local documents have stored local data");
 }
 
 namespace WebKit {
 
-String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
+RefPtr<StringImpl> WebsiteDataRecord::displayNameForCookieHostName(StringImpl* hostName)
 {
 #if PLATFORM(COCOA)
-    if (hostName == String(kCFHTTPCookieLocalFileDomain))
+    if (equal(hostName, StringImpl::create(kCFHTTPCookieLocalFileDomain).get()))
         return displayNameForLocalFiles();
 #else
-    if (hostName == "localhost"_s)
+    if (equal(hostName, "localhost"_s))
         return hostName;
 #endif
     return displayNameForHostName(hostName);
 }
 
-String WebsiteDataRecord::displayNameForHostName(const String& hostName)
+RefPtr<StringImpl> WebsiteDataRecord::displayNameForHostName(StringImpl* hostName)
 {
     return WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(hostName);
 }
 
-String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData& securityOrigin)
+RefPtr<StringImpl> WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData& securityOrigin)
 {
     const auto& protocol = securityOrigin.protocol();
 
-    if (protocol == "file"_s)
+    if (equal(protocol, "file"_s))
         return displayNameForLocalFiles();
 
-    if (protocol == "http"_s || protocol == "https"_s)
+    if (equal(protocol, "http"_s) || equal(protocol, "https"_s))
         return WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(securityOrigin.host());
 
-    return String();
+    return nullptr;
 }
 
 void WebsiteDataRecord::add(WebsiteDataType type, const WebCore::SecurityOriginData& origin)
@@ -78,19 +78,19 @@ void WebsiteDataRecord::add(WebsiteDataType type, const WebCore::SecurityOriginD
     origins.add(origin);
 }
 
-void WebsiteDataRecord::addCookieHostName(const String& hostName)
+void WebsiteDataRecord::addCookieHostName(StringImpl* hostName)
 {
     types.add(WebsiteDataType::Cookies);
     cookieHostNames.add(hostName);
 }
 
-void WebsiteDataRecord::addHSTSCacheHostname(const String& hostName)
+void WebsiteDataRecord::addHSTSCacheHostname(StringImpl* hostName)
 {
     types.add(WebsiteDataType::HSTSCache);
     HSTSCacheHostNames.add(hostName);
 }
 
-void WebsiteDataRecord::addAlternativeServicesHostname(const String& hostName)
+void WebsiteDataRecord::addAlternativeServicesHostname(StringImpl* hostName)
 {
 #if HAVE(ALTERNATIVE_SERVICE)
     types.add(WebsiteDataType::AlternativeServices);
@@ -136,7 +136,7 @@ bool WebsiteDataRecord::matches(const WebCore::RegistrableDomain& domain) const
     return false;
 }
 
-String WebsiteDataRecord::topPrivatelyControlledDomain()
+RefPtr<StringImpl> WebsiteDataRecord::topPrivatelyControlledDomain()
 {
     auto& publicSuffixStore = WebCore::PublicSuffixStore::singleton();
     if (!cookieHostNames.isEmpty())

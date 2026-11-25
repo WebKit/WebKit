@@ -36,13 +36,13 @@ public:
     static Ref<CSSFontFeatureValuesRule> create(StyleRuleFontFeatureValues& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontFeatureValuesRule(rule, sheet)); }
     virtual ~CSSFontFeatureValuesRule() = default;
 
-    const Vector<AtomString>& fontFamilies() const
+    const Vector<RefPtr<AtomStringImpl>>& fontFamilies() const
     {
         return m_fontFeatureValuesRule->fontFamilies();
     }
 
     // Used by the CSSOM.
-    AtomString fontFamily() const
+    RefPtr<AtomStringImpl> fontFamily() const
     {
         StringBuilder builder;
         bool first = true;
@@ -57,13 +57,13 @@ public:
         return builder.toAtomString();
     }
 
-    void setFontFamily(const String&);
+    void setFontFamily(StringImpl*);
 
 private:
     CSSFontFeatureValuesRule(StyleRuleFontFeatureValues&, CSSStyleSheet* parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFeatureValues; }
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFeatureValues> m_fontFeatureValuesRule;
@@ -78,7 +78,7 @@ private:
     CSSFontFeatureValuesBlockRule(StyleRuleFontFeatureValuesBlock&, CSSStyleSheet* parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFeatureValuesBlock; }
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFeatureValuesBlock> m_fontFeatureValuesBlockRule;

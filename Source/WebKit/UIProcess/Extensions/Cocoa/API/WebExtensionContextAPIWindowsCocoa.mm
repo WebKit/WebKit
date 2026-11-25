@@ -49,7 +49,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     static NSString * const apiName = @"windows.create()";
 
     if (!canOpenNewWindow()) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented").get()));
         return;
     }
 
@@ -88,14 +88,14 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
             if (tabParameters.identifier) {
                 RefPtr tab = getTab(tabParameters.identifier.value());
                 if (!tab) {
-                    completionHandler(toWebExtensionError(apiName, nullString(), makeString("tab '"_s, tabParameters.identifier.value().toUInt64(), "' was not found"_s)));
+                    completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), makeString("tab '"_s, tabParameters.identifier.value().toUInt64(), "' was not found"_s)));
                     return;
                 }
 
                 [tabs addObject:tab->delegate()];
             } else if (tabParameters.url) {
                 if (!canNavigateToURL(tabParameters.url.value())) {
-                    completionHandler(toWebExtensionError(apiName, @"url", unsupportedNavigationURLMessage(tabParameters.url.value())));
+                    completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), StringImpl::create(@"url").get(), unsupportedNavigationURLMessage(tabParameters.url.value())));
                     return;
                 }
 
@@ -109,14 +109,14 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
 
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the extension is not loaded"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"the extension is not loaded").get()));
         return;
     }
 
     [extensionController->delegate() webExtensionController:extensionController->wrapper() openNewWindowUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](id<WKWebExtensionWindow> newWindow, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
@@ -136,12 +136,12 @@ void WebExtensionContext::windowsGet(WebPageProxyIdentifier, WebExtensionWindowI
 
     RefPtr window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get()));
         return;
     }
 
     if (!window->matches(filter)) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"window does not match requested 'windowTypes'"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window does not match requested 'windowTypes'").get()));
         return;
     }
 
@@ -162,12 +162,12 @@ void WebExtensionContext::windowsGetLastFocused(OptionSet<WindowTypeFilter> filt
 
     RefPtr window = frontmostWindow();
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get()));
         return;
     }
 
     if (!window->matches(filter)) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"window does not match requested 'windowTypes'"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window does not match requested 'windowTypes'").get()));
         return;
     }
 
@@ -215,7 +215,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
 
     RefPtr window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"window not found").get()));
         return;
     }
 
@@ -245,7 +245,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
 
         CGRect currentFrame = window.frame();
         if (CGRectIsNull(currentFrame)) {
-            stepCompletionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'top', 'left', 'width', and 'height'"));
+            stepCompletionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented for 'top', 'left', 'width', and 'height'").get()));
             return;
         }
 
@@ -263,7 +263,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         // coordinates with the origin in the top-left corner.
         CGRect screenFrame = window.screenFrame();
         if (CGRectIsEmpty(screenFrame)) {
-            stepCompletionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'top', 'left', 'width', and 'height'"));
+            stepCompletionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented for 'top', 'left', 'width', and 'height'").get()));
             return;
         }
 
@@ -329,7 +329,7 @@ void WebExtensionContext::windowsRemove(WebExtensionWindowIdentifier windowIdent
 {
     RefPtr window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler(toWebExtensionError(@"windows.remove()", nullString(), @"window not found"));
+        completionHandler(toWebExtensionError(StringImpl::create(@"windows.remove()").get(), nullString(), StringImpl::create(@"window not found").get()));
         return;
     }
 

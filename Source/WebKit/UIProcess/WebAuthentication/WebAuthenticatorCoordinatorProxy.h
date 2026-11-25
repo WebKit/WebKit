@@ -75,11 +75,11 @@ struct WebAuthenticationRequestData;
 
 struct AutofillEvent {
     MonotonicTime time;
-    String username;
+    RefPtr<StringImpl> username;
     URL url;
 };
 
-using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair<String, bool>>&&)>;
+using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair<RefPtr<StringImpl>, bool>>&&)>;
 using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, WebCore::AuthenticatorAttachment, const WebCore::ExceptionData&)>;
 
 class WebAuthenticatorCoordinatorProxy : public IPC::MessageReceiver, public RefCounted<WebAuthenticatorCoordinatorProxy> {
@@ -102,7 +102,7 @@ public:
     void pauseConditionalAssertion(CompletionHandler<void()>&&);
     void unpauseConditionalAssertion();
     void makeActiveConditionalAssertion();
-    void recordAutofill(const String& username, const URL&);
+    void recordAutofill(StringImpl* username, const URL&);
 #endif
 
 private:
@@ -135,7 +135,7 @@ private:
     RetainPtr<ASAuthorizationController> constructASController(const WebAuthenticationRequestData&);
     RetainPtr<NSArray> requestsForRegistration(const WebCore::PublicKeyCredentialCreationOptions&, const WebCore::SecurityOriginData& callerOrigin);
     RetainPtr<NSArray> requestsForAssertion(const WebCore::PublicKeyCredentialRequestOptions&, const WebCore::SecurityOriginData& callerOrigin, const std::optional<WebCore::SecurityOriginData>& parentOrigin);
-    bool removeMatchingAutofillEventForUsername(const String&, const WebCore::SecurityOriginData&);
+    bool removeMatchingAutofillEventForUsername(StringImpl*, const WebCore::SecurityOriginData&);
     void removeExpiredAutofillEvents();
 
 #endif

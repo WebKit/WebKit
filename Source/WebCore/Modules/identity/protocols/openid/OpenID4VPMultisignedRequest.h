@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct OpenID4VPMultisignedRequest {
-    String payload;
+    RefPtr<StringImpl> payload;
     Vector<OpenID4VPSignature> signatures;
 };
 

@@ -42,14 +42,14 @@ class WebProcessProxy;
 
 class WebEditCommandProxy : public API::ObjectImpl<API::Object::Type::EditCommandProxy>, public CanMakeWeakPtr<WebEditCommandProxy> {
 public:
-    static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, String&& label, WebPageProxy& page, WebProcessProxy& process, WebCore::PageIdentifier pageIDInProcess)
+    static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, RefPtr<StringImpl>&& label, WebPageProxy& page, WebProcessProxy& process, WebCore::PageIdentifier pageIDInProcess)
     {
         return adoptRef(*new WebEditCommandProxy(commandID, WTF::move(label), page, process, pageIDInProcess));
     }
     ~WebEditCommandProxy();
 
     WebUndoStepID commandID() const { return m_commandID; }
-    String label() const { return m_label; }
+    RefPtr<StringImpl> label() const { return m_label; }
 
     RefPtr<WebProcessProxy> process() const;
     WebCore::PageIdentifier pageIDInProcess() const { return m_pageIDInProcess; }
@@ -64,10 +64,10 @@ public:
     void reapply();
 
 private:
-    WebEditCommandProxy(WebUndoStepID commandID, String&& label, WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier pageIDInProcess);
+    WebEditCommandProxy(WebUndoStepID commandID, RefPtr<StringImpl>&& label, WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier pageIDInProcess);
 
     WebUndoStepID m_commandID;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<WebPageProxy> m_page;
     WeakPtr<WebProcessProxy> m_process;
     WebCore::PageIdentifier m_pageIDInProcess;

@@ -191,7 +191,7 @@ WEBCORE_EXPORT bool crossesBidiTextBoundaryInSameLine(const VisiblePosition&, co
 
 WEBCORE_EXPORT Ref<HTMLElement> createDefaultParagraphElement(Document&);
 Ref<HTMLElement> createHTMLElement(Document&, const QualifiedName&);
-Ref<HTMLElement> createHTMLElement(Document&, const AtomString&);
+Ref<HTMLElement> createHTMLElement(Document&, AtomStringImpl*);
 
 WEBCORE_EXPORT RefPtr<HTMLElement> enclosingList(Node*);
 RefPtr<HTMLElement> outermostEnclosingList(Node*, Node* rootList = nullptr);
@@ -202,7 +202,7 @@ RefPtr<Node> enclosingListChild(Node*);
 // -------------------------------------------------------------------------
 
 Ref<Element> createTabSpanElement(Document&);
-Ref<Element> createTabSpanElement(Document&, String&& tabText);
+Ref<Element> createTabSpanElement(Document&, RefPtr<StringImpl>&& tabText);
 Ref<Element> createBlockPlaceholderElement(Document&);
 
 Element* editableRootForPosition(const Position&, EditableType = EditableType::Content);
@@ -227,8 +227,8 @@ bool deprecatedIsCollapsibleWhitespace(char16_t);
 
 NODELETE bool isAmbiguousBoundaryCharacter(char16_t);
 
-String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd);
-const String& nonBreakingSpaceString();
+RefPtr<StringImpl> stringWithRebalancedWhitespace(StringImpl*, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd);
+const RefPtr<StringImpl>& nonBreakingSpaceString();
 
 // Miscellaneous functions for caret rendering.
 

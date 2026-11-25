@@ -70,8 +70,8 @@ private:
     void resume() final;
     void invalidateAndCancel() final;
     NetworkDataTask::State state() const final { return m_state; }
-    void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) final;
-    String suggestedFilename() const final;
+    void setPendingDownloadLocation(StringImpl*, SandboxExtension::Handle&&, bool /*allowOverwrite*/) final;
+    RefPtr<StringImpl> suggestedFilename() const final;
 
     // BlobResourceHandleBase.
     bool didReceiveData(std::span<const uint8_t>) final;

@@ -51,13 +51,13 @@ public:
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
 
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&&);
-    void applyConstraintsFailed(WebCore::MediaConstraintType invalidConstraint, String&& errorMessage) { m_proxy.applyConstraintsFailed(invalidConstraint, WTF::move(errorMessage)); }
+    void applyConstraintsFailed(WebCore::MediaConstraintType invalidConstraint, RefPtr<StringImpl>&& errorMessage) { m_proxy.applyConstraintsFailed(invalidConstraint, WTF::move(errorMessage)); }
 
     void captureStopped(bool didFail);
     void sourceMutedChanged(bool value, bool interrupted);
 
     using RealtimeMediaSource::configurationChanged;
-    void configurationChanged(String&& persistentID, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&);
+    void configurationChanged(RefPtr<StringImpl>&& persistentID, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&);
 
 #if ENABLE(GPU_PROCESS)
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;

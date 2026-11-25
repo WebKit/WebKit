@@ -108,6 +108,6 @@ private:
     private:
 };
 
-String makeString(const IndexOrName&);
+RefPtr<StringImpl> makeString(const IndexOrName&);
 
 } } // namespace JSC::Wasm

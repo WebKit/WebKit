@@ -62,7 +62,7 @@ void BlobBuilder::append(Ref<Blob>&& blob)
     m_items.append(blob->url());
 }
 
-void BlobBuilder::append(const String& text)
+void BlobBuilder::append(StringImpl* text)
 {
     auto bytes = utf8Bytes(text);
 

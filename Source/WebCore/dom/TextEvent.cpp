@@ -41,12 +41,12 @@ Ref<TextEvent> TextEvent::createForBindings()
     return adoptRef(*new TextEvent);
 }
 
-Ref<TextEvent> TextEvent::create(RefPtr<WindowProxy>&& view, const String& data, TextEventInputType inputType)
+Ref<TextEvent> TextEvent::create(RefPtr<WindowProxy>&& view, StringImpl* data, TextEventInputType inputType)
 {
     return adoptRef(*new TextEvent(WTF::move(view), data, inputType));
 }
 
-Ref<TextEvent> TextEvent::createForPlainTextPaste(RefPtr<WindowProxy>&& view, const String& data, bool shouldSmartReplace)
+Ref<TextEvent> TextEvent::createForPlainTextPaste(RefPtr<WindowProxy>&& view, StringImpl* data, bool shouldSmartReplace)
 {
     return adoptRef(*new TextEvent(WTF::move(view), data, nullptr, TextEventInputPaste, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
 }
@@ -56,12 +56,12 @@ Ref<TextEvent> TextEvent::createForFragmentPaste(RefPtr<WindowProxy>&& view, Ref
     return adoptRef(*new TextEvent(WTF::move(view), emptyString(), WTF::move(data), inputType, shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
 }
 
-Ref<TextEvent> TextEvent::createForDrop(RefPtr<WindowProxy>&& view, const String& data)
+Ref<TextEvent> TextEvent::createForDrop(RefPtr<WindowProxy>&& view, StringImpl* data)
 {
     return adoptRef(*new TextEvent(WTF::move(view), data, TextEventInputDrop));
 }
 
-Ref<TextEvent> TextEvent::createForDictation(RefPtr<WindowProxy>&& view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+Ref<TextEvent> TextEvent::createForDictation(RefPtr<WindowProxy>&& view, StringImpl* data, const Vector<DictationAlternative>& dictationAlternatives)
 {
     return adoptRef(*new TextEvent(WTF::move(view), data, dictationAlternatives));
 }
@@ -74,7 +74,7 @@ TextEvent::TextEvent()
 {
 }
 
-TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventInputType inputType)
+TextEvent::TextEvent(RefPtr<WindowProxy>&& view, StringImpl* data, TextEventInputType inputType)
     : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTF::move(view), 0)
     , m_inputType(inputType)
     , m_data(data)
@@ -84,7 +84,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventIn
 {
 }
 
-TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+TextEvent::TextEvent(RefPtr<WindowProxy>&& view, StringImpl* data, RefPtr<DocumentFragment>&& pastingFragment, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
     : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTF::move(view), 0)
     , m_inputType(inputType)
     , m_data(data)
@@ -95,7 +95,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<Docu
 {
 }
 
-TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+TextEvent::TextEvent(RefPtr<WindowProxy>&& view, StringImpl* data, const Vector<DictationAlternative>& dictationAlternatives)
     : UIEvent(EventInterfaceType::TextEvent, eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTF::move(view), 0)
     , m_inputType(TextEventInputDictation)
     , m_data(data)
@@ -108,7 +108,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, const Vecto
 
 TextEvent::~TextEvent() = default;
 
-void TextEvent::initTextEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data)
+void TextEvent::initTextEvent(AtomStringImpl* type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, StringImpl* data)
 {
     if (isBeingDispatched())
         return;

@@ -2573,7 +2573,7 @@ ASCIILiteral RenderBlock::renderName() const
     return "RenderBlock"_s;
 }
 
-String RenderBlock::debugDescription() const
+RefPtr<StringImpl> RenderBlock::debugDescription() const
 {
     if (isViewTransitionPseudo()) {
         StringBuilder builder;
@@ -2591,7 +2591,7 @@ String RenderBlock::debugDescription() const
     return RenderObject::debugDescription();
 }
 
-static TextRun constructTextRunFromString(String&& string, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+static TextRun constructTextRunFromString(RefPtr<StringImpl>&& string, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     auto textDirection = TextDirection::LTR;
     bool directionalOverride = style.rtlOrdering() == Order::Visual;
@@ -2613,14 +2613,9 @@ TextRun RenderBlock::constructTextRun(StringView stringView, const Style::Comput
     return constructTextRunFromString(stringView.toStringWithoutCopying(), style, expansion, flags);
 }
 
-TextRun RenderBlock::constructTextRun(const String& string, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(StringImpl* string, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
-    return constructTextRunFromString(String { string.isNull() ? emptyString() : string }, style, expansion, flags);
-}
-
-TextRun RenderBlock::constructTextRun(const AtomString& atomString, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
-{
-    return constructTextRun(atomString.string(), style, expansion, flags);
+    return constructTextRunFromString(RefPtr<StringImpl> { string ? string : emptyString().get() }, style, expansion, flags);
 }
 
 TextRun RenderBlock::constructTextRun(const RenderText& text, const Style::ComputedStyle& style, ExpansionBehavior expansion)
@@ -2631,7 +2626,7 @@ TextRun RenderBlock::constructTextRun(const RenderText& text, const Style::Compu
 TextRun RenderBlock::constructTextRun(const RenderText& text, unsigned offset, unsigned length, const Style::ComputedStyle& style, ExpansionBehavior expansion)
 {
     unsigned stop = offset + length;
-    ASSERT(stop <= text.text().length());
+    ASSERT(stop <= WTF::length(text.text()));
     auto run = constructTextRun(text.stringView(offset, stop), style, expansion);
     // Measure with the same direction and override as inline layout, see Layout::TextUtil::width().
     if (auto direction = Layout::TextUtil::overridingDirection(text)) {
@@ -3148,7 +3143,7 @@ bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request,
     return legend->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest);
 }
 
-String RenderBlock::updateSecurityDiscCharacters(const Style::ComputedStyle& style, String&& string)
+RefPtr<StringImpl> RenderBlock::updateSecurityDiscCharacters(const Style::ComputedStyle& style, RefPtr<StringImpl>&& string)
 {
 #if !PLATFORM(COCOA)
     UNUSED_PARAM(style);

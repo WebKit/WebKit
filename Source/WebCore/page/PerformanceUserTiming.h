@@ -43,35 +43,35 @@ class Performance;
 class WeakPtrImplWithEventTargetData;
 template<typename> class ExceptionOr;
 
-using PerformanceEntryMap = HashMap<String, Vector<Ref<PerformanceEntry>>>;
+using PerformanceEntryMap = HashMap<RefPtr<StringImpl>, Vector<Ref<PerformanceEntry>>>;
 
 class PerformanceUserTiming {
     WTF_MAKE_TZONE_ALLOCATED(PerformanceUserTiming);
 public:
     explicit PerformanceUserTiming(Performance&);
 
-    ExceptionOr<Ref<PerformanceMark>> mark(JSC::JSGlobalObject&, const String& markName, std::optional<PerformanceMarkOptions>&&);
-    void clearMarks(const String& markName);
+    ExceptionOr<Ref<PerformanceMark>> mark(JSC::JSGlobalObject&, StringImpl* markName, std::optional<PerformanceMarkOptions>&&);
+    void clearMarks(StringImpl* markName);
 
-    using StartOrMeasureOptions = Variant<String, PerformanceMeasureOptions>;
-    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, StartOrMeasureOptions&&, const String& endMark);
-    void clearMeasures(const String& measureName);
+    using StartOrMeasureOptions = Variant<RefPtr<StringImpl>, PerformanceMeasureOptions>;
+    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, StringImpl* measureName, StartOrMeasureOptions&&, StringImpl* endMark);
+    void clearMeasures(StringImpl* measureName);
 
     Vector<Ref<PerformanceEntry>> getMarks() const;
     Vector<Ref<PerformanceEntry>> getMeasures() const;
 
-    Vector<Ref<PerformanceEntry>> getMarks(const String& name) const;
-    Vector<Ref<PerformanceEntry>> getMeasures(const String& name) const;
+    Vector<Ref<PerformanceEntry>> getMarks(StringImpl* name) const;
+    Vector<Ref<PerformanceEntry>> getMeasures(StringImpl* name) const;
 
-    static bool isRestrictedMarkName(const String& markName);
+    static bool isRestrictedMarkName(StringImpl* markName);
 
 private:
-    ExceptionOr<double> convertMarkToTimestamp(const Variant<String, double>&) const;
-    ExceptionOr<double> convertMarkToTimestamp(const String& markName) const;
+    ExceptionOr<double> convertMarkToTimestamp(const Variant<RefPtr<StringImpl>, double>&) const;
+    ExceptionOr<double> convertMarkToTimestamp(StringImpl* markName) const;
     ExceptionOr<double> convertMarkToTimestamp(double) const;
 
-    ExceptionOr<Ref<PerformanceMeasure>> measure(const String& measureName, const String& startMark, const String& endMark);
-    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, const PerformanceMeasureOptions&);
+    ExceptionOr<Ref<PerformanceMeasure>> measure(StringImpl* measureName, StringImpl* startMark, StringImpl* endMark);
+    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, StringImpl* measureName, const PerformanceMeasureOptions&);
 
     WeakRef<Performance, WeakPtrImplWithEventTargetData> m_performance;
     PerformanceEntryMap m_marksMap;

@@ -33,7 +33,7 @@
 namespace WebKit {
 
 struct RemoteGPURequestAdapterResponse {
-    String name;
+    RefPtr<StringImpl> name;
     Vector<::WebGPU::FeatureName> features;
     WebGPU::SupportedLimits limits;
     bool isFallbackAdapter;

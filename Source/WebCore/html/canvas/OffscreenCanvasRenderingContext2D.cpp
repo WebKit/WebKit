@@ -77,7 +77,7 @@ OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase&
 {
 }
 
-void OffscreenCanvasRenderingContext2D::drawText(const String& text, double x, double y, bool fill, std::optional<double> maxWidth)
+void OffscreenCanvasRenderingContext2D::drawText(StringImpl* text, double x, double y, bool fill, std::optional<double> maxWidth)
 {
     if (!canDrawText(x, y, fill, maxWidth))
         return;
@@ -87,14 +87,14 @@ void OffscreenCanvasRenderingContext2D::drawText(const String& text, double x, d
 
 OffscreenCanvasRenderingContext2D::~OffscreenCanvasRenderingContext2D() = default;
 
-void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
+void OffscreenCanvasRenderingContext2D::setFont(StringImpl* newFont)
 {
     Ref context = *protect(canvasBase())->scriptExecutionContext();
 
-    if (newFont.isEmpty())
+    if (isEmpty(newFont))
         return;
 
-    if (newFont == state().unparsedFont && protect(state().font)->realized())
+    if (equal(newFont, state().unparsedFont) && protect(state().font)->realized())
         return;
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
@@ -104,14 +104,14 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
         return;
 
     // The parse succeeded.
-    String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
+    RefPtr<StringImpl> newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the default font.
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily(DefaultFontFamily);
+    fontDescription.setOneFamily(AtomStringImpl::add(DefaultFontFamily).ptr());
     fontDescription.setComputedSize(DefaultFontSize);
     fontDescription.setUsedSize(DefaultFontSize);
     carryOverKerningAndTextRendering(fontDescription);
@@ -121,9 +121,9 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
         ASSERT(context->cssFontSelector());
         protect(modifiableState().font)->initialize(protect(*context->cssFontSelector()), protect(*fontCascade));
 
-        String letterSpacing;
+        RefPtr<StringImpl> letterSpacing;
         setLetterSpacing(std::exchange(modifiableState().letterSpacing, letterSpacing));
-        String wordSpacing;
+        RefPtr<StringImpl> wordSpacing;
         setWordSpacing(std::exchange(modifiableState().wordSpacing, wordSpacing));
     }
 }
@@ -149,7 +149,7 @@ RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
     return result;
 }
 
-AtomString OffscreenCanvasRenderingContext2D::inheritedLanguage() const
+RefPtr<AtomStringImpl> OffscreenCanvasRenderingContext2D::inheritedLanguage() const
 {
     return canvas().inheritedLanguage();
 }
@@ -174,17 +174,17 @@ auto OffscreenCanvasRenderingContext2D::fontProxy() -> const FontProxy* {
     return state().font.ptr();
 }
 
-void OffscreenCanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)
+void OffscreenCanvasRenderingContext2D::fillText(StringImpl* text, double x, double y, std::optional<double> maxWidth)
 {
     drawText(text, x, y, true, maxWidth);
 }
 
-void OffscreenCanvasRenderingContext2D::strokeText(const String& text, double x, double y, std::optional<double> maxWidth)
+void OffscreenCanvasRenderingContext2D::strokeText(StringImpl* text, double x, double y, std::optional<double> maxWidth)
 {
     drawText(text, x, y, false, maxWidth);
 }
 
-Ref<TextMetrics> OffscreenCanvasRenderingContext2D::measureText(const String& text)
+Ref<TextMetrics> OffscreenCanvasRenderingContext2D::measureText(StringImpl* text)
 {
     return measureTextInternal(TextRun { normalizeSpaces(text), 0, 0, ExpansionBehavior::allowRightOnly(), toTextDirection(state().direction) });
 }

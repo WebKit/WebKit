@@ -52,16 +52,16 @@ public:
     WEBCORE_EXPORT static Ref<SecurityOrigin> createOpaque();
     WEBCORE_EXPORT static SecurityOrigin& opaqueOrigin();
 
-    WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
-    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(StringImpl*);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(StringImpl* protocol, StringImpl* host, std::optional<uint16_t> port);
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(SecurityOriginData&&);
-    WEBCORE_EXPORT static Ref<SecurityOrigin> create(WebCore::SecurityOriginData&&, String&& domain, String&& filePath, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(WebCore::SecurityOriginData&&, RefPtr<StringImpl>&& domain, RefPtr<StringImpl>&& filePath, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal);
 
     // QuickLook documents are in non-local origins even when loaded from file: URLs. They need to
     // be allowed to display their own file: URLs in order to perform reloads and same-document
     // navigations. This lets those documents specify the file path that should be allowed to be
     // displayed from their non-local origin.
-    static Ref<SecurityOrigin> createNonLocalWithAllowedFilePath(const URL&, const String& filePath);
+    static Ref<SecurityOrigin> createNonLocalWithAllowedFilePath(const URL&, StringImpl* filePath);
 
     // Create a deep copy of this SecurityOrigin. This method is useful
     // when marshalling a SecurityOrigin to another thread.
@@ -70,12 +70,12 @@ public:
     // Set the domain property of this security origin to newDomain. This
     // function does not check whether newDomain is a suffix of the current
     // domain. The caller is responsible for validating newDomain.
-    void setDomainFromDOM(const String& newDomain);
+    void setDomainFromDOM(StringImpl* newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
-    const String& protocol() const LIFETIME_BOUND { return m_data.protocol(); }
-    const String& host() const LIFETIME_BOUND { return m_data.host(); }
-    const String& domain() const LIFETIME_BOUND { return m_domain; }
+    const RefPtr<StringImpl>& protocol() const LIFETIME_BOUND { return m_data.protocol(); }
+    const RefPtr<StringImpl>& host() const LIFETIME_BOUND { return m_data.host(); }
+    const RefPtr<StringImpl>& domain() const LIFETIME_BOUND { return m_domain; }
     std::optional<uint16_t> port() const { return m_data.port(); }
 
     static bool shouldIgnoreHost(const URL&);
@@ -134,7 +134,7 @@ public:
     NODELETE void grantStorageAccessFromFileURLsQuirk();
     bool needsStorageAccessFromFileURLsQuirk() const { return m_needsStorageAccessFromFileURLsQuirk; }
 
-    WEBCORE_EXPORT String domainForCachePartition() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> domainForCachePartition() const;
     NODELETE Policy canShowNotifications() const;
 
     // The local SecurityOrigin is the most privileged SecurityOrigin.
@@ -166,11 +166,11 @@ public:
     // this SecurityOrigin might have come from a sandboxed iframe, the
     // SecurityOrigin might be empty, or we might have explicitly decided that
     // we shouldTreatURLSchemeAsNoAccess.
-    WEBCORE_EXPORT String toString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toString() const;
 
     // Similar to toString(), but does not take into account any factors that
     // could make the string return "null".
-    WEBCORE_EXPORT String toRawString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toRawString() const;
 
     WEBCORE_EXPORT URL toURL() const;
 
@@ -195,7 +195,7 @@ public:
 
     // This method implements the "is a registrable domain suffix of or is equal to" algorithm from the HTML Standard:
     // https://html.spec.whatwg.org/multipage/origin.html#is-a-registrable-domain-suffix-of-or-is-equal-to
-    WEBCORE_EXPORT bool isMatchingRegistrableDomainSuffix(const String&, bool treatIPAddressAsDomain = false) const;
+    WEBCORE_EXPORT bool isMatchingRegistrableDomainSuffix(StringImpl*, bool treatIPAddressAsDomain = false) const;
 
     WEBCORE_EXPORT bool isPotentiallyTrustworthy() const;
 
@@ -206,7 +206,7 @@ public:
 
     // This method checks that the scheme for this origin is an HTTP-family
     // scheme, e.g. HTTP and HTTPS.
-    bool isHTTPFamily() const { return m_data.protocol() == "http"_s || m_data.protocol() == "https"_s; }
+    bool isHTTPFamily() const { return WTF::equal(m_data.protocol(), "http"_s) || WTF::equal(m_data.protocol(), "https"_s); }
 
 private:
     friend struct IPC::ArgumentCoder<SecurityOrigin>;
@@ -222,8 +222,8 @@ private:
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = ShouldAllowFromThirdParty::MaybeAllowFromThirdParty) const;
 
     SecurityOriginData m_data;
-    String m_domain;
-    String m_filePath;
+    RefPtr<StringImpl> m_domain;
+    RefPtr<StringImpl> m_filePath;
     bool m_universalAccess { false };
     bool m_domainWasSetInDOM { false };
     bool m_canLoadLocalResources { false };

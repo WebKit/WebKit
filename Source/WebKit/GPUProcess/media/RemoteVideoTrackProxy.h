@@ -80,8 +80,8 @@ private:
 
     // TrackPrivateBaseClient
     void idChanged(WebCore::TrackID) final;
-    void labelChanged(const String&) final;
-    void languageChanged(const String&) final;
+    void labelChanged(StringImpl*) final;
+    void languageChanged(StringImpl*) final;
     void willRemove() final;
 
     VideoTrackPrivateRemoteConfiguration configuration();

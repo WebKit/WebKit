@@ -172,7 +172,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     RefPtr coreFrame = _frame->coreLocalFrame();
     if (!coreFrame)
         return nil;
-    return protect(protect(coreFrame->document())->securityOrigin())->toString().createNSString().autorelease();
+    return createNSString(protect(protect(coreFrame->document())->securityOrigin())->toString()).autorelease();
 }
 
 static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<WebCore::LinkIconType> iconTypes)

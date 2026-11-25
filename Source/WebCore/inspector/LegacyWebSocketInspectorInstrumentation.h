@@ -46,7 +46,7 @@ public:
     static void didCloseWebSocket(Document*, WebSocketChannelIdentifier);
     static void didReceiveWebSocketFrame(Document*, WebSocketChannelIdentifier, const WebSocketFrame&);
     static void didSendWebSocketFrame(Document*, WebSocketChannelIdentifier, const WebSocketFrame&);
-    static void didReceiveWebSocketFrameError(Document*, WebSocketChannelIdentifier, const String& errorMessage);
+    static void didReceiveWebSocketFrameError(Document*, WebSocketChannelIdentifier, StringImpl* errorMessage);
 };
 
 } // namespace WebCore

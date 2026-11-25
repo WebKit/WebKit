@@ -148,14 +148,14 @@ void WebPageProxyTesting::setCrossSiteLoadWithLinkDecorationForTesting(const URL
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->setCrossSiteLoadWithLinkDecorationForTesting(protect(page())->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTF::move(completionHandler));
 }
 
-void WebPageProxyTesting::setPermissionLevel(const String& origin, bool allowed)
+void WebPageProxyTesting::setPermissionLevel(StringImpl* origin, bool allowed)
 {
     protect(page())->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPageTesting::SetPermissionLevel(origin, allowed), pageID);
     });
 }
 
-bool WebPageProxyTesting::isEditingCommandEnabled(const String& commandName)
+bool WebPageProxyTesting::isEditingCommandEnabled(StringImpl* commandName)
 {
     RefPtr focusedOrMainFrame = m_page->focusedOrMainFrame();
     auto targetFrameID = focusedOrMainFrame ? std::optional(focusedOrMainFrame->frameID()) : std::nullopt;
@@ -184,7 +184,7 @@ void WebPageProxyTesting::hasActiveContextMenuInteraction(FrameIdentifier frameI
 }
 #endif
 
-void WebPageProxyTesting::dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&& completionHandler)
+void WebPageProxyTesting::dumpPrivateClickMeasurement(CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::DumpPrivateClickMeasurement(m_page->websiteDataStore().sessionID()), WTF::move(completionHandler));
 }
@@ -234,12 +234,12 @@ void WebPageProxyTesting::markPrivateClickMeasurementsAsExpired(CompletionHandle
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::MarkPrivateClickMeasurementsAsExpiredForTesting(m_page->websiteDataStore().sessionID()), WTF::move(completionHandler));
 }
 
-void WebPageProxyTesting::setPCMFraudPreventionValues(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&& completionHandler)
+void WebPageProxyTesting::setPCMFraudPreventionValues(StringImpl* unlinkableToken, StringImpl* secretToken, StringImpl* signature, StringImpl* keyID, CompletionHandler<void()>&& completionHandler)
 {
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::SetPCMFraudPreventionValuesForTesting(m_page->websiteDataStore().sessionID(), unlinkableToken, secretToken, signature, keyID), WTF::move(completionHandler));
 }
 
-void WebPageProxyTesting::setPrivateClickMeasurementAppBundleID(const String& appBundleIDForTesting, CompletionHandler<void()>&& completionHandler)
+void WebPageProxyTesting::setPrivateClickMeasurementAppBundleID(StringImpl* appBundleIDForTesting, CompletionHandler<void()>&& completionHandler)
 {
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAppBundleIDForTesting(m_page->websiteDataStore().sessionID(), appBundleIDForTesting), WTF::move(completionHandler));
 }
@@ -358,7 +358,7 @@ void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& compl
     });
 }
 
-static void dumpFrameState(const FrameState& frameState, size_t indent, bool isCurrentItem, StringBuilder& builder, const String& directoryName)
+static void dumpFrameState(const FrameState& frameState, size_t indent, bool isCurrentItem, StringBuilder& builder, StringImpl* directoryName)
 {
     if (isCurrentItem)
         builder.append("curr->  "_s);
@@ -369,16 +369,16 @@ static void dumpFrameState(const FrameState& frameState, size_t indent, bool isC
 
     URL url { frameState.urlString };
     if (url.protocolIsFile()) {
-        size_t start = url.string().find(directoryName);
+        size_t start = find(url.string(), directoryName);
         if (start == notFound)
             start = 0;
         else
-            start += directoryName.length();
+            start += length(directoryName);
         builder.append("(file test):"_s, StringView { url.string() }.substring(start));
     } else
         builder.append(url.string());
 
-    if (frameState.target.length())
+    if (length(frameState.target))
         builder.append(" (in frame \""_s, frameState.target, "\")"_s);
 
     builder.append('\n');
@@ -393,7 +393,7 @@ static void dumpFrameState(const FrameState& frameState, size_t indent, bool isC
         dumpFrameState(child, indent + 4, false, builder, directoryName);
 }
 
-String WebPageProxyTesting::dumpBackForwardList(const String& directory)
+RefPtr<StringImpl> WebPageProxyTesting::dumpBackForwardList(StringImpl* directory)
 {
     Ref list = protect(m_page.get())->backForwardListWrapper();
 

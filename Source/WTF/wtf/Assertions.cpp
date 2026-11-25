@@ -81,7 +81,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace WTF {
 
 WTF_ATTRIBUTE_NSSTRING(1, 0)
-static String createWithFormatAndArguments(const char* format, va_list args)
+static RefPtr<StringImpl> createWithFormatAndArguments(const char* format, va_list args)
 {
     va_list argsCopy;
     va_copy(argsCopy, args);
@@ -95,7 +95,7 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
         auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, format, kCFStringEncodingUTF8, kCFAllocatorNull));
         auto result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
         va_end(argsCopy);
-        return result.get();
+        return StringImpl::create(result.get());
     }
 #endif
 
@@ -473,16 +473,16 @@ void WTFReportError(const char* file, int line, const char* function, const char
 class WTFLoggingAccumulator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WTFLoggingAccumulator);
 public:
-    void accumulate(const String&);
+    void accumulate(StringImpl*);
     void resetAccumulatedLogs();
-    String getAndResetAccumulatedLogs();
+    RefPtr<StringImpl> getAndResetAccumulatedLogs();
 
 private:
     Lock accumulatorLock;
     StringBuilder loggingAccumulator WTF_GUARDED_BY_LOCK(accumulatorLock);
 };
 
-void WTFLoggingAccumulator::accumulate(const String& log)
+void WTFLoggingAccumulator::accumulate(StringImpl* log)
 {
     Locker locker { accumulatorLock };
     loggingAccumulator.append(log);
@@ -494,10 +494,10 @@ void WTFLoggingAccumulator::resetAccumulatedLogs()
     loggingAccumulator.clear();
 }
 
-String WTFLoggingAccumulator::getAndResetAccumulatedLogs()
+RefPtr<StringImpl> WTFLoggingAccumulator::getAndResetAccumulatedLogs()
 {
     Locker locker { accumulatorLock };
-    String result = loggingAccumulator.toString();
+    RefPtr<StringImpl> result = loggingAccumulator.toString();
     loggingAccumulator.clear();
     return result;
 }
@@ -572,15 +572,15 @@ static void WTFLogVaList(WTFLogChannel* channel, const char* format, va_list arg
     ASSERT(channel->state == WTFLogChannelState::OnWithAccumulation);
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    String loggingString = WTF::createWithFormatAndArguments(format, args);
+    RefPtr<StringImpl> loggingString = WTF::createWithFormatAndArguments(format, args);
 ALLOW_NONLITERAL_FORMAT_END
 
-    if (!loggingString.endsWith('\n'))
+    if (!endsWith(loggingString, '\n'))
         loggingString = makeString(loggingString, '\n');
 
     loggingAccumulator().accumulate(loggingString);
 
-    logToStderr(channel, loggingString.utf8());
+    logToStderr(channel, utf8(loggingString));
 }
 
 void WTFLog(WTFLogChannel* channel, const char* format, ...)
@@ -796,7 +796,7 @@ void resetAccumulatedLogs()
     loggingAccumulator().resetAccumulatedLogs();
 }
 
-String getAndResetAccumulatedLogs()
+RefPtr<StringImpl> getAndResetAccumulatedLogs()
 {
     return loggingAccumulator().getAndResetAccumulatedLogs();
 }

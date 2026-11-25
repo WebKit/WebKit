@@ -52,17 +52,17 @@ RefPtr<CSSValue> InlineStylePropertyMap::propertyValue(CSSPropertyID propertyID)
     return nullptr;
 }
 
-String InlineStylePropertyMap::shorthandPropertySerialization(CSSPropertyID propertyID) const
+RefPtr<StringImpl> InlineStylePropertyMap::shorthandPropertySerialization(CSSPropertyID propertyID) const
 {
     if (RefPtr inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
         return inlineStyle->getPropertyValue(propertyID);
-    return String();
+    return nullptr;
 }
 
-RefPtr<CSSValue> InlineStylePropertyMap::customPropertyValue(const AtomString& property) const
+RefPtr<CSSValue> InlineStylePropertyMap::customPropertyValue(AtomStringImpl* property) const
 {
     if (RefPtr inlineStyle = m_element ? m_element->inlineStyle() : nullptr)
-        return inlineStyle->getCustomPropertyCSSValue(property.string());
+        return inlineStyle->getCustomPropertyCSSValue(property);
     return nullptr;
 }
 
@@ -86,7 +86,7 @@ auto InlineStylePropertyMap::entries(ScriptExecutionContext* context) const -> V
         return StylePropertyMapEntry {
             propertyReference.cssName(),
             propertyReference.id() == CSSPropertyID::Custom
-                ? reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, AtomString { propertyReference.cssName() })
+                ? reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, RefPtr<AtomStringImpl> { propertyReference.cssName() })
                 : reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, propertyReference.id()),
         };
     });
@@ -101,7 +101,7 @@ void InlineStylePropertyMap::removeProperty(CSSPropertyID propertyID)
         mutationScope.enqueueMutationRecord();
 }
 
-bool InlineStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, const String& value)
+bool InlineStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, StringImpl* value)
 {
     if (!m_element)
         return false;
@@ -129,7 +129,7 @@ bool InlineStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>
     return !didFailParsing;
 }
 
-bool InlineStylePropertyMap::setCustomProperty(Document&, const AtomString& property, Ref<CSSSubstitutionValue>&& value)
+bool InlineStylePropertyMap::setCustomProperty(Document&, AtomStringImpl* property, Ref<CSSSubstitutionValue>&& value)
 {
     if (!m_element)
         return false;
@@ -141,7 +141,7 @@ bool InlineStylePropertyMap::setCustomProperty(Document&, const AtomString& prop
     return true;
 }
 
-void InlineStylePropertyMap::removeCustomProperty(const AtomString& property)
+void InlineStylePropertyMap::removeCustomProperty(AtomStringImpl* property)
 {
     if (!m_element)
         return;

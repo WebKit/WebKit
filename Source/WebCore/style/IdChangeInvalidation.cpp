@@ -32,9 +32,9 @@
 
 namespace WebCore::Style {
 
-void IdChangeInvalidation::invalidateStyle(const AtomString& changedId)
+void IdChangeInvalidation::invalidateStyle(AtomStringImpl* changedId)
 {
-    if (changedId.isEmpty())
+    if (isEmpty(changedId))
         return;
 
     bool mayAffectStyle = false;

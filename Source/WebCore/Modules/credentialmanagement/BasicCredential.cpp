@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-BasicCredential::BasicCredential(const String& id, Type type, Discovery discovery)
+BasicCredential::BasicCredential(StringImpl* id, Type type, Discovery discovery)
     : m_id(id)
     , m_type(type)
     , m_discovery(discovery)
@@ -43,19 +43,19 @@ BasicCredential::BasicCredential(const String& id, Type type, Discovery discover
 
 BasicCredential::~BasicCredential() = default;
 
-String BasicCredential::type() const
+RefPtr<StringImpl> BasicCredential::type() const
 {
     switch (m_type) {
     case Type::DigitalCredential:
-        return "digital"_s;
+        return "digital"_si;
 
 #if ENABLE(PHONE_NUMBER_POSSESSION)
     case Type::PhoneNumberPossession:
-        return "phone-number-possession"_s;
+        return "phone-number-possession"_si;
 #endif
 
     case Type::PublicKey:
-        return "public-key"_s;
+        return "public-key"_si;
     }
 
     ASSERT_NOT_REACHED();

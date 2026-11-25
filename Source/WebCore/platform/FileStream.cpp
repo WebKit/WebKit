@@ -43,7 +43,7 @@ FileStream::FileStream() = default;
 
 FileStream::~FileStream() = default;
 
-long long FileStream::getSize(const String& path, std::optional<WallTime> expectedModificationTime)
+long long FileStream::getSize(StringImpl* path, std::optional<WallTime> expectedModificationTime)
 {
     // Check the modification time for the possible file change.
     auto modificationTime = FileSystem::fileModificationTime(path);
@@ -62,7 +62,7 @@ long long FileStream::getSize(const String& path, std::optional<WallTime> expect
     return *length;
 }
 
-bool FileStream::openForRead(const String& path, long long offset, long long length)
+bool FileStream::openForRead(StringImpl* path, long long offset, long long length)
 {
     if (m_handle)
         return true;

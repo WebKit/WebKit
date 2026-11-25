@@ -57,7 +57,7 @@ Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLAreaElement(tagName, document));
 }
 
-void HTMLAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLAreaElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::shapeAttr:
@@ -73,7 +73,7 @@ void HTMLAreaElement::attributeChanged(const QualifiedName& name, const AtomStri
         invalidateCachedRegion();
         break;
     case AttributeNames::coordsAttr:
-        m_coords = parseHTMLListOfOfFloatingPointNumberValues(newValue.string());
+        m_coords = parseHTMLListOfOfFloatingPointNumberValues(newValue);
         invalidateCachedRegion();
         break;
     case AttributeNames::altAttr:
@@ -240,7 +240,7 @@ bool HTMLAreaElement::supportsFocus() const
     return isLink();
 }
 
-AtomString HTMLAreaElement::target() const
+RefPtr<AtomStringImpl> HTMLAreaElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }

@@ -57,8 +57,8 @@ public:
     WEBCORE_EXPORT static bool hasScopeForDocument(ScriptExecutionContextIdentifier);
     ~AudioWorkletGlobalScope();
 
-    ExceptionOr<void> registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&&);
-    RefPtr<AudioWorkletProcessor> createProcessor(const String& name, TransferredMessagePort, Ref<SerializedScriptValue>&& options);
+    ExceptionOr<void> registerProcessor(RefPtr<StringImpl>&& name, Ref<JSAudioWorkletProcessorConstructor>&&);
+    RefPtr<AudioWorkletProcessor> createProcessor(StringImpl* name, TransferredMessagePort, Ref<SerializedScriptValue>&& options);
     void processorIsNoLongerNeeded(AudioWorkletProcessor&);
     void visitProcessorsInGCThread(JSC::AbstractSlotVisitor&);
 
@@ -88,7 +88,7 @@ private:
     const float m_sampleRate;
     const ScriptExecutionContextIdentifier m_documentIdentifier;
     const Ref<MessagePort> m_port;
-    MemoryCompactRobinHoodHashMap<String, Ref<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
     ThreadSafeWeakHashSet<AudioWorkletProcessor> m_processors;
     std::unique_ptr<AudioWorkletProcessorConstructionData> m_pendingProcessorConstructionData;
     std::optional<JSC::VM::DrainMicrotaskDelayScope> m_delayMicrotaskDrainingDuringRendering;

@@ -191,7 +191,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         if not self.assigned_enum_values():
             return []
 
-        return_type = 'String'
+        return_type = 'RefPtr<StringImpl>'
         return_type_with_export_macro = [return_type]
         export_macro = self.model().framework.setting('export_macro', None)
         if export_macro is not None:
@@ -343,7 +343,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('        Builder<STATE | %(camelName)sSet>& set%(camelName)s(%(memberType)s %(memberName)s)' % setter_args)
         lines.append('        {')
         lines.append('            static_assert(!(STATE & %(camelName)sSet), "property %(memberKey)s already set");' % setter_args)
-        lines.append('            Ref { *m_result }->%(setter)s("%(memberKey)s"_s, %(memberValue)s);' % setter_args)
+        lines.append('            Ref { *m_result }->%(setter)s("%(memberKey)s"_si, %(memberValue)s);' % setter_args)
         lines.append('            return castState<%(camelName)sSet>();' % setter_args)
         lines.append('        }')
         if type_member.is_nullable:
@@ -351,7 +351,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             lines.append('        Builder<STATE | %(camelName)sSet>& set%(camelName)sIsNull()' % setter_args)
             lines.append('        {')
             lines.append('            static_assert(!(STATE & %(camelName)sSet), "property %(memberKey)s already set");' % setter_args)
-            lines.append('            Ref { *m_result }->setValue("%(memberKey)s"_s, JSON::Value::null());' % setter_args)
+            lines.append('            Ref { *m_result }->setValue("%(memberKey)s"_si, JSON::Value::null());' % setter_args)
             lines.append('            return castState<%(camelName)sSet>();' % setter_args)
             lines.append('        }')
         return '\n'.join(lines)
@@ -378,13 +378,13 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('')
         lines.append('    void set%(camelName)s(%(memberType)s %(memberName)s)' % setter_args)
         lines.append('    {')
-        lines.append('        JSON::ObjectBase::%(setter)s("%(memberKey)s"_s, %(memberValue)s);' % setter_args)
+        lines.append('        JSON::ObjectBase::%(setter)s("%(memberKey)s"_si, %(memberValue)s);' % setter_args)
         lines.append('    }')
         if type_member.is_nullable:
             lines.append('')
             lines.append('    void set%(camelName)sIsNull()' % setter_args)
             lines.append('    {')
-            lines.append('        JSON::ObjectBase::setValue("%(memberKey)s"_s, JSON::Value::null());' % setter_args)
+            lines.append('        JSON::ObjectBase::setValue("%(memberKey)s"_si, JSON::Value::null());' % setter_args)
             lines.append('    }')
         return '\n'.join(lines)
 
@@ -426,7 +426,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             'namespace %s {' % self.helpers_namespace(),
             '',
             'template<typename ProtocolEnumType>',
-            'std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);',
+            'std::optional<ProtocolEnumType> parseEnumValueFromString(StringImpl*);',
         ]))
 
         def return_type_with_export_macro(cpp_protocol_type):
@@ -455,13 +455,13 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             domain_lines.append("// Enums in the '%s' Domain" % domain.domain_name)
             for enum_type in enum_types:
                 cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_type, enum_type.raw_name())
-                domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, 'template<>\n%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type)))
+                domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, 'template<>\n%s parseEnumValueFromString<%s>(StringImpl*);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type)))
 
             for object_type in object_types:
                 object_lines = []
                 for enum_member in filter(type_member_is_anonymous_enum_type, object_type.members):
                     cpp_protocol_type = CppGenerator.cpp_type_for_enum(enum_member.type, '%s::%s' % (object_type.raw_name(), ucfirst(enum_member.member_name)))
-                    object_lines.append('template<>\n%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
+                    object_lines.append('template<>\n%s parseEnumValueFromString<%s>(StringImpl*);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
                 if len(object_lines):
                     domain_lines.append(self.wrap_with_guard_for_condition(object_type.declaration().condition, '\n'.join(object_lines)))
 

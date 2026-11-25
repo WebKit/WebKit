@@ -36,7 +36,7 @@ public:
     static Ref<SVGFESpecularLightingElement> create(const QualifiedName&, Document&);
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
-    String in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
     float specularConstant() const { return m_specularConstant->currentValue(); }
     float specularExponent() const { return m_specularExponent->currentValue(); }
     float surfaceScale() const { return m_surfaceScale->currentValue(); }
@@ -59,11 +59,11 @@ private:
     static constexpr float initialSpecularExponentValue = 1;
     static constexpr float initialSurfaceScaleValue = 1;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override { return { AtomStringImpl::add(in1()) }; }
     bool taintsOrigin() const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 

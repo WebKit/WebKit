@@ -68,7 +68,7 @@ struct GlobalObjectMethodTable {
 
     JSPromise* (*moduleLoaderImportModule)(JSGlobalObject*, JSModuleLoader*, JSString*, RefPtr<ScriptFetchParameters>, const SourceOrigin&, bool deferred);
     Identifier (*moduleLoaderResolve)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, RefPtr<ScriptFetcher>, bool useImportMap);
-    JSPromise* (*moduleLoaderFetch)(JSGlobalObject*, JSModuleLoader*, JSValue key, const String& referrer, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
+    JSPromise* (*moduleLoaderFetch)(JSGlobalObject*, JSModuleLoader*, JSValue key, StringImpl* referrer, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
     JSObject* (*moduleLoaderCreateImportMetaProperties)(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, RefPtr<ScriptFetcher>);
     JSValue (*moduleLoaderEvaluate)(JSGlobalObject*, JSModuleLoader*, JSValue key, JSValue moduleRecordValue, RefPtr<ScriptFetcher>, JSValue awaitedValue, JSValue resumeMode);
 
@@ -79,8 +79,8 @@ struct GlobalObjectMethodTable {
     JSObject* (*currentScriptExecutionOwner)(JSGlobalObject*);
 
     ScriptExecutionStatus (*scriptExecutionStatus)(JSGlobalObject*, JSObject* scriptExecutionOwner);
-    void (*reportViolationForUnsafeEval)(JSGlobalObject*, const String&);
-    String (*defaultLanguage)();
+    void (*reportViolationForUnsafeEval)(JSGlobalObject*, StringImpl*);
+    RefPtr<StringImpl> (*defaultLanguage)();
 #if ENABLE(WEBASSEMBLY)
     void (*compileStreaming)(JSGlobalObject*, JSPromise*, JSValue, std::optional<WebAssemblyCompileOptions>&&);
     void (*instantiateStreaming)(JSGlobalObject*, JSPromise*, JSValue, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&);
@@ -88,8 +88,8 @@ struct GlobalObjectMethodTable {
     void* compileStreamingPlaceholder; // placeholders to make positional initializers consistent
     void* instantiateStreamingPlaceholder;
 #endif
-    String (*codeForEval)(JSGlobalObject*, JSValue);
-    bool (*canCompileStrings)(JSGlobalObject*, CompilationType, String, const ArgList&);
+    RefPtr<StringImpl> (*codeForEval)(JSGlobalObject*, JSValue);
+    bool (*canCompileStrings)(JSGlobalObject*, CompilationType, RefPtr<StringImpl>, const ArgList&);
     Structure* (*trustedScriptStructure)(JSGlobalObject*);
 };
 

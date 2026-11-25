@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-Ref<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault)
+Ref<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create(StringImpl* voiceURI, StringImpl* name, StringImpl* lang, bool localService, bool isDefault)
 {
     return adoptRef(*new PlatformSpeechSynthesisVoice(voiceURI, name, lang, localService, isDefault));
 }
@@ -40,7 +40,7 @@ Ref<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create()
     return adoptRef(*new PlatformSpeechSynthesisVoice);
 }
 
-inline PlatformSpeechSynthesisVoice::PlatformSpeechSynthesisVoice(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault)
+inline PlatformSpeechSynthesisVoice::PlatformSpeechSynthesisVoice(StringImpl* voiceURI, StringImpl* name, StringImpl* lang, bool localService, bool isDefault)
     : m_voiceURI(voiceURI)
     , m_name(name)
     , m_lang(lang)

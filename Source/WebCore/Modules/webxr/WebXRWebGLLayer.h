@@ -107,7 +107,7 @@ private:
     void canvasResized(CanvasBase&) final;
     void canvasDestroyed(CanvasBase&) final { };
 
-    void addConsoleMessage(JSC::MessageLevel, String&&) const;
+    void addConsoleMessage(JSC::MessageLevel, RefPtr<StringImpl>&&) const;
 
     WeakPtr<WebXRSession> m_session;
     WebXRRenderingContext m_context;

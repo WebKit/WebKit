@@ -82,7 +82,7 @@ void NetworkRTCSharedMonitor::updateNetworksFromPath(nw_path_t path)
         return;
 
     nw_path_enumerate_interfaces(path, makeBlockPtr([](nw_interface_t interface) -> bool {
-        NetworkRTCSharedMonitor::singleton().m_adapterTypes.set(String::fromUTF8(nw_interface_get_name(interface)), interfaceAdapterType(interface));
+        NetworkRTCSharedMonitor::singleton().m_adapterTypes.set(StringImpl::fromUTF8(nw_interface_get_name(interface)), interfaceAdapterType(interface));
         return true;
     }).get());
     updateNetworks();

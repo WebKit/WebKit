@@ -101,24 +101,24 @@ void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
 {
     RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_si });
         return;
     }
 
     RefPtr manager = this->manager();
     if (!manager) {
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_si });
         return;
     }
 
     // FIXME: Add support for the sandboxed orientation lock browsing context flag.
     if (!document->isSameOriginAsTopDocument()) {
-        promise->reject(Exception { ExceptionCode::SecurityError, "Only first party documents can lock the screen orientation"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "Only first party documents can lock the screen orientation"_si });
         return;
     }
 
     if (document->page() && !document->page()->isVisible()) {
-        promise->reject(Exception { ExceptionCode::SecurityError, "Only visible documents can lock the screen orientation"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "Only visible documents can lock the screen orientation"_si });
         return;
     }
 
@@ -128,17 +128,17 @@ void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
 #else
         if (true) {
 #endif
-            promise->reject(Exception { ExceptionCode::SecurityError, "Locking the screen orientation is only allowed when in fullscreen"_s });
+            promise->reject(Exception { ExceptionCode::SecurityError, "Locking the screen orientation is only allowed when in fullscreen"_si });
             return;
         }
     }
     if (!isSupportedLockType(lockType)) {
-        promise->reject(Exception { ExceptionCode::NotSupportedError, "Lock type should be one of { \"any\", \"natural\", \"portrait\", \"landscape\" }"_s });
+        promise->reject(Exception { ExceptionCode::NotSupportedError, "Lock type should be one of { \"any\", \"natural\", \"portrait\", \"landscape\" }"_si });
         return;
     }
     if (auto previousPromise = manager->takeLockPromise()) {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [previousPromise = WTF::move(previousPromise)](auto&) mutable {
-            previousPromise->reject(Exception { ExceptionCode::AbortError, "A new lock request was started"_s });
+            previousPromise->reject(Exception { ExceptionCode::AbortError, "A new lock request was started"_si });
         });
     }
     manager->setLockPromise(*this, WTF::move(promise));
@@ -164,13 +164,13 @@ ExceptionOr<void> ScreenOrientation::unlock()
 {
     RefPtr document = this->document();
     if (!document || !document->isFullyActive())
-        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_si };
 
     if (!document->isSameOriginAsTopDocument())
         return { };
 
     if (document->page() && !document->page()->isVisible())
-        return Exception { ExceptionCode::SecurityError, "Only visible documents can unlock the screen orientation"_s };
+        return Exception { ExceptionCode::SecurityError, "Only visible documents can unlock the screen orientation"_si };
 
     if (RefPtr manager = this->manager())
         manager->unlock();
@@ -269,7 +269,7 @@ void ScreenOrientation::stop()
     manager->removeObserver(*this);
     if (manager->lockRequester() == this) {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = manager->takeLockPromise()](auto&) {
-            promise->reject(Exception { ExceptionCode::AbortError, "Document is no longer fully active"_s });
+            promise->reject(Exception { ExceptionCode::AbortError, "Document is no longer fully active"_si });
         });
     }
 }

@@ -48,11 +48,11 @@ namespace WebCore {
 
 using namespace Inspector;
 
-static String blockedTrackerErrorMessage(const ResourceError& error)
+static RefPtr<StringImpl> blockedTrackerErrorMessage(const ResourceError& error)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (error.blockedKnownTracker())
-        return "Blocked connection to known tracker"_s;
+        return "Blocked connection to known tracker"_si;
 #else
     UNUSED_PARAM(error);
 #endif
@@ -85,7 +85,7 @@ void WebConsoleAgent::didReceiveResponse(ResourceLoaderIdentifier requestIdentif
 
 void WebConsoleAgent::didFailLoading(ResourceLoaderIdentifier requestIdentifier, const ResourceError& error)
 {
-    if (error.domain() == InspectorNetworkAgent::errorDomain())
+    if (equal(error.domain(), InspectorNetworkAgent::errorDomain()))
         return;
 
     // Report failures only.
@@ -94,8 +94,8 @@ void WebConsoleAgent::didFailLoading(ResourceLoaderIdentifier requestIdentifier,
 
     auto level = MessageLevel::Error;
     auto message = blockedTrackerErrorMessage(error);
-    if (message.isEmpty())
-        message = makeString("Failed to load resource"_s, error.localizedDescription().isEmpty() ? ""_s : ": "_s, error.localizedDescription());
+    if (isEmpty(message))
+        message = makeString("Failed to load resource"_s, isEmpty(error.localizedDescription()) ? ""_s : ": "_s, error.localizedDescription());
     else
         level = MessageLevel::Info;
 

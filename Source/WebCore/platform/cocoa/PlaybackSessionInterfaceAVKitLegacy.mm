@@ -179,7 +179,7 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
             return nil;
         }
 #endif
-        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:protect(toAVMediaType(option.mediaType)).get() displayName:option.displayName.createNSString().get() extendedLanguageTag:option.languageTag.createNSString().get() tag:index++]);
+        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:protect(toAVMediaType(option.mediaType)).get() displayName:createNSString(option.displayName).get() extendedLanguageTag:createNSString(option.languageTag).get() tag:index++]);
     });
 }
 
@@ -209,7 +209,7 @@ void PlaybackSessionInterfaceAVKitLegacy::legibleMediaSelectionOptionsChanged(co
     [m_playerController setCurrentLegibleMediaSelectionOption:selectedOption.get()];
 }
 
-void PlaybackSessionInterfaceAVKitLegacy::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, const String& localizedDeviceName, const String& localizedRouteName)
+void PlaybackSessionInterfaceAVKitLegacy::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, StringImpl* localizedDeviceName, StringImpl* localizedRouteName)
 {
     AVPlayerControllerExternalPlaybackType externalPlaybackType = AVPlayerControllerExternalPlaybackTypeNone;
     if (enabled && targetType == PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeAirPlay)
@@ -218,8 +218,8 @@ void PlaybackSessionInterfaceAVKitLegacy::externalPlaybackChanged(bool enabled, 
         externalPlaybackType = AVPlayerControllerExternalPlaybackTypeTVOut;
 
     RetainPtr<NSString> airPlayDeviceLocalizedName;
-    if (localizedRouteName.isEmpty())
-        airPlayDeviceLocalizedName = localizedDeviceName.createNSString();
+    if (isEmpty(localizedRouteName))
+        airPlayDeviceLocalizedName = createNSString(localizedDeviceName);
 
     [m_playerController setExternalPlaybackAirPlayDeviceLocalizedName:airPlayDeviceLocalizedName];
     [m_playerController setExternalPlaybackType:externalPlaybackType];

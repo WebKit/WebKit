@@ -202,18 +202,18 @@ void EditCommand::setParent(RefPtr<CompositeEditCommand>&& parent)
     }
 }
 
-void EditCommand::postTextStateChangeNotification(AXTextEditType type, const String& text)
+void EditCommand::postTextStateChangeNotification(AXTextEditType type, StringImpl* text)
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
     postTextStateChangeNotification(type, text, m_document->selection().selection().start());
 }
 
-void EditCommand::postTextStateChangeNotification(AXTextEditType type, const String& text, const VisiblePosition& position)
+void EditCommand::postTextStateChangeNotification(AXTextEditType type, StringImpl* text, const VisiblePosition& position)
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    if (!text.length())
+    if (!length(text))
         return;
     CheckedPtr cache = document().existingAXObjectCache();
     if (!cache)

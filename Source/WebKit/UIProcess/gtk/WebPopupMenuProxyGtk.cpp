@@ -170,7 +170,7 @@ void WebPopupMenuProxyGtk::createPopupMenu(const Vector<WebPopupItem>& items, in
     for (const auto& item : items) {
         if (item.m_isLabel) {
             gtk_tree_store_insert_with_values(model.get(), &parentIter, nullptr, -1,
-                Columns::Label, item.m_text.trim(deprecatedIsSpaceOrNewline).utf8().legacyCStringPointer(),
+                Columns::Label, utf8(trim(item.m_text, deprecatedIsSpaceOrNewline)).legacyCStringPointer(),
                 Columns::IsGroup, TRUE,
                 Columns::IsEnabled, TRUE,
                 -1);
@@ -179,9 +179,9 @@ void WebPopupMenuProxyGtk::createPopupMenu(const Vector<WebPopupItem>& items, in
         } else {
             GtkTreeIter iter;
             bool isSelected = selectedIndex && static_cast<unsigned>(selectedIndex) == index;
-            gtk_tree_store_insert_with_values(model.get(), &iter, item.m_text.startsWith("    "_s) ? &parentIter : nullptr, -1,
-                Columns::Label, item.m_text.trim(deprecatedIsSpaceOrNewline).utf8().legacyCStringPointer(),
-                Columns::Tooltip, item.m_toolTip.isEmpty() ? nullptr : item.m_toolTip.utf8().legacyCStringPointer(),
+            gtk_tree_store_insert_with_values(model.get(), &iter, startsWith(item.m_text, "    "_s) ? &parentIter : nullptr, -1,
+                Columns::Label, utf8(trim(item.m_text, deprecatedIsSpaceOrNewline)).legacyCStringPointer(),
+                Columns::Tooltip, isEmpty(item.m_toolTip) ? nullptr : utf8(item.m_toolTip).legacyCStringPointer(),
                 Columns::IsGroup, FALSE,
                 Columns::IsSelected, isSelected,
                 Columns::IsEnabled, item.m_isEnabled,

@@ -63,7 +63,7 @@ public:
     using KeyStatusVector = Vector<std::pair<CDMKeyID, KeyStatus>>;
     virtual void updateKeyStatuses(KeyStatusVector&&) = 0;
     virtual void sendMessage(CDMMessageType, Ref<SharedBuffer>&& message) = 0;
-    virtual void sessionIdChanged(const String&) = 0;
+    virtual void sessionIdChanged(StringImpl*) = 0;
     using PlatformDisplayID = uint32_t;
     virtual PlatformDisplayID displayID() = 0;
 };
@@ -89,26 +89,26 @@ public:
         Succeeded,
     };
 
-    using LicenseCallback = CompletionHandler<void(Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, SuccessValue succeeded)>;
-    virtual void requestLicense(LicenseType, KeyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) = 0;
+    using LicenseCallback = CompletionHandler<void(Ref<SharedBuffer>&& message, StringImpl* sessionId, bool needsIndividualization, SuccessValue succeeded)>;
+    virtual void requestLicense(LicenseType, KeyGroupingStrategy, StringImpl* initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) = 0;
 
     using KeyStatusVector = CDMInstanceSessionClient::KeyStatusVector;
     using Message = std::pair<MessageType, Ref<SharedBuffer>>;
     using LicenseUpdateCallback = CompletionHandler<void(bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, SuccessValue succeeded)>;
-    virtual void updateLicense(const String& sessionId, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&&) = 0;
+    virtual void updateLicense(StringImpl* sessionId, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&&) = 0;
 
     using SessionLoadFailure = CDMInstanceSessionLoadFailure;
 
     using LoadSessionCallback = CompletionHandler<void(std::optional<KeyStatusVector>&&, std::optional<double>&&, std::optional<Message>&&, SuccessValue, SessionLoadFailure)>;
-    virtual void loadSession(LicenseType, const String& sessionId, const String& origin, LoadSessionCallback&&) = 0;
+    virtual void loadSession(LicenseType, StringImpl* sessionId, StringImpl* origin, LoadSessionCallback&&) = 0;
 
     using CloseSessionCallback = CompletionHandler<void()>;
-    virtual void closeSession(const String& sessionId, CloseSessionCallback&&) = 0;
+    virtual void closeSession(StringImpl* sessionId, CloseSessionCallback&&) = 0;
 
     using RemoveSessionDataCallback = CompletionHandler<void(KeyStatusVector&&, RefPtr<SharedBuffer>&&, SuccessValue)>;
-    virtual void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&) = 0;
+    virtual void removeSessionData(StringImpl* sessionId, LicenseType, RemoveSessionDataCallback&&) = 0;
 
-    virtual void storeRecordOfKeyUsage(const String& sessionId) = 0;
+    virtual void storeRecordOfKeyUsage(StringImpl* sessionId) = 0;
 
     using PlatformDisplayID = uint32_t;
     virtual void displayChanged(PlatformDisplayID) { }

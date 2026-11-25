@@ -459,7 +459,7 @@ void webkit_dom_html_anchor_element_set_charset(WebKitDOMHTMLAnchorElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charsetAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charsetAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_coords(WebKitDOMHTMLAnchorElement* self)
@@ -477,7 +477,7 @@ void webkit_dom_html_anchor_element_set_coords(WebKitDOMHTMLAnchorElement* self,
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::coordsAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::coordsAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_hreflang(WebKitDOMHTMLAnchorElement* self)
@@ -495,7 +495,7 @@ void webkit_dom_html_anchor_element_set_hreflang(WebKitDOMHTMLAnchorElement* sel
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hreflangAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hreflangAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_name(WebKitDOMHTMLAnchorElement* self)
@@ -513,7 +513,7 @@ void webkit_dom_html_anchor_element_set_name(WebKitDOMHTMLAnchorElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_rel(WebKitDOMHTMLAnchorElement* self)
@@ -531,7 +531,7 @@ void webkit_dom_html_anchor_element_set_rel(WebKitDOMHTMLAnchorElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::relAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::relAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_rev(WebKitDOMHTMLAnchorElement* self)
@@ -549,7 +549,7 @@ void webkit_dom_html_anchor_element_set_rev(WebKitDOMHTMLAnchorElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::revAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::revAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_shape(WebKitDOMHTMLAnchorElement* self)
@@ -567,7 +567,7 @@ void webkit_dom_html_anchor_element_set_shape(WebKitDOMHTMLAnchorElement* self, 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::shapeAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::shapeAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_target(WebKitDOMHTMLAnchorElement* self)
@@ -585,7 +585,7 @@ void webkit_dom_html_anchor_element_set_target(WebKitDOMHTMLAnchorElement* self,
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_type_attr(WebKitDOMHTMLAnchorElement* self)
@@ -603,7 +603,7 @@ void webkit_dom_html_anchor_element_set_type_attr(WebKitDOMHTMLAnchorElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_text(WebKitDOMHTMLAnchorElement* self)
@@ -621,7 +621,7 @@ void webkit_dom_html_anchor_element_set_text(WebKitDOMHTMLAnchorElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setText(WTF::String::fromUTF8(value));
+    item->setText(StringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_href(WebKitDOMHTMLAnchorElement* self)
@@ -639,7 +639,7 @@ void webkit_dom_html_anchor_element_set_href(WebKitDOMHTMLAnchorElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_protocol(WebKitDOMHTMLAnchorElement* self)
@@ -657,7 +657,7 @@ void webkit_dom_html_anchor_element_set_protocol(WebKitDOMHTMLAnchorElement* sel
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setProtocol(convertedValue);
 }
 
@@ -676,7 +676,7 @@ void webkit_dom_html_anchor_element_set_host(WebKitDOMHTMLAnchorElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setHost(convertedValue);
 }
 
@@ -695,7 +695,7 @@ void webkit_dom_html_anchor_element_set_hostname(WebKitDOMHTMLAnchorElement* sel
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setHostname(convertedValue);
 }
 
@@ -714,7 +714,7 @@ void webkit_dom_html_anchor_element_set_port(WebKitDOMHTMLAnchorElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setPort(convertedValue);
 }
 
@@ -733,7 +733,7 @@ void webkit_dom_html_anchor_element_set_pathname(WebKitDOMHTMLAnchorElement* sel
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setPathname(convertedValue);
 }
 
@@ -752,7 +752,7 @@ void webkit_dom_html_anchor_element_set_search(WebKitDOMHTMLAnchorElement* self,
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setSearch(convertedValue);
 }
 
@@ -771,7 +771,7 @@ void webkit_dom_html_anchor_element_set_hash(WebKitDOMHTMLAnchorElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setHash(convertedValue);
 }
 

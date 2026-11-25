@@ -35,18 +35,18 @@ public:
     WEBCORE_EXPORT static Ref<DocumentFragment> create(Document&);
     static Ref<DocumentFragment> createForInnerOuterHTML(Document&);
 
-    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr);
-    WEBCORE_EXPORT bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
+    void parseHTML(StringImpl*, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr);
+    WEBCORE_EXPORT bool parseXML(StringImpl*, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
 
     bool canContainRangeEndPoint() const final { return true; }
     virtual bool isTemplateContent() const { return false; }
 
     // From the NonElementParentNode interface - https://dom.spec.whatwg.org/#interface-nonelementparentnode
-    WEBCORE_EXPORT RefPtr<Element> getElementById(const AtomString&) const;
+    WEBCORE_EXPORT RefPtr<Element> getElementById(AtomStringImpl*) const;
 
 protected:
     DocumentFragment(Document&, OptionSet<TypeFlag> = { });
-    String nodeName() const final;
+    RefPtr<StringImpl> nodeName() const final;
 
 private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;

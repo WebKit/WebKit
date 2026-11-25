@@ -39,7 +39,7 @@ void CSSCounterStyleRegistry::resolveUserAgentReferences()
 {
     for (auto& [name, counter] : userAgentCounterStyles()) {
         // decimal counter has no fallback or extended references because it is the last resource for both cases.
-        if (counter->name() == "decimal"_s)
+        if (equal(counter->name(), "decimal"_s))
             continue;
         if (counter->isFallbackUnresolved())
             resolveFallbackReference(counter);
@@ -118,7 +118,7 @@ void CSSCounterStyleRegistry::addUserAgentCounterStyle(const CSSCounterStyleDesc
 Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::decimalCounter()
 {
     auto& userAgentCounters = userAgentCounterStyles();
-    auto iterator = userAgentCounters.find("decimal"_s);
+    auto iterator = userAgentCounters.find("decimal"_atom);
 
     // user agent counter style should always be populated with a counter named decimal if counter-style-at-rule is enabled
     ASSERT(iterator != userAgentCounters.end());
@@ -126,9 +126,9 @@ Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::decimalCounter()
 }
 
 // A valid map means that the search begins at the author counter style map, otherwise we skip the search to the UA counter styles.
-Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::counterStyle(const AtomString& name, NamedCounterStyleMap* map)
+Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::counterStyle(AtomStringImpl* name, NamedCounterStyleMap* map)
 {
-    if (name.isEmpty())
+    if (isEmpty(name))
         return decimalCounter();
 
     // If there is a map, the search starts from the given map.

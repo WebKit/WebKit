@@ -70,15 +70,15 @@ WorkQueue& IsolatedSiteStore::sharedWorkQueueSingleton()
     return workQueue.get();
 }
 
-Ref<IsolatedSiteStore> IsolatedSiteStore::create(const String& databaseDirectoryPath, UserInteractionDomainFetcher&& userInteractionDomainFetcher, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting)
+Ref<IsolatedSiteStore> IsolatedSiteStore::create(StringImpl* databaseDirectoryPath, UserInteractionDomainFetcher&& userInteractionDomainFetcher, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting)
 {
     return adoptRef(*new IsolatedSiteStore(databaseDirectoryPath, WTF::move(userInteractionDomainFetcher), highValueFraudTargetDomainsEnabled, WTF::move(additionalSitesForTesting)));
 }
 
-IsolatedSiteStore::IsolatedSiteStore(const String& databaseDirectoryPath, UserInteractionDomainFetcher&& userInteractionDomainFetcher, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting)
+IsolatedSiteStore::IsolatedSiteStore(StringImpl* databaseDirectoryPath, UserInteractionDomainFetcher&& userInteractionDomainFetcher, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting)
     : m_userInteractionDomainFetcher(WTF::move(userInteractionDomainFetcher))
     , m_additionalSitesForTesting(WTF::move(additionalSitesForTesting))
-    , m_isPersistent(!databaseDirectoryPath.isEmpty())
+    , m_isPersistent(!isEmpty(databaseDirectoryPath))
     , m_highValueFraudTargetDomainsEnabled(highValueFraudTargetDomainsEnabled)
 {
     ASSERT(isMainRunLoop());

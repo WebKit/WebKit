@@ -37,7 +37,7 @@ public:
     NODELETE static Ref<DeprecatedCSSOMValueList> create(DeprecatedCSSOMValueListBuilder&&, CSSValue::ValueSeparator, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMValueList> create(const CSSValueContainingVector&, CSSStyleDeclaration&);
 
-    String cssText() const override;
+    RefPtr<StringImpl> cssText() const override;
     NODELETE unsigned short cssValueType() const override;
     bool isValueList() const override { return true; }
 

@@ -45,19 +45,19 @@ MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(RetainPtr<AVOutputContext>&& 
 
 MediaPlaybackTargetCocoa::~MediaPlaybackTargetCocoa() = default;
 
-String MediaPlaybackTargetCocoa::deviceName() const
+RefPtr<StringImpl> MediaPlaybackTargetCocoa::deviceName() const
 {
     if (![m_outputContext supportsMultipleOutputDevices])
-        return [m_outputContext deviceName];
+        return StringImpl::create([m_outputContext deviceName]);
 
     auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
     for (AVOutputDevice *outputDevice in [m_outputContext outputDevices])
         [outputDeviceNames addObject:retainPtr([outputDevice deviceName]).get()];
 
-    return [outputDeviceNames componentsJoinedByString:@" + "];
+    return StringImpl::create([outputDeviceNames componentsJoinedByString:@" + "]);
 }
 
-String MediaPlaybackTargetCocoa::routeName() const
+RefPtr<StringImpl> MediaPlaybackTargetCocoa::routeName() const
 {
     return { };
 }

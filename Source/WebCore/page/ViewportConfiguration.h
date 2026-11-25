@@ -160,7 +160,7 @@ public:
     NODELETE WEBCORE_EXPORT static Parameters xhtmlMobileParameters();
     NODELETE WEBCORE_EXPORT static Parameters testingParameters();
 
-    String description() const;
+    RefPtr<StringImpl> description() const;
 #if !LOG_DISABLED
     WEBCORE_EXPORT void dump() const;
 #endif

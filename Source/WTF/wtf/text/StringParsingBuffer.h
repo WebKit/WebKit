@@ -133,9 +133,14 @@ private:
 
 template<typename StringType, typename Function> decltype(auto) readCharactersForParsing(StringType&& string, NOESCAPE const Function& functor)
 {
-    if (string.is8Bit())
-        return functor(StringParsingBuffer { string.span8() });
-    return functor(StringParsingBuffer { string.span16() });
+    // StringImpl pointers (and smart pointers) are read through a StringView; null reads as empty.
+    if constexpr (!requires { string.is8Bit(); })
+        return readCharactersForParsing(StringView { string }, functor);
+    else {
+        if (string.is8Bit())
+            return functor(StringParsingBuffer { string.span8() });
+        return functor(StringParsingBuffer { string.span16() });
+    }
 }
 
 } // namespace WTF

@@ -56,7 +56,7 @@ TEST_SUPPORT_EXPORT void monitorWheelEvents(WebCore::LocalFrame&, bool clearLatc
 TEST_SUPPORT_EXPORT void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WebCore::LocalFrame&, JSContextRef, JSObjectRef);
 TEST_SUPPORT_EXPORT void clearWheelEventTestMonitor(WebCore::LocalFrame&);
 
-NODELETE TEST_SUPPORT_EXPORT void setLogChannelToAccumulate(const String& name);
+NODELETE TEST_SUPPORT_EXPORT void setLogChannelToAccumulate(StringImpl* name);
 NODELETE TEST_SUPPORT_EXPORT void clearAllLogChannelsToAccumulate();
 TEST_SUPPORT_EXPORT void initializeLogChannelsIfNecessary();
 NODELETE TEST_SUPPORT_EXPORT void setAllowsAnySSLCertificate(bool);
@@ -73,7 +73,7 @@ TEST_SUPPORT_EXPORT void notifyAccessibilityTestTeardown();
 NODELETE TEST_SUPPORT_EXPORT void installMockGamepadProvider();
 TEST_SUPPORT_EXPORT void connectMockGamepad(unsigned index);
 TEST_SUPPORT_EXPORT void disconnectMockGamepad(unsigned index);
-TEST_SUPPORT_EXPORT void setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected);
+TEST_SUPPORT_EXPORT void setMockGamepadDetails(unsigned index, StringImpl* gamepadID, StringImpl* mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected);
 TEST_SUPPORT_EXPORT void setMockGamepadAxisValue(unsigned index, unsigned axisIndex, double value);
 TEST_SUPPORT_EXPORT void setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value);
 
@@ -81,7 +81,7 @@ TEST_SUPPORT_EXPORT void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerId
 // Makes the dedicated and shared workers created after the call have the internals object.
 TEST_SUPPORT_EXPORT void setupWorkerInternals();
     
-TEST_SUPPORT_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);
+TEST_SUPPORT_EXPORT void setAdditionalSupportedImageTypesForTesting(StringImpl*);
 
 #if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 #if ENABLE(JIT_OPERATION_DISASSEMBLY)
@@ -100,10 +100,10 @@ inline void populateJITOperations() { populateDisassemblyLabels(); }
 inline void populateJITOperations() { }
 #endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
-TEST_SUPPORT_EXPORT bool testDocumentFragmentParseXML(const String&, OptionSet<WebCore::ParserContentPolicy>);
+TEST_SUPPORT_EXPORT bool testDocumentFragmentParseXML(StringImpl*, OptionSet<WebCore::ParserContentPolicy>);
 
 #if HAVE(TEXT_SCALE_FACTOR)
-TEST_SUPPORT_EXPORT double textScaleFactorForContentSizeCategory(const String&);
+TEST_SUPPORT_EXPORT double textScaleFactorForContentSizeCategory(StringImpl*);
 #endif
 
 #if ENABLE(WEB_AUDIO)

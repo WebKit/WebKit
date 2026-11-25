@@ -235,7 +235,7 @@ std::optional<PlatformVideoFieldDetail> fieldDetailFromFormatDescription(CMForma
     return { };
 }
 
-String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
+RefPtr<StringImpl> codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
 {
     if (!formatDescription)
         return emptyString();
@@ -250,14 +250,14 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
     case 'cavc': {
         RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
         if (!sampleExtensionsDict)
-            return "avc1"_s;
+            return "avc1"_si;
         RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict.get(), CFSTR("avcC")));
         if (!sampleExtensions)
-            return "avc1"_s;
+            return "avc1"_si;
         auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions.get());
         auto parameters = parseAVCDecoderConfigurationRecord(configurationRecordBuffer);
         if (!parameters)
-            return "avc1"_s;
+            return "avc1"_si;
         return createAVCCodecParametersString(*parameters);
     }
     case kCMVideoCodecType_HEVC:
@@ -265,68 +265,68 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
     case 'chvc': {
         RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
         if (!sampleExtensionsDict)
-            return "hvc1"_s;
+            return "hvc1"_si;
         RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict.get(), CFSTR("hvcC")));
         if (!sampleExtensions)
-            return "hvc1"_s;
+            return "hvc1"_si;
         auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions.get());
         auto parameters = parseHEVCDecoderConfigurationRecord(kCMVideoCodecType_HEVC, configurationRecordBuffer);
         if (!parameters)
-            return "hvc1"_s;
+            return "hvc1"_si;
         return createHEVCCodecParametersString(*parameters);
     }
     case kCMVideoCodecType_DolbyVisionHEVC:
     case 'cdh1': {
         RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
         if (!sampleExtensionsDict)
-            return "dvh1"_s;
+            return "dvh1"_si;
         RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict.get(), CFSTR("dvcC")));
         if (!sampleExtensions)
-            return "dvh1"_s;
+            return "dvh1"_si;
         auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions.get());
         auto parameters = parseDoViDecoderConfigurationRecord(configurationRecordBuffer);
         if (!parameters)
-            return "dvh1"_s;
+            return "dvh1"_si;
         return createDoViCodecParametersString(*parameters);
     }
     case kCMVideoCodecType_MPEG4Video:
-        return "mp4v"_s;
+        return "mp4v"_si;
     case kCMVideoCodecType_VP9:
-        return "vp09"_s;
+        return "vp09"_si;
     case kAudioFormatAC3:
-        return "ac-3"_s;
+        return "ac-3"_si;
     case kAudioFormatMPEG4AAC:
-        return "mp4a.40.2"_s;
+        return "mp4a.40.2"_si;
     case kAudioFormatMPEG4AAC_HE:
-        return "mp4a.40.5"_s;
+        return "mp4a.40.5"_si;
     case kAudioFormatMPEG4AAC_HE_V2:
-        return "mp4a.40.29"_s;
+        return "mp4a.40.29"_si;
     case kAudioFormatMPEG4AAC_LD:
-        return "mp4a.40.23"_s;
+        return "mp4a.40.23"_si;
     case kAudioFormatMPEG4AAC_ELD:
-        return "mp4a.40.39"_s;
+        return "mp4a.40.39"_si;
     case kAudioFormatFLAC:
-        return "flac"_s;
+        return "flac"_si;
     case kAudioFormatOpus:
-        return "opus"_s;
+        return "opus"_si;
     case kAudioFormatEnhancedAC3:
     case 'ec+3':
     case 'qec3':
     case 'ce-3':
-        return "ec-3"_s;
+        return "ec-3"_si;
     case 'dts ':
-        return "dts"_s;
+        return "dts"_si;
 #if ENABLE(AV1)
     case kCMVideoCodecType_AV1: {
         RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
         if (!sampleExtensionsDict)
-            return "av01"_s;
+            return "av01"_si;
         RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict.get(), CFSTR("av1C")));
         if (!sampleExtensions)
-            return "av01"_s;
+            return "av01"_si;
         auto parameters = parseAV1DecoderConfigurationRecord(span(sampleExtensions.get()));
         if (!parameters)
-            return "av01"_s;
+            return "av01"_si;
         return createAV1CodecParametersString(*parameters);
     }
 #endif

@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BuiltinExecutables);
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createWithoutCopying({ s_JSCCombinedCode, s_JSCCombinedCodeLength }), { }, String(), SourceTaintedOrigin::Untainted))
+    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createWithoutCopying({ s_JSCCombinedCode, s_JSCCombinedCodeLength }).ptr(), { }, nullptr, SourceTaintedOrigin::Untainted))
 {
 }
 
@@ -54,12 +54,12 @@ SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind cons
     case ConstructorKind::Naked:
         break;
     case ConstructorKind::Base: {
-        static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
-        return makeSource(baseConstructorCode, { }, SourceTaintedOrigin::Untainted);
+        static NeverDestroyed<const RefPtr<StringImpl>> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
+        return makeSource(baseConstructorCode.get(), { }, SourceTaintedOrigin::Untainted);
     }
     case ConstructorKind::Extends: {
-        static NeverDestroyed<const String> derivedConstructorCode(MAKE_STATIC_STRING_IMPL("(function (...args) { super(...args); })"));
-        return makeSource(derivedConstructorCode, { }, SourceTaintedOrigin::Untainted);
+        static NeverDestroyed<const RefPtr<StringImpl>> derivedConstructorCode(MAKE_STATIC_STRING_IMPL("(function (...args) { super(...args); })"));
+        return makeSource(derivedConstructorCode.get(), { }, SourceTaintedOrigin::Untainted);
     }
     }
     RELEASE_ASSERT_NOT_REACHED();

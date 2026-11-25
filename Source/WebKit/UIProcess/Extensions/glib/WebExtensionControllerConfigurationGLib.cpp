@@ -26,13 +26,13 @@
 
 namespace WebKit {
 
-String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<WTF::UUID>)
+RefPtr<StringImpl> WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<WTF::UUID>)
 {
     notImplemented();
     return { };
 }
 
-String WebExtensionControllerConfiguration::createTemporaryStorageDirectoryPath()
+RefPtr<StringImpl> WebExtensionControllerConfiguration::createTemporaryStorageDirectoryPath()
 {
     notImplemented();
     return { };

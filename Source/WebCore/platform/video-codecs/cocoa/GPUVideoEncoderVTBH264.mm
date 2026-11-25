@@ -229,7 +229,7 @@ static CFStringRef extractVTProfileLevel(const H264ProfileLevelId& profileLevelI
     return PAL::kVTProfileLevel_H264_Baseline_AutoLevel;
 }
 
-static RetainPtr<CFStringRef> computeH264VTProfileLevel(const Vector<std::pair<String, String>>& parameters)
+static RetainPtr<CFStringRef> computeH264VTProfileLevel(const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters)
 {
     // https://datatracker.ietf.org/doc/html/rfc6184#section-8.1: default to Constrained Baseline Level 3.1 when profile-level-id is absent.
     H264ProfileLevelId profileLevelId { H264Profile::ConstrainedBaseline, H264Level::Level3_1 };
@@ -243,7 +243,7 @@ static RetainPtr<CFStringRef> computeH264VTProfileLevel(const Vector<std::pair<S
     return extractVTProfileLevel(profileLevelId);
 }
 
-GPUVideoEncoderVTBH264::GPUVideoEncoderVTBH264(CreationInfo&& creationInfo, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&& callback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
+GPUVideoEncoderVTBH264::GPUVideoEncoderVTBH264(CreationInfo&& creationInfo, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters, GPUVideoEncoderCallback&& callback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
     : GPUVideoEncoderVTB(WTF::move(creationInfo), WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback))
     , m_profileLevel(computeH264VTProfileLevel(parameters))
 {

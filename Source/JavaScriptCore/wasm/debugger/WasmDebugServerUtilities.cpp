@@ -60,7 +60,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Breakpoint);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(DebugState);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(StopData);
 
-String stringToHex(StringView str)
+RefPtr<StringImpl> stringToHex(StringView str)
 {
     StringBuilder result;
     auto utf8 = str.utf8();
@@ -159,7 +159,7 @@ static const uint8_t* savedWasmToJSPC(CallFrame* wasmToJSFrame)
     return WTF::unalignedLoad<const uint8_t*>(reinterpret_cast<const uint8_t*>(wasmToJSFrame) + Wasm::WasmToJSIPIntReturnPCSlot);
 }
 
-static String hostFunctionNameOf(CallFrame* frame)
+static RefPtr<StringImpl> hostFunctionNameOf(CallFrame* frame)
 {
     auto* callee = frame->jsCallee();
     if (callee && callee->inherits<JSFunction>()) {

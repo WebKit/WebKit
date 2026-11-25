@@ -135,7 +135,7 @@ bool CachedFont::ensureCustomFontData()
     return ensureCustomFontData(protect(downcast<SharedBuffer>(m_data)).get());
 }
 
-String CachedFont::calculateItemInCollection() const
+RefPtr<StringImpl> CachedFont::calculateItemInCollection() const
 {
     return url().fragmentIdentifier().toString();
 }
@@ -188,12 +188,12 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
     return m_fontCustomPlatformData.get();
 }
 
-RefPtr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping, DownloadableBinaryFontTrustedTypes trustedTypes)
+RefPtr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, StringImpl* itemInCollection, bool& wrapping, DownloadableBinaryFontTrustedTypes trustedTypes)
 {
     return createCustomFontDataWithPolicy(bytes, itemInCollection, wrapping, fontBinaryParsingPolicy(bytes.span(), trustedTypes));
 }
 
-RefPtr<FontCustomPlatformData> CachedFont::createCustomFontDataWithPolicy(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping, FontParsingPolicy policy)
+RefPtr<FontCustomPlatformData> CachedFont::createCustomFontDataWithPolicy(SharedBuffer& bytes, StringImpl* itemInCollection, bool& wrapping, FontParsingPolicy policy)
 {
     switch (policy) {
     case FontParsingPolicy::Deny:
@@ -209,14 +209,14 @@ RefPtr<FontCustomPlatformData> CachedFont::createCustomFontDataWithPolicy(Shared
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<FontCustomPlatformData> CachedFont::createCustomFontDataSystemParser(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
+RefPtr<FontCustomPlatformData> CachedFont::createCustomFontDataSystemParser(SharedBuffer& bytes, StringImpl* itemInCollection, bool& wrapping)
 {
     RefPtr buffer = { &bytes };
     wrapping = !convertWOFFToSfntIfNecessary(buffer);
     return buffer ? FontCustomPlatformData::create(*buffer, itemInCollection) : nullptr;
 }
 
-RefPtr<FontCustomPlatformData> CachedFont::createCustomFontDataSafeFontParser(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
+RefPtr<FontCustomPlatformData> CachedFont::createCustomFontDataSafeFontParser(SharedBuffer& bytes, StringImpl* itemInCollection, bool& wrapping)
 {
     RefPtr buffer = { &bytes };
     wrapping = !convertWOFFToSfntIfNecessary(buffer);

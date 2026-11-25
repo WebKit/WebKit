@@ -51,7 +51,7 @@
 
 namespace WebCore {
 
-bool CDM::supportsKeySystem(const String& keySystem)
+bool CDM::supportsKeySystem(StringImpl* keySystem)
 {
     for (auto& weakFactory : borrow(CDMFactory::registeredFactories())) {
         if (Ref { weakFactory.get() }->supportsKeySystem(keySystem))
@@ -60,12 +60,12 @@ bool CDM::supportsKeySystem(const String& keySystem)
     return false;
 }
 
-Ref<CDM> CDM::create(Document& document, const String& keySystem, const String& mediaKeysHashSalt)
+Ref<CDM> CDM::create(Document& document, StringImpl* keySystem, StringImpl* mediaKeysHashSalt)
 {
     return adoptRef(*new CDM(document, keySystem, mediaKeysHashSalt));
 }
 
-CDM::CDM(Document& document, const String& keySystem, const String& mediaKeysHashSalt)
+CDM::CDM(Document& document, StringImpl* keySystem, StringImpl* mediaKeysHashSalt)
     : ContextDestructionObserver(&document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -135,17 +135,19 @@ bool CDM::supportsSessions() const
     return m_private && m_private->supportsSessions();
 }
 
-bool CDM::supportsInitDataType(const AtomString& initDataType) const
+bool CDM::supportsInitDataType(AtomStringImpl* initDataType) const
 {
-    return m_private && m_private->supportedInitDataTypes().contains(initDataType);
+    return m_private && m_private->supportedInitDataTypes().containsIf([&](auto& item) {
+        return equal(item, initDataType);
+    });
 }
 
-RefPtr<SharedBuffer> CDM::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData)
+RefPtr<SharedBuffer> CDM::sanitizeInitData(AtomStringImpl* initDataType, const SharedBuffer& initData)
 {
     return InitDataRegistry::singleton().sanitizeInitData(initDataType, initData);
 }
 
-bool CDM::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData)
+bool CDM::supportsInitData(AtomStringImpl* initDataType, const SharedBuffer& initData)
 {
     return m_private && m_private->supportsInitData(initDataType, initData);
 }
@@ -157,14 +159,14 @@ RefPtr<SharedBuffer> CDM::sanitizeResponse(const SharedBuffer& response)
     return m_private->sanitizeResponse(response);
 }
 
-std::optional<String> CDM::sanitizeSessionId(const String& sessionId)
+std::optional<RefPtr<StringImpl>> CDM::sanitizeSessionId(StringImpl* sessionId)
 {
     if (!m_private)
         return std::nullopt;
     return m_private->sanitizeSessionId(sessionId);
 }
 
-String CDM::storageDirectory() const
+RefPtr<StringImpl> CDM::storageDirectory() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
     return document ? document->mediaKeysStorageDirectory() : emptyString();

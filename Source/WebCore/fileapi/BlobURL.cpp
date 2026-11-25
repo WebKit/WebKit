@@ -86,14 +86,14 @@ bool BlobURL::isSecureBlobURL(const URL& url)
 URL BlobURL::createBlobURL(StringView originString)
 {
     ASSERT(!originString.isEmpty());
-    String urlString = makeString("blob:"_s, originString, '/', WTF::UUID::createVersion4());
+    RefPtr<StringImpl> urlString = makeString("blob:"_s, originString, '/', WTF::UUID::createVersion4());
     return URL({ }, urlString);
 }
 
 #if ASSERT_ENABLED
 bool BlobURL::isInternalURL(const URL& url)
 {
-    return url.string().startsWith("blob:blobinternal://"_s);
+    return startsWith(url.string(), "blob:blobinternal://"_s);
 }
 #endif
 

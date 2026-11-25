@@ -70,7 +70,7 @@ void RemoteLegacyCDMFactoryProxy::clear()
         connection->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), proxy.key.toUInt64());
 }
 
-void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, std::optional<MediaPlayerIdentifier>&& playerId, CompletionHandler<void(std::optional<RemoteLegacyCDMIdentifier>&&)>&& completion)
+void RemoteLegacyCDMFactoryProxy::createCDM(StringImpl* keySystem, std::optional<MediaPlayerIdentifier>&& playerId, CompletionHandler<void(std::optional<RemoteLegacyCDMIdentifier>&&)>&& completion)
 {
     RefPtr privateCDM = LegacyCDM::create(keySystem);
     if (!privateCDM) {
@@ -84,7 +84,7 @@ void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, std::option
     completion(WTF::move(identifier));
 }
 
-void RemoteLegacyCDMFactoryProxy::supportsKeySystem(const String& keySystem, std::optional<String> mimeType, CompletionHandler<void(bool)>&& completion)
+void RemoteLegacyCDMFactoryProxy::supportsKeySystem(StringImpl* keySystem, std::optional<RefPtr<StringImpl>> mimeType, CompletionHandler<void(bool)>&& completion)
 {
     if (mimeType)
         completion(LegacyCDM::keySystemSupportsMimeType(keySystem, *mimeType));

@@ -76,7 +76,7 @@ template<typename> class ExceptionOr;
 
 class WebTransport : public WebTransportSessionClient, public ActiveDOMObject {
 public:
-    static ExceptionOr<Ref<WebTransport>> create(ScriptExecutionContext&, String&&, WebTransportOptions&&);
+    static ExceptionOr<Ref<WebTransport>> create(ScriptExecutionContext&, RefPtr<StringImpl>&&, WebTransportOptions&&);
     ~WebTransport();
 
     // ActiveDOMObject.
@@ -92,7 +92,7 @@ public:
     NODELETE void setAnticipatedConcurrentIncomingUnidirectionalStreams(std::optional<uint16_t>);
     NODELETE std::optional<uint16_t> anticipatedConcurrentIncomingBidirectionalStreams();
     NODELETE void setAnticipatedConcurrentIncomingBidirectionalStreams(std::optional<uint16_t>);
-    NODELETE String& protocol();
+    NODELETE RefPtr<StringImpl>& protocol();
     NODELETE FetchHeaders* responseHeaders();
     NODELETE DOMPromise& closed();
     NODELETE DOMPromise& draining();
@@ -113,7 +113,7 @@ public:
     void receiveStreamClosed(WebTransportStreamIdentifier);
 
 private:
-    WebTransport(ScriptExecutionContext&, JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<ReadableStream>&&, const WebTransportOptions&, Ref<WebTransportDatagramDuplexStream>&&, Ref<DatagramSource>&&, Ref<WebTransportReceiveStreamSource>&&, Ref<WebTransportBidirectionalStreamSource>&&, URL&&, Vector<KeyValuePair<String, String>>&&);
+    WebTransport(ScriptExecutionContext&, JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<ReadableStream>&&, const WebTransportOptions&, Ref<WebTransportDatagramDuplexStream>&&, Ref<DatagramSource>&&, Ref<WebTransportReceiveStreamSource>&&, Ref<WebTransportBidirectionalStreamSource>&&, URL&&, Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&&);
 
     void cleanup(Ref<DOMException>&&, std::optional<WebTransportCloseInfo>&&);
     void cleanupWithSessionError();
@@ -128,7 +128,7 @@ private:
     void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
     void streamReceiveError(WebTransportStreamIdentifier, uint64_t) final;
     void streamSendError(WebTransportStreamIdentifier, uint64_t) final;
-    void didFail(std::optional<uint32_t>&&, String&&) final;
+    void didFail(std::optional<uint32_t>&&, RefPtr<StringImpl>&&) final;
     void didDrain() final;
 
     ListHashSet<Ref<WritableStream>> m_sendStreams;
@@ -152,7 +152,7 @@ private:
     WebTransportCongestionControl m_congestionControl { WebTransportCongestionControl::Default };
     std::optional<uint16_t> m_anticipatedConcurrentIncomingUnidirectionalStreams;
     std::optional<uint16_t> m_anticipatedConcurrentIncomingBidirectionalStreams;
-    String m_protocol;
+    RefPtr<StringImpl> m_protocol;
     const RefPtr<FetchHeaders> m_responseHeaders;
     const PromiseAndWrapper m_closed;
     const PromiseAndWrapper m_draining;

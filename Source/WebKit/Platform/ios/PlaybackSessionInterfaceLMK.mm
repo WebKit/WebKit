@@ -346,7 +346,7 @@ void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector
 {
     RetainPtr audioTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
-        RetainPtr audioTrack = adoptNS([allocWKSLinearMediaTrackInstance() initWithLocalizedDisplayName:option.displayName.createNSString().get()]);
+        RetainPtr audioTrack = adoptNS([allocWKSLinearMediaTrackInstance() initWithLocalizedDisplayName:createNSString(option.displayName).get()]);
         [audioTracks addObject:audioTrack.get()];
     }
 
@@ -358,7 +358,7 @@ void PlaybackSessionInterfaceLMK::legibleMediaSelectionOptionsChanged(const Vect
 {
     RetainPtr legibleTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
-        RetainPtr legibleTrack = adoptNS([allocWKSLinearMediaTrackInstance() initWithLocalizedDisplayName:option.displayName.createNSString().get()]);
+        RetainPtr legibleTrack = adoptNS([allocWKSLinearMediaTrackInstance() initWithLocalizedDisplayName:createNSString(option.displayName).get()]);
         [legibleTracks addObject:legibleTrack.get()];
     }
 
@@ -454,7 +454,7 @@ static RetainPtr<NSData> artworkData(const WebCore::NowPlayingMetadata& metadata
 
 void PlaybackSessionInterfaceLMK::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& metadata)
 {
-    RetainPtr contentMetadata = adoptNS([allocWKSLinearMediaContentMetadataInstance() initWithTitle:metadata.title.createNSString().get() subtitle:metadata.artist.createNSString().get()]);
+    RetainPtr contentMetadata = adoptNS([allocWKSLinearMediaContentMetadataInstance() initWithTitle:createNSString(metadata.title).get() subtitle:createNSString(metadata.artist).get()]);
     [m_player setContentMetadata:contentMetadata.get()];
     [m_player setArtwork:artworkData(metadata).get()];
 }

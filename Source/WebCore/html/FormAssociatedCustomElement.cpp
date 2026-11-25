@@ -58,11 +58,11 @@ Ref<FormAssociatedCustomElement> FormAssociatedCustomElement::create(HTMLMaybeFo
     return adoptRef(*new FormAssociatedCustomElement(element));
 }
 
-ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags validityStateFlags, String&& message, HTMLElement* validationAnchor)
+ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags validityStateFlags, RefPtr<StringImpl>&& message, HTMLElement* validationAnchor)
 {
     ASSERT(m_element->isPrecustomizedOrDefinedCustomElement());
 
-    if (!validityStateFlags.isValid() && message.isEmpty())
+    if (!validityStateFlags.isValid() && isEmpty(message))
         return Exception { ExceptionCode::TypeError };
 
     m_validityStateFlags = validityStateFlags;
@@ -76,7 +76,7 @@ ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags va
     return { };
 }
 
-String FormAssociatedCustomElement::validationMessage() const
+RefPtr<StringImpl> FormAssociatedCustomElement::validationMessage() const
 {
     ASSERT(m_element->isPrecustomizedOrDefinedCustomElement());
     return customValidationMessage();
@@ -123,7 +123,7 @@ bool FormAssociatedCustomElement::appendFormData(DOMFormData& formData)
         [&](const Ref<DOMFormData>& value) {
             for (const auto& item : value->items()) {
                 WTF::switchOn(item.data,
-                    [&](const String& value) {
+                    [&](StringImpl* value) {
                         formData.append(item.name, value);
                     },
                     [&](const Ref<File>& value) {
@@ -132,12 +132,12 @@ bool FormAssociatedCustomElement::appendFormData(DOMFormData& formData)
                 );
             }
         },
-        [&](const String& value) {
-            if (!name().isEmpty())
+        [&](StringImpl* value) {
+            if (!isEmpty(name()))
                 formData.append(name(), value);
         },
         [&](const Ref<File>& value) {
-            if (!name().isEmpty())
+            if (!isEmpty(name()))
                 formData.append(name(), value);
         },
         [](std::nullptr_t) {
@@ -221,7 +221,7 @@ void FormAssociatedCustomElement::invalidateElementsCollectionCachesInAncestors(
         invalidateElementsCache(ancestor.get());
 }
 
-const AtomString& FormAssociatedCustomElement::formControlType() const
+const RefPtr<AtomStringImpl>& FormAssociatedCustomElement::formControlType() const
 {
     return asHTMLElement().localName();
 }
@@ -243,7 +243,7 @@ FormControlState FormAssociatedCustomElement::saveFormControlState() const
     auto logUnsupportedFileWarning = [&](const Ref<File>&) {
         Ref document = asHTMLElement().document();
         if (document->frame() && !didLogMessage) {
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File isn't currently supported when saving / restoring state."_s);
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File isn't currently supported when saving / restoring state."_si);
             didLogMessage = true;
         }
     };
@@ -254,9 +254,9 @@ FormControlState FormAssociatedCustomElement::saveFormControlState() const
 
             for (const auto& item : state->items()) {
                 WTF::switchOn(item.data,
-                    [&](const String& value) {
-                        savedState.append(item.name);
-                        savedState.append(value);
+                    [&](StringImpl* value) {
+                        savedState.append(AtomStringImpl::add(item.name.get()));
+                        savedState.append(AtomStringImpl::add(value));
                     },
                     [&](const Ref<File>& file) {
                         logUnsupportedFileWarning(file);
@@ -267,9 +267,9 @@ FormControlState FormAssociatedCustomElement::saveFormControlState() const
             savedState.shrinkToFit();
             return savedState;
         },
-        [&](const String& state) {
+        [&](StringImpl* state) {
             FormControlState savedState;
-            savedState.append(state);
+            savedState.append(AtomStringImpl::add(state));
             return savedState;
         },
         [](std::nullptr_t) {
@@ -290,7 +290,7 @@ void FormAssociatedCustomElement::restoreFormControlState(const FormControlState
 
     Ref element = asHTMLElement();
     if (savedState.size() == 1)
-        restoredState.emplace<String>(savedState[0]);
+        restoredState.emplace<RefPtr<StringImpl>>(savedState[0]);
     else {
         auto formData = DOMFormData::create(&protect(element->document()).get(), PAL::UTF8Encoding());
         for (size_t i = 0; i < savedState.size(); i += 2)

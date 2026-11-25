@@ -39,13 +39,13 @@ public:
         Ref<WebXRSession> session;
     };
 
-    static Ref<XRSessionEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<XRSessionEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRSessionEvent();
 
     const WebXRSession& session() const;
 
 private:
-    XRSessionEvent(const AtomString&, Init&&, IsTrusted);
+    XRSessionEvent(AtomStringImpl*, Init&&, IsTrusted);
 
     const Ref<WebXRSession> m_session;
 };

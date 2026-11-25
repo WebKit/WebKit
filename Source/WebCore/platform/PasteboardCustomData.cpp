@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-static Variant<String, Ref<SharedBuffer>> copyPlatformData(const Variant<String, Ref<SharedBuffer>>& other)
+static Variant<RefPtr<StringImpl>, Ref<SharedBuffer>> copyPlatformData(const Variant<RefPtr<StringImpl>, Ref<SharedBuffer>>& other)
 {
-    if (std::holds_alternative<String>(other))
-        return { std::get<String>(other) };
+    if (std::holds_alternative<RefPtr<StringImpl>>(other))
+        return { std::get<RefPtr<StringImpl>>(other) };
 
     if (std::holds_alternative<Ref<SharedBuffer>>(other))
         return { std::get<Ref<SharedBuffer>>(other).copyRef() };
@@ -51,7 +51,7 @@ PasteboardCustomData::Entry::Entry(const Entry& entry)
 {
 }
 
-PasteboardCustomData::Entry::Entry(const String& dataType)
+PasteboardCustomData::Entry::Entry(StringImpl* dataType)
     : type(dataType)
 {
 }
@@ -59,7 +59,7 @@ PasteboardCustomData::Entry::Entry(const String& dataType)
 PasteboardCustomData::Entry::Entry() = default;
 PasteboardCustomData::Entry::Entry(Entry&&) = default;
 
-PasteboardCustomData::Entry::Entry(const String& type, const String& customData, const Variant<String, Ref<WebCore::SharedBuffer>>& platformData)
+PasteboardCustomData::Entry::Entry(StringImpl* type, StringImpl* customData, const Variant<RefPtr<StringImpl>, Ref<WebCore::SharedBuffer>>& platformData)
     : type(type)
     , customData(customData)
     , platformData(platformData)
@@ -81,7 +81,7 @@ PasteboardCustomData::PasteboardCustomData(const PasteboardCustomData&) = defaul
 PasteboardCustomData::PasteboardCustomData(PasteboardCustomData&&) = default;
 PasteboardCustomData::~PasteboardCustomData() = default;
 
-PasteboardCustomData::PasteboardCustomData(String&& origin, Vector<Entry>&& data)
+PasteboardCustomData::PasteboardCustomData(RefPtr<StringImpl>&& origin, Vector<Entry>&& data)
     : m_origin(WTF::move(origin))
     , m_data(WTF::move(data))
 {
@@ -109,18 +109,18 @@ PasteboardCustomData PasteboardCustomData::fromPersistenceDecoder(WTF::Persisten
     if (!version || *version > maxSupportedDataSerializationVersionNumber)
         return { };
 
-    std::optional<String> origin;
+    std::optional<RefPtr<StringImpl>> origin;
     decoder >> origin;
     if (!origin)
         return { };
     result.m_origin = WTF::move(*origin);
 
-    std::optional<HashMap<String, String>> sameOriginCustomStringData;
+    std::optional<HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>> sameOriginCustomStringData;
     decoder >> sameOriginCustomStringData;
     if (!sameOriginCustomStringData)
         return { };
 
-    std::optional<Vector<String>> orderedTypes;
+    std::optional<Vector<RefPtr<StringImpl>>> orderedTypes;
     decoder >> orderedTypes;
     if (!orderedTypes)
         return { };
@@ -136,25 +136,25 @@ PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& 
     return fromPersistenceDecoder(buffer.decoder());
 }
 
-void PasteboardCustomData::writeString(const String& type, const String& value)
+void PasteboardCustomData::writeString(StringImpl* type, StringImpl* value)
 {
     addOrMoveEntryToEnd(type).platformData = { value };
 }
 
-void PasteboardCustomData::writeData(const String& type, Ref<SharedBuffer>&& data)
+void PasteboardCustomData::writeData(StringImpl* type, Ref<SharedBuffer>&& data)
 {
     addOrMoveEntryToEnd(type).platformData = { WTF::move(data) };
 }
 
-void PasteboardCustomData::writeStringInCustomData(const String& type, const String& value)
+void PasteboardCustomData::writeStringInCustomData(StringImpl* type, StringImpl* value)
 {
     addOrMoveEntryToEnd(type).customData = value;
 }
 
-PasteboardCustomData::Entry& PasteboardCustomData::addOrMoveEntryToEnd(const String& type)
+PasteboardCustomData::Entry& PasteboardCustomData::addOrMoveEntryToEnd(StringImpl* type)
 {
     auto index = m_data.findIf([&] (auto& entry) {
-        return entry.type == type;
+        return equal(entry.type, type);
     });
     auto entry = index == notFound ? Entry(type) : m_data[index];
     if (index != notFound)
@@ -168,16 +168,16 @@ void PasteboardCustomData::clear()
     m_data.clear();
 }
 
-void PasteboardCustomData::clear(const String& type)
+void PasteboardCustomData::clear(StringImpl* type)
 {
     m_data.removeFirstMatching([&] (auto& entry) {
-        return entry.type == type;
+        return equal(entry.type, type);
     });
 }
 
 PasteboardCustomData& PasteboardCustomData::operator=(const PasteboardCustomData&) = default;
 
-Vector<String> PasteboardCustomData::orderedTypes() const
+Vector<RefPtr<StringImpl>> PasteboardCustomData::orderedTypes() const
 {
     return m_data.map([&] (auto& entry) {
         return entry.type;
@@ -192,22 +192,22 @@ bool PasteboardCustomData::hasData() const
 bool PasteboardCustomData::hasSameOriginCustomData() const
 {
     return notFound != m_data.findIf([&] (auto& entry) {
-        return !entry.customData.isNull();
+        return !!entry.customData;
     });
 }
 
-HashMap<String, String> PasteboardCustomData::sameOriginCustomStringData() const
+HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> PasteboardCustomData::sameOriginCustomStringData() const
 {
-    HashMap<String, String> customData;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> customData;
     for (auto& entry : m_data)
         customData.set(entry.type, entry.customData);
     return customData;
 }
 
-RefPtr<SharedBuffer> PasteboardCustomData::readBuffer(const String& type) const
+RefPtr<SharedBuffer> PasteboardCustomData::readBuffer(StringImpl* type) const
 {
     for (auto& entry : m_data) {
-        if (entry.type != type)
+        if (!equal(entry.type, type))
             continue;
 
         if (std::holds_alternative<Ref<SharedBuffer>>(entry.platformData))
@@ -218,60 +218,60 @@ RefPtr<SharedBuffer> PasteboardCustomData::readBuffer(const String& type) const
     return nullptr;
 }
 
-String PasteboardCustomData::readString(const String& type) const
+RefPtr<StringImpl> PasteboardCustomData::readString(StringImpl* type) const
 {
     for (auto& entry : m_data) {
-        if (entry.type != type)
+        if (!equal(entry.type, type))
             continue;
 
-        if (std::holds_alternative<String>(entry.platformData))
-            return std::get<String>(entry.platformData);
+        if (std::holds_alternative<RefPtr<StringImpl>>(entry.platformData))
+            return std::get<RefPtr<StringImpl>>(entry.platformData);
 
         return { };
     }
     return { };
 }
 
-String PasteboardCustomData::readStringInCustomData(const String& type) const
+RefPtr<StringImpl> PasteboardCustomData::readStringInCustomData(StringImpl* type) const
 {
     for (auto& entry : m_data) {
-        if (entry.type == type)
+        if (equal(entry.type, type))
             return entry.customData;
     }
     return { };
 }
 
-void PasteboardCustomData::forEachType(NOESCAPE const Function<void(const String&)>& function) const
+void PasteboardCustomData::forEachType(NOESCAPE const Function<void(StringImpl*)>& function) const
 {
     for (auto& entry : m_data)
         function(entry.type);
 }
 
-void PasteboardCustomData::forEachPlatformString(NOESCAPE const Function<void(const String& type, const String& data)>& function) const
+void PasteboardCustomData::forEachPlatformString(NOESCAPE const Function<void(StringImpl* type, StringImpl* data)>& function) const
 {
     for (auto& entry : m_data) {
-        if (!std::holds_alternative<String>(entry.platformData))
+        if (!std::holds_alternative<RefPtr<StringImpl>>(entry.platformData))
             continue;
 
-        auto string = std::get<String>(entry.platformData);
-        if (!string.isNull())
+        auto string = std::get<RefPtr<StringImpl>>(entry.platformData);
+        if (string)
             function(entry.type, string);
     }
 }
 
-void PasteboardCustomData::forEachCustomString(NOESCAPE const Function<void(const String& type, const String& data)>& function) const
+void PasteboardCustomData::forEachCustomString(NOESCAPE const Function<void(StringImpl* type, StringImpl* data)>& function) const
 {
     for (auto& entry : m_data) {
-        if (!entry.customData.isNull())
+        if (entry.customData)
             function(entry.type, entry.customData);
     }
 }
 
-void PasteboardCustomData::forEachPlatformStringOrBuffer(NOESCAPE const Function<void(const String& type, const Variant<String, Ref<SharedBuffer>>& data)>& function) const
+void PasteboardCustomData::forEachPlatformStringOrBuffer(NOESCAPE const Function<void(StringImpl* type, const Variant<RefPtr<StringImpl>, Ref<SharedBuffer>>& data)>& function) const
 {
     for (auto& entry : m_data) {
         auto& data = entry.platformData;
-        if ((std::holds_alternative<String>(data) && !std::get<String>(data).isNull()) || std::holds_alternative<Ref<SharedBuffer>>(data))
+        if ((std::holds_alternative<RefPtr<StringImpl>>(data) && !!std::get<RefPtr<StringImpl>>(data)) || std::holds_alternative<Ref<SharedBuffer>>(data))
             function(entry.type, data);
     }
 }

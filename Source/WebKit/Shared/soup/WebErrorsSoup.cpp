@@ -34,7 +34,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-ResourceError downloadNetworkError(const URL& failingURL, const String& localizedDescription)
+ResourceError downloadNetworkError(const URL& failingURL, StringImpl* localizedDescription)
 {
     return ResourceError(API::Error::webKitDownloadErrorDomain(), API::Error::Download::Transport, failingURL, localizedDescription);
 }
@@ -44,7 +44,7 @@ ResourceError downloadCancelledByUserError(const ResourceResponse& response)
     return ResourceError(API::Error::webKitDownloadErrorDomain(), API::Error::Download::CancelledByUser, response.url(), WEB_UI_STRING("User cancelled the download", "The download was cancelled by the user"));
 }
 
-ResourceError downloadDestinationError(const ResourceResponse& response, const String& localizedDescription)
+ResourceError downloadDestinationError(const ResourceResponse& response, StringImpl* localizedDescription)
 {
     return ResourceError(API::Error::webKitDownloadErrorDomain(), API::Error::Download::Destination, response.url(), localizedDescription);
 }

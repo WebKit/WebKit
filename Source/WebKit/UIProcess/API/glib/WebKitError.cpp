@@ -36,7 +36,7 @@ using namespace WebCore;
  */
 GQuark webkit_network_error_quark()
 {
-    return gQuarkFromString(API::Error::webKitNetworkErrorDomain().utf8());
+    return gQuarkFromString(utf8(API::Error::webKitNetworkErrorDomain()));
 }
 
 /**
@@ -48,7 +48,7 @@ GQuark webkit_network_error_quark()
  */
 GQuark webkit_policy_error_quark()
 {
-    return gQuarkFromString(API::Error::webKitPolicyErrorDomain().utf8());
+    return gQuarkFromString(utf8(API::Error::webKitPolicyErrorDomain()));
 }
 
 /**
@@ -60,7 +60,7 @@ GQuark webkit_policy_error_quark()
  */
 GQuark webkit_plugin_error_quark()
 {
-    return gQuarkFromString(API::Error::webKitPluginErrorDomain().utf8());
+    return gQuarkFromString(utf8(API::Error::webKitPluginErrorDomain()));
 }
 
 /**
@@ -72,7 +72,7 @@ GQuark webkit_plugin_error_quark()
  */
 GQuark webkit_download_error_quark()
 {
-    return gQuarkFromString(API::Error::webKitDownloadErrorDomain().utf8());
+    return gQuarkFromString(utf8(API::Error::webKitDownloadErrorDomain()));
 }
 
 #if PLATFORM(GTK)
@@ -85,7 +85,7 @@ GQuark webkit_download_error_quark()
  */
 GQuark webkit_print_error_quark()
 {
-    return gQuarkFromString(API::Error::webKitPrintErrorDomain().utf8());
+    return gQuarkFromString(utf8(API::Error::webKitPrintErrorDomain()));
 }
 #endif
 

@@ -57,7 +57,7 @@ using WebCore::createVideoInfoFromFormatDescription;
 
 namespace TestWebKitAPI {
 
-static Vector<Ref<MediaSampleAVFObjC>> parseWebMVideoSamples(NSString *resourceName, const String& contentType)
+static Vector<Ref<MediaSampleAVFObjC>> parseWebMVideoSamples(NSString *resourceName, StringImpl* contentType)
 {
     Vector<Ref<MediaSampleAVFObjC>> samples;
 
@@ -72,7 +72,7 @@ static Vector<Ref<MediaSampleAVFObjC>> parseWebMVideoSamples(NSString *resourceN
     parser->setCallOnClientThreadCallback([](auto&& function) {
         function();
     });
-    parser->setDidProvideMediaDataCallback([&](Ref<MediaSampleAVFObjC>&& sample, uint64_t, const String&) {
+    parser->setDidProvideMediaDataCallback([&](Ref<MediaSampleAVFObjC>&& sample, uint64_t, StringImpl*) {
         if (PAL::CMFormatDescriptionGetMediaType(PAL::CMSampleBufferGetFormatDescription(sample->platformSample().cmSampleBuffer())) == kCMMediaType_Video)
             samples.append(WTF::move(sample));
     });
@@ -104,7 +104,7 @@ static RetainPtr<CMSampleBufferRef> createDecodedVideoSampleBuffer()
 
 TEST(VideoMediaSampleRenderer, DecodedFrameDisplayedAfterHardwareDecoderFailureAndFlush)
 {
-    auto samples = parseWebMVideoSamples(@"test-vp8", "video/webm; codecs=vp8"_s);
+    auto samples = parseWebMVideoSamples(@"test-vp8", "video/webm; codecs=vp8"_si);
     ASSERT_GE(samples.size(), 3u);
 
     RefPtr info = createVideoInfoFromFormatDescription(PAL::CMSampleBufferGetFormatDescription(samples[0]->platformSample().cmSampleBuffer()));

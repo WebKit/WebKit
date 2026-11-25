@@ -82,8 +82,8 @@ private:
     RefPtr<NetworkLoad> m_networkLoad;
     WeakPtr<NetworkSession> m_session;
 
-    String m_responseEncoding;
-    String m_referrerPolicy;
+    RefPtr<StringImpl> m_responseEncoding;
+    RefPtr<StringImpl> m_referrerPolicy;
     WebCore::ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     WebCore::CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
 

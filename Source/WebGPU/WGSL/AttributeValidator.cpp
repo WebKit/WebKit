@@ -358,12 +358,12 @@ void AttributeValidator::validateAlignment(const SourceSpan& span, AddressSpace 
 
     if (auto* arrayType = std::get_if<Types::Array>(type)) {
         if (arrayType->stride() % requiredAlignment(arrayType->element)) [[unlikely]] {
-            error(span, "array must have a stride multiple of "_s, String::number(requiredAlignment(arrayType->element)), " bytes, but has a stride of "_s, String::number(arrayType->stride()), " bytes"_s);
+            error(span, "array must have a stride multiple of "_s, makeString(requiredAlignment(arrayType->element)), " bytes, but has a stride of "_s, makeString(arrayType->stride()), " bytes"_s);
             return;
         }
 
         if (addressSpace == AddressSpace::Uniform && (arrayType->stride() % 16)) [[unlikely]] {
-            error(span, "arrays in the uniform address space must have a stride multiple of 16 bytes, but has a stride of "_s, String::number(arrayType->stride()), " bytes"_s);
+            error(span, "arrays in the uniform address space must have a stride multiple of 16 bytes, but has a stride of "_s, makeString(arrayType->stride()), " bytes"_s);
             return;
         }
 
@@ -384,7 +384,7 @@ void AttributeValidator::validateAlignment(const SourceSpan& span, AddressSpace 
                 return;
 
             if (member.offset() % requiredAlignment(type)) [[unlikely]] {
-                error(member.span(), "offset of struct member "_s, structure.name(), "::"_s, member.name(), " must be a multiple of "_s, String::number(requiredAlignment(type)), " bytes, but its offset is "_s, String::number(member.offset()), " bytes"_s);
+                error(member.span(), "offset of struct member "_s, structure.name(), "::"_s, member.name(), " must be a multiple of "_s, makeString(requiredAlignment(type)), " bytes, but its offset is "_s, makeString(member.offset()), " bytes"_s);
                 return;
             }
 
@@ -393,7 +393,7 @@ void AttributeValidator::validateAlignment(const SourceSpan& span, AddressSpace 
                 auto spaceBetweenMembers = nextMember.offset() - member.offset();
                 auto minimumNumberOfBytes = WTF::roundUpToMultipleOf(16, type->size());
                 if (spaceBetweenMembers < minimumNumberOfBytes) [[unlikely]] {
-                    error(member.span(), "uniform address space requires that the number of bytes between "_s, structure.name(), "::"_s, member.name(), " and "_s, structure.name(), "::"_s, nextMember.name(), " must be at least "_s, String::number(minimumNumberOfBytes), " bytes, but it is "_s, String::number(spaceBetweenMembers), " bytes"_s);
+                    error(member.span(), "uniform address space requires that the number of bytes between "_s, structure.name(), "::"_s, member.name(), " and "_s, structure.name(), "::"_s, nextMember.name(), " must be at least "_s, makeString(minimumNumberOfBytes), " bytes, but it is "_s, makeString(spaceBetweenMembers), " bytes"_s);
                     return;
                 }
             }

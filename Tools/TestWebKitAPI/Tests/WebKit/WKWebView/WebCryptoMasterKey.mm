@@ -31,7 +31,7 @@
 #import <wtf/text/WTFString.h>
 
 static bool receivedMessage = false;
-static String gMessage;
+static RefPtr<StringImpl> gMessage;
 static bool masterKeyCalled = false;
 
 @interface WebCryptoMasterKeyNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
@@ -47,7 +47,7 @@ static bool masterKeyCalled = false;
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    gMessage = message;
+    gMessage = StringImpl::create(message);
     receivedMessage = true;
     completionHandler();
 }

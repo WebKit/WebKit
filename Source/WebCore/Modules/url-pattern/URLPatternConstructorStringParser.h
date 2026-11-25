@@ -54,7 +54,7 @@ private:
     NODELETE bool isNonSpecialPatternChararacter(size_t index, char value) const;
     bool isSearchPrefix() const;
     NODELETE bool isAuthoritySlashesNext() const;
-    String makeComponentString() const;
+    RefPtr<StringImpl> makeComponentString() const;
     void changeState(URLPatternConstructorStringParserState, size_t skip);
     void updateState();
     ExceptionOr<void> computeProtocolMatchSpecialSchemeFlag();

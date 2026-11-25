@@ -68,9 +68,9 @@ private:
     IntlRelativeTimeFormat(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    static Vector<String> localeData(const String&, RelevantExtensionKey);
+    static Vector<RefPtr<StringImpl>> localeData(StringImpl*, RelevantExtensionKey);
 
-    String formatInternal(JSGlobalObject*, double, StringView unit) const;
+    RefPtr<StringImpl> formatInternal(JSGlobalObject*, double, StringView unit) const;
 
     enum class Style : uint8_t { Long, Short, Narrow };
 
@@ -82,9 +82,9 @@ private:
     mutable std::unique_ptr<UFormattedRelativeDateTime, ICUDeleter<ureldatefmt_closeResult>> m_formattedResult;
     mutable std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>> m_cfpos;
 
-    String m_locale;
-    String m_dataLocale;
-    mutable String m_numberingSystem;
+    RefPtr<StringImpl> m_locale;
+    RefPtr<StringImpl> m_dataLocale;
+    mutable RefPtr<StringImpl> m_numberingSystem;
     Style m_style { Style::Long };
     bool m_numeric { true };
 };

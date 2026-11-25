@@ -1,0 +1,10 @@
+Tests dynamic import() from a user script running in an ImageDocument (a document without a text decoder, so with a null charset). The importing script has a source origin (about:blank) but no script fetcher, so ScriptModuleLoader creates a CachedScriptFetcher from the document charset.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS importResult is "resolved: 42"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

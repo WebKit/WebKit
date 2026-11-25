@@ -121,7 +121,7 @@ void IDBConnectionToServer::didCreateObjectStore(const IDBResultData& resultData
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
+void IDBConnectionToServer::deleteObjectStore(const IDBRequestData& requestData, StringImpl* objectStoreName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::deleteObjectStore");
     RELEASE_ASSERT(isMainThread());
@@ -138,7 +138,7 @@ void IDBConnectionToServer::didDeleteObjectStore(const IDBResultData& resultData
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+void IDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* newName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::renameObjectStore");
     RELEASE_ASSERT(isMainThread());
@@ -189,7 +189,7 @@ void IDBConnectionToServer::didCreateIndex(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+void IDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* indexName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::deleteIndex");
     RELEASE_ASSERT(isMainThread());
@@ -206,7 +206,7 @@ void IDBConnectionToServer::didDeleteIndex(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
+void IDBConnectionToServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, StringImpl* newName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::renameIndex");
     RELEASE_ASSERT(isMainThread());

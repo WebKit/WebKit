@@ -46,8 +46,8 @@ public:
     Ref<MemoryStorageArea> clone() const;
 
     // StorageAreaBase
-    HashMap<String, String> allItems() final;
-    std::expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, String&& key, String&& value, const String& urlString) final;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> allItems() final;
+    std::expected<void, StorageError> setItem(std::optional<IPC::Connection::UniqueID>, std::optional<StorageAreaImplIdentifier>, RefPtr<StringImpl>&& key, RefPtr<StringImpl>&& value, StringImpl* urlString) final;
     
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -57,8 +57,8 @@ private:
 
     // StorageAreaBase
     StorageAreaBase::StorageType storageType() const final { return m_storageType; }
-    std::expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) final;
-    std::expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) final;
+    std::expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, StringImpl* key, StringImpl* urlString) final;
+    std::expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, StringImpl* urlString) final;
 
     mutable WebCore::StorageMap m_map;
     StorageAreaBase::StorageType m_storageType;

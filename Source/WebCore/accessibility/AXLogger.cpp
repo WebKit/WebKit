@@ -63,11 +63,11 @@ bool AXLogger::shouldLog()
     // For instance, if you want to just log from the wrapper and the AXIsolatedTree class:
     // static NeverDestroyed nameFilter = Vector<String> { "WebAccessibilityObjectWrapper"_s, "AXIsolatedTree"_s };
     // The default string "log nothing", prevents any output. An empty Vector or an empty string in the Vector will log everything.
-    static NeverDestroyed nameFilter = Vector<String> { "log nothing"_s };
+    static NeverDestroyed nameFilter = Vector<RefPtr<StringImpl>> { "log nothing"_s };
 
     if (!nameFilter->isEmpty()) {
         auto it = std::find_if(nameFilter->begin(), nameFilter->end(), [this] (const auto& name) {
-            return m_methodName.contains(name);
+            return contains(m_methodName, name);
         });
         if (it == nameFilter->end())
             return false;
@@ -78,7 +78,7 @@ bool AXLogger::shouldLog()
     return loggingOptions.contains(AXLoggingOptions::OffMainThread);
 }
 
-AXLogger::AXLogger(const String& methodName)
+AXLogger::AXLogger(StringImpl* methodName)
     : m_methodName(methodName)
 {
     auto initializeAXChannel = [] () {
@@ -86,7 +86,7 @@ AXLogger::AXLogger(const String& methodName)
         if (initialized)
             return;
 
-        if (auto* channel = getLogChannel("Accessibility"_s)) {
+        if (auto* channel = getLogChannel("Accessibility"_si)) {
             LogAccessibility.state = WTFLogChannelState::On;
             channel->level = WTFLogLevel::Debug;
             initialized = true;
@@ -95,7 +95,7 @@ AXLogger::AXLogger(const String& methodName)
     initializeAXChannel();
 
     if (shouldLog()) {
-        if (!m_methodName.isEmpty())
+        if (!isEmpty(m_methodName))
             LOG_WITH_STREAM(Accessibility, stream << m_methodName << " {");
     }
     m_startTime = MonotonicTime::now();
@@ -105,7 +105,7 @@ AXLogger::~AXLogger()
 {
     static const Seconds ExecutionTimeThreshold { 1_s };
     auto elapsedTime = MonotonicTime::now() - m_startTime;
-    if (shouldLog() && !m_methodName.isEmpty()) {
+    if (shouldLog() && !isEmpty(m_methodName)) {
         if (elapsedTime > ExecutionTimeThreshold)
             LOG_WITH_STREAM(Accessibility, stream << "} " << m_methodName << " exceeded ExecutionTimeThreshold " << elapsedTime);
         else
@@ -113,7 +113,7 @@ AXLogger::~AXLogger()
     }
 }
 
-void AXLogger::log(const String& message)
+void AXLogger::log(StringImpl* message)
 {
     if (shouldLog())
         LOG_WITH_STREAM(Accessibility, stream << message);
@@ -140,7 +140,7 @@ void AXLogger::log(RefPtr<AXCoreObject> object)
         else
             stream << "null";
 
-        LOG(Accessibility, "%s", stream.release().utf8());
+        LOG(Accessibility, "%s", utf8(stream.release()));
     }
 }
 
@@ -154,7 +154,7 @@ void AXLogger::log(const Vector<Ref<AXCoreObject>>& objects)
             stream << object.get();
         stream << "]";
 
-        LOG(Accessibility, "%s", stream.release().utf8());
+        LOG(Accessibility, "%s", utf8(stream.release()));
     }
 }
 
@@ -164,7 +164,7 @@ void AXLogger::log(const std::pair<Ref<AccessibilityObject>, AXNotificationWithD
         TextStream stream(TextStream::LineMode::MultipleLine);
         stream << "Notification " << notification.second.notification << " for object ";
         stream << notification.first.get();
-        LOG(Accessibility, "%s", stream.release().utf8());
+        LOG(Accessibility, "%s", utf8(stream.release()));
     }
 }
 
@@ -177,7 +177,7 @@ void AXLogger::log(const std::pair<RefPtr<AXCoreObject>, AXNotification>& notifi
             stream << *notification.first;
         else
             stream << "null";
-        LOG(Accessibility, "%s", stream.release().utf8());
+        LOG(Accessibility, "%s", utf8(stream.release()));
     }
 }
 
@@ -188,7 +188,7 @@ void AXLogger::log(const AccessibilitySearchCriteria& criteria)
 
     TextStream stream(TextStream::LineMode::MultipleLine);
     stream << criteria;
-    LOG(Accessibility, "%s", stream.release().utf8());
+    LOG(Accessibility, "%s", utf8(stream.release()));
 }
 
 void AXLogger::log(AccessibilityObjectInclusion inclusion)
@@ -198,7 +198,7 @@ void AXLogger::log(AccessibilityObjectInclusion inclusion)
 
     TextStream stream(TextStream::LineMode::SingleLine);
     stream.dumpProperty("ObjectInclusion"_s, inclusion);
-    LOG(Accessibility, "%s", stream.release().utf8());
+    LOG(Accessibility, "%s", utf8(stream.release()));
 }
 
 void AXLogger::log(AXRelation relation)
@@ -208,7 +208,7 @@ void AXLogger::log(AXRelation relation)
 
     TextStream stream(TextStream::LineMode::SingleLine);
     stream.dumpProperty("RelationType"_s, relation);
-    LOG(Accessibility, "%s", stream.release().utf8());
+    LOG(Accessibility, "%s", utf8(stream.release()));
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -217,7 +217,7 @@ void AXLogger::log(AXIsolatedTree& tree)
     if (shouldLog()) {
         TextStream stream(TextStream::LineMode::MultipleLine);
         stream << tree;
-        LOG(Accessibility, "%s", stream.release().utf8());
+        LOG(Accessibility, "%s", utf8(stream.release()));
     }
 }
 #endif
@@ -227,15 +227,15 @@ void AXLogger::log(AXObjectCache& axObjectCache)
     if (shouldLog()) {
         TextStream stream(TextStream::LineMode::MultipleLine);
         stream << axObjectCache;
-        LOG(Accessibility, "%s", stream.release().utf8());
+        LOG(Accessibility, "%s", utf8(stream.release()));
     }
 }
 
-void AXLogger::log(const String& collectionName, const AXObjectCache::DeferredCollection& collection)
+void AXLogger::log(StringImpl* collectionName, const AXObjectCache::DeferredCollection& collection)
 {
     unsigned size = 0;
     WTF::switchOn(collection,
-        [&size] (const HashMap<Element*, String>& typedCollection) { size = typedCollection.size(); },
+        [&size] (const HashMap<Element*, RefPtr<StringImpl>>& typedCollection) { size = typedCollection.size(); },
         [&size] (const HashSet<AXID>& typedCollection) { size = typedCollection.size(); },
         [&size] (const ListHashSet<Node*>& typedCollection) { size = typedCollection.size(); },
         [&size] (const ListHashSet<Ref<AccessibilityObject>>& typedCollection) { size = typedCollection.size(); },
@@ -248,7 +248,7 @@ void AXLogger::log(const String& collectionName, const AXObjectCache::DeferredCo
         [&size] (const WeakHashSet<AccessibilityNodeObject>& typedCollection) { size = typedCollection.computeSize(); },
         [&size] (const WeakListHashSet<Node, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
         [&size] (const WeakListHashSet<Element, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
-        [&size] (const WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
+        [&size] (const WeakHashMap<Element, RefPtr<StringImpl>, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
         [] (auto&) {
             AX_ASSERT_NOT_REACHED();
             return;
@@ -598,16 +598,16 @@ TextStream& operator<<(TextStream& stream, AXRelation relation)
 
 TextStream& operator<<(WTF::TextStream& stream, const TextUnderElementMode& mode)
 {
-    String childrenInclusion;
+    RefPtr<StringImpl> childrenInclusion;
     switch (mode.childrenInclusion) {
     case TextUnderElementMode::Children::SkipIgnoredChildren:
-        childrenInclusion = "SkipIgnoredChildren"_s;
+        childrenInclusion = "SkipIgnoredChildren"_si;
         break;
     case TextUnderElementMode::Children::IncludeAllChildren:
-        childrenInclusion = "IncludeAllChildren"_s;
+        childrenInclusion = "IncludeAllChildren"_si;
         break;
     case TextUnderElementMode::Children::IncludeNameFromContentsChildren:
-        childrenInclusion = "IncludeNameFromContentsChildren"_s;
+        childrenInclusion = "IncludeNameFromContentsChildren"_si;
         break;
     default:
         AX_ASSERT_NOT_REACHED();
@@ -1395,7 +1395,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
     }
 
     auto id = options & AXStreamOptions::IdentifierAttribute ? object.identifierAttribute() : emptyString();
-    if (!id.isEmpty())
+    if (!isEmpty(id))
         stream.dumpProperty("identifier"_s, WTF::move(id));
 
     if (options & AXStreamOptions::OuterHTML) {
@@ -1408,7 +1408,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
             objectWithInterestingHTML = parent.get();
 
         if (objectWithInterestingHTML)
-            stream.dumpProperty("outerHTML"_s, objectWithInterestingHTML->outerHTML().left(150));
+            stream.dumpProperty("outerHTML"_s, left(objectWithInterestingHTML->outerHTML(), 150));
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

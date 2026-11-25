@@ -62,49 +62,49 @@ SVGElement& SVGURIReference::contextElement() const
     return *m_href->contextElement();
 }
 
-void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGURIReference::parseAttribute(const QualifiedName& name, AtomStringImpl* value)
 {
     if (name.matches(SVGNames::hrefAttr))
-        m_href->setBaseValInternal(value.isNull() ? protect(contextElement())->getAttribute(XLinkNames::hrefAttr) : value);
+        m_href->setBaseValInternal(!value ? protect(contextElement())->getAttribute(XLinkNames::hrefAttr).get() : value);
     else if (name.matches(XLinkNames::hrefAttr) && !protect(contextElement())->hasAttribute(SVGNames::hrefAttr))
         m_href->setBaseValInternal(value);
 }
 
-AtomString SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)
+RefPtr<AtomStringImpl> SVGURIReference::fragmentIdentifierFromIRIString(StringImpl* url, const Document& document)
 {
-    size_t start = url.find('#');
+    size_t start = find(url, '#');
     if (start == notFound)
         return emptyAtom();
 
     if (!start)
-        return AtomString(PAL::decodeURLEscapeSequences(StringView(url).substring(1)));
+        return AtomStringImpl::add(PAL::decodeURLEscapeSequences(StringView(url).substring(1)));
 
     URL urlWithFragment = document.encodingParseURL(url);
     if (equalIgnoringFragmentIdentifier(urlWithFragment, document.url()))
-        return AtomString(PAL::decodeURLEscapeSequences(urlWithFragment.fragmentIdentifier()));
+        return AtomStringImpl::add(PAL::decodeURLEscapeSequences(urlWithFragment.fragmentIdentifier()));
 
     return emptyAtom();
 }
 
-AtomString SVGURIReference::fragmentIdentifierFromIRIString(const Style::URL& url, const Document& document)
+RefPtr<AtomStringImpl> SVGURIReference::fragmentIdentifierFromIRIString(const Style::URL& url, const Document& document)
 {
     return fragmentIdentifierFromIRIString(url.resolved.string(), document);
 }
 
-AtomString SVGURIReference::fragmentIdentifierFromIRIString(const Style::SVGMarkerResource& markerResource, const Document& document)
+RefPtr<AtomStringImpl> SVGURIReference::fragmentIdentifierFromIRIString(const Style::SVGMarkerResource& markerResource, const Document& document)
 {
     if (auto url = markerResource.tryURL())
         return fragmentIdentifierFromIRIString(*url, document);
     return emptyAtom();
 }
 
-auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeScope& treeScope, RefPtr<Document> externalDocument) -> TargetElementResult
+auto SVGURIReference::targetElementFromIRIString(StringImpl* iri, const TreeScope& treeScope, RefPtr<Document> externalDocument) -> TargetElementResult
 {
     // SVG 2 allows <use href="file.svg"> (no fragment) to reference the root
     // element of the external document. This only applies when an external
     // document is supplied by the caller — today only SVGUseElement does.
     // https://svgwg.org/svg2-draft/struct.html#UseElementHrefAttribute
-    size_t startOfFragmentIdentifier = iri.find('#');
+    size_t startOfFragmentIdentifier = find(iri, '#');
     if (startOfFragmentIdentifier == notFound) {
         if (externalDocument)
             return { externalDocument->documentElement(), nullAtom() };
@@ -113,8 +113,8 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
 
     // Exclude the '#' character when determining the fragmentIdentifier.
     // Percent-decode the fragment so that url(#%66%6f%6f) resolves to id="foo".
-    auto id = AtomString(PAL::decodeURLEscapeSequences(StringView(iri).substring(startOfFragmentIdentifier + 1)));
-    if (id.isEmpty())
+    auto id = AtomStringImpl::add(PAL::decodeURLEscapeSequences(StringView(iri).substring(startOfFragmentIdentifier + 1)));
+    if (isEmpty(id))
         return { };
 
     Ref document = treeScope.documentScope();
@@ -149,7 +149,7 @@ auto SVGURIReference::targetElementFromIRIString(const Style::URL& iri, const Tr
 
 bool SVGURIReference::haveLoadedRequiredResources() const
 {
-    if (href().isEmpty())
+    if (isEmpty(href()))
         return true;
     if (protect(contextElement().document())->encodingParseURL(href()).protocolIsData())
         return true;

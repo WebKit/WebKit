@@ -80,7 +80,7 @@ public:
     RefPtr<NativeImage> currentNativeImage(const ImageDrawDescriptor&) final { return currentNativeImage(); }
 
     // Image Metadata
-    String uti() const final { return m_source->uti(); }
+    RefPtr<StringImpl> uti() const final { return m_source->uti(); }
     FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->size(orientation); }
     bool hasSomethingToDraw() const final { return !size().isEmpty(); }
     FloatSize density() const { return m_source->density(); }
@@ -103,7 +103,7 @@ public:
     RefPtr<NativeImage> nativeImageAtIndex(unsigned index, const ImageDrawDescriptor&) final { return nativeImageAtIndex(index); }
 
     // Testing support.
-    UTF8CString sourceUTF8() const { return sourceURL().string().utf8(); }
+    UTF8CString sourceUTF8() const { return utf8(sourceURL().string()); }
     void setAsyncDecodingEnabledForTesting(bool enabled) { m_source->setAsyncDecodingEnabledForTesting(enabled); }
     bool isAsyncDecodingEnabledForTesting() const { return m_source->isAsyncDecodingEnabledForTesting(); }
     void setMinimumDecodingDurationForTesting(Seconds duration) { m_source->setMinimumDecodingDurationForTesting(duration); }
@@ -141,8 +141,8 @@ private:
 
     // Image Metadata
     bool hasDensityCorrectedSize() const final { return m_source->hasDensityCorrectedSize(); }
-    String filenameExtension() const final { return m_source->filenameExtension(); }
-    String accessibilityDescription() const final { return m_source->accessibilityDescription(); }
+    RefPtr<StringImpl> filenameExtension() const final { return m_source->filenameExtension(); }
+    RefPtr<StringImpl> accessibilityDescription() const final { return m_source->accessibilityDescription(); }
     std::optional<Color> singlePixelSolidColor() const final { return m_source->singlePixelSolidColor(); }
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)

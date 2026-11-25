@@ -33,7 +33,7 @@ namespace WebCore {
 class CompositionEvent final : public UIEvent {
     WTF_MAKE_TZONE_ALLOCATED(CompositionEvent);
 public:
-    static Ref<CompositionEvent> create(const AtomString& type, RefPtr<WindowProxy>&& view, const String& data)
+    static Ref<CompositionEvent> create(AtomStringImpl* type, RefPtr<WindowProxy>&& view, StringImpl* data)
     {
         return adoptRef(*new CompositionEvent(type, WTF::move(view), data));
     }
@@ -44,26 +44,26 @@ public:
     }
 
     struct Init : UIEventInit {
-        String data;
+        RefPtr<StringImpl> data;
     };
 
-    static Ref<CompositionEvent> create(const AtomString& type, Init&& initializer)
+    static Ref<CompositionEvent> create(AtomStringImpl* type, Init&& initializer)
     {
         return adoptRef(*new CompositionEvent(type, WTF::move(initializer)));
     }
 
     virtual ~CompositionEvent();
 
-    void initCompositionEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, const String& data);
+    void initCompositionEvent(AtomStringImpl* type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, StringImpl* data);
 
-    String data() const { return m_data; }
+    RefPtr<StringImpl> data() const { return m_data; }
 
 private:
     CompositionEvent();
-    CompositionEvent(const AtomString& type, RefPtr<WindowProxy>&&, const String&);
-    CompositionEvent(const AtomString& type, Init&&);
+    CompositionEvent(AtomStringImpl* type, RefPtr<WindowProxy>&&, StringImpl*);
+    CompositionEvent(AtomStringImpl* type, Init&&);
 
-    String m_data;
+    RefPtr<StringImpl> m_data;
 };
 
 } // namespace WebCore

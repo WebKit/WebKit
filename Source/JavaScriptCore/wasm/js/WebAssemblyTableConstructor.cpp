@@ -69,12 +69,12 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     JSValue addressTypeValue = memoryDescriptor->get(globalObject, addressIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (!addressTypeValue.isUndefined()) {
-        String addressTypeString = addressTypeValue.toWTFString(globalObject);
+        RefPtr<StringImpl> addressTypeString = addressTypeValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-        if (addressTypeString == "i64"_s)
+        if (equal(addressTypeString, "i64"_s))
             addressType =  Wasm::AddressType::I64;
-        else if (addressTypeString != "i32"_s) {
+        else if (!equal(addressTypeString, "i32"_s)) {
             throwTypeError(globalObject, throwScope, "WebAssembly.Table 'address' must be a string of value 'i32' or 'i64'"_s);
             return { };
         }
@@ -90,11 +90,11 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         Identifier elementIdent = Identifier::fromString(vm, "element"_s);
         JSValue elementValue = memoryDescriptor->get(globalObject, elementIdent);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        String elementString = elementValue.toWTFString(globalObject);
+        RefPtr<StringImpl> elementString = elementValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (elementString == "funcref"_s || elementString == "anyfunc"_s)
+        if (equal(elementString, "funcref"_s) || equal(elementString, "anyfunc"_s))
             type = Wasm::TableElementType::Funcref;
-        else if (elementString == "externref"_s)
+        else if (equal(elementString, "externref"_s))
             type = Wasm::TableElementType::Externref;
         else
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s);
@@ -130,13 +130,13 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         maximum = addressValueToUint64(globalObject, maxSizeValue, addressType);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (initial > *maximum)
-            return throwVMRangeError(globalObject, throwScope, "'maximum' property must be greater than or equal to the 'initial' property"_s);
+            return throwVMRangeError(globalObject, throwScope, "'maximum' property must be greater than or equal to the 'initial' property"_si);
     }
 
 
     RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(vm, initial, maximum, type, type == Wasm::TableElementType::Funcref ? Wasm::funcrefType() : Wasm::externrefType(), addressType);
     if (!wasmTable)
-        return throwVMRangeError(globalObject, throwScope, "couldn't create Table"_s);
+        return throwVMRangeError(globalObject, throwScope, "couldn't create Table"_si);
 
     JSWebAssemblyTable* jsWebAssemblyTable = JSWebAssemblyTable::create(vm, webAssemblyTableStructure, wasmTable.releaseNonNull());
 
@@ -173,7 +173,7 @@ Structure* WebAssemblyTableConstructor::createStructure(VM& vm, JSGlobalObject* 
 
 void WebAssemblyTableConstructor::finishCreation(VM& vm, WebAssemblyTablePrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "Table"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Table"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

@@ -75,23 +75,23 @@ public:
 
     class ScreencastSession {
     public:
-        ScreencastSession(String&& path, const GRefPtr<GDBusProxy>& proxy)
+        ScreencastSession(RefPtr<StringImpl>&& path, const GRefPtr<GDBusProxy>& proxy)
             : m_path(WTF::move(path))
             , m_proxy(proxy)
         {
         }
-        const String& path() const LIFETIME_BOUND { return m_path; }
+        const RefPtr<StringImpl>& path() const LIFETIME_BOUND { return m_path; }
         GRefPtr<GVariant> selectSources(GVariantBuilder&);
         GRefPtr<GVariant> start();
         std::optional<PipeWireNodeData> openPipewireRemote();
 
     private:
-        String m_path;
+        RefPtr<StringImpl> m_path;
         const GRefPtr<GDBusProxy>& m_proxy;
     };
 
     std::optional<ScreencastSession> createScreencastSession();
-    void closeSession(const String& path);
+    void closeSession(StringImpl* path);
 
 private:
     DesktopPortalScreenCast(ASCIILiteral, GRefPtr<GDBusProxy>&&);

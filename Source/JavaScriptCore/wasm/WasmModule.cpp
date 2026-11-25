@@ -61,7 +61,7 @@ static Module::ValidationResult makeValidationResult(IPIntPlan& plan, Name&& sou
 {
     ASSERT(!plan.hasWork());
     if (plan.failed())
-        return std::unexpected<String>(plan.errorMessage());
+        return std::unexpected<RefPtr<StringImpl>>(plan.errorMessage());
     return Module::ValidationResult(Module::create(plan, WTF::move(sourceURL)));
 }
 

@@ -38,7 +38,7 @@ namespace WebCore {
 class CloseEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(CloseEvent);
 public:
-    static Ref<CloseEvent> create(bool wasClean, unsigned short code, const String& reason)
+    static Ref<CloseEvent> create(bool wasClean, unsigned short code, StringImpl* reason)
     {
         return adoptRef(*new CloseEvent(wasClean, code, reason));
     }
@@ -46,20 +46,20 @@ public:
     struct Init : EventInit {
         bool wasClean { false };
         unsigned short code { 0 };
-        String reason { emptyString() };
+        RefPtr<StringImpl> reason { emptyString() };
     };
 
-    static Ref<CloseEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<CloseEvent> create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new CloseEvent(type, WTF::move(initializer), isTrusted));
     }
 
     bool wasClean() const { return m_wasClean; }
     unsigned short code() const { return m_code; }
-    String reason() const { return m_reason; }
+    RefPtr<StringImpl> reason() const { return m_reason; }
 
 private:
-    CloseEvent(bool wasClean, int code, const String& reason)
+    CloseEvent(bool wasClean, int code, StringImpl* reason)
         : Event(EventInterfaceType::CloseEvent, eventNames().closeEvent, CanBubble::No, IsCancelable::No)
         , m_wasClean(wasClean)
         , m_code(code)
@@ -67,7 +67,7 @@ private:
     {
     }
 
-    CloseEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    CloseEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
         : Event(EventInterfaceType::CloseEvent, type, initializer, isTrusted)
         , m_wasClean(initializer.wasClean)
         , m_code(initializer.code)
@@ -77,7 +77,7 @@ private:
 
     bool m_wasClean;
     unsigned short m_code;
-    String m_reason;
+    RefPtr<StringImpl> m_reason;
 };
 
 } // namespace WebCore

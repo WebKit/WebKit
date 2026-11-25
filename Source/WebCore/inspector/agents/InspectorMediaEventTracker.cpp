@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-static void forEachInspectedNodeEventName(Node& node, const Function<void(const AtomString&)>& callback)
+static void forEachInspectedNodeEventName(Node& node, const Function<void(AtomStringImpl*)>& callback)
 {
 #if ENABLE(FULLSCREEN_API)
     if (isAnyOf<Document, HTMLMediaElement>(node))
@@ -124,7 +124,7 @@ void InspectorMediaEventTracker::addEventListenersToNode(Node& node)
 
     m_instrumentedNodes.add(node);
 
-    forEachInspectedNodeEventName(node, [node = Ref { node }, eventFiredCallback = Ref { *m_eventFiredCallback }](const AtomString& eventName) {
+    forEachInspectedNodeEventName(node, [node = Ref { node }, eventFiredCallback = Ref { *m_eventFiredCallback }](AtomStringImpl* eventName) {
         node->addEventListener(eventName, eventFiredCallback.copyRef());
     });
 
@@ -139,7 +139,7 @@ void InspectorMediaEventTracker::reset(RemoveEventListeners removeEventListeners
     RefPtr eventFiredCallback = std::exchange(m_eventFiredCallback, nullptr);
     if (eventFiredCallback && removeEventListeners == RemoveEventListeners::Yes) {
         for (Ref node : m_instrumentedNodes) {
-            forEachInspectedNodeEventName(node, [&](const AtomString& eventName) {
+            forEachInspectedNodeEventName(node, [&](AtomStringImpl* eventName) {
                 node->removeEventListener(eventName, *eventFiredCallback, { });
             });
         }
@@ -177,7 +177,7 @@ void InspectorMediaEventTracker::handleEvent(Event& event)
 
 #if ENABLE(FULLSCREEN_API)
     if (event.type() == eventNames().webkitfullscreenchangeEvent || event.type() == eventNames().fullscreenchangeEvent)
-        data->setBoolean("enabled"_s, !!protect(protect(node->document())->fullscreen())->fullscreenElement());
+        data->setBoolean("enabled"_si, !!protect(protect(node->document())->fullscreen())->fullscreenElement());
 #endif // ENABLE(FULLSCREEN_API)
 
     m_client->mediaEventDidFire(nodeId, event.type(), data->size() ? WTF::move(data) : nullptr);

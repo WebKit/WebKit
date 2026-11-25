@@ -34,10 +34,10 @@ namespace WebCore {
 struct ApplePayPaymentPass {
     enum class ActivationState { Activated, RequiresActivation, Activating, Suspended, Deactivated };
     
-    String primaryAccountIdentifier;
-    String primaryAccountNumberSuffix;
-    String deviceAccountIdentifier;
-    String deviceAccountNumberSuffix;
+    RefPtr<StringImpl> primaryAccountIdentifier;
+    RefPtr<StringImpl> primaryAccountNumberSuffix;
+    RefPtr<StringImpl> deviceAccountIdentifier;
+    RefPtr<StringImpl> deviceAccountNumberSuffix;
     ActivationState activationState;
 };
 

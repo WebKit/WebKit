@@ -52,12 +52,12 @@ private:
 
     // WebCore::StorageArea.
     unsigned length() override;
-    String key(unsigned index) override;
-    String item(const String& key) override;
-    void setItem(WebCore::LocalFrame& sourceFrame, const String& key, const String& value, bool& quotaException) override;
-    void removeItem(WebCore::LocalFrame& sourceFrame, const String& key) override;
+    RefPtr<StringImpl> key(unsigned index) override;
+    RefPtr<StringImpl> item(StringImpl* key) override;
+    void setItem(WebCore::LocalFrame& sourceFrame, StringImpl* key, StringImpl* value, bool& quotaException) override;
+    void removeItem(WebCore::LocalFrame& sourceFrame, StringImpl* key) override;
     void clear(WebCore::LocalFrame& sourceFrame) override;
-    bool contains(const String& key) override;
+    bool contains(StringImpl* key) override;
     WebCore::StorageType storageType() const override;
     bool isWebKit2StorageAreaImpl() const final { return true; }
     size_t memoryBytesUsedByCache() override;

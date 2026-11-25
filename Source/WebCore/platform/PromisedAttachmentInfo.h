@@ -34,15 +34,15 @@ class SharedBuffer;
 
 struct PromisedAttachmentInfo {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    String attachmentIdentifier;
+    RefPtr<StringImpl> attachmentIdentifier;
 #endif
 
-    Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> additionalTypesAndData;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<WebCore::SharedBuffer>>> additionalTypesAndData;
 
     operator bool() const
     {
 #if ENABLE(ATTACHMENT_ELEMENT)
-        if (!attachmentIdentifier.isEmpty())
+        if (!isEmpty(attachmentIdentifier))
             return true;
 #endif
         return false;

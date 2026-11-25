@@ -63,7 +63,7 @@ public:
     // ValidationBubbleGtk is inherited from ValidationBubble.
     virtual ~ValidationBubble() = default;
 #else
-    static Ref<ValidationBubble> create(PlatformView* view, String&& message, const Settings& settings)
+    static Ref<ValidationBubble> create(PlatformView* view, RefPtr<StringImpl>&& message, const Settings& settings)
     {
         return adoptRef(*new ValidationBubble(view, WTF::move(message), settings));
     }
@@ -71,7 +71,7 @@ public:
     WEBCORE_EXPORT ~ValidationBubble();
 #endif
 
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
     double fontSize() const { return m_fontSize; }
     const IntRect& anchorRect() const { return m_anchorRect; }
 
@@ -87,7 +87,7 @@ public:
 
 protected:
 #if !PLATFORM(GTK)
-    WEBCORE_EXPORT ValidationBubble(PlatformView*, String&& message, const Settings&);
+    WEBCORE_EXPORT ValidationBubble(PlatformView*, RefPtr<StringImpl>&& message, const Settings&);
 #endif
 
 #if PLATFORM(COCOA)
@@ -95,7 +95,7 @@ protected:
 #elif !PLATFORM(GTK)
     PlatformView* m_view;
 #endif
-    String m_message;
+    RefPtr<StringImpl> m_message;
     double m_fontSize { 0 };
     IntRect m_anchorRect;
 #if PLATFORM(MAC)

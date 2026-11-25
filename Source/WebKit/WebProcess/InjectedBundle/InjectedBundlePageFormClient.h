@@ -51,8 +51,8 @@ public:
     void textDidChangeInTextField(WebPage*, WebCore::HTMLInputElement&, WebFrame*, bool initiatedByUserTyping) override;
     void textDidChangeInTextArea(WebPage*, WebCore::HTMLTextAreaElement&, WebFrame*) override;
     bool shouldPerformActionInTextField(WebPage*, WebCore::HTMLInputElement&, InputFieldAction, WebFrame*) override;
-    void willSubmitForm(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&, RefPtr<API::Object>& userData) override;
-    void willSendSubmitEvent(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&) override;
+    void willSubmitForm(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&, RefPtr<API::Object>& userData) override;
+    void willSendSubmitEvent(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&) override;
     void didAssociateFormControls(WebPage*, const Vector<Ref<WebCore::Element>>&, WebFrame*) override;
     bool shouldNotifyOnFormChanges(WebPage*) override;
 };

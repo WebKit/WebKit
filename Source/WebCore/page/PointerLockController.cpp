@@ -82,31 +82,31 @@ void PointerLockController::requestPointerLock(Element* target, PointerLockOptio
 {
     if (!target || !target->isConnected() || m_documentOfRemovedElementWhileWaitingForUnlock) {
         enqueueEvent(eventNames().pointerlockerrorEvent, target);
-        promise->reject(ExceptionCode::WrongDocumentError, "Pointer lock target must be in an active document."_s);
+        promise->reject(ExceptionCode::WrongDocumentError, "Pointer lock target must be in an active document."_si);
         return;
     }
 
     if (m_documentAllowedToRelockWithoutUserGesture != &target->document() && !UserGestureIndicator::processingUserGesture()) {
         enqueueEvent(eventNames().pointerlockerrorEvent, target);
         // If the request was not started from an engagement gesture and the Document has not previously released a successful Pointer Lock with exitPointerLock():
-        promise->reject(ExceptionCode::NotAllowedError, "Pointer lock requires a user gesture."_s);
+        promise->reject(ExceptionCode::NotAllowedError, "Pointer lock requires a user gesture."_si);
         return;
     }
 
     if (target->document().isSandboxed(SandboxFlag::PointerLock)) {
         auto reason = "Blocked pointer lock on an element because the element's frame is sandboxed and the 'allow-pointer-lock' permission is not set."_s;
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        protect(target->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, reason);
+        protect(target->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, StringImpl::create(reason).ptr());
         enqueueEvent(eventNames().pointerlockerrorEvent, target);
         // If this's node document's active sandboxing flag set has the sandboxed pointer lock browsing context flag set:
-        promise->reject(ExceptionCode::SecurityError, reason);
+        promise->reject(ExceptionCode::SecurityError, StringImpl::create(reason).ptr());
         return;
     }
 
     if (options.unadjustedMovement && !supportsUnadjustedMovement()) {
         // If options["unadjustedMovement"] is true and the platform does not support unadjustedMovement:
         enqueueEvent(eventNames().pointerlockerrorEvent, target);
-        promise->reject(ExceptionCode::NotSupportedError, "Unadjusted movement is unavailable."_s);
+        promise->reject(ExceptionCode::NotSupportedError, "Unadjusted movement is unavailable."_si);
         return;
     }
 
@@ -114,7 +114,7 @@ void PointerLockController::requestPointerLock(Element* target, PointerLockOptio
         if (&m_element->document() != &target->document()) {
             enqueueEvent(eventNames().pointerlockerrorEvent, target);
             // If the user agent's pointer-lock target is an element whose shadow-including root is not equal to this's shadow-including root, then:
-            promise->reject(ExceptionCode::InvalidStateError, "Pointer lock cannot be moved to an element in a different document."_s);
+            promise->reject(ExceptionCode::InvalidStateError, "Pointer lock cannot be moved to an element in a different document."_si);
             return;
         }
         m_element = target;
@@ -146,7 +146,7 @@ void PointerLockController::requestPointerLock(Element* target, PointerLockOptio
                 break;
             case PointerLockRequestResult::Unsupported:
                 enqueueEvent(eventNames().pointerlockerrorEvent, target.get());
-                rejectPromises(ExceptionCode::NotSupportedError, "Pointer lock is unavailable."_s);
+                rejectPromises(ExceptionCode::NotSupportedError, "Pointer lock is unavailable."_si);
                 clearElement();
                 break;
             }
@@ -192,7 +192,7 @@ void PointerLockController::elementWasRemovedInternal()
     // It is possible that the element is removed while pointer lock is still pending.
     // This is essentially the same situation as the !target->isConnected() test in
     // PointerLockController::requestPointerLock, but it has arisen in between then and now.
-    rejectPromises(ExceptionCode::WrongDocumentError, "Pointer lock target element was removed."_s);
+    rejectPromises(ExceptionCode::WrongDocumentError, "Pointer lock target element was removed."_si);
     // Set element null immediately to block any future interaction with it
     // including mouse events received before the unlock completes.
     clearElement();
@@ -207,7 +207,7 @@ void PointerLockController::documentDetached(Document& document)
         m_documentOfRemovedElementWhileWaitingForUnlock = m_element->document();
         requestPointerUnlock();
         // It is possible that the document is detached while pointer lock is still pending.
-        rejectPromises(ExceptionCode::WrongDocumentError, "Pointer lock target document was detached."_s);
+        rejectPromises(ExceptionCode::WrongDocumentError, "Pointer lock target document was detached."_si);
         clearElement();
     }
 }
@@ -250,7 +250,7 @@ void PointerLockController::didNotAcquirePointerLock()
     // 2. Reject promise with a "WrongDocumentError" DOMException.
 
     enqueueEvent(eventNames().pointerlockerrorEvent, m_element.copyRef().get());
-    rejectPromises(ExceptionCode::WrongDocumentError, "Pointer lock requires the window to have focus."_s);
+    rejectPromises(ExceptionCode::WrongDocumentError, "Pointer lock requires the window to have focus."_si);
     clearElement();
     m_unlockPending = false;
     m_documentOfRemovedElementWhileWaitingForUnlock = nullptr;
@@ -271,7 +271,7 @@ void PointerLockController::didLosePointerLock()
     }
 }
 
-void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& event, const AtomString& eventType)
+void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& event, AtomStringImpl* eventType)
 {
     if (!m_element || !m_element->document().frame())
         return;
@@ -301,13 +301,13 @@ void PointerLockController::clearElement()
     ASSERT(m_promises.isEmpty());
 }
 
-void PointerLockController::enqueueEvent(const AtomString& type, Element* element)
+void PointerLockController::enqueueEvent(AtomStringImpl* type, Element* element)
 {
     if (element)
         enqueueEvent(type, protect(element->document()).ptr());
 }
 
-void PointerLockController::enqueueEvent(const AtomString& type, Document* document)
+void PointerLockController::enqueueEvent(AtomStringImpl* type, Document* document)
 {
     // FIXME: Spec doesn't specify which task source use.
     if (document)
@@ -320,7 +320,7 @@ void PointerLockController::resolvePromises()
         promise->resolve();
 }
 
-void PointerLockController::rejectPromises(ExceptionCode code, const String& reason)
+void PointerLockController::rejectPromises(ExceptionCode code, StringImpl* reason)
 {
     for (auto& promise : std::exchange(m_promises, { }))
         promise->reject(code, reason);

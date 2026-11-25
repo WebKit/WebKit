@@ -41,9 +41,9 @@ public:
     NODELETE unsigned length() const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     NODELETE RefPtr<DOMPlugin> item(unsigned index);
-    NODELETE RefPtr<DOMPlugin> namedItem(const AtomString& propertyName);
-    Vector<AtomString> supportedPropertyNames() const;
-    bool isSupportedPropertyName(const AtomString&) const;
+    NODELETE RefPtr<DOMPlugin> namedItem(AtomStringImpl* propertyName);
+    Vector<RefPtr<AtomStringImpl>> supportedPropertyNames() const;
+    bool isSupportedPropertyName(AtomStringImpl*) const;
 
     void refresh(bool reloadPages);
 

@@ -48,7 +48,7 @@ class ParentalControlsContentFilter;
 class ParentalControlsURLFilter : public ThreadSafeRefCounted<ParentalControlsURLFilter, WTF::DestructionThread::Main> {
 public:
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    WEBCORE_EXPORT static ParentalControlsURLFilter& filterWithConfigurationPath(const String&);
+    WEBCORE_EXPORT static ParentalControlsURLFilter& filterWithConfigurationPath(StringImpl*);
 #else
     WEBCORE_EXPORT static ParentalControlsURLFilter& singleton();
     WEBCORE_EXPORT static void setGlobalFilter(Ref<ParentalControlsURLFilter>&&);
@@ -75,7 +75,7 @@ public:
 
 protected:
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    ParentalControlsURLFilter(const String& configurationPath);
+    ParentalControlsURLFilter(StringImpl* configurationPath);
 #endif
     WEBCORE_EXPORT ParentalControlsURLFilter();
 
@@ -88,7 +88,7 @@ private:
     mutable std::optional<bool> m_isEnabled;
     const RetainPtr<WCRBrowserEngineClient> m_wcrBrowserEngineClient;
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    String m_configurationPath;
+    RefPtr<StringImpl> m_configurationPath;
 #endif
 };
 

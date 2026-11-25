@@ -203,7 +203,7 @@ bool HTMLPlugInElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLFrameOwnerElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLPlugInElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLPlugInElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::widthAttr:
@@ -396,7 +396,7 @@ static void registrar(const ReplacementPlugin& replacement)
 }
 #endif
 
-static ReplacementPlugin* pluginReplacementForType(const URL& url, const String& mimeType)
+static ReplacementPlugin* pluginReplacementForType(const URL& url, StringImpl* mimeType)
 {
     Vector<ReplacementPlugin*>& replacements = registeredPluginReplacements();
     if (replacements.isEmpty())
@@ -408,24 +408,24 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
     if (dotOffset != notFound)
         extension = lastPathComponent.substring(dotOffset + 1);
 
-    String type = mimeType;
-    if (type.isEmpty() && url.protocolIsData())
+    RefPtr<StringImpl> type = mimeType;
+    if (isEmpty(type) && url.protocolIsData())
         type = mimeTypeFromDataURL(url.string());
     
-    if (type.isEmpty() && !extension.isEmpty()) {
+    if (isEmpty(type) && !extension.isEmpty()) {
         for (auto* replacement : replacements) {
             if (replacement->supportsFileExtension(extension) && replacement->supportsURL(url))
                 return replacement;
         }
     }
     
-    if (type.isEmpty()) {
+    if (isEmpty(type)) {
         if (extension.isEmpty())
             return nullptr;
         type = MIMETypeRegistry::mediaMIMETypeForExtension(extension);
     }
 
-    if (type.isEmpty())
+    if (isEmpty(type))
         return nullptr;
 
     for (auto* replacement : replacements) {
@@ -436,11 +436,11 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
     return nullptr;
 }
 
-bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
+bool HTMLPlugInElement::requestObject(StringImpl* relativeURL, StringImpl* mimeType, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues)
 {
     ASSERT(document().frame());
 
-    if (relativeURL.isEmpty() && mimeType.isEmpty())
+    if (isEmpty(relativeURL) && isEmpty(mimeType))
         return false;
 
     if (!canLoadPlugInContent(relativeURL, mimeType)) {
@@ -453,7 +453,7 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
 
     Ref document = this->document();
     URL completedURL;
-    if (!relativeURL.isEmpty())
+    if (!isEmpty(relativeURL))
         completedURL = document->encodingParseURL(relativeURL);
 
     if (ReplacementPlugin* replacement = pluginReplacementForType(completedURL, mimeType)) {
@@ -467,7 +467,7 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
     if (ScriptDisallowedScope::InMainThread::isScriptAllowed())
         return document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, getNameAttribute(), mimeType, paramNames, paramValues);
 
-    queueTaskKeepingNodeAlive(*this, TaskSource::Networking, [relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues, document](auto& element) mutable {
+    queueTaskKeepingNodeAlive(*this, TaskSource::Networking, [relativeURL = RefPtr { relativeURL }, nameAttribute = getNameAttribute(), mimeType = RefPtr { mimeType }, paramNames, paramValues, document](auto& element) mutable {
         if (!element.isConnected() || &element.document() != document.ptr())
             return;
         RefPtr frame = element.document().frame();
@@ -523,7 +523,7 @@ void HTMLPlugInElement::scheduleUpdateForAfterStyleResolution()
     });
 }
 
-bool HTMLPlugInElement::shouldBypassCSPForPDFPlugin(const String& contentType) const
+bool HTMLPlugInElement::shouldBypassCSPForPDFPlugin(StringImpl* contentType) const
 {
 #if ENABLE(PDF_PLUGIN)
     return protect(document().frame()->loader().client())->shouldUsePDFPlugin(contentType, protect(document())->url().path());
@@ -539,7 +539,7 @@ RenderEmbeddedObject* HTMLPlugInElement::renderEmbeddedObject() const
     return dynamicDowncast<RenderEmbeddedObject>(renderer());
 }
 
-bool HTMLPlugInElement::canLoadURL(const String& relativeURL) const
+bool HTMLPlugInElement::canLoadURL(StringImpl* relativeURL) const
 {
     return canLoadURL(protect(document())->encodingParseURL(relativeURL));
 }
@@ -573,19 +573,19 @@ bool HTMLPlugInElement::canLoadURL(const URL& completeURL) const
 
 // We don't use m_url, or m_serviceType as they may not be the final values
 // that <object> uses depending on <param> values.
-bool HTMLPlugInElement::wouldLoadAsPlugIn(const String& relativeURL, const String& serviceType)
+bool HTMLPlugInElement::wouldLoadAsPlugIn(StringImpl* relativeURL, StringImpl* serviceType)
 {
     Ref document = this->document();
     ASSERT(document->frame());
     URL completedURL;
-    if (!relativeURL.isEmpty())
+    if (!isEmpty(relativeURL))
         completedURL = document->encodingParseURL(relativeURL);
     return protect(document->frame()->loader().client())->objectContentType(completedURL, serviceType) == ObjectContentType::PlugIn;
 }
 
 bool HTMLPlugInElement::isImageType()
 {
-    if (m_serviceType.isEmpty() && protocolIs(m_url, "data"_s))
+    if (isEmpty(m_serviceType) && protocolIs(m_url, "data"_s))
         m_serviceType = mimeTypeFromDataURL(m_url);
 
     Ref document = this->document();
@@ -700,7 +700,7 @@ void HTMLPlugInElement::resumeFromDocumentSuspension()
     HTMLFrameOwnerElement::resumeFromDocumentSuspension();
 }
 
-bool HTMLPlugInElement::canLoadPlugInContent(const String& relativeURL, const String& mimeType) const
+bool HTMLPlugInElement::canLoadPlugInContent(StringImpl* relativeURL, StringImpl* mimeType) const
 {
     // Elements in user agent show tree should load whatever the embedding document policy is.
     if (isInUserAgentShadowTree())
@@ -708,7 +708,7 @@ bool HTMLPlugInElement::canLoadPlugInContent(const String& relativeURL, const St
 
     Ref document = this->document();
     URL completedURL;
-    if (!relativeURL.isEmpty())
+    if (!isEmpty(relativeURL))
         completedURL = document->encodingParseURL(relativeURL);
 
     ASSERT(document->contentSecurityPolicy());

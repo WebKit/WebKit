@@ -49,9 +49,9 @@ public:
     }
     ~Gamepad();
 
-    const String& id() const LIFETIME_BOUND { return m_id; }
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_id; }
     unsigned index() const { return m_index; }
-    const String& mapping() const LIFETIME_BOUND { return m_mapping; }
+    const RefPtr<StringImpl>& mapping() const LIFETIME_BOUND { return m_mapping; }
 
     bool connected() const { return m_connected; }
     double timestamp() const { return m_timestamp.secondsSinceEpoch().seconds(); }
@@ -66,11 +66,11 @@ public:
 
 private:
     Gamepad(Document*, const PlatformGamepad&);
-    String m_id;
+    RefPtr<StringImpl> m_id;
     unsigned m_index;
     bool m_connected;
     MonotonicTime m_timestamp;
-    String m_mapping;
+    RefPtr<StringImpl> m_mapping;
     GamepadHapticEffectTypeSet m_supportedEffectTypes;
 
     Vector<double> m_axes;

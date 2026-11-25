@@ -52,32 +52,32 @@
 
 - (NSString *)targetPlatformName
 {
-    return _debuggableInfo->targetPlatformName().createNSString().autorelease();
+    return createNSString(_debuggableInfo->targetPlatformName()).autorelease();
 }
 
 - (void)setTargetPlatformName:(NSString *)targetPlatformName
 {
-    protect(*_debuggableInfo)->setTargetPlatformName(targetPlatformName);
+    protect(*_debuggableInfo)->setTargetPlatformName(StringImpl::create(targetPlatformName).get());
 }
 
 - (NSString *)targetBuildVersion
 {
-    return _debuggableInfo->targetBuildVersion().createNSString().autorelease();
+    return createNSString(_debuggableInfo->targetBuildVersion()).autorelease();
 }
 
 - (void)setTargetBuildVersion:(NSString *)targetBuildVersion
 {
-    protect(*_debuggableInfo)->setTargetBuildVersion(targetBuildVersion);
+    protect(*_debuggableInfo)->setTargetBuildVersion(StringImpl::create(targetBuildVersion).get());
 }
 
 - (NSString *)targetProductVersion
 {
-    return _debuggableInfo->targetProductVersion().createNSString().autorelease();
+    return createNSString(_debuggableInfo->targetProductVersion()).autorelease();
 }
 
 - (void)setTargetProductVersion:(NSString *)targetProductVersion
 {
-    protect(*_debuggableInfo)->setTargetProductVersion(targetProductVersion);
+    protect(*_debuggableInfo)->setTargetProductVersion(StringImpl::create(targetProductVersion).get());
 }
 
 - (BOOL)targetIsSimulator

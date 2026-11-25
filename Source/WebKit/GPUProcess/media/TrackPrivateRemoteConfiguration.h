@@ -34,8 +34,8 @@ namespace WebKit {
 
 struct TrackPrivateRemoteConfiguration {
     WebCore::TrackID trackId;
-    String label;
-    String language;
+    RefPtr<StringImpl> label;
+    RefPtr<StringImpl> language;
     MediaTime startTimeVariance { MediaTime::zeroTime() };
     int trackIndex;
 };

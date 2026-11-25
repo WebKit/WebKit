@@ -78,7 +78,7 @@ Ref<XRSubImage> Device::createXRSubImage()
     return XRSubImage::create(*this);
 }
 
-void XRSubImage::setLabel(String&&)
+void XRSubImage::setLabel(RefPtr<StringImpl>&&)
 {
 }
 

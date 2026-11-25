@@ -34,15 +34,15 @@ namespace WebCore {
 class SpeechRecognitionAlternative final : public RefCounted<SpeechRecognitionAlternative> {
     WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionAlternative);
 public:
-    NODELETE static Ref<SpeechRecognitionAlternative> create(String&& transcript, double confidence);
+    NODELETE static Ref<SpeechRecognitionAlternative> create(RefPtr<StringImpl>&& transcript, double confidence);
 
-    const String& transcript() const LIFETIME_BOUND { return m_transcript; }
+    const RefPtr<StringImpl>& transcript() const LIFETIME_BOUND { return m_transcript; }
     double confidence() const { return m_confidence; }
 
 private:
-    SpeechRecognitionAlternative(String&& transcript, double confidence);
+    SpeechRecognitionAlternative(RefPtr<StringImpl>&& transcript, double confidence);
 
-    String m_transcript;
+    RefPtr<StringImpl> m_transcript;
     double m_confidence;
 };
 

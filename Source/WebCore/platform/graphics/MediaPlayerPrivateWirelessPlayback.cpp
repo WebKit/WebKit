@@ -60,7 +60,7 @@ private:
         return adoptRef(*new MediaPlayerPrivateWirelessPlayback(player));
     }
 
-    void getSupportedTypes(HashSet<String>&) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>&) const final
     {
     }
 
@@ -132,14 +132,14 @@ OptionSet<MediaPlaybackTargetType> MediaPlayerPrivateWirelessPlayback::playbackT
     return { MediaPlaybackTargetType::WirelessPlayback };
 }
 
-String MediaPlayerPrivateWirelessPlayback::wirelessPlaybackTargetName() const
+RefPtr<StringImpl> MediaPlayerPrivateWirelessPlayback::wirelessPlaybackTargetName() const
 {
     if (RefPtr playbackTarget = m_playbackTarget)
         return playbackTarget->deviceName();
     return { };
 }
 
-String MediaPlayerPrivateWirelessPlayback::wirelessPlaybackRouteName() const
+RefPtr<StringImpl> MediaPlayerPrivateWirelessPlayback::wirelessPlaybackRouteName() const
 {
     if (RefPtr playbackTarget = m_playbackTarget)
         return playbackTarget->routeName();
@@ -489,9 +489,9 @@ void MediaPlayerPrivateWirelessPlayback::updateReadyState()
     setReadyState(MediaPlayerReadyState::HaveEnoughData);
 }
 
-String MediaPlayerPrivateWirelessPlayback::engineDescription() const
+RefPtr<StringImpl> MediaPlayerPrivateWirelessPlayback::engineDescription() const
 {
-    static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("Cocoa Wireless Playback Engine"));
+    static NeverDestroyed<RefPtr<StringImpl>> description(MAKE_STATIC_STRING_IMPL("Cocoa Wireless Playback Engine"));
     return description;
 }
 

@@ -46,20 +46,20 @@ enum class MediaCaptureType : uint8_t {
 };
 
 struct FileChooserFileInfo {
-    FileChooserFileInfo isolatedCopy() const & { return { path.isolatedCopy(), replacementPath.isolatedCopy(), displayName.isolatedCopy() }; }
-    FileChooserFileInfo isolatedCopy() && { return { WTF::move(path).isolatedCopy(), WTF::move(replacementPath).isolatedCopy(), WTF::move(displayName).isolatedCopy() }; }
+    FileChooserFileInfo isolatedCopy() const & { return { WTF::isolatedCopy(path), WTF::isolatedCopy(replacementPath), WTF::isolatedCopy(displayName) }; }
+    FileChooserFileInfo isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(path)), WTF::isolatedCopy(WTF::move(replacementPath)), WTF::isolatedCopy(WTF::move(displayName)) }; }
 
-    String path;
-    String replacementPath;
-    String displayName;
+    RefPtr<StringImpl> path;
+    RefPtr<StringImpl> replacementPath;
+    RefPtr<StringImpl> displayName;
 };
 
 struct FileChooserSettings {
     bool allowsDirectories { false };
     bool allowsMultipleFiles { false };
-    Vector<String> acceptMIMETypes;
-    Vector<String> acceptFileExtensions;
-    Vector<String> selectedFiles;
+    Vector<RefPtr<StringImpl>> acceptMIMETypes;
+    Vector<RefPtr<StringImpl>> acceptFileExtensions;
+    Vector<RefPtr<StringImpl>> selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
     MediaCaptureType mediaCaptureType { MediaCaptureType::MediaCaptureTypeNone };
 #endif
@@ -70,7 +70,7 @@ class FileChooserClient {
 public:
     virtual ~FileChooserClient() = default;
 
-    virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString = { }, Icon* = nullptr) = 0;
+    virtual void filesChosen(const Vector<FileChooserFileInfo>&, StringImpl* displayString = nullptr, Icon* = nullptr) = 0;
     virtual void fileChoosingCancelled() = 0;
 };
 
@@ -81,13 +81,13 @@ public:
 
     NODELETE void invalidate();
 
-    WEBCORE_EXPORT void chooseFile(const String& path);
-    WEBCORE_EXPORT void chooseFiles(const Vector<String>& paths, const Vector<String>& replacementPaths = { });
+    WEBCORE_EXPORT void chooseFile(StringImpl* path);
+    WEBCORE_EXPORT void chooseFiles(const Vector<RefPtr<StringImpl>>& paths, const Vector<RefPtr<StringImpl>>& replacementPaths = { });
     WEBCORE_EXPORT void cancelFileChoosing();
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this in and remove this one.
-    WEBCORE_EXPORT void chooseMediaFiles(const Vector<String>& paths, const String& displayString, Icon*);
+    WEBCORE_EXPORT void chooseMediaFiles(const Vector<RefPtr<StringImpl>>& paths, StringImpl* displayString, Icon*);
 #endif
 
     // FIXME: We should probably just pass file paths that could be virtual paths with proper display names rather than passing structs.

@@ -112,13 +112,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return false;
 }
 
-String SharedBufferChunkReader::nextChunkAsUTF8StringWithLatin1Fallback(bool includeSeparator)
+RefPtr<StringImpl> SharedBufferChunkReader::nextChunkAsUTF8StringWithLatin1Fallback(bool includeSeparator)
 {
     Vector<uint8_t> data;
     if (!nextChunk(data, includeSeparator))
-        return String();
+        return nullptr;
 
-    return data.size() ? String::fromUTF8WithLatin1Fallback(data.span()) : emptyString();
+    return data.size() ? StringImpl::fromUTF8WithLatin1Fallback(data.span()) : emptyString();
 }
 
 size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize)

@@ -107,7 +107,7 @@ void LibWebRTCSocket::signalClose(int error)
     NotifyClosed(error);
 }
 
-void LibWebRTCSocket::signalUsedInterface(String&& name)
+void LibWebRTCSocket::signalUsedInterface(RefPtr<StringImpl>&& name)
 {
     LibWebRTCNetworkManager::signalUsedInterface(m_contextIdentifier, WTF::move(name));
 }

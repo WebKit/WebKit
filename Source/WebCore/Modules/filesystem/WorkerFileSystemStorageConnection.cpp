@@ -132,7 +132,7 @@ void WorkerFileSystemStorageConnection::didIsSameEntry(CallbackIdentifier callba
         callback(WTF::move(result));
 }
 
-void WorkerFileSystemStorageConnection::getFileHandle(FileSystemHandleIdentifier identifier, const String& name, bool createIfNecessary, FileSystemStorageConnection::GetHandleCallback&& callback)
+void WorkerFileSystemStorageConnection::getFileHandle(FileSystemHandleIdentifier identifier, StringImpl* name, bool createIfNecessary, FileSystemStorageConnection::GetHandleCallback&& callback)
 {
     RefPtr scope = m_scope.get();
     if (!scope)
@@ -141,7 +141,7 @@ void WorkerFileSystemStorageConnection::getFileHandle(FileSystemHandleIdentifier
     auto callbackIdentifier = CallbackIdentifier::generate();
     m_getHandleCallbacks.add(callbackIdentifier, WTF::move(callback));
 
-    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy(), createIfNecessary]() mutable {
+    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = isolatedCopy(name), createIfNecessary]() mutable {
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTF::move(workerThread)](auto&& result) mutable {
             workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTF::move(result))] (auto& scope) mutable {
                 if (RefPtr connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
@@ -153,7 +153,7 @@ void WorkerFileSystemStorageConnection::getFileHandle(FileSystemHandleIdentifier
     });
 }
 
-void WorkerFileSystemStorageConnection::getDirectoryHandle(FileSystemHandleIdentifier identifier, const String& name, bool createIfNecessary, FileSystemStorageConnection::GetHandleCallback&& callback)
+void WorkerFileSystemStorageConnection::getDirectoryHandle(FileSystemHandleIdentifier identifier, StringImpl* name, bool createIfNecessary, FileSystemStorageConnection::GetHandleCallback&& callback)
 {
     RefPtr scope = m_scope.get();
     if (!scope)
@@ -162,7 +162,7 @@ void WorkerFileSystemStorageConnection::getDirectoryHandle(FileSystemHandleIdent
     auto callbackIdentifier = CallbackIdentifier::generate();
     m_getHandleCallbacks.add(callbackIdentifier, WTF::move(callback));
 
-    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy(), createIfNecessary]() mutable {
+    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = isolatedCopy(name), createIfNecessary]() mutable {
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTF::move(workerThread)](auto&& result) mutable {
             workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTF::move(result))] (auto& scope) mutable {
                 if (RefPtr connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
@@ -180,7 +180,7 @@ void WorkerFileSystemStorageConnection::didGetHandle(CallbackIdentifier callback
         callback(WTF::move(result));
 }
 
-void WorkerFileSystemStorageConnection::removeEntry(FileSystemHandleIdentifier identifier, const String& name, bool deleteRecursively, FileSystemStorageConnection::VoidCallback&& callback)
+void WorkerFileSystemStorageConnection::removeEntry(FileSystemHandleIdentifier identifier, StringImpl* name, bool deleteRecursively, FileSystemStorageConnection::VoidCallback&& callback)
 {
     RefPtr scope = m_scope.get();
     if (!scope)
@@ -189,7 +189,7 @@ void WorkerFileSystemStorageConnection::removeEntry(FileSystemHandleIdentifier i
     auto callbackIdentifier = CallbackIdentifier::generate();
     m_voidCallbacks.add(callbackIdentifier, WTF::move(callback));
 
-    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy(), deleteRecursively]() mutable {
+    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = isolatedCopy(name), deleteRecursively]() mutable {
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTF::move(workerThread)](auto&& result) mutable {
             workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTF::move(result))] (auto& scope) mutable {
                 if (RefPtr connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
@@ -222,7 +222,7 @@ void WorkerFileSystemStorageConnection::resolve(FileSystemHandleIdentifier ident
     });
 }
 
-void WorkerFileSystemStorageConnection::didResolve(CallbackIdentifier callbackIdentifier, ExceptionOr<std::optional<Vector<String>>>&& result)
+void WorkerFileSystemStorageConnection::didResolve(CallbackIdentifier callbackIdentifier, ExceptionOr<std::optional<Vector<RefPtr<StringImpl>>>>&& result)
 {
     if (auto callback = m_resolveCallbacks.take(callbackIdentifier))
         callback(WTF::move(result));
@@ -249,7 +249,7 @@ void WorkerFileSystemStorageConnection::getFile(FileSystemHandleIdentifier ident
     });
 }
 
-void WorkerFileSystemStorageConnection::completeStringCallback(CallbackIdentifier callbackIdentifier, ExceptionOr<String>&& result)
+void WorkerFileSystemStorageConnection::completeStringCallback(CallbackIdentifier callbackIdentifier, ExceptionOr<RefPtr<StringImpl>>&& result)
 {
     if (auto callback = m_stringCallbacks.take(callbackIdentifier))
         callback(WTF::move(result));
@@ -430,13 +430,13 @@ void WorkerFileSystemStorageConnection::getHandleNames(FileSystemHandleIdentifie
     });
 }
 
-void WorkerFileSystemStorageConnection::didGetHandleNames(CallbackIdentifier callbackIdentifier, ExceptionOr<Vector<String>>&& result)
+void WorkerFileSystemStorageConnection::didGetHandleNames(CallbackIdentifier callbackIdentifier, ExceptionOr<Vector<RefPtr<StringImpl>>>&& result)
 {
     if (auto callback = m_getHandleNamesCallbacks.take(callbackIdentifier))
         callback(WTF::move(result));
 }
 
-void WorkerFileSystemStorageConnection::getHandle(FileSystemHandleIdentifier identifier, const String& name, GetHandleCallback&& callback)
+void WorkerFileSystemStorageConnection::getHandle(FileSystemHandleIdentifier identifier, StringImpl* name, GetHandleCallback&& callback)
 {
     RefPtr scope = m_scope.get();
     if (!scope)
@@ -445,7 +445,7 @@ void WorkerFileSystemStorageConnection::getHandle(FileSystemHandleIdentifier ide
     auto callbackIdentifier = CallbackIdentifier::generate();
     m_getHandleCallbacks.add(callbackIdentifier, WTF::move(callback));
 
-    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy()]() mutable {
+    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = isolatedCopy(name)]() mutable {
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTF::move(workerThread)](auto&& result) mutable {
             workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTF::move(result))] (auto& scope) mutable {
                 if (RefPtr connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
@@ -457,7 +457,7 @@ void WorkerFileSystemStorageConnection::getHandle(FileSystemHandleIdentifier ide
     });
 }
 
-void WorkerFileSystemStorageConnection::move(FileSystemHandleIdentifier identifier, FileSystemHandleIdentifier destinationIdentifier, const String& newName, VoidCallback&& callback)
+void WorkerFileSystemStorageConnection::move(FileSystemHandleIdentifier identifier, FileSystemHandleIdentifier destinationIdentifier, StringImpl* newName, VoidCallback&& callback)
 {
     RefPtr scope = m_scope.get();
     if (!scope)

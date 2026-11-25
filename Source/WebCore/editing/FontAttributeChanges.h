@@ -45,9 +45,9 @@ enum class VerticalAlignChange : uint8_t { Superscript, Baseline, Subscript };
 class FontChanges {
 public:
     FontChanges() = default;
-    WEBCORE_EXPORT FontChanges(String&& fontName, String&& fontFamily, std::optional<double>&& fontSize, std::optional<double>&& fontSizeDelta, std::optional<bool>&& bold, std::optional<bool>&& italic);
-    void setFontName(const String& fontName) { m_fontName = fontName; }
-    void setFontFamily(const String& fontFamily) { m_fontFamily = fontFamily; }
+    WEBCORE_EXPORT FontChanges(RefPtr<StringImpl>&& fontName, RefPtr<StringImpl>&& fontFamily, std::optional<double>&& fontSize, std::optional<double>&& fontSizeDelta, std::optional<bool>&& bold, std::optional<bool>&& italic);
+    void setFontName(StringImpl* fontName) { m_fontName = fontName; }
+    void setFontFamily(StringImpl* fontFamily) { m_fontFamily = fontFamily; }
     void setFontSize(double fontSize) { m_fontSize = fontSize; }
     void setFontSizeDelta(double fontSizeDelta) { m_fontSizeDelta = fontSizeDelta; }
     void setBold(bool bold) { m_bold = bold; }
@@ -63,10 +63,10 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<FontChanges>;
-    const String& platformFontFamilyNameForCSS() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& platformFontFamilyNameForCSS() const LIFETIME_BOUND;
 
-    String m_fontName;
-    String m_fontFamily;
+    RefPtr<StringImpl> m_fontName;
+    RefPtr<StringImpl> m_fontFamily;
     std::optional<double> m_fontSize;
     std::optional<double> m_fontSizeDelta;
     std::optional<bool> m_bold;

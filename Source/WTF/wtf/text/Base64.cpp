@@ -187,12 +187,12 @@ Vector<uint8_t> base64EncodeToVector(std::span<const std::byte> input, OptionSet
     return base64EncodeInternal(input, options);
 }
 
-String base64EncodeToString(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
+RefPtr<StringImpl> base64EncodeToString(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
 {
     return makeString(base64Encoded(input, options));
 }
 
-String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
+RefPtr<StringImpl> base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte> input, OptionSet<Base64EncodeOption> options)
 {
     return tryMakeString(base64Encoded(input, options));
 }
@@ -300,7 +300,7 @@ std::optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64De
     return base64DecodeInternal(input.span16(), options);
 }
 
-String base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> options)
+RefPtr<StringImpl> base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> options)
 {
     using VectorType = Vector<Latin1Character, 0, CrashOnOverflow, 16, StringImplMalloc>;
     auto result = input.is8Bit()
@@ -308,7 +308,7 @@ String base64DecodeToString(StringView input, OptionSet<Base64DecodeOption> opti
         : base64DecodeInternal<char16_t, VectorType>(input.span16(), options);
     if (!result)
         return nullString();
-    return String::adopt(WTF::move(*result));
+    return StringImpl::adopt(WTF::move(*result));
 }
 
 NODELETE static inline simdutf::base64_options toSIMDUTFDecodeOptions(Alphabet alphabet)

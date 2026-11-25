@@ -183,16 +183,16 @@ bool MediaKeys::hasOpenSessions() const
         });
 }
 
-bool MediaKeys::hasOpenSessionWithIdForOrigin(const String& sessionId, const String& origin) const
+bool MediaKeys::hasOpenSessionWithIdForOrigin(StringImpl* sessionId, StringImpl* origin) const
 {
     return std::ranges::any_of(borrow(m_sessions),
-        [&sessionId, &origin](auto& session) {
-            return session->sessionId() == sessionId && !session->isClosed()
+        [sessionId = RefPtr { sessionId }, origin = RefPtr { origin }](auto& session) {
+            return equal(session->sessionId(), sessionId) && !session->isClosed()
                 && session->hasSecurityOrigin(origin);
         });
 }
 
-void MediaKeys::unrequestedInitializationDataReceived(const String& initDataType, Ref<SharedBuffer>&& initData)
+void MediaKeys::unrequestedInitializationDataReceived(StringImpl* initDataType, Ref<SharedBuffer>&& initData)
 {
     for (Ref cdmClient : m_cdmClients)
         cdmClient->cdmClientUnrequestedInitializationDataReceived(initDataType, initData.copyRef());

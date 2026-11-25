@@ -116,7 +116,7 @@ class VTTCue
     WTF_MAKE_TZONE_ALLOCATED(VTTCue);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VTTCue);
 public:
-    static ExceptionOr<Ref<VTTCue>> create(Document&, double start, double end, String&& content);
+    static ExceptionOr<Ref<VTTCue>> create(Document&, double start, double end, RefPtr<StringImpl>&& content);
     static Ref<VTTCue> create(Document&, Ref<WebVTTCueData>&&);
 
     virtual ~VTTCue();
@@ -159,22 +159,22 @@ public:
     AlignSetting align() const { return m_cueAlignment; }
     void setAlign(AlignSetting);
 
-    const String& text() const LIFETIME_BOUND final { return m_content; }
-    void setText(const String&);
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND final { return m_content; }
+    void setText(StringImpl*);
 
-    const String& cueSettings() const LIFETIME_BOUND { return m_settings; }
-    void setCueSettings(const String&);
+    const RefPtr<StringImpl>& cueSettings() const LIFETIME_BOUND { return m_settings; }
+    void setCueSettings(StringImpl*);
 
     RefPtr<DocumentFragment> getCueAsHTML() final;
     RefPtr<DocumentFragment> createCueRenderingTree();
-    String textWithoutMarkup();
+    RefPtr<StringImpl> textWithoutMarkup();
 
     NODELETE void notifyRegionWhenRemovingDisplayTree(bool);
 
     NODELETE VTTRegion* region();
     void setRegion(VTTRegion*);
 
-    NODELETE const String& regionId() LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& regionId() LIFETIME_BOUND;
 
     void setIsActive(bool) override;
 
@@ -204,7 +204,7 @@ public:
     bool fontSizeIsImportant() const { return m_fontSizeIsImportant; }
 
     CueType cueType() const override { return WebVTT; }
-    bool isRenderable() const final { return !m_content.isEmpty(); }
+    bool isRenderable() const final { return !isEmpty(m_content); }
 
     void didChange(bool = false) final;
 
@@ -224,7 +224,7 @@ public:
     virtual bool preventLineWrapping() const { return false; }
 
 protected:
-    VTTCue(Document&, const MediaTime& start, const MediaTime& end, String&& content);
+    VTTCue(Document&, const MediaTime& start, const MediaTime& end, RefPtr<StringImpl>&& content);
 
     bool cueContentsMatch(const TextTrackCue&) const override;
 
@@ -266,8 +266,8 @@ private:
     ASCIILiteral logClassName() const final { return "VTTCue"_s; }
 #endif
 
-    String m_content;
-    String m_settings;
+    RefPtr<StringImpl> m_content;
+    RefPtr<StringImpl> m_settings;
     std::optional<double> m_linePosition;
     std::optional<double> m_computedLinePosition;
     std::optional<double> m_textPosition;
@@ -278,7 +278,7 @@ private:
     CSSValueID m_displayDirection { CSSValueID::Ltr };
 
     RefPtr<VTTRegion> m_region;
-    String m_parsedRegionId;
+    RefPtr<StringImpl> m_parsedRegionId;
 
     RefPtr<DocumentFragment> m_webVTTNodeTree;
     const Ref<HTMLSpanElement> m_cueHighlightBox;

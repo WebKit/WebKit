@@ -51,8 +51,8 @@ public:
     WEBCORE_EXPORT static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&, bool backdropIsOpaque);
     WEBCORE_EXPORT static void setBlendingFiltersOnLayer(PlatformLayer*, const BlendMode);
     NODELETE static bool isAnimatedFilterProperty(FilterOperation::Type);
-    static String animatedFilterPropertyName(FilterOperation::Type);
-    NODELETE static bool isValidAnimatedFilterPropertyName(const String&);
+    static RefPtr<StringImpl> animatedFilterPropertyName(FilterOperation::Type);
+    NODELETE static bool isValidAnimatedFilterPropertyName(StringImpl*);
 
     WEBCORE_EXPORT static RetainPtr<NSValue> filterValueForOperation(const FilterOperation&);
 

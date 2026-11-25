@@ -35,16 +35,16 @@ class MockPreviewLoaderClient final : public LegacyPreviewLoaderClient {
 public:
     static MockPreviewLoaderClient& singleton();
 
-    void setPassword(const String& password) { m_password = password; }
+    void setPassword(StringImpl* password) { m_password = password; }
 
     bool supportsPasswordEntry() const override { return true; }
-    void didRequestPassword(Function<void(const String&)>&&) override;
+    void didRequestPassword(Function<void(StringImpl*)>&&) override;
 
 private:
     friend class NeverDestroyed<MockPreviewLoaderClient>;
     MockPreviewLoaderClient() = default;
 
-    String m_password;
+    RefPtr<StringImpl> m_password;
 };
 
 } // namespace WebCore

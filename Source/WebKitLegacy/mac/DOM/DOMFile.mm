@@ -42,7 +42,7 @@
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->name().createNSString().autorelease();
+    return createNSString(IMPL->name()).autorelease();
 }
 
 - (long long)lastModified

@@ -208,7 +208,7 @@ void MemoryHandler::handleWasmMemoryRegionInfo(VirtualAddress address, uint32_t 
         size_t memorySize = instance->memory(0)->memory().size();
         if (offset < memorySize) {
             // Address is within WASM memory - return the memory region
-            String name = makeString("wasm_memory_"_s, instanceId);
+            RefPtr<StringImpl> name = makeString("wasm_memory_"_s, instanceId);
             sendMemoryRegionReply(VirtualAddress::createMemory(instanceId).value(), memorySize, "rw"_s, name);
             return;
         }
@@ -238,7 +238,7 @@ void MemoryHandler::handleWasmModuleRegionInfo(VirtualAddress address, uint32_t 
         const auto& source = instance->moduleInformation().debugInfo->source;
         if (offset < source.size()) {
             // Address is within module bounds - return info for the entire WASM module region
-            String name = makeString("wasm_module_"_s, instanceId);
+            RefPtr<StringImpl> name = makeString("wasm_module_"_s, instanceId);
             sendMemoryRegionReply(VirtualAddress::createModule(instanceId).value(), source.size(), "rx"_s, name, "module"_s);
             return;
         }
@@ -263,7 +263,7 @@ void MemoryHandler::handleWasmModuleRegionInfo(VirtualAddress address, uint32_t 
 
 void MemoryHandler::sendMemoryRegionReply(uint64_t start, uint64_t size, StringView permissions, StringView name)
 {
-    String response = makeString(
+    RefPtr<StringImpl> response = makeString(
         "start:"_s, hex(start, Lowercase),
         ";size:"_s, hex(size, Lowercase),
         ";permissions:"_s, permissions,
@@ -274,7 +274,7 @@ void MemoryHandler::sendMemoryRegionReply(uint64_t start, uint64_t size, StringV
 
 void MemoryHandler::sendMemoryRegionReply(uint64_t start, uint64_t size, StringView permissions, StringView name, StringView type)
 {
-    String response = makeString(
+    RefPtr<StringImpl> response = makeString(
         "start:"_s, hex(start, Lowercase),
         ";size:"_s, hex(size, Lowercase),
         ";permissions:"_s, permissions,
@@ -286,7 +286,7 @@ void MemoryHandler::sendMemoryRegionReply(uint64_t start, uint64_t size, StringV
 
 void MemoryHandler::sendUnmappedRegionReply(uint64_t start, uint64_t size)
 {
-    String response = makeString(
+    RefPtr<StringImpl> response = makeString(
         "start:"_s, hex(start, Lowercase),
         ";size:"_s, hex(size, Lowercase),
         ";permissions:;name:;"_s);

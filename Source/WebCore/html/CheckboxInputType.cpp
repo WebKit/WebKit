@@ -65,7 +65,7 @@ CheckboxInputType::CheckboxInputType(HTMLInputElement& element)
 
 CheckboxInputType::~CheckboxInputType() = default;
 
-const AtomString& CheckboxInputType::formControlType() const
+const RefPtr<AtomStringImpl>& CheckboxInputType::formControlType() const
 {
     return InputTypeNames::checkbox();
 }
@@ -76,7 +76,7 @@ bool CheckboxInputType::valueMissing(StringView) const
     return element()->isRequired() && !element()->checked();
 }
 
-String CheckboxInputType::valueMissingText() const
+RefPtr<StringImpl> CheckboxInputType::valueMissingText() const
 {
     if (isSwitch())
         return validationMessageValueMissingForSwitchText();
@@ -109,8 +109,8 @@ void CheckboxInputType::createShadowSubtree()
 
 void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)
 {
-    const String& key = event.keyIdentifier();
-    if (key != "U+0020"_s)
+    const RefPtr<StringImpl>& key = event.keyIdentifier();
+    if (!equal(key, "U+0020"_s))
         return;
     dispatchSimulatedClickIfActive(event);
 }

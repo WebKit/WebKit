@@ -35,27 +35,27 @@ namespace WebCore {
 class RTCCertificate : public RefCounted<RTCCertificate> {
 public:
     struct DtlsFingerprint {
-        String algorithm;
-        String value;
+        RefPtr<StringImpl> algorithm;
+        RefPtr<StringImpl> value;
     };
 
-    NODELETE static Ref<RTCCertificate> create(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
+    NODELETE static Ref<RTCCertificate> create(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, RefPtr<StringImpl>&& pemCertificate, RefPtr<StringImpl>&& pemPrivateKey);
 
     double expires() const { return m_expires; }
     const Vector<DtlsFingerprint>& getFingerprints() const LIFETIME_BOUND { return m_fingerprints; }
 
-    const String& pemCertificate() const LIFETIME_BOUND { return m_pemCertificate; }
-    const String& pemPrivateKey() const LIFETIME_BOUND { return m_pemPrivateKey; }
+    const RefPtr<StringImpl>& pemCertificate() const LIFETIME_BOUND { return m_pemCertificate; }
+    const RefPtr<StringImpl>& pemPrivateKey() const LIFETIME_BOUND { return m_pemPrivateKey; }
     const SecurityOrigin& origin() const { return m_origin.get(); }
 
 private:
-    RTCCertificate(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);
+    RTCCertificate(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, RefPtr<StringImpl>&& pemCertificate, RefPtr<StringImpl>&& pemPrivateKey);
 
     const Ref<SecurityOrigin> m_origin;
     double m_expires { 0 };
     Vector<DtlsFingerprint> m_fingerprints;
-    String m_pemCertificate;
-    String m_pemPrivateKey;
+    RefPtr<StringImpl> m_pemCertificate;
+    RefPtr<StringImpl> m_pemPrivateKey;
 };
 
 } // namespace WebCore

@@ -51,25 +51,25 @@ public:
 
     NODELETE void clear();
 
-    void createFrameIfNecessary(HTMLFrameOwnerElement&, const AtomString& frameName);
-    bool requestFrame(HTMLFrameOwnerElement&, const String& url, const AtomString& frameName, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
-    bool requestObject(HTMLPlugInElement&, const String& url, const AtomString& frameName,
-        const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+    void createFrameIfNecessary(HTMLFrameOwnerElement&, AtomStringImpl* frameName);
+    bool requestFrame(HTMLFrameOwnerElement&, StringImpl* url, AtomStringImpl* frameName, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
+    bool requestObject(HTMLPlugInElement&, StringImpl* url, AtomStringImpl* frameName,
+        StringImpl* serviceType, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues);
 
     bool containsPlugins() const { return m_containsPlugins; }
     
-    bool resourceWillUsePlugin(const String& url, const String& mimeType);
+    bool resourceWillUsePlugin(StringImpl* url, StringImpl* mimeType);
 
 private:
-    bool requestPlugin(HTMLPlugInElement&, const URL&, const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
-    LocalFrame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& frameName, LockHistory, LockBackForwardList);
-    RefPtr<LocalFrame> loadSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& name, const URL& referrer);
-    bool loadPlugin(HTMLPlugInElement&, const URL&, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
+    bool requestPlugin(HTMLPlugInElement&, const URL&, StringImpl* serviceType, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues, bool useFallback);
+    LocalFrame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, AtomStringImpl* frameName, LockHistory, LockBackForwardList);
+    RefPtr<LocalFrame> loadSubframe(HTMLFrameOwnerElement&, const URL&, AtomStringImpl* name, const URL& referrer);
+    bool loadPlugin(HTMLPlugInElement&, const URL&, StringImpl* mimeType, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues, bool useFallback);
 
-    bool shouldUsePlugin(const URL&, const String& mimeType, bool hasFallback, bool& useFallback);
-    bool pluginIsLoadable(const URL&, const HTMLPlugInElement&, const String& mimeType) const;
+    bool shouldUsePlugin(const URL&, StringImpl* mimeType, bool hasFallback, bool& useFallback);
+    bool pluginIsLoadable(const URL&, const HTMLPlugInElement&, StringImpl* mimeType) const;
 
-    URL completeURL(const String&) const;
+    URL completeURL(StringImpl*) const;
 
     NODELETE bool shouldConvertInvalidURLsToBlank() const;
 

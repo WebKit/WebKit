@@ -35,9 +35,9 @@ namespace WebCore {
 struct LinkIcon {
     URL url;
     LinkIconType type;
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
     std::optional<unsigned> size;
-    Vector<std::pair<String, String>> attributes;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> attributes;
 };
 
 } // namespace WebCore

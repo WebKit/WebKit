@@ -72,7 +72,7 @@ VideoTrack* VideoTrackList::itemForBindings(unsigned index) const
     return nullptr;
 }
 
-RefPtr<VideoTrack> VideoTrackList::getTrackById(const AtomString& id) const
+RefPtr<VideoTrack> VideoTrackList::getTrackById(AtomStringImpl* id) const
 {
     for (auto& inbandTrack : m_inbandTracks) {
         Ref track = downcast<VideoTrack>(inbandTrack);

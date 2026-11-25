@@ -31,7 +31,7 @@ class SourceGraphic final : public FilterEffect {
 public:        
     WEBCORE_EXPORT static Ref<SourceGraphic> create(ColorSpace = ColorSpace::SRGB());
 
-    static AtomString effectName() { return FilterEffect::sourceGraphicName(); }
+    static RefPtr<AtomStringImpl> effectName() { return FilterEffect::sourceGraphicName(); }
 
 private:
     explicit SourceGraphic(ColorSpace);

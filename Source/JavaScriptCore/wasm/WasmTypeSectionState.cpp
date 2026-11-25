@@ -89,7 +89,7 @@ const RecursionGroup* RecursionGroup::emptySingleton()
     return &result.get();
 }
 
-String RecursionGroup::toString() const
+RefPtr<StringImpl> RecursionGroup::toString() const
 {
     return WTF::toString(*this);
 }
@@ -109,7 +109,7 @@ void RecursionGroup::dump(PrintStream& out) const
     out.print(")"_s);
 }
 
-String Projection::toString() const
+RefPtr<StringImpl> Projection::toString() const
 {
     return WTF::toString(*this);
 }
@@ -126,7 +126,7 @@ void Projection::dump(PrintStream& out) const
     out.print(")"_s);
 }
 
-String Subtype::toString() const
+RefPtr<StringImpl> Subtype::toString() const
 {
     return WTF::toString(*this);
 }

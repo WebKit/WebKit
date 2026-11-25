@@ -96,7 +96,7 @@ NODELETE static Variant<CSS::Number<>, CSS::LengthPercentage<>> createVariantFor
 }
 
 
-SVGLengthValue::SVGLengthValue(SVGLengthMode lengthMode, const String& valueAsString)
+SVGLengthValue::SVGLengthValue(SVGLengthMode lengthMode, StringImpl* valueAsString)
     : m_value(CSS::Number<>(0))
     , m_lengthMode(lengthMode)
 {
@@ -125,7 +125,7 @@ SVGLengthValue SVGLengthValue::construct(SVGLengthMode lengthMode, StringView va
     // Empty string should use fallback.
     if (valueAsString.isEmpty()) {
         if (!fallbackValue.isNull())
-            return SVGLengthValue(lengthMode, fallbackValue);
+            return SVGLengthValue(lengthMode, StringImpl::create(fallbackValue).ptr());
         return length;
     }
 
@@ -136,7 +136,7 @@ SVGLengthValue SVGLengthValue::construct(SVGLengthMode lengthMode, StringView va
 
     // If parsing failed and we have a fallback, use it.
     if (!fallbackValue.isNull() && parseError != SVGParsingError::None)
-        return SVGLengthValue(lengthMode, fallbackValue);
+        return SVGLengthValue(lengthMode, StringImpl::create(fallbackValue).ptr());
 
     // A forbidden negative value must be ignored even without an explicit fallback.
     if (parseError == SVGParsingError::ForbiddenNegativeValue)
@@ -275,22 +275,22 @@ float SVGLengthValue::valueInSpecifiedUnits() const
     );
 }
 
-String SVGLengthValue::valueAsString() const
+RefPtr<StringImpl> SVGLengthValue::valueAsString() const
 {
     return WTF::switchOn(m_value,
-        [](const auto& value) {
+        [](const auto& value) -> RefPtr<StringImpl> {
             if (auto raw = value.raw()) {
                 // FIXME: Handle calc() expressions and consider exponential notation for very large/small values
                 float numericValue = clampTo<float>(raw->value);
                 return formatCSSNumberValue(CSS::SerializableNumber { numericValue, CSS::unitString(raw->unit) });
             }
 
-            return String();
+            return nullptr;
         }
     );
 }
 
-AtomString SVGLengthValue::valueAsAtomString() const
+RefPtr<AtomStringImpl> SVGLengthValue::valueAsAtomString() const
 {
     return makeAtomString(valueAsString());
 }

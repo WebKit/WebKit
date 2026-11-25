@@ -37,7 +37,7 @@ class WebExtensionAPIBookmarks : public WebExtensionAPIObject, public JSWebExten
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIBookmarks, bookmarks, bookmarks);
 
 public:
-    String rootNodeIdentifier() const { return webExtensionBookmarkRootIdentifier; }
+    RefPtr<StringImpl> rootNodeIdentifier() const { return webExtensionBookmarkRootIdentifier; }
 
 #if PLATFORM(COCOA)
     void createBookmark(NSDictionary *bookmark, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

@@ -48,15 +48,15 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkNotificationManager);
 
-Ref<NetworkNotificationManager> NetworkNotificationManager::create(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
+Ref<NetworkNotificationManager> NetworkNotificationManager::create(StringImpl* webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
     return adoptRef(*new NetworkNotificationManager(webPushMachServiceName, WTF::move(configuration)));
 }
 
-NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
+NetworkNotificationManager::NetworkNotificationManager(StringImpl* webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
-    if (!webPushMachServiceName.isEmpty())
-        lazyInitialize(m_connection, WebPushD::Connection::create(webPushMachServiceName.utf8(), WTF::move(configuration)));
+    if (!isEmpty(webPushMachServiceName))
+        lazyInitialize(m_connection, WebPushD::Connection::create(utf8(webPushMachServiceName), WTF::move(configuration)));
 }
 
 NetworkNotificationManager::~NetworkNotificationManager() = default;
@@ -108,7 +108,7 @@ void NetworkNotificationManager::showNotification(IPC::Connection&, const WebCor
     showNotification(notification, WTF::move(notificationResources), WTF::move(completionHandler));
 }
 
-void NetworkNotificationManager::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+void NetworkNotificationManager::getNotifications(const URL& registrationURL, StringImpl* tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     RefPtr connection = m_connection;
     if (!connection) {

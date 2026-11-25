@@ -55,15 +55,15 @@ public:
     }
 #endif
 #if PLATFORM(COCOA)
-    static Ref<BrowsingWarning> create(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details, Data&& data)
+    static Ref<BrowsingWarning> create(URL&& url, RefPtr<StringImpl>&& title, RefPtr<StringImpl>&& warning, RetainPtr<NSAttributedString>&& details, Data&& data)
     {
         return adoptRef(*new BrowsingWarning(WTF::move(url), WTF::move(title), WTF::move(warning), WTF::move(details), WTF::move(data)));
     }
 #endif
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    const String& title() const LIFETIME_BOUND { return m_title; }
-    const String& warning() const LIFETIME_BOUND { return m_warning; }
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_title; }
+    const RefPtr<StringImpl>& warning() const LIFETIME_BOUND { return m_warning; }
     bool forMainFrameNavigation() const { return m_forMainFrameNavigation; }
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> details() const { return m_details; }
@@ -78,12 +78,12 @@ private:
     BrowsingWarning(const URL&, bool, Data&&);
 #endif
 #if PLATFORM(COCOA)
-    BrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&, Data&&);
+    BrowsingWarning(URL&&, RefPtr<StringImpl>&&, RefPtr<StringImpl>&&, RetainPtr<NSAttributedString>&&, Data&&);
 #endif
 
     URL m_url;
-    String m_title;
-    String m_warning;
+    RefPtr<StringImpl> m_title;
+    RefPtr<StringImpl> m_warning;
     bool m_forMainFrameNavigation { false };
 #if PLATFORM(COCOA)
     const RetainPtr<NSAttributedString> m_details;

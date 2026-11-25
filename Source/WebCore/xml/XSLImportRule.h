@@ -36,10 +36,10 @@ class CachedXSLStyleSheet;
 class XSLImportRule : public RefCounted<XSLImportRule>, private CachedStyleSheetClient {
     WTF_MAKE_TZONE_ALLOCATED(XSLImportRule);
 public:
-    NODELETE static Ref<XSLImportRule> create(XSLStyleSheet& parentSheet, const String& href);
+    NODELETE static Ref<XSLImportRule> create(XSLStyleSheet& parentSheet, StringImpl* href);
     virtual ~XSLImportRule();
     
-    const String& href() const LIFETIME_BOUND { return m_strHref; }
+    const RefPtr<StringImpl>& href() const LIFETIME_BOUND { return m_strHref; }
     XSLStyleSheet* styleSheet() const { return m_styleSheet.get(); }
 
     XSLStyleSheet* parentStyleSheet() const { return m_parentStyleSheet.get(); }
@@ -53,12 +53,12 @@ public:
     void deref() const final { RefCounted::deref(); }
     
 private:
-    XSLImportRule(XSLStyleSheet& parentSheet, const String& href);
+    XSLImportRule(XSLStyleSheet& parentSheet, StringImpl* href);
 
-    void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet) override;
+    void setXSLStyleSheet(StringImpl* href, const URL& baseURL, StringImpl* sheet) override;
     
     WeakPtr<XSLStyleSheet> m_parentStyleSheet;
-    String m_strHref;
+    RefPtr<StringImpl> m_strHref;
     RefPtr<XSLStyleSheet> m_styleSheet;
     CachedResourceHandle<CachedXSLStyleSheet> m_cachedSheet;
     bool m_loading { false };

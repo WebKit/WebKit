@@ -35,7 +35,7 @@ namespace WebKit {
 struct VirtualAuthenticatorConfiguration {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VirtualAuthenticatorConfiguration);
     // FIXME: use ProtocolVersion here
-    String protocol;
+    RefPtr<StringImpl> protocol;
     WebCore::AuthenticatorTransport transport;
     bool hasResidentKey;
     bool hasUserVerification;

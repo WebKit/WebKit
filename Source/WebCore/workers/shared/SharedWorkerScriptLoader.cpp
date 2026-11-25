@@ -97,7 +97,7 @@ void SharedWorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionConte
         }
     }
 
-    if (fetchResult.referrerPolicy.isNull() && scriptExecutionContext)
+    if (!fetchResult.referrerPolicy && scriptExecutionContext)
         fetchResult.referrerPolicy = referrerPolicyToString(scriptExecutionContext->referrerPolicy());
     m_completionHandler(WTF::move(fetchResult), WorkerInitializationData {
         m_loader->takeServiceWorkerData(),

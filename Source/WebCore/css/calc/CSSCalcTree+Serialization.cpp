@@ -538,7 +538,7 @@ template<typename Op> void serializeMathFunctionArguments(StringBuilder& builder
             }
         },
         [&](const CSS::CustomIdent& root) {
-            if (!root.value.isNull()) {
+            if (root.value) {
                 builder.append(std::exchange(separator, ", "_s));
                 CSS::serializationForCSS(builder, state.serializationContext, root);
             }
@@ -775,7 +775,7 @@ void serializationForCSS(StringBuilder& builder, const Tree& tree, const Seriali
     serializeMathFunction(builder, tree.root, state);
 }
 
-String serializationForCSS(const Tree& tree, const SerializationOptions& options)
+RefPtr<StringImpl> serializationForCSS(const Tree& tree, const SerializationOptions& options)
 {
     StringBuilder builder;
     serializationForCSS(builder, tree, options);
@@ -791,7 +791,7 @@ void serializationForCSS(StringBuilder& builder, const Child& child, const Seria
     serializeCalculationTree(builder, child, state);
 }
 
-String serializationForCSS(const Child& child, const SerializationOptions& options)
+RefPtr<StringImpl> serializationForCSS(const Child& child, const SerializationOptions& options)
 {
     StringBuilder builder;
     serializationForCSS(builder, child, options);

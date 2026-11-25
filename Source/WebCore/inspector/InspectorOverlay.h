@@ -49,7 +49,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
-using ErrorString = String;
+using ErrorString = RefPtr<StringImpl>;
 
 template <typename T>
 using ErrorStringOr = std::expected<T, ErrorString>;
@@ -95,7 +95,7 @@ struct InspectorOverlayHighlight {
 
         struct Area {
             WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Area);
-            String name;
+            RefPtr<StringImpl> name;
             FloatQuad quad;
         };
 

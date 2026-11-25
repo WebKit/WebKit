@@ -30,9 +30,9 @@ namespace WebCore {
 
 namespace GStreamerCodecUtilities {
 
-std::pair<UTF8CStringView, String> parseH264ProfileAndLevel(const String& codec);
-UTF8CStringView parseHEVCProfile(const String& codec);
-std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> capsFromCodecString(const String&, const IntSize&, std::optional<double> frameRate = std::nullopt);
+std::pair<UTF8CStringView, RefPtr<StringImpl>> parseH264ProfileAndLevel(StringImpl* codec);
+UTF8CStringView parseHEVCProfile(StringImpl* codec);
+std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> capsFromCodecString(StringImpl*, const IntSize&, std::optional<double> frameRate = std::nullopt);
 
 } // namespace GStreamerCodecUtilities
 

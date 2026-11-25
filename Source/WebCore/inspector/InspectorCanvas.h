@@ -69,7 +69,7 @@ public:
     NODELETE static Ref<InspectorCanvas> create(GPUDevice&);
     ~InspectorCanvas();
 
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     NODELETE CanvasRenderingContext* canvasContext() const;
     NODELETE GPUDevice* deviceContext() const;
@@ -77,7 +77,7 @@ public:
     HashSet<HTMLCanvasElement*> canvasElements() const;
 
     Vector<IntSize> sizes() const;
-    Vector<String> cssCanvasNames() const;
+    Vector<RefPtr<StringImpl>> cssCanvasNames() const;
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -95,8 +95,8 @@ public:
     NODELETE bool hasRecordingData() const;
     NODELETE bool currentFrameHasData() const;
 
-    void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
-    void recordAction(String&&, InspectorCanvasProcessedArgument&& receiver, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(RefPtr<StringImpl>&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(RefPtr<StringImpl>&&, InspectorCanvasProcessedArgument&& receiver, InspectorCanvasProcessedArguments&& = { });
     void recordActionResult(InspectorCanvasProcessedArgument&&);
 
     Ref<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> releaseFrames() { return m_frames.releaseNonNull(); }
@@ -104,7 +104,7 @@ public:
     void finalizeFrame();
     void markCurrentFrameIncomplete();
 
-    void setRecordingName(const String& name) { m_recordingName = name; }
+    void setRecordingName(StringImpl* name) { m_recordingName = name; }
 
     NODELETE void setBufferLimit(long);
     NODELETE bool hasBufferSpace() const;
@@ -116,8 +116,8 @@ public:
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);
     Ref<Inspector::Protocol::Recording::Recording> releaseObjectForRecording();
 
-    static Inspector::Protocol::ErrorStringOr<String> getContentAsDataURL(CanvasRenderingContext&);
-    Inspector::Protocol::ErrorStringOr<String> getContentAsDataURL();
+    static Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> getContentAsDataURL(CanvasRenderingContext&);
+    Inspector::Protocol::ErrorStringOr<RefPtr<StringImpl>> getContentAsDataURL();
 
 private:
     template<typename> friend struct InspectorCanvasArgumentProcessor;
@@ -126,7 +126,7 @@ private:
     explicit InspectorCanvas(GPUDevice&);
 
     void appendActionSnapshotIfNeeded();
-    void recordAction(String&&, InspectorCanvasProcessedArguments&&, RefPtr<JSON::ArrayOf<int>> receiver);
+    void recordAction(RefPtr<StringImpl>&&, InspectorCanvasProcessedArguments&&, RefPtr<JSON::ArrayOf<int>> receiver);
 
     using DuplicateDataVariant = Variant<
         Ref<CanvasGradient>,
@@ -145,20 +145,20 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS)
         Ref<OffscreenCanvas>,
 #endif
-        String
+        RefPtr<StringImpl>
     >;
 
     int indexForData(DuplicateDataVariant);
     size_t identifierForRecordingObject(RecordingSwizzleType, uintptr_t);
     Ref<JSON::Value> valueIndexForData(DuplicateDataVariant);
-    String stringIndexForKey(const String&);
+    RefPtr<StringImpl> stringIndexForKey(StringImpl*);
     Ref<Inspector::Protocol::Recording::InitialState> buildInitialState();
-    Ref<JSON::ArrayOf<JSON::Value>> buildAction(String&&, InspectorCanvasProcessedArguments&& = { });
+    Ref<JSON::ArrayOf<JSON::Value>> buildAction(RefPtr<StringImpl>&&, InspectorCanvasProcessedArguments&& = { });
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);
 
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
 
     Variant<
         WeakRef<CanvasRenderingContext>,
@@ -175,7 +175,7 @@ private:
     HashMap<uintptr_t, size_t> m_boundRecordingObjectIdentifiers;
     HashMap<RecordingSwizzleType, size_t> m_nextRecordingObjectIdentifiers;
 
-    String m_recordingName;
+    RefPtr<StringImpl> m_recordingName;
     MonotonicTime m_currentFrameStartTime { MonotonicTime::nan() };
     size_t m_bufferLimit { 100 * 1024 * 1024 };
     size_t m_bufferUsed { 0 };

@@ -46,9 +46,9 @@ using namespace WebCore;
 
 namespace {
 #if PLATFORM(MAC)
-static inline String bundleName()
+static inline RefPtr<StringImpl> bundleName()
 {
-    return [[NSRunningApplication currentApplication] localizedName];
+    return StringImpl::create([[NSRunningApplication currentApplication] localizedName]);
 }
 #endif
 } // namespace
@@ -75,9 +75,9 @@ LocalConnection::~LocalConnection()
     [m_context invalidate];
 }
 
-void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAccessControlRef accessControl, UserVerificationRequirement uv, UserVerificationCallback&& completionHandler)
+void LocalConnection::verifyUser(StringImpl* rpId, ClientDataType type, SecAccessControlRef accessControl, UserVerificationRequirement uv, UserVerificationCallback&& completionHandler)
 {
-    String title = genericTouchIDPromptTitle();
+    RefPtr<StringImpl> title = genericTouchIDPromptTitle();
 #if PLATFORM(MAC)
     switch (type) {
     case ClientDataType::Create:
@@ -96,7 +96,7 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
 #if HAVE(UNIFIED_ASC_AUTH_UI)
     if ([m_context biometryType] == LABiometryTypeTouchID) {
-        [options setObject:title.createNSString().get() forKey:RetainPtr { @(LAOptionAuthenticationTitle) }.get()];
+        [options setObject:createNSString(title).get() forKey:RetainPtr { @(LAOptionAuthenticationTitle) }.get()];
         [options setObject:@NO forKey:RetainPtr { @(LAOptionFallbackVisible) }.get()];
     }
 #endif
@@ -181,7 +181,7 @@ void LocalConnection::verifyUser(SecAccessControlRef accessControl, LAContext *c
     [context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign options:options.get() reply:reply.get()];
 }
 
-static NSDictionary *alternateAttributes(LAContext *context, SecAccessControlRef accessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag)
+static NSDictionary *alternateAttributes(LAContext *context, SecAccessControlRef accessControlRef, StringImpl* secAttrLabel, NSData *secAttrApplicationTag)
 {
     return @{
         (id)kSecAttrSynchronizable: @YES,
@@ -190,19 +190,19 @@ static NSDictionary *alternateAttributes(LAContext *context, SecAccessControlRef
         (id)kSecPrivateKeyAttrs: @{
             (id)kSecAttrIsPermanent: @YES,
             (id)kSecAttrAccessGroup: WebCore::LocalAuthenticatorAccessGroup,
-            (id)kSecAttrLabel: secAttrLabel.createNSString().get(),
+            (id)kSecAttrLabel: createNSString(secAttrLabel).get(),
             (id)kSecAttrApplicationTag: secAttrApplicationTag,
         }
     };
 }
 
-RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *context, SecAccessControlRef accessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const
+RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *context, SecAccessControlRef accessControlRef, StringImpl* secAttrLabel, NSData *secAttrApplicationTag) const
 {
     RetainPtr privateKeyAttributes = @{
         (id)kSecAttrAccessControl: (id)accessControlRef,
         (id)kSecAttrIsPermanent: @YES,
         (id)kSecAttrAccessGroup: LocalAuthenticatorAccessGroup,
-        (id)kSecAttrLabel: secAttrLabel.createNSString().get(),
+        (id)kSecAttrLabel: createNSString(secAttrLabel).get(),
         (id)kSecAttrApplicationTag: secAttrApplicationTag,
     };
 
@@ -232,14 +232,14 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
     return credentialPrivateKey;
 }
 
-RetainPtr<NSArray> LocalConnection::getExistingCredentials(const String& rpId)
+RetainPtr<NSArray> LocalConnection::getExistingCredentials(StringImpl* rpId)
 {
     // Search Keychain for existing credential matched the RP ID.
     RetainPtr query = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (id)kSecAttrAccessGroup: LocalAuthenticatorAccessGroup,
-        (id)kSecAttrLabel: rpId.createNSString().get(),
+        (id)kSecAttrLabel: createNSString(rpId).get(),
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
         (id)kSecUseDataProtectionKeychain: @YES

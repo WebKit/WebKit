@@ -80,7 +80,7 @@ public:
 
     bool isSecureContext() const final { return true; }
 
-    String agentClusterID() const final { return m_agentClusterID; }
+    RefPtr<StringImpl> agentClusterID() const final { return m_agentClusterID; }
     bool crossOriginIsolated() const final { return m_canBeCrossOriginIsolated == CanBeCrossOriginIsolated::Yes; }
 
     JSC::RuntimeFlags jsRuntimeFlags() const { return m_jsRuntimeFlags; }
@@ -104,16 +104,16 @@ private:
 
     bool isWorkletGlobalScope() const final { return true; }
 
-    void logExceptionToConsole(const String& errorMessage, const String&, int, int, RefPtr<Inspector::ScriptCallStack>&&) final;
-    void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long) final;
-    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
+    void logExceptionToConsole(StringImpl* errorMessage, StringImpl*, int, int, RefPtr<Inspector::ScriptCallStack>&&) final;
+    void addMessage(MessageSource, MessageLevel, StringImpl*, StringImpl*, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long) final;
+    void addConsoleMessage(MessageSource, MessageLevel, StringImpl*, unsigned long) final;
 
     EventTarget* errorEventTarget() final { return this; }
 
     std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(CryptoKeyData&&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return std::nullopt; }
-    URL parseURL(const String&) const final;
-    String userAgent(const URL&) const final;
+    URL parseURL(StringImpl*) const final;
+    RefPtr<StringImpl> userAgent(const URL&) const final;
     NODELETE const SettingsValues& settingsValues() const LIFETIME_BOUND final { return m_settingsValues; }
     const NetworkLoadPolicy& networkLoadPolicy() const LIFETIME_BOUND final { return m_networkLoadPolicy; }
 
@@ -128,7 +128,7 @@ private:
     const RefPtr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
 
     SettingsValues m_settingsValues;
-    String m_agentClusterID;
+    RefPtr<StringImpl> m_agentClusterID;
     const CanBeCrossOriginIsolated m_canBeCrossOriginIsolated;
     const NetworkLoadPolicy m_networkLoadPolicy;
 };

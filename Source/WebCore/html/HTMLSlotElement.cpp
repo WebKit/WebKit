@@ -95,7 +95,7 @@ void HTMLSlotElement::childrenChanged(const ChildChange& childChange)
     }
 }
 
-void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void HTMLSlotElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason reason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 

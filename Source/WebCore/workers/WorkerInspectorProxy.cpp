@@ -125,7 +125,7 @@ Vector<Ref<WorkerInspectorProxy>> WorkerInspectorProxy::proxiesForWorkerGlobalSc
     return copyToVectorOf<Ref<WorkerInspectorProxy>>(iterator->value);
 }
 
-WorkerInspectorProxy::WorkerInspectorProxy(const String& identifier)
+WorkerInspectorProxy::WorkerInspectorProxy(StringImpl* identifier)
     : m_identifier(identifier)
 {
 }
@@ -173,7 +173,7 @@ auto WorkerInspectorProxy::automationOwner() const -> std::optional<AutomationOw
 }
 #endif
 
-void WorkerInspectorProxy::workerStarted(ScriptExecutionContext& scriptExecutionContext, WorkerThread* thread, const URL& url, const String& name)
+void WorkerInspectorProxy::workerStarted(ScriptExecutionContext& scriptExecutionContext, WorkerThread* thread, const URL& url, StringImpl* name)
 {
     ASSERT(!m_workerThread);
     m_scriptExecutionContext = scriptExecutionContext;
@@ -280,18 +280,18 @@ void WorkerInspectorProxy::disconnectFromWorkerInspectorController()
     });
 }
 
-void WorkerInspectorProxy::sendMessageToWorkerInspectorController(const String& message)
+void WorkerInspectorProxy::sendMessageToWorkerInspectorController(StringImpl* message)
 {
     ASSERT(m_workerThread);
     if (!m_workerThread)
         return;
 
-    m_workerThread->runLoop().postDebuggerTask([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postDebuggerTask([message = isolatedCopy(message)] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().dispatchMessageFromFrontend(message);
     });
 }
 
-void WorkerInspectorProxy::sendMessageFromWorkerToFrontend(String&& message)
+void WorkerInspectorProxy::sendMessageFromWorkerToFrontend(RefPtr<StringImpl>&& message)
 {
     if (RefPtr pageChannel = m_pageChannel.get())
         pageChannel->sendMessageFromWorkerToFrontend(*this, WTF::move(message));

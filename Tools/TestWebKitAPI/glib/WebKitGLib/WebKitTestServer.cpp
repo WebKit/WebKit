@@ -69,7 +69,7 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
 
 void WebKitTestServer::addWebSocketHandler(SoupServerWebsocketCallback callback, gpointer userData)
 {
-    m_baseWebSocketURL = URL(m_baseURL, "/websocket/"_s);
+    m_baseWebSocketURL = URL(m_baseURL, "/websocket/"_si);
     m_baseWebSocketURL.setProtocol(m_baseWebSocketURL.protocolIs("http"_s) ? "ws"_s : "wss"_s);
 
     if (m_queue) {
@@ -96,12 +96,12 @@ UTF8CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
 {
     g_assert_false(m_baseWebSocketURL.isNull());
     g_assert_true(path && *path == '/');
-    return URL(m_baseWebSocketURL, String::fromLatin1(path + 1)).string().utf8(); // Ignore the leading slash.
+    return utf8(URL(m_baseWebSocketURL, StringImpl::fromLatin1(path + 1)).string()); // Ignore the leading slash.
 }
 
 UTF8CString WebKitTestServer::getURIForPath(const char* path) const
 {
-    return URL(m_baseURL, String::fromLatin1(path)).string().utf8();
+    return utf8(URL(m_baseURL, StringImpl::fromLatin1(path)).string());
 }
 
 unsigned WebKitTestServer::port() const

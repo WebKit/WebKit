@@ -35,7 +35,7 @@ Ref<JSON::Object> GPUExternalTextureDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
     // `GPUVideoSource` is not JSON serializable.
-    json->setString("colorSpace"_s, convertEnumerationToString(colorSpace));
+    json->setString("colorSpace"_si, convertEnumerationToString(colorSpace));
     return json;
 }
 

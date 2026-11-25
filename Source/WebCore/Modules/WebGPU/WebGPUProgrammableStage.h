@@ -37,8 +37,8 @@ using WebGPUPipelineConstantValue = double; // May represent WGSL’s bool, f32,
 
 struct WebGPUProgrammableStage {
     Ref<::WebGPU::ShaderModule> module;
-    String entryPoint;
-    Vector<KeyValuePair<String, WebGPUPipelineConstantValue>> constants;
+    RefPtr<StringImpl> entryPoint;
+    Vector<KeyValuePair<RefPtr<StringImpl>, WebGPUPipelineConstantValue>> constants;
 };
 
 } // namespace WebCore

@@ -40,7 +40,7 @@ CSSColorSchemeValue::CSSColorSchemeValue(CSS::ColorScheme colorScheme)
 {
 }
 
-String CSSColorSchemeValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSColorSchemeValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_colorScheme);
 }

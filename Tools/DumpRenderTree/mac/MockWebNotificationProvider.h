@@ -33,8 +33,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-using NotificationIDMap = HashMap<String, RetainPtr<WebNotification>>;
-using NotificationViewMap = HashMap<String, CFTypeRef>;
+using NotificationIDMap = HashMap<RefPtr<StringImpl>, RetainPtr<WebNotification>>;
+using NotificationViewMap = HashMap<RefPtr<StringImpl>, CFTypeRef>;
 
 @interface MockWebNotificationProvider : NSObject <WebNotificationProvider> {
     HashSet<CFTypeRef> _registeredWebViews;

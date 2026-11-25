@@ -31,13 +31,13 @@ namespace WebCore {
 
 GstElement* GStreamerHolePunchQuirkWesteros::createHolePunchVideoSink(bool isLegacyPlaybin, const MediaPlayer* player)
 {
-    AtomString val;
-    bool isPIPRequested = player && player->doesHaveAttribute("pip"_s, &val) && equalLettersIgnoringASCIICase(val, "true"_s);
+    RefPtr<AtomStringImpl> val;
+    bool isPIPRequested = player && player->doesHaveAttribute("pip"_atom, &val) && equalLettersIgnoringASCIICase(val, "true"_s);
     if (isLegacyPlaybin && !isPIPRequested)
         return nullptr;
 
     // Westeros using holepunch.
-    GstElement* videoSink = makeGStreamerElement("westerossink"_s, "WesterosVideoSink"_s);
+    GstElement* videoSink = makeGStreamerElement("westerossink"_s, "WesterosVideoSink"_si);
     g_object_set(videoSink, "zorder", 0.0f, nullptr);
     if (isPIPRequested) {
         g_object_set(videoSink, "res-usage", 0u, nullptr);
@@ -57,7 +57,7 @@ bool GStreamerHolePunchQuirkWesteros::setHolePunchVideoRectangle(GstElement* vid
         return false;
 
     auto rectString = makeString(rect.x(), ',', rect.y(), ',', rect.width(), ',', rect.height());
-    g_object_set(videoSink, "rectangle", rectString.ascii().data(), nullptr);
+    g_object_set(videoSink, "rectangle", ascii(rectString).data(), nullptr);
     return true;
 }
 

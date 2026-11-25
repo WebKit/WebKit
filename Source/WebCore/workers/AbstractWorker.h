@@ -52,7 +52,7 @@ protected:
     AbstractWorker() = default;
 
     // Helper function that converts a URL to an absolute URL and checks the result for validity.
-    ExceptionOr<URL> resolveURL(const String& url);
+    ExceptionOr<URL> resolveURL(StringImpl* url);
 
     static bool validateURL(ScriptExecutionContext&, const URL&);
 

@@ -72,7 +72,7 @@ public:
     {
     }
 
-    ParserError(ErrorType type, SyntaxErrorType syntaxError, JSToken token, const String& msg, int line)
+    ParserError(ErrorType type, SyntaxErrorType syntaxError, JSToken token, StringImpl* msg, int line)
         : m_token(token)
         , m_message(msg)
         , m_line(line)
@@ -84,7 +84,7 @@ public:
     bool isValid() const { return m_type != ErrorNone; }
     SyntaxErrorType syntaxErrorType() const { return m_syntaxErrorType; }
     const JSToken& token() const LIFETIME_BOUND { return m_token; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
     int line() const { return m_line; }
     ErrorType type() const { return m_type; }
 
@@ -121,7 +121,7 @@ public:
 
 private:
     JSToken m_token;
-    String m_message;
+    RefPtr<StringImpl> m_message;
     int m_line { -1 };
     ErrorType m_type;
     SyntaxErrorType m_syntaxErrorType;

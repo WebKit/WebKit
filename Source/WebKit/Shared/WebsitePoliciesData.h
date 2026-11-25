@@ -59,13 +59,13 @@ public:
     static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
     static void applyToSettings(const WebsitePoliciesData&, WebCore::Settings&);
 
-    HashMap<String, Vector<String>> activeContentRuleListActionPatterns;
+    HashMap<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>> activeContentRuleListActionPatterns;
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
     Vector<WebCore::TargetedElementSelectors> visibilityAdjustmentSelectors;
-    String customUserAgent;
-    String customUserAgentAsSiteSpecificQuirks;
-    String customNavigatorPlatform;
-    String applicationNameForDesktopUserAgent;
+    RefPtr<StringImpl> customUserAgent;
+    RefPtr<StringImpl> customUserAgentAsSiteSpecificQuirks;
+    RefPtr<StringImpl> customNavigatorPlatform;
+    RefPtr<StringImpl> applicationNameForDesktopUserAgent;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebCore::ContentExtensionEnablement contentExtensionEnablement { WebCore::ContentExtensionDefaultEnablement::Enabled, { } };
@@ -102,7 +102,7 @@ public:
     WebsiteInlineMediaPlaybackPolicy inlineMediaPlaybackPolicy { WebsiteInlineMediaPlaybackPolicy::Default };
     WebCore::ResourceRequest alternateRequest;
     std::optional<UserContentControllerParameters> userContentControllerParameters;
-    String overrideReferrerForAllRequests;
+    RefPtr<StringImpl> overrideReferrerForAllRequests;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     bool forceDisableAXCustomColorMode { false };

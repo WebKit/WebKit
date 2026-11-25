@@ -41,18 +41,18 @@ public:
 
     virtual ~KeyedDecoder() = default;
 
-    [[nodiscard]] virtual bool decodeBytes(const String& key, std::span<const uint8_t>&) = 0;
-    [[nodiscard]] virtual bool decodeBool(const String& key, bool&) = 0;
-    [[nodiscard]] virtual bool decodeUInt32(const String& key, uint32_t&) = 0;
-    [[nodiscard]] virtual bool decodeUInt64(const String& key, uint64_t&) = 0;
-    [[nodiscard]] virtual bool decodeInt32(const String& key, int32_t&) = 0;
-    [[nodiscard]] virtual bool decodeInt64(const String& key, int64_t&) = 0;
-    [[nodiscard]] virtual bool decodeFloat(const String& key, float&) = 0;
-    [[nodiscard]] virtual bool decodeDouble(const String& key, double&) = 0;
-    [[nodiscard]] virtual bool decodeString(const String& key, String&) = 0;
+    [[nodiscard]] virtual bool decodeBytes(StringImpl* key, std::span<const uint8_t>&) = 0;
+    [[nodiscard]] virtual bool decodeBool(StringImpl* key, bool&) = 0;
+    [[nodiscard]] virtual bool decodeUInt32(StringImpl* key, uint32_t&) = 0;
+    [[nodiscard]] virtual bool decodeUInt64(StringImpl* key, uint64_t&) = 0;
+    [[nodiscard]] virtual bool decodeInt32(StringImpl* key, int32_t&) = 0;
+    [[nodiscard]] virtual bool decodeInt64(StringImpl* key, int64_t&) = 0;
+    [[nodiscard]] virtual bool decodeFloat(StringImpl* key, float&) = 0;
+    [[nodiscard]] virtual bool decodeDouble(StringImpl* key, double&) = 0;
+    [[nodiscard]] virtual bool decodeString(StringImpl* key, RefPtr<StringImpl>&) = 0;
 
     template<typename T> [[nodiscard]]
-    bool decodeBytes(const String& key, Vector<T>& vector)
+    bool decodeBytes(StringImpl* key, Vector<T>& vector)
     {
         static_assert(sizeof(T) == 1);
 
@@ -65,7 +65,7 @@ public:
     }
 
     template<typename T, typename F> [[nodiscard]]
-    bool decodeEnum(const String& key, T& value, NOESCAPE const F& isValidEnumFunction)
+    bool decodeEnum(StringImpl* key, T& value, NOESCAPE const F& isValidEnumFunction)
     {
         static_assert(std::is_enum<T>::value, "T must be an enum type");
 
@@ -81,7 +81,7 @@ public:
     }
 
     template<typename T, typename F> [[nodiscard]]
-    bool decodeObject(const String& key, T& object, NOESCAPE const F& function)
+    bool decodeObject(StringImpl* key, T& object, NOESCAPE const F& function)
     {
         if (!beginObject(key))
             return false;
@@ -91,7 +91,7 @@ public:
     }
 
     template<typename T, typename F> [[nodiscard]]
-    bool decodeConditionalObject(const String& key, T& object, NOESCAPE const F& function)
+    bool decodeConditionalObject(StringImpl* key, T& object, NOESCAPE const F& function)
     {
         // FIXME: beginObject can return false for two reasons: either the
         // key doesn't exist or the key refers to something that isn't an object.
@@ -106,7 +106,7 @@ public:
     }
 
     template<typename ContainerType, typename F> [[nodiscard]]
-    bool decodeObjects(const String& key, ContainerType& objects, NOESCAPE const F& function)
+    bool decodeObjects(StringImpl* key, ContainerType& objects, NOESCAPE const F& function)
     {
         if (!beginArray(key))
             return false;
@@ -133,10 +133,10 @@ protected:
     }
 
 private:
-    virtual bool beginObject(const String& key) = 0;
+    virtual bool beginObject(StringImpl* key) = 0;
     virtual void endObject() = 0;
 
-    virtual bool beginArray(const String& key) = 0;
+    virtual bool beginArray(StringImpl* key) = 0;
     virtual bool beginArrayElement() = 0;
     virtual void endArrayElement() = 0;
     virtual void endArray() = 0;
@@ -149,20 +149,20 @@ public:
 
     virtual ~KeyedEncoder() = default;
 
-    virtual void encodeBytes(const String& key, std::span<const uint8_t>) = 0;
-    virtual void encodeBool(const String& key, bool) = 0;
-    virtual void encodeUInt32(const String& key, uint32_t) = 0;
-    virtual void encodeUInt64(const String& key, uint64_t) = 0;
-    virtual void encodeInt32(const String& key, int32_t) = 0;
-    virtual void encodeInt64(const String& key, int64_t) = 0;
-    virtual void encodeFloat(const String& key, float) = 0;
-    virtual void encodeDouble(const String& key, double) = 0;
-    virtual void encodeString(const String& key, const String&) = 0;
+    virtual void encodeBytes(StringImpl* key, std::span<const uint8_t>) = 0;
+    virtual void encodeBool(StringImpl* key, bool) = 0;
+    virtual void encodeUInt32(StringImpl* key, uint32_t) = 0;
+    virtual void encodeUInt64(StringImpl* key, uint64_t) = 0;
+    virtual void encodeInt32(StringImpl* key, int32_t) = 0;
+    virtual void encodeInt64(StringImpl* key, int64_t) = 0;
+    virtual void encodeFloat(StringImpl* key, float) = 0;
+    virtual void encodeDouble(StringImpl* key, double) = 0;
+    virtual void encodeString(StringImpl* key, StringImpl*) = 0;
 
     virtual RefPtr<SharedBuffer> finishEncoding() = 0;
 
     template<typename T>
-    void encodeEnum(const String& key, T value)
+    void encodeEnum(StringImpl* key, T value)
     {
         static_assert(std::is_enum<T>::value, "T must be an enum type");
 
@@ -170,7 +170,7 @@ public:
     }
 
     template<typename T, typename F>
-    void encodeObject(const String& key, const T& object, NOESCAPE const F& function)
+    void encodeObject(StringImpl* key, const T& object, NOESCAPE const F& function)
     {
         beginObject(key);
         function(*this, object);
@@ -178,7 +178,7 @@ public:
     }
 
     template<typename T, typename F>
-    void encodeConditionalObject(const String& key, const T* object, NOESCAPE const F& function)
+    void encodeConditionalObject(StringImpl* key, const T* object, NOESCAPE const F& function)
     {
         if (!object)
             return;
@@ -187,7 +187,7 @@ public:
     }
 
     template<typename CollectionType, typename F>
-    void encodeObjects(const String& key, const CollectionType& collection, NOESCAPE const F& function)
+    void encodeObjects(StringImpl* key, const CollectionType& collection, NOESCAPE const F& function)
     {
         beginArray(key);
         for (auto& item : collection) {
@@ -204,10 +204,10 @@ protected:
     }
 
 private:
-    virtual void beginObject(const String& key) = 0;
+    virtual void beginObject(StringImpl* key) = 0;
     virtual void endObject() = 0;
 
-    virtual void beginArray(const String& key) = 0;
+    virtual void beginArray(StringImpl* key) = 0;
     virtual void beginArrayElement() = 0;
     virtual void endArrayElement() = 0;
     virtual void endArray() = 0;

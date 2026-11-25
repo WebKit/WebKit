@@ -55,7 +55,7 @@ ExceptionOr<Ref<CloseWatcher>> CloseWatcher::create(ScriptExecutionContext& cont
 {
     RefPtr document = dynamicDowncast<Document>(context);
     if (!document->isFullyActive())
-        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_si };
 
     Ref watcher = CloseWatcher::establish(*document);
 

@@ -31,16 +31,16 @@
 
 namespace JSC {
 
-inline JSCellButterfly* StringSplitCache::getForString(const String& subject, const String& separator)
+inline JSCellButterfly* StringSplitCache::getForString(StringImpl* subject, StringImpl* separator)
 {
     AssertNoGC assertNoGC;
-    if (!subject.impl() || !subject.impl()->isAtom())
+    if (!subject || !subject->isAtom())
         return nullptr;
-    if (!separator.impl() || !separator.impl()->isAtom())
+    if (!separator || !separator->isAtom())
         return nullptr;
 
-    auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
-    auto* separatorImpl = static_cast<AtomStringImpl*>(separator.impl());
+    auto* subjectImpl = static_cast<AtomStringImpl*>(subject);
+    auto* separatorImpl = static_cast<AtomStringImpl*>(separator);
     size_t index = subjectImpl->hash() & (m_stringEntries.size() - 1);
     {
         auto& entry = m_stringEntries[index];
@@ -55,16 +55,16 @@ inline JSCellButterfly* StringSplitCache::getForString(const String& subject, co
     return nullptr;
 }
 
-inline void StringSplitCache::setForString(const String& subject, const String& separator, JSCellButterfly* butterfly)
+inline void StringSplitCache::setForString(StringImpl* subject, StringImpl* separator, JSCellButterfly* butterfly)
 {
     AssertNoGC assertNoGC;
-    if (!subject.impl() || !subject.impl()->isAtom())
+    if (!subject || !subject->isAtom())
         return;
-    if (!separator.impl() || !separator.impl()->isAtom())
+    if (!separator || !separator->isAtom())
         return;
 
-    auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
-    auto* separatorImpl = static_cast<AtomStringImpl*>(separator.impl());
+    auto* subjectImpl = static_cast<AtomStringImpl*>(subject);
+    auto* separatorImpl = static_cast<AtomStringImpl*>(separator);
     size_t index = subjectImpl->hash() & (m_stringEntries.size() - 1);
     {
         auto& entry1 = m_stringEntries[index];
@@ -89,15 +89,15 @@ inline void StringSplitCache::setForString(const String& subject, const String& 
     }
 }
 
-inline JSCellButterfly* StringSplitCache::getForRegExp(const String& subject, RegExp* regExp, MatchResult& lastMatch)
+inline JSCellButterfly* StringSplitCache::getForRegExp(StringImpl* subject, RegExp* regExp, MatchResult& lastMatch)
 {
     AssertNoGC assertNoGC;
-    if (!subject.impl() || !subject.impl()->isAtom())
+    if (!subject || !subject->isAtom())
         return nullptr;
     if (!regExp)
         return nullptr;
 
-    auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
+    auto* subjectImpl = static_cast<AtomStringImpl*>(subject);
     size_t index = regExpEntryIndex(subjectImpl, regExp);
     {
         auto& entry = m_regExpEntries[index];
@@ -116,15 +116,15 @@ inline JSCellButterfly* StringSplitCache::getForRegExp(const String& subject, Re
     return nullptr;
 }
 
-inline void StringSplitCache::setForRegExp(const String& subject, RegExp* regExp, JSCellButterfly* butterfly, MatchResult lastMatch)
+inline void StringSplitCache::setForRegExp(StringImpl* subject, RegExp* regExp, JSCellButterfly* butterfly, MatchResult lastMatch)
 {
     AssertNoGC assertNoGC;
-    if (!subject.impl() || !subject.impl()->isAtom())
+    if (!subject || !subject->isAtom())
         return;
     if (!regExp)
         return;
 
-    auto* subjectImpl = static_cast<AtomStringImpl*>(subject.impl());
+    auto* subjectImpl = static_cast<AtomStringImpl*>(subject);
     size_t index = regExpEntryIndex(subjectImpl, regExp);
     auto store = [&](RegExpEntry& entry) {
         entry.m_subject = subjectImpl;

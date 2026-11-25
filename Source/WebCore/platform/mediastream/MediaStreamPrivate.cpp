@@ -64,7 +64,7 @@ Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, R
     return MediaStreamPrivate::create(WTF::move(logger), WTF::move(tracks));
 }
 
-MediaStreamPrivate::MediaStreamPrivate(Ref<const Logger>&& logger, MediaStreamTrackPrivateVector&& tracks, String&& id)
+MediaStreamPrivate::MediaStreamPrivate(Ref<const Logger>&& logger, MediaStreamTrackPrivateVector&& tracks, RefPtr<StringImpl>&& id)
     : m_id(WTF::move(id))
     , m_tracks(WTF::move(tracks))
 #if !RELEASE_LOG_DISABLED
@@ -73,7 +73,7 @@ MediaStreamPrivate::MediaStreamPrivate(Ref<const Logger>&& logger, MediaStreamTr
 #endif
 {
     UNUSED_PARAM(logger);
-    ASSERT(!m_id.isEmpty());
+    ASSERT(!isEmpty(m_id));
 
 #if ASSERT_ENABLED
     HashSet<MediaStreamTrackPrivate*> trackSet;
@@ -153,7 +153,7 @@ void MediaStreamPrivate::updateActiveState()
 
 void MediaStreamPrivate::addTrack(Ref<MediaStreamTrackPrivate>&& track)
 {
-    bool isAlreadyAdded = std::ranges::any_of(m_tracks, [&](auto& current) { return current->id() == track->id(); });
+    bool isAlreadyAdded = std::ranges::any_of(m_tracks, [&](auto& current) { return equal(current->id(), track->id()); });
     if (isAlreadyAdded)
         return;
 
@@ -174,7 +174,7 @@ void MediaStreamPrivate::addTrack(Ref<MediaStreamTrackPrivate>&& track)
 void MediaStreamPrivate::removeTrack(MediaStreamTrackPrivate& track)
 {
     bool hasTrack = m_tracks.removeFirstMatching([&](auto& current) {
-        return current->id() == track.id();
+        return equal(current->id(), track.id());
     });
     if (!hasTrack)
         return;

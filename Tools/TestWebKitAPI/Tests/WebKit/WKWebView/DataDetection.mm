@@ -207,7 +207,7 @@ public:
 
     void SetUp() override
     {
-        String secondIframeOrigin { GetParam().crossOrigin ? "https://apple.com"_s : "https://example.com"_s };
+        RefPtr<StringImpl> secondIframeOrigin { GetParam().crossOrigin ? "https://apple.com"_s : "https://example.com"_s };
         setUpWebView({
             { "/main"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)))) },
             { "/main-without-scroll-bars"_s, html(makeString("<html style='overflow:hidden'><body style='margin:0'>"_s, iframe(iframeLeft, GetParam().subframeURL("/telephone-number.html"_s)), "</body></html>"_s)) },
@@ -224,14 +224,14 @@ public:
                 "<iframe style='position:absolute; left:300px; top:120px; width:400px; height:300px; border:0' src='"_s, GetParam().subframeURL("/text.html"_s), "'></iframe></body>"_s)) },
             { "/main-with-scrollable-iframe"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/tall-telephone-number.html"_s)))) },
             { "/main-with-text-and-iframe"_s, html(mainHTML(makeString("<p style='margin:40px; font:20px Helvetica'>Select these words</p>"_s, iframe(iframeLeft, GetParam().subframeURL("/text.html"_s))))) },
-            { "/nested.html"_s, html(nestedFrameHTML("telephone-number.html"_s, nestedFrameWidth, nestedFrameHeight)) },
-            { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/telephone-number.html"_s, nestedFrameWidth, nestedFrameHeight)) },
-            { "/nested-main-site-at-origin.html"_s, html("<body style='margin:0'><iframe style='position:absolute; left:0; top:0; width:300px; height:200px; border:0' src='https://example.com/telephone-number.html'></iframe></body>"_s) },
-            { "/nested-main-site-at-origin-with-telephone-number-at-left.html"_s, html("<body style='margin:0'><iframe style='position:absolute; left:0; top:0; width:300px; height:200px; border:0' src='https://example.com/telephone-number-at-left.html'></iframe></body>"_s) },
-            { "/telephone-number.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>Call <span id='phone'>408-996-1010</span> today</p></body>"_s) },
-            { "/telephone-number-at-left.html"_s, html("<body style='margin:0'><span id='phone' style='position:absolute; left:4px; top:10px; font:20px Helvetica; white-space:nowrap'>408-996-1010</span></body>"_s) },
-            { "/tall-telephone-number.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:100px'>Call <span id='phone'>408-996-1010</span> today</p><div style='height:1000px'></div></body>"_s) },
-            { "/text.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>No telephone number here</p></body>"_s) },
+            { "/nested.html"_s, html(nestedFrameHTML("telephone-number.html"_si, nestedFrameWidth, nestedFrameHeight)) },
+            { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/telephone-number.html"_si, nestedFrameWidth, nestedFrameHeight)) },
+            { "/nested-main-site-at-origin.html"_s, html("<body style='margin:0'><iframe style='position:absolute; left:0; top:0; width:300px; height:200px; border:0' src='https://example.com/telephone-number.html'></iframe></body>"_si) },
+            { "/nested-main-site-at-origin-with-telephone-number-at-left.html"_s, html("<body style='margin:0'><iframe style='position:absolute; left:0; top:0; width:300px; height:200px; border:0' src='https://example.com/telephone-number-at-left.html'></iframe></body>"_si) },
+            { "/telephone-number.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>Call <span id='phone'>408-996-1010</span> today</p></body>"_si) },
+            { "/telephone-number-at-left.html"_s, html("<body style='margin:0'><span id='phone' style='position:absolute; left:4px; top:10px; font:20px Helvetica; white-space:nowrap'>408-996-1010</span></body>"_si) },
+            { "/tall-telephone-number.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:100px'>Call <span id='phone'>408-996-1010</span> today</p><div style='height:1000px'></div></body>"_si) },
+            { "/text.html"_s, html("<body style='margin:0; font:20px Helvetica'><p style='margin:40px'>No telephone number here</p></body>"_si) },
         }, [](WKWebViewConfiguration *configuration) {
             [[configuration preferences] _setTelephoneNumberDetectionIsEnabled:YES];
             [configuration _setServiceControlsEnabled:YES];

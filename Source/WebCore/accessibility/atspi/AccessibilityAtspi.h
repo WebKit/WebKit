@@ -54,7 +54,7 @@ public:
     void ref() const { }
     void deref() const { }
 
-    void connect(const String&, const String&);
+    void connect(StringImpl*, StringImpl*);
     WEBCORE_EXPORT void disconnect();
 
     const char* uniqueName() const;
@@ -62,11 +62,11 @@ public:
     GVariant* applicationReference() const;
     bool hasClients() const { return !m_clients.isEmpty(); }
 
-    void registerRoot(AccessibilityRootAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&, CompletionHandler<void(const String&)>&&);
+    void registerRoot(AccessibilityRootAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&, CompletionHandler<void(StringImpl*)>&&);
     void unregisterRoot(AccessibilityRootAtspi&);
-    String registerObject(AccessibilityObjectAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&);
+    RefPtr<StringImpl> registerObject(AccessibilityObjectAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&);
     void unregisterObject(AccessibilityObjectAtspi&);
-    String registerHyperlink(AccessibilityObjectAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&);
+    RefPtr<StringImpl> registerHyperlink(AccessibilityObjectAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&);
 
     void parentChanged(AccessibilityObjectAtspi&);
     void parentChanged(AccessibilityRootAtspi&);
@@ -92,7 +92,7 @@ public:
     static const char* localizedRoleName(AccessibilityRole);
 
 #if ENABLE(DEVELOPER_MODE)
-    using NotificationObserverParameter = Variant<std::nullptr_t, String, bool, unsigned, Ref<AccessibilityObjectAtspi>>;
+    using NotificationObserverParameter = Variant<std::nullptr_t, RefPtr<StringImpl>, bool, unsigned, Ref<AccessibilityObjectAtspi>>;
     using NotificationObserver = Function<void(AccessibilityObjectAtspi&, const char*, NotificationObserverParameter)>;
     WEBCORE_EXPORT void addNotificationObserver(void*, NotificationObserver&&);
     WEBCORE_EXPORT void removeNotificationObserver(void*);
@@ -104,7 +104,7 @@ private:
     struct PendingRootRegistration {
         Ref<AccessibilityRootAtspi> root;
         Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>> interfaces;
-        CompletionHandler<void(const String&)> completionHandler;
+        CompletionHandler<void(StringImpl*)> completionHandler;
     };
 
     bool isConnected() const { return m_connection && !m_isConnecting; }
@@ -138,7 +138,7 @@ private:
 
     static GDBusInterfaceVTable s_cacheFunctions;
 
-    String m_busName;
+    RefPtr<StringImpl> m_busName;
     bool m_isConnecting { false };
     unsigned m_nameOwnerId { 0 };
     GRefPtr<GDBusConnection> m_connection;
@@ -150,7 +150,7 @@ private:
     HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 1>> m_atspiHyperlinks;
     HashMap<ASCIICString, unsigned> m_clients;
     unsigned m_cacheID { 0 };
-    HashMap<String, AccessibilityObjectAtspi*> m_cache;
+    HashMap<RefPtr<StringImpl>, AccessibilityObjectAtspi*> m_cache;
     ListHashSet<RefPtr<AccessibilityObjectAtspi>> m_cacheUpdateList;
     RunLoop::Timer m_cacheUpdateTimer;
     RunLoop::Timer m_cacheClearTimer;

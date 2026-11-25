@@ -45,7 +45,7 @@ public:
 private:
     WebVisitedLinkStore();
 
-    bool isLinkVisited(WebCore::Page&, WebCore::SharedStringHash, const URL& baseURL, const AtomString& attributeURL) override;
+    bool isLinkVisited(WebCore::Page&, WebCore::SharedStringHash, const URL& baseURL, AtomStringImpl* attributeURL) override;
     void addVisitedLink(WebCore::Page&, WebCore::SharedStringHash) override;
 
     void populateVisitedLinksIfNeeded(WebCore::Page&);

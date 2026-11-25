@@ -47,7 +47,7 @@ RemoteSamplerProxy::~RemoteSamplerProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteSamplerProxy::setLabel(String&& label)
+void RemoteSamplerProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteSampler::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

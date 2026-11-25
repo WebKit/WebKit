@@ -73,9 +73,11 @@ class SyncedData(object):
         self.underlying_type_namespace = underlying_type_namespace
         self.underlying_type = underlying_type
         if underlying_type_namespace is None:
-            self.fully_qualified_type = underlying_type
+            self.serialized_type = underlying_type
         else:
-            self.fully_qualified_type = underlying_type_namespace + '::' + underlying_type
+            self.serialized_type = underlying_type_namespace + '::' + underlying_type
+        # The .in files and the generated *.serialization.in name IPC wire types (String); C++ uses the string pointer type.
+        self.fully_qualified_type = {'String': 'RefPtr<StringImpl>', 'AtomString': 'RefPtr<AtomStringImpl>'}.get(self.serialized_type, self.serialized_type)
 
 
 def headers_from_datas(datas):
@@ -522,7 +524,7 @@ def generate_process_sync_data_serialiation_in(prefix, variant_sorted_synched_da
         if data.conditional is not None:
             result.append('#if %s' % data.conditional)
         name = data.name[0].lower() + data.name[1:]
-        result.append('    %s %s;' % (data.fully_qualified_type, name))
+        result.append('    %s %s;' % (data.serialized_type, name))
         if data.conditional is not None:
             result.append('#endif')
 
@@ -532,14 +534,14 @@ def generate_process_sync_data_serialiation_in(prefix, variant_sorted_synched_da
     for data in variant_sorted_synched_datas:
         if data.conditional is not None:
             result.append('#if !%s' % data.conditional)
-            result.append('using %s = bool;' % data.fully_qualified_type)
+            result.append('using %s = bool;' % data.serialized_type)
             result.append('#endif')
 
     result.append("")
     variant_string = "using WebCore::%sSyncDataVariant = Variant<" % prefix
     for data in variant_sorted_synched_datas[:-1]:
-        variant_string += data.fully_qualified_type + ', '
-    variant_string += variant_sorted_synched_datas[-1].fully_qualified_type + '>;'
+        variant_string += data.serialized_type + ', '
+    variant_string += variant_sorted_synched_datas[-1].serialized_type + '>;'
     result.append(variant_string)
 
     result.append(_process_sync_data_serialization_in_suffix.format(prefix=prefix))

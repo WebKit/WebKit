@@ -87,12 +87,12 @@ Style::Extractor CSSComputedStyleDeclaration::extractor() const
     return Style::Extractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier);
 }
 
-String CSSComputedStyleDeclaration::cssText() const
+RefPtr<StringImpl> CSSComputedStyleDeclaration::cssText() const
 {
     return emptyString();
 }
 
-ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(const String&)
+ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(StringImpl*)
 {
     return Exception { ExceptionCode::NoModificationAllowedError };
 }
@@ -114,7 +114,7 @@ const FixedVector<CSSPropertyID>& CSSComputedStyleDeclaration::exposedComputedCS
     return protect(element().document())->exposedComputedCSSPropertyIDs();
 }
 
-String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) const
+RefPtr<StringImpl> CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) const
 {
     if (m_isEmpty)
         return emptyString(); // FIXME: Should this be null instead, as it is in StyleProperties::getPropertyValue?
@@ -136,20 +136,20 @@ unsigned CSSComputedStyleDeclaration::length() const
     return exposedComputedCSSPropertyIDs().size() + style->inheritedCustomProperties().size() + style->nonInheritedCustomProperties().size();
 }
 
-String CSSComputedStyleDeclaration::item(unsigned i) const
+RefPtr<StringImpl> CSSComputedStyleDeclaration::item(unsigned i) const
 {
     if (m_isEmpty)
-        return String();
+        return nullptr;
 
     if (i >= length())
-        return String();
+        return nullptr;
 
     if (i < exposedComputedCSSPropertyIDs().size())
         return nameString(exposedComputedCSSPropertyIDs().at(i));
 
     CheckedPtr style = protect(element())->computedStyle(m_pseudoElementIdentifier);
     if (!style)
-        return String();
+        return nullptr;
 
     Ref inheritedCustomProperties = style->inheritedCustomProperties();
 
@@ -174,13 +174,13 @@ CSSRuleList* CSSComputedStyleDeclaration::cssRules() const
     return nullptr;
 }
 
-RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
+RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(StringImpl* propertyName)
 {
     if (m_isEmpty)
         return nullptr;
 
     if (isCustomPropertyName(propertyName))
-        return extractor().customPropertyValueDeprecatedCSSOMValue(AtomString { propertyName }, *this);
+        return extractor().customPropertyValueDeprecatedCSSOMValue(AtomStringImpl::add(propertyName).get(), *this);
 
     auto propertyID = cssPropertyID(propertyName);
     if (propertyID == CSSPropertyID::Invalid)
@@ -189,53 +189,53 @@ RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(co
     return extractor().propertyValueDeprecatedCSSOMValue(propertyID, *this);
 }
 
-String CSSComputedStyleDeclaration::getPropertyValue(const String& propertyName)
+RefPtr<StringImpl> CSSComputedStyleDeclaration::getPropertyValue(StringImpl* propertyName)
 {
     if (m_isEmpty)
-        return String();
+        return nullptr;
 
     if (isCustomPropertyName(propertyName))
-        return extractor().customPropertyValueSerialization(AtomString { propertyName }, CSS::defaultSerializationContext());
+        return extractor().customPropertyValueSerialization(AtomStringImpl::add(propertyName).get(), CSS::defaultSerializationContext());
 
     auto propertyID = cssPropertyID(propertyName);
     if (propertyID == CSSPropertyID::Invalid)
-        return String();
+        return nullptr;
 
     return extractor().propertyValueSerialization(propertyID, CSS::defaultSerializationContext());
 }
 
-String CSSComputedStyleDeclaration::getPropertyPriority(const String&)
+RefPtr<StringImpl> CSSComputedStyleDeclaration::getPropertyPriority(StringImpl*)
 {
     // All computed styles have a priority of not "important".
     return emptyString();
 }
 
-String CSSComputedStyleDeclaration::getPropertyShorthand(const String&)
+RefPtr<StringImpl> CSSComputedStyleDeclaration::getPropertyShorthand(StringImpl*)
 {
     return emptyString(); // FIXME: Should this sometimes be null instead of empty, to match a normal style declaration?
 }
 
-bool CSSComputedStyleDeclaration::isPropertyImplicit(const String&)
+bool CSSComputedStyleDeclaration::isPropertyImplicit(StringImpl*)
 {
     return false;
 }
 
-ExceptionOr<void> CSSComputedStyleDeclaration::setProperty(const String&, const String&, const String&)
+ExceptionOr<void> CSSComputedStyleDeclaration::setProperty(StringImpl*, StringImpl*, StringImpl*)
 {
     return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
-ExceptionOr<String> CSSComputedStyleDeclaration::removeProperty(const String&)
+ExceptionOr<RefPtr<StringImpl>> CSSComputedStyleDeclaration::removeProperty(StringImpl*)
 {
     return Exception { ExceptionCode::NoModificationAllowedError };
 }
     
-String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
+RefPtr<StringImpl> CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
 {
     return getPropertyValue(propertyID);
 }
 
-ExceptionOr<void> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, IsImportant)
+ExceptionOr<void> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, StringImpl*, IsImportant)
 {
     return Exception { ExceptionCode::NoModificationAllowedError };
 }

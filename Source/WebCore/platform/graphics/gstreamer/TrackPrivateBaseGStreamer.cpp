@@ -73,25 +73,25 @@ static GRefPtr<GstPad> findBestUpstreamPad(GRefPtr<GstPad> pad)
     return sinkPad;
 }
 
-static std::optional<String> getTag(GstTagList* tags, ASCIILiteral tagName)
+static std::optional<RefPtr<StringImpl>> getTag(GstTagList* tags, ASCIILiteral tagName)
 {
     GUniqueOutPtr<gchar> tagValue;
     if (!gst_tag_list_get_string(tags, tagName.characters(), &tagValue.outPtr()))
         return std::nullopt;
 
     GST_DEBUG("Track got %s %s.", tagName.characters(), tagValue.get());
-    return String(byteCast<char8_t>(unsafeSpan(tagValue.get())));
+    return StringImpl::create(byteCast<char8_t>(unsafeSpan(tagValue.get())));
 }
 
-static std::optional<String> getLanguageCode(GstTagList* tags)
+static std::optional<RefPtr<StringImpl>> getLanguageCode(GstTagList* tags)
 {
     auto language = getTag(tags, GST_TAG_LANGUAGE_CODE);
     if (!language)
         return std::nullopt;
 
-    auto convertedLanguage = UTF8CStringView::unsafeFromUTF8(gst_tag_get_language_code_iso_639_1(language->utf8().legacyCStringPointer()));
+    auto convertedLanguage = UTF8CStringView::unsafeFromUTF8(gst_tag_get_language_code_iso_639_1(utf8(*language).legacyCStringPointer()));
     GST_DEBUG("Converted track's language code to %s.", convertedLanguage.utf8());
-    return String(convertedLanguage.span());
+    return StringImpl::create(convertedLanguage.span());
 }
 
 TrackDataHolder::TrackDataHolder(TrackPrivateBaseGStreamer& track)
@@ -144,7 +144,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlay
 
     m_data->m_player = WTF::move(player);
     m_data->m_index = index;
-    m_data->m_gstStreamId = byteCast<Latin1Character>(unsafeSpan(gst_stream_get_stream_id(stream.get())));
+    m_data->m_gstStreamId = StringImpl::create(byteCast<Latin1Character>(unsafeSpan(gst_stream_get_stream_id(stream.get()))));
     m_data->m_id = parseStreamId(m_data->m_gstStreamId).value_or(index);
     m_data->m_type = type;
     m_data->m_owner = owner;
@@ -177,7 +177,7 @@ void TrackDataHolder::setPad(GRefPtr<GstPad>&& pad)
     g_clear_signal_handler(&m_padCapsNotifyHandlerId, m_pad.get());
     m_pad = WTF::move(pad);
     m_bestUpstreamPad = findBestUpstreamPad(m_pad);
-    m_gstStreamId = String(GMallocString::unsafeAdoptFromUTF8(gst_pad_get_stream_id(m_pad.get())).span());
+    m_gstStreamId = StringImpl::create(GMallocString::unsafeAdoptFromUTF8(gst_pad_get_stream_id(m_pad.get())).span());
 
     if (m_shouldUsePadStreamId)
         m_id = parseStreamId(m_gstStreamId).value_or(m_index);
@@ -281,7 +281,7 @@ TrackID TrackPrivateBaseGStreamer::streamId() const
     return m_data->m_id;
 }
 
-String TrackPrivateBaseGStreamer::gstStreamId() const
+RefPtr<StringImpl> TrackPrivateBaseGStreamer::gstStreamId() const
 {
     return m_data->m_gstStreamId;
 }
@@ -390,7 +390,7 @@ void TrackDataHolder::notifyTrackOfTagsChanged()
     if (!language)
         return;
 
-    if (*language == m_language)
+    if (equal(*language, m_language))
         return;
 
     m_language = *language;
@@ -404,7 +404,7 @@ void TrackDataHolder::streamIdChanged()
     if (!m_pad)
         return;
 
-    String gstStreamId(GMallocString::unsafeAdoptFromUTF8(gst_pad_get_stream_id(m_pad.get())).span());
+    RefPtr<StringImpl> gstStreamId = StringImpl::create(GMallocString::unsafeAdoptFromUTF8(gst_pad_get_stream_id(m_pad.get())).span());
     auto streamId = parseStreamId(gstStreamId);
     if (!streamId)
         return;
@@ -412,7 +412,7 @@ void TrackDataHolder::streamIdChanged()
     ASSERT(isMainThread());
     m_gstStreamId = gstStreamId;
     m_id = streamId.value();
-    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_id, m_gstStreamId.utf8());
+    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_id, utf8(m_gstStreamId));
 }
 
 void TrackDataHolder::streamChanged()

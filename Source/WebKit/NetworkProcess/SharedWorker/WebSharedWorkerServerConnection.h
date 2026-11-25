@@ -75,7 +75,7 @@ public:
 
     void fetchScriptInClient(const WebSharedWorker&, WebCore::SharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&&);
     void notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier, const WebCore::ResourceError&);
-    void postErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
+    void postErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier, StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, bool isErrorEvent);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 

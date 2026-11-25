@@ -414,7 +414,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     unsigned offset = position.deepEquivalent().deprecatedEditingOffset();
     for (auto& marker : protect(protect(node->document())->markers())->markersFor(*node, DocumentMarkerType::DictationPhraseWithAlternatives)) {
         if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
-            *alternatives = createNSArray(std::get<Vector<String>>(marker->data())).autorelease();
+            *alternatives = createNSArray(std::get<Vector<RefPtr<StringImpl>>>(marker->data())).autorelease();
             return kit(makeSimpleRange(*node, *marker));
         }
     }
@@ -533,7 +533,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
         return [super endPosition];
     
     Ref textFormControlElement = downcast<RenderTextControl>(*object).textFormControlElement();
-    VisiblePosition visiblePosition = textFormControlElement->visiblePositionForIndex(textFormControlElement->value()->length());
+    VisiblePosition visiblePosition = textFormControlElement->visiblePositionForIndex(length(textFormControlElement->value().get()));
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 
@@ -560,7 +560,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
         return [super endPosition];
     
     Ref textFormControlElement = downcast<RenderTextControl>(*object).textFormControlElement();
-    VisiblePosition visiblePosition = textFormControlElement->visiblePositionForIndex(textFormControlElement->value()->length());
+    VisiblePosition visiblePosition = textFormControlElement->visiblePositionForIndex(length(textFormControlElement->value().get()));
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 

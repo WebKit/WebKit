@@ -253,6 +253,15 @@ class Preference
     end
   end
 
+  # The C++ type of the value. Preferences spell strings as "String".
+  def cppType
+    if @type == "String"
+      "RefPtr<StringImpl>"
+    else
+      @type
+    end
+  end
+
   def typeUpper
     if @type == "uint32_t"
       "UInt32"
@@ -317,6 +326,16 @@ class Preference
       "_stringValueForKey"
     else
       raise "Unknown type: #{@type}"
+    end
+  end
+
+  # The value of the preference read from a WebPreferences object named "preferences".
+  def preferenceValue
+    value = "[preferences #{preferenceAccessor}:@\"#{preferenceKey}\"]"
+    if @type == "String"
+      "StringImpl::create(#{value}).get()"
+    else
+      value
     end
   end
 

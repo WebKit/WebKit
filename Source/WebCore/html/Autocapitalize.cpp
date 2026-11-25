@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomString& attributeValue)
+AutocapitalizeType autocapitalizeTypeForAttributeValue(AtomStringImpl* attributeValue)
 {
     // Omitted / missing values are the Default state.
-    if (attributeValue.isEmpty())
+    if (isEmpty(attributeValue))
         return AutocapitalizeType::Default;
 
     if (equalLettersIgnoringASCIICase(attributeValue, "on"_s) || equalLettersIgnoringASCIICase(attributeValue, "sentences"_s))
@@ -52,7 +52,7 @@ AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomString& attribu
     return AutocapitalizeType::Sentences;
 }
 
-const AtomString& stringForAutocapitalizeType(AutocapitalizeType type)
+const RefPtr<AtomStringImpl>& stringForAutocapitalizeType(AutocapitalizeType type)
 {
     switch (type) {
     case AutocapitalizeType::Default:
@@ -60,15 +60,15 @@ const AtomString& stringForAutocapitalizeType(AutocapitalizeType type)
     case AutocapitalizeType::None:
         return noneAtom();
     case AutocapitalizeType::Sentences: {
-        static MainThreadNeverDestroyed<const AtomString> valueSentences("sentences"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> valueSentences("sentences"_s);
         return valueSentences;
     }
     case AutocapitalizeType::Words: {
-        static MainThreadNeverDestroyed<const AtomString> valueWords("words"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> valueWords("words"_s);
         return valueWords;
     }
     case AutocapitalizeType::AllCharacters: {
-        static MainThreadNeverDestroyed<const AtomString> valueAllCharacters("characters"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> valueAllCharacters("characters"_s);
         return valueAllCharacters;
     }
     }

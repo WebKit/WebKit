@@ -33,20 +33,20 @@
 
 namespace WebKit {
 
-Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(WPEEvent* event, const String& text, bool isAutorepeat)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(WPEEvent* event, StringImpl* text, bool isAutorepeat)
 {
     return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutorepeat)));
 }
 
-Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(StringImpl* text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
 {
     return adoptRef(*new NativeWebKeyboardEvent(WebKeyboardEventInit {
         { WebEventType::KeyDown, { }, MonotonicTime::now() },
         {
             .text = text,
-            .key = "Unidentified"_s,
-            .code = "Unidentified"_s,
-            .keyIdentifier = "U+0000"_s,
+            .key = "Unidentified"_si,
+            .code = "Unidentified"_si,
+            .keyIdentifier = "U+0000"_si,
             .windowsVirtualKeyCode = 0,
             .nativeVirtualKeyCode = 0,
             .handledByInputMethod = true,

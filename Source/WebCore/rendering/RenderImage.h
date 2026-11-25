@@ -79,7 +79,7 @@ public:
 
     bool isGeneratedContent() const { return m_isGeneratedContent; }
 
-    WEBCORE_EXPORT String altText() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> altText() const;
 
     // https://html.spec.whatwg.org/multipage/images.html#current-pixel-density
     float currentPixelDensity() const { return m_currentPixelDensity; }
@@ -93,7 +93,7 @@ public:
 
     virtual bool shouldDisplayBrokenImageIcon() const;
 
-    String accessibilityDescription() const;
+    RefPtr<StringImpl> accessibilityDescription() const;
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     bool isMultiRepresentationHEIC() const;
@@ -192,7 +192,7 @@ private:
     bool imageRepresentsNothing() const;
 
     // The alt text of the element; 'content'-derived alt lives in style data.
-    String m_altText;
+    RefPtr<StringImpl> m_altText;
     const std::unique_ptr<RenderImageResource> m_imageResource;
     bool m_needsToSetSizeForAltText { false };
     bool m_isGeneratedContent { false };

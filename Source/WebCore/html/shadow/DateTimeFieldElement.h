@@ -57,7 +57,7 @@ public:
     virtual bool isFieldOwnerHorizontal() const = 0;
     virtual bool didFieldOwnerTransferFocusToPicker() = 0;
     virtual void didSuppressBlurDueToPickerFocusTransfer() = 0;
-    virtual AtomString localeIdentifier() const = 0;
+    virtual RefPtr<AtomStringImpl> localeIdentifier() const = 0;
     virtual PlainGregorianDateTime placeholderDate() const = 0;
 };
 
@@ -70,7 +70,7 @@ public:
     void defaultEventHandler(Event&) override;
     bool isFocusable() const final;
 
-    String visibleValue() const;
+    RefPtr<StringImpl> visibleValue() const;
 
     virtual bool hasValue() const = 0;
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue = DateTimePlaceholderIfNoValue::No) = 0;
@@ -79,13 +79,13 @@ public:
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) = 0;
     virtual void stepDown() = 0;
     virtual void stepUp() = 0;
-    virtual ValueOrReference<String> value() const = 0;
-    virtual String placeholderValue() const = 0;
+    virtual ValueOrReference<RefPtr<StringImpl>> value() const = 0;
+    virtual RefPtr<StringImpl> placeholderValue() const = 0;
 
 protected:
     DateTimeFieldElement(Document&, DateTimeFieldElementFieldOwner&);
     Locale& localeForOwner() const;
-    AtomString localeIdentifier() const;
+    RefPtr<AtomStringImpl> localeIdentifier() const;
     void updateVisibleValue(EventBehavior);
     virtual void adjustMinInlineSize(Style::ComputedStyle&) const = 0;
     virtual int valueAsInteger() const = 0;

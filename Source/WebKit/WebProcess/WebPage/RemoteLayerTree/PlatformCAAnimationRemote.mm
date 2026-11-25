@@ -106,7 +106,7 @@ template<typename T> static Vector<PlatformCAAnimationRemote::KeyframeValue> toK
     });
 }
 
-Ref<PlatformCAAnimation> PlatformCAAnimationRemote::create(PlatformCAAnimation::AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> PlatformCAAnimationRemote::create(PlatformCAAnimation::AnimationType type, StringImpl* keyPath)
 {
     return adoptRef(*new PlatformCAAnimationRemote(type, keyPath));
 }
@@ -144,7 +144,7 @@ Ref<PlatformCAAnimation> PlatformCAAnimationRemote::copy() const
     return animation;
 }
 
-PlatformCAAnimationRemote::PlatformCAAnimationRemote(AnimationType type, const String& keyPath)
+PlatformCAAnimationRemote::PlatformCAAnimationRemote(AnimationType type, StringImpl* keyPath)
     : PlatformCAAnimation(type)
 {
     ASSERT(PlatformCAAnimation::isValidKeyPath(keyPath, type));
@@ -152,7 +152,7 @@ PlatformCAAnimationRemote::PlatformCAAnimationRemote(AnimationType type, const S
     m_properties.animationType = type;
 }
 
-String PlatformCAAnimationRemote::keyPath() const
+RefPtr<StringImpl> PlatformCAAnimationRemote::keyPath() const
 {
     return m_properties.keyPath;
 }
@@ -499,7 +499,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
     RetainPtr<CAAnimation> caAnimation;
     switch (properties.animationType) {
     case PlatformCAAnimation::AnimationType::Basic: {
-        RetainPtr basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath.createNSString().get()];
+        RetainPtr basicAnimation = [CABasicAnimation animationWithKeyPath:createNSString(properties.keyPath).get()];
 
         if (properties.keyValues.size() > 1) {
             Borrow borrowedKeyValues = properties.keyValues;
@@ -529,7 +529,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         break;
     }
     case PlatformCAAnimation::AnimationType::Keyframe: {
-        RetainPtr keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:properties.keyPath.createNSString().get()];
+        RetainPtr keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:createNSString(properties.keyPath).get()];
 
         if (properties.keyValues.size()) {
             [keyframeAnimation setValues:createNSArray(properties.keyValues, [] (auto& value) {
@@ -556,7 +556,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         break;
     }
     case PlatformCAAnimation::AnimationType::Spring: {
-        RetainPtr springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath.createNSString().get()];
+        RetainPtr springAnimation = [CASpringAnimation animationWithKeyPath:createNSString(properties.keyPath).get()];
 
         if (properties.keyValues.size() > 1) {
             Borrow borrowedKeyValues = properties.keyValues;
@@ -619,23 +619,23 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
     return caAnimation;
 }
 
-static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const String& key, const PlatformCAAnimationRemote::Properties& properties)
+static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, StringImpl* key, const PlatformCAAnimationRemote::Properties& properties)
 {
     if (!PlatformCAAnimation::isValidKeyPath(properties.keyPath, properties.animationType)) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    [layer addAnimation:createAnimation(layer, layerTreeHost, properties).get() forKey:key.createNSString().get()];
+    [layer addAnimation:createAnimation(layer, layerTreeHost, properties).get() forKey:createNSString(key).get()];
     [layer setInheritsTiming:NO];
 }
 
-void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const AnimationsList& animationsToAdd, const HashSet<String>& animationsToRemove)
+void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const AnimationsList& animationsToAdd, const HashSet<RefPtr<StringImpl>>& animationsToRemove)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     for (const auto& value : animationsToRemove)
-        [layer removeAnimationForKey:value.createNSString().get()];
+        [layer removeAnimationForKey:createNSString(value).get()];
 
     for (const auto& keyAnimationPair : borrow(animationsToAdd))
         addAnimationToLayer(layer, layerTreeHost, keyAnimationPair.first, keyAnimationPair.second);

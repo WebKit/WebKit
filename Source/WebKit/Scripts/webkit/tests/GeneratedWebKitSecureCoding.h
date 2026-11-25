@@ -127,8 +127,8 @@ private:
         RetainPtr<NSNumber>&&,
         Vector<RetainPtr<DDScannerResult>>&&,
         std::optional<Vector<RetainPtr<DDScannerResult>>>&&,
-        Vector<std::pair<String, RetainPtr<Number>>>&&,
-        std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>>&&,
+        Vector<std::pair<RefPtr<StringImpl>, RetainPtr<Number>>>&&,
+        std::optional<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<DDScannerResult>>>>&&,
         Vector<RetainPtr<NSData>>&&,
         Vector<RetainPtr<SecTrustRef>>&&
     );
@@ -138,8 +138,8 @@ private:
     RetainPtr<NSNumber> m_OptionalNumberKey;
     Vector<RetainPtr<DDScannerResult>> m_ArrayKey;
     std::optional<Vector<RetainPtr<DDScannerResult>>> m_OptionalArrayKey;
-    Vector<std::pair<String, RetainPtr<Number>>> m_DictionaryKey;
-    std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>> m_OptionalDictionaryKey;
+    Vector<std::pair<RefPtr<StringImpl>, RetainPtr<Number>>> m_DictionaryKey;
+    std::optional<Vector<std::pair<RefPtr<StringImpl>, RetainPtr<DDScannerResult>>>> m_OptionalDictionaryKey;
     Vector<RetainPtr<NSData>> m_DataArrayKey;
     Vector<RetainPtr<SecTrustRef>> m_SecTrustArrayKey;
 };

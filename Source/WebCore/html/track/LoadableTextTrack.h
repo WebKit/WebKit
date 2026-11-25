@@ -38,7 +38,7 @@ class LoadableTextTrack final : public TextTrack, private TextTrackLoaderClient 
     WTF_MAKE_TZONE_ALLOCATED(LoadableTextTrack);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LoadableTextTrack);
 public:
-    static Ref<LoadableTextTrack> create(HTMLTrackElement&, const AtomString& kind, const AtomString& label, const AtomString& language);
+    static Ref<LoadableTextTrack> create(HTMLTrackElement&, AtomStringImpl* kind, AtomStringImpl* label, AtomStringImpl* language);
 
     void scheduleLoad(const URL&);
 
@@ -49,14 +49,14 @@ public:
     void deref() const final { TextTrack::deref(); }
 
 private:
-    LoadableTextTrack(HTMLTrackElement&, const AtomString& kind, const AtomString& label, const AtomString& language);
+    LoadableTextTrack(HTMLTrackElement&, AtomStringImpl* kind, AtomStringImpl* label, AtomStringImpl* language);
 
     void newCuesAvailable(TextTrackLoader&) final;
     void cueLoadingCompleted(TextTrackLoader&, bool loadingFailed) final;
     void newRegionsAvailable(TextTrackLoader&) final;
     void newStyleSheetsAvailable(TextTrackLoader&) final;
 
-    AtomString id() const final;
+    RefPtr<AtomStringImpl> id() const final;
     bool isDefault() const final;
 
 #if !RELEASE_LOG_DISABLED

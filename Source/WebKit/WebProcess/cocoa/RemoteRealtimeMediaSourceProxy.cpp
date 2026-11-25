@@ -65,7 +65,7 @@ RemoteRealtimeMediaSourceProxy::RemoteRealtimeMediaSourceProxy(WebCore::Realtime
 
 RemoteRealtimeMediaSourceProxy::~RemoteRealtimeMediaSourceProxy()
 {
-    failApplyConstraintCallbacks("Source terminated"_s);
+    failApplyConstraintCallbacks("Source terminated"_si);
 }
 
 void RemoteRealtimeMediaSourceProxy::updateConnection()
@@ -120,7 +120,7 @@ void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& co
 struct RemoteRealtimeMediaSourceProxy::PromiseConverter {
     static auto convertError(IPC::Error)
     {
-        return makeUnexpected(String { "IPC Connection closed"_s });
+        return makeUnexpected("IPC Connection closed"_si);
     }
 };
 
@@ -146,13 +146,13 @@ void RemoteRealtimeMediaSourceProxy::applyConstraintsSucceeded()
     request.first({ });
 }
 
-void RemoteRealtimeMediaSourceProxy::applyConstraintsFailed(WebCore::MediaConstraintType invalidConstraint, String&& errorMessage)
+void RemoteRealtimeMediaSourceProxy::applyConstraintsFailed(WebCore::MediaConstraintType invalidConstraint, RefPtr<StringImpl>&& errorMessage)
 {
     auto callback = m_pendingApplyConstraintsRequests.takeFirst().first;
     callback(RealtimeMediaSource::ApplyConstraintsError { invalidConstraint, WTF::move(errorMessage) });
 }
 
-void RemoteRealtimeMediaSourceProxy::failApplyConstraintCallbacks(const String& errorMessage)
+void RemoteRealtimeMediaSourceProxy::failApplyConstraintCallbacks(StringImpl* errorMessage)
 {
     auto requests = WTF::move(m_pendingApplyConstraintsRequests);
     while (!requests.isEmpty())

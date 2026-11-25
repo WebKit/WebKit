@@ -50,7 +50,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     ExceptionOr<void> getRandomValues(JSC::ArrayBufferView&);
-    String randomUUID() const;
+    RefPtr<StringImpl> randomUUID() const;
 
     SubtleCrypto& subtle() { return m_subtle; }
 

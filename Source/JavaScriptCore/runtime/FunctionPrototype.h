@@ -31,7 +31,7 @@ public:
     static FunctionPrototype* create(VM& vm, Structure* structure)
     {
         FunctionPrototype* prototype = new (NotNull, allocateCell<FunctionPrototype>(vm)) FunctionPrototype(vm, structure);
-        prototype->finishCreation(vm, String());
+        prototype->finishCreation(vm, nullString());
         return prototype;
     }
 
@@ -43,7 +43,7 @@ public:
 
 private:
     FunctionPrototype(VM&, Structure*);
-    void finishCreation(VM&, const String& name);
+    void finishCreation(VM&, StringImpl* name);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(FunctionPrototype, InternalFunction);
 

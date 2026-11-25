@@ -48,22 +48,22 @@ struct wpe_view_backend* WebPageProxy::viewBackend()
     return nullptr;
 }
 
-String WebPageProxy::userAgentForURL(const URL&)
+RefPtr<StringImpl> WebPageProxy::userAgentForURL(const URL&)
 {
     return userAgent();
 }
 
-String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
+RefPtr<StringImpl> WebPageProxy::standardUserAgent(StringImpl* applicationNameForUserAgent)
 {
     return WebCore::standardUserAgent(applicationNameForUserAgent);
 }
 
-void WebPageProxy::saveRecentSearches(IPC::Connection&, const String&, const Vector<WebCore::RecentSearch>&)
+void WebPageProxy::saveRecentSearches(IPC::Connection&, StringImpl*, const Vector<WebCore::RecentSearch>&)
 {
     notImplemented();
 }
 
-void WebPageProxy::loadRecentSearches(IPC::Connection&, const String&, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+void WebPageProxy::loadRecentSearches(IPC::Connection&, StringImpl*, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     notImplemented();
     completionHandler({ });

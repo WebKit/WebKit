@@ -36,26 +36,26 @@ namespace WebCore {
 class ArchiveResource : public SubstituteResource {
 public:
     static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&, const ResourceResponse&);
-    WEBCORE_EXPORT static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& = ResourceResponse(), const String& fileName = { });
-    WEBCORE_EXPORT static Ref<ArchiveResource> createWithData(Ref<FragmentedSharedBuffer>&&, const URL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& = ResourceResponse(), const String& fileName = { });
+    WEBCORE_EXPORT static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&, StringImpl* mimeType, StringImpl* textEncoding, StringImpl* frameName, const ResourceResponse& = ResourceResponse(), StringImpl* fileName = nullptr);
+    WEBCORE_EXPORT static Ref<ArchiveResource> createWithData(Ref<FragmentedSharedBuffer>&&, const URL&, StringImpl* mimeType, StringImpl* textEncoding, StringImpl* frameName, const ResourceResponse& = ResourceResponse(), StringImpl* fileName = nullptr);
 
-    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
-    const String& textEncoding() const LIFETIME_BOUND { return m_textEncoding; }
-    const String& frameName() const LIFETIME_BOUND { return m_frameName; }
-    const String& relativeFilePath() const LIFETIME_BOUND { return m_relativeFilePath; }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+    const RefPtr<StringImpl>& textEncoding() const LIFETIME_BOUND { return m_textEncoding; }
+    const RefPtr<StringImpl>& frameName() const LIFETIME_BOUND { return m_frameName; }
+    const RefPtr<StringImpl>& relativeFilePath() const LIFETIME_BOUND { return m_relativeFilePath; }
 
     void ignoreWhenUnarchiving() { m_shouldIgnoreWhenUnarchiving = true; }
     bool shouldIgnoreWhenUnarchiving() const { return m_shouldIgnoreWhenUnarchiving; }
-    void setRelativeFilePath(const String& relativeFilePath) { m_relativeFilePath = relativeFilePath; }
-    std::expected<String, ArchiveError> saveToDisk(const String& directory);
+    void setRelativeFilePath(StringImpl* relativeFilePath) { m_relativeFilePath = relativeFilePath; }
+    std::expected<RefPtr<StringImpl>, ArchiveError> saveToDisk(StringImpl* directory);
 
 private:
-    ArchiveResource(Ref<FragmentedSharedBuffer>&&, const URL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&, const String& fileName = { });
+    ArchiveResource(Ref<FragmentedSharedBuffer>&&, const URL&, StringImpl* mimeType, StringImpl* textEncoding, StringImpl* frameName, const ResourceResponse&, StringImpl* fileName = nullptr);
 
-    String m_mimeType;
-    String m_textEncoding;
-    String m_frameName;
-    String m_relativeFilePath;
+    RefPtr<StringImpl> m_mimeType;
+    RefPtr<StringImpl> m_textEncoding;
+    RefPtr<StringImpl> m_frameName;
+    RefPtr<StringImpl> m_relativeFilePath;
 
     bool m_shouldIgnoreWhenUnarchiving;
 };

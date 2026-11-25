@@ -70,7 +70,7 @@ public:
 
     ExceptionOr<void> readAsArrayBuffer(Blob&);
     ExceptionOr<void> readAsBinaryString(Blob&);
-    ExceptionOr<void> readAsText(Blob&, const String& encoding);
+    ExceptionOr<void> readAsText(Blob&, StringImpl* encoding);
     ExceptionOr<void> readAsDataURL(Blob&);
     void abort();
 
@@ -79,7 +79,7 @@ public:
     ReadyState readyState() const { return m_state; }
     DOMException* error() { return m_error.get(); }
     FileReaderLoader::ReadType readType() const { return m_readType; }
-    std::optional<Variant<String, Ref<JSC::ArrayBuffer>>> result() const;
+    std::optional<Variant<RefPtr<StringImpl>, Ref<JSC::ArrayBuffer>>> result() const;
 
 private:
     explicit FileReader(ScriptExecutionContext&);
@@ -102,13 +102,13 @@ private:
 
     ExceptionOr<void> readInternal(Blob&, FileReaderLoader::ReadType);
     void fireErrorEvent(int httpStatusCode);
-    void fireEvent(const AtomString& type);
+    void fireEvent(AtomStringImpl* type);
 
     ReadyState m_state { EMPTY };
     bool m_finishedLoading { false };
     RefPtr<Blob> m_blob;
     FileReaderLoader::ReadType m_readType { FileReaderLoader::ReadAsBinaryString };
-    String m_encoding;
+    RefPtr<StringImpl> m_encoding;
     RefPtr<FileReaderLoader> m_loader;
     RefPtr<DOMException> m_error;
     MonotonicTime m_lastProgressNotificationTime { MonotonicTime::nan() };

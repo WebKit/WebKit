@@ -55,7 +55,7 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::item(unsigned index)
     return m_types[index].ptr();
 }
 
-RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomString& propertyName)
+RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(AtomStringImpl* propertyName)
 {
     for (auto& type : m_types) {
         if (type->type() == propertyName)
@@ -64,14 +64,14 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomString& propertyName)
     return nullptr;
 }
 
-bool DOMMimeTypeArray::isSupportedPropertyName(const AtomString& propertyName) const
+bool DOMMimeTypeArray::isSupportedPropertyName(AtomStringImpl* propertyName) const
 {
     return m_types.containsIf([&](auto& type) { return type->type() == propertyName; });
 }
 
-Vector<AtomString> DOMMimeTypeArray::supportedPropertyNames() const
+Vector<RefPtr<AtomStringImpl>> DOMMimeTypeArray::supportedPropertyNames() const
 {
-    return m_types.map([](auto& type) -> AtomString {
+    return m_types.map([](auto& type) -> RefPtr<AtomStringImpl> {
         return type->type();
     });
 }

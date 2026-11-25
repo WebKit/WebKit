@@ -47,7 +47,7 @@ void ServiceWorkerWindowClient::focus(ScriptExecutionContext& context, Ref<Defer
     Ref serviceWorkerContext = downcast<ServiceWorkerGlobalScope>(context);
 
     if (context.settingsValues().serviceWorkersUserGestureEnabled && !serviceWorkerContext->isProcessingUserGesture()) {
-        promise->reject(Exception { ExceptionCode::InvalidAccessError, "WindowClient focus requires a user gesture"_s });
+        promise->reject(Exception { ExceptionCode::InvalidAccessError, "WindowClient focus requires a user gesture"_si });
         return;
     }
 
@@ -61,7 +61,7 @@ void ServiceWorkerWindowClient::focus(ScriptExecutionContext& context, Ref<Defer
 
                 // FIXME: Check isFocused state and reject if not focused.
                 if (!result) {
-                    promise->reject(Exception { ExceptionCode::TypeError, "WindowClient focus failed"_s });
+                    promise->reject(Exception { ExceptionCode::TypeError, "WindowClient focus failed"_si });
                     return;
                 }
 
@@ -71,7 +71,7 @@ void ServiceWorkerWindowClient::focus(ScriptExecutionContext& context, Ref<Defer
     });
 }
 
-void ServiceWorkerWindowClient::navigate(ScriptExecutionContext& context, const String& urlString, Ref<DeferredPromise>&& promise)
+void ServiceWorkerWindowClient::navigate(ScriptExecutionContext& context, StringImpl* urlString, Ref<DeferredPromise>&& promise)
 {
     auto url = context.encodingParseURL(urlString);
 

@@ -89,8 +89,8 @@ void MockContentFilter::willSendRequest(ResourceRequest& request, const Resource
     if (m_state == State::Filtering)
         return;
 
-    String modifiedRequestURLString { MockContentFilterSettings::singleton().modifiedRequestURL() };
-    if (modifiedRequestURLString.isEmpty())
+    RefPtr<StringImpl> modifiedRequestURLString { MockContentFilterSettings::singleton().modifiedRequestURL() };
+    if (isEmpty(modifiedRequestURLString))
         return;
 
     URL modifiedRequestURL { request.url(), modifiedRequestURLString };
@@ -102,10 +102,10 @@ void MockContentFilter::willSendRequest(ResourceRequest& request, const Resource
     request.setURL(WTF::move(modifiedRequestURL));
 }
 
-void MockContentFilter::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(String&&)>&& completionHandler)
+void MockContentFilter::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     willSendRequest(request, redirectResponse);
-    completionHandler(String { request.url().string() });
+    completionHandler(RefPtr<StringImpl> { request.url().string() });
 }
 
 void MockContentFilter::responseReceived(const ResourceResponse&)
@@ -145,9 +145,9 @@ ContentFilterUnblockHandler MockContentFilter::unblockHandler() const
     };
 }
 
-String MockContentFilter::unblockRequestDeniedScript() const
+RefPtr<StringImpl> MockContentFilter::unblockRequestDeniedScript() const
 {
-    return "unblockRequestDenied()"_s;
+    return "unblockRequestDenied()"_si;
 }
 
 void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
@@ -161,7 +161,7 @@ void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
     if (m_state != State::Blocked)
         return;
 
-    m_replacementData = MockContentFilterSettings::singleton().blockedString().utf8().span();
+    m_replacementData = utf8(MockContentFilterSettings::singleton().blockedString()).span();
 }
 
 } // namespace WebCore

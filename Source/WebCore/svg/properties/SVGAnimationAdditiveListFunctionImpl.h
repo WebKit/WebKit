@@ -46,12 +46,12 @@ public:
     {
     }
 
-    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, StringImpl* from, StringImpl* to) override
     {
         return m_from->parse(from) && m_to->parse(to);
     }
 
-    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, StringImpl* toAtEndOfDuration) override
     {
         return m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
@@ -104,12 +104,12 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGNumberList>;
     using Base::Base;
 
-    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, StringImpl* from, StringImpl* to) override
     {
         return m_from->parse(from) && m_to->parse(to);
     }
 
-    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, StringImpl* toAtEndOfDuration) override
     {
         return m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
@@ -153,12 +153,12 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGPointList>;
     using Base::Base;
 
-    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, StringImpl* from, StringImpl* to) override
     {
         return m_from->parse(from) && m_to->parse(to);
     }
 
-    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, StringImpl* toAtEndOfDuration) override
     {
         return m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
@@ -205,7 +205,7 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGTransformList>;
     using Base::Base;
 
-    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, StringImpl* from, StringImpl* to) override
     {
         // FIXME: this should return if m_from->parse(from) fails, however we get default values for
         // from like "scale()", instead of empty string, which fail the parse but should not return.
@@ -214,7 +214,7 @@ public:
         return m_to->parse(to);
     }
 
-    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, StringImpl* toAtEndOfDuration) override
     {
         return m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }

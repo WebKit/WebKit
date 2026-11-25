@@ -38,12 +38,12 @@ struct SessionSet;
 class WebSocketTask : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebSocketTask> {
     WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
 public:
-    static Ref<WebSocketTask> create(NetworkSocketChannel&, const WebCore::ResourceRequest&, SoupSession*, SoupMessage*, const String& protocol);
+    static Ref<WebSocketTask> create(NetworkSocketChannel&, const WebCore::ResourceRequest&, SoupSession*, SoupMessage*, StringImpl* protocol);
     ~WebSocketTask();
 
     void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
-    void close(int32_t code, const String& reason);
+    void close(int32_t code, StringImpl* reason);
 
     void cancel();
     void resume();
@@ -51,14 +51,14 @@ public:
     SessionSet* sessionSet() { return nullptr; }
 
 private:
-    WebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, SoupSession*, SoupMessage*, const String& protocol);
+    WebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, SoupSession*, SoupMessage*, StringImpl* protocol);
 
     void didConnect(GRefPtr<SoupWebsocketConnection>&&);
-    void didFail(String&&);
-    void didClose(unsigned short code, const String& reason);
+    void didFail(RefPtr<StringImpl>&&);
+    void didClose(unsigned short code, StringImpl* reason);
     void delayFailTimerFired();
 
-    String acceptedExtensions() const;
+    RefPtr<StringImpl> acceptedExtensions() const;
 
     static void didReceiveMessageCallback(WebSocketTask*, SoupWebsocketDataType, GBytes*);
     static void didReceiveErrorCallback(WebSocketTask*, GError*);
@@ -71,7 +71,7 @@ private:
     GRefPtr<GCancellable> m_cancellable;
     bool m_receivedDidFail { false };
     bool m_receivedDidClose { false };
-    String m_delayErrorMessage;
+    RefPtr<StringImpl> m_delayErrorMessage;
     RunLoop::Timer m_delayFailTimer;
 };
 

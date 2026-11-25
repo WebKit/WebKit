@@ -76,7 +76,7 @@ private:
     std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() final;
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() final;
     std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() final;
-    void setMediaStreamIds(const FixedVector<String>&) final;
+    void setMediaStreamIds(const FixedVector<RefPtr<StringImpl>>&) final;
 
     void startSource();
     void stopSource();

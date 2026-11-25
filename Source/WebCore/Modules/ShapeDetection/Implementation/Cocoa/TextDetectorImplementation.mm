@@ -68,7 +68,7 @@ void TextDetectorImpl::detect(const NativeImage& image, CompletionHandler<void(V
     for (VNRecognizedTextObservation *observation in request.get().results) {
         results.append({
             convertRectFromVisionToWeb(imageSize, observation.boundingBox),
-            [observation topCandidates:1][0].string,
+            StringImpl::create([observation topCandidates:1][0].string),
             convertCornerPoints(imageSize, observation),
         });
     }

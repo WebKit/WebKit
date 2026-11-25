@@ -41,9 +41,9 @@ class ProtectionSpace;
 class CredentialStorage {
 public:
     // WebCore session credential storage.
-    WEBCORE_EXPORT void set(const String&, const Credential&, const ProtectionSpace&, const URL&);
-    WEBCORE_EXPORT Credential get(const String&, const ProtectionSpace&);
-    WEBCORE_EXPORT void remove(const String&, const ProtectionSpace&);
+    WEBCORE_EXPORT void set(StringImpl*, const Credential&, const ProtectionSpace&, const URL&);
+    WEBCORE_EXPORT Credential get(StringImpl*, const ProtectionSpace&);
+    WEBCORE_EXPORT void remove(StringImpl*, const ProtectionSpace&);
     WEBCORE_EXPORT void removeCredentialsWithOrigin(const SecurityOriginData&);
     WEBCORE_EXPORT void clearCredentials();
 
@@ -54,16 +54,16 @@ public:
 
     // These methods work for authentication schemes that support sending credentials without waiting for a request. E.g., for HTTP Basic authentication scheme
     // a client should assume that all paths at or deeper than the depth of a known protected resource share are within the same protection space.
-    WEBCORE_EXPORT bool set(const String&, const Credential&, const URL&); // Returns true if the URL corresponds to a known protection space, so credentials could be updated.
-    WEBCORE_EXPORT Credential get(const String&, const URL&);
+    WEBCORE_EXPORT bool set(StringImpl*, const Credential&, const URL&); // Returns true if the URL corresponds to a known protection space, so credentials could be updated.
+    WEBCORE_EXPORT Credential get(StringImpl*, const URL&);
 
     WEBCORE_EXPORT HashSet<SecurityOriginData> originsWithCredentials() const;
 
 private:
-    HashMap<std::pair<String /* partitionName */, ProtectionSpace>, Credential> m_protectionSpaceToCredentialMap;
-    MemoryCompactRobinHoodHashSet<String> m_originsWithCredentials;
+    HashMap<std::pair<RefPtr<StringImpl> /* partitionName */, ProtectionSpace>, Credential> m_protectionSpaceToCredentialMap;
+    MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>> m_originsWithCredentials;
 
-    typedef HashMap<String, ProtectionSpace> PathToDefaultProtectionSpaceMap;
+    typedef HashMap<RefPtr<StringImpl>, ProtectionSpace> PathToDefaultProtectionSpaceMap;
     PathToDefaultProtectionSpaceMap m_pathToDefaultProtectionSpaceMap;
 
     PathToDefaultProtectionSpaceMap::iterator findDefaultProtectionSpaceForURL(const URL&);

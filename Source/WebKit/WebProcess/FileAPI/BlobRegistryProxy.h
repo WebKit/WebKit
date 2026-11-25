@@ -33,15 +33,15 @@ class BlobRegistryProxy final : public WebCore::BlobRegistry {
     WTF_MAKE_TZONE_ALLOCATED(BlobRegistryProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BlobRegistryProxy);
 public:
-    void registerInternalFileBlobURL(const URL&, Ref<WebCore::BlobDataFileReference>&&, const String& path, const String& contentType) final;
-    void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType) final;
+    void registerInternalFileBlobURL(const URL&, Ref<WebCore::BlobDataFileReference>&&, StringImpl* path, StringImpl* contentType) final;
+    void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, StringImpl* contentType) final;
     void registerBlobURL(const URL&, const URL& srcURL, const WebCore::PolicyContainer&, const std::optional<WebCore::SecurityOriginData>& topOrigin) final;
-    void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) final;
+    void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, StringImpl* contentType) final;
     void unregisterBlobURL(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin) final;
-    void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final;
-    String blobType(const URL&) final;
+    void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, StringImpl* contentType) final;
+    RefPtr<StringImpl> blobType(const URL&) final;
     unsigned long long blobSize(const URL&) final;
-    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
+    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&& filePaths)>&&) final;
     void registerBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin) final;
     void unregisterBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin) final;
 };

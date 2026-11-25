@@ -47,7 +47,7 @@ class SQLTransactionBackend;
 class SQLStatement final {
     WTF_MAKE_TZONE_ALLOCATED(SQLStatement);
 public:
-    SQLStatement(Database&, const String&, Vector<SQLValue>&&, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, int permissions);
+    SQLStatement(Database&, StringImpl*, Vector<SQLValue>&&, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, int permissions);
     ~SQLStatement();
 
     bool execute(Database&);
@@ -67,7 +67,7 @@ private:
     void setFailureDueToQuota();
     void clearFailureDueToQuota();
 
-    String m_statement;
+    RefPtr<StringImpl> m_statement;
     Vector<SQLValue> m_arguments;
     SQLCallbackWrapper<SQLStatementCallback> m_statementCallbackWrapper;
     SQLCallbackWrapper<SQLStatementErrorCallback> m_statementErrorCallbackWrapper;

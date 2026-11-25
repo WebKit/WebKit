@@ -126,7 +126,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             lines.append('')
 
         lines.append('    auto protocol_jsonMessage = JSON::Object::create();')
-        lines.append('    protocol_jsonMessage->setString("method"_s, "%s.%s"_s);' % (domain.domain_name, event.event_name))
+        lines.append('    protocol_jsonMessage->setString("method"_si, "%s.%s"_si);' % (domain.domain_name, event.event_name))
         if event.event_parameters:
             lines.extend(self._generate_event_out_parameters(domain, event))
         lines.append('    router.sendEvent(protocol_jsonMessage->toJSONString());')
@@ -152,9 +152,9 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             safe_var_name = '(*%s)' % var_name if parameter.is_optional else var_name
             export_expression = self.objc_protocol_export_expression_for_variable(parameter.type, safe_var_name)
             if not parameter.is_optional:
-                lines.append('    protocol_paramsObject->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
+                lines.append('    protocol_paramsObject->%s("%s"_si, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
             else:
                 lines.append('    if (%s)' % (parameter.parameter_name))
-                lines.append('        protocol_paramsObject->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
-        lines.append('    protocol_jsonMessage->setObject("params"_s, WTF::move(protocol_paramsObject));')
+                lines.append('        protocol_paramsObject->%s("%s"_si, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
+        lines.append('    protocol_jsonMessage->setObject("params"_si, WTF::move(protocol_paramsObject));')
         return lines

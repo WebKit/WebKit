@@ -67,7 +67,7 @@ public:
     void connectFrontend(bool isAutomaticInspection = false, bool immediatelyPause = false);
     void disconnectFrontend(Inspector::DisconnectReason);
 
-    void dispatchMessageFromFrontend(const String&);
+    void dispatchMessageFromFrontend(StringImpl*);
 
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
 

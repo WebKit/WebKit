@@ -36,7 +36,7 @@ public:
 
     const CSS::FontStyleRange& fontStyleRange() const LIFETIME_BOUND { return m_fontStyleRange; };
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSFontStyleRangeValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 

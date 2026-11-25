@@ -37,12 +37,12 @@ void MIMETypeCache::ensureSupportedTypes()
 {
     Locker locker { m_supportedTypesLock };
     if (!m_supportedTypes) {
-        m_supportedTypes = HashSet<String> { };
+        m_supportedTypes = HashSet<RefPtr<StringImpl>> { };
         initializeCache(*m_supportedTypes);
     }
 }
 
-HashSet<String> MIMETypeCache::supportedTypes()
+HashSet<RefPtr<StringImpl>> MIMETypeCache::supportedTypes()
 {
     ensureSupportedTypes();
 
@@ -50,9 +50,9 @@ HashSet<String> MIMETypeCache::supportedTypes()
     return *m_supportedTypes;
 }
 
-bool MIMETypeCache::supportsContainerType(const String& containerType)
+bool MIMETypeCache::supportsContainerType(StringImpl* containerType)
 {
-    if (!isAvailable() || containerType.isEmpty())
+    if (!isAvailable() || WTF::isEmpty(containerType))
         return false;
 
     if (isUnsupportedContainerType(containerType))
@@ -67,9 +67,9 @@ bool MIMETypeCache::supportsContainerType(const String& containerType)
     return m_supportedTypes->contains(containerType);
 }
 
-MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeType)
+MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(StringImpl* mimeType)
 {
-    if (mimeType.isEmpty())
+    if (WTF::isEmpty(mimeType))
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
     if (auto supports = getCachedResult(mimeType))
@@ -77,7 +77,7 @@ MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeTy
 
     auto result = MediaPlayerEnums::SupportsType::IsNotSupported;
     do {
-        if (!isAvailable() || mimeType.isEmpty())
+        if (!isAvailable() || WTF::isEmpty(mimeType))
             break;
 
         auto contentType = ContentType { mimeType };
@@ -105,7 +105,7 @@ MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeTy
     return result;
 }
 
-void MIMETypeCache::addSupportedTypes(const Vector<String>& newTypes)
+void MIMETypeCache::addSupportedTypes(const Vector<RefPtr<StringImpl>>& newTypes)
 {
     ensureSupportedTypes();
 
@@ -114,7 +114,7 @@ void MIMETypeCache::addSupportedTypes(const Vector<String>& newTypes)
         m_supportedTypes->add(type);
 }
 
-std::optional<MediaPlayerEnums::SupportsType> MIMETypeCache::getCachedResult(const String& mimeType) const
+std::optional<MediaPlayerEnums::SupportsType> MIMETypeCache::getCachedResult(StringImpl* mimeType) const
 {
     Locker locker { m_cachedResultsLock };
     if (m_cachedResults)
@@ -122,11 +122,11 @@ std::optional<MediaPlayerEnums::SupportsType> MIMETypeCache::getCachedResult(con
     return std::nullopt;
 }
 
-void MIMETypeCache::addCachedResult(const String& mimeType, MediaPlayerEnums::SupportsType result)
+void MIMETypeCache::addCachedResult(StringImpl* mimeType, MediaPlayerEnums::SupportsType result)
 {
     Locker locker { m_cachedResultsLock };
     if (!m_cachedResults)
-        m_cachedResults = HashMap<String, MediaPlayerEnums::SupportsType>();
+        m_cachedResults = HashMap<RefPtr<StringImpl>, MediaPlayerEnums::SupportsType>();
     m_cachedResults->add(mimeType, result);
 }
 
@@ -135,7 +135,7 @@ bool MIMETypeCache::isStaticContainerType(StringView)
     return false;
 }
 
-bool MIMETypeCache::isUnsupportedContainerType(const String&)
+bool MIMETypeCache::isUnsupportedContainerType(StringImpl*)
 {
     return false;
 }
@@ -151,7 +151,7 @@ bool MIMETypeCache::isEmpty() const
     return m_supportedTypes && m_supportedTypes->isEmpty();
 }
 
-void MIMETypeCache::initializeCache(HashSet<String>&)
+void MIMETypeCache::initializeCache(HashSet<RefPtr<StringImpl>>&)
 {
 }
 
@@ -168,7 +168,7 @@ bool MIMETypeCache::shouldOverrideExtendedType(const ContentType& type)
     // it is not RFC 3003 compliant.
     if (equalLettersIgnoringASCIICase(type.containerType(), "audio/mpeg"_s)) {
         auto codecs = type.codecs();
-        return codecs.size() == 1 && codecs[0] == "mp3"_s;
+        return codecs.size() == 1 && equal(codecs[0], "mp3"_s);
     }
 
     return false;

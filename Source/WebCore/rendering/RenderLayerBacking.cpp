@@ -459,7 +459,7 @@ void RenderLayerBacking::clearBackingSharingLayers(OptionSet<UpdateBackingSharin
     m_backingSharingLayers.clear();
 }
 
-Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
+Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(StringImpl* name, GraphicsLayer::Type layerType)
 {
     auto* graphicsLayerFactory = renderer().page().chrome().client().graphicsLayerFactory();
 
@@ -489,7 +489,7 @@ void RenderLayerBacking::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
         graphicsLayer->setNeedsDisplay();
 }
 
-String RenderLayerBacking::displayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
+RefPtr<StringImpl> RenderLayerBacking::displayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
 {
     return protect(m_graphicsLayer)->displayListAsText(flags);
 }
@@ -499,7 +499,7 @@ void RenderLayerBacking::setIsTrackingDisplayListReplay(bool isTrackingReplay)
     protect(m_graphicsLayer)->setIsTrackingDisplayListReplay(isTrackingReplay);
 }
 
-String RenderLayerBacking::replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
+RefPtr<StringImpl> RenderLayerBacking::replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
 {
     return protect(m_graphicsLayer)->replayDisplayListAsText(flags);
 }
@@ -684,15 +684,15 @@ void RenderLayerBacking::updateAppliesPageScale()
 
 void RenderLayerBacking::createPrimaryGraphicsLayer()
 {
-    String layerName = protect(m_owningLayer)->name();
+    RefPtr<StringImpl> layerName = protect(m_owningLayer)->name();
     const unsigned maxLayerNameLength = 100;
-    if (layerName.length() > maxLayerNameLength)
+    if (length(layerName) > maxLayerNameLength)
         layerName = makeString(StringView(layerName).left(maxLayerNameLength), "..."_s);
     m_graphicsLayer = createGraphicsLayer(layerName, m_isFrameLayerWithTiledBacking ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
     Ref graphicsLayer = *m_graphicsLayer;
 
     if (m_isFrameLayerWithTiledBacking) {
-        m_childContainmentLayer = createGraphicsLayer("Page TiledBacking containment"_s);
+        m_childContainmentLayer = createGraphicsLayer("Page TiledBacking containment"_si);
         graphicsLayer->addChild(*m_childContainmentLayer);
     }
 
@@ -2975,14 +2975,14 @@ void RenderLayerBacking::ensureClippingStackLayers(LayerAncestorClippingStack& c
 {
     for (auto& entry : clippingStack.stack()) {
         if (!entry.clippingLayer) {
-            entry.clippingLayer = createGraphicsLayer(entry.clipData.isOverflowScroll ? "clip for scroller"_s : "ancestor clipping"_s);
+            entry.clippingLayer = createGraphicsLayer(StringImpl::create(entry.clipData.isOverflowScroll ? "clip for scroller"_s : "ancestor clipping"_s).ptr());
             entry.clippingLayer->setMasksToBounds(true);
             entry.clippingLayer->setPaintingPhase({ });
         }
 
         if (boxNeedingShapeMaskForClip(entry.clipData)) {
             if (!entry.shapeMaskLayer) {
-                entry.shapeMaskLayer = createGraphicsLayer("ancestor clip shape mask"_s, GraphicsLayer::Type::Shape);
+                entry.shapeMaskLayer = createGraphicsLayer("ancestor clip shape mask"_si, GraphicsLayer::Type::Shape);
                 entry.clippingLayer->setMaskLayer(entry.shapeMaskLayer.copyRef());
             }
         } else if (entry.shapeMaskLayer) {
@@ -2992,7 +2992,7 @@ void RenderLayerBacking::ensureClippingStackLayers(LayerAncestorClippingStack& c
 
         if (entry.clipData.isOverflowScroll) {
             if (!entry.scrollingLayer)
-                entry.scrollingLayer = createGraphicsLayer("scrolling proxy"_s);
+                entry.scrollingLayer = createGraphicsLayer("scrolling proxy"_si);
         } else if (entry.scrollingLayer)
             GraphicsLayer::unparentAndClear(entry.scrollingLayer);
     }
@@ -3118,7 +3118,7 @@ bool RenderLayerBacking::updateDescendantClippingLayer(bool needsDescendantClip)
 
     if (needsDescendantClip) {
         if (!m_childContainmentLayer && !m_isFrameLayerWithTiledBacking) {
-            m_childContainmentLayer = createGraphicsLayer("child clipping"_s);
+            m_childContainmentLayer = createGraphicsLayer("child clipping"_si);
             Ref childContainmentLayer = *m_childContainmentLayer;
             childContainmentLayer->setMasksToBounds(true);
             childContainmentLayer->setContentsRectClipsDescendants(true);
@@ -3251,7 +3251,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
             return false;
 
         if (needLayer) {
-            layer = createGraphicsLayer(layerName);
+            layer = createGraphicsLayer(StringImpl::create(layerName).ptr());
             if (drawsContent) {
                 layer->setAllowsBackingStoreDetaching(false);
                 layer->setAllowsTiling(false);
@@ -3620,7 +3620,7 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         }
 
         if (!m_maskLayer) {
-            m_maskLayer = createGraphicsLayer("mask"_s, requiredLayerType);
+            m_maskLayer = createGraphicsLayer("mask"_si, requiredLayerType);
             layerChanged = true;
             graphicsLayer->setMaskLayer(m_maskLayer.copyRef());
             // We need a geometry update to size the new mask layer.
@@ -3646,14 +3646,14 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 
     if (!m_scrollContainerLayer) {
         // Outer layer which corresponds with the scroll view. This never paints content.
-        m_scrollContainerLayer = createGraphicsLayer("scroll container"_s, GraphicsLayer::Type::ScrollContainer);
+        m_scrollContainerLayer = createGraphicsLayer("scroll container"_si, GraphicsLayer::Type::ScrollContainer);
         Ref scrollContainerLayer = *m_scrollContainerLayer;
         scrollContainerLayer->setPaintingPhase({ });
         scrollContainerLayer->setDrawsContent(false);
         scrollContainerLayer->setMasksToBounds(true);
 
         // Inner layer which renders the content that scrolls.
-        m_scrolledContentsLayer = createGraphicsLayer("scrolled contents"_s, GraphicsLayer::Type::ScrolledContents);
+        m_scrolledContentsLayer = createGraphicsLayer("scrolled contents"_si, GraphicsLayer::Type::ScrolledContents);
         Ref scrolledContentsLayer = *m_scrolledContentsLayer;
         scrolledContentsLayer->setDrawsContent(true);
         scrolledContentsLayer->setAnchorPoint({ });
@@ -4915,7 +4915,7 @@ static RefPtr<const Pattern> patternForDescription(PatternDescription descriptio
         GraphicsContext& imageContext = imageBuffer->context();
 
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily("Helvetica"_s);
+        fontDescription.setOneFamily("Helvetica"_atom);
         fontDescription.setComputedSize(10);
         fontDescription.setUsedSize(10);
         fontDescription.setWeight(FontSelectionValue(500));
@@ -5719,12 +5719,12 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
 }
 #endif
 
-void RenderLayerBacking::animationPaused(double timeOffset, const String& animationName)
+void RenderLayerBacking::animationPaused(double timeOffset, StringImpl* animationName)
 {
     protect(m_graphicsLayer)->pauseAnimation(animationName, timeOffset);
 }
 
-void RenderLayerBacking::animationFinished(const String& animationName)
+void RenderLayerBacking::animationFinished(StringImpl* animationName)
 {
     protect(m_graphicsLayer)->removeAnimation(animationName, std::nullopt);
     m_owningLayer.setNeedsPostLayoutCompositingUpdate();
@@ -5738,7 +5738,7 @@ void RenderLayerBacking::transformRelatedPropertyDidChange()
     m_graphicsLayer->transformRelatedPropertyDidChange();
 }
 
-void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const String&, MonotonicTime)
+void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, StringImpl*, MonotonicTime)
 {
 }
 

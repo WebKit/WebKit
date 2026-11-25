@@ -40,7 +40,7 @@ typedef ScreenSleepDisablerCounter::Token ScreenSleepDisablerCounterToken;
 
 class SleepDisablerCocoa : public SleepDisabler {
 public:
-    explicit SleepDisablerCocoa(const String&, Type);
+    explicit SleepDisablerCocoa(StringImpl*, Type);
     virtual ~SleepDisablerCocoa();
 
 #if PLATFORM(IOS_FAMILY)
@@ -48,8 +48,8 @@ public:
 #endif
 
 private:
-    void takeScreenSleepDisablingAssertion(const String& reason);
-    void takeSystemSleepDisablingAssertion(const String& reason);
+    void takeScreenSleepDisablingAssertion(StringImpl* reason);
+    void takeSystemSleepDisablingAssertion(StringImpl* reason);
 
     uint32_t m_sleepAssertion { 0 };
 #if PLATFORM(IOS_FAMILY)

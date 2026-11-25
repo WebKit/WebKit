@@ -29,7 +29,7 @@ void AcceleratedAnimations::add(Ref<const AcceleratedAnimation>&& animation, Mon
 {
     // Remove the old state if we are resuming a paused animation.
     m_animations.removeAllMatching([&] (const auto& entry) {
-        return entry.animation->name() == animation->name() && entry.animation->keyframes().property() == animation->keyframes().property();
+        return equal(entry.animation->name(), animation->name()) && entry.animation->keyframes().property() == animation->keyframes().property();
     });
 
     AcceleratedAnimation::Playback playback;
@@ -38,17 +38,17 @@ void AcceleratedAnimations::add(Ref<const AcceleratedAnimation>&& animation, Mon
     m_animations.append({ WTF::move(animation), WTF::move(playback) });
 }
 
-void AcceleratedAnimations::remove(const String& name)
+void AcceleratedAnimations::remove(StringImpl* name)
 {
     m_animations.removeAllMatching([&name] (const auto& entry) {
-        return entry.animation->name() == name;
+        return equal(entry.animation->name(), name);
     });
 }
 
-void AcceleratedAnimations::pause(const String& name, Seconds offset)
+void AcceleratedAnimations::pause(StringImpl* name, Seconds offset)
 {
     for (auto& entry : m_animations) {
-        if (entry.animation->name() == name)
+        if (equal(entry.animation->name(), name))
             entry.playback.pause(offset);
     }
 }

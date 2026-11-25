@@ -187,7 +187,7 @@ void webkit_dom_character_data_append_data(WebKitDOMCharacterData* self, const g
     g_return_if_fail(data);
     UNUSED_PARAM(error);
     WebCore::CharacterData* item = WebKit::core(self);
-    WTF::String convertedData = WTF::String::fromUTF8(data);
+    RefPtr<StringImpl> convertedData = StringImpl::fromUTF8(data);
     item->appendData(convertedData);
 }
 
@@ -198,7 +198,7 @@ void webkit_dom_character_data_insert_data(WebKitDOMCharacterData* self, gulong 
     g_return_if_fail(data);
     g_return_if_fail(!error || !*error);
     WebCore::CharacterData* item = WebKit::core(self);
-    WTF::String convertedData = WTF::String::fromUTF8(data);
+    RefPtr<StringImpl> convertedData = StringImpl::fromUTF8(data);
     auto result = item->insertData(offset, convertedData);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -226,7 +226,7 @@ void webkit_dom_character_data_replace_data(WebKitDOMCharacterData* self, gulong
     g_return_if_fail(data);
     g_return_if_fail(!error || !*error);
     WebCore::CharacterData* item = WebKit::core(self);
-    WTF::String convertedData = WTF::String::fromUTF8(data);
+    RefPtr<StringImpl> convertedData = StringImpl::fromUTF8(data);
     auto result = item->replaceData(offset, length, convertedData);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -250,7 +250,7 @@ void webkit_dom_character_data_set_data(WebKitDOMCharacterData* self, const gcha
     g_return_if_fail(value);
     UNUSED_PARAM(error);
     WebCore::CharacterData* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setData(convertedValue);
 }
 

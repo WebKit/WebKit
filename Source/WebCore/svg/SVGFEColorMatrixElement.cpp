@@ -52,7 +52,7 @@ Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName
     return adoptRef(*new SVGFEColorMatrixElement(tagName, document));
 }
 
-void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:

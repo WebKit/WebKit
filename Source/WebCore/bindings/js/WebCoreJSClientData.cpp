@@ -230,20 +230,20 @@ void JSVMClientData::initNormalWorld(VM* vm, WorkerThreadType type)
     vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController(type == WorkerThreadType::DedicatedWorker || type == WorkerThreadType::Worklet));
 }
 
-String unmaskedSourceURLFromException(JSC::Exception& exception, JSC::VM& vm)
+RefPtr<StringImpl> unmaskedSourceURLFromException(JSC::Exception& exception, JSC::VM& vm)
 {
     for (auto& frame : exception.stackForReporting(vm)) {
-        String url = frame.sourceURL(vm, JSC::AllowURLOverride::No);
-        if (!url.isEmpty() && url != "[native code]"_s)
+        RefPtr<StringImpl> url = frame.sourceURL(vm, JSC::AllowURLOverride::No);
+        if (!isEmpty(url) && !equal(url, "[native code]"_s))
             return url;
     }
 
     return emptyString();
 }
 
-String JSVMClientData::overrideSourceURL(const JSC::StackFrame& frame, const String& originalSourceURL) const
+RefPtr<StringImpl> JSVMClientData::overrideSourceURL(const JSC::StackFrame& frame, StringImpl* originalSourceURL) const
 {
-    if (originalSourceURL.isEmpty())
+    if (isEmpty(originalSourceURL))
         return nullString();
 
     JSGlobalObject* globalObject = nullptr;

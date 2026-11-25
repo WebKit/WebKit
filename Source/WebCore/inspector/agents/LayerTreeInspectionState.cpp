@@ -197,9 +197,9 @@ Ref<Inspector::Protocol::LayerTree::Layer> LayerTreeInspectionState::buildObject
         layerObject->setIsGeneratedContent(true);
         layerObject->setPseudoElementId(bindPseudoElement(RefPtr { downcast<PseudoElement>(renderer->element()) }.get()));
         if (renderer->isBeforeContent())
-            layerObject->setPseudoElement("before"_s);
+            layerObject->setPseudoElement("before"_si);
         else if (renderer->isAfterContent())
-            layerObject->setPseudoElement("after"_s);
+            layerObject->setPseudoElement("after"_si);
     }
 
     // FIXME: RenderView is now really anonymous but don't tell about it to the frontend before making sure it can handle it.
@@ -207,15 +207,15 @@ Ref<Inspector::Protocol::LayerTree::Layer> LayerTreeInspectionState::buildObject
         layerObject->setIsAnonymous(true);
         CheckedRef style = renderer->style();
         if (style->pseudoElementType() == PseudoElementType::FirstLetter)
-            layerObject->setPseudoElement("first-letter"_s);
+            layerObject->setPseudoElement("first-letter"_si);
         else if (style->pseudoElementType() == PseudoElementType::FirstLine)
-            layerObject->setPseudoElement("first-line"_s);
+            layerObject->setPseudoElement("first-line"_si);
     }
 
     return layerObject;
 }
 
-Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> LayerTreeInspectionState::reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId& layerId)
+Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> LayerTreeInspectionState::reasonsForCompositingLayer(StringImpl* layerId)
 {
     const CheckedPtr renderLayer = m_idToLayer.get(layerId);
 
@@ -323,7 +323,7 @@ Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>
     return compositingReasons;
 }
 
-Inspector::CommandResult<String> LayerTreeInspectionState::requestContent(const Inspector::Protocol::LayerTree::LayerId& layerId)
+Inspector::CommandResult<RefPtr<StringImpl>> LayerTreeInspectionState::requestContent(StringImpl* layerId)
 {
     CheckedPtr renderLayer = m_idToLayer.get(layerId);
     if (!renderLayer)
@@ -356,10 +356,10 @@ Inspector::CommandResult<String> LayerTreeInspectionState::requestContent(const 
 
     graphicsLayer->paintGraphicsLayerContents(imageBuffer->context(), { { }, layerSize });
 
-    return encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
+    return encodeDataURL(WTF::move(imageBuffer), "image/png"_si);
 }
 
-String LayerTreeInspectionState::bind(const RenderLayer* layer)
+RefPtr<StringImpl> LayerTreeInspectionState::bind(const RenderLayer* layer)
 {
     if (!layer)
         return emptyString();
@@ -384,12 +384,12 @@ void LayerTreeInspectionState::removeDestroyedLayers()
 void LayerTreeInspectionState::unbind(const RenderLayer* layer)
 {
     auto identifier = m_documentLayerToIdMap.take(layer);
-    if (identifier.isNull())
+    if (!identifier)
         return;
     m_idToLayer.remove(identifier);
 }
 
-String LayerTreeInspectionState::bindPseudoElement(PseudoElement* pseudoElement)
+RefPtr<StringImpl> LayerTreeInspectionState::bindPseudoElement(PseudoElement* pseudoElement)
 {
     if (!pseudoElement)
         return emptyString();
@@ -405,7 +405,7 @@ void LayerTreeInspectionState::unbindPseudoElement(PseudoElement* pseudoElement)
     if (!pseudoElement)
         return;
     auto identifier = m_pseudoElementToIdMap.take(*pseudoElement);
-    if (identifier.isNull())
+    if (!identifier)
         return;
     m_idToPseudoElement.remove(identifier);
 }

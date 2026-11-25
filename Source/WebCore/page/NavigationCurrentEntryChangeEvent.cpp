@@ -32,14 +32,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationCurrentEntryChangeEvent);
 
-NavigationCurrentEntryChangeEvent::NavigationCurrentEntryChangeEvent(const AtomString& type, Init&& init)
+NavigationCurrentEntryChangeEvent::NavigationCurrentEntryChangeEvent(AtomStringImpl* type, Init&& init)
     : Event(EventInterfaceType::NavigationCurrentEntryChangeEvent, type, CanBubble::No, IsCancelable::No)
     , m_navigationType(init.navigationType)
     , m_from(WTF::move(init.from))
 {
 }
 
-Ref<NavigationCurrentEntryChangeEvent> NavigationCurrentEntryChangeEvent::create(const AtomString& type, Init&& init)
+Ref<NavigationCurrentEntryChangeEvent> NavigationCurrentEntryChangeEvent::create(AtomStringImpl* type, Init&& init)
 {
     return adoptRef(*new NavigationCurrentEntryChangeEvent(type, WTF::move(init)));
 }

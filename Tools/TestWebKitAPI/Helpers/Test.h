@@ -29,6 +29,8 @@
 
 #if !PLATFORM(COCOA) || !__has_feature(modules)
 
+#include <concepts>
+#include <optional>
 #include <type_traits>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/CString.h>
@@ -88,9 +90,9 @@ struct TestParametersToStringFormatter {
 
 namespace WTF {
 
-inline std::ostream& operator<<(std::ostream& os, const String& string)
+inline std::ostream& operator<<(std::ostream& os, StringImpl* string)
 {
-    return os << string.utf8().toStdString();
+    return os << utf8(string).toStdString();
 }
 
 inline std::ostream& operator<<(std::ostream& os, const ASCIILiteral& string)
@@ -103,6 +105,94 @@ inline std::ostream& operator<<(std::ostream& os, const UTF8CString& string)
     return os << string.toStdString();
 }
 
+template<typename T> requires std::is_convertible_v<T*, const StringImpl*>
+inline std::ostream& operator<<(std::ostream& os, const RefPtr<T>& string)
+{
+    return os << utf8(string).toStdString();
 }
+
+template<typename T> requires std::is_convertible_v<T*, const StringImpl*>
+inline std::ostream& operator<<(std::ostream& os, const Ref<T>& string)
+{
+    return os << utf8(string).toStdString();
+}
+
+// EXPECT_EQ / EXPECT_NE compare strings by content, as they did when strings were String objects:
+// - values of the same type (other than raw pointers) compare with contentEquals(), which compares StringImpl smart
+//   pointers by content, atoms by identity, containers of strings element-wise, and everything else with ==;
+// - other mixes compare with equal() where operator== is unavailable (StringImpl smart pointers vs. raw pointers,
+//   literals, views and spans).
+// Raw pointers keep comparing by identity.
+template<typename T1, typename T2>
+concept TestHasEqualityOperator = requires(const T1& a, const T2& b)
+{
+    a == b;
+};
+
+template<typename T1, typename T2>
+concept TestHasContentEquals = requires(const T1& a, const T2& b)
+{
+    { contentEquals(a, b) } -> std::convertible_to<bool>;
+};
+
+template<typename T1, typename T2>
+concept TestHasEqualFunction = requires(const T1& a, const T2& b)
+{
+    { equal(a, b) } -> std::convertible_to<bool>;
+};
+
+template<typename T1, typename T2>
+concept TestComparesWithContentEquals = std::same_as<T1, T2> && !std::is_pointer_v<T1> && !std::is_arithmetic_v<T1> && !std::is_enum_v<T1>
+    && TestHasContentEquals<T1, T2>;
+
+template<typename T1, typename T2>
+concept TestComparesStringContentsDirectly = TestComparesWithContentEquals<T1, T2>
+    || (!TestHasEqualityOperator<T1, T2> && TestHasEqualFunction<T1, T2>);
+
+template<typename T> inline constexpr bool isStdOptionalForTesting = false;
+template<typename T> inline constexpr bool isStdOptionalForTesting<std::optional<T>> = true;
+
+// An engaged std::optional of a string compares with a string the way std::optional<String> compared with a String.
+template<typename T1, typename T2>
+concept TestComparesOptionalStringContents = isStdOptionalForTesting<T1> && !isStdOptionalForTesting<T2>
+    && !TestHasEqualityOperator<T1, T2> && TestComparesStringContentsDirectly<typename T1::value_type, T2>;
+
+template<typename T1, typename T2>
+concept TestComparesStringContents = TestComparesStringContentsDirectly<T1, T2> || TestComparesOptionalStringContents<T1, T2>;
+
+template<typename T1, typename T2> requires (TestComparesStringContents<T1, T2>)
+bool testStringContentsEqual(const T1& a, const T2& b)
+{
+    if constexpr (TestComparesOptionalStringContents<T1, T2>)
+        return a && testStringContentsEqual(*a, b);
+    else if constexpr (TestComparesWithContentEquals<T1, T2>)
+        return contentEquals(a, b);
+    else
+        return equal(a, b);
+}
+
+// Found by argument-dependent lookup from testing::internal::EqHelper::Compare(); more constrained than gtest's.
+template<typename T1, typename T2> requires (TestComparesStringContents<T1, T2>)
+::testing::AssertionResult CmpHelperEQ(const char* lhsExpression, const char* rhsExpression, const T1& lhs, const T2& rhs)
+{
+    if (testStringContentsEqual(lhs, rhs))
+        return ::testing::AssertionSuccess();
+    return ::testing::internal::CmpHelperEQFailure(lhsExpression, rhsExpression, lhs, rhs);
+}
+
+}
+
+namespace testing::internal {
+
+// EXPECT_NE names ::testing::internal::CmpHelperNE explicitly; this overload is more constrained than gtest's.
+template<typename T1, typename T2> requires (WTF::TestComparesStringContents<T1, T2>)
+AssertionResult CmpHelperNE(const char* expr1, const char* expr2, const T1& val1, const T2& val2)
+{
+    if (!WTF::testStringContentsEqual(val1, val2))
+        return AssertionSuccess();
+    return CmpHelperOpFailure(expr1, expr2, val1, val2, "!=");
+}
+
+} // namespace testing::internal
 
 #endif // !PLATFORM(COCOA) || !__has_feature(modules)

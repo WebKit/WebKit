@@ -33,19 +33,19 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PushSubscriptionChangeEvent);
 
-Ref<PushSubscriptionChangeEvent> PushSubscriptionChangeEvent::create(const AtomString& type, PushSubscriptionChangeEventInit&& initializer, IsTrusted isTrusted)
+Ref<PushSubscriptionChangeEvent> PushSubscriptionChangeEvent::create(AtomStringImpl* type, PushSubscriptionChangeEventInit&& initializer, IsTrusted isTrusted)
 {
     auto newSubscription = initializer.newSubscription;
     auto oldSubscription = initializer.oldSubscription;
     return create(type, WTF::move(initializer), WTF::move(newSubscription), WTF::move(oldSubscription), isTrusted);
 }
 
-Ref<PushSubscriptionChangeEvent> PushSubscriptionChangeEvent::create(const AtomString& type, ExtendableEventInit&& initializer, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted isTrusted)
+Ref<PushSubscriptionChangeEvent> PushSubscriptionChangeEvent::create(AtomStringImpl* type, ExtendableEventInit&& initializer, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted isTrusted)
 {
     return adoptRef(*new PushSubscriptionChangeEvent(type, WTF::move(initializer), WTF::move(newSubscription), WTF::move(oldSubscription), isTrusted));
 }
 
-PushSubscriptionChangeEvent::PushSubscriptionChangeEvent(const AtomString& type, ExtendableEventInit&& eventInit, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted isTrusted)
+PushSubscriptionChangeEvent::PushSubscriptionChangeEvent(AtomStringImpl* type, ExtendableEventInit&& eventInit, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::PushSubscriptionChangeEvent, type, WTF::move(eventInit), isTrusted)
     , m_newSubscription(WTF::move(newSubscription))
     , m_oldSubscription(WTF::move(oldSubscription))

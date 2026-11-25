@@ -53,7 +53,7 @@ Ref<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGFEBlendElement(tagName, document));
 }
 
-void SVGFEBlendElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEBlendElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::modeAttr:

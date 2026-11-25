@@ -122,7 +122,7 @@ ErrorInstance* JSModuleLoader::duplicateError(JSGlobalObject* globalObject, Erro
     if (error->errorType() == ErrorType::TypeError)
         RELEASE_AND_RETURN(scope, JSModuleLoader::duplicateTypeError(globalObject, error));
 
-    String message = error->sanitizedMessageString(globalObject);
+    RefPtr<StringImpl> message = error->sanitizedMessageString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     ErrorInstance* out = ErrorInstance::create(globalObject, WTF::move(message), error->errorType(), { }, { }, { });
@@ -277,7 +277,7 @@ DEFINE_VISIT_CHILDREN(JSModuleLoader);
 
 // ------------------------------ Functions --------------------------------
 
-static String printableModuleKey(JSGlobalObject* globalObject, JSValue key)
+static RefPtr<StringImpl> printableModuleKey(JSGlobalObject* globalObject, JSValue key)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
@@ -289,7 +289,7 @@ static String printableModuleKey(JSGlobalObject* globalObject, JSValue key)
     return vm.propertyNames->emptyIdentifier.impl();
 }
 
-JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject, const String& key)
+JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject, StringImpl* key)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -345,7 +345,7 @@ void JSModuleLoader::provideFetch(JSGlobalObject* globalObject, const Identifier
         entry->provideFetch(globalObject, moduleData); // can throw
 }
 
-JSPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, const Identifier& specifier, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher, OptionSet<ModuleLoadFlag> flags, const String& referrer)
+JSPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, const Identifier& specifier, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher, OptionSet<ModuleLoadFlag> flags, StringImpl* referrer)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -434,7 +434,7 @@ JSPromise* JSModuleLoader::linkAndEvaluateModule(JSGlobalObject* globalObject, c
 // The referrer of a module fetch is the referring script's base URL, i.e. its module key. An inline
 // module's key is a Symbol: it has no URL of its own, so we return the empty string and let the host
 // substitute its base URL. A null key means there is no referring script at all.
-static String moduleReferrer(const Identifier& referrerKey)
+static RefPtr<StringImpl> moduleReferrer(const Identifier& referrerKey)
 {
     if (referrerKey.isSymbol())
         return emptyString();
@@ -497,7 +497,7 @@ JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* 
 
     if (type && !moduleTypeIsAllowed(globalObject, *type)) {
         auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
-        promise->reject(vm, createTypeError(globalObject, "Module type not supported by environment"_s));
+        promise->reject(vm, createTypeError(globalObject, "Module type not supported by environment"_si));
         RELEASE_AND_RETURN(scope, promise);
     }
 
@@ -540,7 +540,7 @@ Identifier JSModuleLoader::resolve(JSGlobalObject* globalObject, const Identifie
     RELEASE_AND_RETURN(scope, resolve(globalObject, nameValue, referrerValue, WTF::move(scriptFetcher), useImportMap));
 }
 
-JSPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue key, const String& referrer, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher)
+JSPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue key, StringImpl* referrer, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher)
 {
     dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [fetch] ", printableModuleKey(globalObject, key));
 
@@ -558,7 +558,7 @@ JSPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue key, cons
         RELEASE_AND_RETURN(scope, globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, this, key, referrer, WTF::move(parameters), WTF::move(scriptFetcher)));
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
-    String moduleKey = key.toWTFString(globalObject);
+    RefPtr<StringImpl> moduleKey = key.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(vm, scope));
 
     scope.release();
@@ -645,7 +645,7 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
     if (!moduleTypeIsAllowed(globalObject, type)) {
         JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
 
-        auto error = createTypeError(globalObject, "Module type not supported by environment"_s);
+        auto error = createTypeError(globalObject, "Module type not supported by environment"_si);
         promise->reject(vm, error);
 
         scope.release();
@@ -807,7 +807,7 @@ JSPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, const Module
 static void checkSafeToRecurse(JSGlobalObject* globalObject, ThrowScope& scope)
 {
     if (!globalObject->vm().isSafeToRecurse())
-        throwRangeError(globalObject, scope, "Maximum call stack size exceeded"_s);
+        throwRangeError(globalObject, scope, "Maximum call stack size exceeded"_si);
 }
 
 void JSModuleLoader::innerModuleLoading(JSGlobalObject* globalObject, ModuleGraphLoadingState *state, AbstractModuleRecord* module)

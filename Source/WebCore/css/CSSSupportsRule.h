@@ -40,9 +40,9 @@ class CSSSupportsRule final : public CSSConditionRule {
 public:
     static Ref<CSSSupportsRule> create(StyleRuleSupports&, CSSStyleSheet* parent);
 
-    String cssText() const final;
-    String cssText(const CSS::SerializationContext&) const final;
-    NODELETE String conditionText() const final;
+    RefPtr<StringImpl> cssText() const final;
+    RefPtr<StringImpl> cssText(const CSS::SerializationContext&) const final;
+    NODELETE RefPtr<StringImpl> conditionText() const final;
     NODELETE bool matches() const;
 
 private:

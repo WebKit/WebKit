@@ -55,8 +55,8 @@ public:
     void disconnectFromStorageArea(IPC::Connection::UniqueID, StorageAreaIdentifier);
     void cloneStorageArea(StorageNamespaceIdentifier, StorageNamespaceIdentifier);
 
-    HashMap<String, String> fetchStorageMap(StorageNamespaceIdentifier);
-    bool setStorageMap(StorageNamespaceIdentifier, WebCore::ClientOrigin, HashMap<String, String>&&);
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> fetchStorageMap(StorageNamespaceIdentifier);
+    bool setStorageMap(StorageNamespaceIdentifier, WebCore::ClientOrigin, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&);
 
 private:
     StorageAreaIdentifier addStorageArea(Ref<MemoryStorageArea>&&, StorageNamespaceIdentifier);

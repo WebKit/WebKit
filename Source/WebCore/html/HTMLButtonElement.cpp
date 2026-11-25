@@ -106,7 +106,7 @@ int HTMLButtonElement::defaultTabIndex() const
     return 0;
 }
 
-const AtomString& HTMLButtonElement::formControlType() const
+const RefPtr<AtomStringImpl>& HTMLButtonElement::formControlType() const
 {
     switch (m_type) {
     case Type::Submit:
@@ -132,7 +132,7 @@ bool HTMLButtonElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLFormControlElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLButtonElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLButtonElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == typeAttr)
         computeType(newValue);
@@ -156,46 +156,46 @@ RefPtr<Element> HTMLButtonElement::commandForElement() const
     return elementForAttributeInternal(commandforAttr);
 }
 
-static const AtomString& togglePopoverAtom()
+static const RefPtr<AtomStringImpl>& togglePopoverAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("toggle-popover"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("toggle-popover"_s);
     return identifier;
 }
 
-static const AtomString& showPopoverAtom()
+static const RefPtr<AtomStringImpl>& showPopoverAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("show-popover"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("show-popover"_s);
     return identifier;
 }
 
-static const AtomString& hidePopoverAtom()
+static const RefPtr<AtomStringImpl>& hidePopoverAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("hide-popover"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("hide-popover"_s);
     return identifier;
 }
 
-static const AtomString& closeAtom()
+static const RefPtr<AtomStringImpl>& closeAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("close"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("close"_s);
     return identifier;
 }
 
-static const AtomString& requestCloseAtom()
+static const RefPtr<AtomStringImpl>& requestCloseAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("request-close"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("request-close"_s);
     return identifier;
 }
 
-static const AtomString& showModalAtom()
+static const RefPtr<AtomStringImpl>& showModalAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("show-modal"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> identifier("show-modal"_s);
     return identifier;
 }
 
 CommandType HTMLButtonElement::commandType() const
 {
     auto action = attributeWithoutSynchronization(HTMLNames::commandAttr);
-    if (action.isNull() || action.isEmpty())
+    if (!action || isEmpty(action))
         return CommandType::Invalid;
 
     if (equalIgnoringASCIICase(action, togglePopoverAtom()))
@@ -216,7 +216,7 @@ CommandType HTMLButtonElement::commandType() const
     if (equalIgnoringASCIICase(action, requestCloseAtom()))
         return CommandType::RequestClose;
 
-    if (action.startsWith("--"_s))
+    if (startsWith(action, "--"_s))
         return CommandType::Custom;
 
     return CommandType::Invalid;
@@ -240,7 +240,7 @@ void HTMLButtonElement::handleCommand()
     CommandEvent::Init init {
         { false, true, false },
         this,
-        commandRaw.isNull() ? emptyAtom() : commandRaw,
+        !commandRaw ? emptyAtom() : commandRaw,
     };
     Ref event = CommandEvent::create(eventNames().commandEvent, WTF::move(init),
         CommandEvent::IsTrusted::Yes);
@@ -250,7 +250,7 @@ void HTMLButtonElement::handleCommand()
         invokee->handleCommandInternal(*this, command);
 }
 
-const AtomString& HTMLButtonElement::command() const
+const RefPtr<AtomStringImpl>& HTMLButtonElement::command() const
 {
     switch (commandType()) {
     case CommandType::TogglePopover:
@@ -318,7 +318,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
     }
 
     if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && document().focusedElement() == this) {
-        if (keyboardEvent->type() == eventNames.keydownEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
+        if (keyboardEvent->type() == eventNames.keydownEvent && equal(keyboardEvent->keyIdentifier(), "U+0020"_s)) {
             setActive(true);
             // No setDefaultHandled() - IE dispatches a keypress in this case.
             return;
@@ -335,7 +335,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
                     return;
             }
         }
-        if (keyboardEvent->type() == eventNames.keyupEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
+        if (keyboardEvent->type() == eventNames.keyupEvent && equal(keyboardEvent->keyIdentifier(), "U+0020"_s)) {
             if (active())
                 dispatchSimulatedClick(keyboardEvent.get());
             keyboardEvent->setDefaultHandled();
@@ -381,7 +381,7 @@ void HTMLButtonElement::setActivatedSubmit(bool flag)
 
 bool HTMLButtonElement::appendFormData(DOMFormData& formData)
 {
-    if (!isSubmitButton() || name().isEmpty() || !m_isActivatedSubmit)
+    if (!isSubmitButton() || isEmpty(name()) || !m_isActivatedSubmit)
         return false;
     formData.append(name(), value());
     return true;
@@ -392,7 +392,7 @@ bool HTMLButtonElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == formactionAttr || HTMLFormControlElement::isURLAttribute(attribute);
 }
 
-const AtomString& HTMLButtonElement::value() const
+const RefPtr<AtomStringImpl>& HTMLButtonElement::value() const
 {
     return attributeWithoutSynchronization(valueAttr);
 }
@@ -412,7 +412,7 @@ bool HTMLButtonElement::isExplicitlySetSubmitButton() const
     return isSubmitButton() && hasAttributeWithoutSynchronization(HTMLNames::typeAttr);
 }
 
-void HTMLButtonElement::computeType(const AtomString& typeAttrValue)
+void HTMLButtonElement::computeType(AtomStringImpl* typeAttrValue)
 {
     auto oldType = m_type;
     if (equalLettersIgnoringASCIICase(typeAttrValue, "reset"_s))

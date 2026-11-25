@@ -153,7 +153,7 @@ void DesktopPortalCamera::accessCamera(Function<void(std::optional<int>)>&& call
     auto token = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
     GVariantBuilder options;
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&options, "{sv}", "handle_token", gVariantNewString(token.utf8()));
+    g_variant_builder_add(&options, "{sv}", "handle_token", gVariantNewString(utf8(token)));
 
     auto connection = g_dbus_proxy_get_connection(m_proxy.get());
     auto connectionString = StringView::fromLatin1(g_dbus_connection_get_unique_name(connection));
@@ -177,7 +177,7 @@ void DesktopPortalCamera::accessCamera(Function<void(std::optional<int>)>&& call
     };
 
     m_responseSignalId = g_dbus_connection_signal_subscribe(connection, "org.freedesktop.portal.Desktop", "org.freedesktop.portal.Request",
-        "Response", objectPath.utf8().legacyCStringPointer(), nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE, reinterpret_cast<GDBusSignalCallback>(+[](GDBusConnection*, const char* /* senderName */, const char* /* objectPath */, const char* /* interfaceName */, const char* /* signalName */, GVariant* parameters, gpointer userData) {
+        "Response", utf8(objectPath).legacyCStringPointer(), nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE, reinterpret_cast<GDBusSignalCallback>(+[](GDBusConnection*, const char* /* senderName */, const char* /* objectPath */, const char* /* interfaceName */, const char* /* signalName */, GVariant* parameters, gpointer userData) {
             auto& self = *reinterpret_cast<DesktopPortal*>(userData);
             self.notifyResponse(parameters);
         }), this, nullptr);
@@ -217,8 +217,8 @@ std::optional<DesktopPortalScreenCast::ScreencastSession> DesktopPortalScreenCas
     auto sessionToken = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
     GVariantBuilder options;
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
-    g_variant_builder_add(&options, "{sv}", "session_handle_token", g_variant_new_string(sessionToken.ascii().data()));
+    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(ascii(token).data()));
+    g_variant_builder_add(&options, "{sv}", "session_handle_token", g_variant_new_string(ascii(sessionToken).data()));
 
     GUniqueOutPtr<GError> error;
     GRefPtr result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "CreateSession", g_variant_new("(a{sv})", &options),
@@ -233,17 +233,17 @@ std::optional<DesktopPortalScreenCast::ScreencastSession> DesktopPortalScreenCas
     auto objectPath = GMallocString::unsafeAdoptFromUTF8(WTF::move(objectPathChars));
     waitResponseSignal(toUTF8CStringView(objectPath));
 
-    auto sessionPath = makeStringByReplacingAll(objectPath.span(), "/request/"_s, "/session/"_s);
+    auto sessionPath = makeStringByReplacingAll(StringImpl::create(objectPath.span()), "/request/"_s, "/session/"_s);
     sessionPath = makeStringByReplacingAll(sessionPath, token, sessionToken);
     return { ScreencastSession { WTF::move(sessionPath), m_proxy } };
 }
 
-void DesktopPortalScreenCast::closeSession(const String& path)
+void DesktopPortalScreenCast::closeSession(StringImpl* path)
 {
     GUniqueOutPtr<GError> error;
     GRefPtr proxy = adoptGRef(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION,
         static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS | G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES), nullptr,
-        "org.freedesktop.portal.Desktop", path.ascii().data(), "org.freedesktop.portal.Session", nullptr, &error.outPtr()));
+        "org.freedesktop.portal.Desktop", ascii(path).data(), "org.freedesktop.portal.Session", nullptr, &error.outPtr()));
     if (error) {
         SAFE_GST_PRINTERRLN("Unable to connect to the Desktop portal: %s", UTF8CStringView::unsafeFromUTF8(error->message));
         return;
@@ -258,11 +258,11 @@ void DesktopPortalScreenCast::closeSession(const String& path)
 GRefPtr<GVariant> DesktopPortalScreenCast::ScreencastSession::selectSources(GVariantBuilder& options)
 {
     auto token = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
-    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
+    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(ascii(token).data()));
 
     GUniqueOutPtr<GError> error;
     GRefPtr result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "SelectSources",
-        gVariantNew("(oa{sv})", m_path.ascii(), &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
+        gVariantNew("(oa{sv})", ascii(m_path), &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error) {
         SAFE_GST_PRINTERRLN("SelectSources error: %s", UTF8CStringView::unsafeFromUTF8(error->message));
         return nullptr;
@@ -276,11 +276,11 @@ GRefPtr<GVariant> DesktopPortalScreenCast::ScreencastSession::start()
     auto token = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
     GVariantBuilder options;
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
+    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(ascii(token).data()));
 
     GUniqueOutPtr<GError> error;
     GRefPtr result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "Start",
-        gVariantNew("(osa{sv})", m_path.ascii(), "", &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
+        gVariantNew("(osa{sv})", ascii(m_path), "", &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error) {
         SAFE_GST_PRINTERRLN("Start error: %s", UTF8CStringView::unsafeFromUTF8(error->message));
         return nullptr;
@@ -295,7 +295,7 @@ std::optional<PipeWireNodeData> DesktopPortalScreenCast::ScreencastSession::open
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     GUniqueOutPtr<GError> error;
     GRefPtr result = adoptGRef(g_dbus_proxy_call_with_unix_fd_list_sync(m_proxy.get(), "OpenPipeWireRemote",
-        gVariantNew("(oa{sv})", m_path.ascii(), &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &fdList.outPtr(), nullptr, &error.outPtr()));
+        gVariantNew("(oa{sv})", ascii(m_path), &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &fdList.outPtr(), nullptr, &error.outPtr()));
     if (error) {
         SAFE_GST_PRINTERRLN("Unable to open pipewire remote. Error: %s", UTF8CStringView::unsafeFromUTF8(error->message));
         return { };

@@ -1262,7 +1262,7 @@ static void setFontFromControlSize(Style::ComputedStyle& style, NSControlSize co
     fontDescription.setIsAbsoluteSize(true);
 
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
-    fontDescription.setOneFamily("-apple-system"_s);
+    fontDescription.setOneFamily("-apple-system"_atom);
     fontDescription.setUsedSize([font pointSize] * style.usedZoom(), style.usedZoom());
     fontDescription.setComputedSize([font pointSize]);
 
@@ -1318,9 +1318,9 @@ void RenderThemeMac::createColorWellSwatchSubtree(HTMLElement& swatch)
     Ref div = HTMLDivElement::create(document);
     swatch.appendChild(ContainerNode::ChildChange::Source::Parser, div);
     div->setUserAgentPart(UserAgentParts::internalColorSwatchOverlay());
-    div->setInlineStyleProperty(CSSPropertyID::Height, "100%"_s);
-    div->setInlineStyleProperty(CSSPropertyID::Width, "100%"_s);
-    div->setInlineStyleProperty(CSSPropertyID::ClipPath, "polygon(0 0, 100% 0, 0 100%)"_s);
+    div->setInlineStyleProperty(CSSPropertyID::Height, "100%"_si);
+    div->setInlineStyleProperty(CSSPropertyID::Width, "100%"_si);
+    div->setInlineStyleProperty(CSSPropertyID::ClipPath, "polygon(0 0, 100% 0, 0 100%)"_si);
 }
 
 void RenderThemeMac::setColorWellSwatchBackground(HTMLElement& swatch, Color color)
@@ -1678,7 +1678,7 @@ std::optional<FontCascadeDescription> RenderThemeMac::controlFont(StyleAppearanc
         fontDescription.setIsAbsoluteSize(true);
 
         NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
-        fontDescription.setOneFamily("-apple-system"_s);
+        fontDescription.setOneFamily("-apple-system"_atom);
         fontDescription.setUsedSize([nsFont pointSize] * zoomFactor, zoomFactor);
         fontDescription.setComputedSize([nsFont pointSize]);
         return fontDescription;
@@ -1772,18 +1772,18 @@ bool RenderThemeMac::controlRequiresPreWhiteSpace(StyleAppearance appearance) co
     return appearance == StyleAppearance::PushButton;
 }
 
-String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
+RefPtr<StringImpl> RenderThemeMac::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
-        return String();
+        return nullptr;
 
-    String strToTruncate;
+    RefPtr<StringImpl> strToTruncate;
     if (fileList->isEmpty())
         strToTruncate = fileListDefaultLabel(multipleFilesAllowed);
     else if (fileList->length() == 1) {
         RefPtr file = fileList->item(0);
         auto path = file->path();
-        strToTruncate = path.isEmpty() ? file->name() : [[NSFileManager defaultManager] displayNameAtPath:path.createNSString().get()];
+        strToTruncate = isEmpty(path) ? file->name() : StringImpl::create([[NSFileManager defaultManager] displayNameAtPath:createNSString(path).get()]);
     } else
         return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font);
 
@@ -1810,44 +1810,44 @@ LayoutSize RenderThemeMac::attachmentIntrinsicSize(const RenderAttachment& attac
     return LayoutSize(layout.attachmentRect.size());
 }
 
-static RefPtr<Icon> iconForAttachment(const String& fileExtension, const String& attachmentType, const String& title)
+static RefPtr<Icon> iconForAttachment(StringImpl* fileExtension, StringImpl* attachmentType, StringImpl* title)
 {
 // FIXME: Remove after rdar://136373445 is fixed.
-#define LOG_ATTACHMENT(fmt, ...) RELEASE_LOG(Editing, "iconForAttachment(type='%s') " fmt, attachmentType.utf8(), ##__VA_ARGS__);
+#define LOG_ATTACHMENT(fmt, ...) RELEASE_LOG(Editing, "iconForAttachment(type='%s') " fmt, utf8(attachmentType), ##__VA_ARGS__);
 
-    if (!attachmentType.isEmpty() && !equalLettersIgnoringASCIICase(attachmentType, "public.data"_s)) {
+    if (!isEmpty(attachmentType) && !equalLettersIgnoringASCIICase(attachmentType, "public.data"_s)) {
         if (equalLettersIgnoringASCIICase(attachmentType, "public.directory"_s) || equalLettersIgnoringASCIICase(attachmentType, "multipart/x-folder"_s) || equalLettersIgnoringASCIICase(attachmentType, "application/vnd.apple.folder"_s)) {
-            if (auto icon = Icon::createIconForUTI(UTTypeFolder.identifier)) {
+            if (auto icon = Icon::createIconForUTI(StringImpl::create(UTTypeFolder.identifier).get())) {
                 LOG_ATTACHMENT("-> Got icon for UTTypeFolder");
                 return icon;
             }
             LOG_ATTACHMENT("-> No icon for UTTypeFolder! Will fallback to file extension or title...");
         } else {
-            String type;
+            RefPtr<StringImpl> type;
             if (isDeclaredUTI(attachmentType))
                 type = attachmentType;
             else
                 type = UTIFromMIMEType(attachmentType);
 
             if (auto icon = Icon::createIconForUTI(type)) {
-                LOG_ATTACHMENT("-> Got icon for %s '%s'", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8());
+                LOG_ATTACHMENT("-> Got icon for %s '%s'", equal(type, attachmentType) ? "declared UTI" : "UTI-from-MIMEtype", utf8(type));
                 return icon;
             }
-            LOG_ATTACHMENT("-> No icon for %s '%s'! Will fallback to file extension or title...", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8());
+            LOG_ATTACHMENT("-> No icon for %s '%s'! Will fallback to file extension or title...", equal(type, attachmentType) ? "declared UTI" : "UTI-from-MIMEtype", utf8(type));
         }
     }
 
-    if (!fileExtension.isEmpty()) {
+    if (!isEmpty(fileExtension)) {
         if (auto icon = Icon::createIconForFileExtension(fileExtension)) {
-            LOG_ATTACHMENT("-> Got icon for file extension '%s'", fileExtension.utf8());
+            LOG_ATTACHMENT("-> Got icon for file extension '%s'", utf8(fileExtension));
             return icon;
         }
-        LOG_ATTACHMENT("-> No icon for file extension '%s'! Will fallback to title...", fileExtension.utf8());
+        LOG_ATTACHMENT("-> No icon for file extension '%s'! Will fallback to title...", utf8(fileExtension));
     }
 
-    RetainPtr nsTitle = title.createNSString();
+    RetainPtr nsTitle = createNSString(title);
     if (RetainPtr<NSString> fileExtension = nsTitle.get().pathExtension; fileExtension.get().length) {
-        if (auto icon = Icon::createIconForFileExtension(fileExtension.get())) {
+        if (auto icon = Icon::createIconForFileExtension(StringImpl::create(fileExtension.get()).get())) {
             LOG_ATTACHMENT("-> Got icon for title file extension '%s'", UTF8CString { fileExtension });
             return icon;
         }
@@ -1855,13 +1855,13 @@ static RefPtr<Icon> iconForAttachment(const String& fileExtension, const String&
     } else
         LOG_ATTACHMENT("-> No file extension in title! Will fallback to public.data icon");
 
-    return Icon::createIconForUTI("public.data"_s);
+    return Icon::createIconForUTI("public.data"_si);
 #undef LOG_ATTACHMENT
 }
 
-RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(const String& fileExtension, const String& attachmentType, const String& title)
+RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(StringImpl* fileExtension, StringImpl* attachmentType, StringImpl* title)
 {
-    if (fileExtension.isNull() && attachmentType.isNull() && title.isNull())
+    if (!fileExtension && !attachmentType && !title)
         return IconAndSize { nil, FloatSize() };
 
     if (auto icon = WebCore::iconForAttachment(fileExtension, attachmentType, title)) {
@@ -2034,8 +2034,8 @@ bool RenderThemeMac::paintAttachment(const RenderElement& renderer, const PaintI
     auto& progressString = element->attributeWithoutSynchronization(progressAttr);
     bool validProgress = false;
     float progress = 0;
-    if (!progressString.isEmpty())
-        progress = progressString.toFloat(&validProgress);
+    if (!isEmpty(progressString))
+        progress = toFloat(progressString, &validProgress);
 
     GraphicsContext& context = paintInfo.context();
     GraphicsContextStateSaver saver(context);

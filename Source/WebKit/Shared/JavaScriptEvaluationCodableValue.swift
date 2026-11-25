@@ -67,8 +67,8 @@ extension JavaScriptEvaluationCodableValue<UInt64> {
             case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: CDouble.self):
                 .number(Cxx.alternativeForVariant(value))
 
-            case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: WTF.String.self):
-                .string((Cxx.alternativeForVariant(value) as WTF.String).description)
+            case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: Cxx.RefPtrStringImpl.self):
+                .string(String((Cxx.alternativeForVariant(value) as Cxx.RefPtrStringImpl).get()))
 
             case 4: // Seconds
                 fatalError("not yet implemented")

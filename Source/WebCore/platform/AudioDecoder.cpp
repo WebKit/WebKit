@@ -57,7 +57,7 @@ static constexpr FourCC heAACv2CodecName { "aacp" };
 static constexpr FourCC lpcmCodecName { "lpcm" };
 
 struct AudioDecoderConfiguration {
-    String codec;
+    RefPtr<StringImpl> codec;
     AudioDecoder::Config config;
 };
 
@@ -67,7 +67,7 @@ static std::optional<AudioDecoderConfiguration> audioDecoderConfiguration(const 
     auto cookie = cookieData ? cookieData->span() : std::span<const uint8_t> { };
     auto codecName = info.codecName();
 
-    auto configuration = [&](String&& codec, Vector<uint8_t>&& description = { }) {
+    auto configuration = [&](RefPtr<StringImpl>&& codec, Vector<uint8_t>&& description = { }) {
         return AudioDecoderConfiguration { WTF::move(codec), { .description = WTF::move(description), .sampleRate = info.rate(), .numberOfChannels = info.channels() } };
     };
 
@@ -95,14 +95,14 @@ static std::optional<AudioDecoderConfiguration> audioDecoderConfiguration(const 
         return configuration("ulaw"_s);
 
     // FIXME: AAC-LD and AAC-ELD ('aacl', 'aace') are not accepted by AudioDecoder::isCodecSupported.
-    String aacCodec;
+    RefPtr<StringImpl> aacCodec;
     if (codecName == aacCodecName)
         aacCodec = "mp4a.40.2"_s;
     else if (codecName == heAACCodecName)
         aacCodec = "mp4a.40.5"_s;
     else if (codecName == heAACv2CodecName)
         aacCodec = "mp4a.40.29"_s;
-    if (!aacCodec.isNull()) {
+    if (aacCodec) {
         // AudioDecoder falls back to the track's sample rate and channel count when it has no AudioSpecificConfig.
         if (cookie.empty())
             return configuration(WTF::move(aacCodec));
@@ -156,7 +156,7 @@ bool AudioDecoder::isCodecSupported(const StringView& codec)
     return result;
 }
 
-Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const String& codecName, const Config& config, OutputCallback&& outputCallback)
+Ref<AudioDecoder::CreatePromise> AudioDecoder::create(StringImpl* codecName, const Config& config, OutputCallback&& outputCallback)
 {
 #if USE(GSTREAMER)
     CreatePromise::Producer producer;

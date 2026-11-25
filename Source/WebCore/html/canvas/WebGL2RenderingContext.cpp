@@ -1323,13 +1323,13 @@ void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum target, GCGLint le
     protect(graphicsContextGL())->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, slice->span());
 }
 
-GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram& program, const String& name)
+GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram& program, StringImpl* name)
 {
     if (isContextLost())
         return -1;
     if (!validateWebGLObject("getFragDataLocation"_s, program))
         return -1;
-    return protect(graphicsContextGL())->getFragDataLocation(program.object(), name.utf8());
+    return protect(graphicsContextGL())->getFragDataLocation(program.object(), utf8(name));
 }
 
 void WebGL2RenderingContext::uniform1ui(const WebGLUniformLocation* location, GCGLuint v0)
@@ -2256,7 +2256,7 @@ void WebGL2RenderingContext::endTransformFeedback()
     m_boundTransformFeedback->setActive(false);
 }
 
-void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, const Vector<String>& varyings, GCGLenum bufferMode)
+void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, const Vector<RefPtr<StringImpl>>& varyings, GCGLenum bufferMode)
 {
     if (isContextLost())
         return;
@@ -2278,8 +2278,8 @@ void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, co
     }
     program.setRequiredTransformFeedbackBufferCount(
         bufferMode == GraphicsContextGL::INTERLEAVED_ATTRIBS ? std::min(static_cast<size_t>(1), varyings.size()) : varyings.size());
-    auto varyingsUTF8 = varyings.map([](const String& value) {
-        return value.utf8();
+    auto varyingsUTF8 = varyings.map([](StringImpl* value) {
+        return utf8(value);
     });
     protect(graphicsContextGL())->transformFeedbackVaryings(program.object(), varyingsUTF8, bufferMode);
 }
@@ -2297,7 +2297,7 @@ RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebG
     auto info = protect(graphicsContextGL())->getTransformFeedbackVarying(program.object(), index);
     if (!info)
         return nullptr;
-    return WebGLActiveInfo::create(String::fromUTF8(info->name.span()), info->type, info->size);
+    return WebGLActiveInfo::create(StringImpl::fromUTF8(info->name.span()), info->type, info->size);
 }
 
 void WebGL2RenderingContext::pauseTransformFeedback()
@@ -2470,14 +2470,14 @@ Vector<bool> WebGL2RenderingContext::getIndexedBooleanArrayParameter(GCGLenum pn
     });
 }
 
-std::optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram& program, const Vector<String>& names)
+std::optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram& program, const Vector<RefPtr<StringImpl>>& names)
 {
     if (isContextLost())
         return std::nullopt;
     if (!validateWebGLObject("getUniformIndices"_s, program))
         return std::nullopt;
     auto& uniformIndices = program.uniformIndices();
-    return names.map([&](const String& uniformName) -> GCGLuint {
+    return names.map([&](StringImpl* uniformName) -> GCGLuint {
         return uniformIndices.getOptional(uniformName).value_or(GraphicsContextGL::INVALID_INDEX);
     });
 }
@@ -2536,13 +2536,13 @@ WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const 
     }
 }
 
-GCGLuint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram& program, const String& uniformBlockName)
+GCGLuint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram& program, StringImpl* uniformBlockName)
 {
     if (isContextLost())
         return 0;
     if (!validateWebGLObject("getUniformBlockIndex"_s, program))
         return 0;
-    return protect(graphicsContextGL())->getUniformBlockIndex(program.object(), uniformBlockName.utf8());
+    return protect(graphicsContextGL())->getUniformBlockIndex(program.object(), utf8(uniformBlockName));
 }
 
 WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram& program, GCGLuint uniformBlockIndex, GCGLenum pname)
@@ -2572,7 +2572,7 @@ WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram& pr
     }
 }
 
-String WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram& program, GCGLuint index)
+RefPtr<StringImpl> WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram& program, GCGLuint index)
 {
     if (isContextLost())
         return { };
@@ -2584,7 +2584,7 @@ String WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram& program, 
     }
     // Index not validated because the error will be set by the GraphicsContextGL and the return value will be
     // the expected null.
-    return protect(graphicsContextGL())->getActiveUniformBlockName(program.object(), index);
+    return StringImpl::create((protect(graphicsContextGL())->getActiveUniformBlockName(program.object(), index)).span());
 }
 
 void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram& program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding)
@@ -2655,7 +2655,7 @@ void WebGL2RenderingContext::bindVertexArray(WebGLVertexArrayObject* arrayObject
     }
 }
 
-std::optional<WebGLExtensionAny> WebGL2RenderingContext::getExtension(const String& name)
+std::optional<WebGLExtensionAny> WebGL2RenderingContext::getExtension(StringImpl* name)
 {
     if (isContextLost())
         return std::nullopt;
@@ -2718,12 +2718,12 @@ std::optional<WebGLExtensionAny> WebGL2RenderingContext::getExtension(const Stri
     return std::nullopt;
 }
 
-std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
+std::optional<Vector<RefPtr<StringImpl>>> WebGL2RenderingContext::getSupportedExtensions()
 {
     if (isContextLost())
         return std::nullopt;
 
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
 
     RefPtr executionContext = scriptExecutionContext();
     const bool enableDraftExtensions = executionContext->settingsValues().webGLDraftExtensionsEnabled;

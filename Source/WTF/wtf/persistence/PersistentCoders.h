@@ -331,13 +331,31 @@ template<> struct Coder<class> { \
     WTF_EXPORT_PRIVATE static std::optional<class> decodeForPersistence(Decoder&); \
 }
 
-DECLARE_CODER(AtomString);
 DECLARE_CODER(Seconds);
-DECLARE_CODER(String);
 DECLARE_CODER(SHA1::Digest);
 DECLARE_CODER(URL);
 DECLARE_CODER(WallTime);
 
 #undef DECLARE_CODER
+
+// Same encoding as the former String and AtomString coders: the length (UINT_MAX for null), an 8-bit flag, and the characters.
+template<> struct Coder<RefPtr<StringImpl>> {
+    WTF_EXPORT_PRIVATE static void encodeForPersistence(Encoder&, StringImpl*);
+    WTF_EXPORT_PRIVATE static std::optional<RefPtr<StringImpl>> decodeForPersistence(Decoder&);
+};
+
+template<> struct Coder<RefPtr<AtomStringImpl>> {
+    WTF_EXPORT_PRIVATE static void encodeForPersistence(Encoder&, AtomStringImpl*);
+    WTF_EXPORT_PRIVATE static std::optional<RefPtr<AtomStringImpl>> decodeForPersistence(Decoder&);
+};
+
+// Raw pointers can be encoded (as strings, not as addresses), but not decoded.
+template<> struct Coder<StringImpl*> {
+    static void encodeForPersistence(Encoder& encoder, StringImpl* string) { Coder<RefPtr<StringImpl>>::encodeForPersistence(encoder, string); }
+};
+
+template<> struct Coder<AtomStringImpl*> {
+    static void encodeForPersistence(Encoder& encoder, AtomStringImpl* string) { Coder<RefPtr<AtomStringImpl>>::encodeForPersistence(encoder, string); }
+};
 
 }

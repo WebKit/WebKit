@@ -461,7 +461,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 #if PLATFORM(VISION)
     if (_page)
-        _page->setSceneIdentifier(self.window.windowScene.session.persistentIdentifier);
+        _page->setSceneIdentifier(StringImpl::create(self.window.windowScene.session.persistentIdentifier));
 #endif
     UIView *currentContentView = self._currentContentView;
     if (currentContentView == _contentView && [_contentView superview])
@@ -606,7 +606,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     return [_configuration selectionGranularity];
 }
 
-- (void)_setHasCustomContentView:(BOOL)pageHasCustomContentView loadedMIMEType:(const WTF::String&)mimeType
+- (void)_setHasCustomContentView:(BOOL)pageHasCustomContentView loadedMIMEType:(StringImpl*)mimeType
 {
     Class representationClass = nil;
     if (pageHasCustomContentView)
@@ -617,7 +617,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         [_customContentFixedOverlayView removeFromSuperview];
 
         // This is correct, static analysis gets confused by the `web_` prefix to the init method.
-        SUPPRESS_RETAINPTR_CTOR_ADOPT _customContentView = adoptNS([[representationClass alloc] web_initWithFrame:self.bounds webView:self mimeType:mimeType.createNSString().get()]);
+        SUPPRESS_RETAINPTR_CTOR_ADOPT _customContentView = adoptNS([[representationClass alloc] web_initWithFrame:self.bounds webView:self mimeType:createNSString(mimeType).get()]);
         _customContentFixedOverlayView = adoptNS([[UIView alloc] initWithFrame:self.bounds]);
         [_customContentFixedOverlayView layer].name = @"CustomContentFixedOverlay";
         [_customContentFixedOverlayView setUserInteractionEnabled:NO];
@@ -659,13 +659,13 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     }
 }
 
-- (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const String&)suggestedFilename data:(NSData *)data
+- (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(StringImpl*)suggestedFilename data:(NSData *)data
 {
     ASSERT(_customContentView);
     if (!_customContentView)
         return;
 
-    [_customContentView web_setContentProviderData:data suggestedFilename:suggestedFilename.createNSString().get() completionHandler:^{
+    [_customContentView web_setContentProviderData:data suggestedFilename:createNSString(suggestedFilename).get() completionHandler:^{
         _page->didLayoutForCustomContentProvider();
     }];
 }
@@ -1059,7 +1059,7 @@ static UIRectEdge edgesWithinSafeArea(const WebCore::ViewportFitEdges& edges)
 #if ENABLE(PAGE_LOAD_OBSERVER)
     URL url { _page->currentURL() };
     if (url.isValid() && url.protocolIsInHTTPFamily()) {
-        _pendingPageLoadObserverHost = url.hostAndPort().createNSString();
+        _pendingPageLoadObserverHost = createNSString(url.hostAndPort());
         [self _updatePageLoadObserverState];
     }
 #endif
@@ -2246,7 +2246,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         coordinator->setRootNodeIsInUserScroll(true);
 
         if (coordinator->scrollingPerformanceTestingEnabled() && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
-            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, _page->currentURL().utf8());
+            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, utf8(_page->currentURL()));
             _scrollPerfIntervalState = ScrollPerfIntervalState::FingerDown;
             _scrollPerfRubberbandingNotified = NO;
         }
@@ -2334,7 +2334,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
                 _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
             }
             if (decelerate && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
-                WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, _page->currentURL().utf8());
+                WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, utf8(_page->currentURL()));
                 _scrollPerfIntervalState = ScrollPerfIntervalState::Momentum;
             }
         }
@@ -3901,7 +3901,7 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
 - (void)_contentSizeCategoryDidChange:(NSNotification *)notification
 {
-    _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
+    _page->contentSizeCategoryDidChange(StringImpl::create([self _contentSizeCategory]).get());
 }
 
 - (void)_accessibilitySettingsDidChange:(NSNotification *)notification
@@ -4697,7 +4697,7 @@ static bool isLockdownModeWarningNeeded()
             WallTime::now(),
             WebCore::PCM::AttributionEphemeral::No
         );
-        _page->setPrivateClickMeasurement(WTF::move(measurement), attribution.sourceDescription, attribution.purchaser);
+        _page->setPrivateClickMeasurement(WTF::move(measurement), StringImpl::create(attribution.sourceDescription), StringImpl::create(attribution.purchaser));
     } else
         _page->setPrivateClickMeasurement(std::nullopt);
 #endif
@@ -4711,7 +4711,7 @@ static bool isLockdownModeWarningNeeded()
         return nil;
 
     URL destinationURL { makeString("https://"_s, attribution->destinationDomain) };
-    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:attribution->sourceID destinationURL:destinationURL.createNSURL().get() sourceDescription:attribution->sourceDescription.createNSString().get() purchaser:attribution->purchaser.createNSString().get()]).autorelease();
+    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:attribution->sourceID destinationURL:destinationURL.createNSURL().get() sourceDescription:createNSString(attribution->sourceDescription).get() purchaser:createNSString(attribution->purchaser).get()]).autorelease();
 #else
     return nil;
 #endif
@@ -4731,11 +4731,11 @@ static bool isLockdownModeWarningNeeded()
             WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
             WebCore::PCM::SourceSite(attribution.reportEndpoint),
             WebCore::PCM::AttributionDestinationSite(attribution.destinationURL),
-            bundleID,
+            StringImpl::create(bundleID).get(),
             WallTime::now(),
             WebCore::PCM::AttributionEphemeral::Yes
         );
-        _page->setPrivateClickMeasurement(WTF::move(measurement), attribution.sourceDescription, attribution.purchaser);
+        _page->setPrivateClickMeasurement(WTF::move(measurement), StringImpl::create(attribution.sourceDescription), StringImpl::create(attribution.purchaser));
     } else
         _page->setPrivateClickMeasurement(std::nullopt);
 #endif
@@ -5418,10 +5418,10 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     [viewportArgumentPairs enumerateKeysAndObjectsUsingBlock:makeBlockPtr([&] (NSString *key, NSString *value, BOOL* stop) {
         if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]])
             [NSException raise:NSInvalidArgumentException format:@"-[WKWebView _overrideViewportWithArguments:]: Keys and values must all be NSStrings."];
-        String keyString = key;
-        String valueString = value;
-        WebCore::setViewportFeature(viewportArguments, keyString, valueString, metaViewportInteractiveWidgetEnabled, perEdgeViewportFitEnabled, [](WebCore::ViewportErrorCode, const String& errorMessage) {
-            SAFE_WTFLOGALWAYS("-[WKWebView _overrideViewportWithArguments:]: Error parsing viewport argument: %s", errorMessage.utf8());
+        RefPtr<StringImpl> keyString = StringImpl::create(key);
+        RefPtr<StringImpl> valueString = StringImpl::create(value);
+        WebCore::setViewportFeature(viewportArguments, keyString, valueString, metaViewportInteractiveWidgetEnabled, perEdgeViewportFitEnabled, [](WebCore::ViewportErrorCode, StringImpl* errorMessage) {
+            SAFE_WTFLOGALWAYS("-[WKWebView _overrideViewportWithArguments:]: Error parsing viewport argument: %s", utf8(errorMessage));
         });
     }).get()];
 
@@ -5804,7 +5804,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return;
         }
 
-        UIAction *dimmingAction = [UIAction actionWithTitle:WEB_UI_STRING("Auto Dimming", "Menu item label to toggle automatic scene dimming in fullscreen (visionOS only)").createNSString().get() image:[UIImage _systemImageNamed:@"circle.lefthalf.dotted.inset.half.filled"] identifier:nil handler:[weakSelf] (UIAction *) {
+        UIAction *dimmingAction = [UIAction actionWithTitle:createNSString(WEB_UI_STRING("Auto Dimming", "Menu item label to toggle automatic scene dimming in fullscreen (visionOS only)")).get() image:[UIImage _systemImageNamed:@"circle.lefthalf.dotted.inset.half.filled"] identifier:nil handler:[weakSelf] (UIAction *) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
@@ -5833,7 +5833,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_setDefaultSTSLabel:(NSString *)defaultSTSLabel
 {
-    _page->setDefaultSpatialTrackingLabel(defaultSTSLabel);
+    _page->setDefaultSpatialTrackingLabel(StringImpl::create(defaultSTSLabel).get());
 }
 
 - (void)_enterExternalPlaybackForNowPlayingMediaSessionWithEnterCompletionHandler:(void (^)(UIViewController *nowPlayingViewController, NSError *error))enterHandler exitCompletionHandler:(void (^)(NSError *error))exitHandler

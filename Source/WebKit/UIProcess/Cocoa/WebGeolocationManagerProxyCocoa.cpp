@@ -34,7 +34,7 @@ namespace WebKit {
 // FIXME: This should be used by all Cocoa ports
 #if PLATFORM(IOS_FAMILY)
 
-void WebGeolocationManagerProxy::positionChanged(const String& websiteIdentifier, WebCore::GeolocationPositionData&& position)
+void WebGeolocationManagerProxy::positionChanged(StringImpl* websiteIdentifier, WebCore::GeolocationPositionData&& position)
 {
     auto registrableDomain = WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(websiteIdentifier);
     auto it = m_perDomainData.find(registrableDomain);
@@ -47,7 +47,7 @@ void WebGeolocationManagerProxy::positionChanged(const String& websiteIdentifier
         webProcessProxy->send(Messages::WebGeolocationManager::DidChangePosition(registrableDomain, perDomainData.lastPosition.value()), 0);
 }
 
-void WebGeolocationManagerProxy::errorOccurred(const String& websiteIdentifier, const String& errorMessage)
+void WebGeolocationManagerProxy::errorOccurred(StringImpl* websiteIdentifier, StringImpl* errorMessage)
 {
     auto registrableDomain = WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(websiteIdentifier);
     auto it = m_perDomainData.find(registrableDomain);
@@ -59,7 +59,7 @@ void WebGeolocationManagerProxy::errorOccurred(const String& websiteIdentifier, 
         webProcessProxy->send(Messages::WebGeolocationManager::DidFailToDeterminePosition(registrableDomain, errorMessage), 0);
 }
 
-void WebGeolocationManagerProxy::resetGeolocation(const String& websiteIdentifier)
+void WebGeolocationManagerProxy::resetGeolocation(StringImpl* websiteIdentifier)
 {
     auto registrableDomain = WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(websiteIdentifier);
     auto it = m_perDomainData.find(registrableDomain);

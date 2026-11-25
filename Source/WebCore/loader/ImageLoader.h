@@ -93,7 +93,7 @@ public:
     bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
     bool hasPendingActivity() const;
 
-    void dispatchPendingEvent(ImageEventSender*, const AtomString& eventType);
+    void dispatchPendingEvent(ImageEventSender*, AtomStringImpl* eventType);
 
     static void dispatchPendingLoadEvents(Page*);
 
@@ -141,8 +141,8 @@ private:
     CachedResourceHandle<CachedImage> m_image;
     Timer m_derefElementTimer;
     RefPtr<Element> m_protectedElement;
-    String m_failedLoadURL;
-    String m_pendingURL;
+    RefPtr<StringImpl> m_failedLoadURL;
+    RefPtr<StringImpl> m_pendingURL;
     Vector<Ref<DeferredPromise>> m_decodingPromises;
     bool m_hasPendingBeforeLoadEvent : 1;
     bool m_hasPendingLoadEvent : 1;

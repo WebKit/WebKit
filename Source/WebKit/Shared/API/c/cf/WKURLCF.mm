@@ -47,13 +47,13 @@ WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
 {
     auto& string = WebKit::toImpl(URLRef)->string();
-    if (string.isNull())
+    if (!string)
         return nullptr;
 
     // We first create a CString and then create the CFURL from it. This will ensure that the CFURL is stored in 
     // UTF-8 which uses less memory and is what WebKit clients might expect.
 
-    auto buffer = string.utf8();
+    auto buffer = utf8(string);
     auto bufferSpan = buffer.span();
     return CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(bufferSpan.data()), bufferSpan.size(), kCFStringEncodingUTF8, nullptr, true);
 }

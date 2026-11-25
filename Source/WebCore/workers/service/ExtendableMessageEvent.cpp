@@ -51,7 +51,7 @@ static JSC::Strong<JSC::JSObject> createWrapperAndSetData(JSC::JSGlobalObject& g
     return strongWrapper;
 }
 
-auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, const AtomString& type, const Init& initializer, IsTrusted isTrusted) -> ExtendableMessageEventWithStrongData
+auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted) -> ExtendableMessageEventWithStrongData
 {
     Ref event = adoptRef(*new ExtendableMessageEvent(type, initializer, isTrusted));
     auto strongWrapper = createWrapperAndSetData(globalObject, event.get(), initializer.data);
@@ -59,7 +59,7 @@ auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, const Ato
     return { WTF::move(event), WTF::move(strongWrapper) };
 }
 
-auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, Vector<Ref<MessagePort>>&& ports, Ref<SerializedScriptValue>&& data, Ref<SecurityOrigin>&& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source) -> ExtendableMessageEventWithStrongData
+auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, Vector<Ref<MessagePort>>&& ports, Ref<SerializedScriptValue>&& data, Ref<SecurityOrigin>&& origin, StringImpl* lastEventId, std::optional<ExtendableMessageEventSource>&& source) -> ExtendableMessageEventWithStrongData
 {
     auto& vm = globalObject.vm();
     JSC::JSLockHolder locker(vm);
@@ -74,7 +74,7 @@ auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, Vector<Re
     return { WTF::move(event), WTF::move(strongWrapper) };
 }
 
-ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, const Init& init, IsTrusted isTrusted)
+ExtendableMessageEvent::ExtendableMessageEvent(AtomStringImpl* type, const Init& init, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::ExtendableMessageEvent, type, init, isTrusted)
     , m_origin(init.origin)
     , m_lastEventId(init.lastEventId)
@@ -83,7 +83,7 @@ ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, const Ini
 {
 }
 
-ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, Ref<SecurityOrigin>&& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source, Vector<Ref<MessagePort>>&& ports)
+ExtendableMessageEvent::ExtendableMessageEvent(AtomStringImpl* type, Ref<SecurityOrigin>&& origin, StringImpl* lastEventId, std::optional<ExtendableMessageEventSource>&& source, Vector<Ref<MessagePort>>&& ports)
     : ExtendableEvent(EventInterfaceType::ExtendableMessageEvent, type, CanBubble::No, IsCancelable::No)
     , m_origin(WTF::move(origin))
     , m_lastEventId(lastEventId)
@@ -94,12 +94,12 @@ ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, Ref<Secur
 
 ExtendableMessageEvent::~ExtendableMessageEvent() = default;
 
-String ExtendableMessageEvent::origin() const
+RefPtr<StringImpl> ExtendableMessageEvent::origin() const
 {
     return WTF::switchOn(m_origin, [](const Ref<SecurityOrigin>& origin) {
         return origin->toString();
     },
-    [](const String& origin) {
+    [](const RefPtr<StringImpl>& origin) {
         return origin;
     });
 }

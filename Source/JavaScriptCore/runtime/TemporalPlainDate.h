@@ -42,7 +42,7 @@ public:
     }
 
     static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&);
-    static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&, String&&);
+    static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&, RefPtr<StringImpl>&&);
     static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&, CalendarID);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
@@ -55,23 +55,23 @@ public:
     CalendarID calendarID() const { return m_calendarID; }
     void setCalendarId(StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
     void setCalendarID(CalendarID id) { m_calendarID = id; }
-    String calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+    RefPtr<StringImpl> calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD(name, capitalizedName) \
     decltype(auto) name() const { return m_plainDate.name(); }
     JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD
 
-    String monthCode() const { return ISO8601::monthCode(m_plainDate.month()); }
+    RefPtr<StringImpl> monthCode() const { return ISO8601::monthCode(m_plainDate.month()); }
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 
     ISO8601::Duration until(JSGlobalObject*, TemporalPlainDate*, JSValue options);
     ISO8601::Duration since(JSGlobalObject*, TemporalPlainDate*, JSValue options);
 
 private:
     TemporalPlainDate(VM&, Structure*, ISO8601::PlainDate&&);
-    TemporalPlainDate(VM&, Structure*, ISO8601::PlainDate&&, String&&);
+    TemporalPlainDate(VM&, Structure*, ISO8601::PlainDate&&, RefPtr<StringImpl>&&);
     DECLARE_DEFAULT_FINISH_CREATION;
 
     template<DifferenceOperation>
@@ -82,7 +82,7 @@ private:
 };
 
 TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&);
-TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, String&& calendarId);
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, RefPtr<StringImpl>&& calendarId);
 TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, CalendarID);
 TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, CalendarID, TemporalNewTarget);
 

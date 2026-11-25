@@ -38,10 +38,10 @@ class ContainerNode;
 class Node;
 
 struct ParsedTextDirective {
-    String prefix;
-    String startText;
-    String endText;
-    String suffix;
+    RefPtr<StringImpl> prefix;
+    RefPtr<StringImpl> startText;
+    RefPtr<StringImpl> endText;
+    RefPtr<StringImpl> suffix;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ParsedTextDirective&);

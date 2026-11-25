@@ -41,8 +41,8 @@ class CredentialBase {
 public:
     NODELETE WEBCORE_EXPORT bool isEmpty() const;
     
-    NODELETE WEBCORE_EXPORT const String& user() const;
-    NODELETE WEBCORE_EXPORT const String& password() const;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& user() const;
+    NODELETE WEBCORE_EXPORT const RefPtr<StringImpl>& password() const;
     NODELETE WEBCORE_EXPORT bool hasPassword() const;
     NODELETE WEBCORE_EXPORT CredentialPersistence persistence() const;
 
@@ -50,11 +50,11 @@ public:
 
     WEBCORE_EXPORT static bool compare(const Credential&, const Credential&);
 
-    WEBCORE_EXPORT String serializationForBasicAuthorizationHeader() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> serializationForBasicAuthorizationHeader() const;
 
     struct NonPlatformData {
-        String user;
-        String password;
+        RefPtr<StringImpl> user;
+        RefPtr<StringImpl> password;
         CredentialPersistence persistence;
     };
 
@@ -62,14 +62,14 @@ public:
 
 protected:
     NODELETE WEBCORE_EXPORT CredentialBase();
-    NODELETE WEBCORE_EXPORT CredentialBase(const String& user, const String& password, CredentialPersistence);
+    NODELETE WEBCORE_EXPORT CredentialBase(StringImpl* user, StringImpl* password, CredentialPersistence);
     NODELETE CredentialBase(const Credential& original, CredentialPersistence);
 
     static bool platformCompare(const Credential&, const Credential&) { return true; }
 
 private:
-    String m_user;
-    String m_password;
+    RefPtr<StringImpl> m_user;
+    RefPtr<StringImpl> m_password;
     CredentialPersistence m_persistence;
 };
 

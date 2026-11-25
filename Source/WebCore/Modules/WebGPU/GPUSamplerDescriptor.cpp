@@ -37,17 +37,17 @@ namespace WebCore {
 Ref<JSON::Object> GPUSamplerDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
-    json->setString("addressModeU"_s, convertEnumerationToString(addressModeU));
-    json->setString("addressModeV"_s, convertEnumerationToString(addressModeV));
-    json->setString("addressModeW"_s, convertEnumerationToString(addressModeW));
-    json->setString("magFilter"_s, convertEnumerationToString(magFilter));
-    json->setString("minFilter"_s, convertEnumerationToString(minFilter));
-    json->setString("mipmapFilter"_s, convertEnumerationToString(mipmapFilter));
-    json->setDouble("lodMinClamp"_s, lodMinClamp);
-    json->setDouble("lodMaxClamp"_s, lodMaxClamp);
+    json->setString("addressModeU"_si, convertEnumerationToString(addressModeU));
+    json->setString("addressModeV"_si, convertEnumerationToString(addressModeV));
+    json->setString("addressModeW"_si, convertEnumerationToString(addressModeW));
+    json->setString("magFilter"_si, convertEnumerationToString(magFilter));
+    json->setString("minFilter"_si, convertEnumerationToString(minFilter));
+    json->setString("mipmapFilter"_si, convertEnumerationToString(mipmapFilter));
+    json->setDouble("lodMinClamp"_si, lodMinClamp);
+    json->setDouble("lodMaxClamp"_si, lodMaxClamp);
     if (compare)
-        json->setString("compare"_s, convertEnumerationToString(*compare));
-    json->setDouble("maxAnisotropy"_s, maxAnisotropy);
+        json->setString("compare"_si, convertEnumerationToString(*compare));
+    json->setDouble("maxAnisotropy"_si, maxAnisotropy);
     return json;
 }
 

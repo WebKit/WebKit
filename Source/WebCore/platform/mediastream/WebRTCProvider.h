@@ -71,8 +71,8 @@ public:
     NODELETE bool isSupportingMDNS() const;
 
 #if ENABLE(WEB_RTC)
-    virtual std::optional<RTCRtpCapabilities> receiverCapabilities(const String&);
-    virtual std::optional<RTCRtpCapabilities> senderCapabilities(const String&);
+    virtual std::optional<RTCRtpCapabilities> receiverCapabilities(StringImpl*);
+    virtual std::optional<RTCRtpCapabilities> senderCapabilities(StringImpl*);
 #endif
 
     virtual void setLoggingLevel(WTFLogLevel);

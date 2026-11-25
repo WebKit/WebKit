@@ -106,7 +106,7 @@ private:
     static bool parseTabQueryOptions(NSDictionary *, WebExtensionTabQueryParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseCaptureVisibleTabOptions(NSDictionary *, WebExtensionTab::ImageFormat&, uint8_t& imageQuality, NSString *sourceKey, NSString **outExceptionString);
     static bool parseSendMessageOptions(NSDictionary *, WebExtensionMessageTargetParameters&, NSString *sourceKey, NSString **outExceptionString);
-    static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, WebExtensionMessageTargetParameters&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseConnectOptions(NSDictionary *, std::optional<RefPtr<StringImpl>>& name, WebExtensionMessageTargetParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseScriptOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
 
     const RefPtr<WebExtensionAPIEvent> m_onActivated;

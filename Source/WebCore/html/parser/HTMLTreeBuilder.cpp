@@ -70,7 +70,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTreeBuilder);
 using namespace ElementNames;
 using namespace HTMLNames;
 
-CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& customElementInterface, Ref<CustomElementRegistry>&& registry, const AtomString& name, Vector<Attribute>&& attributes)
+CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& customElementInterface, Ref<CustomElementRegistry>&& registry, AtomStringImpl* name, Vector<Attribute>&& attributes)
     : elementInterface(WTF::move(customElementInterface))
     , registry(WTF::move(registry))
     , name(name)
@@ -137,7 +137,7 @@ public:
         ASSERT(!isEmpty());
     }
 
-    explicit ExternalCharacterTokenBuffer(const String& string)
+    explicit ExternalCharacterTokenBuffer(StringImpl* string)
         : m_text(string)
         , m_isAll8BitData(m_text.is8Bit())
     {
@@ -165,7 +165,7 @@ public:
         skipLeading<isASCIIWhitespace>();
     }
 
-    String takeLeadingWhitespace()
+    RefPtr<StringImpl> takeLeadingWhitespace()
     {
         return takeLeading<isASCIIWhitespace>();
     }
@@ -175,7 +175,7 @@ public:
         skipLeading<isNotASCIIWhitespace>();
     }
 
-    String takeRemaining()
+    RefPtr<StringImpl> takeRemaining()
     {
         auto result = makeString(m_text);
         m_text = StringView();
@@ -188,7 +188,7 @@ public:
         m_text = StringView();
     }
 
-    String takeRemainingWhitespace()
+    RefPtr<StringImpl> takeRemainingWhitespace()
     {
         ASSERT(!isEmpty());
         Vector<Latin1Character, 8> whitespace;
@@ -203,9 +203,9 @@ public:
         // characters is slightly cleaner semantically because we don't want
         // to insert a text node (as opposed to inserting an empty text node).
         if (whitespace.isEmpty())
-            return String();
+            return nullptr;
 
-        return String::adopt(WTF::move(whitespace));
+        return StringImpl::adopt(WTF::move(whitespace));
     }
 
 private:
@@ -219,21 +219,21 @@ private:
         }
     }
 
-    template<bool characterPredicate(char16_t)> String takeLeading()
+    template<bool characterPredicate(char16_t)> RefPtr<StringImpl> takeLeading()
     {
         ASSERT(!isEmpty());
         StringView start = m_text;
         skipLeading<characterPredicate>();
         if (start.length() == m_text.length())
-            return String();
+            return nullptr;
         return makeString(start.left(start.length() - m_text.length()));
     }
 
-    String makeString(StringView stringView) const
+    RefPtr<StringImpl> makeString(StringView stringView) const
     {
         if (stringView.is8Bit() || !isAll8BitData())
             return stringView.toString();
-        return String::make8Bit(stringView.span16());
+        return StringImpl::make8Bit(stringView.span16());
     }
 
     StringView m_text;
@@ -452,9 +452,9 @@ void HTMLTreeBuilder::processFakeEndTag(const HTMLStackItem& item)
     processEndTag(WTF::move(fakeToken));
 }
 
-void HTMLTreeBuilder::processFakeCharacters(const String& characters)
+void HTMLTreeBuilder::processFakeCharacters(StringImpl* characters)
 {
-    ASSERT(!characters.isEmpty());
+    ASSERT(!isEmpty(characters));
     ExternalCharacterTokenBuffer buffer(characters);
     processCharacterBuffer(buffer);
 }
@@ -504,19 +504,19 @@ NODELETE static void adjustSVGTagNameCase(AtomHTMLToken& token)
         token.setTagName(adjustSVGTagName(currentTagName));
 }
 
-static inline void adjustAttributes(const MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>& map, AtomHTMLToken& token)
+static inline void adjustAttributes(const MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName>& map, AtomHTMLToken& token)
 {
     for (auto& attribute : token.attributes()) {
         const QualifiedName& casedName = map.get(attribute.localName());
-        if (!casedName.localName().isNull())
+        if (casedName.localName())
             attribute.parserSetName(casedName);
     }
 }
 
 // https://html.spec.whatwg.org/multipage/parsing.html#adjust-svg-attributes
-static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createSVGAttributesMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName> createSVGAttributesMap()
 {
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName> map;
 
     const auto svgAttrs = WTF::toArray<QualifiedName>({
         SVGNames::attributeNameAttr,
@@ -587,37 +587,37 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
 
 static inline void adjustSVGAttributes(AtomHTMLToken& token)
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createSVGAttributesMap();
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName>> map = createSVGAttributesMap();
     adjustAttributes(map, token);
 }
 
 // https://html.spec.whatwg.org/multipage/parsing.html#adjust-mathml-attributes
-static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createMathMLAttributesMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName> createMathMLAttributesMap()
 {
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName> map;
 
-    map.add("definitionurl"_s, MathMLNames::definitionURLAttr);
+    map.add("definitionurl"_atom, MathMLNames::definitionURLAttr);
 
     return map;
 }
 
 static inline void adjustMathMLAttributes(AtomHTMLToken& token)
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createMathMLAttributesMap();
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName>> map = createMathMLAttributesMap();
     adjustAttributes(map, token);
 }
 
 // https://html.spec.whatwg.org/multipage/parsing.html#adjust-foreign-attributes
-static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createForeignAttributesMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName> createForeignAttributesMap()
 {
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName> map;
 
-    auto addNameWithPrefix = [](MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>& map, const QualifiedName name, const AtomString& prefix) {
-        const AtomString& localName = name.localName();
+    auto addNameWithPrefix = [](MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName>& map, const QualifiedName name, AtomStringImpl* prefix) {
+        const RefPtr<AtomStringImpl>& localName = name.localName();
         map.add(makeAtomString(prefix, ':', localName), QualifiedName(prefix, localName, name.namespaceURI()));
     };
 
-    AtomString xlinkName("xlink"_s);
+    RefPtr<AtomStringImpl> xlinkName("xlink"_atom);
     const auto xLinkAttrs = WTF::toArray<QualifiedName>({
         XLinkNames::actuateAttr,
         XLinkNames::arcroleAttr,
@@ -638,14 +638,14 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
         addNameWithPrefix(map, name, xmlAtom());
 
     map.add(xmlnsAtom(), XMLNSNames::xmlnsAttr);
-    map.add("xmlns:xlink"_s, QualifiedName(xmlnsAtom(), xlinkName, XMLNSNames::xmlnsNamespaceURI));
+    map.add("xmlns:xlink"_atom, QualifiedName(xmlnsAtom(), xlinkName, XMLNSNames::xmlnsNamespaceURI));
 
     return map;
 }
 
 static void adjustForeignAttributes(AtomHTMLToken& token)
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createForeignAttributesMap();
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, QualifiedName>> map = createForeignAttributesMap();
     adjustAttributes(map, token);
 }
 
@@ -968,13 +968,13 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomHTMLToken&& token)
         m_tree.reconstructTheActiveFormattingElements();
         adjustMathMLAttributes(token);
         adjustForeignAttributes(token);
-        m_tree.insertForeignElement(WTF::move(token), MathMLNames::mathmlNamespaceURI);
+        m_tree.insertForeignElement(WTF::move(token), MathMLNames::mathmlNamespaceURI.get());
         return;
     case TagName::svg:
         m_tree.reconstructTheActiveFormattingElements();
         adjustSVGAttributes(token);
         adjustForeignAttributes(token);
-        m_tree.insertForeignElement(WTF::move(token), SVGNames::svgNamespaceURI);
+        m_tree.insertForeignElement(WTF::move(token), SVGNames::svgNamespaceURI.get());
         return;
     case TagName::caption:
     case TagName::col:
@@ -1523,7 +1523,7 @@ NODELETE static bool itemMatchesName(const HTMLStackItem& item, ElementName elem
     return item.elementName() == elementName;
 }
 
-NODELETE static bool itemMatchesName(const HTMLStackItem& item, const AtomString& tagName)
+NODELETE static bool itemMatchesName(const HTMLStackItem& item, AtomStringImpl* tagName)
 {
     return item.matchesHTMLTag(tagName);
 }
@@ -2390,7 +2390,7 @@ void HTMLTreeBuilder::processCharacter(AtomHTMLToken&& token)
 
 // FIXME: Extract the following iOS-specific code into a separate file.
 // From the string 4089961010, creates a link of the form <a href="tel:4089961010">4089961010</a> and inserts it.
-void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
+void HTMLTreeBuilder::insertPhoneNumberLink(StringImpl* string)
 {
     Attribute attribute(HTMLNames::hrefAttr, makeAtomString("tel:"_s, string));
 
@@ -2408,7 +2408,7 @@ void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
 // 2. Wraps the phone number in a tel: link.
 // 3. Goes back to step 1 if a phone number is found in the rest of the string.
 // 4. Appends the rest of the string as a text node.
-void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
+void HTMLTreeBuilder::linkifyPhoneNumbers(StringImpl* string)
 {
     ASSERT(TelephoneNumberDetector::isSupported());
 
@@ -2425,7 +2425,7 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
     while (!span.empty() && TelephoneNumberDetector::find(span, &relativeStartPosition, &relativeEndPosition)) {
         if (std::exchange(shouldCheckElementAncestors, false)) {
             for (RefPtr ancestor = m_tree.currentElement(); ancestor; ancestor = ancestor->parentElement()) {
-                if (auto value = ancestor->getAttribute("data-mime-type"_s); value == "text/latex"_s) {
+                if (auto value = ancestor->getAttribute("data-mime-type"_atom); equal(value, "text/latex"_s)) {
                     m_tree.insertTextNode(string);
                     return;
                 }
@@ -2440,10 +2440,10 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
         // to the old parser).
         --relativeEndPosition;
 
-        ASSERT(static_cast<unsigned>(scannerPosition + relativeEndPosition) < string.length());
+        ASSERT(static_cast<unsigned>(scannerPosition + relativeEndPosition) < length(string));
 
-        m_tree.insertTextNode(string.substring(scannerPosition, relativeStartPosition));
-        insertPhoneNumberLink(string.substring(scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1));
+        m_tree.insertTextNode(substring(string, scannerPosition, relativeStartPosition));
+        insertPhoneNumberLink(substring(string, scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1));
 
         skip(span, relativeEndPosition + 1);
     }
@@ -2451,8 +2451,8 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
     // Append the rest as a text node.
     size_t scannerPosition = span.data() - characters.span().data();
     if (scannerPosition > 0) {
-        if (scannerPosition < string.length())
-            m_tree.insertTextNode(string.substring(scannerPosition));
+        if (scannerPosition < length(string))
+            m_tree.insertTextNode(substring(string, scannerPosition));
     } else
         m_tree.insertTextNode(string);
 }
@@ -2505,7 +2505,7 @@ static inline bool shouldParseTelephoneNumbersInNode(const ContainerNode& node)
 inline bool HTMLTreeBuilder::consumeAndInsertWhitespace(ExternalCharacterTokenBuffer& buffer)
 {
     auto leadingWhitespace = buffer.takeLeadingWhitespace();
-    if (!leadingWhitespace.isEmpty())
+    if (!isEmpty(leadingWhitespace))
         m_tree.insertTextNode(leadingWhitespace);
     if (buffer.isEmpty())
         return true;
@@ -2629,7 +2629,7 @@ ReprocessBuffer:
     case InsertionMode::InFrameset:
     case InsertionMode::AfterFrameset: {
         auto leadingWhitespace = buffer.takeRemainingWhitespace();
-        if (!leadingWhitespace.isEmpty())
+        if (!isEmpty(leadingWhitespace))
             m_tree.insertTextNode(leadingWhitespace);
         // FIXME: We should generate a parse error if we skipped over any
         // non-whitespace characters.
@@ -2637,7 +2637,7 @@ ReprocessBuffer:
     }
     case InsertionMode::AfterAfterFrameset: {
         auto leadingWhitespace = buffer.takeRemainingWhitespace();
-        if (!leadingWhitespace.isEmpty()) {
+        if (!isEmpty(leadingWhitespace)) {
             m_tree.reconstructTheActiveFormattingElements();
             m_tree.insertTextNode(leadingWhitespace);
         }
@@ -2651,7 +2651,7 @@ ReprocessBuffer:
 void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuffer& buffer)
 {
     m_tree.reconstructTheActiveFormattingElements();
-    String characters = buffer.takeRemaining();
+    RefPtr<StringImpl> characters = buffer.takeRemaining();
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
     if (!isParsingFragment() && m_tree.isTelephoneNumberParsingEnabled() && shouldParseTelephoneNumbersInNode(m_tree.currentNode()) && TelephoneNumberDetector::isSupported())
         linkifyPhoneNumbers(characters);
@@ -2660,7 +2660,7 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
 #else
     m_tree.insertTextNode(characters);
 #endif
-    if (m_framesetOk && !characters.containsOnly<isASCIIWhitespace>())
+    if (m_framesetOk && !containsOnly<isASCIIWhitespace>(characters))
         m_framesetOk = false;
 }
 
@@ -2790,9 +2790,9 @@ void HTMLTreeBuilder::defaultForAfterHead()
 
 void HTMLTreeBuilder::defaultForInTableText()
 {
-    String characters = m_pendingTableCharacters.toString();
+    RefPtr<StringImpl> characters = m_pendingTableCharacters.toString();
     m_pendingTableCharacters.clear();
-    if (!characters.containsOnly<isASCIIWhitespace>()) {
+    if (!containsOnly<isASCIIWhitespace>(characters)) {
         // FIXME: parse error
         HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree);
         m_tree.reconstructTheActiveFormattingElements();
@@ -3064,9 +3064,9 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
         m_tree.insertProcessingInstruction(WTF::move(token));
         return;
     case HTMLToken::Type::Character: {
-        String characters = token.characters();
+        RefPtr<StringImpl> characters = StringImpl::create(token.characters());
         m_tree.insertTextNode(characters);
-        if (m_framesetOk && !token.isReplacedNullCharacter() && !characters.containsOnly<isASCIIWhitespace>())
+        if (m_framesetOk && !token.isReplacedNullCharacter() && !containsOnly<isASCIIWhitespace>(characters))
             m_framesetOk = false;
         break;
     }

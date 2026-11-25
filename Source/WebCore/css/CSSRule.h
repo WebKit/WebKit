@@ -53,8 +53,8 @@ public:
 
     virtual StyleRuleType styleRuleType() const = 0;
     virtual bool isGroupingRule() const { return false; }
-    virtual String cssText() const = 0;
-    virtual String cssText(const CSS::SerializationContext&) const { return cssText(); }
+    virtual RefPtr<StringImpl> cssText() const = 0;
+    virtual RefPtr<StringImpl> cssText(const CSS::SerializationContext&) const { return cssText(); }
     virtual void reattach(StyleRuleBase&) = 0;
 
     void setParentStyleSheet(CSSStyleSheet*);
@@ -75,7 +75,7 @@ public:
     // create CSSOM wrappers and are main-thread only.
     WEBCORE_EXPORT WebCoreOpaqueRoot opaqueRootForGCThread();
 
-    NODELETE WEBCORE_EXPORT ExceptionOr<void> setCssText(const String&);
+    NODELETE WEBCORE_EXPORT ExceptionOr<void> setCssText(StringImpl*);
 
 protected:
     explicit CSSRule(CSSStyleSheet*);

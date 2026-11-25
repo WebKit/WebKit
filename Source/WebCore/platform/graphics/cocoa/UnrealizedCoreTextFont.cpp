@@ -187,7 +187,7 @@ void UnrealizedCoreTextFont::addAttributesForFontPalettes(CFMutableDictionaryRef
                 break;
             }
         },
-        [&](const AtomString& ident) {
+        [&](AtomStringImpl* ident) {
             if (auto* customPalette = fontPaletteValues ? fontPaletteValues->customPalette(ident) : nullptr)
                 addAttributesForCustomFontPalettes(attributes, customPalette->basePalette, customPalette->overrideColors);
         },

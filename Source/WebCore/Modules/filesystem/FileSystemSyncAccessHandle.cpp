@@ -62,18 +62,18 @@ FileSystemSyncAccessHandle::~FileSystemSyncAccessHandle()
 ExceptionOr<void> FileSystemSyncAccessHandle::truncate(unsigned long long size)
 {
     if (m_isClosed)
-        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_si };
 
     auto oldSize = m_file.size();
     if (!oldSize)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to get current size"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to get current size"_si };
 
     if (size > *oldSize && !requestSpaceForNewSize(size))
         return Exception { ExceptionCode::QuotaExceededError };
 
     auto oldOffset = m_file.seek(0, FileSystem::FileSeekOrigin::Current);
     if (!oldOffset)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to get current offset"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to get current offset"_si };
 
     if (m_file.truncate(size)) {
         if (*oldOffset > size)
@@ -82,25 +82,25 @@ ExceptionOr<void> FileSystemSyncAccessHandle::truncate(unsigned long long size)
         return { };
     }
 
-    return Exception { ExceptionCode::InvalidStateError, "Failed to truncate file"_s };
+    return Exception { ExceptionCode::InvalidStateError, "Failed to truncate file"_si };
 }
 
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::getSize()
 {
     if (m_isClosed)
-        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_si };
 
     auto result = m_file.size();
-    return result ? ExceptionOr<unsigned long long> { result.value() } : Exception { ExceptionCode::InvalidStateError, "Failed to get file size"_s };
+    return result ? ExceptionOr<unsigned long long> { result.value() } : Exception { ExceptionCode::InvalidStateError, "Failed to get file size"_si };
 }
 
 ExceptionOr<void> FileSystemSyncAccessHandle::flush()
 {
     if (m_isClosed)
-        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_si };
 
     bool succeeded = m_file.flush();
-    return succeeded ? ExceptionOr<void> { } : Exception { ExceptionCode::InvalidStateError, "Failed to flush file"_s };
+    return succeeded ? ExceptionOr<void> { } : Exception { ExceptionCode::InvalidStateError, "Failed to flush file"_si };
 }
 
 ExceptionOr<void> FileSystemSyncAccessHandle::close()
@@ -128,17 +128,17 @@ void FileSystemSyncAccessHandle::closeInternal(ShouldNotifyBackend shouldNotifyB
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
 {
     if (m_isClosed)
-        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_si };
 
     if (options.at) {
         auto result = m_file.seek(options.at.value(), FileSystem::FileSeekOrigin::Beginning);
         if (!result)
-            return Exception { ExceptionCode::InvalidStateError, "Failed to read at offset"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Failed to read at offset"_si };
     }
 
     auto result = m_file.read(buffer.mutableSpan());
     if (!result)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to read from file"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to read from file"_si };
 
     return *result;
 }
@@ -146,16 +146,16 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& 
 ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&& buffer, FileSystemSyncAccessHandle::FilesystemReadWriteOptions options)
 {
     if (m_isClosed)
-        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AccessHandle is closed"_si };
 
     if (options.at) {
         auto result = m_file.seek(options.at.value(), FileSystem::FileSeekOrigin::Beginning);
         if (!result)
-            return Exception { ExceptionCode::InvalidStateError, "Failed to write at offset"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Failed to write at offset"_si };
     } else {
         auto result = m_file.seek(0, FileSystem::FileSeekOrigin::Current);
         if (!result)
-            return Exception { ExceptionCode::InvalidStateError, "Failed to get offset"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Failed to get offset"_si };
         options.at = *result;
     }
 
@@ -164,7 +164,7 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
 
     auto result = m_file.write(buffer.span());
     if (!result)
-        return Exception { ExceptionCode::InvalidStateError, "Failed to write to file"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to write to file"_si };
 
     return *result;
 }

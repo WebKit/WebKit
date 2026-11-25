@@ -46,14 +46,14 @@ struct MediaEndpointConfiguration {
     // FIXME: We might be able to remove these constructors once all compilers can handle without it (see https://bugs.webkit.org/show_bug.cgi?id=163255#c15)
     struct IceServerInfo {
         Vector<URL> urls;
-        String credential;
-        String username;
+        RefPtr<StringImpl> credential;
+        RefPtr<StringImpl> username;
 
-        IceServerInfo(Vector<URL>&&, const String&, const String&);
+        IceServerInfo(Vector<URL>&&, StringImpl*, StringImpl*);
     };
     struct CertificatePEM {
-        String certificate;
-        String privateKey;
+        RefPtr<StringImpl> certificate;
+        RefPtr<StringImpl> privateKey;
     };
 
     Vector<IceServerInfo> iceServers;

@@ -61,9 +61,9 @@ Ref<HTMLOutputElement> HTMLOutputElement::create(Document& document)
     return create(HTMLNames::outputTag, document);
 }
 
-const AtomString& HTMLOutputElement::formControlType() const
+const RefPtr<AtomStringImpl>& HTMLOutputElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> output("output"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> output("output"_s);
     return output;
 }
 
@@ -72,7 +72,7 @@ bool HTMLOutputElement::supportsFocus() const
     return HTMLElement::supportsFocus();
 }
 
-void HTMLOutputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLOutputElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == HTMLNames::forAttr && m_forTokens)
         m_forTokens->associatedAttributeValueChanged();
@@ -83,28 +83,28 @@ void HTMLOutputElement::reset()
 {
     setInteractedWithSinceLastFormSubmitEvent(false);
     stringReplaceAll(defaultValue());
-    m_defaultValueOverride = { };
+    m_defaultValueOverride = nullptr;
 }
 
-String HTMLOutputElement::value() const
+RefPtr<StringImpl> HTMLOutputElement::value() const
 {
     return textContent();
 }
 
-void HTMLOutputElement::setValue(String&& value)
+void HTMLOutputElement::setValue(RefPtr<StringImpl>&& value)
 {
     m_defaultValueOverride = defaultValue();
     stringReplaceAll(WTF::move(value));
 }
 
-String HTMLOutputElement::defaultValue() const
+RefPtr<StringImpl> HTMLOutputElement::defaultValue() const
 {
-    return m_defaultValueOverride.isNull() ? textContent() : m_defaultValueOverride;
+    return !m_defaultValueOverride ? textContent() : m_defaultValueOverride;
 }
 
-void HTMLOutputElement::setDefaultValue(String&& value)
+void HTMLOutputElement::setDefaultValue(RefPtr<StringImpl>&& value)
 {
-    if (m_defaultValueOverride.isNull())
+    if (!m_defaultValueOverride)
         stringReplaceAll(WTF::move(value));
     else
         m_defaultValueOverride = WTF::move(value);

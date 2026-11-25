@@ -64,7 +64,7 @@ public:
     static Ref<GStreamerInternalVideoEncoder> create(const VideoEncoder::Config& config, VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback) { return adoptRef(*new GStreamerInternalVideoEncoder(config, WTF::move(descriptionCallback), WTF::move(outputCallback))); }
     ~GStreamerInternalVideoEncoder();
 
-    String initialize(const String& codecName);
+    RefPtr<StringImpl> initialize(StringImpl* codecName);
     bool encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame);
     void setRates(uint64_t bitRate, double frameRate);
     void setBitRateAllocation(RefPtr<WebKitVideoEncoderBitRateAllocation>&&, double frameRate);
@@ -93,10 +93,10 @@ private:
     GRefPtr<GstCaps> m_colorConvertInputCaps;
     GRefPtr<GstCaps> m_colorConvertOutputCaps;
     bool m_hasMultipleTemporalLayers { false };
-    String m_orientation;
+    RefPtr<StringImpl> m_orientation;
 };
 
-void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+void GStreamerVideoEncoder::create(StringImpl* codecName, const VideoEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     auto createResult = create(codecName, config, WTF::move(descriptionCallback), WTF::move(outputCallback));
     if (!createResult) {
@@ -110,7 +110,7 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
     });
 }
 
-std::expected<Ref<GStreamerVideoEncoder>, String> GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+std::expected<Ref<GStreamerVideoEncoder>, RefPtr<StringImpl>> GStreamerVideoEncoder::create(StringImpl* codecName, const VideoEncoder::Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     if (!ensureGStreamerInitialized()) [[unlikely]]
         return makeUnexpected("GStreamer initialization failed"_s);
@@ -127,8 +127,8 @@ std::expected<Ref<GStreamerVideoEncoder>, String> GStreamerVideoEncoder::create(
 
     Ref internalEncoder = encoder->m_internalEncoder;
     auto error = internalEncoder->initialize(codecName);
-    if (!error.isEmpty()) {
-        GST_WARNING("Error creating encoder: %s", error.ascii().data());
+    if (!isEmpty(error)) {
+        GST_WARNING("Error creating encoder: %s", ascii(error).data());
         return makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error));
     }
 
@@ -304,18 +304,18 @@ GStreamerInternalVideoEncoder::~GStreamerInternalVideoEncoder()
     g_signal_handlers_disconnect_by_data(pad.get(), this);
 }
 
-String GStreamerInternalVideoEncoder::initialize(const String& codecName)
+RefPtr<StringImpl> GStreamerInternalVideoEncoder::initialize(StringImpl* codecName)
 {
-    GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", codecName.ascii().data());
+    GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", ascii(codecName).data());
     IntSize size { static_cast<int>(m_config.width), static_cast<int>(m_config.height) };
 
-    if ((codecName == "vp8"_s || codecName == "vp08"_s) && (size.width() >= 30000 || size.height() >= 30000)) {
+    if ((equal(codecName, "vp8"_s) || equal(codecName, "vp08"_s)) && (size.width() >= 30000 || size.height() >= 30000)) {
         GST_WARNING_OBJECT(m_harness->element(), "Rejecting too strenuous VP8 encoding parameters");
-        return "Too strenuous VP8 encoding parameters"_s;
+        return "Too strenuous VP8 encoding parameters"_si;
     }
 
     if (!videoEncoderSetCodec(WEBKIT_VIDEO_ENCODER(m_harness->element()), { codecName, m_config.useAnnexB }, size, { }, true))
-        return "Unable to set encoder format"_s;
+        return "Unable to set encoder format"_si;
 
     applyRates();
 
@@ -344,8 +344,8 @@ bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bo
     GRefPtr sample = gstVideoFrame.sample();
 
     auto orientation = webkitGstImageOrientationTag(gstVideoFrame.rotation(), gstVideoFrame.isMirrored());
-    if (orientation != m_orientation) {
-        auto orientationCString = orientation.utf8();
+    if (!equal(orientation, m_orientation)) {
+        auto orientationCString = utf8(orientation);
         GST_DEBUG_OBJECT(m_harness->element(), "New orientation: %s", orientationCString);
         GRefPtr tags = adoptGRef(gst_tag_list_new(GST_TAG_IMAGE_ORIENTATION, orientationCString.legacyCStringPointer(), nullptr));
         GRefPtr event = adoptGRef(gst_event_new_tag(tags.leakRef()));

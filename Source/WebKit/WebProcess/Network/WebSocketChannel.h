@@ -74,20 +74,20 @@ private:
     static Ref<WebCore::NetworkSendQueue> createMessageQueue(WebCore::ScriptExecutionContext&, WebSocketChannel&);
 
     // ThreadableWebSocketChannel
-    ConnectStatus connect(const URL&, const String& protocol) final;
-    String subprotocol() final;
-    String extensions() final;
+    ConnectStatus connect(const URL&, StringImpl* protocol) final;
+    RefPtr<StringImpl> subprotocol() final;
+    RefPtr<StringImpl> extensions() final;
     void send(UTF8CString&&) final;
     void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength) final;
     void send(WebCore::Blob&) final;
-    void close(int code, const String& reason) final;
-    void fail(String&& reason) final;
+    void close(int code, StringImpl* reason) final;
+    void fail(RefPtr<StringImpl>&& reason) final;
     void disconnect() final;
     void suspend() final;
     void resume() final;
 
     void notifySendFrame(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t> data);
-    void logErrorMessage(WebCore::ScriptExecutionContext&, const String&);
+    void logErrorMessage(WebCore::ScriptExecutionContext&, StringImpl*);
 
     struct ConnectParameters {
         ConnectParameters isolatedCopy() && {
@@ -115,14 +115,14 @@ private:
         bool didUpgradeURL { false };
     };
     static std::optional<ConnectParameters> createConnectParameters(WebCore::Document&, const URL&, WebCore::WebSocketChannelIdentifier);
-    void connectWithParameters(ConnectParameters&&, const String& protocol);
+    void connectWithParameters(ConnectParameters&&, StringImpl* protocol);
 
     // Message receivers
-    void didConnect(String&& subprotocol, String&& extensions);
-    void didReceiveText(String&&);
+    void didConnect(RefPtr<StringImpl>&& subprotocol, RefPtr<StringImpl>&& extensions);
+    void didReceiveText(RefPtr<StringImpl>&&);
     void didReceiveBinaryData(std::span<const uint8_t>);
-    void didClose(unsigned short code, String&&);
-    void didReceiveMessageError(String&&);
+    void didClose(unsigned short code, RefPtr<StringImpl>&&);
+    void didReceiveMessageError(RefPtr<StringImpl>&&);
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);
     void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
 
@@ -150,8 +150,8 @@ private:
     std::atomic<bool> m_messageReceiverAdded { false };
     ThreadSafeWeakPtr<WebCore::WebSocketChannelClient> m_client;
     URL m_url;
-    String m_subprotocol;
-    String m_extensions;
+    RefPtr<StringImpl> m_subprotocol;
+    RefPtr<StringImpl> m_extensions;
     size_t m_bufferedAmount { 0 };
     bool m_isClosing { false };
     bool m_needsToCallClose { false };

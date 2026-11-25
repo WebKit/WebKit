@@ -56,7 +56,7 @@ struct PlatformTextTrackData {
     };
 
     PlatformTextTrackData() = default;
-    PlatformTextTrackData(const String& label, const String& language, const String& url, TrackMode mode, TrackKind kind, TrackType type, int uniqueId, bool isDefault)
+    PlatformTextTrackData(StringImpl* label, StringImpl* language, StringImpl* url, TrackMode mode, TrackKind kind, TrackType type, int uniqueId, bool isDefault)
         : m_label(label)
         , m_language(language)
         , m_url(url)
@@ -68,9 +68,9 @@ struct PlatformTextTrackData {
     {
     }
 
-    String m_label;
-    String m_language;
-    String m_url;
+    RefPtr<StringImpl> m_label;
+    RefPtr<StringImpl> m_language;
+    RefPtr<StringImpl> m_url;
     TrackMode m_mode;
     TrackKind m_kind;
     TrackType m_type;
@@ -88,12 +88,12 @@ public:
 
 class PlatformTextTrack : public RefCounted<PlatformTextTrack> {
 public:
-    static Ref<PlatformTextTrack> create(PlatformTextTrackClient* client, const String& label, const String& language, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, PlatformTextTrackData::TrackType type, int uniqueId)
+    static Ref<PlatformTextTrack> create(PlatformTextTrackClient* client, StringImpl* label, StringImpl* language, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, PlatformTextTrackData::TrackType type, int uniqueId)
     {
-        return adoptRef(*new PlatformTextTrack(client, label, language, String(), mode, kind, type, uniqueId, false));
+        return adoptRef(*new PlatformTextTrack(client, label, language, nullString(), mode, kind, type, uniqueId, false));
     }
 
-    static Ref<PlatformTextTrack> createOutOfBand(const String& label, const String& language, const String& url, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, int uniqueId, bool isDefault)
+    static Ref<PlatformTextTrack> createOutOfBand(StringImpl* label, StringImpl* language, StringImpl* url, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, int uniqueId, bool isDefault)
     {
         return adoptRef(*new PlatformTextTrack(nullptr, label, language, url, mode, kind, PlatformTextTrackData::TrackType::OutOfBand, uniqueId, isDefault));
     }
@@ -108,9 +108,9 @@ public:
     PlatformTextTrackData::TrackType type() const { return m_trackData.m_type; }
     PlatformTextTrackData::TrackKind kind() const { return m_trackData.m_kind; }
     PlatformTextTrackData::TrackMode mode() const { return m_trackData.m_mode; }
-    const String& label() const LIFETIME_BOUND { return m_trackData.m_label; }
-    const String& language() const LIFETIME_BOUND { return m_trackData.m_language; }
-    const String& url() const LIFETIME_BOUND { return m_trackData.m_url; }
+    const RefPtr<StringImpl>& label() const LIFETIME_BOUND { return m_trackData.m_label; }
+    const RefPtr<StringImpl>& language() const LIFETIME_BOUND { return m_trackData.m_language; }
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_trackData.m_url; }
     int uniqueId() const { return m_trackData.m_uniqueId; }
     bool isDefault() const { return m_trackData.m_isDefault; }
     PlatformTextTrackClient* client() const { return m_client; }
@@ -118,7 +118,7 @@ public:
     PlatformTextTrackData data() const { return m_trackData; }
 
 protected:
-    PlatformTextTrack(PlatformTextTrackClient* client, const String& label, const String& language, const String& url, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, PlatformTextTrackData::TrackType type, int uniqueId, bool isDefault)
+    PlatformTextTrack(PlatformTextTrackClient* client, StringImpl* label, StringImpl* language, StringImpl* url, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, PlatformTextTrackData::TrackType type, int uniqueId, bool isDefault)
         : m_client(client)
     {
         m_trackData = {

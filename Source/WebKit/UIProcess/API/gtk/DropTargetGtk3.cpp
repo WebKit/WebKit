@@ -179,7 +179,7 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
     switch (info) {
     case DropTargetType::Text: {
         GUniquePtr<char> text(reinterpret_cast<char*>(gtk_selection_data_get_text(data)));
-        m_selectionData->setText(String::fromUTF8(text.get()));
+        m_selectionData->setText(StringImpl::fromUTF8(text.get()));
         break;
     }
     case DropTargetType::Markup: {
@@ -195,17 +195,17 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
         gint length;
         const auto* uriListData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0)
-            m_selectionData->setURIList(String::fromUTF8(unsafeMakeSpan(uriListData, length)));
+            m_selectionData->setURIList(StringImpl::fromUTF8(unsafeMakeSpan(uriListData, length)));
         break;
     }
     case DropTargetType::NetscapeURL: {
         gint length;
         const auto* urlData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0) {
-            Vector<String> tokens = String::fromUTF8(unsafeMakeSpan(urlData, length)).split('\n');
+            Vector<RefPtr<StringImpl>> tokens = split(StringImpl::fromUTF8(unsafeMakeSpan(urlData, length)), '\n');
             URL url({ }, tokens[0]);
             if (url.isValid())
-                m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
+                m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1].get() : nullptr);
         }
         break;
     }

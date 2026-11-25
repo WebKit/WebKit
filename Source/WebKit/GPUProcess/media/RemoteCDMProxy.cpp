@@ -63,7 +63,7 @@ RemoteCDMProxy::RemoteCDMProxy(RemoteCDMFactoryProxy& factory, UniqueRef<CDMPriv
 
 RemoteCDMProxy::~RemoteCDMProxy() = default;
 
-bool RemoteCDMProxy::supportsInitData(const String& type, const SharedBuffer& data)
+bool RemoteCDMProxy::supportsInitData(StringImpl* type, const SharedBuffer& data)
 {
     return m_private->supportsInitData(type, data);
 }
@@ -73,7 +73,7 @@ RefPtr<SharedBuffer> RemoteCDMProxy::sanitizeResponse(const SharedBuffer& respon
     return m_private->sanitizeResponse(response);
 }
 
-std::optional<String> RemoteCDMProxy::sanitizeSessionId(const String& sessionId)
+std::optional<RefPtr<StringImpl>> RemoteCDMProxy::sanitizeSessionId(StringImpl* sessionId)
 {
     return m_private->sanitizeSessionId(sessionId);
 }

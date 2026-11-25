@@ -76,10 +76,10 @@ struct WorkerParameters {
 public:
     URL scriptURL;
     URL ownerURL;
-    String name;
-    String inspectorIdentifier;
-    String userAgent;
-    String navigatorPlatform;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> inspectorIdentifier;
+    RefPtr<StringImpl> userAgent;
+    RefPtr<StringImpl> navigatorPlatform;
     bool isOnline;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
     bool shouldBypassMainWorldContentSecurityPolicy;
@@ -95,7 +95,7 @@ public:
     Markable<ScriptExecutionContextIdentifier> clientIdentifier;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     std::optional<uint64_t> noiseInjectionHashSalt;
-    String agentClusterID;
+    RefPtr<StringImpl> agentClusterID;
     NetworkLoadPolicy networkLoadPolicy;
     IsSecureContext isSecureContext;
     bool hasUnpartitionedStorageAccess { false };
@@ -150,7 +150,7 @@ private:
     // WorkerOrWorkletThread.
     Ref<Thread> createThread() final;
     RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
-    void evaluateScriptIfNecessary(String& exceptionMessage) final;
+    void evaluateScriptIfNecessary(RefPtr<StringImpl>& exceptionMessage) final;
     bool shouldWaitForWebInspectorOnStartup() const final;
 
     CheckedPtr<WorkerLoaderProxy> m_workerLoaderProxy;

@@ -66,7 +66,7 @@ static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& global
     return DOMPromise::create(jsDOMGlobalObject, *downcast<JSC::JSPromise>(deferredPromise->promise()));
 }
 
-FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::FetchEvent, type, initializer, isTrusted)
     , m_request(WTF::move(initializer.request))
     , m_clientId(WTF::move(initializer.clientId))
@@ -83,19 +83,19 @@ FetchEvent::~FetchEvent()
     }
 }
 
-ResourceError FetchEvent::createResponseError(const URL& url, const String& errorMessage, ResourceError::IsSanitized isSanitized)
+ResourceError FetchEvent::createResponseError(const URL& url, StringImpl* errorMessage, ResourceError::IsSanitized isSanitized)
 {
-    return ResourceError { errorDomainWebKitServiceWorker, 0, url, makeString("FetchEvent.respondWith received an error: "_s, errorMessage), ResourceError::Type::General, isSanitized };
+    return ResourceError { StringImpl::create(errorDomainWebKitServiceWorker).ptr(), 0, url, makeString("FetchEvent.respondWith received an error: "_s, errorMessage), ResourceError::Type::General, isSanitized };
 
 }
 
 ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
 {
     if (!isBeingDispatched())
-        return Exception { ExceptionCode::InvalidStateError, "Event is not being dispatched"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event is not being dispatched"_si };
 
     if (m_respondWithEntered)
-        return Exception { ExceptionCode::InvalidStateError, "Event respondWith flag is set"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event respondWith flag is set"_si };
 
     processRespondWithPromise(WTF::move(promise));
     return { };
@@ -118,7 +118,7 @@ void FetchEvent::processRespondWithPromise(Ref<DOMPromise>&& promise)
     m_waitToRespond = true;
 
     if (isRegistered == DOMPromise::IsCallbackRegistered::No)
-        respondWithError(createResponseError(m_request->url(), "FetchEvent unable to handle respondWith promise."_s, ResourceError::IsSanitized::Yes));
+        respondWithError(createResponseError(m_request->url(), "FetchEvent unable to handle respondWith promise."_si, ResourceError::IsSanitized::Yes));
 }
 
 void FetchEvent::onResponse(ResponseCallback&& callback)
@@ -153,12 +153,12 @@ void FetchEvent::promiseIsSettled()
     ASSERT(respondPromise->status() == DOMPromise::Status::Fulfilled);
     RefPtr response = JSFetchResponse::toWrapped(respondPromise->globalObject()->vm(), respondPromise->result());
     if (!response) {
-        respondWithError(createResponseError(m_request->url(), "Returned response is null."_s, ResourceError::IsSanitized::Yes));
+        respondWithError(createResponseError(m_request->url(), "Returned response is null."_si, ResourceError::IsSanitized::Yes));
         return;
     }
 
     if (response->isDisturbedOrLocked()) {
-        respondWithError(createResponseError(m_request->url(), "Response is disturbed or locked."_s, ResourceError::IsSanitized::Yes));
+        respondWithError(createResponseError(m_request->url(), "Response is disturbed or locked."_si, ResourceError::IsSanitized::Yes));
         return;
     }
 
@@ -193,7 +193,7 @@ void FetchEvent::navigationPreloadIsReady(ResourceResponse&& response)
     if (!m_preloadResponsePromise)
         m_preloadResponsePromise = makeUnique<PreloadResponsePromise>();
 
-    auto request = FetchRequest::create(*context, { }, FetchHeaders::create(), ResourceRequest { m_request->internalRequest() } , FetchOptions { m_request->fetchOptions() }, String { m_request->internalRequestReferrer() });
+    auto request = FetchRequest::create(*context, { }, FetchHeaders::create(), ResourceRequest { m_request->internalRequest() } , FetchOptions { m_request->fetchOptions() }, RefPtr<StringImpl> { m_request->internalRequestReferrer() });
     request->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
 
     auto fetchResponse = FetchResponse::createFetchResponse(*context, request.get(), { });

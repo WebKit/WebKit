@@ -45,24 +45,24 @@
 
 namespace WebCore {
 
-Ref<DataTransferItem> DataTransferItem::create(WeakPtr<DataTransferItemList>&& list, const String& type, Kind kind)
+Ref<DataTransferItem> DataTransferItem::create(WeakPtr<DataTransferItemList>&& list, StringImpl* type, Kind kind)
 {
     return adoptRef(*new DataTransferItem(WTF::move(list), type, kind));
 }
 
-Ref<DataTransferItem> DataTransferItem::create(WeakPtr<DataTransferItemList>&& list, const String& type, Ref<File>&& file)
+Ref<DataTransferItem> DataTransferItem::create(WeakPtr<DataTransferItemList>&& list, StringImpl* type, Ref<File>&& file)
 {
     return adoptRef(*new DataTransferItem(WTF::move(list), type, WTF::move(file)));
 }
 
-DataTransferItem::DataTransferItem(WeakPtr<DataTransferItemList>&& list, const String& type, Kind kind)
+DataTransferItem::DataTransferItem(WeakPtr<DataTransferItemList>&& list, StringImpl* type, Kind kind)
     : m_list(WTF::move(list))
     , m_type(type)
     , m_kind(kind)
 {
 }
 
-DataTransferItem::DataTransferItem(WeakPtr<DataTransferItemList>&& list, const String& type, Ref<File>&& file)
+DataTransferItem::DataTransferItem(WeakPtr<DataTransferItemList>&& list, StringImpl* type, Ref<File>&& file)
     : m_list(WTF::move(list))
     , m_type(type)
     , m_kind(Kind::File)
@@ -82,24 +82,26 @@ bool DataTransferItem::isFile() const
     return m_kind == Kind::File;
 }
 
-String DataTransferItem::kind() const
+RefPtr<StringImpl> DataTransferItem::kind() const
 {
     if (isInDisabledMode())
         return { };
 
     switch (m_kind) {
     case Kind::String:
-        return "string"_s;
+        return "string"_si;
     case Kind::File:
-        return "file"_s;
+        return "file"_si;
     }
     ASSERT_NOT_REACHED();
     return { };
 }
 
-String DataTransferItem::type() const
+RefPtr<StringImpl> DataTransferItem::type() const
 {
-    return isInDisabledMode() ? String() : m_type;
+    if (isInDisabledMode())
+        return nullptr;
+    return m_type;
 }
 
 void DataTransferItem::getAsString(Document& document, RefPtr<StringCallback>&& callback) const

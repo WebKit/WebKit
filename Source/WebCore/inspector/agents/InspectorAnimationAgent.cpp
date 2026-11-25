@@ -172,7 +172,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                             computedStyleExtractor.propertyValueSerializationInStyle(style, cssPropertyId, CSS::defaultSerializationContext(), CSSValuePool::singleton(), renderer)
                         );
                     },
-                    [&](const AtomString& customProperty) {
+                    [&](AtomStringImpl* customProperty) {
                         stylePayloadBuilder.append(
                             customProperty,
                             ": "_s,
@@ -195,7 +195,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                 .setOffset(parsedKeyframe.computedOffset)
                 .release();
 
-            if (!parsedKeyframe.easing.isEmpty())
+            if (!isEmpty(parsedKeyframe.easing))
                 keyframePayload->setEasing(parsedKeyframe.easing);
             else if (const auto& timingFunction = parsedKeyframe.timingFunction)
                 keyframePayload->setEasing(timingFunction->cssText());
@@ -252,7 +252,7 @@ static Ref<Inspector::Protocol::Animation::Effect> buildObjectForEffect(Animatio
 }
 
 InspectorAnimationAgent::InspectorAnimationAgent(WebAgentContext& context)
-    : InspectorAgentBase("Animation"_s, context)
+    : InspectorAgentBase("Animation"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::AnimationFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::AnimationBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
@@ -305,7 +305,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::disable()
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<RefPtr<Inspector::Protocol::Animation::Effect>> InspectorAnimationAgent::requestEffect(const Inspector::Protocol::Animation::AnimationId& animationId)
+Inspector::Protocol::ErrorStringOr<RefPtr<Inspector::Protocol::Animation::Effect>> InspectorAnimationAgent::requestEffect(StringImpl* animationId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -322,7 +322,7 @@ Inspector::Protocol::ErrorStringOr<RefPtr<Inspector::Protocol::Animation::Effect
     return { buildObjectForEffect(*effect) };
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> InspectorAnimationAgent::requestEffectTarget(const Inspector::Protocol::Animation::AnimationId& animationId)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> InspectorAnimationAgent::requestEffectTarget(StringImpl* animationId)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -343,7 +343,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> Ins
     return pushStyleablePathToFrontend(*target);
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> InspectorAnimationAgent::resolveAnimation(const Inspector::Protocol::Animation::AnimationId& animationId, const String& objectGroup)
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> InspectorAnimationAgent::resolveAnimation(StringImpl* animationId, StringImpl* objectGroup)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -484,7 +484,7 @@ void InspectorAnimationAgent::didChangeWebAnimationName(WebAnimation& animation)
 {
     // The `animationId` may be empty if Animation is tracking but not enabled.
     auto animationId = findAnimationId(animation);
-    if (animationId.isEmpty())
+    if (isEmpty(animationId))
         return;
 
     m_frontendDispatcher->nameChanged(animationId, animation.id());
@@ -506,7 +506,7 @@ void InspectorAnimationAgent::didChangeWebAnimationEffectTiming(WebAnimation& an
 
     // The `animationId` may be empty if Animation is tracking but not enabled.
     auto animationId = findAnimationId(animation);
-    if (animationId.isEmpty())
+    if (isEmpty(animationId))
         return;
 
     m_animationsIgnoringEffectChanges.add(animation);
@@ -521,7 +521,7 @@ void InspectorAnimationAgent::didChangeWebAnimationEffectTarget(WebAnimation& an
 
     // The `animationId` may be empty if Animation is tracking but not enabled.
     auto animationId = findAnimationId(animation);
-    if (animationId.isEmpty())
+    if (isEmpty(animationId))
         return;
 
     m_animationsIgnoringTargetChanges.add(animation);
@@ -531,7 +531,7 @@ void InspectorAnimationAgent::didChangeWebAnimationEffectTarget(WebAnimation& an
 
 void InspectorAnimationAgent::didCreateWebAnimation(WebAnimation& animation)
 {
-    if (!findAnimationId(animation).isEmpty()) {
+    if (!isEmpty(findAnimationId(animation))) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -556,7 +556,7 @@ void InspectorAnimationAgent::willDestroyWebAnimation(WebAnimation& animation)
 
     // The `animationId` may be empty if Animation is tracking but not enabled.
     auto animationId = findAnimationId(animation);
-    if (!animationId.isEmpty())
+    if (!isEmpty(animationId))
         unbindAnimation(animationId);
 }
 
@@ -567,7 +567,7 @@ void InspectorAnimationAgent::frameNavigated(LocalFrame& frame)
         return;
     }
 
-    Vector<String> animationIdsToRemove;
+    Vector<RefPtr<StringImpl>> animationIdsToRemove;
     for (auto& [animationId, weakAnimation] : m_animationIdMap) {
         RefPtr animation = weakAnimation.get();
         if (!animation) {
@@ -581,7 +581,7 @@ void InspectorAnimationAgent::frameNavigated(LocalFrame& frame)
         unbindAnimation(animationId);
 }
 
-String InspectorAnimationAgent::findAnimationId(WebAnimation& animation)
+RefPtr<StringImpl> InspectorAnimationAgent::findAnimationId(WebAnimation& animation)
 {
     for (auto& [animationId, existingAnimation] : m_animationIdMap) {
         if (!existingAnimation) {
@@ -594,11 +594,11 @@ String InspectorAnimationAgent::findAnimationId(WebAnimation& animation)
     return nullString();
 }
 
-WebAnimation* InspectorAnimationAgent::assertAnimation(Inspector::Protocol::ErrorString& errorString, const String& animationId)
+WebAnimation* InspectorAnimationAgent::assertAnimation(Inspector::Protocol::ErrorString& errorString, StringImpl* animationId)
 {
     RefPtr animation = m_animationIdMap.get(animationId);
     if (!animation)
-        errorString = "Missing animation for given animationId"_s;
+        errorString = "Missing animation for given animationId"_si;
     return animation.unsafeGet();
 }
 
@@ -612,7 +612,7 @@ void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Insp
         .release();
 
     auto name = animation.id();
-    if (!name.isEmpty())
+    if (!isEmpty(name))
         animationPayload->setName(name);
 
     if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation))
@@ -629,7 +629,7 @@ void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Insp
     m_frontendDispatcher->animationCreated(WTF::move(animationPayload));
 }
 
-void InspectorAnimationAgent::unbindAnimation(const String& animationId)
+void InspectorAnimationAgent::unbindAnimation(StringImpl* animationId)
 {
     m_animationIdMap.remove(animationId);
 

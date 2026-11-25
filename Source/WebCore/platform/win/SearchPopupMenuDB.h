@@ -37,8 +37,8 @@ class SearchPopupMenuDB {
 
 public:
     static WEBCORE_EXPORT SearchPopupMenuDB& singleton();
-    WEBCORE_EXPORT void saveRecentSearches(const String& name, const Vector<RecentSearch>&);
-    WEBCORE_EXPORT void loadRecentSearches(const String& name, Vector<RecentSearch>&);
+    WEBCORE_EXPORT void saveRecentSearches(StringImpl* name, const Vector<RecentSearch>&);
+    WEBCORE_EXPORT void loadRecentSearches(StringImpl* name, Vector<RecentSearch>&);
 
 private:
     SearchPopupMenuDB();
@@ -53,7 +53,7 @@ private:
     void checkSQLiteReturnCode(int actual);
     std::unique_ptr<SQLiteStatement> createPreparedStatement(ASCIILiteral sql);
 
-    String m_databaseFilename;
+    RefPtr<StringImpl> m_databaseFilename;
     SQLiteDatabase m_database;
     std::unique_ptr<SQLiteStatement> m_loadSearchTermsForNameStatement;
     std::unique_ptr<SQLiteStatement> m_insertSearchTermStatement;

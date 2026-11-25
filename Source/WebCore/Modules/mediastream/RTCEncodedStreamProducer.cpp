@@ -184,7 +184,7 @@ ExceptionOr<void> RTCEncodedStreamProducer::writeFrame(ScriptExecutionContext& c
     return { };
 }
 
-void RTCEncodedStreamProducer::generateKeyFrame(ScriptExecutionContext& context, const String& rid, Ref<DeferredPromise>&& promise)
+void RTCEncodedStreamProducer::generateKeyFrame(ScriptExecutionContext& context, StringImpl* rid, Ref<DeferredPromise>&& promise)
 {
     ASSERT(m_isVideo);
 
@@ -194,7 +194,7 @@ void RTCEncodedStreamProducer::generateKeyFrame(ScriptExecutionContext& context,
 
     if (!backend->requestKeyFrame(rid)) {
         protect(context.eventLoop())->queueTask(TaskSource::Networking, [promise = WTF::move(promise)]() mutable {
-            promise->reject(Exception { ExceptionCode::NotFoundError, "rid was not found or is empty"_s });
+            promise->reject(Exception { ExceptionCode::NotFoundError, "rid was not found or is empty"_si });
         });
         return;
     }
@@ -206,7 +206,7 @@ void RTCEncodedStreamProducer::sendKeyFrameRequest()
 {
     ASSERT(m_isVideo);
     if (RefPtr backend = m_transformBackend)
-        backend->requestKeyFrame({ });
+        backend->requestKeyFrame(nullptr);
 }
 
 void RTCEncodedStreamProducer::clear(bool shouldClearCallback)

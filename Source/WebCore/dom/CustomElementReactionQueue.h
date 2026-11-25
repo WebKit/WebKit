@@ -80,7 +80,7 @@ public:
         ~FormAssociatedPayload();
     };
 
-    using AttributeChangedPayload = std::tuple<QualifiedName, AtomString, AtomString>;
+    using AttributeChangedPayload = std::tuple<QualifiedName, RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>;
     using FormDisabledPayload = bool;
     using FormStateRestorePayload = CustomElementFormValue;
     using Payload = std::optional<Variant<AdoptedPayload, AttributeChangedPayload, FormAssociatedPayload, FormDisabledPayload, FormStateRestorePayload>>;
@@ -132,7 +132,7 @@ public:
     static void enqueueDisconnectedCallbackIfNeeded(Element&);
     static void enqueueConnectedMoveCallbackIfNeeded(Element&);
     static void enqueueAdoptedCallbackIfNeeded(Element&, Document& oldDocument, Document& newDocument);
-    static void enqueueAttributeChangedCallbackIfNeeded(Element&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
+    static void enqueueAttributeChangedCallbackIfNeeded(Element&, const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue);
     static void enqueueFormAssociatedCallbackIfNeeded(Element&, HTMLFormElement*);
     static void enqueueFormDisabledCallbackIfNeeded(Element&, bool isDisabled);
     static void enqueueFormResetCallbackIfNeeded(Element&);

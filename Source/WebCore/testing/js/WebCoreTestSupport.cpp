@@ -141,7 +141,7 @@ void clearWheelEventTestMonitor(WebCore::LocalFrame& frame)
     page->clearWheelEventTestMonitor();
 }
 
-void setLogChannelToAccumulate(const String& name)
+void setLogChannelToAccumulate(StringImpl* name)
 {
 #if !LOG_DISABLED
     logChannels().setLogChannelToAccumulate(name);
@@ -235,7 +235,7 @@ void disconnectMockGamepad(unsigned gamepadIndex)
 #endif
 }
 
-void setMockGamepadDetails(unsigned gamepadIndex, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
+void setMockGamepadDetails(unsigned gamepadIndex, StringImpl* gamepadID, StringImpl* mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
 {
 #if ENABLE(GAMEPAD)
     MockGamepadProvider::singleton().setMockGamepadDetails(gamepadIndex, gamepadID, mapping, axisCount, buttonCount, supportsDualRumble, wasConnected);
@@ -308,7 +308,7 @@ void setupWorkerInternals()
 }
 
 #if PLATFORM(COCOA)
-void setAdditionalSupportedImageTypesForTesting(const String& imageTypes)
+void setAdditionalSupportedImageTypesForTesting(StringImpl* imageTypes)
 {
     WebCore::setAdditionalSupportedImageTypesForTesting(imageTypes);
 }
@@ -347,9 +347,9 @@ void populateDisassemblyLabels()
 #endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 #if HAVE(TEXT_SCALE_FACTOR)
-double textScaleFactorForContentSizeCategory(const String& contentSizeCategory)
+double textScaleFactorForContentSizeCategory(StringImpl* contentSizeCategory)
 {
-    return WebCore::textScaleFactorForContentSizeCategory(contentSizeCategory.createCFString());
+    return WebCore::textScaleFactorForContentSizeCategory(createCFString(contentSizeCategory));
 }
 #endif
 
@@ -360,7 +360,7 @@ void testSincResamplerProcessBuffer(std::span<const float> source, std::span<flo
 }
 #endif // ENABLE(WEB_AUDIO)
 
-bool testDocumentFragmentParseXML(const String& chunk, OptionSet<ParserContentPolicy> parserContentPolicy)
+bool testDocumentFragmentParseXML(StringImpl* chunk, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     ProcessWarming::prewarmGlobally();
 

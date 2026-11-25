@@ -151,12 +151,12 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
 
     def _generate_enum_objc_to_protocol_string(self, objc_enum_name, enum_values):
         lines = []
-        lines.append('inline String toProtocolString(%s value)' % objc_enum_name)
+        lines.append('inline RefPtr<StringImpl> toProtocolString(%s value)' % objc_enum_name)
         lines.append('{')
         lines.append('    switch(value) {')
         for enum_value in enum_values:
             lines.append('    case %s%s:' % (objc_enum_name, Generator.stylized_name_for_enum_value(enum_value)))
-            lines.append('        return "%s"_s;' % enum_value)
+            lines.append('        return "%s"_si;' % enum_value)
         lines.append('    }')
         lines.append('}')
         return '\n'.join(lines)
@@ -164,7 +164,7 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
     def _generate_enum_from_protocol_string(self, objc_enum_name, enum_values):
         lines = []
         lines.append('template<>')
-        lines.append('inline std::optional<%s> fromProtocolString(const String& value)' % objc_enum_name)
+        lines.append('inline std::optional<%s> fromProtocolString(StringImpl* value)' % objc_enum_name)
         lines.append('{')
         lines.append('    static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, %s>>({' % objc_enum_name)
         for enum_value in sorted(enum_values):

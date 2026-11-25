@@ -39,11 +39,11 @@ public:
     ~ClipboardItemPasteboardDataSource();
 
 private:
-    Vector<String> types() const final;
-    void getType(const String&, Ref<DeferredPromise>&&) final;
+    Vector<RefPtr<StringImpl>> types() const final;
+    void getType(StringImpl*, Ref<DeferredPromise>&&) final;
     void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&) final;
 
-    Vector<String> m_types;
+    Vector<RefPtr<StringImpl>> m_types;
 };
 
 } // namespace WebCore

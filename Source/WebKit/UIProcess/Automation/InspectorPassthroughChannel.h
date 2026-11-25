@@ -43,15 +43,15 @@ class WebAutomationSession;
 class InspectorPassthroughChannel final : public Inspector::FrontendChannel {
     WTF_MAKE_TZONE_ALLOCATED(InspectorPassthroughChannel);
 public:
-    InspectorPassthroughChannel(WebAutomationSession&, const String& browsingContextHandle);
+    InspectorPassthroughChannel(WebAutomationSession&, StringImpl* browsingContextHandle);
     ~InspectorPassthroughChannel() final;
 
     ConnectionType connectionType() const final { return ConnectionType::Local; }
-    void sendMessageToFrontend(const String& message) final;
+    void sendMessageToFrontend(StringImpl* message) final;
 
 private:
     WeakPtr<WebAutomationSession> m_session;
-    String m_browsingContextHandle;
+    RefPtr<StringImpl> m_browsingContextHandle;
 };
 
 } // namespace WebKit

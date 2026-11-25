@@ -36,7 +36,7 @@ public:
 
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
-    String in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
     float stdDeviationX() const { return m_stdDeviationX->currentValue(); }
     float stdDeviationY() const { return m_stdDeviationY->currentValue(); }
     EdgeModeType edgeMode() const { return m_edgeMode->currentValue<EdgeModeType>(); }
@@ -51,11 +51,11 @@ public:
 private:
     SVGFEGaussianBlurElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override { return { AtomStringImpl::add(in1()) }; }
     bool isIdentity() const override;
     IntOutsets outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;

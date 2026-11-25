@@ -353,12 +353,12 @@ namespace Protocol {
 // Typedefs.
 namespace Runtime {
 /* Unique object identifier. */
-using RemoteObjectId = String;
+using RemoteObjectId = RefPtr<StringImpl>;
 } // Runtime
 
 namespace Runtime2 {
 /* Unique object identifier. */
-using RemoteObjectId = String;
+using RemoteObjectId = RefPtr<StringImpl>;
 } // Runtime2
 // End of typedefs.
 
@@ -766,7 +766,7 @@ using namespace Inspector;
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
 
 

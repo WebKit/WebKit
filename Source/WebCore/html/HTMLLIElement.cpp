@@ -64,18 +64,18 @@ bool HTMLLIElement::hasPresentationalHintsForAttribute(const QualifiedName& name
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == typeAttr) {
-        if (value == "a"_s)
+        if (equal(value, "a"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::LowerAlpha);
-        else if (value == "A"_s)
+        else if (equal(value, "A"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::UpperAlpha);
-        else if (value == "i"_s)
+        else if (equal(value, "i"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::LowerRoman);
-        else if (value == "I"_s)
+        else if (equal(value, "I"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::UpperRoman);
-        else if (value == "1"_s)
+        else if (equal(value, "1"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::Decimal);
         else if (equalLettersIgnoringASCIICase(value, "disc"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::ListStyleType, CSSValueID::Disc);

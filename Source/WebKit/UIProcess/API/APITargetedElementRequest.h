@@ -47,7 +47,7 @@ public:
     WebCore::FloatPoint point() const;
     void setPoint(WebCore::FloatPoint);
 
-    void setSearchText(WTF::String&&);
+    void setSearchText(RefPtr<StringImpl>&&);
     void setSelectors(WebCore::TargetedElementSelectors&&);
 
 private:

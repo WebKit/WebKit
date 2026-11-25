@@ -81,30 +81,30 @@ public:
 
     bool initialize(const WebProcessCreationParameters&, RefPtr<API::Object>&& initializationUserData);
 
-    void setBundleParameter(const String&, std::span<const uint8_t>);
+    void setBundleParameter(StringImpl*, std::span<const uint8_t>);
     void setBundleParameters(std::span<const uint8_t>);
 
     // API
     void setClient(std::unique_ptr<API::InjectedBundle::Client>&&);
-    void postMessage(const String&, API::Object*);
-    void postSynchronousMessage(const String&, API::Object*, RefPtr<API::Object>& returnData);
+    void postMessage(StringImpl*, API::Object*);
+    void postSynchronousMessage(StringImpl*, API::Object*, RefPtr<API::Object>& returnData);
     NODELETE void setServiceWorkerProxyCreationCallback(void (*)(uint64_t));
 
     // TestRunner only SPI
-    void addOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
-    void removeOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
+    void addOriginAccessAllowListEntry(StringImpl*, StringImpl*, StringImpl*, bool);
+    void removeOriginAccessAllowListEntry(StringImpl*, StringImpl*, StringImpl*, bool);
     void resetOriginAccessAllowLists();
     void setAsynchronousSpellCheckingEnabled(bool);
     int numberOfPages(WebFrame*, double, double);
-    int pageNumberForElementById(WebFrame*, const String&, double, double);
-    String pageSizeAndMarginsInPixels(WebFrame*, int, int, int, int, int, int, int);
+    int pageNumberForElementById(WebFrame*, StringImpl*, double, double);
+    RefPtr<StringImpl> pageSizeAndMarginsInPixels(WebFrame*, int, int, int, int, int, int, int);
     bool isPageBoxVisible(WebFrame*, int);
-    void setUserStyleSheetLocation(const String&);
+    void setUserStyleSheetLocation(StringImpl*);
     void removeAllWebNotificationPermissions(WebPage*);
     std::optional<WTF::UUID> webNotificationID(JSContextRef, JSValueRef);
     Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
     
-    typedef HashMap<WTF::UUID, String> DocumentIDToURLMap;
+    typedef HashMap<WTF::UUID, RefPtr<StringImpl>> DocumentIDToURLMap;
     DocumentIDToURLMap liveDocumentURLs(bool excludeDocumentsInPageGroupPages);
 
     // Garbage collection API
@@ -114,8 +114,8 @@ public:
     // Callback hooks
     void didCreatePage(WebPage&);
     void willDestroyPage(WebPage&);
-    void didReceiveMessage(const String&, RefPtr<API::Object>&&);
-    void didReceiveMessageToPage(WebPage&, const String&, RefPtr<API::Object>&&);
+    void didReceiveMessage(StringImpl*, RefPtr<API::Object>&&);
+    void didReceiveMessageToPage(WebPage&, StringImpl*, RefPtr<API::Object>&&);
 
     static void reportException(JSContextRef, JSValueRef exception);
 
@@ -140,7 +140,7 @@ private:
     bool decodeBundleParameters(API::Data*);
 #endif
 
-    String m_path;
+    RefPtr<StringImpl> m_path;
     PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
 
     RefPtr<SandboxExtension> m_sandboxExtension;

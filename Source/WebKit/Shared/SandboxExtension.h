@@ -118,10 +118,10 @@ public:
 
     static RefPtr<SandboxExtension> create(Handle&&);
     static std::optional<Handle> createHandle(StringView path, Type);
-    static Vector<Handle> createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<String>& paths);
+    static Vector<Handle> createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<RefPtr<StringImpl>>& paths);
     static std::optional<Handle> createHandleWithoutResolvingPath(StringView path, Type);
     static std::optional<Handle> createHandleForReadWriteDirectory(StringView path); // Will attempt to create the directory.
-    static std::optional<std::pair<Handle, String>> createHandleForTemporaryFile(StringView prefix, Type);
+    static std::optional<std::pair<Handle, RefPtr<StringImpl>>> createHandleForTemporaryFile(StringView prefix, Type);
     static std::optional<Handle> createHandleForGenericExtension(ASCIILiteral extensionClass);
     static Handle createHandleForMachBootstrapExtension();
 #if HAVE(AUDIT_TOKEN)
@@ -152,9 +152,9 @@ private:
 #endif
 };
 
-String stringByResolvingSymlinksInPath(StringView path);
-String resolvePathForSandboxExtension(StringView path);
-String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path);
+RefPtr<StringImpl> stringByResolvingSymlinksInPath(StringView path);
+RefPtr<StringImpl> resolvePathForSandboxExtension(StringView path);
+RefPtr<StringImpl> resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path);
 
 #if !ENABLE(SANDBOX_EXTENSIONS)
 
@@ -163,10 +163,10 @@ inline SandboxExtensionHandle::SandboxExtensionHandle(const SandboxExtensionHand
 inline SandboxExtensionHandle::~SandboxExtensionHandle() = default;
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
 inline auto SandboxExtension::createHandle(StringView, Type) -> std::optional<Handle> { return Handle { }; }
-inline auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral, const Vector<String>&) -> Vector<Handle> { return { }; }
+inline auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral, const Vector<RefPtr<StringImpl>>&) -> Vector<Handle> { return { }; }
 inline auto SandboxExtension::createHandleWithoutResolvingPath(StringView, Type) -> std::optional<Handle> { return Handle { }; }
 inline auto SandboxExtension::createHandleForReadWriteDirectory(StringView) -> std::optional<Handle> { return Handle { }; }
-inline auto SandboxExtension::createHandleForTemporaryFile(StringView, Type) -> std::optional<std::pair<Handle, String>> { return std::pair<Handle, String> { }; }
+inline auto SandboxExtension::createHandleForTemporaryFile(StringView, Type) -> std::optional<std::pair<Handle, RefPtr<StringImpl>>> { return std::pair<Handle, RefPtr<StringImpl>> { }; }
 inline auto SandboxExtension::createHandleForGenericExtension(ASCIILiteral) -> std::optional<Handle> { return Handle { }; }
 inline SandboxExtension::~SandboxExtension() = default;
 inline bool SandboxExtension::revoke() { return true; }
@@ -174,9 +174,9 @@ inline bool SandboxExtension::consume() { return true; }
 inline bool SandboxExtension::consumePermanently() { return true; }
 inline bool SandboxExtension::consumePermanently(const Handle&) { return true; }
 inline bool SandboxExtension::consumePermanently(const Vector<Handle>&) { return true; }
-inline String stringByResolvingSymlinksInPath(StringView path) { return path.toString(); }
-inline String resolvePathForSandboxExtension(StringView path) { return path.toString(); }
-inline String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path) { return path.toString(); }
+inline RefPtr<StringImpl> stringByResolvingSymlinksInPath(StringView path) { return path.toString(); }
+inline RefPtr<StringImpl> resolvePathForSandboxExtension(StringView path) { return path.toString(); }
+inline RefPtr<StringImpl> resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path) { return path.toString(); }
 
 #endif
 

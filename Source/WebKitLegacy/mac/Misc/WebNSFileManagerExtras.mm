@@ -44,7 +44,7 @@
 {
     ASSERT(URLString);
     ASSERT(path);
-    FileSystem::setMetadataURL(path, URLString, referrer);
+    FileSystem::setMetadataURL(StringImpl::create(path).get(), StringImpl::create(URLString).get(), StringImpl::create(referrer).get());
 }
 
 #endif // !PLATFORM(IOS_FAMILY)

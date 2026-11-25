@@ -44,7 +44,7 @@ public:
         WallTime lastUpdated;
     };
 
-    explicit IsolatedSitePersistence(const String& databaseDirectoryPath);
+    explicit IsolatedSitePersistence(StringImpl* databaseDirectoryPath);
     ~IsolatedSitePersistence();
 
     bool isDatabaseOpen() const { return m_sqliteDB && m_sqliteDB->isOpen(); }
@@ -65,8 +65,8 @@ private:
         Discard,
         Retain
     };
-    OpenResult openDatabase(const String& directoryPath);
-    OpenResult openDatabaseAtPath(const String& path);
+    OpenResult openDatabase(StringImpl* directoryPath);
+    OpenResult openDatabaseAtPath(StringImpl* path);
     void closeDatabase();
     void reportSQLError(ASCIILiteral method, ASCIILiteral action);
     OpenResult reportSQLErrorAndClassify(ASCIILiteral method, ASCIILiteral action);

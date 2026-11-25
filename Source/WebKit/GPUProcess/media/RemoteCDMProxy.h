@@ -62,9 +62,9 @@ public:
 
     RemoteCDMFactoryProxy* factory() const { return m_factory.get(); }
 
-    bool supportsInitData(const String&, const WebCore::SharedBuffer&);
+    bool supportsInitData(StringImpl*, const WebCore::SharedBuffer&);
     RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer& response);
-    std::optional<String> sanitizeSessionId(const String& sessionId);
+    std::optional<RefPtr<StringImpl>> sanitizeSessionId(StringImpl* sessionId);
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 #if !RELEASE_LOG_DISABLED

@@ -44,7 +44,7 @@ public:
     }
     virtual ~VideoTrackList();
 
-    RefPtr<VideoTrack> getTrackById(const AtomString&) const;
+    RefPtr<VideoTrack> getTrackById(AtomStringImpl*) const;
     RefPtr<VideoTrack> getTrackById(TrackID) const;
     NODELETE int selectedIndex() const;
 

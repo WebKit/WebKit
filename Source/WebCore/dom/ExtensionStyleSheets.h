@@ -76,17 +76,17 @@ public:
     WEBCORE_EXPORT void addAuthorStyleSheetForTesting(Ref<StyleSheetContents>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID);
-    void maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents&);
+    void addDisplayNoneSelector(StringImpl* identifier, StringImpl* selector, uint32_t selectorID);
+    void maybeAddContentExtensionSheet(StringImpl* identifier, StyleSheetContents&);
 #endif
 
     void injectPageSpecificUserStyleSheet(const UserStyleSheet&);
     void removePageSpecificUserStyleSheet(const UserStyleSheet&);
 
-    void setQuirkStyleSheets(Vector<String>&&);
+    void setQuirkStyleSheets(Vector<RefPtr<StringImpl>>&&);
     const Vector<Ref<CSSStyleSheet>>& quirkStyleSheets() const LIFETIME_BOUND { return m_quirkStyleSheets; }
 
-    NODELETE String contentForInjectedStyleSheet(CSSStyleSheet&) const;
+    NODELETE RefPtr<StringImpl> contentForInjectedStyleSheet(CSSStyleSheet&) const;
 
     void detachFromDocument();
 
@@ -97,18 +97,18 @@ private:
 
     mutable Vector<Ref<CSSStyleSheet>> m_injectedUserStyleSheets;
     mutable Vector<Ref<CSSStyleSheet>> m_injectedAuthorStyleSheets;
-    mutable HashMap<Ref<CSSStyleSheet>, String> m_injectedStyleSheetToSource;
+    mutable HashMap<Ref<CSSStyleSheet>, RefPtr<StringImpl>> m_injectedStyleSheetToSource;
     mutable bool m_injectedStyleSheetCacheValid { false };
 
     Vector<Ref<CSSStyleSheet>> m_userStyleSheets;
     Vector<Ref<CSSStyleSheet>> m_authorStyleSheetsForTesting;
     Vector<UserStyleSheet> m_pageSpecificStyleSheets;
-    Vector<String> m_quirkStyleSheetSources;
+    Vector<RefPtr<StringImpl>> m_quirkStyleSheetSources;
     Vector<Ref<CSSStyleSheet>> m_quirkStyleSheets;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    MemoryCompactRobinHoodHashMap<String, Ref<CSSStyleSheet>> m_contentExtensionSheets;
-    MemoryCompactRobinHoodHashMap<String, Ref<ContentExtensions::ContentExtensionStyleSheet>> m_contentExtensionSelectorSheets;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<CSSStyleSheet>> m_contentExtensionSheets;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Ref<ContentExtensions::ContentExtensionStyleSheet>> m_contentExtensionSelectorSheets;
 #endif
 };
 

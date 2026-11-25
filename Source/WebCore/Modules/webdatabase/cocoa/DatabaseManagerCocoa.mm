@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-void DatabaseManager::platformInitialize(const String& databasePath)
+void DatabaseManager::platformInitialize(StringImpl* databasePath)
 {
-    if (databasePath.isEmpty())
+    if (isEmpty(databasePath))
         return;
 
     // The path needs to exist so that we can resolve it via realPath().
@@ -44,7 +44,7 @@ void DatabaseManager::platformInitialize(const String& databasePath)
 
     // Disable vnode-guard related simulated crashes for WebSQL (rdar://problem/40674034). We do not overwrite the value here as it may have already been set by WKTR / DRT.
     int overwrite = 0;
-    setenv("SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS", FileSystem::realPath(databasePath).utf8().legacyCStringPointer(), overwrite);
+    setenv("SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS", utf8(FileSystem::realPath(databasePath)).legacyCStringPointer(), overwrite);
 }
 
 } // namespace WebCore

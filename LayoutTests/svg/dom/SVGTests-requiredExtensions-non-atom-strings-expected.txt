@@ -1,0 +1,25 @@
+Tests that requiredExtensions matches the XHTML and MathML namespaces by string content. Every token of the attribute value (and every string added via the SVGStringList API) is a newly created, non-atomic string, so comparing it with the namespace atom by identity would never match.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isRendered('xhtml') is true
+PASS isRendered('mathml') is true
+PASS isRendered('both') is true
+PASS isRendered('padded') is true
+PASS isRendered('unknown') is false
+PASS isRendered('knownAndUnknown') is false
+PASS isRendered('wrongCase') is false
+PASS isRendered('empty') is false
+PASS isRendered('viaSetAttribute') is true
+PASS appendItemList.getItem(0) is "http://www.w3.org/1999/xhtml"
+PASS isRendered('viaAppendItem') is true
+
+switch renders only its first child that passes conditional processing:
+PASS isRendered('switchUnknown') is false
+PASS isRendered('switchXHTML') is true
+PASS isRendered('switchFallback') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

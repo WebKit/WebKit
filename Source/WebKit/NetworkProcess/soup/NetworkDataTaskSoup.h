@@ -55,8 +55,8 @@ private:
     NetworkDataTask::State state() const override;
     void setTimingAllowFailedFlag() final;
 
-    void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
-    String suggestedFilename() const override;
+    void setPendingDownloadLocation(StringImpl*, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
+    RefPtr<StringImpl> suggestedFilename() const override;
 
     void setPriority(WebCore::ResourceLoadPriority) override;
 

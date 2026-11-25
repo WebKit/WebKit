@@ -47,7 +47,7 @@ static std::optional<ApplePaySessionError> additionalError(NSError *error)
         return std::nullopt;
 
     RetainPtr bindTokenValue = checked_objc_cast<NSString>(error.userInfo[bindTokenKey]);
-    return ApplePaySessionError { "featureApplicationError"_s, { { "bindToken"_s, bindTokenValue.get() } } };
+    return ApplePaySessionError { "featureApplicationError"_s, { { "bindToken"_si, StringImpl::create(bindTokenValue.get()) } } };
 #else
     UNUSED_PARAM(error);
     return std::nullopt;

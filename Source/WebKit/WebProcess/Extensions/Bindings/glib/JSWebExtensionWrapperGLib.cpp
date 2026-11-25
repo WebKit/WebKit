@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-String toSortedJSONString(JSContextRef context, JSValueRef value)
+RefPtr<StringImpl> toSortedJSONString(JSContextRef context, JSValueRef value)
 {
     // FIXME: Sort the keys like the Cocoa implementation. The WTF JSON implementation does not support sorting keys yet.
     notImplemented();

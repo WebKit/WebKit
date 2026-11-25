@@ -168,7 +168,7 @@ private:
     RetainPtr<UIButton> _locationButton;
     RetainPtr<UILayoutGuide> _topGuide;
     RetainPtr<NSLayoutConstraint> _topConstraint;
-    String _location;
+    RefPtr<StringImpl> _location;
     WebKit::FullscreenTouchSecheuristic _secheuristic;
     std::unique_ptr<WKFullScreenViewControllerPlaybackSessionModelClient> _playbackClient;
     CGFloat _nonZeroStatusBarHeight;
@@ -499,7 +499,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-- (void)_setTopButtonLabel:(const String&)label
+- (void)_setTopButtonLabel:(StringImpl*)label
 {
     UIButtonConfiguration *fullscreenButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
     fullscreenButtonConfiguration.imagePadding = 9;
@@ -516,7 +516,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     descriptor = [descriptor fontDescriptorByAddingAttributes:@{
         UIFontWeightTrait : [NSNumber numberWithDouble:UIFontWeightMedium]
     }];
-    RetainPtr buttonTitle = adoptNS([[NSMutableAttributedString alloc] initWithString:label.createNSString().get() attributes:@{
+    RetainPtr buttonTitle = adoptNS([[NSMutableAttributedString alloc] initWithString:createNSString(label).get() attributes:@{
         NSFontAttributeName : [UIFont fontWithDescriptor:descriptor.get() size:0]
     }]);
     fullscreenButtonConfiguration.attributedTitle = buttonTitle.get();
@@ -592,7 +592,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (RetainPtr mediaPlayer = playbackSessionInterface->linearMediaPlayer(); [mediaPlayer spatialVideoMetadata] || [mediaPlayer isImmersiveVideo]) {
         _isImmersiveVideo = [mediaPlayer isImmersiveVideo];
-        [self _setTopButtonLabel:_isImmersiveVideo ? WebCore::fullscreenControllerViewImmersive() : WebCore::fullscreenControllerViewSpatial()];
+        [self _setTopButtonLabel:(_isImmersiveVideo ? WebCore::fullscreenControllerViewImmersive() : WebCore::fullscreenControllerViewSpatial()).get()];
         if (!_buttonState.contains(FullscreenVideo)) {
             [_centeredStackView addArrangedSubview:_enterVideoFullscreenButton.get()];
             _buttonState.add(FullscreenVideo);
@@ -809,12 +809,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSString *)location
 {
-    return _location.createNSString().autorelease();
+    return createNSString(_location).autorelease();
 }
 
 - (void)setLocation:(NSString *)location
 {
-    _location = location;
+    _location = StringImpl::create(location);
 
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     SUPPRESS_UNRETAINED_ARG RetainPtr text = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"“%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), self.location]);
@@ -1224,7 +1224,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    RetainPtr alertTitle = WEB_UI_STRING("It looks like you are typing while in full screen", "Full Screen Deceptive Website Warning Sheet Title").createNSString();
+    RetainPtr alertTitle = createNSString(WEB_UI_STRING("It looks like you are typing while in full screen", "Full Screen Deceptive Website Warning Sheet Title"));
     SUPPRESS_UNRETAINED_ARG RetainPtr alertMessage = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.", "Full Screen Deceptive Website Warning Sheet Content Text"), self.location]);
     RetainPtr alert = WebKit::createUIAlertController(alertTitle.get(), alertMessage.get());
 
@@ -1233,7 +1233,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         page->suspendActiveDOMObjectsAndAnimations();
     }
 
-    RetainPtr exitAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (Element Full Screen)", "Full Screen Deceptive Website Exit Action").createNSString().get() style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+    RetainPtr exitAction = [UIAlertAction actionWithTitle:createNSString(WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (Element Full Screen)", "Full Screen Deceptive Website Exit Action")).get() style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
         [self _cancelAction:action];
         if (RefPtr page = self._webView._page.get()) {
             page->resumeActiveDOMObjectsAndAnimations();
@@ -1241,7 +1241,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }];
 
-    RetainPtr stayAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Stay in Full Screen", "Stay in Full Screen (Element Full Screen)", "Full Screen Deceptive Website Stay Action").createNSString().get() style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    RetainPtr stayAction = [UIAlertAction actionWithTitle:createNSString(WEB_UI_STRING_KEY("Stay in Full Screen", "Stay in Full Screen (Element Full Screen)", "Full Screen Deceptive Website Stay Action")).get() style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
         if (RefPtr page = self._webView._page.get()) {
             page->resumeActiveDOMObjectsAndAnimations();
             page->resumeAllMediaPlayback([] { });

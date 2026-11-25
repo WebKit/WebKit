@@ -29,17 +29,17 @@
 
 namespace WTF {
 
-RetainPtr<id> makeNSArrayElement(const String& vectorElement)
+RetainPtr<id> makeNSArrayElement(StringImpl* vectorElement)
 {
-    return bridge_cast(vectorElement.createCFString());
+    return bridge_cast(createCFString(vectorElement));
 }
 
-std::optional<String> makeVectorElement(const String*, id arrayElement)
+std::optional<RefPtr<StringImpl>> makeVectorElement(const RefPtr<StringImpl>*, id arrayElement)
 {
     NSString *nsString = dynamic_objc_cast<NSString>(arrayElement);
     if (!nsString)
         return std::nullopt;
-    return { { nsString } };
+    return { { StringImpl::create(nsString) } };
 }
 
 }

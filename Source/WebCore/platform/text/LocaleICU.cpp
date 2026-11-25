@@ -55,9 +55,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LocaleICU);
 
 using namespace icu;
 
-std::unique_ptr<Locale> Locale::create(const AtomString& locale)
+std::unique_ptr<Locale> Locale::create(AtomStringImpl* locale)
 {
-    return makeUnique<LocaleICU>(locale.string().utf8());
+    return makeUnique<LocaleICU>(utf8(locale));
 }
 
 LocaleICU::LocaleICU(UTF8CString&& locale)
@@ -78,7 +78,7 @@ LocaleICU::~LocaleICU()
 Locale::WritingDirection LocaleICU::defaultWritingDirection() const
 {
 #if USE(HARFBUZZ)
-    UScriptCode icuScript = localeToScriptCode(String::fromUTF8(m_locale.span()));
+    UScriptCode icuScript = localeToScriptCode(StringImpl::fromUTF8(m_locale.span()));
     hb_script_t script = hb_icu_script_to_script(icuScript);
 
     switch (hb_script_get_horizontal_direction(script)) {
@@ -95,35 +95,35 @@ Locale::WritingDirection LocaleICU::defaultWritingDirection() const
 }
 
 #if !UCONFIG_NO_FORMATTING
-String LocaleICU::decimalSymbol(UNumberFormatSymbol symbol)
+RefPtr<StringImpl> LocaleICU::decimalSymbol(UNumberFormatSymbol symbol)
 {
     UErrorCode status = U_ZERO_ERROR;
     int32_t bufferLength = unum_getSymbol(m_numberFormat, symbol, 0, 0, &status);
     ASSERT(U_SUCCESS(status) || needsToGrowToProduceBuffer(status));
     if (U_FAILURE(status) && !needsToGrowToProduceBuffer(status))
-        return String();
+        return nullptr;
     StringBuffer<char16_t> buffer(bufferLength);
     status = U_ZERO_ERROR;
     unum_getSymbol(m_numberFormat, symbol, buffer.characters(), bufferLength, &status);
     if (U_FAILURE(status))
-        return String();
-    return String::adopt(WTF::move(buffer));
+        return nullptr;
+    return StringImpl::adopt(WTF::move(buffer));
 }
 
-String LocaleICU::decimalTextAttribute(UNumberFormatTextAttribute tag)
+RefPtr<StringImpl> LocaleICU::decimalTextAttribute(UNumberFormatTextAttribute tag)
 {
     UErrorCode status = U_ZERO_ERROR;
     int32_t bufferLength = unum_getTextAttribute(m_numberFormat, tag, 0, 0, &status);
     ASSERT(U_SUCCESS(status) || needsToGrowToProduceBuffer(status));
     if (U_FAILURE(status) && !needsToGrowToProduceBuffer(status))
-        return String();
+        return nullptr;
     StringBuffer<char16_t> buffer(bufferLength);
     status = U_ZERO_ERROR;
     unum_getTextAttribute(m_numberFormat, tag, buffer.characters(), bufferLength, &status);
     ASSERT(U_SUCCESS(status));
     if (U_FAILURE(status))
-        return String();
-    return String::adopt(WTF::move(buffer));
+        return nullptr;
+    return StringImpl::adopt(WTF::move(buffer));
 }
 #endif
 
@@ -138,7 +138,7 @@ void LocaleICU::initializeLocaleData()
     if (!U_SUCCESS(status))
         return;
 
-    Vector<String, DecimalSymbolsSize> symbols;
+    Vector<RefPtr<StringImpl>, DecimalSymbolsSize> symbols;
     symbols.append(decimalSymbol(UNUM_ZERO_DIGIT_SYMBOL));
     symbols.append(decimalSymbol(UNUM_ONE_DIGIT_SYMBOL));
     symbols.append(decimalSymbol(UNUM_TWO_DIGIT_SYMBOL));
@@ -172,7 +172,7 @@ UDateFormat* LocaleICU::openDateFormat(UDateFormatStyle timeStyle, UDateFormatSt
     return udatOpen(timeStyle, dateStyle, m_locale, gmtTimezone.data(), gmtTimezone.size(), 0, -1, &status);
 }
 
-static String getDateFormatPattern(const UDateFormat* dateFormat)
+static RefPtr<StringImpl> getDateFormatPattern(const UDateFormat* dateFormat)
 {
     if (!dateFormat)
         return emptyString();
@@ -186,39 +186,39 @@ static String getDateFormatPattern(const UDateFormat* dateFormat)
     udat_toPattern(dateFormat, true, buffer.characters(), length, &status);
     if (U_FAILURE(status))
         return emptyString();
-    return String::adopt(WTF::move(buffer));
+    return StringImpl::adopt(WTF::move(buffer));
 }
 
-std::unique_ptr<Vector<String>> LocaleICU::createLabelVector(const UDateFormat* dateFormat, UDateFormatSymbolType type, int32_t startIndex, int32_t size)
+std::unique_ptr<Vector<RefPtr<StringImpl>>> LocaleICU::createLabelVector(const UDateFormat* dateFormat, UDateFormatSymbolType type, int32_t startIndex, int32_t size)
 {
     if (!dateFormat)
-        return makeUnique<Vector<String>>();
+        return makeUnique<Vector<RefPtr<StringImpl>>>();
     if (udat_countSymbols(dateFormat, type) != startIndex + size)
-        return makeUnique<Vector<String>>();
+        return makeUnique<Vector<RefPtr<StringImpl>>>();
 
-    auto labels = makeUnique<Vector<String>>();
+    auto labels = makeUnique<Vector<RefPtr<StringImpl>>>();
     labels->reserveInitialCapacity(size);
     for (int32_t i = 0; i < size; ++i) {
         UErrorCode status = U_ZERO_ERROR;
         int32_t length = udat_getSymbols(dateFormat, type, startIndex + i, 0, 0, &status);
         if (!needsToGrowToProduceBuffer(status))
-            return makeUnique<Vector<String>>();
+            return makeUnique<Vector<RefPtr<StringImpl>>>();
         StringBuffer<char16_t> buffer(length);
         status = U_ZERO_ERROR;
         udat_getSymbols(dateFormat, type, startIndex + i, buffer.characters(), length, &status);
         if (U_FAILURE(status))
-            return makeUnique<Vector<String>>();
-        labels->append(String::adopt(WTF::move(buffer)));
+            return makeUnique<Vector<RefPtr<StringImpl>>>();
+        labels->append(StringImpl::adopt(WTF::move(buffer)));
     }
     return labels;
 }
 
-static std::unique_ptr<Vector<String>> createFallbackMonthLabels()
+static std::unique_ptr<Vector<RefPtr<StringImpl>>> createFallbackMonthLabels()
 {
-    return makeUnique<Vector<String>>(std::span { WTF::monthFullName });
+    return makeUnique<Vector<RefPtr<StringImpl>>>(std::span { WTF::monthFullName });
 }
 
-const Vector<String>& LocaleICU::monthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleICU::monthLabels()
 {
     if (m_monthLabels)
         return *m_monthLabels;
@@ -231,9 +231,9 @@ const Vector<String>& LocaleICU::monthLabels()
     return *m_monthLabels;
 }
 
-static std::unique_ptr<Vector<String>> createFallbackAMPMLabels()
+static std::unique_ptr<Vector<RefPtr<StringImpl>>> createFallbackAMPMLabels()
 {
-    return makeUnique<Vector<String>>(Vector<String>::from("AM"_str, "PM"_str));
+    return makeUnique<Vector<RefPtr<StringImpl>>>(Vector<RefPtr<StringImpl>>::from("AM"_str, "PM"_str));
 }
 
 void LocaleICU::initializeDateTimeFormat()
@@ -266,19 +266,19 @@ void LocaleICU::initializeDateTimeFormat()
     m_didCreateTimeFormat = true;
 }
 
-String LocaleICU::dateFormat()
+RefPtr<StringImpl> LocaleICU::dateFormat()
 {
-    if (!m_dateFormat.isNull())
+    if (m_dateFormat)
         return m_dateFormat;
     if (!initializeShortDateFormat())
-        return "yyyy-MM-dd"_s;
+        return "yyyy-MM-dd"_si;
     m_dateFormat = getDateFormatPattern(m_shortDateFormat);
     return m_dateFormat;
 }
 
-static String getFormatForSkeleton(const UTF8CString& locale, std::span<const char16_t> skeleton)
+static RefPtr<StringImpl> getFormatForSkeleton(const UTF8CString& locale, std::span<const char16_t> skeleton)
 {
-    String format = "yyyy-MM"_s;
+    RefPtr<StringImpl> format = "yyyy-MM"_si;
     UErrorCode status = U_ZERO_ERROR;
     UDateTimePatternGenerator* patternGenerator = udatpgOpen(locale, &status);
     if (!patternGenerator)
@@ -290,15 +290,15 @@ static String getFormatForSkeleton(const UTF8CString& locale, std::span<const ch
         status = U_ZERO_ERROR;
         udatpg_getBestPattern(patternGenerator, skeleton.data(), skeleton.size(), buffer.characters(), length, &status);
         if (U_SUCCESS(status))
-            format = String::adopt(WTF::move(buffer));
+            format = StringImpl::adopt(WTF::move(buffer));
     }
     udatpg_close(patternGenerator);
     return format;
 }
 
-String LocaleICU::monthFormat()
+RefPtr<StringImpl> LocaleICU::monthFormat()
 {
-    if (m_monthFormat.isNull()) {
+    if (!m_monthFormat) {
         // Gets a format for "MMMM" because Windows API always provides formats for
         // "MMMM" in some locales.
         static constexpr std::array<char16_t, 8> skeleton { 'y', 'y', 'y', 'y', 'M', 'M', 'M', 'M' };
@@ -307,40 +307,40 @@ String LocaleICU::monthFormat()
     return m_monthFormat;
 }
 
-String LocaleICU::shortMonthFormat()
+RefPtr<StringImpl> LocaleICU::shortMonthFormat()
 {
-    if (m_shortMonthFormat.isNull()) {
+    if (!m_shortMonthFormat) {
         static constexpr std::array<char16_t, 7> skeleton { 'y', 'y', 'y', 'y', 'M', 'M', 'M' };
         m_shortMonthFormat = getFormatForSkeleton(m_locale, skeleton);
     }
     return m_shortMonthFormat;
 }
 
-String LocaleICU::timeFormat()
+RefPtr<StringImpl> LocaleICU::timeFormat()
 {
     initializeDateTimeFormat();
     return m_timeFormatWithSeconds;
 }
 
-String LocaleICU::shortTimeFormat()
+RefPtr<StringImpl> LocaleICU::shortTimeFormat()
 {
     initializeDateTimeFormat();
     return m_timeFormatWithoutSeconds;
 }
 
-String LocaleICU::dateTimeFormatWithSeconds()
+RefPtr<StringImpl> LocaleICU::dateTimeFormatWithSeconds()
 {
     initializeDateTimeFormat();
     return m_dateTimeFormatWithSeconds;
 }
 
-String LocaleICU::dateTimeFormatWithoutSeconds()
+RefPtr<StringImpl> LocaleICU::dateTimeFormatWithoutSeconds()
 {
     initializeDateTimeFormat();
     return m_dateTimeFormatWithoutSeconds;
 }
 
-const Vector<String>& LocaleICU::shortMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleICU::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
@@ -356,7 +356,7 @@ const Vector<String>& LocaleICU::shortMonthLabels()
     return m_shortMonthLabels;
 }
 
-const Vector<String>& LocaleICU::standAloneMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleICU::standAloneMonthLabels()
 {
     if (!m_standAloneMonthLabels.isEmpty())
         return m_standAloneMonthLabels;
@@ -370,7 +370,7 @@ const Vector<String>& LocaleICU::standAloneMonthLabels()
     return m_standAloneMonthLabels;
 }
 
-const Vector<String>& LocaleICU::shortStandAloneMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleICU::shortStandAloneMonthLabels()
 {
     if (!m_shortStandAloneMonthLabels.isEmpty())
         return m_shortStandAloneMonthLabels;
@@ -384,7 +384,7 @@ const Vector<String>& LocaleICU::shortStandAloneMonthLabels()
     return m_shortStandAloneMonthLabels;
 }
 
-const Vector<String>& LocaleICU::timeAMPMLabels()
+const Vector<RefPtr<StringImpl>>& LocaleICU::timeAMPMLabels()
 {
     initializeDateTimeFormat();
     return m_timeAMPMLabels;

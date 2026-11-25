@@ -39,7 +39,7 @@ struct WebTransportOptions {
     WebTransportCongestionControl congestionControl { WebTransportCongestionControl::Default };
     std::optional<uint16_t> anticipatedConcurrentIncomingUnidirectionalStreams;
     std::optional<uint16_t> anticipatedConcurrentIncomingBidirectionalStreams;
-    Vector<String> protocols { };
+    Vector<RefPtr<StringImpl>> protocols { };
     std::optional<ReadableStreamType> datagramsReadableType;
     std::optional<FetchHeaders::Init> headersInit { };
 };

@@ -69,8 +69,8 @@ void AudioTrackPrivateRemote::updateConfiguration(AudioTrackPrivateRemoteConfigu
         });
     }
 
-    if (configuration.label != m_label) {
-        auto changed = !m_label.isEmpty();
+    if (!equal(configuration.label, m_label)) {
+        auto changed = !isEmpty(m_label);
         m_label = configuration.label;
         if (changed) {
             notifyClients([label = crossThreadCopy(m_label)](auto& client) {
@@ -79,8 +79,8 @@ void AudioTrackPrivateRemote::updateConfiguration(AudioTrackPrivateRemoteConfigu
         };
     }
 
-    if (configuration.language != m_language) {
-        auto changed = !m_language.isEmpty();
+    if (!equal(configuration.language, m_language)) {
+        auto changed = !isEmpty(m_language);
         m_language = configuration.language;
         if (changed) {
             notifyClients([language = crossThreadCopy(m_language)](auto& client) {

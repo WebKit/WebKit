@@ -42,9 +42,9 @@ public:
     NODELETE WEBCORE_EXPORT static CoreAudioCaptureDeviceManager& singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
-    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, StringImpl*);
 
-    std::optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
+    std::optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(StringImpl*);
     const Vector<CaptureDevice>& speakerDevices() const LIFETIME_BOUND { return m_speakerDevices; }
 
     void setFilterTapEnabledDevices(bool doFiltering) { m_filterTapEnabledDevices = doFiltering; }

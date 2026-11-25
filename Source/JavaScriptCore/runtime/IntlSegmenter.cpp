@@ -71,7 +71,7 @@ void IntlSegmenter::initializeSegmenter(JSGlobalObject* globalObject, JSValue lo
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto localeData = [](const String&, RelevantExtensionKey) -> Vector<String> {
+    auto localeData = [](StringImpl*, RelevantExtensionKey) -> Vector<RefPtr<StringImpl>> {
         return { };
     };
 
@@ -79,7 +79,7 @@ void IntlSegmenter::initializeSegmenter(JSGlobalObject* globalObject, JSValue lo
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { }, localeData);
 
     m_locale = resolved.locale;
-    if (m_locale.isEmpty()) {
+    if (isEmpty(m_locale)) {
         throwTypeError(globalObject, scope, "failed to initialize Segmenter due to invalid locale"_s);
         return;
     }
@@ -101,7 +101,7 @@ void IntlSegmenter::initializeSegmenter(JSGlobalObject* globalObject, JSValue lo
     }
 
     UErrorCode status = U_ZERO_ERROR;
-    m_segmenter = std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>(ubrk_open(type, m_locale.ascii().data(), nullptr, 0, &status));
+    m_segmenter = std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>(ubrk_open(type, ascii(m_locale).data(), nullptr, 0, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize Segmenter"_s);
         return;
@@ -118,7 +118,7 @@ JSValue IntlSegmenter::segment(JSGlobalObject* globalObject, JSValue stringValue
     RETURN_IF_EXCEPTION(scope, { });
     auto string = jsString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto expectedCharacters = string->charactersWithoutNullTermination();
+    auto expectedCharacters = charactersWithoutNullTermination(*string);
     if (!expectedCharacters) {
         throwOutOfMemoryError(globalObject, scope);
         return { };

@@ -37,15 +37,15 @@
 namespace WebCore {
 
 struct IceCandidate {
-    String type;
-    String foundation;
+    RefPtr<StringImpl> type;
+    RefPtr<StringImpl> foundation;
     unsigned componentId { 0 };
-    String transport;
+    RefPtr<StringImpl> transport;
     unsigned long priority { 0 };
-    String address;
+    RefPtr<StringImpl> address;
     unsigned port { 0 };
-    String tcpType;
-    String relatedAddress;
+    RefPtr<StringImpl> tcpType;
+    RefPtr<StringImpl> relatedAddress;
     unsigned relatedPort { 0 };
 };
 

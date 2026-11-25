@@ -83,7 +83,7 @@ struct ParameterRequirement {
 };
 
 struct ParameterInfo {
-    String name;
+    RefPtr<StringImpl> name;
     unsigned index;
     Node* value { nullptr };
     Node* ptrInputContents { nullptr };
@@ -101,8 +101,8 @@ using Behavior = AST::Behavior;
 using Behaviors = AST::Behaviors;
 
 struct LoopSwitchInfo {
-    HashMap<String, Node*> varInNodes;
-    HashMap<String, Node*> varExitNodes;
+    HashMap<RefPtr<StringImpl>, Node*> varInNodes;
+    HashMap<RefPtr<StringImpl>, Node*> varExitNodes;
 };
 
 struct FunctionInfo {
@@ -129,8 +129,8 @@ struct FunctionInfo {
     Vector<ParameterInfo> parameters;
 
     Vector<std::unique_ptr<Node>> nodes;
-    Vector<HashMap<String, Node*>> scopes;
-    HashSet<String> localVarDecls;
+    Vector<HashMap<RefPtr<StringImpl>, Node*>> scopes;
+    HashSet<RefPtr<StringImpl>> localVarDecls;
 
     Node* createNode(const AST::Node* ast = nullptr)
     {
@@ -146,7 +146,7 @@ struct FunctionInfo {
         scopes.append({ });
     }
 
-    HashMap<String, Node*> popScopeCapture()
+    HashMap<RefPtr<StringImpl>, Node*> popScopeCapture()
     {
         ASSERT(scopes.size() > 1);
         auto top = WTF::move(scopes.last());
@@ -154,7 +154,7 @@ struct FunctionInfo {
         return top;
     }
 
-    Node* getVariable(const String& name)
+    Node* getVariable(StringImpl* name)
     {
         for (int i = scopes.size() - 1; i >= 0; --i) {
             auto it = scopes[i].find(name);
@@ -164,7 +164,7 @@ struct FunctionInfo {
         return nullptr;
     }
 
-    void setVariable(const String& name, Node* node)
+    void setVariable(StringImpl* name, Node* node)
     {
         ASSERT(!scopes.isEmpty());
         borrow(scopes)->last().set(name, node);
@@ -217,7 +217,7 @@ private:
     struct LValue {
         Node* cf;
         Node* newVal;
-        String rootIdentifier;
+        RefPtr<StringImpl> rootIdentifier;
     };
     LValue processLValueExpression(Node*, AST::Expression&, bool isPartialReference = false);
 
@@ -235,7 +235,7 @@ private:
     }
 
     ShaderModule& m_shaderModule;
-    HashMap<String, FunctionInfo> m_functions;
+    HashMap<RefPtr<StringImpl>, FunctionInfo> m_functions;
     FunctionInfo* m_currentFunction { nullptr };
     Vector<SeverityControl> m_severityStack;
     Vector<SeverityControl> m_subgroupSeverityStack;
@@ -373,7 +373,7 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
     for (unsigned i = 0; i < function.parameters().size(); ++i) {
         auto& param = function.parameters()[i];
         auto& paramInfo = info.parameters[i];
-        paramInfo.name = param.name();
+        paramInfo.name = param.name().id();
         paramInfo.index = i;
 
         paramInfo.value = info.createNode(&param);
@@ -417,10 +417,10 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
             paramInfo.ptrInputContents = info.createNode(&param);
             paramInfo.ptrInputContents->addEdge(info.cfStart);
             paramInfo.ptrOutputContents = info.createNode();
-            info.setVariable(param.name(), paramInfo.ptrInputContents);
+            info.setVariable(protect(param.name().id()), paramInfo.ptrInputContents);
             info.localVarDecls.add(param.name());
         } else
-            info.setVariable(param.name(), paramInfo.value);
+            info.setVariable(protect(param.name().id()), paramInfo.value);
     }
 
     for (auto& declaration : m_shaderModule.declarations()) {
@@ -430,7 +430,7 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
                 node->addEdge(info.mayBeNonUniform);
             else
                 node->addEdge(info.cfStart);
-            info.setVariable(globalVar->name(), node);
+            info.setVariable(protect(globalVar->name().id()), node);
         }
     }
 
@@ -487,7 +487,7 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
             traverse(sentinel, &reachable);
 
             if (reachable.contains(info.mayBeNonUniform)) {
-                String callName;
+                RefPtr<StringImpl> callName;
                 const AST::Node* callAst = nullptr;
                 for (auto* edge : borrow(sentinel->edges)) {
                     if (!edge->ast)
@@ -500,7 +500,7 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
                     }
                 }
                 RELEASE_ASSERT(callAst);
-                RELEASE_ASSERT(!callName.isEmpty());
+                RELEASE_ASSERT(!isEmpty(callName));
 
                 if (auto it = m_functions.find(callName); it != m_functions.end())
                     callName = it->value.astNode->originalName();
@@ -617,7 +617,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
         auto [cfL, vL, rootIdent] = processLValueExpression(cf, assign.lhs());
         auto [cfR, vR] = processExpression(cfL, assign.rhs());
         vL->addEdge(vR);
-        if (!rootIdent.isEmpty())
+        if (!isEmpty(rootIdent))
             info.setVariable(rootIdent, vL);
         return cfR;
     }
@@ -631,7 +631,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
     case AST::NodeKind::CompoundAssignmentStatement: {
         auto& compAssign = uncheckedDowncast<AST::CompoundAssignmentStatement>(statement);
         auto [cfL, lhsValue, rootIdent] = processLValueExpression(cf, compAssign.leftExpression());
-        auto* lhsLoad = rootIdent.isEmpty() ? nullptr : info.getVariable(rootIdent);
+        auto* lhsLoad = isEmpty(rootIdent) ? nullptr : info.getVariable(rootIdent);
         auto [cfR, vR] = processExpression(cfL, compAssign.rightExpression());
 
         auto* result = info.createNode(&compAssign);
@@ -640,7 +640,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
             result->addEdge(lhsLoad);
 
         lhsValue->addEdge(result);
-        if (!rootIdent.isEmpty())
+        if (!isEmpty(rootIdent))
             info.setVariable(rootIdent, lhsValue);
         return cfR;
     }
@@ -648,7 +648,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
     case AST::NodeKind::DecrementIncrementStatement: {
         auto& incDec = uncheckedDowncast<AST::DecrementIncrementStatement>(statement);
         auto [cfL, lhsValue, rootIdent] = processLValueExpression(cf, incDec.expression());
-        auto* lhsLoad = rootIdent.isEmpty() ? nullptr : info.getVariable(rootIdent);
+        auto* lhsLoad = isEmpty(rootIdent) ? nullptr : info.getVariable(rootIdent);
 
         auto* result = info.createNode(&incDec);
         result->addEdge(cfL);
@@ -656,7 +656,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
             result->addEdge(lhsLoad);
 
         lhsValue->addEdge(result);
-        if (!rootIdent.isEmpty())
+        if (!isEmpty(rootIdent))
             info.setVariable(rootIdent, lhsValue);
         return cfL;
     }
@@ -673,7 +673,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
         } else
             node = cf;
 
-        info.setVariable(variable.name(), node);
+        info.setVariable(protect(variable.name().id()), node);
         if (variable.flavor() == AST::VariableFlavor::Var)
             info.localVarDecls.add(variable.name());
 
@@ -700,7 +700,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
 
         // Remove variables from localVarDecls that were declared only in this scope
         trueVars.removeIf([&](auto& entry) {
-            if (!info.getVariable(entry.key)) {
+            if (!info.getVariable(RefPtr<StringImpl> { entry.key })) {
                 info.localVarDecls.remove(entry.key);
                 return true;
             }
@@ -709,7 +709,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
 
         bool trueHasNext = ifStmt.trueBody().behaviors().contains(Behavior::Next);
 
-        HashMap<String, Node*> falseVars;
+        HashMap<RefPtr<StringImpl>, Node*> falseVars;
         Node* cfFalse = nullptr;
         bool falseHasNext = true;
         if (auto* falseBody = ifStmt.maybeFalseBody()) {
@@ -718,7 +718,7 @@ Node* UniformityGraph::processStatement(Node* cf, AST::Statement& statement)
             falseVars = info.popScopeCapture();
 
             falseVars.removeIf([&](auto& entry) {
-                if (!info.getVariable(entry.key)) {
+                if (!info.getVariable(RefPtr<StringImpl> { entry.key })) {
                     info.localVarDecls.remove(entry.key);
                     return true;
                 }
@@ -1264,7 +1264,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
     auto& info = *m_currentFunction;
 
     auto* target = dynamicDowncast<AST::IdentifierExpression>(call.target());
-    String name;
+    RefPtr<StringImpl> name;
     if (target)
         name = target->identifier().id();
 
@@ -1312,7 +1312,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
     std::optional<unsigned> subgroupUniformArgIndex;
     bool resultIsUniformRegardlessOfArgs = false;
 
-    if (!name.isEmpty()) {
+    if (!isEmpty(name)) {
         auto it = m_functions.find(name);
         if (it != m_functions.end()) {
             funcInfo = &it->value;
@@ -1411,7 +1411,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 // Barriers are a workgroup concern; they impose no requirement at subgroup scope.
                 if (!m_analyzingSubgroupScope)
                     callSiteTag = CallSiteTag::RequiredToBeUniform;
-            } else if (name == "workgroupUniformLoad"_s) {
+            } else if (equal(name, "workgroupUniformLoad"_s)) {
                 if (!m_analyzingSubgroupScope)
                     callSiteTag = CallSiteTag::RequiredToBeUniform;
             } else if (derivativeFunctions.contains(name)) {
@@ -1432,7 +1432,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                         callSiteTag = CallSiteTag::RequiredToBeUniform;
                     // subgroupShuffleUp/Down require a uniform `delta`, and subgroupShuffleXor
                     // a uniform `mask` (argument index 1).
-                    if (name == "subgroupShuffleUp"_s || name == "subgroupShuffleDown"_s || name == "subgroupShuffleXor"_s)
+                    if (equal(name, "subgroupShuffleUp"_s) || equal(name, "subgroupShuffleDown"_s) || equal(name, "subgroupShuffleXor"_s))
                         subgroupUniformArgIndex = 1;
                 }
                 // At subgroup scope, the reduction/broadcast ops produce a uniform result;
@@ -1443,7 +1443,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                     functionTag = FunctionTag::ReturnValueMayBeNonUniform;
             } else if (atomicFunctions.contains(name))
                 functionTag = FunctionTag::ReturnValueMayBeNonUniform;
-            else if (name == "textureLoad"_s) {
+            else if (equal(name, "textureLoad"_s)) {
                 auto* argType = call.arguments()[0].inferredType();
                 if (auto* texStorage = std::get_if<Types::TextureStorage>(argType)) {
                     if (texStorage->access == AccessMode::ReadWrite)
@@ -1512,7 +1512,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                     info.setVariable(rootIdent->identifier().id(), ptrResult);
             }
         } else {
-            if (name == "workgroupUniformLoad"_s && !m_analyzingSubgroupScope) {
+            if (equal(name, "workgroupUniformLoad"_s) && !m_analyzingSubgroupScope) {
                 // workgroupUniformLoad requires the pointer VALUE to be
                 // uniform (same memory location across invocations), but
                 // NOT the contents. For pointer parameters, args[i] reaches
@@ -1524,7 +1524,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 auto* rootId = rootIdentifier(call.arguments()[i]);
                 if (rootId) {
                     for (auto& paramInfo : info.parameters) {
-                        if (paramInfo.name == rootId->identifier().id() && paramInfo.ptrInputContents) {
+                        if (equal(paramInfo.name, rootId->identifier().id()) && paramInfo.ptrInputContents) {
                             ptrValueNode = paramInfo.value;
                             break;
                         }

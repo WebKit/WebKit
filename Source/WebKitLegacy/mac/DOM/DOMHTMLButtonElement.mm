@@ -77,37 +77,37 @@
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->type().createNSString().autorelease();
+    return createNSString(IMPL->type()).autorelease();
 }
 
 - (void)setType:(NSString *)newType
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, newType);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, AtomStringImpl::add((__bridge CFStringRef)newType).get());
 }
 
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getNameAttribute().createNSString().autorelease();
+    return createNSString(IMPL->getNameAttribute()).autorelease();
 }
 
 - (void)setName:(NSString *)newName
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, AtomStringImpl::add((__bridge CFStringRef)newName).get());
 }
 
 - (NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::valueAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::valueAttr)).autorelease();
 }
 
 - (void)setValue:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, newValue);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, AtomStringImpl::add((__bridge CFStringRef)newValue).get());
 }
 
 - (BOOL)willValidate
@@ -119,13 +119,13 @@
 - (NSString *)accessKey
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::accesskeyAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::accesskeyAttr)).autorelease();
 }
 
 - (void)setAccessKey:(NSString *)newAccessKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, newAccessKey);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, AtomStringImpl::add((__bridge CFStringRef)newAccessKey).get());
 }
 
 - (void)click

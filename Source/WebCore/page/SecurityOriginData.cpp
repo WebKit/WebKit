@@ -43,14 +43,14 @@
 
 namespace WebCore {
 
-String SecurityOriginData::toString() const
+RefPtr<StringImpl> SecurityOriginData::toString() const
 {
     auto protocol = this->protocol();
-    if (protocol == "file"_s)
-        return "file://"_s;
+    if (equal(protocol, "file"_s))
+        return "file://"_si;
 
     auto host = this->host();
-    if (protocol.isEmpty() && host.isEmpty())
+    if (isEmpty(protocol) && isEmpty(host))
         return { };
 
     auto port = this->port();
@@ -107,7 +107,7 @@ Ref<SecurityOrigin> SecurityOriginData::securityOrigin() const
 
 static const char separatorCharacter = '_';
 
-String SecurityOriginData::databaseIdentifier() const
+RefPtr<StringImpl> SecurityOriginData::databaseIdentifier() const
 {
     // Historically, we've used the following (somewhat nonsensical) string
     // for the databaseIdentifier of local files. We used to compute this
@@ -116,12 +116,12 @@ String SecurityOriginData::databaseIdentifier() const
     // with existing persistent state.
     auto protocol = this->protocol();
     if (equalLettersIgnoringASCIICase(protocol, "file"_s))
-        return "file__0"_s;
+        return "file__0"_si;
 
     return makeString(protocol, separatorCharacter, FileSystem::encodeForFileName(host()), separatorCharacter, port().value_or(0));
 }
 
-String SecurityOriginData::optionalDatabaseIdentifier() const
+RefPtr<StringImpl> SecurityOriginData::optionalDatabaseIdentifier() const
 {
     auto url = toURL();
     if (!url.isValid())

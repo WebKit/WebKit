@@ -38,29 +38,29 @@ CookieFilter CookieFilter::fromProtocol(const RefPtr<JSON::Object>& filter)
     if (!filter)
         return parsed;
 
-    parsed.name = filter->getString("name"_s);
-    parsed.value = filter->getString("value"_s);
-    parsed.domain = filter->getString("domain"_s);
-    parsed.path = filter->getString("path"_s);
-    parsed.httpOnly = filter->getBoolean("httpOnly"_s);
-    parsed.secure = filter->getBoolean("secure"_s);
-    if (auto partitionKey = filter->getValue("partitionKey"_s); partitionKey && partitionKey->type() == JSON::Value::Type::String)
+    parsed.name = filter->getString("name"_si);
+    parsed.value = filter->getString("value"_si);
+    parsed.domain = filter->getString("domain"_si);
+    parsed.path = filter->getString("path"_si);
+    parsed.httpOnly = filter->getBoolean("httpOnly"_si);
+    parsed.secure = filter->getBoolean("secure"_si);
+    if (auto partitionKey = filter->getValue("partitionKey"_si); partitionKey && partitionKey->type() == JSON::Value::Type::String)
         parsed.partitionKey = partitionKey->asString();
     return parsed;
 }
 
 bool CookieFilter::matches(const WebCore::Cookie& cookie) const
 {
-    if (!name.isEmpty() && cookie.name != name)
+    if (!isEmpty(name) && !equal(cookie.name, name))
         return false;
 
-    if (!value.isEmpty() && cookie.value != value)
+    if (!isEmpty(value) && !equal(cookie.value, value))
         return false;
 
-    if (!domain.isEmpty() && cookie.domain != domain)
+    if (!isEmpty(domain) && !equal(cookie.domain, domain))
         return false;
 
-    if (!path.isEmpty() && cookie.path != path)
+    if (!isEmpty(path) && !equal(cookie.path, path))
         return false;
 
     if (httpOnly && cookie.httpOnly != *httpOnly)
@@ -70,7 +70,7 @@ bool CookieFilter::matches(const WebCore::Cookie& cookie) const
         return false;
 
     // Compare by emptiness first: an unpartitioned cookie's key may be a null String, which != "".
-    if (partitionKey && (partitionKey->isEmpty() ? !cookie.partitionKey.isEmpty() : cookie.partitionKey != *partitionKey))
+    if (partitionKey && (isEmpty(*partitionKey) ? !isEmpty(cookie.partitionKey) : !equal(cookie.partitionKey, *partitionKey)))
         return false;
 
     return true;

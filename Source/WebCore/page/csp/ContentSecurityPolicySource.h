@@ -42,7 +42,7 @@ enum class ShouldUpgradePorts : bool { No, Yes };
 class ContentSecurityPolicySource {
     WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicySource);
 public:
-    ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, std::optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard, IsSelfSource);
+    ContentSecurityPolicySource(const ContentSecurityPolicy&, StringImpl* scheme, StringImpl* host, std::optional<uint16_t> port, StringImpl* path, bool hostHasWildcard, bool portHasWildcard, IsSelfSource);
 
     bool matches(const URL&, bool didReceiveRedirectResponse = false) const;
 
@@ -56,9 +56,9 @@ private:
     NODELETE bool isSchemeOnly() const;
 
     const CheckedRef<const ContentSecurityPolicy> m_policy;
-    String m_scheme;
-    String m_host;
-    String m_path;
+    RefPtr<StringImpl> m_scheme;
+    RefPtr<StringImpl> m_host;
+    RefPtr<StringImpl> m_path;
     std::optional<uint16_t> m_port;
 
     bool m_hostHasWildcard;

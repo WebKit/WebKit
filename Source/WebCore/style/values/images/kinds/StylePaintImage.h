@@ -62,7 +62,7 @@ private:
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
-    Vector<WTF::String> paintArguments() const;
+    Vector<RefPtr<StringImpl>> paintArguments() const;
     ImageDrawResult paint(GraphicsContext&, const RenderElement&, FloatSize) const;
 
     CustomIdent m_name;

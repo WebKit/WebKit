@@ -31,6 +31,7 @@
 #include <type_traits>
 #include <utility>
 #include <wtf/Assertions.h>
+#include <wtf/Forward.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -45,8 +46,8 @@ namespace WTF {
 
 // Converts the arguments of the variadic wrappers below. Typed UTF-8 strings become the const char*
 // GLib expects, and scalars, including a const char* owned by another C interface, are passed through.
-// Any other type, such as a String or a Latin1CString, is rejected.
-template<typename T> requires (std::is_scalar_v<std::decay_t<T>>) inline T glibVariadicType(T argument) { return argument; }
+// Any other type, such as a StringImpl pointer or a Latin1CString, is rejected.
+template<typename T> requires (std::is_scalar_v<std::decay_t<T>> && !(std::is_pointer_v<std::decay_t<T>> && std::is_convertible_v<std::decay_t<T>, const StringImpl*>)) inline T glibVariadicType(T argument) { return argument; }
 inline const char* glibVariadicType(const UTF8CString& string LIFETIME_BOUND) { return string.legacyCStringPointer(); }
 inline const char* glibVariadicType(const UTF8CStringView& string LIFETIME_BOUND) { return string.utf8(); }
 inline const char* glibVariadicType(ASCIILiteral string) { return string.characters(); }

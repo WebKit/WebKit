@@ -43,8 +43,8 @@ class WEBCORE_EXPORT SpeechSynthesisUtterance final : public PlatformSpeechSynth
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechSynthesisUtterance, WEBCORE_EXPORT);
 public:
     using UtteranceCompletionHandler = Function<void(const SpeechSynthesisUtterance&)>;
-    static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
-    static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&);
+    static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, StringImpl*, UtteranceCompletionHandler&&);
+    static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, StringImpl*);
 
     // Create an empty default constructor so SpeechSynthesisEventInit compiles.
     SpeechSynthesisUtterance();
@@ -56,11 +56,11 @@ public:
     void deref() const final;
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    const String& text() const LIFETIME_BOUND { return m_platformUtterance->text(); }
-    void setText(const String& text) { m_platformUtterance->setText(text); }
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_platformUtterance->text(); }
+    void setText(StringImpl* text) { m_platformUtterance->setText(text); }
 
-    const String& lang() const LIFETIME_BOUND { return m_platformUtterance->lang(); }
-    void setLang(const String& lang) { m_platformUtterance->setLang(lang); }
+    const RefPtr<StringImpl>& lang() const LIFETIME_BOUND { return m_platformUtterance->lang(); }
+    void setLang(StringImpl* lang) { m_platformUtterance->setLang(lang); }
 
     NODELETE SpeechSynthesisVoice* voice() const;
     void setVoice(SpeechSynthesisVoice*);
@@ -79,12 +79,12 @@ public:
 
     PlatformSpeechSynthesisUtterance& platformUtterance() const { return m_platformUtterance.get(); }
 
-    void eventOccurred(const AtomString& type, uint32_t charIndex, uint32_t charLength, const String& name) final;
-    void errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode);
+    void eventOccurred(AtomStringImpl* type, uint32_t charIndex, uint32_t charLength, StringImpl* name) final;
+    void errorEventOccurred(AtomStringImpl* type, SpeechSynthesisErrorCode);
     void setIsActiveForEventDispatch(bool);
 
 private:
-    SpeechSynthesisUtterance(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
+    SpeechSynthesisUtterance(ScriptExecutionContext&, StringImpl*, UtteranceCompletionHandler&&);
 
     bool isSpeechSynthesisUtterance() const final { return true; }
 

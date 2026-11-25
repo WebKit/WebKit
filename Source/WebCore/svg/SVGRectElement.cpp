@@ -78,7 +78,7 @@ SVGAnimatedPropertyBase* SVGRectElement::propertyForAttribute(const QualifiedNam
     return nullptr;
 }
 
-void SVGRectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGRectElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
 

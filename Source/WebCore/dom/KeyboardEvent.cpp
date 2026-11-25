@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyboardEvent);
 
-static inline const AtomString& eventTypeForKeyboardEventType(PlatformEvent::Type type)
+static inline const RefPtr<AtomStringImpl>& eventTypeForKeyboardEventType(PlatformEvent::Type type)
 {
     switch (type) {
     case PlatformEvent::Type::KeyUp:
@@ -79,7 +79,7 @@ bool KeyboardEvent::isEnterKeyKeydownEvent(Event& event)
     if (event.type() != eventNames().keydownEvent)
         return false;
     auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
-    return keyboardEvent && keyboardEvent->keyIdentifier() == "Enter"_s;
+    return keyboardEvent && equal(keyboardEvent->keyIdentifier(), "Enter"_s);
 }
 
 NODELETE static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeyboardEvent& key)
@@ -131,7 +131,7 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
     , m_underlyingPlatformEvent(makeUnique<PlatformKeyboardEvent>(key))
     , m_key(key.key())
     , m_code(key.code())
-    , m_keyIdentifier(AtomString { key.keyIdentifier() })
+    , m_keyIdentifier(AtomStringImpl::add(key.keyIdentifier()))
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
     , m_isComposing(viewIsCompositing(view.get()))
@@ -144,7 +144,7 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
 {
 }
 
-inline KeyboardEvent::KeyboardEvent(const AtomString& eventType, const Init& initializer, IsTrusted isTrusted)
+inline KeyboardEvent::KeyboardEvent(AtomStringImpl* eventType, const Init& initializer, IsTrusted isTrusted)
     : UIEventWithKeyState(EventInterfaceType::KeyboardEvent, eventType, initializer, isTrusted)
     , m_key(initializer.key)
     , m_code(initializer.code)
@@ -170,13 +170,13 @@ Ref<KeyboardEvent> KeyboardEvent::createForBindings()
     return adoptRef(*new KeyboardEvent);
 }
 
-Ref<KeyboardEvent> KeyboardEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<KeyboardEvent> KeyboardEvent::create(AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new KeyboardEvent(type, initializer, isTrusted));
 }
 
-void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view,
-    const AtomString& keyIdentifier, unsigned location, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+void KeyboardEvent::initKeyboardEvent(AtomStringImpl* type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view,
+    AtomStringImpl* keyIdentifier, unsigned location, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
     if (isBeingDispatched())
         return;
@@ -194,8 +194,8 @@ void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bo
     m_repeat = false;
     m_underlyingPlatformEvent = nullptr;
     m_which = std::nullopt;
-    m_code = { };
-    m_key = { };
+    m_code = nullptr;
+    m_key = nullptr;
 
 #if PLATFORM(COCOA)
     m_handledByInputMethod = false;
@@ -247,7 +247,7 @@ int KeyboardEvent::charCode() const
 
     if (!m_underlyingPlatformEvent || (type() != eventNames().keypressEvent && !backwardCompatibilityMode))
         return 0;
-    return m_underlyingPlatformEvent->text().codePointAt(0);
+    return codePointAt(m_underlyingPlatformEvent->text(), 0);
 }
 
 unsigned KeyboardEvent::which() const

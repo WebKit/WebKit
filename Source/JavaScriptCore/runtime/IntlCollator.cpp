@@ -73,24 +73,24 @@ void IntlCollator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(IntlCollator);
 
-Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtensionKey key)
+Vector<RefPtr<StringImpl>> IntlCollator::sortLocaleData(StringImpl* locale, RelevantExtensionKey key)
 {
     // 9.1 Internal slots of Service Constructors & 10.2.3 Internal slots (ECMA-402 2.0)
-    Vector<String> keyLocaleData;
+    Vector<RefPtr<StringImpl>> keyLocaleData;
     switch (key) {
     case RelevantExtensionKey::Co: {
         // 10.2.3 "The first element of [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co must be null for all locale values."
         keyLocaleData.append({ });
 
         UErrorCode status = U_ZERO_ERROR;
-        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucol_getKeywordValuesForLocale("collation", locale.ascii().data(), false, &status));
+        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucol_getKeywordValuesForLocale("collation", ascii(locale).data(), false, &status));
         if (U_SUCCESS(status)) {
             const char* pointer;
             int32_t length = 0;
             while ((pointer = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status)) {
                 // 10.2.3 "The values "standard" and "search" must not be used as elements in any [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co array."
-                String collation = String::fromLatin1(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
-                if (collation == "standard"_s || collation == "search"_s)
+                RefPtr<StringImpl> collation = StringImpl::fromLatin1(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
+                if (equal(collation, "standard"_s) || equal(collation, "search"_s))
                     continue;
                 if (auto mapped = mapICUCollationKeywordToBCP47(collation))
                     keyLocaleData.append(WTF::move(mapped.value()));
@@ -101,10 +101,10 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtens
         break;
     }
     case RelevantExtensionKey::Kf:
-        keyLocaleData = Vector<String>::from("false"_str, "lower"_str, "upper"_str);
+        keyLocaleData = Vector<RefPtr<StringImpl>>::from("false"_str, "lower"_str, "upper"_str);
         break;
     case RelevantExtensionKey::Kn:
-        keyLocaleData = Vector<String>::from("false"_str, "true"_str);
+        keyLocaleData = Vector<RefPtr<StringImpl>>::from("false"_str, "true"_str);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -112,10 +112,10 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtens
     return keyLocaleData;
 }
 
-Vector<String> IntlCollator::searchLocaleData(const String&, RelevantExtensionKey key)
+Vector<RefPtr<StringImpl>> IntlCollator::searchLocaleData(StringImpl*, RelevantExtensionKey key)
 {
     // 9.1 Internal slots of Service Constructors & 10.2.3 Internal slots (ECMA-402 2.0)
-    Vector<String> keyLocaleData;
+    Vector<RefPtr<StringImpl>> keyLocaleData;
     switch (key) {
     case RelevantExtensionKey::Co:
         // 10.2.3 "The first element of [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co must be null for all locale values."
@@ -123,10 +123,10 @@ Vector<String> IntlCollator::searchLocaleData(const String&, RelevantExtensionKe
         keyLocaleData.append({ });
         break;
     case RelevantExtensionKey::Kf:
-        keyLocaleData = Vector<String>::from("false"_str, "lower"_str, "upper"_str);
+        keyLocaleData = Vector<RefPtr<StringImpl>>::from("false"_str, "lower"_str, "upper"_str);
         break;
     case RelevantExtensionKey::Kn:
-        keyLocaleData = Vector<String>::from("false"_str, "true"_str);
+        keyLocaleData = Vector<RefPtr<StringImpl>>::from("false"_str, "true"_str);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -157,11 +157,11 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     RETURN_IF_EXCEPTION(scope, void());
 
     {
-        String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, { }, { });
+        RefPtr<StringImpl> collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, { }, { });
         RETURN_IF_EXCEPTION(scope, void());
-        if (!collation.isNull()) {
+        if (collation) {
             if (!isUnicodeLocaleIdentifierType(collation)) {
-                throwRangeError(globalObject, scope, "collation is not a well-formed collation value"_s);
+                throwRangeError(globalObject, scope, "collation is not a well-formed collation value"_si);
                 return;
             }
             localeOptions[static_cast<unsigned>(RelevantExtensionKey::Co)] = WTF::move(collation);
@@ -171,30 +171,30 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     TriState numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric);
     RETURN_IF_EXCEPTION(scope, void());
     if (numeric != TriState::Indeterminate)
-        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Kn)] = String(numeric == TriState::True ? "true"_s : "false"_s);
+        localeOptions[static_cast<unsigned>(RelevantExtensionKey::Kn)] = StringImpl::create(numeric == TriState::True ? "true"_s : "false"_s);
 
-    String caseFirstOption = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper"_s, "lower"_s, "false"_s }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
+    RefPtr<StringImpl> caseFirstOption = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper"_s, "lower"_s, "false"_s }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!caseFirstOption.isNull())
+    if (caseFirstOption)
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Kf)] = caseFirstOption;
 
     const auto& availableLocales = intlCollatorAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Co, RelevantExtensionKey::Kf, RelevantExtensionKey::Kn }, localeData);
 
     m_locale = resolved.locale;
-    if (m_locale.isEmpty()) {
+    if (isEmpty(m_locale)) {
         throwTypeError(globalObject, scope, "failed to initialize Collator due to invalid locale"_s);
         return;
     }
 
-    const String& collation = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Co)];
-    m_collation = collation.isNull() ? "default"_s : collation;
-    m_numeric = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Kn)] == "true"_s;
+    const RefPtr<StringImpl>& collation = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Co)];
+    m_collation = !collation ? "default"_si : collation;
+    m_numeric = equal(resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Kn)], "true"_s);
 
-    const String& caseFirstString = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Kf)];
-    if (caseFirstString == "lower"_s)
+    const RefPtr<StringImpl>& caseFirstString = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Kf)];
+    if (equal(caseFirstString, "lower"_s))
         m_caseFirst = CaseFirst::Lower;
-    else if (caseFirstString == "upper"_s)
+    else if (equal(caseFirstString, "upper"_s))
         m_caseFirst = CaseFirst::Upper;
     else
         m_caseFirst = CaseFirst::False;
@@ -209,17 +209,17 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     ASCIICString dataLocaleWithExtensions;
     switch (m_usage) {
     case Usage::Sort:
-        if (collation.isNull())
-            dataLocaleWithExtensions = resolved.dataLocale.ascii();
+        if (!collation)
+            dataLocaleWithExtensions = ascii(resolved.dataLocale);
         else
-            dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-"_s, m_collation).ascii();
+            dataLocaleWithExtensions = ascii(makeString(resolved.dataLocale, "-u-co-"_s, m_collation));
         break;
     case Usage::Search:
         // searchLocaleData filters out "co" unicode extension. However, we need to pass "co" to ICU when Usage::Search is specified.
         // So we need to pass "co" unicode extension through locale. Since the other relevant extensions are handled via ucol_setAttribute,
         // we can just use dataLocale
         // Since searchLocaleData filters out "co" unicode extension, "collation" option is just ignored.
-        dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-search"_s).ascii();
+        dataLocaleWithExtensions = ascii(makeString(resolved.dataLocale, "-u-co-search"_s));
         break;
     }
     dataLogLnIf(IntlCollatorInternal::verbose, "locale:(", resolved.locale, "),dataLocaleWithExtensions:(", dataLocaleWithExtensions, ")");
@@ -314,7 +314,7 @@ UCollationResult IntlCollator::compareStrings(JSGlobalObject* globalObject, Stri
         result = ucol_strcoll(m_collator.get(), x.upconvertedCharacters(), x.length(), y.upconvertedCharacters(), y.length());
 
     if (U_FAILURE(status)) {
-        throwException(globalObject, scope, createError(globalObject, "Failed to compare strings."_s));
+        throwException(globalObject, scope, createError(globalObject, "Failed to compare strings."_si));
         return { };
     }
     return result.value();
@@ -419,7 +419,7 @@ bool IntlCollator::updateCanDoASCIIUCADUCETComparison() const
     auto checkASCIIUCADUCETComparisonCompatibility = [&] {
         if (m_usage != Usage::Sort)
             return false;
-        if (m_collation != "default"_s)
+        if (!equal(m_collation, "default"_s))
             return false;
         if (m_sensitivity != Sensitivity::Variant)
             return false;
@@ -440,7 +440,7 @@ bool IntlCollator::updateCanDoASCIIUCADUCETComparison() const
 void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
 {
     for (auto& locale : locales) {
-        auto checkASCIIOrderingWithDUCET = [](const String& locale, UCollator& collator) {
+        auto checkASCIIOrderingWithDUCET = [](StringImpl* locale, UCollator& collator) {
             bool allAreGood = true;
             for (unsigned x = 0; x < 128; ++x) {
                 for (unsigned y = 0; y < 128; ++y) {
@@ -462,7 +462,7 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
         };
 
         UErrorCode status = U_ZERO_ERROR;
-        auto collator = std::unique_ptr<UCollator, ICUDeleter<ucol_close>>(ucol_open(locale.ascii().data(), &status));
+        auto collator = std::unique_ptr<UCollator, ICUDeleter<ucol_close>>(ucol_open(ascii(locale).data(), &status));
 
         ASSERT(U_SUCCESS(status));
         ucol_setAttribute(collator.get(), UCOL_STRENGTH, UCOL_TERTIARY, &status);

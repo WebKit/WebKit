@@ -74,7 +74,7 @@ struct WebHitTestResultData;
 
 class PluginView final : public WebCore::PluginViewBase {
 public:
-    static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
+    static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, StringImpl* contentType, bool shouldUseManualLoader);
 
     NODELETE WebCore::LocalFrame* frame() const;
 
@@ -130,24 +130,24 @@ public:
 
     NODELETE void webPageDestroyed();
 
-    bool handleEditingCommand(const String& commandName, const String& argument);
-    bool isEditingCommandEnabled(const String& commandName);
+    bool handleEditingCommand(StringImpl* commandName, StringImpl* argument);
+    bool isEditingCommandEnabled(StringImpl* commandName);
     
-    unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount);
-    bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount);
+    unsigned countFindMatches(StringImpl* target, WebCore::FindOptions, unsigned maxMatchCount);
+    bool findString(StringImpl* target, WebCore::FindOptions, unsigned maxMatchCount);
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const;
     bool drawsFindOverlay() const;
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
 
-    Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions);
+    Vector<WebFoundTextRange::PDFData> findTextMatches(StringImpl* target, WebCore::FindOptions);
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect& clipRect);
     RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition);
     void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&);
 
-    String fullDocumentString() const;
+    RefPtr<StringImpl> fullDocumentString() const;
     PDFPluginTextExtractionContent textExtractionContent() const;
-    String selectionString() const;
-    std::pair<String, String> stringsBeforeAndAfterSelection(int characterCount) const;
+    RefPtr<StringImpl> selectionString() const;
+    std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>> stringsBeforeAndAfterSelection(int characterCount) const;
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
 
@@ -173,7 +173,7 @@ public:
     void setPDFDisplayMode(PDFPluginDisplayMode);
 
 #if ENABLE(PDF_HUD)
-    void openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
+    void openWithPreview(CompletionHandler<void(StringImpl*, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
 #endif
 
     void focusPluginElement();
@@ -191,7 +191,7 @@ public:
     void effectiveAppearanceDidChange();
 
 private:
-    PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&, WebCore::FrameIdentifier);
+    PluginView(WebCore::HTMLPlugInElement&, const URL&, StringImpl* contentType, bool shouldUseManualLoader, WebPage&, WebCore::FrameIdentifier);
     virtual ~PluginView();
 
     bool isPluginView() const final { return true; }
@@ -275,12 +275,12 @@ private:
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<WebCore::ShareableBitmap> m_transientPaintingSnapshot;
 
-    bool sendEditingCommandToPDFForTesting(const String& commandName, const String& argument) final;
-    void setPDFDisplayModeForTesting(const String&) final;
+    bool sendEditingCommandToPDFForTesting(StringImpl* commandName, StringImpl* argument) final;
+    void setPDFDisplayModeForTesting(StringImpl*) final;
     Vector<WebCore::FloatRect> pdfAnnotationRectsForTesting() const override;
-    void unlockPDFDocumentForTesting(const String& password) final;
-    void setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) final;
-    Vector<String> pdfContextMenuItemTitlesForTesting(const WebCore::IntPoint&) const final;
+    void unlockPDFDocumentForTesting(StringImpl* password) final;
+    void setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, StringImpl* value) final;
+    Vector<RefPtr<StringImpl>> pdfContextMenuItemTitlesForTesting(const WebCore::IntPoint&) const final;
     WebCore::IntRect pdfBoundsOnScreenForTesting() const final;
     void registerPDFTestCallback(RefPtr<WebCore::VoidCallback>&&) final;
 };

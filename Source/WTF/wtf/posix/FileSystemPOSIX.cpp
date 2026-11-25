@@ -57,7 +57,7 @@
 
 namespace WTF::FileSystemImpl {
 
-FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission permission, OptionSet<FileLockMode> lockMode, bool failIfFileExists)
+FileHandle openFile(StringImpl* path, FileOpenMode mode, FileAccessPermission permission, OptionSet<FileLockMode> lockMode, bool failIfFileExists)
 {
     auto fsRep = fileSystemRepresentation(path);
 
@@ -94,7 +94,7 @@ FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission 
     return FileHandle::adopt(posixOpen(fsRep, platformFlag, permissionFlag), lockMode);
 }
 
-std::optional<WallTime> fileCreationTime(const String& path)
+std::optional<WallTime> fileCreationTime(StringImpl* path)
 {
 #if (OS(LINUX) && HAVE(STATX)) || OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
     auto fsRep = fileSystemRepresentation(path);
@@ -127,7 +127,7 @@ bool fileIDsAreEqual(std::optional<PlatformFileID> a, std::optional<PlatformFile
     return a == b;
 }
 
-std::optional<uint32_t> volumeFileBlockSize(const String& path)
+std::optional<uint32_t> volumeFileBlockSize(StringImpl* path)
 {
     struct statvfs fileStat;
     if (!posixStatvfs(fileSystemRepresentation(path), &fileStat))
@@ -137,44 +137,44 @@ std::optional<uint32_t> volumeFileBlockSize(const String& path)
 }
 
 #if !USE(CF)
-String stringFromFileSystemRepresentation(UTF8CStringView path)
+RefPtr<StringImpl> stringFromFileSystemRepresentation(UTF8CStringView path)
 {
     if (path.isNull())
-        return String();
+        return nullptr;
 
-    return String::fromUTF8(path.span());
+    return StringImpl::fromUTF8(path.span());
 }
 
-UTF8CString fileSystemRepresentation(const String& path)
+UTF8CString fileSystemRepresentation(StringImpl* path)
 {
-    return path.utf8();
+    return utf8(path);
 }
 #endif
 
 #if !PLATFORM(COCOA)
-static inline String defaultTemporaryDirectory()
+static inline RefPtr<StringImpl> defaultTemporaryDirectory()
 {
-    String directoryPath;
+    RefPtr<StringImpl> directoryPath;
 
 #if USE(GLIB)
-    directoryPath = String::fromUTF8(g_get_tmp_dir());
+    directoryPath = StringImpl::fromUTF8(g_get_tmp_dir());
 #elif OS(HAIKU)
     BPath path;
     if (find_directory(B_SYSTEM_TEMP_DIRECTORY, &path) == B_OK)
-        directoryPath = String::fromUTF8(path.Path());
+        directoryPath = StringImpl::fromUTF8(path.Path());
 #else
     static const char* tmpDir = getenv("TMPDIR");
     if (tmpDir)
-        directoryPath = UTF8CString::unsafeFromUTF8(tmpDir);
+        directoryPath = StringImpl::fromUTF8(UTF8CString::unsafeFromUTF8(tmpDir).span());
 #endif
 
-    if (!directoryPath.isEmpty())
+    if (!isEmpty(directoryPath))
         return directoryPath;
 
-    return "/tmp"_s;
+    return "/tmp"_si;
 }
 
-std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView suffix, const String& temporaryDirectory)
+std::pair<RefPtr<StringImpl>, FileHandle> openTemporaryFile(StringView prefix, StringView suffix, StringImpl* temporaryDirectory)
 {
 #if PLATFORM(PLAYSTATION)
     // Suffix is not supported because there is no mkostemps() nor mkstemps() in the PlayStation libc.
@@ -184,8 +184,8 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
     suffix = ""_s;
 #endif // PLATFORM(PLAYSTATION)
 
-    auto templatePath = makeString(temporaryDirectory.isEmpty() ? defaultTemporaryDirectory() : temporaryDirectory, "/"_s, prefix, "-XXXXXX"_s, suffix);
-    UTF8CString templatePathUTF8 = templatePath.utf8();
+    auto templatePath = makeString(isEmpty(temporaryDirectory) ? defaultTemporaryDirectory() : RefPtr { temporaryDirectory }, "/"_s, prefix, "-XXXXXX"_s, suffix);
+    UTF8CString templatePathUTF8 = utf8(templatePath);
     UTF8CString suffixUTF8 = suffix.utf8();
 
 #if HAVE(MKOSTEMPS)
@@ -208,13 +208,13 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
     auto handle = FileHandle::adopt(openTemporaryFileWithSuffixTemplate(byteCast<char>(templatePathUTF8.mutableSpanIncludingNullTerminator().data()), suffixUTF8.length()));
 #endif // HAVE(MKOSTEMPS)
     if (!handle)
-        return { String(), FileHandle() };
+        return { nullptr, FileHandle() };
 
-    return { String::fromUTF8(templatePathUTF8.span()), WTF::move(handle) };
+    return { StringImpl::fromUTF8(templatePathUTF8.span()), WTF::move(handle) };
 }
 #endif // !PLATFORM(COCOA)
 
-std::optional<int32_t> getFileDeviceId(const String& path)
+std::optional<int32_t> getFileDeviceId(StringImpl* path)
 {
     auto fsFile = fileSystemRepresentation(path);
     if (fsFile.isNull())
@@ -231,12 +231,12 @@ std::optional<int32_t> getFileDeviceId(const String& path)
 // This fast path exists to avoid calls to stat(). It's not needed on other platforms.
 #if ENABLE(FILESYSTEM_POSIX_FAST_PATH)
 
-bool fileExists(const String& path)
+bool fileExists(StringImpl* path)
 {
     return posixAccess(fileSystemRepresentation(path), F_OK) != -1;
 }
 
-bool deleteFile(const String& path)
+bool deleteFile(StringImpl* path)
 {
     // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
     bool unlinked = !posixUnlink(fileSystemRepresentation(path));
@@ -246,7 +246,7 @@ bool deleteFile(const String& path)
     return unlinked;
 }
 
-bool makeAllDirectories(const String& path)
+bool makeAllDirectories(StringImpl* path)
 {
     auto fullPath = fileSystemRepresentation(path);
     int length = fullPath.length();
@@ -277,14 +277,14 @@ bool makeAllDirectories(const String& path)
     return true;
 }
 
-String pathByAppendingComponent(StringView path, StringView component)
+RefPtr<StringImpl> pathByAppendingComponent(StringView path, StringView component)
 {
     if (path.endsWith('/'))
         return makeString(path, component);
     return makeString(path, '/', component);
 }
 
-String pathByAppendingComponents(StringView path, std::span<const StringView> components)
+RefPtr<StringImpl> pathByAppendingComponents(StringView path, std::span<const StringView> components)
 {
     StringBuilder builder;
     builder.append(path);

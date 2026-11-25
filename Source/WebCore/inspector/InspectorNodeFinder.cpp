@@ -45,17 +45,17 @@
 
 namespace WebCore {
 
-static String stripCharacters(const String& string, const char startCharacter, const char endCharacter, bool& startCharFound, bool& endCharFound)
+static RefPtr<StringImpl> stripCharacters(StringImpl* string, const char startCharacter, const char endCharacter, bool& startCharFound, bool& endCharFound)
 {
-    startCharFound = string.startsWith(startCharacter);
-    endCharFound = string.endsWith(endCharacter);
+    startCharFound = startsWith(string, startCharacter);
+    endCharFound = endsWith(string, endCharacter);
 
     unsigned start = startCharFound ? 1 : 0;
-    unsigned end = string.length() - (endCharFound ? 1 : 0);
-    return string.substring(start, end - start);
+    unsigned end = length(string) - (endCharFound ? 1 : 0);
+    return substring(string, start, end - start);
 }
 
-InspectorNodeFinder::InspectorNodeFinder(const String& query, bool caseSensitive)
+InspectorNodeFinder::InspectorNodeFinder(StringImpl* query, bool caseSensitive)
     : m_query(query)
     , m_caseSensitive(caseSensitive)
 {
@@ -103,46 +103,46 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node& parentNode)
     }
 }
 
-bool InspectorNodeFinder::checkEquals(const String& a, const String& b)
+bool InspectorNodeFinder::checkEquals(StringImpl* a, StringImpl* b)
 {
     if (m_caseSensitive)
-        return a == b;
+        return equal(a, b);
     return equalIgnoringASCIICase(a, b);
 }
 
-bool InspectorNodeFinder::checkContains(const String& a, const String& b)
+bool InspectorNodeFinder::checkContains(StringImpl* a, StringImpl* b)
 {
     if (m_caseSensitive)
-        return a.contains(b);
-    return a.containsIgnoringASCIICase(b);
+        return contains(a, b);
+    return containsIgnoringASCIICase(a, b);
 }
 
-bool InspectorNodeFinder::checkStartsWith(const String& a, const String& b)
+bool InspectorNodeFinder::checkStartsWith(StringImpl* a, StringImpl* b)
 {
     if (m_caseSensitive)
-        return a.startsWith(b);
-    return a.startsWithIgnoringASCIICase(b);
+        return startsWith(a, b);
+    return startsWithIgnoringASCIICase(a, b);
 }
 
-bool InspectorNodeFinder::checkEndsWith(const String& a, const String& b)
+bool InspectorNodeFinder::checkEndsWith(StringImpl* a, StringImpl* b)
 {
     if (m_caseSensitive)
-        return a.endsWith(b);
-    return a.endsWithIgnoringASCIICase(b);
+        return endsWith(a, b);
+    return endsWithIgnoringASCIICase(a, b);
 }
 
 bool InspectorNodeFinder::matchesAttribute(const Attribute& attribute)
 {
-    if (checkContains(attribute.localName().string(), m_query))
+    if (checkContains(attribute.localName(), m_query))
         return true;
 
-    auto value = attribute.value().string();
+    auto value = attribute.value();
     return m_exactAttributeMatch ? checkEquals(value, m_attributeQuery) : checkContains(value, m_attributeQuery);
 }
 
 bool InspectorNodeFinder::matchesElement(const Element& element)
 {
-    String nodeName = element.nodeName();
+    RefPtr<StringImpl> nodeName = element.nodeName();
     if ((!m_startTagFound && !m_endTagFound && checkContains(nodeName, m_tagNameQuery))
         || (m_startTagFound && m_endTagFound && checkEquals(nodeName, m_tagNameQuery))
         || (m_startTagFound && !m_endTagFound && checkStartsWith(nodeName, m_tagNameQuery))

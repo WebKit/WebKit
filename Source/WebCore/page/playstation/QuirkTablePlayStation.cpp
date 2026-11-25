@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-String loadQuirkTableJSON()
+RefPtr<StringImpl> loadQuirkTableJSON()
 {
     // FIXME(327589): There is no way to read QuirkTable.json at runtime on PlayStation yet
     notImplemented();

@@ -103,9 +103,9 @@ static void enqueueUpgradeInDocument(Document& document, JSCustomElementInterfac
 
 RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&& elementInterface)
 {
-    static MainThreadNeverDestroyed<const AtomString> extendsLi("extends-li"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> extendsLi("extends-li"_s);
 
-    AtomString localName = elementInterface->name().localName();
+    RefPtr<AtomStringImpl> localName = elementInterface->name().localName();
     ASSERT(!m_nameMap.contains(localName));
     m_nameMap.add(localName, elementInterface.copyRef());
     {
@@ -143,7 +143,7 @@ JSCustomElementInterface* CustomElementRegistry::findInterface(const QualifiedNa
     return m_nameMap.get(name.localName());
 }
 
-JSCustomElementInterface* CustomElementRegistry::findInterface(const AtomString& name) const
+JSCustomElementInterface* CustomElementRegistry::findInterface(AtomStringImpl* name) const
 {
     return m_nameMap.get(name);
 }
@@ -160,17 +160,17 @@ bool CustomElementRegistry::containsConstructor(const JSC::JSObject* constructor
     return m_constructorMap.contains(constructor);
 }
 
-JSC::JSValue CustomElementRegistry::get(const AtomString& name)
+JSC::JSValue CustomElementRegistry::get(AtomStringImpl* name)
 {
     if (auto* elementInterface = m_nameMap.get(name))
         return elementInterface->constructor();
     return JSC::jsUndefined();
 }
 
-ExceptionOr<const AtomString&> CustomElementRegistry::getName(JSC::JSValue constructorValue)
+ExceptionOr<const RefPtr<AtomStringImpl>&> CustomElementRegistry::getName(JSC::JSValue constructorValue)
 {
     if (!constructorValue.isCallable())
-        return Exception { ExceptionCode::TypeError, "The argument must be a function"_s };
+        return Exception { ExceptionCode::TypeError, "The argument must be a function"_si };
     RefPtr elementInterface = findInterface(constructorValue.getObject());
     if (!elementInterface)
         return nullAtom();

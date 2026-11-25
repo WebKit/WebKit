@@ -68,7 +68,7 @@ const MathMLElement::Length& MathMLSpaceElement::depth()
     return cachedMathMLLength(MathMLNames::depthAttr, m_depth);
 }
 
-void MathMLSpaceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLSpaceElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     bool affectsLayout = false;
     switch (name.nodeName()) {

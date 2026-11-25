@@ -55,7 +55,7 @@ public:
     WebExtensionAPIEvent& onChanged();
 
 private:
-    using ParsedDetails = std::tuple<std::optional<PAL::SessionID>, String, URL>;
+    using ParsedDetails = std::tuple<std::optional<PAL::SessionID>, RefPtr<StringImpl>, URL>;
     static std::optional<ParsedDetails> parseCookieDetails(NSDictionary *details, NSArray *requiredKeys, NSString **outExceptionString);
 
     const RefPtr<WebExtensionAPIEvent> m_onChanged;

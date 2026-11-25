@@ -97,11 +97,11 @@ public:
     virtual void setTextTrackRepresentationBounds(const IntRect&) { }
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    virtual void requestShowCaptionDisplaySettingsPreview(const String&) { }
+    virtual void requestShowCaptionDisplaySettingsPreview(StringImpl*) { }
     virtual void requestHideCaptionDisplaySettingsPreview() { }
 #endif
 
-    virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler) { completionHandler(RouteSharingPolicy::Default, emptyString()); }
+    virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, RefPtr<StringImpl>)>&& completionHandler) { completionHandler(RouteSharingPolicy::Default, emptyString()); }
 
 #if PLATFORM(IOS_FAMILY)
     virtual UIViewController *presentingViewController() { return nullptr; }
@@ -131,7 +131,7 @@ public:
     virtual void documentVisibilityChanged(bool) { }
     virtual void isChildOfElementFullscreenChanged(bool) { }
     virtual void audioSessionCategoryChanged(AudioSessionCategory, AudioSessionMode, RouteSharingPolicy) { }
-    virtual void routingContextUIDChanged(const String&) { }
+    virtual void routingContextUIDChanged(StringImpl*) { }
     virtual void hasBeenInteractedWith() { }
     virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) { }
 };

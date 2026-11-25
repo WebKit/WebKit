@@ -36,7 +36,7 @@ namespace WebCore {
 
 class WEBCORE_EXPORT BlobDataFileReference : public ThreadSafeRefCounted<BlobDataFileReference, WTF::DestructionThread::Main> {
 public:
-    static Ref<BlobDataFileReference> create(const String& path, const String& replacementPath = { })
+    static Ref<BlobDataFileReference> create(StringImpl* path, StringImpl* replacementPath = nullptr)
     {
         return adoptRef(*new BlobDataFileReference(path, replacementPath));
     }
@@ -45,7 +45,7 @@ public:
 
     void startTrackingModifications();
 
-    const String& path();
+    const RefPtr<StringImpl>& path();
     unsigned long long size();
     NODELETE std::optional<WallTime> expectedModificationTime();
 
@@ -53,15 +53,15 @@ public:
     virtual void revokeFileAccess();
 
 protected:
-    BlobDataFileReference(const String& path, const String& replacementPath);
+    BlobDataFileReference(StringImpl* path, StringImpl* replacementPath);
 
 private:
 #if ENABLE(FILE_REPLACEMENT)
     void generateReplacementFile();
 #endif
 
-    String m_path;
-    String m_replacementPath;
+    RefPtr<StringImpl> m_path;
+    RefPtr<StringImpl> m_replacementPath;
 #if ENABLE(FILE_REPLACEMENT)
     bool m_replacementShouldBeGenerated { false };
 #endif

@@ -103,9 +103,9 @@ public:
         return processArgument<IDLType>(*device, std::forward<ArgumentType>(argument));
     }
 
-    static void recordAction(CanvasRenderingContext&, String&&, ProcessedArguments&& = { });
-    static void recordAction(const CanvasBase&, String&&, ProcessedArguments&& = { });
-    static void recordAction(GPUDevice&, String&&, ProcessedArguments&& = { });
+    static void recordAction(CanvasRenderingContext&, RefPtr<StringImpl>&&, ProcessedArguments&& = { });
+    static void recordAction(const CanvasBase&, RefPtr<StringImpl>&&, ProcessedArguments&& = { });
+    static void recordAction(GPUDevice&, RefPtr<StringImpl>&&, ProcessedArguments&& = { });
 
     template<typename IDLType, typename Receiver, typename Result>
     static void recordActionResult(Receiver& receiver, Result& result)
@@ -169,7 +169,7 @@ public:
 
     template<typename Receiver>
         requires (requires (Receiver& receiver) { receiver.context(); })
-    static void recordAction(Receiver& receiver, String&& name, ProcessedArguments&& arguments = { })
+    static void recordAction(Receiver& receiver, RefPtr<StringImpl>&& name, ProcessedArguments&& arguments = { })
     {
         RefPtr context = receiver.context();
         if (!context)
@@ -184,7 +184,7 @@ public:
 
     template<typename Receiver>
         requires (requires (Receiver& receiver) { receiver.device(); })
-    static void recordAction(Receiver& receiver, String&& name, ProcessedArguments&& arguments = { })
+    static void recordAction(Receiver& receiver, RefPtr<StringImpl>&& name, ProcessedArguments&& arguments = { })
     {
         RefPtr device = receiver.device();
         if (!device)
@@ -200,8 +200,8 @@ public:
 private:
     static RefPtr<InspectorCanvas> enabledInspectorCanvas(CanvasRenderingContext&);
     static RefPtr<InspectorCanvas> enabledInspectorCanvas(GPUDevice&);
-    static void recordAction(CanvasRenderingContext&, ProcessedArgument&& receiver, String&&, ProcessedArguments&&);
-    static void recordAction(GPUDevice&, ProcessedArgument&& receiver, String&&, ProcessedArguments&&);
+    static void recordAction(CanvasRenderingContext&, ProcessedArgument&& receiver, RefPtr<StringImpl>&&, ProcessedArguments&&);
+    static void recordAction(GPUDevice&, ProcessedArgument&& receiver, RefPtr<StringImpl>&&, ProcessedArguments&&);
 };
 
 } // namespace WebCore

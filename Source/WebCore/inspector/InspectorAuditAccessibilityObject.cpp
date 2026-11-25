@@ -62,7 +62,7 @@ static AccessibilityObject* accessibilityObjectForNode(Node& node)
     return nullptr;
 }
 
-ExceptionOr<Vector<Ref<Node>>> InspectorAuditAccessibilityObject::getElementsByComputedRole(Document& document, const String& role, Node* container)
+ExceptionOr<Vector<Ref<Node>>> InspectorAuditAccessibilityObject::getElementsByComputedRole(Document& document, StringImpl* role, Node* container)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
@@ -71,7 +71,7 @@ ExceptionOr<Vector<Ref<Node>>> InspectorAuditAccessibilityObject::getElementsByC
     auto* containerNode = dynamicDowncast<ContainerNode>(container);
     for (Ref element : descendantsOfType<Element>(containerNode ? *containerNode : document)) {
         if (RefPtr axObject = accessibilityObjectForNode(element)) {
-            if (axObject->computedRoleString() == role)
+            if (equal(axObject->computedRoleString(), role))
                 nodes.append(element);
         }
     }
@@ -134,36 +134,36 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
         if (axObject->supportsChecked()) {
             AccessibilityButtonState checkValue = axObject->checkboxOrRadioValue();
             if (checkValue == AccessibilityButtonState::On)
-                computedProperties.checked = "true"_s;
+                computedProperties.checked = "true"_si;
             else if (checkValue == AccessibilityButtonState::Mixed)
-                computedProperties.checked = "mixed"_s;
+                computedProperties.checked = "mixed"_si;
             else if (axObject->isChecked())
-                computedProperties.checked = "true"_s;
+                computedProperties.checked = "true"_si;
             else
-                computedProperties.checked = "false"_s;
+                computedProperties.checked = "false"_si;
         }
 
         switch (axObject->currentState()) {
         case AccessibilityCurrentState::False:
-            computedProperties.currentState = "false"_s;
+            computedProperties.currentState = "false"_si;
             break;
         case AccessibilityCurrentState::True:
-            computedProperties.currentState = "true"_s;
+            computedProperties.currentState = "true"_si;
             break;
         case AccessibilityCurrentState::Page:
-            computedProperties.currentState = "page"_s;
+            computedProperties.currentState = "page"_si;
             break;
         case AccessibilityCurrentState::Step:
-            computedProperties.currentState = "step"_s;
+            computedProperties.currentState = "step"_si;
             break;
         case AccessibilityCurrentState::Location:
-            computedProperties.currentState = "location"_s;
+            computedProperties.currentState = "location"_si;
             break;
         case AccessibilityCurrentState::Date:
-            computedProperties.currentState = "date"_s;
+            computedProperties.currentState = "date"_si;
             break;
         case AccessibilityCurrentState::Time:
-            computedProperties.currentState = "time"_s;
+            computedProperties.currentState = "time"_si;
             break;
         }
 
@@ -181,15 +181,15 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
         computedProperties.ignored = axObject->isIgnored();
         computedProperties.ignoredByDefault = axObject->isIgnoredByDefault();
 
-        String invalidValue = axObject->invalidStatusIncludingInferred();
-        if (invalidValue == "false"_s)
-            computedProperties.invalidStatus = "false"_s;
-        else if (invalidValue == "grammar"_s)
-            computedProperties.invalidStatus = "grammar"_s;
-        else if (invalidValue == "spelling"_s)
-            computedProperties.invalidStatus = "spelling"_s;
+        RefPtr<StringImpl> invalidValue = axObject->invalidStatusIncludingInferred();
+        if (equal(invalidValue, "false"_s))
+            computedProperties.invalidStatus = "false"_si;
+        else if (equal(invalidValue, "grammar"_s))
+            computedProperties.invalidStatus = "grammar"_si;
+        else if (equal(invalidValue, "spelling"_s))
+            computedProperties.invalidStatus = "spelling"_si;
         else
-            computedProperties.invalidStatus = "true"_s;
+            computedProperties.invalidStatus = "true"_si;
 
         computedProperties.isPopUpButton = axObject->isPopUpButton() || axObject->selfOrAncestorLinkHasPopup();
         computedProperties.label = axObject->computedLabel();
@@ -197,15 +197,15 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
         if (axObject->supportsLiveRegion()) {
             computedProperties.liveRegionAtomic = axObject->liveRegionAtomic();
 
-            String ariaRelevantAttrValue = axObject->liveRegionRelevant();
-            if (!ariaRelevantAttrValue.isEmpty()) {
-                Vector<String> liveRegionRelevant;
-                AtomString ariaRelevantAdditions = "additions"_s;
-                AtomString ariaRelevantRemovals = "removals"_s;
-                AtomString ariaRelevantText = "text"_s;
+            RefPtr<StringImpl> ariaRelevantAttrValue = axObject->liveRegionRelevant();
+            if (!isEmpty(ariaRelevantAttrValue)) {
+                Vector<RefPtr<StringImpl>> liveRegionRelevant;
+                RefPtr<AtomStringImpl> ariaRelevantAdditions = "additions"_atom;
+                RefPtr<AtomStringImpl> ariaRelevantRemovals = "removals"_atom;
+                RefPtr<AtomStringImpl> ariaRelevantText = "text"_atom;
 
-                const auto& values = SpaceSplitString(AtomString { ariaRelevantAttrValue }, SpaceSplitString::ShouldFoldCase::Yes);
-                if (values.contains("all"_s)) {
+                const auto& values = SpaceSplitString(AtomStringImpl::add(ariaRelevantAttrValue).get(), SpaceSplitString::ShouldFoldCase::Yes);
+                if (values.contains("all"_atom)) {
                     liveRegionRelevant.append(ariaRelevantAdditions);
                     liveRegionRelevant.append(ariaRelevantRemovals);
                     liveRegionRelevant.append(ariaRelevantText);

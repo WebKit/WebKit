@@ -35,7 +35,7 @@ namespace WebCore {
 template<> struct Converter<IDLScheduledAction> : DefaultConverter<IDLScheduledAction> {
     using Result = ConversionResult<IDLScheduledAction>;
 
-    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, const String& sink)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, StringImpl* sink)
     {
         auto& vm = lexicalGlobalObject.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);

@@ -50,7 +50,7 @@ WebPopupItem::WebPopupItem(Type type)
 {
 }
 
-WebPopupItem::WebPopupItem(Type type, const String& text, const String& language, WebCore::TextDirection textDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected)
+WebPopupItem::WebPopupItem(Type type, StringImpl* text, StringImpl* language, WebCore::TextDirection textDirection, bool hasTextDirectionOverride, StringImpl* toolTip, StringImpl* accessibilityText, bool isEnabled, bool isLabel, bool isSelected)
     : m_type(type)
     , m_text(text)
     , m_language(language)

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct CryptoAlgorithmRsaHashedImportParamsInit : CryptoAlgorithmParametersInit {
-    Variant<JSC::Strong<JSC::JSObject>, String> hash;
+    Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>> hash;
 };
 
 } // namespace WebCore

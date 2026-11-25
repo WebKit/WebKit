@@ -78,7 +78,7 @@ void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& link
         B3::Value* prevOrigin = nullptr;
         auto forEachInst = [&] (B3::Air::Inst& inst) {
             if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
-                if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
+                if (RefPtr<StringImpl> string = inst.origin->compilerConstructionSite(); string)
                     dataLogLn(string);
                 dataLog(b3Prefix);
                 inst.origin->deepDump(context.procedure.get(), WTF::dataFile());
@@ -137,7 +137,7 @@ void OSREntryPlan::work()
 
     dumpDisassembly(context, linkBuffer, signature, functionIndexSpace);
     omgEntrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), m_callee->nameWithHash().ascii().data()),
+        FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, ascii(signature.toString()).data(), ascii(m_callee->nameWithHash()).data()),
         WTF::move(context.wasmEntrypointByproducts));
 
     omgEntrypoint.calleeSaveRegisters = WTF::move(internalFunction->entrypoint.calleeSaveRegisters);

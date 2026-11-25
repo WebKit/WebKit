@@ -125,7 +125,7 @@ static WKMediaCaptureState microphoneCaptureState;
 
 namespace TestWebKitAPI {
 
-static String wkMediaCaptureStateString(_WKMediaCaptureStateDeprecated flags)
+static RefPtr<StringImpl> wkMediaCaptureStateString(_WKMediaCaptureStateDeprecated flags)
 {
     StringBuilder string;
     if (flags & _WKMediaCaptureStateDeprecatedActiveMicrophone)
@@ -158,7 +158,7 @@ bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprecated ex
             break;
     } while (true);
 
-    SAFE_WTFLOGALWAYS("Expected state %s, but after 10 seconds state is %s", wkMediaCaptureStateString(expectedState).utf8(), wkMediaCaptureStateString(state).utf8());
+    SAFE_WTFLOGALWAYS("Expected state %s, but after 10 seconds state is %s", utf8(wkMediaCaptureStateString(expectedState)), utf8(wkMediaCaptureStateString(state)));
     return false;
 }
 

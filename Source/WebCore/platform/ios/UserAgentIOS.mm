@@ -78,25 +78,25 @@ static StringView deviceNameForUserAgent()
         return "iPhone"_s;
     }
 
-    static NeverDestroyed<String> name = [] {
+    static NeverDestroyed<RefPtr<StringImpl>> name = [] {
         auto name = PAL::deviceName();
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
-        size_t location = name.find(" Simulator"_s);
+        size_t location = find(name, " Simulator"_s);
         if (location != notFound)
-            return name.left(location);
+            return left(name, location);
 #endif
         return name;
     }();
     return name.get();
 }
 
-String standardUserAgentWithApplicationName(const String& applicationName, const String& userAgentOSVersion, UserAgentType type)
+RefPtr<StringImpl> standardUserAgentWithApplicationName(StringImpl* applicationName, StringImpl* userAgentOSVersion, UserAgentType type)
 {
-    String overrideUserAgent = Quirks::standardUserAgentWithApplicationNameIncludingCompatOverrides(applicationName, userAgentOSVersion, type);
-    if (overrideUserAgent.length())
+    RefPtr<StringImpl> overrideUserAgent = Quirks::standardUserAgentWithApplicationNameIncludingCompatOverrides(applicationName, userAgentOSVersion, type);
+    if (length(overrideUserAgent))
         return overrideUserAgent;
 
-    auto separator = applicationName.isEmpty() ? ""_s : " "_s;
+    auto separator = isEmpty(applicationName) ? ""_s : " "_s;
 
     if (type == UserAgentType::Desktop)
         return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, separator, applicationName);
@@ -108,11 +108,11 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
                 NSLog(@"Reading an override UA from the NSUserDefault [com.apple.WebFoundation UserAgent]. This is incompatible with the modern need to compose the UA and clients should use the API to set the application name or UA instead.");
                 hasLoggedDeprecationWarning = YES;
             }
-            return override.get();
+            return StringImpl::create(override.get());
         }
     }
 
-    auto osVersion = userAgentOSVersion.isEmpty() ? systemMarketingVersionForUserAgentString() : userAgentOSVersion;
+    auto osVersion = isEmpty(userAgentOSVersion) ? systemMarketingVersionForUserAgentString() : RefPtr<StringImpl> { userAgentOSVersion };
     return makeString("Mozilla/5.0 ("_s, deviceNameForUserAgent(), "; CPU "_s, osNameForUserAgent(), ' ', osVersion, " like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, separator, applicationName);
 }
 

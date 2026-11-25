@@ -297,7 +297,7 @@ bool validateDictionary(NSDictionary<NSString *, id> *dictionary, NSString *sour
         errorString = [[NSString alloc] initWithFormat:@"it is missing required keys: %@", formatList(remainingRequiredKeys.allObjects)];
 
     if (errorString && outExceptionString)
-        *outExceptionString = toErrorString(nullString(), sourceKey, errorString).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sourceKey).get(), StringImpl::create(errorString).get())).autorelease();
 
     return !errorString;
 }
@@ -310,21 +310,21 @@ bool validateObject(NSObject *object, NSString *sourceKey, id expectedValueType,
     validate(nil, object, expectedValueType, &errorString);
 
     if (errorString && outExceptionString)
-        *outExceptionString = toErrorString(nullString(), sourceKey, errorString).createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(sourceKey).get(), StringImpl::create(errorString).get())).autorelease();
 
     return !errorString;
 }
 
 static JSObjectRef toJSRejectedPromise(JSContextRef context, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString)
 {
-    auto *error = toJSValue(context, toJSError(context, callingAPIName, sourceKey, underlyingErrorString));
+    auto *error = toJSValue(context, toJSError(context, StringImpl::create(callingAPIName).get(), StringImpl::create(sourceKey).get(), StringImpl::create(underlyingErrorString).get()));
     auto *promise = [JSValue valueWithNewPromiseRejectedWithReason:error inContext:toJSContext(context)];
     return JSValueToObject(context, promise.JSValueRef, nullptr);
 }
 
-JSObjectRef toJSRejectedPromise(JSContextRef context, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
+JSObjectRef toJSRejectedPromise(JSContextRef context, StringImpl* callingAPIName, StringImpl* sourceKey, StringImpl* underlyingErrorString)
 {
-    return toJSRejectedPromise(context, callingAPIName.createNSString().get(), sourceKey.createNSString().get(), underlyingErrorString.createNSString().get());
+    return toJSRejectedPromise(context, createNSString(callingAPIName).get(), createNSString(sourceKey).get(), createNSString(underlyingErrorString).get());
 }
 
 NSString *toWebAPI(NSLocale *locale)

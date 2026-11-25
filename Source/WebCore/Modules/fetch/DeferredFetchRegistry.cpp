@@ -228,7 +228,7 @@ RefPtr<FetchLaterResult> DeferredFetchRegistry::addDeferredFetch(ResourceRequest
         newRecord->setAbortAlgorithmIdentifier(WTF::move(protectedSignal), algorithmIdentifier);
     }
 
-    RELEASE_LOG(Loading, "[fetchLater] REGISTER id=%llu activateAfter=%d url=%" SENSITIVE_LOG_STRING, static_cast<unsigned long long>(identifier.toUInt64()), activateAfter ? static_cast<int>(activateAfter->milliseconds()) : -1, newRecord->request().url().string().utf8());
+    RELEASE_LOG(Loading, "[fetchLater] REGISTER id=%llu activateAfter=%d url=%" SENSITIVE_LOG_STRING, static_cast<unsigned long long>(identifier.toUInt64()), activateAfter ? static_cast<int>(activateAfter->milliseconds()) : -1, utf8(newRecord->request().url().string()));
     if (activateAfter) {
         WeakPtr<Document, WeakPtrImplWithEventTargetData> weakDocument { m_document };
         auto handle = protect(Ref { m_document }->eventLoop())->scheduleTask(*activateAfter, TaskSource::Networking, [weakDocument, identifier] {

@@ -35,14 +35,14 @@ class CSSContainerRule final : public CSSConditionRule {
 public:
     static Ref<CSSContainerRule> create(StyleRuleContainer&, CSSStyleSheet* parent);
 
-    String cssText() const final;
-    String conditionText() const final;
-    String containerName() const;
-    String containerQuery() const;
+    RefPtr<StringImpl> cssText() const final;
+    RefPtr<StringImpl> conditionText() const final;
+    RefPtr<StringImpl> containerName() const;
+    RefPtr<StringImpl> containerQuery() const;
 
     struct Condition {
-        String name;
-        String query;
+        RefPtr<StringImpl> name;
+        RefPtr<StringImpl> query;
     };
     Vector<Condition> conditions() const;
 

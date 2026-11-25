@@ -45,7 +45,7 @@ AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::createOutput(AVAudioSes
 }
 
 AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescription *device, AVAudioSessionPortDescription *defaultDevice, CaptureDevice::DeviceType deviceType)
-    : CaptureDevice(device.UID, deviceType, device.portName)
+    : CaptureDevice(StringImpl::create(device.UID).get(), deviceType, StringImpl::create(device.portName).get())
     , m_description(device)
 {
     setEnabled(true);
@@ -70,7 +70,7 @@ bool AVAudioSessionCaptureDevice::isHeadset() const
     return [m_description portType] == (type() == CaptureDevice::DeviceType::Microphone ? AVAudioSessionPortHeadsetMic : AVAudioSessionPortHeadphones);
 }
 
-AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId, bool isEnabled, bool isDefault, bool isMock, RetainPtr<AVAudioSessionPortDescription>&& description)
+AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(StringImpl* persistentId, DeviceType type, StringImpl* label, StringImpl* groupId, bool isEnabled, bool isDefault, bool isMock, RetainPtr<AVAudioSessionPortDescription>&& description)
     : CaptureDevice(persistentId, type, label, groupId, isEnabled, isDefault, isMock)
     , m_description(WTF::move(description))
 {
@@ -79,10 +79,10 @@ AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(const String& persisten
 AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::isolatedCopy() &&
 {
     return {
-        WTF::move(m_persistentId).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(m_persistentId)),
         m_type,
-        WTF::move(m_label).isolatedCopy(),
-        WTF::move(m_groupId).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(m_label)),
+        WTF::isolatedCopy(WTF::move(m_groupId)),
         m_enabled,
         m_default,
         m_isMockDevice,

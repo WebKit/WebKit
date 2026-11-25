@@ -58,8 +58,8 @@ struct Quotes {
     bool isNone() const { return WTF::holdsAlternative<CSS::Keyword::None>(m_value); }
     bool isQuotes() const { return WTF::holdsAlternative<Data>(m_value); }
 
-    const WTF::String& openQuote(unsigned index) const;
-    const WTF::String& closeQuote(unsigned index) const;
+    const RefPtr<StringImpl>& openQuote(unsigned index) const;
+    const RefPtr<StringImpl>& closeQuote(unsigned index) const;
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {

@@ -105,7 +105,7 @@ public:
     ExceptionOr<void> abort();
     ExceptionOr<void> remove(double start, double end);
     ExceptionOr<void> remove(const MediaTime&, const MediaTime&);
-    ExceptionOr<void> changeType(const String&);
+    ExceptionOr<void> changeType(StringImpl*);
 
     const PlatformTimeRanges& bufferedInternal() const LIFETIME_BOUND { return m_buffered->ranges(); }
 
@@ -191,7 +191,7 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::SourceBuffer; }
 
     NODELETE bool isRemoved() const;
-    void scheduleEvent(const AtomString& eventName);
+    void scheduleEvent(AtomStringImpl* eventName);
 
     ExceptionOr<void> appendBufferInternal(std::span<const uint8_t>);
     void sourceBufferPrivateAppendComplete(MediaPromise::Result&&);
@@ -212,7 +212,7 @@ private:
     void rangeRemoval(const MediaTime&, const MediaTime&);
 
     friend class Internals;
-    using SamplesPromise = NativePromise<Vector<String>, PlatformMediaError>;
+    using SamplesPromise = NativePromise<Vector<RefPtr<StringImpl>>, PlatformMediaError>;
     WEBCORE_EXPORT Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID);
     WEBCORE_EXPORT Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID);
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID);
@@ -236,9 +236,9 @@ private:
     const RefPtr<AudioTrackList> m_audioTracks;
     const RefPtr<TextTrackList> m_textTracks;
 
-    Vector<AtomString> m_videoCodecs;
-    Vector<AtomString> m_audioCodecs;
-    Vector<AtomString> m_textCodecs;
+    Vector<RefPtr<AtomStringImpl>> m_videoCodecs;
+    Vector<RefPtr<AtomStringImpl>> m_audioCodecs;
+    Vector<RefPtr<AtomStringImpl>> m_textCodecs;
 
     MediaTime m_appendWindowStart;
     MediaTime m_appendWindowEnd;

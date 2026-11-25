@@ -295,7 +295,7 @@ RouteSharingPolicy AudioSession::routeSharingPolicy() const
     return RouteSharingPolicy::Default;
 }
 
-String AudioSession::routingContextUID() const
+RefPtr<StringImpl> AudioSession::routingContextUID() const
 {
     return emptyString();
 }
@@ -333,9 +333,9 @@ WTFLogChannel& AudioSession::logChannel() const
     return LogMedia;
 }
 
-String convertEnumerationToString(RouteSharingPolicy enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(RouteSharingPolicy enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
         MAKE_STATIC_STRING_IMPL("Default"),
         MAKE_STATIC_STRING_IMPL("LongFormAudio"),
         MAKE_STATIC_STRING_IMPL("Independent"),
@@ -349,9 +349,9 @@ String convertEnumerationToString(RouteSharingPolicy enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(AudioSession::CategoryType enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(AudioSession::CategoryType enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 7> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 7> values {
         MAKE_STATIC_STRING_IMPL("None"),
         MAKE_STATIC_STRING_IMPL("AmbientSound"),
         MAKE_STATIC_STRING_IMPL("SoloAmbientSound"),
@@ -371,9 +371,9 @@ String convertEnumerationToString(AudioSession::CategoryType enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(AudioSession::Mode enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(AudioSession::Mode enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values {
         MAKE_STATIC_STRING_IMPL("Default"),
         MAKE_STATIC_STRING_IMPL("VideoChat"),
         MAKE_STATIC_STRING_IMPL("MoviePlayback"),
@@ -385,9 +385,9 @@ String convertEnumerationToString(AudioSession::Mode enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingArbitrationError enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingArbitrationError enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values {
         MAKE_STATIC_STRING_IMPL("None"),
         MAKE_STATIC_STRING_IMPL("Failed"),
         MAKE_STATIC_STRING_IMPL("Cancelled"),
@@ -399,9 +399,9 @@ String convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingA
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultRouteChanged enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultRouteChanged enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
         MAKE_STATIC_STRING_IMPL("No"),
         MAKE_STATIC_STRING_IMPL("Yes"),
     };
@@ -411,9 +411,9 @@ String convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultR
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(AudioSession::SoundStageSize size)
+RefPtr<StringImpl> convertEnumerationToString(AudioSession::SoundStageSize size)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
         MAKE_STATIC_STRING_IMPL("Automatic"),
         MAKE_STATIC_STRING_IMPL("Small"),
         MAKE_STATIC_STRING_IMPL("Medium"),

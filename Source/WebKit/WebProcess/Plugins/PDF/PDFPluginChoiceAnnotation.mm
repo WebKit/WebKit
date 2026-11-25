@@ -62,7 +62,7 @@ void PDFPluginChoiceAnnotation::updateGeometry()
 
 void PDFPluginChoiceAnnotation::commit()
 {
-    protect(annotation()).get().widgetStringValue = downcast<HTMLSelectElement>(protect(element()))->value().createNSString().get();
+    protect(annotation()).get().widgetStringValue = createNSString(downcast<HTMLSelectElement>(protect(element()))->value()).get();
 
     PDFPluginAnnotation::commit();
 }
@@ -76,18 +76,18 @@ Ref<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
 
     // FIXME: Match font weight and style as well?
     element->setInlineStyleProperty(CSSPropertyID::Color, serializationForHTML(colorFromCocoaColor([choiceAnnotation fontColor])));
-    element->setInlineStyleProperty(CSSPropertyID::FontFamily, [[choiceAnnotation font] familyName]);
+    element->setInlineStyleProperty(CSSPropertyID::FontFamily, StringImpl::create([[choiceAnnotation font] familyName]).get());
 
     RetainPtr<NSArray> choices = [choiceAnnotation choices];
     RetainPtr<NSString> selectedChoice = [choiceAnnotation widgetStringValue];
 
     for (NSString *choice in choices.get()) {
         auto choiceOption = document->createElement(optionTag, false);
-        choiceOption->setAttributeWithoutSynchronization(valueAttr, choice);
-        choiceOption->setTextContent(choice);
+        choiceOption->setAttributeWithoutSynchronization(valueAttr, AtomStringImpl::add((__bridge CFStringRef)choice).get());
+        choiceOption->setTextContent(StringImpl::create(choice));
 
         if ([choice isEqualToString:selectedChoice])
-            choiceOption->setAttributeWithoutSynchronization(selectedAttr, "selected"_s);
+            choiceOption->setAttributeWithoutSynchronization(selectedAttr, "selected"_atom);
 
         element->appendChild(choiceOption);
     }

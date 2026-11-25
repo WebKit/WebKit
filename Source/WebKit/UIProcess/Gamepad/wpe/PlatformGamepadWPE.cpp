@@ -46,7 +46,7 @@ PlatformGamepadWPE::PlatformGamepadWPE(WPEGamepad* gamepad, unsigned index)
 {
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
 
-    m_id = String::fromUTF8(wpe_gamepad_get_name(m_gamepad.get()));
+    m_id = StringImpl::fromUTF8(wpe_gamepad_get_name(m_gamepad.get()));
     m_mapping = "standard"_s;
 
     m_buttonValues.resize(WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_CENTER + 1);

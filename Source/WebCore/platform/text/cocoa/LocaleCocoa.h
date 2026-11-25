@@ -56,27 +56,27 @@ class LocaleCocoa final : public Locale {
     WTF_MAKE_TZONE_ALLOCATED(LocaleCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocaleCocoa);
 public:
-    explicit LocaleCocoa(const AtomString&);
+    explicit LocaleCocoa(AtomStringImpl*);
     ~LocaleCocoa();
 
     Locale::WritingDirection defaultWritingDirection() const final;
 
-    String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) final;
+    RefPtr<StringImpl> formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) final;
 
-    String dateFormat() final;
-    String monthFormat() final;
-    String shortMonthFormat() final;
-    String timeFormat() final;
-    String shortTimeFormat() final;
-    String dateTimeFormatWithSeconds() final;
-    String dateTimeFormatWithoutSeconds() final;
-    const Vector<String>& monthLabels() final;
-    const Vector<String>& shortMonthLabels() final;
-    const Vector<String>& standAloneMonthLabels() final;
-    const Vector<String>& shortStandAloneMonthLabels() final;
-    const Vector<String>& timeAMPMLabels() final;
+    RefPtr<StringImpl> dateFormat() final;
+    RefPtr<StringImpl> monthFormat() final;
+    RefPtr<StringImpl> shortMonthFormat() final;
+    RefPtr<StringImpl> timeFormat() final;
+    RefPtr<StringImpl> shortTimeFormat() final;
+    RefPtr<StringImpl> dateTimeFormatWithSeconds() final;
+    RefPtr<StringImpl> dateTimeFormatWithoutSeconds() final;
+    const Vector<RefPtr<StringImpl>>& monthLabels() final;
+    const Vector<RefPtr<StringImpl>>& shortMonthLabels() final;
+    const Vector<RefPtr<StringImpl>>& standAloneMonthLabels() final;
+    const Vector<RefPtr<StringImpl>>& shortStandAloneMonthLabels() final;
+    const Vector<RefPtr<StringImpl>>& timeAMPMLabels() final;
 
-    static RetainPtr<CFStringRef> canonicalLanguageIdentifierFromString(const AtomString&);
+    static RetainPtr<CFStringRef> canonicalLanguageIdentifierFromString(AtomStringImpl*);
     static void releaseMemory();
 
 private:
@@ -85,23 +85,23 @@ private:
 
     RetainPtr<NSLocale> m_locale;
     const RetainPtr<NSCalendar> m_gregorianCalendar;
-    Vector<String> m_monthLabels;
+    Vector<RefPtr<StringImpl>> m_monthLabels;
     RetainPtr<NSDateFormatter> timeFormatter();
     RetainPtr<NSDateFormatter> shortTimeFormatter();
     RetainPtr<NSDateFormatter> dateTimeFormatterWithSeconds();
     RetainPtr<NSDateFormatter> dateTimeFormatterWithoutSeconds();
 
-    String m_dateFormat;
-    String m_monthFormat;
-    String m_shortMonthFormat;
-    String m_timeFormatWithSeconds;
-    String m_timeFormatWithoutSeconds;
-    String m_dateTimeFormatWithSeconds;
-    String m_dateTimeFormatWithoutSeconds;
-    Vector<String> m_shortMonthLabels;
-    Vector<String> m_standAloneMonthLabels;
-    Vector<String> m_shortStandAloneMonthLabels;
-    Vector<String> m_timeAMPMLabels;
+    RefPtr<StringImpl> m_dateFormat;
+    RefPtr<StringImpl> m_monthFormat;
+    RefPtr<StringImpl> m_shortMonthFormat;
+    RefPtr<StringImpl> m_timeFormatWithSeconds;
+    RefPtr<StringImpl> m_timeFormatWithoutSeconds;
+    RefPtr<StringImpl> m_dateTimeFormatWithSeconds;
+    RefPtr<StringImpl> m_dateTimeFormatWithoutSeconds;
+    Vector<RefPtr<StringImpl>> m_shortMonthLabels;
+    Vector<RefPtr<StringImpl>> m_standAloneMonthLabels;
+    Vector<RefPtr<StringImpl>> m_shortStandAloneMonthLabels;
+    Vector<RefPtr<StringImpl>> m_timeAMPMLabels;
     bool m_didInitializeNumberData;
 };
 

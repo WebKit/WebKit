@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DeprecationReportBody);
 
-DeprecationReportBody::DeprecationReportBody(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber)
+DeprecationReportBody::DeprecationReportBody(RefPtr<StringImpl>&& id, WallTime anticipatedRemoval, RefPtr<StringImpl>&& message, RefPtr<StringImpl>&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber)
     : m_id(WTF::move(id))
     , m_anticipatedRemoval(anticipatedRemoval)
     , m_message(WTF::move(message))
@@ -46,14 +46,14 @@ DeprecationReportBody::DeprecationReportBody(String&& id, WallTime anticipatedRe
 {
 }
 
-Ref<DeprecationReportBody> DeprecationReportBody::create(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber)
+Ref<DeprecationReportBody> DeprecationReportBody::create(RefPtr<StringImpl>&& id, WallTime anticipatedRemoval, RefPtr<StringImpl>&& message, RefPtr<StringImpl>&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber)
 {
     return adoptRef(*new DeprecationReportBody(WTF::move(id), anticipatedRemoval, WTF::move(message), WTF::move(sourceFile), lineNumber, columnNumber));
 }
 
-const String& DeprecationReportBody::type() const
+const RefPtr<StringImpl>& DeprecationReportBody::type() const
 {
-    static NeverDestroyed<const String> reportType(MAKE_STATIC_STRING_IMPL("deprecation"));
+    static NeverDestroyed<const RefPtr<StringImpl>> reportType(MAKE_STATIC_STRING_IMPL("deprecation"));
     return reportType;
 }
 
@@ -62,21 +62,21 @@ Ref<FormData> DeprecationReportBody::createReportFormDataForViolation() const
     // https://wicg.github.io/deprecation-reporting/#deprecation-report
     // Suitable for network endpoints.
     auto reportBody = JSON::Object::create();
-    reportBody->setString("id"_s, m_id);
-    reportBody->setString("anticipatedRemoval"_s, DateComponents::fromMillisecondsSinceEpochForDate(m_anticipatedRemoval.secondsSinceEpoch().milliseconds())->toString());
-    reportBody->setString("message"_s, m_message);
-    if (!m_sourceFile.isNull()) {
-        reportBody->setString("sourceFile"_s, m_sourceFile);
-        reportBody->setInteger("lineNumber"_s, m_lineNumber.value_or(0));
-        reportBody->setInteger("columnNumber"_s, m_columnNumber.value_or(0));
+    reportBody->setString("id"_si, m_id);
+    reportBody->setString("anticipatedRemoval"_si, DateComponents::fromMillisecondsSinceEpochForDate(m_anticipatedRemoval.secondsSinceEpoch().milliseconds())->toString());
+    reportBody->setString("message"_si, m_message);
+    if (m_sourceFile) {
+        reportBody->setString("sourceFile"_si, m_sourceFile);
+        reportBody->setInteger("lineNumber"_si, m_lineNumber.value_or(0));
+        reportBody->setInteger("columnNumber"_si, m_columnNumber.value_or(0));
     }
 
     auto reportObject = JSON::Object::create();
-    reportObject->setString("type"_s, type());
-    reportObject->setString("url"_s, ""_s);
-    reportObject->setObject("body"_s, WTF::move(reportBody));
+    reportObject->setString("type"_si, type());
+    reportObject->setString("url"_si, ""_si);
+    reportObject->setObject("body"_si, WTF::move(reportBody));
 
-    return FormData::create(reportObject->toJSONString().utf8().span());
+    return FormData::create(utf8(reportObject->toJSONString()).span());
 }
 
 } // namespace WebCore

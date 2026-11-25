@@ -83,7 +83,7 @@ void GameControllerGamepad::setupElements()
     bool isExtended = m_gcController.get().extendedGamepad != nil;
     m_buttonValues.resize((homeButton || isExtended) ? numberOfStandardGamepadButtonsWithHomeButton : numberOfStandardGamepadButtonsWithoutHomeButton);
 
-    m_id = makeString(String(m_gcController.get().vendorName), m_gcController.get().extendedGamepad ? " Extended Gamepad"_s : " Gamepad"_s);
+    m_id = makeString(StringImpl::create(m_gcController.get().vendorName), m_gcController.get().extendedGamepad ? " Extended Gamepad"_s : " Gamepad"_s);
 
 #if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
     if (RetainPtr haptics = [m_gcController haptics]) {

@@ -31,36 +31,36 @@
 
 namespace API {
 
-const WTF::String& Error::webKitErrorDomain()
+const RefPtr<StringImpl>& Error::webKitErrorDomain()
 {
-    static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitErrorDomain"));
+    static NeverDestroyed<RefPtr<StringImpl>> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitErrorDomain"));
     return webKitErrorDomainString;
 }
 
-const WTF::String& Error::webKitNetworkErrorDomain()
+const RefPtr<StringImpl>& Error::webKitNetworkErrorDomain()
 {
     static StaticStringImpl impl(WebCore::errorDomainWebKitNetwork);
-    static NeverDestroyed<WTF::String> webKitNetworkErrorDomainString(&static_cast<StringImpl&>(impl));
+    static NeverDestroyed<RefPtr<StringImpl>> webKitNetworkErrorDomainString(&static_cast<StringImpl&>(impl));
     return webKitNetworkErrorDomainString;
 }
 
-const WTF::String& Error::webKitPolicyErrorDomain()
+const RefPtr<StringImpl>& Error::webKitPolicyErrorDomain()
 {
 #if USE(GLIB)
-    static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitPolicyError"));
+    static NeverDestroyed<RefPtr<StringImpl>> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitPolicyError"));
     return webKitErrorDomainString;
 #else
     return webKitErrorDomain();
 #endif
 }
 
-const WTF::String& Error::webKitPluginErrorDomain()
+const RefPtr<StringImpl>& Error::webKitPluginErrorDomain()
 {
 #if USE(GLIB)
 #if ENABLE(2022_GLIB_API)
-    static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitMediaError"));
+    static NeverDestroyed<RefPtr<StringImpl>> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitMediaError"));
 #else
-    static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitPluginError"));
+    static NeverDestroyed<RefPtr<StringImpl>> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitPluginError"));
 #endif
     return webKitErrorDomainString;
 #else
@@ -69,17 +69,17 @@ const WTF::String& Error::webKitPluginErrorDomain()
 }
 
 #if USE(SOUP)
-const WTF::String& Error::webKitDownloadErrorDomain()
+const RefPtr<StringImpl>& Error::webKitDownloadErrorDomain()
 {
-    static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitDownloadError"));
+    static NeverDestroyed<RefPtr<StringImpl>> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitDownloadError"));
     return webKitErrorDomainString;
 }
 #endif
 
 #if PLATFORM(GTK)
-const WTF::String& Error::webKitPrintErrorDomain()
+const RefPtr<StringImpl>& Error::webKitPrintErrorDomain()
 {
-    static NeverDestroyed<WTF::String> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitPrintError"));
+    static NeverDestroyed<RefPtr<StringImpl>> webKitErrorDomainString(MAKE_STATIC_STRING_IMPL("WebKitPrintError"));
     return webKitErrorDomainString;
 }
 #endif

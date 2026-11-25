@@ -48,8 +48,8 @@ class HTMLAttachmentElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAttachmentElement);
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
-    WEBCORE_EXPORT static String getAttachmentIdentifier(HTMLElement&);
-    static URL archiveResourceURL(const String&);
+    WEBCORE_EXPORT static RefPtr<StringImpl> getAttachmentIdentifier(HTMLElement&);
+    static URL archiveResourceURL(StringImpl*);
 
     WEBCORE_EXPORT URL blobURL() const;
     NODELETE WEBCORE_EXPORT File* file() const;
@@ -57,30 +57,30 @@ public:
     enum class UpdateDisplayAttributes : bool { No, Yes };
     void setFile(RefPtr<File>&&, UpdateDisplayAttributes = UpdateDisplayAttributes::No);
 
-    const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
-    void setUniqueIdentifier(const String&);
+    const RefPtr<StringImpl>& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
+    void setUniqueIdentifier(StringImpl*);
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
-    WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, const AtomString& newContentType, const AtomString& newFilename);
-    WEBCORE_EXPORT void updateAssociatedElementWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& data);
+    WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, AtomStringImpl* newContentType, AtomStringImpl* newFilename);
+    WEBCORE_EXPORT void updateAssociatedElementWithData(StringImpl* contentType, Ref<FragmentedSharedBuffer>&& data);
     WEBCORE_EXPORT void updateIconForNarrowLayout(const RefPtr<NativeImage>& icon, const WebCore::FloatSize&);
     WEBCORE_EXPORT void updateIconForWideLayout(Vector<uint8_t>&&);
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
 
-    String ensureUniqueIdentifier();
+    RefPtr<StringImpl> ensureUniqueIdentifier();
     NODELETE AttachmentAssociatedElement* associatedElement() const;
     AttachmentAssociatedElementType associatedElementType() const;
 
-    NODELETE WEBCORE_EXPORT String attachmentTitle() const;
-    NODELETE const AtomString& attachmentSubtitle() const;
-    NODELETE const AtomString& attachmentActionForDisplay() const;
-    String attachmentTitleForDisplay() const;
-    NODELETE const AtomString& attachmentSubtitleForDisplay() const;
-    NODELETE WEBCORE_EXPORT String attachmentType() const;
-    NODELETE String attachmentPath() const;
+    NODELETE WEBCORE_EXPORT RefPtr<StringImpl> attachmentTitle() const;
+    NODELETE const RefPtr<AtomStringImpl>& attachmentSubtitle() const;
+    NODELETE const RefPtr<AtomStringImpl>& attachmentActionForDisplay() const;
+    RefPtr<StringImpl> attachmentTitleForDisplay() const;
+    NODELETE const RefPtr<AtomStringImpl>& attachmentSubtitleForDisplay() const;
+    NODELETE WEBCORE_EXPORT RefPtr<StringImpl> attachmentType() const;
+    NODELETE RefPtr<StringImpl> attachmentPath() const;
     RefPtr<NativeImage> icon() const { return m_icon; }
     void requestIconIfNeededWithSize(const FloatSize&);
     void requestWideLayoutIconIfNeeded();
@@ -97,8 +97,8 @@ public:
     bool usesInlineProgress() const { return m_implementation == Implementation::WideInlineProgressLayout; }
     HTMLElement* wideLayoutShadowContainer() const { return m_containerElement.get(); }
     NODELETE HTMLElement* wideLayoutImageElement() const;
-    WEBCORE_EXPORT static String shadowUserAgentStyleSheetText();
-    static String inlineProgressShadowUserAgentStyleSheetText();
+    WEBCORE_EXPORT static RefPtr<StringImpl> shadowUserAgentStyleSheetText();
+    static RefPtr<StringImpl> inlineProgressShadowUserAgentStyleSheetText();
 
     enum class HighlightState : uint8_t {
         None, // The object is not selected.
@@ -117,7 +117,7 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
     void ensureWideLayoutShadowTree(ShadowRoot&);
-    void updateProgress(const AtomString&);
+    void updateProgress(AtomStringImpl*);
     void updateSaveButton(bool);
     void updateImage();
 
@@ -133,7 +133,7 @@ private:
 #endif
     }
     bool canContainRangeEndPoint() const final { return false; }
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
 #if ENABLE(SERVICE_CONTROLS)
     bool childShouldCreateRenderer(const Node&) const final;
@@ -143,7 +143,7 @@ private:
     enum class InlineProgressState : uint8_t { Idle, Downloading, Complete };
 
     RefPtr<File> m_file;
-    String m_uniqueIdentifier;
+    RefPtr<StringImpl> m_uniqueIdentifier;
     RefPtr<NativeImage> m_icon;
     FloatSize m_iconSize;
 

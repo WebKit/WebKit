@@ -45,21 +45,21 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemFileHandle);
 
-Ref<FileSystemFileHandle> FileSystemFileHandle::create(ScriptExecutionContext& context, String&& name, FileSystemHandleGlobalIdentifier globalIdentifier, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
+Ref<FileSystemFileHandle> FileSystemFileHandle::create(ScriptExecutionContext& context, RefPtr<StringImpl>&& name, FileSystemHandleGlobalIdentifier globalIdentifier, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
 {
     Ref result = adoptRef(*new FileSystemFileHandle(context, WTF::move(name), globalIdentifier, identifier, WTF::move(connection)));
     result->suspendIfNeeded();
     return result;
 }
 
-Ref<FileSystemFileHandle> FileSystemFileHandle::create(ScriptExecutionContext& context, String&& name, FileSystemHandleGlobalIdentifier globalIdentifier)
+Ref<FileSystemFileHandle> FileSystemFileHandle::create(ScriptExecutionContext& context, RefPtr<StringImpl>&& name, FileSystemHandleGlobalIdentifier globalIdentifier)
 {
     Ref result = adoptRef(*new FileSystemFileHandle(context, WTF::move(name), globalIdentifier, { }, nullptr));
     result->suspendIfNeeded();
     return result;
 }
 
-FileSystemFileHandle::FileSystemFileHandle(ScriptExecutionContext& context, String&& name, FileSystemHandleGlobalIdentifier globalIdentifier, Markable<FileSystemHandleIdentifier> identifier, RefPtr<FileSystemStorageConnection>&& connection)
+FileSystemFileHandle::FileSystemFileHandle(ScriptExecutionContext& context, RefPtr<StringImpl>&& name, FileSystemHandleGlobalIdentifier globalIdentifier, Markable<FileSystemHandleIdentifier> identifier, RefPtr<FileSystemStorageConnection>&& connection)
     : FileSystemHandle(context, FileSystemHandle::Kind::File, WTF::move(name), globalIdentifier, identifier, WTF::move(connection))
 {
 }
@@ -67,21 +67,21 @@ FileSystemFileHandle::FileSystemFileHandle(ScriptExecutionContext& context, Stri
 void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_si });
 
     ensureIdentifier([protectedThis = Ref { *this }, promise = WTF::move(promise)](bool success) mutable {
         if (!success)
-            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_s });
+            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_si });
 
-        protect(protectedThis->connection())->getFile(protectedThis->identifier(), [protectedThis, promise = WTF::move(promise)](ExceptionOr<String>&& result) mutable {
+        protect(protectedThis->connection())->getFile(protectedThis->identifier(), [protectedThis, promise = WTF::move(promise)](ExceptionOr<RefPtr<StringImpl>>&& result) mutable {
             if (result.hasException())
                 return promise.reject(result.releaseException());
 
             RefPtr context = protectedThis->scriptExecutionContext();
             if (!context)
-                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
+                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_si });
 
-            promise.resolve(File::create(context.get(), result.returnValue(), { }, protectedThis->name()));
+            promise.resolve(File::create(context.get(), result.returnValue(), nullptr, protectedThis->name()));
         });
     });
 }
@@ -89,11 +89,11 @@ void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& prom
 void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_si });
 
     ensureIdentifier([protectedThis = Ref { *this }, promise = WTF::move(promise)](bool success) mutable {
         if (!success)
-            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_s });
+            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_si });
 
         protect(protectedThis->connection())->createSyncAccessHandle(protectedThis->identifier(), [protectedThis, promise = WTF::move(promise)](auto result) mutable {
             if (result.hasException())
@@ -101,12 +101,12 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
 
             auto info = result.releaseReturnValue();
             if (!info.file)
-                return promise.reject(Exception { ExceptionCode::UnknownError, "Invalid platform file handle"_s });
+                return promise.reject(Exception { ExceptionCode::UnknownError, "Invalid platform file handle"_si });
 
             RefPtr context = protectedThis->scriptExecutionContext();
             if (!context) {
                 protectedThis->closeSyncAccessHandle(info.identifier);
-                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
+                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_si });
             }
 
             promise.resolve(FileSystemSyncAccessHandle::create(*context, protectedThis.get(), info.identifier, WTF::move(info.file), info.capacity));
@@ -150,11 +150,11 @@ void FileSystemFileHandle::unregisterSyncAccessHandle(FileSystemSyncAccessHandle
 void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, DOMPromiseDeferred<IDLInterface<FileSystemWritableFileStream>>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_si });
 
     ensureIdentifier([this, protectedThis = Ref { *this }, options, promise = WTF::move(promise)](bool success) mutable {
         if (!success)
-            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_s });
+            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_si });
 
         protect(connection())->createWritable(scriptExecutionContext()->identifier(), identifier(), options.keepExistingData, [this, protectedThis = WTF::move(protectedThis), promise = WTF::move(promise)](auto result) mutable {
             if (result.hasException())
@@ -164,13 +164,13 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
             RefPtr context = protectedThis->scriptExecutionContext();
             if (!context) {
                 closeWritable(streamIdentifier, FileSystemWriteCloseReason::Aborted);
-                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
+                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_si });
             }
 
             auto* globalObject = downcast<JSDOMGlobalObject>(context->globalObject());
             if (!globalObject) {
                 closeWritable(streamIdentifier, FileSystemWriteCloseReason::Aborted);
-                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Global object is invalid"_s });
+                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Global object is invalid"_si });
             }
 
             auto sink = FileSystemWritableFileStreamSink::create(streamIdentifier, *this);
@@ -198,7 +198,7 @@ void FileSystemFileHandle::closeWritable(FileSystemWritableFileStreamIdentifier 
     Ref connection = this->connection();
     connection->unregisterFileSystemWritable(streamIdentifier);
     if (isClosed())
-        return completionHandler(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
+        return completionHandler(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_si });
 
     connection->closeWritable(identifier(), streamIdentifier, reason, WTF::move(completionHandler));
 }
@@ -206,7 +206,7 @@ void FileSystemFileHandle::closeWritable(FileSystemWritableFileStreamIdentifier 
 void FileSystemFileHandle::executeCommandForWritable(FileSystemWritableFileStreamIdentifier streamIdentifier, FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, DOMPromiseDeferred<void>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_si });
 
     ASSERT(!isUnresolved());
     protect(connection())->executeCommandForWritable(identifier(), streamIdentifier, type, position, size, dataBytes, hasDataError, [promise = WTF::move(promise)](auto result) mutable {

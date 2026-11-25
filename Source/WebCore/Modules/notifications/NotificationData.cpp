@@ -30,12 +30,12 @@ namespace WebCore {
 
 NotificationData NotificationData::isolatedCopy() const &
 {
-    return { navigateURL.isolatedCopy(), title.isolatedCopy(), body.isolatedCopy(), iconURL.isolatedCopy(), tag.isolatedCopy(), language.isolatedCopy(), direction, originString.isolatedCopy(), serviceWorkerRegistrationURL.isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, data, silent };
+    return { navigateURL.isolatedCopy(), WTF::isolatedCopy(title), WTF::isolatedCopy(body), WTF::isolatedCopy(iconURL), WTF::isolatedCopy(tag), WTF::isolatedCopy(language), direction, WTF::isolatedCopy(originString), serviceWorkerRegistrationURL.isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, data, silent };
 }
 
 NotificationData NotificationData::isolatedCopy() &&
 {
-    return { WTF::move(navigateURL).isolatedCopy(), WTF::move(title).isolatedCopy(), WTF::move(body).isolatedCopy(), WTF::move(iconURL).isolatedCopy(), WTF::move(tag).isolatedCopy(), WTF::move(language).isolatedCopy(), direction, WTF::move(originString).isolatedCopy(), WTF::move(serviceWorkerRegistrationURL).isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, WTF::move(data), silent };
+    return { WTF::move(navigateURL).isolatedCopy(), WTF::isolatedCopy(WTF::move(title)), WTF::isolatedCopy(WTF::move(body)), WTF::isolatedCopy(WTF::move(iconURL)), WTF::isolatedCopy(WTF::move(tag)), WTF::isolatedCopy(WTF::move(language)), direction, WTF::isolatedCopy(WTF::move(originString)), WTF::move(serviceWorkerRegistrationURL).isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, WTF::move(data), silent };
 }
 
 } // namespace WebCore

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static String fontsPath()
+static RefPtr<StringImpl> fontsPath()
 {
     const wchar_t* fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
     // <https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getenvironmentvariable>
@@ -71,8 +71,8 @@ FontCache::CreateDWriteFactoryResult FontCache::createDWriteFactory()
 
     builder->AddFontSet(systemFontSet.get());
 
-    String baseFontPath = fontsPath();
-    if (baseFontPath.isEmpty())
+    RefPtr<StringImpl> baseFontPath = fontsPath();
+    if (isEmpty(baseFontPath))
         return result;
 
     const auto fontFilenames = {
@@ -89,9 +89,9 @@ FontCache::CreateDWriteFactoryResult FontCache::createDWriteFactory()
     };
 
     for (auto filename : fontFilenames) {
-        String path = FileSystem::pathByAppendingComponent(baseFontPath, filename);
+        RefPtr<StringImpl> path = FileSystem::pathByAppendingComponent(baseFontPath, filename);
         COMPtr<IDWriteFontFile> file;
-        hr = factory5->CreateFontFileReference(path.wideCharacters().span().data(), nullptr, &file);
+        hr = factory5->CreateFontFileReference(wideCharacters(path).span().data(), nullptr, &file);
         if (FAILED(hr))
             return result;
         builder->AddFontFile(file.get());

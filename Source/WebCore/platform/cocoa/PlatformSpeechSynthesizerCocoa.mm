@@ -152,22 +152,22 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     // then choose the default language.
     RefPtr utteranceVoice = utterance->voice();
     RetainPtr<NSString> voiceLanguage;
-    if (!utteranceVoice || utteranceVoice->voiceURI().isEmpty()) {
-        if (utterance->lang().isEmpty())
+    if (!utteranceVoice || isEmpty(utteranceVoice->voiceURI())) {
+        if (isEmpty(utterance->lang()))
             voiceLanguage = [PAL::getAVSpeechSynthesisVoiceClassSingleton() currentLanguageCode];
         else
-            voiceLanguage = utterance->lang().createNSString();
+            voiceLanguage = createNSString(utterance->lang());
     } else
-        voiceLanguage = utterance->voice()->lang().createNSString();
+        voiceLanguage = createNSString(utterance->voice()->lang());
 
     AVSpeechSynthesisVoice *avVoice = nil;
     if (utteranceVoice)
-        avVoice = [PAL::getAVSpeechSynthesisVoiceClassSingleton() voiceWithIdentifier:utteranceVoice->voiceURI().createNSString().get()];
+        avVoice = [PAL::getAVSpeechSynthesisVoiceClassSingleton() voiceWithIdentifier:createNSString(utteranceVoice->voiceURI()).get()];
 
     if (!avVoice)
         avVoice = [PAL::getAVSpeechSynthesisVoiceClassSingleton() voiceWithLanguage:voiceLanguage.get()];
 
-    RetainPtr avUtterance = checked_objc_cast<AVSpeechUtterance>([PAL::getAVSpeechUtteranceClassSingleton() speechUtteranceWithString:utterance->text().createNSString().get()]);
+    RetainPtr avUtterance = checked_objc_cast<AVSpeechUtterance>([PAL::getAVSpeechUtteranceClassSingleton() speechUtteranceWithString:createNSString(utterance->text()).get()]);
 
     [avUtterance setRate:[self mapSpeechRateToPlatformRate:utterance->rate()]];
     [avUtterance setVolume:utterance->volume()];
@@ -178,7 +178,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
 
     // macOS won't send a did start speaking callback for empty strings.
 #if !HAVE(UNIFIED_SPEECHSYNTHESIS_FIX_FOR_81465164)
-    if (!m_utterance->text().length()) {
+    if (!length(m_utterance->text())) {
         RefPtr protectedSynthesizerObject = m_synthesizerObject.get();
         if (!protectedSynthesizerObject)
             return;
@@ -342,7 +342,7 @@ void PlatformSpeechSynthesizer::appendVoices(NSArray *voices)
 {
     for (AVSpeechSynthesisVoice *voice in voices) {
         if (voice.isSystemVoice)
-            m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, /* localService */ true, /* isDefault */ true));
+            m_voiceList.append(PlatformSpeechSynthesisVoice::create(StringImpl::create(voice.identifier).get(), StringImpl::create(voice.name).get(), StringImpl::create(voice.language).get(), /* localService */ true, /* isDefault */ true));
     }
 }
 

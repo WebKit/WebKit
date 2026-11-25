@@ -49,7 +49,7 @@ ExceptionOr<Ref<WebCodecsEncodedVideoChunk>> WebCodecsEncodedVideoChunk::create(
 ExceptionOr<void> WebCodecsEncodedVideoChunk::copyTo(BufferSource&& source)
 {
     if (source.byteLength() < byteLength())
-        return Exception { ExceptionCode::TypeError, "buffer is too small"_s };
+        return Exception { ExceptionCode::TypeError, "buffer is too small"_si };
 
     memcpySpan(source.mutableSpan(), buffer()->span());
     return { };

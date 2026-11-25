@@ -38,7 +38,7 @@
 namespace WebCore {
 
 struct WebCodecsVideoEncoderConfig {
-    String codec;
+    RefPtr<StringImpl> codec;
     size_t width;
     size_t height;
     std::optional<size_t> displayWidth;
@@ -47,26 +47,26 @@ struct WebCodecsVideoEncoderConfig {
     std::optional<double> framerate;
     HardwareAcceleration hardwareAcceleration { HardwareAcceleration::NoPreference };
     WebCodecsAlphaOption alpha { WebCodecsAlphaOption::Discard };
-    String scalabilityMode;
+    RefPtr<StringImpl> scalabilityMode;
     BitrateMode bitrateMode { BitrateMode::Variable };
     LatencyMode latencyMode { LatencyMode::Quality };
     std::optional<AvcEncoderConfig> avc;
     std::optional<HevcEncoderConfig> hevc;
 
-    WebCodecsVideoEncoderConfig isolatedCopy() && { return { WTF::move(codec).isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, WTF::move(scalabilityMode).isolatedCopy(), bitrateMode, latencyMode, avc, hevc }; }
-    WebCodecsVideoEncoderConfig isolatedCopy() const & { return { codec.isolatedCopy(), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, scalabilityMode.isolatedCopy(), bitrateMode, latencyMode, avc, hevc }; }
+    WebCodecsVideoEncoderConfig isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(codec)), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, WTF::isolatedCopy(WTF::move(scalabilityMode)), bitrateMode, latencyMode, avc, hevc }; }
+    WebCodecsVideoEncoderConfig isolatedCopy() const & { return { WTF::isolatedCopy(codec), width, height, displayWidth, displayHeight, bitrate, framerate, hardwareAcceleration, alpha, WTF::isolatedCopy(scalabilityMode), bitrateMode, latencyMode, avc, hevc }; }
 };
 
 inline bool isSameConfigurationExceptBitrateAndFramerate(const WebCodecsVideoEncoderConfig& a, const WebCodecsVideoEncoderConfig& b)
 {
-    return a.codec == b.codec
+    return equal(a.codec, b.codec)
         && a.width == b.width
         && a.height == b.height
         && a.displayWidth == b.displayWidth
         && a.displayHeight == b.displayHeight
         && a.hardwareAcceleration == b.hardwareAcceleration
         && a.alpha == b.alpha
-        && a.scalabilityMode == b.scalabilityMode
+        && equal(a.scalabilityMode, b.scalabilityMode)
         && a.bitrateMode == b.bitrateMode
         && a.latencyMode == b.latencyMode
         && (!!a.avc == !!b.avc)

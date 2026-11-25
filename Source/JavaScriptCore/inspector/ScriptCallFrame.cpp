@@ -34,7 +34,7 @@
 
 namespace Inspector {
 
-ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& scriptName, JSC::SourceID sourceID, JSC::LineColumn lineColumn)
+ScriptCallFrame::ScriptCallFrame(StringImpl* functionName, StringImpl* scriptName, JSC::SourceID sourceID, JSC::LineColumn lineColumn)
     : m_functionName(functionName)
     , m_scriptName(scriptName)
     , m_sourceID(sourceID)
@@ -42,7 +42,7 @@ ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& scrip
 {
 }
 
-ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& scriptName, const String& preRedirectURL, JSC::SourceID sourceID, JSC::LineColumn lineColumn)
+ScriptCallFrame::ScriptCallFrame(StringImpl* functionName, StringImpl* scriptName, StringImpl* preRedirectURL, JSC::SourceID sourceID, JSC::LineColumn lineColumn)
     : m_functionName(functionName)
     , m_scriptName(scriptName)
     , m_preRedirectURL(preRedirectURL)
@@ -57,15 +57,15 @@ bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
 {
     // Ignore sourceID in isEqual in case of identical scripts executed multiple times
     // that would get different script identifiers, but are otherwise the same.
-    return m_functionName == o.m_functionName
-        && m_scriptName == o.m_scriptName
-        && m_preRedirectURL == o.m_preRedirectURL
+    return equal(m_functionName, o.m_functionName)
+        && equal(m_scriptName, o.m_scriptName)
+        && equal(m_preRedirectURL, o.m_preRedirectURL)
         && m_lineColumn == o.m_lineColumn;
 }
 
 bool ScriptCallFrame::isNative() const
 {
-    return m_scriptName == "[native code]"_s;
+    return equal(m_scriptName, "[native code]"_s);
 }
 
 Ref<Protocol::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
@@ -73,7 +73,7 @@ Ref<Protocol::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
     return Protocol::Console::CallFrame::create()
         .setFunctionName(m_functionName)
         .setUrl(m_scriptName)
-        .setScriptId(String::number(m_sourceID))
+        .setScriptId(makeString(m_sourceID))
         .setLineNumber(m_lineColumn.line)
         .setColumnNumber(m_lineColumn.column)
         .release();

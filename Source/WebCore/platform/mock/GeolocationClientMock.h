@@ -59,13 +59,13 @@ public:
     NODELETE void setController(GeolocationController*);
 
     void setPosition(GeolocationPositionData&&);
-    void setPositionUnavailableError(const String& errorMessage);
+    void setPositionUnavailableError(StringImpl* errorMessage);
     void setPermission(bool allowed);
     NODELETE int numberOfPendingPermissionRequests() const;
 
     // GeolocationClient
     void geolocationDestroyed() override;
-    void startUpdating(const String& authorizationToken, bool enableHighAccuracy) override;
+    void startUpdating(StringImpl* authorizationToken, bool enableHighAccuracy) override;
     void stopUpdating() override;
     void setEnableHighAccuracy(bool) override;
     std::optional<GeolocationPositionData> lastPosition() override;
@@ -86,7 +86,7 @@ private:
     WeakPtr<GeolocationController> m_controller;
     std::optional<GeolocationPositionData> m_lastPosition;
     bool m_hasError { false };
-    String m_errorMessage;
+    RefPtr<StringImpl> m_errorMessage;
     Timer m_controllerTimer;
     Timer m_permissionTimer;
     bool m_isActive { false };

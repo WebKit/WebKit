@@ -89,20 +89,20 @@ public:
     CommandResult<void> enable() final;
     CommandResult<void> disable() final;
     CommandResult<void> setExtraHTTPHeaders(Ref<JSON::Object>&&) final;
-    void getResponseBody(const Protocol::Network::RequestId&, Ref<GetResponseBodyCallback>&&) final;
+    void getResponseBody(StringImpl*, Ref<GetResponseBodyCallback>&&) final;
     CommandResult<void> setResourceCachingDisabled(bool) final;
     CommandResult<void> setClearResourceDataOnNavigate(bool) final;
-    void loadResource(const Protocol::Network::FrameId&, const String& url, Ref<LoadResourceCallback>&&) final;
-    void getSerializedCertificate(const Protocol::Network::RequestId&, Ref<GetSerializedCertificateCallback>&&) final;
-    void resolveWebSocket(const Protocol::Network::RequestId&, const String& objectGroup, Ref<ResolveWebSocketCallback>&&) final;
+    void loadResource(StringImpl*, StringImpl* url, Ref<LoadResourceCallback>&&) final;
+    void getSerializedCertificate(StringImpl*, Ref<GetSerializedCertificateCallback>&&) final;
+    void resolveWebSocket(StringImpl*, StringImpl* objectGroup, Ref<ResolveWebSocketCallback>&&) final;
     void setInterceptionEnabled(bool, Ref<SetInterceptionEnabledCallback>&&) final;
-    void addInterception(const String& url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<AddInterceptionCallback>&&) final;
-    void removeInterception(const String& url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<RemoveInterceptionCallback>&&) final;
-    CommandResult<void> interceptContinue(const Protocol::Network::RequestId&, Protocol::Network::NetworkStage) final;
-    CommandResult<void> interceptWithRequest(const Protocol::Network::RequestId&, const String& url, const String& method, RefPtr<JSON::Object>&& headers, const String& postData) final;
-    CommandResult<void> interceptWithResponse(const Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers) final;
-    CommandResult<void> interceptRequestWithResponse(const Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers) final;
-    CommandResult<void> interceptRequestWithError(const Protocol::Network::RequestId&, Protocol::Network::ResourceErrorType) final;
+    void addInterception(StringImpl* url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<AddInterceptionCallback>&&) final;
+    void removeInterception(StringImpl* url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<RemoveInterceptionCallback>&&) final;
+    CommandResult<void> interceptContinue(StringImpl*, Protocol::Network::NetworkStage) final;
+    CommandResult<void> interceptWithRequest(StringImpl*, StringImpl* url, StringImpl* method, RefPtr<JSON::Object>&& headers, StringImpl* postData) final;
+    CommandResult<void> interceptWithResponse(StringImpl*, StringImpl* content, bool base64Encoded, StringImpl* mimeType, std::optional<int>&& status, StringImpl* statusText, RefPtr<JSON::Object>&& headers) final;
+    CommandResult<void> interceptRequestWithResponse(StringImpl*, StringImpl* content, bool base64Encoded, StringImpl* mimeType, int status, StringImpl* statusText, Ref<JSON::Object>&& headers) final;
+    CommandResult<void> interceptRequestWithError(StringImpl*, Protocol::Network::ResourceErrorType) final;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     CommandResult<void> setEmulatedConditions(std::optional<int>&& bandwidth, std::optional<int>&& latency) final;
 #endif
@@ -112,25 +112,25 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC message handlers from WebProcess FrameNetworkAgentProxy
-    void requestWillBeSent(ResourceID, FrameID, const String& loaderId, const String& targetID, const String& documentURL, const WebCore::ResourceRequest&, const RequestExtras&, std::optional<WebCore::ResourceResponse>&&, ResourceType, double timestamp, double walltime, InitiatorData&&);
-    void responseReceived(ResourceID, FrameID, const String& loaderId, const WebCore::ResourceResponse&, ResourceType, double timestamp, std::optional<MonotonicTime> resourceLoadStartTime);
+    void requestWillBeSent(ResourceID, FrameID, StringImpl* loaderId, StringImpl* targetID, StringImpl* documentURL, const WebCore::ResourceRequest&, const RequestExtras&, std::optional<WebCore::ResourceResponse>&&, ResourceType, double timestamp, double walltime, InitiatorData&&);
+    void responseReceived(ResourceID, FrameID, StringImpl* loaderId, const WebCore::ResourceResponse&, ResourceType, double timestamp, std::optional<MonotonicTime> resourceLoadStartTime);
     void dataReceived(ResourceID, int dataLength, int encodedDataLength, double timestamp);
-    void loadingFinished(ResourceID, double timestamp, const String& sourceMapURL, WebCore::NetworkLoadMetrics&&);
-    void loadingFailed(IPC::Connection&, ResourceID, double timestamp, const String& errorText, bool canceled);
-    void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, const URL&, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&&);
+    void loadingFinished(ResourceID, double timestamp, StringImpl* sourceMapURL, WebCore::NetworkLoadMetrics&&);
+    void loadingFailed(IPC::Connection&, ResourceID, double timestamp, StringImpl* errorText, bool canceled);
+    void requestServedFromMemoryCache(ResourceID, FrameID, StringImpl* loaderId, StringImpl* documentURL, const URL&, const WebCore::ResourceResponse&, ResourceType, StringImpl* sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&&);
     void requestIntercepted(IPC::Connection&, ResourceID, const WebCore::ResourceRequest&);
     void responseIntercepted(IPC::Connection&, ResourceID, const WebCore::ResourceResponse&);
 
     void updateInterceptPatterns(CompletionHandler<void()>&& = [] { });
-    CommandResult<void> resolveInterception(const Protocol::Network::RequestId&, NetworkInterceptionPhase, NetworkInterceptionResolution&&);
+    CommandResult<void> resolveInterception(StringImpl* requestId, NetworkInterceptionPhase, NetworkInterceptionResolution&&);
     void continuePendingInterceptions();
 
-    void webSocketCreated(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, FrameID, const String& loaderId, const String& requestURL);
+    void webSocketCreated(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, FrameID, StringImpl* loaderId, StringImpl* requestURL);
     void webSocketWillSendHandshakeRequest(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, double walltime, const WebCore::HTTPHeaderMap&);
-    void webSocketHandshakeResponseReceived(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int statusCode, const String& statusText, const WebCore::HTTPHeaderMap&);
-    void webSocketFrameReceived(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int opcode, bool mask, const String& payloadData, uint64_t payloadLength);
-    void webSocketFrameSent(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int opcode, bool mask, const String& payloadData, uint64_t payloadLength);
-    void webSocketFrameError(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, const String& errorMessage);
+    void webSocketHandshakeResponseReceived(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int statusCode, StringImpl* statusText, const WebCore::HTTPHeaderMap&);
+    void webSocketFrameReceived(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int opcode, bool mask, StringImpl* payloadData, uint64_t payloadLength);
+    void webSocketFrameSent(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, int opcode, bool mask, StringImpl* payloadData, uint64_t payloadLength);
+    void webSocketFrameError(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp, StringImpl* errorMessage);
     void webSocketClosed(IPC::Connection&, WebCore::ProcessIdentifier, uint64_t channelID, double timestamp);
 
     void removeAllRegisteredReceivers();
@@ -151,8 +151,8 @@ private:
     Vector<InterceptPattern> m_interceptPatterns;
     // Loads paused for Web Inspector, by protocol request id, each waiting in the process that
     // started it.
-    HashMap<String, ResourceID> m_pendingInterceptRequests;
-    HashMap<String, ResourceID> m_pendingInterceptResponses;
+    HashMap<RefPtr<StringImpl>, ResourceID> m_pendingInterceptRequests;
+    HashMap<RefPtr<StringImpl>, ResourceID> m_pendingInterceptResponses;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed

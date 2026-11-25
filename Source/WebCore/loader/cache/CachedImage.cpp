@@ -644,7 +644,7 @@ bool CachedImage::isOriginClean(SecurityOrigin* origin)
 {
     ASSERT_UNUSED(origin, origin);
     ASSERT(this->origin());
-    ASSERT(origin->toString() == this->origin()->toString());
+    ASSERT(equal(origin->toString(), this->origin()->toString()));
     return !loadFailedOrCanceled() && isCORSSameOrigin();
 }
 
@@ -681,14 +681,14 @@ bool CachedImage::isVisibleInViewport(const Document& document) const
     return false;
 }
 
-String CachedImage::filenameExtension() const
+RefPtr<StringImpl> CachedImage::filenameExtension() const
 {
-    return m_image ? protect(m_image)->filenameExtension() : String();
+    return m_image ? protect(m_image)->filenameExtension() : nullptr;
 }
 
-String CachedImage::accessibilityDescription() const
+RefPtr<StringImpl> CachedImage::accessibilityDescription() const
 {
-    return m_image ? protect(m_image)->accessibilityDescription() : String();
+    return m_image ? protect(m_image)->accessibilityDescription() : nullptr;
 }
 
 bool CachedImage::isAnimated() const

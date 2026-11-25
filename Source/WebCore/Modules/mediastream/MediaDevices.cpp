@@ -115,8 +115,8 @@ static bool isDefaultDeviceIdConstraint(const std::optional<StringConstraint>& d
     if (!deviceId || !deviceId->isMandatory())
         return false;
 
-    Vector<String> exact;
-    return deviceId->getExact(exact) && exact.size() == 1 && exact[0] == "default"_s;
+    Vector<RefPtr<StringImpl>> exact;
+    return deviceId->getExact(exact) && exact.size() == 1 && equal(exact[0], "default"_s);
 }
 
 static MediaConstraints createMediaConstraints(const Variant<bool, MediaTrackConstraints>& constraints, const Document* document = nullptr)
@@ -161,7 +161,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     }
 
     if (!document || !document->isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_si });
         return;
     }
 
@@ -169,7 +169,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     if (audioConstraints.isValid) {
         auto categoryOverride = AudioSession::singleton().categoryOverride();
         if (categoryOverride != AudioSessionCategory::None && categoryOverride != AudioSessionCategory::PlayAndRecord)  {
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioSession category is not compatible with audio capture."_s });
+            promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioSession category is not compatible with audio capture."_si });
             return;
         }
     }
@@ -181,7 +181,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         if (audioConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Microphone)) {
             // Asynchronous rejection.
             callOnMainThread([promise = WTF::move(promise)] () mutable {
-                promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_s });
+                promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_si });
 
             });
             return;
@@ -193,7 +193,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         if (videoConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Camera)) {
             // Asynchronous rejection.
             callOnMainThread([promise = WTF::move(promise)] () mutable {
-                promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_s });
+                promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_si });
 
             });
             return;
@@ -262,7 +262,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         case MediaConstraintType::DisplaySurface:
         case MediaConstraintType::GroupId: {
             auto& stringConstraint = downcast<StringConstraint>(constraint);
-            Vector<String> values;
+            Vector<RefPtr<StringImpl>> values;
             invalid = stringConstraint.getExact(values);
             break;
         }
@@ -299,19 +299,19 @@ void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, 
 
     bool isUserGesturePriviledged = computeUserGesturePriviledge(GestureAllowedRequest::Display);
     if (!isUserGesturePriviledged) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "getDisplayMedia must be called from a user gesture handler."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "getDisplayMedia must be called from a user gesture handler."_si });
         return;
     }
 
     auto videoConstraints = createMediaConstraints(constraints.video);
     if (hasInvalidGetDisplayMediaConstraint(videoConstraints)) {
-        promise.reject(Exception { ExceptionCode::TypeError, "getDisplayMedia must be called with valid constraints."_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "getDisplayMedia must be called with valid constraints."_si });
         return;
     }
 
     // FIXME: We use hidden while the spec is using focus, let's revisit when when spec is made clearer.
     if (!document->isFullyActive() || document->hidden()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_si });
         return;
     }
 
@@ -346,23 +346,23 @@ NODELETE static inline bool exposeSpeakersWithoutMicrophoneAccess(const Document
     return document.frame() && document.frame()->settings().exposeSpeakersWithoutMicrophoneEnabled();
 }
 
-static inline bool haveMicrophoneDevice(const Vector<CaptureDeviceWithCapabilities>& devices, const String& deviceId)
+static inline bool haveMicrophoneDevice(const Vector<CaptureDeviceWithCapabilities>& devices, StringImpl* deviceId)
 {
-    return std::ranges::any_of(devices, [&deviceId](auto& deviceWithCapabilities) {
+    return std::ranges::any_of(devices, [deviceId = RefPtr { deviceId }](auto& deviceWithCapabilities) {
         auto& device = deviceWithCapabilities.device;
-        return device.persistentId() == deviceId && device.type() == CaptureDevice::DeviceType::Microphone;
+        return equal(device.persistentId(), deviceId) && device.type() == CaptureDevice::DeviceType::Microphone;
     });
 }
 
-String MediaDevices::deviceIdToPersistentId(const String& deviceId) const
+RefPtr<StringImpl> MediaDevices::deviceIdToPersistentId(StringImpl* deviceId) const
 {
-    if (deviceId == AudioMediaStreamTrackRenderer::defaultDeviceID())
+    if (equal(deviceId, AudioMediaStreamTrackRenderer::defaultDeviceID()))
         return deviceId;
 
     return m_audioOutputDeviceIdToPersistentId.get(deviceId);
 }
 
-static Ref<MediaDeviceInfo> createDefaultSpeakerAsSpecificDevice(const CaptureDevice& defaultRealDevice, const String& groupId)
+static Ref<MediaDeviceInfo> createDefaultSpeakerAsSpecificDevice(const CaptureDevice& defaultRealDevice, StringImpl* groupId)
 {
     return MediaDeviceInfo::create(makeString(defaultSystemSpeakerLabel(), " - "_s, defaultRealDevice.label()), AudioMediaStreamTrackRenderer::defaultDeviceID(), groupId, MediaDeviceInfo::Kind::Audiooutput);
 }
@@ -394,7 +394,7 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
             continue;
 
         auto& center = RealtimeMediaSourceCenter::singleton();
-        String deviceId;
+        RefPtr<StringImpl> deviceId;
         if (newDevice.isEphemeral())
             deviceId = center.hashStringWithSalt(newDevice.persistentId(), deviceIDHashSalts.ephemeralDeviceSalt);
         else
@@ -412,15 +412,15 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
                 devices.append(MediaDeviceInfo::create(newDevice.label(), WTF::move(deviceId), WTF::move(groupId), MediaDeviceInfo::Kind::Audiooutput));
             }
         } else {
-            if (newDevice.type() == CaptureDevice::DeviceType::Camera && !newDevice.label().isEmpty())
+            if (newDevice.type() == CaptureDevice::DeviceType::Camera && !isEmpty(newDevice.label()))
                 m_hasRestrictedCameraDevices = false;
-            if (newDevice.type() == CaptureDevice::DeviceType::Microphone && !newDevice.label().isEmpty())
+            if (newDevice.type() == CaptureDevice::DeviceType::Microphone && !isEmpty(newDevice.label()))
                 m_hasRestrictedMicrophoneDevices = false;
             if (shouldEnableEnumerateDeviceQuirk(document)) {
-                if (deviceId.isEmpty())
-                    deviceId = "default"_s;
-                if (newDeviceWithCapabilities.device.label().isEmpty())
-                    newDeviceWithCapabilities.device.setLabel("default"_s);
+                if (isEmpty(deviceId))
+                    deviceId = "default"_si;
+                if (isEmpty(newDeviceWithCapabilities.device.label()))
+                    newDeviceWithCapabilities.device.setLabel("default"_si);
             }
             devices.append(InputDeviceInfo::create(WTF::move(newDeviceWithCapabilities), WTF::move(deviceId), WTF::move(groupId)));
         }
@@ -509,7 +509,7 @@ void MediaDevices::listenForDeviceChanges()
     });
 }
 
-bool MediaDevices::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool MediaDevices::addEventListener(AtomStringImpl* eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (eventType == eventNames().devicechangeEvent)
         listenForDeviceChanges();

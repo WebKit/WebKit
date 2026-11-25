@@ -40,7 +40,7 @@ public:
     {
     }
 
-    Credential(const String& user, const String& password, CredentialPersistence persistence)
+    Credential(StringImpl* user, StringImpl* password, CredentialPersistence persistence)
         : CredentialBase(user, password, persistence)
     {
     }

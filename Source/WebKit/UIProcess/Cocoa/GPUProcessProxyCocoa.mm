@@ -53,7 +53,7 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
 {
     parameters.mobileGestaltExtensionHandle = createMobileGestaltSandboxExtensionIfNeeded();
     parameters.gpuToolsExtensionHandles = createGPUToolsSandboxExtensionHandlesIfNeeded();
-    parameters.applicationVisibleName = applicationVisibleName().get();
+    parameters.applicationVisibleName = StringImpl::create(applicationVisibleName().get());
 #if PLATFORM(MAC)
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
         parameters.launchServicesExtensionHandle = WTF::move(*launchServicesExtensionHandle);

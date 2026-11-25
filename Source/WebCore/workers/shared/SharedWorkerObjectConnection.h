@@ -55,7 +55,7 @@ protected:
     // IPC messages.
     WEBCORE_EXPORT void fetchScriptInClient(URL&&, WebCore::SharedWorkerObjectIdentifier, WorkerOptions&&, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
     WEBCORE_EXPORT void notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier, const ResourceError&);
-    WEBCORE_EXPORT void postErrorToWorkerObject(SharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
+    WEBCORE_EXPORT void postErrorToWorkerObject(SharedWorkerObjectIdentifier, StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL, bool isErrorEvent);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WEBCORE_EXPORT void reportNetworkUsageToWorkerObject(SharedWorkerObjectIdentifier, uint64_t bytesTransferredOverNetworkDelta);

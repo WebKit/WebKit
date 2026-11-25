@@ -60,7 +60,7 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
     return WebProcess::singleton().sourceApplicationAuditData();
 }
 
-String WebFrameNetworkingContext::sourceApplicationIdentifier() const
+RefPtr<StringImpl> WebFrameNetworkingContext::sourceApplicationIdentifier() const
 {
     return WebProcess::singleton().uiProcessBundleIdentifier();
 }

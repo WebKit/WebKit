@@ -64,11 +64,11 @@ public:
     const PlatformCALayerList* customSublayers() const LIFETIME_BOUND override { return m_customSublayers.get(); }
     void adoptSublayers(PlatformCALayer& source) override;
 
-    void addAnimationForKey(const String& key, PlatformCAAnimation&) override;
-    void removeAnimationForKey(const String& key) override;
-    RefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
-    void animationStarted(const String& key, MonotonicTime beginTime) override;
-    void animationEnded(const String& key) override;
+    void addAnimationForKey(StringImpl* key, PlatformCAAnimation&) override;
+    void removeAnimationForKey(StringImpl* key) override;
+    RefPtr<PlatformCAAnimation> animationForKey(StringImpl* key) override;
+    void animationStarted(StringImpl* key, MonotonicTime beginTime) override;
+    void animationEnded(StringImpl* key) override;
 
     void setMaskLayer(RefPtr<WebCore::PlatformCALayer>&&) override;
 
@@ -151,7 +151,7 @@ public:
 
     void setBlendMode(BlendMode) override;
 
-    void setName(const String&) override;
+    void setName(StringImpl*) override;
 
     void setSpeed(float) override;
 

@@ -87,7 +87,7 @@ private:
 
     Latin1CString m_boundary;
     Vector<uint8_t> m_buffer;
-    Vector<String> m_headers;
+    Vector<RefPtr<StringImpl>> m_headers;
 
     State m_state { State::FindBoundaryStart };
     bool m_didCompleteMessage { false };

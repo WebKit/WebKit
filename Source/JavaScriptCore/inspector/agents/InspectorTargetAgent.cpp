@@ -34,7 +34,7 @@ namespace Inspector {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTargetAgent);
 
 InspectorTargetAgent::InspectorTargetAgent(FrontendRouter& frontendRouter, BackendDispatcher& backendDispatcher)
-    : InspectorAgentBase("Target"_s)
+    : InspectorAgentBase("Target"_si)
     , m_router(frontendRouter)
     , m_frontendDispatcher(makeUniqueRef<TargetFrontendDispatcher>(frontendRouter))
     , m_backendDispatcher(TargetBackendDispatcher::create(backendDispatcher, this))
@@ -65,7 +65,7 @@ Protocol::ErrorStringOr<void> InspectorTargetAgent::setPauseOnStart(bool pauseOn
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorTargetAgent::resume(const String& targetId)
+Protocol::ErrorStringOr<void> InspectorTargetAgent::resume(StringImpl* targetId)
 {
     CheckedPtr target = m_targets.get(targetId);
     if (!target)
@@ -79,7 +79,7 @@ Protocol::ErrorStringOr<void> InspectorTargetAgent::resume(const String& targetI
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorTargetAgent::sendMessageToTarget(const String& targetId, const String& message)
+Protocol::ErrorStringOr<void> InspectorTargetAgent::sendMessageToTarget(StringImpl* targetId, StringImpl* message)
 {
     CheckedPtr target = m_targets.get(targetId);
     if (!target)
@@ -90,7 +90,7 @@ Protocol::ErrorStringOr<void> InspectorTargetAgent::sendMessageToTarget(const St
     return { };
 }
 
-void InspectorTargetAgent::sendMessageFromTargetToFrontend(const String& targetId, const String& message)
+void InspectorTargetAgent::sendMessageFromTargetToFrontend(StringImpl* targetId, StringImpl* message)
 {
     m_frontendDispatcher->dispatchMessageFromTarget(targetId, message);
 }
@@ -122,7 +122,7 @@ static Ref<Protocol::Target::TargetInfo> buildTargetInfoObject(const InspectorTa
         result->setIsProvisional(true);
     if (target.isPaused())
         result->setIsPaused(true);
-    if (auto processIdentifier = target.processIdentifier(); !processIdentifier.isEmpty())
+    if (auto processIdentifier = target.processIdentifier(); !isEmpty(processIdentifier))
         result->setProcessIdentifier(processIdentifier);
     return result;
 }
@@ -152,7 +152,7 @@ void InspectorTargetAgent::targetDestroyed(InspectorTarget& target)
     m_frontendDispatcher->targetDestroyed(target.identifier());
 }
 
-void InspectorTargetAgent::didCommitProvisionalTarget(const String& oldTargetID, const String& committedTargetID)
+void InspectorTargetAgent::didCommitProvisionalTarget(StringImpl* oldTargetID, StringImpl* committedTargetID)
 {
     if (!m_isConnected)
         return;
@@ -163,12 +163,12 @@ void InspectorTargetAgent::didCommitProvisionalTarget(const String& oldTargetID,
     m_frontendDispatcher->didCommitProvisionalTarget(oldTargetID, committedTargetID);
 }
 
-void InspectorTargetAgent::debuggerPauseSessionChanged(const String& sessionID, bool isPaused, const Vector<String>& stoppingTargetIDs)
+void InspectorTargetAgent::debuggerPauseSessionChanged(StringImpl* sessionID, bool isPaused, const Vector<RefPtr<StringImpl>>& stoppingTargetIDs)
 {
     if (!m_isConnected)
         return;
 
-    auto targetIDs = JSON::ArrayOf<String>::create();
+    auto targetIDs = JSON::ArrayOf<RefPtr<StringImpl>>::create();
     for (auto& targetID : stoppingTargetIDs)
         targetIDs->addItem(targetID);
     m_frontendDispatcher->debuggerPauseSessionChanged(sessionID, isPaused ? Protocol::Target::DebuggerPauseSessionState::Paused : Protocol::Target::DebuggerPauseSessionState::Closed, WTF::move(targetIDs));

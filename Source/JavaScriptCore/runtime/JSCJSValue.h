@@ -215,8 +215,8 @@ public:
     NODELETE JS_EXPORT_PRIVATE bool isStringSlow() const;
 
     // Extracting the value.
-    inline bool getString(JSGlobalObject*, WTF::String&) const; // Defined in JSCJSValueCell.h
-    inline WTF::String getString(JSGlobalObject*) const; // null string if not a string. Defined in JSCJSValueCell.h
+    inline bool getString(JSGlobalObject*, RefPtr<StringImpl>&) const; // Defined in JSCJSValueCell.h
+    inline RefPtr<StringImpl> getString(JSGlobalObject*) const; // null string if not a string. Defined in JSCJSValueCell.h
     inline JSObject* getObject() const; // 0 if not an object. Defined in JSCJSValueCell.h
 
     // Extracting integer values.
@@ -242,8 +242,8 @@ public:
     inline JSString* toStringOrNull(JSGlobalObject*) const; // On exception, this returns null, to make exception checks faster. Defined in JSCJSValuePropertyInlines.h
     Identifier toPropertyKey(JSGlobalObject*) const;
     JSValue toPropertyKeyValue(JSGlobalObject*) const;
-    inline WTF::String toWTFString(JSGlobalObject*) const; // Defined in JSCJSValuePropertyInlines.h
-    JS_EXPORT_PRIVATE WTF::String toWTFStringForConsole(JSGlobalObject*) const;
+    inline RefPtr<StringImpl> toWTFString(JSGlobalObject*) const; // Defined in JSCJSValuePropertyInlines.h
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> toWTFStringForConsole(JSGlobalObject*) const;
     inline JSObject* toObject(JSGlobalObject*) const; // Defined in JSCJSValueCell.h
 
     // Integer conversions.
@@ -433,7 +433,7 @@ private:
     inline const JSValue asValue() const { return *this; }
     JS_EXPORT_PRIVATE double toNumberSlowCase(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSString* toStringSlowCase(JSGlobalObject*, bool returnEmptyStringOnError) const;
-    JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> toWTFStringSlowCase(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSValue toThisSloppySlowCase(JSGlobalObject*) const;
 

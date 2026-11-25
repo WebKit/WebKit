@@ -147,7 +147,7 @@ private:
 
 class DatabaseTableNamesTask final : public DatabaseTask {
 public:
-    DatabaseTableNamesTask(Database&, DatabaseTaskSynchronizer&, Vector<String>& result);
+    DatabaseTableNamesTask(Database&, DatabaseTaskSynchronizer&, Vector<RefPtr<StringImpl>>& result);
 
 private:
     void doPerformTask() final;
@@ -156,7 +156,7 @@ private:
     ASCIILiteral debugTaskName() const override;
 #endif
 
-    Vector<String>& m_result;
+    Vector<RefPtr<StringImpl>>& m_result;
 };
 
 } // namespace WebCore

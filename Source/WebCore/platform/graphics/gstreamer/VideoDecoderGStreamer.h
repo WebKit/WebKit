@@ -34,9 +34,9 @@ class GStreamerVideoDecoder final : public VideoDecoder {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoDecoder);
 
 public:
-    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&);
+    static void create(StringImpl* codecName, const Config&, CreateCallback&&, OutputCallback&&);
 
-    GStreamerVideoDecoder(const String& codecName, const Config&, OutputCallback&&, GRefPtr<GstElement>&&);
+    GStreamerVideoDecoder(StringImpl* codecName, const Config&, OutputCallback&&, GRefPtr<GstElement>&&);
     ~GStreamerVideoDecoder();
 
 private:

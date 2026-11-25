@@ -86,7 +86,7 @@ template<typename VectorElementType, typename CFType> Vector<VectorElementType> 
 
 // Allow for abbreviated specializations like makeVector<String>(CFArrayRef) containing CFStringRef objects.
 template<typename VectorElementType> Vector<VectorElementType> makeVector(CFArrayRef);
-template<> inline Vector<String> makeVector<String>(CFArrayRef array) { return makeVector<String, CFStringRef>(array); }
+template<> inline Vector<RefPtr<StringImpl>> makeVector<RefPtr<StringImpl>>(CFArrayRef array) { return makeVector<RefPtr<StringImpl>, CFStringRef>(array); }
 
 // This overload of createCFArray takes a function to map each vector element to an CF object.
 // The map function has the same interface as the makeCFArrayElement function above, but can be any

@@ -47,7 +47,7 @@ public:
 
     WEBCORE_EXPORT virtual ~CSSComputedStyleDeclaration();
 
-    String getPropertyValue(CSSPropertyID) const;
+    RefPtr<StringImpl> getPropertyValue(CSSPropertyID) const;
 
 private:
     enum class IsEmpty : bool { No, Yes };
@@ -59,18 +59,18 @@ private:
     NODELETE CSSRule* parentRule() const final;
     NODELETE CSSRuleList* cssRules() const final;
     unsigned length() const final;
-    String item(unsigned index) const final;
-    RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
-    String getPropertyValue(const String& propertyName) final;
-    NODELETE String getPropertyPriority(const String& propertyName) final;
-    NODELETE String getPropertyShorthand(const String& propertyName) final;
-    NODELETE bool isPropertyImplicit(const String& propertyName) final;
-    ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) final;
-    ExceptionOr<String> removeProperty(const String& propertyName) final;
-    NODELETE String cssText() const final;
-    ExceptionOr<void> setCssText(const String&) final;
-    String getPropertyValueInternal(CSSPropertyID) final;
-    ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) final;
+    RefPtr<StringImpl> item(unsigned index) const final;
+    RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(StringImpl* propertyName) final;
+    RefPtr<StringImpl> getPropertyValue(StringImpl* propertyName) final;
+    NODELETE RefPtr<StringImpl> getPropertyPriority(StringImpl* propertyName) final;
+    NODELETE RefPtr<StringImpl> getPropertyShorthand(StringImpl* propertyName) final;
+    NODELETE bool isPropertyImplicit(StringImpl* propertyName) final;
+    ExceptionOr<void> setProperty(StringImpl* propertyName, StringImpl* value, StringImpl* priority) final;
+    ExceptionOr<RefPtr<StringImpl>> removeProperty(StringImpl* propertyName) final;
+    NODELETE RefPtr<StringImpl> cssText() const final;
+    ExceptionOr<void> setCssText(StringImpl*) final;
+    RefPtr<StringImpl> getPropertyValueInternal(CSSPropertyID) final;
+    ExceptionOr<void> setPropertyInternal(CSSPropertyID, StringImpl* value, IsImportant) final;
     Ref<MutableStyleProperties> copyProperties() const final;
 
     Element& element() const { return m_element; }

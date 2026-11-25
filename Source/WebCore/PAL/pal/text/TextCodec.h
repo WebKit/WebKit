@@ -50,7 +50,7 @@ public:
     virtual ~TextCodec() = default;
 
     virtual void stripByteOrderMark() { }
-    virtual String decode(std::span<const uint8_t> data, bool flush, bool stopOnError, bool& sawError) = 0;
+    virtual RefPtr<StringImpl> decode(std::span<const uint8_t> data, bool flush, bool stopOnError, bool& sawError) = 0;
 
     virtual Vector<uint8_t> encode(StringView, UnencodableHandling) const = 0;
 

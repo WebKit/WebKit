@@ -73,7 +73,7 @@ void listsForNamespace(NamespacedCollection&& namespacedCollection, CompletionHa
         return completion(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 
     auto&& [listNamespace, collectionID] = WTF::move(namespacedCollection);
-    if (listNamespace.isEmpty() || collectionID.isEmpty())
+    if (isEmpty(listNamespace) || isEmpty(collectionID))
         return completion(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 
     BlockPtr mainRunLoopCompletion = makeBlockPtr([completion = WTF::move(completion)](NamespacedLists *result, NSError *error) mutable {
@@ -82,7 +82,7 @@ void listsForNamespace(NamespacedCollection&& namespacedCollection, CompletionHa
         });
     });
 
-    [context _getListsForNamespace:listNamespace.createNSString().get() collectionId:collectionID.createNSString().get() completionHandler:mainRunLoopCompletion.get()];
+    [context _getListsForNamespace:createNSString(listNamespace).get() collectionId:createNSString(collectionID).get() completionHandler:mainRunLoopCompletion.get()];
 }
 
 } // namespace WebKit::SafeBrowsingUtilities

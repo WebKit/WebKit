@@ -110,8 +110,8 @@ private:
         void didStartProvisionalNavigation(WebPageProxy&, const WebCore::ResourceRequest&, API::Navigation*, API::Object*) override;
         void didStartProvisionalLoadForFrame(WebPageProxy&, WebCore::ResourceRequest&&, FrameInfoData&&) override;
         void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
-        void willPerformClientRedirect(WebPageProxy&, WTF::String&&, double) override;
-        void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
+        void willPerformClientRedirect(WebPageProxy&, RefPtr<StringImpl>&&, double) override;
+        void didPerformClientRedirect(WebPageProxy&, StringImpl*, StringImpl*) override;
         void didCancelClientRedirect(WebPageProxy&) override;
         void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&&, API::Navigation*, const URL&, const WebCore::ResourceError&, API::Object*) override;
         void didFailProvisionalLoadWithErrorForFrame(WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, FrameInfoData&&) override;
@@ -125,7 +125,7 @@ private:
         void didFailLoadWithErrorForFrame(WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, FrameInfoData&&) override;
         void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
         void didApplyLinkDecorationFiltering(WebPageProxy&, const URL&, const URL&) override;
-        void didPromptForStorageAccess(WebPageProxy&, const String& topFrameDomain, const String& subFrameDomain, bool hasQuirk) override;
+        void didPromptForStorageAccess(WebPageProxy&, StringImpl* topFrameDomain, StringImpl* subFrameDomain, bool hasQuirk) override;
 
         void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;
 
@@ -145,7 +145,7 @@ private:
         void contextMenuDidCreateDownload(WebPageProxy&, DownloadProxy&) final;
 
 #if USE(QUICK_LOOK)
-        void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
+        void didStartLoadForQuickLookDocumentInMainFrame(StringImpl* fileName, StringImpl* uti) override;
         void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::FragmentedSharedBuffer&) override;
 #endif
 
@@ -160,7 +160,7 @@ private:
         void decidePolicyForNavigationResponse(WebPageProxy&, Ref<API::NavigationResponse>&&, Ref<WebFramePolicyListenerProxy>&&) override;
 
 #if HAVE(APP_SSO)
-        void decidePolicyForSOAuthorizationLoad(WebPageProxy&, SOAuthorizationLoadPolicy, const String&, CompletionHandler<void(SOAuthorizationLoadPolicy)>&&) override;
+        void decidePolicyForSOAuthorizationLoad(WebPageProxy&, SOAuthorizationLoadPolicy, StringImpl*, CompletionHandler<void(SOAuthorizationLoadPolicy)>&&) override;
 #endif
 
         WeakPtr<NavigationState> m_navigationState;
@@ -174,9 +174,9 @@ private:
         
     private:
         void didNavigateWithNavigationData(WebPageProxy&, const WebNavigationDataStore&) override;
-        void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
-        void didPerformServerRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
-        void didUpdateHistoryTitle(WebPageProxy&, const WTF::String&, const WTF::String&) override;
+        void didPerformClientRedirect(WebPageProxy&, StringImpl*, StringImpl*) override;
+        void didPerformServerRedirect(WebPageProxy&, StringImpl*, StringImpl*) override;
+        void didUpdateHistoryTitle(WebPageProxy&, StringImpl*, StringImpl*) override;
         
         WeakPtr<NavigationState> m_navigationState;
     };

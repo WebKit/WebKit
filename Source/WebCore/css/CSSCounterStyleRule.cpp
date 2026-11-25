@@ -128,47 +128,47 @@ CSSCounterStyleRule::CSSCounterStyleRule(StyleRuleCounterStyle& counterStyleRule
 
 CSSCounterStyleRule::~CSSCounterStyleRule() = default;
 
-String CSSCounterStyleRule::cssText() const
+RefPtr<StringImpl> CSSCounterStyleRule::cssText() const
 {
-    String systemText = system();
-    const auto systemPrefix = systemText.isEmpty() ? ""_s : " system: "_s;
-    const auto systemSuffix = systemText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> systemText = system();
+    const auto systemPrefix = isEmpty(systemText) ? ""_s : " system: "_s;
+    const auto systemSuffix = isEmpty(systemText) ? ""_s : ";"_s;
 
-    String symbolsText = symbols();
-    const auto symbolsPrefix = symbolsText.isEmpty() ? ""_s : " symbols: "_s;
-    const auto symbolsSuffix = symbolsText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> symbolsText = symbols();
+    const auto symbolsPrefix = isEmpty(symbolsText) ? ""_s : " symbols: "_s;
+    const auto symbolsSuffix = isEmpty(symbolsText) ? ""_s : ";"_s;
 
-    String additiveSymbolsText = additiveSymbols();
-    const auto additiveSymbolsPrefix = additiveSymbolsText.isEmpty() ? ""_s : " additive-symbols: "_s;
-    const auto additiveSymbolsSuffix = additiveSymbolsText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> additiveSymbolsText = additiveSymbols();
+    const auto additiveSymbolsPrefix = isEmpty(additiveSymbolsText) ? ""_s : " additive-symbols: "_s;
+    const auto additiveSymbolsSuffix = isEmpty(additiveSymbolsText) ? ""_s : ";"_s;
 
-    String negativeText = negative();
-    const auto negativePrefix = negativeText.isEmpty() ? ""_s : " negative: "_s;
-    const auto negativeSuffix = negativeText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> negativeText = negative();
+    const auto negativePrefix = isEmpty(negativeText) ? ""_s : " negative: "_s;
+    const auto negativeSuffix = isEmpty(negativeText) ? ""_s : ";"_s;
 
-    String prefixText = prefix();
-    const auto prefixTextPrefix = prefixText.isEmpty() ? ""_s : " prefix: "_s;
-    const auto prefixTextSuffix = prefixText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> prefixText = prefix();
+    const auto prefixTextPrefix = isEmpty(prefixText) ? ""_s : " prefix: "_s;
+    const auto prefixTextSuffix = isEmpty(prefixText) ? ""_s : ";"_s;
 
-    String suffixText = suffix();
-    const auto suffixTextPrefix = suffixText.isEmpty() ? ""_s : " suffix: "_s;
-    const auto suffixTextSuffix = suffixText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> suffixText = suffix();
+    const auto suffixTextPrefix = isEmpty(suffixText) ? ""_s : " suffix: "_s;
+    const auto suffixTextSuffix = isEmpty(suffixText) ? ""_s : ";"_s;
 
-    String padText = pad();
-    const auto padPrefix = padText.isEmpty() ? ""_s : " pad: "_s;
-    const auto padSuffix = padText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> padText = pad();
+    const auto padPrefix = isEmpty(padText) ? ""_s : " pad: "_s;
+    const auto padSuffix = isEmpty(padText) ? ""_s : ";"_s;
 
-    String rangeText = range();
-    const auto rangePrefix = rangeText.isEmpty() ? ""_s : " range: "_s;
-    const auto rangeSuffix = rangeText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> rangeText = range();
+    const auto rangePrefix = isEmpty(rangeText) ? ""_s : " range: "_s;
+    const auto rangeSuffix = isEmpty(rangeText) ? ""_s : ";"_s;
 
-    String fallbackText = fallback();
-    const auto fallbackPrefix = fallbackText.isEmpty() ? ""_s : " fallback: "_s;
-    const auto fallbackSuffix = fallbackText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> fallbackText = fallback();
+    const auto fallbackPrefix = isEmpty(fallbackText) ? ""_s : " fallback: "_s;
+    const auto fallbackSuffix = isEmpty(fallbackText) ? ""_s : ";"_s;
 
-    String speakAsText = speakAs();
-    const auto speakAsPrefix = speakAsText.isEmpty() ? ""_s : " speak-as: "_s;
-    const auto speakAsSuffix = speakAsText.isEmpty() ? ""_s : ";"_s;
+    RefPtr<StringImpl> speakAsText = speakAs();
+    const auto speakAsPrefix = isEmpty(speakAsText) ? ""_s : " speak-as: "_s;
+    const auto speakAsSuffix = isEmpty(speakAsText) ? ""_s : ";"_s;
 
     StringBuilder builder;
 
@@ -196,13 +196,13 @@ void CSSCounterStyleRule::reattach(StyleRuleBase& rule)
     m_counterStyleRule = downcast<StyleRuleCounterStyle>(rule);
 }
 
-RefPtr<CSSValue> CSSCounterStyleRule::cssValueFromText(CSSPropertyID propertyID, const String& string)
+RefPtr<CSSValue> CSSCounterStyleRule::cssValueFromText(CSSPropertyID propertyID, StringImpl* string)
 {
     return CSSPropertyParser::parseCounterStyleDescriptor(propertyID, string, parserContext());
 }
 
 // https://drafts.csswg.org/css-counter-styles-3/#dom-csscounterstylerule-name
-void CSSCounterStyleRule::setName(const String& text)
+void CSSCounterStyleRule::setName(StringImpl* text)
 {
     auto tokenizer = CSSTokenizer(text);
     auto tokenRange = tokenizer.tokenRange();
@@ -213,7 +213,7 @@ void CSSCounterStyleRule::setName(const String& text)
     mutableDescriptors().setName(WTF::move(name));
 }
 
-void CSSCounterStyleRule::setSystem(const String& text)
+void CSSCounterStyleRule::setSystem(StringImpl* text)
 {
     auto systemValue = cssValueFromText(CSSPropertyID::System, text);
     if (!systemValue)
@@ -228,7 +228,7 @@ void CSSCounterStyleRule::setSystem(const String& text)
     mutableDescriptors().setSystemData(WTF::move(systemData));
 }
 
-void CSSCounterStyleRule::setNegative(const String& text)
+void CSSCounterStyleRule::setNegative(StringImpl* text)
 {
     auto newValue = cssValueFromText(CSSPropertyID::Negative, text);
     if (!newValue)
@@ -237,7 +237,7 @@ void CSSCounterStyleRule::setNegative(const String& text)
     mutableDescriptors().setNegative(negativeSymbolsFromCSSValue(newValue.releaseNonNull()));
 }
 
-void CSSCounterStyleRule::setPrefix(const String& text)
+void CSSCounterStyleRule::setPrefix(StringImpl* text)
 {
     auto newValue = cssValueFromText(CSSPropertyID::Prefix, text);
     if (!newValue)
@@ -246,7 +246,7 @@ void CSSCounterStyleRule::setPrefix(const String& text)
     mutableDescriptors().setPrefix(symbolFromCSSValue(WTF::move(newValue)));
 }
 
-void CSSCounterStyleRule::setSuffix(const String& text)
+void CSSCounterStyleRule::setSuffix(StringImpl* text)
 {
     auto newValue = cssValueFromText(CSSPropertyID::Suffix, text);
     if (!newValue)
@@ -255,7 +255,7 @@ void CSSCounterStyleRule::setSuffix(const String& text)
     mutableDescriptors().setSuffix(symbolFromCSSValue(WTF::move(newValue)));
 }
 
-void CSSCounterStyleRule::setRange(const String& text)
+void CSSCounterStyleRule::setRange(StringImpl* text)
 {
     auto newValue = cssValueFromText(CSSPropertyID::Range, text);
     if (!newValue)
@@ -264,7 +264,7 @@ void CSSCounterStyleRule::setRange(const String& text)
     mutableDescriptors().setRanges(rangeFromCSSValue(newValue.releaseNonNull()));
 }
 
-void CSSCounterStyleRule::setPad(const String& text)
+void CSSCounterStyleRule::setPad(StringImpl* text)
 {
     auto newValue = cssValueFromText(CSSPropertyID::Pad, text);
     if (!newValue)
@@ -273,7 +273,7 @@ void CSSCounterStyleRule::setPad(const String& text)
     mutableDescriptors().setPad(padFromCSSValue(newValue.releaseNonNull()));
 }
 
-void CSSCounterStyleRule::setFallback(const String& text)
+void CSSCounterStyleRule::setFallback(StringImpl* text)
 {
     auto newValue = cssValueFromText(CSSPropertyID::Fallback, text);
     if (!newValue)
@@ -282,7 +282,7 @@ void CSSCounterStyleRule::setFallback(const String& text)
     mutableDescriptors().setFallbackName(fallbackNameFromCSSValue(newValue.releaseNonNull()));
 }
 
-void CSSCounterStyleRule::setSymbols(const String& text)
+void CSSCounterStyleRule::setSymbols(StringImpl* text)
 {
     auto newValue = cssValueFromText(CSSPropertyID::Symbols, text);
     if (!newValue)
@@ -291,7 +291,7 @@ void CSSCounterStyleRule::setSymbols(const String& text)
     mutableDescriptors().setSymbols(symbolsFromCSSValue(newValue.releaseNonNull()));
 }
 
-void CSSCounterStyleRule::setAdditiveSymbols(const String& text)
+void CSSCounterStyleRule::setAdditiveSymbols(StringImpl* text)
 {
     auto newValue = cssValueFromText(CSSPropertyID::AdditiveSymbols, text);
     if (!newValue)
@@ -300,7 +300,7 @@ void CSSCounterStyleRule::setAdditiveSymbols(const String& text)
     mutableDescriptors().setAdditiveSymbols(additiveSymbolsFromCSSValue(newValue.releaseNonNull()));
 }
 
-void CSSCounterStyleRule::setSpeakAs(const String&)
+void CSSCounterStyleRule::setSpeakAs(StringImpl*)
 {
     // FIXME: @counter-style speak-as not supported (rdar://103019111).
 }

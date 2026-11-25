@@ -85,12 +85,12 @@ PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
     , m_hrtfDatabaseLoader(HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(context.sampleRate()))
     , m_panningModel(options.panningModel)
     , m_panner(Panner::create(m_panningModel, sampleRate(), m_hrtfDatabaseLoader.ptr()))
-    , m_positionX(AudioParam::create(context, "positionX"_s, options.positionX, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
-    , m_positionY(AudioParam::create(context, "positionY"_s, options.positionY, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
-    , m_positionZ(AudioParam::create(context, "positionZ"_s, options.positionZ, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
-    , m_orientationX(AudioParam::create(context, "orientationX"_s, options.orientationX, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
-    , m_orientationY(AudioParam::create(context, "orientationY"_s, options.orientationY, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
-    , m_orientationZ(AudioParam::create(context, "orientationZ"_s, options.orientationZ, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_positionX(AudioParam::create(context, "positionX"_si, options.positionX, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_positionY(AudioParam::create(context, "positionY"_si, options.positionY, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_positionZ(AudioParam::create(context, "positionZ"_si, options.positionZ, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_orientationX(AudioParam::create(context, "orientationX"_si, options.orientationX, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_orientationY(AudioParam::create(context, "orientationY"_si, options.orientationY, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_orientationZ(AudioParam::create(context, "orientationZ"_si, options.orientationZ, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
 {
     setDistanceModelForBindings(options.distanceModel);
     setConeInnerAngleForBindings(options.coneInnerAngle);
@@ -357,7 +357,7 @@ ExceptionOr<void> PannerNode::setRefDistanceForBindings(double refDistance)
     ASSERT(isMainThread());
 
     if (refDistance < 0)
-        return Exception { ExceptionCode::RangeError, "refDistance cannot be set to a negative value"_s };
+        return Exception { ExceptionCode::RangeError, "refDistance cannot be set to a negative value"_si };
     
     // This synchronizes with process().
     Locker locker { m_processLock };
@@ -375,7 +375,7 @@ ExceptionOr<void> PannerNode::setMaxDistanceForBindings(double maxDistance)
     ASSERT(isMainThread());
 
     if (maxDistance <= 0)
-        return Exception { ExceptionCode::RangeError, "maxDistance cannot be set to a non-positive value"_s };
+        return Exception { ExceptionCode::RangeError, "maxDistance cannot be set to a non-positive value"_si };
     
     // This synchronizes with process().
     Locker locker { m_processLock };
@@ -393,7 +393,7 @@ ExceptionOr<void> PannerNode::setRolloffFactorForBindings(double rolloffFactor)
     ASSERT(isMainThread());
 
     if (rolloffFactor < 0)
-        return Exception { ExceptionCode::RangeError, "rolloffFactor cannot be set to a negative value"_s };
+        return Exception { ExceptionCode::RangeError, "rolloffFactor cannot be set to a negative value"_si };
     
     // This synchronizes with process().
     Locker locker { m_processLock };
@@ -411,7 +411,7 @@ ExceptionOr<void> PannerNode::setConeOuterGainForBindings(double gain)
     ASSERT(isMainThread());
 
     if (gain < 0 || gain > 1)
-        return Exception { ExceptionCode::InvalidStateError, "coneOuterGain must be in [0, 1]"_s };
+        return Exception { ExceptionCode::InvalidStateError, "coneOuterGain must be in [0, 1]"_si };
     
     // This synchronizes with process().
     Locker locker { m_processLock };
@@ -457,7 +457,7 @@ ExceptionOr<void> PannerNode::setChannelCount(unsigned channelCount)
     ASSERT(isMainThread());
 
     if (channelCount > 2)
-        return Exception { ExceptionCode::NotSupportedError, "PannerNode's channelCount cannot be greater than 2"_s };
+        return Exception { ExceptionCode::NotSupportedError, "PannerNode's channelCount cannot be greater than 2"_si };
     
     return AudioNode::setChannelCount(channelCount);
 }
@@ -467,7 +467,7 @@ ExceptionOr<void> PannerNode::setChannelCountMode(ChannelCountMode mode)
     ASSERT(isMainThread());
 
     if (mode == ChannelCountMode::Max)
-        return Exception { ExceptionCode::NotSupportedError, "PannerNode's channelCountMode cannot be max"_s };
+        return Exception { ExceptionCode::NotSupportedError, "PannerNode's channelCountMode cannot be max"_si };
     
     return AudioNode::setChannelCountMode(mode);
 }

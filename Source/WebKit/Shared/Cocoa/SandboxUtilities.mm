@@ -49,17 +49,17 @@ bool connectedProcessIsSandboxed(xpc_connection_t connectionToParent)
 
 bool processHasContainer()
 {
-    static bool hasContainer = !pathForProcessContainer().isEmpty();
+    static bool hasContainer = !isEmpty(pathForProcessContainer());
     return hasContainer;
 }
 
-String pathForProcessContainer()
+RefPtr<StringImpl> pathForProcessContainer()
 {
     std::array<char, MAXPATHLEN> path;
     path[0] = 0;
     sandbox_container_path_for_pid(getpid(), path.data(), path.size());
 
-    return String::fromUTF8(path.data());
+    return StringImpl::fromUTF8(path.data());
 }
 
 }

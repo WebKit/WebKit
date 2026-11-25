@@ -51,7 +51,7 @@ public:
 
     bool isEnabled() const final { return enabled(); }
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override { }
-    void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(String&&)>&&) final;
+    void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&) final;
     void responseReceived(const ResourceResponse&) override;
     void addData(const SharedBuffer&) override;
     void finishedAddingData() override;
@@ -87,7 +87,7 @@ private:
     RetainPtr<NSData> m_webContentRestrictionsReplacementData WTF_GUARDED_BY_LOCK(m_resultLock);
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    String m_webContentRestrictionsConfigurationPath;
+    RefPtr<StringImpl> m_webContentRestrictionsConfigurationPath;
 #endif
 
 #elif HAVE(WEBCONTENTANALYSIS_FRAMEWORK)

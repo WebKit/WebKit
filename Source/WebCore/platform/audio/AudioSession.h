@@ -98,7 +98,7 @@ public:
     virtual CategoryType categoryOverride() const;
 
     virtual RouteSharingPolicy routeSharingPolicy() const;
-    virtual String routingContextUID() const;
+    virtual RefPtr<StringImpl> routingContextUID() const;
 
     virtual float sampleRate() const;
     virtual size_t bufferSize() const;
@@ -154,8 +154,8 @@ public:
 
     bool isInterrupted() const { return m_isInterrupted; }
 
-    virtual void setSceneIdentifier(const String&) { }
-    virtual const String& sceneIdentifier() const { return nullString(); }
+    virtual void setSceneIdentifier(StringImpl*) { }
+    virtual const RefPtr<StringImpl>& sceneIdentifier() const { return nullString(); }
 
     using SoundStageSize = AudioSessionSoundStageSize;
     virtual void setSoundStageSize(SoundStageSize) { }
@@ -212,12 +212,12 @@ public:
     virtual bool canLog() const = 0;
 };
 
-WEBCORE_EXPORT String convertEnumerationToString(RouteSharingPolicy);
-WEBCORE_EXPORT String convertEnumerationToString(AudioSession::CategoryType);
-WEBCORE_EXPORT String convertEnumerationToString(AudioSession::Mode);
-WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingArbitrationError);
-WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultRouteChanged);
-WEBCORE_EXPORT String convertEnumerationToString(AudioSession::SoundStageSize);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(RouteSharingPolicy);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(AudioSession::CategoryType);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(AudioSession::Mode);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingArbitrationError);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultRouteChanged);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(AudioSession::SoundStageSize);
 
 } // namespace WebCore
 
@@ -228,7 +228,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::RouteSharingPolicy> {
-    static String toString(const WebCore::RouteSharingPolicy policy)
+    static RefPtr<StringImpl> toString(const WebCore::RouteSharingPolicy policy)
     {
         return convertEnumerationToString(policy);
     }
@@ -236,7 +236,7 @@ struct LogArgument<WebCore::RouteSharingPolicy> {
 
 template <>
 struct LogArgument<WebCore::AudioSession::CategoryType> {
-    static String toString(const WebCore::AudioSession::CategoryType category)
+    static RefPtr<StringImpl> toString(const WebCore::AudioSession::CategoryType category)
     {
         return convertEnumerationToString(category);
     }
@@ -244,7 +244,7 @@ struct LogArgument<WebCore::AudioSession::CategoryType> {
 
 template <>
 struct LogArgument<WebCore::AudioSession::Mode> {
-    static String toString(const WebCore::AudioSession::Mode mode)
+    static RefPtr<StringImpl> toString(const WebCore::AudioSession::Mode mode)
     {
         return convertEnumerationToString(mode);
     }
@@ -252,7 +252,7 @@ struct LogArgument<WebCore::AudioSession::Mode> {
 
 template <>
 struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError> {
-    static String toString(const WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError error)
+    static RefPtr<StringImpl> toString(const WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError error)
     {
         return convertEnumerationToString(error);
     }
@@ -260,7 +260,7 @@ struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitra
 
 template <>
 struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged> {
-    static String toString(const WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged changed)
+    static RefPtr<StringImpl> toString(const WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged changed)
     {
         return convertEnumerationToString(changed);
     }
@@ -268,7 +268,7 @@ struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteCh
 
 template <>
 struct LogArgument<WebCore::AudioSession::SoundStageSize> {
-    static String toString(const WebCore::AudioSession::SoundStageSize size)
+    static RefPtr<StringImpl> toString(const WebCore::AudioSession::SoundStageSize size)
     {
         return convertEnumerationToString(size);
     }

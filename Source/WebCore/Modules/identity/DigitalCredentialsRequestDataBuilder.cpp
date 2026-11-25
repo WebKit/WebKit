@@ -40,7 +40,7 @@ namespace WebCore {
 ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> DigitalCredentialsRequestDataBuilder::build(Vector<std::optional<ValidatedDigitalCredentialRequest>>&& validatedCredentialRequests, const DigitalCredentialsSecurityOriginData& origins, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests)
 {
     if (validatedCredentialRequests.size() != unvalidatedRequests.size())
-        return Exception { ExceptionCode::TypeError, "Validation did not account for every credential request."_s };
+        return Exception { ExceptionCode::TypeError, "Validation did not account for every credential request."_si };
 
 
     // The raw requests handed to the document provider are exactly the presented requests, in the

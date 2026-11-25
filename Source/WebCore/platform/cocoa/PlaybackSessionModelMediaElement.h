@@ -79,7 +79,7 @@ public:
     WEBCORE_EXPORT void mediaEngineChanged();
 
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
-    void updateForEventName(const AtomString&);
+    void updateForEventName(AtomStringImpl*);
     WEBCORE_EXPORT void updateAll();
 
     WEBCORE_EXPORT void addClient(PlaybackSessionModelClient&);
@@ -109,8 +109,8 @@ public:
     WEBCORE_EXPORT void setVolume(double) final;
     WEBCORE_EXPORT void setPlayingOnSecondScreen(bool) final;
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    WEBCORE_EXPORT String spatialTrackingLabel() const final;
-    WEBCORE_EXPORT void setSpatialTrackingLabel(const String&) final;
+    WEBCORE_EXPORT RefPtr<StringImpl> spatialTrackingLabel() const final;
+    WEBCORE_EXPORT void setSpatialTrackingLabel(StringImpl*) final;
 #endif
     WEBCORE_EXPORT void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;
     void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final { }
@@ -134,8 +134,8 @@ public:
     WEBCORE_EXPORT uint64_t legibleMediaSelectedIndex() const final;
     bool externalPlaybackEnabled() const final;
     ExternalPlaybackTargetType externalPlaybackTargetType() const final;
-    String externalPlaybackLocalizedDeviceName() const final;
-    String externalPlaybackLocalizedRouteName() const final;
+    RefPtr<StringImpl> externalPlaybackLocalizedDeviceName() const final;
+    RefPtr<StringImpl> externalPlaybackLocalizedRouteName() const final;
     bool wirelessVideoPlaybackDisabled() const final;
     bool isMuted() const final;
     double volume() const final;
@@ -149,8 +149,8 @@ private:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();
 
     void progressEventTimerFired();
-    static const Vector<AtomString>& observedEventNames();
-    const AtomString& eventNameAll();
+    static const Vector<RefPtr<AtomStringImpl>>& observedEventNames();
+    const RefPtr<AtomStringImpl>& eventNameAll();
 
     double playbackStartedTime() const;
     void updateMediaSelectionOptions();

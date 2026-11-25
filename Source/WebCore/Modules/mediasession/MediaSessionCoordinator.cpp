@@ -256,7 +256,7 @@ void MediaSessionCoordinator::pause(DOMPromiseDeferred<void>&& promise)
     });
 }
 
-void MediaSessionCoordinator::setTrack(const String& track, DOMPromiseDeferred<void>&& promise)
+void MediaSessionCoordinator::setTrack(StringImpl* track, DOMPromiseDeferred<void>&& promise)
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
@@ -431,7 +431,7 @@ void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&& compl
     completionHandler(true);
 }
 
-void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHandler<void(bool)>&& completionHandler)
+void MediaSessionCoordinator::setSessionTrack(StringImpl* track, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", track);
 

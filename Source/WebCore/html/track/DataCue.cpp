@@ -44,7 +44,7 @@ using namespace JSC;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DataCue);
 
-DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
+DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, StringImpl* type)
     : TextTrackCue(document, start, end)
     , m_type(type)
 {
@@ -57,14 +57,14 @@ DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& en
 {
 }
 
-DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
+DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, StringImpl* type)
     : TextTrackCue(document, start, end)
     , m_type(type)
     , m_platformValue(WTF::move(platformValue))
 {
 }
 
-DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, JSC::JSValue value, const String& type)
+DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, JSC::JSValue value, StringImpl* type)
     : TextTrackCue(document, start, end)
     , m_type(type)
     , m_value(document.vm(), value)
@@ -78,7 +78,7 @@ Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const M
     return dataCue;
 }
 
-Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
+Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, StringImpl* type)
 {
     auto dataCue = adoptRef(*new DataCue(document, start, end, WTF::move(platformValue), type));
     dataCue->suspendIfNeeded();
@@ -92,7 +92,7 @@ Ref<DataCue> DataCue::create(Document& document, double start, double end, Array
     return dataCue;
 }
 
-Ref<DataCue> DataCue::create(Document& document, double start, double end, JSC::JSValue value, const String& type)
+Ref<DataCue> DataCue::create(Document& document, double start, double end, JSC::JSValue value, StringImpl* type)
 {
     auto dataCue = adoptRef(*new DataCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), value, type));
     dataCue->suspendIfNeeded();
@@ -115,7 +115,7 @@ RefPtr<ArrayBuffer> DataCue::data() const
 ExceptionOr<void> DataCue::setData(ArrayBuffer* data)
 {
     if (!data)
-        return Exception { ExceptionCode::TypeError, "The DataCue.data attribute must be an instance of ArrayBuffer"_s };
+        return Exception { ExceptionCode::TypeError, "The DataCue.data attribute must be an instance of ArrayBuffer"_si };
 
     m_platformValue = nullptr;
     m_value.clear();
@@ -179,8 +179,8 @@ void DataCue::toJSON(JSON::Object& object) const
 {
     TextTrackCue::toJSON(object);
 
-    if (!m_type.isEmpty())
-        object.setString("type"_s, m_type);
+    if (!isEmpty(m_type))
+        object.setString("type"_si, m_type);
 }
 
 } // namespace WebCore

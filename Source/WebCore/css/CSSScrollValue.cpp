@@ -34,16 +34,16 @@
 
 namespace WebCore {
 
-String CSSScrollValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSScrollValue::customCSSText(const CSS::SerializationContext& context) const
 {
     auto hasScroller = m_scroller && !isValueID(*m_scroller, CSSValueID::Nearest);
     auto hasAxis = m_axis && !isValueID(*m_axis, CSSValueID::Block);
 
     return makeString(
         "scroll("_s,
-        hasScroller ? m_scroller->cssText(context) : ""_s,
+        hasScroller ? m_scroller->cssText(context) : ""_si,
         hasScroller && hasAxis ? " "_s : ""_s,
-        hasAxis ? m_axis->cssText(context) : ""_s,
+        hasAxis ? m_axis->cssText(context) : ""_si,
         ")"_s
     );
 }

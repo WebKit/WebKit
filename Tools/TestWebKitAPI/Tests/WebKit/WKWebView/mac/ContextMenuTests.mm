@@ -846,7 +846,7 @@ TEST(ContextMenuTests, HitTestResultImageSuggestedFilename)
     Util::run(&gotProposedMenu);
 }
 
-static RetainPtr<NSString> imageSuggestedFilenameFromCollidingImageURL(Vector<WTF::KeyValuePair<String, String>> imageResponseHeaders)
+static RetainPtr<NSString> imageSuggestedFilenameFromCollidingImageURL(Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> imageResponseHeaders)
 {
     using namespace TestWebKitAPI;
 
@@ -855,9 +855,9 @@ static RetainPtr<NSString> imageSuggestedFilenameFromCollidingImageURL(Vector<WT
     HTTPServer server([imageData, imageResponseHeaders](Connection connection) {
         connection.receiveHTTPRequest([connection, imageData, imageResponseHeaders](Vector<char>&&) {
             connection.send(HTTPResponse({ { "Content-Type"_s, "text/html"_s } },
-                "<img id='collision' src='collision.gifv' style='width:300px;height:300px'>"_s).serialize(), [connection, imageData, imageResponseHeaders] {
+                "<img id='collision' src='collision.gifv' style='width:300px;height:300px'>"_si).serialize(), [connection, imageData, imageResponseHeaders] {
                 connection.receiveHTTPRequest([connection, imageData, imageResponseHeaders](Vector<char>&&) {
-                    Vector<WTF::KeyValuePair<String, String>> headers = imageResponseHeaders;
+                    Vector<WTF::KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> headers = imageResponseHeaders;
                     connection.send(HTTPResponse(WTF::move(headers), imageData).serialize());
                 });
             });

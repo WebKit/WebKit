@@ -45,30 +45,30 @@ struct PeerMediaDescription {
     void clearSsrcs() { ssrcs.clear(); }
     void addIceCandidate(IceCandidate&& candidate) { iceCandidates.append(WTF::move(candidate)); }
 
-    String type;
+    RefPtr<StringImpl> type;
     unsigned short port { 9 };
-    String address { "0.0.0.0"_s };
-    String mode { "sendrecv"_s };
-    String mid;
+    RefPtr<StringImpl> address { "0.0.0.0"_s };
+    RefPtr<StringImpl> mode { "sendrecv"_s };
+    RefPtr<StringImpl> mid;
 
     Vector<MediaPayload> payloads;
 
     bool rtcpMux { true };
-    String rtcpAddress;
+    RefPtr<StringImpl> rtcpAddress;
     unsigned short rtcpPort { 0 };
 
-    String mediaStreamId;
-    String mediaStreamTrackId;
+    RefPtr<StringImpl> mediaStreamId;
+    RefPtr<StringImpl> mediaStreamTrackId;
 
-    String dtlsSetup { "actpass"_s };
-    String dtlsFingerprintHashFunction;
-    String dtlsFingerprint;
+    RefPtr<StringImpl> dtlsSetup { "actpass"_s };
+    RefPtr<StringImpl> dtlsFingerprintHashFunction;
+    RefPtr<StringImpl> dtlsFingerprint;
 
     Vector<unsigned> ssrcs;
-    String cname;
+    RefPtr<StringImpl> cname;
 
-    String iceUfrag;
-    String icePassword;
+    RefPtr<StringImpl> iceUfrag;
+    RefPtr<StringImpl> icePassword;
     Vector<IceCandidate> iceCandidates;
 };
 

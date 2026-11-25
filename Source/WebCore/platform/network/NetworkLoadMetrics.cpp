@@ -33,7 +33,7 @@ namespace WebCore {
 
 NetworkLoadMetrics::NetworkLoadMetrics() = default;
 
-NetworkLoadMetrics::NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, MonotonicTime&& firstInterimResponseStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, bool fromPrefetch, bool fromCache, PrivacyStance privacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&& additionalNetworkLoadMetricsForWebInspector)
+NetworkLoadMetrics::NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, MonotonicTime&& firstInterimResponseStart, RefPtr<StringImpl>&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, bool fromPrefetch, bool fromCache, PrivacyStance privacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&& additionalNetworkLoadMetricsForWebInspector)
     : redirectStart(WTF::move(redirectStart))
     , fetchStart(WTF::move(fetchStart))
     , domainLookupStart(WTF::move(domainLookupStart))
@@ -142,10 +142,10 @@ Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsFor
 {
     auto copy = AdditionalNetworkLoadMetricsForWebInspector::create();
     copy->priority = priority;
-    copy->remoteAddress = remoteAddress.isolatedCopy();
-    copy->connectionIdentifier = connectionIdentifier.isolatedCopy();
-    copy->tlsProtocol = tlsProtocol.isolatedCopy();
-    copy->tlsCipher = tlsCipher.isolatedCopy();
+    copy->remoteAddress = WTF::isolatedCopy(remoteAddress);
+    copy->connectionIdentifier = WTF::isolatedCopy(connectionIdentifier);
+    copy->tlsProtocol = WTF::isolatedCopy(tlsProtocol);
+    copy->tlsCipher = WTF::isolatedCopy(tlsCipher);
     copy->requestHeaders = requestHeaders.isolatedCopy();
     copy->requestHeaderBytesSent = requestHeaderBytesSent;
     copy->responseHeaderBytesReceived = responseHeaderBytesReceived;
@@ -171,7 +171,7 @@ NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
     copy.workerStart = workerStart.isolatedCopy();
     copy.firstInterimResponseStart = firstInterimResponseStart.isolatedCopy();
 
-    copy.protocol = protocol.isolatedCopy();
+    copy.protocol = WTF::isolatedCopy(protocol);
 
     copy.redirectCount = redirectCount;
 
@@ -202,12 +202,12 @@ NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
     return copy;
 }
 
-Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::create(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
+Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::create(NetworkLoadPriority&& priority, RefPtr<StringImpl>&& remoteAddress, RefPtr<StringImpl>&& connectionIdentifier, RefPtr<StringImpl>&& tlsProtocol, RefPtr<StringImpl>&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
 {
     return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector(WTF::move(priority), WTF::move(remoteAddress), WTF::move(connectionIdentifier), WTF::move(tlsProtocol), WTF::move(tlsCipher), WTF::move(requestHeaders), requestHeaderBytesSent, responseHeaderBytesReceived, requestBodyBytesSent, isProxyConnection));
 }
 
-AdditionalNetworkLoadMetricsForWebInspector::AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
+AdditionalNetworkLoadMetricsForWebInspector::AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&& priority, RefPtr<StringImpl>&& remoteAddress, RefPtr<StringImpl>&& connectionIdentifier, RefPtr<StringImpl>&& tlsProtocol, RefPtr<StringImpl>&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
     : priority(WTF::move(priority))
     , remoteAddress(WTF::move(remoteAddress))
     , connectionIdentifier(WTF::move(connectionIdentifier))

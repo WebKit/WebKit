@@ -83,7 +83,7 @@ private:
     WEBCORE_EXPORT explicit SVGImage(ImageObserver*);
     virtual ~SVGImage();
 
-    String filenameExtension() const final;
+    RefPtr<StringImpl> filenameExtension() const final;
     NaturalDimensions unorientedNaturalDimensions() const final;
     bool usesConcreteObjectSizeAsViewport() const final { return true; }
 

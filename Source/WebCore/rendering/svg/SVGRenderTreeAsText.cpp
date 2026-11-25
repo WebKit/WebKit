@@ -133,9 +133,9 @@ static void writeNameAndQuotedValue(TextStream& ts, ASCIILiteral name, ValueType
     ts << " ["_s << name << "=\""_s << value << "\"]"_s;
 }
 
-static void writeIfNotEmpty(TextStream& ts, ASCIILiteral name, const String& value)
+static void writeIfNotEmpty(TextStream& ts, ASCIILiteral name, StringImpl* value)
 {
-    if (!value.isEmpty())
+    if (!isEmpty(value))
         writeNameValuePair(ts, name, value);
 }
 
@@ -160,7 +160,7 @@ static TextStream& operator<<(TextStream& ts, const SVGMarkerUnitsType& markerUn
 
 static TextStream& operator<<(TextStream& ts, const SVGSpreadMethodType& type)
 {
-    ts << SVGPropertyTraits<SVGSpreadMethodType>::toString(type).convertToASCIIUppercase();
+    ts << convertToASCIIUppercase(SVGPropertyTraits<SVGSpreadMethodType>::toString(type));
     return ts;
 }
 
@@ -312,7 +312,7 @@ void writeSVGGraphicsElement(TextStream& ts, const SVGGraphicsElement& svgElemen
     } else if (auto* element = dynamicDowncast<SVGPolyElement>(svgElement))
         writeNameAndQuotedValue(ts, "points"_s, protect(element->points())->valueAsString());
     else if (auto* element = dynamicDowncast<SVGPathElement>(svgElement)) {
-        String pathString;
+        RefPtr<StringImpl> pathString;
         // FIXME: We should switch to UnalteredParsing here - this will affect the path dumping output of dozens of tests.
         buildStringFromByteStream(element->pathByteStream(), pathString, NormalizedParsing);
         writeNameAndQuotedValue(ts, "data"_s, pathString);
@@ -352,7 +352,7 @@ static inline void writeSVGTextBox(TextStream& ts, const InlineIterator::SVGText
         return;
 
     CheckedRef style = textBox.renderer().style();
-    String text = textBox.renderer().text();
+    RefPtr<StringImpl> text = textBox.renderer().text();
 
     TextStream::IndentScope indentScope(ts);
 
@@ -394,7 +394,7 @@ static inline void writeSVGTextBox(TextStream& ts, const InlineIterator::SVGText
         if (!textBox.isLeftToRightDirection())
             ts << " RTL"_s;
 
-        ts << ": "_s << quoteAndEscapeNonPrintables(text.substring(fragment.characterOffset, fragment.length)) << '\n';
+        ts << ": "_s << quoteAndEscapeNonPrintables(substring(text, fragment.characterOffset, fragment.length)) << '\n';
     }
 }
 
@@ -448,7 +448,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
 {
     writeStandardPrefix(ts, resource, behavior);
 
-    const AtomString& id = resource.element().getIdAttribute();
+    const RefPtr<AtomStringImpl>& id = resource.element().getIdAttribute();
     writeNameAndQuotedValue(ts, "id"_s, id);
 
     if (auto* masker = dynamicDowncast<LegacyRenderSVGResourceMasker>(resource)) {

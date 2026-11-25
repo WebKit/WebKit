@@ -53,7 +53,7 @@ class CDMInstanceClient : public AbstractRefCountedAndCanMakeWeakPtr<CDMInstance
 public:
     virtual ~CDMInstanceClient() = default;
 
-    virtual void unrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) = 0;
+    virtual void unrequestedInitializationDataReceived(StringImpl*, Ref<SharedBuffer>&&) = 0;
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
@@ -115,8 +115,8 @@ public:
 
     virtual void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) = 0;
     virtual void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) = 0;
-    virtual void setStorageDirectory(const String&) = 0;
-    virtual const String& keySystem() const = 0;
+    virtual void setStorageDirectory(StringImpl*) = 0;
+    virtual const RefPtr<StringImpl>& keySystem() const = 0;
     virtual RefPtr<CDMInstanceSession> createSession() = 0;
 
     using HDCPStatus = CDMInstanceHDCPStatus;

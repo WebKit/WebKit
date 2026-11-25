@@ -148,7 +148,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
             if (found == notFound)
                 return -1;
             offsetVector[0] = found;
-            offsetVector[1] = found + atom().length();
+            offsetVector[1] = found + length(atom());
             return found;
         }
     }
@@ -278,7 +278,7 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
             size_t found = StringView(s).find(vm.adaptiveStringSearcherTables(), atom(), startOffset);
             if (found == notFound)
                 return MatchResult::failed();
-            return MatchResult { found, found + atom().length() };
+            return MatchResult { found, found + length(atom()) };
         }
     }
 

@@ -70,7 +70,7 @@ ExceptionOr<Ref<CSSSkew>> CSSSkew::create(Ref<const CSSFunctionValue> cssFunctio
     auto numberOfComponents = components.size();
     if (numberOfComponents < 1 || numberOfComponents > 2) {
         ASSERT_NOT_REACHED();
-        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_si };
     }
 
     if (components.size() == 2)

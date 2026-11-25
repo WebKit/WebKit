@@ -95,19 +95,20 @@ void PointerRewriter::visit(AST::VariableStatement& statement)
     Base::visit(statement);
 
     auto& variable = statement.variable();
+    RefPtr name = variable.name().id();
     auto* initializer = variable.maybeInitializer();
     if (!initializer) {
-        introduceVariable(variable.name(), nullptr);
+        introduceVariable(name, nullptr);
         return;
     }
 
     auto* pointerType = std::get_if<Types::Pointer>(initializer->inferredType());
     if (!pointerType) {
-        introduceVariable(variable.name(), nullptr);
+        introduceVariable(name, nullptr);
         return;
     }
 
-    introduceVariable(variable.name(), initializer);
+    introduceVariable(name, initializer);
     m_indicesToDelete.append(m_currentStatementIndex);
 }
 
@@ -134,7 +135,8 @@ void PointerRewriter::visit(AST::LoopStatement& statement)
 
 void PointerRewriter::visit(AST::IdentifierExpression& identifier)
 {
-    auto* variable = readVariable(identifier.identifier());
+    RefPtr name = identifier.identifier().id();
+    auto* variable = readVariable(name);
     if (!variable || !*variable)
         return;
 

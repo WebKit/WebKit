@@ -42,7 +42,7 @@ public:
 
 private:
     void reset() final;
-    void addMediaSession(WebCore::MediaSessionIdentifier, const String&, const URL&) final;
+    void addMediaSession(WebCore::MediaSessionIdentifier, StringImpl*, const URL&) final;
     void updateMediaUsage(WebCore::MediaSessionIdentifier, const WebCore::MediaUsageInfo&) final;
     void removeMediaSession(WebCore::MediaSessionIdentifier) final;
 #if !HAVE(CGS_FIX_FOR_RADAR_97530095)
@@ -52,7 +52,7 @@ private:
     struct SessionMediaUsage {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SessionMediaUsage);
 
-        SessionMediaUsage(WebCore::MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+        SessionMediaUsage(WebCore::MediaSessionIdentifier identifier, StringImpl* bundleIdentifier, const URL& pageURL)
             : identifier(identifier)
             , bundleIdentifier(bundleIdentifier)
             , pageURL(pageURL)
@@ -60,7 +60,7 @@ private:
         }
 
         WebCore::MediaSessionIdentifier identifier;
-        String bundleIdentifier;
+        RefPtr<StringImpl> bundleIdentifier;
         URL pageURL;
         std::optional<WebCore::MediaUsageInfo> mediaUsageInfo;
         RetainPtr<USVideoUsage> usageTracker;

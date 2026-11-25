@@ -46,7 +46,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCPKContact>;
 
-    CoreIPCPKContact(std::optional<CoreIPCPersonNameComponents>&& name, String&& emailAddress, std::optional<CoreIPCCNPhoneNumber>&& phoneNumber, std::optional<CoreIPCCNPostalAddress>&& postalAddress, String&& supplementarySublocality)
+    CoreIPCPKContact(std::optional<CoreIPCPersonNameComponents>&& name, RefPtr<StringImpl>&& emailAddress, std::optional<CoreIPCCNPhoneNumber>&& phoneNumber, std::optional<CoreIPCCNPostalAddress>&& postalAddress, RefPtr<StringImpl>&& supplementarySublocality)
         : m_name(WTF::move(name))
         , m_emailAddress(WTF::move(emailAddress))
         , m_phoneNumber(WTF::move(phoneNumber))
@@ -56,10 +56,10 @@ private:
     }
 
     std::optional<CoreIPCPersonNameComponents> m_name;
-    String m_emailAddress;
+    RefPtr<StringImpl> m_emailAddress;
     std::optional<CoreIPCCNPhoneNumber> m_phoneNumber;
     std::optional<CoreIPCCNPostalAddress> m_postalAddress;
-    String m_supplementarySublocality;
+    RefPtr<StringImpl> m_supplementarySublocality;
 };
 
 } // namespace WebKit

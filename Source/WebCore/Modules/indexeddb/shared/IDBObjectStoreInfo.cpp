@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-IDBObjectStoreInfo::IDBObjectStoreInfo(IDBObjectStoreIdentifier identifier, const String& name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement, HashMap<IDBIndexIdentifier, IDBIndexInfo>&& indexMap)
+IDBObjectStoreInfo::IDBObjectStoreInfo(IDBObjectStoreIdentifier identifier, StringImpl* name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement, HashMap<IDBIndexIdentifier, IDBIndexInfo>&& indexMap)
     : m_identifier(identifier)
     , m_name(name)
     , m_keyPath(WTF::move(keyPath))
@@ -41,7 +41,7 @@ IDBObjectStoreInfo::IDBObjectStoreInfo(IDBObjectStoreIdentifier identifier, cons
 {
 }
 
-IDBIndexInfo IDBObjectStoreInfo::createNewIndex(IDBIndexIdentifier indexID, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
+IDBIndexInfo IDBObjectStoreInfo::createNewIndex(IDBIndexIdentifier indexID, StringImpl* name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
 {
     IDBIndexInfo info(indexID, m_identifier, name, WTF::move(keyPath), unique, multiEntry);
     m_indexMap.set(info.identifier(), info);
@@ -51,15 +51,15 @@ IDBIndexInfo IDBObjectStoreInfo::createNewIndex(IDBIndexIdentifier indexID, cons
 void IDBObjectStoreInfo::addExistingIndex(const IDBIndexInfo& info)
 {
     if (m_indexMap.contains(info.identifier()))
-        LOG_ERROR("Adding an index '%s' with existing Index ID", info.name().utf8());
+        LOG_ERROR("Adding an index '%s' with existing Index ID", utf8(info.name()));
 
     m_indexMap.set(info.identifier(), info);
 }
 
-bool IDBObjectStoreInfo::hasIndex(const String& name) const
+bool IDBObjectStoreInfo::hasIndex(StringImpl* name) const
 {
     for (auto& index : m_indexMap.values()) {
-        if (index.name() == name)
+        if (equal(index.name(), name))
             return true;
     }
 
@@ -71,10 +71,10 @@ bool IDBObjectStoreInfo::hasIndex(IDBIndexIdentifier indexIdentifier) const
     return m_indexMap.contains(indexIdentifier);
 }
 
-IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(const String& name)
+IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(StringImpl* name)
 {
     for (auto& index : m_indexMap.values()) {
-        if (index.name() == name)
+        if (equal(index.name(), name))
             return &index;
     }
 
@@ -92,26 +92,26 @@ IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(IDBIndexIdentifier identi
 
 IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const &
 {
-    IDBObjectStoreInfo result = { m_identifier, m_name.isolatedCopy(), crossThreadCopy(m_keyPath), m_autoIncrement };
+    IDBObjectStoreInfo result = { m_identifier, WTF::isolatedCopy(m_name), crossThreadCopy(m_keyPath), m_autoIncrement };
     result.m_indexMap = crossThreadCopy(m_indexMap);
     return result;
 }
 
 IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() &&
 {
-    IDBObjectStoreInfo result = { m_identifier, WTF::move(m_name).isolatedCopy(), crossThreadCopy(WTF::move(m_keyPath)), m_autoIncrement };
+    IDBObjectStoreInfo result = { m_identifier, WTF::isolatedCopy(WTF::move(m_name)), crossThreadCopy(WTF::move(m_keyPath)), m_autoIncrement };
     result.m_indexMap = crossThreadCopy(WTF::move(m_indexMap));
     return result;
 }
 
-Vector<String> IDBObjectStoreInfo::indexNames() const
+Vector<RefPtr<StringImpl>> IDBObjectStoreInfo::indexNames() const
 {
-    return WTF::map(m_indexMap, [](auto& pair) -> String {
+    return WTF::map(m_indexMap, [](auto& pair) -> RefPtr<StringImpl> {
         return pair.value.name();
     });
 }
 
-void IDBObjectStoreInfo::deleteIndex(const String& indexName)
+void IDBObjectStoreInfo::deleteIndex(StringImpl* indexName)
 {
     auto* info = infoForExistingIndex(indexName);
     if (!info)
@@ -127,7 +127,7 @@ void IDBObjectStoreInfo::deleteIndex(IDBIndexIdentifier indexIdentifier)
 
 #if !LOG_DISABLED
 
-String IDBObjectStoreInfo::loggingString(int indent) const
+RefPtr<StringImpl> IDBObjectStoreInfo::loggingString(int indent) const
 {
     StringBuilder builder;
     for (int i = 0; i < indent; ++i)
@@ -138,7 +138,7 @@ String IDBObjectStoreInfo::loggingString(int indent) const
     return builder.toString();
 }
 
-String IDBObjectStoreInfo::condensedLoggingString() const
+RefPtr<StringImpl> IDBObjectStoreInfo::condensedLoggingString() const
 {
     return makeString("<OS: "_s, m_name, " ("_s, m_identifier, ")>"_s);
 }

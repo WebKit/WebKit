@@ -43,7 +43,7 @@ public:
 
     OptionSet<Modifier> modifierKeys() const { return m_modifiers; }
 
-    WEBCORE_EXPORT bool getModifierState(const String& keyIdentifier) const;
+    WEBCORE_EXPORT bool getModifierState(StringImpl* keyIdentifier) const;
 
 protected:
     explicit UIEventWithKeyState(enum EventInterfaceType eventInterface)
@@ -51,21 +51,21 @@ protected:
     {
     }
 
-    UIEventWithKeyState(enum EventInterfaceType eventInterface, const AtomString& type, CanBubble canBubble, IsCancelable cancelable, IsComposed isComposed,
+    UIEventWithKeyState(enum EventInterfaceType eventInterface, AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, IsComposed isComposed,
         RefPtr<WindowProxy>&& view, int detail, OptionSet<Modifier> modifiers)
         : UIEvent(eventInterface, type, canBubble, cancelable, isComposed, WTF::move(view), detail)
         , m_modifiers(modifiers)
     {
     }
 
-    UIEventWithKeyState(enum EventInterfaceType eventInterface, const AtomString& type, CanBubble canBubble, IsCancelable cancelable, IsComposed isComposed,
+    UIEventWithKeyState(enum EventInterfaceType eventInterface, AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, IsComposed isComposed,
         MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, OptionSet<Modifier> modifiers, IsTrusted isTrusted)
         : UIEvent(eventInterface, type, canBubble, cancelable, isComposed, timestamp, WTF::move(view), detail, isTrusted)
         , m_modifiers(modifiers)
     {
     }
 
-    UIEventWithKeyState(enum EventInterfaceType eventInterface, const AtomString& type, const EventModifierInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    UIEventWithKeyState(enum EventInterfaceType eventInterface, AtomStringImpl* type, const EventModifierInit& initializer, IsTrusted isTrusted = IsTrusted::No)
         : UIEvent(eventInterface, type, initializer, isTrusted)
         , m_modifiers(modifiersFromInitializer(initializer))
     {

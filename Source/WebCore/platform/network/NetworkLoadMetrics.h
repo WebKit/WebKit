@@ -65,7 +65,7 @@ class NetworkLoadMetrics {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkLoadMetrics);
 public:
     NODELETE WEBCORE_EXPORT NetworkLoadMetrics();
-    NODELETE WEBCORE_EXPORT NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, MonotonicTime&& firstInterimResponseStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, bool fromPrefetch, bool fromCache, PrivacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&&);
+    NODELETE WEBCORE_EXPORT NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, MonotonicTime&& firstInterimResponseStart, RefPtr<StringImpl>&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, bool fromPrefetch, bool fromCache, PrivacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&&);
 
     NODELETE WEBCORE_EXPORT static const NetworkLoadMetrics& emptyMetrics();
 
@@ -97,15 +97,15 @@ public:
     MonotonicTime workerStart;
     MonotonicTime workerRouterEvaluationStart;
     MonotonicTime workerCacheLookupStart;
-    String workerMatchedRouterSource;
-    String workerFinalRouterSource;
+    RefPtr<StringImpl> workerMatchedRouterSource;
+    RefPtr<StringImpl> workerFinalRouterSource;
 
     // https://github.com/w3c/resource-timing/pull/408
     // Timing for interim (1xx) vs final (2xx/3xx/4xx/5xx) responses
     MonotonicTime firstInterimResponseStart; // When first 1xx response arrived (if any)
 
     // ALPN Protocol ID: https://w3c.github.io/resource-timing/#bib-RFC7301
-    String protocol;
+    RefPtr<StringImpl> protocol;
 
     uint16_t redirectCount { 0 };
 
@@ -131,17 +131,17 @@ public:
 struct AdditionalNetworkLoadMetricsForWebInspector : public RefCounted<AdditionalNetworkLoadMetricsForWebInspector> {
 
     static Ref<AdditionalNetworkLoadMetricsForWebInspector> create() { return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector()); }
-    NODELETE WEBCORE_EXPORT static Ref<AdditionalNetworkLoadMetricsForWebInspector> create(NetworkLoadPriority&&, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
+    NODELETE WEBCORE_EXPORT static Ref<AdditionalNetworkLoadMetricsForWebInspector> create(NetworkLoadPriority&&, RefPtr<StringImpl>&& remoteAddress, RefPtr<StringImpl>&& connectionIdentifier, RefPtr<StringImpl>&& tlsProtocol, RefPtr<StringImpl>&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
     Ref<AdditionalNetworkLoadMetricsForWebInspector> isolatedCopy() const;
     Ref<AdditionalNetworkLoadMetricsForWebInspector> isolatedCopy();
 
     NetworkLoadPriority priority { NetworkLoadPriority::Unknown };
 
-    String remoteAddress;
-    String connectionIdentifier;
+    RefPtr<StringImpl> remoteAddress;
+    RefPtr<StringImpl> connectionIdentifier;
 
-    String tlsProtocol;
-    String tlsCipher;
+    RefPtr<StringImpl> tlsProtocol;
+    RefPtr<StringImpl> tlsCipher;
 
     HTTPHeaderMap requestHeaders;
 
@@ -152,7 +152,7 @@ struct AdditionalNetworkLoadMetricsForWebInspector : public RefCounted<Additiona
     bool isProxyConnection { false };
 private:
     AdditionalNetworkLoadMetricsForWebInspector() { }
-    AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&&, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
+    AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&&, RefPtr<StringImpl>&& remoteAddress, RefPtr<StringImpl>&& connectionIdentifier, RefPtr<StringImpl>&& tlsProtocol, RefPtr<StringImpl>&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
 };
 
 #if PLATFORM(COCOA)

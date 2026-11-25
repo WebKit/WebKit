@@ -46,7 +46,7 @@ namespace JSC { namespace B3 { namespace Air {
 public:                                                                 \
     forEachMacro(PHASE_STATS_MEMBER)                                    \
                                                                         \
-    void setLabel(const String& label) { m_label = label; }             \
+    void setLabel(StringImpl* label) { m_label = label; }               \
                                                                         \
     void dump(PrintStream& out) const {                                 \
         forEachMacro(PHASE_STATS_PRINT)                                 \
@@ -60,7 +60,7 @@ public:                                                                 \
     }                                                                   \
                                                                         \
 private:                                                                \
-    String m_label;
+    RefPtr<StringImpl> m_label;
 
 } } } // namespace JSC::B3::Air
 

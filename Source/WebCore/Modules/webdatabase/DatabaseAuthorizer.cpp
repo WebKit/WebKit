@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-Ref<DatabaseAuthorizer> DatabaseAuthorizer::create(const String& databaseInfoTableName)
+Ref<DatabaseAuthorizer> DatabaseAuthorizer::create(StringImpl* databaseInfoTableName)
 {
     return adoptRef(*new DatabaseAuthorizer(databaseInfoTableName));
 }
 
-DatabaseAuthorizer::DatabaseAuthorizer(const String& databaseInfoTableName)
+DatabaseAuthorizer::DatabaseAuthorizer(StringImpl* databaseInfoTableName)
     : m_securityEnabled(false)
     , m_databaseInfoTableName(databaseInfoTableName)
 {
@@ -62,67 +62,67 @@ void DatabaseAuthorizer::addAllowedFunctions()
 {
     // SQLite functions used to help implement some operations
     // ALTER TABLE helpers
-    m_allowedFunctions.add("sqlite_rename_table"_s);
-    m_allowedFunctions.add("sqlite_rename_trigger"_s);
+    m_allowedFunctions.add("sqlite_rename_table"_si);
+    m_allowedFunctions.add("sqlite_rename_trigger"_si);
     // GLOB helpers
-    m_allowedFunctions.add("glob"_s);
+    m_allowedFunctions.add("glob"_si);
 
     // SQLite core functions
-    m_allowedFunctions.add("abs"_s);
-    m_allowedFunctions.add("changes"_s);
-    m_allowedFunctions.add("coalesce"_s);
-    m_allowedFunctions.add("glob"_s);
-    m_allowedFunctions.add("ifnull"_s);
-    m_allowedFunctions.add("hex"_s);
-    m_allowedFunctions.add("last_insert_rowid"_s);
-    m_allowedFunctions.add("length"_s);
-    m_allowedFunctions.add("like"_s);
-    m_allowedFunctions.add("lower"_s);
-    m_allowedFunctions.add("ltrim"_s);
-    m_allowedFunctions.add("max"_s);
-    m_allowedFunctions.add("min"_s);
-    m_allowedFunctions.add("nullif"_s);
-    m_allowedFunctions.add("quote"_s);
-    m_allowedFunctions.add("replace"_s);
-    m_allowedFunctions.add("round"_s);
-    m_allowedFunctions.add("rtrim"_s);
-    m_allowedFunctions.add("soundex"_s);
-    m_allowedFunctions.add("sqlite_source_id"_s);
-    m_allowedFunctions.add("sqlite_version"_s);
-    m_allowedFunctions.add("substr"_s);
-    m_allowedFunctions.add("total_changes"_s);
-    m_allowedFunctions.add("trim"_s);
-    m_allowedFunctions.add("typeof"_s);
-    m_allowedFunctions.add("upper"_s);
-    m_allowedFunctions.add("zeroblob"_s);
+    m_allowedFunctions.add("abs"_si);
+    m_allowedFunctions.add("changes"_si);
+    m_allowedFunctions.add("coalesce"_si);
+    m_allowedFunctions.add("glob"_si);
+    m_allowedFunctions.add("ifnull"_si);
+    m_allowedFunctions.add("hex"_si);
+    m_allowedFunctions.add("last_insert_rowid"_si);
+    m_allowedFunctions.add("length"_si);
+    m_allowedFunctions.add("like"_si);
+    m_allowedFunctions.add("lower"_si);
+    m_allowedFunctions.add("ltrim"_si);
+    m_allowedFunctions.add("max"_si);
+    m_allowedFunctions.add("min"_si);
+    m_allowedFunctions.add("nullif"_si);
+    m_allowedFunctions.add("quote"_si);
+    m_allowedFunctions.add("replace"_si);
+    m_allowedFunctions.add("round"_si);
+    m_allowedFunctions.add("rtrim"_si);
+    m_allowedFunctions.add("soundex"_si);
+    m_allowedFunctions.add("sqlite_source_id"_si);
+    m_allowedFunctions.add("sqlite_version"_si);
+    m_allowedFunctions.add("substr"_si);
+    m_allowedFunctions.add("total_changes"_si);
+    m_allowedFunctions.add("trim"_si);
+    m_allowedFunctions.add("typeof"_si);
+    m_allowedFunctions.add("upper"_si);
+    m_allowedFunctions.add("zeroblob"_si);
 
     // SQLite date and time functions
-    m_allowedFunctions.add("date"_s);
-    m_allowedFunctions.add("time"_s);
-    m_allowedFunctions.add("datetime"_s);
-    m_allowedFunctions.add("julianday"_s);
-    m_allowedFunctions.add("strftime"_s);
+    m_allowedFunctions.add("date"_si);
+    m_allowedFunctions.add("time"_si);
+    m_allowedFunctions.add("datetime"_si);
+    m_allowedFunctions.add("julianday"_si);
+    m_allowedFunctions.add("strftime"_si);
 
     // SQLite aggregate functions
     // max() and min() are already in the list
-    m_allowedFunctions.add("avg"_s);
-    m_allowedFunctions.add("count"_s);
-    m_allowedFunctions.add("group_concat"_s);
-    m_allowedFunctions.add("sum"_s);
-    m_allowedFunctions.add("total"_s);
+    m_allowedFunctions.add("avg"_si);
+    m_allowedFunctions.add("count"_si);
+    m_allowedFunctions.add("group_concat"_si);
+    m_allowedFunctions.add("sum"_si);
+    m_allowedFunctions.add("total"_si);
 
     // SQLite FTS functions
-    m_allowedFunctions.add("match"_s);
-    m_allowedFunctions.add("snippet"_s);
-    m_allowedFunctions.add("offsets"_s);
-    m_allowedFunctions.add("optimize"_s);
+    m_allowedFunctions.add("match"_si);
+    m_allowedFunctions.add("snippet"_si);
+    m_allowedFunctions.add("offsets"_si);
+    m_allowedFunctions.add("optimize"_si);
 
     // SQLite ICU functions
     // like(), lower() and upper() are already in the list
-    m_allowedFunctions.add("regexp"_s);
+    m_allowedFunctions.add("regexp"_si);
 }
 
-int DatabaseAuthorizer::createTable(const String& tableName)
+int DatabaseAuthorizer::createTable(StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -131,7 +131,7 @@ int DatabaseAuthorizer::createTable(const String& tableName)
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::createTempTable(const String& tableName)
+int DatabaseAuthorizer::createTempTable(StringImpl* tableName)
 {
     // SQLITE_CREATE_TEMP_TABLE results in a UPDATE operation, which is not
     // allowed in read-only transactions or private browsing, so we might as
@@ -142,7 +142,7 @@ int DatabaseAuthorizer::createTempTable(const String& tableName)
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::dropTable(const String& tableName)
+int DatabaseAuthorizer::dropTable(StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -150,7 +150,7 @@ int DatabaseAuthorizer::dropTable(const String& tableName)
     return updateDeletesBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::dropTempTable(const String& tableName)
+int DatabaseAuthorizer::dropTempTable(StringImpl* tableName)
 {
     // SQLITE_DROP_TEMP_TABLE results in a DELETE operation, which is not
     // allowed in read-only transactions or private browsing, so we might as
@@ -161,7 +161,7 @@ int DatabaseAuthorizer::dropTempTable(const String& tableName)
     return updateDeletesBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::allowAlterTable(const String&, const String& tableName)
+int DatabaseAuthorizer::allowAlterTable(StringImpl*, StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -170,7 +170,7 @@ int DatabaseAuthorizer::allowAlterTable(const String&, const String& tableName)
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::createIndex(const String&, const String& tableName)
+int DatabaseAuthorizer::createIndex(StringImpl*, StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -179,7 +179,7 @@ int DatabaseAuthorizer::createIndex(const String&, const String& tableName)
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::createTempIndex(const String&, const String& tableName)
+int DatabaseAuthorizer::createTempIndex(StringImpl*, StringImpl* tableName)
 {
     // SQLITE_CREATE_TEMP_INDEX should result in a UPDATE or INSERT operation,
     // which is not allowed in read-only transactions or private browsing,
@@ -190,7 +190,7 @@ int DatabaseAuthorizer::createTempIndex(const String&, const String& tableName)
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::dropIndex(const String&, const String& tableName)
+int DatabaseAuthorizer::dropIndex(StringImpl*, StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -198,7 +198,7 @@ int DatabaseAuthorizer::dropIndex(const String&, const String& tableName)
     return updateDeletesBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::dropTempIndex(const String&, const String& tableName)
+int DatabaseAuthorizer::dropTempIndex(StringImpl*, StringImpl* tableName)
 {
     // SQLITE_DROP_TEMP_INDEX should result in a DELETE operation, which is
     // not allowed in read-only transactions or private browsing, so we might
@@ -209,7 +209,7 @@ int DatabaseAuthorizer::dropTempIndex(const String&, const String& tableName)
     return updateDeletesBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::createTrigger(const String&, const String& tableName)
+int DatabaseAuthorizer::createTrigger(StringImpl*, StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -218,7 +218,7 @@ int DatabaseAuthorizer::createTrigger(const String&, const String& tableName)
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::createTempTrigger(const String&, const String& tableName)
+int DatabaseAuthorizer::createTempTrigger(StringImpl*, StringImpl* tableName)
 {
     // SQLITE_CREATE_TEMP_TRIGGER results in a INSERT operation, which is not
     // allowed in read-only transactions or private browsing, so we might as
@@ -229,7 +229,7 @@ int DatabaseAuthorizer::createTempTrigger(const String&, const String& tableName
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::dropTrigger(const String&, const String& tableName)
+int DatabaseAuthorizer::dropTrigger(StringImpl*, StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -237,7 +237,7 @@ int DatabaseAuthorizer::dropTrigger(const String&, const String& tableName)
     return updateDeletesBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::dropTempTrigger(const String&, const String& tableName)
+int DatabaseAuthorizer::dropTempTrigger(StringImpl*, StringImpl* tableName)
 {
     // SQLITE_DROP_TEMP_TRIGGER results in a DELETE operation, which is not
     // allowed in read-only transactions or private browsing, so we might as
@@ -248,12 +248,12 @@ int DatabaseAuthorizer::dropTempTrigger(const String&, const String& tableName)
     return updateDeletesBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::createView(const String&)
+int DatabaseAuthorizer::createView(StringImpl*)
 {
     return (!allowWrite() ? SQLAuthDeny : SQLAuthAllow);
 }
 
-int DatabaseAuthorizer::createTempView(const String&)
+int DatabaseAuthorizer::createTempView(StringImpl*)
 {
     // SQLITE_CREATE_TEMP_VIEW results in a UPDATE operation, which is not
     // allowed in read-only transactions or private browsing, so we might as
@@ -261,7 +261,7 @@ int DatabaseAuthorizer::createTempView(const String&)
     return (!allowWrite() ? SQLAuthDeny : SQLAuthAllow);
 }
 
-int DatabaseAuthorizer::dropView(const String&)
+int DatabaseAuthorizer::dropView(StringImpl*)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -270,7 +270,7 @@ int DatabaseAuthorizer::dropView(const String&)
     return SQLAuthAllow;
 }
 
-int DatabaseAuthorizer::dropTempView(const String&)
+int DatabaseAuthorizer::dropTempView(StringImpl*)
 {
     // SQLITE_DROP_TEMP_VIEW results in a DELETE operation, which is not
     // allowed in read-only transactions or private browsing, so we might as
@@ -282,17 +282,17 @@ int DatabaseAuthorizer::dropTempView(const String&)
     return SQLAuthAllow;
 }
 
-int DatabaseAuthorizer::createVTable(const String&, const String&)
+int DatabaseAuthorizer::createVTable(StringImpl*, StringImpl*)
 {
     return SQLAuthDeny;
 }
 
-int DatabaseAuthorizer::dropVTable(const String&, const String&)
+int DatabaseAuthorizer::dropVTable(StringImpl*, StringImpl*)
 {
     return SQLAuthDeny;
 }
 
-int DatabaseAuthorizer::allowDelete(const String& tableName)
+int DatabaseAuthorizer::allowDelete(StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -300,7 +300,7 @@ int DatabaseAuthorizer::allowDelete(const String& tableName)
     return updateDeletesBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::allowInsert(const String& tableName)
+int DatabaseAuthorizer::allowInsert(StringImpl* tableName)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -310,7 +310,7 @@ int DatabaseAuthorizer::allowInsert(const String& tableName)
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::allowUpdate(const String& tableName, const String&)
+int DatabaseAuthorizer::allowUpdate(StringImpl* tableName, StringImpl*)
 {
     if (!allowWrite())
         return SQLAuthDeny;
@@ -324,7 +324,7 @@ int DatabaseAuthorizer::allowTransaction()
     return m_securityEnabled ? SQLAuthDeny : SQLAuthAllow;
 }
 
-int DatabaseAuthorizer::allowRead(const String& tableName, const String&)
+int DatabaseAuthorizer::allowRead(StringImpl* tableName, StringImpl*)
 {
     if (m_permissions & NoAccessMask && m_securityEnabled)
         return SQLAuthDeny;
@@ -332,32 +332,32 @@ int DatabaseAuthorizer::allowRead(const String& tableName, const String&)
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::allowReindex(const String&)
+int DatabaseAuthorizer::allowReindex(StringImpl*)
 {
     return (!allowWrite() ? SQLAuthDeny : SQLAuthAllow);
 }
 
-int DatabaseAuthorizer::allowAnalyze(const String& tableName)
+int DatabaseAuthorizer::allowAnalyze(StringImpl* tableName)
 {
     return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::allowPragma(const String&, const String&)
+int DatabaseAuthorizer::allowPragma(StringImpl*, StringImpl*)
 {
     return m_securityEnabled ? SQLAuthDeny : SQLAuthAllow;
 }
 
-int DatabaseAuthorizer::allowAttach(const String&)
+int DatabaseAuthorizer::allowAttach(StringImpl*)
 {
     return m_securityEnabled ? SQLAuthDeny : SQLAuthAllow;
 }
 
-int DatabaseAuthorizer::allowDetach(const String&)
+int DatabaseAuthorizer::allowDetach(StringImpl*)
 {
     return m_securityEnabled ? SQLAuthDeny : SQLAuthAllow;
 }
 
-int DatabaseAuthorizer::allowFunction(const String& functionName)
+int DatabaseAuthorizer::allowFunction(StringImpl* functionName)
 {
     if (m_securityEnabled && !m_allowedFunctions.contains(functionName))
         return SQLAuthDeny;
@@ -385,7 +385,7 @@ void DatabaseAuthorizer::setPermissions(int permissions)
     m_permissions = permissions;
 }
 
-int DatabaseAuthorizer::denyBasedOnTableName(const String& tableName) const
+int DatabaseAuthorizer::denyBasedOnTableName(StringImpl* tableName) const
 {
     if (!m_securityEnabled)
         return SQLAuthAllow;
@@ -404,7 +404,7 @@ int DatabaseAuthorizer::denyBasedOnTableName(const String& tableName) const
     return SQLAuthAllow;
 }
 
-int DatabaseAuthorizer::updateDeletesBasedOnTableName(const String& tableName)
+int DatabaseAuthorizer::updateDeletesBasedOnTableName(StringImpl* tableName)
 {
     int allow = denyBasedOnTableName(tableName);
     if (allow)

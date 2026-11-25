@@ -50,7 +50,7 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
     LOG_WITH_STREAM(TextFragment, stream << " parseFragmentDirective: ");
     
     Vector<ParsedTextDirective> parsedTextDirectives;
-    String textDirectivePrefix = "text="_s;
+    RefPtr<StringImpl> textDirectivePrefix = "text="_si;
 
     auto directives = fragmentDirective.split('&');
     
@@ -60,9 +60,9 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         if (!directive.startsWith(textDirectivePrefix))
             continue;
         
-        auto textDirective = directive.substring(textDirectivePrefix.length());
+        auto textDirective = directive.substring(length(textDirectivePrefix));
         
-        Deque<String> tokens;
+        Deque<RefPtr<StringImpl>> tokens;
         bool containsEmptyToken = false;
         for (auto token : textDirective.split(',')) {
             if (token.isEmpty()) {
@@ -81,9 +81,9 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         
         ParsedTextDirective parsedTextDirective;
         
-        if (tokens.first().endsWith('-') && tokens.first().length() > 1) {
+        if (endsWith(tokens.first(), '-') && length(tokens.first()) > 1) {
             auto takenFirstToken = tokens.takeFirst();
-            if (auto prefix = WTF::URLParser::formURLDecode(StringView(takenFirstToken).left(takenFirstToken.length() - 1)))
+            if (auto prefix = WTF::URLParser::formURLDecode(StringView(takenFirstToken).left(length(takenFirstToken) - 1)))
                 parsedTextDirective.prefix = WTF::move(*prefix);
             else
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode prefix ");
@@ -94,8 +94,8 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
             continue;
         }
 
-        if (tokens.last().startsWith('-') && tokens.last().length() > 1) {
-            tokens.last() = tokens.last().substring(1);
+        if (startsWith(tokens.last(), '-') && length(tokens.last()) > 1) {
+            tokens.last() = substring(tokens.last(), 1);
             
             if (auto suffix = WTF::URLParser::formURLDecode(tokens.takeLast()))
                 parsedTextDirective.suffix = WTF::move(*suffix);

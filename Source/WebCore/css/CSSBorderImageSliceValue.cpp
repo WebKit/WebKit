@@ -43,7 +43,7 @@ Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageS
     return adoptRef(*new CSSBorderImageSliceValue(WTF::move(slices)));
 }
 
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_slices);
 }

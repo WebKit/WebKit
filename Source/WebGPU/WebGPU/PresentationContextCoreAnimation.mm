@@ -60,7 +60,7 @@ void PresentationContextCoreAnimation::configure(const WebGPU::CanvasConfigurati
         [[fallthrough]];
     default:
         if (configuration.reportValidationErrors)
-            device->generateAValidationError("Requested texture format cannot be presented"_s);
+            device->generateAValidationError("Requested texture format cannot be presented"_si);
         return;
     }
 

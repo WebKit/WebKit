@@ -198,13 +198,13 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
     return keyData;
 }
 
-String CryptoKeyOKP::generateJwkD() const
+RefPtr<StringImpl> CryptoKeyOKP::generateJwkD() const
 {
     ASSERT(type() == CryptoKeyType::Private);
     return base64URLEncodeToString(m_data);
 }
 
-String CryptoKeyOKP::generateJwkX() const
+RefPtr<StringImpl> CryptoKeyOKP::generateJwkX() const
 {
     if (type() == CryptoKeyType::Public)
         return base64URLEncodeToString(m_data);

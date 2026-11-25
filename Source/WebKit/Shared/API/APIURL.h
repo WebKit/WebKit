@@ -34,62 +34,62 @@ namespace API {
 
 class URL : public ObjectImpl<Object::Type::URL> {
 public:
-    static Ref<API::URL> create(const WTF::String& string)
+    static Ref<API::URL> create(StringImpl* string)
     {
         return adoptRef(*new URL(string));
     }
 
-    static Ref<API::URL> create(const API::URL* baseURL, const WTF::String& relativeURL)
+    static Ref<API::URL> create(const API::URL* baseURL, StringImpl* relativeURL)
     {
         ASSERT(baseURL);
         baseURL->parseURLIfNecessary();
         auto absoluteURL = makeUnique<WTF::URL>(*baseURL->m_parsedURL.get(), relativeURL);
-        const WTF::String& absoluteURLString = absoluteURL->string();
+        const RefPtr<StringImpl>& absoluteURLString = absoluteURL->string();
 
         return adoptRef(*new API::URL(WTF::move(absoluteURL), absoluteURLString));
     }
 
-    bool isNull() const { return m_string.isNull(); }
-    bool isEmpty() const { return m_string.isEmpty(); }
+    bool isNull() const { return !m_string; }
+    bool isEmpty() const { return WTF::isEmpty(m_string); }
 
-    const WTF::String& string() const LIFETIME_BOUND { return m_string; }
+    const RefPtr<StringImpl>& string() const LIFETIME_BOUND { return m_string; }
 
     static bool equals(const API::URL& a, const API::URL& b)
     {
         return a.url() == b.url();
     }
 
-    WTF::String host() const
+    RefPtr<StringImpl> host() const
     {
         parseURLIfNecessary();
         return m_parsedURL->host().toString();
     }
 
-    WTF::String protocol() const
+    RefPtr<StringImpl> protocol() const
     {
         parseURLIfNecessary();
         return m_parsedURL->protocol().toString();
     }
 
-    WTF::String path() const
+    RefPtr<StringImpl> path() const
     {
         parseURLIfNecessary();
         return m_parsedURL->path().toString();
     }
 
-    WTF::String lastPathComponent() const
+    RefPtr<StringImpl> lastPathComponent() const
     {
         parseURLIfNecessary();
         return m_parsedURL->lastPathComponent().toString();
     }
 
 private:
-    URL(const WTF::String& string)
+    URL(StringImpl* string)
         : m_string(string)
     {
     }
 
-    URL(std::unique_ptr<WTF::URL> parsedURL, const WTF::String& string)
+    URL(std::unique_ptr<WTF::URL> parsedURL, StringImpl* string)
         : m_string(string)
         , m_parsedURL(WTF::move(parsedURL))
     {
@@ -108,7 +108,7 @@ private:
         m_parsedURL = makeUnique<WTF::URL>(m_string);
     }
 
-    WTF::String m_string;
+    RefPtr<StringImpl> m_string;
     mutable std::unique_ptr<WTF::URL> m_parsedURL;
 };
 

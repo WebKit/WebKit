@@ -64,7 +64,7 @@ void serializationForCSS(StringBuilder& builder, const ColorInterpolationMethod&
     );
 }
 
-String serializationForCSS(const ColorInterpolationMethod& method)
+RefPtr<StringImpl> serializationForCSS(const ColorInterpolationMethod& method)
 {
     StringBuilder builder;
     serializationForCSS(builder, method);

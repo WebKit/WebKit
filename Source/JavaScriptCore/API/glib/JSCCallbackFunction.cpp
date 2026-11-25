@@ -66,7 +66,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSCCallbackFunction, (JSGlobalObject* globalOb
     return APICallbackFunction::constructImpl<JSCCallbackFunction>(globalObject, callFrame);
 }
 
-JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, const String& name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, std::optional<Vector<GType>>&& parameters)
+JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, StringImpl* name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     Structure* structure = globalObject->glibCallbackFunctionStructure();
     JSCCallbackFunction* function = new (NotNull, allocateCell<JSCCallbackFunction>(vm)) JSCCallbackFunction(vm, structure, type, jscClass, WTF::move(closure), returnType, WTF::move(parameters));
@@ -96,7 +96,7 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     auto* jsContext = jscContextGetJSContext(context.get());
 
     if (m_type == Type::Constructor) {
-        *exception = toRef(JSC::createTypeError(toJS(jsContext), "cannot call a class constructor without |new|"_s));
+        *exception = toRef(JSC::createTypeError(toJS(jsContext), "cannot call a class constructor without |new|"_si));
         return JSValueMakeUndefined(jsContext);
     }
 
@@ -104,7 +104,7 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     if (m_type == Type::Method) {
         instance = jscContextWrappedObject(context.get(), thisObject);
         if (!instance) {
-            *exception = toRef(JSC::createTypeError(toJS(jsContext), "invalid instance type in method"_s));
+            *exception = toRef(JSC::createTypeError(toJS(jsContext), "invalid instance type in method"_si));
             return JSValueMakeUndefined(jsContext);
         }
     }
@@ -171,7 +171,7 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
     auto* jsContext = jscContextGetJSContext(context.get());
 
     if (m_returnType == G_TYPE_NONE) {
-        *exception = toRef(JSC::createTypeError(toJS(jsContext), "constructors cannot be void"_s));
+        *exception = toRef(JSC::createTypeError(toJS(jsContext), "constructors cannot be void"_si));
         return nullptr;
     }
 
@@ -226,7 +226,7 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
     case G_TYPE_OBJECT:
         if (auto* ptr = returnValue.data[0].v_pointer)
             return toRef(jscClassGetOrCreateJSWrapper(m_class.get(), context.get(), ptr));
-        *exception = toRef(JSC::createTypeError(toJS(jsContext), "constructor returned null"_s));
+        *exception = toRef(JSC::createTypeError(toJS(jsContext), "constructor returned null"_si));
         break;
     default:
         *exception = toRef(JSC::createTypeError(toJS(jsContext), makeString("invalid type "_s, unsafeSpan(g_type_name(G_VALUE_TYPE(&returnValue))), " returned by constructor"_s)));

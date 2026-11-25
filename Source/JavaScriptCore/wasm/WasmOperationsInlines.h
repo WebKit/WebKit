@@ -844,7 +844,7 @@ inline void* throwWasmToJSException(CallFrame* callFrame, Wasm::ExceptionType ty
         if (type == ExceptionType::StackOverflow)
             error = createStackOverflowError(globalObject);
         else if (isTypeErrorExceptionType(type))
-            error = createTypeError(globalObject, Wasm::errorMessageForExceptionType(type));
+            error = createTypeError(globalObject, StringImpl::create(Wasm::errorMessageForExceptionType(type)).ptr());
         else
             error = createJSWebAssemblyRuntimeError(globalObject, vm, type);
         throwException(globalObject, throwScope, error);

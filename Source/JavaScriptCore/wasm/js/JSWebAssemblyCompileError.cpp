@@ -33,9 +33,9 @@
 
 namespace JSC {
 
-JSObject* createJSWebAssemblyCompileError(JSGlobalObject* globalObject, VM& vm, const String& message)
+JSObject* createJSWebAssemblyCompileError(JSGlobalObject* globalObject, VM& vm, StringImpl* message)
 {
-    ASSERT(!message.isEmpty());
+    ASSERT(!isEmpty(message));
     return ErrorInstance::create(vm, globalObject->webAssemblyCompileErrorStructure(), message, JSValue(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
 }
 

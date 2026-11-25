@@ -52,24 +52,24 @@ enum class AllowsCellularAccess : bool { No, Yes };
 struct NetworkSessionCreationParameters {
     PAL::SessionID sessionID { PAL::SessionID::defaultSessionID() };
     Markable<WTF::UUID> dataStoreIdentifier;
-    String boundInterfaceIdentifier;
+    RefPtr<StringImpl> boundInterfaceIdentifier;
     AllowsCellularAccess allowsCellularAccess { AllowsCellularAccess::Yes };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> proxyConfiguration;
-    String sourceApplicationBundleIdentifier;
-    String sourceApplicationSecondaryIdentifier;
+    RefPtr<StringImpl> sourceApplicationBundleIdentifier;
+    RefPtr<StringImpl> sourceApplicationSecondaryIdentifier;
     bool shouldLogCookieInformation { false };
     URL httpProxy;
     URL httpsProxy;
 #endif
 #if HAVE(ALTERNATIVE_SERVICE)
-    String alternativeServiceDirectory;
+    RefPtr<StringImpl> alternativeServiceDirectory;
     SandboxExtension::Handle alternativeServiceDirectoryExtensionHandle;
 #endif
-    String hstsStorageDirectory;
+    RefPtr<StringImpl> hstsStorageDirectory;
     SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
 #if USE(SOUP)
-    String cookiePersistentStoragePath;
+    RefPtr<StringImpl> cookiePersistentStoragePath;
     SoupCookiePersistentStorageType cookiePersistentStorageType { SoupCookiePersistentStorageType::Text };
     bool persistentCredentialStorageEnabled { true };
     bool ignoreTLSErrors { false };
@@ -77,17 +77,17 @@ struct NetworkSessionCreationParameters {
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain };
 #endif
 #if USE(CURL)
-    String cookiePersistentStorageFile;
+    RefPtr<StringImpl> cookiePersistentStorageFile;
     WebCore::CurlProxySettings proxySettings;
 #endif
     bool deviceManagementRestrictionsEnabled { false };
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration;
 
-    String networkCacheDirectory;
+    RefPtr<StringImpl> networkCacheDirectory;
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
-    String dataConnectionServiceType;
-    String ipAddressSpaceOverridesForTesting;
+    RefPtr<StringImpl> dataConnectionServiceType;
+    RefPtr<StringImpl> ipAddressSpaceOverridesForTesting;
     bool fastServerTrustEvaluationEnabled { false };
     bool networkCacheSpeculativeValidationEnabled { false };
     bool shouldUseTestingNetworkSession { false };
@@ -101,9 +101,9 @@ struct NetworkSessionCreationParameters {
     bool preventsSystemHTTPProxyAuthentication { false };
     bool allowsHSTSWithUntrustedRootCertificate { false };
     bool qualifiedServerTrustDebugEnabledForTesting { false };
-    String pcmMachServiceName;
-    String webPushMachServiceName;
-    String webPushPartitionString;
+    RefPtr<StringImpl> pcmMachServiceName;
+    RefPtr<StringImpl> webPushMachServiceName;
+    RefPtr<StringImpl> webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode { false };
     bool enablePrivateClickMeasurementPrivateRelayEnforcement { false };
     bool isOptInCookiePartitioningEnabled { false };
@@ -116,15 +116,15 @@ struct NetworkSessionCreationParameters {
     std::optional<double> totalQuotaRatio;
     std::optional<uint64_t> standardVolumeCapacity;
     std::optional<uint64_t> volumeCapacityOverride;
-    String localStorageDirectory;
+    RefPtr<StringImpl> localStorageDirectory;
     SandboxExtension::Handle localStorageDirectoryExtensionHandle;
-    String indexedDBDirectory;
+    RefPtr<StringImpl> indexedDBDirectory;
     SandboxExtension::Handle indexedDBDirectoryExtensionHandle;
-    String cacheStorageDirectory;
+    RefPtr<StringImpl> cacheStorageDirectory;
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
-    String generalStorageDirectory;
+    RefPtr<StringImpl> generalStorageDirectory;
     SandboxExtension::Handle generalStorageDirectoryHandle;
-    String serviceWorkerRegistrationDirectory;
+    RefPtr<StringImpl> serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled { true };
     bool inspectionForServiceWorkersAllowed { true };
@@ -143,7 +143,7 @@ struct NetworkSessionCreationParameters {
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    String resourceMonitorThrottlerDirectory;
+    RefPtr<StringImpl> resourceMonitorThrottlerDirectory;
     SandboxExtension::Handle resourceMonitorThrottlerDirectoryExtensionHandle;
 #endif
 #if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
@@ -152,7 +152,7 @@ struct NetworkSessionCreationParameters {
     bool isLegacyTLSAllowed { true };
 #endif
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    String webContentRestrictionsConfigurationFile;
+    RefPtr<StringImpl> webContentRestrictionsConfigurationFile;
     SandboxExtension::Handle webContentRestrictionsConfigurationExtensionHandle;
 #endif
 };

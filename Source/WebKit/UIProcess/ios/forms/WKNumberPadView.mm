@@ -134,11 +134,11 @@ static RetainPtr<NSString> buttonTitleForKey(WKNumberPadKey key)
     case WKNumberPadKeyToggleMode:
         return @"…";
     case WKNumberPadKeyAccept:
-        return WebCore::numberPadOKButtonTitle().createNSString();
+        return createNSString(WebCore::numberPadOKButtonTitle());
     case WKNumberPadKeyNone:
         return nil;
     default:
-        return String::number(key).createNSString();
+        return createNSString(makeString(static_cast<NSInteger>(key)));
     }
 }
 

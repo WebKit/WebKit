@@ -52,7 +52,7 @@ public:
     JSC::JSGlobalObject* globalObject() const { return m_globalObject.get(); }
 
 private:
-    void sourceParsed(JSC::JSGlobalObject*, JSC::SourceProvider*, int errorLine, const WTF::String& errorMsg) override;
+    void sourceParsed(JSC::JSGlobalObject*, JSC::SourceProvider*, int errorLine, StringImpl* errorMsg) override;
     void handlePause(JSC::JSGlobalObject*) override;
 
     bool m_callingDelegate;

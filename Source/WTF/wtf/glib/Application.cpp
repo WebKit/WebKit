@@ -57,13 +57,13 @@ const UTF8CString& applicationID()
         // and won't flood xdg-desktop-portal with new ids.
         if (auto executablePath = FileSystem::currentExecutablePath(); !executablePath.isNull()) {
             GUniquePtr<char> digest(g_compute_checksum_for_data(G_CHECKSUM_SHA256, reinterpret_cast<const uint8_t*>(executablePath.data()), executablePath.length()));
-            id.get() = makeString("org.webkit.app-"_s, unsafeSpan(digest.get())).utf8();
+            id.get() = utf8(makeString("org.webkit.app-"_s, unsafeSpan(digest.get())));
             return;
         }
 
         // If it is not possible to obtain the executable path, generate a random identifier as a fallback.
         auto uuid = WTF::UUID::createVersion4Weak();
-        id.get() = makeString("org.webkit.app-"_s, uuid.toString()).utf8();
+        id.get() = utf8(makeString("org.webkit.app-"_s, uuid.toString()));
     });
     return id.get();
 }

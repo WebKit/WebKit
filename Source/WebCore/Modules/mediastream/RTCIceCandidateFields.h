@@ -34,21 +34,21 @@
 namespace WebCore {
 
 struct RTCIceCandidateFields {
-    String foundation;
+    RefPtr<StringImpl> foundation;
     std::optional<RTCIceComponent> component;
     std::optional<unsigned> priority;
-    String address;
+    RefPtr<StringImpl> address;
     std::optional<RTCIceProtocol> protocol;
     std::optional<unsigned short> port;
     std::optional<RTCIceCandidateType> type;
     std::optional<RTCIceTcpCandidateType> tcpType;
-    String relatedAddress;
+    RefPtr<StringImpl> relatedAddress;
     std::optional<unsigned short> relatedPort;
-    String usernameFragment;
+    RefPtr<StringImpl> usernameFragment;
 
-    RTCIceCandidateFields isolatedCopy() && { return { WTF::move(foundation).isolatedCopy(), component, priority, WTF::move(address).isolatedCopy(), protocol, port, type, tcpType, WTF::move(relatedAddress).isolatedCopy(), relatedPort, WTF::move(usernameFragment).isolatedCopy() }; }
+    RTCIceCandidateFields isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(foundation)), component, priority, WTF::isolatedCopy(WTF::move(address)), protocol, port, type, tcpType, WTF::isolatedCopy(WTF::move(relatedAddress)), relatedPort, WTF::isolatedCopy(WTF::move(usernameFragment)) }; }
 };
 
-std::optional<RTCIceCandidateFields> parseIceCandidateSDP(const String&);
+std::optional<RTCIceCandidateFields> parseIceCandidateSDP(StringImpl*);
 
 } // namespace WebCore

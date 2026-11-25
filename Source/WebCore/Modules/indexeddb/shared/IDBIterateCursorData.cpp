@@ -37,7 +37,7 @@ IDBIterateCursorData IDBIterateCursorData::isolatedCopy() const
 
 #if !LOG_DISABLED
 
-String IDBIterateCursorData::loggingString() const
+RefPtr<StringImpl> IDBIterateCursorData::loggingString() const
 {
     return makeString("<Itr8Crsr: key "_s, keyData.loggingString(), ", primaryKey "_s, primaryKeyData.loggingString(), ", count "_s, count, '>');
 }

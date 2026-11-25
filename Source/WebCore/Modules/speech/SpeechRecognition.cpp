@@ -73,15 +73,15 @@ void SpeechRecognition::suspend(ReasonForSuspension)
 ExceptionOr<void> SpeechRecognition::startRecognition()
 {
     if (m_state != State::Inactive)
-        return Exception { ExceptionCode::InvalidStateError, "Recognition is being started or already started"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Recognition is being started or already started"_si };
 
     if (!m_connection)
-        return Exception { ExceptionCode::UnknownError, "Recognition does not have a valid connection"_s };
+        return Exception { ExceptionCode::UnknownError, "Recognition does not have a valid connection"_si };
 
     Ref document = downcast<Document>(*scriptExecutionContext());
     RefPtr frame = document->frame();
     if (!frame || !document->frameID())
-        return Exception { ExceptionCode::UnknownError, "Recognition is not in a valid frame"_s };
+        return Exception { ExceptionCode::UnknownError, "Recognition is not in a valid frame"_si };
 
     auto frameIdentifier = *document->frameID();
     if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document.get(), PermissionsPolicy::ShouldReportViolation::No)) {

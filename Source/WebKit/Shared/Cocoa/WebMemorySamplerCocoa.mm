@@ -94,12 +94,12 @@ size_t WebMemorySampler::sampleProcessCommittedBytes() const
     return taskInfo.resident_size;
 }
 
-String WebMemorySampler::processName() const
+RefPtr<StringImpl> WebMemorySampler::processName() const
 {
     RetainPtr appName = [[NSBundle mainBundle] bundleIdentifier];
     if (!appName)
         appName = [[NSProcessInfo processInfo] processName];
-    return String(appName.get());
+    return StringImpl::create(appName.get());
 }
 
 WebMemoryStatistics WebMemorySampler::sampleWebKit() const

@@ -283,7 +283,7 @@ static bool shouldAllowNonInteractiveCursorForElement(const Element& element)
 #endif
 
     if (RefPtr textElement = dynamicDowncast<HTMLTextFormControlElement>(element))
-        return !textElement->focused() || !textElement->lastChangeWasUserEdit() || textElement->value()->isEmpty();
+        return !textElement->focused() || !textElement->lastChangeWasUserEdit() || isEmpty(textElement->value().get());
 
     if (is<HTMLFormControlElement>(element))
         return true;
@@ -574,7 +574,7 @@ static RefPtr<Element> hostElementForGeneratedText(const RenderObject& renderer)
 }
 
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
-static String interactionRegionTextContentForNode(Node& node)
+static RefPtr<StringImpl> interactionRegionTextContentForNode(Node& node)
 {
     if (auto nodeRange = makeRangeSelectingNode(node))
         return plainText(*nodeRange);
@@ -913,7 +913,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
         clipPath,
         useContinuousCorners,
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
-        regionNode ? interactionRegionTextContentForNode(*regionNode) : String { }
+        regionNode ? interactionRegionTextContentForNode(*regionNode) : nullptr
 #endif
     }, shapeIsInset, hasNoVisualBorders };
 }
@@ -946,7 +946,7 @@ TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegio
     if (interactionRegion.clipPath)
         ts.dumpProperty("clipPath"_s, interactionRegion.clipPath.value());
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
-    if (!interactionRegion.text.isEmpty())
+    if (!isEmpty(interactionRegion.text))
         ts.dumpProperty("text"_s, interactionRegion.text);
 #endif
     return ts;

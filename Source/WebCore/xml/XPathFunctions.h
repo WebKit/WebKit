@@ -34,16 +34,16 @@ namespace WebCore::XPath {
 class Function : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(Function);
 public:
-    static std::unique_ptr<Function> create(const String& name);
-    static std::unique_ptr<Function> create(const String& name, Vector<std::unique_ptr<Expression>> arguments);
+    static std::unique_ptr<Function> create(StringImpl* name);
+    static std::unique_ptr<Function> create(StringImpl* name, Vector<std::unique_ptr<Expression>> arguments);
 
 protected:
     unsigned argumentCount() const { return subexpressionCount(); }
     const Expression& argument(unsigned i) const { return subexpression(i); }
 
 private:
-    static std::unique_ptr<Function> create(const String& name, unsigned numArguments);
-    void setArguments(const String& name, Vector<std::unique_ptr<Expression>>);
+    static std::unique_ptr<Function> create(StringImpl* name, unsigned numArguments);
+    void setArguments(StringImpl* name, Vector<std::unique_ptr<Expression>>);
 };
 
 } // namespace WebCore::XPath

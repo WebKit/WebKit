@@ -150,17 +150,17 @@ std::optional<RealtimeMediaSourceCapabilities> RealtimeMediaSourceCenter::getCap
     return std::nullopt;
 }
 
-static void addStringToSHA1(SHA1& sha1, const String& string)
+static void addStringToSHA1(SHA1& sha1, StringImpl* string)
 {
-    if (string.isEmpty())
+    if (isEmpty(string))
         return;
 
     sha1.addUTF8Bytes(string);
 }
 
-String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const String& hashSalt)
+RefPtr<StringImpl> RealtimeMediaSourceCenter::hashStringWithSalt(StringImpl* id, StringImpl* hashSalt)
 {
-    if (id.isEmpty() || hashSalt.isEmpty())
+    if (isEmpty(id) || isEmpty(hashSalt))
         return emptyString();
 
     SHA1 sha1;
@@ -171,7 +171,7 @@ String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const Str
     SHA1::Digest digest;
     sha1.computeHash(digest);
     
-    return String::fromLatin1(SHA1::hexDigest(digest).data());
+    return StringImpl::fromLatin1(SHA1::hexDigest(digest).data());
 }
 
 void RealtimeMediaSourceCenter::addDevicesChangedObserver(RealtimeMediaSourceCenterObserver& observer)
@@ -200,7 +200,7 @@ void RealtimeMediaSourceCenter::captureDevicesChanged()
 #endif
 }
 
-void RealtimeMediaSourceCenter::captureDeviceWillBeRemoved(const String& persistentId)
+void RealtimeMediaSourceCenter::captureDeviceWillBeRemoved(StringImpl* persistentId)
 {
     Ref protectedThis { *this };
     m_observers.forEach([&](Ref<RealtimeMediaSourceCenterObserver> observer) {
@@ -441,12 +441,12 @@ bool RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-const String& RealtimeMediaSourceCenter::currentMediaEnvironment() const
+const RefPtr<StringImpl>& RealtimeMediaSourceCenter::currentMediaEnvironment() const
 {
     return m_currentMediaEnvironment;
 }
 
-void RealtimeMediaSourceCenter::setCurrentMediaEnvironment(String&& mediaEnvironment)
+void RealtimeMediaSourceCenter::setCurrentMediaEnvironment(RefPtr<StringImpl>&& mediaEnvironment)
 {
     m_currentMediaEnvironment = WTF::move(mediaEnvironment);
 }

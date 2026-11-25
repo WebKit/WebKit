@@ -54,21 +54,21 @@ public:
 
     NODELETE JS_EXPORT_PRIVATE JSC::JSGlobalObject* globalObject() const;
 
-    JS_EXPORT_PRIVATE bool getFirstArgumentAsString(String& result) const;
-    JS_EXPORT_PRIVATE Vector<String> getArgumentsAsStrings() const;
+    JS_EXPORT_PRIVATE bool getFirstArgumentAsString(RefPtr<StringImpl>& result) const;
+    JS_EXPORT_PRIVATE Vector<RefPtr<StringImpl>> getArgumentsAsStrings() const;
     bool isEqual(const ScriptArguments&) const;
 
-    static String truncateStringForConsoleMessage(const String& message)
+    static RefPtr<StringImpl> truncateStringForConsoleMessage(StringImpl* message)
     {
         constexpr size_t maxMessageLength = 10000;
-        if (message.length() <= maxMessageLength)
+        if (length(message) <= maxMessageLength)
             return message;
         return makeString(StringView(message).left(maxMessageLength), "..."_s);
     }
 
 private:
     ScriptArguments(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
-    std::optional<String> getArgumentAtIndexAsString(size_t) const;
+    std::optional<RefPtr<StringImpl>> getArgumentAtIndexAsString(size_t) const;
 
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
     Vector<JSC::Strong<JSC::Unknown>> m_arguments;

@@ -54,7 +54,7 @@ Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& 
     return adoptRef(*new SVGFEMorphologyElement(tagName, document));
 }
 
-void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::operatorAttr:

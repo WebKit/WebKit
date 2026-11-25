@@ -35,10 +35,10 @@ Ref<JSON::Object> GPUImageCopyTexture::toJSON() const
 {
     Ref json = JSON::Object::create();
     // `GPUTexture` is not JSON serializable.
-    json->setDouble("mipLevel"_s, mipLevel);
+    json->setDouble("mipLevel"_si, mipLevel);
     if (origin)
-        json->setValue("origin"_s, WebCore::toJSON(*origin));
-    json->setString("aspect"_s, convertEnumerationToString(aspect));
+        json->setValue("origin"_si, WebCore::toJSON(*origin));
+    json->setString("aspect"_si, convertEnumerationToString(aspect));
     return json;
 }
 

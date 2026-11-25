@@ -45,9 +45,9 @@ public:
 
     ~WebKitBufferNamespace();
 
-    NODELETE Vector<AtomString> supportedPropertyNames() const;
-    WebKitBuffer* namedItem(DOMWrapperWorld&, const AtomString&);
-    NODELETE bool isSupportedPropertyName(const AtomString&);
+    NODELETE Vector<RefPtr<AtomStringImpl>> supportedPropertyNames() const;
+    WebKitBuffer* namedItem(DOMWrapperWorld&, AtomStringImpl*);
+    NODELETE bool isSupportedPropertyName(AtomStringImpl*);
 
 private:
     explicit WebKitBufferNamespace(LocalFrame&, UserContentProvider&);

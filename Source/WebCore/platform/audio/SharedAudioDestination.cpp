@@ -59,14 +59,14 @@ public:
     }
 
 #if PLATFORM(IOS_FAMILY)
-    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+    const RefPtr<StringImpl>& sceneIdentifier() const { return m_sceneIdentifier; }
 #endif
 
     AudioDestinationCreationFunction takeEnsureFunction() { return WTF::move(m_ensureFunction); }
 
 private:
 #if PLATFORM(IOS_FAMILY)
-    using AdapterKey = std::tuple<unsigned, float, String>;
+    using AdapterKey = std::tuple<unsigned, float, RefPtr<StringImpl>>;
 #else
     using AdapterKey = std::tuple<unsigned, float>;
 #endif
@@ -84,7 +84,7 @@ private:
     float m_sampleRate;
 
 #if PLATFORM(IOS_FAMILY)
-    String m_sceneIdentifier { emptyString() };
+    RefPtr<StringImpl> m_sceneIdentifier { emptyString() };
 #endif
 
     const Ref<AudioDestination> m_destination;
@@ -115,7 +115,7 @@ Ref<SharedAudioDestinationAdapter> SharedAudioDestinationAdapter::ensureAdapter(
 {
     std::tuple key { options.numberOfOutputChannels, options.sampleRate
 #if PLATFORM(IOS_FAMILY)
-        , options.sceneIdentifier.isNull() ? emptyString() : options.sceneIdentifier
+        , !options.sceneIdentifier ? emptyString() : options.sceneIdentifier
 #endif
     };
     auto results = sharedMap().find(key);
@@ -135,7 +135,7 @@ SharedAudioDestinationAdapter::SharedAudioDestinationAdapter(const CreationOptio
     , m_sampleRate { options.sampleRate }
     , m_destination { ensureFunction({ *this, options.inputDeviceId, options.numberOfInputChannels, options.numberOfOutputChannels, options.sampleRate
 #if PLATFORM(IOS_FAMILY)
-        , options.sceneIdentifier.isNull() ? emptyString() : options.sceneIdentifier
+        , !options.sceneIdentifier ? emptyString() : options.sceneIdentifier
 #endif
         }) }
     , m_workBus { AudioBus::create(options.numberOfOutputChannels, AudioUtilities::renderQuantumSize) }
@@ -344,9 +344,9 @@ private:
     void isPlayingDidChange() final { }
 };
 
-void SharedAudioDestination::setSceneIdentifier(const String& identifier)
+void SharedAudioDestination::setSceneIdentifier(StringImpl* identifier)
 {
-    if (protect(m_outputAdapter)->sceneIdentifier() == identifier)
+    if (equal(protect(m_outputAdapter)->sceneIdentifier(), identifier))
         return;
 
     // We need to re-create the outputAdapter when the sceneIdentifier

@@ -34,9 +34,9 @@ class QualifiedName;
 
 class JSLazyEventListener final : public JSEventListener {
 public:
-    static RefPtr<JSLazyEventListener> create(Element&, const QualifiedName& attributeName, const AtomString& attributeValue);
-    static RefPtr<JSLazyEventListener> create(Document&, const QualifiedName& attributeName, const AtomString& attributeValue);
-    static RefPtr<JSLazyEventListener> create(LocalDOMWindow&, const QualifiedName& attributeName, const AtomString& attributeValue);
+    static RefPtr<JSLazyEventListener> create(Element&, const QualifiedName& attributeName, AtomStringImpl* attributeValue);
+    static RefPtr<JSLazyEventListener> create(Document&, const QualifiedName& attributeName, AtomStringImpl* attributeValue);
+    static RefPtr<JSLazyEventListener> create(LocalDOMWindow&, const QualifiedName& attributeName, AtomStringImpl* attributeValue);
 
     virtual ~JSLazyEventListener();
 
@@ -47,7 +47,7 @@ private:
     struct CreationArguments;
     static RefPtr<JSLazyEventListener> create(CreationArguments&&);
     JSLazyEventListener(CreationArguments&&, const URL& sourceURL, const TextPosition&);
-    String code() const final { return m_code; }
+    RefPtr<StringImpl> code() const final { return m_code; }
 
 #if ASSERT_ENABLED
     void checkValidityForEventTarget(EventTarget&) final;
@@ -55,9 +55,9 @@ private:
 
     JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const final;
 
-    String m_functionName;
-    const String& m_functionParameters;
-    String m_code;
+    RefPtr<StringImpl> m_functionName;
+    const RefPtr<StringImpl>& m_functionParameters;
+    RefPtr<StringImpl> m_code;
     URL m_sourceURL;
     TextPosition m_sourcePosition;
     WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> m_originalNode;

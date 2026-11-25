@@ -63,8 +63,8 @@ public:
     // Parses a @counter-style descriptor.
     static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, StringView, const CSSParserContext&);
 
-    static RefPtr<const Style::CustomProperty> parseTypedCustomPropertyInitialValue(const AtomString&, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
-    static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&, Style::IsAttrTainted);
+    static RefPtr<const Style::CustomProperty> parseTypedCustomPropertyInitialValue(AtomStringImpl*, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
+    static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> parseTypedCustomPropertyValue(AtomStringImpl* name, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&, Style::IsAttrTainted);
 
     static ComputedStyleDependencies collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax&, CSSParserTokenRange, const CSSParserContext&);
     static bool isValidCustomPropertyValueForSyntax(const CSSCustomPropertySyntax&, CSSParserTokenRange, const CSSParserContext&);

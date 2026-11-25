@@ -52,9 +52,9 @@ static Vector<uint8_t> vectorFromData(dispatch_data_t content)
     return request;
 }
 
-static OSObjectPtr<dispatch_data_t> dataFromString(String&& s)
+static OSObjectPtr<dispatch_data_t> dataFromString(RefPtr<StringImpl>&& s)
 {
-    auto impl = s.releaseImpl();
+    auto impl = WTF::move(s);
     ASSERT(impl->is8Bit());
     auto characters = impl->span8();
     return adoptOSObject(dispatch_data_create(characters.data(), characters.size(), mainDispatchQueueSingleton(), ^{
@@ -126,7 +126,7 @@ SendOperation Connection::awaitableSend(Vector<uint8_t>&& message, bool isComple
     return { makeDispatchData(WTF::move(message)), *this, isComplete };
 }
 
-SendOperation Connection::awaitableSend(String&& message, bool isComplete)
+SendOperation Connection::awaitableSend(RefPtr<StringImpl>&& message, bool isComplete)
 {
     return { dataFromString(WTF::move(message)), *this, isComplete };
 }
@@ -136,7 +136,7 @@ SendOperation Connection::awaitableSend(OSObjectPtr<dispatch_data_t>&& data, boo
     return { WTF::move(data), *this, isComplete };
 }
 
-void Connection::send(String&& message, CompletionHandler<void()>&& completionHandler) const
+void Connection::send(RefPtr<StringImpl>&& message, CompletionHandler<void()>&& completionHandler) const
 {
     send(dataFromString(WTF::move(message)), [completionHandler = WTF::move(completionHandler)] (bool) mutable {
         if (completionHandler)

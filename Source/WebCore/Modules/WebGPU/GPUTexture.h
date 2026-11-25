@@ -55,8 +55,8 @@ public:
         return adoptRef(*new GPUTexture(WTF::move(backing), descriptor, device, isCanvasBacking));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     ExceptionOr<Ref<GPUTextureView>> createView(const std::optional<GPUTextureViewDescriptor>&) const;
 
@@ -103,7 +103,7 @@ private:
     GPUTexture& operator=(GPUTexture&&) = delete;
 
     const Ref<::WebGPU::Texture> m_backing;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     const GPUTextureFormat m_format;
     const GPUIntegerCoordinateOut m_width;
     const GPUIntegerCoordinateOut m_height;

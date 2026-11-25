@@ -44,7 +44,7 @@ void teardownGStreamerRegistryScannerMSE()
     scanner.teardown();
 }
 
-void GStreamerRegistryScannerMSE::getSupportedDecodingTypes(HashSet<String>& types)
+void GStreamerRegistryScannerMSE::getSupportedDecodingTypes(HashSet<RefPtr<StringImpl>>& types)
 {
     if (isInWebProcess())
         types = singleton().mimeTypeSet(GStreamerRegistryScanner::Configuration::Decoding);

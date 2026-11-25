@@ -150,7 +150,7 @@ private:
     unsigned resourceTypeValue() const final;
 };
 
-class StorageAccessUserAgentStringQuirkController : public ListDataController<StorageAccessUserAgentStringQuirkController, HashMap<WebCore::RegistrableDomain, String>> {
+class StorageAccessUserAgentStringQuirkController : public ListDataController<StorageAccessUserAgentStringQuirkController, HashMap<WebCore::RegistrableDomain, RefPtr<StringImpl>>> {
 private:
     void updateList(CompletionHandler<void()>&&) final;
     unsigned resourceTypeValue() const final;
@@ -224,7 +224,7 @@ class ResourceMonitorURLsController : public WebPrivacyContentRuleListController
 public:
     NODELETE static ResourceMonitorURLsController& singleton();
 
-    void getSource(CompletionHandler<void(String&&)>&&);
+    void getSource(CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
 
     void setContentRuleListStore(API::ContentRuleListStore&);
     API::ContentRuleListStore* contentRuleListStore() const { return m_contentRuleListStore; }

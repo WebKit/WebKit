@@ -133,7 +133,7 @@ NODELETE static RefPtr<WebGLShader> shaderForType(WebGLProgram& program, Inspect
 
 #endif // ENABLE(WEBGL)
 
-String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::ShaderType shaderType)
+RefPtr<StringImpl> InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::ShaderType shaderType)
 {
     return WTF::switchOn(m_program
 #if ENABLE(WEBGL)
@@ -164,7 +164,7 @@ String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::
     );
 }
 
-void InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderType shaderType, const String& source, CompletionHandler<void(bool)>&& completionHandler)
+void InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderType shaderType, StringImpl* source, CompletionHandler<void(bool)>&& completionHandler)
 {
     WTF::switchOn(m_program
 #if ENABLE(WEBGL)
@@ -278,7 +278,7 @@ bool InspectorShaderProgram::setHighlighted(bool highlighted)
 #endif // ENABLE(WEBGL)
         , [](const WeakRef<GPUComputePipeline>&) { return false; }
         , [](const WeakRef<GPURenderPipeline>& weakPipeline) {
-            return !weakPipeline->fragmentShaderSource().isNull();
+            return !!weakPipeline->fragmentShaderSource();
         }
     );
     if (!supported)
@@ -353,7 +353,7 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
 {
     auto programType = Inspector::Protocol::Canvas::ProgramType::Render;
     bool sharesVertexFragmentShader = false;
-    String name;
+    RefPtr<StringImpl> name;
     WTF::switchOn(m_program
 #if ENABLE(WEBGL)
         , [](const WeakRef<WebGLProgram>&) { }
@@ -368,8 +368,8 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
         , [&](const WeakRef<GPURenderPipeline>& weakPipeline) {
             Ref pipeline = weakPipeline.get();
 
-            const String& fragmentShaderSource = pipeline->fragmentShaderSource();
-            if (fragmentShaderSource.isNull())
+            const RefPtr<StringImpl>& fragmentShaderSource = pipeline->fragmentShaderSource();
+            if (!fragmentShaderSource)
                 programType = Inspector::Protocol::Canvas::ProgramType::Vertex;
             else
                 sharesVertexFragmentShader = pipeline->sharesVertexFragmentShader();
@@ -384,7 +384,7 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
         .release();
     if (sharesVertexFragmentShader)
         payload->setSharesVertexFragmentShader(true);
-    if (!name.isEmpty())
+    if (!isEmpty(name))
         payload->setName(name);
     return payload;
 }

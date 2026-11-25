@@ -36,14 +36,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InputEvent);
 
-Ref<InputEvent> InputEvent::create(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
-    const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
+Ref<InputEvent> InputEvent::create(AtomStringImpl* eventType, StringImpl* inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
+    StringImpl* data, RefPtr<DataTransfer>&& dataTransfer, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
 {
     return adoptRef(*new InputEvent(eventType, inputType, cancelable, WTF::move(view), data, WTF::move(dataTransfer), targetRanges, detail, isInputMethodComposing));
 }
 
-InputEvent::InputEvent(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
-    const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
+InputEvent::InputEvent(AtomStringImpl* eventType, StringImpl* inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
+    StringImpl* data, RefPtr<DataTransfer>&& dataTransfer, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
     : UIEvent(EventInterfaceType::InputEvent, eventType, CanBubble::Yes, cancelable, IsComposed::Yes, WTF::move(view), detail)
     , m_inputType(inputType)
     , m_data(data)
@@ -53,7 +53,7 @@ InputEvent::InputEvent(const AtomString& eventType, const String& inputType, IsC
 {
 }
 
-InputEvent::InputEvent(const AtomString& eventType, const Init& initializer)
+InputEvent::InputEvent(AtomStringImpl* eventType, const Init& initializer)
     : UIEvent(EventInterfaceType::InputEvent, eventType, initializer)
     , m_inputType(initializer.inputType)
     , m_data(initializer.data)

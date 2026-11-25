@@ -33,9 +33,9 @@
 namespace WebCore {
 
 struct MediaImage {
-    String src;
-    String sizes;
-    String type;
+    RefPtr<StringImpl> src;
+    RefPtr<StringImpl> sizes;
+    RefPtr<StringImpl> type;
 };
 
 }

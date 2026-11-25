@@ -40,11 +40,11 @@ public:
     {
     }
 
-    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type = Type::General, IsSanitized isSanitized = IsSanitized::No)
+    ResourceError(StringImpl* domain, int errorCode, const URL& failingURL, StringImpl* localizedDescription, Type type = Type::General, IsSanitized isSanitized = IsSanitized::No)
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type, isSanitized)
     {
-        ASSERT(domain != getNSURLErrorDomain());
-        ASSERT(domain != getCFErrorDomainCFNetwork());
+        ASSERT(!equal(domain, getNSURLErrorDomain()));
+        ASSERT(!equal(domain, getCFErrorDomainCFNetwork()));
     }
 
     WEBCORE_EXPORT ResourceError(CFErrorRef error);
@@ -68,7 +68,7 @@ public:
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     WEBCORE_EXPORT bool blockedKnownTracker() const;
-    WEBCORE_EXPORT String blockedTrackerHostName() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> blockedTrackerHostName() const;
 #endif
 
     WEBCORE_EXPORT ErrorRecoveryMethod errorRecoveryMethod() const;
@@ -79,8 +79,8 @@ public:
 private:
     friend class ResourceErrorBase;
 
-    WEBCORE_EXPORT const String& getNSURLErrorDomain() const;
-    WEBCORE_EXPORT const String& getCFErrorDomainCFNetwork() const;
+    WEBCORE_EXPORT const RefPtr<StringImpl>& getNSURLErrorDomain() const;
+    WEBCORE_EXPORT const RefPtr<StringImpl>& getCFErrorDomainCFNetwork() const;
     WEBCORE_EXPORT void mapPlatformError();
 
     void platformLazyInit();

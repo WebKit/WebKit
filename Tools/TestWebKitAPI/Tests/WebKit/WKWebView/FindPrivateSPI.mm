@@ -50,7 +50,7 @@ INSTANTIATE_TEST_SUITE_P(FindInPage, FindPrivateSPI, testing::Values(SiteIsolati
 
 TEST_P(FindPrivateSPI, CountStringMatches)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 3u);
@@ -59,7 +59,7 @@ TEST_P(FindPrivateSPI, CountStringMatches)
 
 TEST_P(FindPrivateSPI, CountStringMatchesOverMaxCount)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive, 2), static_cast<unsigned>(-1));
@@ -67,7 +67,7 @@ TEST_P(FindPrivateSPI, CountStringMatchesOverMaxCount)
 
 TEST_P(FindPrivateSPI, StepForwardAndBackward)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     for (int expectedIndex : { 0, 1, 2, 0 }) {
@@ -84,7 +84,7 @@ TEST_P(FindPrivateSPI, StepForwardAndBackward)
 
 TEST_P(FindPrivateSPI, StepWithoutWrapFailsAtEnd)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     auto noWrap = static_cast<_WKFindOptions>(stepOptions & ~_WKFindOptionsWrapAround);
@@ -98,7 +98,7 @@ TEST_P(FindPrivateSPI, StepWithoutWrapFailsAtEnd)
 
 TEST_P(FindPrivateSPI, CaseSensitivity)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>Hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>Hello hello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 2u);
@@ -107,7 +107,7 @@ TEST_P(FindPrivateSPI, CaseSensitivity)
 
 TEST_P(FindPrivateSPI, AtWordStarts)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello othello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello othello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 2u);
@@ -116,7 +116,7 @@ TEST_P(FindPrivateSPI, AtWordStarts)
 
 TEST_P(FindPrivateSPI, ChangingSearchStringResetsMatchIndex)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello help</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello help</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     find.findString(@"hello", stepOptions);
@@ -128,7 +128,7 @@ TEST_P(FindPrivateSPI, ChangingSearchStringResetsMatchIndex)
 
 TEST_P(FindPrivateSPI, NoMatch)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     auto result = find.findString(@"goodbye", stepOptions);
@@ -137,7 +137,7 @@ TEST_P(FindPrivateSPI, NoMatch)
 
 TEST_P(FindPrivateSPI, HideFindUI)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     find.findString(@"hello", static_cast<_WKFindOptions>(stepOptions | _WKFindOptionsShowFindIndicator));
@@ -260,7 +260,7 @@ TEST_P(FindPrivateSPI, NestedFrames)
 
 TEST_P(FindPrivateSPI, MatchAddedBetweenSteps)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'>hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'>hello hello</p>"_si), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
     EXPECT_EQ(find.findString(@"hello", stepOptions).matchCount, 2u);
@@ -274,7 +274,7 @@ TEST_P(FindPrivateSPI, MatchAddedBetweenSteps)
 
 TEST_P(FindPrivateSPI, CountInPDF)
 {
-    FindTestPage page { "/test.pdf"_s, GetParam(), configurationForWebViewTestingUnifiedPDF(), FindTestFixtures::pdfResources() };
+    FindTestPage page { "/test.pdf"_si, GetParam(), configurationForWebViewTestingUnifiedPDF(), FindTestFixtures::pdfResources() };
     PrivateFindSPITester find { page.webView() };
 
     EXPECT_EQ(find.countStringMatches(@"555", _WKFindOptionsCaseInsensitive), 2u);

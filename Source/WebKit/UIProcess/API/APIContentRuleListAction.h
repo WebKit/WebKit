@@ -42,7 +42,7 @@ public:
     NODELETE bool blockedCookies() const;
     NODELETE bool redirected() const;
     NODELETE bool modifiedHeaders() const;
-    NODELETE const Vector<WTF::String>& notifications() const LIFETIME_BOUND;
+    NODELETE const Vector<RefPtr<StringImpl>>& notifications() const LIFETIME_BOUND;
 
 private:
     ContentRuleListAction(WebCore::ContentRuleListResults::Result&&);

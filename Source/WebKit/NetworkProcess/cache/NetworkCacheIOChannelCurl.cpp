@@ -31,7 +31,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS>)
+IOChannel::IOChannel(StringImpl* filePath, Type type, std::optional<WorkQueue::QOS>)
 {
     FileSystem::FileOpenMode mode { };
     switch (type) {

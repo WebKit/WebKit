@@ -33,7 +33,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBDatabaseInfo);
 
-IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, HashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>&& objectStoreMap)
+IDBDatabaseInfo::IDBDatabaseInfo(StringImpl* name, uint64_t version, uint64_t maxIndexID, HashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>&& objectStoreMap)
     : m_name(name)
     , m_version(version)
     , m_maxIndexID(maxIndexID)
@@ -42,7 +42,7 @@ IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t 
 }
 
 IDBDatabaseInfo::IDBDatabaseInfo(const IDBDatabaseInfo& other, IsolatedCopyTag)
-    : m_name(other.m_name.isolatedCopy())
+    : m_name(WTF::isolatedCopy(other.m_name))
     , m_version(other.m_version)
     , m_maxIndexID(other.m_maxIndexID)
 {
@@ -55,17 +55,17 @@ IDBDatabaseInfo IDBDatabaseInfo::isolatedCopy() const
     return { *this, IDBDatabaseInfo::IsolatedCopy };
 }
 
-bool IDBDatabaseInfo::hasObjectStore(const String& name) const
+bool IDBDatabaseInfo::hasObjectStore(StringImpl* name) const
 {
     for (auto& objectStore : m_objectStoreMap.values()) {
-        if (objectStore.name() == name)
+        if (equal(objectStore.name(), name))
             return true;
     }
 
     return false;
 }
 
-IDBObjectStoreInfo IDBDatabaseInfo::createNewObjectStore(const String& name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement)
+IDBObjectStoreInfo IDBDatabaseInfo::createNewObjectStore(StringImpl* name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement)
 {
     // ObjectIdentifier generation begins anew from 1 each time the program is restarted. But the IDBObjectStores
     // held in m_objectStoreMap and their identifiers are perisisted to disk. So we must ensure that newly created
@@ -94,10 +94,10 @@ IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(IDBObjectStor
     return &iterator->value;
 }
 
-IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(const String& name)
+IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(StringImpl* name)
 {
     for (auto& objectStore : m_objectStoreMap.values()) {
-        if (objectStore.name() == name)
+        if (equal(objectStore.name(), name))
             return &objectStore;
     }
 
@@ -114,17 +114,17 @@ IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(IDBObjectStoreId
     return getInfoForExistingObjectStore(objectStoreIdentifier);
 }
 
-const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& name) const
+const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(StringImpl* name) const
 {
     return const_cast<IDBDatabaseInfo*>(this)->getInfoForExistingObjectStore(name);
 }
 
-IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& name)
+IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(StringImpl* name)
 {
     return getInfoForExistingObjectStore(name);
 }
 
-void IDBDatabaseInfo::renameObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+void IDBDatabaseInfo::renameObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* newName)
 {
     auto* info = infoForExistingObjectStore(objectStoreIdentifier);
     if (!info)
@@ -133,14 +133,14 @@ void IDBDatabaseInfo::renameObjectStore(IDBObjectStoreIdentifier objectStoreIden
     info->rename(newName);
 }
 
-Vector<String> IDBDatabaseInfo::objectStoreNames() const
+Vector<RefPtr<StringImpl>> IDBDatabaseInfo::objectStoreNames() const
 {
     return WTF::map(m_objectStoreMap, [](auto& pair) {
         return pair.value.name();
     });
 }
 
-void IDBDatabaseInfo::deleteObjectStore(const String& objectStoreName)
+void IDBDatabaseInfo::deleteObjectStore(StringImpl* objectStoreName)
 {
     auto* info = infoForExistingObjectStore(objectStoreName);
     if (!info)
@@ -156,7 +156,7 @@ void IDBDatabaseInfo::deleteObjectStore(IDBObjectStoreIdentifier objectStoreIden
 
 #if !LOG_DISABLED
 
-String IDBDatabaseInfo::loggingString() const
+RefPtr<StringImpl> IDBDatabaseInfo::loggingString() const
 {
     StringBuilder builder;
     builder.append("Database:"_s, m_name, " version "_s, m_version, '\n');

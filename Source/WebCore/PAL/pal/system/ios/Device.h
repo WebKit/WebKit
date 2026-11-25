@@ -32,7 +32,7 @@
 
 namespace PAL {
 
-String deviceName(); // Thread-safe.
+RefPtr<StringImpl> deviceName(); // Thread-safe.
 
 PAL_EXPORT bool deviceClassIsDesktop();
 

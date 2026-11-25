@@ -39,23 +39,23 @@
 
 namespace WTF {
 
-void FileSystem::setMetadataURL(const String& path, const String& metadataURLString, const String& referrer)
+void FileSystem::setMetadataURL(StringImpl* path, StringImpl* metadataURLString, StringImpl* referrer)
 {
-    String urlString;
-    if (RetainPtr url = URLWithUserTypedString(metadataURLString.createNSString().get()))
-        urlString = userVisibleString(URLByRemovingUserInfo(url.get()));
+    RefPtr<StringImpl> urlString;
+    if (RetainPtr url = URLWithUserTypedString(createNSString(metadataURLString).get()))
+        urlString = StringImpl::create(userVisibleString(URLByRemovingUserInfo(url.get())));
     else
         urlString = metadataURLString;
 
     // Call Metadata API on a background queue because it can take some time.
-    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [path = path.isolatedCopy(), urlString = WTF::move(urlString).isolatedCopy(), referrer = referrer.isolatedCopy()] {
-        auto item = adoptCF(MDItemCreate(kCFAllocatorDefault, path.createCFString().get()));
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [path = isolatedCopy(path), urlString = isolatedCopy(WTF::move(urlString)), referrer = isolatedCopy(referrer)] {
+        auto item = adoptCF(MDItemCreate(kCFAllocatorDefault, createCFString(path).get()));
         if (!item)
             return;
 
-        RetainPtr whereFromAttribute = adoptNS([[NSMutableArray alloc] initWithObjects:urlString.createNSString().get(), nil]);
-        if (!referrer.isNull())
-            [whereFromAttribute addObject:referrer.createNSString().get()];
+        RetainPtr whereFromAttribute = adoptNS([[NSMutableArray alloc] initWithObjects:createNSString(urlString).get(), nil]);
+        if (referrer)
+            [whereFromAttribute addObject:createNSString(referrer).get()];
 
         MDItemSetAttribute(item.get(), kMDItemWhereFroms, (__bridge CFArrayRef)whereFromAttribute.get());
         MDItemSetAttribute(item.get(), kMDItemDownloadedDate, (__bridge CFArrayRef)@[ [NSDate date] ]);

@@ -101,12 +101,12 @@ void RemoteTextTrackProxy::idChanged(TrackID)
     configurationChanged();
 }
 
-void RemoteTextTrackProxy::labelChanged(const String&)
+void RemoteTextTrackProxy::labelChanged(StringImpl*)
 {
     configurationChanged();
 }
 
-void RemoteTextTrackProxy::languageChanged(const String&)
+void RemoteTextTrackProxy::languageChanged(StringImpl*)
 {
     configurationChanged();
 }
@@ -118,7 +118,7 @@ void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& e
 }
 
 #if ENABLE(DATACUE_VALUE)
-void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& cueData, const String& type)
+void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& cueData, StringImpl* type)
 {
     if (RefPtr connection = m_connectionToWebProcess.get())
         connection->connection().send(Messages::MediaPlayerPrivateRemote::AddDataCueWithType(m_trackPrivate->id(), start, end, cueData->encodableValue(), type), m_mediaPlayerIdentifier);
@@ -155,7 +155,7 @@ void RemoteTextTrackProxy::removeGenericCue(InbandGenericCue& cue)
         connection->connection().send(Messages::MediaPlayerPrivateRemote::RemoveGenericCue(m_trackPrivate->id(), cue.cueData()), m_mediaPlayerIdentifier);
 }
 
-void RemoteTextTrackProxy::parseWebVTTFileHeader(String&& header)
+void RemoteTextTrackProxy::parseWebVTTFileHeader(RefPtr<StringImpl>&& header)
 {
     if (RefPtr connection = m_connectionToWebProcess.get())
         connection->connection().send(Messages::MediaPlayerPrivateRemote::ParseWebVTTFileHeader(m_trackPrivate->id(), header), m_mediaPlayerIdentifier);

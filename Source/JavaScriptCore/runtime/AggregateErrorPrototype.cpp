@@ -40,7 +40,7 @@ AggregateErrorPrototype::AggregateErrorPrototype(VM& vm, Structure* structure)
 
 void AggregateErrorPrototype::finishCreation(VM& vm)
 {
-    Base::finishCreation(vm, errorTypeName(ErrorType::AggregateError));
+    Base::finishCreation(vm, StringImpl::create(errorTypeName(ErrorType::AggregateError)).ptr());
     ASSERT(inherits(info()));
 }
 

@@ -54,7 +54,7 @@ public:
     void ref() const final { MediaTrackBase::ref(); }
     void deref() const final { MediaTrackBase::deref(); }
 
-    static const AtomString& signKeyword();
+    static const RefPtr<AtomStringImpl>& signKeyword();
 
     bool selected() const { return m_selected; }
     void setSelected(const bool);
@@ -64,8 +64,8 @@ public:
 
     size_t inbandTrackIndex();
 
-    void setKind(const AtomString&) final;
-    void setLanguage(const AtomString&) final;
+    void setKind(AtomStringImpl*) final;
+    void setLanguage(AtomStringImpl*) final;
 
     const MediaDescription& description() const;
 
@@ -79,7 +79,7 @@ public:
 private:
     VideoTrack(ScriptExecutionContext*, VideoTrackPrivate&);
 
-    bool isValidKind(const AtomString&) const final;
+    bool isValidKind(AtomStringImpl*) const final;
 
     // VideoTrackPrivateClient
     void selectedChanged(bool) final;
@@ -87,8 +87,8 @@ private:
 
     // TrackPrivateBaseClient
     void idChanged(TrackID) final;
-    void labelChanged(const String&) final;
-    void languageChanged(const String&) final;
+    void labelChanged(StringImpl*) final;
+    void languageChanged(StringImpl*) final;
     void willRemove() final;
 
     bool enabled() const final { return selected(); }

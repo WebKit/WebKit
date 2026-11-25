@@ -48,7 +48,7 @@ using UserContext = Inspector::Protocol::BidiBrowser::UserContext;
 
 struct BidiEventSubscription {
     SubscriptionID id;
-    HashSet<AtomString> events;
+    HashSet<RefPtr<AtomStringImpl>> events;
     HashSet<BrowsingContext> browsingContextIDs;
     HashSet<UserContext> userContextIDs;
 
@@ -67,7 +67,7 @@ public:
     void subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&& contexts, RefPtr<JSON::Array>&& userContexts, Inspector::CommandCallback<Inspector::Protocol::BidiSession::SubscriptionID>&&) override;
     void unsubscribe(RefPtr<JSON::Array>&& subscriptions, RefPtr<JSON::Array>&& events, Inspector::CommandCallback<void>&&) override;
 
-    bool eventIsEnabled(const String& eventName, const HashSet<String>& browsingContexts);
+    bool eventIsEnabled(StringImpl* eventName, const HashSet<RefPtr<StringImpl>>& browsingContexts);
 
 private:
     void unsubscribeByEventName(RefPtr<JSON::Array>&& events, Inspector::CommandCallback<void>&&);
@@ -76,7 +76,7 @@ private:
     const Ref<Inspector::BidiSessionBackendDispatcher> m_sessionDomainDispatcher;
 
     // https://w3c.github.io/webdriver-bidi/#events
-    HashMap<AtomString, unsigned> m_eventSubscriptionCounts;
+    HashMap<RefPtr<AtomStringImpl>, unsigned> m_eventSubscriptionCounts;
     HashMap<SubscriptionID, BidiEventSubscription> m_eventSubscriptions;
 };
 

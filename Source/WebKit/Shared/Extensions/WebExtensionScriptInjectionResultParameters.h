@@ -33,8 +33,8 @@
 namespace WebKit {
 
 struct WebExtensionScriptInjectionResultParameters {
-    std::optional<String> error;
-    std::optional<String> resultJSON;
+    std::optional<RefPtr<StringImpl>> error;
+    std::optional<RefPtr<StringImpl>> resultJSON;
     std::optional<WebExtensionFrameIdentifier> frameIdentifier;
     Markable<WTF::UUID> documentIdentifier;
 };

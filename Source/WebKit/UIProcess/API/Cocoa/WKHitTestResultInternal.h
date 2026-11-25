@@ -41,7 +41,7 @@ template<> struct WrapperTraits<API::HitTestResult> {
 };
 #endif
 
-NSURL *URLFromHitTestResultString(const String&);
+NSURL *URLFromHitTestResultString(StringImpl*);
 
 }
 

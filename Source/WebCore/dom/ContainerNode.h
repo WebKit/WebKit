@@ -58,7 +58,7 @@ public:
     ExceptionOr<void> replaceChild(Node& newChild, Node& oldChild);
     WEBCORE_EXPORT ExceptionOr<void> removeChild(Node& child);
     WEBCORE_EXPORT ExceptionOr<void> appendChild(Node& newChild);
-    void stringReplaceAll(String&&);
+    void stringReplaceAll(RefPtr<StringImpl>&&);
     void replaceAll(Node*);
 
     NODELETE inline ContainerNode& rootNode() const; // Defined in ContainerNodeInlines.h
@@ -135,13 +135,13 @@ public:
     // This gives the area within which events may get handled by a hander registered on this node.
     virtual LayoutRect absoluteEventHandlerBounds(bool& /* includesFixedPositionElements */);
 
-    WEBCORE_EXPORT ExceptionOr<Element*> querySelector(const String& selectors);
-    WEBCORE_EXPORT ExceptionOr<Ref<NodeList>> querySelectorAll(const String& selectors);
+    WEBCORE_EXPORT ExceptionOr<Element*> querySelector(StringImpl* selectors);
+    WEBCORE_EXPORT ExceptionOr<Ref<NodeList>> querySelectorAll(StringImpl* selectors);
 
-    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagName(const AtomString&);
-    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagNameNS(const AtomString& namespaceURI, const AtomString& localName);
-    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByClassName(const AtomString& classNames);
-    Ref<RadioNodeList> radioNodeList(const AtomString&);
+    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagName(AtomStringImpl*);
+    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagNameNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName);
+    WEBCORE_EXPORT Ref<HTMLCollection> getElementsByClassName(AtomStringImpl* classNames);
+    Ref<RadioNodeList> radioNodeList(AtomStringImpl*);
 
     // From the ParentNode interface - https://dom.spec.whatwg.org/#interface-parentnode
     WEBCORE_EXPORT Ref<HTMLCollection> children();

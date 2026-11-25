@@ -68,7 +68,7 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
     return SVGFitToViewBox::viewBoxToViewTransform(viewBox(), preserveAspectRatio(), viewWidth, viewHeight);
 }
 
-void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGMarkerElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
     switch (name.nodeName()) {
@@ -147,12 +147,12 @@ void SVGMarkerElement::childrenChanged(const ChildChange& change)
     invalidateMarkerResource();
 }
 
-AtomString SVGMarkerElement::orient() const
+RefPtr<AtomStringImpl> SVGMarkerElement::orient() const
 {
     return getAttribute(SVGNames::orientAttr);
 }
 
-void SVGMarkerElement::setOrient(const AtomString& orient)
+void SVGMarkerElement::setOrient(AtomStringImpl* orient)
 {
     setAttribute(SVGNames::orientAttr, orient);
 }

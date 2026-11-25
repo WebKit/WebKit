@@ -46,11 +46,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSUnitValue);
 
-CSSUnitType CSSUnitValue::parseUnit(const String& unit)
+CSSUnitType CSSUnitValue::parseUnit(StringImpl* unit)
 {
-    if (unit == "number"_s)
+    if (equal(unit, "number"_s))
         return CSSUnitType::Number;
-    if (unit == "percent"_s)
+    if (equal(unit, "percent"_s))
         return CSSUnitType::Percentage;
     return CSSParserToken::stringToUnitType(unit);
 }
@@ -79,7 +79,7 @@ void CSSUnitValue::serialize(StringBuilder& builder, OptionSet<SerializationArgu
     builder.append(unitSerialization());
 }
 
-ExceptionOr<Ref<CSSUnitValue>> CSSUnitValue::create(double value, const String& unit)
+ExceptionOr<Ref<CSSUnitValue>> CSSUnitValue::create(double value, StringImpl* unit)
 {
     auto parsedUnit = parseUnit(unit);
     if (parsedUnit == CSSUnitType::Unknown)

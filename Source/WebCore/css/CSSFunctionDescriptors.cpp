@@ -49,12 +49,12 @@ StyleRuleType CSSFunctionDescriptors::ruleType() const
 // MARK: - Descriptors
 
 // @position-try 'margin'
-String CSSFunctionDescriptors::result() const
+RefPtr<StringImpl> CSSFunctionDescriptors::result() const
 {
     return getPropertyValueInternal(CSSPropertyID::Result);
 }
 
-ExceptionOr<void> CSSFunctionDescriptors::setResult(const String& value)
+ExceptionOr<void> CSSFunctionDescriptors::setResult(StringImpl* value)
 {
     return setPropertyInternal(CSSPropertyID::Result, value, IsImportant::No);
 }

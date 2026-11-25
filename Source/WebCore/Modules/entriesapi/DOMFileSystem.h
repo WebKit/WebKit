@@ -50,7 +50,7 @@ public:
 
     ~DOMFileSystem();
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     Ref<FileSystemDirectoryEntry> root(ScriptExecutionContext&);
 
     using DirectoryListingCallback = Function<void(ExceptionOr<Vector<Ref<FileSystemEntry>>>&&)>;
@@ -60,7 +60,7 @@ public:
     void getParent(ScriptExecutionContext&, FileSystemEntry&, GetParentCallback&&);
 
     using GetEntryCallback = Function<void(ExceptionOr<Ref<FileSystemEntry>>&&)>;
-    void getEntry(ScriptExecutionContext&, FileSystemDirectoryEntry&, const String& virtualPath, const FileSystemDirectoryEntry::Flags&, GetEntryCallback&&);
+    void getEntry(ScriptExecutionContext&, FileSystemDirectoryEntry&, StringImpl* virtualPath, const FileSystemDirectoryEntry::Flags&, GetEntryCallback&&);
 
     using GetFileCallback = Function<void(ExceptionOr<Ref<File>>&&)>;
     void getFile(ScriptExecutionContext&, FileSystemFileEntry&, GetFileCallback&&);
@@ -68,12 +68,12 @@ public:
 private:
     explicit DOMFileSystem(Ref<File>&&);
 
-    String evaluatePath(StringView virtualPath);
+    RefPtr<StringImpl> evaluatePath(StringView virtualPath);
     Ref<FileSystemEntry> fileAsEntry(ScriptExecutionContext&);
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     const Ref<File> m_file;
-    String m_rootPath;
+    RefPtr<StringImpl> m_rootPath;
     const Ref<WorkQueue> m_workQueue;
 };
 

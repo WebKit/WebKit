@@ -32,7 +32,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextRun);
 
 struct ExpectedTextRunSize final {
-    String text;
+    RefPtr<StringImpl> text;
     TabSize tabSize;
     float float1;
     float float2;

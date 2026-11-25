@@ -46,8 +46,8 @@ public:
     WEBCORE_EXPORT virtual ~DeprecatedCSSOMValue();
 
     NODELETE WEBCORE_EXPORT virtual unsigned short cssValueType() const = 0;
-    WEBCORE_EXPORT virtual String cssText() const = 0;
-    ExceptionOr<void> setCssText(const String&) { return { }; } // Will never implement.
+    WEBCORE_EXPORT virtual RefPtr<StringImpl> cssText() const = 0;
+    ExceptionOr<void> setCssText(StringImpl*) { return { }; } // Will never implement.
 
     virtual bool isCustomValue() const { return false; }
     virtual bool isPrimitiveValue() const { return false; }

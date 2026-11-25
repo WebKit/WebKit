@@ -65,8 +65,8 @@ public:
     Protocol::ErrorStringOr<std::tuple<double, Protocol::Heap::HeapSnapshotData>> snapshot() final;
     Protocol::ErrorStringOr<void> startTracking() final;
     Protocol::ErrorStringOr<void> stopTracking() final;
-    Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDetails>, RefPtr<Protocol::Runtime::ObjectPreview>>> getPreview(int heapObjectId) final;
-    Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> getRemoteObject(int heapObjectId, const String& objectGroup) final;
+    Protocol::ErrorStringOr<std::tuple<RefPtr<StringImpl>, RefPtr<Protocol::Debugger::FunctionDetails>, RefPtr<Protocol::Runtime::ObjectPreview>>> getPreview(int heapObjectId) final;
+    Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> getRemoteObject(int heapObjectId, StringImpl* objectGroup) final;
 
     // JSC::HeapObserver
     void willGarbageCollect() final;

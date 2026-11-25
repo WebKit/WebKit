@@ -31,9 +31,9 @@ namespace WebCore {
  
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
 // combined with the semantics of the String(NSString*) constructor
-ProtectionSpaceBase::ProtectionSpaceBase(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme)
-    : m_host(host.length() ? host : emptyString())
-    , m_realm(realm.length() ? realm : emptyString())
+ProtectionSpaceBase::ProtectionSpaceBase(StringImpl* host, int port, ServerType serverType, StringImpl* realm, AuthenticationScheme authenticationScheme)
+    : m_host(length(host) ? host : emptyString().get())
+    , m_realm(length(realm) ? realm : emptyString().get())
     , m_port(port)
     , m_serverType(serverType)
     , m_authenticationScheme(authenticationScheme)
@@ -88,14 +88,14 @@ bool ProtectionSpaceBase::isPasswordBased() const
 
 bool ProtectionSpaceBase::compare(const ProtectionSpace& a, const ProtectionSpace& b)
 {
-    if (a.host() != b.host())
+    if (!equal(a.host(), b.host()))
         return false;
     if (a.port() != b.port())
         return false;
     if (a.serverType() != b.serverType())
         return false;
     // Ignore realm for proxies
-    if (!a.isProxy() && a.realm() != b.realm())
+    if (!a.isProxy() && !equal(a.realm(), b.realm()))
         return false;
     if (a.authenticationScheme() != b.authenticationScheme())
         return false;

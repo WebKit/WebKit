@@ -98,9 +98,9 @@ private:
     void deleteMediaPlayer(WebCore::MediaPlayerIdentifier);
 
     // Media player factory
-    void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
+    void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&);
     void supportsTypeAndCodecs(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const WebCore::MediaEngineSupportParameters&&, CompletionHandler<void(WebCore::MediaPlayer::SupportsType)>&&);
-    void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
+    void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const RefPtr<StringImpl>&&, const RefPtr<StringImpl>&&, CompletionHandler<void(bool)>&&);
 
     CheckedPtr<const WebCore::MediaPlayerFactory> playbackEngineForConnection(WebCore::MediaPlayerEnums::MediaEngineIdentifier) const;
 

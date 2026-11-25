@@ -56,7 +56,7 @@ public:
         virtual ~Client() = default;
 
         virtual Inspector::Protocol::DOM::NodeId pushNodePathForMediaEvent(Node&) = 0;
-        virtual void mediaEventDidFire(Inspector::Protocol::DOM::NodeId, const String& eventName, RefPtr<JSON::Object>&& data) = 0;
+        virtual void mediaEventDidFire(Inspector::Protocol::DOM::NodeId, StringImpl* eventName, RefPtr<JSON::Object>&& data) = 0;
         virtual void powerEfficientPlaybackStateDidChange(Inspector::Protocol::DOM::NodeId, bool isPowerEfficient) = 0;
     };
 

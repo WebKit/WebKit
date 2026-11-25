@@ -53,7 +53,7 @@ public:
         return result && result->isValid() ? WTF::move(result) : nullptr;
     }
 
-    using URLSchemeSet = HashSet<String>;
+    using URLSchemeSet = HashSet<RefPtr<StringImpl>>;
     using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
 
     // Keep in sync with WKWebExtensionMatchPatternError values.
@@ -77,8 +77,8 @@ public:
         MatchAllPaths    = 1 << 2, // Create a pattern that matches all paths, ignoring the supplied path.
     };
 
-    static RefPtr<WebExtensionMatchPattern> getOrCreate(const String& pattern);
-    static RefPtr<WebExtensionMatchPattern> getOrCreate(const String& scheme, const String& host, const String& path);
+    static RefPtr<WebExtensionMatchPattern> getOrCreate(StringImpl* pattern);
+    static RefPtr<WebExtensionMatchPattern> getOrCreate(StringImpl* scheme, StringImpl* host, StringImpl* path);
     static RefPtr<WebExtensionMatchPattern> getOrCreate(const URL&, OptionSet<CreateOptions> = { CreateOptions::MatchSubdomains, CreateOptions::MatchAllPaths });
 
     static Ref<WebExtensionMatchPattern> allURLsMatchPattern();
@@ -89,14 +89,14 @@ public:
     static bool patternsMatchPattern(const MatchPatternSet&, const WebExtensionMatchPattern&);
 
     explicit WebExtensionMatchPattern() = default;
-    explicit WebExtensionMatchPattern(const String& pattern, RefPtr<API::Error>&);
-    explicit WebExtensionMatchPattern(const String& scheme, const String& host, const String& path, RefPtr<API::Error>&);
+    explicit WebExtensionMatchPattern(StringImpl* pattern, RefPtr<API::Error>&);
+    explicit WebExtensionMatchPattern(StringImpl* scheme, StringImpl* host, StringImpl* path, RefPtr<API::Error>&);
 
     static URLSchemeSet& extensionSchemes();
     static URLSchemeSet& validSchemes();
     static URLSchemeSet& supportedSchemes();
 
-    static void registerCustomURLScheme(String);
+    static void registerCustomURLScheme(RefPtr<StringImpl>);
     static bool isWebExtensionURL(const URL&);
 
     NODELETE bool operator==(const WebExtensionMatchPattern&) const;
@@ -104,9 +104,9 @@ public:
     bool isValid() const { return m_valid; }
     bool isSupported() const;
 
-    NODELETE String scheme() const;
-    String host() const;
-    NODELETE String path() const;
+    NODELETE RefPtr<StringImpl> scheme() const;
+    RefPtr<StringImpl> host() const;
+    NODELETE RefPtr<StringImpl> path() const;
 
     bool hostIsPublicSuffix() const;
 
@@ -116,8 +116,8 @@ public:
     bool matchesURL(const URL&, OptionSet<Options> = { }) const;
     bool matchesPattern(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
 
-    String string() const { return stringWithScheme(nullString()); }
-    Vector<String> expandedStrings(OptionSet<Options> = { }) const;
+    RefPtr<StringImpl> string() const { return stringWithScheme(nullString()); }
+    Vector<RefPtr<StringImpl>> expandedStrings(OptionSet<Options> = { }) const;
 
     const WebCore::UserContentURLPattern& pattern() const LIFETIME_BOUND { return m_pattern; }
 
@@ -128,11 +128,11 @@ public:
 #endif
 
 private:
-    static Ref<API::Error> createError(Error, const String& localizedDescription);
+    static Ref<API::Error> createError(Error, StringImpl* localizedDescription);
 
-    String stringWithScheme(const String& differentScheme) const;
+    RefPtr<StringImpl> stringWithScheme(StringImpl* differentScheme) const;
 
-    static bool isValidScheme(String);
+    static bool isValidScheme(RefPtr<StringImpl>);
 
     bool schemeMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
     NODELETE bool hostMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
@@ -149,8 +149,8 @@ NSSet *toAPI(const WebExtensionMatchPattern::MatchPatternSet&);
 WebExtensionMatchPattern::MatchPatternSet toPatterns(NSSet *);
 #endif
 
-WebExtensionMatchPattern::MatchPatternSet toPatterns(const HashSet<String>&);
-HashSet<String> toStrings(const WebExtensionMatchPattern::MatchPatternSet&);
+WebExtensionMatchPattern::MatchPatternSet toPatterns(const HashSet<RefPtr<StringImpl>>&);
+HashSet<RefPtr<StringImpl>> toStrings(const WebExtensionMatchPattern::MatchPatternSet&);
 
 } // namespace WebKit
 

@@ -597,9 +597,9 @@ bool GraphicsLayerTextureMapper::filtersCanBeComposited(const FilterOperations& 
     return !filters.isEmpty();
 }
 
-bool GraphicsLayerTextureMapper::addAnimation(const GraphicsLayerKeyframeValueList& valueList, const GraphicsLayerAnimation* anim, const String& keyframesName, double timeOffset)
+bool GraphicsLayerTextureMapper::addAnimation(const GraphicsLayerKeyframeValueList& valueList, const GraphicsLayerAnimation* anim, StringImpl* keyframesName, double timeOffset)
 {
-    ASSERT(!keyframesName.isEmpty());
+    ASSERT(!isEmpty(keyframesName));
 
     if (!anim || anim->isZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedProperty::Transform && valueList.property() != AnimatedProperty::Opacity))
         return false;
@@ -626,12 +626,12 @@ bool GraphicsLayerTextureMapper::addAnimation(const GraphicsLayerKeyframeValueLi
     return true;
 }
 
-void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, double timeOffset)
+void GraphicsLayerTextureMapper::pauseAnimation(StringImpl* animationName, double timeOffset)
 {
     m_animations.pause(animationName, Seconds(timeOffset));
 }
 
-void GraphicsLayerTextureMapper::removeAnimation(const String& animationName, std::optional<AnimatedProperty>)
+void GraphicsLayerTextureMapper::removeAnimation(StringImpl* animationName, std::optional<AnimatedProperty>)
 {
     m_animations.remove(animationName);
 }

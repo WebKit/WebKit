@@ -33,12 +33,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TrustedScriptURL);
 
-Ref<TrustedScriptURL> TrustedScriptURL::create(const String& data)
+Ref<TrustedScriptURL> TrustedScriptURL::create(StringImpl* data)
 {
     return adoptRef(*new TrustedScriptURL(data));
 }
 
-TrustedScriptURL::TrustedScriptURL(const String& data)
+TrustedScriptURL::TrustedScriptURL(StringImpl* data)
     : m_data(data)
 {
 }

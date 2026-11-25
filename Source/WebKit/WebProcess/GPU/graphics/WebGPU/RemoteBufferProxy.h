@@ -64,7 +64,7 @@ public:
     OptionSet<::WebGPU::BufferUsage> usage() const final { return m_usage; }
     ::WebGPU::BufferMapState mapState() const final;
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

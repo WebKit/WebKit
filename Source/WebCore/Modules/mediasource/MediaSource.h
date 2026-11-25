@@ -79,7 +79,7 @@ class MediaSource
     WTF_MAKE_TZONE_ALLOCATED(MediaSource);
 public:
     NODELETE static void setRegistry(URLRegistry*);
-    static MediaSource* lookup(const String& url) { return s_registry ? downcast<MediaSource>(s_registry->lookup(url)) : nullptr; }
+    static MediaSource* lookup(StringImpl* url) { return s_registry ? downcast<MediaSource>(s_registry->lookup(url)) : nullptr; }
 
     static Ref<MediaSource> create(ScriptExecutionContext&, MediaSourceInit&&);
     virtual ~MediaSource();
@@ -123,9 +123,9 @@ public:
 
     NODELETE Ref<SourceBufferList> sourceBuffers() const;
     NODELETE Ref<SourceBufferList> activeSourceBuffers() const;
-    ExceptionOr<Ref<SourceBuffer>> addSourceBuffer(const String& type);
+    ExceptionOr<Ref<SourceBuffer>> addSourceBuffer(StringImpl* type);
     ExceptionOr<void> removeSourceBuffer(SourceBuffer&);
-    static bool isTypeSupported(ScriptExecutionContext&, const String& type);
+    static bool isTypeSupported(ScriptExecutionContext&, StringImpl* type);
 
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     Ref<MediaSourceHandle> handle();
@@ -173,7 +173,7 @@ public:
 protected:
     MediaSource(ScriptExecutionContext&, MediaSourceInit&&);
 
-    void scheduleEvent(const AtomString& eventName);
+    void scheduleEvent(AtomStringImpl* eventName);
     void notifyElementUpdateMediaState() const;
     void ensureWeakOnHTMLMediaElementContext(Function<void(HTMLMediaElement&)>&&) const;
 
@@ -191,7 +191,7 @@ private:
     void stop() final;
     NODELETE bool virtualHasPendingActivity() const final;
 
-    static bool isTypeSupported(ScriptExecutionContext&, const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport);
+    static bool isTypeSupported(ScriptExecutionContext&, StringImpl* type, Vector<ContentType>&& contentTypesRequiringHardwareSupport);
 
     void setPrivate(RefPtr<MediaSourcePrivate>&&);
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&);
@@ -243,8 +243,8 @@ private:
     const Ref<MediaSourceClientImpl> m_client;
 };
 
-String convertEnumerationToString(MediaSource::EndOfStreamError);
-String convertEnumerationToString(MediaSource::ReadyState);
+RefPtr<StringImpl> convertEnumerationToString(MediaSource::EndOfStreamError);
+RefPtr<StringImpl> convertEnumerationToString(MediaSource::ReadyState);
 
 } // namespace WebCore
 
@@ -255,7 +255,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::MediaSource::EndOfStreamError> {
-    static String toString(const WebCore::MediaSource::EndOfStreamError error)
+    static RefPtr<StringImpl> toString(const WebCore::MediaSource::EndOfStreamError error)
     {
         return convertEnumerationToString(error);
     }
@@ -263,7 +263,7 @@ struct LogArgument<WebCore::MediaSource::EndOfStreamError> {
 
 template <>
 struct LogArgument<WebCore::MediaSource::ReadyState> {
-    static String toString(const WebCore::MediaSource::ReadyState state)
+    static RefPtr<StringImpl> toString(const WebCore::MediaSource::ReadyState state)
     {
         return convertEnumerationToString(state);
     }

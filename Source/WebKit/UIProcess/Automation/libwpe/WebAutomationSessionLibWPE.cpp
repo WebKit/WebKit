@@ -100,7 +100,7 @@ static void doMotionEvent(struct wpe_view_backend* viewBackend, const WebCore::I
     wpe_view_backend_dispatch_pointer_event(viewBackend, &event);
 }
 
-void platformSimulateMouseInteractionLibWPE(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& location, OptionSet<WebEventModifier> keyModifiers, const String& pointerType, unsigned& currentModifiers)
+void platformSimulateMouseInteractionLibWPE(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& location, OptionSet<WebEventModifier> keyModifiers, StringImpl* pointerType, unsigned& currentModifiers)
 {
     UNUSED_PARAM(pointerType);
 
@@ -353,7 +353,7 @@ void platformSimulateKeyboardInteractionLibWPE(WebPageProxy& page, KeyboardInter
     }
 }
 
-void platformSimulateKeySequenceLibWPE(WebPageProxy& page, const String& keySequence, unsigned& currentModifiers)
+void platformSimulateKeySequenceLibWPE(WebPageProxy& page, StringImpl* keySequence, unsigned& currentModifiers)
 {
     for (auto codePoint : StringView(keySequence).codePoints())
         doKeyStrokeEvent(page.viewBackend(), true, wpe_unicode_to_key_code(codePoint), currentModifiers, true);

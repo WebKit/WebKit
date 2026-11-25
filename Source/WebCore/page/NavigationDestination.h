@@ -46,8 +46,8 @@ public:
 
     const URL& url() const LIFETIME_BOUND { return m_url; };
     void setURL(URL&& url) { m_url = WTF::move(url); }
-    String key() const { return m_entry ? m_entry->key() : String(); };
-    String id() const { return m_entry ? m_entry->id() : String(); };
+    RefPtr<StringImpl> key() const { return m_entry ? m_entry->key() : nullptr; };
+    RefPtr<StringImpl> id() const { return m_entry ? m_entry->id() : nullptr; };
     int64_t index() const { return m_entry ? m_entry->index() : -1; };
     bool sameDocument() const { return m_isSameDocument; };
     JSC::JSValue getState(JSDOMGlobalObject&) const;

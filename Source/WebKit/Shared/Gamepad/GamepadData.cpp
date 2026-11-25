@@ -35,7 +35,7 @@ using WebCore::SharedGamepadValue;
 
 namespace WebKit {
 
-GamepadData::GamepadData(unsigned index, const String& id, const String& mapping, const Vector<SharedGamepadValue>& axisValues, const Vector<SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime, const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes)
+GamepadData::GamepadData(unsigned index, StringImpl* id, StringImpl* mapping, const Vector<SharedGamepadValue>& axisValues, const Vector<SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime, const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes)
     : m_index(index)
     , m_id(id)
     , m_mapping(mapping)
@@ -46,7 +46,7 @@ GamepadData::GamepadData(unsigned index, const String& id, const String& mapping
 {
 }
 
-GamepadData::GamepadData(unsigned index, String&& id, String&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes)
+GamepadData::GamepadData(unsigned index, RefPtr<StringImpl>&& id, RefPtr<StringImpl>&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes)
     : m_index(index)
     , m_id(WTF::move(id))
     , m_mapping(WTF::move(mapping))
@@ -59,7 +59,7 @@ GamepadData::GamepadData(unsigned index, String&& id, String&& mapping, Vector<d
 
 #if !LOG_DISABLED
 
-String GamepadData::loggingString() const
+RefPtr<StringImpl> GamepadData::loggingString() const
 {
     StringBuilder builder;
 

@@ -69,7 +69,7 @@ public:
     static Ref<DedicatedWorkerGlobalScope> create(const WorkerParameters&, Ref<SecurityOrigin>&&, DedicatedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
     virtual ~DedicatedWorkerGlobalScope();
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
@@ -102,7 +102,7 @@ private:
 
     void prepareForDestruction() final;
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     const RefPtr<WorkerAnimationController> m_workerAnimationController;

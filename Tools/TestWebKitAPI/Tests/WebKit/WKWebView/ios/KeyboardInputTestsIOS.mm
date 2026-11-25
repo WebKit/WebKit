@@ -1168,8 +1168,8 @@ TEST(KeyboardInputTests, NoCrashWhenDiscardingMarkedText)
     [webView setNavigationDelegate:navigationDelegate.get()];
     [webView _setEditable:YES];
 
-    auto navigateAndSetMarkedText = [&](const String& urlString) {
-        RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:urlString.createNSString().get()]).get()]);
+    auto navigateAndSetMarkedText = [&](StringImpl* urlString) {
+        RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(urlString).get()]).get()]);
         [webView loadSimulatedRequest:request.get() responseHTMLString:@"<body>Hello world</body>"];
         [navigationDelegate waitForDidFinishNavigation];
         [webView selectAll:nil];
@@ -1177,10 +1177,10 @@ TEST(KeyboardInputTests, NoCrashWhenDiscardingMarkedText)
         [webView waitForNextPresentationUpdate];
     };
 
-    navigateAndSetMarkedText("https://foo.com"_s);
-    navigateAndSetMarkedText("https://bar.com"_s);
-    navigateAndSetMarkedText("https://baz.com"_s);
-    navigateAndSetMarkedText("https://foo.com"_s);
+    navigateAndSetMarkedText("https://foo.com"_si);
+    navigateAndSetMarkedText("https://bar.com"_si);
+    navigateAndSetMarkedText("https://baz.com"_si);
+    navigateAndSetMarkedText("https://foo.com"_si);
     [webView _close];
 
     Util::runFor(100_ms);

@@ -60,9 +60,9 @@ KeyedDecoderCF::~KeyedDecoderCF()
     ASSERT(m_arrayIndexStack.isEmpty());
 }
 
-bool KeyedDecoderCF::decodeBytes(const String& key, std::span<const uint8_t>& bytes)
+bool KeyedDecoderCF::decodeBytes(StringImpl* key, std::span<const uint8_t>& bytes)
 {
-    RetainPtr data = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr data = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!data)
         return false;
 
@@ -70,9 +70,9 @@ bool KeyedDecoderCF::decodeBytes(const String& key, std::span<const uint8_t>& by
     return true;
 }
 
-bool KeyedDecoderCF::decodeBool(const String& key, bool& result)
+bool KeyedDecoderCF::decodeBool(StringImpl* key, bool& result)
 {
-    RetainPtr boolean = dynamic_cf_cast<CFBooleanRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr boolean = dynamic_cf_cast<CFBooleanRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!boolean)
         return false;
 
@@ -80,65 +80,65 @@ bool KeyedDecoderCF::decodeBool(const String& key, bool& result)
     return true;
 }
 
-bool KeyedDecoderCF::decodeUInt32(const String& key, uint32_t& result)
+bool KeyedDecoderCF::decodeUInt32(StringImpl* key, uint32_t& result)
 {
     return decodeInt32(key, reinterpret_cast<int32_t&>(result));
 }
     
-bool KeyedDecoderCF::decodeUInt64(const String& key, uint64_t& result)
+bool KeyedDecoderCF::decodeUInt64(StringImpl* key, uint64_t& result)
 {
     return decodeInt64(key, reinterpret_cast<int64_t&>(result));
 }
 
-bool KeyedDecoderCF::decodeInt32(const String& key, int32_t& result)
+bool KeyedDecoderCF::decodeInt32(StringImpl* key, int32_t& result)
 {
-    RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!number)
         return false;
 
     return CFNumberGetValue(number.get(), kCFNumberSInt32Type, &result);
 }
 
-bool KeyedDecoderCF::decodeInt64(const String& key, int64_t& result)
+bool KeyedDecoderCF::decodeInt64(StringImpl* key, int64_t& result)
 {
-    RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!number)
         return false;
 
     return CFNumberGetValue(number.get(), kCFNumberSInt64Type, &result);
 }
 
-bool KeyedDecoderCF::decodeFloat(const String& key, float& result)
+bool KeyedDecoderCF::decodeFloat(StringImpl* key, float& result)
 {
-    RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!number)
         return false;
 
     return CFNumberGetValue(number.get(), kCFNumberFloatType, &result);
 }
 
-bool KeyedDecoderCF::decodeDouble(const String& key, double& result)
+bool KeyedDecoderCF::decodeDouble(StringImpl* key, double& result)
 {
-    RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr number = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!number)
         return false;
 
     return CFNumberGetValue(number.get(), kCFNumberDoubleType, &result);
 }
 
-bool KeyedDecoderCF::decodeString(const String& key, String& result)
+bool KeyedDecoderCF::decodeString(StringImpl* key, RefPtr<StringImpl>& result)
 {
-    RetainPtr string = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr string = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!string)
         return false;
 
-    result = string.get();
+    result = StringImpl::create(string.get());
     return true;
 }
 
-bool KeyedDecoderCF::beginObject(const String& key)
+bool KeyedDecoderCF::beginObject(StringImpl* key)
 {
-    RetainPtr dictionary = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr dictionary = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!dictionary)
         return false;
 
@@ -151,9 +151,9 @@ void KeyedDecoderCF::endObject()
     m_dictionaryStack.removeLast();
 }
 
-bool KeyedDecoderCF::beginArray(const String& key)
+bool KeyedDecoderCF::beginArray(StringImpl* key)
 {
-    RetainPtr array = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), key.createCFString().get()));
+    RetainPtr array = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(protect(m_dictionaryStack.last()), createCFString(key).get()));
     if (!array)
         return false;
 

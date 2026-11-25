@@ -62,7 +62,7 @@ public:
 
     ~PipelineLayout();
 
-    NODELETE void setLabel(String&&) final;
+    NODELETE void setLabel(RefPtr<StringImpl>&&) final;
 
     bool isValid() const final { return m_isValid; }
 
