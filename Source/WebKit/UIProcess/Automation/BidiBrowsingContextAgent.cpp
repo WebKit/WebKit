@@ -303,17 +303,28 @@ void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::
     }
 
     // FIXME: implement `referenceContext` option.
-    // FIXME: implement `background` option.
     // FIXME: implement `userContext` option (use validated context to create in specific user context).
+    // FIXME: implement `background` for windows, which embedders always bring to the front <https://webkit.org/b/328000>.
 
-    session->createBrowsingContext(browsingContextPresentationFromCreateType(createType), [callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) {
+    bool background = optionalBackground.value_or(false);
+    session->createBrowsingContext(browsingContextPresentationFromCreateType(createType), [weakThis = WeakPtr { *this }, background, callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) mutable {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
         }
 
         auto [resultContext, resultPresentation] = WTF::move(result.value());
-        callback(WTF::move(resultContext));
+        RefPtr protectedThis = weakThis;
+        if (background || !protectedThis) {
+            callback(WTF::move(resultContext));
+            return;
+        }
+
+        // Embedders open new tabs unselected, as WebDriver classic's New Window expects. The context exists even if
+        // activating it fails, so return it either way.
+        protectedThis->activate(resultContext, [context = resultContext, callback = WTF::move(callback)](CommandResult<void>&&) mutable {
+            callback(WTF::move(context));
+        });
     });
 }
 
