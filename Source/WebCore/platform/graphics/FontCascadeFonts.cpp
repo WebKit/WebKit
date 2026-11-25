@@ -595,6 +595,7 @@ void FontCascadeFonts::pruneSystemFallbacks()
     }
     m_systemFallbackFontSet.clear();
     m_shapedTextCache.clear();
+    m_characterAdvancesCache.clear();
 }
 
 void FontCascadeFonts::addSystemFallbackFont(Ref<Font>&& font)
