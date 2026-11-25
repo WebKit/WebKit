@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>text-box-trim with scroll container and flow-root children</title>
+<link rel="author" title="Christian Biesinger" href="mailto:cbiesinger@igalia.com">
+<link rel="help" href="https://drafts.csswg.org/css-inline-3/#text-box-trim">
+<link rel="help" href="https://www.w3.org/TR/CSS2/selector.html#first-formatted-line">
+<link rel="match" href="../../reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="Like ::first-line, text-box-trim propagates into in-flow block-level children that establish a block formatting context, such as scroll containers.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<style>
+  .container {
+    position: relative;
+    text-box-trim: trim-both;
+    font-family: Ahem;
+    font-size: 20px;
+    line-height: 40px;
+    color: green;
+    background: red;
+  }
+  .filler {
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    background: green;
+  }
+</style>
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<div style="width:100px; height:100px; background:red;">
+  <div class="container">
+    <div style="overflow:hidden;">xxxxx</div>
+    <div style="display:flow-root;">xxxxx</div>
+    <div style="overflow:auto;">xxxxx</div>
+    <div class="filler" style="top:20px;"></div>
+    <div class="filler" style="top:60px;"></div>
+  </div>
+</div>
