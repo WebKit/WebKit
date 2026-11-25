@@ -112,7 +112,7 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        invalidatePresentationalHintStyle();
+        invalidatePresentationalHintStyle(attrName);
         invalidateResourceImageBuffersIfNeeded();
         return;
     }

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<title>Changing some of an element's presentation attributes</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<svg id="svg" width="200" height="200"></svg>
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+
+function makeElement(name, attributes)
+{
+    const element = document.createElementNS(svgNS, name);
+    for (const [attribute, value] of attributes)
+        element.setAttribute(attribute, value);
+    svg.appendChild(element);
+    return element;
+}
+
+// Changes the attributes of an element that already has a style, and compares it with a new element
+// that has the resulting attributes in the same order.
+function testChanges(name, initialAttributes, changes, properties, description)
+{
+    test(t => {
+        const element = makeElement(name, initialAttributes);
+        t.add_cleanup(() => element.remove());
+        // Change once first, so that the presentational hint style is the mutable one.
+        const [firstAttribute, firstValue] = initialAttributes[0];
+        element.setAttribute(firstAttribute, firstValue + " ");
+        getComputedStyle(element).fill;
+        element.setAttribute(firstAttribute, firstValue);
+        getComputedStyle(element).fill;
+
+        const finalAttributes = new Map(initialAttributes);
+        for (const [attribute, value] of changes) {
+            element.setAttribute(attribute, value);
+            finalAttributes.set(attribute, value);
+        }
+
+        const reference = makeElement(name, finalAttributes);
+        t.add_cleanup(() => reference.remove());
+        for (const property of properties)
+            assert_equals(getComputedStyle(element)[property], getComputedStyle(reference)[property], property);
+    }, description);
+}
+
+testChanges("rect", [["width", "10"], ["height", "10"], ["fill", "red"], ["overflow", "visible"]],
+    [["fill", "bogus"], ["overflow", "hidden"]],
+    ["fill", "overflowX", "overflowY"],
+    "An attribute that fails to parse changing with an attribute that maps to a shorthand");
+
+testChanges("rect", [["width", "10"], ["height", "10"], ["fill", "red"], ["stroke", "blue"]],
+    [["fill", "bogus"], ["stroke", "green"]],
+    ["fill", "stroke"],
+    "An attribute that fails to parse changing with an attribute that parses");
+
+testChanges("rect", [["width", "10"], ["height", "10"], ["fill", "red"]],
+    [["fill", "bogus"]],
+    ["fill"],
+    "An attribute that fails to parse");
+
+testChanges("rect", [["width", "10"], ["height", "10"], ["overflow", "visible"]],
+    [["overflow", "hidden"]],
+    ["overflowX", "overflowY"],
+    "An attribute that maps to a shorthand");
+
+testChanges("text", [["fill", "red"], ["font-stretch", "condensed"], ["font-width", "expanded"]],
+    [["font-stretch", "normal"]],
+    ["fontWidth"],
+    "font-stretch changing before a font-width attribute");
+
+testChanges("text", [["fill", "red"], ["font-stretch", "condensed"], ["font-width", "expanded"]],
+    [["font-width", "extra-expanded"]],
+    ["fontWidth"],
+    "font-width changing after a font-stretch attribute");
+
+testChanges("text", [["fill", "red"], ["font-width", "expanded"], ["font-stretch", "condensed"]],
+    [["font-stretch", "normal"], ["font-width", "extra-expanded"]],
+    ["fontWidth"],
+    "font-stretch and font-width changing together");
+
+testChanges("rect", [["width", "10"], ["height", "10"], ["x", "1"], ["y", "1"], ["rx", "1"], ["ry", "1"], ["fill", "red"],
+        ["stroke", "red"], ["stroke-width", "1"], ["opacity", "0.5"], ["fill-opacity", "0.5"], ["stroke-opacity", "0.5"]],
+    [["width", "20"], ["height", "20"], ["x", "2"], ["y", "2"], ["rx", "2"], ["ry", "2"], ["fill", "blue"],
+        ["stroke", "blue"], ["stroke-width", "2"], ["opacity", "0.25"], ["fill-opacity", "0.25"], ["stroke-opacity", "0.25"]],
+    ["width", "height", "x", "y", "rx", "ry", "fill", "stroke", "strokeWidth", "opacity", "fillOpacity", "strokeOpacity"],
+    "More attributes changing than are tracked");
+</script>

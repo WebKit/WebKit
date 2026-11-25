@@ -153,7 +153,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
         updateSVGRendererForElementChange();
         if (document().settings().cssDPropertyEnabled())
-            invalidatePresentationalHintStyle();
+            invalidatePresentationalHintStyle(attrName);
         invalidateResourceImageBuffersIfNeeded();
         return;
     }

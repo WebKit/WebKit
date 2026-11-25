@@ -214,6 +214,7 @@ protected:
     CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&) const;
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    bool hasIndependentPresentationalHintForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void postConnectionSteps() override;

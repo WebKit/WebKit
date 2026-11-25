@@ -1,0 +1,10 @@
+
+PASS An attribute that fails to parse changing with an attribute that maps to a shorthand
+PASS An attribute that fails to parse changing with an attribute that parses
+PASS An attribute that fails to parse
+PASS An attribute that maps to a shorthand
+PASS font-stretch changing before a font-width attribute
+PASS font-width changing after a font-stretch attribute
+PASS font-stretch and font-width changing together
+PASS More attributes changing than are tracked
+
