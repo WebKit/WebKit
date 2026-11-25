@@ -320,6 +320,8 @@ std::optional<PipeWireNodeData> DesktopPortalScreenCast::ScreencastSession::open
     auto drmFormat = GMallocString::unsafeAdoptFromUTF8(gst_video_dma_drm_fourcc_to_string(fourcc, 0));
     gst_caps_set_simple(nodeData.caps.get(), "format", G_TYPE_STRING, "DMA_DRM", "drm-format", G_TYPE_STRING, drmFormat.utf8(), nullptr);
 #endif
+    // Compositors without linear BGRA DMA-BUFs, such as umbriel on NVIDIA, still offer shared memory.
+    gst_caps_append(nodeData.caps.get(), gst_caps_from_string("video/x-raw, format=(string){ BGRx, BGRA, RGBx, RGBA }"));
     return nodeData;
 }
 
