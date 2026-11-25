@@ -122,6 +122,11 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
 
     auto tileImageSize = tileImage->logicalSize();
 
+    // The tile is not drawn again, so keep it as an image.
+    RefPtr tileNativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(tileImage));
+    if (!tileNativeImage)
+        return nullptr;
+
     // Compute pattern space transformation.
     auto patternData = makeUnique<PatternData>();
     patternData->transform.translate(tileBoundaries.location());
@@ -142,7 +147,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     }
 
     // Build pattern.
-    patternData->pattern = Pattern::create({ tileImage.releaseNonNull() }, { true, true, patternData->transform });
+    patternData->pattern = Pattern::create({ tileNativeImage.releaseNonNull() }, { true, true, patternData->transform });
 
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by

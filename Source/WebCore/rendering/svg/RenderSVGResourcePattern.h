@@ -20,6 +20,7 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "NativeImage.h"
 #include "PatternAttributes.h"
 #include "RenderSVGResourcePaintServer.h"
 #include "SVGPatternElement.h"
@@ -69,7 +70,7 @@ protected:
 
     struct CachedTile {
         FloatSize absoluteScale;
-        Ref<ImageBuffer> image;
+        Ref<NativeImage> image;
         AffineTransform patternSpaceTransform;
     };
     struct CachedTiles {
