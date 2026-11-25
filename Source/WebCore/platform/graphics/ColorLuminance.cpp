@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,11 +40,7 @@ double relativeLuminance(const Color& color)
 
 double contrastRatio(const Color& colorA, const Color& colorB)
 {
-    return colorA.callOnUnderlyingType([&] (const auto& underlyingColorA) {
-        return colorB.callOnUnderlyingType([&] (const auto& underlyingColorB) {
-            return contrastRatio(underlyingColorA, underlyingColorB);
-        });
-    });
+    return contrastRatio(relativeLuminance(colorA), relativeLuminance(colorB));
 }
 
-}
+} // namespace WebCore
