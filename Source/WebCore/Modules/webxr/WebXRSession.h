@@ -162,6 +162,7 @@ public:
 #if ENABLE(WEBXR_LAYERS)
     unsigned maxRenderLayers() const;
     void layerDestroyed(const XRCompositionLayer&);
+    bool areLayersEnabled() const;
 #endif
 
     void initializeTrackingAndRendering(std::optional<XRCanvasConfiguration>&&);

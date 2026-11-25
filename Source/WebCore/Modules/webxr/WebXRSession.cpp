@@ -47,6 +47,7 @@
 #include "WebXRHitTestSource.h"
 #include "WebXRPlane.h"
 #include "WebXRTransientInputHitTestSource.h"
+#include "WebXRWebGLLayer.h"
 #include "XRCompositionLayer.h"
 #include "XRFrameRequestCallback.h"
 #if ENABLE(WEBXR_ANCHORS)
@@ -209,7 +210,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
                 return Exception { ExceptionCode::InvalidStateError, "Cannot set a destroyed layer in the layers list."_s };
         }
 
-        if (!m_requestedFeatures.contains(PlatformXR::SessionFeature::Layers) && newState.layers->size() > 1)
+        if (!areLayersEnabled() && newState.layers->size() > 1)
             return Exception { ExceptionCode::NotSupportedError, "Cannot set layers when the Layers feature is not enabled for this session."_s };
 
         auto maxLayers = maxRenderLayers();
@@ -225,7 +226,10 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
             if (i != newState.layers->reverseFind(layer))
                 return Exception { ExceptionCode::TypeError, "Cannot set the same XRLayer instance multiple times in the layers array."_s };
 
-            if (layer->isWebXRWebGLLayer() && downcast<WebXRWebGLLayer>(layer.get()).session() != this)
+            if (auto* compositionLayer = dynamicDowncast<XRCompositionLayer>(layer); compositionLayer && compositionLayer->session() != this)
+                return Exception { ExceptionCode::TypeError, "XRCompositionLayer's session does not match the XRSession."_s };
+
+            if (auto* webGLLayer = dynamicDowncast<WebXRWebGLLayer>(layer); webGLLayer && webGLLayer->session() != this)
                 return Exception { ExceptionCode::TypeError, "XRWebGLLayer's session does not match the XRSession."_s };
         }
 
@@ -1082,8 +1086,16 @@ void WebXRSession::addSessionListener(const WebXRSessionListener& listener)
 }
 
 #if ENABLE(WEBXR_LAYERS)
+bool WebXRSession::areLayersEnabled() const
+{
+    return m_requestedFeatures.contains(PlatformXR::SessionFeature::Layers);
+}
+
 unsigned WebXRSession::maxRenderLayers() const
 {
+    if (!areLayersEnabled())
+        return 1;
+
     RefPtr device { m_device };
     return device ? device->maxRenderLayers() : 0;
 }
