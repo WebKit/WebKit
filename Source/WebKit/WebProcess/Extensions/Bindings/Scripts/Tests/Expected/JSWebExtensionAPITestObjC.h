@@ -28,10 +28,24 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionWrapper.h"
+#include "JSWebExtensionValueParser.h"
 
 namespace WebKit {
 
 using namespace WTF;
+
+struct WebExtensionTestObjCOptions {
+    String name;
+    std::optional<double> count;
+    bool enabled;
+    std::optional<Vector<String>> tags;
+};
+
+std::expected<WebExtensionTestObjCOptions, WebExtensionValueError> parseWebExtensionTestObjCOptions(JSContextRef, JSValueRef, const String& path = { });
+
+template<> struct WebExtensionValueParser<WebExtensionTestObjCOptions> : WebExtensionObjectParserBase {
+    static std::expected<WebExtensionTestObjCOptions, WebExtensionValueError> parse(JSContextRef context, JSValueRef value, const String& path) { return parseWebExtensionTestObjCOptions(context, value, path); }
+};
 
 class WebExtensionAPITestObjC;
 
@@ -59,6 +73,7 @@ private:
     static JSValueRef getMessage(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef getURL(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef runTests(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    static JSValueRef configure(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef openPopup(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef createMenu(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)

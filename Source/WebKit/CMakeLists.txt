@@ -1235,6 +1235,10 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
         set(_supplemental_arguments --supplementalDependencyFile ${_supplemental_dependency_file})
     endif ()
 
+    set(_idl_file_names_list ${WebKit_DERIVED_SOURCES_DIR}/WebExtensionIDLFileNamesList.txt)
+    list(JOIN _input_files "\n" _idl_file_names_content)
+    file(GENERATE OUTPUT ${_idl_file_names_list} CONTENT "${_idl_file_names_content}\n")
+
     add_custom_command(
         OUTPUT
             ${_outputs}
@@ -1243,6 +1247,7 @@ macro(GENERATE_IDL_BINDINGS _output_source _inputs _cpp_inputs)
         MAIN_DEPENDENCY ${WEBCORE_DIR}/bindings/scripts/generate-bindings-all.pl
         DEPENDS
             ${_input_files}
+            ${_idl_file_names_list}
             ${_supplemental_files}
            "${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm"
            "${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl"
