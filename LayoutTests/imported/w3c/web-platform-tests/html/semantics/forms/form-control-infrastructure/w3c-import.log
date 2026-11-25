@@ -10,14 +10,15 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/association.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form-attribute-tree-mutations.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form-named-items-non-descendant.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/parser-reparented-open-element.html

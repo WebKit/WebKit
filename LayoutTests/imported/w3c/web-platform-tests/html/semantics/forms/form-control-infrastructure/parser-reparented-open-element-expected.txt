@@ -1,0 +1,5 @@
+
+
+PASS Elements parsed into an open container reparented elsewhere in the same document stay associated with the open form
+PASS Elements parsed into an open container detached from the document are not associated with the open form
+

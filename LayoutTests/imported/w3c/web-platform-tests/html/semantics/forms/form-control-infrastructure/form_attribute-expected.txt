@@ -1,5 +1,6 @@
 
 
+Same ID as form
 
 PASS Tests for parser inserted controls
 PASS [BUTTON] Basic form association - control with no form attribute is associated with ancestor
@@ -100,4 +101,5 @@ PASS [TEXTAREA] When the id of a non-ancestor form changes from not being a matc
 PASS [TEXTAREA] When form element with same ID as the control's form attribute is inserted earlier in tree order, the form owner is changed to the inserted form
 PASS [TEXTAREA] When non-form element with same ID as the control's form attribute is inserted earlier in tree order, the control does not have a form owner
 PASS [TEXTAREA] A control that is not in the document but has the form attribute set is associated with the nearest ancestor form if one exists
+PASS Test for button with same ID as form
 
