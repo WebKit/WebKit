@@ -1,0 +1,9 @@
+target
+
+PASS Moving a style element from the document into a shadow root and back
+PASS Moving a style element from one shadow root into another
+PASS Moving a SVG style element from the document into a shadow root and back
+PASS Moving a SVG style element from one shadow root into another
+PASS Moving a link element from the document into a shadow root and back
+PASS Moving a link element from one shadow root into another
+

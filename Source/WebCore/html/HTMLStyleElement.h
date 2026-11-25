@@ -61,6 +61,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
+    void movingSteps(MovingType, ContainerNode&) final;
     void childrenChanged(const ChildChange&) final;
 
     bool isLoading() const { return m_styleSheetOwner.isLoading(); }

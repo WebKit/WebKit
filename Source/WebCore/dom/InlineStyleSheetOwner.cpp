@@ -90,6 +90,12 @@ void InlineStyleSheetOwner::removedFromDocument(Element& element)
         clearSheet();
 }
 
+void InlineStyleSheetOwner::moved(Element& element)
+{
+    if (CheckedPtr scope = m_styleScope)
+        m_styleScope = scope->styleSheetCandidateNodeMoved(element);
+}
+
 void InlineStyleSheetOwner::clearDocumentData(Element& element)
 {
     if (RefPtr sheet = m_sheet)

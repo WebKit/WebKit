@@ -149,6 +149,12 @@ void HTMLStyleElement::removingSteps(RemovalType removalType, ContainerNode& old
         m_styleSheetOwner.removedFromDocument(*this);
 }
 
+void HTMLStyleElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(movingType, oldParent);
+    m_styleSheetOwner.moved(*this);
+}
+
 void HTMLStyleElement::childrenChanged(const ChildChange& change)
 {
     HTMLElement::childrenChanged(change);

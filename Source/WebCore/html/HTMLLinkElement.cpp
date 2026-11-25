@@ -525,6 +525,18 @@ void HTMLLinkElement::postConnectionSteps()
     process();
 }
 
+void HTMLLinkElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(movingType, oldParent);
+    if (CheckedPtr styleScope = m_styleScope)
+        m_styleScope = &styleScope->styleSheetCandidateNodeMoved(*this);
+
+    if (m_expectIdTargetObserver && &oldParent.treeScope() != &treeScope()) {
+        m_expectIdTargetObserver = nullptr;
+        processInternalResourceLink();
+    }
+}
+
 void HTMLLinkElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);

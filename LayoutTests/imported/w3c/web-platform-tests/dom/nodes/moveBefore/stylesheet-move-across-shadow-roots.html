@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<title>moveBefore() of stylesheets between the document and shadow roots</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-parentnode-movebefore">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<div id="target" class="target">target</div>
+
+<script>
+const BLUE = "rgb(0, 0, 255)";
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function documentContainer(t, isSVG) {
+  if (!isSVG)
+    return document.head;
+  const svg = document.createElementNS(SVG_NS, "svg");
+  document.body.append(svg);
+  t.add_cleanup(() => svg.remove());
+  return svg;
+}
+
+function shadowContainer(root, isSVG) {
+  if (!isSVG)
+    return root;
+  const svg = document.createElementNS(SVG_NS, "svg");
+  root.append(svg);
+  return svg;
+}
+
+function createHost(t) {
+  const host = document.createElement("div");
+  const root = host.attachShadow({mode: "open"});
+  const shadowTarget = document.createElement("div");
+  shadowTarget.className = "target";
+  root.append(shadowTarget);
+  document.body.append(host);
+  t.add_cleanup(() => host.remove());
+  return {root, shadowTarget};
+}
+
+function createStyle(t) {
+  const style = document.createElement("style");
+  style.textContent = ".target { color: blue; }";
+  t.add_cleanup(() => style.remove());
+  return style;
+}
+
+function createSVGStyle(t) {
+  const style = document.createElementNS(SVG_NS, "style");
+  style.textContent = ".target { color: blue; }";
+  t.add_cleanup(() => style.remove());
+  return style;
+}
+
+function createLink(t) {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "resources/stylesheet-cascade-blue.css";
+  t.add_cleanup(() => link.remove());
+  return link;
+}
+
+async function insertAndLoad(sheetOwner, parent) {
+  if (sheetOwner.localName !== "link") {
+    parent.append(sheetOwner);
+    return;
+  }
+  const loaded = new Promise((resolve, reject) => {
+    sheetOwner.addEventListener("load", resolve, {once: true});
+    sheetOwner.addEventListener("error", reject, {once: true});
+  });
+  parent.append(sheetOwner);
+  await loaded;
+}
+
+function sheetIn(list, sheetOwner) {
+  return Array.from(list).includes(sheetOwner.sheet);
+}
+
+function assertStylesDocument(sheetOwner, root, shadowTarget, description) {
+  const target = document.getElementById("target");
+  assert_equals(getComputedStyle(target).color, BLUE,
+                `${description}: styles the document`);
+  assert_not_equals(getComputedStyle(shadowTarget).color, BLUE,
+                    `${description}: does not style the shadow tree`);
+  assert_true(sheetIn(document.styleSheets, sheetOwner),
+              `${description}: listed in document.styleSheets`);
+  assert_false(sheetIn(root.styleSheets, sheetOwner),
+               `${description}: not listed in the shadow root's styleSheets`);
+}
+
+function assertStylesShadowTree(sheetOwner, root, shadowTarget, description) {
+  const target = document.getElementById("target");
+  assert_not_equals(getComputedStyle(target).color, BLUE,
+                    `${description}: does not style the document`);
+  assert_equals(getComputedStyle(shadowTarget).color, BLUE,
+                `${description}: styles the shadow tree`);
+  assert_false(sheetIn(document.styleSheets, sheetOwner),
+               `${description}: not listed in document.styleSheets`);
+  assert_true(sheetIn(root.styleSheets, sheetOwner),
+              `${description}: listed in the shadow root's styleSheets`);
+}
+
+for (const [name, create, isSVG] of [["style", createStyle, false], ["SVG style", createSVGStyle, true], ["link", createLink, false]]) {
+  promise_test(async t => {
+    const {root, shadowTarget} = createHost(t);
+    const documentParent = documentContainer(t, isSVG);
+    const shadowParent = shadowContainer(root, isSVG);
+    const sheetOwner = create(t);
+    await insertAndLoad(sheetOwner, documentParent);
+    assertStylesDocument(sheetOwner, root, shadowTarget, "before moving");
+
+    shadowParent.moveBefore(sheetOwner, null);
+    assertStylesShadowTree(sheetOwner, root, shadowTarget, "after moving into the shadow root");
+
+    documentParent.moveBefore(sheetOwner, null);
+    assertStylesDocument(sheetOwner, root, shadowTarget, "after moving back to the document");
+  }, `Moving a ${name} element from the document into a shadow root and back`);
+
+  promise_test(async t => {
+    const first = createHost(t);
+    const second = createHost(t);
+    const firstParent = shadowContainer(first.root, isSVG);
+    const secondParent = shadowContainer(second.root, isSVG);
+    const sheetOwner = create(t);
+    await insertAndLoad(sheetOwner, firstParent);
+
+    assert_equals(getComputedStyle(first.shadowTarget).color, BLUE,
+                  "styles the first shadow tree before moving");
+    assert_not_equals(getComputedStyle(second.shadowTarget).color, BLUE,
+                      "does not style the second shadow tree before moving");
+
+    secondParent.moveBefore(sheetOwner, null);
+    assertStylesShadowTree(sheetOwner, second.root, second.shadowTarget,
+                           "after moving into the second shadow root");
+    assert_not_equals(getComputedStyle(first.shadowTarget).color, BLUE,
+                      "no longer styles the first shadow tree");
+    assert_false(sheetIn(first.root.styleSheets, sheetOwner),
+                 "no longer listed in the first shadow root's styleSheets");
+
+    sheetOwner.remove();
+    assert_not_equals(getComputedStyle(second.shadowTarget).color, BLUE,
+                      "removing the element stops it styling the second shadow tree");
+  }, `Moving a ${name} element from one shadow root into another`);
+}
+</script>
