@@ -214,8 +214,8 @@ void ComputedStyleBase::setFontDescription(FontCascadeDescription&& description)
     if (fontDescription() == description)
         return;
 
-    auto existingFontCascade = this->fontCascade();
-    RefPtr fontSelector = existingFontCascade.fontSelector();
+    CheckedRef existingFontCascade = this->fontCascade();
+    RefPtr fontSelector = existingFontCascade->fontSelector();
 
     auto newCascade = FontCascade { WTF::move(description), existingFontCascade };
     newCascade.update(WTF::move(fontSelector));

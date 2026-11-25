@@ -39,7 +39,7 @@ inline void traverseRuleFeaturesInShadowTree(Element& element, NOESCAPE const Tr
     if (!element.shadowRoot())
         return;
 
-    auto& shadowRuleSets = element.shadowRoot()->styleScope().resolver().ruleSets();
+    auto& shadowRuleSets = protect(element.shadowRoot()->styleScope())->resolver().ruleSets();
     bool hasRulesMatchingShadowHost = shadowRuleSets.hasMatchingUserOrAuthorStyle([&] (auto& style) {
         return style.hasRulesMatchingShadowHost() || style.hasHostPseudoClassRulesMatchingInShadowTree();
     });
@@ -54,7 +54,7 @@ inline void traverseRuleFeaturesForSlotted(Element& element, NOESCAPE const Trav
 {
     auto assignedShadowRoots = assignedShadowRootsIfSlotted(element);
     for (auto& assignedShadowRoot : assignedShadowRoots) {
-        auto& ruleSets = assignedShadowRoot->styleScope().resolver().ruleSets();
+        auto& ruleSets = protect(assignedShadowRoot->styleScope())->resolver().ruleSets();
         if (!ruleSets.hasMatchingUserOrAuthorStyle([] (auto& style) { return !style.slottedPseudoElementRules().isEmpty(); }))
             continue;
 
@@ -86,9 +86,9 @@ inline void traverseRuleFeatures(Element& element, NOESCAPE const TraverseFuncti
 
     // Ensure that the containing tree resolver also exists so it doesn't get created in the middle of invalidation.
     if (element.isInShadowTree() && element.containingShadowRoot()) {
-        auto& host = *element.containingShadowRoot()->host();
-        if (host.isConnected())
-            Style::Scope::forNode(host).resolver();
+        Ref host = *element.containingShadowRoot()->host();
+        if (host->isConnected())
+            protect(Style::Scope::forNode(host))->resolver();
     }
 }
 

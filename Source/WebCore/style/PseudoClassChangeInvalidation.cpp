@@ -128,7 +128,7 @@ void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidatio
     collect(protect(m_element)->styleResolver().ruleSets());
 
     if (RefPtr shadowRoot = m_element.shadowRoot())
-        collect(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Relation::Host);
+        collect(protect(shadowRoot->styleScope())->resolver().ruleSets(), MatchElement::Relation::Host);
 }
 
 void PseudoClassChangeInvalidation::invalidateBeforeChange()

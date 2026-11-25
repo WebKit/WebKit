@@ -79,7 +79,7 @@ inline UnadjustedStyle copy(const UnadjustedStyle& other)
 {
     // Relations hold raw Element pointers valid only for a single style resolution. They should not be cached.
     return {
-        .style = ComputedStyle::clonePtr(*other.style),
+        .style = ComputedStyle::clonePtr(protect(*other.style)),
         .relations = { },
         .matchResult = other.matchResult
     };
@@ -171,7 +171,7 @@ const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInline
 
 void MatchResultCache::update(CachedMatchResult& result, const Style::ComputedStyle& style)
 {
-    result.styleToUpdate->cloneFrom(style);
+    protect(result.styleToUpdate)->cloneFrom(style);
 }
 
 void MatchResultCache::updateForFastPathInherit(const Element& element, const Style::ComputedStyle& parentStyle)

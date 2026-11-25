@@ -265,7 +265,7 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
             state.style()->inheritFrom(*state.parentStyle());
     } else {
         state.setStyle(defaultStyleForElement(&element));
-        state.setParentStyle(Style::ComputedStyle::clonePtr(*state.style()));
+        state.setParentStyle(Style::ComputedStyle::clonePtr(protect(*state.style())));
     }
 
     // BuilderState::useSVGZoomRulesForLength equivalent
@@ -273,15 +273,15 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
         state.style()->setUseSVGZoomRulesForLength(true);
 
     if (element.isLink()) {
-        auto& style = *state.style();
-        style.setIsLink(true);
-        InsideLink linkState = protect(document())->visitedLinkState().determineLinkState(element);
+        CheckedRef style = *state.style();
+        style->setIsLink(true);
+        InsideLink linkState = protect(protect(document())->visitedLinkState())->determineLinkState(element);
         if (linkState != InsideLink::NotInside) {
             bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClass::Visited);
             if (forceVisited)
                 linkState = InsideLink::InsideVisited;
         }
-        style.setInsideLink(linkState);
+        style->setInsideLink(linkState);
     }
 
     return state;
@@ -454,7 +454,8 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
     if (state.style()->usesViewportUnits())
         element.document().setHasStyleWithViewportUnits();
 
-    Adjuster adjuster(protect(document()), *state.parentStyle(), nullptr, !pseudoElementIdentifier ? &element : nullptr);
+    CheckedRef parentStyle = *state.parentStyle();
+    Adjuster adjuster(protect(document()), parentStyle, nullptr, !pseudoElementIdentifier ? &element : nullptr);
     adjuster.adjust(style);
 
     blendingKeyframe.setHasPropertiesWithRevertRuleOrLayer(builder.state().hasRevertRuleOrLayerInKeyframeStyle());
@@ -644,7 +645,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
         state.style()->inheritFrom(*state.parentStyle());
     } else {
         state.setStyle(defaultStyleForElement(&element));
-        state.setParentStyle(Style::ComputedStyle::clonePtr(*state.style()));
+        state.setParentStyle(Style::ComputedStyle::clonePtr(protect(*state.style())));
     }
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);

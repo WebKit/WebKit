@@ -180,7 +180,7 @@ static bool shouldInvalidateLastSuccessfulPositionOptionIndex(const Style::Compu
 ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, ResolutionType resolutionType, const ResolutionContext& resolutionContext, const Style::ComputedStyle* existingStyle)
 {
     if (resolutionType == ResolutionType::AnimationOnly && styleable.lastStyleChangeEventStyle() && !styleable.hasPropertiesOverridenAfterAnimation())
-        return { Style::ComputedStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) };
+        return { Style::ComputedStyle::clonePtr(protect(*styleable.lastStyleChangeEventStyle())) };
 
     Ref element = styleable.element;
 
@@ -404,7 +404,7 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
             return pseudoElementChanges;
         if (pseudoElementUpdate->recompositeLayer)
             update.recompositeLayer = true;
-        update.style->addPseudoElementStyle(WTF::move(pseudoElementUpdate->style));
+        protect(*update.style)->addPseudoElementStyle(WTF::move(pseudoElementUpdate->style));
         return pseudoElementUpdate->changes;
     };
 
@@ -591,7 +591,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
             resolvedStyle = scope().resolver->styleForPseudoElement(element, pseudoElementIdentifier, resolutionContext);
 
             if (resolvedStyle && pseudoSupportsPositionTry) {
-                if (shouldInvalidateLastSuccessfulPositionOptionIndex(existingStyle, resolvedStyle->style.get()))
+                if (shouldInvalidateLastSuccessfulPositionOptionIndex(existingStyle, protect(resolvedStyle->style.get())))
                     m_document->styleScope().forgetLastSuccessfulPositionOptionIndex(styleable);
 
                 generatePositionOptionsIfNeeded(*resolvedStyle, styleable, resolutionContext);
@@ -909,7 +909,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             return;
 
         if (oldStyle && (!oldStyle->transitions().isInitial() || !resolvedStyle.style->transitions().isInitial()))
-            styleable.updateCSSTransitions(*oldStyle, *resolvedStyle.style, newStyleOriginatedAnimations);
+            styleable.updateCSSTransitions(protect(*oldStyle), protect(*resolvedStyle.style), newStyleOriginatedAnimations);
 
         if ((oldStyle && !oldStyle->scrollTimelines().isInitial()) || !resolvedStyle.style->scrollTimelines().isInitial())
             styleable.updateCSSScrollTimelines(oldStyle, protect(*resolvedStyle.style));
@@ -947,13 +947,13 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             return { WTF::move(resolvedStyle.style), OptionSet<AnimationImpact> { } };
         }
 
-        auto previousLastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle() ? Style::ComputedStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) : nullptr;
+        auto previousLastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle() ? Style::ComputedStyle::clonePtr(protect(*styleable.lastStyleChangeEventStyle())) : nullptr;
         // Record the style prior to applying animations for this style change event.
-        styleable.setLastStyleChangeEventStyle(Style::ComputedStyle::clonePtr(*resolvedStyle.style));
+        styleable.setLastStyleChangeEventStyle(Style::ComputedStyle::clonePtr(protect(*resolvedStyle.style)));
 
         // Apply all keyframe effects to the new style.
         HashSet<AnimatableCSSProperty> animatedProperties;
-        auto animatedStyle = Style::ComputedStyle::clonePtr(*resolvedStyle.style);
+        auto animatedStyle = Style::ComputedStyle::clonePtr(protect(*resolvedStyle.style));
 
         auto animationImpact = styleable.applyKeyframeEffects(*animatedStyle, animatedProperties, previousLastStyleChangeEventStyle.get(), resolutionContext);
 
@@ -963,13 +963,15 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         if (resolvedStyle.matchResult) {
             auto animatedStyleBeforeCascadeApplication = Style::ComputedStyle::clonePtr(*animatedStyle);
             // The cascade may override animated properties and have dependencies to them.
-            auto overriddenAnimatedProperties = applyCascadeAfterAnimation(*animatedStyle, animatedPropertySources(styleable, animatedProperties), *resolvedStyle.matchResult, element, resolutionContext);
+            auto overriddenAnimatedProperties = applyCascadeAfterAnimation(*animatedStyle, animatedPropertySources(styleable, animatedProperties), protect(*resolvedStyle.matchResult), element, resolutionContext);
             ASSERT(styleable.keyframeEffectStack());
             styleable.keyframeEffectStack()->cascadeDidOverrideProperties(overriddenAnimatedProperties, document);
             styleable.setHasPropertiesOverridenAfterAnimation(!overriddenAnimatedProperties.isEmpty());
         }
 
-        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? styleable.element.ptr() : nullptr);
+        CheckedRef parentStyle = *resolutionContext.parentStyle;
+        CheckedPtr parentBoxStyle = resolutionContext.parentBoxStyle;
+        Adjuster adjuster(document, parentStyle, parentBoxStyle.get(), !styleable.pseudoElementIdentifier ? styleable.element.ptr() : nullptr);
         adjuster.adjustAnimatedStyle(*animatedStyle, animationImpact);
 
         return { WTF::move(animatedStyle), animationImpact };
@@ -988,7 +990,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
     if (document->backForwardCacheState() == Document::NotInBackForwardCache && !skipAnimationForAnchorPosition) {
         if ((oldStyle && !oldStyle->animations().isInitial()) || !resolvedStyle.style->animations().isInitial())
-            styleable.updateCSSAnimations(oldStyle, *resolvedStyle.style, resolutionContext, newStyleOriginatedAnimations, isInDisplayNoneTree);
+            styleable.updateCSSAnimations(oldStyle, protect(*resolvedStyle.style), resolutionContext, newStyleOriginatedAnimations, isInDisplayNoneTree);
     }
 
     // Now we can update all Web animations, which will include CSS Animations as well

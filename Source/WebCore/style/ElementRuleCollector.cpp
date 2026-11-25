@@ -568,13 +568,12 @@ void ElementRuleCollector::matchQuirkRules()
 void ElementRuleCollector::matchUARules()
 {
     // First we match rules from the user agent sheet.
-    auto* userAgentStyleSheet = m_isPrintStyle
-        ? UserAgentStyle::defaultPrintStyle : UserAgentStyle::defaultStyle;
-    matchUARules(*userAgentStyleSheet);
+    auto& userAgentSheets = UserAgentStyle::sheets();
+    matchUARules(m_isPrintStyle ? *userAgentSheets.defaultPrintStyle : *userAgentSheets.defaultStyle);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
     if (element().document().inQuirksMode())
-        matchUARules(*UserAgentStyle::defaultQuirksStyle);
+        matchUARules(*userAgentSheets.defaultQuirksStyle);
 
     if (m_userAgentMediaQueryStyle)
         matchUARules(*m_userAgentMediaQueryStyle);

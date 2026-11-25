@@ -1,5 +1,3 @@
 rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp
 style/ElementRuleCollector.cpp
-style/StyleInvalidationFunctions.h
-style/UserAgentStyle.cpp

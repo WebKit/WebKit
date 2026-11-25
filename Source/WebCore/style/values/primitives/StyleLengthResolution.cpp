@@ -225,7 +225,7 @@ static double resolveViewportUnit(const auto& adaptor)
 {
     adaptor.setUsesViewportUnits();
 
-    auto* renderView = adaptor.renderViewForViewportUnits();
+    CheckedPtr renderView = adaptor.renderViewForViewportUnits();
     if (!renderView) {
         if constexpr (axis == ViewportDimension::Max || axis == ViewportDimension::Min)
             return 1;

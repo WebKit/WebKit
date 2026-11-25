@@ -22,6 +22,9 @@
 
 #pragma once
 
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
 class Element;
@@ -33,35 +36,43 @@ class RuleSet;
 
 class UserAgentStyle {
 public:
-    static RuleSet* defaultStyle;
-    static RuleSet* defaultQuirksStyle;
-    static RuleSet* defaultPrintStyle;
-    static unsigned defaultStyleVersion;
+    struct Sheets {
+        Sheets(); // Defined out of line so includers don't need complete RuleSet / StyleSheetContents types.
 
-    static StyleSheetContents* defaultStyleSheet;
-    static StyleSheetContents* quirksStyleSheet;
-    static StyleSheetContents* svgStyleSheet;
-    static StyleSheetContents* mathMLStyleSheet;
-    static StyleSheetContents* mathMLCoreExtrasStyleSheet;
-    static StyleSheetContents* mathMLCoreMathvariantStyleSheet;
-    static StyleSheetContents* mathMLFontSizeMathStyleSheet;
-    static StyleSheetContents* mathMLLegacyFontSizeMathStyleSheet;
-    static StyleSheetContents* mediaQueryStyleSheet;
-    static StyleSheetContents* horizontalFormControlsStyleSheet;
-    static StyleSheetContents* htmlSwitchControlStyleSheet;
-    static StyleSheetContents* selectMultipleAndListBoxStyleSheet;
-    static StyleSheetContents* popoverStyleSheet;
-    static StyleSheetContents* counterStylesStyleSheet;
-    static StyleSheetContents* viewTransitionsStyleSheet;
+        const RefPtr<RuleSet> defaultStyle;
+        const RefPtr<RuleSet> defaultQuirksStyle;
+        const RefPtr<RuleSet> defaultPrintStyle;
+
+        const RefPtr<StyleSheetContents> defaultStyleSheet;
+        const RefPtr<StyleSheetContents> quirksStyleSheet;
+        const RefPtr<StyleSheetContents> svgStyleSheet;
+        const RefPtr<StyleSheetContents> mathMLStyleSheet;
+        const RefPtr<StyleSheetContents> mathMLCoreExtrasStyleSheet;
+        const RefPtr<StyleSheetContents> mathMLCoreMathvariantStyleSheet;
+        const RefPtr<StyleSheetContents> mathMLFontSizeMathStyleSheet;
+        const RefPtr<StyleSheetContents> mathMLLegacyFontSizeMathStyleSheet;
+        const RefPtr<StyleSheetContents> mediaQueryStyleSheet;
+        const RefPtr<StyleSheetContents> horizontalFormControlsStyleSheet;
+        const RefPtr<StyleSheetContents> htmlSwitchControlStyleSheet;
+        const RefPtr<StyleSheetContents> selectMultipleAndListBoxStyleSheet;
+        const RefPtr<StyleSheetContents> popoverStyleSheet;
+        const RefPtr<StyleSheetContents> counterStylesStyleSheet;
+        const RefPtr<StyleSheetContents> viewTransitionsStyleSheet;
 #if ENABLE(FULLSCREEN_API)
-    static StyleSheetContents* fullscreenStyleSheet;
-#endif
-#if ENABLE(SERVICE_CONTROLS)
-    static StyleSheetContents* imageControlsStyleSheet;
+        const RefPtr<StyleSheetContents> fullscreenStyleSheet;
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-    static StyleSheetContents* attachmentStyleSheet;
+        const RefPtr<StyleSheetContents> attachmentStyleSheet;
 #endif
+    };
+
+    static Sheets& sheets()
+    {
+        static NeverDestroyed<Sheets> sheets;
+        return sheets;
+    }
+
+    static unsigned defaultStyleVersion;
 
     static void initDefaultStyleSheet();
     static void ensureDefaultStyleSheetsForElement(const Element&);

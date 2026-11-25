@@ -19,7 +19,6 @@ rendering/style/BorderData.cpp
 style/ElementRuleCollector.cpp
 style/RuleData.h
 style/StyleResolver.cpp
-style/StyleTreeResolver.cpp
 style/computed/StyleComputedStyle.cpp
 style/computed/StyleComputedStyleBase.cpp
 style/values/transforms/StyleTransformList.cpp

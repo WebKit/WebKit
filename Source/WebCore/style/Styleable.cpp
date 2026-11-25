@@ -85,7 +85,7 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
         }
         break;
     case PseudoElementType::Marker: {
-        auto* renderListItem = RenderListItem::listItemForMarker(renderer);
+        CheckedPtr renderListItem = RenderListItem::listItemForMarker(renderer);
         if (renderListItem && renderListItem->element())
             return Styleable(*renderListItem->element(), Style::PseudoElementIdentifier { PseudoElementType::Marker });
         break;
@@ -232,7 +232,7 @@ bool Styleable::computeAnimationExtent(LayoutRect& bounds) const
 
 bool Styleable::mayHaveNonZeroOpacity() const
 {
-    auto* renderer = this->renderer();
+    CheckedPtr renderer = this->renderer();
     if (!renderer)
         return false;
 
@@ -621,7 +621,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with
     // any styles derived from declarative animations such as CSS Transitions, CSS Animations, and SMIL Animations updated to the current time.
     auto beforeChangeStyle = [&] -> UniqueRef<Style::ComputedStyle> {
-        if (auto* lastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle()) {
+        if (CheckedPtr lastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle()) {
             auto style = Style::ComputedStyle::clone(*lastStyleChangeEventStyle);
             if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
                 for (RefPtr effect : keyframeEffectStack->sortedEffects()) {
@@ -713,7 +713,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     if (hasRunningTransition && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureRunningTransitionsByProperty(), document)) {
         auto previouslyRunningTransition = styleable.ensureRunningTransitionsByProperty().take(property);
         auto previouslyRunningTransitionCurrentStyle = [&] {
-            if (auto* lastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle()) {
+            if (CheckedPtr lastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle()) {
                 auto style = Style::ComputedStyle::clone(*lastStyleChangeEventStyle);
                 ASSERT(previouslyRunningTransition->keyframeEffect());
                 protect(*previouslyRunningTransition->keyframeEffect())->apply(style, { nullptr });
@@ -820,7 +820,7 @@ void Styleable::updateCSSTransitions(const Style::ComputedStyle& currentStyle, c
             );
         };
 
-        const Style::ComputedStyle* targetStyle = &currentStyle;
+        CheckedPtr<const Style::ComputedStyle> targetStyle = &currentStyle;
         if (auto* lastStyleChangeEventStyle = this->lastStyleChangeEventStyle())
             targetStyle = lastStyleChangeEventStyle;
 

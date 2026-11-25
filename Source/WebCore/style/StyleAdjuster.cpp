@@ -799,7 +799,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 
     // Let the theme also have a crack at adjusting the style.
     if (style.appearance() != StyleAppearance::None && style.appearance() != StyleAppearance::Base)
-        adjustThemeStyle(style, m_parentStyle);
+        adjustThemeStyle(style, protect(m_parentStyle));
 
     bool hasBaseAppearance = style.usedAppearance() == StyleAppearance::Base;
     if ((hasBaseAppearance || style.inBaseAppearanceSubtree()) && !style.pseudoElementType() && m_element && m_element->supportsBaseAppearance(StyleAppearance::Base)) {
