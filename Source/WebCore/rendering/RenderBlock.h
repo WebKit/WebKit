@@ -231,7 +231,6 @@ public:
     virtual bool hasLineIfEmpty() const;
 
     void updateInFlowDescendantTransformsAfterLayout();
-    void updateOutOfFlowDescendantTransformsAfterLayout();
 
     virtual bool canPerformSimplifiedLayout() const;
 

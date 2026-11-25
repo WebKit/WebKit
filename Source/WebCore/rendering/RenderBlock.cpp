@@ -54,6 +54,7 @@
 #include "Logging.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
 #include "MaskPainter.h"
+#include "MotionPath.h"
 #include "OutlinePainter.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -913,6 +914,9 @@ static void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& co
     if (outOfFlowBox.needsOutOfFlowMovementLayoutOnly() && outOfFlowBox.tryLayoutDoingOutOfFlowMovementOnly()) {
         if (Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBoxStyle))
             Style::AnchorPositionEvaluator::captureScrollSnapshots(outOfFlowBox);
+        // The motion path transform depends on the box's position within its containing block.
+        if (MotionPath::needsUpdateAfterContainingBlockLayout(outOfFlowBoxStyle.offsetPath()))
+            outOfFlowBox.updateLayerTransform();
         outOfFlowBox.clearNeedsLayout();
     }
 
@@ -3191,15 +3195,6 @@ void RenderBlock::updateInFlowDescendantTransformsAfterLayout()
     auto boxes = view().frameView().layoutContext().takeBoxesNeedingTransformUpdateAfterContainerLayout(*this);
     for (auto& box : boxes) {
         if (box && box->hasLayer() && !box->isOutOfFlowPositioned())
-            box->layer()->updateTransform();
-    }
-}
-
-void RenderBlock::updateOutOfFlowDescendantTransformsAfterLayout()
-{
-    auto boxes = view().frameView().layoutContext().takeBoxesNeedingTransformUpdateAfterContainerLayout(*this);
-    for (auto& box : boxes) {
-        if (box && box->hasLayer() && box->isOutOfFlowPositioned())
             box->layer()->updateTransform();
     }
 }

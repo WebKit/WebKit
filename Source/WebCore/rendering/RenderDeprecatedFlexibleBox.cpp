@@ -403,7 +403,6 @@ void RenderDeprecatedFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren,
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
         else
             layoutOutOfFlowBoxes(relayoutChildren);
-        updateOutOfFlowDescendantTransformsAfterLayout();
         addOverflowFromOutOfFlowBoxes();
     }
 
@@ -776,6 +775,7 @@ void RenderDeprecatedFlexibleBox::layoutSingleClampedFlexItem()
     setBorderBoxHeight(childBoxBottom + paddingBottom() + borderBottom());
     updateLogicalHeight();
 
+    updateInFlowDescendantTransformsAfterLayout();
     computeInFlowOverflow(blockStartRelativeContentBoxRect());
 
     endAndCommitUpdateScrollInfoAfterLayoutTransaction();
