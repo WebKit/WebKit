@@ -8606,3 +8606,8 @@ webkit.org/b/329235 webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videoran
 # Debug assertion in RenderLayer::recursiveUpdateLayerPositions (repaintRects mismatch on the RenderSVGRoot).
 webkit.org/b/328364 imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-import.sub.html [ Pass Crash ]
 webkit.org/b/328364 imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-sheet.sub.html [ Pass Crash ]
+
+imported/w3c/web-platform-tests/css/CSS2/floats-clear/floats-143.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/floats-clear/margin-collapse-134.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/floats-clear/no-clearance-adjoining-opposite-float.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/floats-clear/no-clearance-due-to-large-margin-after-left-right.html [ ImageOnlyFailure ]

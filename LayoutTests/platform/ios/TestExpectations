@@ -10403,3 +10403,12 @@ imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-sele
 
 # Legacy SVG engine: textPath resolves transform-box: fill-box before the referenced path, which follows the text, is laid out.
 webkit.org/b/332613 imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-after-text.html [ ImageOnlyFailure ]
+
+webkit.org/b/332874 imported/w3c/web-platform-tests/css/CSS2/floats-clear/clear-clearance-calculation-001.xht [ ImageOnlyFailure ]
+webkit.org/b/332874 imported/w3c/web-platform-tests/css/CSS2/floats-clear/clear-clearance-calculation-002.xht [ ImageOnlyFailure ]
+webkit.org/b/332874 imported/w3c/web-platform-tests/css/CSS2/floats-clear/clear-clearance-calculation-003.xht [ ImageOnlyFailure ]
+webkit.org/b/332874 imported/w3c/web-platform-tests/css/CSS2/floats-clear/floats-005.xht [ ImageOnlyFailure ]
+webkit.org/b/332874 imported/w3c/web-platform-tests/css/CSS2/floats-clear/margin-collapse-018.xht [ ImageOnlyFailure ]
+webkit.org/b/332874 imported/w3c/web-platform-tests/css/CSS2/floats-clear/margin-collapse-023.xht [ ImageOnlyFailure ]
+webkit.org/b/332874 imported/w3c/web-platform-tests/css/CSS2/floats-clear/margin-collapse-024.xht [ ImageOnlyFailure ]
+webkit.org/b/332874 imported/w3c/web-platform-tests/css/CSS2/floats-clear/margin-collapse-027.xht [ ImageOnlyFailure ]
