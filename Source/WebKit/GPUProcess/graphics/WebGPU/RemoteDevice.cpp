@@ -80,9 +80,6 @@ RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess,
     , m_queue(RemoteQueue::create(gpuConnectionToWebProcess, device.queue(), objectHeap, WTF::move(streamConnection), gpu, queueIdentifier))
 #if ENABLE(VIDEO)
     , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
-#if PLATFORM(COCOA)
-    , m_sharedVideoFrameReader(m_videoFrameObjectHeap.ptr(), gpuConnectionToWebProcess.webProcessIdentity())
-#endif
 #endif
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_gpu(gpu)
@@ -150,18 +147,6 @@ void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, We
     auto remoteSampler = RemoteSampler::create(*sampler, objectHeap, protect(m_streamConnection), protect(m_gpu), identifier);
     objectHeap->addObject(identifier, remoteSampler);
 }
-
-#if ENABLE(VIDEO) && PLATFORM(COCOA)
-void RemoteDevice::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
-{
-    m_sharedVideoFrameReader.setSemaphore(WTF::move(semaphore));
-}
-
-void RemoteDevice::setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&& handle)
-{
-    m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
-}
-#endif
 
 void RemoteDevice::pauseAllErrorReporting(bool pauseErrorReporting)
 {
@@ -293,11 +278,16 @@ void RemoteDevice::generateAValidationError(String&& message)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor& descriptor, WebGPUExternalTextureIdentifier identifier)
 {
-    std::optional<WebKit::SharedVideoFrame> sharedVideoFrame = descriptor.sharedFrame;
     RetainPtr<CVPixelBufferRef> pixelBuffer { nullptr };
-    if (sharedVideoFrame) {
-        if (auto videoFrame = m_sharedVideoFrameReader.read(WTF::move(*sharedVideoFrame)))
-            pixelBuffer = videoFrame->pixelBuffer();
+    if (descriptor.videoFrame) {
+        // The Web process adds the frame to the heap on another connection. Wait without blocking the queue.
+        auto videoFrame = m_videoFrameObjectHeap->read(m_streamConnection, RemoteVideoFrameReadReference { *descriptor.videoFrame });
+        if (!videoFrame) {
+            m_streamConnection->markCurrentlyDispatchedMessageAsDeferred();
+            return;
+        }
+        if (RefPtr frame = WTF::move(*videoFrame))
+            pixelBuffer = frame->pixelBuffer();
     } else if (descriptor.mediaIdentifier) {
         if (auto connection = m_gpuConnectionToWebProcess.get()) {
             connection->performWithMediaPlayerOnMainThread(*descriptor.mediaIdentifier, [&] (auto& player) mutable {

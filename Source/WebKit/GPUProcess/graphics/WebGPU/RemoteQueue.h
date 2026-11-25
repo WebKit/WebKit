@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGPU.h"
-#include "SharedVideoFrame.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUExtent3D.h"
 #include "WebGPUIdentifier.h"
@@ -53,7 +52,9 @@ class StreamServerConnection;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
-struct SharedVideoFrame;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+class RemoteVideoFrameObjectHeap;
+#endif
 
 namespace WebGPU {
 struct ImageCopyExternalImage;
@@ -128,8 +129,6 @@ private:
         CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&&);
 
     void copyExternalImageFromVideoFrameToTexture(
         WebGPU::ImageCopyExternalImageVideoSource&&,
@@ -146,7 +145,7 @@ private:
     WeakRef<RemoteGPU> m_gpu;
     WebGPUQueueIdentifier m_identifier;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    SharedVideoFrameReader m_sharedVideoFrameReader;
+    const Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 #endif
 };
 

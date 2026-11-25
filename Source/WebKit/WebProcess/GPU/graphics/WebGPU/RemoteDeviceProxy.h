@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteAdapterProxy.h"
-#include "SharedVideoFrame.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUDevice.h>
@@ -141,9 +140,6 @@ private:
     const Ref<RemoteAdapterProxy> m_parent;
     const Ref<RemoteQueueProxy> m_queue;
     bool m_isLost { false };
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    WebKit::SharedVideoFrameWriter m_sharedVideoFrameWriter;
-#endif
 };
 
 } // namespace WebKit::WebGPU

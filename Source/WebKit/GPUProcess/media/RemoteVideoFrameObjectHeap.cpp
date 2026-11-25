@@ -46,6 +46,8 @@
 #include <WebCore/CoreVideoSoftLink.h>
 #endif
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_connection.get())
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -56,16 +58,23 @@ static WorkQueue& remoteVideoFrameObjectHeapQueueSingleton()
     return queue.get();
 }
 
-Ref<RemoteVideoFrameObjectHeap> RemoteVideoFrameObjectHeap::create(Ref<IPC::Connection>&& connection)
+Ref<RemoteVideoFrameObjectHeap> RemoteVideoFrameObjectHeap::create(Ref<IPC::Connection>&& connection, const ProcessIdentity& webProcessIdentity)
 {
-    Ref heap = adoptRef(*new RemoteVideoFrameObjectHeap(WTF::move(connection)));
+    Ref heap = adoptRef(*new RemoteVideoFrameObjectHeap(WTF::move(connection), webProcessIdentity));
     protect(heap->m_connection)->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName(), remoteVideoFrameObjectHeapQueueSingleton(), heap);
     return heap;
 }
 
-RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&& connection)
+RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&& connection, const ProcessIdentity& webProcessIdentity)
     : m_connection(WTF::move(connection))
+#if PLATFORM(COCOA)
+    // The reader resolves no frame references, so it does not hold the heap.
+    , m_sharedVideoFrameReader(nullptr, webProcessIdentity, SharedVideoFrameReader::UseIOSurfaceBufferPool::Yes)
+#endif
 {
+#if !PLATFORM(COCOA)
+    UNUSED_PARAM(webProcessIdentity);
+#endif
 }
 
 RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap()
@@ -114,6 +123,28 @@ void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReferenc
 }
 
 #if PLATFORM(COCOA)
+void RemoteVideoFrameObjectHeap::addVideoFrame(RemoteVideoFrameReference&& reference, SharedVideoFrame&& sharedVideoFrame)
+{
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
+    MESSAGE_CHECK(!isInGPUProcessObjectIdentifierDomain(reference.identifier().toUInt64()));
+    MESSAGE_CHECK(!reference.version());
+
+    RefPtr<VideoFrame> frame;
+    if (auto* read = std::get_if<RemoteVideoFrameReadReference>(&sharedVideoFrame.buffer)) {
+        // A frame derived from a frame in the heap: the same pixels, with the orientation and alpha of the Web process frame.
+        if (RefPtr heapFrame = get(WTF::move(*read))) {
+            Ref derivedFrame = heapFrame->updateOrientation(sharedVideoFrame.rotation, sharedVideoFrame.mirrored, VideoFrame::ShouldClone::Yes);
+            auto shouldClone = derivedFrame.ptr() == heapFrame.get() ? VideoFrame::ShouldClone::Yes : VideoFrame::ShouldClone::No;
+            frame = derivedFrame->updateShouldIgnoreAlpha(sharedVideoFrame.shouldIgnoreAlpha, shouldClone);
+        }
+    } else
+        frame = m_sharedVideoFrameReader.read(WTF::move(sharedVideoFrame));
+
+    // Add even a null frame, so that the consumers waiting for the reference get null instead of waiting forever.
+    bool success = m_heap.add(reference, WTF::move(frame));
+    MESSAGE_CHECK(success);
+}
+
 void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read)
 {
     assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
@@ -217,6 +248,11 @@ RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameRead
     return m_heap.read(WTF::move(read), timeout);
 }
 
+std::optional<RefPtr<WebCore::VideoFrame>> RemoteVideoFrameObjectHeap::read(IPC::StreamServerConnection& connection, RemoteVideoFrameReadReference&& read)
+{
+    return m_heap.read(connection, WTF::move(read));
+}
+
 #endif
 
 void RemoteVideoFrameObjectHeap::lowMemoryHandler()
@@ -229,5 +265,7 @@ void RemoteVideoFrameObjectHeap::lowMemoryHandler()
 }
 
 }
+
+#undef MESSAGE_CHECK
 
 #endif

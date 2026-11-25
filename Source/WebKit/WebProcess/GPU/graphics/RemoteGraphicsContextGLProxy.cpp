@@ -110,6 +110,9 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const 
 
 RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(const GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend)
     : GraphicsContextGL(attributes)
+#if ENABLE(VIDEO)
+    , m_videoFrameObjectHeapProxy(renderingBackend.videoFrameObjectHeapProxy())
+#endif
     , m_renderingBackend(renderingBackend)
 {
 }
@@ -129,7 +132,6 @@ void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection
         m_gpuProcessConnection = gpuProcessConnection.get();
         lazyInitialize(m_sharedResourceCache, gpuProcessConnection->sharedResourceCache());
 #if ENABLE(VIDEO)
-        lazyInitialize(m_videoFrameObjectHeapProxy, Ref { gpuProcessConnection->videoFrameObjectHeapProxy() });
         lazyInitialize(m_gpuProcessIPCConnection, Ref { gpuProcessConnection->connection() });
 #endif
     });

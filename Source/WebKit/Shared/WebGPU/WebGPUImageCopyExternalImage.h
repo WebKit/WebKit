@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "SharedVideoFrame.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "WebGPUOrigin2D.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -49,13 +49,13 @@ struct ImageCopyExternalImage {
 // The same copy, when the source is a video rather than an ImageBuffer. Unlike an ImageBuffer, a
 // decoded frame carries no rendering resource identifier, so it is named the way an external texture
 // names one: by the media player holding it, or - for a WebCodecs frame, which has no player - by
-// shipping the frame itself through the shared video frame memory.
+// its reference in the video frame object heap.
 struct ImageCopyExternalImageVideoSource {
     std::optional<Origin2D> origin;
     bool flipY { false };
     std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
     WebCore::IntSize sourceSize;
-    std::optional<WebKit::SharedVideoFrame> sharedFrame;
+    std::optional<WebKit::RemoteVideoFrameReadReference> videoFrame;
 };
 #endif
 

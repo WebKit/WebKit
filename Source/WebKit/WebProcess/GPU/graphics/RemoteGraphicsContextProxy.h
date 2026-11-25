@@ -47,7 +47,6 @@ namespace WebKit {
 
 class RemoteRenderingBackendProxy;
 class RemoteImageBufferProxy;
-class SharedVideoFrameWriter;
 
 class RemoteGraphicsContextProxy : public WebCore::DisplayList::Recorder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteGraphicsContextProxy);
@@ -224,10 +223,6 @@ private:
     std::optional<WebCore::ContentsFormat> m_contentsFormat;
     WebCore::AffineTransform m_ctmToRemote;
     ThreadSafeWeakPtr<RemoteImageBufferProxy> m_client;
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    Lock m_sharedVideoFrameWriterLock;
-    std::unique_ptr<SharedVideoFrameWriter> m_sharedVideoFrameWriter WTF_GUARDED_BY_LOCK(m_sharedVideoFrameWriterLock);
-#endif
 #if HAVE(SUPPORT_HDR_DISPLAY)
     std::optional<float> m_maxEDRHeadroom;
     float m_maxPaintedEDRHeadroom { 1 };
