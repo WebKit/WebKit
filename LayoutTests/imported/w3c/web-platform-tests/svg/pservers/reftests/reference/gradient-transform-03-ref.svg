@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <linearGradient id="lg" gradientTransform="scale(2)">
+    <stop offset="0" stop-color="green"/>
+    <stop offset="0.5" stop-color="green"/>
+    <stop offset="1" stop-color="red"/>
+  </linearGradient>
+  <rect width="100" height="100" fill="url(#lg)"/>
+</svg>

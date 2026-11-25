@@ -44,6 +44,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-02.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-03-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-03.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-css-property-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-css-property.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-template-inheritance-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-template-inheritance-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-template-inheritance.svg
@@ -64,6 +66,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-02.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-03-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-03.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-css-property-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-css-property.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-empty-attr-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-empty-attr-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-empty-attr.svg
