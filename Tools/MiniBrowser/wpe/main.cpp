@@ -58,6 +58,7 @@ static gboolean logInputMethod;
 static gboolean privateMode;
 static const char* profileDirectory;
 static gboolean automationMode;
+static gboolean exitOnWebProcessFailure;
 static gboolean ignoreTLSErrors;
 static const char* contentFilter;
 static const char** userScriptsAtDocumentStart;
@@ -80,6 +81,7 @@ static GHashTable* openViews;
 static gboolean windowMaximized;
 static gboolean windowFullscreen;
 static const char* configFile;
+static int applicationExitStatus = EXIT_SUCCESS;
 #if ENABLE_WPE_PLATFORM
 #if defined(USE_LIBWPE) && USE_LIBWPE
 static gboolean useLegacyAPI;
@@ -127,6 +129,7 @@ static const GOptionEntry commandLineOptions[] =
     { "private", 'p', 0, G_OPTION_ARG_NONE, &privateMode, "Run in private browsing mode", nullptr },
     { "profile-dir", 0, 0, G_OPTION_ARG_FILENAME, &profileDirectory, "Custom profile directory to store session data", "DIR" },
     { "automation", 0, 0, G_OPTION_ARG_NONE, &automationMode, "Run in automation mode", nullptr },
+    { "exit-on-webprocess-failure", 0, 0, G_OPTION_ARG_NONE, &exitOnWebProcessFailure, "Exit with an error if the WebProcess crashes", nullptr },
     { "cookies-file", 'c', 0, G_OPTION_ARG_FILENAME, &cookiesFile, "Persistent cookie storage database file", "FILE" },
     { "cookies-policy", 0, 0, G_OPTION_ARG_STRING, &cookiesPolicy, "Cookies accept policy (always, never, no-third-party). Default: no-third-party", "POLICY" },
     { "proxy", 0, 0, G_OPTION_ARG_STRING, &proxy, "Set proxy", "PROXY" },
@@ -326,6 +329,12 @@ static void webProcessTerminated(WebKitWebView* webView, WebKitWebProcessTermina
         message = "The web process exceeded the memory limit";
         break;
     default:
+        return;
+    }
+
+    if (exitOnWebProcessFailure) {
+        applicationExitStatus = EXIT_FAILURE;
+        g_application_quit(g_application_get_default());
         return;
     }
 
@@ -858,5 +867,5 @@ int main(int argc, char *argv[])
 
     g_hash_table_destroy(openViews);
 
-    return 0;
+    return applicationExitStatus;
 }
