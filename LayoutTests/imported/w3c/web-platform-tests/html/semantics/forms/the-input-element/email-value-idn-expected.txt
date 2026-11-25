@@ -1,0 +1,7 @@
+
+
+FAIL IDN domain in parser-created email value attribute is converted to ASCII assert_equals: expected "test@xn--exmle-hra.com" but got "test@exämle.com"
+FAIL IDN domain in dynamically-set email value attribute is converted to ASCII assert_equals: expected "user@xn--t8j.com" but got "user@お.com"
+FAIL IDN domains in multiple email value attribute are converted to ASCII assert_equals: expected "test@xn--exmle-hra.com,user@xn--t8j.com" but got "test@exämle.com,user@お.com"
+FAIL IDN domain is converted when type changes to email assert_equals: expected "test@xn--exmle-hra.com" but got "test@exämle.com"
+

@@ -1,0 +1,7 @@
+
+PASS Document is loaded and focused before blur tests
+FAIL datetime-local -> text false assert_true: datetime-local input should match :focus-visible expected true got false
+PASS number -> text false
+PASS search -> text false
+PASS week -> text false
+

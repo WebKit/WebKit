@@ -1,0 +1,5 @@
+input_valueAsNumber
+
+
+PASS value and valueAsNumber are setting each other correctly for input[type=number]
+

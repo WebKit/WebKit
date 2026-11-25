@@ -1,0 +1,9 @@
+
+PASS Changing the form attribute reassociates a radio without joining the ownerless group
+PASS Changing the ID target reassociates a radio without joining the ownerless group
+PASS Setting the form attribute to its current value does not disassociate a radio
+PASS Setting the form's ID to its current value does not disassociate a radio
+PASS Changing the form attribute to an unmatched ID makes a radio join the ownerless group
+FAIL Disconnecting a subtree preserves radio checkedness when the form owner is unchanged assert_true: The associated radio never joins the ownerless group expected true got false
+PASS Disconnecting a subtree reassociates a radio with its ancestor form without joining the ownerless group
+

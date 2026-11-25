@@ -1,0 +1,7 @@
+
+PASS Input value/defaultValue dirty value flag semantics
+PASS Input checked/defaultChecked dirty checkedness semantics
+PASS Input type defaults to 'text' on the property despite no attribute
+PASS Setting input type property sets the attribute
+PASS Parsed input type attribute is reflected in both property and attribute
+

@@ -1,0 +1,7 @@
+
+PASS Document is loaded and focused before blur tests
+PASS text -> datetime-local false
+PASS text -> number false
+PASS text -> search false
+PASS text -> week false
+

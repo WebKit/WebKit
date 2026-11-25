@@ -1,0 +1,7 @@
+
+PASS Document is loaded and focused before blur tests
+PASS checkbox -> text true
+PASS file -> text true
+PASS radio -> text true
+PASS tel -> text true
+

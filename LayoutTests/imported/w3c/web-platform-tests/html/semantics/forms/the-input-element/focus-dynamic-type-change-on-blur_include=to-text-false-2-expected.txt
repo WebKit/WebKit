@@ -1,0 +1,7 @@
+
+PASS Document is loaded and focused before blur tests
+PASS color -> text false
+PASS image -> text false
+PASS range -> text false
+FAIL time -> text false assert_true: time input should match :focus-visible expected true got false
+

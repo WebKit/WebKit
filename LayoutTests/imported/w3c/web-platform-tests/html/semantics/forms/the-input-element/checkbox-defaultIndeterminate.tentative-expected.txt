@@ -1,0 +1,23 @@
+
+FAIL defaultIndeterminate is exposed assert_equals: expected true but got false
+FAIL defaultIndeterminate reflects a boolean content attribute assert_false: expected false got undefined
+FAIL Parsed defaultindeterminate="" initializes indeterminate assert_true: expected true got undefined
+FAIL Parsed defaultindeterminate="defaultindeterminate" initializes indeterminate assert_true: expected true got undefined
+FAIL Parsed defaultindeterminate="false" initializes indeterminate assert_true: expected true got undefined
+FAIL Content attribute changes update indeterminate while it is not dirty assert_true: expected true got undefined
+PASS Assigning indeterminate=false, even without a state change, makes it dirty
+PASS Assigning indeterminate=true, even without a state change, makes it dirty
+FAIL Clicking a checkbox makes both checkedness and indeterminateness dirty assert_true: expected true got false
+FAIL Canceling a click with preventDefault leaves indeterminateness dirty assert_true: expected true got false
+FAIL dirty checkedness doesn't trigger dirty indeterminateness assert_true: expected true got false
+PASS dirty indeterminateness doesn't trigger dirty checkedness
+FAIL cloneNode() preserves non-dirty indeterminate=false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL cloneNode() preserves dirty indeterminate=false with defaultIndeterminate=false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL cloneNode() preserves dirty indeterminate=false with defaultIndeterminate=true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL cloneNode() preserves non-dirty indeterminate=true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL cloneNode() preserves dirty indeterminate=true with defaultIndeterminate=false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL cloneNode() preserves dirty indeterminate=true with defaultIndeterminate=true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL Form reset restores indeterminate=false from the current default and clears its dirty state assert_equals: expected false but got true
+FAIL Form reset restores indeterminate=true from the current default and clears its dirty state assert_equals: expected true but got false
+FAIL Form reset restores checkedness and indeterminateness after checkbox activation assert_true: expected true got false
+
