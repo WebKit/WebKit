@@ -31,8 +31,11 @@
 #include "DocumentWriter.h"
 
 #include "ContentSecurityPolicy.h"
+#include "CrossOriginEmbedderPolicy.h"
+#include "CrossOriginOpenerPolicy.h"
 #include "DOMImplementation.h"
 #include "DocumentInlines.h"
+#include "DocumentIsolationPolicy.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentView.h"
@@ -40,6 +43,7 @@
 #include "FrameLoaderStateMachine.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "IntegrityPolicy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
@@ -277,10 +281,47 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     if (m_decoder)
         document->setDecoder(m_decoder.copyRef());
 
-    // Documents that inherit their origin, such as about:blank, keep the identifier they inherited.
     if (RefPtr documentLoader = frameLoader->documentLoader()) {
+        // Documents that inherit their origin, such as about:blank, keep the identifier they inherited.
         if (auto agentClusterIdentifier = documentLoader->agentClusterAssignment().identifier; agentClusterIdentifier && !frameLoader->stateMachine().creatingInitialEmptyDocument())
             document->setAgentClusterIdentifier(agentClusterIdentifier);
+
+        if (document->url().protocolIsInHTTPFamilyOrBlob()) {
+            auto isSecureContext = document->isSecureContext() ? IsSecureContext::Yes : IsSecureContext::No;
+            document->setCrossOriginEmbedderPolicy(obtainCrossOriginEmbedderPolicy(documentLoader->response(), isSecureContext, credentiallessSupport(document->settingsValues()), document.ptr()));
+
+            if (auto ipAddressSpace = documentLoader->response().ipAddressSpace(); ipAddressSpace != IPAddressSpace::Unknown)
+                document->setIPAddressSpace(ipAddressSpace);
+
+            if (!frameLoader->stateMachine().creatingInitialEmptyDocument()) {
+                auto& agentClusterAssignment = documentLoader->agentClusterAssignment();
+                if (frame->settings().originAgentClusterEnabled())
+                    document->setIsOriginKeyed(agentClusterAssignment.isOriginKeyed);
+                // The UI process decides the value, since it determines the agent cluster. The rest is only for reporting.
+                DocumentIsolationPolicy documentIsolationPolicy;
+                if (frame->settings().documentIsolationPolicyEnabled() && frame->settings().siteIsolationEnabled())
+                    documentIsolationPolicy = obtainDocumentIsolationPolicy(documentLoader->response(), isSecureContext, credentiallessSupport(document->settingsValues()));
+                ASSERT(documentIsolationPolicy.value == agentClusterAssignment.documentIsolationPolicy);
+                documentIsolationPolicy.value = agentClusterAssignment.documentIsolationPolicy;
+                document->setDocumentIsolationPolicy(documentIsolationPolicy);
+            }
+        }
+
+        String referrerPolicy = documentLoader->response().httpHeaderField(HTTPHeaderName::ReferrerPolicy);
+        if (!referrerPolicy.isNull())
+            document->processReferrerPolicy(referrerPolicy, ReferrerPolicySource::HTTPHeader);
+
+        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object (Step 7)
+        if (frame->isMainFrame()) {
+            if (auto crossOriginOpenerPolicy = documentLoader->crossOriginOpenerPolicy())
+                document->setCrossOriginOpenerPolicy(WTF::move(*crossOriginOpenerPolicy));
+        }
+
+        if (auto integrityPolicy = documentLoader->integrityPolicy())
+            document->setIntegrityPolicy(WTF::move(integrityPolicy));
+
+        if (auto integrityPolicyReportOnly = documentLoader->integrityPolicyReportOnly())
+            document->setIntegrityPolicyReportOnly(WTF::move(integrityPolicyReportOnly));
     }
 
     frame->setDocument(document.copyRef());

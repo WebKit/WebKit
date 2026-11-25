@@ -953,31 +953,6 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
     std::optional<NavigationNavigationType> navigationType;
 
     if (RefPtr documentLoader = m_documentLoader) {
-        if (document->url().protocolIsInHTTPFamilyOrBlob()) {
-            auto isSecureContext = document->isSecureContext() ? IsSecureContext::Yes : IsSecureContext::No;
-            document->setCrossOriginEmbedderPolicy(obtainCrossOriginEmbedderPolicy(documentLoader->response(), isSecureContext, credentiallessSupport(document->settingsValues()), document.ptr()));
-
-            if (auto ipAddressSpace = documentLoader->response().ipAddressSpace(); ipAddressSpace != IPAddressSpace::Unknown)
-                document->setIPAddressSpace(ipAddressSpace);
-
-            if (!m_stateMachine.creatingInitialEmptyDocument()) {
-                auto& agentClusterAssignment = documentLoader->agentClusterAssignment();
-                if (frame->settings().originAgentClusterEnabled())
-                    document->setIsOriginKeyed(agentClusterAssignment.isOriginKeyed);
-                // The UI process decides the value, since it determines the agent cluster. The rest is only for reporting.
-                DocumentIsolationPolicy documentIsolationPolicy;
-                if (settings->documentIsolationPolicyEnabled() && settings->siteIsolationEnabled())
-                    documentIsolationPolicy = obtainDocumentIsolationPolicy(documentLoader->response(), isSecureContext, credentiallessSupport(document->settingsValues()));
-                ASSERT(documentIsolationPolicy.value == agentClusterAssignment.documentIsolationPolicy);
-                documentIsolationPolicy.value = agentClusterAssignment.documentIsolationPolicy;
-                document->setDocumentIsolationPolicy(documentIsolationPolicy);
-            }
-        }
-
-        String referrerPolicy = documentLoader->response().httpHeaderField(HTTPHeaderName::ReferrerPolicy);
-        if (!referrerPolicy.isNull())
-            document->processReferrerPolicy(referrerPolicy, ReferrerPolicySource::HTTPHeader);
-
         String headerContentLanguage = documentLoader->response().httpHeaderField(HTTPHeaderName::ContentLanguage);
         if (!headerContentLanguage.isEmpty()) {
             auto contentLanguage = extractContentLanguageFromHeader(headerContentLanguage);
@@ -989,20 +964,8 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
         if (!reportingEndpoints.isEmpty())
             protect(document->reportingScope())->parseReportingEndpoints(reportingEndpoints, documentLoader->response().url());
 
-        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object (Step 7)
-        if (frame->isMainFrame()) {
-            if (auto crossOriginOpenerPolicy = documentLoader->crossOriginOpenerPolicy())
-                document->setCrossOriginOpenerPolicy(WTF::move(*crossOriginOpenerPolicy));
-        }
-
         if (!m_stateMachine.creatingInitialEmptyDocument() && document->url().protocolIsInHTTPFamily())
             logCrossOriginIsolationDiagnostics(document, documentLoader->response(), frame->isMainFrame());
-
-        if (auto integrityPolicy = documentLoader->integrityPolicy())
-            document->setIntegrityPolicy(WTF::move(integrityPolicy));
-
-        if (auto integrityPolicyReportOnly = documentLoader->integrityPolicyReportOnly())
-            document->setIntegrityPolicyReportOnly(WTF::move(integrityPolicyReportOnly));
 
         navigationType = documentLoader->triggeringAction().navigationAPIType();
     }
