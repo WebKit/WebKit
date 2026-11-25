@@ -113,7 +113,7 @@ static std::optional<SecurityOriginData> getSecurityOriginData(ASCIILiteral name
 void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap<String, std::unique_ptr<HashSaltForOrigin>>&&)>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
-        ASSERT(!RunLoop::isMain());
+        assertIsCurrent(m_queue);
 
         FileSystem::makeAllDirectories(m_deviceIdHashSaltStorageDirectory);
 
@@ -257,7 +257,7 @@ void DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins(CompletionHandler<void(
 void DeviceIdHashSaltStorage::deleteHashSaltFromDisk(const HashSaltForOrigin& hashSaltForOrigin)
 {
     m_queue->dispatch([this, protectedThis = Ref { *this }, deviceIdHashSalt = hashSaltForOrigin.deviceIdHashSalt.isolatedCopy()]() mutable {
-        ASSERT(!RunLoop::isMain());
+        assertIsCurrent(m_queue);
 
         String fileFullPath = FileSystem::pathByAppendingComponent(m_deviceIdHashSaltStorageDirectory, deviceIdHashSalt);
         FileSystem::deleteFile(fileFullPath);

@@ -233,7 +233,7 @@ void StorageAreaSync::syncTimerFired()
 
 void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 {
-    ASSERT(!isMainThread());
+    m_syncManager->assertIsCurrent();
     ASSERT(!m_database->isOpen());
     ASSERT(!m_databaseOpenFailed);
 
@@ -319,7 +319,7 @@ void StorageAreaSync::migrateItemTableIfNeeded()
 
 void StorageAreaSync::performImport()
 {
-    ASSERT(!isMainThread());
+    m_syncManager->assertIsCurrent();
     ASSERT(!m_database->isOpen());
 
     openDatabase(SkipIfNonExistent);
@@ -384,7 +384,7 @@ void StorageAreaSync::blockUntilImportComplete()
 
 void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items)
 {
-    ASSERT(!isMainThread());
+    m_syncManager->assertIsCurrent();
 
     if (items.isEmpty() && !clearItems && !m_syncCloseDatabase)
         return;
@@ -466,7 +466,7 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
 
 void StorageAreaSync::performSync()
 {
-    ASSERT(!isMainThread());
+    m_syncManager->assertIsCurrent();
 
     bool clearItems;
     HashMap<String, String> items;
@@ -497,7 +497,7 @@ void StorageAreaSync::performSync()
 
 void StorageAreaSync::deleteEmptyDatabase()
 {
-    ASSERT(!isMainThread());
+    m_syncManager->assertIsCurrent();
     if (!m_database->isOpen())
         return;
 

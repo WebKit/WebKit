@@ -130,6 +130,11 @@ VideoTrackGenerator::Source::Source(ScriptExecutionContextIdentifier identifier)
 {
 }
 
+VideoTrackGenerator::Source::~Source()
+{
+    m_workerThread = anyThreadLike;
+}
+
 void VideoTrackGenerator::Source::endProducingData()
 {
     ASSERT(isMainThread());
@@ -143,14 +148,14 @@ void VideoTrackGenerator::Source::endProducingData()
 
 void VideoTrackGenerator::Source::setWritable(WritableStream& writable)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_workerThread);
     ASSERT(!m_writable);
     m_writable = writable;
 }
 
 void VideoTrackGenerator::Source::writeVideoFrame(VideoFrame& frame, VideoFrameTimeMetadata metadata)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_workerThread);
 
     auto frameSize = frame.rotatedSize();
 

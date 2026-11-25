@@ -391,7 +391,7 @@ void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const Displ
 {
     tracePoint(DisplayRefreshDispatchingToMainThread, displayID, sendToMainThread);
 
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(queue());
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     m_momentumEventDispatcher->displayDidRefresh(displayID);

@@ -175,7 +175,7 @@ void StorageTracker::syncImportOriginIdentifiers()
 {
     ASSERT(m_isActive);
     
-    ASSERT(!isMainThread());
+    m_thread->assertIsCurrent();
 
     {
         Locker locker { m_databaseMutex };
@@ -392,7 +392,7 @@ static void truncateDatabaseFile(SQLiteDatabase& database)
 
 void StorageTracker::syncDeleteAllOrigins()
 {
-    ASSERT(!isMainThread());
+    m_thread->assertIsCurrent();
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
     
@@ -494,7 +494,7 @@ void StorageTracker::deleteOrigin(const SecurityOriginData& origin)
 
 void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
 {
-    ASSERT(!isMainThread());
+    m_thread->assertIsCurrent();
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 

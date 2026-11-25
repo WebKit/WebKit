@@ -134,7 +134,7 @@ void SuspendableWorkQueue::dispatchSync(Function<void()>&& function)
 
 void SuspendableWorkQueue::invokeAllSuspensionCompletionHandlers()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(*this);
 
     if (m_suspensionCompletionHandlers.isEmpty())
         return;
@@ -149,7 +149,7 @@ void SuspendableWorkQueue::invokeAllSuspensionCompletionHandlers()
 
 void SuspendableWorkQueue::suspendIfNeeded()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(*this);
     Locker suspensionLocker { m_suspensionLock };
 
     auto suspendFunction = std::exchange(m_suspendFunction, { });

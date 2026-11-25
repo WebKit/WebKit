@@ -46,6 +46,9 @@ public:
     void dispatch(Function<void ()>&&);
     void close();
 
+    // Only call from a task dispatched to this manager.
+    void assertIsCurrent() const;
+
 private:
     explicit StorageSyncManager(const String& path);
 

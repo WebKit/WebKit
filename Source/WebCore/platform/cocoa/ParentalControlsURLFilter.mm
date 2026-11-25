@@ -193,7 +193,7 @@ bool ParentalControlsURLFilter::isEnabled() const
 void ParentalControlsURLFilter::isURLAllowed(IsMainFrameLoad isMainFrame, const URL& mainDocumentURL, const URL& url, ParentalControlsContentFilter& filter)
 {
     isURLAllowedImpl(isMainFrame, mainDocumentURL, url, { [protectedThis = Ref { *this }, weakFilter = ThreadSafeWeakPtr { filter }] (bool allowed, NSData *replacementData) mutable {
-        ASSERT(!isMainThread());
+        assertIsCurrent(workQueueSingleton());
         if (RefPtr filter = weakFilter.get())
             filter->didReceiveAllowDecisionOnQueue(allowed, replacementData);
     }, CompletionHandlerCallThread::AnyThread });
@@ -202,7 +202,7 @@ void ParentalControlsURLFilter::isURLAllowed(IsMainFrameLoad isMainFrame, const 
 void ParentalControlsURLFilter::isURLAllowed(IsMainFrameLoad isMainFrame, const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
     isURLAllowedImpl(isMainFrame, mainDocumentURL, url, { [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (bool allowed, NSData *replacementData) mutable {
-        ASSERT(!isMainThread());
+        assertIsCurrent(workQueueSingleton());
         callOnMainRunLoop([completionHandler = WTF::move(completionHandler), allowed, replacementData = RetainPtr { replacementData }]() mutable {
             completionHandler(allowed, replacementData.get());
         });

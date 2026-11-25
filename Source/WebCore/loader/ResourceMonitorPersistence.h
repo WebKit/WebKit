@@ -27,6 +27,7 @@
 
 #include "SQLiteDatabase.h"
 #include <wtf/ContinuousApproximateTime.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -59,6 +60,7 @@ private:
 
     std::unique_ptr<SQLiteDatabase> m_sqliteDB;
     std::unique_ptr<SQLiteStatement> m_insertSQLStatement;
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerQueue;
 };
 
 }

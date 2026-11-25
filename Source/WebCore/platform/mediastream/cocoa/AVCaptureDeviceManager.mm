@@ -116,7 +116,7 @@ RetainPtr<NSArray> AVCaptureDeviceManager::currentCameras()
 void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 {
 #if HAVE(AVCAPTUREDEVICE)
-    RELEASE_ASSERT(!isMainThread());
+    releaseAssertIsCurrent(m_dispatchQueue);
     auto currentDevices = currentCameras();
     auto removedDevices = adoptNS([[NSMutableArray alloc] init]);
     for (AVCaptureDevice *cachedDevice in m_avCaptureDevices.get()) {
@@ -170,7 +170,7 @@ static inline bool isVideoDevice(AVCaptureDevice *device)
 
 Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
 {
-    RELEASE_ASSERT(!isMainThread());
+    releaseAssertIsCurrent(m_dispatchQueue);
     if (!isAvailable())
         return { };
 

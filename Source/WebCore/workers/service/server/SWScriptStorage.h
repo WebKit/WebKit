@@ -28,6 +28,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -53,6 +54,7 @@ private:
 
     String m_directory;
     FileSystem::Salt m_salt;
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerQueue;
 };
 
 } // namespace WebCore

@@ -47,7 +47,7 @@ ResourceMonitorPersistence::ResourceMonitorPersistence()
 
 ResourceMonitorPersistence::~ResourceMonitorPersistence()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     if (m_sqliteDB)
         closeDatabase();
@@ -95,7 +95,7 @@ static String databasePath(const String& directoryPath)
 
 bool ResourceMonitorPersistence::openDatabase(String&& directoryPath)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     FileSystem::makeAllDirectories(directoryPath);
 
@@ -146,7 +146,7 @@ bool ResourceMonitorPersistence::openDatabase(String&& directoryPath)
 
 void ResourceMonitorPersistence::deleteAllRecords()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     auto deleteStatement = protect(*m_sqliteDB)->prepareStatement(deleteAllRecordsSQL);
     if (!deleteStatement || !deleteStatement->executeCommand())
@@ -157,7 +157,7 @@ void ResourceMonitorPersistence::deleteAllRecords()
 
 void ResourceMonitorPersistence::deleteExpiredRecords(ContinuousApproximateTime now, Seconds duration)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     auto expirationTime = continuousApproximateTimeToDouble(now - duration);
 
@@ -170,7 +170,7 @@ void ResourceMonitorPersistence::deleteExpiredRecords(ContinuousApproximateTime 
 
 Vector<ResourceMonitorPersistence::Record> ResourceMonitorPersistence::importRecords()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     auto selectStatement = protect(*m_sqliteDB)->prepareStatement(selectAllRecordsSQL);
     if (!selectStatement) {
@@ -191,7 +191,7 @@ Vector<ResourceMonitorPersistence::Record> ResourceMonitorPersistence::importRec
 
 void ResourceMonitorPersistence::recordAccess(const String& host, ContinuousApproximateTime time)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     if (!m_insertSQLStatement)
         return;
@@ -206,7 +206,7 @@ void ResourceMonitorPersistence::recordAccess(const String& host, ContinuousAppr
 
 void ResourceMonitorPersistence::closeDatabase()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     m_insertSQLStatement = nullptr;
 

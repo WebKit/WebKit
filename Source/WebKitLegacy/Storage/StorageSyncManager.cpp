@@ -73,6 +73,12 @@ void StorageSyncManager::dispatch(Function<void ()>&& function)
         thread->dispatch(WTF::move(function));
 }
 
+void StorageSyncManager::assertIsCurrent() const
+{
+    ASSERT(m_thread);
+    m_thread->assertIsCurrent();
+}
+
 void StorageSyncManager::close()
 {
     ASSERT(isMainThread());

@@ -51,6 +51,13 @@ public:
 
     void dispatch(Function<void ()>&&);
 
+    // Only call from a task dispatched to this thread.
+    void assertIsCurrent() const
+    {
+        ASSERT(m_thread);
+        WTF::assertIsCurrent(*m_thread);
+    }
+
     static void releaseFastMallocFreeMemoryInAllThreads();
 
 private:

@@ -82,7 +82,7 @@ MockRealtimeVideoSourceMac::~MockRealtimeVideoSourceMac() = default;
 
 void MockRealtimeVideoSourceMac::updateSampleBuffer()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(runLoop());
 
     RefPtr imageBuffer = this->imageBufferInternal();
     if (!imageBuffer)

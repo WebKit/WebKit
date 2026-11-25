@@ -329,7 +329,7 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
         auto transcodingExtension = WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(transcodingMIMEType);
 
         sharedImageTranscodingQueueSingleton().dispatch([process = WTF::move(process), pathnames = crossThreadCopy(WTF::move(pathnames)), pathsToTranscode = crossThreadCopy(WTF::move(pathsToTranscode)), indicesToTranscode = WTF::move(indicesToTranscode), transcodingUTI = crossThreadCopy(WTF::move(transcodingUTI)), transcodingExtension = crossThreadCopy(WTF::move(transcodingExtension)), pasteboardType = crossThreadCopy(pasteboardType), completionHandler = WTF::move(completionHandler)] mutable {
-            ASSERT(!RunLoop::isMain());
+            assertIsCurrent(sharedImageTranscodingQueueSingleton());
 
             auto transcodedPaths = transcodeImages(pathsToTranscode, transcodingUTI, transcodingExtension);
 
@@ -774,7 +774,7 @@ void WebPasteboardProxy::allPasteboardItemInfo(IPC::Connection& connection, cons
         auto [transcodingUTI, transcodingExtension] = heicTranscodingParameters();
 
         sharedImageTranscodingQueueSingleton().dispatch([protectedConnection = Ref { connection }, pageID, process = WTF::move(process), allInfo = WTF::move(*allInfo), pathsToTranscode = crossThreadCopy(WTF::move(pathsToTranscode)), transcodingInfo = WTF::move(transcodingInfo), transcodingUTI = crossThreadCopy(WTF::move(transcodingUTI)), transcodingExtension = crossThreadCopy(WTF::move(transcodingExtension)), completionHandler = WTF::move(completionHandler)] mutable {
-            ASSERT(!RunLoop::isMain());
+            assertIsCurrent(sharedImageTranscodingQueueSingleton());
 
             auto transcodedPaths = transcodeImages(pathsToTranscode, transcodingUTI, transcodingExtension);
 
@@ -842,7 +842,7 @@ void WebPasteboardProxy::informationForItemAtIndex(IPC::Connection& connection, 
         auto [transcodingUTI, transcodingExtension] = heicTranscodingParameters();
 
         sharedImageTranscodingQueueSingleton().dispatch([protectedConnection = Ref { connection }, pageID, process = WTF::move(process), info = WTF::move(*info), pathsToTranscode = crossThreadCopy(WTF::move(pathsToTranscode)), transcodingInfo = WTF::move(transcodingInfo), transcodingUTI = crossThreadCopy(WTF::move(transcodingUTI)), transcodingExtension = crossThreadCopy(WTF::move(transcodingExtension)), completionHandler = WTF::move(completionHandler)] mutable {
-            ASSERT(!RunLoop::isMain());
+            assertIsCurrent(sharedImageTranscodingQueueSingleton());
 
             auto transcodedPaths = transcodeImages(pathsToTranscode, transcodingUTI, transcodingExtension);
 

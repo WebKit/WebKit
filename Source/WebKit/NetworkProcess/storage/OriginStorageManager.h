@@ -29,6 +29,7 @@
 #include "OriginQuotaManager.h"
 #include "WebsiteDataType.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -70,13 +71,13 @@ public:
     WebCore::StorageEstimate estimate();
     const String& path() const LIFETIME_BOUND { return m_path; }
     NODELETE OriginQuotaManager& quotaManager();
-    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&);
+    FileSystemStorageManager& fileSystemStorageManager(WorkQueue&, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&);
     FileSystemStorageManager* existingFileSystemStorageManager();
     LocalStorageManager& localStorageManager(StorageAreaRegistry&) LIFETIME_BOUND;
     LocalStorageManager* existingLocalStorageManager() LIFETIME_BOUND;
     SessionStorageManager& sessionStorageManager(StorageAreaRegistry&) LIFETIME_BOUND;
     SessionStorageManager* existingSessionStorageManager() LIFETIME_BOUND;
-    IDBStorageManager& idbStorageManager(IDBStorageRegistry&, bool useSQLiteMemoryBackingStore);
+    IDBStorageManager& idbStorageManager(WorkQueue&, IDBStorageRegistry&, bool useSQLiteMemoryBackingStore);
     IDBStorageManager* existingIDBStorageManager();
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
     CacheStorageManager* existingCacheStorageManager();
@@ -117,6 +118,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     bool m_includedInBackup { false };
 #endif
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerQueue;
 };
 
 } // namespace WebKit

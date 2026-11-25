@@ -148,7 +148,7 @@ void transcodeImagesInBackgroundQueue(Vector<String>&& paths, String&& destinati
 {
     ASSERT(isMainThread());
     sharedImageTranscodingQueueSingleton().dispatch([paths = crossThreadCopy(WTF::move(paths)), destinationUTI = WTF::move(destinationUTI).isolatedCopy(), destinationExtension = WTF::move(destinationExtension).isolatedCopy(), completion = WTF::move(completion)]() mutable {
-        ASSERT(!isMainThread());
+        assertIsCurrent(sharedImageTranscodingQueueSingleton());
 
         auto replacementPaths = transcodeImages(paths, destinationUTI, destinationExtension);
         ASSERT(paths.size() == replacementPaths.size());

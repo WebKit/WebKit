@@ -34,6 +34,7 @@
 #include <WebCore/FileSystemHandleRecord.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
@@ -44,7 +45,7 @@ class FileSystemStorageManager final : public RefCountedAndCanMakeWeakPtr<FileSy
     WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageManager);
 public:
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    static Ref<FileSystemStorageManager> create(String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
+    static Ref<FileSystemStorageManager> create(WorkQueue&, String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
     ~FileSystemStorageManager();
     const WebCore::ClientOrigin& origin() const { return m_origin; }
 
@@ -81,7 +82,7 @@ public:
     void requestSpace(uint64_t spaceRequested, CompletionHandler<void(bool)>&&);
 
 private:
-    FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
+    FileSystemStorageManager(WorkQueue&, String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
 
     void close();
     void removeGlobalIdentifierReference(WebCore::FileSystemHandleGlobalIdentifier);
@@ -96,6 +97,7 @@ private:
     HashMap<WebCore::FileSystemHandleIdentifier, Ref<FileSystemStorageHandle>> m_handles;
     HashMap<String, Lock> m_lockMap;
     HashMap<WebCore::FileSystemHandleGlobalIdentifier, GlobalIdentifierEntry> m_globalIdentifierRegistry;
+    const Ref<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

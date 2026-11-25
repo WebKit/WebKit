@@ -29,6 +29,7 @@
 #include <WebCore/SQLiteTransaction.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Scope.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class PrivateClickMeasurement;
@@ -44,7 +45,7 @@ using TableAndIndexPair = std::pair<String, std::optional<String>>;
 
 class DatabaseUtilities {
 protected:
-    DatabaseUtilities(String&& storageFilePath);
+    DatabaseUtilities(WorkQueue&, String&& storageFilePath);
     ~DatabaseUtilities();
 
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query, ASCIILiteral logString) const;
@@ -72,6 +73,7 @@ protected:
     const String m_storageFilePath;
     const UniqueRef<WebCore::SQLiteDatabase> m_database;
     mutable WebCore::SQLiteTransaction m_transaction;
+    const Ref<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

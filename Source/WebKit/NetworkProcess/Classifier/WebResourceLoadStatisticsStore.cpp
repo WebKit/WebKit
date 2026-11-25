@@ -116,15 +116,15 @@ void WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecords
     });
 }
 
-static Ref<SuspendableWorkQueue> sharedStatisticsQueue()
+SuspendableWorkQueue& WebResourceLoadStatisticsStore::statisticsQueueSingleton()
 {
     static NeverDestroyed<Ref<SuspendableWorkQueue>> queue(SuspendableWorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue"_s,  WorkQueue::QOS::Utility));
-    return queue.get().copyRef();
+    return queue.get();
 }
 
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral isEphemeral)
     : m_networkSession(networkSession)
-    , m_statisticsQueue(sharedStatisticsQueue())
+    , m_statisticsQueue(statisticsQueueSingleton())
     , m_dailyTasksTimer(RunLoop::mainSingleton(), "WebResourceLoadStatisticsStore::DailyTasksTimer"_s, this, &WebResourceLoadStatisticsStore::performDailyTasks)
     , m_isEphemeral(isEphemeral)
 {
@@ -186,7 +186,7 @@ inline void WebResourceLoadStatisticsStore::postTask(WTF::Function<void(WebResou
 
 inline void WebResourceLoadStatisticsStore::postTaskReply(WTF::Function<void()>&& reply)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(statisticsQueueSingleton());
     RunLoop::mainSingleton().dispatch(WTF::move(reply));
 }
 
@@ -1666,14 +1666,14 @@ void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<
 void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    sharedStatisticsQueue()->suspend(ResourceLoadStatisticsStore::interruptAllDatabases, WTF::move(completionHandler));
+    statisticsQueueSingleton().suspend(ResourceLoadStatisticsStore::interruptAllDatabases, WTF::move(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::resume()
 {
     ASSERT(RunLoop::isMain());
 
-    sharedStatisticsQueue()->resume();
+    statisticsQueueSingleton().resume();
 }
 
 void WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting(RegistrableDomain&& domain, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)

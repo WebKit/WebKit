@@ -687,7 +687,7 @@ void MockRealtimeVideoSource::delaySamples(Seconds delta)
 
 RefPtr<ImageBuffer> MockRealtimeVideoSource::generatePhoto()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_runLoop.get());
 
     Locker lock { m_frameGenerationLock };
     invalidateDrawingState();
@@ -723,7 +723,7 @@ RefPtr<ImageBuffer> MockRealtimeVideoSource::generateFrameInternal()
 
 void MockRealtimeVideoSource::generateFrame()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_runLoop.get());
 
     if (m_delayUntil) {
         if (m_delayUntil < MonotonicTime::now())

@@ -30,6 +30,7 @@
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -73,6 +74,7 @@ private:
     std::unique_ptr<WebCore::SQLiteDatabase> m_sqliteDB;
     std::unique_ptr<WebCore::SQLiteStatement> m_insertSiteSQLStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_deleteSiteSQLStatement;
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerQueue;
 };
 
 } // namespace WebKit

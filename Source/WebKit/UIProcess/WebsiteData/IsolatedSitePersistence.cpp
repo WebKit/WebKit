@@ -71,7 +71,7 @@ IsolatedSitePersistence::IsolatedSitePersistence(const String& databaseDirectory
 
 IsolatedSitePersistence::~IsolatedSitePersistence()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (m_sqliteDB)
         closeDatabase();
@@ -103,7 +103,7 @@ static String isolatedSitesDatabasePath(const String& directoryPath)
 
 IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabase(const String& directoryPath)
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
     ASSERT(!directoryPath.isEmpty());
 
     FileSystem::makeAllDirectories(directoryPath);
@@ -126,7 +126,7 @@ IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabase(const 
 
 IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabaseAtPath(const String& path)
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     m_sqliteDB = makeUnique<WebCore::SQLiteDatabase>();
 
@@ -183,7 +183,7 @@ IsolatedSitePersistence::OpenResult IsolatedSitePersistence::openDatabaseAtPath(
 
 void IsolatedSitePersistence::closeDatabase()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     m_insertSiteSQLStatement = nullptr;
     m_deleteSiteSQLStatement = nullptr;
@@ -196,7 +196,7 @@ void IsolatedSitePersistence::closeDatabase()
 
 HashMap<WebCore::RegistrableDomain, IsolatedSitePersistence::SiteRecord> IsolatedSitePersistence::allSites()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(SiteIsolation, "IsolatedSitePersistence::%" PUBLIC_LOG_STRING ": Attempted operation on closed database.", __FUNCTION__);
@@ -225,7 +225,7 @@ HashMap<WebCore::RegistrableDomain, IsolatedSitePersistence::SiteRecord> Isolate
 
 void IsolatedSitePersistence::setRecordForSite(const WebCore::RegistrableDomain& domain, SiteRecord record)
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(SiteIsolation, "IsolatedSitePersistence::%" PUBLIC_LOG_STRING ": Attempted operation on closed database.", __FUNCTION__);
@@ -243,7 +243,7 @@ void IsolatedSitePersistence::setRecordForSite(const WebCore::RegistrableDomain&
 
 void IsolatedSitePersistence::deleteAllSites()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(SiteIsolation, "IsolatedSitePersistence::%" PUBLIC_LOG_STRING ": Attempted operation on closed database.", __FUNCTION__);
@@ -257,7 +257,7 @@ void IsolatedSitePersistence::deleteAllSites()
 
 void IsolatedSitePersistence::deleteSitesUpdatedSince(WallTime cutoff)
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(SiteIsolation, "IsolatedSitePersistence::%" PUBLIC_LOG_STRING ": Attempted operation on closed database.", __FUNCTION__);
@@ -273,7 +273,7 @@ void IsolatedSitePersistence::deleteSitesUpdatedSince(WallTime cutoff)
 
 void IsolatedSitePersistence::deleteSites(const Vector<WebCore::RegistrableDomain>& domains)
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(SiteIsolation, "IsolatedSitePersistence::%" PUBLIC_LOG_STRING ": Attempted operation on closed database.", __FUNCTION__);
@@ -291,7 +291,7 @@ void IsolatedSitePersistence::deleteSites(const Vector<WebCore::RegistrableDomai
 
 bool IsolatedSitePersistence::didImportUserInteractions()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen())
         return false;
@@ -307,7 +307,7 @@ bool IsolatedSitePersistence::didImportUserInteractions()
 
 void IsolatedSitePersistence::setDidImportUserInteractions()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(SiteIsolation, "IsolatedSitePersistence::%" PUBLIC_LOG_STRING ": Attempted operation on closed database.", __FUNCTION__);

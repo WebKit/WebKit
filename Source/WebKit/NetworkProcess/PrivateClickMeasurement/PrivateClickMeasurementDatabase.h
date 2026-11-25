@@ -46,7 +46,7 @@ struct DebugInfo;
 class Database : public DatabaseUtilities, public RefCountedAndCanMakeWeakPtr<Database> {
     WTF_MAKE_TZONE_ALLOCATED(Database);
 public:
-    static Ref<Database> create(const String& storageDirectory);
+    static Ref<Database> create(WorkQueue&, const String& storageDirectory);
 
     virtual ~Database();
 
@@ -75,7 +75,7 @@ private:
     using SourceEarliestTimeToSend = double;
     using DestinationEarliestTimeToSend = double;
 
-    Database(const String& storageDirectory);
+    Database(WorkQueue&, const String& storageDirectory);
     bool createSchema() final;
     void destroyStatements() final;
     std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PCM::SourceSite&, const WebCore::PCM::AttributionDestinationSite&, const ApplicationBundleIdentifier&);

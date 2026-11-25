@@ -29,6 +29,7 @@
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <wtf/ContinuousApproximateTime.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -67,6 +68,7 @@ private:
     std::unique_ptr<WebCore::SQLiteStatement> m_selectSpecificSiteSQLStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_insertSiteSQLStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_deleteSQLStatement;
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerQueue;
 };
 
 }

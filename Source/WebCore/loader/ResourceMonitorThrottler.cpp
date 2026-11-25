@@ -71,7 +71,7 @@ ResourceMonitorThrottler::ResourceMonitorThrottler(String&& directoryPath, size_
 
 ResourceMonitorThrottler::~ResourceMonitorThrottler()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     if (m_persistence) {
         RESOURCEMONITOR_RELEASE_LOG("Closing persistence for throttler.");
@@ -81,7 +81,7 @@ ResourceMonitorThrottler::~ResourceMonitorThrottler()
 
 auto ResourceMonitorThrottler::throttlerForHost(const String& host) -> AccessThrottler&
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     return m_throttlersByHost.ensure(host, [] {
         return AccessThrottler { };
@@ -90,7 +90,7 @@ auto ResourceMonitorThrottler::throttlerForHost(const String& host) -> AccessThr
 
 void ResourceMonitorThrottler::removeOldestThrottler()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     auto oldest = ContinuousApproximateTime::infinity();
     String oldestKey;
@@ -108,7 +108,7 @@ void ResourceMonitorThrottler::removeOldestThrottler()
 
 bool ResourceMonitorThrottler::tryAccess(const String& host, ContinuousApproximateTime time)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
     ASSERT(!host.isEmpty());
 
     auto& throttler = throttlerForHost(host);
@@ -128,7 +128,7 @@ bool ResourceMonitorThrottler::tryAccess(const String& host, ContinuousApproxima
 
 void ResourceMonitorThrottler::clearAllData()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     m_throttlersByHost.clear();
 
@@ -138,7 +138,7 @@ void ResourceMonitorThrottler::clearAllData()
 
 void ResourceMonitorThrottler::maintainHosts(ContinuousApproximateTime time)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     if (m_throttlersByHost.size() <= m_config.maxHosts)
         return;
@@ -157,7 +157,7 @@ void ResourceMonitorThrottler::maintainHosts(ContinuousApproximateTime time)
 
 void ResourceMonitorThrottler::setCountPerDuration(size_t count, Seconds duration)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     m_config.count = count;
     m_config.duration = duration;

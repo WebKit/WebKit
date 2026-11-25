@@ -198,11 +198,12 @@ bool IDBStorageManager::migrateOriginData(const String& oldOriginDirectory, cons
     });
 }
 
-IDBStorageManager::IDBStorageManager(const String& path, IDBStorageRegistry& registry, QuotaCheckFunction&& quotaCheckFunction, bool useSQLiteMemoryBackingStore)
+IDBStorageManager::IDBStorageManager(WorkQueue& queue, const String& path, IDBStorageRegistry& registry, QuotaCheckFunction&& quotaCheckFunction, bool useSQLiteMemoryBackingStore)
     : m_path(path)
     , m_registry(registry)
     , m_quotaCheckFunction(WTF::move(quotaCheckFunction))
     , m_useSQLiteMemoryBackingStore(useSQLiteMemoryBackingStore)
+    , m_queue(queue)
 {
 }
 
@@ -249,7 +250,7 @@ WebCore::IDBServer::UniqueIDBDatabase& IDBStorageManager::getOrCreateUniqueIDBDa
 {
     auto addResult = m_databases.add(identifier, nullptr);
     if (addResult.isNewEntry)
-        addResult.iterator->value = makeUnique<WebCore::IDBServer::UniqueIDBDatabase>(*this, identifier);
+        addResult.iterator->value = makeUnique<WebCore::IDBServer::UniqueIDBDatabase>(m_queue, *this, identifier);
 
     return *addResult.iterator->value;
 }

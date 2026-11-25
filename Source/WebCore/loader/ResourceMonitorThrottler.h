@@ -29,6 +29,7 @@
 #include <wtf/ContinuousApproximateTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/PriorityQueue.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -81,6 +82,7 @@ private:
     Config m_config;
     HashMap<String, AccessThrottler> m_throttlersByHost;
     std::unique_ptr<ResourceMonitorPersistence> m_persistence;
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerQueue;
 };
 
 }

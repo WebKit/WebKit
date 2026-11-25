@@ -128,7 +128,7 @@ void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdenti
         return completionHandler(false);
 
     proxy->thread().runLoop().postTask([transferredPort = WTF::move(transferredPort), sourceOrigin = sourceOrigin.isolatedCopy()] (auto& scriptExecutionContext) mutable {
-        ASSERT(!isMainThread());
+        ASSERT(scriptExecutionContext.isContextThread());
         downcast<SharedWorkerGlobalScope>(scriptExecutionContext).postConnectEvent(WTF::move(transferredPort), sourceOrigin);
     });
     completionHandler(true);

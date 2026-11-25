@@ -29,6 +29,7 @@
 #include <WebCore/ServiceWorkerUpdateViaCache.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadAssertions.h>
 
 namespace WebCore {
 
@@ -87,7 +88,7 @@ private:
     std::unique_ptr<SQLiteDatabase> m_database;
     Vector<std::unique_ptr<SQLiteStatement>> m_cachedStatements;
     std::unique_ptr<SWScriptStorage> m_scriptStorage;
-    
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerQueue;
 }; // namespace WebCore
 
 struct ImportedScriptAttributes {

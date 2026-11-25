@@ -68,7 +68,7 @@ EnhancedSecuritySitesPersistence::EnhancedSecuritySitesPersistence(const String&
 
 EnhancedSecuritySitesPersistence::~EnhancedSecuritySitesPersistence()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (m_sqliteDB)
         closeDatabase();
@@ -103,7 +103,7 @@ WebCore::SQLiteStatementAutoResetScope EnhancedSecuritySitesPersistence::cachedS
 
 bool EnhancedSecuritySitesPersistence::openDatabase(const String& directoryPath)
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
     ASSERT(!directoryPath.isEmpty());
 
     FileSystem::makeAllDirectories(directoryPath);
@@ -196,7 +196,7 @@ void EnhancedSecuritySitesPersistence::deleteSite(const WebCore::RegistrableDoma
 
 void EnhancedSecuritySitesPersistence::deleteSites(const Vector<WebCore::RegistrableDomain>& sites)
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(EnhancedSecurity, "%s: Attempted operation on closed database.", __FUNCTION__);
@@ -209,7 +209,7 @@ void EnhancedSecuritySitesPersistence::deleteSites(const Vector<WebCore::Registr
 
 void EnhancedSecuritySitesPersistence::deleteAllSites()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(EnhancedSecurity, "%s: Delete all attempted on closed database, trying file deletion instead.", __FUNCTION__);
@@ -223,7 +223,7 @@ void EnhancedSecuritySitesPersistence::deleteAllSites()
 
 HashSet<WebCore::RegistrableDomain> EnhancedSecuritySitesPersistence::enhancedSecurityOnlyDomains()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(EnhancedSecurity, "%s: Attempted operation on closed database.", __FUNCTION__);
@@ -247,7 +247,7 @@ HashSet<WebCore::RegistrableDomain> EnhancedSecuritySitesPersistence::enhancedSe
 
 HashSet<WebCore::RegistrableDomain> EnhancedSecuritySitesPersistence::allEnhancedSecuritySites()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(EnhancedSecurity, "%s: Attempted operation on closed database.", __FUNCTION__);
@@ -271,7 +271,7 @@ HashSet<WebCore::RegistrableDomain> EnhancedSecuritySitesPersistence::allEnhance
 
 void EnhancedSecuritySitesPersistence::trackEnhancedSecurityForDomain(WebCore::RegistrableDomain&& site, EnhancedSecurity reason)
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     if (!isDatabaseOpen()) {
         RELEASE_LOG_ERROR(EnhancedSecurity, "%s: Attempted operation on closed database.", __FUNCTION__);
@@ -305,7 +305,7 @@ void EnhancedSecuritySitesPersistence::trackEnhancedSecurityForDomain(WebCore::R
 
 void EnhancedSecuritySitesPersistence::closeDatabase()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     m_insertSiteSQLStatement = nullptr;
     m_selectSpecificSiteSQLStatement = nullptr;

@@ -274,7 +274,7 @@ static std::unique_ptr<SQLiteDatabase> openAndMigrateDatabase(const String& path
 class PushDatabase::Storage : public ThreadSafeRefCounted<Storage, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(Storage);
 public:
-    static Ref<Storage> create(UniqueRef<SQLiteDatabase>&& database) { return adoptRef(*new Storage(WTF::move(database))); }
+    static Ref<Storage> create(Ref<WorkQueue>&& queue, UniqueRef<SQLiteDatabase>&& database) { return adoptRef(*new Storage(WTF::move(queue), WTF::move(database))); }
 
     NODELETE SQLiteDatabase& database() { return m_db; }
 
@@ -290,18 +290,20 @@ public:
     }
 
 private:
-    explicit Storage(UniqueRef<SQLiteDatabase>&& database)
-        : m_db(WTF::move(database))
+    Storage(Ref<WorkQueue>&& queue, UniqueRef<SQLiteDatabase>&& database)
+        : m_queue(WTF::move(queue))
+        , m_db(WTF::move(database))
     {
     }
 
+    const Ref<WorkQueue> m_queue;
     const UniqueRef<SQLiteDatabase> m_db;
     HashMap<ASCIILiteral, UniqueRef<SQLiteStatement>> m_statements;
 };
 
 SQLiteStatementAutoResetScope PushDatabase::Storage::cachedStatement(ASCIILiteral query)
 {
-    RELEASE_ASSERT(!RunLoop::isMain());
+    releaseAssertIsCurrent(m_queue.get());
 
     auto it = m_statements.find(query);
     if (it != m_statements.end())
@@ -353,7 +355,7 @@ void PushDatabase::create(const String& path, CreationHandler&& completionHandle
 
 PushDatabase::PushDatabase(Ref<WorkQueue>&& queue, UniqueRef<SQLiteDatabase>&& db)
     : m_queue(WTF::move(queue))
-    , m_storage(Storage::create(WTF::move(db)))
+    , m_storage(Storage::create(m_queue.copyRef(), WTF::move(db)))
 {
 }
 

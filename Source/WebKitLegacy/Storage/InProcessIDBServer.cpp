@@ -78,7 +78,7 @@ InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& d
         Ref connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
         m_connectionToClient = connectionToClient.copyRef();
 
-        m_server = makeUnique<IDBServer::IDBServer>(directory, [](const ClientOrigin&, uint64_t) {
+        m_server = makeUnique<IDBServer::IDBServer>(m_queue, directory, [](const ClientOrigin&, uint64_t) {
             return true;
         });
         protect(m_server)->registerConnection(connectionToClient);
@@ -505,6 +505,6 @@ void InProcessIDBServer::dispatchTask(Function<void()>&& function)
 
 void InProcessIDBServer::dispatchTaskReply(Function<void()>&& function)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_queue.get());
     callOnMainThread(WTF::move(function));
 }

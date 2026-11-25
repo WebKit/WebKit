@@ -28,6 +28,7 @@
 #include <WebCore/UniqueIDBDatabase.h>
 #include <WebCore/UniqueIDBDatabaseManager.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class IDBRequestData;
@@ -56,7 +57,7 @@ public:
     static bool migrateOriginData(const String& oldOriginDirectory, const String& newOriginDirectory);
 
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    IDBStorageManager(const String& path, IDBStorageRegistry&, QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
+    IDBStorageManager(WorkQueue&, const String& path, IDBStorageRegistry&, QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
     ~IDBStorageManager();
     NODELETE bool isActive() const;
     bool hasDataInMemory() const;
@@ -87,6 +88,7 @@ private:
     HashMap<WebCore::IDBDatabaseIdentifier, std::unique_ptr<WebCore::IDBServer::UniqueIDBDatabase>> m_databases;
     bool m_useSQLiteMemoryBackingStore { false };
     bool m_isClosing { false };
+    const Ref<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

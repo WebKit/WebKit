@@ -29,10 +29,12 @@
 #include "Logging.h"
 #include "PrivateClickMeasurementDebugInfo.h"
 #include "PrivateClickMeasurementManager.h"
+#include "PrivateClickMeasurementPersistentStore.h"
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <WebCore/SQLiteTransaction.h>
+#include <wtf/SuspendableWorkQueue.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -85,13 +87,13 @@ NODELETE static WeakHashSet<Database>& allDatabases()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Database);
 
-Ref<Database> Database::create(const String& storageDirectory)
+Ref<Database> Database::create(WorkQueue& queue, const String& storageDirectory)
 {
-    return adoptRef(*new Database(storageDirectory));
+    return adoptRef(*new Database(queue, storageDirectory));
 }
 
-Database::Database(const String& storageDirectory)
-    : DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectory, "pcm.db"_s))
+Database::Database(WorkQueue& queue, const String& storageDirectory)
+    : DatabaseUtilities(queue, FileSystem::pathByAppendingComponent(storageDirectory, "pcm.db"_s))
 {
     ASSERT(!RunLoop::isMain());
     openDatabaseAndCreateSchemaIfNecessary();
@@ -102,7 +104,7 @@ Database::Database(const String& storageDirectory)
 
 Database::~Database()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     close();
     allDatabases().remove(*this);
 }
@@ -131,7 +133,7 @@ std::span<const ASCIILiteral> Database::sortedTables()
 
 void Database::interruptAllDatabases()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(PersistentStore::sharedWorkQueueSingleton());
     for (Ref database : allDatabases())
         database->interrupt();
 }
@@ -148,7 +150,7 @@ bool Database::createUniqueIndices()
 
 bool Database::createSchema()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
 
     if (!m_database->executeCommand(createPCMObservedDomain)) {
         LOG_ERROR("Could not create PCMObservedDomains table in database (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
@@ -175,7 +177,7 @@ bool Database::createSchema()
 
 void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& attribution, PrivateClickMeasurementAttributionType attributionType)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
 
     auto transactionScope = beginTransactionIfNecessary();
 
@@ -239,7 +241,7 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
 
 void Database::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto scopedStatement = this->scopedStatement(m_setUnattributedPrivateClickMeasurementAsExpiredStatement, setUnattributedPrivateClickMeasurementAsExpiredQuery, "markAllUnattributedPrivateClickMeasurementAsExpiredForTesting"_s);
 
     if (!scopedStatement || scopedStatement->step() != SQLITE_DONE) {
@@ -250,7 +252,7 @@ void Database::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
 
 std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::optional<Database::AttributedPrivateClickMeasurement>> Database::findPrivateClickMeasurement(const WebCore::PCM::SourceSite& sourceSite, const WebCore::PCM::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto sourceSiteDomainID = domainID(sourceSite.registrableDomain);
     auto destinationSiteDomainID = domainID(destinationSite.registrableDomain);
     if (!sourceSiteDomainID || !destinationSiteDomainID)
@@ -287,7 +289,7 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
 
 std::pair<std::optional<WebCore::PCM::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PCM::SourceSite& sourceSite, const WebCore::PCM::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier, WebCore::PCM::AttributionTriggerData&& attributionTriggerData, WebCore::PrivateClickMeasurement::IsRunningLayoutTest isRunningTest)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
 
     // We should always clear expired clicks from the database before scheduling an attribution.
     clearExpiredPrivateClickMeasurement();
@@ -352,7 +354,7 @@ std::pair<std::optional<WebCore::PCM::AttributionSecondsUntilSendData>, DebugInf
 
 void Database::removeUnattributed(WebCore::PrivateClickMeasurement& attribution)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
     auto destinationSiteDomainID = domainID(attribution.destinationSite().registrableDomain);
     if (!sourceSiteDomainID || !destinationSiteDomainID)
@@ -372,7 +374,7 @@ void Database::removeUnattributed(WebCore::PrivateClickMeasurement& attribution)
 
 Vector<WebCore::PrivateClickMeasurement> Database::allAttributedPrivateClickMeasurement()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto attributedScopedStatement = this->scopedStatement(m_allAttributedPrivateClickMeasurementStatement, allAttributedPrivateClickMeasurementQuery, "allAttributedPrivateClickMeasurement"_s);
 
     if (!attributedScopedStatement) {
@@ -390,7 +392,7 @@ Vector<WebCore::PrivateClickMeasurement> Database::allAttributedPrivateClickMeas
 
 String Database::privateClickMeasurementToStringForTesting() const
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto privateClickMeasurementDataExists = m_database->prepareStatement("SELECT (SELECT COUNT(*) FROM UnattributedPrivateClickMeasurement) as cnt1, (SELECT COUNT(*) FROM AttributedPrivateClickMeasurement) as cnt2"_s);
     if (!privateClickMeasurementDataExists || privateClickMeasurementDataExists->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::privateClickMeasurementToStringForTesting failed, error message: %" PRIVATE_LOG_STRING, this, m_database->lastErrorMsg());
@@ -437,7 +439,7 @@ String Database::privateClickMeasurementToStringForTesting() const
 
 String Database::attributionToStringForTesting(const WebCore::PrivateClickMeasurement& pcm) const
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto sourceSiteDomain = pcm.sourceSite().registrableDomain;
     auto destinationSiteDomain = pcm.destinationSite().registrableDomain;
     auto sourceID = pcm.sourceID();
@@ -472,7 +474,7 @@ String Database::attributionToStringForTesting(const WebCore::PrivateClickMeasur
 
 void Database::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto expiredTimeToSend = WallTime::now() - 1_h;
 
     auto transactionScope = beginTransactionIfNecessary();
@@ -495,7 +497,7 @@ void Database::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
 
 Vector<WebCore::RegistrableDomain> Database::fetchRegistrableDomains() const
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
 
     auto statement = m_database->prepareStatement("SELECT registrableDomain FROM PCMObservedDomains;"_s);
 
@@ -513,7 +515,7 @@ Vector<WebCore::RegistrableDomain> Database::fetchRegistrableDomains() const
 
 void Database::clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDomain> domain)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
 
     // Default to clear all entries if no domain is specified.
     String bindParameter;
@@ -540,7 +542,7 @@ void Database::clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDo
 
 void Database::clearExpiredPrivateClickMeasurement()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto expirationTimeFrame = WallTime::now() - WebCore::PrivateClickMeasurement::maxAge();
     auto scopedStatement = this->scopedStatement(m_clearExpiredPrivateClickMeasurementStatement, clearExpiredPrivateClickMeasurementQuery, "clearExpiredPrivateClickMeasurement"_s);
 
@@ -554,7 +556,7 @@ void Database::clearExpiredPrivateClickMeasurement()
 
 void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attribution, WebCore::PCM::AttributionReportEndpoint attributionReportEndpoint)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto timesToSend = earliestTimesToSend(attribution);
     auto sourceEarliestTimeToSend = timesToSend.first;
     auto destinationEarliestTimeToSend = timesToSend.second;
@@ -601,7 +603,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
 
 void Database::markReportAsSentToDestination(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID, const ApplicationBundleIdentifier& sourceApplicationBundleID)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto scopedStatement = this->scopedStatement(m_markReportAsSentToDestinationStatement, markReportAsSentToDestinationQuery, "markReportAsSentToDestination"_s);
 
     if (!scopedStatement
@@ -616,7 +618,7 @@ void Database::markReportAsSentToDestination(SourceDomainID sourceSiteDomainID, 
 
 void Database::markReportAsSentToSource(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID, const ApplicationBundleIdentifier& sourceApplicationBundleID)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto scopedStatement = this->scopedStatement(m_markReportAsSentToSourceStatement, markReportAsSentToSourceQuery, "markReportAsSentToSource"_s);
 
     if (!scopedStatement
@@ -631,7 +633,7 @@ void Database::markReportAsSentToSource(SourceDomainID sourceSiteDomainID, Desti
 
 std::pair<std::optional<Database::SourceEarliestTimeToSend>, std::optional<Database::DestinationEarliestTimeToSend>> Database::earliestTimesToSend(const WebCore::PrivateClickMeasurement& attribution)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
     auto destinationSiteDomainID = domainID(attribution.destinationSite().registrableDomain);
 
@@ -665,7 +667,7 @@ std::pair<std::optional<Database::SourceEarliestTimeToSend>, std::optional<Datab
 
 std::optional<Database::DomainID> Database::domainID(const WebCore::RegistrableDomain& domain)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
 
     auto scopedStatement = this->scopedStatement(m_domainIDFromStringStatement, domainIDFromStringQuery, "domainID"_s);
     if (!scopedStatement || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
@@ -682,7 +684,7 @@ std::optional<Database::DomainID> Database::domainID(const WebCore::RegistrableD
 
 String Database::getDomainStringFromDomainID(DomainID domainID) const
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto result = emptyString();
     
     auto scopedStatement = this->scopedStatement(m_domainStringFromDomainIDStatement, domainStringFromDomainIDQuery, "getDomainStringFromDomainID"_s);

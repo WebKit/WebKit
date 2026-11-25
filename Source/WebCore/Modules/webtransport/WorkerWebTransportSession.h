@@ -28,6 +28,7 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/WebTransportSession.h>
 #include <WebCore/WebTransportSessionClient.h>
+#include <wtf/ThreadAssertions.h>
 
 namespace WebCore {
 
@@ -77,6 +78,7 @@ private:
     const ScriptExecutionContextIdentifier m_contextID;
     ThreadSafeWeakPtr<WebTransportSessionClient> m_client;
     const RefPtr<WebTransportSession> m_session;
+    NO_UNIQUE_ADDRESS ThreadLikeAssertion m_workerThread;
 };
 
 }

@@ -37,22 +37,23 @@
 
 namespace WebKit {
 
-DatabaseUtilities::DatabaseUtilities(String&& storageFilePath)
+DatabaseUtilities::DatabaseUtilities(WorkQueue& queue, String&& storageFilePath)
     : m_storageFilePath(WTF::move(storageFilePath))
     , m_database(makeUniqueRef<WebCore::SQLiteDatabase>())
     , m_transaction(m_database.get())
+    , m_queue(queue)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
 }
 
 DatabaseUtilities::~DatabaseUtilities()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
 }
 
 WebCore::SQLiteStatementAutoResetScope DatabaseUtilities::scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>& statement, ASCIILiteral query, ASCIILiteral logString) const
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     if (!statement) {
         statement = m_database->prepareStatement(query);
         if (!statement) {
@@ -66,7 +67,7 @@ WebCore::SQLiteStatementAutoResetScope DatabaseUtilities::scopedStatement(std::u
 
 ScopeExit<Function<void()>> DatabaseUtilities::beginTransactionIfNecessary()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     if (m_transaction.inProgress())
         return makeScopeExit(Function<void()> { [] { } });
 
@@ -85,7 +86,7 @@ static bool evaluateStatementAndExpect(std::unique_ptr<WebCore::SQLiteStatement>
 
 auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFile
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     CreatedNewFile createdNewFile = CreatedNewFile::No;
     if (!FileSystem::fileExists(m_storageFilePath)) {
         if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_storageFilePath))) {
@@ -124,7 +125,7 @@ void DatabaseUtilities::enableForeignKeys()
 
 void DatabaseUtilities::close()
 {
-    RELEASE_ASSERT(!RunLoop::isMain());
+    releaseAssertIsCurrent(m_queue);
     destroyStatements();
     if (m_database->isOpen())
         m_database->close();
@@ -132,14 +133,14 @@ void DatabaseUtilities::close()
 
 void DatabaseUtilities::interrupt()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     if (m_database->isOpen())
         m_database->interrupt();
 }
 
 WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement& statement, PrivateClickMeasurementAttributionType attributionType) const
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     auto sourceSiteDomain = getDomainStringFromDomainID(statement.columnInt(0));
     auto destinationSiteDomain = getDomainStringFromDomainID(statement.columnInt(1));
     auto sourceID = statement.columnInt(2);
@@ -269,7 +270,7 @@ static std::unique_ptr<WebCore::SQLiteStatement> insertDistinctValuesInTableStat
 
 void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue);
     if (!needsUpdatedSchema())
         return;
 

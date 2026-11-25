@@ -40,6 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -74,7 +75,7 @@ class UniqueIDBDatabase final : public CanMakeWeakPtr<UniqueIDBDatabase>, public
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(UniqueIDBDatabase, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(UniqueIDBDatabase);
 public:
-    WEBCORE_EXPORT UniqueIDBDatabase(UniqueIDBDatabaseManager&, const IDBDatabaseIdentifier&);
+    WEBCORE_EXPORT UniqueIDBDatabase(WorkQueue&, UniqueIDBDatabaseManager&, const IDBDatabaseIdentifier&);
     UniqueIDBDatabase(UniqueIDBDatabase&) = delete;
     WEBCORE_EXPORT ~UniqueIDBDatabase();
 
@@ -119,7 +120,6 @@ public:
     WEBCORE_EXPORT void handleDelete(IDBConnectionToClient&, const IDBOpenRequestData&);
     WEBCORE_EXPORT void immediateClose();
 
-    NODELETE bool hasActiveTransactions() const;
     WEBCORE_EXPORT void abortActiveTransactions();
     void handleTransactionsAfterAbortingSuspendedClientTransactions();
     WEBCORE_EXPORT bool tryClose();
@@ -195,6 +195,8 @@ private:
 #if ASSERT_ENABLED
     bool m_isAbortingTransactionsOfSuspendedClients { false };
 #endif
+
+    const Ref<WorkQueue> m_queue;
 };
 
 } // namespace IDBServer

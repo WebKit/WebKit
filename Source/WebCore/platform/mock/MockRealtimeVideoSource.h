@@ -73,6 +73,8 @@ protected:
 
     ImageBuffer* imageBufferInternal();
 
+    RunLoop& runLoop() const { return m_runLoop.get(); }
+
 private:
     friend class MockDisplayCaptureSourceGStreamer;
     friend class MockRealtimeVideoSourceGStreamer;

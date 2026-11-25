@@ -35,30 +35,30 @@
 
 namespace WebKit::PCM {
 
-static Ref<SuspendableWorkQueue> sharedWorkQueue()
+SuspendableWorkQueue& PersistentStore::sharedWorkQueueSingleton()
 {
     static NeverDestroyed<Ref<SuspendableWorkQueue>> queue(SuspendableWorkQueue::create("PrivateClickMeasurement Process Data Queue"_s,  WorkQueue::QOS::Utility));
-    return queue.get().copyRef();
+    return queue.get();
 }
 
 void PersistentStore::prepareForProcessToSuspend(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    sharedWorkQueue()->suspend(Database::interruptAllDatabases, WTF::move(completionHandler));
+    sharedWorkQueueSingleton().suspend(Database::interruptAllDatabases, WTF::move(completionHandler));
 }
 
 void PersistentStore::processDidResume()
 {
     ASSERT(RunLoop::isMain());
-    sharedWorkQueue()->resume();
+    sharedWorkQueueSingleton().resume();
 }
 
 PersistentStore::PersistentStore(const String& databaseDirectory)
-    : m_queue(sharedWorkQueue())
+    : m_queue(sharedWorkQueueSingleton())
 {
     if (!databaseDirectory.isEmpty()) {
         postTask([this, protectedThis = Ref { *this }, databaseDirectory = databaseDirectory.isolatedCopy()] () mutable {
-            m_database = Database::create(WTF::move(databaseDirectory));
+            m_database = Database::create(m_queue, WTF::move(databaseDirectory));
         });
     }
 }
@@ -73,7 +73,7 @@ void PersistentStore::postTask(Function<void()>&& task) const
 
 void PersistentStore::postTaskReply(WTF::Function<void()>&& reply) const
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_queue.get());
     RunLoop::mainSingleton().dispatch(WTF::move(reply));
 }
 

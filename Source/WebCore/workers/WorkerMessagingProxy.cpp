@@ -546,7 +546,7 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
 
 void WorkerMessagingProxy::setAppBadge(std::optional<uint64_t> badge)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(*protect(m_workerThread));
 
     if (!m_scriptExecutionContext)
         return;

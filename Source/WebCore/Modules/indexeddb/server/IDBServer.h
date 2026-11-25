@@ -37,6 +37,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ class IDBServer final : public UniqueIDBDatabaseManager {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBServer);
 public:
     using SpaceRequester = Function<bool(const ClientOrigin&, uint64_t spaceRequested)>;
-    WEBCORE_EXPORT IDBServer(const String& databaseDirectoryPath, SpaceRequester&&);
+    WEBCORE_EXPORT IDBServer(WorkQueue&, const String& databaseDirectoryPath, SpaceRequester&&);
     WEBCORE_EXPORT ~IDBServer();
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
@@ -81,7 +82,7 @@ public:
     WEBCORE_EXPORT void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&);
 
     WEBCORE_EXPORT void establishTransaction(IDBDatabaseConnectionIdentifier, const IDBTransactionInfo&);
-    NODELETE WEBCORE_EXPORT void databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier);
+    WEBCORE_EXPORT void databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier);
     WEBCORE_EXPORT void databaseConnectionClosed(IDBDatabaseConnectionIdentifier);
     WEBCORE_EXPORT void abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier);
     WEBCORE_EXPORT void didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
@@ -124,6 +125,8 @@ private:
     String m_databaseDirectoryPath;
 
     SpaceRequester m_spaceRequester;
+
+    const Ref<WorkQueue> m_queue;
 };
 
 } // namespace IDBServer

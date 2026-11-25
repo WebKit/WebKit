@@ -113,7 +113,7 @@ void LogStream::stopListeningForIPC()
 void LogStream::logOnBehalfOfWebContent(std::span<const char8_t> subsystemSpan, std::span<const char8_t> categorySpan, std::span<const char8_t> stringSpan, uint8_t logType)
 {
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(logWorkQueueSingleton());
 #endif
 
     RefPtr connection = m_connection.get();

@@ -467,7 +467,7 @@ void ServiceWorkerThreadProxy::fireBackgroundFetchClickEvent(BackgroundFetchInfo
 
 void ServiceWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_serviceWorkerThread);
 
     callOnMainRunLoop([badge = WTF::move(badge), this, protectedThis = Ref { *this }] {
         m_page->badgeClient().setAppBadge(nullptr, SecurityOriginData::fromURL(scriptURL()), badge);

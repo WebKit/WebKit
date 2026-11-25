@@ -203,7 +203,7 @@ ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() cons
 
 void ParentalControlsContentFilter::didReceiveAllowDecisionOnQueue(bool isAllowed, NSData *replacementData)
 {
-    RELEASE_ASSERT(!isMainThread());
+    releaseAssertIsCurrent(ParentalControlsURLFilter::workQueueSingleton());
 
     Locker resultLocker { m_resultLock };
     ASSERT(!m_isAllowedByWebContentRestrictions);

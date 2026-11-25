@@ -227,7 +227,7 @@ SWRegistrationDatabase::~SWRegistrationDatabase()
 
 void SWRegistrationDatabase::close()
 {
-    ASSERT(!isMainRunLoop());
+    assertIsCurrent(m_ownerQueue);
 
     for (size_t i = 0; i < static_cast<size_t>(StatementType::Invalid); ++i)
         m_cachedStatements[i] = nullptr;

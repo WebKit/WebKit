@@ -177,7 +177,7 @@ void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, co
 
 void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
-    ASSERT(!isMainThread());
+    ASSERT(isContextThread());
     protect(script())->loadAndEvaluateModule(moduleURL, credentials, WTF::move(completionHandler));
 }
 

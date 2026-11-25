@@ -83,7 +83,7 @@ String SWScriptStorage::scriptPath(const ServiceWorkerRegistrationKey& registrat
 
 ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registrationKey, const URL& scriptURL, const ScriptBuffer& script)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     auto scriptPath = this->scriptPath(registrationKey, scriptURL);
     FileSystem::makeAllDirectories(FileSystem::parentPath(scriptPath));
@@ -124,7 +124,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
 
 ScriptBuffer SWScriptStorage::retrieve(const ServiceWorkerRegistrationKey& registrationKey, const URL& scriptURL)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_ownerQueue);
 
     auto scriptPath = this->scriptPath(registrationKey, scriptURL);
     auto fileSize = FileSystem::fileSize(scriptPath);

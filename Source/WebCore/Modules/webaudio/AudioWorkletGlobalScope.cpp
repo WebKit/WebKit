@@ -80,7 +80,7 @@ AudioWorkletGlobalScope::~AudioWorkletGlobalScope() = default;
 // https://www.w3.org/TR/webaudio/#dom-audioworkletglobalscope-registerprocessor
 ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&& processorConstructor)
 {
-    ASSERT(!isMainThread());
+    ASSERT(isContextThread());
 
     if (name.isEmpty())
         return Exception { ExceptionCode::NotSupportedError, "Name cannot be the empty string"_s };

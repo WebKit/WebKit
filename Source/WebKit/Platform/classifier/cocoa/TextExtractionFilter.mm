@@ -64,7 +64,7 @@ TextExtractionFilter::TextExtractionFilter()
 
 void TextExtractionFilter::initializeModelIfNeeded()
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_modelQueue);
 
     if (m_model || m_failedInitialization)
         return;
@@ -120,7 +120,7 @@ void TextExtractionFilter::shouldFilter(const String& text, CompletionHandler<vo
 
 bool TextExtractionFilter::shouldFilter(const String& text)
 {
-    ASSERT(!RunLoop::isMain());
+    assertIsCurrent(m_modelQueue);
 
     initializeModelIfNeeded();
 

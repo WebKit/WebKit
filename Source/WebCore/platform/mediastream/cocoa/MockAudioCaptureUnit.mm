@@ -300,7 +300,7 @@ void MockAudioCaptureInternalUnit::voiceDetected()
 
 void MockAudioCaptureInternalUnit::reconfigure()
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_workQueue.get());
 
     auto rate = sampleRate();
     ASSERT(rate);
@@ -330,7 +330,7 @@ void MockAudioCaptureInternalUnit::reconfigure()
 
 void MockAudioCaptureInternalUnit::emitSampleBuffers(uint32_t frameCount)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_workQueue.get());
     ASSERT(m_formatDescription);
 
     CMTime startTime = PAL::CMTimeMake(m_samplesEmitted, sampleRate());

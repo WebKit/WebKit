@@ -159,7 +159,7 @@ void SharedWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
 
 void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
-    RELEASE_ASSERT(!isMainThread());
+    releaseAssertIsCurrent(m_workerThread);
     if (!m_workerThread->isInStaticScriptEvaluation())
         return;
 
@@ -175,7 +175,7 @@ void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMes
 
 void SharedWorkerThreadProxy::reportErrorToWorkerObject(const String& errorMessage)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_workerThread);
 
     callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = errorMessage.isolatedCopy()] {
         bool isErrorEvent = false;
@@ -259,7 +259,7 @@ ReportingClient* SharedWorkerThreadProxy::reportingClient() const
 
 void SharedWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)
 {
-    ASSERT(!isMainThread());
+    assertIsCurrent(m_workerThread);
     callOnMainRunLoop([badge = WTF::move(badge), this, protectedThis = Ref { *this }] {
         m_page->badgeClient().setAppBadge(nullptr, m_clientOrigin.clientOrigin, badge);
     });
