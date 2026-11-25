@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<script>
+if (window.internals)
+    internals.setTrackingPreventionEnabled(false);
+</script>
+<script>
+function checkReferrer(referrer)
+{
+    top.postMessage({ frame: "child", referrer }, "*");
+}
+</script>
+<script src="http://127.0.0.1:8000/referrer-policy/resources/script.py?from=child"></script>
+<iframe src="http://localhost:8000/site-isolation/resources/referrer-policy-nested-frame-grandchild.html"></iframe>
