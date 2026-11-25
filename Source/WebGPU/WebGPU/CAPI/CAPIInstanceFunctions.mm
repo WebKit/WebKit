@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "CAPIConversions.h"
+#import "CAPIFutures.h"
 #import "PresentationContextCoreAnimation.h"
 #import "WebGPUCppConversions.h"
 #import <wtf/Borrow.h>
@@ -46,12 +47,21 @@ void wgpuInstanceRelease(WGPUInstance instance)
     }
 }
 
-// The required instance features are not checked: the instance has all of them. The instance has
-// no scheduler: its callbacks run in wgpuInstanceProcessEvents() and wgpuInstanceWaitAny().
+// The required instance features are not checked: the instance has all of them. The instance
+// schedules its callbacks into its event manager: they run in wgpuInstanceProcessEvents() and
+// wgpuInstanceWaitAny().
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor*)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::releaseToAPI(WebGPU::Metal::Instance::create({ }));
+        Ref events = WebGPU::CAPI::EventManager::create();
+        Ref instance = WebGPU::Metal::Instance::create({
+            .scheduleWork = [events](Function<void()>&& work) {
+                events->scheduleWork(WTF::move(work));
+            },
+            .webProcessResourceOwner = std::nullopt,
+        });
+        events->attach(instance);
+        return WebGPU::CAPI::releaseToAPI(WTF::move(instance));
     }
 }
 
@@ -76,7 +86,7 @@ WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDe
 void wgpuInstanceProcessEvents(WGPUInstance instance)
 {
     @autoreleasepool {
-        protect(WebGPU::CAPI::metalFromAPI(instance))->processEvents();
+        WebGPU::CAPI::EventManager::ensure(protect(WebGPU::CAPI::fromAPI(instance)))->processEvents();
     }
 }
 
@@ -106,7 +116,8 @@ WGPUFuture wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAd
     }
 }
 
-// A timeout of UINT64_MAX never passes.
+// A timeout of UINT64_MAX never passes. WGPUWaitStatus_Error when the completion of a future cannot
+// be waited for, for example because the connection to the GPU Process is gone.
 WGPUWaitStatus wgpuInstanceWaitAny(WGPUInstance instance, size_t futureCount, WGPUFutureWaitInfo* futures, uint64_t timeoutNS)
 {
     @autoreleasepool {
@@ -115,9 +126,17 @@ WGPUWaitStatus wgpuInstanceWaitAny(WGPUInstance instance, size_t futureCount, WG
             return waitInfo.future.id;
         });
         auto timeout = timeoutNS == UINT64_MAX ? Seconds::infinity() : Seconds::fromNanoseconds(timeoutNS);
-        bool completed = protect(WebGPU::CAPI::metalFromAPI(instance))->waitForAnyFuture(borrow(futureIDs)->span(), timeout, [&](size_t index) {
+        auto status = WebGPU::CAPI::EventManager::ensure(protect(WebGPU::CAPI::fromAPI(instance)))->waitAny(borrow(futureIDs)->span(), timeout, [&](size_t index) {
             waitInfos[index].completed = true;
         });
-        return completed ? WGPUWaitStatus_Success : WGPUWaitStatus_TimedOut;
+        switch (status) {
+        case WebGPU::CAPI::EventManager::WaitStatus::Completed:
+            return WGPUWaitStatus_Success;
+        case WebGPU::CAPI::EventManager::WaitStatus::TimedOut:
+            return WGPUWaitStatus_TimedOut;
+        case WebGPU::CAPI::EventManager::WaitStatus::Failed:
+            return WGPUWaitStatus_Error;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }

@@ -29,7 +29,7 @@
     EnabledBy=WebGPUEnabled
 ]
 messages -> RemoteShaderModule Stream {
-    void CompilationInfo() -> (Vector<WebKit::WebGPU::CompilationMessage> messages)
+    void CompilationInfo() -> (Vector<WebKit::WebGPU::CompilationMessage> messages) ReplyCanDispatchOutOfOrder
     void SetLabel(String label)
     void Destruct()
 }

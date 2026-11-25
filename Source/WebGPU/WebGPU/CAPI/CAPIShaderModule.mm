@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "CAPIConversions.h"
+#import "CAPIFutures.h"
 #import "WebGPUCppConversions.h"
 
 NODELETE void wgpuShaderModuleAddRef(WGPUShaderModule shaderModule)

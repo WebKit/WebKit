@@ -92,6 +92,10 @@ public:
     void addUncapturedErrorListener(WebGPUDeviceIdentifier, WebGPU::RemoteDeviceProxy&);
     void removeUncapturedErrorListener(WebGPUDeviceIdentifier);
 
+    // Whether this is called on the dispatcher thread, which dispatches the replies of the
+    // asynchronous messages.
+    bool isOnDispatcher() const { return isCurrent(); }
+
 private:
     friend class WebGPU::RemoteWebGPUInstanceProxy;
 

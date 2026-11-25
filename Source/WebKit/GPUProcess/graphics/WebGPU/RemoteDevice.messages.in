@@ -43,13 +43,13 @@ messages -> RemoteDevice Stream {
     void CreateComputePipelineWithPipelineLayoutFromPipeline(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUComputePipelineIdentifier identifier, WebKit::WebGPUComputePipelineIdentifier pipelineToReplaceIdentifier) -> (bool success)
     void CreateRenderPipeline(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPURenderPipelineIdentifier identifier)
     void CreateRenderPipelineWithPipelineLayoutFromPipeline(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPURenderPipelineIdentifier identifier, WebKit::WebGPURenderPipelineIdentifier pipelineToReplaceIdentifier) -> (bool success)
-    void CreateComputePipelineAsync(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUComputePipelineIdentifier identifier) -> (bool success, String error)
-    void CreateRenderPipelineAsync(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPURenderPipelineIdentifier identifier) -> (bool success, String error)
+    void CreateComputePipelineAsync(WebKit::WebGPU::ComputePipelineDescriptor descriptor, WebKit::WebGPUComputePipelineIdentifier identifier) -> (bool success, String error) ReplyCanDispatchOutOfOrder
+    void CreateRenderPipelineAsync(WebKit::WebGPU::RenderPipelineDescriptor descriptor, WebKit::WebGPURenderPipelineIdentifier identifier) -> (bool success, String error) ReplyCanDispatchOutOfOrder
     void CreateCommandEncoder(std::optional<WebKit::WebGPU::CommandEncoderDescriptor> descriptor, WebKit::WebGPUCommandEncoderIdentifier identifier)
     void CreateRenderBundleEncoder(WebKit::WebGPU::RenderBundleEncoderDescriptor descriptor, WebKit::WebGPURenderBundleEncoderIdentifier identifier)
     void CreateQuerySet(WebKit::WebGPU::QuerySetDescriptor descriptor, WebKit::WebGPUQuerySetIdentifier identifier)
     void PushErrorScope(::WebGPU::ErrorFilter errorFilter)
-    void PopErrorScope() -> (bool success, std::optional<::WebGPU::Error> error)
+    void PopErrorScope() -> (bool success, std::optional<::WebGPU::Error> error) ReplyCanDispatchOutOfOrder
     void SetListensForUncapturedErrors(bool listens)
     void ResolveDeviceLostPromise() -> (::WebGPU::DeviceLostReason reason, bool isLost)
     void SetLabel(String label)

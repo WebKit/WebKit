@@ -59,10 +59,13 @@
 #include <span>
 #include <variant> // NOLINT: See the Swift C++ interop constraints above.
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -873,8 +876,8 @@ struct Error {
 };
 
 struct InstanceDescriptor {
-    // Runs a work item on the thread that the instance calls back on. Empty: the work items wait
-    // for processEvents().
+    // Runs a work item on the thread that the instance calls back on. Empty: the work items run on
+    // the thread that schedules them.
     Function<void(Function<void()>&&)> scheduleWork;
 #if PLATFORM(COCOA)
     // The task that owns the resources the instance allocates.
@@ -1554,9 +1557,49 @@ protected:
     ExternalTexture() = default;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUExternalTexture, derefWebGPUExternalTexture);
 
+// What Instance::dispatchEvents() did.
+enum class DispatchEventsResult : uint8_t {
+    // The completion handlers of the instance run without help from the caller: on the threads of
+    // the implementation, or through InstanceDescriptor::scheduleWork. The call returns at once.
+    NotNeeded,
+    // A completion handler ran.
+    Dispatched,
+    // No completion handler ran before the timeout.
+    TimedOut,
+    // No completion handler can run with the help of the caller: the connection to the
+    // implementation is gone, or the calling thread cannot run them.
+    Failed,
+};
+
+// State that the WebGPU C API keeps with an instance, for as long as the instance lives. The C++ API
+// and its implementations never look at it.
+class InstanceClientState : public ThreadSafeRefCounted<InstanceClientState> {
+public:
+    virtual ~InstanceClientState() = default;
+
+protected:
+    InstanceClientState() = default;
+};
+
 class Instance : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Instance> {
 public:
     virtual ~Instance() = default;
+
+    // The client state of the instance, which `create` makes the first time. Only the WebGPU C API
+    // sets it, so it knows its type. This can be called on any thread.
+    Ref<InstanceClientState> ensureClientState(NOESCAPE const Function<Ref<InstanceClientState>()>& create)
+    {
+        Locker locker { m_clientStateLock };
+        if (!m_clientState)
+            m_clientState = create();
+        return *m_clientState;
+    }
+
+    // Runs, on the calling thread, one completion handler that runs only with the help of the
+    // caller, and waits up to the timeout for one. A client that blocks until a completion handler
+    // has run, like wgpuInstanceWaitAny(), waits with this. When it returns NotNeeded, the client
+    // waits for the handlers to run on their own instead.
+    virtual DispatchEventsResult dispatchEvents(Seconds timeout) = 0;
 
     // Completes with nullptr when no adapter is available.
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
@@ -1572,6 +1615,10 @@ public:
 
 protected:
     Instance() = default;
+
+private:
+    Lock m_clientStateLock;
+    RefPtr<InstanceClientState> m_clientState WTF_GUARDED_BY_LOCK(m_clientStateLock);
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebGPUInstance, derefWebGPUInstance);
 
 class PipelineLayout : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PipelineLayout> {

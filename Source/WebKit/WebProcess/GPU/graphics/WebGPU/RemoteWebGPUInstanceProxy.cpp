@@ -44,6 +44,26 @@ RemoteWebGPUInstanceProxy::RemoteWebGPUInstanceProxy(RemoteGPUProxy& parent)
 
 RemoteWebGPUInstanceProxy::~RemoteWebGPUInstanceProxy() = default;
 
+// The proxies complete their handlers when the replies to their asynchronous messages are
+// dispatched, on the dispatcher of the GPU proxy: the main thread, or the thread of a worker. A
+// client that blocks that thread, like wgpuInstanceWaitAny(), dispatches them with this. These
+// replies are declared with ReplyCanDispatchOutOfOrder, which lets them run before the messages
+// that arrived earlier.
+::WebGPU::DispatchEventsResult RemoteWebGPUInstanceProxy::dispatchEvents(Seconds timeout)
+{
+    Ref root = this->root();
+    if (!root->isOnDispatcher())
+        return ::WebGPU::DispatchEventsResult::Failed;
+    switch (protect(root->streamClientConnection())->waitForAnyAsyncReplyAndDispatchImmediately(timeout)) {
+    case IPC::Error::NoError:
+        return ::WebGPU::DispatchEventsResult::Dispatched;
+    case IPC::Error::Timeout:
+        return ::WebGPU::DispatchEventsResult::TimedOut;
+    default:
+        return ::WebGPU::DispatchEventsResult::Failed;
+    }
+}
+
 void RemoteWebGPUInstanceProxy::requestAdapter(const ::WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&& callback)
 {
     Ref root = this->root();

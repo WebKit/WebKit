@@ -1588,6 +1588,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				WebGPU/DeviceLostTests.cpp,
+				WebGPU/FutureTests.cpp,
 				WebGPU/InstanceDestroyTests.cpp,
 				WebGPU/UncapturedErrorCallbackTests.cpp,
 				WGSL/ASTStringDumperTests.cpp,

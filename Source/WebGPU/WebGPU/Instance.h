@@ -73,7 +73,8 @@ public:
 
     virtual ~Instance();
 
-    void processEvents();
+    // The completion handlers run on Metal threads, or through the scheduleWork of the instance.
+    WebGPU::DispatchEventsResult dispatchEvents(Seconds) final { return WebGPU::DispatchEventsResult::NotNeeded; }
     void requestAdapter(const WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebGPU::Adapter>&&)>&&) final;
     RefPtr<WebGPU::PresentationContext> createPresentationContext(const WebGPU::PresentationContextDescriptor&) final;
 
@@ -91,14 +92,6 @@ public:
     NODELETE const std::optional<const MachSendRight>& webProcessID() const;
     id<MTLDevice> device() const;
 
-    // The futures of the C API. A future completes when the callback it stands for has run.
-    uint64_t createFuture();
-    void completeFuture(uint64_t);
-    // Runs the pending work until one of the futures has completed, and calls didComplete with
-    // the index of each completed one, which is then forgotten. False when the timeout passes
-    // first. This can be called on a background thread.
-    bool waitForAnyFuture(std::span<const uint64_t> futures, Seconds timeout, NOESCAPE const Function<void(size_t)>& didComplete);
-
     // Every asynchronous compile signals the semaphore once its Metal completion handler no longer
     // holds the instance. See callOnWebGPUThread().
     Box<Semaphore> didStartAsyncCompile()
@@ -111,26 +104,15 @@ private:
     Instance(Function<void(WorkItem&&)>&& scheduleWork, const WTF::MachSendRight* webProcessResourceOwner);
     explicit Instance();
 
-    // This can be called on a background thread.
-    void defaultScheduleWork(WorkItem&&);
-    bool anyFutureCompleted(std::span<const uint64_t> futures) const WTF_REQUIRES_LOCK(m_lock);
-
-    // This can be used on a background thread.
-    Deque<WorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
-    uint64_t m_nextFuture WTF_GUARDED_BY_LOCK(m_lock) { 1 };
-    HashSet<uint64_t> m_completedFutures WTF_GUARDED_BY_LOCK(m_lock);
-    // Signalled when work is appended to m_pendingWork or a future completes.
-    Condition m_condition;
     using CommandBufferContainer = Vector<WeakObjCPtr<id<MTLCommandBuffer>>>;
     HashMap<Ref<Device>, CommandBufferContainer> retainedDeviceInstances;
     Vector<std::pair<Ref<CommandBuffer>, WeakObjCPtr<id<MTLCommandBuffer>>>> m_retainedCommandBufferInstances;
     const std::optional<const MachSendRight> m_webProcessID;
-    // Null when the work waits in m_pendingWork for processEvents().
+    // Null when the work runs on the thread that schedules it.
     const Function<void(WorkItem&&)> m_scheduleWork;
     const Box<Semaphore> m_asyncCompileCompletions { Box<Semaphore>::create(0) };
     // The asynchronous compiles started since destroy() last waited for them.
     uint64_t m_startedAsyncCompileCount { 0 };
-    Lock m_lock;
     bool m_isValid { true };
 };
 
