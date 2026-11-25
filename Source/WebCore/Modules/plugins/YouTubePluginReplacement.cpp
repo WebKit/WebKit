@@ -31,7 +31,7 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "NodeDocument.h"
-#include "RenderElement.h"
+#include "RenderBlockFlow.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "YouTubeEmbedShadowElement.h"
@@ -72,15 +72,15 @@ YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, co
 
 YouTubePluginReplacement::~YouTubePluginReplacement() = default;
 
-RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, UniqueRef<Style::ComputedStyle>&& style, const RenderTreePosition&)
 {
-    ASSERT_UNUSED(plugin, m_parentElement == &plugin);
+    ASSERT(m_parentElement == &plugin);
 
-    RefPtr embedShadowElement = m_embedShadowElement;
-    if (!embedShadowElement)
+    if (!m_embedShadowElement)
         return nullptr;
-    
-    return embedShadowElement->createElementRenderer(WTF::move(style), insertionPosition);
+
+    // The renderer belongs to the plugin element, so it must be created with the plugin element as its node.
+    return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, plugin, WTF::move(style));
 }
 
 void YouTubePluginReplacement::installReplacement(ShadowRoot& root)

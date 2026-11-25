@@ -33,6 +33,7 @@
 #include <WebCore/NodeInlinesLight.h>
 #include <WebCore/PseudoElement.h>
 #include <WebCore/RenderBox.h>
+#include <WebCore/RenderObjectNode.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/TreeScopeInlines.h>
 
@@ -83,6 +84,8 @@ inline NamedNodeMap* Node::attributesMap() const
 
 inline void Node::setRenderer(RenderObject* renderer)
 {
+    // RenderObject::willBeDestroyed() relies on this to clear m_renderer.
+    ASSERT(!renderer || renderer->node() == this || (isDocumentNode() && renderer->isRenderView()));
     m_renderer = renderer;
 
     if (InspectorInstrumentationPublic::hasFrontends()) [[unlikely]]

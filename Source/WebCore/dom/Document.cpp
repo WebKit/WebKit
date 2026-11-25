@@ -3590,12 +3590,14 @@ void Document::destroyRenderTree()
             }
         }
 
+        // The RenderView is anonymous so RenderObject::willBeDestroyed() doesn't clear the
+        // Document's renderer. Clear it before destroying the RenderView.
+        Node::setRenderer(nullptr);
+
         // destroy() deletes the RenderView, so it cannot be protected.
         SUPPRESS_UNCHECKED_ARG m_renderView->destroy();
     }
     m_renderView.release();
-
-    Node::setRenderer(nullptr);
 
     m_textAutoSizing = nullptr;
 

@@ -500,7 +500,7 @@ public:
     // -----------------------------------------------------------------------------
     // Integration with rendering tree
 
-    RenderObject* renderer() const { return m_renderer; }
+    RenderObject* renderer() const { return m_renderer.get(); }
     void setRenderer(RenderObject*); // Defined in NodeInlines.h
 
     // Use these two methods with caution.
@@ -867,7 +867,7 @@ private:
     CheckedPtr<Node> m_shadowIncludingRoot;
     CheckedPtr<Node> m_previousSibling;
     CheckedPtr<Node> m_next;
-    RenderObject* m_renderer { nullptr };
+    CheckedPtr<RenderObject> m_renderer;
     CompactUniquePtrTuple<NodeRareData, uint16_t> m_rareDataWithBitfields;
 };
 
