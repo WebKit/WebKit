@@ -673,6 +673,7 @@ private:
     Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::LockdownMode, EnhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, JSCOptionsForWebProcess = { });
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&, ProcessCrossOriginIsolation);
+    bool shouldPrewarmEnhancedSecurityProcessForSharedProcess(WebProcessProxy::LockdownMode, EnhancedSecurity);
     void shutDownPrewarmedProcessesForWebsiteDataStore(WebsiteDataStore&);
 
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, JSCOptionsForWebProcess = { });
@@ -816,6 +817,7 @@ private:
     WeakHashSet<WebProcessProxy> m_prewarmedProcesses;
 
     bool m_hasUsedSiteIsolation { false };
+    bool m_hasUsedSharedProcessEnhancedSecurity { false };
 
     HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
