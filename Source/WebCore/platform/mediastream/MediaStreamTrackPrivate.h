@@ -100,7 +100,7 @@ public:
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&& postTask = { });
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&& postTask = { });
 
-    WEBCORE_EXPORT virtual ~MediaStreamTrackPrivate();
+    WEBCORE_EXPORT ~MediaStreamTrackPrivate();
 
     const String& id() const LIFETIME_BOUND { return m_data.trackId; }
     const String& label() const LIFETIME_BOUND { return m_data.label; }

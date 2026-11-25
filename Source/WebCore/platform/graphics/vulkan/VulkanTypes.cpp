@@ -183,8 +183,10 @@ const Vector<VkLayerProperties>& Instance::availableLayers()
             return { };
         }
 
+#if !RELEASE_LOG_DISABLED
         for (const auto& item : result)
             RELEASE_LOG_DEBUG(Vulkan, "Available layer: %s (spec %" PRIu32 ", version %" PRIu32 ")", item.layerName, item.specVersion, item.implementationVersion);
+#endif
 
         return result;
     })();
@@ -519,6 +521,7 @@ static VkBool32 debugUtilsMessengerHandleMessage(VkDebugUtilsMessageSeverityFlag
             RELEASE_ASSERT_NOT_REACHED();
         }
     }();
+    UNUSED_VARIABLE(logLevel);
 
     StringBuilder messageTypeString;
     if (messageTypes & VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT)
@@ -547,12 +550,14 @@ VkResult Instance::installDebugMessenger()
     createInfo->pfnUserCallback = debugUtilsMessengerHandleMessage;
     createInfo->messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
     createInfo->messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     if (LOG_CHANNEL(Vulkan).level >= WTFLogLevel::Info)
         createInfo->messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT;
     if (LOG_CHANNEL(Vulkan).level >= WTFLogLevel::Warning)
         createInfo->messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
     if (LOG_CHANNEL(Vulkan).level >= WTFLogLevel::Debug)
         createInfo->messageSeverity |= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
+#endif
 
     return vkCreateDebugUtilsMessengerEXT(ptr(), createInfo.ptr(), nullptr, &m_debugMessenger);
 }

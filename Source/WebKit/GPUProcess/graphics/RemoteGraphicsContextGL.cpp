@@ -185,6 +185,7 @@ void RemoteGraphicsContextGL::didReceiveInvalidMessage(IPC::StreamServerConnecti
 {
     RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
     uint64_t webProcessID = gpuConnectionToWebProcess ? gpuConnectionToWebProcess->webProcessIdentifier().toUInt64() : 0;
+    UNUSED_VARIABLE(webProcessID);
     RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "Received an invalid message %s from WebContent process %" PRIu64 ", requesting for it to be terminated.", description(messageName), webProcessID);
     callOnMainRunLoop([weakGPUConnectionToWebProcess = m_gpuConnectionToWebProcess, messageName] {
         if (RefPtr gpuConnectionToWebProcess = weakGPUConnectionToWebProcess.get())

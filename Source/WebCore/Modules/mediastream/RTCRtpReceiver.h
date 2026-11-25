@@ -62,7 +62,7 @@ public:
     {
         return adoptRef(*new RTCRtpReceiver(connection, WTF::move(track), WTF::move(backend)));
     }
-    virtual ~RTCRtpReceiver();
+    ~RTCRtpReceiver();
 
     static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 

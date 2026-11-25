@@ -62,6 +62,7 @@ SocketConnection::~SocketConnection() = default;
 
 bool SocketConnection::didReceiveInvalidMessage(ASCIILiteral message)
 {
+    UNUSED_PARAM(message);
     RELEASE_LOG_FAULT_WITH_PAYLOAD(Process, "Received invalid message (%s), closing SocketConnection", message);
     close();
     m_readBuffer.shrink(0);

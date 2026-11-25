@@ -64,7 +64,7 @@ class RTCRtpSender final : public RefCounted<RTCRtpSender>
 public:
     static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, Ref<RTCRtpSenderBackend>&&);
     NODELETE static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
-    virtual ~RTCRtpSender();
+    ~RTCRtpSender();
 
     static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
