@@ -122,9 +122,6 @@
     },
     "TestWTF": {
         "subtests": {
-            "WTF_GUniquePtr.Basic": {
-                "expected": {"all@Debug": {"status": ["FAIL"], "bug": "webkit.org/b/319221"}}
-            },
             "WTF_ThreadSafeWeakPtr.GetRacingWithLastWeakReferenceRelease": {
                 "expected": {"all": {"status": ["FAIL", "PASS"]}}
             },
