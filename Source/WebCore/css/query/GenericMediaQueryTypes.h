@@ -95,7 +95,7 @@ struct Comparison {
 
 struct Feature {
     AtomString name;
-    Syntax syntax;
+    Syntax syntax { Syntax::Boolean };
     std::optional<Comparison> leftComparison { };
     std::optional<Comparison> rightComparison { };
 
