@@ -54,6 +54,7 @@ static const NSString * const kSiteIsolationArgumentString = @"--force-site-isol
 static const NSString * const kWebInspectorArgumentString = @"--web-inspector";
 static const NSString * const kAutomationFileDescriptorArgumentString = @"--automation-fd";
 static const NSString * const kDownloadsDirectoryArgumentString = @"--downloads-directory";
+static const NSString * const kStayBehindOtherAppsArgumentString = @"--stay-behind-other-apps";
 
 static NSString *sTargetURL = nil;
 
@@ -62,6 +63,9 @@ static BOOL sForceSiteIsolationSetting = NO;
 static BOOL sShouldEnableSiteIsolation = NO;
 
 static BOOL sOpenWebInspector = NO;
+
+// Under automation, windows come in front of the windows of other apps, unless this is set.
+static BOOL sStayBehindOtherApps = NO;
 
 static const NSTimeInterval windowStateChangeTimeout = 5;
 static const NSTimeInterval windowFramePollInterval = 0.1;
@@ -73,9 +77,126 @@ static int sAutomationFileDescriptor = -1;
 // This reads the arguments itself, because MiniBrowserUserDefaults() needs it before -_parseArguments runs.
 static BOOL isControlledByAutomation(void)
 {
-    NSArray *arguments = [[NSProcessInfo processInfo] arguments];
-    return [arguments containsObject:kAutomationFileDescriptorArgumentString];
+    static BOOL controlledByAutomation;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSArray *arguments = [[NSProcessInfo processInfo] arguments];
+        controlledByAutomation = [arguments containsObject:kAutomationFileDescriptorArgumentString];
+    });
+    return controlledByAutomation;
 }
+
+// Under automation, MiniBrowser acts as the active app, without activating. A browser under WebDriver is normally
+// the active app, as Safari is, but only one app can be active at a time, and several MiniBrowsers can run tests side
+// by side. In an app that isn't active, AppKit doesn't make windows key, -[NSWindow sendEvent:] takes a mouse down for
+// the click that activates the app, so it never reaches the page, and menus don't perform their key equivalents.
+@interface NSApplication (AppKitSPI)
+- (BOOL)_isActiveApp;
+@end
+
+@interface BrowserApplication : NSApplication
+@end
+
+@implementation BrowserApplication
+
+- (BOOL)_isActiveApp
+{
+    // AppKit asks this whether the system considers the app active: at launch, to make the app active, and later,
+    // to check that it still is.
+    return isControlledByAutomation() || [super _isActiveApp];
+}
+
+- (void)sendEvent:(NSEvent *)event
+{
+    // Another app becoming active, for example another MiniBrowser that launched, would make this one inactive.
+    if (isControlledByAutomation() && event.type == NSEventTypeAppKitDefined && (event.subtype == NSEventSubtypeApplicationActivated || event.subtype == NSEventSubtypeApplicationDeactivated))
+        return;
+    [super sendEvent:event];
+}
+
+// AppKit asks for activation itself, for example to show an alert. With --stay-behind-other-apps, the app that the user
+// works in stays active.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+- (void)activateIgnoringOtherApps:(BOOL)ignoreOtherApps
+{
+    if (sStayBehindOtherApps)
+        return;
+    [super activateIgnoringOtherApps:ignoreOtherApps];
+}
+#pragma clang diagnostic pop
+
+- (void)activate
+{
+    if (sStayBehindOtherApps)
+        return;
+    [super activate];
+}
+
+@end
+
+// When AppKit orders a window front, the window server only puts it in front of other apps' windows depending on the
+// app's last event, so the first window that automation opens would stay behind them, and later ones wouldn't. With
+// --stay-behind-other-apps, this keeps windows behind other apps' windows instead.
+@interface BrowserWindow : NSWindow
+@end
+
+@implementation BrowserWindow
+
+- (void)makeKeyAndOrderFront:(id)sender
+{
+    if (!isControlledByAutomation()) {
+        [super makeKeyAndOrderFront:sender];
+        return;
+    }
+
+    // Automation makes the window key and orders it front before every event that it sends. Each time, that's several
+    // requests to the window server, which several MiniBrowsers running tests at once keep busy.
+    if (self.isKeyWindow && self.isVisible)
+        return;
+
+    if (sStayBehindOtherApps && !self.isMiniaturized) {
+        [self _orderFrontBehindOtherApps];
+        [self makeKeyWindow];
+        return;
+    }
+
+    // Restoring a minimized window brings it to the front, even with --stay-behind-other-apps.
+    [super makeKeyAndOrderFront:sender];
+    if (!sStayBehindOtherApps)
+        [self orderFrontRegardless];
+}
+
+// Showing a sheet, such as a JavaScript alert, brings the window to the front. A sheet for a tab that isn't selected
+// waits, and the window stays hidden.
+- (void)beginSheet:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse returnCode))handler
+{
+    [super beginSheet:sheetWindow completionHandler:handler];
+    if (sStayBehindOtherApps && self.isVisible)
+        [self _orderFrontBehindOtherApps];
+}
+
+- (void)beginCriticalSheet:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse returnCode))handler
+{
+    [super beginCriticalSheet:sheetWindow completionHandler:handler];
+    if (sStayBehindOtherApps && self.isVisible)
+        [self _orderFrontBehindOtherApps];
+}
+
+// In front of the app's other windows, like ordering it front does, so that the window that automation opened or
+// switched to last is the frontmost one. Without being in front of everything first.
+- (void)_orderFrontBehindOtherApps
+{
+    for (NSWindow *window in NSApp.orderedWindows) {
+        if (window != self && window.isVisible && [window isKindOfClass:BrowserWindow.class]) {
+            [self orderWindow:NSWindowAbove relativeTo:window.windowNumber];
+            return;
+        }
+    }
+    [self orderBack:nil];
+}
+
+@end
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -104,6 +225,7 @@ enum {
 @interface BrowserAppDelegate () <AutomationConnectionDelegate, _WKAutomationSessionDelegate> {
     AutomationConnection *_automationConnection;
     _WKAutomationSession *_automationSession;
+    id<NSObject> _automationActivity;
 }
 @end
 
@@ -135,6 +257,8 @@ NSUserDefaults *MiniBrowserUserDefaults(void)
         // Under automation, settings start from their defaults, so that a WebDriver session doesn't
         // depend on how MiniBrowser was set up by hand. They are kept apart from the user's settings,
         // and cleared at launch. Settings passed on the command line still apply.
+        // FIXME: MiniBrowsers that run side by side share these settings. What one of them saves, like a notification
+        // permission, the others get, until another one launches and clears them.
         NSString *automationSuiteName = @"org.webkit.MiniBrowser.Automation";
         defaults = [[NSUserDefaults alloc] initWithSuiteName:automationSuiteName];
         [defaults removePersistentDomainForName:automationSuiteName];
@@ -325,6 +449,8 @@ static NSNumber *_currentBadge;
 
     const NSUInteger webInspectorIndex = [args indexOfObject:kWebInspectorArgumentString];
     sOpenWebInspector = (webInspectorIndex != NSNotFound);
+
+    sStayBehindOtherApps = isControlledByAutomation() && [args containsObject:kStayBehindOtherAppsArgumentString];
 
     const NSUInteger downloadsDirectoryIndex = [args indexOfObject:kDownloadsDirectoryArgumentString];
     if (downloadsDirectoryIndex != NSNotFound && downloadsDirectoryIndex + 1 < args.count)
@@ -749,6 +875,15 @@ static NSNumber *_currentBadge;
     if (getppid() != parentProcessID)
         _exit(EXIT_SUCCESS);
 
+    // App Nap can throttle an app that the system doesn't consider active once other windows cover all of its windows.
+    // Under automation, MiniBrowser only acts as the active app inside AppKit (see BrowserApplication).
+    _automationActivity = [[NSProcessInfo processInfo] beginActivityWithOptions:NSActivityUserInitiatedAllowingIdleSystemSleep reason:@"MiniBrowser is controlled by automation"];
+
+    // Launching from the app that the user works in made this one active. Give that back, before there are windows to
+    // lose their key state.
+    if (sStayBehindOtherApps)
+        [NSApp deactivate];
+
     _automationConnection = [[AutomationConnection alloc] initWithFileDescriptor:sAutomationFileDescriptor delegate:self];
     if (!_automationConnection) {
         NSLog(@"Failed to open the automation connection on file descriptor %d.", sAutomationFileDescriptor);
@@ -813,32 +948,28 @@ static NSNumber *_currentBadge;
     WKWebViewConfiguration *configuration = [self.defaultConfiguration copy];
     configuration._controlledByAutomation = YES;
 
+    // Not at launch, when the app that launched MiniBrowser made it active: by now, AppKit has checked with the system.
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (!NSApp.isActive)
+            NSLog(@"MiniBrowser isn't acting as the active app, so its pages will miss clicks, mouse moves and menu key equivalents from automation. Check -[BrowserApplication _isActiveApp].");
+    });
+
     WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
     [self didCreateBrowserWindowController:controller];
 
     // This is what Safari does under WebDriver. A new tab opens in the frontmost automation window,
     // unless that's a popup window, which can't have tabs. The tab isn't selected, so the page in the
-    // selected tab stays visible. A new window comes to the front, and MiniBrowser becomes active, so
-    // that the first click in the window isn't taken by activating it.
+    // selected tab stays visible. A new window comes in front of the other MiniBrowser windows and
+    // becomes key. MiniBrowser doesn't activate: it acts as the active app already (see BrowserApplication).
     NSWindow *frontmostWindow = [self _frontmostAutomationWindow];
     if ((options & _WKAutomationSessionBrowsingContextOptionsPreferNewTab) && frontmostWindow && frontmostWindow.tabbingMode != NSWindowTabbingModeDisallowed) {
         NSWindowTabGroup *tabGroup = frontmostWindow.tabGroup;
         NSWindow *selectedWindow = tabGroup.selectedWindow;
         [tabGroup addWindow:controller.window];
         tabGroup.selectedWindow = selectedWindow;
-    } else {
+    } else
         [controller.window makeKeyAndOrderFront:nil];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [NSApp activateIgnoringOtherApps:YES];
-#pragma clang diagnostic pop
-        [self _waitForNotification:NSWindowDidChangeOcclusionStateNotification ofWindow:controller.window until:^{
-            return (BOOL)(controller.window.occlusionState & NSWindowOcclusionStateVisible);
-        } completionHandler:^{
-            completionHandler(controller.webView);
-        }];
-        return;
-    }
     completionHandler(controller.webView);
 }
 
@@ -960,11 +1091,7 @@ static NSNumber *_currentBadge;
 
     [self _waitForNotification:NSWindowDidDeminiaturizeNotification ofWindow:window until:^{
         return (BOOL)!window.isMiniaturized;
-    } completionHandler:^{
-        [self _waitForNotification:NSWindowDidChangeOcclusionStateNotification ofWindow:window until:^{
-            return (BOOL)(window.occlusionState & NSWindowOcclusionStateVisible);
-        } completionHandler:completionHandler];
-    }];
+    } completionHandler:completionHandler];
     [window deminiaturize:nil];
 }
 

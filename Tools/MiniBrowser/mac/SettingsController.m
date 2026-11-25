@@ -121,11 +121,12 @@ typedef NS_ENUM(NSInteger, AttachmentElementEnabledMenuItemTag) {
         UseFindDelegatePreferenceKey,
     ];
 
-    NSUserDefaults *userDefaults = MiniBrowserUserDefaults();
-    for (NSString *prefName in onByDefaultPrefs) {
-        if (![userDefaults objectForKey:prefName])
-            [userDefaults setBool:YES forKey:prefName];
-    }
+    // Register these defaults instead of saving them. Under automation, MiniBrowsers that run side by side share
+    // one settings suite, and each one clears it at launch, which would turn them off in the others.
+    NSMutableDictionary<NSString *, id> *registeredDefaults = [NSMutableDictionary dictionary];
+    for (NSString *prefName in onByDefaultPrefs)
+        registeredDefaults[prefName] = @YES;
+    [MiniBrowserUserDefaults() registerDefaults:registeredDefaults];
 
     [self _populateMenu:menu];
 

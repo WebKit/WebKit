@@ -2305,7 +2305,7 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288324"}},
         "subtests": {
             "test_switch_between_contexts[window]": {
-                "expected": {"mac-site-isolation": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
+                "expected": {"mac": {"status": ["PASS"]}, "mac-site-isolation": {"status": ["FAIL"], "note": "Fails with Site Isolation, not investigated yet"}}
             }
         }
     },
