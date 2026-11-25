@@ -95,7 +95,7 @@ WEBCORE_EXPORT String extractMIMETypeFromMediaType(const String&);
 WEBCORE_EXPORT StringView extractCharsetFromMediaType(StringView mediaType LIFETIME_BOUND);
 XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
 AtomString extractReasonPhraseFromHTTPStatusLine(const String&);
-WEBCORE_EXPORT XFrameOptionsDisposition parseXFrameOptionsHeader(StringView);
+WEBCORE_EXPORT XFrameOptionsDisposition parseXFrameOptionsHeader(NOESCAPE_FOR_SWIFT StringView);
 WEBCORE_EXPORT OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse&);
 
 // One of the HTTPRange bounds could be set to std::nullopt but not both of them.

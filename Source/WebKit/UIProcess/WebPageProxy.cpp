@@ -22365,6 +22365,11 @@ PageLoadState& WebPageProxy::pageLoadState()
     return internals().pageLoadState;
 }
 
+URL WebPageProxy::activeURLCopy() const
+{
+    return pageLoadState().activeURL();
+}
+
 void WebPageProxy::isLoadingChanged()
 {
     activityStateDidChange(ActivityState::IsLoading);

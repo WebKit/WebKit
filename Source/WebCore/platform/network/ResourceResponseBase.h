@@ -93,6 +93,8 @@ public:
     WEBCORE_EXPORT bool isSuccessful() const;
 
     WEBCORE_EXPORT const URL& url() const LIFETIME_BOUND;
+    // FIXME: (rdar://193738426) Remove once Swift can call url(), which returns a reference, without unsafe.
+    URL urlCopy() const { return url(); }
     WEBCORE_EXPORT void setURL(URL&&);
 
     WEBCORE_EXPORT const String& mimeType() const LIFETIME_BOUND;
@@ -123,6 +125,9 @@ public:
 
     String httpHeaderField(StringView name) const;
     WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
+    // FIXME: Remove these when WebKit no longer builds its Swift with Swift 6.4, which fails to link httpHeaderField().
+    String httpLocation() const { return httpHeaderField(HTTPHeaderName::Location); }
+    String httpXFrameOptions() const { return httpHeaderField(HTTPHeaderName::XFrameOptions); }
     WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void setUncommonHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);

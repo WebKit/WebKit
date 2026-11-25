@@ -25,15 +25,14 @@
 
 #pragma once
 
-// FIXME: Remove the `__has_feature(modules)` condition when possible.
-#if !__has_feature(modules)
-
 #include <wtf/Compiler.h>
 #include <wtf/Platform.h>
 
 DECLARE_SYSTEM_HEADER
 
 #if HAVE(APP_SSO)
+
+#import <Foundation/Foundation.h>
 
 #define kSOAuthorizationOptionInitiatingPath @"path"
 
@@ -129,5 +128,3 @@ NS_ASSUME_NONNULL_END
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // HAVE(APP_SSO)
-
-#endif // !__has_feature(modules)

@@ -41,10 +41,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <pal/spi/cocoa/AuthKitSPI.h>
-#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/StringPrintStream.h>
+#import <wtf/Threading.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -67,9 +67,6 @@ static bool allMessagesReceived = false;
 static String finalURL;
 static SOAuthorization* gAuthorization;
 static id<SOAuthorizationDelegate> gDelegate;
-#if PLATFORM(MAC)
-static BlockPtr<void(NSNotification *)> gNotificationCallback;
-#endif
 static RetainPtr<WKWebView> gNewWindow;
 
 static constexpr auto openerTemplate =
@@ -270,6 +267,7 @@ private:
 
 - (void)_webView:(WKWebView *)webView decidePolicyForSOAuthorizationLoadWithCurrentPolicy:(_WKSOAuthorizationLoadPolicy)policy forExtension:(NSString *)extension completionHandler:(void (^)(_WKSOAuthorizationLoadPolicy policy))completionHandler
 {
+    EXPECT_TRUE([NSThread isMainThread]);
     EXPECT_EQ(policy, _WKSOAuthorizationLoadPolicyAllow);
     EXPECT_TRUE([extension isEqual:@"Test"]);
     policyForAppSSOPerformed = true;
@@ -413,21 +411,18 @@ static void overrideGetAuthorizationHintsWithURL(id, SEL, NSURL *url, NSInteger 
     completion(soAuthorizationHints.get(), nullptr);
 }
 
+static void overrideGetAuthorizationHintsWithURLOnBackgroundQueue(id authorization, SEL selector, NSURL *url, NSInteger responseCode, GetAuthorizationHintsCallback completion)
+{
+    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_DEFAULT, 0), ^{
+        overrideGetAuthorizationHintsWithURL(authorization, selector, url, responseCode, completion);
+    });
+}
+
 static void overrideGetAuthorizationHintsWithURLNil(id, SEL, NSURL *url, NSInteger responseCode, GetAuthorizationHintsCallback completion)
 {
     EXPECT_EQ(responseCode, 0l);
     completion(nil, nullptr);
 }
-
-#if PLATFORM(MAC)
-using NotificationCallback = void (^)(NSNotification *note);
-static id overrideAddObserverForName(id, SEL, NSNotificationName name, id, NSOperationQueue *, NotificationCallback block)
-{
-    if ([name isEqual:NSWindowWillCloseNotification])
-        gNotificationCallback = makeBlockPtr(block);
-    return @YES;
-}
-#endif
 
 static bool overrideIsURLFromAppleOwnedDomain(id, SEL, NSURL *)
 {
@@ -449,9 +444,6 @@ static void resetState()
     finalURL = emptyString();
     gAuthorization = nullptr;
     gDelegate = nullptr;
-#if PLATFORM(MAC)
-    gNotificationCallback = nullptr;
-#endif
     gNewWindow = nullptr;
 }
 
@@ -622,11 +614,9 @@ TEST(SOAuthorizationRedirect, InterceptionDoNotHandle)
     EXPECT_WK_STREQ(testURL.get().absoluteString, finalURL);
 }
 
-TEST(SOAuthorizationRedirect, InterceptionCancel)
+// Loads a page whose navigation AppSSO intercepts, and returns once AppSSO has been asked to authorize it. The caller swizzles AppSSO.
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestSOAuthorizationDelegate>> startRedirectInterception()
 {
-    resetState();
-    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
-
     RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -635,6 +625,16 @@ TEST(SOAuthorizationRedirect, InterceptionCancel)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
+
+    return { WTF::move(webView), WTF::move(delegate) };
+}
+
+TEST(SOAuthorizationRedirect, InterceptionCancel)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+
+    auto [webView, delegate] = startRedirectInterception();
     checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
@@ -643,6 +643,56 @@ TEST(SOAuthorizationRedirect, InterceptionCancel)
     EXPECT_WK_STREQ("", webView.get()._committedURL.absoluteString);
     EXPECT_FALSE(webView.get().loading);
     EXPECT_FALSE(navigationCompleted);
+}
+
+#if GTEST_HAS_DEATH_TEST
+static void cancelAuthorizationOffMainThread()
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+
+    auto interception = startRedirectInterception();
+
+    Thread::create("cancelAuthorizationOffMainThread"_s, [] {
+        [gDelegate authorizationDidCancel:gAuthorization];
+    })->waitForCompletion();
+}
+
+// The SOAuthorization delegate must be called on the main thread; a call from another thread traps.
+// The trap's signal is checked, so that a crash of another kind does not pass.
+TEST(SOAuthorizationRedirectDeathTest, InterceptionCancelOffMainThread)
+{
+    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+#if CPU(X86_64)
+    constexpr int trapSignal = SIGILL;
+#else
+    constexpr int trapSignal = SIGTRAP;
+#endif
+    ASSERT_EXIT(cancelAuthorizationOffMainThread(), ::testing::KilledBySignal(trapSignal), "");
+}
+#endif
+
+// AppSSO may call the hints completion on another queue; the policy decision still happens on the main thread.
+TEST(SOAuthorizationRedirect, InterceptionHintsOnBackgroundQueue)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+    InstanceMethodSwizzler hintsSwizzler(PAL::getSOAuthorizationClassSingleton(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURLOnBackgroundQueue));
+
+    auto [webView, delegate] = startRedirectInterception();
+    checkAuthorizationOptions(false, emptyString(), 0);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
+    RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
+    Util::run(&navigationCompleted);
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    navigationCompleted = false;
+    Util::run(&navigationCompleted);
+#endif
+    EXPECT_WK_STREQ(redirectURL.get().absoluteString, finalURL);
 }
 
 TEST(SOAuthorizationRedirect, InterceptionCompleteWithoutData)
@@ -751,7 +801,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed2)
 #if PLATFORM(MAC)
     [webView _loadRequest:[NSURLRequest requestWithURL:testURL.createNSURL().get()] shouldOpenExternalURLs:YES];
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    // Here we force RedirectSOAuthorizationSession to go to the with user gestures route.
+    // Here we force the redirect session to go to the with user gestures route.
     [webView evaluateJavaScript:adoptNS([[NSString alloc] initWithFormat:@"location = '%@'", testURL.string().createNSString().get()]).get() completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -784,7 +834,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed3)
 #if PLATFORM(MAC)
     [webView _loadRequest:[NSURLRequest requestWithURL:testURL.createNSURL().get()] shouldOpenExternalURLs:YES];
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    // Here we force RedirectSOAuthorizationSession to go to the with user gestures route.
+    // Here we force the redirect session to go to the with user gestures route.
     [webView evaluateJavaScript:adoptNS([[NSString alloc] initWithFormat:@"location = '%@'", testURL.string().createNSString().get()]).get() completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -1244,7 +1294,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithRedirectionAndCookie)
 #if PLATFORM(MAC)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.createNSURL().get()]];
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    // Here we force RedirectSOAuthorizationSession to go to the with user gestures route.
+    // Here we force the redirect session to go to the with user gestures route.
     [webView evaluateJavaScript:adoptNS([[NSString alloc] initWithFormat:@"location = '%@'", testURL.string().createNSString().get()]).get() completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -2043,16 +2093,16 @@ TEST(SOAuthorizationRedirect, NSNotificationCenter)
 
     RetainPtr viewController = adoptNS([[TestSOAuthorizationViewController alloc] init]);
     RetainPtr view = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
-    {
-        InstanceMethodSwizzler swizzler4([NSNotificationCenter class], @selector(addObserverForName:object:queue:usingBlock:), reinterpret_cast<IMP>(overrideAddObserverForName));
-        [viewController setView:view.get()];
-        [gDelegate authorization:gAuthorization presentViewController:viewController.get() withCompletion:^(BOOL success, NSError *) {
-            EXPECT_TRUE(success);
-        }];
-        Util::run(&uiShowed);
-    }
+    [viewController setView:view.get()];
+    [gDelegate authorization:gAuthorization presentViewController:viewController.get() withCompletion:^(BOOL success, NSError *) {
+        EXPECT_TRUE(success);
+    }];
+    Util::run(&uiShowed);
 
-    gNotificationCallback(nullptr);
+    // The sheet's window holds the view controller's view.
+    RetainPtr sheetWindow = [view window];
+    EXPECT_NOT_NULL(sheetWindow.get());
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowWillCloseNotification object:sheetWindow.get()];
     EXPECT_FALSE(uiShowed);
 }
 

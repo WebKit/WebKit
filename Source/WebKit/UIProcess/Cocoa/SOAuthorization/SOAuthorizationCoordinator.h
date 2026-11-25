@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,26 +27,44 @@
 
 #if HAVE(APP_SSO)
 
+#include <wtf/BlockPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
+#include <wtf/RefCountable.h>
 #include <wtf/TZoneMalloc.h>
-
-OBJC_CLASS SOAuthorization;
-OBJC_CLASS WKSOAuthorizationDelegate;
 
 namespace API {
 class NavigationAction;
 class PageConfiguration;
 }
 
-namespace WebCore {
-class ResourceRequest;
-}
-
 namespace WebKit {
 
 class WebPageProxy;
+
+// The callers' callbacks, boxed so that the Swift session can keep them.
+// FIXME: (rdar://170854276) Swift cannot spell a C++ class template instantiation, so these aliases name them.
+using SOAuthorizationNavigationCallback = WTF::RefCountable<CompletionHandler<void(bool)>>;
+using SOAuthorizationNewPageCallback = WTF::RefCountable<CompletionHandler<void(RefPtr<WebPageProxy>&&)>>;
+using SOAuthorizationUIClientCallback = WTF::RefCountable<Function<void(Ref<API::NavigationAction>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&)>>;
+
+// FIXME: (rdar://193738752) Swift cannot expose an actor-isolated class to C++, so C++ calls it through blocks.
+// WKSOAuthorizationCoordinator's two tryAuthorize calls, as main-actor blocks that hold it.
+// Spelled out: plain C++ files include this header, where NS_SWIFT_UI_ACTOR is not defined.
+typedef void (__attribute__((swift_attr("@MainActor"))) ^SOAuthorizationTryAuthorizeNavigationBlock)(API::NavigationAction * _Nonnull, WebPageProxy * _Nonnull, SOAuthorizationNavigationCallback * _Nonnull);
+typedef void (__attribute__((swift_attr("@MainActor"))) ^SOAuthorizationTryAuthorizePopUpBlock)(API::PageConfiguration * _Nonnull, API::NavigationAction * _Nonnull, WebPageProxy * _Nonnull, SOAuthorizationNewPageCallback * _Nonnull, SOAuthorizationUIClientCallback * _Nonnull);
+
+struct SOAuthorizationCoordinatorBlocks {
+    SOAuthorizationCoordinatorBlocks(SOAuthorizationTryAuthorizeNavigationBlock _Nonnull tryAuthorizeNavigation, SOAuthorizationTryAuthorizePopUpBlock _Nonnull tryAuthorizePopUp)
+        : tryAuthorizeNavigation(makeBlockPtr(tryAuthorizeNavigation))
+        , tryAuthorizePopUp(makeBlockPtr(tryAuthorizePopUp))
+    {
+    }
+
+    BlockPtr<void(API::NavigationAction * _Nonnull, WebPageProxy * _Nonnull, SOAuthorizationNavigationCallback * _Nonnull)> tryAuthorizeNavigation;
+    BlockPtr<void(API::PageConfiguration * _Nonnull, API::NavigationAction * _Nonnull, WebPageProxy * _Nonnull, SOAuthorizationNewPageCallback * _Nonnull, SOAuthorizationUIClientCallback * _Nonnull)> tryAuthorizePopUp;
+};
 
 class SOAuthorizationCoordinator {
     WTF_MAKE_TZONE_ALLOCATED(SOAuthorizationCoordinator);
@@ -63,10 +81,7 @@ public:
     void tryAuthorize(Ref<API::PageConfiguration>&&, Ref<API::NavigationAction>&&, WebPageProxy&, NewPageCallback&&, UIClientCallback&&);
 
 private:
-    void canAuthorize(const URL&, CompletionHandler<void(bool)>&&);
-
-    const RetainPtr<WKSOAuthorizationDelegate> m_soAuthorizationDelegate;
-    bool m_hasAppSSO { false };
+    const SOAuthorizationCoordinatorBlocks m_blocks;
 };
 
 } // namespace WebKit

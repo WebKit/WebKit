@@ -44,11 +44,15 @@ public:
         return adoptRef(*new NavigationAction(std::forward<Args>(args)...));
     }
 
-    FrameInfo* sourceFrame() const LIFETIME_BOUND { return m_sourceFrame.get(); }
-    FrameInfo* targetFrame() const LIFETIME_BOUND { return m_targetFrame.get(); }
+    FrameInfo* sourceFrame() const LIFETIME_BOUND_EXCEPT_FOR_SWIFT { return m_sourceFrame.get(); }
+    FrameInfo* targetFrame() const LIFETIME_BOUND_EXCEPT_FOR_SWIFT { return m_targetFrame.get(); }
     const WTF::String& targetFrameName() const LIFETIME_BOUND { return m_targetFrameName; }
 
     const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_request; }
+    // FIXME: (rdar://193738426) Remove once Swift can call request(), which returns a reference, without unsafe.
+    WebCore::ResourceRequest requestCopy() const { return m_request; }
+    WTF::URL requestURLCopy() const { return m_request.url(); }
+    bool requestIsPOST() const { return m_request.httpMethod() == "POST"_s; }
     const WTF::URL& originalURL() const LIFETIME_BOUND { return !m_originalURL.isNull() ? m_originalURL : m_request.url(); }
 
     WebCore::NavigationType navigationType() const { return m_navigationActionData.navigationType; }

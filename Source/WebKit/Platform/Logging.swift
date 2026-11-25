@@ -21,9 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-// Needs the WTF.String conversions in StdlibExtras.swift.
-#if ENABLE_BACK_FORWARD_LIST_SWIFT
-
 import wtf
 
 #if canImport(os)
@@ -224,5 +221,3 @@ struct PortableLogger {
 }
 
 #endif // !canImport(os) && (!LOG_DISABLED || !RELEASE_LOG_DISABLED)
-
-#endif // ENABLE_BACK_FORWARD_LIST_SWIFT
