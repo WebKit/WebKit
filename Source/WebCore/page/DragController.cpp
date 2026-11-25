@@ -315,7 +315,7 @@ DragEventTargetData DragController::performDragOperation(DragData&& dragData, Lo
         return { DragEventHandled::No };
 
     auto urlString = dragData.asURL();
-    if (urlString.isEmpty())
+    if (urlString.isEmpty() || URL { urlString }.protocolIsJavaScript())
         return { DragEventHandled::No };
 
     client().willPerformDragDestinationAction(DragDestinationAction::Load, dragData);
