@@ -702,9 +702,11 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksTo
 
         Vector<SimulatedInputKeyFrame::StateEntry> entries;
         for (auto& action : borrow(tick)) {
+// FIXME: Remove the platform-exclusive WEBDRIVER_*_INTERACTIONS guards and input source aliasing. <https://webkit.org/b/327296>
+#if !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
             if (action.sourceType == SourceType::Wheel)
                 SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Wheel input sources are not yet supported."_s);
-// FIXME: Remove the platform-exclusive WEBDRIVER_*_INTERACTIONS guards and input source aliasing. <https://webkit.org/b/327296>
+#endif
 #if !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
             if (action.sourceType == SourceType::Key)
                 SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Keyboard input sources are not yet supported."_s);
@@ -719,6 +721,12 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksTo
                 sourceState.origin = std::nullopt;
                 sourceState.nodeHandle = std::nullopt;
                 sourceState.location = std::nullopt;
+            }
+            if (action.sourceType == SourceType::Wheel) {
+                sourceState.origin = std::nullopt;
+                sourceState.nodeHandle = std::nullopt;
+                sourceState.location = std::nullopt;
+                sourceState.scrollDelta = std::nullopt;
             }
             switch (action.type) {
             case ActionType::Pause:
@@ -800,11 +808,27 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksTo
                 }
                 sourceState.location = WebCore::flooredIntPoint(WebCore::FloatPoint(action.x, action.y));
                 break;
+            case ActionType::Scroll:
+                switch (action.origin) {
+                case OriginType::Viewport:
+                    sourceState.origin = MouseMoveOrigin::Viewport;
+                    break;
+                case OriginType::Element:
+                    sourceState.origin = MouseMoveOrigin::Element;
+                    sourceState.nodeHandle = action.originSharedId;
+                    break;
+                case OriginType::Pointer:
+                    ASSERT_NOT_REACHED();
+                    return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InvalidParameter, "Invalid origin for a wheel source."_s));
+                }
+                sourceState.location = WebCore::flooredIntPoint(WebCore::FloatPoint(action.x, action.y));
+                sourceState.scrollDelta = WebCore::IntSize(clampTo<int>(action.deltaX), clampTo<int>(action.deltaY));
+                break;
             default:
                 SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "This input source type is not supported yet."_s);
             }
             auto duration = action.duration;
-            if (!duration && action.type == ActionType::PointerMove)
+            if (!duration && (action.type == ActionType::PointerMove || action.type == ActionType::Scroll))
                 duration = tickDuration;
             if (duration)
                 sourceState.duration = Seconds::fromMilliseconds(*duration);

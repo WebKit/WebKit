@@ -3244,7 +3244,7 @@ void WebAutomationSession::runBidiInteractionSequence(WebPageProxy& page, std::o
         }
 
         // FIXME: Refresh the viewport when an earlier action in the sequence scrolls or re-lays out the page. <https://webkit.org/b/329451>
-        protectedThis->runInteractionSequence(*page, frameID, WTF::move(keyFrames), inputSources, SimulatedInputRunOptions { .viewport = SimulatedInputViewport { viewport->location(), viewport->size() }, .interpolatePointerMoves = true, .elementOriginHandleKind = NodeHandleKind::SharedReference }, WTF::move(completionHandler));
+        protectedThis->runInteractionSequence(*page, frameID, WTF::move(keyFrames), inputSources, SimulatedInputRunOptions { .viewport = SimulatedInputViewport { viewport->location(), viewport->size() }, .interpolatePointerMoves = true, .elementOriginHandleKind = NodeHandleKind::SharedReference, .scrollDeltasArePerAction = true }, WTF::move(completionHandler));
     };
 
     auto send = [page = protect(page), frameID, didGetFrameViewportHandler = WTF::move(didGetFrameViewportHandler)] mutable {
@@ -3468,7 +3468,7 @@ void WebAutomationSession::dispatchWheelInteraction(WebPageProxy& page, const We
             callbackInMap(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout)));
         callbackInMap = WTF::move(wheelEventsFlushedCallback);
 
-        platformSimulateWheelInteraction(page, locationInViewport, delta);
+        platformSimulateWheelInteraction(page, locationInViewport, { std::max(delta.width(), -std::numeric_limits<int>::max()), std::max(delta.height(), -std::numeric_limits<int>::max()) });
 
         // If the event does not hit test anything in the window, then it may not have been delivered.
         if (callbackInMap && !page->isProcessingWheelEvents()) {

@@ -157,6 +157,8 @@ struct SimulatedInputRunOptions {
     std::optional<SimulatedInputViewport> viewport;
     bool interpolatePointerMoves { false };
     NodeHandleKind elementOriginHandleKind { };
+    // FIXME: Classic sends each scroll's own delta too, so it shouldn't diff consecutive states either. <https://webkit.org/b/332993>
+    bool scrollDeltasArePerAction { false };
 };
 
 class SimulatedInputDispatcher : public RefCountedAndCanMakeWeakPtr<SimulatedInputDispatcher> {
