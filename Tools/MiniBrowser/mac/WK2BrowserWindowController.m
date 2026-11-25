@@ -180,6 +180,11 @@ static const int testFooterBannerHeight = 58;
     _webView.allowsMagnification = YES;
     _webView.allowsBackForwardNavigationGestures = YES;
     _webView._editable = self.isEditable;
+    // Under automation, a page counts as hidden when its window is minimized or closed, but not when other windows
+    // cover it. Several MiniBrowsers can run tests side by side, and a test bot's screen has room for few of their
+    // windows, so they cover each other. A hidden page would stop updating its rendering and throttle its timers.
+    if (_configuration._controlledByAutomation)
+        _webView._windowOcclusionDetectionEnabled = NO;
 
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [containerView addSubview:_webView];
