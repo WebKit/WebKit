@@ -688,6 +688,7 @@ public:
     // BaseAudioContext lifetime testing.
     NODELETE static uint64_t baseAudioContextIdentifier(const BaseAudioContext&);
     static bool isBaseAudioContextAlive(uint64_t contextID);
+    static bool hasAudioWorkletGlobalScope(const Document&);
 
     Vector<float> waveShaperProcessCurveWithData(Vector<float> source, Vector<float> curve);
 

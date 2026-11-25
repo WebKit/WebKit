@@ -1404,6 +1404,7 @@ enum LayerType {
     unsigned long long pageIdentifier(Document document);
 
     boolean isAnyWorkletGlobalScopeAlive();
+    [Conditional=WEB_AUDIO] boolean hasAudioWorkletGlobalScope(Document document);
 
     readonly attribute long processIdentifier;
     DOMString serviceWorkerClientInternalIdentifier(Document document);

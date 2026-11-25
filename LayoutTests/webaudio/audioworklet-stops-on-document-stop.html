@@ -20,10 +20,11 @@ if (!window.internals) {
         // Keep the detached window alive so a GC of the AudioContext cannot
         // be what destroys the worklet. Document stop has to do it.
         const innerWindow = frame.contentWindow;
+        const workletDocument = innerWindow.document;
         frame.remove();
         let checks = 0;
         const handle = setInterval(() => {
-            if (innerWindow && !internals.isAnyWorkletGlobalScopeAlive()) {
+            if (innerWindow && !internals.hasAudioWorkletGlobalScope(workletDocument)) {
                 clearInterval(handle);
                 testPassed("AudioWorklet global scope was destroyed");
                 finishJSTest();

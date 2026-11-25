@@ -400,6 +400,7 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioContext.h"
+#include "AudioWorkletGlobalScope.h"
 #include "WaveShaperDSPKernel.h"
 #endif
 
@@ -3727,6 +3728,11 @@ bool Internals::isBaseAudioContextAlive(uint64_t contextID)
 {
     ASSERT(contextID);
     return BaseAudioContext::isContextAlive(contextID);
+}
+
+bool Internals::hasAudioWorkletGlobalScope(const Document& document)
+{
+    return AudioWorkletGlobalScope::hasScopeForDocument(document.identifier());
 }
 #endif // ENABLE(WEB_AUDIO)
 

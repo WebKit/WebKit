@@ -71,7 +71,8 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet, Transf
         document->crossOriginIsolated() ? CanBeCrossOriginIsolated::Yes : CanBeCrossOriginIsolated::No,
         protect(document->contentSecurityPolicy())->responseHeaders(),
         document->networkLoadPolicy(),
-        WTF::move(globalScopePort)
+        WTF::move(globalScopePort),
+        document->identifier()
     };
 }
 
