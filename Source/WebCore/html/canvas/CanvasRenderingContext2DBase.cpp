@@ -2810,7 +2810,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 
-    return RefPtr<CanvasPattern> { CanvasPattern::create({ nativeImage.releaseNonNull() }, repeatX, repeatY, originClean) };
+    return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, originClean) };
 }
 
 static ConcreteObjectSize concreteObjectSizeForPattern(Image& image)
@@ -2879,7 +2879,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 
-    return RefPtr<CanvasPattern> { CanvasPattern::create({ nativeImage.releaseNonNull() }, repeatX, repeatY, canvas.originClean()) };
+    return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, canvas.originClean()) };
 }
 
 #if ENABLE(VIDEO)
@@ -2900,7 +2900,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 
 #if USE(CG)
     if (auto nativeImage = videoElement.nativeImageForCurrentTime())
-        return RefPtr<CanvasPattern> { CanvasPattern::create({ nativeImage.releaseNonNull() }, repeatX, repeatY, originClean) };
+        return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, originClean) };
 #endif
 
     auto renderingMode = drawingContext() ? drawingContext()->renderingMode() : RenderingMode::Unaccelerated;
@@ -2910,7 +2910,11 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 
     videoElement.paintCurrentFrameInContext(imageBuffer->context(), FloatRect(FloatPoint(), size(videoElement)));
 
-    return RefPtr<CanvasPattern> { CanvasPattern::create({ imageBuffer.releaseNonNull() }, repeatX, repeatY, originClean) };
+    RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
+    if (!nativeImage)
+        return nullptr;
+
+    return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, originClean) };
 }
 
 #endif
@@ -2937,11 +2941,15 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
     if (usability.returnValue() == CanvasImageSourceUsability::Bad)
         return nullptr;
 
-    RefPtr<ImageBuffer> buffer = imageBitmap.buffer();
+    RefPtr buffer = imageBitmap.buffer();
     if (!buffer)
         return Exception { ExceptionCode::InvalidStateError };
 
-    return RefPtr<CanvasPattern> { CanvasPattern::create({ buffer.releaseNonNull() }, repeatX, repeatY, imageBitmap.originClean()) };
+    RefPtr nativeImage = buffer->copyNativeImage();
+    if (!nativeImage)
+        return Exception { ExceptionCode::InvalidStateError };
+
+    return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, imageBitmap.originClean()) };
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CSSStyleImageValue&, bool, bool)

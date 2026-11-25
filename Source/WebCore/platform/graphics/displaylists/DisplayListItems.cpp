@@ -144,17 +144,6 @@ SetState::SetState(const GraphicsContextState& state)
 {
 }
 
-static bool hasUnresolvedPattern(const SourceBrush& brush)
-{
-    RefPtr pattern = brush.pattern();
-    return pattern && !pattern->tileImage().isResolved();
-}
-
-bool SetState::isResolved() const
-{
-    return !hasUnresolvedPattern(m_state.fillBrush()) && !hasUnresolvedPattern(m_state.strokeBrush());
-}
-
 void SetState::apply(GraphicsContext& context) const
 {
     context.mergeLastChanges(m_state);

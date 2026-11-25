@@ -28,7 +28,6 @@
 
 #if USE(SKIA)
 #include "AffineTransform.h"
-#include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "SkiaUtilities.h"
 
@@ -43,10 +42,7 @@ namespace WebCore {
 
 sk_sp<SkShader> Pattern::createPlatformPattern(const SkSamplingOptions& samplingOptions, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext) const
 {
-    auto nativeImage = tileNativeImage();
-    if (!nativeImage)
-        return nullptr;
-
+    Ref nativeImage = tileImage();
     auto platformImage = nativeImage->platformImage();
     if (!platformImage)
         return nullptr;

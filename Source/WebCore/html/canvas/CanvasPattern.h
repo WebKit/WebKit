@@ -26,19 +26,19 @@
 #pragma once
 
 #include "Pattern.h"
-#include "SourceImage.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class NativeImage;
 struct DOMMatrix2DInit;
 template<typename> class ExceptionOr;
 
 class CanvasPattern : public RefCounted<CanvasPattern> {
 public:
-    NODELETE static Ref<CanvasPattern> create(SourceImage&&, bool repeatX, bool repeatY, bool originClean);
+    NODELETE static Ref<CanvasPattern> create(Ref<NativeImage>&&, bool repeatX, bool repeatY, bool originClean);
     ~CanvasPattern();
 
     static bool parseRepetitionType(const String&, bool& repeatX, bool& repeatY);
@@ -51,7 +51,7 @@ public:
         return createPattern();
     }
 
-    const SourceImage& tileImage() const LIFETIME_BOUND { return m_tileImage; }
+    NativeImage& tileImage() const LIFETIME_BOUND { return m_tileImage; }
     bool repeatX() const { return m_parameters.repeatX; }
     bool repeatY() const { return m_parameters.repeatY; }
 
@@ -60,11 +60,11 @@ public:
     ExceptionOr<void> setTransform(DOMMatrix2DInit&&);
 
 private:
-    CanvasPattern(SourceImage&&, bool repeatX, bool repeatY, bool originClean);
+    CanvasPattern(Ref<NativeImage>&&, bool repeatX, bool repeatY, bool originClean);
 
     Ref<const Pattern> createPattern() const;
 
-    SourceImage m_tileImage;
+    const Ref<NativeImage> m_tileImage;
     PatternParameters m_parameters;
     mutable RefPtr<const Pattern> m_pattern;
     bool m_originClean;

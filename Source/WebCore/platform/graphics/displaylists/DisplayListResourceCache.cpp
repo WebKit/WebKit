@@ -28,7 +28,6 @@
 
 #include "DisplayList.h"
 #include "FEImage.h"
-#include "Pattern.h"
 #include "SourceImage.h"
 
 namespace WebCore {
@@ -55,6 +54,11 @@ bool ResourceCache::cacheImageBuffer(RenderingResourceIdentifier identifier, Ref
     if (m_nativeImages.contains(identifier))
         return false;
     return m_imageBuffers.add(identifier, WTF::move(imageBuffer)).isNewEntry;
+}
+
+RefPtr<NativeImage> ResourceCache::nativeImage(RenderingResourceIdentifier identifier) const
+{
+    return m_nativeImages.get(identifier);
 }
 
 void ResourceCache::appendDisplayList(Ref<const DisplayList>&& displayList)
@@ -98,18 +102,6 @@ std::optional<SourceImage> ResourceCache::sourceImage(RenderingResourceIdentifie
     if (RefPtr imageBuffer = m_imageBuffers.get(identifier))
         return SourceImage { imageBuffer.releaseNonNull() };
     return std::nullopt;
-}
-
-bool ResourceCache::resolvePattern(SourceBrush& brush) const
-{
-    RefPtr pattern = brush.pattern();
-    if (!pattern || pattern->tileImage().isResolved())
-        return true;
-    auto tileImage = sourceImage(pattern->tileImage().imageIdentifier());
-    if (!tileImage)
-        return false;
-    brush.setPattern(Pattern::create(WTF::move(*tileImage), pattern->parameters()));
-    return true;
 }
 
 bool ResourceCache::resolve(ClipToNativeImage& item) const
@@ -178,11 +170,6 @@ bool ResourceCache::resolve(DrawPatternImageBuffer& item) const
 bool ResourceCache::resolve(DrawPatternNativeImage& item) const
 {
     return resolveNativeImage(item);
-}
-
-bool ResourceCache::resolve(SetState& item) const
-{
-    return resolvePattern(item.state().fillBrush()) && resolvePattern(item.state().strokeBrush());
 }
 
 } // namespace DisplayList

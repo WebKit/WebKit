@@ -57,10 +57,7 @@ static void patternReleaseCallback(void* info)
 
 RetainPtr<CGPatternRef> Pattern::createPlatformPattern(const AffineTransform& userSpaceTransform) const
 {
-    auto nativeImage = tileNativeImage();
-    if (!nativeImage)
-        return nullptr;
-
+    Ref nativeImage = tileImage();
     auto platformImage = nativeImage->platformImage();
     if (!platformImage)
         return nullptr;

@@ -1195,12 +1195,8 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasPattern(cons
     else
         repeat = "no-repeat"_s;
 
-    auto& tileImage = canvasPattern.tileImage();
-    auto tileDataURL = [&] {
-        if (RefPtr imageBuffer = tileImage.imageBufferIfExists())
-            return encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
-        return encodeDataURL(RefPtr { tileImage.nativeImageIfExists() }, "image/png"_s);
-    }();
+    Ref tileImage = canvasPattern.tileImage();
+    auto tileDataURL = encodeDataURL(tileImage.get(), "image/png"_s);
 
     auto array = JSON::ArrayOf<JSON::Value>::create();
     array->addItem(indexForData(tileDataURL));

@@ -29,7 +29,6 @@
 #include <WebCore/Gradient.h>
 #include <WebCore/Pattern.h>
 #include <WebCore/SourceBrushLogicalGradient.h>
-#include <wtf/ArgumentCoder.h>
 
 namespace WebCore {
 
@@ -43,10 +42,11 @@ public:
     {
     }
 
-    SourceBrush(const Color& color, OptionalPatternGradient&& patternGradient)
+    SourceBrush(const Color& color, std::optional<SourceBrushLogicalGradient>&& logicalGradient)
         : m_color(color)
-        , m_patternGradient(WTF::move(patternGradient))
     {
+        if (logicalGradient)
+            m_patternGradient = WTF::move(*logicalGradient);
     }
 
     // Color should be stored in the variant, in place of std::monospace. Currently a lot of code
@@ -60,6 +60,7 @@ public:
     NODELETE WEBCORE_EXPORT const Gradient* gradient() const;
     NODELETE WEBCORE_EXPORT const Pattern* pattern() const;
     NODELETE WEBCORE_EXPORT const AffineTransform& gradientSpaceTransform() const;
+    WEBCORE_EXPORT std::optional<SourceBrushLogicalGradient> logicalGradient() const;
     WEBCORE_EXPORT std::optional<RenderingResourceIdentifier> gradientIdentifier() const;
 
     WEBCORE_EXPORT void setGradient(Ref<const Gradient>&&, const AffineTransform& spaceTransform = { });
@@ -71,8 +72,6 @@ public:
     friend bool operator==(const SourceBrush&, const SourceBrush&);
 
 private:
-    friend struct IPC::ArgumentCoder<SourceBrush>;
-
     Color m_color { Color::black };
     OptionalPatternGradient m_patternGradient;
 };

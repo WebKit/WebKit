@@ -1,1 +1,0 @@
-This test passes if neither the GPU process nor the WebContent process crashes.

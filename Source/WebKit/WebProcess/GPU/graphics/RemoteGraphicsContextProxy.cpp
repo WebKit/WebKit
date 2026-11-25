@@ -993,13 +993,9 @@ void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
         if (auto packedColor = fillBrush.packedColor())
             send(Messages::RemoteGraphicsContext::SetFillPackedColor(*packedColor));
         else if (RefPtr pattern = fillBrush.pattern()) {
-            if (RefPtr image = pattern->tileNativeImage()) {
-                if (recordResourceUse(*image))
-                    send(Messages::RemoteGraphicsContext::SetFillPatternNativeImage(image->renderingResourceIdentifier(), pattern->parameters()));
-            } else if (RefPtr buffer = pattern->tileImageBuffer()) {
-                if (recordResourceUse(*buffer))
-                    send(Messages::RemoteGraphicsContext::SetFillPatternImageBuffer(buffer->renderingResourceIdentifier(), pattern->parameters()));
-            }
+            Ref image = pattern->tileImage();
+            if (recordResourceUse(image.get()))
+                send(Messages::RemoteGraphicsContext::SetFillPatternNativeImage(image->renderingResourceIdentifier(), pattern->parameters()));
         } else if (RefPtr gradient = fillBrush.gradient()) {
             if (auto identifier = recordResourceUse(*gradient))
                 send(Messages::RemoteGraphicsContext::SetFillCachedGradient(*identifier, fillBrush.gradientSpaceTransform()));
@@ -1017,13 +1013,9 @@ void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
             } else
                 send(Messages::RemoteGraphicsContext::SetStrokePackedColor(*packedColor));
         } else if (RefPtr pattern = strokeBrush.pattern()) {
-            if (RefPtr image = pattern->tileNativeImage()) {
-                if (recordResourceUse(*image))
-                    send(Messages::RemoteGraphicsContext::SetStrokePatternNativeImage(image->renderingResourceIdentifier(), pattern->parameters()));
-            } else if (RefPtr buffer = pattern->tileImageBuffer()) {
-                if (recordResourceUse(*buffer))
-                    send(Messages::RemoteGraphicsContext::SetStrokePatternImageBuffer(buffer->renderingResourceIdentifier(), pattern->parameters()));
-            }
+            Ref image = pattern->tileImage();
+            if (recordResourceUse(image.get()))
+                send(Messages::RemoteGraphicsContext::SetStrokePatternNativeImage(image->renderingResourceIdentifier(), pattern->parameters()));
         } else if (RefPtr gradient = strokeBrush.gradient()) {
             if (auto identifier = recordResourceUse(*gradient))
                 send(Messages::RemoteGraphicsContext::SetStrokeCachedGradient(*identifier, strokeBrush.gradientSpaceTransform()));

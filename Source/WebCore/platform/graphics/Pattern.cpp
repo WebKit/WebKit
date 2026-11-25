@@ -27,17 +27,14 @@
 #include "config.h"
 #include "Pattern.h"
 
-#include "ImageBuffer.h"
-#include "NativeImage.h"
-
 namespace WebCore {
 
-Ref<const Pattern> Pattern::create(SourceImage&& tileImage, const Parameters& parameters)
+Ref<const Pattern> Pattern::create(Ref<NativeImage>&& tileImage, const Parameters& parameters)
 {
     return adoptRef(*new Pattern(WTF::move(tileImage), parameters));
 }
 
-Pattern::Pattern(SourceImage&& tileImage, const Parameters& parameters)
+Pattern::Pattern(Ref<NativeImage>&& tileImage, const Parameters& parameters)
     : m_tileImage(WTF::move(tileImage))
     , m_parameters(parameters)
 {
@@ -47,22 +44,7 @@ Pattern::~Pattern() = default;
 
 Ref<const Pattern> Pattern::withPatternSpaceTransform(const AffineTransform& patternSpaceTransform) const
 {
-    return create(SourceImage { m_tileImage }, { repeatX(), repeatY(), patternSpaceTransform });
-}
-
-const SourceImage& Pattern::tileImage() const
-{
-    return m_tileImage;
-}
-
-RefPtr<NativeImage> Pattern::tileNativeImage() const
-{
-    return m_tileImage.nativeImage();
-}
-
-RefPtr<ImageBuffer> Pattern::tileImageBuffer() const
-{
-    return m_tileImage.imageBuffer();
+    return create(m_tileImage.copyRef(), { repeatX(), repeatY(), patternSpaceTransform });
 }
 
 }

@@ -59,6 +59,7 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "InspectorInstrumentation.h"
 #include "LayerAncestorClippingStack.h"
@@ -66,6 +67,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "Model.h"
+#include "NativeImage.h"
 #include "NullGraphicsContext.h"
 #include "Page.h"
 #include "PaintClipPathScope.h"
@@ -4934,7 +4936,11 @@ static RefPtr<const Pattern> patternForDescription(PatternDescription descriptio
     patternOffsetTransform.translate(contentOffset + description.phase);
     patternOffsetTransform.scale(1 / destContext.scaleFactor());
 
-    return Pattern::create({ imageBuffer.releaseNonNull() }, { true, true, patternOffsetTransform });
+    RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
+    if (!nativeImage)
+        return nullptr;
+
+    return Pattern::create(nativeImage.releaseNonNull(), { true, true, patternOffsetTransform });
 };
 #endif
 
@@ -5092,6 +5098,9 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     if (visibleDebugOverlayRegions.contains(DebugOverlayRegions::WheelEventHandlerRegion)) {
         for (auto type : { EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel }) {
             auto fillPattern = patternForEventListenerRegionType(type, graphicsLayer->offsetFromRenderer(), context);
+            if (!fillPattern)
+                continue;
+
             context.setFillPattern(fillPattern.releaseNonNull());
 
             auto& region = graphicsLayer->eventRegion().eventListenerRegionForType(type);

@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class SourceBrush;
 class SourceImage;
 
 namespace DisplayList {
@@ -51,6 +50,8 @@ public:
     WEBCORE_EXPORT bool cacheImageBuffer(RenderingResourceIdentifier, Ref<ImageBuffer>&&);
     WEBCORE_EXPORT void appendDisplayList(Ref<const DisplayList>&&);
 
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImage(RenderingResourceIdentifier) const;
+
     bool resolveItem(Item&) const;
 
 private:
@@ -62,12 +63,10 @@ private:
     bool resolve(DrawNativeImage&) const;
     bool resolve(DrawPatternImageBuffer&) const;
     bool resolve(DrawPatternNativeImage&) const;
-    bool resolve(SetState&) const;
     template<typename T> bool resolve(T&) const { return true; }
 
     bool resolveNativeImage(auto& item) const;
     bool resolveImageBuffer(auto& item) const;
-    bool resolvePattern(SourceBrush&) const;
     std::optional<SourceImage> sourceImage(RenderingResourceIdentifier) const;
 
     Vector<Ref<const FontBase>> m_fonts;
