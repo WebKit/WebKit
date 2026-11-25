@@ -202,7 +202,7 @@ private:
 
     TextPosition m_startPosition;
 
-    mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
+    const RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };

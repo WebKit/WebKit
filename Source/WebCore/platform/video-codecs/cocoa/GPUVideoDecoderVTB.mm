@@ -219,7 +219,7 @@ bool GPUVideoDecoderVTB::setVideoInfo(Ref<VideoInfo>&& videoInfo)
     m_reorderQueueMaxSize = videoInfo->reorderQueueMaxSize().value_or(0);
     m_videoInfo = WTF::move(videoInfo);
     if (m_reorderQueueMaxSize && !m_queue)
-        m_queue = GPUVideoDecoderVTBQueue::create(m_reorderQueueMaxSize);
+        lazyInitialize(m_queue, GPUVideoDecoderVTBQueue::create(m_reorderQueueMaxSize));
 
     return ensureDecoder();
 }

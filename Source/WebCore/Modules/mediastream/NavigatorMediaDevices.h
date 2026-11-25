@@ -55,7 +55,7 @@ private:
     static ASCIILiteral supplementName() { return "NavigatorMediaDevices"_s; }
     bool isNavigatorMediaDevices() const final { return true; }
 
-    mutable RefPtr<MediaDevices> m_mediaDevices;
+    const RefPtr<MediaDevices> m_mediaDevices;
 };
 
 } // namespace WebCore

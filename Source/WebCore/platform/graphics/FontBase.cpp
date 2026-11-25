@@ -85,7 +85,7 @@ const OpenTypeMathData* FontBase::mathData() const
     if (!m_mathData) {
         Ref mathData = OpenTypeMathData::create(m_platformData);
         if (mathData->hasMathData())
-            m_mathData = WTF::move(mathData);
+            lazyInitialize(m_mathData, WTF::move(mathData));
     }
     return m_mathData.get();
 }

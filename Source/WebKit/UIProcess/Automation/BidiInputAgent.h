@@ -167,7 +167,7 @@ private:
     Automation::BidiInputState& inputStateForTopLevelContext(const String& pageHandle);
 
     WeakPtr<WebAutomationSession> m_session;
-    Ref<Inspector::BidiInputBackendDispatcher> m_inputDomainDispatcher;
+    const Ref<Inspector::BidiInputBackendDispatcher> m_inputDomainDispatcher;
     // Queued commands and in-flight dispatches also hold a Ref, so a state can outlive its entry here after willClosePage().
     HashMap<String, Ref<Automation::BidiInputState>> m_inputStates;
 };

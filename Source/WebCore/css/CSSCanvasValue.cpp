@@ -58,7 +58,7 @@ RefPtr<Style::Image> CSSCanvasValue::createStyleImage(const Style::BuilderState&
     if (m_cachedStyleImage)
         return m_cachedStyleImage;
 
-    m_cachedStyleImage = Style::CanvasImage::create(Style::toStyle(m_name, state));
+    lazyInitialize(m_cachedStyleImage, Style::CanvasImage::create(Style::toStyle(m_name, state)));
     return m_cachedStyleImage;
 }
 

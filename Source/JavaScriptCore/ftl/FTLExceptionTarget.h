@@ -56,7 +56,7 @@ private:
     
     bool m_isDefaultHandler;
     Box<CCallHelpers::Label> m_defaultHandler;
-    RefPtr<OSRExitHandle> m_handle;
+    const RefPtr<OSRExitHandle> m_handle;
 };
 
 } } // namespace JSC::FTL

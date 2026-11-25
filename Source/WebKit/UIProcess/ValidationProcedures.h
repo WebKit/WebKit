@@ -252,17 +252,16 @@ public:
 
     std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::RegistrableDomain& registrableDomain) const
     {
-        Ref proxy = m_proxy;
         RefPtr process = m_process;
         if (!process)
             return IPC::ValidationFailure::Ignore;
-        if (!proxy->webProcessHasStartedUpdatingLocation(registrableDomain, *process))
+        if (!m_proxy->webProcessHasStartedUpdatingLocation(registrableDomain, *process))
             return IPC::ValidationFailure::Terminate;
         return std::nullopt;
     }
 
 private:
-    Ref<const WebGeolocationManagerProxy> m_proxy;
+    const Ref<const WebGeolocationManagerProxy> m_proxy;
     WeakPtr<const WebProcessProxy> m_process;
 };
 

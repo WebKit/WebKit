@@ -50,7 +50,7 @@ public:
     void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState* conductingMutatorState, Thread* conductorThread) WTF_REQUIRES_SHARED_CAPABILITY(markerWithWorldStoppedRole);
 
     // Only needs to be called by clients that can use the same heap from multiple threads.
-    bool addCurrentThread() { return Ref { m_threadGroup }->addCurrentThread() == ThreadGroupAddResult::NewlyAdded; }
+    bool addCurrentThread() { return m_threadGroup->addCurrentThread() == ThreadGroupAddResult::NewlyAdded; }
 
     WordLock& getLock() { return m_threadGroup->getLock(); }
     const ListHashSet<Ref<Thread>>& threads(const AbstractLocker& locker) const { return m_threadGroup->threads(locker); }
@@ -61,7 +61,7 @@ private:
     void tryCopyOtherThreadStack(const ThreadSuspendLocker&, Thread&, void*, size_t capacity, size_t*);
     bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*, Thread& conductorThread);
 
-    Ref<ThreadGroup> m_threadGroup;
+    const Ref<ThreadGroup> m_threadGroup;
 };
 
 #define DECLARE_AND_COMPUTE_CURRENT_THREAD_STATE(stateName) \

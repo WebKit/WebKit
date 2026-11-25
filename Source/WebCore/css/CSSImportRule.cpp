@@ -47,9 +47,9 @@ CSSImportRule::CSSImportRule(StyleRuleImport& importRule, CSSStyleSheet* parent)
 CSSImportRule::~CSSImportRule()
 {
     if (m_styleSheetCSSOMWrapper)
-        protect(m_styleSheetCSSOMWrapper)->clearOwnerRule();
+        m_styleSheetCSSOMWrapper->clearOwnerRule();
     if (m_mediaCSSOMWrapper)
-        protect(m_mediaCSSOMWrapper)->detachFromParent();
+        m_mediaCSSOMWrapper->detachFromParent();
 }
 
 String CSSImportRule::href() const
@@ -59,9 +59,8 @@ String CSSImportRule::href() const
 
 MediaList& CSSImportRule::media() const
 {
-    if (!m_mediaCSSOMWrapper) {
-        m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSImportRule*>(this));
-    }
+    if (!m_mediaCSSOMWrapper)
+        lazyInitialize(m_mediaCSSOMWrapper, MediaList::create(const_cast<CSSImportRule*>(this)));
     return *m_mediaCSSOMWrapper;
 }
 
@@ -132,9 +131,8 @@ CSSStyleSheet* CSSImportRule::styleSheet() const
     if (auto* cachedSheet = m_importRule->cachedCSSStyleSheet())
         isOriginClean = cachedSheet->isCORSSameOrigin();
 
-    if (!m_styleSheetCSSOMWrapper) {
-        m_styleSheetCSSOMWrapper = CSSStyleSheet::create(*m_importRule.get().styleSheet(), const_cast<CSSImportRule*>(this), isOriginClean);
-    }
+    if (!m_styleSheetCSSOMWrapper)
+        lazyInitialize(m_styleSheetCSSOMWrapper, CSSStyleSheet::create(*m_importRule.get().styleSheet(), const_cast<CSSImportRule*>(this), isOriginClean));
     return m_styleSheetCSSOMWrapper.get(); 
 }
 

@@ -140,7 +140,7 @@ CSSKeyframeRule::~CSSKeyframeRule()
 CSSStyleProperties& CSSKeyframeRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(protect(m_keyframe->mutableProperties()), *this);
+        lazyInitialize(m_propertiesCSSOMWrapper, StyleRuleCSSStyleProperties::create(protect(m_keyframe->mutableProperties()), *this));
     return *m_propertiesCSSOMWrapper;
 }
 

@@ -122,7 +122,7 @@ public:
     {
         RareData& rareData = ensureRareData();
         if (!rareData.m_returnStatementTypeSet)
-            rareData.m_returnStatementTypeSet = TypeSet::create();
+            lazyInitialize(rareData.m_returnStatementTypeSet, TypeSet::create());
         return rareData.m_returnStatementTypeSet;
     }
         
@@ -306,7 +306,7 @@ public:
 
         static constexpr ptrdiff_t offsetOfAsString() { return OBJECT_OFFSETOF(RareData, m_asString); }
 
-        RefPtr<TypeSet> m_returnStatementTypeSet;
+        const RefPtr<TypeSet> m_returnStatementTypeSet;
         Markable<int> m_overrideLineNumber;
         unsigned m_parametersStartOffset { 0 };
         WriteBarrierStructureID m_cachedPolyProtoStructureID;

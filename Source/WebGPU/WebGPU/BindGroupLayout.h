@@ -184,7 +184,7 @@ private:
     const size_t m_sizeOfVertexDynamicOffsets { 0 };
     const size_t m_sizeOfFragmentDynamicOffsets { 0 };
     const size_t m_sizeOfComputeDynamicOffsets { 0 };
-    Ref<const Device> m_device;
+    const Ref<const Device> m_device;
     // Identifier of the auto-generated PipelineLayout which produced this layout, i.e. the WebGPU
     // [[exclusivePipeline]] slot. Not a WeakPtr: that PipelineLayout can be destroyed while a BindGroup
     // still references this layout, and a decayed pointer would make unrelated auto-generated layouts

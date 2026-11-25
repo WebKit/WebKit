@@ -988,7 +988,7 @@ public:
     void* m_jitData { nullptr };
 private:
 #endif
-    RefPtr<MetadataTable> m_metadata;
+    const RefPtr<MetadataTable> m_metadata;
 #if ENABLE(DFG_JIT)
     // This is relevant to non-DFG code blocks that serve as the profiled code block
     // for DFG code blocks.

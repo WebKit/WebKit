@@ -323,7 +323,7 @@ void AudioSession::setIsPlayingToBluetoothOverride(std::optional<bool>)
 Logger& AudioSession::logger()
 {
     if (!m_logger)
-        m_logger = Logger::create(this);
+        lazyInitialize(m_logger, Logger::create(this));
 
     return *m_logger;
 }

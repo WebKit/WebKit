@@ -103,7 +103,7 @@ private:
     RenderBundle(Device&, NSString*);
 
     const Ref<Device> m_device;
-    RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
+    const RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
     NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
     Vector<WebGPU::Metal::BindableResources> m_resources;
     const Vector<std::optional<WebGPU::TextureFormat>> m_colorFormats;

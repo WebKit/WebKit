@@ -227,14 +227,14 @@ bool FilterImage::knownToBeOpaque(const RenderElement&) const
 
 bool FilterImage::canDrawAtSize(const RenderElement& renderer, const FloatSize& size) const
 {
-    return !size.isEmpty() && m_image && protect(m_image)->canDrawAtSize(renderer, size);
+    return !size.isEmpty() && m_image && m_image->canDrawAtSize(renderer, size);
 }
 
 DecodingMode FilterImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
 {
     if (!m_image)
         return Image::decodingModeForImageDraw(renderer, paintInfo);
-    return protect(m_image)->decodingModeForImageDraw(renderer, paintInfo);
+    return m_image->decodingModeForImageDraw(renderer, paintInfo);
 }
 
 InterpolationQuality FilterImage::interpolationQualityForImageDraw(GraphicsContext& context, const RenderElement& renderer, ConcreteObjectSize, const void* layer, const LayoutSize& size) const
@@ -244,7 +244,7 @@ InterpolationQuality FilterImage::interpolationQualityForImageDraw(GraphicsConte
 
 bool FilterImage::containsCurrentColor() const
 {
-    return (m_image && protect(m_image)->containsCurrentColor())
+    return (m_image && m_image->containsCurrentColor())
         || m_filter.hasFilterThatRequiresRepaintForCurrentColorChange();
 }
 

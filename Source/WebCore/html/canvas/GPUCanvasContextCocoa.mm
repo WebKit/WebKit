@@ -319,11 +319,11 @@ void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenPropertiesIfNeeded()
         headroom = gatherScreenHeadroom();
     else {
         if (!m_offMainThreadScreenHeadroom)
-            m_offMainThreadScreenHeadroom = GPUOffMainThreadScreenHeadroom::create();
+            lazyInitialize(m_offMainThreadScreenHeadroom, GPUOffMainThreadScreenHeadroom::create());
         RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();
         if (!scriptExecutionContext)
             return;
-        auto cachedHeadroom = protect(m_offMainThreadScreenHeadroom)->read([contextIdentifier = scriptExecutionContext->identifier(), weakThis = WeakPtr { *this }](ScreenHeadroom headroom) mutable {
+        auto cachedHeadroom = m_offMainThreadScreenHeadroom->read([contextIdentifier = scriptExecutionContext->identifier(), weakThis = WeakPtr { *this }](ScreenHeadroom headroom) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [weakThis = WTF::move(weakThis), headroom](ScriptExecutionContext&) {
                 if (RefPtr protectedThis = weakThis.get())
                     protectedThis->updateScreenHeadroom(headroom.maxEDRHeadroom, headroom.suppressEDR);

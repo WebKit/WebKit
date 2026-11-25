@@ -131,7 +131,7 @@ private:
 
     const Ref<Device> m_device;
     Vector<BindableResources> m_resources;
-    RefPtr<const BindGroupLayout> m_bindGroupLayout;
+    const RefPtr<const BindGroupLayout> m_bindGroupLayout;
     DynamicBuffersContainer m_dynamicBuffers;
     HashMap<uint32_t, uint32_t> m_dynamicOffsetsIndices;
     mutable HashMap<uint64_t, uint32_t> m_validatedBindGroup;

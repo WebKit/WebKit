@@ -269,7 +269,7 @@ private:
     void derefEventTarget() override { deref(); }
 
 #if !RELEASE_LOG_DISABLED
-    mutable Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
 #endif
 

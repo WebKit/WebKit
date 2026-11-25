@@ -88,7 +88,7 @@ public:
 private:
     static unsigned s_nextId;
 
-    RefPtr<Process> m_process;
+    const RefPtr<Process> m_process;
     TaskHandle m_corpseHandle;
     unsigned m_id;
 

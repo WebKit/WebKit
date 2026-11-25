@@ -59,9 +59,9 @@ RemoteInspectorSocketEndpoint::RemoteInspectorSocketEndpoint()
         m_wakeupReceiveSocket = sockets->at(1);
     }
 
-    m_workerThread = Thread::create("SocketEndpoint"_s, [this] {
+    lazyInitialize(m_workerThread, Thread::create("SocketEndpoint"_s, [this] {
         workerThread();
-    });
+    }));
 }
 
 RemoteInspectorSocketEndpoint::~RemoteInspectorSocketEndpoint()

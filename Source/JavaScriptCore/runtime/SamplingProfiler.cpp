@@ -340,9 +340,9 @@ void SamplingProfiler::createThreadIfNecessary()
         return;
 
     RefPtr<SamplingProfiler> profiler = this;
-    m_thread = Thread::create("jsc.sampling-profiler.thread"_s, [profiler] {
+    lazyInitialize(m_thread, Thread::create("jsc.sampling-profiler.thread"_s, [profiler] {
         profiler->timerLoop();
-    });
+    }));
 }
 
 void SamplingProfiler::timerLoop()

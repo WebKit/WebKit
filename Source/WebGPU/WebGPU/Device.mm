@@ -389,7 +389,7 @@ RefPtr<WebGPU::Instance> Device::instance() const
 
 RefPtr<XRSubImage> Device::getXRViewSubImage(XRProjectionLayer& projectionLayer)
 {
-    protect(m_xrSubImage)->update(projectionLayer);
+    m_xrSubImage->update(projectionLayer);
     return m_xrSubImage;
 }
 

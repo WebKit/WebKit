@@ -120,10 +120,10 @@ private:
         NetworkLoadParameters parameters;
         parameters.request = WTF::move(request);
         parameters.webPageProxyID = pageID;
-        m_load = NetworkLoad::create(*this, WTF::move(parameters), session);
+        lazyInitialize(m_load, NetworkLoad::create(*this, WTF::move(parameters), session));
     }
 
-    void start() { protect(m_load)->start(); }
+    void start() { m_load->start(); }
 
     bool isSynchronous() const final { return false; }
     bool isAllowedToAskUserForCredentials() const final { return true; }
@@ -134,7 +134,7 @@ private:
     {
         if (m_buffer.size() > m_maximumBytesFromNetwork || buffer.size() > m_maximumBytesFromNetwork - m_buffer.size()) {
             Ref protectedThis { *this };
-            protect(m_load)->cancel();
+            m_load->cancel();
             complete(makeUnexpected(imageDataExceedsMaximumSizeError(m_url)));
             return;
         }
@@ -155,7 +155,7 @@ private:
     RefPtr<ImageDecoderLoad> m_selfReference;
     const URL m_url;
     const size_t m_maximumBytesFromNetwork;
-    RefPtr<NetworkLoad> m_load;
+    const RefPtr<NetworkLoad> m_load;
     CompletionHandler<void(std::expected<Ref<FragmentedSharedBuffer>, ResourceError>&&)> m_completionHandler;
     SharedBufferBuilder m_buffer;
 };

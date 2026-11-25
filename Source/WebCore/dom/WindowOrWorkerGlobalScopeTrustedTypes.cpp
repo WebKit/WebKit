@@ -54,7 +54,7 @@ private:
     static WTF::ASCIILiteral supplementName() { return "DOMWindowTrustedTypes"_s; }
     bool isDOMWindowTrustedTypes() const final { return true; }
 
-    mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
+    const RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMWindowTrustedTypes);
@@ -78,7 +78,7 @@ DOMWindowTrustedTypes* DOMWindowTrustedTypes::from(LocalDOMWindow& window)
 TrustedTypePolicyFactory* DOMWindowTrustedTypes::trustedTypes() const
 {
     if (!m_trustedTypes)
-        m_trustedTypes = TrustedTypePolicyFactory::create(*window()->document());
+        lazyInitialize(m_trustedTypes, TrustedTypePolicyFactory::create(*window()->document()));
     return m_trustedTypes.get();
 }
 

@@ -300,11 +300,11 @@ namespace JSC {
         void finalize(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, unsigned bodyBytecodeEndOffset);
 
     private:
-        RefPtr<RegisterID> m_localRegister;
-        RefPtr<RegisterID> m_propertyName;
-        RefPtr<RegisterID> m_propertyOffset;
-        RefPtr<RegisterID> m_enumerator;
-        RefPtr<RegisterID> m_mode;
+        const RefPtr<RegisterID> m_localRegister;
+        const RefPtr<RegisterID> m_propertyName;
+        const RefPtr<RegisterID> m_propertyOffset;
+        const RefPtr<RegisterID> m_enumerator;
+        const RefPtr<RegisterID> m_mode;
         std::optional<Variable> m_baseVariable;
         bool m_isValid { true };
         unsigned m_bodyBytecodeStartOffset;

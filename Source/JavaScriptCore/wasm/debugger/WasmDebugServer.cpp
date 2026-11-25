@@ -173,7 +173,7 @@ bool DebugServer::createAndBindServerSocket()
 
 void DebugServer::startAcceptThread()
 {
-    m_acceptThread = WTF::Thread::create("WasmDebugServer", [this]() {
+    lazyInitialize(m_acceptThread, WTF::Thread::create("WasmDebugServer", [this] {
         m_executionHandler->setDebugServerThreadId(Thread::currentSingleton().uid());
 
         while (isInService()) {
@@ -188,7 +188,7 @@ void DebugServer::startAcceptThread()
                 dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Accept failed, continuing...");
         }
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Accept thread exiting");
-    });
+    }));
 }
 
 void DebugServer::closeSocket(SocketType& socket)

@@ -60,7 +60,7 @@ private:
     RefPtr<VideoInfo> m_videoInfo WTF_GUARDED_BY_CAPABILITY(queue());
     RetainPtr<CMVideoFormatDescriptionRef> m_format WTF_GUARDED_BY_CAPABILITY(queue());
     RefPtr<VideoDecoderVTBSession> m_decoder WTF_GUARDED_BY_CAPABILITY(queue());
-    RefPtr<GPUVideoDecoderVTBQueue> m_queue WTF_GUARDED_BY_CAPABILITY(queue());
+    const RefPtr<GPUVideoDecoderVTBQueue> m_queue WTF_GUARDED_BY_CAPABILITY(queue());
     uint8_t m_reorderQueueMaxSize WTF_GUARDED_BY_CAPABILITY(queue()) { 0 };
 };
 

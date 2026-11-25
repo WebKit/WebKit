@@ -21483,7 +21483,7 @@ Logger& WebPageProxy::logger()
 {
     if (!m_logger) {
         Ref logger = Logger::create(this);
-        m_logger = logger.copyRef();
+        lazyInitialize(m_logger, logger.copyRef());
         // FIXME: Does this really need to be disabled in ephemeral sessions?
         logger->setEnabled(this, isAlwaysOnLoggingAllowed());
     }

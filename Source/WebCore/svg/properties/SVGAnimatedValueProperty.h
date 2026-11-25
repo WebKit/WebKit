@@ -43,7 +43,7 @@ public:
 
     ~SVGAnimatedValueProperty()
     {
-        protect(m_baseVal)->detach();
+        m_baseVal->detach();
         if (m_animVal)
             protect(m_animVal)->detach();
     }
@@ -51,15 +51,13 @@ public:
     // Used by SVGElement::parseAttribute().
     void setBaseValInternal(const ValueType& baseVal)
     {
-        protect(m_baseVal)->setValue(baseVal);
+        m_baseVal->setValue(baseVal);
         if (m_animVal)
             protect(m_animVal)->setValue(baseVal);
     }
 
     // Used by the DOM.
     const Ref<PropertyType>& baseVal() const { return m_baseVal; }
-
-    Ref<PropertyType>& baseVal() { return m_baseVal; }
 
     // Used by SVGAnimator::progress.
     void setAnimVal(const ValueType& animVal)
@@ -75,7 +73,7 @@ public:
     PropertyType& animVal() { return ensureAnimVal(); }
 
     // Used when committing a change from the SVGAnimatedProperty to the attribute.
-    String baseValAsString() const override { return protect(m_baseVal)->valueAsString(); }
+    String baseValAsString() const override { return m_baseVal->valueAsString(); }
 
     // Used to apply the SVGAnimator change to the target element.
     String animValAsString() const override
@@ -87,7 +85,7 @@ public:
     // Managing the relationship with the owner.
     void setDirty() override { m_baseVal->setDirty(); }
     bool isDirty() const override { return m_baseVal->isDirty(); }
-    std::optional<String> synchronize() override { return protect(m_baseVal)->synchronize(); }
+    std::optional<String> synchronize() override { return m_baseVal->synchronize(); }
 
     // Used by RenderSVGElements and DumpRenderTree.
     const ValueType& currentValue() const LIFETIME_BOUND
@@ -172,7 +170,7 @@ protected:
         Base::commitPropertyChange(property);
     }
 
-    Ref<PropertyType> m_baseVal;
+    const Ref<PropertyType> m_baseVal;
     mutable RefPtr<PropertyType> m_animVal;
 };
 

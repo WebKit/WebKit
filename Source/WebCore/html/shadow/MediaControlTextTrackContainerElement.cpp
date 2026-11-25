@@ -609,7 +609,7 @@ VTTCue& MediaControlTextTrackContainerElement::ensurePreviewCue() const
 const Logger& MediaControlTextTrackContainerElement::logger() const
 {
     if (!m_logger)
-        m_logger = protect(document())->logger();
+        lazyInitialize(m_logger, Ref { protect(document())->logger() });
 
     return *m_logger;
 }

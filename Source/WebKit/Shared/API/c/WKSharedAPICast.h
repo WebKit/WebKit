@@ -173,7 +173,7 @@ public:
     operator APIType() { return toAPI(m_impl.get()); }
 
 private:
-    RefPtr<ImplType> m_impl;
+    const RefPtr<ImplType> m_impl;
 };
 
 /* Special cases. */

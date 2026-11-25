@@ -354,7 +354,7 @@ private:
     // Shared, so that the callback stays alive while it runs even if it replaces itself or loses the device.
     RefPtr<SharedTask<void(WebGPU::Error&&)>> m_uncapturedErrorCallback;
     Vector<ErrorScope> m_errorScopeStack;
-    RefPtr<XRSubImage> m_xrSubImage;
+    const RefPtr<XRSubImage> m_xrSubImage;
 
     CompletionHandler<void(WebGPU::DeviceLostReason, String&&)> m_deviceLostCallback;
     bool m_isLost { false };

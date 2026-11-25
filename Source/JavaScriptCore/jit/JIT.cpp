@@ -749,10 +749,10 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
     }
     if (m_vm->m_perBytecodeProfiler) [[unlikely]] {
         // FIXME: build profiler disassembler off UnlinkedCodeBlock.
-        m_compilation = adoptRef(
-            new Profiler::Compilation(
+        lazyInitialize(m_compilation, adoptRef(
+            *new Profiler::Compilation(
                 m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_profiledCodeBlock),
-                Profiler::Baseline));
+                Profiler::Baseline)));
         m_compilation->addProfiledBytecodes(*m_vm->m_perBytecodeProfiler, m_profiledCodeBlock);
     }
     

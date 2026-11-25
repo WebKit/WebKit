@@ -238,7 +238,7 @@ PerformanceNavigation& Performance::navigation()
     ASSERT(isMainThread());
 
     if (!m_navigation)
-        m_navigation = PerformanceNavigation::create(protect(downcast<Document>(*scriptExecutionContext()).window()));
+        lazyInitialize(m_navigation, PerformanceNavigation::create(protect(downcast<Document>(*scriptExecutionContext()).window())));
     return *m_navigation;
 }
 
@@ -248,7 +248,7 @@ PerformanceTiming& Performance::timing()
     ASSERT(isMainThread());
 
     if (!m_timing)
-        m_timing = PerformanceTiming::create(protect(downcast<Document>(*scriptExecutionContext()).window()));
+        lazyInitialize(m_timing, PerformanceTiming::create(protect(downcast<Document>(*scriptExecutionContext()).window())));
     return *m_timing;
 }
 

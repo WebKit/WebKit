@@ -715,7 +715,7 @@ uint32_t BindGroupLayout::storageTexturesPerStage(ShaderStage shaderStage) const
 
 BindGroupLayout::~BindGroupLayout()
 {
-    protect(m_device)->removeCachedBindGroupLayout(*this);
+    m_device->removeCachedBindGroupLayout(*this);
 }
 
 void BindGroupLayout::setLabel(String&& label)

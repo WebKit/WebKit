@@ -43,8 +43,8 @@ public:
     void reset();
     void resetContextElement() { m_contextElement = nullptr; }
 
-    String transformString() const { return protect(m_transform)->valueAsString(); }
-    Ref<SVGTransformList>& transform() { return m_transform; }
+    String transformString() const { return m_transform->valueAsString(); }
+    const Ref<SVGTransformList>& transform() { return m_transform; }
 
     SVGElement* contextElementConcurrently() const { return m_contextElement; }
 
@@ -54,7 +54,7 @@ private:
     explicit SVGViewSpec(SVGElement&);
 
     WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_contextElement;
-    Ref<SVGTransformList> m_transform;
+    const Ref<SVGTransformList> m_transform;
 };
 
 } // namespace WebCore

@@ -124,7 +124,7 @@ private:
     const AtomString m_name;
     const Kind m_value;
     const IsAttrTainted m_isAttrTainted { IsAttrTainted::No };
-    mutable RefPtr<CSSVariableData> m_cachedTokens;
+    const RefPtr<CSSVariableData> m_cachedTokens;
 };
 
 inline Ref<const CustomProperty> CustomProperty::createForGuaranteedInvalid(const AtomString& name)

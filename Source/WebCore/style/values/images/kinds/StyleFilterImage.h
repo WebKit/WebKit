@@ -84,7 +84,7 @@ private:
 
     RefPtr<ImageBuffer> resolvedImage(const RenderElement&, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const;
 
-    RefPtr<Image> m_image;
+    const RefPtr<Image> m_image;
     Filter m_filter;
 
     // FIXME: Rather than caching and tracking the input image via WebCore::CachedImages, we should

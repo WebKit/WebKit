@@ -214,7 +214,7 @@ private:
     template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&);
     template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&) const;
 
-    RefPtr<ArrayBuffer> m_buffer;
+    const RefPtr<ArrayBuffer> m_buffer;
 };
 
 ArrayBufferView::~ArrayBufferView()

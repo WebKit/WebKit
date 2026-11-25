@@ -174,7 +174,7 @@ protected:
     NODELETE WTFLogChannel& logChannel() const;
     uint64_t logIdentifier() const { return 0; }
 
-    mutable RefPtr<Logger> m_logger;
+    const RefPtr<Logger> m_logger;
 
     WeakPtr<AudioSessionRoutingArbitrationClient> m_routingArbitrationClient;
     AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };

@@ -159,7 +159,7 @@ ICStats::ICStats()
         stats.dumpChains();
     });
 
-    m_thread = Thread::create(
+    lazyInitialize(m_thread, Thread::create(
         "JSC ICStats"_s,
         [this] () {
             Locker locker { m_lock };
@@ -185,7 +185,7 @@ ICStats::ICStats()
                 }
                 dumpChains();
             }
-        });
+        }));
 }
 
 ICStats::~ICStats()

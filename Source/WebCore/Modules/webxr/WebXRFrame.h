@@ -127,10 +127,10 @@ private:
     DOMHighResTimeStamp m_time { 0 };
     const Ref<WebXRSession> m_session;
 #if ENABLE(WEBXR_PLANE_DETECTION)
-    RefPtr<WebXRPlaneSet> m_detectedPlanes;
+    const RefPtr<WebXRPlaneSet> m_detectedPlanes;
 #endif
 #if ENABLE(WEBXR_ANCHORS)
-    RefPtr<WebXRAnchorSet> m_trackedAnchors;
+    const RefPtr<WebXRAnchorSet> m_trackedAnchors;
 #endif
 };
 

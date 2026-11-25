@@ -189,7 +189,7 @@ protected:
     PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };
     PlatformSocketType m_wakeupReceiveSocket { INVALID_SOCKET_VALUE };
 
-    RefPtr<Thread> m_workerThread;
+    const RefPtr<Thread> m_workerThread;
     std::atomic<bool> m_shouldAbortWorkerThread { false };
 };
 

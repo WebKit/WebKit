@@ -64,8 +64,8 @@ private:
     void setMediaQueries(MQ::MediaQueryList&&);
 
     const Ref<StyleRuleImport> m_importRule;
-    mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
-    mutable RefPtr<CSSStyleSheet> m_styleSheetCSSOMWrapper;
+    const RefPtr<MediaList> m_mediaCSSOMWrapper;
+    const RefPtr<CSSStyleSheet> m_styleSheetCSSOMWrapper;
 };
 
 } // namespace WebCore

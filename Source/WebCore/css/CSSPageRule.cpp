@@ -53,7 +53,7 @@ CSSPageRule::~CSSPageRule()
 CSSPageDescriptors& CSSPageRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = CSSPageDescriptors::create(protect(protect(m_pageRule)->mutableProperties()), protect(*this));
+        lazyInitialize(m_propertiesCSSOMWrapper, CSSPageDescriptors::create(protect(protect(m_pageRule)->mutableProperties()), protect(*this)));
     return *m_propertiesCSSOMWrapper;
 }
 
@@ -90,7 +90,7 @@ void CSSPageRule::reattach(StyleRuleBase& rule)
 {
     m_pageRule = downcast<StyleRulePage>(rule);
     if (m_propertiesCSSOMWrapper)
-        protect(m_propertiesCSSOMWrapper)->reattach(protect(m_pageRule.get().mutableProperties()));
+        m_propertiesCSSOMWrapper->reattach(protect(m_pageRule.get().mutableProperties()));
 }
 
 } // namespace WebCore

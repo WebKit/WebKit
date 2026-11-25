@@ -42,7 +42,7 @@ public:
     TypeLocation();
 
     GlobalVariableID m_globalVariableID;
-    RefPtr<TypeSet> m_instructionTypeSet;
+    const RefPtr<TypeSet> m_instructionTypeSet;
     RefPtr<TypeSet> m_globalTypeSet;
     SourceID m_sourceID;
     unsigned m_divotStart;

@@ -56,7 +56,7 @@ private:
     NODELETE const MQ::MediaQueryList& mediaQueries() const;
     void setMediaQueries(MQ::MediaQueryList&&);
 
-    mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
+    const RefPtr<MediaList> m_mediaCSSOMWrapper;
 };
 
 } // namespace WebCore

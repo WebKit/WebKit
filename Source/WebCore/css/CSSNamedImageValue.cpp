@@ -58,7 +58,7 @@ RefPtr<Style::Image> CSSNamedImageValue::createStyleImage(const Style::BuilderSt
     if (m_cachedStyleImage)
         return m_cachedStyleImage;
 
-    m_cachedStyleImage = Style::NamedImage::create(Style::toStyle(m_name, state));
+    lazyInitialize(m_cachedStyleImage, Style::NamedImage::create(Style::toStyle(m_name, state)));
     return m_cachedStyleImage;
 }
 

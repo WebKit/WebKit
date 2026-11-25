@@ -71,7 +71,7 @@ protected:
 
     void finishCreation(VM&);
 
-    Ref<const Wasm::Tag> m_tag;
+    const Ref<const Wasm::Tag> m_tag;
     Payload m_payload;
 };
 

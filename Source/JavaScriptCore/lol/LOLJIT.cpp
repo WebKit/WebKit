@@ -112,11 +112,11 @@ RefPtr<BaselineJITCode> LOLJIT::compileAndLinkWithoutFinalizing(JITCompilationEf
 
     if (m_vm->m_perBytecodeProfiler) [[unlikely]] {
         // FIXME: build profiler disassembler off UnlinkedCodeBlock.
-        m_compilation = adoptRef(
-            new Profiler::Compilation(
+        lazyInitialize(m_compilation, adoptRef(
+            *new Profiler::Compilation(
                 m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_profiledCodeBlock),
-                Profiler::Baseline));
-        Ref(*m_compilation)->addProfiledBytecodes(*m_vm->m_perBytecodeProfiler, m_profiledCodeBlock);
+                Profiler::Baseline)));
+        m_compilation->addProfiledBytecodes(*m_vm->m_perBytecodeProfiler, m_profiledCodeBlock);
     }
 
     m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(BytecodeIndex(0)));
@@ -293,7 +293,7 @@ void LOLJIT::privateCompileMainPass()
             JIT_COMMENT(*this, "Execution trace start");
             add64(
                 TrustedImm32(1),
-                AbsoluteAddress(Ref(*m_compilation)->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
+                AbsoluteAddress(m_compilation->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
                     m_compilation->bytecodes(), m_bytecodeIndex)))->address()));
             JIT_COMMENT(*this, "First non-trace instruction");
         }

@@ -879,7 +879,7 @@ namespace JSC {
         Label m_arityCheck;
 
         std::unique_ptr<JITDisassembler> m_disassembler;
-        RefPtr<Profiler::Compilation> m_compilation;
+        const RefPtr<Profiler::Compilation> m_compilation;
 
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
 

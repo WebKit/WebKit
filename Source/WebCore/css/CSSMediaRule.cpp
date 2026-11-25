@@ -80,7 +80,7 @@ String CSSMediaRule::conditionText() const
 MediaList& CSSMediaRule::media() const
 {
     if (!m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSMediaRule*>(this));
+        lazyInitialize(m_mediaCSSOMWrapper, MediaList::create(const_cast<CSSMediaRule*>(this)));
     return *m_mediaCSSOMWrapper;
 }
 

@@ -502,7 +502,7 @@ private:
     friend class CachedTDZEnvironmentLink;
 
     CompactTDZEnvironmentMap::Handle m_handle;
-    RefPtr<TDZEnvironmentLink> m_parent;
+    const RefPtr<TDZEnvironmentLink> m_parent;
 };
 
 } // namespace JSC

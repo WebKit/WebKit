@@ -467,7 +467,7 @@ ExceptionOr<Ref<WebXRPlaneSet>> WebXRFrame::detectedPlanes()
         return Exception { ExceptionCode::InvalidStateError, "Frame is not active"_s };
 
     if (!m_detectedPlanes)
-        m_detectedPlanes = WebXRPlaneSet::create(m_session->detectedPlanes());
+        lazyInitialize(m_detectedPlanes, WebXRPlaneSet::create(m_session->detectedPlanes()));
     return Ref { *m_detectedPlanes };
 }
 #endif
@@ -554,7 +554,7 @@ ExceptionOr<Ref<WebXRAnchorSet>> WebXRFrame::trackedAnchors()
             if (RefPtr anchor = m_session->anchor(identifier))
                 anchors.append(anchor.releaseNonNull());
         }
-        m_trackedAnchors = WebXRAnchorSet::create(WTF::move(anchors));
+        lazyInitialize(m_trackedAnchors, WebXRAnchorSet::create(WTF::move(anchors)));
     }
     return Ref { *m_trackedAnchors };
 }

@@ -2744,7 +2744,7 @@ private:
 #endif
 
     const std::unique_ptr<OrientationNotifier> m_orientationNotifier;
-    mutable RefPtr<Logger> m_logger;
+    const RefPtr<Logger> m_logger;
 
     RefPtr<DocumentTimeline> m_timeline;
     const std::unique_ptr<AnimationTimelinesController> m_timelinesController;
@@ -2802,7 +2802,7 @@ private:
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_renderBlockingElements;
 
-    RefPtr<DeferredFetchRegistry> m_deferredFetchRegistry;
+    const RefPtr<DeferredFetchRegistry> m_deferredFetchRegistry;
     const RefPtr<ReportingScope> m_reportingScope;
 
     const std::unique_ptr<WakeLockManager> m_wakeLockManager;
@@ -3012,7 +3012,7 @@ private:
     const RefPtr<ResourceMonitor> m_resourceMonitor;
 #endif
 
-    mutable RefPtr<CSSCalc::RandomCachingKeyMap> m_randomCachingKeyMap;
+    const RefPtr<CSSCalc::RandomCachingKeyMap> m_randomCachingKeyMap;
 
     const Ref<DocumentSyncData> m_syncData;
 

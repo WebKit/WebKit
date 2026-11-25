@@ -186,7 +186,7 @@ CSSStyleSheet::~CSSStyleSheet()
             m_childRuleCSSOMWrappers[i]->setParentStyleSheet(nullptr);
     }
     if (m_mediaCSSOMWrapper)
-        protect(m_mediaCSSOMWrapper)->detachFromParent();
+        m_mediaCSSOMWrapper->detachFromParent();
 
     protect(m_contents)->unregisterClient(this);
 }
@@ -496,9 +496,8 @@ bool CSSStyleSheet::isLoading() const
 
 MediaList* CSSStyleSheet::media() const 
 {
-    if (!m_mediaCSSOMWrapper) {
-        m_mediaCSSOMWrapper = MediaList::create(const_cast<CSSStyleSheet*>(this));
-    }
+    if (!m_mediaCSSOMWrapper)
+        lazyInitialize(m_mediaCSSOMWrapper, MediaList::create(const_cast<CSSStyleSheet*>(this)));
     return m_mediaCSSOMWrapper.get();
 }
 

@@ -463,22 +463,22 @@ private:
     WeakHashSet<LocalDOMWindowObserver> m_observers;
 
     mutable RefPtr<Crypto> m_crypto;
-    mutable RefPtr<History> m_history;
-    mutable RefPtr<BarProp> m_locationbar;
-    mutable RefPtr<StyleMedia> m_media;
-    mutable RefPtr<BarProp> m_menubar;
+    const RefPtr<History> m_history;
+    const RefPtr<BarProp> m_locationbar;
+    const RefPtr<StyleMedia> m_media;
+    const RefPtr<BarProp> m_menubar;
     mutable RefPtr<Navigator> m_navigator;
-    mutable RefPtr<BarProp> m_personalbar;
-    mutable RefPtr<Scheduler> m_scheduler;
-    mutable RefPtr<Screen> m_screen;
-    mutable RefPtr<BarProp> m_scrollbars;
-    mutable RefPtr<DOMSelection> m_selection;
-    mutable RefPtr<BarProp> m_statusbar;
-    mutable RefPtr<BarProp> m_toolbar;
-    mutable RefPtr<Viewport> m_viewport;
-    mutable RefPtr<VisualViewport> m_visualViewport;
-    mutable RefPtr<Navigation> m_navigation;
-    mutable RefPtr<CloseWatcherManager> m_closeWatcherManager;
+    const RefPtr<BarProp> m_personalbar;
+    const RefPtr<Scheduler> m_scheduler;
+    const RefPtr<Screen> m_screen;
+    const RefPtr<BarProp> m_scrollbars;
+    const RefPtr<DOMSelection> m_selection;
+    const RefPtr<BarProp> m_statusbar;
+    const RefPtr<BarProp> m_toolbar;
+    const RefPtr<Viewport> m_viewport;
+    const RefPtr<VisualViewport> m_visualViewport;
+    const RefPtr<Navigation> m_navigation;
+    const RefPtr<CloseWatcherManager> m_closeWatcherManager;
 
     // Equivalent to the list of PerformanceEventTiming objects mentioned in https://www.w3.org/TR/event-timing/#sec-modifications-HTML :
     Vector<PerformanceEventTimingCandidate, 6> m_performanceEventTimingCandidates;
@@ -517,8 +517,8 @@ private:
     uint64_t m_gamepadEventListenerCount { 0 };
 #endif
 
-    mutable RefPtr<Storage> m_sessionStorage;
-    mutable RefPtr<Storage> m_localStorage;
+    const RefPtr<Storage> m_sessionStorage;
+    const RefPtr<Storage> m_localStorage;
 
     mutable RefPtr<Performance> m_performance;
 
@@ -545,7 +545,7 @@ private:
     bool m_mayReuseForNavigation { true };
     bool m_isStopping { false };
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    mutable RefPtr<WebKitNamespace> m_webkitNamespace;
+    const RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif
 
     const RefPtr<CookieStore> m_cookieStore;

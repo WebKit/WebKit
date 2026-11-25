@@ -52,7 +52,7 @@ private:
     explicit CSSNamedImageValue(CSS::CustomIdent&&);
 
     CSS::CustomIdent m_name;
-    mutable RefPtr<Style::Image> m_cachedStyleImage;
+    const RefPtr<Style::Image> m_cachedStyleImage;
 };
 
 } // namespace WebCore

@@ -486,7 +486,7 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
     std::unique_ptr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;
-    RefPtr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
+    const RefPtr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
 #endif
 
     const Ref<WatchpointSet> m_masqueradesAsUndefinedWatchpointSet;
@@ -681,7 +681,7 @@ public:
 
     const Ref<ImportMap> m_importMap;
 
-    Ref<SymbolImpl> m_intlLegacyConstructedSymbol;
+    const Ref<SymbolImpl> m_intlLegacyConstructedSymbol;
 
     HashMap<String, JSCJSGlobalObjectSignpostIdentifier> m_signposts;
 

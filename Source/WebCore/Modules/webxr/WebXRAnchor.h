@@ -65,7 +65,7 @@ private:
 
     WeakPtr<WebXRSession> m_session;
     PlatformXR::AnchorIdentifier m_identifier;
-    RefPtr<WebXRAnchorSpace> m_anchorSpace;
+    const RefPtr<WebXRAnchorSpace> m_anchorSpace;
     bool m_deleted { false };
 };
 

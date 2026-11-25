@@ -4650,7 +4650,7 @@ private:
 
     WeakHashSet<WebViewDidMoveToWindowObserver> m_webViewDidMoveToWindowObservers;
 
-    mutable RefPtr<Logger> m_logger;
+    const RefPtr<Logger> m_logger;
 
     RefPtr<SpeechRecognitionPermissionManager> m_speechRecognitionPermissionManager;
 

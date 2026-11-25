@@ -213,7 +213,7 @@ protected:
     Attributes m_attributes;
 
 #if ENABLE(MATHML)
-    mutable RefPtr<OpenTypeMathData> m_mathData;
+    const RefPtr<OpenTypeMathData> m_mathData;
 #endif
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> m_verticalData;

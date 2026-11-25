@@ -3,7 +3,6 @@ API/JSCallbackConstructor.cpp
 API/JSCallbackObject.h
 API/JSCallbackObjectFunctions.h
 API/JSClassRef.cpp
-API/JSContextRef.cpp
 API/JSObjectRef.cpp
 API/JSScript.mm
 API/JSTypedArray.cpp
@@ -19,7 +18,6 @@ bytecode/BytecodeDumper.cpp
 bytecode/CallLinkInfo.cpp
 bytecode/CodeBlock.cpp
 bytecode/CodeBlockHash.cpp
-bytecode/CodeBlockInlines.h
 bytecode/DirectEvalCodeCache.h
 bytecode/GetByStatus.cpp
 bytecode/InByStatus.cpp
@@ -80,7 +78,6 @@ inspector/agents/InspectorScriptProfilerAgent.cpp
 interpreter/Interpreter.cpp
 jit/BaselineJITPlan.cpp
 jit/GCAwareJITStubRoutine.cpp
-jit/ICStats.cpp
 jit/JIT.cpp
 jit/JITSafepoint.cpp
 jit/JITWorklist.cpp
@@ -94,7 +91,6 @@ parser/UnlinkedSourceCode.cpp
 parser/UnlinkedSourceCode.h
 profiler/ProfilerDatabase.cpp
 profiler/ProfilerEvent.cpp
-runtime/ArrayBufferView.cpp
 runtime/AtomicsObject.cpp
 runtime/CacheableIdentifierInlines.h
 runtime/CodeCache.cpp
@@ -141,8 +137,6 @@ wasm/WasmCalleeGroup.cpp
 wasm/WasmEntryPlan.cpp
 wasm/WasmFunctionParser.h
 wasm/WasmIPIntPlan.cpp
-wasm/WasmIPIntSlowPaths.cpp
-wasm/WasmMemory.cpp
 wasm/WasmOMGIRGenerator.cpp
 wasm/WasmOMGPlan.cpp
 wasm/WasmOSREntryPlan.cpp

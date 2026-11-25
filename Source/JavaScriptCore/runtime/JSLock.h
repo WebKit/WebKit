@@ -119,7 +119,7 @@ public:
 
     private:
         intptr_t m_droppedLockCount;
-        RefPtr<VM> m_vm;
+        const RefPtr<VM> m_vm;
         unsigned m_dropDepth;
     };
 

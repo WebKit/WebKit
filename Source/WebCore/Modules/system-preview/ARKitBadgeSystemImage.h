@@ -67,7 +67,7 @@ private:
     {
     }
 
-    RefPtr<NativeImage> m_nativeImage;
+    const RefPtr<NativeImage> m_nativeImage;
 };
 
 } // namespace WebCore

@@ -94,7 +94,7 @@ private:
     StyleRuleType styleRuleType() const final { return StyleRuleType::Keyframe; }
 
     const Ref<StyleRuleKeyframe> m_keyframe;
-    mutable RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
+    const RefPtr<StyleRuleCSSStyleProperties> m_propertiesCSSOMWrapper;
     
     friend class CSSKeyframesRule;
 };

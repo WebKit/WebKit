@@ -45,7 +45,7 @@ protected:
     }
 
 private:
-    Ref<EmbedderArrayLike> m_embeddedArrayLike;
+    const Ref<EmbedderArrayLike> m_embeddedArrayLike;
 };
 
 } // namespace JSC

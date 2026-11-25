@@ -143,7 +143,7 @@ private:
 #if HAVE(SUPPORT_HDR_DISPLAY)
     using ScreenPropertiesChangedObserver = Observer<void(PlatformDisplayID)>;
     const RefPtr<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
-    RefPtr<GPUOffMainThreadScreenHeadroom> m_offMainThreadScreenHeadroom;
+    const RefPtr<GPUOffMainThreadScreenHeadroom> m_offMainThreadScreenHeadroom;
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
     float m_currentEDRHeadroom { 1 };
     float m_screenEDRHeadroom { 0.f };

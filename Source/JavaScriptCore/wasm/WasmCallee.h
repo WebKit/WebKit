@@ -525,7 +525,7 @@ private:
     const uint8_t* m_bytecodeEnd;
     Vector<uint8_t> m_metadata;
     Vector<uint8_t> m_localInitBytecode;
-    RefPtr<const RTT> m_signatureRTT;
+    const RefPtr<const RTT> m_signatureRTT;
     Vector<FunctionSpaceIndex> m_callTargets;
     HotLocals m_hotLocals;
 

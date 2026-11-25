@@ -102,7 +102,7 @@ RefPtr<Style::Image> CSSGradientValue::createStyleImage(const Style::BuilderStat
         Style::toStyle(m_gradient, state)
     );
     if (!CSS::styleImageIsUncacheable(m_gradient))
-        m_cachedStyleImage = styleImage.ptr();
+        lazyInitialize(m_cachedStyleImage, styleImage.copyRef());
 
     return styleImage;
 }

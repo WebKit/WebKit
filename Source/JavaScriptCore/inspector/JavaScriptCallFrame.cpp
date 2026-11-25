@@ -44,7 +44,7 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
     if (!debuggerCallerFrame)
         return nullptr;
 
-    m_caller = create(debuggerCallerFrame.releaseNonNull());
+    lazyInitialize(m_caller, create(debuggerCallerFrame.releaseNonNull()));
     return m_caller.get();
 }
 

@@ -112,7 +112,7 @@ private:
     uint64_t logIdentifier() const final;
     WTFLogChannel& logChannel() const final;
     ASCIILiteral logClassName() const final { return "MediaControlTextTrackContainerElement"_s; }
-    mutable RefPtr<Logger> m_logger;
+    const RefPtr<Logger> m_logger;
     mutable uint64_t m_logIdentifier { 0 };
 #endif
 

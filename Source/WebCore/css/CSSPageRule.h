@@ -48,7 +48,7 @@ private:
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRulePage> m_pageRule;
-    mutable RefPtr<CSSPageDescriptors> m_propertiesCSSOMWrapper;
+    const RefPtr<CSSPageDescriptors> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

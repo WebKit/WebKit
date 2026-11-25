@@ -323,7 +323,7 @@ private:
     };
 
     Identifier m_ecmaName;
-    RefPtr<TDZEnvironmentLink> m_parentScopeTDZVariables;
+    const RefPtr<TDZEnvironmentLink> m_parentScopeTDZVariables;
 
     RareData& ensureRareData()
     {

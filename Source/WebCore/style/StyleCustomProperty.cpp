@@ -234,7 +234,7 @@ const Vector<CSSParserToken>& CustomProperty::tokens() const
             if (!m_cachedTokens) {
                 auto serialization = propertyValueSerializationForTokenization(CSS::defaultSerializationContext(), Style::ComputedStyle::defaultStyleSingleton());
                 CSSTokenizer tokenizer { serialization };
-                m_cachedTokens = CSSVariableData::create(tokenizer.tokenRange(), m_isAttrTainted);
+                lazyInitialize(m_cachedTokens, CSSVariableData::create(tokenizer.tokenRange(), m_isAttrTainted));
             }
             return m_cachedTokens->tokens();
         }

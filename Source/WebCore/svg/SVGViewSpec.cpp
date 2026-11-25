@@ -47,7 +47,7 @@ SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
 
 void SVGViewSpec::reset()
 {
-    protect(transform())->clearItems();
+    m_transform->clearItems();
     SVGFitToViewBox::reset();
     SVGZoomAndPan::reset();
 }
@@ -120,7 +120,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
                     return false;
                 if (!skipExactly(buffer, '('))
                     return false;
-                protect(transform())->parse(buffer);
+                m_transform->parse(buffer);
                 if (!skipExactly(buffer, ')'))
                     return false;
             } else

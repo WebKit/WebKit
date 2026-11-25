@@ -111,7 +111,7 @@ protected:
     Type m_wasmType;
     // For concrete (RTT-bearing) heap types, retain the canonical RTT so the
     // pointer embedded in m_wasmType does not dangle.
-    RefPtr<const RTT> m_wasmTypeRTT;
+    const RefPtr<const RTT> m_wasmTypeRTT;
     bool m_isFixedSized { false };
     Wasm::AddressType m_addressType;
     JSWebAssemblyTable* m_owner;

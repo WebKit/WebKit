@@ -263,7 +263,7 @@ private:
     };
     InputSourceState& inputSourceState(const String& id);
 
-    RefPtr<SessionHost> m_host;
+    const RefPtr<SessionHost> m_host;
     double m_scriptTimeout;
     double m_pageLoadTimeout;
     double m_implicitWaitTimeout;

@@ -167,7 +167,7 @@ protected:
             WriteBarrierBase<Unknown>* m_moduleVariableSlot;
         } s3;
     } u;
-    RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
+    const RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     RefPtr<AccessCase> m_accessCase;
     std::unique_ptr<PropertyInlineCacheClearingWatchpoint> m_watchpoint;
 };

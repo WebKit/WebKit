@@ -1286,7 +1286,7 @@ Editor& Document::ensureEditor()
 DeferredFetchRegistry& Document::ensureDeferredFetchRegistry()
 {
     if (!m_deferredFetchRegistry)
-        m_deferredFetchRegistry = DeferredFetchRegistry::create(*this);
+        lazyInitialize(m_deferredFetchRegistry, DeferredFetchRegistry::create(*this));
     return *m_deferredFetchRegistry;
 }
 
@@ -3613,8 +3613,8 @@ void Document::willBeRemovedFromFrame()
     // Activate any pending fetchLater() requests before the document goes away.
     // Must happen before we start tearing down subsystems the load path relies on
     // (e.g. the CachedResourceLoader / DocumentLoader below).
-    if (RefPtr registry = m_deferredFetchRegistry)
-        registry->documentIsBeingDestroyed();
+    if (m_deferredFetchRegistry)
+        m_deferredFetchRegistry->documentIsBeingDestroyed();
 
 #if ENABLE(WEB_RTC)
     if (RefPtr rtcNetworkManager = m_rtcNetworkManager)
@@ -7951,8 +7951,8 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
             idbConnectionProxy->setContextSuspended(*this, false);
         break;
     case AboutToEnterBackForwardCache:
-        if (RefPtr registry = m_deferredFetchRegistry)
-            registry->documentIsAboutToEnterBackForwardCache();
+        if (m_deferredFetchRegistry)
+            m_deferredFetchRegistry->documentIsAboutToEnterBackForwardCache();
         break;
     }
 }
@@ -8098,8 +8098,8 @@ void Document::storageBlockingStateDidChange()
 // Used only by WebKitLegacy.
 void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 {
-    if (RefPtr logger = m_logger)
-        logger->setEnabled(this, isAlwaysOnLoggingAllowed());
+    if (m_logger)
+        m_logger->setEnabled(this, isAlwaysOnLoggingAllowed());
 
 #if ENABLE(VIDEO)
     forEachMediaElement([sessionID] (HTMLMediaElement& element) {
@@ -11322,7 +11322,7 @@ Logger& Document::logger()
 {
     if (!m_logger) {
         Ref logger = Logger::create(this);
-        m_logger = logger.copyRef();
+        lazyInitialize(m_logger, logger.copyRef());
         RefPtr page = this->page();
         logger->setEnabled(this, isAlwaysOnLoggingAllowed());
         logger->addObserver(*this);
@@ -12872,8 +12872,8 @@ ResourceMonitor* Document::parentResourceMonitorIfExists()
 double Document::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key) const
 {
     if (!m_randomCachingKeyMap)
-        m_randomCachingKeyMap = CSSCalc::RandomCachingKeyMap::create();
-    return protect(m_randomCachingKeyMap)->lookupCSSRandomBaseValue(key);
+        lazyInitialize(m_randomCachingKeyMap, CSSCalc::RandomCachingKeyMap::create());
+    return m_randomCachingKeyMap->lookupCSSRandomBaseValue(key);
 }
 
 void Document::prefetch(const URL& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority)

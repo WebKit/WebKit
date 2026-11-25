@@ -497,7 +497,7 @@ private:
     const Ref<Wasm::Module> m_module;
     const Ref<const Wasm::ModuleInformation> m_moduleInformation;
     RefPtr<Wasm::InstanceAnchor> m_anchor;
-    RefPtr<SourceProvider> m_sourceProvider;
+    const RefPtr<SourceProvider> m_sourceProvider;
     MemoryIsMemory64BitSet m_memoryIsMemory64Bits;
     uint64_t m_cachedMemory0Size { 0 }; // memory.size for memory 0, handled specially to avoid performance regressions
 

@@ -62,7 +62,7 @@ private:
     }
 
     CSS::Gradient m_gradient;
-    mutable RefPtr<Style::Image> m_cachedStyleImage;
+    const RefPtr<Style::Image> m_cachedStyleImage;
 };
 
 } // namespace WebCore

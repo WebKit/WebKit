@@ -1197,7 +1197,7 @@ private:
     StackMaps m_stackmaps;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
-    RefPtr<B3::Air::PrologueGenerator> m_prologueGenerator;
+    const RefPtr<B3::Air::PrologueGenerator> m_prologueGenerator;
 
     Vector<std::unique_ptr<OMGIRGenerator>> m_protectedInlineeGenerators;
     Vector<std::unique_ptr<FunctionParser<OMGIRGenerator>>> m_protectedInlineeParsers;
@@ -1392,7 +1392,7 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
         }
     }
 
-    m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this](CCallHelpers& jit, B3::Air::Code& code, B3::Air::GenerationContext& context) {
+    lazyInitialize(m_prologueGenerator, createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this](CCallHelpers& jit, B3::Air::Code& code, B3::Air::GenerationContext& context) {
         RELEASE_ASSERT(m_callee);
         AllowMacroScratchRegisterUsage allowScratch(jit);
 
@@ -1408,7 +1408,7 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
         jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_callee)), scratchGPR);
         static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
         jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
-    });
+    }));
     {
         B3::PatchpointValue* stackOverflowCheck = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, Void, Origin());
         stackOverflowCheck->appendSomeRegister(instanceValue());

@@ -58,7 +58,7 @@ private:
     JavaScriptCallFrame(Ref<JSC::DebuggerCallFrame>&&);
 
     const Ref<JSC::DebuggerCallFrame> m_debuggerCallFrame;
-    RefPtr<JavaScriptCallFrame> m_caller;
+    const RefPtr<JavaScriptCallFrame> m_caller;
 };
 
 } // namespace Inspector
