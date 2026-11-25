@@ -1,0 +1,25 @@
+
+PASS XMLSerializer uses the document context for a detached global registry element
+PASS XMLSerializer uses the document context for a detached null registry element
+PASS XMLSerializer uses the document context for a detached scoped registry element
+PASS XMLSerializer handles a null registry child of a global registry parent
+PASS XMLSerializer handles a scoped registry child of a global registry parent
+PASS XMLSerializer handles a null registry child of a null registry parent
+PASS XMLSerializer handles a scoped registry child of a scoped registry parent
+PASS XMLSerializer handles a other registry child of a scoped registry parent
+PASS XMLSerializer handles a scoped registry child of a null registry parent
+PASS XMLSerializer handles a null registry child of a scoped registry parent
+PASS XMLSerializer handles a global registry child of a null registry parent
+PASS XMLSerializer handles a global registry child of a scoped registry parent
+PASS XMLSerializer compares an element with its parent registry, like outerHTML
+PASS XML serialization keeps each sibling registry context independent
+PASS XML serialization preserves an existing registry attribute without duplicating it
+PASS A namespaced attribute does not suppress the generated XML registry attribute
+PASS XML serialization does not generate registry attributes on foreign elements
+PASS XML serialization detects an HTML registry boundary inside a foreign element
+PASS XML serialization uses the template contents registry for descendants
+PASS XML document serialization propagates registry context from the document root
+PASS XMLSerializer uses the document context for top-level fragment children
+PASS XMLSerializer uses the shadow root registry context for shadow root children
+PASS An XML-serialized scoped registry boundary reparses as null and can be initialized
+

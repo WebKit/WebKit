@@ -676,7 +676,7 @@ void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& ele
 {
     appendOpenTag(result, element, namespaces);
 
-    if (!inXMLFragmentSerialization() && shouldAppendCustomElementRegistryAttribute(element)) [[unlikely]]
+    if (shouldAppendCustomElementRegistryAttribute(element)) [[unlikely]]
         result.append(" customelementregistry=\"\""_s);
 
     if (m_serializationContext) {
