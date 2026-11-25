@@ -43,6 +43,7 @@
 #include "ElementTextDirection.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
+#include "ImmutableStyleProperties.h"
 #include "SVGElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "SelectorCompiler.h"

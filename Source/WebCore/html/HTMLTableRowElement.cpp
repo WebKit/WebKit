@@ -62,7 +62,7 @@ Ref<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagNam
 
 HTMLTableRowElement::~HTMLTableRowElement() = default;
 
-const MutableStyleProperties* HTMLTableRowElement::additionalPresentationalHintStyle() const
+const ImmutableStyleProperties* HTMLTableRowElement::additionalPresentationalHintStyle() const
 {
     auto table = findParentTable();
     if (!table)
