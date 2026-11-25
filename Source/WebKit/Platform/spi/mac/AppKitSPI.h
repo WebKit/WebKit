@@ -89,6 +89,9 @@ DECLARE_SYSTEM_HEADER
 
 @interface NSKeyboardShortcut
 + (id)shortcutWithKeyEquivalent:(NSString *)keyEquivalent modifierMask:(NSUInteger)modifierMask;
+#if HAVE(NSKEYBOARDSHORTCUT_MODIFIER_FLAGS)
++ (instancetype)shortcutWithKeyEquivalent:(NSString *)keyEquivalent modifierFlags:(NSEventModifierFlags)modifierFlags;
+#endif
 @property (readonly) NSString *localizedDisplayName;
 @end
 
