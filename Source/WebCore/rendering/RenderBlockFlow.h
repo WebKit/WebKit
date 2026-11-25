@@ -39,6 +39,7 @@ using FloatingObjectSet = ListHashSet<std::unique_ptr<FloatingObject>, FloatingO
 
 namespace Layout {
 class InlineContentCache;
+class PlacedFloats;
 }
 
 namespace LayoutIntegration {
@@ -474,6 +475,8 @@ private:
 
     LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
     LayoutUnit logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
+    // The logical right edge of the left floats and the logical left edge of the right floats.
+    std::pair<std::optional<LayoutUnit>, std::optional<LayoutUnit>> floatEdgesFromFloatingContext(LayoutUnit logicalTop, LayoutUnit logicalHeight) const;
 
     LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const;
     LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const;

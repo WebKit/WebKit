@@ -1076,6 +1076,9 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
     auto resetBlockStartMarginTrimming = WTF::makeScopeExit([&] {
         layoutState->setMarginTrimBlockStart(marginTrimBlockStartFromContainingBlock);
     });
+    // The block keeps one PlacedFloats list for its children's float positions and offsets.
+    if (m_floatingObjects)
+        m_floatingObjects->placedFloats();
     auto clearPlacedFloats = WTF::makeScopeExit([&] {
         if (m_floatingObjects)
             m_floatingObjects->clearPlacedFloats();
@@ -2996,7 +2999,7 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
         boxGeometry.setHorizontalMargin({ marginStart, marginEnd });
         boxGeometry.setVerticalMargin({ marginBefore, marginAfterForChild(childBox) });
 
-        auto floatingContext = Layout::FloatingContext { layoutBox(), m_floatingObjects->placedFloats(), { }, borderBoxInlineSize };
+        auto& floatingContext = m_floatingObjects->floatingContext();
         auto borderBoxTopLeft = floatingContext.positionForFloat(childBox.layoutBox(), boxGeometry, { { }, { contentBoxInlineStart, contentBoxLogicalWidth } });
 
         logicalTopOffset = borderBoxTopLeft.y() - marginBefore;
@@ -3204,18 +3207,50 @@ bool RenderBlockFlow::positionNewFloats()
 
 LayoutUnit RenderBlockFlow::logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const
 {
-    if (m_floatingObjects && m_floatingObjects->hasLeftObjects())
+    if (!m_floatingObjects || !m_floatingObjects->hasLeftObjects())
+        return fixedOffset;
+
+    if (!view().frameView().layoutContext().isInRenderTreeLayout())
         return m_floatingObjects->logicalLeftOffset(fixedOffset, logicalTop, logicalHeight);
 
-    return fixedOffset;
+    auto leftFloatsEdge = floatEdgesFromFloatingContext(logicalTop, logicalHeight).first;
+    return leftFloatsEdge ? std::max(fixedOffset, *leftFloatsEdge) : fixedOffset;
 }
 
 LayoutUnit RenderBlockFlow::logicalRightFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const
 {
-    if (m_floatingObjects && m_floatingObjects->hasRightObjects())
+    if (!m_floatingObjects || !m_floatingObjects->hasRightObjects())
+        return fixedOffset;
+
+    if (!view().frameView().layoutContext().isInRenderTreeLayout())
         return m_floatingObjects->logicalRightOffset(fixedOffset, logicalTop, logicalHeight);
 
-    return fixedOffset;
+    auto rightFloatsEdge = floatEdgesFromFloatingContext(logicalTop, logicalHeight).second;
+    return rightFloatsEdge ? std::min(fixedOffset, *rightFloatsEdge) : fixedOffset;
+}
+
+std::pair<std::optional<LayoutUnit>, std::optional<LayoutUnit>> RenderBlockFlow::floatEdgesFromFloatingContext(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
+{
+    auto candidateTop = Layout::AxisPosition<Layout::FormattingContextRoot> { logicalTop };
+    auto candidateBottom = candidateTop + logicalHeight;
+    auto constraints = [&] {
+        if (m_floatingObjects->keptPlacedFloats())
+            return m_floatingObjects->floatingContext().constraints(candidateTop, candidateBottom, Layout::FloatingContext::MayBeAboveLastFloat::Yes);
+        // Outside of the block's child layout (e.g. when a child is laid out as a layout root), build a list just for this call.
+        auto placedFloats = m_floatingObjects->makePlacedFloats();
+        return Layout::FloatingContext { layoutBox(), *placedFloats, { }, logicalWidth() }.constraints(candidateTop, candidateBottom, Layout::FloatingContext::MayBeAboveLastFloat::Yes);
+    }();
+
+    // FloatingContext positions are relative to the inline start edge.
+    auto isLeftToRight = writingMode().isLogicalLeftInlineStart();
+    auto logicalPosition = [&](auto& constraint) -> std::optional<LayoutUnit> {
+        if (!constraint)
+            return { };
+        return isLeftToRight ? constraint->x().value() : logicalWidth() - constraint->x().value();
+    };
+    if (isLeftToRight)
+        return { logicalPosition(constraints.start), logicalPosition(constraints.end) };
+    return { logicalPosition(constraints.end), logicalPosition(constraints.start) };
 }
 
 LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight) const
@@ -3223,7 +3258,22 @@ LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelowForBlock(LayoutUnit logic
     if (!m_floatingObjects)
         return logicalHeight;
 
-    return m_floatingObjects->findNextFloatLogicalBottomBelowForBlock(logicalHeight);
+    auto temporaryPlacedFloats = std::unique_ptr<Layout::PlacedFloats> { };
+    auto* placedFloats = m_floatingObjects->keptPlacedFloats();
+    if (!placedFloats) {
+        // Outside of the block's child layout (e.g. when a child is laid out as a layout root), build a list just for this call.
+        temporaryPlacedFloats = m_floatingObjects->makePlacedFloats();
+        placedFloats = temporaryPlacedFloats.get();
+    }
+    auto nextFloatBottom = std::optional<LayoutUnit> { };
+    for (auto& floatItem : placedFloats->list()) {
+        if (!floatItem.marginBoxSize().height())
+            continue;
+        auto floatBottom = floatItem.marginBoxBottom().value();
+        if (floatBottom > logicalHeight && (!nextFloatBottom || floatBottom < *nextFloatBottom))
+            nextFloatBottom = floatBottom;
+    }
+    return nextFloatBottom.value_or(0_lu);
 }
 
 LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom() const
