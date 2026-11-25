@@ -1,5 +1,3 @@
-dom/CollectionIndexCache.h
-dom/Node.cpp
 dom/Node.h
 rendering/LayoutRepainter.h
 rendering/LogicalSelectionOffsetCaches.h
@@ -16,11 +14,11 @@ rendering/RenderLayerScrollableArea.h
 rendering/RenderLayoutState.h
 rendering/RenderTableSection.h
 rendering/RenderText.cpp
+[ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/paint/BackgroundPainter.h
 rendering/paint/InlineBoxPainter.h
 rendering/paint/PaintInfo.h
 rendering/paint/TextDecorationPainter.h
-[ iOS ] rendering/ios/RenderThemeIOS.mm
 style/PseudoClassChangeInvalidation.h
 style/StyleAdjuster.h
 style/StyleBuilderState.h

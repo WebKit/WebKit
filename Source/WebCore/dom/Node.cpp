@@ -3133,10 +3133,14 @@ template<TreeType treeType> NODELETE size_t depth(const Node& node)
     return depth;
 }
 
+// AncestorAndChildren is a short-lived return value of NODELETE functions and is never stored, so nodes
+// cannot be destroyed while it is alive. Using smart pointers here would regress treeOrder(), which is hot.
 struct AncestorAndChildren {
-    const Node* commonAncestor;
-    const Node* distinctAncestorA;
-    const Node* distinctAncestorB;
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    SUPPRESS_UNCHECKED_MEMBER SUPPRESS_UNCOUNTED_MEMBER const Node* commonAncestor;
+    SUPPRESS_UNCHECKED_MEMBER SUPPRESS_UNCOUNTED_MEMBER const Node* distinctAncestorA;
+    SUPPRESS_UNCHECKED_MEMBER SUPPRESS_UNCOUNTED_MEMBER const Node* distinctAncestorB;
 };
 
 template<TreeType treeType> NODELETE AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, const Node& b)

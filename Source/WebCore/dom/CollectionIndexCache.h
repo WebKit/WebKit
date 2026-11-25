@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -60,8 +61,15 @@ private:
     inline unsigned computeNodeCountUpdatingListCache(const Collection&);
     inline NodeType* traverseBackwardTo(const Collection&, unsigned);
     inline NodeType* traverseForwardTo(const Collection&, unsigned);
+    inline void traverseCurrentForward(const Collection&, unsigned count, unsigned& traversedCount);
+    inline void traverseCurrentBackward(const Collection&, unsigned count);
 
-    Iterator m_current { };
+    // Raw pointer iterators are stored as a CheckedPtr but traversal is done on a raw
+    // pointer so that the checked pointer count is updated once per traversal, not per step.
+    static constexpr bool iteratorIsRawPointer = std::is_pointer_v<Iterator>;
+    using StoredIterator = std::conditional_t<iteratorIsRawPointer, CheckedPtr<NodeType>, Iterator>;
+
+    StoredIterator m_current { };
     unsigned m_currentIndex { 0 };
     unsigned m_nodeCount { 0 };
     Vector<WeakPtr<NodeType, WeakPtrImplWithEventTargetData>> m_cachedList;

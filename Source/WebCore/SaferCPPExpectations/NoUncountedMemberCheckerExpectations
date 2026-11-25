@@ -1,5 +1,3 @@
-dom/CollectionIndexCache.h
-dom/Node.cpp
 rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h

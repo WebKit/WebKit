@@ -68,6 +68,28 @@ unsigned CollectionIndexCache<Collection, Iterator>::computeNodeCountUpdatingLis
 }
 
 template <class Collection, class Iterator>
+inline void CollectionIndexCache<Collection, Iterator>::traverseCurrentForward(const Collection& collection, unsigned count, unsigned& traversedCount)
+{
+    if constexpr (iteratorIsRawPointer) {
+        SUPPRESS_UNCOUNTED_LOCAL Iterator current = m_current.get();
+        collection.collectionTraverseForward(current, count, traversedCount);
+        m_current = current;
+    } else
+        collection.collectionTraverseForward(m_current, count, traversedCount);
+}
+
+template <class Collection, class Iterator>
+inline void CollectionIndexCache<Collection, Iterator>::traverseCurrentBackward(const Collection& collection, unsigned count)
+{
+    if constexpr (iteratorIsRawPointer) {
+        SUPPRESS_UNCOUNTED_LOCAL Iterator current = m_current.get();
+        collection.collectionTraverseBackward(current, count);
+        m_current = current;
+    } else
+        collection.collectionTraverseBackward(m_current, count);
+}
+
+template <class Collection, class Iterator>
 inline typename CollectionIndexCache<Collection, Iterator>::NodeType* CollectionIndexCache<Collection, Iterator>::traverseBackwardTo(const Collection& collection, unsigned index)
 {
     ASSERT(m_current);
@@ -78,12 +100,12 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
         m_current = collection.collectionBegin();
         m_currentIndex = 0;
         if (index)
-            collection.collectionTraverseForward(m_current, index, m_currentIndex);
+            traverseCurrentForward(collection, index, m_currentIndex);
         ASSERT(m_current);
         return &*m_current;
     }
 
-    collection.collectionTraverseBackward(m_current, m_currentIndex - index);
+    traverseCurrentBackward(collection, m_currentIndex - index);
     m_currentIndex = index;
 
     ASSERT(m_current);
@@ -102,7 +124,7 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
         ASSERT(hasValidCache());
         m_current = collection.collectionLast();
         if (index < m_nodeCount - 1)
-            collection.collectionTraverseBackward(m_current, m_nodeCount - index - 1);
+            traverseCurrentBackward(collection, m_nodeCount - index - 1);
         m_currentIndex = index;
         ASSERT(m_current);
         return &*m_current;
@@ -114,7 +136,7 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
     }
 
     unsigned traversedCount;
-    collection.collectionTraverseForward(m_current, index - m_currentIndex, traversedCount);
+    traverseCurrentForward(collection, index - m_currentIndex, traversedCount);
     m_currentIndex = m_currentIndex + traversedCount;
 
     if (!m_current) {
@@ -150,7 +172,7 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
         ASSERT(hasValidCache());
         m_current = collection.collectionLast();
         if (index < m_nodeCount - 1)
-            collection.collectionTraverseBackward(m_current, m_nodeCount - index - 1);
+            traverseCurrentBackward(collection, m_nodeCount - index - 1);
         m_currentIndex = index;
         ASSERT(m_current);
         return &*m_current;
@@ -165,7 +187,7 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
     m_currentIndex = 0;
     bool startIsEnd = !m_current;
     if (index && m_current) {
-        collection.collectionTraverseForward(m_current, index, m_currentIndex);
+        traverseCurrentForward(collection, index, m_currentIndex);
         ASSERT(m_current || m_currentIndex < index);
     }
     if (!m_current) {
@@ -181,7 +203,7 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
 template <class Collection, class Iterator>
 void CollectionIndexCache<Collection, Iterator>::invalidate()
 {
-    m_current = { };
+    m_current = StoredIterator { };
     m_hasValidCache = false;
     m_nodeCountValid = false;
     m_listValid = false;
