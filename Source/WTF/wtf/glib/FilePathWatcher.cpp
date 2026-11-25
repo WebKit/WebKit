@@ -35,13 +35,13 @@ namespace WTF {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FilePathWatcher);
 
-FilePathWatcher::FilePathWatcher(const String& path, Function<void()>&& handler)
+FilePathWatcher::FilePathWatcher(StringImpl* path, Function<void()>&& handler)
     : m_handler(WTF::move(handler))
 {
-    if (path.isEmpty() || !m_handler)
+    if (isEmpty(path) || !m_handler)
         return;
 
-    auto pathUtf8 = path.utf8();
+    auto pathUtf8 = utf8(path);
     GRefPtr file = gFileNewForPath(pathUtf8);
     GUniqueOutPtr<GError> error;
     m_monitor = adoptGRef(g_file_monitor_file(file.get(), G_FILE_MONITOR_WATCH_HARD_LINKS, nullptr, &error.outPtr()));

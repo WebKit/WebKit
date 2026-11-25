@@ -43,9 +43,9 @@ namespace WebCore {
 
 ClipboardItem::~ClipboardItem() = default;
 
-Ref<Blob> ClipboardItem::blobFromString(ScriptExecutionContext* context, const String& stringData, const String& type)
+Ref<Blob> ClipboardItem::blobFromString(ScriptExecutionContext* context, StringImpl* stringData, StringImpl* type)
 {
-    return Blob::create(context, Vector(byteCast<uint8_t>(stringData.utf8().span())), Blob::normalizedContentType(type));
+    return Blob::create(context, Vector(byteCast<uint8_t>(utf8(stringData).span())), Blob::normalizedContentType(type));
 }
 
 NODELETE static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(const PasteboardItemInfo& info)
@@ -66,7 +66,7 @@ NODELETE static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(
 // and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
 // https://w3c.github.io/clipboard-apis/#optional-data-types
 // https://webkit.org/b/280664
-ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& items, const Options& options)
+ClipboardItem::ClipboardItem(Vector<KeyValuePair<RefPtr<StringImpl>, Ref<DOMPromise>>>&& items, const Options& options)
     : m_dataSource(makeUniqueRef<ClipboardItemBindingsDataSource>(*this, WTF::move(items)))
     , m_presentationStyle(options.presentationStyle)
 {
@@ -80,10 +80,10 @@ ClipboardItem::ClipboardItem(Clipboard& clipboard, const PasteboardItemInfo& inf
 {
 }
 
-ExceptionOr<Ref<ClipboardItem>> ClipboardItem::create(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& data, const Options& options)
+ExceptionOr<Ref<ClipboardItem>> ClipboardItem::create(Vector<KeyValuePair<RefPtr<StringImpl>, Ref<DOMPromise>>>&& data, const Options& options)
 {
     if (data.isEmpty())
-        return Exception { ExceptionCode::TypeError, "ClipboardItem() can not be an empty array: {}"_s };
+        return Exception { ExceptionCode::TypeError, "ClipboardItem() can not be an empty array: {}"_si };
     return adoptRef(*new ClipboardItem(WTF::move(data), options));
 }
 
@@ -92,19 +92,19 @@ Ref<ClipboardItem> ClipboardItem::create(Clipboard& clipboard, const PasteboardI
     return adoptRef(*new ClipboardItem(clipboard, info));
 }
 
-Vector<String> ClipboardItem::types() const
+Vector<RefPtr<StringImpl>> ClipboardItem::types() const
 {
     return m_dataSource->types();
 }
 
-void ClipboardItem::getType(const String& type, Ref<DeferredPromise>&& promise)
+void ClipboardItem::getType(StringImpl* type, Ref<DeferredPromise>&& promise)
 {
     m_dataSource->getType(type, WTF::move(promise));
 }
 
-bool ClipboardItem::supports(ScriptExecutionContext& context, const String& type)
+bool ClipboardItem::supports(ScriptExecutionContext& context, StringImpl* type)
 {
-    if (type == textPlainContentTypeAtom())
+    if (equal(type, textPlainContentTypeAtom()))
         return true;
 
     if (!context.settingsValues().asyncClipboardRichContentEnabled)
@@ -113,10 +113,10 @@ bool ClipboardItem::supports(ScriptExecutionContext& context, const String& type
     // FIXME: Custom format starts with `"web "`("web" followed by U+0020 SPACE) prefix
     // and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
     // https://webkit.org/b/280664
-    return type == textHTMLContentTypeAtom()
-        || type == "image/png"_s
-        || type == "text/uri-list"_s
-        || type == "image/svg+xml"_s;
+    return equal(type, textHTMLContentTypeAtom())
+        || equal(type, "image/png"_s)
+        || equal(type, "text/uri-list"_s)
+        || equal(type, "image/svg+xml"_s);
 }
 
 void ClipboardItem::collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)

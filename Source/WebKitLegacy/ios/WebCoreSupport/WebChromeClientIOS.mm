@@ -118,30 +118,30 @@ void WebChromeClientIOS::focus()
     [[webView _UIDelegateForwarder] webViewFocus:webView];
 }
 
-void WebChromeClientIOS::runJavaScriptAlert(LocalFrame& frame, const WTF::String& message)
+void WebChromeClientIOS::runJavaScriptAlert(LocalFrame& frame, StringImpl* message)
 {
     RetainPtr webView = this->webView();
     WebThreadLockPushModal();
-    [[webView _UIDelegateForwarder] webView:webView runJavaScriptAlertPanelWithMessage:message.createNSString().get() initiatedByFrame:protect(kit(&frame))];
+    [[webView _UIDelegateForwarder] webView:webView runJavaScriptAlertPanelWithMessage:createNSString(message).get() initiatedByFrame:protect(kit(&frame))];
     WebThreadLockPopModal();
 }
 
-bool WebChromeClientIOS::runJavaScriptConfirm(LocalFrame& frame, const WTF::String& message)
+bool WebChromeClientIOS::runJavaScriptConfirm(LocalFrame& frame, StringImpl* message)
 {
     RetainPtr webView = this->webView();
     WebThreadLockPushModal();
-    bool result = [[webView _UIDelegateForwarder] webView:webView runJavaScriptConfirmPanelWithMessage:message.createNSString().get() initiatedByFrame:protect(kit(&frame))];
+    bool result = [[webView _UIDelegateForwarder] webView:webView runJavaScriptConfirmPanelWithMessage:createNSString(message).get() initiatedByFrame:protect(kit(&frame))];
     WebThreadLockPopModal();
     return result;
 }
 
-bool WebChromeClientIOS::runJavaScriptPrompt(LocalFrame& frame, const WTF::String& prompt, const WTF::String& defaultText, WTF::String& result)
+bool WebChromeClientIOS::runJavaScriptPrompt(LocalFrame& frame, StringImpl* prompt, StringImpl* defaultText, RefPtr<StringImpl>& result)
 {
     RetainPtr webView = this->webView();
     WebThreadLockPushModal();
-    result = [[webView _UIDelegateForwarder] webView:webView runJavaScriptTextInputPanelWithPrompt:prompt.createNSString().get() defaultText:defaultText.createNSString().get() initiatedByFrame:protect(kit(&frame))];
+    result = StringImpl::create([[webView _UIDelegateForwarder] webView:webView runJavaScriptTextInputPanelWithPrompt:createNSString(prompt).get() defaultText:createNSString(defaultText).get() initiatedByFrame:protect(kit(&frame))]);
     WebThreadLockPopModal();
-    return !result.isNull();
+    return !!result;
 }
 
 void WebChromeClientIOS::runOpenPanel(LocalFrame&, FileChooser& chooser)
@@ -387,7 +387,7 @@ void WebChromeClientIOS::focusedElementChanged(Element* element, LocalFrame*, Fo
     CallFormDelegate(protect(webView()), @selector(didFocusTextField:inFrame:), protect(kit(&inputElement)), protect(kit(protect(inputElement.document().frame()))));
 }
 
-void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&)
+void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, StringImpl*)
 {
     RetainPtr webView = this->webView();
     CGPoint point = [[webView _UIKitDelegateForwarder] interactionLocation];
@@ -395,7 +395,7 @@ void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteS
     [[webView _UIKitDelegateForwarder] showPlaybackTargetPicker:hasVideo fromRect:elementRect];
 }
 
-RefPtr<Icon> WebChromeClientIOS::createIconForFiles(const Vector<String>& filenames)
+RefPtr<Icon> WebChromeClientIOS::createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames)
 {
     return Icon::createIconForFiles(filenames);
 }

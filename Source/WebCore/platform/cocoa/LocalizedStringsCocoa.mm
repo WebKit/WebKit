@@ -45,252 +45,252 @@ static RetainPtr<NSString> localizedPercentage(double percent)
     return [numberFormatter stringFromNumber:@(percent)];
 }
 
-String AXProcessingPage(double percent)
+RefPtr<StringImpl> AXProcessingPage(double percent)
 {
     return WEB_UI_FORMAT_STRING("Processing page %@", "Title for the webarea while the accessibility tree is being built.", localizedPercentage(percent).get());
 }
 
-String copyImageUnknownFileLabel()
+RefPtr<StringImpl> copyImageUnknownFileLabel()
 {
     return WEB_UI_STRING("unknown", "Unknown filename");
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-String contextMenuItemTagAddHighlightToCurrentQuickNote()
+RefPtr<StringImpl> contextMenuItemTagAddHighlightToCurrentQuickNote()
 {
-    return WEB_UI_NSSTRING(@"Add to Quick Note", "Add to Quick Note context menu item.");
+    return StringImpl::create(protect(WEB_UI_NSSTRING(@"Add to Quick Note", "Add to Quick Note context menu item.")).get());
 }
 
-String contextMenuItemTagAddHighlightToNewQuickNote()
+RefPtr<StringImpl> contextMenuItemTagAddHighlightToNewQuickNote()
 {
-    return WEB_UI_NSSTRING(@"New Quick Note", "New Quick Note context menu item.");
+    return StringImpl::create(protect(WEB_UI_NSSTRING(@"New Quick Note", "New Quick Note context menu item.")).get());
 }
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-String contextMenuItemTagSearchWeb()
+RefPtr<StringImpl> contextMenuItemTagSearchWeb()
 {
     auto searchProviderName = PAL::defaultSearchProviderDisplayName();
     return WEB_UI_FORMAT_CFSTRING("Search with %@", "Search with search provider context menu item with provider name inserted", searchProviderName.get());
 }
 
-String contextMenuItemTagShowFonts()
+RefPtr<StringImpl> contextMenuItemTagShowFonts()
 {
     return WEB_UI_STRING("Show Fonts", "Show fonts context menu item");
 }
 
-String contextMenuItemTagStyles()
+RefPtr<StringImpl> contextMenuItemTagStyles()
 {
     return WEB_UI_STRING("Styles…", "Styles context menu item");
 }
 
-String contextMenuItemTagShowColors()
+RefPtr<StringImpl> contextMenuItemTagShowColors()
 {
     return WEB_UI_STRING("Show Colors", "Show colors context menu item");
 }
 
-String contextMenuItemTagSpeechMenu()
+RefPtr<StringImpl> contextMenuItemTagSpeechMenu()
 {
     return WEB_UI_STRING("Speech", "Speech context sub-menu item");
 }
 
-String contextMenuItemTagStartSpeaking()
+RefPtr<StringImpl> contextMenuItemTagStartSpeaking()
 {
     return WEB_UI_STRING("Start Speaking", "Start speaking context menu item");
 }
 
-String contextMenuItemTagStopSpeaking()
+RefPtr<StringImpl> contextMenuItemTagStopSpeaking()
 {
     return WEB_UI_STRING("Stop Speaking", "Stop speaking context menu item");
 }
 
-String contextMenuItemTagCorrectSpellingAutomatically()
+RefPtr<StringImpl> contextMenuItemTagCorrectSpellingAutomatically()
 {
     return WEB_UI_STRING("Correct Spelling Automatically", "Correct Spelling Automatically context menu item");
 }
 
-String contextMenuItemTagSubstitutionsMenu()
+RefPtr<StringImpl> contextMenuItemTagSubstitutionsMenu()
 {
     return WEB_UI_STRING("Substitutions", "Substitutions context sub-menu item");
 }
 
-String contextMenuItemTagShowSubstitutions(bool show)
+RefPtr<StringImpl> contextMenuItemTagShowSubstitutions(bool show)
 {
     if (show)
         return WEB_UI_STRING("Show Substitutions", "menu item title");
     return WEB_UI_STRING("Hide Substitutions", "menu item title");
 }
 
-String contextMenuItemTagSmartCopyPaste()
+RefPtr<StringImpl> contextMenuItemTagSmartCopyPaste()
 {
     return WEB_UI_STRING("Smart Copy/Paste", "Smart Copy/Paste context menu item");
 }
 
-String contextMenuItemTagSmartQuotes()
+RefPtr<StringImpl> contextMenuItemTagSmartQuotes()
 {
     return WEB_UI_STRING("Smart Quotes", "Smart Quotes context menu item");
 }
 
-String contextMenuItemTagSmartDashes()
+RefPtr<StringImpl> contextMenuItemTagSmartDashes()
 {
     return WEB_UI_STRING("Smart Dashes", "Smart Dashes context menu item");
 }
 
-String contextMenuItemTagSmartLinks()
+RefPtr<StringImpl> contextMenuItemTagSmartLinks()
 {
     return WEB_UI_STRING("Smart Links", "Smart Links context menu item");
 }
 
-String contextMenuItemTagSmartLists()
+RefPtr<StringImpl> contextMenuItemTagSmartLists()
 {
     return WEB_UI_STRING("Smart Lists", "Smart Lists context menu item");
 }
 
-String contextMenuItemTagTextReplacement()
+RefPtr<StringImpl> contextMenuItemTagTextReplacement()
 {
     return WEB_UI_STRING("Text Replacement", "Text Replacement context menu item");
 }
 
-String contextMenuItemTagTransformationsMenu()
+RefPtr<StringImpl> contextMenuItemTagTransformationsMenu()
 {
     return WEB_UI_STRING("Transformations", "Transformations context sub-menu item");
 }
 
-String contextMenuItemTagMakeUpperCase()
+RefPtr<StringImpl> contextMenuItemTagMakeUpperCase()
 {
     return WEB_UI_STRING("Make Upper Case", "Make Upper Case context menu item");
 }
 
-String contextMenuItemTagMakeLowerCase()
+RefPtr<StringImpl> contextMenuItemTagMakeLowerCase()
 {
     return WEB_UI_STRING("Make Lower Case", "Make Lower Case context menu item");
 }
 
-String contextMenuItemTagCapitalize()
+RefPtr<StringImpl> contextMenuItemTagCapitalize()
 {
     return WEB_UI_STRING("Capitalize", "Capitalize context menu item");
 }
 
-String contextMenuItemTagConvertToTraditionalChinese()
+RefPtr<StringImpl> contextMenuItemTagConvertToTraditionalChinese()
 {
     return WEB_UI_STRING("Convert to Traditional Chinese", "Convert to Traditional Chinese context menu item");
 }
 
-String contextMenuItemTagConvertToSimplifiedChinese()
+RefPtr<StringImpl> contextMenuItemTagConvertToSimplifiedChinese()
 {
     return WEB_UI_STRING("Convert to Simplified Chinese", "Convert to Simplified Chinese context menu item");
 }
 
-String contextMenuItemTagChangeBack(const String& replacedString)
+RefPtr<StringImpl> contextMenuItemTagChangeBack(StringImpl* replacedString)
 {
     notImplemented();
     return replacedString;
 }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-String contextMenuItemTagEnterPictureInPicture()
+RefPtr<StringImpl> contextMenuItemTagEnterPictureInPicture()
 {
     return WEB_UI_STRING("Enter Picture in Picture", "menu item");
 }
 
-String contextMenuItemTagExitPictureInPicture()
+RefPtr<StringImpl> contextMenuItemTagExitPictureInPicture()
 {
     return WEB_UI_STRING("Exit Picture in Picture", "menu item");
 }
 
-String contextMenuItemTagEnterVideoViewer()
+RefPtr<StringImpl> contextMenuItemTagEnterVideoViewer()
 {
     return WEB_UI_STRING("Enter Viewer", "Enter Video Viewer context menu item");
 }
 
-String contextMenuItemTagExitVideoViewer()
+RefPtr<StringImpl> contextMenuItemTagExitVideoViewer()
 {
     return WEB_UI_STRING("Exit Viewer", "Exit Video Viewer context menu item");
 }
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
 
-String AXMeterGaugeRegionOptimumText()
+RefPtr<StringImpl> AXMeterGaugeRegionOptimumText()
 {
     return WEB_UI_STRING("optimal value", "The optimum value description for a meter element.");
 }
 
-String AXMeterGaugeRegionSuboptimalText()
+RefPtr<StringImpl> AXMeterGaugeRegionSuboptimalText()
 {
     return WEB_UI_STRING("suboptimal value", "The suboptimal value description for a meter element.");
 }
 
-String AXMeterGaugeRegionLessGoodText()
+RefPtr<StringImpl> AXMeterGaugeRegionLessGoodText()
 {
     return WEB_UI_STRING("critical value", "The less good value description for a meter element.");
 }
 
-String pdfDocumentTypeDescription()
+RefPtr<StringImpl> pdfDocumentTypeDescription()
 {
     // Also exposed to DOM.
     return WEB_UI_STRING_KEY("Portable Document Format", "Portable Document Format (Safari)", "Description of the primary type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari.");
 }
 
 #if PLATFORM(IOS_FAMILY)
-String fileButtonChooseMediaFileLabel()
+RefPtr<StringImpl> fileButtonChooseMediaFileLabel()
 {
     return WEB_UI_STRING("Choose Media (Single)", "Title for file button used in HTML forms for media files");
 }
 
-String fileButtonChooseMultipleMediaFilesLabel()
+RefPtr<StringImpl> fileButtonChooseMultipleMediaFilesLabel()
 {
     return WEB_UI_STRING("Choose Media (Multiple)", "Title for file button used in HTML5 forms for multiple media files");
 }
 
-String fileButtonNoMediaFileSelectedLabel()
+RefPtr<StringImpl> fileButtonNoMediaFileSelectedLabel()
 {
     return WEB_UI_STRING("no media selected (single)", "Text to display in file button used in HTML forms for media files when no media file is selected");
 }
 
-String fileButtonNoMediaFilesSelectedLabel()
+RefPtr<StringImpl> fileButtonNoMediaFilesSelectedLabel()
 {
     return WEB_UI_STRING("no media selected (multiple)", "Text to display in file button used in HTML forms for media files when no media files are selected and the button allows multiple files to be selected");
 }
 
 
-String formControlDoneButtonTitle()
+RefPtr<StringImpl> formControlDoneButtonTitle()
 {
     return WEB_UI_STRING("Done", "Title of the Done button for form controls.");
 }
 #endif
 
-String validationMessageTooLongText(int, int maxLength)
+RefPtr<StringImpl> validationMessageTooLongText(int, int maxLength)
 {
     return WEB_UI_FORMAT_CFSTRING("Use no more than %d character(s)", "Validation message for form control elements with a value shorter than maximum allowed length", maxLength);
 }
 
 #if PLATFORM(MAC)
-String insertListTypeNone()
+RefPtr<StringImpl> insertListTypeNone()
 {
     return WEB_UI_STRING("None", "Option in segmented control for choosing list type in text editing");
 }
 
-String insertListTypeBulleted()
+RefPtr<StringImpl> insertListTypeBulleted()
 {
     return WEB_UI_STRING("•", "Option in segmented control for choosing list type in text editing");
 }
 
-String insertListTypeBulletedAccessibilityTitle()
+RefPtr<StringImpl> insertListTypeBulletedAccessibilityTitle()
 {
     return WEB_UI_STRING("Bulleted list", "Option in segmented control for inserting a bulleted list in text editing");
 }
 
-String insertListTypeNumbered()
+RefPtr<StringImpl> insertListTypeNumbered()
 {
     return WEB_UI_STRING("1. 2. 3.", "Option in segmented control for choosing list type in text editing");
 }
 
-String insertListTypeNumberedAccessibilityTitle()
+RefPtr<StringImpl> insertListTypeNumberedAccessibilityTitle()
 {
     return WEB_UI_STRING("Numbered list", "Option in segmented control for inserting a numbered list in text editing");
 }
 
-String exitFullScreenButtonAccessibilityTitle()
+RefPtr<StringImpl> exitFullScreenButtonAccessibilityTitle()
 {
     return WEB_UI_STRING("Exit Full Screen", "Button for exiting full screen when in full screen media playback");
 }
@@ -298,7 +298,7 @@ String exitFullScreenButtonAccessibilityTitle()
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-String contextMenuItemTagLookUpImage()
+RefPtr<StringImpl> contextMenuItemTagLookUpImage()
 {
     return WEB_UI_STRING("Look Up", "Title for Look Up action button");
 }
@@ -307,12 +307,12 @@ String contextMenuItemTagLookUpImage()
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-String contextMenuItemTagCopySubject()
+RefPtr<StringImpl> contextMenuItemTagCopySubject()
 {
     return WEB_UI_STRING("Copy Subject", "Title for Copy Subject");
 }
 
-String contextMenuItemTitleRemoveBackground()
+RefPtr<StringImpl> contextMenuItemTitleRemoveBackground()
 {
     return WEB_UI_STRING("Remove Background", "Remove Background menu item");
 }

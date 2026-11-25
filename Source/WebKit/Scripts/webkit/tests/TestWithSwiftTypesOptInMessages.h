@@ -31,6 +31,7 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -109,7 +110,7 @@ private:
 
 class SwiftTypedMessage {
 public:
-    using Arguments = std::tuple<String, Vector<uint32_t>>;
+    using Arguments = std::tuple<RefPtr<StringImpl>, Vector<uint32_t>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwiftTypesOptIn_SwiftTypedMessage; }
     static constexpr bool isSync = false;
@@ -122,7 +123,7 @@ public:
     using ReplyArguments = std::tuple<uint8_t>;
     using Reply = CompletionHandler<void(uint8_t)>;
     using Promise = WTF::NativePromise<uint8_t, IPC::Error>;
-    SwiftTypedMessage(const String& url, const Vector<uint32_t>& values)
+    SwiftTypedMessage(StringView url, const Vector<uint32_t>& values)
         : m_url(url)
         , m_values(values)
     {
@@ -136,7 +137,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
     SUPPRESS_FORWARD_DECL_MEMBER const Vector<uint32_t>& m_values;
 };
 
@@ -176,8 +177,8 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using ReplyArguments = std::tuple<String>;
-    using Reply = CompletionHandler<void(String&&)>;
+    using ReplyArguments = std::tuple<RefPtr<StringImpl>>;
+    using Reply = CompletionHandler<void(RefPtr<StringImpl>&&)>;
     explicit SwiftTypedSynchronousMessage(const WebKit::TestSwiftStruct& payload)
         : m_payload(payload)
     {

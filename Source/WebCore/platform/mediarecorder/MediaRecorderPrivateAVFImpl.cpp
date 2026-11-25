@@ -53,7 +53,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateAVFImpl);
 bool MediaRecorderPrivateAVFImpl::isTypeSupported(Document& document, ContentType& mimeType)
 {
     auto containerType = mimeType.containerType();
-    if (containerType.isEmpty())
+    if (isEmpty(containerType))
         return true;
 
     if (equalLettersIgnoringASCIICase(containerType, "audio/mp4"_s) || equalLettersIgnoringASCIICase(containerType, "video/mp4"_s)) {
@@ -61,15 +61,15 @@ bool MediaRecorderPrivateAVFImpl::isTypeSupported(Document& document, ContentTyp
             // FIXME: We should further validate parameters.
             if (!startsWithLettersIgnoringASCIICase(codec, "avc1"_s)
 #if ENABLE(AV1) && ENABLE(WEB_RTC)
-                && !(codec.startsWith("av01."_s) && document.settings().webCodecsAV1Enabled())
+                && !(startsWith(codec, "av01."_s) && document.settings().webCodecsAV1Enabled())
 #endif
 #if ENABLE(WEB_RTC)
-                && !((codec.startsWith("hev1."_s) || codec.startsWith("hvc1."_s)) && document.settings().webRTCH265CodecEnabled())
+                && !((startsWith(codec, "hev1."_s) || startsWith(codec, "hvc1."_s)) && document.settings().webRTCH265CodecEnabled())
 #endif
 #if HAVE(AVASSETWRITER_WITH_OPUS_SUPPORTED)
-                && codec != "opus"_s
+                && !equal(codec, "opus"_s)
 #endif
-                && codec != "pcm"_s && codec != "alac"_s
+                && !equal(codec, "pcm"_s) && !equal(codec, "alac"_s)
                 && !startsWithLettersIgnoringASCIICase(codec, "mp4a"_s))
                 return false;
         }
@@ -83,12 +83,12 @@ bool MediaRecorderPrivateAVFImpl::isTypeSupported(Document& document, ContentTyp
 
     for (auto& codec : mimeType.codecs()) {
         // FIXME: We should further validate parameters.
-        bool isVP90 = (codec.startsWith("vp09"_s) || equal(codec, "vp9"_s) || equal(codec, "vp9.0"_s)) && !codec.startsWith("vp09.02"_s);
-        bool isVP92 = codec.startsWith("vp09.02"_s);
-        bool isVP8 = codec.startsWith("vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp8.0"_s);
-        bool isH264 = codec.startsWith("avc1"_s);
-        bool isOpus = codec == "opus"_s;
-        bool isPCM = codec == "pcm"_s;
+        bool isVP90 = (startsWith(codec, "vp09"_s) || equal(codec, "vp9"_s) || equal(codec, "vp9.0"_s)) && !startsWith(codec, "vp09.02"_s);
+        bool isVP92 = startsWith(codec, "vp09.02"_s);
+        bool isVP8 = startsWith(codec, "vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp8.0"_s);
+        bool isH264 = startsWith(codec, "avc1"_s);
+        bool isOpus = equal(codec, "opus"_s);
+        bool isPCM = equal(codec, "pcm"_s);
         if (!(isVP90 && document.settings().webRTCVP9Profile0CodecEnabled()) && !(isVP92 && document.settings().webRTCVP9Profile2CodecEnabled()) && !isVP8 && !isOpus && !((isH264 || isPCM) && (document.settings().limitedMatroskaSupportEnabled() || document.quirks().needsLimitedMatroskaSupport())))
             return false;
     }
@@ -108,7 +108,7 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
     auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
 
     auto options = originalOptions;
-    if (options.mimeType.isEmpty())
+    if (isEmpty(options.mimeType))
         options.mimeType = !!selectedTracks.videoTrack ? "video/mp4"_s : "audio/mp4"_s;
     RefPtr writer = MediaRecorderPrivateEncoder::create(!!selectedTracks.audioTrack, !!selectedTracks.videoTrack, options);
     if (!writer)
@@ -142,7 +142,7 @@ MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl()
 void MediaRecorderPrivateAVFImpl::startRecording(StartRecordingCallback&& callback)
 {
     // FIXME: In case of of audio recording, we should wait for the audio compression to start to give back the exact bit rate.
-    callback(String(m_encoder->mimeType()), m_encoder->audioBitRate(), m_encoder->videoBitRate());
+    callback(m_encoder->mimeType(), m_encoder->audioBitRate(), m_encoder->videoBitRate());
 }
 
 void MediaRecorderPrivateAVFImpl::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
@@ -206,7 +206,7 @@ void MediaRecorderPrivateAVFImpl::fetchData(FetchDataCallback&& completionHandle
     });
 }
 
-String MediaRecorderPrivateAVFImpl::mimeType() const
+RefPtr<StringImpl> MediaRecorderPrivateAVFImpl::mimeType() const
 {
     return m_encoder->mimeType();
 }

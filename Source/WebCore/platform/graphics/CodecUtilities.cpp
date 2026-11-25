@@ -36,20 +36,20 @@
 
 namespace WebCore {
 
-String humanReadableStringFromCodecString(const String& codecString)
+RefPtr<StringImpl> humanReadableStringFromCodecString(StringImpl* codecString)
 {
     if (auto parameters = parseVPCodecParameters(codecString)) {
         StringBuilder builder;
-        if (parameters->codecName == "vp08"_s)
+        if (equal(parameters->codecName, "vp08"_s))
             builder.append(WEB_UI_STRING_KEY("VP8", "VP8 (Codec String)", "Codec Strings"));
-        else if (parameters->codecName == "vp09"_s)
+        else if (equal(parameters->codecName, "vp09"_s))
             builder.append(WEB_UI_STRING_KEY("VP9", "VP9 (Codec String)", "Codec Strings"));
         builder.append(" ("_s);
 
         uint8_t levelMajor = parameters->level / 10;
         uint8_t levelMinor = parameters->level % 10;
-        auto levelString = levelMinor ? WEB_UI_FORMAT_STRING("%d.%d", "Codec Level (Codec Strings)", levelMajor, levelMinor) : String::number(levelMajor);
-        builder.append(WEB_UI_FORMAT_STRING("Profile %d, Level %s", "VP8/9 Codec Level & Profile (Codec Strings)", parameters->profile, levelString.utf8()), ')');
+        auto levelString = levelMinor ? WEB_UI_FORMAT_STRING("%d.%d", "Codec Level (Codec Strings)", levelMajor, levelMinor) : makeString(static_cast<int>(levelMajor));
+        builder.append(WEB_UI_FORMAT_STRING("Profile %d, Level %s", "VP8/9 Codec Level & Profile (Codec Strings)", parameters->profile, utf8(levelString)), ')');
 
         return builder.toString();
     }
@@ -210,14 +210,14 @@ String humanReadableStringFromCodecString(const String& codecString)
     if (auto parameters = parseDoViCodecParameters(codecString))
         return WEB_UI_STRING_KEY("Dolby Vision", "Dolby Vision Codec String", "Codec Strings");
 
-    if (codecString.startsWith("opus"_s))
+    if (startsWith(codecString, "opus"_s))
         return WEB_UI_STRING_KEY("Opus", "Opus Codec String", "Codec Strings");
 
-    if (codecString.startsWith("vorbis"_s))
+    if (startsWith(codecString, "vorbis"_s))
         return WEB_UI_STRING_KEY("Vorbis", "Vorbis Codec String", "Codec Strings");
 
-    if (codecString.startsWith("mp4a.40."_s)) {
-        auto objectType = codecString.substring(8);
+    if (startsWith(codecString, "mp4a.40."_s)) {
+        auto objectType = substring(codecString, 8);
         auto objectValue = parseInteger<uint8_t>(objectType, 10);
 
         switch (objectValue.value_or(0)) {
@@ -237,8 +237,8 @@ String humanReadableStringFromCodecString(const String& codecString)
         return WEB_UI_STRING_KEY("MPEG-4 AAC", "MPEG-4 AAC Codec String", "Codec Strings");
     }
 
-    auto dotIndex = codecString.find('.');
-    return codecString.substring(0, dotIndex == notFound ? String::MaxLength : dotIndex);
+    auto dotIndex = find(codecString, '.');
+    return substring(codecString, 0, dotIndex == notFound ? StringImpl::MaxLength : dotIndex);
 }
 
 }

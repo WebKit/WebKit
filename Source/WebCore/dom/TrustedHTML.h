@@ -36,16 +36,16 @@ namespace WebCore {
 class TrustedHTML : public ScriptWrappable, public RefCounted<TrustedHTML> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(TrustedHTML, WEBCORE_EXPORT);
 public:
-    NODELETE static Ref<TrustedHTML> create(const String& data);
+    NODELETE static Ref<TrustedHTML> create(StringImpl* data);
     WEBCORE_EXPORT ~TrustedHTML();
 
-    String toString() const { return m_data; }
-    String toJSON() const { return toString(); }
+    RefPtr<StringImpl> toString() const { return m_data; }
+    RefPtr<StringImpl> toJSON() const { return toString(); }
 
 private:
-    TrustedHTML(const String& data);
+    TrustedHTML(StringImpl* data);
 
-    const String m_data;
+    const RefPtr<StringImpl> m_data;
 };
 
 } // namespace WebCore

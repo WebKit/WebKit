@@ -10164,11 +10164,11 @@ static void testARM64Disassembler()
         for (size_t size : { static_cast<size_t>(0), static_cast<size_t>(1), static_cast<size_t>(2), static_cast<size_t>(3), static_cast<size_t>(5), static_cast<size_t>(7) }) {
             StringPrintStream out;
             CHECK_EQ(tryToDisassemble(CodePtr<DisassemblyPtrTag>::fromTaggedPtr(tagCodePtr<DisassemblyPtrTag>(insns)), size, "", out), true);
-            String text = out.toString();
+            RefPtr<StringImpl> text = out.toString();
             if (size < 4)
-                CHECK_EQ(text.isEmpty(), true);
+                CHECK_EQ(isEmpty(text), true);
             else
-                CHECK_EQ(text.contains("nop"_s), true);
+                CHECK_EQ(contains(text, "nop"_s), true);
         }
     }
 
@@ -10196,13 +10196,13 @@ static void testARM64Disassembler()
             &pageBuffer[2048],
             "",
             out), true);
-        String text = out.toString();
-        CHECK_EQ(text.contains("-> <4096>"_s), true);
-        CHECK_EQ(text.contains("-> <54>"_s), true);
-        CHECK_EQ(text.contains("-> 0xffff1234"_s), true);
-        CHECK_EQ(text.contains("0xffffffffffff1234"_s), false);
-        CHECK_EQ(text.contains("-> 0x80010000"_s), true);
-        CHECK_EQ(text.contains("0xffffffff80010000"_s), false);
+        RefPtr<StringImpl> text = out.toString();
+        CHECK_EQ(contains(text, "-> <4096>"_s), true);
+        CHECK_EQ(contains(text, "-> <54>"_s), true);
+        CHECK_EQ(contains(text, "-> 0xffff1234"_s), true);
+        CHECK_EQ(contains(text, "0xffffffffffff1234"_s), false);
+        CHECK_EQ(contains(text, "-> 0x80010000"_s), true);
+        CHECK_EQ(contains(text, "0xffffffff80010000"_s), false);
     }
 }
 #endif

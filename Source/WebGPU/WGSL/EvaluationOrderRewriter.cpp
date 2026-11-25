@@ -69,7 +69,7 @@ private:
     bool mayHaveSideEffects(AST::Expression&);
 
     ShaderModule& m_shaderModule;
-    HashSet<String> m_userFunctions;
+    HashSet<RefPtr<StringImpl>> m_userFunctions;
     AST::Statement::List m_hoisted;
     unsigned m_hoistCount { 0 };
 };
@@ -82,7 +82,7 @@ class SideEffectFinder final : public AST::Visitor {
     using Base::visit;
 
 public:
-    SideEffectFinder(const HashSet<String>& userFunctions)
+    SideEffectFinder(const HashSet<RefPtr<StringImpl>>& userFunctions)
         : m_userFunctions(userFunctions)
     {
     }
@@ -98,7 +98,7 @@ public:
         if (!call.isConstructor()) {
             if (auto* target = dynamicDowncast<AST::IdentifierExpression>(call.target())) {
                 const auto& name = target->identifier().id();
-                if (m_userFunctions.contains(name) || name.startsWith("atomic"_s))
+                if (m_userFunctions.contains(name) || startsWith(name, "atomic"_s))
                     m_found = true;
             }
         }
@@ -106,7 +106,7 @@ public:
     }
 
 private:
-    const HashSet<String>& m_userFunctions;
+    const HashSet<RefPtr<StringImpl>>& m_userFunctions;
     bool m_found { false };
 };
 

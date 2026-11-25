@@ -46,7 +46,7 @@ enum class SpeechRecognitionUpdateType : uint8_t {
     End
 };
 
-String convertEnumerationToString(SpeechRecognitionUpdateType);
+RefPtr<StringImpl> convertEnumerationToString(SpeechRecognitionUpdateType);
 
 class SpeechRecognitionUpdate {
 public:
@@ -77,7 +77,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::SpeechRecognitionUpdateType> {
-    static String toString(const WebCore::SpeechRecognitionUpdateType type)
+    static RefPtr<StringImpl> toString(const WebCore::SpeechRecognitionUpdateType type)
     {
         return convertEnumerationToString(type);
     }

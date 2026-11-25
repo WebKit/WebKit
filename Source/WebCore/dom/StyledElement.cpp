@@ -105,7 +105,7 @@ Ref<MutableStyleProperties> StyledElement::ensureMutableInlineStyle()
     return mutableProperties;
 }
 
-void StyledElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void StyledElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason reason)
 {
     Element::attributeChanged(name, oldValue, newValue, reason);
     if (oldValue != newValue) {
@@ -132,7 +132,7 @@ static bool usesStyleBasedEditability(const StyleProperties& properties)
     return properties.getPropertyCSSValue(CSSPropertyID::WebkitUserModify);
 }
 
-void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
+void StyledElement::setInlineStyleFromString(AtomStringImpl* newStyleString)
 {
     auto& inlineStyle = elementData()->m_inlineStyle;
 
@@ -151,20 +151,20 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
         document().setHasElementUsingStyleBasedEditability();
 }
 
-bool StyledElement::isStyleAttributeAllowedByContentSecurityPolicy(const AtomString& styleString, OrdinalNumber startLineNumber)
+bool StyledElement::isStyleAttributeAllowedByContentSecurityPolicy(AtomStringImpl* styleString, OrdinalNumber startLineNumber)
 {
     Ref policyDocument = document().contextDocument();
-    return protect(policyDocument->contentSecurityPolicy())->allowInlineStyle(policyDocument->url().string(), startLineNumber, styleString.string(), CheckUnsafeHashes::Yes, *this, nonce(), isInUserAgentShadowTree());
+    return protect(policyDocument->contentSecurityPolicy())->allowInlineStyle(policyDocument->url().string(), startLineNumber, styleString, CheckUnsafeHashes::Yes, *this, nonce(), isInUserAgentShadowTree());
 }
 
-void StyledElement::styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason reason)
+void StyledElement::styleAttributeChanged(AtomStringImpl* newStyleString, AttributeModificationReason reason)
 {
     Ref document = this->document();
     auto startLineNumber = OrdinalNumber::beforeFirst();
     if (document->scriptableDocumentParser() && !document->isInDocumentWrite())
         startLineNumber = protect(document->scriptableDocumentParser())->textPosition().m_line;
 
-    if (newStyleString.isNull())
+    if (!newStyleString)
         ensureMutableInlineStyle()->clear();
     else if (reason == AttributeModificationReason::ByCloning || isStyleAttributeAllowedByContentSecurityPolicy(newStyleString, startLineNumber))
         setInlineStyleFromString(newStyleString);
@@ -245,7 +245,7 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, Ref<CSSValu
     return true;
 }
 
-bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, IsImportant important, bool* didFailParsing)
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, StringImpl* value, IsImportant important, bool* didFailParsing)
 {
     bool changes = ensureMutableInlineStyle()->setProperty(propertyID, value, CSSParserContext(protect(document())), important, didFailParsing);
     if (changes)
@@ -253,9 +253,9 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const Strin
     return changes;
 }
 
-bool StyledElement::setInlineStyleCustomProperty(const AtomString& property, const String& value, IsImportant important)
+bool StyledElement::setInlineStyleCustomProperty(AtomStringImpl* property, StringImpl* value, IsImportant important)
 {
-    bool changes = ensureMutableInlineStyle()->setCustomProperty(property.string(), value, CSSParserContext(protect(document())), important);
+    bool changes = ensureMutableInlineStyle()->setCustomProperty(property, value, CSSParserContext(protect(document())), important);
     if (changes)
         inlineStyleChanged();
     return changes;
@@ -279,7 +279,7 @@ bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
     return changes;
 }
 
-bool StyledElement::removeInlineStyleCustomProperty(const AtomString& property)
+bool StyledElement::removeInlineStyleCustomProperty(AtomStringImpl* property)
 {
     if (!inlineStyle())
         return false;
@@ -382,7 +382,7 @@ void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties&
     style.setProperty(propertyID, CSSPrimitiveValue::create(value, unit));
 }
     
-void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& value)
+void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringImpl* value)
 {
     SUPPRESS_UNCOUNTED_ARG style.setProperty(propertyID, value, document().cssParserContext());
 }
@@ -392,9 +392,9 @@ void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties&
     style.setProperty(propertyID, WTF::move(value));
 }
 
-void StyledElement::mapLanguageAttributeToLocale(const AtomString& value, MutableStyleProperties& style)
+void StyledElement::mapLanguageAttributeToLocale(AtomStringImpl* value, MutableStyleProperties& style)
 {
-    if (!value.isEmpty()) {
+    if (!isEmpty(value)) {
         // Quote the locale id so it is treated as a string instead of as a CSS keyword.
         addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitLocale, serializeString(value));
     } else {

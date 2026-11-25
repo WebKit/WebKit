@@ -26,7 +26,7 @@
 
 namespace WebKit {
 
-JSObjectRef toJSRejectedPromise(JSContextRef context, const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
+JSObjectRef toJSRejectedPromise(JSContextRef context, StringImpl* callingAPIName, StringImpl* sourceKey, StringImpl* underlyingErrorString)
 {
     JSObjectRef reject = nullptr;
     JSObjectRef promise = JSObjectMakeDeferredPromise(context, nullptr, &reject, nullptr);

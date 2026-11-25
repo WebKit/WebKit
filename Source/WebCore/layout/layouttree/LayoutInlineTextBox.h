@@ -46,7 +46,7 @@ public:
         HasSynthesizedGlyph, // A list marker's disc, circle or square: the text is the character the counter style produced.
         HighestEnumValue = HasSynthesizedGlyph
     };
-    const String& content() const LIFETIME_BOUND { return m_content; }
+    const RefPtr<StringImpl>& content() const LIFETIME_BOUND { return m_content; }
 
     // text-combine-upright content that fits in 1em is drawn horizontally with a font of its own.
     struct CombinedText {
@@ -73,7 +73,7 @@ public:
     static constexpr float contentGlyphAdvanceRatio = 0.52f;
 
     // BoxTreeUpdater sets these from the renderer.
-    void setContent(String newContent, EnumSet<ContentCharacteristic>);
+    void setContent(RefPtr<StringImpl> newContent, EnumSet<ContentCharacteristic>);
     void setCanUseSimplifiedContentMeasuring(bool);
     void setCombinedText(std::unique_ptr<CombinedText>&&);
 
@@ -87,7 +87,7 @@ private:
     EnumSet<ContentCharacteristic> contentCharacteristics() const { return EnumSet<ContentCharacteristic>::fromRaw(m_textContentCharacteristics); }
 
     // The rest of the state is in Box bits.
-    String m_content;
+    RefPtr<StringImpl> m_content;
 };
 
 inline std::optional<SynthesizedGlyph> InlineTextBox::contentGlyph() const
@@ -97,7 +97,7 @@ inline std::optional<SynthesizedGlyph> InlineTextBox::contentGlyph() const
     return static_cast<SynthesizedGlyph>(m_textContentGlyph - 1);
 }
 
-inline void InlineTextBox::setContent(String newContent, EnumSet<ContentCharacteristic> contentCharacteristicSet)
+inline void InlineTextBox::setContent(RefPtr<StringImpl> newContent, EnumSet<ContentCharacteristic> contentCharacteristicSet)
 {
     m_content = WTF::move(newContent);
     m_textContentCharacteristics = contentCharacteristicSet.toRaw();

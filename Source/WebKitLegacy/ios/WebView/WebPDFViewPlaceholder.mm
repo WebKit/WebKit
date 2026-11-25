@@ -484,7 +484,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     // Call to the frame loader because this is where our security checks are made.
     RefPtr frame = core([protect(_dataSource) webFrame]);
     RefPtr document = frame->document();
-    FrameLoadRequest frameLoadRequest { *document, protect(document->securityOrigin()), { URL }, { }, InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { *document, protect(document->securityOrigin()), { URL }, nullptr, InitiatedByMainFrame::Unknown };
     frameLoadRequest.setReferrerPolicy(ReferrerPolicy::NoReferrer);
     frame->loader().loadFrameRequest(WTF::move(frameLoadRequest), event.ptr(), nullptr);
 }

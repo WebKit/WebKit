@@ -198,11 +198,11 @@ bool DebuggerScope::isNestedLexicalScope() const
     return m_scope->isNestedLexicalScope();
 }
 
-String DebuggerScope::name() const
+RefPtr<StringImpl> DebuggerScope::name() const
 {
     SymbolTable* symbolTable = m_scope->symbolTable();
     if (!symbolTable)
-        return String();
+        return nullptr;
 
     return symbolTable->inferredName();
 }

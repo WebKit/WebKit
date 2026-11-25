@@ -136,7 +136,7 @@ template<> JSValue JSTestCallTracerDOMConstructor::prototypeForStructure(JSC::VM
 template<> void JSTestCallTracerDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    JSString* nameString = jsNontrivialString(vm, "TestCallTracer"_s);
+    JSString* nameString = jsNontrivialString(vm, "TestCallTracer"_si);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->prototype, JSTestCallTracer::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
@@ -237,7 +237,7 @@ static inline JSValue jsTestCallTracer_testAttributeInterfaceGetter(JSGlobalObje
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testAttributeInterface"_s);
+        TestInterfaceCallTracer::recordAction(impl, "testAttributeInterface"_si);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testAttributeInterface())));
 }
 
@@ -256,7 +256,7 @@ static inline bool setJSTestCallTracer_testAttributeInterfaceSetter(JSGlobalObje
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testAttributeInterface"_s, { TestInterfaceCallTracer::processArgument<IDLBoolean>(impl, nativeValueConversionResult.returnValue()) });
+        TestInterfaceCallTracer::recordAction(impl, "testAttributeInterface"_si, { TestInterfaceCallTracer::processArgument<IDLBoolean>(impl, nativeValueConversionResult.returnValue()) });
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setTestAttributeInterface(nativeValueConversionResult.releaseReturnValue());
     });
@@ -274,7 +274,7 @@ static inline JSValue jsTestCallTracer_testAttributeSpecifiedGetter(JSGlobalObje
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     if (impl.hasActiveTestAttributeCallTracer()) [[unlikely]]
-        TestAttributeCallTracer::recordAction(impl, "testAttributeSpecified"_s);
+        TestAttributeCallTracer::recordAction(impl, "testAttributeSpecified"_si);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testAttributeSpecified())));
 }
 
@@ -293,7 +293,7 @@ static inline bool setJSTestCallTracer_testAttributeSpecifiedSetter(JSGlobalObje
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     if (impl.hasActiveTestAttributeCallTracer()) [[unlikely]]
-        TestAttributeCallTracer::recordAction(impl, "testAttributeSpecified"_s, { TestAttributeCallTracer::processArgument<IDLBoolean>(impl, nativeValueConversionResult.returnValue()) });
+        TestAttributeCallTracer::recordAction(impl, "testAttributeSpecified"_si, { TestAttributeCallTracer::processArgument<IDLBoolean>(impl, nativeValueConversionResult.returnValue()) });
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setTestAttributeSpecified(nativeValueConversionResult.releaseReturnValue());
     });
@@ -311,7 +311,7 @@ static inline JSValue jsTestCallTracer_testAttributeWithVariantGetter(JSGlobalOb
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testAttributeWithVariant"_s);
+        TestInterfaceCallTracer::recordAction(impl, "testAttributeWithVariant"_si);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(lexicalGlobalObject, *thisObject.realm(), throwScope, impl.testAttributeWithVariant())));
 }
 
@@ -330,7 +330,7 @@ static inline bool setJSTestCallTracer_testAttributeWithVariantSetter(JSGlobalOb
     if (nativeValueConversionResult.hasException(throwScope)) [[unlikely]]
         return false;
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testAttributeWithVariant"_s, { TestInterfaceCallTracer::processArgument<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(impl, nativeValueConversionResult.returnValue()) });
+        TestInterfaceCallTracer::recordAction(impl, "testAttributeWithVariant"_si, { TestInterfaceCallTracer::processArgument<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(impl, nativeValueConversionResult.returnValue()) });
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setTestAttributeWithVariant(nativeValueConversionResult.releaseReturnValue());
     });
@@ -363,7 +363,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testOperationInterface"_s);
+        TestInterfaceCallTracer::recordAction(impl, "testOperationInterface"_si);
     decltype(auto) nativeResult = impl.testOperationInterface();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
         TestInterfaceCallTracer::recordActionResult<IDLInterface<TestCallTracer>>(impl, nativeResult);
@@ -383,7 +383,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     if (impl.hasActiveTestOperationCallTracer()) [[unlikely]]
-        TestOperationCallTracer::recordAction(impl, "testOperationSpecified"_s);
+        TestOperationCallTracer::recordAction(impl, "testOperationSpecified"_si);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.testOperationSpecified(); })));
 }
 
@@ -414,7 +414,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     if (cConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testOperationWithArguments"_s, { TestInterfaceCallTracer::processArgument<IDLBoolean>(impl, aConversionResult.returnValue()), TestInterfaceCallTracer::processArgument<IDLFloat>(impl, bConversionResult.returnValue()), TestInterfaceCallTracer::processArgument<IDLDOMString>(impl, cConversionResult.returnValue()) });
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithArguments"_si, { TestInterfaceCallTracer::processArgument<IDLBoolean>(impl, aConversionResult.returnValue()), TestInterfaceCallTracer::processArgument<IDLFloat>(impl, bConversionResult.returnValue()), TestInterfaceCallTracer::processArgument<IDLDOMString>(impl, cConversionResult.returnValue()) });
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.testOperationWithArguments(aConversionResult.releaseReturnValue(), bConversionResult.releaseReturnValue(), cConversionResult.releaseReturnValue()); })));
 }
 
@@ -437,7 +437,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     if (nodeNullableArgConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableArgument"_s, { TestInterfaceCallTracer::processArgument<IDLNullable<IDLInterface<Node>>>(impl, nodeNullableArgConversionResult.returnValue()) });
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableArgument"_si, { TestInterfaceCallTracer::processArgument<IDLNullable<IDLInterface<Node>>>(impl, nodeNullableArgConversionResult.returnValue()) });
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.testOperationWithNullableArgument(nodeNullableArgConversionResult.releaseReturnValue().get()); })));
 }
 
@@ -460,7 +460,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     if (variantArgConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testOperationWithVariantArgument"_s, { TestInterfaceCallTracer::processArgument<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(impl, variantArgConversionResult.returnValue()) });
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithVariantArgument"_si, { TestInterfaceCallTracer::processArgument<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(impl, variantArgConversionResult.returnValue()) });
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.testOperationWithVariantArgument(variantArgConversionResult.releaseReturnValue()); })));
 }
 
@@ -483,7 +483,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     if (variantNullableArgConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableVariantArgument"_s, { TestInterfaceCallTracer::processArgument<IDLNullable<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>>(impl, variantNullableArgConversionResult.returnValue()) });
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableVariantArgument"_si, { TestInterfaceCallTracer::processArgument<IDLNullable<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>>(impl, variantNullableArgConversionResult.returnValue()) });
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.testOperationWithNullableVariantArgument(variantNullableArgConversionResult.releaseReturnValue()); })));
 }
 
@@ -504,7 +504,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     if (variantOptionalArgConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testOperationWithOptionalVariantArgument"_s, { TestInterfaceCallTracer::processArgument<IDLOptional<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>>(impl, variantOptionalArgConversionResult.returnValue()) });
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithOptionalVariantArgument"_si, { TestInterfaceCallTracer::processArgument<IDLOptional<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>>(impl, variantOptionalArgConversionResult.returnValue()) });
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.testOperationWithOptionalVariantArgument(variantOptionalArgConversionResult.releaseReturnValue()); })));
 }
 
@@ -525,7 +525,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     if (variantDefaultArgConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
-        TestInterfaceCallTracer::recordAction(impl, "testOperationWithDefaultVariantArgument"_s, { TestInterfaceCallTracer::processArgument<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(impl, variantDefaultArgConversionResult.returnValue()) });
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithDefaultVariantArgument"_si, { TestInterfaceCallTracer::processArgument<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(impl, variantDefaultArgConversionResult.returnValue()) });
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.testOperationWithDefaultVariantArgument(variantDefaultArgConversionResult.releaseReturnValue()); })));
 }
 

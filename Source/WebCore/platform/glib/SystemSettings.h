@@ -38,16 +38,16 @@ namespace WebCore {
 enum class InterfaceContrastPreference : uint8_t;
 
 struct SystemSettingsState {
-    std::optional<String> themeName;
+    std::optional<RefPtr<StringImpl>> themeName;
     std::optional<bool> darkMode;
-    std::optional<String> fontName;
-    std::optional<String> fontFamily;
+    std::optional<RefPtr<StringImpl>> fontName;
+    std::optional<RefPtr<StringImpl>> fontFamily;
     std::optional<float> fontSize;
     std::optional<int> fontWeight;
     std::optional<int> xftAntialias;
     std::optional<int> xftHinting;
-    std::optional<String> xftHintStyle;
-    std::optional<String> xftRGBA;
+    std::optional<RefPtr<StringImpl>> xftHintStyle;
+    std::optional<RefPtr<StringImpl>> xftRGBA;
     std::optional<int> xftDPI;
     std::optional<bool> followFontSystemSettings;
     std::optional<bool> cursorBlink;
@@ -73,10 +73,10 @@ public:
     void addObserver(Function<void(const State&)>&&, void* context);
     void removeObserver(void* context);
 
-    std::optional<String> themeName() const { return m_state.themeName; }
+    std::optional<RefPtr<StringImpl>> themeName() const { return m_state.themeName; }
     std::optional<bool> darkMode() const { return m_state.darkMode; }
-    std::optional<String> fontName() const { return m_state.fontName; }
-    std::optional<String> fontFamily() const { return m_state.fontFamily; }
+    std::optional<RefPtr<StringImpl>> fontName() const { return m_state.fontName; }
+    std::optional<RefPtr<StringImpl>> fontFamily() const { return m_state.fontFamily; }
     std::optional<float> fontSize() const { return m_state.fontSize; }
     std::optional<int> fontWeight() const { return m_state.fontWeight; }
     std::optional<bool> cursorBlink() const { return m_state.cursorBlink; }
@@ -92,7 +92,7 @@ public:
     std::optional<FontRenderOptions::SubpixelOrder> subpixelOrder() const;
     std::optional<FontRenderOptions::Antialias> antialiasMode() const;
 
-    String defaultSystemFont() const;
+    RefPtr<StringImpl> defaultSystemFont() const;
 
 private:
     SystemSettings();

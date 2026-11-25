@@ -33,9 +33,9 @@ namespace WebCore {
 struct ServiceWorkerImportedScript {
     ScriptBuffer script;
     URL responseURL;
-    String mimeType;
+    RefPtr<StringImpl> mimeType;
 
-    ServiceWorkerImportedScript isolatedCopy() const & { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
-    ServiceWorkerImportedScript isolatedCopy() && { return { WTF::move(script).isolatedCopy(), WTF::move(responseURL).isolatedCopy(), WTF::move(mimeType).isolatedCopy() }; }
+    ServiceWorkerImportedScript isolatedCopy() const & { return { script.isolatedCopy(), responseURL.isolatedCopy(), WTF::isolatedCopy(mimeType) }; }
+    ServiceWorkerImportedScript isolatedCopy() && { return { WTF::move(script).isolatedCopy(), WTF::move(responseURL).isolatedCopy(), WTF::isolatedCopy(WTF::move(mimeType)) }; }
 };
 } // namespace WebCore

@@ -34,7 +34,7 @@
 namespace WebCore {
 using namespace JSC;
 
-DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, Type type, const String& name)
+DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, Type type, StringImpl* name)
     : m_vm(vm)
     , m_name(name)
     , m_type(type)

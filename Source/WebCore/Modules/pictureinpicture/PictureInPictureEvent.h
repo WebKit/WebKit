@@ -41,12 +41,12 @@ public:
         Ref<PictureInPictureWindow> pictureInPictureWindow;
     };
 
-    NODELETE static Ref<PictureInPictureEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<PictureInPictureEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
 
     PictureInPictureWindow& pictureInPictureWindow() const { return m_pictureInPictureWindow.get(); }
 
 private:
-    PictureInPictureEvent(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    PictureInPictureEvent(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
 
     const Ref<PictureInPictureWindow> m_pictureInPictureWindow;
 };

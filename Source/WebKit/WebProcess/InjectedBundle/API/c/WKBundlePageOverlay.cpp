@@ -179,7 +179,7 @@ private:
     }
 #endif // PLATFORM(MAC)
 
-    bool copyAccessibilityAttributeStringValueForPoint(WebKit::WebPageOverlay& pageOverlay, String attribute, WebCore::FloatPoint parameter, String& value) override
+    bool copyAccessibilityAttributeStringValueForPoint(WebKit::WebPageOverlay& pageOverlay, RefPtr<StringImpl> attribute, WebCore::FloatPoint parameter, RefPtr<StringImpl>& value) override
     {
         if (!m_accessibilityClient.client().copyAccessibilityAttributeValue)
             return false;
@@ -190,7 +190,7 @@ private:
         return true;
     }
 
-    bool copyAccessibilityAttributeBoolValueForPoint(WebKit::WebPageOverlay& pageOverlay, String attribute, WebCore::FloatPoint parameter, bool& value) override
+    bool copyAccessibilityAttributeBoolValueForPoint(WebKit::WebPageOverlay& pageOverlay, RefPtr<StringImpl> attribute, WebCore::FloatPoint parameter, bool& value) override
     {
         if (!m_accessibilityClient.client().copyAccessibilityAttributeValue)
             return false;
@@ -201,9 +201,9 @@ private:
         return true;
     }
 
-    Vector<String> copyAccessibilityAttributeNames(WebKit::WebPageOverlay& pageOverlay, bool paramerizedNames) override
+    Vector<RefPtr<StringImpl>> copyAccessibilityAttributeNames(WebKit::WebPageOverlay& pageOverlay, bool paramerizedNames) override
     {
-        Vector<String> names;
+        Vector<RefPtr<StringImpl>> names;
         if (!m_accessibilityClient.client().copyAccessibilityAttributeNames)
             return names;
         auto wkNames = m_accessibilityClient.client().copyAccessibilityAttributeNames(toAPI(&pageOverlay), paramerizedNames, m_accessibilityClient.client().base.clientInfo);

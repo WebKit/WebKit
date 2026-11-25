@@ -56,26 +56,26 @@ static void initializeKillRingIfNeeded()
     }
 }
 
-void KillRing::append(const String& string)
+void KillRing::append(StringImpl* string)
 {
     initializeKillRingIfNeeded();
     // Necessary to prevent an implicit new sequence if the previous command was NSPrependToKillRing.
     _NSResetKillRingOperationFlag();
-    _NSAppendToKillRing(string.createNSString().get());
+    _NSAppendToKillRing(createNSString(string).get());
 }
 
-void KillRing::prepend(const String& string)
+void KillRing::prepend(StringImpl* string)
 {
     initializeKillRingIfNeeded();
     // Necessary to prevent an implicit new sequence if the previous command was NSAppendToKillRing.
     _NSResetKillRingOperationFlag();
-    _NSPrependToKillRing(string.createNSString().get());
+    _NSPrependToKillRing(createNSString(string).get());
 }
 
-String KillRing::yank()
+RefPtr<StringImpl> KillRing::yank()
 {
     initializeKillRingIfNeeded();
-    return _NSYankFromKillRing();
+    return StringImpl::create(protect(_NSYankFromKillRing()).get());
 }
 
 void KillRing::startNewSequence()

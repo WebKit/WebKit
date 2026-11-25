@@ -50,7 +50,7 @@ JSGlobalObjectDebuggerAgent::~JSGlobalObjectDebuggerAgent() = default;
 InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
-        errorString = "executionContextId is not supported for JSContexts as there is only one execution context"_s;
+        errorString = "executionContextId is not supported for JSContexts as there is only one execution context"_si;
         return InjectedScript();
     }
 
@@ -58,7 +58,7 @@ InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(Protocol::Erro
     return injectedScriptManager().injectedScriptFor(&globalObject);
 }
 
-void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* globalObject, const String& message)
+void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* globalObject, StringImpl* message)
 {
     m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(globalObject), 0));
 }

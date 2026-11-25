@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct WebCodecsVideoDecoderConfig {
-    String codec;
+    RefPtr<StringImpl> codec;
     std::optional<BufferSource> description;
     std::optional<size_t> codedWidth;
     std::optional<size_t> codedHeight;
@@ -47,8 +47,8 @@ struct WebCodecsVideoDecoderConfig {
     double rotation { 0 };
     bool flip { false };
 
-    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() && { return { WTF::move(codec).isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency, rotation, flip }; }
-    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() const & { return { codec.isolatedCopy(), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency, rotation, flip }; }
+    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() && { return { isolatedCopy(WTF::move(codec)), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency, rotation, flip }; }
+    WebCodecsVideoDecoderConfig isolatedCopyWithoutDescription() const & { return { isolatedCopy(codec), { }, codedWidth, codedHeight, displayAspectWidth, displayAspectHeight, colorSpace, hardwareAcceleration, optimizeForLatency, rotation, flip }; }
 };
 
 }

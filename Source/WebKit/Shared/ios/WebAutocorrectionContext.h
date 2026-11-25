@@ -36,10 +36,10 @@ namespace WebKit {
 
 struct WebAutocorrectionContext {
     std::optional<WebCore::FrameIdentifier> frameID;
-    String contextBefore;
-    String markedText;
-    String selectedText;
-    String contextAfter;
+    RefPtr<StringImpl> contextBefore;
+    RefPtr<StringImpl> markedText;
+    RefPtr<StringImpl> selectedText;
+    RefPtr<StringImpl> contextAfter;
     EditingRange selectedRangeInMarkedText;
 };
 

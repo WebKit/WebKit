@@ -40,7 +40,7 @@ struct MessagePortIdentifier {
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
 #if !LOG_DISABLED
-    String logString() const;
+    RefPtr<StringImpl> logString() const;
 #endif
 };
 
@@ -51,7 +51,7 @@ inline void add(Hasher& hasher, const MessagePortIdentifier& identifier)
 
 #if !LOG_DISABLED
 
-inline String MessagePortIdentifier::logString() const
+inline RefPtr<StringImpl> MessagePortIdentifier::logString() const
 {
     return makeString(processIdentifier.toUInt64(), '-', portIdentifier.toUInt64());
 }

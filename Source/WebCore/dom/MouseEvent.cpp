@@ -57,7 +57,7 @@ static int16_t buttonValue(std::expected<MouseButton, MouseButtonState> button)
     return std::to_underlying(button.error());
 }
 
-bool isAnyClick(const AtomString& eventType)
+bool isAnyClick(AtomStringImpl* eventType)
 {
     return eventType == eventNames().clickEvent || eventType == eventNames().auxclickEvent;
 }
@@ -67,13 +67,13 @@ bool isAnyClick(const Event& event)
     return isAnyClick(event.type());
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomString& type, const MouseEventInit& initializer)
+Ref<MouseEvent> MouseEvent::create(AtomStringImpl* type, const MouseEventInit& initializer)
 {
     return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, type, initializer, IsTrusted::No));
 }
 
 Ref<MouseEvent> MouseEvent::create(
-    const AtomString& eventType,
+    AtomStringImpl* eventType,
     RefPtr<WindowProxy>&& view,
     const PlatformMouseEvent& event,
     const Vector<Ref<MouseEvent>>& coalescedEvents,
@@ -113,7 +113,7 @@ Ref<MouseEvent> MouseEvent::create(
 }
 
 Ref<MouseEvent> MouseEvent::create(
-    const AtomString& type,
+    AtomStringImpl* type,
     CanBubble canBubble,
     IsCancelable isCancelable,
     IsComposed isComposed,
@@ -167,7 +167,7 @@ Ref<MouseEvent> MouseEvent::create(
 }
 
 Ref<MouseEvent> MouseEvent::create(
-    const AtomString& eventType,
+    AtomStringImpl* eventType,
     CanBubble canBubble,
     IsCancelable isCancelable,
     IsComposed isComposed,
@@ -229,7 +229,7 @@ MouseEvent::MouseEvent(enum EventInterfaceType eventInterface)
 
 MouseEvent::MouseEvent(
     enum EventInterfaceType eventInterface,
-    const AtomString& eventType,
+    AtomStringImpl* eventType,
     CanBubble canBubble,
     IsCancelable isCancelable,
     IsComposed isComposed,
@@ -283,7 +283,7 @@ MouseEvent::MouseEvent(
 
 MouseEvent::MouseEvent(
     enum EventInterfaceType eventInterface,
-    const AtomString& eventType,
+    AtomStringImpl* eventType,
     CanBubble canBubble,
     IsCancelable isCancelable,
     IsComposed isComposed,
@@ -327,7 +327,7 @@ MouseEvent::MouseEvent(
 
 MouseEvent::MouseEvent(
     enum EventInterfaceType eventInterface,
-    const AtomString& eventType,
+    AtomStringImpl* eventType,
     const MouseEventInit& initializer,
     IsTrusted isTrusted
 )
@@ -343,7 +343,7 @@ MouseEvent::MouseEvent(
 MouseEvent::~MouseEvent() = default;
 
 void MouseEvent::initMouseEvent(
-    const AtomString& type,
+    AtomStringImpl* type,
     bool canBubble,
     bool cancelable,
     RefPtr<WindowProxy>&& view,

@@ -53,7 +53,7 @@ REPLY()
 END
 
 FUNCTION(handleAttribution)
-ARGUMENTS(PrivateClickMeasurementManager::AttributionTriggerData, URL, WebCore::RegistrableDomain, URL, String)
+ARGUMENTS(PrivateClickMeasurementManager::AttributionTriggerData, URL, WebCore::RegistrableDomain, URL, RefPtr<StringImpl>)
 END
 
 FUNCTION(clear)
@@ -80,7 +80,7 @@ END
 
 FUNCTION(toStringForTesting)
 ARGUMENTS()
-REPLY(String)
+REPLY(RefPtr<StringImpl>)
 END
 
 FUNCTION(setOverrideTimerForTesting)
@@ -109,7 +109,7 @@ REPLY()
 END
 
 FUNCTION(setPCMFraudPreventionValuesForTesting)
-ARGUMENTS(String, String, String, String)
+ARGUMENTS(RefPtr<StringImpl>, RefPtr<StringImpl>, RefPtr<StringImpl>, RefPtr<StringImpl>)
 END
 
 FUNCTION(startTimerImmediatelyForTesting)
@@ -117,7 +117,7 @@ ARGUMENTS()
 END
 
 FUNCTION(setPrivateClickMeasurementAppBundleIDForTesting)
-ARGUMENTS(String)
+ARGUMENTS(RefPtr<StringImpl>)
 END
 
 FUNCTION(destroyStoreForTesting)
@@ -155,7 +155,7 @@ static PCM::EncodedMessage encodeReplyImpl(T&& payload)
     return encoder.takeBuffer();
 }
 
-PCM::EncodedMessage toStringForTesting::encodeReply(String reply)
+PCM::EncodedMessage toStringForTesting::encodeReply(RefPtr<StringImpl> reply)
 {
     return encodeReplyImpl(WTF::move(reply));
 }
@@ -203,7 +203,7 @@ NODELETE static RefPtr<PrivateClickMeasurementManager>& managerPointer()
     return manager.get();
 }
 
-void initializePCMStorageInDirectory(const String& storageDirectory, const String& applicationBundleIdentifier, const String& secondaryApplicationBundleIdentifier)
+void initializePCMStorageInDirectory(StringImpl* storageDirectory, StringImpl* applicationBundleIdentifier, StringImpl* secondaryApplicationBundleIdentifier)
 {
     ASSERT(!managerPointer());
     managerPointer() = PrivateClickMeasurementManager::create(makeUniqueRef<PCM::DaemonClient>(), storageDirectory, std::make_pair(applicationBundleIdentifier, secondaryApplicationBundleIdentifier));

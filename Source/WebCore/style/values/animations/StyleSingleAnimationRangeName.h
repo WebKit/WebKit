@@ -47,8 +47,8 @@ enum class SingleAnimationRangeName : uint8_t { Normal, Omitted, Cover, Contain,
 NODELETE CSSValueID convertSingleAnimationRangeNameToCSSValueID(SingleAnimationRangeName);
 NODELETE SingleAnimationRangeName convertCSSValueIDToSingleAnimationRangeName(CSSValueID);
 
-WTF::String convertSingleAnimationRangeNameToRangeString(SingleAnimationRangeName);
-SingleAnimationRangeName convertRangeStringToSingleTimelineRangeName(const WTF::String&);
+RefPtr<StringImpl> convertSingleAnimationRangeNameToRangeString(SingleAnimationRangeName);
+SingleAnimationRangeName convertRangeStringToSingleTimelineRangeName(StringImpl*);
 
 } // namespace Style
 } // namespace WebCore

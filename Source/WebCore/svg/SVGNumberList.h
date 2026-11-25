@@ -52,7 +52,7 @@ public:
     ~SVGNumberList();
 
     bool parse(StringView);
-    String valueAsString() const override;
+    RefPtr<StringImpl> valueAsString() const override;
 
 private:
     SVGNumberList();

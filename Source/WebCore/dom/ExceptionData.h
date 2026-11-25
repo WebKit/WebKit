@@ -32,12 +32,12 @@ namespace WebCore {
 
 struct ExceptionData {
     ExceptionCode code;
-    String message;
+    RefPtr<StringImpl> message;
 
-    ExceptionData isolatedCopy() const & { return { code, message.isolatedCopy() }; }
-    ExceptionData isolatedCopy() && { return { code, WTF::move(message).isolatedCopy() }; }
+    ExceptionData isolatedCopy() const & { return { code, WTF::isolatedCopy(message) }; }
+    ExceptionData isolatedCopy() && { return { code, WTF::isolatedCopy(WTF::move(message)) }; }
 
-    Exception toException() const & { return Exception { code, String { message } }; }
+    Exception toException() const & { return Exception { code, RefPtr<StringImpl> { message } }; }
     Exception toException() && { return Exception { code, WTF::move(message) }; }
 };
 

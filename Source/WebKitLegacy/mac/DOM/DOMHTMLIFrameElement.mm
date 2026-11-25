@@ -48,145 +48,145 @@
 - (NSString *)align
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::alignAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::alignAttr)).autorelease();
 }
 
 - (void)setAlign:(NSString *)newAlign
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, newAlign);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, AtomStringImpl::add((__bridge CFStringRef)newAlign).get());
 }
 
 - (NSString *)frameBorder
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::frameborderAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::frameborderAttr)).autorelease();
 }
 
 - (void)setFrameBorder:(NSString *)newFrameBorder
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::frameborderAttr, newFrameBorder);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::frameborderAttr, AtomStringImpl::add((__bridge CFStringRef)newFrameBorder).get());
 }
 
 - (NSString *)height
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::heightAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::heightAttr)).autorelease();
 }
 
 - (void)setHeight:(NSString *)newHeight
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::heightAttr, newHeight);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::heightAttr, AtomStringImpl::add((__bridge CFStringRef)newHeight).get());
 }
 
 - (NSString *)longDesc
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::longdescAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::longdescAttr)).autorelease();
 }
 
 - (void)setLongDesc:(NSString *)newLongDesc
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::longdescAttr, newLongDesc);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::longdescAttr, AtomStringImpl::add((__bridge CFStringRef)newLongDesc).get());
 }
 
 - (NSString *)marginHeight
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::marginheightAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::marginheightAttr)).autorelease();
 }
 
 - (void)setMarginHeight:(NSString *)newMarginHeight
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginheightAttr, newMarginHeight);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginheightAttr, AtomStringImpl::add((__bridge CFStringRef)newMarginHeight).get());
 }
 
 - (NSString *)marginWidth
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::marginwidthAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::marginwidthAttr)).autorelease();
 }
 
 - (void)setMarginWidth:(NSString *)newMarginWidth
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginwidthAttr, newMarginWidth);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginwidthAttr, AtomStringImpl::add((__bridge CFStringRef)newMarginWidth).get());
 }
 
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getNameAttribute().createNSString().autorelease();
+    return createNSString(IMPL->getNameAttribute()).autorelease();
 }
 
 - (void)setName:(NSString *)newName
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, AtomStringImpl::add((__bridge CFStringRef)newName).get());
 }
 
 - (NSString *)sandbox
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::sandboxAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::sandboxAttr)).autorelease();
 }
 
 - (void)setSandbox:(NSString *)newSandbox
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::sandboxAttr, newSandbox);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::sandboxAttr, AtomStringImpl::add((__bridge CFStringRef)newSandbox).get());
 }
 
 - (NSString *)scrolling
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::scrollingAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::scrollingAttr)).autorelease();
 }
 
 - (void)setScrolling:(NSString *)newScrolling
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::scrollingAttr, newScrolling);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::scrollingAttr, AtomStringImpl::add((__bridge CFStringRef)newScrolling).get());
 }
 
 - (NSString *)src
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::srcAttr).string().createNSString().autorelease();
+    return createNSString(IMPL->getURLAttribute(WebCore::HTMLNames::srcAttr).string()).autorelease();
 }
 
 - (void)setSrc:(NSString *)newSrc
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, newSrc);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, AtomStringImpl::add((__bridge CFStringRef)newSrc).get());
 }
 
 - (NSString *)srcdoc
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::srcdocAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::srcdocAttr)).autorelease();
 }
 
 - (void)setSrcdoc:(NSString *)newSrcdoc
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcdocAttr, newSrcdoc);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcdocAttr, AtomStringImpl::add((__bridge CFStringRef)newSrcdoc).get());
 }
 
 - (NSString *)width
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::widthAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::widthAttr)).autorelease();
 }
 
 - (void)setWidth:(NSString *)newWidth
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, newWidth);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, AtomStringImpl::add((__bridge CFStringRef)newWidth).get());
 }
 
 - (DOMDocument *)contentDocument

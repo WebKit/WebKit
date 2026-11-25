@@ -72,7 +72,7 @@ private:
 
     // Message handlers.
     void replaceRelativeToSelection(const WebCore::AttributedString&, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength);
-    void removeAnnotationRelativeToSelection(const String& annotationName, int64_t selectionOffset, uint64_t length);
+    void removeAnnotationRelativeToSelection(StringImpl* annotationName, int64_t selectionOffset, uint64_t length);
 
     WeakRef<WebPage> m_page;
 };

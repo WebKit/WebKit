@@ -544,9 +544,9 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersForMainFrameMainRe
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
 
-    __block Vector<std::pair<String, String>> adjustedURLStrings;
+    __block Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> adjustedURLStrings;
     [navigationDelegate setDidChangeLookalikeCharactersFromURL:^(WKWebView *, NSURL *originalURL, NSURL *adjustedURL) {
-        adjustedURLStrings.append({ { originalURL.absoluteString }, { adjustedURL.absoluteString } });
+        adjustedURLStrings.append({ { StringImpl::create(originalURL.absoluteString) }, { StringImpl::create(adjustedURL.absoluteString) } });
     }];
 
     [webView setNavigationDelegate:navigationDelegate.get()];
@@ -617,7 +617,7 @@ TEST(AdvancedPrivacyProtections, ApplyNavigationalProtectionsAfterMultiplePSON)
     }, HTTPServer::Protocol::Http);
 
     auto refreshHeaderContent = makeString("1;URL=http://127.0.0.1:"_s, server.port(), "/landing?foo=10&garply=20&bar=30&baz=40"_s);
-    server.addResponse("/"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Refresh"_s, refreshHeaderContent } }, "body"_s });
+    server.addResponse("/"_si, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Refresh"_s, refreshHeaderContent } }, "body"_si });
 
     auto webView = createWebViewWithAdvancedPrivacyProtections(NO);
     __block bool didCallDecisionHandler { false };
@@ -637,7 +637,7 @@ TEST(AdvancedPrivacyProtections, ApplyNavigationalProtectionsAfterMultiplePSON)
     };
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:makeString("http://localhost:"_s, server.port(), "/"_s).createNSString().get()]).get()]).get()];
+    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(makeString("http://localhost:"_s, server.port(), "/"_s)).get()]).get()]).get()];
     Util::run(&didCallDecisionHandler);
     finishedSuccessfully = false;
     Util::run(&finishedSuccessfully);
@@ -652,8 +652,8 @@ TEST(AdvancedPrivacyProtections, ApplyNavigationalProtectionsAfterMultiplePSON)
 TEST(AdvancedPrivacyProtections, DoNotHideReferrerInPopupWindow)
 {
     HTTPServer server({ { "/popup"_s, { "<body><h1>popup</h1></body>"_s } } }, HTTPServer::Protocol::Http);
-    server.addResponse("/main"_s, { makeString("<body><h1>main</h1><script src='http://localhost:"_s, server.port(), "/show-popup.js'></script></body>"_s) });
-    server.addResponse("/show-popup.js"_s, { makeString("open('http://localhost:"_s, server.port(), "/popup', 'Popup', 'width=400,height=300')"_s) });
+    server.addResponse("/main"_si, { makeString("<body><h1>main</h1><script src='http://localhost:"_s, server.port(), "/show-popup.js'></script></body>"_s) });
+    server.addResponse("/show-popup.js"_si, { makeString("open('http://localhost:"_s, server.port(), "/popup', 'Popup', 'width=400,height=300')"_s) });
 
     bool popupDidFinishNavigation = false;
     RetainPtr popupNavigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -677,7 +677,7 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerInPopupWindow)
 
     // Load the main page on 127.0.0.1, which opens a cross-origin popup window on localhost.
     auto mainURLPrefix = "http://127.0.0.1:"_s;
-    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:makeString(mainURLPrefix, server.port(), "/main"_s).createNSString().get()]).get()]).get()];
+    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(makeString(mainURLPrefix, server.port(), "/main"_s)).get()]).get()]).get()];
 
     // Wait for the popup window to finish loading.
     Util::waitForConditionWithLogging([&] {
@@ -685,8 +685,8 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerInPopupWindow)
     }, 5, @"Timed out while waiting for popup window to load");
 
     // Confirm that the popup window has access to the document referrer.
-    String referrerFromPopup = [popupWebView stringByEvaluatingJavaScript:@"document.referrer"];
-    EXPECT_TRUE(referrerFromPopup.startsWith(mainURLPrefix));
+    RefPtr<StringImpl> referrerFromPopup = StringImpl::create([popupWebView stringByEvaluatingJavaScript:@"document.referrer"]);
+    EXPECT_TRUE(startsWith(referrerFromPopup, mainURLPrefix));
 }
 
 static RetainPtr<TestWKWebView> setUpWebViewForTestingQueryParameterHiding(NSString *pageSource, NSString *requestURLString, NSString *referrer = @"https://webkit.org")
@@ -833,7 +833,7 @@ TEST(AdvancedPrivacyProtections, DoNotHideQueryParametersAfterEffectiveSameSiteN
     EXPECT_WK_STREQ("thirdparty: custom://firstparty.co.uk/index.html?hello=123", results[0]);
 }
 
-static RetainPtr<TestWKWebView> setUpWebViewForTestingTrackerDomainBlocking(String nonTrackerFramePageSource, String subFramePageSource, NSString *requestURLString)
+static RetainPtr<TestWKWebView> setUpWebViewForTestingTrackerDomainBlocking(RefPtr<StringImpl> nonTrackerFramePageSource, RefPtr<StringImpl> subFramePageSource, NSString *requestURLString)
 {
     HTTPServer httpsServer({
         { "/"_s, { { }, nonTrackerFramePageSource } },
@@ -1020,7 +1020,7 @@ TEST(AdvancedPrivacyProtections, LinkPreconnectUsesEnhancedPrivacy)
     };
 
     HTTPServer server { { }, HTTPServer::Protocol::Http };
-    server.addResponse("/index.html"_s, { createMarkupString(server.port()) });
+    server.addResponse("/index.html"_si, { createMarkupString(server.port()) });
 
     auto webView = createWebViewWithAdvancedPrivacyProtections(YES, nil, WKWebsiteDataStore.defaultDataStore);
     RetainPtr request = adoptNS([[NSMutableURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:adoptNS([[NSString alloc] initWithFormat:@"http://localhost:%u/index.html", server.port()]).get()]).get()]);
@@ -1098,7 +1098,7 @@ static HTTPServer redirectingAttachmentServer()
 {
     return HTTPServer({
         { "/"_s, { 301, { { "Location"_s, "/example.txt"_s } } } },
-        { "/example.txt"_s, HTTPResponse { { { "Content-Disposition"_s, "attachment; filename=\"example.txt\""_s } }, "download contents"_s } },
+        { "/example.txt"_s, HTTPResponse { { { "Content-Disposition"_s, "attachment; filename=\"example.txt\""_s } }, "download contents"_si } },
     });
 }
 
@@ -1299,9 +1299,9 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerAfterReducingPrivacyProtection
         { "/index2.html"_s, { "<script>window.result = document.referrer;</script>"_s } },
     }, HTTPServer::Protocol::Http);
 
-    server.addResponse("/index1.html"_s, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/index2.html'>Link</a>"_s) });
+    server.addResponse("/index1.html"_si, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/index2.html'>Link</a>"_s) });
 
-    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(makeString("http://localhost:"_s, server.port(), "/index1.html"_s).createNSString().get());
+    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(createNSString(makeString("http://localhost:"_s, server.port(), "/index1.html"_s)).get());
 
     NSString *result = [webView objectByEvaluatingJavaScript:@"window.result"];
     NSString *expectedReferrer = [NSString stringWithFormat:@"http://localhost:%d/", server.port()];
@@ -1314,10 +1314,10 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerAfterReducingPrivacyProtection
         { "/destination.html"_s, { "<script>window.result = document.referrer;</script>"_s } },
     }, HTTPServer::Protocol::Http);
 
-    server.addResponse("/source.html"_s, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/redirect.html'>Link</a>"_s) });
-    server.addResponse("/redirect.html"_s, { makeString("<script>window.location = 'http://localhost:"_s, server.port(), "/destination.html';</script>"_s) });
+    server.addResponse("/source.html"_si, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/redirect.html'>Link</a>"_s) });
+    server.addResponse("/redirect.html"_si, { makeString("<script>window.location = 'http://localhost:"_s, server.port(), "/destination.html';</script>"_s) });
 
-    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(makeString("http://localhost:"_s, server.port(), "/source.html"_s).createNSString().get(), true);
+    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(createNSString(makeString("http://localhost:"_s, server.port(), "/source.html"_s)).get(), true);
 
     NSString *result = [webView objectByEvaluatingJavaScript:@"window.result"];
     NSString *expectedReferrer = [NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()];
@@ -1330,10 +1330,10 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerAfterReducingPrivacyProtection
         { "/destination.html"_s, { "<script>window.result = document.referrer;</script>"_s } },
     }, HTTPServer::Protocol::Http);
 
-    server.addResponse("/source.html"_s, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/redirect'>Link</a>"_s) });
-    server.addResponse("/redirect"_s, { 302, {{"Location"_s, makeString("http://localhost:"_s, server.port(), "/destination.html"_s) }}, "redirecting..."_s });
+    server.addResponse("/source.html"_si, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/redirect'>Link</a>"_s) });
+    server.addResponse("/redirect"_si, { 302, {{"Location"_s, makeString("http://localhost:"_s, server.port(), "/destination.html"_s) }}, "redirecting..."_si });
 
-    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(makeString("http://localhost:"_s, server.port(), "/source.html"_s).createNSString().get());
+    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(createNSString(makeString("http://localhost:"_s, server.port(), "/source.html"_s)).get());
 
     NSString *result = [webView objectByEvaluatingJavaScript:@"window.result"];
     NSString *expectedReferrer = [NSString stringWithFormat:@"http://localhost:%d/", server.port()];
@@ -1493,7 +1493,7 @@ static ConsistentQueryParameterFilteringNavigationResult navigateWithConsistentQ
     };
 
     HTTPServer server({
-        { "/source.html"_s,      { makeString("<a referrerpolicy='no-referrer' href='"_s, String { linkURLString }, "'>Link</a>"_s) } },
+        { "/source.html"_s,      { makeString("<a referrerpolicy='no-referrer' href='"_s, StringImpl::create(linkURLString).get(), "'>Link</a>"_s) } },
         { destinationPath,       destinationResponse() },
         { "/tracker.js"_s,       { { { "Content-Type"_s, javaScriptContentType } }, "window.trackingScriptURL = document.URL;"_s } },
         { "/widget.js"_s,        { { { "Content-Type"_s, javaScriptContentType } }, "window.crossSiteScriptURL = document.URL;"_s } },
@@ -1503,7 +1503,7 @@ static ConsistentQueryParameterFilteringNavigationResult navigateWithConsistentQ
     // order-preserving subset of them. The empty subset is the bare destination path registered above.
     NSArray<NSString *> *queryParameters = [[NSURLComponents componentsWithString:linkURLString].percentEncodedQuery componentsSeparatedByString:@"&"] ?: @[];
     RELEASE_ASSERT(queryParameters.count < 16);
-    HashSet<String> registeredPaths { destinationPath };
+    HashSet<RefPtr<StringImpl>> registeredPaths { StringImpl::create(destinationPath) };
     for (unsigned subset = 1; subset < (1u << queryParameters.count); ++subset) {
         StringBuilder path;
         path.append(destinationPath);
@@ -1511,7 +1511,7 @@ static ConsistentQueryParameterFilteringNavigationResult navigateWithConsistentQ
         for (NSUInteger i = 0; i < queryParameters.count; ++i) {
             if (!(subset & (1u << i)))
                 continue;
-            path.append(isFirstParameter ? '?' : '&', String { queryParameters[i] });
+            path.append(isFirstParameter ? '?' : '&', StringImpl::create(queryParameters[i]).get());
             isFirstParameter = false;
         }
         if (auto pathString = path.toString(); registeredPaths.add(pathString).isNewEntry)
@@ -1809,7 +1809,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIsAfterMultiplePSON)
         { "/landing"_s, { "<script>window.result = document.referrer;</script>"_s } },
     }, HTTPServer::Protocol::Http);
 
-    server.addResponse("/"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Refresh"_s, "1;URL=https://bundle-file/audio-fingerprinting.html"_s } }, "body"_s });
+    server.addResponse("/"_si, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Refresh"_s, "1;URL=https://bundle-file/audio-fingerprinting.html"_s } }, "body"_si });
 
     auto webView = createWebViewWithAdvancedPrivacyProtections(NO);
     __block bool didCallDecisionHandler { false };
@@ -1827,7 +1827,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIsAfterMultiplePSON)
     };
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:makeString("http://localhost:"_s, server.port(), "/"_s).createNSString().get()]).get()]).get()];
+    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(makeString("http://localhost:"_s, server.port(), "/"_s)).get()]).get()]).get()];
     Util::run(&didCallDecisionHandler);
     finishedSuccessfully = false;
     Util::run(&finishedSuccessfully);
@@ -1855,7 +1855,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIsAfterReducingPrivacyProte
         { "/index2.html"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Refresh"_s, "1;URL=https://bundle-file/audio-fingerprinting.html"_s } }, "body"_s } },
     }, HTTPServer::Protocol::Http);
 
-    server.addResponse("/index1.html"_s, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/index2.html'>Link</a>"_s) });
+    server.addResponse("/index1.html"_si, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/index2.html'>Link</a>"_s) });
 
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate setDecidePolicyForNavigationActionWithPreferences:[&](WKNavigationAction *action, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
@@ -1863,7 +1863,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIsAfterReducingPrivacyProte
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
     }];
 
-    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(makeString("http://localhost:"_s, server.port(), "/index1.html"_s).createNSString().get());
+    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(createNSString(makeString("http://localhost:"_s, server.port(), "/index1.html"_s)).get());
 
     [webView setNavigationDelegate:navigationDelegate.get()];
     [navigationDelegate waitForDidFinishNavigation];
@@ -2150,7 +2150,7 @@ TEST(AdvancedPrivacyProtections, Canvas2DQuirks)
     EXPECT_TRUE(finishedSuccessfully);
 }
 
-inline static String sharedWorkerMainBytes()
+inline static RefPtr<StringImpl> sharedWorkerMainBytes()
 {
     return R"TESTRESOURCE(
         <!DOCTYPE html>
@@ -2172,9 +2172,9 @@ inline static String sharedWorkerMainBytes()
         )TESTRESOURCE"_s;
 }
 
-inline static String sharedWorkerBytes()
+inline static RefPtr<StringImpl> sharedWorkerBytes()
 {
-    return String::fromUTF8(R"TESTRESOURCE(
+    return StringImpl::fromUTF8(R"TESTRESOURCE(
         onconnect = (event) => {
             const port = event.ports[0];
             port.onmessage = function(event) {

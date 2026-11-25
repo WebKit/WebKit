@@ -31,34 +31,34 @@ template<>
 struct SVGPropertyTraits<ColorMatrixType> {
     static unsigned highestEnumValue() { return std::to_underlying(ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA); }
 
-    static String toString(ColorMatrixType type)
+    static RefPtr<StringImpl> toString(ColorMatrixType type)
     {
         switch (type) {
         case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
             return emptyString();
         case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:
-            return "matrix"_s;
+            return "matrix"_si;
         case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
-            return "saturate"_s;
+            return "saturate"_si;
         case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
-            return "hueRotate"_s;
+            return "hueRotate"_si;
         case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-            return "luminanceToAlpha"_s;
+            return "luminanceToAlpha"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static ColorMatrixType fromString(SVGElement&, const String& value)
+    static ColorMatrixType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "matrix"_s)
+        if (equal(value, "matrix"_s))
             return ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX;
-        if (value == "saturate"_s)
+        if (equal(value, "saturate"_s))
             return ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE;
-        if (value == "hueRotate"_s)
+        if (equal(value, "hueRotate"_s))
             return ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE;
-        if (value == "luminanceToAlpha"_s)
+        if (equal(value, "luminanceToAlpha"_s))
             return ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
         return ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN;
     }
@@ -70,7 +70,7 @@ class SVGFEColorMatrixElement final : public SVGFilterPrimitiveStandardAttribute
 public:
     static Ref<SVGFEColorMatrixElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
     ColorMatrixType type() const { return m_type->currentValue<ColorMatrixType>(); }
     const SVGNumberList& values() const LIFETIME_BOUND { return m_values->currentValue(); }
 
@@ -83,11 +83,11 @@ public:
 private:
     SVGFEColorMatrixElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override { return { AtomStringImpl::add(in1()) }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

@@ -85,7 +85,7 @@ protected:
     SUPPRESS_UNCOUNTED_MEMBER StringImpl* m_owner;
     unsigned m_hashForSymbolShiftedWithFlagCount;
     Flags m_flags { s_flagDefault };
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl));
 
 inline constexpr SymbolImpl::StaticSymbolImpl::StaticSymbolImpl(ASCIILiteral literal, Flags flags)
@@ -110,7 +110,7 @@ public:
 private:
     PrivateSymbolImpl(std::span<const Latin1Character>, Ref<StringImpl>&&);
     PrivateSymbolImpl(std::span<const char16_t>, Ref<StringImpl>&&);
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 class RegisteredSymbolImpl final : public SymbolImpl {
 private:
@@ -128,7 +128,7 @@ private:
     RegisteredSymbolImpl(std::span<const char16_t>, Ref<StringImpl>&&, SymbolRegistry&, Flags = s_flagIsRegistered);
 
     CheckedPtr<SymbolRegistry> m_symbolRegistry;
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 } // namespace WTF
 

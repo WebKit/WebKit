@@ -71,9 +71,9 @@ public:
     void setContentsClippingRect(const FloatRoundedRect&) override;
     void setContentsRectClipsDescendants(bool) override;
 
-    bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String&, double) override;
-    void pauseAnimation(const String&, double) override;
-    void removeAnimation(const String&, std::optional<AnimatedProperty>) override;
+    bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, StringImpl*, double) override;
+    void pauseAnimation(StringImpl*, double) override;
+    void removeAnimation(StringImpl*, std::optional<AnimatedProperty>) override;
 
     void setContentsToNativeImage(NativeImage*) override;
     void setContentsToSolidColor(const Color&) override;

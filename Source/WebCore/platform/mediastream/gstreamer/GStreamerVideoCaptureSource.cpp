@@ -88,7 +88,7 @@ private:
     DisplayCaptureManager& displayCaptureDeviceManager() final { return GStreamerDisplayCaptureDeviceManager::singleton(); }
 };
 
-CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
+CaptureSourceOrError GStreamerVideoCaptureSource::create(RefPtr<StringImpl>&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
 {
     auto device = GStreamerVideoCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
@@ -207,7 +207,7 @@ void GStreamerVideoCaptureSource::captureEnded()
 
 void GStreamerVideoCaptureSource::captureDeviceUpdated(const GStreamerCaptureDevice& device)
 {
-    setName(AtomString { device.label() });
+    setName(AtomStringImpl::add(device.label()));
     setPersistentId(device.persistentId());
     configurationChanged();
 }

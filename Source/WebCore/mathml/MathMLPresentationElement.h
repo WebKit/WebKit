@@ -41,7 +41,7 @@ public:
 
 protected:
     MathMLPresentationElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
 
     static std::optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? std::nullopt : std::optional<bool>(value == BooleanValue::True); }
     NODELETE const BooleanValue& cachedBooleanAttribute(const QualifiedName&, std::optional<BooleanValue>&);
@@ -60,7 +60,7 @@ private:
 
     static Length parseNumberAndUnit(StringView, bool acceptLegacyMathMLLengths);
     static Length parseNamedSpace(StringView);
-    static MathVariant parseMathVariantAttribute(const AtomString& attributeValue);
+    static MathVariant parseMathVariantAttribute(AtomStringImpl* attributeValue);
 };
 
 }

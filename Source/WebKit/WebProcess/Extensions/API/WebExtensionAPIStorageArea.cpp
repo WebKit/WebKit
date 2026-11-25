@@ -49,9 +49,9 @@ bool WebExtensionAPIStorageArea::isPropertyAllowed(const ASCIILiteral& propertyN
     if (protect(extensionContext())->isUnsupportedAPI(propertyPath(), propertyName)) [[unlikely]]
         return false;
 
-    static NeverDestroyed<HashSet<AtomString>> syncStorageProperties { HashSet { AtomString("QUOTA_BYTES_PER_ITEM"_s), AtomString("MAX_ITEMS"_s), AtomString("MAX_WRITE_OPERATIONS_PER_HOUR"_s), AtomString("MAX_WRITE_OPERATIONS_PER_MINUTE"_s) } };
+    static NeverDestroyed<HashSet<RefPtr<AtomStringImpl>>> syncStorageProperties { HashSet { "QUOTA_BYTES_PER_ITEM"_atom, "MAX_ITEMS"_atom, "MAX_WRITE_OPERATIONS_PER_HOUR"_atom, "MAX_WRITE_OPERATIONS_PER_MINUTE"_atom } };
 
-    if (syncStorageProperties.get().contains(propertyName))
+    if (syncStorageProperties.get().contains(AtomStringImpl::add(propertyName).ptr()))
         return m_type == WebExtensionDataType::Sync;
 
     if (propertyName == "setAccessLevel"_s)
@@ -61,14 +61,14 @@ bool WebExtensionAPIStorageArea::isPropertyAllowed(const ASCIILiteral& propertyN
     return false;
 }
 
-void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifier, RefPtr<JSON::Value> items, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifier, RefPtr<JSON::Value> items, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/get
 
     if (!items)
         items = JSON::Value::null();
 
-    if (!validateObject(items, "items"_s, {
+    if (!validateObject(items, "items"_si, {
         JSON::Value::Type::Object,
         JSON::Value::Type::String,
         JSON::Value::Type::Array,
@@ -76,7 +76,7 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
     }, { JSON::Value::Type::String }, outExceptionString))
         return;
 
-    Vector<String> keysVector;
+    Vector<RefPtr<StringImpl>> keysVector;
 
     auto keysWithDefaultValues = items->asObject();
     if (keysWithDefaultValues) {
@@ -99,11 +99,11 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
         keysVector = makeStringVector(*keys);
     }
 
-    String key;
+    RefPtr<StringImpl> key;
     if (items->asString(key))
         keysVector = { key };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(webPageProxyIdentifier, m_type, keysVector), [keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<String>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(webPageProxyIdentifier, m_type, keysVector), [keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<RefPtr<StringImpl>>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -132,9 +132,9 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::getKeys(WebPageProxyIdentifier webPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIStorageArea::getKeys(WebPageProxyIdentifier webPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetKeys(webPageProxyIdentifier, m_type), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<String>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetKeys(webPageProxyIdentifier, m_type), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<RefPtr<StringImpl>>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;
@@ -144,24 +144,24 @@ void WebExtensionAPIStorageArea::getKeys(WebPageProxyIdentifier webPageProxyIden
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::getBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIStorageArea::getBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/getBytesInUse
 
     if (!keys)
         keys = JSON::Value::null();
 
-    if (keys && !validateObject(keys, "keys"_s, {
+    if (keys && !validateObject(keys, "keys"_si, {
         JSON::Value::Type::String,
         JSON::Value::Type::Array,
         JSON::Value::Type::Null,
     }, { JSON::Value::Type::String }, outExceptionString))
         return;
 
-    Vector<String> keysVector;
+    Vector<RefPtr<StringImpl>> keysVector;
     if (auto keysArray = keys->asArray(); keysArray)
         keysVector = makeStringVector(*keysArray);
-    else if (String key; keys->asString(key))
+    else if (RefPtr<StringImpl> key; keys->asString(key))
         keysVector = { key };
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetBytesInUse(webPageProxyIdentifier, m_type, keysVector), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<uint64_t, WebExtensionError>&& result) {
@@ -172,7 +172,7 @@ void WebExtensionAPIStorageArea::getBytesInUse(WebPageProxyIdentifier webPagePro
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifier, JSContextRef context, JSValueRef items, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifier, JSContextRef context, JSValueRef items, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/set
 
@@ -182,7 +182,7 @@ void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifi
     }
 
     if (JSValueIsArray(context, items)) {
-        outExceptionString = toErrorString(nullString(), "items"_s, "an object is expected"_s);
+        outExceptionString = toErrorString(nullString(), "items"_si, "an object is expected"_si);
         return;
     }
 
@@ -196,7 +196,7 @@ void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifi
     RefPtr<JSON::Object> serializedData = JSON::Object::create();
     JSPropertyNameArrayRef propertyNames = JSObjectCopyPropertyNames(context, object);
     size_t propertyNameCount = JSPropertyNameArrayGetCount(propertyNames);
-    String keyWithError = nullString();
+    RefPtr<StringImpl> keyWithError = nullString();
     for (size_t i = 0; i < propertyNameCount; ++i) {
         RefPtr propertyName = JSPropertyNameArrayGetNameAtIndex(propertyNames, i);
         if (!propertyName)
@@ -208,11 +208,11 @@ void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifi
         if (JSValueIsUndefined(context, item))
             continue;
 
-        if (!keyWithError.isEmpty())
+        if (!isEmpty(keyWithError))
             continue;
 
         auto result = toJSONString(context, item);
-        if (result.isEmpty()) {
+        if (isEmpty(result)) {
             keyWithError = key;
             continue;
         }
@@ -222,18 +222,18 @@ void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifi
 
     JSPropertyNameArrayRelease(propertyNames);
 
-    if (!keyWithError.isEmpty()) {
-        outExceptionString = toErrorString(nullString(), makeString("items[`"_s, keyWithError, "`]"_s), "it is not JSON-serializable"_s);
+    if (!isEmpty(keyWithError)) {
+        outExceptionString = toErrorString(nullString(), makeString("items[`"_s, keyWithError, "`]"_s), "it is not JSON-serializable"_si);
         return;
     }
 
     if (m_type == WebExtensionDataType::Sync && anyItemsExceedQuota(serializedData, webExtensionStorageAreaSyncQuotaBytesPerItem, keyWithError)) {
-        outExceptionString = toErrorString(nullString(), makeString("items[`"_s, keyWithError, "`]"_s), "it exceeded maximum size for a single item"_s);
+        outExceptionString = toErrorString(nullString(), makeString("items[`"_s, keyWithError, "`]"_s), "it exceeded maximum size for a single item"_si);
         return;
     }
 
     if (storageSizeOf(serializedData) > storageMaximumBytesPerCall(extensionContext().inTestingMode())) {
-        outExceptionString = toErrorString(nullString(), nullString(), "it exceeded maximum data size allowed per call"_s);
+        outExceptionString = toErrorString(nullString(), nullString(), "it exceeded maximum data size allowed per call"_si);
         return;
     }
 
@@ -245,20 +245,20 @@ void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifi
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::remove(WebPageProxyIdentifier webPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIStorageArea::remove(WebPageProxyIdentifier webPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/remove
 
-    if (!validateObject(keys, "keys"_s, {
+    if (!validateObject(keys, "keys"_si, {
         JSON::Value::Type::String,
         JSON::Value::Type::Array
     }, { JSON::Value::Type::String }, outExceptionString))
         return;
 
-    Vector<String> keysVector;
+    Vector<RefPtr<StringImpl>> keysVector;
     if (RefPtr array = keys->asArray(); array)
         keysVector = makeStringVector(*array);
-    else if (String key; keys->asString(key))
+    else if (RefPtr<StringImpl> key; keys->asString(key))
         keysVector = { key };
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageRemove(webPageProxyIdentifier, m_type, keysVector), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
@@ -279,9 +279,9 @@ void WebExtensionAPIStorageArea::clear(WebPageProxyIdentifier webPageProxyIdenti
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::setAccessLevel(WebPageProxyIdentifier webPageProxyIdentifier, RefPtr<JSON::Value> accessOptions, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIStorageArea::setAccessLevel(WebPageProxyIdentifier webPageProxyIdentifier, RefPtr<JSON::Value> accessOptions, Ref<WebExtensionCallbackHandler>&& callback, RefPtr<StringImpl>& outExceptionString)
 {
-    if (!validateDictionary(accessOptions, "accessOptions"_s, { accessLevelKey }, {
+    if (!validateDictionary(accessOptions, "accessOptions"_si, { accessLevelKey }, {
         { accessLevelKey, JSON::Value::Type::String },
     }, outExceptionString))
         return;
@@ -290,13 +290,13 @@ void WebExtensionAPIStorageArea::setAccessLevel(WebPageProxyIdentifier webPagePr
     if (!accessObject)
         return;
 
-    String accessLevelString = accessObject->getString(accessLevelKey);
-    if ((accessLevelString != accessLevelTrustedContexts) && (accessLevelString != accessLevelTrustedAndUntrustedContexts)) {
-        outExceptionString = toErrorString(nullString(), "accessLevel"_s, "it must specify either 'TRUSTED_CONTEXTS' or 'TRUSTED_AND_UNTRUSTED_CONTEXTS'"_s);
+    RefPtr<StringImpl> accessLevelString = accessObject->getString(StringImpl::create(accessLevelKey).ptr());
+    if ((!equal(accessLevelString, accessLevelTrustedContexts)) && (!equal(accessLevelString, accessLevelTrustedAndUntrustedContexts))) {
+        outExceptionString = toErrorString(nullString(), "accessLevel"_si, "it must specify either 'TRUSTED_CONTEXTS' or 'TRUSTED_AND_UNTRUSTED_CONTEXTS'"_si);
         return;
     }
 
-    WebExtensionStorageAccessLevel accessLevel = (accessLevelString == accessLevelTrustedContexts) ? WebExtensionStorageAccessLevel::TrustedContexts : WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
+    WebExtensionStorageAccessLevel accessLevel = (equal(accessLevelString, accessLevelTrustedContexts)) ? WebExtensionStorageAccessLevel::TrustedContexts : WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSetAccessLevel(webPageProxyIdentifier, m_type, accessLevel), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result)

@@ -57,13 +57,13 @@ public:
 
     JS_EXPORT_PRIVATE InjectedScriptBase& operator=(const InjectedScriptBase&);
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     bool hasNoValue() const { return !m_injectedScriptObject.get(); }
     JSC::JSGlobalObject* globalObject() const { return m_globalObject; }
 
 protected:
-    InjectedScriptBase(const String& name);
-    InjectedScriptBase(const String& name, JSC::JSGlobalObject*, JSC::JSObject*, InspectorEnvironment*);
+    InjectedScriptBase(StringImpl* name);
+    InjectedScriptBase(StringImpl* name, JSC::JSGlobalObject*, JSC::JSObject*, InspectorEnvironment*);
 
     InspectorEnvironment& inspectorEnvironment() const { return *m_environment; }
 
@@ -79,7 +79,7 @@ private:
     void checkCallResult(Protocol::ErrorString&, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);
     void checkAsyncCallResult(RefPtr<JSON::Value> result, const AsyncCallCallback&);
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     SUPPRESS_FORWARD_DECL_MEMBER JSC::JSGlobalObject* m_globalObject { nullptr };
     JSC::Strong<JSC::JSObject> m_injectedScriptObject;
     WeakPtr<InspectorEnvironment> m_environment;

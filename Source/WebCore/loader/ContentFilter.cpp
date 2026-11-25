@@ -114,7 +114,7 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
     if (!protectedClient)
         return false;
 
-    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from <%{sensitive}s>.\n", request.url().string().utf8(), redirectResponse.url().string().utf8());
+    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from <%{sensitive}s>.\n", utf8(request.url().string()), utf8(redirectResponse.url().string()));
 #if !LOG_DISABLED
     ResourceRequest originalRequest { request };
 #endif
@@ -126,7 +126,7 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
         request = ResourceRequest();
 #if !LOG_DISABLED
     if (request != originalRequest)
-        LOG(ContentFiltering, "ContentFilter changed request url to <%{sensitive}s>.\n", originalRequest.url().string().utf8());
+        LOG(ContentFiltering, "ContentFilter changed request url to <%{sensitive}s>.\n", utf8(originalRequest.url().string()));
 #endif
     return !request.isNull();
 }
@@ -151,7 +151,7 @@ ContentFilter::ContentFilterCallbackAggregator::~ContentFilterCallbackAggregator
     m_callback(WTF::move(m_request));
 }
 
-void ContentFilter::ContentFilterCallbackAggregator::didReceivePlatformContentFilterDecision(PlatformContentFilter& platformContentFilter, String&& urlString)
+void ContentFilter::ContentFilterCallbackAggregator::didReceivePlatformContentFilterDecision(PlatformContentFilter& platformContentFilter, RefPtr<StringImpl>&& urlString)
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -182,13 +182,13 @@ void ContentFilter::continueAfterWillSendRequest(ResourceRequest&& request, cons
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
-    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from %s" SENSITIVE_LOG_STRING, request.url().string().utf8(), redirectResponse.url().string().utf8());
+    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from %s" SENSITIVE_LOG_STRING, utf8(request.url().string()), utf8(redirectResponse.url().string()));
     ASSERT(m_state == State::Stopped || m_state == State::Filtering);
 
     Ref contentFilterCallbackAggregator = ContentFilterCallbackAggregator::create(*this, request, WTF::move(completionHandler));
 
     for (Ref platformContentFilter : m_contentFilters) {
-        CompletionHandler<void(String&&)> completion = [contentFilterCallbackAggregator, platformContentFilter] (String&& urlString) mutable {
+        CompletionHandler<void(RefPtr<StringImpl>&&)> completion = [contentFilterCallbackAggregator, platformContentFilter] (RefPtr<StringImpl>&& urlString) mutable {
             RELEASE_ASSERT(RunLoop::isMain());
             contentFilterCallbackAggregator->didReceivePlatformContentFilterDecision(platformContentFilter, WTF::move(urlString));
         };
@@ -206,7 +206,7 @@ void ContentFilter::startFilteringMainResource(const URL& url)
     if (m_state != State::Stopped)
         return;
 
-    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", url.string().utf8());
+    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", utf8(url.string()));
     m_state = State::Filtering;
     ASSERT(m_mainResourceURL.isEmpty());
     m_mainResourceURL = url;
@@ -217,7 +217,7 @@ void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
     if (m_state != State::Stopped)
         return;
 
-    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", resource.url().string().utf8());
+    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", utf8(resource.url().string()));
     m_state = State::Filtering;
     ASSERT(!m_mainResource);
     m_mainResource = resource;
@@ -237,7 +237,7 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
         return false;
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter received response from <%{sensitive}s>.\n", response.url().string().utf8());
+        LOG(ContentFiltering, "ContentFilter received response from <%{sensitive}s>.\n", utf8(response.url().string()));
         forEachContentFilterUntilBlocked([&response](PlatformContentFilter& contentFilter) {
             contentFilter.responseReceived(response);
         });
@@ -255,7 +255,7 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data, FromDocu
         return false;
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%{sensitive}s>.\n", data.size(), url().string().utf8());
+        LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%{sensitive}s>.\n", data.size(), utf8(url().string()));
 
         forEachContentFilterUntilBlocked([data = Ref { data }](auto& contentFilter) {
             contentFilter.addData(data);
@@ -287,7 +287,7 @@ bool ContentFilter::continueAfterNotifyFinished(const URL& resourceURL)
     ASSERT_UNUSED(resourceURL, resourceURL == m_mainResourceURL);
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().utf8());
+        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", utf8(url().string()));
         forEachContentFilterUntilBlocked([](PlatformContentFilter& contentFilter) {
             contentFilter.finishedAddingData();
         });
@@ -314,7 +314,7 @@ bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
         return true;
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().utf8());
+        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", utf8(url().string()));
         forEachContentFilterUntilBlocked([](PlatformContentFilter& contentFilter) {
             contentFilter.finishedAddingData();
         });
@@ -367,7 +367,7 @@ void ContentFilter::didDecide(State state)
     ASSERT(m_state != State::Blocked);
     ASSERT(state == State::Allowed || state == State::Blocked);
 #if !LOG_DISABLED
-    LOG(ContentFiltering, "ContentFilter decided load should be %s for main resource at <%{sensitive}s>.\n", state == State::Allowed ? "allowed" : "blocked", url().string().utf8());
+    LOG(ContentFiltering, "ContentFilter decided load should be %s for main resource at <%{sensitive}s>.\n", state == State::Allowed ? "allowed" : "blocked", utf8(url().string()));
 #endif // !LOG_DISABLED
     m_state = state;
     if (m_state != State::Blocked)
@@ -425,7 +425,7 @@ bool ContentFilter::willHandleProvisionalLoadFailure(const ResourceError& error)
     if (m_state != State::Blocked)
         return false;
 
-    if (m_blockedError.errorCode() != error.errorCode() || m_blockedError.domain() != error.domain())
+    if (m_blockedError.errorCode() != error.errorCode() || !equal(m_blockedError.domain(), error.domain()))
         return false;
 
     ASSERT(m_blockedError.failingURL() == error.failingURL());
@@ -440,7 +440,7 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
     ASSERT(blockingContentFilter);
     RefPtr replacementData { blockingContentFilter->replacementData() };
     // The page replaces the blocked document's contents, so it gets an opaque origin.
-    ResourceResponse response { URL { blockedPageURL() }, "text/html"_s, static_cast<long long>(replacementData->size()), "UTF-8"_s };
+    ResourceResponse response { URL { blockedPageURL() }, "text/html"_si, static_cast<long long>(replacementData->size()), "UTF-8"_si };
     response.setTainting(ResourceResponse::Tainting::Opaque);
     SubstituteData substituteData { WTF::move(replacementData), URL { error.failingURL() }, WTF::move(response), SubstituteData::SessionHistoryVisibility::Hidden };
     SetForScope loadingBlockedPage { m_isLoadingBlockedPage, true };

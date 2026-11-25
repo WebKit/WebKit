@@ -55,7 +55,7 @@ private:
 
     void updateScrollExtents() final;
     void serviceAnimation(MonotonicTime) final;
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     NODELETE Seconds durationFromDistance(const FloatSize&) const;
 

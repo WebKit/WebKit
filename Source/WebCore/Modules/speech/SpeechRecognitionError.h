@@ -42,7 +42,7 @@ enum class SpeechRecognitionErrorType : uint8_t {
 
 struct SpeechRecognitionError {
     SpeechRecognitionErrorType type;
-    String message;
+    RefPtr<StringImpl> message;
 };
 
 } // namespace WebCore

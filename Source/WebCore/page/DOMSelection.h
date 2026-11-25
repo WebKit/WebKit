@@ -52,11 +52,11 @@ class DOMSelection : public RefCounted<DOMSelection>, public LocalDOMWindowPrope
 public:
     static Ref<DOMSelection> create(LocalDOMWindow&);
 
-    String type() const;
-    String direction() const;
+    RefPtr<StringImpl> type() const;
+    RefPtr<StringImpl> direction() const;
     ExceptionOr<void> setBaseAndExtent(Node& anchorNode, unsigned anchorOffset, Node& focusNode, unsigned focusOffset);
     ExceptionOr<void> setPosition(Node*, unsigned offset);
-    void modify(const String& alter, const String& direction, const String& granularity);
+    void modify(StringImpl* alter, StringImpl* direction, StringImpl* granularity);
 
     // The anchor and focus are the start and end of the selection, and
     // reflect the direction in which the selection was made by the user.
@@ -81,7 +81,7 @@ public:
     bool containsNode(Node&, bool partlyContained) const;
     ExceptionOr<void> selectAllChildren(Node&);
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 
     void empty();
 

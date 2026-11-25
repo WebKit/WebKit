@@ -459,7 +459,7 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
         m_keyAutoRepeatHandler.keyRelease();
         auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
         if (!filterResult.handled)
-            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, String(), false));
+            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(event, nullptr, false));
         return TRUE;
     }
     case WPE_EVENT_TOUCH_DOWN:
@@ -558,7 +558,7 @@ void ViewPlatform::handleGesture(WPEEvent* event)
     }
 }
 
-void ViewPlatform::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
+void ViewPlatform::synthesizeCompositionKeyPress(StringImpl* text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
     page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent::create(text, WTF::move(underlines), WTF::move(selectionRange)));
 }
@@ -733,7 +733,7 @@ void ViewPlatform::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
     }
 }
 
-std::expected<Ref<ViewSnapshot>, String> ViewPlatform::takeViewSnapshot(std::optional<WebCore::IntRect>&& clipRect)
+std::expected<Ref<ViewSnapshot>, RefPtr<StringImpl>> ViewPlatform::takeViewSnapshot(std::optional<WebCore::IntRect>&& clipRect)
 {
     return m_backingStore->takeSnapshot(WTF::move(clipRect));
 }

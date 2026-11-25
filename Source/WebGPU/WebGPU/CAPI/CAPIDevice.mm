@@ -88,7 +88,7 @@ WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor*
 WGPUCommandEncoder wgpuDeviceCreateCommandEncoder(WGPUDevice device, const WGPUCommandEncoderDescriptor* descriptor)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(device))->createCommandEncoder({ .label = descriptor ? WebGPU::CAPI::fromAPI(descriptor->label) : String() }));
+        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(device))->createCommandEncoder({ .label = descriptor ? WebGPU::CAPI::fromAPI(descriptor->label) : RefPtr<StringImpl>() }));
     }
 }
 
@@ -108,7 +108,7 @@ WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, const WGP
 
 // The C API reports a failed asynchronous pipeline creation with a status and no pipeline.
 template<typename T>
-static auto createPipelineAsyncCompletion(Function<void(WGPUCreatePipelineAsyncStatus, T*, String&&)>&& callback)
+static auto createPipelineAsyncCompletion(Function<void(WGPUCreatePipelineAsyncStatus, T*, RefPtr<StringImpl>&&)>&& callback)
 {
     return [callback = WTF::move(callback)](auto&& pipeline) mutable {
         if (!pipeline)
@@ -122,14 +122,14 @@ static void reportInvalidPipelineDescriptor(WebGPU::Device& device, ASCIILiteral
 {
     if (RefPtr instance = device.instance()) {
         WebGPU::CAPI::EventManager::ensure(*instance)->scheduleWork([callback = WTF::move(callback), message] mutable {
-            callback(WGPUCreatePipelineAsyncStatus_ValidationError, nullptr, message);
+            callback(WGPUCreatePipelineAsyncStatus_ValidationError, nullptr, StringImpl::create(message));
         });
         return;
     }
-    callback(WGPUCreatePipelineAsyncStatus_ValidationError, nullptr, message);
+    callback(WGPUCreatePipelineAsyncStatus_ValidationError, nullptr, StringImpl::create(message));
 }
 
-static void createComputePipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor& descriptor, Function<void(WGPUCreatePipelineAsyncStatus, WGPUComputePipeline, String&&)>&& callback)
+static void createComputePipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor& descriptor, Function<void(WGPUCreatePipelineAsyncStatus, WGPUComputePipeline, RefPtr<StringImpl>&&)>&& callback)
 {
     Ref protectedDevice = WebGPU::CAPI::fromAPI(device);
     WebGPU::CAPI::ComputePipelineDescriptorStorage storage;
@@ -143,8 +143,8 @@ WGPUFuture wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUCom
 {
     @autoreleasepool {
         WebGPU::CAPI::Future future { protect(WebGPU::CAPI::fromAPI(device))->instance() };
-        createComputePipelineAsync(device, *descriptor, [callbackInfo, future](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, String&& message) {
-            auto utf8 = message.utf8();
+        createComputePipelineAsync(device, *descriptor, [callbackInfo, future](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, RefPtr<StringImpl>&& message) {
+            auto utf8 = WTF::utf8(message);
             callbackInfo.callback(status, pipeline, WebGPU::CAPI::toAPI(utf8), callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
         });
@@ -207,7 +207,7 @@ WGPURenderPipeline wgpuDeviceCreateRenderPipeline(WGPUDevice device, const WGPUR
     }
 }
 
-static void createRenderPipelineAsync(WGPUDevice device, const WGPURenderPipelineDescriptor& descriptor, Function<void(WGPUCreatePipelineAsyncStatus, WGPURenderPipeline, String&&)>&& callback)
+static void createRenderPipelineAsync(WGPUDevice device, const WGPURenderPipelineDescriptor& descriptor, Function<void(WGPUCreatePipelineAsyncStatus, WGPURenderPipeline, RefPtr<StringImpl>&&)>&& callback)
 {
     Ref protectedDevice = WebGPU::CAPI::fromAPI(device);
     WebGPU::CAPI::RenderPipelineDescriptorStorage storage;
@@ -221,8 +221,8 @@ WGPUFuture wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURend
 {
     @autoreleasepool {
         WebGPU::CAPI::Future future { protect(WebGPU::CAPI::fromAPI(device))->instance() };
-        createRenderPipelineAsync(device, *descriptor, [callbackInfo, future](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, String&& message) {
-            auto utf8 = message.utf8();
+        createRenderPipelineAsync(device, *descriptor, [callbackInfo, future](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, RefPtr<StringImpl>&& message) {
+            auto utf8 = WTF::utf8(message);
             callbackInfo.callback(status, pipeline, WebGPU::CAPI::toAPI(utf8), callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
         });
@@ -332,7 +332,7 @@ WGPUFuture wgpuDevicePopErrorScope(WGPUDevice device, WGPUPopErrorScopeCallbackI
         WebGPU::CAPI::Future future { protectedDevice->instance() };
         protectedDevice->popErrorScope([callbackInfo, future](bool succeeded, std::optional<WebGPU::Error>&& error) {
             if (error) {
-                auto message = error->message.utf8();
+                auto message = utf8(error->message);
                 callbackInfo.callback(WGPUPopErrorScopeStatus_Success, WebGPU::CAPI::toAPI(error), WebGPU::CAPI::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
             } else if (succeeded)
                 callbackInfo.callback(WGPUPopErrorScopeStatus_Success, WGPUErrorType_NoError, WebGPU::CAPI::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);

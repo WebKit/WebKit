@@ -125,7 +125,7 @@ public:
     void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, ArrayBufferView& srcData, uint64_t srcOffset, GCGLuint srcLengthOverride);
 
     // Programs and shaders
-    GCGLint getFragDataLocation(WebGLProgram&, const String& name);
+    GCGLint getFragDataLocation(WebGLProgram&, StringImpl* name);
 
     // Uniforms and attributes
     using Uint32List = TypedList<Uint32Array, uint32_t>;
@@ -221,7 +221,7 @@ public:
     void bindTransformFeedback(GCGLenum target, WebGLTransformFeedback* id);
     void beginTransformFeedback(GCGLenum primitiveMode);
     void endTransformFeedback();
-    void transformFeedbackVaryings(WebGLProgram&, const Vector<String>& varyings, GCGLenum bufferMode);
+    void transformFeedbackVaryings(WebGLProgram&, const Vector<RefPtr<StringImpl>>& varyings, GCGLenum bufferMode);
     RefPtr<WebGLActiveInfo> getTransformFeedbackVarying(WebGLProgram&, GCGLuint index);
     void pauseTransformFeedback();
     void resumeTransformFeedback();
@@ -230,11 +230,11 @@ public:
     void bindBufferBase(GCGLenum target, GCGLuint index, WebGLBuffer*);
     void bindBufferRange(GCGLenum target, GCGLuint index, WebGLBuffer*, GCGLint64 offset, GCGLint64 size);
     WebGLAny getIndexedParameter(GCGLenum target, GCGLuint index);
-    std::optional<Vector<GCGLuint>> getUniformIndices(WebGLProgram&, const Vector<String>& uniformNames);
+    std::optional<Vector<GCGLuint>> getUniformIndices(WebGLProgram&, const Vector<RefPtr<StringImpl>>& uniformNames);
     WebGLAny getActiveUniforms(WebGLProgram&, const Vector<GCGLuint>& uniformIndices, GCGLenum pname);
-    GCGLuint getUniformBlockIndex(WebGLProgram&, const String& uniformBlockName);
+    GCGLuint getUniformBlockIndex(WebGLProgram&, StringImpl* uniformBlockName);
     WebGLAny getActiveUniformBlockParameter(WebGLProgram&, GCGLuint uniformBlockIndex, GCGLenum pname);
-    String getActiveUniformBlockName(WebGLProgram&, GCGLuint uniformBlockIndex);
+    RefPtr<StringImpl> getActiveUniformBlockName(WebGLProgram&, GCGLuint uniformBlockIndex);
     void uniformBlockBinding(WebGLProgram&, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding);
     
     // Vertex array objects
@@ -243,8 +243,8 @@ public:
     GCGLboolean isVertexArray(WebGLVertexArrayObject* vertexArray);
     void bindVertexArray(WebGLVertexArrayObject* vertexArray);
     
-    std::optional<WebGLExtensionAny> getExtension(const String&) final;
-    std::optional<Vector<String>> getSupportedExtensions() final;
+    std::optional<WebGLExtensionAny> getExtension(StringImpl*) final;
+    std::optional<Vector<RefPtr<StringImpl>>> getSupportedExtensions() final;
     WebGLAny getParameter(GCGLenum pname) final;
 
     // Must override the WebGL 1.0 signature in order to add extra validation.

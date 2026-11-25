@@ -59,19 +59,19 @@ void ResourceResponse::initNSURLResponse() const
             expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
 
         RetainPtr encodingNSString = nsStringNilIfEmpty(m_textEncodingName);
-        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url.createNSURL().get() MIMEType:m_mimeType.createNSString().get() expectedContentLength:expectedContentLength textEncodingName:encodingNSString.get()]);
+        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url.createNSURL().get() MIMEType:createNSString(m_mimeType).get() expectedContentLength:expectedContentLength textEncodingName:encodingNSString.get()]);
         return;
     }
 
     // FIXME: We lose the status text and the HTTP version here.
     RetainPtr headerDictionary = adoptNS([[NSMutableDictionary alloc] init]);
     for (auto& header : m_httpHeaderFields)
-        [headerDictionary setObject:header.value.createNSString().get() forKey:header.key.createNSString().get()];
+        [headerDictionary setObject:createNSString(header.value).get() forKey:createNSString(header.key).get()];
 
     m_nsResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_url.createNSURL().get() statusCode:m_httpStatusCode HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headerDictionary.get()]);
 
     // Mime type sniffing doesn't work with a synthesized response.
-    [m_nsResponse _setMIMEType:m_mimeType.createNSString().get()];
+    [m_nsResponse _setMIMEType:createNSString(m_mimeType).get()];
 }
 
 void ResourceResponse::disableLazyInitialization()
@@ -122,14 +122,14 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
 static void addToHTTPHeaderMap(const void* key, const void* value, void* context)
 {
     HTTPHeaderMap* httpHeaderMap = (HTTPHeaderMap*)context;
-    httpHeaderMap->set((CFStringRef)key, (CFStringRef)value);
+    httpHeaderMap->set((CFStringRef)key, StringImpl::create((CFStringRef)value).get());
 }
 
-static inline AtomString stripLeadingAndTrailingDoubleQuote(const String& value)
+static inline RefPtr<AtomStringImpl> stripLeadingAndTrailingDoubleQuote(StringImpl* value)
 {
-    unsigned length = value.length();
-    if (length < 2 || value[0u] != '"' || value[length - 1] != '"')
-        return AtomString { value };
+    unsigned length = WTF::length(value);
+    if (length < 2 || codeUnitAt(value, 0u) != '"' || codeUnitAt(value, length - 1) != '"')
+        return AtomStringImpl::add(value);
 
     return StringView(value).substring(1, length - 2).toAtomString();
 }
@@ -144,12 +144,12 @@ static inline HTTPHeaderMap initializeHTTPHeaders(CFHTTPMessageRef messageRef)
     return headersMap;
 }
 
-static inline AtomString extractHTTPStatusText(CFHTTPMessageRef messageRef)
+static inline RefPtr<AtomStringImpl> extractHTTPStatusText(CFHTTPMessageRef messageRef)
 {
     if (auto httpStatusLine = adoptCF(CFHTTPMessageCopyResponseStatusLine(messageRef)))
-        return extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
+        return extractReasonPhraseFromHTTPStatusLine(StringImpl::create(httpStatusLine.get()).get());
 
-    static MainThreadNeverDestroyed<const AtomString> defaultStatusText("OK"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> defaultStatusText("OK"_s);
     return defaultStatusText;
 }
 
@@ -172,12 +172,12 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             m_url = [m_nsResponse URL];
             // CFNetwork only canonicalizes a MIME type it parses from a header. One that a client passes
             // to NSURLResponse is kept as is.
-            String mimeType = [m_nsResponse MIMEType];
+            RefPtr<StringImpl> mimeType = StringImpl::create([m_nsResponse MIMEType]);
             m_mimeType = extractMIMETypeFromMediaType(mimeType);
             m_expectedContentLength = [m_nsResponse expectedContentLength];
             // Stripping double quotes as a workaround for <rdar://problem/8757088>, can be removed once that is fixed.
-            m_textEncodingName = stripLeadingAndTrailingDoubleQuote([m_nsResponse textEncodingName]);
-            if (m_textEncodingName.isEmpty())
+            m_textEncodingName = stripLeadingAndTrailingDoubleQuote(StringImpl::create([m_nsResponse textEncodingName]).get());
+            if (isEmpty(m_textEncodingName))
                 m_textEncodingName = extractCharsetFromMediaType(mimeType).toString();
             m_httpStatusCode = messageRef ? CFHTTPMessageGetResponseStatusCode(messageRef.get()) : 0;
             if (messageRef)
@@ -185,16 +185,16 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         }
         if (messageRef && initLevel == AllFields) {
             m_httpStatusText = extractHTTPStatusText(messageRef.get());
-            m_httpVersion = AtomString { String(adoptCF(CFHTTPMessageCopyVersion(messageRef.get())).get()).convertToASCIIUppercase() };
+            m_httpVersion = AtomStringImpl::add(convertToASCIIUppercase(StringImpl::create(adoptCF(CFHTTPMessageCopyVersion(messageRef.get())).get())));
         }
     }
 
     m_initLevel = initLevel;
 }
 
-String ResourceResponse::platformSuggestedFilename() const
+RefPtr<StringImpl> ResourceResponse::platformSuggestedFilename() const
 {
-    return [protect(nsURLResponse()) suggestedFilename];
+    return StringImpl::create([protect(nsURLResponse()) suggestedFilename]);
 }
 
 bool ResourceResponse::platformCompare(const ResourceResponse& a, const ResourceResponse& b)

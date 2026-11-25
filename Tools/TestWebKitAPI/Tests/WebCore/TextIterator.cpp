@@ -37,12 +37,12 @@ using namespace WebCore;
 
 TEST(TextIteratorTest, ContainsPlainTextMatchWithinFirstBuffer)
 {
-    EXPECT_TRUE(containsPlainText("the quick brown fox"_s, "brown"_s, { }));
+    EXPECT_TRUE(containsPlainText("the quick brown fox"_si, "brown"_si, { }));
 }
 
 TEST(TextIteratorTest, ContainsPlainTextNoMatch)
 {
-    EXPECT_FALSE(containsPlainText("the quick brown fox"_s, "purple"_s, { }));
+    EXPECT_FALSE(containsPlainText("the quick brown fox"_si, "purple"_si, { }));
 }
 
 TEST(TextIteratorTest, ContainsPlainTextMatchPastFirstBufferFill)
@@ -53,8 +53,8 @@ TEST(TextIteratorTest, ContainsPlainTextMatchPastFirstBufferFill)
     builder.append("needle"_s);
     auto document = builder.toString();
 
-    EXPECT_TRUE(containsPlainText(document, "needle"_s, { }));
-    EXPECT_FALSE(containsPlainText(document, "haystack"_s, { }));
+    EXPECT_TRUE(containsPlainText(document, "needle"_si, { }));
+    EXPECT_FALSE(containsPlainText(document, "haystack"_si, { }));
 }
 
 } // namespace TestWebKitAPI

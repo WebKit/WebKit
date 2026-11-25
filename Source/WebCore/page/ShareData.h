@@ -34,14 +34,14 @@ namespace WebCore {
 enum class ShareDataOriginator : bool { Web, User };
     
 struct ShareData {
-    String title;
-    String text;
-    String url;
+    RefPtr<StringImpl> title;
+    RefPtr<StringImpl> text;
+    RefPtr<StringImpl> url;
     Vector<Ref<File>> files { };
 };
 
 struct RawFile {
-    String fileName;
+    RefPtr<StringImpl> fileName;
     RefPtr<SharedBuffer> fileData;
 };
 

@@ -57,7 +57,7 @@ std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMET
 {
     ASSERT(CFStringGetLength(preferredMIMEType));
     auto preferredTypeIdentifier = RetainPtr { (__bridge CFStringRef)[UTType typeWithMIMEType:bridge_cast(preferredMIMEType) conformingToType:UTTypeImage].identifier };
-    if (WebCore::isSupportedImageType(preferredTypeIdentifier.get())) {
+    if (WebCore::isSupportedImageType(StringImpl::create(preferredTypeIdentifier.get()).get())) {
         if (auto data = transcode(image, preferredTypeIdentifier.get()); [data length])
             return { WTF::move(data), WTF::move(preferredTypeIdentifier) };
     }
@@ -75,7 +75,7 @@ RetainPtr<CocoaImage> createCocoaImageRestrictedToSupportedTypes(NSData *data, d
         return nil;
 
     RetainPtr type = CGImageSourceGetType(imageSource.get());
-    if (!type || !WebCore::isSupportedImageType(type.get()))
+    if (!type || !WebCore::isSupportedImageType(StringImpl::create(type.get()).get()))
         return nil;
 
     RetainPtr image = adoptCF(CGImageSourceCreateImageAtIndex(imageSource.get(), 0, nullptr));

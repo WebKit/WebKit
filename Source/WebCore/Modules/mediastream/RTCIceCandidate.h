@@ -46,32 +46,32 @@ public:
     using Fields = RTCIceCandidateFields;
 
     static ExceptionOr<Ref<RTCIceCandidate>> create(const RTCIceCandidateInit&);
-    static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
-    static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, Fields&& fields) { return adoptRef(*new RTCIceCandidate(candidate, sdpMid, { }, WTF::move(fields))); }
+    static Ref<RTCIceCandidate> create(StringImpl* candidate, StringImpl* sdpMid, std::optional<unsigned short> sdpMLineIndex);
+    static Ref<RTCIceCandidate> create(StringImpl* candidate, StringImpl* sdpMid, Fields&& fields) { return adoptRef(*new RTCIceCandidate(candidate, sdpMid, { }, WTF::move(fields))); }
 
-    const String& candidate() const LIFETIME_BOUND { return m_candidate; }
-    const String& sdpMid() const LIFETIME_BOUND { return m_sdpMid; }
+    const RefPtr<StringImpl>& candidate() const LIFETIME_BOUND { return m_candidate; }
+    const RefPtr<StringImpl>& sdpMid() const LIFETIME_BOUND { return m_sdpMid; }
     std::optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
 
-    String foundation() const { return m_fields.foundation; }
+    RefPtr<StringImpl> foundation() const { return m_fields.foundation; }
     std::optional<RTCIceComponent> component() const { return m_fields.component; }
     std::optional<unsigned> priority() const { return m_fields.priority; }
-    String address() const { return m_fields.address; }
+    RefPtr<StringImpl> address() const { return m_fields.address; }
     std::optional<RTCIceProtocol> protocol() const { return m_fields.protocol; }
     std::optional<unsigned short> port() const { return m_fields.port; }
     std::optional<RTCIceCandidateType> type() const { return m_fields.type; }
     std::optional<RTCIceTcpCandidateType> tcpType() const { return m_fields.tcpType; }
-    String relatedAddress() const { return m_fields.relatedAddress; }
+    RefPtr<StringImpl> relatedAddress() const { return m_fields.relatedAddress; }
     std::optional<unsigned short> relatedPort() const { return m_fields.relatedPort; }
 
-    String usernameFragment() const { return m_fields.usernameFragment; }
+    RefPtr<StringImpl> usernameFragment() const { return m_fields.usernameFragment; }
     RTCIceCandidateInit toJSON() const;
 
 private:
-    RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex, Fields&&);
+    RTCIceCandidate(StringImpl* candidate, StringImpl* sdpMid, std::optional<unsigned short> sdpMLineIndex, Fields&&);
 
-    String m_candidate;
-    String m_sdpMid;
+    RefPtr<StringImpl> m_candidate;
+    RefPtr<StringImpl> m_sdpMid;
     std::optional<unsigned short> m_sdpMLineIndex;
     Fields m_fields;
 };

@@ -49,20 +49,20 @@ public:
     using MethodDetailsFunction = std::function<JSC::Strong<JSC::JSObject>(JSC::JSGlobalObject&)>;
     using MethodDetailsType = Variant<JSValueInWrappedObject, MethodDetailsFunction>;
 
-    const String& methodName() const LIFETIME_BOUND { return m_methodName; }
+    const RefPtr<StringImpl>& methodName() const LIFETIME_BOUND { return m_methodName; }
     const MethodDetailsType& methodDetails() const LIFETIME_BOUND { return m_methodDetails; }
     JSValueInWrappedObject& cachedMethodDetails() LIFETIME_BOUND { return m_cachedMethodDetails; }
 
     struct Init final : PaymentRequestUpdateEventInit {
-        String methodName;
+        RefPtr<StringImpl> methodName;
         JSC::Strong<JSC::JSObject> methodDetails;
     };
 
 private:
-    PaymentMethodChangeEvent(JSC::JSGlobalObject&, const AtomString& type, Init&&);
-    PaymentMethodChangeEvent(const AtomString& type, const String& methodName, MethodDetailsFunction&&);
+    PaymentMethodChangeEvent(JSC::JSGlobalObject&, AtomStringImpl* type, Init&&);
+    PaymentMethodChangeEvent(AtomStringImpl* type, StringImpl* methodName, MethodDetailsFunction&&);
 
-    String m_methodName;
+    RefPtr<StringImpl> m_methodName;
     MethodDetailsType m_methodDetails;
     JSValueInWrappedObject m_cachedMethodDetails;
 };

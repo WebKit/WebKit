@@ -154,7 +154,7 @@ struct WebPageCreationParameters {
     double pageLength { 0 };
     double gapBetweenPages { 0 };
     
-    String userAgent { };
+    RefPtr<StringImpl> userAgent { };
     bool hasCustomUserAgent { false };
 
     VisitedLinkTableIdentifier visitedLinkTableID;
@@ -198,7 +198,7 @@ struct WebPageCreationParameters {
 
     bool hasResourceLoadClient { false };
 
-    Vector<String> mimeTypesWithCustomContentProviders { };
+    Vector<RefPtr<StringImpl>> mimeTypesWithCustomContentProviders { };
 
     bool controlledByAutomation { false };
     Inspector::NetworkInterception networkInterception { };
@@ -237,14 +237,14 @@ struct WebPageCreationParameters {
     bool canShowWhileLocked { false };
     bool isCapturingScreen { false };
     WebCore::Color insertionPointColor { };
-    String contentSizeCategory { };
+    RefPtr<StringImpl> contentSizeCategory { };
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(UNIFIED_PDF)
     PDFPluginDisplayMode initialPDFDisplayMode { PDFPluginDisplayMode::SinglePageContinuous };
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled { false };
-    Vector<String> additionalSupportedImageTypes { };
+    Vector<RefPtr<StringImpl>> additionalSupportedImageTypes { };
     Vector<SandboxExtension::Handle> gpuIOKitExtensionHandles { };
     Vector<SandboxExtension::Handle> gpuMachExtensionHandles { };
 #endif
@@ -271,11 +271,11 @@ struct WebPageCreationParameters {
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones { };
 
-    String overrideContentSecurityPolicy { };
+    RefPtr<StringImpl> overrideContentSecurityPolicy { };
     std::optional<double> cpuLimit { };
 
-    HashMap<String, WebURLSchemeHandlerIdentifier> urlSchemeHandlers { };
-    Vector<String> urlSchemesWithLegacyCustomProtocolHandlers { };
+    HashMap<RefPtr<StringImpl>, WebURLSchemeHandlerIdentifier> urlSchemeHandlers { };
+    Vector<RefPtr<StringImpl>> urlSchemesWithLegacyCustomProtocolHandlers { };
 
 #if ENABLE(APPLICATION_MANIFEST)
     std::optional<WebCore::ApplicationManifest> applicationManifest { };
@@ -295,15 +295,15 @@ struct WebPageCreationParameters {
 
     std::optional<WebCore::PageIdentifier> oldPageID { };
 
-    String overriddenMediaType { };
-    Vector<String> corsDisablingPatterns { };
-    HashSet<String> maskedURLSchemes { };
+    RefPtr<StringImpl> overriddenMediaType { };
+    Vector<RefPtr<StringImpl>> corsDisablingPatterns { };
+    HashSet<RefPtr<StringImpl>> maskedURLSchemes { };
     bool loadsSubresources { true };
-    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts { };
+    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>> allowedNetworkHosts { };
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting { };
 
     bool crossOriginAccessControlCheckEnabled { true };
-    String processDisplayName { };
+    RefPtr<StringImpl> processDisplayName { };
 
     bool shouldCaptureAudioInUIProcess { false };
     bool shouldCaptureVideoInUIProcess { false };
@@ -346,7 +346,7 @@ struct WebPageCreationParameters {
     std::optional<RemotePageParameters> remotePageParameters { };
     std::optional<ProvisionalFrameCreationParameters> provisionalFrameCreationParameters { };
     WebCore::FrameIdentifier mainFrameIdentifier;
-    String openedMainFrameName;
+    RefPtr<StringImpl> openedMainFrameName;
     WebCore::RegistrableDomain openedByScriptDomain;
     std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier { };
     URL mainFrameOpenerURL;
@@ -382,7 +382,7 @@ struct WebPageCreationParameters {
 #endif
 
 #if PLATFORM(COCOA)
-    String presentingApplicationBundleIdentifier;
+    RefPtr<StringImpl> presentingApplicationBundleIdentifier;
 #endif
     bool shouldSendConsoleLogsToUIProcessForTesting { false };
 
@@ -390,7 +390,7 @@ struct WebPageCreationParameters {
     std::optional<WebCore::ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers { std::nullopt };
 #endif
 
-    String displayedTranslationLocaleIdentifier { };
+    RefPtr<StringImpl> displayedTranslationLocaleIdentifier { };
 
     std::optional<TextManipulationParameters> textManipulationParameters { std::nullopt };
 

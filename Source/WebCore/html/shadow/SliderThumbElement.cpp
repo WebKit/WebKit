@@ -290,8 +290,8 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
         }
     }
 
-    String valueString = serializeForNumberType(value);
-    if (valueString == input->value())
+    RefPtr<StringImpl> valueString = serializeForNumberType(value);
+    if (equal(valueString, input->value()))
         return;
 
     // FIXME: This is no longer being set from renderer. Consider updating the method name.
@@ -346,7 +346,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
     }
 
     bool isLeftButton = mouseEvent->button() == MouseButton::Left;
-    const AtomString& eventType = mouseEvent->type();
+    const RefPtr<AtomStringImpl>& eventType = mouseEvent->type();
 
     // We intentionally do not call event->setDefaultHandled() here because
     // MediaControlTimelineElement::defaultEventHandler() wants to handle these
@@ -513,7 +513,7 @@ void SliderThumbElement::handleTouchEvent(TouchEvent& touchEvent)
         return;
     }
 
-    const AtomString& eventType = touchEvent.type();
+    const RefPtr<AtomStringImpl>& eventType = touchEvent.type();
     auto& eventNames = WebCore::eventNames();
     if (eventType == eventNames.touchstartEvent) {
         handleTouchStart(touchEvent);

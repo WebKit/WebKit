@@ -80,7 +80,7 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
         let clientData = ClientData(
             challenge: challenge.base64EncodedString(options: [.base64URLAlphabet, .omitPaddingCharacter]),
             requestContext: "web browser",
-            rpId: request.pointee.relyingPartyIdentifier.description
+            rpId: String(request.pointee.relyingPartyIdentifier.get())
         )
 
         let phoneNumberRequested = request.pointee.desiredResponseType == .PossessionIdentifierAndPhoneNumber

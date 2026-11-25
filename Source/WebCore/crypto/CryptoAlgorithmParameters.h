@@ -74,7 +74,7 @@ public:
     }
 
     // FIXME: Consider merging name and identifier.
-    String name;
+    RefPtr<StringImpl> name;
     CryptoAlgorithmIdentifier identifier;
 
     virtual ~CryptoAlgorithmParameters() = default;

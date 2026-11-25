@@ -51,13 +51,13 @@ class GPUQuerySet;
 
 class GPUCommandEncoder : public RefCountedAndCanMakeWeakPtr<GPUCommandEncoder> {
 public:
-    static Ref<GPUCommandEncoder> create(Ref<::WebGPU::CommandEncoder>&& backing, String&& label, GPUDevice& device)
+    static Ref<GPUCommandEncoder> create(Ref<::WebGPU::CommandEncoder>&& backing, RefPtr<StringImpl>&& label, GPUDevice& device)
     {
         return adoptRef(*new GPUCommandEncoder(WTF::move(backing), WTF::move(label), device));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     ExceptionOr<Ref<GPURenderPassEncoder>> beginRenderPass(const GPURenderPassDescriptor&);
     ExceptionOr<Ref<GPUComputePassEncoder>> beginComputePass(const std::optional<GPUComputePassDescriptor>&);
@@ -94,9 +94,9 @@ public:
         GPUSize64 offset,
         std::optional<GPUSize64>);
 
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel);
     void popDebugGroup();
-    void insertDebugMarker(String&& markerLabel);
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel);
 
     void writeTimestamp(GPUQuerySet&, GPUSize32 queryIndex);
 
@@ -118,12 +118,12 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUCommandEncoder(Ref<::WebGPU::CommandEncoder>&&, String&& label, GPUDevice&);
+    GPUCommandEncoder(Ref<::WebGPU::CommandEncoder>&&, RefPtr<StringImpl>&& label, GPUDevice&);
 
     Ref<::WebGPU::CommandEncoder> m_backing;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
-    std::optional<String> m_overrideLabel;
+    std::optional<RefPtr<StringImpl>> m_overrideLabel;
 };
 
 }

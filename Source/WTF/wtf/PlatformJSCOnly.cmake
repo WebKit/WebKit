@@ -4,7 +4,6 @@ list(APPEND WTF_SOURCES
 
 if (WIN32)
     list(APPEND WTF_SOURCES
-        text/win/StringWin.cpp
         text/win/TextBreakIteratorInternalICUWin.cpp
 
         win/CPUTimeWin.cpp

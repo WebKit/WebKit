@@ -207,7 +207,7 @@ public:
     };
     WEBCORE_EXPORT DebugRGBA debugRGBA() const;
 
-    WEBCORE_EXPORT String debugDescription() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> debugDescription() const;
 
 private:
     friend void add(Hasher&, const Color&);

@@ -78,19 +78,19 @@ public:
 
 private:
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    bool readFilePath(const String&, PresentationSize preferredPresentationSize = { }, const String& contentType = { }) override;
-    bool readFilePaths(const Vector<String>&) override;
-    bool readHTML(const String&) override;
-    bool readImage(Ref<FragmentedSharedBuffer>&&, const String& type, PresentationSize preferredPresentationSize = { }) override;
-    bool readURL(const URL&, const String& title) override;
-    bool readPlainText(const String&) override;
+    bool readFilePath(StringImpl*, PresentationSize preferredPresentationSize = { }, StringImpl* contentType = nullptr) override;
+    bool readFilePaths(const Vector<RefPtr<StringImpl>>&) override;
+    bool readHTML(StringImpl*) override;
+    bool readImage(Ref<FragmentedSharedBuffer>&&, StringImpl* type, PresentationSize preferredPresentationSize = { }) override;
+    bool readURL(const URL&, StringImpl* title) override;
+    bool readPlainText(StringImpl*) override;
 #endif
 
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
-    bool readDataBuffer(SharedBuffer&, const String& type, const AtomString& name, PresentationSize preferredPresentationSize = { }) override;
+    bool readDataBuffer(SharedBuffer&, StringImpl* type, AtomStringImpl* name, PresentationSize preferredPresentationSize = { }) override;
 #endif
 
     const SimpleRange m_context;
@@ -109,26 +109,26 @@ public:
     {
     }
 
-    String takeMarkup() { return std::exchange(m_markup, { }); }
+    RefPtr<StringImpl> takeMarkup() { return std::exchange(m_markup, { }); }
 
 private:
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    bool readFilePath(const String&, PresentationSize = { }, const String& = { }) override { return false; }
-    bool readFilePaths(const Vector<String>&) override { return false; }
-    bool readHTML(const String&) override;
-    bool readImage(Ref<FragmentedSharedBuffer>&&, const String&, PresentationSize = { }) override { return false; }
-    bool readURL(const URL&, const String&) override { return false; }
-    bool readPlainText(const String&) override { return false; }
+    bool readFilePath(StringImpl*, PresentationSize = { }, StringImpl* = nullptr) override { return false; }
+    bool readFilePaths(const Vector<RefPtr<StringImpl>>&) override { return false; }
+    bool readHTML(StringImpl*) override;
+    bool readImage(Ref<FragmentedSharedBuffer>&&, StringImpl*, PresentationSize = { }) override { return false; }
+    bool readURL(const URL&, StringImpl*) override { return false; }
+    bool readPlainText(StringImpl*) override { return false; }
 #endif
 
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
-    bool readDataBuffer(SharedBuffer&, const String&, const AtomString&, PresentationSize = { }) override { return false; }
+    bool readDataBuffer(SharedBuffer&, StringImpl*, AtomStringImpl*, PresentationSize = { }) override { return false; }
 #endif
 
-    String m_markup;
+    RefPtr<StringImpl> m_markup;
 };
 
 #if PLATFORM(COCOA) && defined(__OBJC__)

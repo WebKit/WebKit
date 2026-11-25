@@ -45,7 +45,7 @@ public:
     PropertyType& value() LIFETIME_BOUND { return m_value; }
     void setValue(const PropertyType& value) { m_value = value; }
 
-    String valueAsString() const override
+    RefPtr<StringImpl> valueAsString() const override
     {
         return SVGPropertyTraits<PropertyType>::toString(m_value);
     }

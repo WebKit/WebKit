@@ -35,7 +35,7 @@
 
 namespace TestWebKitAPI::FindTestFixtures {
 
-inline FrameSpec singleFrame(const String& body)
+inline FrameSpec singleFrame(StringImpl* body)
 {
     return { .body = body };
 }
@@ -125,32 +125,32 @@ inline FrameSpec matchesInEveryFrame()
 
 inline FrameSpec shadowDOM()
 {
-    return singleFrame("<div id='host'></div><script>host.attachShadow({ mode: 'open' }).innerHTML = '<p>hello</p>';</script>"_s);
+    return singleFrame("<div id='host'></div><script>host.attachShadow({ mode: 'open' }).innerHTML = '<p>hello</p>';</script>"_si);
 }
 
 inline FrameSpec textControls()
 {
-    return singleFrame("<input value='hello'><textarea>hello</textarea>"_s);
+    return singleFrame("<input value='hello'><textarea>hello</textarea>"_si);
 }
 
 inline FrameSpec contentEditable()
 {
-    return singleFrame("<div contenteditable>hello</div>"_s);
+    return singleFrame("<div contenteditable>hello</div>"_si);
 }
 
 inline FrameSpec closedDetails()
 {
-    return singleFrame("<details><summary>summary</summary>hello</details>"_s);
+    return singleFrame("<details><summary>summary</summary>hello</details>"_si);
 }
 
 inline FrameSpec hiddenUntilFound()
 {
-    return singleFrame("<div hidden='until-found'>hello</div>"_s);
+    return singleFrame("<div hidden='until-found'>hello</div>"_si);
 }
 
 inline FrameSpec userSelectNone()
 {
-    return singleFrame("<p style='user-select: none'>hello</p>"_s);
+    return singleFrame("<p style='user-select: none'>hello</p>"_si);
 }
 
 inline FrameSpec crossOriginChildWithCaptionedVideo()
@@ -172,7 +172,7 @@ inline HTTPServer::ResponseMap testBundleResource(NSString *extension, ASCIILite
 {
     HTTPResponse response { { { "Content-Type"_s, mimeType } }, [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:extension]] };
     HTTPServer::ResponseMap resources;
-    resources.add(makeString("/test."_s, String(extension)), WTF::move(response));
+    resources.add(makeString("/test."_s, StringImpl::create(extension)), WTF::move(response));
     return resources;
 }
 

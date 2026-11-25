@@ -84,22 +84,22 @@ void LargestContentfulPaint::setSize(unsigned size)
     m_pixelArea = size;
 }
 
-String LargestContentfulPaint::id() const
+RefPtr<StringImpl> LargestContentfulPaint::id() const
 {
     return m_id;
 }
 
-void LargestContentfulPaint::setID(const String& idString)
+void LargestContentfulPaint::setID(StringImpl* idString)
 {
     m_id = idString;
 }
 
-String LargestContentfulPaint::url() const
+RefPtr<StringImpl> LargestContentfulPaint::url() const
 {
     return m_urlString;
 }
 
-void LargestContentfulPaint::setURLString(const String& urlString)
+void LargestContentfulPaint::setURLString(StringImpl* urlString)
 {
     m_urlString = urlString;
 }

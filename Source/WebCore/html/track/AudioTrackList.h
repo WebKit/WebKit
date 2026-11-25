@@ -44,7 +44,7 @@ public:
     }
     virtual ~AudioTrackList();
 
-    RefPtr<AudioTrack> getTrackById(const AtomString&) const;
+    RefPtr<AudioTrack> getTrackById(AtomStringImpl*) const;
     RefPtr<AudioTrack> getTrackById(TrackID) const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_inbandTracks.size(); }

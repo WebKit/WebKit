@@ -182,11 +182,11 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 // String::createNSString() converts null Strings to empty NSStrings for compatibility
 // with AppKit. We need to work around that here.
-static NSString* NSStringOrNil(String coreString)
+static NSString* NSStringOrNil(RefPtr<StringImpl> coreString)
 {
-    if (coreString.isNull())
+    if (!coreString)
         return nil;
-    return coreString.createNSString().autorelease();
+    return createNSString(coreString).autorelease();
 }
 
 - (NSString *)_altDisplayString

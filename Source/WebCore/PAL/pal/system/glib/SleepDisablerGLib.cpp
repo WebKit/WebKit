@@ -34,12 +34,12 @@
 
 namespace PAL {
 
-std::unique_ptr<SleepDisabler> SleepDisabler::create(const String& reason, Type type)
+std::unique_ptr<SleepDisabler> SleepDisabler::create(StringImpl* reason, Type type)
 {
     return std::unique_ptr<SleepDisabler>(new SleepDisablerGLib(reason, type));
 }
 
-SleepDisablerGLib::SleepDisablerGLib(const String& reason, Type type)
+SleepDisablerGLib::SleepDisablerGLib(StringImpl* reason, Type type)
     : SleepDisabler(reason, type)
     , m_cancellable(adoptGRef(g_cancellable_new()))
     , m_reason(reason)
@@ -91,13 +91,13 @@ void SleepDisablerGLib::acquireInhibitor()
     if (shouldUsePortal()) {
         GVariantBuilder builder;
         g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-        g_variant_builder_add(&builder, "{sv}", "reason", gVariantNewString(m_reason.utf8()));
+        g_variant_builder_add(&builder, "{sv}", "reason", gVariantNewString(utf8(m_reason)));
         parameters = g_variant_new("(su@a{sv})", "" /* no window */, 8 /* idle */, g_variant_builder_end(&builder));
     } else if (const gchar* prgname = g_get_prgname()) {
-        parameters = gVariantNew("(ss)", prgname, m_reason.utf8());
+        parameters = gVariantNew("(ss)", prgname, utf8(m_reason));
     } else if (const auto executablePath = FileSystem::currentExecutablePath(); !executablePath.isNull()) {
         GUniquePtr<char> executableName(g_path_get_basename(executablePath.legacyCStringPointer()));
-        parameters = gVariantNew("(ss)", executableName.get(), m_reason.utf8());
+        parameters = gVariantNew("(ss)", executableName.get(), utf8(m_reason));
     } else
         return;
 

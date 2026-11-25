@@ -546,7 +546,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
             value = target->get(globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
 
-        JSString* key = jsOwnedString(vm, propertyName.uid());
+        JSString* key = jsOwnedString(vm, RefPtr<StringImpl> { propertyName.uid() });
         JSArray* entry = constructArrayPair(globalObject, key, value);
         RETURN_IF_EXCEPTION(scope, void());
         entries->putDirectIndex(globalObject, index++, entry);

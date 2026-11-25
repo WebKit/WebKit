@@ -59,12 +59,12 @@ void IndexOrName::dump(PrintStream& out) const
         out.print(moduleName, ".wasm-function["_s, name()->span(), "]");
 }
 
-String makeString(const IndexOrName& ion)
+RefPtr<StringImpl> makeString(const IndexOrName& ion)
 {
     if (ion.isEmpty() || !ion.nameSection()) {
         if (ion.isIndex())
             return makeString("wasm-stub["_s, ion.index(), "]"_s);
-        return "wasm-stub"_s;
+        return "wasm-stub"_si;
     }
     auto moduleName = ion.moduleName();
     if (ion.isIndex())

@@ -74,10 +74,10 @@ public:
     virtual ~WebProcessTest() = default;
     virtual bool runTest(const char* testName, WebKitWebPage*) = 0;
 
-    static void add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()>);
-    static std::unique_ptr<WebProcessTest> create(const String& testName);
+    static void add(StringImpl* testName, std::function<std::unique_ptr<WebProcessTest> ()>);
+    static std::unique_ptr<WebProcessTest> create(StringImpl* testName);
 };
 
 #define REGISTER_TEST(ClassName, TestName) \
-    WebProcessTest::add(String::fromUTF8(TestName), ClassName::create)
+    WebProcessTest::add(StringImpl::fromUTF8(TestName), ClassName::create)
 

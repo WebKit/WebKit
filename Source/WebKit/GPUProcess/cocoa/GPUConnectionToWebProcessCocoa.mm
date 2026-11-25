@@ -40,27 +40,27 @@ bool GPUConnectionToWebProcess::setCaptureAttributionString()
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-String GPUConnectionToWebProcess::mediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier)
+RefPtr<StringImpl> GPUConnectionToWebProcess::mediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier)
 {
     return m_mediaPlaybackEnvironments.get(pageIdentifier);
 }
 
-void GPUConnectionToWebProcess::setMediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier, const String& mediaPlaybackEnvironment)
+void GPUConnectionToWebProcess::setMediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier, StringImpl* mediaPlaybackEnvironment)
 {
-    if (mediaPlaybackEnvironment.isEmpty())
+    if (isEmpty(mediaPlaybackEnvironment))
         m_mediaPlaybackEnvironments.remove(pageIdentifier);
     else
         m_mediaPlaybackEnvironments.set(pageIdentifier, mediaPlaybackEnvironment);
 }
 
-String GPUConnectionToWebProcess::displayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier)
+RefPtr<StringImpl> GPUConnectionToWebProcess::displayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier)
 {
     return m_displayCaptureEnvironments.get(pageIdentifier);
 }
 
-void GPUConnectionToWebProcess::setDisplayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier, const String& displayCaptureEnvironment)
+void GPUConnectionToWebProcess::setDisplayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier, StringImpl* displayCaptureEnvironment)
 {
-    if (displayCaptureEnvironment.isEmpty())
+    if (isEmpty(displayCaptureEnvironment))
         m_displayCaptureEnvironments.remove(pageIdentifier);
     else
         m_displayCaptureEnvironments.set(pageIdentifier, displayCaptureEnvironment);

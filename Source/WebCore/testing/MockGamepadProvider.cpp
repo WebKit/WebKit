@@ -64,7 +64,7 @@ void MockGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
     m_invisibleGamepadsForClient.remove(client);
 }
 
-void MockGamepadProvider::setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
+void MockGamepadProvider::setMockGamepadDetails(unsigned index, StringImpl* gamepadID, StringImpl* mapping, unsigned axisCount, unsigned buttonCount, bool supportsDualRumble, bool wasConnected)
 {
     if (index >= m_mockGamepadVector.size())
         m_mockGamepadVector.grow(index + 1);
@@ -183,12 +183,12 @@ void MockGamepadProvider::clearGamepadsForTesting()
     m_mockGamepadVector.clear();
 }
 
-void MockGamepadProvider::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+void MockGamepadProvider::playEffect(unsigned, StringImpl*, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(true);
 }
 
-void MockGamepadProvider::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+void MockGamepadProvider::stopEffects(unsigned, StringImpl*, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }

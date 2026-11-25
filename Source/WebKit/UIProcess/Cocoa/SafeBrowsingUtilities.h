@@ -41,8 +41,8 @@ enum class NavigationType : bool { MainFrame, SubFrame };
 void lookUp(const URL&, NavigationType, SSBLookupResult *cachedResult, CompletionHandler<void(SSBLookupResult *, NSError *)>&&);
 
 struct NamespacedCollection {
-    String listNamespace;
-    String collectionID;
+    RefPtr<StringImpl> listNamespace;
+    RefPtr<StringImpl> collectionID;
 };
 
 using NamespacedLists = NSDictionary<NSString *, NSArray<NSString *> *>;

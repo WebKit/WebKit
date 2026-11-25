@@ -43,7 +43,7 @@ struct SameSizeAsElementRareData : NodeRareData {
 #endif
     IntPoint savedLayerScrollPosition;
     HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> animationRareData;
-    HashMap<std::optional<Style::PseudoElementIdentifier>, AtomString> viewTransitionCapture;
+    HashMap<std::optional<Style::PseudoElementIdentifier>, RefPtr<AtomStringImpl>> viewTransitionCapture;
     void* pointers[17];
     void* intersectionObserverData;
     void* resizeObserverData;

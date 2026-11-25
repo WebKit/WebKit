@@ -41,10 +41,10 @@ Ref<DOMParser> DOMParser::create(Document& contextDocument)
     return adoptRef(*new DOMParser(contextDocument));
 }
 
-ExceptionOr<Ref<Document>> DOMParser::parseFromString(Variant<Ref<TrustedHTML>, String>&& string, const AtomString& contentType)
+ExceptionOr<Ref<Document>> DOMParser::parseFromString(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& string, AtomStringImpl* contentType)
 {
     Ref contextDocument = *m_contextDocument;
-    auto stringValueHolder = trustedTypeCompliantString(protect(contextDocument->contextDocument()), WTF::move(string), "DOMParser parseFromString"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(contextDocument->contextDocument()), WTF::move(string), "DOMParser parseFromString"_si);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();

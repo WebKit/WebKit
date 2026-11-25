@@ -33,17 +33,17 @@ namespace WebCore {
 
 class PlatformSpeechSynthesisVoice : public RefCounted<PlatformSpeechSynthesisVoice> {
 public:
-    NODELETE WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisVoice> create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
+    NODELETE WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisVoice> create(StringImpl* voiceURI, StringImpl* name, StringImpl* lang, bool localService, bool isDefault);
     NODELETE static Ref<PlatformSpeechSynthesisVoice> create();
 
-    const String& voiceURI() const LIFETIME_BOUND { return m_voiceURI; }
-    void setVoiceURI(const String& voiceURI) { m_voiceURI = voiceURI; }
+    const RefPtr<StringImpl>& voiceURI() const LIFETIME_BOUND { return m_voiceURI; }
+    void setVoiceURI(StringImpl* voiceURI) { m_voiceURI = voiceURI; }
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    void setName(const String& name) { m_name = name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    void setName(StringImpl* name) { m_name = name; }
 
-    const String& lang() const LIFETIME_BOUND { return m_lang; }
-    void setLang(const String& lang) { m_lang = lang; }
+    const RefPtr<StringImpl>& lang() const LIFETIME_BOUND { return m_lang; }
+    void setLang(StringImpl* lang) { m_lang = lang; }
 
     bool localService() const { return m_localService; }
     void setLocalService(bool localService) { m_localService = localService; }
@@ -52,12 +52,12 @@ public:
     void setIsDefault(bool isDefault) { m_default = isDefault; }
 
 private:
-    PlatformSpeechSynthesisVoice(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
+    PlatformSpeechSynthesisVoice(StringImpl* voiceURI, StringImpl* name, StringImpl* lang, bool localService, bool isDefault);
     PlatformSpeechSynthesisVoice() = default;
 
-    String m_voiceURI;
-    String m_name;
-    String m_lang;
+    RefPtr<StringImpl> m_voiceURI;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_lang;
     bool m_localService { false };
     bool m_default { false };
 };

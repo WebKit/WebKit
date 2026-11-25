@@ -59,7 +59,7 @@ RemoteWebLockRegistry::~RemoteWebLockRegistry()
     WebProcess::singleton().removeMessageReceiver(*this);
 }
 
-void RemoteWebLockRegistry::requestLock(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, const String& name, WebCore::WebLockMode lockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
+void RemoteWebLockRegistry::requestLock(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, StringImpl* name, WebCore::WebLockMode lockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
     ASSERT_UNUSED(sessionID, WebProcess::singleton().sessionID());
     LockRequest request { { WTF::move(lockStolenHandler) }, WTF::move(grantedHandler) };
@@ -69,7 +69,7 @@ void RemoteWebLockRegistry::requestLock(PAL::SessionID sessionID, const WebCore:
     WebProcess::singleton().send(Messages::WebLockRegistryProxy::RequestLock(clientOrigin, lockIdentifier, clientID, name, lockMode, steal, ifAvailable), 0);
 }
 
-void RemoteWebLockRegistry::releaseLock(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, const String& name)
+void RemoteWebLockRegistry::releaseLock(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, StringImpl* name)
 {
     ASSERT_UNUSED(sessionID, WebProcess::singleton().sessionID());
     auto it = m_locksSnapshotPerClient.find(clientID);
@@ -82,7 +82,7 @@ void RemoteWebLockRegistry::releaseLock(PAL::SessionID sessionID, const WebCore:
     WebProcess::singleton().send(Messages::WebLockRegistryProxy::ReleaseLock(clientOrigin, lockIdentifier, clientID, name), 0);
 }
 
-void RemoteWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, const String& name, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, StringImpl* name, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT_UNUSED(sessionID, WebProcess::singleton().sessionID());
     WebProcess::singleton().sendWithAsyncReply(Messages::WebLockRegistryProxy::AbortLockRequest(clientOrigin, lockIdentifier, clientID, name), [weakThis = WeakPtr { *this }, lockIdentifier, clientID, completionHandler = WTF::move(completionHandler)](bool didAbort) mutable {

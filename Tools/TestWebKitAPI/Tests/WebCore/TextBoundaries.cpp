@@ -30,7 +30,7 @@ namespace TestWebKitAPI {
 
 TEST(TextBoundariesTest, FindWordBoundaryEmpty)
 {
-    WTF::String emptyString(""_s);
+    RefPtr<StringImpl> emptyString(""_si);
     WTF::StringView stringView(emptyString);
     int start = -1;
     int end = -1;

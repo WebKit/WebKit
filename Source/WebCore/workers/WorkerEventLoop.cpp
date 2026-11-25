@@ -77,9 +77,9 @@ void WorkerEventLoop::clearMicrotaskQueue()
     m_microtaskQueue = nullptr;
 }
 
-const String WorkerEventLoop::taskMode()
+const RefPtr<StringImpl> WorkerEventLoop::taskMode()
 {
-    return "workerEventLoopTaskMode"_s;
+    return "workerEventLoopTaskMode"_si;
 }
 
 } // namespace WebCore

@@ -38,7 +38,7 @@ struct Indent {
     Indent(StringDumper& dumper)
         : scope(dumper.m_indent, makeString(dumper.m_indent, "    "_s))
     { }
-    SetForScope<String> scope;
+    SetForScope<RefPtr<StringImpl>> scope;
 };
 
 static Indent bumpIndent(StringDumper& dumper)
@@ -59,7 +59,7 @@ void StringDumper::visitVector(T& nodes, J joiner)
     }
 }
 
-String StringDumper::toString()
+RefPtr<StringImpl> StringDumper::toString()
 {
     return m_out.toString();
 }
@@ -256,7 +256,7 @@ void StringDumper::visit(Float32Literal& literal)
 
 void StringDumper::visit(Float16Literal& literal)
 {
-    m_out.print(String::number(literal.value()), "h");
+    m_out.print(makeString(static_cast<float>(literal.value())), "h");
 }
 
 void StringDumper::visit(IdentifierExpression& identifier)

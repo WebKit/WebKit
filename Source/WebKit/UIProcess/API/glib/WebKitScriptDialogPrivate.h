@@ -25,7 +25,7 @@
 #include <wtf/text/WTFString.h>
 
 struct _WebKitScriptDialog {
-    _WebKitScriptDialog(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, const String&)>&& completionHandler)
+    _WebKitScriptDialog(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, StringImpl*)>&& completionHandler)
         : type(type)
         , message(message)
         , defaultText(defaultText)
@@ -40,7 +40,7 @@ struct _WebKitScriptDialog {
     bool confirmed { false };
     UTF8CString text;
 
-    Function<void(bool, const String&)> completionHandler;
+    Function<void(bool, StringImpl*)> completionHandler;
 
 #if PLATFORM(GTK)
     GtkWidget* nativeDialog { nullptr };
@@ -53,9 +53,9 @@ struct _WebKitScriptDialog {
     int referenceCount { 1 };
 };
 
-WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, const String&)>&& completionHandler);
+WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, StringImpl*)>&& completionHandler);
 bool webkitScriptDialogIsRunning(WebKitScriptDialog*);
 void webkitScriptDialogAccept(WebKitScriptDialog*);
 void webkitScriptDialogDismiss(WebKitScriptDialog*);
-void webkitScriptDialogSetUserInput(WebKitScriptDialog*, const String&);
+void webkitScriptDialogSetUserInput(WebKitScriptDialog*, StringImpl*);
 bool webkitScriptDialogIsUserHandled(WebKitScriptDialog *);

@@ -68,10 +68,10 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setCachePolicy(other.cachePolicy());
     setTimeoutInterval(other.timeoutInterval());
     setFirstPartyForCookies(other.firstPartyForCookies().isolatedCopy());
-    setHTTPMethod(other.httpMethod().isolatedCopy());
+    setHTTPMethod(WTF::isolatedCopy(other.httpMethod()));
     setPriority(other.priority());
     setRequester(other.requester());
-    setInitiatorIdentifier(other.initiatorIdentifier().isolatedCopy());
+    setInitiatorIdentifier(WTF::isolatedCopy(other.initiatorIdentifier()));
     setShouldBlockThirdPartyStorage(other.shouldBlockThirdPartyStorage());
 
     if (auto inspectorInitiatorNodeIdentifier = other.inspectorInitiatorNodeIdentifier())
@@ -86,13 +86,13 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
 
     size_t encodingCount = other.m_requestData.m_responseContentDispositionEncodingFallbackArray.size();
     if (encodingCount > 0) {
-        String encoding1 = other.m_requestData.m_responseContentDispositionEncodingFallbackArray[0].isolatedCopy();
-        String encoding2;
-        String encoding3;
+        RefPtr<StringImpl> encoding1 = WTF::isolatedCopy(other.m_requestData.m_responseContentDispositionEncodingFallbackArray[0]);
+        RefPtr<StringImpl> encoding2;
+        RefPtr<StringImpl> encoding3;
         if (encodingCount > 1) {
-            encoding2 = other.m_requestData.m_responseContentDispositionEncodingFallbackArray[1].isolatedCopy();
+            encoding2 = WTF::isolatedCopy(other.m_requestData.m_responseContentDispositionEncodingFallbackArray[1]);
             if (encodingCount > 2)
-                encoding3 = other.m_requestData.m_responseContentDispositionEncodingFallbackArray[2].isolatedCopy();
+                encoding3 = WTF::isolatedCopy(other.m_requestData.m_responseContentDispositionEncodingFallbackArray[2]);
         }
         ASSERT(encodingCount <= 3);
         setResponseContentDispositionEncodingFallbackArray(encoding1, encoding2, encoding3);
@@ -155,7 +155,7 @@ static bool shouldUseGet(const ResourceRequestBase& request, const ResourceRespo
 void ResourceRequestBase::redirectAsGETIfNeeded(const ResourceRequestBase &redirectRequest, const ResourceResponse& redirectResponse)
 {
     if (shouldUseGet(redirectRequest, redirectResponse)) {
-        setHTTPMethod("GET"_s);
+        setHTTPMethod("GET"_si);
         setHTTPBody(nullptr);
         m_requestData.m_httpHeaderFields.removeRequestBodyHeaders();
     }
@@ -171,7 +171,7 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     auto location = redirectResponse.httpHeaderField(HTTPHeaderName::Location);
 
     // https://fetch.spec.whatwg.org/#concept-response-location-url
-    auto url = location.isEmpty() ? URL { } : URL { redirectResponse.url(), location };
+    auto url = WTF::isEmpty(location) ? URL { } : URL { redirectResponse.url(), location };
     if (shouldSetHash == ShouldSetHash::Yes && url.fragmentIdentifier().isEmpty() && !redirectResponse.url().fragmentIdentifier().isEmpty())
         url.setFragmentIdentifier(redirectResponse.url().fragmentIdentifier());
 
@@ -351,18 +351,18 @@ void ResourceRequestBase::setIsTopSite(bool isTopSite)
     m_platformRequestUpdated = false;
 }
 
-const String& ResourceRequestBase::httpMethod() const
+const RefPtr<StringImpl>& ResourceRequestBase::httpMethod() const
 {
     updateResourceRequest(); 
     
     return m_requestData.m_httpMethod;
 }
 
-void ResourceRequestBase::setHTTPMethod(const String& httpMethod) 
+void ResourceRequestBase::setHTTPMethod(StringImpl* httpMethod) 
 {
     updateResourceRequest(); 
 
-    if (m_requestData.m_httpMethod == httpMethod)
+    if (WTF::equal(m_requestData.m_httpMethod, httpMethod))
         return;
 
     m_requestData.m_httpMethod = httpMethod;
@@ -377,21 +377,21 @@ const HTTPHeaderMap& ResourceRequestBase::httpHeaderFields() const
     return m_requestData.m_httpHeaderFields;
 }
 
-String ResourceRequestBase::httpHeaderField(StringView name) const
+RefPtr<StringImpl> ResourceRequestBase::httpHeaderField(StringView name) const
 {
     updateResourceRequest();
 
     return m_requestData.m_httpHeaderFields.get(name);
 }
 
-String ResourceRequestBase::httpHeaderField(HTTPHeaderName name) const
+RefPtr<StringImpl> ResourceRequestBase::httpHeaderField(HTTPHeaderName name) const
 {
     updateResourceRequest(); 
     
     return m_requestData.m_httpHeaderFields.get(name);
 }
 
-void ResourceRequestBase::setHTTPHeaderField(const String& name, const String& value)
+void ResourceRequestBase::setHTTPHeaderField(StringImpl* name, StringImpl* value)
 {
     updateResourceRequest();
 
@@ -400,7 +400,7 @@ void ResourceRequestBase::setHTTPHeaderField(const String& name, const String& v
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::setHTTPHeaderField(HTTPHeaderName name, const String& value)
+void ResourceRequestBase::setHTTPHeaderField(HTTPHeaderName name, StringImpl* value)
 {
     updateResourceRequest();
 
@@ -419,12 +419,12 @@ void ResourceRequestBase::clearHTTPAuthorization()
     m_platformRequestUpdated = false;
 }
 
-String ResourceRequestBase::httpContentType() const
+RefPtr<StringImpl> ResourceRequestBase::httpContentType() const
 {
     return httpHeaderField(HTTPHeaderName::ContentType);
 }
 
-void ResourceRequestBase::setHTTPContentType(const String& httpContentType)
+void ResourceRequestBase::setHTTPContentType(StringImpl* httpContentType)
 {
     setHTTPHeaderField(HTTPHeaderName::ContentType, httpContentType);
 }
@@ -447,7 +447,7 @@ void ResourceRequestBase::clearPurpose()
     m_platformRequestUpdated = false;
 }
 
-String ResourceRequestBase::httpReferrer() const
+RefPtr<StringImpl> ResourceRequestBase::httpReferrer() const
 {
     return httpHeaderField(HTTPHeaderName::Referer);
 }
@@ -457,14 +457,14 @@ bool ResourceRequestBase::hasHTTPReferrer() const
     return m_requestData.m_httpHeaderFields.contains(HTTPHeaderName::Referer);
 }
 
-void ResourceRequestBase::setHTTPReferrer(const String& httpReferrer)
+void ResourceRequestBase::setHTTPReferrer(StringImpl* httpReferrer)
 {
     // https://w3c.github.io/webappsec-referrer-policy/#determine-requests-referrer
     constexpr size_t maxLength = 4096;
-    if (httpReferrer.length() > maxLength) {
+    if (length(httpReferrer) > maxLength) {
         RELEASE_LOG(Loading, "Truncating HTTP referer");
-        String origin = URL(SecurityOrigin::create(URL { httpReferrer })->toString()).string();
-        if (origin.length() <= maxLength)
+        RefPtr<StringImpl> origin = URL(SecurityOrigin::create(URL { httpReferrer })->toString()).string();
+        if (length(origin) <= maxLength)
             setHTTPHeaderField(HTTPHeaderName::Referer, origin);
     } else
         setHTTPHeaderField(HTTPHeaderName::Referer, httpReferrer);
@@ -487,12 +487,12 @@ void ResourceRequestBase::clearHTTPReferrer()
     m_platformRequestUpdated = false;
 }
 
-String ResourceRequestBase::httpOrigin() const
+RefPtr<StringImpl> ResourceRequestBase::httpOrigin() const
 {
     return httpHeaderField(HTTPHeaderName::Origin);
 }
 
-void ResourceRequestBase::setHTTPOrigin(const String& httpOrigin)
+void ResourceRequestBase::setHTTPOrigin(StringImpl* httpOrigin)
 {
     setHTTPHeaderField(HTTPHeaderName::Origin, httpOrigin);
 }
@@ -516,12 +516,12 @@ bool ResourceRequestBase::hasHTTPHeader(HTTPHeaderName name) const
     return m_requestData.m_httpHeaderFields.contains(name);
 }
 
-String ResourceRequestBase::httpUserAgent() const
+RefPtr<StringImpl> ResourceRequestBase::httpUserAgent() const
 {
     return httpHeaderField(HTTPHeaderName::UserAgent);
 }
 
-void ResourceRequestBase::setHTTPUserAgent(const String& httpUserAgent)
+void ResourceRequestBase::setHTTPUserAgent(StringImpl* httpUserAgent)
 {
     setHTTPHeaderField(HTTPHeaderName::UserAgent, httpUserAgent);
 }
@@ -544,17 +544,17 @@ void ResourceRequestBase::clearHTTPAcceptEncoding()
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2, const String& encoding3)
+void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(StringImpl* encoding1, StringImpl* encoding2, StringImpl* encoding3)
 {
     updateResourceRequest(); 
     
     m_requestData.m_responseContentDispositionEncodingFallbackArray.clear();
-    m_requestData.m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(!encoding1.isNull() + !encoding2.isNull() + !encoding3.isNull());
-    if (!encoding1.isNull())
+    m_requestData.m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(!!encoding1 + !!encoding2 + !!encoding3);
+    if (encoding1)
         m_requestData.m_responseContentDispositionEncodingFallbackArray.append(encoding1);
-    if (!encoding2.isNull())
+    if (encoding2)
         m_requestData.m_responseContentDispositionEncodingFallbackArray.append(encoding2);
-    if (!encoding3.isNull())
+    if (encoding3)
         m_requestData.m_responseContentDispositionEncodingFallbackArray.append(encoding3);
     
     m_platformRequestUpdated = false;
@@ -628,7 +628,7 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::addHTTPHeaderFieldIfNotPresent(HTTPHeaderName name, const String& value)
+void ResourceRequestBase::addHTTPHeaderFieldIfNotPresent(HTTPHeaderName name, StringImpl* value)
 {
     updateResourceRequest();
 
@@ -638,7 +638,7 @@ void ResourceRequestBase::addHTTPHeaderFieldIfNotPresent(HTTPHeaderName name, co
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::addHTTPHeaderField(HTTPHeaderName name, const String& value)
+void ResourceRequestBase::addHTTPHeaderField(HTTPHeaderName name, StringImpl* value)
 {
     updateResourceRequest();
 
@@ -647,7 +647,7 @@ void ResourceRequestBase::addHTTPHeaderField(HTTPHeaderName name, const String& 
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::addHTTPHeaderField(const String& name, const String& value)
+void ResourceRequestBase::addHTTPHeaderField(StringImpl* name, StringImpl* value)
 {
     updateResourceRequest();
 
@@ -670,7 +670,7 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::removeHTTPHeaderField(const String& name)
+void ResourceRequestBase::removeHTTPHeaderField(StringImpl* name)
 {
     updateResourceRequest();
 
@@ -766,7 +766,7 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceReque
     if (a.isTopSite() != b.isTopSite())
         return false;
     
-    if (a.httpMethod() != b.httpMethod())
+    if (!equal(a.httpMethod(), b.httpMethod()))
         return false;
     
     if (a.allowCookies() != b.allowCookies())
@@ -869,7 +869,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
 }
 #endif
 
-String ResourceRequestBase::cachePartition() const
+RefPtr<StringImpl> ResourceRequestBase::cachePartition() const
 {
 #if ENABLE(CACHE_PARTITIONING)
     if (!m_shouldBlockThirdPartyStorage)

@@ -41,14 +41,14 @@ RefPtr<SecurityOrigin> URLDecomposition::extractOrigin() const
     return SecurityOrigin::create(url);
 }
 
-String URLDecomposition::origin() const
+RefPtr<StringImpl> URLDecomposition::origin() const
 {
     if (RefPtr origin = extractOrigin())
         return origin->toString();
     return emptyString();
 }
 
-String URLDecomposition::protocol() const
+RefPtr<StringImpl> URLDecomposition::protocol() const
 {
     return makeString(this->fullURL().protocol(), ':');
 }
@@ -62,7 +62,7 @@ void URLDecomposition::setProtocol(StringView value)
     setFullURL(copy);
 }
 
-String URLDecomposition::username() const
+RefPtr<StringImpl> URLDecomposition::username() const
 {
     return fullURL().encodedUser().toString();
 }
@@ -76,7 +76,7 @@ void URLDecomposition::setUsername(StringView user)
     setFullURL(fullURL);
 }
 
-String URLDecomposition::password() const
+RefPtr<StringImpl> URLDecomposition::password() const
 {
     return fullURL().encodedPassword().toString();
 }
@@ -90,7 +90,7 @@ void URLDecomposition::setPassword(StringView password)
     setFullURL(fullURL);
 }
 
-String URLDecomposition::host() const
+RefPtr<StringImpl> URLDecomposition::host() const
 {
     return fullURL().hostAndPort();
 }
@@ -107,7 +107,7 @@ void URLDecomposition::setHost(StringView value)
         setFullURL(fullURL);
 }
 
-String URLDecomposition::hostname() const
+RefPtr<StringImpl> URLDecomposition::hostname() const
 {
     return fullURL().host().toString();
 }
@@ -122,12 +122,12 @@ void URLDecomposition::setHostname(StringView host)
         setFullURL(fullURL);
 }
 
-String URLDecomposition::port() const
+RefPtr<StringImpl> URLDecomposition::port() const
 {
     auto port = fullURL().port();
     if (!port)
         return emptyString();
-    return String::number(*port);
+    return makeString(*port);
 }
 
 std::optional<uint16_t> URLDecomposition::parsePort(StringView string)
@@ -172,7 +172,7 @@ void URLDecomposition::setPort(StringView value)
     setFullURL(fullURL);
 }
 
-String URLDecomposition::pathname() const
+RefPtr<StringImpl> URLDecomposition::pathname() const
 {
     return fullURL().path().toString();
 }
@@ -186,16 +186,16 @@ void URLDecomposition::setPathname(StringView value)
     setFullURL(fullURL);
 }
 
-String URLDecomposition::search() const
+RefPtr<StringImpl> URLDecomposition::search() const
 {
     auto fullURL = this->fullURL();
     return fullURL.query().isEmpty() ? emptyString() : fullURL.queryWithLeadingQuestionMark().toString();
 }
 
-void URLDecomposition::setSearch(const String& value)
+void URLDecomposition::setSearch(StringImpl* value)
 {
     auto fullURL = this->fullURL();
-    if (value.isEmpty()) {
+    if (isEmpty(value)) {
         // If the given value is the empty string, set url's query to null.
         fullURL.setQuery({ });
     } else {
@@ -205,7 +205,7 @@ void URLDecomposition::setSearch(const String& value)
     setFullURL(fullURL);
 }
 
-String URLDecomposition::hash() const
+RefPtr<StringImpl> URLDecomposition::hash() const
 {
     auto fullURL = this->fullURL();
     return fullURL.fragmentIdentifier().isEmpty() ? emptyString() : fullURL.fragmentIdentifierWithLeadingNumberSign().toString();

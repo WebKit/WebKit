@@ -126,12 +126,6 @@ TextStream& TextStream::operator<<(const void* p)
     return *this << buffer;
 }
 
-TextStream& TextStream::operator<<(const AtomString& string)
-{
-    m_text.append(string);
-    return *this;
-}
-
 TextStream& TextStream::operator<<(const UTF8CString& string)
 {
     m_text.append(string.span());
@@ -147,12 +141,6 @@ TextStream& TextStream::operator<<(const Latin1CString& string)
 TextStream& TextStream::operator<<(const ASCIICString& string)
 {
     m_text.append(string.span());
-    return *this;
-}
-
-TextStream& TextStream::operator<<(const String& string)
-{
-    m_text.append(string);
     return *this;
 }
 
@@ -191,9 +179,9 @@ TextStream& TextStream::operator<<(const FormatNumberRespectingIntegers& numberT
     return *this;
 }
 
-String TextStream::release()
+RefPtr<StringImpl> TextStream::release()
 {
-    String result = m_text.toString();
+    RefPtr<StringImpl> result = m_text.toString();
     m_text.clear();
     return result;
 }

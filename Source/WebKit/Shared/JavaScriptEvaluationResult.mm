@@ -71,8 +71,8 @@ RetainPtr<id> JavaScriptEvaluationResult::ObjCInserter::toID(Value&& root)
         return value ? @YES : @NO;
     }, [] (double value) -> RetainPtr<id> {
         return adoptNS([[NSNumber alloc] initWithDouble:value]);
-    }, [] (String&& value) -> RetainPtr<id> {
-        return value.createNSString();
+    }, [] (RefPtr<StringImpl>&& value) -> RetainPtr<id> {
+        return createNSString(value);
     }, [] (Seconds value) -> RetainPtr<id> {
         return [NSDate dateWithTimeIntervalSince1970:value.seconds()];
     }, [&] (Vector<JSObjectID>&& vector) -> RetainPtr<id> {
@@ -140,7 +140,7 @@ auto JavaScriptEvaluationResult::ObjCExtractor::toValue(id object) -> Value
     }
 
     if (auto* nsString = dynamic_objc_cast<NSString>(object))
-        return String(nsString);
+        return StringImpl::create(nsString);
 
     if ([object isKindOfClass:NSDate.class])
         return Seconds([(NSDate *)object timeIntervalSince1970]);

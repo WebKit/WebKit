@@ -78,9 +78,9 @@ public:
 
     CSSFontFace* lookUpByCSSConnection(StyleRuleFontFace&);
 
-    ExceptionOr<bool> check(ScriptExecutionContext&, const String& font, const String& text);
+    ExceptionOr<bool> check(ScriptExecutionContext&, StringImpl* font, StringImpl* text);
 
-    CSSSegmentedFontFace* fontFace(FontSelectionRequest, FontVariantCaps, const AtomString& family);
+    CSSSegmentedFontFace* fontFace(FontSelectionRequest, FontVariantCaps, AtomStringImpl* family);
 
     enum class Status { Loading, Loaded };
     Status status() const { return m_status; }
@@ -89,7 +89,7 @@ public:
 
     size_t facesPartitionIndex() const { return m_facesPartitionIndex; }
 
-    ExceptionOr<Vector<Ref<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(ScriptExecutionContext&, const String& font, const String& text);
+    ExceptionOr<Vector<Ref<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(ScriptExecutionContext&, StringImpl* font, StringImpl* text);
 
     // FIXME: Should this be implemented?
     void updateStyleIfNeeded(CSSFontFace&) final { }
@@ -106,9 +106,9 @@ private:
     void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) final;
     void fontPropertyChanged(CSSFontFace&, CSSValue* oldFamily = nullptr) final;
 
-    void ensureLocalFontFacesForFamilyRegistered(const AtomString&);
+    void ensureLocalFontFacesForFamilyRegistered(AtomStringImpl*);
 
-    NODELETE static AtomString familyName(const CSSValue&);
+    NODELETE static RefPtr<AtomStringImpl> familyName(const CSSValue&);
 
     using FontSelectionKey = std::optional<FontSelectionRequest>;
     struct FontSelectionKeyHash : WTF::HasherBasedHash<FontSelectionKey> {
@@ -121,14 +121,14 @@ private:
         static bool isDeletedValue(const FontSelectionKey& value) { return !value; }
     };
     using FontSelectionHashMap = HashMap<FontSelectionKey, Ref<CSSSegmentedFontFace>, FontSelectionKeyHash, FontSelectionKeyHashTraits>;
-    using FontFamilyCache = HashMap<String, FontSelectionHashMap, ASCIICaseInsensitiveHash>;
+    using FontFamilyCache = HashMap<RefPtr<StringImpl>, FontSelectionHashMap, ASCIICaseInsensitiveHash>;
 
     FontFamilyCache& cache(FontVariantCaps variantCaps) { return variantCaps == FontVariantCaps::Small ? m_smallCapsCache : m_cache; }
 
     // m_faces should hold all the same fonts as the ones inside inside m_facesLookupTable.
     Vector<Ref<CSSFontFace>> m_faces; // We should investigate moving m_faces to FontFaceSet and making it reference FontFaces. This may clean up the font loading design.
-    HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_facesLookupTable;
-    HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFacesLookupTable;
+    HashMap<RefPtr<StringImpl>, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_facesLookupTable;
+    HashMap<RefPtr<StringImpl>, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFacesLookupTable;
     FontFamilyCache m_cache;
     FontFamilyCache m_smallCapsCache;
     HashMap<StyleRuleFontFace*, CSSFontFace*> m_constituentCSSConnections;

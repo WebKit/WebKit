@@ -59,7 +59,7 @@ static std::optional<CoreIPCCFDictionary::KeyType> keyVariantFromCFType(CFTypeRe
     case IPC::CFType::CFNumber:
         return CoreIPCNumber((CFNumberRef)cfType);
     case IPC::CFType::CFString:
-        return CoreIPCString((CFStringRef)cfType);
+        return CoreIPCString(StringImpl::create((CFStringRef)cfType));
     case IPC::CFType::CFURL:
         return CoreIPCCFURL((CFURLRef)cfType);
     case IPC::CFType::Nullptr:

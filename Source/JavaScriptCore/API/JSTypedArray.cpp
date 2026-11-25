@@ -206,7 +206,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
 
     JSArrayBuffer* jsBuffer = dynamicDowncast<JSArrayBuffer>(toJS(jsBufferRef));
     if (!jsBuffer) {
-        setException(ctx, exception, createTypeError(globalObject, "JSObjectMakeTypedArrayWithArrayBuffer expects buffer to be an Array Buffer object"_s));
+        setException(ctx, exception, createTypeError(globalObject, "JSObjectMakeTypedArrayWithArrayBuffer expects buffer to be an Array Buffer object"_si));
         return nullptr;
     }
 
@@ -234,7 +234,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
 
     JSArrayBuffer* jsBuffer = dynamicDowncast<JSArrayBuffer>(toJS(jsBufferRef));
     if (!jsBuffer) {
-        setException(ctx, exception, createTypeError(globalObject, "JSObjectMakeTypedArrayWithArrayBuffer expects buffer to be an Array Buffer object"_s));
+        setException(ctx, exception, createTypeError(globalObject, "JSObjectMakeTypedArrayWithArrayBuffer expects buffer to be an Array Buffer object"_si));
         return nullptr;
     }
 
@@ -339,7 +339,7 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
     if (JSArrayBuffer* jsBuffer = dynamicDowncast<JSArrayBuffer>(object)) {
         ArrayBuffer* buffer = jsBuffer->impl();
         if (buffer->isWasmMemory()) {
-            setException(ctx, exception, createTypeError(globalObject, "Cannot get the backing buffer for a WebAssembly.Memory"_s));
+            setException(ctx, exception, createTypeError(globalObject, "Cannot get the backing buffer for a WebAssembly.Memory"_si));
             return nullptr;
         }
 

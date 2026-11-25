@@ -125,7 +125,7 @@ void ImageAnalysisQueue::resumeProcessingSoon()
     m_resumeProcessingTimer.startOneShot(resumeProcessingDelay);
 }
 
-void ImageAnalysisQueue::enqueueAllImagesIfNeeded(Frame& frame, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier)
+void ImageAnalysisQueue::enqueueAllImagesIfNeeded(Frame& frame, StringImpl* sourceLanguageIdentifier, StringImpl* targetLanguageIdentifier)
 {
     if (!m_page)
         return;
@@ -135,7 +135,7 @@ void ImageAnalysisQueue::enqueueAllImagesIfNeeded(Frame& frame, const String& so
 
     m_analysisOfAllImagesOnPageHasStarted = true;
 
-    if (sourceLanguageIdentifier != m_languageIdentifiers.source || targetLanguageIdentifier != m_languageIdentifiers.target)
+    if (!equal(sourceLanguageIdentifier, m_languageIdentifiers.source) || !equal(targetLanguageIdentifier, m_languageIdentifiers.target))
         clear();
 
     m_languageIdentifiers.source = sourceLanguageIdentifier;
@@ -174,7 +174,7 @@ void ImageAnalysisQueue::resumeProcessing()
         if (RefPtr image = element->cachedImage(); image && !image->errorOccurred())
             m_queuedElements.set(*element, image->url());
 
-        auto allowSnapshots = m_languageIdentifiers.target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
+        auto allowSnapshots = isEmpty(m_languageIdentifiers.target) ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
         page->chrome().client().requestTextRecognition(*element, { m_languageIdentifiers.source, m_languageIdentifiers.target, allowSnapshots }, [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }](auto&&) {
             if (auto* page = weakPage.get(); !page || page->imageAnalysisQueueIfExists() != this)
                 return;

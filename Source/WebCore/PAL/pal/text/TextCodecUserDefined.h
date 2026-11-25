@@ -37,7 +37,7 @@ public:
     static void registerCodecs(TextCodecRegistrar);
 
 private:
-    String decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
+    RefPtr<StringImpl> decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 };
 

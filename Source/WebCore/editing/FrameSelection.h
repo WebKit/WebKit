@@ -243,7 +243,7 @@ public:
     WEBCORE_EXPORT void updateAppearance();
 
 #if ENABLE(TREE_DEBUGGING)
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
     void showTreeForThis() const;
 #endif
 

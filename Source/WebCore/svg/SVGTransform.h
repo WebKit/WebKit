@@ -187,7 +187,7 @@ private:
         m_value.matrixDidChange();
     }
 
-    String valueAsString() const override
+    RefPtr<StringImpl> valueAsString() const override
     {
         return m_value.valueAsString();
     }

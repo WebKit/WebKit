@@ -38,7 +38,7 @@ namespace WebCore {
 UserContentURLPattern::UserContentURLPattern(StringView scheme, StringView host, StringView path)
     : m_scheme(scheme.toString())
 {
-    if (m_scheme.isEmpty()) {
+    if (isEmpty(m_scheme)) {
         m_error = Error::MissingScheme;
         return;
     }
@@ -46,7 +46,7 @@ UserContentURLPattern::UserContentURLPattern(StringView scheme, StringView host,
     bool isFileScheme = equalLettersIgnoringASCIICase(m_scheme, "file"_s);
 
     m_host = host.toString();
-    if (!isFileScheme && m_host.isEmpty()) {
+    if (!isFileScheme && isEmpty(m_host)) {
         m_error = Error::MissingHost;
         return;
     }
@@ -54,36 +54,36 @@ UserContentURLPattern::UserContentURLPattern(StringView scheme, StringView host,
     normalizeHostAndSetMatchSubdomains();
 
     // No other '*' can occur in the host after it is normalized.
-    if (m_host.find('*') != notFound) {
+    if (find(m_host, '*') != notFound) {
         m_error = Error::InvalidHost;
         return;
     }
 
     // No username or password is allowed in patterns.
-    if (m_host.find('@') != notFound) {
+    if (find(m_host, '@') != notFound) {
         m_error = Error::InvalidHost;
         return;
     }
 
     // No port is allowed in patterns.
-    if (m_host.startsWith('[')) {
-        auto ipv6End = m_host.find(']');
+    if (startsWith(m_host, '[')) {
+        auto ipv6End = find(m_host, ']');
         if (ipv6End == notFound) {
             m_error = Error::InvalidHost;
             return;
         }
 
-        if (m_host.find(':', ipv6End) != notFound) {
+        if (find(m_host, ':', ipv6End) != notFound) {
             m_error = Error::InvalidHost;
             return;
         }
-    } else if (m_host.find(':') != notFound) {
+    } else if (find(m_host, ':') != notFound) {
         m_error = Error::InvalidHost;
         return;
     }
 
     m_path = path.toString();
-    if (!m_path.startsWith("/"_s)) {
+    if (!startsWith(m_path, "/"_s)) {
         m_error = Error::MissingPath;
         return;
     }
@@ -101,7 +101,7 @@ std::optional<RegistrableDomain> UserContentURLPattern::siteMatchedByPatterns(co
         if (pattern.matchAllHosts() || PublicSuffixStore::singleton().isPublicSuffix(pattern.host()))
             return std::nullopt;
 
-        if (pattern.host().isEmpty())
+        if (isEmpty(pattern.host()))
             continue;
 
         auto patternSite = RegistrableDomain::uncheckedCreateFromHost(pattern.host());
@@ -115,10 +115,10 @@ std::optional<RegistrableDomain> UserContentURLPattern::siteMatchedByPatterns(co
 bool UserContentURLPattern::operator==(const UserContentURLPattern& other) const
 {
     return this == &other || (m_error == other.m_error && m_matchSubdomains == other.m_matchSubdomains
-        && m_scheme == other.m_scheme && m_host == other.m_host && m_path == other.m_path);
+        && equal(m_scheme, other.m_scheme) && equal(m_host, other.m_host) && equal(m_path, other.m_path));
 }
 
-bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>& allowlist, const Vector<String>& blocklist)
+bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<RefPtr<StringImpl>>& allowlist, const Vector<RefPtr<StringImpl>>& blocklist)
 {
     // In order for a URL to be a match it has to be present in the allowlist and not present in the blocklist.
     // If there is no allowlist at all, then all URLs are assumed to be in the allowlist.
@@ -151,13 +151,13 @@ void UserContentURLPattern::normalizeHostAndSetMatchSubdomains()
 {
     ASSERT(!m_matchSubdomains);
 
-    if (m_host == "*"_s) {
+    if (equal(m_host, "*"_s)) {
         // The pattern can be just '*', which means match all domains.
         m_host = emptyString();
         m_matchSubdomains = true;
-    } else if (m_host.startsWith("*."_s)) {
+    } else if (startsWith(m_host, "*."_s)) {
         // The first component can be '*', which means to match all subdomains.
-        m_host = m_host.substring(2); // Length of "*."
+        m_host = substring(m_host, 2); // Length of "*."
         m_matchSubdomains = true;
     } else if (equalLettersIgnoringASCIICase(m_scheme, "file"_s) && equalLettersIgnoringASCIICase(m_host, "localhost"_s)) {
         // A localhost for the file scheme is also empty string. This matches what URLParser does for URL.
@@ -190,22 +190,22 @@ UserContentURLPattern::Error UserContentURLPattern::parse(StringView pattern)
     normalizeHostAndSetMatchSubdomains();
 
     // No other '*' can occur in the host after it is normalized.
-    if (m_host.find('*') != notFound)
+    if (find(m_host, '*') != notFound)
         return Error::InvalidHost;
 
     // No username or password is allowed in patterns.
-    if (m_host.find('@') != notFound)
+    if (find(m_host, '@') != notFound)
         return Error::InvalidHost;
 
     // No port is allowed in patterns.
-    if (m_host.startsWith('[')) {
-        auto ipv6End = m_host.find(']');
+    if (startsWith(m_host, '[')) {
+        auto ipv6End = find(m_host, ']');
         if (ipv6End == notFound)
             return Error::InvalidHost;
 
-        if (m_host.find(':', ipv6End) != notFound)
+        if (find(m_host, ':', ipv6End) != notFound)
             return Error::InvalidHost;
-    } else if (m_host.find(':') != notFound)
+    } else if (find(m_host, ':') != notFound)
         return Error::InvalidHost;
 
     m_path = pattern.right(pattern.length() - pathStartPos).toString();
@@ -213,10 +213,10 @@ UserContentURLPattern::Error UserContentURLPattern::parse(StringView pattern)
     return Error::None;
 }
 
-String UserContentURLPattern::originalHost() const
+RefPtr<StringImpl> UserContentURLPattern::originalHost() const
 {
     if (matchAllHosts())
-        return "*"_s;
+        return "*"_si;
 
     if (m_matchSubdomains)
         return makeString("*."_s, m_host);
@@ -228,7 +228,7 @@ bool UserContentURLPattern::matchesScheme(const URL& url) const
 {
     ASSERT(isValid());
 
-    if (m_scheme == "*"_s)
+    if (equal(m_scheme, "*"_s))
         return url.protocolIsInHTTPFamily();
 
     return url.protocolIs(m_scheme);
@@ -238,13 +238,13 @@ bool UserContentURLPattern::matchesScheme(const UserContentURLPattern& other) co
 {
     ASSERT(isValid());
 
-    if (m_scheme == "*"_s)
-        return other.scheme() == "*"_s || equalIgnoringASCIICase(other.scheme(), "https"_s) || equalIgnoringASCIICase(other.scheme(), "http"_s);
+    if (equal(m_scheme, "*"_s))
+        return equal(other.scheme(), "*"_s) || equalIgnoringASCIICase(other.scheme(), "https"_s) || equalIgnoringASCIICase(other.scheme(), "http"_s);
 
     return equalIgnoringASCIICase(other.scheme(), m_scheme);
 }
 
-bool UserContentURLPattern::matchesHost(const String& host) const
+bool UserContentURLPattern::matchesHost(StringImpl* host) const
 {
     ASSERT(isValid());
 
@@ -256,17 +256,17 @@ bool UserContentURLPattern::matchesHost(const String& host) const
 
     // If we're matching subdomains, and we have no host, that means the pattern
     // was <scheme>://*/<whatever>, so we match anything.
-    if (!m_host.length())
+    if (!length(m_host))
         return true;
 
     // Check if the domain is a subdomain of our host.
-    if (!host.endsWithIgnoringASCIICase(m_host))
+    if (!endsWithIgnoringASCIICase(host, m_host))
         return false;
 
-    ASSERT(host.length() > m_host.length());
+    ASSERT(length(host) > length(m_host));
 
     // Check that the character before the suffix is a period.
-    return host[host.length() - m_host.length() - 1] == '.';
+    return codeUnitAt(host, length(host) - length(m_host) - 1) == '.';
 }
 
 struct MatchTester {
@@ -343,14 +343,14 @@ struct MatchTester {
     }
 };
 
-bool UserContentURLPattern::matchesPath(const String& path) const
+bool UserContentURLPattern::matchesPath(StringImpl* path) const
 {
     ASSERT(isValid());
 
     return MatchTester(m_path, path).test();
 }
 
-bool matchesWildcardPattern(const String& pattern, const String& testString)
+bool matchesWildcardPattern(StringImpl* pattern, StringImpl* testString)
 {
     return MatchTester(pattern, testString).test();
 }

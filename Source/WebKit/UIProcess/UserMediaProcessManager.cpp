@@ -118,7 +118,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
 
     if (extensionCount) {
         Vector<SandboxExtension::Handle> handles;
-        Vector<String> ids;
+        Vector<RefPtr<StringImpl>> ids;
         SandboxExtension::Handle machBootstrapExtension;
 
         if (!proxyPage->preferences().mockCaptureDevicesEnabled()) {
@@ -180,7 +180,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
         }
 
         for (const auto& id : borrow(ids))
-            RELEASE_LOG(WebRTC, "UserMediaProcessManager::willCreateMediaStream - granting extension %s", id.utf8());
+            RELEASE_LOG(WebRTC, "UserMediaProcessManager::willCreateMediaStream - granting extension %s", utf8(id));
 
         if (needsAudioSandboxExtension)
             process->grantAudioCaptureExtension();
@@ -226,7 +226,7 @@ void UserMediaProcessManager::revokeSandboxExtensionsIfNeeded(WebProcessProxy& p
     if (hasAudioCapture && hasVideoCapture)
         return;
 
-    Vector<String> params;
+    Vector<RefPtr<StringImpl>> params;
     if (!hasAudioCapture && process.hasAudioCaptureExtension()) {
         params.append(audioExtensionPath);
         process.revokeAudioCaptureExtension();
@@ -249,7 +249,7 @@ void UserMediaProcessManager::revokeSandboxExtensionsIfNeeded(WebProcessProxy& p
         return;
 
     for (const auto& id : borrow(params))
-        RELEASE_LOG(WebRTC, "UserMediaProcessManager::endedCaptureSession - revoking extension %s", id.utf8());
+        RELEASE_LOG(WebRTC, "UserMediaProcessManager::endedCaptureSession - revoking extension %s", utf8(id));
 
     process.send(Messages::WebProcess::RevokeUserMediaDeviceSandboxExtensions(params), 0);
 #endif

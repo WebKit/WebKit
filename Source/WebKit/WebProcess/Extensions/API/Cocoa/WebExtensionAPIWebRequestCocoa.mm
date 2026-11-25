@@ -157,7 +157,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onErrorOccurred()
     return *m_onErrorOccurredEvent;
 }
 
-static NSString *toWebAPI(const WebCore::FormData& formData, const String& contentType, JSGlobalContextRef context)
+static NSString *toWebAPI(const WebCore::FormData& formData, StringImpl* contentType, JSGlobalContextRef context)
 {
     if (formData.isEmpty() || !context)
         return nil;
@@ -171,11 +171,11 @@ static NSString *toWebAPI(const WebCore::FormData& formData, const String& conte
     for (const WebCore::FormDataElement& element : formData.elements()) {
         if (auto* data = std::get_if<Vector<uint8_t>>(&element.data)) {
             if (isURLEncoded) {
-                auto dataString = String::fromUTF8(borrow(*data)->span());
+                auto dataString = StringImpl::fromUTF8(borrow(*data)->span());
 
                 for (auto& pair : URLParser::parseURLEncodedForm(dataString)) {
-                    RetainPtr key = pair.key.createNSString();
-                    RetainPtr value = pair.value.createNSString();
+                    RetainPtr key = createNSString(pair.key);
+                    RetainPtr value = createNSString(pair.value);
 
                     NSMutableArray *array = formDataDictionary[key.get()];
                     if (!array) {
@@ -265,14 +265,14 @@ static NSMutableDictionary *webRequestDetailsForResourceLoad(const ResourceLoadI
         parentFrameIdKey: @(toWebAPI(parentFrameIdentifier)),
         requestIdKey: adoptNS([[NSString alloc] initWithFormat:@"%llu", resourceLoad.resourceLoadID.toUInt64()]).get(),
         timeStampKey: @(floor(resourceLoad.eventTimestamp.approximate<WallTime>().secondsSinceEpoch().milliseconds())),
-        @"url": resourceLoad.originalURL.string().createNSString().get(),
+        @"url": createNSString(resourceLoad.originalURL.string()).get(),
         @"tabId": @(toWebAPI(tabIdentifier)),
         typeKey: resourceLoad.type == ResourceLoadInfo::Type::Document && resourceLoad.parentFrameID ? @"sub_frame" : toWebAPI(resourceLoad.type),
-        methodKey: resourceLoad.originalHTTPMethod.createNSString().get(),
+        methodKey: createNSString(resourceLoad.originalHTTPMethod).get(),
     } mutableCopy];
 
     if (resourceLoad.documentID)
-        result[@"documentId"] = resourceLoad.documentID.value().toString().createNSString().get();
+        result[@"documentId"] = createNSString(resourceLoad.documentID.value().toString()).get();
 
     return result;
 }
@@ -282,8 +282,8 @@ static NSArray *convertHeaderFieldsToWebExtensionFormat(const WebCore::HTTPHeade
     auto *convertedHeaderFields = [NSMutableArray arrayWithCapacity:headerMap.size()];
     for (auto& header : headerMap) {
         [convertedHeaderFields addObject:@{
-            @"name": header.key.createNSString().get(),
-            valueKey: header.value.createNSString().get()
+            @"name": createNSString(header.key).get(),
+            valueKey: createNSString(header.value).get()
         }];
     }
 
@@ -292,12 +292,20 @@ static NSArray *convertHeaderFieldsToWebExtensionFormat(const WebCore::HTTPHeade
     return [convertedHeaderFields copy];
 }
 
+static bool containsExtraInfo(const Vector<RefPtr<StringImpl>>& extraInfo, NSString *key)
+{
+    RefPtr keyString = StringImpl::create(key);
+    return extraInfo.containsIf([&](auto& info) {
+        return equal(info, keyString);
+    });
+}
+
 static NSMutableDictionary *headersReceivedDetails(const ResourceLoadInfo& resourceLoad, WebExtensionTabIdentifier tabID, const WebCore::ResourceResponse& response)
 {
     auto *details = webRequestDetailsForResourceLoad(resourceLoad, tabID);
 
     [details addEntriesFromDictionary:@{
-        statusLineKey: response.httpStatusText().createNSString().get(),
+        statusLineKey: createNSString(response.httpStatusText()).get(),
         statusCodeKey: @(response.httpStatusCode()),
         fromCacheKey: @(resourceLoad.loadedFromCache),
         // FIXME: <rdar://problem/57132290> Add ip.
@@ -315,7 +323,7 @@ void WebExtensionContextProxy::resourceLoadDidSendRequest(WebExtensionTabIdentif
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         protect(protect(namespaceObject.webRequest())->onBeforeRequest())->enumerateListeners(tabID, windowID, resourceLoad, [&](auto& listener, auto& extraInfo) {
-            if (formData && extraInfo.contains(String(requestBodyKey))) {
+            if (formData && containsExtraInfo(extraInfo, requestBodyKey)) {
                 if (auto *requestBody = toWebAPI(*formData, contentType, listener.globalContext()))
                     [details setObject:requestBody forKey:requestBodyKey];
             }
@@ -330,7 +338,7 @@ void WebExtensionContextProxy::resourceLoadDidSendRequest(WebExtensionTabIdentif
 
     auto handleListeners = [&](WebExtensionAPIWebRequestEvent& listeners) {
         listeners.enumerateListeners(tabID, windowID, resourceLoad, [&](auto& listener, auto& extraInfo) {
-            if (extraInfo.contains(String(requestHeadersKey))) {
+            if (containsExtraInfo(extraInfo, requestHeadersKey)) {
                 if (!requestHeaders)
                     requestHeaders = convertHeaderFieldsToWebExtensionFormat(request.httpHeaderFields());
                 [details setObject:requestHeaders.get() forKey:requestHeadersKey];
@@ -366,7 +374,7 @@ void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensio
 
     auto handleListeners = [&](WebExtensionAPIWebRequestEvent& listeners) {
         listeners.enumerateListeners(tabID, windowID, resourceLoad, [&](auto& listener, auto& extraInfo) {
-            if (extraInfo.contains(String(responseHeadersKey))) {
+            if (containsExtraInfo(extraInfo, responseHeadersKey)) {
                 if (!responseHeaders)
                     responseHeaders = convertHeaderFieldsToWebExtensionFormat(response.httpHeaderFields());
                 [details setObject:responseHeaders forKey:responseHeadersKey];
@@ -382,7 +390,7 @@ void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensio
         handleListeners(protect(protect(namespaceObject.webRequest())->onHeadersReceived()));
     });
 
-    details[redirectURLKey] = newRequest.url().string().createNSString().get();
+    details[redirectURLKey] = createNSString(newRequest.url().string()).get();
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         handleListeners(protect(protect(namespaceObject.webRequest())->onBeforeRedirect()));
@@ -426,7 +434,7 @@ void WebExtensionContextProxy::resourceLoadDidReceiveResponse(WebExtensionTabIde
 
     auto handleListeners = [&](WebExtensionAPIWebRequestEvent& listeners) {
         listeners.enumerateListeners(tabID, windowID, resourceLoad, [&](auto& listener, auto& extraInfo) {
-            if (extraInfo.contains(String(responseHeadersKey))) {
+            if (containsExtraInfo(extraInfo, responseHeadersKey)) {
                 if (!responseHeaders)
                     responseHeaders = convertHeaderFieldsToWebExtensionFormat(response.httpHeaderFields());
                 [details setObject:responseHeaders forKey:responseHeadersKey];
@@ -451,7 +459,7 @@ void WebExtensionContextProxy::resourceLoadDidCompleteWithError(WebExtensionTabI
     if (!error.isNull()) {
         [details addEntriesFromDictionary:@{
             @"tabId": @(toWebAPI(tabID)),
-            errorKey: error.localizedDescription().createNSString().get()
+            errorKey: createNSString(error.localizedDescription()).get()
         }];
 
         enumerateNamespaceObjects([&](auto& namespaceObject) {
@@ -467,7 +475,7 @@ void WebExtensionContextProxy::resourceLoadDidCompleteWithError(WebExtensionTabI
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         protect(protect(namespaceObject.webRequest())->onCompleted())->enumerateListeners(tabID, windowID, resourceLoad, [&](auto& listener, auto& extraInfo) {
-            if (extraInfo.contains(String(responseHeadersKey))) {
+            if (containsExtraInfo(extraInfo, responseHeadersKey)) {
                 if (!responseHeaders)
                     responseHeaders = convertHeaderFieldsToWebExtensionFormat(response.httpHeaderFields());
                 [details setObject:responseHeaders forKey:responseHeadersKey];

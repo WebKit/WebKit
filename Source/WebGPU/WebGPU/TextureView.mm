@@ -60,9 +60,9 @@ TextureView::TextureView(Texture& texture, Device& device)
 
 TextureView::~TextureView() = default;
 
-void TextureView::setLabel(String&& label)
+void TextureView::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_texture.label = label.createNSString().get();
+    m_texture.label = createNSString(label).get();
     m_sampledTexture.label = m_texture.label;
 }
 

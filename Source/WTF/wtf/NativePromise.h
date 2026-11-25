@@ -1581,7 +1581,7 @@ auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& function, con
 
 template<typename ResolveValueT, typename RejectValueT, unsigned options>
 struct LogArgument<NativePromise<ResolveValueT, RejectValueT, options>> {
-    static String toString(const NativePromise<ResolveValueT, RejectValueT, options>& p)
+    static RefPtr<StringImpl> toString(const NativePromise<ResolveValueT, RejectValueT, options>& p)
     {
         return makeString("NativePromise"_s, LogArgument<const void*>::toString(&p), '<', LogArgument<Logger::LogSiteIdentifier>::toString(p.logSiteIdentifier()), '>');
     }
@@ -1589,7 +1589,7 @@ struct LogArgument<NativePromise<ResolveValueT, RejectValueT, options>> {
 
 template<>
 struct LogArgument<GenericPromise> {
-    static String toString(const GenericPromise& p)
+    static RefPtr<StringImpl> toString(const GenericPromise& p)
     {
         return makeString("GenericPromise"_s, LogArgument<const void*>::toString(&p), '<', LogArgument<Logger::LogSiteIdentifier>::toString(p.logSiteIdentifier()), '>');
     }

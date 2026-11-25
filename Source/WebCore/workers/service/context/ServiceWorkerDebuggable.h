@@ -44,13 +44,13 @@ public:
 
     Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::ServiceWorker; }
 
-    String name() const final { return "ServiceWorker"_s; }
-    String url() const final { return m_scopeURL; }
+    RefPtr<StringImpl> name() const final { return "ServiceWorker"_si; }
+    RefPtr<StringImpl> url() const final { return m_scopeURL; }
     bool hasLocalDebugger() const final { return false; }
 
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) final;
     void disconnect(Inspector::FrontendChannel&) final;
-    void dispatchMessageFromRemote(String&& message) final;
+    void dispatchMessageFromRemote(RefPtr<StringImpl>&& message) final;
 
 #if ENABLE(REMOTE_INSPECTOR_SERVICE_WORKER_AUTO_INSPECTION) && !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
     bool automaticInspectionAllowed() const final { return true; }
@@ -60,7 +60,7 @@ private:
     ServiceWorkerDebuggable(ServiceWorkerThreadProxy&, const ServiceWorkerContextData&);
 
     ThreadSafeWeakPtr<ServiceWorkerThreadProxy> m_serviceWorkerThreadProxy;
-    String m_scopeURL;
+    RefPtr<StringImpl> m_scopeURL;
 };
 
 } // namespace WebCore

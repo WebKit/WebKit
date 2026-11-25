@@ -180,7 +180,7 @@ void webkit_dom_media_list_delete_medium(WebKitDOMMediaList* self, const gchar* 
     g_return_if_fail(oldMedium);
     g_return_if_fail(!error || !*error);
     WebCore::MediaList* item = WebKit::core(self);
-    WTF::String convertedOldMedium = WTF::String::fromUTF8(oldMedium);
+    RefPtr<StringImpl> convertedOldMedium = StringImpl::fromUTF8(oldMedium);
     auto result = item->deleteMedium(convertedOldMedium);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -195,7 +195,7 @@ void webkit_dom_media_list_append_medium(WebKitDOMMediaList* self, const gchar* 
     g_return_if_fail(newMedium);
     g_return_if_fail(!error || !*error);
     WebCore::MediaList* item = WebKit::core(self);
-    WTF::String convertedNewMedium = WTF::String::fromUTF8(newMedium);
+    RefPtr<StringImpl> convertedNewMedium = StringImpl::fromUTF8(newMedium);
     item->appendMedium(convertedNewMedium);
 }
 
@@ -215,7 +215,7 @@ void webkit_dom_media_list_set_media_text(WebKitDOMMediaList* self, const gchar*
     g_return_if_fail(value);
     g_return_if_fail(!error || !*error);
     WebCore::MediaList* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    RefPtr<StringImpl> convertedValue = StringImpl::fromUTF8(value);
     item->setMediaText(convertedValue);
 }
 

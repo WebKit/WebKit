@@ -36,19 +36,19 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding
     return makeUnexpected("Not supported for frame targets"_s);
 }
 
-Inspector::CommandResult<String> FrameDOMAgent::getAssociatedDataForNode(int)
+Inspector::CommandResult<RefPtr<StringImpl>> FrameDOMAgent::getAssociatedDataForNode(int)
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
+Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(StringImpl*, StringImpl*, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }
 #else
-Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
+Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(StringImpl*, StringImpl*, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }

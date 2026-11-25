@@ -335,9 +335,9 @@ bool RemoteScrollingCoordinatorProxyMac::hasVisibleMonotonicAnimations() const
     return m_eventDispatcher->hasVisibleMonotonicAnimations();
 }
 
-String RemoteScrollingCoordinatorProxyMac::animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
+RefPtr<StringImpl> RemoteScrollingCoordinatorProxyMac::animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
 {
-    String json = emptyString();
+    RefPtr<StringImpl> json = emptyString();
     m_eventDispatcher->lockForAnimationChanges();
     if (RefPtr animationStack = m_eventDispatcher->animationStackForNodeWithIDForTesting(layerID))
         json = animationStack->toJSONForTesting()->toJSONString();

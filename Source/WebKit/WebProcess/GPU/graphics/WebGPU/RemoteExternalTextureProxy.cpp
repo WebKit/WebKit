@@ -47,7 +47,7 @@ RemoteExternalTextureProxy::~RemoteExternalTextureProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteExternalTextureProxy::setLabel(String&& label)
+void RemoteExternalTextureProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteExternalTexture::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);

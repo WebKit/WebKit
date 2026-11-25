@@ -32,23 +32,23 @@
 
 namespace WebCore {
 
-Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createEmpty(const AtomString& name)
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createEmpty(AtomStringImpl* name)
 {
     static NeverDestroyed<Ref<CSSVariableData>> empty { CSSVariableData::create({ }) };
     return createSyntaxAll(name, protect(empty.get()));
 }
 
-Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createUnresolved(const AtomString& name, Ref<CSSSubstitutionValue>&& value)
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createUnresolved(AtomStringImpl* name, Ref<CSSSubstitutionValue>&& value)
 {
     return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTF::InPlaceType<Ref<CSSSubstitutionValue>>, WTF::move(value) }));
 }
 
-Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createSyntaxAll(const AtomString& name, Ref<CSSVariableData>&& value)
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createSyntaxAll(AtomStringImpl* name, Ref<CSSVariableData>&& value)
 {
     return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTF::InPlaceType<Ref<CSSVariableData>>, WTF::move(value) }));
 }
 
-Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createWithCSSWideKeyword(const AtomString& name, CSSWideKeyword keyword)
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createWithCSSWideKeyword(AtomStringImpl* name, CSSWideKeyword keyword)
 {
     return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { keyword }));
 }
@@ -93,7 +93,7 @@ bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
     );
 }
 
-String CSSCustomPropertyValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSCustomPropertyValue::customCSSText(const CSS::SerializationContext& context) const
 {
     auto serialize = [&] {
         return WTF::switchOn(m_value,
@@ -103,13 +103,13 @@ String CSSCustomPropertyValue::customCSSText(const CSS::SerializationContext& co
             [&](const Ref<CSSVariableData>& value) {
                 return value->serialize();
             },
-            [&](const CSSWideKeyword& value) {
-                return nameStringForSerialization(toValueID(value)).string();
+            [&](const CSSWideKeyword& value) -> RefPtr<StringImpl> {
+                return nameStringForSerialization(toValueID(value));
             }
         );
     };
 
-    if (m_cachedCSSText.isNull())
+    if (!m_cachedCSSText)
         m_cachedCSSText = serialize();
 
     return m_cachedCSSText;

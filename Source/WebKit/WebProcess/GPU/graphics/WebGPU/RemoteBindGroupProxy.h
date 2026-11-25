@@ -49,7 +49,7 @@ public:
     WebGPUBindGroupIdentifier backing() const { return m_backing; }
 
     bool updateExternalTextures(::WebGPU::ExternalTexture&) final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

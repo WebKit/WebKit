@@ -51,9 +51,9 @@ class RemoteMediaPlayerMIMETypeCache final : public CanMakeThreadSafeCheckedPtr<
 public:
     RemoteMediaPlayerMIMETypeCache(RemoteMediaPlayerManager&, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
-    HashSet<String>& supportedTypes();
+    HashSet<RefPtr<StringImpl>>& supportedTypes();
     WebCore::MediaPlayerEnums::SupportsType supportsTypeAndCodecs(const WebCore::MediaEngineSupportParameters&);
-    void addSupportedTypes(const Vector<String>&);
+    void addSupportedTypes(const Vector<RefPtr<StringImpl>>&);
     NODELETE bool isEmpty() const;
 
 private:
@@ -62,9 +62,9 @@ private:
     ThreadSafeWeakRef<RemoteMediaPlayerManager> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
 
-    using SupportedTypesAndCodecsKey = std::tuple<String, WebCore::PlatformMediaDecodingType, bool, WebCore::MediaPlaybackTargetType>;
+    using SupportedTypesAndCodecsKey = std::tuple<RefPtr<StringImpl>, WebCore::PlatformMediaDecodingType, bool, WebCore::MediaPlaybackTargetType>;
     std::optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
-    HashSet<String> m_supportedTypesCache;
+    HashSet<RefPtr<StringImpl>> m_supportedTypesCache;
     bool m_hasPopulatedSupportedTypesCacheFromGPUProcess { false };
 };
 

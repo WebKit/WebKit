@@ -53,7 +53,7 @@ class PageSerializer {
 public:
     struct Resource {
         URL url;
-        String mimeType;
+        RefPtr<StringImpl> mimeType;
         RefPtr<SharedBuffer> data;
     };
 

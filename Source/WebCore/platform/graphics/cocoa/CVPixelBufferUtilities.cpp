@@ -137,21 +137,21 @@ RetainPtr<CVPixelBufferRef> createCVPixelBufferFromImage(PlatformImagePtr platfo
 }
 
 #if ENABLE(DUMP_GAIN_MAP_IMAGES)
-void CVPixelBufferDumpToFile(CVPixelBufferRef pixelBuffer, const String& name)
+void CVPixelBufferDumpToFile(CVPixelBufferRef pixelBuffer, StringImpl* name)
 {
-    if (!pixelBuffer || name.length() < 3)
+    if (!pixelBuffer || length(name) < 3)
         return;
 
-    String localName = name;
+    RefPtr<StringImpl> localName = name;
 
-    if (((localName[0] == '*') || (localName[0] == '+'))  && localName[1] == '/') {
+    if (((codeUnitAt(localName, 0) == '*') || (codeUnitAt(localName, 0) == '+'))  && codeUnitAt(localName, 1) == '/') {
         StringBuilder builder;
         builder.append("/tmp"_s);
-        builder.append(name.right(localName.length() - 1));
+        builder.append(right(name, length(localName) - 1));
         localName = builder.toString();
     }
 
-    auto fileHandle = FileSystem::openFile(localName, FileSystem::FileOpenMode::Truncate);
+    auto fileHandle = FileSystem::openFile(localName.get(), FileSystem::FileOpenMode::Truncate);
     if (!fileHandle)
         return;
 

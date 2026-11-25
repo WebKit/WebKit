@@ -36,15 +36,15 @@ namespace NetworkCache {
 static inline WebCore::ResourceRequest constructRevalidationRequest(const Key& key, const WebCore::ResourceRequest& request, const Entry& entry)
 {
     WebCore::ResourceRequest revalidationRequest = request;
-    ASSERT_WITH_MESSAGE(key.range().isEmpty(), "range is not supported");
+    ASSERT_WITH_MESSAGE(isEmpty(key.range()), "range is not supported");
 
     revalidationRequest.makeUnconditional();
     auto eTag = entry.response().httpHeaderField(WebCore::HTTPHeaderName::ETag);
-    if (!eTag.isEmpty())
+    if (!isEmpty(eTag))
         revalidationRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfNoneMatch, eTag);
 
     auto lastModified = entry.response().httpHeaderField(WebCore::HTTPHeaderName::LastModified);
-    if (!lastModified.isEmpty())
+    if (!isEmpty(lastModified))
         revalidationRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfModifiedSince, lastModified);
 
     revalidationRequest.setPriority(WebCore::ResourceLoadPriority::Low);

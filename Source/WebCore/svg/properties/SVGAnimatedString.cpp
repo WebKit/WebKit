@@ -36,19 +36,19 @@ namespace WebCore {
 ExceptionOr<void> SVGAnimatedString::setBaseVal(const StringOrTrustedScriptURL& baseVal)
 {
     auto stringValueHolder = WTF::switchOn(baseVal,
-        [&](const String& str) -> ExceptionOr<String> {
+        [&](StringImpl* str) -> ExceptionOr<RefPtr<StringImpl>> {
             RefPtr element = contextElement();
             if (element && isScriptElement(*element) && m_isHrefProperty == IsHrefProperty::Yes)
-                return trustedTypeCompliantString(TrustedType::TrustedScriptURL, protect(*element->scriptExecutionContext()), str, "SVGScriptElement href"_s);
-            return String(str);
+                return trustedTypeCompliantString(TrustedType::TrustedScriptURL, protect(*element->scriptExecutionContext()), str, "SVGScriptElement href"_si);
+            return RefPtr<StringImpl>(str);
         },
-        [](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {
+        [](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<RefPtr<StringImpl>> {
             return trustedScriptURL->toString();
         }
     );
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
-    return SVGAnimatedPrimitiveProperty<String>::setBaseVal(stringValueHolder.releaseReturnValue());
+    return SVGAnimatedPrimitiveProperty<RefPtr<StringImpl>>::setBaseVal(stringValueHolder.releaseReturnValue());
 }
 }

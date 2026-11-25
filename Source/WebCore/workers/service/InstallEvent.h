@@ -41,7 +41,7 @@ class ScriptExecutionContext;
 class InstallEvent final : public ExtendableEvent {
     WTF_MAKE_TZONE_ALLOCATED(InstallEvent);
 public:
-    static Ref<InstallEvent> create(const AtomString& type, ExtendableEventInit&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<InstallEvent> create(AtomStringImpl* type, ExtendableEventInit&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new InstallEvent(type, WTF::move(initializer), isTrusted));
     }
@@ -50,7 +50,7 @@ public:
     void addRoutes(JSC::JSGlobalObject&, Variant<RouterRule, Vector<RouterRule>>&&, Ref<DeferredPromise>&&);
 
 private:
-    WEBCORE_EXPORT InstallEvent(const AtomString&, ExtendableEventInit&&, IsTrusted);
+    WEBCORE_EXPORT InstallEvent(AtomStringImpl*, ExtendableEventInit&&, IsTrusted);
 };
 
 } // namespace WebCore

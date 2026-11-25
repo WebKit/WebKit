@@ -44,44 +44,44 @@ public:
     WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature,  const Vector<uint8_t>& userHandle, AuthenticatorAttachment);
     static Ref<AuthenticatorAssertionResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle, std::optional<AuthenticationExtensionsClientOutputs>&&, AuthenticatorAttachment);
 #if PLATFORM(COCOA)
-    NODELETE WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef, AuthenticatorAttachment);
+    NODELETE WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, RefPtr<StringImpl>&& name, SecAccessControlRef, AuthenticatorAttachment);
 #endif
     virtual ~AuthenticatorAssertionResponse() = default;
 
     ArrayBuffer* authenticatorData() const { return m_authenticatorData.get(); }
     ArrayBuffer* signature() const { return m_signature.get(); }
     ArrayBuffer* userHandle() const { return m_userHandle.get(); }
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    const String& displayName() const LIFETIME_BOUND { return m_displayName; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& displayName() const LIFETIME_BOUND { return m_displayName; }
     size_t numberOfCredentials() const { return m_numberOfCredentials; }
-    const String& group() const LIFETIME_BOUND { return m_group; }
+    const RefPtr<StringImpl>& group() const LIFETIME_BOUND { return m_group; }
     bool synchronizable() const { return m_synchronizable; }
 #if PLATFORM(COCOA)
     SecAccessControlRef accessControl() const { return m_accessControl.get(); }
     LAContext * laContext() const { return m_laContext.get(); }
 #endif
     RefPtr<ArrayBuffer> largeBlob() const { return m_largeBlob; }
-    const String& accessGroup() const LIFETIME_BOUND { return m_accessGroup; }
+    const RefPtr<StringImpl>& accessGroup() const LIFETIME_BOUND { return m_accessGroup; }
 
     WEBCORE_EXPORT void setAuthenticatorData(Vector<uint8_t>&&);
     void setSignature(Ref<ArrayBuffer>&& signature) { m_signature = WTF::move(signature); }
-    void setName(const String& name) { m_name = name; }
-    void setDisplayName(const String& displayName) { m_displayName = displayName; }
+    void setName(StringImpl* name) { m_name = name; }
+    void setDisplayName(StringImpl* displayName) { m_displayName = displayName; }
     void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
-    void setGroup(const String& group) { m_group = group; }
+    void setGroup(StringImpl* group) { m_group = group; }
     void setSynchronizable(bool synchronizable) { m_synchronizable = synchronizable; }
 #if PLATFORM(COCOA)
     void setLAContext(LAContext *context) { m_laContext = context; }
 #endif
     void setLargeBlob(Ref<ArrayBuffer>&& largeBlob) { m_largeBlob = WTF::move(largeBlob); }
-    void setAccessGroup(const String& accessGroup) { m_accessGroup = accessGroup; }
+    void setAccessGroup(StringImpl* accessGroup) { m_accessGroup = accessGroup; }
 
     AuthenticationResponseJSON::AuthenticatorAssertionResponseJSON toJSON();
 
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, AuthenticatorAttachment);
 #if PLATFORM(COCOA)
-    AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, String&&, SecAccessControlRef, AuthenticatorAttachment);
+    AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, RefPtr<StringImpl>&&, SecAccessControlRef, AuthenticatorAttachment);
 #endif
 
     Type type() const final { return Type::Assertion; }
@@ -91,9 +91,9 @@ private:
     RefPtr<ArrayBuffer> m_signature;
     const RefPtr<ArrayBuffer> m_userHandle;
 
-    String m_name;
-    String m_displayName;
-    String m_group;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_displayName;
+    RefPtr<StringImpl> m_group;
     bool m_synchronizable { false };
     size_t m_numberOfCredentials { 0 };
 #if PLATFORM(COCOA)
@@ -101,7 +101,7 @@ private:
     RetainPtr<LAContext> m_laContext;
 #endif
     RefPtr<ArrayBuffer> m_largeBlob;
-    String m_accessGroup;
+    RefPtr<StringImpl> m_accessGroup;
 };
 
 } // namespace WebCore

@@ -51,7 +51,7 @@ void WebAssemblySuspendErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirectWithoutTransition(vm, vm.propertyNames->name, jsNontrivialString(vm, "SuspendError"_s), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, vm.propertyNames->name, jsNontrivialString(vm, "SuspendError"_si), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

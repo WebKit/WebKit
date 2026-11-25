@@ -56,7 +56,7 @@ struct ImageDecoderFrameInfo {
 class ImageDecoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageDecoder> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageDecoder, WEBCORE_EXPORT);
 public:
-    static RefPtr<ImageDecoder> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ImageDecoder> create(FragmentedSharedBuffer&, StringImpl* mimeType, AlphaOption, GammaAndColorProfileOption);
     WEBCORE_EXPORT virtual ~ImageDecoder();
 
     using FrameInfo = ImageDecoderFrameInfo;
@@ -78,9 +78,9 @@ public:
     virtual size_t frameCount() const = 0;
     virtual size_t primaryFrameIndex() const { return 0; }
     virtual RepetitionCount repetitionCount() const = 0;
-    virtual String uti() const { return emptyString(); }
-    virtual String filenameExtension() const = 0;
-    virtual String accessibilityDescription() const { return emptyString(); };
+    virtual RefPtr<StringImpl> uti() const { return emptyString(); }
+    virtual RefPtr<StringImpl> filenameExtension() const = 0;
+    virtual RefPtr<StringImpl> accessibilityDescription() const { return emptyString(); };
     virtual std::optional<IntPoint> hotSpot() const = 0;
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)

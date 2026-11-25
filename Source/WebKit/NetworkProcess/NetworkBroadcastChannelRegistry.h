@@ -52,9 +52,9 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-    void registerChannel(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name);
-    void unregisterChannel(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name);
-    void postMessage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name, WebCore::MessageWithMessagePorts&&, Vector<URL>&& blobURLs, CompletionHandler<void()>&&);
+    void registerChannel(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, StringImpl* name);
+    void unregisterChannel(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, StringImpl* name);
+    void postMessage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, StringImpl* name, WebCore::MessageWithMessagePorts&&, Vector<URL>&& blobURLs, CompletionHandler<void()>&&);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 private:
@@ -62,7 +62,7 @@ private:
 
     bool isOriginAllowedForConnection(IPC::Connection&, const WebCore::ClientOrigin&) const;
 
-    using NameToConnectionIdentifiersMap = HashMap<String, Vector<IPC::Connection::UniqueID>>;
+    using NameToConnectionIdentifiersMap = HashMap<RefPtr<StringImpl>, Vector<IPC::Connection::UniqueID>>;
     HashMap<WebCore::ClientOrigin, NameToConnectionIdentifiersMap> m_broadcastChannels;
 };
 

@@ -189,11 +189,11 @@ static void webkitMediaThunderParserConstructed(GObject* object)
         for (GList* tmp = list; tmp; tmp = tmp->next) {
             auto factory = GST_ELEMENT_FACTORY_CAST(tmp->data);
             auto name = StringView::fromLatin1(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(factory)));
-            if (name == "webkitthunderparser"_s)
+            if (equal(name, "webkitthunderparser"_s))
                 continue;
 
             auto decryptorFactoryName = StringView::fromLatin1(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(gst_element_get_factory(self->priv->decryptor.get()))));
-            if (name == decryptorFactoryName)
+            if (equal(name, decryptorFactoryName))
                 continue;
 
             GValue value = G_VALUE_INIT;

@@ -53,8 +53,8 @@ private:
     explicit MediaPlaybackTargetCocoa(RetainPtr<AVOutputContext>&&);
 
     // MediaPlaybackTarget
-    String deviceName() const final;
-    String routeName() const final;
+    RefPtr<StringImpl> deviceName() const final;
+    RefPtr<StringImpl> routeName() const final;
     bool hasActiveRoute() const final;
 
     const RetainPtr<AVOutputContext> m_outputContext;

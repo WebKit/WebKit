@@ -272,9 +272,9 @@ ClassMethodSwizzler enhancedSiriAvailabilitySwizzler(PAL::getWTWritingToolsViewC
 
 - (NSString *)contentsAsStringWithoutNBSP
 {
-    auto string = String { [self contentsAsString] };
+    auto string = StringImpl::create([self contentsAsString]);
     auto updatedString = makeStringByReplacingAll(string, noBreakSpace, space);
-    return updatedString.createNSString().autorelease();
+    return createNSString(updatedString).autorelease();
 }
 
 - (NSUInteger)transparentContentMarkerCount:(NSString *)evaluateNodeExpression
@@ -4649,7 +4649,7 @@ static void runContextGenerationTest(const ASCIILiteral& html, const DecomposedA
 
     TextStream stream;
     stream << "expected " << actual << " to equal " << expected;
-    EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
+    EXPECT_EQ(actual, expected) << utf8(stream.release()).toStdString();
 }
 
 TEST(WritingToolsContextGeneration, ContextWithBasicOrderedList)

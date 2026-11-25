@@ -58,28 +58,28 @@ struct NetworkProcessCreationParameters {
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
 
-    Vector<String> urlSchemesRegisteredForCustomProtocols;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredForCustomProtocols;
 
 #if PLATFORM(COCOA)
-    String uiProcessBundleIdentifier;
+    RefPtr<StringImpl> uiProcessBundleIdentifier;
     RetainPtr<CFDataRef> networkATSContext;
     bool isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    String containerTemporaryDirectory;
+    RefPtr<StringImpl> containerTemporaryDirectory;
 #endif
 
 #if USE(SOUP)
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::AlwaysAccept };
-    Vector<String> languages;
+    Vector<RefPtr<StringImpl>> languages;
     std::optional<MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
 #endif
 
-    Vector<String> urlSchemesRegisteredAsSecure;
-    Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
-    Vector<String> urlSchemesRegisteredAsLocal;
-    Vector<String> urlSchemesRegisteredAsNoAccess;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsSecure;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsLocal;
+    Vector<RefPtr<StringImpl>> urlSchemesRegisteredAsNoAccess;
 
     bool enablePrivateClickMeasurement { true };
     bool ftpEnabled { false };
@@ -90,8 +90,8 @@ struct NetworkProcessCreationParameters {
     bool enableEnhancedSecurityLinks { false };
 #endif
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
-    HashMap<WebCore::ProcessIdentifier, Vector<String>> allowedFilePaths;
-    HashSet<String> localhostAliasesForTesting;
+    HashMap<WebCore::ProcessIdentifier, Vector<RefPtr<StringImpl>>> allowedFilePaths;
+    HashSet<RefPtr<StringImpl>> localhostAliasesForTesting;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 
     Markable<double> defaultRequestTimeoutInterval;

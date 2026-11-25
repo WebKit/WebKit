@@ -621,19 +621,19 @@ WPEBufferFormats* wpe_toplevel_get_preferred_buffer_formats(WPEToplevel* topleve
 
     const char* formatString = getenv("WPE_BUFFER_FORMAT");
     if (formatString && *formatString) {
-        auto tokens = String::fromUTF8(formatString).split(':');
-        if (!tokens.isEmpty() && tokens[0].length() >= 2 && tokens[0].length() <= 4) {
-            guint32 format = fourcc_code(tokens[0][0], tokens[0][1], tokens[0].length() > 2 ? tokens[0][2] : ' ', tokens[0].length() > 3 ? tokens[0][3] : ' ');
+        auto tokens = split(StringImpl::fromUTF8(formatString), ':');
+        if (!tokens.isEmpty() && length(tokens[0]) >= 2 && length(tokens[0]) <= 4) {
+            guint32 format = fourcc_code(codeUnitAt(tokens[0], 0), codeUnitAt(tokens[0], 1), length(tokens[0]) > 2 ? codeUnitAt(tokens[0], 2) : ' ', length(tokens[0]) > 3 ? codeUnitAt(tokens[0], 3) : ' ');
             char* endptr = nullptr;
-            guint64 modifier = tokens.size() > 1 ? g_ascii_strtoull(tokens[1].ascii().data(), &endptr, 16) : DRM_FORMAT_MOD_INVALID;
+            guint64 modifier = tokens.size() > 1 ? g_ascii_strtoull(ascii(tokens[1]).data(), &endptr, 16) : DRM_FORMAT_MOD_INVALID;
             if (!(modifier == G_MAXUINT64 && errno == ERANGE) && !(!modifier && !endptr)) {
                 WPEBufferFormatUsage usage = WPE_BUFFER_FORMAT_USAGE_RENDERING;
                 if (tokens.size() > 2) {
-                    if (tokens[2] == "rendering"_s)
+                    if (equal(tokens[2], "rendering"_s))
                         usage = WPE_BUFFER_FORMAT_USAGE_RENDERING;
-                    else if (tokens[2] == "mapping"_s)
+                    else if (equal(tokens[2], "mapping"_s))
                         usage = WPE_BUFFER_FORMAT_USAGE_MAPPING;
-                    else if (tokens[2] == "scanout"_s)
+                    else if (equal(tokens[2], "scanout"_s))
                         usage = WPE_BUFFER_FORMAT_USAGE_SCANOUT;
                 }
                 auto* builder = wpe_buffer_formats_builder_new(priv->display ? wpe_display_get_drm_device(priv->display.get()) : nullptr);

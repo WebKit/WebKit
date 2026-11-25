@@ -85,15 +85,15 @@ AccessibilityObjectAtspi::CollectionMatchRule::CollectionMatchRule(GVariant* rul
     const char* attributeName;
     const char* attributeValue;
     while (g_variant_iter_next(attributesIter.get(), "{&s&s}", &attributeName, &attributeValue)) {
-        auto addResult = attributes.value.add(String::fromUTF8(attributeName), Vector<String> { });
-        String value = String::fromUTF8(attributeValue);
+        auto addResult = attributes.value.add(StringImpl::fromUTF8(attributeName), Vector<RefPtr<StringImpl>> { });
+        RefPtr<StringImpl> value = StringImpl::fromUTF8(attributeValue);
         unsigned currentPos = 0;
         unsigned startPos = 0;
         size_t endPos;
-        while ((endPos = value.find(':', currentPos)) != notFound) {
+        while ((endPos = find(value, ':', currentPos)) != notFound) {
             if (currentPos != endPos) {
-                if (startPos != endPos && ((endPos && value[endPos - 1] != '\\') || (endPos > 1 && value[endPos - 2] == '\\'))) {
-                    auto unescapedValue = makeStringByReplacingAll(value.substring(startPos, endPos - startPos), "\\:"_s, ":"_s);
+                if (startPos != endPos && ((endPos && codeUnitAt(value, endPos - 1) != '\\') || (endPos > 1 && codeUnitAt(value, endPos - 2) == '\\'))) {
+                    auto unescapedValue = makeStringByReplacingAll(substring(value, startPos, endPos - startPos), "\\:"_s, ":"_s);
                     addResult.iterator->value.append(makeStringByReplacingAll(unescapedValue, "\\\\"_s, "\\"_s));
                     startPos = endPos + 1;
                 }
@@ -102,8 +102,8 @@ AccessibilityObjectAtspi::CollectionMatchRule::CollectionMatchRule(GVariant* rul
             if (startPos == endPos)
                 startPos++;
         }
-        if (startPos != value.length()) {
-            auto unescapedValue = makeStringByReplacingAll(value.substring(startPos), "\\:"_s, ":"_s);
+        if (startPos != length(value)) {
+            auto unescapedValue = makeStringByReplacingAll(substring(value, startPos), "\\:"_s, ":"_s);
             addResult.iterator->value.append(makeStringByReplacingAll(unescapedValue, "\\\\"_s, "\\"_s));
         }
     }
@@ -122,7 +122,7 @@ AccessibilityObjectAtspi::CollectionMatchRule::CollectionMatchRule(GVariant* rul
 
     const char* interface;
     while (g_variant_iter_next(interfacesIter.get(), "&s", &interface))
-        interfaces.value.append(String::fromUTF8(interface));
+        interfaces.value.append(StringImpl::fromUTF8(interface));
     interfaces.type = static_cast<Atspi::CollectionMatchType>(interfacesMatchType);
 }
 
@@ -131,32 +131,32 @@ bool AccessibilityObjectAtspi::CollectionMatchRule::matchInterfaces(Accessibilit
     if (interfaces.value.isEmpty())
         return true;
 
-    auto matchInterface = [&](const String& interface) {
-        if (interface == "accessible"_s)
+    auto matchInterface = [&](StringImpl* interface) {
+        if (equal(interface, "accessible"_s))
             return axObject.interfaces().contains(Interface::Accessible);
-        if (interface == "action"_s)
+        if (equal(interface, "action"_s))
             return axObject.interfaces().contains(Interface::Action);
-        if (interface == "component"_s)
+        if (equal(interface, "component"_s))
             return axObject.interfaces().contains(Interface::Component);
-        if (interface == "text"_s)
+        if (equal(interface, "text"_s))
             return axObject.interfaces().contains(Interface::Text);
-        if (interface == "hypertext"_s)
+        if (equal(interface, "hypertext"_s))
             return axObject.interfaces().contains(Interface::Hypertext);
-        if (interface == "hyperlink"_s)
+        if (equal(interface, "hyperlink"_s))
             return axObject.interfaces().contains(Interface::Hyperlink);
-        if (interface == "image"_s)
+        if (equal(interface, "image"_s))
             return axObject.interfaces().contains(Interface::Image);
-        if (interface == "selection"_s)
+        if (equal(interface, "selection"_s))
             return axObject.interfaces().contains(Interface::Selection);
-        if (interface == "table"_s)
+        if (equal(interface, "table"_s))
             return axObject.interfaces().contains(Interface::Table);
-        if (interface == "tablecell"_s)
+        if (equal(interface, "tablecell"_s))
             return axObject.interfaces().contains(Interface::TableCell);
-        if (interface == "value"_s)
+        if (equal(interface, "value"_s))
             return axObject.interfaces().contains(Interface::Value);
-        if (interface == "document"_s)
+        if (equal(interface, "document"_s))
             return axObject.interfaces().contains(Interface::Document);
-        if (interface == "collection"_s)
+        if (equal(interface, "collection"_s))
             return axObject.interfaces().contains(Interface::Collection);
         return false;
     };
@@ -257,7 +257,7 @@ bool AccessibilityObjectAtspi::CollectionMatchRule::matchAttributes(Accessibilit
         auto axAttributes = axObject.attributes();
         for (const auto& it : attributes.value) {
             auto value = axAttributes.get(it.key);
-            if (value.isNull())
+            if (!value)
                 return false;
 
             if (it.value.isEmpty() || it.value.size() > 1)
@@ -273,7 +273,7 @@ bool AccessibilityObjectAtspi::CollectionMatchRule::matchAttributes(Accessibilit
         auto axAttributes = axObject.attributes();
         for (const auto& it : attributes.value) {
             auto value = axAttributes.get(it.key);
-            if (value.isNull())
+            if (!value)
                 continue;
 
             bool found = it.value.findIf([&value](auto& item) {
@@ -290,7 +290,7 @@ bool AccessibilityObjectAtspi::CollectionMatchRule::matchAttributes(Accessibilit
         auto axAttributes = axObject.attributes();
         for (const auto& it : attributes.value) {
             auto value = axAttributes.get(it.key);
-            if (value.isNull())
+            if (!value)
                 continue;
 
             bool found = it.value.findIf([&value](auto& item) {

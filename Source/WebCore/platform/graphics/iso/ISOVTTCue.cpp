@@ -35,7 +35,7 @@ namespace WebCore {
 
 class ISOStringBox final : public ISOBox {
 public:
-    NODELETE const String& contents() { return m_contents; }
+    NODELETE const RefPtr<StringImpl>& contents() { return m_contents; }
 
 private:
     bool parse(const ByteView& view, unsigned& offset) override
@@ -62,11 +62,11 @@ private:
             characters.append(character);
         }
 
-        m_contents = String::fromUTF8(characters);
+        m_contents = StringImpl::fromUTF8(characters);
         offset = localOffset;
         return true;
     }
-    String m_contents;
+    RefPtr<StringImpl> m_contents;
 };
 
 NODELETE static FourCC vttIdBoxType() { return std::span { "iden" }; }
@@ -82,7 +82,7 @@ ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& d
 {
 }
 
-ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration, String&& cueID, String&& cueText, String&& settings, String&& sourceID, String&& originalStartTime)
+ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration, RefPtr<StringImpl>&& cueID, RefPtr<StringImpl>&& cueText, RefPtr<StringImpl>&& settings, RefPtr<StringImpl>&& sourceID, RefPtr<StringImpl>&& originalStartTime)
     : ISOBox(boxTypeName())
     , m_presentationTime(presentationTime)
     , m_duration(duration)
@@ -113,7 +113,7 @@ bool ISOWebVTTCue::parse(const ByteView& view, unsigned& offset)
         if (stringBox.boxType() == vttCueSourceIDBoxType())
             m_sourceID = stringBox.contents();
         else if (stringBox.boxType() == vttIdBoxType())
-            m_identifier = AtomString { stringBox.contents() };
+            m_identifier = AtomStringImpl::add(stringBox.contents());
         else if (stringBox.boxType() == vttCurrentTimeBoxType())
             m_originalStartTime = stringBox.contents();
         else if (stringBox.boxType() == vttSettingsBoxType())
@@ -126,19 +126,19 @@ bool ISOWebVTTCue::parse(const ByteView& view, unsigned& offset)
     return true;
 }
 
-String ISOWebVTTCue::toJSONString() const
+RefPtr<StringImpl> ISOWebVTTCue::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    object->setString("text"_s, m_cueText);
-    object->setString("sourceId"_s, encodeWithURLEscapeSequences(m_sourceID));
-    object->setString("id"_s, encodeWithURLEscapeSequences(m_identifier));
+    object->setString("text"_si, m_cueText);
+    object->setString("sourceId"_si, encodeWithURLEscapeSequences(m_sourceID));
+    object->setString("id"_si, encodeWithURLEscapeSequences(m_identifier));
 
-    object->setString("originalStartTime"_s, encodeWithURLEscapeSequences(m_originalStartTime));
-    object->setString("settings"_s, encodeWithURLEscapeSequences(m_settings));
+    object->setString("originalStartTime"_si, encodeWithURLEscapeSequences(m_originalStartTime));
+    object->setString("settings"_si, encodeWithURLEscapeSequences(m_settings));
 
-    object->setDouble("presentationTime"_s, m_presentationTime.toDouble());
-    object->setDouble("duration"_s, m_duration.toDouble());
+    object->setDouble("presentationTime"_si, m_presentationTime.toDouble());
+    object->setDouble("duration"_si, m_duration.toDouble());
 
     return object->toJSONString();
 }

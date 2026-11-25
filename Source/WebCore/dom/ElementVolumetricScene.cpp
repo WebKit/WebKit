@@ -119,21 +119,21 @@ void ElementVolumetricScene::setInVolumetricScene(Element& element, bool inVolum
 }
 
 // "unavailable" distinguishes an element that cannot host a scene from one that simply is not presenting.
-String ElementVolumetricScene::presentationModeForTesting(const Element& element)
+RefPtr<StringImpl> ElementVolumetricScene::presentationModeForTesting(const Element& element)
 {
     auto mode = presentationMode(element);
     if (!mode)
-        return "unavailable"_s;
+        return "unavailable"_si;
 
     switch (*mode) {
     case ModelPresentationMode::Inline:
-        return "inline"_s;
+        return "inline"_si;
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     case ModelPresentationMode::Immersive:
-        return "immersive"_s;
+        return "immersive"_si;
 #endif
     case ModelPresentationMode::Volumetric:
-        return "volumetric"_s;
+        return "volumetric"_si;
     }
 
     ASSERT_NOT_REACHED();

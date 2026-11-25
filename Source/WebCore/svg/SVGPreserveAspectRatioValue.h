@@ -72,7 +72,7 @@ public:
     NODELETE bool parse(StringParsingBuffer<Latin1Character>&, bool validate);
     NODELETE bool parse(StringParsingBuffer<char16_t>&, bool validate);
 
-    String valueAsString() const;
+    RefPtr<StringImpl> valueAsString() const;
 
 private:
     SVGPreserveAspectRatioType m_align { SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMIDYMID };
@@ -83,9 +83,9 @@ private:
 
 template<> struct SVGPropertyTraits<SVGPreserveAspectRatioValue> {
     static SVGPreserveAspectRatioValue initialValue() { return SVGPreserveAspectRatioValue(); }
-    static SVGPreserveAspectRatioValue fromString(const String& string) { return SVGPreserveAspectRatioValue(string); }
-    static std::optional<SVGPreserveAspectRatioValue> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
-    static String toString(const SVGPreserveAspectRatioValue& type) { return type.valueAsString(); }
+    static SVGPreserveAspectRatioValue fromString(StringImpl* string) { return SVGPreserveAspectRatioValue(string); }
+    static std::optional<SVGPreserveAspectRatioValue> parse(const QualifiedName&, StringImpl*) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static RefPtr<StringImpl> toString(const SVGPreserveAspectRatioValue& type) { return type.valueAsString(); }
 };
 
 } // namespace WebCore

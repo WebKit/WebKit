@@ -75,7 +75,7 @@ NODELETE static bool isExtensionParameter(LinkHeader::LinkParameterName name)
 // <cat.jpg>; rel=preload
 //          ^            ^
 //          position     end
-template<typename CharacterType> static std::optional<String> findURLBoundaries(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> static std::optional<RefPtr<StringImpl>> findURLBoundaries(StringParsingBuffer<CharacterType>& buffer)
 {
     skipWhile<isTabOrSpace>(buffer);
     if (!skipExactly(buffer, '<'))
@@ -89,7 +89,7 @@ template<typename CharacterType> static std::optional<String> findURLBoundaries(
     if (!skipExactly(buffer, '>'))
         return std::nullopt;
 
-    return String(urlStart.first(urlEnd - urlStart.data()));
+    return StringImpl::create(urlStart.first(urlEnd - urlStart.data()));
 }
 
 template<typename CharacterType> NODELETE static bool invalidParameterDelimiter(StringParsingBuffer<CharacterType>& buffer)
@@ -230,7 +230,7 @@ template<typename CharacterType> NODELETE static bool skipQuotesIfNeeded(StringP
 // <cat.jpg>; rel=preload; foo=bar
 //                       ^        ^
 //                   position     end
-template<typename CharacterType> static bool parseParameterValue(StringParsingBuffer<CharacterType>& buffer, String& value)
+template<typename CharacterType> static bool parseParameterValue(StringParsingBuffer<CharacterType>& buffer, RefPtr<StringImpl>& value)
 {
     auto valueStart = buffer.span();
     size_t valueLength = 0;
@@ -253,11 +253,11 @@ template<typename CharacterType> static bool parseParameterValue(StringParsingBu
         ASSERT(valueLength);
         --valueLength;
     }
-    value = String(valueStart.first(valueLength));
+    value = StringImpl::create(valueStart.first(valueLength));
     return !hasQuotes || completeQuotes;
 }
 
-void LinkHeader::setValue(LinkParameterName name, String&& value)
+void LinkHeader::setValue(LinkParameterName name, RefPtr<StringImpl>&& value)
 {
     switch (name) {
     case LinkParameterRel:
@@ -333,7 +333,7 @@ template<typename CharacterType> LinkHeader::LinkHeader(StringParsingBuffer<Char
             return;
         }
 
-        String parameterValue;
+        RefPtr<StringImpl> parameterValue;
         if (!parseParameterValue(buffer, parameterValue) && !isExtensionParameter(*parameterName)) {
             findNextHeader(buffer);
             m_isValid = false;
@@ -345,7 +345,7 @@ template<typename CharacterType> LinkHeader::LinkHeader(StringParsingBuffer<Char
     findNextHeader(buffer);
 }
 
-LinkHeaderSet::LinkHeaderSet(const String& header)
+LinkHeaderSet::LinkHeaderSet(StringImpl* header)
 {
     readCharactersForParsing(header, [&](auto buffer) {
         while (buffer.hasCharactersRemaining())

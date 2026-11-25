@@ -515,7 +515,7 @@ void EventSenderProxy::leapForward(int milliseconds)
 
 void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation, CompletionHandler<void()>&& completionHandler)
 {
-    RetainPtr modifierKeys = [ModifierKeys modifierKeysWithKey:toWTFString(key).createNSString().get() modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
+    RetainPtr modifierKeys = [ModifierKeys modifierKeysWithKey:createNSString(toWTFString(key)).get() modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
 
     RetainPtr keyDownEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown
         location:NSMakePoint(5, 5)
@@ -569,7 +569,7 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
 
 void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
 {
-    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:toWTFString(key).createNSString().get() modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
+    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:createNSString(toWTFString(key)).get() modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
 
     NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyDown
         location:NSMakePoint(5, 5)
@@ -589,7 +589,7 @@ void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, u
 
 void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
 {
-    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:toWTFString(key).createNSString().get() modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
+    RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:createNSString(toWTFString(key)).get() modifiers:buildModifierFlags(modifiers) keyLocation:keyLocation];
 
     NSEvent *event = [NSEvent keyEventWithType:NSEventTypeKeyUp
         location:NSMakePoint(5, 5)
@@ -741,7 +741,7 @@ void EventSenderProxy::smartMagnify()
     });
 }
 
-static void sendMagnifyEvent(TestController& testController, WKPoint position, NSInteger eventNumber, NSTimeInterval time, double scale, NSEventPhase phase, const String& description)
+static void sendMagnifyEvent(TestController& testController, WKPoint position, NSInteger eventNumber, NSTimeInterval time, double scale, NSEventPhase phase, StringImpl* description)
 {
     auto* mainWebView = testController.mainWebView();
     RetainPtr platformView = mainWebView->platformView();
@@ -754,24 +754,24 @@ static void sendMagnifyEvent(TestController& testController, WKPoint position, N
         eventNumber:eventNumber
         window:[platformView window]]);
 
-    dispatchSyntheticEvent(event, platformView, description.createNSString(), ^(NSView *targetView, NSEvent *syntheticEvent) {
+    dispatchSyntheticEvent(event, platformView, createNSString(description), ^(NSView *targetView, NSEvent *syntheticEvent) {
         [targetView magnifyWithEvent:syntheticEvent];
     });
 }
 
 void EventSenderProxy::scaleGestureStart(double scale)
 {
-    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseBegan, "scaleGestureStart"_s);
+    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseBegan, "scaleGestureStart"_si);
 }
 
 void EventSenderProxy::scaleGestureChange(double scale)
 {
-    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseChanged, "scaleGestureChange"_s);
+    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseChanged, "scaleGestureChange"_si);
 }
 
 void EventSenderProxy::scaleGestureEnd(double scale)
 {
-    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseEnded, "scaleGestureEnd"_s);
+    sendMagnifyEvent(*m_testController, m_position, ++m_eventNumber, absoluteTimeForEventTime(currentEventTime()), scale, NSEventPhaseEnded, "scaleGestureEnd"_si);
 }
 
 } // namespace WTR

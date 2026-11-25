@@ -42,7 +42,7 @@ CSSFontStyleRangeValue::CSSFontStyleRangeValue(CSS::FontStyleRange&& fontStyleRa
 {
 }
 
-String CSSFontStyleRangeValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFontStyleRangeValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_fontStyleRange);
 }

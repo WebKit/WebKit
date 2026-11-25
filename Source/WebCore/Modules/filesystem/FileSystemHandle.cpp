@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemHandle);
 
-FileSystemHandle::FileSystemHandle(ScriptExecutionContext& context, FileSystemHandle::Kind kind, String&& name, FileSystemHandleGlobalIdentifier globalIdentifier, Markable<FileSystemHandleIdentifier> identifier, RefPtr<FileSystemStorageConnection>&& connection)
+FileSystemHandle::FileSystemHandle(ScriptExecutionContext& context, FileSystemHandle::Kind kind, RefPtr<StringImpl>&& name, FileSystemHandleGlobalIdentifier globalIdentifier, Markable<FileSystemHandleIdentifier> identifier, RefPtr<FileSystemStorageConnection>&& connection)
     : ActiveDOMObject(&context)
     , m_kind(kind)
     , m_name(WTF::move(name))
@@ -130,18 +130,18 @@ void FileSystemHandle::resolveEnsureIdentifierCallbacks(bool success)
 void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_si });
 
-    if (m_kind != handle.kind() || m_name != handle.name())
+    if (m_kind != handle.kind() || !equal(m_name, handle.name()))
         return promise.resolve(false);
 
     ensureIdentifier([this, protectedThis = Ref { *this }, handle = Ref { handle }, promise = WTF::move(promise)](bool success) mutable {
         if (!success)
-            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_s });
+            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_si });
 
         handle->ensureIdentifier([this, protectedThis = WTF::move(protectedThis), handle, promise = WTF::move(promise)](bool success) mutable {
             if (!success)
-                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_s });
+                return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_si });
 
             protect(m_connection)->isSameEntry(*m_identifier, handle->identifier(), [promise = WTF::move(promise)](auto result) mutable {
                 promise.settle(WTF::move(result));
@@ -150,19 +150,19 @@ void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<
     });
 }
 
-void FileSystemHandle::move(FileSystemHandle& destinationHandle, const String& newName, DOMPromiseDeferred<void>&& promise)
+void FileSystemHandle::move(FileSystemHandle& destinationHandle, StringImpl* newName, DOMPromiseDeferred<void>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_si });
 
     if (destinationHandle.kind() != Kind::Directory)
         return promise.reject(Exception { ExceptionCode::TypeMismatchError });
 
-    ensureIdentifier([this, protectedThis = Ref { *this }, destinationHandle = Ref { destinationHandle }, newName, promise = WTF::move(promise)](bool success) mutable {
+    ensureIdentifier([this, protectedThis = Ref { *this }, destinationHandle = Ref { destinationHandle }, newName = RefPtr { newName }, promise = WTF::move(promise)](bool success) mutable {
         if (!success)
-            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_s });
+            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is invalid"_si });
 
-        protect(m_connection)->move(*m_identifier, destinationHandle->identifier(), newName, [this, protectedThis = WTF::move(protectedThis), newName, promise = WTF::move(promise)](auto result) mutable {
+        protect(m_connection)->move(*m_identifier, destinationHandle->identifier(), newName, [this, protectedThis = WTF::move(protectedThis), newName = RefPtr { newName }, promise = WTF::move(promise)](auto result) mutable {
             if (!result.hasException())
                 m_name = newName;
 

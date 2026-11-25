@@ -946,18 +946,18 @@ void DeleteSelectionCommand::clearTransientState()
     m_trailingWhitespace.clear();
 }
     
-String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection()
+RefPtr<StringImpl> DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection()
 {
     if (!m_selectionToDelete.isRange())
-        return String();
+        return nullptr;
 
     VisiblePosition startOfSelection = m_selectionToDelete.start();
     if (!isStartOfWord(startOfSelection))
-        return String();
+        return nullptr;
 
     auto rangeOfFirstCharacter = makeSimpleRange(startOfSelection, startOfSelection.next());
     if (!rangeOfFirstCharacter)
-        return String();
+        return nullptr;
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (auto& marker : protect(document().markers())->markersInRange(*rangeOfFirstCharacter, DocumentMarkerType::Autocorrected)) {
@@ -965,7 +965,7 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
         if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
             return marker->description();
     }
-    return String();
+    return nullptr;
 }
 
 // This method removes div elements with no attributes that have only one child or no children at all.
@@ -999,7 +999,7 @@ void DeleteSelectionCommand::doApply()
         return;
 
     Ref editor = protect(document())->editor();
-    String originalString = originalStringForAutocorrectionAtBeginningOfSelection();
+    RefPtr<StringImpl> originalString = originalStringForAutocorrectionAtBeginningOfSelection();
 
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
     if (!m_replace) {
@@ -1078,7 +1078,7 @@ void DeleteSelectionCommand::doApply()
 
     calculateTypingStyleAfterDelete();
 
-    if (!originalString.isEmpty())
+    if (!isEmpty(originalString))
         editor->deletedAutocorrectionAtPosition(m_endingPosition, originalString);
 
     setEndingSelection(VisibleSelection(VisiblePosition(m_endingPosition, affinity), endingSelection().directionality()));

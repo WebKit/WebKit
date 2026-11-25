@@ -68,7 +68,7 @@ void UIScriptControllerWPE::copyText(JSStringRef text)
     if (!TestController::singleton().useWPELegacyAPI()) {
         auto* clipboard = wpe_display_get_clipboard(wpe_display_get_primary());
         auto* content = wpe_clipboard_content_new();
-        wpe_clipboard_content_set_text(content, text->string().utf8().legacyCStringPointer());
+        wpe_clipboard_content_set_text(content, utf8(text->string()).legacyCStringPointer());
         wpe_clipboard_set_content(clipboard, content);
         wpe_clipboard_content_unref(content);
     }
@@ -159,17 +159,17 @@ double UIScriptControllerWPE::zoomScale() const
     return WKPageGetScaleFactor(page);
 }
 
-static EventSenderProxy::WheelEventPhase wheelEventPhaseFromString(const String& phase)
+static EventSenderProxy::WheelEventPhase wheelEventPhaseFromString(StringImpl* phase)
 {
-    if (phase == "began"_s)
+    if (equal(phase, "began"_s))
         return EventSenderProxy::WheelEventPhase::Began;
-    if (phase == "changed"_s || phase == "continue"_s) // Allow "continue" for ease of conversion from mouseScrollByWithWheelAndMomentumPhases values.
+    if (equal(phase, "changed"_s) || equal(phase, "continue"_s)) // Allow "continue" for ease of conversion from mouseScrollByWithWheelAndMomentumPhases values.
         return EventSenderProxy::WheelEventPhase::Changed;
-    if (phase == "ended"_s)
+    if (equal(phase, "ended"_s))
         return EventSenderProxy::WheelEventPhase::Ended;
-    if (phase == "cancelled"_s)
+    if (equal(phase, "cancelled"_s))
         return EventSenderProxy::WheelEventPhase::Cancelled;
-    if (phase == "maybegin"_s)
+    if (equal(phase, "maybegin"_s))
         return EventSenderProxy::WheelEventPhase::MayBegin;
 
     ASSERT_NOT_REACHED();
@@ -188,7 +188,7 @@ void UIScriptControllerWPE::sendEventStream(JSStringRef eventsJSON, JSValueRef c
 
     auto jsonValue = JSON::Value::parseJSON(eventsJSON->string());
     auto jsonObject = jsonValue ? jsonValue->asObject() : nullptr;
-    auto eventsArray = jsonObject ? jsonObject->getArray("events"_s) : nullptr;
+    auto eventsArray = jsonObject ? jsonObject->getArray("events"_si) : nullptr;
     if (!eventsArray) {
         WTFLogAlways("JSON is not convertible to a dictionary with an `events` array");
         return;
@@ -207,25 +207,25 @@ void UIScriptControllerWPE::sendEventStream(JSStringRef eventsJSON, JSValueRef c
             break;
         }
 
-        auto eventTypeString = eventObject->getString("type"_s);
+        auto eventTypeString = eventObject->getString("type"_si);
         if (!eventTypeString) {
-            SAFE_WTFLOGALWAYS("Failed to find type key in %s", eventTypeString.utf8());
+            SAFE_WTFLOGALWAYS("Failed to find type key in %s", utf8(eventTypeString));
             break;
         }
 
-        if (eventTypeString == "wheel"_s) {
+        if (equal(eventTypeString, "wheel"_s)) {
             auto phase = EventSenderProxy::WheelEventPhase::None;
             auto momentumPhase = EventSenderProxy::WheelEventPhase::None;
 
-            auto phaseString = eventObject->getString("phase"_s);
-            if (!phaseString.isNull())
-                phase = wheelEventPhaseFromString(phaseString);
+            auto phaseString = eventObject->getString("phase"_si);
+            if (phaseString)
+                phase = wheelEventPhaseFromString(phaseString.get());
 
-            auto momentumPhaseString = eventObject->getString("momentumPhase"_s);
-            if (!momentumPhaseString.isNull()) {
-                momentumPhase = wheelEventPhaseFromString(momentumPhaseString);
+            auto momentumPhaseString = eventObject->getString("momentumPhase"_si);
+            if (momentumPhaseString) {
+                momentumPhase = wheelEventPhaseFromString(momentumPhaseString.get());
                 if (momentumPhase == EventSenderProxy::WheelEventPhase::Cancelled || momentumPhase == EventSenderProxy::WheelEventPhase::MayBegin) {
-                    SAFE_WTFLOGALWAYS("Invalid value %s for momentumPhase", momentumPhaseString.utf8());
+                    SAFE_WTFLOGALWAYS("Invalid value %s for momentumPhase", utf8(momentumPhaseString));
                     break;
                 }
             }
@@ -233,14 +233,14 @@ void UIScriptControllerWPE::sendEventStream(JSStringRef eventsJSON, JSValueRef c
             ASSERT_IMPLIES(phase == EventSenderProxy::WheelEventPhase::None, momentumPhase != EventSenderProxy::WheelEventPhase::None);
             ASSERT_IMPLIES(momentumPhase == EventSenderProxy::WheelEventPhase::None, phase != EventSenderProxy::WheelEventPhase::None);
 
-            if (auto x = eventObject->getDouble("viewX"_s))
+            if (auto x = eventObject->getDouble("viewX"_si))
                 currentViewRelativeX = *x;
 
-            if (auto y = eventObject->getDouble("viewY"_s))
+            if (auto y = eventObject->getDouble("viewY"_si))
                 currentViewRelativeY = *y;
 
-            double deltaX = eventObject->getDouble("deltaX"_s).value_or(0);
-            double deltaY = eventObject->getDouble("deltaY"_s).value_or(0);
+            double deltaX = eventObject->getDouble("deltaX"_si).value_or(0);
+            double deltaY = eventObject->getDouble("deltaY"_si).value_or(0);
 
             eventSender->sendWheelEvent(currentTime, currentViewRelativeX, currentViewRelativeY, deltaX, deltaY, phase, momentumPhase);
         }

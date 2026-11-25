@@ -450,14 +450,14 @@ void testWebKitFeatures(Test* test, gconstpointer)
 
     {
         // Keep a set of identifiers to validate their uniqueness.
-        HashSet<String> featureIdentifiers;
+        HashSet<RefPtr<StringImpl>> featureIdentifiers;
         featureIdentifiers.reserveInitialCapacity(allFeaturesCount);
         for (gsize i = 0; i < allFeaturesCount; i++) {
             auto* feature = webkit_feature_list_get(allFeatures, i);
             g_assert_nonnull(webkit_feature_get_identifier(feature));
             g_assert_nonnull(webkit_feature_get_category(feature));
 
-            auto identifier = String::fromUTF8(webkit_feature_get_identifier(feature));
+            auto identifier = StringImpl::fromUTF8(webkit_feature_get_identifier(feature));
             g_assert_false(featureIdentifiers.contains(identifier));
             featureIdentifiers.add(WTF::move(identifier));
         }
@@ -484,20 +484,20 @@ void testWebKitFeatures(Test* test, gconstpointer)
     // Check that enabled status is the same as the declared default.
     for (gsize i = 0; i < allFeaturesCount; i++) {
         auto* feature = webkit_feature_list_get(allFeatures, i);
-        const auto identifier = String::fromUTF8(webkit_feature_get_identifier(feature));
+        const auto identifier = StringImpl::fromUTF8(webkit_feature_get_identifier(feature));
 
         // FIXME: During initialization this is changed depending on
         // available hardware support, so the default is not guaranteed to
         // match. It might be possible to try and write a function like
         // WebKit::defaultForceCompositingModeEnabled() to provide the
         // default value for the feature flag.
-        if (identifier == "ForceCompositingMode"_s)
+        if (equal(identifier, "ForceCompositingMode"_s))
             continue;
 
         // FIXME: This is enabled in UnifiedWebPreferences.yaml, but the
         // actual value ends up being disabled without an obvious reason.
         // Needs investigating.
-        if (identifier == "TargetTextPseudoElement"_s)
+        if (equal(identifier, "TargetTextPseudoElement"_s))
             continue;
 
         g_assert(webkit_settings_get_feature_enabled(settings.get(), feature) == webkit_feature_get_default_value(feature));
@@ -562,7 +562,7 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
     g_assert_error(error.get(), G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE);
 
     // Overflowing uint settings should raise an error.
-    gKeyFileLoadFromData(key_file.get(), bigIntNotSupported.utf8(), G_KEY_FILE_NONE, &error.outPtr());
+    gKeyFileLoadFromData(key_file.get(), utf8(bigIntNotSupported), G_KEY_FILE_NONE, &error.outPtr());
     g_assert_no_error(error.get());
     g_assert_false(webkit_settings_apply_from_key_file(settings.get(), key_file.get(), "websettings", &error.outPtr()));
     g_assert_error(error.get(), G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE);

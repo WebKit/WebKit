@@ -40,22 +40,22 @@ class CommandEvent final : public Event {
 public:
     struct Init : EventInit {
         RefPtr<Element> source;
-        String command;
+        RefPtr<StringImpl> command;
     };
 
-    static Ref<CommandEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<CommandEvent> create(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
     static Ref<CommandEvent> createForBindings();
 
     RefPtr<Element> source() const;
 
-    String command() const { return m_command; }
+    RefPtr<StringImpl> command() const { return m_command; }
 
 private:
     CommandEvent();
-    CommandEvent(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    CommandEvent(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
 
     const RefPtr<Element> m_source;
-    String m_command;
+    RefPtr<StringImpl> m_command;
 };
 
 } // namespace WebCore

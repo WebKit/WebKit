@@ -38,13 +38,13 @@ CompositionEvent::CompositionEvent()
 {
 }
 
-CompositionEvent::CompositionEvent(const AtomString& type, RefPtr<WindowProxy>&& view, const String& data)
+CompositionEvent::CompositionEvent(AtomStringImpl* type, RefPtr<WindowProxy>&& view, StringImpl* data)
     : UIEvent(EventInterfaceType::CompositionEvent, type, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTF::move(view), 0)
     , m_data(data)
 {
 }
 
-CompositionEvent::CompositionEvent(const AtomString& type, Init&& initializer)
+CompositionEvent::CompositionEvent(AtomStringImpl* type, Init&& initializer)
     : UIEvent(EventInterfaceType::CompositionEvent, type, WTF::move(initializer))
     , m_data(WTF::move(initializer.data))
 {
@@ -52,7 +52,7 @@ CompositionEvent::CompositionEvent(const AtomString& type, Init&& initializer)
 
 CompositionEvent::~CompositionEvent() = default;
 
-void CompositionEvent::initCompositionEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data)
+void CompositionEvent::initCompositionEvent(AtomStringImpl* type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, StringImpl* data)
 {
     if (isBeingDispatched())
         return;

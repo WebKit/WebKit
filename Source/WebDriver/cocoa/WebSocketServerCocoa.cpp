@@ -55,13 +55,13 @@ static OSObjectPtr<nw_ws_response_t> handshakeResponse(nw_ws_response_status_t s
     return adoptOSObject(nw_ws_response_create(status, nullptr));
 }
 
-static String originOfHandshake(nw_ws_request_t request)
+static RefPtr<StringImpl> originOfHandshake(nw_ws_request_t request)
 {
-    __block String origin;
+    __block RefPtr<StringImpl> origin;
     nw_ws_request_enumerate_additional_headers(request, ^bool(const char* name, const char* value) {
         if (!equalLettersIgnoringASCIICase(StringView::fromLatin1(name), "origin"_s))
             return true;
-        origin = String::fromUTF8(value);
+        origin = StringImpl::fromUTF8(value);
         return false;
     });
     return origin;
@@ -98,13 +98,13 @@ static void closeConnection(const WebSocketMessageHandler::Connection& connectio
     });
 }
 
-std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
+std::optional<RefPtr<StringImpl>> WebSocketServer::listen(StringImpl* host, unsigned port)
 {
     if (!validateListeningHost(host))
         return std::nullopt;
 
     OSObjectPtr parameters = adoptOSObject(nw_parameters_create_secure_tcp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
-    nw_parameters_set_local_endpoint(parameters.get(), adoptOSObject(nw_endpoint_create_host("127.0.0.1", String::number(port).utf8().legacyCStringPointer())).get());
+    nw_parameters_set_local_endpoint(parameters.get(), adoptOSObject(nw_endpoint_create_host("127.0.0.1", utf8(makeString(port)).legacyCStringPointer())).get());
 
     OSObjectPtr webSocketOptions = adoptOSObject(nw_ws_create_options(nw_ws_version_13));
     nw_ws_options_set_auto_reply_ping(webSocketOptions.get(), true);
@@ -168,7 +168,7 @@ std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
 
     // "/session" is where clients start BiDi-only sessions, with session.new. startListening() adds the
     // resource of each session. https://w3c.github.io/webdriver-bidi/#establishing
-    m_listener = WebSocketListener::create("127.0.0.1"_s, boundPort, false, { getResourceName(nullString()) });
+    m_listener = WebSocketListener::create("127.0.0.1"_si, boundPort, false, { getResourceName(nullString()) });
     return getWebSocketURL(m_listener, nullString());
 }
 
@@ -198,7 +198,7 @@ void WebSocketServer::startConnection(WebSocketMessageHandler::Connection&& conn
         return;
     }
 
-    __block String resourcePath;
+    __block RefPtr<StringImpl> resourcePath;
     auto weakThis = WeakPtr { *this };
     OSObjectPtr acceptance = handshakeResponse(nw_ws_response_status_accept);
     OSObjectPtr rejection = handshakeResponse(nw_ws_response_status_reject);
@@ -210,19 +210,19 @@ void WebSocketServer::startConnection(WebSocketMessageHandler::Connection&& conn
         // Browsers send the origin of the page that opens a WebSocket. Only accept pages from this
         // machine. Clients that aren't browsers usually send no origin.
         auto origin = originOfHandshake(request);
-        if (!origin.isNull() && !isLoopbackURL(origin)) {
-            RELEASE_LOG(WebDriverBiDi, "Rejecting a WebSocket handshake from origin %s", origin.utf8());
+        if (!!origin && !isLoopbackURL(origin)) {
+            RELEASE_LOG(WebDriverBiDi, "Rejecting a WebSocket handshake from origin %s", utf8(origin));
             return rejection.get();
         }
 
         if (__builtin_available(macOS 26.0, *)) {
-            String path;
+            RefPtr<StringImpl> path;
             if (char* rawPath = nw_ws_request_copy_path(request)) {
-                path = String::fromUTF8(rawPath);
+                path = StringImpl::fromUTF8(rawPath);
                 free(rawPath);
             }
-            if (auto queryStart = path.find('?'); queryStart != notFound)
-                path = path.left(queryStart);
+            if (auto queryStart = find(path, '?'); queryStart != notFound)
+                path = left(path, queryStart);
             if (!protectedThis->m_messageHandler.acceptHandshake({ "GET"_s, path, nullptr, 0 }))
                 return rejection.get();
             resourcePath = WTF::move(path);
@@ -258,10 +258,10 @@ void WebSocketServer::startConnection(WebSocketMessageHandler::Connection&& conn
     nw_connection_start(networkConnection);
 }
 
-void WebSocketServer::didOpenConnection(const WebSocketMessageHandler::Connection& connection, const String& resourcePath)
+void WebSocketServer::didOpenConnection(const WebSocketMessageHandler::Connection& connection, StringImpl* resourcePath)
 {
     // A connection becomes ready even when its handshake was rejected.
-    if (resourcePath.isNull()) {
+    if (!resourcePath) {
         nw_connection_cancel(connection.get());
         return;
     }
@@ -275,7 +275,7 @@ void WebSocketServer::didOpenConnection(const WebSocketMessageHandler::Connectio
     m_openConnections.add(connection);
 
     // Delayed steps from the end of the handshake, as now we have a connection object.
-    if (resourcePath == "/session"_s)
+    if (equal(resourcePath, "/session"_s))
         addStaticConnection(WebSocketMessageHandler::Connection { connection });
     else
         addConnection(WebSocketMessageHandler::Connection { connection }, getSessionID(resourcePath));
@@ -343,11 +343,11 @@ void WebSocketServer::didCloseConnection(const WebSocketMessageHandler::Connecti
         m_messageHandler.clientDisconnected(connection);
 }
 
-void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection, const String& message)
+void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection, StringImpl* message)
 {
     ASSERT(connection);
-    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8());
-    sendText(connection.get(), message.utf8().span());
+    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", utf8(message));
+    sendText(connection.get(), utf8(message).span());
 }
 
 void WebSocketServer::disconnect()
@@ -362,12 +362,12 @@ void WebSocketServer::disconnect()
         closeConnection(connection);
 }
 
-void WebSocketServer::disconnectSession(const String& sessionId)
+void WebSocketServer::disconnectSession(StringImpl* sessionId)
 {
     // Close every connection of the session. As with soup, they aren't reported as closed by the
     // client.
     for (auto& [connection, connectionSessionID] : m_connectionToSession) {
-        if (connectionSessionID == sessionId && m_openConnections.remove(connection))
+        if (equal(connectionSessionID, sessionId) && m_openConnections.remove(connection))
             closeConnection(connection);
     }
 }

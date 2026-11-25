@@ -39,7 +39,7 @@ public:
         Internal, // WebKit Internal (e.g. Media Controls)
     };
 
-    static Ref<DOMWrapperWorld> create(JSC::VM& vm, Type type = Type::Internal, const String& name = { })
+    static Ref<DOMWrapperWorld> create(JSC::VM& vm, Type type = Type::Internal, StringImpl* name = nullptr)
     {
         return adoptRef(*new DOMWrapperWorld(vm, type, name));
     }
@@ -87,7 +87,7 @@ public:
     bool isNonNormal() const { return m_type != Type::Normal; }
     bool isUser() const { return m_type == Type::User; }
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
     JSC::VM& vm() const { return m_vm; }
 
@@ -95,7 +95,7 @@ public:
     void removeEventListener(JSEventListener&);
 
 protected:
-    DOMWrapperWorld(JSC::VM&, Type, const String& name);
+    DOMWrapperWorld(JSC::VM&, Type, StringImpl* name);
 
 private:
     JSC::VM& m_vm;
@@ -104,7 +104,7 @@ private:
 
     WeakHashSet<JSEventListener> m_eventListeners;
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     Type m_type { Type::Internal };
 
     bool m_allowAutofill : 1 { false };

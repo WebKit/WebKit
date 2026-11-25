@@ -68,7 +68,7 @@
 - (DOMNode *)namedItem:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->namedItem(name)));
+    return kit(WTF::getPtr(IMPL->namedItem(AtomStringImpl::add((__bridge CFStringRef)name).get())));
 }
 
 - (DOMNodeList *)tags:(NSString *)name
@@ -77,7 +77,7 @@
         return nullptr;
 
     WebCore::JSMainThreadNullState state;
-    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->ownerNode().getElementsByTagName(name))));
+    return kit(static_cast<WebCore::NodeList*>(WTF::getPtr(IMPL->ownerNode().getElementsByTagName(AtomStringImpl::add((__bridge CFStringRef)name).get()))));
 }
 
 @end

@@ -122,7 +122,7 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
     if (!_urlCallback)
         return completionHandler([NSError errorWithDomain:WebMockMediaDeviceRouteErrorDomain code:WebMockMediaDeviceRouteErrorCodeInvalidState userInfo:nil], nil);
 
-    auto result = _urlCallback->invoke(url.absoluteString);
+    auto result = _urlCallback->invoke(StringImpl::create(url.absoluteString).get());
     if (result.type() != WebCore::CallbackResultType::Success)
         return completionHandler([NSError errorWithDomain:WebMockMediaDeviceRouteErrorDomain code:WebMockMediaDeviceRouteErrorCodeInvalidState userInfo:nil], nil);
 

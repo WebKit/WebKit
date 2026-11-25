@@ -132,7 +132,7 @@ static RetainPtr<CGColorRef> createColor(float r, float g, float b, float a)
 struct HistoricMemoryCategoryInfo {
     HistoricMemoryCategoryInfo() { } // Needed for std::array.
 
-    HistoricMemoryCategoryInfo(unsigned category, SRGBA<uint8_t> color, String name, bool subcategory = false)
+    HistoricMemoryCategoryInfo(unsigned category, SRGBA<uint8_t> color, RefPtr<StringImpl> name, bool subcategory = false)
         : name(WTF::move(name))
         , color(cachedCGColor(color))
         , isSubcategory(subcategory)
@@ -140,7 +140,7 @@ struct HistoricMemoryCategoryInfo {
     {
     }
 
-    String name;
+    RefPtr<StringImpl> name;
     RetainPtr<CGColorRef> color;
     RingBuffer<size_t> dirtySize;
     RingBuffer<size_t> reclaimableSize;
@@ -165,18 +165,18 @@ struct HistoricResourceUsageData {
 HistoricResourceUsageData::HistoricResourceUsageData()
 {
     // VM tag categories.
-    categories[MemoryCategory::JSJIT] = HistoricMemoryCategoryInfo(MemoryCategory::JSJIT, { 255, 96, 255 }, "JS JIT"_s);
-    categories[MemoryCategory::Gigacage] = HistoricMemoryCategoryInfo(MemoryCategory::Gigacage, { 101, 79, 240 }, "Gigacage"_s);
-    categories[MemoryCategory::Images] = HistoricMemoryCategoryInfo(MemoryCategory::Images, Color::yellow, "Images"_s);
-    categories[MemoryCategory::Layers] = HistoricMemoryCategoryInfo(MemoryCategory::Layers, Color::cyan, "Layers"_s);
-    categories[MemoryCategory::LibcMalloc] = HistoricMemoryCategoryInfo(MemoryCategory::LibcMalloc, Color::green, "libc malloc"_s);
-    categories[MemoryCategory::bmalloc] = HistoricMemoryCategoryInfo(MemoryCategory::bmalloc, { 255, 96, 96 }, "bmalloc"_s);
-    categories[MemoryCategory::IsoHeap] = HistoricMemoryCategoryInfo(MemoryCategory::IsoHeap, { 128, 159, 64 }, "IsoHeap"_s);
-    categories[MemoryCategory::Other] = HistoricMemoryCategoryInfo(MemoryCategory::Other, { 192, 255, 0 }, "Other"_s);
+    categories[MemoryCategory::JSJIT] = HistoricMemoryCategoryInfo(MemoryCategory::JSJIT, { 255, 96, 255 }, "JS JIT"_si);
+    categories[MemoryCategory::Gigacage] = HistoricMemoryCategoryInfo(MemoryCategory::Gigacage, { 101, 79, 240 }, "Gigacage"_si);
+    categories[MemoryCategory::Images] = HistoricMemoryCategoryInfo(MemoryCategory::Images, Color::yellow, "Images"_si);
+    categories[MemoryCategory::Layers] = HistoricMemoryCategoryInfo(MemoryCategory::Layers, Color::cyan, "Layers"_si);
+    categories[MemoryCategory::LibcMalloc] = HistoricMemoryCategoryInfo(MemoryCategory::LibcMalloc, Color::green, "libc malloc"_si);
+    categories[MemoryCategory::bmalloc] = HistoricMemoryCategoryInfo(MemoryCategory::bmalloc, { 255, 96, 96 }, "bmalloc"_si);
+    categories[MemoryCategory::IsoHeap] = HistoricMemoryCategoryInfo(MemoryCategory::IsoHeap, { 128, 159, 64 }, "IsoHeap"_si);
+    categories[MemoryCategory::Other] = HistoricMemoryCategoryInfo(MemoryCategory::Other, { 192, 255, 0 }, "Other"_si);
 
     // Sub categories (e.g breakdown of bmalloc tag.)
-    categories[MemoryCategory::GCHeap] = HistoricMemoryCategoryInfo(MemoryCategory::GCHeap, { 160, 160, 255 }, "GC heap"_s, true);
-    categories[MemoryCategory::GCOwned] = HistoricMemoryCategoryInfo(MemoryCategory::GCOwned, { 255, 192, 96 }, "GC owned"_s, true);
+    categories[MemoryCategory::GCHeap] = HistoricMemoryCategoryInfo(MemoryCategory::GCHeap, { 160, 160, 255 }, "GC heap"_si, true);
+    categories[MemoryCategory::GCOwned] = HistoricMemoryCategoryInfo(MemoryCategory::GCOwned, { 255, 192, 96 }, "GC owned"_si, true);
 
 #ifndef NDEBUG
     // Ensure this aligns with ResourceUsageData's category order.
@@ -258,7 +258,7 @@ void ResourceUsageOverlay::platformDestroy()
     ResourceUsageThread::removeObserver(this);
 }
 
-static void showText(CGContextRef context, float x, float y, CGColorRef color, const String& text)
+static void showText(CGContextRef context, float x, float y, CGColorRef color, StringImpl* text)
 {
     CGContextSaveGState(context);
 
@@ -277,7 +277,7 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     CFTypeRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
     CFTypeRef values[] = { font.get(), kCFBooleanTrue };
     auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    auto cstr = text.ascii();
+    auto cstr = ascii(text);
     auto cstrSpan = cstr.span();
     auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(cstrSpan.data()), cstrSpan.size(), kCFStringEncodingASCII, false, kCFAllocatorNull));
     auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
@@ -289,7 +289,7 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     CGContextRestoreGState(context);
 }
 
-static void drawGraphLabel(CGContextRef context, float x, float y, const String& text)
+static void drawGraphLabel(CGContextRef context, float x, float y, StringImpl* text)
 {
     static NeverDestroyed<RetainPtr<CGColorRef>> black = createColor(0, 0, 0, 1);
     showText(context, x + 5, y - 3, black.get().get(), text);
@@ -317,7 +317,7 @@ static void drawCpuHistory(CGContextRef context, float x1, float y1, float y2, R
         i++;
     });
 
-    drawGraphLabel(context, x1, y2, "CPU"_s);
+    drawGraphLabel(context, x1, y2, "CPU"_si);
 }
 
 static void drawGCHistory(CGContextRef context, float x1, float y1, float y2, RingBuffer<size_t>& sizeHistory, RingBuffer<size_t>& capacityHistory)
@@ -360,7 +360,7 @@ static void drawGCHistory(CGContextRef context, float x1, float y1, float y2, Ri
         i++;
     });
 
-    drawGraphLabel(context, x1, y2, "GC"_s);
+    drawGraphLabel(context, x1, y2, "GC"_si);
 }
 
 static void drawMemHistory(CGContextRef context, float x1, float y1, float y2, HistoricResourceUsageData& data)
@@ -406,7 +406,7 @@ static void drawMemHistory(CGContextRef context, float x1, float y1, float y2, H
         ++i;
     }
 
-    drawGraphLabel(context, x1, y2, "Mem"_s);
+    drawGraphLabel(context, x1, y2, "Mem"_si);
 }
 
 static const float fullCircleInRadians = std::numbers::pi_v<float> * 2;
@@ -434,7 +434,7 @@ static void drawMemoryPie(CGContextRef context, FloatRect& rect, HistoricResourc
         drawSlice(context, center, angle, radius, category.dirtySize.last(), totalDirty, category.color.get());
 }
 
-static String formatByteNumber(size_t number)
+static RefPtr<StringImpl> formatByteNumber(size_t number)
 {
     if (number >= 1024 * 1048576)
         return makeString(FormattedNumber::fixedWidth(number / (1024. * 1048576), 3), " GB"_s);
@@ -442,14 +442,14 @@ static String formatByteNumber(size_t number)
         return makeString(FormattedNumber::fixedWidth(number / 1048576., 2), " MB"_s);
     if (number >= 1024)
         return makeString(FormattedNumber::fixedWidth(number / 1024, 1), " kB"_s);
-    return String::number(number);
+    return makeString(number);
 }
 
-static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
+static RefPtr<StringImpl> gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
     if (timerFireDate.isNaN())
-        return "[not scheduled]"_s;
-    return String::numberToStringFixedPrecision((timerFireDate - now).seconds());
+        return "[not scheduled]"_si;
+    return StringImpl::numberToStringFixedPrecision((timerFireDate - now).seconds());
 }
 
 void ResourceUsageOverlay::platformDraw(CGContextRef context)

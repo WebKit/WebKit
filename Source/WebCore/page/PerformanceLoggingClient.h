@@ -45,7 +45,7 @@ public:
     };
     virtual void logScrollingEvent(ScrollingEvent, MonotonicTime, uint64_t) = 0;
 
-    WEBCORE_EXPORT static String synchronousScrollingReasonsAsString(OptionSet<SynchronousScrollingReason>);
+    WEBCORE_EXPORT static RefPtr<StringImpl> synchronousScrollingReasonsAsString(OptionSet<SynchronousScrollingReason>);
 
     virtual ~PerformanceLoggingClient() = default;
 };

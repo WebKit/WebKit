@@ -47,20 +47,20 @@ public:
         bool recursive { false };
     };
 
-    WEBCORE_EXPORT static Ref<FileSystemDirectoryHandle> create(ScriptExecutionContext&, String&&, FileSystemHandleGlobalIdentifier, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
-    WEBCORE_EXPORT static Ref<FileSystemDirectoryHandle> create(ScriptExecutionContext&, String&&, FileSystemHandleGlobalIdentifier);
-    void getFileHandle(const String& name, const GetFileOptions&, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&&);
-    void getDirectoryHandle(const String& name, const GetDirectoryOptions&, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
-    void removeEntry(const String& name, const RemoveOptions&, DOMPromiseDeferred<void>&&);
+    WEBCORE_EXPORT static Ref<FileSystemDirectoryHandle> create(ScriptExecutionContext&, RefPtr<StringImpl>&&, FileSystemHandleGlobalIdentifier, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
+    WEBCORE_EXPORT static Ref<FileSystemDirectoryHandle> create(ScriptExecutionContext&, RefPtr<StringImpl>&&, FileSystemHandleGlobalIdentifier);
+    void getFileHandle(StringImpl* name, const GetFileOptions&, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&&);
+    void getDirectoryHandle(StringImpl* name, const GetDirectoryOptions&, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
+    void removeEntry(StringImpl* name, const RemoveOptions&, DOMPromiseDeferred<void>&&);
     void resolve(const FileSystemHandle&, DOMPromiseDeferred<IDLNullable<IDLSequence<IDLUSVString>>>&&);
 
-    void getHandleNames(CompletionHandler<void(ExceptionOr<Vector<String>>&&)>&&);
-    void getHandle(const String& name, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandle>>&&)>&&);
+    void getHandleNames(CompletionHandler<void(ExceptionOr<Vector<RefPtr<StringImpl>>>&&)>&&);
+    void getHandle(StringImpl* name, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandle>>&&)>&&);
 
     class Iterator : public RefCounted<FileSystemDirectoryHandle::Iterator> {
     public:
         NODELETE static Ref<Iterator> create(FileSystemDirectoryHandle&);
-        using Result = std::optional<KeyValuePair<String, Ref<FileSystemHandle>>>;
+        using Result = std::optional<KeyValuePair<RefPtr<StringImpl>, Ref<FileSystemHandle>>>;
         void next(CompletionHandler<void(ExceptionOr<Result>&&)>&&);
     private:
         explicit Iterator(FileSystemDirectoryHandle& source)
@@ -71,14 +71,14 @@ public:
 
         const Ref<FileSystemDirectoryHandle> m_source;
         size_t m_index { 0 };
-        Vector<String> m_keys;
+        Vector<RefPtr<StringImpl>> m_keys;
         bool m_isInitialized { false };
         bool m_isWaitingForResult { false };
     };
     NODELETE Ref<Iterator> createIterator(ScriptExecutionContext*);
 
 private:
-    FileSystemDirectoryHandle(ScriptExecutionContext&, String&&, FileSystemHandleGlobalIdentifier, Markable<FileSystemHandleIdentifier>, RefPtr<FileSystemStorageConnection>&&);
+    FileSystemDirectoryHandle(ScriptExecutionContext&, RefPtr<StringImpl>&&, FileSystemHandleGlobalIdentifier, Markable<FileSystemHandleIdentifier>, RefPtr<FileSystemStorageConnection>&&);
 };
 
 } // namespace WebCore

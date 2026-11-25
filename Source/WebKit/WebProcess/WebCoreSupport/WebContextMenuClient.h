@@ -47,7 +47,7 @@ private:
     void searchWithGoogle(const WebCore::LocalFrame*) override;
     void lookUpInDictionary(WebCore::LocalFrame*) override;
     bool isSpeaking() const override;
-    void speak(const String&) override;
+    void speak(StringImpl*) override;
     void stopSpeaking() override;
 
 #if ENABLE(IMAGE_ANALYSIS)

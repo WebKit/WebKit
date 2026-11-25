@@ -44,7 +44,7 @@ public:
         return adoptRef(*new InspectorAuditDOMObject(auditAgent));
     }
 
-    ExceptionOr<bool> hasEventListeners(Node&, const String& type);
+    ExceptionOr<bool> hasEventListeners(Node&, StringImpl* type);
 
     ExceptionOr<void> simulateUserInteraction(Document&, Ref<VoidCallback>&&);
 

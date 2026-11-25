@@ -168,7 +168,7 @@ void webkit_dom_html_quote_element_set_cite(WebKitDOMHTMLQuoteElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_QUOTE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLQuoteElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::citeAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::citeAttr, AtomStringImpl::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

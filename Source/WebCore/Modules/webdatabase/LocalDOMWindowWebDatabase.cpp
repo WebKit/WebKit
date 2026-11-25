@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-ExceptionOr<RefPtr<Database>> LocalDOMWindowWebDatabase::openDatabase(LocalDOMWindow& window, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
+ExceptionOr<RefPtr<Database>> LocalDOMWindowWebDatabase::openDatabase(LocalDOMWindow& window, StringImpl* name, StringImpl* version, StringImpl* displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
 {
     if (!window.isCurrentlyDisplayedInFrame())
         return RefPtr<Database> { nullptr };
@@ -47,7 +47,7 @@ ExceptionOr<RefPtr<Database>> LocalDOMWindowWebDatabase::openDatabase(LocalDOMWi
     RefPtr document = window.document();
     if (!document)
         return Exception { ExceptionCode::SecurityError };
-    document->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "Web SQL is deprecated. Please use IndexedDB instead."_s);
+    document->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "Web SQL is deprecated. Please use IndexedDB instead."_si);
 
     if (document->canAccessResource(ScriptExecutionContext::ResourceType::WebSQL) != ScriptExecutionContext::HasResourceAccess::Yes)
         return Exception { ExceptionCode::SecurityError };

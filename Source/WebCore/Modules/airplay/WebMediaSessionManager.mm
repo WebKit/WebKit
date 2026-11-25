@@ -81,7 +81,7 @@ NODELETE static bool flagsAreSet(MediaProducerMediaStateFlags value, MediaProduc
     return value.containsAny(flags);
 }
 
-String mediaProducerStateString(MediaProducerMediaStateFlags flags)
+RefPtr<StringImpl> mediaProducerStateString(MediaProducerMediaStateFlags flags)
 {
     StringBuilder string;
     string.append(" { "_s);
@@ -175,7 +175,7 @@ void WebMediaSessionManager::setMockMediaPlaybackTargetPickerEnabled(bool enable
     m_mockPickerEnabled = enabled;
 }
 
-void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetMockState state)
+void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(StringImpl* name, MediaPlaybackTargetMockState state)
 {
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__);
     protect(mockPicker())->setState(name, state);

@@ -35,15 +35,15 @@ namespace WebCore {
 class HeaderFieldTokenizer {
 
 public:
-    NODELETE explicit HeaderFieldTokenizer(const String&);
+    NODELETE explicit HeaderFieldTokenizer(StringImpl*);
 
     // Try to parse a separator character, a token or either a token or a quoted
     // string from the |header_field| input. Return |true| on success. Return
     // |false| if the separator character, the token or the quoted string is
     // missing or invalid.
     NODELETE bool consume(char16_t);
-    String consumeToken();
-    String consumeTokenOrQuotedString();
+    RefPtr<StringImpl> consumeToken();
+    RefPtr<StringImpl> consumeTokenOrQuotedString();
 
     // Consume all characters before (but excluding) any of the characters from
     // the Vector parameter are found.
@@ -51,14 +51,14 @@ public:
     // character of the base string, the Vector should be small (< 3 members).
     NODELETE void consumeBeforeAnyCharMatch(const Vector<char16_t>&);
 
-    bool isConsumed() const { return m_index >= m_input.length(); }
+    bool isConsumed() const { return m_index >= length(m_input); }
 
 private:
-    String consumeQuotedString();
+    RefPtr<StringImpl> consumeQuotedString();
     NODELETE void skipSpaces();
 
     unsigned m_index = 0;
-    const String m_input;
+    const RefPtr<StringImpl> m_input;
 };
 
 } // namespace WebCore

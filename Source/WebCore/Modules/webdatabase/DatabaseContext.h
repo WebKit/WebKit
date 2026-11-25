@@ -60,7 +60,7 @@ public:
     bool stopDatabases(DatabaseTaskSynchronizer*);
 
     bool allowDatabaseAccess() const;
-    void databaseExceededQuota(const String& name, DatabaseDetails);
+    void databaseExceededQuota(StringImpl* name, DatabaseDetails);
 
     NODELETE Document* document() const;
     const SecurityOriginData& securityOrigin() const;

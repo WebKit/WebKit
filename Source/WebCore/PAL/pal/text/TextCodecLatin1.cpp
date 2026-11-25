@@ -98,7 +98,7 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-String TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool& sawException)
+RefPtr<StringImpl> TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool& sawException)
 {
     std::span<Latin1Character> characters;
     if (bytes.empty())
@@ -108,7 +108,7 @@ String TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool&
         sawException = true;
         return emptyString();
     }
-    String result = String::createUninitialized(bytes.size(), characters);
+    RefPtr<StringImpl> result = StringImpl::createUninitialized(bytes.size(), characters);
 
     auto source = bytes;
     const uint8_t* alignedEnd = WTF::alignToMachineWord(std::to_address(source.end()));
@@ -154,7 +154,7 @@ useLookupTable:
     
 upConvertTo16Bit:
     std::span<char16_t> characters16;
-    String result16 = String::createUninitialized(bytes.size(), characters16);
+    RefPtr<StringImpl> result16 = StringImpl::createUninitialized(bytes.size(), characters16);
 
     auto destination16 = characters16;
 

@@ -34,12 +34,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(XSLImportRule);
 
-Ref<XSLImportRule> XSLImportRule::create(XSLStyleSheet& parentSheet, const String& href)
+Ref<XSLImportRule> XSLImportRule::create(XSLStyleSheet& parentSheet, StringImpl* href)
 {
     return adoptRef(*new XSLImportRule(parentSheet, href));
 }
 
-XSLImportRule::XSLImportRule(XSLStyleSheet& parent, const String& href)
+XSLImportRule::XSLImportRule(XSLStyleSheet& parent, StringImpl* href)
     : m_parentStyleSheet(parent)
     , m_strHref(href)
 {
@@ -54,7 +54,7 @@ XSLImportRule::~XSLImportRule()
         protect(m_cachedSheet)->removeClient(*this);
 }
 
-void XSLImportRule::setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet)
+void XSLImportRule::setXSLStyleSheet(StringImpl* href, const URL& baseURL, StringImpl* sheet)
 {
     if (m_styleSheet)
         styleSheet()->setParentStyleSheet(nullptr);
@@ -83,7 +83,7 @@ void XSLImportRule::loadSheet()
 
     RefPtr cachedResourceLoader = rootSheet->cachedResourceLoader();
 
-    String absHref = m_strHref;
+    RefPtr<StringImpl> absHref = m_strHref;
     RefPtr parentSheet = parentStyleSheet();
     if (!parentSheet->baseURL().isNull())
         // use parent styleheet's URL as the base URL
@@ -92,7 +92,7 @@ void XSLImportRule::loadSheet()
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
     for (RefPtr parentSheet = parentStyleSheet(); parentSheet; parentSheet = parentSheet->parentStyleSheet()) {
-        if (absHref == parentSheet->baseURL().string())
+        if (equal(absHref, parentSheet->baseURL().string()))
             return;
     }
 

@@ -35,7 +35,7 @@ enum class DateComponentsType : uint8_t;
 
 class MeasureTextClient {
 public:
-    virtual float measureText(const String&) const = 0;
+    virtual float measureText(StringImpl*) const = 0;
     virtual ~MeasureTextClient() = default;
 };
 

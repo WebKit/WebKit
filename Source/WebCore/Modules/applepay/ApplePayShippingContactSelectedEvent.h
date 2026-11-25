@@ -37,7 +37,7 @@ class PaymentContact;
 class ApplePayShippingContactSelectedEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ApplePayShippingContactSelectedEvent);
 public:
-    static Ref<ApplePayShippingContactSelectedEvent> create(const AtomString& type, unsigned version, const PaymentContact& shippingContact)
+    static Ref<ApplePayShippingContactSelectedEvent> create(AtomStringImpl* type, unsigned version, const PaymentContact& shippingContact)
     {
         return adoptRef(*new ApplePayShippingContactSelectedEvent(type, version, shippingContact));
     }
@@ -47,7 +47,7 @@ public:
     const ApplePayPaymentContact& shippingContact() const LIFETIME_BOUND { return m_shippingContact; }
 
 private:
-    ApplePayShippingContactSelectedEvent(const AtomString& type, unsigned version, const PaymentContact&);
+    ApplePayShippingContactSelectedEvent(AtomStringImpl* type, unsigned version, const PaymentContact&);
 
     const LocalizedApplePayPaymentContact m_shippingContact;
 };

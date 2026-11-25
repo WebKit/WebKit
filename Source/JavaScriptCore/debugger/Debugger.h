@@ -151,7 +151,7 @@ public:
     bool suppressAllPauses() const { return m_suppressAllPauses; }
     void setSuppressAllPauses(bool suppress) { m_suppressAllPauses = suppress; }
 
-    JS_EXPORT_PRIVATE virtual void sourceParsed(JSGlobalObject*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage);
+    JS_EXPORT_PRIVATE virtual void sourceParsed(JSGlobalObject*, SourceProvider*, int errorLineNumber, StringImpl* errorMessage);
 #if ENABLE(WEBASSEMBLY)
     JS_EXPORT_PRIVATE virtual void sourceParsed(JSGlobalObject*, JSWebAssemblyModule*);
 #endif
@@ -196,11 +196,11 @@ public:
 
     // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify Debugger::Script to use SourceProvider
     struct Script {
-        String url;
-        String source;
-        String displayName;
-        String sourceURL;
-        String sourceMappingURL;
+        RefPtr<StringImpl> url;
+        RefPtr<StringImpl> source;
+        RefPtr<StringImpl> displayName;
+        RefPtr<StringImpl> sourceURL;
+        RefPtr<StringImpl> sourceMappingURL;
         uint64_t requestIdentifier { 0 };
         RefPtr<SourceProvider> sourceProvider;
         int startLine { 0 };
@@ -211,14 +211,14 @@ public:
         bool isInternalScript { false };
     };
 
-    static bool isWebKitInjectedScript(const String& sourceURL);
+    static bool isWebKitInjectedScript(StringImpl* sourceURL);
 
     class Observer {
     public:
         virtual ~Observer() { }
 
         virtual void didParseSource(JSGlobalObject*, SourceID, const Debugger::Script&) { }
-        virtual void failedToParseSource(const String& /* url */, const String& /* data */, int /* firstLine */, int /* errorLine */, const String& /* errorMessage */) { }
+        virtual void failedToParseSource(StringImpl* /* url */, StringImpl* /* data */, int /* firstLine */, int /* errorLine */, StringImpl* /* errorMessage */) { }
 
         virtual void didCreateNativeExecutable(NativeExecutable&) { }
         virtual void willCallNativeExecutable(CallFrame*) { }
@@ -235,7 +235,7 @@ public:
         virtual void didContinue() { }
 
         virtual void applyBreakpoints(CodeBlock*) { }
-        virtual void breakpointActionLog(JSGlobalObject*, const String& /* data */) { }
+        virtual void breakpointActionLog(JSGlobalObject*, StringImpl* /* data */) { }
         virtual void breakpointActionSound(BreakpointActionID) { }
         virtual void breakpointActionProbe(JSGlobalObject*, BreakpointActionID, unsigned /* batchId */, unsigned /* sampleId */, JSValue /* result */) { }
         virtual void didDeferBreakpointPause(BreakpointID) { }

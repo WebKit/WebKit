@@ -53,30 +53,30 @@ public:
 
     static RefPtr<MIMEHeader> parseHeader(SharedBufferChunkReader& crLFLineReader);
 
-    bool isMultipart() const { return m_contentType.startsWith("multipart/"_s); }
+    bool isMultipart() const { return startsWith(m_contentType, "multipart/"_s); }
 
-    String contentType() const { return m_contentType; }
-    String charset() const { return m_charset; }
+    RefPtr<StringImpl> contentType() const { return m_contentType; }
+    RefPtr<StringImpl> charset() const { return m_charset; }
     Encoding contentTransferEncoding() const { return m_contentTransferEncoding; }
-    String contentLocation() const { return m_contentLocation; }
+    RefPtr<StringImpl> contentLocation() const { return m_contentLocation; }
 
     // Multi-part type and boundaries are only valid for multipart MIME headers.
-    String multiPartType() const { return m_multipartType; }
-    String endOfPartBoundary() const { return m_endOfPartBoundary; }
-    String endOfDocumentBoundary() const { return m_endOfDocumentBoundary; }
+    RefPtr<StringImpl> multiPartType() const { return m_multipartType; }
+    RefPtr<StringImpl> endOfPartBoundary() const { return m_endOfPartBoundary; }
+    RefPtr<StringImpl> endOfDocumentBoundary() const { return m_endOfDocumentBoundary; }
 
 private:
     MIMEHeader();
 
     static Encoding parseContentTransferEncoding(StringView);
 
-    String m_contentType;
-    String m_charset;
+    RefPtr<StringImpl> m_contentType;
+    RefPtr<StringImpl> m_charset;
     Encoding m_contentTransferEncoding;
-    String m_contentLocation;
-    String m_multipartType;
-    String m_endOfPartBoundary;
-    String m_endOfDocumentBoundary;
+    RefPtr<StringImpl> m_contentLocation;
+    RefPtr<StringImpl> m_multipartType;
+    RefPtr<StringImpl> m_endOfPartBoundary;
+    RefPtr<StringImpl> m_endOfDocumentBoundary;
 };
 
 }

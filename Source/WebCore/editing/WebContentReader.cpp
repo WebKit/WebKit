@@ -44,16 +44,16 @@ bool FrameWebContentReader::shouldSanitize() const
 {
     RefPtr document = m_frame->document();
     ASSERT(document);
-    return document->originIdentifierForPasteboard() != contentOrigin();
+    return !equal(document->originIdentifierForPasteboard(), contentOrigin());
 }
 
 MSOListQuirks FrameWebContentReader::msoListQuirksForMarkup() const
 {
-    return contentOrigin().isNull() ? MSOListQuirks::CheckIfNeeded : MSOListQuirks::Disabled;
+    return !contentOrigin() ? MSOListQuirks::CheckIfNeeded : MSOListQuirks::Disabled;
 }
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-bool WebContentReader::readFilePaths(const Vector<String>& paths)
+bool WebContentReader::readFilePaths(const Vector<RefPtr<StringImpl>>& paths)
 {
     if (paths.isEmpty() || !frame().document())
         return false;

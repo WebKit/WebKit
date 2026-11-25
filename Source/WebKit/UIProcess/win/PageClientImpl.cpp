@@ -114,7 +114,7 @@ void PageClientImpl::didRelaunchProcess()
     notImplemented();
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
+void PageClientImpl::toolTipChanged(StringImpl*, StringImpl* newToolTip)
 {
     m_view.setToolTip(newToolTip);
 }
@@ -257,10 +257,10 @@ bool PageClientImpl::handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy
         ofn.Flags |= OFN_ALLOWMULTISELECT;
 
     if (GetOpenFileName(&ofn)) {
-        Vector<String> fileList;
+        Vector<RefPtr<StringImpl>> fileList;
         auto p = fileBuffer.span().data();
         auto length = wcslen(p);
-        auto firstValue = String(p, length);
+        auto firstValue = StringImpl::create(p, length);
 
         // The value set in the buffer depends on whether one or more files are actually selected, regardless of the OFN_ALLOWMULTISELECT flag.
         // The number of selected files cannot be determined by the flags, so check the character at address nOffsetFile - 1.
@@ -270,7 +270,7 @@ bool PageClientImpl::handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy
             p += length + 1;
             while (*p) {
                 length = wcslen(p);
-                String fileName(p, length);
+                RefPtr<StringImpl> fileName = StringImpl::create(p, length);
                 fileList.append(FileSystem::pathByAppendingComponent(firstValue, WTF::move(fileName)));
                 p += length + 1;
             }
@@ -291,7 +291,7 @@ void PageClientImpl::didChangeContentSize(const IntSize& size)
     notImplemented();
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(const String& /* mimeType */, bool /* useCustomContentProvider */ )
+void PageClientImpl::didCommitLoadForMainFrame(StringImpl* /* mimeType */, bool /* useCustomContentProvider */ )
 {
     notImplemented();
 }
@@ -354,7 +354,7 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     notImplemented();
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, std::span<const uint8_t>)
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(StringImpl*, std::span<const uint8_t>)
 {
     notImplemented();
 }
@@ -441,12 +441,12 @@ HWND PageClientImpl::viewWidget()
     return m_view.window();
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const IntRect&, StringImpl* originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     // Reading back what the same origin just wrote needs no permission.
     if (requiresInteraction == WebCore::DOMPasteRequiresInteraction::No) {
         auto customData = WebCore::PlatformPasteboard(emptyString()).readCustomData();
-        if (customData && customData->origin() == originIdentifier) {
+        if (customData && equal(customData->origin(), originIdentifier)) {
             completionHandler(WebCore::DOMPasteAccessResponse::GrantedForGesture);
             return;
         }

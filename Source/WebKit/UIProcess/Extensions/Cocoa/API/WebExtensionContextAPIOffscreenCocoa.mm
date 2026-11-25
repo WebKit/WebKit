@@ -45,7 +45,7 @@ namespace WebKit {
 bool WebExtensionContext::isOffscreenMessageAllowed(IPC::Decoder& message)
 {
     if (RefPtr controller = extensionController())
-        return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::offscreen()) && controller->isFeatureEnabled(@"WebExtensionOffscreenEnabled");
+        return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::offscreen()) && controller->isFeatureEnabled(StringImpl::create(@"WebExtensionOffscreenEnabled").get());
 
     return false;
 }
@@ -66,19 +66,19 @@ void WebExtensionContext::offscreenCreateDocument(const WebExtensionOffscreenDoc
     static constexpr auto apiName = "offscreen.createDocument()"_s;
 
     if (m_offscreenWebView) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"only a single offscreen document may be created"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).ptr(), nullString(), StringImpl::create(@"only a single offscreen document may be created").get()));
         return;
     }
 
     URL documentURL { m_baseURL, parameters.url };
     if (!isURLForThisExtension(documentURL)) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"url must be a resource within the extension"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).ptr(), nullString(), StringImpl::create(@"url must be a resource within the extension").get()));
         return;
     }
 
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"the extension is not loaded"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).ptr(), nullString(), StringImpl::create(@"the extension is not loaded").get()));
         return;
     }
 
@@ -118,7 +118,7 @@ void WebExtensionContext::offscreenCloseDocument(CompletionHandler<void(std::exp
     static constexpr auto apiName = "offscreen.closeDocument()"_s;
 
     if (!m_offscreenWebView) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"no offscreen document is open"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).ptr(), nullString(), StringImpl::create(@"no offscreen document is open").get()));
         return;
     }
 
@@ -136,7 +136,7 @@ void WebExtensionContext::unloadOffscreenWebView()
 {
     static constexpr auto completionHandlerAPIName = "offscreen.createDocument()"_s;
     for (auto& completionHandler : std::exchange(m_offscreenDocumentLoadCompletionHandlers, { }))
-        completionHandler(toWebExtensionError(completionHandlerAPIName, nullString(), @"offscreen document was closed"));
+        completionHandler(toWebExtensionError(StringImpl::create(completionHandlerAPIName).ptr(), nullString(), StringImpl::create(@"offscreen document was closed").get()));
 
     m_offscreenWebViewActivity = { };
 

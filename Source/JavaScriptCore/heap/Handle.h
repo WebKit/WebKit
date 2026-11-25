@@ -94,7 +94,7 @@ template <typename Base> struct HandleConverter<Base, Unknown> {
     Handle<JSObject> asObject() const;
     bool isObject() const { return jsValue().isObject(); }
     bool getNumber(double number) const { return jsValue().getNumber(number); }
-    WTF::String getString(JSGlobalObject*) const;
+    RefPtr<StringImpl> getString(JSGlobalObject*) const;
     bool isUndefinedOrNull() const { return jsValue().isUndefinedOrNull(); }
 
 private:

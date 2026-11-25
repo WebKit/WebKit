@@ -92,7 +92,7 @@ static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(Ref<cons
     case CSSValueID::Matrix3d:
         return makeTransformComponent(CSSMatrixComponent::create(WTF::move(functionValue), document));
     default:
-        return Exception { ExceptionCode::TypeError, "Unexpected function value type"_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected function value type"_si };
     }
 }
 
@@ -102,7 +102,7 @@ ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Ref<const CSSTrans
     for (Ref value : list.get()) {
         RefPtr functionValue = dynamicDowncast<CSSFunctionValue>(value.ptr());
         if (!functionValue)
-            return Exception { ExceptionCode::TypeError, "Expected only function values in a transform list."_s };
+            return Exception { ExceptionCode::TypeError, "Expected only function values in a transform list."_si };
         auto component = createTransformComponent(functionValue.releaseNonNull(), document);
         if (component.hasException())
             return component.releaseException();

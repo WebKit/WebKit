@@ -50,8 +50,8 @@ static constexpr ASCIILiteral accessibilityIsLiveRegionRemovalAttributeKey = "UI
 #endif
 
 struct LiveRegionObjectMetadata {
-    String text;
-    String language;
+    RefPtr<StringImpl> text;
+    RefPtr<StringImpl> language;
     HashSet<AXID> descendants;
 };
 
@@ -61,7 +61,7 @@ AXLiveRegionManager::AXLiveRegionManager(AXObjectCache& cache)
 {
 }
 
-static UNUSED_FUNCTION String debugDescriptionForSnapshot(LiveRegionSnapshot snapshot)
+static UNUSED_FUNCTION RefPtr<StringImpl> debugDescriptionForSnapshot(LiveRegionSnapshot snapshot)
 {
     StringBuilder result;
     result.append("SNAPSHOT:\n"_s);
@@ -136,7 +136,7 @@ void AXLiveRegionManager::registerLiveRegion(AccessibilityObject& object, bool s
         handleLiveRegionChange(object, AnnouncementContents::All);
 }
 
-static LiveRegionStatus stringToLiveRegionStatus(const String& string)
+static LiveRegionStatus stringToLiveRegionStatus(StringImpl* string)
 {
     if (equalLettersIgnoringASCIICase(string, "assertive"_s))
         return LiveRegionStatus::Assertive;
@@ -146,7 +146,7 @@ static LiveRegionStatus stringToLiveRegionStatus(const String& string)
     return LiveRegionStatus::Off;
 }
 
-static OptionSet<LiveRegionRelevant> stringToLiveRegionRelevant(const String& string)
+static OptionSet<LiveRegionRelevant> stringToLiveRegionRelevant(StringImpl* string)
 {
     OptionSet<LiveRegionRelevant> result;
     for (auto attribute : StringView(string).split(' ')) {
@@ -173,7 +173,7 @@ NODELETE static bool hasSameObjectTexts(const LiveRegionSnapshot& oldSnapshot, c
         return false;
 
     for (size_t i = 0; i < oldSnapshot.objects.size(); ++i) {
-        if (oldSnapshot.objects[i].text != newSnapshot.objects[i].text)
+        if (!equal(oldSnapshot.objects[i].text, newSnapshot.objects[i].text))
             return false;
     }
     return true;
@@ -244,11 +244,11 @@ static constexpr size_t maximumAggregateLength = 131072;
 
 // Concatenates the objects' text, separated by a single space, with each object's own whitespace runs
 // collapsed and its leading and trailing whitespace dropped.
-static String aggregateText(const Vector<LiveRegionObject>& objects, bool& isTruncated, Vector<size_t>* objectEndOffsets = nullptr)
+static RefPtr<StringImpl> aggregateText(const Vector<LiveRegionObject>& objects, bool& isTruncated, Vector<size_t>* objectEndOffsets = nullptr)
 {
     size_t lengthHint = 0;
     for (auto& object : objects)
-        lengthHint += object.text.length() + 1;
+        lengthHint += length(object.text) + 1;
 
     StringBuilder builder;
     builder.reserveCapacity(std::min(lengthHint, maximumAggregateLength + 1));
@@ -256,8 +256,8 @@ static String aggregateText(const Vector<LiveRegionObject>& objects, bool& isTru
         objectEndOffsets->reserveInitialCapacity(objects.size());
 
     for (auto& object : objects) {
-        String text = object.text.simplifyWhiteSpace(isUnicodeWhitespace);
-        if (!text.isEmpty()) {
+        RefPtr<StringImpl> text = simplifyWhiteSpace(object.text, isUnicodeWhitespace);
+        if (!isEmpty(text)) {
             if (builder.length())
                 builder.append(' ');
             builder.append(text);
@@ -276,10 +276,10 @@ static String aggregateText(const Vector<LiveRegionObject>& objects, bool& isTru
 
 // True when text carries no word of its own, which is not worth announcing. Resolving inline markup can
 // split a trailing punctuation mark into its own object, which would otherwise be announced as just ".".
-static bool isPunctuationOnly(const String& text)
+static bool isPunctuationOnly(StringImpl* text)
 {
-    for (unsigned i = 0; i < text.length(); ++i) {
-        char16_t character = text[i];
+    for (unsigned i = 0; i < length(text); ++i) {
+        char16_t character = codeUnitAt(text, i);
         if (!isPunctuation(character) && !isUnicodeWhitespace(character))
             return false;
     }
@@ -326,16 +326,16 @@ LiveRegionSnapshot AXLiveRegionManager::buildLiveRegionSnapshot(AccessibilityObj
             for (auto& child : object.unignoredChildren())
                 collectDescendants(downcast<AccessibilityObject>(child.get()));
 
-            String text = object.announcementText();
-            snapshot.hasAnyText |= !text.isEmpty();
+            RefPtr<StringImpl> text = object.announcementText();
+            snapshot.hasAnyText |= !isEmpty(text);
             snapshot.hasAtomicRegion = true;
             snapshot.objects.append({ object.objectID(), WTF::move(text), object.languageIncludingAncestors(), WTF::move(descendants), /* isTextContent */ false });
             return;
         }
 
         if (protectedThis->shouldIncludeInSnapshot(object)) {
-            String text = object.announcementText();
-            snapshot.hasAnyText |= !text.isEmpty();
+            RefPtr<StringImpl> text = object.announcementText();
+            snapshot.hasAnyText |= !isEmpty(text);
             snapshot.objects.append({ object.objectID(), WTF::move(text), object.languageIncludingAncestors(), { }, object.isStaticText() });
         } else {
             for (auto& child : object.unignoredChildren())
@@ -357,7 +357,7 @@ bool AXLiveRegionManager::shouldIncludeInSnapshot(AccessibilityObject& object) c
         return true;
 
     // Description will account for alt text, aria-label(ledby), and title attributes.
-    if (String description = object.description(); description.length())
+    if (RefPtr<StringImpl> description = object.description(); length(description))
         return true;
 
     // If an object has unignored children, there isn't a need to include it in the snapshot since the children will return YES.
@@ -365,7 +365,7 @@ bool AXLiveRegionManager::shouldIncludeInSnapshot(AccessibilityObject& object) c
         return false;
 
     // For leaf objects, include if they have a value (e.g., form controls).
-    if (!object.stringValue().isEmpty())
+    if (!isEmpty(object.stringValue()))
         return true;
 
     Vector<AccessibilityText> accessibilityText;
@@ -373,12 +373,12 @@ bool AXLiveRegionManager::shouldIncludeInSnapshot(AccessibilityObject& object) c
 
 #if PLATFORM(COCOA)
     // For leaf objects, include if they have accessible description text (e.g., images with alt text).
-    if (!object.descriptionAttributeValue(&accessibilityText).isEmpty())
+    if (!isEmpty(object.descriptionAttributeValue(&accessibilityText)))
         return true;
 #endif
 
     // Some leaf objects (like buttons) return their text via `title`.
-    if (!object.title(&accessibilityText).isEmpty())
+    if (!isEmpty(object.title(&accessibilityText)))
         return true;
 
     return false;
@@ -404,20 +404,20 @@ static std::optional<Vector<LiveRegionObject>> appendedObjects(const LiveRegionS
     if (oldSnapshot.hasAtomicRegion || newSnapshot.hasAtomicRegion)
         return std::nullopt;
 
-    const String& oldAggregate = oldSnapshot.aggregatedText;
-    const String& newAggregate = newSnapshot.aggregatedText;
+    const RefPtr<StringImpl>& oldAggregate = oldSnapshot.aggregatedText;
+    const RefPtr<StringImpl>& newAggregate = newSnapshot.aggregatedText;
 
-    if (oldAggregate.isEmpty())
+    if (isEmpty(oldAggregate))
         return std::nullopt;
 
     // The same text spread across a different set of objects. Streaming pages coalesce their many
     // small nodes into fewer, larger ones once the response is complete, which leaves the text
     // unchanged but matches up with none of the previous objects. Nothing was added, so there is
     // nothing to announce.
-    if (newAggregate == oldAggregate)
+    if (equal(newAggregate, oldAggregate))
         return Vector<LiveRegionObject> { };
 
-    if (!newAggregate.startsWith(oldAggregate))
+    if (!startsWith(newAggregate, oldAggregate))
         return std::nullopt;
 
     // Streaming often delivers partial words, so the point where the old text ended can fall in the
@@ -428,16 +428,16 @@ static std::optional<Vector<LiveRegionObject>> appendedObjects(const LiveRegionS
     // the new value should be announced in full rather than only the characters that changed.
     static constexpr size_t maximumSingleValueLength = 8;
 
-    size_t splitOffset = oldAggregate.length();
-    if (!isUnicodeWhitespace(newAggregate[splitOffset])) {
+    size_t splitOffset = length(oldAggregate);
+    if (!isUnicodeWhitespace(codeUnitAt(newAggregate, splitOffset))) {
         size_t limit = splitOffset > maximumWordBoundaryBackup ? splitOffset - maximumWordBoundaryBackup : 0;
         size_t candidate = splitOffset;
-        while (candidate > limit && !isUnicodeWhitespace(newAggregate[candidate - 1]))
+        while (candidate > limit && !isUnicodeWhitespace(codeUnitAt(newAggregate, candidate - 1)))
             --candidate;
 
-        if (candidate && isUnicodeWhitespace(newAggregate[candidate - 1]))
+        if (candidate && isUnicodeWhitespace(codeUnitAt(newAggregate, candidate - 1)))
             splitOffset = candidate;
-        else if (oldAggregate.length() <= maximumSingleValueLength) {
+        else if (length(oldAggregate) <= maximumSingleValueLength) {
             // No word boundary was found. Scripts that do not separate words with spaces (Chinese,
             // Japanese, Thai) never have one, so only rewind the whole text when it is short enough to
             // plausibly be a single value. Otherwise the entire region would be re-announced per chunk.
@@ -471,8 +471,8 @@ static std::optional<Vector<LiveRegionObject>> appendedObjects(const LiveRegionS
         }
 
         // Take the text from the aggregate, which is already whitespace-collapsed.
-        object.text = newAggregate.substring(announceFrom, objectEnd - announceFrom).trim(isUnicodeWhitespace);
-        if (object.text.isEmpty() || isPunctuationOnly(object.text))
+        object.text = trim(substring(newAggregate, announceFrom, objectEnd - announceFrom), isUnicodeWhitespace);
+        if (isEmpty(object.text) || isPunctuationOnly(object.text))
             continue;
 
         appended.append(WTF::move(object));
@@ -519,11 +519,11 @@ AXLiveRegionManager::LiveRegionDiff AXLiveRegionManager::computeChanges(const Li
 
     // Index the old objects by text too, so content that survived a re-render can still be matched
     // even though the objects backing it are new. See the second pass below.
-    HashMap<String, Vector<AXID>> oldObjectIDsByText;
+    HashMap<RefPtr<StringImpl>, Vector<AXID>> oldObjectIDsByText;
 
     for (auto& object : oldObjects) {
         unmatchedOldObjects.set(object.objectID, LiveRegionObjectMetadata { object.text, object.language, object.descendants });
-        if (!object.text.isEmpty())
+        if (!isEmpty(object.text))
             oldObjectIDsByText.add(object.text, Vector<AXID> { }).iterator->value.append(object.objectID);
     }
 
@@ -540,7 +540,7 @@ AXLiveRegionManager::LiveRegionDiff AXLiveRegionManager::computeChanges(const Li
         if (iterator == unmatchedOldObjects.end())
             unmatchedNewObjectIndices.append(i);
         else {
-            bool textChanged = iterator->value.text != newObject.text;
+            bool textChanged = !equal(iterator->value.text, newObject.text);
 
             if (!newObject.descendants.isEmpty()) {
                 // This is an atomic region, indicated by the presence of children.
@@ -574,7 +574,7 @@ AXLiveRegionManager::LiveRegionDiff AXLiveRegionManager::computeChanges(const Li
 
         bool matchedIdenticalText = false;
         // The text is only looked up when it is non-empty, matching how oldObjectIDsByText was built.
-        if (!newObject.text.isEmpty()) {
+        if (!isEmpty(newObject.text)) {
             if (auto iterator = oldObjectIDsByText.find(newObject.text); iterator != oldObjectIDsByText.end()) {
                 // An old object's text can only be claimed once, so drop candidates already matched by AXID above.
                 while (!iterator->value.isEmpty()) {
@@ -621,7 +621,7 @@ AttributedString AXLiveRegionManager::computeAnnouncement(OptionSet<LiveRegionRe
     bool hasText = hasAll || liveRegionRelevant.contains(LiveRegionRelevant::Text);
 
     StringBuilder stringBuilder;
-    Vector<std::pair<AttributedString::Range, HashMap<String, AttributedString::AttributeValue>>> attributes;
+    Vector<std::pair<AttributedString::Range, HashMap<RefPtr<StringImpl>, AttributedString::AttributeValue>>> attributes;
 
     size_t characterCount = 0;
 
@@ -631,7 +631,7 @@ AttributedString AXLiveRegionManager::computeAnnouncement(OptionSet<LiveRegionRe
     bool needsSpace = false;
 
     auto appendStringAndLanguage = [&](const LiveRegionObject& object, IsLiveRegionRemoval isRemoval = IsLiveRegionRemoval::No) {
-        if (object.text.isEmpty() || spokenObjects.contains(object.objectID))
+        if (isEmpty(object.text) || spokenObjects.contains(object.objectID))
             return;
 
         if (needsSpace) {
@@ -641,23 +641,23 @@ AttributedString AXLiveRegionManager::computeAnnouncement(OptionSet<LiveRegionRe
 
         uint64_t startLocation = stringBuilder.length();
         stringBuilder.append(object.text);
-        characterCount += object.text.length();
+        characterCount += length(object.text);
 
-        if (!object.language.isEmpty()) {
-            HashMap<String, AttributedString::AttributeValue> languageAttribute;
+        if (!isEmpty(object.language)) {
+            HashMap<RefPtr<StringImpl>, AttributedString::AttributeValue> languageAttribute;
             languageAttribute.set(accessibilityLanguageAttributeKey, AttributedString::AttributeValue { object.language });
             // The - / + 1 allows us to set the language of the space character seemlessly with the text around it.
-            attributes.append({ { needsSpace && startLocation ? startLocation - 1 : startLocation, needsSpace && startLocation ? object.text.length() + 1 : object.text.length() }, WTF::move(languageAttribute) });
+            attributes.append({ { needsSpace && startLocation ? startLocation - 1 : startLocation, needsSpace && startLocation ? length(object.text) + 1 : length(object.text) }, WTF::move(languageAttribute) });
         }
 
         if (isRemoval == IsLiveRegionRemoval::Yes) {
-            HashMap<String, AttributedString::AttributeValue> removalAttribute;
+            HashMap<RefPtr<StringImpl>, AttributedString::AttributeValue> removalAttribute;
             removalAttribute.set(accessibilityIsLiveRegionRemovalAttributeKey, AttributedString::AttributeValue { 1.0 });
-            attributes.append({ { needsSpace && startLocation ? startLocation - 1 : startLocation, needsSpace && startLocation ? object.text.length() + 1 : object.text.length() }, WTF::move(removalAttribute) });
+            attributes.append({ { needsSpace && startLocation ? startLocation - 1 : startLocation, needsSpace && startLocation ? length(object.text) + 1 : length(object.text) }, WTF::move(removalAttribute) });
         }
 
         // If the preceeding object already ends with a space (e.g., list markers), no need to add another.
-        needsSpace = object.text.isEmpty() || object.text[object.text.length() - 1] != ' ';
+        needsSpace = isEmpty(object.text) || codeUnitAt(object.text, length(object.text) - 1) != ' ';
         spokenObjects.add(object.objectID);
     };
 
@@ -697,7 +697,7 @@ void AXLiveRegionManager::postAnnouncementForChange(AccessibilityObject& object,
 
     // Collect the text of every object that could contribute to the announcement, in the order
     // computeAnnouncement() will consider them, so translated text can be written back positionally.
-    Vector<String> segments;
+    Vector<RefPtr<StringImpl>> segments;
     auto collect = [&](const Vector<LiveRegionObject>& objects) {
         for (auto& liveRegionObject : objects)
             segments.append(liveRegionObject.text);
@@ -716,13 +716,13 @@ void AXLiveRegionManager::postAnnouncementForChange(AccessibilityObject& object,
     // object in the region on every update just to read them.
     auto liveRegionStatus = newSnapshot.liveRegionStatus;
     auto liveRegionRelevant = newSnapshot.liveRegionRelevant;
-    auto assemble = [protectedThis = CheckedRef { *this }, object = Ref { object }, diff, liveRegionStatus, liveRegionRelevant, expectedSegmentCount](Vector<String>&& translatedSegments, const String& language) mutable {
+    auto assemble = [protectedThis = CheckedRef { *this }, object = Ref { object }, diff, liveRegionStatus, liveRegionRelevant, expectedSegmentCount](Vector<RefPtr<StringImpl>>&& translatedSegments, StringImpl* language) mutable {
         if (translatedSegments.size() == expectedSegmentCount) {
             size_t index = 0;
             auto applyTranslation = [&](Vector<LiveRegionObject>& objects) {
                 for (auto& liveRegionObject : objects) {
                     liveRegionObject.text = WTF::move(translatedSegments[index++]);
-                    if (!language.isEmpty())
+                    if (!isEmpty(language))
                         liveRegionObject.language = language;
                 }
             };
@@ -732,7 +732,7 @@ void AXLiveRegionManager::postAnnouncementForChange(AccessibilityObject& object,
         }
 
         AttributedString announcement = protectedThis->computeAnnouncement(liveRegionRelevant, diff);
-        if (announcement.isNull() || announcement.string.isEmpty())
+        if (announcement.isNull() || isEmpty(announcement.string))
             return;
 
         CheckedRef { protectedThis->m_cache }->postLiveRegionNotification(object, liveRegionStatus, announcement);

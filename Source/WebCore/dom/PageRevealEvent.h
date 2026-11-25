@@ -38,13 +38,13 @@ public:
         RefPtr<ViewTransition> viewTransition;
     };
 
-    NODELETE static Ref<PageRevealEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<PageRevealEvent> create(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
     ~PageRevealEvent();
 
     const RefPtr<ViewTransition>& viewTransition() const { return m_viewTransition; }
 
 private:
-    PageRevealEvent(const AtomString& type, Init&&, IsTrusted);
+    PageRevealEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
     const RefPtr<ViewTransition> m_viewTransition;
 };

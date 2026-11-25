@@ -191,7 +191,7 @@ public:
     static constexpr FloatSize nanSize();
     constexpr bool isNaN() const;
 
-    WEBCORE_EXPORT String toJSONString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
     operator DoubleSize() const { return { m_width, m_height }; }
@@ -317,7 +317,7 @@ template<> struct HashTraits<WebCore::FloatSize>;
 template<typename Type> struct LogArgument;
 template <>
 struct LogArgument<WebCore::FloatSize> {
-    static String toString(const WebCore::FloatSize& size)
+    static RefPtr<StringImpl> toString(const WebCore::FloatSize& size)
     {
         return size.toJSONString();
     }

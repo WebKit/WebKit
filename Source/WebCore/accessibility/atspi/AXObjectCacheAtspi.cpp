@@ -107,7 +107,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& coreObject, AX
             wrapper->valueChanged(coreObject.valueForRange());
         break;
     case AXNotification::InvalidStatusChanged:
-        wrapper->stateChanged("invalid-entry", coreObject.invalidStatusIncludingInferred() != "false"_s);
+        wrapper->stateChanged("invalid-entry", !equal(coreObject.invalidStatusIncludingInferred(), "false"_s));
         break;
     case AXNotification::ElementBusyChanged:
         wrapper->stateChanged("busy", coreObject.isBusy());
@@ -165,9 +165,9 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
     wrapper->selectionChanged(selection);
 }
 
-void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* coreObject, AXTextEditType editType, const String& text, const VisiblePosition& position)
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* coreObject, AXTextEditType editType, StringImpl* text, const VisiblePosition& position)
 {
-    if (text.isEmpty())
+    if (isEmpty(text))
         return;
 
     auto* wrapper = coreObject->wrapper();
@@ -197,7 +197,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     }
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* coreObject, const String& deletedText, const String& insertedText)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* coreObject, StringImpl* deletedText, StringImpl* insertedText)
 {
     if (!coreObject)
         coreObject = rootWebArea();
@@ -205,20 +205,20 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
     if (!coreObject)
         return;
 
-    if (deletedText.isEmpty() && insertedText.isEmpty())
+    if (isEmpty(deletedText) && isEmpty(insertedText))
         return;
 
     auto* wrapper = coreObject->wrapper();
     if (!wrapper)
         return;
 
-    if (!deletedText.isEmpty())
+    if (!isEmpty(deletedText))
         wrapper->textDeleted(deletedText, coreObject->visiblePositionForIndex(0));
-    if (!insertedText.isEmpty())
-        wrapper->textInserted(insertedText, coreObject->visiblePositionForIndex(insertedText.length()));
+    if (!isEmpty(insertedText))
+        wrapper->textInserted(insertedText, coreObject->visiblePositionForIndex(length(insertedText)));
 }
 
-void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* coreObject, AXTextEditType, const String& deletedText, AXTextEditType, const String& insertedText, const VisiblePosition& position)
+void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* coreObject, AXTextEditType, StringImpl* deletedText, AXTextEditType, StringImpl* insertedText, const VisiblePosition& position)
 {
     if (!coreObject)
         coreObject = rootWebArea();
@@ -226,16 +226,16 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
     if (!coreObject)
         return;
 
-    if (deletedText.isEmpty() && insertedText.isEmpty())
+    if (isEmpty(deletedText) && isEmpty(insertedText))
         return;
 
     auto* wrapper = coreObject->wrapper();
     if (!wrapper)
         return;
 
-    if (!deletedText.isEmpty())
+    if (!isEmpty(deletedText))
         wrapper->textDeleted(deletedText, position);
-    if (!insertedText.isEmpty())
+    if (!isEmpty(insertedText))
         wrapper->textInserted(insertedText, position);
 }
 

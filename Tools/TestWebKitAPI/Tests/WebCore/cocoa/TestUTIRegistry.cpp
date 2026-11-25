@@ -35,15 +35,15 @@ using namespace WebCore;
 
 TEST(UTIRegistry, AdditionalSupportedImageTypesForMailPsd)
 {
-    EXPECT_FALSE(isSupportedImageType("com.adobe.photoshop-image"_s));
-    EXPECT_FALSE(MIMETypeRegistry::isSupportedImageMIMEType("image/vnd.adobe.photoshop"_s));
-    EXPECT_FALSE(MIMETypeRegistry::isSupportedImageMIMEType("application/x-photoshop"_s));
+    EXPECT_FALSE(isSupportedImageType("com.adobe.photoshop-image"_si));
+    EXPECT_FALSE(MIMETypeRegistry::isSupportedImageMIMEType("image/vnd.adobe.photoshop"_si));
+    EXPECT_FALSE(MIMETypeRegistry::isSupportedImageMIMEType("application/x-photoshop"_si));
 
-    setAdditionalSupportedImageTypes(Vector { String { "com.adobe.photoshop-image"_s } });
-    EXPECT_TRUE(isSupportedImageType("com.adobe.photoshop-image"_s));
-    EXPECT_TRUE(MIMETypeRegistry::isSupportedImageMIMEType("image/vnd.adobe.photoshop"_s));
+    setAdditionalSupportedImageTypes(Vector { "com.adobe.photoshop-image"_si });
+    EXPECT_TRUE(isSupportedImageType("com.adobe.photoshop-image"_si));
+    EXPECT_TRUE(MIMETypeRegistry::isSupportedImageMIMEType("image/vnd.adobe.photoshop"_si));
     // If this fails, Mail may not be able to display psd images when editing.
-    EXPECT_TRUE(MIMETypeRegistry::isSupportedImageMIMEType("application/x-photoshop"_s));
+    EXPECT_TRUE(MIMETypeRegistry::isSupportedImageMIMEType("application/x-photoshop"_si));
     // If this fails, the special case of "application/x-photoshop" introduced in
     // https://bugs.webkit.org/show_bug.cgi?id=260464 should be removed or reworked.
     EXPECT_EQ(MIMETypeRegistry::mimeTypeForExtension("psd"_s), "application/x-photoshop"_s);

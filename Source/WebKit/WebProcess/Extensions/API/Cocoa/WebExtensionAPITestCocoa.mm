@@ -43,7 +43,7 @@
 
 namespace WebKit {
 
-JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef promiseRef, JSValueRef expectedError, const String& message)
+JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef promiseRef, JSValueRef expectedError, StringImpl* message)
 {
     __block JSValue *resolveCallback;
     __block JSValue *rejectCallback;
@@ -58,21 +58,21 @@ JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef p
     if (!isThenable(context, promise.JSValueRef))
         return JSValueMakeNull(context);
 
-    auto *nsMessage = message.createNSString().get();
+    auto *nsMessage = createNSString(message).get();
     auto generation = beginAsyncAssertion();
 
     // A failed assertion rejects the returned promise, so awaiting it throws like the other assertions.
     auto promiseHandler = ^(JSValue *result, JSValue *error) {
         bool passed = true;
-        String failureMessage;
+        RefPtr<StringImpl> failureMessage;
 
         settleAsyncAssertion(generation, [&] {
-            String falseException = nullString();
+            RefPtr<StringImpl> falseException = nullString();
 
             if (result || !error) {
                 passed = false;
-                failureMessage = combineMessages(nsMessage, "Promise did not reject with an error"_s);
-                assertEquals(context, false, expectedError ? debugString(context, expectedError) : "(any error)"_s, result ? debugString(context, result.JSValueRef) : "(no error)"_s, failureMessage, falseException);
+                failureMessage = combineMessages(StringImpl::create(nsMessage).get(), "Promise did not reject with an error"_si);
+                assertEquals(context, false, expectedError ? debugString(context, expectedError) : "(any error)"_si, result ? debugString(context, result.JSValueRef) : "(no error)"_si, failureMessage, falseException);
                 return;
             }
 
@@ -81,20 +81,20 @@ JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef p
             // By default, JSValueRef is set to an undefined value in the JS implementation.
             // It should not be possible to get a null value here.
             if (JSValueIsUndefined(context, expectedError) || !expectedError) {
-                assertEquals(context, true, "(any error)"_s, debugString(context, errorMessageValue), combineMessages(nsMessage, "Promise rejected with an error"_s), falseException);
+                assertEquals(context, true, "(any error)"_si, debugString(context, errorMessageValue), combineMessages(StringImpl::create(nsMessage).get(), "Promise rejected with an error"_si), falseException);
                 return;
             }
 
             if (isRegularExpression(context, expectedError)) {
-                JSValueRef testResult = invokeMethod<1>(context, expectedError, "test"_s, { errorMessageValue });
+                JSValueRef testResult = invokeMethod<1>(context, expectedError, "test"_si, { errorMessageValue });
                 passed = JSValueToBoolean(context, testResult);
-                failureMessage = combineMessages(nsMessage, "Promise rejected with an error that didn't match the regular expression"_s);
+                failureMessage = combineMessages(StringImpl::create(nsMessage).get(), "Promise rejected with an error that didn't match the regular expression"_si);
                 assertEquals(context, passed, debugString(context, expectedError), debugString(context, errorMessageValue), failureMessage, falseException);
                 return;
             }
 
             passed = JSValueIsEqual(context, expectedError, errorMessageValue, nullptr);
-            failureMessage = combineMessages(nsMessage, "Promise rejected with an error that didn't equal"_s);
+            failureMessage = combineMessages(StringImpl::create(nsMessage).get(), "Promise rejected with an error that didn't equal"_si);
             assertEquals(context, passed, debugString(context, expectedError), debugString(context, errorMessageValue), failureMessage, falseException);
         });
 
@@ -103,7 +103,7 @@ JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef p
             return;
         }
 
-        [rejectCallback callWithArguments:@[ [JSValue valueWithNewErrorFromMessage:failureMessage.createNSString().get() inContext:toJSContext(context)] ]];
+        [rejectCallback callWithArguments:@[ [JSValue valueWithNewErrorFromMessage:createNSString(failureMessage).get() inContext:toJSContext(context)] ]];
     };
 
     [promise invokeMethod:@"then" withArguments:@[
@@ -119,7 +119,7 @@ JSValueRef WebExtensionAPITest::assertRejects(JSContextRef context, JSValueRef p
     return resultPromise.JSValueRef;
 }
 
-JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef promiseRef, const String& message)
+JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef promiseRef, StringImpl* message)
 {
     __block JSValue *resolveCallback;
     __block JSValue *rejectCallback;
@@ -135,17 +135,17 @@ JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef 
         return JSValueMakeNull(context);
 
     // The handler runs after this function returns, so it needs its own copy of the message.
-    String messageCopy = message;
+    RefPtr<StringImpl> messageCopy = message;
 
     auto generation = beginAsyncAssertion();
 
     // A failed assertion rejects the returned promise, so awaiting it throws like the other assertions.
     auto promiseHandler = ^(JSValue *result, JSValue *error) {
-        String failureMessage;
+        RefPtr<StringImpl> failureMessage;
 
         settleAsyncAssertion(generation, [&] {
             if (!error) {
-                succeed(context, @"Promise resolved without an error");
+                succeed(context, StringImpl::create(@"Promise resolved without an error").get());
                 return;
             }
 
@@ -159,7 +159,7 @@ JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef 
             return;
         }
 
-        [rejectCallback callWithArguments:@[ [JSValue valueWithNewErrorFromMessage:failureMessage.createNSString().get() inContext:toJSContext(context)] ]];
+        [rejectCallback callWithArguments:@[ [JSValue valueWithNewErrorFromMessage:createNSString(failureMessage).get() inContext:toJSContext(context)] ]];
     };
 
     [promise invokeMethod:@"then" withArguments:@[
@@ -175,22 +175,22 @@ JSValueRef WebExtensionAPITest::assertResolves(JSContextRef context, JSValueRef 
     return resultPromise.JSValueRef;
 }
 
-JSValueRef WebExtensionAPITest::addTest(JSContextRef context, JSValueRef testFunctionRef, String callingAPIName)
+JSValueRef WebExtensionAPITest::addTest(JSContextRef context, JSValueRef testFunctionRef, RefPtr<StringImpl> callingAPIName)
 {
     if (!JSValueIsObject(context, testFunctionRef))
-        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "Error creating a new test."_s).createNSString().get() inContext:toJSContext(context)].JSValueRef;
+        return [JSValue valueWithNewPromiseRejectedWithReason:createNSString(toErrorString(callingAPIName, nullString(), "Error creating a new test."_si)).get() inContext:toJSContext(context)].JSValueRef;
 
-    JSValueRef testName = JSObjectGetProperty(context, JSValueToObject(context, testFunctionRef, nullptr), toJSString("name"_s).get(), nullptr);
-    if (toString(context, testName).isEmpty())
-        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "The supplied test function must be named."_s).createNSString().get() inContext:toJSContext(context)].JSValueRef;
+    JSValueRef testName = JSObjectGetProperty(context, JSValueToObject(context, testFunctionRef, nullptr), toJSString("name"_si).get(), nullptr);
+    if (isEmpty(toString(context, testName)))
+        return [JSValue valueWithNewPromiseRejectedWithReason:createNSString(toErrorString(callingAPIName, nullString(), "The supplied test function must be named."_si)).get() inContext:toJSContext(context)].JSValueRef;
 
     RefPtr page = toWebPage(context);
     if (!page)
-        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "Error creating a new test."_s).createNSString().get() inContext:toJSContext(context)].JSValueRef;
+        return [JSValue valueWithNewPromiseRejectedWithReason:createNSString(toErrorString(callingAPIName, nullString(), "Error creating a new test."_si)).get() inContext:toJSContext(context)].JSValueRef;
 
     RefPtr webExtensionControllerProxy = page->webExtensionControllerProxy();
     if (!webExtensionControllerProxy)
-        return [JSValue valueWithNewPromiseRejectedWithReason:toErrorString(callingAPIName, nullString(), "Error creating a new test."_s).createNSString().get() inContext:toJSContext(context)].JSValueRef;
+        return [JSValue valueWithNewPromiseRejectedWithReason:createNSString(toErrorString(callingAPIName, nullString(), "Error creating a new test."_si)).get() inContext:toJSContext(context)].JSValueRef;
 
     __block JSValue *resolveCallback;
     __block JSValue *rejectCallback;
@@ -250,20 +250,20 @@ void WebExtensionAPITest::startNextTest()
             NSString *errorMessage;
             if (error) {
                 JSValue *errorMessageValue = error.isObject && [error hasProperty:@"message"] ? error[@"message"] : error;
-                errorMessage = debugString(test.testFunction.context().get(), errorMessageValue.JSValueRef).createNSString().get();
-            } else if (!m_assertionMessage.isNull())
-                errorMessage = m_assertionMessage.createNSString().get();
+                errorMessage = createNSString(debugString(test.testFunction.context().get(), errorMessageValue.JSValueRef)).get();
+            } else if (m_assertionMessage)
+                errorMessage = createNSString(m_assertionMessage).get();
             else if (hasPendingAssertions)
                 errorMessage = @"The test finished with an assertion promise still pending. Await browser.test.assertRejects() and browser.test.assertResolves().";
 
-            errorMessage = errorMessage ? combineMessages("Promise rejected with an error: "_s, errorMessage).createNSString().get() : @"Promise rejected without an error";
+            errorMessage = errorMessage ? createNSString(combineMessages("Promise rejected with an error: "_si, StringImpl::create(errorMessage).get())).get() : @"Promise rejected without an error";
 
-            WebProcess::singleton().send(Messages::WebExtensionController::TestFinished(test.testName, false, errorMessage, test.location.first, test.location.second), test.webExtensionControllerIdentifier);
+            WebProcess::singleton().send(Messages::WebExtensionController::TestFinished(test.testName, false, StringImpl::create(errorMessage).get(), test.location.first, test.location.second), test.webExtensionControllerIdentifier);
 
             callObjectWithArguments<0>(test.rejectCallback.get(), test.rejectCallback.context().get(), { });
         } else {
             WebProcess::singleton().send(Messages::WebExtensionController::TestFinished
-            (test.testName, true, @"Promise resolved without an error.", test.location.first, test.location.second), test.webExtensionControllerIdentifier);
+            (test.testName, true, StringImpl::create(@"Promise resolved without an error.").get(), test.location.first, test.location.second), test.webExtensionControllerIdentifier);
             callObjectWithArguments<1>(test.resolveCallback.get(), test.resolveCallback.context().get(), { result.JSValueRef });
         }
 

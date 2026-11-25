@@ -372,7 +372,7 @@ void IOSurfacePool::discardAllSurfacesInternal()
     releaseLayerContents();
 }
 
-String IOSurfacePool::poolStatistics() const
+RefPtr<StringImpl> IOSurfacePool::poolStatistics() const
 {
 #if ENABLE_IOSURFACE_POOL_STATISTICS
     TextStream stream;

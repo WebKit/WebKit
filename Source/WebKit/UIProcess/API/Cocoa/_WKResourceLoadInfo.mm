@@ -118,7 +118,7 @@ NODELETE static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType
 
 - (NSString *)originalHTTPMethod
 {
-    return _info->originalHTTPMethod().createNSString().autorelease();
+    return createNSString(_info->originalHTTPMethod()).autorelease();
 }
 
 - (NSDate *)eventTimestamp
@@ -205,7 +205,7 @@ NODELETE static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType
         parentFrame ? parentFrame->_frameHandle->frameID() : std::nullopt,
         documentID ? WTF::UUID::fromNSUUID(documentID.get()) : std::nullopt,
         originalURL.get(),
-        originalHTTPMethod.get(),
+        StringImpl::create(originalHTTPMethod.get()),
         WallTime::fromRawSeconds(eventTimestamp.get().timeIntervalSince1970),
         static_cast<bool>(loadedFromCache.get().boolValue),
         static_cast<WebKit::ResourceLoadInfo::Type>(type.get().unsignedCharValue),

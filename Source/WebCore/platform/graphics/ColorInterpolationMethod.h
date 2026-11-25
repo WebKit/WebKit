@@ -231,7 +231,7 @@ static constexpr ASCIILiteral serializationForCSS(ColorInterpolationColorSpace i
 void serializationForCSS(StringBuilder&, ColorInterpolationColorSpace);
 void serializationForCSS(StringBuilder&, HueInterpolationMethod);
 void serializationForCSS(StringBuilder&, const ColorInterpolationMethod&);
-String serializationForCSS(const ColorInterpolationMethod&);
+RefPtr<StringImpl> serializationForCSS(const ColorInterpolationMethod&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, ColorInterpolationColorSpace);
 WTF::TextStream& operator<<(WTF::TextStream&, HueInterpolationMethod);

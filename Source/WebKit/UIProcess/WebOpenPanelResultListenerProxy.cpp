@@ -45,14 +45,14 @@ WebOpenPanelResultListenerProxy::WebOpenPanelResultListenerProxy(WebPageProxy* p
 WebOpenPanelResultListenerProxy::~WebOpenPanelResultListenerProxy() = default;
 
 #if PLATFORM(IOS_FAMILY)
-void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<WTF::String>& filenames, const String& displayString, const API::Data* iconImageData)
+void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<RefPtr<StringImpl>>& filenames, StringImpl* displayString, const API::Data* iconImageData)
 {
     if (RefPtr page = m_page)
         page->didChooseFilesForOpenPanelWithDisplayStringAndIcon(filenames, displayString, iconImageData);
 }
 #endif
 
-void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<String>& filenames, const Vector<String>& allowedMIMETypes)
+void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<RefPtr<StringImpl>>& filenames, const Vector<RefPtr<StringImpl>>& allowedMIMETypes)
 {
     if (RefPtr page = m_page)
         page->didChooseFilesForOpenPanel(filenames, allowedMIMETypes);

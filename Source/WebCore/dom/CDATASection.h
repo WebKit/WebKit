@@ -30,15 +30,15 @@ class CDATASection final : public Text {
     WTF_MAKE_TZONE_ALLOCATED(CDATASection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDATASection);
 public:
-    static Ref<CDATASection> create(Document&, String&&);
+    static Ref<CDATASection> create(Document&, RefPtr<StringImpl>&&);
 
 private:
-    CDATASection(Document&, String&&);
+    CDATASection(Document&, RefPtr<StringImpl>&&);
 
-    String nodeName() const override;
+    RefPtr<StringImpl> nodeName() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
-    Ref<Text> virtualCreate(String&&) override;
+    Ref<Text> virtualCreate(RefPtr<StringImpl>&&) override;
 };
 
 } // namespace WebCore

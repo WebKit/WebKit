@@ -49,42 +49,42 @@ enum class OpenID4VPTrustedAuthorityType : uint8_t {
 
 struct OpenID4VPTrustedAuthoritiesQuery {
     OpenID4VPTrustedAuthorityType type;
-    Vector<String> values;
+    Vector<RefPtr<StringImpl>> values;
 };
 
 struct OpenID4VPAllArrayElements { };
 
-using OpenID4VPClaimPathComponent = Variant<String, OpenID4VPAllArrayElements, uint64_t>;
+using OpenID4VPClaimPathComponent = Variant<RefPtr<StringImpl>, OpenID4VPAllArrayElements, uint64_t>;
 
-using OpenID4VPClaimValue = Variant<String, int64_t, bool>;
+using OpenID4VPClaimValue = Variant<RefPtr<StringImpl>, int64_t, bool>;
 
 struct OpenID4VPClaimsQuery {
-    String identifier;
+    RefPtr<StringImpl> identifier;
     Vector<OpenID4VPClaimPathComponent> path;
     Vector<OpenID4VPClaimValue> values;
     std::optional<bool> intentToRetain;
 };
 
 struct OpenID4VPCredentialQuery {
-    String identifier;
+    RefPtr<StringImpl> identifier;
     OpenID4VPCredentialFormat format;
     bool allowsMultiple { false };
-    String documentType;
-    Vector<String> verifiableCredentialTypes;
+    RefPtr<StringImpl> documentType;
+    Vector<RefPtr<StringImpl>> verifiableCredentialTypes;
     Vector<OpenID4VPTrustedAuthoritiesQuery> trustedAuthorities;
     bool requiresCryptographicHolderBinding { true };
     Vector<OpenID4VPClaimsQuery> claims;
-    Vector<Vector<String>> claimSets;
+    Vector<Vector<RefPtr<StringImpl>>> claimSets;
 };
 
 struct OpenID4VPCredentialSetQuery {
-    Vector<Vector<String>> options;
+    Vector<Vector<RefPtr<StringImpl>>> options;
     bool isRequired { true };
 };
 
 struct OpenID4VPVerifierIdentity {
-    String clientIdentifierPrefix;
-    String identifier;
+    RefPtr<StringImpl> clientIdentifierPrefix;
+    RefPtr<StringImpl> identifier;
     CertificateInfo certificateChain;
 };
 
@@ -111,11 +111,11 @@ inline bool isWithinOpenID4VPRequestLimits(const ValidatedOpenID4VPRequestObject
     auto addElement = [&] {
         return ++elementCount <= maxOpenID4VPRequestElementCount;
     };
-    auto addString = [&](const String& string) {
-        stringLength += string.length();
+    auto addString = [&](StringImpl* string) {
+        stringLength += length(string);
         return stringLength <= maxOpenID4VPRequestDataLength && addElement();
     };
-    auto addStrings = [&](const Vector<String>& strings) {
+    auto addStrings = [&](const Vector<RefPtr<StringImpl>>& strings) {
         return addElement() && std::ranges::all_of(strings, addString);
     };
 
@@ -130,12 +130,12 @@ inline bool isWithinOpenID4VPRequestLimits(const ValidatedOpenID4VPRequestObject
             if (!addElement() || !addString(claim.identifier))
                 return false;
             for (auto& component : claim.path) {
-                auto* key = std::get_if<String>(&component);
+                auto* key = std::get_if<RefPtr<StringImpl>>(&component);
                 if (!(key ? addString(*key) : addElement()))
                     return false;
             }
             for (auto& value : claim.values) {
-                auto* string = std::get_if<String>(&value);
+                auto* string = std::get_if<RefPtr<StringImpl>>(&value);
                 if (!(string ? addString(*string) : addElement()))
                     return false;
             }

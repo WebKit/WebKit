@@ -37,7 +37,7 @@ class DatabaseManagerClient : public AbstractRefCountedAndCanMakeWeakPtr<Databas
 public:
     virtual ~DatabaseManagerClient() = default;
     virtual void dispatchDidModifyOrigin(const SecurityOriginData&) = 0;
-    virtual void dispatchDidModifyDatabase(const SecurityOriginData&, const String& databaseName) = 0;
+    virtual void dispatchDidModifyDatabase(const SecurityOriginData&, StringImpl* databaseName) = 0;
 
 #if PLATFORM(IOS_FAMILY)
     virtual void dispatchDidAddNewOrigin() = 0;

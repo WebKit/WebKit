@@ -78,13 +78,13 @@ public:
 
     virtual void updateWidget(CreatePlugins) = 0;
 
-    const String& serviceType() const LIFETIME_BOUND { return m_serviceType; }
-    const String& url() const LIFETIME_BOUND { return m_url; }
+    const RefPtr<StringImpl>& serviceType() const LIFETIME_BOUND { return m_serviceType; }
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_url; }
 
     bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
 
-    bool shouldBypassCSPForPDFPlugin(const String& contentType) const;
+    bool shouldBypassCSPForPDFPlugin(StringImpl* contentType) const;
 
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
@@ -92,7 +92,7 @@ protected:
     bool canContainRangeEndPoint() const override { return false; }
     void willDetachRenderers() override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) override;
 
     virtual bool useFallbackContent() const { return false; }
 
@@ -103,7 +103,7 @@ protected:
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
-    bool requestObject(const String& url, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+    bool requestObject(StringImpl* url, StringImpl* mimeType, const Vector<RefPtr<AtomStringImpl>>& paramNames, const Vector<RefPtr<AtomStringImpl>>& paramValues);
     RenderPtr<RenderElement> createElementRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&) override;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
@@ -115,17 +115,17 @@ protected:
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
     void updateImageLoaderWithNewURLSoon();
 
-    bool canLoadURL(const String& relativeURL) const;
-    bool wouldLoadAsPlugIn(const String& relativeURL, const String& serviceType);
+    bool canLoadURL(StringImpl* relativeURL) const;
+    bool wouldLoadAsPlugIn(StringImpl* relativeURL, StringImpl* serviceType);
 
     void scheduleUpdateForAfterStyleResolution();
 
-    String m_serviceType;
-    String m_url;
+    RefPtr<StringImpl> m_serviceType;
+    RefPtr<StringImpl> m_url;
 
 private:
     void swapRendererTimerFired();
-    bool shouldOverridePlugin(const String& url, const String& mimeType);
+    bool shouldOverridePlugin(StringImpl* url, StringImpl* mimeType);
 
     bool supportsFocus() const final;
 
@@ -133,7 +133,7 @@ private:
     bool isPluginElement() const final;
     bool canLoadScriptURL(const URL&) const final;
 
-    bool canLoadPlugInContent(const String& relativeURL, const String& mimeType) const;
+    bool canLoadPlugInContent(StringImpl* relativeURL, StringImpl* mimeType) const;
     bool canLoadURL(const URL&) const;
 
     RenderPtr<RenderElement> createPluginRenderer(UniqueRef<Style::ComputedStyle>&&, const RenderTreePosition&);

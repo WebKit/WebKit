@@ -94,8 +94,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines.extend(['    "%s"_s,' % enum_value for enum_value in self.assigned_enum_values()])
         lines.append('});')
         lines.append('')
-        lines.append('String getEnumConstantValue(int code) {')
-        lines.append('    return enum_constant_values[code];')
+        lines.append('RefPtr<StringImpl> getEnumConstantValue(int code) {')
+        lines.append('    return StringImpl::create(enum_constant_values[code]);')
         lines.append('}')
         return ['\n'.join(lines)]
 
@@ -107,7 +107,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         def generate_conversion_method_body(enum_type, cpp_protocol_type):
             body_lines = []
             body_lines.extend([
-                'template<> std::optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
+                'template<> std::optional<%s> parseEnumValueFromString<%s>(StringImpl* protocolString)' % (cpp_protocol_type, cpp_protocol_type),
                 '{',
                 '    static const auto constantValues = WTF::toArray<size_t>({',
             ])
@@ -119,7 +119,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             body_lines.extend([
                 '    });',
                 '    for (size_t i = 0; i < %d; ++i)' % len(enum_values),
-                '        if (protocolString == enum_constant_values[constantValues[i]])',
+                '        if (equal(protocolString, enum_constant_values[constantValues[i]]))',
                 '            return (%s)constantValues[i];' % cpp_protocol_type,
                 '',
                 '    return std::nullopt;',
@@ -228,7 +228,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             }
 
             lines.append("""    {
-        auto %(memberName)sPos = object->find("%(memberName)s"_s);
+        auto %(memberName)sPos = object->find("%(memberName)s"_si);
         ASSERT(%(memberName)sPos != object->end());
         BindingTraits<%(memberType)s>::assertValueHasExpectedType(%(memberName)sPos->value.ptr());
     }""" % args)
@@ -252,7 +252,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             }
 
             lines.append("""    {
-        auto %(memberName)sPos = object->find("%(memberName)s"_s);
+        auto %(memberName)sPos = object->find("%(memberName)s"_si);
         if (%(memberName)sPos != object->end()) {
             BindingTraits<%(memberType)s>::assertValueHasExpectedType(%(memberName)sPos->value.ptr());""" % args)
 
@@ -261,7 +261,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             lines.append('    }')
 
         lines.append('    if (foundPropertiesCount %s object->size())' % ('!=' if should_count_properties else '>='))
-        lines.append('        FATAL("Unexpected properties in object: %s\\n", object->toJSONString().ascii().data());')
+        lines.append('        FATAL("Unexpected properties in object: %s\\n", ascii(object->toJSONString()).data());')
         lines.append('#endif')
         lines.append('}')
         return '\n'.join(lines)
@@ -275,7 +275,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines.append('    auto result = value->asString();')
         lines.append('    ASSERT(result);')
 
-        assert_condition = ' || '.join(['result == "%s"_s' % enum_value for enum_value in enum_member.type.enum_values()])
+        assert_condition = ' || '.join(['equal(result, "%s"_s)' % enum_value for enum_value in enum_member.type.enum_values()])
         lines.append('    ASSERT(%s);' % assert_condition)
         lines.append('#endif')
         lines.append('}')

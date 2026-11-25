@@ -49,7 +49,7 @@ public:
     // Used by the DOM APIs.
     virtual DecorationType value() const { return valueInternal(); }
 
-    virtual String valueAsString() const = 0;
+    virtual RefPtr<StringImpl> valueAsString() const = 0;
     virtual Ref<SVGDecoratedProperty<DecorationType>> clone() = 0;
 };
 

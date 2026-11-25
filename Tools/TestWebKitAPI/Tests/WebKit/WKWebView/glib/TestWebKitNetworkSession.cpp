@@ -177,7 +177,7 @@ static void testNetworkSessionProxySettings(ProxyTest* test, gconstpointer)
     g_assert_true(serverType == ProxyTest::WebSocketServerType::NoProxy);
 
     // Set default proxy URI to point to proxyServer. Requests to kServer should be received by proxyServer instead.
-    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), nullptr);
+    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(utf8(test->m_proxyServer.baseURL().string()).legacyCStringPointer(), nullptr);
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
@@ -217,7 +217,7 @@ static void testNetworkSessionProxySettings(ProxyTest* test, gconstpointer)
 
     // Use a default proxy uri, but ignoring requests to localhost.
     static const char* ignoreHosts[] = { "localhost", nullptr };
-    settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), ignoreHosts);
+    settings = webkit_network_proxy_settings_new(utf8(test->m_proxyServer.baseURL().string()).legacyCStringPointer(), ignoreHosts);
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
@@ -233,7 +233,7 @@ static void testNetworkSessionProxySettings(ProxyTest* test, gconstpointer)
 
     // Use scheme specific proxy instead of the default.
     settings = webkit_network_proxy_settings_new(nullptr, nullptr);
-    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer());
+    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", utf8(test->m_proxyServer.baseURL().string()).legacyCStringPointer());
     webkit_network_session_set_proxy_settings(test->m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());

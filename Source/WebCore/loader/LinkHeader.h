@@ -36,19 +36,19 @@ class LinkHeader {
 public:
     template<typename CharacterType> LinkHeader(StringParsingBuffer<CharacterType>&);
 
-    const String& url() const LIFETIME_BOUND { return m_url; }
-    const String& rel() const LIFETIME_BOUND { return m_rel; }
-    const String& as() const LIFETIME_BOUND { return m_as; }
-    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
-    const String& media() const LIFETIME_BOUND { return m_media; }
-    const String& crossOrigin() const LIFETIME_BOUND { return m_crossOrigin; }
-    const String& imageSrcSet() const LIFETIME_BOUND { return m_imageSrcSet; }
-    const String& imageSizes() const LIFETIME_BOUND { return m_imageSizes; }
-    const String& nonce() const LIFETIME_BOUND { return m_nonce; }
-    const String& referrerPolicy() const LIFETIME_BOUND { return m_referrerPolicy; }
-    const String& fetchPriority() const LIFETIME_BOUND { return m_fetchPriority; }
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_url; }
+    const RefPtr<StringImpl>& rel() const LIFETIME_BOUND { return m_rel; }
+    const RefPtr<StringImpl>& as() const LIFETIME_BOUND { return m_as; }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+    const RefPtr<StringImpl>& media() const LIFETIME_BOUND { return m_media; }
+    const RefPtr<StringImpl>& crossOrigin() const LIFETIME_BOUND { return m_crossOrigin; }
+    const RefPtr<StringImpl>& imageSrcSet() const LIFETIME_BOUND { return m_imageSrcSet; }
+    const RefPtr<StringImpl>& imageSizes() const LIFETIME_BOUND { return m_imageSizes; }
+    const RefPtr<StringImpl>& nonce() const LIFETIME_BOUND { return m_nonce; }
+    const RefPtr<StringImpl>& referrerPolicy() const LIFETIME_BOUND { return m_referrerPolicy; }
+    const RefPtr<StringImpl>& fetchPriority() const LIFETIME_BOUND { return m_fetchPriority; }
     bool valid() const { return m_isValid; }
-    bool isViewportDependent() const { return !media().isEmpty() || !imageSrcSet().isEmpty() || !imageSizes().isEmpty(); }
+    bool isViewportDependent() const { return !isEmpty(media()) || !isEmpty(imageSrcSet()) || !isEmpty(imageSizes()); }
 
     enum LinkParameterName {
         LinkParameterRel,
@@ -70,25 +70,25 @@ public:
     };
 
 private:
-    void setValue(LinkParameterName, String&& value);
+    void setValue(LinkParameterName, RefPtr<StringImpl>&& value);
 
-    String m_url;
-    String m_rel;
-    String m_as;
-    String m_mimeType;
-    String m_media;
-    String m_crossOrigin;
-    String m_imageSrcSet;
-    String m_imageSizes;
-    String m_nonce;
-    String m_referrerPolicy;
-    String m_fetchPriority;
+    RefPtr<StringImpl> m_url;
+    RefPtr<StringImpl> m_rel;
+    RefPtr<StringImpl> m_as;
+    RefPtr<StringImpl> m_mimeType;
+    RefPtr<StringImpl> m_media;
+    RefPtr<StringImpl> m_crossOrigin;
+    RefPtr<StringImpl> m_imageSrcSet;
+    RefPtr<StringImpl> m_imageSizes;
+    RefPtr<StringImpl> m_nonce;
+    RefPtr<StringImpl> m_referrerPolicy;
+    RefPtr<StringImpl> m_fetchPriority;
     bool m_isValid { true };
 };
 
 class LinkHeaderSet {
 public:
-    WEBCORE_EXPORT LinkHeaderSet(const String& header);
+    WEBCORE_EXPORT LinkHeaderSet(StringImpl* header);
 
     Vector<LinkHeader>::const_iterator begin() const LIFETIME_BOUND { return m_headerSet.begin(); }
     Vector<LinkHeader>::const_iterator end() const LIFETIME_BOUND { return m_headerSet.end(); }

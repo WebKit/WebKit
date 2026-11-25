@@ -46,7 +46,7 @@ public:
 
     const CSS::PathFunction& path() const LIFETIME_BOUND { return m_path; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPathValue&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;

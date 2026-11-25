@@ -112,8 +112,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 - (JSValue *)evaluateScript:(NSString *)script withSourceURL:(NSURL *)sourceURL
 {
     JSValueRef exceptionValue = nullptr;
-    auto scriptJS = OpaqueJSString::tryCreate(script);
-    auto sourceURLJS = OpaqueJSString::tryCreate([sourceURL absoluteString]);
+    auto scriptJS = OpaqueJSString::tryCreate(StringImpl::create(script));
+    auto sourceURLJS = OpaqueJSString::tryCreate(StringImpl::create([sourceURL absoluteString]));
     JSValueRef result = JSEvaluateScript(m_context, scriptJS.get(), nullptr, sourceURLJS.get(), 0, &exceptionValue);
 
     if (exceptionValue)
@@ -165,7 +165,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     }
 
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-    JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, String([[script sourceURL] absoluteString]));
+    JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, StringImpl::create([[script sourceURL] absoluteString]).get());
     if (scope.exception()) {
         JSValueRef exceptionValue = toRef(globalObject, scope.exception()->value());
         scope.clearException();
@@ -268,7 +268,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 - (void)setName:(NSString *)name
 {
-    JSGlobalContextSetName(m_context, OpaqueJSString::tryCreate(name).get());
+    JSGlobalContextSetName(m_context, OpaqueJSString::tryCreate(StringImpl::create(name)).get());
 }
 
 - (BOOL)isInspectable

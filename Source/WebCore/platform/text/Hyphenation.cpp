@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-bool canHyphenate(const AtomString& /* localeIdentifier */)
+bool canHyphenate(AtomStringImpl* /* localeIdentifier */)
 {
     return false;
 }
 
-size_t lastHyphenLocation(StringView, size_t /* beforeIndex */, const AtomString& /* localeIdentifier */)
+size_t lastHyphenLocation(StringView, size_t /* beforeIndex */, AtomStringImpl* /* localeIdentifier */)
 {
     ASSERT_NOT_REACHED();
     return 0;

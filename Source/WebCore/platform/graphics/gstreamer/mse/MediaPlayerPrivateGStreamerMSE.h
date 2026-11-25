@@ -49,7 +49,7 @@ public:
 
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::GStreamerMSE; }
 
-    void load(const String&) override;
+    void load(StringImpl*) override;
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 
     void updateDownloadBufferingFlag() override { };
@@ -113,7 +113,7 @@ private:
     explicit MediaPlayerPrivateGStreamerMSE(MediaPlayer&);
 
     friend class MediaPlayerFactoryGStreamerMSE;
-    static void getSupportedTypes(HashSet<String>&);
+    static void getSupportedTypes(HashSet<RefPtr<StringImpl>>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     friend class AppendPipeline;

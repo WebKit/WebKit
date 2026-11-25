@@ -67,23 +67,23 @@ namespace WebKit {
 
 using namespace Inspector;
 
-static String getTargetID(const ProvisionalPageProxy& provisionalPage)
+static RefPtr<StringImpl> getTargetID(const ProvisionalPageProxy& provisionalPage)
 {
     return PageInspectorTarget::toTargetID(provisionalPage.webPageID());
 }
 
 // For an uncommitted provisional page, which is delegated through its main frame target under SI.
-static String getMainFrameTargetID(const ProvisionalPageProxy& provisionalPage)
+static RefPtr<StringImpl> getMainFrameTargetID(const ProvisionalPageProxy& provisionalPage)
 {
     return FrameInspectorTarget::toTargetID(protect(provisionalPage.mainFrame())->frameID(), provisionalPage.process().coreProcessIdentifier());
 }
 
-static String getTargetID(const WebFrameProxy& frame)
+static RefPtr<StringImpl> getTargetID(const WebFrameProxy& frame)
 {
     return FrameInspectorTarget::toTargetID(frame.frameID(), frame.process().coreProcessIdentifier());
 }
 
-static String getTargetID(const ProvisionalFrameProxy& provisionalFrame)
+static RefPtr<StringImpl> getTargetID(const ProvisionalFrameProxy& provisionalFrame)
 {
     return FrameInspectorTarget::toTargetID(provisionalFrame.frame().frameID(), provisionalFrame.process().coreProcessIdentifier());
 }
@@ -107,7 +107,7 @@ WebPageInspectorController::~WebPageInspectorController()
 
 void WebPageInspectorController::init()
 {
-    String pageTargetId = PageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
+    RefPtr<StringImpl> pageTargetId = PageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
     addTarget(PageInspectorTargetProxy::create(protect(m_inspectedPage), pageTargetId, Inspector::InspectorTargetType::Page));
 }
 
@@ -207,7 +207,7 @@ void WebPageInspectorController::disconnectAllFrontends()
 #endif
 }
 
-void WebPageInspectorController::dispatchMessageFromFrontend(const String& message)
+void WebPageInspectorController::dispatchMessageFromFrontend(StringImpl* message)
 {
     m_backendDispatcher->dispatch(message);
 }
@@ -227,13 +227,13 @@ void WebPageInspectorController::setIndicating(bool indicating)
 }
 #endif
 
-void WebPageInspectorController::debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier sessionID, bool isPaused, const Vector<String>& stoppingTargetIDs)
+void WebPageInspectorController::debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier sessionID, bool isPaused, const Vector<RefPtr<StringImpl>>& stoppingTargetIDs)
 {
     if (CheckedPtr targetAgent = m_targetAgent)
-        targetAgent->debuggerPauseSessionChanged(String::number(sessionID.toUInt64()), isPaused, stoppingTargetIDs);
+        targetAgent->debuggerPauseSessionChanged(makeString(sessionID.toUInt64()), isPaused, stoppingTargetIDs);
 }
 
-void WebPageInspectorController::sendMessageToInspectorFrontend(const String& targetId, const String& message)
+void WebPageInspectorController::sendMessageToInspectorFrontend(StringImpl* targetId, StringImpl* message)
 {
     if (!decltype(m_targets)::isValidKey(targetId))
         return;
@@ -322,8 +322,8 @@ void WebPageInspectorController::willDestroyProvisionalPage(const ProvisionalPag
 
 void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore::FrameIdentifier> oldMainFrameID, WebCore::ProcessIdentifier oldProcessID, WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID)
 {
-    String oldPageTargetID = PageInspectorTarget::toTargetID(oldWebPageID);
-    String newPageTargetID = PageInspectorTarget::toTargetID(newWebPageID);
+    RefPtr<StringImpl> oldPageTargetID = PageInspectorTarget::toTargetID(oldWebPageID);
+    RefPtr<StringImpl> newPageTargetID = PageInspectorTarget::toTargetID(newWebPageID);
     CheckedPtr targetAgent = m_targetAgent;
 
     // Commit the provisional page target.
@@ -334,7 +334,7 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
 
     // Commit the provisional main frame target.
     bool shouldManageFrameTargets = this->shouldManageFrameTargets();
-    String mainFrameTargetID;
+    RefPtr<StringImpl> mainFrameTargetID;
     if (shouldManageFrameTargets) {
         RefPtr mainFrame = protect(m_inspectedPage)->mainFrame();
         mainFrameTargetID = FrameInspectorTarget::toTargetID(mainFrame->frameID(), protect(mainFrame->process())->coreProcessIdentifier());
@@ -344,17 +344,17 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
         mainFrameTarget->didCommitProvisionalTarget();
 
         ASSERT(oldMainFrameID);
-        String oldMainFrameTargetID = FrameInspectorTarget::toTargetID(*oldMainFrameID, oldProcessID);
+        RefPtr<StringImpl> oldMainFrameTargetID = FrameInspectorTarget::toTargetID(*oldMainFrameID, oldProcessID);
         targetAgent->didCommitProvisionalTarget(oldMainFrameTargetID, mainFrameTargetID);
     }
 
     // Update target list to only include targets belonging to the committed page.
     const Vector targetIDsToRemove = [&] {
-        Vector<String> targetIDsToRemove;
+        Vector<RefPtr<StringImpl>> targetIDsToRemove;
         for (auto& [targetID, target] : m_targets) {
-            if (targetID == newPageTargetID)
+            if (equal(targetID, newPageTargetID))
                 continue;
-            if (shouldManageFrameTargets && targetID == mainFrameTargetID)
+            if (shouldManageFrameTargets && equal(targetID, mainFrameTargetID))
                 continue;
             targetIDsToRemove.append(targetID);
         }
@@ -371,7 +371,7 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
 
         if (hasFrontends) {
             // PageInspectorTargetProxy would route through the WebPageProxy, which already points at the new process.
-            if (targetID == oldPageTargetID) {
+            if (equal(targetID, oldPageTargetID)) {
                 if (oldProcess)
                     oldProcess->send(Messages::WebPage::DisconnectInspector(), oldWebPageID);
             } else
@@ -475,7 +475,7 @@ void WebPageInspectorController::processDidTerminate(WebProcessProxy& process)
     // canceled before this runs, and willDestroyProvisionalFrame resumes its target before removing it.
     // FIXME <https://webkit.org/b/331366>: When the main frame's process exits, frames are detached from the page
     // before their provisional frames are destroyed, so willDestroyProvisionalFrame never resumes their paused targets.
-    Vector<String> targetIDs;
+    Vector<RefPtr<StringImpl>> targetIDs;
     for (auto& [targetID, target] : m_targets) {
         if (CheckedPtr frameTarget = dynamicDowncast<FrameInspectorTargetProxy>(*target); frameTarget && frameTarget->processID() == process.coreProcessIdentifier())
             targetIDs.append(targetID);
@@ -557,7 +557,7 @@ void WebPageInspectorController::willDestroyProvisionalFrame(const ProvisionalFr
     if (!shouldManageFrameTargets())
         return;
 
-    String targetId = getTargetID(provisionalFrame);
+    RefPtr<StringImpl> targetId = getTargetID(provisionalFrame);
     if (CheckedPtr target = m_targets.get(targetId)) {
         // The resume callback is required because it wraps a CompletionHandler from
         // prepareForProvisionalLoadInProcess. CompletionHandlers must be called before destruction.
@@ -586,8 +586,8 @@ void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame,
         return;
 
     WebCore::FrameIdentifier frameID = frame.frameID();
-    String oldTargetID = FrameInspectorTarget::toTargetID(frameID, oldProcessID);
-    String newTargetID = FrameInspectorTarget::toTargetID(frameID, newProcessID);
+    RefPtr<StringImpl> oldTargetID = FrameInspectorTarget::toTargetID(frameID, oldProcessID);
+    RefPtr<StringImpl> newTargetID = FrameInspectorTarget::toTargetID(frameID, newProcessID);
 
     CheckedPtr targetAgent = m_targetAgent;
 
@@ -600,7 +600,7 @@ void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame,
     }
 
     // A same-process commit has oldTargetID == newTargetID; taking it would destroy what we just committed.
-    if (oldTargetID != newTargetID) {
+    if (!equal(oldTargetID, newTargetID)) {
         if (auto oldTarget = m_targets.take(oldTargetID))
             targetAgent->targetDestroyed(protect(*oldTarget));
     }
@@ -665,7 +665,7 @@ void WebPageInspectorController::addTarget(std::unique_ptr<InspectorTargetProxy>
     m_targets.set(target->identifier(), WTF::move(target));
 }
 
-void WebPageInspectorController::removeTarget(const String& targetId)
+void WebPageInspectorController::removeTarget(StringImpl* targetId)
 {
     auto it = m_targets.find(targetId);
     if (it == m_targets.end())
@@ -745,7 +745,7 @@ void WebPageInspectorController::takeTimelineScreenshot(const WebCore::IntRect& 
             return;
 
         if (image)
-            controller.sendTimelineScreenshotRecord(timestamp, encodeDataURL(image, "image/png"_s));
+            controller.sendTimelineScreenshotRecord(timestamp, encodeDataURL(image, "image/png"_si));
         controller.finishTimelineScreenshot();
     });
 #else
@@ -763,7 +763,7 @@ void WebPageInspectorController::finishTimelineScreenshot()
         completionHandler();
 }
 
-void WebPageInspectorController::sendTimelineScreenshotRecord(double timestamp, const String& imageData)
+void WebPageInspectorController::sendTimelineScreenshotRecord(double timestamp, StringImpl* imageData)
 {
     // pageClosed() discards the target agent.
     if (!m_targetAgent || !hasFrontends())
@@ -771,19 +771,19 @@ void WebPageInspectorController::sendTimelineScreenshotRecord(double timestamp, 
 
     // The same record as the page target sends for its own screenshots (see TimelineRecordFactory::createScreenshotData()).
     auto data = JSON::Object::create();
-    data->setString("imageData"_s, imageData);
+    data->setString("imageData"_si, imageData);
 
     auto record = JSON::Object::create();
-    record->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Timeline::EventType::Screenshot));
-    record->setDouble("startTime"_s, timestamp);
-    record->setObject("data"_s, WTF::move(data));
+    record->setString("type"_si, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Timeline::EventType::Screenshot));
+    record->setDouble("startTime"_si, timestamp);
+    record->setObject("data"_si, WTF::move(data));
 
     auto params = JSON::Object::create();
-    params->setObject("record"_s, WTF::move(record));
+    params->setObject("record"_si, WTF::move(record));
 
     auto message = JSON::Object::create();
-    message->setString("method"_s, "Timeline.eventRecorded"_s);
-    message->setObject("params"_s, WTF::move(params));
+    message->setString("method"_si, "Timeline.eventRecorded"_si);
+    message->setObject("params"_si, WTF::move(params));
 
     // Resolve the page target now: the main frame may have moved to another process since the page target asked.
     // Under Site Isolation all page and frame targets share one clock, so the time still fits.
@@ -804,13 +804,13 @@ void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* a
         inspectedPage->uiClient().didDisableInspectorBrowserDomain(inspectedPage);
 }
 
-void WebPageInspectorController::browserExtensionsEnabled(HashMap<String, String>&& extensionIDToName)
+void WebPageInspectorController::browserExtensionsEnabled(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& extensionIDToName)
 {
     if (CheckedPtr enabledBrowserAgent = m_enabledBrowserAgent)
         enabledBrowserAgent->extensionsEnabled(WTF::move(extensionIDToName));
 }
 
-void WebPageInspectorController::browserExtensionsDisabled(HashSet<String>&& extensionIDs)
+void WebPageInspectorController::browserExtensionsDisabled(HashSet<RefPtr<StringImpl>>&& extensionIDs)
 {
     if (CheckedPtr enabledBrowserAgent = m_enabledBrowserAgent)
         enabledBrowserAgent->extensionsDisabled(WTF::move(extensionIDs));

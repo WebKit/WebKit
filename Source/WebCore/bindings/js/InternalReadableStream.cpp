@@ -226,11 +226,11 @@ ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>>
     auto resultArray = getInternalBuiltinResultObjects<2>(*globalObject, result);
     RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
     if (!resultArray) [[unlikely]]
-        return Exception { ExceptionCode::TypeError, "Internal ReadableStream tee returned an unexpected value"_s };
+        return Exception { ExceptionCode::TypeError, "Internal ReadableStream tee returned an unexpected value"_si };
 
     auto results = *resultArray;
     if (!results[0] || !results[1] || !isInternalReadableStream(*globalObject, *results[0].get()) || !isInternalReadableStream(*globalObject, *results[1].get())) [[unlikely]]
-        return Exception { ExceptionCode::TypeError, "Internal ReadableStream tee returned branches of unexpected types"_s };
+        return Exception { ExceptionCode::TypeError, "Internal ReadableStream tee returned branches of unexpected types"_si };
 
     auto& jsDOMGlobalObject = *globalObject;
     return std::make_pair(InternalReadableStream::fromObject(jsDOMGlobalObject, *results[0].get()), InternalReadableStream::fromObject(jsDOMGlobalObject, *results[1].get()));

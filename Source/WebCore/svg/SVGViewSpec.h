@@ -43,7 +43,7 @@ public:
     void reset();
     void resetContextElement() { m_contextElement = nullptr; }
 
-    String transformString() const { return m_transform->valueAsString(); }
+    RefPtr<StringImpl> transformString() const { return m_transform->valueAsString(); }
     const Ref<SVGTransformList>& transform() { return m_transform; }
 
     SVGElement* contextElementConcurrently() const { return m_contextElement; }

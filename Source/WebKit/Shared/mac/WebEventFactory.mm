@@ -320,11 +320,11 @@ WebWheelEventInit WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *w
 WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
 {
     WebEventType type = WebCore::isKeyUpEvent(event) ? WebEventType::KeyUp : WebEventType::KeyDown;
-    String text = WebCore::textFromEvent(event, replacesSoftSpace);
-    String unmodifiedText = WebCore::unmodifiedTextFromEvent(event, replacesSoftSpace);
-    String key = WebCore::keyForKeyEvent(event);
-    String code = WebCore::codeForKeyEvent(event);
-    String keyIdentifier = WebCore::keyIdentifierForKeyEvent(event);
+    RefPtr<StringImpl> text = WebCore::textFromEvent(event, replacesSoftSpace);
+    RefPtr<StringImpl> unmodifiedText = WebCore::unmodifiedTextFromEvent(event, replacesSoftSpace);
+    RefPtr<StringImpl> key = WebCore::keyForKeyEvent(event);
+    RefPtr<StringImpl> code = WebCore::codeForKeyEvent(event);
+    RefPtr<StringImpl> keyIdentifier = WebCore::keyIdentifierForKeyEvent(event);
     int windowsVirtualKeyCode = WebCore::windowsKeyCodeForKeyEvent(event);
     int nativeVirtualKeyCode = [event keyCode];
     int macCharCode = WebCore::keyCharForEvent(event);
@@ -336,19 +336,19 @@ WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(NSEvent *event, boo
 
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
     if (windowsVirtualKeyCode == VK_RETURN) {
-        text = "\r"_s;
+        text = "\r"_si;
         unmodifiedText = text;
     }
 
     // AppKit sets text to "\x7F" for backspace, but the correct KeyboardEvent character code is 8.
     if (windowsVirtualKeyCode == VK_BACK) {
-        text = "\x8"_s;
+        text = "\x8"_si;
         unmodifiedText = text;
     }
 
     // Always use 9 for Tab -- we don't want to use AppKit's different character for shift-tab.
     if (windowsVirtualKeyCode == VK_TAB) {
-        text = "\x9"_s;
+        text = "\x9"_si;
         unmodifiedText = text;
     }
 

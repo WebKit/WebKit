@@ -193,9 +193,9 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 
 #if !LOG_DISABLED
 
-String FontPlatformData::description() const
+RefPtr<StringImpl> FontPlatformData::description() const
 {
-    String fontDescription { adoptCF(CFCopyDescription(ctFont())).get() };
+    RefPtr<StringImpl> fontDescription { StringImpl::create(adoptCF(CFCopyDescription(ctFont())).get()) };
     return makeString(fontDescription, ' ', m_metadata.pointSize,
         (m_metadata.isSyntheticBold ? " synthetic bold"_s : ""_s),
         (m_metadata.isSyntheticOblique ? " synthetic oblique"_s : ""_s),
@@ -204,10 +204,10 @@ String FontPlatformData::description() const
 
 #endif
 
-String FontPlatformData::familyName() const
+RefPtr<StringImpl> FontPlatformData::familyName() const
 {
     if (RetainPtr platformFont = ctFont())
-        return adoptCF(CTFontCopyFamilyName(platformFont.get())).get();
+        return StringImpl::create(adoptCF(CTFontCopyFamilyName(platformFont.get())).get());
     return { };
 }
 
@@ -257,6 +257,12 @@ FontPlatformData::FontPlatformData(const FontMetadata& metadata, RetainPtr<CTFon
         target = extractedValue.get();\
     }
 
+#define EXTRACT_STRING_VALUE(key, target) { \
+    RetainPtr extractedValue = checked_cf_cast<CFStringRef>(CFDictionaryGetValue(dictionary, key));\
+    if (extractedValue && CFGetTypeID(extractedValue.get()) == CFStringGetTypeID())\
+        target = StringImpl::create(extractedValue.get());\
+    }
+
 std::optional<FontPlatformSerializedAttributes> FontPlatformSerializedAttributes::fromCF(CFDictionaryRef dictionary)
 {
     if (!dictionary)
@@ -264,9 +270,9 @@ std::optional<FontPlatformSerializedAttributes> FontPlatformSerializedAttributes
 
     FontPlatformSerializedAttributes result;
 
-    EXTRACT_TYPED_VALUE(kCTFontNameAttribute, CFString, result.fontName);
-    EXTRACT_TYPED_VALUE(kCTFontDescriptorLanguageAttribute, CFString, result.descriptorLanguage);
-    EXTRACT_TYPED_VALUE(kCTFontDescriptorTextStyleAttribute, CFString, result.descriptorTextStyle);
+    EXTRACT_STRING_VALUE(kCTFontNameAttribute, result.fontName);
+    EXTRACT_STRING_VALUE(kCTFontDescriptorLanguageAttribute, result.descriptorLanguage);
+    EXTRACT_STRING_VALUE(kCTFontDescriptorTextStyleAttribute, result.descriptorTextStyle);
 
     EXTRACT_TYPED_VALUE(kCTFontMatrixAttribute, CFData, result.matrix);
     EXTRACT_TYPED_VALUE(kCTFontIgnoreLegibilityWeightAttribute, CFBoolean, result.ignoreLegibilityWeight);
@@ -376,8 +382,8 @@ std::optional<FontPlatformSerializedAttributes> FontPlatformSerializedAttributes
 }
 
 #define INJECT_STRING_VALUE(key, value) { \
-    if (!value.isNull())\
-        CFDictionaryAddValue(result.get(), key, value.createCFString().get());\
+    if (value)\
+        CFDictionaryAddValue(result.get(), key, createCFString(value).get());\
     }
 
 #define INJECT_CF_VALUE(key, value) { \
@@ -458,7 +464,7 @@ std::optional<FontPlatformSerializedTraits> FontPlatformSerializedTraits::fromCF
 
     FontPlatformSerializedTraits result;
 
-    EXTRACT_TYPED_VALUE(kCTFontUIFontDesignTrait, CFString, result.uiFontDesign);
+    EXTRACT_STRING_VALUE(kCTFontUIFontDesignTrait, result.uiFontDesign);
     EXTRACT_TYPED_VALUE(kCTFontWeightTrait, CFNumber, result.weight);
     EXTRACT_TYPED_VALUE(kCTFontWidthTrait, CFNumber, result.width);
     EXTRACT_TYPED_VALUE(kCTFontSymbolicTrait, CFNumber, result.symbolic);
@@ -488,7 +494,7 @@ std::optional<FontPlatformOpticalSize> FontPlatformOpticalSize::fromCF(CFTypeRef
     if (CFGetTypeID(type) == CFNumberGetTypeID())
         return FontPlatformOpticalSize { RetainPtr { checked_cf_cast<CFNumberRef>(type) } };
     if (CFGetTypeID(type) == CFStringGetTypeID())
-        return FontPlatformOpticalSize { String { checked_cf_cast<CFStringRef>(type) } };
+        return FontPlatformOpticalSize { StringImpl::create(checked_cf_cast<CFStringRef>(type)) };
 
     return std::nullopt;
 }
@@ -497,14 +503,14 @@ RetainPtr<CFTypeRef> FontPlatformOpticalSize::toCF() const
 {
     return WTF::switchOn(opticalSize, [] (const RetainPtr<CFNumberRef>& number) -> RetainPtr<CFTypeRef> {
         return number;
-    }, [] (const String& string) -> RetainPtr<CFTypeRef> {
-        return string.createCFString();
+    }, [] (StringImpl* string) -> RetainPtr<CFTypeRef> {
+        return createCFString(string);
     });
 }
 
 RetainPtr<CTFontRef> InstalledFont::SystemUIFont::toCTFont(float pointSize) const
 {
-    return adoptCF(CTFontCreateUIFontForLanguage(static_cast<CTFontUIFontType>(systemUIFontType), pointSize, language.createCFString().get()));
+    return adoptCF(CTFontCreateUIFontForLanguage(static_cast<CTFontUIFontType>(systemUIFontType), pointSize, createCFString(language).get()));
 }
 
 RetainPtr<CTFontRef> InstalledFont::PostScriptFont::toCTFont(float pointSize) const
@@ -513,13 +519,13 @@ RetainPtr<CTFontRef> InstalledFont::PostScriptFont::toCTFont(float pointSize) co
     if (fontSerializedAttributes)
         fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributesAndOptions(fontSerializedAttributes->toCFDictionary().get(), fontDescriptorOptions));
     else
-        fontDescriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(postScriptName.createCFString().get(), pointSize));
+        fontDescriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(createCFString(postScriptName).get(), pointSize));
 
     RetainPtr font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), pointSize, nullptr));
-    auto fontName = String(adoptCF(CTFontCopyPostScriptName(font.get())).get());
-    if (fontName != postScriptName) {
+    auto fontName = StringImpl::create(adoptCF(CTFontCopyPostScriptName(font.get())).get());
+    if (!equal(fontName, postScriptName)) {
         RELEASE_LOG_ERROR(Fonts, "Serialized font %{public}s reconstructed to %{public}s. Subbing system-ui; may result in garbled text.",
-            postScriptName.utf8(), fontName.utf8());
+            utf8(postScriptName), utf8(fontName));
         font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, pointSize, nullptr));
     }
 
@@ -553,6 +559,7 @@ Ref<Font> InstalledFont::toFont() const
 #undef INJECT_STRING_VALUE
 #undef INJECT_CF_VALUE
 #undef PAIR_VECTOR_TO_DICTIONARY
+#undef EXTRACT_STRING_VALUE
 #undef EXTRACT_TYPED_VALUE
 
 #if HAVE(ADDITIONAL_FONT_PLATFORM_SERIALIZED_ATTRIBUTES)

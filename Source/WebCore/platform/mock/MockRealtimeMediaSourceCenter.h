@@ -45,8 +45,8 @@ public:
 
     WEBCORE_EXPORT static void setDevices(Vector<MockMediaDevice>&&);
     WEBCORE_EXPORT static void addDevice(const MockMediaDevice&);
-    WEBCORE_EXPORT static void removeDevice(const String&);
-    WEBCORE_EXPORT static void setDeviceIsEphemeral(const String&, bool);
+    WEBCORE_EXPORT static void removeDevice(StringImpl*);
+    WEBCORE_EXPORT static void setDeviceIsEphemeral(StringImpl*, bool);
     WEBCORE_EXPORT static void resetDevices();
     WEBCORE_EXPORT static void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
 
@@ -61,9 +61,9 @@ public:
     static Vector<CaptureDevice>& videoDevices();
     WEBCORE_EXPORT static Vector<CaptureDevice>& displayDevices();
 
-    static std::optional<MockMediaDevice> mockDeviceWithPersistentID(const String&);
+    static std::optional<MockMediaDevice> mockDeviceWithPersistentID(StringImpl*);
     static std::optional<MockMediaDevice> mockMicrophoneFromDeviceID(uint32_t);
-    static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, StringImpl*);
 
     CaptureDeviceManager& audioCaptureDeviceManager() LIFETIME_BOUND { return m_audioCaptureDeviceManager; }
     CaptureDeviceManager& videoCaptureDeviceManager() LIFETIME_BOUND { return m_videoCaptureDeviceManager; }
@@ -80,17 +80,17 @@ private:
     class MockAudioCaptureDeviceManager final : public CaptureDeviceManager {
     private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::microphoneDevices(); }
-        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
+        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, StringImpl* id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
     };
     class MockVideoCaptureDeviceManager final : public CaptureDeviceManager {
     private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::videoDevices(); }
-        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
+        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, StringImpl* id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
     };
     class MockDisplayCaptureDeviceManager final : public DisplayCaptureManager {
     private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::displayDevices(); }
-        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
+        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, StringImpl* id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
     };
 
     MockAudioCaptureDeviceManager m_audioCaptureDeviceManager;

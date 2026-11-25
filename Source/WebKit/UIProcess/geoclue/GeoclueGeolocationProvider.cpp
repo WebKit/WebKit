@@ -183,11 +183,11 @@ void GeoclueGeolocationProvider::setupPortalProxy(GRefPtr<GDBusProxy>&& proxy)
     m_portal.locationPortal = WTF::move(proxy);
 
     auto* connection = g_dbus_proxy_get_connection(m_portal.locationPortal.get());
-    auto uniqueName = String::fromUTF8(g_dbus_connection_get_unique_name(connection));
+    auto uniqueName = StringImpl::fromUTF8(g_dbus_connection_get_unique_name(connection));
 
     // The portal sender name is the D-Bus unique name, without the initial ':',
     // and with all '.' replaced by '_'
-    m_portal.senderName = makeStringByReplacingAll(uniqueName.substring(1), '.', '_');
+    m_portal.senderName = makeStringByReplacingAll(substring(uniqueName, 1), '.', '_');
 
     if (!m_isRunning) {
         destroyStateLater();
@@ -214,7 +214,7 @@ void GeoclueGeolocationProvider::createPortalSession()
 
     GVariantBuilder options;
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&options, "{sv}", "session_handle_token", g_variant_new_string(sessionToken.ascii().data()));
+    g_variant_builder_add(&options, "{sv}", "session_handle_token", g_variant_new_string(ascii(sessionToken).data()));
     g_variant_builder_add(&options, "{sv}", "accuracy", g_variant_new_uint32(accuracy));
 
     g_dbus_proxy_call(m_portal.locationPortal.get(), "CreateSession", g_variant_new("(a{sv})", &options), G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(),
@@ -244,7 +244,7 @@ void GeoclueGeolocationProvider::startPortalSession()
 
     auto* connection = g_dbus_proxy_get_connection(m_portal.locationPortal.get());
     m_portal.responseSignalId = g_dbus_connection_signal_subscribe(connection, "org.freedesktop.portal.Desktop", "org.freedesktop.portal.Request",
-        "Response", requestPath.ascii().data(), nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE,
+        "Response", ascii(requestPath).data(), nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE,
         [](GDBusConnection*, const char* /* senderName */, const char* /* objectPath */, const char* /* interfaceName */, const char* /* signalName */, GVariant* parameters, gpointer userData) {
             GRefPtr<GVariant> returnValue;
             uint32_t response;
@@ -271,9 +271,9 @@ void GeoclueGeolocationProvider::startPortalSession()
 
     GVariantBuilder options;
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
+    g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(ascii(token).data()));
 
-    g_dbus_proxy_call(m_portal.locationPortal.get(), "Start", gVariantNew("(osa{sv})", m_portal.sessionId->ascii(), "", &options), G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(),
+    g_dbus_proxy_call(m_portal.locationPortal.get(), "Start", gVariantNew("(osa{sv})", ascii(*m_portal.sessionId), "", &options), G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(),
         [](GObject* manager, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;
             GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(manager), result, &error.outPtr()));
@@ -326,7 +326,7 @@ void GeoclueGeolocationProvider::stopPortalSession()
 
     m_portal.senderName = std::nullopt;
 
-    g_dbus_connection_call(connection, "org.freedesktop.portal.Desktop", m_portal.sessionId->ascii().data(),
+    g_dbus_connection_call(connection, "org.freedesktop.portal.Desktop", ascii(*m_portal.sessionId).data(),
         "org.freedesktop.portal.Session", "Close", nullptr, nullptr, G_DBUS_CALL_FLAGS_NONE, -1, nullptr, nullptr, nullptr);
     m_portal.sessionId = std::nullopt;
 }

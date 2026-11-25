@@ -93,14 +93,14 @@ private:
     RefPtr<PeriodicWave> m_periodicWave WTF_GUARDED_BY_LOCK(m_processLock);
 };
 
-String convertEnumerationToString(OscillatorType); // In JSOscillatorNode.cpp
+RefPtr<StringImpl> convertEnumerationToString(OscillatorType); // In JSOscillatorNode.cpp
 
 } // namespace WebCore
 
 namespace WTF {
 
 template<> struct LogArgument<WebCore::OscillatorType> {
-    static String toString(WebCore::OscillatorType type) { return convertEnumerationToString(type); }
+    static RefPtr<StringImpl> toString(WebCore::OscillatorType type) { return convertEnumerationToString(type); }
 };
 
 } // namespace WTF

@@ -73,7 +73,7 @@ public:
 
     void markEndOfFile()
     {
-        m_last->append(span(kEndOfFileMarker));
+        m_last->append(StringImpl::create(span(kEndOfFileMarker)));
         m_last->close();
     }
 

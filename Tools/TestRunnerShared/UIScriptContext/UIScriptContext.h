@@ -44,7 +44,7 @@ class UIScriptContextDelegate {
 public:
     virtual ~UIScriptContextDelegate() = default;
 
-    virtual void uiScriptDidComplete(const String& result, unsigned callbackID) = 0;
+    virtual void uiScriptDidComplete(StringImpl* result, unsigned callbackID) = 0;
 };
 
 const unsigned firstNonPersistentCallbackID = 1000;
@@ -82,7 +82,7 @@ public:
 
     ~UIScriptContext();
 
-    void runUIScript(const String& script, unsigned scriptCallbackID);
+    void runUIScript(StringImpl* script, unsigned scriptCallbackID);
     void requestUIScriptCompletion(JSStringRef);
 
     // For one-shot tasks callbacks.

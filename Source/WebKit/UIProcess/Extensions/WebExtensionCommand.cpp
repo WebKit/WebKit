@@ -45,7 +45,7 @@ WebExtensionCommand::WebExtensionCommand(WebExtensionContext& extensionContext, 
 
 bool WebExtensionCommand::operator==(const WebExtensionCommand& other) const
 {
-    return this == &other || (m_extensionContext == other.m_extensionContext && m_identifier == other.m_identifier);
+    return this == &other || (m_extensionContext == other.m_extensionContext && equal(m_identifier, other.m_identifier));
 }
 
 bool WebExtensionCommand::isActionCommand() const
@@ -55,9 +55,9 @@ bool WebExtensionCommand::isActionCommand() const
         return false;
 
     if (protect(context->extension())->supportsManifestVersion(3))
-        return identifier() == "_execute_action"_s;
+        return equal(identifier(), "_execute_action"_s);
 
-    return identifier() == "_execute_browser_action"_s || identifier() == "_execute_page_action"_s;
+    return equal(identifier(), "_execute_browser_action"_s) || equal(identifier(), "_execute_page_action"_s);
 }
 
 WebExtensionCommandParameters WebExtensionCommand::parameters() const

@@ -33,15 +33,15 @@ namespace WebCore {
 Ref<JSON::Object> GPURenderPipelineDescriptor::toJSON() const
 {
     Ref json = GPUPipelineDescriptorBase::toJSON();
-    json->setObject("vertex"_s, vertex.toJSON());
+    json->setObject("vertex"_si, vertex.toJSON());
     if (primitive)
-        json->setObject("primitive"_s, primitive->toJSON());
+        json->setObject("primitive"_si, primitive->toJSON());
     if (depthStencil)
-        json->setObject("depthStencil"_s, depthStencil->toJSON());
+        json->setObject("depthStencil"_si, depthStencil->toJSON());
     if (multisample)
-        json->setObject("multisample"_s, multisample->toJSON());
+        json->setObject("multisample"_si, multisample->toJSON());
     if (fragment)
-        json->setObject("fragment"_s, fragment->toJSON());
+        json->setObject("fragment"_si, fragment->toJSON());
     return json;
 }
 

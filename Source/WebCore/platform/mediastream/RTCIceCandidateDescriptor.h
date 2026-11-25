@@ -41,18 +41,18 @@ namespace WebCore {
 
 class RTCIceCandidateDescriptor : public RefCounted<RTCIceCandidateDescriptor> {
 public:
-    NODELETE static Ref<RTCIceCandidateDescriptor> create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);
+    NODELETE static Ref<RTCIceCandidateDescriptor> create(StringImpl* candidate, StringImpl* sdpMid, unsigned short sdpMLineIndex);
     virtual ~RTCIceCandidateDescriptor();
 
-    const String& candidate() const LIFETIME_BOUND { return m_candidate; }
-    const String& sdpMid() const LIFETIME_BOUND { return m_sdpMid; }
+    const RefPtr<StringImpl>& candidate() const LIFETIME_BOUND { return m_candidate; }
+    const RefPtr<StringImpl>& sdpMid() const LIFETIME_BOUND { return m_sdpMid; }
     unsigned short sdpMLineIndex() const { return m_sdpMLineIndex; }
 
 private:
-    RTCIceCandidateDescriptor(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);
+    RTCIceCandidateDescriptor(StringImpl* candidate, StringImpl* sdpMid, unsigned short sdpMLineIndex);
 
-    String m_candidate;
-    String m_sdpMid;
+    RefPtr<StringImpl> m_candidate;
+    RefPtr<StringImpl> m_sdpMid;
     unsigned short m_sdpMLineIndex;
 };
 

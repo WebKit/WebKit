@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-XSLStyleSheet::XSLStyleSheet(XSLStyleSheet* parentSheet, const String& originalURL, const URL& finalURL)
+XSLStyleSheet::XSLStyleSheet(XSLStyleSheet* parentSheet, StringImpl* originalURL, const URL& finalURL)
     : m_originalURL(originalURL)
     , m_finalURL(finalURL)
     , m_embedded(false)
@@ -53,7 +53,7 @@ XSLStyleSheet::XSLStyleSheet(XSLStyleSheet* parentSheet, const String& originalU
 {
 }
 
-XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& originalURL, const URL& finalURL,  bool embedded)
+XSLStyleSheet::XSLStyleSheet(Node* parentNode, StringImpl* originalURL, const URL& finalURL,  bool embedded)
     : m_ownerNode(parentNode)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
@@ -140,7 +140,7 @@ CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
     return &document->cachedResourceLoader();
 }
 
-bool XSLStyleSheet::parseString(const String& string)
+bool XSLStyleSheet::parseString(StringImpl* string)
 {
     // Parse in a single chunk into an xmlDocPtr
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&byteOrderMark);
@@ -154,7 +154,7 @@ bool XSLStyleSheet::parseString(const String& string)
 
     auto upconvertedCharacters = StringView(string).upconvertedCharacters();
     const char* buffer = reinterpret_cast<const char*>(upconvertedCharacters.get());
-    CheckedUint32 unsignedSize = string.length();
+    CheckedUint32 unsignedSize = length(string);
     unsignedSize *= sizeof(char16_t);
     if (unsignedSize.hasOverflowed() || unsignedSize > static_cast<unsigned>(std::numeric_limits<int>::max()))
         return false;
@@ -180,7 +180,7 @@ bool XSLStyleSheet::parseString(const String& string)
     }
 
     m_stylesheetDoc = xmlCtxtReadMemory(ctxt, buffer, size,
-        finalURL().string().utf8().legacyCStringPointer(),
+        utf8(finalURL().string()).legacyCStringPointer(),
         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE",
         XML_PARSE_NOENT | XML_PARSE_DTDATTR | XML_PARSE_NOWARNING | XML_PARSE_NOCDATA);
     xmlFreeParserCtxt(ctxt);
@@ -204,7 +204,7 @@ void XSLStyleSheet::loadChildSheets()
     if (m_embedded) {
         // We have to locate (by ID) the appropriate embedded stylesheet element, so that we can walk the
         // import/include list.
-        xmlAttrPtr idNode = xmlGetID(document(), (const xmlChar*)(finalURL().string().utf8().legacyCStringPointer()));
+        xmlAttrPtr idNode = xmlGetID(document(), (const xmlChar*)(utf8(finalURL().string()).legacyCStringPointer()));
         if (!idNode)
             return;
         stylesheetRoot = idNode->parent;
@@ -224,7 +224,7 @@ void XSLStyleSheet::loadChildSheets()
             }
             if (IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "import")) {
                 xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar*)"href", XSLT_NAMESPACE);
-                loadChildSheet(String::fromUTF8((const char*)uriRef));
+                loadChildSheet(StringImpl::fromUTF8((const char*)uriRef));
                 xmlFree(uriRef);
             } else
                 break;
@@ -235,7 +235,7 @@ void XSLStyleSheet::loadChildSheets()
         while (curr) {
             if (curr->type == XML_ELEMENT_NODE && IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "include")) {
                 xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar*)"href", XSLT_NAMESPACE);
-                loadChildSheet(String::fromUTF8((const char*)uriRef));
+                loadChildSheet(StringImpl::fromUTF8((const char*)uriRef));
                 xmlFree(uriRef);
             }
             curr = curr->next;
@@ -243,7 +243,7 @@ void XSLStyleSheet::loadChildSheets()
     }
 }
 
-void XSLStyleSheet::loadChildSheet(const String& href)
+void XSLStyleSheet::loadChildSheet(StringImpl* href)
 {
     Ref rule = XSLImportRule::create(*this, href);
     m_children.append(rule.copyRef());
@@ -302,7 +302,7 @@ xmlDocPtr XSLStyleSheet::locateStylesheetSubResource(xmlDocPtr parentDoc, const 
             // In order to ensure that libxml canonicalized both URLs, we get the original href
             // string from the import rule and canonicalize it using libxml before comparing it
             // with the URI argument.
-            auto importHref = import->href().utf8();
+            auto importHref = utf8(import->href());
             xmlChar* base = xmlNodeGetBase(parentDoc, (xmlNodePtr)parentDoc);
             xmlChar* childURI = xmlBuildURI((const xmlChar*)importHref.legacyCStringPointer(), base);
             bool equalURIs = xmlStrEqual(uri, childURI);
@@ -330,7 +330,7 @@ void XSLStyleSheet::markAsProcessed()
     m_stylesheetDocTaken = true;
 }
 
-String XSLStyleSheet::debugDescription() const
+RefPtr<StringImpl> XSLStyleSheet::debugDescription() const
 {
     return makeString("XSLStyleSheet "_s, "0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', href());
 }

@@ -62,7 +62,7 @@ public:
         virtual void establishConnection(CompletionHandler<void()>&&) = 0;
         virtual void postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts&, ServiceWorkerIdentifier source, const SecurityOriginData& sourceOrigin) = 0;
         virtual void serviceWorkerStarted(std::optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, bool doesHandleFetch) = 0;
-        virtual void serviceWorkerFailedToStart(std::optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& message) = 0;
+        virtual void serviceWorkerFailedToStart(std::optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, StringImpl* message) = 0;
         virtual void didFinishInstall(std::optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, bool wasSuccessful) = 0;
         virtual void didFinishActivation(ServiceWorkerIdentifier) = 0;
         virtual void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool) = 0;
@@ -71,7 +71,7 @@ public:
         virtual void setScriptResource(ServiceWorkerIdentifier, const URL&, const ServiceWorkerContextData::ImportedScript&) = 0;
 
         using FindClientByIdentifierCallback = CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>;
-        virtual void findClientByVisibleIdentifier(ServiceWorkerIdentifier, const String&, FindClientByIdentifierCallback&&) = 0;
+        virtual void findClientByVisibleIdentifier(ServiceWorkerIdentifier, StringImpl*, FindClientByIdentifierCallback&&) = 0;
         virtual void matchAll(ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&) = 0;
         virtual void claim(ServiceWorkerIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&&) = 0;
         virtual void focus(ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&&) = 0;
@@ -90,7 +90,7 @@ public:
 
         virtual void stop() = 0;
 
-        virtual void reportConsoleMessage(ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) = 0;
+        virtual void reportConsoleMessage(ServiceWorkerIdentifier, MessageSource, MessageLevel, StringImpl* message, unsigned long requestIdentifier) = 0;
 
         bool isClosed() const { return m_isClosed; }
 
@@ -151,7 +151,7 @@ public:
 private:
     SWContextManager() = default;
 
-    void startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& exceptionMessage, bool doesHandleFetch);
+    void startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, StringImpl* exceptionMessage, bool doesHandleFetch);
     NO_RETURN_DUE_TO_CRASH void serviceWorkerFailedToTerminate(ServiceWorkerIdentifier);
 
     void stopWorker(ServiceWorkerThreadProxy&, Seconds, Function<void()>&&);

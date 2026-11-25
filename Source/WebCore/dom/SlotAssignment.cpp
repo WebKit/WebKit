@@ -55,12 +55,17 @@ struct SameSizeAsNamedSlotAssignment {
 
 static_assert(sizeof(NamedSlotAssignment) == sizeof(SameSizeAsNamedSlotAssignment), "NamedSlotAssignment should remain small");
 
-NODELETE static const AtomString& slotNameFromAttributeValue(const AtomString& value)
+NODELETE static const RefPtr<AtomStringImpl>& slotNameFromAttributeValue(const RefPtr<AtomStringImpl>& value)
 {
     return value == nullAtom() ? NamedSlotAssignment::defaultSlotName() : value;
 }
 
-NODELETE static const AtomString& slotNameFromSlotAttribute(const Node& child)
+NODELETE static AtomStringImpl* slotNameFromAttributeValue(AtomStringImpl* value)
+{
+    return value ? value : NamedSlotAssignment::defaultSlotName().get();
+}
+
+NODELETE static const RefPtr<AtomStringImpl>& slotNameFromSlotAttribute(const Node& child)
 {
     if (is<Text>(child))
         return NamedSlotAssignment::defaultSlotName();
@@ -69,7 +74,7 @@ NODELETE static const AtomString& slotNameFromSlotAttribute(const Node& child)
 }
 
 #if ASSERT_ENABLED
-static HTMLSlotElement* findSlotElement(ShadowRoot& shadowRoot, const AtomString& slotName)
+static HTMLSlotElement* findSlotElement(ShadowRoot& shadowRoot, AtomStringImpl* slotName)
 {
     for (auto& slotElement : descendantsOfType<HTMLSlotElement>(shadowRoot)) {
         if (slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr)) == slotName)
@@ -116,7 +121,7 @@ inline bool NamedSlotAssignment::hasAssignedNodes(ShadowRoot& shadowRoot, Slot& 
     return !slot.assignedNodes.isEmpty();
 }
 
-void NamedSlotAssignment::renameSlotElement(HTMLSlotElement& slotElement, const AtomString& oldName, const AtomString& newName, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::renameSlotElement(HTMLSlotElement& slotElement, AtomStringImpl* oldName, AtomStringImpl* newName, ShadowRoot& shadowRoot)
 {
     ASSERT(m_slotElementsForConsistencyCheck.contains(slotElement));
 
@@ -126,7 +131,7 @@ void NamedSlotAssignment::renameSlotElement(HTMLSlotElement& slotElement, const 
     addSlotElementByName(newName, slotElement, shadowRoot);
 }
 
-void NamedSlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::addSlotElementByName(AtomStringImpl* name, HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
 {
 #if ASSERT_ENABLED
     ASSERT(!m_slotElementsForConsistencyCheck.contains(slotElement));
@@ -142,7 +147,7 @@ void NamedSlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotE
         shadowRootHost->setHasShadowRootContainingSlots(true);
     m_slotElementCount++;
 
-    auto& slotName = slotNameFromAttributeValue(name);
+    RefPtr slotName = slotNameFromAttributeValue(name);
     auto addResult = m_slots.ensure(slotName, [&] {
         m_slotAssignmentsIsValid = false;
         return makeUnique<Slot>();
@@ -163,7 +168,7 @@ void NamedSlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotE
     resolveSlotsAfterSlotMutation(shadowRoot, SlotMutationType::Insertion);
 }
 
-void NamedSlotAssignment::removeSlotElementByName(const AtomString& name, HTMLSlotElement& slotElement, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::removeSlotElementByName(AtomStringImpl* name, HTMLSlotElement& slotElement, ContainerNode* oldParentOfRemovedTreeForRemoval, ShadowRoot& shadowRoot)
 {
 #if ASSERT_ENABLED
     ASSERT(m_slotElementsForConsistencyCheck.contains(slotElement));
@@ -304,9 +309,9 @@ void NamedSlotAssignment::slotFallbackDidChange(HTMLSlotElement& slotElement, Sh
         slotElement.enqueueSlotChangeEvent();
 }
 
-void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& shadowRoot, RenderTreeUpdate renderTreeUpdate)
+void NamedSlotAssignment::didChangeSlot(AtomStringImpl* slotAttrValue, ShadowRoot& shadowRoot, RenderTreeUpdate renderTreeUpdate)
 {
-    auto& slotName = slotNameFromAttributeValue(slotAttrValue);
+    RefPtr slotName = slotNameFromAttributeValue(slotAttrValue);
     auto* slot = m_slots.get(slotName);
     if (!slot)
         return;
@@ -339,7 +344,7 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
     }
 }
 
-void NamedSlotAssignment::didInsertSlottable(const AtomString& slotName, ShadowRoot&)
+void NamedSlotAssignment::didInsertSlottable(AtomStringImpl* slotName, ShadowRoot&)
 {
     auto* slot = m_slots.get(slotName);
     if (!slot)
@@ -357,7 +362,7 @@ void NamedSlotAssignment::didInsertSlottable(const AtomString& slotName, ShadowR
     }
 }
 
-void NamedSlotAssignment::didRemoveSlottable(const AtomString& slotName, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::didRemoveSlottable(AtomStringImpl* slotName, ShadowRoot& shadowRoot)
 {
     auto* slot = m_slots.get(slotName);
     if (!slot)
@@ -382,7 +387,7 @@ void NamedSlotAssignment::didRemoveSlottable(const AtomString& slotName, ShadowR
     slotElement->invalidateStyleAndRenderersForSubtree();
 }
 
-void NamedSlotAssignment::didReassignSlottable(Element& element, const AtomString& oldSlotName, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::didReassignSlottable(Element& element, AtomStringImpl* oldSlotName, ShadowRoot& shadowRoot)
 {
     ASSERT(element.parentNode() == shadowRoot.host());
 
@@ -394,7 +399,7 @@ void NamedSlotAssignment::didReassignSlottable(Element& element, const AtomStrin
     didInsertSlottable(slotNameForHostChild(element), shadowRoot);
 }
 
-std::optional<RefPtr<Node>> NamedSlotAssignment::firstAssignedNodeBeforeChange(const AtomString& slotName) const
+std::optional<RefPtr<Node>> NamedSlotAssignment::firstAssignedNodeBeforeChange(AtomStringImpl* slotName) const
 {
     if (!m_slotAssignmentsIsValid)
         return { };
@@ -404,7 +409,7 @@ std::optional<RefPtr<Node>> NamedSlotAssignment::firstAssignedNodeBeforeChange(c
     return RefPtr { slot->assignedNodes.first() };
 }
 
-void NamedSlotAssignment::updateWhitespaceRendererAfterSlottable(const Node& slottable, const AtomString& slotName, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::updateWhitespaceRendererAfterSlottable(const Node& slottable, AtomStringImpl* slotName, ShadowRoot& shadowRoot)
 {
     RefPtr host = shadowRoot.host();
     if (!host->renderer() && !host->hasDisplayContents())
@@ -461,7 +466,7 @@ void NamedSlotAssignment::hostChildElementDidChange(const Element& childElement,
         didRemoveSlottable(slotName, shadowRoot);
 }
 
-void NamedSlotAssignment::hostChildElementDidChangeSlotAttribute(Element& element, const AtomString& oldValue, const AtomString& newValue, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::hostChildElementDidChangeSlotAttribute(Element& element, AtomStringImpl* oldValue, AtomStringImpl* newValue, ShadowRoot& shadowRoot)
 {
     didChangeSlot(oldValue, shadowRoot, RenderTreeUpdate::ByCaller);
     didChangeSlot(newValue, shadowRoot, RenderTreeUpdate::ByCaller);
@@ -469,13 +474,14 @@ void NamedSlotAssignment::hostChildElementDidChangeSlotAttribute(Element& elemen
     // An element that left the composed tree is torn down like a removed one.
     if (!findAssignedSlot(element))
         RenderTreeUpdater::tearDownRenderers(element);
-    didReassignSlottable(element, slotNameFromAttributeValue(oldValue), shadowRoot);
+    RefPtr oldSlotName = slotNameFromAttributeValue(oldValue);
+    didReassignSlottable(element, oldSlotName.get(), shadowRoot);
 }
 
 const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* NamedSlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
 {
     ASSERT(slotElement.containingShadowRoot() == &shadowRoot);
-    const AtomString& slotName = slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr));
+    const RefPtr<AtomStringImpl>& slotName = slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr));
     auto* slot = m_slots.get(slotName);
 
     bool hasNotAddedSlotInInsertedIntoAncestorYet = shadowRoot.isConnected() && (!slotElement.isConnected() || slotElement.isInInsertedIntoAncestor());
@@ -517,7 +523,7 @@ void NamedSlotAssignment::willRemoveAssignedNode(Node& node, ShadowRoot& shadowR
     InspectorInstrumentation::didChangeAssignedSlot(node);
 }
 
-NODELETE const AtomString& NamedSlotAssignment::slotNameForHostChild(const Node& child) const
+NODELETE const RefPtr<AtomStringImpl>& NamedSlotAssignment::slotNameForHostChild(const Node& child) const
 {
     return slotNameFromSlotAttribute(child);
 }
@@ -558,9 +564,9 @@ void NamedSlotAssignment::assignSlots(ShadowRoot& shadowRoot)
         entry.value->assignedNodes.shrinkToFit();
 }
 
-void NamedSlotAssignment::assignToSlot(Node& child, const AtomString& slotName)
+void NamedSlotAssignment::assignToSlot(Node& child, AtomStringImpl* slotName)
 {
-    ASSERT(!slotName.isNull());
+    ASSERT(slotName);
     if (slotName == defaultSlotName()) {
         auto defaultSlotEntry = m_slots.find(defaultSlotName());
         if (defaultSlotEntry != m_slots.end())
@@ -606,11 +612,11 @@ const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* ManualSlotAssignmen
     return cachedAssignment.size() ? &cachedAssignment : nullptr;
 }
 
-void ManualSlotAssignment::renameSlotElement(HTMLSlotElement&, const AtomString&, const AtomString&, ShadowRoot&)
+void ManualSlotAssignment::renameSlotElement(HTMLSlotElement&, AtomStringImpl*, AtomStringImpl*, ShadowRoot&)
 {
 }
 
-void ManualSlotAssignment::addSlotElementByName(const AtomString&, HTMLSlotElement& slot, ShadowRoot& shadowRoot)
+void ManualSlotAssignment::addSlotElementByName(AtomStringImpl*, HTMLSlotElement& slot, ShadowRoot& shadowRoot)
 {
     if (!m_slotElementCount)
         shadowRoot.host()->setHasShadowRootContainingSlots(true);
@@ -624,7 +630,7 @@ void ManualSlotAssignment::addSlotElementByName(const AtomString&, HTMLSlotEleme
         slot.enqueueSlotChangeEvent();
 }
 
-void ManualSlotAssignment::removeSlotElementByName(const AtomString&, HTMLSlotElement& slot, ContainerNode*, ShadowRoot& shadowRoot)
+void ManualSlotAssignment::removeSlotElementByName(AtomStringImpl*, HTMLSlotElement& slot, ContainerNode*, ShadowRoot& shadowRoot)
 {
     RELEASE_ASSERT(m_slotElementCount);
     --m_slotElementCount;
@@ -725,7 +731,7 @@ void ManualSlotAssignment::hostChildElementDidChange(const Element&, ShadowRoot&
     ++m_slottableVersion;
 }
 
-void ManualSlotAssignment::hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&)
+void ManualSlotAssignment::hostChildElementDidChangeSlotAttribute(Element&, AtomStringImpl*, AtomStringImpl*, ShadowRoot&)
 {
 }
 

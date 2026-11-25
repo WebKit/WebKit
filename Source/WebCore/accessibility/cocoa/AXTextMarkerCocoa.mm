@@ -86,7 +86,7 @@ RetainPtr<NSAttributedString> AXTextMarkerRange::toAttributedString(AXCoreObject
         return nil;
     auto& [start, end] = *markers;
 
-    String listMarkerText = listMarkerTextOnSameLine(start);
+    RefPtr<StringImpl> listMarkerText = listMarkerTextOnSameLine(start);
 
     RefPtr startObject = start.isolatedObject();
     if (startObject == end.isolatedObject()) {
@@ -94,7 +94,7 @@ RetainPtr<NSAttributedString> AXTextMarkerRange::toAttributedString(AXCoreObject
         size_t maxOffset = std::max(start.offset(), end.offset());
 
         StringView substringView = start.runs()->substring(minOffset, maxOffset - minOffset);
-        if (listMarkerText.isEmpty()) {
+        if (isEmpty(listMarkerText)) {
             // In the common case where there is no list marker text, we don't need to allocate a new string,
             // instead passing just the substring StringView to createAttributedString.
             return startObject->createAttributedString(substringView, spellCheck).autorelease();
@@ -105,7 +105,7 @@ RetainPtr<NSAttributedString> AXTextMarkerRange::toAttributedString(AXCoreObject
     RetainPtr<NSMutableAttributedString> result = nil;
     StringView substringView = start.runs()->substring(start.offset());
     // As done above, only allocate a new string via makeString if we actually have listMarkerText.
-    if (listMarkerText.isEmpty())
+    if (isEmpty(listMarkerText))
         result = startObject->createAttributedString(substringView, spellCheck);
     else
         result = startObject->createAttributedString(makeString(listMarkerText, substringView), spellCheck);

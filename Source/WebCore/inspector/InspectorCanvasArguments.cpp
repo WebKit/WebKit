@@ -83,48 +83,48 @@ static Ref<JSON::ArrayOf<JSON::Value>> process(InspectorCanvas& inspectorCanvas,
 static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUFragmentState& state)
 {
     Ref object = state.toJSON();
-    object->setArray("module"_s, process(inspectorCanvas, state.module));
+    object->setArray("module"_si, process(inspectorCanvas, state.module));
     return object;
 }
 
 static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUVertexState& state)
 {
     Ref object = state.toJSON();
-    object->setArray("module"_s, process(inspectorCanvas, state.module));
+    object->setArray("module"_si, process(inspectorCanvas, state.module));
     return object;
 }
 
 static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUBindGroupDescriptor& descriptor)
 {
     Ref object = descriptor.toJSON();
-    object->setArray("layout"_s, process(inspectorCanvas, descriptor.layout));
+    object->setArray("layout"_si, process(inspectorCanvas, descriptor.layout));
 
     auto entries = JSON::Array::create();
     for (auto& entry : descriptor.entries) {
         auto entryObject = JSON::Object::create();
-        entryObject->setDouble("binding"_s, entry.binding);
+        entryObject->setDouble("binding"_si, entry.binding);
         WTF::switchOn(entry.resource, [&](const auto& resource) {
             using Resource = std::remove_cvref_t<decltype(resource)>;
             if constexpr (std::is_same_v<Resource, GPUBufferBinding>) {
                 auto bufferBinding = JSON::Object::create();
-                bufferBinding->setArray("buffer"_s, process(inspectorCanvas, resource.buffer));
-                bufferBinding->setDouble("offset"_s, resource.offset);
+                bufferBinding->setArray("buffer"_si, process(inspectorCanvas, resource.buffer));
+                bufferBinding->setDouble("offset"_si, resource.offset);
                 if (resource.size)
-                    bufferBinding->setDouble("size"_s, *resource.size);
-                entryObject->setValue("resource"_s, WTF::move(bufferBinding));
+                    bufferBinding->setDouble("size"_si, *resource.size);
+                entryObject->setValue("resource"_si, WTF::move(bufferBinding));
             } else
-                entryObject->setArray("resource"_s, process(inspectorCanvas, resource));
+                entryObject->setArray("resource"_si, process(inspectorCanvas, resource));
         });
         entries->pushValue(WTF::move(entryObject));
     }
-    object->setValue("entries"_s, WTF::move(entries));
+    object->setValue("entries"_si, WTF::move(entries));
     return object;
 }
 
 static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUComputePassTimestampWrites& timestampWrites)
 {
     Ref object = timestampWrites.toJSON();
-    object->setArray("querySet"_s, process(inspectorCanvas, timestampWrites.querySet));
+    object->setArray("querySet"_si, process(inspectorCanvas, timestampWrites.querySet));
     return object;
 }
 
@@ -132,21 +132,21 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUComp
 {
     Ref object = descriptor.toJSON();
     if (descriptor.timestampWrites)
-        object->setObject("timestampWrites"_s, process(inspectorCanvas, *descriptor.timestampWrites));
+        object->setObject("timestampWrites"_si, process(inspectorCanvas, *descriptor.timestampWrites));
     return object;
 }
 
 static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUImageCopyTexture& imageCopyTexture)
 {
     Ref object = imageCopyTexture.toJSON();
-    object->setArray("texture"_s, process(inspectorCanvas, imageCopyTexture.texture));
+    object->setArray("texture"_si, process(inspectorCanvas, imageCopyTexture.texture));
     return object;
 }
 
 static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUImageCopyTextureTagged& imageCopyTexture)
 {
     Ref object = imageCopyTexture.toJSON();
-    object->setArray("texture"_s, process(inspectorCanvas, imageCopyTexture.texture));
+    object->setArray("texture"_si, process(inspectorCanvas, imageCopyTexture.texture));
     return object;
 }
 
@@ -159,7 +159,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUDraw
 {
     Ref object = drawElementImageSource.toJSON();
     WTF::switchOn(drawElementImageSource.source, [&](const auto& source) {
-        object->setArray("source"_s, process(inspectorCanvas, source));
+        object->setArray("source"_si, process(inspectorCanvas, source));
     });
     return object;
 }
@@ -170,10 +170,10 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUExte
 #if ENABLE(VIDEO)
 #if ENABLE(WEB_CODECS)
     WTF::switchOn(descriptor.source, [&](const auto& source) {
-        object->setArray("source"_s, process(inspectorCanvas, source));
+        object->setArray("source"_si, process(inspectorCanvas, source));
     });
 #else // ENABLE(WEB_CODECS)
-    object->setArray("source"_s, process(inspectorCanvas, descriptor.source));
+    object->setArray("source"_si, process(inspectorCanvas, descriptor.source));
 #endif // !ENABLE(WEB_CODECS)
 #endif // ENABLE(VIDEO)
     return object;
@@ -182,7 +182,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUExte
 static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUImageCopyBuffer& imageCopyBuffer)
 {
     Ref object = imageCopyBuffer.toJSON();
-    object->setArray("buffer"_s, process(inspectorCanvas, imageCopyBuffer.buffer));
+    object->setArray("buffer"_si, process(inspectorCanvas, imageCopyBuffer.buffer));
     return object;
 }
 
@@ -190,7 +190,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUImag
 {
     Ref object = imageCopyExternalImage.toJSON();
     WTF::switchOn(imageCopyExternalImage.source, [&](const auto& source) {
-        object->setArray("source"_s, process(inspectorCanvas, source));
+        object->setArray("source"_si, process(inspectorCanvas, source));
     });
     return object;
 }
@@ -205,7 +205,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUPipe
         else
             bindGroupLayouts->pushValue(JSON::Value::null());
     }
-    object->setArray("bindGroupLayouts"_s, WTF::move(bindGroupLayouts));
+    object->setArray("bindGroupLayouts"_si, WTF::move(bindGroupLayouts));
     return object;
 }
 
@@ -213,11 +213,11 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURend
 {
     Ref object = colorAttachment.toJSON();
     WTF::switchOn(colorAttachment.view, [&](const auto& view) {
-        object->setArray("view"_s, process(inspectorCanvas, view));
+        object->setArray("view"_si, process(inspectorCanvas, view));
     });
     if (colorAttachment.resolveTarget) {
         WTF::switchOn(*colorAttachment.resolveTarget, [&](const auto& resolveTarget) {
-            object->setArray("resolveTarget"_s, process(inspectorCanvas, resolveTarget));
+            object->setArray("resolveTarget"_si, process(inspectorCanvas, resolveTarget));
         });
     }
     return object;
@@ -227,7 +227,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURend
 {
     Ref object = depthStencilAttachment.toJSON();
     WTF::switchOn(depthStencilAttachment.view, [&](const auto& view) {
-        object->setArray("view"_s, process(inspectorCanvas, view));
+        object->setArray("view"_si, process(inspectorCanvas, view));
     });
     return object;
 }
@@ -235,7 +235,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURend
 static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURenderPassTimestampWrites& timestampWrites)
 {
     Ref object = timestampWrites.toJSON();
-    object->setArray("querySet"_s, process(inspectorCanvas, timestampWrites.querySet));
+    object->setArray("querySet"_si, process(inspectorCanvas, timestampWrites.querySet));
     return object;
 }
 
@@ -250,14 +250,14 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURend
         else
             colorAttachments->pushValue(JSON::Value::null());
     }
-    object->setArray("colorAttachments"_s, WTF::move(colorAttachments));
+    object->setArray("colorAttachments"_si, WTF::move(colorAttachments));
 
     if (descriptor.depthStencilAttachment)
-        object->setObject("depthStencilAttachment"_s, process(inspectorCanvas, *descriptor.depthStencilAttachment));
+        object->setObject("depthStencilAttachment"_si, process(inspectorCanvas, *descriptor.depthStencilAttachment));
     if (descriptor.occlusionQuerySet)
-        object->setArray("occlusionQuerySet"_s, process(inspectorCanvas, Ref { *descriptor.occlusionQuerySet }));
+        object->setArray("occlusionQuerySet"_si, process(inspectorCanvas, Ref { *descriptor.occlusionQuerySet }));
     if (descriptor.timestampWrites)
-        object->setObject("timestampWrites"_s, process(inspectorCanvas, *descriptor.timestampWrites));
+        object->setObject("timestampWrites"_si, process(inspectorCanvas, *descriptor.timestampWrites));
     return object;
 }
 
@@ -265,7 +265,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUShad
 {
     Ref object = hint.toJSON();
     if (auto* layout = std::get_if<Ref<GPUPipelineLayout>>(&hint.layout))
-        object->setArray("layout"_s, process(inspectorCanvas, *layout));
+        object->setArray("layout"_si, process(inspectorCanvas, *layout));
     return object;
 }
 
@@ -275,7 +275,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUShad
     auto hints = JSON::Object::create();
     for (auto& hint : descriptor.hints)
         hints->setObject(hint.key, process(inspectorCanvas, hint.value));
-    object->setObject("hints"_s, WTF::move(hints));
+    object->setObject("hints"_si, WTF::move(hints));
     return object;
 }
 
@@ -283,11 +283,11 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUComp
 {
     Ref object = descriptor.toJSON();
     if (auto* layout = std::get_if<Ref<GPUPipelineLayout>>(&descriptor.layout))
-        object->setArray("layout"_s, process(inspectorCanvas, *layout));
+        object->setArray("layout"_si, process(inspectorCanvas, *layout));
 
     Ref compute = descriptor.compute.toJSON();
-    compute->setArray("module"_s, process(inspectorCanvas, descriptor.compute.module));
-    object->setObject("compute"_s, WTF::move(compute));
+    compute->setArray("module"_si, process(inspectorCanvas, descriptor.compute.module));
+    object->setObject("compute"_si, WTF::move(compute));
     return object;
 }
 
@@ -295,10 +295,10 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURend
 {
     Ref object = descriptor.toJSON();
     if (auto* layout = std::get_if<Ref<GPUPipelineLayout>>(&descriptor.layout))
-        object->setArray("layout"_s, process(inspectorCanvas, *layout));
-    object->setObject("vertex"_s, process(inspectorCanvas, descriptor.vertex));
+        object->setArray("layout"_si, process(inspectorCanvas, *layout));
+    object->setObject("vertex"_si, process(inspectorCanvas, descriptor.vertex));
     if (descriptor.fragment)
-        object->setObject("fragment"_s, process(inspectorCanvas, *descriptor.fragment));
+        object->setObject("fragment"_si, process(inspectorCanvas, *descriptor.fragment));
     return object;
 }
 
@@ -408,7 +408,7 @@ auto InspectorCanvasArgumentProcessor<IDLDictionary<UpdateElementGeometryOptions
 
 // MARK: - Strings
 
-auto InspectorCanvasArgumentProcessor<IDLDOMString>::operator()(InspectorCanvas& context, const String& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLDOMString>::operator()(InspectorCanvas& context, StringImpl* argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ context.valueIndexForData(argument), RecordingSwizzleType::String }};
 }

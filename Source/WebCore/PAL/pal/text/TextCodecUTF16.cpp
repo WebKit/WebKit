@@ -67,7 +67,7 @@ void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
 }
 
 // https://encoding.spec.whatwg.org/#shared-utf-16-decoder
-String TextCodecUTF16::decode(std::span<const uint8_t> bytes, bool flush, bool, bool& sawError)
+RefPtr<StringImpl> TextCodecUTF16::decode(std::span<const uint8_t> bytes, bool flush, bool, bool& sawError)
 {
     size_t index = 0;
     size_t lengthMinusOne = bytes.size() - 1;

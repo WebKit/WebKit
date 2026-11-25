@@ -315,14 +315,14 @@ NODELETE inline bool Interval::contains(int value) const
     return value >= m_min && value <= m_max;
 }
 
-void Function::setArguments(const String& name, Vector<std::unique_ptr<Expression>> arguments)
+void Function::setArguments(StringImpl* name, Vector<std::unique_ptr<Expression>> arguments)
 {
     ASSERT(!subexpressionCount());
 
     // Functions that use the context node as an implicit argument are context node sensitive when they
     // have no arguments, but when explicit arguments are added, they are no longer context node sensitive.
     // As of this writing, the only exception to this is the "lang" function.
-    if (name != "lang"_s && !arguments.isEmpty())
+    if (!equal(name, "lang"_s) && !arguments.isEmpty())
         setIsContextNodeSensitive(false);
 
     setSubexpressions(WTF::move(arguments));
@@ -383,17 +383,17 @@ Value FunId::evaluate() const
     return Value(WTF::move(result));
 }
 
-NODELETE static inline String expandedNameLocalPart(Node& node)
+NODELETE static inline RefPtr<StringImpl> expandedNameLocalPart(Node& node)
 {
     if (auto* pi = dynamicDowncast<ProcessingInstruction>(node))
         return pi->target();
-    return node.localName().string();
+    return node.localName();
 }
 
-static inline String expandedName(Node& node)
+static inline RefPtr<StringImpl> expandedName(Node& node)
 {
     auto& prefix = node.prefix();
-    return prefix.isEmpty() ? expandedNameLocalPart(node) : makeString(prefix, ':', expandedNameLocalPart(node));
+    return isEmpty(prefix) ? expandedNameLocalPart(node) : makeString(prefix, ':', expandedNameLocalPart(node));
 }
 
 Value FunLocalName::evaluate() const
@@ -418,10 +418,10 @@ Value FunNamespaceURI::evaluate() const
             return emptyString();
 
         RefPtr node = a.toNodeSet().firstNode();
-        return node ? node->namespaceURI().string() : emptyString();
+        return node ? node->namespaceURI() : emptyString();
     }
 
-    return evaluationContext().node->namespaceURI().string();
+    return evaluationContext().node->namespaceURI();
 }
 
 Value FunName::evaluate() const
@@ -470,76 +470,76 @@ Value FunStartsWith::evaluate() const
 {
     auto clonedContext = Expression::evaluationContext();
 
-    String s1 = argument(0).evaluate().toString();
-    String s2;
+    RefPtr<StringImpl> s1 = argument(0).evaluate().toString();
+    RefPtr<StringImpl> s2;
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
         s2 = argument(1).evaluate().toString();
     }
 
-    if (s2.isEmpty())
+    if (isEmpty(s2))
         return true;
 
-    return s1.startsWith(s2);
+    return startsWith(s1, s2);
 }
 
 Value FunContains::evaluate() const
 {
     auto clonedContext = Expression::evaluationContext();
 
-    String s1 = argument(0).evaluate().toString();
-    String s2;
+    RefPtr<StringImpl> s1 = argument(0).evaluate().toString();
+    RefPtr<StringImpl> s2;
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
         s2 = argument(1).evaluate().toString();
     }
 
-    if (s2.isEmpty()) 
+    if (isEmpty(s2)) 
         return true;
 
-    return s1.contains(s2) != 0;
+    return contains(s1, s2) != 0;
 }
 
 Value FunSubstringBefore::evaluate() const
 {
     auto clonedContext = Expression::evaluationContext();
 
-    String s1 = argument(0).evaluate().toString();
-    String s2;
+    RefPtr<StringImpl> s1 = argument(0).evaluate().toString();
+    RefPtr<StringImpl> s2;
 
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
         s2 = argument(1).evaluate().toString();
     }
 
-    if (s2.isEmpty())
+    if (isEmpty(s2))
         return emptyString();
 
-    size_t i = s1.find(s2);
+    size_t i = find(s1, s2);
 
     if (i == notFound)
         return emptyString();
 
-    return s1.left(i);
+    return left(s1, i);
 }
 
 Value FunSubstringAfter::evaluate() const
 {
     auto clonedContext = Expression::evaluationContext();
 
-    String s1 = argument(0).evaluate().toString();
-    String s2;
+    RefPtr<StringImpl> s1 = argument(0).evaluate().toString();
+    RefPtr<StringImpl> s2;
 
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
         s2 = argument(1).evaluate().toString();
     }
 
-    size_t i = s1.find(s2);
+    size_t i = find(s1, s2);
     if (i == notFound)
         return emptyString();
 
-    return s1.substring(i + s2.length());
+    return substring(s1, i + length(s2));
 }
 
 // Computes the 1-based start and end (exclusive) string indices for
@@ -571,7 +571,7 @@ Value FunSubstring::evaluate() const
     EvaluationContext clonedContext2(Expression::evaluationContext());
     EvaluationContext clonedContext3(Expression::evaluationContext());
 
-    String sourceString;
+    RefPtr<StringImpl> sourceString;
     double pos;
     double len;
 
@@ -591,29 +591,29 @@ Value FunSubstring::evaluate() const
         len = std::numeric_limits<double>::infinity();
     }
 
-    const auto bounds = computeSubstringStartEnd(pos, len, sourceString.length());
+    const auto bounds = computeSubstringStartEnd(pos, len, length(sourceString));
     if (bounds.second <= bounds.first)
         return emptyString();
 
-    return sourceString.substring(bounds.first - 1, bounds.second - bounds.first);
+    return substring(sourceString, bounds.first - 1, bounds.second - bounds.first);
 }
 
 Value FunStringLength::evaluate() const
 {
     if (!argumentCount())
-        return Value(NodeSet(*Expression::evaluationContext().node)).toString().length();
-    return argument(0).evaluate().toString().length();
+        return length(Value(NodeSet(*Expression::evaluationContext().node)).toString());
+    return length(argument(0).evaluate().toString());
 }
 
 Value FunNormalizeSpace::evaluate() const
 {
     // https://www.w3.org/TR/1999/REC-xpath-19991116/#function-normalize-space
     if (!argumentCount()) {
-        String s = Value(NodeSet(*Expression::evaluationContext().node)).toString();
-        return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<char16_t>);
+        RefPtr<StringImpl> s = Value(NodeSet(*Expression::evaluationContext().node)).toString();
+        return simplifyWhiteSpace(s, isASCIIWhitespaceWithoutFF<char16_t>);
     }
-    String s = argument(0).evaluate().toString();
-    return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<char16_t>);
+    RefPtr<StringImpl> s = argument(0).evaluate().toString();
+    return simplifyWhiteSpace(s, isASCIIWhitespaceWithoutFF<char16_t>);
 }
 
 Value FunTranslate::evaluate() const
@@ -621,8 +621,8 @@ Value FunTranslate::evaluate() const
     EvaluationContext clonedContext1(Expression::evaluationContext());
     EvaluationContext clonedContext2(Expression::evaluationContext());
 
-    String s1 = argument(0).evaluate().toString();
-    String s2, s3;
+    RefPtr<StringImpl> s1 = argument(0).evaluate().toString();
+    RefPtr<StringImpl> s2, s3;
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext1);
         s2 = argument(1).evaluate().toString();
@@ -634,14 +634,14 @@ Value FunTranslate::evaluate() const
 
     StringBuilder result;
 
-    for (unsigned i1 = 0; i1 < s1.length(); ++i1) {
-        char16_t ch = s1[i1];
-        size_t i2 = s2.find(ch);
+    for (unsigned i1 = 0; i1 < length(s1); ++i1) {
+        char16_t ch = codeUnitAt(s1, i1);
+        size_t i2 = find(s2, ch);
         
         if (i2 == notFound)
             result.append(ch);
-        else if (i2 < s3.length())
-            result.append(s3[i2]);
+        else if (i2 < length(s3))
+            result.append(codeUnitAt(s3, i2));
     }
 
     return result.toString();
@@ -664,7 +664,7 @@ Value FunTrue::evaluate() const
 
 Value FunLang::evaluate() const
 {
-    String lang = argument(0).evaluate().toString();
+    RefPtr<StringImpl> lang = argument(0).evaluate().toString();
 
     const Attribute* languageAttribute = nullptr;
     RefPtr node = evaluationContext().node.get();
@@ -681,16 +681,16 @@ Value FunLang::evaluate() const
     if (!languageAttribute)
         return false;
 
-    String langValue = languageAttribute->value();
+    RefPtr<StringImpl> langValue = languageAttribute->value();
     while (true) {
         if (equalIgnoringASCIICase(langValue, lang))
             return true;
 
         // Remove suffixes one by one.
-        size_t index = langValue.reverseFind('-');
+        size_t index = reverseFind(langValue, '-');
         if (index == notFound)
             break;
-        langValue = langValue.left(index);
+        langValue = left(langValue, index);
     }
 
     return false;
@@ -756,7 +756,7 @@ struct FunctionMapValue {
     Interval argumentCountInterval;
 };
 
-static MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> createFunctionMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, FunctionMapValue> createFunctionMap()
 {
     struct FunctionMapping {
         ASCIILiteral name;
@@ -793,13 +793,13 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> createF
         { "true"_s, { createFunctionTrue, 0 } },
     });
 
-    MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, FunctionMapValue> map;
     for (auto& function : functions)
         map.add(function.name, function.function);
     return map;
 }
 
-std::unique_ptr<Function> Function::create(const String& name, unsigned numArguments)
+std::unique_ptr<Function> Function::create(StringImpl* name, unsigned numArguments)
 {
     static NeverDestroyed functionMap = createFunctionMap();
 
@@ -813,12 +813,12 @@ std::unique_ptr<Function> Function::create(const String& name, unsigned numArgum
     return it->value.creationFunction();
 }
 
-std::unique_ptr<Function> Function::create(const String& name)
+std::unique_ptr<Function> Function::create(StringImpl* name)
 {
     return create(name, 0);
 }
 
-std::unique_ptr<Function> Function::create(const String& name, Vector<std::unique_ptr<Expression>> arguments)
+std::unique_ptr<Function> Function::create(StringImpl* name, Vector<std::unique_ptr<Expression>> arguments)
 {
     auto function = create(name, arguments.size());
     if (function)

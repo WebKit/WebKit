@@ -48,7 +48,7 @@ Ref<CSSSupportsRule> CSSSupportsRule::create(StyleRuleSupports& rule, CSSStyleSh
     return adoptRef(*new CSSSupportsRule(rule, parent));
 }
 
-String CSSSupportsRule::cssText() const
+RefPtr<StringImpl> CSSSupportsRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@supports "_s, conditionText());
@@ -56,7 +56,7 @@ String CSSSupportsRule::cssText() const
     return builder.toString();
 }
 
-String CSSSupportsRule::cssText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSSupportsRule::cssText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
     builder.append("@supports "_s, conditionText());
@@ -64,7 +64,7 @@ String CSSSupportsRule::cssText(const CSS::SerializationContext& context) const
     return builder.toString();
 }
 
-String CSSSupportsRule::conditionText() const
+RefPtr<StringImpl> CSSSupportsRule::conditionText() const
 {
     return downcast<StyleRuleSupports>(groupRule()).conditionText();
 }

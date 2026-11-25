@@ -50,7 +50,7 @@ class VisiblePosition;
 
 // Data needed to create a platform-specific custom action.
 struct CustomActionData {
-    String name;
+    RefPtr<StringImpl> name;
     AXID targetID;
     AXTreeID treeID;
 };

@@ -71,7 +71,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
 
         MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 1"_s, { }, true, MockSpeakerProperties { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, 44100 } },
         MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 2"_s, { }, false, MockSpeakerProperties { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, 48000 } },
-        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 3"_s, { }, false, MockSpeakerProperties { String { }, 48000 } },
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 3"_s, { }, false, MockSpeakerProperties { nullString(), 48000 } },
 
         MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s, { }, true,
             MockCameraProperties {
@@ -121,14 +121,14 @@ public:
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId()))
-            return CaptureSourceOrError({ "Unable to find mock camera device with given persistentID"_s, MediaAccessDenialReason::PermissionDenied });
+            return CaptureSourceOrError({ "Unable to find mock camera device with given persistentID"_si, MediaAccessDenialReason::PermissionDenied });
 
         auto mock = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(device.persistentId());
         ASSERT(mock);
         if (mock->flags.contains(MockMediaDevice::Flag::Invalid))
-            return CaptureSourceOrError({ "Invalid mock camera device"_s, MediaAccessDenialReason::PermissionDenied });
+            return CaptureSourceOrError({ "Invalid mock camera device"_si, MediaAccessDenialReason::PermissionDenied });
 
-        return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTF::move(hashSalts), constraints, pageIdentifier);
+        return MockRealtimeVideoSource::create(RefPtr<StringImpl> { device.persistentId() }, AtomStringImpl::add(device.label()), WTF::move(hashSalts), constraints, pageIdentifier);
     }
 
 private:
@@ -168,7 +168,7 @@ private:
 
 MockDisplayCapturer::MockDisplayCapturer(CapturerObserver& observer, const CaptureDevice& device, std::optional<PageIdentifier> pageIdentifier)
     : DisplayCaptureSourceCocoa::Capturer(observer)
-    , m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
+    , m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(RefPtr<StringImpl> { device.persistentId() }, AtomStringImpl::add(device.label()), MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
     , m_readyTimer(*this, &MockDisplayCapturer::readyTimerFired)
 {
 }
@@ -241,14 +241,14 @@ void MockDisplayCapturer::triggerMockCaptureConfigurationChange()
 {
     Ref source = m_source;
     auto deviceId = source->persistentID();
-    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceId.startsWith("WINDOW"_s) ? "WINDOW-2"_s : "SCREEN-2"_s);
+    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(StringImpl::create(startsWith(deviceId, "WINDOW"_s) ? "WINDOW-2"_s : "SCREEN-2"_s).ptr());
     ASSERT(device);
     if (!device)
         return;
 
     bool isStarted = source->isProducingData();
     auto pageIdentifier = source->pageIdentifier();
-    source = MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device->persistentId }, AtomString { device->label }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier);
+    source = MockRealtimeVideoSourceMac::createForMockDisplayCapturer(RefPtr<StringImpl> { device->persistentId }, AtomStringImpl::add(device->label), MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier);
     m_source = source.copyRef();
     if (isStarted)
         source->start();
@@ -264,7 +264,7 @@ public:
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier) final
     {
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
-            return CaptureSourceOrError({ "Unable to find mock display device with given persistentID"_s, MediaAccessDenialReason::PermissionDenied });
+            return CaptureSourceOrError({ "Unable to find mock display device with given persistentID"_si, MediaAccessDenialReason::PermissionDenied });
 
         switch (device.type()) {
         case CaptureDevice::DeviceType::Screen:
@@ -278,7 +278,7 @@ public:
 #elif USE(GSTREAMER)
             return MockDisplayCaptureSourceGStreamer::create(device, WTF::move(hashSalts), constraints, pageIdentifier);
 #else
-            return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTF::move(hashSalts), constraints, pageIdentifier);
+            return MockRealtimeVideoSource::create(RefPtr<StringImpl> { device.persistentId() }, AtomStringImpl::add(device.label()), WTF::move(hashSalts), constraints, pageIdentifier);
 #endif
             break;
         }
@@ -324,14 +324,14 @@ public:
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
-            return CaptureSourceOrError({ "Unable to find mock microphone device with given persistentID"_s, MediaAccessDenialReason::PermissionDenied });
+            return CaptureSourceOrError({ "Unable to find mock microphone device with given persistentID"_si, MediaAccessDenialReason::PermissionDenied });
 
         auto mock = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(device.persistentId());
         ASSERT(mock);
         if (mock->flags.contains(MockMediaDevice::Flag::Invalid))
-            return CaptureSourceOrError({ "Invalid mock microphone device"_s, MediaAccessDenialReason::PermissionDenied });
+            return CaptureSourceOrError({ "Invalid mock microphone device"_si, MediaAccessDenialReason::PermissionDenied });
 
-        return MockRealtimeAudioSource::create(String { device.persistentId() }, AtomString { device.label() }, WTF::move(hashSalts), constraints, pageIdentifier);
+        return MockRealtimeAudioSource::create(RefPtr<StringImpl> { device.persistentId() }, AtomStringImpl::add(device.label()), WTF::move(hashSalts), constraints, pageIdentifier);
     }
 private:
     MockRealtimeAudioSourceFactory() = default;
@@ -346,10 +346,10 @@ static Vector<MockMediaDevice>& devices()
     return devices;
 }
 
-static HashMap<String, MockMediaDevice>& deviceMap()
+static HashMap<RefPtr<StringImpl>, MockMediaDevice>& deviceMap()
 {
     static NeverDestroyed map = [] {
-        HashMap<String, MockMediaDevice> map;
+        HashMap<RefPtr<StringImpl>, MockMediaDevice> map;
         for (auto& device : devices())
             map.add(device.persistentId, device);
         return map;
@@ -489,7 +489,7 @@ void MockRealtimeMediaSourceCenter::setDevices(Vector<MockMediaDevice>&& newMock
     for (auto& device : mockDevices) {
         auto& persistentId = device.persistentId;
         if (!newMockDevices.containsIf([&persistentId](auto& newDevice) -> bool {
-            return newDevice.persistentId == persistentId;
+            return equal(newDevice.persistentId, persistentId);
         }))
             RealtimeMediaSourceCenter::singleton().captureDeviceWillBeRemoved(persistentId);
     }
@@ -529,7 +529,7 @@ void MockRealtimeMediaSourceCenter::addDevice(const MockMediaDevice& newDevice)
     RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
-void MockRealtimeMediaSourceCenter::removeDevice(const String& persistentId)
+void MockRealtimeMediaSourceCenter::removeDevice(StringImpl* persistentId)
 {
     auto& map = deviceMap();
     auto iterator = map.find(persistentId);
@@ -538,20 +538,20 @@ void MockRealtimeMediaSourceCenter::removeDevice(const String& persistentId)
 
     RealtimeMediaSourceCenter::singleton().captureDeviceWillBeRemoved(persistentId);
     devices().removeFirstMatching([&persistentId](const auto& device) {
-        return device.persistentId == persistentId;
+        return equal(device.persistentId, persistentId);
     });
 
     deviceListForDevice(iterator->value).removeFirstMatching([&persistentId](const auto& device) {
-        return device.persistentId() == persistentId;
+        return equal(device.persistentId(), persistentId);
     });
 
     map.remove(iterator);
     RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
-void MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
+void MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(StringImpl* persistentId, bool isEphemeral)
 {
-    ASSERT(!persistentId.isEmpty());
+    ASSERT(!isEmpty(persistentId));
 
     auto& map = deviceMap();
     auto iterator = map.find(persistentId);
@@ -568,9 +568,9 @@ void MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(const String& persisten
     addDevice(device);
 }
 
-std::optional<MockMediaDevice> MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(const String& id)
+std::optional<MockMediaDevice> MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(StringImpl* id)
 {
-    ASSERT(!id.isEmpty());
+    ASSERT(!isEmpty(id));
 
     auto& map = deviceMap();
     auto iterator = map.find(id);
@@ -589,9 +589,9 @@ std::optional<MockMediaDevice> MockRealtimeMediaSourceCenter::mockMicrophoneFrom
     return { };
 }
 
-std::optional<CaptureDevice> MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
+std::optional<CaptureDevice> MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, StringImpl* id)
 {
-    ASSERT(!id.isEmpty());
+    ASSERT(!isEmpty(id));
 
     auto& map = deviceMap();
     auto iterator = map.find(id);

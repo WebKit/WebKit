@@ -39,7 +39,7 @@ namespace WebCore {
 class ProtectionSpace : public ProtectionSpaceBase {
 public:
     ProtectionSpace() : ProtectionSpaceBase() { }
-    ProtectionSpace(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme)
+    ProtectionSpace(StringImpl* host, int port, ServerType serverType, StringImpl* realm, AuthenticationScheme authenticationScheme)
         : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
     {
     }

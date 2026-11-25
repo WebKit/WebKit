@@ -195,7 +195,7 @@ void UniqueIDBDatabaseTransaction::createObjectStore(const IDBRequestData& reque
     });
 }
 
-void UniqueIDBDatabaseTransaction::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
+void UniqueIDBDatabaseTransaction::deleteObjectStore(const IDBRequestData& requestData, StringImpl* objectStoreName)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteObjectStore");
 
@@ -226,7 +226,7 @@ void UniqueIDBDatabaseTransaction::deleteObjectStore(const IDBRequestData& reque
     });
 }
 
-void UniqueIDBDatabaseTransaction::renameObjectStore(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+void UniqueIDBDatabaseTransaction::renameObjectStore(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* newName)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::renameObjectStore");
 
@@ -285,7 +285,7 @@ void UniqueIDBDatabaseTransaction::clearObjectStore(const IDBRequestData& reques
     });
 }
 
-void UniqueIDBDatabaseTransaction::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+void UniqueIDBDatabaseTransaction::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* indexName)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteIndex");
 
@@ -314,7 +314,7 @@ void UniqueIDBDatabaseTransaction::deleteIndex(const IDBRequestData& requestData
     });
 }
 
-void UniqueIDBDatabaseTransaction::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName)
+void UniqueIDBDatabaseTransaction::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, StringImpl* newName)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::renameIndex");
 
@@ -574,7 +574,7 @@ const Vector<IDBObjectStoreIdentifier>& UniqueIDBDatabaseTransaction::objectStor
         if (!objectStoreInfo)
             continue;
 
-        if (m_transactionInfo.objectStores().contains(objectStoreName))
+        if (m_transactionInfo.objectStores().containsIf([&](auto& item) { return equal(item, objectStoreName); }))
             m_objectStoreIdentifiers.append(objectStoreInfo->identifier());
     }
 

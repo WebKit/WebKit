@@ -132,14 +132,14 @@ static bool subFrameReceivedScriptSource = false;
 static void cleanUpInAppBrowserPrivacyTestSettings()
 {
     clearApplicationBundleIdentifierTestingOverride();
-    setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI"_s);
+    setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI"_si);
 }
 
 static void initializeInAppBrowserPrivacyTestSettings()
 {
     WTF::initializeMainThread();
     clearApplicationBundleIdentifierTestingOverride();
-    setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier"_s);
+    setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier"_si);
 }
 
 TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
@@ -813,7 +813,7 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
     TestWebKitAPI::Util::run(&done);
 }
 
-static String expectedMessage;
+static RefPtr<StringImpl> expectedMessage;
 
 @interface SWInAppBrowserPrivacyMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -965,7 +965,7 @@ TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
     });
 
     // Expect the service worker load to complete successfully.
-    expectedMessage = "Message from worker: ServiceWorker received: Hello from an app-bound domain"_s;
+    expectedMessage = "Message from worker: ServiceWorker received: Hello from an app-bound domain"_si;
     [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
@@ -992,7 +992,7 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
         { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
     });
 
-    expectedMessage = "Unregistration success"_s;
+    expectedMessage = "Unregistration success"_si;
     [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
     TestWebKitAPI::Util::run(&isDone);
 
@@ -1020,7 +1020,7 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorkerMaxRegistrationCount)
         { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
     });
 
-    expectedMessage = "Unregistration success"_s;
+    expectedMessage = "Unregistration success"_si;
     [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
     TestWebKitAPI::Util::run(&isDone);
 
@@ -1049,7 +1049,7 @@ TEST(InAppBrowserPrivacy, ReregisterServiceWorkerMaxRegistrationCount)
         { "/sw.js?v2"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
     });
 
-    expectedMessage = "Reregistration success"_s;
+    expectedMessage = "Reregistration success"_si;
     [webView loadRequest:server.requestWithLocalhost("/main.html"_s)];
     TestWebKitAPI::Util::run(&isDone);
 

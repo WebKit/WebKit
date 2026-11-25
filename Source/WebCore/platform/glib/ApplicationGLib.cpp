@@ -24,28 +24,28 @@
 
 namespace WebCore {
 
-static String gApplicationName;
-static String gApplicationID;
-static NeverDestroyed<WTF::String> gDefaultApplicationName(MAKE_STATIC_STRING_IMPL("WebKit"));
+static RefPtr<StringImpl> gApplicationName;
+static RefPtr<StringImpl> gApplicationID;
+static NeverDestroyed<RefPtr<StringImpl>> gDefaultApplicationName(MAKE_STATIC_STRING_IMPL("WebKit"));
 
-void setApplicationName(const String& applicationName)
+void setApplicationName(StringImpl* applicationName)
 {
     gApplicationName = applicationName;
 }
 
-const String& getApplicationName()
+const RefPtr<StringImpl>& getApplicationName()
 {
-    if (!gApplicationName.isEmpty())
+    if (!isEmpty(gApplicationName))
         return gApplicationName;
     return gDefaultApplicationName;
 }
 
-void setApplicationID(const String& applicationID)
+void setApplicationID(StringImpl* applicationID)
 {
     gApplicationID = applicationID;
 }
 
-const String& getApplicationID()
+const RefPtr<StringImpl>& getApplicationID()
 {
     return gApplicationID;
 }

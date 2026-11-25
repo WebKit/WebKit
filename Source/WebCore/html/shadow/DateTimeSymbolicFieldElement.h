@@ -34,7 +34,7 @@ namespace WebCore {
 class DateTimeSymbolicFieldElement : public DateTimeFieldElement, public TypeAheadDataSource {
     WTF_MAKE_TZONE_ALLOCATED(DateTimeSymbolicFieldElement);
 protected:
-    DateTimeSymbolicFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&, int);
+    DateTimeSymbolicFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Vector<RefPtr<StringImpl>>&, int);
     size_t symbolsSize() const { return m_symbols.size(); }
     bool hasValue() const final;
     void setEmptyValue(EventBehavior = DispatchNoEvent) override;
@@ -49,16 +49,16 @@ private:
     void adjustMinInlineSize(Style::ComputedStyle&) const final;
     void stepDown() final;
     void stepUp() final;
-    ValueOrReference<String> value() const final;
-    String placeholderValue() const final;
+    ValueOrReference<RefPtr<StringImpl>> value() const final;
+    RefPtr<StringImpl> placeholderValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;
 
     // TypeAheadDataSource functions:
     int indexOfSelectedOption() const final;
     int optionCount() const final;
-    String optionAtIndex(int index) const final;
+    RefPtr<StringImpl> optionAtIndex(int index) const final;
 
-    const Vector<String> m_symbols;
+    const Vector<RefPtr<StringImpl>> m_symbols;
     int m_selectedIndex { invalidIndex };
     int m_placeholderIndex { invalidIndex };
 

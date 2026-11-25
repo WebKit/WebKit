@@ -62,7 +62,7 @@ private:
         for (char16_t ch = minChar; ch <= maxChar; ++ch) {
             for (char16_t chNext = minChar; chNext <= maxChar; ++chNext) {
                 auto string = makeString(ch, chNext);
-                CachedTextBreakIterator iterator(string, { }, WTF::TextBreakIterator::LineMode { WTF::TextBreakIterator::LineMode::Behavior::Default }, AtomString("en"_str));
+                CachedTextBreakIterator iterator(string, { }, WTF::TextBreakIterator::LineMode { WTF::TextBreakIterator::LineMode::Behavior::Default }, AtomStringImpl::add("en"_str).get());
                 setPairValue(ch, chNext, iterator.isBoundary(1));
             }
         }

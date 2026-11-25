@@ -342,14 +342,14 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 - (void)addContent
 {
     RetainPtr warningViewIcon = viewForIconImage(self);
-    auto title = makeLabel(adoptNS([[NSAttributedString alloc] initWithString:_warning->title().createNSString().get() attributes:@{
+    auto title = makeLabel(adoptNS([[NSAttributedString alloc] initWithString:createNSString(_warning->title()).get() attributes:@{
         NSFontAttributeName:fontOfSize(WarningTextSize::Title).get(),
         NSForegroundColorAttributeName:colorForItem(WarningItem::TitleText, self).get()
 #if PLATFORM(WATCHOS)
         , NSHyphenationFactorDocumentAttribute:@1
 #endif
     }]).get());
-    auto warning = makeLabel(adoptNS([[NSAttributedString alloc] initWithString:_warning->warning().createNSString().get() attributes:@{
+    auto warning = makeLabel(adoptNS([[NSAttributedString alloc] initWithString:createNSString(_warning->warning()).get() attributes:@{
         NSFontAttributeName:fontOfSize(WarningTextSize::Body).get(),
         NSForegroundColorAttributeName:colorForItem(WarningItem::MessageText, self).get()
 #if PLATFORM(WATCHOS)

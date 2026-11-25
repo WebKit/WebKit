@@ -36,7 +36,7 @@ namespace WebCore {
 struct PaymentValidationErrors {
     PayerErrorFields payer;
     AddressErrors shippingAddress;
-    String error;
+    RefPtr<StringImpl> error;
     JSC::Strong<JSC::JSObject> paymentMethod;
 };
 

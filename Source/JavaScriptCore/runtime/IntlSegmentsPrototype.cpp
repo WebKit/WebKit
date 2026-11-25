@@ -69,7 +69,7 @@ void IntlSegmentsPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_s, intlSegmentsPrototypeFuncIterator, ImplementationVisibility::Public);
+    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_si, intlSegmentsPrototypeFuncIterator, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 

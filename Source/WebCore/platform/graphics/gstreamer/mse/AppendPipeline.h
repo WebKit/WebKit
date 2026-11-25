@@ -130,7 +130,7 @@ private:
 
     GstElement* appsrc() { return m_appsrc.get(); }
 
-    static AtomString generateTrackId(StreamType, int padIndex);
+    static RefPtr<AtomStringImpl> generateTrackId(StreamType, int padIndex);
     enum class CreateTrackResult { TrackCreated, TrackIgnored, AppendParsingFailed };
     std::pair<CreateTrackResult, AppendPipeline::Track*> tryCreateTrackFromPad(GstPad* demuxerSrcPad);
 

@@ -64,29 +64,29 @@ inline bool isStorageTypeAllowedInUntrustedContexts(const WebExtensionStorageAcc
     return storageAccessLevel(accessLevels, dataType) == WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
 }
 
-inline String toAPIString(WebExtensionStorageAccessLevel accessLevel)
+inline RefPtr<StringImpl> toAPIString(WebExtensionStorageAccessLevel accessLevel)
 {
     switch (accessLevel) {
     case WebExtensionStorageAccessLevel::TrustedContexts:
-        return "TRUSTED_CONTEXTS"_s;
+        return "TRUSTED_CONTEXTS"_si;
     case WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts:
-        return "TRUSTED_AND_UNTRUSTED_CONTEXTS"_s;
+        return "TRUSTED_AND_UNTRUSTED_CONTEXTS"_si;
     }
 
     ASSERT_NOT_REACHED();
     return emptyString();
 }
 
-inline std::optional<WebExtensionStorageAccessLevel> toWebExtensionStorageAccessLevel(const String& accessLevelString)
+inline std::optional<WebExtensionStorageAccessLevel> toWebExtensionStorageAccessLevel(StringImpl* accessLevelString)
 {
-    if (accessLevelString == "TRUSTED_CONTEXTS"_s)
+    if (equal(accessLevelString, "TRUSTED_CONTEXTS"_s))
         return WebExtensionStorageAccessLevel::TrustedContexts;
-    if (accessLevelString == "TRUSTED_AND_UNTRUSTED_CONTEXTS"_s)
+    if (equal(accessLevelString, "TRUSTED_AND_UNTRUSTED_CONTEXTS"_s))
         return WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
 
     // An empty string means no access level was saved for the data type, which is expected.
     // In this case, we fallback to the default value. Anything else implies an invalid accessLevel.
-    ASSERT(accessLevelString.isEmpty());
+    ASSERT(isEmpty(accessLevelString));
 
     return std::nullopt;
 }

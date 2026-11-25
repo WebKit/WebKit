@@ -37,7 +37,7 @@ class PaymentSessionError;
 class ApplePayCancelEvent : public Event {
     WTF_MAKE_TZONE_ALLOCATED(ApplePayCancelEvent);
 public:
-    static Ref<ApplePayCancelEvent> create(const AtomString& type, PaymentSessionError&& sessionError)
+    static Ref<ApplePayCancelEvent> create(AtomStringImpl* type, PaymentSessionError&& sessionError)
     {
         return adoptRef(*new ApplePayCancelEvent(type, WTF::move(sessionError)));
     }
@@ -45,7 +45,7 @@ public:
     ApplePaySessionError sessionError() const;
 
 private:
-    explicit ApplePayCancelEvent(const AtomString&, PaymentSessionError&&);
+    explicit ApplePayCancelEvent(AtomStringImpl*, PaymentSessionError&&);
 
     PaymentSessionError m_sessionError;
 };

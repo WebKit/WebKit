@@ -41,17 +41,17 @@ public:
         return adoptRef(*new TextExtractionURLCache);
     }
 
-    String add(const String& shortenedString, const URL& originalURL, ExtractedURLType);
+    RefPtr<StringImpl> add(StringImpl* shortenedString, const URL& originalURL, ExtractedURLType);
     void clear();
 
-    URL urlForShortenedString(const String&) const;
+    URL urlForShortenedString(StringImpl*) const;
 
 private:
     TextExtractionURLCache() = default;
 
-    HashMap<String, URL> m_shortenedStringToURLMap;
-    HashMap<URL, String> m_urlToShortenedStringMap;
-    HashCountedSet<String> m_shortenedStringCounts;
+    HashMap<RefPtr<StringImpl>, URL> m_shortenedStringToURLMap;
+    HashMap<URL, RefPtr<StringImpl>> m_urlToShortenedStringMap;
+    HashCountedSet<RefPtr<StringImpl>> m_shortenedStringCounts;
 };
 
 } // namespace WebKit

@@ -46,7 +46,7 @@ public:
 
 private:
     RemoteMediaDescription(const MediaDescriptionInfo& descriptionInfo)
-        : MediaDescription(descriptionInfo.m_codec.isolatedCopy())
+        : MediaDescription(isolatedCopy(descriptionInfo.m_codec))
         , m_isVideo(descriptionInfo.m_isVideo)
         , m_isAudio(descriptionInfo.m_isAudio)
         , m_isText(descriptionInfo.m_isText)

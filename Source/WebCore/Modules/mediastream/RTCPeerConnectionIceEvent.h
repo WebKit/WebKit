@@ -39,20 +39,20 @@ public:
 
     struct Init : EventInit {
         std::optional<RefPtr<RTCIceCandidate>> candidate;
-        std::optional<String> url;
+        std::optional<RefPtr<StringImpl>> url;
     };
 
-    static Ref<RTCPeerConnectionIceEvent> create(const AtomString& type, Init&&);
-    static Ref<RTCPeerConnectionIceEvent> create(CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
+    static Ref<RTCPeerConnectionIceEvent> create(AtomStringImpl* type, Init&&);
+    static Ref<RTCPeerConnectionIceEvent> create(CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, RefPtr<StringImpl>&& serverURL);
 
     NODELETE RTCIceCandidate* candidate() const;
-    const String& url() const LIFETIME_BOUND { return m_url; }
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_url; }
 
 private:
-    RTCPeerConnectionIceEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
+    RTCPeerConnectionIceEvent(AtomStringImpl* type, CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, RefPtr<StringImpl>&& serverURL);
 
     const RefPtr<RTCIceCandidate> m_candidate;
-    String m_url;
+    RefPtr<StringImpl> m_url;
 };
 
 } // namespace WebCore

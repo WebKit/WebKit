@@ -52,7 +52,7 @@ public:
     virtual ~PageUIClient() = default;
 
 #if !PLATFORM(COCOA)
-    virtual void willAddMessageToConsole(WebKit::WebPage*, JSC::MessageSource, JSC::MessageLevel, const WTF::String& message, unsigned lineNumber, unsigned columnNumber, const WTF::String& sourceID) { UNUSED_PARAM(message); UNUSED_PARAM(lineNumber); UNUSED_PARAM(columnNumber); UNUSED_PARAM(sourceID); }
+    virtual void willAddMessageToConsole(WebKit::WebPage*, JSC::MessageSource, JSC::MessageLevel, StringImpl* message, unsigned lineNumber, unsigned columnNumber, StringImpl* sourceID) { UNUSED_PARAM(message); UNUSED_PARAM(lineNumber); UNUSED_PARAM(columnNumber); UNUSED_PARAM(sourceID); }
 #endif
 
     virtual void didClickAutoFillButton(WebKit::WebPage&, WebKit::InjectedBundleNodeHandle&, RefPtr<API::Object>&) { }

@@ -68,7 +68,7 @@ void PerActivityStateCPUUsageSampler::reportWebContentCPUTime(Seconds cpuTime, A
         result.iterator->value += cpuTime;
 }
 
-static inline String loggingKeyForActivityState(ActivityStateForCPUSampling state)
+static inline RefPtr<StringImpl> loggingKeyForActivityState(ActivityStateForCPUSampling state)
 {
     switch (state) {
     case ActivityStateForCPUSampling::NonVisible:
@@ -95,9 +95,9 @@ void PerActivityStateCPUUsageSampler::loggingTimerFired()
 
     for (auto& pair : m_cpuTimeInActivityState) {
         double cpuUsage = pair.value.value() * 100. / cpuTimeDelta.value();
-        String activityStateKey = loggingKeyForActivityState(pair.key);
+        RefPtr<StringImpl> activityStateKey = loggingKeyForActivityState(pair.key);
         page->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cpuUsageKey(), activityStateKey, cpuUsage, 2, ShouldSample::No);
-        RELEASE_LOG(PerformanceLogging, "WebContent processes used %.1f%% CPU in %s state", cpuUsage, activityStateKey.utf8());
+        RELEASE_LOG(PerformanceLogging, "WebContent processes used %.1f%% CPU in %s state", cpuUsage, utf8(activityStateKey));
     }
 
     m_cpuTimeInActivityState.clear();

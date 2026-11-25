@@ -174,8 +174,8 @@ private:
     uint64_t legibleMediaSelectedIndex() const override;
     bool externalPlaybackEnabled() const override;
     ExternalPlaybackTargetType externalPlaybackTargetType() const override;
-    String externalPlaybackLocalizedDeviceName() const override;
-    String externalPlaybackLocalizedRouteName() const override;
+    RefPtr<StringImpl> externalPlaybackLocalizedDeviceName() const override;
+    RefPtr<StringImpl> externalPlaybackLocalizedRouteName() const override;
     bool wirelessVideoPlaybackDisabled() const override;
     void togglePictureInPicture() override { }
     void enterInWindowFullscreen() override { }
@@ -199,7 +199,7 @@ private:
     void canPlayFastReverseChanged(bool) override;
     void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
     void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
-    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) override;
+    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, StringImpl* localizedDeviceName, StringImpl* localizedRouteName) override;
     void wirelessVideoPlaybackDisabledChanged(bool) override;
     void mutedChanged(bool) override;
     void volumeChanged(double) override;
@@ -507,10 +507,10 @@ void VideoFullscreenControllerContext::legibleMediaSelectionOptionsChanged(const
         client->legibleMediaSelectionOptionsChanged(options, selectedIndex);
 }
 
-void VideoFullscreenControllerContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName, const String& localizedRouteName)
+void VideoFullscreenControllerContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, StringImpl* localizedDeviceName, StringImpl* localizedRouteName)
 {
     if (WebThreadIsCurrent()) {
-        callOnMainThread([protectedThis = Ref { *this }, this, enabled, type, localizedDeviceName = localizedDeviceName.isolatedCopy(), localizedRouteName = localizedRouteName.isolatedCopy()] {
+        callOnMainThread([protectedThis = Ref { *this }, this, enabled, type, localizedDeviceName = isolatedCopy(localizedDeviceName), localizedRouteName = isolatedCopy(localizedRouteName)] {
             for (auto& client : m_playbackClients)
                 client->externalPlaybackChanged(enabled, type, localizedDeviceName, localizedRouteName);
         });
@@ -991,16 +991,16 @@ PlaybackSessionModel::ExternalPlaybackTargetType VideoFullscreenControllerContex
     return m_playbackModel ? protect(m_playbackModel)->externalPlaybackTargetType() : ExternalPlaybackTargetType::TargetTypeNone;
 }
 
-String VideoFullscreenControllerContext::externalPlaybackLocalizedDeviceName() const
+RefPtr<StringImpl> VideoFullscreenControllerContext::externalPlaybackLocalizedDeviceName() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? protect(m_playbackModel)->externalPlaybackLocalizedDeviceName() : String();
+    return m_playbackModel ? protect(m_playbackModel)->externalPlaybackLocalizedDeviceName() : nullptr;
 }
 
-String VideoFullscreenControllerContext::externalPlaybackLocalizedRouteName() const
+RefPtr<StringImpl> VideoFullscreenControllerContext::externalPlaybackLocalizedRouteName() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? protect(m_playbackModel)->externalPlaybackLocalizedRouteName() : String();
+    return m_playbackModel ? protect(m_playbackModel)->externalPlaybackLocalizedRouteName() : nullptr;
 }
 
 bool VideoFullscreenControllerContext::wirelessVideoPlaybackDisabled() const

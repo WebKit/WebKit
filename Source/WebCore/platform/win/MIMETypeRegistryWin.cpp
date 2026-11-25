@@ -34,45 +34,45 @@
 
 namespace WebCore {
 
-static String mimeTypeForExtensionFromRegistry(const String& extension)
+static RefPtr<StringImpl> mimeTypeForExtensionFromRegistry(StringImpl* extension)
 {
     auto ext = makeString('.', extension);
     WCHAR contentTypeStr[256];
     DWORD contentTypeStrLen = sizeof(contentTypeStr);
     DWORD keyType;
 
-    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, ext.wideCharacters().span().data(), L"Content Type", &keyType, contentTypeStr, &contentTypeStrLen);
+    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, wideCharacters(ext).span().data(), L"Content Type", &keyType, contentTypeStr, &contentTypeStrLen);
 
     if (result == ERROR_SUCCESS && keyType == REG_SZ)
-        return String(contentTypeStr, contentTypeStrLen / sizeof(contentTypeStr[0]) - 1);
+        return StringImpl::create(contentTypeStr, contentTypeStrLen / sizeof(contentTypeStr[0]) - 1);
 
-    return String();
+    return nullptr;
 }
 
-String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
+RefPtr<StringImpl> MIMETypeRegistry::preferredExtensionForMIMEType(StringImpl* type)
 {
     auto path = makeString("MIME\\Database\\Content Type\\"_s, type);
     WCHAR extStr[MAX_PATH];
     DWORD extStrLen = sizeof(extStr);
     DWORD keyType;
 
-    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, path.wideCharacters().span().data(), L"Extension", &keyType, extStr, &extStrLen);
+    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, wideCharacters(path).span().data(), L"Extension", &keyType, extStr, &extStrLen);
 
     if (result == ERROR_SUCCESS && keyType == REG_SZ)
-        return String(extStr + 1, extStrLen / sizeof(extStr[0]) - 2);
+        return StringImpl::create(extStr + 1, extStrLen / sizeof(extStr[0]) - 2);
 
-    return String();
+    return nullptr;
 }
 
-String MIMETypeRegistry::mimeTypeForExtension(StringView string)
+RefPtr<StringImpl> MIMETypeRegistry::mimeTypeForExtension(StringView string)
 {
     ASSERT(isMainThread());
 
     if (string.isEmpty())
-        return String();
+        return nullptr;
 
     auto ext = string.toString();
-    static HashMap<String, String> mimetypeMap;
+    static HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> mimetypeMap;
     if (mimetypeMap.isEmpty()) {
         //fill with initial values
         mimetypeMap.add("txt"_s, "text/plain"_s);
@@ -108,21 +108,21 @@ String MIMETypeRegistry::mimeTypeForExtension(StringView string)
         mimetypeMap.add("jxl"_s, "image/jxl"_s);
 #endif
     }
-    String result = mimetypeMap.get(ext);
-    if (result.isEmpty()) {
+    RefPtr<StringImpl> result = mimetypeMap.get(ext);
+    if (isEmpty(result)) {
         result = mimeTypeForExtensionFromRegistry(ext);
-        if (!result.isEmpty())
+        if (!isEmpty(result))
             mimetypeMap.add(ext, result);
     }
     return result;
 }
 
-bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
+bool MIMETypeRegistry::isApplicationPluginMIMEType(StringImpl*)
 {
     return false;
 }
 
-Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String&)
+Vector<RefPtr<StringImpl>> MIMETypeRegistry::extensionsForMIMEType(StringImpl*)
 {
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };

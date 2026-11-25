@@ -74,7 +74,7 @@ public:
 
     void didParseStreamDataAsAsset(AVAsset*);
     void didFailToParseStreamDataWithError(NSError*);
-    void didProvideMediaDataForTrackID(uint64_t trackID, CMSampleBufferRef, const String& mediaType, unsigned flags);
+    void didProvideMediaDataForTrackID(uint64_t trackID, CMSampleBufferRef, StringImpl* mediaType, unsigned flags);
     void willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID);
     void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, uint64_t trackID);
     void didProvideContentKeyRequestSpecifierForTrackID(NSData*, uint64_t trackID);

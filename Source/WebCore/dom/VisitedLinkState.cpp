@@ -49,7 +49,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(VisitedLinkState);
 
 using namespace HTMLNames;
 
-inline static const AtomString linkAttribute(const Element& element)
+inline static const RefPtr<AtomStringImpl> linkAttribute(const Element& element)
 {
     if (!element.isLink())
         return nullAtom();
@@ -110,13 +110,13 @@ InsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
     ASSERT(element.isLink());
 
     auto attribute = linkAttribute(element);
-    if (attribute.isNull())
+    if (!attribute)
         return InsideLink::NotInside;
 
     auto hashIfFound = linkHashForElement(element);
 
     if (!hashIfFound)
-        return attribute.isEmpty() ? InsideLink::InsideVisited : InsideLink::InsideUnvisited;
+        return isEmpty(attribute) ? InsideLink::InsideVisited : InsideLink::InsideUnvisited;
 
     auto hash = *hashIfFound;
 

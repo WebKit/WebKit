@@ -45,7 +45,7 @@ public:
     bool isEmpty() const { return *this == emptyKey(); }
     WEBCORE_EXPORT bool isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
     bool originIsMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
-    size_t scopeLength() const { return m_scope.string().length(); }
+    size_t scopeLength() const { return length(m_scope.string()); }
 
     WEBCORE_EXPORT ClientOrigin clientOrigin() const;
     const SecurityOriginData& topOrigin() const LIFETIME_BOUND { return m_topOrigin; }
@@ -58,11 +58,11 @@ public:
     WEBCORE_EXPORT ServiceWorkerRegistrationKey isolatedCopy() const &;
     WEBCORE_EXPORT ServiceWorkerRegistrationKey isolatedCopy() &&;
 
-    String toDatabaseKey() const;
-    WEBCORE_EXPORT static std::optional<ServiceWorkerRegistrationKey> fromDatabaseKey(const String&);
+    RefPtr<StringImpl> toDatabaseKey() const;
+    WEBCORE_EXPORT static std::optional<ServiceWorkerRegistrationKey> fromDatabaseKey(StringImpl*);
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 
 private:

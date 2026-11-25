@@ -67,19 +67,19 @@
 - (DOMElement *)getElementById:(NSString *)elementId
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getElementById(AtomString(elementId))));
+    return kit(WTF::getPtr(IMPL->getElementById(AtomStringImpl::add((__bridge CFStringRef)elementId).get())));
 }
 
 - (DOMElement *)querySelector:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->querySelector(selectors)));
+    return kit(raiseOnDOMError(IMPL->querySelector(StringImpl::create(selectors).get())));
 }
 
 - (DOMNodeList *)querySelectorAll:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->querySelectorAll(selectors)).ptr());
+    return kit(raiseOnDOMError(IMPL->querySelectorAll(StringImpl::create(selectors).get())).ptr());
 }
 
 @end

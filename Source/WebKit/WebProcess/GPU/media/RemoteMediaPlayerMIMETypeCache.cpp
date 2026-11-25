@@ -45,7 +45,7 @@ RemoteMediaPlayerMIMETypeCache::RemoteMediaPlayerMIMETypeCache(RemoteMediaPlayer
 {
 }
 
-void RemoteMediaPlayerMIMETypeCache::addSupportedTypes(const Vector<String>& newTypes)
+void RemoteMediaPlayerMIMETypeCache::addSupportedTypes(const Vector<RefPtr<StringImpl>>& newTypes)
 {
     m_supportedTypesCache.addAll(newTypes);
 }
@@ -55,7 +55,7 @@ bool RemoteMediaPlayerMIMETypeCache::isEmpty() const
     return m_hasPopulatedSupportedTypesCacheFromGPUProcess && m_supportedTypesCache.isEmpty();
 }
 
-HashSet<String>& RemoteMediaPlayerMIMETypeCache::supportedTypes()
+HashSet<RefPtr<StringImpl>>& RemoteMediaPlayerMIMETypeCache::supportedTypes()
 {
     ASSERT(isMainRunLoop());
     if (!m_hasPopulatedSupportedTypesCacheFromGPUProcess) {
@@ -72,7 +72,7 @@ HashSet<String>& RemoteMediaPlayerMIMETypeCache::supportedTypes()
 
 MediaPlayerEnums::SupportsType RemoteMediaPlayerMIMETypeCache::supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters)
 {
-    if (parameters.type.raw().isEmpty())
+    if (WTF::isEmpty(parameters.type.raw()))
         return MediaPlayerEnums::SupportsType::MayBeSupported;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

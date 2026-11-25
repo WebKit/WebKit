@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-void getSupportedKeySizes(Vector<String>&)
+void getSupportedKeySizes(Vector<RefPtr<StringImpl>>&)
 {
     notImplemented();
 }
 
-String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&)
+RefPtr<StringImpl> signedPublicKeyAndChallengeString(unsigned, StringImpl*, const URL&)
 {
     notImplemented();
     return { };

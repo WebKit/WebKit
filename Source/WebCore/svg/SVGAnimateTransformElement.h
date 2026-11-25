@@ -41,8 +41,8 @@ private:
     SVGAnimateTransformElement(const QualifiedName&, Document&);
     
     bool hasValidAttributeType() const final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-    String animateRangeString(const String&) const final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
+    RefPtr<StringImpl> animateRangeString(StringImpl*) const final;
 
     SVGTransformValue::SVGTransformType m_type;
 };

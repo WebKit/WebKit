@@ -156,7 +156,7 @@ void AudioDestinationGStreamer::initializePipeline()
         return;
 
     static Atomic<uint32_t> pipelineId;
-    m_pipeline = gst_pipeline_new(makeString("audio-destination-"_s, pipelineId.exchangeAdd(1)).ascii().data());
+    m_pipeline = gst_pipeline_new(ascii(makeString("audio-destination-"_s, pipelineId.exchangeAdd(1))).data());
     registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get(), [weakThis = ThreadSafeWeakPtr { *this }](GstMessage* message) {
         RefPtr destination = weakThis.get();
@@ -172,13 +172,13 @@ void AudioDestinationGStreamer::initializePipeline()
     auto& quirksManager = GStreamerQuirksManager::singleton();
     if (quirksManager.isEnabled()) {
 #if ENABLE(MEDIA_STREAM)
-        if (!m_audioSink && !outputDeviceId().isEmpty()) {
+        if (!m_audioSink && !isEmpty(outputDeviceId())) {
             auto [resolvedId, device] = gstResolveAudioOutputDevice(outputDeviceId());
             if (device)
                 m_audioSink = quirksManager.createWebAudioSink(resolvedId, device);
 
             if (!m_audioSink)
-                GST_WARNING_OBJECT(m_pipeline.get(), "Failed to create a GStreamer audio sink for device '%s'. Falling back to the default device.", outputDeviceId().utf8().legacyCStringPointer());
+                GST_WARNING_OBJECT(m_pipeline.get(), "Failed to create a GStreamer audio sink for device '%s'. Falling back to the default device.", utf8(outputDeviceId()).legacyCStringPointer());
         }
 #endif
 
@@ -187,18 +187,18 @@ void AudioDestinationGStreamer::initializePipeline()
     }
 
 #if ENABLE(MEDIA_STREAM)
-    if (!m_audioSink && !outputDeviceId().isEmpty()) {
+    if (!m_audioSink && !isEmpty(outputDeviceId())) {
         auto [resolvedId, device] = gstResolveAudioOutputDevice(outputDeviceId());
         if (device)
-            m_audioSink = createPlatformAudioSink("webaudio"_s, resolvedId, device);
+            m_audioSink = createPlatformAudioSink("webaudio"_si, resolvedId, device);
 
         if (!m_audioSink)
-            GST_WARNING_OBJECT(m_pipeline.get(), "Failed to create a GStreamer audio sink for device '%s'. Falling back to the default device.", outputDeviceId().utf8().legacyCStringPointer());
+            GST_WARNING_OBJECT(m_pipeline.get(), "Failed to create a GStreamer audio sink for device '%s'. Falling back to the default device.", utf8(outputDeviceId()).legacyCStringPointer());
     }
 #endif
 
     if (!m_audioSink)
-        m_audioSink = createPlatformAudioSink("webaudio"_s);
+        m_audioSink = createPlatformAudioSink("webaudio"_si);
 
     if (!m_audioSink) {
         GST_ERROR("Failed to create GStreamer audio sink element");
@@ -242,14 +242,14 @@ void AudioDestinationGStreamer::initializePipeline()
     gst_element_link_pads_full(audioResample, "src", m_audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 }
 
-void AudioDestinationGStreamer::setSinkId(const String& persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&& completionHandler)
+void AudioDestinationGStreamer::setSinkId(StringImpl* persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (outputDeviceId() == persistentDeviceId && this->isSilent() == isSilent) {
+    if (equal(outputDeviceId(), persistentDeviceId) && this->isSilent() == isSilent) {
         completionHandler(true);
         return;
     }
 
-    auto previousDeviceId = outputDeviceId();
+    RefPtr previousDeviceId = outputDeviceId();
     bool previousIsSilent = this->isSilent();
     setSinkSelection(persistentDeviceId, isSilent);
 
@@ -269,9 +269,9 @@ void AudioDestinationGStreamer::setSinkId(const String& persistentDeviceId, bool
 
 #if ENABLE(MEDIA_STREAM)
     bool changed = false;
-    if (persistentDeviceId.isEmpty()) {
+    if (isEmpty(persistentDeviceId)) {
         // No device set, route back to the default output.
-        changed = gstApplyAudioSinkDevice(m_audioSink.get(), { }, { });
+        changed = gstApplyAudioSinkDevice(m_audioSink.get(), { }, nullptr);
     } else {
         auto [resolvedId, device] = gstResolveAudioOutputDevice(persistentDeviceId);
         if (device) {
@@ -279,7 +279,7 @@ void AudioDestinationGStreamer::setSinkId(const String& persistentDeviceId, bool
             GST_DEBUG_OBJECT(m_pipeline.get(), "Switching to %s<%p>, output '%s'.", GST_OBJECT_NAME(device.get()), device.get(), deviceName.utf8());
             changed = gstApplyAudioSinkDevice(m_audioSink.get(), device, resolvedId);
         } else
-            GST_WARNING_OBJECT(m_pipeline.get(), "Could not obtain GstDevice for '%s'.", resolvedId.utf8().legacyCStringPointer());
+            GST_WARNING_OBJECT(m_pipeline.get(), "Could not obtain GstDevice for '%s'.", utf8(resolvedId).legacyCStringPointer());
     }
 
     if (!changed) {

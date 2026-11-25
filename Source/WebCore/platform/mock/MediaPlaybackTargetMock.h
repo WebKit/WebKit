@@ -43,22 +43,22 @@ class MediaPlaybackTargetMock final : public MediaPlaybackTarget {
 public:
     using State = MediaPlaybackTargetMockState;
 
-    NODELETE WEBCORE_EXPORT static Ref<MediaPlaybackTargetMock> create(const String& mockDeviceName, State);
+    NODELETE WEBCORE_EXPORT static Ref<MediaPlaybackTargetMock> create(StringImpl* mockDeviceName, State);
 
     ~MediaPlaybackTargetMock();
 
     State state() const { return m_mockState; }
 
 private:
-    MediaPlaybackTargetMock(const String& mockDeviceName, State);
+    MediaPlaybackTargetMock(StringImpl* mockDeviceName, State);
 
     // MediaPlaybackTarget
-    String deviceName() const final { return m_mockDeviceName; }
-    String routeName() const final { return { }; }
-    bool hasActiveRoute() const final { return !m_mockDeviceName.isEmpty(); }
-    bool supportsRemoteVideoPlayback() const final { return !m_mockDeviceName.isEmpty(); }
+    RefPtr<StringImpl> deviceName() const final { return m_mockDeviceName; }
+    RefPtr<StringImpl> routeName() const final { return { }; }
+    bool hasActiveRoute() const final { return !isEmpty(m_mockDeviceName); }
+    bool supportsRemoteVideoPlayback() const final { return !isEmpty(m_mockDeviceName); }
 
-    String m_mockDeviceName;
+    RefPtr<StringImpl> m_mockDeviceName;
     State m_mockState;
 };
 

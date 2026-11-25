@@ -106,9 +106,9 @@ void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
     });
 }
 
-String MediaRecorderPrivateMock::mimeType() const
+RefPtr<StringImpl> MediaRecorderPrivateMock::mimeType() const
 {
-    static NeverDestroyed<const String> textPlainMimeType(MAKE_STATIC_STRING_IMPL("text/plain"));
+    static NeverDestroyed<const RefPtr<StringImpl>> textPlainMimeType(MAKE_STATIC_STRING_IMPL("text/plain"));
     return textPlainMimeType;
 }
 

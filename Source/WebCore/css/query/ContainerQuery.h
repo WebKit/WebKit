@@ -56,7 +56,7 @@ OptionSet<Axis> requiredAxesForFeature(const MQ::Feature&);
 
 // Custom properties a feature reads, so changes to them on a container re-evaluate style queries:
 // the queried property and, for style ranges, bare <custom-property-name> operands and var() references.
-void collectCustomPropertyNames(const MQ::Feature&, HashSet<AtomString>&);
+void collectCustomPropertyNames(const MQ::Feature&, HashSet<RefPtr<AtomStringImpl>>&);
 
 struct ContainerRequirements {
     OptionSet<Axis> sizeAxes;
@@ -68,7 +68,7 @@ enum class ContainsUnknownFeature : bool { No, Yes };
 
 // Per spec, this is <container-condition>, a single condition.
 struct ContainerCondition {
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     MQ::Condition condition;
     ContainerRequirements requirements;
     ContainsUnknownFeature containsUnknownFeature;

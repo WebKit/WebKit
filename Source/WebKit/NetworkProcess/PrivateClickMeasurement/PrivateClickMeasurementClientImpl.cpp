@@ -37,7 +37,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ClientImpl);
 ClientImpl::ClientImpl(NetworkSession& session)
     : m_networkSession(session) { }
 
-void ClientImpl::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const String& message)
+void ClientImpl::broadcastConsoleMessage(JSC::MessageLevel messageLevel, StringImpl* message)
 {
     if (!featureEnabled())
         return;

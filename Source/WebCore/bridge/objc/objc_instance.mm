@@ -171,7 +171,7 @@ bool ObjcInstance::supportsInvokeDefaultMethod() const
 
 class ObjCRuntimeMethod final : public RuntimeMethod {
 public:
-    static ObjCRuntimeMethod* create(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
+    static ObjCRuntimeMethod* create(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, StringImpl* name, Bindings::Method* method)
     {
         VM& vm = globalObject->vm();
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
@@ -197,7 +197,7 @@ private:
     {
     }
 
-    void finishCreation(VM& vm, const String& name)
+    void finishCreation(VM& vm, StringImpl* name)
     {
         Base::finishCreation(vm, name);
         ASSERT(inherits(info()));
@@ -209,7 +209,7 @@ const ClassInfo ObjCRuntimeMethod::s_info = { "ObjCRuntimeMethod"_s, &RuntimeMet
 JSC::JSValue ObjcInstance::getMethod(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName)
 {
     Method* method = getClass()->methodNamed(propertyName, this);
-    return ObjCRuntimeMethod::create(lexicalGlobalObject, lexicalGlobalObject, propertyName.publicName(), method);
+    return ObjCRuntimeMethod::create(lexicalGlobalObject, lexicalGlobalObject, protect(propertyName.publicName()), method);
 }
 
 JSC::JSValue ObjcInstance::invokeMethod(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, RuntimeMethod* runtimeMethod)
@@ -395,8 +395,8 @@ JSC::JSValue ObjcInstance::invokeDefaultMethod(JSGlobalObject* lexicalGlobalObje
 
 bool ObjcInstance::setValueOfUndefinedField(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue aValue)
 {
-    String name(propertyName.publicName());
-    if (name.isNull())
+    RefPtr<StringImpl> name(propertyName.publicName());
+    if (!name)
         return false;
 
     RetainPtr<id> targetObject = getObject();
@@ -412,7 +412,7 @@ bool ObjcInstance::setValueOfUndefinedField(JSGlobalObject* lexicalGlobalObject,
 
         // Default implementation throws an exception.
         @try {
-            [targetObject setValue:protect((__bridge id)objcValue.objectValue) forUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
+            [targetObject setValue:protect((__bridge id)objcValue.objectValue) forUndefinedKey:[NSString stringWithCString:ascii(name).data() encoding:NSASCIIStringEncoding]];
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.
         }
@@ -425,8 +425,8 @@ bool ObjcInstance::setValueOfUndefinedField(JSGlobalObject* lexicalGlobalObject,
 
 JSC::JSValue ObjcInstance::getValueOfUndefinedField(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName) const
 {
-    String name(propertyName.publicName());
-    if (name.isNull())
+    RefPtr<StringImpl> name(propertyName.publicName());
+    if (!name)
         return jsUndefined();
 
     JSValue result = jsUndefined();
@@ -439,7 +439,7 @@ JSC::JSValue ObjcInstance::getValueOfUndefinedField(JSGlobalObject* lexicalGloba
         setGlobalException(nil);
         // Default implementaion throws an exception.
         @try {
-            RetainPtr<id> objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
+            RetainPtr<id> objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:ascii(name).data() encoding:NSASCIIStringEncoding]];
             result = convertObjcValueToValue(lexicalGlobalObject, objcValue, m_rootObject.get());
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.

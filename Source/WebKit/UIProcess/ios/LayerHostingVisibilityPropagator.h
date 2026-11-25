@@ -59,12 +59,12 @@ public:
 private:
     LayerHostingVisibilityPropagator();
 
-    void visibilityEndowmentEnvironmentsChanged(const HashSet<String>&) final;
-    void refreshInjectorsAtIndex(size_t, const HashSet<String>&);
+    void visibilityEndowmentEnvironmentsChanged(const HashSet<RefPtr<StringImpl>>&) final;
+    void refreshInjectorsAtIndex(size_t, const HashSet<RefPtr<StringImpl>>&);
 
     struct ProcessAndInjectors {
         WeakPtr<AuxiliaryProcessProxy> process;
-        HashMap<String, RetainPtr<BSServiceConnectionEndpointInjector>> injectorsBySourceEnvironment;
+        HashMap<RefPtr<StringImpl>, RetainPtr<BSServiceConnectionEndpointInjector>> injectorsBySourceEnvironment;
     };
     Vector<ProcessAndInjectors> m_processesAndInjectors;
     RefPtr<ProcessAssertion> m_processAssertion;

@@ -75,7 +75,7 @@ ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResou
 
     RefPtr frame = document.frame();
     if (!frame)
-        return Exception { ExceptionCode::NotAllowedError, "Cannot be called with a detached document"_s };
+        return Exception { ExceptionCode::NotAllowedError, "Cannot be called with a detached document"_si };
 
     for (RefPtr cachedResource : ResourceUtilities::cachedResourcesForFrame(frame)) {
         Resource resource;
@@ -87,7 +87,7 @@ ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResou
         else {
             cachedResource->addClient(clientForResource(*cachedResource));
 
-            resource.id = String::number(m_resources.size() + 1);
+            resource.id = makeString(m_resources.size() + 1);
             m_resources.add(resource.id, cachedResource);
             m_resourceIdentifiers.add(*cachedResource, resource.id);
         }
@@ -98,13 +98,13 @@ ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResou
     return resources;
 }
 
-ExceptionOr<InspectorAuditResourcesObject::ResourceContent> InspectorAuditResourcesObject::getResourceContent(Document& document, const String& id)
+ExceptionOr<InspectorAuditResourcesObject::ResourceContent> InspectorAuditResourcesObject::getResourceContent(Document& document, StringImpl* id)
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
     RefPtr frame = document.frame();
     if (!frame)
-        return Exception { ExceptionCode::NotAllowedError, "Cannot be called with a detached document"_s };
+        return Exception { ExceptionCode::NotAllowedError, "Cannot be called with a detached document"_si };
 
     RefPtr cachedResource = m_resources.get(id);
     if (!cachedResource)
@@ -113,7 +113,7 @@ ExceptionOr<InspectorAuditResourcesObject::ResourceContent> InspectorAuditResour
     Inspector::Protocol::ErrorString errorString;
     ResourceContent resourceContent;
     ResourceUtilities::resourceContent(errorString, frame, cachedResource->url(), &resourceContent.data, &resourceContent.base64Encoded);
-    if (!errorString.isEmpty())
+    if (!isEmpty(errorString))
         return Exception { ExceptionCode::NotFoundError, errorString };
 
     return resourceContent;

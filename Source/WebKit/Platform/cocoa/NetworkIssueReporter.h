@@ -51,7 +51,7 @@ public:
     static bool shouldReport(NSURLSessionTaskMetrics *);
 
 private:
-    HashSet<String> m_reportedHosts;
+    HashSet<RefPtr<StringImpl>> m_reportedHosts;
     std::unique_ptr<void, WTF::SystemFree<void>> m_stackTrace;
     size_t m_stackTraceSize { 0 };
 };

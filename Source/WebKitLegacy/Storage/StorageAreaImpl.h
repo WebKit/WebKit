@@ -47,12 +47,12 @@ public:
     virtual ~StorageAreaImpl();
 
     unsigned length() override;
-    String key(unsigned index) override;
-    String item(const String& key) override;
-    void setItem(WebCore::LocalFrame& sourceFrame, const String& key, const String& value, bool& quotaException) override;
-    void removeItem(WebCore::LocalFrame& sourceFrame, const String& key) override;
+    RefPtr<StringImpl> key(unsigned index) override;
+    RefPtr<StringImpl> item(StringImpl* key) override;
+    void setItem(WebCore::LocalFrame& sourceFrame, StringImpl* key, StringImpl* value, bool& quotaException) override;
+    void removeItem(WebCore::LocalFrame& sourceFrame, StringImpl* key) override;
     void clear(WebCore::LocalFrame& sourceFrame) override;
-    bool contains(const String& key) override;
+    bool contains(StringImpl* key) override;
 
     WebCore::StorageType storageType() const override { return m_storageType; }
 
@@ -66,7 +66,7 @@ public:
     void close();
 
     // Only called from a background thread.
-    void importItems(HashMap<String, String>&& items);
+    void importItems(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& items);
 
     // Used to clear a StorageArea and close db before backing db file is deleted.
     void clearForOriginDeletion();
@@ -82,7 +82,7 @@ private:
     void blockUntilImportComplete() const;
     void closeDatabaseTimerFired();
 
-    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, WebCore::LocalFrame& sourceFrame);
+    void dispatchStorageEvent(StringImpl* key, StringImpl* oldValue, StringImpl* newValue, WebCore::LocalFrame& sourceFrame);
 
     WebCore::StorageType m_storageType;
     const Ref<const WebCore::SecurityOrigin> m_securityOrigin;

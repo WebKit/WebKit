@@ -57,8 +57,8 @@ public:
     void schedule(NetworkLoad&);
     void unschedule(NetworkLoad&, const WebCore::NetworkLoadMetrics* = nullptr);
 
-    void startedPreconnectForMainResource(const URL&, const String& userAgent);
-    void finishedPreconnectForMainResource(const URL&, const String& userAgent, const WebCore::ResourceError&);
+    void startedPreconnectForMainResource(const URL&, StringImpl* userAgent);
+    void finishedPreconnectForMainResource(const URL&, StringImpl* userAgent, const WebCore::ResourceError&);
 
     void setResourceLoadSchedulingMode(WebCore::PageIdentifier, WebCore::LoadSchedulingMode);
     void prioritizeLoads(const Vector<Ref<NetworkLoad>>&);
@@ -73,13 +73,13 @@ private:
     void scheduleMainResourceLoad(NetworkLoad&);
     void unscheduleMainResourceLoad(NetworkLoad&, const WebCore::NetworkLoadMetrics*);
 
-    bool isOriginHTTP1X(const String&);
-    void updateOriginProtocolInfo(const String&, const String&);
+    bool isOriginHTTP1X(StringImpl*);
+    void updateOriginProtocolInfo(StringImpl*, StringImpl*);
 
     class HostContext;
     HostContext* contextForLoad(const NetworkLoad&);
 
-    using PageContext = HashMap<String, std::unique_ptr<HostContext>>;
+    using PageContext = HashMap<RefPtr<StringImpl>, std::unique_ptr<HostContext>>;
     HashMap<WebCore::PageIdentifier, std::unique_ptr<PageContext>> m_pageContexts;
 
     struct PendingMainResourcePreconnectInfo {
@@ -87,12 +87,12 @@ private:
         WeakListHashSet<NetworkLoad> pendingLoads;
     };
     // Maps (protocolHostAndPort, userAgent) => PendingMainResourcePreconnectInfo.
-    using PendingPreconnectMap = HashMap<std::tuple<String, String>, PendingMainResourcePreconnectInfo>;
+    using PendingPreconnectMap = HashMap<std::tuple<RefPtr<StringImpl>, RefPtr<StringImpl>>, PendingMainResourcePreconnectInfo>;
     PendingPreconnectMap m_pendingMainResourcePreconnects;
 
     void maybePrunePreconnectInfo(PendingPreconnectMap::iterator&);
 
-    HashSet<String> m_http1XOrigins;
+    HashSet<RefPtr<StringImpl>> m_http1XOrigins;
 };
 
 }

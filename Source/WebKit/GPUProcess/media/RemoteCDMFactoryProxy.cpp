@@ -57,7 +57,7 @@ void RemoteCDMFactoryProxy::clear()
     m_proxies.clear();
 }
 
-static CDMFactory* factoryForKeySystem(const String& keySystem)
+static CDMFactory* factoryForKeySystem(StringImpl* keySystem)
 {
     auto& factories = CDMFactory::registeredFactories();
     auto foundIndex = factories.findIf([&] (auto& factory) { return factory->supportsKeySystem(keySystem); });
@@ -66,7 +66,7 @@ static CDMFactory* factoryForKeySystem(const String& keySystem)
     return factories[foundIndex].ptr();
 }
 
-void RemoteCDMFactoryProxy::createCDM(const String& keySystem, const String& mediaKeysHashSalt, CompletionHandler<void(std::optional<RemoteCDMIdentifier>&&, RemoteCDMConfiguration&&)>&& completion)
+void RemoteCDMFactoryProxy::createCDM(StringImpl* keySystem, StringImpl* mediaKeysHashSalt, CompletionHandler<void(std::optional<RemoteCDMIdentifier>&&, RemoteCDMConfiguration&&)>&& completion)
 {
     RefPtr factory = factoryForKeySystem(keySystem);
     if (!factory) {
@@ -87,7 +87,7 @@ void RemoteCDMFactoryProxy::createCDM(const String& keySystem, const String& med
     completion(WTF::move(identifier), WTF::move(configuration));
 }
 
-void RemoteCDMFactoryProxy::supportsKeySystem(const String& keySystem, CompletionHandler<void(bool)>&& completion)
+void RemoteCDMFactoryProxy::supportsKeySystem(StringImpl* keySystem, CompletionHandler<void(bool)>&& completion)
 {
     completion(factoryForKeySystem(keySystem));
 }
@@ -195,7 +195,7 @@ bool RemoteCDMFactoryProxy::allowsExitUnderMemoryPressure() const
     return m_instances.isEmpty();
 }
 
-String RemoteCDMFactoryProxy::mediaKeysStorageDirectory() const
+RefPtr<StringImpl> RemoteCDMFactoryProxy::mediaKeysStorageDirectory() const
 {
     if (RefPtr connection = m_gpuConnectionToWebProcess.get())
         return connection->mediaKeysStorageDirectory();

@@ -91,8 +91,8 @@ inline ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask(std:
 {
 }
 
-inline ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask(MessageSource source, MessageLevel level, const String& message)
-    : Task([source, level, message = message.isolatedCopy()](ScriptExecutionContext& context) {
+inline ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask(MessageSource source, MessageLevel level, StringImpl* message)
+    : Task([source, level, message = isolatedCopy(message)](ScriptExecutionContext& context) {
         context.addConsoleMessage(source, level, message);
     })
 {

@@ -56,15 +56,15 @@ XMLTreeViewer::XMLTreeViewer(Document& document)
 
 void XMLTreeViewer::transformDocumentToTreeView()
 {
-    String scriptString = StringImpl::createWithoutCopying(byteCast<Latin1Character>(std::span { XMLViewer_js }));
+    RefPtr<StringImpl> scriptString = StringImpl::createWithoutCopying(byteCast<Latin1Character>(std::span { XMLViewer_js }));
     Ref document = m_document.get();
     RefPtr frame = document->frame();
     protect(frame->script())->evaluateIgnoringException(ScriptSourceCode(scriptString, JSC::SourceTaintedOrigin::Untainted));
-    protect(frame->script())->evaluateIgnoringException(ScriptSourceCode(AtomString("prepareWebKitXMLViewer('This XML file does not appear to have any style information associated with it. The document tree is shown below.');"_s), JSC::SourceTaintedOrigin::Untainted));
+    protect(frame->script())->evaluateIgnoringException(ScriptSourceCode("prepareWebKitXMLViewer('This XML file does not appear to have any style information associated with it. The document tree is shown below.');"_atom, JSC::SourceTaintedOrigin::Untainted));
 
-    String cssString = StringImpl::createWithoutCopying(byteCast<Latin1Character>(std::span { XMLViewer_css }));
+    RefPtr<StringImpl> cssString = StringImpl::createWithoutCopying(byteCast<Latin1Character>(std::span { XMLViewer_css }));
     Ref text = document->createTextNode(WTF::move(cssString));
-    document->getElementById(String("xml-viewer-style"_s))->appendChild(WTF::move(text));
+    document->getElementById("xml-viewer-style"_si)->appendChild(WTF::move(text));
 }
 
 } // namespace WebCore

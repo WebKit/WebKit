@@ -105,7 +105,7 @@ std::optional<PlatformMediaCapabilitiesInfo> validateAV1Parameters(const AV1Code
     if (!perProfileSupport)
         return std::nullopt;
 
-    auto profileString = String::number(profile).createCFString();
+    auto profileString = createCFString(makeString(profile));
     RetainPtr profileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(perProfileSupport.get(), profileString.get()));
     if (!profileSupport)
         return std::nullopt;
@@ -127,7 +127,7 @@ std::optional<PlatformMediaCapabilitiesInfo> validateAV1Parameters(const AV1Code
 
     if (RetainPtr cfSupportedChromaSubsampling = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(profileSupport.get(), kVTDecoderCapability_ChromaSubsampling))) {
         auto supportedChromaSubsampling = makeVector(cfSupportedChromaSubsampling.get(), [](CFStringRef chromaSubsamplingString) {
-            return parseInteger<uint8_t>(String(chromaSubsamplingString));
+            return parseInteger<uint8_t>(StringImpl::create(chromaSubsamplingString).get());
         });
 
         // CoreMedia defines the kVTDecoderCapability_ChromaSubsampling value as
@@ -153,7 +153,7 @@ std::optional<PlatformMediaCapabilitiesInfo> validateAV1Parameters(const AV1Code
 
     if (RetainPtr cfSupportedColorDepths = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(profileSupport.get(), kVTDecoderCapability_ColorDepth))) {
         auto supportedColorDepths = makeVector(cfSupportedColorDepths.get(), [](CFStringRef colorDepthString) {
-            return parseInteger<uint8_t>(String(colorDepthString));
+            return parseInteger<uint8_t>(StringImpl::create(colorDepthString).get());
         });
         if (!supportedColorDepths.contains(static_cast<uint8_t>(record.bitDepth)))
             return std::nullopt;

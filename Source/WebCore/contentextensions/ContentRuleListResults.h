@@ -41,7 +41,7 @@ struct ContentRuleListResults {
         bool blockedCookies { false };
         bool modifiedHeaders { false };
         bool redirected { false };
-        Vector<String> notifications;
+        Vector<RefPtr<StringImpl>> notifications;
         
         bool shouldNotifyApplication() const
         {
@@ -65,7 +65,7 @@ struct ContentRuleListResults {
         Vector<std::pair<ContentExtensions::RedirectAction, URL>> redirectActions { };
     };
 
-    using ContentRuleListIdentifier = String;
+    using ContentRuleListIdentifier = RefPtr<StringImpl>;
 
     Summary summary;
     Vector<std::pair<ContentRuleListIdentifier, Result>> results;

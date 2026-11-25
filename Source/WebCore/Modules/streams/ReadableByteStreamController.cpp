@@ -144,10 +144,10 @@ std::optional<double> ReadableByteStreamController::desiredSize() const
 ExceptionOr<void> ReadableByteStreamController::closeForBindings(JSDOMGlobalObject& globalObject)
 {
     if (m_closeRequested)
-        return Exception { ExceptionCode::TypeError, "controller is closed"_s };
+        return Exception { ExceptionCode::TypeError, "controller is closed"_si };
 
     if (protect(stream())->state() != ReadableStream::State::Readable)
-        return Exception { ExceptionCode::TypeError, "controller's stream is not readable"_s };
+        return Exception { ExceptionCode::TypeError, "controller's stream is not readable"_si };
 
     close(globalObject, ShouldThrowOnError::Yes);
     return { };
@@ -157,17 +157,17 @@ ExceptionOr<void> ReadableByteStreamController::closeForBindings(JSDOMGlobalObje
 ExceptionOr<void> ReadableByteStreamController::enqueueForBindings(JSDOMGlobalObject& globalObject, JSC::ArrayBufferView& chunk)
 {
     if (!chunk.byteLength())
-        return Exception { ExceptionCode::TypeError, "chunk's size is 0"_s };
+        return Exception { ExceptionCode::TypeError, "chunk's size is 0"_si };
 
     RefPtr sharedBuffer = chunk.possiblySharedBuffer();
     if (!sharedBuffer || !sharedBuffer->byteLength())
-        return Exception { ExceptionCode::TypeError, "chunk's buffer size is 0"_s };
+        return Exception { ExceptionCode::TypeError, "chunk's buffer size is 0"_si };
 
     if (m_closeRequested)
-        return Exception { ExceptionCode::TypeError, "controller is closed"_s };
+        return Exception { ExceptionCode::TypeError, "controller is closed"_si };
 
     if (protect(stream())->state() != ReadableStream::State::Readable)
-        return Exception { ExceptionCode::TypeError, "controller's stream is not readable"_s };
+        return Exception { ExceptionCode::TypeError, "controller's stream is not readable"_si };
 
     return enqueue(globalObject, chunk);
 }
@@ -278,7 +278,7 @@ bool ReadableByteStreamController::close(JSDOMGlobalObject& globalObject, Should
             Ref vm = globalObject.vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
 
-            auto error = createDOMException(&globalObject, ExceptionCode::TypeError, "controller has pending pull intos"_s);
+            auto error = createDOMException(&globalObject, ExceptionCode::TypeError, "controller has pending pull intos"_si);
             scope.assertNoExceptionExceptTermination();
 
             this->error(globalObject, error);
@@ -300,12 +300,12 @@ static ExceptionOr<Ref<JSC::ArrayBuffer>> transferArrayBuffer(JSC::VM& vm, JSC::
     ASSERT(!buffer.isDetached());
 
     if (buffer.isWasmMemory())
-        return Exception { ExceptionCode::TypeError, "transfer of buffer is not possible"_s };
+        return Exception { ExceptionCode::TypeError, "transfer of buffer is not possible"_si };
 
     JSC::ArrayBufferContents contents;
     bool isOK = buffer.transferTo(vm, contents);
     if (!isOK)
-        return Exception { ExceptionCode::TypeError, "transfer of buffer failed"_s };
+        return Exception { ExceptionCode::TypeError, "transfer of buffer failed"_si };
 
     return ArrayBuffer::create(WTF::move(contents));
 }
@@ -339,7 +339,7 @@ ExceptionOr<void> ReadableByteStreamController::enqueue(JSDOMGlobalObject& globa
 
     RefPtr buffer = view.possiblySharedBuffer();
     if (!buffer || buffer->isDetached())
-        return Exception { ExceptionCode::TypeError, "view is detached"_s };
+        return Exception { ExceptionCode::TypeError, "view is detached"_si };
 
     return enqueue(globalObject, *buffer, view.byteOffset(), view.byteLength());
 }
@@ -350,7 +350,7 @@ ExceptionOr<void> ReadableByteStreamController::enqueue(JSDOMGlobalObject& globa
         return { };
 
     if (buffer.isDetached())
-        return Exception { ExceptionCode::TypeError, "view is detached"_s };
+        return Exception { ExceptionCode::TypeError, "view is detached"_si };
 
     return enqueue(globalObject, buffer, 0, buffer.byteLength());
 }
@@ -369,7 +369,7 @@ ExceptionOr<void> ReadableByteStreamController::enqueue(JSDOMGlobalObject& globa
     if (!m_pendingPullIntos.isEmpty()) {
         auto& firstPendingPullInto = m_pendingPullIntos.first();
         if (Ref { firstPendingPullInto.buffer }->isDetached())
-            return Exception { ExceptionCode::TypeError, "pendingPullInto buffer is detached"_s };
+            return Exception { ExceptionCode::TypeError, "pendingPullInto buffer is detached"_si };
 
         invalidateByobRequest();
 
@@ -703,7 +703,7 @@ void ReadableByteStreamController::pullInto(JSDOMGlobalObject& globalObject, JSC
     auto byteOffset = view.byteOffset();
     auto byteLength = view.byteLength();
     if (view.isDetached()) {
-        readIntoRequest->runErrorSteps(Exception { ExceptionCode::TypeError, "view is detached"_s });
+        readIntoRequest->runErrorSteps(Exception { ExceptionCode::TypeError, "view is detached"_si });
         return;
     }
 
@@ -741,7 +741,7 @@ void ReadableByteStreamController::pullInto(JSDOMGlobalObject& globalObject, JSC
             return;
         }
         if (m_closeRequested) {
-            JSC::JSValue e = JSC::createTypeError(&globalObject, "close is requested"_s);
+            JSC::JSValue e = JSC::createTypeError(&globalObject, "close is requested"_si);
             error(globalObject, e);
             readIntoRequest->runErrorSteps(e);
             return;
@@ -830,13 +830,13 @@ ExceptionOr<void> ReadableByteStreamController::respond(JSDOMGlobalObject& globa
     auto state = protect(stream())->state();
     if (state == ReadableStream::State::Closed) {
         if (bytesWritten > 0)
-            return Exception { ExceptionCode::TypeError, "stream is closed"_s };
+            return Exception { ExceptionCode::TypeError, "stream is closed"_si };
     } else {
         ASSERT(state == ReadableStream::State::Readable);
         if (!bytesWritten)
-            return Exception { ExceptionCode::TypeError, "bytesWritten is 0"_s };
+            return Exception { ExceptionCode::TypeError, "bytesWritten is 0"_si };
         if (firstDescriptor.bytesFilled + bytesWritten > firstDescriptor.byteLength)
-            return Exception { ExceptionCode::RangeError, "bytesWritten is too big"_s };
+            return Exception { ExceptionCode::RangeError, "bytesWritten is too big"_si };
     }
 
     Ref vm = globalObject.vm();
@@ -860,23 +860,23 @@ ExceptionOr<void> ReadableByteStreamController::respondWithNewView(JSDOMGlobalOb
     auto state = protect(stream())->state();
     if (state == ReadableStream::State::Closed) {
         if (!!view.byteLength())
-            return Exception { ExceptionCode::TypeError, "stream is closed"_s };
+            return Exception { ExceptionCode::TypeError, "stream is closed"_si };
     } else {
         ASSERT(state == ReadableStream::State::Readable);
         if (!view.byteLength())
-            return Exception { ExceptionCode::TypeError, "bytesWritten is 0"_s };
+            return Exception { ExceptionCode::TypeError, "bytesWritten is 0"_si };
     }
 
     if (firstDescriptor.byteOffset + firstDescriptor.bytesFilled != view.byteOffset())
-        return Exception { ExceptionCode::RangeError, "Wrong byte offset"_s };
+        return Exception { ExceptionCode::RangeError, "Wrong byte offset"_si };
 
     RefPtr viewedArrayBuffer = view.possiblySharedBuffer();
     auto viewedArrayBufferByteLength = viewedArrayBuffer ? viewedArrayBuffer->byteLength() : 0;
     if (firstDescriptor.bufferByteLength != viewedArrayBufferByteLength)
-        return Exception { ExceptionCode::RangeError, "Wrong view buffer byte length"_s };
+        return Exception { ExceptionCode::RangeError, "Wrong view buffer byte length"_si };
 
     if (firstDescriptor.bytesFilled + view.byteLength() > firstDescriptor.byteLength)
-        return Exception { ExceptionCode::RangeError, "Wrong byte length"_s };
+        return Exception { ExceptionCode::RangeError, "Wrong byte length"_si };
 
     auto viewByteLength = view.byteLength();
 

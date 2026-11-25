@@ -89,7 +89,7 @@ bool SVGPointList::parse(StringView value)
     return true;
 }
 
-String SVGPointList::valueAsString() const
+RefPtr<StringImpl> SVGPointList::valueAsString() const
 {
     StringBuilder builder;
 

@@ -141,10 +141,10 @@ public:
     DateTimeStyle dateStyle() const;
     DateTimeStyle timeStyle() const;
     TimeZoneName timeZoneName() const;
-    const String& ensureCalendar() const;
-    const String& ensureNumberingSystem() const;
+    const RefPtr<StringImpl>& ensureCalendar() const;
+    const RefPtr<StringImpl>& ensureNumberingSystem() const;
 
-    static bool calendarMatchesICU(StringView temporalId, const String& icuCalId);
+    static bool calendarMatchesICU(StringView temporalId, StringImpl* icuCalId);
 
     using UDateFormatDeleter = ICUDeleter<udat_close>;
     UDateFormat* getTemporalFormatter(VM&, TemporalFieldKind) const; // Non-owning; no clone needed (single-threaded JS).
@@ -178,7 +178,7 @@ private:
     IntlDateTimeFormat(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    static Vector<String> localeData(const String&, RelevantExtensionKey);
+    static Vector<RefPtr<StringImpl>> localeData(StringImpl*, RelevantExtensionKey);
 
     UDateIntervalFormat* createDateIntervalFormatIfNecessary(JSGlobalObject*);
 
@@ -207,10 +207,10 @@ private:
     static ASCIILiteral formatStyleString(DateTimeStyle);
 
     NODELETE static HourCycle hourCycleFromSymbol(char16_t);
-    static HourCycle parseHourCycle(const String&);
+    static HourCycle parseHourCycle(StringImpl*);
     NODELETE static void replaceHourCycleInSkeleton(Vector<char16_t, 32>&, bool hour12);
     static void replaceHourCycleInPattern(Vector<char16_t, 32>&, HourCycle);
-    static String buildSkeleton(Weekday, Era, Year, Month, Day, TriState, HourCycle, Hour, DayPeriod, Minute, Second, unsigned, TimeZoneName);
+    static RefPtr<StringImpl> buildSkeleton(Weekday, Era, Year, Month, Day, TriState, HourCycle, Hour, DayPeriod, Minute, Second, unsigned, TimeZoneName);
 
     WriteBarrier<JSBoundFunction> m_boundFormat;
     std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter> m_dateIntervalFormat;
@@ -231,18 +231,18 @@ class IntlDateTimeFormatImpl : public RefCounted<IntlDateTimeFormatImpl> {
 public:
     static Ref<IntlDateTimeFormatImpl> create() { return adoptRef(*new IntlDateTimeFormatImpl); }
 
-    String m_locale;
-    String m_dataLocale;
+    RefPtr<StringImpl> m_locale;
+    RefPtr<StringImpl> m_dataLocale;
     ASCIICString m_dataLocaleWithExtensions;
-    mutable String m_calendar;
-    mutable String m_numberingSystem;
+    mutable RefPtr<StringImpl> m_calendar;
+    mutable RefPtr<StringImpl> m_numberingSystem;
     TimeZone m_timeZone;
     // Time zone string returned by resolvedOptions().timeZone. Per spec this is
     // [[Identifier]] (the case-normalized accepted form, e.g. "Asia/Calcutta"),
     // not [[PrimaryIdentifier]] (e.g. "Asia/Kolkata"). For UTC offset inputs
     // this is the canonical "+HH:MM" form. m_timeZone holds the canonicalized
     // primary used for ICU formatting.
-    String m_timeZoneForResolvedOptions;
+    RefPtr<StringImpl> m_timeZoneForResolvedOptions;
     IntlDateTimeFormat::HourCycle m_hourCycle { IntlDateTimeFormat::HourCycle::None };
     IntlDateTimeFormat::Weekday m_weekday { IntlDateTimeFormat::Weekday::None };
     IntlDateTimeFormat::Era m_era { IntlDateTimeFormat::Era::None };

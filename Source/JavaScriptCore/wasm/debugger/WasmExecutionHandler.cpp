@@ -66,14 +66,14 @@ namespace Wasm {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExecutionHandler);
 
 struct StopReasonInfo {
-    String reasonString;
+    RefPtr<StringImpl> reasonString;
     StringView reasonSuffix;
 };
 
 // GDB RSP stop reply: T<AA> where AA is the POSIX signal number in two-digit hex.
 // "reason:<suffix>" is an LLDB extension (not in the GDB RSP spec).
 // Reference: https://sourceware.org/gdb/current/onlinedocs/gdb/Stop-Reply-Packets.html
-static String signalStopString(int signo)
+static RefPtr<StringImpl> signalStopString(int signo)
 {
     return makeString('T', hex(signo, 2, WTF::Uppercase));
 }
@@ -780,7 +780,7 @@ NODELETE static uint64_t getStopPC(const DebugState& state)
     return state.stopData->address;
 }
 
-static String getThreadName(const DebugState& state, uint64_t vmId)
+static RefPtr<StringImpl> getThreadName(const DebugState& state, uint64_t vmId)
 {
     StringView stateName;
     if (state.isStoppedAtPrologue())
@@ -797,7 +797,7 @@ static String getThreadName(const DebugState& state, uint64_t vmId)
 struct ThreadInfo {
     uint64_t vmId;
     uint64_t pc;
-    String name;
+    RefPtr<StringImpl> name;
     StringView stopReason;
 };
 
@@ -927,7 +927,7 @@ void ExecutionHandler::sendReplyImpl(AbstractLocker&, StringView reply) WTF_REQU
     for (auto character : reply.codeUnits())
         checksum += character;
 
-    String packet = makeString('$', reply, '#', hex(checksum, 2, Lowercase));
+    RefPtr<StringImpl> packet = makeString('$', reply, '#', hex(checksum, 2, Lowercase));
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (m_debugServer.isRWIMode()) {
@@ -941,7 +941,7 @@ void ExecutionHandler::sendReplyImpl(AbstractLocker&, StringView reply) WTF_REQU
     }
 #endif
 
-    auto packetData = packet.utf8();
+    auto packetData = utf8(packet);
     auto packetBytes = packetData.span();
     int sent = static_cast<int>(send(m_debugServer.m_clientSocket, packetBytes.data(), packetBytes.size(), 0));
     if (sent < 0)
@@ -989,7 +989,7 @@ DebugState* ExecutionHandler::debuggeeStateForTest() const
     return m_debuggee->debugState();
 }
 
-String ExecutionHandler::callStackStringFor(uint64_t vmId)
+RefPtr<StringImpl> ExecutionHandler::callStackStringFor(uint64_t vmId)
 {
     Locker locker { m_lock };
 
@@ -1000,7 +1000,7 @@ String ExecutionHandler::callStackStringFor(uint64_t vmId)
 
     if (!targetVM) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] callStackStringFor: thread ", vmId, " not found");
-        return String();
+        return nullptr;
     }
 
     auto* state = targetVM->debugState();

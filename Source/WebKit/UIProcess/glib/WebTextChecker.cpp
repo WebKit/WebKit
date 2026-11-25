@@ -70,7 +70,7 @@ void WebTextChecker::checkSpelling(WebPageProxy* page, bool startBeforeSelection
     page->advanceToNextMisspelling(startBeforeSelection);
 }
 
-void WebTextChecker::changeSpellingToWord(WebPageProxy* page, const String& text)
+void WebTextChecker::changeSpellingToWord(WebPageProxy* page, StringImpl* text)
 {
     page->changeSpellingToWord(text);
 }

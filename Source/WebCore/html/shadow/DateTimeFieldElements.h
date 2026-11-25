@@ -66,10 +66,10 @@ class DateTimeMeridiemFieldElement final : public DateTimeSymbolicFieldElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeMeridiemFieldElement);
 
 public:
-    static Ref<DateTimeMeridiemFieldElement> create(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&);
+    static Ref<DateTimeMeridiemFieldElement> create(Document&, DateTimeFieldElementFieldOwner&, const Vector<RefPtr<StringImpl>>&);
 
 private:
-    DateTimeMeridiemFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&);
+    DateTimeMeridiemFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Vector<RefPtr<StringImpl>>&);
 
     void updateAriaValueAttributes();
     // DateTimeFieldElement functions:
@@ -145,10 +145,10 @@ class DateTimeSymbolicMonthFieldElement final : public DateTimeSymbolicFieldElem
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeSymbolicMonthFieldElement);
 
 public:
-    static Ref<DateTimeSymbolicMonthFieldElement> create(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&);
+    static Ref<DateTimeSymbolicMonthFieldElement> create(Document&, DateTimeFieldElementFieldOwner&, const Vector<RefPtr<StringImpl>>&);
 
 private:
-    DateTimeSymbolicMonthFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&);
+    DateTimeSymbolicMonthFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Vector<RefPtr<StringImpl>>&);
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;

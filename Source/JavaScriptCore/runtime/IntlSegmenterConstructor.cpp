@@ -72,7 +72,7 @@ IntlSegmenterConstructor::IntlSegmenterConstructor(VM& vm, Structure* structure)
 
 void IntlSegmenterConstructor::finishCreation(VM& vm, IntlSegmenterPrototype* segmenterPrototype)
 {
-    Base::finishCreation(vm, 0, "Segmenter"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "Segmenter"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, segmenterPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     segmenterPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
@@ -114,7 +114,7 @@ JSC_DEFINE_HOST_FUNCTION(intlSegmenterConstructorSupportedLocalesOf, (JSGlobalOb
     const auto& availableLocales = intlSegmenterAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).

@@ -52,7 +52,7 @@ Ref<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Doc
     return scriptElement;
 }
 
-void SVGScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGScriptElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::asyncAttr)
         handleAsyncAttribute();
@@ -76,7 +76,7 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
     InstanceInvalidationGuard guard(*this);
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
-        if (auto href = this->href(); !href.isEmpty())
+        if (auto href = this->href(); !isEmpty(href))
             handleSourceAttribute(href);
         return;
     }
@@ -149,12 +149,12 @@ void SVGScriptElement::eventListenersDidChange()
     setHasRelevantLoadEventsListener(hasEventListeners(eventNames().errorEvent) || hasEventListeners(eventNames().loadEvent));
 }
 
-String SVGScriptElement::crossOrigin() const
+RefPtr<StringImpl> SVGScriptElement::crossOrigin() const
 {
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(SVGNames::crossoriginAttr));
 }
 
-String SVGScriptElement::referrerPolicyForBindings() const
+RefPtr<StringImpl> SVGScriptElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
 }

@@ -43,9 +43,9 @@ public:
 
     ~FrameTree();
 
-    const AtomString& specifiedName() const LIFETIME_BOUND { return m_specifiedName; }
-    WEBCORE_EXPORT AtomString uniqueName() const;
-    WEBCORE_EXPORT void setSpecifiedName(const AtomString&);
+    const RefPtr<AtomStringImpl>& specifiedName() const LIFETIME_BOUND { return m_specifiedName; }
+    WEBCORE_EXPORT RefPtr<AtomStringImpl> uniqueName() const;
+    WEBCORE_EXPORT void setSpecifiedName(AtomStringImpl*);
     WEBCORE_EXPORT void clearName();
     NODELETE WEBCORE_EXPORT Frame* parent() const;
 
@@ -81,10 +81,10 @@ public:
     WEBCORE_EXPORT void replaceChild(Frame&, Frame&);
 
     NODELETE Frame* child(unsigned index) const;
-    NODELETE Frame* childBySpecifiedName(const AtomString& name) const;
+    NODELETE Frame* childBySpecifiedName(AtomStringImpl* name) const;
     NODELETE WEBCORE_EXPORT Frame* descendantByFrameID(FrameIdentifier) const;
-    WEBCORE_EXPORT RefPtr<Frame> findByUniqueName(const AtomString&, Frame& activeFrame) const;
-    WEBCORE_EXPORT RefPtr<Frame> findBySpecifiedName(const AtomString&, Frame& activeFrame) const;
+    WEBCORE_EXPORT RefPtr<Frame> findByUniqueName(AtomStringImpl*, Frame& activeFrame) const;
+    WEBCORE_EXPORT RefPtr<Frame> findBySpecifiedName(AtomStringImpl*, Frame& activeFrame) const;
     NODELETE WEBCORE_EXPORT unsigned childCount() const;
     NODELETE unsigned descendantCount() const;
     NODELETE WEBCORE_EXPORT Frame& top() const;
@@ -93,8 +93,8 @@ public:
     bool hasRemoteFrameDescendant() const { return !!m_remoteFrameDescendantCount; }
 
     WEBCORE_EXPORT RefPtr<Frame> scopedChild(unsigned index) const;
-    WEBCORE_EXPORT RefPtr<Frame> scopedChildByUniqueName(const AtomString&) const;
-    RefPtr<Frame> scopedChildBySpecifiedName(const AtomString& name) const;
+    WEBCORE_EXPORT RefPtr<Frame> scopedChildByUniqueName(AtomStringImpl*) const;
+    RefPtr<Frame> scopedChildBySpecifiedName(AtomStringImpl* name) const;
     unsigned scopedChildCount() const;
 
 private:
@@ -112,12 +112,12 @@ private:
     RefPtr<Frame> scopedChild(NOESCAPE const Function<bool(const FrameTree&)>& isMatch, TreeScope*) const;
     NODELETE unsigned scopedChildCount(TreeScope*) const;
 
-    template<typename F> RefPtr<Frame> find(const AtomString& name, NOESCAPE const F& nameGetter, Frame& activeFrame) const;
+    template<typename F> RefPtr<Frame> find(AtomStringImpl* name, NOESCAPE const F& nameGetter, Frame& activeFrame) const;
 
     WeakRef<Frame> m_thisFrame;
 
     WeakPtr<Frame> m_parent;
-    AtomString m_specifiedName; // The actual frame name (may be empty).
+    RefPtr<AtomStringImpl> m_specifiedName; // The actual frame name (may be empty).
 
     RefPtr<Frame> m_nextSibling;
     WeakPtr<Frame> m_previousSibling;

@@ -35,9 +35,9 @@
 namespace WebKit::WebGPU {
 
 struct ShaderModuleDescriptor : public ObjectDescriptorBase {
-    String code;
+    RefPtr<StringImpl> code;
     // FIXME: Hook up the sourceMap.
-    Vector<KeyValuePair<String, ShaderModuleCompilationHint>> hints;
+    Vector<KeyValuePair<RefPtr<StringImpl>, ShaderModuleCompilationHint>> hints;
 };
 
 } // namespace WebKit::WebGPU

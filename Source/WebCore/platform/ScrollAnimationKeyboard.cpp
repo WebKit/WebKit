@@ -229,7 +229,7 @@ bool ScrollAnimationKeyboard::animateScroll(MonotonicTime currentTime)
     return true;
 }
 
-String ScrollAnimationKeyboard::debugDescription() const
+RefPtr<StringImpl> ScrollAnimationKeyboard::debugDescription() const
 {
     TextStream textStream;
     textStream << "ScrollAnimationKeyboard " << this << " active " << isActive() << " current offset " << currentOffset() << " current velocity " << m_velocity;

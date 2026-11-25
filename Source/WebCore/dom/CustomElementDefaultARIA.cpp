@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementDefaultARIA);
 CustomElementDefaultARIA::CustomElementDefaultARIA() = default;
 CustomElementDefaultARIA::~CustomElementDefaultARIA() = default;
 
-void CustomElementDefaultARIA::setValueForAttribute(const QualifiedName& name, const AtomString& value)
+void CustomElementDefaultARIA::setValueForAttribute(const QualifiedName& name, AtomStringImpl* value)
 {
     m_map.set(name, value);
 }
@@ -51,20 +51,20 @@ NODELETE static bool isElementVisible(const Element& element, const Element& thi
     return !element.isConnected() || element.isInDocumentTree() || thisElement.isShadowIncludingDescendantOf(element.rootNode());
 }
 
-const AtomString& CustomElementDefaultARIA::valueForAttribute(const Element& thisElement, const QualifiedName& name) const
+const RefPtr<AtomStringImpl>& CustomElementDefaultARIA::valueForAttribute(const Element& thisElement, const QualifiedName& name) const
 {
     auto it = m_map.find(name);
     if (it == m_map.end())
         return nullAtom();
 
-    return WTF::switchOn(it->value, [&](const AtomString& stringValue) -> const AtomString& {
+    return WTF::switchOn(it->value, [&](const RefPtr<AtomStringImpl>& stringValue) -> const RefPtr<AtomStringImpl>& {
         return stringValue;
-    }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) -> const AtomString& {
+    }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) -> const RefPtr<AtomStringImpl>& {
         auto* elementValue = weakElementValue.get();
         if (elementValue && isElementVisible(*elementValue, thisElement))
             return elementValue->attributeWithoutSynchronization(HTMLNames::idAttr);
         return nullAtom();
-    }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& elements) -> const AtomString& {
+    }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& elements) -> const RefPtr<AtomStringImpl>& {
         StringBuilder idList;
         for (auto& weakElement : elements) {
             RefPtr element = weakElement.get();
@@ -91,7 +91,7 @@ RefPtr<Element> CustomElementDefaultARIA::elementForAttribute(const Element& thi
         return nullptr;
 
     RefPtr<Element> result;
-    WTF::switchOn(it->value, [&](const AtomString& stringValue) {
+    WTF::switchOn(it->value, [&](AtomStringImpl* stringValue) {
         if (thisElement.isInTreeScope())
             result = protect(thisElement.treeScope())->elementByIdResolvingReferenceTarget(stringValue);
     }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) {
@@ -115,7 +115,7 @@ std::optional<Vector<Ref<Element>>> CustomElementDefaultARIA::elementsForAttribu
     if (it == m_map.end())
         return std::nullopt;
     Vector<Ref<Element>> result;
-    WTF::switchOn(it->value, [&](const AtomString& stringValue) {
+    WTF::switchOn(it->value, [&](AtomStringImpl* stringValue) {
         if (thisElement.isInTreeScope()) {
             SpaceSplitString idList { stringValue, SpaceSplitString::ShouldFoldCase::No };
             result = WTF::compactMap(idList, [&](auto& id) {

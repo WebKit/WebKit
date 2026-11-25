@@ -542,7 +542,7 @@ TEST(WTF_HashSet, RemoveIfShrinkToBestSize)
 
 TEST(WTF_HashSet, ReserveInitialCapacity)
 {
-    HashSet<String> set;
+    HashSet<RefPtr<StringImpl>> set;
     EXPECT_EQ(0u, set.size());
     EXPECT_EQ(0u, set.capacity());
 
@@ -571,9 +571,9 @@ TEST(WTF_HashSet, ReserveInitialCapacity)
     EXPECT_EQ(0u, set.size());
     EXPECT_EQ(8u, set.capacity());
 
-    HashSet<String> set2;
+    HashSet<RefPtr<StringImpl>> set2;
     set2.reserveInitialCapacity(9999);
-    EXPECT_FALSE(set2.remove("foo1"_s));
+    EXPECT_FALSE(set2.remove("foo1"_si));
 
     for (int i = 0; i < 2000; ++i)
         set2.add(makeString("foo"_s, i));

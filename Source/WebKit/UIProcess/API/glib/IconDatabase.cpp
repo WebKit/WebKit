@@ -45,7 +45,7 @@ static const Seconds notUsedIconExpirationTime { 60 * 60 * 24 * 30 };
 // Loaded icons are cleared after 30 seconds of being requested.
 static const Seconds loadedIconExpirationTime { 30_s };
 
-IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseWrite)
+IconDatabase::IconDatabase(StringImpl* path, AllowDatabaseWrite allowDatabaseWrite)
     : m_workQueue(WorkQueue::create("org.webkit.IconDatabase"_s))
     , m_allowDatabaseWrite(allowDatabaseWrite)
     , m_db(makeUniqueRef<SQLiteDatabase>())
@@ -57,13 +57,13 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
     // We initialize the database synchronously, it's hopefully fast enough because it makes
     // the implementation a lot simpler.
     m_workQueue->dispatchSync([&] {
-        if (allowDatabaseWrite == AllowDatabaseWrite::No && (path.isNull() || !FileSystem::fileExists(path)))
+        if (allowDatabaseWrite == AllowDatabaseWrite::No && (!path || !FileSystem::fileExists(path)))
             return;
 
         auto databaseDirectory = FileSystem::parentPath(path);
         FileSystem::makeAllDirectories(databaseDirectory);
         if (!m_db->open(path)) {
-            RELEASE_LOG_ERROR(IconDatabase, "Unable to open favicon database '%s' (%i) - %s", path.utf8(), m_db->lastError(), m_db->lastErrorMsg());
+            RELEASE_LOG_ERROR(IconDatabase, "Unable to open favicon database '%s' (%i) - %s", utf8(path), m_db->lastError(), m_db->lastErrorMsg());
             return;
         }
 
@@ -199,7 +199,7 @@ void IconDatabase::populatePageURLToIconURLsMap()
     Locker locker { m_pageURLToIconURLMapLock };
     while (result == SQLITE_ROW) {
         auto iconURLs = m_pageURLToIconURLMap.ensure(query->columnText(0), []() {
-            return ListHashSet<String> { };
+            return ListHashSet<RefPtr<StringImpl>> { };
         });
         iconURLs.iterator->value.add(query->columnText(1));
         result = query->step();
@@ -290,7 +290,7 @@ void IconDatabase::startClearLoadedIconsTimer()
     m_clearLoadedIconsTimer.startOneShot(loadedIconExpirationTime);
 }
 
-std::optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& expired)
+std::optional<int64_t> IconDatabase::iconIDForIconURL(StringImpl* iconURL, bool& expired)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db->isOpen());
@@ -318,7 +318,7 @@ std::optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, boo
     return result;
 }
 
-bool IconDatabase::setIconIDForPageURL(int64_t iconID, const String& pageURL)
+bool IconDatabase::setIconIDForPageURL(int64_t iconID, StringImpl* pageURL)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db->isOpen());
@@ -368,7 +368,7 @@ Vector<uint8_t> IconDatabase::iconData(int64_t iconID)
     return result;
 }
 
-std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<uint8_t>& iconData)
+std::optional<int64_t> IconDatabase::addIcon(StringImpl* iconURL, const Vector<uint8_t>& iconData)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db->isOpen());
@@ -476,17 +476,17 @@ void IconDatabase::deleteIcon(int64_t iconID)
     m_deleteIconStatement->reset();
 }
 
-void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool, bool)>&& completionHandler)
+void IconDatabase::checkIconURLAndSetPageURLIfNeeded(StringImpl* iconURL, StringImpl* pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool, bool)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
-    m_workQueue->dispatch([this, protectedThis = protect(*this), iconURL = iconURL.isolatedCopy(), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, completionHandler = WTF::move(completionHandler)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = protect(*this), iconURL = isolatedCopy(iconURL), pageURL = isolatedCopy(pageURL), allowDatabaseWrite, completionHandler = WTF::move(completionHandler)]() mutable {
         bool result = false;
         bool changed = false;
         if (m_db->isOpen()) {
             bool canWriteToDatabase = m_allowDatabaseWrite == AllowDatabaseWrite::Yes && allowDatabaseWrite == AllowDatabaseWrite::Yes;
             bool expired = false;
-            ListHashSet<String> cachedIconURLs;
+            ListHashSet<RefPtr<StringImpl>> cachedIconURLs;
             {
                 Locker locker { m_pageURLToIconURLMapLock };
                 cachedIconURLs = m_pageURLToIconURLMap.get(pageURL);
@@ -504,7 +504,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
                     if (!canWriteToDatabase || setIconIDForPageURL(iconID.value(), pageURL)) {
                         Locker locker { m_pageURLToIconURLMapLock };
                         auto iconURLs = m_pageURLToIconURLMap.ensure(pageURL, []() {
-                            return ListHashSet<String> { };
+                            return ListHashSet<RefPtr<StringImpl>> { };
                         });
                         iconURLs.iterator->value.add(iconURL);
                         changed = true;
@@ -521,7 +521,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
                     result = true;
                     Locker locker { m_pageURLToIconURLMapLock };
                     auto iconURLs = m_pageURLToIconURLMap.ensure(pageURL, []() {
-                        return ListHashSet<String> { };
+                        return ListHashSet<RefPtr<StringImpl>> { };
                     });
                     iconURLs.iterator->value.add(iconURL);
                     changed = true;
@@ -535,12 +535,12 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
     });
 }
 
-void IconDatabase::loadIconsForPageURL(const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(Vector<PlatformImagePtr>&&)>&& completionHandler)
+void IconDatabase::loadIconsForPageURL(StringImpl* pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(Vector<PlatformImagePtr>&&)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
-    m_workQueue->dispatch([this, protectedThis = protect(*this), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTF::move(completionHandler)]() mutable {
-        ListHashSet<String> iconURLs;
+    m_workQueue->dispatch([this, protectedThis = protect(*this), pageURL = isolatedCopy(pageURL), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTF::move(completionHandler)]() mutable {
+        ListHashSet<RefPtr<StringImpl>> iconURLs;
         {
             Locker locker { m_pageURLToIconURLMapLock };
             iconURLs = m_pageURLToIconURLMap.get(pageURL);
@@ -609,7 +609,7 @@ void IconDatabase::loadIconsForPageURL(const String& pageURL, AllowDatabaseWrite
     });
 }
 
-ListHashSet<String> IconDatabase::iconURLsForPageURL(const String& pageURL)
+ListHashSet<RefPtr<StringImpl>> IconDatabase::iconURLsForPageURL(StringImpl* pageURL)
 {
     ASSERT(isMainRunLoop());
 
@@ -617,7 +617,7 @@ ListHashSet<String> IconDatabase::iconURLsForPageURL(const String& pageURL)
     return m_pageURLToIconURLMap.get(pageURL);
 }
 
-void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint8_t> iconData, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
+void IconDatabase::setIconForPageURL(StringImpl* iconURL, std::span<const uint8_t> iconData, StringImpl* pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
@@ -637,14 +637,14 @@ void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint
         startClearLoadedIconsTimer();
         Locker locker { m_pageURLToIconURLMapLock };
         auto iconURLs = m_pageURLToIconURLMap.ensure(pageURL, []() {
-            return ListHashSet<String> { };
+            return ListHashSet<RefPtr<StringImpl>> { };
         });
         iconURLs.iterator->value.add(iconURL);
         completionHandler(result);
         return;
     }
 
-    m_workQueue->dispatch([this, protectedThis = protect(*this), iconURL = iconURL.isolatedCopy(), iconData = Vector(iconData), pageURL = pageURL.isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = protect(*this), iconURL = isolatedCopy(iconURL), iconData = Vector(iconData), pageURL = isolatedCopy(pageURL), completionHandler = WTF::move(completionHandler)]() mutable {
         bool result = false;
         if (m_db->isOpen()) {
             SQLiteTransaction transaction(m_db);
@@ -660,7 +660,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint
                 if (setIconIDForPageURL(iconID.value(), pageURL)) {
                     Locker locker { m_pageURLToIconURLMapLock };
                     auto iconURLs = m_pageURLToIconURLMap.ensure(pageURL, []() {
-                        return ListHashSet<String> { };
+                        return ListHashSet<RefPtr<StringImpl>> { };
                     });
                     iconURLs.iterator->value.add(iconURL);
                 }

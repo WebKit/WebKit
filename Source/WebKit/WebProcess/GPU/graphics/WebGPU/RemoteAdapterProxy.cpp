@@ -53,7 +53,7 @@ RemoteAdapterProxy::~RemoteAdapterProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteAdapterProxy::requestDevice(const ::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::Device>, String>&&)>&& callback)
+void RemoteAdapterProxy::requestDevice(const ::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<::WebGPU::Device>, RefPtr<StringImpl>>&&)>&& callback)
 {
     auto convertedDescriptor = serialize(descriptor);
     ASSERT(convertedDescriptor);

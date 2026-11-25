@@ -244,8 +244,8 @@ ManetteGamepad::ManetteGamepad(ManetteDevice* device, unsigned index)
 
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
 
-    m_id = String::fromUTF8(manette_device_get_name(m_device.get()));
-    m_mapping = String::fromUTF8("standard");
+    m_id = StringImpl::fromUTF8(manette_device_get_name(m_device.get()));
+    m_mapping = StringImpl::fromUTF8("standard");
 
     m_axisValues.resize(static_cast<size_t>(standardGamepadAxisCount));
     for (auto& value : m_axisValues)

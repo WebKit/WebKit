@@ -63,7 +63,7 @@ enum class ShouldConvertNumberToPxLength : bool { No, Yes };
 class SVGLengthValue {
     WTF_MAKE_TZONE_ALLOCATED(SVGLengthValue);
 public:
-    SVGLengthValue(SVGLengthMode = SVGLengthMode::Other, const String& valueAsString = { });
+    SVGLengthValue(SVGLengthMode = SVGLengthMode::Other, StringImpl* valueAsString = nullptr);
     SVGLengthValue(float valueInSpecifiedUnits, SVGLengthType, SVGLengthMode = SVGLengthMode::Other);
     SVGLengthValue(const SVGLengthContext&, float, SVGLengthType = SVGLengthType::Number, SVGLengthMode = SVGLengthMode::Other);
 
@@ -79,8 +79,8 @@ public:
     float valueAsPercentage() const;
     float valueInSpecifiedUnits() const;
 
-    String valueAsString() const;
-    AtomString valueAsAtomString() const;
+    RefPtr<StringImpl> valueAsString() const;
+    RefPtr<AtomStringImpl> valueAsAtomString() const;
     ExceptionOr<float> valueForBindings(const SVGLengthContext&) const;
 
     void setValueInSpecifiedUnits(float);

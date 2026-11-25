@@ -321,7 +321,7 @@ IterationStatus SlabSlicer::step(VM& vm, StackVisitor& visitor)
             commitPendingSlice();
             m_state = State::Success;
         } else {
-            m_errorMessage = "JSPI stack scan reached the limit frame unexpectedly"_s;
+            m_errorMessage = "JSPI stack scan reached the limit frame unexpectedly"_si;
             m_state = State::Failure;
         }
         m_teleportFrame = const_cast<CallFrame*>(m_lastVisitedFrame);
@@ -335,7 +335,7 @@ IterationStatus SlabSlicer::step(VM& vm, StackVisitor& visitor)
             m_futureReturnFromFrame = callFrame;
             m_state = State::ExpectingWasmToJS;
         } else {
-            m_errorMessage = "expected suspending frame not found"_s;
+            m_errorMessage = "expected suspending frame not found"_si;
             m_state = State::Failure;
         }
         break;
@@ -351,7 +351,7 @@ IterationStatus SlabSlicer::step(VM& vm, StackVisitor& visitor)
                 m_state = State::Failure;
             }
         } else {
-            m_errorMessage = "expected WasmToJS, got a non-Wasm frame"_s;
+            m_errorMessage = "expected WasmToJS, got a non-Wasm frame"_si;
             m_state = State::Failure;
         }
         break;
@@ -380,7 +380,7 @@ IterationStatus SlabSlicer::step(VM& vm, StackVisitor& visitor)
             }
             }
         } else { // no compilationMode - a JS frame
-            m_errorMessage = "encountered an unexpected non-Wasm frame"_s;
+            m_errorMessage = "encountered an unexpected non-Wasm frame"_si;
             m_state = State::Failure;
         }
         break;
@@ -390,7 +390,7 @@ IterationStatus SlabSlicer::step(VM& vm, StackVisitor& visitor)
         // Getting here means there are JS frames between the suspension point and the limitFrame. In other
         // words, it means execution left Wasm before returning and leaving again to get suspended, which is
         // a SuspensionError per the spec.
-        m_errorMessage = "unexpected frame after reaching a JSToWasmFrame"_s;
+        m_errorMessage = "unexpected frame after reaching a JSToWasmFrame"_si;
         m_state = State::Overrun;
         break;
     }
@@ -426,7 +426,7 @@ IterationStatus FragSlicer::step(VM& vm, StackVisitor& visitor)
             commitPendingSlice();
             m_state = State::Success;
         } else {
-            m_errorMessage = "JSPI stack scan reached the limit frame unexpectedly"_s;
+            m_errorMessage = "JSPI stack scan reached the limit frame unexpectedly"_si;
             m_state = State::Failure;
         }
         m_teleportFrame = const_cast<CallFrame*>(m_lastVisitedFrame);
@@ -440,7 +440,7 @@ IterationStatus FragSlicer::step(VM& vm, StackVisitor& visitor)
             m_futureReturnFromFrame = callFrame;
             m_state = State::ExpectingWasmToJS;
         } else {
-            m_errorMessage = "expected suspending frame not found"_s;
+            m_errorMessage = "expected suspending frame not found"_si;
             m_state = State::Failure;
         }
         break;
@@ -456,7 +456,7 @@ IterationStatus FragSlicer::step(VM& vm, StackVisitor& visitor)
                 m_state = State::Failure;
             }
         } else {
-            m_errorMessage = "expected WasmToJS, got a non-Wasm frame"_s;
+            m_errorMessage = "expected WasmToJS, got a non-Wasm frame"_si;
             m_state = State::Failure;
         }
         break;
@@ -472,7 +472,7 @@ IterationStatus FragSlicer::step(VM& vm, StackVisitor& visitor)
             m_pendingFrameRecords.append(callFrame);
             m_state = State::ScanningWasm;
         } else {
-            m_errorMessage = "a WasmToJSFrame not followed by a recognized Wasm frame"_s;
+            m_errorMessage = "a WasmToJSFrame not followed by a recognized Wasm frame"_si;
             m_state = State::Failure;
         }
         break;
@@ -509,13 +509,13 @@ IterationStatus FragSlicer::step(VM& vm, StackVisitor& visitor)
             }
             }
         } else { // no compilationMode - a JS frame
-            m_errorMessage = "encountered an unexpected non-Wasm frame"_s;
+            m_errorMessage = "encountered an unexpected non-Wasm frame"_si;
             m_state = State::Failure;
         }
         break;
     }
     case State::ScannedJSToWasm: {
-        m_errorMessage = "unexpected frame after reaching a JSToWasmFrame"_s;
+        m_errorMessage = "unexpected frame after reaching a JSToWasmFrame"_si;
         m_state = State::Overrun;
         break;
     }

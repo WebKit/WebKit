@@ -52,7 +52,7 @@ class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WorkerThreadableLoader, Loader);
 public:
     static void loadResourceSynchronously(WorkerOrWorkletGlobalScope&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
-    static Ref<WorkerThreadableLoader> create(WorkerOrWorkletGlobalScope& WorkerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
+    static Ref<WorkerThreadableLoader> create(WorkerOrWorkletGlobalScope& WorkerOrWorkletGlobalScope, ThreadableLoaderClient& client, StringImpl* taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, StringImpl* referrer)
     {
         return adoptRef(*new WorkerThreadableLoader(WorkerOrWorkletGlobalScope, client, taskMode, WTF::move(request), options, referrer));
     }
@@ -91,7 +91,7 @@ private:
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MainThreadBridge, Loader);
     public:
         // All executed on the worker context's thread.
-        static Ref<MainThreadBridge> create(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerOrWorkletGlobalScope&);
+        static Ref<MainThreadBridge> create(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, StringImpl* taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, StringImpl* outgoingReferrer, WorkerOrWorkletGlobalScope&);
         void detach();
         void cancel();
         void computeIsDone();
@@ -104,7 +104,7 @@ private:
         void deref() const final { ThreadSafeRefCounted::deref(); }
 
     private:
-        MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerOrWorkletGlobalScope&);
+        MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, StringImpl* taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, StringImpl* outgoingReferrer, WorkerOrWorkletGlobalScope&);
 
         // All executed on the main thread.
         void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
@@ -127,12 +127,12 @@ private:
         CheckedPtr<WorkerLoaderProxy> m_loaderProxy;
 
         // For use on the main thread.
-        String m_taskMode;
+        RefPtr<StringImpl> m_taskMode;
         ResourceLoaderIdentifier m_workerRequestIdentifier;
         ScriptExecutionContextIdentifier m_contextIdentifier;
     };
 
-    WorkerThreadableLoader(WorkerOrWorkletGlobalScope&, ThreadableLoaderClient&, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& referrer);
+    WorkerThreadableLoader(WorkerOrWorkletGlobalScope&, ThreadableLoaderClient&, StringImpl* taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, StringImpl* referrer);
 
     void computeIsDone() final;
 

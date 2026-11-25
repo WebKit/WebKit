@@ -120,7 +120,7 @@ Vector<HighlightHitResult> HighlightRegistry::highlightsFromPoint(Document& docu
     });
 }
 
-void HighlightRegistry::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
+void HighlightRegistry::setFromMapLike(RefPtr<AtomStringImpl>&& key, Ref<Highlight>&& value)
 {
     if (RefPtr previousHighlight = m_map.get(key))
         previousHighlight->repaint();
@@ -143,7 +143,7 @@ void HighlightRegistry::clear()
         highlight->clearFromSetLike();
 }
 
-bool HighlightRegistry::remove(const AtomString& key)
+bool HighlightRegistry::remove(AtomStringImpl* key)
 {
     auto highlight = m_map.take(key);
     if (!highlight)
@@ -167,9 +167,9 @@ void HighlightRegistry::setHighlightVisibility(HighlightVisibility highlightVisi
 }
 #endif
 
-static const AtomString& annotationHighlightKey()
+static const RefPtr<AtomStringImpl>& annotationHighlightKey()
 {
-    static MainThreadNeverDestroyed<const AtomString> key { "annotationHighlightKey"_s };
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> key { "annotationHighlightKey"_s };
     return key.get();
 }
 
@@ -180,7 +180,7 @@ void HighlightRegistry::addAnnotationHighlightWithRange(Ref<StaticRange>&& value
         highlight->addToSetLike(value);
         return;
     }
-    setFromMapLike(AtomString { key }, Highlight::create({ std::ref<AbstractRange>(value.get()) }));
+    setFromMapLike(RefPtr<AtomStringImpl> { key }, Highlight::create({ std::ref<AbstractRange>(value.get()) }));
 }
 
 }

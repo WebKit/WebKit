@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomString&);
-const AtomString& stringForAutocapitalizeType(AutocapitalizeType);
+AutocapitalizeType autocapitalizeTypeForAttributeValue(AtomStringImpl*);
+const RefPtr<AtomStringImpl>& stringForAutocapitalizeType(AutocapitalizeType);
 
 } // namespace WebCore
 

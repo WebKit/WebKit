@@ -139,7 +139,7 @@ void VideoPresentationInterfaceContext::audioSessionCategoryChanged(WebCore::Aud
         manager->audioSessionCategoryChanged(m_contextId, category, mode, policy);
 }
 
-void VideoPresentationInterfaceContext::routingContextUIDChanged(const String& routingContextUID)
+void VideoPresentationInterfaceContext::routingContextUIDChanged(StringImpl* routingContextUID)
 {
     if (RefPtr manager = m_manager.get())
         manager->routingContextUIDChanged(m_contextId, routingContextUID);
@@ -630,7 +630,7 @@ void VideoPresentationManager::audioSessionCategoryChanged(WebCore::MediaPlayerC
         page->send(Messages::VideoPresentationManagerProxy::AudioSessionCategoryChanged(contextId, category, mode, policy));
 }
 
-void VideoPresentationManager::routingContextUIDChanged(WebCore::MediaPlayerClientIdentifier contextId, const String& routingContextUID)
+void VideoPresentationManager::routingContextUIDChanged(WebCore::MediaPlayerClientIdentifier contextId, StringImpl* routingContextUID)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::VideoPresentationManagerProxy::RoutingContextUIDChanged(contextId, routingContextUID));
@@ -919,7 +919,7 @@ void VideoPresentationManager::fullscreenMayReturnToInline(WebCore::MediaPlayerC
     RefPtr { m_page.get() }->send(Messages::VideoPresentationManagerProxy::PreparedToReturnToInline(contextId, true, inlineVideoFrame(*videoElement)));
 }
 
-void VideoPresentationManager::requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& reply)
+void VideoPresentationManager::requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, RefPtr<StringImpl>)>&& reply)
 {
     ensureModel(contextId)->requestRouteSharingPolicyAndContextUID(WTF::move(reply));
 }

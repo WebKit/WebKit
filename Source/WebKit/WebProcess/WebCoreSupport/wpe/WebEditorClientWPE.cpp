@@ -178,9 +178,9 @@ static void handleKeyPress(LocalFrame& frame, KeyboardEvent& event, const Platfo
     if (!frame.editor().canEdit())
         return;
 
-    auto commandName = String::fromLatin1(interpretKeyEvent(event));
+    auto commandName = StringImpl::fromLatin1(interpretKeyEvent(event));
 
-    if (!commandName.isEmpty()) {
+    if (!isEmpty(commandName)) {
         frame.editor().command(commandName).execute();
         event.setDefaultHandled();
         return;
@@ -200,8 +200,8 @@ static void handleKeyPress(LocalFrame& frame, KeyboardEvent& event, const Platfo
 
 static void handleKeyDown(LocalFrame& frame, KeyboardEvent& event, const PlatformKeyboardEvent&)
 {
-    auto commandName = String::fromLatin1(interpretKeyEvent(event));
-    if (commandName.isEmpty())
+    auto commandName = StringImpl::fromLatin1(interpretKeyEvent(event));
+    if (isEmpty(commandName))
         return;
 
     // We shouldn't insert text through the editor. Let WebCore decide

@@ -79,7 +79,7 @@ struct ReferencePath {
     explicit ReferencePath(const Ref<ReferencePathOperation>& operation) : operation { operation } { }
 
     ALWAYS_INLINE const URL& url() const { return operation->url(); }
-    ALWAYS_INLINE const AtomString& fragment() const { return operation->fragment(); }
+    ALWAYS_INLINE const RefPtr<AtomStringImpl>& fragment() const { return operation->fragment(); }
     ALWAYS_INLINE const std::optional<WebCore::Path>& path() const { return operation->path(); }
     ALWAYS_INLINE CSSBoxType referenceBox() const { return operation->referenceBox(); }
 

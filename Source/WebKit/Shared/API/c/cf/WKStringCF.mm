@@ -36,23 +36,23 @@ WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 {
     if (RetainPtr wkNSString = dynamic_objc_cast<WKNSString>(bridge_cast(cfString)))
         return WebKit::toAPI(RefPtr { downcast<API::String>(&[wkNSString.leakRef() _apiObject]) }.get());
-    String string(cfString);
+    RefPtr<StringImpl> string(StringImpl::create(cfString));
     return WebKit::toCopiedAPI(string);
 }
 
 CFStringRef WKStringCopyCFString(CFAllocatorRef allocatorRef, WKStringRef stringRef)
 {
     RefPtr apiString = WebKit::toImpl(stringRef);
-    ASSERT(!apiString->string().isNull());
+    ASSERT(apiString->string());
 
     auto string = apiString->string();
 
     // NOTE: This does not use StringImpl::createCFString() since that function
     // expects to be called on the thread running WebCore.
-    if (string.is8Bit()) {
-        auto characters = string.span8();
+    if (is8Bit(string)) {
+        auto characters = span8(string);
         return CFStringCreateWithBytes(allocatorRef, byteCast<UInt8>(characters.data()), characters.size(), kCFStringEncodingISOLatin1, true);
     }
-    auto characters = string.span16();
+    auto characters = span16(string);
     return CFStringCreateWithCharacters(allocatorRef, reinterpret_cast<const UniChar*>(characters.data()), characters.size());
 }

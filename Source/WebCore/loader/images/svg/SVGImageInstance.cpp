@@ -113,7 +113,7 @@ Ref<SVGImageInstance> SVGImageInstance::create(SVGImage& image, const std::optio
 
     RefPtr activeDocumentLoader = loader->activeDocumentLoader();
     ASSERT(activeDocumentLoader); // DocumentLoader should have been created by frame->init().
-    activeDocumentLoader->writer().setMIMEType("image/svg+xml"_s);
+    activeDocumentLoader->writer().setMIMEType("image/svg+xml"_si);
     activeDocumentLoader->writer().begin(URL()); // create the empty document
     protect(image.data())->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
         protect(activeDocumentLoader)->writer().addData(buffer);

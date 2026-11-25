@@ -56,7 +56,7 @@ WebCore::Color resolveColor(const ContrastColor&, const ResolvedColors&);
 bool containsCurrentColor(const ContrastColor&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ContrastColor&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ContrastColor&);
+RefPtr<StringImpl> serializationForCSSTokenization(const CSS::SerializationContext&, const ContrastColor&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ContrastColor&);
 

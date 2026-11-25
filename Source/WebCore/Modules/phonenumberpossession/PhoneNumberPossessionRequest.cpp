@@ -44,10 +44,10 @@ std::optional<Exception> validatePhoneNumberPossessionRequest(const PhoneNumberP
     if (!request.challenge.byteLength() || request.challenge.byteLength() > maximumChallengeLength)
         return Exception { ExceptionCode::TypeError, makeString("The challenge must be between 1 and "_s, maximumChallengeLength, " bytes long."_s) };
 
-    if (request.relyingPartyIdentifier.isEmpty())
-        return Exception { ExceptionCode::TypeError, "The RP ID must not be empty."_s };
+    if (isEmpty(request.relyingPartyIdentifier))
+        return Exception { ExceptionCode::TypeError, "The RP ID must not be empty."_si };
 
-    if (auto& suffix = request.phoneNumberSuffixHint; !suffix.isNull() && (suffix.isEmpty() || suffix.length() > maximumPhoneNumberSuffixHintLength || !suffix.containsOnly<isASCIIDigit>()))
+    if (auto& suffix = request.phoneNumberSuffixHint; suffix && (isEmpty(suffix) || length(suffix) > maximumPhoneNumberSuffixHintLength || !containsOnly<isASCIIDigit>(suffix)))
         return Exception { ExceptionCode::TypeError, makeString("The phoneNumberSuffixHint must contain between 1 and "_s, maximumPhoneNumberSuffixHintLength, " digits."_s) };
 
     if (request.pnpiSuffixHint && (!request.pnpiSuffixHint->byteLength() || request.pnpiSuffixHint->byteLength() > maximumPNPISuffixHintLength))

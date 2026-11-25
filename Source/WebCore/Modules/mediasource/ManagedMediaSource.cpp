@@ -65,7 +65,7 @@ ExceptionOr<ManagedMediaSource::PreferredQuality> ManagedMediaSource::quality() 
     return PreferredQuality::High;
 }
 
-bool ManagedMediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type)
+bool ManagedMediaSource::isTypeSupported(ScriptExecutionContext& context, StringImpl* type)
 {
     return MediaSource::isTypeSupported(context, type);
 }

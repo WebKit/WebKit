@@ -45,13 +45,13 @@
 - (NSString *)selectorText
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->selectorText().createNSString().autorelease();
+    return createNSString(IMPL->selectorText()).autorelease();
 }
 
 - (void)setSelectorText:(NSString *)newSelectorText
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setSelectorText(newSelectorText);
+    IMPL->setSelectorText(StringImpl::create(newSelectorText).get());
 }
 
 - (DOMCSSStyleDeclaration *)style

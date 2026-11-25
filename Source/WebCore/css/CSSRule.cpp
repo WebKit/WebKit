@@ -52,7 +52,7 @@ unsigned short CSSRule::typeForCSSOM() const
     return std::to_underlying(styleRuleType());
 }
 
-ExceptionOr<void> CSSRule::setCssText(const String&)
+ExceptionOr<void> CSSRule::setCssText(StringImpl*)
 {
     return { };
 }

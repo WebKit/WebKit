@@ -36,13 +36,13 @@
 
 namespace API {
 
-InspectorExtension::InspectorExtension(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy& extensionControllerProxy)
+InspectorExtension::InspectorExtension(StringImpl* identifier, WebKit::WebInspectorUIExtensionControllerProxy& extensionControllerProxy)
     : m_identifier(identifier)
     , m_extensionControllerProxy(extensionControllerProxy)
 {
 }
 
-Ref<InspectorExtension> InspectorExtension::create(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy& extensionControllerProxy)
+Ref<InspectorExtension> InspectorExtension::create(StringImpl* identifier, WebKit::WebInspectorUIExtensionControllerProxy& extensionControllerProxy)
 {
     return adoptRef(*new InspectorExtension(identifier, extensionControllerProxy));
 }
@@ -52,7 +52,7 @@ void InspectorExtension::setClient(UniqueRef<InspectorExtensionClient>&& client)
     m_client = client.moveToUniquePtr();
 }
 
-void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&& completionHandler)
+void InspectorExtension::createTab(StringImpl* tabName, const WTF::URL& tabIconURL, const WTF::URL& sourceURL, WTF::CompletionHandler<void(std::expected<Inspector::ExtensionTabID, Inspector::ExtensionError>)>&& completionHandler)
 {
     RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
     if (!extensionControllerProxy) {
@@ -63,7 +63,7 @@ void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& t
     extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTF::move(completionHandler));
 }
 
-void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+void InspectorExtension::evaluateScript(StringImpl* scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
     if (!extensionControllerProxy) {
@@ -85,7 +85,7 @@ void InspectorExtension::navigateTab(const Inspector::ExtensionTabID& extensionT
     extensionControllerProxy->navigateTabForExtension(extensionTabID, sourceURL, WTF::move(completionHandler));
 }
 
-void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<WTF::String>& userAgent, const std::optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&& completionHandler)
+void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<RefPtr<StringImpl>>& userAgent, const std::optional<RefPtr<StringImpl>>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&& completionHandler)
 {
     RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
     if (!extensionControllerProxy) {
@@ -98,7 +98,7 @@ void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCa
 
 // For testing.
 
-void InspectorExtension::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::String& scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+void InspectorExtension::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, StringImpl* scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     RefPtr extensionControllerProxy = m_extensionControllerProxy.get();
     if (!extensionControllerProxy) {

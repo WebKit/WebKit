@@ -58,32 +58,32 @@ void WebPageDebuggable::detachFromPage()
 
 WebPageDebuggable::~WebPageDebuggable() = default;
 
-String WebPageDebuggable::name() const
+RefPtr<StringImpl> WebPageDebuggable::name() const
 {
-    String name;
+    RefPtr<StringImpl> name;
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &name] {
         RefPtr page = m_page.get();
         if (!page || !page->mainFrame())
             return;
-        name = page->mainFrame()->title().isolatedCopy();
+        name = isolatedCopy(page->mainFrame()->title());
     });
     return name;
 }
 
 
-String WebPageDebuggable::url() const
+RefPtr<StringImpl> WebPageDebuggable::url() const
 {
-    String url;
+    RefPtr<StringImpl> url;
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &url] {
         RefPtr page = m_page.get();
         if (!page || !page->mainFrame()) {
-            url = aboutBlankURL().string().isolatedCopy();
+            url = isolatedCopy(aboutBlankURL().string());
             return;
         }
 
-        url = page->mainFrame()->url().string().isolatedCopy();
-        if (url.isEmpty())
-            url = aboutBlankURL().string().isolatedCopy();
+        url = isolatedCopy(page->mainFrame()->url().string());
+        if (isEmpty(url))
+            url = isolatedCopy(aboutBlankURL().string());
     });
     return url;
 }
@@ -114,9 +114,9 @@ void WebPageDebuggable::disconnect(FrontendChannel& channel)
     });
 }
 
-void WebPageDebuggable::dispatchMessageFromRemote(String&& message)
+void WebPageDebuggable::dispatchMessageFromRemote(RefPtr<StringImpl>&& message)
 {
-    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTF::move(message).isolatedCopy()]() mutable {
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = isolatedCopy(WTF::move(message))]() mutable {
         if (RefPtr page = m_page.get())
             page->inspectorController().dispatchMessageFromFrontend(WTF::move(message));
     });
@@ -130,7 +130,7 @@ void WebPageDebuggable::setIndicating(bool indicating)
     });
 }
 
-void WebPageDebuggable::setNameOverride(const String& name)
+void WebPageDebuggable::setNameOverride(StringImpl* name)
 {
     m_nameOverride = name;
     update();

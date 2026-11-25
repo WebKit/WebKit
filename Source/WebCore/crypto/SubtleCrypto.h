@@ -65,7 +65,7 @@ public:
     enum class PendingPromiseIdentifierType { };
     using PendingPromiseIdentifier = AtomicObjectIdentifier<PendingPromiseIdentifierType>;
 
-    using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;
+    using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>>;
     using KeyDataVariant = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, JsonWebKey>;
 
     void encrypt(JSC::JSGlobalObject&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);

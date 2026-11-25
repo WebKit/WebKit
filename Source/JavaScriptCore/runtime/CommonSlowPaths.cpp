@@ -316,7 +316,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_check_tdz)
     BEGIN();
     auto bytecode = pc->as<OpCheckTdz>();
     if (bytecode.m_targetVirtualRegister == codeBlock->thisRegister())
-        THROW(createReferenceError(globalObject, "'super()' must be called in derived constructor before accessing |this| or returning non-object."_s));
+        THROW(createReferenceError(globalObject, "'super()' must be called in derived constructor before accessing |this| or returning non-object."_si));
     else {
         auto [block, index] = getBytecodeIndex(codeBlock->vm(), callFrame);
         auto info = block->expressionInfoForBytecodeIndex(index);
@@ -332,7 +332,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_check_tdz)
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_strict_mode_readonly_property_write_error)
 {
     BEGIN();
-    THROW(createTypeError(globalObject, ReadonlyPropertyWriteError));
+    THROW(createTypeError(globalObject, StringImpl::create(ReadonlyPropertyWriteError).ptr()));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_not)
@@ -751,7 +751,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_typeof_is_function)
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_static_error_from_instanceof)
 {
     BEGIN();
-    THROW(createTypeError(globalObject, "Right hand side of instanceof is not an object"_s));
+    THROW(createTypeError(globalObject, "Right hand side of instanceof is not an object"_si));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_instanceof_custom_from_instanceof)
@@ -1407,7 +1407,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_has_own_property)
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_profile_type_clear_log)
 {
     BEGIN();
-    vm.typeProfilerLog()->processLogEntries(vm, "LLInt log full."_s);
+    vm.typeProfilerLog()->processLogEntries(vm, "LLInt log full."_si);
     END();
 }
 
@@ -1618,7 +1618,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_static_error)
     RELEASE_ASSERT(errorMessageValue.isString());
     auto errorMessage = asString(errorMessageValue)->value(globalObject);
     ErrorTypeWithExtension errorType = bytecode.m_errorType;
-    THROW(createError(globalObject, errorType, errorMessage));
+    THROW(createError(globalObject, errorType, errorMessage->get()));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
@@ -1704,7 +1704,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_species)
 
     if (speciesResult.first == SpeciesConstructResult::FastPath) [[likely]] {
         if (length > std::numeric_limits<unsigned>::max()) [[unlikely]]
-            THROW(createRangeError(globalObject, ArrayInvalidLengthError));
+            THROW(createRangeError(globalObject, StringImpl::create(ArrayInvalidLengthError).ptr()));
 
         JSArray* result = constructEmptyArray(globalObject, &arrayAllocationProfile, static_cast<unsigned>(length));
         CHECK_EXCEPTION();

@@ -115,7 +115,7 @@ void XMLDocumentParser::insert(SegmentedString&&)
 
 void XMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
-    String source { WTF::move(inputSource) };
+    RefPtr<StringImpl> source { WTF::move(inputSource) };
 
     if (m_sawXSLTransform || !m_sawFirstElement)
         m_originalSourceForTransform.append(source);
@@ -149,7 +149,7 @@ void XMLDocumentParser::createLeafTextNode()
 
     ASSERT(m_bufferedText.size() == 0);
     ASSERT(!m_leafTextNode);
-    m_leafTextNode = Text::create(protect(m_currentNode->document()), String { emptyString() });
+    m_leafTextNode = Text::create(protect(m_currentNode->document()), RefPtr<StringImpl> { emptyString() });
     if (RefPtr currentNode = m_currentNode.get())
         currentNode->parserAppendChild(*protect(m_leafTextNode));
 }
@@ -164,10 +164,10 @@ bool XMLDocumentParser::updateLeafTextNode()
 
     if (isXHTMLDocument()) {
         StringBuilder buffer;
-        protect(m_leafTextNode)->parserAppendData(String::fromUTF8(m_bufferedText.span()), buffer);
+        protect(m_leafTextNode)->parserAppendData(StringImpl::fromUTF8(m_bufferedText.span()), buffer);
     } else {
         // This operation might fire mutation event, see below.
-        protect(m_leafTextNode)->appendData(String::fromUTF8(m_bufferedText.span()));
+        protect(m_leafTextNode)->appendData(StringImpl::fromUTF8(m_bufferedText.span()));
     }
     m_bufferedText = { };
 
@@ -301,8 +301,8 @@ void XMLDocumentParser::pauseParsing()
 }
 
 struct XMLParsingNamespaces {
-    AtomString defaultNamespace;
-    HashMap<AtomString, AtomString> prefixNamespaces;
+    RefPtr<AtomStringImpl> defaultNamespace;
+    HashMap<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>> prefixNamespaces;
 };
 
 static XMLParsingNamespaces findXMLParsingNamespaces(Element* contextElement)
@@ -326,16 +326,16 @@ static XMLParsingNamespaces findXMLParsingNamespaces(Element* contextElement)
     return result;
 }
 
-bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment& fragment, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
+bool XMLDocumentParser::parseDocumentFragment(StringImpl* chunk, DocumentFragment& fragment, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
-    if (!chunk.length())
+    if (!length(chunk))
         return true;
 
     // FIXME: We need to implement the HTML5 XML Fragment parsing algorithm:
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-parsing-algorithm
     // For now we have a hack for script/style innerHTML support:
     if (contextElement && (contextElement->hasLocalName(HTMLNames::scriptTag->localName()) || contextElement->hasLocalName(HTMLNames::styleTag->localName()))) {
-        fragment.parserAppendChild(protect(fragment.document())->createTextNode(String { chunk }));
+        fragment.parserAppendChild(protect(fragment.document())->createTextNode(RefPtr<StringImpl> { chunk }));
         return true;
     }
 

@@ -816,11 +816,11 @@ static UTF8CString getProgramLog(GLuint program)
 }
 #endif
 
-TextureMapperShaderProgram::TextureMapperShaderProgram(const String& vertex, const String& fragment)
+TextureMapperShaderProgram::TextureMapperShaderProgram(StringImpl* vertex, StringImpl* fragment)
 {
     m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
     {
-        auto vertexCString = vertex.utf8();
+        auto vertexCString = utf8(vertex);
         const char* data = vertexCString.legacyCStringPointer();
         int length = vertexCString.length();
         glShaderSource(m_vertexShader, 1, &data, &length);
@@ -829,7 +829,7 @@ TextureMapperShaderProgram::TextureMapperShaderProgram(const String& vertex, con
 
     m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     {
-        auto fragmentCString = fragment.utf8();
+        auto fragmentCString = utf8(fragment);
         const char* data = fragmentCString.legacyCStringPointer();
         int length = fragmentCString.length();
         glShaderSource(m_fragmentShader, 1, &data, &length);

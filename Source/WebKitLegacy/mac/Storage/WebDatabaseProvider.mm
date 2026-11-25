@@ -29,14 +29,14 @@
 #import <wtf/FileSystem.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-String WebDatabaseProvider::indexedDatabaseDirectoryPath()
+RefPtr<StringImpl> WebDatabaseProvider::indexedDatabaseDirectoryPath()
 {
     RetainPtr defaults = [NSUserDefaults standardUserDefaults];
     RetainPtr databasesDirectory = dynamic_objc_cast<NSString>([defaults objectForKey:WebDatabaseDirectoryDefaultsKey]);
     if (!databasesDirectory)
-        databasesDirectory = FileSystem::pathByAppendingComponent("~/Library/WebKit/Databases/___IndexedDB"_s, String([[NSBundle mainBundle] bundleIdentifier])).createNSString();
+        databasesDirectory = createNSString(FileSystem::pathByAppendingComponent("~/Library/WebKit/Databases/___IndexedDB"_s, StringImpl::create([[NSBundle mainBundle] bundleIdentifier]).get()));
     else
-        databasesDirectory = FileSystem::pathByAppendingComponent(String(databasesDirectory.get()), "___IndexedDB"_s).createNSString();
+        databasesDirectory = createNSString(FileSystem::pathByAppendingComponent(StringImpl::create(databasesDirectory.get()).get(), "___IndexedDB"_s));
     
-    return [databasesDirectory stringByStandardizingPath];
+    return StringImpl::create([databasesDirectory stringByStandardizingPath]);
 }

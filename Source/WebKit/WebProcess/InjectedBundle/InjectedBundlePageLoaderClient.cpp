@@ -62,7 +62,7 @@ void InjectedBundlePageLoaderClient::willLoadURLRequest(WebPage& page, const Res
     m_client.willLoadURLRequest(toAPI(&page), toAPI(request), toAPI(userData), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const ResourceRequest& request, RefPtr<FragmentedSharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const URL& unreachableURL, API::Object* userData)
+void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const ResourceRequest& request, RefPtr<FragmentedSharedBuffer> sharedBuffer, StringImpl* MIMEType, StringImpl* encodingName, const URL& unreachableURL, API::Object* userData)
 {
     if (!m_client.willLoadDataRequest)
         return;
@@ -165,7 +165,7 @@ void InjectedBundlePageLoaderClient::didSameDocumentNavigationForFrame(WebPage& 
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::didReceiveTitleForFrame(WebPage& page, const String& title, WebFrame& frame, RefPtr<API::Object>& userData)
+void InjectedBundlePageLoaderClient::didReceiveTitleForFrame(WebPage& page, StringImpl* title, WebFrame& frame, RefPtr<API::Object>& userData)
 {
     if (!m_client.didReceiveTitleForFrame)
         return;
@@ -239,7 +239,7 @@ void InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame(WebPage& pa
     m_client.didCancelClientRedirectForFrame(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage& page, WebFrame& frame, const String& url, double delay, WallTime date)
+void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage& page, WebFrame& frame, StringImpl* url, double delay, WallTime date)
 {
     if (!m_client.willPerformClientRedirectForFrame)
         return;
@@ -312,7 +312,7 @@ void InjectedBundlePageLoaderClient::willDestroyGlobalObjectForDOMWindowExtensio
     m_client.willDestroyGlobalObjectForDOMWindowExtension(toAPI(&page), toAPI(extension.get()), m_client.base.clientInfo);
 }
 
-bool InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL(WebPage& page, const String& url)
+bool InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL(WebPage& page, StringImpl* url)
 {
     if (!m_client.shouldForceUniversalAccessFromLocalURL)
         return false;
@@ -320,7 +320,7 @@ bool InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL(WebP
     return m_client.shouldForceUniversalAccessFromLocalURL(toAPI(&page), toAPI(url), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage& page, const Vector<String>& features)
+void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage& page, const Vector<RefPtr<StringImpl>>& features)
 {
     if (!m_client.featuresUsedInPage)
         return;

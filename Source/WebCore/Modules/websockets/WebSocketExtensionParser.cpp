@@ -73,7 +73,7 @@ bool WebSocketExtensionParser::consumeToken()
     while (tokenLength < m_data.size() && isASCIIPrintable(m_data[tokenLength]) && !isSeparator(m_data[tokenLength]))
         ++tokenLength;
     if (tokenLength) {
-        m_currentToken = String(byteCast<Latin1Character>(consumeSpan(start, tokenLength)));
+        m_currentToken = StringImpl::create(byteCast<Latin1Character>(consumeSpan(start, tokenLength)));
         return true;
     }
     return false;
@@ -95,8 +95,8 @@ bool WebSocketExtensionParser::consumeQuotedString()
     }
     if (m_data.empty() || m_data[0] != '"')
         return false;
-    m_currentToken = String::fromUTF8(borrow(buffer)->span());
-    if (m_currentToken.isNull())
+    m_currentToken = StringImpl::fromUTF8(borrow(buffer)->span());
+    if (!m_currentToken)
         return false;
     skip(m_data, 1);
     return true;
@@ -115,7 +115,7 @@ bool WebSocketExtensionParser::consumeCharacter(char character)
     return skipExactly(m_data, character);
 }
 
-bool WebSocketExtensionParser::parseExtension(String& extensionToken, HashMap<String, String>& extensionParameters)
+bool WebSocketExtensionParser::parseExtension(RefPtr<StringImpl>& extensionToken, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& extensionParameters)
 {
     // Parse extension-token.
     if (!consumeToken()) {
@@ -132,7 +132,7 @@ bool WebSocketExtensionParser::parseExtension(String& extensionToken, HashMap<St
             return false;
         }
 
-        String parameterToken = currentToken();
+        RefPtr<StringImpl> parameterToken = currentToken();
         if (consumeCharacter('=')) {
             if (consumeQuotedStringOrToken())
                 extensionParameters.add(parameterToken, currentToken());
@@ -141,7 +141,7 @@ bool WebSocketExtensionParser::parseExtension(String& extensionToken, HashMap<St
                 return false;
             }
         } else
-            extensionParameters.add(parameterToken, String());
+            extensionParameters.add(parameterToken, nullString());
     }
     if (!finished() && !consumeCharacter(',')) {
         m_didFailParsing = true;

@@ -48,7 +48,7 @@ public:
     NODELETE void setEnumeratingAllNetworkInterfacesEnabled(bool);
     NODELETE void setEnumeratingVisibleNetworkInterfacesEnabled(bool);
 
-    static void signalUsedInterface(WebCore::ScriptExecutionContextIdentifier, String&&);
+    static void signalUsedInterface(WebCore::ScriptExecutionContextIdentifier, RefPtr<StringImpl>&&);
 
     bool useMDNSCandidates() const { return m_useMDNSCandidates; }
 
@@ -59,7 +59,7 @@ private:
     void setICECandidateFiltering(bool doFiltering) final { m_useMDNSCandidates = doFiltering; }
     void unregisterMDNSNames() final;
     void close() final;
-    const String& interfaceNameForTesting() const final;
+    const RefPtr<StringImpl>& interfaceNameForTesting() const final;
 
     // webrtc::NetworkManagerBase
     void StartUpdating() final;
@@ -75,7 +75,7 @@ private:
     void networkProcessCrashed() final;
 
     void networksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&, bool forceSignaling);
-    void signalUsedInterface(String&&);
+    void signalUsedInterface(RefPtr<StringImpl>&&);
 
     bool isLibWebRTCNetworkManager() const final { return true; }
 
@@ -90,7 +90,7 @@ private:
 #if PLATFORM(COCOA)
     bool m_hasQueriedInterface { false };
 #endif
-    HashSet<String> m_allowedInterfaces;
+    HashSet<RefPtr<StringImpl>> m_allowedInterfaces;
 };
 
 } // namespace WebKit

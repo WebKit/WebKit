@@ -38,14 +38,14 @@ public:
     }
 
     enum DescriptionTag { Description };
-    explicit PrivateName(DescriptionTag, const String& description)
-        : m_uid(SymbolImpl::create(*description.impl()))
+    explicit PrivateName(DescriptionTag, StringImpl* description)
+        : m_uid(SymbolImpl::create(*description))
     {
     }
 
     enum PrivateSymbolTag { PrivateSymbol };
-    explicit PrivateName(PrivateSymbolTag, const String& description)
-        : m_uid(PrivateSymbolImpl::create(*description.impl()))
+    explicit PrivateName(PrivateSymbolTag, StringImpl* description)
+        : m_uid(PrivateSymbolImpl::create(*description))
     {
     }
 

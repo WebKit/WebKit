@@ -62,7 +62,7 @@ Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
     return const_cast<ImmutableStyleProperties&>(uncheckedDowncast<ImmutableStyleProperties>(*this));
 }
 
-String serializeLonghandValue(const CSS::SerializationContext& context, CSSPropertyID property, const CSSValue& value)
+RefPtr<StringImpl> serializeLonghandValue(const CSS::SerializationContext& context, CSSPropertyID property, const CSSValue& value)
 {
     // Longhands set by mask and background shorthands can have comma-separated lists with implicit initial values in them.
     // We need to serialize those lists with the actual values, not as "initial".
@@ -79,17 +79,17 @@ String serializeLonghandValue(const CSS::SerializationContext& context, CSSPrope
     return value.isImplicitInitialValue() ? initialValueTextForLonghand(property) : value.cssText(context);
 }
 
-inline String StyleProperties::serializeLonghandValue(const CSS::SerializationContext& context, CSSPropertyID propertyID) const
+inline RefPtr<StringImpl> StyleProperties::serializeLonghandValue(const CSS::SerializationContext& context, CSSPropertyID propertyID) const
 {
     return WebCore::serializeLonghandValue(context, propertyID, getPropertyCSSValue(propertyID).get());
 }
 
-inline String StyleProperties::serializeShorthandValue(const CSS::SerializationContext& context, CSSPropertyID propertyID) const
+inline RefPtr<StringImpl> StyleProperties::serializeShorthandValue(const CSS::SerializationContext& context, CSSPropertyID propertyID) const
 {
     return WebCore::serializeShorthandValue(context, *this, propertyID);
 }
 
-String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
+RefPtr<StringImpl> StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 {
     return isLonghand(propertyID) ? serializeLonghandValue(CSS::defaultSerializationContext(), propertyID) : serializeShorthandValue(CSS::defaultSerializationContext(), propertyID);
 }
@@ -112,12 +112,12 @@ std::optional<CSSValueID> StyleProperties::propertyAsValueID(CSSPropertyID prope
     return longhandValueID(property, getPropertyCSSValue(property).get());
 }
 
-String StyleProperties::getCustomPropertyValue(const String& propertyName) const
+RefPtr<StringImpl> StyleProperties::getCustomPropertyValue(StringImpl* propertyName) const
 {
     RefPtr<CSSValue> value = getCustomPropertyCSSValue(propertyName);
     if (value)
         return value->cssText(CSS::defaultSerializationContext());
-    return String();
+    return nullptr;
 }
 
 RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) const
@@ -134,7 +134,7 @@ RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) 
     return value;
 }
 
-RefPtr<CSSValue> StyleProperties::getCustomPropertyCSSValue(const String& propertyName) const
+RefPtr<CSSValue> StyleProperties::getCustomPropertyCSSValue(StringImpl* propertyName) const
 {
     int foundPropertyIndex = findCustomPropertyIndex(propertyName);
     if (foundPropertyIndex == -1)
@@ -159,7 +159,7 @@ bool StyleProperties::propertyIsImportant(CSSPropertyID propertyID) const
     return true;
 }
 
-bool StyleProperties::customPropertyIsImportant(const String& propertyName) const
+bool StyleProperties::customPropertyIsImportant(StringImpl* propertyName) const
 {
     int foundPropertyIndex = findCustomPropertyIndex(propertyName);
     if (foundPropertyIndex != -1)
@@ -167,11 +167,11 @@ bool StyleProperties::customPropertyIsImportant(const String& propertyName) cons
     return false;
 }
 
-String StyleProperties::getPropertyShorthand(CSSPropertyID propertyID) const
+RefPtr<StringImpl> StyleProperties::getPropertyShorthand(CSSPropertyID propertyID) const
 {
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
-        return String();
+        return nullptr;
     return nameString(propertyAt(foundPropertyIndex).shorthandID());
 }
 
@@ -183,12 +183,12 @@ bool StyleProperties::isPropertyImplicit(CSSPropertyID propertyID) const
     return propertyAt(foundPropertyIndex).isImplicit();
 }
 
-String StyleProperties::asText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> StyleProperties::asText(const CSS::SerializationContext& context) const
 {
     return asTextInternal(context).toString();
 }
 
-AtomString StyleProperties::asTextAtom(const CSS::SerializationContext& context) const
+RefPtr<AtomStringImpl> StyleProperties::asTextAtom(const CSS::SerializationContext& context) const
 {
     return asTextInternal(context).toAtomString();
 }
@@ -282,7 +282,7 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
             }
         }
 
-        String value;
+        RefPtr<StringImpl> value;
         bool alreadyUsedShorthand = false;
         for (auto& shorthandPropertyID : shorthands) {
             ASSERT(isShorthand(shorthandPropertyID));
@@ -298,7 +298,7 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
             shorthandPropertyAppeared.set(shorthandPropertyIndex);
 
             value = serializeShorthandValue(context, shorthandPropertyID);
-            if (!value.isNull()) {
+            if (value) {
                 propertyID = shorthandPropertyID;
                 shorthandPropertyUsed.set(shorthandPropertyIndex);
                 break;
@@ -307,7 +307,7 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
         if (alreadyUsedShorthand)
             continue;
 
-        if (value.isNull())
+        if (!value)
             value = WebCore::serializeLonghandValue(context, propertyID, protect(*property.value()));
 
         if (numDecls++)
@@ -415,11 +415,11 @@ static_assert(sizeof(StyleProperties) == sizeof(SameSizeAsStyleProperties), "sty
 #ifndef NDEBUG
 void StyleProperties::showStyle()
 {
-    SAFE_FPRINTF(stderr, "%s\n", asText(CSS::defaultSerializationContext()).ascii());
+    SAFE_FPRINTF(stderr, "%s\n", ascii(asText(CSS::defaultSerializationContext())));
 }
 #endif
 
-const AtomString& StyleProperties::PropertyReference::cssName() const
+const RefPtr<AtomStringImpl>& StyleProperties::PropertyReference::cssName() const
 {
     if (id() == CSSPropertyID::Custom)
         return downcast<CSSCustomPropertyValue>(*value()).name();
@@ -429,7 +429,7 @@ const AtomString& StyleProperties::PropertyReference::cssName() const
     return nameString(id());
 }
 
-String StyleProperties::PropertyReference::cssText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> StyleProperties::PropertyReference::cssText(const CSS::SerializationContext& context) const
 {
     return makeString(cssName(), ": "_s, WebCore::serializeLonghandValue(context, id(), protect(*m_value)), isImportant() ? " !important;"_s : ";"_s);
 }

@@ -49,7 +49,7 @@ struct DictionaryPopupInfo {
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
     DictionaryPopupInfoCocoa platformData;
 #else
-    String text;
+    RefPtr<StringImpl> text;
 #endif
 };
 

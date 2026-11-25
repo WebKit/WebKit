@@ -50,18 +50,18 @@ public:
     RefPtr<WebFrame> frame() const;
     RefPtr<WebFrame> targetFrame() const;
 
-    String absoluteImageURL() const;
-    String absolutePDFURL() const;
-    String absoluteLinkURL() const;
-    String absoluteMediaURL() const;
+    RefPtr<StringImpl> absoluteImageURL() const;
+    RefPtr<StringImpl> absolutePDFURL() const;
+    RefPtr<StringImpl> absoluteLinkURL() const;
+    RefPtr<StringImpl> absoluteMediaURL() const;
     bool mediaIsInFullscreen() const;
     bool mediaHasAudio() const;
     bool isDownloadableMedia() const;
     BundleHitTestResultMediaType mediaType() const;
 
-    String linkLabel() const;
-    String linkTitle() const;
-    String linkSuggestedFilename() const;
+    RefPtr<StringImpl> linkLabel() const;
+    RefPtr<StringImpl> linkTitle() const;
+    RefPtr<StringImpl> linkSuggestedFilename() const;
     
     WebCore::IntRect imageRect() const;
     RefPtr<WebImage> image() const;

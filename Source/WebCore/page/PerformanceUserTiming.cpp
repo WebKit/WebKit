@@ -72,7 +72,7 @@ static constexpr SortedArrayMap restrictedMarkFunctions { WTF::toArray<std::pair
     { "unloadEventStart"_s, &PerformanceTiming::unloadEventStart },
 }) };
 
-bool PerformanceUserTiming::isRestrictedMarkName(const String& markName)
+bool PerformanceUserTiming::isRestrictedMarkName(StringImpl* markName)
 {
     return restrictedMarkFunctions.contains(markName);
 }
@@ -82,21 +82,21 @@ PerformanceUserTiming::PerformanceUserTiming(Performance& performance)
 {
 }
 
-static void clearPerformanceEntries(PerformanceEntryMap& map, const String& name)
+static void clearPerformanceEntries(PerformanceEntryMap& map, StringImpl* name)
 {
-    if (name.isNull())
+    if (!name)
         map.clear();
     else
         map.remove(name);
 }
 
-static void addPerformanceEntry(PerformanceEntryMap& map, const String& name, PerformanceEntry& entry)
+static void addPerformanceEntry(PerformanceEntryMap& map, StringImpl* name, PerformanceEntry& entry)
 {
     auto& performanceEntryList = map.ensure(name, [] { return Vector<Ref<PerformanceEntry>>(); }).iterator->value;
     performanceEntryList.append(entry);
 }
 
-ExceptionOr<Ref<PerformanceMark>> PerformanceUserTiming::mark(JSC::JSGlobalObject& globalObject, const String& markName, std::optional<PerformanceMarkOptions>&& markOptions)
+ExceptionOr<Ref<PerformanceMark>> PerformanceUserTiming::mark(JSC::JSGlobalObject& globalObject, StringImpl* markName, std::optional<PerformanceMarkOptions>&& markOptions)
 {
     Ref context = *m_performance->scriptExecutionContext();
 
@@ -114,19 +114,21 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceUserTiming::mark(JSC::JSGlobalObjec
     return mark.releaseReturnValue();
 }
 
-void PerformanceUserTiming::clearMarks(const String& markName)
+void PerformanceUserTiming::clearMarks(StringImpl* markName)
 {
     clearPerformanceEntries(m_marksMap, markName);
 }
 
-ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const Variant<String, double>& mark) const
+ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const Variant<RefPtr<StringImpl>, double>& mark) const
 {
-    return WTF::switchOn(mark, [&](auto& value) {
+    return WTF::switchOn(mark, [&](const RefPtr<StringImpl>& markName) {
+        return convertMarkToTimestamp(markName.get());
+    }, [&](double value) {
         return convertMarkToTimestamp(value);
     });
 }
 
-ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const String& mark) const
+ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(StringImpl* mark) const
 {
     if (!isMainThread()) {
         if (restrictedMarkFunctions.contains(mark))
@@ -160,10 +162,10 @@ ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(double mark) c
     return mark;
 }
 
-ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(const String& measureName, const String& startMark, const String& endMark)
+ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(StringImpl* measureName, StringImpl* startMark, StringImpl* endMark)
 {
     double endTime;
-    if (!endMark.isNull()) {
+    if (endMark) {
         auto end = convertMarkToTimestamp(endMark);
         if (end.hasException())
             return end.releaseException();
@@ -172,7 +174,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(const String
         endTime = protect(m_performance)->now();
 
     double startTime;
-    if (!startMark.isNull()) {
+    if (startMark) {
         auto start = convertMarkToTimestamp(startMark);
         if (start.hasException())
             return start.releaseException();
@@ -188,7 +190,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(const String
     return measure.releaseReturnValue();
 }
 
-ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGlobalObject& globalObject, const String& measureName, const PerformanceMeasureOptions& measureOptions)
+ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGlobalObject& globalObject, StringImpl* measureName, const PerformanceMeasureOptions& measureOptions)
 {
     double endTime;
     if (measureOptions.end) {
@@ -250,14 +252,14 @@ NODELETE static bool isEmptyDictionary(const PerformanceMeasureOptions& measureO
         && !measureOptions.end;
 }
 
-ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGlobalObject& globalObject, const String& measureName, StartOrMeasureOptions&& startOrMeasureOptions, const String& endMark)
+ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGlobalObject& globalObject, StringImpl* measureName, StartOrMeasureOptions&& startOrMeasureOptions, StringImpl* endMark)
 {
     return WTF::switchOn(startOrMeasureOptions,
         [&](const PerformanceMeasureOptions& measureOptions) -> ExceptionOr<Ref<PerformanceMeasure>> {
             if (isEmptyDictionary(measureOptions))
-                return measure(measureName, { }, endMark);
+                return measure(measureName, nullptr, endMark);
 
-            if (!endMark.isNull())
+            if (endMark)
                 return Exception { ExceptionCode::TypeError };
             if (!measureOptions.start && !measureOptions.end)
                 return Exception { ExceptionCode::TypeError };
@@ -265,13 +267,13 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGloba
                 return Exception { ExceptionCode::TypeError };
             return measure(globalObject, measureName, measureOptions);
         },
-        [&](const String& startMark) {
+        [&](StringImpl* startMark) {
             return measure(measureName, startMark, endMark);
         }
     );
 }
 
-void PerformanceUserTiming::clearMeasures(const String& measureName)
+void PerformanceUserTiming::clearMeasures(StringImpl* measureName)
 {
     clearPerformanceEntries(m_measuresMap, measureName);
 }
@@ -289,7 +291,7 @@ Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMarks() const
     return convertToEntrySequence(m_marksMap);
 }
 
-Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMarks(const String& name) const
+Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMarks(StringImpl* name) const
 {
     return m_marksMap.get(name);
 }
@@ -299,7 +301,7 @@ Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMeasures() const
     return convertToEntrySequence(m_measuresMap);
 }
 
-Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMeasures(const String& name) const
+Vector<Ref<PerformanceEntry>> PerformanceUserTiming::getMeasures(StringImpl* name) const
 {
     return m_measuresMap.get(name);
 }

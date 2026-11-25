@@ -41,12 +41,12 @@ static const size_t inlineMessageMaxSize = 4096;
 
 bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier)
 {
-    String pipeName;
+    RefPtr<StringImpl> pipeName;
 
     do {
         pipeName = makeString("\\\\.\\pipe\\com.apple.WebKit."_s, hex(cryptographicallyRandomNumber<unsigned>()));
 
-        serverIdentifier = ::CreateNamedPipe(pipeName.wideCharacters().span().data(),
+        serverIdentifier = ::CreateNamedPipe(wideCharacters(pipeName).span().data(),
             PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED,
             PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE, 1, inlineMessageMaxSize, inlineMessageMaxSize,
             0, 0);
@@ -55,7 +55,7 @@ bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientId
     if (!serverIdentifier)
         return false;
 
-    clientIdentifier = ::CreateFileW(pipeName.wideCharacters().span().data(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
+    clientIdentifier = ::CreateFileW(wideCharacters(pipeName).span().data(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
     if (!clientIdentifier) {
         ::CloseHandle(serverIdentifier);
         return false;

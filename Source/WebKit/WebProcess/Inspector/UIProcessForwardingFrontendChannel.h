@@ -39,15 +39,15 @@ class UIProcessForwardingFrontendChannel final : public Inspector::FrontendChann
     WTF_MAKE_TZONE_ALLOCATED(UIProcessForwardingFrontendChannel);
     WTF_MAKE_NONCOPYABLE(UIProcessForwardingFrontendChannel);
 public:
-    UIProcessForwardingFrontendChannel(WebPage&, const String& targetId, Inspector::FrontendChannel::ConnectionType);
+    UIProcessForwardingFrontendChannel(WebPage&, StringImpl* targetId, Inspector::FrontendChannel::ConnectionType);
     virtual ~UIProcessForwardingFrontendChannel() = default;
 
 private:
     ConnectionType connectionType() const override { return m_connectionType; }
-    void sendMessageToFrontend(const String& message) override;
+    void sendMessageToFrontend(StringImpl* message) override;
 
     WeakRef<WebPage> m_page;
-    String m_targetId;
+    RefPtr<StringImpl> m_targetId;
     Inspector::FrontendChannel::ConnectionType m_connectionType { Inspector::FrontendChannel::ConnectionType::Remote };
 };
 

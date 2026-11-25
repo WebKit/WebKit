@@ -48,7 +48,7 @@ public:
     enum class Side { Receiver, Sender };
     virtual Side side() const = 0;
 
-    virtual bool requestKeyFrame(const String&) = 0;
+    virtual bool requestKeyFrame(StringImpl*) = 0;
 
     // Invoked when the WebKit backend that owns this transform is about to be
     // destroyed. Gives subclasses a chance to break retain cycles with the

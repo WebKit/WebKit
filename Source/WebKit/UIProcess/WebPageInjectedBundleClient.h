@@ -45,8 +45,8 @@ class WebPageProxy;
 class WebPageInjectedBundleClient : public API::Client<WKPageInjectedBundleClientBase> {
     WTF_MAKE_TZONE_ALLOCATED(WebPageInjectedBundleClient);
 public:
-    void didReceiveMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*);
-    void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, bool fromMainFrameProcess, CompletionHandler<void(RefPtr<API::Object>)>&&);
+    void didReceiveMessageFromInjectedBundle(WebPageProxy*, StringImpl*, API::Object*);
+    void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, StringImpl*, API::Object*, bool fromMainFrameProcess, CompletionHandler<void(RefPtr<API::Object>)>&&);
 };
 
 } // namespace WebKit

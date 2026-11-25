@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-std::optional<ApplePayInstallmentConfiguration> ApplePayInstallmentConfiguration::fromInstallmentConfiguration(ApplePaySetupFeatureType type, String&& openToBuyThresholdAmount, String&& bindingTotalAmount, String&& currencyCode, bool isInStorePurchase, String&& merchantIdentifier, String&& referrerIdentifier, Vector<ApplePayInstallmentItem>&& items, String&& applicationMetadata, ApplePayInstallmentRetailChannel channel)
+std::optional<ApplePayInstallmentConfiguration> ApplePayInstallmentConfiguration::fromInstallmentConfiguration(ApplePaySetupFeatureType type, RefPtr<StringImpl>&& openToBuyThresholdAmount, RefPtr<StringImpl>&& bindingTotalAmount, RefPtr<StringImpl>&& currencyCode, bool isInStorePurchase, RefPtr<StringImpl>&& merchantIdentifier, RefPtr<StringImpl>&& referrerIdentifier, Vector<ApplePayInstallmentItem>&& items, RefPtr<StringImpl>&& applicationMetadata, ApplePayInstallmentRetailChannel channel)
 {
     return std::optional<ApplePayInstallmentConfiguration> {
         std::in_place,

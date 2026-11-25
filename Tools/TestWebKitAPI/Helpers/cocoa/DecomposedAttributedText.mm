@@ -40,7 +40,7 @@ static DecomposedAttributedText::ListMarker convertMarker(NSTextListMarkerFormat
     if ([marker isEqualToString:NSTextListMarkerLowercaseRoman])
         return DecomposedAttributedText::ListMarker::LowercaseRoman;
 
-    return DecomposedAttributedText::ListMarker { marker };
+    return DecomposedAttributedText::ListMarker { StringImpl::create(marker) };
 }
 
 #if PLATFORM(MAC)
@@ -68,15 +68,15 @@ static void addTextChild(Vector<DecomposedAttributedText::Element>& children, co
     }
 
     auto& last = children.last();
-    if (last.index() != child.index() || !std::holds_alternative<String>(child)) {
+    if (last.index() != child.index() || !std::holds_alternative<RefPtr<StringImpl>>(child)) {
         children.append(child);
         return;
     }
 
-    auto lastString = std::get<String>(last);
-    auto childString = std::get<String>(child);
+    auto lastString = std::get<RefPtr<StringImpl>>(last);
+    auto childString = std::get<RefPtr<StringImpl>>(child);
 
-    if (lastString.endsWith('\n') || childString.startsWith('\n')) {
+    if (endsWith(lastString, '\n') || startsWith(childString, '\n')) {
         children.append(child);
         return;
     }
@@ -92,7 +92,7 @@ static void decomposeChildren(HashMap<NSTextList *, DecomposedAttributedText::Li
     if (!textLists || index == [textLists count]) {
         PlatformFontDescriptorSymbolicTraits traits = [font fontDescriptor].symbolicTraits;
 
-        DecomposedAttributedText::Element child = text;
+        DecomposedAttributedText::Element child = StringImpl::create(text);
         if (traits & PlatformFontDescriptorTraitBold)
             child = DecomposedAttributedText::Bold { { child } };
         if (traits & PlatformFontDescriptorTraitItalic)
@@ -162,32 +162,32 @@ DecomposedAttributedText decompose(NSAttributedString *string)
 
 bool operator==(const DecomposedAttributedText::ListMarker& lhs, const DecomposedAttributedText::ListMarker& rhs)
 {
-    return lhs.data == rhs.data;
+    return contentEquals(lhs.data, rhs.data);
 }
 
 bool operator==(const DecomposedAttributedText::OrderedList& lhs, const DecomposedAttributedText::OrderedList& rhs)
 {
-    return lhs.marker == rhs.marker && lhs.startingItemNumber == rhs.startingItemNumber && lhs.children == rhs.children;
+    return lhs.marker == rhs.marker && lhs.startingItemNumber == rhs.startingItemNumber && contentEquals(lhs.children, rhs.children);
 }
 
 bool operator==(const DecomposedAttributedText::UnorderedList& lhs, const DecomposedAttributedText::UnorderedList& rhs)
 {
-    return lhs.marker == rhs.marker && lhs.children == rhs.children;
+    return lhs.marker == rhs.marker && contentEquals(lhs.children, rhs.children);
 }
 
 bool operator==(const DecomposedAttributedText::Bold& lhs, const DecomposedAttributedText::Bold& rhs)
 {
-    return lhs.children == rhs.children;
+    return contentEquals(lhs.children, rhs.children);
 }
 
 bool operator==(const DecomposedAttributedText::Italic& lhs, const DecomposedAttributedText::Italic& rhs)
 {
-    return lhs.children == rhs.children;
+    return contentEquals(lhs.children, rhs.children);
 }
 
 bool operator==(const DecomposedAttributedText& lhs, const DecomposedAttributedText& rhs)
 {
-    return lhs.children == rhs.children;
+    return contentEquals(lhs.children, rhs.children);
 }
 
 TextStream& operator<<(TextStream& stream, const DecomposedAttributedText::Bold& value)
@@ -244,7 +244,7 @@ TextStream& operator<<(TextStream& stream, const DecomposedAttributedText::ListM
             stream << "lowercase-roman";
             break;
         }
-    }, [&](const String& string) {
+    }, [&](StringImpl* string) {
         stream << string;
     });
 

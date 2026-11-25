@@ -36,39 +36,39 @@ namespace WebCore {
 
 class IDBObjectStoreInfo {
 public:
-    WEBCORE_EXPORT IDBObjectStoreInfo(IDBObjectStoreIdentifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<IDBIndexIdentifier, IDBIndexInfo>&& = { });
+    WEBCORE_EXPORT IDBObjectStoreInfo(IDBObjectStoreIdentifier, StringImpl* name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<IDBIndexIdentifier, IDBIndexInfo>&& = { });
 
     IDBObjectStoreIdentifier identifier() const { return m_identifier; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     const std::optional<IDBKeyPath>& keyPath() const LIFETIME_BOUND { return m_keyPath; }
     bool autoIncrement() const { return m_autoIncrement; }
 
-    void rename(const String& newName) { m_name = newName; }
+    void rename(StringImpl* newName) { m_name = newName; }
 
     WEBCORE_EXPORT IDBObjectStoreInfo isolatedCopy() const &;
     WEBCORE_EXPORT IDBObjectStoreInfo isolatedCopy() &&;
 
-    IDBIndexInfo createNewIndex(IDBIndexIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
+    IDBIndexInfo createNewIndex(IDBIndexIdentifier, StringImpl* name, IDBKeyPath&&, bool unique, bool multiEntry);
     void addExistingIndex(const IDBIndexInfo&);
-    NODELETE bool hasIndex(const String& name) const;
+    NODELETE bool hasIndex(StringImpl* name) const;
     NODELETE bool hasIndex(IDBIndexIdentifier) const;
-    NODELETE IDBIndexInfo* infoForExistingIndex(const String& name);
+    NODELETE IDBIndexInfo* infoForExistingIndex(StringImpl* name);
     NODELETE IDBIndexInfo* infoForExistingIndex(IDBIndexIdentifier);
 
-    Vector<String> indexNames() const;
+    Vector<RefPtr<StringImpl>> indexNames() const;
     const HashMap<IDBIndexIdentifier, IDBIndexInfo>& indexMap() const LIFETIME_BOUND { return m_indexMap; }
 
-    void deleteIndex(const String& indexName);
+    void deleteIndex(StringImpl* indexName);
     void deleteIndex(IDBIndexIdentifier);
 
 #if !LOG_DISABLED
-    String loggingString(int indent = 0) const;
-    String condensedLoggingString() const;
+    RefPtr<StringImpl> loggingString(int indent = 0) const;
+    RefPtr<StringImpl> condensedLoggingString() const;
 #endif
 
 private:
     IDBObjectStoreIdentifier m_identifier;
-    String m_name;
+    RefPtr<StringImpl> m_name;
     std::optional<IDBKeyPath> m_keyPath;
     bool m_autoIncrement { false };
 
@@ -83,7 +83,7 @@ template<> struct HashTraits<WebCore::IDBObjectStoreInfo> : GenericHashTraits<We
     static constexpr bool emptyValueIsZero = false;
     static WebCore::IDBObjectStoreInfo emptyValue()
     {
-        return WebCore::IDBObjectStoreInfo { HashTraits<WebCore::IDBObjectStoreIdentifier>::emptyValue(), { }, { }, false };
+        return WebCore::IDBObjectStoreInfo { HashTraits<WebCore::IDBObjectStoreIdentifier>::emptyValue(), nullptr, { }, false };
     }
     static bool isEmptyValue(const WebCore::IDBObjectStoreInfo& value) { return value.identifier().isHashTableEmptyValue(); }
 };

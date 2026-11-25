@@ -145,7 +145,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
     }
 }
 
-static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElementRenderer, const AtomString& name, PseudoElementType pseudoElementType)
+static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElementRenderer, AtomStringImpl* name, PseudoElementType pseudoElementType)
 {
     CheckedRef documentElementStyle = documentElementRenderer.style();
     CheckedPtr style = documentElementStyle->pseudoElementStyle({ pseudoElementType, name });
@@ -182,7 +182,7 @@ static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElemen
 }
 
 
-void RenderTreeUpdater::ViewTransition::buildPseudoElementGroup(RenderBlockFlow& viewTransitionRoot, const AtomString& name, RenderElement& documentElementRenderer, RenderObject* beforeChild)
+void RenderTreeUpdater::ViewTransition::buildPseudoElementGroup(RenderBlockFlow& viewTransitionRoot, AtomStringImpl* name, RenderElement& documentElementRenderer, RenderObject* beforeChild)
 {
     auto viewTransitionGroup = createRendererIfNeeded(documentElementRenderer, name, PseudoElementType::ViewTransitionGroup);
     auto viewTransitionImagePair = viewTransitionGroup ? createRendererIfNeeded(documentElementRenderer, name, PseudoElementType::ViewTransitionImagePair) : nullptr;

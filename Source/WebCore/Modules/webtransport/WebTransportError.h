@@ -34,12 +34,12 @@ enum class WebTransportErrorSource : bool;
 
 class WebTransportError : public DOMException {
 public:
-    NODELETE static Ref<WebTransportError> create(WebTransportErrorOptions&&);
-    NODELETE static Ref<WebTransportError> create(String&&, WebTransportErrorOptions&&);
+    static Ref<WebTransportError> create(WebTransportErrorOptions&&);
+    NODELETE static Ref<WebTransportError> create(RefPtr<StringImpl>&&, WebTransportErrorOptions&&);
     NODELETE WebTransportErrorSource source();
     NODELETE std::optional<uint32_t> streamErrorCode();
 private:
-    WebTransportError(String&&, WebTransportErrorOptions&&);
+    WebTransportError(RefPtr<StringImpl>&&, WebTransportErrorOptions&&);
 
     const WebTransportErrorOptions m_options;
 };

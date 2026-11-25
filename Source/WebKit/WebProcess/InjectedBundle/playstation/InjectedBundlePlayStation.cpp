@@ -34,7 +34,7 @@ namespace WebKit {
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, RefPtr<API::Object>&& initializationUserData)
 {
-    auto bundle = LibraryBundle::create(m_path.utf8().legacyCStringPointer());
+    auto bundle = LibraryBundle::create(utf8(m_path).legacyCStringPointer());
     m_platformBundle = bundle;
     if (!m_platformBundle) {
         printf("PlayStation::Bundle::create failed\n");
@@ -49,7 +49,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     return true;
 }
 
-void InjectedBundle::setBundleParameter(WTF::String const&, std::span<const uint8_t>)
+void InjectedBundle::setBundleParameter(StringImpl*, std::span<const uint8_t>)
 {
 
 }

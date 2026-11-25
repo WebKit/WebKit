@@ -75,8 +75,8 @@ class IntersectionObserver : public RefCountedAndCanMakeWeakPtr<IntersectionObse
 public:
     struct Init {
         std::optional<Variant<Ref<Element>, Ref<Document>>> root;
-        String rootMargin;
-        String scrollMargin;
+        RefPtr<StringImpl> rootMargin;
+        RefPtr<StringImpl> scrollMargin;
         Variant<double, Vector<double>> threshold;
     };
 
@@ -94,8 +94,8 @@ public:
     NODELETE Document* trackingDocument() const;
 
     ContainerNode* root() const { return m_root.get(); }
-    String rootMargin() const;
-    String scrollMargin() const;
+    RefPtr<StringImpl> rootMargin() const;
+    RefPtr<StringImpl> scrollMargin() const;
     const IntersectionObserverMarginBox& rootMarginBox() const LIFETIME_BOUND { return m_rootMargin; }
     const IntersectionObserverMarginBox& scrollMarginBox() const LIFETIME_BOUND { return m_scrollMargin; }
     const Vector<double>& thresholds() const LIFETIME_BOUND { return m_thresholds; }

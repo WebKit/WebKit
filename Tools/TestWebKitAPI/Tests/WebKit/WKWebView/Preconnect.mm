@@ -425,14 +425,14 @@ TEST(Preconnect, PrivacyProxyRequestFlags)
     EXPECT_EQ(connectionCount, 1U);
 }
 
-static void appendHPACKString(Vector<uint8_t>& headerBlock, const String& string)
+static void appendHPACKString(Vector<uint8_t>& headerBlock, StringImpl* string)
 {
-    auto utf8 = string.utf8();
+    auto utf8 = WTF::utf8(string);
     headerBlock.append(utf8.length());
     headerBlock.append(byteCast<uint8_t>(utf8.span()));
 }
 
-static void appendHPACKLiteralHeader(Vector<uint8_t>& headerBlock, const String& name, const String& value)
+static void appendHPACKLiteralHeader(Vector<uint8_t>& headerBlock, StringImpl* name, StringImpl* value)
 {
     // https://httpwg.org/specs/rfc7541.html#literal.header.without.indexing
     headerBlock.append(0x00);
@@ -450,14 +450,14 @@ static void respondWithEarlyHintsPreconnect(Ref<H2::Connection>&& connection, ui
 
             // Literal header field without indexing, named by static table index 8 (":status").
             Vector<uint8_t> earlyHints { 0x08 };
-            appendHPACKString(earlyHints, "103"_s);
-            appendHPACKLiteralHeader(earlyHints, "link"_s, makeString("<https://127.0.0.1:"_s, preconnectPort, "/>; rel=preconnect"_s));
+            appendHPACKString(earlyHints, "103"_si);
+            appendHPACKLiteralHeader(earlyHints, "link"_si, makeString("<https://127.0.0.1:"_s, preconnectPort, "/>; rel=preconnect"_s).get());
 
             // Send each frame only after the previous one, since the first send waits for the connection preface.
             connection->send(H2::Frame(H2::Frame::Type::Headers, endHeaders, streamID, WTF::move(earlyHints)), [connection, streamID] {
                 // Indexed header field, static table index 8 (":status: 200").
                 Vector<uint8_t> responseHeaders { 0x88 };
-                appendHPACKLiteralHeader(responseHeaders, "content-type"_s, "text/html"_s);
+                appendHPACKLiteralHeader(responseHeaders, "content-type"_si, "text/html"_si);
                 connection->send(H2::Frame(H2::Frame::Type::Headers, endHeaders, streamID, WTF::move(responseHeaders)), [connection, streamID] {
                     Vector<uint8_t> body;
                     body.append("<!DOCTYPE html><body>Hello world</body>"_span8);

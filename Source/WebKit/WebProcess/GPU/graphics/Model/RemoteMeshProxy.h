@@ -121,7 +121,7 @@ private:
     void play(bool) final;
 
     void render(uint32_t textureIndex, Function<void(bool)>&&) final;
-    void setLabelInternal(const String&) final;
+    void setLabelInternal(StringImpl*) final;
     void setEntityTransform(const WebModel::Float4x4&) final;
     NODELETE void setEntityTransformInternal(const WebModel::Float4x4&);
 #if PLATFORM(COCOA)

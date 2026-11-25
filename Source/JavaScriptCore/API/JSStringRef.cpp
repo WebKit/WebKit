@@ -44,7 +44,7 @@ JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 JSStringRef JSStringCreateWithUTF8CString(const char* string)
 {
     JSC::initialize();
-    if (auto result = OpaqueJSString::tryCreate(byteCast<char8_t>(unsafeSpan(string))))
+    if (auto result = OpaqueJSString::tryCreate(StringImpl::create(byteCast<char8_t>(unsafeSpan(string)))))
         return result.leakRef();
     return &OpaqueJSString::create().leakRef();
 }

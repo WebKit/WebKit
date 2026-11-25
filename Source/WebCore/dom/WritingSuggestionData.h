@@ -32,7 +32,7 @@ namespace WebCore {
 class WritingSuggestionData {
     WTF_MAKE_TZONE_ALLOCATED(WritingSuggestionData);
 public:
-    WritingSuggestionData(String&& content, String&& currentText, uint64_t&& offset, String&& originalPrefix, String&& originalSuffix, bool supportsSuffix)
+    WritingSuggestionData(RefPtr<StringImpl>&& content, RefPtr<StringImpl>&& currentText, uint64_t&& offset, RefPtr<StringImpl>&& originalPrefix, RefPtr<StringImpl>&& originalSuffix, bool supportsSuffix)
         : m_content(WTF::move(content))
         , m_currentText(WTF::move(currentText))
         , m_originalPrefix(WTF::move(originalPrefix))
@@ -40,27 +40,27 @@ public:
         , m_offset(WTF::move(offset))
         , m_supportsSuffix(supportsSuffix)
     {
-        ASSERT(!m_content.isEmpty());
+        ASSERT(!isEmpty(m_content));
     }
 
-    String content() const { return m_content; }
+    RefPtr<StringImpl> content() const { return m_content; }
 
-    String currentText() const { return m_currentText; }
+    RefPtr<StringImpl> currentText() const { return m_currentText; }
 
     uint64_t offset() const { return m_offset; }
 
-    String originalPrefix() const { return m_originalPrefix; }
+    RefPtr<StringImpl> originalPrefix() const { return m_originalPrefix; }
 
-    String originalSuffix() const { return m_originalSuffix; }
+    RefPtr<StringImpl> originalSuffix() const { return m_originalSuffix; }
 
     bool supportsSuffix() const { return m_supportsSuffix; }
 
 private:
-    String m_content;
-    String m_currentText;
+    RefPtr<StringImpl> m_content;
+    RefPtr<StringImpl> m_currentText;
 
-    String m_originalPrefix;
-    String m_originalSuffix;
+    RefPtr<StringImpl> m_originalPrefix;
+    RefPtr<StringImpl> m_originalSuffix;
 
     uint64_t m_offset { 0 };
     bool m_supportsSuffix { false };

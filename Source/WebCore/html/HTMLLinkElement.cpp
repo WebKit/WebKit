@@ -93,7 +93,7 @@ class ExpectIdTargetObserver final : public IdTargetObserver {
     WTF_MAKE_TZONE_ALLOCATED(ExpectIdTargetObserver);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ExpectIdTargetObserver);
 public:
-    ExpectIdTargetObserver(const AtomString& id, HTMLLinkElement&);
+    ExpectIdTargetObserver(AtomStringImpl* id, HTMLLinkElement&);
 
     void idTargetChanged(Element&) override;
 
@@ -103,7 +103,7 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExpectIdTargetObserver);
 
-ExpectIdTargetObserver::ExpectIdTargetObserver(const AtomString& id, HTMLLinkElement& element)
+ExpectIdTargetObserver::ExpectIdTargetObserver(AtomStringImpl* id, HTMLLinkElement& element)
     : IdTargetObserver(protect(element.treeScope())->idTargetObserverRegistry(), id)
     , m_element(element)
 {
@@ -192,12 +192,12 @@ void HTMLLinkElement::setDisabledState(bool disabled)
     }
 }
 
-void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLLinkElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::relAttr: {
         if (equalLettersIgnoringASCIICase(newValue, "spatial-backdrop"_s))
-            protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Error, "The \"spatial-backdrop\" link rel value is no longer supported and was ignored. Use the <model> immersive API instead."_s);
+            protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Error, "The \"spatial-backdrop\" link rel value is no longer supported and was ignored. Use the <model> immersive API instead."_si);
         auto parsedRel = LinkRelAttribute(protect(document()), newValue);
         auto didMutateRel = parsedRel != m_relAttribute;
         m_relAttribute = WTF::move(parsedRel);
@@ -216,7 +216,7 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     }
     case AttributeNames::typeAttr:
-        if (newValue == m_type)
+        if (equal(newValue, m_type))
             return;
         m_type = newValue;
         process();
@@ -228,7 +228,7 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     case AttributeNames::blockingAttr:
         blocking().associatedAttributeValueChanged();
-        if (protect(blocking())->contains("render"_s)) {
+        if (protect(blocking())->contains("render"_atom)) {
             processInternalResourceLink();
             if (m_loading && mediaAttributeMatches() && !isAlternate())
                 potentiallyBlockRendering();
@@ -236,8 +236,8 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
             unblockRendering();
         break;
     case AttributeNames::mediaAttr: {
-        auto media = newValue.string().convertToASCIILowercase();
-        if (media == m_media)
+        auto media = convertToASCIILowercase(newValue);
+        if (equal(media, m_media))
             return;
         m_media = WTF::move(media);
         process();
@@ -253,7 +253,7 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
             process();
         break;
     case AttributeNames::disabledAttr:
-        setDisabledState(!newValue.isNull());
+        setDisabledState(!!newValue);
         break;
     case AttributeNames::titleAttr:
         if (m_sheet && !isInShadowTree())
@@ -270,14 +270,14 @@ bool HTMLLinkElement::shouldLoadLink()
     return isConnected();
 }
 
-String HTMLLinkElement::crossOrigin() const
+RefPtr<StringImpl> HTMLLinkElement::crossOrigin() const
 {
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
 }
 
-String HTMLLinkElement::as() const
+RefPtr<StringImpl> HTMLLinkElement::as() const
 {
-    String as = attributeWithoutSynchronization(asAttr);
+    RefPtr<StringImpl> as = attributeWithoutSynchronization(asAttr);
     if (equalLettersIgnoringASCIICase(as, "fetch"_s)
         || equalLettersIgnoringASCIICase(as, "image"_s)
         || equalLettersIgnoringASCIICase(as, "script"_s)
@@ -285,8 +285,8 @@ String HTMLLinkElement::as() const
         || (document().settings().mediaPreloadingEnabled() && (equalLettersIgnoringASCIICase(as, "video"_s) || equalLettersIgnoringASCIICase(as, "audio"_s)))
         || equalLettersIgnoringASCIICase(as, "track"_s)
         || equalLettersIgnoringASCIICase(as, "font"_s))
-        return as.convertToASCIILowercase();
-    return String();
+        return convertToASCIILowercase(as);
+    return nullptr;
 }
 
 void HTMLLinkElement::process()
@@ -324,19 +324,19 @@ void HTMLLinkElement::process()
 
     bool treatAsStyleSheet = false;
     if (m_relAttribute.isStyleSheet) {
-        if (m_type.isNull())
+        if (!m_type)
             treatAsStyleSheet = true;
         else if (auto parsedContentType = ParsedContentType::create(m_type))
             treatAsStyleSheet = equalLettersIgnoringASCIICase(parsedContentType->mimeType(), "text/css"_s);
     }
     if (!treatAsStyleSheet)
-        treatAsStyleSheet = document->settings().treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css"_s);
+        treatAsStyleSheet = document->settings().treatsAnyTextCSSLinkAsStylesheet() && containsIgnoringASCIICase(m_type, "text/css"_s);
 
     LOG_WITH_STREAM(StyleSheets, stream << "HTMLLinkElement " << this << " process() - treatAsStyleSheet " << treatAsStyleSheet);
 
     if (m_disabledState != Disabled && treatAsStyleSheet && document->frame() && m_url.isValid()) {
-        String charset = attributeWithoutSynchronization(charsetAttr);
-        if (!PAL::TextEncoding { charset }.isValid())
+        RefPtr<StringImpl> charset = attributeWithoutSynchronization(charsetAttr);
+        if (!PAL::TextEncoding { charset.get() }.isValid())
             charset = document->charset();
 
         if (RefPtr cachedSheet = std::exchange(m_cachedSheet, nullptr)) {
@@ -486,7 +486,7 @@ void HTMLLinkElement::processInternalResourceLink(Element* element)
 // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#blocking-attributes
 void HTMLLinkElement::potentiallyBlockRendering()
 {
-    bool explicitRenderBlocking = m_blockingList && m_blockingList->contains("render"_s);
+    bool explicitRenderBlocking = m_blockingList && m_blockingList->contains("render"_atom);
     if (explicitRenderBlocking || isImplicitlyPotentiallyRenderBlocking()) {
         protect(document())->blockRenderingOn(*this, explicitRenderBlocking ? Document::ImplicitRenderBlocking::No : Document::ImplicitRenderBlocking::Yes);
         m_isRenderBlocking = true;
@@ -581,7 +581,7 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
     }
 }
 
-void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& cachedStyleSheet)
+void HTMLLinkElement::setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& cachedStyleSheet)
 {
     unblockRendering();
     if (!isConnected()) {
@@ -648,7 +648,7 @@ DOMTokenList& HTMLLinkElement::sizes()
 
 bool HTMLLinkElement::mediaAttributeMatches() const
 {
-    if (m_media.isEmpty())
+    if (isEmpty(m_media))
         return true;
 
     Ref document = this->document();
@@ -686,7 +686,7 @@ void HTMLLinkElement::dispatchPendingLoadEvents(Page* page)
     linkLoadEventSenderSingleton().dispatchPendingEvents(page);
 }
 
-void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender, const AtomString& eventType)
+void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender, AtomStringImpl* eventType)
 {
     ASSERT_UNUSED(eventSender, eventSender == &linkLoadEventSenderSingleton());
     dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
@@ -739,17 +739,17 @@ URL HTMLLinkElement::href() const
     return protect(document())->encodingParseURL(attributeWithoutSynchronization(hrefAttr));
 }
 
-const AtomString& HTMLLinkElement::rel() const
+const RefPtr<AtomStringImpl>& HTMLLinkElement::rel() const
 {
     return attributeWithoutSynchronization(relAttr);
 }
 
-AtomString HTMLLinkElement::target() const
+RefPtr<AtomStringImpl> HTMLLinkElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }
 
-const AtomString& HTMLLinkElement::type() const
+const RefPtr<AtomStringImpl>& HTMLLinkElement::type() const
 {
     return attributeWithoutSynchronization(typeAttr);
 }
@@ -818,7 +818,7 @@ void HTMLLinkElement::removePendingSheet()
     styleScope->removePendingSheet(*this);
 }
 
-String HTMLLinkElement::referrerPolicyForBindings() const
+RefPtr<StringImpl> HTMLLinkElement::referrerPolicyForBindings() const
 {
     return referrerPolicyToString(referrerPolicy());
 }
@@ -828,12 +828,12 @@ ReferrerPolicy HTMLLinkElement::referrerPolicy() const
     return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
 }
 
-String HTMLLinkElement::debugDescription() const
+RefPtr<StringImpl> HTMLLinkElement::debugDescription() const
 {
     return makeString(HTMLElement::debugDescription(), ' ', type(), ' ', href().string());
 }
 
-String HTMLLinkElement::fetchPriorityForBindings() const
+RefPtr<StringImpl> HTMLLinkElement::fetchPriorityForBindings() const
 {
     return convertEnumerationToString(fetchPriority());
 }

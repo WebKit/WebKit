@@ -36,16 +36,16 @@ namespace API {
 
 class TextRun final : public ObjectImpl<Object::Type::TextRun> {
 public:
-    static Ref<TextRun> create(WebKit::WebPageProxy& page, WTF::String&& string, WebCore::FloatRect&& rect)
+    static Ref<TextRun> create(WebKit::WebPageProxy& page, RefPtr<StringImpl>&& string, WebCore::FloatRect&& rect)
     {
         return adoptRef(*new TextRun(page, WTF::move(string), WTF::move(rect)));
     }
 
-    const WTF::String& string() const LIFETIME_BOUND { return m_string; }
+    const RefPtr<StringImpl>& string() const LIFETIME_BOUND { return m_string; }
     WebCore::FloatRect rectInWebView() const;
 
 private:
-    explicit TextRun(WebKit::WebPageProxy& page, WTF::String&& string, WebCore::FloatRect&& rect)
+    explicit TextRun(WebKit::WebPageProxy& page, RefPtr<StringImpl>&& string, WebCore::FloatRect&& rect)
         : m_page { page }
         , m_string { WTF::move(string) }
         , m_rectInRootView { WTF::move(rect) }
@@ -53,7 +53,7 @@ private:
     }
 
     WeakPtr<WebKit::WebPageProxy> m_page;
-    WTF::String m_string;
+    RefPtr<StringImpl> m_string;
     WebCore::FloatRect m_rectInRootView;
 };
 

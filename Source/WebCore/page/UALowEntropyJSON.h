@@ -34,7 +34,7 @@ namespace WebCore {
 struct UALowEntropyJSON {
     Vector<NavigatorUABrandVersion> brands;
     bool mobile;
-    String platform;
+    RefPtr<StringImpl> platform;
 };
 
 } // namespace WebCore

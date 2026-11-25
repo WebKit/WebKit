@@ -50,7 +50,7 @@ const Vector<CaptureDevice>& DisplayCaptureManagerCocoa::captureDevices()
     return m_devices;
 }
 
-std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
+std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(StringImpl* deviceID)
 {
 #if HAVE(SCREEN_CAPTURE_KIT)
     if (ScreenCaptureKitCaptureSource::isAvailable())
@@ -63,7 +63,7 @@ std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWith
 #endif
 }
 
-std::optional<CaptureDevice> DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID(const String& deviceID)
+std::optional<CaptureDevice> DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID(StringImpl* deviceID)
 {
     UNUSED_PARAM(deviceID);
 
@@ -75,7 +75,7 @@ std::optional<CaptureDevice> DisplayCaptureManagerCocoa::windowCaptureDeviceWith
     return std::nullopt;
 }
 
-std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
+std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, StringImpl* id)
 {
     switch (type) {
     case CaptureDevice::DeviceType::Screen:

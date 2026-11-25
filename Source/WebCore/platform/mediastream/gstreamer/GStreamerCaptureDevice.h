@@ -30,7 +30,7 @@ namespace WebCore {
 
 class GStreamerCaptureDevice : public CaptureDevice {
 public:
-    GStreamerCaptureDevice(GRefPtr<GstDevice>&& device, const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString())
+    GStreamerCaptureDevice(GRefPtr<GstDevice>&& device, StringImpl* persistentId, DeviceType type, StringImpl* label, StringImpl* groupId = emptyString())
         : CaptureDevice(persistentId, type, label, groupId)
         , m_device(WTF::move(device))
     {

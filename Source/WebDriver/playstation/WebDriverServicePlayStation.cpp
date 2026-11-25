@@ -45,22 +45,22 @@ void WebDriverService::platformInit()
 Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;
-    capabilities.platformName = String::fromLatin1("playstation");
+    capabilities.platformName = StringImpl::fromLatin1("playstation");
     capabilities.setWindowRect = true;
     return capabilities;
 }
 
-bool WebDriverService::platformCompareBrowserVersions(const String&, const String&)
+bool WebDriverService::platformCompareBrowserVersions(StringImpl*, StringImpl*)
 {
     return true;
 }
 
-bool WebDriverService::platformValidateCapability(const String&, const Ref<JSON::Value>&) const
+bool WebDriverService::platformValidateCapability(StringImpl*, const Ref<JSON::Value>&) const
 {
     return true;
 }
 
-bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Value>&) const
+bool WebDriverService::platformMatchCapability(StringImpl*, const Ref<JSON::Value>&) const
 {
     return true;
 }
@@ -70,7 +70,7 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
     CapabilitiesSocket::parseCapabilities(matchedCapabilities, capabilities);
 }
 
-bool WebDriverService::platformSupportProxyType(const String&) const
+bool WebDriverService::platformSupportProxyType(StringImpl*) const
 {
     return false;
 }

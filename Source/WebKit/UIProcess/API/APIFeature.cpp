@@ -28,12 +28,12 @@
 
 namespace API {
 
-Ref<Feature> Feature::uncheckedCreate(const WTF::String& name, const WTF::String& key, FeatureStatus status, FeatureCategory category, const WTF::String& details, bool defaultValue, bool hidden)
+Ref<Feature> Feature::uncheckedCreate(StringImpl* name, StringImpl* key, FeatureStatus status, FeatureCategory category, StringImpl* details, bool defaultValue, bool hidden)
 {
     return adoptRef(*new Feature(name, key, status, category, details, defaultValue, hidden));
 }
 
-Feature::Feature(const WTF::String& name, const WTF::String& key, FeatureStatus status, FeatureCategory category, const WTF::String& details, bool defaultValue, bool hidden)
+Feature::Feature(StringImpl* name, StringImpl* key, FeatureStatus status, FeatureCategory category, StringImpl* details, bool defaultValue, bool hidden)
     : m_name(name)
     , m_key(key)
     , m_details(details)

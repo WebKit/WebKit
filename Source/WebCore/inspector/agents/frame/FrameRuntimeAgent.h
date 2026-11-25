@@ -56,8 +56,8 @@ public:
     // RuntimeBackendDispatcherHandler
     Inspector::CommandResult<void> enable() override;
     Inspector::CommandResult<void> disable() override;
-    Inspector::CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */> evaluate(const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture) override;
-    void callFunctionOn(const Inspector::Protocol::Runtime::RemoteObjectId&, const String& functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&&) override;
+    Inspector::CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */> evaluate(StringImpl* expression, StringImpl* objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture) override;
+    void callFunctionOn(StringImpl*, StringImpl* functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&&) override;
 
     // InspectorInstrumentation
     void didClearWindowObjectInWorld(DOMWrapperWorld&);
@@ -69,7 +69,7 @@ private:
     bool vmOutlivesInspectedTarget() const override { return true; }
     void reportExecutionContextCreation();
     void notifyContextCreated(JSC::JSGlobalObject*, const DOMWrapperWorld&, SecurityOrigin* = nullptr);
-    String frameIdForProtocol() const;
+    RefPtr<StringImpl> frameIdForProtocol() const;
 
     const UniqueRef<Inspector::RuntimeFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;

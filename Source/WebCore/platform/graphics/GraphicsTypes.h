@@ -171,10 +171,10 @@ enum TextAlign : uint8_t {
     RightTextAlign
 };
 
-String compositeOperatorName(WebCore::CompositeOperator, WebCore::BlendMode);
-String blendModeName(WebCore::BlendMode);
-NODELETE bool parseBlendMode(const String&, WebCore::BlendMode&);
-NODELETE bool parseCompositeAndBlendOperator(const String&, WebCore::CompositeOperator&, WebCore::BlendMode&);
+RefPtr<StringImpl> compositeOperatorName(WebCore::CompositeOperator, WebCore::BlendMode);
+RefPtr<StringImpl> blendModeName(WebCore::BlendMode);
+NODELETE bool parseBlendMode(StringImpl*, WebCore::BlendMode&);
+NODELETE bool parseCompositeAndBlendOperator(StringImpl*, WebCore::CompositeOperator&, WebCore::BlendMode&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::BlendMode);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::CompositeOperator);

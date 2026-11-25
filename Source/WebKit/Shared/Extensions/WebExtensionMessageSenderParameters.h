@@ -40,7 +40,7 @@
 namespace WebKit {
 
 struct WebExtensionMessageSenderParameters {
-    std::optional<String> extensionUniqueIdentifier;
+    std::optional<RefPtr<StringImpl>> extensionUniqueIdentifier;
     std::optional<WebExtensionTabParameters> tabParameters;
     std::optional<WebExtensionFrameIdentifier> frameIdentifier;
     WebPageProxyIdentifier pageProxyIdentifier;

@@ -120,13 +120,13 @@ struct ProtocolProperties {
     std::optional<APProxyRequestType> requestType;
 
     using AppPropertyValue = Variant<bool, CoreIPCNumber, CoreIPCString, CoreIPCData>;
-    HashMap<String, AppPropertyValue> appProperties;
+    HashMap<RefPtr<StringImpl>, AppPropertyValue> appProperties;
 };
 
 struct CoreIPCNSURLRequestData {
 
     using BodyParts = Variant<CoreIPCString, CoreIPCData>;
-    using HeaderField = std::pair<String, Variant<String, Vector<String>>>;
+    using HeaderField = std::pair<RefPtr<StringImpl>, Variant<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>>;
 
     std::optional<ProtocolProperties> protocolProperties;
     bool isMutable { false };

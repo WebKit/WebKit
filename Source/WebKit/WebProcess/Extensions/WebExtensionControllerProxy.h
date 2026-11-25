@@ -58,7 +58,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     using WebExtensionContextProxySet = HashSet<Ref<WebExtensionContextProxy>>;
-    using WebExtensionContextProxyBaseURLMap = HashMap<String, Ref<WebExtensionContextProxy>>;
+    using WebExtensionContextProxyBaseURLMap = HashMap<RefPtr<StringImpl>, Ref<WebExtensionContextProxy>>;
 
     WebExtensionControllerIdentifier identifier() { return m_identifier; }
 
@@ -78,7 +78,7 @@ public:
     // FIXME: Include the error here.
     void didFailLoadForFrame(WebPage&, WebFrame&, const URL&);
 
-    NODELETE RefPtr<WebExtensionContextProxy> extensionContext(const String& uniqueIdentifier) const;
+    NODELETE RefPtr<WebExtensionContextProxy> extensionContext(StringImpl* uniqueIdentifier) const;
     RefPtr<WebExtensionContextProxy> extensionContext(const URL&) const;
     RefPtr<WebExtensionContextProxy> extensionContext(WebFrame&, WebCore::DOMWrapperWorld&) const;
 

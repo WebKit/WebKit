@@ -118,7 +118,7 @@ bool SpatialAudioPlaybackHelper::supportsSpatialAudioPlaybackForConfiguration(co
     ASSERT(configuration.audio);
 
     // Only multichannel audio can be spatially rendered on iOS.
-    if (!configuration.audio || configuration.audio->channels.toDouble() <= 2)
+    if (!configuration.audio || toDouble(configuration.audio->channels) <= 2)
         return false;
 
     return SpatialAudioPlaybackHelperIOS::singleton().activeAudioRouteSupportsSpatialPlayback();

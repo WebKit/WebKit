@@ -126,9 +126,9 @@ private:
     void setBackdropFiltersShapePath(const Path&) override;
     void setIsBackdropRoot(bool) override;
 
-    bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String&, double) override;
-    void removeAnimation(const String&, std::optional<AnimatedProperty>) override;
-    void pauseAnimation(const String& animationName, double timeOffset) override;
+    bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, StringImpl*, double) override;
+    void removeAnimation(StringImpl*, std::optional<AnimatedProperty>) override;
+    void pauseAnimation(StringImpl* animationName, double timeOffset) override;
     void transformRelatedPropertyDidChange() override;
     Vector<GraphicsLayer::AcceleratedAnimationForTesting> acceleratedAnimationsForTesting() const override;
 

@@ -36,9 +36,9 @@
 
 namespace WTF {
 
-UTF8CString FileSystem::fileSystemRepresentation(const String& path)
+UTF8CString FileSystem::fileSystemRepresentation(StringImpl* path)
 {
-    RetainPtr<CFStringRef> cfString = path.createCFString();
+    RetainPtr<CFStringRef> cfString = createCFString(path);
 
     if (!cfString)
         return { };
@@ -56,14 +56,14 @@ UTF8CString FileSystem::fileSystemRepresentation(const String& path)
     return UTF8CString::unsafeFromUTF8(buffer.span().data());
 }
 
-String FileSystem::stringFromFileSystemRepresentation(UTF8CStringView fileSystemRepresentation)
+RefPtr<StringImpl> FileSystem::stringFromFileSystemRepresentation(UTF8CStringView fileSystemRepresentation)
 {
-    return adoptCF(CFStringCreateWithFileSystemRepresentation(kCFAllocatorDefault, fileSystemRepresentation.utf8())).get();
+    return StringImpl::create(adoptCF(CFStringCreateWithFileSystemRepresentation(kCFAllocatorDefault, fileSystemRepresentation.utf8())).get());
 }
 
-RetainPtr<CFURLRef> FileSystem::pathAsURL(const String& path)
+RetainPtr<CFURLRef> FileSystem::pathAsURL(StringImpl* path)
 {
-    return adoptCF(CFURLCreateWithFileSystemPath(nullptr, path.createCFString().get(), kCFURLPOSIXPathStyle, FALSE));
+    return adoptCF(CFURLCreateWithFileSystemPath(nullptr, createCFString(path).get(), kCFURLPOSIXPathStyle, FALSE));
 }
 
 } // namespace WTF

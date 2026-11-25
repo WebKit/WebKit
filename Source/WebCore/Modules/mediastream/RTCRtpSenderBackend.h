@@ -52,7 +52,7 @@ public:
     virtual void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) = 0;
     virtual std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() = 0;
     virtual Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() = 0;
-    virtual void setMediaStreamIds(const FixedVector<String>&) = 0;
+    virtual void setMediaStreamIds(const FixedVector<RefPtr<StringImpl>>&) = 0;
     virtual std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() = 0;
 
     virtual bool isLibWebRTCRtpSenderBackend() const { return false; }

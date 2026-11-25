@@ -66,7 +66,7 @@ public:
         EmptyType,
         bool,
         double,
-        String,
+        RefPtr<StringImpl>,
         Seconds,
         ObjectVector,
         ObjectMap,
@@ -84,7 +84,7 @@ public:
     JSObjectID root() const { return m_root; }
     const Map& map() const LIFETIME_BOUND { return m_map; }
 
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
 
 #if PLATFORM(COCOA)
     static std::optional<JavaScriptEvaluationResult> extract(id);

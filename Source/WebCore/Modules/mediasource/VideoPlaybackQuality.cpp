@@ -52,12 +52,12 @@ Ref<JSON::Object> VideoPlaybackQuality::toJSONObject() const
 {
     Ref json = JSON::Object::create();
 
-    json->setDouble("creationTime"_s, m_creationTime);
-    json->setInteger("totalVideoFrames"_s, m_totalVideoFrames);
-    json->setInteger("droppedVideoFrames"_s, m_droppedVideoFrames);
-    json->setInteger("corruptedVideoFrames"_s, m_corruptedVideoFrames);
-    json->setInteger("displayCompositedVideoFrames"_s, m_displayCompositedVideoFrames);
-    json->setDouble("totalFrameDelay"_s, m_totalFrameDelay);
+    json->setDouble("creationTime"_si, m_creationTime);
+    json->setInteger("totalVideoFrames"_si, m_totalVideoFrames);
+    json->setInteger("droppedVideoFrames"_si, m_droppedVideoFrames);
+    json->setInteger("corruptedVideoFrames"_si, m_corruptedVideoFrames);
+    json->setInteger("displayCompositedVideoFrames"_si, m_displayCompositedVideoFrames);
+    json->setDouble("totalFrameDelay"_si, m_totalFrameDelay);
 
     return json;
 }

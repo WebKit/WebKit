@@ -162,7 +162,7 @@ void GroupActivitiesCoordinator::sessionStateChanged(const GroupActivitiesSessio
     client->coordinatorStateChanged(static_cast<MediaSessionCoordinatorState>(state));
 }
 
-String GroupActivitiesCoordinator::identifier() const
+RefPtr<StringImpl> GroupActivitiesCoordinator::identifier() const
 {
     return m_session->uuid();
 }
@@ -196,7 +196,7 @@ void GroupActivitiesCoordinator::pause(CoordinatorCompletionHandler&& callback)
     callback(std::nullopt);
 }
 
-void GroupActivitiesCoordinator::setTrack(const String& track, CoordinatorCompletionHandler&& callback)
+void GroupActivitiesCoordinator::setTrack(StringImpl* track, CoordinatorCompletionHandler&& callback)
 {
     callback(std::nullopt);
 }
@@ -222,10 +222,10 @@ void GroupActivitiesCoordinator::playbackStateChanged(MediaSessionPlaybackState 
     m_playbackState = playbackState;
 }
 
-void GroupActivitiesCoordinator::trackIdentifierChanged(const String& identifier)
+void GroupActivitiesCoordinator::trackIdentifierChanged(StringImpl* identifier)
 {
-    if (identifier != String([m_playbackCoordinator currentItemIdentifier]))
-        [m_playbackCoordinator transitionToItemWithIdentifier:identifier.createNSString().get() proposingInitialTimingBasedOnTimebase:nil];
+    if (!equal(identifier, StringImpl::create([m_playbackCoordinator currentItemIdentifier]).get()))
+        [m_playbackCoordinator transitionToItemWithIdentifier:createNSString(identifier).get() proposingInitialTimingBasedOnTimebase:nil];
 }
 
 void GroupActivitiesCoordinator::issuePlayCommand(AVDelegatingPlaybackCoordinatorPlayCommand *playCommand, CommandCompletionHandler&& callback)

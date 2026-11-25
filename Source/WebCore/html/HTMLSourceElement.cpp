@@ -203,7 +203,7 @@ void HTMLSourceElement::stop()
     cancelPendingErrorEvent();
 }
 
-void HTMLSourceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLSourceElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -267,7 +267,7 @@ Attribute HTMLSourceElement::replaceURLsInAttributeValue(const Attribute& attrib
     if (serializationContext.replacementURLStrings.isEmpty())
         return attribute;
 
-    return Attribute { srcsetAttr, AtomString { replaceURLsInSrcsetAttribute(*this, StringView(attribute.value()), serializationContext) } };
+    return Attribute { srcsetAttr, AtomStringImpl::add(replaceURLsInSrcsetAttribute(*this, StringView(attribute.value()), serializationContext)).get() };
 }
 
 void HTMLSourceElement::addCandidateSubresourceURLs(OrderedHashSet<URL>& urls) const

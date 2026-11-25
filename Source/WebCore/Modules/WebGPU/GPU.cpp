@@ -67,7 +67,7 @@ void GPU::requestAdapter(ScriptExecutionContext& context, const std::optional<GP
     // https://gpuweb.github.io/gpuweb/#dom-gpu-requestadapter
     // A feature level that is spelled out but is not one we recognize gets no adapter at all, rather
     // than being treated as if it had been left out.
-    if (options && !options->featureLevel.isNull() && options->featureLevel != "core"_s && options->featureLevel != "compatibility"_s) {
+    if (options && !!options->featureLevel && !equal(options->featureLevel, "core"_s) && !equal(options->featureLevel, "compatibility"_s)) {
         protect(context.eventLoop())->queueTask(TaskSource::WebGPU, [promise = WTF::move(promise)] mutable {
             promise.resolve(nullptr);
         });

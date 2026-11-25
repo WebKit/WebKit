@@ -38,7 +38,7 @@ class ViewTransitionTypeSet : public RefCounted<ViewTransitionTypeSet> {
     WTF_MAKE_TZONE_ALLOCATED(ViewTransitionTypeSet);
 
 public:
-    static Ref<ViewTransitionTypeSet> create(Document& document, Vector<AtomString>&& initialActiveTypes)
+    static Ref<ViewTransitionTypeSet> create(Document& document, Vector<RefPtr<AtomStringImpl>>&& initialActiveTypes)
     {
         return adoptRef(*new ViewTransitionTypeSet(document, WTF::move(initialActiveTypes)));
     }
@@ -46,15 +46,15 @@ public:
     void initializeSetLike(DOMSetAdapter&) const;
 
     void clearFromSetLike();
-    void addToSetLike(const AtomString&);
-    bool removeFromSetLike(const AtomString&);
+    void addToSetLike(AtomStringImpl*);
+    bool removeFromSetLike(AtomStringImpl*);
 
-    NODELETE bool hasType(const AtomString&) const;
+    NODELETE bool hasType(AtomStringImpl*) const;
 
 private:
-    ViewTransitionTypeSet(Document&, Vector<AtomString>&&);
+    ViewTransitionTypeSet(Document&, Vector<RefPtr<AtomStringImpl>>&&);
 
-    ListHashSet<AtomString> m_typeSet;
+    ListHashSet<RefPtr<AtomStringImpl>> m_typeSet;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 

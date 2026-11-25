@@ -74,11 +74,11 @@ public:
 
 private:
     // Messages
-    void createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&& callback);
+    void createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, StringImpl*, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&& callback);
     void deleteUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
     void startUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, ConsumerSharedCARingBuffer::Handle&&, IPC::Semaphore&&);
     void stopUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
-    void setLastDeviceUsed(const String&);
+    void setLastDeviceUsed(StringImpl*);
 
     // WebCore::AudioSessionInterruptionObserver
     void beginAudioSessionInterruption() final;

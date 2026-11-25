@@ -32,9 +32,9 @@
 namespace WebCore {
 
 struct PayerErrorFields {
-    String email;
-    String name;
-    String phone;
+    RefPtr<StringImpl> email;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> phone;
 };
 
 } // namespace WebCore

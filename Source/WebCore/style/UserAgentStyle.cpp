@@ -88,7 +88,7 @@ static const MQ::MediaQueryEvaluator& printEval()
     return staticPrintEval;
 }
 
-static Ref<StyleSheetContents> parseUASheet(const WTF::String& str)
+static Ref<StyleSheetContents> parseUASheet(StringImpl* str)
 {
     Ref sheet = StyleSheetContents::create(CSSParserContext(UASheetMode));
     sheet->parseString(str);
@@ -150,19 +150,19 @@ void UserAgentStyle::initDefaultStyleSheet()
     lazyInitialize(sheets.defaultQuirksStyle, RuleSet::create());
     lazyInitialize(sheets.mediaQueryStyleSheet, StyleSheetContents::create(CSSParserContext(UASheetMode)));
 
-    WTF::String defaultRules;
+    RefPtr<StringImpl> defaultRules;
     auto extraDefaultStyleSheet = RenderTheme::singleton().extraDefaultStyleSheet();
-    if (extraDefaultStyleSheet.isEmpty())
+    if (isEmpty(extraDefaultStyleSheet))
         defaultRules = StringImpl::createWithoutCopying(htmlUserAgentStyleSheet);
     else
         defaultRules = makeString(std::span { htmlUserAgentStyleSheet }, extraDefaultStyleSheet);
     lazyInitialize(sheets.defaultStyleSheet, parseUASheet(defaultRules));
     addToDefaultStyle(*sheets.defaultStyleSheet);
 
-    lazyInitialize(sheets.counterStylesStyleSheet, parseUASheet(StringImpl::createWithoutCopying(counterStylesUserAgentStyleSheet)));
+    lazyInitialize(sheets.counterStylesStyleSheet, parseUASheet(StringImpl::createWithoutCopying(counterStylesUserAgentStyleSheet).ptr()));
     addToCounterStyleRegistry(*sheets.counterStylesStyleSheet);
 
-    lazyInitialize(sheets.quirksStyleSheet, parseUASheet(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet)));
+    lazyInitialize(sheets.quirksStyleSheet, parseUASheet(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet).ptr()));
 
     RuleSetBuilder quirkBuilder(*sheets.defaultQuirksStyle, screenEval());
     quirkBuilder.addRulesFromSheet(*sheets.quirksStyleSheet);
@@ -176,7 +176,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     if (is<HTMLElement>(element)) {
         if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
             if (!sheets.htmlSwitchControlStyleSheet && input->isSwitch()) {
-                lazyInitialize(sheets.htmlSwitchControlStyleSheet, parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet)));
+                lazyInitialize(sheets.htmlSwitchControlStyleSheet, parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet).ptr()));
                 addToDefaultStyle(*sheets.htmlSwitchControlStyleSheet);
             }
         }
@@ -188,50 +188,50 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
         if (!sheets.popoverStyleSheet && element.document().settings().popoverAttributeEnabled() && element.hasAttributeWithoutSynchronization(popoverAttr)) {
-            lazyInitialize(sheets.popoverStyleSheet, parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet)));
+            lazyInitialize(sheets.popoverStyleSheet, parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet).ptr()));
             addToDefaultStyle(*sheets.popoverStyleSheet);
         }
 
         if (!sheets.selectMultipleAndListBoxStyleSheet && is<HTMLSelectElement>(element) && element.document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled()) {
-            lazyInitialize(sheets.selectMultipleAndListBoxStyleSheet, parseUASheet(StringImpl::createWithoutCopying(selectMultipleAndListBoxUserAgentStyleSheet)));
+            lazyInitialize(sheets.selectMultipleAndListBoxStyleSheet, parseUASheet(StringImpl::createWithoutCopying(selectMultipleAndListBoxUserAgentStyleSheet).ptr()));
             addToDefaultStyle(*sheets.selectMultipleAndListBoxStyleSheet);
         }
 
         if (isAnyOf<HTMLFormControlElement, HTMLMeterElement, HTMLProgressElement>(element) && !element.document().settings().verticalFormControlsEnabled()) {
             if (!sheets.horizontalFormControlsStyleSheet) {
-                lazyInitialize(sheets.horizontalFormControlsStyleSheet, parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet)));
+                lazyInitialize(sheets.horizontalFormControlsStyleSheet, parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet).ptr()));
                 addToDefaultStyle(*sheets.horizontalFormControlsStyleSheet);
             }
         }
 
     } else if (is<SVGElement>(element)) {
         if (!sheets.svgStyleSheet) {
-            lazyInitialize(sheets.svgStyleSheet, parseUASheet(StringImpl::createWithoutCopying(svgUserAgentStyleSheet)));
+            lazyInitialize(sheets.svgStyleSheet, parseUASheet(StringImpl::createWithoutCopying(svgUserAgentStyleSheet).ptr()));
             addToDefaultStyle(*sheets.svgStyleSheet);
         }
     }
 #if ENABLE(MATHML)
     else if (is<MathMLElement>(element)) {
         if (!sheets.mathMLStyleSheet) {
-            lazyInitialize(sheets.mathMLStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlUserAgentStyleSheet)));
+            lazyInitialize(sheets.mathMLStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlUserAgentStyleSheet).ptr()));
             addToDefaultStyle(*sheets.mathMLStyleSheet);
         }
         if (!sheets.mathMLCoreExtrasStyleSheet && element.document().settings().coreMathMLEnabled()) {
-            lazyInitialize(sheets.mathMLCoreExtrasStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlCoreExtrasUserAgentStyleSheet)));
+            lazyInitialize(sheets.mathMLCoreExtrasStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlCoreExtrasUserAgentStyleSheet).ptr()));
             addToDefaultStyle(*sheets.mathMLCoreExtrasStyleSheet);
         }
         if (!sheets.mathMLCoreMathvariantStyleSheet && element.document().settings().coreMathMLDeprecateLegacyMathvariant()) {
-            lazyInitialize(sheets.mathMLCoreMathvariantStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlCoreMathvariantUserAgentStyleSheet)));
+            lazyInitialize(sheets.mathMLCoreMathvariantStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlCoreMathvariantUserAgentStyleSheet).ptr()));
             addToDefaultStyle(*sheets.mathMLCoreMathvariantStyleSheet);
         }
         if (element.document().settings().cssMathDepthEnabled()) {
             if (!sheets.mathMLFontSizeMathStyleSheet) {
-                lazyInitialize(sheets.mathMLFontSizeMathStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlFontSizeMathUserAgentStyleSheet)));
+                lazyInitialize(sheets.mathMLFontSizeMathStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlFontSizeMathUserAgentStyleSheet).ptr()));
                 addToDefaultStyle(*sheets.mathMLFontSizeMathStyleSheet);
             }
         } else {
             if (!sheets.mathMLLegacyFontSizeMathStyleSheet) {
-                lazyInitialize(sheets.mathMLLegacyFontSizeMathStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlLegacyFontSizeMathUserAgentStyleSheet)));
+                lazyInitialize(sheets.mathMLLegacyFontSizeMathStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlLegacyFontSizeMathUserAgentStyleSheet).ptr()));
                 addToDefaultStyle(*sheets.mathMLLegacyFontSizeMathStyleSheet);
             }
         }
@@ -240,13 +240,13 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr documentFullscreen = element.document().fullscreenIfExists(); !sheets.fullscreenStyleSheet && documentFullscreen) {
-        lazyInitialize(sheets.fullscreenStyleSheet, parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet)));
+        lazyInitialize(sheets.fullscreenStyleSheet, parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet).ptr()));
         addToDefaultStyle(*sheets.fullscreenStyleSheet);
     }
 #endif // ENABLE(FULLSCREEN_API)
 
     if (!sheets.viewTransitionsStyleSheet) {
-        lazyInitialize(sheets.viewTransitionsStyleSheet, parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet)));
+        lazyInitialize(sheets.viewTransitionsStyleSheet, parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet).ptr()));
         addToDefaultStyle(*sheets.viewTransitionsStyleSheet);
         addUserAgentKeyframes(*sheets.viewTransitionsStyleSheet);
     }

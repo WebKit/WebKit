@@ -33,9 +33,9 @@ namespace WebKit {
 
 class AutomationSessionClient final : public API::AutomationSessionClient {
 public:
-    explicit AutomationSessionClient(const String&, const Inspector::RemoteInspector::Client::SessionCapabilities&);
+    explicit AutomationSessionClient(StringImpl*, const Inspector::RemoteInspector::Client::SessionCapabilities&);
 
-    String sessionIdentifier() const override { return m_sessionIdentifier; }
+    RefPtr<StringImpl> sessionIdentifier() const override { return m_sessionIdentifier; }
 
     // From API::AutomationSessionClient
     void requestNewPageWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebKit::WebPageProxy*)>&&) override;
@@ -45,7 +45,7 @@ public:
     void didDisconnectFromRemote(WebKit::WebAutomationSession&) override;
 
 private:
-    String m_sessionIdentifier;
+    RefPtr<StringImpl> m_sessionIdentifier;
     Inspector::RemoteInspector::Client::SessionCapabilities m_capabilities { };
 
 };

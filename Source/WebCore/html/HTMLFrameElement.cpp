@@ -81,11 +81,11 @@ int HTMLFrameElement::defaultTabIndex() const
     return 0;
 }
 
-void HTMLFrameElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLFrameElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == frameborderAttr) {
         m_frameBorder = parseHTMLInteger(newValue).value_or(0);
-        m_frameBorderSet = !newValue.isNull();
+        m_frameBorderSet = !!newValue;
         // FIXME: If we are already attached, this has no effect.
     } else if (name == noresizeAttr) {
         if (CheckedPtr renderer = this->renderer())

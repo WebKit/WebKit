@@ -98,7 +98,7 @@ WebCodecsVideoFrame::~WebCodecsVideoFrame()
         return;
     if (RefPtr context = scriptExecutionContext()) {
         context->postTask([](auto& context) {
-            context.addConsoleMessage(MessageSource::Media, MessageLevel::Warning, "A VideoFrame was destroyed without having been closed explicitly"_s);
+            context.addConsoleMessage(MessageSource::Media, MessageLevel::Warning, "A VideoFrame was destroyed without having been closed explicitly"_si);
         });
     }
 }
@@ -110,11 +110,11 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         // 1. Check the usability of the image argument. If this throws an exception or returns
         //    bad, then throw an InvalidStateError DOMException.
         if (!isUsable(image.get()))
-            return Exception { ExceptionCode::InvalidStateError, "Image is not usable"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Image is not usable"_si };
 
         // 2. If image is not origin-clean, then throw a SecurityError DOMException.
         if (!isOriginClean(image.get(), *protect(context.securityOrigin())))
-            return Exception { ExceptionCode::SecurityError, "Image is not origin-clean"_s };
+            return Exception { ExceptionCode::SecurityError, "Image is not origin-clean"_si };
 
         // 3. Let frame be a new VideoFrame.
         // 4. Switch on image:
@@ -126,11 +126,11 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::createFromImageElemen
 {
     // 1. If timestamp does not exist in init, throw a TypeError.
     if (!init.timestamp)
-        return Exception { ExceptionCode::TypeError, "timestamp is not provided"_s };
+        return Exception { ExceptionCode::TypeError, "timestamp is not provided"_si };
 
     RefPtr sourceImage = image.sourceImage();
     if (!sourceImage)
-        return Exception { ExceptionCode::InvalidStateError, "Image has no data"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Image has no data"_si };
 
     // The resource is read in the orientation the element gives it, so baseRotation and
     // baseFlip below are always 0 and false.
@@ -140,7 +140,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::createFromImageElemen
     // 2. If image's media data has no natural dimensions (e.g., it's a vector graphic with no
     //    specified content size), then throw an InvalidStateError DOMException.
     if (!naturalDimensions.width || !naturalDimensions.height)
-        return Exception { ExceptionCode::InvalidStateError, "Image has no natural dimensions"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Image has no natural dimensions"_si };
 
     // 3. Let resource be a new media resource containing a copy of image's media data. If this
     //    is an animated image, image's bitmap data MUST only be taken from the default image of
@@ -151,7 +151,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::createFromImageElemen
     auto codedSize = VideoFrameImageSizing { }.resolve(naturalDimensions);
     RefPtr resource = sourceImage->currentPreTransformedNativeImage(ImageDrawDescriptor { codedSize, orientation });
     if (!resource)
-        return Exception { ExceptionCode::InvalidStateError, "Image has no video frame"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Image has no video frame"_si };
 
     // 5. Let baseRotation and baseFlip describe the rotation and flip of image relative to
     //    resource.
@@ -181,12 +181,12 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     // 1. If image's networkState attribute is NETWORK_EMPTY, then throw an InvalidStateError
     //    DOMException.
     if (image->networkState() == HTMLMediaElement::NETWORK_EMPTY)
-        return Exception { ExceptionCode::InvalidStateError, "Video element has no data"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Video element has no data"_si };
 
     // 2. Let currentPlaybackFrame be the VideoFrame at the current playback position.
     RefPtr currentPlaybackFrame = image->player() ? protect(image->player())->videoFrameForCurrentTime() : nullptr;
     if (!currentPlaybackFrame)
-        return Exception { ExceptionCode::InvalidStateError, "Video element has no video frame"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Video element has no video frame"_si };
 
     // 3. If metadata does not exist in init, assign currentPlaybackFrame.[[metadata]] to it.
     // FIXME: VideoFrameInit's metadata is not supported.
@@ -201,12 +201,12 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 {
     // 1. If timestamp does not exist in init, throw a TypeError.
     if (!init.timestamp)
-        return Exception { ExceptionCode::TypeError, "timestamp is not provided"_s };
+        return Exception { ExceptionCode::TypeError, "timestamp is not provided"_si };
 
     // 2. Let resource be a new media resource containing a copy of image's bitmap data.
     RefPtr resource = image->toVideoFrame();
     if (!resource)
-        return Exception { ExceptionCode::InvalidStateError, "Canvas has no frame"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Canvas has no frame"_si };
 
     // 3. Let width be image.width and height be image.height.
     // 4. Run the Initialize Frame With Resource algorithm with init, frame, resource, width,
@@ -219,12 +219,12 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 {
     // 1. If timestamp does not exist in init, throw a TypeError.
     if (!init.timestamp)
-        return Exception { ExceptionCode::TypeError, "timestamp is not provided"_s };
+        return Exception { ExceptionCode::TypeError, "timestamp is not provided"_si };
 
     // 2. Let resource be a new media resource containing a copy of image's bitmap data.
     RefPtr resource = image->makeRenderingResultsAvailable();
     if (!resource)
-        return Exception { ExceptionCode::InvalidStateError, "Input canvas has no image buffer"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Input canvas has no image buffer"_si };
 
     // 3. Let width be image.width and height be image.height.
     // 4. Run the Initialize Frame With Resource algorithm with init, frame, resource, width,
@@ -237,12 +237,12 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 {
     // 1. If timestamp does not exist in init, throw a TypeError.
     if (!init.timestamp)
-        return Exception { ExceptionCode::TypeError, "timestamp is not provided"_s };
+        return Exception { ExceptionCode::TypeError, "timestamp is not provided"_si };
 
     // 2. Let resource be a new media resource containing a copy of image's bitmap data.
     RefPtr resource = image->buffer();
     if (!resource)
-        return Exception { ExceptionCode::InvalidStateError, "Input image has no image buffer"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Input image has no image buffer"_si };
 
     // 3. Let width be image.width and height be image.height.
     // 4. Run the Initialize Frame With Resource algorithm with init, frame, resource, width,
@@ -260,7 +260,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 {
     // A CSSImageValue has already been rejected as not origin-clean.
     ASSERT_NOT_REACHED();
-    return Exception { ExceptionCode::SecurityError, "Image is not origin-clean"_s };
+    return Exception { ExceptionCode::SecurityError, "Image is not origin-clean"_si };
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)
@@ -270,7 +270,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 
     auto pixelBuffer = buffer.getPixelBuffer(format, region);
     if (!pixelBuffer)
-        return Exception { ExceptionCode::InvalidStateError,  "Buffer has no frame"_s };
+        return Exception { ExceptionCode::InvalidStateError,  "Buffer has no frame"_si };
 
     auto videoFrame = VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), {
         .presentationTime = init.timestamp ? timestampToMediaTime(*init.timestamp) : MediaTime { },
@@ -283,7 +283,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     });
 
     if (!videoFrame)
-        return Exception { ExceptionCode::InvalidStateError,  "Unable to create frame from buffer"_s };
+        return Exception { ExceptionCode::InvalidStateError,  "Unable to create frame from buffer"_si };
 
     return WebCodecsVideoFrame::initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTF::move(init), VideoFrame::ShouldClone::Yes);
 }
@@ -295,14 +295,14 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     auto pixelFormat = init.format.value_or(VideoPixelFormat::I420);
 
     if (isHighBitDepthVideoPixelFormat(pixelFormat) && !context.settingsValues().webCodecsHighBitDepthEnabled)
-        return Exception { ExceptionCode::TypeError, "VideoPixelFormat is not valid"_s };
+        return Exception { ExceptionCode::TypeError, "VideoPixelFormat is not valid"_si };
 
     WebCodecsTransferList transferList { WTF::move(init.transfer) };
     if (auto result = transferList.validate(); result.hasException())
         return result.releaseException();
 
     if (!isValidVideoFrameBufferInit(init))
-        return Exception { ExceptionCode::TypeError, "buffer init is not valid"_s };
+        return Exception { ExceptionCode::TypeError, "buffer init is not valid"_si };
 
     DOMRectInit defaultRect { 0, 0, static_cast<double>(init.codedWidth), static_cast<double>(init.codedHeight) };
     auto parsedRectOrExtension = parseVisibleRect(defaultRect, init.visibleRect, init.codedWidth, init.codedHeight, pixelFormat);
@@ -370,11 +370,11 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         videoFrame = VideoFrame::createPlanarYUV(pixelFormat, data.span(), parsedRect.width, parsedRect.height, borrow(layout.computedLayouts)->span().first<4>(), WTF::move(videoFrameInit));
         break;
     default:
-        return Exception { ExceptionCode::NotSupportedError, "VideoPixelFormat is not supported"_s };
+        return Exception { ExceptionCode::NotSupportedError, "VideoPixelFormat is not supported"_si };
     }
 
     if (!videoFrame)
-        return Exception { ExceptionCode::TypeError, "Unable to create internal resource from data"_s };
+        return Exception { ExceptionCode::TypeError, "Unable to create internal resource from data"_si };
 
     transferList.detachAll(context.vm());
 
@@ -486,7 +486,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     auto initialFormat = videoFrame->m_data.format.value_or(VideoPixelFormat::I420);
     auto format = computeVideoPixelFormat(initialFormat, init.alpha == WebCodecsAlphaOption::Discard);
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
-        return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
+        return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_si };
 
     auto result = adoptRef(*new WebCodecsVideoFrame(context));
     result->m_data.internalFrame = videoFrame->m_data.internalFrame;
@@ -520,7 +520,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     auto initialFormat = videoPixelFormatForContext(context, internalVideoFrame);
     auto format = initialFormat ? std::make_optional(computeVideoPixelFormat(*initialFormat, init.alpha == WebCodecsAlphaOption::Discard)) : std::nullopt;
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format.value_or(VideoPixelFormat::I420)))
-        return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
+        return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_si };
 
     auto result = adoptRef(*new WebCodecsVideoFrame(context));
     result->m_data.internalFrame = WTF::move(internalVideoFrame);
@@ -551,14 +551,14 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
 {
     auto internalVideoFrame = VideoFrame::fromNativeImage(image.get());
     if (!internalVideoFrame)
-        return Exception { ExceptionCode::TypeError,  "image has no resource"_s };
+        return Exception { ExceptionCode::TypeError,  "image has no resource"_si };
 
     auto codedWidth = image->size().width();
     auto codedHeight = image->size().height();
     auto initialFormat = videoPixelFormatForContext(context, *internalVideoFrame);
     auto format = initialFormat ? std::make_optional(computeVideoPixelFormat(*initialFormat, init.alpha == WebCodecsAlphaOption::Discard)) : std::nullopt;
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format.value_or(VideoPixelFormat::I420)))
-        return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
+        return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_si };
 
     auto result = adoptRef(*new WebCodecsVideoFrame(context));
     result->m_data.internalFrame = WTF::move(internalVideoFrame);
@@ -604,14 +604,14 @@ void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options,
 
     auto combinedLayout = combinedLayoutOrException.releaseReturnValue();
     if (source.byteLength() < combinedLayout.allocationSize) {
-        promise.reject(Exception { ExceptionCode::TypeError,  "Buffer is too small"_s });
+        promise.reject(Exception { ExceptionCode::TypeError,  "Buffer is too small"_si });
         return;
     }
 
     auto buffer = source.mutableSpan();
     protect(m_data.internalFrame)->copyTo(buffer, options.format ? *options.format : *m_data.format, toColorSpace(options.colorSpace.value_or(PredefinedColorSpace::SRGB)), WTF::move(combinedLayout.computedLayouts), [source = WTF::move(source), promise = WTF::move(promise)](auto planeLayouts) mutable {
         if (!planeLayouts) {
-            promise.reject(Exception { ExceptionCode::TypeError,  "Unable to copy data"_s });
+            promise.reject(Exception { ExceptionCode::TypeError,  "Unable to copy data"_si });
             return;
         }
         promise.resolve(WTF::move(*planeLayouts));
@@ -621,7 +621,7 @@ void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options,
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::clone(ScriptExecutionContext& context)
 {
     if (isDetached())
-        return Exception { ExceptionCode::InvalidStateError,  "VideoFrame is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError,  "VideoFrame is detached"_si };
 
     auto clone = adoptRef(*new WebCodecsVideoFrame(context, WebCodecsVideoFrameData { m_data }));
 

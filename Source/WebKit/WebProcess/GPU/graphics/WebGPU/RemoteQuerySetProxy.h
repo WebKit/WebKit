@@ -57,7 +57,7 @@ public:
     uint32_t count() const final { return m_count; }
     std::optional<::WebGPU::QueryType> type() const final { return m_type; }
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

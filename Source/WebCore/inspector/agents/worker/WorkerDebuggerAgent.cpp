@@ -52,7 +52,7 @@ WorkerDebuggerAgent::WorkerDebuggerAgent(WorkerAgentContext& context)
 
 WorkerDebuggerAgent::~WorkerDebuggerAgent() = default;
 
-void WorkerDebuggerAgent::breakpointActionLog(JSGlobalObject* lexicalGlobalObject, const String& message)
+void WorkerDebuggerAgent::breakpointActionLog(JSGlobalObject* lexicalGlobalObject, StringImpl* message)
 {
     protect(globalScope())->addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject)));
 }
@@ -60,7 +60,7 @@ void WorkerDebuggerAgent::breakpointActionLog(JSGlobalObject* lexicalGlobalObjec
 InjectedScript WorkerDebuggerAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
-        errorString = "executionContextId is not supported for workers as there is only one execution context"_s;
+        errorString = "executionContextId is not supported for workers as there is only one execution context"_si;
         return InjectedScript();
     }
 

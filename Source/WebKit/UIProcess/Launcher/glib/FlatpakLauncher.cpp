@@ -248,7 +248,7 @@ void flatpakSpawn(const WebKit::ProcessLauncher::LaunchOptions& launchOptions, V
 
 #if USE(ATSPI)
         if (checkFlatpakPortalVersion(7)) {
-            auto busName = launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("accessibilityBusName"_s).utf8();
+            auto busName = utf8(launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("accessibilityBusName"_s));
             const char* busNameString = busName.legacyCStringPointer();
             g_variant_builder_add(&optionsBuilder, "{sv}", "sandbox-a11y-own-names", g_variant_new_strv(&busNameString, 1));
         }

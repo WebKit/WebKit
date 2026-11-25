@@ -35,7 +35,7 @@ class WebProcessPool;
 // The inspector page groups are used to give different preferences to each
 // inspector level by setting a per-level page group identifier.
 NODELETE unsigned inspectorLevelForPage(WebPageProxy*);
-String defaultInspectorPageGroupIdentifierForPage(WebPageProxy*);
+RefPtr<StringImpl> defaultInspectorPageGroupIdentifierForPage(WebPageProxy*);
 void trackInspectorPage(WebPageProxy& inspectorPage, WebPageProxy* inspectedPage);
 void untrackInspectorPage(WebPageProxy& inspectorPage);
 

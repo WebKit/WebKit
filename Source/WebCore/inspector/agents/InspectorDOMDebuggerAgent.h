@@ -72,10 +72,10 @@ public:
     virtual bool enabled() const;
 
     // DOMDebuggerBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<void> setURLBreakpoint(const String& url, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
-    Inspector::Protocol::ErrorStringOr<void> removeURLBreakpoint(const String& url, std::optional<bool>&& isRegex) final;
-    Inspector::Protocol::ErrorStringOr<void> setEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
-    Inspector::Protocol::ErrorStringOr<void> removeEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
+    Inspector::Protocol::ErrorStringOr<void> setURLBreakpoint(StringImpl* url, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
+    Inspector::Protocol::ErrorStringOr<void> removeURLBreakpoint(StringImpl* url, std::optional<bool>&& isRegex) final;
+    Inspector::Protocol::ErrorStringOr<void> setEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, StringImpl* eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
+    Inspector::Protocol::ErrorStringOr<void> removeEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, StringImpl* eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
 
     // InspectorDebuggerAgent::Listener
     void debuggerWasEnabled() override;
@@ -83,8 +83,8 @@ public:
 
     // InspectorInstrumentation
     virtual void mainFrameNavigated();
-    void willSendXMLHttpRequest(Inspector::InspectorDebuggerAgent*, const String& url);
-    void willFetch(Inspector::InspectorDebuggerAgent*, const String& url);
+    void willSendXMLHttpRequest(Inspector::InspectorDebuggerAgent*, StringImpl* url);
+    void willFetch(Inspector::InspectorDebuggerAgent*, StringImpl* url);
     void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     void didHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     void willFireTimer(Inspector::InspectorDebuggerAgent*, bool oneShot);
@@ -111,13 +111,13 @@ protected:
     Inspector::InjectedScriptManager& injectedScriptManagerForContext(ScriptExecutionContext&) const;
 
 private:
-    void breakOnURLIfNeeded(Inspector::InspectorDebuggerAgent*, const String&);
+    void breakOnURLIfNeeded(Inspector::InspectorDebuggerAgent*, StringImpl*);
 
     const Ref<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     struct EventBreakpoint {
-        String eventName;
+        RefPtr<StringImpl> eventName;
         bool caseSensitive { true };
         bool isRegex { false };
 
@@ -126,18 +126,18 @@ private:
 
         inline bool operator==(const EventBreakpoint& other) const
         {
-            return eventName == other.eventName
+            return equal(eventName, other.eventName)
                 && caseSensitive == other.caseSensitive
                 && isRegex == other.isRegex;
         }
 
-        bool matches(const String&);
+        bool matches(StringImpl*);
 
     private:
         std::optional<Inspector::ContentSearchUtilities::Searcher> m_eventNameSearcher;
 
         // Avoid having to (re)match the searcher each time an event is dispatched.
-        HashSet<String> m_knownMatchingEventNames;
+        HashSet<RefPtr<StringImpl>> m_knownMatchingEventNames;
     };
     Vector<EventBreakpoint> m_listenerBreakpoints;
     RefPtr<JSC::Breakpoint> m_pauseOnAllIntervalsBreakpoint;
@@ -146,7 +146,7 @@ private:
     RefPtr<JSC::Breakpoint> m_pauseOnAllAnimationFramesBreakpoint;
 
     struct URLBreakpoint {
-        String url;
+        RefPtr<StringImpl> url;
         bool isRegex { false };
 
         // This is only used for the breakpoint configuration (i.e. it's irrelevant when comparing).
@@ -157,7 +157,7 @@ private:
 
         inline bool operator==(const URLBreakpoint& other) const
         {
-            return url == other.url && isRegex == other.isRegex;
+            return equal(url, other.url) && isRegex == other.isRegex;
         }
     };
     Vector<URLBreakpoint> m_urlBreakpoints;

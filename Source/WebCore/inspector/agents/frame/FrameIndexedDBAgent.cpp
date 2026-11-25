@@ -45,14 +45,14 @@ FrameIndexedDBAgent::FrameIndexedDBAgent(FrameAgentContext& context)
 
 FrameIndexedDBAgent::~FrameIndexedDBAgent() = default;
 
-Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> FrameIndexedDBAgent::frameForSecurityOrigin(const String& securityOrigin)
+Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> FrameIndexedDBAgent::frameForSecurityOrigin(StringImpl* securityOrigin)
 {
     Ref frame = m_inspectedFrame.get();
     RefPtr document = frame->document();
     if (!document)
         return makeUnexpected("Missing document for given frame"_s);
 
-    if (protect(document->securityOrigin())->toRawString() != securityOrigin)
+    if (!equal(protect(document->securityOrigin())->toRawString(), securityOrigin))
         return makeUnexpected("Frame target's document does not have given securityOrigin"_s);
 
     return frame;

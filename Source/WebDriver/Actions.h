@@ -48,21 +48,21 @@ struct PointerOrigin {
     enum class Type { Viewport, Pointer, Element };
 
     Type type;
-    std::optional<String> elementID;
+    std::optional<RefPtr<StringImpl>> elementID;
 };
 
 struct Action {
     enum class Type { None, Key, Pointer, Wheel };
     enum class Subtype { Pause, PointerUp, PointerDown, PointerMove, PointerCancel, KeyUp, KeyDown, Scroll };
 
-    Action(const String& id, Type type, Subtype subtype)
+    Action(StringImpl* id, Type type, Subtype subtype)
         : id(id)
         , type(type)
         , subtype(subtype)
     {
     }
 
-    String id;
+    RefPtr<StringImpl> id;
     Type type;
     Subtype subtype;
     std::optional<unsigned> duration;
@@ -75,7 +75,7 @@ struct Action {
     std::optional<int64_t> deltaX;
     std::optional<int64_t> deltaY;
 
-    std::optional<String> key;
+    std::optional<RefPtr<StringImpl>> key;
 };
 
 } // WebDriver

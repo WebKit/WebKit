@@ -66,14 +66,14 @@ class Download final : public IPC::MessageSender, public RefCountedAndCanMakeWea
     WTF_MAKE_TZONE_ALLOCATED(Download);
     WTF_MAKE_NONCOPYABLE(Download);
 public:
-    static Ref<Download> create(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
+    static Ref<Download> create(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, StringImpl* suggestedFilename = nullptr);
 #if PLATFORM(COCOA)
-    static Ref<Download> create(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { }, OptionSet<WebCore::AdvancedPrivacyProtections> = { });
+    static Ref<Download> create(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, StringImpl* suggestedFilename = nullptr, OptionSet<WebCore::AdvancedPrivacyProtections> = { });
 #endif
 
     ~Download();
 
-    void resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&&, std::span<const uint8_t> activityAccessToken);
+    void resume(std::span<const uint8_t> resumeData, StringImpl* path, SandboxExtension::Handle&&, std::span<const uint8_t> activityAccessToken);
     enum class IgnoreDidFailCallback : bool { No, Yes };
     void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&, IgnoreDidFailCallback);
 #if PLATFORM(COCOA)
@@ -91,7 +91,7 @@ public:
 
     void setSandboxExtension(RefPtr<SandboxExtension>&& sandboxExtension) { m_sandboxExtension = WTF::move(sandboxExtension); }
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
-    void didCreateDestination(const String& path);
+    void didCreateDestination(StringImpl* path);
     void didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite);
     void didFinish();
     void didFail(const WebCore::ResourceError&, std::span<const uint8_t> resumeData);
@@ -104,9 +104,9 @@ public:
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
 
 private:
-    Download(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
+    Download(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, StringImpl* suggestedFilename = nullptr);
 #if PLATFORM(COCOA)
-    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { }, OptionSet<WebCore::AdvancedPrivacyProtections> = { });
+    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, StringImpl* suggestedFilename = nullptr, OptionSet<WebCore::AdvancedPrivacyProtections> = { });
 #endif
 
     // IPC::MessageSender

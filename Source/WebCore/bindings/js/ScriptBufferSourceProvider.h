@@ -41,7 +41,7 @@ public:
 class ScriptBufferSourceProvider final : public JSC::SourceProvider, public AbstractScriptBufferHolder, public CanMakeWeakPtr<ScriptBufferSourceProvider> {
     WTF_MAKE_TZONE_ALLOCATED(ScriptBufferSourceProvider);
 public:
-    static Ref<ScriptBufferSourceProvider> create(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, String sourceURL, String preRedirectURL, const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
+    static Ref<ScriptBufferSourceProvider> create(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, RefPtr<StringImpl> sourceURL, RefPtr<StringImpl> preRedirectURL, const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
     {
         return adoptRef(*new ScriptBufferSourceProvider(scriptBuffer, sourceOrigin, WTF::move(sourceURL), WTF::move(preRedirectURL), startPosition, sourceType));
     }
@@ -61,7 +61,7 @@ public:
     void clearDecodedData() final
     {
         Locker locker { m_lock };
-        m_cachedScriptString = String();
+        m_cachedScriptString = nullptr;
     }
 
     void tryReplaceScriptBuffer(const ScriptBuffer& scriptBuffer) final
@@ -83,7 +83,7 @@ public:
     }
 
 private:
-    ScriptBufferSourceProvider(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType)
+    ScriptBufferSourceProvider(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, RefPtr<StringImpl>&& sourceURL, RefPtr<StringImpl>&& preRedirectURL, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType)
         : JSC::SourceProvider(sourceOrigin, WTF::move(sourceURL), WTF::move(preRedirectURL), JSC::SourceTaintedOrigin::Untainted, startPosition, sourceType)
         , m_scriptBuffer(scriptBuffer)
     {
@@ -110,7 +110,7 @@ private:
         if (!m_cachedScriptString) {
             m_cachedScriptString = m_scriptBuffer.toString();
             if (!m_scriptHash)
-                m_scriptHash = m_cachedScriptString.impl()->hash();
+                m_scriptHash = m_cachedScriptString.get()->hash();
         }
 
         return m_cachedScriptString;
@@ -119,7 +119,7 @@ private:
     ScriptBuffer m_scriptBuffer;
     mutable RefPtr<SharedBuffer> m_contiguousBuffer;
     mutable unsigned m_scriptHash { 0 };
-    mutable String m_cachedScriptString;
+    mutable RefPtr<StringImpl> m_cachedScriptString;
     mutable std::optional<bool> m_containsOnlyASCII;
     mutable Lock m_lock;
 };

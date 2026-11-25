@@ -33,34 +33,34 @@ namespace WebCore {
 
 class IDBError {
 public:
-    WEBCORE_EXPORT explicit IDBError(std::optional<ExceptionCode> = std::nullopt, const String& message = { });
+    WEBCORE_EXPORT explicit IDBError(std::optional<ExceptionCode> = std::nullopt, StringImpl* message = nullptr);
 
     static IDBError userDeleteError()
     {
-        return IDBError { ExceptionCode::UnknownError, "Database deleted by request of the user"_s };
+        return IDBError { ExceptionCode::UnknownError, "Database deleted by request of the user"_si };
     }
     
     static IDBError serverConnectionLostError()
     {
-        return IDBError { ExceptionCode::UnknownError, "Connection to Indexed Database server lost. Refresh the page to try again"_s };
+        return IDBError { ExceptionCode::UnknownError, "Connection to Indexed Database server lost. Refresh the page to try again"_si };
     }
 
     RefPtr<DOMException> toDOMException() const;
 
     std::optional<ExceptionCode> code() const { return m_code; }
-    String name() const;
-    String message() const;
-    const String& messageForSerialization() const LIFETIME_BOUND { return m_message; }
+    RefPtr<StringImpl> name() const;
+    RefPtr<StringImpl> message() const;
+    const RefPtr<StringImpl>& messageForSerialization() const LIFETIME_BOUND { return m_message; }
 
     bool isNull() const { return !m_code; }
     operator bool() const { return !isNull(); }
 
-    IDBError isolatedCopy() const & { return IDBError { m_code, m_message.isolatedCopy() }; }
-    IDBError isolatedCopy() && { return IDBError { m_code, WTF::move(m_message).isolatedCopy() }; }
+    IDBError isolatedCopy() const & { return IDBError { m_code, WTF::isolatedCopy(m_message) }; }
+    IDBError isolatedCopy() && { return IDBError { m_code, WTF::isolatedCopy(WTF::move(m_message)) }; }
 
 private:
     std::optional<ExceptionCode> m_code;
-    String m_message;
+    RefPtr<StringImpl> m_message;
 };
 
 } // namespace WebCore

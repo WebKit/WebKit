@@ -76,7 +76,7 @@ RefPtr<ServiceWorkerFetchTask> ServiceWorkerFetchTask::fromNavigationPreloader(W
     return adoptRef(*new ServiceWorkerFetchTask(swServerConnection, loader, std::exchange(task->m_preloader, { })));
 }
 
-Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::fromCache(NetworkResourceLoader& loader, NetworkStorageManager& manager, WebCore::ResourceRequest&& request, String&& cacheName)
+Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::fromCache(NetworkResourceLoader& loader, NetworkStorageManager& manager, WebCore::ResourceRequest&& request, RefPtr<StringImpl>&& cacheName)
 {
     Ref topOrigin = loader.parameters().topOrigin ? Ref { *loader.parameters().topOrigin } : SecurityOrigin::createOpaque();
     Ref clientOrigin = loader.parameters().sourceOrigin ? Ref { *loader.parameters().sourceOrigin } : SecurityOrigin::createOpaque();
@@ -136,7 +136,7 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
         m_timeoutTimer->startOneShot(protect(NetworkProcess::singleton())->serviceWorkerFetchTimeout());
     }
 
-    bool canUsePreloader = session && (m_shouldRaceNetworkAndFetchHandler || isNavigationRequest(loader.parameters().options.destination)) && m_currentRequest.httpMethod() == "GET"_s;
+    bool canUsePreloader = session && (m_shouldRaceNetworkAndFetchHandler || isNavigationRequest(loader.parameters().options.destination)) && equal(m_currentRequest.httpMethod(), "GET"_s);
 
     if (canUsePreloader && (m_shouldRaceNetworkAndFetchHandler || !isWorkerReady || registration.navigationPreloadState().enabled)) {
         NetworkLoadParameters parameters = loader.parameters().networkLoadParameters();
@@ -209,7 +209,7 @@ void ServiceWorkerFetchTask::contextClosed()
         return;
 
     if (m_wasHandled && !m_isLoadingFromPreloader) {
-        didFail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+        didFail(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "Service Worker context closed"_si });
         return;
     }
     cannotHandle();
@@ -235,12 +235,12 @@ void ServiceWorkerFetchTask::startFetch()
     auto request = m_currentRequest;
     cleanHTTPRequestHeadersForAccessControl(request, loader->parameters().httpHeadersToKeep);
 
-    String clientIdentifier;
+    RefPtr<StringImpl> clientIdentifier;
     if (loader->parameters().options.mode != FetchOptions::Mode::Navigate) {
         if (auto identifier = loader->parameters().options.clientIdentifier)
             clientIdentifier = identifier->toString();
     }
-    String resultingClientIdentifier;
+    RefPtr<StringImpl> resultingClientIdentifier;
     if (auto& identifier = loader->parameters().options.resultingClientIdentifier)
         resultingClientIdentifier = identifier->toString();
 
@@ -303,7 +303,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, const 
         return;
 #endif
 
-    SWFETCH_RELEASE_LOG("processResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, needsContinueDidReceiveResponseMessage=%d, source=%u)", response.httpStatusCode(), response.mimeType().utf8(), response.expectedContentLength(), needsContinueDidReceiveResponseMessage, static_cast<unsigned>(response.source()));
+    SWFETCH_RELEASE_LOG("processResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, needsContinueDidReceiveResponseMessage=%d, source=%u)", response.httpStatusCode(), utf8(response.mimeType()), response.expectedContentLength(), needsContinueDidReceiveResponseMessage, static_cast<unsigned>(response.source()));
     m_wasHandled = true;
     if (m_timeoutTimer)
         m_timeoutTimer->stop();
@@ -414,7 +414,7 @@ void ServiceWorkerFetchTask::didFail(const ResourceError& error)
     }
     cancelPreloadIfNecessary();
 
-    SWFETCH_RELEASE_LOG_ERROR("didFail: (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8(), error.errorCode());
+    SWFETCH_RELEASE_LOG_ERROR("didFail: (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", utf8(error.domain()), error.errorCode());
     protect(m_loader)->didFailLoading(error);
 }
 
@@ -641,7 +641,7 @@ void ServiceWorkerFetchTask::loadBodyFromPreloader()
     ASSERT(m_isLoadingFromPreloader);
     if (!m_preloader) {
         SWFETCH_RELEASE_LOG_ERROR("loadBodyFromPreloader preloader is null");
-        didFail(ResourceError(errorDomainWebKitInternal, 0, m_currentRequest.url(), "Request canceled from preloader"_s, ResourceError::Type::Cancellation));
+        didFail(ResourceError(StringImpl::create(errorDomainWebKitInternal).ptr(), 0, m_currentRequest.url(), "Request canceled from preloader"_si, ResourceError::Type::Cancellation));
         return;
     }
 
@@ -730,7 +730,7 @@ std::optional<SharedPreferencesForWebProcess> ServiceWorkerFetchTask::sharedPref
     return loader->connectionToWebProcess().sharedPreferencesForWebProcess();
 }
 
-void ServiceWorkerFetchTask::loadFromCache(NetworkStorageManager& manager, WebCore::ClientOrigin&& origin, WebCore::RetrieveRecordsOptions&& options, String&& cacheName)
+void ServiceWorkerFetchTask::loadFromCache(NetworkStorageManager& manager, WebCore::ClientOrigin&& origin, WebCore::RetrieveRecordsOptions&& options, RefPtr<StringImpl>&& cacheName)
 {
     RefPtr loader = m_loader;
     loader->setWorkerCacheLookupStart(MonotonicTime::now());

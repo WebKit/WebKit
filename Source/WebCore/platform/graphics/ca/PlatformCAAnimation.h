@@ -85,7 +85,7 @@ public:
     virtual Ref<PlatformCAAnimation> copy() const = 0;
     
     AnimationType animationType() const { return m_type; }
-    virtual String keyPath() const = 0;
+    virtual RefPtr<StringImpl> keyPath() const = 0;
     
     virtual CFTimeInterval beginTime() const = 0;
     virtual void setBeginTime(CFTimeInterval) = 0;
@@ -161,9 +161,9 @@ public:
 
     NODELETE bool isBasicAnimation() const;
 
-    NODELETE WEBCORE_EXPORT static String makeGroupKeyPath();
-    WEBCORE_EXPORT static String makeKeyPath(AnimatedProperty, FilterOperation::Type = FilterOperation::Type::None, int = 0);
-    WEBCORE_EXPORT static bool isValidKeyPath(const String&, AnimationType = AnimationType::Basic);
+    NODELETE WEBCORE_EXPORT static RefPtr<StringImpl> makeGroupKeyPath();
+    WEBCORE_EXPORT static RefPtr<StringImpl> makeKeyPath(AnimatedProperty, FilterOperation::Type = FilterOperation::Type::None, int = 0);
+    WEBCORE_EXPORT static bool isValidKeyPath(StringImpl*, AnimationType = AnimationType::Basic);
 
 protected:
     PlatformCAAnimation(AnimationType type = AnimationType::Basic)

@@ -126,25 +126,25 @@ void FunctionOverrides::reinstallOverrides()
     overrides.parseOverridesInFile(overridesFileName);
 }
 
-static void initializeOverrideInfo(const SourceCode& origCode, const String& newBody, FunctionOverrides::OverrideInfo& info)
+static void initializeOverrideInfo(const SourceCode& origCode, StringImpl* newBody, FunctionOverrides::OverrideInfo& info)
 {
     FunctionOverridesAssertScope assertScope;
-    String origProviderStr = origCode.provider()->source().toString();
+    RefPtr<StringImpl> origProviderStr = origCode.provider()->source().toString();
     unsigned origStart = origCode.startOffset();
-    unsigned origFunctionStart = origProviderStr.reverseFind("function"_s, origStart);
-    unsigned origBraceStart = origProviderStr.find('{', origStart);
+    unsigned origFunctionStart = reverseFind(origProviderStr, "function"_s, origStart);
+    unsigned origBraceStart = find(origProviderStr, '{', origStart);
     unsigned headerLength = origBraceStart - origFunctionStart;
     auto origHeaderView = StringView(origProviderStr).substring(origFunctionStart, headerLength);
 
-    String newProviderString = makeString(origHeaderView, newBody);
+    RefPtr<StringImpl> newProviderString = makeString(origHeaderView, newBody);
 
     auto overridden = "<overridden>"_s;
-    URL url({ }, overridden);
+    URL url({ }, StringImpl::create(overridden).ptr());
     Ref<SourceProvider> newProvider = StringSourceProvider::create(newProviderString, SourceOrigin { url }, overridden, SourceTaintedOrigin::Untainted);
 
-    info.parametersStartOffset = newProviderString.find('(');
+    info.parametersStartOffset = find(newProviderString, '(');
     info.functionStart = 0;
-    info.functionEnd = newProviderString.length() - 1;
+    info.functionEnd = length(newProviderString) - 1;
 
     info.sourceCode =
         SourceCode(WTF::move(newProvider), info.parametersStartOffset, info.functionEnd + 1);
@@ -156,19 +156,19 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     RELEASE_ASSERT(Options::functionOverrides());
     FunctionOverrides& overrides = FunctionOverrides::overrides();
 
-    String sourceString = origCode.view().toString();
-    size_t sourceBodyStart = sourceString.find('{');
+    RefPtr<StringImpl> sourceString = origCode.view().toString();
+    size_t sourceBodyStart = find(sourceString, '{');
     if (sourceBodyStart == notFound)
         return false;
-    String sourceBodyString = sourceString.substring(sourceBodyStart);
+    RefPtr<StringImpl> sourceBodyString = substring(sourceString, sourceBodyStart);
 
-    String newBody;
+    RefPtr<StringImpl> newBody;
     {
         Locker locker { overrides.m_lock };
-        auto it = overrides.m_entries.find(WTF::move(sourceBodyString).isolatedCopy());
+        auto it = overrides.m_entries.find(isolatedCopy(WTF::move(sourceBodyString)));
         if (it == overrides.m_entries.end())
             return false;
-        newBody = it->value.isolatedCopy();
+        newBody = isolatedCopy(it->value);
     }
 
     initializeOverrideInfo(origCode, newBody, result);
@@ -199,7 +199,7 @@ NODELETE static bool hasDisallowedCharacters(const char* str, size_t length)
     return false;
 }
 
-static String parseClause(const char* keyword, size_t keywordLength, FILE* file, const char* line, char* buffer, size_t bufferSize)
+static RefPtr<StringImpl> parseClause(const char* keyword, size_t keywordLength, FILE* file, const char* line, char* buffer, size_t bufferSize)
 {
     FunctionOverridesAssertScope assertScope;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -218,12 +218,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("Missing { after '", keyword, "' clause start delimiter:\n", line, "\n"));
 
     size_t delimiterLength = delimiterEnd - delimiterStart;
-    String delimiter = String::fromLatin1(unsafeMakeSpan(delimiterStart, delimiterLength));
+    RefPtr<StringImpl> delimiter = StringImpl::fromLatin1(unsafeMakeSpan(delimiterStart, delimiterLength));
 
     if (hasDisallowedCharacters(delimiterStart, delimiterLength))
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("Delimiter '", delimiter, "' cannot have '{', '}', or whitespace:\n", line, "\n"));
 
-    auto terminatorCString = makeString('}', delimiter).ascii();
+    auto terminatorCString = ascii(makeString('}', delimiter));
     const char* terminator = terminatorCString.data();
     line = delimiterEnd; // Start from the {.
 
@@ -273,14 +273,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         size_t keywordLength;
         
         keywordLength = sizeof("override") - 1;
-        String keyStr = parseClause("override", keywordLength, file, line, buffer, sizeof(buffer));
+        RefPtr<StringImpl> keyStr = parseClause("override", keywordLength, file, line, buffer, sizeof(buffer));
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         line = fgets(buffer, sizeof(buffer), file);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         keywordLength = sizeof("with") - 1;
-        String valueStr = parseClause("with", keywordLength, file, line, buffer, sizeof(buffer));
+        RefPtr<StringImpl> valueStr = parseClause("with", keywordLength, file, line, buffer, sizeof(buffer));
 
         m_entries.add(keyStr, valueStr);
     }

@@ -200,7 +200,7 @@ private:
         return adoptRef(*new MediaPlayerPrivateMediaStreamAVFObjC(player));
     }
 
-    void getSupportedTypes(HashSet<String>& types) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types) const final
     {
         return MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(types);
     }
@@ -224,7 +224,7 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::isAvailable()
     return PAL::isAVFoundationFrameworkAvailable() && PAL::isCoreMediaFrameworkAvailable() && PAL::getAVSampleBufferDisplayLayerClassSingleton();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<RefPtr<StringImpl>>& types)
 {
     // FIXME: Is it really correct to list no supported types?
     types.clear();
@@ -495,7 +495,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
 #pragma mark -
 #pragma mark MediaPlayerPrivateInterface Overrides
 
-void MediaPlayerPrivateMediaStreamAVFObjC::load(const String&)
+void MediaPlayerPrivateMediaStreamAVFObjC::load(StringImpl*)
 {
     // This media engine only supports MediaStream URLs.
     scheduleDeferredTask([weakThis = WeakPtr { *this }] {
@@ -913,7 +913,7 @@ enum class TrackKind {
 };
 
 template <typename RefT>
-void updateTracksOfKind(MemoryCompactRobinHoodHashMap<String, RefT>& trackMap, TrackKind trackKind, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), NOESCAPE const Function<void(std::reference_wrapper<typename std::remove_pointer<typename RefT::PtrTraits::StorageType>::type>, int, TrackState)>& configureTrack)
+void updateTracksOfKind(MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefT>& trackMap, TrackKind trackKind, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), NOESCAPE const Function<void(std::reference_wrapper<typename std::remove_pointer<typename RefT::PtrTraits::StorageType>::type>, int, TrackState)>& configureTrack)
 {
     Vector<RefT> removedTracks;
     Vector<RefT> addedTracks;
@@ -1035,7 +1035,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             track.setVolume(protectedThis->m_volume);
             track.setMuted(protectedThis->m_muted);
             track.setEnabled(track.streamTrack().enabled() && !track.streamTrack().muted());
-            if (!deviceId.isNull())
+            if (deviceId)
                 track.setAudioOutputDevice(deviceId);
 
             if (protectedThis->playing())
@@ -1172,9 +1172,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateLayersAsNeeded()
         destroyLayers();
 }
 
-String MediaPlayerPrivateMediaStreamAVFObjC::engineDescription() const
+RefPtr<StringImpl> MediaPlayerPrivateMediaStreamAVFObjC::engineDescription() const
 {
-    static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("AVFoundation MediaStream Engine"));
+    static NeverDestroyed<RefPtr<StringImpl>> description(MAKE_STATIC_STRING_IMPL("AVFoundation MediaStream Engine"));
     return description;
 }
 
@@ -1224,7 +1224,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::audioOutputDeviceChanged()
     if (!player)
         return;
     auto deviceId = player->audioOutputDeviceId();
-    if (deviceId.isEmpty())
+    if (isEmpty(deviceId))
         deviceId = AudioMediaStreamTrackRenderer::defaultDeviceID();
     for (auto& audioTrack : m_audioTrackMap.values())
         audioTrack->setAudioOutputDevice(deviceId);

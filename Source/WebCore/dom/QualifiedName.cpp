@@ -32,27 +32,27 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedName);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedNameQualifiedNameImpl);
 
-QualifiedName::QualifiedNameImpl::QualifiedNameImpl(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
+QualifiedName::QualifiedNameImpl::QualifiedNameImpl(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI)
     : m_namespace(Namespace::Unknown)
     , m_nodeName(NodeName::Unknown)
     , m_prefix(prefix)
     , m_localName(localName)
     , m_namespaceURI(namespaceURI)
 {
-    ASSERT(!namespaceURI.isEmpty() || namespaceURI.isNull());
+    ASSERT(!isEmpty(namespaceURI) || !namespaceURI);
 }
 
-NODELETE static QualifiedNameComponents makeComponents(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
+NODELETE static QualifiedNameComponents makeComponents(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI)
 {
-    return { prefix.impl(), localName.impl(), namespaceURI.isEmpty() ? nullptr : namespaceURI.impl() };
+    return { prefix, localName, isEmpty(namespaceURI) ? nullptr : namespaceURI };
 }
 
-QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
+QualifiedName::QualifiedName(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI)
     : m_impl(threadGlobalDataSingleton().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI)))
 {
 }
 
-QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace nodeNamespace, NodeName nodeName)
+QualifiedName::QualifiedName(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI, Namespace nodeNamespace, NodeName nodeName)
     : m_impl(threadGlobalDataSingleton().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI), nodeNamespace, nodeName))
 {
 }
@@ -77,16 +77,16 @@ void QualifiedName::init()
     initialized = true;
 }
 
-const AtomString& QualifiedName::localNameUppercase() const
+const RefPtr<AtomStringImpl>& QualifiedName::localNameUppercase() const
 {
     if (!m_impl->m_localNameUpper)
-        m_impl->m_localNameUpper = m_impl->m_localName.convertToASCIIUppercase();
+        m_impl->m_localNameUpper = convertToASCIIUppercase(m_impl->m_localName);
     return m_impl->m_localNameUpper;
 }
 
 unsigned QualifiedName::QualifiedNameImpl::computeHash() const
 {
-    QualifiedNameComponents components = { m_prefix.impl(), m_localName.impl(), m_namespaceURI.impl() };
+    QualifiedNameComponents components = { m_prefix.get(), m_localName.get(), m_namespaceURI.get() };
     return WTF::computeHash(components);
 }
 

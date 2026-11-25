@@ -47,7 +47,7 @@ class ConsoleClient : public CanMakeWeakPtr<ConsoleClient>, public CanMakeThread
 public:
     virtual ~ConsoleClient() { }
 
-    JS_EXPORT_PRIVATE static void printConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber);
+    JS_EXPORT_PRIVATE static void printConsoleMessage(MessageSource, MessageType, MessageLevel, StringImpl* message, StringImpl* url, unsigned lineNumber, unsigned columnNumber);
     JS_EXPORT_PRIVATE static void printConsoleMessageWithArguments(MessageSource, MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
 
     void logWithLevel(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&, MessageLevel);
@@ -62,14 +62,14 @@ public:
     void groupEnd(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
 
     virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;
-    virtual void count(JSGlobalObject*, const String& label) = 0;
-    virtual void countReset(JSGlobalObject*, const String& label) = 0;
-    virtual void profile(JSGlobalObject*, const String& title) = 0;
-    virtual void profileEnd(JSGlobalObject*, const String& title) = 0;
-    virtual void takeHeapSnapshot(JSGlobalObject*, const String& title) = 0;
-    virtual void time(JSGlobalObject*, const String& label) = 0;
-    virtual void timeLog(JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&) = 0;
-    virtual void timeEnd(JSGlobalObject*, const String& label) = 0;
+    virtual void count(JSGlobalObject*, StringImpl* label) = 0;
+    virtual void countReset(JSGlobalObject*, StringImpl* label) = 0;
+    virtual void profile(JSGlobalObject*, StringImpl* title) = 0;
+    virtual void profileEnd(JSGlobalObject*, StringImpl* title) = 0;
+    virtual void takeHeapSnapshot(JSGlobalObject*, StringImpl* title) = 0;
+    virtual void time(JSGlobalObject*, StringImpl* label) = 0;
+    virtual void timeLog(JSGlobalObject*, StringImpl* label, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void timeEnd(JSGlobalObject*, StringImpl* label) = 0;
     virtual void timeStamp(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;
     virtual void record(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;
     virtual void recordEnd(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;

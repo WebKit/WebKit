@@ -109,7 +109,7 @@ class SourceProvider : public ThreadSafeRefCounted<SourceProvider> {
 public:
     static const intptr_t nullID = 1;
 
-    JS_EXPORT_PRIVATE SourceProvider(const SourceOrigin&, String&& sourceURL, String&& preRedirectURL, SourceTaintedness, const TextPosition& startPosition, SourceProviderSourceType);
+    JS_EXPORT_PRIVATE SourceProvider(const SourceOrigin&, RefPtr<StringImpl>&& sourceURL, RefPtr<StringImpl>&& preRedirectURL, SourceTaintedness, const TextPosition& startPosition, SourceProviderSourceType);
 
     JS_EXPORT_PRIVATE virtual ~SourceProvider();
 
@@ -128,11 +128,11 @@ public:
     const SourceOrigin& sourceOrigin() const LIFETIME_BOUND { return m_sourceOrigin; }
 
     // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same...
-    const String& sourceURL() const LIFETIME_BOUND { return m_sourceURL; }
-    const String& sourceURLStripped();
-    const String& preRedirectURL() const LIFETIME_BOUND { return m_preRedirectURL; }
-    const String& sourceURLDirective() const LIFETIME_BOUND { return m_sourceURLDirective; }
-    const String& sourceMappingURLDirective() const LIFETIME_BOUND { return m_sourceMappingURLDirective; }
+    const RefPtr<StringImpl>& sourceURL() const LIFETIME_BOUND { return m_sourceURL; }
+    const RefPtr<StringImpl>& sourceURLStripped();
+    const RefPtr<StringImpl>& preRedirectURL() const LIFETIME_BOUND { return m_preRedirectURL; }
+    const RefPtr<StringImpl>& sourceURLDirective() const LIFETIME_BOUND { return m_sourceURLDirective; }
+    const RefPtr<StringImpl>& sourceMappingURLDirective() const LIFETIME_BOUND { return m_sourceMappingURLDirective; }
 
     TextPosition startPosition() const { return m_startPosition; }
     SourceProviderSourceType sourceType() const { return m_sourceType; }
@@ -156,8 +156,8 @@ public:
         return m_id;
     }
 
-    void setSourceURLDirective(const String& sourceURLDirective) { m_sourceURLDirective = sourceURLDirective; }
-    void setSourceMappingURLDirective(const String& sourceMappingURLDirective) { m_sourceMappingURLDirective = sourceMappingURLDirective; }
+    void setSourceURLDirective(StringImpl* sourceURLDirective) { m_sourceURLDirective = sourceURLDirective; }
+    void setSourceMappingURLDirective(StringImpl* sourceMappingURLDirective) { m_sourceMappingURLDirective = sourceMappingURLDirective; }
     void setSourceTaintedOrigin(SourceTaintKind kind, SourceTaintedOrigin taintedness) { m_taintedness[kind] = taintedness; }
 
     SourceTaintedness taintedness() const { return m_taintedness; }
@@ -215,11 +215,11 @@ private:
     std::atomic<unsigned> m_lockingCount { 0 };
     SourceProviderSourceType m_sourceType;
     SourceOrigin m_sourceOrigin;
-    String m_sourceURL;
-    String m_sourceURLStripped;
-    String m_preRedirectURL;
-    String m_sourceURLDirective;
-    String m_sourceMappingURLDirective;
+    RefPtr<StringImpl> m_sourceURL;
+    RefPtr<StringImpl> m_sourceURLStripped;
+    RefPtr<StringImpl> m_preRedirectURL;
+    RefPtr<StringImpl> m_sourceURLDirective;
+    RefPtr<StringImpl> m_sourceMappingURLDirective;
     TextPosition m_startPosition;
     SourceID m_id { 0 };
     SourceTaintedness m_taintedness;
@@ -235,7 +235,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
 class StringSourceProvider : public SourceProvider {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringSourceProvider, StringSourceProvider);
 public:
-    static Ref<StringSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, String sourceURL, SourceTaintedness taintedness, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
+    static Ref<StringSourceProvider> create(StringImpl* source, const SourceOrigin& sourceOrigin, RefPtr<StringImpl> sourceURL, SourceTaintedness taintedness, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
     {
         return adoptRef(*new StringSourceProvider(source, sourceOrigin, taintedness, WTF::move(sourceURL), startPosition, sourceType));
     }
@@ -251,9 +251,9 @@ public:
     }
 
 protected:
-    StringSourceProvider(const String& source, const SourceOrigin& sourceOrigin, SourceTaintedness taintedness, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
-        : SourceProvider(sourceOrigin, WTF::move(sourceURL), String(), taintedness, startPosition, sourceType)
-        , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
+    StringSourceProvider(StringImpl* source, const SourceOrigin& sourceOrigin, SourceTaintedness taintedness, RefPtr<StringImpl>&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
+        : SourceProvider(sourceOrigin, WTF::move(sourceURL), nullptr, taintedness, startPosition, sourceType)
+        , m_source(!source ? *StringImpl::empty() : *source)
     {
     }
 
@@ -267,19 +267,19 @@ public:
     virtual const uint8_t* data() = 0;
     virtual size_t size() const = 0;
 protected:
-    JS_EXPORT_PRIVATE BaseWebAssemblySourceProvider(const SourceOrigin&, String&& sourceURL);
+    JS_EXPORT_PRIVATE BaseWebAssemblySourceProvider(const SourceOrigin&, RefPtr<StringImpl>&& sourceURL);
 };
 
 class WebAssemblySourceProvider final : public BaseWebAssemblySourceProvider {
 public:
-    static Ref<WebAssemblySourceProvider> create(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String sourceURL)
+    static Ref<WebAssemblySourceProvider> create(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, RefPtr<StringImpl> sourceURL)
     {
         return adoptRef(*new WebAssemblySourceProvider(WTF::move(data), sourceOrigin, WTF::move(sourceURL)));
     }
 
     unsigned hash() const final
     {
-        return m_source.impl()->hash();
+        return m_source.get()->hash();
     }
 
     StringView source() const final
@@ -303,14 +303,14 @@ public:
     }
 
 private:
-    WebAssemblySourceProvider(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String&& sourceURL)
+    WebAssemblySourceProvider(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, RefPtr<StringImpl>&& sourceURL)
         : BaseWebAssemblySourceProvider(sourceOrigin, WTF::move(sourceURL))
-        , m_source("[WebAssembly source]"_s)
+        , m_source("[WebAssembly source]"_si)
         , m_data(WTF::move(data))
     {
     }
 
-    String m_source;
+    RefPtr<StringImpl> m_source;
     Vector<uint8_t> m_data;
 };
 #endif

@@ -36,7 +36,7 @@ class CryptoAlgorithmRsaHashedImportParams final : public CryptoAlgorithmParamet
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmRsaHashedImportParams);
 public:
     // FIXME: Consider merging hash and hashIdentifier.
-    Variant<JSC::Strong<JSC::JSObject>, String> hash;
+    Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
     CryptoAlgorithmRsaHashedImportParams(CryptoAlgorithmIdentifier identifier)

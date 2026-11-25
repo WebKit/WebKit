@@ -55,7 +55,7 @@ public:
     using ArtworkImageLoaderCallback = Function<void(Image*)>;
     // The callback will only be called upon success or explicit failure to retrieve the image. If the operation is interrupted following the
     // destruction of the ArtworkImageLoader, the callback won't be called.
-    NODELETE WEBCORE_EXPORT static Ref<ArtworkImageLoader> create(Document&, const String& src, ArtworkImageLoaderCallback&&);
+    NODELETE WEBCORE_EXPORT static Ref<ArtworkImageLoader> create(Document&, StringImpl* src, ArtworkImageLoaderCallback&&);
     WEBCORE_EXPORT ~ArtworkImageLoader();
 
     WEBCORE_EXPORT void requestImageResource();
@@ -68,10 +68,10 @@ protected:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
 private:
-    ArtworkImageLoader(Document&, const String& src, ArtworkImageLoaderCallback&&);
+    ArtworkImageLoader(Document&, StringImpl* src, ArtworkImageLoaderCallback&&);
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    const String m_src;
+    const RefPtr<StringImpl> m_src;
     ArtworkImageLoaderCallback m_callback;
     CachedResourceHandle<CachedImage> m_cachedImage;
 };
@@ -85,32 +85,32 @@ public:
     void setMediaSession(MediaSession&);
     void resetMediaSession();
 
-    const String& title() const LIFETIME_BOUND { return m_metadata.title; }
-    void setTitle(const String&);
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_metadata.title; }
+    void setTitle(StringImpl*);
 
-    const String& artist() const LIFETIME_BOUND { return m_metadata.artist; }
-    void setArtist(const String&);
+    const RefPtr<StringImpl>& artist() const LIFETIME_BOUND { return m_metadata.artist; }
+    void setArtist(StringImpl*);
 
-    const String& album() const LIFETIME_BOUND { return m_metadata.album; }
-    void setAlbum(const String&);
+    const RefPtr<StringImpl>& album() const LIFETIME_BOUND { return m_metadata.album; }
+    void setAlbum(StringImpl*);
 
     const Vector<MediaImage>& artwork() const LIFETIME_BOUND { return m_metadata.artwork; }
     ExceptionOr<void> setArtwork(ScriptExecutionContext&, Vector<MediaImage>&&);
 
-    const String& artworkSrc() const LIFETIME_BOUND { return m_artworkImageSrc; }
+    const RefPtr<StringImpl>& artworkSrc() const LIFETIME_BOUND { return m_artworkImageSrc; }
     const std::optional<SizedImage>& artworkImage() const { return m_artworkImage; }
 
     const MediaSessionMetadata& metadata() const LIFETIME_BOUND { return m_metadata; }
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
-    const String& trackIdentifier() const LIFETIME_BOUND { return m_metadata.trackIdentifier; }
-    void setTrackIdentifier(const String&);
+    const RefPtr<StringImpl>& trackIdentifier() const LIFETIME_BOUND { return m_metadata.trackIdentifier; }
+    void setTrackIdentifier(StringImpl*);
 #endif
 
 private:
     struct Pair {
         float score;
-        String src;
+        RefPtr<StringImpl> src;
     };
 
     MediaMetadata();
@@ -123,7 +123,7 @@ private:
     WeakPtr<MediaSession> m_session;
     MediaSessionMetadata m_metadata;
     RefPtr<ArtworkImageLoader> m_artworkLoader;
-    String m_artworkImageSrc;
+    RefPtr<StringImpl> m_artworkImageSrc;
     std::optional<SizedImage> m_artworkImage;
     Vector<URL> m_defaultImages;
 };

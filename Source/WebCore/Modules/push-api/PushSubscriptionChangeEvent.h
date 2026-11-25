@@ -33,15 +33,15 @@ namespace WebCore {
 class PushSubscriptionChangeEvent final : public ExtendableEvent {
     WTF_MAKE_TZONE_ALLOCATED(PushSubscriptionChangeEvent);
 public:
-    static Ref<PushSubscriptionChangeEvent> create(const AtomString&, PushSubscriptionChangeEventInit&&, IsTrusted = IsTrusted::No);
-    NODELETE static Ref<PushSubscriptionChangeEvent> create(const AtomString&, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
+    static Ref<PushSubscriptionChangeEvent> create(AtomStringImpl*, PushSubscriptionChangeEventInit&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<PushSubscriptionChangeEvent> create(AtomStringImpl*, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
     ~PushSubscriptionChangeEvent();
 
     PushSubscription* newSubscription() { return m_newSubscription.get(); }
     PushSubscription* oldSubscription() { return m_oldSubscription.get(); }
 
 private:
-    PushSubscriptionChangeEvent(const AtomString&, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
+    PushSubscriptionChangeEvent(AtomStringImpl*, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
 
     const RefPtr<PushSubscription> m_newSubscription;
     const RefPtr<PushSubscription> m_oldSubscription;

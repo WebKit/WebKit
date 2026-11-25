@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
+void ThemeCocoa::drawNamedImage(StringImpl* name, GraphicsContext& context, const FloatSize& size) const
 {
-    if (name == "wireless-playback"_s) {
+    if (equal(name, "wireless-playback"_s)) {
         GraphicsContextStateSaver stateSaver(context);
         context.setFillColor(Color::black);
 
@@ -72,12 +72,12 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
     }
 
 #if ENABLE(APPLE_PAY)
-    if (name == "apple-pay-logo-black"_s) {
+    if (equal(name, "apple-pay-logo-black"_s)) {
         context.drawSystemImage(ApplePayLogoSystemImage::create(ApplePayLogoStyle::Black), FloatRect(FloatPoint::zero(), size));
         return;
     }
 
-    if (name == "apple-pay-logo-white"_s) {
+    if (equal(name, "apple-pay-logo-white"_s)) {
         context.drawSystemImage(ApplePayLogoSystemImage::create(ApplePayLogoStyle::White), FloatRect(FloatPoint::zero(), size));
         return;
     }
@@ -86,14 +86,14 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
     Theme::drawNamedImage(name, context, size);
 }
 
-String ThemeCocoa::invertedNamedImage(const String& name) const
+RefPtr<StringImpl> ThemeCocoa::invertedNamedImage(StringImpl* name) const
 {
 #if ENABLE(APPLE_PAY)
-    if (name == "apple-pay-logo-black"_s)
-        return "apple-pay-logo-white"_s;
+    if (equal(name, "apple-pay-logo-black"_s))
+        return "apple-pay-logo-white"_si;
 
-    if (name == "apple-pay-logo-white"_s)
-        return "apple-pay-logo-black"_s;
+    if (equal(name, "apple-pay-logo-white"_s))
+        return "apple-pay-logo-black"_si;
 #endif
 
     return name;

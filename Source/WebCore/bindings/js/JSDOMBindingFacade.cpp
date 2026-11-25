@@ -259,7 +259,7 @@ JSC::JSValue freezeObject(JSC::JSGlobalObject& globalObject, JSC::JSObject* obje
 
 JSC::JSBoundFunction* createBoundFunction(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSObject* target, JSC::JSValue boundThis, JSC::ArgList boundArgs, double length, ASCIILiteral sourceName)
 {
-    return JSC::JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, JSC::jsEmptyString(vm), JSC::makeSource(sourceName, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
+    return JSC::JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, JSC::jsEmptyString(vm), JSC::makeSource(StringImpl::create(sourceName).ptr(), JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
 }
 
 bool fillInternalBuiltinResultObjects(JSC::JSGlobalObject& globalObject, JSC::JSValue value, std::span<JSC::Strong<JSC::JSObject>> result)

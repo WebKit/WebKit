@@ -54,7 +54,7 @@ public:
         std::optional<double> gamma;
     };
 
-    static Ref<DeviceMotionEvent> create(const AtomString& eventType, DeviceMotionData* deviceMotionData)
+    static Ref<DeviceMotionEvent> create(AtomStringImpl* eventType, DeviceMotionData* deviceMotionData)
     {
         return adoptRef(*new DeviceMotionEvent(eventType, deviceMotionData));
     }
@@ -69,7 +69,7 @@ public:
     NODELETE std::optional<RotationRate> rotationRate() const;
     NODELETE std::optional<double> interval() const;
 
-    void initDeviceMotionEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<Acceleration>&&, std::optional<Acceleration>&&, std::optional<RotationRate>&&, std::optional<double>);
+    void initDeviceMotionEvent(AtomStringImpl* type, bool bubbles, bool cancelable, std::optional<Acceleration>&&, std::optional<Acceleration>&&, std::optional<RotationRate>&&, std::optional<double>);
 
 #if ENABLE(DEVICE_ORIENTATION)
     using PermissionState = DeviceOrientationOrMotionPermissionState;
@@ -79,7 +79,7 @@ public:
 
 private:
     DeviceMotionEvent();
-    DeviceMotionEvent(const AtomString& eventType, DeviceMotionData*);
+    DeviceMotionEvent(AtomStringImpl* eventType, DeviceMotionData*);
 
     RefPtr<DeviceMotionData> m_deviceMotionData;
 };

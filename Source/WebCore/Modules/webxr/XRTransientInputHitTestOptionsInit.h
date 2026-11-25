@@ -36,7 +36,7 @@ namespace WebCore {
 
 // https://immersive-web.github.io/hit-test/#transient-input-hit-test-options-dictionary
 struct XRTransientInputHitTestOptionsInit {
-    String profile;
+    RefPtr<StringImpl> profile;
     Vector<XRHitTestTrackableType> entityTypes;
     RefPtr<WebXRRay> offsetRay;
 };

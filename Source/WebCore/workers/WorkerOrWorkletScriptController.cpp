@@ -230,7 +230,7 @@ void WorkerOrWorkletScriptController::setException(JSC::Exception* exception)
     throwException(lexicalGlobalObject, scope, exception);
 }
 
-void WorkerOrWorkletScriptController::disableEval(const String& errorMessage)
+void WorkerOrWorkletScriptController::disableEval(StringImpl* errorMessage)
 {
     initScriptIfNeeded();
     JSLockHolder lock { vm() };
@@ -238,7 +238,7 @@ void WorkerOrWorkletScriptController::disableEval(const String& errorMessage)
     m_globalScopeWrapper->setEvalEnabled(false, errorMessage);
 }
 
-void WorkerOrWorkletScriptController::disableWebAssembly(const String& errorMessage)
+void WorkerOrWorkletScriptController::disableWebAssembly(StringImpl* errorMessage)
 {
     initScriptIfNeeded();
     JSLockHolder lock { vm() };
@@ -254,7 +254,7 @@ void WorkerOrWorkletScriptController::setTrustedTypesEnforcement(JSC::TrustedTyp
     m_globalScopeWrapper->setTrustedTypesEnforcement(enforcement);
 }
 
-void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, String* returnedExceptionMessage)
+void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, RefPtr<StringImpl>* returnedExceptionMessage)
 {
     if (isExecutionForbidden())
         return;
@@ -272,7 +272,7 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
     }
 }
 
-auto WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage) -> ParseResult
+auto WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedPtr<JSC::Exception>& returnedException, RefPtr<StringImpl>* returnedExceptionMessage) -> ParseResult
 {
     if (isExecutionForbidden())
         return ParseResult::Failed;
@@ -303,7 +303,7 @@ auto WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
         if (auto* errorInstance = dynamicDowncast<JSC::ErrorInstance>(returnedException->value())) {
             if (errorInstance->isParseError()) {
                 JSValue errorSourceURL = errorInstance->getDirect(vm, vm.propertyNames->sourceURL);
-                if (errorSourceURL && errorSourceURL.isString() && asString(errorSourceURL)->tryGetValue() == jsSourceCode.provider()->sourceURL())
+                if (errorSourceURL && errorSourceURL.isString() && equal(asString(errorSourceURL)->tryGetValue(), jsSourceCode.provider()->sourceURL()))
                     isParseErrorForThisSource = true;
             }
         }
@@ -315,7 +315,7 @@ auto WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
                 *returnedExceptionMessage = returnedException->value().toWTFString(&globalObject);
         } else {
             // Overwrite the detailed error with a generic error.
-            String genericErrorMessage { "Script error."_s };
+            RefPtr<StringImpl> genericErrorMessage { "Script error."_si };
             if (returnedExceptionMessage)
                 *returnedExceptionMessage = genericErrorMessage;
             returnedException = JSC::Exception::create(vm, createError(&globalObject, genericErrorMessage));
@@ -387,7 +387,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
         scope.assertNoExceptionExceptTermination();
         RETURN_IF_EXCEPTION(scope, false);
 
-        auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [protector](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
+        auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, nullString(), [protector](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
             VM& vm = globalObject->vm();
             JSLockHolder lock { vm };
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -397,7 +397,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
             return JSValue::encode(jsUndefined());
         });
 
-        auto& rejectHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [protector](JSGlobalObject* globalObject, CallFrame* callFrame) {
+        auto& rejectHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, nullString(), [protector](JSGlobalObject* globalObject, CallFrame* callFrame) {
             VM& vm = globalObject->vm();
             JSLockHolder lock { vm };
             JSValue errorValue = callFrame->argument(0);
@@ -478,7 +478,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
     // For example, the main thread can postMessage just after creating a Worker. In that case, postMessage's
     // task is queued in WorkerRunLoop before start running module scripts. This task should not be discarded
     // in the following driving of the RunLoop which mainly attempt to collect initial load of module scripts.
-    String taskMode = WorkerModuleScriptLoader::taskMode();
+    RefPtr<StringImpl> taskMode = WorkerModuleScriptLoader::taskMode();
 
     // Allow tasks scheduled from the WorkerEventLoop.
     constexpr bool allowEventLoopTasks = true;
@@ -493,7 +493,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
     return success;
 }
 
-void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher& scriptFetcher, const ScriptSourceCode& sourceCode, String* returnedExceptionMessage)
+void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher& scriptFetcher, const ScriptSourceCode& sourceCode, RefPtr<StringImpl>* returnedExceptionMessage)
 {
     if (isExecutionForbidden())
         return;
@@ -518,7 +518,7 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
             if (returnedExceptionMessage)
                 *returnedExceptionMessage = returnedException->value().toWTFString(&globalObject);
         } else {
-            String genericErrorMessage { "Script error."_s };
+            RefPtr<StringImpl> genericErrorMessage { "Script error."_si };
             if (returnedExceptionMessage)
                 *returnedExceptionMessage = genericErrorMessage;
         }
@@ -530,7 +530,7 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
     if (promise) {
         constexpr bool fromModule = true;
 
-        JSC::JSValue onRejected = JSC::JSNativeStdFunction::create(vm, &globalObject, 1, { }, [](JSGlobalObject* globalObject, CallFrame* callFrame) -> EncodedJSValue {
+        JSC::JSValue onRejected = JSC::JSNativeStdFunction::create(vm, &globalObject, 1, nullptr, [](JSGlobalObject* globalObject, CallFrame* callFrame) -> EncodedJSValue {
             reportException(globalObject, callFrame->argument(0), nullptr, fromModule);
             return encodedJSUndefined();
         });
@@ -573,7 +573,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
         completion->complete(WTF::move(exception));
     });
 
-    auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [task, scriptFetcher](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
+    auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, nullString(), [task, scriptFetcher](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
         // task->run(std::nullopt);
         VM& vm = globalObject->vm();
         JSLockHolder lock { vm };
@@ -599,21 +599,21 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
         }
 
         auto report = [context, moduleKey](JSGlobalObject* globalObject, JSValue error) {
-            String message;
+            RefPtr<StringImpl> message;
             if (context->canIncludeErrorDetails(nullptr, moduleKey.string())) {
                 // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
                 // Do we need to do anything to handle that properly, if it, say, raises another exception?
                 message = error.toWTFString(globalObject);
             } else
-                message = "Script error."_s;
-            context->reportException(message, { }, { }, { }, { }, { }, nullptr, true);
+                message = "Script error."_si;
+            context->reportException(message, { }, { }, nullptr, { }, { }, nullptr, true);
         };
 
         if (returnedException) {
             report(globalObject, returnedException->value());
             task->run(std::nullopt);
         } else {
-            JSC::JSValue onRejected = JSC::JSNativeStdFunction::create(vm, globalObject, 1, { }, [report](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
+            JSC::JSValue onRejected = JSC::JSNativeStdFunction::create(vm, globalObject, 1, nullptr, [report](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
                 report(globalObject, callFrame->argument(0));
                 return encodedJSUndefined();
             }, promise);
@@ -630,7 +630,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
         return JSValue::encode(jsUndefined());
     });
 
-    auto& rejectHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [task](JSGlobalObject* globalObject, CallFrame* callFrame) {
+    auto& rejectHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, nullString(), [task](JSGlobalObject* globalObject, CallFrame* callFrame) {
         VM& vm = globalObject->vm();
         JSLockHolder lock { vm };
         JSValue errorValue = callFrame->argument(0);
@@ -638,7 +638,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
             auto* object = JSC::asObject(errorValue);
             if (JSValue failureKindValue = object->getDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName())) {
                 auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                String message = retrieveErrorMessageWithoutName(*globalObject, vm, object, catchScope);
+                RefPtr<StringImpl> message = retrieveErrorMessageWithoutName(*globalObject, vm, object, catchScope);
                 switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
                 case ModuleFetchFailureKind::WasFetchError:
                 case ModuleFetchFailureKind::WasResolveError:
@@ -656,13 +656,13 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
                 switch (error->errorType()) {
                 case ErrorType::TypeError: {
                     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                    String message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
+                    RefPtr<StringImpl> message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
                     task->run(Exception { ExceptionCode::TypeError, message });
                     return JSValue::encode(jsUndefined());
                 }
                 case ErrorType::SyntaxError: {
                     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                    String message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
+                    RefPtr<StringImpl> message = retrieveErrorMessageWithoutName(*globalObject, vm, error, catchScope);
                     task->run(Exception { ExceptionCode::JSSyntaxError, message });
                     return JSValue::encode(jsUndefined());
                 }
@@ -673,7 +673,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
         }
 
         auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-        String message = retrieveErrorMessageWithoutName(*globalObject, vm, errorValue, catchScope);
+        RefPtr<StringImpl> message = retrieveErrorMessageWithoutName(*globalObject, vm, errorValue, catchScope);
         task->run(Exception { ExceptionCode::AbortError, message });
         return JSValue::encode(jsUndefined());
     });

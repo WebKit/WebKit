@@ -1075,10 +1075,10 @@ void ScrollbarsControllerMac::scrollbarWidthChanged(WebCore::ScrollbarWidth)
     updateScrollerImps();
 }
 
-static String scrollbarState(Scrollbar* scrollbar)
+static RefPtr<StringImpl> scrollbarState(Scrollbar* scrollbar)
 {
     if (!scrollbar)
-        return "none"_s;
+        return "none"_si;
 
     StringBuilder result;
     result.append(scrollbar->enabled() ? "enabled"_s : "disabled"_s);
@@ -1108,12 +1108,12 @@ static String scrollbarState(Scrollbar* scrollbar)
     return result.toString();
 }
 
-String ScrollbarsControllerMac::horizontalScrollbarStateForTesting() const
+RefPtr<StringImpl> ScrollbarsControllerMac::horizontalScrollbarStateForTesting() const
 {
     return scrollbarState(protect(protect(scrollableArea())->horizontalScrollbar()).get());
 }
 
-String ScrollbarsControllerMac::verticalScrollbarStateForTesting() const
+RefPtr<StringImpl> ScrollbarsControllerMac::verticalScrollbarStateForTesting() const
 {
     return scrollbarState(protect(protect(scrollableArea())->verticalScrollbar()).get());
 }

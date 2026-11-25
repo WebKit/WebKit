@@ -45,13 +45,13 @@ public:
     ~OrientationNotifier() = default;
 
     void orientationChanged(IntDegrees orientation);
-    void rotationAngleForCaptureDeviceChanged(const String&, VideoFrameRotation);
+    void rotationAngleForCaptureDeviceChanged(StringImpl*, VideoFrameRotation);
 
     class Observer : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
     public:
         virtual ~Observer() = default;
         virtual void orientationChanged(IntDegrees orientation) = 0;
-        virtual void rotationAngleForHorizonLevelDisplayChanged(const String&, VideoFrameRotation) { }
+        virtual void rotationAngleForHorizonLevelDisplayChanged(StringImpl*, VideoFrameRotation) { }
     };
 
     void addObserver(Observer&);
@@ -71,7 +71,7 @@ inline void OrientationNotifier::orientationChanged(IntDegrees orientation)
     });
 }
 
-inline void OrientationNotifier::rotationAngleForCaptureDeviceChanged(const String& devicePersistentId, VideoFrameRotation orientation)
+inline void OrientationNotifier::rotationAngleForCaptureDeviceChanged(StringImpl* devicePersistentId, VideoFrameRotation orientation)
 {
     m_observers.forEach([&](auto& observer) {
         observer.rotationAngleForHorizonLevelDisplayChanged(devicePersistentId, orientation);

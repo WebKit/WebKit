@@ -169,7 +169,7 @@ static RetainPtr<PKContactField> toPKContactField(WebCore::ApplePayErrorContactF
 static NSError *toNSError(const WebCore::ApplePayError& error)
 {
     RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] init]);
-    [userInfo setObject:error.message().createNSString().get() forKey:NSLocalizedDescriptionKey];
+    [userInfo setObject:createNSString(error.message()).get() forKey:NSLocalizedDescriptionKey];
 
 #if HAVE(PASSKIT_DISBURSEMENTS)
     if (error.domain() == WebCore::ApplePayError::Domain::Disbursement) {
@@ -178,7 +178,7 @@ static NSError *toNSError(const WebCore::ApplePayError& error)
             return [PAL::getPKDisbursementRequestClassSingleton() disbursementCardUnsupportedError];
         case WebCore::ApplePayErrorCode::RecipientContactInvalid:
             if (error.contactField())
-                return [PAL::getPKDisbursementRequestClassSingleton() disbursementContactInvalidErrorWithContactField:toPKContactField(error.contactField().value()).get() localizedDescription:error.message().createNSString().get()];
+                return [PAL::getPKDisbursementRequestClassSingleton() disbursementContactInvalidErrorWithContactField:toPKContactField(error.contactField().value()).get() localizedDescription:createNSString(error.message()).get()];
             break;
         default:
             return [NSError errorWithDomain:PKDisbursementErrorDomain code:PKDisbursementUnknownError userInfo:userInfo.get()];
@@ -314,7 +314,7 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
         [paymentMethodUpdate setMultiTokenContexts:platformPaymentTokenContexts(WTF::move(*multiTokenContexts)).get()];
 #endif
 #if HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
-    [paymentMethodUpdate setInstallmentGroupIdentifier:update->installmentGroupIdentifier.createNSString().get()];
+    [paymentMethodUpdate setInstallmentGroupIdentifier:createNSString(update->installmentGroupIdentifier).get()];
 #endif // HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
 #if HAVE(PASSKIT_DEFERRED_PAYMENTS)
     if (auto& deferredPaymentRequest = update->newDeferredPaymentRequest)
@@ -334,7 +334,7 @@ void PaymentAuthorizationPresenter::completePaymentSession(WebCore::ApplePayPaym
 
 #if HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)
     if (auto orderDetails = WTF::move(result.orderDetails)) {
-        auto platformOrderDetails = adoptNS([PAL::allocPKPaymentOrderDetailsInstance() initWithOrderTypeIdentifier:orderDetails->orderTypeIdentifier.createNSString().get() orderIdentifier:orderDetails->orderIdentifier.createNSString().get() webServiceURL:adoptNS([[NSURL alloc] initWithString:orderDetails->webServiceURL.createNSString().get()]).get() authenticationToken:orderDetails->authenticationToken.createNSString().get()]);
+        auto platformOrderDetails = adoptNS([PAL::allocPKPaymentOrderDetailsInstance() initWithOrderTypeIdentifier:createNSString(orderDetails->orderTypeIdentifier).get() orderIdentifier:createNSString(orderDetails->orderIdentifier).get() webServiceURL:adoptNS([[NSURL alloc] initWithString:createNSString(orderDetails->webServiceURL).get()]).get() authenticationToken:createNSString(orderDetails->authenticationToken).get()]);
         [protect(platformDelegate()) completePaymentSession:status errors:errors.get() orderDetails:platformOrderDetails.get()];
         return;
     }

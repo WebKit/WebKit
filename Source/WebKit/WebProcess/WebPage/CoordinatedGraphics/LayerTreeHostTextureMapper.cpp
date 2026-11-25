@@ -120,7 +120,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     m_rootLayer->setSize(m_webPage.size());
     m_rootLayer->setNeedsDisplay();
 #ifndef NDEBUG
-    m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("Root layer"));
+    m_rootLayer->setName("Root layer"_si);
 #endif
     applyDeviceScaleFactor();
 

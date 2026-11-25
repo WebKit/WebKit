@@ -49,7 +49,7 @@ template<typename> class ExceptionOr;
 class FetchRequest final : public FetchBodyOwner {
 public:
     using Init = FetchRequestInit;
-    using Info = Variant<Ref<FetchRequest>, String>;
+    using Info = Variant<Ref<FetchRequest>, RefPtr<StringImpl>>;
 
     using Cache = FetchOptions::Cache;
     using Credentials = FetchOptions::Credentials;
@@ -58,15 +58,15 @@ public:
     using Redirect = FetchOptions::Redirect;
 
     static ExceptionOr<Ref<FetchRequest>> create(ScriptExecutionContext&, Info&&, Init&&);
-    static Ref<FetchRequest> create(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
+    static Ref<FetchRequest> create(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, RefPtr<StringImpl>&& referrer);
 
-    const String& method() const LIFETIME_BOUND { return m_request.httpMethod(); }
-    NODELETE const String& urlString() const;
+    const RefPtr<StringImpl>& method() const LIFETIME_BOUND { return m_request.httpMethod(); }
+    NODELETE const RefPtr<StringImpl>& urlString() const;
     FetchHeaders& headers() { return m_headers.get(); }
     const FetchHeaders& headers() const { return m_headers.get(); }
 
     Destination destination() const { return m_options.destination; }
-    String referrer() const;
+    RefPtr<StringImpl> referrer() const;
     ReferrerPolicy referrerPolicy() const { return m_options.referrerPolicy; }
     Mode mode() const { return m_options.mode; }
     Credentials credentials() const { return m_options.credentials; }
@@ -76,13 +76,13 @@ public:
     FetchRequestDuplex duplex() const { return m_duplex.value_or(FetchRequestDuplex::Half); }
     AbortSignal& signal() { return m_signal.get(); }
 
-    const String& integrity() const LIFETIME_BOUND { return m_options.integrity; }
+    const RefPtr<StringImpl>& integrity() const LIFETIME_BOUND { return m_options.integrity; }
 
     ExceptionOr<Ref<FetchRequest>> clone(JSDOMGlobalObject&);
 
     const FetchOptions& fetchOptions() const LIFETIME_BOUND { return m_options; }
     const ResourceRequest& internalRequest() const LIFETIME_BOUND { return m_request; }
-    const String& internalRequestReferrer() const LIFETIME_BOUND { return m_referrer; }
+    const RefPtr<StringImpl>& internalRequestReferrer() const LIFETIME_BOUND { return m_referrer; }
     const URL& url() const LIFETIME_BOUND { return m_request.url(); }
 
     ResourceRequest resourceRequest() const;
@@ -99,11 +99,11 @@ public:
     void markAsUnhandled() { setDisturbed(); }
 
 private:
-    FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
+    FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, RefPtr<StringImpl>&& referrer);
 
     ExceptionOr<void> initializeOptions(const Init&);
     ExceptionOr<void> initializeWith(FetchRequest&, Init&&);
-    ExceptionOr<void> initializeWith(const String&, Init&&);
+    ExceptionOr<void> initializeWith(StringImpl*, Init&&);
     ExceptionOr<void> setBody(FetchBody::Init&&);
     ExceptionOr<void> setBody(FetchRequest&);
 
@@ -115,7 +115,7 @@ private:
     FetchOptions m_options;
     RequestPriority m_priority { RequestPriority::Auto };
     std::optional<FetchRequestDuplex> m_duplex;
-    String m_referrer;
+    RefPtr<StringImpl> m_referrer;
     const Ref<AbortSignal> m_signal;
     Markable<FetchIdentifier> m_navigationPreloadIdentifier;
     bool m_enableContentExtensionsCheck { true };

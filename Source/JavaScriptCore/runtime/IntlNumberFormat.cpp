@@ -106,18 +106,18 @@ void IntlNumberFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(IntlNumberFormat);
 
-Vector<String> IntlNumberFormat::localeData(const String& locale, RelevantExtensionKey key)
+Vector<RefPtr<StringImpl>> IntlNumberFormat::localeData(StringImpl* locale, RelevantExtensionKey key)
 {
     // 9.1 Internal slots of Service Constructors & 11.2.3 Internal slots (ECMA-402 2.0)
     ASSERT_UNUSED(key, key == RelevantExtensionKey::Nu);
     return numberingSystemsForLocale(locale);
 }
 
-NODELETE static inline unsigned computeCurrencySortKey(const String& currency)
+NODELETE static inline unsigned computeCurrencySortKey(StringImpl* currency)
 {
-    ASSERT(currency.length() == 3);
-    ASSERT(currency.containsOnly<isASCIIUpper>());
-    return (currency[0] << 16) + (currency[1] << 8) + currency[2];
+    ASSERT(length(currency) == 3);
+    ASSERT(containsOnly<isASCIIUpper>(currency));
+    return (codeUnitAt(currency, 0) << 16) + (codeUnitAt(currency, 1) << 8) + codeUnitAt(currency, 2);
 }
 
 NODELETE static inline unsigned computeCurrencySortKey(const std::array<const char, 3>& currency)
@@ -131,7 +131,7 @@ NODELETE static unsigned extractCurrencySortKey(std::pair<std::array<const char,
     return computeCurrencySortKey(currencyMinorUnit->first);
 }
 
-static unsigned computeCurrencyDigits(const String& currency)
+static unsigned computeCurrencyDigits(StringImpl* currency)
 {
     // 11.1.1 The abstract operation CurrencyDigits (currency)
     // "If the ISO 4217 currency and funds code list contains currency as an alphabetic code,
@@ -307,11 +307,11 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
+    RefPtr<StringImpl> numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!numberingSystem.isNull()) {
+    if (numberingSystem) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
-            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
+            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_si);
             return;
         }
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
@@ -321,7 +321,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Nu }, localeData);
 
     m_locale = resolved.locale;
-    if (m_locale.isEmpty()) {
+    if (isEmpty(m_locale)) {
         throwTypeError(globalObject, scope, "failed to initialize NumberFormat due to invalid locale"_s);
         return;
     }
@@ -332,23 +332,23 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "decimal"_s, Style::Decimal }, { "percent"_s, Style::Percent }, { "currency"_s, Style::Currency }, { "unit"_s, Style::Unit } }, "style must be either \"decimal\", \"percent\", \"currency\", or \"unit\""_s, Style::Decimal);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String currency = intlStringOption(globalObject, options, Identifier::fromString(vm, "currency"_s), { }, { }, { });
+    RefPtr<StringImpl> currency = intlStringOption(globalObject, options, Identifier::fromString(vm, "currency"_s), { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
-    if (!currency.isNull()) {
+    if (currency) {
         if (!isWellFormedCurrencyCode(currency)) {
-            throwException(globalObject, scope, createRangeError(globalObject, "currency is not a well-formed currency code"_s));
+            throwException(globalObject, scope, createRangeError(globalObject, "currency is not a well-formed currency code"_si));
             return;
         }
     }
 
     unsigned currencyDigits = 0;
     if (m_style == Style::Currency) {
-        if (currency.isNull()) {
+        if (!currency) {
             throwTypeError(globalObject, scope, "currency must be a string"_s);
             return;
         }
 
-        currency = currency.convertToASCIIUppercase();
+        currency = convertToASCIIUppercase(currency);
         m_currency = currency;
         currencyDigits = computeCurrencyDigits(currency);
     }
@@ -362,13 +362,13 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_currencySign = intlOption<CurrencySign>(globalObject, options, Identifier::fromString(vm, "currencySign"_s), { { "standard"_s, CurrencySign::Standard }, { "accounting"_s, CurrencySign::Accounting } }, "currencySign must be either \"standard\" or \"accounting\""_s, CurrencySign::Standard);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String unit = intlStringOption(globalObject, options, Identifier::fromString(vm, "unit"_s), { }, { }, { });
+    RefPtr<StringImpl> unit = intlStringOption(globalObject, options, Identifier::fromString(vm, "unit"_s), { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     std::optional<WellFormedUnit> wellFormedUnit;
-    if (!unit.isNull()) {
+    if (unit) {
         wellFormedUnit = wellFormedUnitIdentifier(unit);
         if (!wellFormedUnit) {
-            throwRangeError(globalObject, scope, "unit is not a well-formed unit identifier"_s);
+            throwRangeError(globalObject, scope, "unit is not a well-formed unit identifier"_si);
             return;
         }
         m_unit = unit;
@@ -409,7 +409,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_signDisplay = intlOption<SignDisplay>(globalObject, options, Identifier::fromString(vm, "signDisplay"_s), { { "auto"_s, SignDisplay::Auto }, { "never"_s, SignDisplay::Never }, { "always"_s, SignDisplay::Always }, { "exceptZero"_s, SignDisplay::ExceptZero }, { "negative"_s, SignDisplay::Negative } }, "signDisplay must be either \"auto\", \"never\", \"always\", \"exceptZero\", or \"negative\""_s, SignDisplay::Auto);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.ascii() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).ascii();
+    auto dataLocaleWithExtensions = !m_numberingSystem ? ascii(m_dataLocale) : ascii(makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem));
     dataLogLnIf(IntlNumberFormatInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions , ")");
 
     // Options are obtained. Configure formatter here.
@@ -534,7 +534,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         break;
     }
 
-    String skeleton = skeletonBuilder.toString();
+    RefPtr<StringImpl> skeleton = skeletonBuilder.toString();
     dataLogLnIf(IntlNumberFormatInternal::verbose, skeleton);
     StringView skeletonView(skeleton);
     auto upconverted = skeletonView.upconvertedCharacters();
@@ -597,7 +597,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value) con
     status = callBufferProducingFunction(unumf_resultToString, formattedNumber.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "Failed to format a number."_s);
-    return jsString(vm, String(WTF::move(buffer)));
+    return jsString(vm, StringImpl::create(Vector { WTF::move(buffer) }));
 }
 
 // https://tc39.es/ecma402/#sec-formatnumber
@@ -621,7 +621,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, IntlMathematicalV
     status = callBufferProducingFunction(unumf_resultToString, formattedNumber.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "Failed to format a BigInt."_s);
-    return jsString(vm, String(WTF::move(buffer)));
+    return jsString(vm, StringImpl::create(Vector { WTF::move(buffer) }));
 }
 
 JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, double start, double end)
@@ -630,7 +630,7 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, double start
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (std::isnan(start) || std::isnan(end))
-        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
+        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_si);
 
     auto* rangeFormatter = createNumberRangeFormatterIfNecessary(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -653,7 +653,7 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, double start
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
-    return jsString(vm, String({ string, static_cast<size_t>(length) }));
+    return jsString(vm, StringImpl::create({ string, static_cast<size_t>(length) }));
 }
 
 JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, IntlMathematicalValue&& start, IntlMathematicalValue&& end)
@@ -662,7 +662,7 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, IntlMathemat
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (start.numberType() == IntlMathematicalValue::NumberType::NaN || end.numberType() == IntlMathematicalValue::NumberType::NaN)
-        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
+        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_si);
 
     auto* rangeFormatter = createNumberRangeFormatterIfNecessary(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -691,7 +691,7 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, IntlMathemat
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
-    return jsString(vm, String({ string, static_cast<size_t>(length) }));
+    return jsString(vm, StringImpl::create({ string, static_cast<size_t>(length) }));
 }
 
 static constexpr int32_t literalField = -1;
@@ -842,10 +842,10 @@ void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, 
         return;
     }
 
-    auto sharedString = jsNontrivialString(vm, "shared"_s);
-    auto startRangeString = jsNontrivialString(vm, "startRange"_s);
-    auto endRangeString = jsNontrivialString(vm, "endRange"_s);
-    auto literalString = jsNontrivialString(vm, "literal"_s);
+    auto sharedString = jsNontrivialString(vm, "shared"_si);
+    auto startRangeString = jsNontrivialString(vm, "startRange"_si);
+    auto endRangeString = jsNontrivialString(vm, "endRange"_si);
+    auto literalString = jsNontrivialString(vm, "literal"_si);
 
     WTF::Range<int32_t> startRange { -1, -1 };
     WTF::Range<int32_t> endRange { -1, -1 };
@@ -945,7 +945,7 @@ JSValue IntlNumberFormat::formatRangeToParts(JSGlobalObject* globalObject, doubl
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (std::isnan(start) || std::isnan(end))
-        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
+        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_si);
 
     auto* rangeFormatter = createNumberRangeFormatterIfNecessary(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -972,7 +972,7 @@ JSValue IntlNumberFormat::formatRangeToParts(JSGlobalObject* globalObject, doubl
         }
 
         if (equal)
-            RELEASE_AND_RETURN(scope, formatToParts(globalObject, start, jsNontrivialString(vm, "shared"_s)));
+            RELEASE_AND_RETURN(scope, formatToParts(globalObject, start, jsNontrivialString(vm, "shared"_si)));
     }
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
@@ -993,7 +993,7 @@ JSValue IntlNumberFormat::formatRangeToParts(JSGlobalObject* globalObject, IntlM
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (start.numberType() == IntlMathematicalValue::NumberType::NaN || end.numberType() == IntlMathematicalValue::NumberType::NaN)
-        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_s);
+        return throwRangeError(globalObject, scope, "Passed numbers are out of range"_si);
 
     auto* rangeFormatter = createNumberRangeFormatterIfNecessary(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -1026,7 +1026,7 @@ JSValue IntlNumberFormat::formatRangeToParts(JSGlobalObject* globalObject, IntlM
         }
 
         if (equal)
-            RELEASE_AND_RETURN(scope, formatToParts(globalObject, WTF::move(start), jsNontrivialString(vm, "shared"_s)));
+            RELEASE_AND_RETURN(scope, formatToParts(globalObject, WTF::move(start), jsNontrivialString(vm, "shared"_si)));
     }
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
@@ -1210,11 +1210,11 @@ JSValue IntlNumberFormat::useGroupingValue(VM& vm, UseGrouping useGrouping)
     case UseGrouping::False:
         return jsBoolean(false);
     case UseGrouping::Min2:
-        return jsNontrivialString(vm, "min2"_s);
+        return jsNontrivialString(vm, "min2"_si);
     case UseGrouping::Auto:
-        return jsNontrivialString(vm, "auto"_s);
+        return jsNontrivialString(vm, "auto"_si);
     case UseGrouping::Always:
-        return jsNontrivialString(vm, "always"_s);
+        return jsNontrivialString(vm, "always"_si);
     }
     return jsUndefined();
 }
@@ -1223,7 +1223,7 @@ JSValue IntlNumberFormat::useGroupingValue(VM& vm, UseGrouping useGrouping)
 JSObject* IntlNumberFormat::resolvedOptions(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
-    if (m_numberingSystem.isNull())
+    if (!m_numberingSystem)
         m_numberingSystem = defaultNumberingSystemForLocale(m_dataLocale);
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
@@ -1278,12 +1278,12 @@ void IntlNumberFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
     m_boundFormat.set(vm, this, format);
 }
 
-void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, Style style, bool sign, IntlMathematicalValue::NumberType numberType, const String& formatted, IntlFieldIterator& iterator, JSArray* parts, JSString* sourceType, JSString* unit)
+void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, Style style, bool sign, IntlMathematicalValue::NumberType numberType, StringImpl* formatted, IntlFieldIterator& iterator, JSArray* parts, JSString* sourceType, JSString* unit)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto stringLength = formatted.length();
+    auto stringLength = length(formatted);
 
     Vector<IntlNumberFormatField> fields;
 
@@ -1304,7 +1304,7 @@ void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, Style
 
     auto flatten = flattenFields(WTF::move(fields), stringLength);
 
-    auto literalString = jsNontrivialString(vm, "literal"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_si);
 
     for (auto& field : flatten) {
         auto fieldType = field.m_field;
@@ -1353,7 +1353,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
         return throwTypeError(globalObject, scope, "Failed to format a number."_s);
     IntlFieldIterator iterator(*fieldItr.get());
 
-    auto resultString = String(WTF::move(result));
+    RefPtr<StringImpl> resultString = StringImpl::create(Vector { WTF::move(result) });
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
@@ -1398,7 +1398,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, IntlMathem
 
     IntlFieldIterator iterator(*fieldItr.get());
 
-    auto resultString = String(WTF::move(result));
+    RefPtr<StringImpl> resultString = StringImpl::create(Vector { WTF::move(result) });
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
@@ -1456,7 +1456,7 @@ IntlMathematicalValue IntlMathematicalValue::parseString(JSGlobalObject* globalO
             return IntlMathematicalValue {
                 IntlMathematicalValue::NumberType::Integer,
                 false,
-                string.ascii(),
+                ascii(string),
             };
         }
     }

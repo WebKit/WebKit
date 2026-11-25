@@ -62,7 +62,7 @@ bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery)
         if (!context)
             continue;
 
-        if (condition.condition.queries.isEmpty() && !condition.name.isEmpty())
+        if (condition.condition.queries.isEmpty() && !isEmpty(condition.name))
             return true;
 
         if (evaluateCondition(condition.condition, *context) == MQ::EvaluationResult::True)
@@ -140,7 +140,7 @@ auto ContainerQueryEvaluator::featureEvaluationContextForCondition(const CQ::Con
     };
 }
 
-RefPtr<const Element> ContainerQueryEvaluator::selectContainer(CQ::ContainerRequirements requirements, const WTF::String& name, const Element& element, SelectionMode selectionMode, ScopeOrdinal scopeOrdinal, const ContainerQueryEvaluationState* evaluationState)
+RefPtr<const Element> ContainerQueryEvaluator::selectContainer(CQ::ContainerRequirements requirements, StringImpl* name, const Element& element, SelectionMode selectionMode, ScopeOrdinal scopeOrdinal, const ContainerQueryEvaluationState* evaluationState)
 {
     // "For each element, the query container to be queried is selected from among the element’s
     // ancestor query containers that have a valid container-type for all the container features
@@ -181,7 +181,7 @@ RefPtr<const Element> ContainerQueryEvaluator::selectContainer(CQ::ContainerRequ
             return false;
         if (!isValidContainer(style->containerType(), candidateElement.renderer()))
             return false;
-        if (name.isEmpty())
+        if (isEmpty(name))
             return true;
 
         return style->containerNames().containsIf([&](auto& scopedName) {
@@ -194,7 +194,7 @@ RefPtr<const Element> ContainerQueryEvaluator::selectContainer(CQ::ContainerRequ
                 // Otherwise names from the inner scopes are ignored.
                 return scopedName.scopeOrdinal <= ScopeOrdinal::Element;
             };
-            return isNameFromAllowedScope(scopedName) && scopedName.name == name;
+            return isNameFromAllowedScope(scopedName) && equal(scopedName.name, name);
         });
     };
 

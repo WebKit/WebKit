@@ -64,7 +64,7 @@ RemoteCDMInstance::~RemoteCDMInstance()
     factory->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteCDMInstance::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
+void RemoteCDMInstance::unrequestedInitializationDataReceived(StringImpl* type, Ref<SharedBuffer>&& initData)
 {
     if (RefPtr client = m_client.get())
         client->unrequestedInitializationDataReceived(type, WTF::move(initData));
@@ -92,7 +92,7 @@ void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certif
     protect(factory->gpuProcessConnection().connection())->sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTF::move(certificate)), WTF::move(callback), m_identifier);
 }
 
-void RemoteCDMInstance::setStorageDirectory(const String& directory)
+void RemoteCDMInstance::setStorageDirectory(StringImpl* directory)
 {
     if (RefPtr factory = m_factory.get())
         protect(factory->gpuProcessConnection().connection())->send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);

@@ -37,19 +37,19 @@
 namespace WebKit {
 
 struct RemoteMediaPlayerProxyConfiguration {
-    String referrer;
-    String userAgent;
-    String sourceApplicationIdentifier;
-    String networkInterfaceName;
-    String audioOutputDeviceId;
+    RefPtr<StringImpl> referrer;
+    RefPtr<StringImpl> userAgent;
+    RefPtr<StringImpl> sourceApplicationIdentifier;
+    RefPtr<StringImpl> networkInterfaceName;
+    RefPtr<StringImpl> audioOutputDeviceId;
     Vector<WebCore::ContentType> mediaContentTypesRequiringHardwareSupport;
-    std::optional<Vector<String>> allowedMediaContainerTypes;
-    std::optional<Vector<String>> allowedMediaCodecTypes;
+    std::optional<Vector<RefPtr<StringImpl>>> allowedMediaContainerTypes;
+    std::optional<Vector<RefPtr<StringImpl>>> allowedMediaCodecTypes;
     std::optional<Vector<WebCore::FourCC>> allowedMediaVideoCodecIDs;
     std::optional<Vector<WebCore::FourCC>> allowedMediaAudioCodecIDs;
     std::optional<Vector<WebCore::FourCC>> allowedMediaCaptionFormatTypes;
     WebCore::LayoutRect playerContentBoxRect;
-    Vector<String> preferredAudioCharacteristics;
+    Vector<RefPtr<StringImpl>> preferredAudioCharacteristics;
 #if PLATFORM(COCOA)
     Vector<WebCore::PlatformTextTrackData> outOfBandTrackData;
 #endif

@@ -485,7 +485,7 @@ TEST(WKWebView, AttributedStringFromListWithNegativeStartValue)
 
     TextStream stream;
     stream << "expected " << actual << " to equal " << expected;
-    EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
+    EXPECT_EQ(actual, expected) << utf8(stream.release()).toStdString();
 }
 
 TEST(WKWebView, AttributedStringFromListWithCustomListStyleTypes)
@@ -521,12 +521,12 @@ TEST(WKWebView, AttributedStringFromListWithCustomListStyleTypes)
             "\tv\tB\n"_s,
             "\tvi\tC\n"_s,
         } },
-        DecomposedAttributedText::OrderedList { 4, DecomposedAttributedText::ListMarker { "{#}"_s }, {
+        DecomposedAttributedText::OrderedList { 4, DecomposedAttributedText::ListMarker { "{#}"_si }, {
             "\t4\tD\n"_s,
             "\t5\tE\n"_s,
             "\t6\tF\n"_s,
         } },
-        DecomposedAttributedText::UnorderedList { DecomposedAttributedText::ListMarker { "#"_s }, {
+        DecomposedAttributedText::UnorderedList { DecomposedAttributedText::ListMarker { "#"_si }, {
             "\t#\tG\n"_s,
             "\t#\tH\n"_s,
             "\t#\tI\n"_s,
@@ -546,7 +546,7 @@ TEST(WKWebView, AttributedStringFromListWithCustomListStyleTypes)
 
     TextStream stream;
     stream << "expected " << actual << " to equal " << expected;
-    EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
+    EXPECT_EQ(actual, expected) << utf8(stream.release()).toStdString();
 }
 
 TEST(WKWebView, AttributedStringFromListWithSymbolsFunctionListStyleType)
@@ -572,8 +572,8 @@ TEST(WKWebView, AttributedStringFromListWithSymbolsFunctionListStyleType)
             "\t2\tB\n"_s,
         } },
         DecomposedAttributedText::UnorderedList { {
-            String::fromUTF8("\t•\tC\n"),
-            String::fromUTF8("\t•\tD\n"),
+            StringImpl::fromUTF8("\t•\tC\n"),
+            StringImpl::fromUTF8("\t•\tD\n"),
         } },
     } };
 
@@ -585,7 +585,7 @@ TEST(WKWebView, AttributedStringFromListWithSymbolsFunctionListStyleType)
 
     TextStream stream;
     stream << "expected " << actual << " to equal " << expected;
-    EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
+    EXPECT_EQ(actual, expected) << utf8(stream.release()).toStdString();
 }
 
 TEST(WKWebView, AttributedStringWithoutNetworkLoads)

@@ -228,7 +228,7 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
     bool mutedStateChanged = !m_configuration || configuration.isMuted != (*m_configuration).isMuted;
     bool bufferSizeChanged = !m_configuration || configuration.bufferSize != (*m_configuration).bufferSize;
     bool sampleRateChanged = !m_configuration || configuration.sampleRate != (*m_configuration).sampleRate;
-    bool routingContextUIDChanged = !m_configuration || configuration.routingContextUID != (*m_configuration).routingContextUID;
+    bool routingContextUIDChanged = !m_configuration || !equal(configuration.routingContextUID, (*m_configuration).routingContextUID);
     bool activeChanged = configuration.isActive != isActive();
 
     m_configuration = WTF::move(configuration);
@@ -324,7 +324,7 @@ void RemoteAudioSession::endInterruptionForTesting()
     protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::TriggerEndInterruptionForTesting(), { });
 }
 
-void RemoteAudioSession::setSceneIdentifier(const String& sceneIdentifier)
+void RemoteAudioSession::setSceneIdentifier(StringImpl* sceneIdentifier)
 {
     configuration().sceneIdentifier = sceneIdentifier;
     protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetSceneIdentifier(sceneIdentifier), { });

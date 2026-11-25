@@ -296,7 +296,7 @@ private:
         void setRenderTreeSizeThreshold(uint64_t threshold) { m_renderTreeSizeThreshold = threshold; }
 
     private:
-        static String eventsDescription(Events);
+        static RefPtr<StringImpl> eventsDescription(Events);
         void log(StringView) const;
 
         void fireRemovalCallbackImmediately();

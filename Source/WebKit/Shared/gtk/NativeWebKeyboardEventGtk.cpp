@@ -42,20 +42,20 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
 
-Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(GdkEvent* event, const String& text, bool isAutoRepeat, Vector<String>&& commands)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(GdkEvent* event, StringImpl* text, bool isAutoRepeat, Vector<RefPtr<StringImpl>>&& commands)
 {
     return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, false, std::nullopt, std::nullopt, WTF::move(commands)), event));
 }
 
-Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(StringImpl* text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
 {
     return adoptRef(*new NativeWebKeyboardEvent(WebKeyboardEventInit {
         { WebEventType::KeyDown, { }, MonotonicTime::now() },
         {
             .text = text,
-            .key = "Unidentified"_s,
-            .code = "Unidentified"_s,
-            .keyIdentifier = "U+0000"_s,
+            .key = "Unidentified"_si,
+            .code = "Unidentified"_si,
+            .keyIdentifier = "U+0000"_si,
             .windowsVirtualKeyCode = 229,
             .nativeVirtualKeyCode = GDK_KEY_VoidSymbol,
             .handledByInputMethod = true,
@@ -68,7 +68,7 @@ Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(const String& text, s
     }, nullptr));
 }
 
-Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(WebEventType type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier> modifiers)
+Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(WebEventType type, StringImpl* text, StringImpl* key, StringImpl* code, StringImpl* keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<RefPtr<StringImpl>>&& commands, bool isAutoRepeat, bool isKeypad, OptionSet<WebEventModifier> modifiers)
 {
     return adoptRef(*new NativeWebKeyboardEvent(WebKeyboardEventInit {
         { type, modifiers, MonotonicTime::now() },

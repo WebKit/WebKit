@@ -41,7 +41,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient = false);
+    WEBCORE_EXPORT IDBDatabaseIdentifier(StringImpl* databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient = false);
 
     IDBDatabaseIdentifier isolatedCopy() const &;
     IDBDatabaseIdentifier isolatedCopy() &&;
@@ -53,33 +53,38 @@ public:
 
     bool isValid() const
     {
-        return !m_databaseName.isNull()
+        return !!m_databaseName
             && !m_databaseName.isHashTableDeletedValue();
     }
 
     bool isEmpty() const
     {
-        return m_databaseName.isNull();
+        return !m_databaseName;
     }
 
-    friend bool operator==(const IDBDatabaseIdentifier&, const IDBDatabaseIdentifier&) = default;
+    friend bool operator==(const IDBDatabaseIdentifier& a, const IDBDatabaseIdentifier& b)
+    {
+        return contentEquals(a.m_databaseName, b.m_databaseName)
+            && a.m_origin == b.m_origin
+            && a.m_isTransient == b.m_isTransient;
+    }
 
-    const String& databaseName() const LIFETIME_BOUND { return m_databaseName; }
+    const RefPtr<StringImpl>& databaseName() const LIFETIME_BOUND { return m_databaseName; }
     const ClientOrigin& origin() const LIFETIME_BOUND { return m_origin; }
     bool isTransient() const { return m_isTransient; }
 
-    String databaseDirectoryRelativeToRoot(const String& rootDirectory, ASCIILiteral versionString = "v1"_s) const;
-    WEBCORE_EXPORT static String databaseDirectoryRelativeToRoot(const ClientOrigin&, const String& rootDirectory, ASCIILiteral versionString);
-    WEBCORE_EXPORT static String optionalDatabaseDirectoryRelativeToRoot(const ClientOrigin&, const String& rootDirectory, ASCIILiteral versionString);
+    RefPtr<StringImpl> databaseDirectoryRelativeToRoot(StringImpl* rootDirectory, ASCIILiteral versionString = "v1"_s) const;
+    WEBCORE_EXPORT static RefPtr<StringImpl> databaseDirectoryRelativeToRoot(const ClientOrigin&, StringImpl* rootDirectory, ASCIILiteral versionString);
+    WEBCORE_EXPORT static RefPtr<StringImpl> optionalDatabaseDirectoryRelativeToRoot(const ClientOrigin&, StringImpl* rootDirectory, ASCIILiteral versionString);
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 
 private:
     friend struct IPC::ArgumentCoder<IDBDatabaseIdentifier>;
 
-    String m_databaseName;
+    RefPtr<StringImpl> m_databaseName;
     ClientOrigin m_origin;
     bool m_isTransient { false };
 };

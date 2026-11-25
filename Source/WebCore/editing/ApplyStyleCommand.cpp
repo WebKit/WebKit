@@ -63,16 +63,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static String& styleSpanClassString()
+static RefPtr<StringImpl>& styleSpanClassString()
 {
-    static NeverDestroyed<String> styleSpanClassString = String::fromLatin1(AppleStyleSpanClass);
+    static NeverDestroyed<RefPtr<StringImpl>> styleSpanClassString = StringImpl::fromLatin1(AppleStyleSpanClass);
     return styleSpanClassString;
 }
 
 bool isLegacyAppleStyleSpan(const Node* node)
 {
     RefPtr spanElement = dynamicDowncast<HTMLSpanElement>(node);
-    return spanElement && spanElement->attributeWithoutSynchronization(classAttr) == styleSpanClassString();
+    return spanElement && equal(spanElement->attributeWithoutSynchronization(classAttr), styleSpanClassString());
 }
 
 static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement& element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
@@ -81,7 +81,7 @@ static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement& element, Sho
         return true;
 
     unsigned matchedAttributes = 0;
-    if (element.attributeWithoutSynchronization(classAttr) == styleSpanClassString())
+    if (equal(element.attributeWithoutSynchronization(classAttr), styleSpanClassString()))
         matchedAttributes++;
     if (element.hasAttribute(styleAttr) && (shouldStyleAttributeBeEmpty == AllowNonEmptyStyleAttribute
         || !element.inlineStyle() || element.inlineStyle()->isEmpty()))
@@ -1385,12 +1385,12 @@ bool ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     return true;
 }
 
-static AtomString joinWithSpace(const String& a, const AtomString& b)
+static RefPtr<AtomStringImpl> joinWithSpace(StringImpl* a, AtomStringImpl* b)
 {
-    if (a.isEmpty())
+    if (isEmpty(a))
         return b;
-    if (b.isEmpty())
-        return AtomString { a };
+    if (isEmpty(b))
+        return AtomStringImpl::add(a);
     return makeAtomString(a, ' ', b);
 }
 
@@ -1544,7 +1544,7 @@ void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, co
             newStart = Position(childText.ptr(), childText->length() + start.offsetInContainerNode());
         if (end.anchorType() == Position::PositionIsOffsetInAnchor && next == end.containerNode())
             newEnd = Position(childText.ptr(), childText->length() + end.offsetInContainerNode());
-        String textToMove = next->data();
+        RefPtr<StringImpl> textToMove = next->data();
         insertTextIntoNode(childText, childText->length(), textToMove);
         removeNode(*next);
         // don't move child node pointer. it may want to merge with more text nodes.

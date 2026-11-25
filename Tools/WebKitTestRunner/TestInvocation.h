@@ -69,8 +69,8 @@ public:
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody, bool fromMainFrameProcess);
 
     static void dumpWebProcessUnresponsiveness(ASCIILiteral errorMessage);
-    void outputText(const String&);
-    void outputResourceLoadCallback(const String&);
+    void outputText(StringImpl*);
+    void outputResourceLoadCallback(StringImpl*);
 
     void notifyDownloadDone();
 
@@ -130,13 +130,13 @@ private:
     bool shouldLogHistoryClientCallbacks() const;
 
     // UIScriptContextDelegate
-    void uiScriptDidComplete(const String& result, unsigned callbackID) override;
+    void uiScriptDidComplete(StringImpl* result, unsigned callbackID) override;
 
     const TestOptions m_options;
     
     uint64_t m_identifier;
     WKRetainPtr<WKURLRef> m_url;
-    String m_urlString;
+    RefPtr<StringImpl> m_urlString;
     RunLoop::Timer m_waitToDumpWatchdogTimer;
     RunLoop::Timer m_waitForPostDumpWatchdogTimer;
 
@@ -173,7 +173,7 @@ private:
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 
     StringBuilder m_textOutput;
-    String m_savedResourceLoadStatistics;
+    RefPtr<StringImpl> m_savedResourceLoadStatistics;
     StringBuilder m_savedResourceLoadCallbacks;
     WKRetainPtr<WKDataRef> m_audioResult;
     WKRetainPtr<WKImageRef> m_pixelResult;

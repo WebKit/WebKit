@@ -39,13 +39,13 @@ public:
     struct Init : EventInit {
         Vector<Ref<Element>> changedElements;
     };
-    NODELETE static Ref<CanvasPaintEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<CanvasPaintEvent> create(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
     ~CanvasPaintEvent();
 
     const Vector<Ref<Element>>& changedElements() const LIFETIME_BOUND { return m_changedElements; }
 
 private:
-    CanvasPaintEvent(const AtomString& type, Init&&, IsTrusted);
+    CanvasPaintEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
     Vector<Ref<Element>> m_changedElements;
 };

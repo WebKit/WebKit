@@ -42,25 +42,25 @@
 - (NSString *)cols
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::colsAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::colsAttr)).autorelease();
 }
 
 - (void)setCols:(NSString *)newCols
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::colsAttr, newCols);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::colsAttr, AtomStringImpl::add((__bridge CFStringRef)newCols).get());
 }
 
 - (NSString *)rows
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::rowsAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::rowsAttr)).autorelease();
 }
 
 - (void)setRows:(NSString *)newRows
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::rowsAttr, newRows);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::rowsAttr, AtomStringImpl::add((__bridge CFStringRef)newRows).get());
 }
 
 @end

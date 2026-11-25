@@ -82,13 +82,13 @@
 - (NSString *)poster
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::posterAttr).string().createNSString().autorelease();
+    return createNSString(IMPL->getURLAttribute(WebCore::HTMLNames::posterAttr).string()).autorelease();
 }
 
 - (void)setPoster:(NSString *)newPoster
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::posterAttr, newPoster);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::posterAttr, AtomStringImpl::add((__bridge CFStringRef)newPoster).get());
 }
 
 - (BOOL)playsInline

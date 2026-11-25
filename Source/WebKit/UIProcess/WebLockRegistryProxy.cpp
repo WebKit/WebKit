@@ -62,11 +62,11 @@ WebLockRegistryProxy::~WebLockRegistryProxy()
     m_process->removeMessageReceiver(Messages::WebLockRegistryProxy::messageReceiverName());
 }
 
-void WebLockRegistryProxy::requestLock(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, String&& name, WebCore::WebLockMode lockMode, bool steal, bool ifAvailable)
+void WebLockRegistryProxy::requestLock(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, RefPtr<StringImpl>&& name, WebCore::WebLockMode lockMode, bool steal, bool ifAvailable)
 {
     MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process->coreProcessIdentifier());
     MESSAGE_CHECK(clientID.processIdentifier() == m_process->coreProcessIdentifier());
-    MESSAGE_CHECK(name.length() <= WebCore::WebLock::maxNameLength);
+    MESSAGE_CHECK(length(name) <= WebCore::WebLock::maxNameLength);
     EXTRACT_WITH_MESSAGE_CHECK(clientOrigin, untrustedClientOrigin, ProcessCommittedStorageClientOrigin { m_process.get() });
     m_hasEverRequestedLocks = true;
 
@@ -85,7 +85,7 @@ void WebLockRegistryProxy::requestLock(IPC::Untrusted<WebCore::ClientOrigin>&& u
     });
 }
 
-void WebLockRegistryProxy::releaseLock(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, String&& name)
+void WebLockRegistryProxy::releaseLock(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, RefPtr<StringImpl>&& name)
 {
     MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process->coreProcessIdentifier());
     MESSAGE_CHECK(clientID.processIdentifier() == m_process->coreProcessIdentifier());
@@ -98,7 +98,7 @@ void WebLockRegistryProxy::releaseLock(IPC::Untrusted<WebCore::ClientOrigin>&& u
     dataStore->webLockRegistry().releaseLock(process->sessionID(), WTF::move(clientOrigin), lockIdentifier, clientID, WTF::move(name));
 }
 
-void WebLockRegistryProxy::abortLockRequest(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, String&& name, CompletionHandler<void(bool)>&& completionHandler)
+void WebLockRegistryProxy::abortLockRequest(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, RefPtr<StringImpl>&& name, CompletionHandler<void(bool)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(lockIdentifier.processIdentifier() == m_process->coreProcessIdentifier(), completionHandler(false));
     MESSAGE_CHECK_COMPLETION(clientID.processIdentifier() == m_process->coreProcessIdentifier(), completionHandler(false));

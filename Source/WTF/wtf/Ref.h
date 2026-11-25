@@ -43,6 +43,22 @@ extern "C" int __asan_address_is_poisoned(void const volatile *addr);
 
 namespace WTF {
 
+class PrivateSymbolImpl;
+class RegisteredSymbolImpl;
+class SymbolImpl;
+
+// The string implementation classes. Converting constructors of Ref and RefPtr are constrained on pointer
+// convertibility only for these (so that, e.g., RefPtr<AtomStringImpl> is not constructible from RefPtr<StringImpl>
+// during overload resolution), because convertibility can't be checked for other types that may be incomplete.
+template<typename> inline constexpr bool isStringImplClass = false;
+template<> inline constexpr bool isStringImplClass<StringImpl> = true;
+template<> inline constexpr bool isStringImplClass<AtomStringImpl> = true;
+template<> inline constexpr bool isStringImplClass<UniquedStringImpl> = true;
+template<> inline constexpr bool isStringImplClass<SymbolImpl> = true;
+template<> inline constexpr bool isStringImplClass<RegisteredSymbolImpl> = true;
+template<> inline constexpr bool isStringImplClass<PrivateSymbolImpl> = true;
+template<typename T> concept StringImplClass = isStringImplClass<std::remove_const_t<T>>;
+
 template<typename T> struct DefaultRefDerefTraits {
     static constexpr bool isDefaultImplementation = true;
 
@@ -104,7 +120,7 @@ public:
     {
     }
 
-    template<typename X, typename Y> Ref(const Ref<X, Y>& other)
+    template<typename X, typename Y> Ref(const Ref<X, Y>& other) requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*>
         : m_ptr(&RefDerefTraits::ref(other.get()))
     {
     }
@@ -116,7 +132,7 @@ public:
     }
 
     template<typename X, typename Y>
-    Ref(Ref<X, Y>&& other) noexcept
+    Ref(Ref<X, Y>&& other) noexcept requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*>
         : m_ptr(&other.leakRef())
     {
         ASSERT(m_ptr);

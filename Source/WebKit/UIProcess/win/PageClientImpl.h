@@ -76,7 +76,7 @@ private:
     void didRelaunchProcess() override;
     void pageClosed() override;
     void preferencesDidChange() override;
-    void toolTipChanged(const WTF::String&, const WTF::String&) override;
+    void toolTipChanged(StringImpl*, StringImpl*) override;
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo) override;
@@ -107,7 +107,7 @@ private:
     bool handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy&, const FrameInfoData&, API::OpenPanelParameters&, WebOpenPanelResultListenerProxy&) override;
 
     void didChangeContentSize(const WebCore::IntSize&) override;
-    void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
+    void didCommitLoadForMainFrame(StringImpl* mimeType, bool useCustomContentProvider) override;
     void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
     void didFinishNavigation(API::Navigation*) override;
     void didFailNavigation(API::Navigation*) override { }
@@ -133,7 +133,7 @@ private:
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&) override;
 #endif
 
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
+    void didFinishLoadingDataForCustomContentProvider(StringImpl* suggestedFilename, std::span<const uint8_t>) override;
 
     void navigationGestureDidBegin() override;
     void navigationGestureWillEnd(bool, WebBackForwardListItem&) override;
@@ -160,7 +160,7 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
-    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, StringImpl*, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     // Members of PageClientImpl class
     DefaultUndoController m_undoController;

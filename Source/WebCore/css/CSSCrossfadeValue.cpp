@@ -64,7 +64,7 @@ bool CSSCrossfadeValue::equals(const CSSCrossfadeValue& other) const
     return m_function == other.m_function;
 }
 
-String CSSCrossfadeValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSCrossfadeValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return WTF::switchOn(m_function,
         [&](const auto& function) {

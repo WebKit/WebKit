@@ -98,7 +98,7 @@ public:
         return { };
     }
     
-    String valueAsString() const override
+    RefPtr<StringImpl> valueAsString() const override
     {
         return SVGPropertyTraits<FloatRect>::toString(m_value);
     }

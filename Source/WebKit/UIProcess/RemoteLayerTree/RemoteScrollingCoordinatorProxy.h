@@ -173,7 +173,7 @@ public:
     virtual void removeTimelines(WebCore::ProcessIdentifier) { };
     virtual RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const { return nullptr; }
     virtual void progressBasedTimelinesWereUpdatedForNode(const WebCore::ScrollingTreeScrollingNode&) { }
-    virtual String animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const { return emptyString(); }
+    virtual RefPtr<StringImpl> animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const { return emptyString(); }
     virtual HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const { return { }; }
     virtual HashSet<Ref<RemoteMonotonicTimeline>> monotonicTimelinesForProcessForTesting(WebCore::ProcessIdentifier) const { return { }; }
     virtual bool hasHighImpactMonotonicAnimations() const { return false; }
@@ -182,8 +182,8 @@ public:
     virtual void updateAnimatedContentVisibilityIfNeeded() { }
 #endif
 
-    String scrollingTreeAsText() const;
-    String scrollingTreeIncludingNodeIDsAsText() const;
+    RefPtr<StringImpl> scrollingTreeAsText() const;
+    RefPtr<StringImpl> scrollingTreeIncludingNodeIDsAsText() const;
     float rubberbandHyperbolicCoefficientForTesting() const;
 
     void resetStateAfterProcessExited();
@@ -223,7 +223,7 @@ public:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
     void viewSizeDidChange();
-    String scrollbarStateForScrollingNodeID(std::optional<WebCore::ScrollingNodeID>, bool isVertical);
+    RefPtr<StringImpl> scrollbarStateForScrollingNodeID(std::optional<WebCore::ScrollingNodeID>, bool isVertical);
     bool overlayScrollbarsEnabled();
 
     void sendScrollingTreeNodeUpdate();

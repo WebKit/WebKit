@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-const String& GPUCompilationMessage::message() const
+const RefPtr<StringImpl>& GPUCompilationMessage::message() const
 {
     return m_backing.message;
 }

@@ -345,7 +345,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncRound, (JSGlobalObjec
         RETURN_IF_EXCEPTION(scope, { });
         smallest = temporalUnitType(string);
         if (!smallest) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
+            return throwVMRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_si);
     } else {
         // Step 5: Set roundTo to ? GetOptionsObject(roundTo).
         options = intlGetOptionsObject(globalObject, optionsValue);
@@ -372,7 +372,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncRound, (JSGlobalObjec
         // Step 10 (string path): Perform ? ValidateTemporalUnitValue(smallestUnit, ~time~, « ~day~ »).
         // isCalendarUnit (unit <= Week) rejects year/month/week; day and time units pass.
         if (isCalendarUnit(smallest.value())) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_s);
+            return throwVMRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_si);
     }
 
     auto smallestUnit = smallest.value();
@@ -736,7 +736,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterDayOfYear, (JSGloba
 
     auto result = TemporalCore::calendarDayOfYear(plainDateTime->calendarID(), plainDateTime->plainDate());
     if (!result) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, String(result.error().message));
+        return throwVMRangeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
     return JSValue::encode(jsNumber(*result));
 }
 

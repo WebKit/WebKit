@@ -36,14 +36,14 @@
 namespace WebCore {
 
 struct BackgroundFetchRequest {
-    BackgroundFetchRequest isolatedCopy() const & { return { internalRequest.isolatedCopy(), options.isolatedCopy(), guard, httpHeaders.isolatedCopy(), referrer.isolatedCopy(), crossThreadCopy(cspResponseHeaders) }; }
-    BackgroundFetchRequest isolatedCopy() && { return { WTF::move(internalRequest).isolatedCopy(), WTF::move(options).isolatedCopy(), guard, WTF::move(httpHeaders).isolatedCopy(), WTF::move(referrer).isolatedCopy(), crossThreadCopy(WTF::move(cspResponseHeaders)) }; }
+    BackgroundFetchRequest isolatedCopy() const & { return { internalRequest.isolatedCopy(), options.isolatedCopy(), guard, httpHeaders.isolatedCopy(), WTF::isolatedCopy(referrer), crossThreadCopy(cspResponseHeaders) }; }
+    BackgroundFetchRequest isolatedCopy() && { return { WTF::move(internalRequest).isolatedCopy(), WTF::move(options).isolatedCopy(), guard, WTF::move(httpHeaders).isolatedCopy(), WTF::isolatedCopy(WTF::move(referrer)), crossThreadCopy(WTF::move(cspResponseHeaders)) }; }
 
     ResourceRequest internalRequest;
     FetchOptions options;
     FetchHeadersGuard guard;
     HTTPHeaderMap httpHeaders;
-    String referrer;
+    RefPtr<StringImpl> referrer;
     Markable<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
 };
 

@@ -41,7 +41,7 @@ namespace Inspector {
 
 using namespace JSC;
 
-void ScriptCallArgumentHandler::appendArgument(const String& argument)
+void ScriptCallArgumentHandler::appendArgument(StringImpl* argument)
 {
     VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
@@ -52,7 +52,7 @@ void ScriptCallArgumentHandler::appendArgument(const char* argument)
 {
     VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
-    m_arguments.append(jsString(vm, String::fromLatin1(argument)));
+    m_arguments.append(jsString(vm, StringImpl::fromLatin1(argument)));
 }
 
 void ScriptCallArgumentHandler::appendArgument(JSValue argument)
@@ -95,7 +95,7 @@ void ScriptCallArgumentHandler::appendArgument(bool argument)
     m_arguments.append(jsBoolean(argument));
 }
 
-ScriptFunctionCall::ScriptFunctionCall(JSC::JSGlobalObject* globalObject, JSC::JSObject* thisObject, const String& name, ScriptFunctionCallHandler callHandler)
+ScriptFunctionCall::ScriptFunctionCall(JSC::JSGlobalObject* globalObject, JSC::JSObject* thisObject, StringImpl* name, ScriptFunctionCallHandler callHandler)
     : ScriptCallArgumentHandler(globalObject)
     , m_callHandler(callHandler)
     , m_thisObject(globalObject->vm(), thisObject)

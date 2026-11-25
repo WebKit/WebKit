@@ -35,10 +35,10 @@ class FuzzerPredictions {
 public:
     JS_EXPORT_PRIVATE FuzzerPredictions(const char8_t*);
 
-    std::optional<SpeculatedType> predictionFor(const String&);
+    std::optional<SpeculatedType> predictionFor(StringImpl*);
 
 private:
-    HashMap<String, SpeculatedType> m_predictions;
+    HashMap<RefPtr<StringImpl>, SpeculatedType> m_predictions;
 };
 
 JS_EXPORT_PRIVATE FuzzerPredictions& ensureGlobalFuzzerPredictions();

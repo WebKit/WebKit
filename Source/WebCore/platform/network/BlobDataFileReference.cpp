@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-BlobDataFileReference::BlobDataFileReference(const String& path, const String& replacementPath)
+BlobDataFileReference::BlobDataFileReference(StringImpl* path, StringImpl* replacementPath)
     : m_path(path)
     , m_replacementPath(replacementPath)
 {
@@ -40,17 +40,17 @@ BlobDataFileReference::BlobDataFileReference(const String& path, const String& r
 
 BlobDataFileReference::~BlobDataFileReference()
 {
-    if (!m_replacementPath.isNull())
+    if (m_replacementPath)
         FileSystem::deleteFile(m_replacementPath);
 }
 
-const String& BlobDataFileReference::path()
+const RefPtr<StringImpl>& BlobDataFileReference::path()
 {
 #if ENABLE(FILE_REPLACEMENT)
     if (m_replacementShouldBeGenerated)
         generateReplacementFile();
 #endif
-    if (!m_replacementPath.isNull())
+    if (m_replacementPath)
         return m_replacementPath;
 
     return m_path;
@@ -71,7 +71,7 @@ std::optional<WallTime> BlobDataFileReference::expectedModificationTime()
 #if ENABLE(FILE_REPLACEMENT)
     // We do not currently track modifications for generated files, because we have a snapshot.
     // Unfortunately, this is inconsistent with regular file handling - File objects should be invalidated when underlying files change.
-    if (m_replacementShouldBeGenerated || !m_replacementPath.isNull())
+    if (m_replacementShouldBeGenerated || m_replacementPath)
         return std::nullopt;
 #endif
     return m_expectedModificationTime;
@@ -100,7 +100,7 @@ void BlobDataFileReference::startTrackingModifications()
 #endif
 
     // This is a registered blob with a replacement file. Get the size of the replacement file.
-    auto fileSize = FileSystem::fileSize(m_replacementPath.isNull() ? m_path : m_replacementPath);
+    auto fileSize = FileSystem::fileSize(!m_replacementPath ? m_path : m_replacementPath);
     if (!fileSize)
         return;
 

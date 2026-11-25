@@ -89,55 +89,55 @@ bool HTMLMarqueeElement::hasPresentationalHintsForAttribute(const QualifiedName&
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::widthAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addHTMLLengthToStyle(style, CSSPropertyID::Width, value);
         break;
     case AttributeNames::heightAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addHTMLLengthToStyle(style, CSSPropertyID::Height, value);
         break;
     case AttributeNames::bgcolorAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addHTMLColorToStyle(style, CSSPropertyID::BackgroundColor, value);
         break;
     case AttributeNames::vspaceAttr:
-        if (!value.isEmpty()) {
+        if (!isEmpty(value)) {
             addHTMLLengthToStyle(style, CSSPropertyID::MarginTop, value);
             addHTMLLengthToStyle(style, CSSPropertyID::MarginBottom, value);
         }
         break;
     case AttributeNames::hspaceAttr:
-        if (!value.isEmpty()) {
+        if (!isEmpty(value)) {
             addHTMLLengthToStyle(style, CSSPropertyID::MarginLeft, value);
             addHTMLLengthToStyle(style, CSSPropertyID::MarginRight, value);
         }
         break;
     case AttributeNames::scrollamountAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addHTMLLengthToStyle(style, CSSPropertyID::WebkitMarqueeIncrement, value);
         break;
     case AttributeNames::scrolldelayAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitMarqueeSpeed, limitToOnlyHTMLNonNegative(value, defaultScrollDelay), CSSUnitType::Ms);
         break;
     case AttributeNames::loopAttr:
-        if (!value.isEmpty()) {
-            if (value == "-1"_s || equalLettersIgnoringASCIICase(value, "infinite"_s))
+        if (!isEmpty(value)) {
+            if (equal(value, "-1"_s) || equalLettersIgnoringASCIICase(value, "infinite"_s))
                 addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitMarqueeRepetition, CSSValueID::Infinite);
             else
                 addHTMLNumberToStyle(style, CSSPropertyID::WebkitMarqueeRepetition, value);
         }
         break;
     case AttributeNames::behaviorAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitMarqueeStyle, value);
         break;
     case AttributeNames::directionAttr:
-        if (!value.isEmpty())
+        if (!isEmpty(value))
             addPropertyToPresentationalHintStyle(style, CSSPropertyID::WebkitMarqueeDirection, value);
         break;
     default:

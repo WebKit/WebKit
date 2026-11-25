@@ -186,7 +186,7 @@ TEST(URLSchemeHandler, BasicWithHTTPS)
     done = false;
 
     HTTPServer httpsServer({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, schemeHandlerMainBytes } },
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, StringImpl::create(schemeHandlerMainBytes) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
@@ -549,7 +549,7 @@ static bool receivedStop;
 
 @interface SyncScheme : NSObject <WKURLSchemeHandler> {
 @public
-    HashMap<String, SchemeResourceInfo> resources;
+    HashMap<RefPtr<StringImpl>, SchemeResourceInfo> resources;
 }
 @end
 
@@ -557,13 +557,13 @@ static bool receivedStop;
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
-    auto entry = resources.find([task.request.URL absoluteString]);
+    auto entry = resources.find(StringImpl::create([task.request.URL absoluteString]).get());
     if (entry == resources.end()) {
         NSLog(@"Did not find resource entry for URL %@", task.request.URL);
         return;
     }
 
-    if (entry->key == "syncxhr://host/test.dat"_s)
+    if (equal(entry->key, "syncxhr://host/test.dat"_s))
         startedXHR = true;
 
     if (!entry->value.shouldRespond)
@@ -574,7 +574,7 @@ static bool receivedStop;
     [task didReceiveData:toNSData(entry->value.data.span8()).get()];
     [task didFinish];
 
-    if (entry->key == "syncxhr://host/test.dat"_s)
+    if (equal(entry->key, "syncxhr://host/test.dat"_s))
         startedXHR = false;
 }
 
@@ -630,8 +630,8 @@ TEST(URLSchemeHandler, SyncXHR)
         RetainPtr handler = adoptNS([[SyncScheme alloc] init]);
         [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"syncxhr"];
 
-        handler.get()->resources.set("syncxhr://host/main.html"_s, SchemeResourceInfo { @"text/html", syncMainBytes, true });
-        handler.get()->resources.set("syncxhr://host/test.dat"_s, SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
+        handler.get()->resources.set("syncxhr://host/main.html"_si, SchemeResourceInfo { @"text/html", syncMainBytes, true });
+        handler.get()->resources.set("syncxhr://host/test.dat"_si, SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
 
         RetainPtr messageHandler = adoptNS([[SyncMessageHandler alloc] init]);
         [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sync"];
@@ -649,7 +649,7 @@ TEST(URLSchemeHandler, SyncXHR)
 
         // Now try again, but hang the WebProcess in the reply to the XHR by telling the scheme handler to never
         // respond to it.
-        handler.get()->resources.find("syncxhr://host/test.dat"_s)->value.shouldRespond = false;
+        handler.get()->resources.find("syncxhr://host/test.dat"_si)->value.shouldRespond = false;
         [webView loadRequest:request];
 
         TestWebKitAPI::Util::run(&startedXHR);
@@ -1242,10 +1242,10 @@ TEST(WebKit, OriginHeaderWithCORSDisablingPatternsInUnrelatedWebView)
     HTTPServer server([&] (Connection connection) {
         connection.receiveHTTPRequest([&, connection](Vector<char>&& requestBytes) {
             auto path = HTTPServer::parsePath(requestBytes);
-            if (path == "/"_s) {
+            if (equal(path, "/"_s)) {
                 auto html = "<head><link rel='modulepreload' href='https://webkit.org/module'></head>"_s;
                 connection.send(HTTPResponse(html).serialize());
-            } else if (path == "/module"_s) {
+            } else if (equal(path, "/module"_s)) {
                 EXPECT_TRUE(contains(requestBytes.span(), "Origin: https://example.com\r\n"_span));
                 done = true;
             }
@@ -1425,14 +1425,14 @@ static void serverLoop(const TestWebKitAPI::Connection& connection, bool& loaded
                 serverLoop(connection, loadedImage, loadedIFrame);
             });
         };
-        if (path == "/main.html"_s)
-            sendReply({ { { "Content-Type"_s, "text/html"_s } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>"_s });
-        else if (path == "/imgsrc"_s) {
+        if (equal(path, "/main.html"_s))
+            sendReply({ { { "Content-Type"_s, "text/html"_s } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>"_si });
+        else if (equal(path, "/imgsrc"_s)) {
             loadedImage = true;
-            sendReply({ "image content"_s });
-        } else if (path == "/iframesrc"_s) {
+            sendReply({ "image content"_si });
+        } else if (equal(path, "/iframesrc"_s)) {
             loadedIFrame = true;
-            sendReply({ "iframe content"_s });
+            sendReply({ "iframe content"_si });
         } else
             ASSERT_NOT_REACHED();
     });
@@ -1758,18 +1758,18 @@ TEST(URLSchemeHandler, Ranges)
         NSString *requestRange = [task.request.allHTTPHeaderFields objectForKey:@"Range"];
         EXPECT_TRUE(requestRange);
 
-        String requestRangeString(requestRange);
-        String rangeBytes = "bytes="_s;
-        auto begin = requestRangeString.find(rangeBytes, 0);
+        RefPtr<StringImpl> requestRangeString(StringImpl::create(requestRange));
+        RefPtr<StringImpl> rangeBytes = "bytes="_si;
+        auto begin = find(requestRangeString, rangeBytes, 0);
         ASSERT(begin != notFound);
-        auto dash = requestRangeString.find('-', begin);
+        auto dash = find(requestRangeString, '-', begin);
         ASSERT(dash != notFound);
-        auto end = requestRangeString.length();
+        auto end = length(requestRangeString);
 
-        auto rangeBeginString = requestRangeString.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length());
-        auto rangeEndString = requestRangeString.substring(dash + 1, end - dash - 1);
+        auto rangeBeginString = substring(requestRangeString, begin + length(rangeBytes), dash - begin - length(rangeBytes));
+        auto rangeEndString = substring(requestRangeString, dash + 1, end - dash - 1);
         auto rangeBegin = parseInteger<uint64_t>(rangeBeginString).value_or(0);
-        auto rangeEnd = rangeEndString.isEmpty() ? [videoData length] - 1 : parseInteger<uint64_t>(rangeEndString).value_or(0);
+        auto rangeEnd = isEmpty(rangeEndString) ? [videoData length] - 1 : parseInteger<uint64_t>(rangeEndString).value_or(0);
         auto contentLength = rangeEnd - rangeBegin + 1;
 
         RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:206 HTTPVersion:@"HTTP/1.1" headerFields:@{

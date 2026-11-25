@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-CacheStorageRecordInformation::CacheStorageRecordInformation(NetworkCache::Key&& key, double insertionTime, uint64_t identifier, uint64_t updateResponseCounter, uint64_t size, URL&& url, bool hasVaryStar, HashMap<String, String>&& varyHeaders)
+CacheStorageRecordInformation::CacheStorageRecordInformation(NetworkCache::Key&& key, double insertionTime, uint64_t identifier, uint64_t updateResponseCounter, uint64_t size, URL&& url, bool hasVaryStar, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& varyHeaders)
     : m_key(WTF::move(key))
     , m_insertionTime(insertionTime)
     , m_identifier(identifier)
@@ -43,13 +43,13 @@ CacheStorageRecordInformation::CacheStorageRecordInformation(NetworkCache::Key&&
 void CacheStorageRecordInformation::updateVaryHeaders(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse::CrossThreadData& response)
 {
     auto varyValue = response.httpHeaderFields.get(WebCore::HTTPHeaderName::Vary);
-    if (varyValue.isNull() || response.tainting == WebCore::ResourceResponse::Tainting::Opaque || response.tainting == WebCore::ResourceResponse::Tainting::Opaqueredirect) {
+    if (!varyValue || response.tainting == WebCore::ResourceResponse::Tainting::Opaque || response.tainting == WebCore::ResourceResponse::Tainting::Opaqueredirect) {
         m_hasVaryStar = false;
         m_varyHeaders = { };
         return;
     }
 
-    varyValue.split(',', [&](StringView view) {
+    split(varyValue, ',', [&](StringView view) {
         if (!m_hasVaryStar && view.trim(isASCIIWhitespaceWithoutFF<char16_t>) == "*"_s)
             m_hasVaryStar = true;
         m_varyHeaders.add(view.toString(), request.httpHeaderField(view));

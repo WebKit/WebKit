@@ -58,7 +58,7 @@ template<typename CharType> NODELETE static StringView parseKey(StringParsingBuf
 }
 
 // Parsing a String (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.5).
-template<typename CharType> static std::optional<String> parseString(StringParsingBuffer<CharType>& buffer)
+template<typename CharType> static std::optional<RefPtr<StringImpl>> parseString(StringParsingBuffer<CharType>& buffer)
 {
     if (!skipExactly(buffer, '"'))
         return std::nullopt;
@@ -132,7 +132,7 @@ template<typename CharType> static std::optional<Token> parseToken(StringParsing
         return std::nullopt;
     auto tokenStart = buffer.span();
     skipUntil<isEndOfToken>(buffer);
-    return Token { String(tokenStart.first(buffer.position() - tokenStart.data())) };
+    return Token { StringImpl::create(tokenStart.first(buffer.position() - tokenStart.data())) };
 }
 
 // Parsing a Byte Sequence (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.7).
@@ -188,7 +188,7 @@ template<typename CharType> static std::optional<BareItem> parseBareItem(StringP
 // Parsing Parameters (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.3.2).
 template<typename CharType> static std::optional<Parameters> parseParameters(StringParsingBuffer<CharType>& buffer)
 {
-    HashMap<String, BareItem> parameters;
+    HashMap<RefPtr<StringImpl>, BareItem> parameters;
     while (buffer.hasCharactersRemaining()) {
         if (!skipExactly(buffer, ';'))
             break;
@@ -259,9 +259,9 @@ template<typename CharType> static std::optional<std::pair<ItemOrInnerList, Para
 }
 
 // Parsing a dictionary (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.2).
-template<typename CharType> static std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionary(StringParsingBuffer<CharType>& buffer)
+template<typename CharType> static std::optional<HashMap<RefPtr<StringImpl>, std::pair<ItemOrInnerList, Parameters>>> parseDictionary(StringParsingBuffer<CharType>& buffer)
 {
-    HashMap<String, std::pair<ItemOrInnerList, Parameters>> dictionary;
+    HashMap<RefPtr<StringImpl>, std::pair<ItemOrInnerList, Parameters>> dictionary;
     while (buffer.hasCharactersRemaining()) {
         auto key = parseKey(buffer);
         if (key.isNull())
@@ -358,12 +358,12 @@ std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> parseListStructure
 }
 
 // https://datatracker.ietf.org/doc/html/rfc8941#section-4.2 with type "dictionary".
-std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header)
+std::optional<HashMap<RefPtr<StringImpl>, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header)
 {
     if (header.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(WTF::move(header), [](auto buffer) -> std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> {
+    return readCharactersForParsing(WTF::move(header), [](auto buffer) -> std::optional<HashMap<RefPtr<StringImpl>, std::pair<ItemOrInnerList, Parameters>>> {
         skipWhile(buffer, ' ');
 
         auto dictionary = parseDictionary(buffer);
@@ -378,7 +378,7 @@ std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDict
     });
 }
 
-std::optional<String> escapeString(StringView input)
+std::optional<RefPtr<StringImpl>> escapeString(StringView input)
 {
     // https://datatracker.ietf.org/doc/html/rfc8941#section-3.3.3
     StringBuilder builder;

@@ -38,52 +38,52 @@
 
 namespace WebCore {
 
-static String convertEnumerationToString(PlatformMediaCapabilitiesColorGamut value)
+static RefPtr<StringImpl> convertEnumerationToString(PlatformMediaCapabilitiesColorGamut value)
 {
     switch (value) {
-    case PlatformMediaCapabilitiesColorGamut::SRGB:    return "srgb"_s;
-    case PlatformMediaCapabilitiesColorGamut::P3:      return "p3"_s;
-    case PlatformMediaCapabilitiesColorGamut::Rec2020: return "rec2020"_s;
+    case PlatformMediaCapabilitiesColorGamut::SRGB:    return "srgb"_si;
+    case PlatformMediaCapabilitiesColorGamut::P3:      return "p3"_si;
+    case PlatformMediaCapabilitiesColorGamut::Rec2020: return "rec2020"_si;
     }
     RELEASE_ASSERT_NOT_REACHED();
 
 }
 
-static String convertEnumerationToString(PlatformMediaCapabilitiesHdrMetadataType value)
+static RefPtr<StringImpl> convertEnumerationToString(PlatformMediaCapabilitiesHdrMetadataType value)
 {
     switch (value) {
-    case PlatformMediaCapabilitiesHdrMetadataType::SmpteSt2086:   return "smpteSt2086"_s;
-    case PlatformMediaCapabilitiesHdrMetadataType::SmpteSt209410: return "smpteSt2094-10"_s;
-    case PlatformMediaCapabilitiesHdrMetadataType::SmpteSt209440: return "smpteSt2094-40"_s;
+    case PlatformMediaCapabilitiesHdrMetadataType::SmpteSt2086:   return "smpteSt2086"_si;
+    case PlatformMediaCapabilitiesHdrMetadataType::SmpteSt209410: return "smpteSt2094-10"_si;
+    case PlatformMediaCapabilitiesHdrMetadataType::SmpteSt209440: return "smpteSt2094-40"_si;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static String convertEnumerationToString(PlatformMediaCapabilitiesTransferFunction value)
+static RefPtr<StringImpl> convertEnumerationToString(PlatformMediaCapabilitiesTransferFunction value)
 {
     switch (value) {
-    case PlatformMediaCapabilitiesTransferFunction::SRGB:    return "srgb"_s;
-    case PlatformMediaCapabilitiesTransferFunction::PQ:      return "pq"_s;
-    case PlatformMediaCapabilitiesTransferFunction::HLG:     return "hlg"_s;
+    case PlatformMediaCapabilitiesTransferFunction::SRGB:    return "srgb"_si;
+    case PlatformMediaCapabilitiesTransferFunction::PQ:      return "pq"_si;
+    case PlatformMediaCapabilitiesTransferFunction::HLG:     return "hlg"_si;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static String convertEnumerationToString(PlatformMediaDecodingType value)
+static RefPtr<StringImpl> convertEnumerationToString(PlatformMediaDecodingType value)
 {
     switch (value) {
-    case PlatformMediaDecodingType::FileOrHLS:      return "file"_s;
-    case PlatformMediaDecodingType::MediaSource:    return "media-source"_s;
-    case PlatformMediaDecodingType::MediaStream:    return "media-stream"_s;
+    case PlatformMediaDecodingType::FileOrHLS:      return "file"_si;
+    case PlatformMediaDecodingType::MediaSource:    return "media-source"_si;
+    case PlatformMediaDecodingType::MediaStream:    return "media-stream"_si;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static String convertEnumerationToString(PlatformMediaEncodingType value)
+static RefPtr<StringImpl> convertEnumerationToString(PlatformMediaEncodingType value)
 {
     switch (value) {
-    case PlatformMediaEncodingType::Record: return "record"_s;
-    case PlatformMediaEncodingType::WebRTC: return "webrtc"_s;
+    case PlatformMediaEncodingType::Record: return "record"_si;
+    case PlatformMediaEncodingType::WebRTC: return "webrtc"_si;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -91,34 +91,34 @@ static String convertEnumerationToString(PlatformMediaEncodingType value)
 static Ref<JSON::Object> toJSONObject(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
     auto object = JSON::Object::create();
-    object->setString("contentType"_s, configuration.contentType);
-    object->setInteger("width"_s, configuration.width);
-    object->setInteger("height"_s, configuration.height);
-    object->setInteger("bitrate"_s, static_cast<int>(configuration.bitrate));
-    object->setDouble("framerate"_s, configuration.framerate);
+    object->setString("contentType"_si, configuration.contentType);
+    object->setInteger("width"_si, configuration.width);
+    object->setInteger("height"_si, configuration.height);
+    object->setInteger("bitrate"_si, static_cast<int>(configuration.bitrate));
+    object->setDouble("framerate"_si, configuration.framerate);
     if (configuration.alphaChannel)
-        object->setBoolean("alphaChannel"_s, configuration.alphaChannel.value());
+        object->setBoolean("alphaChannel"_si, configuration.alphaChannel.value());
     if (configuration.colorGamut)
-        object->setString("colorGamut"_s, convertEnumerationToString(configuration.colorGamut.value()));
+        object->setString("colorGamut"_si, convertEnumerationToString(configuration.colorGamut.value()));
     if (configuration.hdrMetadataType)
-        object->setString("hdrMetadataType"_s, convertEnumerationToString(configuration.hdrMetadataType.value()));
+        object->setString("hdrMetadataType"_si, convertEnumerationToString(configuration.hdrMetadataType.value()));
     if (configuration.transferFunction)
-        object->setString("transferFunction"_s, convertEnumerationToString(configuration.transferFunction.value()));
+        object->setString("transferFunction"_si, convertEnumerationToString(configuration.transferFunction.value()));
     return object;
 }
 
 static Ref<JSON::Object> toJSONObject(const PlatformMediaCapabilitiesAudioConfiguration& configuration)
 {
     auto object = JSON::Object::create();
-    object->setString("contentType"_s, configuration.contentType);
-    if (!configuration.channels.isNull())
-        object->setString("channels"_s, configuration.channels);
+    object->setString("contentType"_si, configuration.contentType);
+    if (configuration.channels)
+        object->setString("channels"_si, configuration.channels);
     if (configuration.bitrate)
-        object->setInteger("bitrate"_s, static_cast<int>(configuration.bitrate.value()));
+        object->setInteger("bitrate"_si, static_cast<int>(configuration.bitrate.value()));
     if (configuration.samplerate)
-        object->setDouble("samplerate"_s, configuration.samplerate.value());
+        object->setDouble("samplerate"_si, configuration.samplerate.value());
     if (configuration.spatialRendering)
-        object->setBoolean("spatialRendering"_s, configuration.spatialRendering.value());
+        object->setBoolean("spatialRendering"_si, configuration.spatialRendering.value());
     return object;
 }
 
@@ -126,85 +126,85 @@ static Ref<JSON::Object> toJSONObject(const PlatformMediaConfiguration& configur
 {
     auto object = JSON::Object::create();
     if (configuration.video)
-        object->setValue("video"_s, toJSONObject(configuration.video.value()));
+        object->setValue("video"_si, toJSONObject(configuration.video.value()));
     if (configuration.audio)
-        object->setValue("audio"_s, toJSONObject(configuration.audio.value()));
+        object->setValue("audio"_si, toJSONObject(configuration.audio.value()));
     return object;
 }
 
 static Ref<JSON::Object> toJSONObject(const PlatformMediaDecodingConfiguration& configuration)
 {
     auto object = toJSONObject(static_cast<const PlatformMediaConfiguration&>(configuration));
-    object->setString("type"_s, convertEnumerationToString(configuration.type));
+    object->setString("type"_si, convertEnumerationToString(configuration.type));
     return object;
 }
 
 static Ref<JSON::Object> toJSONObject(const PlatformMediaEncodingConfiguration& configuration)
 {
     auto object = toJSONObject(static_cast<const PlatformMediaConfiguration&>(configuration));
-    object->setString("type"_s, convertEnumerationToString(configuration.type));
+    object->setString("type"_si, convertEnumerationToString(configuration.type));
     return object;
 }
 
 static Ref<JSON::Object> toJSONObject(const PlatformMediaCapabilitiesInfo& info)
 {
     auto object = JSON::Object::create();
-    object->setBoolean("supported"_s, info.supported);
-    object->setBoolean("smooth"_s, info.smooth);
-    object->setBoolean("powerEfficient"_s, info.powerEfficient);
+    object->setBoolean("supported"_si, info.supported);
+    object->setBoolean("smooth"_si, info.smooth);
+    object->setBoolean("powerEfficient"_si, info.powerEfficient);
     return object;
 }
 
 static Ref<JSON::Object> toJSONObject(const PlatformMediaCapabilitiesDecodingInfo& info)
 {
     auto object = toJSONObject(static_cast<const PlatformMediaCapabilitiesInfo&>(info));
-    object->setValue("configuration"_s, toJSONObject(info.configuration));
+    object->setValue("configuration"_si, toJSONObject(info.configuration));
     return object;
 }
 
 static Ref<JSON::Object> toJSONObject(const PlatformMediaCapabilitiesEncodingInfo& info)
 {
     auto object = toJSONObject(static_cast<const PlatformMediaCapabilitiesInfo&>(info));
-    object->setValue("configuration"_s, toJSONObject(info.configuration));
+    object->setValue("configuration"_si, toJSONObject(info.configuration));
     return object;
 }
 
-static String toJSONString(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
+static RefPtr<StringImpl> toJSONString(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
     return toJSONObject(configuration)->toJSONString();
 }
 
-static String toJSONString(const PlatformMediaCapabilitiesAudioConfiguration& configuration)
+static RefPtr<StringImpl> toJSONString(const PlatformMediaCapabilitiesAudioConfiguration& configuration)
 {
     return toJSONObject(configuration)->toJSONString();
 }
 
-static String toJSONString(const PlatformMediaConfiguration& configuration)
+static RefPtr<StringImpl> toJSONString(const PlatformMediaConfiguration& configuration)
 {
     return toJSONObject(configuration)->toJSONString();
 }
 
-static String toJSONString(const PlatformMediaDecodingConfiguration& configuration)
+static RefPtr<StringImpl> toJSONString(const PlatformMediaDecodingConfiguration& configuration)
 {
     return toJSONObject(configuration)->toJSONString();
 }
 
-static String toJSONString(const PlatformMediaEncodingConfiguration& configuration)
+static RefPtr<StringImpl> toJSONString(const PlatformMediaEncodingConfiguration& configuration)
 {
     return toJSONObject(configuration)->toJSONString();
 }
 
-static String toJSONString(const PlatformMediaCapabilitiesInfo& info)
+static RefPtr<StringImpl> toJSONString(const PlatformMediaCapabilitiesInfo& info)
 {
     return toJSONObject(info)->toJSONString();
 }
 
-static String toJSONString(const PlatformMediaCapabilitiesDecodingInfo& info)
+static RefPtr<StringImpl> toJSONString(const PlatformMediaCapabilitiesDecodingInfo& info)
 {
     return toJSONObject(info)->toJSONString();
 }
 
-static String toJSONString(const PlatformMediaCapabilitiesEncodingInfo& info)
+static RefPtr<StringImpl> toJSONString(const PlatformMediaCapabilitiesEncodingInfo& info)
 {
     return toJSONObject(info)->toJSONString();
 }
@@ -213,67 +213,67 @@ static String toJSONString(const PlatformMediaCapabilitiesEncodingInfo& info)
 
 namespace WTF {
 
-String LogArgument<WebCore::PlatformMediaCapabilitiesVideoConfiguration>::toString(const WebCore::PlatformMediaCapabilitiesVideoConfiguration& configuration)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaCapabilitiesVideoConfiguration>::toString(const WebCore::PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
     return toJSONString(configuration);
 }
 
-String LogArgument<WebCore::PlatformMediaCapabilitiesAudioConfiguration>::toString(const WebCore::PlatformMediaCapabilitiesAudioConfiguration& configuration)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaCapabilitiesAudioConfiguration>::toString(const WebCore::PlatformMediaCapabilitiesAudioConfiguration& configuration)
 {
     return toJSONString(configuration);
 }
 
-String LogArgument<WebCore::PlatformMediaConfiguration>::toString(const WebCore::PlatformMediaConfiguration& configuration)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaConfiguration>::toString(const WebCore::PlatformMediaConfiguration& configuration)
 {
     return toJSONString(configuration);
 }
 
-String LogArgument<WebCore::PlatformMediaDecodingConfiguration>::toString(const WebCore::PlatformMediaDecodingConfiguration& configuration)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaDecodingConfiguration>::toString(const WebCore::PlatformMediaDecodingConfiguration& configuration)
 {
     return toJSONString(configuration);
 }
 
-String LogArgument<WebCore::PlatformMediaEncodingConfiguration>::toString(const WebCore::PlatformMediaEncodingConfiguration& configuration)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaEncodingConfiguration>::toString(const WebCore::PlatformMediaEncodingConfiguration& configuration)
 {
     return toJSONString(configuration);
 }
 
-String LogArgument<WebCore::PlatformMediaCapabilitiesInfo>::toString(const WebCore::PlatformMediaCapabilitiesInfo& info)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaCapabilitiesInfo>::toString(const WebCore::PlatformMediaCapabilitiesInfo& info)
 {
     return toJSONString(info);
 }
 
-String LogArgument<WebCore::PlatformMediaCapabilitiesDecodingInfo>::toString(const WebCore::PlatformMediaCapabilitiesDecodingInfo& info)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaCapabilitiesDecodingInfo>::toString(const WebCore::PlatformMediaCapabilitiesDecodingInfo& info)
 {
     return toJSONString(info);
 }
 
-String LogArgument<WebCore::PlatformMediaCapabilitiesEncodingInfo>::toString(const WebCore::PlatformMediaCapabilitiesEncodingInfo& info)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaCapabilitiesEncodingInfo>::toString(const WebCore::PlatformMediaCapabilitiesEncodingInfo& info)
 {
     return toJSONString(info);
 }
 
-String LogArgument<WebCore::PlatformMediaCapabilitiesColorGamut>::toString(const WebCore::PlatformMediaCapabilitiesColorGamut& type)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaCapabilitiesColorGamut>::toString(const WebCore::PlatformMediaCapabilitiesColorGamut& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::PlatformMediaCapabilitiesHdrMetadataType>::toString(const WebCore::PlatformMediaCapabilitiesHdrMetadataType& type)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaCapabilitiesHdrMetadataType>::toString(const WebCore::PlatformMediaCapabilitiesHdrMetadataType& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::PlatformMediaCapabilitiesTransferFunction>::toString(const WebCore::PlatformMediaCapabilitiesTransferFunction& type)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaCapabilitiesTransferFunction>::toString(const WebCore::PlatformMediaCapabilitiesTransferFunction& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::PlatformMediaDecodingType>::toString(const WebCore::PlatformMediaDecodingType& type)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaDecodingType>::toString(const WebCore::PlatformMediaDecodingType& type)
 {
     return convertEnumerationToString(type);
 }
 
-String LogArgument<WebCore::PlatformMediaEncodingType>::toString(const WebCore::PlatformMediaEncodingType& type)
+RefPtr<StringImpl> LogArgument<WebCore::PlatformMediaEncodingType>::toString(const WebCore::PlatformMediaEncodingType& type)
 {
     return convertEnumerationToString(type);
 }

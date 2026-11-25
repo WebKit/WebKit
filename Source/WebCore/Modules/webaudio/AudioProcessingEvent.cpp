@@ -39,7 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioProcessingEvent);
 
-Ref<AudioProcessingEvent> AudioProcessingEvent::create(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
+Ref<AudioProcessingEvent> AudioProcessingEvent::create(AtomStringImpl* eventType, AudioProcessingEventInit&& eventInitDict)
 {
     return adoptRef(*new AudioProcessingEvent(eventType, WTF::move(eventInitDict)));
 }
@@ -52,7 +52,7 @@ AudioProcessingEvent::AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, Re
 {
 }
 
-AudioProcessingEvent::AudioProcessingEvent(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
+AudioProcessingEvent::AudioProcessingEvent(AtomStringImpl* eventType, AudioProcessingEventInit&& eventInitDict)
     : Event(EventInterfaceType::AudioProcessingEvent, eventType, eventInitDict, IsTrusted::No)
     , m_inputBuffer(WTF::move(eventInitDict.inputBuffer))
     , m_outputBuffer(WTF::move(eventInitDict.outputBuffer))

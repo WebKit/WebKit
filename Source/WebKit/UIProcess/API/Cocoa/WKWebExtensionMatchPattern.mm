@@ -55,9 +55,9 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
 + (void)registerCustomURLScheme:(NSString *)urlScheme
 {
     NSParameterAssert([urlScheme isKindOfClass:NSString.class]);
-    NSAssert1(WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme)), @"Invalid parameter: '%@' is not a valid URL scheme", urlScheme);
+    NSAssert1(WTF::URLParser::maybeCanonicalizeScheme(StringImpl::create(urlScheme).get()), @"Invalid parameter: '%@' is not a valid URL scheme", urlScheme);
 
-    WebKit::WebExtensionMatchPattern::registerCustomURLScheme(urlScheme);
+    WebKit::WebExtensionMatchPattern::registerCustomURLScheme(StringImpl::create(urlScheme));
 }
 
 + (instancetype)allURLsMatchPattern
@@ -74,7 +74,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
 {
     NSParameterAssert([patternString isKindOfClass:NSString.class]);
 
-    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(patternString)).autorelease();
+    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(StringImpl::create(patternString).get())).autorelease();
 }
 
 + (instancetype)matchPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path
@@ -83,7 +83,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
     NSParameterAssert([host isKindOfClass:NSString.class]);
     NSParameterAssert([path isKindOfClass:NSString.class]);
 
-    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path)).autorelease();
+    return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(StringImpl::create(scheme).get(), StringImpl::create(host).get(), StringImpl::create(path).get())).autorelease();
 }
 
 - (instancetype)initWithString:(NSString *)string error:(NSError **)error
@@ -95,11 +95,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
         API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self);
 
         // Use the pattern cache instead for better performance, since an error isn't needed.
-        return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(string)).autorelease();
+        return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(StringImpl::create(string).get())).autorelease();
     }
 
     RefPtr<API::Error> internalError;
-    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, string, internalError);
+    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, StringImpl::create(string).get(), internalError);
 
     if (error)
         *error = internalError ? static_cast<NSError *>(internalError->platformError()) : nil;
@@ -118,11 +118,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
         API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self);
 
         // Use the pattern cache instead for better performance, since an error isn't needed.
-        return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path)).autorelease();
+        return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(StringImpl::create(scheme).get(), StringImpl::create(host).get(), StringImpl::create(path).get())).autorelease();
     }
 
     RefPtr<API::Error> internalError;
-    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, scheme, host, path, internalError);
+    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, StringImpl::create(scheme).get(), StringImpl::create(host).get(), StringImpl::create(path).get(), internalError);
 
     if (error)
         *error = internalError ? static_cast<NSError *>(internalError->platformError()) : nil;
@@ -182,30 +182,30 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
 - (NSString *)scheme
 {
     Ref pattern = *_webExtensionMatchPattern;
-    if (pattern->scheme().isNull())
+    if (!pattern->scheme())
         return nil;
-    return pattern->scheme().createNSString().autorelease();
+    return createNSString(pattern->scheme()).autorelease();
 }
 
 - (NSString *)host
 {
     Ref pattern = *_webExtensionMatchPattern;
-    if (pattern->host().isNull())
+    if (!pattern->host())
         return nil;
-    return pattern->host().createNSString().autorelease();
+    return createNSString(pattern->host()).autorelease();
 }
 
 - (NSString *)path
 {
     Ref pattern = *_webExtensionMatchPattern;
-    if (pattern->path().isNull())
+    if (!pattern->path())
         return nil;
-    return pattern->path().createNSString().autorelease();
+    return createNSString(pattern->path()).autorelease();
 }
 
 - (NSString *)string
 {
-    return protect(*_webExtensionMatchPattern)->string().createNSString().autorelease();
+    return createNSString(protect(*_webExtensionMatchPattern)->string()).autorelease();
 }
 
 - (BOOL)matchesAllURLs

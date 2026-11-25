@@ -48,7 +48,7 @@ public:
     RemoteGPUProxy& root() const { return m_parent; }
     WebGPUBindGroupLayoutIdentifier backing() const { return m_backing; }
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

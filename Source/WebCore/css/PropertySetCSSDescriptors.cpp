@@ -65,7 +65,7 @@ unsigned PropertySetCSSDescriptors::length() const
     return exposed;
 }
 
-String PropertySetCSSDescriptors::item(unsigned i) const
+RefPtr<StringImpl> PropertySetCSSDescriptors::item(unsigned i) const
 {
     Ref propertySet = m_propertySet;
 
@@ -75,17 +75,17 @@ String PropertySetCSSDescriptors::item(unsigned i) const
     }
 
     if (i >= propertySet->propertyCount())
-        return String();
+        return nullptr;
 
     return propertySet->propertyAt(i).cssName();
 }
 
-String PropertySetCSSDescriptors::cssText() const
+RefPtr<StringImpl> PropertySetCSSDescriptors::cssText() const
 {
     return protect(propertySet())->asText(CSS::defaultSerializationContext());
 }
 
-ExceptionOr<void> PropertySetCSSDescriptors::setCssText(const String& text)
+ExceptionOr<void> PropertySetCSSDescriptors::setCssText(StringImpl* text)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
     if (!willMutate())
@@ -98,7 +98,7 @@ ExceptionOr<void> PropertySetCSSDescriptors::setCssText(const String& text)
     return { };
 }
 
-CSSPropertyID PropertySetCSSDescriptors::resolvePropertyName(const String& propertyName) const
+CSSPropertyID PropertySetCSSDescriptors::resolvePropertyName(StringImpl* propertyName) const
 {
     auto propertyID = cssPropertyID(propertyName);
     if (propertyID == CSSPropertyID::Size && ruleType() == StyleRuleType::Page)
@@ -106,7 +106,7 @@ CSSPropertyID PropertySetCSSDescriptors::resolvePropertyName(const String& prope
     return propertyID;
 }
 
-RefPtr<DeprecatedCSSOMValue> PropertySetCSSDescriptors::getPropertyCSSValue(const String& propertyName)
+RefPtr<DeprecatedCSSOMValue> PropertySetCSSDescriptors::getPropertyCSSValue(StringImpl* propertyName)
 {
     auto propertyID = resolvePropertyName(propertyName);
     if (!isExposed(propertyID))
@@ -114,39 +114,39 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSDescriptors::getPropertyCSSValue(cons
     return wrapForDeprecatedCSSOM(protect(propertySet())->getPropertyCSSValue(propertyID).get());
 }
 
-String PropertySetCSSDescriptors::getPropertyValue(const String& propertyName)
+RefPtr<StringImpl> PropertySetCSSDescriptors::getPropertyValue(StringImpl* propertyName)
 {
     if (styleDeclarationType() == StyleDeclarationType::Function && isCustomPropertyName(propertyName))
         return protect(propertySet())->getCustomPropertyValue(propertyName);
 
     auto propertyID = resolvePropertyName(propertyName);
     if (!isExposed(propertyID))
-        return String();
+        return nullptr;
     return getPropertyValueInternal(propertyID);
 }
 
-String PropertySetCSSDescriptors::getPropertyPriority(const String& propertyName)
+RefPtr<StringImpl> PropertySetCSSDescriptors::getPropertyPriority(StringImpl* propertyName)
 {
     auto propertyID = resolvePropertyName(propertyName);
     if (!isExposed(propertyID))
         return emptyString();
-    return protect(propertySet())->propertyIsImportant(propertyID) ? "important"_s : emptyString();
+    return protect(propertySet())->propertyIsImportant(propertyID) ? "important"_si : emptyString();
 }
 
-String PropertySetCSSDescriptors::getPropertyShorthand(const String& propertyName)
+RefPtr<StringImpl> PropertySetCSSDescriptors::getPropertyShorthand(StringImpl* propertyName)
 {
     auto propertyID = resolvePropertyName(propertyName);
     if (!isExposed(propertyID))
-        return String();
+        return nullptr;
     return protect(propertySet())->getPropertyShorthand(propertyID);
 }
 
-bool PropertySetCSSDescriptors::isPropertyImplicit(const String& propertyName)
+bool PropertySetCSSDescriptors::isPropertyImplicit(StringImpl* propertyName)
 {
     return protect(propertySet())->isPropertyImplicit(resolvePropertyName(propertyName));
 }
 
-ExceptionOr<void> PropertySetCSSDescriptors::setProperty(const String& propertyName, const String& value, const String& priority)
+ExceptionOr<void> PropertySetCSSDescriptors::setProperty(StringImpl* propertyName, StringImpl* value, StringImpl* priority)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
 
@@ -158,7 +158,7 @@ ExceptionOr<void> PropertySetCSSDescriptors::setProperty(const String& propertyN
         return { };
 
     bool important = equalLettersIgnoringASCIICase(priority, "important"_s);
-    if (!important && !priority.isEmpty())
+    if (!important && !isEmpty(priority))
         return { };
 
     bool changed = protect(propertySet())->setProperty(propertyID, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
@@ -174,18 +174,18 @@ ExceptionOr<void> PropertySetCSSDescriptors::setProperty(const String& propertyN
     return { };
 }
 
-ExceptionOr<String> PropertySetCSSDescriptors::removeProperty(const String& propertyName)
+ExceptionOr<RefPtr<StringImpl>> PropertySetCSSDescriptors::removeProperty(StringImpl* propertyName)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
 
     auto propertyID = resolvePropertyName(propertyName);
     if (!isExposed(propertyID))
-        return String();
+        return nullptr;
 
     if (!willMutate())
-        return String();
+        return nullptr;
 
-    String result;
+    RefPtr<StringImpl> result;
     bool changed = protect(propertySet())->removeProperty(propertyID, &result);
 
     didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
@@ -195,20 +195,20 @@ ExceptionOr<String> PropertySetCSSDescriptors::removeProperty(const String& prop
     return result;
 }
 
-String PropertySetCSSDescriptors::getPropertyValueInternal(CSSPropertyID propertyID) const
+RefPtr<StringImpl> PropertySetCSSDescriptors::getPropertyValueInternal(CSSPropertyID propertyID) const
 {
     if (!isExposed(propertyID))
         return { };
 
     auto value = protect(propertySet())->getPropertyValue(propertyID);
 
-    if (!value.isEmpty())
+    if (!isEmpty(value))
         return value;
 
     return { };
 }
 
-ExceptionOr<void> PropertySetCSSDescriptors::setPropertyInternal(CSSPropertyID propertyID, const String& value, IsImportant important)
+ExceptionOr<void> PropertySetCSSDescriptors::setPropertyInternal(CSSPropertyID propertyID, StringImpl* value, IsImportant important)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
     if (!willMutate())

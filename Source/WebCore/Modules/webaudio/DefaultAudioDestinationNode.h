@@ -61,10 +61,10 @@ public:
 
     // The completion handler reports whether the device was acquired; on failure the previous
     // routing stays in effect.
-    void setSinkId(const String& persistentDeviceId, bool isSilentSink, CompletionHandler<void(bool)>&&);
+    void setSinkId(StringImpl* persistentDeviceId, bool isSilentSink, CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(IOS_FAMILY)
-    void setSceneIdentifier(const String&) final;
+    void setSceneIdentifier(StringImpl*) final;
 #endif
 
 private:
@@ -89,13 +89,13 @@ private:
 
     bool requiresTailProcessing() const final { return false; }
 
-    void enableInput(const String& inputDeviceId) final;
+    void enableInput(StringImpl* inputDeviceId) final;
     void restartRendering() final;
     unsigned maxChannelCount() const final;
 
     RefPtr<AudioDestination> m_destination;
-    String m_inputDeviceId;
-    String m_outputDevicePersistentId;
+    RefPtr<StringImpl> m_inputDeviceId;
+    RefPtr<StringImpl> m_outputDevicePersistentId;
     bool m_outputSinkIsSilent { false };
     unsigned m_numberOfInputChannels { 0 };
     bool m_wasDestinationStarted { false };

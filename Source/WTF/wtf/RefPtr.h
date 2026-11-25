@@ -97,11 +97,11 @@ public:
     ALWAYS_INLINE RefPtr(T& ptr) : m_ptr(&RefDerefTraits::ref(ptr)) { }
     // FIXME: Remove this suppression once rdar://190192936 is fixed.
     SUPPRESS_FORWARD_DECL_ARG ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(RefDerefTraits::refIfNotNull(PtrTraits::unwrap(o.m_ptr))) { }
-    template<typename X, typename Y, typename Z> RefPtr(const RefPtr<X, Y, Z>& o) : m_ptr(RefDerefTraits::refIfNotNull(PtrTraits::unwrap(o.get()))) { }
+    template<typename X, typename Y, typename Z> RefPtr(const RefPtr<X, Y, Z>& o) requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(PtrTraits::unwrap(o.get()))) { }
 
     ALWAYS_INLINE RefPtr(RefPtr&& o) noexcept : m_ptr(o.leakRef()) { }
-    template<typename X, typename Y, typename Z> RefPtr(RefPtr<X, Y, Z>&& o) noexcept : m_ptr(o.leakRef()) { }
-    template<typename X, typename Y> RefPtr(Ref<X, Y>&&);
+    template<typename X, typename Y, typename Z> RefPtr(RefPtr<X, Y, Z>&& o) noexcept requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*> : m_ptr(o.leakRef()) { }
+    template<typename X, typename Y> RefPtr(Ref<X, Y>&&) requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*>;
     template<typename X, typename Y, typename Z> RefPtr(const WeakPtr<X, Y, Z>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
     template<typename X, typename Y> RefPtr(const CheckedPtr<X, Y>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
     template<typename X> RefPtr(const ThreadSafeWeakPtr<X>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
@@ -135,9 +135,9 @@ public:
     RefPtr& operator=(const RefPtr&);
     RefPtr& operator=(T*);
     RefPtr& operator=(std::nullptr_t);
-    template<typename X, typename Y, typename Z> RefPtr& operator=(const RefPtr<X, Y, Z>&);
+    template<typename X, typename Y, typename Z> RefPtr& operator=(const RefPtr<X, Y, Z>&) requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*>;
     RefPtr& operator=(RefPtr&&);
-    template<typename X, typename Y, typename Z> RefPtr& operator=(RefPtr<X, Y, Z>&&);
+    template<typename X, typename Y, typename Z> RefPtr& operator=(RefPtr<X, Y, Z>&&) requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*>;
     template<typename X> RefPtr& operator=(Ref<X>&&);
 
     template<typename X, typename Y, typename Z> void swap(RefPtr<X, Y, Z>&);
@@ -174,7 +174,7 @@ template<typename X, typename Deleter> RefPtr(std::unique_ptr<X, Deleter>&) -> R
 
 template<typename T, typename U, typename V>
 template<typename X, typename Y>
-inline RefPtr<T, U, V>::RefPtr(Ref<X, Y>&& reference)
+inline RefPtr<T, U, V>::RefPtr(Ref<X, Y>&& reference) requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*>
     : m_ptr(&reference.leakRef())
 {
 }
@@ -195,7 +195,7 @@ inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(const RefPtr& o)
 
 template<typename T, typename U, typename V>
 template<typename X, typename Y, typename Z>
-inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(const RefPtr<X, Y, Z>& o)
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(const RefPtr<X, Y, Z>& o) requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*>
 {
     RefPtr ptr = o;
     swap(ptr);
@@ -228,7 +228,7 @@ inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(RefPtr&& o)
 
 template<typename T, typename U, typename V>
 template<typename X, typename Y, typename Z>
-inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(RefPtr<X, Y, Z>&& o)
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(RefPtr<X, Y, Z>&& o) requires (!StringImplClass<T> && !StringImplClass<X>) || std::is_convertible_v<X*, T*>
 {
     RefPtr ptr = WTF::move(o);
     swap(ptr);
@@ -415,6 +415,24 @@ NODELETE SUPPRESS_NODELETE ALWAYS_INLINE void lazyInitialize(const RefPtr<T>& pt
     RELEASE_ASSERT(!ptr);
     const_cast<RefPtr<T>&>(ptr) = WTF::move(obj);
 }
+
+namespace Detail {
+
+// For wrappers that hold a RefPtr<X> (NeverDestroyed, ValueOrReference, ...) and, like RefPtr itself, convert to X*.
+// A wrapper's conversion to const RefPtr<X>& followed by RefPtr's conversion to X* would be two user-defined
+// conversions, so the wrapper declares "operator RefPtrRawPointer<T>::Type() const requires RefPtrRawPointer<T>::isRefPtr".
+template<typename> struct RefPtrRawPointer {
+    struct NotARefPtr;
+    using Type = NotARefPtr*;
+    static constexpr bool isRefPtr = false;
+};
+
+template<typename T, typename PtrTraits, typename RefDerefTraits> struct RefPtrRawPointer<RefPtr<T, PtrTraits, RefDerefTraits>> {
+    using Type = T*;
+    static constexpr bool isRefPtr = true;
+};
+
+} // namespace Detail
 
 } // namespace WTF
 

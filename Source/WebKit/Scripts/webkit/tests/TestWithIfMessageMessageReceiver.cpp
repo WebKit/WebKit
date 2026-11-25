@@ -32,6 +32,9 @@
 #include "HandleMessage.h" // NOLINT
 #include "TestWithIfMessageMessages.h" // NOLINT
 #if PLATFORM(COCOA) || PLATFORM(GTK)
+#include <wtf/text/StringView.h> // NOLINT
+#endif
+#if PLATFORM(COCOA) || PLATFORM(GTK)
 #include <wtf/text/WTFString.h> // NOLINT
 #endif
 

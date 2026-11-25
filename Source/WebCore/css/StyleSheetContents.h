@@ -50,13 +50,13 @@ class StyleSheetContents final : public RefCountedAndCanMakeWeakPtr<StyleSheetCo
 public:
     static Ref<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(HTMLStandardMode))
     {
-        return adoptRef(*new StyleSheetContents(nullptr, String(), context));
+        return adoptRef(*new StyleSheetContents(nullptr, nullString(), context));
     }
-    static Ref<StyleSheetContents> create(const String& originalURL, const CSSParserContext& context)
+    static Ref<StyleSheetContents> create(StringImpl* originalURL, const CSSParserContext& context)
     {
         return adoptRef(*new StyleSheetContents(nullptr, originalURL, context));
     }
-    static Ref<StyleSheetContents> create(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext& context)
+    static Ref<StyleSheetContents> create(StyleRuleImport* ownerRule, StringImpl* originalURL, const CSSParserContext& context)
     {
         return adoptRef(*new StyleSheetContents(ownerRule, originalURL, context));
     }
@@ -65,12 +65,12 @@ public:
     
     const CSSParserContext& parserContext() const LIFETIME_BOUND { return m_parserContext; }
     
-    const AtomString& defaultNamespace() LIFETIME_BOUND { return m_defaultNamespace; }
-    NODELETE const AtomString& namespaceURIFromPrefix(const AtomString& prefix);
+    const RefPtr<AtomStringImpl>& defaultNamespace() LIFETIME_BOUND { return m_defaultNamespace; }
+    NODELETE const RefPtr<AtomStringImpl>& namespaceURIFromPrefix(AtomStringImpl* prefix);
     const CSSNamespacePrefixMap& namespacePrefixMap() const { return m_namespacePrefixMap; }
 
     bool parseAuthorStyleSheet(const CachedCSSStyleSheet&, const SecurityOrigin*);
-    WEBCORE_EXPORT bool parseString(const String&);
+    WEBCORE_EXPORT bool parseString(StringImpl*);
 
     bool isCacheable() const;
     bool isCacheableWithNoBaseURLDependency() const;
@@ -99,7 +99,7 @@ public:
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
     void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
 
-    void parserAddNamespace(const AtomString& prefix, const AtomString& uri);
+    void parserAddNamespace(AtomStringImpl* prefix, AtomStringImpl* uri);
     void parserAppendRule(Ref<StyleRuleBase>&&);
     void parserSetUsesStyleBasedEditability() { m_usesStyleBasedEditability = true; }
 
@@ -119,7 +119,7 @@ public:
     // Note that href is the URL that started the redirect chain that led to
     // this style sheet. This property probably isn't useful for much except
     // the JavaScript binding (which needs to use this value for security).
-    String originalURL() const { return m_originalURL; }
+    const RefPtr<StringImpl>& originalURL() const LIFETIME_BOUND { return m_originalURL; }
     const URL& baseURL() const LIFETIME_BOUND { return m_parserContext.baseURL; }
 
     bool isEmpty() const { return !ruleCount(); }
@@ -161,19 +161,19 @@ public:
     friend class CSSStyleSheet;
 
 private:
-    WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
+    WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, StringImpl* originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);
 
     WeakPtr<StyleRuleImport> m_ownerRule;
 
-    String m_originalURL;
+    RefPtr<StringImpl> m_originalURL;
 
     Vector<Ref<StyleRuleLayer>> m_layerRulesBeforeImportRules;
     Vector<Ref<StyleRuleImport>> m_importRules;
     Vector<Ref<StyleRuleNamespace>> m_namespaceRules;
     Vector<Ref<StyleRuleBase>> m_childRules;
     CSSNamespacePrefixMap m_namespacePrefixMap;
-    AtomString m_defaultNamespace;
+    RefPtr<AtomStringImpl> m_defaultNamespace;
 
     bool m_isUserStyleSheet { false };
     bool m_loadCompleted { false };

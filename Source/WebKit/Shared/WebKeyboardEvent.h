@@ -41,13 +41,13 @@ class WebKeyboardEvent;
 // Field order matches WebEvent.serialization.in. On GTK/WPE, unmodifiedText, macCharCode and
 // isSystemKey are not stored because no constructor on those platforms sets them.
 struct WebKeyboardEventData {
-    String text;
+    RefPtr<StringImpl> text;
 #if !PLATFORM(GTK) && !USE(LIBWPE) && !ENABLE(WPE_PLATFORM)
-    String unmodifiedText;
+    RefPtr<StringImpl> unmodifiedText;
 #endif
-    String key;
-    String code;
-    String keyIdentifier;
+    RefPtr<StringImpl> key;
+    RefPtr<StringImpl> code;
+    RefPtr<StringImpl> keyIdentifier;
     int32_t windowsVirtualKeyCode { 0 };
     int32_t nativeVirtualKeyCode { 0 };
 #if !PLATFORM(GTK) && !USE(LIBWPE) && !ENABLE(WPE_PLATFORM)
@@ -63,7 +63,7 @@ struct WebKeyboardEventData {
 #if USE(APPKIT)
     Vector<WebCore::KeypressCommand> commands;
 #elif PLATFORM(GTK)
-    Vector<String> commands;
+    Vector<RefPtr<StringImpl>> commands;
 #endif
     bool isAutoRepeat { false };
     bool isKeypad { false };
@@ -85,16 +85,16 @@ public:
 
     ~WebKeyboardEvent();
 
-    const String& text() const LIFETIME_BOUND { return m_data.text; }
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_data.text; }
 #if !PLATFORM(GTK) && !USE(LIBWPE) && !ENABLE(WPE_PLATFORM)
-    const String& unmodifiedText() const LIFETIME_BOUND { return m_data.unmodifiedText; }
+    const RefPtr<StringImpl>& unmodifiedText() const LIFETIME_BOUND { return m_data.unmodifiedText; }
 #else
     // Always identical to text() on this platform.
-    const String& unmodifiedText() const LIFETIME_BOUND { return m_data.text; }
+    const RefPtr<StringImpl>& unmodifiedText() const LIFETIME_BOUND { return m_data.text; }
 #endif
-    const String& key() const LIFETIME_BOUND { return m_data.key; }
-    const String& code() const LIFETIME_BOUND { return m_data.code; }
-    const String& keyIdentifier() const LIFETIME_BOUND { return m_data.keyIdentifier; }
+    const RefPtr<StringImpl>& key() const LIFETIME_BOUND { return m_data.key; }
+    const RefPtr<StringImpl>& code() const LIFETIME_BOUND { return m_data.code; }
+    const RefPtr<StringImpl>& keyIdentifier() const LIFETIME_BOUND { return m_data.keyIdentifier; }
     int32_t windowsVirtualKeyCode() const { return m_data.windowsVirtualKeyCode; }
 #if PLATFORM(WIN)
     void setWindowsVirtualKeyCode(int32_t keyCode) { m_data.windowsVirtualKeyCode = keyCode; }
@@ -115,7 +115,7 @@ public:
 #if USE(APPKIT)
     const Vector<WebCore::KeypressCommand>& commands() const LIFETIME_BOUND { return m_data.commands; }
 #elif PLATFORM(GTK)
-    const Vector<String>& commands() const LIFETIME_BOUND { return m_data.commands; }
+    const Vector<RefPtr<StringImpl>>& commands() const LIFETIME_BOUND { return m_data.commands; }
 #endif
     bool isAutoRepeat() const { return m_data.isAutoRepeat; }
     bool isKeypad() const { return m_data.isKeypad; }
@@ -130,18 +130,18 @@ public:
     NODELETE static bool isKeyboardEventType(WebEventType);
 
 #if PLATFORM(WPE)
-    static String keyValueStringForWPEKeyval(unsigned);
-    static String keyCodeStringForWPEKeycode(unsigned);
-    static String keyIdentifierForWPEKeyval(unsigned);
+    static RefPtr<StringImpl> keyValueStringForWPEKeyval(unsigned);
+    static RefPtr<StringImpl> keyCodeStringForWPEKeycode(unsigned);
+    static RefPtr<StringImpl> keyIdentifierForWPEKeyval(unsigned);
     static int32_t windowsKeyCodeForWPEKeyval(unsigned);
-    static String singleCharacterStringForWPEKeyval(unsigned);
+    static RefPtr<StringImpl> singleCharacterStringForWPEKeyval(unsigned);
 #endif
 #if PLATFORM(GTK)
-    static String keyValueStringForGdkKeyval(unsigned);
-    static String keyCodeStringForGdkKeycode(unsigned);
-    static String keyIdentifierForGdkKeyval(unsigned);
+    static RefPtr<StringImpl> keyValueStringForGdkKeyval(unsigned);
+    static RefPtr<StringImpl> keyCodeStringForGdkKeycode(unsigned);
+    static RefPtr<StringImpl> keyIdentifierForGdkKeyval(unsigned);
     static int windowsKeyCodeForGdkKeyval(unsigned);
-    static String singleCharacterStringForGdkKeyval(unsigned);
+    static RefPtr<StringImpl> singleCharacterStringForGdkKeyval(unsigned);
 #endif
 
 protected:

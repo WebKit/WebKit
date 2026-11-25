@@ -151,7 +151,7 @@ int PCMDaemonMain(int argc, const char** argv)
         if (startActivity)
             registerScheduledActivityHandler();
         WTF::initializeMainThread();
-        PCM::initializePCMStorageInDirectory(FileSystem::stringFromFileSystemRepresentation(storageLocation), safariApplicationBundleIdentifier, webKitSecondaryIdentifier);
+        PCM::initializePCMStorageInDirectory(FileSystem::stringFromFileSystemRepresentation(storageLocation), StringImpl::create(safariApplicationBundleIdentifier).ptr(), StringImpl::create(webKitSecondaryIdentifier).ptr());
     }
     CFRunLoopRun();
     return 0;

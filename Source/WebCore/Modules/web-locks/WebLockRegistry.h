@@ -48,9 +48,9 @@ public:
 
     virtual ~WebLockRegistry() { }
 
-    virtual void requestLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) = 0;
-    virtual void releaseLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name) = 0;
-    virtual void abortLockRequest(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) = 0;
+    virtual void requestLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) = 0;
+    virtual void releaseLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name) = 0;
+    virtual void abortLockRequest(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name, CompletionHandler<void(bool)>&&) = 0;
     virtual void snapshot(PAL::SessionID, const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) = 0;
     virtual void clientIsGoingAway(PAL::SessionID, const ClientOrigin&, ScriptExecutionContextIdentifier) = 0;
 
@@ -63,9 +63,9 @@ public:
     static Ref<LocalWebLockRegistry> create() { return adoptRef(*new LocalWebLockRegistry); }
     ~LocalWebLockRegistry();
 
-    WEBCORE_EXPORT void requestLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
-    WEBCORE_EXPORT void releaseLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name) final;
-    WEBCORE_EXPORT void abortLockRequest(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) final;
+    WEBCORE_EXPORT void requestLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
+    WEBCORE_EXPORT void releaseLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name) final;
+    WEBCORE_EXPORT void abortLockRequest(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, StringImpl* name, CompletionHandler<void(bool)>&&) final;
     WEBCORE_EXPORT void snapshot(PAL::SessionID, const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) final;
     WEBCORE_EXPORT void clientIsGoingAway(PAL::SessionID, const ClientOrigin&, ScriptExecutionContextIdentifier) final;
     WEBCORE_EXPORT void clientsAreGoingAway(ProcessIdentifier);

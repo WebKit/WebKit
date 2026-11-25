@@ -127,17 +127,17 @@ MediaKeySession::~MediaKeySession()
     m_instanceSession->clearClient();
 }
 
-const String& MediaKeySession::sessionId() const
+const RefPtr<StringImpl>& MediaKeySession::sessionId() const
 {
     return m_sessionId;
 }
 
-bool MediaKeySession::hasSecurityOrigin(const String& origin) const
+bool MediaKeySession::hasSecurityOrigin(StringImpl* origin) const
 {
-    String sessionOrigin;
+    RefPtr<StringImpl> sessionOrigin;
     if (RefPtr document = downcast<Document>(scriptExecutionContext()))
         sessionOrigin = protect(document->securityOrigin())->toString();
-    return origin == sessionOrigin;
+    return equal(origin, sessionOrigin);
 }
 
 double MediaKeySession::expiration() const
@@ -150,7 +150,7 @@ Ref<MediaKeyStatusMap> MediaKeySession::keyStatuses() const
     return m_keyStatuses.copyRef();
 }
 
-void MediaKeySession::generateRequest(const AtomString& initDataType, const BufferSource& initData, Ref<DeferredPromise>&& promise)
+void MediaKeySession::generateRequest(AtomStringImpl* initDataType, const BufferSource& initData, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeysession-generaterequest
     // W3C Editor's Draft 09 November 2016
@@ -172,8 +172,8 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
 
     // 4. If initDataType is the empty string, return a promise rejected with a newly created TypeError.
     // 5. If initData is an empty array, return a promise rejected with a newly created TypeError.
-    if (initDataType.isEmpty() || !initData.byteLength()) {
-        ERROR_LOG(identifier, "Rejected: initDataType empty(", initDataType.isEmpty(), ") or initData empty(", !initData.byteLength(), ")");
+    if (isEmpty(initDataType) || !initData.byteLength()) {
+        ERROR_LOG(identifier, "Rejected: initDataType empty(", isEmpty(initDataType), ") or initData empty(", !initData.byteLength(), ")");
         promise->reject(ExceptionCode::TypeError);
         return;
     }
@@ -191,7 +191,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     // 8. Let session type be this object's session type.
     // 9. Let promise be a new promise.
     // 10. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [initData = SharedBuffer::create(initData.span()), initDataType, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto& session) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [initData = SharedBuffer::create(initData.span()), initDataType = RefPtr { initDataType }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto& session) mutable {
         // 10.1. If the init data is not valid for initDataType, reject promise with a newly created TypeError.
         // 10.2. Let sanitized init data be a validated and sanitized version of init data.
         RefPtr<SharedBuffer> sanitizedInitData = session.m_implementation->sanitizeInitData(initDataType, initData);
@@ -241,7 +241,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             session.m_latestDecryptTime = 0;
         }
 
-        session.m_instanceSession->requestLicense(session.m_sessionType, session.keyGroupingStrategy(), initDataType, sanitizedInitData.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+        session.m_instanceSession->requestLicense(session.m_sessionType, session.keyGroupingStrategy(), initDataType, sanitizedInitData.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (Ref<SharedBuffer>&& message, StringImpl* sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -263,7 +263,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             }
 
             // 10.10. Queue a task to run the following steps:
-            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [promise = WTF::move(promise), message = WTF::move(message), messageType, sessionId, succeeded, identifier = WTF::move(identifier)](auto& session) mutable {
+            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [promise = WTF::move(promise), message = WTF::move(message), messageType, sessionId = RefPtr { sessionId }, succeeded, identifier = WTF::move(identifier)](auto& session) mutable {
                 // 10.10.1. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
                 if (succeeded == CDMInstanceSession::SuccessValue::Failed) {
                     ERROR_LOG_WITH_THIS(&session, identifier, "::task() Rejected: failed to request license");
@@ -289,7 +289,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     // 11. Return promise.
 }
 
-void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promise)
+void MediaKeySession::load(StringImpl* sessionId, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeysession-load
     // W3C Editor's Draft 09 November 2016
@@ -310,8 +310,8 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
 
     // 4. If sessionId is the empty string, return a promise rejected with a newly created TypeError.
     // 5. If the result of running the Is persistent session type? algorithm on this object's session type is false, return a promise rejected with a newly created TypeError.
-    if (sessionId.isEmpty() || m_sessionType == MediaKeySessionType::Temporary) {
-        ERROR_LOG(identifier, "Rejected: sessionID empty(", sessionId.isEmpty(), ") or sessionType == Temporary (", m_sessionType == MediaKeySessionType::Temporary, ")");
+    if (isEmpty(sessionId) || m_sessionType == MediaKeySessionType::Temporary) {
+        ERROR_LOG(identifier, "Rejected: sessionID empty(", isEmpty(sessionId), ") or sessionType == Temporary (", m_sessionType == MediaKeySessionType::Temporary, ")");
         promise->reject(ExceptionCode::TypeError);
         return;
     }
@@ -321,17 +321,17 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
 
     // 7. Let promise be a new promise.
     // 8. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [sessionId, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto& session) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [sessionId = RefPtr { sessionId }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (auto& session) mutable {
         // 8.1. Let sanitized session ID be a validated and/or sanitized version of sessionId.
         // 8.2. If the preceding step failed, or if sanitized session ID is empty, reject promise with a newly created TypeError.
-        std::optional<String> sanitizedSessionId = session.m_implementation->sanitizeSessionId(sessionId);
-        if (!sanitizedSessionId || sanitizedSessionId->isEmpty()) {
+        std::optional<RefPtr<StringImpl>> sanitizedSessionId = session.m_implementation->sanitizeSessionId(sessionId);
+        if (!sanitizedSessionId || isEmpty(*sanitizedSessionId)) {
             ERROR_LOG_WITH_THIS(&session, identifier, "Rejected: sanitizedSSessionID empty");
             promise->reject(ExceptionCode::TypeError);
             return;
         }
 
-        String origin;
+        RefPtr<StringImpl> origin;
         if (RefPtr document = downcast<Document>(session.scriptExecutionContext()))
             origin = protect(document->securityOrigin())->toString();
 
@@ -787,7 +787,7 @@ void MediaKeySession::sendMessage(CDMMessageType messageType, Ref<SharedBuffer>&
     enqueueMessage(messageType, message);
 }
 
-void MediaKeySession::sessionIdChanged(const String& sessionId)
+void MediaKeySession::sessionIdChanged(StringImpl* sessionId)
 {
     m_sessionId = sessionId;
 }
@@ -854,7 +854,7 @@ void MediaKeySession::sessionClosed()
     m_closedPromise->resolve();
 }
 
-String MediaKeySession::mediaKeysStorageDirectory() const
+RefPtr<StringImpl> MediaKeySession::mediaKeysStorageDirectory() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
     return document ? document->mediaKeysStorageDirectory() : emptyString();

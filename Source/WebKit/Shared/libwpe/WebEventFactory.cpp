@@ -101,12 +101,12 @@ static OptionSet<WebEventModifier> modifiersForKeyboardEvent(struct wpe_input_ke
     return modifiers;
 }
 
-WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
+WebKeyboardEventInit WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, StringImpl* text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
 {
     return {
         { event->pressed ? WebEventType::KeyDown : WebEventType::KeyUp, modifiersForKeyboardEvent(event), monotonicTimeForEventTimeInMilliseconds(event->time) },
         {
-            .text = text.isNull() ? WebCore::PlatformKeyboardEvent::singleCharacterString(event->key_code) : text,
+            .text = !text ? WebCore::PlatformKeyboardEvent::singleCharacterString(event->key_code) : RefPtr<StringImpl> { text },
             .key = WebCore::PlatformKeyboardEvent::keyValueForWPEKeyCode(event->key_code),
             .code = WebCore::PlatformKeyboardEvent::keyCodeForHardwareKeyCode(event->hardware_key_code),
             .keyIdentifier = WebCore::PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(event->key_code),

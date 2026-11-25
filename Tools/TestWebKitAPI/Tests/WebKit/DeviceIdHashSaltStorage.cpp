@@ -38,7 +38,7 @@ TEST(DeviceIdHashSaltStorage, SaltStringHasFixedWidth)
     // Regression test for using hex() without a minimum width, which emitted only the significant
     // digits and produced shorter salts that then failed the length check on reload.
     auto salt = WebKit::createDeviceIdHashSaltString(WTF::toArray<uint64_t>({ 0x1, 0x2, 0x3 }));
-    EXPECT_EQ(salt.length(), 48u);
+    EXPECT_EQ(length(salt), 48u);
     EXPECT_EQ(salt, "000000000000000100000000000000020000000000000003"_s);
 }
 

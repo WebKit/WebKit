@@ -122,7 +122,7 @@ static std::optional<std::tuple<SVGFilterEffectGraph, FilterEffectGeometryMap>> 
         if (effectElement->colorInterpolation() == ColorInterpolation::LinearRGB)
             effect->setOperatingColorSpace(ColorSpace::LinearSRGB());
 
-        graph.addNamedNode(AtomString { effectElement->result() }, { *effect });
+        graph.addNamedNode(AtomStringImpl::add(effectElement->result()).get(), { *effect });
         graph.setNodeInputs(*effect, WTF::move(*inputs));
     }
 
@@ -175,7 +175,7 @@ static std::optional<SVGFilterPrimitiveGraph> buildFilterPrimitiveGraph(SVGFilte
     for (Ref effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
         // We should not be strict about not finding the input primitives here because SourceGraphic and SourceAlpha do not have primitives.
         auto inputs = graph.getNamedNodes(effectElement->filterEffectInputsNames()).value_or(SVGFilterPrimitiveGraph::NodeVector());
-        graph.addNamedNode(AtomString { effectElement->result() }, effectElement.copyRef());
+        graph.addNamedNode(AtomStringImpl::add(effectElement->result()).get(), effectElement.copyRef());
         graph.setNodeInputs(effectElement, WTF::move(inputs));
     }
 

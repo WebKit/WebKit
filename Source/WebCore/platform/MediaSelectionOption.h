@@ -46,7 +46,7 @@ struct MediaSelectionOption {
     };
 
     MediaSelectionOption() = default;
-    MediaSelectionOption(MediaType mediaType, const String& displayName, LegibleType legibleType, const String& languageTag)
+    MediaSelectionOption(MediaType mediaType, StringImpl* displayName, LegibleType legibleType, StringImpl* languageTag)
         : mediaType { mediaType }
         , displayName { displayName }
         , legibleType { legibleType }
@@ -54,7 +54,7 @@ struct MediaSelectionOption {
     {
     }
 
-    MediaSelectionOption(MediaType mediaType, String&& displayName, LegibleType legibleType, String&& languageTag)
+    MediaSelectionOption(MediaType mediaType, RefPtr<StringImpl>&& displayName, LegibleType legibleType, RefPtr<StringImpl>&& languageTag)
         : mediaType { mediaType }
         , displayName { WTF::move(displayName) }
         , legibleType { legibleType }
@@ -62,13 +62,13 @@ struct MediaSelectionOption {
     {
     }
 
-    MediaSelectionOption isolatedCopy() const & { return { mediaType, displayName.isolatedCopy(), legibleType, languageTag.isolatedCopy() }; }
-    MediaSelectionOption isolatedCopy() && { return { mediaType, WTF::move(displayName).isolatedCopy(), legibleType, WTF::move(languageTag).isolatedCopy() }; }
+    MediaSelectionOption isolatedCopy() const & { return { mediaType, WTF::isolatedCopy(displayName), legibleType, WTF::isolatedCopy(languageTag) }; }
+    MediaSelectionOption isolatedCopy() && { return { mediaType, WTF::isolatedCopy(WTF::move(displayName)), legibleType, WTF::isolatedCopy(WTF::move(languageTag)) }; }
 
     MediaType mediaType { MediaType::Unknown };
-    String displayName;
+    RefPtr<StringImpl> displayName;
     LegibleType legibleType { LegibleType::Regular };
-    String languageTag;
+    RefPtr<StringImpl> languageTag;
 };
 
 } // namespace WebCore

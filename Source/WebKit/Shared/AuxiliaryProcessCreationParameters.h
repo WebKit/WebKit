@@ -31,9 +31,9 @@ namespace WebKit {
 
 // Parameters that are sent to the process object as the first message after process has started.
 struct AuxiliaryProcessCreationParameters {
-    String wtfLoggingChannels;
-    String webCoreLoggingChannels;
-    String webKitLoggingChannels;
+    RefPtr<StringImpl> wtfLoggingChannels;
+    RefPtr<StringImpl> webCoreLoggingChannels;
+    RefPtr<StringImpl> webKitLoggingChannels;
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     bool shouldEnableIPCSignposts { false };

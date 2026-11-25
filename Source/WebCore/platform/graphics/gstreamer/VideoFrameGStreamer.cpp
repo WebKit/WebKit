@@ -779,7 +779,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
     }
 
 #ifndef GST_DISABLE_GST_DEBUG
-    GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Copying frame data to %s pixel format", convertVideoPixelFormatToString(pixelFormat).ascii().data());
+    GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Copying frame data to %s pixel format", ascii(convertVideoPixelFormatToString(pixelFormat)).data());
 #endif
     if (pixelFormat == VideoPixelFormat::NV12) {
         auto spanPlaneLayoutY = computedPlaneLayout[GST_VIDEO_COMP_Y];
@@ -851,7 +851,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         // The frame's planes must already be in the requested format: only RGB destinations are converted.
         auto frameFormat = static_cast<GstVideoFormat>(inputFrame.format());
         if (gstVideoFormatForPlanarYUV(pixelFormat) != frameFormat || computedPlaneLayout.size() != 3) {
-            GST_WARNING("Cannot copy a %s frame to %s", gst_video_format_to_string(frameFormat), convertVideoPixelFormatToString(pixelFormat).ascii().data());
+            GST_WARNING("Cannot copy a %s frame to %s", gst_video_format_to_string(frameFormat), ascii(convertVideoPixelFormatToString(pixelFormat)).data());
             callback({ });
             return;
         }
@@ -868,7 +868,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
                 sourcePlane = PlanarImageConverter::subplane(*framePlane, planeLayout.sourceLeftBytes / sampleSize, planeLayout.sourceTop, width, planeLayout.sourceHeight);
             auto destinationPlane = PlanarImageConverter::makePlane(destination, planeLayout.destinationOffset, planeLayout.destinationStride, width, planeLayout.sourceHeight, sampleFormat);
             if (!sourcePlane || !destinationPlane || !PlanarImageConverter::copyPlane(*sourcePlane, *destinationPlane)) {
-                GST_WARNING("%s plane %u doesn't fit in the frame or destination", convertVideoPixelFormatToString(pixelFormat).ascii().data(), plane);
+                GST_WARNING("%s plane %u doesn't fit in the frame or destination", ascii(convertVideoPixelFormatToString(pixelFormat)).data(), plane);
                 callback({ });
                 return;
             }

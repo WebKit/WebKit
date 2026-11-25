@@ -830,7 +830,7 @@ TEST(SiteIsolation, PauseAllAnimationsAfterCrossOriginIframeLoads)
 {
     RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"test-mse" ofType:@"mp4"] options:0 error:NULL];
     HTTPResponse videoResponse { videoData.get() };
-    videoResponse.setHeaderField("Content-Type"_s, "video/mp4"_s);
+    videoResponse.setHeaderField("Content-Type"_si, "video/mp4"_si);
 
     HTTPServer server({
         { "/mainframe"_s, { mainFrameTextWithCrossOriginIframe } },
@@ -1015,7 +1015,7 @@ TEST(SiteIsolation, CopyLinkWithHighlightInCrossOriginIframe)
 
     RetainPtr menuBuilder = adoptNS([TestUIMenuBuilder new]);
     [webView buildMenuWithBuilder:menuBuilder];
-    RetainPtr<UIAction> copyLinkWithHighlightAction = [menuBuilder actionWithTitle:WebCore::contextMenuItemTagCopyLinkWithHighlight().createNSString()];
+    RetainPtr<UIAction> copyLinkWithHighlightAction = [menuBuilder actionWithTitle:createNSString(WebCore::contextMenuItemTagCopyLinkWithHighlight())];
     ASSERT_NOT_NULL(copyLinkWithHighlightAction.get());
 
     clearPasteboard();
@@ -1144,9 +1144,9 @@ TEST(SiteIsolation, CanUseCredentialStorageInCrossOriginIframe)
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/mainframe"_s)
+            if (equal(path, "/mainframe"_s))
                 co_await connection.awaitableSend(HTTPResponse(mainFrameTextWithCrossOriginIframe).serialize());
-            else if (path == "/iframe"_s)
+            else if (equal(path, "/iframe"_s))
                 co_await connection.awaitableSend(HTTPResponse("iframe"_s).serialize());
             else if (contains(request.span(), "Authorization: Basic"_span))
                 co_await connection.awaitableSend(HTTPResponse("authorized"_s).serialize());
@@ -1203,12 +1203,12 @@ TEST(SiteIsolation, UserInterfaceLayoutDirectionInCrossOriginIframe)
     RetainPtr childFrame = [webView firstChildFrame];
 
     // Media controls mark themselves with this class when the page's user interface layout direction is left to right.
-    auto controlsDirection = [&](WKFrameInfo *frame) -> String {
-        return [webView stringByEvaluatingJavaScript:@"(() => { const controls = internals.shadowRoot(document.querySelector('video'))?.querySelector('.media-controls'); return controls ? (controls.classList.contains('uses-ltr-user-interface-layout-direction') ? 'ltr' : 'rtl') : 'none' })()" inFrame:frame];
+    auto controlsDirection = [&](WKFrameInfo *frame) -> RefPtr<StringImpl> {
+        return StringImpl::create([webView stringByEvaluatingJavaScript:@"(() => { const controls = internals.shadowRoot(document.querySelector('video'))?.querySelector('.media-controls'); return controls ? (controls.classList.contains('uses-ltr-user-interface-layout-direction') ? 'ltr' : 'rtl') : 'none' })()" inFrame:frame]);
     };
 
     EXPECT_TRUE(Util::waitFor([&] {
-        return controlsDirection(nil) == "ltr"_s && controlsDirection(childFrame.get()) == "ltr"_s;
+        return equal(controlsDirection(nil), "ltr"_s) && equal(controlsDirection(childFrame.get()), "ltr"_s);
     }));
 
 #if PLATFORM(MAC)
@@ -1217,10 +1217,10 @@ TEST(SiteIsolation, UserInterfaceLayoutDirectionInCrossOriginIframe)
     [webView setSemanticContentAttribute:UISemanticContentAttributeForceRightToLeft];
 #endif
     EXPECT_TRUE(Util::waitFor([&] {
-        return controlsDirection(nil) == "rtl"_s;
+        return equal(controlsDirection(nil), "rtl"_s);
     }));
     EXPECT_TRUE(Util::waitFor([&] {
-        return controlsDirection(childFrame.get()) == "rtl"_s;
+        return equal(controlsDirection(childFrame.get()), "rtl"_s);
     }));
 }
 
@@ -1237,21 +1237,21 @@ TEST(SiteIsolation, BackgroundExtendsBeyondPageInCrossOriginIframe)
     RetainPtr childFrame = [webView firstChildFrame];
 
     // A frame's scrolling node rereads the setting when its geometry changes, so each check grows the page.
-    auto behaviorForFixedElements = [&](WKFrameInfo *frame) -> String {
-        return [webView stringByEvaluatingJavaScript:@"(() => { const div = document.querySelector('div'); div.style.height = `${div.offsetHeight + 100}px`;"
-            "return internals.scrollingStateTreeAsText().match(/behavior for fixed (\\d)/)?.[1] ?? '' })()" inFrame:frame];
+    auto behaviorForFixedElements = [&](WKFrameInfo *frame) -> RefPtr<StringImpl> {
+        return StringImpl::create([webView stringByEvaluatingJavaScript:@"(() => { const div = document.querySelector('div'); div.style.height = `${div.offsetHeight + 100}px`;"
+            "return internals.scrollingStateTreeAsText().match(/behavior for fixed (\\d)/)?.[1] ?? '' })()" inFrame:frame]);
     };
 
     EXPECT_TRUE(Util::waitFor([&] {
-        return behaviorForFixedElements(nil) == "1"_s && behaviorForFixedElements(childFrame.get()) == "1"_s;
+        return equal(behaviorForFixedElements(nil), "1"_s) && equal(behaviorForFixedElements(childFrame.get()), "1"_s);
     }));
 
     [webView _setBackgroundExtendsBeyondPage:NO];
     EXPECT_TRUE(Util::waitFor([&] {
-        return behaviorForFixedElements(nil) == "0"_s;
+        return equal(behaviorForFixedElements(nil), "0"_s);
     }));
     EXPECT_TRUE(Util::waitFor([&] {
-        return behaviorForFixedElements(childFrame.get()) == "0"_s;
+        return equal(behaviorForFixedElements(childFrame.get()), "0"_s);
     }));
 }
 
@@ -1271,21 +1271,21 @@ TEST(SiteIsolation, TintColorChangeReachesCrossOriginIframe)
     EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
 
     // Without a caret-color, autocorrection markers take their color from the web view's tint.
-    auto markerColor = [&](WKFrameInfo *frame) -> String {
-        return [webView stringByEvaluatingJavaScript:@"internals.autocorrectionReplacementMarkerColor(document.body.firstChild)" inFrame:frame];
+    auto markerColor = [&](WKFrameInfo *frame) -> RefPtr<StringImpl> {
+        return StringImpl::create([webView stringByEvaluatingJavaScript:@"internals.autocorrectionReplacementMarkerColor(document.body.firstChild)" inFrame:frame]);
     };
     auto originalMarkerColor = markerColor(nil);
-    EXPECT_FALSE(originalMarkerColor.isEmpty());
+    EXPECT_FALSE(isEmpty(originalMarkerColor));
     EXPECT_WK_STREQ(markerColor(childFrame.get()), originalMarkerColor);
 
     [webView setTintColor:UIColor.greenColor];
-    String newMarkerColor;
+    RefPtr<StringImpl> newMarkerColor;
     EXPECT_TRUE(Util::waitFor([&] {
         newMarkerColor = markerColor(nil);
-        return newMarkerColor != originalMarkerColor;
+        return !equal(newMarkerColor, originalMarkerColor);
     }));
     EXPECT_TRUE(Util::waitFor([&] {
-        return markerColor(childFrame.get()) == newMarkerColor;
+        return equal(markerColor(childFrame.get()), newMarkerColor);
     }));
 }
 
@@ -1309,10 +1309,10 @@ TEST(SiteIsolation, ToggleSmartInsertDeleteInCrossOriginIframe)
     auto selectionAfterDoubleClick = [&](NSPoint point, WKFrameInfo *frame) {
         [webView objectByEvaluatingJavaScript:@"getSelection().removeAllRanges(); true" inFrame:frame];
         [webView sendClicksAtPoint:point numberOfClicks:2];
-        String selection;
+        RefPtr<StringImpl> selection;
         EXPECT_TRUE(Util::waitFor([&] {
-            selection = [webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:frame];
-            return !selection.isEmpty();
+            selection = StringImpl::create([webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:frame]);
+            return !isEmpty(selection);
         }));
         return selection;
     };
@@ -1324,7 +1324,7 @@ TEST(SiteIsolation, ToggleSmartInsertDeleteInCrossOriginIframe)
 
     [webView performSelector:@selector(toggleSmartInsertDelete:) withObject:nil];
     auto mainFrameSelectionAfterToggle = selectionAfterDoubleClick(mainFrameWord, nil);
-    EXPECT_FALSE(mainFrameSelectionAfterToggle == mainFrameSelectionBeforeToggle);
+    EXPECT_FALSE(equal(mainFrameSelectionAfterToggle, mainFrameSelectionBeforeToggle));
     EXPECT_WK_STREQ(selectionAfterDoubleClick(childFrameWord, childFrame.get()), mainFrameSelectionAfterToggle);
 
     [webView performSelector:@selector(toggleSmartInsertDelete:) withObject:nil];
@@ -2041,20 +2041,20 @@ TEST(SiteIsolation, DrawsBackgroundInCrossOriginIframe)
     RetainPtr childFrame = [webView firstChildFrame];
     EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
 
-    auto baseBackgroundColor = [&](WKFrameInfo *frame) -> String {
-        return [webView stringByEvaluatingJavaScript:@"internals.viewBaseBackgroundColor()" inFrame:frame];
+    auto baseBackgroundColor = [&](WKFrameInfo *frame) -> RefPtr<StringImpl> {
+        return StringImpl::create([webView stringByEvaluatingJavaScript:@"internals.viewBaseBackgroundColor()" inFrame:frame]);
     };
     auto opaqueColor = baseBackgroundColor(nil);
     EXPECT_WK_STREQ(baseBackgroundColor(childFrame.get()), opaqueColor);
 
     [webView _setDrawsBackground:NO];
-    String transparentColor;
+    RefPtr<StringImpl> transparentColor;
     EXPECT_TRUE(Util::waitFor([&] {
         transparentColor = baseBackgroundColor(nil);
-        return transparentColor != opaqueColor;
+        return !equal(transparentColor, opaqueColor);
     }));
     EXPECT_TRUE(Util::waitFor([&] {
-        return baseBackgroundColor(childFrame.get()) == transparentColor;
+        return equal(baseBackgroundColor(childFrame.get()), transparentColor);
     }));
 }
 
@@ -2375,7 +2375,7 @@ TEST(SiteIsolation, AutocorrectionContextInCrossOriginIframe)
     // process that got the request. Otherwise the wait times out and the context comes back empty.
     auto context = [webView autocorrectionContext];
     EXPECT_WK_STREQ("world", context.selectedText);
-    EXPECT_TRUE(context.contextBeforeSelection.startsWith("hello"_s));
+    EXPECT_TRUE(startsWith(context.contextBeforeSelection, "hello"_s));
 }
 
 TEST(SiteIsolation, AutocorrectionRectsInCrossOriginIframe)
@@ -4385,7 +4385,7 @@ static NSPoint loadAndCaptureCaptionDisplaySettingsMenuLocation(TestWKWebView *w
     return capturedCaptionDisplaySettingsMenuLocation;
 }
 
-static void checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, NSPoint expectedLocation, CaptionDisplaySettingsTestBlock showCaptionDisplaySettings, CaptionDisplaySettingsTestBlock prepare = nil)
+static void checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl* mainframeHTML, StringImpl* subframeHTML, NSPoint expectedLocation, CaptionDisplaySettingsTestBlock showCaptionDisplaySettings, CaptionDisplaySettingsTestBlock prepare = nil)
 {
     HTTPServer server({
         { "/control"_s, { makeStringByReplacingAll(mainframeHTML, "domain2.com"_s, "domain1.com"_s) } },
@@ -4434,7 +4434,7 @@ static constexpr NSPoint captionDisplaySettingsMousePointInWebView { 300, 250 };
 
 TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInCrossOriginIframe)
 {
-    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl::create(captionDisplaySettingsMainFrameHTML).ptr(), StringImpl::create(captionDisplaySettingsSubframeHTML).ptr(), captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
         [webView objectByEvaluatingJavaScript:@"video.showCaptionDisplaySettings({ anchorNode: target, positionArea: 'bottom right' }); true" inFrame:childFrame];
     });
 }
@@ -4442,8 +4442,8 @@ TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInCrossOriginIframe)
 TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInScrolledCrossOriginIframeWithScrolledMainFrame)
 {
     checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(
-        "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
-        "<body style='margin: 0; height: 2000px'><div id='target' style='position: absolute; left: 10px; top: 520px; width: 30px; height: 40px;'></div><video id='video'></video></body>"_s,
+        "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_si,
+        "<body style='margin: 0; height: 2000px'><div id='target' style='position: absolute; left: 10px; top: 520px; width: 30px; height: 40px;'></div><video id='video'></video></body>"_si,
         captionDisplaySettingsTargetBottomRightInWebView,
         ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
             [webView objectByEvaluatingJavaScript:@"video.showCaptionDisplaySettings({ anchorNode: target, positionArea: 'bottom right' }); true" inFrame:childFrame];
@@ -4465,7 +4465,7 @@ TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInScrolledCrossOriginIframeW
 TEST(SiteIsolation, CaptionDisplaySettingsEventTargetInCrossOriginIframe)
 {
     // Without an anchor node, the target of the current non-mouse event is used as the anchor.
-    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl::create(captionDisplaySettingsMainFrameHTML).ptr(), StringImpl::create(captionDisplaySettingsSubframeHTML).ptr(), captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
         [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"target.addEventListener('custom', () => { %@ }); target.dispatchEvent(new Event('custom')); true", showCaptionDisplaySettingsScript] inFrame:childFrame];
     });
 }
@@ -4473,7 +4473,7 @@ TEST(SiteIsolation, CaptionDisplaySettingsEventTargetInCrossOriginIframe)
 TEST(SiteIsolation, CaptionDisplaySettingsMouseEventLocationInCrossOriginIframe)
 {
     // Without an anchor node, the location of the current mouse event is used as the anchor.
-    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl::create(captionDisplaySettingsMainFrameHTML).ptr(), StringImpl::create(captionDisplaySettingsSubframeHTML).ptr(), captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
         [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"addEventListener('mousedown', () => { %@ }); true", showCaptionDisplaySettingsScript] inFrame:childFrame];
         [webView mouseDownAtPoint:captionDisplaySettingsMousePointInWindow simulatePressure:NO];
         [webView mouseUpAtPoint:captionDisplaySettingsMousePointInWindow];
@@ -4483,7 +4483,7 @@ TEST(SiteIsolation, CaptionDisplaySettingsMouseEventLocationInCrossOriginIframe)
 TEST(SiteIsolation, CaptionDisplaySettingsLastKnownMousePositionInCrossOriginIframe)
 {
     // Without an anchor node or a current event, the last known mouse position is used as the anchor.
-    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(StringImpl::create(captionDisplaySettingsMainFrameHTML).ptr(), StringImpl::create(captionDisplaySettingsSubframeHTML).ptr(), captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
         [webView objectByEvaluatingJavaScript:@"window.didReceiveMouseMove = false; addEventListener('mousemove', () => { didReceiveMouseMove = true; }); true" inFrame:childFrame];
         [webView mouseMoveToPoint:NSMakePoint(10, 10) withFlags:0];
         [webView mouseMoveToPoint:captionDisplaySettingsMousePointInWindow withFlags:0];
@@ -4728,18 +4728,18 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWhoseResponseHasDocumentIsolationPo
         while (1) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/plain"_s) {
-                co_await connection.awaitableSend(HTTPResponse(speculationRules).serialize());
+            if (equal(path, "/plain"_s)) {
+                co_await connection.awaitableSend(HTTPResponse(StringImpl::create(speculationRules).ptr()).serialize());
                 continue;
             }
-            if (path == "/destination"_s) {
+            if (equal(path, "/destination"_s)) {
                 // Hold the prefetch, so the navigation finds it still loading.
                 if (contains(request.span(), "Sec-Purpose: prefetch"_span)) {
                     prefetchConnection = connection;
                     co_return;
                 }
                 navigationRequests++;
-                co_await connection.awaitableSend(documentIsolationPolicyResponse("destination"_s).serialize());
+                co_await connection.awaitableSend(documentIsolationPolicyResponse("destination"_si).serialize());
                 continue;
             }
             EXPECT_FALSE(true);
@@ -4767,7 +4767,7 @@ TEST(SiteIsolation, NavigationJoiningPrefetchWhoseResponseHasDocumentIsolationPo
     // The navigation joins the prefetch in the same task that reports its start, so the prefetch's response reaches it.
     [webView evaluateJavaScript:@"location.href = '/destination'" completionHandler:nil];
     [navigationDelegate waitForDidStartProvisionalNavigation];
-    prefetchConnection->send(HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s }, { "Connection"_s, "close"_s } }, "prefetch"_s).serialize());
+    prefetchConnection->send(HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Document-Isolation-Policy"_s, "isolate-and-require-corp"_s }, { "Connection"_s, "close"_s } }, "prefetch"_si).serialize());
     [navigationDelegate waitForDidFinishNavigation];
 
     // The prefetch can't serve the navigation, so the navigation makes its own request, whose response moves it to a

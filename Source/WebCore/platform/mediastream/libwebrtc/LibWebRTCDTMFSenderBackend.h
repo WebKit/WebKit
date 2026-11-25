@@ -48,7 +48,7 @@ private:
     bool canInsertDTMF() final;
     void playTone(const char tone, size_t duration, size_t interToneGap) final;
     void onTonePlayed(Function<void()>&&) final;
-    String tones() const final;
+    RefPtr<StringImpl> tones() const final;
     size_t duration() const final;
     size_t interToneGap() const final;
 

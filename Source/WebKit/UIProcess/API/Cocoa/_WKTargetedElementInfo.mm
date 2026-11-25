@@ -101,7 +101,7 @@
     for (auto& selectors : _info->selectors()) {
         RetainPtr nsSelectors = adoptNS([[NSMutableArray alloc] initWithCapacity:selectors.size()]);
         for (auto& selector : borrow(selectors))
-            [nsSelectors addObject:selector.createNSString().get()];
+            [nsSelectors addObject:createNSString(selector).get()];
         [result addObject:nsSelectors.get()];
     }
     return result.autorelease();
@@ -109,17 +109,17 @@
 
 - (NSString *)renderedText
 {
-    return _info->renderedText().createNSString().autorelease();
+    return createNSString(_info->renderedText()).autorelease();
 }
 
 - (NSString *)searchableText
 {
-    return _info->searchableText().createNSString().autorelease();
+    return createNSString(_info->searchableText()).autorelease();
 }
 
 - (NSString *)screenReaderText
 {
-    return _info->screenReaderText().createNSString().autorelease();
+    return createNSString(_info->screenReaderText()).autorelease();
 }
 
 - (_WKRectEdge)offsetEdges
@@ -201,7 +201,7 @@
 
 - (NSString *)debugDescription
 {
-    auto firstSelector = [&]() -> String {
+    auto firstSelector = [&]() -> RefPtr<StringImpl> {
         auto& allSelectors = _info->selectors();
         if (allSelectors.isEmpty())
             return { };
@@ -216,7 +216,7 @@
 
     auto bounds = _info->boundsInRootView();
     return [NSString stringWithFormat:@"<%@ %p \"%@\" at {{%.0f,%.0f},{%.0f,%.0f}}>"
-        , self.class, self, firstSelector.createNSString().get()
+        , self.class, self, createNSString(firstSelector).get()
         , bounds.x(), bounds.y(), bounds.width(), bounds.height()];
 }
 

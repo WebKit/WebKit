@@ -47,12 +47,12 @@ static void ensureDebugCategoryInitialized()
     });
 }
 
-std::pair<UTF8CStringView, String> GStreamerCodecUtilities::parseH264ProfileAndLevel(const String& codec)
+std::pair<UTF8CStringView, RefPtr<StringImpl>> GStreamerCodecUtilities::parseH264ProfileAndLevel(StringImpl* codec)
 {
     ensureDebugCategoryInitialized();
 
     uint64_t spsAsInteger = 0;
-    auto components = codec.split('.');
+    auto components = split(codec, '.');
     if (components.size() > 1)
         spsAsInteger = parseInteger<uint64_t>(components[1], 16).value_or(0);
 
@@ -62,7 +62,7 @@ std::pair<UTF8CStringView, String> GStreamerCodecUtilities::parseH264ProfileAndL
     sps[2] = spsAsInteger & 0xff;
 
     auto profile = UTF8CStringView::unsafeFromUTF8(gst_codec_utils_h264_get_profile(sps.data(), 3));
-    auto level = String::fromLatin1(gst_codec_utils_h264_get_level(sps.data(), 3));
+    auto level = StringImpl::fromLatin1(gst_codec_utils_h264_get_level(sps.data(), 3));
 
     // To avoid going through a class hierarchy for such a simple
     // string conversion, we use a little trick here: See
@@ -70,21 +70,21 @@ std::pair<UTF8CStringView, String> GStreamerCodecUtilities::parseH264ProfileAndL
     char levelAsStringFallback[2] = { '\0', '\0' };
     if (!level && sps[2] > 0 && sps[2] <= 5) {
         levelAsStringFallback[0] = static_cast<char>('0' + sps[2]);
-        level = String(byteCast<Latin1Character>(unsafeSpan(levelAsStringFallback)));
+        level = StringImpl::create(byteCast<Latin1Character>(unsafeSpan(levelAsStringFallback)));
     }
 
-    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8(), GST_STR_NULL(profile.utf8()), level.ascii().data());
+    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", utf8(codec), GST_STR_NULL(profile.utf8()), ascii(level).data());
     return { profile, level };
 }
 
-static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(const String& codecString)
+static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(StringImpl* codecString)
 {
     GRefPtr outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
     auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codecString);
     if (profile)
         gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, profile.utf8(), nullptr);
-    if (!level.isEmpty())
-        gst_caps_set_simple(outputCaps.get(), "level", G_TYPE_STRING, level.ascii().data(), nullptr);
+    if (!isEmpty(level))
+        gst_caps_set_simple(outputCaps.get(), "level", G_TYPE_STRING, ascii(level).data(), nullptr);
 
     StringBuilder formatBuilder;
     auto isY444TenBits = startsWithLettersIgnoringASCIICase(profile.span(), "high-4:4:4"_s);
@@ -107,19 +107,19 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(con
     }
 
     auto pixelFormat = formatBuilder.toString();
-    GST_DEBUG("Setting pixel format %s for profile %s", pixelFormat.ascii().data(), profile.utf8());
-    GRefPtr inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, pixelFormat.ascii().data(), nullptr));
+    GST_DEBUG("Setting pixel format %s for profile %s", ascii(pixelFormat).data(), profile.utf8());
+    GRefPtr inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, ascii(pixelFormat).data(), nullptr));
     return { inputCaps, outputCaps };
 }
 
-UTF8CStringView GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
+UTF8CStringView GStreamerCodecUtilities::parseHEVCProfile(StringImpl* codec)
 {
     ensureDebugCategoryInitialized();
 
-    GST_DEBUG("Parsing HEVC codec string: %s", codec.ascii().data());
+    GST_DEBUG("Parsing HEVC codec string: %s", ascii(codec).data());
     auto parameters = parseHEVCCodecParameters(codec);
     if (!parameters) {
-        GST_WARNING("Invalid HEVC codec: %s", codec.ascii().data());
+        GST_WARNING("Invalid HEVC codec: %s", ascii(codec).data());
         return nullptr;
     }
 
@@ -145,7 +145,7 @@ UTF8CStringView GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
     return UTF8CStringView::unsafeFromUTF8(gst_codec_utils_h265_get_profile(profileTierLevel.data(), profileTierLevel.size()));
 }
 
-static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h265CapsFromCodecString(const String& codecString)
+static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h265CapsFromCodecString(StringImpl* codecString)
 {
     GRefPtr outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
     auto profile = GStreamerCodecUtilities::parseHEVCProfile(codecString);
@@ -177,29 +177,29 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h265CapsFromCodecString(con
     }
 
     auto pixelFormat = formatBuilder.toString();
-    GST_DEBUG("Setting pixel format %s for profile %s", pixelFormat.ascii().data(), profile.utf8());
-    GRefPtr inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, pixelFormat.ascii().data(), nullptr));
+    GST_DEBUG("Setting pixel format %s for profile %s", ascii(pixelFormat).data(), profile.utf8());
+    GRefPtr inputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, ascii(pixelFormat).data(), nullptr));
     return { inputCaps, outputCaps };
 }
 
-static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> vpxCapsFromCodecString(const String& codecString)
+static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> vpxCapsFromCodecString(StringImpl* codecString)
 {
     auto parameters = parseVPCodecParameters(codecString);
     if (!parameters)
         parameters = parseVPCodecParametersIgnoringColorFields(codecString);
 
     if (!parameters) {
-        GST_DEBUG("Unable to parse codec string %s", codecString.utf8());
+        GST_DEBUG("Unable to parse codec string %s", utf8(codecString));
         return { nullptr, nullptr };
     }
     GRefPtr inputCaps = adoptGRef(gst_caps_new_any());
 
-    if (parameters->codecName.startsWith("vp8"_s) || parameters->codecName.startsWith("vp08"_s))
+    if (startsWith(parameters->codecName, "vp8"_s) || startsWith(parameters->codecName, "vp08"_s))
         return { inputCaps, adoptGRef(gst_caps_new_empty_simple("video/x-vp8")) };
 
     GRefPtr outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
     auto profile = makeString(parameters->profile);
-    gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, profile.ascii().data(), nullptr);
+    gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, ascii(profile).data(), nullptr);
     auto yuvFormat = "I420"_s;
     if (parameters->chromaSubsampling == VPConfigurationChromaSubsampling::Subsampling_422)
         yuvFormat = "I422"_s;
@@ -220,7 +220,7 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> vpxCapsFromCodecString(cons
     }
 
     auto formatString = formatBuilder.toString();
-    auto format = gst_video_format_from_string(formatString.ascii().data());
+    auto format = gst_video_format_from_string(ascii(formatString).data());
     GstVideoInfo info;
     // Setting a random size here, it is overridden later on.
     gst_video_info_set_format(&info, format, 320, 240);
@@ -310,7 +310,7 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> vpxCapsFromCodecString(cons
     return { inputCaps, outputCaps };
 }
 
-static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(const String& codecString)
+static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(StringImpl* codecString)
 {
     auto configurationRecord = parseAV1CodecParameters(codecString);
     if (!configurationRecord)
@@ -369,7 +369,7 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(cons
     }
 
     auto formatString = formatBuilder.toString();
-    auto format = gst_video_format_from_string(formatString.ascii().data());
+    auto format = gst_video_format_from_string(ascii(formatString).data());
     GstVideoInfo info;
     // Setting a random size here, it is overridden later on.
     gst_video_info_set_format(&info, format, 320, 240);
@@ -512,11 +512,11 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> av1CapsFromCodecString(cons
         gst_caps_set_simple(outputCaps.get(), "chroma-format", G_TYPE_STRING, chromaFormat.characters(), nullptr);
 
     GRefPtr inputCaps = adoptGRef(gst_video_info_to_caps(&info));
-    GST_DEBUG("Codec %s maps to input %" GST_PTR_FORMAT " and output %" GST_PTR_FORMAT, codecString.ascii().data(), inputCaps.get(), outputCaps.get());
+    GST_DEBUG("Codec %s maps to input %" GST_PTR_FORMAT " and output %" GST_PTR_FORMAT, ascii(codecString).data(), inputCaps.get(), outputCaps.get());
     return { inputCaps, outputCaps };
 }
 
-std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> GStreamerCodecUtilities::capsFromCodecString(const String& codecString, const IntSize& size, std::optional<double> frameRate)
+std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> GStreamerCodecUtilities::capsFromCodecString(StringImpl* codecString, const IntSize& size, std::optional<double> frameRate)
 {
     ensureDebugCategoryInitialized();
 
@@ -542,22 +542,22 @@ std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> GStreamerCodecUtilities::capsFromC
         return caps;
     };
 
-    if (codecString.startsWith("vp8"_s) || codecString.startsWith("vp08"_s) || codecString.startsWith("vp9"_s) || codecString.startsWith("vp09"_s)) {
+    if (startsWith(codecString, "vp8"_s) || startsWith(codecString, "vp08"_s) || startsWith(codecString, "vp9"_s) || startsWith(codecString, "vp09"_s)) {
         auto [inputCaps, outputCaps] = vpxCapsFromCodecString(codecString);
         return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
-    if (codecString.startsWith("av01"_s)) {
+    if (startsWith(codecString, "av01"_s)) {
         auto [inputCaps, outputCaps] = av1CapsFromCodecString(codecString);
         return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
-    if (codecString.startsWith("avc1"_s)) {
+    if (startsWith(codecString, "avc1"_s)) {
         auto [inputCaps, outputCaps] = h264CapsFromCodecString(codecString);
         return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
-    if (codecString.startsWith("hvc1"_s) || codecString.startsWith("hev1"_s)) {
+    if (startsWith(codecString, "hvc1"_s) || startsWith(codecString, "hev1"_s)) {
         auto [inputCaps, outputCaps] = h265CapsFromCodecString(codecString);
         return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }

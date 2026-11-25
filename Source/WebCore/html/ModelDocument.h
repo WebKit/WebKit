@@ -44,14 +44,14 @@ public:
 
     virtual ~ModelDocument() = default;
 
-    String outgoingReferrer() const { return m_outgoingReferrer; }
+    RefPtr<StringImpl> outgoingReferrer() const { return m_outgoingReferrer; }
 
 private:
     ModelDocument(LocalFrame*, const Settings&, const URL&);
 
     Ref<DocumentParser> createParser() override;
 
-    String m_outgoingReferrer;
+    RefPtr<StringImpl> m_outgoingReferrer;
 };
 
 } // namespace WebCore

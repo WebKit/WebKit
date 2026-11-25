@@ -76,7 +76,7 @@ public:
 
     IPC::Connection& connection() { return m_connection.get(); }
 
-    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
+    void writeBlobsToTemporaryFilesForIndexedDB(const Vector<RefPtr<StringImpl>>& blobURLs, CompletionHandler<void(Vector<RefPtr<StringImpl>>&& filePaths)>&&);
 
     WebIDBConnectionToServer* existingIDBConnectionToServer() const { return m_webIDBConnection.get(); };
     WebIDBConnectionToServer& idbConnectionToServer();
@@ -93,8 +93,8 @@ public:
     NODELETE bool cookiesEnabled() const;
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    void cookiesAdded(const String& host, Vector<WebCore::Cookie>&&);
-    void cookiesDeleted(const String& host, Vector<WebCore::Cookie>&&);
+    void cookiesAdded(StringImpl* host, Vector<WebCore::Cookie>&&);
+    void cookiesDeleted(StringImpl* host, Vector<WebCore::Cookie>&&);
     void allCookiesDeleted();
 #endif
     void updateCachedCookiesEnabled();
@@ -125,7 +125,7 @@ private:
     void connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler, CompletionHandler<void(std::optional<bool>)>&&);
 #endif
 
-    void broadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
+    void broadcastConsoleMessage(MessageSource, MessageLevel, StringImpl* message);
     void notifyWorkerReportObservers(WebCore::ScriptExecutionContextIdentifier, Ref<WebCore::Report>&&);
 
     void storageAccessPermissionChanged(const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain);

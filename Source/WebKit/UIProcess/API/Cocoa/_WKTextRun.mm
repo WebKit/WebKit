@@ -46,7 +46,7 @@
 
 - (NSString *)text
 {
-    return _textRun->string().createNSString().autorelease();
+    return createNSString(_textRun->string()).autorelease();
 }
 
 - (CGRect)rectInWebView

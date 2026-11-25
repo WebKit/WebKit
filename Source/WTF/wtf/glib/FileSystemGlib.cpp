@@ -42,7 +42,7 @@ bool validRepresentation(const UTF8CString& representation)
 }
 
 // Converts a string to something suitable to be displayed to the user.
-String filenameForDisplay(const String& string)
+RefPtr<StringImpl> filenameForDisplay(StringImpl* string)
 {
 #if OS(WINDOWS)
     return string;
@@ -54,7 +54,7 @@ String filenameForDisplay(const String& string)
     GUniquePtr<gchar> display(g_filename_display_name(filename.legacyCStringPointer()));
     if (!display)
         return string;
-    return String::fromUTF8(display.get());
+    return StringImpl::fromUTF8(display.get());
 #endif
 }
 
@@ -107,8 +107,7 @@ UTF8CString currentExecutablePath()
     if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
         return { };
 
-    String path(buffer, length);
-    return path.utf8();
+    return utf8(StringImpl::create(buffer, length));
 }
 #endif
 
@@ -123,23 +122,23 @@ UTF8CString currentExecutableName()
     return UTF8CString::unsafeFromUTF8(g_get_prgname());
 }
 
-String userCacheDirectory()
+RefPtr<StringImpl> userCacheDirectory()
 {
     return stringFromFileSystemRepresentation(g_get_user_cache_dir());
 }
 
-String userDataDirectory()
+RefPtr<StringImpl> userDataDirectory()
 {
     return stringFromFileSystemRepresentation(g_get_user_data_dir());
 }
 
-String createTemporaryDirectory(const String& directoryPrefix)
+RefPtr<StringImpl> createTemporaryDirectory(StringImpl* directoryPrefix)
 {
-    String newTempDir = makeString(directoryPrefix, "XXXXXX"_s);
+    auto newTempDir = makeString(directoryPrefix, "XXXXXX"_s);
     GUniqueOutPtr<GError> error;
-    GUniquePtr<char> tempDir(g_dir_make_tmp(newTempDir.utf8().legacyCStringPointer(), &error.outPtr()));
+    GUniquePtr<char> tempDir(g_dir_make_tmp(utf8(newTempDir).legacyCStringPointer(), &error.outPtr()));
     if (!tempDir) {
-        SAFE_G_WARNING("Creating temporary directory at %s failed: %s", directoryPrefix.utf8(), error->message);
+        SAFE_G_WARNING("Creating temporary directory at %s failed: %s", utf8(directoryPrefix), error->message);
         return { };
     }
 

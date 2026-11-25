@@ -70,11 +70,11 @@ public:
 private:
     WEBCORE_EXPORT SharedWorkerThreadProxy(Ref<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, WorkerInitializationData&&, CacheStorageProvider&);
 
-    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode);
+    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, StringImpl* mode);
 
     // WorkerObjectProxy.
-    void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
-    void reportErrorToWorkerObject(const String&) final;
+    void postExceptionToWorkerObject(StringImpl* errorMessage, int lineNumber, int columnNumber, StringImpl* sourceURL) final;
+    void reportErrorToWorkerObject(StringImpl*) final;
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { }
     void workerGlobalScopeDestroyed() final { }
     void workerGlobalScopeClosed() final;
@@ -88,7 +88,7 @@ private:
     ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
 
     // WorkerDebuggerProxy.
-    void postMessageToDebugger(const String&) final;
+    void postMessageToDebugger(StringImpl*) final;
     void setResourceCachingDisabledByWebInspector(bool) final;
 
     // WorkerBadgeProxy

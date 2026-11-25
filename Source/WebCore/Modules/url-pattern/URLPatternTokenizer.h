@@ -66,7 +66,7 @@ private:
     void addToken(TokenType currentType, size_t nextPosition, size_t valuePosition);
     void addToken(TokenType currentType);
 
-    ExceptionOr<void> processTokenizingError(size_t nextPosition, size_t valuePosition, const String&);
+    ExceptionOr<void> processTokenizingError(size_t nextPosition, size_t valuePosition, StringImpl*);
 };
 
 } // namespace URLPatternUtilities

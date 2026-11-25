@@ -33,11 +33,11 @@ namespace WebCore {
 Ref<JSON::Object> GPUImageDataLayout::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setDouble("offset"_s, offset);
+    json->setDouble("offset"_si, offset);
     if (bytesPerRow)
-        json->setDouble("bytesPerRow"_s, *bytesPerRow);
+        json->setDouble("bytesPerRow"_si, *bytesPerRow);
     if (rowsPerImage)
-        json->setDouble("rowsPerImage"_s, *rowsPerImage);
+        json->setDouble("rowsPerImage"_si, *rowsPerImage);
     return json;
 }
 

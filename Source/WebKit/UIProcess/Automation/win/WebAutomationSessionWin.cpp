@@ -113,7 +113,7 @@ static void doMouseButtonEvent(WebPageProxy& page, MouseInteraction interaction,
     page.handleMouseEvent(NativeWebMouseEvent::create(hwnd, message, wparam, lparam, { }, page.deviceScaleFactor()));
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, StringImpl* pointerType)
 {
     UNUSED_PARAM(pointerType);
 
@@ -347,19 +347,19 @@ OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(We
     return webModifiers;
 }
 
-void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
+void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, StringImpl* keySequence)
 {
     // https://www.w3.org/TR/uievents-code/#key-alphanumeric-writing-system
-    auto keyIdentifier = makeString("Key"_s, keySequence.convertToASCIIUppercase());
+    auto keyIdentifier = makeString("Key"_s, convertToASCIIUppercase(keySequence));
 
     auto hwnd = reinterpret_cast<HWND>(page.viewWidget());
-    String key = (m_currentModifiers & kWKEventModifiersShiftKey) ? keySequence.convertToASCIIUppercase() : keySequence;
+    RefPtr<StringImpl> key = (m_currentModifiers & kWKEventModifiersShiftKey) ? convertToASCIIUppercase(keySequence) : RefPtr<StringImpl> { keySequence };
 
     // FIXME: The LPARAM of WM_CHAR is used as key stroke message flag.
     //        If we need that information, the 4th argument should be set to an appropriate value, not 0.
     // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-char
     // https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#keystroke-message-flags
-    Ref event = NativeWebKeyboardEvent::create(hwnd, WM_CHAR, keySequence.codeUnitAt(0), 0, { });
+    Ref event = NativeWebKeyboardEvent::create(hwnd, WM_CHAR, codeUnitAt(keySequence, 0), 0, { });
     page.handleKeyboardEvent(WTF::move(event));
 }
 

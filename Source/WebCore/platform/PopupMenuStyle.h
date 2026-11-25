@@ -41,7 +41,7 @@ public:
         Large,
     };
 
-    PopupMenuStyle(const Color& foreground, const Color& background, const FontCascade& font, const String& language, bool visible, bool isDisplayNone, bool hasDefaultAppearance, TextDirection textDirection, bool hasTextDirectionOverride, BackgroundColorType backgroundColorType = DefaultBackgroundColor, PopupMenuType menuType = SelectPopup, Size menuSize = Size::Normal)
+    PopupMenuStyle(const Color& foreground, const Color& background, const FontCascade& font, StringImpl* language, bool visible, bool isDisplayNone, bool hasDefaultAppearance, TextDirection textDirection, bool hasTextDirectionOverride, BackgroundColorType backgroundColorType = DefaultBackgroundColor, PopupMenuType menuType = SelectPopup, Size menuSize = Size::Normal)
         : m_foregroundColor(foreground)
         , m_backgroundColor(background)
         , m_font(font)
@@ -60,7 +60,7 @@ public:
     const Color& foregroundColor() const LIFETIME_BOUND { return m_foregroundColor; }
     const Color& backgroundColor() const LIFETIME_BOUND { return m_backgroundColor; }
     const FontCascade& font() const { return m_font; }
-    const String& language() const LIFETIME_BOUND { return m_language; }
+    const RefPtr<StringImpl>& language() const LIFETIME_BOUND { return m_language; }
     bool isVisible() const { return m_visible; }
     bool isDisplayNone() const { return m_isDisplayNone; }
     bool hasDefaultAppearance() const { return m_hasDefaultAppearance; }
@@ -74,7 +74,7 @@ private:
     Color m_foregroundColor;
     Color m_backgroundColor;
     FontCascade m_font;
-    String m_language;
+    RefPtr<StringImpl> m_language;
     bool m_visible;
     bool m_isDisplayNone;
     bool m_hasDefaultAppearance;

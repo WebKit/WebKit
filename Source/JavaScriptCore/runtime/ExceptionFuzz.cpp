@@ -59,7 +59,7 @@ void doExceptionFuzzing(JSGlobalObject* globalObject, ThrowScope& scope, ASCIILi
         // to placate the exception check verifier here.
         EXCEPTION_ASSERT(scope.exception() || !scope.exception());
 
-        throwException(globalObject, scope, createError(globalObject, "Exception Fuzz"_s));
+        throwException(globalObject, scope, createError(globalObject, "Exception Fuzz"_si));
     }
 }
 

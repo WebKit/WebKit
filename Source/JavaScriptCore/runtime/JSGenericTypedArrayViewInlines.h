@@ -118,12 +118,12 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(JSGlo
     ASSERT(length || buffer->isResizableOrGrowableShared());
 
     if (!ArrayBufferView::verifySubRangeLength(buffer->byteLength(), byteOffset, length.value_or(0), elementSize)) {
-        throwException(globalObject, scope, createRangeError(globalObject, arrayBufferViewErrorMessageOutOfRangeOfBuffer));
+        throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(arrayBufferViewErrorMessageOutOfRangeOfBuffer).ptr()));
         return nullptr;
     }
 
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, elementSize)) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"_s));
+        throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"_si));
         return nullptr;
     }
 
@@ -175,7 +175,7 @@ bool JSGenericTypedArrayView<Adaptor>::validateRange(
     if (canAccessRangeQuickly(offset, length))
         return true;
 
-    throwException(globalObject, scope, createRangeError(globalObject, "Range consisting of offset and length are out of bounds"_s));
+    throwException(globalObject, scope, createRangeError(globalObject, "Range consisting of offset and length are out of bounds"_si));
     return false;
 }
 
@@ -501,7 +501,7 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
     RETURN_IF_EXCEPTION(scope, { });
 
     if (offset > MAX_ARRAY_BUFFER_SIZE || !isSumSmallerThanOrEqual(sourceLength, offset, targetLength)) {
-        throwRangeError(globalObject, scope, "Range consisting of offset and length are out of bounds"_s);
+        throwRangeError(globalObject, scope, "Range consisting of offset and length are out of bounds"_si);
         return false;
     }
 

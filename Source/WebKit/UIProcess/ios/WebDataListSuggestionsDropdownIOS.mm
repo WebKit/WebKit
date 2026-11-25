@@ -52,8 +52,8 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 - (NSArray<WKDataListTextSuggestion *> *)textSuggestions;
 - (NSInteger)suggestionsCount;
-- (String)suggestionAtIndex:(NSInteger)index;
-- (String)suggestionLabelAtIndex:(NSInteger)index;
+- (RefPtr<StringImpl>)suggestionAtIndex:(NSInteger)index;
+- (RefPtr<StringImpl>)suggestionLabelAtIndex:(NSInteger)index;
 - (NSTextAlignment)textAlignment;
 
 @end
@@ -133,7 +133,7 @@ void WebDataListSuggestionsDropdownIOS::platformShow(WebCore::DataListSuggestion
     [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
 }
 
-void WebDataListSuggestionsDropdownIOS::handleKeydownWithIdentifier(const String&)
+void WebDataListSuggestionsDropdownIOS::handleKeydownWithIdentifier(StringImpl*)
 {
 }
 
@@ -144,7 +144,7 @@ void WebDataListSuggestionsDropdownIOS::close()
     WebDataListSuggestionsDropdown::close();
 }
 
-void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOption)
+void WebDataListSuggestionsDropdownIOS::didSelectOption(StringImpl* selectedOption)
 {
     if (!m_page)
         return;
@@ -199,7 +199,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     NSMutableArray *suggestions = [NSMutableArray array];
 
     for (const auto& suggestion : borrow(_suggestions)) {
-        [suggestions addObject:[WKDataListTextSuggestion textSuggestionWithInputText:suggestion.value.createNSString().get()]];
+        [suggestions addObject:[WKDataListTextSuggestion textSuggestionWithInputText:createNSString(suggestion.value).get()]];
         if (suggestions.count == 3)
             break;
     }
@@ -212,12 +212,12 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     return _suggestions.size();
 }
 
-- (String)suggestionAtIndex:(NSInteger)index
+- (RefPtr<StringImpl>)suggestionAtIndex:(NSInteger)index
 {
     return _suggestions[index].value;
 }
 
-- (String)suggestionLabelAtIndex:(NSInteger)index
+- (RefPtr<StringImpl>)suggestionLabelAtIndex:(NSInteger)index
 {
     return _suggestions[index].label;
 }
@@ -293,7 +293,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    return [self suggestionAtIndex:row].createNSString().autorelease();
+    return createNSString([self suggestionAtIndex:row]).autorelease();
 }
 
 - (void)invalidate
@@ -379,7 +379,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     [super didSelectOptionAtIndex:index];
     [[_popover popoverController] dismissPopoverAnimated:YES];
-    self.view.dataListTextSuggestions = @[ [WKDataListTextSuggestion textSuggestionWithInputText:[self suggestionAtIndex:index].createNSString().get()] ];
+    self.view.dataListTextSuggestions = @[ [WKDataListTextSuggestion textSuggestionWithInputText:createNSString([self suggestionAtIndex:index]).get()] ];
 }
 
 @end
@@ -408,7 +408,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!cell)
         cell = adoptNS([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:suggestionCellReuseIdentifier]);
 
-    [cell textLabel].text = [self.control suggestionAtIndex:indexPath.row].createNSString().get();
+    [cell textLabel].text = createNSString([self.control suggestionAtIndex:indexPath.row]).get();
     [cell textLabel].lineBreakMode = NSLineBreakByTruncatingTail;
     [cell textLabel].textAlignment = [self.control textAlignment];
 
@@ -542,14 +542,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSMutableArray *suggestions = [NSMutableArray arrayWithCapacity:self.suggestionsCount];
 
     for (NSInteger index = 0; index < self.suggestionsCount; index++) {
-        RetainPtr suggestionAction = [UIAction actionWithTitle:[self suggestionAtIndex:index].createNSString().get() image:nil identifier:nil handler:[weakSelf = WeakObjCPtr<WKDataListSuggestionsDropdown>(self), index] (UIAction *) {
+        RetainPtr suggestionAction = [UIAction actionWithTitle:createNSString([self suggestionAtIndex:index]).get() image:nil identifier:nil handler:[weakSelf = WeakObjCPtr<WKDataListSuggestionsDropdown>(self), index] (UIAction *) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
 
             [strongSelf didSelectOptionAtIndex:index];
         }];
-        suggestionAction.get().subtitle = [self suggestionLabelAtIndex:index].createNSString().get();
+        suggestionAction.get().subtitle = createNSString([self suggestionLabelAtIndex:index]).get();
 
         [suggestions addObject:suggestionAction.get()];
     }

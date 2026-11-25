@@ -41,12 +41,12 @@ class XSLImportRule;
     
 class XSLStyleSheet final : public StyleSheet, public CanMakeWeakPtr<XSLStyleSheet> {
 public:
-    static Ref<XSLStyleSheet> create(XSLStyleSheet* parentSheet, const String& originalURL, const URL& finalURL)
+    static Ref<XSLStyleSheet> create(XSLStyleSheet* parentSheet, StringImpl* originalURL, const URL& finalURL)
     {
         return adoptRef(*new XSLStyleSheet(parentSheet, originalURL, finalURL));
     }
 
-    static Ref<XSLStyleSheet> create(ProcessingInstruction& parentNode, const String& originalURL, const URL& finalURL)
+    static Ref<XSLStyleSheet> create(ProcessingInstruction& parentNode, StringImpl* originalURL, const URL& finalURL)
     {
         return adoptRef(*new XSLStyleSheet(&parentNode, originalURL, finalURL, false));
     }
@@ -58,21 +58,21 @@ public:
 
     // Taking an arbitrary node is unsafe, because owner node pointer can become stale.
     // XSLTProcessor ensures that the stylesheet doesn't outlive its parent, in part by not exposing it to JavaScript.
-    static Ref<XSLStyleSheet> createForXSLTProcessor(Node* parentNode, const String& originalURL, const URL& finalURL)
+    static Ref<XSLStyleSheet> createForXSLTProcessor(Node* parentNode, StringImpl* originalURL, const URL& finalURL)
     {
         return adoptRef(*new XSLStyleSheet(parentNode, originalURL, finalURL, false));
     }
 
     virtual ~XSLStyleSheet();
 
-    bool parseString(const String&);
+    bool parseString(StringImpl*);
     
     void checkLoaded();
     
     const URL& finalURL() const LIFETIME_BOUND { return m_finalURL; }
 
     void loadChildSheets();
-    void loadChildSheet(const String& href);
+    void loadChildSheet(StringImpl* href);
 
     CachedResourceLoader* cachedResourceLoader();
 
@@ -89,12 +89,12 @@ public:
     NODELETE void markAsProcessed();
     bool processed() const { return m_processed; }
     
-    String type() const override { return "text/xml"_s; }
+    RefPtr<StringImpl> type() const override { return "text/xml"_si; }
     bool disabled() const override { return m_isDisabled; }
     void setDisabled(bool b) override { m_isDisabled = b; }
     Node* ownerNode() const override { assertIsOwnerThread(); return m_ownerNode.get(); }
-    String href() const override { return m_originalURL; }
-    String title() const override { return { }; }
+    RefPtr<StringImpl> href() const override { return m_originalURL; }
+    RefPtr<StringImpl> title() const override { return { }; }
 
     void clearOwnerNode() override;
     WebCoreOpaqueRoot opaqueRootForGCThread() override;
@@ -102,11 +102,11 @@ public:
     bool isLoading() const override;
 
 private:
-    XSLStyleSheet(Node* parentNode, const String& originalURL, const URL& finalURL, bool embedded);
-    XSLStyleSheet(XSLStyleSheet* parentSheet, const String& originalURL, const URL& finalURL);
+    XSLStyleSheet(Node* parentNode, StringImpl* originalURL, const URL& finalURL, bool embedded);
+    XSLStyleSheet(XSLStyleSheet* parentSheet, StringImpl* originalURL, const URL& finalURL);
 
     bool isXSLStyleSheet() const override { return true; }
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     void clearXSLStylesheetDocument();
 
@@ -115,7 +115,7 @@ private:
     // use assertIsOwnerThread() instead of locking; the GC thread must lock even to read.
     CheckedPtr<Node> m_ownerNode WTF_GUARDED_BY_LOCK(m_opaqueRootLockForGC);
     WTF_DECLARE_OWNER_THREAD_ASSERTIONS(m_opaqueRootLockForGC, mainThreadLike);
-    String m_originalURL;
+    RefPtr<StringImpl> m_originalURL;
     URL m_finalURL;
     bool m_isDisabled { false };
 

@@ -125,7 +125,7 @@ ExceptionOr<void> ConvolverNode::setBufferForBindings(RefPtr<AudioBuffer>&& buff
     }
 
     if (buffer->sampleRate() != protect(context())->sampleRate())
-        return Exception { ExceptionCode::NotSupportedError, "Buffer sample rate does not match the context's sample rate"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Buffer sample rate does not match the context's sample rate"_si };
 
     unsigned numberOfChannels = buffer->numberOfChannels();
     size_t bufferLength = buffer->length();
@@ -135,7 +135,7 @@ ExceptionOr<void> ConvolverNode::setBufferForBindings(RefPtr<AudioBuffer>&& buff
     bool isChannelCountGood = (numberOfChannels == 1 || numberOfChannels == 2 || numberOfChannels == 4);
 
     if (!isChannelCountGood)
-        return Exception { ExceptionCode::NotSupportedError, "Buffer should have 1, 2 or 4 channels"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Buffer should have 1, 2 or 4 channels"_si };
 
     // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpySpan().
     // This memory is simply used in the Reverb constructor and no reference to it is kept for later use in that class.
@@ -205,14 +205,14 @@ bool ConvolverNode::requiresTailProcessing() const
 ExceptionOr<void> ConvolverNode::setChannelCount(unsigned count)
 {
     if (count > 2)
-        return Exception { ExceptionCode::NotSupportedError, "ConvolverNode's channel count cannot be greater than 2"_s };
+        return Exception { ExceptionCode::NotSupportedError, "ConvolverNode's channel count cannot be greater than 2"_si };
     return AudioNode::setChannelCount(count);
 }
 
 ExceptionOr<void> ConvolverNode::setChannelCountMode(ChannelCountMode mode)
 {
     if (mode == ChannelCountMode::Max)
-        return Exception { ExceptionCode::NotSupportedError, "ConvolverNode's channel count mode cannot be 'max'"_s };
+        return Exception { ExceptionCode::NotSupportedError, "ConvolverNode's channel count mode cannot be 'max'"_si };
     return AudioNode::setChannelCountMode(mode);
 }
 

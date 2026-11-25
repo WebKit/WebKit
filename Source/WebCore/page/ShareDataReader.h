@@ -46,7 +46,7 @@ public:
 
 private:
     explicit ShareDataReader(CompletionHandler<void(ExceptionOr<ShareDataWithParsedURL&>)>&&);
-    void didFinishLoading(int, const String& fileName);
+    void didFinishLoading(int, StringImpl* fileName);
 
     CompletionHandler<void(ExceptionOr<ShareDataWithParsedURL&>)> m_completionHandler;
     ShareDataWithParsedURL m_shareData;

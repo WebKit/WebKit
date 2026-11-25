@@ -41,9 +41,9 @@ OptionSet<WebKit::ContentWorldOption> ContentWorld::defaultOptions()
     return WebKit::ContentWorldOption::Inspectable;
 }
 
-NODELETE static HashMap<WTF::String, WeakRef<ContentWorld>>& sharedWorldNameMap()
+NODELETE static HashMap<RefPtr<StringImpl>, WeakRef<ContentWorld>>& sharedWorldNameMap()
 {
-    static NeverDestroyed<HashMap<WTF::String, WeakRef<ContentWorld>>> sharedMap;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 
@@ -72,7 +72,7 @@ static WebKit::ContentWorldIdentifier generateIdentifier()
     return WebKit::ContentWorldIdentifier::generate();
 }
 
-ContentWorld::ContentWorld(const WTF::String& name, OptionSet<WebKit::ContentWorldOption> options)
+ContentWorld::ContentWorld(StringImpl* name, OptionSet<WebKit::ContentWorldOption> options)
     : m_identifier(generateIdentifier())
     , m_name(name)
     , m_options(options)
@@ -88,7 +88,7 @@ ContentWorld::ContentWorld(WebKit::ContentWorldIdentifier identifier)
     ASSERT(m_identifier == WebKit::pageContentWorldIdentifier());
 }
 
-Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name, OptionSet<WebKit::ContentWorldOption> options)
+Ref<ContentWorld> ContentWorld::sharedWorldWithName(StringImpl* name, OptionSet<WebKit::ContentWorldOption> options)
 {
     RefPtr<ContentWorld> newContentWorld;
     auto result = sharedWorldNameMap().ensure(name, [&] {
@@ -111,7 +111,7 @@ ContentWorld& ContentWorld::pageContentWorldSingleton()
 
 ContentWorld& ContentWorld::defaultClientWorldSingleton()
 {
-    static NeverDestroyed<Ref<ContentWorld>> world(adoptRef(*new ContentWorld(WTF::String { }, defaultOptions())));
+    static NeverDestroyed<Ref<ContentWorld>> world(adoptRef(*new ContentWorld(nullString(), defaultOptions())));
     return world.get();
 }
 
@@ -122,7 +122,7 @@ ContentWorld::~ContentWorld()
     auto result = sharedWorldIdentifierMap().take(m_identifier);
     ASSERT_UNUSED(result, result.get() == this || m_identifier == WebKit::pageContentWorldIdentifier());
 
-    if (!name().isNull()) {
+    if (name()) {
         auto taken = sharedWorldNameMap().take(name());
         ASSERT_UNUSED(taken, taken.get() == this);
     }

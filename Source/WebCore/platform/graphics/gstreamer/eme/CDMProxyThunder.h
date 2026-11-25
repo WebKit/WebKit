@@ -42,7 +42,7 @@ namespace WebCore {
 // This is the thread-safe API that decode threads should use to make use of a platform CDM module.
 class CDMProxyThunder final : public CDMProxy, public CanMakeWeakPtr<CDMProxyThunder, WeakPtrFactoryInitialization::Eager> {
 public:
-    CDMProxyThunder(const String& keySystem)
+    CDMProxyThunder(StringImpl* keySystem)
         : m_keySystem(keySystem) { }
     virtual ~CDMProxyThunder() = default;
 
@@ -56,11 +56,11 @@ public:
     };
 
     DecryptionResult decrypt(DecryptionContext&, const GRefPtr<GstCaps>& inputCaps);
-    const String& keySystem() LIFETIME_BOUND { return m_keySystem; }
+    const RefPtr<StringImpl>& keySystem() LIFETIME_BOUND { return m_keySystem; }
 
 private:
     BoxPtr<OpenCDMSession> getDecryptionSession(DecryptionContext&) const;
-    String m_keySystem;
+    RefPtr<StringImpl> m_keySystem;
 };
 
 } // namespace WebCore

@@ -51,19 +51,19 @@ public:
         Remote,
     };
 
-    BasicCredential(const String&, Type, Discovery);
+    BasicCredential(StringImpl*, Type, Discovery);
     virtual ~BasicCredential();
 
     virtual Type credentialType() const = 0;
 
-    const String& id() const LIFETIME_BOUND { return m_id; }
-    String type() const;
+    const RefPtr<StringImpl>& id() const LIFETIME_BOUND { return m_id; }
+    RefPtr<StringImpl> type() const;
     Discovery discovery() const { return m_discovery; }
 
     static void isConditionalMediationAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
 
 private:
-    String m_id;
+    RefPtr<StringImpl> m_id;
     Type m_type;
     Discovery m_discovery;
 };

@@ -37,14 +37,14 @@ public:
 
     virtual ~CSSNamespaceRule();
 
-    NODELETE AtomString namespaceURI() const;
-    NODELETE AtomString prefix() const;
+    NODELETE RefPtr<AtomStringImpl> namespaceURI() const;
+    NODELETE RefPtr<AtomStringImpl> prefix() const;
 
 private:
     CSSNamespaceRule(StyleRuleNamespace&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Namespace; }
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
     NODELETE void reattach(StyleRuleBase&) final;
 
     const Ref<StyleRuleNamespace> m_namespaceRule;

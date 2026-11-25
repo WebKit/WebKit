@@ -52,10 +52,10 @@ public:
 
     WebCore::RectEdges<bool> offsetEdges() const { return m_info.offsetEdges; }
 
-    const WTF::String& renderedText() const LIFETIME_BOUND { return m_info.renderedText; }
-    const WTF::String& searchableText() const LIFETIME_BOUND { return m_info.searchableText; }
-    const WTF::String& screenReaderText() const LIFETIME_BOUND { return m_info.screenReaderText; }
-    const Vector<Vector<WTF::String>>& selectors() const LIFETIME_BOUND { return m_info.selectors; }
+    const RefPtr<StringImpl>& renderedText() const LIFETIME_BOUND { return m_info.renderedText; }
+    const RefPtr<StringImpl>& searchableText() const LIFETIME_BOUND { return m_info.searchableText; }
+    const RefPtr<StringImpl>& screenReaderText() const LIFETIME_BOUND { return m_info.screenReaderText; }
+    const Vector<Vector<RefPtr<StringImpl>>>& selectors() const LIFETIME_BOUND { return m_info.selectors; }
     WebCore::PositionType positionType() const { return m_info.positionType; }
     WebCore::FloatRect boundsInRootView() const { return m_info.boundsInRootView; }
     WebCore::FloatRect boundsInWebView() const;

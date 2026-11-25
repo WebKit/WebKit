@@ -141,9 +141,9 @@ public:
     void setBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy);
 
 #if PLATFORM(IOS_FAMILY)
-    void accessLog(CompletionHandler<void(String)>&&);
-    void errorLog(CompletionHandler<void(String)>&&);
-    void setSceneIdentifier(String&&);
+    void accessLog(CompletionHandler<void(RefPtr<StringImpl>)>&&);
+    void errorLog(CompletionHandler<void(RefPtr<StringImpl>)>&&);
+    void setSceneIdentifier(RefPtr<StringImpl>&&);
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -271,28 +271,28 @@ private:
     void mediaPlayerDidRemoveVideoTrack(WebCore::VideoTrackPrivate&) final;
     void mediaPlayerDidAddTextTrack(WebCore::InbandTextTrackPrivate&) final;
     void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
-    String audioOutputDeviceId() const final { return m_configuration.audioOutputDeviceId; }
-    String audioOutputDeviceIdOverride() const final { return m_configuration.audioOutputDeviceId; }
+    RefPtr<StringImpl> audioOutputDeviceId() const final { return m_configuration.audioOutputDeviceId; }
+    RefPtr<StringImpl> audioOutputDeviceIdOverride() const final { return m_configuration.audioOutputDeviceId; }
 
     // Not implemented
     void mediaPlayerFirstVideoFrameAvailable() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const final;
+    RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(StringImpl*) const final;
     void mediaPlayerKeyNeeded(const WebCore::SharedBuffer&) final;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) final;
+    void mediaPlayerInitializationDataEncountered(StringImpl*, RefPtr<ArrayBuffer>&&) final;
     void mediaPlayerWaitingForKeyChanged() final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
-    String mediaPlayerMediaKeysStorageDirectory() const final;
+    RefPtr<StringImpl> mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
-    String mediaPlayerReferrer() const final;
-    String mediaPlayerUserAgent() const final;
+    RefPtr<StringImpl> mediaPlayerReferrer() const final;
+    RefPtr<StringImpl> mediaPlayerUserAgent() const final;
     bool mediaPlayerIsFullscreen() const final;
     bool mediaPlayerIsFullscreenPermitted() const final;
     bool mediaPlayerIsVideo() const final;
@@ -300,9 +300,9 @@ private:
     bool mediaPlayerPlatformVolumeConfigurationRequired() const final;
     WebCore::CachedResourceLoader* mediaPlayerCachedResourceLoader() const final;
     Ref<WebCore::PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
-    bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;
+    bool doesHaveAttribute(AtomStringImpl*, RefPtr<AtomStringImpl>* = nullptr) const final;
     bool mediaPlayerShouldUsePersistentCache() const final;
-    String mediaPlayerMediaCacheDirectory() const final;
+    RefPtr<StringImpl> mediaPlayerMediaCacheDirectory() const final;
     WebCore::LayoutRect mediaPlayerContentBoxRect() const final;
 
     void textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
@@ -312,11 +312,11 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    String mediaPlayerNetworkInterfaceName() const final;
+    RefPtr<StringImpl> mediaPlayerNetworkInterfaceName() const final;
     void mediaPlayerGetRawCookies(const URL&, WebCore::MediaPlayerClient::GetRawCookiesCallback&&) const final;
 #endif
 
-    String mediaPlayerSourceApplicationIdentifier() const final;
+    RefPtr<StringImpl> mediaPlayerSourceApplicationIdentifier() const final;
     WebCore::MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const final { return m_clientIdentifier; }
 
     double mediaPlayerRequestedPlaybackRate() const final;
@@ -324,14 +324,14 @@ private:
     WebCore::MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const final;
     bool mediaPlayerIsVideoFullscreenStandby() const final;
 #endif
-    Vector<String> mediaPlayerPreferredAudioCharacteristics() const final;
+    Vector<RefPtr<StringImpl>> mediaPlayerPreferredAudioCharacteristics() const final;
 
     bool mediaPlayerShouldDisableSleep() const final;
     const Vector<WebCore::ContentType>& mediaContentTypesRequiringHardwareSupport() const final;
     bool mediaPlayerShouldCheckHardwareSupport() const final;
 
-    const std::optional<Vector<String>>& allowedMediaContainerTypes() const final { return m_configuration.allowedMediaContainerTypes; };
-    const std::optional<Vector<String>>& allowedMediaCodecTypes() const final { return m_configuration.allowedMediaCodecTypes; };
+    const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaContainerTypes() const final { return m_configuration.allowedMediaContainerTypes; };
+    const std::optional<Vector<RefPtr<StringImpl>>>& allowedMediaCodecTypes() const final { return m_configuration.allowedMediaCodecTypes; };
     const std::optional<Vector<WebCore::FourCC>>& allowedMediaVideoCodecIDs() const final { return m_configuration.allowedMediaVideoCodecIDs; };
     const std::optional<Vector<WebCore::FourCC>>& allowedMediaAudioCodecIDs() const final { return m_configuration.allowedMediaAudioCodecIDs; };
     const std::optional<Vector<WebCore::FourCC>>& allowedMediaCaptionFormatTypes() const final { return m_configuration.allowedMediaCaptionFormatTypes; };
@@ -378,8 +378,8 @@ private:
     void requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&&);
     void setShouldCheckHardwareSupport(bool);
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    void setDefaultSpatialTrackingLabel(const String&);
-    void setSpatialTrackingLabel(const String&);
+    void setDefaultSpatialTrackingLabel(StringImpl*);
+    void setSpatialTrackingLabel(StringImpl*);
 #endif
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
     void setPrefersSpatialAudioExperience(bool);
@@ -387,7 +387,7 @@ private:
 
     void isInFullscreenOrPictureInPictureChanged(bool);
 
-    void audioOutputDeviceChanged(String&&);
+    void audioOutputDeviceChanged(RefPtr<StringImpl>&&);
     using SoundStageSize = WebCore::MediaPlayer::SoundStageSize;
     void setSoundStageSize(SoundStageSize);
         SoundStageSize mediaPlayerSoundStageSize() const final { return m_soundStageSize; }

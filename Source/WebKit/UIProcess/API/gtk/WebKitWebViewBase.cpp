@@ -374,7 +374,7 @@ struct _WebKitWebViewBasePrivate {
 
 #if GTK_CHECK_VERSION(3, 24, 0)
     GtkWidget* emojiChooser;
-    CompletionHandler<void(String)> emojiChooserCompletionHandler;
+    CompletionHandler<void(RefPtr<StringImpl>)> emojiChooserCompletionHandler;
     RunLoop::Timer releaseEmojiChooserTimer;
 #endif
 
@@ -845,7 +845,7 @@ void webkitWebViewBaseRemoveWebInspector(WebKitWebViewBase* webViewBase, GtkWidg
 }
 
 #if GTK_CHECK_VERSION(3, 24, 0)
-static void webkitWebViewBaseCompleteEmojiChooserRequest(WebKitWebViewBase* webView, const String& text)
+static void webkitWebViewBaseCompleteEmojiChooserRequest(WebKitWebViewBase* webView, StringImpl* text)
 {
     if (auto completionHandler = std::exchange(webView->priv->emojiChooserCompletionHandler, nullptr))
         completionHandler(text);
@@ -2016,12 +2016,12 @@ GVariant* webkitWebViewBaseContentsOfUserInterfaceItem(WebKitWebViewBase* webVie
 
     WebPageProxy* page = webViewBase->priv->pageProxy.get();
     auto* validationBubble = page->validationBubble();
-    String message = validationBubble ? validationBubble->message() : emptyString();
+    RefPtr<StringImpl> message = validationBubble ? validationBubble->message() : emptyString();
     double fontSize = validationBubble ? validationBubble->fontSize() : 0;
 
     GVariantBuilder subBuilder;
     g_variant_builder_init(&subBuilder, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&subBuilder, "{sv}", "message", gVariantNewString(message.utf8()));
+    g_variant_builder_add(&subBuilder, "{sv}", "message", gVariantNewString(utf8(message)));
     g_variant_builder_add(&subBuilder, "{sv}", "fontSize", g_variant_new_double(fontSize));
 
     GVariantBuilder builder;
@@ -2615,11 +2615,11 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     }, webkitWebViewBase);
 }
 
-void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const String& tooltip)
+void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, StringImpl* tooltip)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (!tooltip.isEmpty()) {
-        priv->tooltipText = tooltip.utf8();
+    if (!isEmpty(tooltip)) {
+        priv->tooltipText = utf8(tooltip);
         gtk_widget_set_has_tooltip(GTK_WIDGET(webViewBase), TRUE);
     } else {
         priv->tooltipText = ""_s;
@@ -2723,7 +2723,7 @@ static void webkitWebViewBaseDidEnterFullScreen(WebKitWebViewBase* webkitWebView
     ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen);
     // FIXME: Call CompletionHandler from PageClientImpl::beganEnterFullScreen here.
     priv->fullScreenState = WebFullScreenManagerProxy::FullscreenState::InFullscreen;
-    priv->sleepDisabler = PAL::SleepDisabler::create(String::fromUTF8(_("Website running in fullscreen mode")), PAL::SleepDisabler::Type::Display);
+    priv->sleepDisabler = PAL::SleepDisabler::create(StringImpl::fromUTF8(_("Website running in fullscreen mode")), PAL::SleepDisabler::Type::Display);
 }
 
 void webkitWebViewBaseWillExitFullScreen(WebKitWebViewBase* webkitWebViewBase, CompletionHandler<void()>&& completionHandler)
@@ -3101,7 +3101,7 @@ void webkitWebViewBaseDidRestoreScrollPosition(WebKitWebViewBase* webkitWebViewB
 #if GTK_CHECK_VERSION(3, 24, 0)
 static void emojiChooserEmojiPicked(WebKitWebViewBase* webkitWebViewBase, const char* text)
 {
-    webkitWebViewBaseCompleteEmojiChooserRequest(webkitWebViewBase, String::fromUTF8(text));
+    webkitWebViewBaseCompleteEmojiChooserRequest(webkitWebViewBase, StringImpl::fromUTF8(text));
 }
 
 static void emojiChooserClosed(WebKitWebViewBase* webkitWebViewBase)
@@ -3115,7 +3115,7 @@ static void emojiChooserClosed(WebKitWebViewBase* webkitWebViewBase)
 }
 #endif
 
-void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, const IntRect& caretRect, CompletionHandler<void(String)>&& completionHandler)
+void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, const IntRect& caretRect, CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler)
 {
 #if GTK_CHECK_VERSION(3, 24, 0)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
@@ -3182,7 +3182,7 @@ WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBa
     return webViewBase->priv->inputMethodFilter.context();
 }
 
-void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
+void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase, StringImpl* text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
     webViewBase->priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent::create(text, WTF::move(underlines), WTF::move(selectionRange)));
 }
@@ -3203,18 +3203,18 @@ static inline OptionSet<WebEventModifier> toWebKitModifiers(unsigned modifiers)
     return webEventModifiers;
 }
 
-static inline PointerID primaryPointerForType(const String& pointerType)
+static inline PointerID primaryPointerForType(StringImpl* pointerType)
 {
-    if (pointerType == mousePointerEventType())
+    if (equal(pointerType, mousePointerEventType()))
         return mousePointerID;
 
-    if (pointerType == penPointerEventType())
+    if (equal(pointerType, penPointerEventType()))
         return 2;
 
     return mousePointerID;
 }
 
-void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, const String& pointerType, PlatformMouseEvent::IsTouch isTouchEvent, SyntheticClickType syntheticClickType)
+void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, StringImpl* pointerType, PlatformMouseEvent::IsTouch isTouchEvent, SyntheticClickType syntheticClickType)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->dialog)
@@ -3313,7 +3313,7 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent::create(webEventType, webEventButton, webEventButtons, DoublePoint(x, y),
         widgetRootCoords(GTK_WIDGET(webViewBase), x, y), clickCount, toWebKitModifiers(modifiers), movementDelta,
-        primaryPointerForType(pointerType), pointerType.isNull() ? mousePointerEventType() : pointerType, isTouchEvent, static_cast<WebMouseEventSyntheticClickType>(syntheticClickType)));
+        primaryPointerForType(pointerType), !pointerType ? mousePointerEventType().get() : pointerType, isTouchEvent, static_cast<WebMouseEventSyntheticClickType>(syntheticClickType)));
 }
 
 void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEventType type, unsigned keyval, unsigned modifiers, ShouldTranslateKeyboardState shouldTranslate)
@@ -3411,7 +3411,7 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
         if (!filterResult.handled) {
             priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent::create(
                 WebEventType::KeyDown,
-                filterResult.keyText.isNull() ? WebKeyboardEvent::singleCharacterStringForGdkKeyval(keyval) : filterResult.keyText,
+                !filterResult.keyText ? WebKeyboardEvent::singleCharacterStringForGdkKeyval(keyval) : filterResult.keyText,
                 WebKeyboardEvent::keyValueStringForGdkKeyval(keyval),
                 WebKeyboardEvent::keyCodeStringForGdkKeycode(keycode),
                 WebKeyboardEvent::keyIdentifierForGdkKeyval(keyval),
@@ -3576,7 +3576,7 @@ void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase* webView
 }
 
 #if USE(GTK4)
-void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& plugID)
+void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, StringImpl* plugID)
 {
 #ifdef GTK_ACCESSIBILITY_ATSPI
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -3586,17 +3586,17 @@ void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& pl
         priv->socketAccessible = nullptr;
     }
 
-    Vector<String> tokens = plugID.split(':');
+    Vector<RefPtr<StringImpl>> tokens = split(plugID, ':');
     RELEASE_ASSERT(tokens.size() == 2);
 
     GUniqueOutPtr<GError> error;
 
-    auto plugBusName = tokens[0].utf8();
+    auto plugBusName = utf8(tokens[0]);
     RELEASE_ASSERT(g_dbus_is_name(plugBusName.legacyCStringPointer()));
 
-    auto busName = makeString(g_dbus_is_unique_name(plugBusName.legacyCStringPointer()) ? ":"_s : ""_s, tokens[0]).utf8();
+    auto busName = utf8(makeString(g_dbus_is_unique_name(plugBusName.legacyCStringPointer()) ? ":"_s : ""_s, tokens[0]));
 
-    priv->socketAccessible = adoptGRef(gtk_at_spi_socket_new(busName.legacyCStringPointer(), tokens[1].utf8().legacyCStringPointer(), &error.outPtr()));
+    priv->socketAccessible = adoptGRef(gtk_at_spi_socket_new(busName.legacyCStringPointer(), utf8(tokens[1]).legacyCStringPointer(), &error.outPtr()));
 
     if (priv->socketAccessible) {
         auto* widget = gtk_widget_get_first_child(GTK_WIDGET(webViewBase));

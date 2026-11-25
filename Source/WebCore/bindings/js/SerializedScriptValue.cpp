@@ -358,7 +358,7 @@ enum class ImageBitmapSerializationFlags : uint8_t {
 
 }
 
-static String agentClusterIDFromGlobalObject(JSGlobalObject& globalObject)
+static RefPtr<StringImpl> agentClusterIDFromGlobalObject(JSGlobalObject& globalObject)
 {
     auto& domGlobalObject = downcast<JSDOMGlobalObject>(globalObject);
     RefPtr context = domGlobalObject.scriptExecutionContext();
@@ -366,7 +366,7 @@ static String agentClusterIDFromGlobalObject(JSGlobalObject& globalObject)
     if (!context)
         return nullString();
     auto result = context->agentClusterID();
-    ASSERT(!result.isNull());
+    ASSERT(result);
     return result;
 }
 
@@ -1131,7 +1131,7 @@ private:
     }
 
 public:
-    String agentClusterID()
+    RefPtr<StringImpl> agentClusterID()
     {
         return agentClusterIDFromGlobalObject(*m_lexicalGlobalObject);
     }
@@ -1791,25 +1791,25 @@ class CloneDeserializer : public JSC::CloneDeserializerBase<CloneDeserializer> {
     using Base = JSC::CloneDeserializerBase<CloneDeserializer>;
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    static String deserializeString(const Vector<uint8_t>& buffer, ShouldAtomize shouldAtomize = ShouldAtomize::No)
+    static RefPtr<StringImpl> deserializeString(const Vector<uint8_t>& buffer, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         if (buffer.isEmpty())
-            return String();
+            return nullptr;
         auto span = buffer.span();
         uint32_t version;
         if (!JSC::StructuredCloneInternal::readLittleEndian(span, version) || majorVersionFor(version) > CurrentMajorVersion)
-            return String();
+            return nullptr;
         uint8_t tag;
         if (!JSC::StructuredCloneInternal::readLittleEndian(span, tag) || tag != StringTag)
-            return String();
+            return nullptr;
         uint32_t length;
         if (!JSC::StructuredCloneInternal::readLittleEndian(span, length))
-            return String();
+            return nullptr;
         bool is8Bit = length & StringDataIs8BitFlag;
         length &= ~StringDataIs8BitFlag;
-        String str;
+        RefPtr<StringImpl> str;
         if (!readString(span, str, length, is8Bit, shouldAtomize))
-            return String();
+            return nullptr;
         return str;
     }
 
@@ -1827,7 +1827,7 @@ public:
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
 #endif
-        , ArrayBufferContentsArray* arrayBufferContentsArray, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths, ArrayBufferContentsArray* sharedBuffers
+        , ArrayBufferContentsArray* arrayBufferContentsArray, const Vector<uint8_t>& buffer, const Vector<RefPtr<StringImpl>>& blobURLs, const Vector<RefPtr<StringImpl>> blobFilePaths, ArrayBufferContentsArray* sharedBuffers
 #if ENABLE(WEBASSEMBLY)
         , WasmModuleArray* wasmModules
         , WasmMemoryHandleArray* wasmMemoryHandles
@@ -2000,7 +2000,7 @@ private:
         readAndStoreVersion();
     }
 
-    CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<Ref<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths, ArrayBufferContentsArray* sharedBuffers, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
+    CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<Ref<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, const Vector<uint8_t>& buffer, const Vector<RefPtr<StringImpl>>& blobURLs, const Vector<RefPtr<StringImpl>> blobFilePaths, ArrayBufferContentsArray* sharedBuffers, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
         , const Vector<Ref<OffscreenCanvas>>& inMemoryOffscreenCanvases
@@ -2135,8 +2135,8 @@ private:
         }
 
         // If the blob URL for this file has an associated blob file path, prefer that one over the "built-in" path.
-        String filePath = blobFilePathForBlobURL(url->string());
-        if (filePath.isEmpty())
+        RefPtr<StringImpl> filePath = blobFilePathForBlobURL(url->string());
+        if (isEmpty(filePath))
             filePath = path->string();
 
         if (!m_canCreateDOMObject)
@@ -3220,8 +3220,8 @@ private:
 
         uint32_t line = 0;
         uint32_t column = 0;
-        String sourceURL;
-        String stack;
+        RefPtr<StringImpl> sourceURL;
+        RefPtr<StringImpl> stack;
         bool hasErrorInformation = m_majorVersion >= 16;
         if (hasErrorInformation) {
             if (!read(line) || !read(column) || !readNullableString(sourceURL) || !readNullableString(stack))
@@ -3295,7 +3295,7 @@ private:
             return JSValue();
         }
 
-        if (protect(context->securityOrigin())->toString() != origin->string()) {
+        if (!equal(protect(context->securityOrigin())->toString(), origin->string())) {
             fail();
             return JSValue();
         }
@@ -3308,17 +3308,17 @@ private:
 
         auto clientOrigin = clientOriginForContext(*context);
         if (kind == FileSystemHandleKind::File) {
-            Ref handle = FileSystemFileHandle::create(*context, String { name->string() }, globalIdentifier);
+            Ref handle = FileSystemFileHandle::create(*context, RefPtr<StringImpl> { name->string() }, globalIdentifier);
             handle->markAsUnresolved(WTF::move(clientOrigin), connection.releaseNonNull());
             return getJSValue(handle);
         }
-        Ref handle = FileSystemDirectoryHandle::create(*context, String { name->string() }, globalIdentifier);
+        Ref handle = FileSystemDirectoryHandle::create(*context, RefPtr<StringImpl> { name->string() }, globalIdentifier);
         handle->markAsUnresolved(WTF::move(clientOrigin), connection.releaseNonNull());
         return getJSValue(handle);
     }
 
 public:
-    String agentClusterID()
+    RefPtr<StringImpl> agentClusterID()
     {
         return agentClusterIDFromGlobalObject(*m_globalObject);
     }
@@ -3339,7 +3339,7 @@ public:
     {
         if (isTagRestrictedToSameAgentCluster(tag)) {
             CachedStringRef restrictedAgentClusterID;
-            if (!readStringData(restrictedAgentClusterID) || !m_isDOMGlobalObject || restrictedAgentClusterID->string() != agentClusterID()) {
+            if (!readStringData(restrictedAgentClusterID) || !m_isDOMGlobalObject || !equal(restrictedAgentClusterID->string(), agentClusterID())) {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();
                 return JSValue();
@@ -3569,8 +3569,8 @@ private:
     const bool m_canCreateDOMObject;
     Vector<Ref<ImageData>> m_imageDataPool;
     const Vector<Ref<MessagePort>>& m_messagePorts;
-    Vector<String> m_blobURLs;
-    Vector<String> m_blobFilePaths;
+    Vector<RefPtr<StringImpl>> m_blobURLs;
+    Vector<RefPtr<StringImpl>> m_blobFilePaths;
     Vector<std::optional<DetachedImageBitmap>> m_detachedImageBitmaps;
     Vector<RefPtr<ImageBitmap>> m_imageBitmaps;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -3611,15 +3611,17 @@ private:
     Vector<RefPtr<MediaStreamTrackHandle>> m_mediaStreamTrackHandles;
 #endif
 
-    NODELETE String blobFilePathForBlobURL(const String& blobURL)
+    NODELETE RefPtr<StringImpl> blobFilePathForBlobURL(StringImpl* blobURL)
     {
         size_t i = 0;
         for (; i < m_blobURLs.size(); ++i) {
-            if (m_blobURLs[i] == blobURL)
+            if (equal(m_blobURLs[i], blobURL))
                 break;
         }
 
-        return i < m_blobURLs.size() ? m_blobFilePaths[i] : String();
+        if (i >= m_blobURLs.size())
+            return nullptr;
+        return m_blobFilePaths[i];
     }
 
 #if ASSERT_ENABLED
@@ -3644,8 +3646,8 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSGlobalObject* globalObject = lexicalGlobalObject;
-    Vector<String> blobURLs;
-    Vector<String> blobFilePaths;
+    Vector<RefPtr<StringImpl>> blobURLs;
+    Vector<RefPtr<StringImpl>> blobFilePaths;
     Vector<std::optional<WebCore::DetachedImageBitmap>> detachedImageBitmaps;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedOffscreenCanvases;
@@ -3774,7 +3776,7 @@ SerializedScriptValueInternals SerializedScriptValueInternals::clone() const
         .arrayBufferContentsArray = copyArrayBufferContentsArray(arrayBufferContentsArray),
 #if ENABLE(WEB_RTC)
         .detachedRTCDataChannels = detachedRTCDataChannels.map([](const auto& channel) {
-            return makeUnique<DetachedRTCDataChannel>(channel->identifier, channel->label.isolatedCopy(), channel->options.isolatedCopy(), channel->state);
+            return makeUnique<DetachedRTCDataChannel>(channel->identifier, isolatedCopy(channel->label), channel->options.isolatedCopy(), channel->state);
         }),
 #endif
 #if ENABLE(WEB_CODECS)
@@ -3937,7 +3939,7 @@ size_t SerializedScriptValue::computeMemoryCost() const
 #endif
 
     for (auto& handle : m_internals->blobHandles)
-        cost += handle.url().string().sizeInBytes();
+        cost += sizeInBytes(handle.url().string());
 
     return cost;
 }
@@ -4145,7 +4147,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     HashSet<JSC::Strong<JSC::JSObject>> visited;
     for (auto& transferable : transferList) {
         if (!visited.add(JSC::Strong<JSC::JSObject> { vm, transferable.get() }).isNewEntry)
-            return Exception { ExceptionCode::DataCloneError, "Duplicate transferable for structured clone"_s };
+            return Exception { ExceptionCode::DataCloneError, "Duplicate transferable for structured clone"_si };
 
         if (RefPtr arrayBuffer = toPossiblySharedArrayBuffer(vm, transferable.get())) {
             arrayBuffers.append(arrayBuffer.releaseNonNull());
@@ -4297,7 +4299,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     }
     for (size_t i = 0; i < exposedMessagePortsCount; ++i) {
         if (messagePorts[i]->isDetached())
-            return Exception { ExceptionCode::DataCloneError, "MessagePort is detached"_s };
+            return Exception { ExceptionCode::DataCloneError, "MessagePort is detached"_si };
     }
     for (auto& imageBitmap : imageBitmaps) {
         if (imageBitmap->isDetached())
@@ -4498,7 +4500,7 @@ Vector<uint8_t> SerializedScriptValue::serializeCryptoKey(const WebCore::CryptoK
     return CloneSerializer::serializeCryptoKey(key);
 }
 
-String SerializedScriptValue::toString() const
+RefPtr<StringImpl> SerializedScriptValue::toString() const
 {
     return CloneDeserializer::deserializeString(m_internals->data);
 }
@@ -4511,12 +4513,12 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
 
 JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, Vector<Ref<MessagePort>>& messagePorts, SerializationErrorMode throwExceptions, bool* didFail)
 {
-    Vector<String> dummyBlobs;
-    Vector<String> dummyPaths;
+    Vector<RefPtr<StringImpl>> dummyBlobs;
+    Vector<RefPtr<StringImpl>> dummyPaths;
     return deserialize(lexicalGlobalObject, globalObject, messagePorts, dummyBlobs, dummyPaths, throwExceptions, didFail);
 }
 
-JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, Vector<Ref<MessagePort>>& messagePorts, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode throwExceptions, bool* didFail)
+JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, Vector<Ref<MessagePort>>& messagePorts, const Vector<RefPtr<StringImpl>>& blobURLs, const Vector<RefPtr<StringImpl>>& blobFilePaths, SerializationErrorMode throwExceptions, bool* didFail)
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
@@ -4593,10 +4595,10 @@ Ref<SerializedScriptValue> SerializedScriptValue::nullValue()
     return adoptRef(*new SerializedScriptValue(Internals { }));
 }
 
-Vector<String> SerializedScriptValue::blobURLs() const
+Vector<RefPtr<StringImpl>> SerializedScriptValue::blobURLs() const
 {
     return m_internals->blobHandles.map([](auto& handle) {
-        return handle.url().string().isolatedCopy();
+        return isolatedCopy(handle.url().string());
     });
 }
 

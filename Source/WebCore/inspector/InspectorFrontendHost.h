@@ -69,20 +69,20 @@ public:
     void reset();
 
     void bringToFront();
-    void inspectedURLChanged(const String&);
+    void inspectedURLChanged(StringImpl*);
 
     NODELETE bool supportsShowCertificate() const;
-    bool showCertificate(const String& serializedCertificate);
+    bool showCertificate(StringImpl* serializedCertificate);
 
     void setZoomFactor(float);
     float zoomFactor();
 
-    void setForcedAppearance(String);
+    void setForcedAppearance(RefPtr<StringImpl>);
 
-    String userInterfaceLayoutDirection();
+    RefPtr<StringImpl> userInterfaceLayoutDirection();
 
-    bool supportsDockSide(const String&);
-    void requestSetDockSide(const String&);
+    bool supportsDockSide(StringImpl*);
+    void requestSetDockSide(StringImpl*);
 
     void setAttachedWindowHeight(unsigned);
     void setAttachedWindowWidth(unsigned);
@@ -93,27 +93,27 @@ public:
     void moveWindowBy(float x, float y) const;
 
     bool isRemote() const;
-    String localizedStringsURL() const;
-    String backendCommandsURL() const;
+    RefPtr<StringImpl> localizedStringsURL() const;
+    RefPtr<StringImpl> backendCommandsURL() const;
     unsigned inspectionLevel() const;
 
-    String platform() const;
-    String platformVersionName() const;
+    RefPtr<StringImpl> platform() const;
+    RefPtr<StringImpl> platformVersionName() const;
 
     struct DebuggableInfo {
-        String debuggableType;
-        String targetPlatformName;
-        String targetBuildVersion;
-        String targetProductVersion;
+        RefPtr<StringImpl> debuggableType;
+        RefPtr<StringImpl> targetPlatformName;
+        RefPtr<StringImpl> targetBuildVersion;
+        RefPtr<StringImpl> targetProductVersion;
         bool targetIsSimulator;
     };
     DebuggableInfo debuggableInfo() const;
 
-    void copyText(const String& text);
-    void killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence);
+    void copyText(StringImpl* text);
+    void killText(StringImpl* text, bool shouldPrependToKillRing, bool shouldStartNewSequence);
 
-    void openURLExternally(const String& url);
-    void revealFileExternally(const String& path);
+    void openURLExternally(StringImpl* url);
+    void revealFileExternally(StringImpl* path);
 
     void requestDisableSiteIsolation();
 
@@ -123,14 +123,14 @@ public:
     void save(Vector<SaveData>&&, bool forceSaveAs);
 
     bool canLoad();
-    void load(const String& path, Ref<DeferredPromise>&&);
+    void load(StringImpl* path, Ref<DeferredPromise>&&);
 
     bool canPickColorFromScreen();
     void pickColorFromScreen(Ref<DeferredPromise>&&);
 
     struct ContextMenuItem {
-        String type;
-        String label;
+        RefPtr<StringImpl> type;
+        RefPtr<StringImpl> label;
         std::optional<int> id;
         std::optional<bool> enabled;
         std::optional<bool> checked;
@@ -138,11 +138,11 @@ public:
     };
     void showContextMenu(Event&, Vector<ContextMenuItem>&&);
 
-    void sendMessageToBackend(const String& message);
+    void sendMessageToBackend(StringImpl* message);
     void dispatchEventAsContextMenuEvent(Event&);
 
     bool isUnderTest();
-    void unbufferedLog(const String& message);
+    void unbufferedLog(StringImpl* message);
 
     void beep();
     void inspectInspector();
@@ -154,21 +154,21 @@ public:
     bool supportsDiagnosticLogging();
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool diagnosticLoggingAvailable();
-    void logDiagnosticEvent(const String& eventName, const String& payload);
+    void logDiagnosticEvent(StringImpl* eventName, StringImpl* payload);
 #endif
 
     bool supportsWebExtensions();
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    void didShowExtensionTab(const String& extensionID, const String& extensionTabID, HTMLIFrameElement& extensionFrame);
-    void didHideExtensionTab(const String& extensionID, const String& extensionTabID);
-    void didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const String& url);
-    void inspectedPageDidNavigate(const String& url);
-    ExceptionOr<JSC::JSValue> evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrame, const String& scriptSource);
+    void didShowExtensionTab(StringImpl* extensionID, StringImpl* extensionTabID, HTMLIFrameElement& extensionFrame);
+    void didHideExtensionTab(StringImpl* extensionID, StringImpl* extensionTabID);
+    void didNavigateExtensionTab(StringImpl* extensionID, StringImpl* extensionTabID, StringImpl* url);
+    void inspectedPageDidNavigate(StringImpl* url);
+    ExceptionOr<JSC::JSValue> evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrame, StringImpl* scriptSource);
 #endif
 
     // IDL extensions.
 
-    NODELETE String getPath(const File&) const;
+    NODELETE RefPtr<StringImpl> getPath(const File&) const;
 
     float getCurrentX(const CanvasRenderingContext2D&) const;
     float getCurrentY(const CanvasRenderingContext2D&) const;

@@ -34,11 +34,11 @@
 namespace WebCore {
 
 struct ApplePayAutomaticReloadPaymentRequest final {
-    String paymentDescription; // required
+    RefPtr<StringImpl> paymentDescription; // required
     ApplePayLineItem automaticReloadBilling; // required, must be `paymentTiming: "automaticReload"`
-    String billingAgreement;
-    String managementURL; // required
-    String tokenNotificationURL;
+    RefPtr<StringImpl> billingAgreement;
+    RefPtr<StringImpl> managementURL; // required
+    RefPtr<StringImpl> tokenNotificationURL;
 };
 
 } // namespace WebCore

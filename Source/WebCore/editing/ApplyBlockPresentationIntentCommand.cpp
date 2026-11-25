@@ -243,8 +243,8 @@ void ApplyBlockPresentationIntentCommand::wrapContentsInCode(HTMLElement& preEle
     }
 
     // The CommonMark form of a language hint.
-    if (!m_intent.languageHint.isEmpty())
-        setNodeAttribute(*codeElement, classAttr, AtomString { makeString("language-"_s, m_intent.languageHint) });
+    if (!isEmpty(m_intent.languageHint))
+        setNodeAttribute(*codeElement, classAttr, AtomStringImpl::add(makeString("language-"_s, m_intent.languageHint)).get());
 }
 
 bool ApplyBlockPresentationIntentCommand::removeCodeElementsPreservingChildren()
@@ -566,7 +566,7 @@ void ApplyBlockPresentationIntentCommand::removeInlineStyleProperties(StyledElem
     if (mutableStyle->isEmpty())
         removeNodeAttribute(element, styleAttr);
     else
-        setNodeAttribute(element, styleAttr, AtomString { mutableStyle->asText(CSS::defaultSerializationContext()) });
+        setNodeAttribute(element, styleAttr, AtomStringImpl::add(mutableStyle->asText(CSS::defaultSerializationContext())).get());
 }
 
 // Removes the sizes, faces and spacing that would override the style sheet's look for the block, keeping colors and

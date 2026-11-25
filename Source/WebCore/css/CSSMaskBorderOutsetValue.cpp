@@ -43,7 +43,7 @@ Ref<CSSMaskBorderOutsetValue> CSSMaskBorderOutsetValue::create(CSS::MaskBorderOu
     return adoptRef(*new CSSMaskBorderOutsetValue(WTF::move(outsets)));
 }
 
-String CSSMaskBorderOutsetValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSMaskBorderOutsetValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_outsets);
 }

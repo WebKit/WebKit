@@ -49,7 +49,7 @@ Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID)
     return adoptRef(*new InProcessIDBServer(sessionID));
 }
 
-Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath)
+Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID, StringImpl* databaseDirectoryPath)
 {
     ASSERT(!sessionID.isEphemeral());
 
@@ -68,12 +68,12 @@ InProcessIDBServer::~InProcessIDBServer()
     semaphore.wait();
 }
 
-InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath)
+InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, StringImpl* databaseDirectoryPath)
     : m_queue(WorkQueue::create("com.apple.WebKit.IndexedDBServer"_s))
 {
     ASSERT(isMainThread());
     lazyInitialize(m_connectionToServer, IDBClient::IDBConnectionToServer::create(*this, sessionID));
-    dispatchTask([this, protectedThis = Ref { *this }, directory = databaseDirectoryPath.isolatedCopy()] () mutable {
+    dispatchTask([this, protectedThis = Ref { *this }, directory = isolatedCopy(databaseDirectoryPath)] () mutable {
         assertIsCurrent(m_queue.get());
         Ref connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
         m_connectionToClient = connectionToClient.copyRef();
@@ -276,17 +276,17 @@ void InProcessIDBServer::createObjectStore(const WebCore::IDBRequestData& result
     });
 }
 
-void InProcessIDBServer::deleteObjectStore(const WebCore::IDBRequestData& requestData, const String& objectStoreName)
+void InProcessIDBServer::deleteObjectStore(const WebCore::IDBRequestData& requestData, StringImpl* objectStoreName)
 {
-    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreName = objectStoreName.isolatedCopy()] () mutable {
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreName = isolatedCopy(objectStoreName)] () mutable {
         assertIsCurrent(m_queue.get());
         protect(m_server)->deleteObjectStore(requestData, objectStoreName);
     });
 }
 
-void InProcessIDBServer::renameObjectStore(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+void InProcessIDBServer::renameObjectStore(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* newName)
 {
-    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, newName = newName.isolatedCopy()] () mutable {
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, newName = isolatedCopy(newName)] () mutable {
         assertIsCurrent(m_queue.get());
         protect(m_server)->renameObjectStore(requestData, objectStoreIdentifier, newName);
     });
@@ -308,17 +308,17 @@ void InProcessIDBServer::createIndex(const WebCore::IDBRequestData& requestData,
     });
 }
 
-void InProcessIDBServer::deleteIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+void InProcessIDBServer::deleteIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, StringImpl* indexName)
 {
-    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexName = indexName.isolatedCopy()] {
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexName = isolatedCopy(indexName)] {
         assertIsCurrent(m_queue.get());
         protect(m_server)->deleteIndex(requestData, objectStoreIdentifier, indexName);
     });
 }
 
-void InProcessIDBServer::renameIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, const String& newName)
+void InProcessIDBServer::renameIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, StringImpl* newName)
 {
-    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexIdentifier, newName = newName.isolatedCopy()] {
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexIdentifier, newName = isolatedCopy(newName)] {
         assertIsCurrent(m_queue.get());
         protect(m_server)->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
     });

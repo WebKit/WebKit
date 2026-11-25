@@ -67,7 +67,7 @@ void MediaQueryList::detachFromMatcher()
     m_matcher = nullptr;
 }
 
-String MediaQueryList::media() const
+RefPtr<StringImpl> MediaQueryList::media() const
 {
     StringBuilder builder;
     MQ::serialize(builder, m_mediaQueries);

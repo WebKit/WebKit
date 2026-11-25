@@ -58,7 +58,7 @@ private:
     const Ref<Inspector::BidiEmulationBackendDispatcher> m_emulationDomainDispatcher;
 
     WeakHashMap<WebPageProxy, WebCore::ScrollbarStyle> m_scrollbarTypeOverridesForBrowsingContexts;
-    HashMap<String, WebCore::ScrollbarStyle> m_scrollbarTypeOverridesForUserContexts;
+    HashMap<RefPtr<StringImpl>, WebCore::ScrollbarStyle> m_scrollbarTypeOverridesForUserContexts;
     std::optional<WebCore::ScrollbarStyle> m_scrollbarTypeOverride;
 };
 

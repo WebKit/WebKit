@@ -395,7 +395,7 @@ bool Styleable::animationListContainsNewlyValidAnimation(const Style::Animations
         return false;
 
     for (auto& currentAnimation : animations.usedValues()) {
-        if (auto keyframesName = currentAnimation.name().tryKeyframesName(); keyframesName && !keyframesName->name.isEmpty() && keyframeEffectStack.containsInvalidCSSAnimationName(keyframesName->name) && keyframesRuleExistsForAnimation(protect(element), *keyframesName))
+        if (auto keyframesName = currentAnimation.name().tryKeyframesName(); keyframesName && !isEmpty(keyframesName->name) && keyframeEffectStack.containsInvalidCSSAnimationName(keyframesName->name) && keyframesRuleExistsForAnimation(protect(element), *keyframesName))
             return true;
     }
 
@@ -440,7 +440,7 @@ void Styleable::updateCSSAnimations(const Style::ComputedStyle* currentStyle, co
     if (!currentAnimationList.isInitial()) {
         for (auto& currentAnimation : currentAnimationList.usedValues() | std::views::reverse) {
             auto keyframesName = currentAnimation.name().tryKeyframesName();
-            if (!keyframesName || keyframesName->name.isEmpty())
+            if (!keyframesName || isEmpty(keyframesName->name))
                 continue;
 
             if (!keyframesRuleExistsForAnimation(protect(element), *keyframesName)) {
@@ -529,7 +529,7 @@ static bool transitionMatchesProperty(const Style::Transition& transition, const
             return false;
         },
         [&](const Style::SingleTransitionProperty::CustomProperty& customProperty) {
-            if (auto* propertyToMatch = std::get_if<AtomString>(&property))
+            if (auto* propertyToMatch = std::get_if<RefPtr<AtomStringImpl>>(&property))
                 return *propertyToMatch == customProperty.value;
             return false;
         },
@@ -549,7 +549,7 @@ static bool transitionMatchesProperty(const Style::Transition& transition, const
     );
 }
 
-static void compileTransitionPropertiesInStyle(const Style::ComputedStyle& style, CSSPropertiesBitSet& transitionProperties, HashSet<AtomString>& transitionCustomProperties, bool& transitionPropertiesContainAll)
+static void compileTransitionPropertiesInStyle(const Style::ComputedStyle& style, CSSPropertiesBitSet& transitionProperties, HashSet<RefPtr<AtomStringImpl>>& transitionCustomProperties, bool& transitionPropertiesContainAll)
 {
     auto& transitions = style.transitions();
     if (transitions.isInitial()) {
@@ -802,7 +802,7 @@ void Styleable::updateCSSTransitions(const Style::ComputedStyle& currentStyle, c
     // First, let's compile the list of all CSS properties found in the current style and the after-change style.
     bool transitionPropertiesContainAll = false;
     CSSPropertiesBitSet transitionProperties;
-    HashSet<AtomString> transitionCustomProperties;
+    HashSet<RefPtr<AtomStringImpl>> transitionCustomProperties;
     compileTransitionPropertiesInStyle(currentStyle, transitionProperties, transitionCustomProperties, transitionPropertiesContainAll);
     compileTransitionPropertiesInStyle(newStyle, transitionProperties, transitionCustomProperties, transitionPropertiesContainAll);
 
@@ -816,7 +816,7 @@ void Styleable::updateCSSTransitions(const Style::ComputedStyle& currentStyle, c
                     } else if (propertyId != CSSPropertyID::Invalid)
                         transitionProperties.m_properties.set(std::to_underlying(propertyId));
                 },
-                [&](const AtomString&) { }
+                [&](AtomStringImpl*) { }
             );
         };
 
@@ -886,7 +886,7 @@ void Styleable::updateCSSScrollTimelines(const Style::ComputedStyle* currentStyl
 
     CheckedRef styleOriginatedTimelinesController = protect(element->document())->ensureStyleOriginatedTimelinesController();
 
-    HashSet<AtomString> registeredScrollTimelineNames;
+    HashSet<RefPtr<AtomStringImpl>> registeredScrollTimelineNames;
 
     for (auto& scrollTimeline : afterChangeStyle.scrollTimelines().usedValues()) {
         WTF::switchOn(scrollTimeline.name(),
@@ -923,7 +923,7 @@ void Styleable::updateCSSViewTimelines(const Style::ComputedStyle* currentStyle,
 
     CheckedRef styleOriginatedTimelinesController = protect(element->document())->ensureStyleOriginatedTimelinesController();
 
-    HashSet<AtomString> registeredViewTimelineNames;
+    HashSet<RefPtr<AtomStringImpl>> registeredViewTimelineNames;
 
     for (auto& viewTimeline : afterChangeStyle.viewTimelines().usedValues()) {
         WTF::switchOn(viewTimeline.name(),
@@ -990,14 +990,14 @@ bool Styleable::viewportSizeDidChange() const
 
 bool Styleable::capturedInViewTransition() const
 {
-    return !element->viewTransitionCapturedName(pseudoElementIdentifier).isNull();
+    return !!element->viewTransitionCapturedName(pseudoElementIdentifier);
 }
 
-void Styleable::setCapturedInViewTransition(AtomString captureName)
+void Styleable::setCapturedInViewTransition(RefPtr<AtomStringImpl> captureName)
 {
     protect(element)->setViewTransitionCapturedName(pseudoElementIdentifier, captureName);
     if (CheckedPtr renderer = this->renderer()) {
-        bool changed = renderer->setCapturedInViewTransition(!captureName.isNull());
+        bool changed = renderer->setCapturedInViewTransition(!!captureName);
         if (changed)
             protect(element)->invalidateStyleAndLayerComposition();
     }

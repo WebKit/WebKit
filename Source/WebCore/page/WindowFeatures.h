@@ -69,7 +69,7 @@ struct WindowFeatures {
     std::optional<bool> noopener { std::nullopt };
     std::optional<bool> noreferrer { std::nullopt };
 
-    Vector<String> additionalFeatures { };
+    Vector<RefPtr<StringImpl>> additionalFeatures { };
 
     bool wantsNoOpener() const { return (noopener && *noopener) || (noreferrer && *noreferrer); }
     bool wantsNoReferrer() const { return (noreferrer && *noreferrer); }

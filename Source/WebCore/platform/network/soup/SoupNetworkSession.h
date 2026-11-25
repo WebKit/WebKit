@@ -60,9 +60,9 @@ public:
     void setCookieJar(SoupCookieJar*);
     SoupCookieJar* cookieJar() const;
 
-    void setHSTSPersistentStorage(const String& hstsStorageDirectory);
+    void setHSTSPersistentStorage(StringImpl* hstsStorageDirectory);
 
-    static void clearOldSoupCache(const String& cacheDirectory);
+    static void clearOldSoupCache(StringImpl* cacheDirectory);
 
     void setProxySettings(const SoupNetworkProxySettings&);
 
@@ -71,10 +71,10 @@ public:
 
     WEBCORE_EXPORT void setIgnoreTLSErrors(bool);
     std::optional<ResourceError> checkTLSErrors(const URL&, GTlsCertificate*, GTlsCertificateFlags);
-    void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
+    void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, StringImpl* host);
 
-    void getHostNamesWithHSTSCache(HashSet<String>&);
-    void deleteHSTSCacheForHostNames(const Vector<String>&);
+    void getHostNamesWithHSTSCache(HashSet<RefPtr<StringImpl>>&);
+    void deleteHSTSCacheForHostNames(const Vector<RefPtr<StringImpl>>&);
     void clearHSTSCache(WallTime);
 
 private:
@@ -84,7 +84,7 @@ private:
     PAL::SessionID m_sessionID;
     bool m_ignoreTLSErrors { false };
     SoupNetworkProxySettings m_proxySettings;
-    HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash> m_allowedCertificates;
+    HashMap<RefPtr<StringImpl>, HostTLSCertificateSet, ASCIICaseInsensitiveHash> m_allowedCertificates;
 };
 
 } // namespace WebCore

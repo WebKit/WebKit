@@ -52,23 +52,23 @@ public:
     enum Mode {
         Incomplete, Normal, Failed, Connected
     };
-    WEBCORE_EXPORT WebSocketHandshake(const URL&, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated);
+    WEBCORE_EXPORT WebSocketHandshake(const URL&, StringImpl* protocol, StringImpl* userAgent, StringImpl* clientOrigin, bool allowCookies, bool isAppInitiated);
     WEBCORE_EXPORT ~WebSocketHandshake();
 
     NODELETE WEBCORE_EXPORT const URL& url() const;
     void setURL(const URL&);
     WEBCORE_EXPORT URL httpURLForAuthenticationAndCookies() const;
-    const String host() const;
+    const RefPtr<StringImpl> host() const;
 
-    NODELETE const String& clientProtocol() const;
-    void setClientProtocol(const String&);
+    NODELETE const RefPtr<StringImpl>& clientProtocol() const;
+    void setClientProtocol(StringImpl*);
 
     NODELETE bool secure() const;
 
-    String clientLocation() const;
+    RefPtr<StringImpl> clientLocation() const;
 
     WEBCORE_EXPORT UTF8CString clientHandshakeMessage() const;
-    WEBCORE_EXPORT ResourceRequest clientHandshakeRequest(NOESCAPE const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const;
+    WEBCORE_EXPORT ResourceRequest clientHandshakeRequest(NOESCAPE const Function<RefPtr<StringImpl>(const URL&)>& cookieRequestHeaderFieldValue) const;
 
     WEBCORE_EXPORT void setClientHandshakeRequestHeaders(const HTTPHeaderMap&);
 
@@ -76,24 +76,24 @@ public:
 
     WEBCORE_EXPORT int readServerHandshake(std::span<const uint8_t> header);
     NODELETE WEBCORE_EXPORT Mode mode() const;
-    NODELETE WEBCORE_EXPORT String failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
+    NODELETE WEBCORE_EXPORT RefPtr<StringImpl> failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
 
-    WEBCORE_EXPORT String serverWebSocketProtocol() const;
-    WEBCORE_EXPORT String serverSetCookie() const;
-    String serverUpgrade() const;
-    String serverConnection() const;
-    String serverWebSocketAccept() const;
-    WEBCORE_EXPORT String acceptedExtensions() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> serverWebSocketProtocol() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> serverSetCookie() const;
+    RefPtr<StringImpl> serverUpgrade() const;
+    RefPtr<StringImpl> serverConnection() const;
+    RefPtr<StringImpl> serverWebSocketAccept() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> acceptedExtensions() const;
 
     NODELETE WEBCORE_EXPORT const ResourceResponse& serverHandshakeResponse() const;
 
     WEBCORE_EXPORT void addExtensionProcessor(std::unique_ptr<WebSocketExtensionProcessor>);
 
-    static String getExpectedWebSocketAccept(const String& secWebSocketKey);
+    static RefPtr<StringImpl> getExpectedWebSocketAccept(StringImpl* secWebSocketKey);
 
 private:
 
-    int readStatusLine(std::span<const uint8_t> header, int& statusCode, String& statusText);
+    int readStatusLine(std::span<const uint8_t> header, int& statusCode, RefPtr<StringImpl>& statusText);
 
     // Reads all headers except for the two predefined ones.
     std::span<const uint8_t> readHTTPHeaders(std::span<const uint8_t>);
@@ -101,12 +101,12 @@ private:
     bool checkResponseHeaders();
 
     URL m_url;
-    String m_clientProtocol;
+    RefPtr<StringImpl> m_clientProtocol;
     bool m_secure;
 
     Mode m_mode;
-    String m_userAgent;
-    String m_clientOrigin;
+    RefPtr<StringImpl> m_userAgent;
+    RefPtr<StringImpl> m_clientOrigin;
     bool m_allowCookies;
     bool m_isAppInitiated;
 
@@ -114,10 +114,10 @@ private:
 
     ResourceResponse m_serverHandshakeResponse;
 
-    String m_failureReason;
+    RefPtr<StringImpl> m_failureReason;
 
-    String m_secWebSocketKey;
-    String m_expectedAccept;
+    RefPtr<StringImpl> m_secWebSocketKey;
+    RefPtr<StringImpl> m_expectedAccept;
 
     WebSocketExtensionDispatcher m_extensionDispatcher;
 };

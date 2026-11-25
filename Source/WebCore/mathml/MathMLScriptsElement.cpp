@@ -82,7 +82,7 @@ const MathMLElement::Length& MathMLScriptsElement::superscriptShift()
     return cachedMathMLLength(superscriptshiftAttr, m_superscriptShift);
 }
 
-void MathMLScriptsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLScriptsElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == subscriptshiftAttr)
         m_subscriptShift = std::nullopt;

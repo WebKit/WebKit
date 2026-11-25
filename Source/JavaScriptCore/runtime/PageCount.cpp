@@ -33,7 +33,7 @@ namespace JSC {
 
 void PageCount::dump(PrintStream& out) const
 {
-    out.print(String::number(bytes()), "B");
+    out.print(makeString(bytes()), "B");
 }
 
 } // namespace JSC

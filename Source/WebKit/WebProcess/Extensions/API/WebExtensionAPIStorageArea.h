@@ -43,17 +43,17 @@ class WebExtensionAPIStorageArea : public WebExtensionAPIObject, public JSWebExt
 public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
-    void get(WebPageProxyIdentifier, RefPtr<JSON::Value> items, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
-    void getKeys(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
-    void getBytesInUse(WebPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
-    void set(WebPageProxyIdentifier, JSContextRef, JSValueRef items, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
-    void remove(WebPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void get(WebPageProxyIdentifier, RefPtr<JSON::Value> items, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
+    void getKeys(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
+    void getBytesInUse(WebPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
+    void set(WebPageProxyIdentifier, JSContextRef, JSValueRef items, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
+    void remove(WebPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
     void clear(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&);
 
     NODELETE double quotaBytes();
 
     // Only exposed to trusted contexts.
-    void setAccessLevel(WebPageProxyIdentifier, RefPtr<JSON::Value>, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void setAccessLevel(WebPageProxyIdentifier, RefPtr<JSON::Value>, Ref<WebExtensionCallbackHandler>&&, RefPtr<StringImpl>& outExceptionString);
 
     // Exposed only by storage.sync.
     NODELETE double quotaBytesPerItem();

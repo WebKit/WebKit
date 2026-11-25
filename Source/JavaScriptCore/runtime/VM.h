@@ -247,7 +247,7 @@ public:
     struct ClientData {
         JS_EXPORT_PRIVATE virtual ~ClientData() { };
 
-        JS_EXPORT_PRIVATE virtual String overrideSourceURL(const StackFrame&, const String& originalSourceURL) const = 0;
+        JS_EXPORT_PRIVATE virtual RefPtr<StringImpl> overrideSourceURL(const StackFrame&, StringImpl* originalSourceURL) const = 0;
 
         // Called after marking and before sweeping, alongside the cell types the Heap reconciles
         // itself. The client owns the subspaces for its own cell types, so it has to visit the
@@ -766,8 +766,8 @@ public:
     std::unique_ptr<FTL::Thunks> ftlThunks;
 #endif
 
-    NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, NativeFunction constructor, unsigned length, const String& name);
-    NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, unsigned length, const String& name);
+    NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, NativeFunction constructor, unsigned length, StringImpl* name);
+    NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, unsigned length, StringImpl* name);
 
     NativeExecutable* getBoundFunction(bool isJSFunction, SourceTaintedOrigin taintedness);
 

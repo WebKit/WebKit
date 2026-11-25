@@ -40,23 +40,23 @@ class MerchantValidationEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(MerchantValidationEvent);
 public:
     struct Init final : EventInit {
-        String methodName;
-        String validationURL;
+        RefPtr<StringImpl> methodName;
+        RefPtr<StringImpl> validationURL;
     };
 
-    NODELETE static Ref<MerchantValidationEvent> create(const AtomString& type, const String& methodName, URL&& validationURL);
-    static ExceptionOr<Ref<MerchantValidationEvent>> create(Document&, const AtomString& type, Init&&);
+    NODELETE static Ref<MerchantValidationEvent> create(AtomStringImpl* type, StringImpl* methodName, URL&& validationURL);
+    static ExceptionOr<Ref<MerchantValidationEvent>> create(Document&, AtomStringImpl* type, Init&&);
 
-    const String& methodName() const LIFETIME_BOUND { return m_methodName; }
-    const String& validationURL() const LIFETIME_BOUND { return m_validationURL.string(); }
+    const RefPtr<StringImpl>& methodName() const LIFETIME_BOUND { return m_methodName; }
+    const RefPtr<StringImpl>& validationURL() const LIFETIME_BOUND { return m_validationURL.string(); }
     ExceptionOr<void> complete(Ref<DOMPromise>&&);
 
 private:
-    MerchantValidationEvent(const AtomString& type, const String& methodName, URL&& validationURL);
-    MerchantValidationEvent(const AtomString& type, String&& methodName, URL&& validationURL, Init&&);
+    MerchantValidationEvent(AtomStringImpl* type, StringImpl* methodName, URL&& validationURL);
+    MerchantValidationEvent(AtomStringImpl* type, RefPtr<StringImpl>&& methodName, URL&& validationURL, Init&&);
 
     bool m_isCompleted { false };
-    String m_methodName;
+    RefPtr<StringImpl> m_methodName;
     URL m_validationURL;
 };
 

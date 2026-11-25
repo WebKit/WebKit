@@ -70,7 +70,7 @@ static TemporalPlainYearMonth* createTemporalYearMonthImpl(JSGlobalObject* globa
 
     // Step 1: If ISOYearMonthWithinLimits(isoDate) is false, throw a RangeError exception.
     if (!ISO8601::isYearMonthWithinLimits(plainDate.year(), plainDate.month())) [[unlikely]] {
-        throwRangeError(globalObject, scope, "PlainYearMonth is out of range of ECMAScript representation"_s);
+        throwRangeError(globalObject, scope, "PlainYearMonth is out of range of ECMAScript representation"_si);
         return { };
     }
 
@@ -102,12 +102,12 @@ TemporalPlainYearMonth* createTemporalYearMonth(JSGlobalObject* globalObject, IS
     return createTemporalYearMonthImpl<TemporalConstructTarget::NewTarget>(globalObject, WTF::move(plainDate), calendarID, newTarget);
 }
 
-String TemporalPlainYearMonth::toString() const
+RefPtr<StringImpl> TemporalPlainYearMonth::toString() const
 {
     return ISO8601::temporalYearMonthToString(m_plainYearMonth, "auto"_s, m_calendarID);
 }
 
-String TemporalPlainYearMonth::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
+RefPtr<StringImpl> TemporalPlainYearMonth::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -118,7 +118,7 @@ String TemporalPlainYearMonth::toString(JSGlobalObject* globalObject, JSValue op
     if (!options) [[likely]]
         return toString();
 
-    String calendarName = temporalShowCalendarName(globalObject, options);
+    RefPtr<StringImpl> calendarName = temporalShowCalendarName(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
     return ISO8601::temporalYearMonthToString(m_plainYearMonth, calendarName, m_calendarID);
@@ -137,12 +137,12 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
     // an Object, so the reorder is unobservable.
     auto string = item.getString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    if (!string.isNull()) {
+    if (string) {
         // Step 4: result = ? ParseISODateTime(item, « TemporalYearMonthString »).
         auto dateTime = ISO8601::parseISODateTime(string, ISO8601::TemporalProduction::YearMonth);
         if (!dateTime) [[unlikely]] {
-            String message = tryMakeString("Temporal.PlainYearMonth.from: invalid year-month string "_s, string);
-            throwRangeError(globalObject, scope, message.isNull() ? "Temporal.PlainYearMonth.from: invalid year-month string"_s : message);
+            RefPtr<StringImpl> message = tryMakeString("Temporal.PlainYearMonth.from: invalid year-month string "_s, string);
+            throwRangeError(globalObject, scope, !message ? "Temporal.PlainYearMonth.from: invalid year-month string"_si : message);
             return { };
         }
         auto [plainDateOpt, plainTimeOptional, timeZoneOptional, calendarOptional, matched, isShortForm] = WTF::move(*dateTime);
@@ -174,7 +174,7 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
 
         auto resolved = TemporalCore::plainYearMonthFromISODate(calendarId, plainDate);
         if (!resolved) [[unlikely]] {
-            throwRangeError(globalObject, scope, String(resolved.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             return { };
         }
         RELEASE_AND_RETURN(scope, createTemporalYearMonth(globalObject, WTF::move(resolved->isoDate), resolved->calendarId));
@@ -227,9 +227,9 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
         auto resolved = TemporalCore::yearMonthFromFields(calendarId, fields, overflow);
         if (!resolved) [[unlikely]] {
             if (resolved.error().kind == TemporalErrorKind::TypeError)
-                throwTypeError(globalObject, scope, String(resolved.error().message));
+                throwTypeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             else
-                throwRangeError(globalObject, scope, String(resolved.error().message));
+                throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             return { };
         }
 

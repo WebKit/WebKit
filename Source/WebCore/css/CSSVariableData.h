@@ -61,14 +61,14 @@ public:
 
     bool operator==(const CSSVariableData& other) const;
 
-    String serialize() const;
+    RefPtr<StringImpl> serialize() const;
 
 private:
     CSSVariableData(const CSSParserTokenRange&, const CSSParserContext&);
     CSSVariableData(const CSSParserTokenRange&, Style::IsAttrTainted, const CSSParserContext&);
     template<typename CharacterType> NODELETE void updateBackingStringsInTokens();
 
-    String m_backingString;
+    RefPtr<StringImpl> m_backingString;
     Vector<CSSParserToken> m_tokens;
     const CSSParserContext m_context;
     Style::IsAttrTainted m_isAttrTainted { };

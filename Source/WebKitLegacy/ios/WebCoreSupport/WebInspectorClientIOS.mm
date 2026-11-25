@@ -125,7 +125,7 @@ WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView
 
 void WebInspectorFrontendClient::attachAvailabilityChanged(bool) { }
 void WebInspectorFrontendClient::frontendLoaded() { }
-String WebInspectorFrontendClient::localizedStringsURL() const { return String(); }
+RefPtr<StringImpl> WebInspectorFrontendClient::localizedStringsURL() const { return nullptr; }
 void WebInspectorFrontendClient::bringToFront() { }
 void WebInspectorFrontendClient::closeWindow() { }
 void WebInspectorFrontendClient::reopen() { }
@@ -138,15 +138,15 @@ void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned) { }
 void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned) { }
 void WebInspectorFrontendClient::setSheetRect(const FloatRect&) { }
 void WebInspectorFrontendClient::startWindowDrag() { }
-void WebInspectorFrontendClient::inspectedURLChanged(const String&) { }
+void WebInspectorFrontendClient::inspectedURLChanged(StringImpl*) { }
 void WebInspectorFrontendClient::showCertificate(const CertificateInfo&) { }
 bool WebInspectorFrontendClient::supportsDiagnosticLogging() { return false; }
-void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) { }
+void WebInspectorFrontendClient::logDiagnosticEvent(StringImpl* eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) { }
 void WebInspectorFrontendClient::updateWindowTitle() const { }
 bool WebInspectorFrontendClient::canSave(WebCore::InspectorFrontendClient::SaveMode) { return false; }
 void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) { }
 
-void WebInspectorFrontendClient::sendMessageToBackend(const String&)
+void WebInspectorFrontendClient::sendMessageToBackend(StringImpl*)
 {
     notImplemented();
 }

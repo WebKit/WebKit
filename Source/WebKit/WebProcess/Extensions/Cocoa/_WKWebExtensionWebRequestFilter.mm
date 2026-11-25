@@ -132,7 +132,7 @@ static NSArray<WKWebExtensionMatchPattern *> *toMatchPatterns(NSArray<NSString *
         WKWebExtensionMatchPattern *pattern = [[WKWebExtensionMatchPattern alloc] initWithString:rawPattern error:&error];
         if (!pattern) {
             if (outErrorMessage)
-                *outErrorMessage = toErrorString(nullString(), urlsKey, makeString("'"_s, String(rawPattern), "' is an invalid match pattern. "_s, String(error.localizedDescription))).createNSString().autorelease();
+                *outErrorMessage = createNSString(toErrorString(nullString(), StringImpl::create(urlsKey).get(), makeString("'"_s, StringImpl::create(rawPattern), "' is an invalid match pattern. "_s, StringImpl::create(error.localizedDescription)))).autorelease();
             return nil;
         }
 
@@ -165,7 +165,7 @@ static NSNumber *toResourceType(NSString *typeString, NSString **outErrorMessage
 
     NSNumber *typeAsNumber = validTypes[typeString];
     if (!typeAsNumber) {
-        *outErrorMessage = toErrorString(nullString(), typesKey, makeString("'"_s, String(typeString), "' is an unknown resource type"_s)).createNSString().autorelease();
+        *outErrorMessage = createNSString(toErrorString(nullString(), StringImpl::create(typesKey).get(), makeString("'"_s, StringImpl::create(typeString), "' is an unknown resource type"_s))).autorelease();
         return nil;
     }
 

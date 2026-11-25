@@ -180,7 +180,7 @@ void WebBackForwardCacheEntry::expirationTimerFired()
 {
     ASSERT(m_backForwardItemID);
     ASSERT(m_backForwardFrameItemID);
-    RELEASE_LOG(BackForwardCache, "%p - WebBackForwardCacheEntry::expirationTimerFired backForwardItemID=%s backForwardFrameItemID=%s, hasSuspendedPage=%d", this, m_backForwardItemID->toString().utf8(), m_backForwardFrameItemID->toString().utf8(), !!m_suspendedPage);
+    RELEASE_LOG(BackForwardCache, "%p - WebBackForwardCacheEntry::expirationTimerFired backForwardItemID=%s backForwardFrameItemID=%s, hasSuspendedPage=%d", this, utf8(m_backForwardItemID->toString()), utf8(m_backForwardFrameItemID->toString()), !!m_suspendedPage);
     RefPtr item = WebBackForwardListFrameItem::itemForID(*m_backForwardItemID, *m_backForwardFrameItemID);
     ASSERT(item);
     if (RefPtr backForwardCache = m_backForwardCache.get()) {

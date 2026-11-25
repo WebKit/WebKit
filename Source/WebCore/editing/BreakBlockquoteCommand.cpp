@@ -173,7 +173,7 @@ void BreakBlockquoteCommand::doApply()
                 listChildNode = listChildNode->nextSibling();
             if (listChildNode) {
                 if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(listChildNode->renderer()))
-                    setNodeAttribute(clonedChild, startAttr, AtomString::number(listItemRenderer->value()));
+                    setNodeAttribute(clonedChild, startAttr, AtomStringImpl::number(listItemRenderer->value()));
             }
         }
 

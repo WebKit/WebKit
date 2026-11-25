@@ -52,7 +52,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 
 - (NSString *)title
 {
-    auto *title = _webExtensionSidebar->title().createNSString().get();
+    auto *title = createNSString(_webExtensionSidebar->title()).get();
     ASSERT(title);
     return title;
 }

@@ -69,10 +69,10 @@ bool HTMLFrameElementBase::canLoad() const
 {
     // FIXME: Why is it valuable to return true when m_frameURL is empty?
     // FIXME: After openURL replaces an empty URL with the blank URL, this may no longer necessarily return true.
-    return m_frameURL.isEmpty() || canLoadURL(m_frameURL);
+    return isEmpty(m_frameURL) || canLoadURL(m_frameURL);
 }
 
-bool HTMLFrameElementBase::canLoadURL(const String& relativeURL) const
+bool HTMLFrameElementBase::canLoadURL(StringImpl* relativeURL) const
 {
     return canLoadURL(protect(document())->encodingParseURL(relativeURL));
 }
@@ -96,8 +96,8 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (!canLoad())
         return;
 
-    if (m_frameURL.isEmpty())
-        m_frameURL = AtomString { aboutBlankURL().string() };
+    if (isEmpty(m_frameURL))
+        m_frameURL = AtomStringImpl::add(aboutBlankURL().string());
 
     Ref document = this->document();
     RefPtr parentFrame { document->frame() };
@@ -105,7 +105,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
         return;
 
     auto frameName = getNameAttribute();
-    if (frameName.isNull()) {
+    if (!frameName) {
         if (document->settings().needsFrameNameFallbackToIdQuirk()) [[unlikely]]
             frameName = getIdAttribute();
     }
@@ -127,22 +127,22 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     document->quirks().triggerOptionalStorageAccessIframeQuirk(completeURL, WTF::move(finishOpeningURL));
 }
 
-void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     // FIXME: trimming whitespace is probably redundant with the URL parser
     if (name == srcdocAttr) {
-        if (newValue.isNull())
-            setLocation(attributeWithoutSynchronization(srcAttr).string().trim(isASCIIWhitespace));
+        if (!newValue)
+            setLocation(trim(attributeWithoutSynchronization(srcAttr), isASCIIWhitespace));
         else
             setLocation(aboutSrcDocURL().string());
     } else if (name == srcAttr && !hasAttributeWithoutSynchronization(srcdocAttr))
-        setLocation(newValue.string().trim(isASCIIWhitespace));
+        setLocation(trim(newValue, isASCIIWhitespace));
     else if (name == scrollingAttr && contentFrame())
         protect(contentFrame())->updateScrollingMode();
     else if (name == marginwidthAttr || name == marginheightAttr) {
         if (RefPtr contentDocument = this->contentDocument()) {
             if (RefPtr body = contentDocument->body()) {
-                if (newValue.isNull())
+                if (!newValue)
                     body->removeAttribute(name);
                 else
                     body->setAttributeWithoutSynchronization(name, newValue);
@@ -198,15 +198,15 @@ void HTMLFrameElementBase::didAttachRenderers()
     }
 }
 
-void HTMLFrameElementBase::setLocation(const String& str)
+void HTMLFrameElementBase::setLocation(StringImpl* str)
 {
-    if (document().settings().needsAcrobatFrameReloadingQuirk() && m_frameURL == str)
+    if (document().settings().needsAcrobatFrameReloadingQuirk() && equal(m_frameURL, str))
         return;
 
     if (!SubframeLoadingDisabler::canLoadFrame(*this))
         return;
 
-    m_frameURL = AtomString(str);
+    m_frameURL = AtomStringImpl::add(str);
 
     if (isConnected())
         openURL(LockHistory::No, LockBackForwardList::No);

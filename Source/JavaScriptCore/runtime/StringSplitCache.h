@@ -61,11 +61,11 @@ public:
         MatchResult m_lastMatch { };
     };
 
-    JSCellButterfly* getForString(const String& subject, const String& separator);
-    void setForString(const String& subject, const String& separator, JSCellButterfly*);
+    JSCellButterfly* getForString(StringImpl* subject, StringImpl* separator);
+    void setForString(StringImpl* subject, StringImpl* separator, JSCellButterfly*);
 
-    JSCellButterfly* getForRegExp(const String& subject, RegExp*, MatchResult& lastMatch);
-    void setForRegExp(const String& subject, RegExp*, JSCellButterfly*, MatchResult lastMatch);
+    JSCellButterfly* getForRegExp(StringImpl* subject, RegExp*, MatchResult& lastMatch);
+    void setForRegExp(StringImpl* subject, RegExp*, JSCellButterfly*, MatchResult lastMatch);
 
     void clear()
     {

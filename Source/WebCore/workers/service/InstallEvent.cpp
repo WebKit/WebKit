@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InstallEvent);
 
-InstallEvent::InstallEvent(const AtomString& type, ExtendableEventInit&& initializer, IsTrusted isTrusted)
+InstallEvent::InstallEvent(AtomStringImpl* type, ExtendableEventInit&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::InstallEvent, type, initializer, isTrusted)
 {
 }
@@ -50,7 +50,7 @@ InstallEvent::~InstallEvent() = default;
 static ExceptionOr<ServiceWorkerRoutePattern> toServiceWorkerRoutePattern(const URLPattern& pattern)
 {
     if (pattern.hasRegExpGroups())
-        return Exception { ExceptionCode::TypeError, "Service Worker route url pattern has regexp groups"_s };
+        return Exception { ExceptionCode::TypeError, "Service Worker route url pattern has regexp groups"_si };
 
     return ServiceWorkerRoutePattern {
         pattern.shouldIgnoreCase(),
@@ -127,11 +127,11 @@ static std::optional<Exception> verifyRouterCondition(RouterCondition& condition
             return urlPatternOrException.releaseException();
         condition.urlPattern = urlPatternOrException.releaseReturnValue();
     }
-    if (!condition.requestMethod.isNull()) {
+    if (condition.requestMethod) {
         if (!isValidHTTPToken(condition.requestMethod))
-            return Exception { ExceptionCode::TypeError, "Method is not a valid HTTP token."_s };
+            return Exception { ExceptionCode::TypeError, "Method is not a valid HTTP token."_si };
         if (isForbiddenMethod(condition.requestMethod))
-            return Exception { ExceptionCode::TypeError, "Method is forbidden."_s };
+            return Exception { ExceptionCode::TypeError, "Method is forbidden."_si };
         condition.requestMethod = normalizeHTTPMethod(condition.requestMethod);
 
         hasCondition = true;
@@ -144,7 +144,7 @@ static std::optional<Exception> verifyRouterCondition(RouterCondition& condition
         hasCondition = true;
     if (condition.orConditions && !condition.orConditions->isEmpty()) {
         if (hasCondition)
-            return Exception { ExceptionCode::TypeError, "Or condition should not be present"_s };
+            return Exception { ExceptionCode::TypeError, "Or condition should not be present"_si };
         for (auto& orCondition : *condition.orConditions) {
             if (auto exception = verifyRouterCondition(orCondition, scope))
                 return *exception;
@@ -153,7 +153,7 @@ static std::optional<Exception> verifyRouterCondition(RouterCondition& condition
     }
     if (condition.notCondition) {
         if (hasCondition)
-            return Exception { ExceptionCode::TypeError, "Not condition should not be present"_s };
+            return Exception { ExceptionCode::TypeError, "Not condition should not be present"_si };
         if (auto exception = verifyRouterCondition(condition.notCondition->value(), scope))
             return *exception;
     }
@@ -191,7 +191,7 @@ void InstallEvent::addRoutes(JSC::JSGlobalObject& globalObject, Variant<RouterRu
         auto route = routeOrException.releaseReturnValue();
         if (!serviceWorkerGlobalScope->hasFetchEventHandler()) {
             if (auto* source = std::get_if<RouterSourceEnum>(&route.source); *source == RouterSourceEnum::FetchEvent || *source == RouterSourceEnum::RaceNetworkAndFetchHandler) {
-                promise->reject(Exception { ExceptionCode::TypeError, "Rule source requires registering a fetch event handler"_s });
+                promise->reject(Exception { ExceptionCode::TypeError, "Rule source requires registering a fetch event handler"_si });
                 return;
             }
         }
@@ -199,7 +199,7 @@ void InstallEvent::addRoutes(JSC::JSGlobalObject& globalObject, Variant<RouterRu
     }
 
     if (!isWaiting()) {
-        promise->reject(Exception { ExceptionCode::TypeError, "Service worker is not installing"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Service worker is not installing"_si });
         return;
     }
 

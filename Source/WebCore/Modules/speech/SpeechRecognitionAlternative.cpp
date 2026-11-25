@@ -32,12 +32,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionAlternative);
 
-Ref<SpeechRecognitionAlternative> SpeechRecognitionAlternative::create(String&& transcript, double confidence)
+Ref<SpeechRecognitionAlternative> SpeechRecognitionAlternative::create(RefPtr<StringImpl>&& transcript, double confidence)
 {
     return adoptRef(*new SpeechRecognitionAlternative(WTF::move(transcript), confidence));
 }
 
-SpeechRecognitionAlternative::SpeechRecognitionAlternative(String&& transcript, double confidence)
+SpeechRecognitionAlternative::SpeechRecognitionAlternative(RefPtr<StringImpl>&& transcript, double confidence)
     : m_transcript(WTF::move(transcript))
     , m_confidence(confidence)
 {

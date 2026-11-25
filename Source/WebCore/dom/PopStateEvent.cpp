@@ -42,7 +42,7 @@ PopStateEvent::PopStateEvent()
 {
 }
 
-PopStateEvent::PopStateEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+PopStateEvent::PopStateEvent(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::PopStateEvent, type, initializer, isTrusted)
     , m_state(globalObject, initializer.state)
     , m_hasUAVisualTransition(initializer.hasUAVisualTransition)
@@ -63,7 +63,7 @@ Ref<PopStateEvent> PopStateEvent::create(RefPtr<SerializedScriptValue>&& seriali
     return adoptRef(*new PopStateEvent(WTF::move(serializedState), history));
 }
 
-Ref<PopStateEvent> PopStateEvent::create(JSC::JSGlobalObject& globalObject, const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<PopStateEvent> PopStateEvent::create(JSC::JSGlobalObject& globalObject, AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new PopStateEvent(globalObject, type, initializer, isTrusted));
 }

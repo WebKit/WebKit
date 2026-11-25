@@ -44,18 +44,18 @@ class PageGroup final : public CanMakeWeakPtr<PageGroup>, public CanMakeCheckedP
     WTF_MAKE_NONCOPYABLE(PageGroup);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageGroup);
 public:
-    NODELETE WEBCORE_EXPORT static UniqueRef<PageGroup> create(const String&);
+    NODELETE WEBCORE_EXPORT static UniqueRef<PageGroup> create(StringImpl*);
     WEBCORE_EXPORT static UniqueRef<PageGroup> create(Page&);
     WEBCORE_EXPORT ~PageGroup();
 
-    WEBCORE_EXPORT static PageGroup* pageGroup(const String& groupName);
+    WEBCORE_EXPORT static PageGroup* pageGroup(StringImpl* groupName);
 
     const WeakHashSet<Page>& pages() const LIFETIME_BOUND { return m_pages; }
 
     void addPage(Page&);
     void removePage(Page&);
 
-    const String& name() LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() LIFETIME_BOUND { return m_name; }
     unsigned identifier() { return m_identifier; }
 
 #if ENABLE(VIDEO)
@@ -65,10 +65,10 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT explicit PageGroup(const String&);
+    WEBCORE_EXPORT explicit PageGroup(StringImpl*);
     WEBCORE_EXPORT explicit PageGroup(Page&);
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     WeakHashSet<Page> m_pages;
 
     unsigned m_identifier;

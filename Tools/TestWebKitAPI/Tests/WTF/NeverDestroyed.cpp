@@ -29,6 +29,8 @@
 #include "MoveOnlyLifecycleLogger.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
 
@@ -79,6 +81,60 @@ TEST(WTF_NeverDestroyed, Basic)
 {
     ASSERT_EQ(list().size(), 3u);
     ASSERT_EQ(&list(), &list());
+}
+
+NODELETE static StringImpl* passThrough(StringImpl* string)
+{
+    return string;
+}
+
+NODELETE static AtomStringImpl* passThroughAtom(AtomStringImpl* atom)
+{
+    return atom;
+}
+
+// A wrapper of RefPtr<X> converts to X*, like the RefPtr. Wrappers of anything else do not convert to pointers.
+static_assert(std::is_convertible_v<const NeverDestroyed<RefPtr<StringImpl>>&, StringImpl*>);
+static_assert(std::is_convertible_v<const NeverDestroyed<const RefPtr<StringImpl>>&, StringImpl*>);
+static_assert(std::is_convertible_v<const LazyNeverDestroyed<RefPtr<AtomStringImpl>>&, AtomStringImpl*>);
+static_assert(std::is_convertible_v<const MainThreadNeverDestroyed<RefPtr<StringImpl>>&, StringImpl*>);
+static_assert(std::is_convertible_v<const MainThreadLazyNeverDestroyed<const RefPtr<AtomStringImpl>>&, AtomStringImpl*>);
+static_assert(!std::is_convertible_v<const NeverDestroyed<RefPtr<StringImpl>>&, AtomStringImpl*>);
+static_assert(!std::is_convertible_v<const NeverDestroyed<Vector<int>>&, int*>);
+static_assert(!std::is_convertible_v<const NeverDestroyed<int>&, void*>);
+static_assert(!std::is_convertible_v<const NeverDestroyed<std::unique_ptr<int>>&, int*>);
+
+TEST(WTF_NeverDestroyed, RefPtrConvertsToRawPointer)
+{
+    static NeverDestroyed<RefPtr<StringImpl>> string { StringImpl::create("never destroyed"_s) };
+    static NeverDestroyed<const RefPtr<StringImpl>> constString { "const never destroyed"_si };
+    static NeverDestroyed<RefPtr<StringImpl>> nullString;
+
+    // Passing to a raw pointer parameter.
+    EXPECT_EQ(passThrough(string), string.get().get());
+    EXPECT_EQ(passThrough(constString), constString.get().get());
+    EXPECT_FALSE(passThrough(nullString));
+    EXPECT_TRUE(equal(passThrough(string), "never destroyed"_s));
+
+    // Comparing with raw pointers and RefPtrs (identity).
+    RefPtr<StringImpl> sameString = string;
+    RefPtr<StringImpl> otherString = StringImpl::create("never destroyed"_s);
+    EXPECT_TRUE(string == sameString.get());
+    EXPECT_TRUE(sameString.get() == string);
+    EXPECT_FALSE(string != sameString.get());
+    EXPECT_FALSE(string == otherString.get());
+    EXPECT_TRUE(nullString == nullptr);
+    EXPECT_FALSE(string == nullptr);
+
+    // Atoms, and the lazily constructed variant.
+    static LazyNeverDestroyed<RefPtr<AtomStringImpl>> atom;
+    atom.construct(AtomStringImpl::add("lazy atom"_s));
+    RefPtr<AtomStringImpl> sameAtom = AtomStringImpl::add("lazy atom"_s);
+    EXPECT_EQ(passThroughAtom(atom), sameAtom.get());
+    EXPECT_TRUE(atom == sameAtom);
+    EXPECT_TRUE(sameAtom == atom);
+    EXPECT_TRUE(atom == sameAtom.get());
+    EXPECT_FALSE(atom != sameAtom);
 }
 
 } // namespace TestWebKitAPI

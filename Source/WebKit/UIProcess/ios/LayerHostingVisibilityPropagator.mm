@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerHostingVisibilityPropagator);
 static NSString * const visibilityEndowmentNamespace = @"com.apple.frontboard.visibility";
 static constexpr ASCIILiteral environmentSuffix = "-layerHosting"_s;
 
-static void invalidateInjectors(HashMap<String, RetainPtr<BSServiceConnectionEndpointInjector>>& injectorsBySourceEnvironment)
+static void invalidateInjectors(HashMap<RefPtr<StringImpl>, RetainPtr<BSServiceConnectionEndpointInjector>>& injectorsBySourceEnvironment)
 {
     for (auto& injector : injectorsBySourceEnvironment.values())
         [injector invalidate];
@@ -122,14 +122,14 @@ void LayerHostingVisibilityPropagator::clear()
     }
 }
 
-void LayerHostingVisibilityPropagator::visibilityEndowmentEnvironmentsChanged(const HashSet<String>& environments)
+void LayerHostingVisibilityPropagator::visibilityEndowmentEnvironmentsChanged(const HashSet<RefPtr<StringImpl>>& environments)
 {
     RELEASE_LOG(Process, "LayerHostingVisibilityPropagator %p: visibilityEndowmentEnvironmentsChanged: %u environments now active", this, environments.size());
     for (size_t i = 0; i < m_processesAndInjectors.size(); ++i)
         refreshInjectorsAtIndex(i, environments);
 }
 
-void LayerHostingVisibilityPropagator::refreshInjectorsAtIndex(size_t index, const HashSet<String>& environments)
+void LayerHostingVisibilityPropagator::refreshInjectorsAtIndex(size_t index, const HashSet<RefPtr<StringImpl>>& environments)
 {
     auto& entry = m_processesAndInjectors[index];
     RefPtr process = entry.process.get();

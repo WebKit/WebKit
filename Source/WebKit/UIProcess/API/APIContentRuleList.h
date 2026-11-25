@@ -47,11 +47,11 @@ public:
     ContentRuleList(Ref<WebKit::WebCompiledContentRuleList>&&, WebKit::NetworkCache::Data&&);
     virtual ~ContentRuleList();
 
-    NODELETE const WTF::String& name() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& name() const LIFETIME_BOUND;
     const WebKit::WebCompiledContentRuleList& compiledRuleList() const { return m_compiledRuleList.get(); }
     
-    static bool supportsRegularExpression(const WTF::String&);
-    static std::error_code parseRuleList(const WTF::String&, WebCore::ContentExtensions::CSSSelectorsAllowed);
+    static bool supportsRegularExpression(StringImpl*);
+    static std::error_code parseRuleList(StringImpl*, WebCore::ContentExtensions::CSSSelectorsAllowed);
 
 private:
     const Ref<WebKit::WebCompiledContentRuleList> m_compiledRuleList;

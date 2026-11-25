@@ -38,30 +38,30 @@ class WebKitMediaKeyMessageEvent final : public Event {
 public:
     virtual ~WebKitMediaKeyMessageEvent();
 
-    static Ref<WebKitMediaKeyMessageEvent> create(const AtomString& type, Uint8Array* message, const String& destinationURL)
+    static Ref<WebKitMediaKeyMessageEvent> create(AtomStringImpl* type, Uint8Array* message, StringImpl* destinationURL)
     {
         return adoptRef(*new WebKitMediaKeyMessageEvent(type, message, destinationURL));
     }
 
     struct Init : EventInit {
         RefPtr<Uint8Array> message;
-        String destinationURL;
+        RefPtr<StringImpl> destinationURL;
     };
 
-    static Ref<WebKitMediaKeyMessageEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<WebKitMediaKeyMessageEvent> create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new WebKitMediaKeyMessageEvent(type, WTF::move(initializer), isTrusted));
     }
 
     Uint8Array* message() const { return m_message.get(); }
-    String destinationURL() const { return m_destinationURL; }
+    RefPtr<StringImpl> destinationURL() const { return m_destinationURL; }
 
 private:
-    WebKitMediaKeyMessageEvent(const AtomString& type, Uint8Array* message, const String& destinationURL);
-    WebKitMediaKeyMessageEvent(const AtomString& type, Init&&, IsTrusted);
+    WebKitMediaKeyMessageEvent(AtomStringImpl* type, Uint8Array* message, StringImpl* destinationURL);
+    WebKitMediaKeyMessageEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
     const RefPtr<Uint8Array> m_message;
-    String m_destinationURL;
+    RefPtr<StringImpl> m_destinationURL;
 };
 
 } // namespace WebCore

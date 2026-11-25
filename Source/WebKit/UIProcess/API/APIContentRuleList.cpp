@@ -43,12 +43,12 @@ ContentRuleList::ContentRuleList(Ref<WebKit::WebCompiledContentRuleList>&& conte
 
 ContentRuleList::~ContentRuleList() = default;
 
-const WTF::String& ContentRuleList::name() const
+const RefPtr<StringImpl>& ContentRuleList::name() const
 {
     return m_compiledRuleList->data().identifier;
 }
 
-bool ContentRuleList::supportsRegularExpression(const WTF::String& regex)
+bool ContentRuleList::supportsRegularExpression(StringImpl* regex)
 {
     using namespace WebCore::ContentExtensions;
     CombinedURLFilters combinedURLFilters;
@@ -76,7 +76,7 @@ bool ContentRuleList::supportsRegularExpression(const WTF::String& regex)
     return false;
 }
 
-std::error_code ContentRuleList::parseRuleList(const WTF::String& ruleList, WebCore::ContentExtensions::CSSSelectorsAllowed cssSelectorsAllowed)
+std::error_code ContentRuleList::parseRuleList(StringImpl* ruleList, WebCore::ContentExtensions::CSSSelectorsAllowed cssSelectorsAllowed)
 {
     auto result = WebCore::ContentExtensions::parseRuleList(ruleList, cssSelectorsAllowed);
     if (result.has_value())

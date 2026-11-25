@@ -42,12 +42,12 @@ template<typename> class ExceptionOr;
 
 class PerformanceMeasure final : public PerformanceEntry {
 public:
-    static ExceptionOr<Ref<PerformanceMeasure>> create(const String& name, double startTime, double endTime, Ref<SerializedScriptValue>&& detail);
+    static ExceptionOr<Ref<PerformanceMeasure>> create(StringImpl* name, double startTime, double endTime, Ref<SerializedScriptValue>&& detail);
 
     JSC::JSValue detail(JSC::JSGlobalObject&);
 
 private:
-    PerformanceMeasure(const String& name, double startTime, double endTime, Ref<SerializedScriptValue>&& detail);
+    PerformanceMeasure(StringImpl* name, double startTime, double endTime, Ref<SerializedScriptValue>&& detail);
     ~PerformanceMeasure();
 
     Type performanceEntryType() const final { return Type::Measure; }

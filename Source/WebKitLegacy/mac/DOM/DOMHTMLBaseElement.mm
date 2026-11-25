@@ -42,25 +42,25 @@
 - (NSString *)href
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->href().createNSString().autorelease();
+    return createNSString(IMPL->href()).autorelease();
 }
 
 - (void)setHref:(NSString *)newHref
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, newHref);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, AtomStringImpl::add((__bridge CFStringRef)newHref).get());
 }
 
 - (NSString *)target
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::targetAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::targetAttr)).autorelease();
 }
 
 - (void)setTarget:(NSString *)newTarget
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, newTarget);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, AtomStringImpl::add((__bridge CFStringRef)newTarget).get());
 }
 
 @end

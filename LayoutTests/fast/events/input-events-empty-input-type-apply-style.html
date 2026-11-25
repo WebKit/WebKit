@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="editable" contenteditable onbeforeinput="handleInput(event)" oninput="handleInput(event)">Hello <b>bold</b> world</div>
+<script>
+description("Tests the inputType of input events for style changes whose editing action has no input type name (it is the empty string). "
+    + "These go through Editor::applyStyle().");
+
+var editable = document.getElementById("editable");
+var log = [];
+
+function handleInput(event)
+{
+    log.push(`${event.type}: inputType="${event.inputType}" data=${JSON.stringify(event.data)}`);
+}
+
+function runCommand(label, command)
+{
+    log = [];
+    editable.focus();
+    getSelection().selectAllChildren(editable);
+    command();
+    debug(label + ":");
+    for (let entry of log)
+        debug("    " + entry);
+    if (!log.length)
+        debug("    (no events)");
+}
+
+if (window.testRunner) {
+    // MenuOrKeyBinding source: Editor::applyStyleToSelection() -> Editor::applyStyle() with EditAction::ChangeAttributes / Unscript.
+    runCommand("FontSize (testRunner)", () => testRunner.execCommand("FontSize", "5", "5"));
+    runCommand("FontSizeDelta (testRunner)", () => testRunner.execCommand("FontSizeDelta", "+2px", "+2px"));
+    runCommand("Unscript (testRunner)", () => testRunner.execCommand("Unscript", "", ""));
+}
+
+// DOM source: Editor::applyStyle() with EditAction::ChangeAttributes.
+runCommand("fontSize (document.execCommand)", () => document.execCommand("fontSize", false, "3"));
+
+// A mapped action for comparison.
+runCommand("bold (document.execCommand)", () => document.execCommand("bold"));
+
+debug("");
+shouldBeEqualToString("editable.textContent", "Hello bold world");
+</script>
+</body>
+</html>

@@ -45,7 +45,7 @@ static IPAddressSpace resolvedIPAddressSpace(SoupMessage* soupMessage)
         return IPAddressSpace::Unknown;
 
     GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address))));
-    auto resolvedIPAddress = IPAddress::fromString(String::fromUTF8(ipAddress.get()));
+    auto resolvedIPAddress = IPAddress::fromString(StringImpl::fromUTF8(ipAddress.get()));
     if (!resolvedIPAddress)
         return IPAddressSpace::Unknown;
 
@@ -69,7 +69,7 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const UTF8CString& 
     }
 
     m_httpStatusCode = soup_message_get_status(soupMessage);
-    setHTTPStatusText(String::fromLatin1(soup_message_get_reason_phrase(soupMessage)));
+    setHTTPStatusText(StringImpl::fromLatin1(soup_message_get_reason_phrase(soupMessage)));
 
     m_certificate = soup_message_get_tls_peer_certificate(soupMessage);
     m_tlsErrors = soup_message_get_tls_peer_certificate_errors(soupMessage);
@@ -77,14 +77,14 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const UTF8CString& 
     auto* responseHeaders = soup_message_get_response_headers(soupMessage);
     updateFromSoupMessageHeaders(responseHeaders);
 
-    String contentType;
+    RefPtr<StringImpl> contentType;
     const char* officialType = soup_message_headers_get_one(responseHeaders, "Content-Type");
     if (!sniffedContentType.isNull() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED && sniffedContentType != UTF8CStringView::unsafeFromUTF8(officialType))
-        contentType = String { sniffedContentType };
+        contentType = StringImpl::fromUTF8(sniffedContentType.span());
     else
-        contentType = String::fromLatin1(officialType);
+        contentType = StringImpl::fromLatin1(officialType);
     setMimeType(extractMIMETypeFromMediaType(contentType));
-    if (m_mimeType.isEmpty() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED)
+    if (isEmpty(m_mimeType) && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED)
         setMimeType(MIMETypeRegistry::mimeTypeForPath(m_url.path()));
     setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
 
@@ -96,7 +96,7 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const UTF8CString& 
 void ResourceResponse::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const
 {
     for (const auto& header : httpHeaderFields())
-        soup_message_headers_append(soupHeaders, header.key.utf8().legacyCStringPointer(), header.value.utf8().legacyCStringPointer());
+        soup_message_headers_append(soupHeaders, utf8(header.key).legacyCStringPointer(), utf8(header.value).legacyCStringPointer());
 }
 
 void ResourceResponse::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHeaders)
@@ -106,7 +106,7 @@ void ResourceResponse::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHead
     const char* headerValue;
     soup_message_headers_iter_init(&headersIter, soupHeaders);
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        addHTTPHeaderField(String::fromLatin1(headerName), String::fromLatin1(headerValue));
+        addHTTPHeaderField(StringImpl::fromLatin1(headerName), StringImpl::fromLatin1(headerValue));
 }
 
 CertificateInfo ResourceResponse::platformCertificateInfo(std::span<const std::byte>) const
@@ -114,31 +114,31 @@ CertificateInfo ResourceResponse::platformCertificateInfo(std::span<const std::b
     return CertificateInfo(m_certificate.get(), m_tlsErrors);
 }
 
-static String sanitizeFilename(const String& filename)
+static RefPtr<StringImpl> sanitizeFilename(StringImpl* filename)
 {
-    if (filename.isEmpty())
+    if (isEmpty(filename))
         return filename;
 
     // Trim leading/trailing whitespaces, path separators and dots
-    auto result = filename.trim([](char16_t character) -> bool {
+    auto result = trim(filename, [](char16_t character) -> bool {
         return deprecatedIsSpaceOrNewline(character) || character == '/' || character == '\\' || character == '.';
     });
 
-    if (result.isEmpty())
+    if (isEmpty(result))
         return result;
 
     // Replace control, formatting and dangerous characters in filenames.
     static USet* illegalCharacterSet = nullptr;
     if (!illegalCharacterSet) {
         UErrorCode errorCode = U_ZERO_ERROR;
-        String illegalCharacters = "[[\"~*/:<>?\\\\|][:Cc:][:Cf:]]"_s;
-        illegalCharacterSet = uset_openPattern(StringView(illegalCharacters).upconvertedCharacters(), illegalCharacters.length(), &errorCode);
+        RefPtr<StringImpl> illegalCharacters = "[[\"~*/:<>?\\\\|][:Cc:][:Cf:]]"_si;
+        illegalCharacterSet = uset_openPattern(StringView(illegalCharacters).upconvertedCharacters(), length(illegalCharacters), &errorCode);
         ASSERT(U_SUCCESS(errorCode));
     }
 
     HashSet<uint16_t> illegalCharactersInFilename;
-    for (unsigned i = 0; i < result.length(); ++i) {
-        auto character = result[i];
+    for (unsigned i = 0; i < length(result); ++i) {
+        auto character = codeUnitAt(result, i);
         if (uset_contains(illegalCharacterSet, character))
             illegalCharactersInFilename.add(character);
     }
@@ -148,19 +148,19 @@ static String sanitizeFilename(const String& filename)
     return result;
 }
 
-String ResourceResponse::platformSuggestedFilename() const
+RefPtr<StringImpl> ResourceResponse::platformSuggestedFilename() const
 {
-    String contentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
-    if (contentDisposition.isEmpty())
+    RefPtr<StringImpl> contentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
+    if (isEmpty(contentDisposition))
         return { };
 
-    if (contentDisposition.is8Bit())
-        contentDisposition = String::fromUTF8WithLatin1Fallback(contentDisposition.span8());
+    if (is8Bit(contentDisposition))
+        contentDisposition = StringImpl::fromUTF8WithLatin1Fallback(span8(contentDisposition));
     GUniquePtr<SoupMessageHeaders> soupHeaders(soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE));
-    soup_message_headers_append(soupHeaders.get(), "Content-Disposition", contentDisposition.utf8().legacyCStringPointer());
+    soup_message_headers_append(soupHeaders.get(), "Content-Disposition", utf8(contentDisposition).legacyCStringPointer());
     GRefPtr<GHashTable> params;
     soup_message_headers_get_content_disposition(soupHeaders.get(), nullptr, &params.outPtr());
-    auto filename = params ? String::fromUTF8(static_cast<char*>(g_hash_table_lookup(params.get(), "filename"))) : String();
+    auto filename = params ? StringImpl::fromUTF8(static_cast<char*>(g_hash_table_lookup(params.get(), "filename"))) : nullptr;
     return sanitizeFilename(filename);
 }
 

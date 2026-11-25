@@ -81,15 +81,15 @@ namespace {
 class FormatterInput {
     WTF_MAKE_NONCOPYABLE(FormatterInput);
 public:
-    explicit FormatterInput(std::span<const String> strings)
+    explicit FormatterInput(std::span<const RefPtr<StringImpl>> strings)
         : m_strings(ReserveCapacityTag { }, strings.size())
         , m_stringPointers(ReserveCapacityTag { }, strings.size())
         , m_stringLengths(ReserveCapacityTag { }, strings.size())
     {
         for (auto& string : strings) {
-            String string16 = string;
-            string16.convertTo16Bit();
-            append(string16.span16());
+            RefPtr string16 = string;
+            convertTo16Bit(string16);
+            append(span16(string16));
             m_strings.append(WTF::move(string16));
         }
     }
@@ -114,37 +114,37 @@ private:
     }
 
     static constexpr size_t inlineCapacity = 10;
-    Vector<String, inlineCapacity> m_strings;
+    Vector<RefPtr<StringImpl>, inlineCapacity> m_strings;
     Vector<const char16_t*, inlineCapacity> m_stringPointers;
     Vector<int32_t, inlineCapacity> m_stringLengths;
 };
 
 } // namespace
 
-static std::optional<String> formatInput(const UListFormatter* formatter, const FormatterInput& input)
+static std::optional<RefPtr<StringImpl>> formatInput(const UListFormatter* formatter, const FormatterInput& input)
 {
     Vector<char16_t, 128> result;
     auto status = callBufferProducingFunction(ulistfmt_format, formatter, input.stringPointers(), input.stringLengths(), input.size(), result);
     if (U_FAILURE(status)) [[unlikely]]
         return std::nullopt;
-    return String { StringImpl::create8BitIfPossible(borrow(result)->span()) };
+    return RefPtr<StringImpl> { StringImpl::create8BitIfPossible(borrow(result)->span()) };
 }
 
-std::optional<String> ListFormatter::format(std::span<const String> strings) const
+std::optional<RefPtr<StringImpl>> ListFormatter::format(std::span<const RefPtr<StringImpl>> strings) const
 {
     if (!m_formatter) [[unlikely]]
         return std::nullopt;
     return formatInput(m_formatter.get(), FormatterInput { strings });
 }
 
-std::optional<String> ListFormatter::format(std::span<const std::span<const char16_t>> strings) const
+std::optional<RefPtr<StringImpl>> ListFormatter::format(std::span<const std::span<const char16_t>> strings) const
 {
     if (!m_formatter) [[unlikely]]
         return std::nullopt;
     return formatInput(m_formatter.get(), FormatterInput { strings });
 }
 
-std::optional<ListFormatter::FormattedList> ListFormatter::formatToParts(std::span<const String> strings) const
+std::optional<ListFormatter::FormattedList> ListFormatter::formatToParts(std::span<const RefPtr<StringImpl>> strings) const
 {
     if (!m_formatter) [[unlikely]]
         return std::nullopt;
@@ -177,7 +177,7 @@ std::optional<ListFormatter::FormattedList> ListFormatter::formatToParts(std::sp
     if (U_FAILURE(status)) [[unlikely]]
         return std::nullopt;
 
-    FormattedList formattedList { String { unsafeMakeSpan(characters, length) }, { } };
+    FormattedList formattedList { StringImpl::createOrNull(unsafeMakeSpan(characters, length)), { } };
     while (ufmtval_nextPosition(formattedValue, position.get(), &status)) {
         int32_t begin = 0;
         int32_t end = 0;

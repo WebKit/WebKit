@@ -59,18 +59,18 @@ public:
     void setAcceptPolicy(CookieAcceptPolicy policy) { m_acceptPolicy = policy; }
     CookieAcceptPolicy acceptPolicy() const { return m_acceptPolicy; }
 
-    WEBCORE_EXPORT HashSet<String> allDomains();
+    WEBCORE_EXPORT HashSet<RefPtr<StringImpl>> allDomains();
     WEBCORE_EXPORT std::optional<Vector<Cookie>> searchCookies(const URL& firstParty, const SameSiteInfo&, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session);
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
-    WEBCORE_EXPORT bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source, std::optional<Seconds> cappedLifetime = std::nullopt);
+    WEBCORE_EXPORT bool setCookie(const URL& firstParty, const URL&, StringImpl* cookie, Source, std::optional<Seconds> cappedLifetime = std::nullopt);
     WEBCORE_EXPORT bool setCookie(const Cookie&);
 
-    WEBCORE_EXPORT bool deleteCookie(const String& url, const String& name);
-    bool deleteCookies(const String& url);
-    WEBCORE_EXPORT bool deleteCookiesForHostname(const String& hostname, IncludeHttpOnlyCookies);
+    WEBCORE_EXPORT bool deleteCookie(StringImpl* url, StringImpl* name);
+    bool deleteCookies(StringImpl* url);
+    WEBCORE_EXPORT bool deleteCookiesForHostname(StringImpl* hostname, IncludeHttpOnlyCookies);
     WEBCORE_EXPORT bool deleteAllCookies();
 
-    WEBCORE_EXPORT CookieJarDB(const String& databasePath);
+    WEBCORE_EXPORT CookieJarDB(StringImpl* databasePath);
     WEBCORE_EXPORT ~CookieJarDB();
 
 private:
@@ -81,11 +81,11 @@ private:
     };
 
     CookieAcceptPolicy m_acceptPolicy { CookieAcceptPolicy::Always };
-    String m_databasePath;
+    RefPtr<StringImpl> m_databasePath;
 
     bool m_detectedDatabaseCorruption { false };
 
-    bool isOnMemory() const { return m_databasePath == ":memory:"_s; };
+    bool isOnMemory() const { return equal(m_databasePath, ":memory:"_s); };
 
     bool openDatabase();
     std::expected<void, DatabaseError> tryOpenDatabase();
@@ -96,7 +96,7 @@ private:
     bool checkSQLiteReturnCode(int);
     void flagDatabaseCorruption();
     bool checkDatabaseCorruptionAndRemoveIfNeeded();
-    String getCorruptionMarkerPath() const;
+    RefPtr<StringImpl> getCorruptionMarkerPath() const;
 
     std::expected<void, DatabaseError> checkDatabaseValidity();
     void deleteAllDatabaseFiles();
@@ -104,17 +104,17 @@ private:
     std::expected<void, DatabaseError> verifySchemaVersion();
 
     std::expected<void, DatabaseError> createPrepareStatement(ASCIILiteral);
-    SQLiteStatement& preparedStatement(const String&);
+    SQLiteStatement& preparedStatement(ASCIILiteral);
     std::expected<void, DatabaseError> executeSQLStatement(std::unique_ptr<SQLiteStatement>&&);
 
-    bool deleteCookieInternal(const String& name, const String& domain, const String& path);
-    bool hasHttpOnlyCookie(const String& name, const String& domain, const String& path);
+    bool deleteCookieInternal(StringImpl* name, StringImpl* domain, StringImpl* path);
+    bool hasHttpOnlyCookie(StringImpl* name, StringImpl* domain, StringImpl* path);
     bool canAcceptCookie(const Cookie&, const URL& firstParty, const URL&, CookieJarDB::Source);
     bool checkCookieAcceptPolicy(const URL& firstParty, const URL&);
     bool hasCookies(const URL&);
 
     SQLiteDatabase m_database;
-    HashMap<String, std::unique_ptr<SQLiteStatement>> m_statements;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<SQLiteStatement>> m_statements;
 };
 
 } // namespace WebCore

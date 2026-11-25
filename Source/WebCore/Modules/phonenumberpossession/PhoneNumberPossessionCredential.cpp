@@ -64,7 +64,7 @@ void PhoneNumberPossessionCredential::discoverFromExternalSource(const Document&
 {
     RefPtr page = document.page();
     if (!page) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_si });
         return;
     }
     page->phoneNumberPossessionCoordinator().discoverFromExternalSource(document, WTF::move(request), mediation, WTF::move(signal), WTF::move(promise));

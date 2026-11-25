@@ -43,24 +43,24 @@ constexpr auto s_fileName = "localstorage.sqlite3"_s;
 
 // This is intended to be used for existing files.
 // We should not include origin in file name.
-static std::optional<WebCore::SecurityOriginData> fileNameToOrigin(const String& fileName)
+static std::optional<WebCore::SecurityOriginData> fileNameToOrigin(StringImpl* fileName)
 {
-    if (!fileName.endsWith(StringView { s_fileSuffix }))
+    if (!endsWith(fileName, StringView { s_fileSuffix }))
         return std::nullopt;
 
     auto suffixLength = s_fileSuffix.length();
-    auto fileNameLength = fileName.length();
+    auto fileNameLength = length(fileName);
     if (fileNameLength <= suffixLength)
         return std::nullopt;
 
-    auto originIdentifier = fileName.left(fileNameLength - suffixLength);
+    auto originIdentifier = left(fileName, fileNameLength - suffixLength);
     return WebCore::SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
 }
 
-static String originToFileName(const WebCore::ClientOrigin& origin)
+static RefPtr<StringImpl> originToFileName(const WebCore::ClientOrigin& origin)
 {
     auto databaseIdentifier = origin.clientOrigin.optionalDatabaseIdentifier();
-    if (databaseIdentifier.isEmpty())
+    if (isEmpty(databaseIdentifier))
         return { };
 
     return makeString(databaseIdentifier, ".localstorage"_s);
@@ -68,10 +68,10 @@ static String originToFileName(const WebCore::ClientOrigin& origin)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalStorageManager);
 
-Vector<WebCore::SecurityOriginData> LocalStorageManager::originsOfLocalStorageData(const String& path)
+Vector<WebCore::SecurityOriginData> LocalStorageManager::originsOfLocalStorageData(StringImpl* path)
 {
     Vector<WebCore::SecurityOriginData> origins;
-    if (path.isEmpty())
+    if (isEmpty(path))
         return origins;
 
     for (auto& fileName : FileSystem::listDirectory(path)) {
@@ -82,27 +82,27 @@ Vector<WebCore::SecurityOriginData> LocalStorageManager::originsOfLocalStorageDa
     return origins;
 }
 
-String LocalStorageManager::localStorageFilePath(const String& directory, const WebCore::ClientOrigin& origin)
+RefPtr<StringImpl> LocalStorageManager::localStorageFilePath(StringImpl* directory, const WebCore::ClientOrigin& origin)
 {
-    if (directory.isEmpty())
+    if (isEmpty(directory))
         return emptyString();
 
     auto fileName = originToFileName(origin);
-    if (fileName.isEmpty())
+    if (isEmpty(fileName))
         return emptyString();
 
     return FileSystem::pathByAppendingComponent(directory, fileName);
 }
 
-String LocalStorageManager::localStorageFilePath(const String& directory)
+RefPtr<StringImpl> LocalStorageManager::localStorageFilePath(StringImpl* directory)
 {
-    if (directory.isEmpty())
+    if (isEmpty(directory))
         return emptyString();
 
     return FileSystem::pathByAppendingComponent(directory, s_fileName);
 }
 
-LocalStorageManager::LocalStorageManager(const String& path, StorageAreaRegistry& registry)
+LocalStorageManager::LocalStorageManager(StringImpl* path, StorageAreaRegistry& registry)
     : m_path(path)
     , m_registry(registry)
 {
@@ -197,7 +197,7 @@ StorageAreaBase& LocalStorageManager::ensureLocalStorageArea(const WebCore::Clie
 {
     if (!m_localStorageArea) {
         RefPtr<StorageAreaBase> storage;
-        if (!m_path.isEmpty())
+        if (!isEmpty(m_path))
             storage = SQLiteStorageArea::create(localStorageQuotaInBytes, origin, m_path, WTF::move(workQueue));
         else
             storage = MemoryStorageArea::create(origin, StorageAreaBase::StorageType::Local);
@@ -212,7 +212,7 @@ StorageAreaBase& LocalStorageManager::ensureLocalStorageArea(const WebCore::Clie
 StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& workQueue)
 {
     Ref localStorageArea = ensureLocalStorageArea(origin, WTF::move(workQueue));
-    ASSERT(m_path.isEmpty() || is<SQLiteStorageArea>(localStorageArea));
+    ASSERT(isEmpty(m_path) || is<SQLiteStorageArea>(localStorageArea));
     localStorageArea->addListener(connection, sourceIdentifier);
     return localStorageArea->identifier();
 }
@@ -258,7 +258,7 @@ void LocalStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID co
         connectionClosedForTransientStorageArea(connection);
 }
 
-HashMap<String, String> LocalStorageManager::fetchStorageMap() const
+HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> LocalStorageManager::fetchStorageMap() const
 {
     if (RefPtr localStorageArea = m_localStorageArea)
         return localStorageArea->allItems();
@@ -269,20 +269,20 @@ HashMap<String, String> LocalStorageManager::fetchStorageMap() const
     return { };
 }
 
-bool LocalStorageManager::setStorageMap(WebCore::ClientOrigin clientOrigin, HashMap<String, String>&& storageMap, Ref<WorkQueue>&& workQueue)
+bool LocalStorageManager::setStorageMap(WebCore::ClientOrigin clientOrigin, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&& storageMap, Ref<WorkQueue>&& workQueue)
 {
     bool succeeded = true;
 
     if (clientOrigin.topOrigin == clientOrigin.clientOrigin) {
         Ref localStorageArea = ensureLocalStorageArea(clientOrigin, WTF::move(workQueue));
         for (auto& [key, value] : storageMap) {
-            if (!localStorageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), { }))
+            if (!localStorageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), nullptr))
                 succeeded = false;
         }
     } else {
         Ref transientStorageArea = ensureTransientLocalStorageArea(clientOrigin);
         for (auto& [key, value] : storageMap) {
-            if (!transientStorageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), { }))
+            if (!transientStorageArea->setItem({ }, { }, WTF::move(key), WTF::move(value), nullptr))
                 succeeded = false;
         }
     }

@@ -78,7 +78,7 @@ static inline bool canReferToParentFrameEncoding(const LocalFrame* frame, const 
 // This is only called by ScriptController::executeIfJavaScriptURL
 // and always contains the result of evaluating a javascript: url.
 // This is the <iframe src="javascript:'html'"> case.
-void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const String& source, Document* ownerDocument)
+void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(StringImpl* source, Document* ownerDocument)
 {
     Ref frame = *m_frame;
     frame->loader().stopAllLoaders();
@@ -90,21 +90,21 @@ void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const Str
 
     begin(protect(frame->document())->url(), true, ownerDocument);
 
-    setEncoding("UTF-8"_s, IsEncodingUserChosen::No);
+    setEncoding("UTF-8"_si, IsEncodingUserChosen::No);
 
     // begin() might fire an unload event, which will result in a situation where no new document has been attached,
     // and the old document has been detached. Therefore, bail out if no document is attached.
     if (!frame->document())
         return;
 
-    if (!source.isNull()) {
+    if (source) {
         if (!m_hasReceivedSomeData) {
             m_hasReceivedSomeData = true;
             protect(frame->document())->setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
         }
 
         if (RefPtr parser = frame->document()->parser())
-            parser->appendBytes(*this, byteCast<uint8_t>(source.utf8().span()));
+            parser->appendBytes(*this, byteCast<uint8_t>(utf8(source).span()));
     }
 
     end();
@@ -115,7 +115,7 @@ void DocumentWriter::clear()
     m_decoder = nullptr;
     m_hasReceivedSomeData = false;
     if (!m_encodingWasChosenByUser)
-        m_encoding = String();
+        m_encoding = nullptr;
 }
 
 bool DocumentWriter::begin()
@@ -307,8 +307,8 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
             }
         }
 
-        String referrerPolicy = documentLoader->response().httpHeaderField(HTTPHeaderName::ReferrerPolicy);
-        if (!referrerPolicy.isNull())
+        RefPtr<StringImpl> referrerPolicy = documentLoader->response().httpHeaderField(HTTPHeaderName::ReferrerPolicy);
+        if (referrerPolicy)
             document->processReferrerPolicy(referrerPolicy, ReferrerPolicySource::HTTPHeader);
 
         // https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object (Step 7)
@@ -346,7 +346,7 @@ TextResourceDecoder& DocumentWriter::decoder()
 {
     if (!m_decoder) {
         Ref frame = *m_frame;
-        Ref decoder = MIMETypeRegistry::isSupportedJSONMIMEType(m_mimeType) ? TextResourceDecoder::createUTF8() : TextResourceDecoder::create(TextResourceDecoder::contentTypeForMIMEType(m_mimeType), frame->settings().defaultTextEncodingName(), frame->settings().usesEncodingDetector());
+        Ref decoder = MIMETypeRegistry::isSupportedJSONMIMEType(m_mimeType) ? TextResourceDecoder::createUTF8() : TextResourceDecoder::create(TextResourceDecoder::contentTypeForMIMEType(m_mimeType), frame->settings().defaultTextEncodingName().get(), frame->settings().usesEncodingDetector());
         m_decoder = decoder.copyRef();
         RefPtr parentFrame = dynamicDowncast<LocalFrame>(frame->tree().parent());
         // Set the hint encoding to the parent frame encoding only if
@@ -360,11 +360,11 @@ TextResourceDecoder& DocumentWriter::decoder()
         // we may consider relaxing this later after testing.
         if (canReferToParentFrameEncoding(frame.ptr(), parentFrame))
             decoder->setHintEncoding(parentFrame->document()->decoder());
-        if (m_encoding.isEmpty()) {
+        if (isEmpty(m_encoding)) {
             if (canReferToParentFrameEncoding(frame.ptr(), parentFrame))
                 decoder->setEncoding(protect(parentFrame->document())->textEncoding(), TextResourceDecoder::EncodingSource::ParentFrame);
         } else {
-            decoder->setEncoding(m_encoding,
+            decoder->setEncoding(m_encoding.get(),
                 m_encodingWasChosenByUser ? TextResourceDecoder::EncodingSource::UserChosen : TextResourceDecoder::EncodingSource::HTTPHeader);
         }
         protect(frame->document())->setDecoder(WTF::move(decoder));
@@ -396,7 +396,7 @@ void DocumentWriter::addData(const SharedBuffer& data)
     protect(m_parser)->appendBytes(*this, data.span());
 }
 
-void DocumentWriter::insertDataSynchronously(const String& markup)
+void DocumentWriter::insertDataSynchronously(StringImpl* markup)
 {
     ASSERT(m_state != State::NotStarted);
     ASSERT(m_state != State::Finished);
@@ -428,7 +428,7 @@ void DocumentWriter::end()
     m_parser = nullptr;
 }
 
-void DocumentWriter::setEncoding(const String& name, IsEncodingUserChosen isUserChosen)
+void DocumentWriter::setEncoding(StringImpl* name, IsEncodingUserChosen isUserChosen)
 {
     m_encoding = name;
     m_encodingWasChosenByUser = isUserChosen == IsEncodingUserChosen::Yes;

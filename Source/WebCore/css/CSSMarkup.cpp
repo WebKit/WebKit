@@ -145,7 +145,7 @@ void serializeURLTokenValue(StringBuilder& appendTo, StringView string)
     }
 }
 
-String serializeString(StringView string)
+RefPtr<StringImpl> serializeString(StringView string)
 {
     StringBuilder builder;
     serializeString(builder, string);
@@ -204,7 +204,7 @@ void serializeFontFamily(StringBuilder& builder, StringView string)
     builder.append(string);
 }
 
-String serializeFontFamily(const String& string)
+RefPtr<StringImpl> serializeFontFamily(StringImpl* string)
 {
     if (shouldQuoteFontFamily(string))
         return serializeString(string);

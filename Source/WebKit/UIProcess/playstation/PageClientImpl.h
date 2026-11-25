@@ -88,9 +88,9 @@ private:
 
     void preferencesDidChange() override;
 
-    void toolTipChanged(const String&, const String&) override;
+    void toolTipChanged(StringImpl*, StringImpl*) override;
 
-    void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
+    void didCommitLoadForMainFrame(StringImpl* mimeType, bool useCustomContentProvider) override;
 
     void didChangeContentSize(const WebCore::IntSize&) override;
 
@@ -144,7 +144,7 @@ private:
 #endif
 
     // Custom representations.
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
+    void didFinishLoadingDataForCustomContentProvider(StringImpl* suggestedFilename, std::span<const uint8_t>) override;
 
     void navigationGestureDidBegin() override;
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;
@@ -169,7 +169,7 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
-    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) override;
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect&, StringImpl*, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) override;
 
 #if USE(WPE_RENDERER)
     UnixFileDescriptor hostFileDescriptor() override;

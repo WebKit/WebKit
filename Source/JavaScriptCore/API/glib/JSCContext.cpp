@@ -297,7 +297,7 @@ JSValueRef jscContextGArrayToJSArray(JSCContext* context, GPtrArray* gArray, JSV
         else if (JSC_IS_VALUE(item))
             JSObjectSetPropertyAtIndex(priv->jsContext.get(), jsArrayObject, i, jscValueGetJSValue(JSC_VALUE(item)), exception);
         else
-            *exception = toRef(JSC::createTypeError(globalObject, "invalid item type in GPtrArray"_s));
+            *exception = toRef(JSC::createTypeError(globalObject, "invalid item type in GPtrArray"_si));
 
         if (*exception)
             return JSValueMakeUndefined(priv->jsContext.get());
@@ -317,7 +317,7 @@ static GRefPtr<GPtrArray> jscContextJSArrayToGArray(JSCContext* context, JSValue
         return nullptr;
 
     if (!JSValueIsArray(priv->jsContext.get(), jsArray)) {
-        *exception = toRef(JSC::createTypeError(globalObject, "invalid js type for GPtrArray"_s));
+        *exception = toRef(JSC::createTypeError(globalObject, "invalid js type for GPtrArray"_si));
         return nullptr;
     }
 
@@ -356,7 +356,7 @@ GUniquePtr<char*> jscContextJSArrayToGStrv(JSCContext* context, JSValueRef jsArr
         return nullptr;
 
     if (!JSValueIsArray(priv->jsContext.get(), jsArray)) {
-        *exception = toRef(JSC::createTypeError(globalObject, "invalid js type for GStrv"_s));
+        *exception = toRef(JSC::createTypeError(globalObject, "invalid js type for GStrv"_si));
         return nullptr;
     }
 
@@ -549,7 +549,7 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
                 return;
             }
 
-            *exception = toRef(JSC::createTypeError(globalObject, "invalid pointer type"_s));
+            *exception = toRef(JSC::createTypeError(globalObject, "invalid pointer type"_si));
             return;
         }
 
@@ -560,7 +560,7 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
         else if (G_IS_OBJECT(wrappedObject))
             g_value_set_object(value, wrappedObject);
         else
-            *exception = toRef(JSC::createTypeError(globalObject, "wrapped object is not a GObject"_s));
+            *exception = toRef(JSC::createTypeError(globalObject, "wrapped object is not a GObject"_si));
         break;
     }
     case G_TYPE_LONG:
@@ -851,7 +851,7 @@ JSCValue* jsc_context_evaluate(JSCContext* context, const char* code, gssize len
     return jsc_context_evaluate_with_source_uri(context, code, length, nullptr, 0);
 }
 
-static JSValueRef evaluateScriptInContext(JSGlobalContextRef jsContext, String&& script, const char* uri, unsigned lineNumber, JSValueRef* exception)
+static JSValueRef evaluateScriptInContext(JSGlobalContextRef jsContext, RefPtr<StringImpl>&& script, const char* uri, unsigned lineNumber, JSValueRef* exception)
 {
     RefPtr scriptJS = OpaqueJSString::tryCreate(WTF::move(script));
     RefPtr sourceURI = uri ? adoptRef(JSStringCreateWithUTF8CString(uri)) : nullptr;
@@ -878,7 +878,7 @@ JSCValue* jsc_context_evaluate_with_source_uri(JSCContext* context, const char* 
     g_return_val_if_fail(code, nullptr);
 
     JSValueRef exception = nullptr;
-    JSValueRef result = evaluateScriptInContext(context->priv->jsContext.get(), length < 0 ? String::fromUTF8(code) : String::fromUTF8(unsafeMakeSpan(code, length)), uri, lineNumber, &exception);
+    JSValueRef result = evaluateScriptInContext(context->priv->jsContext.get(), length < 0 ? StringImpl::fromUTF8(code) : StringImpl::fromUTF8(unsafeMakeSpan(code, length)), uri, lineNumber, &exception);
     if (jscContextHandleExceptionIfNeeded(context, exception))
         return jsc_value_new_undefined(context);
 
@@ -918,7 +918,7 @@ JSCValue* jsc_context_evaluate_in_object(JSCContext* context, const char* code, 
     JSC::JSLockHolder locker(globalObject);
     globalObject->setGlobalScopeExtension(JSC::JSWithScope::create(vm, globalObject, globalObject->globalScope(), toJS(JSContextGetGlobalObject(context->priv->jsContext.get()))));
     JSValueRef exception = nullptr;
-    JSValueRef result = evaluateScriptInContext(objectContext.get(), length < 0 ? String::fromUTF8(code) : String::fromUTF8(unsafeMakeSpan(code, length)), uri, lineNumber, &exception);
+    JSValueRef result = evaluateScriptInContext(objectContext.get(), length < 0 ? StringImpl::fromUTF8(code) : StringImpl::fromUTF8(unsafeMakeSpan(code, length)), uri, lineNumber, &exception);
     if (jscContextHandleExceptionIfNeeded(context, exception))
         return jsc_value_new_undefined(context);
 
@@ -977,8 +977,8 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
 
-    URL sourceURL = uri ? URL(String::fromLatin1(uri)) : URL();
-    JSC::SourceCode source = JSC::makeSource(length < 0 ? String::fromUTF8(code) : String::fromUTF8(unsafeMakeSpan(code, length)), JSC::SourceOrigin { sourceURL }, JSC::SourceTaintedOrigin::Untainted,
+    URL sourceURL = uri ? URL(StringImpl::fromLatin1(uri)) : URL();
+    JSC::SourceCode source = JSC::makeSource(length < 0 ? StringImpl::fromUTF8(code) : StringImpl::fromUTF8(unsafeMakeSpan(code, length)), JSC::SourceOrigin { sourceURL }, JSC::SourceTaintedOrigin::Untainted,
         sourceURL.string() , TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
     bool success = false;
     JSC::ParserError error;

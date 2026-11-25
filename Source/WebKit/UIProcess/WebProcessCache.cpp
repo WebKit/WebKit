@@ -183,7 +183,7 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
 
         evictAtRandomIfNeeded();
 
-        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added COOP process to WebProcess cache (size=%u, capacity=%u) %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), origin->toString().utf8());
+        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added COOP process to WebProcess cache (size=%u, capacity=%u) %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), utf8(origin->toString()));
         m_coopProcessesPerOrigin.add(*origin, WTF::move(cachedProcess));
 
         return true;
@@ -197,7 +197,7 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
 
         evictAtRandomIfNeeded();
 
-        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added shared process to WebProcess cache (size=%u, capacity=%u) %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), site->toString().utf8());
+        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added shared process to WebProcess cache (size=%u, capacity=%u) %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), utf8(site->toString()));
         m_sharedProcessesPerSite.add(*site, WTF::move(cachedProcess));
 
         return true;
@@ -216,7 +216,7 @@ bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
 
     evictAtRandomIfNeeded();
 
-    WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u, isolatedProcessType=%d) %" SENSITIVE_LOG_STRING ", mainFrameSite: %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), static_cast<int>(isolatedProcessType), site.loggingString().utf8(), mainFrameSite.loggingString().utf8());
+    WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u, isolatedProcessType=%d) %" SENSITIVE_LOG_STRING ", mainFrameSite: %" SENSITIVE_LOG_STRING, cachedProcess->process().processID(), size() + 1, capacity(), static_cast<int>(isolatedProcessType), utf8(site.loggingString()), utf8(mainFrameSite.loggingString()));
     m_processesPerSite.add({ site, mainFrameSite }, WTF::move(cachedProcess));
 
     return true;
@@ -260,7 +260,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, 
 
     auto it = m_processesPerSite.find({ site, mainFrameSite });
     if (it == m_processesPerSite.end()) {
-        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: did not find %" SENSITIVE_LOG_STRING ", mainFrameSite: %" SENSITIVE_LOG_STRING, 0, site.loggingString().utf8(), mainFrameSite.loggingString().utf8());
+        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: did not find %" SENSITIVE_LOG_STRING ", mainFrameSite: %" SENSITIVE_LOG_STRING, 0, utf8(site.loggingString()), utf8(mainFrameSite.loggingString()));
         return nullptr;
     }
 
@@ -285,7 +285,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, 
     }
 
     Ref process = m_processesPerSite.take(it)->takeProcess();
-    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d, isolatedProcessType=%d) %" SENSITIVE_LOG_STRING ", mainFrameSite %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), static_cast<int>(isolatedProcessType), site.loggingString().utf8(), mainFrameSite.loggingString().utf8());
+    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d, isolatedProcessType=%d) %" SENSITIVE_LOG_STRING ", mainFrameSite %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), static_cast<int>(isolatedProcessType), utf8(site.loggingString()), utf8(mainFrameSite.loggingString()));
 
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
@@ -318,7 +318,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeSharedProcess(const WebCore::Site& 
     }
 
     if (!cachedProcess) {
-        WEBPROCESSCACHE_RELEASE_LOG("takeSharedProcess: did not find %" SENSITIVE_LOG_STRING, 0, mainFrameSite.loggingString().utf8());
+        WEBPROCESSCACHE_RELEASE_LOG("takeSharedProcess: did not find %" SENSITIVE_LOG_STRING, 0, utf8(mainFrameSite.loggingString()));
         return nullptr;
     }
 
@@ -347,7 +347,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeSharedProcess(const WebCore::Site& 
     else
         m_sharedProcessesPerSite.remove(mainFrameSite);
     Ref process = cachedProcess->takeProcess();
-    WEBPROCESSCACHE_RELEASE_LOG("takeSharedProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d, wasPendingAddRequest=%d) %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), !!pendingAddRequestIdentifier, mainFrameSite.loggingString().utf8());
+    WEBPROCESSCACHE_RELEASE_LOG("takeSharedProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d, wasPendingAddRequest=%d) %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), !!pendingAddRequestIdentifier, utf8(mainFrameSite.loggingString()));
 
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
@@ -365,7 +365,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeCOOPProcess(const WebCore::Security
 {
     auto it = m_coopProcessesPerOrigin.find(origin);
     if (it == m_coopProcessesPerOrigin.end()) {
-        WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: did not find %" SENSITIVE_LOG_STRING, 0, origin.toString().utf8());
+        WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: did not find %" SENSITIVE_LOG_STRING, 0, utf8(origin.toString()));
         return nullptr;
     }
 
@@ -390,7 +390,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeCOOPProcess(const WebCore::Security
     }
 
     Ref process = m_coopProcessesPerOrigin.take(it)->takeProcess();
-    WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d) %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), origin.toString().utf8());
+    WEBPROCESSCACHE_RELEASE_LOG("takeCOOPProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d) %" SENSITIVE_LOG_STRING, process->processID(), size(), capacity(), process->wasTerminated(), utf8(origin.toString()));
 
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());

@@ -243,7 +243,7 @@ class ObjCGenerator(Generator):
     @staticmethod
     def protocol_type_for_raw_name(raw_name):
         if raw_name == 'string':
-            return 'String'
+            return 'RefPtr<StringImpl>'
         if raw_name == 'integer':
             return 'int'
         if raw_name == 'number':
@@ -370,16 +370,18 @@ class ObjCGenerator(Generator):
         category = ObjCTypeCategory.category_for_type(var_type)
         if category in [ObjCTypeCategory.Simple, ObjCTypeCategory.String]:
             if isinstance(var_type, EnumType):
-                return 'toProtocolString(%s).createNSString().get()' % var_name
+                return 'toProtocolString(%s)' % var_name
+            if category == ObjCTypeCategory.String:
+                return 'StringImpl::create(%s).get()' % var_name
             return var_name
         if category == ObjCTypeCategory.Object:
             return '[%s toJSONObject]' % var_name
         if category == ObjCTypeCategory.Array:
             protocol_type = ObjCGenerator.protocol_type_for_type(var_type.element_type)
             objc_class = self.objc_class_for_type(var_type.element_type)
-            if protocol_type == 'JSON::ArrayOf<String>':
+            if protocol_type == 'JSON::ArrayOf<RefPtr<StringImpl>>':
                 return 'toJSONStringArrayArray(%s)' % var_name
-            if protocol_type == 'String' and objc_class == 'NSString':
+            if protocol_type == 'RefPtr<StringImpl>' and objc_class == 'NSString':
                 return 'toJSONStringArray(%s)' % var_name
             if protocol_type == 'int' and objc_class == 'NSNumber':
                 return 'toJSONIntegerArray(%s)' % var_name
@@ -390,8 +392,8 @@ class ObjCGenerator(Generator):
     def objc_protocol_import_expression_for_member(self, name, declaration, member):
         if isinstance(member.type, EnumType):
             if member.type.is_anonymous:
-                return 'fromProtocolString<%s>((__bridge CFStringRef)%s)' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), name)
-            return 'fromProtocolString<%s>((__bridge CFStringRef)%s)' % (self.objc_enum_name_for_non_anonymous_enum(member.type), name)
+                return 'fromProtocolString<%s>(StringImpl::create((__bridge CFStringRef)%s).get())' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), name)
+            return 'fromProtocolString<%s>(StringImpl::create((__bridge CFStringRef)%s).get())' % (self.objc_enum_name_for_non_anonymous_enum(member.type), name)
         return self.objc_protocol_import_expression_for_variable(member.type, name)
 
     def objc_protocol_import_expression_for_parameter(self, name, domain, event_or_command_name, parameter):
@@ -422,7 +424,7 @@ class ObjCGenerator(Generator):
         category = ObjCTypeCategory.category_for_type(member.type)
         if category in [ObjCTypeCategory.Simple, ObjCTypeCategory.String]:
             if isinstance(member.type, EnumType):
-                return 'toProtocolString(%s).createNSString().get()' % sub_expression
+                return 'createNSString(toProtocolString(%s)).get()' % sub_expression
             return sub_expression
         if category == ObjCTypeCategory.Object:
             return sub_expression
@@ -442,8 +444,8 @@ class ObjCGenerator(Generator):
         if category in [ObjCTypeCategory.Simple, ObjCTypeCategory.String]:
             if isinstance(member.type, EnumType):
                 if member.type.is_anonymous:
-                    return 'fromProtocolString<%s>((__bridge CFStringRef)%s).value()' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
-                return 'fromProtocolString<%s>((__bridge CFStringRef)%s).value()' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
+                    return 'fromProtocolString<%s>(StringImpl::create((__bridge CFStringRef)%s).get()).value()' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
+                return 'fromProtocolString<%s>(StringImpl::create((__bridge CFStringRef)%s).get()).value()' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
             return sub_expression
         if category == ObjCTypeCategory.Object:
             raise Exception("protocol_to_objc_expression_for_member does not support an Object type. See: protocol_to_objc_code_block_for_object_member")
@@ -487,9 +489,9 @@ class ObjCGenerator(Generator):
         if isinstance(member.type, EnumType):
             sub_expression = 'payload[@"%s"]' % member.member_name
             if member.type.is_anonymous:
-                return 'fromProtocolString<%s>((__bridge CFStringRef)%s)' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
+                return 'fromProtocolString<%s>(StringImpl::create((__bridge CFStringRef)%s).get())' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
             else:
-                return 'fromProtocolString<%s>((__bridge CFStringRef)%s)' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
+                return 'fromProtocolString<%s>(StringImpl::create((__bridge CFStringRef)%s).get())' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
         if isinstance(_type, ObjectType):
             objc_class = self.objc_class_for_type(member.type)
             return '[[%s alloc] initWithPayload:payload[@"%s"]]' % (objc_class, member.member_name)

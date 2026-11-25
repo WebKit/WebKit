@@ -41,10 +41,10 @@
 
 namespace API {
 
-static WTF::String mimeTypeInferredFromFileExtension(const API::Attachment& attachment)
+static RefPtr<StringImpl> mimeTypeInferredFromFileExtension(const API::Attachment& attachment)
 {
-    if (RetainPtr<NSString> fileExtension = [attachment.fileName().createNSString() pathExtension])
-        return WebCore::MIMETypeRegistry::mimeTypeForExtension(WTF::String(fileExtension.get()));
+    if (RetainPtr<NSString> fileExtension = [createNSString(attachment.fileName()) pathExtension])
+        return WebCore::MIMETypeRegistry::mimeTypeForExtension(StringImpl::create(fileExtension.get()).get());
 
     return { };
 }
@@ -68,44 +68,44 @@ void Attachment::doWithFileWrapper(NOESCAPE const Function<void(NSFileWrapper *)
     function(protect(m_fileWrapper).get());
 }
 
-WTF::String Attachment::mimeType() const
+RefPtr<StringImpl> Attachment::mimeType() const
 {
-    RetainPtr contentType = m_contentType.isEmpty() ? mimeTypeInferredFromFileExtension(*this).createNSString() : m_contentType.createNSString();
+    RetainPtr contentType = WTF::isEmpty(m_contentType) ? createNSString(mimeTypeInferredFromFileExtension(*this)) : createNSString(m_contentType);
     if (!contentType.get().length)
         return nullString();
 
     if (RetainPtr utType = [UTType typeWithIdentifier:contentType.get()]) {
         if (isDeclaredOrDynamicTypeIdentifier(utType.get()))
-            return [utType preferredMIMEType];
+            return StringImpl::create([utType preferredMIMEType]);
     }
 
-    return contentType.get();
+    return StringImpl::create(contentType.get());
 }
 
-WTF::String Attachment::utiType() const
+RefPtr<StringImpl> Attachment::utiType() const
 {
-    RetainPtr contentType = m_contentType.isEmpty() ? mimeTypeInferredFromFileExtension(*this).createNSString() : m_contentType.createNSString();
+    RetainPtr contentType = WTF::isEmpty(m_contentType) ? createNSString(mimeTypeInferredFromFileExtension(*this)) : createNSString(m_contentType);
     if (!contentType.get().length)
         return nullString();
 
     if (RetainPtr utType = [UTType typeWithIdentifier:contentType.get()]) {
         if (isDeclaredOrDynamicTypeIdentifier(utType.get()))
-            return contentType.get();
+            return StringImpl::create(contentType.get());
     }
 
     RetainPtr preferredType = [UTType typeWithMIMEType:contentType.get()];
-    return [preferredType identifier];
+    return StringImpl::create([preferredType identifier]);
 }
 
-WTF::String Attachment::fileName() const
+RefPtr<StringImpl> Attachment::fileName() const
 {
     Locker locker { m_fileWrapperLock };
 
     RetainPtr fileWrapper = m_fileWrapper;
     if ([fileWrapper filename].length)
-        return [fileWrapper filename];
+        return StringImpl::create([fileWrapper filename]);
 
-    return [fileWrapper preferredFilename];
+    return StringImpl::create([fileWrapper preferredFilename]);
 }
 
 void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, NSString *contentType)
@@ -116,13 +116,13 @@ void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, 
             updatedContentType = UTTypeDirectory.identifier;
         else if (fileWrapper.regularFile) {
             if (RetainPtr<NSString> pathExtension = protect(protect(fileWrapper.filename).get().length ? fileWrapper.filename : fileWrapper.preferredFilename).get().pathExtension)
-                updatedContentType = WebCore::MIMETypeRegistry::mimeTypeForExtension(WTF::String(pathExtension.get())).createNSString();
+                updatedContentType = createNSString(WebCore::MIMETypeRegistry::mimeTypeForExtension(StringImpl::create(pathExtension.get()).get()));
             if (!updatedContentType.get().length)
                 updatedContentType = UTTypeData.identifier;
         }
     }
 
-    setContentType(updatedContentType.get());
+    setContentType(StringImpl::create(updatedContentType.get()).get());
     setFileWrapper(fileWrapper);
 }
 
@@ -200,7 +200,7 @@ RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
     return WebCore::SharedBuffer::create(serializedData);
 }
 
-void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&& serializedRepresentation, const WTF::String& contentType)
+void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&& serializedRepresentation, StringImpl* contentType)
 {
     RefPtr webPage = m_webPage.get();
     if (!webPage)
@@ -220,7 +220,7 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
         return;
 
     m_isCreatedFromSerializedRepresentation = true;
-    setFileWrapperAndUpdateContentType(fileWrapper.get(), contentType.createNSString().get());
+    setFileWrapperAndUpdateContentType(fileWrapper.get(), createNSString(contentType).get());
     webPage->updateAttachmentAttributes(*this, [] { });
 }
 
@@ -234,7 +234,7 @@ void Attachment::cloneFileWrapperTo(Attachment& other)
 
 bool Attachment::shouldUseFileWrapperIconForDirectory() const
 {
-    if (m_contentType != "public.directory"_s)
+    if (!equal(m_contentType, "public.directory"_s))
         return false;
 
     if (m_isCreatedFromSerializedRepresentation)

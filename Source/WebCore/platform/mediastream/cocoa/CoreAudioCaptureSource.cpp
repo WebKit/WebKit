@@ -83,14 +83,14 @@ CaptureSourceOrError CoreAudioCaptureSource::create(const CaptureDevice& device,
 #if PLATFORM(MAC)
     auto coreAudioDevice = CoreAudioCaptureDeviceManager::singleton().coreAudioDeviceWithUID(device.persistentId());
     if (!coreAudioDevice)
-        return CaptureSourceOrError({ "No CoreAudioCaptureSource device"_s, MediaAccessDenialReason::PermissionDenied });
+        return CaptureSourceOrError({ "No CoreAudioCaptureSource device"_si, MediaAccessDenialReason::PermissionDenied });
 
     auto source = adoptRef(*new CoreAudioCaptureSource(device, coreAudioDevice->deviceID(), WTF::move(hashSalts), pageIdentifier));
 #elif PLATFORM(IOS_FAMILY)
     auto coreAudioDevice = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(device.persistentId());
     if (!coreAudioDevice && !device.isDefault()) {
         AVAudioSessionCaptureDeviceManager::singleton().scheduleUpdateCaptureDevices();
-        return CaptureSourceOrError({ "No AVAudioSessionCaptureDevice device"_s, MediaAccessDenialReason::PermissionDenied });
+        return CaptureSourceOrError({ "No AVAudioSessionCaptureDevice device"_si, MediaAccessDenialReason::PermissionDenied });
     }
 
     auto source = adoptRef(*new CoreAudioCaptureSource(device, 0, WTF::move(hashSalts), pageIdentifier));
@@ -98,7 +98,7 @@ CaptureSourceOrError CoreAudioCaptureSource::create(const CaptureDevice& device,
     return initializeCoreAudioCaptureSource(WTF::move(source), constraints);
 }
 
-CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& persistentID, uint32_t deviceID, AtomString&& label, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier, std::optional<bool> echoCancellation)
+CaptureSourceOrError CoreAudioCaptureSource::createForTesting(RefPtr<StringImpl>&& persistentID, uint32_t deviceID, RefPtr<AtomStringImpl>&& label, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier, std::optional<bool> echoCancellation)
 {
     auto source = adoptRef(*new CoreAudioCaptureSource(CaptureDevice { WTF::move(persistentID), CaptureDevice::DeviceType::Microphone, WTF::move(label) }, deviceID, WTF::move(hashSalts), pageIdentifier));
     if (echoCancellation) {
@@ -232,7 +232,7 @@ void CoreAudioCaptureSource::initializeToStartProducingData()
     Ref unit = m_unit;
     // We add ourselves as a client before changing of capture device, as it can trigger reconfiguration.
     unit->addClient(*this);
-    unit->setCaptureDevice(String { persistentID() }, m_captureDeviceID, captureDevice().isDefault());
+    unit->setCaptureDevice(RefPtr<StringImpl> { persistentID() }, m_captureDeviceID, captureDevice().isDefault());
 
     bool shouldReconfigure = echoCancellation() != unit->enableEchoCancellation() || sampleRate() != unit->sampleRate() || volume() != unit->volume();
 #if !PLATFORM(MAC)
@@ -385,12 +385,12 @@ void CoreAudioCaptureSource::audioUnitWillStart()
 
 void CoreAudioCaptureSource::handleNewCurrentMicrophoneDevice(const CaptureDevice& device)
 {
-    if (!isProducingData() || persistentID() == device.persistentId())
+    if (!isProducingData() || equal(persistentID(), device.persistentId()))
         return;
 
-    RELEASE_LOG_INFO(WebRTC, "CoreAudioCaptureSource switching from '%s' to '%s'", name().utf8(), device.label().utf8());
+    RELEASE_LOG_INFO(WebRTC, "CoreAudioCaptureSource switching from '%s' to '%s'", utf8(name()), utf8(device.label()));
 
-    setName(AtomString { device.label() });
+    setName(AtomStringImpl::add(device.label()));
     setPersistentId(device.persistentId());
 
     m_currentSettings = { };
@@ -402,9 +402,9 @@ void CoreAudioCaptureSource::handleNewCurrentMicrophoneDevice(const CaptureDevic
 }
 
 #if PLATFORM(MAC)
-void CoreAudioCaptureSource::vpioUnitWillChangeCaptureDeviceTo(const String& persistentID)
+void CoreAudioCaptureSource::vpioUnitWillChangeCaptureDeviceTo(StringImpl* persistentID)
 {
-    if (!isProducingData() || this->persistentID() == persistentID || !echoCancellation())
+    if (!isProducingData() || equal(this->persistentID(), persistentID) || !echoCancellation())
         return;
 
     // We migrate capture to a non VPIO unit so that we keep only one VPIO unit running.

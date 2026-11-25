@@ -51,8 +51,8 @@ class ExtendableMessageEvent final : public ExtendableEvent {
 public:
     struct Init : ExtendableEventInit {
         JSC::JSValue data;
-        String origin;
-        String lastEventId;
+        RefPtr<StringImpl> origin;
+        RefPtr<StringImpl> lastEventId;
         std::optional<ExtendableMessageEventSource> source;
         Vector<Ref<MessagePort>> ports;
     };
@@ -62,27 +62,27 @@ public:
         JSC::Strong<JSC::JSObject> strongWrapper; // Keep the wrapper alive until the event is fired, since it is what keeps `data` alive.
     };
 
-    static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
-    static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, Vector<Ref<MessagePort>>&&, Ref<SerializedScriptValue>&&, Ref<SecurityOrigin>&&, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&);
+    static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, AtomStringImpl* type, const Init&, IsTrusted = IsTrusted::No);
+    static ExtendableMessageEventWithStrongData create(JSC::JSGlobalObject&, Vector<Ref<MessagePort>>&&, Ref<SerializedScriptValue>&&, Ref<SecurityOrigin>&&, StringImpl* lastEventId, std::optional<ExtendableMessageEventSource>&&);
 
     ~ExtendableMessageEvent();
 
     JSValueInWrappedObject& data() LIFETIME_BOUND { return m_data; }
     JSValueInWrappedObject& cachedPorts() LIFETIME_BOUND { return m_cachedPorts; }
 
-    String origin() const;
+    RefPtr<StringImpl> origin() const;
     NODELETE const RefPtr<SecurityOrigin> securityOrigin() const;
-    const String& lastEventId() const LIFETIME_BOUND { return m_lastEventId; }
+    const RefPtr<StringImpl>& lastEventId() const LIFETIME_BOUND { return m_lastEventId; }
     const std::optional<ExtendableMessageEventSource>& source() const LIFETIME_BOUND { return m_source; }
     const Vector<Ref<MessagePort>>& ports() const LIFETIME_BOUND { return m_ports; }
 
 private:
-    ExtendableMessageEvent(const AtomString&, const Init&, IsTrusted);
-    ExtendableMessageEvent(const AtomString&, Ref<SecurityOrigin>&&, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
+    ExtendableMessageEvent(AtomStringImpl*, const Init&, IsTrusted);
+    ExtendableMessageEvent(AtomStringImpl*, Ref<SecurityOrigin>&&, StringImpl* lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
 
     JSValueInWrappedObject m_data;
-    const Variant<String, Ref<SecurityOrigin>> m_origin;
-    String m_lastEventId;
+    const Variant<RefPtr<StringImpl>, Ref<SecurityOrigin>> m_origin;
+    RefPtr<StringImpl> m_lastEventId;
     std::optional<ExtendableMessageEventSource> m_source;
     Vector<Ref<MessagePort>> m_ports;
     JSValueInWrappedObject m_cachedPorts;

@@ -57,8 +57,8 @@ public:
         Vector<int> m_lastMatch { };
     };
 
-    Entry* get(const String& subject, RegExp*);
-    void set(const String& subject, RegExp*, JSCellButterfly*, MatchResult, std::span<const int> lastMatch);
+    Entry* get(StringImpl* subject, RegExp*);
+    void set(StringImpl* subject, RegExp*, JSCellButterfly*, MatchResult, std::span<const int> lastMatch);
 
     DECLARE_VISIT_AGGREGATE;
 

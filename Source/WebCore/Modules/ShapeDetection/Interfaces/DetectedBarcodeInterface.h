@@ -35,7 +35,7 @@ namespace WebCore::ShapeDetection {
 
 struct DetectedBarcode {
     FloatRect boundingBox;
-    String rawValue;
+    RefPtr<StringImpl> rawValue;
     BarcodeFormat format { BarcodeFormat::Unknown };
     Vector<FloatPoint> cornerPoints;
 };

@@ -106,7 +106,7 @@ JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, Call
 
 void ProxyConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
-    Base::finishCreation(vm, 2, "Proxy"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 2, "Proxy"_si, PropertyAdditionMode::WithoutStructureTransition);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("revocable"_s, makeRevocableProxy, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
 }
 

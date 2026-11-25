@@ -39,7 +39,7 @@ public:
     virtual ~LoadableModuleScript();
 
     enum class IsInline : bool { No, Yes };
-    NODELETE static Ref<LoadableModuleScript> create(IsInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
+    NODELETE static Ref<LoadableModuleScript> create(IsInline, AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy, RequestPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree);
 
     bool isLoaded() const final { return m_isLoaded; }
     bool hasError() const final;
@@ -60,7 +60,7 @@ public:
     ModuleFetchParameters& parameters() const LIFETIME_BOUND { return m_parameters.get(); }
 
 private:
-    LoadableModuleScript(IsInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
+    LoadableModuleScript(IsInline, AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy, RequestPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree);
 
     const Ref<ModuleFetchParameters> m_parameters;
     RefPtr<UniquedStringImpl> m_moduleKey;

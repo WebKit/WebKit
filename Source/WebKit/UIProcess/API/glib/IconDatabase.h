@@ -35,7 +35,7 @@ class IconDatabase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Icon
 public:
     enum class AllowDatabaseWrite : bool { No, Yes };
 
-    static Ref<IconDatabase> create(const String& path, AllowDatabaseWrite allowDatabaseWrite)
+    static Ref<IconDatabase> create(StringImpl* path, AllowDatabaseWrite allowDatabaseWrite)
     {
         return adoptRef(*new IconDatabase(path, allowDatabaseWrite));
     }
@@ -44,14 +44,14 @@ public:
 
     void invalidate();
 
-    void checkIconURLAndSetPageURLIfNeeded(const String& iconURL, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool, bool)>&&);
-    void loadIconsForPageURL(const String&, AllowDatabaseWrite, CompletionHandler<void(Vector<WebCore::PlatformImagePtr>&&)>&&);
-    ListHashSet<String> iconURLsForPageURL(const String&);
-    void setIconForPageURL(const String& iconURL, std::span<const uint8_t>, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool)>&&);
+    void checkIconURLAndSetPageURLIfNeeded(StringImpl* iconURL, StringImpl* pageURL, AllowDatabaseWrite, CompletionHandler<void(bool, bool)>&&);
+    void loadIconsForPageURL(StringImpl*, AllowDatabaseWrite, CompletionHandler<void(Vector<WebCore::PlatformImagePtr>&&)>&&);
+    ListHashSet<RefPtr<StringImpl>> iconURLsForPageURL(StringImpl*);
+    void setIconForPageURL(StringImpl* iconURL, std::span<const uint8_t>, StringImpl* pageURL, AllowDatabaseWrite, CompletionHandler<void(bool)>&&);
     void clear(CompletionHandler<void()>&&);
 
 private:
-    IconDatabase(const String&, AllowDatabaseWrite);
+    IconDatabase(StringImpl*, AllowDatabaseWrite);
 
     bool createTablesIfNeeded();
     void populatePageURLToIconURLsMap();
@@ -60,19 +60,19 @@ private:
     void clearStatements();
     void clearLoadedIconsTimerFired();
     void startClearLoadedIconsTimer();
-    std::optional<int64_t> iconIDForIconURL(const String&, bool& expired);
-    bool setIconIDForPageURL(int64_t, const String&);
+    std::optional<int64_t> iconIDForIconURL(StringImpl*, bool& expired);
+    bool setIconIDForPageURL(int64_t, StringImpl*);
     Vector<uint8_t> iconData(int64_t);
-    std::optional<int64_t> addIcon(const String&, const Vector<uint8_t>&);
+    std::optional<int64_t> addIcon(StringImpl*, const Vector<uint8_t>&);
     void updateIconTimestamp(int64_t iconID, int64_t timestamp);
     void deleteIcon(int64_t);
 
     const Ref<WorkQueue> m_workQueue;
     AllowDatabaseWrite m_allowDatabaseWrite { AllowDatabaseWrite::Yes };
     const UniqueRef<WebCore::SQLiteDatabase> m_db;
-    HashMap<String, ListHashSet<String>> m_pageURLToIconURLMap;
+    HashMap<RefPtr<StringImpl>, ListHashSet<RefPtr<StringImpl>>> m_pageURLToIconURLMap;
     Lock m_pageURLToIconURLMapLock;
-    HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons WTF_GUARDED_BY_LOCK(m_loadedIconsLock);
+    HashMap<RefPtr<StringImpl>, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons WTF_GUARDED_BY_LOCK(m_loadedIconsLock);
     Lock m_loadedIconsLock;
 
     std::unique_ptr<WebCore::SQLiteStatement> m_iconIDForIconURLStatement;

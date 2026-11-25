@@ -73,7 +73,7 @@ void wgpuRenderBundleEncoderDrawIndirect(WGPURenderBundleEncoder renderBundleEnc
 WGPURenderBundle wgpuRenderBundleEncoderFinish(WGPURenderBundleEncoder renderBundleEncoder, const WGPURenderBundleDescriptor* descriptor)
 {
     @autoreleasepool {
-        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(renderBundleEncoder))->finish({ .label = descriptor ? WebGPU::CAPI::fromAPI(descriptor->label) : String() }));
+        return WebGPU::CAPI::releaseToAPI(protect(WebGPU::CAPI::fromAPI(renderBundleEncoder))->finish({ .label = descriptor ? WebGPU::CAPI::fromAPI(descriptor->label) : RefPtr<StringImpl>() }));
     }
 }
 

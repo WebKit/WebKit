@@ -58,13 +58,13 @@ static NSDictionary *toWebAPI(WebExtensionFrameParameters frameInfo)
 
     result[errorOccurredKey] = @(frameInfo.errorOccurred);
     result[parentFrameIdKey] = @(toWebAPI(frameInfo.parentFrameIdentifier));
-    result[urlKey] = frameInfo.url && !frameInfo.url.value().isNull() ? frameInfo.url.value().string().createNSString().get() : emptyURLValue;
+    result[urlKey] = frameInfo.url && !frameInfo.url.value().isNull() ? createNSString(frameInfo.url.value().string()).get() : emptyURLValue;
 
     if (frameInfo.frameIdentifier)
         result[frameIdKey] = @(toWebAPI(frameInfo.frameIdentifier.value()));
 
     if (frameInfo.documentIdentifier)
-        result[documentIdKey] = frameInfo.documentIdentifier.value().toString().createNSString().get();
+        result[documentIdKey] = createNSString(frameInfo.documentIdentifier.value().toString()).get();
 
     return [result copy];
 }
@@ -95,7 +95,7 @@ void WebExtensionAPIWebNavigation::getAllFrames(NSDictionary *details, Ref<WebEx
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetAllFrames(tabIdentifier.value()), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionFrameParameters>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -124,13 +124,13 @@ void WebExtensionAPIWebNavigation::getFrame(NSDictionary *details, Ref<WebExtens
     NSNumber *frameId = details[frameIdKey];
     auto frameIdentifier = toWebExtensionFrameIdentifier(frameId.doubleValue);
     if (!isValid(frameIdentifier)) {
-        *outExceptionString = toErrorString(nullString(), frameIdKey, @"it is not a frame identifier").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(frameIdKey).get(), StringImpl::create(@"it is not a frame identifier").get())).autorelease();
         return;
     }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetFrame(tabIdentifier.value(), frameIdentifier.value()), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<std::optional<WebExtensionFrameParameters>, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -198,7 +198,7 @@ void WebExtensionContextProxy::dispatchWebNavigationEvent(WebExtensionEventListe
     auto& parentFrameID = frameParameters.parentFrameIdentifier;
 
     NSMutableDictionary *navigationDetails = [@{
-        urlKey: frameURL.string().createNSString().get(),
+        urlKey: createNSString(frameURL.string()).get(),
         tabIdKey: @(toWebAPI(tabID)),
         frameIdKey: @(toWebAPI(frameID)),
         parentFrameIdKey: @(toWebAPI(parentFrameID)),
@@ -206,7 +206,7 @@ void WebExtensionContextProxy::dispatchWebNavigationEvent(WebExtensionEventListe
     } mutableCopy];
 
     if (frameParameters.documentIdentifier)
-        navigationDetails[documentIdKey] = frameParameters.documentIdentifier.value().toString().createNSString().get();
+        navigationDetails[documentIdKey] = createNSString(frameParameters.documentIdentifier.value().toString()).get();
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         Ref webNavigationObject = namespaceObject.webNavigation();

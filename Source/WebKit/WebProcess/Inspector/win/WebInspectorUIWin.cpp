@@ -57,9 +57,9 @@ bool WebInspectorUI::canPickColorFromScreen()
     return false;
 }
 
-String WebInspectorUI::localizedStringsURL() const
+RefPtr<StringImpl> WebInspectorUI::localizedStringsURL() const
 {
-    return "inspector-resource:///localizedStrings.js"_s;
+    return "inspector-resource:///localizedStrings.js"_si;
 }
 
 void WebInspectorUI::didEstablishConnection()

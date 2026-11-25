@@ -62,7 +62,7 @@ NODELETE static void clampFrequency(std::span<float> frequencies, float nyquist)
 ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& context, const OscillatorOptions& options)
 {
     if (options.type == OscillatorType::Custom && !options.periodicWave)
-        return Exception { ExceptionCode::InvalidStateError, "Must provide periodicWave when using custom type."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Must provide periodicWave when using custom type."_si };
     
     auto oscillator = adoptRef(*new OscillatorNode(context, options));
     oscillator->suspendIfNeeded();
@@ -84,8 +84,8 @@ ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& contex
 
 OscillatorNode::OscillatorNode(BaseAudioContext& context, const OscillatorOptions& options)
     : AudioScheduledSourceNode(context, NodeTypeOscillator)
-    , m_frequency(AudioParam::create(context, "frequency"_s, options.frequency, -context.sampleRate() / 2, context.sampleRate() / 2, AutomationRate::ARate))
-    , m_detune(AudioParam::create(context, "detune"_s, options.detune, -1200 * log2f(std::numeric_limits<float>::max()), 1200 * log2f(std::numeric_limits<float>::max()), AutomationRate::ARate))
+    , m_frequency(AudioParam::create(context, "frequency"_si, options.frequency, -context.sampleRate() / 2, context.sampleRate() / 2, AutomationRate::ARate))
+    , m_detune(AudioParam::create(context, "detune"_si, options.detune, -1200 * log2f(std::numeric_limits<float>::max()), 1200 * log2f(std::numeric_limits<float>::max()), AutomationRate::ARate))
     , m_phaseIncrements(AudioUtilities::renderQuantumSize)
     , m_detuneValues(AudioUtilities::renderQuantumSize)
 {
@@ -106,7 +106,7 @@ ExceptionOr<void> OscillatorNode::setTypeForBindings(OscillatorType type)
 
     if (type == OscillatorType::Custom) {
         if (m_type != OscillatorType::Custom)
-            return Exception { ExceptionCode::InvalidStateError, "OscillatorNode.type cannot be changed to 'custom'"_s };
+            return Exception { ExceptionCode::InvalidStateError, "OscillatorNode.type cannot be changed to 'custom'"_si };
         return { };
     }
 

@@ -114,7 +114,7 @@ static bool parseContentRange(StringView headerValue, int64_t& firstBytePosition
     return areContentRangeValuesValid(firstBytePosition, lastBytePosition, instanceLength);
 }
 
-ParsedContentRange::ParsedContentRange(const String& headerValue)
+ParsedContentRange::ParsedContentRange(StringImpl* headerValue)
 {
     if (!parseContentRange(StringView(headerValue), m_firstBytePosition, m_lastBytePosition, m_instanceLength))
         m_instanceLength = invalidLength;
@@ -129,10 +129,10 @@ ParsedContentRange::ParsedContentRange(int64_t firstBytePosition, int64_t lastBy
         m_instanceLength = invalidLength;
 }
 
-String ParsedContentRange::headerValue() const
+RefPtr<StringImpl> ParsedContentRange::headerValue() const
 {
     if (!isValid())
-        return String();
+        return nullptr;
     if (m_instanceLength == unknownLength)
         return makeString("bytes "_s, m_firstBytePosition, '-', m_lastBytePosition, "/*"_s);
     return makeString("bytes "_s, m_firstBytePosition, '-', m_lastBytePosition, '/', m_instanceLength);

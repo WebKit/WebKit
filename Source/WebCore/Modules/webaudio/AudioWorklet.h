@@ -59,7 +59,7 @@ public:
     // or destroyWorkerGlobalScope asserts that the scope has one ref.
     void releaseProcessors(AudioWorkletMessagingProxy&);
 
-    void createProcessor(const String& name, TransferredMessagePort, Ref<SerializedScriptValue>&&, AudioWorkletNode&);
+    void createProcessor(StringImpl* name, TransferredMessagePort, Ref<SerializedScriptValue>&&, AudioWorkletNode&);
 
 private:
     explicit AudioWorklet(BaseAudioContext&);

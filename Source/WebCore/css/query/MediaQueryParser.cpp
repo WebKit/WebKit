@@ -39,7 +39,7 @@ Vector<const FeatureSchema*> MediaQueryParser::featureSchemas()
     return Features::allSchemas();
 }
 
-MediaQueryList MediaQueryParser::parse(const String& string, const CSSParserContext& context)
+MediaQueryList MediaQueryParser::parse(StringImpl* string, const CSSParserContext& context)
 {
     auto tokenizer = CSSTokenizer::tryCreate(string);
     if (!tokenizer)
@@ -153,7 +153,7 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
         return { };
     };
 
-    auto consumeMediaType = [&]() -> AtomString {
+    auto consumeMediaType = [&]() -> RefPtr<AtomStringImpl> {
         if (range.peek().type() != IdentToken)
             return { };
 
@@ -162,7 +162,7 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
             return { };
 
         auto mediaType = range.consumeIncludingWhitespace().value().convertToASCIILowercaseAtom();
-        if (mediaType == "layer"_s)
+        if (equal(mediaType, "layer"_s))
             return { };
         
         return mediaType;
@@ -171,7 +171,7 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     auto prefix = consumePrefix();
     auto mediaType = consumeMediaType();
 
-    if (mediaType.isNull())
+    if (!mediaType)
         return { };
 
     if (range.atEnd())
@@ -195,7 +195,7 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     return MediaQuery { prefix, mediaType, condition };
 }
 
-const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& name, const CSSParserContext& context, State& state)
+const FeatureSchema* MediaQueryParser::schemaForFeatureName(AtomStringImpl* name, const CSSParserContext& context, State& state)
 {
     auto* schema = GenericMediaQueryParser<MediaQueryParser>::schemaForFeatureName(name, context, state);
 
@@ -233,7 +233,7 @@ void serialize(StringBuilder& builder, const MediaQuery& query)
         }
     }
 
-    if (!query.mediaType.isEmpty() && (!query.condition || query.prefix || query.mediaType != allAtom())) {
+    if (!isEmpty(query.mediaType) && (!query.condition || query.prefix || query.mediaType != allAtom())) {
         serializeIdentifier(builder, query.mediaType);
         if (query.condition)
             builder.append(" and "_s);

@@ -122,7 +122,7 @@ bool MathMLMencloseElement::hasNotation(MencloseNotationFlag notationFlag)
     return m_notationFlags.value() & notationFlag;
 }
 
-void MathMLMencloseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLMencloseElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == notationAttr)
         m_notationFlags = std::nullopt;

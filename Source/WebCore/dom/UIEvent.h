@@ -37,7 +37,7 @@ typedef WindowProxy AbstractView;
 class UIEvent : public Event {
     WTF_MAKE_TZONE_ALLOCATED(UIEvent);
 public:
-    static Ref<UIEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& view, int detail)
+    static Ref<UIEvent> create(AtomStringImpl* type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& view, int detail)
     {
         return adoptRef(*new UIEvent(EventInterfaceType::UIEvent, type, canBubble, isCancelable, isComposed, WTF::move(view), detail));
     }
@@ -45,13 +45,13 @@ public:
     {
         return adoptRef(*new UIEvent(EventInterfaceType::UIEvent));
     }
-    static Ref<UIEvent> create(const AtomString& type, const UIEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<UIEvent> create(AtomStringImpl* type, const UIEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new UIEvent(EventInterfaceType::UIEvent, type, initializer, isTrusted));
     }
     virtual ~UIEvent();
 
-    WEBCORE_EXPORT void initUIEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, int detail);
+    WEBCORE_EXPORT void initUIEvent(AtomStringImpl* type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, int detail);
 
     WindowProxy* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
@@ -73,9 +73,9 @@ public:
 protected:
     UIEvent(enum EventInterfaceType);
 
-    UIEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail);
-    UIEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail, IsTrusted = IsTrusted::Yes);
-    UIEvent(enum EventInterfaceType, const AtomString&, const UIEventInit&, IsTrusted = IsTrusted::No);
+    UIEvent(enum EventInterfaceType, AtomStringImpl* type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail);
+    UIEvent(enum EventInterfaceType, AtomStringImpl* type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail, IsTrusted = IsTrusted::Yes);
+    UIEvent(enum EventInterfaceType, AtomStringImpl*, const UIEventInit&, IsTrusted = IsTrusted::No);
 
 private:
     bool isUIEvent() const final { return true; }

@@ -45,13 +45,13 @@ CORPViolationReportBody::CORPViolationReportBody(COEPDisposition disposition, co
 {
 }
 
-const String& CORPViolationReportBody::type() const
+const RefPtr<StringImpl>& CORPViolationReportBody::type() const
 {
-    static NeverDestroyed<const String> corpType(MAKE_STATIC_STRING_IMPL("corp"));
+    static NeverDestroyed<const RefPtr<StringImpl>> corpType(MAKE_STATIC_STRING_IMPL("corp"));
     return corpType;
 }
 
-String CORPViolationReportBody::disposition() const
+RefPtr<StringImpl> CORPViolationReportBody::disposition() const
 {
     return m_disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s;
 }

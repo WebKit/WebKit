@@ -74,7 +74,7 @@ static bool isDocumentFullyActive(LocalFrame* frame)
 
 static Exception documentNotFullyActive()
 {
-    return Exception { ExceptionCode::SecurityError, "Attempt to use History API from a document that isn't fully active"_s };
+    return Exception { ExceptionCode::SecurityError, "Attempt to use History API from a document that isn't fully active"_si };
 }
 
 ExceptionOr<unsigned> History::length() const
@@ -213,7 +213,7 @@ ExceptionOr<void> History::updateAndCheckStateObjectQuota(const URL& fullURL, Se
     static Seconds stateObjectTimeSpan { 10_s };
     static unsigned perStateObjectTimeSpanLimit = 100;
 
-    Checked<unsigned> urlSize = fullURL.string().length();
+    Checked<unsigned> urlSize = WTF::length(fullURL.string());
     urlSize *= 2;
 
     Checked<uint64_t> payloadSize = urlSize;
@@ -245,8 +245,8 @@ ExceptionOr<void> History::updateAndCheckStateObjectQuota(const URL& fullURL, Se
 
         if (newTotalUsage > mainHistory->totalStateObjectPayloadLimit()) {
             if (historyBehavior == NavigationHistoryBehavior::Replace)
-                return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.replaceState()"_s };
-            return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.pushState()"_s };
+                return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.replaceState()"_si };
+            return Exception { ExceptionCode::QuotaExceededError, "Attempt to store more data than allowed using history.pushState()"_si };
         }
 
         mainHistory->m_totalStateObjectUsage = newTotalUsage;
@@ -258,7 +258,7 @@ ExceptionOr<void> History::updateAndCheckStateObjectQuota(const URL& fullURL, Se
 }
 
 // https://html.spec.whatwg.org/#shared-history-push/replace-state-steps
-ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& urlString, NavigationHistoryBehavior historyBehavior)
+ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, StringImpl* urlString, NavigationHistoryBehavior historyBehavior)
 {
     m_cachedState.clear();
 
@@ -277,13 +277,13 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         return Exception { ExceptionCode::SecurityError, makeString("Blocked attempt to use "_s, functionName, " to change session history URL from "_s, documentURL.stringCenterEllipsizedToLength(), " to "_s, fullURL.stringCenterEllipsizedToLength(), ". "_s, suffix) };
     };
 
-    if (!urlString.isEmpty()) {
+    if (!isEmpty(urlString)) {
         fullURL = document->encodingParseURL(urlString);
         if (!fullURL.isValid())
             return createBlockedURLSecurityErrorWithMessageSuffix("URL is invalid"_s);
 
         // The checks below are loosely implementing https://html.spec.whatwg.org/#can-have-its-url-rewritten
-        if (!protocolHostAndPortAreEqual(fullURL, documentURL) || fullURL.user() != documentURL.user() || fullURL.password() != documentURL.password())
+        if (!protocolHostAndPortAreEqual(fullURL, documentURL) || !equal(fullURL.user(), documentURL.user()) || !equal(fullURL.password(), documentURL.password()))
             return createBlockedURLSecurityErrorWithMessageSuffix("Protocols, domains, ports, usernames, and passwords must match."_s);
 
         if (fullURL.protocolIsFile()
@@ -291,7 +291,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
             && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PushStateFilePathRestriction)
 #endif
             && !document->quirks().shouldDisablePushStateFilePathRestrictions()
-            && fullURL.fileSystemPath() != documentURL.fileSystemPath()) {
+            && !equal(fullURL.fileSystemPath(), documentURL.fileSystemPath())) {
             return createBlockedURLSecurityErrorWithMessageSuffix("Only differences in query and fragment are allowed for file: URLs."_s);
         }
 

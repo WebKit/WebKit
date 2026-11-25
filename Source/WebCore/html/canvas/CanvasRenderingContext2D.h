@@ -45,25 +45,25 @@ public:
     void drawFocusIfNeeded(Element&);
     void drawFocusIfNeeded(Path2D&, Element&);
 
-    void setFont(const String&);
+    void setFont(StringImpl*);
 
-    void fillText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
-    void strokeText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
-    Ref<TextMetrics> measureText(const String& text);
+    void fillText(StringImpl* text, double x, double y, std::optional<double> maxWidth = std::nullopt);
+    void strokeText(StringImpl* text, double x, double y, std::optional<double> maxWidth = std::nullopt);
+    Ref<TextMetrics> measureText(StringImpl* text);
 
 private:
     CanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
     const FontProxy* fontProxy() final;
-    AtomString inheritedLanguage() const final;
+    RefPtr<AtomStringImpl> inheritedLanguage() const final;
 
-    std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(const String&) override;
+    std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(StringImpl*) override;
     RefPtr<Filter> createFilter(const FloatRect& bounds) const override;
     IntOutsets calculateFilterOutsets(const FloatRect& bounds) const override;
 
-    void setFontWithoutUpdatingStyle(const String&);
+    void setFontWithoutUpdatingStyle(StringImpl*);
 
-    void drawTextInternal(const String& text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
+    void drawTextInternal(StringImpl* text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
 
     void drawFocusIfNeededInternal(const Path&, Element&);
 

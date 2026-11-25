@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct OpenID4VPSignedRequest {
-    String request;
+    RefPtr<StringImpl> request;
 };
 
 } // namespace WebCore

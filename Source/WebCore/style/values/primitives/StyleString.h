@@ -38,10 +38,13 @@ class CSSStringValue;
 namespace Style {
 
 struct String {
-    WTF::String value;
+    RefPtr<StringImpl> value;
 
-    bool operator==(const String&) const = default;
-    bool operator==(const WTF::String& other) const { return value == other; }
+    bool operator==(const String& other) const
+    {
+        return contentEquals(value, other.value);
+    }
+    bool operator==(StringImpl* other) const { return equal(value, other); }
 };
 
 // MARK: - Conversion
@@ -81,7 +84,7 @@ namespace WTF {
 
 template<>
 struct MarkableTraits<WebCore::Style::String> {
-    static bool isEmptyValue(const WebCore::Style::String& value) { return value.value.isNull(); }
+    static bool isEmptyValue(const WebCore::Style::String& value) { return !value.value; }
     static WebCore::Style::String emptyValue() { return WebCore::Style::String { nullString() }; }
 };
 
@@ -90,10 +93,10 @@ struct HashTraits<WebCore::Style::String> : GenericHashTraits<WebCore::Style::St
     using EmptyValueType = WebCore::Style::String;
     static constexpr bool emptyValueIsZero = true;
     static constexpr bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const WebCore::Style::String& value) { return value.value.isNull(); }
+    static bool isEmptyValue(const WebCore::Style::String& value) { return !value.value; }
     static EmptyValueType emptyValue() { return WebCore::Style::String { nullString() }; }
 
-    static void constructDeletedValue(WebCore::Style::String& value) { new (NotNull, std::addressof(value.value)) String { HashTableDeletedValue }; }
+    static void constructDeletedValue(WebCore::Style::String& value) { new (NotNull, std::addressof(value.value)) RefPtr<StringImpl> { HashTableDeletedValue }; }
     static bool isDeletedValue(const WebCore::Style::String& value) { return value.value.isHashTableDeletedValue(); }
 };
 

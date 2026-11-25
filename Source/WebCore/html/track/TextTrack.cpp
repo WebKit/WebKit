@@ -57,49 +57,49 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrack);
 
-static const AtomString& descriptionsKeyword()
+static const RefPtr<AtomStringImpl>& descriptionsKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> descriptions("descriptions"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> descriptions("descriptions"_s);
     return descriptions;
 }
 
-static const AtomString& chaptersKeyword()
+static const RefPtr<AtomStringImpl>& chaptersKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> chapters("chapters"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> chapters("chapters"_s);
     return chapters;
 }
 
-static const AtomString& metadataKeyword()
+static const RefPtr<AtomStringImpl>& metadataKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> metadata("metadata"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> metadata("metadata"_s);
     return metadata;
 }
     
-static const AtomString& forcedKeyword()
+static const RefPtr<AtomStringImpl>& forcedKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> forced("forced"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> forced("forced"_s);
     return forced;
 }
 
 TextTrack& TextTrack::captionMenuOffItemSingleton()
 {
-    static NeverDestroyed<Ref<TextTrack>> off = TextTrack::create(nullptr, "off menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    static NeverDestroyed<Ref<TextTrack>> off = TextTrack::create(nullptr, "off menu item"_atom, emptyAtom(), emptyAtom(), emptyAtom());
     return off->get();
 }
 
 TextTrack& TextTrack::captionMenuOnItemSingleton()
 {
-    static NeverDestroyed<Ref<TextTrack>> on = TextTrack::create(nullptr, "on menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    static NeverDestroyed<Ref<TextTrack>> on = TextTrack::create(nullptr, "on menu item"_atom, emptyAtom(), emptyAtom(), emptyAtom());
     return on->get();
 }
 
 TextTrack& TextTrack::captionMenuAutomaticItemSingleton()
 {
-    static NeverDestroyed<Ref<TextTrack>> automatic = TextTrack::create(nullptr, "automatic menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    static NeverDestroyed<Ref<TextTrack>> automatic = TextTrack::create(nullptr, "automatic menu item"_atom, emptyAtom(), emptyAtom(), emptyAtom());
     return automatic->get();
 }
 
-TextTrack::Kind TextTrack::convertKind(const AtomString& kind)
+TextTrack::Kind TextTrack::convertKind(AtomStringImpl* kind)
 {
     if (kind == captionsAtom())
         return Kind::Captions;
@@ -114,7 +114,7 @@ TextTrack::Kind TextTrack::convertKind(const AtomString& kind)
     return Kind::Subtitles;
 }
 
-TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, TrackID id, const AtomString& label, const AtomString& language, TextTrackType type)
+TextTrack::TextTrack(ScriptExecutionContext* context, AtomStringImpl* kind, TrackID id, AtomStringImpl* label, AtomStringImpl* language, TextTrackType type)
     : TrackBase(context, TrackBase::TextTrack, std::nullopt, id, label, language)
     , ActiveDOMObject(context)
     , m_kind(convertKind(kind))
@@ -122,7 +122,7 @@ TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, Tr
 {
 }
 
-TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType type)
+TextTrack::TextTrack(ScriptExecutionContext* context, AtomStringImpl* kind, AtomStringImpl* id, AtomStringImpl* label, AtomStringImpl* language, TextTrackType type)
     : TrackBase(context, TrackBase::TextTrack, id, 0, label, language)
     , ActiveDOMObject(context)
     , m_kind(convertKind(kind))
@@ -130,14 +130,14 @@ TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, co
 {
 }
 
-Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, const AtomString& kind, TrackID id, const AtomString& label, const AtomString& language)
+Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, AtomStringImpl* kind, TrackID id, AtomStringImpl* label, AtomStringImpl* language)
 {
     auto textTrack = adoptRef(*new TextTrack(context, kind, id, label, language, AddTrack));
     textTrack->suspendIfNeeded();
     return textTrack;
 }
 
-Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
+Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, AtomStringImpl* kind, AtomStringImpl* id, AtomStringImpl* label, AtomStringImpl* language)
 {
     auto textTrack = adoptRef(*new TextTrack(context, kind, id, label, language, AddTrack));
     textTrack->suspendIfNeeded();
@@ -185,7 +185,7 @@ bool TextTrack::enabled() const
     return m_mode != Mode::Disabled;
 }
 
-bool TextTrack::isValidKindKeyword(const AtomString& value)
+bool TextTrack::isValidKindKeyword(AtomStringImpl* value)
 {
     if (value == subtitlesAtom())
         return true;
@@ -229,7 +229,7 @@ const Style::RuleSet* TextTrack::embeddedStyleRuleSet()
     return m_embeddedStyleRuleSet.get();
 }
 
-const AtomString& TextTrack::kindKeyword() const
+const RefPtr<AtomStringImpl>& TextTrack::kindKeyword() const
 {
     switch (m_kind) {
     case Kind::Captions:
@@ -622,7 +622,7 @@ bool TextTrack::containsOnlyForcedSubtitles() const
     return m_kind == Kind::Forced;
 }
 
-void TextTrack::setLanguage(const AtomString& language)
+void TextTrack::setLanguage(AtomStringImpl* language)
 {
     // 11.1 language, on setting:
     // 1. If the value being assigned to this attribute is not an empty string or a BCP 47 language
@@ -650,7 +650,7 @@ void TextTrack::setId(TrackID id)
     });
 }
 
-void TextTrack::setLabel(const AtomString& label)
+void TextTrack::setLabel(AtomStringImpl* label)
 {
     TrackBase::setLabel(label);
     m_clients.forEach([this](auto& client) {

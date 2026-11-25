@@ -34,7 +34,7 @@ namespace WebCore {
 
 struct MockPaymentError {
     ApplePayErrorCode code;
-    String message;
+    RefPtr<StringImpl> message;
     std::optional<ApplePayErrorContactField> contactField;
 };
 

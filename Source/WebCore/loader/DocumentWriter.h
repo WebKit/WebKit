@@ -46,21 +46,21 @@ class DocumentWriter {
 public:
     DocumentWriter() = default;
 
-    void replaceDocumentWithResultOfExecutingJavascriptURL(const String&, Document* ownerDocument);
+    void replaceDocumentWithResultOfExecutingJavascriptURL(StringImpl*, Document* ownerDocument);
 
     WEBCORE_EXPORT bool begin();
     bool begin(const URL&, bool dispatchWindowObjectAvailable = true, Document* ownerDocument = nullptr, std::optional<ScriptExecutionContextIdentifier> = std::nullopt, const NavigationAction* triggeringAction = nullptr);
     void addData(const SharedBuffer&);
-    WEBCORE_EXPORT void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
+    WEBCORE_EXPORT void insertDataSynchronously(StringImpl*); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
 
     NODELETE void setFrame(LocalFrame&);
 
     enum class IsEncodingUserChosen : bool { No, Yes };
-    WEBCORE_EXPORT void setEncoding(const String& encoding, IsEncodingUserChosen);
+    WEBCORE_EXPORT void setEncoding(StringImpl* encoding, IsEncodingUserChosen);
 
-    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
-    void setMIMEType(const String& type) { m_mimeType = type; }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+    void setMIMEType(StringImpl* type) { m_mimeType = type; }
 
     // Exposed for DocumentParser::appendBytes.
     TextResourceDecoder& decoder();
@@ -74,9 +74,9 @@ private:
 
     WeakPtr<LocalFrame> m_frame;
 
-    String m_mimeType;
+    RefPtr<StringImpl> m_mimeType;
 
-    String m_encoding;
+    RefPtr<StringImpl> m_encoding;
     RefPtr<TextResourceDecoder> m_decoder;
     RefPtr<DocumentParser> m_parser;
 

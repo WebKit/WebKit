@@ -47,42 +47,42 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
 bool Pasteboard::hasData()
 {
     // FIXME: Getting the list of types for this is wasteful. Do this in the UI process.
-    Vector<String> types;
+    Vector<RefPtr<StringImpl>> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types);
     return !types.isEmpty();
 }
 
-Vector<String> Pasteboard::typesSafeForBindings(const String&)
+Vector<RefPtr<StringImpl>> Pasteboard::typesSafeForBindings(StringImpl*)
 {
     notImplemented();
     return { };
 }
 
-Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
+Vector<RefPtr<StringImpl>> Pasteboard::typesForLegacyUnsafeBindings()
 {
-    Vector<String> types;
+    Vector<RefPtr<StringImpl>> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types);
     return types;
 }
 
-String Pasteboard::readOrigin()
+RefPtr<StringImpl> Pasteboard::readOrigin()
 {
     notImplemented(); // webkit.org/b/177633: [GTK] Move to new Pasteboard API
     return { };
 }
 
-String Pasteboard::readString(const String& type)
+RefPtr<StringImpl> Pasteboard::readString(StringImpl* type)
 {
     return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, type, name(), context());
 }
 
-String Pasteboard::readStringInCustomData(const String&)
+RefPtr<StringImpl> Pasteboard::readStringInCustomData(StringImpl*)
 {
     notImplemented();
     return { };
 }
 
-void Pasteboard::writeString(const String& type, const String& text)
+void Pasteboard::writeString(StringImpl* type, StringImpl* text)
 {
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(type, text);
 }
@@ -91,13 +91,13 @@ void Pasteboard::clear()
 {
 }
 
-void Pasteboard::clear(const String&)
+void Pasteboard::clear(StringImpl*)
 {
 }
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
 {
-    text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8"_s, name(), context());
+    text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8"_si, name(), context());
 }
 
 void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, std::optional<size_t>)
@@ -111,7 +111,7 @@ void Pasteboard::read(PasteboardFileReader&, std::optional<size_t>)
 
 void Pasteboard::write(const PasteboardURL& url)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard("text/plain;charset=utf-8"_s, url.url.string());
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard("text/plain;charset=utf-8"_si, url.url.string());
 }
 
 void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
@@ -143,13 +143,13 @@ bool Pasteboard::canSmartReplace()
     return false;
 }
 
-void Pasteboard::writeMarkup(const String&)
+void Pasteboard::writeMarkup(StringImpl*)
 {
 }
 
-void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
+void Pasteboard::writePlainText(StringImpl* text, SmartReplaceOption)
 {
-    writeString("text/plain;charset=utf-8"_s, text);
+    writeString("text/plain;charset=utf-8"_si, text);
 }
 
 void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>&, PasteboardWriteType)

@@ -110,12 +110,12 @@ DragImage DragImage::create(NativeImage& image, GraphicsClient* client, float de
     return DragImage { createDragImageFromImage(image, client, deviceScaleFactor) };
 }
 
-static PlatformDragImage createDragImageIconForCachedImageFilename(const String&)
+static PlatformDragImage createDragImageIconForCachedImageFilename(StringImpl*)
 {
     return nullptr;
 }
 
-DragImage DragImage::createIconForCachedImageFilename(const String& filename)
+DragImage DragImage::createIconForCachedImageFilename(StringImpl* filename)
 {
     return DragImage { createDragImageIconForCachedImageFilename(filename) };
 }

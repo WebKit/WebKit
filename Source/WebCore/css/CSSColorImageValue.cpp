@@ -45,7 +45,7 @@ CSSColorImageValue::CSSColorImageValue(CSS::Color&& color)
 
 CSSColorImageValue::~CSSColorImageValue() = default;
 
-String CSSColorImageValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSColorImageValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return makeString("image("_s, CSS::serializationForCSS(context, m_color), ')');
 }

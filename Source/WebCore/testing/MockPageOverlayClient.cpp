@@ -71,14 +71,14 @@ void MockPageOverlayClient::uninstallAllOverlays()
     }
 }
 
-String MockPageOverlayClient::layerTreeAsText(Page& page, LocalFrame& rootFrame, OptionSet<LayerTreeAsTextOptions> options)
+RefPtr<StringImpl> MockPageOverlayClient::layerTreeAsText(Page& page, LocalFrame& rootFrame, OptionSet<LayerTreeAsTextOptions> options)
 {
     RefPtr viewOverlayRoot { page.pageOverlayController().viewOverlayRootLayer() };
     RefPtr documentOverlayRoot { rootFrame.isMainFrame() ? page.pageOverlayController().documentOverlayRootLayer() : page.pageOverlayController().documentOverlayRootLayerIfExistsForFrame(rootFrame) };
 
     StringBuilder builder;
-    builder.append("View-relative:\n"_s, (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_s)
-        , "\n\nDocument-relative:\n"_s, (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)"_s));
+    builder.append("View-relative:\n"_s, (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_si)
+        , "\n\nDocument-relative:\n"_s, (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)"_si));
 
     unsigned scopedOverlayCount { 0 };
     unsigned scopedOverlayWithoutRootCount { 0 };
@@ -138,17 +138,17 @@ void MockPageOverlayClient::didScrollFrame(PageOverlay&, LocalFrame&)
 {
 }
 
-bool MockPageOverlayClient::copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&)
+bool MockPageOverlayClient::copyAccessibilityAttributeStringValueForPoint(PageOverlay&, RefPtr<StringImpl> /* attribute */, FloatPoint, RefPtr<StringImpl>&)
 {
     return false;
 }
 
-bool MockPageOverlayClient::copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&)
+bool MockPageOverlayClient::copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, RefPtr<StringImpl> /* attribute */, FloatPoint, bool&)
 {
     return false;
 }
 
-Vector<String> MockPageOverlayClient::copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)
+Vector<RefPtr<StringImpl>> MockPageOverlayClient::copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)
 {
     return { };
 }

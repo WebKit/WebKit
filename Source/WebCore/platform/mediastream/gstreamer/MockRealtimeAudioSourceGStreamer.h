@@ -33,7 +33,7 @@ namespace WebCore {
 
 class MockRealtimeAudioSourceGStreamer final : public MockRealtimeAudioSource, GStreamerCapturerObserver {
 public:
-    static Ref<MockRealtimeAudioSource> createForMockAudioCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&);
+    static Ref<MockRealtimeAudioSource> createForMockAudioCapturer(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&&);
 
     static const HashSet<MockRealtimeAudioSource*>& allMockRealtimeAudioSources();
 
@@ -56,7 +56,7 @@ protected:
 
 private:
     friend class MockRealtimeAudioSource;
-    MockRealtimeAudioSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&);
+    MockRealtimeAudioSourceGStreamer(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&&);
     void reconfigure();
 
     void startProducingData() final;

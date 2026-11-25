@@ -41,23 +41,23 @@ class SVGURIReference {
 public:
     virtual ~SVGURIReference() = default;
 
-    void parseAttribute(const QualifiedName&, const AtomString&);
+    void parseAttribute(const QualifiedName&, AtomStringImpl*);
 
-    static AtomString fragmentIdentifierFromIRIString(const String&, const Document&);
-    static AtomString fragmentIdentifierFromIRIString(const Style::URL&, const Document&);
-    static AtomString fragmentIdentifierFromIRIString(const Style::SVGMarkerResource&, const Document&);
+    static RefPtr<AtomStringImpl> fragmentIdentifierFromIRIString(StringImpl*, const Document&);
+    static RefPtr<AtomStringImpl> fragmentIdentifierFromIRIString(const Style::URL&, const Document&);
+    static RefPtr<AtomStringImpl> fragmentIdentifierFromIRIString(const Style::SVGMarkerResource&, const Document&);
 
     struct TargetElementResult {
         RefPtr<Element> element;
-        AtomString identifier;
+        RefPtr<AtomStringImpl> identifier;
     };
-    static TargetElementResult targetElementFromIRIString(const String&, const TreeScope&, RefPtr<Document> externalDocument = nullptr);
+    static TargetElementResult targetElementFromIRIString(StringImpl*, const TreeScope&, RefPtr<Document> externalDocument = nullptr);
     static TargetElementResult targetElementFromIRIString(const Style::URL&, const TreeScope&, RefPtr<Document> externalDocument = nullptr);
 
-    static bool isExternalURIReference(const String& uri, const Document& document)
+    static bool isExternalURIReference(StringImpl* uri, const Document& document)
     {
         // Fragment-only URIs are always internal
-        if (uri.startsWith('#'))
+        if (startsWith(uri, '#'))
             return false;
 
         // If the URI matches our documents URL, we're dealing with a local reference.
@@ -68,7 +68,7 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistryBase<SVGURIReference>;
 
-    String href() const { return m_href->currentValue(); }
+    RefPtr<StringImpl> href() const { return m_href->currentValue(); }
     SVGAnimatedString& hrefAnimated() { return m_href; }
     const SVGAnimatedString& hrefAnimated() const { return m_href; }
 

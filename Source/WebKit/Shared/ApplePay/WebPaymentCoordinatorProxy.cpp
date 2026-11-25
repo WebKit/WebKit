@@ -70,17 +70,17 @@ void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&&
     platformCanMakePayments(WTF::move(reply));
 }
 
-void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!merchantIdentifier.isNull(), completionHandler(false));
-    MESSAGE_CHECK_COMPLETION(!domainName.isNull(), completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(merchantIdentifier, completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(domainName, completionHandler(false));
     platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTF::move(completionHandler));
 }
 
-void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::openPaymentSetup(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!merchantIdentifier.isNull(), completionHandler(false));
-    MESSAGE_CHECK_COMPLETION(!domainName.isNull(), completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(merchantIdentifier, completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(domainName, completionHandler(false));
     platformOpenPaymentSetup(merchantIdentifier, domainName, WTF::move(completionHandler));
 }
 
@@ -249,7 +249,7 @@ void WebPaymentCoordinatorProxy::presenterDidSelectShippingMethod(PaymentAuthori
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinatorProxy::presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode)
+void WebPaymentCoordinatorProxy::presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, StringImpl* couponCode)
 {
     ASSERT(m_state == State::Active);
 

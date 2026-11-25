@@ -37,9 +37,9 @@ bool BytecodeCacheError::StandardError::isValid() const
     return true;
 }
 
-String BytecodeCacheError::StandardError::message() const
+RefPtr<StringImpl> BytecodeCacheError::StandardError::message() const
 {
-    return String { safeStrerror(m_errno) };
+    return StringImpl::create((safeStrerror(m_errno)).span());
 }
 
 bool BytecodeCacheError::WriteError::isValid() const
@@ -47,7 +47,7 @@ bool BytecodeCacheError::WriteError::isValid() const
     return true;
 }
 
-String BytecodeCacheError::WriteError::message() const
+RefPtr<StringImpl> BytecodeCacheError::WriteError::message() const
 {
     return makeString("Could not write the full cache file to disk. Only wrote "_s, m_written, " of the expected "_s, m_expected, " bytes."_s);
 }
@@ -77,7 +77,7 @@ bool BytecodeCacheError::isValid() const
     });
 }
 
-String BytecodeCacheError::message() const
+RefPtr<StringImpl> BytecodeCacheError::message() const
 {
     return WTF::switchOn(m_error, [](const auto& error) {
         return error.message();

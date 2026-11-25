@@ -274,7 +274,7 @@ void ProvisionalPageProxy::cancel(ProvisionalLoadIsReplaced isReplaced)
         std::nullopt,
         mainFrame->isFocused(),
     };
-    didFailProvisionalLoad(WTF::move(frameInfo), ResourceRequest { m_request }, m_navigationID, String { m_provisionalLoadURL.string() }, WTF::move(error), WebCore::WillContinueLoading::No, UserData { }, WebCore::WillInternallyHandleFailure::No, isReplaced); // Will delete |this|.
+    didFailProvisionalLoad(WTF::move(frameInfo), ResourceRequest { m_request }, m_navigationID, RefPtr<StringImpl> { m_provisionalLoadURL.string() }, WTF::move(error), WebCore::WillContinueLoading::No, UserData { }, WebCore::WillInternallyHandleFailure::No, isReplaced); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::navigationWillContinueInAnotherProcess()
@@ -356,7 +356,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     page->inspectorController().didCreateProvisionalPage(*this, m_mainFrame->frameID(), protect(m_frameProcess->process()));
 }
 
-void ProvisionalPageProxy::loadData(API::Navigation& navigation, Ref<WebCore::SharedBuffer>&& data, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, RefPtr<API::WebsitePolicies>&& websitePolicies, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
+void ProvisionalPageProxy::loadData(API::Navigation& navigation, Ref<WebCore::SharedBuffer>&& data, StringImpl* mimeType, StringImpl* encoding, StringImpl* baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, RefPtr<API::WebsitePolicies>&& websitePolicies, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
 {
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "loadData:");
     ASSERT(shouldTreatAsContinuingLoad != WebCore::ShouldTreatAsContinuingLoad::No);
@@ -468,7 +468,7 @@ inline bool ProvisionalPageProxy::validateInput(FrameIdentifier frameID, const s
     return !navigationID || *navigationID == m_navigationID;
 }
 
-void ProvisionalPageProxy::didPerformClientRedirect(String&& sourceURLString, String&& destinationURLString, FrameIdentifier frameID)
+void ProvisionalPageProxy::didPerformClientRedirect(RefPtr<StringImpl>&& sourceURLString, RefPtr<StringImpl>&& destinationURLString, FrameIdentifier frameID)
 {
     if (!validateInput(frameID))
         return;
@@ -508,12 +508,12 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
     page->didStartProvisionalLoadForFrameShared(protect(process()), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
 }
 
-void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& provisionalURL, WebCore::ResourceError&& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
+void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, RefPtr<StringImpl>&& provisionalURL, WebCore::ResourceError&& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
 {
     didFailProvisionalLoad(WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(provisionalURL), WTF::move(error), willContinueLoading, userData, willInternallyHandleFailure, ProvisionalLoadIsReplaced::No);
 }
 
-void ProvisionalPageProxy::didFailProvisionalLoad(FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& provisionalURL, WebCore::ResourceError&& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure, ProvisionalLoadIsReplaced isReplaced)
+void ProvisionalPageProxy::didFailProvisionalLoad(FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, RefPtr<StringImpl>&& provisionalURL, WebCore::ResourceError&& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure, ProvisionalLoadIsReplaced isReplaced)
 {
     if (!validateInput(frameInfo.frameID, navigationID))
         return;
@@ -544,7 +544,7 @@ void ProvisionalPageProxy::didFailProvisionalLoad(FrameInfoData&& frameInfo, Res
     page->didFailProvisionalLoadForFrameShared(protect(process()), *frame, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(provisionalURL), WTF::move(error), willContinueLoading, userData, willInternallyHandleFailure, isReplaced); // May delete |this|.
 }
 
-void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedReportedOrigin, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCSPOrigins, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
+void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedReportedOrigin, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, RefPtr<StringImpl>&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, RefPtr<StringImpl>&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCSPOrigins, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)
 {
     // Re-wrapped by commitProvisionalPage() and validated by WebPageProxy::didCommitLoadForFrame.
     auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(untrustedCSPOrigins).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
@@ -611,7 +611,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(IPC::Connection&
         completionHandler({ });
 }
 
-void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, RefPtr<StringImpl>&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     if (!validateInput(frameInfo.frameID, navigationID))
         return completionHandler({ });
@@ -622,7 +622,7 @@ void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, st
         completionHandler({ });
 }
 
-void ProvisionalPageProxy::didPerformServerRedirect(String&& sourceURLString, String&& destinationURLString, FrameIdentifier frameID)
+void ProvisionalPageProxy::didPerformServerRedirect(RefPtr<StringImpl>&& sourceURLString, RefPtr<StringImpl>&& destinationURLString, FrameIdentifier frameID)
 {
     if (!validateInput(frameID))
         return;
@@ -669,25 +669,25 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& 
         reply({ });
 }
 
-void ProvisionalPageProxy::logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)
+void ProvisionalPageProxy::logDiagnosticMessageFromWebProcess(StringImpl* message, StringImpl* description, WebCore::ShouldSample shouldSample)
 {
-    MESSAGE_CHECK(message.containsOnlyASCII());
+    MESSAGE_CHECK(containsOnlyASCII(message));
 
     if (RefPtr page = m_page.get())
         page->logDiagnosticMessage(message, description, shouldSample);
 }
 
-void ProvisionalPageProxy::logDiagnosticMessageWithEnhancedPrivacyFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)
+void ProvisionalPageProxy::logDiagnosticMessageWithEnhancedPrivacyFromWebProcess(StringImpl* message, StringImpl* description, WebCore::ShouldSample shouldSample)
 {
-    MESSAGE_CHECK(message.containsOnlyASCII());
+    MESSAGE_CHECK(containsOnlyASCII(message));
 
     if (RefPtr page = m_page.get())
         page->logDiagnosticMessageWithEnhancedPrivacy(message, description, shouldSample);
 }
 
-void ProvisionalPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary& valueDictionary, WebCore::ShouldSample shouldSample)
+void ProvisionalPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess(StringImpl* message, StringImpl* description, const WebCore::DiagnosticLoggingClient::ValueDictionary& valueDictionary, WebCore::ShouldSample shouldSample)
 {
-    MESSAGE_CHECK(message.containsOnlyASCII());
+    MESSAGE_CHECK(containsOnlyASCII(message));
 
     if (RefPtr page = m_page.get())
         page->logDiagnosticMessageWithValueDictionary(message, description, valueDictionary, shouldSample);
@@ -706,12 +706,12 @@ void ProvisionalPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier na
 }
 
 #if USE(QUICK_LOOK)
-void ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+void ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame(StringImpl* fileName, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
         page->requestPasswordForQuickLookDocumentInMainFrameShared(fileName, WTF::move(completionHandler));
     else
-        completionHandler({ });
+        completionHandler(nullptr);
 }
 #endif
 
@@ -723,7 +723,7 @@ void ProvisionalPageProxy::registerWebProcessAccessibilityToken(std::span<const 
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-void ProvisionalPageProxy::bindAccessibilityTree(const String& plugID)
+void ProvisionalPageProxy::bindAccessibilityTree(StringImpl* plugID)
 {
     m_accessibilityPlugID = plugID;
 }

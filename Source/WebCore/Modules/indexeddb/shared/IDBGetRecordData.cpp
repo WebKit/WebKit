@@ -38,7 +38,7 @@ IDBGetRecordData IDBGetRecordData::isolatedCopy() const
 
 #if !LOG_DISABLED
 
-String IDBGetRecordData::loggingString() const
+RefPtr<StringImpl> IDBGetRecordData::loggingString() const
 {
     return makeString("<GetRecord: "_s, type == IDBGetRecordDataType::KeyOnly ? "KeyOnly"_s : "Key+Value"_s, ' ', keyRangeData.loggingString(), '>');
 }

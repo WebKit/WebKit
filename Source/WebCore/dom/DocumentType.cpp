@@ -34,15 +34,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentType);
 
-DocumentType::DocumentType(Document& document, const String& name, const String& publicId, const String& systemId)
+DocumentType::DocumentType(Document& document, StringImpl* name, StringImpl* publicId, StringImpl* systemId)
     : Node(document, NodeType::DocumentType, { })
     , m_name(name)
-    , m_publicId(publicId.isNull() ? emptyString() : publicId)
-    , m_systemId(systemId.isNull() ? emptyString() : systemId)
+    , m_publicId(!publicId ? emptyString().get() : publicId)
+    , m_systemId(!systemId ? emptyString().get() : systemId)
 {
 }
 
-String DocumentType::nodeName() const
+RefPtr<StringImpl> DocumentType::nodeName() const
 {
     return name();
 }

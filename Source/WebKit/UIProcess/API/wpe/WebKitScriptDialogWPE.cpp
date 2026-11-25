@@ -44,12 +44,12 @@ void webkitScriptDialogDismiss(WebKitScriptDialog* dialog)
     webkit_script_dialog_unref(dialog);
 }
 
-void webkitScriptDialogSetUserInput(WebKitScriptDialog* dialog, const String& input)
+void webkitScriptDialogSetUserInput(WebKitScriptDialog* dialog, StringImpl* input)
 {
     if (webkit_script_dialog_get_dialog_type(dialog) != WEBKIT_SCRIPT_DIALOG_PROMPT)
         return;
 
-    webkit_script_dialog_prompt_set_text(dialog, input.utf8().legacyCStringPointer());
+    webkit_script_dialog_prompt_set_text(dialog, utf8(input).legacyCStringPointer());
 }
 
 bool webkitScriptDialogIsUserHandled(WebKitScriptDialog* dialog)

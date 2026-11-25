@@ -50,11 +50,11 @@ UndoManager::~UndoManager() = default;
 ExceptionOr<void> UndoManager::addItem(Ref<UndoItem>&& item)
 {
     if (item->undoManager())
-        return Exception { ExceptionCode::InvalidModificationError, "This item has already been added to an UndoManager"_s };
+        return Exception { ExceptionCode::InvalidModificationError, "This item has already been added to an UndoManager"_si };
 
     RefPtr frame = m_document->frame();
     if (!frame)
-        return Exception { ExceptionCode::SecurityError, "A browsing context is required to add an UndoItem"_s };
+        return Exception { ExceptionCode::SecurityError, "A browsing context is required to add an UndoItem"_si };
 
     item->setUndoManager(this);
     protect(frame->editor())->registerCustomUndoStep(CustomUndoStep::create(item));

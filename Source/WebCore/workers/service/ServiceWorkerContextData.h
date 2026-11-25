@@ -52,7 +52,7 @@ struct ServiceWorkerContextData {
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
-    String referrerPolicy;
+    RefPtr<StringImpl> referrerPolicy;
     URL scriptURL;
     WorkerType workerType;
     bool loadedFromDisk;

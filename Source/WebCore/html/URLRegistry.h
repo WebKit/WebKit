@@ -61,7 +61,7 @@ public:
     virtual void unregisterURLsForContext(const ScriptExecutionContext&) = 0;
 
     // This is an optional API
-    virtual URLRegistrable* lookup(const String&) const { ASSERT_NOT_REACHED(); return 0; }
+    virtual URLRegistrable* lookup(StringImpl*) const { ASSERT_NOT_REACHED(); return 0; }
 };
 
 } // namespace WebCore

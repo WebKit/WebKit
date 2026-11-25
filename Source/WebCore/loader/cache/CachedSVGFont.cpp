@@ -112,12 +112,12 @@ bool CachedSVGFont::ensureCustomFontData()
     return m_externalSVGDocument && CachedFont::ensureCustomFontData(m_convertedFont.copyRef().get());
 }
 
-SVGFontElement* CachedSVGFont::getSVGFontById(const AtomString& fontName) const
+SVGFontElement* CachedSVGFont::getSVGFontById(AtomStringImpl* fontName) const
 {
     ASSERT(m_externalSVGDocument);
     auto elements = descendantsOfType<SVGFontElement>(*m_externalSVGDocument);
 
-    if (fontName.isEmpty())
+    if (isEmpty(fontName))
         return elements.first();
 
     for (auto& element : elements) {

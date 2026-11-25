@@ -68,7 +68,7 @@ Structure* WebAssemblyArrayConstructor::createStructure(VM& vm, JSGlobalObject* 
 
 void WebAssemblyArrayConstructor::finishCreation(VM& vm, WebAssemblyArrayPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "Array"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Array"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }
 

@@ -39,17 +39,17 @@ typedef KeyedDecoderGeneric::Dictionary KeyedDecoderGenericDictionary;
 class KeyedDecoderGeneric::Dictionary {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(KeyedDecoderGenericDictionary);
 public:
-    using Node = Variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
+    using Node = Variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, RefPtr<StringImpl>, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
 
     template <typename T>
-    void add(const String& key, T&& value) { m_map.add(key, makeUniqueWithoutFastMallocCheck<Node>(std::forward<T>(value))); }
-    Node* get(const String& key) { return m_map.get(key); }
+    void add(StringImpl* key, T&& value) { m_map.add(key, makeUniqueWithoutFastMallocCheck<Node>(std::forward<T>(value))); }
+    Node* get(StringImpl* key) { return m_map.get(key); }
 
 private:
-    HashMap<String, std::unique_ptr<Node>> m_map;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<Node>> m_map;
 };
 
-static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
+static std::optional<RefPtr<StringImpl>> readString(WTF::Persistence::Decoder& decoder)
 {
     std::optional<size_t> size;
     decoder >> size;
@@ -63,8 +63,8 @@ static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
     Vector<uint8_t> buffer(size.value());
     if (!decoder.decodeFixedLengthData(buffer.mutableSpan()))
         return std::nullopt;
-    auto result = String::fromUTF8(buffer.span());
-    if (result.isNull())
+    auto result = StringImpl::fromUTF8(buffer.span());
+    if (!result)
         return std::nullopt;
 
     return result;
@@ -218,7 +218,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
 }
 
 template<typename T>
-const T* KeyedDecoderGeneric::getPointerFromDictionaryStack(const String& key)
+const T* KeyedDecoderGeneric::getPointerFromDictionaryStack(StringImpl* key)
 {
     auto& dictionary = m_dictionaryStack.last();
 
@@ -230,7 +230,7 @@ const T* KeyedDecoderGeneric::getPointerFromDictionaryStack(const String& key)
 }
 
 template<typename T>
-bool KeyedDecoderGeneric::decodeSimpleValue(const String& key, T& result)
+bool KeyedDecoderGeneric::decodeSimpleValue(StringImpl* key, T& result)
 {
     auto value = getPointerFromDictionaryStack<T>(key);
     if (!value)
@@ -240,7 +240,7 @@ bool KeyedDecoderGeneric::decodeSimpleValue(const String& key, T& result)
     return true;
 }
 
-bool KeyedDecoderGeneric::decodeBytes(const String& key, std::span<const uint8_t>& data)
+bool KeyedDecoderGeneric::decodeBytes(StringImpl* key, std::span<const uint8_t>& data)
 {
     auto value = getPointerFromDictionaryStack<Vector<uint8_t>>(key);
     if (!value)
@@ -250,47 +250,47 @@ bool KeyedDecoderGeneric::decodeBytes(const String& key, std::span<const uint8_t
     return true;
 }
 
-bool KeyedDecoderGeneric::decodeBool(const String& key, bool& result)
+bool KeyedDecoderGeneric::decodeBool(StringImpl* key, bool& result)
 {
     return decodeSimpleValue(key, result);
 }
 
-bool KeyedDecoderGeneric::decodeUInt32(const String& key, uint32_t& result)
+bool KeyedDecoderGeneric::decodeUInt32(StringImpl* key, uint32_t& result)
 {
     return decodeSimpleValue(key, result);
 }
 
-bool KeyedDecoderGeneric::decodeUInt64(const String& key, uint64_t& result)
+bool KeyedDecoderGeneric::decodeUInt64(StringImpl* key, uint64_t& result)
 {
     return decodeSimpleValue(key, result);
 }
 
-bool KeyedDecoderGeneric::decodeInt32(const String& key, int32_t& result)
+bool KeyedDecoderGeneric::decodeInt32(StringImpl* key, int32_t& result)
 {
     return decodeSimpleValue(key, result);
 }
 
-bool KeyedDecoderGeneric::decodeInt64(const String& key, int64_t& result)
+bool KeyedDecoderGeneric::decodeInt64(StringImpl* key, int64_t& result)
 {
     return decodeSimpleValue(key, result);
 }
 
-bool KeyedDecoderGeneric::decodeFloat(const String& key, float& result)
+bool KeyedDecoderGeneric::decodeFloat(StringImpl* key, float& result)
 {
     return decodeSimpleValue(key, result);
 }
 
-bool KeyedDecoderGeneric::decodeDouble(const String& key, double& result)
+bool KeyedDecoderGeneric::decodeDouble(StringImpl* key, double& result)
 {
     return decodeSimpleValue(key, result);
 }
 
-bool KeyedDecoderGeneric::decodeString(const String& key, String& result)
+bool KeyedDecoderGeneric::decodeString(StringImpl* key, RefPtr<StringImpl>& result)
 {
     return decodeSimpleValue(key, result);
 }
 
-bool KeyedDecoderGeneric::beginObject(const String& key)
+bool KeyedDecoderGeneric::beginObject(StringImpl* key)
 {
     auto value = getPointerFromDictionaryStack<std::unique_ptr<Dictionary>>(key);
     if (!value)
@@ -305,7 +305,7 @@ void KeyedDecoderGeneric::endObject()
     m_dictionaryStack.removeLast();
 }
 
-bool KeyedDecoderGeneric::beginArray(const String& key)
+bool KeyedDecoderGeneric::beginArray(StringImpl* key)
 {
     auto value = getPointerFromDictionaryStack<std::unique_ptr<Array>>(key);
     if (!value)

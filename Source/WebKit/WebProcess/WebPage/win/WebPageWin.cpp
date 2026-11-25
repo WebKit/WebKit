@@ -77,7 +77,7 @@ bool WebPage::platformCanHandleRequest(const ResourceRequest&)
     return false;
 }
 
-String WebPage::platformUserAgent(const URL&) const
+RefPtr<StringImpl> WebPage::platformUserAgent(const URL&) const
 {
     return { };
 }
@@ -234,7 +234,7 @@ bool WebPage::handleEditingKeyboardEvent(WebCore::KeyboardEvent& event)
     if (event.type() != eventNames().keydownEvent && event.type() != eventNames().keypressEvent)
         return false;
 
-    auto command = frame->editor().command(String::fromLatin1(interpretKeyEvent(&event)));
+    auto command = frame->editor().command(StringImpl::fromLatin1(interpretKeyEvent(&event)));
 
     if (keyEvent->type() == PlatformEvent::Type::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide

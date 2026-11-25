@@ -90,7 +90,7 @@ public:
 private:
     friend class WebExtensionContextProxy;
 
-    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, const String& name)
+    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, StringImpl* name)
         : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(WebExtensionContentWorldType::Main)
         , m_name(name)
@@ -98,7 +98,7 @@ private:
         ASSERT(isQuarantined());
     }
 
-    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, const String& name)
+    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, StringImpl* name)
         : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(owningPageProxyIdentifier)
@@ -108,7 +108,7 @@ private:
         add();
     }
 
-    explicit WebExtensionAPIPort(WebExtensionContentWorldType contentWorldType, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, const String& name)
+    explicit WebExtensionAPIPort(WebExtensionContentWorldType contentWorldType, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, StringImpl* name)
         : WebExtensionAPIObject(contentWorldType, runtime, context)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(owningPageProxyIdentifier)
@@ -118,7 +118,7 @@ private:
         add();
     }
 
-    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
+    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, StringImpl* name, const WebExtensionMessageSenderParameters& senderParameters)
         : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(owningPageProxyIdentifier)
@@ -129,7 +129,7 @@ private:
         add();
     }
 
-    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
+    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, StringImpl* name, const WebExtensionMessageSenderParameters& senderParameters)
         : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(owningPageProxyIdentifier)
@@ -152,7 +152,7 @@ private:
     Markable<WebExtensionPortChannelIdentifier> m_channelIdentifier;
     bool m_disconnected { false };
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     Protected<JSValueRef> m_error;
     std::optional<WebExtensionMessageSenderParameters> m_senderParameters;
 

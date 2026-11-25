@@ -31,7 +31,7 @@
 namespace WebKit {
 
 struct WebPageGroupData {
-    String identifier;
+    RefPtr<StringImpl> identifier;
     PageGroupIdentifier pageGroupID;
 };
 

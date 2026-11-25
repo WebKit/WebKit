@@ -41,16 +41,16 @@ void WebsiteDataStore::platformDestroy()
     notImplemented();
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String& baseCacheDirectory, ShouldCreateDirectory)
+RefPtr<StringImpl> WebsiteDataStore::cacheDirectoryFileSystemRepresentation(StringImpl* directoryName, StringImpl* baseCacheDirectory, ShouldCreateDirectory)
 {
-    if (!baseCacheDirectory.isNull())
+    if (baseCacheDirectory)
         return FileSystem::pathByAppendingComponent(baseCacheDirectory, directoryName);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), directoryName);
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String& baseDataDirectory, ShouldCreateDirectory)
+RefPtr<StringImpl> WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(StringImpl* directoryName, StringImpl* baseDataDirectory, ShouldCreateDirectory)
 {
-    if (!baseDataDirectory.isNull())
+    if (baseDataDirectory)
         return FileSystem::pathByAppendingComponent(baseDataDirectory, directoryName);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), directoryName);
 }

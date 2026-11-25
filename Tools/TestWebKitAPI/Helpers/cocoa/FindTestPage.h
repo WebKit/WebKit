@@ -39,11 +39,11 @@
 namespace TestWebKitAPI {
 
 struct FrameSpec {
-    String host { "a.com"_s };
-    String body { };
-    String iframeAttributes { };
+    RefPtr<StringImpl> host { "a.com"_si };
+    RefPtr<StringImpl> body { };
+    RefPtr<StringImpl> iframeAttributes { };
     Vector<FrameSpec> children { };
-    String iframeContainerStyle { };
+    RefPtr<StringImpl> iframeContainerStyle { };
 };
 
 enum class SiteIsolation : bool { Off, On };
@@ -51,13 +51,13 @@ enum class SiteIsolation : bool { Off, On };
 class FindTestPage {
 public:
     FindTestPage(const FrameSpec& root, SiteIsolation, RetainPtr<WKWebViewConfiguration> = nil, HTTPServer::ResponseMap&& resources = { });
-    FindTestPage(const String& path, SiteIsolation, RetainPtr<WKWebViewConfiguration>, HTTPServer::ResponseMap&& resources);
+    FindTestPage(StringImpl* path, SiteIsolation, RetainPtr<WKWebViewConfiguration>, HTTPServer::ResponseMap&& resources);
     ~FindTestPage();
 
     TestWKWebView *webView() const { return m_webView.get(); }
 
 private:
-    void load(const String& url, SiteIsolation, RetainPtr<WKWebViewConfiguration>);
+    void load(StringImpl* url, SiteIsolation, RetainPtr<WKWebViewConfiguration>);
 
     HTTPServer m_server;
     RetainPtr<TestWKWebView> m_webView;

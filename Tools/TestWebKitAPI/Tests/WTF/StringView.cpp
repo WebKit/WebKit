@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Helpers/Test.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 
@@ -35,9 +36,9 @@ StringView stringViewFromLiteral(const char* characters)
     return StringView::fromLatin1(characters);
 }
 
-StringView stringViewFromUTF8(String& ref, const char* characters)
+StringView stringViewFromUTF8(RefPtr<StringImpl>& ref, const char* characters)
 {
-    ref = String::fromUTF8(characters);
+    ref = StringImpl::fromUTF8(characters);
     return ref;
 }
 
@@ -50,17 +51,17 @@ TEST(WTF, StringViewASCII)
     EXPECT_STREQ("", emptyStringView().ascii().data());
 
     // 8-bit StringView.
-    String eightBit("foobar"_s);
+    RefPtr<StringImpl> eightBit("foobar"_si);
     EXPECT_STREQ("foobar", StringView(eightBit).ascii().data());
 
     // Substring, to check the view's own length is used rather than the underlying string's.
     EXPECT_STREQ("oob", StringView(eightBit).substring(1, 3).ascii().data());
 
     // Characters outside 32..127 become '?', in both 8-bit and 16-bit views.
-    String backingStore;
+    RefPtr<StringImpl> backingStore;
     EXPECT_STREQ("caf?", stringViewFromUTF8(backingStore, "caf\xC3\xA9").ascii().data());
     EXPECT_STREQ("caf?", stringViewFromUTF8(backingStore, "caf\xE6\xBC\xA2").ascii().data());
-    String withTab("a\tb"_s);
+    RefPtr<StringImpl> withTab("a\tb"_si);
     EXPECT_STREQ("a?b", StringView(withTab).ascii().data());
 }
 
@@ -68,7 +69,7 @@ TEST(WTF, StringViewStartsWithEmptyVsNull)
 {
     StringView nullView;
     StringView emptyView = emptyStringView();
-    String stringWithCharacters("hello"_s);
+    RefPtr<StringImpl> stringWithCharacters("hello"_si);
     StringView viewWithCharacters(stringWithCharacters);
 
     EXPECT_TRUE(viewWithCharacters.startsWith(nullView));
@@ -107,7 +108,7 @@ TEST(WTF, StringViewEmptyVsNull)
     else
         SUCCEED();
 
-    String string { "hello"_s };
+    RefPtr<StringImpl> string { "hello"_si };
     StringView viewWithCharacters(string);
     EXPECT_FALSE(viewWithCharacters.isNull());
     EXPECT_FALSE(viewWithCharacters.isEmpty());
@@ -165,7 +166,7 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(emptyStringView().codeUnits(), { }));
     EXPECT_TRUE(compareLoopIterations(emptyStringView().graphemeClusters(), { }));
 
-    String helo("helo"_s);
+    RefPtr<StringImpl> helo("helo"_si);
     StringView heloView(helo);
 
     auto codePoints = heloView.codePoints();
@@ -179,7 +180,7 @@ TEST(WTF, StringViewIterators)
     EXPECT_EQ(*codePointsIterator, U'h');
     codePointsIterator = savedIterator;
     EXPECT_EQ(*codePointsIterator, U'l');
-    String webkit("webkit"_s);
+    RefPtr<StringImpl> webkit("webkit"_si);
     auto webkitCodePoints = StringView(webkit).codePoints();
     codePointsIterator = webkitCodePoints.begin();
     ++codePointsIterator;
@@ -283,9 +284,9 @@ TEST(WTF, StringViewCodePointCount)
     EXPECT_EQ(codePointCount({ 0xD800, 0xD800, 0xDD55 }), 2u);
 }
 
-static Vector<String> vectorFromSplitResult(const StringView::SplitResult& substrings)
+static Vector<RefPtr<StringImpl>> vectorFromSplitResult(const StringView::SplitResult& substrings)
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     for (StringView substring : substrings)
         result.append(substring.toString());
     return result;
@@ -297,7 +298,7 @@ TEST(WTF, StringViewSplitEmptyAndNullStrings)
     auto splitResult = a.split('b');
     EXPECT_TRUE(splitResult.begin() == splitResult.end());
 
-    a = { String { } };
+    a = { nullString() };
     splitResult = a.split('b');
     EXPECT_TRUE(splitResult.begin() == splitResult.end());
 
@@ -308,12 +309,12 @@ TEST(WTF, StringViewSplitEmptyAndNullStrings)
 
 TEST(WTF, StringViewSplitBasic)
 {
-    String referenceHolder;
+    RefPtr<StringImpl> referenceHolder;
     StringView a = stringViewFromUTF8(referenceHolder, "This is a sentence.");
 
     // Simple
-    Vector<String> actual = vectorFromSplitResult(a.split('T'));
-    Vector<String> expected({ "his is a sentence."_s });
+    Vector<RefPtr<StringImpl>> actual = vectorFromSplitResult(a.split('T'));
+    Vector<RefPtr<StringImpl>> expected({ "his is a sentence."_s });
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_EQ(expected[i], actual[i]) << "Vectors differ at index " << i;
@@ -346,11 +347,11 @@ TEST(WTF, StringViewSplitBasic)
 
 TEST(WTF, StringViewSplitWithConsecutiveSeparators)
 {
-    String referenceHolder;
+    RefPtr<StringImpl> referenceHolder;
     StringView a = stringViewFromUTF8(referenceHolder, " This     is  a       sentence. ");
 
-    Vector<String> actual = vectorFromSplitResult(a.split(' '));
-    Vector<String> expected({ "This"_s, "is"_s, "a"_s, "sentence."_s });
+    Vector<RefPtr<StringImpl>> actual = vectorFromSplitResult(a.split(' '));
+    Vector<RefPtr<StringImpl>> expected({ "This"_s, "is"_s, "a"_s, "sentence."_s });
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_EQ(expected[i], actual[i]) << "Vectors differ at index " << i;
@@ -364,7 +365,7 @@ TEST(WTF, StringViewSplitWithConsecutiveSeparators)
 
 TEST(WTF, StringViewEqualBasic)
 {
-    String referenceHolder;
+    RefPtr<StringImpl> referenceHolder;
     StringView a = stringViewFromUTF8(referenceHolder, "Hello World!");
     EXPECT_TRUE(a == "Hello World!"_s);
     EXPECT_FALSE(a == "Hello World"_s);
@@ -467,9 +468,9 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
 
 TEST(WTF, StringViewFindIgnoringASCIICaseBasic)
 {
-    String referenceAHolder;
+    RefPtr<StringImpl> referenceAHolder;
     StringView referenceA = stringViewFromUTF8(referenceAHolder, "aBcéeFG");
-    String referenceBHolder;
+    RefPtr<StringImpl> referenceBHolder;
     StringView referenceB = stringViewFromUTF8(referenceBHolder, "ABCÉEFG");
 
     // Search the exact string.
@@ -480,7 +481,7 @@ TEST(WTF, StringViewFindIgnoringASCIICaseBasic)
     EXPECT_EQ(static_cast<size_t>(notFound), referenceA.findIgnoringASCIICase(referenceB));
     EXPECT_EQ(static_cast<size_t>(notFound), referenceB.findIgnoringASCIICase(referenceA));
 
-    String tempStringHolder;
+    RefPtr<StringImpl> tempStringHolder;
     // Find the prefix.
     EXPECT_EQ(static_cast<size_t>(0), referenceA.findIgnoringASCIICase(stringViewFromLiteral("a")));
     EXPECT_EQ(static_cast<size_t>(0), referenceA.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "abcé")));
@@ -580,9 +581,9 @@ TEST(WTF, StringViewFindIgnoringASCIICaseBasic)
 
 TEST(WTF, StringViewFindIgnoringASCIICaseWithValidOffset)
 {
-    String referenceHolder;
+    RefPtr<StringImpl> referenceHolder;
     StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFGaBcéeFG");
-    String tempStringHolder;
+    RefPtr<StringImpl> tempStringHolder;
 
     EXPECT_EQ(static_cast<size_t>(0), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABC"), 0));
     EXPECT_EQ(static_cast<size_t>(7), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABC"), 1));
@@ -594,9 +595,9 @@ TEST(WTF, StringViewFindIgnoringASCIICaseWithValidOffset)
 
 TEST(WTF, StringViewFindIgnoringASCIICaseWithInvalidOffset)
 {
-    String referenceHolder;
+    RefPtr<StringImpl> referenceHolder;
     StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFGaBcéeFG");
-    String tempStringHolder;
+    RefPtr<StringImpl> tempStringHolder;
 
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABC"), 15));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(stringViewFromUTF8(tempStringHolder, "ABC"), 16));
@@ -607,7 +608,7 @@ TEST(WTF, StringViewFindIgnoringASCIICaseWithInvalidOffset)
 
 TEST(WTF, StringViewFindIgnoringASCIICaseOnEmpty)
 {
-    String referenceHolder;
+    RefPtr<StringImpl> referenceHolder;
     StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFG");
     StringView empty = stringViewFromLiteral("");
     EXPECT_EQ(static_cast<size_t>(0), reference.findIgnoringASCIICase(empty));
@@ -621,9 +622,9 @@ TEST(WTF, StringViewFindIgnoringASCIICaseOnEmpty)
 
 TEST(WTF, StringViewFindIgnoringASCIICaseWithPatternLongerThanReference)
 {
-    String referenceHolder;
+    RefPtr<StringImpl> referenceHolder;
     StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFG");
-    String patternHolder;
+    RefPtr<StringImpl> patternHolder;
     StringView pattern = stringViewFromUTF8(patternHolder, "ABCÉEFGA");
 
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(pattern));
@@ -633,7 +634,7 @@ TEST(WTF, StringViewFindIgnoringASCIICaseWithPatternLongerThanReference)
 TEST(WTF, StringViewStartsWithBasic)
 {
     StringView reference = stringViewFromLiteral("abcdefg");
-    String referenceUTF8Ref;
+    RefPtr<StringImpl> referenceUTF8Ref;
     StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "àîûèô");
 
     StringView oneLetterPrefix = stringViewFromLiteral("a");
@@ -643,15 +644,15 @@ TEST(WTF, StringViewStartsWithBasic)
     StringView empty = stringViewFromLiteral("");
     StringView notPrefix = stringViewFromLiteral("bc");
 
-    String oneLetterPrefixUTF8Ref;
+    RefPtr<StringImpl> oneLetterPrefixUTF8Ref;
     StringView oneLetterPrefixUTF8 = stringViewFromUTF8(oneLetterPrefixUTF8Ref, "à");
-    String shortPrefixUTF8Ref;
+    RefPtr<StringImpl> shortPrefixUTF8Ref;
     StringView shortPrefixUTF8 = stringViewFromUTF8(shortPrefixUTF8Ref, "àî");
-    String longPrefixUTF8Ref;
+    RefPtr<StringImpl> longPrefixUTF8Ref;
     StringView longPrefixUTF8 = stringViewFromUTF8(longPrefixUTF8Ref, "àîûè");
-    String upperCasePrefixUTF8Ref;
+    RefPtr<StringImpl> upperCasePrefixUTF8Ref;
     StringView upperCasePrefixUTF8 = stringViewFromUTF8(upperCasePrefixUTF8Ref, "ÀÎ");
-    String notPrefixUTF8Ref;
+    RefPtr<StringImpl> notPrefixUTF8Ref;
     StringView notPrefixUTF8 = stringViewFromUTF8(notPrefixUTF8Ref, "îû");
 
     EXPECT_TRUE(reference.startsWith(reference));
@@ -679,7 +680,7 @@ TEST(WTF, StringViewStartsWithBasic)
 TEST(WTF, StringViewStartsWithEmpty)
 {
     StringView a = stringViewFromLiteral("");
-    String refB;
+    RefPtr<StringImpl> refB;
     StringView b = stringViewFromUTF8(refB, "");
 
     EXPECT_TRUE(a.startsWith(a));
@@ -692,7 +693,7 @@ TEST(WTF, StringViewStartsWithIgnoringASCIICaseBasic)
 {
     StringView reference = stringViewFromLiteral("abcdefg");
 
-    String referenceUTF8Ref;
+    RefPtr<StringImpl> referenceUTF8Ref;
     StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "àîûèô");
 
     StringView oneLetterPrefix = stringViewFromLiteral("a");
@@ -703,15 +704,15 @@ TEST(WTF, StringViewStartsWithIgnoringASCIICaseBasic)
     StringView empty = stringViewFromLiteral("");
     StringView notPrefix = stringViewFromLiteral("bc");
 
-    String oneLetterPrefixUTF8Ref;
+    RefPtr<StringImpl> oneLetterPrefixUTF8Ref;
     StringView oneLetterPrefixUTF8 = stringViewFromUTF8(oneLetterPrefixUTF8Ref, "à");
-    String shortPrefixUTF8Ref;
+    RefPtr<StringImpl> shortPrefixUTF8Ref;
     StringView shortPrefixUTF8 = stringViewFromUTF8(shortPrefixUTF8Ref, "àî");
-    String longPrefixUTF8Ref;
+    RefPtr<StringImpl> longPrefixUTF8Ref;
     StringView longPrefixUTF8 = stringViewFromUTF8(longPrefixUTF8Ref, "àîûè");
-    String upperCasePrefixUTF8Ref;
+    RefPtr<StringImpl> upperCasePrefixUTF8Ref;
     StringView upperCasePrefixUTF8 = stringViewFromUTF8(upperCasePrefixUTF8Ref, "ÀÎ");
-    String notPrefixUTF8Ref;
+    RefPtr<StringImpl> notPrefixUTF8Ref;
     StringView notPrefixUTF8 = stringViewFromUTF8(notPrefixUTF8Ref, "îû");
 
     EXPECT_TRUE(reference.startsWithIgnoringASCIICase(reference));
@@ -741,7 +742,7 @@ TEST(WTF, StringViewStartsWithIgnoringASCIICaseBasic)
 TEST(WTF, StringViewStartsWithIgnoringASCIICaseEmpty)
 {
     StringView a = stringViewFromLiteral("");
-    String refB;
+    RefPtr<StringImpl> refB;
     StringView b = stringViewFromUTF8(refB, "");
 
     EXPECT_TRUE(a.startsWithIgnoringASCIICase(a));
@@ -753,7 +754,7 @@ TEST(WTF, StringViewStartsWithIgnoringASCIICaseEmpty)
 TEST(WTF, StringViewStartsWithIgnoringASCIICaseWithLatin1Characters)
 {
     StringView reference = stringViewFromLiteral("aBcéeFG");
-    String referenceUTF8Ref;
+    RefPtr<StringImpl> referenceUTF8Ref;
     StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "aBcéeFG");
 
     StringView a = stringViewFromLiteral("aBcéeF");
@@ -761,13 +762,13 @@ TEST(WTF, StringViewStartsWithIgnoringASCIICaseWithLatin1Characters)
     StringView c = stringViewFromLiteral("abcéef");
     StringView d = stringViewFromLiteral("Abcéef");
 
-    String refE;
+    RefPtr<StringImpl> refE;
     StringView e = stringViewFromUTF8(refE, "aBcéeF");
-    String refF;
+    RefPtr<StringImpl> refF;
     StringView f = stringViewFromUTF8(refF, "ABCéEF");
-    String refG;
+    RefPtr<StringImpl> refG;
     StringView g = stringViewFromUTF8(refG, "abcéef");
-    String refH;
+    RefPtr<StringImpl> refH;
     StringView h = stringViewFromUTF8(refH, "Abcéef");
     
     EXPECT_TRUE(reference.startsWithIgnoringASCIICase(a));
@@ -787,7 +788,7 @@ TEST(WTF, StringViewStartsWithIgnoringASCIICaseWithLatin1Characters)
 TEST(WTF, StringViewEndsWithBasic)
 {
     StringView reference = stringViewFromLiteral("abcdefg");
-    String referenceUTF8Ref;
+    RefPtr<StringImpl> referenceUTF8Ref;
     StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "àîûèô");
 
     StringView oneLetterSuffix = stringViewFromLiteral("g");
@@ -797,15 +798,15 @@ TEST(WTF, StringViewEndsWithBasic)
     StringView empty = stringViewFromLiteral("");
     StringView notSuffix = stringViewFromLiteral("bc");
 
-    String oneLetterSuffixUTF8Ref;
+    RefPtr<StringImpl> oneLetterSuffixUTF8Ref;
     StringView oneLetterSuffixUTF8 = stringViewFromUTF8(oneLetterSuffixUTF8Ref, "ô");
-    String shortSuffixUTF8Ref;
+    RefPtr<StringImpl> shortSuffixUTF8Ref;
     StringView shortSuffixUTF8 = stringViewFromUTF8(shortSuffixUTF8Ref, "èô");
-    String longSuffixUTF8Ref;
+    RefPtr<StringImpl> longSuffixUTF8Ref;
     StringView longSuffixUTF8 = stringViewFromUTF8(longSuffixUTF8Ref, "îûèô");
-    String upperCaseSuffixUTF8Ref;
+    RefPtr<StringImpl> upperCaseSuffixUTF8Ref;
     StringView upperCaseSuffixUTF8 = stringViewFromUTF8(upperCaseSuffixUTF8Ref, "ÈÔ");
-    String notSuffixUTF8Ref;
+    RefPtr<StringImpl> notSuffixUTF8Ref;
     StringView notSuffixUTF8 = stringViewFromUTF8(notSuffixUTF8Ref, "îû");
 
     EXPECT_TRUE(reference.endsWith(reference));
@@ -833,7 +834,7 @@ TEST(WTF, StringViewEndsWithBasic)
 TEST(WTF, StringViewEndsWithEmpty)
 {
     StringView a = stringViewFromLiteral("");
-    String refB;
+    RefPtr<StringImpl> refB;
     StringView b = stringViewFromUTF8(refB, "");
 
     EXPECT_TRUE(a.endsWith(a));
@@ -845,7 +846,7 @@ TEST(WTF, StringViewEndsWithEmpty)
 TEST(WTF, StringViewEndsWithIgnoringASCIICaseBasic)
 {
     StringView reference = stringViewFromLiteral("abcdefg");
-    String referenceUTF8Ref;
+    RefPtr<StringImpl> referenceUTF8Ref;
     StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "àîûèô");
 
     StringView oneLetterSuffix = stringViewFromLiteral("g");
@@ -856,15 +857,15 @@ TEST(WTF, StringViewEndsWithIgnoringASCIICaseBasic)
     StringView empty = stringViewFromLiteral("");
     StringView notSuffix = stringViewFromLiteral("bc");
 
-    String oneLetterSuffixUTF8Ref;
+    RefPtr<StringImpl> oneLetterSuffixUTF8Ref;
     StringView oneLetterSuffixUTF8 = stringViewFromUTF8(oneLetterSuffixUTF8Ref, "ô");
-    String shortSuffixUTF8Ref;
+    RefPtr<StringImpl> shortSuffixUTF8Ref;
     StringView shortSuffixUTF8 = stringViewFromUTF8(shortSuffixUTF8Ref, "èô");
-    String longSuffixUTF8Ref;
+    RefPtr<StringImpl> longSuffixUTF8Ref;
     StringView longSuffixUTF8 = stringViewFromUTF8(longSuffixUTF8Ref, "îûèô");
-    String upperCaseSuffixUTF8Ref;
+    RefPtr<StringImpl> upperCaseSuffixUTF8Ref;
     StringView upperCaseSuffixUTF8 = stringViewFromUTF8(upperCaseSuffixUTF8Ref, "ÈÔ");
-    String notSuffixUTF8Ref;
+    RefPtr<StringImpl> notSuffixUTF8Ref;
     StringView notSuffixUTF8 = stringViewFromUTF8(notSuffixUTF8Ref, "îû");
 
     EXPECT_TRUE(reference.endsWithIgnoringASCIICase(reference));
@@ -893,7 +894,7 @@ TEST(WTF, StringViewEndsWithIgnoringASCIICaseBasic)
 TEST(WTF, StringViewEndsWithIgnoringASCIICaseEmpty)
 {
     StringView a = stringViewFromLiteral("");
-    String refB;
+    RefPtr<StringImpl> refB;
     StringView b = stringViewFromUTF8(refB, "");
 
     EXPECT_TRUE(a.endsWithIgnoringASCIICase(a));
@@ -905,7 +906,7 @@ TEST(WTF, StringViewEndsWithIgnoringASCIICaseEmpty)
 TEST(WTF, StringViewEndsWithIgnoringASCIICaseWithLatin1Characters)
 {
     StringView reference = stringViewFromLiteral("aBcéeFG");
-    String referenceUTF8Ref;
+    RefPtr<StringImpl> referenceUTF8Ref;
     StringView referenceUTF8 = stringViewFromUTF8(referenceUTF8Ref, "aBcéeFG");
 
     StringView a = stringViewFromLiteral("BcéeFG");
@@ -913,13 +914,13 @@ TEST(WTF, StringViewEndsWithIgnoringASCIICaseWithLatin1Characters)
     StringView c = stringViewFromLiteral("bcéefG");
     StringView d = stringViewFromLiteral("bcéefg");
 
-    String refE;
+    RefPtr<StringImpl> refE;
     StringView e = stringViewFromUTF8(refE, "bcéefG");
-    String refF;
+    RefPtr<StringImpl> refF;
     StringView f = stringViewFromUTF8(refF, "BCéEFG");
-    String refG;
+    RefPtr<StringImpl> refG;
     StringView g = stringViewFromUTF8(refG, "bcéefG");
-    String refH;
+    RefPtr<StringImpl> refH;
     StringView h = stringViewFromUTF8(refH, "bcéefg");
     
     EXPECT_TRUE(reference.endsWithIgnoringASCIICase(a));
@@ -946,11 +947,11 @@ TEST(WTF, StringView8Bit)
     EXPECT_TRUE(StringView(lcharSpan).is8Bit());
     EXPECT_FALSE(StringView(ucharSpan).is8Bit());
 
-    EXPECT_TRUE(StringView(String(lcharSpan)).is8Bit());
-    EXPECT_TRUE(StringView(String(ucharSpan)).is8Bit());
+    EXPECT_TRUE(StringView(StringImpl::create(lcharSpan).ptr()).is8Bit());
+    EXPECT_TRUE(StringView(StringImpl::create(ucharSpan).ptr()).is8Bit());
 
-    EXPECT_TRUE(StringView(String().impl()).is8Bit());
-    EXPECT_TRUE(StringView(emptyString().impl()).is8Bit());
+    EXPECT_TRUE(StringView(nullString().get()).is8Bit());
+    EXPECT_TRUE(StringView(emptyString().get()).is8Bit());
 }
 
 TEST(WTF, StringViewRightBasic)
@@ -1057,12 +1058,12 @@ TEST(WTF, StringViewTrim)
 
 TEST(WTF, StringViewContainsOnlyASCII)
 {
-    EXPECT_TRUE(StringView(String("Hello"_s)).containsOnlyASCII());
-    EXPECT_TRUE(StringView(String("Cocoa"_s)).containsOnlyASCII());
-    EXPECT_FALSE(StringView(String::fromLatin1("📱")).containsOnlyASCII());
-    EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).containsOnlyASCII());
+    EXPECT_TRUE(StringView("Hello"_si).containsOnlyASCII());
+    EXPECT_TRUE(StringView("Cocoa"_si).containsOnlyASCII());
+    EXPECT_FALSE(StringView(StringImpl::fromLatin1("📱")).containsOnlyASCII());
+    EXPECT_FALSE(StringView(StringImpl::fromLatin1("\u0080")).containsOnlyASCII());
     constexpr size_t zeroLength = 0;
-    EXPECT_TRUE(StringView(String({ reinterpret_cast<const char16_t*>(u"Hello"), zeroLength })).containsOnlyASCII());
+    EXPECT_TRUE(StringView(StringImpl::create({ reinterpret_cast<const char16_t*>(u"Hello"), zeroLength }).ptr()).containsOnlyASCII());
 }
 
 TEST(WTF, StringViewUpconvert)
@@ -1089,7 +1090,7 @@ TEST(WTF, StringViewCodePointAtASCII)
 
 TEST(WTF, StringViewCodePointAtBMP)
 {
-    auto string = String::fromUTF8("caf\xC3\xA9");
+    auto string = StringImpl::fromUTF8("caf\xC3\xA9");
     ASSERT_FALSE(StringView(string).is8Bit());
     ASSERT_EQ(StringView(string).codePointAt(0), static_cast<char32_t>('c'));
     ASSERT_EQ(StringView(string).codePointAt(3), 0x00E9u);
@@ -1097,7 +1098,7 @@ TEST(WTF, StringViewCodePointAtBMP)
 
 TEST(WTF, StringViewCodePointAtSupplementary)
 {
-    auto string = String::fromUTF8("A\xF0\x9F\x98\x80Z");
+    auto string = StringImpl::fromUTF8("A\xF0\x9F\x98\x80Z");
     StringView view(string);
     ASSERT_FALSE(view.is8Bit());
     ASSERT_EQ(view.length(), 4u);

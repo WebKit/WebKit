@@ -90,7 +90,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
         context.m_grantedPermissions = parameters.grantedPermissions;
         context.m_localization = parseLocalization(parameters.localizationJSON, parameters.baseURL);
         Ref manifestJSON = *parameters.manifestJSON;
-        context.m_manifest = JSON::Value::parseJSON(String::fromUTF8(manifestJSON->span()));
+        context.m_manifest = JSON::Value::parseJSON(StringImpl::fromUTF8(manifestJSON->span()));
         context.m_usesStructuredCloneMessageSerialization = parameters.usesStructuredCloneMessageSerialization;
         context.m_manifestVersion = parameters.manifestVersion;
         context.m_storageAccessLevels = parameters.storageAccessLevels;
@@ -149,13 +149,13 @@ WebExtensionControllerProxy* WebExtensionContextProxy::extensionControllerProxy(
     return m_extensionControllerProxy.get();
 }
 
-bool WebExtensionContextProxy::isUnsupportedAPI(const String& propertyPath, const ASCIILiteral& propertyName) const
+bool WebExtensionContextProxy::isUnsupportedAPI(StringImpl* propertyPath, const ASCIILiteral& propertyName) const
 {
-    auto fullPropertyPath = !propertyPath.isEmpty() ? makeString(propertyPath, '.', propertyName) : propertyName;
+    auto fullPropertyPath = !isEmpty(propertyPath) ? makeString(propertyPath, '.', propertyName) : propertyName;
     return m_unsupportedAPIs.contains(fullPropertyPath);
 }
 
-bool WebExtensionContextProxy::hasPermission(const String& permission) const
+bool WebExtensionContextProxy::hasPermission(StringImpl* permission) const
 {
     WallTime currentTime = WallTime::now();
 
@@ -190,7 +190,7 @@ RefPtr<WebExtensionLocalization> WebExtensionContextProxy::parseLocalization(Ref
     if (!json)
         return nullptr;
 
-    if (RefPtr value = JSON::Value::parseJSON(String::fromUTF8(json->span()))) {
+    if (RefPtr value = JSON::Value::parseJSON(StringImpl::fromUTF8(json->span()))) {
         if (RefPtr object = value->asObject())
             return WebExtensionLocalization::create(object, baseURL.host().toString());
     }
@@ -205,7 +205,7 @@ void WebExtensionContextProxy::addFrameWithExtensionContent(WebFrame& frame)
 
 bool WebExtensionContextProxy::isURLForThisExtension(const URL& url) const
 {
-    return url.isValid() && url.string().startsWith(m_baseURL.string());
+    return url.isValid() && startsWith(url.string(), m_baseURL.string());
 }
 
 std::optional<WebExtensionTabIdentifier> WebExtensionContextProxy::tabIdentifier(WebPage& page) const
@@ -380,12 +380,12 @@ void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(NOESCAPE const
         auto globalObject = JSContextGetGlobalObject(context);
 
         RefPtr<WebExtensionAPINamespace> namespaceObjectImpl;
-        auto browserNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser"_s).get(), nullptr);
+        auto browserNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser"_si).get(), nullptr);
         if (browserNamespaceObject && JSValueIsObject(context, browserNamespaceObject))
             namespaceObjectImpl = toWebExtensionAPINamespace(context, browserNamespaceObject);
 
         if (!namespaceObjectImpl) {
-            auto chromeNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("chrome"_s).get(), nullptr);
+            auto chromeNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("chrome"_si).get(), nullptr);
             if (chromeNamespaceObject && JSValueIsObject(context, chromeNamespaceObject))
                 namespaceObjectImpl = toWebExtensionAPINamespace(context, chromeNamespaceObject);
         }
@@ -404,7 +404,7 @@ void WebExtensionContextProxy::enumerateFramesAndWebPageNamespaceObjects(NOESCAP
         auto globalObject = JSContextGetGlobalObject(context);
 
         RefPtr<WebExtensionAPIWebPageNamespace> namespaceObjectImpl;
-        auto browserNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser"_s).get(), nullptr);
+        auto browserNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser"_si).get(), nullptr);
         if (browserNamespaceObject && JSValueIsObject(context, browserNamespaceObject))
             namespaceObjectImpl = toWebExtensionAPIWebPageNamespace(context, browserNamespaceObject);
 
@@ -434,7 +434,7 @@ Ref<WebCore::DOMWrapperWorld> WebExtensionContextProxy::toDOMWrapperWorld(WebExt
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void WebExtensionContextProxy::didEncounterScriptError(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, WebExtensionContentWorldType worldType)
+void WebExtensionContextProxy::didEncounterScriptError(StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber, WebExtensionContentWorldType worldType)
 {
     WebProcess::singleton().send(Messages::WebExtensionContext::DidEncounterScriptError(message, sourceURL, lineNumber, columnNumber, worldType), identifier());
 }

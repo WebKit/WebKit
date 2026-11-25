@@ -78,7 +78,7 @@ const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttri
 
     // In MathML Core, attribute values are ASCII case-insensitive.
     // https://w3c.github.io/mathml-core/#dfn-boolean
-    const AtomString& value = attributeWithoutSynchronization(name);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(name);
     if (equalIgnoringASCIICase(value, trueAtom()))
         attribute = BooleanValue::True;
     else if (equalIgnoringASCIICase(value, falseAtom()))
@@ -209,7 +209,7 @@ const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const
     return length.value();
 }
 
-MathVariant MathMLPresentationElement::parseMathVariantAttribute(const AtomString& attributeValue)
+MathVariant MathMLPresentationElement::parseMathVariantAttribute(AtomStringImpl* attributeValue)
 {
     // The mathvariant attribute values is case-sensitive.
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, MathVariant>>({
@@ -244,7 +244,7 @@ std::optional<MathVariant> MathMLPresentationElement::specifiedMathVariant()
     return m_mathVariant.value() == MathVariant::None ? std::nullopt : m_mathVariant;
 }
 
-void MathMLPresentationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLPresentationElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == mathvariantAttr && acceptsLegacyMathVariantAttribute()) {
         m_mathVariant = std::nullopt;

@@ -69,7 +69,7 @@ inline void CSSFontFaceSource::setStatus(Status newStatus)
     m_status = newStatus;
 }
 
-CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName)
+CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, RefPtr<AtomStringImpl> fontFaceName)
     : m_fontFaceName(WTF::move(fontFaceName))
     , m_owningCSSFontFace(owner)
 {
@@ -94,7 +94,7 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector& fontSe
     }
 }
 
-CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement& fontFace)
+CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, RefPtr<AtomStringImpl> fontFaceName, SVGFontFaceElement& fontFace)
     : m_fontFaceName(WTF::move(fontFaceName))
     , m_owningCSSFontFace(owner)
     , m_svgFontFaceElement(fontFace)
@@ -131,7 +131,7 @@ bool CSSFontFaceSource::shouldIgnoreFontLoadCompletions() const
 
 void CSSFontFaceSource::opportunisticallyStartFontDataURLLoading(DownloadableBinaryFontTrustedTypes trustedType)
 {
-    if (status() == Status::Pending && m_fontRequest && m_fontRequest->url().protocolIsData() && m_fontRequest->url().string().length() < MB)
+    if (status() == Status::Pending && m_fontRequest && m_fontRequest->url().protocolIsData() && length(m_fontRequest->url().string()) < MB)
         load(trustedType);
 }
 
@@ -163,7 +163,7 @@ RefPtr<FontCustomPlatformData> CSSFontFaceSource::loadCustomFont(SharedBuffer& b
 {
     // FIXME: We should refactor this so that the unused wrapping parameter is not required.
     bool wrapping = false;
-    return CachedFont::createCustomFontData(buffer, String(), wrapping, trustedTypes);
+    return CachedFont::createCustomFontData(buffer, nullString(), wrapping, trustedTypes);
 }
 
 void CSSFontFaceSource::load(DownloadableBinaryFontTrustedTypes trustedTypes, Document* document)
@@ -204,7 +204,7 @@ void CSSFontFaceSource::load(DownloadableBinaryFontTrustedTypes trustedTypes, Do
             fontDescription.setShouldAllowUserInstalledFonts(cssFontFace().allowUserInstalledFonts());
             success = protect(FontCache::forCurrentThread())->fontForFamily(fontDescription, m_fontFaceName, { }, FontLookupOptions::ExactFamilyNameMatch);
             if (document && document->settings().webAPIStatisticsEnabled())
-                ResourceLoadObserver::singleton().logFontLoad(*document, m_fontFaceName.string(), success);
+                ResourceLoadObserver::singleton().logFontLoad(*document, m_fontFaceName, success);
         }
         setStatus(success ? Status::Success : Status::Failure);
     }

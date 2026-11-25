@@ -79,23 +79,23 @@ public:
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
     Inspector::Protocol::ErrorStringOr<void> reload(std::optional<bool>&& ignoreCache, std::optional<bool>&& revalidateAllResources);
-    Inspector::Protocol::ErrorStringOr<void> overrideUserAgent(const String&);
+    Inspector::Protocol::ErrorStringOr<void> overrideUserAgent(StringImpl*);
     Inspector::Protocol::ErrorStringOr<void> overrideSetting(Inspector::Protocol::Page::Setting, std::optional<bool>&& value);
     Inspector::Protocol::ErrorStringOr<void> overrideUserPreference(Inspector::Protocol::Page::UserPreferenceName, std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>>> getCookies();
     Inspector::Protocol::ErrorStringOr<void> setCookie(Ref<JSON::Object>&&, std::optional<bool>&& shouldPartition);
-    Inspector::Protocol::ErrorStringOr<void> deleteCookie(const String& cookieName, const String& url);
+    Inspector::Protocol::ErrorStringOr<void> deleteCookie(StringImpl* cookieName, StringImpl* url);
     void getResourceTree(Ref<GetResourceTreeCallback>&&);
-    void getResourceContent(const Inspector::Protocol::Network::FrameId&, const String& url, Ref<GetResourceContentCallback>&&);
-    Inspector::Protocol::ErrorStringOr<void> setBootstrapScript(const String& source);
-    void searchInResource(const Inspector::Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Inspector::Protocol::Network::RequestId&, Ref<SearchInResourceCallback>&&);
-    void searchInResources(const String&, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&);
+    void getResourceContent(StringImpl*, StringImpl* url, Ref<GetResourceContentCallback>&&);
+    Inspector::Protocol::ErrorStringOr<void> setBootstrapScript(StringImpl* source);
+    void searchInResource(StringImpl*, StringImpl* url, StringImpl* query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, StringImpl*, Ref<SearchInResourceCallback>&&);
+    void searchInResources(StringImpl*, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<SearchInResourcesCallback>&&);
 #if !PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> setShowRulers(bool);
 #endif
     Inspector::Protocol::ErrorStringOr<void> setShowPaintRects(bool);
-    Inspector::Protocol::ErrorStringOr<void> setEmulatedMedia(const String&);
-    void snapshotNode(Inspector::Protocol::DOM::NodeId, const String& targetId, Ref<SnapshotNodeCallback>&&);
+    Inspector::Protocol::ErrorStringOr<void> setEmulatedMedia(StringImpl*);
+    void snapshotNode(Inspector::Protocol::DOM::NodeId, StringImpl* targetId, Ref<SnapshotNodeCallback>&&);
     void snapshotRect(int x, int y, int width, int height, Inspector::Protocol::Page::CoordinateSystem, Ref<SnapshotRectCallback>&&);
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
     void archive(Ref<ArchiveCallback>&&);
@@ -115,8 +115,8 @@ public:
 #if ENABLE(DARK_MODE_CSS)
     void defaultAppearanceDidChange();
 #endif
-    void applyUserAgentOverride(String&);
-    void applyEmulatedMedia(AtomString&);
+    void applyUserAgentOverride(RefPtr<StringImpl>&);
+    void applyEmulatedMedia(RefPtr<AtomStringImpl>&);
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
     void didPaint(RenderObject&, const LayoutRect&);
     void didLayout();
@@ -124,11 +124,11 @@ public:
     void didRecalculateStyle();
 
     Frame* frameForId(const Inspector::Protocol::Network::FrameId&);
-    WEBCORE_EXPORT String frameId(Frame*);
-    String loaderId(DocumentLoader*);
+    WEBCORE_EXPORT RefPtr<StringImpl> frameId(Frame*);
+    RefPtr<StringImpl> loaderId(DocumentLoader*);
     RefPtr<LocalFrame> assertFrame(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
 
-    static void evaluateBootstrapScript(LocalFrame&, const String& source);
+    static void evaluateBootstrapScript(LocalFrame&, StringImpl* source);
 
     // Returns false if the setting isn't backed by page Settings.
     WEBCORE_EXPORT static bool applySettingOverride(Page&, Inspector::Protocol::Page::Setting, std::optional<bool>);
@@ -152,9 +152,9 @@ private:
     InspectorBackendClient* m_client { nullptr };
     WeakRef<InspectorOverlay> m_overlay;
 
-    String m_userAgentOverride;
-    AtomString m_emulatedMedia;
-    String m_bootstrapScript;
+    RefPtr<StringImpl> m_userAgentOverride;
+    RefPtr<AtomStringImpl> m_emulatedMedia;
+    RefPtr<StringImpl> m_bootstrapScript;
     bool m_isFirstLayoutAfterOnLoad { false };
     bool m_showPaintRects { false };
 };

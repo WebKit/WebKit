@@ -63,7 +63,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
     // strerror_r() leaves the buffer unspecified when it fails.
     if (unknownError)
-        return makeString("Unknown error "_s, errnum).utf8();
+        return utf8(makeString("Unknown error "_s, errnum));
 
     // strerror_r() truncates rather than overflowing, so bound the length by the buffer.
     size_t length = strnlen(message, bufferLength);

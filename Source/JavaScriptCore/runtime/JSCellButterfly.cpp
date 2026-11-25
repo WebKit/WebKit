@@ -230,7 +230,7 @@ JSCellButterfly* JSCellButterfly::createFromString(JSGlobalObject* globalObject,
                 characters[index],
                 characters[index + 1],
             };
-            value = jsNontrivialString(vm, String(string));
+            value = jsNontrivialString(vm, StringImpl::create(string));
         }
 
         result->setIndex(vm, resultIndex++, value);

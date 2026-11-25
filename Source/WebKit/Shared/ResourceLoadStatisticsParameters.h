@@ -35,7 +35,7 @@
 namespace WebKit {
 
 struct ResourceLoadStatisticsParameters {
-    String directory;
+    RefPtr<StringImpl> directory;
     SandboxExtension::Handle directoryExtensionHandle;
     bool enabled { false };
     bool enableLogTestingEvent { false };

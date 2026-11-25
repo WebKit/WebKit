@@ -76,7 +76,7 @@ private:
 
     using ULocaleDisplayNamesDeleter = ICUDeleter<uldn_close>;
     std::unique_ptr<ULocaleDisplayNames, ULocaleDisplayNamesDeleter> m_displayNames;
-    String m_locale;
+    RefPtr<StringImpl> m_locale;
     // FIXME: We should store it only when m_type is Currency.
     // https://bugs.webkit.org/show_bug.cgi?id=213773
     ASCIICString m_localeCString;

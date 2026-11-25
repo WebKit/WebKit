@@ -109,7 +109,7 @@ DragImage DragImage::create(NativeImage& image, GraphicsClient* client, float de
     return DragImage { createDragImageFromImage(image, client, deviceScaleFactor) };
 }
     
-static RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filename)
+static RetainPtr<NSImage> createDragImageIconForCachedImageFilename(StringImpl* filename)
 {
     // It might be worth doing a further lookup to pull the extension from the MIME type when there isn't one.
     RetainPtr extension = FileSystem::pathExtension(filename).createNSString();
@@ -119,7 +119,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-DragImage DragImage::createIconForCachedImageFilename(const String& filename)
+DragImage DragImage::createIconForCachedImageFilename(StringImpl* filename)
 {
     return DragImage { createDragImageIconForCachedImageFilename(filename) };
 }

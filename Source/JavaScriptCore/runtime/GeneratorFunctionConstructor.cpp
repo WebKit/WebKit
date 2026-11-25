@@ -58,7 +58,7 @@ GeneratorFunctionConstructor::GeneratorFunctionConstructor(VM& vm, Structure* st
 
 void GeneratorFunctionConstructor::finishCreation(VM& vm, GeneratorFunctionPrototype* generatorFunctionPrototype)
 {
-    Base::finishCreation(vm, 1, "GeneratorFunction"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "GeneratorFunction"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, generatorFunctionPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

@@ -395,7 +395,7 @@ void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSFunction* function, JSS
 
     if (vm.getAndClearFailNextNewCodeBlock()) [[unlikely]] {
         JSGlobalObject* globalObject = scope->realm();
-        throwException(globalObject, throwScope, createError(globalObject, "Forced Failure"_s));
+        throwException(globalObject, throwScope, createError(globalObject, "Forced Failure"_si));
         return;
     }
 

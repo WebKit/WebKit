@@ -136,7 +136,7 @@ void WebChromeClient::webAppOrientationsUpdated()
     notImplemented();
 }
 
-void WebChromeClient::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy policy, const String& routingContextUID)
+void WebChromeClient::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy policy, StringImpl* routingContextUID)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(hasVideo, page->rectForElementAtInteractionLocation(), policy, routingContextUID));
@@ -191,7 +191,7 @@ bool WebChromeClient::showDataDetectorsUIForElement(const Element& element, cons
     return true;
 }
 
-void WebChromeClient::relayAccessibilityNotification(String&& notificationName, RetainPtr<NSData>&& notificationData) const
+void WebChromeClient::relayAccessibilityNotification(RefPtr<StringImpl>&& notificationName, RetainPtr<NSData>&& notificationData) const
 {
     if (RefPtr page = m_page.get())
         page->relayAccessibilityNotification(WTF::move(notificationName), WTF::move(notificationData));
@@ -209,7 +209,7 @@ void WebChromeClient::relayLiveRegionNotification(WebCore::LiveRegionAnnouncemen
         page->relayLiveRegionNotification(WTF::move(notificationData));
 }
 
-void WebChromeClient::didDisplayCaptions(Vector<String>&& captions) const
+void WebChromeClient::didDisplayCaptions(Vector<RefPtr<StringImpl>>&& captions) const
 {
     if (RefPtr page = m_page.get())
         page->didDisplayCaptions(WTF::move(captions));

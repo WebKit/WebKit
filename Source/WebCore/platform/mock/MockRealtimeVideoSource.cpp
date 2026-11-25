@@ -56,7 +56,7 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
-CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
+CaptureSourceOrError MockRealtimeVideoSource::create(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -85,7 +85,7 @@ FontCascadeDescription& MockRealtimeVideoSource::DrawingState::fontDescription()
 {
     if (!m_fontDescription) {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily("Courier"_s);
+        fontDescription.setOneFamily("Courier"_atom);
         fontDescription.setWeight(FontSelectionValue(500));
         m_fontDescription = { fontDescription };
     }
@@ -135,7 +135,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::statsFont()
     return *m_statsFont;
 }
 
-MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
+MockRealtimeVideoSource::MockRealtimeVideoSource(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeVideoCaptureSource(CaptureDevice { WTF::move(deviceID), CaptureDevice::DeviceType::Camera, WTF::move(name) }, WTF::move(hashSalts), pageIdentifier)
     , m_runLoop(RunLoop::create("WebKit::MockRealtimeVideoSource generateFrame runloop"_s))
     , m_emitFrameTimer(makeUnique<RunLoop::Timer>(m_runLoop.get(), "MockRealtimeVideoSource::EmitFrameTimer"_s, [weakThis = ThreadSafeWeakPtr { *this }]() {
@@ -278,7 +278,7 @@ auto MockRealtimeVideoSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhot
             return TakePhotoNativePromise::createAndReject("Capture interrupted by session reconfiguration"_s);
 
         if (currentImage)
-            return TakePhotoNativePromise::createAndResolve(std::make_pair(encodeData(WTF::move(currentImage), "image/png"_s, std::nullopt), "image/png"_s));
+            return TakePhotoNativePromise::createAndResolve(std::make_pair(encodeData(WTF::move(currentImage), "image/png"_si, std::nullopt), "image/png"_s));
 
         return TakePhotoNativePromise::createAndReject("Failed to capture photo"_s);
     });
@@ -480,7 +480,7 @@ void MockRealtimeVideoSource::startProducingData()
     ASSERT(!m_beingConfigured);
 
 #if ENABLE(EXTENSION_CAPABILITIES) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    ASSERT(!RealtimeMediaSourceCenter::singleton().currentMediaEnvironment().isEmpty() || !WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s));
+    ASSERT(!isEmpty(RealtimeMediaSourceCenter::singleton().currentMediaEnvironment()) || !WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s));
 #endif
 
     startCaptureTimer();
@@ -625,7 +625,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     string = makeString("Size: "_s, size.width(), " x "_s, size.height());
     context.drawText(protect(drawingState.statsFont()), TextRun { string }, statsLocation);
 
-    String deviceString;
+    RefPtr<StringImpl> deviceString;
     if (mockCamera()) {
         statsLocation.move(0, drawingState.statsFontSize());
         string = makeString("Preset size: "_s, captureSize.width(), " x "_s, captureSize.height());
@@ -651,13 +651,13 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
         }
         deviceString = makeString("Camera: "_s, camera);
     } else if (mockDisplay())
-        deviceString = "Display capture"_s;
+        deviceString = "Display capture"_si;
     else if (mockScreen())
-        deviceString = "Screen capture"_s;
+        deviceString = "Screen capture"_si;
     else if (mockWindow())
-        deviceString = "Window capture"_s;
+        deviceString = "Window capture"_si;
     else
-        deviceString = "Unknown capture"_s;
+        deviceString = "Unknown capture"_si;
 
     statsLocation.move(0, drawingState.statsFontSize());
     context.drawText(protect(drawingState.statsFont()), TextRun { string }, statsLocation);
@@ -666,11 +666,11 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     unsigned frameMod = m_frameNumber % 60;
     if (frameMod <= 15) {
         context.setFillColor(Color::cyan);
-        String bip("Bip"_s);
+        RefPtr<StringImpl> bip("Bip"_si);
         context.drawText(protect(drawingState.bipBopFont()), TextRun { bip }, bipBopLocation);
     } else if (frameMod > 30 && frameMod <= 45) {
         context.setFillColor(Color::yellow);
-        String bop("Bop"_s);
+        RefPtr<StringImpl> bop("Bop"_si);
         context.drawText(protect(drawingState.bipBopFont()), TextRun { bop }, bipBopLocation);
     }
 }
@@ -765,9 +765,9 @@ bool MockRealtimeVideoSource::mockDisplayType(CaptureDevice::DeviceType type) co
     return std::get<MockDisplayProperties>(m_device.properties).type == type;
 }
 
-void MockRealtimeVideoSource::rotationAngleForHorizonLevelDisplayChanged(const String& persistentID, VideoFrameRotation rotation)
+void MockRealtimeVideoSource::rotationAngleForHorizonLevelDisplayChanged(StringImpl* persistentID, VideoFrameRotation rotation)
 {
-    if (this->persistentID() != persistentID) {
+    if (!equal(this->persistentID(), persistentID)) {
         ASSERT_NOT_REACHED();
         return;
     }

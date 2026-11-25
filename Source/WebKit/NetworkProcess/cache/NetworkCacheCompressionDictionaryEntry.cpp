@@ -38,18 +38,18 @@
 
 namespace WebCore {
 // Created by binding generator.
-String convertEnumerationToString(FetchOptions::Destination);
+RefPtr<StringImpl> convertEnumerationToString(FetchOptions::Destination);
 }
 
 namespace WebKit::NetworkCache {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CompressionDictionaryEntry);
 
-std::optional<WebCore::FetchOptions::Destination> parseFetchDestination(const String& string)
+std::optional<WebCore::FetchOptions::Destination> parseFetchDestination(StringImpl* string)
 {
     std::optional<WebCore::FetchOptions::Destination> result;
     WTF::EnumTraitsForPersistence<WebCore::FetchOptions::Destination>::values::forEach([&](auto destination) {
-        if (!result && WebCore::convertEnumerationToString(destination) == string)
+        if (!result && equal(WebCore::convertEnumerationToString(destination), string))
             result = destination;
     });
     return result;
@@ -112,12 +112,12 @@ std::unique_ptr<CompressionDictionaryEntry> CompressionDictionaryEntry::decodeSt
     if (recordVersion != version)
         return nullptr;
 
-    std::optional<String> match;
+    std::optional<RefPtr<StringImpl>> match;
     decoder >> match;
     if (!match)
         return nullptr;
 
-    std::optional<String> id;
+    std::optional<RefPtr<StringImpl>> id;
     decoder >> id;
     if (!id)
         return nullptr;

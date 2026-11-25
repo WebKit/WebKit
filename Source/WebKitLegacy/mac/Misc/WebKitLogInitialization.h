@@ -36,7 +36,7 @@ WTF::LogChannels& logChannels();
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-WTFLogChannel* getLogChannel(const String& name);
+WTFLogChannel* getLogChannel(StringImpl* name);
 
 } // namespace WebKit
 

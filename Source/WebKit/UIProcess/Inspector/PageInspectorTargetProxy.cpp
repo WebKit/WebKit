@@ -43,12 +43,12 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PageInspectorTargetProxy);
 
-std::unique_ptr<PageInspectorTargetProxy> PageInspectorTargetProxy::create(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
+std::unique_ptr<PageInspectorTargetProxy> PageInspectorTargetProxy::create(WebPageProxy& page, StringImpl* targetId, Inspector::InspectorTargetType type)
 {
     return makeUnique<PageInspectorTargetProxy>(page, targetId, type);
 }
 
-std::unique_ptr<PageInspectorTargetProxy> PageInspectorTargetProxy::create(ProvisionalPageProxy& provisionalPage, const String& targetId, Inspector::InspectorTargetType type)
+std::unique_ptr<PageInspectorTargetProxy> PageInspectorTargetProxy::create(ProvisionalPageProxy& provisionalPage, StringImpl* targetId, Inspector::InspectorTargetType type)
 {
     RefPtr page = provisionalPage.page();
     if (!page)
@@ -59,7 +59,7 @@ std::unique_ptr<PageInspectorTargetProxy> PageInspectorTargetProxy::create(Provi
     return target;
 }
 
-PageInspectorTargetProxy::PageInspectorTargetProxy(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
+PageInspectorTargetProxy::PageInspectorTargetProxy(WebPageProxy& page, StringImpl* targetId, Inspector::InspectorTargetType type)
     : InspectorTargetProxy(targetId, type)
     , m_page(page)
 {
@@ -92,7 +92,7 @@ void PageInspectorTargetProxy::disconnect()
         protect(page->legacyMainFrameProcess())->send(Messages::WebPage::DisconnectInspector(), page->webPageIDInMainFrameProcess());
 }
 
-void PageInspectorTargetProxy::sendMessageToTargetBackend(const String& message)
+void PageInspectorTargetProxy::sendMessageToTargetBackend(StringImpl* message)
 {
     if (RefPtr provisionalPage = m_provisionalPage.get()) {
         provisionalPage->send(Messages::WebPage::SendMessageToTargetBackend(message));
@@ -116,15 +116,15 @@ bool PageInspectorTargetProxy::isProvisional() const
 
 // Not stored like a frame target's: the page can change process without a new target, as on its first launch.
 // Read it the way connect() picks the process.
-String PageInspectorTargetProxy::processIdentifier() const
+RefPtr<StringImpl> PageInspectorTargetProxy::processIdentifier() const
 {
     if (RefPtr provisionalPage = m_provisionalPage)
-        return String::number(provisionalPage->process().coreProcessIdentifier().toUInt64());
+        return makeString(provisionalPage->process().coreProcessIdentifier().toUInt64());
 
     Ref page = m_page;
     if (!page->hasRunningProcess())
         return { };
-    return String::number(page->legacyMainFrameProcess().coreProcessIdentifier().toUInt64());
+    return makeString(page->legacyMainFrameProcess().coreProcessIdentifier().toUInt64());
 }
 
 } // namespace WebKit

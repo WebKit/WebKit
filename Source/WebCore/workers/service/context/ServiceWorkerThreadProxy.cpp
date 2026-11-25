@@ -70,7 +70,7 @@ NODELETE static ThreadSafeWeakHashSet<ServiceWorkerThreadProxy>& allServiceWorke
     return set;
 }
 
-ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(Ref<Page>&& page, ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, CacheStorageProvider& cacheStorageProvider, std::unique_ptr<NotificationClient>&& notificationClient)
+ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(Ref<Page>&& page, ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, RefPtr<StringImpl>&& userAgent, WorkerThreadMode workerThreadMode, CacheStorageProvider& cacheStorageProvider, std::unique_ptr<NotificationClient>&& notificationClient)
     : m_page(WTF::move(page))
     , m_document(*m_page->localTopDocument())
 #if ENABLE(REMOTE_INSPECTOR)
@@ -116,7 +116,7 @@ bool ServiceWorkerThreadProxy::lastNavigationWasAppInitiated()
     return m_document->loader() ? m_document->loader()->lastNavigationWasAppInitiated() : true;
 }
 
-bool ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
+bool ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, StringImpl* mode)
 {
     if (m_isTerminatingOrTerminated)
         return false;
@@ -137,9 +137,9 @@ void ServiceWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& t
     });
 }
 
-void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
+void ServiceWorkerThreadProxy::postMessageToDebugger(StringImpl* message)
 {
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, message = isolatedCopy(message)]() mutable {
         // FIXME: Handle terminated case.
         m_inspectorProxy.sendMessageFromWorkerToFrontend(WTF::move(message));
     });
@@ -204,7 +204,7 @@ void ServiceWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
     }, WorkerRunLoop::defaultMode());
 }
 
-static inline bool isValidFetch(const ResourceRequest& request, const FetchOptions& options, const URL& serviceWorkerURL, const String& referrer)
+static inline bool isValidFetch(const ResourceRequest& request, const FetchOptions& options, const URL& serviceWorkerURL, StringImpl* referrer)
 {
     // For exotic service workers, do not enforce checks.
     if (!serviceWorkerURL.protocolIsInHTTPFamily())
@@ -221,8 +221,8 @@ static inline bool isValidFetch(const ResourceRequest& request, const FetchOptio
         return true;
     }
 
-    String origin = request.httpOrigin();
-    URL url { origin.isEmpty() ? referrer : origin };
+    RefPtr<StringImpl> origin = request.httpOrigin();
+    URL url { isEmpty(origin) ? referrer : origin.get() };
     if (url.protocolIsInHTTPFamily() && !protocolHostAndPortAreEqual(url, serviceWorkerURL)) {
         RELEASE_LOG_ERROR(ServiceWorker, "Should not intercept a non navigation load that is not originating from a same-origin context as the service worker URL");
         ASSERT(url.host() == serviceWorkerURL.host());
@@ -233,7 +233,7 @@ static inline bool isValidFetch(const ResourceRequest& request, const FetchOptio
     return true;
 }
 
-void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, Ref<ServiceWorkerFetch::Client>&& client, ResourceRequest&& request, String&& referrer, FetchOptions&& options, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
+void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, Ref<ServiceWorkerFetch::Client>&& client, ResourceRequest&& request, RefPtr<StringImpl>&& referrer, FetchOptions&& options, bool isServiceWorkerNavigationPreloadEnabled, RefPtr<StringImpl>&& clientIdentifier, RefPtr<StringImpl>&& resultingClientIdentifier)
 {
     ASSERT(!isMainThread());
 
@@ -241,7 +241,7 @@ void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectio
         protectedThis->thread().startFetchEventMonitoring();
     });
 
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, client = WTF::move(client), request = request.isolatedCopy(), referrer = WTF::move(referrer).isolatedCopy(), options = WTF::move(options).isolatedCopy(), fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, clientIdentifier = WTF::move(clientIdentifier).isolatedCopy(), resultingClientIdentifier = WTF::move(resultingClientIdentifier).isolatedCopy()] (auto& context) mutable {
+    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, client = WTF::move(client), request = request.isolatedCopy(), referrer = isolatedCopy(WTF::move(referrer)), options = WTF::move(options).isolatedCopy(), fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, clientIdentifier = isolatedCopy(WTF::move(clientIdentifier)), resultingClientIdentifier = isolatedCopy(WTF::move(resultingClientIdentifier))] (auto& context) mutable {
         if (!isValidFetch(request, options, downcast<ServiceWorkerGlobalScope>(context).contextData().scriptURL, referrer)) {
             client->didNotHandle();
             return;

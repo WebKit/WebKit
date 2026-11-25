@@ -35,11 +35,11 @@ PopupMenu* SearchPopupMenuIOS::popupMenu()
     return m_popup.ptr();
 }
 
-void SearchPopupMenuIOS::saveRecentSearches(const AtomString&, const Vector<RecentSearch>& /*searchItems*/)
+void SearchPopupMenuIOS::saveRecentSearches(AtomStringImpl*, const Vector<RecentSearch>& /*searchItems*/)
 {
 }
 
-void SearchPopupMenuIOS::loadRecentSearches(const AtomString&, Vector<RecentSearch>& /*searchItems*/)
+void SearchPopupMenuIOS::loadRecentSearches(AtomStringImpl*, Vector<RecentSearch>& /*searchItems*/)
 {
 }
 

@@ -69,7 +69,7 @@ private:
     static ASCIILiteral granularityString(Granularity);
 
     std::unique_ptr<UBreakIterator, UBreakIteratorDeleter> m_segmenter;
-    String m_locale;
+    RefPtr<StringImpl> m_locale;
     Granularity m_granularity { Granularity::Grapheme };
 };
 

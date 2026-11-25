@@ -80,11 +80,11 @@ protected:
     bool supportsReadOnly() const final { return true; }
     void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
     void handleBlurEvent() final;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) override;
+    void setValue(StringImpl*, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) override;
     void updateInnerTextValue() final;
-    ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const override;
+    ValueOrReference<RefPtr<StringImpl>> sanitizeValue(StringImpl* value LIFETIME_BOUND) const override;
 
-    virtual String convertFromVisibleValue(const String&) const;
+    virtual RefPtr<StringImpl> convertFromVisibleValue(StringImpl*) const;
     virtual void didSetValueByUserEdit();
 
 private:
@@ -137,7 +137,7 @@ private:
     IntRect elementRectInMainFrameViewCoordinates() const final;
     Vector<DataListSuggestion> suggestions() final;
     std::optional<FrameIdentifier> rootFrameID() const final;
-    void didSelectDataListOption(const String&) final;
+    void didSelectDataListOption(StringImpl*) final;
     void didCloseSuggestions() final;
 
     void dataListButtonElementWasClicked() final;
@@ -145,7 +145,7 @@ private:
     bool m_popupIsVisible { false };
     RefPtr<DataListButtonElement> m_dataListDropdownIndicator;
 
-    std::pair<String, Vector<DataListSuggestion>> m_cachedSuggestions;
+    std::pair<RefPtr<StringImpl>, Vector<DataListSuggestion>> m_cachedSuggestions;
     RefPtr<DataListSuggestionPicker> m_suggestionPicker;
 
     RefPtr<HTMLElement> m_container;

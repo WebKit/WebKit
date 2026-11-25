@@ -35,9 +35,9 @@
 
 namespace WebCore {
     
-OriginAccessEntry::OriginAccessEntry(const String& protocol, const String& host, SubdomainSetting subdomainSetting, IPAddressSetting ipAddressSetting)
-    : m_protocol(protocol.convertToASCIILowercase())
-    , m_host(host.convertToASCIILowercase())
+OriginAccessEntry::OriginAccessEntry(StringImpl* protocol, StringImpl* host, SubdomainSetting subdomainSetting, IPAddressSetting ipAddressSetting)
+    : m_protocol(convertToASCIILowercase(protocol))
+    , m_host(convertToASCIILowercase(host))
     , m_subdomainSettings(subdomainSetting)
     , m_ipAddressSettings(ipAddressSetting)
     , m_hostIsIPAddress(URL::hostIsIPAddress(m_host))
@@ -47,18 +47,18 @@ OriginAccessEntry::OriginAccessEntry(const String& protocol, const String& host,
 
 bool OriginAccessEntry::matchesOrigin(const SecurityOrigin& origin) const
 {
-    ASSERT(origin.host() == origin.host().convertToASCIILowercase());
-    ASSERT(origin.protocol() == origin.protocol().convertToASCIILowercase());
+    ASSERT(equal(origin.host(), convertToASCIILowercase(origin.host())));
+    ASSERT(equal(origin.protocol(), convertToASCIILowercase(origin.protocol())));
 
-    if (m_protocol != origin.protocol())
+    if (!equal(m_protocol, origin.protocol()))
         return false;
     
     // Special case: Include subdomains and empty host means "all hosts, including ip addresses".
-    if (m_subdomainSettings == AllowSubdomains && m_host.isEmpty())
+    if (m_subdomainSettings == AllowSubdomains && isEmpty(m_host))
         return true;
     
     // Exact match.
-    if (m_host == origin.host())
+    if (equal(m_host, origin.host()))
         return true;
     
     // Otherwise we can only match if we're matching subdomains.
@@ -71,7 +71,7 @@ bool OriginAccessEntry::matchesOrigin(const SecurityOrigin& origin) const
         return false;
     
     // Match subdomains.
-    if (origin.host().length() > m_host.length() && origin.host()[origin.host().length() - m_host.length() - 1] == '.' && origin.host().endsWith(m_host))
+    if (length(origin.host()) > length(m_host) && codeUnitAt(origin.host(), length(origin.host()) - length(m_host) - 1) == '.' && endsWith(origin.host(), m_host))
         return true;
     
     return false;

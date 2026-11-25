@@ -60,10 +60,10 @@ public:
 
     bool load(Document&, const URL&);
     bool isAsync() const { return m_isAsync; }
-    const AtomString& integrity() const LIFETIME_BOUND { return m_integrity; }
+    const RefPtr<AtomStringImpl>& integrity() const LIFETIME_BOUND { return m_integrity; }
 
 protected:
-    LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
+    LoadableNonModuleScriptBase(AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy, RequestPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
@@ -72,21 +72,21 @@ protected:
     CachedResourceHandle<CachedScript> m_cachedScript { };
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_weakDocument;
     std::optional<Error> m_error { std::nullopt };
-    const AtomString m_integrity;
+    const RefPtr<AtomStringImpl> m_integrity;
     bool m_isAsync { false };
 };
 
 
 class LoadableClassicScript final : public LoadableNonModuleScriptBase {
 public:
-    NODELETE static Ref<LoadableClassicScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
+    NODELETE static Ref<LoadableClassicScript> create(AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy, RequestPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 
     ScriptType scriptType() const final { return ScriptType::Classic; }
 
     void execute(ScriptElement&) final;
 
 private:
-    LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
+    LoadableClassicScript(AtomStringImpl* nonce, AtomStringImpl* integrity, ReferrerPolicy, RequestPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 };
 
 }

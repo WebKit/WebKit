@@ -53,7 +53,7 @@ enum class WebExtensionContextInstallReason : uint8_t {
 
 enum class WebExtensionContextWindowIsClosing : bool { No, Yes };
 
-using WebExtensionPermissionsMap = HashMap<String, WallTime>;
+using WebExtensionPermissionsMap = HashMap<RefPtr<StringImpl>, WallTime>;
 
 using WebExtensionPageIdentifierTuple = std::tuple<WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
 
@@ -62,8 +62,8 @@ struct WebExtensionContextParameters {
     Markable<WebExtensionContextIdentifier> privilegedIdentifier;
 
     URL baseURL;
-    String uniqueIdentifier;
-    HashSet<String> unsupportedAPIs;
+    RefPtr<StringImpl> uniqueIdentifier;
+    HashSet<RefPtr<StringImpl>> unsupportedAPIs;
 
     WebExtensionPermissionsMap grantedPermissions;
 

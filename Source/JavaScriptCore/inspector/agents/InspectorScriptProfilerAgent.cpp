@@ -86,7 +86,7 @@ static void removeSamplingAgent(InspectorScriptProfilerAgent& agent)
 #endif // ENABLE(SAMPLING_PROFILER)
 
 InspectorScriptProfilerAgent::InspectorScriptProfilerAgent(AgentContext& context)
-    : InspectorAgentBase("ScriptProfiler"_s)
+    : InspectorAgentBase("ScriptProfiler"_si)
     , m_frontendDispatcher(makeUniqueRef<ScriptProfilerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(ScriptProfilerBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_environment(context.environment)
@@ -250,7 +250,7 @@ static Ref<Protocol::ScriptProfiler::StackTrace> buildStackTrace(VM& vm, Samplin
     auto frames = JSON::ArrayOf<Protocol::ScriptProfiler::StackFrame>::create();
     for (SamplingProfiler::StackFrame& stackFrame : stackTrace.frames) {
         auto frameObject = Protocol::ScriptProfiler::StackFrame::create()
-            .setSourceID(String::number(std::get<1>(stackFrame.sourceProviderAndID())))
+            .setSourceID(makeString(std::get<1>(stackFrame.sourceProviderAndID())))
             .setName(stackFrame.displayName(vm))
             .setLine(stackFrame.functionStartLine())
             .setColumn(stackFrame.functionStartColumn())

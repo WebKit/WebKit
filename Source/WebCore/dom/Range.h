@@ -87,17 +87,17 @@ public:
     WEBCORE_EXPORT ExceptionOr<short> comparePoint(Node&, unsigned offset) const;
     WEBCORE_EXPORT bool intersectsNode(Node&) const;
 
-    WEBCORE_EXPORT String toString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toString() const;
 
     Ref<DOMRectList> getClientRects() const;
     Ref<DOMRect> getBoundingClientRect() const;
     static Ref<DOMRect> boundingClientRect(const SimpleRange&);
 
-    WEBCORE_EXPORT ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Variant<Ref<TrustedHTML>, String>&& fragment);
+    WEBCORE_EXPORT ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Variant<Ref<TrustedHTML>, RefPtr<StringImpl>>&& fragment);
 
     // Expand range to a unit (word or sentence or block or document) boundary.
     // Please refer to https://bugs.webkit.org/show_bug.cgi?id=27632 comment #5 for details.
-    WEBCORE_EXPORT ExceptionOr<void> expand(const String&);
+    WEBCORE_EXPORT ExceptionOr<void> expand(StringImpl*);
 
     enum CompareResults : uint8_t { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
     WEBCORE_EXPORT ExceptionOr<CompareResults> compareNode(Node&) const;
@@ -129,7 +129,7 @@ public:
     static ExceptionOr<RefPtr<Node>> checkNodeOffsetPair(Node&, unsigned offset);
 
 #if ENABLE(TREE_DEBUGGING)
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 #endif
 
     void visitNodesInGCThread(JSC::AbstractSlotVisitor&) const;

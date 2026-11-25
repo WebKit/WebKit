@@ -67,7 +67,7 @@ bool FrameDebuggerAgent::enabled() const
     return instrumentingAgents->enabledFrameDebuggerAgent() == this && WebDebuggerAgent::enabled();
 }
 
-CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */> FrameDebuggerAgent::evaluateOnCallFrame(const Inspector::Protocol::Debugger::CallFrameId& callFrameId, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
+CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */> FrameDebuggerAgent::evaluateOnCallFrame(StringImpl* callFrameId, StringImpl* expression, StringImpl* objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
     auto injectedScript = injectedScriptManager().injectedScriptForObjectId(callFrameId);
     if (injectedScript.hasNoValue())
@@ -98,21 +98,21 @@ void FrameDebuggerAgent::internalDisable(bool isBeingDestroyed)
     WebDebuggerAgent::internalDisable(isBeingDestroyed);
 }
 
-String FrameDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& script)
+RefPtr<StringImpl> FrameDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& script)
 {
-    if (script.url.isEmpty())
+    if (isEmpty(script.url))
         return InspectorDebuggerAgent::sourceMapURLForScript(script);
 
     RefPtr resource = ResourceUtilities::cachedResource(protect(m_inspectedFrame).ptr(), URL({ }, script.url));
     if (!resource)
         return InspectorDebuggerAgent::sourceMapURLForScript(script);
 
-    String sourceMapHeader = resource->response().httpHeaderField("SourceMap"_s);
-    if (!sourceMapHeader.isEmpty())
+    RefPtr<StringImpl> sourceMapHeader = resource->response().httpHeaderField("SourceMap"_s);
+    if (!isEmpty(sourceMapHeader))
         return sourceMapHeader;
 
     sourceMapHeader = resource->response().httpHeaderField("X-SourceMap"_s);
-    if (!sourceMapHeader.isEmpty())
+    if (!isEmpty(sourceMapHeader))
         return sourceMapHeader;
 
     return InspectorDebuggerAgent::sourceMapURLForScript(script);
@@ -142,7 +142,7 @@ void FrameDebuggerAgent::debuggerDidEvaluate(JSC::Debugger&, JSC::JSGlobalObject
     m_breakpointActionUserGestureEmulationScopeStack.removeLast();
 }
 
-void FrameDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& message)
+void FrameDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* lexicalGlobalObject, StringImpl* message)
 {
     protect(m_inspectedFrame)->console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject));
 }
@@ -159,13 +159,13 @@ InjectedScript FrameDebuggerAgent::injectedScriptForEval(Inspector::Protocol::Er
 
         auto result = injectedScriptManager().injectedScriptFor(globalObject);
         if (result.hasNoValue())
-            errorString = "Internal error: main world execution context not found"_s;
+            errorString = "Internal error: main world execution context not found"_si;
         return result;
     }
 
     auto injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
-        errorString = "Missing injected script for given executionContextId"_s;
+        errorString = "Missing injected script for given executionContextId"_si;
 
     return injectedScript;
 }

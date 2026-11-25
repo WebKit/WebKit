@@ -51,12 +51,12 @@ public:
     Inspector::RemoteControllableTarget::Type type() const final { return m_type; }
     void setIsITML() { m_type = Inspector::RemoteControllableTarget::Type::ITML; }
 
-    String name() const final;
+    RefPtr<StringImpl> name() const final;
     bool hasLocalDebugger() const final { return false; }
 
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) final;
     void disconnect(Inspector::FrontendChannel&) final;
-    void dispatchMessageFromRemote(String&& message) final;
+    void dispatchMessageFromRemote(RefPtr<StringImpl>&& message) final;
 
     bool automaticInspectionAllowed() const final { return true; }
     void pauseWaitingForAutomaticInspection() final;

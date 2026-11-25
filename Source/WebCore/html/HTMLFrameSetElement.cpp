@@ -76,7 +76,7 @@ bool HTMLFrameSetElement::hasPresentationalHintsForAttribute(const QualifiedName
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLFrameSetElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLFrameSetElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == bordercolorAttr)
         addHTMLColorToStyle(style, CSSPropertyID::BorderColor, value);
@@ -84,9 +84,9 @@ void HTMLFrameSetElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name); !eventName.isNull())
+    if (auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name); eventName)
         protect(document())->setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorldSingleton());
     else
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -95,7 +95,7 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
     case AttributeNames::rowsAttr:
         // FIXME: What is the right thing to do when removing this attribute?
         // Why not treat it the same way we treat setting it to the empty string?
-        if (!newValue.isNull()) {
+        if (newValue) {
             m_rowDimensions = parseHTMLDimensionsList(newValue);
             // FIXME: Would be nice to optimize the case where m_rowDimensions did not change.
             invalidateStyleForSubtree();
@@ -104,18 +104,18 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
     case AttributeNames::colsAttr:
         // FIXME: What is the right thing to do when removing this attribute?
         // Why not treat it the same way we treat setting it to the empty string?
-        if (!newValue.isNull()) {
+        if (newValue) {
             m_colDimensions = parseHTMLDimensionsList(newValue);
             // FIXME: Would be nice to optimize the case where m_colDimensions did not change.
             invalidateStyleForSubtree();
         }
         break;
     case AttributeNames::frameborderAttr:
-        if (!newValue.isNull()) {
-            if (equalLettersIgnoringASCIICase(newValue, "no"_s) || newValue == "0"_s) {
+        if (newValue) {
+            if (equalLettersIgnoringASCIICase(newValue, "no"_s) || equal(newValue, "0"_s)) {
                 m_frameborder = false;
                 m_frameborderSet = true;
-            } else if (equalLettersIgnoringASCIICase(newValue, "yes"_s) || newValue == "1"_s) {
+            } else if (equalLettersIgnoringASCIICase(newValue, "yes"_s) || equal(newValue, "1"_s)) {
                 m_frameborder = true;
                 m_frameborderSet = true;
             }
@@ -126,11 +126,11 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
         invalidateStyleForSubtree();
         break;
     case AttributeNames::noresizeAttr:
-        m_noresize = !newValue.isNull();
+        m_noresize = !!newValue;
         invalidateStyleForSubtree();
         break;
     case AttributeNames::borderAttr:
-        if (!newValue.isNull()) {
+        if (newValue) {
             m_border = parseHTMLInteger(newValue).value_or(0);
             m_borderSet = true;
         } else
@@ -138,7 +138,7 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
         // FIXME: Do we need to trigger repainting?
         break;
     case AttributeNames::bordercolorAttr:
-        m_borderColorSet = !newValue.isEmpty();
+        m_borderColorSet = !isEmpty(newValue);
         // FIXME: Clearly wrong: This can overwrite the value inherited from the parent frameset.
         // FIXME: Do we need to trigger repainting?
         break;
@@ -212,18 +212,18 @@ void HTMLFrameSetElement::removingSteps(RemovalType removalType, ContainerNode& 
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 
-WindowProxy* HTMLFrameSetElement::namedItem(const AtomString& name)
+WindowProxy* HTMLFrameSetElement::namedItem(AtomStringImpl* name)
 {
     RefPtr frameElement = dynamicDowncast<HTMLFrameElement>(children()->namedItem(name));
     return frameElement ? frameElement->contentWindow() : nullptr;
 }
 
-bool HTMLFrameSetElement::isSupportedPropertyName(const AtomString& name)
+bool HTMLFrameSetElement::isSupportedPropertyName(AtomStringImpl* name)
 {
     return namedItem(name);
 }
 
-Vector<AtomString> HTMLFrameSetElement::supportedPropertyNames() const
+Vector<RefPtr<AtomStringImpl>> HTMLFrameSetElement::supportedPropertyNames() const
 {
     // NOTE: Left empty as no specification defines this named getter and we
     //       have not historically exposed these named items for enumeration.

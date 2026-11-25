@@ -47,22 +47,22 @@ void NamedNodeMap::deref()
     m_element->deref();
 }
 
-RefPtr<Attr> NamedNodeMap::getNamedItem(const AtomString& name) const
+RefPtr<Attr> NamedNodeMap::getNamedItem(AtomStringImpl* name) const
 {
     return protect(element())->getAttributeNode(name);
 }
 
-bool NamedNodeMap::isSupportedPropertyName(const AtomString& name) const
+bool NamedNodeMap::isSupportedPropertyName(AtomStringImpl* name) const
 {
     return protect(element())->hasAttribute(name);
 }
 
-RefPtr<Attr> NamedNodeMap::getNamedItemNS(const AtomString& namespaceURI, const AtomString& localName) const
+RefPtr<Attr> NamedNodeMap::getNamedItemNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName) const
 {
     return protect(element())->getAttributeNodeNS(namespaceURI, localName);
 }
 
-ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItem(const AtomString& name)
+ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItem(AtomStringImpl* name)
 {
     Ref element = m_element.get();
     if (!element->hasAttributes())
@@ -78,11 +78,11 @@ Element& NamedNodeMap::element() const
     return m_element.get();
 }
 
-Vector<String> NamedNodeMap::supportedPropertyNames() const
+Vector<RefPtr<StringImpl>> NamedNodeMap::supportedPropertyNames() const
 {
-    Vector<String> names = protect(m_element.get())->getAttributeNames();
+    Vector<RefPtr<StringImpl>> names = protect(m_element.get())->getAttributeNames();
     if (is<HTMLElement>(m_element.get()) && m_element->document().isHTMLDocument()) {
-        names.removeAllMatching([](String& name) {
+        names.removeAllMatching([](RefPtr<StringImpl>& name) {
             for (auto character : StringView { name }.codeUnits()) {
                 if (isASCIIUpper(character))
                     return true;
@@ -93,7 +93,7 @@ Vector<String> NamedNodeMap::supportedPropertyNames() const
     return names;
 }
 
-ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItemNS(const AtomString& namespaceURI, const AtomString& localName)
+ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItemNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName)
 {
     Ref element = m_element.get();
     if (!element->hasAttributes())

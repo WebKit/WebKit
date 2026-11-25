@@ -92,14 +92,14 @@ public:
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) override;
     WEBCORE_EXPORT void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) override;
     WEBCORE_EXPORT void audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy) override;
-    WEBCORE_EXPORT void routingContextUIDChanged(const String&) final;
+    WEBCORE_EXPORT void routingContextUIDChanged(StringImpl*) final;
 
 #if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     virtual void callToActionChanged(std::optional<CallToActionLabel>) { }
 #endif
 
     // PlaybackSessionModelClient
-    WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) override;
+    WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, StringImpl* localizedDeviceName, StringImpl* localizedRouteName) override;
 
     WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);
     PlaybackSessionInterfaceCocoa& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
@@ -212,7 +212,7 @@ protected:
     RetainPtr<UIView> m_parentView;
     Mode m_targetMode;
     RouteSharingPolicy m_routeSharingPolicy { RouteSharingPolicy::Default };
-    String m_routingContextUID;
+    RefPtr<StringImpl> m_routingContextUID;
     ThreadSafeWeakPtr<VideoPresentationModel> m_videoPresentationModel;
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
     bool m_targetStandby { false };

@@ -83,13 +83,13 @@ ASCIILiteral functionConstructorPrefix(FunctionConstructionMode functionConstruc
     return ASCIILiteral { };
 }
 
-static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, FunctionConstructionMode functionConstructionMode, ThrowScope& scope, std::optional<int>& functionConstructorParametersEndPosition)
+static RefPtr<StringImpl> stringifyFunction(JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, FunctionConstructionMode functionConstructionMode, ThrowScope& scope, std::optional<int>& functionConstructorParametersEndPosition)
 {
     ASCIILiteral prefix = functionConstructorPrefix(functionConstructionMode);
 
     // How we stringify functions is sometimes important for web compatibility.
     // See https://bugs.webkit.org/show_bug.cgi?id=24350.
-    String program;
+    RefPtr<StringImpl> program;
     functionConstructorParametersEndPosition = std::nullopt;
     if (args.isEmpty())
         program = makeString(prefix, functionName.string(), "(\n) {\n\n}"_s);
@@ -120,7 +120,7 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
             RETURN_IF_EXCEPTION(scope, { });
             auto body = arg1.toWTFString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
-            arg0Length = arg.length();
+            arg0Length = length(arg);
             program = tryMakeString(prefix, functionName.string(), "("_s, arg, "\n) {\n"_s, body, "\n}"_s);
         }
 
@@ -128,7 +128,7 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
-        functionConstructorParametersEndPosition = prefix.length() + functionName.string().length() + "("_s.length() + arg0Length + "\n)"_s.length();
+        functionConstructorParametersEndPosition = prefix.length() + length(functionName.string()) + "("_s.length() + arg0Length + "\n)"_s.length();
     } else {
         StringBuilder builder(OverflowPolicy::RecordOverflow);
         builder.append(prefix, functionName.string(), '(');
@@ -168,13 +168,13 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
 }
 
 // ECMA 15.3.2 The Function Constructor
-JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const SourceOrigin& sourceOrigin, const String& sourceURL, SourceTaintedness taintedOrigin, const TextPosition& position, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
+JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const SourceOrigin& sourceOrigin, StringImpl* sourceURL, SourceTaintedness taintedOrigin, const TextPosition& position, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     std::optional<int> functionConstructorParametersEndPosition;
     auto code = stringifyFunction(globalObject, args, functionName, functionConstructionMode, scope, functionConstructorParametersEndPosition);
-    EXCEPTION_ASSERT(!!scope.exception() == code.isNull());
+    EXCEPTION_ASSERT(!!scope.exception() == !code);
 
     if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::None) [[unlikely]] {
         bool isTrusted = true;
@@ -192,7 +192,7 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
             bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::Function, code, args);
             RETURN_IF_EXCEPTION(scope, { });
             if (!canCompileStrings) {
-                throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
+                throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_si));
                 return nullptr;
             }
         }
@@ -201,19 +201,19 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
     if (!globalObject->evalEnabled()) [[unlikely]] {
         if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::EnforcedWithEvalEnabled) {
             TRY_CLEAR_EXCEPTION(scope, nullptr);
-            globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, !code.isNull() ? WTF::move(code) : nullString());
+            globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, !!code ? WTF::move(code) : nullString());
             throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
             return nullptr;
         }
     }
-    if (code.isNull()) [[unlikely]]
+    if (!code) [[unlikely]]
         return nullptr;
 
     LexicallyScopedFeatures lexicallyScopedFeatures = globalObject->globalScopeExtension() ? TaintedByWithScopeLexicallyScopedFeature : NoLexicallyScopedFeatures;
     RELEASE_AND_RETURN(scope, constructFunctionSkippingEvalEnabledCheck(globalObject, WTF::move(code), lexicallyScopedFeatures, functionName, sourceOrigin, sourceURL, taintedOrigin, position, -1, functionConstructorParametersEndPosition, functionConstructionMode, newTarget));
 }
 
-JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject, String&& program, LexicallyScopedFeatures lexicallyScopedFeatures, const Identifier& functionName, const SourceOrigin& sourceOrigin, const String& sourceURL, SourceTaintedness taintedOrigin, const TextPosition& position, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
+JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject, RefPtr<StringImpl>&& program, LexicallyScopedFeatures lexicallyScopedFeatures, const Identifier& functionName, const SourceOrigin& sourceOrigin, StringImpl* sourceURL, SourceTaintedness taintedOrigin, const TextPosition& position, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -272,7 +272,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject
 JSObject* constructFunction(JSGlobalObject* globalObject, CallFrame* callFrame, const ArgList& args, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
 {
     VM& vm = globalObject->vm();
-    return constructFunction(globalObject, args, vm.propertyNames->anonymous, callFrame->callerSourceOrigin(vm), String(), computeNewSourceTaintednessFromStack(vm, callFrame), TextPosition(), functionConstructionMode, newTarget);
+    return constructFunction(globalObject, args, vm.propertyNames->anonymous, callFrame->callerSourceOrigin(vm), nullString(), computeNewSourceTaintednessFromStack(vm, callFrame), TextPosition(), functionConstructionMode, newTarget);
 }
 
 } // namespace JSC

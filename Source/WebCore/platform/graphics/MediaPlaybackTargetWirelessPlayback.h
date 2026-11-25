@@ -52,8 +52,8 @@ private:
     MediaPlaybackTargetWirelessPlayback(RefPtr<MediaDeviceRoute>&&, bool hasActiveRoute);
 
     // MediaPlaybackTarget
-    String deviceName() const final;
-    String routeName() const final;
+    RefPtr<StringImpl> deviceName() const final;
+    RefPtr<StringImpl> routeName() const final;
     bool hasActiveRoute() const final { return m_hasActiveRoute; }
     bool supportsRemoteVideoPlayback() const final { return hasActiveRoute(); }
     bool operator==(const MediaPlaybackTarget&) const final;

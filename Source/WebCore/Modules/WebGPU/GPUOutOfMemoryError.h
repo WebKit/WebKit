@@ -35,7 +35,7 @@ namespace WebCore {
 
 class GPUOutOfMemoryError final : public GPUError {
 public:
-    static Ref<GPUOutOfMemoryError> create(String&& message)
+    static Ref<GPUOutOfMemoryError> create(RefPtr<StringImpl>&& message)
     {
         return adoptRef(*new GPUOutOfMemoryError(WTF::move(message)));
     }
@@ -46,13 +46,13 @@ public:
     }
 
     Type type() const final { return Type::OutOfMemory; }
-    const String& message() const LIFETIME_BOUND final { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND final { return m_message; }
 
     WebGPUOutOfMemoryError* backing() { return m_backing.get(); }
     const WebGPUOutOfMemoryError* backing() const { return m_backing.get(); }
 
 private:
-    GPUOutOfMemoryError(String&& message)
+    GPUOutOfMemoryError(RefPtr<StringImpl>&& message)
         : m_message(WTF::move(message))
     {
     }
@@ -62,7 +62,7 @@ private:
     {
     }
 
-    String m_message;
+    RefPtr<StringImpl> m_message;
     const RefPtr<WebGPUOutOfMemoryError> m_backing;
 };
 

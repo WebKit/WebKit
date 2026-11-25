@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode mode)
+RefPtr<StringImpl> composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode mode)
 {
     TextStream stream;
     auto descendants = composedTreeDescendants(root);
@@ -55,7 +55,7 @@ String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode mode)
     return stream.release();
 }
 
-String composedTreeAsTextFromNode(ContainerNode& root, Node& startNode)
+RefPtr<StringImpl> composedTreeAsTextFromNode(ContainerNode& root, Node& startNode)
 {
     TextStream stream;
     auto descendants = composedTreeDescendants(root);

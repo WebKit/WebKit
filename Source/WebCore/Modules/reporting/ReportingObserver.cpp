@@ -52,7 +52,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ReportingObserverCallback);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ReportingObserver);
 
-static bool isVisibleToReportingObservers(const String& type)
+static bool isVisibleToReportingObservers(StringImpl* type)
 {
     static constexpr SortedArraySet visibleTypes { WTF::toArray<ComparableASCIILiteral>({
         "coep"_s,
@@ -87,7 +87,7 @@ ReportingObserver::ReportingObserver(ScriptExecutionContext& scriptExecutionCont
     : ActiveDOMObject(&scriptExecutionContext)
     , m_reportingScope(reportingScopeForContext(scriptExecutionContext))
     , m_callback(WTF::move(callback))
-    , m_types(options.types.value_or(Vector<AtomString>()))
+    , m_types(options.types.value_or(Vector<RefPtr<AtomStringImpl>>()))
     , m_buffered(options.buffered)
 {
 }
@@ -208,7 +208,7 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
         return;
     
     // Step 4.3.2
-    if (m_types.size() && !m_types.contains(report->type()))
+    if (m_types.size() && !m_types.containsIf([&](auto& type) { return equal(type, report->type()); }))
         return;
     
     // Step 4.3.3:
@@ -232,7 +232,7 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
         if (reports.isEmpty())
             return;
 
-        InspectorInstrumentation::willFireObserverCallback(*context, "ReportingObserver"_s);
+        InspectorInstrumentation::willFireObserverCallback(*context, "ReportingObserver"_si);
 
         protectedCallback->invoke(reports, observer);
 

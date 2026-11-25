@@ -53,14 +53,14 @@ public:
     uint16_t vendorID() const { return m_vendorID; }
     uint16_t productID() const { return m_productID; }
     uint32_t fullProductIdentifier() const { return m_vendorID << 16 | m_productID; }
-    const String& productName() const LIFETIME_BOUND { return m_productName; }
+    const RefPtr<StringImpl>& productName() const LIFETIME_BOUND { return m_productName; }
 
 private:
     const RetainPtr<IOHIDDeviceRef> m_rawDevice;
 
     uint16_t m_vendorID;
     uint16_t m_productID;
-    String m_productName;
+    RefPtr<StringImpl> m_productName;
 };
 
 } // namespace WebCore

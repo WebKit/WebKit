@@ -66,7 +66,7 @@ Ref<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedNa
     return adoptRef(*new SVGLinearGradientElement(tagName, document));
 }
 
-void SVGLinearGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGLinearGradientElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
 

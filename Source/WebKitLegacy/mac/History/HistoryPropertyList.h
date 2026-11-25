@@ -50,12 +50,12 @@ private:
     virtual void writeObjects(BinaryPropertyListObjectStream&);
     virtual std::span<UInt8> buffer(size_t);
 
-    const String m_displayTitleKey;
-    const String m_lastVisitWasFailureKey;
-    const String m_lastVisitedDateKey;
-    const String m_redirectURLsKey;
-    const String m_titleKey;
-    const String m_urlKey;
+    const RefPtr<StringImpl> m_displayTitleKey;
+    const RefPtr<StringImpl> m_lastVisitWasFailureKey;
+    const RefPtr<StringImpl> m_lastVisitedDateKey;
+    const RefPtr<StringImpl> m_redirectURLsKey;
+    const RefPtr<StringImpl> m_titleKey;
+    const RefPtr<StringImpl> m_urlKey;
 
     MallocSpan<UInt8, CFMalloc> m_buffer;
 };

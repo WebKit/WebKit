@@ -113,7 +113,7 @@ WebExtensionMenuItem::WebExtensionMenuItem(WebExtensionContext& extensionContext
     else
         m_contexts = WebExtensionMenuItemContextType::Page;
 
-    if (!parameters.iconsJSON.isEmpty()) {
+    if (!isEmpty(parameters.iconsJSON)) {
         RefPtr parsedIcons = JSON::Value::parseJSON(parameters.iconsJSON);
         m_icons = parsedIcons ? parsedIcons->asObject() : nullptr;
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
@@ -168,7 +168,7 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
     if (parameters.type)
         m_type = parameters.type.value();
 
-    if (!parameters.identifier.isEmpty())
+    if (!isEmpty(parameters.identifier))
         m_identifier = parameters.identifier;
 
     if (parameters.parentIdentifier) {
@@ -182,13 +182,13 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
         }
     }
 
-    if (!parameters.title.isEmpty())
+    if (!isEmpty(parameters.title))
         m_title = removeAmpersands(parameters.title);
 
-    if (!parameters.command.isNull())
+    if (parameters.command)
         m_command = extensionContext->command(parameters.command);
 
-    if (!parameters.iconsJSON.isNull()) {
+    if (parameters.iconsJSON) {
         RefPtr parsedIcons = JSON::Value::parseJSON(parameters.iconsJSON);
         m_icons = parsedIcons ? parsedIcons->asObject() : nullptr;
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
@@ -280,7 +280,7 @@ CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItem
     ASSERT(extensionContext());
     ASSERT(matches(contextParameters));
 
-    auto selectionString = !contextParameters.selectionString.isNull() ? WebCore::truncatedStringForMenuItem(contextParameters.selectionString) : emptyString();
+    auto selectionString = !!contextParameters.selectionString ? WebCore::truncatedStringForMenuItem(contextParameters.selectionString) : emptyString();
     auto processedTitle = makeStringByReplacingAll(title(), "%s"_s, selectionString);
     auto *submenuItemArray = matchingPlatformMenuItems(submenuItems(), contextParameters);
 
@@ -288,13 +288,13 @@ CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItem
     if (type() == WebExtensionMenuItemType::Separator)
         return [NSMenuItem separatorItem];
 
-    auto *result = [[_WKWebExtensionMenuItem alloc] initWithTitle:processedTitle.createNSString().get() handler:makeBlockPtr([this, protectedThis = Ref { *this }, contextParameters](id sender) mutable {
+    auto *result = [[_WKWebExtensionMenuItem alloc] initWithTitle:createNSString(processedTitle).get() handler:makeBlockPtr([this, protectedThis = Ref { *this }, contextParameters](id sender) mutable {
         if (RefPtr context = extensionContext())
             context->performMenuItem(const_cast<WebExtensionMenuItem&>(*this), contextParameters, WebExtensionContext::UserTriggered::Yes);
     }).get()];
 
     if (RefPtr command = this->command()) {
-        result.keyEquivalent = command->activationKey().createNSString().get();
+        result.keyEquivalent = createNSString(command->activationKey()).get();
         result.keyEquivalentModifierMask = command->modifierFlags().toRaw();
     }
 
@@ -326,7 +326,7 @@ CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItem
 
     // iOS does not support sub-menus that are disabled or hidden, so return a normal action in that case.
     if (submenuItems().isEmpty() || !isEnabled() || !isVisible()) {
-        auto *action = [UIAction actionWithTitle:processedTitle.createNSString().get() image:toCocoaImage(icon({ 20, 20 })) identifier:nil handler:makeBlockPtr([this, protectedThis = Ref { *this }, contextParameters](UIAction *) mutable {
+        auto *action = [UIAction actionWithTitle:createNSString(processedTitle).get() image:toCocoaImage(icon({ 20, 20 })) identifier:nil handler:makeBlockPtr([this, protectedThis = Ref { *this }, contextParameters](UIAction *) mutable {
             if (RefPtr context = extensionContext())
                 context->performMenuItem(const_cast<WebExtensionMenuItem&>(*this), contextParameters, WebExtensionContext::UserTriggered::Yes);
         }).get()];
@@ -343,7 +343,7 @@ CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItem
         return action;
     }
 
-    return [UIMenu menuWithTitle:processedTitle.createNSString().get() image:toCocoaImage(icon({ 20, 20 })) identifier:nil options:0 children:submenuItemArray];
+    return [UIMenu menuWithTitle:createNSString(processedTitle).get() image:toCocoaImage(icon({ 20, 20 })) identifier:nil options:0 children:submenuItemArray];
 #endif
 }
 

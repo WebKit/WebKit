@@ -35,7 +35,7 @@ class OfflineAudioCompletionEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(OfflineAudioCompletionEvent);
 public:
     NODELETE static Ref<OfflineAudioCompletionEvent> create(Ref<AudioBuffer>&& renderedBuffer);
-    NODELETE static Ref<OfflineAudioCompletionEvent> create(const AtomString& eventType, OfflineAudioCompletionEventInit&&);
+    NODELETE static Ref<OfflineAudioCompletionEvent> create(AtomStringImpl* eventType, OfflineAudioCompletionEventInit&&);
     
     virtual ~OfflineAudioCompletionEvent();
 
@@ -43,7 +43,7 @@ public:
 
 private:
     explicit OfflineAudioCompletionEvent(Ref<AudioBuffer>&& renderedBuffer);
-    OfflineAudioCompletionEvent(const AtomString& eventType, OfflineAudioCompletionEventInit&&);
+    OfflineAudioCompletionEvent(AtomStringImpl* eventType, OfflineAudioCompletionEventInit&&);
 
     const Ref<AudioBuffer> m_renderedBuffer;
 };

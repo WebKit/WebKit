@@ -67,11 +67,11 @@ bool BaseButtonInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void BaseButtonInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
+void BaseButtonInputType::setValue(StringImpl* sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     RefPtr element = this->element();
     ASSERT(element);
-    element->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
+    element->setAttributeWithoutSynchronization(valueAttr, AtomStringImpl::add(sanitizedValue).get());
 
     if (CheckedPtr cache = protect(element->document())->existingAXObjectCache())
         cache->valueChanged(*element);

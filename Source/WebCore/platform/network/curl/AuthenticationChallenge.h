@@ -55,8 +55,8 @@ private:
     ProtectionSpace protectionSpaceForServerTrust(const URL&, const CertificateInfo&);
     std::optional<uint16_t> determineProxyPort(const URL&);
     ProtectionSpace::AuthenticationScheme authenticationSchemeFromCurlAuth(long);
-    String parseRealm(const ResourceResponse&);
-    void removeLeadingAndTrailingQuotes(String&);
+    RefPtr<StringImpl> parseRealm(const ResourceResponse&);
+    void removeLeadingAndTrailingQuotes(RefPtr<StringImpl>&);
 };
 
 } // namespace WebCore

@@ -95,14 +95,14 @@ void RenderButton::updateFromElement()
 {
     // If we're an input element, we may need to change our button text.
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(formControlElement())) {
-        String value = input->valueWithDefault();
+        RefPtr<StringImpl> value = input->valueWithDefault();
         setText(value);
     }
 }
 
-void RenderButton::setText(const String& str)
+void RenderButton::setText(StringImpl* str)
 {
-    if (!m_buttonText && str.isEmpty())
+    if (!m_buttonText && isEmpty(str))
         return;
 
     if (!m_buttonText) {
@@ -116,8 +116,8 @@ void RenderButton::setText(const String& str)
         return;
     }
 
-    if (!str.isEmpty()) {
-        protect(m_buttonText.get())->setText(str.impl());
+    if (!isEmpty(str)) {
+        protect(m_buttonText.get())->setText(str);
         return;
     }
     if (RenderTreeBuilder::current())
@@ -128,7 +128,7 @@ void RenderButton::setText(const String& str)
         SUPPRESS_UNCHECKED_ARG RenderTreeBuilder(*document().renderView()).destroy(*m_buttonText);
 }
 
-String RenderButton::text() const
+RefPtr<StringImpl> RenderButton::text() const
 {
     if (m_buttonText)
         return m_buttonText->text();

@@ -32,7 +32,7 @@ namespace WebCore {
 
 class GStreamerAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerAudioCaptureSource>,  public GStreamerCapturerObserver {
 public:
-    static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
+    static CaptureSourceOrError create(RefPtr<StringImpl>&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
     const RealtimeMediaSourceCapabilities& capabilities() override;

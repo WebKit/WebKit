@@ -253,7 +253,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
 static bool shouldEnableAsyncOverflowScrolling(const std::string& pathOrURL)
 {
-    return isWebPlatformTestURL({ { }, String::fromUTF8(pathOrURL.c_str()) });
+    return isWebPlatformTestURL({ { }, StringImpl::fromUTF8(pathOrURL.c_str()) });
 }
 
 TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand& command) const
@@ -292,8 +292,8 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
 
     RetainPtr<NSURL> tempDir;
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-        tempDir = adoptNS([[NSURL alloc] initFileURLWithPath:[temporaryFolder.createNSString() stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES]);
+        RefPtr<StringImpl> temporaryFolder = StringImpl::fromUTF8(dumpRenderTreeTemp);
+        tempDir = adoptNS([[NSURL alloc] initFileURLWithPath:[createNSString(temporaryFolder) stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES]);
     } else
         tempDir = adoptNS([[NSURL alloc] initFileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES]);
 
@@ -493,12 +493,12 @@ void TestController::platformInitializeContext()
     WKContextSetFontAllowList(m_context.get(), generateFontAllowList().get());
 }
 
-void TestController::setScrollbarStyleOverride(const String& style, CompletionHandler<void(WKTypeRef)>&& completionHandler)
+void TestController::setScrollbarStyleOverride(StringImpl* style, CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {
     RetainPtr<NSNumber> scrollerStyle;
-    if (style == "classic"_s)
+    if (equal(style, "classic"_s))
         scrollerStyle = @(NSScrollerStyleLegacy);
-    else if (style == "overlay"_s)
+    else if (equal(style, "overlay"_s))
         scrollerStyle = @(NSScrollerStyleOverlay);
     [m_mainWebView->platformView() _setScrollerStyleOverrideForTesting:scrollerStyle.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
         completionHandler(nullptr);

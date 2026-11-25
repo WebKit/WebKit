@@ -40,9 +40,9 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-std::optional<RTCIceCandidateFields> parseIceCandidateSDP(const String& sdp)
+std::optional<RTCIceCandidateFields> parseIceCandidateSDP(StringImpl* sdp)
 {
-    auto candidate = webrtc::Candidate::ParseCandidateString(std::string_view { byteCast<char>(sdp.utf8().span()) });
+    auto candidate = webrtc::Candidate::ParseCandidateString(std::string_view { byteCast<char>(utf8(sdp).span()) });
     if (!candidate.ok())
         return { };
 

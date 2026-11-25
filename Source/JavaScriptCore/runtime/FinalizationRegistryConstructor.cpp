@@ -41,7 +41,7 @@ const ClassInfo FinalizationRegistryConstructor::s_info = { "Function"_s, &Base:
 
 void FinalizationRegistryConstructor::finishCreation(VM& vm, FinalizationRegistryPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "FinalizationRegistry"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "FinalizationRegistry"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

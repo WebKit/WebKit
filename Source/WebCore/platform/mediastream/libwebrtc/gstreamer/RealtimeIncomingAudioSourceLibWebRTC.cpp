@@ -39,19 +39,19 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_libwebrtc_incoming_audio_debug);
 #define GST_CAT_DEFAULT webkit_libwebrtc_incoming_audio_debug
 
-Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
+Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, RefPtr<StringImpl>&& audioTrackId)
 {
     auto source = RealtimeIncomingAudioSourceLibWebRTC::create(WTF::move(audioTrack), WTF::move(audioTrackId));
     source->start();
     return source;
 }
 
-Ref<RealtimeIncomingAudioSourceLibWebRTC> RealtimeIncomingAudioSourceLibWebRTC::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
+Ref<RealtimeIncomingAudioSourceLibWebRTC> RealtimeIncomingAudioSourceLibWebRTC::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, RefPtr<StringImpl>&& audioTrackId)
 {
     return adoptRef(*new RealtimeIncomingAudioSourceLibWebRTC(WTF::move(audioTrack), WTF::move(audioTrackId)));
 }
 
-RealtimeIncomingAudioSourceLibWebRTC::RealtimeIncomingAudioSourceLibWebRTC(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
+RealtimeIncomingAudioSourceLibWebRTC::RealtimeIncomingAudioSourceLibWebRTC(Ref<webrtc::AudioTrackInterface>&& audioTrack, RefPtr<StringImpl>&& audioTrackId)
     : RealtimeIncomingAudioSource(WTF::move(audioTrack), WTF::move(audioTrackId))
 {
 #ifndef GST_DISABLE_GST_DEBUG
@@ -60,7 +60,7 @@ RealtimeIncomingAudioSourceLibWebRTC::RealtimeIncomingAudioSourceLibWebRTC(Ref<w
         GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_incoming_audio_debug, "webkitlibwebrtcaudioincoming", 0, "WebKit LibWebRTC incoming audio source");
     });
 #if GST_CHECK_VERSION(1, 22, 0)
-    m_id = persistentID().ascii();
+    m_id = ascii(persistentID());
     GST_DEBUG("Created incoming audio source with ID: %s", m_id);
 #endif
 #endif

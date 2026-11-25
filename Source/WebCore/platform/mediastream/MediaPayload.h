@@ -39,10 +39,10 @@ namespace WebCore {
 
 struct MediaPayload {
 public:
-    void addParameter(const String& name, unsigned value) { parameters.set(name, value); }
+    void addParameter(StringImpl* name, unsigned value) { parameters.set(name, value); }
 
     unsigned type { 0 };
-    String encodingName;
+    RefPtr<StringImpl> encodingName;
     unsigned clockRate { 0 };
 
     // audio
@@ -53,7 +53,7 @@ public:
     bool nackpli { false };
     bool nack { false };
 
-    HashMap<String, unsigned> parameters;
+    HashMap<RefPtr<StringImpl>, unsigned> parameters;
 };
 
 } // namespace WebCore

@@ -438,11 +438,11 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
 
 #endif
 
-String convertEnumerationToString(TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
-        MAKE_STATIC_STRING_IMPL("enumValue1"),
-        MAKE_STATIC_STRING_IMPL("enumValue2"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
+        "enumValue1"_si,
+        "enumValue2"_si,
     };
     static_assert(static_cast<size_t>(TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1) == 0, "TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2) == 1, "TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2 is not 1 as expected");
@@ -455,7 +455,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestStandaloneDictionary::En
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFile> parseEnumerationFromString<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(const String& stringValue)
+template<> std::optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFile> parseEnumerationFromString<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>({
         { "enumValue1"_s, TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1 },

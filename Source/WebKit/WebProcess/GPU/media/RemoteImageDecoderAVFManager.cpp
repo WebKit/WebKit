@@ -43,7 +43,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageDecoderAVFManager);
 
-std::optional<ImageDecoderIdentifier> RemoteImageDecoderAVFManager::createRemoteImageDecoder(FragmentedSharedBuffer& data, const String& mimeType)
+std::optional<ImageDecoderIdentifier> RemoteImageDecoderAVFManager::createRemoteImageDecoder(FragmentedSharedBuffer& data, StringImpl* mimeType)
 {
     ASSERT(RemoteImageDecoderAVF::canDecodeType(mimeType));
 
@@ -56,7 +56,7 @@ std::optional<ImageDecoderIdentifier> RemoteImageDecoderAVFManager::createRemote
     return imageDecoderIdentifier;
 }
 
-RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, StringImpl* mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     auto imageDecoderIdentifier = createRemoteImageDecoder(data, mimeType);
     if (!imageDecoderIdentifier)
@@ -121,7 +121,7 @@ void RemoteImageDecoderAVFManager::setUseGPUProcess(bool useGPUProcess)
     ImageDecoderFactoryAVF::singleton().set({
         RemoteImageDecoderAVF::supportsMediaType,
         RemoteImageDecoderAVF::canDecodeType,
-        [weakThis = ThreadSafeWeakPtr { *this }](FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) {
+        [weakThis = ThreadSafeWeakPtr { *this }](FragmentedSharedBuffer& data, StringImpl* mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) {
             RefPtr protectedThis = weakThis.get();
             return protectedThis ? protectedThis->createImageDecoder(data, mimeType, alphaOption, gammaAndColorProfileOption) : nullptr;
         },

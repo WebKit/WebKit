@@ -122,10 +122,10 @@ void WebDataListSuggestionsDropdownGtk::treeViewRowActivatedCallback(GtkTreeView
     GUniqueOutPtr<char> item;
     gtk_tree_model_get(model, &iter, 0, &item.outPtr(), -1);
 
-    menu->didSelectOption(String::fromUTF8(item.get()));
+    menu->didSelectOption(StringImpl::fromUTF8(item.get()));
 }
 
-void WebDataListSuggestionsDropdownGtk::didSelectOption(const String& selectedOption)
+void WebDataListSuggestionsDropdownGtk::didSelectOption(StringImpl* selectedOption)
 {
     if (!m_page)
         return;
@@ -141,7 +141,7 @@ void WebDataListSuggestionsDropdownGtk::platformShow(WebCore::DataListSuggestion
     for (const auto& suggestion : information.suggestions) {
         GtkTreeIter iter;
         gtk_list_store_append(model, &iter);
-        gtk_list_store_set(model, &iter, 0, suggestion.value.utf8().legacyCStringPointer(), -1);
+        gtk_list_store_set(model, &iter, 0, utf8(suggestion.value).legacyCStringPointer(), -1);
     }
 
     GtkRequisition treeViewRequisition;
@@ -213,28 +213,28 @@ void WebDataListSuggestionsDropdownGtk::platformShow(WebCore::DataListSuggestion
     gtk_widget_show(m_popup);
 }
 
-void WebDataListSuggestionsDropdownGtk::handleKeydownWithIdentifier(const String& key)
+void WebDataListSuggestionsDropdownGtk::handleKeydownWithIdentifier(StringImpl* key)
 {
     auto* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(m_treeView));
     GtkTreeModel* model;
     GtkTreeIter iter;
     bool hasSelection = gtk_tree_selection_get_selected(selection, &model, &iter);
-    if (key == "Enter"_s) {
+    if (equal(key, "Enter"_s)) {
         if (hasSelection) {
             GUniqueOutPtr<char> item;
             gtk_tree_model_get(model, &iter, 0, &item.outPtr(), -1);
-            m_page->didSelectOption(String::fromUTF8(item.get()), m_targetFrameID);
+            m_page->didSelectOption(StringImpl::fromUTF8(item.get()), m_targetFrameID);
         }
         close();
         return;
     }
 
-    if (key == "Up"_s) {
+    if (equal(key, "Up"_s)) {
         if ((hasSelection && gtk_tree_model_iter_previous(model, &iter)) || gtk_tree_model_iter_nth_child(model, &iter, nullptr, gtk_tree_model_iter_n_children(model, nullptr) - 1))
             gtk_tree_selection_select_iter(selection, &iter);
         else
             return;
-    } else if (key == "Down"_s) {
+    } else if (equal(key, "Down"_s)) {
         if ((hasSelection && gtk_tree_model_iter_next(model, &iter)) || gtk_tree_model_get_iter_first(model, &iter))
             gtk_tree_selection_select_iter(selection, &iter);
         else

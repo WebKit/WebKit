@@ -39,9 +39,9 @@ class IconDatabaseClient {
 public:
     virtual ~IconDatabaseClient() { }
 
-    virtual void didChangeIconForPageURL(WebKit::WebIconDatabase&, const WTF::String&) { };
+    virtual void didChangeIconForPageURL(WebKit::WebIconDatabase&, StringImpl*) { };
     virtual void didRemoveAllIcons(WebKit::WebIconDatabase&) { };
-    virtual void iconDataReadyForPageURL(WebKit::WebIconDatabase&, const WTF::String&) { };
+    virtual void iconDataReadyForPageURL(WebKit::WebIconDatabase&, StringImpl*) { };
 };
 
 } // namespace API

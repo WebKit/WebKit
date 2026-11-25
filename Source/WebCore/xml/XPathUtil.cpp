@@ -49,7 +49,7 @@ Node& treeRoot(Node& node)
     return node.rootNode();
 }
 
-String stringValue(Node& node)
+RefPtr<StringImpl> stringValue(Node& node)
 {
     switch (node.nodeType()) {
     case NodeType::Attribute:
@@ -62,7 +62,7 @@ String stringValue(Node& node)
         if (isRootDomNode(&node) || node.isElementNode())
             return TextNodeTraversal::contentsAsString(node);
     }
-    return String();
+    return nullptr;
 }
 
 bool isValidContextNode(Node& node)

@@ -91,15 +91,15 @@ void TextTrackCueGenericBoxElement::applyCSSProperties()
         setInlineStyleProperty(CSSPropertyID::BackgroundColor, serializationForHTML(cue->backgroundColor()));
 }
 
-Ref<TextTrackCueGeneric> TextTrackCueGeneric::create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
+Ref<TextTrackCueGeneric> TextTrackCueGeneric::create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, StringImpl* content)
 {
     Ref cue = adoptRef(*new TextTrackCueGeneric(downcast<Document>(context), start, end, content));
     cue->suspendIfNeeded();
     return cue;
 }
 
-TextTrackCueGeneric::TextTrackCueGeneric(Document& document, const MediaTime& start, const MediaTime& end, const String& content)
-    : VTTCue(document, start, end, String { content })
+TextTrackCueGeneric::TextTrackCueGeneric(Document& document, const MediaTime& start, const MediaTime& end, StringImpl* content)
+    : VTTCue(document, start, end, RefPtr<StringImpl> { content })
 {
 }
 
@@ -144,7 +144,7 @@ bool TextTrackCueGeneric::cueContentsMatch(const TextTrackCue& otherTextTrackCue
     return VTTCue::cueContentsMatch(other)
         && m_baseFontSizeRelativeToVideoHeight == other.m_baseFontSizeRelativeToVideoHeight
         && m_fontSizeMultiplier == other.m_fontSizeMultiplier
-        && m_fontName == other.m_fontName
+        && equal(m_fontName, other.m_fontName)
         && m_foregroundColor == other.m_foregroundColor
         && m_backgroundColor == other.m_backgroundColor
         && m_preventLineWrapping == other.m_preventLineWrapping;
@@ -185,18 +185,18 @@ void TextTrackCueGeneric::toJSON(JSON::Object& object) const
     VTTCue::toJSON(object);
 
     if (m_foregroundColor.isValid())
-        object.setString("foregroundColor"_s, serializationForHTML(m_foregroundColor));
+        object.setString("foregroundColor"_si, serializationForHTML(m_foregroundColor));
     if (m_backgroundColor.isValid())
-        object.setString("backgroundColor"_s, serializationForHTML(m_backgroundColor));
+        object.setString("backgroundColor"_si, serializationForHTML(m_backgroundColor));
     if (m_highlightColor.isValid())
-        object.setString("highlightColor"_s, serializationForHTML(m_highlightColor));
+        object.setString("highlightColor"_si, serializationForHTML(m_highlightColor));
     if (m_baseFontSizeRelativeToVideoHeight)
-        object.setDouble("relativeFontSize"_s, m_baseFontSizeRelativeToVideoHeight);
+        object.setDouble("relativeFontSize"_si, m_baseFontSizeRelativeToVideoHeight);
     if (m_fontSizeMultiplier)
-        object.setDouble("fontSizeMultiplier"_s, m_fontSizeMultiplier);
-    if (!m_fontName.isEmpty())
-        object.setString("font"_s, m_fontName);
-    object.setString("preventLineWrapping"_s, m_preventLineWrapping ? "true"_s : "false"_s);
+        object.setDouble("fontSizeMultiplier"_si, m_fontSizeMultiplier);
+    if (!isEmpty(m_fontName))
+        object.setString("font"_si, m_fontName);
+    object.setString("preventLineWrapping"_si, StringImpl::create(m_preventLineWrapping ? "true"_s : "false"_s).ptr());
 }
 
 } // namespace WebCore

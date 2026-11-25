@@ -53,11 +53,11 @@ static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, Deferred
     promise.resolve<IDLInterface<ServiceWorkerClient>>(ServiceWorkerClient::create(scope, WTF::move(*clientData)));
 }
 
-void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id, Ref<DeferredPromise>&& promise)
+void ServiceWorkerClients::get(ScriptExecutionContext& context, StringImpl* id, Ref<DeferredPromise>&& promise)
 {
     auto serviceWorkerIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread()->identifier();
 
-    callOnMainThread([promiseIdentifier = addPendingPromise(WTF::move(promise)), serviceWorkerIdentifier, id = id.isolatedCopy()] () {
+    callOnMainThread([promiseIdentifier = addPendingPromise(WTF::move(promise)), serviceWorkerIdentifier, id = isolatedCopy(id)] () {
         Ref connection = *SWContextManager::singleton().connection();
         connection->findClientByVisibleIdentifier(serviceWorkerIdentifier, id, [promiseIdentifier, serviceWorkerIdentifier]<typename ClientData> (ClientData&& clientData) {
             SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, data = crossThreadCopy(std::forward<ClientData>(clientData))] (auto& context) mutable {
@@ -95,12 +95,12 @@ void ServiceWorkerClients::matchAll(ScriptExecutionContext& context, const Clien
     });
 }
 
-void ServiceWorkerClients::openWindow(ScriptExecutionContext& context, const String& urlString, Ref<DeferredPromise>&& promise)
+void ServiceWorkerClients::openWindow(ScriptExecutionContext& context, StringImpl* urlString, Ref<DeferredPromise>&& promise)
 {
     LOG_WITH_STREAM(ServiceWorker, stream << "WebProcess "_s << getpid() << " service worker calling openWindow to URL "_s << urlString);
 
     if (context.settingsValues().serviceWorkersUserGestureEnabled && !downcast<ServiceWorkerGlobalScope>(context).isProcessingUserGesture()) {
-        promise->reject(Exception { ExceptionCode::InvalidAccessError, "ServiceWorkerClients.openWindow() requires a user gesture"_s });
+        promise->reject(Exception { ExceptionCode::InvalidAccessError, "ServiceWorkerClients.openWindow() requires a user gesture"_si });
         return;
     }
 

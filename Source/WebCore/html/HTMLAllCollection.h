@@ -52,8 +52,8 @@ class HTMLAllCollection final : public AllDescendantsCollection {
 public:
     NODELETE static Ref<HTMLAllCollection> create(Document&, CollectionType);
 
-    std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const;
-    std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> namedItemOrItems(const AtomString&) const;
+    std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> namedOrIndexedItemOrItems(AtomStringImpl* nameOrIndex) const;
+    std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> namedItemOrItems(AtomStringImpl*) const;
 
 private:
     HTMLAllCollection(Document&, CollectionType);
@@ -63,7 +63,7 @@ static_assert(sizeof(HTMLAllCollection) == sizeof(AllDescendantsCollection));
 class HTMLAllNamedSubCollection final : public CachedHTMLCollection<HTMLAllNamedSubCollection> {
     WTF_MAKE_TZONE_ALLOCATED(HTMLAllNamedSubCollection);
 public:
-    static Ref<HTMLAllNamedSubCollection> create(Document& document, CollectionType type, const AtomString& name)
+    static Ref<HTMLAllNamedSubCollection> create(Document& document, CollectionType type, AtomStringImpl* name)
     {
         return adoptRef(*new HTMLAllNamedSubCollection(document, type, name));
     }
@@ -72,9 +72,9 @@ public:
     NODELETE bool elementMatches(Element&) const;
 
 private:
-    HTMLAllNamedSubCollection(Document&, CollectionType, const AtomString&);
+    HTMLAllNamedSubCollection(Document&, CollectionType, AtomStringImpl*);
 
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
 };
 
 } // namespace WebCore

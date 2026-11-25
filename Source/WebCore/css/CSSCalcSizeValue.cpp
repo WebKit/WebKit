@@ -41,7 +41,7 @@ CSSCalcSizeValue::CSSCalcSizeValue(CSS::CalcSizeFunction&& calcSize)
 {
 }
 
-String CSSCalcSizeValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSCalcSizeValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
     CSS::serializationForCSS(builder, context, m_calcSize);

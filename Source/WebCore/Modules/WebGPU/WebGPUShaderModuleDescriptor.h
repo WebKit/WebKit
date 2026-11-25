@@ -32,9 +32,9 @@
 namespace WebCore {
 
 struct WebGPUShaderModuleDescriptor : public WebGPUObjectDescriptorBase {
-    String code;
+    RefPtr<StringImpl> code;
     // JSC::Strong<JSC::JSObject> sourceMap;
-    Vector<KeyValuePair<String, WebGPUShaderModuleCompilationHint>> hints;
+    Vector<KeyValuePair<RefPtr<StringImpl>, WebGPUShaderModuleCompilationHint>> hints;
 };
 
 } // namespace WebCore

@@ -59,6 +59,6 @@ private:
     RefPtr<Private> d;
 };
 
-void JS_EXPORT_PRIVATE replace(String&, const RegularExpression&, StringView);
+void JS_EXPORT_PRIVATE replace(RefPtr<StringImpl>&, const RegularExpression&, StringView);
 
 } } // namespace JSC::Yarr

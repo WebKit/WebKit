@@ -101,7 +101,7 @@ PropertyCascade::AnimationLayer::AnimationLayer(const HashMap<AnimatableCSSPrope
     : properties(properties)
 {
     for (auto& key : properties.keys()) {
-        if (std::holds_alternative<AtomString>(key)) {
+        if (std::holds_alternative<RefPtr<AtomStringImpl>>(key)) {
             hasCustomProperties = true;
             break;
         }
@@ -215,7 +215,7 @@ void PropertyCascade::setDelayingForRuleRollback(CSSPropertyID propertyID, CSSVa
 {
     ASSERT(m_ruleRollbackDepth);
 
-    auto key = [&] -> std::pair<unsigned, AtomString>  {
+    auto key = [&] -> std::pair<unsigned, RefPtr<AtomStringImpl>>  {
         if (propertyID == CSSPropertyID::Custom)
             return { std::to_underlying(propertyID), downcast<CSSCustomPropertyValue>(cssValue).name() };
         return { std::to_underlying(propertyID), emptyAtom() };

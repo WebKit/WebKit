@@ -701,7 +701,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 
         // Disallow -webkit-user-modify on ::pseudo elements, except if that pseudo-element targets a slot,
         // in which case we want the editability to be passed onto the slotted contents.
-        if (element->isInUserAgentShadowTree() && !element->userAgentPart().isNull() && !is<HTMLSlotElement>(element))
+        if (element->isInUserAgentShadowTree() && element->userAgentPart() && !is<HTMLSlotElement>(element))
             style.setUserModify(UserModify::ReadOnly);
 
         if (is<HTMLMarqueeElement>(*element)) {
@@ -1172,19 +1172,19 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
     if (documentQuirks.needsYouTubeOverflowScrollQuirk()) {
         // This turns sidebar scrollable without hover.
-        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> idValue("guide-inner-content"_s);
         if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
     }
     if (documentQuirks.needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
-        static MainThreadNeverDestroyed<const AtomString> roleValue("navigation"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> roleValue("navigation"_s);
         if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
 
     if (documentQuirks.needsGoogleDocsNavigationWidgetScrollQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> className("navigation-widget-content"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> className("navigation-widget-content"_s);
         if (style.visibility() == Visibility::Hidden && m_parentStyle.visibility() == Visibility::Visible && m_element->hasClassName(className))
             style.setVisibility(Visibility::Visible);
     }
@@ -1219,11 +1219,11 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 #if ENABLE(VIDEO)
     if (documentQuirks.needsFullscreenDisplayNoneQuirk()) {
         if (is<HTMLDivElement>(*m_element) && style.display() == DisplayType::None) {
-            static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
-            static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
+            static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
+            static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> videoElementID("vjs_video_3_html5_api"_s);
 
             if (m_element->hasClassName(instreamNativeVideoDivClass)) {
-                RefPtr video = dynamicDowncast<HTMLVideoElement>(protect(m_element->treeScope())->getElementById(videoElementID));
+                RefPtr video = dynamicDowncast<HTMLVideoElement>(protect(m_element->treeScope())->getElementById(videoElementID.get()));
                 if (video && video->isFullscreen())
                     style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlow);
             }
@@ -1231,7 +1231,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     }
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr documentFullscreen = m_document->fullscreenIfExists(); documentFullscreen && documentQuirks.needsFullscreenObjectFitQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> playerClassName("top-player-video-element"_s);
         bool isFullscreen = documentFullscreen->isFullscreen();
         if (is<HTMLVideoElement>(*m_element) && isFullscreen && m_element->hasClassName(playerClassName) && style.objectFit() == ObjectFit::Fill)
             style.setObjectFit(ObjectFit::Contain);
@@ -1263,7 +1263,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
 #if PLATFORM(MAC)
     if (documentQuirks.needsZomatoEmailLoginLabelQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> class1("eNjKGZ"_s);
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> class1("eNjKGZ"_s);
         if (is<HTMLLabelElement>(*m_element)
             && m_element->hasClassName(class1)
             && style.backgroundColorResolvingCurrentColor() == WebCore::Color::white)

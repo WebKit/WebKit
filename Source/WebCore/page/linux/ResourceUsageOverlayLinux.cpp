@@ -45,14 +45,14 @@ namespace WebCore {
 
 static ResourceUsageData gData;
 
-static String cpuUsageString(float cpuUsage)
+static RefPtr<StringImpl> cpuUsageString(float cpuUsage)
 {
     if (cpuUsage < 0)
-        return "<unknown>"_s;
+        return "<unknown>"_si;
     return makeString(FormattedNumber::fixedWidth(cpuUsage, 1), '%');
 }
 
-static String formatByteNumber(size_t number)
+static RefPtr<StringImpl> formatByteNumber(size_t number)
 {
     if (number >= 1024 * 1048576)
         return makeString(FormattedNumber::fixedWidth(number / (1024. * 1048576), 3), " GB"_s);
@@ -60,14 +60,14 @@ static String formatByteNumber(size_t number)
         return makeString(FormattedNumber::fixedWidth(number / 1048576., 2), " MB"_s);
     if (number >= 1024)
         return makeString(FormattedNumber::fixedWidth(number / 1024, 1), " kB"_s);
-    return String::number(number);
+    return makeString(number);
 }
 
-static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
+static RefPtr<StringImpl> gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
     if (timerFireDate.isNaN())
-        return "[not scheduled]"_s;
-    return String::numberToStringFixedPrecision((timerFireDate - now).seconds());
+        return "[not scheduled]"_si;
+    return StringImpl::numberToStringFixedPrecision((timerFireDate - now).seconds());
 }
 
 static const float gFontSize = 14;

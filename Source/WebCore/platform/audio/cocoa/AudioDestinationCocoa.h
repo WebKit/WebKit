@@ -60,7 +60,7 @@ private:
     friend Ref<AudioDestination> AudioDestination::create(const CreationOptions&);
 
 #if PLATFORM(IOS_FAMILY)
-    void setSceneIdentifier(const String&) override;
+    void setSceneIdentifier(StringImpl*) override;
 #endif
 
     void startRendering(CompletionHandler<void(bool)>&&) override;
@@ -70,7 +70,7 @@ private:
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
 
 #if PLATFORM(IOS_FAMILY)
-    String m_sceneIdentifier;
+    RefPtr<StringImpl> m_sceneIdentifier;
 #endif
 };
 

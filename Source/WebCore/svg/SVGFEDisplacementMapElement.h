@@ -30,34 +30,34 @@ template<>
 struct SVGPropertyTraits<ChannelSelectorType> {
     static unsigned highestEnumValue() { return std::to_underlying(ChannelSelectorType::CHANNEL_A); }
 
-    static String toString(ChannelSelectorType type)
+    static RefPtr<StringImpl> toString(ChannelSelectorType type)
     {
         switch (type) {
         case ChannelSelectorType::CHANNEL_UNKNOWN:
             return emptyString();
         case ChannelSelectorType::CHANNEL_R:
-            return "R"_s;
+            return "R"_si;
         case ChannelSelectorType::CHANNEL_G:
-            return "G"_s;
+            return "G"_si;
         case ChannelSelectorType::CHANNEL_B:
-            return "B"_s;
+            return "B"_si;
         case ChannelSelectorType::CHANNEL_A:
-            return "A"_s;
+            return "A"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static ChannelSelectorType fromString(SVGElement&, const String& value)
+    static ChannelSelectorType fromString(SVGElement&, StringImpl* value)
     {
-        if (value == "R"_s)
+        if (equal(value, "R"_s))
             return ChannelSelectorType::CHANNEL_R;
-        if (value == "G"_s)
+        if (equal(value, "G"_s))
             return ChannelSelectorType::CHANNEL_G;
-        if (value == "B"_s)
+        if (equal(value, "B"_s))
             return ChannelSelectorType::CHANNEL_B;
-        if (value == "A"_s)
+        if (equal(value, "A"_s))
             return ChannelSelectorType::CHANNEL_A;
         return ChannelSelectorType::CHANNEL_UNKNOWN;
     }
@@ -69,8 +69,8 @@ class SVGFEDisplacementMapElement final : public SVGFilterPrimitiveStandardAttri
 public:
     static Ref<SVGFEDisplacementMapElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1->currentValue(); }
-    String in2() const { return m_in2->currentValue(); }
+    RefPtr<StringImpl> in1() const { return m_in1->currentValue(); }
+    RefPtr<StringImpl> in2() const { return m_in2->currentValue(); }
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector->currentValue<ChannelSelectorType>(); }
     ChannelSelectorType yChannelSelector() const { return m_yChannelSelector->currentValue<ChannelSelectorType>(); }
     float scale() const { return m_scale->currentValue(); }
@@ -86,11 +86,11 @@ public:
 private:
     SVGFEDisplacementMapElement(const QualifiedName& tagName, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName& attrName) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() }, AtomString { in2() } }; }
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override { return { AtomStringImpl::add(in1()), AtomStringImpl::add(in2()) }; }
     IntOutsets outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 

@@ -753,7 +753,7 @@ TextStream& operator<<(TextStream& ts, const ViewportConfiguration& config)
     return ts << config.description();
 }
 
-String ViewportConfiguration::description() const
+RefPtr<StringImpl> ViewportConfiguration::description() const
 {
     TextStream ts;
 
@@ -800,7 +800,7 @@ String ViewportConfiguration::description() const
 
 void ViewportConfiguration::dump() const
 {
-    SAFE_WTFLOGALWAYS("%s", description().utf8());
+    SAFE_WTFLOGALWAYS("%s", utf8(description()));
 }
 
 #endif

@@ -60,7 +60,7 @@ public:
 
     WEBCORE_EXPORT IPAddress isolatedCopy() const;
     WEBCORE_EXPORT unsigned matchingNetMaskLength(const IPAddress& other) const;
-    WEBCORE_EXPORT static std::optional<IPAddress> fromString(const String&);
+    WEBCORE_EXPORT static std::optional<IPAddress> fromString(StringImpl*);
 
     bool isIPv4() const { return std::holds_alternative<struct in_addr>(m_address); }
     bool isIPv6() const { return std::holds_alternative<struct in6_addr>(m_address); }
@@ -92,8 +92,8 @@ enum class DNSError { Unknown, CannotResolve, Cancelled };
 using DNSAddressesOrError = std::expected<Vector<IPAddress>, DNSError>;
 using DNSCompletionHandler = CompletionHandler<void(DNSAddressesOrError&&)>;
 
-WEBCORE_EXPORT void prefetchDNS(const String& hostname);
-WEBCORE_EXPORT void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&&);
+WEBCORE_EXPORT void prefetchDNS(StringImpl* hostname);
+WEBCORE_EXPORT void resolveDNS(StringImpl* hostname, uint64_t identifier, DNSCompletionHandler&&);
 WEBCORE_EXPORT void stopResolveDNS(uint64_t identifier);
 WEBCORE_EXPORT bool isIPAddressDisallowed(const URL&);
 WEBCORE_EXPORT uint64_t prefetchedHostnameCountForTesting();

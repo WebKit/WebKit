@@ -376,7 +376,7 @@ static void createAndPopulatePCMObservedDomainTable(WebCore::SQLiteDatabase& dat
 void setUpFromResourceLoadStatisticsDatabase(void(*addUnattributedPCM)(WebCore::SQLiteDatabase&), void(*addAttributedPCM)(WebCore::SQLiteDatabase&))
 {
     auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(database->open(emptyObservationsDBPath()));
+    EXPECT_TRUE(database->open(StringImpl::create(protect(emptyObservationsDBPath()).get()).get()));
     createAndPopulateObservedDomainTable(database.get());
     addUnattributedPCM(database.get());
     addAttributedPCM(database.get());
@@ -386,7 +386,7 @@ void setUpFromResourceLoadStatisticsDatabase(void(*addUnattributedPCM)(WebCore::
 void setUpFromPCMDatabase(void(*addUnattributedPCM)(WebCore::SQLiteDatabase&), void(*addAttributedPCM)(WebCore::SQLiteDatabase&))
 {
     auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(database->open(emptyPcmDBPath()));
+    EXPECT_TRUE(database->open(StringImpl::create(protect(emptyPcmDBPath()).get()).get()));
     createAndPopulatePCMObservedDomainTable(database.get());
     addUnattributedPCM(database.get());
     addAttributedPCM(database.get());

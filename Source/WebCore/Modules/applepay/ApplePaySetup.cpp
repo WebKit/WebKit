@@ -96,7 +96,7 @@ void ApplePaySetup::begin(Document& document, Vector<Ref<ApplePaySetupFeature>>&
     }
 
     if (!UserGestureIndicator::processingUserGesture()) {
-        promise.reject(Exception { ExceptionCode::InvalidAccessError, "Must call ApplePaySetup.begin from a user gesture handler."_s });
+        promise.reject(Exception { ExceptionCode::InvalidAccessError, "Must call ApplePaySetup.begin from a user gesture handler."_si });
         return;
     }
 

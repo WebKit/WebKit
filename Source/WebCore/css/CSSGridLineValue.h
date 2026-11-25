@@ -37,7 +37,7 @@ public:
 
     const CSS::GridLine& line() const { return m_line; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSGridLineValue& other) const;
 
 private:

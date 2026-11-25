@@ -68,7 +68,7 @@ static void applyStyleResourceRequestOptions(ResourceLoaderOptions& options, con
     applyModifiersToLoaderOptions(modifiers, options);
 }
 
-CachedResourceRequest createStyleResourceRequest(Document& document, const WTF::URL& url, const URLModifiers& modifiers, const URLProvenance& provenance, FetchOptions::Mode corsMode, ResourceLoaderOptions options, const AtomString& initiatorType)
+CachedResourceRequest createStyleResourceRequest(Document& document, const WTF::URL& url, const URLModifiers& modifiers, const URLProvenance& provenance, FetchOptions::Mode corsMode, ResourceLoaderOptions options, AtomStringImpl* initiatorType)
 {
     // https://drafts.csswg.org/css-values-4/#fetch-a-style-resource
 
@@ -101,9 +101,12 @@ CachedResourceRequest createStyleResourceRequest(Document& document, const WTF::
     // 7. If sheet's origin-clean flag is set, set req's initiator type to "css".
     //
     // Otherwise the load is marked as loaded from an opaque source.
-    if (provenance.isStyleSheetOriginClean)
-        request.setInitiatorType(initiatorType.isNull() ? cachedResourceRequestInitiatorTypes().css : initiatorType);
-    else {
+    if (provenance.isStyleSheetOriginClean) {
+        if (!initiatorType)
+            request.setInitiatorType(cachedResourceRequestInitiatorTypes().css.get());
+        else
+            request.setInitiatorType(initiatorType);
+    } else {
         auto requestOptions = request.options();
         requestOptions.loadedFromOpaqueSource = LoadedFromOpaqueSource::Yes;
         request.setOptions(requestOptions);

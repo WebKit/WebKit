@@ -57,7 +57,7 @@ public:
     ~CSSSubstitutionValue();
 
     bool equals(const CSSSubstitutionValue&) const;
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
 
     NODELETE const CSSParserContext& context() const;
 
@@ -77,11 +77,11 @@ private:
 
     const Ref<CSSVariableData> m_data;
     CSSNamespacePrefixMap m_namespacePrefixMap;
-    mutable String m_stringValue;
+    mutable RefPtr<StringImpl> m_stringValue;
 
     // For quickly resolving simple substitution functions.
     struct SimpleReference {
-        AtomString name;
+        RefPtr<AtomStringImpl> name;
         CSSValueID functionId;
     };
     std::optional<SimpleReference> m_simpleReference;
@@ -99,7 +99,7 @@ private:
         // The result of the last substitution, if it substituted only var() functions. It is reused while
         // the custom properties they substituted have the same values.
         struct VarSubstitution {
-            Vector<std::pair<AtomString, RefPtr<const Style::CustomProperty>>> customProperties;
+            Vector<std::pair<RefPtr<AtomStringImpl>, RefPtr<const Style::CustomProperty>>> customProperties;
             Ref<CSSVariableData> result;
             bool hasTaintedURL { false };
         };

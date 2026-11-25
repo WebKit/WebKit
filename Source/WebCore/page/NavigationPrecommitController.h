@@ -48,7 +48,7 @@ public:
     static Ref<NavigationPrecommitController> create(NavigateEvent& event) { return adoptRef(*new NavigationPrecommitController(event)); }
     ~NavigationPrecommitController();
 
-    ExceptionOr<void> redirect(JSC::JSGlobalObject&, Document&, const String& url, NavigationNavigateOptions&&);
+    ExceptionOr<void> redirect(JSC::JSGlobalObject&, Document&, StringImpl* url, NavigationNavigateOptions&&);
     ExceptionOr<void> addHandler(Document&, Ref<NavigationInterceptHandler>&&);
 
     NavigateEvent& event() { return m_event.get(); }

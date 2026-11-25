@@ -43,7 +43,7 @@ CachedSVGDocument::CachedSVGDocument(CachedResourceRequest&& request, CachedSVGD
 
 CachedSVGDocument::~CachedSVGDocument() = default;
 
-void CachedSVGDocument::setEncoding(const String& chs)
+void CachedSVGDocument::setEncoding(StringImpl* chs)
 {
     m_decoder->setEncoding(chs, TextResourceDecoder::EncodingSource::HTTPHeader);
 }

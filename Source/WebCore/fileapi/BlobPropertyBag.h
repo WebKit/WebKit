@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct BlobPropertyBag {
-    String type;
+    RefPtr<StringImpl> type;
     EndingType endings = EndingType::Transparent;
 };
 

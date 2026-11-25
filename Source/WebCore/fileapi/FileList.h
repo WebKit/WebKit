@@ -54,7 +54,7 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_files.size(); }
 
     bool isEmpty() const { return m_files.isEmpty(); }
-    Vector<String> paths() const;
+    Vector<RefPtr<StringImpl>> paths() const;
 
     const Vector<Ref<File>>& files() const LIFETIME_BOUND { return m_files; }
     const File& file(unsigned index) const { return m_files[index].get(); }

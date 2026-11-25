@@ -30,7 +30,6 @@
 
 namespace WTF {
 
-class String;
 
 } // namespace WTF
 
@@ -43,7 +42,7 @@ template<typename> class ExceptionOr;
 
 class LocalDOMWindowWebDatabase {
 public:
-    static ExceptionOr<RefPtr<Database>> openDatabase(LocalDOMWindow&, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback);
+    static ExceptionOr<RefPtr<Database>> openDatabase(LocalDOMWindow&, StringImpl* name, StringImpl* version, StringImpl* displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback);
 
     LocalDOMWindowWebDatabase() = delete;
     ~LocalDOMWindowWebDatabase() = delete;

@@ -31,13 +31,13 @@
 namespace WebCore {
 
 struct ImageResource {
-    ImageResource isolatedCopy() const & { return { src.isolatedCopy(), sizes.isolatedCopy(), type.isolatedCopy(), label.isolatedCopy() }; }
-    ImageResource isolatedCopy() && { return { WTF::move(src).isolatedCopy(), WTF::move(sizes).isolatedCopy(), WTF::move(type).isolatedCopy(), WTF::move(label).isolatedCopy() }; }
+    ImageResource isolatedCopy() const & { return { WTF::isolatedCopy(src), WTF::isolatedCopy(sizes), WTF::isolatedCopy(type), WTF::isolatedCopy(label) }; }
+    ImageResource isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(src)), WTF::isolatedCopy(WTF::move(sizes)), WTF::isolatedCopy(WTF::move(type)), WTF::isolatedCopy(WTF::move(label)) }; }
 
-    String src;
-    String sizes;
-    String type;
-    String label;
+    RefPtr<StringImpl> src;
+    RefPtr<StringImpl> sizes;
+    RefPtr<StringImpl> type;
+    RefPtr<StringImpl> label;
 };
 
 } // namespace WebCore

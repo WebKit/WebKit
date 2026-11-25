@@ -38,7 +38,7 @@ struct WebExtensionTabParameters {
     std::optional<WebExtensionTabIdentifier> identifier;
 
     std::optional<URL> url;
-    std::optional<String> title;
+    std::optional<RefPtr<StringImpl>> title;
 
     std::optional<WebExtensionWindowIdentifier> windowIdentifier;
     std::optional<uint64_t> index;

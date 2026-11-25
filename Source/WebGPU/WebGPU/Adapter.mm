@@ -90,7 +90,7 @@ static uint32_t subgroupSize(id<MTLDevice> device)
 WebGPU::AdapterInfo Adapter::info()
 {
     WebGPU::AdapterInfo info {
-        .name = m_device.name,
+        .name = StringImpl::create(m_device.name),
         // A Metal device is never a fallback (software) adapter.
         .isFallbackAdapter = false,
         .hasUnifiedMemory = static_cast<bool>(m_device.hasUnifiedMemory),
@@ -115,7 +115,7 @@ bool Adapter::hasFeature(WebGPU::FeatureName feature)
     return m_capabilities.features.contains(feature);
 }
 
-void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<WebGPU::Device>, String>&&)>&& callback)
+void Adapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<WebGPU::Device>, RefPtr<StringImpl>>&&)>&& callback)
 {
     if (m_deviceRequested) {
         callback(makeUnexpected("Adapter can only request one device"_s));

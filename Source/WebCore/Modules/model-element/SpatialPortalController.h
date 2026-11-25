@@ -132,11 +132,11 @@ public:
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     void environmentMapStyleDidChange();
-    WEBCORE_EXPORT String effectiveEnvironmentMapForTesting() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> effectiveEnvironmentMapForTesting() const;
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    WEBCORE_EXPORT void sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&);
+    WEBCORE_EXPORT void sceneGraphAsTextForTesting(std::optional<NodeIdentifier> rootNode, const ModelSceneGraphAsTextOptions&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
@@ -161,23 +161,23 @@ private:
         RefPtr<PlaceholderModelPlayer> placeholder;
 
         std::optional<NodeIdentifier> anchorNode;
-        String anchorPlacement;
+        RefPtr<StringImpl> anchorPlacement;
         bool anchorWarningIssued { false };
     };
 
     struct AnchorResolution {
         std::optional<NodeIdentifier> node;
-        String warning;
+        RefPtr<StringImpl> warning;
     };
 
     struct ResolvedAnchor {
         std::optional<NodeIdentifier> node;
-        String placement;
+        RefPtr<StringImpl> placement;
     };
 
     struct PromotedChildAnchor {
         std::optional<NodeIdentifier> anchorNode;
-        String anchorPlacement;
+        RefPtr<StringImpl> anchorPlacement;
         bool anchorWarningIssued { false };
     };
 
@@ -188,7 +188,7 @@ private:
     void modelDidUnload(ModelPlayer&);
     void modelDidUpdate(ModelPlayer&);
     void modelDidUpdatePortalTransform(ModelPlayer&, const TransformationMatrix&);
-    void logWarning(ModelPlayer&, const String&);
+    void logWarning(ModelPlayer&, StringImpl*);
     RefPtr<GraphicsLayer> portalGraphicsLayer() const;
     void viewportIntersectionChanged(bool isIntersecting);
     void portalVisibilityChanged();
@@ -211,7 +211,7 @@ private:
     void updatePromotedChildAnchors(const AnchorsByName&);
     static std::optional<NodeIdentifier> anchorNodeForName(const Element&, const Style::ScopedName&, const AnchorsByName&);
     bool anchorChainReaches(NodeIdentifier startNode, NodeIdentifier targetNode, const AnchorsByName&) const;
-    void addConsoleWarning(const String&) const;
+    void addConsoleWarning(StringImpl*) const;
     void reconfigurePortalLayer();
     void observePortalVisibility();
     void stopObservingPortalVisibility();

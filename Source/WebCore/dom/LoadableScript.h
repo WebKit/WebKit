@@ -60,7 +60,7 @@ public:
     void removeClient(LoadableScriptClient&);
 
 protected:
-    LoadableScript(const AtomString& nonce, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
+    LoadableScript(AtomStringImpl* nonce, ReferrerPolicy, RequestPriority, AtomStringImpl* crossOriginMode, AtomStringImpl* charset, AtomStringImpl* initiatorType, bool isInUserAgentShadowTree);
 
     void notifyClientFinished();
 

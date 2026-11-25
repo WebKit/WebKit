@@ -128,14 +128,14 @@ public:
         return Vector(std::span<const uint8_t> { data, static_cast<size_t>(length) });
     }
 
-    String getDataAsString() const
+    RefPtr<StringImpl> getDataAsString() const
     {
         uint8_t* data { nullptr };
         auto length = ::BIO_get_mem_data(m_bio, &data);
         if (length < 0)
-            return String();
+            return nullptr;
 
-        return String({ byteCast<Latin1Character>(data), static_cast<size_t>(length) });
+        return StringImpl::createOrNull(std::span { byteCast<Latin1Character>(data), static_cast<size_t>(length) });
     }
 
     std::unique_ptr<X509, deleter<X509>> readX509()
@@ -185,62 +185,62 @@ WebCore::CertificateInfo::CertificateChain createCertificateChain(X509_STORE_CTX
 }
 
 #if OS(WINDOWS)
-static String toString(const ASN1_STRING* name)
+static RefPtr<StringImpl> toString(const ASN1_STRING* name)
 {
     unsigned char* data { nullptr };
     auto length = ASN1_STRING_to_UTF8(&data, name);
     if (length <= 0)
-        return String();
+        return nullptr;
 
-    String result({ byteCast<Latin1Character>(data), static_cast<size_t>(length) });
+    RefPtr<StringImpl> result = StringImpl::createOrNull(std::span { byteCast<Latin1Character>(data), static_cast<size_t>(length) });
     OPENSSL_free(data);
     return result;
 }
 #endif
 
-static String getSubjectEntry(const X509* x509, int nid)
+static RefPtr<StringImpl> getSubjectEntry(const X509* x509, int nid)
 {
     auto subjectName = X509_get_subject_name(x509);
     if (!subjectName)
-        return String();
+        return nullptr;
 
     auto index = X509_NAME_get_index_by_NID(subjectName, nid, -1);
     if (index < 0)
-        return String();
+        return nullptr;
 
     auto entry = X509_NAME_get_entry(subjectName, index);
     if (!entry)
-        return String();
+        return nullptr;
 
     auto entryData = X509_NAME_ENTRY_get_data(entry);
     if (!entryData)
-        return String();
+        return nullptr;
 
     return toString(entryData);
 }
 
-static String getCommonName(const X509* x509)
+static RefPtr<StringImpl> getCommonName(const X509* x509)
 {
     return getSubjectEntry(x509, NID_commonName);
 }
 
-static String getOrganizationName(const X509* x509)
+static RefPtr<StringImpl> getOrganizationName(const X509* x509)
 {
     return getSubjectEntry(x509, NID_organizationName);
 }
 
-static String getSubjectName(const X509* x509)
+static RefPtr<StringImpl> getSubjectName(const X509* x509)
 {
     static const unsigned long flags = (ASN1_STRFLGS_RFC2253 | ASN1_STRFLGS_ESC_QUOTE | XN_FLAG_SEP_CPLUS_SPC | XN_FLAG_DN_REV | XN_FLAG_FN_NONE | XN_FLAG_SPC_EQ) & ~ASN1_STRFLGS_ESC_MSB;
 
     auto subjectName = X509_get_subject_name(x509);
     if (!subjectName)
-        return String();
+        return nullptr;
 
     BIO bio;
     auto length = X509_NAME_print_ex(bio.get(), subjectName, 0, flags);
     if (length <= 0)
-        return String();
+        return nullptr;
 
     return bio.getDataAsString();
 }
@@ -293,7 +293,7 @@ static std::optional<Seconds> convertASN1TimeToSeconds(const ASN1_TIME* ans1Time
     return Seconds(gmtTime + (localTimeOffset.offset / 1000.0));
 }
 
-static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector<String>& ipAddresses)
+static void getSubjectAltName(const X509* x509, Vector<RefPtr<StringImpl>>& dnsNames, Vector<RefPtr<StringImpl>>& ipAddresses)
 {
     StackOfGeneralName sanList(x509, NID_subject_alt_name);
     if (!sanList)
@@ -307,7 +307,7 @@ static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector
 
         if (value->type == GEN_DNS) {
             auto dnsName = toString(value->d.dNSName);
-            if (!dnsName.isNull())
+            if (dnsName)
                 dnsNames.append(WTF::move(dnsName));
         } else if (value->type == GEN_IPADD) {
             auto data = value->d.iPAddress->data;
@@ -321,7 +321,7 @@ static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector
     }
 }
 
-String canonicalizeIPv6Address(std::span<uint8_t, 16> data)
+RefPtr<StringImpl> canonicalizeIPv6Address(std::span<uint8_t, 16> data)
 {
     bool compressCurrentSection = false;
     size_t maxZeros = 0;
@@ -347,7 +347,7 @@ String canonicalizeIPv6Address(std::span<uint8_t, 16> data)
 
     size_t minimum = 1;
     StringBuilder ipAddress;
-    String oldSection = ""_s;
+    RefPtr<StringImpl> oldSection = ""_si;
     StringBuilder newSection;
     for (int j = 0; j < 8; j++) {
         if (j == start && maxZeros > minimum) {
@@ -361,8 +361,8 @@ String canonicalizeIPv6Address(std::span<uint8_t, 16> data)
         oldSection = makeString(hex(data[2 * j] << 8 | data[2 * j + 1], 4, Lowercase));
         newSection = StringBuilder();
         for (int k = 0; k < 4; k++) {
-            if (oldSection[k] != '0' || !newSection.isEmpty() || k == 3)
-                newSection.append(oldSection[k]);
+            if (codeUnitAt(oldSection, k) != '0' || !newSection.isEmpty() || k == 3)
+                newSection.append(codeUnitAt(oldSection, k));
         }
         ipAddress.append(newSection.toString());
 
@@ -383,9 +383,9 @@ std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_
 
     // Prefer the CN attribute, then O, to match the behavior of SecCertificateCopySubjectSummary on macOS.
     summaryInfo.subject = getCommonName(x509.get());
-    if (summaryInfo.subject.isNull())
+    if (!summaryInfo.subject)
         summaryInfo.subject = getOrganizationName(x509.get());
-    if (summaryInfo.subject.isNull())
+    if (!summaryInfo.subject)
         summaryInfo.subject = getSubjectName(x509.get());
 
     if (auto notBefore = convertASN1TimeToSeconds(X509_get0_notBefore(x509.get())))
@@ -399,14 +399,14 @@ std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_
     return summaryInfo;
 }
 
-String tlsVersion(const SSL* ssl)
+RefPtr<StringImpl> tlsVersion(const SSL* ssl)
 {
-    return String::fromLatin1(SSL_get_version(ssl));
+    return StringImpl::fromLatin1(SSL_get_version(ssl));
 }
 
-String tlsCipherName(const SSL* ssl)
+RefPtr<StringImpl> tlsCipherName(const SSL* ssl)
 {
-    return String::fromLatin1(SSL_CIPHER_get_name(SSL_get_current_cipher(ssl)));
+    return StringImpl::fromLatin1(SSL_CIPHER_get_name(SSL_get_current_cipher(ssl)));
 }
 
 }

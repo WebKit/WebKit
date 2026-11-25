@@ -48,13 +48,13 @@ JSCallbackFunction::JSCallbackFunction(VM& vm, Structure* structure, JSObjectCal
 {
 }
 
-void JSCallbackFunction::finishCreation(VM& vm, const String& name)
+void JSCallbackFunction::finishCreation(VM& vm, StringImpl* name)
 {
     Base::finishCreation(vm, 0, name);
     ASSERT(inherits(info()));
 }
 
-JSCallbackFunction* JSCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const String& name)
+JSCallbackFunction* JSCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, StringImpl* name)
 {
     Structure* structure = globalObject->callbackFunctionStructure();
     JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(vm)) JSCallbackFunction(vm, structure, callback);

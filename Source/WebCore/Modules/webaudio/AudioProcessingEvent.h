@@ -41,7 +41,7 @@ public:
         return adoptRef(*new AudioProcessingEvent(WTF::move(inputBuffer), WTF::move(outputBuffer), playbackTime));
     }
     
-    NODELETE static Ref<AudioProcessingEvent> create(const AtomString&, AudioProcessingEventInit&&);
+    NODELETE static Ref<AudioProcessingEvent> create(AtomStringImpl*, AudioProcessingEventInit&&);
     
     virtual ~AudioProcessingEvent();
 
@@ -51,7 +51,7 @@ public:
 
 private:
     AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime);
-    AudioProcessingEvent(const AtomString&, AudioProcessingEventInit&&);
+    AudioProcessingEvent(AtomStringImpl*, AudioProcessingEventInit&&);
 
     const RefPtr<AudioBuffer> m_inputBuffer;
     const RefPtr<AudioBuffer> m_outputBuffer;

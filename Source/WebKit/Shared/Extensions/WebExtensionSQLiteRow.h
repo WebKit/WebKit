@@ -48,7 +48,7 @@ public:
         return adoptRef(*new WebExtensionSQLiteRow(std::forward<Args>(args)...));
     }
 
-    String getString(int index);
+    RefPtr<StringImpl> getString(int index);
     int getInt(int index);
     int64_t getInt64(int index);
     double getDouble(int index);

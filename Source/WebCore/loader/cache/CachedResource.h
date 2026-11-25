@@ -125,7 +125,7 @@ public:
 
     virtual void load(CachedResourceLoader&);
 
-    virtual void setEncoding(const String&) { }
+    virtual void setEncoding(StringImpl*) { }
     virtual ASCIILiteral encoding() const { return ASCIILiteral(); }
     virtual const TextResourceDecoder* textResourceDecoder() const { return nullptr; }
     virtual void updateBuffer(const FragmentedSharedBuffer&);
@@ -140,11 +140,11 @@ public:
 
     const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_resourceRequest; }
     const URL& url() const LIFETIME_BOUND { return m_resourceRequest.url(); }
-    String cachePartition() const { return m_resourceRequest.cachePartition(); }
+    RefPtr<StringImpl> cachePartition() const { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     const CookieJar* cookieJar() const { return m_cookieJar.get(); }
     Type type() const { return m_type; }
-    String mimeType() const { return response().mimeType(); }
+    RefPtr<StringImpl> mimeType() const { return response().mimeType(); }
     long long expectedContentLength() const { return response().expectedContentLength(); }
 
     static bool shouldUsePingLoad(Type type) { return type == Type::Beacon || type == Type::Ping; }
@@ -247,7 +247,7 @@ public:
 
     const SecurityOrigin* origin() const { return m_origin.get(); }
     SecurityOrigin* origin() { return m_origin.get(); }
-    AtomString initiatorType() const { return m_initiatorType; }
+    RefPtr<AtomStringImpl> initiatorType() const { return m_initiatorType; }
 
     bool isExpired() const;
 
@@ -390,7 +390,7 @@ private:
     // FIXME: This should use a smart pointer.
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
 
-    Vector<std::pair<String, String>> m_varyingHeaderValues;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> m_varyingHeaderValues;
 
     // If this field is non-null we are using the resource as a proxy for checking whether an existing resource is still up to date
     // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved
@@ -401,10 +401,10 @@ private:
     // If this field is non-null, the resource has a proxy for checking whether it is still up to date (see m_resourceToRevalidate).
     WeakPtr<CachedResource> m_proxyResource;
 
-    String m_fragmentIdentifierForRequest;
+    RefPtr<StringImpl> m_fragmentIdentifierForRequest;
 
     const RefPtr<SecurityOrigin> m_origin;
-    AtomString m_initiatorType;
+    RefPtr<AtomStringImpl> m_initiatorType;
 
     RedirectChainCacheStatus m_redirectChainCacheStatus;
 

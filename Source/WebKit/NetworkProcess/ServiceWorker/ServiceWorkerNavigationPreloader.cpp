@@ -66,7 +66,7 @@ void ServiceWorkerNavigationPreloader::start()
 
     CheckedPtr session = m_session.get();
     if (!session) {
-        didFailLoading(ResourceError { errorDomainWebKitInternal, 0, { }, "No session for preload"_s });
+        didFailLoading(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "No session for preload"_si });
         return;
     }
 
@@ -87,11 +87,11 @@ void ServiceWorkerNavigationPreloader::start()
                 protectedThis->m_cacheEntry = WTF::move(entry);
 
                 auto eTag = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::ETag);
-                if (!eTag.isEmpty())
+                if (!isEmpty(eTag))
                     protectedThis->m_parameters.request.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
 
                 auto lastModified = protectedThis->m_cacheEntry->response().httpHeaderField(HTTPHeaderName::LastModified);
-                if (!lastModified.isEmpty())
+                if (!isEmpty(lastModified))
                     protectedThis->m_parameters.request.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
             }
 

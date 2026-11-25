@@ -72,7 +72,7 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
     auto context = frame.jsContextForWorld(world);
     auto globalObject = JSContextGetGlobalObject(context);
 
-    RefPtr browserString = toJSString("browser"_s);
+    RefPtr browserString = toJSString("browser"_si);
     if (!browserString)
         return;
 
@@ -102,11 +102,11 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
 
     JSObjectSetProperty(context, globalObject, browserString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
 
-    if (RefPtr chromeString = toJSString("chrome"_s))
+    if (RefPtr chromeString = toJSString("chrome"_si))
         JSObjectSetProperty(context, globalObject, chromeString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
 
     if (auto* domGlobalObject = dynamicDowncast<JSDOMGlobalObject>(toJS(context))) {
-        domGlobalObject->addScriptErrorCallback([extension = Ref { *extension }, contentWorldType](const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) {
+        domGlobalObject->addScriptErrorCallback([extension = Ref { *extension }, contentWorldType](StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber) {
             extension->didEncounterScriptError(message, sourceURL, lineNumber, columnNumber, contentWorldType);
         });
     }
@@ -123,7 +123,7 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
     auto context = frame.jsContextForServiceWorkerWorld(world);
     auto globalObject = JSContextGetGlobalObject(context);
 
-    RefPtr browserString = toJSString("browser"_s);
+    RefPtr browserString = toJSString("browser"_si);
     if (!browserString)
         return;
 
@@ -136,11 +136,11 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
     namespaceObject = toJS(context, WebExtensionAPINamespace::create(WebExtensionContentWorldType::Main, *extension).ptr());
 
     JSObjectSetProperty(context, globalObject, browserString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
-    if (RefPtr chromeString = toJSString("chrome"_s))
+    if (RefPtr chromeString = toJSString("chrome"_si))
         JSObjectSetProperty(context, globalObject, chromeString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
 
     if (auto* domGlobalObject = dynamicDowncast<JSDOMGlobalObject>(toJS(context))) {
-        domGlobalObject->addScriptErrorCallback([extension = Ref { *extension }](const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) {
+        domGlobalObject->addScriptErrorCallback([extension = Ref { *extension }](StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber) {
             extension->didEncounterScriptError(message, sourceURL, lineNumber, columnNumber, WebExtensionContentWorldType::Main);
         });
     }
@@ -151,7 +151,7 @@ void WebExtensionControllerProxy::addBindingsToWebPageFrameIfNecessary(WebFrame&
     auto context = frame.jsContextForWorld(world);
     auto globalObject = JSContextGetGlobalObject(context);
 
-    RefPtr browserString = toJSString("browser"_s);
+    RefPtr browserString = toJSString("browser"_si);
     if (!browserString)
         return;
 
@@ -177,7 +177,7 @@ void WebExtensionControllerProxy::addBindingsToWebPageFrameIfNecessary(WebFrame&
     // yet loaded when the global object was first created), register them now.
     if (domGlobalObject && !domGlobalObject->hasScriptErrorCallbacks()) {
         for (Ref extensionContext : m_extensionContexts) {
-            domGlobalObject->addScriptErrorCallback([extensionContext = extensionContext.copyRef()](const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) {
+            domGlobalObject->addScriptErrorCallback([extensionContext = extensionContext.copyRef()](StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber) {
                 if (!extensionContext->isURLForThisExtension(URL(URL(), sourceURL)))
                     return;
 
@@ -201,7 +201,7 @@ void WebExtensionControllerProxy::addTestListenersToContext(WebExtensionContextP
         auto jsContext = frame.jsContextForWorld(WebExtensionContextProxy::mainWorldSingleton());
         auto globalObject = JSContextGetGlobalObject(jsContext);
 
-        auto browserObject = JSObjectGetProperty(jsContext, globalObject, toJSString("browser"_s).get(), nullptr);
+        auto browserObject = JSObjectGetProperty(jsContext, globalObject, toJSString("browser"_si).get(), nullptr);
         if (!browserObject || !JSValueIsObject(jsContext, browserObject))
             return;
 

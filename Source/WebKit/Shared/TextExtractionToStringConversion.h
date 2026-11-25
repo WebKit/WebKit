@@ -67,8 +67,8 @@ enum class TextExtractionOutputFormat : uint8_t {
 };
 
 using TextExtractionOptionFlags = OptionSet<TextExtractionOptionFlag>;
-using TextExtractionFilterPromise = NativePromise<String, void>;
-using TextExtractionFilterCallback = Function<Ref<TextExtractionFilterPromise>(const String&, std::optional<WebCore::FrameIdentifier>&&, std::optional<WebCore::NodeIdentifier>&&)>;
+using TextExtractionFilterPromise = NativePromise<RefPtr<StringImpl>, void>;
+using TextExtractionFilterCallback = Function<Ref<TextExtractionFilterPromise>(StringImpl*, std::optional<WebCore::FrameIdentifier>&&, std::optional<WebCore::NodeIdentifier>&&)>;
 
 struct TextExtractionOptions {
     TextExtractionOptions(TextExtractionOptions&& other)
@@ -85,7 +85,7 @@ struct TextExtractionOptions {
     {
     }
 
-    TextExtractionOptions(WebCore::FrameIdentifier&& mainFrameIdentifier, Vector<TextExtractionFilterCallback>&& filters, Vector<String>&& items, Vector<std::pair<String, String>>&& replacementStrings, std::optional<TextExtractionVersion> version, TextExtractionOptionFlags flags, TextExtractionOutputFormat outputFormat, TextExtractionURLCache* urlCache = nullptr, std::optional<uint64_t> maxWordsPerParagraph = std::nullopt, String&& topHostName = { })
+    TextExtractionOptions(WebCore::FrameIdentifier&& mainFrameIdentifier, Vector<TextExtractionFilterCallback>&& filters, Vector<RefPtr<StringImpl>>&& items, Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>&& replacementStrings, std::optional<TextExtractionVersion> version, TextExtractionOptionFlags flags, TextExtractionOutputFormat outputFormat, TextExtractionURLCache* urlCache = nullptr, std::optional<uint64_t> maxWordsPerParagraph = std::nullopt, RefPtr<StringImpl>&& topHostName = { })
         : mainFrameIdentifier(WTF::move(mainFrameIdentifier))
         , filterCallbacks(WTF::move(filters))
         , nativeMenuItems(WTF::move(items))
@@ -101,27 +101,27 @@ struct TextExtractionOptions {
 
     WebCore::FrameIdentifier mainFrameIdentifier;
     Vector<TextExtractionFilterCallback> filterCallbacks;
-    Vector<String> nativeMenuItems;
-    Vector<std::pair<String, String>> replacementStrings;
+    Vector<RefPtr<StringImpl>> nativeMenuItems;
+    Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> replacementStrings;
     std::optional<TextExtractionVersion> version;
     std::optional<uint64_t> maxWordsPerParagraph;
     TextExtractionOptionFlags flags;
     TextExtractionOutputFormat outputFormat { TextExtractionOutputFormat::TextTree };
     RefPtr<TextExtractionURLCache> urlCache;
-    String topHostName;
+    RefPtr<StringImpl> topHostName;
 };
 
 struct TextExtractionLineContent {
-    String contentWithoutIdentifier;
-    String cachedRepresentation;
-    std::optional<String> nodeIdentifier;
+    RefPtr<StringImpl> contentWithoutIdentifier;
+    RefPtr<StringImpl> cachedRepresentation;
+    std::optional<RefPtr<StringImpl>> nodeIdentifier;
 };
 
 struct TextExtractionResult {
-    String textContent;
+    RefPtr<StringImpl> textContent;
     bool filteredOutAnyText { false };
-    Vector<String> shortenedURLStrings;
-    HashMap<String, Vector<ExtractedNodeInfo>> textToContainerMap;
+    Vector<RefPtr<StringImpl>> shortenedURLStrings;
+    HashMap<RefPtr<StringImpl>, Vector<ExtractedNodeInfo>> textToContainerMap;
     Vector<TextExtractionLineContent> lineContents;
 };
 
@@ -129,8 +129,8 @@ void convertToText(WebCore::TextExtraction::Item&&, TextExtractionOptions&&, Com
 
 std::optional<ExtractedNodeInfo> parseExtractedNodeInfo(StringView);
 
-String foldTextForReplacement(const String& source);
+RefPtr<StringImpl> foldTextForReplacement(StringImpl* source);
 
-String applyReplacements(const String& text, const Vector<std::pair<String, String>>& replacementStrings);
+RefPtr<StringImpl> applyReplacements(StringImpl* text, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& replacementStrings);
 
 } // namespace WebKit

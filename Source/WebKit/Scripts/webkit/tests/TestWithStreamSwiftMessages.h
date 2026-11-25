@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -71,7 +72,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class SendString {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamSwift_SendString; }
     static constexpr bool isSync = false;
@@ -81,7 +82,7 @@ public:
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
 
-    explicit SendString(const String& url)
+    explicit SendString(StringView url)
         : m_url(url)
     {
     }
@@ -93,12 +94,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class SendStringSync {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamSwift_SendStringSync; }
     static constexpr bool isSync = true;
@@ -112,7 +113,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<int64_t>;
     using Reply = CompletionHandler<void(int64_t)>;
-    explicit SendStringSync(const String& url)
+    explicit SendStringSync(StringView url)
         : m_url(url)
     {
     }
@@ -124,7 +125,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 } // namespace TestWithStreamSwift

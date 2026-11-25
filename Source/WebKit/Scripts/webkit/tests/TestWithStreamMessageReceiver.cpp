@@ -32,6 +32,7 @@
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRight.h> // NOLINT
 #endif
+#include <wtf/text/StringView.h> // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)

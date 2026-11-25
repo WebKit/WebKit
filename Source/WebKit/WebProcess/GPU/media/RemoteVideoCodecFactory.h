@@ -42,8 +42,8 @@ public:
     ~RemoteVideoCodecFactory();
 
 private:
-    static void createDecoder(const String&, const WebCore::VideoDecoder::Config&, WebCore::VideoDecoder::CreateCallback&&, WebCore::VideoDecoder::OutputCallback&&);
-    static void createEncoder(const String&, const WebCore::VideoEncoder::Config&, WebCore::VideoEncoder::CreateCallback&&, WebCore::VideoEncoder::DescriptionCallback&&, WebCore::VideoEncoder::OutputCallback&&);
+    static void createDecoder(StringImpl*, const WebCore::VideoDecoder::Config&, WebCore::VideoDecoder::CreateCallback&&, WebCore::VideoDecoder::OutputCallback&&);
+    static void createEncoder(StringImpl*, const WebCore::VideoEncoder::Config&, WebCore::VideoEncoder::CreateCallback&&, WebCore::VideoEncoder::DescriptionCallback&&, WebCore::VideoEncoder::OutputCallback&&);
 };
 
 } // namespace WebKit

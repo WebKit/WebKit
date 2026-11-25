@@ -907,7 +907,7 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject
             return nullptr;
 
         case Resolution::Type::Error:
-            throwSyntaxError(globalObject, scope, "Exported binding name 'default' cannot be resolved by star export entries."_s);
+            throwSyntaxError(globalObject, scope, "Exported binding name 'default' cannot be resolved by star export entries."_si);
             return nullptr;
 
         case Resolution::Type::Ambiguous:
@@ -1147,7 +1147,7 @@ void AbstractModuleRecord::evaluateModuleSync(JSGlobalObject* globalObject)
 static void checkSafeToRecurse(JSGlobalObject* globalObject, ThrowScope& scope)
 {
     if (!globalObject->vm().isSafeToRecurse())
-        throwRangeError(globalObject, scope, "Maximum call stack size exceeded"_s);
+        throwRangeError(globalObject, scope, "Maximum call stack size exceeded"_si);
 }
 
 unsigned AbstractModuleRecord::innerModuleEvaluation(JSGlobalObject* globalObject, Vector<AbstractModuleRecord*, 8>& stack, unsigned index)
@@ -1398,14 +1398,14 @@ unsigned AbstractModuleRecord::innerModuleLinking(JSGlobalObject* globalObject, 
     return index;
 }
 
-static String printableName(const RefPtr<UniquedStringImpl>& uid)
+static RefPtr<StringImpl> printableName(const RefPtr<UniquedStringImpl>& uid)
 {
     if (uid->isSymbol())
         return uid.get();
     return WTF::makeString('\'', StringView(uid.get()), '\'');
 }
 
-static String printableName(const Identifier& ident)
+static RefPtr<StringImpl> printableName(const Identifier& ident)
 {
     return printableName(ident.impl());
 }

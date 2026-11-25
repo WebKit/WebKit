@@ -51,7 +51,8 @@ JSC::Structure* JSDOMWindowProperties::createStructure(JSC::VM& vm, JSC::JSGloba
 // https://html.spec.whatwg.org/multipage/window-object.html#dom-window-nameditem
 static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, LocalDOMWindow& window, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    if (RefPtr frame = window.frame()) {
+    // A symbol is never a frame name.
+    if (RefPtr frame = window.frame(); frame && !propertyName.isSymbol()) {
         if (RefPtr scopedChild = frame->tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName))) {
             slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontEnum), toJS(lexicalGlobalObject, protect(scopedChild->window())));
             return true;
@@ -64,8 +65,8 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
     // Allow shortcuts like 'Image1' instead of document.images.Image1
     CheckedPtr document = window.document();
     if (CheckedPtr htmlDocument = dynamicDowncast<HTMLDocument>(document.get())) {
-        AtomString atomPropertyName = propertyName.publicName();
-        if (!atomPropertyName.isEmpty() && htmlDocument->hasWindowNamedItem(atomPropertyName)) {
+        RefPtr<AtomStringImpl> atomPropertyName = propertyName.publicName();
+        if (!isEmpty(atomPropertyName) && htmlDocument->hasWindowNamedItem(atomPropertyName)) {
             JSValue namedItem;
             if (htmlDocument->windowNamedItemContainsMultipleElements(atomPropertyName)) [[unlikely]] {
                 Ref<HTMLCollection> collection = document->windowNamedItems(atomPropertyName);

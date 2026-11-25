@@ -453,7 +453,7 @@ TEST(Badging, ServiceWorker)
     EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 2);
 }
 
-static String originMainFrameBytes(const String& iframeURL)
+static RefPtr<StringImpl> originMainFrameBytes(StringImpl* iframeURL)
 {
     return makeString("<iframe src=\""_s, iframeURL, "\"></iframe>"_s, R"SWRESOURCE(
 <script>
@@ -487,7 +487,7 @@ static void runOriginTest(IFrameOrigin iframeOrigin)
 
     NSURL *mainFrameURL = server.request("/index.html"_s).URL;
     NSURL *iframeURL = iframeIsSameOriginAsMainFrame ? server.request("/iframe.html"_s).URL : server.requestWithLocalhost("/iframe.html"_s).URL;
-    server.addResponse("/index.html"_s, { originMainFrameBytes(iframeURL.absoluteString) });
+    server.addResponse("/index.html"_si, { originMainFrameBytes(StringImpl::create(iframeURL.absoluteString).get()) });
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().preferences._appBadgeEnabled = YES;
@@ -649,7 +649,7 @@ async function sendSpoofedBadgeIPC()
 </script>
 )TESTRESOURCE"_s;
 
-static void runAppBadgeSpoofTest(const String& attackerHTML)
+static void runAppBadgeSpoofTest(StringImpl* attackerHTML)
 {
     NSURL *coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
     NSData *coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL];
@@ -691,7 +691,7 @@ static void runAppBadgeSpoofTest(const String& attackerHTML)
 
 TEST(Badging, SetAppBadgeFromWorkerOriginSpoof)
 {
-    runAppBadgeSpoofTest(badgeAttackFromWorkerBytes);
+    runAppBadgeSpoofTest(StringImpl::create(badgeAttackFromWorkerBytes).ptr());
 }
 
 static constexpr auto badgeAttackFromFrameBytes = R"TESTRESOURCE(
@@ -722,7 +722,7 @@ async function sendSpoofedBadgeIPC()
 
 TEST(Badging, SetAppBadgeFromFrameOriginSpoof)
 {
-    runAppBadgeSpoofTest(badgeAttackFromFrameBytes);
+    runAppBadgeSpoofTest(StringImpl::create(badgeAttackFromFrameBytes).ptr());
 }
 
 #endif // ENABLE(IPC_TESTING_API)

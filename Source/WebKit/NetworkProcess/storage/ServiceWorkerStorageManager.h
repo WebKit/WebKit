@@ -35,7 +35,7 @@ namespace WebKit {
 class ServiceWorkerStorageManager {
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerStorageManager);
 public:
-    explicit ServiceWorkerStorageManager(const String& path);
+    explicit ServiceWorkerStorageManager(StringImpl* path);
 
     void closeFiles();
     void clearAllRegistrations();
@@ -48,7 +48,7 @@ public:
 private:
     WebCore::SWRegistrationDatabase* ensureDatabase();
 
-    String m_path;
+    RefPtr<StringImpl> m_path;
     std::unique_ptr<WebCore::SWRegistrationDatabase> m_database;
 };
 

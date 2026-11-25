@@ -34,17 +34,17 @@
 
 namespace WebCore {
 
-ContentType::ContentType(String&& contentType)
+ContentType::ContentType(RefPtr<StringImpl>&& contentType)
     : m_type(WTF::move(contentType))
 {
 }
 
-ContentType::ContentType(const String& contentType)
+ContentType::ContentType(StringImpl* contentType)
     : m_type(contentType)
 {
 }
 
-ContentType::ContentType(const String& contentType, bool typeWasInferredFromExtension)
+ContentType::ContentType(StringImpl* contentType, bool typeWasInferredFromExtension)
     : m_type(contentType)
     , m_typeWasInferredFromExtension(typeWasInferredFromExtension)
 {
@@ -58,47 +58,47 @@ ContentType ContentType::fromURL(const URL& url)
     size_t pos = lastPathComponent.reverseFind('.');
     if (pos != notFound) {
         auto extension = lastPathComponent.substring(pos + 1);
-        String mediaType = MIMETypeRegistry::mediaMIMETypeForExtension(extension);
-        if (!mediaType.isEmpty())
+        RefPtr<StringImpl> mediaType = MIMETypeRegistry::mediaMIMETypeForExtension(extension);
+        if (!WTF::isEmpty(mediaType))
             return ContentType(WTF::move(mediaType), true);
     }
     return ContentType();
 }
 
-const String& ContentType::codecsParameter()
+const RefPtr<StringImpl>& ContentType::codecsParameter()
 {
-    static NeverDestroyed<String> codecs { "codecs"_s };
+    static NeverDestroyed<RefPtr<StringImpl>> codecs { "codecs"_s };
     return codecs;
 }
 
-const String& ContentType::profilesParameter()
+const RefPtr<StringImpl>& ContentType::profilesParameter()
 {
-    static NeverDestroyed<String> profiles { "profiles"_s };
+    static NeverDestroyed<RefPtr<StringImpl>> profiles { "profiles"_s };
     return profiles;
 }
 
-String ContentType::parameter(const String& parameterName) const
+RefPtr<StringImpl> ContentType::parameter(StringImpl* parameterName) const
 {
     // A MIME type can have one or more "param=value" after a semicolon, separated from each other by semicolons.
 
     // FIXME: This will ignore a quotation mark if it comes before the semicolon. Is that the desired behavior?
-    auto semicolonPosition = m_type.find(';');
+    auto semicolonPosition = find(m_type, ';');
     if (semicolonPosition == notFound)
         return { };
 
     // FIXME: This matches parameters that have parameterName as a suffix; that is not the desired behavior.
-    auto nameStart = m_type.findIgnoringASCIICase(parameterName, semicolonPosition + 1);
+    auto nameStart = findIgnoringASCIICase(m_type, parameterName, semicolonPosition + 1);
     if (nameStart == notFound)
         return { };
 
-    auto equalSignPosition = m_type.find('=', nameStart + parameterName.length());
+    auto equalSignPosition = find(m_type, '=', nameStart + length(parameterName));
     if (equalSignPosition == notFound)
         return { };
 
     // FIXME: This skips over any characters that come before a quotation mark; that is not the desired behavior.
-    auto quotePosition = m_type.find('"', equalSignPosition + 1);
+    auto quotePosition = find(m_type, '"', equalSignPosition + 1);
     // FIXME: This does not work if there is an escaped quotation mark in the quoted string. Is that the desired behavior?
-    auto secondQuotePosition = m_type.find('"', quotePosition + 1);
+    auto secondQuotePosition = find(m_type, '"', quotePosition + 1);
     size_t start;
     size_t end;
     if (quotePosition != notFound && secondQuotePosition != notFound) {
@@ -107,49 +107,49 @@ String ContentType::parameter(const String& parameterName) const
     } else {
         // FIXME: If there is only one quotation mark, this will treat it as part of the string; that is not the desired behavior.
         start = equalSignPosition + 1;
-        end = m_type.find(';', start);
+        end = find(m_type, ';', start);
     }
     return StringView { m_type }.substring(start, end - start).trim(isASCIIWhitespace<char16_t>).toString();
 }
 
-String ContentType::containerType() const
+RefPtr<StringImpl> ContentType::containerType() const
 {
     // Strip parameters that come after a semicolon.
     // FIXME: This will ignore a quotation mark if it comes before the semicolon. Is that the desired behavior?
-    return m_type.left(m_type.find(';')).trim(isASCIIWhitespace);
+    return trim(left(m_type, find(m_type, ';')), isASCIIWhitespace);
 }
 
-static inline Vector<String> splitParameters(StringView parametersView)
+static inline Vector<RefPtr<StringImpl>> splitParameters(StringView parametersView)
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     for (auto view : parametersView.split(','))
         result.append(view.trim(isASCIIWhitespace<char16_t>).toString());
     return result;
 }
 
-Vector<String> ContentType::codecs() const
+Vector<RefPtr<StringImpl>> ContentType::codecs() const
 {
     return splitParameters(parameter(codecsParameter()));
 }
 
-Vector<String> ContentType::profiles() const
+Vector<RefPtr<StringImpl>> ContentType::profiles() const
 {
     return splitParameters(parameter(profilesParameter()));
 }
 
-String ContentType::toJSONString() const
+RefPtr<StringImpl> ContentType::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    object->setString("containerType"_s, containerType());
+    object->setString("containerType"_si, containerType());
 
     auto codecs = parameter(codecsParameter());
-    if (!codecs.isEmpty())
-        object->setString("codecs"_s, codecs);
+    if (!WTF::isEmpty(codecs))
+        object->setString("codecs"_si, codecs);
 
     auto profiles = parameter(profilesParameter());
-    if (!profiles.isEmpty())
-        object->setString("profiles"_s, profiles);
+    if (!WTF::isEmpty(profiles))
+        object->setString("profiles"_si, profiles);
 
     return object->toJSONString();
 }

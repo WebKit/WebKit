@@ -49,7 +49,7 @@ public:
 
     virtual void setOpaqueRootReachabilityReasonForCell(JSCell*, ASCIILiteral) = 0;
     virtual void setWrappedObjectForCell(JSCell*, void*) = 0;
-    virtual void setLabelForCell(JSCell*, const String&) = 0;
+    virtual void setLabelForCell(JSCell*, StringImpl*) = 0;
 };
 
 } // namespace JSC

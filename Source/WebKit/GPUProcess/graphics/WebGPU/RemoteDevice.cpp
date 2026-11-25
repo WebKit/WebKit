@@ -242,7 +242,7 @@ void RemoteDevice::createInvalidQuerySet(WebGPUQuerySetIdentifier identifier)
     objectHeap->addObject(identifier, remoteQuerySet);
 }
 
-void RemoteDevice::createInvalidRenderBundleEncoder(String&& error, WebGPURenderBundleEncoderIdentifier identifier)
+void RemoteDevice::createInvalidRenderBundleEncoder(RefPtr<StringImpl>&& error, WebGPURenderBundleEncoderIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap;
     RefPtr renderBundleEncoder = m_backing->createInvalidRenderBundleEncoder(WTF::move(error));
@@ -287,7 +287,7 @@ void RemoteDevice::createInvalidTexture(WebGPUTextureIdentifier identifier)
     objectHeap->addObject(identifier, remoteTexture);
 }
 
-void RemoteDevice::generateAValidationError(String&& message)
+void RemoteDevice::generateAValidationError(RefPtr<StringImpl>&& message)
 {
     m_backing->generateAValidationError(WTF::move(message));
 }
@@ -466,14 +466,14 @@ void RemoteDevice::createRenderPipelineWithPipelineLayoutFromPipeline(const WebG
     });
 }
 
-void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUComputePipelineIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
+void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUComputePipelineIdentifier identifier, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& callback)
 {
     Ref objectHeap = m_objectHeap.get();
     Vector<::WebGPU::ConstantEntry> constants;
     auto convertedDescriptor = deserialize(objectHeap, descriptor, constants);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(false, ""_s);
+        callback(false, ""_si);
         return;
     }
 
@@ -489,14 +489,14 @@ void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescr
     });
 }
 
-void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPURenderPipelineIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
+void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPURenderPipelineIdentifier identifier, CompletionHandler<void(bool, RefPtr<StringImpl>&&)>&& callback)
 {
     Ref objectHeap = m_objectHeap.get();
     WebGPU::RenderPipelineDescriptorStorage storage;
     auto convertedDescriptor = deserialize(objectHeap, descriptor, storage);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(false, ""_s);
+        callback(false, ""_si);
         return;
     }
 
@@ -594,13 +594,13 @@ void RemoteDevice::setListensForUncapturedErrors(bool listens)
 // that is gone is lost.
 void RemoteDevice::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, bool isLost)>&& callback)
 {
-    m_backing->resolveDeviceLostPromise([weakDevice = ThreadSafeWeakPtr { m_backing.get() }, callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason, String&&) mutable {
+    m_backing->resolveDeviceLostPromise([weakDevice = ThreadSafeWeakPtr { m_backing.get() }, callback = WTF::move(callback)](::WebGPU::DeviceLostReason reason, RefPtr<StringImpl>&&) mutable {
         RefPtr device = weakDevice;
         callback(reason, !device || device->isLost());
     });
 }
 
-void RemoteDevice::setLabel(String&& label)
+void RemoteDevice::setLabel(RefPtr<StringImpl>&& label)
 {
     m_backing->setLabel(WTF::move(label));
 }

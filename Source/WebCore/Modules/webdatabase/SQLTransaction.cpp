@@ -74,7 +74,7 @@ SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCa
 
 SQLTransaction::~SQLTransaction() = default;
 
-ExceptionOr<void> SQLTransaction::executeSql(const String& sqlStatement, std::optional<Vector<SQLValue>>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& callbackError)
+ExceptionOr<void> SQLTransaction::executeSql(StringImpl* sqlStatement, std::optional<Vector<SQLValue>>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& callbackError)
 {
     if (!m_executeSqlAllowed || !m_database->opened())
         return Exception { ExceptionCode::InvalidStateError };
@@ -139,7 +139,7 @@ void SQLTransaction::callErrorCallbackDueToInterruption()
         return;
 
     protect(protect(protect(m_database)->document())->eventLoop())->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback)]() mutable {
-        errorCallback->invoke(SQLError::create(SQLError::DATABASE_ERR, "the database was closed"_s));
+        errorCallback->invoke(SQLError::create(SQLError::DATABASE_ERR, "the database was closed"_si));
     });
 }
 
@@ -238,7 +238,7 @@ void SQLTransaction::openTransactionAndPreflight()
 
     // If the database was deleted, jump to the error callback
     if (m_database->deleted()) {
-        m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to open a transaction, because the user deleted the database"_s);
+        m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to open a transaction, because the user deleted the database"_si);
 
         handleTransactionError();
         return;
@@ -271,7 +271,7 @@ void SQLTransaction::openTransactionAndPreflight()
     // Note: We intentionally retrieve the actual version even with an empty expected version.
     // In multi-process browsers, we take this opportinutiy to update the cached value for
     // the actual version. In single-process browsers, this is just a map lookup.
-    String actualVersion;
+    RefPtr<StringImpl> actualVersion;
     if (!m_database->getActualVersionForTransaction(actualVersion)) {
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to read version"_s, m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_database->disableAuthorizer();
@@ -283,7 +283,7 @@ void SQLTransaction::openTransactionAndPreflight()
     }
 
     auto expectedVersion = m_database->expectedVersionIsolatedCopy();
-    m_hasVersionMismatch = !expectedVersion.isEmpty() && expectedVersion != actualVersion;
+    m_hasVersionMismatch = !isEmpty(expectedVersion) && !equal(expectedVersion, actualVersion);
 
     // Spec 4.3.2.3: Perform preflight steps, jumping to the error callback if they fail
     if (RefPtr wrapper = m_wrapper; wrapper && !wrapper->performPreflight(*this)) {
@@ -292,7 +292,7 @@ void SQLTransaction::openTransactionAndPreflight()
         m_database->enableAuthorizer();
         m_transactionError = wrapper->sqlError();
         if (!m_transactionError)
-            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction preflight"_s);
+            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction preflight"_si);
 
         handleTransactionError();
         return;
@@ -397,7 +397,7 @@ void SQLTransaction::deliverTransactionCallback()
 
     // Spec 4.3.2 5: If the transaction callback was null or raised an exception, jump to the error callback
     if (shouldDeliverErrorCallback) {
-        m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "the SQLTransactionCallback was null or threw an exception"_s);
+        m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "the SQLTransactionCallback was null or threw an exception"_si);
         return deliverTransactionErrorCallback();
     }
 
@@ -434,7 +434,7 @@ void SQLTransaction::deliverStatementCallback()
     m_executeSqlAllowed = false;
 
     if (result) {
-        m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "the statement callback raised an exception or statement error callback did not return false"_s);
+        m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "the statement callback raised an exception or statement error callback did not return false"_si);
 
         if (m_errorCallbackWrapper.hasCallback())
             return deliverTransactionErrorCallback();
@@ -570,7 +570,7 @@ void SQLTransaction::handleCurrentStatementError()
 
     m_transactionError = m_currentStatement->sqlError();
     if (!m_transactionError)
-        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "the statement failed to execute"_s);
+        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "the statement failed to execute"_si);
 
     handleTransactionError();
 }
@@ -596,7 +596,7 @@ void SQLTransaction::postflightAndCommit()
     if (RefPtr wrapper = m_wrapper; wrapper && !wrapper->performPostflight(*this)) {
         m_transactionError = wrapper->sqlError();
         if (!m_transactionError)
-            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction postflight"_s);
+            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction postflight"_si);
 
         handleTransactionError();
         return;

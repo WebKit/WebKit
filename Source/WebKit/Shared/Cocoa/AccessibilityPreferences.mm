@@ -48,7 +48,7 @@ WebKit::WebKitAXValueState reduceMotionEnabled()
 {
     if (shouldUseDefault()) [[unlikely]]
         return WebKit::initialPerAppSettingsState;
-    RetainPtr appId = applicationBundleIdentifier().createCFString();
+    RetainPtr appId = createCFString(applicationBundleIdentifier());
     return WebKit::toWebKitAXValueState(_AXSReduceMotionEnabledApp(appId.get()));
 }
 
@@ -56,7 +56,7 @@ WebKit::WebKitAXValueState increaseButtonLegibility()
 {
     if (shouldUseDefault()) [[unlikely]]
         return WebKit::initialPerAppSettingsState;
-    RetainPtr appId = applicationBundleIdentifier().createCFString();
+    RetainPtr appId = createCFString(applicationBundleIdentifier());
     return WebKit::toWebKitAXValueState(_AXSIncreaseButtonLegibilityApp(appId.get()));
 }
 
@@ -64,7 +64,7 @@ WebKit::WebKitAXValueState enhanceTextLegibility()
 {
     if (shouldUseDefault()) [[unlikely]]
         return WebKit::initialPerAppSettingsState;
-    RetainPtr appId = applicationBundleIdentifier().createCFString();
+    RetainPtr appId = createCFString(applicationBundleIdentifier());
     return WebKit::toWebKitAXValueState(_AXSEnhanceTextLegibilityEnabledApp(appId.get()));
 }
 
@@ -72,7 +72,7 @@ WebKit::WebKitAXValueState darkenSystemColors()
 {
     if (shouldUseDefault()) [[unlikely]]
         return WebKit::initialPerAppSettingsState;
-    RetainPtr appId = applicationBundleIdentifier().createCFString();
+    RetainPtr appId = createCFString(applicationBundleIdentifier());
     return WebKit::toWebKitAXValueState(_AXDarkenSystemColorsApp(appId.get()));
 }
 
@@ -80,7 +80,7 @@ WebKit::WebKitAXValueState invertColorsEnabled()
 {
     if (shouldUseDefault()) [[unlikely]]
         return WebKit::initialPerAppSettingsState;
-    RetainPtr appId = applicationBundleIdentifier().createCFString();
+    RetainPtr appId = createCFString(applicationBundleIdentifier());
     return WebKit::toWebKitAXValueState(_AXSInvertColorsEnabledApp(appId.get()));
 }
 #endif // HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)

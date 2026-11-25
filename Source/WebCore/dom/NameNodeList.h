@@ -31,16 +31,16 @@ namespace WebCore {
 class NameNodeList final : public CachedLiveNodeList<NameNodeList> {
     WTF_MAKE_TZONE_ALLOCATED(NameNodeList);
 public:
-    static Ref<NameNodeList> create(ContainerNode& rootNode, const AtomString& name);
+    static Ref<NameNodeList> create(ContainerNode& rootNode, AtomStringImpl* name);
     virtual ~NameNodeList();
 
     bool elementMatches(Element&) const final;
     bool isRootedAtTreeScope() const final { return false; }
 
 private:
-    NameNodeList(ContainerNode& rootNode, const AtomString& name);
+    NameNodeList(ContainerNode& rootNode, AtomStringImpl* name);
 
-    AtomString m_name;
+    RefPtr<AtomStringImpl> m_name;
 };
 
 } // namespace WebCore

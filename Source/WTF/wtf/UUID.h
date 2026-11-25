@@ -113,7 +113,7 @@ public:
     constexpr bool isHashTableDeletedValue() const { return m_data == deletedValue; }
     constexpr bool isHashTableEmptyValue() const { return m_data == emptyValue; }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
-    WTF_EXPORT_PRIVATE String toString() const;
+    WTF_EXPORT_PRIVATE RefPtr<StringImpl> toString() const;
 
     constexpr operator bool() const { return !!m_data; }
     bool isValid() const { return m_data != emptyValue && m_data != deletedValue; }
@@ -184,10 +184,10 @@ template<> struct HashTraits<UUID> : GenericHashTraits<UUID> {
 // data source. Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8,
 // 9, A, or B for y.
 
-WTF_EXPORT_PRIVATE String createVersion4UUIDString();
-WTF_EXPORT_PRIVATE String createVersion4UUIDStringWeak();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> createVersion4UUIDString();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> createVersion4UUIDStringWeak();
 
-WTF_EXPORT_PRIVATE String bootSessionUUIDString();
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> bootSessionUUIDString();
 WTF_EXPORT_PRIVATE bool isVersion4UUID(StringView);
 
 // 128 bits rendered in the canonical UUID form, for bits that are UUID-shaped but cannot be held in a

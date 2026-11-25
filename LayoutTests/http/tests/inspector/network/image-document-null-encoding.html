@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadImageDocument()
+{
+    let iframe = document.createElement("iframe");
+    iframe.src = "resources/white.png";
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("ImageDocument.NullEncoding");
+
+    let imageFrame;
+    let imageResource;
+
+    async function logCommandResult(label, promise)
+    {
+        try {
+            let result = await promise;
+            InspectorTest.log(`${label}: success, base64Encoded: ${result.base64Encoded}, has content: ${!!(result.body || result.content)}`);
+        } catch (error) {
+            InspectorTest.log(`${label}: error: ${error.message || error}`);
+        }
+    }
+
+    suite.addTestCase({
+        name: "ImageDocument.NullEncoding.MainResourceContent",
+        description: "Get the content of the main resource of an image document, whose document has no text decoder and a null encoding.",
+        async test() {
+            let [event] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ChildFrameWasAdded),
+                InspectorTest.evaluateInPage("loadImageDocument()"),
+            ]);
+            imageFrame = event.data.childFrame;
+            imageResource = imageFrame.mainResource;
+            if (!imageResource.finished)
+                await imageResource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            InspectorTest.log("Loaded image document: " + imageResource.displayName + ", type: " + imageResource.type + ", MIME type: " + imageResource.mimeType);
+
+            await logCommandResult("Network.getResponseBody", WI.mainTarget.NetworkAgent.getResponseBody(imageResource.requestIdentifier));
+            await logCommandResult("Page.getResourceContent", WI.mainTarget.PageAgent.getResourceContent(imageFrame.id, imageResource.url));
+        },
+    });
+
+    suite.addTestCase({
+        name: "ImageDocument.NullEncoding.RuntimeEvaluateDynamicImport",
+        description: "Dynamic import() from Runtime.evaluate in the image document. The evaluated code has no source origin, so the module loader creates a script fetcher from the (null) document charset.",
+        async test() {
+            let context = imageFrame.pageExecutionContext;
+            InspectorTest.expectThat(context, "Should have an execution context for the image document.");
+            if (!context)
+                return;
+
+            let moduleURL = imageResource.url.replace(/white\.png$/, "image-document-module.js");
+            let expression = `import(${JSON.stringify(moduleURL)}).then((module) => "resolved: " + module.value, (error) => "rejected: " + error)`;
+            let {result, wasThrown} = await WI.mainTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", contextId: context.id});
+            InspectorTest.log(`Runtime.evaluate: wasThrown: ${!!wasThrown}, result: ${result.type} ${result.subtype || ""} ${result.className || ""}`);
+
+            let awaited = await WI.mainTarget.RuntimeAgent.awaitPromise(result.objectId, true);
+            InspectorTest.log("Promise settled with: " + awaited.result.value);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests inspector access to an image document (a document without a text decoder, so with a null encoding).</p>
+</body>
+</html>

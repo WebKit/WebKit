@@ -62,7 +62,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::IPIntCallee&, WasmToWasmImportableFunction::LoadLocation, Ref<const Wasm::RTT>&&);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, StringImpl*, JSWebAssemblyInstance*, Wasm::IPIntCallee&, WasmToWasmImportableFunction::LoadLocation, Ref<const Wasm::RTT>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     Wasm::JSToWasmCallee* jsToWasmCallee() const { return m_boxedJSToWasmCallee.get(); }

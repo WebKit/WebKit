@@ -173,7 +173,7 @@ inline void CSSPreloadScanner::tokenize(char16_t c)
     }
 }
 
-static String parseCSSStringOrURL(std::span<const char16_t> characters)
+static RefPtr<StringImpl> parseCSSStringOrURL(std::span<const char16_t> characters)
 {
     size_t offset = 0;
     size_t reducedLength = characters.size();
@@ -214,7 +214,7 @@ static String parseCSSStringOrURL(std::span<const char16_t> characters)
             reducedLength -= 2;            
         }
 
-    return String(characters.subspan(offset, reducedLength));
+    return StringImpl::create(characters.subspan(offset, reducedLength));
 }
 
 static bool hasValidImportConditions(StringView conditions)
@@ -239,11 +239,11 @@ void CSSPreloadScanner::emitRule()
 {
     StringView rule(m_rule.span());
     if (equalLettersIgnoringASCIICase(rule, "import"_s)) {
-        String url = parseCSSStringOrURL(m_ruleValue.span());
+        RefPtr<StringImpl> url = parseCSSStringOrURL(m_ruleValue.span());
         StringView conditions(m_ruleConditions.span());
-        if (!url.isEmpty() && hasValidImportConditions(conditions)) {
+        if (!isEmpty(url) && hasValidImportConditions(conditions)) {
             // FIXME: Should this be including the charset in the preload request?
-            m_requests->append(makeUnique<PreloadRequest>("css"_s, url, m_predictedBaseElementURL, CachedResource::Type::CSSStyleSheet, String(), ScriptType::Classic, ReferrerPolicy::EmptyString));
+            m_requests->append(makeUnique<PreloadRequest>("css"_s, url, m_predictedBaseElementURL, CachedResource::Type::CSSStyleSheet, nullString(), ScriptType::Classic, ReferrerPolicy::EmptyString));
         }
         m_state = Initial;
     } else if (equalLettersIgnoringASCIICase(rule, "charset"_s) || equalLettersIgnoringASCIICase(rule, "layer"_s))

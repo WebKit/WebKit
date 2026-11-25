@@ -34,15 +34,15 @@ namespace WebCore {
 class DictationCommand : public TextInsertionBaseCommand {
     friend class DictationCommandLineOperation;
 public:
-    static void insertText(Ref<Document>&&, const String&, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);
+    static void insertText(Ref<Document>&&, StringImpl*, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);
     bool isDictationCommand() const override { return true; }
 private:
-    static Ref<DictationCommand> create(Ref<Document>&& document, const String& text, const Vector<DictationAlternative>& alternatives)
+    static Ref<DictationCommand> create(Ref<Document>&& document, StringImpl* text, const Vector<DictationAlternative>& alternatives)
     {
         return adoptRef(*new DictationCommand(WTF::move(document), text, alternatives));
     }
 
-    DictationCommand(Ref<Document>&&, const String& text, const Vector<DictationAlternative>& alternatives);
+    DictationCommand(Ref<Document>&&, StringImpl* text, const Vector<DictationAlternative>& alternatives);
     
     void doApply() override;
 
@@ -50,7 +50,7 @@ private:
     void insertParagraphSeparator();
     void collectDictationAlternativesInRange(size_t rangeStart, size_t rangeLength, Vector<DictationAlternative>&);
 
-    String m_textToInsert;
+    RefPtr<StringImpl> m_textToInsert;
     Vector<DictationAlternative> m_alternatives;
 };
 

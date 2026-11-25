@@ -71,7 +71,7 @@ private:
     // We do not need to keep a reference to the m_coreTarget, because
     // we only use it when the GObject and thus the m_coreTarget object is alive.
     WebCore::EventTarget* m_coreTarget;
-    AtomString m_eventType;
+    RefPtr<AtomStringImpl> m_eventType;
     GRefPtr<GClosure> m_handler;
     bool m_capture;
 };

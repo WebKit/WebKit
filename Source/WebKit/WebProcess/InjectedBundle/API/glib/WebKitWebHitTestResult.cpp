@@ -141,14 +141,14 @@ static void webkit_web_hit_test_result_class_init(WebKitWebHitTestResultClass* k
 WebKitWebHitTestResult* webkitWebHitTestResultCreate(const HitTestResult& hitTestResult)
 {
     unsigned context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
-    String absoluteLinkURL = hitTestResult.absoluteLinkURL().string();
-    if (!absoluteLinkURL.isEmpty())
+    RefPtr<StringImpl> absoluteLinkURL = hitTestResult.absoluteLinkURL().string();
+    if (!isEmpty(absoluteLinkURL))
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
-    String absoluteImageURL = hitTestResult.absoluteImageURL().string();
-    if (!absoluteImageURL.isEmpty())
+    RefPtr<StringImpl> absoluteImageURL = hitTestResult.absoluteImageURL().string();
+    if (!isEmpty(absoluteImageURL))
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE;
-    String absoluteMediaURL = hitTestResult.absoluteMediaURL().string();
-    if (!absoluteMediaURL.isEmpty())
+    RefPtr<StringImpl> absoluteMediaURL = hitTestResult.absoluteMediaURL().string();
+    if (!isEmpty(absoluteMediaURL))
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
     if (hitTestResult.isContentEditable())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
@@ -157,8 +157,8 @@ WebKitWebHitTestResult* webkitWebHitTestResultCreate(const HitTestResult& hitTes
     if (hitTestResult.isSelected())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION;
 
-    String linkTitle = hitTestResult.titleDisplayString();
-    String linkLabel = hitTestResult.textContent();
+    RefPtr<StringImpl> linkTitle = hitTestResult.titleDisplayString();
+    RefPtr<StringImpl> linkLabel = hitTestResult.textContent();
 
 #if ENABLE(2022_GLIB_API)
     GRefPtr<WebKitHitTestResult> webkitHitTestResult = adoptGRef(WEBKIT_HIT_TEST_RESULT(gObjectNew(WEBKIT_TYPE_HIT_TEST_RESULT,
@@ -166,14 +166,14 @@ WebKitWebHitTestResult* webkitWebHitTestResultCreate(const HitTestResult& hitTes
     auto* result = WEBKIT_WEB_HIT_TEST_RESULT(gObjectNew(WEBKIT_TYPE_WEB_HIT_TEST_RESULT,
 #endif
         "context", context,
-        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? absoluteLinkURL.utf8() : UTF8CString { },
-        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? absoluteImageURL.utf8() : UTF8CString { },
-        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? absoluteMediaURL.utf8() : UTF8CString { },
-        "link-title", !linkTitle.isEmpty() ? linkTitle.utf8() : UTF8CString { },
+        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? utf8(absoluteLinkURL) : UTF8CString { },
+        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? utf8(absoluteImageURL) : UTF8CString { },
+        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? utf8(absoluteMediaURL) : UTF8CString { },
+        "link-title", !isEmpty(linkTitle) ? utf8(linkTitle) : UTF8CString { },
 #if ENABLE(2022_GLIB_API)
-        "link-label", !linkLabel.isEmpty() ? linkLabel.utf8() : UTF8CString { })));
+        "link-label", !isEmpty(linkLabel) ? utf8(linkLabel) : UTF8CString { })));
 #else
-        "link-label", !linkLabel.isEmpty() ? linkLabel.utf8() : UTF8CString { },
+        "link-label", !isEmpty(linkLabel) ? utf8(linkLabel) : UTF8CString { },
         "node", kit(hitTestResult.innerNonSharedNode())));
 #endif
 

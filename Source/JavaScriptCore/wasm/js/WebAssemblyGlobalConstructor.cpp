@@ -77,19 +77,19 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         Identifier valueIdent = Identifier::fromString(vm, "value"_s);
         JSValue valueValue = globalDescriptor->get(globalObject, valueIdent);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        String valueString = valueValue.toWTFString(globalObject);
+        RefPtr<StringImpl> valueString = valueValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (valueString == "i32"_s)
+        if (equal(valueString, "i32"_s))
             type = Wasm::Types::I32;
-        else if (valueString == "i64"_s)
+        else if (equal(valueString, "i64"_s))
             type = Wasm::Types::I64;
-        else if (valueString == "f32"_s)
+        else if (equal(valueString, "f32"_s))
             type = Wasm::Types::F32;
-        else if (valueString == "f64"_s)
+        else if (equal(valueString, "f64"_s))
             type = Wasm::Types::F64;
-        else if (valueString == "anyfunc"_s || valueString == "funcref"_s)
+        else if (equal(valueString, "anyfunc"_s) || equal(valueString, "funcref"_s))
             type = Wasm::funcrefType();
-        else if (valueString == "externref"_s)
+        else if (equal(valueString, "externref"_s))
             type = Wasm::externrefType();
         else
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', 'f64', 'anyfunc', 'funcref', or 'externref'"_s);
@@ -178,7 +178,7 @@ Structure* WebAssemblyGlobalConstructor::createStructure(VM& vm, JSGlobalObject*
 
 void WebAssemblyGlobalConstructor::finishCreation(VM& vm, WebAssemblyGlobalPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, "Global"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, "Global"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 

@@ -151,7 +151,7 @@ private:
 class AlternateCommandDomainBackendDispatcher : public AlternateBackendDispatcher {
 public:
     virtual ~AlternateCommandDomainBackendDispatcher() { }
-    virtual void command(long protocol_requestId, const String& enumRequired, const String& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional) = 0;
+    virtual void command(long protocol_requestId, StringImpl* enumRequired, StringImpl* opt_enumOptional, StringImpl* parameterRequired, StringImpl* opt_parameterOptional) = 0;
 };
 
 } // namespace Inspector
@@ -208,7 +208,7 @@ class AlternateCommandDomainBackendDispatcher;
 
 class CommandDomainBackendDispatcherHandler {
 public:
-    virtual Inspector::CommandResultOf<Protocol::TypeDomain::Enum /* enumRequired */, std::optional<Protocol::TypeDomain::Enum> /* opt_enumOptional */, String /* returnRequired */, String /* opt_returnOptional */> command(Protocol::TypeDomain::Enum enumRequired, std::optional<Protocol::TypeDomain::Enum>&& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional) = 0;
+    virtual Inspector::CommandResultOf<Protocol::TypeDomain::Enum /* enumRequired */, std::optional<Protocol::TypeDomain::Enum> /* opt_enumOptional */, RefPtr<StringImpl> /* returnRequired */, RefPtr<StringImpl> /* opt_returnOptional */> command(Protocol::TypeDomain::Enum enumRequired, std::optional<Protocol::TypeDomain::Enum>&& opt_enumOptional, StringImpl* parameterRequired, StringImpl* opt_parameterOptional) = 0;
 protected:
     virtual ~CommandDomainBackendDispatcherHandler();
 };
@@ -216,7 +216,7 @@ protected:
 class CommandDomainBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<CommandDomainBackendDispatcher> create(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
-    void dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message) final;
+    void dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message) final;
 private:
     void command(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -287,16 +287,16 @@ CommandDomainBackendDispatcher::CommandDomainBackendDispatcher(BackendDispatcher
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain("CommandDomain"_s, this);
+    m_backendDispatcher->registerDispatcherForDomain("CommandDomain"_si, this);
 }
 
-void CommandDomainBackendDispatcher::dispatch(long protocol_requestId, const String& protocol_method, Ref<JSON::Object>&& protocol_message)
+void CommandDomainBackendDispatcher::dispatch(long protocol_requestId, StringImpl* protocol_method, Ref<JSON::Object>&& protocol_message)
 {
     Ref<CommandDomainBackendDispatcher> protect(*this);
 
-    auto protocol_parameters = protocol_message->getObject("params"_s);
+    auto protocol_parameters = protocol_message->getObject("params"_si);
 
-    if (protocol_method == "command"_s) {
+    if (equal(protocol_method, "command"_s)) {
         command(protocol_requestId, WTF::move(protocol_parameters));
         return;
     }
@@ -306,12 +306,12 @@ void CommandDomainBackendDispatcher::dispatch(long protocol_requestId, const Str
 
 void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSON::Object>&& protocol_parameters)
 {
-    auto in_enumRequired_json = m_backendDispatcher->getString(protocol_parameters.get(), "enumRequired"_s, true);
-    auto in_opt_enumOptional_json = m_backendDispatcher->getString(protocol_parameters.get(), "enumOptional"_s, false);
-    auto in_parameterRequired = m_backendDispatcher->getString(protocol_parameters.get(), "parameterRequired"_s, true);
-    auto in_opt_parameterOptional = m_backendDispatcher->getString(protocol_parameters.get(), "parameterOptional"_s, false);
+    auto in_enumRequired_json = m_backendDispatcher->getString(protocol_parameters.get(), "enumRequired"_si, true);
+    auto in_opt_enumOptional_json = m_backendDispatcher->getString(protocol_parameters.get(), "enumOptional"_si, false);
+    auto in_parameterRequired = m_backendDispatcher->getString(protocol_parameters.get(), "parameterRequired"_si, true);
+    auto in_opt_parameterOptional = m_backendDispatcher->getString(protocol_parameters.get(), "parameterOptional"_si, false);
     if (m_backendDispatcher->hasProtocolErrors()) {
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method 'CommandDomain.command' can't be processed"_s);
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method 'CommandDomain.command' can't be processed"_si);
         return;
     }
 
@@ -329,14 +329,14 @@ void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSO
     }
 
     auto in_opt_enumOptional = Protocol::TestHelpers::parseEnumValueFromString<Protocol::TypeDomain::Enum>(in_opt_enumOptional_json);
-    if (!in_opt_enumOptional_json.isEmpty() && !in_opt_enumOptional) {
+    if (!isEmpty(in_opt_enumOptional_json) && !in_opt_enumOptional) {
         m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, makeString("Unknown enumOptional: "_s, in_opt_enumOptional_json));
         return;
     }
 
     auto result = m_agent->command(*in_enumRequired, WTF::move(in_opt_enumOptional), in_parameterRequired, in_opt_parameterOptional);
     if (!result) {
-        ASSERT(!result.error().isEmpty());
+        ASSERT(!isEmpty(result.error()));
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, result.error());
         return;
     }
@@ -344,12 +344,12 @@ void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSO
     auto [out_enumRequired, out_opt_enumOptional, out_returnRequired, out_opt_returnOptional] = WTF::move(result.value());
 
     auto protocol_jsonMessage = JSON::Object::create();
-    protocol_jsonMessage->setString("enumRequired"_s, Protocol::TestHelpers::getEnumConstantValue(out_enumRequired));
+    protocol_jsonMessage->setString("enumRequired"_si, Protocol::TestHelpers::getEnumConstantValue(out_enumRequired));
     if (!!out_opt_enumOptional)
-        protocol_jsonMessage->setString("enumOptional"_s, Protocol::TestHelpers::getEnumConstantValue(*out_opt_enumOptional));
-    protocol_jsonMessage->setString("returnRequired"_s, out_returnRequired);
+        protocol_jsonMessage->setString("enumOptional"_si, Protocol::TestHelpers::getEnumConstantValue(*out_opt_enumOptional));
+    protocol_jsonMessage->setString("returnRequired"_si, out_returnRequired);
     if (!!out_opt_returnOptional)
-        protocol_jsonMessage->setString("returnOptional"_s, out_opt_returnOptional);
+        protocol_jsonMessage->setString("returnOptional"_si, out_opt_returnOptional);
     m_backendDispatcher->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);
 }
 
@@ -419,7 +419,7 @@ public:
             SharedOptional = 5,
             Green = 6,
         }; // enum class ParameterOptional
-    void event(Protocol::TypeDomain::Enum enumRequired, std::optional<Protocol::TypeDomain::Enum>&& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional);
+    void event(Protocol::TypeDomain::Enum enumRequired, std::optional<Protocol::TypeDomain::Enum>&& opt_enumOptional, StringImpl* parameterRequired, StringImpl* opt_parameterOptional);
 private:
     const CheckedRef<FrontendRouter> m_frontendRouter;
 };
@@ -468,18 +468,18 @@ EventDomainFrontendDispatcher::EventDomainFrontendDispatcher(FrontendRouter& fro
 
 EventDomainFrontendDispatcher::~EventDomainFrontendDispatcher() = default;
 
-void EventDomainFrontendDispatcher::event(Protocol::TypeDomain::Enum enumRequired, std::optional<Protocol::TypeDomain::Enum>&& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional)
+void EventDomainFrontendDispatcher::event(Protocol::TypeDomain::Enum enumRequired, std::optional<Protocol::TypeDomain::Enum>&& opt_enumOptional, StringImpl* parameterRequired, StringImpl* opt_parameterOptional)
 {
     auto protocol_jsonMessage = JSON::Object::create();
-    protocol_jsonMessage->setString("method"_s, "EventDomain.event"_s);
+    protocol_jsonMessage->setString("method"_si, "EventDomain.event"_si);
     auto protocol_paramsObject = JSON::Object::create();
-    protocol_paramsObject->setString("enumRequired"_s, Protocol::TestHelpers::getEnumConstantValue(enumRequired));
+    protocol_paramsObject->setString("enumRequired"_si, Protocol::TestHelpers::getEnumConstantValue(enumRequired));
     if (!!opt_enumOptional)
-        protocol_paramsObject->setString("enumOptional"_s, Protocol::TestHelpers::getEnumConstantValue(*opt_enumOptional));
-    protocol_paramsObject->setString("parameterRequired"_s, parameterRequired);
+        protocol_paramsObject->setString("enumOptional"_si, Protocol::TestHelpers::getEnumConstantValue(*opt_enumOptional));
+    protocol_paramsObject->setString("parameterRequired"_si, parameterRequired);
     if (!!opt_parameterOptional)
-        protocol_paramsObject->setString("parameterOptional"_s, opt_parameterOptional);
-    protocol_jsonMessage->setObject("params"_s, WTF::move(protocol_paramsObject));
+        protocol_paramsObject->setString("parameterOptional"_si, opt_parameterOptional);
+    protocol_jsonMessage->setObject("params"_si, WTF::move(protocol_paramsObject));
 
     m_frontendRouter->sendEvent(protocol_jsonMessage->toJSONString());
 }
@@ -544,9 +544,9 @@ enum class Enum;
 
 namespace TestHelpers {
 
-String getEnumConstantValue(int code);
+RefPtr<StringImpl> getEnumConstantValue(int code);
 
-template<typename T> String getEnumConstantValue(T enumValue)
+template<typename T> RefPtr<StringImpl> getEnumConstantValue(T enumValue)
 {
     return getEnumConstantValue(static_cast<int>(enumValue));
 }
@@ -568,11 +568,11 @@ enum class Enum {
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(StringImpl*);
 
 // Enums in the 'TypeDomain' Domain
 template<>
-std::optional<Protocol::TypeDomain::Enum> parseEnumValueFromString<Protocol::TypeDomain::Enum>(const String&);
+std::optional<Protocol::TypeDomain::Enum> parseEnumValueFromString<Protocol::TypeDomain::Enum>(StringImpl*);
 
 } // namespace TestHelpers
 
@@ -646,13 +646,13 @@ static const auto enum_constant_values = WTF::toArray<ASCIILiteral>({
     "blue"_s,
 });
 
-String getEnumConstantValue(int code) {
-    return enum_constant_values[code];
+RefPtr<StringImpl> getEnumConstantValue(int code) {
+    return StringImpl::create(enum_constant_values[code]);
 }
 
 // Enums in the 'TypeDomain' Domain
 
-template<> std::optional<Protocol::TypeDomain::Enum> parseEnumValueFromString<Protocol::TypeDomain::Enum>(const String& protocolString)
+template<> std::optional<Protocol::TypeDomain::Enum> parseEnumValueFromString<Protocol::TypeDomain::Enum>(StringImpl* protocolString)
 {
     static const auto constantValues = WTF::toArray<size_t>({
         (size_t)Protocol::TypeDomain::Enum::Shared,
@@ -660,7 +660,7 @@ template<> std::optional<Protocol::TypeDomain::Enum> parseEnumValueFromString<Pr
         (size_t)Protocol::TypeDomain::Enum::2,
     });
     for (size_t i = 0; i < 3; ++i)
-        if (protocolString == enum_constant_values[constantValues[i]])
+        if (equal(protocolString, enum_constant_values[constantValues[i]]))
             return (Protocol::TypeDomain::Enum)constantValues[i];
 
     return std::nullopt;
@@ -716,7 +716,7 @@ class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateComman
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCInspectorCommandDomainBackendDispatcher);
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<TestProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
-    void command(long protocol_requestId, const String& enumRequired, const String& opt_enumOptional, const String& parameterRequired, const String& opt_parameterOptional) final;
+    void command(long protocol_requestId, StringImpl* enumRequired, StringImpl* opt_enumOptional, StringImpl* parameterRequired, StringImpl* opt_parameterOptional) final;
 private:
     RetainPtr<id<TestProtocolCommandDomainDomainHandler>> m_delegate;
 };
@@ -764,32 +764,32 @@ private:
 
 namespace Inspector {
 
-void ObjCInspectorCommandDomainBackendDispatcher::command(long protocol_requestId, const String& in_enumRequired, const String& in_opt_enumOptional, const String& in_parameterRequired, const String& in_opt_parameterOptional)
+void ObjCInspectorCommandDomainBackendDispatcher::command(long protocol_requestId, StringImpl* in_enumRequired, StringImpl* in_opt_enumOptional, StringImpl* in_parameterRequired, StringImpl* in_opt_parameterOptional)
 {
     if (![m_delegate respondsToSelector:@selector(commandWithErrorCallback:successCallback:enumRequired:enumOptional:parameterRequired:parameterOptional:)]) {
-        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'CommandDomain.command' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'CommandDomain.command' was not found"_si);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, StringImpl::create(error).get());
     };
 
     id successCallback = ^(TestProtocolTypeDomainEnum out_enumRequired, TestProtocolTypeDomainEnum *out_opt_enumOptional, TestProtocolCommandDomain(anonymous) out_returnRequired, TestProtocolCommandDomain(anonymous) *out_opt_returnOptional) {
         auto protocol_jsonMessage = JSON::Object::create();
-        protocol_jsonMessage->setString("enumRequired"_s, toProtocolString(out_enumRequired).createNSString().get());
+        protocol_jsonMessage->setString("enumRequired"_si, toProtocolString(out_enumRequired));
         if (!!out_opt_enumOptional)
-            protocol_jsonMessage->setString("enumOptional"_s, toProtocolString(*out_opt_enumOptional).createNSString().get());
-        protocol_jsonMessage->setString("returnRequired"_s, toProtocolString(out_returnRequired).createNSString().get());
+            protocol_jsonMessage->setString("enumOptional"_si, toProtocolString(*out_opt_enumOptional));
+        protocol_jsonMessage->setString("returnRequired"_si, toProtocolString(out_returnRequired));
         if (!!out_opt_returnOptional)
-            protocol_jsonMessage->setString("returnOptional"_s, toProtocolString(*out_opt_returnOptional).createNSString().get());
+            protocol_jsonMessage->setString("returnOptional"_si, toProtocolString(*out_opt_returnOptional));
         backendDispatcher()->sendResponse(protocol_requestId, WTF::move(protocol_jsonMessage), false);
     };
 
     std::optional<TestProtocolTypeDomainEnum> o_in_enumRequired = fromProtocolString<TestProtocolTypeDomainEnum>(in_enumRequired);
     if (!o_in_enumRequired) {
-        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'enumRequired' of method 'CommandDomain.command' cannot be processed"_s);
+        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'enumRequired' of method 'CommandDomain.command' cannot be processed"_si);
         return;
     }
     std::optional<TestProtocolTypeDomainEnum> o_in_opt_enumOptional;
@@ -797,7 +797,7 @@ void ObjCInspectorCommandDomainBackendDispatcher::command(long protocol_requestI
         o_in_opt_enumOptional = fromProtocolString<TestProtocolTypeDomainEnum>(in_opt_enumOptional);
     std::optional<TestProtocolCommandDomain(anonymous)> o_in_parameterRequired = fromProtocolString<TestProtocolCommandDomain(anonymous)>(in_parameterRequired);
     if (!o_in_parameterRequired) {
-        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'parameterRequired' of method 'CommandDomain.command' cannot be processed"_s);
+        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'parameterRequired' of method 'CommandDomain.command' cannot be processed"_si);
         return;
     }
     std::optional<TestProtocolCommandDomain(anonymous)> o_in_opt_parameterOptional;
@@ -917,7 +917,7 @@ using namespace Inspector;
     _commandDomainHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
-    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>("CommandDomain"_s, *_controller, WTF::move(alternateDispatcher));
+    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>("CommandDomain"_si, *_controller, WTF::move(alternateDispatcher));
     _controller->registerAlternateAgent(WTF::move(alternateAgent));
 }
 
@@ -995,15 +995,15 @@ using namespace Inspector;
     const FrontendRouter& router = _controller->frontendRouter();
 
     auto protocol_jsonMessage = JSON::Object::create();
-    protocol_jsonMessage->setString("method"_s, "EventDomain.event"_s);
+    protocol_jsonMessage->setString("method"_si, "EventDomain.event"_si);
     auto protocol_paramsObject = JSON::Object::create();
-    protocol_paramsObject->setString("enumRequired"_s, toProtocolString(enumRequired).createNSString().get());
+    protocol_paramsObject->setString("enumRequired"_si, toProtocolString(enumRequired));
     if (enumOptional)
-        protocol_paramsObject->setString("enumOptional"_s, toProtocolString((*enumOptional)).createNSString().get());
-    protocol_paramsObject->setString("parameterRequired"_s, toProtocolString(parameterRequired).createNSString().get());
+        protocol_paramsObject->setString("enumOptional"_si, toProtocolString((*enumOptional)));
+    protocol_paramsObject->setString("parameterRequired"_si, toProtocolString(parameterRequired));
     if (parameterOptional)
-        protocol_paramsObject->setString("parameterOptional"_s, toProtocolString((*parameterOptional)).createNSString().get());
-    protocol_jsonMessage->setObject("params"_s, WTF::move(protocol_paramsObject));
+        protocol_paramsObject->setString("parameterOptional"_si, toProtocolString((*parameterOptional)));
+    protocol_jsonMessage->setObject("params"_si, WTF::move(protocol_paramsObject));
     router.sendEvent(protocol_jsonMessage->toJSONString());
 }
 
@@ -1151,22 +1151,22 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);
 
-inline String toProtocolString(TestProtocolTypeDomainEnum value)
+inline RefPtr<StringImpl> toProtocolString(TestProtocolTypeDomainEnum value)
 {
     switch(value) {
     case TestProtocolTypeDomainEnumShared:
-        return "shared"_s;
+        return "shared"_si;
     case TestProtocolTypeDomainEnum1:
-        return "1"_s;
+        return "1"_si;
     case TestProtocolTypeDomainEnum2:
-        return "2"_s;
+        return "2"_si;
     }
 }
 
 template<>
-inline std::optional<TestProtocolTypeDomainEnum> fromProtocolString(const String& value)
+inline std::optional<TestProtocolTypeDomainEnum> fromProtocolString(StringImpl* value)
 {
     static constexpr SortedArrayMap map { WTF::toArray<std::pair<ComparableASCIILiteral, TestProtocolTypeDomainEnum>>({
         { "1"_s, TestProtocolTypeDomainEnum1 },
@@ -1231,7 +1231,7 @@ using namespace Inspector;
 + (void)_parseEnum:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    auto result = Inspector::fromProtocolString<TestProtocolTypeDomainEnum>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolTypeDomainEnum>(StringImpl::create((__bridge CFStringRef)payload).get());
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"Enum");
     *outValue = @(result.value());
 }

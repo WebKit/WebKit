@@ -41,7 +41,7 @@ public:
         WordBoundary,
     };
 
-    TextBreakIteratorCF(StringView string, StringView priorContext, Mode mode, const AtomString& locale)
+    TextBreakIteratorCF(StringView string, StringView priorContext, Mode mode, AtomStringImpl* locale)
         : m_backing(mapModeToBackingIterator(string, priorContext, mode, locale))
     {
     }
@@ -83,7 +83,7 @@ public:
 private:
     using BackingVariant = Variant<TextBreakIteratorCFCharacterCluster, TextBreakIteratorCFStringTokenizer>;
 
-    static BackingVariant mapModeToBackingIterator(StringView string, StringView priorContext, Mode mode, const AtomString& locale)
+    static BackingVariant mapModeToBackingIterator(StringView string, StringView priorContext, Mode mode, AtomStringImpl* locale)
     {
         switch (mode) {
         case Mode::ComposedCharacter:

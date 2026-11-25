@@ -48,7 +48,7 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameDOMStorageAgent);
 
 FrameDOMStorageAgent::FrameDOMStorageAgent(FrameAgentContext& context)
-    : InspectorAgentBase("DOMStorage"_s, context)
+    : InspectorAgentBase("DOMStorage"_si, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMStorageBackendDispatcher::create(Ref { context.backendDispatcher }, this))
     , m_inspectedFrame(context.inspectedFrame)
@@ -97,12 +97,12 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOMStorage::Item
     if (!storageArea)
         return makeUnexpected(errorString);
 
-    auto storageItems = JSON::ArrayOf<JSON::ArrayOf<String>>::create();
+    auto storageItems = JSON::ArrayOf<JSON::ArrayOf<RefPtr<StringImpl>>>::create();
     for (unsigned i = 0; i < storageArea->length(); ++i) {
-        String key = storageArea->key(i);
-        String value = storageArea->item(key);
+        RefPtr<StringImpl> key = storageArea->key(i);
+        RefPtr<StringImpl> value = storageArea->item(key);
 
-        auto entry = JSON::ArrayOf<String>::create();
+        auto entry = JSON::ArrayOf<RefPtr<StringImpl>>::create();
         entry->addItem(key);
         entry->addItem(value);
         storageItems->addItem(WTF::move(entry));
@@ -110,7 +110,7 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOMStorage::Item
     return storageItems;
 }
 
-Inspector::CommandResult<void> FrameDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value)
+Inspector::CommandResult<void> FrameDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&& storageId, StringImpl* key, StringImpl* value)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -127,7 +127,7 @@ Inspector::CommandResult<void> FrameDOMStorageAgent::setDOMStorageItem(Ref<JSON:
     return { };
 }
 
-Inspector::CommandResult<void> FrameDOMStorageAgent::removeDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key)
+Inspector::CommandResult<void> FrameDOMStorageAgent::removeDOMStorageItem(Ref<JSON::Object>&& storageId, StringImpl* key)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -155,16 +155,16 @@ Inspector::CommandResult<void> FrameDOMStorageAgent::clearDOMStorageItems(Ref<JS
     return { };
 }
 
-void FrameDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
+void FrameDOMStorageAgent::didDispatchDOMStorageEvent(StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
 {
     // Shared with the page-level agent so both emit an identical StorageId for the same event.
     auto id = InspectorDOMStorageAgent::storageId(securityOrigin, storageType == StorageType::Local);
 
-    if (key.isNull())
+    if (!key)
         m_frontendDispatcher->domStorageItemsCleared(WTF::move(id));
-    else if (newValue.isNull())
+    else if (!newValue)
         m_frontendDispatcher->domStorageItemRemoved(WTF::move(id), key);
-    else if (oldValue.isNull())
+    else if (!oldValue)
         m_frontendDispatcher->domStorageItemAdded(WTF::move(id), key, newValue);
     else
         m_frontendDispatcher->domStorageItemUpdated(WTF::move(id), key, oldValue, newValue);
@@ -172,15 +172,15 @@ void FrameDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const S
 
 RefPtr<StorageArea> FrameDOMStorageAgent::findStorageArea(Inspector::Protocol::ErrorString& errorString, const JSON::Object& storageId, RefPtr<LocalFrame>& targetFrame)
 {
-    auto securityOrigin = storageId.getString("securityOrigin"_s);
+    auto securityOrigin = storageId.getString("securityOrigin"_si);
     if (!securityOrigin) {
-        errorString = "Missing securityOrigin in given storageId"_s;
+        errorString = "Missing securityOrigin in given storageId"_si;
         return nullptr;
     }
 
-    auto isLocalStorage = storageId.getBoolean("isLocalStorage"_s);
+    auto isLocalStorage = storageId.getBoolean("isLocalStorage"_si);
     if (!isLocalStorage) {
-        errorString = "Missing isLocalStorage in given storageId"_s;
+        errorString = "Missing isLocalStorage in given storageId"_si;
         return nullptr;
     }
 
@@ -188,7 +188,7 @@ RefPtr<StorageArea> FrameDOMStorageAgent::findStorageArea(Inspector::Protocol::E
     RefPtr page = frame->page();
     RefPtr document = frame->document();
     if (!page || !document) {
-        errorString = "Frame or page not available"_s;
+        errorString = "Frame or page not available"_si;
         return nullptr;
     }
 
@@ -197,8 +197,8 @@ RefPtr<StorageArea> FrameDOMStorageAgent::findStorageArea(Inspector::Protocol::E
     // as a precondition: a mismatch means the storageId was routed to the wrong frame or is
     // stale after a navigation, and proceeding would mutate a different origin's storage. Fail
     // so the frontend can re-resolve, rather than silently acting on the wrong origin.
-    if (protect(document->securityOrigin())->toRawString() != securityOrigin) {
-        errorString = "Given securityOrigin does not match the inspected frame's origin"_s;
+    if (!equal(protect(document->securityOrigin())->toRawString(), securityOrigin)) {
+        errorString = "Given securityOrigin does not match the inspected frame's origin"_si;
         return nullptr;
     }
 

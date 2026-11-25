@@ -96,7 +96,7 @@ void UserMediaPermissionRequestProxyCocoa::promptForGetDisplayMedia(UserMediaDis
         }
 
         protectedThis->setEligibleVideoDevices({ device.value() });
-        protectedThis->allow(String(), device.value().persistentId());
+        protectedThis->allow(nullString(), device.value().persistentId());
     });
 #else
     ASSERT_NOT_REACHED();

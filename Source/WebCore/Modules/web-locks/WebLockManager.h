@@ -59,8 +59,8 @@ public:
 
     using Snapshot = WebLockManagerSnapshot;
 
-    void request(const String& name, Ref<WebLockGrantedCallback>&&, Ref<DeferredPromise>&&);
-    void request(const String& name, Options&&, Ref<WebLockGrantedCallback>&&, Ref<DeferredPromise>&&);
+    void request(StringImpl* name, Ref<WebLockGrantedCallback>&&, Ref<DeferredPromise>&&);
+    void request(StringImpl* name, Options&&, Ref<WebLockGrantedCallback>&&, Ref<DeferredPromise>&&);
     void query(Ref<DeferredPromise>&&);
 
 private:

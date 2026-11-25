@@ -332,25 +332,25 @@ void MediaController::setMuted(bool flag)
     });
 }
 
-static const AtomString& playbackStateWaiting()
+static const RefPtr<AtomStringImpl>& playbackStateWaiting()
 {
-    static MainThreadNeverDestroyed<const AtomString> waiting("waiting"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> waiting("waiting"_s);
     return waiting;
 }
 
-static const AtomString& playbackStatePlaying()
+static const RefPtr<AtomStringImpl>& playbackStatePlaying()
 {
-    static MainThreadNeverDestroyed<const AtomString> playing("playing"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> playing("playing"_s);
     return playing;
 }
 
-static const AtomString& playbackStateEnded()
+static const RefPtr<AtomStringImpl>& playbackStateEnded()
 {
-    static MainThreadNeverDestroyed<const AtomString> ended("ended"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> ended("ended"_s);
     return ended;
 }
 
-const AtomString& MediaController::playbackState() const
+const RefPtr<AtomStringImpl>& MediaController::playbackState() const
 {
     switch (m_playbackState) {
     case WAITING:
@@ -371,7 +371,7 @@ void MediaController::reportControllerState()
     updatePlaybackState();
 }
 
-static AtomString eventNameForReadyState(MediaControllerInterface::ReadyState state)
+static RefPtr<AtomStringImpl> eventNameForReadyState(MediaControllerInterface::ReadyState state)
 {
     switch (state) {
     case MediaControllerInterface::HAVE_NOTHING:
@@ -480,7 +480,7 @@ void MediaController::updatePlaybackState()
     // If the MediaController's most recently reported playback state is not equal to new playback state
     // then queue a task to fire a simple event at the MediaController object, whose name is playing 
     // if new playback state is playing, ended if new playback state is ended, and waiting otherwise.
-    AtomString eventName;
+    RefPtr<AtomStringImpl> eventName;
     switch (newPlaybackState) {
     case WAITING:
         eventName = eventNames().waitingEvent;
@@ -567,7 +567,7 @@ bool MediaController::hasEnded() const
     });
 }
 
-void MediaController::scheduleEvent(const AtomString& eventName)
+void MediaController::scheduleEvent(AtomStringImpl* eventName)
 {
     m_pendingEvents.append(Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::Yes));
     if (!m_asyncEventTimer.isActive())

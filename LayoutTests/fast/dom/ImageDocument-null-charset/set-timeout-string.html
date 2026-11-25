@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/image-document-frame.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a string passed to setTimeout() in the window of an ImageDocument (a document without a text decoder, so with a null charset) runs. "
+    + "ScheduledAction runs the string through ScriptController::executeScriptInWorld(), which creates a CachedScriptFetcher from the document charset.");
+
+window.jsTestIsAsync = true;
+var frameDocument;
+var timeoutRan = false;
+
+loadImageDocumentFrame().then((iframe) => {
+    frameDocument = iframe.contentDocument;
+    shouldBeEqualToString("frameDocument.body.firstChild.tagName", "IMG");
+
+    iframe.contentWindow.setTimeout("parent.timeoutRan = true; parent.timeoutDone();", 0);
+});
+
+function timeoutDone()
+{
+    shouldBeTrue("timeoutRan");
+    finishJSTest();
+}
+</script>
+</body>
+</html>

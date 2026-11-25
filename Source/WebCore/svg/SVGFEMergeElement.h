@@ -39,7 +39,7 @@ private:
 
     void childrenChanged(const ChildChange&) override;
 
-    Vector<AtomString> filterEffectInputsNames() const override;
+    Vector<RefPtr<AtomStringImpl>> filterEffectInputsNames() const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 };
 

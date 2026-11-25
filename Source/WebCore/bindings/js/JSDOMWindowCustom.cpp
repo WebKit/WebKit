@@ -118,7 +118,7 @@ static ALWAYS_INLINE bool allowsLegacyExpandoIndexedProperties()
 #endif
 }
 
-bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject, DOMWindow& window, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, const String& errorMessage)
+bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject, DOMWindow& window, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, StringImpl* errorMessage)
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -162,7 +162,8 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
     // not match IE, but some sites end up naming frames things that conflict with window
     // properties that are in Moz but not IE. Since we have some of these, we have to do it
     // the Moz way.
-    if (RefPtr frame = window.frame()) {
+    // A symbol is never a frame name.
+    if (RefPtr frame = window.frame(); frame && !propertyName.isSymbol()) {
         if (RefPtr scopedChild = frame->tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName))) {
             slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, toJS(&lexicalGlobalObject, protect(scopedChild->window())));
             return true;
@@ -205,7 +206,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
 
     // Hand off all cross-domain access to jsDOMWindowGetOwnPropertySlotRestrictedAccess.
     Ref window = thisObject->wrapped();
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, window.get(), errorMessage))
         return jsDOMWindowGetOwnPropertySlotRestrictedAccess(thisObject, window.get(), *lexicalGlobalObject, propertyName, slot, errorMessage);
 
@@ -276,7 +277,7 @@ bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Propert
 
     auto* thisObject = downcast<JSDOMWindow>(cell);
 
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, protect(thisObject->wrapped()), errorMessage)) {
         // We only allow setting "location" attribute cross-origin.
         if (propertyName == builtinNames(vm).locationPublicName()) {
@@ -300,7 +301,7 @@ bool JSDOMWindow::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, 
     auto* thisObject = downcast<JSDOMWindow>(cell);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, protect(thisObject->wrapped()), errorMessage)) {
         throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
         return false;
@@ -309,7 +310,7 @@ bool JSDOMWindow::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, 
     if (allowsLegacyExpandoIndexedProperties()) {
         RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped());
         if (RefPtr document = localDOMWindow ? localDOMWindow->document() : nullptr)
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Adding expando indexed properties to 'window' was a non-standard behavior that is now removed."_s);
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Adding expando indexed properties to 'window' was a non-standard behavior that is now removed."_si);
         RELEASE_AND_RETURN(scope, Base::putByIndex(thisObject, lexicalGlobalObject, index, value, shouldThrow));
     }
     return typeError(lexicalGlobalObject, scope, shouldThrow, makeUnsupportedIndexedSetterErrorMessage("Window"_s));
@@ -541,12 +542,12 @@ JSC_DEFINE_CUSTOM_GETTER(showModalDialogGetter, (JSGlobalObject* lexicalGlobalOb
 
     RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped());
     if (RefPtr document = localDOMWindow ? localDOMWindow->document() : nullptr)
-        document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Window 'showModalDialog' function is deprecated and will be removed soon."_s);
+        document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Window 'showModalDialog' function is deprecated and will be removed soon."_si);
 
     if (RefPtr frame = thisObject->wrapped().frame()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (frame->settings().showModalDialogEnabled() && localFrame && LocalDOMWindow::canShowModalDialog(*localFrame)) {
-            auto* jsFunction = JSFunction::create(vm, lexicalGlobalObject, 1, "showModalDialog"_s, showModalDialog, ImplementationVisibility::Public);
+            auto* jsFunction = JSFunction::create(vm, lexicalGlobalObject, 1, "showModalDialog"_si, showModalDialog, ImplementationVisibility::Public);
             thisObject->putDirect(vm, propertyName, jsFunction);
             return JSValue::encode(jsFunction);
         }
@@ -682,8 +683,8 @@ static inline JSC::EncodedJSValue jsDOMWindowInstanceFunctionOpenDatabaseBody(JS
         return encodedJSValue();
 
     if (!DeprecatedGlobalSettings::webSQLEnabled()) {
-        if (name.returnValue() != "null"_s || version.returnValue() != "null"_s || displayName.returnValue() != "null"_s || estimatedSize.returnValue())
-            propagateException(*lexicalGlobalObject, throwScope, Exception(ExceptionCode::UnknownError, "Web SQL is deprecated"_s));
+        if (!equal(name.returnValue(), "null"_s) || !equal(version.returnValue(), "null"_s) || !equal(displayName.returnValue(), "null"_s) || estimatedSize.returnValue())
+            propagateException(*lexicalGlobalObject, throwScope, Exception(ExceptionCode::UnknownError, "Web SQL is deprecated"_si));
         return JSValue::encode(JSC::constructEmptyObject(lexicalGlobalObject, castedThis->realm()->objectPrototype()));
     }
 

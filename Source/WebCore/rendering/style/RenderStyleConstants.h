@@ -35,7 +35,6 @@
 #include <wtf/EnumTraits.h>
 
 namespace WTF {
-class String;
 class TextStream;
 }
 
@@ -587,7 +586,7 @@ enum class SynthesizedGlyph : uint8_t {
     PickerDown
 };
 
-WTF::String fallbackText(SynthesizedGlyph);
+RefPtr<StringImpl> fallbackText(SynthesizedGlyph);
 
 enum class AnimationFillMode : uint8_t {
     None,

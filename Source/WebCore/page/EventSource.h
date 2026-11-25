@@ -54,7 +54,7 @@ public:
     struct Init {
         bool withCredentials;
     };
-    static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, Init&&);
+    static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, StringImpl* url, Init&&);
     virtual ~EventSource();
 
     // EventTarget, ThreadableLoaderClient.
@@ -63,7 +63,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    const String& url() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND;
     bool withCredentials() const;
 
     using State = short;
@@ -126,15 +126,15 @@ private:
     bool m_isDoingExplicitCancellation { false };
     bool m_shouldReconnectOnResume { false };
 
-    AtomString m_eventName;
+    RefPtr<AtomStringImpl> m_eventName;
     Vector<char16_t> m_data;
-    String m_currentlyParsedEventId;
-    String m_lastEventId;
+    RefPtr<StringImpl> m_currentlyParsedEventId;
+    RefPtr<StringImpl> m_lastEventId;
     uint64_t m_reconnectDelay { defaultReconnectDelay };
     RefPtr<SecurityOrigin> m_eventStreamOrigin;
 };
 
-inline const String& EventSource::url() const LIFETIME_BOUND
+inline const RefPtr<StringImpl>& EventSource::url() const LIFETIME_BOUND
 {
     return m_url.string();
 }

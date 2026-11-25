@@ -81,7 +81,7 @@ bool InjectedBundlePageEditorClient::shouldInsertNode(WebPage& page, Node& node,
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldInsertText(WebPage& page, const String& text, const std::optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
+bool InjectedBundlePageEditorClient::shouldInsertText(WebPage& page, StringImpl* text, const std::optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
     if (m_client.shouldInsertText)
         return m_client.shouldInsertText(toAPI(&page), toAPI(text), toAPI(createHandle(rangeToReplace).get()), toAPI(action), m_client.base.clientInfo);
@@ -109,25 +109,25 @@ bool InjectedBundlePageEditorClient::shouldApplyStyle(WebPage& page, const Style
     return true;
 }
 
-void InjectedBundlePageEditorClient::didBeginEditing(WebPage& page, const String& notificationName)
+void InjectedBundlePageEditorClient::didBeginEditing(WebPage& page, StringImpl* notificationName)
 {
     if (m_client.didBeginEditing)
         m_client.didBeginEditing(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::didEndEditing(WebPage& page, const String& notificationName)
+void InjectedBundlePageEditorClient::didEndEditing(WebPage& page, StringImpl* notificationName)
 {
     if (m_client.didEndEditing)
         m_client.didEndEditing(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::didChange(WebPage& page, const String& notificationName)
+void InjectedBundlePageEditorClient::didChange(WebPage& page, StringImpl* notificationName)
 {
     if (m_client.didChange)
         m_client.didChange(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::didChangeSelection(WebPage& page, const String& notificationName)
+void InjectedBundlePageEditorClient::didChangeSelection(WebPage& page, StringImpl* notificationName)
 {
     if (m_client.didChangeSelection)
         m_client.didChangeSelection(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
@@ -139,7 +139,7 @@ void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage& page, const 
         m_client.willWriteToPasteboard(toAPI(&page), toAPI(createHandle(range).get()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, const std::optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
+void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, const std::optional<SimpleRange>& range, Vector<RefPtr<StringImpl>>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
 {
     if (m_client.getPasteboardDataForRange) {
         WKArrayRef types = nullptr;

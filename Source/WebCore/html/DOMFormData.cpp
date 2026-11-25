@@ -37,7 +37,7 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 
-template class mpark::variant<WTF::Ref<WebCore::File>, WTF::String>;
+template class mpark::variant<WTF::Ref<WebCore::File>, RefPtr<StringImpl>>;
 
 namespace WebCore {
 
@@ -58,14 +58,14 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(ScriptExecutionContext& contex
     if (submitter) {
         control = dynamicDowncast<HTMLFormControlElement>(*submitter);
         if (!control || !control->isSubmitButton())
-            return Exception { ExceptionCode::TypeError, "The specified element is not a submit button."_s };
+            return Exception { ExceptionCode::TypeError, "The specified element is not a submit button."_si };
         if (control->form() != form)
-            return Exception { ExceptionCode::NotFoundError, "The specified element is not owned by this form element."_s };
+            return Exception { ExceptionCode::NotFoundError, "The specified element is not owned by this form element."_si };
     }
     auto result = form->constructEntryList(control.get(), WTF::move(formData), nullptr);
     
     if (!result)
-        return Exception { ExceptionCode::InvalidStateError, "Already constructing Form entry list."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Already constructing Form entry list."_si };
     
     return result.releaseNonNull();
 }
@@ -84,93 +84,93 @@ Ref<DOMFormData> DOMFormData::clone() const
 }
 
 // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#create-an-entry
-static auto createStringEntry(const String& name, const String& value) -> DOMFormData::Item
+static auto createStringEntry(StringImpl* name, StringImpl* value) -> DOMFormData::Item
 {
     return {
-        replaceUnpairedSurrogatesWithReplacementCharacter(String(name)),
-        replaceUnpairedSurrogatesWithReplacementCharacter(String(value)),
+        replaceUnpairedSurrogatesWithReplacementCharacter(RefPtr<StringImpl>(name)),
+        replaceUnpairedSurrogatesWithReplacementCharacter(RefPtr<StringImpl>(value)),
     };
 }
 
 // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#create-an-entry
-static auto createFileEntry(const String& name, Blob& blob, const String& filename) -> DOMFormData::Item
+static auto createFileEntry(StringImpl* name, Blob& blob, StringImpl* filename) -> DOMFormData::Item
 {
-    auto usvName = replaceUnpairedSurrogatesWithReplacementCharacter(String(name));
+    auto usvName = replaceUnpairedSurrogatesWithReplacementCharacter(RefPtr<StringImpl>(name));
 
     if (RefPtr file = dynamicDowncast<File>(blob)) {
-        if (!filename.isNull())
+        if (filename)
             return { usvName, File::create(protect(blob.scriptExecutionContext()).get(), *file, filename) };
         return { usvName, file.releaseNonNull() };
     }
-    return { usvName, File::create(protect(blob.scriptExecutionContext()).get(), blob, filename.isNull() ? "blob"_s : filename) };
+    return { usvName, File::create(protect(blob.scriptExecutionContext()).get(), blob, !filename ? "blob"_si : RefPtr { filename }) };
 }
 
-void DOMFormData::append(const String& name, const String& value)
+void DOMFormData::append(StringImpl* name, StringImpl* value)
 {
     m_items.append(createStringEntry(name, value));
 }
 
-void DOMFormData::append(const String& name, Blob& blob, const String& filename)
+void DOMFormData::append(StringImpl* name, Blob& blob, StringImpl* filename)
 {
     m_items.append(createFileEntry(name, blob, filename));
 }
 
-void DOMFormData::remove(const String& name)
+void DOMFormData::remove(StringImpl* name)
 {
     m_items.removeAllMatching([&name] (const auto& item) {
-        return item.name == name;
+        return equal(item.name, name);
     });
 }
 
-auto DOMFormData::get(const String& name) -> std::optional<FormDataEntryValue>
+auto DOMFormData::get(StringImpl* name) -> std::optional<FormDataEntryValue>
 {
     for (auto& item : m_items) {
-        if (item.name == name)
+        if (equal(item.name, name))
             return item.data;
     }
 
     return std::nullopt;
 }
 
-auto DOMFormData::getAll(const String& name) -> Vector<FormDataEntryValue>
+auto DOMFormData::getAll(StringImpl* name) -> Vector<FormDataEntryValue>
 {
     Vector<FormDataEntryValue> result;
 
     for (auto& item : m_items) {
-        if (item.name == name)
+        if (equal(item.name, name))
             result.append(item.data);
     }
 
     return result;
 }
 
-bool DOMFormData::has(const String& name)
+bool DOMFormData::has(StringImpl* name)
 {
     for (auto& item : m_items) {
-        if (item.name == name)
+        if (equal(item.name, name))
             return true;
     }
     
     return false;
 }
 
-void DOMFormData::set(const String& name, const String& value)
+void DOMFormData::set(StringImpl* name, StringImpl* value)
 {
     set(name, { name, value });
 }
 
-void DOMFormData::set(const String& name, Blob& blob, const String& filename)
+void DOMFormData::set(StringImpl* name, Blob& blob, StringImpl* filename)
 {
     set(name, createFileEntry(name, blob, filename));
 }
 
-void DOMFormData::set(const String& name, Item&& item)
+void DOMFormData::set(StringImpl* name, Item&& item)
 {
     std::optional<size_t> initialMatchLocation;
 
     // Find location of the first item with a matching name.
     for (size_t i = 0; i < m_items.size(); ++i) {
-        if (name == m_items[i].name) {
+        if (equal(name, m_items[i].name)) {
             initialMatchLocation = i;
             break;
         }
@@ -180,7 +180,7 @@ void DOMFormData::set(const String& name, Item&& item)
         m_items[*initialMatchLocation] = WTF::move(item);
 
         m_items.removeAllMatching([&name] (const auto& item) {
-            return item.name == name;
+            return equal(item.name, name);
         }, *initialMatchLocation + 1);
         return;
     }
@@ -193,7 +193,7 @@ DOMFormData::Iterator::Iterator(DOMFormData& target)
 {
 }
 
-std::optional<KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
+std::optional<KeyValuePair<RefPtr<StringImpl>, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
 {
     auto& items = m_target->items();
     if (m_index >= items.size())

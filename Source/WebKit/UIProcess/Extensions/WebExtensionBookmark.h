@@ -57,7 +57,7 @@ public:
     enum class IncludeChildren : bool { No, Yes };
     enum class Recursively : bool { No, Yes };
 
-    static String rootIdentifier() { return webExtensionBookmarkRootIdentifier; }
+    static RefPtr<StringImpl> rootIdentifier() { return webExtensionBookmarkRootIdentifier; }
 
     template<typename... Args>
     static Ref<WebExtensionBookmark> create(Args&&... args)
@@ -70,8 +70,8 @@ public:
     bool isRoot() const { return m_isRoot; }
     bool isValid() const;
 
-    String identifier() const;
-    String title() const;
+    RefPtr<StringImpl> identifier() const;
+    RefPtr<StringImpl> title() const;
     std::optional<URL> url() const;
     WallTime dateAdded() const;
     bool isFolder() const;
@@ -86,7 +86,7 @@ public:
     const Vector<Ref<WebExtensionBookmark>>& children() const;
 
     // Returns this bookmark or the descendant with the identifier.
-    RefPtr<WebExtensionBookmark> find(const String& identifier);
+    RefPtr<WebExtensionBookmark> find(StringImpl* identifier);
 
     // Returns every descendant in pre-order, without this bookmark.
     Vector<Ref<WebExtensionBookmark>> descendants() const;
@@ -99,14 +99,14 @@ public:
     WebExtensionBookmarkParameters parameters(IncludeChildren = IncludeChildren::No) const;
 
     // Each of these checks the rules every browser shares before it calls the delegate node.
-    void createChild(const String& apiName, std::optional<URL>, const String& title, std::optional<size_t> index, CompletionHandler<void(std::expected<Ref<WebExtensionBookmark>, WebExtensionError>&&)>&&);
-    void setTitle(const String& apiName, const String& title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void setURL(const String& apiName, const URL&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void moveTo(const String& apiName, WebExtensionBookmark& newParent, std::optional<size_t> index, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
-    void remove(const String& apiName, Recursively, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void createChild(StringImpl* apiName, std::optional<URL>, StringImpl* title, std::optional<size_t> index, CompletionHandler<void(std::expected<Ref<WebExtensionBookmark>, WebExtensionError>&&)>&&);
+    void setTitle(StringImpl* apiName, StringImpl* title, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void setURL(StringImpl* apiName, const URL&, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void moveTo(StringImpl* apiName, WebExtensionBookmark& newParent, std::optional<size_t> index, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
+    void remove(StringImpl* apiName, Recursively, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 
     // Returns why remove() would fail on a rule WebKit checks itself, without calling the delegate node.
-    std::optional<WebExtensionError> removalError(const String& apiName, Recursively) const;
+    std::optional<WebExtensionError> removalError(StringImpl* apiName, Recursively) const;
 
 #ifdef __OBJC__
     NSObject *delegate() const { return m_delegate.get(); }
@@ -118,9 +118,9 @@ private:
 
     explicit WebExtensionBookmark(const WebExtensionContext&, NSObject *delegate, WebExtensionBookmark* parent = nullptr, std::optional<size_t> index = std::nullopt);
 
-    std::optional<WebExtensionError> modificationError(const String& apiName) const;
-    std::optional<WebExtensionError> readOnlyError(const String& apiName) const;
-    std::optional<WebExtensionError> contentsReadOnlyError(const String& apiName) const;
+    std::optional<WebExtensionError> modificationError(StringImpl* apiName) const;
+    std::optional<WebExtensionError> readOnlyError(StringImpl* apiName) const;
+    std::optional<WebExtensionError> contentsReadOnlyError(StringImpl* apiName) const;
 
     WeakPtr<WebExtensionContext> m_extensionContext;
     RetainPtr<NSObject> m_delegate;

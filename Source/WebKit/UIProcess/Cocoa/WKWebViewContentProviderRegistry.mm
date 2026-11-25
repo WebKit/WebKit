@@ -41,7 +41,7 @@
 #import <wtf/text/StringHash.h>
 
 @implementation WKWebViewContentProviderRegistry {
-    HashMap<String, Class <WKWebViewContentProvider>, ASCIICaseInsensitiveHash> _contentProviderForMIMEType;
+    HashMap<RefPtr<StringImpl>, Class <WKWebViewContentProvider>, ASCIICaseInsensitiveHash> _contentProviderForMIMEType;
 }
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
@@ -52,21 +52,21 @@
 #if USE(SYSTEM_PREVIEW)
     if (configuration._systemPreviewEnabled && !configuration.preferences._modelDocumentEnabled) {
         for (auto& type : WebCore::MIMETypeRegistry::usdMIMETypes())
-            [self registerProvider:[WKUSDPreviewView class] forMIMEType:@(type.characters())];
+            [self registerProvider:[WKUSDPreviewView class] forMIMEType:StringImpl::create(@(type.characters()))];
     }
 #endif
 
     return self;
 }
 
-- (void)registerProvider:(Class <WKWebViewContentProvider>)contentProvider forMIMEType:(const String&)mimeType
+- (void)registerProvider:(Class <WKWebViewContentProvider>)contentProvider forMIMEType:(StringImpl*)mimeType
 {
     _contentProviderForMIMEType.set(mimeType, contentProvider);
 }
 
-- (Class <WKWebViewContentProvider>)providerForMIMEType:(const String&)mimeType
+- (Class <WKWebViewContentProvider>)providerForMIMEType:(StringImpl*)mimeType
 {
-    if (mimeType.isEmpty())
+    if (isEmpty(mimeType))
         return nil;
 
     const auto& representation = _contentProviderForMIMEType.find(mimeType);
@@ -77,7 +77,7 @@
     return representation->value;
 }
 
-- (Vector<String>)_mimeTypesWithCustomContentProviders
+- (Vector<RefPtr<StringImpl>>)_mimeTypesWithCustomContentProviders
 {
     return copyToVector(_contentProviderForMIMEType.keys());
 }

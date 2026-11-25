@@ -30,15 +30,15 @@
 
 namespace WebCore {
 
-std::optional<HTTPHeaderField> HTTPHeaderField::create(String&& unparsedName, String&& unparsedValue)
+std::optional<HTTPHeaderField> HTTPHeaderField::create(RefPtr<StringImpl>&& unparsedName, RefPtr<StringImpl>&& unparsedValue)
 {
     auto trimmedName = StringView(unparsedName).trim(isTabOrSpace<char16_t>);
     auto trimmedValue = StringView(unparsedValue).trim(isTabOrSpace<char16_t>);
     if (!RFC7230::isValidName(trimmedName) || !RFC7230::isValidValue(trimmedValue))
         return std::nullopt;
 
-    auto name = trimmedName.length() == unparsedName.length() ? WTF::move(unparsedName) : trimmedName.toString();
-    auto value = trimmedValue.length() == unparsedValue.length() ? WTF::move(unparsedValue) : trimmedValue.toString();
+    auto name = trimmedName.length() == length(unparsedName) ? WTF::move(unparsedName) : trimmedName.toString();
+    auto value = trimmedValue.length() == length(unparsedValue) ? WTF::move(unparsedValue) : trimmedValue.toString();
     return {{ WTF::move(name), WTF::move(value) }};
 }
 

@@ -45,17 +45,17 @@ namespace WebCore {
 // 
 class MockBox {
 public:
-    static String peekType(JSC::ArrayBuffer*);
+    static RefPtr<StringImpl> peekType(JSC::ArrayBuffer*);
     static size_t peekLength(JSC::ArrayBuffer*);
 
     size_t length() const { return m_length; }
-    const String& type() const LIFETIME_BOUND { return m_type; }
+    const RefPtr<StringImpl>& type() const LIFETIME_BOUND { return m_type; }
 
 protected:
     MockBox(JSC::ArrayBuffer*);
 
     size_t m_length;
-    String m_type;
+    RefPtr<StringImpl> m_type;
 };
 
 // A MockTrackBox extends MockBox and expects the following
@@ -69,19 +69,19 @@ protected:
 // 
 class MockTrackBox final : public MockBox {
 public:
-    static const String& type();
+    static const RefPtr<StringImpl>& type();
     MockTrackBox(JSC::ArrayBuffer*);
 
     int32_t trackID() const { return m_trackID; }
 
-    const String& codec() const LIFETIME_BOUND { return m_codec; }
+    const RefPtr<StringImpl>& codec() const LIFETIME_BOUND { return m_codec; }
 
     enum TrackKind { Audio, Video, Text };
     TrackKind kind() const { return m_kind; }
 
 private:
     uint8_t m_trackID;
-    String m_codec;
+    RefPtr<StringImpl> m_codec;
     TrackKind m_kind;
 };
 
@@ -96,7 +96,7 @@ private:
 //
 class MockInitializationBox final : public MockBox {
 public:
-    static const String& type();
+    static const RefPtr<StringImpl>& type();
     MockInitializationBox(JSC::ArrayBuffer*);
 
     MediaTime duration() const { return m_duration; }
@@ -121,7 +121,7 @@ private:
 //
 class MockSampleBox final : public MockBox {
 public:
-    static const String& type();
+    static const RefPtr<StringImpl>& type();
     MockSampleBox(JSC::ArrayBuffer*);
 
     MediaTime presentationTimestamp() const { return m_presentationTimestamp; }

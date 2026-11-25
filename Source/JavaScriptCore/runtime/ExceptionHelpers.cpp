@@ -42,27 +42,27 @@ namespace JSC {
 
 JSObject* createStackOverflowError(JSGlobalObject* globalObject)
 {
-    auto* error = createRangeError(globalObject, "Maximum call stack size exceeded."_s);
+    auto* error = createRangeError(globalObject, "Maximum call stack size exceeded."_si);
     uncheckedDowncast<ErrorInstance>(error)->setStackOverflowError();
     return error;
 }
 
 JSObject* createUndefinedVariableError(JSGlobalObject* globalObject, const Identifier& ident)
 {
-    String message;
+    RefPtr<StringImpl> message;
     if (ident.isPrivateName()) {
         message = tryMakeString("Can't find private variable: PrivateSymbol."_s, ident.string());
         if (!message) [[unlikely]]
-            message = "Can't find private variable"_s;
+            message = "Can't find private variable"_si;
     } else {
         message = tryMakeString("Can't find variable: "_s, ident.string());
         if (!message) [[unlikely]]
-            message = "Can't find variable"_s;
+            message = "Can't find variable"_si;
     }
     return createReferenceError(globalObject, message);
 }
 
-String errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
+RefPtr<StringImpl> errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
 {
     if (v.isString()) {
         auto string = asString(v)->value(globalObject);
@@ -76,7 +76,7 @@ String errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
         if (expectedDescription)
             return expectedDescription.value();
         ASSERT(expectedDescription.error() == ErrorTypeWithExtension::OutOfMemoryError);
-        return String("Symbol"_s);
+        return "Symbol"_si;
     }
     if (v.isObject()) {
         VM& vm = globalObject->vm();
@@ -88,19 +88,19 @@ String errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
     return v.toString(globalObject)->value(globalObject);
 }
     
-NODELETE static StringView clampErrorMessage(const String& originalMessage LIFETIME_BOUND)
+NODELETE static StringView clampErrorMessage(StringImpl* originalMessage LIFETIME_BOUND)
 {
     // Hopefully this is sufficiently long. Note, this is the length of the string not the number of bytes used.
     constexpr unsigned maxLength = 2 * KB;
     return StringView(originalMessage).left(maxLength);
 }
 
-static String defaultApproximateSourceError(const String& originalMessage, StringView sourceText)
+static RefPtr<StringImpl> defaultApproximateSourceError(StringImpl* originalMessage, StringView sourceText)
 {
     return makeString(clampErrorMessage(originalMessage), " (near '..."_s, sourceText, "...')"_s);
 }
 
-String defaultSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+RefPtr<StringImpl> defaultSourceAppender(StringImpl* originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     if (occurrence == ErrorInstance::SourceTextWhereErrorOccurred::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
@@ -167,7 +167,7 @@ NODELETE static StringView functionCallBase(StringView sourceText)
     return sourceText.left(idx + 1);
 }
 
-String notAFunctionSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+RefPtr<StringImpl> notAFunctionSourceAppender(StringImpl* originalMessage, StringView sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     ASSERT(type != TypeFunction);
 
@@ -175,7 +175,7 @@ String notAFunctionSourceAppender(const String& originalMessage, StringView sour
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::SourceTextWhereErrorOccurred::FoundExactSource);
-    auto notAFunctionIndex = originalMessage.reverseFind("is not a function"_s);
+    auto notAFunctionIndex = reverseFind(originalMessage, "is not a function"_s);
     RELEASE_ASSERT(notAFunctionIndex != notFound);
     auto displayValue = StringView { originalMessage }.left(notAFunctionIndex - 1);
 
@@ -194,12 +194,12 @@ String notAFunctionSourceAppender(const String& originalMessage, StringView sour
     builder.append(')');
 
     if (builder.hasOverflowed())
-        return "object is not a function."_s;
+        return "object is not a function."_si;
 
     return WTF::move(builder).toString();
 }
 
-static String invalidParameterInSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static RefPtr<StringImpl> invalidParameterInSourceAppender(StringImpl* originalMessage, StringView sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     ASSERT_UNUSED(type, type != TypeObject);
 
@@ -222,7 +222,7 @@ static String invalidParameterInSourceAppender(const String& originalMessage, St
     return makeString(rightHandSide, " is not an Object. (evaluating '"_s, sourceText, "')"_s);
 }
 
-inline String invalidParameterInstanceofSourceAppender(const String& content, const String& originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+inline RefPtr<StringImpl> invalidParameterInstanceofSourceAppender(StringImpl* content, StringImpl* originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     if (occurrence == ErrorInstance::SourceTextWhereErrorOccurred::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
@@ -241,17 +241,17 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
     return makeString(rightHandSide, content, ". (evaluating '"_s, sourceText, "')"_s);
 }
 
-static String invalidParameterInstanceofNotFunctionSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static RefPtr<StringImpl> invalidParameterInstanceofNotFunctionSourceAppender(StringImpl* originalMessage, StringView sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
-    return invalidParameterInstanceofSourceAppender(" is not a function"_s, originalMessage, sourceText, runtimeType, occurrence);
+    return invalidParameterInstanceofSourceAppender(" is not a function"_si, originalMessage, sourceText, runtimeType, occurrence);
 }
 
-static String invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static RefPtr<StringImpl> invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender(StringImpl* originalMessage, StringView sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
-    return invalidParameterInstanceofSourceAppender("[Symbol.hasInstance] is not a function, undefined, or null"_s, originalMessage, sourceText, runtimeType, occurrence);
+    return invalidParameterInstanceofSourceAppender("[Symbol.hasInstance] is not a function, undefined, or null"_si, originalMessage, sourceText, runtimeType, occurrence);
 }
 
-static String invalidPrototypeSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static RefPtr<StringImpl> invalidPrototypeSourceAppender(StringImpl* originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     if (occurrence == ErrorInstance::SourceTextWhereErrorOccurred::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
@@ -260,20 +260,20 @@ static String invalidPrototypeSourceAppender(const String& originalMessage, Stri
     if (extendsIndex == notFound || sourceText.find("extends"_s) != extendsIndex)
         return makeString(originalMessage, " (evaluating '"_s, sourceText, "')"_s);
 
-    return "The value of the superclass's prototype property is not an object or null."_s;
+    return "The value of the superclass's prototype property is not an object or null."_si;
 }
 
-String constructErrorMessage(JSGlobalObject* globalObject, JSValue value, const String& message)
+RefPtr<StringImpl> constructErrorMessage(JSGlobalObject* globalObject, JSValue value, StringImpl* message)
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    String valueDescription = errorDescriptionForValue(globalObject, value);
+    RefPtr<StringImpl> valueDescription = errorDescriptionForValue(globalObject, value);
     RETURN_IF_EXCEPTION(scope, { });
     if (!valueDescription)
         return valueDescription;
     return tryMakeString(valueDescription, ' ', message);
 }
 
-JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
+JSObject* createError(JSGlobalObject* globalObject, JSValue value, StringImpl* message, ErrorInstance::SourceAppender appender)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
@@ -295,71 +295,71 @@ JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String&
 
 JSObject* createInvalidFunctionApplyParameterError(JSGlobalObject* globalObject, JSValue value)
 {
-    return createTypeError(globalObject, "second argument to Function.prototype.apply must be an Array-like object"_s, defaultSourceAppender, runtimeTypeForValue(value));
+    return createTypeError(globalObject, "second argument to Function.prototype.apply must be an Array-like object"_si, defaultSourceAppender, runtimeTypeForValue(value));
 }
 
 JSObject* createInvalidInParameterError(JSGlobalObject* globalObject, JSValue value)
 {
-    return createError(globalObject, value, "is not an Object."_s, invalidParameterInSourceAppender);
+    return createError(globalObject, value, "is not an Object."_si, invalidParameterInSourceAppender);
 }
 
 JSObject* createInvalidInstanceofParameterErrorNotFunction(JSGlobalObject* globalObject, JSValue value)
 {
-    return createError(globalObject, value, " is not a function"_s, invalidParameterInstanceofNotFunctionSourceAppender);
+    return createError(globalObject, value, " is not a function"_si, invalidParameterInstanceofNotFunctionSourceAppender);
 }
 
 JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(JSGlobalObject* globalObject, JSValue value)
 {
-    return createError(globalObject, value, "[Symbol.hasInstance] is not a function, undefined, or null"_s, invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender);
+    return createError(globalObject, value, "[Symbol.hasInstance] is not a function, undefined, or null"_si, invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender);
 }
 
 JSObject* createNotAConstructorError(JSGlobalObject* globalObject, JSValue value)
 {
-    return createError(globalObject, value, "is not a constructor"_s, defaultSourceAppender);
+    return createError(globalObject, value, "is not a constructor"_si, defaultSourceAppender);
 }
 
 JSObject* createNotAFunctionError(JSGlobalObject* globalObject, JSValue value)
 {
-    return createError(globalObject, value, "is not a function"_s, notAFunctionSourceAppender);
+    return createError(globalObject, value, "is not a function"_si, notAFunctionSourceAppender);
 }
 
 JSObject* createNotAnObjectError(JSGlobalObject* globalObject, JSValue value)
 {
-    return createError(globalObject, value, "is not an object"_s, defaultSourceAppender);
+    return createError(globalObject, value, "is not an object"_si, defaultSourceAppender);
 }
 
 JSObject* createInvalidPrototypeError(JSGlobalObject* globalObject, JSValue value)
 {
-    return createError(globalObject, value, "is not an object or null"_s, invalidPrototypeSourceAppender);
+    return createError(globalObject, value, "is not an object or null"_si, invalidPrototypeSourceAppender);
 }
 
 JSObject* createErrorForDuplicateGlobalVariableDeclaration(JSGlobalObject* globalObject, UniquedStringImpl* key)
 {
-    String message = tryMakeString("Can't create duplicate variable: '"_s, StringView(key), '\'');
+    RefPtr<StringImpl> message = tryMakeString("Can't create duplicate variable: '"_s, StringView(key), '\'');
     if (!message) [[unlikely]]
-        message = "Can't create duplicate variable"_s;
+        message = "Can't create duplicate variable"_si;
     return createSyntaxError(globalObject, message);
 }
 
 JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
 {
-    String message = tryMakeString("Can't declare global function '"_s, ident.string(), "': property must be either configurable or both writable and enumerable"_s);
+    RefPtr<StringImpl> message = tryMakeString("Can't declare global function '"_s, ident.string(), "': property must be either configurable or both writable and enumerable"_s);
     if (!message) [[unlikely]]
-        message = "Can't declare global function: property must be either configurable or both writable and enumerable"_s;
+        message = "Can't declare global function: property must be either configurable or both writable and enumerable"_si;
     return createTypeError(globalObject, message);
 }
 
 JSObject* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
 {
-    String message = tryMakeString("Can't declare global variable '"_s, ident.string(), "': global object must be extensible"_s);
+    RefPtr<StringImpl> message = tryMakeString("Can't declare global variable '"_s, ident.string(), "': global object must be extensible"_s);
     if (!message) [[unlikely]]
-        message = "Can't declare global variable: global object must be extensible"_s;
+        message = "Can't declare global variable: global object must be extensible"_si;
     return createTypeError(globalObject, message);
 }
 
 JSObject* createTDZError(JSGlobalObject* globalObject, StringView ident)
 {
-    String message = tryMakeString("Cannot access '"_s, ident, "' before initialization."_s);
+    RefPtr<StringImpl> message = tryMakeString("Cannot access '"_s, ident, "' before initialization."_s);
     if (!message) [[unlikely]]
         return createTDZError(globalObject);
     return createReferenceError(globalObject, message);
@@ -367,27 +367,27 @@ JSObject* createTDZError(JSGlobalObject* globalObject, StringView ident)
 
 JSObject* createTDZError(JSGlobalObject* globalObject)
 {
-    return createReferenceError(globalObject, "Cannot access uninitialized variable."_s);
+    return createReferenceError(globalObject, "Cannot access uninitialized variable."_si);
 }
 
 JSObject* createInvalidPrivateNameError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, "Cannot access invalid private field"_s, defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot access invalid private field"_si, defaultSourceAppender, TypeNothing);
 }
 
 JSObject* createRedefinedPrivateNameError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, "Cannot redefine existing private field"_s, defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot redefine existing private field"_si, defaultSourceAppender, TypeNothing);
 }
 
 JSObject* createPrivateMethodAccessError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, "Cannot access private method or acessor"_s, defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot access private method or acessor"_si, defaultSourceAppender, TypeNothing);
 }
 
 JSObject* createReinstallPrivateMethodError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, "Cannot install same private methods on object more than once"_s, defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot install same private methods on object more than once"_si, defaultSourceAppender, TypeNothing);
 }
 
 Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope)
@@ -395,7 +395,7 @@ Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope
     return throwException(globalObject, scope, createOutOfMemoryError(globalObject));
 }
 
-Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope, const String& message)
+Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope, StringImpl* message)
 {
     return throwException(globalObject, scope, createOutOfMemoryError(globalObject, message));
 }

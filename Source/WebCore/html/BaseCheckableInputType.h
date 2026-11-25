@@ -56,9 +56,9 @@ private:
     bool appendFormData(DOMFormData&) const final;
     void handleKeypressEvent(KeyboardEvent&) final;
     bool accessKeyAction(bool sendMouseEvents) final;
-    ValueOrReference<String> fallbackValue() const final;
+    ValueOrReference<RefPtr<StringImpl>> fallbackValue() const final;
     bool storesValueSeparateFromAttribute() final;
-    void setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    void setValue(StringImpl*, bool, TextFieldEventBehavior, TextControlSetValueSelection) final;
 };
 
 } // namespace WebCore

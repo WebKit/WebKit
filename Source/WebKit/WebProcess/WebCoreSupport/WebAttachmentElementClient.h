@@ -40,7 +40,7 @@ class WebAttachmentElementClient final : public WebCore::AttachmentElementClient
 public:
     explicit WebAttachmentElementClient(WebPage&);
 
-    void requestAttachmentIcon(const String& identifier, const WebCore::FloatSize&) final;
+    void requestAttachmentIcon(StringImpl* identifier, const WebCore::FloatSize&) final;
 
 private:
     WeakRef<WebPage> m_page;

@@ -193,12 +193,12 @@ bool KeyframeEffectStack::hasInvalidCSSAnimationNames() const
     return !m_invalidCSSAnimationNames.isEmpty();
 }
 
-bool KeyframeEffectStack::containsInvalidCSSAnimationName(const String& name) const
+bool KeyframeEffectStack::containsInvalidCSSAnimationName(StringImpl* name) const
 {
     return m_invalidCSSAnimationNames.contains(name);
 }
 
-void KeyframeEffectStack::addInvalidCSSAnimationName(const String& name)
+void KeyframeEffectStack::addInvalidCSSAnimationName(StringImpl* name)
 {
     m_invalidCSSAnimationNames.add(name);
 }

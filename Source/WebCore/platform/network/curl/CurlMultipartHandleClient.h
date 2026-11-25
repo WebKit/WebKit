@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CurlMultipartHandleClient : public AbstractCanMakeCheckedPtr {
 public:
-    virtual void didReceiveHeaderFromMultipart(Vector<String>&&) = 0;
+    virtual void didReceiveHeaderFromMultipart(Vector<RefPtr<StringImpl>>&&) = 0;
     virtual void didReceiveDataFromMultipart(std::span<const uint8_t>) = 0;
     virtual void didCompleteFromMultipart() = 0;
 

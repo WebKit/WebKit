@@ -87,7 +87,7 @@ struct WebMouseEventData {
 #endif
 #if !PLATFORM(MAC)
     WebCore::PointerID pointerId { WebCore::mousePointerID };
-    String pointerType { WebCore::mousePointerEventType() };
+    RefPtr<StringImpl> pointerType { WebCore::mousePointerEventType() };
 #endif
     GestureWasCancelled gestureWasCancelled { GestureWasCancelled::No };
     WebCore::DoublePoint unadjustedMovementDelta;
@@ -131,10 +131,10 @@ public:
 #if PLATFORM(MAC)
     // No constructor on this platform takes these, so the defaults are the only possible values.
     WebCore::PointerID pointerId() const { return WebCore::mousePointerID; }
-    const String& pointerType() const LIFETIME_BOUND { return WebCore::mousePointerEventType(); }
+    const RefPtr<StringImpl>& pointerType() const LIFETIME_BOUND { return WebCore::mousePointerEventType(); }
 #else
     WebCore::PointerID pointerId() const { return m_data.pointerId; }
-    const String& pointerType() const LIFETIME_BOUND { return m_data.pointerType; }
+    const RefPtr<StringImpl>& pointerType() const LIFETIME_BOUND { return m_data.pointerType; }
 #endif
     GestureWasCancelled gestureWasCancelled() const { return m_data.gestureWasCancelled; }
     // Unaccelerated pointer movement

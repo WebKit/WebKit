@@ -95,7 +95,7 @@ const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
     return messageHandlers;
 }
 
-void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)
+void SessionHost::connectToBrowser(Function<void (std::optional<RefPtr<StringImpl>> error)>&& completionHandler)
 {
     launchBrowser(WTF::move(completionHandler));
 }
@@ -108,7 +108,7 @@ bool SessionHost::isConnected() const
 
 struct ConnectToBrowserAsyncData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ConnectToBrowserAsyncData);
-    ConnectToBrowserAsyncData(SessionHost* sessionHost, UTF8CString&& inspectorAddress, GCancellable* cancellable, Function<void(std::optional<String>)>&& completionHandler)
+    ConnectToBrowserAsyncData(SessionHost* sessionHost, UTF8CString&& inspectorAddress, GCancellable* cancellable, Function<void(std::optional<RefPtr<StringImpl>>)>&& completionHandler)
         : sessionHost(sessionHost)
         , inspectorAddress(WTF::move(inspectorAddress))
         , cancellable(cancellable)
@@ -119,7 +119,7 @@ struct ConnectToBrowserAsyncData {
     SessionHost* sessionHost;
     UTF8CString inspectorAddress;
     GRefPtr<GCancellable> cancellable;
-    Function<void (std::optional<String> error)> completionHandler;
+    Function<void (std::optional<RefPtr<StringImpl>> error)> completionHandler;
     unsigned connectionAttemptCount { 0 };
 };
 
@@ -135,12 +135,12 @@ static guint16 freePort()
     return g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address.get()));
 }
 
-void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& completionHandler)
+void SessionHost::launchBrowser(Function<void (std::optional<RefPtr<StringImpl>> error)>&& completionHandler)
 {
-    String targetIp;
+    RefPtr<StringImpl> targetIp;
     uint16_t targetPort = 0;
 
-    if (!m_targetIp.isEmpty() && m_targetPort) {
+    if (!isEmpty(m_targetIp) && m_targetPort) {
         targetIp = m_targetIp;
         targetPort = m_targetPort;
     } else if (m_capabilities.targetAddr && m_capabilities.targetPort) {
@@ -149,8 +149,8 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
     }
 
     m_cancellable = adoptGRef(g_cancellable_new());
-    auto inspectorAddress = makeString(targetIp.isEmpty() ? "127.0.0.1"_s : StringView(targetIp), ':', targetPort > 0 ? targetPort : freePort()).utf8();
-    if (!targetIp.isEmpty()) {
+    auto inspectorAddress = utf8(makeString(isEmpty(targetIp) ? "127.0.0.1"_s : StringView(targetIp), ':', targetPort > 0 ? targetPort : freePort()));
+    if (!isEmpty(targetIp)) {
         m_isRemoteBrowser = true;
         RELEASE_LOG_INFO(SessionHost, "Attaching to already running RemoteInspector at %s", inspectorAddress);
         connectToBrowser(makeUnique<ConnectToBrowserAsyncData>(this, WTF::move(inspectorAddress), m_cancellable.get(), WTF::move(completionHandler)));
@@ -165,9 +165,9 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
 
     size_t browserArgumentsSize = m_capabilities.browserArguments ? m_capabilities.browserArguments->size() : 0;
     GUniquePtr<char*> args(g_new0(char*, browserArgumentsSize + 2));
-    args.get()[0] = gStrdup(m_capabilities.browserBinary.value().utf8());
+    args.get()[0] = gStrdup(utf8(m_capabilities.browserBinary.value()));
     for (unsigned i = 0; i < browserArgumentsSize; ++i)
-        args.get()[i + 1] = gStrdup(m_capabilities.browserArguments.value()[i].utf8());
+        args.get()[i + 1] = gStrdup(utf8(m_capabilities.browserArguments.value()[i]));
 
     RELEASE_LOG_INFO(SessionHost, "Spawning local browser: %s with %zu argument(s)", args.get()[0], browserArgumentsSize);
 
@@ -175,7 +175,7 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
     m_browser = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), args.get(), &error.outPtr()));
     if (error) {
         RELEASE_LOG_ERROR(SessionHost, "Failed to spawn browser %s: %s", args.get()[0], error->message);
-        completionHandler(String::fromUTF8(error->message));
+        completionHandler(StringImpl::fromUTF8(error->message));
         return;
     }
 
@@ -228,7 +228,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                         return;
                     }
                     RELEASE_LOG_ERROR(SessionHost, "Failed to connect to %s: %s", data->inspectorAddress, error->message);
-                    data->completionHandler(String::fromUTF8(error->message));
+                    data->completionHandler(StringImpl::fromUTF8(error->message));
                     return;
                 }
 
@@ -243,8 +243,8 @@ void SessionHost::disconnect(DisconnectReason reason)
 {
     Ref<SessionHost> protectedThis(*this);
 
-    if (!m_targetIp.isEmpty())
-        RELEASE_LOG_INFO(SessionHost, "RemoteInspector at %s:%u disconnected", m_targetIp.utf8(), m_targetPort);
+    if (!isEmpty(m_targetIp))
+        RELEASE_LOG_INFO(SessionHost, "RemoteInspector at %s:%u disconnected", utf8(m_targetIp), m_targetPort);
     else
         RELEASE_LOG_INFO(SessionHost, "Inspector disconnected (local browser)");
 
@@ -274,12 +274,12 @@ void SessionHost::setupConnection(Ref<SocketConnection>&& connection)
     m_socketConnection = WTF::move(connection);
 }
 
-static bool matchBrowserOptions(const String& browserName, const String& browserVersion, const Capabilities& capabilities)
+static bool matchBrowserOptions(StringImpl* browserName, StringImpl* browserVersion, const Capabilities& capabilities)
 {
-    if (capabilities.browserName && capabilities.browserName.value() != browserName)
+    if (capabilities.browserName && !equal(capabilities.browserName.value(), browserName))
         return false;
 
-    if (capabilities.browserVersion && !WebDriverService::platformCompareBrowserVersions(capabilities.browserVersion.value(), browserVersion))
+    if (capabilities.browserVersion && !WebDriverService::platformCompareBrowserVersions(capabilities.browserVersion.value().get(), browserVersion))
         return false;
 
     return true;
@@ -291,9 +291,9 @@ bool SessionHost::matchCapabilities(GVariant* capabilities)
     const char* version;
     g_variant_get(capabilities, "(&s&s)", &name, &version);
 
-    auto browserName = String::fromUTF8(name);
-    auto browserVersion = String::fromUTF8(version);
-    bool didMatch = matchBrowserOptions(browserName, browserVersion, m_capabilities);
+    auto browserName = StringImpl::fromUTF8(name);
+    auto browserVersion = StringImpl::fromUTF8(version);
+    bool didMatch = matchBrowserOptions(browserName.get(), browserVersion.get(), m_capabilities);
     m_capabilities.browserName = browserName;
     m_capabilities.browserVersion = browserVersion;
 
@@ -314,7 +314,7 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
         g_variant_builder_init(&arrayBuilder, G_VARIANT_TYPE("a(ss)"));
         for (auto& certificate : *m_capabilities.certificates) {
             g_variant_builder_add_value(&arrayBuilder, gVariantNew("(ss)",
-                certificate.first.utf8(), certificate.second.utf8()));
+                utf8(certificate.first), utf8(certificate.second)));
         }
         g_variant_builder_add(builder, "{sv}", "certificates", g_variant_builder_end(&arrayBuilder));
     }
@@ -322,15 +322,15 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
     if (m_capabilities.proxy) {
         GVariantBuilder dictBuilder;
         g_variant_builder_init(&dictBuilder, G_VARIANT_TYPE("a{sv}"));
-        g_variant_builder_add(&dictBuilder, "{sv}", "type", gVariantNewString(m_capabilities.proxy->type.utf8()));
+        g_variant_builder_add(&dictBuilder, "{sv}", "type", gVariantNewString(utf8(m_capabilities.proxy->type)));
         if (m_capabilities.proxy->autoconfigURL)
-            g_variant_builder_add(&dictBuilder, "{sv}", "autoconfigURL", gVariantNewString(m_capabilities.proxy->autoconfigURL->string().utf8()));
+            g_variant_builder_add(&dictBuilder, "{sv}", "autoconfigURL", gVariantNewString(utf8(m_capabilities.proxy->autoconfigURL->string())));
         if (m_capabilities.proxy->ftpURL)
-            g_variant_builder_add(&dictBuilder, "{sv}", "ftpURL", gVariantNewString(m_capabilities.proxy->ftpURL->string().utf8()));
+            g_variant_builder_add(&dictBuilder, "{sv}", "ftpURL", gVariantNewString(utf8(m_capabilities.proxy->ftpURL->string())));
         if (m_capabilities.proxy->httpURL)
-            g_variant_builder_add(&dictBuilder, "{sv}", "httpURL", gVariantNewString(m_capabilities.proxy->httpURL->string().utf8()));
+            g_variant_builder_add(&dictBuilder, "{sv}", "httpURL", gVariantNewString(utf8(m_capabilities.proxy->httpURL->string())));
         if (m_capabilities.proxy->httpsURL)
-            g_variant_builder_add(&dictBuilder, "{sv}", "httpsURL", gVariantNewString(m_capabilities.proxy->httpsURL->string().utf8()));
+            g_variant_builder_add(&dictBuilder, "{sv}", "httpsURL", gVariantNewString(utf8(m_capabilities.proxy->httpsURL->string())));
         if (m_capabilities.proxy->socksURL) {
             URL socksURL = m_capabilities.proxy->socksURL.value();
             ASSERT(m_capabilities.proxy->socksVersion);
@@ -347,13 +347,13 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
             default:
                 break;
             }
-            g_variant_builder_add(&dictBuilder, "{sv}", "socksURL", gVariantNewString(socksURL.string().utf8()));
+            g_variant_builder_add(&dictBuilder, "{sv}", "socksURL", gVariantNewString(utf8(socksURL.string())));
         }
         if (!m_capabilities.proxy->ignoreAddressList.isEmpty()) {
             GUniquePtr<char*> ignoreAddressList(static_cast<char**>(g_new0(char*, m_capabilities.proxy->ignoreAddressList.size() + 1)));
             unsigned i = 0;
             for (const auto& ignoreAddress : m_capabilities.proxy->ignoreAddressList)
-                ignoreAddressList.get()[i++] = gStrdup(ignoreAddress.utf8());
+                ignoreAddressList.get()[i++] = gStrdup(utf8(ignoreAddress));
             g_variant_builder_add(&dictBuilder, "{sv}", "ignoreAddressList", g_variant_new_strv(ignoreAddressList.get(), -1));
         }
         g_variant_builder_add(builder, "{sv}", "proxy", g_variant_builder_end(&dictBuilder));
@@ -362,14 +362,14 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
     return true;
 }
 
-void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
+void SessionHost::startAutomationSession(Function<void (bool, std::optional<RefPtr<StringImpl>>)>&& completionHandler)
 {
     ASSERT(m_socketConnection);
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTF::move(completionHandler);
     m_sessionID = createVersion4UUIDString();
     GVariantBuilder builder;
-    m_socketConnection->sendMessage("StartAutomationSession"_s, gVariantNew("(sa{sv})", m_sessionID.utf8(), buildSessionCapabilities(&builder) ? &builder : nullptr));
+    m_socketConnection->sendMessage("StartAutomationSession"_s, gVariantNew("(sa{sv})", utf8(m_sessionID), buildSessionCapabilities(&builder) ? &builder : nullptr));
 }
 
 void SessionHost::didStartAutomationSession(GVariant* parameters)
@@ -418,15 +418,15 @@ void SessionHost::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID
 {
     if (connectionID != m_connectionID || targetID != m_target.id)
         return;
-    dispatchMessage(String::fromUTF8(message));
+    dispatchMessage(StringImpl::fromUTF8(message).get());
 }
 
-void SessionHost::sendMessageToBackend(const String& message)
+void SessionHost::sendMessageToBackend(StringImpl* message)
 {
     ASSERT(m_socketConnection);
     ASSERT(m_connectionID);
     ASSERT(m_target.id);
-    m_socketConnection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", m_connectionID, m_target.id, message.utf8()));
+    m_socketConnection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", m_connectionID, m_target.id, utf8(message)));
 }
 
 } // namespace WebDriver

@@ -43,17 +43,22 @@ using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType
 class SecurityOriginData {
 public:
     struct Tuple {
-        String protocol;
-        String host;
+        RefPtr<StringImpl> protocol;
+        RefPtr<StringImpl> host;
         std::optional<uint16_t> port;
 
-        friend bool operator==(const Tuple&, const Tuple&) = default;
-        Tuple isolatedCopy() const & { return { protocol.isolatedCopy(), host.isolatedCopy(), port }; }
-        Tuple isolatedCopy() && { return { WTF::move(protocol).isolatedCopy(), WTF::move(host).isolatedCopy(), port }; }
+        friend bool operator==(const Tuple& a, const Tuple& b)
+        {
+            return contentEquals(a.protocol, b.protocol)
+                && contentEquals(a.host, b.host)
+                && a.port == b.port;
+        }
+        Tuple isolatedCopy() const & { return { WTF::isolatedCopy(protocol), WTF::isolatedCopy(host), port }; }
+        Tuple isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(protocol)), WTF::isolatedCopy(WTF::move(host)), port }; }
     };
 
     SecurityOriginData() = default;
-    SecurityOriginData(const String& protocol, const String& host, std::optional<uint16_t> port)
+    SecurityOriginData(StringImpl* protocol, StringImpl* host, std::optional<uint16_t> port)
         : m_data { Tuple { protocol, host, port } }
     {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isHashTableDeletedValue());
@@ -80,19 +85,19 @@ public:
     // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
     // host, and port.
 
-    const String& protocol() const LIFETIME_BOUND
+    const RefPtr<StringImpl>& protocol() const LIFETIME_BOUND
     {
-        return switchOn(m_data, [] (const Tuple& tuple) -> const String& {
+        return switchOn(m_data, [] (const Tuple& tuple) -> const RefPtr<StringImpl>& {
             return tuple.protocol;
-        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) -> const String& {
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) -> const RefPtr<StringImpl>& {
             return emptyString();
         });
     }
-    const String& host() const LIFETIME_BOUND
+    const RefPtr<StringImpl>& host() const LIFETIME_BOUND
     {
-        return switchOn(m_data, [] (const Tuple& tuple) -> const String&  {
+        return switchOn(m_data, [] (const Tuple& tuple) -> const RefPtr<StringImpl>&  {
             return tuple.host;
-        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) -> const String& {
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) -> const RefPtr<StringImpl>& {
             return emptyString();
         });
     }
@@ -126,14 +131,14 @@ public:
 
     // Serialize the security origin to a string that could be used as part of
     // file names. This format should be used in storage APIs only.
-    WEBCORE_EXPORT String databaseIdentifier() const;
-    WEBCORE_EXPORT String optionalDatabaseIdentifier() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> databaseIdentifier() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> optionalDatabaseIdentifier() const;
     WEBCORE_EXPORT static std::optional<SecurityOriginData> fromDatabaseIdentifier(StringView);
 
     bool isNull() const
     {
         return switchOn(m_data, [] (const Tuple& tuple) {
-            return tuple.protocol.isNull() && tuple.host.isNull() && tuple.port == std::nullopt;
+            return !tuple.protocol && !tuple.host && tuple.port == std::nullopt;
         }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) {
             return false;
         });
@@ -152,12 +157,12 @@ public:
         });
     }
     
-    WEBCORE_EXPORT String toString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toString() const;
 
     WEBCORE_EXPORT URL toURL() const;
 
 #if !LOG_DISABLED
-    String debugString() const { return toString(); }
+    RefPtr<StringImpl> debugString() const { return toString(); }
 #endif
 
     WEBCORE_EXPORT static bool shouldTreatAsOpaqueOrigin(const URL&);

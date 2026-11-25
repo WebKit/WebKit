@@ -95,7 +95,7 @@ static void initializeRemoteInspectorServer()
 
     if (inspectorHTTPAddress) {
         if (RemoteInspectorHTTPServer::singleton().start(WTF::move(inspectorHTTPAddress), Inspector::RemoteInspectorServer::singleton().port()))
-            Inspector::RemoteInspector::setInspectorServerAddress(RemoteInspectorHTTPServer::singleton().inspectorServerAddress().utf8());
+            Inspector::RemoteInspector::setInspectorServerAddress(utf8(RemoteInspectorHTTPServer::singleton().inspectorServerAddress()));
     } else
         Inspector::RemoteInspector::setInspectorServerAddress(UTF8CString::unsafeFromUTF8(address));
 }

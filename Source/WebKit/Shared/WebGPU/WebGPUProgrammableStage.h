@@ -39,8 +39,8 @@ using PipelineConstantValue = double; // May represent WGSL’s bool, f32, i32, 
 
 struct ProgrammableStage {
     WebGPUShaderModuleIdentifier module;
-    String entryPoint;
-    Vector<KeyValuePair<String, PipelineConstantValue>> constants;
+    RefPtr<StringImpl> entryPoint;
+    Vector<KeyValuePair<RefPtr<StringImpl>, PipelineConstantValue>> constants;
 };
 
 } // namespace WebKit::WebGPU

@@ -66,20 +66,20 @@ public:
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
     };
-    using CreateResult = std::expected<Ref<VideoEncoder>, String>;
-    using CreatePromise = NativePromise<Ref<VideoEncoder>, String>;
+    using CreateResult = std::expected<Ref<VideoEncoder>, RefPtr<StringImpl>>;
+    using CreatePromise = NativePromise<Ref<VideoEncoder>, RefPtr<StringImpl>>;
 
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
+    using CreatorFunction = void(*)(StringImpl*, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
     NODELETE WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
-    static Ref<CreatePromise> create(const String&, const Config&, DescriptionCallback&&, OutputCallback&&);
-    WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
+    static Ref<CreatePromise> create(StringImpl*, const Config&, DescriptionCallback&&, OutputCallback&&);
+    WEBCORE_EXPORT static void createLocalEncoder(StringImpl*, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
 
-    using EncodePromise = NativePromise<void, String>;
+    using EncodePromise = NativePromise<void, RefPtr<StringImpl>>;
     virtual Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) = 0;
 
     virtual Ref<GenericPromise> setRates(uint64_t /* bitRate */, double /* frameRate */) = 0;

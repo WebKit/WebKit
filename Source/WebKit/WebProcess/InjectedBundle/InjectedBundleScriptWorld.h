@@ -46,10 +46,10 @@ class InjectedBundleScriptWorld : public API::ObjectImpl<API::Object::Type::Bund
 public:
     enum class Type { User, Internal };
     static Ref<InjectedBundleScriptWorld> create(ContentWorldIdentifier, Type = Type::Internal);
-    static Ref<InjectedBundleScriptWorld> create(ContentWorldIdentifier, const String& name, Type = Type::Internal);
+    static Ref<InjectedBundleScriptWorld> create(ContentWorldIdentifier, StringImpl* name, Type = Type::Internal);
     static Ref<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
     static RefPtr<InjectedBundleScriptWorld> get(const WebCore::DOMWrapperWorld&);
-    NODELETE static InjectedBundleScriptWorld* find(const String&);
+    NODELETE static InjectedBundleScriptWorld* find(StringImpl*);
     static InjectedBundleScriptWorld& normalWorldSingleton();
 
     virtual ~InjectedBundleScriptWorld();
@@ -68,14 +68,14 @@ public:
     NODELETE void setAllowPostingLegacySynchronousMessages();
 
     ContentWorldIdentifier identifier() const { return m_identifier; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
 private:
-    InjectedBundleScriptWorld(ContentWorldIdentifier, WebCore::DOMWrapperWorld&, const String&);
+    InjectedBundleScriptWorld(ContentWorldIdentifier, WebCore::DOMWrapperWorld&, StringImpl*);
 
     const ContentWorldIdentifier m_identifier;
     const Ref<WebCore::DOMWrapperWorld> m_world;
-    const String m_name;
+    const RefPtr<StringImpl> m_name;
 };
 
 } // namespace WebKit

@@ -49,10 +49,10 @@ public:
 private:
     // RemoteInspector::Client
     bool remoteAutomationAllowed() const final;
-    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities&) final;
+    void requestAutomationSession(StringImpl* sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities&) final;
     void requestedDebuggablesToWakeUp() final;
-    String browserName() const final;
-    String browserVersion() const final;
+    RefPtr<StringImpl> browserName() const final;
+    RefPtr<StringImpl> browserVersion() const final;
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WeakObjCPtr<WKProcessPool> m_processPool;

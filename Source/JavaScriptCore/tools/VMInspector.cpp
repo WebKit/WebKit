@@ -397,8 +397,8 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
         
         while (it < startOfVars) {
             JSValue v = it->jsValue();
-            String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
-            SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii(), it++, (long long)JSValue::encode(v), valueAsString(v));
+            RefPtr<StringImpl> name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
+            SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, ascii(name), it++, (long long)JSValue::encode(v), valueAsString(v));
         }
         
         dataLogF("--------------------------------------------------------------- Variables ---\n");
@@ -409,8 +409,8 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
         
         while (it < endOfCalleeSaves) {
             JSValue v = it->jsValue();
-            String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
-            SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii(), it++, (long long)JSValue::encode(v), valueAsString(v));
+            RefPtr<StringImpl> name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
+            SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, ascii(name), it++, (long long)JSValue::encode(v), valueAsString(v));
         }
         
         dataLogF("------------------------------------------------------------ Callee Saves ---\n");
@@ -449,8 +449,8 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     const Register* bottom = callFrame->registers() + (CallFrameSlot::thisArgument + callFrame->argumentCount());
     while (it <= bottom) {
         JSValue v = it->jsValue();
-        String name = codeBlock ? codeBlock->nameForRegister(VirtualRegister(registerNumber)) : emptyString();
-        SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, name.ascii(), it++, (long long)JSValue::encode(v), valueAsString(v));
+        RefPtr<StringImpl> name = codeBlock ? codeBlock->nameForRegister(VirtualRegister(registerNumber)) : emptyString();
+        SAFE_DATALOGF("% 4d  %-16s : %10p  0x%llx %s\n", registerNumber++, ascii(name), it++, (long long)JSValue::encode(v), valueAsString(v));
     }
     
     dataLogF("--------------------------------------------------------------------- End ---\n");

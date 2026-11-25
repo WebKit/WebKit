@@ -43,8 +43,8 @@ struct ApplePayRequestBase {
     std::optional<Vector<ApplePayFeature>> features;
 
     Vector<ApplePayMerchantCapability> merchantCapabilities;
-    Vector<String> supportedNetworks;
-    String countryCode;
+    Vector<RefPtr<StringImpl>> supportedNetworks;
+    RefPtr<StringImpl> countryCode;
 
     std::optional<Vector<ApplePayContactField>> requiredBillingContactFields;
     std::optional<ApplePayPaymentContact> billingContact;
@@ -52,8 +52,8 @@ struct ApplePayRequestBase {
     std::optional<Vector<ApplePayContactField>> requiredShippingContactFields;
     std::optional<ApplePayPaymentContact> shippingContact;
 
-    String applicationData;
-    Vector<String> supportedCountries;
+    RefPtr<StringImpl> applicationData;
+    Vector<RefPtr<StringImpl>> supportedCountries;
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     std::optional<ApplePayInstallmentConfiguration> installmentConfiguration;
@@ -61,7 +61,7 @@ struct ApplePayRequestBase {
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     std::optional<bool> supportsCouponCode;
-    String couponCode;
+    RefPtr<StringImpl> couponCode;
 #endif
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
@@ -73,7 +73,7 @@ struct ApplePayRequestBase {
 #endif
 
 #if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
-    String merchantCategoryCode;
+    RefPtr<StringImpl> merchantCategoryCode;
 #endif
 
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)

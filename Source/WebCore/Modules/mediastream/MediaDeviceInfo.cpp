@@ -35,12 +35,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaDeviceInfo);
 
-Ref<MediaDeviceInfo> MediaDeviceInfo::create(const String& label, const String& deviceId, const String& groupId, Kind kind)
+Ref<MediaDeviceInfo> MediaDeviceInfo::create(StringImpl* label, StringImpl* deviceId, StringImpl* groupId, Kind kind)
 {
     return adoptRef(*new MediaDeviceInfo(label, deviceId, groupId, kind));
 }
 
-MediaDeviceInfo::MediaDeviceInfo(const String& label, const String& deviceId, const String& groupId, Kind kind)
+MediaDeviceInfo::MediaDeviceInfo(StringImpl* label, StringImpl* deviceId, StringImpl* groupId, Kind kind)
     : m_label(label)
     , m_deviceId(deviceId)
     , m_groupId(groupId)

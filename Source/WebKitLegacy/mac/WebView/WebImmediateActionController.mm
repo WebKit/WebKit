@@ -287,7 +287,7 @@
         return adoptNS([[WebAnimationController alloc] init]).autorelease();
 
     RetainPtr url = _hitTestResult.absoluteLinkURL().createNSURL();
-    String absoluteURLString = [url absoluteString];
+    RefPtr<StringImpl> absoluteURLString = StringImpl::create([url absoluteString]);
     if (url && _hitTestResult.URLElement()) {
         if (WTF::protocolIs(absoluteURLString, "mailto"_s)) {
             _type = WebImmediateActionMailtoLink;
@@ -513,7 +513,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     [_currentActionContext setHighlightFrame:[[webView window] convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(protect(_hitTestResult.URLElement()))]];
 
-    RetainPtr menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL().string().createNSString().get() actionContext:_currentActionContext.get()];
+    RetainPtr menuItems = [[PAL::getDDActionsManagerClassSingleton() sharedManager] menuItemsForTargetURL:createNSString(_hitTestResult.absoluteLinkURL().string()).get() actionContext:_currentActionContext.get()];
     if ([menuItems.get() count] != 1)
         return nil;
 
@@ -530,7 +530,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
     // so bail out early to avoid that.
     WebCore::DictionaryPopupInfo popupInfo;
-    if (plainText(range).find(deprecatedIsNotSpaceOrNewline) == notFound) {
+    if (find(plainText(range), deprecatedIsNotSpaceOrNewline) == notFound) {
         editor->setIsGettingDictionaryPopupInfo(false);
         return popupInfo;
     }
@@ -565,7 +565,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     popupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledAttributedString.get());
 #else
-    popupInfo.text = [attributedString string];
+    popupInfo.text = StringImpl::create([attributedString string]);
 #endif
 
     if (auto textIndicator = WebCore::TextIndicator::createWithRange(range, indicatorOptions, presentationTransition))

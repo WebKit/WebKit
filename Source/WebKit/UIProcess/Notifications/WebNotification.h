@@ -57,11 +57,11 @@ public:
         return adoptRef(*new WebNotification(data, std::nullopt, dataStoreIdentifier, sourceConnection));
     }
 
-    const String& title() const LIFETIME_BOUND { return m_data.title; }
-    const String& body() const LIFETIME_BOUND { return m_data.body; }
-    const String& iconURL() const LIFETIME_BOUND { return m_data.iconURL; }
-    const String& tag() const LIFETIME_BOUND { return m_data.tag; }
-    const String& lang() const LIFETIME_BOUND { return m_data.language; }
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_data.title; }
+    const RefPtr<StringImpl>& body() const LIFETIME_BOUND { return m_data.body; }
+    const RefPtr<StringImpl>& iconURL() const LIFETIME_BOUND { return m_data.iconURL; }
+    const RefPtr<StringImpl>& tag() const LIFETIME_BOUND { return m_data.tag; }
+    const RefPtr<StringImpl>& lang() const LIFETIME_BOUND { return m_data.language; }
     WebCore::NotificationDirection dir() const { return m_data.direction; }
     const WTF::UUID& coreNotificationID() const LIFETIME_BOUND { return m_data.notificationID; }
     const std::optional<WTF::UUID>& dataStoreIdentifier() const LIFETIME_BOUND { return m_dataStoreIdentifier; }

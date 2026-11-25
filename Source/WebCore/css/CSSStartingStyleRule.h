@@ -38,7 +38,7 @@ public:
         return adoptRef(*new CSSStartingStyleRule(rule, parent));
     }
 
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
 
 private:
     CSSStartingStyleRule(StyleRuleStartingStyle&, CSSStyleSheet*);

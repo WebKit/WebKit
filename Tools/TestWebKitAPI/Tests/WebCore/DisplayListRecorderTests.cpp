@@ -141,7 +141,7 @@ template<typename Operation>
 class DisplayListRecorderResultStateTest : public testing::Test {
 protected:
     Operation operation() { return Operation { }; }
-    String operationDescription() { return Operation::description(); }
+    RefPtr<StringImpl> operationDescription() { return Operation::description(); }
 };
 
 struct NoCommands {
@@ -149,9 +149,9 @@ struct NoCommands {
     {
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
-        return ""_s;
+        return ""_si;
     }
 };
 
@@ -161,7 +161,7 @@ struct ChangeAntialias {
         c.setShouldAntialias(false);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -179,7 +179,7 @@ struct ChangeAntialiasBeforeSave {
         c.restore();
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -203,7 +203,7 @@ struct ChangeAntialiasBeforeAndAfterSave {
         c.restore();
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -228,7 +228,7 @@ struct ChangeAntialiasInEmptySaveRestore {
         c.restore(); // This is being tested. The previous antialias == false should be restored on restore().
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (save)
@@ -249,7 +249,7 @@ struct DrawSystemImage {
 #endif
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
 #if ENABLE(APPLE_PAY)
         return R"DL(
@@ -273,7 +273,7 @@ struct ResetClipRect {
         c.restore();
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (translate
@@ -294,7 +294,7 @@ struct ChangeAntialiasBeforeClipRect {
         c.clip({ 0,0, 9.f, 7.7f });
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -312,7 +312,7 @@ struct ChangeAntialiasBeforeClipOutRect {
         c.clipOut({ 0,0, 9.f, 7.7f });
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -330,7 +330,7 @@ struct ChangeAntialiasBeforeClipOutPath {
         c.clipOut(createTestPath());
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -348,7 +348,7 @@ struct ChangeAntialiasBeforeClipPath {
         c.clipPath(createTestPath(), WebCore::WindRule::NonZero);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -367,7 +367,7 @@ struct ChangeAntialiasBeforeClipToNativeImage {
         c.clipToNativeImage(*createTestImageBuffer()->copyNativeImage(), { 0, 1, 77, 99 });
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -387,7 +387,7 @@ struct TrivialTranslate {
         c.drawRect({ 0, 0, 1, 1 });
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (translate
@@ -410,7 +410,7 @@ struct TrivialScale {
         c.drawRect({ 0, 0, 1, 1 });
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (scale
@@ -434,7 +434,7 @@ struct TrivialRotate {
         c.drawRect({ 0, 0, 1, 1 });
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (rotate
@@ -459,7 +459,7 @@ struct RestoreTransformKeepsClip {
         c.drawRect({ 0, 0, 1, 1 });
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (save-transform)
@@ -484,7 +484,7 @@ struct SetDefaultFillBrush {
         c.setFillColor(WebCore::Color::black);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-inline-fill-color
@@ -498,7 +498,7 @@ struct SetDefaultFillRule {
         c.setFillRule(WebCore::WindRule::NonZero);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -513,7 +513,7 @@ struct SetDefaultStrokeBrush {
         c.setStrokeColor(WebCore::Color::black);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-inline-stroke
@@ -527,7 +527,7 @@ struct SetDefaultStrokeThickness {
         c.setStrokeThickness(0);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-inline-stroke
@@ -541,7 +541,7 @@ struct SetDefaultStrokeStyle {
         c.setStrokeStyle(WebCore::StrokeStyle::SolidStroke);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -556,7 +556,7 @@ struct SetDefaultCompositeMode {
         c.setCompositeOperation(WebCore::CompositeOperator::SourceOver, WebCore::BlendMode::Normal);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         // Note: the literals are split around the space TextStream emits after a nested group name,
         // so that it does not end up as trailing whitespace in this file.
@@ -575,7 +575,7 @@ struct SetDefaultDropShadow {
         c.clearDropShadow();
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -590,7 +590,7 @@ struct SetDefaultStyle {
         c.setStyle(std::nullopt);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -605,7 +605,7 @@ struct SetDefaultAlpha {
         c.setAlpha(1);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -620,7 +620,7 @@ struct SetDefaultImageInterpolationQuality {
         c.setImageInterpolationQuality(WebCore::InterpolationQuality::Default);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -635,7 +635,7 @@ struct SetDefaultTextDrawingMode {
         c.setTextDrawingMode(WebCore::TextDrawingMode::Fill);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -650,7 +650,7 @@ struct SetDefaultShouldAntialias {
         c.setShouldAntialias(true);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -665,7 +665,7 @@ struct SetDefaultShouldSmoothFonts {
         c.setShouldSmoothFonts(true);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -683,7 +683,7 @@ struct SetDefaultShouldSubpixelQuantizeFonts {
         c.setShouldSubpixelQuantizeFonts(true);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -699,7 +699,7 @@ struct SetDefaultShadowsIgnoreTransforms {
         c.setShadowsIgnoreTransforms(false);
     }
 
-    static String description()
+    static RefPtr<StringImpl> description()
     {
         return R"DL(
 (set-state
@@ -734,8 +734,8 @@ TYPED_TEST_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreser
 
     Ref displayList = tested->takeDisplayList();
 
-    auto description = displayList->asText({ WebCore::DisplayList::AsTextFlag::IncludePlatformOperations }).trim(deprecatedIsSpaceOrNewline);
-    auto expectedDescription = this->operationDescription().trim(deprecatedIsSpaceOrNewline);
+    auto description = trim(displayList->asText({ WebCore::DisplayList::AsTextFlag::IncludePlatformOperations }), deprecatedIsSpaceOrNewline);
+    auto expectedDescription = trim(this->operationDescription(), deprecatedIsSpaceOrNewline);
     EXPECT_EQ(expectedDescription, description);
 
     RefPtr resultTarget = createReferenceTarget();
@@ -811,8 +811,8 @@ TEST(DisplayListRecorderTest, RestoreTransformRestoresCTM)
     EXPECT_EQ(initialCTM, context.getCTM());
 
     Ref displayList = recorder->takeDisplayList();
-    auto description = displayList->asText({ }).trim(deprecatedIsSpaceOrNewline);
-    String expectedDescription = R"DL(
+    auto description = trim(displayList->asText({ }), deprecatedIsSpaceOrNewline);
+    RefPtr<StringImpl> expectedDescription = R"DL(
 (save-transform)
 (translate
   (x 3.00)
@@ -821,8 +821,8 @@ TEST(DisplayListRecorderTest, RestoreTransformRestoresCTM)
 (rotate
   (angle 1.00))
 (restore)
-(restore-transform))DL"_s;
-    EXPECT_EQ(expectedDescription.trim(deprecatedIsSpaceOrNewline), description);
+(restore-transform))DL"_si;
+    EXPECT_EQ(trim(expectedDescription, deprecatedIsSpaceOrNewline), description);
 }
 
 TEST(DisplayListRecorderTest, RestoreDoesNotRestoreSaveTransform)
@@ -838,13 +838,13 @@ TEST(DisplayListRecorderTest, RestoreDoesNotRestoreSaveTransform)
     EXPECT_EQ(0u, context.stackSize());
 
     Ref displayList = recorder->takeDisplayList();
-    auto description = displayList->asText({ }).trim(deprecatedIsSpaceOrNewline);
-    String expectedDescription = R"DL(
+    auto description = trim(displayList->asText({ }), deprecatedIsSpaceOrNewline);
+    RefPtr<StringImpl> expectedDescription = R"DL(
 (save)
 (save-transform)
 (restore-transform)
-(restore))DL"_s;
-    EXPECT_EQ(expectedDescription.trim(deprecatedIsSpaceOrNewline), description);
+(restore))DL"_si;
+    EXPECT_EQ(trim(expectedDescription, deprecatedIsSpaceOrNewline), description);
 }
 
 TEST(DisplayListRecorderTest, RestoreTransformReplaysUnderDifferentBaseTransform)
@@ -876,7 +876,7 @@ TEST(DisplayListRecorderTest, DeconstructedEmojiGlyphsShareNativeImages)
     WTF::initializeMainThread();
 
     WebCore::FontCascadeDescription description;
-    description.setOneFamily("Apple Color Emoji"_s);
+    description.setOneFamily("Apple Color Emoji"_atom);
     description.setUsedSize(16);
     WebCore::FontCascade font(WTF::move(description));
     font.update();
@@ -885,7 +885,7 @@ TEST(DisplayListRecorderTest, DeconstructedEmojiGlyphsShareNativeImages)
     unsigned drawNativeImageCount = 0;
     for (unsigned i = 0; i < 2; ++i) {
         Ref recorder = WebCore::DisplayList::RecorderImpl::create({ }, { 0, 0, testContextWidth, testContextHeight }, { }, WebCore::ColorSpace::SRGB(), WebCore::DisplayList::Recorder::DrawGlyphsMode::Deconstruct);
-        font.drawText(recorder, WebCore::TextRun { String::fromUTF8("\u2B1B\u2B1C\u2B1B\u2B1C") }, { 0, 20 });
+        font.drawText(recorder, WebCore::TextRun { StringImpl::fromUTF8("\u2B1B\u2B1C\u2B1B\u2B1C") }, { 0, 20 });
         Ref displayList = recorder->takeDisplayList();
         for (auto& item : displayList->items()) {
             if (auto* drawNativeImage = std::get_if<WebCore::DisplayList::DrawNativeImage>(&item)) {

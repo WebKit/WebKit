@@ -89,7 +89,7 @@ private:
     void didFinishActivation(WebCore::ServiceWorkerIdentifier) final;
     void setServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier, bool) final;
     void workerTerminated(WebCore::ServiceWorkerIdentifier) final;
-    void findClientByVisibleIdentifier(WebCore::ServiceWorkerIdentifier, const String&, FindClientByIdentifierCallback&&) final;
+    void findClientByVisibleIdentifier(WebCore::ServiceWorkerIdentifier, StringImpl*, FindClientByIdentifierCallback&&) final;
     void matchAll(WebCore::ServiceWorkerIdentifier, const WebCore::ServiceWorkerClientQueryOptions&, WebCore::ServiceWorkerClientsMatchAllCallback&&) final;
     void claim(WebCore::ServiceWorkerIdentifier, CompletionHandler<void(WebCore::ExceptionOr<void>&&)>&&) final;
     void focus(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&) final;
@@ -101,7 +101,7 @@ private:
     void setAsInspected(WebCore::ServiceWorkerIdentifier, bool) final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
     void stop() final;
-    void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
+    void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, StringImpl* message, unsigned long requestIdentifier) final;
     void removeNavigationFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier) final;
     void startPendingStreamUploadForwarding(WebCore::PendingStreamState&) final;
     void cancelPendingStreamUploadForwarding(WebCore::PendingStreamState&) final;
@@ -109,10 +109,10 @@ private:
     // IPC messages.
     void updatePreferencesStore(WebPreferencesStore&&);
     void serviceWorkerStarted(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, bool doesHandleFetch) final;
-    void serviceWorkerFailedToStart(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
-    void installServiceWorker(WebCore::ServiceWorkerContextData&&, WebCore::ServiceWorkerData&&, String&& userAgent, WebCore::WorkerThreadMode, WebCore::ServiceWorkerIsInspectable, OptionSet<WebCore::AdvancedPrivacyProtections>);
+    void serviceWorkerFailedToStart(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, StringImpl* exceptionMessage) final;
+    void installServiceWorker(WebCore::ServiceWorkerContextData&&, WebCore::ServiceWorkerData&&, RefPtr<StringImpl>&& userAgent, WebCore::WorkerThreadMode, WebCore::ServiceWorkerIsInspectable, OptionSet<WebCore::AdvancedPrivacyProtections>);
     void updateAppInitiatedValue(WebCore::ServiceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated);
-    void startFetch(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&, String&& referrer, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+    void startFetch(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&, RefPtr<StringImpl>&& referrer, bool isServiceWorkerNavigationPreloadEnabled, RefPtr<StringImpl>&& clientIdentifier, RefPtr<StringImpl>&& resultingClientIdentifier);
     void cancelFetch(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier);
     void continueDidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier);
     void forwardPendingStreamUploadData(WebCore::FetchIdentifier, IPC::SharedBufferReference&&);
@@ -131,7 +131,7 @@ private:
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, WebCore::ScriptBuffer&&, HashMap<URL, WebCore::ScriptBuffer>&& importedScripts);
 #endif
-    void setUserAgent(String&& userAgent);
+    void setUserAgent(RefPtr<StringImpl>&& userAgent);
     void close();
     void setThrottleState(bool isThrottleable);
     void setInspectable(WebCore::ServiceWorkerIsInspectable);
@@ -149,7 +149,7 @@ private:
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     void connectToInspector(WebCore::ServiceWorkerIdentifier, bool isAutomaticConnection = false, bool immediatelyPause = false);
     void disconnectFromInspector(WebCore::ServiceWorkerIdentifier);
-    void dispatchMessageFromInspector(WebCore::ServiceWorkerIdentifier, String&&);
+    void dispatchMessageFromInspector(WebCore::ServiceWorkerIdentifier, RefPtr<StringImpl>&&);
 #if ENABLE(REMOTE_INSPECTOR_SERVICE_WORKER_AUTO_INSPECTION)
     void unpauseServiceWorkerForRejectedAutomaticInspection(WebCore::ServiceWorkerIdentifier);
 #endif
@@ -163,7 +163,7 @@ private:
     WebCore::PageIdentifier m_pageID;
 
     HashSet<std::unique_ptr<RemoteWorkerFrameLoaderClient>> m_loaders;
-    String m_userAgent;
+    RefPtr<StringImpl> m_userAgent;
     bool m_isThrottleable { true };
     const Ref<WebUserContentController> m_userContentController;
     std::optional<WebPreferencesStore> m_preferencesStore;

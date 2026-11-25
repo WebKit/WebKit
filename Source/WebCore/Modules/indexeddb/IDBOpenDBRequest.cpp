@@ -141,7 +141,7 @@ void IDBOpenDBRequest::dispatchEvent(Event& event)
 
     if (RefPtr transaction = m_transaction; transaction && transaction->isVersionChange() && (event.type() == eventNames().errorEvent || event.type() == eventNames().successEvent)) {
         if (!transaction->isFinishedOrFinishing()) {
-            RELEASE_LOG_FAULT(IndexedDB, "IDBOpenDBRequest::dispatchEvent: version change transaction %" PUBLIC_LOG_STRING " is not finishing or finished", transaction->info().identifier().loggingString().utf8());
+            RELEASE_LOG_FAULT(IndexedDB, "IDBOpenDBRequest::dispatchEvent: version change transaction %" PUBLIC_LOG_STRING " is not finishing or finished", utf8(transaction->info().identifier().loggingString()));
             return;
         }
         transaction->database().connectionProxy().didFinishHandlingVersionChangeTransaction(transaction->database().databaseConnectionIdentifier(), *transaction);
@@ -261,7 +261,7 @@ void IDBOpenDBRequest::setIsContextSuspended(bool isContextSuspended)
     if (m_isBlocked) {
         IDBOpenRequestData requestData(connectionProxy(), *this);
         connectionProxy().openDBRequestCancelled(requestData);
-        auto result = IDBResultData::error(requestData.requestIdentifier(), IDBError { ExceptionCode::UnknownError, "Blocked open request on cached page is aborted to unblock other requests"_s });
+        auto result = IDBResultData::error(requestData.requestIdentifier(), IDBError { ExceptionCode::UnknownError, "Blocked open request on cached page is aborted to unblock other requests"_si });
         requestCompleted(result);
     }
 }

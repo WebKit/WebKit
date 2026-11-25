@@ -37,14 +37,14 @@ class ExtendableCookieChangeEvent final : public ExtendableEvent {
 public:
     using Init = ExtendableCookieChangeEventInit;
 
-    NODELETE static Ref<ExtendableCookieChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<ExtendableCookieChangeEvent> create(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
     ~ExtendableCookieChangeEvent();
 
     const Vector<CookieListItem>& changed() const LIFETIME_BOUND { return m_changed; }
     const Vector<CookieListItem>& deleted() const LIFETIME_BOUND { return m_deleted; }
 
 private:
-    ExtendableCookieChangeEvent(const AtomString& type, Init&&, IsTrusted);
+    ExtendableCookieChangeEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
     Vector<CookieListItem> m_changed;
     Vector<CookieListItem> m_deleted;

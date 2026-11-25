@@ -29,7 +29,7 @@ JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject*);
 const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject*);
 
 enum class DOMWindowType : bool { Local, Remote };
-bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, DOMWindow&, JSC::JSGlobalObject&, JSC::PropertyName, JSC::PropertySlot&, const String&);
+bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject*, DOMWindow&, JSC::JSGlobalObject&, JSC::PropertyName, JSC::PropertySlot&, StringImpl*);
 
 enum class CrossOriginObject : bool { Window, Location };
 template<CrossOriginObject> void addCrossOriginOwnPropertyNames(JSC::JSGlobalObject&, JSC::PropertyNameArrayBuilder&);

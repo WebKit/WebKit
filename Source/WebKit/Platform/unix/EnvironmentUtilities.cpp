@@ -34,7 +34,7 @@ namespace WebKit {
 
 namespace EnvironmentUtilities {
 
-String stripEntriesEndingWith(StringView input, StringView suffix)
+RefPtr<StringImpl> stripEntriesEndingWith(StringView input, StringView suffix)
 {
     StringBuilder output;
 
@@ -61,12 +61,12 @@ void removeValuesEndingWith(const char* environmentVariable, const char* searchV
         return;
 
     auto after = stripEntriesEndingWith(StringView::fromLatin1(before), StringView::fromLatin1(searchValue));
-    if (after.isEmpty()) {
+    if (isEmpty(after)) {
         unsetenv(environmentVariable);
         return;
     }
 
-    setenv(environmentVariable, after.utf8().legacyCStringPointer(), 1);
+    setenv(environmentVariable, utf8(after).legacyCStringPointer(), 1);
 }
 
 } // namespace EnvironmentUtilities

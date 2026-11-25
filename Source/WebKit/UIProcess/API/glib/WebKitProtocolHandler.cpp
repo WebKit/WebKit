@@ -102,7 +102,7 @@ WebKitProtocolHandler::WebKitProtocolHandler(WebKitWebContext* context)
 
 void WebKitProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
 {
-    URL requestURL = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
+    URL requestURL = URL(StringImpl::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
     if (requestURL.host() == "gpu"_s) {
         auto& page = webkitURISchemeRequestGetWebPage(request);
         protect(page.legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::GetRenderProcessInfo(), [this, request = GRefPtr<WebKitURISchemeRequest>(request)](RenderProcessInfo&& info) {
@@ -187,7 +187,7 @@ static const char* openGLAPI()
 }
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
-static String dmabufRendererWithSupportedBuffers()
+static RefPtr<StringImpl> dmabufRendererWithSupportedBuffers()
 {
     StringBuilder buffers;
     buffers.append("DMABuf (Supported buffers: "_s);
@@ -216,14 +216,14 @@ static String dmabufRendererWithSupportedBuffers()
 #if USE(LIBDRM)
 
 // Base on function 'drmGetFormatName' from 'https://gitlab.freedesktop.org/mesa/drm/-/blob/main/xf86drm.c'.
-static String webkitDrmGetFormatName(uint32_t format)
+static RefPtr<StringImpl> webkitDrmGetFormatName(uint32_t format)
 {
     bool isBigEndian = (format & (1U << 31));
     format &= ~(1U<<31);
 
     // If format is DRM_FORMAT_INVALID.
     if (!format)
-        return "INVALID"_s;
+        return "INVALID"_si;
 
     std::array<char, 4> buffer;
     buffer[0] = static_cast<char>((format >> 0) & 0xFF);
@@ -239,7 +239,7 @@ static String webkitDrmGetFormatName(uint32_t format)
     return makeString(unsafeMakeSpan(buffer.data(), bufferSize), isBigEndian ? "_BE"_s : ""_s);
 }
 
-static String webkitDrmGetModifierName(uint64_t modifier)
+static RefPtr<StringImpl> webkitDrmGetModifierName(uint64_t modifier)
 {
 #if HAVE(DRM_GET_FORMAT_MODIFIER_VENDOR) && HAVE(DRM_GET_FORMAT_MODIFIER_NAME)
     std::unique_ptr<char, decltype(free)*> modifierVendor(drmGetFormatModifierVendor(modifier), free);
@@ -250,7 +250,7 @@ static String webkitDrmGetModifierName(uint64_t modifier)
 #endif
 }
 
-static String modifierListToString(const Vector<uint64_t, 1>& modifiers)
+static RefPtr<StringImpl> modifierListToString(const Vector<uint64_t, 1>& modifiers)
 {
     if (modifiers.isEmpty())
         return { };
@@ -268,7 +268,7 @@ static String modifierListToString(const Vector<uint64_t, 1>& modifiers)
 #endif
 }
 
-static String renderBufferDescription(WebKitURISchemeRequest* request)
+static RefPtr<StringImpl> renderBufferDescription(WebKitURISchemeRequest* request)
 {
     StringBuilder bufferDescription;
     auto description = webkitWebViewGetRendererBufferDescription(webkit_uri_scheme_request_get_web_view(request));
@@ -277,7 +277,7 @@ static String renderBufferDescription(WebKitURISchemeRequest* request)
         switch (description.type) {
         case RendererBufferDescription::Type::DMABuf: {
             auto modifierName = webkitDrmGetModifierName(description.modifier);
-            if (!modifierName.isNull())
+            if (modifierName)
                 bufferDescription.append("DMA-BUF: "_s, formatName, " ("_s, modifierName, ")"_s);
             else
                 bufferDescription.append("Unknown"_s);
@@ -310,7 +310,7 @@ static String renderBufferDescription(WebKitURISchemeRequest* request)
 }
 
 #if USE(GBM)
-static String preferredBufferFormats(WebKitURISchemeRequest* request, JSON::Array& jsonArray)
+static RefPtr<StringImpl> preferredBufferFormats(WebKitURISchemeRequest* request, JSON::Array& jsonArray)
 {
     auto& page = webkitURISchemeRequestGetWebPage(request);
     auto formats = page.preferredBufferFormats();
@@ -322,24 +322,24 @@ static String preferredBufferFormats(WebKitURISchemeRequest* request, JSON::Arra
         builder.append("<li>Formats for "_s);
         switch (tranche.usage) {
         case RendererBufferFormat::Usage::Rendering: {
-            auto device = String::fromUTF8(!drmDevice.renderNode.isNull() ? drmDevice.renderNode.span() : drmDevice.primaryNode.span());
+            auto device = StringImpl::fromUTF8(!drmDevice.renderNode.isNull() ? drmDevice.renderNode.span() : drmDevice.primaryNode.span());
             builder.append("<b>rendering</b> using device <i>"_s, device, "</i>"_s);
-            jsonObject->setString("Usage"_s, "Rendering"_s);
-            jsonObject->setString("Device"_s, device);
+            jsonObject->setString("Usage"_si, "Rendering"_si);
+            jsonObject->setString("Device"_si, device);
             break;
         }
         case RendererBufferFormat::Usage::Scanout: {
-            auto device = String::fromUTF8(drmDevice.primaryNode.span());
+            auto device = StringImpl::fromUTF8(drmDevice.primaryNode.span());
             builder.append("<b>scanout</b> using device <i>"_s, device, "</i>"_s);
-            jsonObject->setString("Usage"_s, "Scanout"_s);
-            jsonObject->setString("Device"_s, device);
+            jsonObject->setString("Usage"_si, "Scanout"_si);
+            jsonObject->setString("Device"_si, device);
             break;
         }
         case RendererBufferFormat::Usage::Mapping: {
-            auto device = String::fromUTF8(drmDevice.primaryNode.span());
+            auto device = StringImpl::fromUTF8(drmDevice.primaryNode.span());
             builder.append("<b>mapping</b> using device <i>"_s, device, "</i>"_s);
-            jsonObject->setString("Usage"_s, "Mapping"_s);
-            jsonObject->setString("Device"_s, device);
+            jsonObject->setString("Usage"_si, "Mapping"_si);
+            jsonObject->setString("Device"_si, device);
             break;
         }
         }
@@ -354,14 +354,14 @@ static String preferredBufferFormats(WebKitURISchemeRequest* request, JSON::Arra
             formatsBuilder.append("<b>"_s, formatName, "</b>"_s);
             jsonStringBuilder.append(formatName);
             auto modifiers = modifierListToString(format.modifiers);
-            if (!modifiers.isNull()) {
+            if (modifiers) {
                 formatsBuilder.append(modifiers);
                 jsonStringBuilder.append(modifiers);
             }
             jsonFormats->pushString(jsonStringBuilder.toString());
         }
         builder.append(formatsBuilder.toString());
-        jsonObject->setArray("Formats"_s, WTF::move(jsonFormats));
+        jsonObject->setArray("Formats"_si, WTF::move(jsonFormats));
         jsonArray.pushObject(WTF::move(jsonObject));
     }
     builder.append("</ul>"_s);
@@ -371,12 +371,12 @@ static String preferredBufferFormats(WebKitURISchemeRequest* request, JSON::Arra
 #endif // USE(LIBDRM)
 #endif // PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
 
-static String vblankMonitorType(const DisplayVBlankMonitor& monitor)
+static RefPtr<StringImpl> vblankMonitorType(const DisplayVBlankMonitor& monitor)
 {
 #if ENABLE(WPE_PLATFORM)
     if (monitor.type() == DisplayVBlankMonitor::Type::Wpe) {
         const auto& wpeMonitor = *static_cast<const DisplayVBlankMonitorWPE*>(&monitor);
-        return makeString("WPE ("_s, String::fromUTF8(G_OBJECT_TYPE_NAME(wpeMonitor.observer())), ')');
+        return makeString("WPE ("_s, StringImpl::fromUTF8(G_OBJECT_TYPE_NAME(wpeMonitor.observer())), ')');
     }
 #endif
 
@@ -384,7 +384,7 @@ static String vblankMonitorType(const DisplayVBlankMonitor& monitor)
 }
 
 #if USE(LIBDRM)
-static String supportedBufferFormats(const RenderProcessInfo& info, JSON::Array& jsonArray)
+static RefPtr<StringImpl> supportedBufferFormats(const RenderProcessInfo& info, JSON::Array& jsonArray)
 {
     StringBuilder builder;
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
@@ -396,7 +396,7 @@ static String supportedBufferFormats(const RenderProcessInfo& info, JSON::Array&
         builder.append("<b>"_s, formatName, "</b>"_s);
         jsonStringBuilder.append(formatName);
         auto modifiers = modifierListToString(format.modifiers);
-        if (!modifiers.isNull()) {
+        if (modifiers) {
             builder.append(modifiers);
             jsonStringBuilder.append(modifiers);
         }
@@ -407,10 +407,10 @@ static String supportedBufferFormats(const RenderProcessInfo& info, JSON::Array&
 }
 #endif
 
-static String viewActivityState(WebKitURISchemeRequest* request)
+static RefPtr<StringImpl> viewActivityState(WebKitURISchemeRequest* request)
 {
     auto& page = webkitURISchemeRequestGetWebPage(request);
-    Vector<String, 4> state;
+    Vector<RefPtr<StringImpl>, 4> state;
     if (page.isInWindow())
         state.append("in window"_s);
     if (page.isViewVisible())
@@ -419,11 +419,11 @@ static String viewActivityState(WebKitURISchemeRequest* request)
         state.append("focused"_s);
     if (page.isViewWindowActive())
         state.append("active"_s);
-    return makeStringByJoining(state.span(), ", "_s);
+    return makeStringByJoining(state.span(), ", "_si);
 }
 
 #if PLATFORM(GTK)
-static String toplevelState(WebKitURISchemeRequest* request)
+static RefPtr<StringImpl> toplevelState(WebKitURISchemeRequest* request)
 {
 #if USE(GTK4)
     auto* webView = webkit_uri_scheme_request_get_web_view(request);
@@ -437,16 +437,16 @@ static String toplevelState(WebKitURISchemeRequest* request)
 
     auto state = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
     if (state & GDK_TOPLEVEL_STATE_FULLSCREEN)
-        return "fullscreen"_s;
+        return "fullscreen"_si;
     if (state & GDK_TOPLEVEL_STATE_MAXIMIZED)
-        return "maximized"_s;
-    return "normal"_s;
+        return "maximized"_si;
+    return "normal"_si;
 #else
     return { };
 #endif
 }
 #elif PLATFORM(WPE)
-static String toplevelState(WebKitURISchemeRequest* request)
+static RefPtr<StringImpl> toplevelState(WebKitURISchemeRequest* request)
 {
 #if ENABLE(WPE_PLATFORM)
     if (!WKWPE::isUsingWPEPlatformAPI())
@@ -459,20 +459,20 @@ static String toplevelState(WebKitURISchemeRequest* request)
 
     auto state = wpe_view_get_toplevel_state(view);
     if (state & WPE_TOPLEVEL_STATE_FULLSCREEN)
-        return "fullscreen"_s;
+        return "fullscreen"_si;
     if (state & WPE_TOPLEVEL_STATE_MAXIMIZED)
-        return "maximized"_s;
-    return "normal"_s;
+        return "maximized"_si;
+    return "normal"_si;
 #else
     return { };
 #endif
 }
 #endif
 
-static String prettyPrintJSON(const String& jsonString)
+static RefPtr<StringImpl> prettyPrintJSON(StringImpl* jsonString)
 {
     StringBuilder result;
-    result.reserveCapacity(jsonString.length() + 128);
+    result.reserveCapacity(length(jsonString) + 128);
     int indentLevel = 0;
     bool inQuotes = false;
     bool escape = false;
@@ -536,7 +536,7 @@ static unsigned refreshParameter(const URL& url)
 {
     auto parameters = queryParameters(url);
     for (const auto& parameter : parameters) {
-        if (parameter.key == "refresh"_s)
+        if (equal(parameter.key, "refresh"_s))
             return parseInteger<unsigned>(parameter.value).value_or(0);
     }
     return 0;
@@ -544,7 +544,7 @@ static unsigned refreshParameter(const URL& url)
 
 void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderProcessInfo&& info)
 {
-    URL requestURL = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
+    URL requestURL = URL(StringImpl::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
 
     StringBuilder htmlBuilder;
     htmlBuilder.append("<html><head><title>GPU information</title>"
@@ -577,12 +577,12 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
         tablesBuilder.append("<h1>"_s, header, "</h1><table>"_s);
     };
 
-    auto addTableRow = [&](auto& jsonObject, auto key, auto&& value, RefPtr<JSON::Value>&& jsonValue = nullptr) {
+    auto addTableRow = [&](auto& jsonObject, ASCIILiteral key, RefPtr<StringImpl> value, RefPtr<JSON::Value>&& jsonValue = nullptr) {
         tablesBuilder.append("<tbody><tr><td><div class=\"titlename\">"_s, key, "</div></td><td>"_s, value, "</td></tr></tbody>"_s);
         if (jsonValue)
-            jsonObject->setValue(key, jsonValue.releaseNonNull());
+            jsonObject->setValue(StringImpl::create(key).ptr(), jsonValue.releaseNonNull());
         else
-            jsonObject->setString(key, value);
+            jsonObject->setString(StringImpl::create(key).ptr(), value.get());
     };
 
     auto stopTable = [&] {
@@ -590,14 +590,14 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
     };
 
     auto addEGLInfo = [&](auto& jsonObject) {
-        addTableRow(jsonObject, "GL_RENDERER"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
-        addTableRow(jsonObject, "GL_VENDOR"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
-        addTableRow(jsonObject, "GL_VERSION"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
-        addTableRow(jsonObject, "GL_SHADING_LANGUAGE_VERSION"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+        addTableRow(jsonObject, "GL_RENDERER"_s, StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
+        addTableRow(jsonObject, "GL_VENDOR"_s, StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
+        addTableRow(jsonObject, "GL_VERSION"_s, StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
+        addTableRow(jsonObject, "GL_SHADING_LANGUAGE_VERSION"_s, StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
         switch (eglQueryAPI()) {
         case EGL_OPENGL_ES_API:
-            addTableRow(jsonObject, "GL_EXTENSIONS"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
+            addTableRow(jsonObject, "GL_EXTENSIONS"_s, StringImpl::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
             break;
         case EGL_OPENGL_API: {
             StringBuilder extensionsBuilder;
@@ -614,8 +614,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
         }
 
         auto eglDisplay = eglGetCurrentDisplay();
-        addTableRow(jsonObject, "EGL_VERSION"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION)));
-        addTableRow(jsonObject, "EGL_VENDOR"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR)));
+        addTableRow(jsonObject, "EGL_VERSION"_s, StringImpl::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION)));
+        addTableRow(jsonObject, "EGL_VENDOR"_s, StringImpl::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR)));
         addTableRow(jsonObject, "EGL_EXTENSIONS"_s, makeString(unsafeSpan(eglQueryString(nullptr, EGL_EXTENSIONS)), ' ', unsafeSpan(eglQueryString(eglDisplay, EGL_EXTENSIONS))));
     };
 
@@ -632,7 +632,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
 #endif
 
     const char* desktopName = g_getenv("XDG_CURRENT_DESKTOP");
-    addTableRow(versionObject, "Desktop"_s, (desktopName && *desktopName) ? String::fromUTF8(desktopName) : "Unknown"_s);
+    addTableRow(versionObject, "Desktop"_s, (desktopName && *desktopName) ? StringImpl::fromUTF8(desktopName) : "Unknown"_s);
 
 #if USE(GSTREAMER)
     auto gstVersion = GMallocString::unsafeAdoptFromUTF8(gst_version_string());
@@ -648,20 +648,20 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
 #if USE(LIBWPE)
     if (!usingWPEPlatformAPI) {
         addTableRow(versionObject, "WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
-        addTableRow(versionObject, "WPE backend"_s, String::fromUTF8(wpe_loader_get_loaded_implementation_library_name()));
+        addTableRow(versionObject, "WPE backend"_s, StringImpl::fromUTF8(wpe_loader_get_loaded_implementation_library_name()));
     }
 #endif
 #endif
 
     stopTable();
-    jsonObject->setObject("Version Information"_s, WTF::move(versionObject));
+    jsonObject->setObject("Version Information"_si, WTF::move(versionObject));
 
     auto displayObject = JSON::Object::create();
     startTable("Display Information"_s);
 
     Ref page = webkitURISchemeRequestGetWebPage(request);
     auto displayID = page->displayID();
-    addTableRow(displayObject, "Identifier"_s, String::number(displayID.value_or(0)));
+    addTableRow(displayObject, "Identifier"_s, makeString(displayID.value_or(0)));
 
 #if PLATFORM(GTK)
     StringBuilder typeStringBuilder;
@@ -679,12 +679,12 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
 
     rect = IntRect(screenAvailableRect(nullptr));
     addTableRow(displayObject, "Screen work area"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
-    addTableRow(displayObject, "Device scale"_s, String::number(page->deviceScaleFactor()));
-    addTableRow(displayObject, "Depth"_s, String::number(screenDepth(nullptr)));
-    addTableRow(displayObject, "Bits per color component"_s, String::number(screenDepthPerComponent(nullptr)));
-    addTableRow(displayObject, "Font Scaling DPI"_s, String::number(WebCore::fontDPI()));
+    addTableRow(displayObject, "Device scale"_s, makeString(page->deviceScaleFactor()));
+    addTableRow(displayObject, "Depth"_s, makeString(screenDepth(nullptr)));
+    addTableRow(displayObject, "Bits per color component"_s, makeString(screenDepthPerComponent(nullptr)));
+    addTableRow(displayObject, "Font Scaling DPI"_s, makeString(WebCore::fontDPI()));
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
-    addTableRow(displayObject, "Screen DPI"_s, String::number(screenDPI(displayID.value_or(PlatformScreen::singleton()->primaryScreenDisplayID()))));
+    addTableRow(displayObject, "Screen DPI"_s, makeString(screenDPI(displayID.value_or(PlatformScreen::singleton()->primaryScreenDisplayID()))));
 #endif
 
     if (displayID) {
@@ -699,15 +699,15 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
     if (policy != "never"_s) {
         auto drmDevice = drmMainDevice();
         if (!drmDevice.isNull()) {
-            addTableRow(displayObject, "DRM Primary Node"_s, String::fromUTF8(drmDevice.primaryNode.span()));
+            addTableRow(displayObject, "DRM Primary Node"_s, StringImpl::fromUTF8(drmDevice.primaryNode.span()));
             if (!drmDevice.renderNode.isNull())
-                addTableRow(displayObject, "DRM Render Node"_s, String::fromUTF8(drmDevice.renderNode.span()));
+                addTableRow(displayObject, "DRM Render Node"_s, StringImpl::fromUTF8(drmDevice.renderNode.span()));
         }
     }
 #endif
 
     stopTable();
-    jsonObject->setObject("Display Information"_s, WTF::move(displayObject));
+    jsonObject->setObject("Display Information"_si, WTF::move(displayObject));
 
     auto viewObject = JSON::Object::create();
     startTable("View Information"_s);
@@ -715,11 +715,11 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
     addTableRow(viewObject, "Size"_s, makeString(page->viewSize().width(), 'x', page->viewSize().height()));
     addTableRow(viewObject, "State"_s, viewActivityState(request));
     auto state = toplevelState(request);
-    if (!state.isNull())
+    if (state)
         addTableRow(viewObject, "Toplevel state"_s, state);
 
     stopTable();
-    jsonObject->setObject("View Information"_s, WTF::move(viewObject));
+    jsonObject->setObject("View Information"_si, WTF::move(viewObject));
 
     auto hardwareAccelerationObject = JSON::Object::create();
     startTable("Hardware Acceleration Information"_s);
@@ -734,7 +734,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
     if (policy != "never"_s) {
         bool hasEGLContext = uiProcessContextIsEGL() && eglGetCurrentContext() != EGL_NO_CONTEXT;
 
-        addTableRow(hardwareAccelerationObject, "API"_s, hasEGLContext ? String::fromUTF8(openGLAPI()) : "Not available"_s);
+        addTableRow(hardwareAccelerationObject, "API"_s, hasEGLContext ? StringImpl::fromUTF8(openGLAPI()) : "Not available"_s);
 #if PLATFORM(GTK)
         bool showBuffersInfo = true;
 #elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
@@ -767,26 +767,26 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
     }
 
     stopTable();
-    jsonObject->setObject("Hardware Acceleration Information"_s, WTF::move(hardwareAccelerationObject));
+    jsonObject->setObject("Hardware Acceleration Information"_si, WTF::move(hardwareAccelerationObject));
 
-    if (policy != "never"_s && !info.platform.isEmpty()) {
+    if (policy != "never"_s && !isEmpty(info.platform)) {
         auto hardwareAccelerationObject = JSON::Object::create();
         startTable("Hardware Acceleration Information (Render Process)"_s);
 
         addTableRow(hardwareAccelerationObject, "Platform"_s, info.platform);
 
-        if (!info.drmVersion.isEmpty())
+        if (!isEmpty(info.drmVersion))
             addTableRow(hardwareAccelerationObject, "DRM version"_s, info.drmVersion);
 
 #if USE(GBM)
-        if (!info.dmabufExportStrategy.isEmpty())
+        if (!isEmpty(info.dmabufExportStrategy))
             addTableRow(hardwareAccelerationObject, "DMA-BUF export strategy"_s, info.dmabufExportStrategy);
         addTableRow(hardwareAccelerationObject, "DMA-BUF memory-mapped GPU buffers"_s, info.memoryMappedGPUBufferSupported ? "Yes"_s : "No"_s);
 #endif
 
         if (info.paintingThreadsCount)
             addTableRow(hardwareAccelerationObject, "Threaded rendering"_s, makeString(info.paintingThreadsCount, " threads"_s));
-        addTableRow(hardwareAccelerationObject, "MSAA"_s, info.msaaSampleCount ? makeString(info.msaaSampleCount, " samples"_s) : String("Disabled"_s));
+        addTableRow(hardwareAccelerationObject, "MSAA"_s, info.msaaSampleCount ? makeString(info.msaaSampleCount, " samples"_s) : "Disabled"_si);
 
 #if USE(LIBDRM)
         if (!info.supportedBufferFormats.isEmpty()) {
@@ -806,7 +806,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
         addTableRow(hardwareAccelerationObject, "EGL_EXTENSIONS"_s, info.eglExtensions);
 
         stopTable();
-        jsonObject->setObject("Hardware Acceleration Information (Render process)"_s, WTF::move(hardwareAccelerationObject));
+        jsonObject->setObject("Hardware Acceleration Information (Render process)"_si, WTF::move(hardwareAccelerationObject));
     }
 
     auto infoAsString = jsonObject->toJSONString();
@@ -828,13 +828,13 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
 
     htmlBuilder.append(tablesBuilder.toString(), "</body></html>"_s);
 
-    GMallocString html { htmlBuilder.toString().utf8() };
+    GMallocString html { utf8(htmlBuilder.toString()) };
     auto streamLength = html.lengthInBytes();
     GRefPtr stream = gMemoryInputStreamNewFromData(WTF::move(html));
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
 
     if (requestURL.path() == "/stdout"_s)
-        SAFE_WTFLOGALWAYS("GPU information\n%s", prettyPrintJSON(infoAsString).utf8());
+        SAFE_WTFLOGALWAYS("GPU information\n%s", utf8(prettyPrintJSON(infoAsString)));
 }
 
 } // namespace WebKit

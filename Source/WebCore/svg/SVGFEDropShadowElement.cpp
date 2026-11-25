@@ -64,7 +64,7 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
     updateSVGRendererForElementChange();
 }
 
-void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::stdDeviationAttr:

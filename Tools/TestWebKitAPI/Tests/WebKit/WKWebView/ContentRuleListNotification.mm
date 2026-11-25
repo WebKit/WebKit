@@ -52,21 +52,21 @@ static bool receivedNotification;
 static bool receivedAlert;
 
 struct Notification {
-    String identifier;
-    String url;
+    RefPtr<StringImpl> identifier;
+    RefPtr<StringImpl> url;
     bool blockedLoad { false };
     bool blockedCookies { false };
     bool madeHTTPS { false };
-    Vector<String> notifications;
+    Vector<RefPtr<StringImpl>> notifications;
     
     bool operator==(const Notification& other) const
     {
-        return identifier == other.identifier
-            && url == other.url
+        return equal(identifier, other.identifier)
+            && equal(url, other.url)
             && blockedLoad == other.blockedLoad
             && blockedCookies == other.blockedCookies
             && madeHTTPS == other.madeHTTPS
-            && notifications == other.notifications;
+            && contentEquals(notifications, other.notifications);
     }
 };
 
@@ -91,7 +91,7 @@ static RetainPtr<NSString> notificationIdentifier;
 
 - (void)_webView:(WKWebView *)webView contentRuleListWithIdentifier:(NSString *)identifier performedAction:(_WKContentRuleListAction *)action forURL:(NSURL *)url
 {
-    notificationList.append({ identifier, url.absoluteString, !!action.blockedLoad, !!action.blockedCookies, !!action.madeHTTPS, makeVector<String>(action.notifications) });
+    notificationList.append({ StringImpl::create(identifier), StringImpl::create(url.absoluteString), !!action.blockedLoad, !!action.blockedCookies, !!action.madeHTTPS, makeVector<RefPtr<StringImpl>>(action.notifications) });
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
@@ -683,7 +683,7 @@ TEST(ContentRuleList, InterpretURLFilterCacheDoesNotConfuseSameStartDomains)
         [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"apitest:///"]];
         TestWebKitAPI::Util::run(&receivedAlert);
         for (const Notification& notification : notificationList) {
-            if (notification.url == String(urlString) && notification.blockedLoad)
+            if (equal(notification.url, StringImpl::create(urlString).get()) && notification.blockedLoad)
                 return true;
         }
         return false;

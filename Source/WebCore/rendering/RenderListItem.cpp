@@ -207,7 +207,7 @@ UniqueRef<Style::ComputedStyle> RenderListItem::computeMarkerStyle() const
     // font the marker has: it is what the glyph is measured with too, the way it is for every other marker.
     if (listMarkerIsDisclosure(markerStyle, protect(document()))) {
         auto fontDescription = FontCascadeDescription { markerStyle->fontDescription() };
-        fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
+        fontDescription.setFamilies({ { "system-ui"_atom, FontFamilyKind::Generic } });
         markerStyle->setFontDescription(WTF::move(fontDescription));
         markerStyle->fontCascade().update(&protect(document())->fontSelector());
     }
@@ -341,7 +341,7 @@ int RenderListItem::startForReversedOrderedList(const HTMLOListElement& list)
     ASSERT(list.isReversed() && !list.hasExplicitStart());
     size_t itemsBefore = 0;
     for (CheckedPtr item = firstListItem(list); item; item = nextListItem(list, *item)) {
-        auto directives = item->style().usedCounterDirectives().map.get("list-item"_s);
+        auto directives = item->style().usedCounterDirectives().map.get("list-item"_atom);
         if (directives.setValue)
             return itemsBefore + *directives.setValue;
         ++itemsBefore;
@@ -382,7 +382,7 @@ void RenderListItem::updateValueNow() const
         // Take in account enclosing list counter-reset.
         // FIXME: This can be a lot more simple when lists use presentational hints.
         if (list && list->renderer()) {
-            auto listDirectives = list->renderer()->style().usedCounterDirectives().map.get("list-item"_s);
+            auto listDirectives = list->renderer()->style().usedCounterDirectives().map.get("list-item"_atom);
             if (listDirectives.resetValue)
                 startValue = *listDirectives.resetValue;
             else if (orderedList && orderedList->isReversed() && !orderedList->hasExplicitStart())
@@ -390,7 +390,7 @@ void RenderListItem::updateValueNow() const
             else
                 startValue = orderedList ? orderedList->start() - defaultIncrement : 0;
         }
-        auto directives = startItem->style().usedCounterDirectives().map.get("list-item"_s);
+        auto directives = startItem->style().usedCounterDirectives().map.get("list-item"_atom);
         startValue = valueForItem(startValue.value_or(0), directives);
     }
 
@@ -398,7 +398,7 @@ void RenderListItem::updateValueNow() const
 
     for (auto* item = startItem; item != this; ) {
         item = nextListItem(*list, *item);
-        auto directives = item->style().usedCounterDirectives().map.get("list-item"_s);
+        auto directives = item->style().usedCounterDirectives().map.get("list-item"_atom);
         item->m_value = valueForItem(value, directives);
         // counter-reset creates a new nested counter, so it should not be counted towards the current counter.
         if (!directives.resetValue)
@@ -536,7 +536,7 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
     if (diff == Style::DifferenceResult::Layout) {
-        if (oldStyle && oldStyle->usedCounterDirectives().map.get("list-item"_s) != style().usedCounterDirectives().map.get("list-item"_s))
+        if (oldStyle && oldStyle->usedCounterDirectives().map.get("list-item"_atom) != style().usedCounterDirectives().map.get("list-item"_atom))
             usedCounterDirectivesChanged();
         if (m_outsideMarkerPosition)
             invalidateOutsideMarkerContainer();
@@ -602,7 +602,7 @@ void RenderListItem::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit p
     addOverflowFromContainedBox(*outsideMarker);
 }
 
-static std::pair<float, float> layoutBoundsForMarkerText(const Style::ComputedStyle& style, const String& text)
+static std::pair<float, float> layoutBoundsForMarkerText(const Style::ComputedStyle& style, StringImpl* text)
 {
     // FIXME: This should be part of InlineBoxBuilder (webkit.org/b/294342)
     // This is essentially what we do in LineBoxBuilder::enclosingAscentDescentWithFallbackFonts.
@@ -637,7 +637,7 @@ static std::pair<float, float> layoutBoundsForMarkerText(const Style::ComputedSt
     return { primaryFontAscentAndDescent.first + halfLeading, primaryFontAscentAndDescent.second + halfLeading };
 }
 
-static std::pair<float, float> outsideMarkerLayoutBounds(const RenderBlockFlow& marker, const String& markerText)
+static std::pair<float, float> outsideMarkerLayoutBounds(const RenderBlockFlow& marker, StringImpl* markerText)
 {
     ASSERT(marker.isOutsideListMarker());
     if (CheckedPtr image = imageForMarker(marker))
@@ -780,7 +780,7 @@ RenderListItem* RenderListItem::listItemForMarker(const RenderObject& marker)
     return nullptr;
 }
 
-String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
+RefPtr<StringImpl> RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
 {
     CheckedPtr marker = m_marker.get();
     if (!marker)
@@ -789,7 +789,7 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
     // css-lists-3 §3.3: with a non-normal `content` the marker says whatever its content renderers hold, unless the
     // author gave it alternative text (css-content-3 §1.2).
     if (listMarkerHasContent(marker->style(), document())) {
-        if (auto altText = marker->style().content().altText(); !altText.isNull())
+        if (auto altText = marker->style().content().altText(); altText)
             return altText;
         StringBuilder text;
         for (auto& textRenderer : descendantsOfType<RenderText>(*marker))
@@ -804,11 +804,11 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
     return includeSuffix == ListMarkerIncludeSuffix::Yes ? textContent.textWithSuffix : textContent.textWithoutSuffix().toString();
 }
 
-String RenderListItem::markerText(const RenderObject& marker, ListMarkerIncludeSuffix includeSuffix)
+RefPtr<StringImpl> RenderListItem::markerText(const RenderObject& marker, ListMarkerIncludeSuffix includeSuffix)
 {
     CheckedPtr listItem = listItemForMarker(marker);
     // A marker that is being detached from its item has no item to ask.
-    return listItem ? listItem->markerText(includeSuffix) : String();
+    return listItem ? listItem->markerText(includeSuffix) : nullptr;
 }
 
 void RenderListItem::usedCounterDirectivesChanged()
@@ -1063,12 +1063,12 @@ ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerSt
             return ListMarkerTextContent { .textWithSuffix = " "_s, .textWithoutSuffixLength = 0 };
         },
         [&](const Style::String& identifier) {
-            return ListMarkerTextContent { .textWithSuffix = identifier.value, .textWithoutSuffixLength = identifier.value.length() };
+            return ListMarkerTextContent { .textWithSuffix = identifier.value, .textWithoutSuffixLength = length(identifier.value) };
         },
         [&](const auto& counterStyle) {
             auto counter = listItem.document().counterStyleRegistry().resolvedCounterStyle(counterStyle);
             auto text = makeString(counter->prefix().text, counter->text(listItem.value(), markerStyle.writingMode()));
-            return ListMarkerTextContent { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = text.length() };
+            return ListMarkerTextContent { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = length(text) };
         }
     );
 }

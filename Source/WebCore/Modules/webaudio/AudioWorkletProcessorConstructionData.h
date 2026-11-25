@@ -39,16 +39,16 @@ namespace WebCore {
 class AudioWorkletProcessorConstructionData {
     WTF_MAKE_TZONE_ALLOCATED(AudioWorkletProcessorConstructionData);
 public:
-    AudioWorkletProcessorConstructionData(String&& name, Ref<MessagePort>&& port)
+    AudioWorkletProcessorConstructionData(RefPtr<StringImpl>&& name, Ref<MessagePort>&& port)
         : m_name(WTF::move(name))
         , m_port(WTF::move(port))
     { }
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     MessagePort& port() const { return m_port.get(); }
 
 private:
-    String m_name;
+    RefPtr<StringImpl> m_name;
     const Ref<MessagePort> m_port;
 };
 

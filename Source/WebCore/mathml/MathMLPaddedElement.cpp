@@ -78,7 +78,7 @@ const MathMLElement::Length& MathMLPaddedElement::voffset()
     return cachedMathMLLength(MathMLNames::voffsetAttr, m_voffset);
 }
 
-void MathMLPaddedElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLPaddedElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     bool affectsLayout = false;
     switch (name.nodeName()) {

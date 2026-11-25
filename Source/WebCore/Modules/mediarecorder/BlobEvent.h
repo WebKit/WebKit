@@ -40,14 +40,14 @@ public:
         std::optional<double> timecode;
     };
     
-    NODELETE static Ref<BlobEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<BlobEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
 
     Blob& data() const { return m_blob.get(); }
     double timecode() const { return m_timecode; }
 
 private:
-    BlobEvent(const AtomString&, Init&&, IsTrusted);
-    BlobEvent(const AtomString&, CanBubble, IsCancelable, Ref<Blob>&&);
+    BlobEvent(AtomStringImpl*, Init&&, IsTrusted);
+    BlobEvent(AtomStringImpl*, CanBubble, IsCancelable, Ref<Blob>&&);
 
     const Ref<Blob> m_blob;
     double m_timecode { 0 };

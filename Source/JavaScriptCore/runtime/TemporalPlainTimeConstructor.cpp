@@ -75,7 +75,7 @@ TemporalPlainTimeConstructor::TemporalPlainTimeConstructor(VM& vm, Structure* st
 
 void TemporalPlainTimeConstructor::finishCreation(VM& vm, TemporalPlainTimePrototype* plainTimePrototype)
 {
-    Base::finishCreation(vm, 0, "PlainTime"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "PlainTime"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, plainTimePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
@@ -101,9 +101,9 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainTime, (JSGlobalObject* globalObje
         double v = arg.toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (std::isnan(v)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainTime argument must not be NaN"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.PlainTime argument must not be NaN"_si);
         if (!std::isfinite(v)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainTime properties must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.PlainTime properties must be finite"_si);
         duration.setField(durationIndex, std::trunc(v));
     }
     // Steps 8-9: IsValidTime + CreateTimeRecord. Ahead of Step 10 so the observable

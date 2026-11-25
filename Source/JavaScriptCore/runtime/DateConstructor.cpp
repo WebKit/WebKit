@@ -118,7 +118,7 @@ JSObject* constructDate(JSGlobalObject* globalObject, JSValue newTarget, const A
             if (primitive.isString()) {
                 auto primitiveString = asString(primitive)->value(globalObject);
                 RETURN_IF_EXCEPTION(scope, nullptr);
-                value = vm.dateCache.parseDate(globalObject, vm, primitiveString);
+                value = vm.dateCache.parseDate(globalObject, vm, primitiveString->get());
                 RETURN_IF_EXCEPTION(scope, nullptr);
             } else {
                 value = primitive.toNumber(globalObject);
@@ -159,7 +159,7 @@ JSC_DEFINE_HOST_FUNCTION(dateParse, (JSGlobalObject* globalObject, CallFrame* ca
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    String dateStr = callFrame->argument(0).toWTFString(globalObject);
+    RefPtr<StringImpl> dateStr = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(timeClip(vm.dateCache.parseDate(globalObject, vm, dateStr)))));
 }

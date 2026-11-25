@@ -75,7 +75,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         return;
 
     // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
-    protect(client())->setInsertionPasteboard(NSPasteboardNameGeneral);
+    protect(client())->setInsertionPasteboard(StringImpl::create(NSPasteboardNameGeneral).get());
 
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = webContentFromPasteboard(*pasteboard, *range, options.contains(PasteOption::AllowPlainText), chosePlainText);
@@ -87,31 +87,31 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote );
     
     if (CheckedPtr client = this->client())
-        client->setInsertionPasteboard(String());
+        client->setInsertionPasteboard(nullString());
 }
 
 void Editor::platformCopyFont()
 {
-    Pasteboard pasteboard(PagePasteboardContext::create(document().pageID()), NSPasteboardNameFont);
+    Pasteboard pasteboard(PagePasteboardContext::create(document().pageID()), StringImpl::create(NSPasteboardNameFont).get());
 
     auto fontSampleString = adoptNS([[NSAttributedString alloc] initWithString:@"x" attributes:fontAttributesAtSelectionStart().createDictionary().get()]);
     auto fontData = RetainPtr([fontSampleString RTFFromRange:NSMakeRange(0, [fontSampleString length]) documentAttributes:@{ }]);
 
     PasteboardBuffer pasteboardBuffer;
     pasteboardBuffer.contentOrigin = protect(document())->originIdentifierForPasteboard();
-    pasteboardBuffer.type = legacyFontPasteboardTypeSingleton();
+    pasteboardBuffer.type = StringImpl::create(legacyFontPasteboardTypeSingleton());
     pasteboardBuffer.data = SharedBuffer::create(fontData.get());
     pasteboard.write(pasteboardBuffer);
 }
 
 void Editor::platformPasteFont()
 {
-    Pasteboard pasteboard(PagePasteboardContext::create(document().pageID()), NSPasteboardNameFont);
+    Pasteboard pasteboard(PagePasteboardContext::create(document().pageID()), StringImpl::create(NSPasteboardNameFont).get());
 
     protect(client())->setInsertionPasteboard(pasteboard.name());
 
     RetainPtr<NSData> fontData;
-    if (auto buffer = pasteboard.readBuffer(std::nullopt, legacyFontPasteboardTypeSingleton()))
+    if (auto buffer = pasteboard.readBuffer(std::nullopt, StringImpl::create(legacyFontPasteboardTypeSingleton()).get()))
         fontData = buffer->createNSData();
     auto fontSampleString = adoptNS([[NSAttributedString alloc] initWithRTF:fontData.get() documentAttributes:nil]);
     auto fontAttributes = RetainPtr([fontSampleString fontAttributesInRange:NSMakeRange(0, 1)]);
@@ -128,13 +128,13 @@ void Editor::platformPasteFont()
     if (RetainPtr font = dynamic_objc_cast<NSFont>([fontAttributes objectForKey:NSFontAttributeName])) {
         // FIXME: Need more sophisticated escaping code if we want to handle family names
         // with characters like single quote or backslash in their names.
-        style->setProperty(CSSPropertyID::FontFamily, [NSString stringWithFormat:@"'%@'", retainPtr([font familyName]).get()]);
+        style->setProperty(CSSPropertyID::FontFamily, StringImpl::create([NSString stringWithFormat:@"'%@'", retainPtr([font familyName]).get()]).get());
         style->setProperty(CSSPropertyID::FontSize, CSSPrimitiveValue::create([font pointSize], CSSUnitType::Px));
         // FIXME: Map to the entire range of CSS weight values.
         style->setProperty(CSSPropertyID::FontWeight, ([NSFontManager.sharedFontManager weightOfFont:font.get()] >= 7) ? CSSValueID::Bold : CSSValueID::Normal);
         style->setProperty(CSSPropertyID::FontStyle, ([NSFontManager.sharedFontManager traitsOfFont:font.get()] & NSItalicFontMask) ? CSSValueID::Italic : CSSValueID::Normal);
     } else {
-        style->setProperty(CSSPropertyID::FontFamily, "Helvetica"_s);
+        style->setProperty(CSSPropertyID::FontFamily, "Helvetica"_si);
         style->setProperty(CSSPropertyID::FontSize, CSSPrimitiveValue::create(12, CSSUnitType::Px));
         style->setProperty(CSSPropertyID::FontWeight, CSSValueID::Normal);
         style->setProperty(CSSPropertyID::FontStyle, CSSValueID::Normal);
@@ -164,7 +164,7 @@ void Editor::platformPasteFont()
 
     applyStyleToSelection(style.ptr(), EditAction::PasteFont);
 
-    protect(client())->setInsertionPasteboard(String());
+    protect(client())->setInsertionPasteboard(nullString());
 }
 
 RefPtr<SharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
@@ -175,7 +175,7 @@ RefPtr<SharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
     return SharedBuffer::create(archive->rawDataRepresentation().get());
 }
 
-RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)
+RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(StringImpl* pasteboardType)
 {
     // FIXME: The interface to this function is awkward. We'd probably be better off with three separate functions. As of this writing, this is only used in WebKit2 to implement the method -[WKView writeSelectionToPasteboard:types:], which is only used to support macOS services.
 
@@ -183,13 +183,13 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
     if (!canCopy())
         return nullptr;
 
-    if (pasteboardType == WebArchivePboardType || pasteboardType == String(UTTypeWebArchive.identifier))
+    if (equal(pasteboardType, WebArchivePboardType) || equal(pasteboardType, StringImpl::create(UTTypeWebArchive.identifier).get()))
         return selectionInWebArchiveFormat();
 
-    if (pasteboardType == String(legacyRTFDPasteboardTypeSingleton()))
+    if (equal(pasteboardType, StringImpl::create(legacyRTFDPasteboardTypeSingleton()).get()))
         return dataInRTFDFormat(attributedString(*adjustedSelectionRange(), IgnoreUserSelectNone::Yes).nsAttributedString().get());
 
-    if (pasteboardType == String(legacyRTFPasteboardTypeSingleton())) {
+    if (equal(pasteboardType, StringImpl::create(legacyRTFPasteboardTypeSingleton()).get())) {
         auto string = attributedString(*adjustedSelectionRange(), IgnoreUserSelectNone::Yes).nsAttributedString();
         // FIXME: Why is this stripping needed here, but not in writeSelectionToPasteboard?
         if ([string containsAttachments])
@@ -209,20 +209,20 @@ void Editor::selectionWillChange()
     protect(client())->canceledComposition();
 }
 
-String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
+RefPtr<StringImpl> Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 {
     auto string = text.text;
 
     // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
     // all the same cases we handle well in the URL code for creating an NSURL.
     if (text.isURL)
-        string = WTF::userVisibleString([NSURL URLWithString:string.createNSString().get()]);
+        string = StringImpl::create(protect(WTF::userVisibleString([NSURL URLWithString:createNSString(string).get()])).get());
 
     // FIXME: WTF should offer a non-Mac-specific way to convert string to precomposed form so we can do it for all platforms.
-    return [string.createNSString() precomposedStringWithCanonicalMapping];
+    return StringImpl::create([createNSString(string) precomposedStringWithCanonicalMapping]);
 }
 
-void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, const String& title)
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, StringImpl* title)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
     if (!renderImage)
@@ -248,7 +248,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
 
     pasteboardImage.url.url = url;
     pasteboardImage.url.title = title;
-    pasteboardImage.url.userVisibleForm = WTF::userVisibleString(pasteboardImage.url.url.createNSURL().get());
+    pasteboardImage.url.userVisibleForm = StringImpl::create(protect(WTF::userVisibleString(pasteboardImage.url.url.createNSURL().get())).get());
     if (RefPtr buffer = cachedImage->resourceBuffer())
         pasteboardImage.resourceData = buffer->makeContiguous();
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();

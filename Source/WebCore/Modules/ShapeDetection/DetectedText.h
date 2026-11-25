@@ -54,7 +54,7 @@ struct DetectedText {
     }
 
     Ref<DOMRectReadOnly> boundingBox;
-    String rawValue;
+    RefPtr<StringImpl> rawValue;
     Vector<Point2D> cornerPoints;
 };
 

@@ -64,7 +64,7 @@ RemoteWebInspectorUI::RemoteWebInspectorUI(WebPage& page)
 
 RemoteWebInspectorUI::~RemoteWebInspectorUI() = default;
 
-void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const String& backendCommandsURL)
+void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, StringImpl* backendCommandsURL)
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = WebInspectorUIExtensionController::create(*this, m_page->identifier());
@@ -76,20 +76,20 @@ void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const
     m_page->corePage()->inspectorController().setInspectorFrontendClient(this);
 
     m_frontendAPIDispatcher->reset();
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_s, { JSON::Value::create(true) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_si, { JSON::Value::create(true) });
 }
 
-void RemoteWebInspectorUI::updateFindString(const String& findString)
+void RemoteWebInspectorUI::updateFindString(StringImpl* findString)
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("updateFindString"_s, { JSON::Value::create(findString) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("updateFindString"_si, { JSON::Value::create(findString) });
 }
 
-void RemoteWebInspectorUI::sendMessageToFrontend(const String& message)
+void RemoteWebInspectorUI::sendMessageToFrontend(StringImpl* message)
 {
     m_frontendAPIDispatcher->dispatchMessageAsync(message);
 }
 
-void RemoteWebInspectorUI::sendMessageToBackend(const String& message)
+void RemoteWebInspectorUI::sendMessageToBackend(StringImpl* message)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::SendMessageToBackend(message), m_page->identifier());
 }
@@ -107,7 +107,7 @@ void RemoteWebInspectorUI::frontendLoaded()
 {
     m_frontendAPIDispatcher->frontendLoaded();
 
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setIsVisible"_s, { JSON::Value::create(true) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setIsVisible"_si, { JSON::Value::create(true) });
 
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::FrontendLoaded(), m_page->identifier());
 
@@ -195,20 +195,20 @@ void RemoteWebInspectorUI::resetState()
 
 void RemoteWebInspectorUI::showConsole()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showConsole"_s);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showConsole"_si);
 }
 
 void RemoteWebInspectorUI::showResources()
 {
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_si);
 }
 
-void RemoteWebInspectorUI::openURLExternally(const String& url)
+void RemoteWebInspectorUI::openURLExternally(StringImpl* url)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::OpenURLExternally(url), m_page->identifier());
 }
 
-void RemoteWebInspectorUI::revealFileExternally(const String& path)
+void RemoteWebInspectorUI::revealFileExternally(StringImpl* path)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::RevealFileExternally(path), m_page->identifier());
 }
@@ -218,7 +218,7 @@ void RemoteWebInspectorUI::save(Vector<WebCore::InspectorFrontendClient::SaveDat
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::Save(WTF::move(saveDatas), forceSaveAs), m_page->identifier());
 }
 
-void RemoteWebInspectorUI::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+void RemoteWebInspectorUI::load(StringImpl* path, CompletionHandler<void(StringImpl*)>&& completionHandler)
 {
     protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::Load(path), WTF::move(completionHandler), m_page->identifier());
 }
@@ -228,7 +228,7 @@ void RemoteWebInspectorUI::pickColorFromScreen(CompletionHandler<void(const std:
     protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::PickColorFromScreen(), WTF::move(completionHandler), m_page->identifier());
 }
 
-void RemoteWebInspectorUI::inspectedURLChanged(const String& urlString)
+void RemoteWebInspectorUI::inspectedURLChanged(StringImpl* urlString)
 {
     // Do nothing. The remote side can know if the main resource changed.
 }
@@ -259,17 +259,17 @@ Inspector::DebuggableType RemoteWebInspectorUI::debuggableType() const
     return m_debuggableInfo.debuggableType;
 }
 
-String RemoteWebInspectorUI::targetPlatformName() const
+RefPtr<StringImpl> RemoteWebInspectorUI::targetPlatformName() const
 {
     return m_debuggableInfo.targetPlatformName;
 }
 
-String RemoteWebInspectorUI::targetBuildVersion() const
+RefPtr<StringImpl> RemoteWebInspectorUI::targetBuildVersion() const
 {
     return m_debuggableInfo.targetBuildVersion;
 }
 
-String RemoteWebInspectorUI::targetProductVersion() const
+RefPtr<StringImpl> RemoteWebInspectorUI::targetProductVersion() const
 {
     return m_debuggableInfo.targetProductVersion;
 }
@@ -285,9 +285,9 @@ bool RemoteWebInspectorUI::supportsDiagnosticLogging()
     return m_page->corePage()->settings().diagnosticLoggingEnabled();
 }
 
-void RemoteWebInspectorUI::logDiagnosticEvent(const String& eventName,  const DiagnosticLoggingClient::ValueDictionary& dictionary)
+void RemoteWebInspectorUI::logDiagnosticEvent(StringImpl* eventName,  const DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
-    protect(protect(protect(m_page)->corePage())->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(eventName, "Remote Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+    protect(protect(protect(m_page)->corePage())->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(eventName, "Remote Web Inspector Frontend Diagnostics"_si, dictionary, ShouldSample::No);
 }
 
 void RemoteWebInspectorUI::setDiagnosticLoggingAvailable(bool available)
@@ -296,7 +296,7 @@ void RemoteWebInspectorUI::setDiagnosticLoggingAvailable(bool available)
     ASSERT(!available || supportsDiagnosticLogging());
     m_diagnosticLoggingAvailable = available;
 
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_s, { JSON::Value::create(m_diagnosticLoggingAvailable) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_si, { JSON::Value::create(m_diagnosticLoggingAvailable) });
 }
 #endif // ENABLE(INSPECTOR_TELEMETRY)
 
@@ -356,7 +356,7 @@ bool RemoteWebInspectorUI::canPickColorFromScreen()
     return false;
 }
 
-String RemoteWebInspectorUI::localizedStringsURL() const
+RefPtr<StringImpl> RemoteWebInspectorUI::localizedStringsURL() const
 {
     notImplemented();
     return emptyString();

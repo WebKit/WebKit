@@ -70,7 +70,7 @@ public:
     using FunctionIndexToData = HashMap<size_t, FunctionDebugInfo>;
     FunctionIndexToData functionIndexToData;
 
-    mutable std::optional<String> cachedDeclaredName;
+    mutable std::optional<RefPtr<StringImpl>> cachedDeclaredName;
 };
 
 } // namespace Wasm

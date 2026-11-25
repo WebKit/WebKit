@@ -99,14 +99,14 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     return platformData;
 }
 
-RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, StringImpl* itemInCollection)
 {
     sk_sp<SkTypeface> typeface;
     SkString familyName;
 
     const auto bufferData = buffer.createSkData();
     bool isCollection = spanHasPrefix(buffer.span(), "ttcf"_span);
-    if (itemInCollection.isNull() || !isCollection)
+    if (!itemInCollection || !isCollection)
         typeface = FontCache::forCurrentThread().fontManager().makeFromData(bufferData);
     else {
         size_t index = 0;
@@ -115,7 +115,7 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
             if (!typeface)
                 break;
             typeface->getFamilyName(&familyName);
-            if (equalIgnoringASCIICase(itemInCollection, String::fromLatin1(familyName.c_str())))
+            if (equalIgnoringASCIICase(itemInCollection, StringImpl::fromLatin1(familyName.c_str())))
                 break;
         }
     }
@@ -127,12 +127,12 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
     return adoptRef(new FontCustomPlatformData(WTF::move(typeface), WTF::move(creationData)));
 }
 
-RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, StringImpl*)
 {
     return nullptr;
 }
 
-bool FontCustomPlatformData::supportsFormat(const String& format)
+bool FontCustomPlatformData::supportsFormat(StringImpl* format)
 {
     return equalLettersIgnoringASCIICase(format, "truetype"_s)
         || equalLettersIgnoringASCIICase(format, "opentype"_s)

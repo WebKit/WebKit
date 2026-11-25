@@ -68,7 +68,7 @@ private:
     IPCTester();
 
     // Messages.
-    void startMessageTesting(IPC::Connection&, String&& driverName);
+    void startMessageTesting(IPC::Connection&, RefPtr<StringImpl>&& driverName);
     void stopMessageTesting(CompletionHandler<void()>&&);
     void createStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseStreamTester(IPCStreamTesterIdentifier, CompletionHandler<void()>&&);
@@ -85,11 +85,11 @@ private:
     void asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionHandler<void()>&&);
-    void asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String)>&&);
+    void asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, RefPtr<StringImpl>)>&&);
     void emptyMessage() { }
     void emptyMessageWithReply(CompletionHandler<void(uint64_t)>&&);
     void checkTestParameter(IPC::Connection&, TestParameter);
-    void sendSwiftTypesMessagesToReceiver(IPC::Connection&, CompletionHandler<void(String&&)>&&);
+    void sendSwiftTypesMessagesToReceiver(IPC::Connection&, CompletionHandler<void(RefPtr<StringImpl>&&)>&&);
     void addReceiverForSwiftTypesTesting(IPC::Connection&, CompletionHandler<void(bool)>&&);
     void removeReceiverForSwiftTypesTesting(IPC::Connection&, CompletionHandler<void()>&&);
     void stopIfNeeded();

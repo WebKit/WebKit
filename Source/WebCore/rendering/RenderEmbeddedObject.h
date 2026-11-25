@@ -95,7 +95,7 @@ private:
 
     bool m_isPluginUnavailable { false };
     PluginUnavailabilityReason m_pluginUnavailabilityReason { PluginUnavailabilityReason::PluginMissing };
-    String m_unavailablePluginReplacementText;
+    RefPtr<StringImpl> m_unavailablePluginReplacementText;
     bool m_unavailablePluginIndicatorIsPressed { false };
     bool m_mouseDownWasInUnavailablePluginIndicator { false };
     bool m_hasShadowContent { false };

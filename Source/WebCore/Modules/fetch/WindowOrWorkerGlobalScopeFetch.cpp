@@ -78,7 +78,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
     if (request->signal().aborted()) {
         auto reason = request->signal().reason().getValue();
         if (reason.isUndefined())
-            promise.reject(Exception { ExceptionCode::AbortError, "Request signal is aborted"_s });
+            promise.reject(Exception { ExceptionCode::AbortError, "Request signal is aborted"_si });
         else
             promise.rejectType<IDLAny>(reason);
 
@@ -100,7 +100,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
 void WindowOrWorkerGlobalScopeFetch::fetch(DOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
     if (RefPtr document = window.documentIfLocal(); document && document->quirks().shouldBlockFetchWithNewlineAndLessThan()) {
-        if (auto* string = std::get_if<String>(&input); string && string->contains('\n') && string->contains('<'))
+        if (auto* string = std::get_if<RefPtr<StringImpl>>(&input); string && contains(*string, '\n') && contains(*string, '<'))
             return promise->reject(ExceptionCode::InvalidStateError);
     }
 
@@ -179,11 +179,11 @@ ExceptionOr<Ref<FetchLaterResult>> WindowOrWorkerGlobalScopeFetch::fetchLater(DO
     uint64_t bodyBytes = body ? body->lengthInBytes() : 0;
     URL urlWithoutFragment = resourceRequest.url();
     urlWithoutFragment.removeFragmentIdentifier();
-    CheckedUint64 checkedRequestBytes = urlWithoutFragment.string().length();
-    checkedRequestBytes += request->referrer().length();
+    CheckedUint64 checkedRequestBytes = length(urlWithoutFragment.string());
+    checkedRequestBytes += length(request->referrer());
     for (auto& header : resourceRequest.httpHeaderFields()) {
-        checkedRequestBytes += header.key.length();
-        checkedRequestBytes += header.value.length();
+        checkedRequestBytes += length(header.key);
+        checkedRequestBytes += length(header.value);
     }
     checkedRequestBytes += bodyBytes;
     uint64_t requestBytes = checkedRequestBytes.hasOverflowed() ? std::numeric_limits<uint64_t>::max() : checkedRequestBytes.value();
@@ -199,11 +199,11 @@ ExceptionOr<Ref<FetchLaterResult>> WindowOrWorkerGlobalScopeFetch::fetchLater(DO
         if (referrerPolicy == ReferrerPolicy::EmptyString)
             referrerPolicy = document->referrerPolicy();
         auto requestedReferrer = request->referrer();
-        URL referrerURL = requestedReferrer.isNull() || requestedReferrer == "about:client"_s
+        URL referrerURL = !requestedReferrer || equal(requestedReferrer, "about:client"_s)
             ? frame->loader().outgoingReferrerURL()
             : URL { requestedReferrer };
         auto referrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, resourceRequest.url(), referrerURL, OriginAccessPatternsForWebProcess::singleton());
-        if (!referrer.isEmpty())
+        if (!isEmpty(referrer))
             resourceRequest.setHTTPReferrer(referrer);
         frame->loader().updateRequestAndAddExtraFields(resourceRequest, IsMainResource::No);
     }
@@ -232,7 +232,7 @@ ExceptionOr<Ref<FetchLaterResult>> WindowOrWorkerGlobalScopeFetch::fetchLater(DO
 
         auto& vm = lexicalGlobalObject.vm();
         auto throwScope = DECLARE_THROW_SCOPE(vm);
-        auto error = QuotaExceededError::create("fetchLater() exceeded per-origin quota"_s, { static_cast<double>(availableBytes), static_cast<double>(requestBytes) });
+        auto error = QuotaExceededError::create("fetchLater() exceeded per-origin quota"_si, { static_cast<double>(availableBytes), static_cast<double>(requestBytes) });
         throwException(&lexicalGlobalObject, throwScope, toJSNewlyCreated(&lexicalGlobalObject, globalObject, WTF::move(error)));
         return Exception { ExceptionCode::ExistingExceptionError };
     }

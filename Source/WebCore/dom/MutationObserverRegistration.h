@@ -51,10 +51,10 @@ class QualifiedName;
 class MutationObserverRegistration final : public RefCountedAndCanMakeWeakPtr<MutationObserverRegistration> {
     WTF_MAKE_TZONE_ALLOCATED(MutationObserverRegistration);
 public:
-    static Ref<MutationObserverRegistration> create(MutationObserver&, Node&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
+    static Ref<MutationObserverRegistration> create(MutationObserver&, Node&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& attributeFilter);
     ~MutationObserverRegistration();
 
-    void resetObservation(MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
+    void resetObservation(MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& attributeFilter);
     void observedSubtreeNodeWillDetach(Node&);
     HashSet<GCReachableRef<Node>> takeTransientRegistrations();
     bool hasTransientRegistrations() const { return !m_transientRegistrationNodes.isEmpty(); }
@@ -70,14 +70,14 @@ public:
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
 private:
-    MutationObserverRegistration(MutationObserver&, Node&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
+    MutationObserverRegistration(MutationObserver&, Node&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>>& attributeFilter);
 
     const Ref<MutationObserver> m_observer;
     WeakRef<Node, WeakPtrImplWithEventTargetData> m_node;
     RefPtr<Node> m_nodeKeptAlive;
     HashSet<GCReachableRef<Node>> m_transientRegistrationNodes;
     MutationObserverOptions m_options;
-    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> m_attributeFilter;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<AtomStringImpl>> m_attributeFilter;
 };
 
 } // namespace WebCore

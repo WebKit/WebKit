@@ -79,7 +79,7 @@
 - (NSString *)title
 {
 #if ENABLE(NOTIFICATIONS)
-    return _private->_internal->title.createNSString().autorelease();
+    return createNSString(_private->_internal->title).autorelease();
 #else
     return nil;
 #endif
@@ -88,7 +88,7 @@
 - (NSString *)body
 {
 #if ENABLE(NOTIFICATIONS)
-    return _private->_internal->body.createNSString().autorelease();
+    return createNSString(_private->_internal->body).autorelease();
 #else
     return nil;
 #endif
@@ -97,7 +97,7 @@
 - (NSString *)tag
 {
 #if ENABLE(NOTIFICATIONS)
-    return _private->_internal->tag.createNSString().autorelease();
+    return createNSString(_private->_internal->tag).autorelease();
 #else
     return nil;
 #endif
@@ -106,7 +106,7 @@
 - (NSString *)iconURL
 {
 #if ENABLE(NOTIFICATIONS)
-    return _private->_internal->iconURL.createNSString().autorelease();
+    return createNSString(_private->_internal->iconURL).autorelease();
 #else
     return nil;
 #endif
@@ -115,7 +115,7 @@
 - (NSString *)lang
 {
 #if ENABLE(NOTIFICATIONS)
-    return _private->_internal->language.createNSString().autorelease();
+    return createNSString(_private->_internal->language).autorelease();
 #else
     return nil;
 #endif
@@ -140,7 +140,7 @@
 - (WebSecurityOrigin *)origin
 {
 #if ENABLE(NOTIFICATIONS)
-    return adoptNS([[WebSecurityOrigin alloc] _initWithString:_private->_internal->originString.createNSString().get()]).autorelease();
+    return adoptNS([[WebSecurityOrigin alloc] _initWithString:createNSString(_private->_internal->originString).get()]).autorelease();
 #else
     return nil;
 #endif
@@ -149,7 +149,7 @@
 - (NSString *)notificationID
 {
 #if ENABLE(NOTIFICATIONS)
-    return _private->_internal->notificationID.toString().createNSString().autorelease();
+    return createNSString(_private->_internal->notificationID.toString()).autorelease();
 #else
     return 0;
 #endif

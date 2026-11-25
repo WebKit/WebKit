@@ -47,7 +47,7 @@ struct WebPageAgentContext {
 
 class InspectorAgentBase : public Inspector::InspectorAgentBase {
 protected:
-    InspectorAgentBase(const String& name, WebPageAgentContext&)
+    InspectorAgentBase(StringImpl* name, WebPageAgentContext&)
         : Inspector::InspectorAgentBase(name)
     {
     }

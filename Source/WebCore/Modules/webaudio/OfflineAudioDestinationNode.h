@@ -55,7 +55,7 @@ public:
     void uninitialize() final;
 
     // AudioDestinationNode
-    void enableInput(const String&) final { }
+    void enableInput(StringImpl*) final { }
     void startRendering(CompletionHandler<void(std::optional<Exception>&&)>&&) final;
 
 private:

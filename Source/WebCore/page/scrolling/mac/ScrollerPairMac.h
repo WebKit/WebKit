@@ -98,7 +98,7 @@ public:
     ScrollerMac& verticalScroller() { return m_verticalScroller.get(); }
     ScrollerMac& horizontalScroller() { return m_horizontalScroller.get(); }
 
-    String scrollbarStateForOrientation(ScrollbarOrientation) const;
+    RefPtr<StringImpl> scrollbarStateForOrientation(ScrollbarOrientation) const;
 
     ScrollbarStyle scrollbarStyle() const { return m_scrollbarStyle; }
     void setScrollbarStyle(ScrollbarStyle);

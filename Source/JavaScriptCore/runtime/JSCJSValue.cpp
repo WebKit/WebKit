@@ -371,7 +371,7 @@ JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmp
     return returnString;
 }
 
-String JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
+RefPtr<StringImpl> JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -392,7 +392,7 @@ String JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
     RELEASE_AND_RETURN(scope, string->value(globalObject));
 }
 
-WTF::String JSValue::toWTFStringForConsole(JSGlobalObject* globalObject) const
+RefPtr<StringImpl> JSValue::toWTFStringForConsole(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -34,17 +34,17 @@
 
 
 // Any named groups will live for the lifetime of the process, thanks to the reference held by the RefPtr.
-NODELETE static HashMap<String, RefPtr<WebViewGroup>>& webViewGroups()
+NODELETE static HashMap<RefPtr<StringImpl>, RefPtr<WebViewGroup>>& webViewGroups()
 {
-    static NeverDestroyed<HashMap<String, RefPtr<WebViewGroup>>> webViewGroups;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, RefPtr<WebViewGroup>>> webViewGroups;
 
     return webViewGroups;
 }
 
-Ref<WebViewGroup> WebViewGroup::getOrCreate(const String& name, const String& localStorageDatabasePath)
+Ref<WebViewGroup> WebViewGroup::getOrCreate(StringImpl* name, StringImpl* localStorageDatabasePath)
 {
-    if (name.isEmpty())
-        return adoptRef(*new WebViewGroup(String(), localStorageDatabasePath));
+    if (isEmpty(name))
+        return adoptRef(*new WebViewGroup(nullString(), localStorageDatabasePath));
 
     auto& webViewGroup = webViewGroups().add(name, nullptr).iterator->value;
     if (!webViewGroup) {
@@ -53,20 +53,20 @@ Ref<WebViewGroup> WebViewGroup::getOrCreate(const String& name, const String& lo
         return result;
     }
 
-    if (!webViewGroup->m_storageNamespaceProvider && webViewGroup->m_localStorageDatabasePath.isEmpty() && !localStorageDatabasePath.isEmpty())
+    if (!webViewGroup->m_storageNamespaceProvider && isEmpty(webViewGroup->m_localStorageDatabasePath) && !isEmpty(localStorageDatabasePath))
         webViewGroup->m_localStorageDatabasePath = localStorageDatabasePath;
 
     return *webViewGroup;
 }
 
-WebViewGroup* WebViewGroup::get(const String& name)
+WebViewGroup* WebViewGroup::get(StringImpl* name)
 {
-    ASSERT(!name.isEmpty());
+    ASSERT(!isEmpty(name));
 
     return webViewGroups().get(name);
 }
 
-WebViewGroup::WebViewGroup(const String& name, const String& localStorageDatabasePath)
+WebViewGroup::WebViewGroup(StringImpl* name, StringImpl* localStorageDatabasePath)
     : m_name(name)
     , m_localStorageDatabasePath(localStorageDatabasePath)
     , m_userContentController(WebCore::UserContentController::create())
@@ -76,7 +76,7 @@ WebViewGroup::WebViewGroup(const String& name, const String& localStorageDatabas
 
 WebViewGroup::~WebViewGroup()
 {
-    ASSERT(m_name.isEmpty());
+    ASSERT(isEmpty(m_name));
     ASSERT(m_webViews.isEmpty());
 }
 

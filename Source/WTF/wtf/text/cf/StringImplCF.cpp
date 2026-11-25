@@ -27,6 +27,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/cf/VectorCF.h>
+#include <wtf/text/StringBuffer.h>
 
 namespace WTF {
 
@@ -141,6 +143,38 @@ RetainPtr<CFStringRef> StringImpl::createCFString()
     StringWrapperCFAllocator::currentString() = nullptr;
 
     return string;
+}
+
+RefPtr<StringImpl> StringImpl::create(CFStringRef str)
+{
+    if (!str)
+        return nullptr;
+
+    // We cannot use CFIndex here since CFStringGetLength can return values larger than
+    // CFIndex can hold.  (<rdar://problem/6806478>)
+    size_t size = CFStringGetLength(str);
+    if (!size)
+        return StringImpl::empty();
+
+    // Fast path: check if CF exposes its internal buffer directly.
+    if (auto span = CFStringGetLatin1CStringSpan(str); span.data())
+        return StringImpl::create(span);
+
+    if (auto span = CFStringGetCharactersSpan(str); span.data())
+        return StringImpl::create8BitIfPossible(span);
+
+    // Slow path: try converting to Latin1, then fall back to UTF-16.
+    {
+        StringBuffer<Latin1Character> buffer(size);
+        CFIndex usedBufLen;
+        CFIndex convertedSize = CFStringGetBytes(str, CFRangeMake(0, size), kCFStringEncodingISOLatin1, 0, false, byteCast<UInt8>(buffer.characters()), size, &usedBufLen);
+        if (static_cast<size_t>(convertedSize) == size && static_cast<size_t>(usedBufLen) == size)
+            return StringImpl::adopt(WTF::move(buffer));
+    }
+
+    StringBuffer<char16_t> ucharBuffer(size);
+    CFStringCopyCharactersSpan(str, ucharBuffer.span());
+    return StringImpl::adopt(WTF::move(ucharBuffer));
 }
 
 // On StringImpl creation we could check if the allocator is the StringWrapperCFAllocator.

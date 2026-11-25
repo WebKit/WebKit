@@ -30,18 +30,18 @@
 
 namespace WebCore {
 
-String DOMStringList::item(unsigned index) const
+RefPtr<StringImpl> DOMStringList::item(unsigned index) const
 {
     if (index >= m_strings.size())
-        return String();
+        return nullptr;
     return m_strings[index];
 }
 
-bool DOMStringList::contains(const String& string) const
+bool DOMStringList::contains(StringImpl* string) const
 {
     // Currently, all consumers of DOMStringList store fairly small lists and thus an O(n) algorithm is OK.
     for (auto& value : m_strings) {
-        if (value == string)
+        if (equal(value, string))
             return true;
     }
     return false;

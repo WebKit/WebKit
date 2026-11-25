@@ -67,7 +67,7 @@ struct EventTrackingRegions {
     using EventType = EventTrackingRegionsEventType;
 
     WEBCORE_EXPORT static ASCIILiteral eventName(EventType);
-    NODELETE WEBCORE_EXPORT static const AtomString& eventNameAtomString(const EventNames&, EventType);
+    NODELETE WEBCORE_EXPORT static const RefPtr<AtomStringImpl>& eventNameAtomString(const EventNames&, EventType);
 
     // Region for which events can be dispatched without blocking scrolling.
     Region asynchronousDispatchRegion;

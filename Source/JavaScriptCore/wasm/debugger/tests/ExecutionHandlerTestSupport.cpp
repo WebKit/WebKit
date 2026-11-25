@@ -71,16 +71,16 @@ std::atomic<unsigned> replyCount { 0 };
 
 static Lock lastReplyLock;
 
-static String& lastReplyStorage() WTF_REQUIRES_LOCK(lastReplyLock)
+static RefPtr<StringImpl>& lastReplyStorage() WTF_REQUIRES_LOCK(lastReplyLock)
 {
-    static NeverDestroyed<String> storage;
+    static NeverDestroyed<RefPtr<StringImpl>> storage;
     return storage.get();
 }
 
-String lastReply()
+RefPtr<StringImpl> lastReply()
 {
     Locker locker { lastReplyLock };
-    return lastReplyStorage().isolatedCopy();
+    return isolatedCopy(lastReplyStorage());
 }
 
 // ========== Worker/Workers classes (duplicated from jsc.cpp) ==========
@@ -184,12 +184,12 @@ private:
         JSC::JSObject* dollar = JSC::JSFinalObject::create(vm, JSC::JSFinalObject::createStructure(vm, this, objectPrototype(), 0));
         JSC::JSObject* agent = JSC::JSFinalObject::create(vm, JSC::JSFinalObject::createStructure(vm, this, objectPrototype(), 0));
         JSC::Identifier startId = JSC::Identifier::fromString(vm, "start"_s);
-        agent->putDirect(vm, startId, JSC::JSFunction::create(vm, this, 1, "start"_s, functionDollarAgentStart, JSC::ImplementationVisibility::Public));
+        agent->putDirect(vm, startId, JSC::JSFunction::create(vm, this, 1, "start"_si, functionDollarAgentStart, JSC::ImplementationVisibility::Public));
         dollar->putDirect(vm, JSC::Identifier::fromString(vm, "agent"_s), agent);
 
         // Add shouldExit() function to $
         JSC::Identifier shouldExitId = JSC::Identifier::fromString(vm, "shouldExit"_s);
-        dollar->putDirect(vm, shouldExitId, JSC::JSFunction::create(vm, this, 0, "shouldExit"_s, functionShouldExit, JSC::ImplementationVisibility::Public));
+        dollar->putDirect(vm, shouldExitId, JSC::JSFunction::create(vm, this, 0, "shouldExit"_si, functionShouldExit, JSC::ImplementationVisibility::Public));
 
         putDirect(vm, JSC::Identifier::fromString(vm, "$"_s), dollar);
     }
@@ -211,14 +211,14 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSC::JSGlobalObject * global
         return JSC::JSValue::encode(JSC::jsUndefined());
 
     JSC::JSValue scriptValue = callFrame->argument(0);
-    String script = scriptValue.toWTFString(globalObject);
+    RefPtr<StringImpl> script = scriptValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, JSC::JSValue::encode(JSC::jsUndefined()));
 
     Lock didStartLock;
     Condition didStartCondition;
     bool didStart = false;
 
-    Thread::create("JSC Agent"_s, [script = script.isolatedCopy(), &didStartLock, &didStartCondition, &didStart] {
+    Thread::create("JSC Agent"_s, [script = isolatedCopy(script), &didStartLock, &didStartCondition, &didStart] {
         Worker worker(Workers::singleton(), false);
         VM& workerVM = VM::create(JSC::HeapType::Large).leakRef();
 
@@ -232,7 +232,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSC::JSGlobalObject * global
                 didStartCondition.notifyOne();
             }
 
-            JSC::SourceOrigin origin(URL({ }, "agent-worker"_s));
+            JSC::SourceOrigin origin(URL({ }, "agent-worker"_si));
             JSC::SourceCode sourceCode = JSC::makeSource(script, origin, JSC::SourceTaintedOrigin::Untainted);
 
             NakedPtr<JSC::Exception> exception;
@@ -281,10 +281,10 @@ void setupTestEnvironment(DebugServer*& debugServer, ExecutionHandler*& executio
     Options::setOptions("--enableWasmDebugger=true");
 
     debugServer = &DebugServer::singleton();
-    debugServer->startRWI([](const String& packet) {
+    debugServer->startRWI([](StringImpl* packet) {
         {
             Locker locker { lastReplyLock };
-            lastReplyStorage() = packet.isolatedCopy();
+            lastReplyStorage() = isolatedCopy(packet);
         }
         replyCount++;
         dataLogLnIf(verboseLogging, RWI_REPLY_PREFIX, packet);
@@ -298,7 +298,7 @@ void setupTestEnvironment(DebugServer*& debugServer, ExecutionHandler*& executio
     dataLogLnIf(verboseLogging, "DebugServer setup complete in RWI mode");
 }
 
-void workerThreadTask(const String& script)
+void workerThreadTask(StringImpl* script)
 {
     dataLogLnIf(verboseLogging, "Worker thread starting");
 
@@ -312,7 +312,7 @@ void workerThreadTask(const String& script)
         dataLogLnIf(verboseLogging, "Worker thread created VM ", RawPointer(&vm), " with TestGlobalObject");
 
         NakedPtr<JSC::Exception> exception;
-        JSC::SourceOrigin origin(URL({ }, "worker"_s));
+        JSC::SourceOrigin origin(URL({ }, "worker"_si));
         JSC::SourceCode sourceCode = JSC::makeSource(script, origin, JSC::SourceTaintedOrigin::Untainted);
 
         JSC::evaluate(globalObject, sourceCode, JSC::JSValue(), exception);

@@ -51,7 +51,7 @@ private:
     void didConcludeEditDrag() override;
 
 #if PLATFORM(COCOA)
-    void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const URL&, const String&, WebCore::LocalFrame*) override;
+    void declareAndWriteDragImage(StringImpl* pasteboardName, WebCore::Element&, const URL&, StringImpl*, WebCore::LocalFrame*) override;
 #endif
 
     WeakPtr<WebPage> m_page;

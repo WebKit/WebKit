@@ -95,7 +95,7 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookies
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
 void NetworkStorageSession::setCookie(const URL& firstParty, const Cookie& cookie, ShouldPartitionCookie shouldPartitionCookie)
 {
-    if (!isOptInCookiePartitioningEnabled() || shouldPartitionCookie != ShouldPartitionCookie::Yes || !cookie.partitionKey.isEmpty()) {
+    if (!isOptInCookiePartitioningEnabled() || shouldPartitionCookie != ShouldPartitionCookie::Yes || !isEmpty(cookie.partitionKey)) {
         setCookie(cookie);
         return;
     }
@@ -217,7 +217,7 @@ bool NetworkStorageSession::shouldExemptDomainPairFromThirdPartyCookieBlocking(c
     return topFrameDomain == resourceDomain || (m_appBoundDomains.contains(topFrameDomain) && m_appBoundDomains.contains(resourceDomain));
 }
 
-String NetworkStorageSession::cookiePartitionIdentifier(const ResourceRequest& request)
+RefPtr<StringImpl> NetworkStorageSession::cookiePartitionIdentifier(const ResourceRequest& request)
 {
     return cookiePartitionIdentifier(request.firstPartyForCookies());
 }
@@ -320,9 +320,9 @@ bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDo
     return false;
 }
 
-Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
+Vector<RefPtr<StringImpl>> NetworkStorageSession::getAllStorageAccessEntries() const
 {
-    Vector<String> entries;
+    Vector<RefPtr<StringImpl>> entries;
     for (auto& innerMap : m_framesGrantedStorageAccess.values()) {
         for (auto& value : innerMap.values())
             entries.append(value.string());
@@ -517,7 +517,7 @@ std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const Registra
 #endif
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> cookieHostNames, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(std::span<const RefPtr<StringImpl>> cookieHostNames, CompletionHandler<void()>&& completionHandler)
 {
     deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, ExemptAllowlistedCookies::No, WTF::move(completionHandler));
 }

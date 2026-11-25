@@ -56,9 +56,9 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    const String& url() const LIFETIME_BOUND;
-    String key() const;
-    String id() const;
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND;
+    RefPtr<StringImpl> key() const;
+    RefPtr<StringImpl> id() const;
     uint64_t index() const;
     bool sameDocument() const;
     JSC::JSValue getState(JSDOMGlobalObject&) const;
@@ -78,7 +78,7 @@ private:
         ReferrerPolicy referrerPolicy { ReferrerPolicy::Default };
     };
 
-    NavigationHistoryEntry(Navigation&, const DocumentState&, Ref<HistoryItem>&&, String urlString, RefPtr<SerializedScriptValue>&& state = { }, WTF::UUID = WTF::UUID::createVersion4());
+    NavigationHistoryEntry(Navigation&, const DocumentState&, Ref<HistoryItem>&&, RefPtr<StringImpl> urlString, RefPtr<SerializedScriptValue>&& state = { }, WTF::UUID = WTF::UUID::createVersion4());
 
     // ActiveDOMObject.
     NODELETE bool virtualHasPendingActivity() const final;
@@ -91,7 +91,7 @@ private:
     void eventListenersDidChange() final;
 
     WeakPtr<Navigation, WeakPtrImplWithEventTargetData> m_navigation;
-    const String m_urlString;
+    const RefPtr<StringImpl> m_urlString;
     const WTF::UUID m_id;
     RefPtr<SerializedScriptValue> m_state;
     const Ref<HistoryItem> m_associatedHistoryItem;

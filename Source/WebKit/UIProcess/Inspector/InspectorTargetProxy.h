@@ -37,15 +37,15 @@ public:
     virtual ~InspectorTargetProxy() = default;
 
     Inspector::InspectorTargetType type() const final { return m_type; }
-    String identifier() const final { return m_identifier; }
+    RefPtr<StringImpl> identifier() const final { return m_identifier; }
 
     virtual void didCommitProvisionalTarget() = 0;
 
 protected:
-    InspectorTargetProxy(const String& targetId, Inspector::InspectorTargetType);
+    InspectorTargetProxy(StringImpl* targetId, Inspector::InspectorTargetType);
 
 private:
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     Inspector::InspectorTargetType m_type;
 };
 

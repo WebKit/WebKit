@@ -36,8 +36,8 @@ using namespace WebCore;
 struct _WebKitAudioSinkPrivate {
     GRefPtr<GstElement> interAudioSink;
     GRefPtr<GstPad> mixerPad;
-    String role;
-    String deviceId;
+    RefPtr<StringImpl> role;
+    RefPtr<StringImpl> deviceId;
     GRefPtr<GstDevice> device;
 };
 
@@ -100,7 +100,7 @@ static GRefPtr<GstPad> webKitAudioSinkRegisterProducer(WebKitAudioSink* sink)
     std::optional<int> forcedSampleRate;
     std::optional<GstClockTime> periodTime;
 #if ENABLE(WEB_AUDIO)
-    if (priv->role == "webaudio"_s) {
+    if (equal(priv->role, "webaudio"_s)) {
         // Match the interaudiosrc period-time with the size of the buffers pushed by the WebAudio
         // source, otherwise the inter elements accumulate the audio in chunks that don't match the
         // reads, producing underruns and clicks. The period is applied when the interaudiosrc
@@ -206,7 +206,7 @@ static void webkit_audio_sink_class_init(WebKitAudioSinkClass* klass)
     eklass->change_state = GST_DEBUG_FUNCPTR(webKitAudioSinkChangeState);
 }
 
-GstElement* /* (transfer floating) */ webkitAudioSinkNew(const String& role, const String& deviceId, const GRefPtr<GstDevice>& device)
+GstElement* /* (transfer floating) */ webkitAudioSinkNew(StringImpl* role, StringImpl* deviceId, const GRefPtr<GstDevice>& device)
 {
     auto element = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_AUDIO_SINK, nullptr));
     auto audioSink = WEBKIT_AUDIO_SINK(element);
@@ -223,7 +223,7 @@ GstElement* /* (transfer floating) */ webkitAudioSinkNew(const String& role, con
     return element;
 }
 
-bool webkitAudioSinkSetDevice(GstElement* element, const String& deviceId, const GRefPtr<GstDevice>& device)
+bool webkitAudioSinkSetDevice(GstElement* element, StringImpl* deviceId, const GRefPtr<GstDevice>& device)
 {
     if (!WEBKIT_IS_AUDIO_SINK(element))
         return false;
@@ -232,7 +232,7 @@ bool webkitAudioSinkSetDevice(GstElement* element, const String& deviceId, const
     auto* priv = sink->priv;
 
     // No-op if already on the requested device.
-    if (priv->deviceId == deviceId)
+    if (equal(priv->deviceId, deviceId))
         return true;
 
     auto& mixer = GStreamerAudioMixer::singleton();

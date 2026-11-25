@@ -36,22 +36,22 @@ namespace WebKit {
 
 class CoreIPCLocale {
 public:
-    static bool isValidIdentifier(const String&);
+    static bool isValidIdentifier(StringImpl*);
 
     CoreIPCLocale(NSLocale *);
-    CoreIPCLocale(String&&);
+    CoreIPCLocale(RefPtr<StringImpl>&&);
 
     RetainPtr<id> toID() const;
 
-    String identfier() const
+    RefPtr<StringImpl> identfier() const
     {
         return m_identifier;
     }
 
 private:
-    static std::optional<String> canonicalLocaleStringReplacement(const String& identifier);
+    static std::optional<RefPtr<StringImpl>> canonicalLocaleStringReplacement(StringImpl* identifier);
 
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
 };
 
 }

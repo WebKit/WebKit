@@ -39,7 +39,7 @@ class RegistrableDomain;
 
 namespace WebKit {
 
-void setNWParametersApplicationIdentifiers(nw_parameters_t, const UTF8CString& sourceApplicationBundleIdentifier, std::optional<audit_token_t>, const String& attributedBundleIdentifier);
+void setNWParametersApplicationIdentifiers(nw_parameters_t, const UTF8CString& sourceApplicationBundleIdentifier, std::optional<audit_token_t>, StringImpl* attributedBundleIdentifier);
 enum class IsRTC : bool { No, Yes };
 void setNWParametersTrackerOptions(nw_parameters_t, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker, IsRTC = IsRTC::Yes);
 bool isKnownTracker(const WebCore::RegistrableDomain&);

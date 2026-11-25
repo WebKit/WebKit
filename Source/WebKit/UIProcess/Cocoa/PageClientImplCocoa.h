@@ -100,7 +100,7 @@ public:
     bool scrollingUpdatesDisabledForTesting() final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void didInsertAttachment(API::Attachment&, const String& source) final;
+    void didInsertAttachment(API::Attachment&, StringImpl* source) final;
     void didRemoveAttachment(API::Attachment&) final;
     void didInvalidateDataForAttachment(API::Attachment&) final;
     NSFileWrapper *allocFileWrapperInstance() const final;
@@ -110,7 +110,7 @@ public:
     std::optional<WebCore::DictationContext> addDictationAlternatives(PlatformTextAlternatives *) final;
     void replaceDictationAlternatives(PlatformTextAlternatives *, WebCore::DictationContext) final;
     void removeDictationAlternatives(WebCore::DictationContext) final;
-    Vector<String> dictationAlternatives(WebCore::DictationContext) final;
+    Vector<RefPtr<StringImpl>> dictationAlternatives(WebCore::DictationContext) final;
     PlatformTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) final;
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -190,7 +190,7 @@ public:
 
     void processDidUpdateThrottleState() final;
 
-    void translateAccessibilityAnnouncementStrings(Vector<String>&&, String&&, CompletionHandler<void(Vector<String>&&)>&&) final;
+    void translateAccessibilityAnnouncementStrings(Vector<RefPtr<StringImpl>>&&, RefPtr<StringImpl>&&, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&&) final;
 
 private:
 #if ENABLE(FULLSCREEN_API)

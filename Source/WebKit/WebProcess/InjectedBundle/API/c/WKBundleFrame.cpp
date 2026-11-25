@@ -234,7 +234,7 @@ void WKBundleFrameSetAccessibleName(WKBundleFrameRef frameRef, WKStringRef acces
     if (!frameRef)
         return;
 
-    protect(WebKit::toImpl(frameRef))->setAccessibleName(AtomString { WebKit::toWTFString(accessibleNameRef) });
+    protect(WebKit::toImpl(frameRef))->setAccessibleName(AtomStringImpl::add(WebKit::toWTFString(accessibleNameRef)).get());
 }
 
 WKDataRef WKBundleFrameCopyWebArchive(WKBundleFrameRef frameRef)

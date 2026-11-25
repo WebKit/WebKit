@@ -95,9 +95,9 @@ static std::expected<CoreAudioCaptureUnit::StoredAudioUnit, OSStatus> createAudi
     CFStringRef name = nullptr;
     PAL::AudioComponentCopyName(ioComponent, &name);
     if (name) {
-        String ioUnitName = name;
+        RefPtr<StringImpl> ioUnitName = StringImpl::create(name);
         CFRelease(name);
-        RELEASE_LOG(WebRTC, "CoreAudioCaptureInternalUnit created \"%" PRIVATE_LOG_STRING "\" component", ioUnitName.utf8());
+        RELEASE_LOG(WebRTC, "CoreAudioCaptureInternalUnit created \"%" PRIVATE_LOG_STRING "\" component", utf8(ioUnitName));
     }
 #endif
 
@@ -311,7 +311,7 @@ void CoreAudioCaptureUnit::captureDeviceChanged()
 #if PLATFORM(MAC)
     reconfigureAudioUnit();
 #else
-    AVAudioSessionCaptureDeviceManager::singleton().setPreferredMicrophoneID(isCapturingWithDefaultMicrophone() ? String { } : persistentID());
+    AVAudioSessionCaptureDeviceManager::singleton().setPreferredMicrophoneID(isCapturingWithDefaultMicrophone() ? nullptr : persistentID());
 #endif
     updateVoiceActivityDetection();
 }
@@ -968,7 +968,7 @@ void CoreAudioCaptureUnit::handleMuteStatusChangedNotification(bool isMuting)
         m_muteStatusChangedCallback(isMuting);
 }
 
-void CoreAudioCaptureUnit::willChangeCaptureDeviceTo(const String& persistentId)
+void CoreAudioCaptureUnit::willChangeCaptureDeviceTo(StringImpl* persistentId)
 {
 #if PLATFORM(MAC)
     if (m_shouldUseVPIO) {

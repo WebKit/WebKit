@@ -35,7 +35,7 @@ public:
 
     const CSS::FontFamilyName& fontFamilyName() const LIFETIME_BOUND { return m_fontFamilyName; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     NODELETE bool equals(const CSSFontFamilyNameValue&) const;
     NODELETE IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
     NODELETE bool addDerivedHash(Hasher&) const;

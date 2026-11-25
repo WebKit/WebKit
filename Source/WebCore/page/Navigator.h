@@ -49,14 +49,14 @@ public:
     static Ref<Navigator> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
     virtual ~Navigator();
 
-    String appVersion() const;
+    RefPtr<StringImpl> appVersion() const;
     DOMPluginArray& plugins();
     DOMMimeTypeArray& mimeTypes();
     bool pdfViewerEnabled();
     bool cookieEnabled() const;
     bool javaEnabled() const { return false; }
-    const String& userAgent() const final;
-    String platform() const final;
+    const RefPtr<StringImpl>& userAgent() const final;
+    RefPtr<StringImpl> platform() const final;
     void userAgentChanged();
     bool onLine() const final;
     bool canShare(Document&, const ShareData&);
@@ -90,8 +90,8 @@ private:
     mutable bool m_pdfViewerEnabled { false };
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
-    mutable String m_userAgent;
-    mutable String m_platform;
+    mutable RefPtr<StringImpl> m_userAgent;
+    mutable RefPtr<StringImpl> m_platform;
     mutable RefPtr<NavigatorUAData> m_navigatorUAData;
     const RefPtr<GPU> m_gpuForWebGPU;
 };

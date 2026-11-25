@@ -59,7 +59,7 @@ Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const
 }
 
 #if PLATFORM(COCOA)
-Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef accessControl, AuthenticatorAttachment attachment)
+Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, RefPtr<StringImpl>&& name, SecAccessControlRef accessControl, AuthenticatorAttachment attachment)
 {
     return adoptRef(*new AuthenticatorAssertionResponse(WTF::move(rawId), WTF::move(userHandle), WTF::move(name), accessControl, attachment));
 }
@@ -79,7 +79,7 @@ AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(Ref<ArrayBuffer>&
 }
 
 #if PLATFORM(COCOA)
-AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef accessControl, AuthenticatorAttachment attachment)
+AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, RefPtr<StringImpl>&& name, SecAccessControlRef accessControl, AuthenticatorAttachment attachment)
     : AuthenticatorResponse(WTF::move(rawId), attachment)
     , m_userHandle(WTF::move(userHandle))
     , m_name(WTF::move(name))

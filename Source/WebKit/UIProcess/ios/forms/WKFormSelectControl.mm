@@ -47,11 +47,11 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
 {
     CGFloat adjustedSize = initialFontSize;
     for (auto& item : borrow(items)) {
-        if (item.text.isEmpty())
+        if (isEmpty(item.text))
             continue;
 
         CGFloat actualFontSize = initialFontSize;
-        [item.text.createNSString() _legacy_sizeWithFont:font minFontSize:minimumOptionFontSize actualFontSize:&actualFontSize forWidth:textWidth lineBreakMode:NSLineBreakByWordWrapping];
+        [createNSString(item.text) _legacy_sizeWithFont:font minFontSize:minimumOptionFontSize actualFontSize:&actualFontSize forWidth:textWidth lineBreakMode:NSLineBreakByWordWrapping];
 
         if (actualFontSize > 0 && actualFontSize < adjustedSize)
             adjustedSize = actualFontSize;

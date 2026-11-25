@@ -34,12 +34,12 @@
 namespace WebCore {
 using namespace JSC;
 
-String convertEnumerationToString(TestStandaloneEnumeration enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestStandaloneEnumeration enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 3> values {
-        MAKE_STATIC_STRING_IMPL("enumValue1"),
-        MAKE_STATIC_STRING_IMPL("enumValue2"),
-        MAKE_STATIC_STRING_IMPL("enum-value3"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 3> values {
+        "enumValue1"_si,
+        "enumValue2"_si,
+        "enum-value3"_si,
     };
     static_assert(static_cast<size_t>(TestStandaloneEnumeration::EnumValue1) == 0, "TestStandaloneEnumeration::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestStandaloneEnumeration::EnumValue2) == 1, "TestStandaloneEnumeration::EnumValue2 is not 1 as expected");
@@ -53,7 +53,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestStandaloneEnumeration en
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestStandaloneEnumeration> parseEnumerationFromString<TestStandaloneEnumeration>(const String& stringValue)
+template<> std::optional<TestStandaloneEnumeration> parseEnumerationFromString<TestStandaloneEnumeration>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestStandaloneEnumeration>>({
         { "enum-value3"_s, TestStandaloneEnumeration::EnumValue3 },

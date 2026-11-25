@@ -140,7 +140,7 @@ std::optional<Ref<NativeImage>> NativeImage::create(RefPtr<ShareableBitmap>&& bi
 
 RefPtr<NativeImage> NativeImage::create(FragmentedSharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-    RefPtr decoder = ImageDecoder::create(data, { }, alphaOption, gammaAndColorProfileOption);
+    RefPtr decoder = ImageDecoder::create(data, nullptr, alphaOption, gammaAndColorProfileOption);
     if (!decoder)
         return nullptr;
 

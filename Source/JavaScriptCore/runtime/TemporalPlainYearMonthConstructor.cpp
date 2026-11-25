@@ -75,7 +75,7 @@ TemporalPlainYearMonthConstructor::TemporalPlainYearMonthConstructor(VM& vm, Str
 
 void TemporalPlainYearMonthConstructor::finishCreation(VM& vm, TemporalPlainYearMonthPrototype* plainYearMonthPrototype)
 {
-    Base::finishCreation(vm, 2, "PlainYearMonth"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 2, "PlainYearMonth"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, plainYearMonthPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
@@ -93,13 +93,13 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
     double isoYear = callFrame->argument(0).toIntegerWithTruncation(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (!std::isfinite(isoYear)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth year property must be finite"_s);
+        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth year property must be finite"_si);
 
     // Step 4: Let m be ? ToIntegerWithTruncation(isoMonth).
     double isoMonth = callFrame->argument(1).toIntegerWithTruncation(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (!std::isfinite(isoMonth)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth month property must be finite"_s);
+        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth month property must be finite"_si);
 
     // Step 5: If calendar is undefined, set calendar to "iso8601".
     // Step 6: If calendar is not a String, throw TypeError.
@@ -113,7 +113,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
         RETURN_IF_EXCEPTION(scope, { });
         auto canonicalized = isBuiltinCalendar(rawCalendarId);
         if (!canonicalized) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "invalid calendar ID"_s);
+            return throwVMRangeError(globalObject, scope, "invalid calendar ID"_si);
         calId = *canonicalized;
     }
 
@@ -125,19 +125,19 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
         referenceDay = refArg.toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(referenceDay)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth reference day must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth reference day must be finite"_si);
     }
 
     // Step 9: If IsValidISODate(y, m, ref) is false, throw RangeError.
     if (!ISO8601::isValidISODate(isoYear, isoMonth, referenceDay)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth: not a valid ISO date"_s);
+        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth: not a valid ISO date"_si);
 
     if (!ISO8601::isYearWithinLimits(isoYear)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "year is out of range"_s);
+        return throwVMRangeError(globalObject, scope, "year is out of range"_si);
     if (!isInBounds<int32_t>(isoMonth)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "month is out of range"_s);
+        return throwVMRangeError(globalObject, scope, "month is out of range"_si);
     if (!isInBounds<int32_t>(referenceDay)) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "reference day is out of range"_s);
+        return throwVMRangeError(globalObject, scope, "reference day is out of range"_si);
 
     // Step 10: Let isoDate be CreateISODateRecord(y, m, ref).
     // Step 11: Return ? CreateTemporalYearMonth(isoDate, calendar, NewTarget).

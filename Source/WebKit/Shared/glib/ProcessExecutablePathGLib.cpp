@@ -33,7 +33,7 @@
 namespace WebKit {
 
 #if ENABLE(DEVELOPER_MODE)
-static String getExecutablePath()
+static RefPtr<StringImpl> getExecutablePath()
 {
     auto executablePath = FileSystem::currentExecutablePath();
     if (!executablePath.isNull())
@@ -42,19 +42,19 @@ static String getExecutablePath()
 }
 #endif
 
-static String findWebKitProcess(const ASCIILiteral processName)
+static RefPtr<StringImpl> findWebKitProcess(const ASCIILiteral processName)
 {
 #if ENABLE(DEVELOPER_MODE)
     static const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
     if (execDirectory) {
-        String processPath = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(execDirectory), processName);
+        RefPtr<StringImpl> processPath = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(execDirectory), processName);
         if (FileSystem::fileExists(processPath))
             return processPath;
     }
 
-    static String executablePath = getExecutablePath();
-    if (!executablePath.isNull()) {
-        String processPath = FileSystem::pathByAppendingComponent(executablePath, processName);
+    static RefPtr<StringImpl> executablePath = getExecutablePath();
+    if (executablePath) {
+        RefPtr<StringImpl> processPath = FileSystem::pathByAppendingComponent(executablePath, processName);
         if (FileSystem::fileExists(processPath))
             return processPath;
     }
@@ -63,7 +63,7 @@ static String findWebKitProcess(const ASCIILiteral processName)
     return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(PKGLIBEXECDIR), processName);
 }
 
-String executablePathOfWebProcess()
+RefPtr<StringImpl> executablePathOfWebProcess()
 {
 #if PLATFORM(WPE)
     return findWebKitProcess("WPEWebProcess"_s);
@@ -72,7 +72,7 @@ String executablePathOfWebProcess()
 #endif
 }
 
-String executablePathOfNetworkProcess()
+RefPtr<StringImpl> executablePathOfNetworkProcess()
 {
 #if PLATFORM(WPE)
     return findWebKitProcess("WPENetworkProcess"_s);
@@ -82,7 +82,7 @@ String executablePathOfNetworkProcess()
 }
 
 #if ENABLE(GPU_PROCESS)
-String executablePathOfGPUProcess()
+RefPtr<StringImpl> executablePathOfGPUProcess()
 {
 #if PLATFORM(WPE)
     return findWebKitProcess("WPEGPUProcess"_s);

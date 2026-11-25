@@ -37,7 +37,7 @@ public:
     virtual ~MediaStreamConstraintsValidationClient() = default;
 
     virtual void constraintsAreValid() = 0;
-    virtual void constraintsInvalid(const String& constraintName) = 0;
+    virtual void constraintsInvalid(StringImpl* constraintName) = 0;
 };
 
 } // namespace WebCore

@@ -78,13 +78,13 @@ static void handleVideoReceiverSwapEndpointsMessage(xpc_object_t message)
 }
 #endif
 
-void handleXPCEndpointMessage(xpc_object_t message, const String& messageName)
+void handleXPCEndpointMessage(xpc_object_t message, StringImpl* messageName)
 {
     ASSERT_UNUSED(messageName, messageName);
     RELEASE_ASSERT(xpc_get_type(message) == XPC_TYPE_DICTIONARY);
 
 #if HAVE(LSDATABASECONTEXT)
-    if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
+    if (equal(messageName, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName)) {
         handleLaunchServiceDatabaseMessage(message);
         return;
     }

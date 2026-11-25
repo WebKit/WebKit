@@ -36,8 +36,8 @@ struct CharacterClass;
 struct ClassSet;
 enum class CompileMode : uint8_t;
 
-JS_EXPORT_PRIVATE std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String, WTF::String);
-JS_EXPORT_PRIVATE std::optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String, CompileMode);
+JS_EXPORT_PRIVATE std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(RefPtr<StringImpl>, RefPtr<StringImpl>);
+JS_EXPORT_PRIVATE std::optional<BuiltInCharacterClassID> unicodeMatchProperty(RefPtr<StringImpl>, CompileMode);
 
 std::unique_ptr<CharacterClass> createUnicodeCharacterClassFor(BuiltInCharacterClassID);
 NODELETE JS_EXPORT_PRIVATE bool characterClassMayContainStrings(BuiltInCharacterClassID unicodeClassID);

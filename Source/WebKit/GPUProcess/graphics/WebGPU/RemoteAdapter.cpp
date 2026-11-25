@@ -67,24 +67,24 @@ void RemoteAdapter::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteAdapter::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier, CompletionHandler<void(Vector<::WebGPU::FeatureName>&&, WebGPU::SupportedLimits&&, String&&)>&& callback)
+void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUDeviceIdentifier identifier, WebGPUQueueIdentifier queueIdentifier, CompletionHandler<void(Vector<::WebGPU::FeatureName>&&, WebGPU::SupportedLimits&&, RefPtr<StringImpl>&&)>&& callback)
 {
     Ref objectHeap = m_objectHeap;
     auto convertedDescriptor = deserialize(objectHeap, descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback({ }, { }, "Device descriptor is invalid"_s);
+        callback({ }, { }, "Device descriptor is invalid"_si);
         return;
     }
 
     // A reply without a device has the error, and empty features and limits.
-    protect(m_backing)->requestDevice(*convertedDescriptor, [callback = WTF::move(callback), objectHeap = WTF::move(objectHeap), streamConnection = protect(m_streamConnection), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protect(m_gpu)](std::expected<Ref<::WebGPU::Device>, String>&& result) mutable {
+    protect(m_backing)->requestDevice(*convertedDescriptor, [callback = WTF::move(callback), objectHeap = WTF::move(objectHeap), streamConnection = protect(m_streamConnection), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protect(m_gpu)](std::expected<Ref<::WebGPU::Device>, RefPtr<StringImpl>>&& result) mutable {
         if (!result) {
             callback({ }, { }, WTF::move(result.error()));
             return;
         }
         if (!gpuConnectionToWebProcess) {
-            callback({ }, { }, "Web Process connection is closed"_s);
+            callback({ }, { }, "Web Process connection is closed"_si);
             return;
         }
 

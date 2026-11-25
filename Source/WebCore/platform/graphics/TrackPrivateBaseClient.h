@@ -43,8 +43,8 @@ public:
     enum Type { Text, Audio, Video };
     virtual constexpr Type type() const = 0;
     virtual void idChanged(TrackID) = 0;
-    virtual void labelChanged(const String&) = 0;
-    virtual void languageChanged(const String&) = 0;
+    virtual void labelChanged(StringImpl*) = 0;
+    virtual void languageChanged(StringImpl*) = 0;
     virtual void willRemove() = 0;
 };
 

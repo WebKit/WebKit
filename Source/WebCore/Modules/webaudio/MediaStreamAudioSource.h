@@ -53,8 +53,8 @@ public:
     const RealtimeMediaSourceCapabilities& capabilities() final;
     NODELETE const RealtimeMediaSourceSettings& settings() final;
 
-    const String& deviceId() const LIFETIME_BOUND { return m_deviceId; }
-    void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
+    const RefPtr<StringImpl>& deviceId() const LIFETIME_BOUND { return m_deviceId; }
+    void setDeviceId(StringImpl* deviceId) { m_deviceId = deviceId; }
 
     void consumeAudio(AudioBus&, size_t numberOfFrames);
     void setNumberOfChannels(unsigned);
@@ -64,7 +64,7 @@ private:
 
     bool isCaptureSource() const final { return false; }
 
-    String m_deviceId;
+    RefPtr<StringImpl> m_deviceId;
     RealtimeMediaSourceSettings m_currentSettings;
     std::unique_ptr<PlatformAudioData> m_audioBuffer;
 #if USE(AVFOUNDATION) || USE(GSTREAMER)

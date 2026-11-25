@@ -90,9 +90,9 @@ public:
     void endOcclusionQuery() final;
     void endPass();
     void executeBundles(std::span<const Ref<WebGPU::RenderBundle>>) final;
-    void insertDebugMarker(String&& markerLabel) final;
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel) final;
     void popDebugGroup() final;
-    void pushDebugGroup(String&& groupLabel) final;
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel) final;
     // std::nullopt dynamic offsets are not validated against the bind group layout.
     void setBindGroup(uint32_t groupIndex, const BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets);
     void setBlendConstant(const WebGPU::Color&) final;
@@ -113,7 +113,7 @@ public:
     void drawIndexedIndirect(WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
     void end() final { endPass(); }
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     Device& device() const { return m_device; }
 
@@ -132,7 +132,7 @@ public:
     void deferRenderCommandEncoder(MTLRenderPassDescriptor* descriptor) { m_deferredDescriptor = descriptor; }
     id<MTLRenderCommandEncoder> materializeRenderCommandEncoder() const;
     void makeInvalid(NSString* = nil);
-    void makeInvalid(String&& error) final;
+    void makeInvalid(RefPtr<StringImpl>&& error) final;
     CommandEncoder& parentEncoder() const { return m_parentEncoder; }
 
     bool setCommandEncoder(const BindGroupEntryUsageData::Resource&);

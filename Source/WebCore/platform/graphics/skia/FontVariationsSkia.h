@@ -39,7 +39,7 @@ struct FontVariationDefaults {
         return std::clamp(value, minimumValue, maximumValue);
     }
 
-    String axisName;
+    RefPtr<StringImpl> axisName;
     float defaultValue;
     float minimumValue;
     float maximumValue;

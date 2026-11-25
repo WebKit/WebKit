@@ -283,7 +283,7 @@ void webkit_user_content_manager_remove_all_scripts(WebKitUserContentManager* ma
  * Since: 2.40
  */
 struct _WebKitScriptMessageReply {
-    _WebKitScriptMessageReply(WTF::Function<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+    _WebKitScriptMessageReply(WTF::Function<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& completionHandler)
         : completionHandler(WTF::move(completionHandler))
         , referenceCount(1)
     {
@@ -293,12 +293,12 @@ struct _WebKitScriptMessageReply {
     {
         if (auto result = JavaScriptEvaluationResult::extract(API::SerializedScriptValue::deserializationContext().get(), jscValueGetJSValue(value)))
             return completionHandler(WTF::move(*result));
-        completionHandler(makeUnexpected(String()));
+        completionHandler(makeUnexpected(nullptr));
     }
 
     void sendErrorMessage(const char* errorMessage)
     {
-        completionHandler(makeUnexpected(String::fromUTF8(errorMessage)));
+        completionHandler(makeUnexpected(StringImpl::fromUTF8(errorMessage)));
     }
 
     ~_WebKitScriptMessageReply()
@@ -309,7 +309,7 @@ struct _WebKitScriptMessageReply {
         }
     }
 
-    WTF::CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)> completionHandler;
+    WTF::CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)> completionHandler;
     int referenceCount;
 };
 
@@ -354,7 +354,7 @@ void webkit_script_message_reply_unref(WebKitScriptMessageReply* scriptMessageRe
     }
 }
 
-WebKitScriptMessageReply* webKitScriptMessageReplyCreate(WTF::Function<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+WebKitScriptMessageReply* webKitScriptMessageReplyCreate(WTF::Function<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     WebKitScriptMessageReply* scriptMessageReply = static_cast<WebKitScriptMessageReply*>(fastMalloc(sizeof(WebKitScriptMessageReply)));
     new (scriptMessageReply) WebKitScriptMessageReply(WTF::move(completionHandler));
@@ -410,11 +410,11 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
+    void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, JavaScriptEvaluationResult&& jsMessage, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& completionHandler) override
     {
         if (!m_manager) {
             g_critical("Script message %s received after the WebKitUserContentManager has been destroyed. You must unregister the message handler!", g_quark_to_string(m_handlerName));
-            return completionHandler(makeUnexpected(String()));
+            return completionHandler(makeUnexpected(nullptr));
         }
 
         if (m_supportsAsyncReply) {
@@ -434,7 +434,7 @@ public:
         g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
 #endif
-        completionHandler(makeUnexpected(String()));
+        completionHandler(makeUnexpected(nullptr));
     }
 
     virtual ~ScriptMessageClientGtk() { }
@@ -452,7 +452,7 @@ gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserC
     g_return_val_if_fail(name, FALSE);
 
     Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomString::fromUTF8(name), API::ContentWorld::pageContentWorldSingleton());
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomStringImpl::fromUTF8(name), API::ContentWorld::pageContentWorldSingleton());
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -460,7 +460,7 @@ void webkit_user_content_manager_unregister_script_message_handler(WebKitUserCon
 {
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
     g_return_if_fail(name);
-    manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), API::ContentWorld::pageContentWorldSingleton());
+    manager->priv->userContentController->removeUserMessageHandlerForName(StringImpl::fromUTF8(name), API::ContentWorld::pageContentWorldSingleton());
 }
 #else
 gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserContentManager* manager, const char* name, const char* worldName)
@@ -469,7 +469,7 @@ gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserC
     g_return_val_if_fail(name, FALSE);
 
     Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomString::fromUTF8(name), worldName ? webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)) : API::ContentWorld::pageContentWorldSingleton());
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomStringImpl::fromUTF8(name), worldName ? webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)) : API::ContentWorld::pageContentWorldSingleton());
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -478,7 +478,7 @@ void webkit_user_content_manager_unregister_script_message_handler(WebKitUserCon
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
     g_return_if_fail(name);
 
-    manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), worldName ? webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)) : API::ContentWorld::pageContentWorldSingleton());
+    manager->priv->userContentController->removeUserMessageHandlerForName(StringImpl::fromUTF8(name), worldName ? webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)) : API::ContentWorld::pageContentWorldSingleton());
 }
 #endif
 
@@ -513,7 +513,7 @@ gboolean webkit_user_content_manager_register_script_message_handler_with_reply(
     g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager), FALSE);
     g_return_val_if_fail(name, FALSE);
 
-    auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, true), AtomString::fromUTF8(name), worldName ? webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)) : API::ContentWorld::pageContentWorldSingleton());
+    auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, true), AtomStringImpl::fromUTF8(name), worldName ? webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)) : API::ContentWorld::pageContentWorldSingleton());
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -525,7 +525,7 @@ gboolean webkit_user_content_manager_register_script_message_handler_in_world(We
     g_return_val_if_fail(worldName, FALSE);
 
     Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomString::fromUTF8(name), webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)));
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomStringImpl::fromUTF8(name), webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)));
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -535,7 +535,7 @@ void webkit_user_content_manager_unregister_script_message_handler_in_world(WebK
     g_return_if_fail(name);
     g_return_if_fail(worldName);
 
-    manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)));
+    manager->priv->userContentController->removeUserMessageHandlerForName(StringImpl::fromUTF8(name), webkitContentWorld(UTF8CStringView::unsafeFromUTF8(worldName)));
 }
 #endif
 
@@ -598,7 +598,7 @@ void webkit_user_content_manager_remove_filter_by_id(WebKitUserContentManager* m
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
     g_return_if_fail(filterId);
 #if ENABLE(CONTENT_EXTENSIONS)
-    manager->priv->userContentController->removeContentRuleList(String::fromUTF8(filterId));
+    manager->priv->userContentController->removeContentRuleList(StringImpl::fromUTF8(filterId));
 #endif
 }
 

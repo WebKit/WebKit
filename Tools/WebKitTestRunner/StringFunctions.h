@@ -44,7 +44,7 @@
 namespace WTR {
 
 WKRetainPtr<WKStringRef> toWKString(JSContextRef, JSValueRef);
-WTF::String toWTFString(JSContextRef, JSValueRef);
+RefPtr<StringImpl> toWTFString(JSContextRef, JSValueRef);
 
 inline WKRetainPtr<WKStringRef> toWK(JSStringRef string)
 {
@@ -71,9 +71,9 @@ inline WKRetainPtr<WKStringRef> toWK(const WTF::UTF8CString& string)
     return adoptWK(WKStringCreateWithUTF8CString(string.legacyCStringPointer()));
 }
 
-inline WKRetainPtr<WKStringRef> toWK(const WTF::String& string)
+inline WKRetainPtr<WKStringRef> toWK(StringImpl* string)
 {
-    return toWK(string.utf8());
+    return toWK(utf8(string));
 }
 
 inline WKRetainPtr<WKURLRef> toWKURL(const WTF::UTF8CString& string)
@@ -81,14 +81,14 @@ inline WKRetainPtr<WKURLRef> toWKURL(const WTF::UTF8CString& string)
     return adoptWK(WKURLCreateWithUTF8CString(string.legacyCStringPointer()));
 }
 
-inline WKRetainPtr<WKURLRef> toWKURL(const WTF::String& string)
+inline WKRetainPtr<WKURLRef> toWKURL(StringImpl* string)
 {
-    return toWKURL(string.utf8());
+    return toWKURL(utf8(string));
 }
 
-inline WKRetainPtr<WKURLRef> toWKURL(WKURLRef baseURL, const WTF::String& relativeURL)
+inline WKRetainPtr<WKURLRef> toWKURL(WKURLRef baseURL, StringImpl* relativeURL)
 {
-    return adoptWK(WKURLCreateWithBaseURL(baseURL, relativeURL.utf8().legacyCStringPointer()));
+    return adoptWK(WKURLCreateWithBaseURL(baseURL, utf8(relativeURL).legacyCStringPointer()));
 }
 
 inline RefPtr<OpaqueJSString> toJS(WKStringRef string)
@@ -114,7 +114,7 @@ inline std::string toSTD(const WKRetainPtr<WKStringRef>& string)
     return toSTD(string.get());
 }
 
-inline WTF::String toWTFString(WKStringRef string)
+inline RefPtr<StringImpl> toWTFString(WKStringRef string)
 {
     if (!string)
         return nullString();
@@ -122,28 +122,28 @@ inline WTF::String toWTFString(WKStringRef string)
     auto buffer = makeUniqueWithoutFastMallocCheck<char[]>(bufferSize);
     size_t stringLength = WKStringGetUTF8CStringNonStrict(string, buffer.get(), bufferSize);
     if (!stringLength)
-        return "(null)"_s;
-    return WTF::String::fromUTF8WithLatin1Fallback({ buffer.get(), stringLength - 1 });
+        return "(null)"_si;
+    return StringImpl::fromUTF8WithLatin1Fallback({ buffer.get(), stringLength - 1 });
 }
     
-inline WTF::String toWTFString(const WKRetainPtr<WKStringRef>& string)
+inline RefPtr<StringImpl> toWTFString(const WKRetainPtr<WKStringRef>& string)
 {
     return toWTFString(string.get());
 }
 
-inline WTF::String toWTFString(JSStringRef string)
+inline RefPtr<StringImpl> toWTFString(JSStringRef string)
 {
     return toWTFString(toWK(string));
 }
 
-inline WTF::String toWTFString(const RefPtr<OpaqueJSString>& string)
+inline RefPtr<StringImpl> toWTFString(const RefPtr<OpaqueJSString>& string)
 {
     return toWTFString(string.get());
 }
 
-inline WTF::String toWTFString(const std::string& string)
+inline RefPtr<StringImpl> toWTFString(const std::string& string)
 {
-    return WTF::String::fromUTF8(string.c_str());
+    return StringImpl::fromUTF8(string.c_str());
 }
 
 inline WKRetainPtr<WKStringRef> toWKString(JSContextRef context, JSValueRef value)
@@ -151,7 +151,7 @@ inline WKRetainPtr<WKStringRef> toWKString(JSContextRef context, JSValueRef valu
     return toWK(createJSString(context, value).get());
 }
 
-inline WTF::String toWTFString(JSContextRef context, JSValueRef value)
+inline RefPtr<StringImpl> toWTFString(JSContextRef context, JSValueRef value)
 {
     // FIXME: Could make this efficient by using the WTFString inside OpaqueJSString if we wanted to.
     return toWTFString(createJSString(context, value));
@@ -178,7 +178,7 @@ inline Vector<StringType> split(const StringType& string, char delimiter)
     return result;
 }
 
-inline WTF::String stripTrailingSpacesAddNewline(const WTF::String& string)
+inline RefPtr<StringImpl> stripTrailingSpacesAddNewline(StringImpl* string)
 {
     StringBuilder builder;
     for (auto line : StringView(string).splitAllowingEmptyEntries('\n')) {
@@ -189,10 +189,10 @@ inline WTF::String stripTrailingSpacesAddNewline(const WTF::String& string)
     return builder.toString();
 }
 
-inline WTF::String addLeadingSpaceStripTrailingSpacesAddNewline(const WTF::String& string)
+inline RefPtr<StringImpl> addLeadingSpaceStripTrailingSpacesAddNewline(StringImpl* string)
 {
     auto result = stripTrailingSpacesAddNewline(string);
-    return (result.isEmpty() || result.startsWith('\n')) ? result : makeString(' ', result);
+    return (isEmpty(result) || startsWith(result, '\n')) ? result : makeString(' ', result);
 }
 
 } // namespace WTR

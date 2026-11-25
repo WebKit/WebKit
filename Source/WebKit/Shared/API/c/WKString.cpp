@@ -41,12 +41,12 @@ WKTypeID WKStringGetTypeID()
 
 WKStringRef WKStringCreateWithUTF8CString(const char* string)
 {
-    return WebKit::toAPILeakingRef(API::String::create(WTF::String::fromUTF8(string)));
+    return WebKit::toAPILeakingRef(API::String::create(StringImpl::fromUTF8(string)));
 }
 
 WKStringRef WKStringCreateWithUTF8CStringWithLength(const char* string, size_t stringLength)
 {
-    return WebKit::toAPILeakingRef(API::String::create(WTF::String::fromUTF8(unsafeMakeSpan(string, stringLength))));
+    return WebKit::toAPILeakingRef(API::String::create(StringImpl::fromUTF8(unsafeMakeSpan(string, stringLength))));
 }
 
 bool WKStringIsEmpty(WKStringRef stringRef)
@@ -122,14 +122,14 @@ bool WKStringIsEqualToUTF8CString(WKStringRef aRef, const char* b)
 {
     // FIXME: Should we add a fast path that avoids memory allocation when the string is all ASCII?
     // FIXME: We can do even the general case more efficiently if we write a function in StringView that understands UTF-8 C strings.
-    return WebKit::toImpl(aRef)->stringView() == WTF::String::fromUTF8(b);
+    return WebKit::toImpl(aRef)->stringView() == StringImpl::fromUTF8(b);
 }
 
 bool WKStringIsEqualToUTF8CStringIgnoringCase(WKStringRef aRef, const char* b)
 {
     // FIXME: Should we add a fast path that avoids memory allocation when the string is all ASCII?
     // FIXME: We can do even the general case more efficiently if we write a function in StringView that understands UTF-8 C strings.
-    return equalIgnoringASCIICase(WebKit::toImpl(aRef)->stringView(), WTF::String::fromUTF8(b));
+    return equalIgnoringASCIICase(WebKit::toImpl(aRef)->stringView(), StringImpl::fromUTF8(b));
 }
 
 WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)

@@ -105,7 +105,7 @@ GStreamerCapturerObserver::~GStreamerCapturerObserver() = default;
 void GStreamerCapturer::setDevice(std::optional<GStreamerCaptureDevice>&& device)
 {
     if (device)
-        GST_DEBUG_OBJECT(m_pipeline.get(), "Setting new capture device: %s", device->label().utf8());
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Setting new capture device: %s", utf8(device->label()));
     else
         GST_DEBUG_OBJECT(m_pipeline.get(), "Clearing capture device");
     tearDown(true);
@@ -150,14 +150,14 @@ GstElement* GStreamerCapturer::createSource() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     if (m_pipewireDevice) {
         m_src = makeElement("pipewiresrc");
         ASSERT(m_src);
-        auto path = AtomString::number(m_pipewireDevice->objectId());
+        auto path = AtomStringImpl::number(m_pipewireDevice->objectId());
         // FIXME: The path property is deprecated in favor of target-object but the portal doesn't expose this object.
-        g_object_set(m_src.get(), "path", path.string().ascii().data(), "fd", m_pipewireDevice->fd(), nullptr);
+        g_object_set(m_src.get(), "path", ascii(path).data(), "fd", m_pipewireDevice->fd(), nullptr);
     } else {
         ASSERT(m_device);
         ASSERT(gst_device_has_classes(m_device->device(), GST_ELEMENT_FACTORY_KLASS_SRC));
         auto sourceName = makeString(unsafeSpan(name()), hex(reinterpret_cast<uintptr_t>(this)));
-        m_src = gst_device_create_element(m_device->device(), sourceName.ascii().data());
+        m_src = gst_device_create_element(m_device->device(), ascii(sourceName).data());
         ASSERT(m_src);
         g_object_set(m_src.get(), "do-timestamp", TRUE, nullptr);
     }
@@ -261,7 +261,7 @@ GstElement* GStreamerCapturer::makeElement(ASCIILiteral factoryName)
 {
     auto* element = makeGStreamerElement(factoryName);
     auto elementName = makeString(unsafeSpan(name()), "_capturer_"_s, unsafeSpan(GST_OBJECT_NAME(element)), '_', hex(reinterpret_cast<uintptr_t>(this)));
-    gst_object_set_name(GST_OBJECT(element), elementName.ascii().data());
+    gst_object_set_name(GST_OBJECT(element), ascii(elementName).data());
 
     return element;
 }

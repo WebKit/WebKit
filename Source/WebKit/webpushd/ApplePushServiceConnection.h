@@ -35,30 +35,30 @@ namespace WebPushD {
 
 class ApplePushServiceConnection final : public PushServiceConnection {
 public:
-    static Ref<ApplePushServiceConnection> create(const String& incomingPushServiceName)
+    static Ref<ApplePushServiceConnection> create(StringImpl* incomingPushServiceName)
     {
         return adoptRef(*new ApplePushServiceConnection(incomingPushServiceName));
     }
 
     ~ApplePushServiceConnection();
 
-    void subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) final;
-    void unsubscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&&) final;
+    void subscribe(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) final;
+    void unsubscribe(StringImpl* topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&&) final;
 
-    Vector<String> enabledTopics() override;
-    Vector<String> ignoredTopics() override;
-    Vector<String> opportunisticTopics() override;
-    Vector<String> nonWakingTopics() override;
+    Vector<RefPtr<StringImpl>> enabledTopics() override;
+    Vector<RefPtr<StringImpl>> ignoredTopics() override;
+    Vector<RefPtr<StringImpl>> opportunisticTopics() override;
+    Vector<RefPtr<StringImpl>> nonWakingTopics() override;
 
-    void setEnabledTopics(Vector<String>&&) override;
-    void setIgnoredTopics(Vector<String>&&) override;
-    void setOpportunisticTopics(Vector<String>&&) override;
-    void setNonWakingTopics(Vector<String>&&) override;
+    void setEnabledTopics(Vector<RefPtr<StringImpl>>&&) override;
+    void setIgnoredTopics(Vector<RefPtr<StringImpl>>&&) override;
+    void setOpportunisticTopics(Vector<RefPtr<StringImpl>>&&) override;
+    void setNonWakingTopics(Vector<RefPtr<StringImpl>>&&) override;
 
     void setTopicLists(TopicLists&&) override;
 
 private:
-    ApplePushServiceConnection(const String& incomingPushServiceName);
+    ApplePushServiceConnection(StringImpl* incomingPushServiceName);
 
     const RetainPtr<APSConnection> m_connection;
     const RetainPtr<id<APSConnectionDelegate>> m_delegate;

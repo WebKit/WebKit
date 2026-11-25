@@ -43,9 +43,9 @@ public:
         setNodeInputs(protect(*this->sourceAlpha()), NodeVector { *this->sourceGraphic() });
     }
 
-    void addNamedNode(const AtomString& name, Ref<FilterEffect>&& node) override
+    void addNamedNode(AtomStringImpl* name, Ref<FilterEffect>&& node) override
     {
-        if (name.isEmpty()) {
+        if (isEmpty(name)) {
             m_lastNode = WTF::move(node);
             return;
         }
@@ -68,9 +68,9 @@ private:
         return m_sourceNodes.get(FilterEffect::sourceAlphaName());
     }
 
-    RefPtr<FilterEffect> getNamedNode(const AtomString& name) const override
+    RefPtr<FilterEffect> getNamedNode(AtomStringImpl* name) const override
     {
-        if (!name.isEmpty()) {
+        if (!isEmpty(name)) {
             if (RefPtr sourceNode = m_sourceNodes.get(name))
                 return sourceNode;
 
@@ -85,7 +85,7 @@ private:
         return sourceGraphic();
     }
 
-    HashMap<AtomString, Ref<FilterEffect>> m_sourceNodes;
+    HashMap<RefPtr<AtomStringImpl>, Ref<FilterEffect>> m_sourceNodes;
 };
 
 } // namespace WebCore

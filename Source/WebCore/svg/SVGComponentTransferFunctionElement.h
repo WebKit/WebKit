@@ -35,28 +35,28 @@ template<>
 struct SVGPropertyTraits<ComponentTransferType> {
     static unsigned highestEnumValue() { return std::to_underlying(ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA); }
 
-    static String toString(ComponentTransferType type)
+    static RefPtr<StringImpl> toString(ComponentTransferType type)
     {
         switch (type) {
         case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN:
             return emptyString();
         case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY:
-            return "identity"_s;
+            return "identity"_si;
         case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE:
-            return "table"_s;
+            return "table"_si;
         case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE:
-            return "discrete"_s;
+            return "discrete"_si;
         case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR:
-            return "linear"_s;
+            return "linear"_si;
         case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA:
-            return "gamma"_s;
+            return "gamma"_si;
         }
 
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 
-    static ComponentTransferType fromString(SVGElement&, const String& value)
+    static ComponentTransferType fromString(SVGElement&, StringImpl* value)
     {
         static constexpr SortedArrayMap map { WTF::toArray<std::pair<PackedASCIILiteral<uint64_t>, ComponentTransferType>>({
             { "discrete"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE },
@@ -97,7 +97,7 @@ public:
 protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool rendererIsNeeded(const Style::ComputedStyle&) override { return false; }

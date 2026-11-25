@@ -66,7 +66,7 @@ AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setPinProtocols(StdS
     return *this;
 }
 
-AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setExtensions(Vector<String>&& extensions)
+AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setExtensions(Vector<RefPtr<StringImpl>>&& extensions)
 {
     m_extensions = WTF::move(extensions);
     return *this;

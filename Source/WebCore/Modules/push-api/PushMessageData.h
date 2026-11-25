@@ -47,7 +47,7 @@ public:
     Ref<Blob> blob(ScriptExecutionContext&);
     ExceptionOr<Ref<JSC::Uint8Array>> bytes();
     ExceptionOr<JSC::JSValue> json(JSDOMGlobalObject&);
-    String text();
+    RefPtr<StringImpl> text();
 
 private:
     explicit PushMessageData(Vector<uint8_t>&&);

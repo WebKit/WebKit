@@ -34,13 +34,13 @@
 
 namespace JSC {
 
-String sourceTaintedOriginToString(SourceTaintedOrigin taintedness)
+RefPtr<StringImpl> sourceTaintedOriginToString(SourceTaintedOrigin taintedness)
 {
     switch (taintedness) {
-    case SourceTaintedOrigin::Untainted: return "Untainted"_s;
-    case SourceTaintedOrigin::KnownTainted: return "KnownTainted"_s;
-    case SourceTaintedOrigin::IndirectlyTainted: return "IndirectlyTainted"_s;
-    case SourceTaintedOrigin::IndirectlyTaintedByHistory: return "IndirectlyTaintedByHistory"_s;
+    case SourceTaintedOrigin::Untainted: return "Untainted"_si;
+    case SourceTaintedOrigin::KnownTainted: return "KnownTainted"_si;
+    case SourceTaintedOrigin::IndirectlyTainted: return "IndirectlyTainted"_si;
+    case SourceTaintedOrigin::IndirectlyTaintedByHistory: return "IndirectlyTaintedByHistory"_si;
     default: break;
     }
     RELEASE_ASSERT_NOT_REACHED();

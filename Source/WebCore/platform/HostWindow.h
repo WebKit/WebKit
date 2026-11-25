@@ -66,7 +66,7 @@ public:
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
 #if PLATFORM(IOS_FAMILY)
-    virtual void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const = 0;
+    virtual void relayAccessibilityNotification(RefPtr<StringImpl>&&, RetainPtr<NSData>&&) const = 0;
 #endif
 
     // Method for retrieving the native client of the page.

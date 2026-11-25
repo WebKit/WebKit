@@ -83,9 +83,9 @@ public:
 };
 
 template<>
-class WebExtensionSQLiteDatatypeTraits<String> {
+class WebExtensionSQLiteDatatypeTraits<RefPtr<StringImpl>> {
 public:
-    static String fetch(sqlite3_stmt* statement, int index)
+    static RefPtr<StringImpl> fetch(sqlite3_stmt* statement, int index)
     {
         if (sqlite3_column_type(statement, index) == SQLITE_NULL)
             return emptyString();
@@ -93,12 +93,12 @@ public:
         return WebCore::sqliteColumnText(statement, index);
     }
 
-    static inline int bind(sqlite3_stmt* statement, int index, const String& value)
+    static inline int bind(sqlite3_stmt* statement, int index, StringImpl* value)
     {
         if (!value)
             return sqlite3_bind_null(statement, index);
 
-        return WebCore::sqliteBindText(statement, index, value.utf8());
+        return WebCore::sqliteBindText(statement, index, utf8(value));
     }
 };
 

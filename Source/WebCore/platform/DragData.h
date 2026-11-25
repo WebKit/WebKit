@@ -70,7 +70,7 @@ enum class DragApplicationFlags : uint8_t {
 class PasteboardContext;
 
 #if PLATFORM(WIN)
-using DragDataMap = HashMap<unsigned, Vector<String>>;
+using DragDataMap = HashMap<unsigned, Vector<RefPtr<StringImpl>>>;
 #endif
 
 class DragData {
@@ -83,12 +83,12 @@ public:
 
     WEBCORE_EXPORT DragData(
 #if PLATFORM(COCOA)
-        const String& dragStorageName,
+        StringImpl* dragStorageName,
 #endif
         const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), std::optional<PageIdentifier> pageID = std::nullopt);
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, const Vector<String>&, Vector<String>&& /* promisedFileMIMETypes */, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), std::optional<PageIdentifier> pageID = std::nullopt);
+    WEBCORE_EXPORT DragData(StringImpl* dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, const Vector<RefPtr<StringImpl>>&, Vector<RefPtr<StringImpl>>&& /* promisedFileMIMETypes */, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), std::optional<PageIdentifier> pageID = std::nullopt);
 #endif
     // This constructor should used only by WebKit2 IPC because DragData
     // is initialized by the decoder and not in the constructor.
@@ -96,7 +96,7 @@ public:
 #if PLATFORM(WIN)
     WEBCORE_EXPORT DragData(const DragDataMap&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> = { }, std::optional<PageIdentifier> pageID = std::nullopt);
     const DragDataMap& dragDataMap();
-    void getDragFileDescriptorData(int& size, String& pathname);
+    void getDragFileDescriptorData(int& size, RefPtr<StringImpl>& pathname);
     void getDragFileContentData(int size, void* dataBlob);
 #endif
     const IntPoint& clientPosition() const LIFETIME_BOUND { return m_clientPosition; }
@@ -112,22 +112,22 @@ public:
     bool containsURL(FilenameConversionPolicy = ConvertFilenames) const;
     bool containsPlainText() const;
     bool containsCompatibleContent(DraggingPurpose = DraggingPurpose::ForEditing) const;
-    String asURL(FilenameConversionPolicy = ConvertFilenames, String* title = nullptr) const;
-    String asPlainText() const;
-    Vector<String> asFilenames() const;
+    RefPtr<StringImpl> asURL(FilenameConversionPolicy = ConvertFilenames, RefPtr<StringImpl>* title = nullptr) const;
+    RefPtr<StringImpl> asPlainText() const;
+    Vector<RefPtr<StringImpl>> asFilenames() const;
     Color asColor() const;
     bool canSmartReplace() const;
     bool containsColor() const;
     bool containsFiles() const;
     unsigned numberOfFiles() const;
     OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
-    void setFileNames(Vector<String>& fileNames) { m_fileNames = WTF::move(fileNames); }
-    const Vector<String>& fileNames() const LIFETIME_BOUND { return m_fileNames; }
-    void setPromisedFileMIMETypes(Vector<String>&& types) { m_promisedFileMIMETypes = WTF::move(types); }
-    const Vector<String>& promisedFileMIMETypes() const LIFETIME_BOUND { return m_promisedFileMIMETypes; }
+    void setFileNames(Vector<RefPtr<StringImpl>>& fileNames) { m_fileNames = WTF::move(fileNames); }
+    const Vector<RefPtr<StringImpl>>& fileNames() const LIFETIME_BOUND { return m_fileNames; }
+    void setPromisedFileMIMETypes(Vector<RefPtr<StringImpl>>&& types) { m_promisedFileMIMETypes = WTF::move(types); }
+    const Vector<RefPtr<StringImpl>>& promisedFileMIMETypes() const LIFETIME_BOUND { return m_promisedFileMIMETypes; }
     void disallowFileAccess();
 #if PLATFORM(COCOA)
-    const String& pasteboardName() const LIFETIME_BOUND { return m_pasteboardName; }
+    const RefPtr<StringImpl>& pasteboardName() const LIFETIME_BOUND { return m_pasteboardName; }
     bool containsURLTypeIdentifier() const;
     NODELETE bool containsPromise() const;
 #endif
@@ -148,12 +148,12 @@ private:
 #endif
     OptionSet<DragOperation> m_draggingSourceOperationMask;
     OptionSet<DragApplicationFlags> m_applicationFlags;
-    Vector<String> m_fileNames;
-    Vector<String> m_promisedFileMIMETypes;
+    Vector<RefPtr<StringImpl>> m_fileNames;
+    Vector<RefPtr<StringImpl>> m_promisedFileMIMETypes;
     OptionSet<DragDestinationAction> m_dragDestinationActionMask;
     std::optional<PageIdentifier> m_pageID;
 #if PLATFORM(COCOA)
-    String m_pasteboardName;
+    RefPtr<StringImpl> m_pasteboardName;
 #endif
 #if PLATFORM(WIN)
     DragDataMap m_dragDataMap;

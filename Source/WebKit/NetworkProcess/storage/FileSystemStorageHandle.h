@@ -57,10 +57,10 @@ class FileSystemStorageHandle final : public RefCounted<FileSystemStorageHandle>
     WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageHandle);
 public:
     enum class Type : uint8_t { File, Directory, Any };
-    static RefPtr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);
+    static RefPtr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name);
 
-    const String& path() const LIFETIME_BOUND { return m_path; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& path() const LIFETIME_BOUND { return m_path; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     Type type() const { return m_type; }
     uint64_t allocatedUnusedCapacity();
     std::optional<WebCore::ClientOrigin> origin() const;
@@ -70,13 +70,13 @@ public:
 
     void close();
     bool isSameEntry(WebCore::FileSystemHandleIdentifier);
-    std::optional<FileSystemStorageError> move(WebCore::FileSystemHandleIdentifier, const String& newName);
-    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getFileHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
-    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getDirectoryHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
-    std::optional<FileSystemStorageError> removeEntry(const String& name, bool deleteRecursively);
-    std::expected<std::optional<Vector<String>>, FileSystemStorageError> resolve(WebCore::FileSystemHandleIdentifier);
-    std::expected<Vector<String>, FileSystemStorageError> getHandleNames();
-    std::expected<WebCore::FileSystemHandleInfo, FileSystemStorageError> getHandle(IPC::Connection::UniqueID, String&& name);
+    std::optional<FileSystemStorageError> move(WebCore::FileSystemHandleIdentifier, StringImpl* newName);
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getFileHandle(IPC::Connection::UniqueID, RefPtr<StringImpl>&& name, bool createIfNecessary);
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> getDirectoryHandle(IPC::Connection::UniqueID, RefPtr<StringImpl>&& name, bool createIfNecessary);
+    std::optional<FileSystemStorageError> removeEntry(StringImpl* name, bool deleteRecursively);
+    std::expected<std::optional<Vector<RefPtr<StringImpl>>>, FileSystemStorageError> resolve(WebCore::FileSystemHandleIdentifier);
+    std::expected<Vector<RefPtr<StringImpl>>, FileSystemStorageError> getHandleNames();
+    std::expected<WebCore::FileSystemHandleInfo, FileSystemStorageError> getHandle(IPC::Connection::UniqueID, RefPtr<StringImpl>&& name);
     void requestNewCapacityForSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
     std::expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
@@ -89,23 +89,23 @@ public:
     Vector<WebCore::FileSystemWritableFileStreamIdentifier> writables() const;
 
 private:
-    FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
-    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
+    FileSystemStorageHandle(FileSystemStorageManager&, Type, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name);
+    std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, RefPtr<StringImpl>&& name, bool createIfNecessary);
     NODELETE bool isActiveSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
     std::optional<FileSystemStorageError> executeCommandForWritableInternal(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t>, bool hasDataError);
     std::optional<size_t> computeCommandSpace(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t>, bool hasDataError);
 
     WeakPtr<FileSystemStorageManager> m_manager;
     Type m_type;
-    String m_path;
-    String m_name;
+    RefPtr<StringImpl> m_path;
+    RefPtr<StringImpl> m_name;
     struct SyncAccessHandleInfo {
         WebCore::FileSystemSyncAccessHandleIdentifier identifier;
         uint64_t capacity { 0 };
     };
     struct FileHandleWithPath {
         FileSystem::FileHandle handle;
-        String path;
+        RefPtr<StringImpl> path;
     };
 
     std::optional<SyncAccessHandleInfo> m_activeSyncAccessHandle;

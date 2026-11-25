@@ -139,7 +139,7 @@ void DebuggerPauseCoordinator::notifySessionChanged(bool isPaused)
     if (m_isDestroying)
         return;
 
-    Vector<String> stoppingTargetIDs;
+    Vector<RefPtr<StringImpl>> stoppingTargetIDs;
     if (isPaused) {
         for (auto& [processID, frameID] : m_stoppingFrames)
             stoppingTargetIDs.append(FrameInspectorTarget::toTargetID(frameID, processID));

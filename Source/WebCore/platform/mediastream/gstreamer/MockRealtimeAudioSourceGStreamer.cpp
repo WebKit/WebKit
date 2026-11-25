@@ -55,7 +55,7 @@ const HashSet<MockRealtimeAudioSource*>& MockRealtimeAudioSourceGStreamer::allMo
     return allMockRealtimeAudioSourcesStorage();
 }
 
-CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>)
+CaptureSourceOrError MockRealtimeAudioSource::create(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -73,12 +73,12 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
     return CaptureSourceOrError(WTF::move(source));
 }
 
-Ref<MockRealtimeAudioSource> MockRealtimeAudioSourceGStreamer::createForMockAudioCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts)
+Ref<MockRealtimeAudioSource> MockRealtimeAudioSourceGStreamer::createForMockAudioCapturer(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&& hashSalts)
 {
     return adoptRef(*new MockRealtimeAudioSourceGStreamer(WTF::move(deviceID), WTF::move(name), WTF::move(hashSalts)));
 }
 
-MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts)
+MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer(RefPtr<StringImpl>&& deviceID, RefPtr<AtomStringImpl>&& name, MediaDeviceHashSalts&& hashSalts)
     : MockRealtimeAudioSource(WTF::move(deviceID), WTF::move(name), WTF::move(hashSalts), { })
 {
     ensureGStreamerInitialized();
@@ -136,7 +136,7 @@ void MockRealtimeAudioSourceGStreamer::captureEnded()
 
 void MockRealtimeAudioSourceGStreamer::captureDeviceUpdated(const GStreamerCaptureDevice& device)
 {
-    setName(AtomString { device.label() });
+    setName(AtomStringImpl::add(device.label()));
     setPersistentId(device.persistentId());
 
     configurationChanged();

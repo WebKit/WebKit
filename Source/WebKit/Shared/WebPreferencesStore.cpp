@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-typedef HashMap<String, bool> BoolOverridesMap;
+typedef HashMap<RefPtr<StringImpl>, bool> BoolOverridesMap;
 
 NODELETE static BoolOverridesMap& boolTestRunnerOverridesMap()
 {
@@ -41,7 +41,7 @@ NODELETE static BoolOverridesMap& boolTestRunnerOverridesMap()
     return map;
 }
 
-void WebPreferencesStore::overrideBoolValueForKey(const String& key, bool value)
+void WebPreferencesStore::overrideBoolValueForKey(StringImpl* key, bool value)
 {
     boolTestRunnerOverridesMap().set(key, value);
 }
@@ -52,7 +52,7 @@ void WebPreferencesStore::removeTestRunnerOverrides()
 }
 
 template<typename MappedType>
-NODELETE SUPPRESS_NODELETE static MappedType valueForKey(const WebPreferencesStore::ValueMap& values, const WebPreferencesStore::ValueMap& overriddenDefaults, const String& key)
+NODELETE SUPPRESS_NODELETE static MappedType valueForKey(const WebPreferencesStore::ValueMap& values, const WebPreferencesStore::ValueMap& overriddenDefaults, StringImpl* key)
 {
     auto valuesIt = values.find(key);
     if (valuesIt != values.end() && std::holds_alternative<MappedType>(valuesIt->value))
@@ -71,32 +71,43 @@ NODELETE SUPPRESS_NODELETE static MappedType valueForKey(const WebPreferencesSto
 }
 
 template<typename MappedType>
-static bool setValueForKey(WebPreferencesStore::ValueMap& map, const WebPreferencesStore::ValueMap& overriddenDefaults, const String& key, const MappedType& value)
+static bool valuesAreEqual(const MappedType& a, const MappedType& b)
+{
+    return a == b;
+}
+
+static bool valuesAreEqual(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b)
+{
+    return equal(a, b);
+}
+
+template<typename MappedType>
+static bool setValueForKey(WebPreferencesStore::ValueMap& map, const WebPreferencesStore::ValueMap& overriddenDefaults, StringImpl* key, const MappedType& value)
 {
     MappedType existingValue = valueForKey<MappedType>(map, overriddenDefaults, key);
-    if (existingValue == value)
+    if (valuesAreEqual(existingValue, value))
         return false;
 
     map.set(key, WebPreferencesStore::Value(value));
     return true;
 }
 
-bool WebPreferencesStore::setStringValueForKey(const String& key, const String& value)
+bool WebPreferencesStore::setStringValueForKey(StringImpl* key, StringImpl* value)
 {
-    return setValueForKey<String>(m_values, m_overriddenDefaults, key, value);
+    return setValueForKey<RefPtr<StringImpl>>(m_values, m_overriddenDefaults, key, value);
 }
 
-String WebPreferencesStore::getStringValueForKey(const String& key) const
+RefPtr<StringImpl> WebPreferencesStore::getStringValueForKey(StringImpl* key) const
 {
-    return valueForKey<String>(m_values, m_overriddenDefaults, key);
+    return valueForKey<RefPtr<StringImpl>>(m_values, m_overriddenDefaults, key);
 }
 
-bool WebPreferencesStore::setBoolValueForKey(const String& key, bool value)
+bool WebPreferencesStore::setBoolValueForKey(StringImpl* key, bool value)
 {
     return setValueForKey<bool>(m_values, m_overriddenDefaults, key, value);
 }
 
-SUPPRESS_NODELETE bool WebPreferencesStore::getBoolValueForKey(const String& key) const
+SUPPRESS_NODELETE bool WebPreferencesStore::getBoolValueForKey(StringImpl* key) const
 {
     // FIXME: Extend overriding to other key types used from TestRunner.
     auto it = boolTestRunnerOverridesMap().find(key);
@@ -106,62 +117,71 @@ SUPPRESS_NODELETE bool WebPreferencesStore::getBoolValueForKey(const String& key
     return valueForKey<bool>(m_values, m_overriddenDefaults, key);
 }
 
-bool WebPreferencesStore::setUInt32ValueForKey(const String& key, uint32_t value) 
+bool WebPreferencesStore::setUInt32ValueForKey(StringImpl* key, uint32_t value) 
 {
     return setValueForKey<uint32_t>(m_values, m_overriddenDefaults, key, value);
 }
 
-uint32_t WebPreferencesStore::getUInt32ValueForKey(const String& key) const
+uint32_t WebPreferencesStore::getUInt32ValueForKey(StringImpl* key) const
 {
     return valueForKey<uint32_t>(m_values, m_overriddenDefaults, key);
 }
 
-bool WebPreferencesStore::setDoubleValueForKey(const String& key, double value) 
+bool WebPreferencesStore::setDoubleValueForKey(StringImpl* key, double value) 
 {
     return setValueForKey<double>(m_values, m_overriddenDefaults, key, value);
 }
 
-double WebPreferencesStore::getDoubleValueForKey(const String& key) const
+double WebPreferencesStore::getDoubleValueForKey(StringImpl* key) const
 {
     return valueForKey<double>(m_values, m_overriddenDefaults, key);
 }
 
 // Overridden Defaults
 
-void WebPreferencesStore::setOverrideDefaultsStringValueForKey(const String& key, String value)
+void WebPreferencesStore::setOverrideDefaultsStringValueForKey(StringImpl* key, RefPtr<StringImpl> value)
 {
     m_overriddenDefaults.set(key, Value(value));
 }
 
-void WebPreferencesStore::setOverrideDefaultsBoolValueForKey(const String& key, bool value)
+void WebPreferencesStore::setOverrideDefaultsBoolValueForKey(StringImpl* key, bool value)
 {
     m_overriddenDefaults.set(key, Value(value));
 }
 
-void WebPreferencesStore::setOverrideDefaultsUInt32ValueForKey(const String& key, uint32_t value)
+void WebPreferencesStore::setOverrideDefaultsUInt32ValueForKey(StringImpl* key, uint32_t value)
 {
     m_overriddenDefaults.set(key, Value(value));
 }
 
-void WebPreferencesStore::setOverrideDefaultsDoubleValueForKey(const String& key, double value)
+void WebPreferencesStore::setOverrideDefaultsDoubleValueForKey(StringImpl* key, double value)
 {
     m_overriddenDefaults.set(key, Value(value));
 }
 
-void WebPreferencesStore::deleteKey(const String& key)
+void WebPreferencesStore::deleteKey(StringImpl* key)
 {
     m_values.remove(key);
     m_overriddenDefaults.remove(key);
 }
 
 #if !RELEASE_LOG_DISABLED
+static bool valuesAreEqual(const WebPreferencesStore::Value& a, const WebPreferencesStore::Value& b)
+{
+    if (a.index() != b.index())
+        return false;
+    return WTF::switchOn(a, [&]<typename T>(const T& value) {
+        return valuesAreEqual(value, std::get<T>(b));
+    });
+}
+
 static void appendValueToStringBuilder(StringBuilder& builder, const WebPreferencesStore::Value& value)
 {
     WTF::switchOn(value,
         [&](bool b) { builder.append(b ? "true"_s : "false"_s); },
         [&](uint32_t u) { builder.append(u); },
         [&](double d) { builder.append(d); },
-        [&](const String& s) { builder.append('"', s, '"'); }
+        [&](const RefPtr<StringImpl>& s) { builder.append('"', s, '"'); }
     );
 }
 #endif
@@ -176,9 +196,9 @@ void WebPreferencesStore::logNonDefaultValues() const
 
     StringBuilder nonDefaultPrefs;
 
-    auto checkEntry = [&](const String& key, const Value& value) {
+    auto checkEntry = [&](StringImpl* key, const Value& value) {
         auto it = defaultsMap.find(key);
-        if (it != defaultsMap.end() && it->value == value)
+        if (it != defaultsMap.end() && valuesAreEqual(it->value, value))
             return;
         if (!nonDefaultPrefs.isEmpty())
             nonDefaultPrefs.append(", "_s);
@@ -195,7 +215,7 @@ void WebPreferencesStore::logNonDefaultValues() const
         checkEntry(key, value);
 
     if (!nonDefaultPrefs.isEmpty())
-        RELEASE_LOG(Loading, "WebPreferencesStore: non-default preferences: %" PUBLIC_LOG_STRING, nonDefaultPrefs.toString().utf8());
+        RELEASE_LOG(Loading, "WebPreferencesStore: non-default preferences: %" PUBLIC_LOG_STRING, utf8(nonDefaultPrefs.toString()));
 #endif
 }
 

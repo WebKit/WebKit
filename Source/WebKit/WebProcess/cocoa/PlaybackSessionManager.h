@@ -101,7 +101,7 @@ private:
     void legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex) final;
     void audioMediaSelectionIndexChanged(uint64_t) final;
     void legibleMediaSelectionIndexChanged(uint64_t) final;
-    void externalPlaybackChanged(bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) final;
+    void externalPlaybackChanged(bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, StringImpl* localizedDeviceName, StringImpl* localizedRouteName) final;
     void wirelessVideoPlaybackDisabledChanged(bool) final;
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
@@ -186,7 +186,7 @@ private:
     void legibleMediaSelectionOptionsChanged(WebCore::MediaPlayerClientIdentifier, const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex);
     void audioMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier, uint64_t selectedIndex);
     void legibleMediaSelectionIndexChanged(WebCore::MediaPlayerClientIdentifier, uint64_t selectedIndex);
-    void externalPlaybackChanged(WebCore::MediaPlayerClientIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName, String localizedRouteName);
+    void externalPlaybackChanged(WebCore::MediaPlayerClientIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, RefPtr<StringImpl> localizedDeviceName, RefPtr<StringImpl> localizedRouteName);
     void wirelessVideoPlaybackDisabledChanged(WebCore::MediaPlayerClientIdentifier, bool);
     void mutedChanged(WebCore::MediaPlayerClientIdentifier, bool);
     void volumeChanged(WebCore::MediaPlayerClientIdentifier, double);
@@ -233,7 +233,7 @@ private:
 #endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    void setSpatialTrackingLabel(WebCore::MediaPlayerClientIdentifier, const String&);
+    void setSpatialTrackingLabel(WebCore::MediaPlayerClientIdentifier, StringImpl*);
 #endif
 
     void forEachModel(NOESCAPE const Function<void(WebCore::PlaybackSessionModel&)>&);

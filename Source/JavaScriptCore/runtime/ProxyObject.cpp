@@ -96,7 +96,7 @@ JSObject* ProxyObject::getHandlerTrap(JSGlobalObject* globalObject, JSObject* ha
 
         callData = JSC::getCallDataInline(value);
         if (callData.type == CallData::Type::None) {
-            throwTypeError(globalObject, scope, makeString('\'', String(ident.impl()), "' property of a Proxy's handler should be callable"_s));
+            throwTypeError(globalObject, scope, makeString('\'', RefPtr<StringImpl>(ident.impl()), "' property of a Proxy's handler should be callable"_s));
             return nullptr;
         }
 

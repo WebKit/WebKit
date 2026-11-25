@@ -135,45 +135,45 @@ void GStreamerCaptureDeviceManager::devicesChanged()
     m_devices.clear();
 }
 
-void GStreamerCaptureDeviceManager::deviceWillBeRemoved(const String& persistentId)
+void GStreamerCaptureDeviceManager::deviceWillBeRemoved(StringImpl* persistentId)
 {
     stopCapturing(persistentId);
 }
 
 void GStreamerCaptureDeviceManager::registerCapturer(RefPtr<GStreamerCapturer>&& capturer)
 {
-    GST_DEBUG("Registering capturer for device %s", capturer->devicePersistentId().ascii().data());
+    GST_DEBUG("Registering capturer for device %s", ascii(capturer->devicePersistentId()).data());
     m_capturers.append(WTF::move(capturer));
 }
 
 void GStreamerCaptureDeviceManager::unregisterCapturer(const GStreamerCapturer& capturer)
 {
-    GST_DEBUG("Un-registering capturer for device %s", capturer.devicePersistentId().ascii().data());
+    GST_DEBUG("Un-registering capturer for device %s", ascii(capturer.devicePersistentId()).data());
     m_capturers.removeAllMatching([&](auto& item) -> bool {
         return item.get() == &capturer;
     });
 }
 
-void GStreamerCaptureDeviceManager::stopCapturing(const String& persistentId)
+void GStreamerCaptureDeviceManager::stopCapturing(StringImpl* persistentId)
 {
-    GST_DEBUG("Stopping capturer for device with persistent ID: %s", persistentId.ascii().data());
+    GST_DEBUG("Stopping capturer for device with persistent ID: %s", ascii(persistentId).data());
     for (auto& capturer : m_capturers) {
-        GST_DEBUG("Checking capturer with device persistent ID: %s", capturer->devicePersistentId().ascii().data());
-        if (capturer->devicePersistentId() != persistentId)
+        GST_DEBUG("Checking capturer with device persistent ID: %s", ascii(capturer->devicePersistentId()).data());
+        if (!equal(capturer->devicePersistentId(), persistentId))
             continue;
         capturer->stopDevice(false);
         break;
     }
 }
 
-std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
+std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(StringImpl* deviceID)
 {
     captureDevices();
 
-    GST_DEBUG("Looking for device with UID %s", deviceID.ascii().data());
+    GST_DEBUG("Looking for device with UID %s", ascii(deviceID).data());
     for (auto& device : m_gstreamerDevices) {
-        GST_LOG("Checking device with persistent ID: %s", device.persistentId().ascii().data());
-        if (device.persistentId() == deviceID)
+        GST_LOG("Checking device with persistent ID: %s", ascii(device.persistentId()).data());
+        if (equal(device.persistentId(), deviceID))
             return device;
     }
     GST_WARNING("Device not found");
@@ -225,7 +225,7 @@ std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::captureDevi
     auto label = makeString(isDefault ? "default: "_s : ""_s, deviceName.span());
 
     auto nodeName = gstStructureGetString(properties.get(), "node.name"_s);
-    String identifier;
+    RefPtr<StringImpl> identifier;
     if (nodeName.isEmpty())
         identifier = makeString(deviceName.span(), ", "_s, deviceClass.span(), ", "_s, deviceClass.span());
     else
@@ -233,11 +233,11 @@ std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::captureDevi
 
     bool isMock = false;
     if (auto persistentId = gstStructureGetString(properties.get(), "persistent-id"_s)) {
-        identifier = persistentId.span();
+        identifier = StringImpl::fromUTF8(persistentId.span());
         isMock = true;
     }
 
-    auto gstCaptureDevice = GStreamerCaptureDevice(WTF::move(device), identifier, type, deviceName.span());
+    auto gstCaptureDevice = GStreamerCaptureDevice(WTF::move(device), identifier, type, StringImpl::create(deviceName.span()).get());
     gstCaptureDevice.setEnabled(true);
     gstCaptureDevice.setIsDefault(isDefault);
     gstCaptureDevice.setIsMockDevice(isMock);
@@ -250,7 +250,7 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
     if (!gstCaptureDevice)
         return;
 
-    GST_INFO_OBJECT(gstCaptureDevice->device(), "Registering %sdefault device %s", gstCaptureDevice->isDefault() ? "" : "non-", gstCaptureDevice->label().utf8());
+    GST_INFO_OBJECT(gstCaptureDevice->device(), "Registering %sdefault device %s", gstCaptureDevice->isDefault() ? "" : "non-", utf8(gstCaptureDevice->label()));
     const auto type = gstCaptureDevice->type();
     m_gstreamerDevices.append(WTF::move(*gstCaptureDevice));
     if (type == CaptureDevice::DeviceType::Speaker)
@@ -266,10 +266,10 @@ void GStreamerCaptureDeviceManager::removeDevice(GRefPtr<GstDevice>&& gstDevice)
             return false;
 
         m_devices.removeFirstMatching([&](auto& device) -> bool {
-            return device.persistentId() == captureDevice.persistentId();
+            return equal(device.persistentId(), captureDevice.persistentId());
         });
         m_speakerDevices.removeFirstMatching([&](auto& device) -> bool {
-            return device.persistentId() == captureDevice.persistentId();
+            return equal(device.persistentId(), captureDevice.persistentId());
         });
         return true;
     });
@@ -286,7 +286,7 @@ void GStreamerCaptureDeviceManager::updateDevice(GRefPtr<GstDevice>&& gstDevice,
             return;
 
         for (auto& capturer : m_capturers) {
-            if (capturer->devicePersistentId() == oldGstCaptureDevice->persistentId()) {
+            if (equal(capturer->devicePersistentId(), oldGstCaptureDevice->persistentId())) {
                 m_defaultCapturer = capturer;
                 break;
             }

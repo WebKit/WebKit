@@ -117,7 +117,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
             }
         },
         [&] (CharKey charKey) {
-            characters = charKey.createNSString();
+            characters = createNSString(charKey);
             unmodifiedCharacters = characters;
         }
     );
@@ -163,7 +163,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
 
-void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
+void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, StringImpl* keySequence)
 {
     auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
 
@@ -172,7 +172,7 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     // This command is more similar to the 'insertText:' editing command, except
     // that this emits keyup/keydown/keypress events for roughly each character.
     // This API should move more towards that direction in the future.
-    RetainPtr text = keySequence.createNSString();
+    RetainPtr text = createNSString(keySequence);
     BOOL isTabKey = [text isEqualToString:@"\t"];
 
     [text enumerateSubstringsInRange:NSMakeRange(0, text.get().length) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {

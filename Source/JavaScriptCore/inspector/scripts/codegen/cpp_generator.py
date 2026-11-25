@@ -41,7 +41,7 @@ _PRIMITIVE_TO_CPP_NAME_MAP = {
     'boolean': 'bool',
     'integer': 'int',
     'number': 'double',
-    'string': 'String',
+    'string': 'RefPtr<StringImpl>',
     'object': 'JSON::Object',
     'array': 'JSON::Array',
     'any': 'JSON::Value'
@@ -150,7 +150,7 @@ class CppGenerator(Generator):
             return 'Ref<JSON::Value>&&'
 
         if _type.qualified_name() == 'string':
-            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
+            return 'StringImpl*'
 
         if isinstance(_type, EnumType):
             if _type.is_anonymous:
@@ -190,7 +190,7 @@ class CppGenerator(Generator):
             return 'Ref<JSON::Value>&&'
 
         if _type.qualified_name() == 'string':
-            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
+            return 'StringImpl*'
 
         if isinstance(_type, EnumType):
             cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
@@ -278,7 +278,7 @@ class CppGenerator(Generator):
             return 'Ref<JSON::Value>&&'
 
         if _type.qualified_name() == 'string':
-            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
+            return 'StringImpl*'
 
         if isinstance(_type, EnumType):
             cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
@@ -322,7 +322,7 @@ class CppGenerator(Generator):
             return 'Ref<JSON::Value>&&'
 
         if _type.qualified_name() == 'string':
-            return 'const %s&' % CppGenerator.cpp_name_for_primitive_type(_type)
+            return 'StringImpl*'
 
         if isinstance(_type, EnumType):
             cpp_name = 'Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())

@@ -72,11 +72,11 @@
 namespace WebKit {
 using namespace fido;
 
-static RetainPtr<NSData> dataFromBase64(const String& base64String)
+static RetainPtr<NSData> dataFromBase64(StringImpl* base64String)
 {
-    if (base64String.isEmpty())
+    if (isEmpty(base64String))
         return nil;
-    return adoptNS([[NSData alloc] initWithBase64EncodedString:base64String.createNSString().get() options:NSDataBase64DecodingIgnoreUnknownCharacters]);
+    return adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(base64String).get() options:NSDataBase64DecodingIgnoreUnknownCharacters]);
 }
 
 Ref<MockCcidService> MockCcidService::create(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
@@ -105,9 +105,9 @@ RetainPtr<NSData> MockCcidService::nextReply(NSData *request)
     // Command-aware replies let a test model a legacy U2F-only key: the applet selection command can be
     // answered with a non-match, forcing the connection to fall back to the U2F_VERSION command.
     const Vector requestVector = makeVector(request);
-    if (!m_configuration.ccid->appletSelectionResponseBase64.isEmpty() && equalSpans(requestVector.span(), std::span { kCtapNfcAppletSelectionCommand }))
+    if (!isEmpty(m_configuration.ccid->appletSelectionResponseBase64) && equalSpans(requestVector.span(), std::span { kCtapNfcAppletSelectionCommand }))
         return dataFromBase64(m_configuration.ccid->appletSelectionResponseBase64);
-    if (!m_configuration.ccid->u2fVersionResponseBase64.isEmpty() && equalSpans(requestVector.span(), std::span { kCtapNfcU2fVersionCommand }))
+    if (!isEmpty(m_configuration.ccid->u2fVersionResponseBase64) && equalSpans(requestVector.span(), std::span { kCtapNfcU2fVersionCommand }))
         return dataFromBase64(m_configuration.ccid->u2fVersionResponseBase64);
 
     if (m_configuration.ccid->payloadBase64.isEmpty())

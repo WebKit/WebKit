@@ -66,12 +66,12 @@ public:
     WebCore::StorageType type() const { return m_type; }
 
     unsigned length();
-    String key(unsigned index);
-    String item(const String& key);
-    void setItem(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException);
-    void removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, const String& key);
+    RefPtr<StringImpl> key(unsigned index);
+    RefPtr<StringImpl> item(StringImpl* key);
+    void setItem(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, StringImpl* key, StringImpl* value, bool& quotaException);
+    void removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea, StringImpl* key);
     void clear(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea);
-    bool contains(const String& key);
+    bool contains(StringImpl* key);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -86,35 +86,35 @@ public:
 private:
     StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
 
-    void didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
-    void didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
+    void didSetItem(uint64_t mapSeed, StringImpl* key, bool hasError, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&);
+    void didRemoveItem(uint64_t mapSeed, StringImpl* key, bool hasError, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&);
     NODELETE void didClear(uint64_t mapSeed);
 
     // Message handlers.
-    void dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString, uint64_t messageIdentifier);
+    void dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& sourceStorageAreaID, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* urlString, uint64_t messageIdentifier);
     void clearCache(uint64_t messageIdentifier);
 
-    void syncOneItem(const String& key, const String& value);
-    void syncItems(HashMap<String, String>&&);
+    void syncOneItem(StringImpl* key, StringImpl* value);
+    void syncItems(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&);
     WebCore::StorageMap& ensureMap();
     WebCore::StorageType computeStorageType() const;
     WebCore::ClientOrigin clientOrigin() const;
 
-    void applyChange(const String& key, const String& newValue);
-    void dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
-    void dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void applyChange(StringImpl* key, StringImpl* newValue);
+    void dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>&, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* urlString);
+    void dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>&, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* urlString);
 
     enum class SendMode : bool { Async, Sync };
     void sendConnectMessage(SendMode);
     void connectSync();
-    void didConnect(std::optional<StorageAreaIdentifier>, HashMap<String, String>&&, uint64_t messageIdentifier);
+    void didConnect(std::optional<StorageAreaIdentifier>, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>&&, uint64_t messageIdentifier);
 
     uint64_t m_lastHandledMessageIdentifier { 0 };
     WeakRef<StorageNamespaceImpl> m_namespace;
     const Ref<const WebCore::SecurityOrigin> m_securityOrigin;
     std::unique_ptr<WebCore::StorageMap> m_map;
     std::optional<StorageAreaIdentifier> m_remoteAreaIdentifier;
-    HashCountedSet<String> m_pendingValueChanges;
+    HashCountedSet<RefPtr<StringImpl>> m_pendingValueChanges;
     uint64_t m_currentSeed { 1 };
     unsigned m_quotaInBytes;
     WebCore::StorageType m_type;

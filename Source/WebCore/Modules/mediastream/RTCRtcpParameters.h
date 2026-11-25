@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct RTCRtcpParameters {
-    String cname;
+    RefPtr<StringImpl> cname;
     std::optional<bool> reducedSize;
 };
 

@@ -43,22 +43,22 @@ void DecodedDataDocumentParser::appendBytes(DocumentWriter& writer, std::span<co
     if (data.empty())
         return;
 
-    String decoded = protect(writer.decoder())->decode(data);
-    if (decoded.isEmpty())
+    RefPtr<StringImpl> decoded = protect(writer.decoder())->decode(data);
+    if (isEmpty(decoded))
         return;
 
     writer.reportDataReceived();
-    append(decoded.releaseImpl());
+    append(WTF::move(decoded));
 }
 
 void DecodedDataDocumentParser::flush(DocumentWriter& writer)
 {
-    String remainingData = protect(writer.decoder())->flush();
-    if (remainingData.isEmpty())
+    RefPtr<StringImpl> remainingData = protect(writer.decoder())->flush();
+    if (isEmpty(remainingData))
         return;
 
     writer.reportDataReceived();
-    append(remainingData.releaseImpl());
+    append(WTF::move(remainingData));
 }
 
 };

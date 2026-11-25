@@ -70,7 +70,7 @@ public:
         virtual void presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact&) = 0;
         virtual void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePayShippingMethod&) = 0;
 #if HAVE(PASSKIT_COUPON_CODE)
-        virtual void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode) = 0;
+        virtual void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, StringImpl* couponCode) = 0;
 #endif
         virtual void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) = 0;
         virtual CocoaWindow *presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const = 0;
@@ -93,9 +93,9 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void present(UIViewController *, CompletionHandler<void(bool)>&&) = 0;
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    virtual void presentInScene(const String& sceneIdentifier, const String& bundleIdentifier, CompletionHandler<void(bool)>&&) = 0;
-    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
-    const String& bundleIdentifier() const LIFETIME_BOUND { return m_bundleIdentifier; }
+    virtual void presentInScene(StringImpl* sceneIdentifier, StringImpl* bundleIdentifier, CompletionHandler<void(bool)>&&) = 0;
+    const RefPtr<StringImpl>& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
+    const RefPtr<StringImpl>& bundleIdentifier() const LIFETIME_BOUND { return m_bundleIdentifier; }
 #endif
 #endif
 
@@ -108,8 +108,8 @@ protected:
     virtual WKPaymentAuthorizationDelegate *platformDelegate() = 0;
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    String m_sceneIdentifier;
-    String m_bundleIdentifier;
+    RefPtr<StringImpl> m_sceneIdentifier;
+    RefPtr<StringImpl> m_bundleIdentifier;
 #endif
 
 private:

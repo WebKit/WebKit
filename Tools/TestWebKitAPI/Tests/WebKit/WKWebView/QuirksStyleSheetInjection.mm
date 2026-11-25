@@ -44,7 +44,7 @@ static constexpr auto overlayPointerEventsScript = "getComputedStyle(document.qu
 static RetainPtr<NSString> overlayPointerEventsInSubframe(NSString *topURL, NSString *subframeURL, bool siteIsolationEnabled)
 {
     HTTPServer server({
-        { "/main"_s, { makeString("<iframe src='"_s, String(subframeURL), "'></iframe>"_s) } },
+        { "/main"_s, { makeString("<iframe src='"_s, StringImpl::create(subframeURL), "'></iframe>"_s) } },
         { "/subframe"_s, { "<div id='overlay'><button aria-label='Share'>Share</button><button aria-label='Report'>Report</button></div>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 

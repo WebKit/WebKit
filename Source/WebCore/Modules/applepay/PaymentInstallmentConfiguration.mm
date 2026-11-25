@@ -42,14 +42,14 @@ SPECIALIZE_OBJC_TYPE_TRAITS(PKPaymentInstallmentItem, PAL::getPKPaymentInstallme
 
 namespace WebCore {
 
-static String fromDecimalNumber(NSDecimalNumber *number)
+static RefPtr<StringImpl> fromDecimalNumber(NSDecimalNumber *number)
 {
     auto numberFormatter = adoptNS([[NSNumberFormatter alloc] init]);
     [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
     [numberFormatter setMinimumIntegerDigits:1];
     [numberFormatter setMinimumFractionDigits:2];
     [numberFormatter setMaximumFractionDigits:[numberFormatter maximumIntegerDigits]];
-    return [numberFormatter stringFromNumber:number];
+    return StringImpl::create([numberFormatter stringFromNumber:number]);
 }
 
 NODELETE static std::optional<ApplePaySetupFeatureType> applePaySetupFeatureType(PKPaymentSetupFeatureType featureType)
@@ -143,10 +143,10 @@ static RetainPtr<id> makeNSArrayElement(const ApplePayInstallmentItem& item)
     RetainPtr installmentItem = adoptNS([PAL::allocPKPaymentInstallmentItemInstance() init]);
     [installmentItem setInstallmentItemType:platformItemType(item.type)];
     [installmentItem setAmount:protect(toDecimalNumber(item.amount)).get()];
-    [installmentItem setCurrencyCode:item.currencyCode.createNSString().get()];
-    [installmentItem setProgramIdentifier:item.programIdentifier.createNSString().get()];
+    [installmentItem setCurrencyCode:createNSString(item.currencyCode).get()];
+    [installmentItem setProgramIdentifier:createNSString(item.programIdentifier).get()];
     [installmentItem setApr:protect(toDecimalNumber(item.apr)).get()];
-    [installmentItem setProgramTerms:item.programTerms.createNSString().get()];
+    [installmentItem setProgramTerms:createNSString(item.programTerms).get()];
     return installmentItem;
 }
 
@@ -159,24 +159,24 @@ static std::optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayIn
     return ApplePayInstallmentItem {
         applePayItemType([item installmentItemType]),
         fromDecimalNumber(retainPtr([item amount]).get()),
-        [item currencyCode],
-        [item programIdentifier],
+        StringImpl::create([item currencyCode]),
+        StringImpl::create([item programIdentifier]),
         fromDecimalNumber(retainPtr([item apr]).get()),
-        [item programTerms],
+        StringImpl::create([item programTerms]),
     };
 }
 
 static RetainPtr<NSDictionary> applicationMetadataDictionary(const ApplePayInstallmentConfiguration& configuration)
 {
-    if (RetainPtr applicationMetadata = [configuration.applicationMetadata.createNSString() dataUsingEncoding:NSUTF8StringEncoding])
+    if (RetainPtr applicationMetadata = [createNSString(configuration.applicationMetadata) dataUsingEncoding:NSUTF8StringEncoding])
         return dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:applicationMetadata.get() options:0 error:nil]);
     return { };
 }
 
-static String applicationMetadataString(NSDictionary *dictionary)
+static RefPtr<StringImpl> applicationMetadataString(NSDictionary *dictionary)
 {
     if (RetainPtr applicationMetadata = dictionary ? [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingSortedKeys error:nil] : nil)
-        return adoptNS([[NSString alloc] initWithData:applicationMetadata.get() encoding:NSUTF8StringEncoding]).get();
+        return StringImpl::create(adoptNS([[NSString alloc] initWithData:applicationMetadata.get() encoding:NSUTF8StringEncoding]).get());
     return { };
 }
 
@@ -190,11 +190,11 @@ static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(
     [configuration setFeature:platformFeatureType(coreConfiguration.featureType)];
 
     [configuration setBindingTotalAmount:protect(toDecimalNumber(coreConfiguration.bindingTotalAmount)).get()];
-    [configuration setCurrencyCode:coreConfiguration.currencyCode.createNSString().get()];
+    [configuration setCurrencyCode:createNSString(coreConfiguration.currencyCode).get()];
     [configuration setInStorePurchase:coreConfiguration.isInStorePurchase];
     [configuration setOpenToBuyThresholdAmount:protect(toDecimalNumber(coreConfiguration.openToBuyThresholdAmount)).get()];
-    [configuration setInstallmentMerchantIdentifier:coreConfiguration.merchantIdentifier.createNSString().get()];
-    [configuration setReferrerIdentifier:coreConfiguration.referrerIdentifier.createNSString().get()];
+    [configuration setInstallmentMerchantIdentifier:createNSString(coreConfiguration.merchantIdentifier).get()];
+    [configuration setReferrerIdentifier:createNSString(coreConfiguration.referrerIdentifier).get()];
 
     if (!PAL::getPKPaymentInstallmentItemClassSingleton())
         return configuration;
@@ -209,8 +209,8 @@ static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(
 ExceptionOr<PaymentInstallmentConfiguration> PaymentInstallmentConfiguration::create(const ApplePayInstallmentConfiguration& configuration)
 {
     auto dictionary = applicationMetadataDictionary(configuration);
-    if (!configuration.applicationMetadata.isNull() && !dictionary)
-        return Exception { ExceptionCode::TypeError, "applicationMetadata must be a JSON object"_s };
+    if (configuration.applicationMetadata && !dictionary)
+        return Exception { ExceptionCode::TypeError, "applicationMetadata must be a JSON object"_si };
 
     return PaymentInstallmentConfiguration(ApplePayInstallmentConfiguration(configuration), WTF::move(dictionary));
 }
@@ -262,12 +262,12 @@ std::optional<ApplePayInstallmentConfiguration> PaymentInstallmentConfiguration:
         return std::nullopt;
 
     installmentConfiguration.bindingTotalAmount = fromDecimalNumber(retainPtr([configuration bindingTotalAmount]).get());
-    installmentConfiguration.currencyCode = [configuration currencyCode];
+    installmentConfiguration.currencyCode = StringImpl::create([configuration currencyCode]);
     installmentConfiguration.isInStorePurchase = [configuration isInStorePurchase];
     installmentConfiguration.openToBuyThresholdAmount = fromDecimalNumber(retainPtr([configuration openToBuyThresholdAmount]).get());
 
-    installmentConfiguration.merchantIdentifier = [configuration installmentMerchantIdentifier];
-    installmentConfiguration.referrerIdentifier = [configuration referrerIdentifier];
+    installmentConfiguration.merchantIdentifier = StringImpl::create([configuration installmentMerchantIdentifier]);
+    installmentConfiguration.referrerIdentifier = StringImpl::create([configuration referrerIdentifier]);
 
     if (!PAL::getPKPaymentInstallmentItemClassSingleton())
         return WTF::move(installmentConfiguration);

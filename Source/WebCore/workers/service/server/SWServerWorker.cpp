@@ -49,7 +49,7 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
 }
 
 // FIXME: Use r-value references for script and contentSecurityPolicy
-SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap, Vector<ServiceWorkerRoute>&& routes)
+SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, RefPtr<StringImpl>&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap, Vector<ServiceWorkerRoute>&& routes)
     : m_server(server)
     , m_registrationKey(registration.key())
     , m_registration(registration)
@@ -194,7 +194,7 @@ SWServerToContextConnection* SWServerWorker::contextConnection()
     return server ? server->contextConnectionForRegistrableDomain(topRegistrableDomain(), m_crossOriginEmbedderPolicy.value) : nullptr;
 }
 
-void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
+void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, StringImpl* message)
 {
     ASSERT(m_server);
     if (RefPtr server = m_server.get())
@@ -243,7 +243,7 @@ std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(co
     return protect(*server())->serviceWorkerClientWithOriginByID(origin(), clientId);
 }
 
-void SWServerWorker::findClientByVisibleIdentifier(const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
+void SWServerWorker::findClientByVisibleIdentifier(StringImpl* clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
 {
     if (!m_server) {
         callback({ });
@@ -267,7 +267,7 @@ void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, Se
     return protect(*server())->matchAll(*this, options, WTF::move(callback));
 }
 
-String SWServerWorker::userAgent() const
+RefPtr<StringImpl> SWServerWorker::userAgent() const
 {
     ASSERT(m_server);
     if (!m_server)

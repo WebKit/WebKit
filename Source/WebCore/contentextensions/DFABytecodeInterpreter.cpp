@@ -256,15 +256,15 @@ DFABytecodeInterpreter::DFABytecodeInterpreter(std::span<const uint8_t> bytecode
 {
 }
 
-auto DFABytecodeInterpreter::interpret(const String& urlString, ResourceFlags flags) -> Actions
+auto DFABytecodeInterpreter::interpret(StringImpl* urlString, ResourceFlags flags) -> Actions
 {
     UTF8CString urlCString;
     std::span<const Latin1Character> url;
-    if (urlString.is8Bit()) [[likely]]
-        url = urlString.span8();
+    if (is8Bit(urlString)) [[likely]]
+        url = span8(urlString);
     else {
         // FIXME: Stuffing a UTF-8 string into a Latin1 buffer seems wrong.
-        urlCString = urlString.utf8();
+        urlCString = utf8(urlString);
         url = byteCast<Latin1Character>(urlCString.span());
     }
     ASSERT(url.data());

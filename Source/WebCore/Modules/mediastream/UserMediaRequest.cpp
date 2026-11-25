@@ -161,7 +161,7 @@ static inline bool isMediaStreamCorrectlyStarted(const MediaStream& stream)
 
 void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, MediaDeviceHashSalts&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8() : ""_s, videoDevice ? videoDevice.persistentId().utf8() : ""_s);
+    RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? utf8(audioDevice.persistentId()) : ""_s, videoDevice ? utf8(videoDevice.persistentId()) : ""_s);
 
     Ref document = downcast<Document>(*scriptExecutionContext());
     RefPtr localWindow = document->window();
@@ -250,7 +250,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
     });
 }
 
-void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message, MediaConstraintType invalidConstraint)
+void UserMediaRequest::deny(MediaAccessDenialReason reason, StringImpl* message, MediaConstraintType invalidConstraint)
 {
     if (!scriptExecutionContext())
         return;
@@ -275,7 +275,7 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
         break;
     case MediaAccessDenialReason::InvalidConstraint:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %d", (int)invalidConstraint);
-        m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(invalidConstraint, "Invalid constraint"_s).get());
+        m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(invalidConstraint, "Invalid constraint"_si).get());
         return;
     case MediaAccessDenialReason::HardwareError:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - hardware error");
@@ -295,7 +295,7 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
         break;
     }
 
-    if (!message.isEmpty())
+    if (!isEmpty(message))
         m_promise->reject(code, message);
     else
         m_promise->reject(code);

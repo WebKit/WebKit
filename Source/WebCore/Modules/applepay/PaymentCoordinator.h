@@ -68,8 +68,8 @@ public:
 
     bool supportsVersion(Document&, unsigned version) const;
     bool canMakePayments();
-    void canMakePaymentsWithActiveCard(Document&, const String& merchantIdentifier, Function<void(bool)>&& completionHandler);
-    void openPaymentSetup(Document&, const String& merchantIdentifier, Function<void(bool)>&& completionHandler);
+    void canMakePaymentsWithActiveCard(Document&, StringImpl* merchantIdentifier, Function<void(bool)>&& completionHandler);
+    void openPaymentSetup(Document&, StringImpl* merchantIdentifier, Function<void(bool)>&& completionHandler);
 
     bool hasActiveSession() const { return m_activeSession; }
 
@@ -91,11 +91,11 @@ public:
     WEBCORE_EXPORT void didSelectShippingMethod(const ApplePayShippingMethod&);
     WEBCORE_EXPORT void didSelectShippingContact(const PaymentContact&);
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    WEBCORE_EXPORT void didChangeCouponCode(String&& couponCode);
+    WEBCORE_EXPORT void didChangeCouponCode(RefPtr<StringImpl>&& couponCode);
 #endif
     WEBCORE_EXPORT void didCancelPaymentSession(PaymentSessionError&&);
 
-    std::optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
+    std::optional<RefPtr<StringImpl>> validatedPaymentNetwork(Document&, unsigned version, StringImpl*) const;
 
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&);
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<Ref<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&);

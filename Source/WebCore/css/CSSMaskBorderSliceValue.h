@@ -37,7 +37,7 @@ public:
 
     const CSS::MaskBorderSlice& slices() const LIFETIME_BOUND { return m_slices; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSMaskBorderSliceValue&) const;
 
 private:

@@ -62,8 +62,8 @@ public:
 #undef JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD
 
     ISO8601::PlainTime round(JSGlobalObject*, JSValue options) const;
-    String toString(JSGlobalObject*, JSValue options) const;
-    String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const
+    RefPtr<StringImpl> toString(JSGlobalObject*, JSValue options) const;
+    RefPtr<StringImpl> toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const
     {
         return ISO8601::temporalTimeToString(m_plainTime, precision);
     }

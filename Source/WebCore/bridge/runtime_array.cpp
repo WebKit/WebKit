@@ -127,7 +127,7 @@ bool RuntimeArray::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Proper
 
     RuntimeArray* thisObject = uncheckedDowncast<RuntimeArray>(cell);
     if (propertyName == vm->propertyNames->length) {
-        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Range error"_s));
+        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Range error"_si));
         return false;
     }
     
@@ -143,7 +143,7 @@ bool RuntimeArray::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject,
 
     RuntimeArray* thisObject = uncheckedDowncast<RuntimeArray>(cell);
     if (index >= thisObject->getLength()) {
-        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Range error"_s));
+        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Range error"_si));
         return false;
     }
     

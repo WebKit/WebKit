@@ -152,9 +152,9 @@ void ModelProcessModelPlayer::didFinishLoading(WebCore::NodeIdentifier nodeID, c
     client->didUpdateBoundingBox(*this, nodeID, boundingBoxCenter, boundingBoxExtents);
 }
 
-void ModelProcessModelPlayer::didConvertModelData(Ref<WebCore::SharedBuffer>&& convertedData, const String& convertedMIMEType)
+void ModelProcessModelPlayer::didConvertModelData(Ref<WebCore::SharedBuffer>&& convertedData, StringImpl* convertedMIMEType)
 {
-    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer didConvertModelData mimeType=%s id=%" PRIu64, this, convertedMIMEType.utf8(), m_id.toUInt64());
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer didConvertModelData mimeType=%s id=%" PRIu64, this, utf8(convertedMIMEType), m_id.toUInt64());
     RELEASE_ASSERT(modelProcessEnabled());
 
     protect(client())->didConvertModelData(*this, WTF::move(convertedData), convertedMIMEType);
@@ -167,7 +167,7 @@ void ModelProcessModelPlayer::didFailLoading(WebCore::NodeIdentifier nodeID)
 
     m_animationStates.remove(nodeID);
 
-    protect(client())->didFailLoading(*this, nodeID, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Failed to load model data"_s });
+    protect(client())->didFailLoading(*this, nodeID, WebCore::ResourceError { StringImpl::create(WebCore::errorDomainWebKitInternal).ptr(), 0, { }, "Failed to load model data"_si });
 }
 
 /// This comes from Model Process side, so that Web Process has the most up-to-date knowledge about the transform actually applied to the entity.
@@ -274,9 +274,11 @@ void ModelProcessModelPlayer::load(WebCore::NodeIdentifier nodeID, WebCore::Mode
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer load model id=%" PRIu64, this, m_id.toUInt64());
 
     if (!WebCore::MIMETypeRegistry::isSupportedModelMIMEType(model.mimeType())) {
-        RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer::load: Found unexpected model mimetype: %s", this, model.mimeType().utf8());
-        if (RefPtr client = m_client.get())
-            client->logWarning(*this, makeString("Unsupported model MIME type \""_s, model.mimeType(), "\" in <model> element. The model may fail to render."_s));
+        RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer::load: Found unexpected model mimetype: %s", this, utf8(model.mimeType()));
+        if (RefPtr client = m_client.get()) {
+            RefPtr warning = makeString("Unsupported model MIME type \""_s, model.mimeType(), "\" in <model> element. The model may fail to render."_s);
+            client->logWarning(*this, warning.get());
+        }
     }
 
     send(Messages::ModelProcessModelPlayerProxy::LoadModel(nodeID, model, size, isForImmersive));
@@ -549,13 +551,13 @@ void ModelProcessModelPlayer::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& dat
     send(Messages::ModelProcessModelPlayerProxy::SetEnvironmentMapData(WTF::move(data)));
 }
 
-String ModelProcessModelPlayer::environmentMapForTesting() const
+RefPtr<StringImpl> ModelProcessModelPlayer::environmentMapForTesting() const
 {
     switch (m_environmentMapKind) {
     case WebCore::EnvironmentMapKind::None:
-        return "none"_s;
+        return "none"_si;
     case WebCore::EnvironmentMapKind::Default:
-        return "auto"_s;
+        return "auto"_si;
     case WebCore::EnvironmentMapKind::Custom:
         return m_environmentMapURL.string();
     }
@@ -607,7 +609,7 @@ void ModelProcessModelPlayer::setPortalAction(WebCore::PortalActionKind kind)
     send(Messages::ModelProcessModelPlayerProxy::SetPortalAction(m_portalAction));
 }
 
-void ModelProcessModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+void ModelProcessModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, StringImpl* placement)
 {
     send(Messages::ModelProcessModelPlayerProxy::SetAnchor(nodeID, anchorNode, placement));
 }
@@ -670,7 +672,7 @@ bool ModelProcessModelPlayer::hostsPortalPromotedChild(WebCore::NodeIdentifier r
     return m_displayedPortalChildren.contains(rootNodeID);
 }
 
-void ModelProcessModelPlayer::setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+void ModelProcessModelPlayer::setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, StringImpl* placement)
 {
     send(Messages::ModelProcessModelPlayerProxy::SetPromotedChildAnchor(rootNodeID, anchorNode, placement));
 }
@@ -929,7 +931,7 @@ void ModelProcessModelPlayer::updateVolumetricPresentationSize(const WebCore::Fl
 
 #endif
 
-void ModelProcessModelPlayer::sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions& options, CompletionHandler<void(String&&)>&& completionHandler)
+void ModelProcessModelPlayer::sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, RefPtr<StringImpl>>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions& options, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::ModelProcessModelPlayerProxy::SceneGraphAsTextForTesting(rootNode, modelLabels, options), WTF::move(completionHandler));
 }

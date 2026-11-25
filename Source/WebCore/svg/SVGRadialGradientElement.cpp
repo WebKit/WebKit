@@ -67,7 +67,7 @@ Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedNa
     return adoptRef(*new SVGRadialGradientElement(tagName, document));
 }
 
-void SVGRadialGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGRadialGradientElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::None;
 

@@ -43,11 +43,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoEncoderVTBH265);
 
-static std::optional<HEVCParameters> hevcParametersFromFormatParameters(const Vector<std::pair<String, String>>& parameters)
+static std::optional<HEVCParameters> hevcParametersFromFormatParameters(const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters)
 {
     // https://datatracker.ietf.org/doc/html/rfc7798#section-7.1
     std::optional<HEVCParameters> hevcParameters;
-    String interopConstraints;
+    RefPtr<StringImpl> interopConstraints;
     for (auto& [name, value] : borrow(parameters).get()) {
         if (equalLettersIgnoringASCIICase(name, "profile-id"_s)) {
             auto profileIDC = parseInteger<uint8_t>(value);
@@ -62,7 +62,7 @@ static std::optional<HEVCParameters> hevcParametersFromFormatParameters(const Ve
         return { };
 
     auto& flags = hevcParameters->generalConstraintIndicatorFlags;
-    if (interopConstraints.length() != 2 * flags.size())
+    if (length(interopConstraints) != 2 * flags.size())
         return hevcParameters;
     for (size_t i = 0; i < flags.size(); ++i) {
         auto flag = parseInteger<uint8_t>(StringView { interopConstraints }.substring(2 * i, 2), 16);
@@ -73,7 +73,7 @@ static std::optional<HEVCParameters> hevcParametersFromFormatParameters(const Ve
     return hevcParameters;
 }
 
-static RetainPtr<CFStringRef> computeHEVCVTProfileLevel(const Vector<std::pair<String, String>>& parameters)
+static RetainPtr<CFStringRef> computeHEVCVTProfileLevel(const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters)
 {
     auto hevcParameters = hevcParametersFromFormatParameters(parameters);
     if (!hevcParameters)
@@ -109,7 +109,7 @@ bool GPUVideoEncoderVTBH265::isProfileLevelSupported(CFStringRef profileLevel, I
     return supportedValues && CFArrayContainsValue(supportedValues, CFRangeMake(0, CFArrayGetCount(supportedValues)), profileLevel);
 }
 
-RefPtr<GPUVideoEncoderVTBH265> GPUVideoEncoderVTBH265::create(CreationInfo&& info, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&& callback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
+RefPtr<GPUVideoEncoderVTBH265> GPUVideoEncoderVTBH265::create(CreationInfo&& info, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters, GPUVideoEncoderCallback&& callback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
 {
     RetainPtr profileLevel = computeHEVCVTProfileLevel(parameters);
     if (profileLevel && !info.size.isEmpty() && !isProfileLevelSupported(profileLevel, info.size))

@@ -58,11 +58,11 @@
 namespace WebCore {
 using namespace JSC;
 
-String convertEnumerationToString(TestCallbackInterface::Enum enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestCallbackInterface::Enum enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
-        MAKE_STATIC_STRING_IMPL("value1"),
-        MAKE_STATIC_STRING_IMPL("value2"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
+        "value1"_si,
+        "value2"_si,
     };
     static_assert(static_cast<size_t>(TestCallbackInterface::Enum::Value1) == 0, "TestCallbackInterface::Enum::Value1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestCallbackInterface::Enum::Value2) == 1, "TestCallbackInterface::Enum::Value2 is not 1 as expected");
@@ -75,7 +75,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestCallbackInterface::Enum 
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestCallbackInterface::Enum> parseEnumerationFromString<TestCallbackInterface::Enum>(const String& stringValue)
+template<> std::optional<TestCallbackInterface::Enum> parseEnumerationFromString<TestCallbackInterface::Enum>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestCallbackInterface::Enum>>({
         { "value1"_s, TestCallbackInterface::Enum::Value1 },
@@ -191,7 +191,7 @@ template<> JSValue JSTestCallbackInterfaceDOMConstructor::prototypeForStructure(
 template<> void JSTestCallbackInterfaceDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    JSString* nameString = jsNontrivialString(vm, "TestCallbackInterface"_s);
+    JSString* nameString = jsNontrivialString(vm, "TestCallbackInterface"_si);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     UNUSED_PARAM(globalObject);

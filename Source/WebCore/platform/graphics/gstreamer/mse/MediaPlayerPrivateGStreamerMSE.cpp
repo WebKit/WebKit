@@ -81,7 +81,7 @@ private:
         return adoptRef(*new MediaPlayerPrivateGStreamerMSE(player));
     }
 
-    void getSupportedTypes(HashSet<String>& types) const final
+    void getSupportedTypes(HashSet<RefPtr<StringImpl>>& types) const final
     {
         return MediaPlayerPrivateGStreamerMSE::getSupportedTypes(types);
     }
@@ -91,7 +91,7 @@ private:
         return MediaPlayerPrivateGStreamerMSE::supportsType(parameters);
     }
 
-    bool supportsKeySystem(const String& keySystem, const String& mimeType) const final
+    bool supportsKeySystem(StringImpl* keySystem, StringImpl* mimeType) const final
     {
         return MediaPlayerPrivateGStreamerMSE::supportsKeySystem(keySystem, mimeType);
     }
@@ -134,7 +134,7 @@ void MediaPlayerPrivateGStreamerMSE::willSetPipelineToNull()
     }
 }
 
-void MediaPlayerPrivateGStreamerMSE::load(const String&)
+void MediaPlayerPrivateGStreamerMSE::load(StringImpl*)
 {
     // This media engine only supports MediaSource URLs.
     m_networkState = MediaPlayer::NetworkState::FormatError;
@@ -144,8 +144,8 @@ void MediaPlayerPrivateGStreamerMSE::load(const String&)
 
 void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const LoadOptions&, MediaSourcePrivateClient& mediaSource)
 {
-    auto urlString = makeString("mediasource"_s, url.string().isEmpty() ? "blob://"_s : url.string());
-    GST_DEBUG("Loading %s", urlString.ascii().data());
+    auto urlString = makeString("mediasource"_s, isEmpty(url.string()) ? "blob://"_s : url.string());
+    GST_DEBUG("Loading %s", ascii(urlString).data());
     if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateGStreamer>(mediaSource.mediaSourcePrivate())) {
         mediaSourcePrivate->setPlayer(this);
         m_mediaSourcePrivate = WTF::move(mediaSourcePrivate);
@@ -257,7 +257,7 @@ Ref<MediaTimePromise> MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTar
     if (!m_pipeline)
         rebuildPipeline();
 
-    GST_INFO_OBJECT(pipeline(), "Requested seek to %s", target.time.toString().utf8());
+    GST_INFO_OBJECT(pipeline(), "Requested seek to %s", utf8(target.time.toString()));
     if (!doSeek(target, m_playbackRate))
         m_seekPromise->reject(PlatformMediaError::Cancelled);
     return *m_seekPromise;
@@ -444,7 +444,7 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
     // c) At the end of a flush (forced quality change). These should not produce either of these outcomes.
     // We identify (a) and (b) by setting m_isWaitingForPreroll = true at the initialization of the player and
     // at the beginning of a seek.
-    GST_DEBUG_OBJECT(pipeline(), "Pipeline prerolled. currentMediaTime = %s", currentTime().toString().utf8());
+    GST_DEBUG_OBJECT(pipeline(), "Pipeline prerolled. currentMediaTime = %s", utf8(currentTime().toString()));
     if (!m_isWaitingForPreroll) {
         GST_DEBUG_OBJECT(pipeline(), "Preroll was consequence of a flush, nothing to do at this level.");
         return;
@@ -459,7 +459,7 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
         m_isSeeking = false;
         m_canFallBackToLastFinishedSeekPosition = true;
         invalidateCachedPosition();
-        GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentTime().toString().utf8());
+        GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", utf8(currentTime().toString()));
         if (auto seekPromise = std::exchange(m_seekPromise, std::nullopt))
             seekPromise->resolve(currentTime());
     }
@@ -536,7 +536,7 @@ bool MediaPlayerPrivateGStreamerMSE::isTimeBuffered(const MediaTime &time) const
 {
 
     bool result = m_mediaSourcePrivate && m_mediaSourcePrivate->buffered().contain(time);
-    GST_DEBUG("Time %s buffered? %s", toString(time).utf8(), boolForPrinting(result));
+    GST_DEBUG("Time %s buffered? %s", utf8(toString(time)), boolForPrinting(result));
     return result;
 }
 
@@ -547,7 +547,7 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
     MediaTime previousDuration = m_mediaTimeDuration;
     m_mediaTimeDuration = m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : MediaTime::invalidTime();
 
-    GST_TRACE("previous=%s, new=%s", toString(previousDuration).utf8(), toString(m_mediaTimeDuration).utf8());
+    GST_TRACE("previous=%s, new=%s", utf8(toString(previousDuration)), utf8(toString(m_mediaTimeDuration)));
 
     // Avoid emiting durationchanged in the case where the previous duration was 0 because that case is already handled
     // by the HTMLMediaElement.
@@ -634,7 +634,7 @@ void MediaPlayerPrivateGStreamerMSE::rebuildPipeline()
     changePipelineState(GST_STATE_PAUSED);
 }
 
-void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<RefPtr<StringImpl>>& types)
 {
     GStreamerRegistryScannerMSE::getSupportedDecodingTypes(types);
 }
@@ -651,19 +651,19 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     auto containerType = parameters.type.containerType();
 
     // YouTube TV provides empty types for some videos and we want to be selected as best media engine for them.
-    if (containerType.isEmpty()) {
+    if (isEmpty(containerType)) {
         result = MediaPlayer::SupportsType::MayBeSupported;
-        GST_DEBUG("mime-type \"%s\" supported: %s", parameters.type.raw().utf8(), convertEnumerationToString(result).utf8());
+        GST_DEBUG("mime-type \"%s\" supported: %s", utf8(parameters.type.raw()), utf8(convertEnumerationToString(result)));
         return result;
     }
 
     registerWebKitGStreamerElements();
 
-    GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8());
+    GST_DEBUG("Checking mime-type \"%s\"", utf8(parameters.type.raw()));
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
     result = gstRegistryScanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Decoding, parameters.type, parameters.contentTypesRequiringHardwareSupport);
 
-    GST_DEBUG("Supported: %s", convertEnumerationToString(result).utf8());
+    GST_DEBUG("Supported: %s", utf8(convertEnumerationToString(result)));
     return result;
 }
 

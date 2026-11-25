@@ -131,7 +131,7 @@ SVGTRefElement::~SVGTRefElement()
 
 void SVGTRefElement::updateReferencedText(Element* target)
 {
-    String textContent;
+    RefPtr<StringImpl> textContent;
     if (target)
         textContent = target->textContent();
 
@@ -154,18 +154,18 @@ void SVGTRefElement::detachTarget()
     ASSERT(shadowRoot());
     RefPtr container = shadowRoot()->firstChild();
     if (container)
-        container->setTextContent(String { });
+        container->setTextContent(nullptr);
 
     if (!isConnected())
         return;
 
     // Mark the referenced ID as pending.
     auto target = SVGURIReference::targetElementFromIRIString(href(), protect(document()));
-    if (!target.identifier.isEmpty())
+    if (!isEmpty(target.identifier))
         protect(treeScopeForSVGReferences())->addPendingSVGResource(target.identifier, protect(*this));
 }
 
-void SVGTRefElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGTRefElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGURIReference::parseAttribute(name, newValue);
     SVGTextPositioningElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -220,7 +220,7 @@ void SVGTRefElement::buildPendingResource()
 
     auto target = SVGURIReference::targetElementFromIRIString(href(), protect(treeScopeForSVGReferences()));
     if (!target.element) {
-        if (target.identifier.isEmpty())
+        if (isEmpty(target.identifier))
             return;
 
         protect(treeScopeForSVGReferences())->addPendingSVGResource(target.identifier, protect(*this));

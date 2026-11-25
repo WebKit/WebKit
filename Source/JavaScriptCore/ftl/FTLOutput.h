@@ -92,7 +92,7 @@ public:
 
     void applyBlockOrder();
 
-    void probeDebugPrint(const String& str, LValue value);
+    void probeDebugPrint(StringImpl* str, LValue value);
     NODELETE LBasicBlock appendTo(LBasicBlock, LBasicBlock nextBlock);
     void appendTo(LBasicBlock);
 

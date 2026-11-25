@@ -46,7 +46,7 @@ public:
 
     virtual ~MediaKeyMessageEvent();
 
-    static Ref<MediaKeyMessageEvent> create(const AtomString& type, const MediaKeyMessageEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<MediaKeyMessageEvent> create(AtomStringImpl* type, const MediaKeyMessageEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new MediaKeyMessageEvent(type, initializer, isTrusted));
     }
@@ -55,7 +55,7 @@ public:
     NODELETE RefPtr<JSC::ArrayBuffer> message() const;
 
 private:
-    MediaKeyMessageEvent(const AtomString&, const MediaKeyMessageEventInit&, IsTrusted);
+    MediaKeyMessageEvent(AtomStringImpl*, const MediaKeyMessageEventInit&, IsTrusted);
 
     MediaKeyMessageType m_messageType;
     const RefPtr<JSC::ArrayBuffer> m_message;

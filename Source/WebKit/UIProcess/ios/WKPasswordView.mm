@@ -123,9 +123,9 @@ const CGFloat passwordEntryFieldPadding = 10;
 - (void)showPasswordFailureAlert
 {
     [[_passwordView passwordField] setText:@""];
-    auto alert = WebKit::createUIAlertController(WEB_UI_STRING("The document could not be opened with that password.", "document password failure alert message").createNSString().get(), @"");
+    auto alert = WebKit::createUIAlertController(createNSString(WEB_UI_STRING("The document could not be opened with that password.", "document password failure alert message")).get(), @"");
 
-    RetainPtr defaultAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("OK", "OK (password failure alert)", "OK button label in document password failure alert").createNSString().get() style:UIAlertActionStyleDefault handler:[](UIAlertAction *) { }];
+    RetainPtr defaultAction = [UIAlertAction actionWithTitle:createNSString(WEB_UI_STRING_KEY("OK", "OK (password failure alert)", "OK button label in document password failure alert")).get() style:UIAlertActionStyleDefault handler:[](UIAlertAction *) { }];
 
     [alert addAction:defaultAction.get()];
 

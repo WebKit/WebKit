@@ -32,14 +32,14 @@ namespace WebCore::XPath {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VariableReference);
 
-VariableReference::VariableReference(const String& name)
+VariableReference::VariableReference(StringImpl* name)
     : m_name(name)
 {
 }
 
 Value VariableReference::evaluate() const
 {
-    HashMap<String, String>& bindings = evaluationContext().variableBindings;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& bindings = evaluationContext().variableBindings;
     if (!bindings.contains(m_name))
         // FIXME: Is this the right thing to do if an unknown variable is referenced?
         return "";

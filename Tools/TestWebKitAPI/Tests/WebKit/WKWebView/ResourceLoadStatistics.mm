@@ -463,20 +463,20 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 }
 
 @interface DataTaskIdentifierCollisionDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
-- (Vector<String>)waitForMessages:(size_t)count;
+- (Vector<RefPtr<StringImpl>>)waitForMessages:(size_t)count;
 @end
 
 @implementation DataTaskIdentifierCollisionDelegate {
-    Vector<String> _messages;
+    Vector<RefPtr<StringImpl>> _messages;
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    _messages.append(message);
+    _messages.append(StringImpl::create(message));
     completionHandler();
 }
 
-- (Vector<String>)waitForMessages:(size_t)messageCount
+- (Vector<RefPtr<StringImpl>>)waitForMessages:(size_t)messageCount
 {
     while (_messages.size() < messageCount)
         TestWebKitAPI::Util::spinRunLoop();
@@ -559,9 +559,9 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://prevalent-example.com/"]]];
 
     auto messages = [delegate waitForMessages:2];
-    auto contains = [] (const Vector<String>& array, ASCIILiteral expected) {
+    auto contains = [] (const Vector<RefPtr<StringImpl>>& array, ASCIILiteral expected) {
         for (auto& s : array) {
-            if (s == expected)
+            if (equal(s, expected))
                 return true;
         }
         return false;
@@ -1167,7 +1167,7 @@ TEST(ResourceLoadStatistics, DataSummaryWithCachedProcess)
     [webView setNavigationDelegate:delegate.get()];
 
     for (unsigned i = 0; i < maxSuspendedPageCount + 1; i++) {
-        RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:makeString("resource-load-statistics://www.domain-"_s, i, ".com"_s).createNSString().get()]).get()]);
+        RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(makeString("resource-load-statistics://www.domain-"_s, i, ".com"_s)).get()]).get()]);
         [webView loadRequest:request.get()];
         [delegate waitForDidFinishNavigation];
 
@@ -1176,7 +1176,7 @@ TEST(ResourceLoadStatistics, DataSummaryWithCachedProcess)
         EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
     }
     
-    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:makeString("resource-load-statistics://www.domain-"_s, maxSuspendedPageCount + 1, ".com"_s).createNSString().get()]).get()]);
+    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:createNSString(makeString("resource-load-statistics://www.domain-"_s, maxSuspendedPageCount + 1, ".com"_s)).get()]).get()]);
     [webView loadRequest:request.get()];
     [delegate waitForDidFinishNavigation];
 
@@ -1338,12 +1338,12 @@ TEST(ResourceLoadStatistics, DISABLED_MigrateDistinctDataFromTableWithMissingInd
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
 }
 
-static Vector<String> columnsForTable(WebCore::SQLiteDatabase& database, ASCIILiteral tableName)
+static Vector<RefPtr<StringImpl>> columnsForTable(WebCore::SQLiteDatabase& database, ASCIILiteral tableName)
 {
     auto statement = database.prepareStatementSlow(makeString("PRAGMA table_info("_s, tableName, ')'));
     EXPECT_NOT_NULL(statement);
 
-    Vector<String> columns;
+    Vector<RefPtr<StringImpl>> columns;
     while (statement->step() == SQLITE_ROW)
         columns.append(statement->columnText(1));
 
@@ -1363,7 +1363,7 @@ TEST(ResourceLoadStatistics, DatabaseSchemeUpdate)
     
     NSURL *targetURL = [dataStoreConfiguration.get()._resourceLoadStatisticsDirectory URLByAppendingPathComponent:@"observations.db"];
     auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(database->open(targetURL.path));
+    EXPECT_TRUE(database->open(StringImpl::create(targetURL.path).get()));
 
     constexpr auto createObservedDomain = "CREATE TABLE ObservedDomains ("
         "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, "
@@ -1384,7 +1384,7 @@ TEST(ResourceLoadStatistics, DatabaseSchemeUpdate)
     TestWebKitAPI::Util::run(&done);
     
     auto databaseAfterMigration = makeUniqueRef<WebCore::SQLiteDatabase>();
-    EXPECT_TRUE(databaseAfterMigration->open(targetURL.path));
+    EXPECT_TRUE(databaseAfterMigration->open(StringImpl::create(targetURL.path).get()));
     auto columns = columnsForTable(databaseAfterMigration, "ObservedDomains"_s);
     databaseAfterMigration->close();
     EXPECT_WK_STREQ(columns.last(), "mostRecentWebPushInteractionTime");
@@ -2113,13 +2113,13 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
 
             URL url { HTTPServer::parsePath(request) };
 
-            if (url.string() == "/"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+            if (equal(url.string(), "/"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_si).serialize());
                 continue;
             }
 
-            if (url.string() == "/request-storage-access"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<body><script>internals.withUserGesture(() => { document.body.innerText = \"User gesture\"; document.requestStorageAccess().then(() => { document.body.innerText = \"Granted access\"; alert(\"Granted\"); }) });</script>site page 1 iframe</body>"_s).serialize());
+            if (equal(url.string(), "/request-storage-access"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<body><script>internals.withUserGesture(() => { document.body.innerText = \"User gesture\"; document.requestStorageAccess().then(() => { document.body.innerText = \"Granted access\"; alert(\"Granted\"); }) });</script>site page 1 iframe</body>"_si).serialize());
                 continue;
             }
 
@@ -2249,35 +2249,35 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
 
             URL url { HTTPServer::parsePath(request) };
 
-            if (url.string() == "/set-cookie"_s) {
-                co_await connection.awaitableSend(HTTPResponse({ { { "Set-Cookie"_s, "exists=1"_s } }, "<body></body>"_s }).serialize());
+            if (equal(url.string(), "/set-cookie"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ { { "Set-Cookie"_s, "exists=1"_s } }, "<body></body>"_si }).serialize());
                 didSetSite2CookieHeader = true;
                 continue;
             }
 
-            if (url.string() == "/"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+            if (equal(url.string(), "/"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_si).serialize());
                 continue;
             }
 
-            if (url.string() == "/get-cookie"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<body><script>alert(\"loaded\");</script>site page 1 iframe</body>"_s).serialize());
+            if (equal(url.string(), "/get-cookie"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<body><script>alert(\"loaded\");</script>site page 1 iframe</body>"_si).serialize());
                 continue;
             }
 
-            if (url.string() == "/get-cookie2"_s && headerFromRequest(request, "Cookie: "_s) == "exists=1"_s) {
+            if (equal(url.string(), "/get-cookie2"_s) && equal(headerFromRequest(request, "Cookie: "_s), "exists=1"_s)) {
                 didSendSite2CookieHeader = true;
-                co_await connection.awaitableSend(HTTPResponse("<body><script>alert(\"loaded\");</script>site page 1 iframe</body>"_s).serialize());
+                co_await connection.awaitableSend(HTTPResponse("<body><script>alert(\"loaded\");</script>site page 1 iframe</body>"_si).serialize());
                 continue;
             }
 
-            if (url.string() == "/has-access"_s) {
-                co_await connection.awaitableSend(HTTPResponse("<body><script>document.hasStorageAccess().then((allowed) => alert(allowed), (denied) => alert(denied));</script></body>"_s).serialize());
+            if (equal(url.string(), "/has-access"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<body><script>document.hasStorageAccess().then((allowed) => alert(allowed), (denied) => alert(denied));</script></body>"_si).serialize());
                 continue;
             }
 
-            if (url.string() == "/redirect"_s) {
-                co_await connection.awaitableSend(HTTPResponse({ 302, { { "Location"_s, "https://site3.example/has-access"_s } }, "Redirecting"_s }).serialize());
+            if (equal(url.string(), "/redirect"_s)) {
+                co_await connection.awaitableSend(HTTPResponse({ 302, { { "Location"_s, "https://site3.example/has-access"_s } }, "Redirecting"_si }).serialize());
                 continue;
             }
 
@@ -2602,20 +2602,20 @@ TEST(ResourceLoadStatistics, NestGoogleStorageAccessReachesOtherPagesAndSurvives
     // The iframe's own load is checked rather than document.cookie. On SDKs without cookie partitioning
     // the web process blocks document.cookie on a new page before asking the network process, which is
     // where the cross-page grant lives. Nest checks the Google session over HTTP, so this is what matters.
-    String iframeCookieHeader;
+    RefPtr<StringImpl> iframeCookieHeader;
     HTTPServer server { HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/set-cookie"_s) {
+            if (equal(path, "/set-cookie"_s)) {
                 co_await connection.awaitableSend(HTTPResponse({ { { "Set-Cookie"_s, "auth=signedin; path=/; SameSite=None; Secure"_s } }, "cookie set"_s }).serialize());
                 continue;
             }
-            if (path == "/login"_s) {
+            if (equal(path, "/login"_s)) {
                 co_await connection.awaitableSend(HTTPResponse({ { { "Content-Type"_s, "text/html"_s } }, "<iframe src='https://accounts.google.com/iframe'></iframe>"_s }).serialize());
                 continue;
             }
-            if (path == "/iframe"_s) {
+            if (equal(path, "/iframe"_s)) {
                 StringView requestView { request.span() };
                 constexpr auto cookiePrefix = "\r\nCookie: "_s;
                 auto cookieStart = requestView.find(cookiePrefix);
@@ -2733,8 +2733,8 @@ TEST(ResourceLoadStatistics, NestGoogleStorageAccessReachesOtherPagesAndSurvives
 
     // The new network process reads the saved grant from the ITP database asynchronously, so a page
     // loaded right after the restart can be too early. Retry a few times before failing.
-    iframeCookieHeader = { };
-    for (unsigned attempt = 0; attempt < 5 && iframeCookieHeader != "auth=signedin"_s; ++attempt) {
+    iframeCookieHeader = nullptr;
+    for (unsigned attempt = 0; attempt < 5 && !equal(iframeCookieHeader, "auth=signedin"_s); ++attempt) {
         RetainPtr afterRestartView = loadLoginPage();
         ASSERT_TRUE(afterRestartView) << "load after the network process restart";
     }

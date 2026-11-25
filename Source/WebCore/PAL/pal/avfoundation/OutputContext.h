@@ -42,7 +42,7 @@ public:
     static std::optional<OutputContext>& sharedAudioPresentationOutputContext();
 
     bool supportsMultipleOutputDevices();
-    String deviceName();
+    RefPtr<StringImpl> deviceName();
 
     Vector<OutputDevice> outputDevices() const;
 

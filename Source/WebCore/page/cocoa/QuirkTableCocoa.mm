@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-String loadQuirkTableJSON()
+RefPtr<StringImpl> loadQuirkTableJSON()
 {
-    static NeverDestroyed<String> json;
+    static NeverDestroyed<RefPtr<StringImpl>> json;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         RetainPtr url = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] URLForResource:@"QuirkTable" withExtension:@"json"];
@@ -46,7 +46,7 @@ String loadQuirkTableJSON()
         if (!data)
             return;
 
-        json.get() = String::fromUTF8(span(data.get()));
+        json.get() = StringImpl::fromUTF8(span(data.get()));
     });
     return json.get();
 }

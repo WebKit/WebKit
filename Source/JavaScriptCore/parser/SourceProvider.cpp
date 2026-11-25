@@ -35,7 +35,7 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
 
-SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL, SourceTaintedness taintedness, const TextPosition& startPosition, SourceProviderSourceType sourceType)
+SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, RefPtr<StringImpl>&& sourceURL, RefPtr<StringImpl>&& preRedirectURL, SourceTaintedness taintedness, const TextPosition& startPosition, SourceProviderSourceType sourceType)
     : m_sourceType(sourceType)
     , m_sourceOrigin(sourceOrigin)
     , m_sourceURL(WTF::move(sourceURL))
@@ -86,11 +86,11 @@ void SourceProvider::getID()
     }
 }
 
-const String& SourceProvider::sourceURLStripped()
+const RefPtr<StringImpl>& SourceProvider::sourceURLStripped()
 {
-    if (m_sourceURL.isNull()) [[unlikely]]
+    if (!m_sourceURL) [[unlikely]]
         return m_sourceURLStripped;
-    if (!m_sourceURLStripped.isNull()) [[likely]]
+    if (m_sourceURLStripped) [[likely]]
         return m_sourceURLStripped;
     m_sourceURLStripped = URL(m_sourceURL).strippedForUseAsReport();
     return m_sourceURLStripped;
@@ -107,23 +107,23 @@ UTF8CString SourceProvider::sourceCodeDumpFilePath(const UTF8CString& dumpDirect
     if (m_sourceCodeDumped.load(std::memory_order_relaxed))
         return m_sourceCodeDumpFilePath;
 
-    auto tryExtractLocalPath = [](const String& urlString) -> String {
-        if (urlString.isNull())
+    auto tryExtractLocalPath = [](StringImpl* urlString) -> RefPtr<StringImpl> {
+        if (!urlString)
             return { };
-        if (urlString.startsWith('/'))
+        if (startsWith(urlString, '/'))
             return urlString;
-        if (urlString.startsWith("file://"_s))
+        if (startsWith(urlString, "file://"_s))
             return URL(urlString).fileSystemPath();
         return { };
     };
 
-    String localPath = tryExtractLocalPath(sourceURL());
+    RefPtr<StringImpl> localPath = tryExtractLocalPath(sourceURL());
 
-    if (!localPath.isNull())
+    if (localPath)
         m_sourceCodeDumpFilePath = FileSystem::fileSystemRepresentation(localPath);
     else {
         auto baseName = makeString("source-"_s, asID(), '-', WTF::getCurrentProcessID());
-        String filePath;
+        RefPtr<StringImpl> filePath;
         FileSystem::FileHandle handle;
         if (dumpDirectory.isNull()) {
             auto result = FileSystem::openTemporaryFile(baseName, ".js"_s);
@@ -146,8 +146,8 @@ UTF8CString SourceProvider::sourceCodeDumpFilePath(const UTF8CString& dumpDirect
 }
 
 #if ENABLE(WEBASSEMBLY)
-BaseWebAssemblySourceProvider::BaseWebAssemblySourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL)
-    : SourceProvider(sourceOrigin, WTF::move(sourceURL), String(), SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::WebAssembly)
+BaseWebAssemblySourceProvider::BaseWebAssemblySourceProvider(const SourceOrigin& sourceOrigin, RefPtr<StringImpl>&& sourceURL)
+    : SourceProvider(sourceOrigin, WTF::move(sourceURL), nullptr, SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::WebAssembly)
 {
 }
 #endif

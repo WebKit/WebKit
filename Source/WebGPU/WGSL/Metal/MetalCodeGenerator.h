@@ -37,7 +37,7 @@ struct PrepareResult;
 namespace Metal {
 
 // Can't fail. Any failure checks need to be done earlier, in the backend-agnostic part of the compiler.
-String generateMetalCode(ShaderModule&, PrepareResult&, const HashMap<String, ConstantValue>&, DeviceState&&);
+RefPtr<StringImpl> generateMetalCode(ShaderModule&, PrepareResult&, const HashMap<RefPtr<StringImpl>, ConstantValue>&, DeviceState&&);
 
 } // namespace Metal
 } // namespace WGSL

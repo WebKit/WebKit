@@ -45,10 +45,10 @@ public:
     { }
     ~LegacyCDMPrivateAVFObjC();
 
-    static bool supportsKeySystem(const String&);
-    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
+    static bool supportsKeySystem(StringImpl*);
+    static bool supportsKeySystemAndMimeType(StringImpl* keySystem, StringImpl* mimeType);
 
-    bool supportsMIMEType(const String& mimeType) const override;
+    bool supportsMIMEType(StringImpl* mimeType) const override;
     RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
     NODELETE LegacyCDM& cdm() const;
@@ -63,7 +63,7 @@ private:
         int version;
         Vector<int> protocols;
     };
-    static std::optional<KeySystemParameters> parseKeySystem(const String& keySystem);
+    static std::optional<KeySystemParameters> parseKeySystem(StringImpl* keySystem);
 
     WeakRef<LegacyCDM> m_cdm;
     Vector<CDMSessionAVContentKeySession*> m_sessions;

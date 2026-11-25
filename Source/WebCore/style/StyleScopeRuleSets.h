@@ -95,13 +95,13 @@ public:
 
     const RuleFeatureSet& features() const LIFETIME_BOUND;
 
-    const Vector<InvalidationRuleSet>* idInvalidationRuleSets(const AtomString&) const LIFETIME_BOUND;
-    const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString&) const LIFETIME_BOUND;
-    const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomString&) const LIFETIME_BOUND;
+    const Vector<InvalidationRuleSet>* idInvalidationRuleSets(AtomStringImpl*) const LIFETIME_BOUND;
+    const Vector<InvalidationRuleSet>* classInvalidationRuleSets(AtomStringImpl*) const LIFETIME_BOUND;
+    const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(AtomStringImpl*) const LIFETIME_BOUND;
     const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const LIFETIME_BOUND;
     const Vector<InvalidationRuleSet>* hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const LIFETIME_BOUND;
 
-    const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const LIFETIME_BOUND;
+    const HashSet<RefPtr<AtomStringImpl>>& customPropertyNamesInStyleContainerQueries() const LIFETIME_BOUND;
 
     SelectorsForStyleAttribute selectorsForStyleAttribute() const;
 
@@ -143,13 +143,13 @@ private:
 
     const SingleThreadWeakRef<Resolver> m_styleResolver;
     mutable RuleFeatureSet m_features;
-    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
-    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
-    mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
+    mutable HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
+    mutable HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
+    mutable HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
     mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_pseudoClassInvalidationRuleSets;
     mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_hasPseudoClassInvalidationRuleSets;
 
-    mutable std::optional<HashSet<AtomString>> m_customPropertyNamesInStyleContainerQueries;
+    mutable std::optional<HashSet<RefPtr<AtomStringImpl>>> m_customPropertyNamesInStyleContainerQueries;
 
     mutable std::optional<SelectorsForStyleAttribute> m_cachedSelectorsForStyleAttribute;
 

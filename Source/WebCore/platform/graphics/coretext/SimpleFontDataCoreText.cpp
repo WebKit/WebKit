@@ -55,7 +55,7 @@ static CFNumberRef zeroValue()
     return zeroValue.get().get();
 }
 
-extern RetainPtr<CFDictionaryRef> getCFStringAttributes(const Font& font, bool enableKerning, FontOrientation orientation, const AtomString& locale)
+extern RetainPtr<CFDictionaryRef> getCFStringAttributes(const Font& font, bool enableKerning, FontOrientation orientation, AtomStringImpl* locale)
 {
     std::array<CFTypeRef, 5> keys;
     std::array<CFTypeRef, 5> values;
@@ -65,8 +65,8 @@ extern RetainPtr<CFDictionaryRef> getCFStringAttributes(const Font& font, bool e
     size_t count = 1;
 
     RetainPtr<CFStringRef> localeString;
-    if (!locale.isEmpty()) {
-        localeString = locale.string().createCFString();
+    if (!isEmpty(locale)) {
+        localeString = createCFString(locale);
         keys[count] = kCTLanguageAttributeName;
         values[count] = localeString.get();
         ++count;

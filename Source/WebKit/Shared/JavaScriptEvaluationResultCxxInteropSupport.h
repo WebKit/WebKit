@@ -60,6 +60,10 @@ private:
 
 namespace WebKit::CxxInteropSupport {
 
+// Swift can only name a class template specialization through an alias; this names the string alternative of
+// JavaScriptEvaluationResult::Value.
+using RefPtrStringImpl = RefPtr<StringImpl>;
+
 // FIXME: Generalize this once rdar://186426517 is fixed.
 template<typename Alternative>
 inline Alternative alternativeForVariant(const JavaScriptEvaluationResult::Value& value)

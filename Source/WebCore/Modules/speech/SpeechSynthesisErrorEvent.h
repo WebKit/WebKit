@@ -38,12 +38,12 @@ class SpeechSynthesisErrorEvent final : public SpeechSynthesisEvent {
 public:
     using Init = SpeechSynthesisErrorEventInit;
 
-    NODELETE static Ref<SpeechSynthesisErrorEvent> create(const AtomString& type, Init&&);
+    NODELETE static Ref<SpeechSynthesisErrorEvent> create(AtomStringImpl* type, Init&&);
 
     SpeechSynthesisErrorCode error() const { return m_error; }
 
 private:
-    SpeechSynthesisErrorEvent(const AtomString& type, SpeechSynthesisErrorCode, Init&&);
+    SpeechSynthesisErrorEvent(AtomStringImpl* type, SpeechSynthesisErrorCode, Init&&);
 
     SpeechSynthesisErrorCode m_error;
 };

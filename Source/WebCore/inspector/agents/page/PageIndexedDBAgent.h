@@ -42,7 +42,7 @@ public:
     ~PageIndexedDBAgent();
 
 private:
-    Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> frameForSecurityOrigin(const String& securityOrigin) override;
+    Inspector::Protocol::ErrorStringOr<Ref<LocalFrame>> frameForSecurityOrigin(StringImpl* securityOrigin) override;
 
     WeakRef<Page> m_inspectedPage;
 };

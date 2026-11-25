@@ -53,7 +53,7 @@ struct DragItem final {
     IntPoint eventPositionInMainFrameViewCoordinates;
     IntPoint dragLocationInContentCoordinates;
     IntPoint dragLocationInWindowCoordinates;
-    String title;
+    RefPtr<StringImpl> title;
     URL url;
     IntRect dragPreviewFrameInMainFrameViewCoordinates;
     bool containsSelection { false };

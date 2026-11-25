@@ -56,7 +56,7 @@ public:
     ~LibWebRTCDataChannelHandler();
 
     RTCDataChannelInit dataChannelInit() const;
-    String label() const;
+    RefPtr<StringImpl> label() const;
 
     static webrtc::DataChannelInit fromRTCDataChannelInit(const RTCDataChannelInit&);
 
@@ -79,7 +79,7 @@ private:
         RTCDataChannelState state;
         std::optional<webrtc::RTCError> error;
     };
-    using Message = Variant<StateChange, String, Ref<FragmentedSharedBuffer>>;
+    using Message = Variant<StateChange, RefPtr<StringImpl>, Ref<FragmentedSharedBuffer>>;
     using PendingMessages = Vector<Message>;
     void storeMessage(PendingMessages&, const webrtc::DataBuffer&);
     void processMessage(const webrtc::DataBuffer&);

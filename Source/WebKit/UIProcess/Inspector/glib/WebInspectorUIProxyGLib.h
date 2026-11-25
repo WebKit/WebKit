@@ -31,6 +31,6 @@
 
 namespace WebKit {
 
-void platformSaveDataToFile(GRefPtr<GFile>&&, const String& content, bool base64Encoded);
+void platformSaveDataToFile(GRefPtr<GFile>&&, StringImpl* content, bool base64Encoded);
 
 } // namespace WebKit

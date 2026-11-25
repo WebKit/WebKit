@@ -54,7 +54,7 @@ struct DragSourceState {
     DragPreviewContentType dragPreviewContent;
     RefPtr<WebCore::TextIndicator> textIndicator;
     std::optional<WebCore::Path> visiblePath;
-    String linkTitle;
+    RefPtr<StringImpl> linkTitle;
     URL linkURL;
     bool possiblyNeedsDragPreviewUpdate { true };
     bool containsSelection { false };

@@ -44,21 +44,21 @@ class ScriptExecutionContext;
 class ClipboardItemBindingsDataSource : public ClipboardItemDataSource {
     WTF_MAKE_TZONE_ALLOCATED(ClipboardItemBindingsDataSource);
 public:
-    ClipboardItemBindingsDataSource(ClipboardItem&, Vector<KeyValuePair<String, Ref<DOMPromise>>>&&);
+    ClipboardItemBindingsDataSource(ClipboardItem&, Vector<KeyValuePair<RefPtr<StringImpl>, Ref<DOMPromise>>>&&);
     ~ClipboardItemBindingsDataSource();
 
 private:
-    Vector<String> types() const final;
-    void getType(const String&, Ref<DeferredPromise>&&) final;
+    Vector<RefPtr<StringImpl>> types() const final;
+    void getType(StringImpl*, Ref<DeferredPromise>&&) final;
     void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&) final;
 
     void clearItemTypeLoaders();
     void invokeCompletionHandler();
 
-    using BufferOrString = Variant<String, Ref<SharedBuffer>>;
+    using BufferOrString = Variant<RefPtr<StringImpl>, Ref<SharedBuffer>>;
     class ClipboardItemTypeLoader : public FileReaderLoaderClient, public RefCounted<ClipboardItemTypeLoader> {
     public:
-        static Ref<ClipboardItemTypeLoader> create(Clipboard& writingDestination, const String& type, CompletionHandler<void()>&& completionHandler)
+        static Ref<ClipboardItemTypeLoader> create(Clipboard& writingDestination, StringImpl* type, CompletionHandler<void()>&& completionHandler)
         {
             return adoptRef(*new ClipboardItemTypeLoader(writingDestination, type, WTF::move(completionHandler)));
         }
@@ -69,21 +69,21 @@ private:
         void ref() const final { RefCounted::ref(); }
         void deref() const final { RefCounted::deref(); }
 
-        void didResolveToString(const String&);
+        void didResolveToString(StringImpl*);
         void didFailToResolve();
         void didResolveToBlob(ScriptExecutionContext&, Ref<Blob>&&);
 
         void invokeCompletionHandler();
 
-        const String& type() LIFETIME_BOUND { return m_type; }
+        const RefPtr<StringImpl>& type() LIFETIME_BOUND { return m_type; }
         const BufferOrString& data() LIFETIME_BOUND { return m_data; }
 
     private:
-        ClipboardItemTypeLoader(Clipboard&, const String& type, CompletionHandler<void()>&&);
+        ClipboardItemTypeLoader(Clipboard&, StringImpl* type, CompletionHandler<void()>&&);
 
         void sanitizeDataIfNeeded();
 
-        String dataAsString() const;
+        RefPtr<StringImpl> dataAsString() const;
 
         // FileReaderLoaderClient methods.
         void didStartLoading() final { }
@@ -91,7 +91,7 @@ private:
         void didFinishLoading() final;
         void didFail(ExceptionCode) final;
 
-        String m_type;
+        RefPtr<StringImpl> m_type;
         BufferOrString m_data;
         RefPtr<FileReaderLoader> m_blobLoader;
         CompletionHandler<void()> m_completionHandler;
@@ -103,7 +103,7 @@ private:
     Vector<Ref<ClipboardItemTypeLoader>> m_itemTypeLoaders;
     WeakPtr<Clipboard, WeakPtrImplWithEventTargetData> m_writingDestination;
 
-    Vector<KeyValuePair<String, Ref<DOMPromise>>> m_itemPromises;
+    Vector<KeyValuePair<RefPtr<StringImpl>, Ref<DOMPromise>>> m_itemPromises;
 };
 
 } // namespace WebCore

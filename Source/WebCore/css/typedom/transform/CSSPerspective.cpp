@@ -59,7 +59,7 @@ static ExceptionOr<CSSPerspectiveValue> checkLength(CSSPerspectiveValue length)
                 return Exception { ExceptionCode::TypeError };
             return { WTF::move(value) };
         },
-        [&](String&& value) {
+        [&](RefPtr<StringImpl>&& value) {
             return checkKeywordValue(CSSOMKeywordValue::rectifyKeywordish(WTF::move(value)));
         },
         checkKeywordValue
@@ -83,7 +83,7 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(Ref<const CSSFunctionVal
 
     if (cssFunctionValue->size() != 1 || !cssFunctionValue->item(0)) {
         ASSERT_NOT_REACHED();
-        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_si };
     }
 
     Ref parameterValue = *cssFunctionValue->item(0);
@@ -95,7 +95,7 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(Ref<const CSSFunctionVal
     } else if (RefPtr keywordParameterValue = dynamicDowncast<CSSKeywordValue>(parameterValue.get()))
         return CSSPerspective::create(CSSPerspectiveValue { CSSOMKeywordValue::reifyValue(document, *keywordParameterValue) });
 
-    return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue or CSSKeywordValue."_s };
+    return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue or CSSKeywordValue."_si };
 }
 
 CSSPerspective::CSSPerspective(CSSPerspectiveValue length)
@@ -134,7 +134,7 @@ void CSSPerspective::serialize(StringBuilder& builder) const
             }
             value->serialize(builder);
         },
-        [&](const String& value) {
+        [&](StringImpl* value) {
             builder.append(value);
         },
         [&](const Ref<CSSOMKeywordValue>& value) {
@@ -155,7 +155,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
 
     auto valuePx = length->convertTo(CSSUnitType::Px);
     if (!valuePx)
-        return Exception { ExceptionCode::TypeError, "Length unit is not compatible with 'px'"_s };
+        return Exception { ExceptionCode::TypeError, "Length unit is not compatible with 'px'"_si };
 
     TransformationMatrix matrix { };
     matrix.applyPerspective(valuePx->value());
@@ -169,7 +169,7 @@ RefPtr<CSSValue> CSSPerspective::toCSSValue() const
         [](const Ref<CSSNumericValue>& numericValue) -> RefPtr<CSSValue> {
             return numericValue->toCSSValue();
         },
-        [](const String&) -> RefPtr<CSSValue> {
+        [](StringImpl*) -> RefPtr<CSSValue> {
             // FIXME: Implement this.
             return nullptr;
         },

@@ -86,7 +86,7 @@ public:
     JS_EXPORT_PRIVATE void interrupt();
     void notifyDebuggerOfNewInstance(VM&);
     void handleThreadStopInfo(StringView packet);
-    String callStackStringFor(uint64_t threadId);
+    RefPtr<StringImpl> callStackStringFor(uint64_t threadId);
     JS_EXPORT_PRIVATE void reset();
 
     template<DebugStopReason reason>

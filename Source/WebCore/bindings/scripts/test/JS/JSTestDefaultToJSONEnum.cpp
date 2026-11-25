@@ -31,11 +31,11 @@
 namespace WebCore {
 using namespace JSC;
 
-String convertEnumerationToString(TestDefaultToJSONEnum enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestDefaultToJSONEnum enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
-        MAKE_STATIC_STRING_IMPL("EnumValue1"),
-        MAKE_STATIC_STRING_IMPL("EnumValue2"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
+        "EnumValue1"_si,
+        "EnumValue2"_si,
     };
     static_assert(static_cast<size_t>(TestDefaultToJSONEnum::EnumValue1) == 0, "TestDefaultToJSONEnum::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestDefaultToJSONEnum::EnumValue2) == 1, "TestDefaultToJSONEnum::EnumValue2 is not 1 as expected");
@@ -48,7 +48,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestDefaultToJSONEnum enumer
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(const String& stringValue)
+template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum>>({
         { "EnumValue1"_s, TestDefaultToJSONEnum::EnumValue1 },

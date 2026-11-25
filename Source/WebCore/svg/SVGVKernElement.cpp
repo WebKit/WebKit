@@ -49,12 +49,12 @@ std::optional<SVGKerningPair> SVGVKernElement::buildVerticalKerningPair() const
 
     auto& u1 = attributeWithoutSynchronization(SVGNames::u1Attr);
     auto& g1 = attributeWithoutSynchronization(SVGNames::g1Attr);
-    if (u1.isEmpty() && g1.isEmpty())
+    if (isEmpty(u1) && isEmpty(g1))
         return std::nullopt;
 
     auto& u2 = attributeWithoutSynchronization(SVGNames::u2Attr);
     auto& g2 = attributeWithoutSynchronization(SVGNames::g2Attr);
-    if (u2.isEmpty() && g2.isEmpty())
+    if (isEmpty(u2) && isEmpty(g2))
         return std::nullopt;
 
     auto glyphName1 = parseGlyphName(g1);
@@ -71,7 +71,7 @@ std::optional<SVGKerningPair> SVGVKernElement::buildVerticalKerningPair() const
         return std::nullopt;
 
     bool ok = false;
-    auto kerning = attributeWithoutSynchronization(SVGNames::kAttr).string().toFloat(&ok);
+    auto kerning = toFloat(attributeWithoutSynchronization(SVGNames::kAttr), &ok);
     if (!ok)
         return std::nullopt;
 

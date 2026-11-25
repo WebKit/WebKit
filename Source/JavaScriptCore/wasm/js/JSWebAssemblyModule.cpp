@@ -79,7 +79,7 @@ void JSWebAssemblyModule::finishCreation(VM& vm)
     }
     for (auto& exp : moduleInformation.exports) {
         auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
-        exportSymbolTable->add(NoLockingNecessary, makeAtomString(exp.field).impl(), SymbolTableEntry(VarOffset(offset)));
+        exportSymbolTable->add(NoLockingNecessary, makeAtomString(exp.field).get(), SymbolTableEntry(VarOffset(offset)));
     }
 
     m_exportSymbolTable.set(vm, this, exportSymbolTable);

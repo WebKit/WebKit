@@ -45,17 +45,17 @@ inline std::span<const uint8_t> xpcDictionaryGetData(xpc_object_t xdict, ASCIILi
 // ASCIILiteral version of XPC_ERROR_KEY_DESCRIPTION.
 static constexpr auto xpcErrorDescriptionKey = "XPCErrorDescription"_s;
 
-inline String xpcDictionaryGetString(xpc_object_t xdict, ASCIILiteral key)
+inline RefPtr<StringImpl> xpcDictionaryGetString(xpc_object_t xdict, ASCIILiteral key)
 {
     auto* cstring = xpc_dictionary_get_string(xdict, key.characters()); // NOLINT
     if (!cstring)
         return { };
-    return String::fromUTF8(cstring);
+    return StringImpl::fromUTF8(cstring);
 }
 
-inline String xpcStringGetString(xpc_object_t xvalue)
+inline RefPtr<StringImpl> xpcStringGetString(xpc_object_t xvalue)
 {
-    return String::fromUTF8(unsafeMakeSpan(xpc_string_get_string_ptr(xvalue), xpc_string_get_length(xvalue))); // NOLINT
+    return StringImpl::fromUTF8(unsafeMakeSpan(xpc_string_get_string_ptr(xvalue), xpc_string_get_length(xvalue))); // NOLINT
 }
 
 // Wrappers for XPC functions that take UTF-8 strings, so that callers can pass typed strings instead of

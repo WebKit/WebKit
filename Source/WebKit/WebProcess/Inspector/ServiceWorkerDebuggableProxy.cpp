@@ -43,12 +43,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerDebuggableProxy);
 
 using namespace Inspector;
 
-Ref<ServiceWorkerDebuggableProxy> ServiceWorkerDebuggableProxy::create(const String& url, WebCore::ServiceWorkerIdentifier identifier, WebProcessProxy& webProcessProxy)
+Ref<ServiceWorkerDebuggableProxy> ServiceWorkerDebuggableProxy::create(StringImpl* url, WebCore::ServiceWorkerIdentifier identifier, WebProcessProxy& webProcessProxy)
 {
     return adoptRef(*new ServiceWorkerDebuggableProxy(url, identifier, webProcessProxy));
 }
 
-ServiceWorkerDebuggableProxy::ServiceWorkerDebuggableProxy(const String& url, WebCore::ServiceWorkerIdentifier identifier, WebProcessProxy& webProcessProxy)
+ServiceWorkerDebuggableProxy::ServiceWorkerDebuggableProxy(StringImpl* url, WebCore::ServiceWorkerIdentifier identifier, WebProcessProxy& webProcessProxy)
     : m_scopeURL(url)
     , m_identifier(identifier)
     , m_webProcessProxy(webProcessProxy)
@@ -77,7 +77,7 @@ void ServiceWorkerDebuggableProxy::disconnect(FrontendChannel& channel)
         webProcessProxy->send(Messages::WebSWContextManagerConnection::DisconnectFromInspector(m_identifier), 0);
 }
 
-void ServiceWorkerDebuggableProxy::dispatchMessageFromRemote(String&& message)
+void ServiceWorkerDebuggableProxy::dispatchMessageFromRemote(RefPtr<StringImpl>&& message)
 {
     RELEASE_LOG(Inspector, "ServiceWorkerDebuggableProxy::dispatchMessageFromRemote: serviceWorkerIdentifier=%" PRIu64, m_identifier.toUInt64());
     if (RefPtr webProcessProxy = m_webProcessProxy.get())

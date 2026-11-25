@@ -36,7 +36,7 @@ class StyleMedia final : public RefCounted<StyleMedia>, public LocalDOMWindowPro
 public:
     static Ref<StyleMedia> create(LocalDOMWindow& window) { return adoptRef(*new StyleMedia(window)); }
 
-    String type() const;
+    RefPtr<StringImpl> type() const;
 
 private:
     explicit StyleMedia(LocalDOMWindow&);

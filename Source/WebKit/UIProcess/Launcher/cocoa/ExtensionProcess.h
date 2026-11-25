@@ -52,7 +52,7 @@ public:
     ExtensionProcess(BERenderingProcess *);
 
     void invalidate() const;
-    void invalidate(const String& reason) const;
+    void invalidate(StringImpl* reason) const;
 
     OSObjectPtr<xpc_connection_t> makeLibXPCConnection() const;
     PlatformGrant grantCapability(const PlatformCapability&, BlockPtr<void()>&& invalidationHandler = ^{ }) const;

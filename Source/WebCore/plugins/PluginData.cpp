@@ -89,28 +89,28 @@ Vector<MimeClassInfo> PluginData::webVisibleMimeTypes() const
     return result;
 }
 
-NODELETE static bool supportsMimeTypeForPlugins(const String& mimeType, const PluginData::AllowedPluginTypes allowedPluginTypes, const Vector<PluginInfo>& plugins)
+NODELETE static bool supportsMimeTypeForPlugins(StringImpl* mimeType, const PluginData::AllowedPluginTypes allowedPluginTypes, const Vector<PluginInfo>& plugins)
 {
     for (auto& plugin : plugins) {
         for (auto& type : plugin.mimes) {
-            if (type.type == mimeType && (allowedPluginTypes == PluginData::AllPlugins || plugin.isApplicationPlugin))
+            if (equal(type.type, mimeType) && (allowedPluginTypes == PluginData::AllPlugins || plugin.isApplicationPlugin))
                 return true;
         }
     }
     return false;
 }
 
-bool PluginData::supportsMimeType(const String& mimeType, const AllowedPluginTypes allowedPluginTypes) const
+bool PluginData::supportsMimeType(StringImpl* mimeType, const AllowedPluginTypes allowedPluginTypes) const
 {
     return supportsMimeTypeForPlugins(mimeType, allowedPluginTypes, plugins());
 }
 
-bool PluginData::supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes allowedPluginTypes) const
+bool PluginData::supportsWebVisibleMimeType(StringImpl* mimeType, const AllowedPluginTypes allowedPluginTypes) const
 {
     return supportsMimeTypeForPlugins(mimeType, allowedPluginTypes, webVisiblePlugins());
 }
 
-bool PluginData::supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes allowedPluginTypes, const URL& url) const
+bool PluginData::supportsWebVisibleMimeTypeForURL(StringImpl* mimeType, const AllowedPluginTypes allowedPluginTypes, const URL& url) const
 {
     if (!protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, url)) {
         Ref page = m_page.get();
@@ -121,11 +121,11 @@ bool PluginData::supportsWebVisibleMimeTypeForURL(const String& mimeType, const 
     return supportsMimeTypeForPlugins(mimeType, allowedPluginTypes, *m_cachedVisiblePlugins.pluginList);
 }
 
-String PluginData::pluginFileForWebVisibleMimeType(const String& mimeType) const
+RefPtr<StringImpl> PluginData::pluginFileForWebVisibleMimeType(StringImpl* mimeType) const
 {
     for (auto& plugin : webVisiblePlugins()) {
         for (auto& type : plugin.mimes) {
-            if (type.type == mimeType)
+            if (equal(type.type, mimeType))
                 return plugin.file;
         }
     }
@@ -136,19 +136,19 @@ PluginInfo PluginData::dummyPDFPluginInfo()
 {
     PluginInfo info;
 
-    info.name = "Dummy Plugin"_s;
+    info.name = "Dummy Plugin"_si;
     info.desc = pdfDocumentTypeDescription();
-    info.file = "internal-pdf-viewer"_s;
+    info.file = "internal-pdf-viewer"_si;
     info.isApplicationPlugin = true;
 
     MimeClassInfo pdfMimeClassInfo;
-    pdfMimeClassInfo.type = "application/pdf"_s;
+    pdfMimeClassInfo.type = "application/pdf"_atom;
     pdfMimeClassInfo.desc = pdfDocumentTypeDescription();
     pdfMimeClassInfo.extensions.append("pdf"_s);
     info.mimes.append(pdfMimeClassInfo);
 
     MimeClassInfo textPDFMimeClassInfo;
-    textPDFMimeClassInfo.type = "text/pdf"_s;
+    textPDFMimeClassInfo.type = "text/pdf"_atom;
     textPDFMimeClassInfo.desc = pdfDocumentTypeDescription();
     textPDFMimeClassInfo.extensions.append("pdf"_s);
     info.mimes.append(textPDFMimeClassInfo);

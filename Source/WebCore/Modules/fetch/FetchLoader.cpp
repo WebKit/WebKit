@@ -65,7 +65,7 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
 
     if (m_urlForReading.isEmpty()) {
         if (RefPtr client = m_client.get())
-            client->didFail({ errorDomainWebKitInternal, 0, URL(), "Could not create URL for Blob"_s });
+            client->didFail({ StringImpl::create(errorDomainWebKitInternal).ptr(), 0, URL(), "Could not create URL for Blob"_si });
         return;
     }
 
@@ -73,7 +73,7 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
 
     ResourceRequest request(URL { m_urlForReading });
     request.setInitiatorIdentifier(context.resourceRequestIdentifier());
-    request.setHTTPMethod("GET"_s);
+    request.setHTTPMethod("GET"_si);
 
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
@@ -87,13 +87,13 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
     m_isStarted = m_loader;
 }
 
-void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request, const String& initiator)
+void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request, StringImpl* initiator)
 {
     ResourceLoaderOptions resourceLoaderOptions = request.fetchOptions();
     resourceLoaderOptions.preflightPolicy = PreflightPolicy::Consider;
     ThreadableLoaderOptions options(resourceLoaderOptions,
         context.shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective,
-        String(initiator),
+        RefPtr<StringImpl>(initiator),
         ResponseFilteringPolicy::Disable);
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.dataBufferingPolicy = DataBufferingPolicy::DoNotBufferData;
@@ -116,17 +116,17 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
             sourcePosition = document->currentParserSourcePosition();
         if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy->allowConnectToSource(fetchRequest.url(), WTF::move(sourcePosition))) {
             if (RefPtr client = m_client.get())
-                client->didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), "Not allowed by ContentSecurityPolicy"_s, ResourceError::Type::AccessControl });
+                client->didFail({ StringImpl::create(errorDomainWebKitInternal).ptr(), 0, fetchRequest.url(), "Not allowed by ContentSecurityPolicy"_si, ResourceError::Type::AccessControl });
             return;
         }
     }
 
-    String referrer = request.internalRequestReferrer();
-    if (referrer == "no-referrer"_s) {
+    RefPtr<StringImpl> referrer = request.internalRequestReferrer();
+    if (equal(referrer, "no-referrer"_s)) {
         options.referrerPolicy = ReferrerPolicy::NoReferrer;
-        referrer = String();
+        referrer = nullptr;
     } else
-        referrer = (referrer == "client"_s) ? context.url().strippedForUseAsReferrer().string : URL(context.url(), referrer).strippedForUseAsReferrer().string;
+        referrer = (equal(referrer, "client"_s)) ? context.url().strippedForUseAsReferrer().string : URL(context.url(), referrer).strippedForUseAsReferrer().string;
     if (options.referrerPolicy == ReferrerPolicy::EmptyString)
         options.referrerPolicy = context.referrerPolicy();
 

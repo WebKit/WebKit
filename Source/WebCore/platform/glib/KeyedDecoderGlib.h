@@ -41,28 +41,28 @@ public:
     ~KeyedDecoderGlib() override;
 
 private:
-    [[nodiscard]] bool decodeBytes(const String& key, std::span<const uint8_t>&) override;
-    [[nodiscard]] bool decodeBool(const String& key, bool&) override;
-    [[nodiscard]] bool decodeUInt32(const String& key, uint32_t&) override;
-    [[nodiscard]] bool decodeUInt64(const String& key, uint64_t&) override;
-    [[nodiscard]] bool decodeInt32(const String& key, int32_t&) override;
-    [[nodiscard]] bool decodeInt64(const String& key, int64_t&) override;
-    [[nodiscard]] bool decodeFloat(const String& key, float&) override;
-    [[nodiscard]] bool decodeDouble(const String& key, double&) override;
-    [[nodiscard]] bool decodeString(const String& key, String&) override;
+    [[nodiscard]] bool decodeBytes(StringImpl* key, std::span<const uint8_t>&) override;
+    [[nodiscard]] bool decodeBool(StringImpl* key, bool&) override;
+    [[nodiscard]] bool decodeUInt32(StringImpl* key, uint32_t&) override;
+    [[nodiscard]] bool decodeUInt64(StringImpl* key, uint64_t&) override;
+    [[nodiscard]] bool decodeInt32(StringImpl* key, int32_t&) override;
+    [[nodiscard]] bool decodeInt64(StringImpl* key, int64_t&) override;
+    [[nodiscard]] bool decodeFloat(StringImpl* key, float&) override;
+    [[nodiscard]] bool decodeDouble(StringImpl* key, double&) override;
+    [[nodiscard]] bool decodeString(StringImpl* key, RefPtr<StringImpl>&) override;
 
-    bool beginObject(const String& key) override;
+    bool beginObject(StringImpl* key) override;
     void endObject() override;
 
-    bool beginArray(const String& key) override;
+    bool beginArray(StringImpl* key) override;
     bool beginArrayElement() override;
     void endArrayElement() override;
     void endArray() override;
 
-    template<typename T, typename F> [[nodiscard]] bool decodeSimpleValue(const String& key, T& result, F getFunction);
-    HashMap<String, GRefPtr<GVariant>> dictionaryFromGVariant(GVariant*);
+    template<typename T, typename F> [[nodiscard]] bool decodeSimpleValue(StringImpl* key, T& result, F getFunction);
+    HashMap<RefPtr<StringImpl>, GRefPtr<GVariant>> dictionaryFromGVariant(GVariant*);
 
-    Vector<HashMap<String, GRefPtr<GVariant>>> m_dictionaryStack;
+    Vector<HashMap<RefPtr<StringImpl>, GRefPtr<GVariant>>> m_dictionaryStack;
     Vector<GVariant*, 16> m_arrayStack;
     Vector<unsigned> m_arrayIndexStack;
 };

@@ -38,35 +38,35 @@ class Document;
 
 class ApplicationManifestParser {
 public:
-    WEBCORE_EXPORT static ApplicationManifest parse(Document&, const String&, const URL& manifestURL, const URL& documentURL);
-    WEBCORE_EXPORT static ApplicationManifest parse(const String&, const URL& manifestURL, const URL& documentURL);
-    WEBCORE_EXPORT static std::optional<ApplicationManifest> parseWithValidation(const String&, const URL& manifestURL, const URL& documentURL);
+    WEBCORE_EXPORT static ApplicationManifest parse(Document&, StringImpl*, const URL& manifestURL, const URL& documentURL);
+    WEBCORE_EXPORT static ApplicationManifest parse(StringImpl*, const URL& manifestURL, const URL& documentURL);
+    WEBCORE_EXPORT static std::optional<ApplicationManifest> parseWithValidation(StringImpl*, const URL& manifestURL, const URL& documentURL);
 
 private:
     ApplicationManifestParser(RefPtr<Document>&&);
-    ApplicationManifest parseManifest(const JSON::Object&, const String&, const URL&, const URL&);
+    ApplicationManifest parseManifest(const JSON::Object&, StringImpl*, const URL&, const URL&);
 
-    RefPtr<JSON::Object> createJSONObject(const String&);
+    RefPtr<JSON::Object> createJSONObject(StringImpl*);
     URL parseStartURL(const JSON::Object&, const URL&);
     ApplicationManifest::Direction parseDir(const JSON::Object&);
     ApplicationManifest::Display parseDisplay(const JSON::Object&);
     const std::optional<ScreenOrientationLockType> parseOrientation(const JSON::Object&);
-    String parseLang(const JSON::Object&);
-    String parseName(const JSON::Object&);
-    String parseDescription(const JSON::Object&);
-    String parseShortName(const JSON::Object&);
+    RefPtr<StringImpl> parseLang(const JSON::Object&);
+    RefPtr<StringImpl> parseName(const JSON::Object&);
+    RefPtr<StringImpl> parseDescription(const JSON::Object&);
+    RefPtr<StringImpl> parseShortName(const JSON::Object&);
     std::optional<URL> parseScope(const JSON::Object&, const URL&, const URL&);
-    Vector<String> parseCategories(const JSON::Object&);
+    Vector<RefPtr<StringImpl>> parseCategories(const JSON::Object&);
     Vector<ApplicationManifest::Icon> parseIcons(const JSON::Object&);
     Vector<ApplicationManifest::Shortcut> parseShortcuts(const JSON::Object&);
     URL parseId(const JSON::Object&, const URL&);
 
-    Color parseColor(const JSON::Object&, const String& propertyName);
-    String parseGenericString(const JSON::Object&, const String&);
+    Color parseColor(const JSON::Object&, StringImpl* propertyName);
+    RefPtr<StringImpl> parseGenericString(const JSON::Object&, StringImpl*);
 
-    void logManifestPropertyNotAString(const String&);
-    void logManifestPropertyInvalidURL(const String&);
-    void logDeveloperWarning(const String& message);
+    void logManifestPropertyNotAString(StringImpl*);
+    void logManifestPropertyInvalidURL(StringImpl*);
+    void logDeveloperWarning(StringImpl* message);
 
     const RefPtr<Document> m_document;
     URL m_manifestURL;

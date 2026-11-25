@@ -59,9 +59,9 @@ inline constexpr GamepadButtonRole maximumGamepadButton = GamepadButtonRole::Cen
 inline constexpr size_t numberOfStandardGamepadButtonsWithoutHomeButton = static_cast<size_t>(maximumGamepadButton);
 inline constexpr size_t numberOfStandardGamepadButtonsWithHomeButton = numberOfStandardGamepadButtonsWithoutHomeButton + 1;
 
-const String& standardGamepadMappingString();
+const RefPtr<StringImpl>& standardGamepadMappingString();
 #if ENABLE(WEBXR)
-const String& xrStandardGamepadMappingString();
+const RefPtr<StringImpl>& xrStandardGamepadMappingString();
 #endif
 
 } // namespace WebCore

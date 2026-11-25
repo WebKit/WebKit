@@ -40,12 +40,12 @@ Ref<StorageEvent> StorageEvent::createForBindings()
 
 StorageEvent::~StorageEvent() = default;
 
-Ref<StorageEvent> StorageEvent::create(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
+Ref<StorageEvent> StorageEvent::create(AtomStringImpl* type, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* url, Storage* storageArea)
 {
     return adoptRef(*new StorageEvent(type, key, oldValue, newValue, url, storageArea));
 }
 
-Ref<StorageEvent> StorageEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+Ref<StorageEvent> StorageEvent::create(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new StorageEvent(type, WTF::move(initializer), isTrusted));
 }
@@ -55,7 +55,7 @@ StorageEvent::StorageEvent()
 {
 }
 
-StorageEvent::StorageEvent(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
+StorageEvent::StorageEvent(AtomStringImpl* type, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* url, Storage* storageArea)
     : Event(EventInterfaceType::StorageEvent, type, CanBubble::No, IsCancelable::No)
     , m_key(key)
     , m_oldValue(oldValue)
@@ -65,7 +65,7 @@ StorageEvent::StorageEvent(const AtomString& type, const String& key, const Stri
 {
 }
 
-StorageEvent::StorageEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+StorageEvent::StorageEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
     : Event(EventInterfaceType::StorageEvent, type, WTF::move(initializer), isTrusted)
     , m_key(WTF::move(initializer.key))
     , m_oldValue(WTF::move(initializer.oldValue))
@@ -75,7 +75,7 @@ StorageEvent::StorageEvent(const AtomString& type, Init&& initializer, IsTrusted
 {
 }
 
-void StorageEvent::initStorageEvent(const AtomString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
+void StorageEvent::initStorageEvent(AtomStringImpl* type, bool canBubble, bool cancelable, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* url, Storage* storageArea)
 {
     if (isBeingDispatched())
         return;

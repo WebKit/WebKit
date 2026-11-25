@@ -55,9 +55,9 @@ static constexpr auto lightCardHTML = "<!DOCTYPE html>"
 TEST(AdaptiveDarkMode, EstimatedBackgroundColorAppliesColorFilterToAncestors)
 {
     auto page = createPageWithAdaptiveDarkMode();
-    page.loadHTML(lightCardHTML);
+    page.loadHTML(StringImpl::create(lightCardHTML).ptr());
 
-    RefPtr link = page.getElementById("link"_s);
+    RefPtr link = page.getElementById("link"_si);
     ASSERT_TRUE(link);
 
     auto documentBackgroundColor = page.frame().view()->documentBackgroundColor();
@@ -75,9 +75,9 @@ TEST(AdaptiveDarkMode, EstimatedBackgroundColorAppliesColorFilterToAncestors)
 TEST(AdaptiveDarkMode, EstimatedBackgroundColorUnchangedWhenAdaptiveDarkModeIsOff)
 {
     auto page = TestPageHarness::create();
-    page.loadHTML(lightCardHTML);
+    page.loadHTML(StringImpl::create(lightCardHTML).ptr());
 
-    RefPtr link = page.getElementById("link"_s);
+    RefPtr link = page.getElementById("link"_si);
     ASSERT_TRUE(link);
 
     // Without Adaptive Dark Mode the document background is left as authored.

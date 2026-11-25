@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho, EditAction editingAction)
+InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned offset, StringImpl* text, AllowPasswordEcho allowPasswordEcho, EditAction editingAction)
     : SimpleEditCommand(node->document(), editingAction)
     , m_node(WTF::move(node))
     , m_offset(offset)
@@ -46,7 +46,7 @@ InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned 
     , m_allowPasswordEcho(allowPasswordEcho)
 {
     ASSERT(m_offset <= m_node->length());
-    ASSERT(!m_text.isEmpty());
+    ASSERT(!isEmpty(m_text));
 }
 
 bool InsertIntoTextNodeCommand::shouldEnablePasswordEcho() const
@@ -75,7 +75,7 @@ void InsertIntoTextNodeCommand::doApply()
 
     if (passwordEchoEnabled) {
         if (CheckedPtr renderText = m_node->renderer())
-            renderText->momentarilyRevealLastTypedCharacter(m_offset + m_text.length());
+            renderText->momentarilyRevealLastTypedCharacter(m_offset + length(m_text));
     }
     
     m_node->insertData(m_offset, m_text);
@@ -94,7 +94,7 @@ void InsertIntoTextNodeCommand::doUnapply()
     if (!m_node->hasEditableStyle())
         return;
 
-    m_node->deleteData(m_offset, m_text.length());
+    m_node->deleteData(m_offset, length(m_text));
 }
 
 #ifndef NDEBUG

@@ -93,24 +93,24 @@ void StringPrintStream::reset()
     m_buffer[0] = 0;
 }
 
-std::expected<String, UTF8ConversionError> StringPrintStream::tryToString() const
+std::expected<RefPtr<StringImpl>, UTF8ConversionError> StringPrintStream::tryToString() const
 {
     ASSERT(m_length == strlenSpan(m_buffer));
-    if (m_length > String::MaxLength)
+    if (m_length > StringImpl::MaxLength)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
-    return String::fromUTF8(m_buffer.first(m_length));
+    return StringImpl::fromUTF8(m_buffer.first(m_length));
 }
 
-String StringPrintStream::toString() const
+RefPtr<StringImpl> StringPrintStream::toString() const
 {
     ASSERT(m_length == strlenSpan(m_buffer));
-    return String::fromUTF8(m_buffer.first(m_length));
+    return StringImpl::fromUTF8(m_buffer.first(m_length));
 }
 
-String StringPrintStream::toStringWithLatin1Fallback() const
+RefPtr<StringImpl> StringPrintStream::toStringWithLatin1Fallback() const
 {
     ASSERT(m_length == strlenSpan(m_buffer));
-    return String::fromUTF8WithLatin1Fallback(m_buffer.first(m_length));
+    return StringImpl::fromUTF8WithLatin1Fallback(m_buffer.first(m_length));
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

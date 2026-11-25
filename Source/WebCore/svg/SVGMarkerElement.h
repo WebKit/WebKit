@@ -66,8 +66,8 @@ public:
     SVGAnimatedAngle& orientAngleAnimated() { return m_orientAngle; }
     Ref<SVGAnimatedEnumeration> orientTypeAnimated() { return m_orientType.copyRef(); }
 
-    AtomString orient() const;
-    void setOrient(const AtomString&);
+    RefPtr<AtomStringImpl> orient() const;
+    void setOrient(AtomStringImpl*);
 
     void setOrientToAuto();
     void setOrientToAngle(const SVGAngle&);
@@ -78,7 +78,7 @@ private:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMarkerElement, SVGElement, SVGFitToViewBox>;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
 
@@ -95,8 +95,8 @@ private:
 
     const Ref<SVGAnimatedLength> m_refX { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     const Ref<SVGAnimatedLength> m_refY { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
-    const Ref<SVGAnimatedLength> m_markerWidth { SVGAnimatedLength::create(this, SVGLengthMode::Width, "3"_s) };
-    const Ref<SVGAnimatedLength> m_markerHeight { SVGAnimatedLength::create(this, SVGLengthMode::Height, "3"_s) };
+    const Ref<SVGAnimatedLength> m_markerWidth { SVGAnimatedLength::create(this, SVGLengthMode::Width, "3"_si) };
+    const Ref<SVGAnimatedLength> m_markerHeight { SVGAnimatedLength::create(this, SVGLengthMode::Height, "3"_si) };
     const Ref<SVGAnimatedEnumeration> m_markerUnits { SVGAnimatedEnumeration::create(this, SVGMarkerUnitsType::StrokeWidth) };
     const Ref<SVGAnimatedAngle> m_orientAngle { SVGAnimatedAngle::create(this) };
     const Ref<SVGAnimatedOrientType> m_orientType { SVGAnimatedOrientType::create(this, SVGMarkerOrientAngle) };

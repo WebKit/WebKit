@@ -30,12 +30,12 @@
 
 namespace WebKit {
 
-WebJSBufferData::WebJSBufferData(const Ref<WebCore::SharedMemory>& data, ContentWorldData&& worldData, const String& name)
+WebJSBufferData::WebJSBufferData(const Ref<WebCore::SharedMemory>& data, ContentWorldData&& worldData, StringImpl* name)
     : data(data)
     , worldData(WTF::move(worldData))
     , name(name) { }
 
-WebJSBufferData::WebJSBufferData(std::optional<WebCore::SharedMemoryHandle>&& handle, ContentWorldData&& worldData, String&& name)
+WebJSBufferData::WebJSBufferData(std::optional<WebCore::SharedMemoryHandle>&& handle, ContentWorldData&& worldData, RefPtr<StringImpl>&& name)
     : data(handle ? WebCore::SharedMemory::map(WTF::move(*handle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr)
     , worldData(WTF::move(worldData))
     , name(WTF::move(name)) { }

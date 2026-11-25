@@ -179,7 +179,7 @@ public:
     {
         for (auto event : events) {
             auto eventMessage = makeString(event, " event"_s);
-            RetainPtr nsEventMessage = eventMessage.createNSString();
+            RetainPtr nsEventMessage = createNSString(eventMessage);
             [_messageHandlers addObject:nsEventMessage.get()];
             [webView() performAfterReceivingMessage:nsEventMessage.get() action:[this, eventMessage = WTF::move(eventMessage)] {
                 _eventListenersCalled.add(eventMessage);
@@ -213,7 +213,7 @@ public:
     {
         for (auto handler : handlers) {
             auto handlerMessage = makeString(handler, " handler"_s);
-            RetainPtr nsHandleMessage = handlerMessage.createNSString();
+            RetainPtr nsHandleMessage = createNSString(handlerMessage);
             [_messageHandlers addObject:nsHandleMessage.get()];
             [webView() performAfterReceivingMessage:nsHandleMessage.get() action:[this, handlerMessage = WTF::move(handlerMessage)] {
                 _mediaSessionHandlersCalled.add(handlerMessage);
@@ -257,8 +257,8 @@ private:
     RetainPtr<WKWebViewConfiguration> _configuration;
     RetainPtr<TestWKWebView> _webView;
 
-    HashSet<String> _mediaSessionHandlersCalled;
-    HashSet<String> _eventListenersCalled;
+    HashSet<RefPtr<StringImpl>> _mediaSessionHandlersCalled;
+    HashSet<RefPtr<StringImpl>> _eventListenersCalled;
     RetainPtr<NSMutableArray> _messageHandlers;
 };
 

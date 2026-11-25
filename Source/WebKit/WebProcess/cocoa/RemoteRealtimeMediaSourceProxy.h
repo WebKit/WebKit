@@ -64,8 +64,8 @@ public:
     void createRemoteCloneSource(WebCore::RealtimeMediaSourceIdentifier, WebCore::PageIdentifier);
 
     void applyConstraintsSucceeded();
-    void applyConstraintsFailed(WebCore::MediaConstraintType, String&& errorMessage);
-    void failApplyConstraintCallbacks(const String& errorMessage);
+    void applyConstraintsFailed(WebCore::MediaConstraintType, RefPtr<StringImpl>&& errorMessage);
+    void failApplyConstraintCallbacks(StringImpl* errorMessage);
 
     bool isEnded() const { return m_isEnded; }
     void end();

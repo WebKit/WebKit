@@ -62,8 +62,8 @@ public:
     static void deleteSelection(Ref<Document>&&, OptionSet<Option> = { }, TextCompositionType = TextCompositionType::None);
     static void deleteKeyPressed(Ref<Document>&&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
     static void forwardDeleteKeyPressed(Ref<Document>&&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
-    static void insertText(Ref<Document>&&, const String&, Event* triggeringEvent, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
-    static void insertText(Ref<Document>&&, const String&, Event* triggeringEvent, const VisibleSelection&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
+    static void insertText(Ref<Document>&&, StringImpl*, Event* triggeringEvent, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
+    static void insertText(Ref<Document>&&, StringImpl*, Event* triggeringEvent, const VisibleSelection&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
     static void insertLineBreak(Ref<Document>&&, OptionSet<Option>);
     static void insertParagraphSeparator(Ref<Document>&&, OptionSet<Option>);
     static void insertParagraphSeparatorInQuotedContent(Ref<Document>&&);
@@ -72,8 +72,8 @@ public:
     static void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Document&, const VisibleSelection&);
 #endif
 
-    void insertText(const String&, bool selectInsertedText);
-    void insertTextRunWithoutNewlines(const String&, bool selectInsertedText);
+    void insertText(StringImpl*, bool selectInsertedText);
+    void insertTextRunWithoutNewlines(StringImpl*, bool selectInsertedText);
     void insertLineBreak();
     void insertParagraphSeparatorInQuotedContent();
     void insertParagraphSeparator();
@@ -90,17 +90,17 @@ public:
 #endif
 
 private:
-    static Ref<TypingCommand> create(Ref<Document>&& document, Type command, const String& text = emptyString(), OptionSet<Option> options = { }, TextGranularity granularity = TextGranularity::CharacterGranularity, TextCompositionType compositionType = TextCompositionType::None)
+    static Ref<TypingCommand> create(Ref<Document>&& document, Type command, StringImpl* text = emptyString(), OptionSet<Option> options = { }, TextGranularity granularity = TextGranularity::CharacterGranularity, TextCompositionType compositionType = TextCompositionType::None)
     {
         return adoptRef(*new TypingCommand(WTF::move(document), command, text, options, granularity, compositionType));
     }
 
-    static Ref<TypingCommand> create(Ref<Document>&& document, Type command, const String& text, OptionSet<Option> options, TextCompositionType compositionType)
+    static Ref<TypingCommand> create(Ref<Document>&& document, Type command, StringImpl* text, OptionSet<Option> options, TextCompositionType compositionType)
     {
         return adoptRef(*new TypingCommand(WTF::move(document), command, text, options, TextGranularity::CharacterGranularity, compositionType));
     }
 
-    TypingCommand(Ref<Document>&&, Type, const String& text, OptionSet<Option>, TextGranularity, TextCompositionType);
+    TypingCommand(Ref<Document>&&, Type, StringImpl* text, OptionSet<Option>, TextGranularity, TextCompositionType);
 
     void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }
     bool isOpenForMoreTyping() const { return m_openForMoreTyping; }
@@ -120,9 +120,9 @@ private:
     bool shouldStopCaretBlinking() const final { return true; }
     void setShouldPreventSpellChecking(bool prevent) { m_shouldPreventSpellChecking = prevent; }
 
-    AtomString inputEventTypeName() const final;
+    RefPtr<AtomStringImpl> inputEventTypeName() const final;
     bool isInputMethodComposing() const final;
-    String inputEventData() const final;
+    RefPtr<StringImpl> inputEventData() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
     bool isBeforeInputEventCancelable() const final;
 
@@ -131,14 +131,14 @@ private:
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Document&);
 
     NODELETE void updatePreservesTypingStyle(Type);
-    bool willAddTypingToOpenCommand(Type, TextGranularity, const String& = emptyString(), const std::optional<SimpleRange>& = { });
+    bool willAddTypingToOpenCommand(Type, TextGranularity, StringImpl* = emptyString(), const std::optional<SimpleRange>& = { });
     void markMisspellingsAfterTyping(Type);
     void typingAddedToOpenCommand(Type);
     bool makeEditableRootEmpty();
 
-    String recordDeletionForAccessibility(const VisibleSelection&);
-    void postTextStateChangeNotificationForDeletion(const String& deletedText);
-    void insertTextAndNotifyAccessibility(const String &text, bool selectInsertedText);
+    RefPtr<StringImpl> recordDeletionForAccessibility(const VisibleSelection&);
+    void postTextStateChangeNotificationForDeletion(StringImpl* deletedText);
+    void insertTextAndNotifyAccessibility(StringImpl*text, bool selectInsertedText);
     void insertLineBreakAndNotifyAccessibility();
     void insertParagraphSeparatorInQuotedContentAndNotifyAccessibility();
     void insertParagraphSeparatorAndNotifyAccessibility();
@@ -150,8 +150,8 @@ private:
 
     Type m_commandType;
     EditAction m_currentTypingEditAction;
-    String m_textToInsert;
-    String m_currentTextToInsert;
+    RefPtr<StringImpl> m_textToInsert;
+    RefPtr<StringImpl> m_currentTextToInsert;
     bool m_openForMoreTyping;
     bool m_selectInsertedText;
     bool m_smartDelete;

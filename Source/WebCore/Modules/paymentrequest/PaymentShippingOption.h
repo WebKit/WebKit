@@ -33,8 +33,8 @@
 namespace WebCore {
 
 struct PaymentShippingOption {
-    String id;
-    String label;
+    RefPtr<StringImpl> id;
+    RefPtr<StringImpl> label;
     PaymentCurrencyAmount amount;
     bool selected { false };
 };

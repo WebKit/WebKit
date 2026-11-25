@@ -41,15 +41,15 @@ public:
     NODELETE static AVStreamDataParserMIMETypeCache& singleton();
 
     bool isAvailable() const final;
-    MediaPlayerEnums::SupportsType canDecodeType(const String&) final;
-    HashSet<String> supportedTypes() final;
+    MediaPlayerEnums::SupportsType canDecodeType(StringImpl*) final;
+    HashSet<RefPtr<StringImpl>> supportedTypes() final;
 
 private:
     friend NeverDestroyed<AVStreamDataParserMIMETypeCache>;
     AVStreamDataParserMIMETypeCache() = default;
 
     bool canDecodeExtendedType(const ContentType&) final;
-    void initializeCache(HashSet<String>&) final;
+    void initializeCache(HashSet<RefPtr<StringImpl>>&) final;
 };
 
 }

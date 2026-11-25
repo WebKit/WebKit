@@ -39,22 +39,30 @@ class HTTPHeaderMap {
 public:
     struct CommonHeader {
         HTTPHeaderName key;
-        String value;
+        RefPtr<StringImpl> value;
 
-        CommonHeader isolatedCopy() const & { return { key , value.isolatedCopy() }; }
-        CommonHeader isolatedCopy() && { return { key , WTF::move(value).isolatedCopy() }; }
+        CommonHeader isolatedCopy() const & { return { key , WTF::isolatedCopy(value) }; }
+        CommonHeader isolatedCopy() && { return { key , WTF::isolatedCopy(WTF::move(value)) }; }
 
-        friend bool operator==(const CommonHeader&, const CommonHeader&) = default;
+        friend bool operator==(const CommonHeader& a, const CommonHeader& b)
+        {
+            return a.key == b.key
+                && contentEquals(a.value, b.value);
+        }
     };
 
     struct UncommonHeader {
-        String key;
-        String value;
+        RefPtr<StringImpl> key;
+        RefPtr<StringImpl> value;
 
-        UncommonHeader isolatedCopy() const & { return { key.isolatedCopy() , value.isolatedCopy() }; }
-        UncommonHeader isolatedCopy() && { return { WTF::move(key).isolatedCopy() , WTF::move(value).isolatedCopy() }; }
+        UncommonHeader isolatedCopy() const & { return { WTF::isolatedCopy(key) , WTF::isolatedCopy(value) }; }
+        UncommonHeader isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(key)) , WTF::isolatedCopy(WTF::move(value)) }; }
 
-        friend bool operator==(const UncommonHeader&, const UncommonHeader&) = default;
+        friend bool operator==(const UncommonHeader& a, const UncommonHeader& b)
+        {
+            return contentEquals(a.key, b.key)
+                && contentEquals(a.value, b.value);
+        }
     };
 
     typedef Vector<CommonHeader, 0, CrashOnOverflow, 6> CommonHeadersVector;
@@ -75,9 +83,9 @@ public:
         }
 
         struct KeyValue {
-            String key;
+            RefPtr<StringImpl> key;
             std::optional<HTTPHeaderName> keyAsHTTPHeaderName;
-            String value;
+            RefPtr<StringImpl> value;
         };
         using difference_type = ptrdiff_t;
         using value_type = KeyValue;
@@ -158,26 +166,26 @@ public:
         m_uncommonHeaders.shrinkToFit();
     }
 
-    WEBCORE_EXPORT String get(StringView name) const;
-    WEBCORE_EXPORT void set(const String& name, const String& value);
-    WEBCORE_EXPORT void add(const String& name, const String& value);
-    void setUncommonHeader(const String& name, const String& value);
-    void addUncommonHeader(const String& name, const String& value);
-    WEBCORE_EXPORT void append(const String& name, const String& value);
-    WEBCORE_EXPORT bool contains(const String&) const;
-    WEBCORE_EXPORT bool remove(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> get(StringView name) const;
+    WEBCORE_EXPORT void set(StringImpl* name, StringImpl* value);
+    WEBCORE_EXPORT void add(StringImpl* name, StringImpl* value);
+    void setUncommonHeader(StringImpl* name, StringImpl* value);
+    void addUncommonHeader(StringImpl* name, StringImpl* value);
+    WEBCORE_EXPORT void append(StringImpl* name, StringImpl* value);
+    WEBCORE_EXPORT bool contains(StringImpl*) const;
+    WEBCORE_EXPORT bool remove(StringImpl*);
 
 #if USE(CF)
-    WEBCORE_EXPORT void set(CFStringRef name, const String& value);
+    WEBCORE_EXPORT void set(CFStringRef name, StringImpl* value);
 #ifdef __OBJC__
-    void set(NSString *name, const String& value) { set((__bridge CFStringRef)name, value); }
+    void set(NSString *name, StringImpl* value) { set((__bridge CFStringRef)name, value); }
 #endif
 #endif
 
-    WEBCORE_EXPORT String get(HTTPHeaderName) const;
-    void set(HTTPHeaderName, const String& value);
-    void add(HTTPHeaderName, const String& value);
-    bool addIfNotPresent(HTTPHeaderName, const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> get(HTTPHeaderName) const;
+    void set(HTTPHeaderName, StringImpl* value);
+    void add(HTTPHeaderName, StringImpl* value);
+    bool addIfNotPresent(HTTPHeaderName, StringImpl*);
     WEBCORE_EXPORT bool contains(HTTPHeaderName) const;
     WEBCORE_EXPORT bool remove(HTTPHeaderName);
 
@@ -194,8 +202,8 @@ public:
     }
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String get(ASCIILiteral) const = delete;
-    template<size_t length> void set(ASCIILiteral, const String&) = delete;
+    template<size_t length> RefPtr<StringImpl> get(ASCIILiteral) const = delete;
+    template<size_t length> void set(ASCIILiteral, StringImpl*) = delete;
     template<size_t length> bool contains(ASCIILiteral) = delete;
     template<size_t length> bool remove(ASCIILiteral) = delete;
 
@@ -212,18 +220,18 @@ public:
         if (a.m_commonHeaders.size() != b.m_commonHeaders.size() || a.m_uncommonHeaders.size() != b.m_uncommonHeaders.size())
             return false;
         for (auto& commonHeader : a.m_commonHeaders) {
-            if (b.get(commonHeader.key) != commonHeader.value)
+            if (!equal(b.get(commonHeader.key), commonHeader.value))
                 return false;
         }
         for (auto& uncommonHeader : a.m_uncommonHeaders) {
-            if (b.getUncommonHeader(uncommonHeader.key) != uncommonHeader.value)
+            if (!equal(b.getUncommonHeader(uncommonHeader.key), uncommonHeader.value))
                 return false;
         }
         return true;
     }
 
 private:
-    WEBCORE_EXPORT String getUncommonHeader(StringView name) const;
+    WEBCORE_EXPORT RefPtr<StringImpl> getUncommonHeader(StringView name) const;
 
     CommonHeadersVector m_commonHeaders;
     UncommonHeadersVector m_uncommonHeaders;

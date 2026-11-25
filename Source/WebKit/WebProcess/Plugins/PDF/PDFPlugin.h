@@ -104,7 +104,7 @@ public:
     void focusNextAnnotation() final;
     void focusPreviousAnnotation() final;
 
-    void attemptToUnlockPDF(const String& password) final;
+    void attemptToUnlockPDF(StringImpl* password) final;
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
 
@@ -122,7 +122,7 @@ private:
     explicit PDFPlugin(WebCore::HTMLPlugInElement&);
     bool isLegacyPDFPlugin() const override { return true; }
 
-    PDFSelection *nextMatchForString(const String& target, bool searchForward, bool caseSensitive, bool wrapSearch, PDFSelection *initialSelection, bool startInSelection);
+    PDFSelection *nextMatchForString(StringImpl* target, bool searchForward, bool caseSensitive, bool wrapSearch, PDFSelection *initialSelection, bool startInSelection);
 
     void didChangeScrollOffset() override;
 
@@ -157,22 +157,22 @@ private:
     bool handleMouseLeaveEvent(const WebMouseEvent&) override;
     bool handleContextMenuEvent(const WebMouseEvent&) override;
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
-    bool handleEditingCommand(const String& commandName, const String& argument) override;
-    bool isEditingCommandEnabled(const String& commandName) override;
+    bool handleEditingCommand(StringImpl* commandName, StringImpl* argument) override;
+    bool isEditingCommandEnabled(StringImpl* commandName) override;
 
-    String selectionString() const override;
+    RefPtr<StringImpl> selectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const override;
 
-    bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) override;
+    bool findString(StringImpl* target, WebCore::FindOptions, unsigned maxMatchCount) override;
     bool drawsFindOverlay() const final { return true; }
 
-    Vector<WebFoundTextRange::PDFData> findTextMatches(const String&, WebCore::FindOptions) final { return { }; }
+    Vector<WebFoundTextRange::PDFData> findTextMatches(StringImpl*, WebCore::FindOptions) final { return { }; }
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const Vector<WebFoundTextRange::PDFData>&, const WebCore::IntRect&) final { return { }; }
 
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) override;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
-    std::pair<String, RetainPtr<PDFSelection>> textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint&, WebHitTestResultData&) override;
+    std::pair<RefPtr<StringImpl>, RetainPtr<PDFSelection>> textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint&, WebHitTestResultData&) override;
 
     bool shouldCreateTransientPaintingSnapshot() const override { return true; }
     RefPtr<WebCore::ShareableBitmap> snapshot() override;

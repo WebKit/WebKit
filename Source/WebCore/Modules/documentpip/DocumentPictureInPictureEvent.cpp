@@ -35,12 +35,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentPictureInPictureEvent);
 
-Ref<DocumentPictureInPictureEvent> DocumentPictureInPictureEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
+Ref<DocumentPictureInPictureEvent> DocumentPictureInPictureEvent::create(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
 {
     return adoptRef(*new DocumentPictureInPictureEvent(type, WTF::move(init), isTrusted));
 }
 
-DocumentPictureInPictureEvent::DocumentPictureInPictureEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+DocumentPictureInPictureEvent::DocumentPictureInPictureEvent(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
     : Event(EventInterfaceType::DocumentPictureInPictureEvent, type, init, isTrusted)
     , m_window(WTF::move(init.window))
 {

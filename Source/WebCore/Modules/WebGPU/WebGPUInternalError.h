@@ -33,25 +33,25 @@ namespace WebCore {
 
 class WebGPUInternalError final : public RefCounted<WebGPUInternalError> {
 public:
-    static Ref<WebGPUInternalError> create(String&& message)
+    static Ref<WebGPUInternalError> create(RefPtr<StringImpl>&& message)
     {
         return adoptRef(*new WebGPUInternalError(WTF::move(message)));
     }
 
-    static Ref<WebGPUInternalError> create(const String& message)
+    static Ref<WebGPUInternalError> create(StringImpl* message)
     {
         return adoptRef(*new WebGPUInternalError(message));
     }
 
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
 
 private:
-    WebGPUInternalError(String&& message)
+    WebGPUInternalError(RefPtr<StringImpl>&& message)
         : m_message(WTF::move(message))
     {
     }
 
-    WebGPUInternalError(const String& message)
+    WebGPUInternalError(StringImpl* message)
         : m_message(message)
     {
     }
@@ -61,7 +61,7 @@ private:
     WebGPUInternalError& operator=(const WebGPUInternalError&) = delete;
     WebGPUInternalError& operator=(WebGPUInternalError&&) = delete;
 
-    String m_message;
+    RefPtr<StringImpl> m_message;
 };
 
 } // namespace WebCore

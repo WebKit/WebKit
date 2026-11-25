@@ -77,7 +77,7 @@ private:
     Function<bool(bool shouldKeepScreenAwake)> m_screenWakeLockHandler;
 };
 
-void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(const String&)
+void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(StringImpl*)
 {
     m_screenSleepDisablerToken = ScreenSleepDisabler::singleton().takeAssertion();
 }

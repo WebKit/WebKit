@@ -138,7 +138,7 @@ void PlaybackSessionInterfaceContext::legibleMediaSelectionIndexChanged(uint64_t
         manager->legibleMediaSelectionIndexChanged(m_contextId, selectedIndex);
 }
 
-void PlaybackSessionInterfaceContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName, const String& localizedRouteName)
+void PlaybackSessionInterfaceContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, StringImpl* localizedDeviceName, StringImpl* localizedRouteName)
 {
     if (RefPtr manager = m_manager.get())
         manager->externalPlaybackChanged(m_contextId, enabled, type, localizedDeviceName, localizedRouteName);
@@ -448,7 +448,7 @@ void PlaybackSessionManager::legibleMediaSelectionOptionsChanged(WebCore::HTMLMe
     m_page->send(Messages::PlaybackSessionManagerProxy::LegibleMediaSelectionOptionsChanged(contextId, options, selectedIndex));
 }
 
-void PlaybackSessionManager::externalPlaybackChanged(WebCore::HTMLMediaElementIdentifier contextId, bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName, String localizedRouteName)
+void PlaybackSessionManager::externalPlaybackChanged(WebCore::HTMLMediaElementIdentifier contextId, bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, RefPtr<StringImpl> localizedDeviceName, RefPtr<StringImpl> localizedRouteName)
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(contextId, enabled, targetType, localizedDeviceName, localizedRouteName));
 }
@@ -750,7 +750,7 @@ void PlaybackSessionManager::setSoundStageSize(WebCore::HTMLMediaElementIdentifi
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-void PlaybackSessionManager::setSpatialTrackingLabel(WebCore::HTMLMediaElementIdentifier contextId, const String& label)
+void PlaybackSessionManager::setSpatialTrackingLabel(WebCore::HTMLMediaElementIdentifier contextId, StringImpl* label)
 {
     ensureModel(contextId)->setSpatialTrackingLabel(label);
 }

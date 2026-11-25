@@ -48,7 +48,7 @@ class WebAutomationSession;
 struct VirtualWalletBehavior {
     Inspector::Protocol::BidiDigitalCredentials::VirtualWalletAction action;
     WebCore::DigitalCredentialPresentationProtocol protocol { WebCore::DigitalCredentialPresentationProtocol::OrgIsoMdoc };
-    String responseJSON;
+    RefPtr<StringImpl> responseJSON;
 };
 
 using DigitalCredentialsPickerCompletionHandler = CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>;
@@ -59,22 +59,22 @@ public:
     BidiDigitalCredentialsAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
     ~BidiDigitalCredentialsAgent() override;
 
-    void setVirtualWalletBehavior(Inspector::Protocol::BidiDigitalCredentials::VirtualWalletAction, const String& optionalContext, std::optional<Inspector::Protocol::BidiDigitalCredentials::DigitalCredentialProtocol>&& optionalProtocol, RefPtr<JSON::Object>&& optionalResponse, Inspector::CommandCallback<void>&&) override;
+    void setVirtualWalletBehavior(Inspector::Protocol::BidiDigitalCredentials::VirtualWalletAction, StringImpl* optionalContext, std::optional<Inspector::Protocol::BidiDigitalCredentials::DigitalCredentialProtocol>&& optionalProtocol, RefPtr<JSON::Object>&& optionalResponse, Inspector::CommandCallback<void>&&) override;
 
-    std::optional<VirtualWalletBehavior> behaviorForContext(const String& browsingContextID) const;
+    std::optional<VirtualWalletBehavior> behaviorForContext(StringImpl* browsingContextID) const;
 
-    void holdPendingHandler(const String& contextID, DigitalCredentialsPickerCompletionHandler&&);
-    void releasePendingHandler(const String& contextID);
+    void holdPendingHandler(StringImpl* contextID, DigitalCredentialsPickerCompletionHandler&&);
+    void releasePendingHandler(StringImpl* contextID);
     void cancelAllPendingRequests();
 
 private:
-    void abortPendingHandler(const String& contextID, ASCIILiteral message);
+    void abortPendingHandler(StringImpl* contextID, ASCIILiteral message);
 
     WeakPtr<WebAutomationSession> m_session;
     const Ref<Inspector::BidiDigitalCredentialsBackendDispatcher> m_digitalCredentialsDomainDispatcher;
-    HashMap<String, VirtualWalletBehavior> m_browsingContextToWalletBehaviors;
+    HashMap<RefPtr<StringImpl>, VirtualWalletBehavior> m_browsingContextToWalletBehaviors;
     std::optional<VirtualWalletBehavior> m_defaultBehavior;
-    HashMap<String, DigitalCredentialsPickerCompletionHandler> m_browsingContextToPendingWaitHandlers;
+    HashMap<RefPtr<StringImpl>, DigitalCredentialsPickerCompletionHandler> m_browsingContextToPendingWaitHandlers;
 };
 
 } // namespace WebKit

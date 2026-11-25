@@ -74,7 +74,7 @@ IntlDateTimeFormatConstructor::IntlDateTimeFormatConstructor(VM& vm, Structure* 
 
 void IntlDateTimeFormatConstructor::finishCreation(VM& vm, IntlDateTimeFormatPrototype* dateTimeFormatPrototype)
 {
-    Base::finishCreation(vm, 0, "DateTimeFormat"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "DateTimeFormat"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, dateTimeFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
@@ -129,7 +129,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatConstructorFuncSupportedLocalesOf, (J
     const auto& availableLocales = intlDateTimeFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).

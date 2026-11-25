@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-ErrorInstance* createAggregateError(VM& vm, Structure* structure, JSArray* errors, const String& message, JSValue cause, ErrorInstance::SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+ErrorInstance* createAggregateError(VM& vm, Structure* structure, JSArray* errors, StringImpl* message, JSValue cause, ErrorInstance::SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     auto* error = ErrorInstance::create(vm, structure, message, cause, appender, type, ErrorType::AggregateError, useCurrentFrame);
     error->putDirect(vm, vm.propertyNames->errors, errors, static_cast<unsigned>(PropertyAttribute::DontEnum));

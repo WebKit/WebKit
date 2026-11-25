@@ -55,11 +55,11 @@ public:
     void hoveredPartChanged(WebCore::Scrollbar&) final;
     void pressedPartChanged(WebCore::Scrollbar&) final;
     void scrollbarColorChanged(std::optional<WebCore::ScrollbarColor>) final;
-    String horizontalScrollbarStateForTesting() const final;
-    String verticalScrollbarStateForTesting() const final;
+    RefPtr<StringImpl> horizontalScrollbarStateForTesting() const final;
+    RefPtr<StringImpl> verticalScrollbarStateForTesting() const final;
 
 private:
-    String scrollbarStateForTesting(WebCore::Scrollbar*) const;
+    RefPtr<StringImpl> scrollbarStateForTesting(WebCore::Scrollbar*) const;
     ThreadSafeWeakPtr<WebCore::ScrollingCoordinator> m_coordinator;
 };
 

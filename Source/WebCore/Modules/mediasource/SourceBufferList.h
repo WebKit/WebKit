@@ -78,7 +78,7 @@ public:
 private:
     explicit SourceBufferList(ScriptExecutionContext*);
 
-    void scheduleEvent(const AtomString&);
+    void scheduleEvent(AtomStringImpl*);
 
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }

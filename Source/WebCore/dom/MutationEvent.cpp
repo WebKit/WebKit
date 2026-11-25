@@ -34,7 +34,7 @@ MutationEvent::MutationEvent()
 {
 }
 
-MutationEvent::MutationEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Node* relatedNode, const String& prevValue, const String& newValue)
+MutationEvent::MutationEvent(AtomStringImpl* type, CanBubble canBubble, IsCancelable cancelable, Node* relatedNode, StringImpl* prevValue, StringImpl* newValue)
     : Event(EventInterfaceType::MutationEvent, type, canBubble, cancelable)
     , m_relatedNode(relatedNode)
     , m_prevValue(prevValue)
@@ -42,7 +42,7 @@ MutationEvent::MutationEvent(const AtomString& type, CanBubble canBubble, IsCanc
 {
 }
 
-void MutationEvent::initMutationEvent(const AtomString& type, bool canBubble, bool cancelable, Node* relatedNode, const String& prevValue, const String& newValue, const String& attrName, unsigned short attrChange)
+void MutationEvent::initMutationEvent(AtomStringImpl* type, bool canBubble, bool cancelable, Node* relatedNode, StringImpl* prevValue, StringImpl* newValue, StringImpl* attrName, unsigned short attrChange)
 {
     if (isBeingDispatched())
         return;

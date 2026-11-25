@@ -43,7 +43,7 @@ namespace WebCore {
 static ExceptionOr<ApplePayAMSUIRequest> convertAndValidateApplePayAMSUIRequest(Document& document, JSC::JSValue data)
 {
     if (data.isEmpty())
-        return Exception { ExceptionCode::TypeError, "Missing payment method data."_s };
+        return Exception { ExceptionCode::TypeError, "Missing payment method data."_si };
 
     auto throwScope = DECLARE_THROW_SCOPE(document.vm());
     auto applePayAMSUIRequestConversionResult = convertDictionary<ApplePayAMSUIRequest>(*document.globalObject(), data);
@@ -51,8 +51,8 @@ static ExceptionOr<ApplePayAMSUIRequest> convertAndValidateApplePayAMSUIRequest(
         return Exception { ExceptionCode::ExistingExceptionError };
     auto applePayAMSUIRequest = applePayAMSUIRequestConversionResult.releaseReturnValue();
 
-    if (!applePayAMSUIRequest.engagementRequest.startsWith('{'))
-        return Exception { ExceptionCode::TypeError, "Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object"_s };
+    if (!startsWith(applePayAMSUIRequest.engagementRequest, '{'))
+        return Exception { ExceptionCode::TypeError, "Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object"_si };
 
     return WTF::move(applePayAMSUIRequest);
 }
@@ -155,7 +155,7 @@ void ApplePayAMSUIPaymentHandler::canMakePayment(Document& document, Function<vo
     completionHandler(page && !page->hasActiveApplePayAMSUISession());
 }
 
-ExceptionOr<void> ApplePayAMSUIPaymentHandler::detailsUpdated(PaymentRequest::UpdateReason, String&& /* error */, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* /* paymentMethodErrors */)
+ExceptionOr<void> ApplePayAMSUIPaymentHandler::detailsUpdated(PaymentRequest::UpdateReason, RefPtr<StringImpl>&& /* error */, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* /* paymentMethodErrors */)
 {
     ASSERT_NOT_REACHED_WITH_MESSAGE("ApplePayAMSUIPaymentHandler does not need shipping/payment info");
     return { };
@@ -167,7 +167,7 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::merchantValidationCompleted(JSC::
     return { };
 }
 
-ExceptionOr<void> ApplePayAMSUIPaymentHandler::complete(Document&, std::optional<PaymentComplete>&&, String&&)
+ExceptionOr<void> ApplePayAMSUIPaymentHandler::complete(Document&, std::optional<PaymentComplete>&&, RefPtr<StringImpl>&&)
 {
     hide();
     return { };

@@ -38,10 +38,10 @@ namespace IPC {
 std::optional<TransferString> TransferString::create(CFStringRef string)
 {
     if (!string)
-        return TransferString { String { } };
+        return TransferString { RefPtr<StringImpl> { } };
     CFIndex size = CFStringGetLength(string);
     if (!size)
-        return TransferString { ""_s };
+        return TransferString { ""_si };
     // The transferAsMappingSize checks are inside the `if`s because we want to make sure
     // that the getter will return the data. We need that during ::toIPCData.
     if (auto span8 = CFStringGetLatin1CStringSpan(string); !span8.empty()) {
@@ -58,7 +58,7 @@ std::optional<TransferString> TransferString::create(CFStringRef string)
     // to get UTF-16. Copy small ones to be held and sent as String.
     auto dataSize = static_cast<size_t>(size) * sizeof(char16_t);
     if (dataSize < transferAsMappingSize)
-        return TransferString { String { string } };
+        return TransferString { StringImpl::create(string) };
     RefPtr buffer = WebCore::SharedMemory::allocate(dataSize);
     if (!buffer)
         return std::nullopt;
@@ -92,38 +92,38 @@ std::optional<TransferString> TransferString::createCopy(std::span<const char16_
     return std::optional<TransferString> { std::in_place, SharedSpan16 { WTF::move(*handle) } };
 }
 
-std::optional<String> TransferString::release(size_t maxCopySizeInBytes) && // NOLINT
+std::optional<RefPtr<StringImpl>> TransferString::release(size_t maxCopySizeInBytes) && // NOLINT
 { // NOLINT
     return WTF::switchOn(WTF::move(m_storage),
-        [](String string) {
-            return std::optional<String> { std::in_place, WTF::move(string) };
+        [](RefPtr<StringImpl> string) {
+            return std::optional<RefPtr<StringImpl>> { std::in_place, WTF::move(string) };
         },
 #if USE(CF)
         [](RetainPtr<CFStringRef> string) {
-            return std::optional<String> { std::in_place, string.get() };
+            return std::optional<RefPtr<StringImpl>> { std::in_place, StringImpl::create(string.get()) };
         },
 #endif
-        [maxCopySizeInBytes](SharedSpan8 handle) -> std::optional<String> {
+        [maxCopySizeInBytes](SharedSpan8 handle) -> std::optional<RefPtr<StringImpl>> {
             RefPtr memory = WebCore::SharedMemory::map(WTF::move(handle.dataHandle), WebCore::SharedMemoryProtection::ReadOnly);
             if (!memory)
                 return std::nullopt;
             if (memory->size() > maxCopySizeInBytes) {
                 auto span = byteCast<Latin1Character>(memory->span());
                 Ref<StringImpl> impl = ExternalStringImpl::create(span, [memory = memory.releaseNonNull()] (auto...) mutable { });
-                return std::optional<String> { std::in_place, String { WTF::move(impl) } };
+                return std::optional<RefPtr<StringImpl>> { std::in_place, WTF::move(impl) };
             }
-            return std::optional<String> { std::in_place, String { byteCast<Latin1Character>(memory->span()) } };
+            return std::optional<RefPtr<StringImpl>> { std::in_place, StringImpl::createOrNull(byteCast<Latin1Character>(memory->span())) };
         },
-        [maxCopySizeInBytes](SharedSpan16 handle) -> std::optional<String> {
+        [maxCopySizeInBytes](SharedSpan16 handle) -> std::optional<RefPtr<StringImpl>> {
             RefPtr memory = WebCore::SharedMemory::map(WTF::move(handle.dataHandle), WebCore::SharedMemoryProtection::ReadOnly);
             if (!memory || (memory->size() % sizeof(char16_t)))
                 return std::nullopt;
             if (memory->size() > maxCopySizeInBytes) {
                 auto span = spanReinterpretCast<const char16_t>(memory->span());
                 Ref<StringImpl> impl = ExternalStringImpl::create(span, [memory = memory.releaseNonNull()] (auto...) mutable { });
-                return std::optional<String> { std::in_place, String { WTF::move(impl) } };
+                return std::optional<RefPtr<StringImpl>> { std::in_place, WTF::move(impl) };
             }
-            return std::optional<String> { std::in_place, String { spanReinterpretCast<const char16_t>(memory->span()) } };
+            return std::optional<RefPtr<StringImpl>> { std::in_place, StringImpl::createOrNull(spanReinterpretCast<const char16_t>(memory->span())) };
         }
     );
 }
@@ -131,12 +131,12 @@ std::optional<String> TransferString::release(size_t maxCopySizeInBytes) && // N
 TransferString::IPCData TransferString::toIPCData() const LIFETIME_BOUND
 {
     return WTF::switchOn(m_storage,
-        [](const String& string) {
-            if (string.isNull())
+        [](StringImpl* string) {
+            if (!string)
                 return IPCData { std::monostate { } };
-            if (string.is8Bit())
-                return IPCData { string.span8() };
-            return IPCData { string.span16() };
+            if (is8Bit(string))
+                return IPCData { WTF::span8(string) };
+            return IPCData { span16(string) };
         },
 #if USE(CF)
         [](const RetainPtr<CFStringRef>& string) {
@@ -161,7 +161,7 @@ TransferString::TransferString(TransferString&&) = default;
 TransferString::TransferString(const TransferString& other)
 {
     WTF::switchOn(other.m_storage,
-        [&](const String& string) {
+        [&](StringImpl* string) {
             m_storage = string;
         },
 #if USE(CF)
@@ -188,7 +188,7 @@ TransferString& TransferString::operator=(const TransferString& other)
 bool TransferString::shouldCache() const
 {
     return WTF::switchOn(m_storage,
-        [](const String&) { return false; },
+        [](StringImpl*) { return false; },
 #if USE(CF)
         [](const RetainPtr<CFStringRef>& string) { return false; },
 #endif

@@ -46,7 +46,7 @@ public:
     WebView *webView() { return m_webView; }
 
     void geolocationDestroyed() final { }
-    void startUpdating(const String& authorizationToken, bool enableHighAccuracy) override;
+    void startUpdating(StringImpl* authorizationToken, bool enableHighAccuracy) override;
     void stopUpdating() override;
 #if PLATFORM(IOS_FAMILY)
     // FIXME: unify this with Mac on OpenSource.

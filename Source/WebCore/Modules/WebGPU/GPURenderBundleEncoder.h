@@ -49,13 +49,13 @@ template<typename> class ExceptionOr;
 
 class GPURenderBundleEncoder : public RefCountedAndCanMakeWeakPtr<GPURenderBundleEncoder> {
 public:
-    static Ref<GPURenderBundleEncoder> create(Ref<::WebGPU::RenderBundleEncoder>&& backing, String&& label, GPUDevice& device)
+    static Ref<GPURenderBundleEncoder> create(Ref<::WebGPU::RenderBundleEncoder>&& backing, RefPtr<StringImpl>&& label, GPUDevice& device)
     {
         return adoptRef(*new GPURenderBundleEncoder(WTF::move(backing), WTF::move(label), device));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     void setPipeline(const GPURenderPipeline&);
 
@@ -80,9 +80,9 @@ public:
         GPUSize64 dynamicOffsetsDataStart,
         GPUSize32 dynamicOffsetsDataLength);
 
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(RefPtr<StringImpl>&& groupLabel);
     void popDebugGroup();
-    void insertDebugMarker(String&& markerLabel);
+    void insertDebugMarker(RefPtr<StringImpl>&& markerLabel);
 
     ExceptionOr<Ref<GPURenderBundle>> finish(const std::optional<GPURenderBundleDescriptor>&);
 
@@ -94,10 +94,10 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPURenderBundleEncoder(Ref<::WebGPU::RenderBundleEncoder>&&, String&& label, GPUDevice&);
+    GPURenderBundleEncoder(Ref<::WebGPU::RenderBundleEncoder>&&, RefPtr<StringImpl>&& label, GPUDevice&);
 
     const Ref<::WebGPU::RenderBundleEncoder> m_backing;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     WeakPtr<GPURenderPipeline> m_currentPipeline;
 };

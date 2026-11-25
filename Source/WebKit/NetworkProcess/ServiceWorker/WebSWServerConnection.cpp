@@ -283,7 +283,7 @@ RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkRes
         loader.setWorkerRouterEvaluationStart(MonotonicTime::now());
 
     bool shouldRaceNetworkAndFetchHandler = false;
-    String cacheName;
+    RefPtr<StringImpl> cacheName;
     auto routerSource = worker->getRouterSource(loader.parameters().options, request);
     auto routerSourceOrDefault = routerSource.value_or(worker->defaultRouterSource());
     if (auto* routerSourceEnum = std::get_if<RouterSourceEnum>(&routerSourceOrDefault)) {
@@ -311,7 +311,7 @@ RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkRes
         cacheName = std::get<RouterSourceDict>(*routerSource).cacheName;
     }
 
-    if (!cacheName.isNull()) {
+    if (cacheName) {
         Ref storageManager = session()->storageManager();
         return ServiceWorkerFetchTask::fromCache(loader, storageManager.get(), ResourceRequest { request }, WTF::move(cacheName));
     }
@@ -371,7 +371,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
             }
 
             if (!contextConnection) {
-                SWSERVERCONNECTION_RELEASE_LOG_ERROR_WITH_THIS(protectedThis, "startFetch: fetchIdentifier=%s DidNotHandle because failed to run service worker", task->fetchIdentifier().loggingString().utf8());
+                SWSERVERCONNECTION_RELEASE_LOG_ERROR_WITH_THIS(protectedThis, "startFetch: fetchIdentifier=%s DidNotHandle because failed to run service worker", utf8(task->fetchIdentifier().loggingString()));
                 task->cannotHandle();
                 return;
             }
@@ -442,7 +442,7 @@ void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
         return;
     }
 
-    SWSERVERCONNECTION_RELEASE_LOG("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8());
+    SWSERVERCONNECTION_RELEASE_LOG("Scheduling ServiceWorker job %s in server", utf8(jobData.identifier().loggingString()));
     ASSERT(identifier() == jobData.connectionIdentifier());
 
     if (RefPtr server = this->server())
@@ -557,7 +557,7 @@ void WebSWServerConnection::getRegistrations(IPC::Untrusted<WebCore::SecurityOri
     });
 }
 
-void WebSWServerConnection::registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
+void WebSWServerConnection::registerServiceWorkerClient(IPC::Untrusted<WebCore::ClientOrigin>&& untrustedClientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, RefPtr<StringImpl>&& userAgent)
 {
     auto clientOrigin = WTF::move(untrustedClientOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
 
@@ -568,7 +568,7 @@ void WebSWServerConnection::registerServiceWorkerClient(IPC::Untrusted<WebCore::
     registerServiceWorkerClientInternal(WTF::move(clientOrigin), WTF::move(data), controllingServiceWorkerRegistrationIdentifier, WTF::move(userAgent), SWServer::IsBeingCreatedClient::No);
 }
 
-void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent, WebCore::SWServer::IsBeingCreatedClient isBeingCreatedClient)
+void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, RefPtr<StringImpl>&& userAgent, WebCore::SWServer::IsBeingCreatedClient isBeingCreatedClient)
 {
     auto& contextOrigin = clientOrigin.clientOrigin;
     if (data.url.protocolIsInHTTPFamily()) {
@@ -933,7 +933,7 @@ void WebSWServerConnection::disableNavigationPreload(WebCore::ServiceWorkerRegis
     callback(registration->disableNavigationPreload());
 }
 
-void WebSWServerConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String&& headerValue, ExceptionOrVoidCallback&& callback)
+void WebSWServerConnection::setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, RefPtr<StringImpl>&& headerValue, ExceptionOrVoidCallback&& callback)
 {
     RefPtr server = this->server();
     if (!server) {
@@ -1073,7 +1073,7 @@ void WebSWServerConnection::addRoutes(WebCore::ServiceWorkerRegistrationIdentifi
 }
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-void WebSWServerConnection::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
+void WebSWServerConnection::getNotifications(const URL& registrationURL, StringImpl* tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     CheckedPtr session = this->session();
     if (!session) {

@@ -47,7 +47,7 @@ public:
 protected:
     ContinuousApproximateTime m_reference;
     RefPtr<ResourceMonitorThrottlerHolder> m_throttler;
-    String m_persistenceDirectory;
+    RefPtr<StringImpl> m_persistenceDirectory;
 
     void prepareThrottler(size_t count, Seconds duration, size_t maxHosts, bool withPersistence = false)
     {
@@ -88,7 +88,7 @@ protected:
         return m_reference;
     }
 
-    bool tryAccess(const String& host, ContinuousApproximateTime time)
+    bool tryAccess(StringImpl* host, ContinuousApproximateTime time)
     {
         bool result;
         bool completed = false;
@@ -102,10 +102,10 @@ protected:
         return result;
     }
 
-    String& temporaryDatabasePath()
+    RefPtr<StringImpl>& temporaryDatabasePath()
     {
-        if (m_persistenceDirectory.isEmpty())
-            m_persistenceDirectory = FileSystem::createTemporaryDirectory(@"ResourceMonitor");
+        if (isEmpty(m_persistenceDirectory))
+            m_persistenceDirectory = StringImpl::create(protect(FileSystem::createTemporaryDirectory(@"ResourceMonitor")).get());
         return m_persistenceDirectory;
     }
 };
@@ -117,14 +117,14 @@ TEST_F(ResourceMonitorTest, ThrottlerBasic)
     auto host = "example.com"_s;
 
     // first access must be okay.
-    EXPECT_TRUE(tryAccess(host, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host).ptr(), now()));
     // second one is alse okay.
-    EXPECT_TRUE(tryAccess(host, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host).ptr(), now()));
     // but third one is not okay because size is 2.
-    EXPECT_FALSE(tryAccess(host, now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(host).ptr(), now()));
 
     // after duration, it should be okay.
-    EXPECT_TRUE(tryAccess(host, later(1_s)));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host).ptr(), later(1_s)));
 }
 
 TEST_F(ResourceMonitorTest, ThrottlerMaxHosts)
@@ -136,17 +136,17 @@ TEST_F(ResourceMonitorTest, ThrottlerMaxHosts)
     auto host3 = "h3.example.com"_s;
 
     // make host1 inaccessible.
-    EXPECT_TRUE(tryAccess(host1, now()));
-    EXPECT_TRUE(tryAccess(host1, now()));
-    EXPECT_FALSE(tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host1).ptr(), now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host1).ptr(), now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(host1).ptr(), now()));
 
     // host2 is accessible and still host1 is not.
-    EXPECT_TRUE(tryAccess(host2, now()));
-    EXPECT_FALSE(tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host2).ptr(), now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(host1).ptr(), now()));
 
     // host3 is accessible and host1 is now also accessible because of the max host.
-    EXPECT_TRUE(tryAccess(host3, now()));
-    EXPECT_TRUE(tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host3).ptr(), now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host1).ptr(), now()));
 }
 
 TEST_F(ResourceMonitorTest, ThrottlerLeastRecentAccessedHostWillBeRemoved)
@@ -158,23 +158,23 @@ TEST_F(ResourceMonitorTest, ThrottlerLeastRecentAccessedHostWillBeRemoved)
     auto host3 = "h3.example.com"_s;
 
     // host1 is the oldest access.
-    EXPECT_TRUE(tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host1).ptr(), now()));
 
     // make host2 inaccessible
-    EXPECT_TRUE(tryAccess(host2, now()));
-    EXPECT_TRUE(tryAccess(host2, now()));
-    EXPECT_FALSE(tryAccess(host2, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host2).ptr(), now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host2).ptr(), now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(host2).ptr(), now()));
 
     // make host1 inaccessible and this is the most recent access.
-    EXPECT_TRUE(tryAccess(host1, now()));
-    EXPECT_FALSE(tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host1).ptr(), now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(host1).ptr(), now()));
 
     // host3 is accessible. In this access, lest recent host is removed.
-    EXPECT_TRUE(tryAccess(host3, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host3).ptr(), now()));
     // host1 is the oldest, but recent than host2. Still it is blocked.
-    EXPECT_FALSE(tryAccess(host1, now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(host1).ptr(), now()));
     // host2 is the least recent access and removed in host3 access. So it is accessible.
-    EXPECT_TRUE(tryAccess(host2, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host2).ptr(), now()));
 }
 
 TEST_F(ResourceMonitorTest, ThrottlerEmptyHostname)
@@ -184,7 +184,7 @@ TEST_F(ResourceMonitorTest, ThrottlerEmptyHostname)
     auto emptyHost = ""_s;
 
     // Accessing with an empty hostname should not crash.
-    EXPECT_FALSE(tryAccess(emptyHost, now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(emptyHost).ptr(), now()));
 }
 
 TEST_F(ResourceMonitorTest, ThrottlerPersistence)
@@ -194,18 +194,18 @@ TEST_F(ResourceMonitorTest, ThrottlerPersistence)
     prepareThrottler(/* size */ 2, /* duration */ 1_s, /* maxHosts */ 2, /* withPersistence */ true);
 
     // first access must be okay.
-    EXPECT_TRUE(tryAccess(host, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host).ptr(), now()));
     // second one is alse okay.
-    EXPECT_TRUE(tryAccess(host, now()));
+    EXPECT_TRUE(tryAccess(StringImpl::create(host).ptr(), now()));
     // but third one is not okay because size is 2.
-    EXPECT_FALSE(tryAccess(host, now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(host).ptr(), now()));
 
     disposeThrottler();
 
     prepareThrottler(/* size */ 2, /* duration */ 1_s, /* maxHosts */ 2, /* withPersistence */ true);
 
     // recover all history from database so still third one is not okay because size is 2.
-    EXPECT_FALSE(tryAccess(host, now()));
+    EXPECT_FALSE(tryAccess(StringImpl::create(host).ptr(), now()));
 }
 
 TEST_F(ResourceMonitorTest, ThrottlerCreateAndDelete)

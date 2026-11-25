@@ -116,7 +116,7 @@ JSDOMGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
     return protect(localMainFrame->script())->globalObject(mainThreadNormalWorldSingleton());
 }
 
-static String expressionForEvaluatingCommand(const String& command, Vector<Ref<JSON::Value>>&& arguments)
+static RefPtr<StringImpl> expressionForEvaluatingCommand(StringImpl* command, Vector<Ref<JSON::Value>>&& arguments)
 {
     StringBuilder expression;
     expression.append("InspectorFrontendAPI.dispatch([\""_s, command, '"');
@@ -128,7 +128,7 @@ static String expressionForEvaluatingCommand(const String& command, Vector<Ref<J
     return expression.toString();
 }
 
-InspectorFrontendAPIDispatcher::EvaluationResult InspectorFrontendAPIDispatcher::dispatchCommandWithResultSync(const String& command, Vector<Ref<JSON::Value>>&& arguments)
+InspectorFrontendAPIDispatcher::EvaluationResult InspectorFrontendAPIDispatcher::dispatchCommandWithResultSync(StringImpl* command, Vector<Ref<JSON::Value>>&& arguments)
 {
     if (m_suspended)
         return makeUnexpected(EvaluationError::ExecutionSuspended);
@@ -136,17 +136,17 @@ InspectorFrontendAPIDispatcher::EvaluationResult InspectorFrontendAPIDispatcher:
     return evaluateExpression(expressionForEvaluatingCommand(command, WTF::move(arguments)));
 }
 
-void InspectorFrontendAPIDispatcher::dispatchCommandWithResultAsync(const String& command, Vector<Ref<JSON::Value>>&& arguments, EvaluationResultHandler&& resultHandler)
+void InspectorFrontendAPIDispatcher::dispatchCommandWithResultAsync(StringImpl* command, Vector<Ref<JSON::Value>>&& arguments, EvaluationResultHandler&& resultHandler)
 {
     evaluateOrQueueExpression(expressionForEvaluatingCommand(command, WTF::move(arguments)), WTF::move(resultHandler));
 }
 
-void InspectorFrontendAPIDispatcher::dispatchMessageAsync(const String& message)
+void InspectorFrontendAPIDispatcher::dispatchMessageAsync(StringImpl* message)
 {
     evaluateOrQueueExpression(makeString("InspectorFrontendAPI.dispatchMessageAsync("_s, message, ')'));
 }
 
-void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& expression, EvaluationResultHandler&& optionalResultHandler)
+void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(StringImpl* expression, EvaluationResultHandler&& optionalResultHandler)
 {
     // If the frontend page has been deallocated, then there is nothing to do.
     if (!m_frontendPage) {
@@ -258,7 +258,7 @@ void InspectorFrontendAPIDispatcher::evaluateQueuedExpressions()
     }
 }
 
-ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String& expression)
+ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(StringImpl* expression)
 {
     ASSERT(m_frontendPage);
     ASSERT(!m_suspended);
@@ -270,7 +270,7 @@ ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String
     return protect(localMainFrame->script())->evaluateInWorld(ScriptSourceCode(expression, JSC::SourceTaintedOrigin::Untainted), mainThreadNormalWorldSingleton());
 }
 
-void InspectorFrontendAPIDispatcher::evaluateExpressionForTesting(const String& expression)
+void InspectorFrontendAPIDispatcher::evaluateExpressionForTesting(StringImpl* expression)
 {
     evaluateOrQueueExpression(expression);
 }

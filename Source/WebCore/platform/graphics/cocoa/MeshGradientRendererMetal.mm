@@ -298,7 +298,7 @@ std::unique_ptr<MeshGradientRendererMetal> MeshGradientRendererMetal::create()
         return nullptr;
 
     NSError *error = nil;
-    RetainPtr library = adoptNS([device newLibraryWithSource:makeString(metalColorConversionShaderSource, shaderSource).createNSString().get() options:nil error:&error]);
+    RetainPtr library = adoptNS([device newLibraryWithSource:createNSString(makeString(metalColorConversionShaderSource, shaderSource)).get() options:nil error:&error]);
     if (!library) {
         LOG_ERROR("Failed to compile mesh gradient shaders: %s", error.localizedDescription.UTF8String);
         return nullptr;

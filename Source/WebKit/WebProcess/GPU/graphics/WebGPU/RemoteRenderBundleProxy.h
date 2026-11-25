@@ -48,7 +48,7 @@ public:
     RemoteGPUProxy& root() { return m_parent->root(); }
     WebGPURenderBundleIdentifier backing() const { return m_backing; }
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

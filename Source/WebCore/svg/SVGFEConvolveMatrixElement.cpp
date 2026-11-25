@@ -65,7 +65,7 @@ Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const Qualifi
     return adoptRef(*new SVGFEConvolveMatrixElement(tagName, document));
 }
 
-void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::inAttr:
@@ -75,7 +75,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         // An order that does not parse or is below 1 is invalid and reverts to the initial value,
         // like an absent order. A single invalid component makes the whole attribute invalid, so
         // both components revert.
-        if (newValue.isEmpty()) {
+        if (isEmpty(newValue)) {
             m_orderX->setBaseValInternal(std::nullopt);
             m_orderY->setBaseValInternal(std::nullopt);
             break;
@@ -92,7 +92,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         break;
     }
     case AttributeNames::edgeModeAttr:
-        if (!protect(m_edgeMode)->parseBaseVal<EdgeModeType>(*this, newValue) && !newValue.isNull())
+        if (!protect(m_edgeMode)->parseBaseVal<EdgeModeType>(*this, newValue) && newValue)
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Using the initial value duplicate."_s));
         break;
     case AttributeNames::kernelMatrixAttr:
@@ -102,7 +102,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
     case AttributeNames::divisorAttr: {
         auto result = parseNumber(newValue);
         m_divisor->setBaseValInternal(result);
-        if (!newValue.isEmpty() && (!result || !*result))
+        if (!isEmpty(newValue) && (!result || !*result))
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Using the default value."_s));
         break;
     }
@@ -116,7 +116,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         auto result = parseInteger<int>(newValue);
         Ref target = name == SVGNames::targetXAttr ? m_targetX : m_targetY;
         target->setBaseValInternal(result);
-        if (!newValue.isEmpty() && (!result || *result < 0))
+        if (!isEmpty(newValue) && (!result || *result < 0))
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing "_s, name.localName(), "=\""_s, newValue, "\". Using the default value."_s));
         break;
     }
@@ -125,7 +125,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         if (!result) {
             m_kernelUnitLengthX->setBaseValInternal(std::nullopt);
             m_kernelUnitLengthY->setBaseValInternal(std::nullopt);
-            if (!newValue.isEmpty())
+            if (!isEmpty(newValue))
                 protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Using the default value."_s));
             break;
         }
@@ -138,7 +138,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
     case AttributeNames::preserveAlphaAttr:
         // Any value other than "true", including an absent attribute, is the initial value false.
         m_preserveAlpha->setBaseValInternal(newValue == trueAtom());
-        if (!newValue.isNull() && newValue != trueAtom() && newValue != falseAtom())
+        if (newValue && newValue != trueAtom() && newValue != falseAtom())
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing preserveAlpha=\""_s, newValue, "\". Using the initial value false."_s));
         break;
     default:

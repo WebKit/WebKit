@@ -31,8 +31,8 @@
 namespace WebCore {
 
 struct BackgroundFetchOptions : BackgroundFetchUIOptions {
-    BackgroundFetchOptions isolatedCopy() const & { return { { crossThreadCopy(icons), title.isolatedCopy() }, downloadTotal }; }
-    BackgroundFetchOptions isolatedCopy() && { return { { crossThreadCopy(WTF::move(icons)), WTF::move(title).isolatedCopy() }, downloadTotal }; }
+    BackgroundFetchOptions isolatedCopy() const & { return { { crossThreadCopy(icons), WTF::isolatedCopy(title) }, downloadTotal }; }
+    BackgroundFetchOptions isolatedCopy() && { return { { crossThreadCopy(WTF::move(icons)), WTF::isolatedCopy(WTF::move(title)) }, downloadTotal }; }
 
     uint64_t downloadTotal { 0 };
 };

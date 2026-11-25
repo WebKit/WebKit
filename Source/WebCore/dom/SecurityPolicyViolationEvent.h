@@ -31,14 +31,14 @@
 namespace WebCore {
 
 struct SecurityPolicyViolationEventInit : EventInit {
-    String documentURI;
-    String referrer;
-    String blockedURI;
-    String violatedDirective;
-    String effectiveDirective;
-    String originalPolicy;
-    String sourceFile;
-    String sample;
+    RefPtr<StringImpl> documentURI;
+    RefPtr<StringImpl> referrer;
+    RefPtr<StringImpl> blockedURI;
+    RefPtr<StringImpl> violatedDirective;
+    RefPtr<StringImpl> effectiveDirective;
+    RefPtr<StringImpl> originalPolicy;
+    RefPtr<StringImpl> sourceFile;
+    RefPtr<StringImpl> sample;
     SecurityPolicyViolationEventDisposition disposition { SecurityPolicyViolationEventDisposition::Enforce };
     unsigned short statusCode { 0 };
     unsigned lineNumber { 0 };
@@ -51,19 +51,19 @@ public:
     using Disposition = SecurityPolicyViolationEventDisposition;
     using Init = SecurityPolicyViolationEventInit;
 
-    static Ref<SecurityPolicyViolationEvent> create(const AtomString& type, Init&& initializer = { }, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<SecurityPolicyViolationEvent> create(AtomStringImpl* type, Init&& initializer = { }, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new SecurityPolicyViolationEvent(type, WTF::move(initializer), isTrusted));
     }
 
-    const String& documentURI() const LIFETIME_BOUND { return m_documentURI; }
-    const String& referrer() const LIFETIME_BOUND { return m_referrer; }
-    const String& blockedURI() const LIFETIME_BOUND { return m_blockedURI; }
-    const String& violatedDirective() const LIFETIME_BOUND { return m_violatedDirective; }
-    const String& effectiveDirective() const LIFETIME_BOUND { return m_effectiveDirective; }
-    const String& originalPolicy() const LIFETIME_BOUND { return m_originalPolicy; }
-    const String& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
-    const String& sample() const LIFETIME_BOUND { return m_sample; }
+    const RefPtr<StringImpl>& documentURI() const LIFETIME_BOUND { return m_documentURI; }
+    const RefPtr<StringImpl>& referrer() const LIFETIME_BOUND { return m_referrer; }
+    const RefPtr<StringImpl>& blockedURI() const LIFETIME_BOUND { return m_blockedURI; }
+    const RefPtr<StringImpl>& violatedDirective() const LIFETIME_BOUND { return m_violatedDirective; }
+    const RefPtr<StringImpl>& effectiveDirective() const LIFETIME_BOUND { return m_effectiveDirective; }
+    const RefPtr<StringImpl>& originalPolicy() const LIFETIME_BOUND { return m_originalPolicy; }
+    const RefPtr<StringImpl>& sourceFile() const LIFETIME_BOUND { return m_sourceFile; }
+    const RefPtr<StringImpl>& sample() const LIFETIME_BOUND { return m_sample; }
     Disposition disposition() const { return m_disposition; }
     unsigned short statusCode() const { return m_statusCode; }
     unsigned lineNumber() const { return m_lineNumber; }
@@ -75,7 +75,7 @@ private:
     {
     }
 
-    SecurityPolicyViolationEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    SecurityPolicyViolationEvent(AtomStringImpl* type, Init&& initializer, IsTrusted isTrusted)
         : Event(EventInterfaceType::SecurityPolicyViolationEvent, type, WTF::move(initializer), isTrusted)
         , m_documentURI(WTF::move(initializer.documentURI))
         , m_referrer(WTF::move(initializer.referrer))
@@ -92,14 +92,14 @@ private:
     {
     }
 
-    String m_documentURI;
-    String m_referrer;
-    String m_blockedURI;
-    String m_violatedDirective;
-    String m_effectiveDirective;
-    String m_originalPolicy;
-    String m_sourceFile;
-    String m_sample;
+    RefPtr<StringImpl> m_documentURI;
+    RefPtr<StringImpl> m_referrer;
+    RefPtr<StringImpl> m_blockedURI;
+    RefPtr<StringImpl> m_violatedDirective;
+    RefPtr<StringImpl> m_effectiveDirective;
+    RefPtr<StringImpl> m_originalPolicy;
+    RefPtr<StringImpl> m_sourceFile;
+    RefPtr<StringImpl> m_sample;
     Disposition m_disposition { Disposition::Enforce };
     unsigned short m_statusCode;
     unsigned m_lineNumber;

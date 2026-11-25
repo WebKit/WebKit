@@ -32,11 +32,11 @@
 namespace WebKit {
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-void platformSimulateMouseInteractionLibWPE(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType, unsigned& currentModifiers);
+void platformSimulateMouseInteractionLibWPE(WebPageProxy&, MouseInteraction, MouseButton, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, StringImpl* pointerType, unsigned& currentModifiers);
 #endif
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 void platformSimulateKeyboardInteractionLibWPE(WebPageProxy&, KeyboardInteraction, Variant<VirtualKey, CharKey>&&, unsigned& currentModifiers);
-void platformSimulateKeySequenceLibWPE(WebPageProxy&, const String& keySequence, unsigned& currentModifiers);
+void platformSimulateKeySequenceLibWPE(WebPageProxy&, StringImpl* keySequence, unsigned& currentModifiers);
 #endif
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 void platformSimulateWheelInteractionLibWPE(WebPageProxy&, const WebCore::IntPoint& location, const WebCore::IntSize& delta);

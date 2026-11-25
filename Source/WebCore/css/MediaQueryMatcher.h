@@ -49,7 +49,7 @@ public:
     void addMediaQueryList(MediaQueryList&);
     void removeMediaQueryList(MediaQueryList&);
 
-    RefPtr<MediaQueryList> matchMedia(const String&);
+    RefPtr<MediaQueryList> matchMedia(StringImpl*);
 
     unsigned evaluationRound() const { return m_evaluationRound; }
 
@@ -58,7 +58,7 @@ public:
 
     bool evaluate(const MQ::MediaQueryList&);
 
-    AtomString mediaType() const;
+    RefPtr<AtomStringImpl> mediaType() const;
 
 private:
     explicit MediaQueryMatcher(Document&);

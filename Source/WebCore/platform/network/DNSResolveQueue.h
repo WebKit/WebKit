@@ -50,9 +50,9 @@ public:
     void ref() const { }
     void deref() const { }
 
-    virtual void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) = 0;
+    virtual void resolve(StringImpl* hostname, uint64_t identifier, DNSCompletionHandler&&) = 0;
     virtual void stopResolve(uint64_t identifier) = 0;
-    void add(const String& hostname);
+    void add(StringImpl* hostname);
     void decrementRequestCount()
     {
         --m_requestsInFlight;
@@ -69,12 +69,12 @@ protected:
 
 private:
     virtual void updateIsUsingProxy() = 0;
-    virtual void platformResolve(const String&) = 0;
+    virtual void platformResolve(StringImpl*) = 0;
     void timerFired();
 
     Timer m_timer;
 
-    HashSet<String> m_names;
+    HashSet<RefPtr<StringImpl>> m_names;
     std::atomic<int> m_requestsInFlight;
     MonotonicTime m_lastProxyEnabledStatusCheckTime;
 };

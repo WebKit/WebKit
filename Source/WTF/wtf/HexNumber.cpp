@@ -77,10 +77,10 @@ ASCIICString toHexCString(std::span<const uint8_t> values)
     return result;
 }
 
-String toHexString(std::span<const uint8_t> values)
+RefPtr<StringImpl> toHexString(std::span<const uint8_t> values)
 {
     std::span<Latin1Character> buffer;
-    auto result = String::createUninitialized(CheckedSize(values.size()) * 2U, buffer);
+    auto result = StringImpl::createUninitialized(CheckedSize(values.size()) * 2U, buffer);
     toHexInternal(values, buffer);
     return result;
 }

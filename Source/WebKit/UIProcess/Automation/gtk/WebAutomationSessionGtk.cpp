@@ -70,7 +70,7 @@ static unsigned mouseButtonToGdkButton(MouseButton button)
     return GDK_BUTTON_PRIMARY;
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, StringImpl* pointerType)
 {
     unsigned gdkButton = mouseButtonToGdkButton(button);
     auto modifier = stateModifierForGdkButton(gdkButton);
@@ -323,7 +323,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     webkitWebViewBaseSynthesizeKeyEvent(viewWidget, type, keyCode, m_currentModifiers, ShouldTranslateKeyboardState::Yes);
 }
 
-void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
+void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, StringImpl* keySequence)
 {
     auto* viewWidget = reinterpret_cast<WebKitWebViewBase*>(page.viewWidget());
     for (auto codePoint : StringView(keySequence).codePoints())
@@ -342,7 +342,7 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
 #if USE(GTK4)
-static std::optional<String> base64EncodedPNGData(GdkTexture* texture)
+static std::optional<RefPtr<StringImpl>> base64EncodedPNGData(GdkTexture* texture)
 {
     if (!texture)
         return std::nullopt;
@@ -351,7 +351,7 @@ static std::optional<String> base64EncodedPNGData(GdkTexture* texture)
     return base64EncodeToString(span(pngBytes));
 }
 #else
-static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
+static std::optional<RefPtr<StringImpl>> base64EncodedPNGData(cairo_surface_t* surface)
 {
     if (!surface)
         return std::nullopt;
@@ -370,7 +370,7 @@ static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
 }
 #endif // USE(GTK4)
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+std::optional<RefPtr<StringImpl>> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
 {
 #if USE(GTK4)
     return base64EncodedPNGData(snapshot.texture());

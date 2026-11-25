@@ -132,7 +132,7 @@ void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<vo
     playbackSessionInterface().startObservingNowPlayingMetadata();
     [linearMediaPlayer() enterFullscreenWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (BOOL success, NSError *error) {
         if (auto* playbackSessionModel = this->playbackSessionModel()) {
-            playbackSessionModel->setSpatialTrackingLabel(m_spatialTrackingLabel);
+            playbackSessionModel->setSpatialTrackingLabel(protect(m_spatialTrackingLabel).get());
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Large);
 
             playableViewController().prefersAutoDimming = playbackSessionModel->prefersAutoDimming();
@@ -146,7 +146,7 @@ void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, Function<vo
     playbackSessionInterface().stopObservingNowPlayingMetadata();
     [linearMediaPlayer() exitFullscreenWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (BOOL success, NSError *error) {
         if (auto* playbackSessionModel = this->playbackSessionModel()) {
-            playbackSessionModel->setSpatialTrackingLabel(nullString());
+            playbackSessionModel->setSpatialTrackingLabel(nullptr);
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Automatic);
 
             playbackSessionModel->setPrefersAutoDimming(playableViewController().prefersAutoDimming);
@@ -172,7 +172,7 @@ void VideoPresentationInterfaceLMK::enterExternalPlayback(CompletionHandler<void
     // Puts the player into `enteringExternal` state.
     [linearMediaPlayer() enterExternalPlaybackWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, handler = WTF::move(enterHandler)] (BOOL success, NSError *error) mutable {
         if (auto* playbackSessionModel = this->playbackSessionModel()) {
-            playbackSessionModel->setSpatialTrackingLabel(m_spatialTrackingLabel);
+            playbackSessionModel->setSpatialTrackingLabel(protect(m_spatialTrackingLabel).get());
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Large);
         }
 
@@ -202,7 +202,7 @@ void VideoPresentationInterfaceLMK::exitExternalPlayback()
     playbackSessionInterface().stopObservingNowPlayingMetadata();
     [linearMediaPlayer() exitExternalPlaybackWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, handler = WTF::move(exitHandler)] (BOOL success, NSError *error) mutable {
         if (auto* playbackSessionModel = this->playbackSessionModel()) {
-            playbackSessionModel->setSpatialTrackingLabel(nullString());
+            playbackSessionModel->setSpatialTrackingLabel(nullptr);
             playbackSessionModel->setSoundStageSize(WebCore::AudioSessionSoundStageSize::Automatic);
         }
         invalidatePlayerViewController();
@@ -283,10 +283,10 @@ CALayer *VideoPresentationInterfaceLMK::captionsLayer()
     m_spatialTrackingLabel = makeString(createVersion4UUIDString());
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
     if (prefersSpatialAudioExperience())
-        [m_spatialTrackingLayer setValue:m_spatialTrackingLabel.createNSString().get() forKeyPath:@"separatedOptions.AudioTether"];
+        [m_spatialTrackingLayer setValue:createNSString(m_spatialTrackingLabel).get() forKeyPath:@"separatedOptions.AudioTether"];
     else
 #endif
-        [m_spatialTrackingLayer setValue:m_spatialTrackingLabel.createNSString().get() forKeyPath:@"separatedOptions.STSLabel"];
+        [m_spatialTrackingLayer setValue:createNSString(m_spatialTrackingLabel).get() forKeyPath:@"separatedOptions.STSLabel"];
     [m_captionsLayer addSublayer:m_spatialTrackingLayer.get()];
 
     return m_captionsLayer.get();

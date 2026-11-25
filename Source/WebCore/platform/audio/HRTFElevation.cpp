@@ -68,15 +68,15 @@ constexpr size_t ResponseFrameSize = 256;
 constexpr float ResponseSampleRate = 44100;
 
 static Lock audioBusMapLock;
-NODELETE static HashMap<String, Ref<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
+NODELETE static HashMap<RefPtr<StringImpl>, Ref<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
 {
-    static NeverDestroyed<HashMap<String, Ref<AudioBus>>> audioBusMap;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, Ref<AudioBus>>> audioBusMap;
     return audioBusMap;
 }
 
 // Lazily load a concatenated HRTF database for given subject and store it in a
 // local hash table to ensure quick efficient future retrievals.
-static RefPtr<AudioBus> getConcatenatedImpulseResponsesForSubject(const String& subjectName)
+static RefPtr<AudioBus> getConcatenatedImpulseResponsesForSubject(StringImpl* subjectName)
 {
     RefPtr<AudioBus> bus;
     {
@@ -88,7 +88,7 @@ static RefPtr<AudioBus> getConcatenatedImpulseResponsesForSubject(const String& 
             ASSERT(bus);
             if (!bus)
                 return nullptr;
-            cache.add(subjectName.isolatedCopy(), *bus);
+            cache.add(isolatedCopy(subjectName), *bus);
         }
     }
 
@@ -113,7 +113,7 @@ void HRTFElevation::clearCache()
 #endif
 }
 
-bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
+bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, StringImpl* subjectName,
                                                         RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR)
 {
     // Valid values for azimuth are 0 -> 345 in 15 degree increments.
@@ -243,7 +243,7 @@ static const std::array<int, 24> maxElevations {
     45 //  345 
 };
 
-std::unique_ptr<HRTFElevation> HRTFElevation::createForSubject(const String& subjectName, int elevation, float sampleRate)
+std::unique_ptr<HRTFElevation> HRTFElevation::createForSubject(StringImpl* subjectName, int elevation, float sampleRate)
 {
     bool isElevationGood = elevation >= -45 && elevation <= 90 && (elevation / 15) * 15 == elevation;
     ASSERT(isElevationGood);

@@ -53,14 +53,14 @@ void WebValidationMessageClient::documentDetached(WebCore::Document& document)
         hideValidationMessage(protect(*m_currentAnchor));
 }
 
-void WebValidationMessageClient::showValidationMessage(const WebCore::Element& anchor, String&& message)
+void WebValidationMessageClient::showValidationMessage(const WebCore::Element& anchor, RefPtr<StringImpl>&& message)
 {
     if (m_currentAnchor)
         hideValidationMessage(protect(*m_currentAnchor));
 
     m_currentAnchor = &anchor;
     m_currentAnchorRect = anchor.boundingBoxInRootViewCoordinates();
-    [protect(m_view) showFormValidationMessage:message.createNSString().get() withAnchorRect:m_currentAnchorRect];
+    [protect(m_view) showFormValidationMessage:createNSString(message).get() withAnchorRect:m_currentAnchorRect];
 }
 
 void WebValidationMessageClient::hideValidationMessage(const WebCore::Element& anchor)

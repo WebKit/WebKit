@@ -54,12 +54,12 @@ class BackgroundFetch : public RefCountedAndCanMakeWeakPtr<BackgroundFetch> {
 public:
     using NotificationCallback = Function<void(BackgroundFetch&)>;
 
-    static Ref<BackgroundFetch> create(SWServerRegistration& sWServerRegistration, const String& identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
+    static Ref<BackgroundFetch> create(SWServerRegistration& sWServerRegistration, StringImpl* identifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback)
     {
         return adoptRef(*new BackgroundFetch(sWServerRegistration, identifier, WTF::move(requests), WTF::move(options), WTF::move(store), WTF::move(notificationCallback)));
     }
 
-    static Ref<BackgroundFetch> create(SWServerRegistration& swServerRegistration, String&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)
+    static Ref<BackgroundFetch> create(SWServerRegistration& swServerRegistration, RefPtr<StringImpl>&& identifier, BackgroundFetchOptions&& options, Ref<BackgroundFetchStore>&& store, NotificationCallback&& notificationCallback, bool pausedFlag)
     {
         return adoptRef(*new BackgroundFetch(swServerRegistration, WTF::move(identifier), WTF::move(options), WTF::move(store), WTF::move(notificationCallback), pausedFlag));
     }
@@ -68,7 +68,7 @@ public:
 
     static RefPtr<BackgroundFetch> createFromStore(std::span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
 
-    String identifier() const { return m_identifier; }
+    RefPtr<StringImpl> identifier() const { return m_identifier; }
     NODELETE WEBCORE_EXPORT BackgroundFetchInformation information() const;
     const ServiceWorkerRegistrationKey& registrationKey() const LIFETIME_BOUND { return m_registrationKey; }
     const BackgroundFetchOptions& options() const LIFETIME_BOUND { return m_options; }
@@ -117,7 +117,7 @@ public:
         void didFinish(const ResourceError&) final;
 
         WeakPtr<BackgroundFetch> m_fetch;
-        String m_fetchIdentifier;
+        RefPtr<StringImpl> m_fetchIdentifier;
         ServiceWorkerRegistrationKey m_registrationKey;
         BackgroundFetchRequest m_request;
         size_t m_index { 0 };
@@ -146,8 +146,8 @@ public:
     void unsetRecordsAvailableFlag();
 
 private:
-    BackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
-    BackgroundFetch(SWServerRegistration&, String&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&, bool pausedFlag);
+    BackgroundFetch(SWServerRegistration&, StringImpl*, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
+    BackgroundFetch(SWServerRegistration&, RefPtr<StringImpl>&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&, bool pausedFlag);
 
     void didSendData(uint64_t);
     void storeResponse(size_t, bool shouldClearResponseBody, ResourceResponse&&);
@@ -160,7 +160,7 @@ private:
 
     void setRecords(Vector<Ref<Record>>&&);
 
-    String m_identifier;
+    RefPtr<StringImpl> m_identifier;
     Vector<Ref<Record>> m_records;
     BackgroundFetchOptions m_options;
     ServiceWorkerRegistrationKey m_registrationKey;

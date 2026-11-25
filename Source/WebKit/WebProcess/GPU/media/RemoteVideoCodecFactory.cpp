@@ -142,7 +142,7 @@ NODELETE static bool shouldUseLocalDecoder(std::optional<WebCore::VideoCodecType
     return false;
 }
 
-void RemoteVideoCodecFactory::createDecoder(const String& codec, const WebCore::VideoDecoder::Config& config, WebCore::VideoDecoder::CreateCallback&& createCallback, WebCore::VideoDecoder::OutputCallback&& outputCallback)
+void RemoteVideoCodecFactory::createDecoder(StringImpl* codec, const WebCore::VideoDecoder::Config& config, WebCore::VideoDecoder::CreateCallback&& createCallback, WebCore::VideoDecoder::OutputCallback&& outputCallback)
 {
     LibWebRTCCodecs::initializeIfNeeded();
 
@@ -168,7 +168,7 @@ void RemoteVideoCodecFactory::createDecoder(const String& codec, const WebCore::
     });
 }
 
-void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::VideoEncoder::Config& config, WebCore::VideoEncoder::CreateCallback&& createCallback, WebCore::VideoEncoder::DescriptionCallback&& descriptionCallback, WebCore::VideoEncoder::OutputCallback&& outputCallback)
+void RemoteVideoCodecFactory::createEncoder(StringImpl* codec, const WebCore::VideoEncoder::Config& config, WebCore::VideoEncoder::CreateCallback&& createCallback, WebCore::VideoEncoder::DescriptionCallback&& descriptionCallback, WebCore::VideoEncoder::OutputCallback&& outputCallback)
 {
     LibWebRTCCodecs::initializeIfNeeded();
 
@@ -180,8 +180,8 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
 
     std::map<std::string, std::string> parameters;
     if (type == WebCore::VideoCodecType::H264) {
-        if (auto position = codec.find('.');position != notFound && position != codec.length()) {
-            auto profileLevelId = byteCast<char>(codec.span8().subspan(position + 1));
+        if (auto position = find(codec, '.');position != notFound && position != length(codec)) {
+            auto profileLevelId = byteCast<char>(span8(codec).subspan(position + 1));
             parameters["profile-level-id"] = std::string(profileLevelId.data(), profileLevelId.size());
         }
     } else if (type == WebCore::VideoCodecType::H265) {
@@ -191,7 +191,7 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
             StringBuilder interopConstraints;
             for (auto flag : hevcParameters->generalConstraintIndicatorFlags)
                 interopConstraints.append(hex(flag, 2));
-            parameters["interop-constraints"] = interopConstraints.toString().utf8().toStdString();
+            parameters["interop-constraints"] = utf8(interopConstraints.toString()).toStdString();
         }
     }
 

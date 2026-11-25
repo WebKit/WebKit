@@ -47,7 +47,7 @@ public:
     void updateGeometry() override;
     void commit() override;
 
-    void setValue(const String&);
+    void setValue(StringImpl*);
 
 protected:
     PDFPluginTextAnnotation(PDFAnnotation *annotation, PDFPluginBase* plugin)
@@ -56,7 +56,7 @@ protected:
     }
 
     Ref<WebCore::Element> createAnnotationElement() override;
-    String value() const;
+    RefPtr<StringImpl> value() const;
 
 private:
     bool handleEvent(WebCore::Event&) override;

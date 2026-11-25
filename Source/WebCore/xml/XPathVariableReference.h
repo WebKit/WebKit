@@ -35,11 +35,11 @@ namespace WebCore::XPath {
 class VariableReference final : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(VariableReference);
 public:
-    explicit VariableReference(const String& name);
+    explicit VariableReference(StringImpl* name);
 private:
     Value evaluate() const final;
     Value::Type resultType() const final { ASSERT_NOT_REACHED(); return Value::Type::Number; }
-    String m_name;
+    RefPtr<StringImpl> m_name;
 };
 
 } // namespace WebCore::XPath

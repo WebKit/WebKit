@@ -75,7 +75,7 @@ class Dumper {
 public:
     class Keys {
     public:
-#define JSC_DEFINE_PROFILER_OBJECT_KEY(key) String m_##key { #key ""_s };
+#define JSC_DEFINE_PROFILER_OBJECT_KEY(key) RefPtr<StringImpl> m_##key { #key ""_si };
         JSC_PROFILER_OBJECT_KEYS(JSC_DEFINE_PROFILER_OBJECT_KEY)
 #undef JSC_DEFINE_PROFILER_OBJECT_KEY
     };

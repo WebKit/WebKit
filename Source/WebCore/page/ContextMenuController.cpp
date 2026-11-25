@@ -154,7 +154,7 @@ void ContextMenuController::handleContextMenuEvent(Event& event)
 
 static std::unique_ptr<ContextMenuItem> separatorItem()
 {
-    return std::unique_ptr<ContextMenuItem>(new ContextMenuItem(ContextMenuItemType::Separator, ContextMenuItemTagNoAction, String()));
+    return std::unique_ptr<ContextMenuItem>(new ContextMenuItem(ContextMenuItemType::Separator, ContextMenuItemTagNoAction, nullString()));
 }
 
 void ContextMenuController::showContextMenu(Event& event, ContextMenuProvider& provider)
@@ -283,11 +283,11 @@ static void openNewWindow(const URL& urlToLoad, LocalFrame& frame, Event* event,
     if (!oldPage)
         return;
 
-    FrameLoadRequest frameLoadRequest { protect(frame.document()).releaseNonNull(), protect(protect(frame.document())->securityOrigin()), ResourceRequest(URL { urlToLoad }, frame.loader().outgoingReferrer()), { }, InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { protect(frame.document()).releaseNonNull(), protect(protect(frame.document())->securityOrigin()), ResourceRequest(URL { urlToLoad }, frame.loader().outgoingReferrer()), nullptr, InitiatedByMainFrame::Unknown };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     frameLoadRequest.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
 
-    RefPtr newPage = oldPage->chrome().createWindow(frame, { }, { }, { *protect(frame.document()), frameLoadRequest.resourceRequest(), frameLoadRequest.initiatedByMainFrame(), frameLoadRequest.isRequestFromClientOrUserInput() });
+    RefPtr newPage = oldPage->chrome().createWindow(frame, nullptr, { }, { *protect(frame.document()), frameLoadRequest.resourceRequest(), frameLoadRequest.initiatedByMainFrame(), frameLoadRequest.isRequestFromClientOrUserInput() });
     if (!newPage)
         return;
     newPage->chrome().show();
@@ -299,7 +299,7 @@ static void openNewWindow(const URL& urlToLoad, LocalFrame& frame, Event* event,
 
 static void insertUnicodeCharacter(char16_t character, LocalFrame& frame)
 {
-    String text(span(character));
+    RefPtr<StringImpl> text = StringImpl::create(span(character));
     if (!protect(frame.editor())->shouldInsertText(text, frame.selection().selection().toNormalizedRange(), EditorInsertAction::Typed))
         return;
 
@@ -309,15 +309,15 @@ static void insertUnicodeCharacter(char16_t character, LocalFrame& frame)
 
 #endif
 
-static std::optional<SimpleRange> rangeIfTextUnchanged(Range& range, const String& text)
+static std::optional<SimpleRange> rangeIfTextUnchanged(Range& range, StringImpl* text)
 {
     auto simpleRange = makeSimpleRange(range);
-    if (plainText(simpleRange) != text)
+    if (!equal(plainText(simpleRange), text))
         return std::nullopt;
     return simpleRange;
 }
 
-void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, const String& title)
+void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, StringImpl* title)
 {
     if (action >= ContextMenuItemBaseCustomTag) {
         ASSERT(m_menuProvider);
@@ -457,14 +457,14 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->loader().reload();
         break;
     case ContextMenuItemTagCut:
-        protect(frame->editor())->command("Cut"_s).execute();
+        protect(frame->editor())->command("Cut"_si).execute();
         break;
     case ContextMenuItemTagPaste:
-        protect(frame->editor())->command("Paste"_s).execute();
+        protect(frame->editor())->command("Paste"_si).execute();
         break;
 #if PLATFORM(GTK)
     case ContextMenuItemTagPasteAsPlainText:
-        frame->editor().command("PasteAsPlainText"_s).execute();
+        frame->editor().command("PasteAsPlainText"_si).execute();
         break;
     case ContextMenuItemTagDelete:
         protect(frame->editor())->performDelete();
@@ -500,7 +500,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         insertUnicodeCharacter(zeroWidthNonJoiner, *frame);
         break;
     case ContextMenuItemTagSelectAll:
-        frame->editor().command("SelectAll"_s).execute();
+        frame->editor().command("SelectAll"_si).execute();
         break;
     case ContextMenuItemTagInsertEmoji:
         m_client->insertEmoji(*frame);
@@ -524,7 +524,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
                 wordSelection.expandUsingGranularity(TextGranularity::WordGranularity);
                 protect(frame->selection())->setSelection(wordSelection);
             } else {
-                ASSERT(frame->editor().selectedText().length());
+                ASSERT(length(frame->editor().selectedText()));
                 replaceOptions.add(ReplaceSelectionCommand::SelectReplacement);
             }
 
@@ -561,7 +561,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         if (RefPtr targetFrame = m_context.hitTestResult().targetFrame()) {
             ResourceRequest resourceRequest { m_context.hitTestResult().absoluteLinkURL(), frame->loader().outgoingReferrer() };
             Ref document = *frame->document();
-            FrameLoadRequest frameLoadRequest { document.copyRef(), protect(document->securityOrigin()), WTF::move(resourceRequest), { }, InitiatedByMainFrame::Unknown };
+            FrameLoadRequest frameLoadRequest { document.copyRef(), protect(document->securityOrigin()), WTF::move(resourceRequest), nullptr, InitiatedByMainFrame::Unknown };
             frameLoadRequest.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
             if (targetFrame->isMainFrame())
                 frameLoadRequest.setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy::ShouldAllow);
@@ -570,10 +570,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, eventForLoadRequests.get(), ShouldOpenExternalURLsPolicy::ShouldAllow);
         break;
     case ContextMenuItemTagBold:
-        protect(frame->editor())->command("ToggleBold"_s).execute();
+        protect(frame->editor())->command("ToggleBold"_si).execute();
         break;
     case ContextMenuItemTagItalic:
-        protect(frame->editor())->command("ToggleItalic"_s).execute();
+        protect(frame->editor())->command("ToggleItalic"_si).execute();
         break;
     case ContextMenuItemTagUnderline:
         protect(frame->editor())->toggleUnderline();
@@ -602,13 +602,13 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         protect(frame->editor())->setBaseWritingDirection(WritingDirection::RightToLeft);
         break;
     case ContextMenuItemTagTextDirectionDefault:
-        protect(frame->editor())->command("MakeTextWritingDirectionNatural"_s).execute();
+        protect(frame->editor())->command("MakeTextWritingDirectionNatural"_si).execute();
         break;
     case ContextMenuItemTagTextDirectionLeftToRight:
-        protect(frame->editor())->command("MakeTextWritingDirectionLeftToRight"_s).execute();
+        protect(frame->editor())->command("MakeTextWritingDirectionLeftToRight"_si).execute();
         break;
     case ContextMenuItemTagTextDirectionRightToLeft:
-        protect(frame->editor())->command("MakeTextWritingDirectionRightToLeft"_s).execute();
+        protect(frame->editor())->command("MakeTextWritingDirectionRightToLeft"_si).execute();
         break;
     case ContextMenuItemTagShowSpellingPanel:
         protect(frame->editor())->showSpellingGuessPanel();
@@ -711,34 +711,34 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
 
 #if ENABLE(PDFJS)
     case ContextMenuItemPDFAutoSize:
-        performPDFJSAction(*frame, "context-menu-auto-size"_s);
+        performPDFJSAction(*frame, "context-menu-auto-size"_si);
         break;
     case ContextMenuItemPDFZoomIn:
-        performPDFJSAction(*frame, "context-menu-zoom-in"_s);
+        performPDFJSAction(*frame, "context-menu-zoom-in"_si);
         break;
     case ContextMenuItemPDFZoomOut:
-        performPDFJSAction(*frame, "context-menu-zoom-out"_s);
+        performPDFJSAction(*frame, "context-menu-zoom-out"_si);
         break;
     case ContextMenuItemPDFActualSize:
-        performPDFJSAction(*frame, "context-menu-actual-size"_s);
+        performPDFJSAction(*frame, "context-menu-actual-size"_si);
         break;
     case ContextMenuItemPDFSinglePage:
-        performPDFJSAction(*frame, "context-menu-single-page"_s);
+        performPDFJSAction(*frame, "context-menu-single-page"_si);
         break;
     case ContextMenuItemPDFSinglePageContinuous:
-        performPDFJSAction(*frame, "context-menu-single-page-continuous"_s);
+        performPDFJSAction(*frame, "context-menu-single-page-continuous"_si);
         break;
     case ContextMenuItemPDFTwoPages:
-        performPDFJSAction(*frame, "context-menu-two-pages"_s);
+        performPDFJSAction(*frame, "context-menu-two-pages"_si);
         break;
     case ContextMenuItemPDFTwoPagesContinuous:
-        performPDFJSAction(*frame, "context-menu-two-pages-continuous"_s);
+        performPDFJSAction(*frame, "context-menu-two-pages-continuous"_si);
         break;
     case ContextMenuItemPDFNextPage:
-        performPDFJSAction(*frame, "context-menu-next-page"_s);
+        performPDFJSAction(*frame, "context-menu-next-page"_si);
         break;
     case ContextMenuItemPDFPreviousPage:
-        performPDFJSAction(*frame, "context-menu-previous-page"_s);
+        performPDFJSAction(*frame, "context-menu-previous-page"_si);
         break;
 #endif
     default:
@@ -903,13 +903,13 @@ bool ContextMenuController::createAndAppendTransformationsSubMenu(ContextMenuIte
         if (RefPtr frame = node->document().frame()) {
             Ref frameEditor = frame->editor();
             auto selectedText = frameEditor->selectedText();
-            auto selectionLength = selectedText.length();
+            auto selectionLength = length(selectedText);
 
             // Match AppKit's text analysis behavior: look at the first 200 characters when
             // determining which transformations to show. If more than 200 characters
             // are selected, show the case transformation items regardless.
             static constexpr unsigned maximumLengthForAnalysis = 200;
-            selectedText = selectedText.left(maximumLengthForAnalysis);
+            selectedText = left(selectedText, maximumLengthForAnalysis);
             showCaseTransformations = (selectionLength > maximumLengthForAnalysis) || frameEditor->canApplyCaseTransformations(selectedText);
             showConvertToTraditionalChinese = frameEditor->canConvertToTraditionalChinese(selectedText);
             showConvertToSimplifiedChinese = frameEditor->canConvertToSimplifiedChinese(selectedText);
@@ -1064,9 +1064,9 @@ void ContextMenuController::populate()
     ContextMenuItem CopyImageURLItem(ContextMenuItemType::Action, ContextMenuItemTagCopyImageURLToClipboard,
         contextMenuItemTagCopyImageURLToClipboard());
 #endif
-    ContextMenuItem OpenMediaInNewWindowItem(ContextMenuItemType::Action, ContextMenuItemTagOpenMediaInNewWindow, String());
-    ContextMenuItem DownloadMediaItem(ContextMenuItemType::Action, ContextMenuItemTagDownloadMediaToDisk, String());
-    ContextMenuItem CopyMediaLinkItem(ContextMenuItemType::Action, ContextMenuItemTagCopyMediaLinkToClipboard, String());
+    ContextMenuItem OpenMediaInNewWindowItem(ContextMenuItemType::Action, ContextMenuItemTagOpenMediaInNewWindow, nullString());
+    ContextMenuItem DownloadMediaItem(ContextMenuItemType::Action, ContextMenuItemTagDownloadMediaToDisk, nullString());
+    ContextMenuItem CopyMediaLinkItem(ContextMenuItemType::Action, ContextMenuItemTagCopyMediaLinkToClipboard, nullString());
     ContextMenuItem MediaPlayPause(ContextMenuItemType::Action, ContextMenuItemTagMediaPlayPause,
         contextMenuItemTagMediaPlay());
     ContextMenuItem MediaMute(ContextMenuItemType::Action, ContextMenuItemTagMediaMute,
@@ -1166,8 +1166,8 @@ void ContextMenuController::populate()
     if (!frame)
         return;
 
-    auto addSelectedTextActionsIfNeeded = [&] (const String& selectedText) {
-        if (selectedText.isEmpty())
+    auto addSelectedTextActionsIfNeeded = [&] (StringImpl* selectedText) {
+        if (isEmpty(selectedText))
             return;
 
 #if PLATFORM(COCOA)
@@ -1420,7 +1420,7 @@ void ContextMenuController::populate()
                         }
                     } else {
                         for (const auto& guess : guesses) {
-                            if (!guess.isEmpty()) {
+                            if (!isEmpty(guess)) {
                                 ContextMenuItem item(ContextMenuItemType::Action, ContextMenuItemTagSpellingGuess, guess);
                                 appendItem(item, m_contextMenu.get());
                             }
@@ -1437,8 +1437,8 @@ void ContextMenuController::populate()
 #if PLATFORM(COCOA)
                 } else {
                     // If the string was autocorrected, generate a contextual menu item allowing it to be changed back.
-                    String replacedString = m_context.hitTestResult().replacedString();
-                    if (!replacedString.isEmpty()) {
+                    RefPtr<StringImpl> replacedString = m_context.hitTestResult().replacedString();
+                    if (!isEmpty(replacedString)) {
                         ContextMenuItem item(ContextMenuItemType::Action, ContextMenuItemTagChangeBack, contextMenuItemTagChangeBack(replacedString));
                         appendItem(item, m_contextMenu.get());
                         appendItem(*separatorItem(), m_contextMenu.get());
@@ -1450,7 +1450,7 @@ void ContextMenuController::populate()
 
             if (!haveContextMenuItemsForMisspellingOrGrammer) {
                 // Spelling and grammar checking is mutually exclusive with dictation alternatives.
-                Vector<String> dictationAlternatives = m_context.hitTestResult().dictationAlternatives();
+                Vector<RefPtr<StringImpl>> dictationAlternatives = m_context.hitTestResult().dictationAlternatives();
                 if (!dictationAlternatives.isEmpty()) {
                     for (auto& alternative : dictationAlternatives) {
                         ContextMenuItem item(ContextMenuItemType::Action, ContextMenuItemTagDictationAlternative, alternative);
@@ -1496,7 +1496,7 @@ void ContextMenuController::populate()
 #if ENABLE(TOP_LEVEL_WRITING_TOOLS_CONTEXT_MENU_ITEMS)
             bool editorHasText = [&] {
                 if (auto range = protect(frame->editor())->contextRangeForCandidateRequest())
-                    return !plainText(*range).isEmpty();
+                    return !isEmpty(plainText(*range));
 
                 return false;
             }();
@@ -1665,25 +1665,25 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagLeftToRight:
         case ContextMenuItemTagRightToLeft: {
-            String direction = item.action() == ContextMenuItemTagLeftToRight ? "ltr"_s : "rtl"_s;
+            RefPtr<StringImpl> direction = item.action() == ContextMenuItemTagLeftToRight ? "ltr"_s : "rtl"_s;
             shouldCheck = frameEditor->selectionHasStyle(CSSPropertyID::Direction, direction) != TriState::False;
             shouldEnable = true;
             break;
         }
         case ContextMenuItemTagTextDirectionDefault: {
-            Editor::Command command = frameEditor->command("MakeTextWritingDirectionNatural"_s);
+            Editor::Command command = frameEditor->command("MakeTextWritingDirectionNatural"_si);
             shouldCheck = command.state() == TriState::True;
             shouldEnable = command.isEnabled();
             break;
         }
         case ContextMenuItemTagTextDirectionLeftToRight: {
-            Editor::Command command = frameEditor->command("MakeTextWritingDirectionLeftToRight"_s);
+            Editor::Command command = frameEditor->command("MakeTextWritingDirectionLeftToRight"_si);
             shouldCheck = command.state() == TriState::True;
             shouldEnable = command.isEnabled();
             break;
         }
         case ContextMenuItemTagTextDirectionRightToLeft: {
-            Editor::Command command = frameEditor->command("MakeTextWritingDirectionRightToLeft"_s);
+            Editor::Command command = frameEditor->command("MakeTextWritingDirectionRightToLeft"_si);
             shouldCheck = command.state() == TriState::True;
             shouldEnable = command.isEnabled();
             break;
@@ -1731,7 +1731,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
 #endif
         case ContextMenuItemTagUnderline: {
-            shouldCheck = frameEditor->selectionHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "underline"_s) != TriState::False;
+            shouldCheck = frameEditor->selectionHasStyle(CSSPropertyID::WebkitTextDecorationsInEffect, "underline"_si) != TriState::False;
             shouldEnable = frameEditor->canEditRichly();
             break;
         }
@@ -1744,12 +1744,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = true;
             break;
         case ContextMenuItemTagItalic: {
-            shouldCheck = frameEditor->selectionHasStyle(CSSPropertyID::FontStyle, "italic"_s) != TriState::False;
+            shouldCheck = frameEditor->selectionHasStyle(CSSPropertyID::FontStyle, "italic"_si) != TriState::False;
             shouldEnable = frameEditor->canEditRichly();
             break;
         }
         case ContextMenuItemTagBold: {
-            shouldCheck = frameEditor->selectionHasStyle(CSSPropertyID::FontWeight, "bold"_s) != TriState::False;
+            shouldCheck = frameEditor->selectionHasStyle(CSSPropertyID::FontWeight, "bold"_si) != TriState::False;
             shouldEnable = frameEditor->canEditRichly();
             break;
         }
@@ -2028,7 +2028,7 @@ void ContextMenuController::showImageControlsMenu(Event& event)
 
 #if ENABLE(PDFJS)
 
-void ContextMenuController::performPDFJSAction(LocalFrame& frame, const String& action)
+void ContextMenuController::performPDFJSAction(LocalFrame& frame, StringImpl* action)
 {
     if (RefPtr document = dynamicDowncast<PDFJSDocument>(frame.ownerElement()->document()))
         document->postMessageToIframe(action, nullptr);

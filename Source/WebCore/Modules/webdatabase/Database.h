@@ -82,17 +82,17 @@ public:
     NODELETE SQLTransactionCoordinator& transactionCoordinator();
 
     // Direct support for the DOM API
-    String version() const;
-    void changeVersion(String&& oldVersion, String&& newVersion, RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
+    RefPtr<StringImpl> version() const;
+    void changeVersion(RefPtr<StringImpl>&& oldVersion, RefPtr<StringImpl>&& newVersion, RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
     void transaction(Ref<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
     void readTransaction(Ref<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
 
     // Internal engine support
-    String stringIdentifierIsolatedCopy() const;
-    String displayNameIsolatedCopy() const;
-    String expectedVersionIsolatedCopy() const;
+    RefPtr<StringImpl> stringIdentifierIsolatedCopy() const;
+    RefPtr<StringImpl> displayNameIsolatedCopy() const;
+    RefPtr<StringImpl> expectedVersionIsolatedCopy() const;
     NODELETE unsigned long long estimatedSize() const;
-    String fileNameIsolatedCopy() const;
+    RefPtr<StringImpl> fileNameIsolatedCopy() const;
     DatabaseDetails details() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
 
@@ -108,9 +108,9 @@ public:
     DatabaseContext& databaseContext() { return m_databaseContext; }
     NODELETE DatabaseThread& databaseThread();
     Document& document() { return m_document; }
-    void logErrorMessage(const String& message);
+    void logErrorMessage(StringImpl* message);
 
-    Vector<String> tableNames();
+    Vector<RefPtr<StringImpl>> tableNames();
 
     SecurityOriginData securityOrigin();
 
@@ -123,22 +123,22 @@ public:
 
     // Called from DatabaseTask
     ExceptionOr<void> performOpenAndVerify(bool shouldSetVersionInNewDatabase);
-    Vector<String> performGetTableNames();
+    Vector<RefPtr<StringImpl>> performGetTableNames();
 
     // Called from DatabaseTask and DatabaseThread
     void performClose();
 
 private:
-    Database(DatabaseContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned long long estimatedSize);
+    Database(DatabaseContext&, StringImpl* name, StringImpl* expectedVersion, StringImpl* displayName, unsigned long long estimatedSize);
 
     void closeDatabase();
 
-    bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
-    bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
-    void setExpectedVersion(const String&);
-    String getCachedVersion() const;
-    void setCachedVersion(const String&);
-    bool getActualVersionForTransaction(String& version);
+    bool getVersionFromDatabase(RefPtr<StringImpl>& version, bool shouldCacheVersion = true);
+    bool setVersionInDatabase(StringImpl* version, bool shouldCacheVersion = true);
+    void setExpectedVersion(StringImpl*);
+    RefPtr<StringImpl> getCachedVersion() const;
+    void setCachedVersion(StringImpl*);
+    bool getActualVersionForTransaction(RefPtr<StringImpl>& version);
     void setEstimatedSize(unsigned long long);
 
     void scheduleTransaction() WTF_REQUIRES_LOCK(m_transactionInProgressLock);
@@ -146,7 +146,7 @@ private:
     void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
 #if !LOG_DISABLED || !ERROR_DISABLED
-    String databaseDebugName() const;
+    RefPtr<StringImpl> databaseDebugName() const;
 #endif
 
     Ref<Document> m_document;
@@ -157,11 +157,11 @@ private:
     bool m_deleted { false };
     bool m_hasPendingCreationEvent { false };
 
-    String m_name;
-    String m_expectedVersion;
-    String m_displayName;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_expectedVersion;
+    RefPtr<StringImpl> m_displayName;
     unsigned long long m_estimatedSize;
-    String m_filename;
+    RefPtr<StringImpl> m_filename;
 
     DatabaseGUID m_guid;
     bool m_opened { false };

@@ -38,7 +38,7 @@ public:
         return adoptRef(*new CSSOffsetRotateValue(downcast<CSSKeywordValue>(WTF::move(modifier)), downcast<CSSPrimitiveValue>(WTF::move(angle))));
     }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
 
     CSSKeywordValue* modifier() const { return m_modifier.get(); }
     CSSPrimitiveValue* angle() const { return m_angle.get(); }

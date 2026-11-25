@@ -1816,7 +1816,7 @@ id<MTLRenderCommandEncoder> RenderPassEncoder::renderCommandEncoder() const
     return materializeRenderCommandEncoder();
 }
 
-void RenderPassEncoder::insertDebugMarker(String&& markerLabel)
+void RenderPassEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
     RETURN_IF_FINISHED();
@@ -1824,7 +1824,7 @@ void RenderPassEncoder::insertDebugMarker(String&& markerLabel)
     if (!prepareTheEncoderState())
         return;
 
-    [m_renderCommandEncoder insertDebugSignpost:markerLabel.createNSString().get()];
+    [m_renderCommandEncoder insertDebugSignpost:createNSString(markerLabel).get()];
 }
 
 bool RenderPassEncoder::validatePopDebugGroup() const
@@ -1857,9 +1857,9 @@ void RenderPassEncoder::makeInvalid(NSString* errorString)
     m_renderCommandEncoder = nil;
 }
 
-void RenderPassEncoder::makeInvalid(String&& error)
+void RenderPassEncoder::makeInvalid(RefPtr<StringImpl>&& error)
 {
-    makeInvalid(error.createNSString().get());
+    makeInvalid(createNSString(error).get());
 }
 
 void RenderPassEncoder::popDebugGroup()
@@ -1879,7 +1879,7 @@ void RenderPassEncoder::popDebugGroup()
     [m_renderCommandEncoder popDebugGroup];
 }
 
-void RenderPassEncoder::pushDebugGroup(String&& groupLabel)
+void RenderPassEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
     RETURN_IF_FINISHED();
@@ -1888,7 +1888,7 @@ void RenderPassEncoder::pushDebugGroup(String&& groupLabel)
         return;
 
     ++m_debugGroupStackSize;
-    [m_renderCommandEncoder pushDebugGroup:groupLabel.createNSString().get()];
+    [m_renderCommandEncoder pushDebugGroup:createNSString(groupLabel).get()];
 }
 
 void RenderPassEncoder::setPipeline(const WebGPU::RenderPipeline& pipeline)
@@ -2189,9 +2189,9 @@ void RenderPassEncoder::setViewport(float x, float y, float width, float height,
     m_viewportNeedsApplying = true;
 }
 
-void RenderPassEncoder::setLabel(String&& label)
+void RenderPassEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_renderCommandEncoder.label = label.createNSString().get();
+    m_renderCommandEncoder.label = createNSString(label).get();
 }
 
 #undef CHECKED_SET_PSO

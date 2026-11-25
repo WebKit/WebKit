@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-String serializeForNumberType(const Decimal& number)
+RefPtr<StringImpl> serializeForNumberType(const Decimal& number)
 {
     if (number.isZero()) {
         // Decimal::toString appends exponent, e.g. "0e-18"
@@ -53,11 +53,11 @@ String serializeForNumberType(const Decimal& number)
     return number.toString();
 }
 
-String serializeForNumberType(double number)
+RefPtr<StringImpl> serializeForNumberType(double number)
 {
     // According to HTML5, "the best representation of the number n as a floating
     // point number" is a string produced by applying ToString() to n.
-    return String::number(number);
+    return makeString(number);
 }
 
 Decimal parseToDecimalForNumberType(StringView string, const Decimal& fallbackValue)
@@ -334,16 +334,16 @@ static bool threadSafeEqual(const StringImpl& a, const StringImpl& b)
 
 bool threadSafeMatch(const QualifiedName& a, const QualifiedName& b)
 {
-    return threadSafeEqual(*a.localName().impl(), *b.localName().impl());
+    return threadSafeEqual(*a.localName().get(), *b.localName().get());
 }
 
-String parseCORSSettingsAttribute(const AtomString& value)
+RefPtr<StringImpl> parseCORSSettingsAttribute(AtomStringImpl* value)
 {
-    if (value.isNull())
-        return String();
+    if (!value)
+        return nullptr;
     if (equalLettersIgnoringASCIICase(value, "use-credentials"_s))
-        return "use-credentials"_s;
-    return "anonymous"_s;
+        return "use-credentials"_si;
+    return "anonymous"_si;
 }
 
 template<typename CharacterType>
@@ -360,7 +360,7 @@ NODELETE static bool isSemicolonOrComma(CharacterType character)
 
 // https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-refresh
 template <typename CharacterType>
-static bool parseHTTPRefreshInternal(std::span<const CharacterType> data, double& parsedDelay, String& parsedURL)
+static bool parseHTTPRefreshInternal(std::span<const CharacterType> data, double& parsedDelay, RefPtr<StringImpl>& parsedURL)
 {
     skipWhile<isASCIIWhitespace>(data);
 
@@ -444,7 +444,7 @@ static bool parseHTTPRefreshInternal(std::span<const CharacterType> data, double
     return true;
 }
 
-bool parseMetaHTTPEquivRefresh(StringView input, double& delay, String& url)
+bool parseMetaHTTPEquivRefresh(StringView input, double& delay, RefPtr<StringImpl>& url)
 {
     if (input.is8Bit()) [[likely]]
         return parseHTTPRefreshInternal(input.span8(), delay, url);
@@ -452,7 +452,7 @@ bool parseMetaHTTPEquivRefresh(StringView input, double& delay, String& url)
 }
 
 // https://html.spec.whatwg.org/#rules-for-parsing-a-hash-name-reference
-AtomString parseHTMLHashNameReference(StringView usemap)
+RefPtr<AtomStringImpl> parseHTMLHashNameReference(StringView usemap)
 {
     size_t numberSignIndex = usemap.find('#');
     if (numberSignIndex == notFound)

@@ -29,6 +29,7 @@
 #include <JavaScriptCore/JSCell.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -102,13 +103,38 @@ public:
     T operator->() LIFETIME_BOUND requires (std::is_pointer_v<T>) { return data; }
     const T operator->() const LIFETIME_BOUND requires (std::is_pointer_v<T>) { return data; }
 
-    auto operator[](unsigned index) const LIFETIME_BOUND { return data[index]; }
+    // For string data, *scope is the string (like the String it replaced) and scope[i] is a code unit.
+    const std::remove_reference_t<T>& operator*() const LIFETIME_BOUND requires (!std::is_pointer_v<T>) { return data; }
 
-    // Convenience conversion for String -> StringView
-    operator StringView() const LIFETIME_BOUND requires (std::is_same_v<std::decay_t<T>, String>) { return data; }
+    auto operator[](unsigned index) const LIFETIME_BOUND
+    {
+        if constexpr (WTF::StringImplPointerLike<T>)
+            return WTF::codeUnitAt(data, index);
+        else
+            return data[index];
+    }
+
+    // Convenience conversion for string data (RefPtr<StringImpl>) -> StringView.
+    operator StringView() const LIFETIME_BOUND requires (std::is_same_v<std::remove_cvref_t<T>, RefPtr<StringImpl>>) { return StringView { data }; }
+    explicit operator bool() const requires (std::is_same_v<std::remove_cvref_t<T>, RefPtr<StringImpl>>) { return !!data; }
+    // There is deliberately no implicit conversion to StringImpl*: it would make assigning or constructing a RefPtr from a scope
+    // ambiguous. To pass string data to a StringImpl* parameter, write scope->get() (which the SaferCPP checkers understand).
 
     const JSCell* owner { nullptr };
     SUPPRESS_UNCOUNTED_MEMBER T data { };
 };
 
-}
+} // namespace JSC
+
+namespace WTF {
+
+// A GCOwnedDataScope holding string data (e.g. JSString::value()) can be passed directly to the WTF string
+// free functions (equal(), length(), find(), ...), as with the underlying pointer. The scope outlives the call.
+template<typename T> requires StringImplPointerLike<T>
+struct StringImplPointerLikeTraits<JSC::GCOwnedDataScope<T>> {
+    static constexpr bool value = true;
+    using PointeeType = StringImplPointeeType<T>;
+    static StringImpl* toImpl(const JSC::GCOwnedDataScope<T>& scope) { return toStringImplPointer(scope.data); }
+};
+
+} // namespace WTF

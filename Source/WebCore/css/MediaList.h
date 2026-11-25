@@ -51,12 +51,12 @@ public:
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     NODELETE WEBCORE_EXPORT unsigned length() const;
-    WEBCORE_EXPORT String item(unsigned index) const;
-    WEBCORE_EXPORT ExceptionOr<void> deleteMedium(const String& oldMedium);
-    WEBCORE_EXPORT void appendMedium(const String& newMedium);
+    WEBCORE_EXPORT RefPtr<StringImpl> item(unsigned index) const;
+    WEBCORE_EXPORT ExceptionOr<void> deleteMedium(StringImpl* oldMedium);
+    WEBCORE_EXPORT void appendMedium(StringImpl* newMedium);
 
-    WEBCORE_EXPORT String mediaText() const;
-    WEBCORE_EXPORT void setMediaText(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> mediaText() const;
+    WEBCORE_EXPORT void setMediaText(StringImpl*);
 
     NODELETE CSSRule* parentRule() const;
     NODELETE CSSStyleSheet* parentStyleSheet() const;

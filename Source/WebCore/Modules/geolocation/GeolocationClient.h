@@ -40,9 +40,9 @@ class GeolocationClient : public AbstractRefCountedAndCanMakeWeakPtr<Geolocation
 public:
     virtual void geolocationDestroyed() = 0;
 
-    virtual void startUpdating(const String& authorizationToken, bool needsHighAccuracy) = 0;
+    virtual void startUpdating(StringImpl* authorizationToken, bool needsHighAccuracy) = 0;
     virtual void stopUpdating() = 0;
-    virtual void revokeAuthorizationToken(const String&) { }
+    virtual void revokeAuthorizationToken(StringImpl*) { }
 
     // FIXME: The V2 Geolocation specification proposes that this property is
     // renamed. See http://www.w3.org/2008/geolocation/track/issues/6

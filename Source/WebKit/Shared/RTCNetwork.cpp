@@ -54,7 +54,7 @@ static std::string_view toStdStringView(const UTF8CString& string LIFETIME_BOUND
     return std::string_view { byteCast<char>(string.span()) };
 }
 
-RTCNetwork::RTCNetwork(String&& name, String&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips)
+RTCNetwork::RTCNetwork(RefPtr<StringImpl>&& name, RefPtr<StringImpl>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips)
     : name(WTF::move(name))
     , description(WTF::move(description))
     , prefix(prefix)
@@ -69,8 +69,8 @@ RTCNetwork::RTCNetwork(String&& name, String&& description, IPAddress prefix, in
 
 std::unique_ptr<webrtc::Network> RTCNetwork::value() const
 {
-    auto nameUTF8 = name.utf8();
-    auto descriptionUTF8 = description.utf8();
+    auto nameUTF8 = utf8(name);
+    auto descriptionUTF8 = utf8(description);
     webrtc::Network network(toStdStringView(nameUTF8), toStdStringView(descriptionUTF8), prefix.rtcAddress(), prefixLength, webrtc::AdapterType(type));
     network.set_id(id);
     network.set_preference(preference);
@@ -111,7 +111,7 @@ webrtc::SocketAddress SocketAddress::rtcAddress() const
     webrtc::SocketAddress result;
     result.SetPort(port);
     result.SetScopeID(scopeID);
-    auto hostnameUTF8 = hostname.utf8();
+    auto hostnameUTF8 = utf8(hostname);
     result.SetIP(toStdStringView(hostnameUTF8));
     if (ipAddress)
         result.SetResolvedIP(ipAddress->rtcAddress());
@@ -121,7 +121,7 @@ webrtc::SocketAddress SocketAddress::rtcAddress() const
 SocketAddress::SocketAddress(const webrtc::SocketAddress& value)
     : port(value.port())
     , scopeID(value.scope_id())
-    , hostname(String::fromUTF8(value.hostname()))
+    , hostname(StringImpl::fromUTF8(value.hostname()))
     , ipAddress(value.IsUnresolvedIP() ? std::nullopt : std::optional(IPAddress(value.ipaddr())))
 {
 }

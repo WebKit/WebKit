@@ -207,7 +207,7 @@ void TextAnimationController::addInitialTextAnimationForActiveWritingToolsSessio
     m_initialAnimationID = initialAnimationID;
 }
 
-void TextAnimationController::addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange& replacingRange, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+void TextAnimationController::addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange& replacingRange, StringImpl* string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
     auto previouslyReplacedRange = m_alreadyReplacedRange;
     auto replaceCharacterRange = replacingRange;
@@ -249,7 +249,7 @@ void TextAnimationController::addSourceTextAnimationForActiveWritingToolsSession
     m_textAnimationRanges.append({ sourceAnimationUUID, replaceCharacterRange });
 }
 
-void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> sourceAnimationUUIDValue, Markable<WTF::UUID> destinationAnimationUUIDValue, const std::optional<WebCore::CharacterRange>& characterRangeAfterReplace, const String& string)
+void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSession(Markable<WTF::UUID> sourceAnimationUUIDValue, Markable<WTF::UUID> destinationAnimationUUIDValue, const std::optional<WebCore::CharacterRange>& characterRangeAfterReplace, StringImpl* string)
 {
     RefPtr webPage = m_webPage.get();
     if (!characterRangeAfterReplace || !sourceAnimationUUIDValue || !destinationAnimationUUIDValue) {

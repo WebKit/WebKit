@@ -80,15 +80,15 @@ public:
     void deref() const;
 
 private:
-    bool supportsKeySystem(const String&);
-    bool supportsKeySystemAndMimeType(const String&, const String&);
+    bool supportsKeySystem(StringImpl*);
+    bool supportsKeySystemAndMimeType(StringImpl*, StringImpl*);
     std::unique_ptr<WebCore::CDMPrivateInterface> createCDM(WebCore::LegacyCDM&);
 
     WeakRef<WebProcess> m_webProcess;
     HashMap<RemoteLegacyCDMSessionIdentifier, WeakPtr<RemoteLegacyCDMSession>> m_sessions;
     HashMap<RemoteLegacyCDMIdentifier, WeakPtr<RemoteLegacyCDM>> m_cdms;
-    HashMap<String, bool> m_supportsKeySystemCache;
-    HashMap<std::pair<String, String>, bool> m_supportsKeySystemAndMimeTypeCache;
+    HashMap<RefPtr<StringImpl>, bool> m_supportsKeySystemCache;
+    HashMap<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>, bool> m_supportsKeySystemAndMimeTypeCache;
 };
 
 }

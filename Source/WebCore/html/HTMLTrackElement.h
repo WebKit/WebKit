@@ -51,7 +51,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
-    const AtomString& kind();
+    const RefPtr<AtomStringImpl>& kind();
     NODELETE bool isDefault() const;
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
@@ -66,7 +66,7 @@ public:
     void didCompleteLoad(LoadStatus);
 
     NODELETE RefPtr<HTMLMediaElement> mediaElement() const;
-    const AtomString& mediaElementCrossOriginAttribute() const;
+    const RefPtr<AtomStringImpl>& mediaElementCrossOriginAttribute() const;
 
     void scheduleTask(Function<void(HTMLTrackElement&)>&&);
 
@@ -77,7 +77,7 @@ private:
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;

@@ -35,7 +35,7 @@ namespace WebCore {
 class GPUVideoEncoderVTBH265 final : public GPUVideoEncoderVTB {
     WTF_MAKE_TZONE_ALLOCATED(GPUVideoEncoderVTBH265);
 public:
-    static RefPtr<GPUVideoEncoderVTBH265> create(CreationInfo&&, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
+    static RefPtr<GPUVideoEncoderVTBH265> create(CreationInfo&&, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& parameters, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
 
     ~GPUVideoEncoderVTBH265() = default;
 

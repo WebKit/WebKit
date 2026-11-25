@@ -55,11 +55,11 @@ public:
     struct DocumentPredicate;
 
     struct URLPatternPredicate {
-        Vector<String> patterns;
+        Vector<RefPtr<StringImpl>> patterns;
     };
 
     struct CSSSelectorPredicate {
-        Vector<String> selectors;
+        Vector<RefPtr<StringImpl>> selectors;
     };
 
     struct Conjunction {
@@ -95,9 +95,9 @@ public:
         std::optional<DocumentPredicate> predicate;
         Eagerness eagerness;
         std::optional<ReferrerPolicy> referrerPolicy;
-        Vector<String> tags;
-        Vector<String> requirements;
-        String noVarySearchHint;
+        Vector<RefPtr<StringImpl>> tags;
+        Vector<RefPtr<StringImpl>> requirements;
+        RefPtr<StringImpl> noVarySearchHint;
     };
 
     NODELETE static Ref<SpeculationRules> create();

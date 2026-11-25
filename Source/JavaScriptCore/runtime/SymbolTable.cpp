@@ -218,10 +218,10 @@ void SymbolTable::prepareForTypeProfiling(const ConcurrentJSLocker&)
     }
 }
 
-String SymbolTable::inferredName()
+RefPtr<StringImpl> SymbolTable::inferredName()
 {
     if (!m_rareData)
-        return String();
+        return nullptr;
     return m_rareData->m_inferredName;
 }
 
@@ -235,9 +235,9 @@ DebuggerLocation SymbolTable::debuggerLocation()
 void SymbolTable::collectDebuggerInfo(CodeBlock* codeBlock)
 {
     auto& rareData = ensureRareData();
-    if (!rareData.m_inferredName.isNull())
+    if (rareData.m_inferredName)
         return;
-    rareData.m_inferredName = String::fromUTF8(codeBlock->inferredName().span());
+    rareData.m_inferredName = StringImpl::fromUTF8(codeBlock->inferredName().span());
     ScriptExecutable* executable = codeBlock->ownerExecutable();
     if (!executable->isHostFunction()) {
         rareData.m_debuggerSourceID = executable->sourceID();

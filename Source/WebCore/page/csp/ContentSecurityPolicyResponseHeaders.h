@@ -41,7 +41,7 @@ enum class ContentSecurityPolicyHeaderType : bool {
 class ContentSecurityPolicyResponseHeaders {
 public:
     ContentSecurityPolicyResponseHeaders() = default;
-    ContentSecurityPolicyResponseHeaders(Vector<std::pair<String, ContentSecurityPolicyHeaderType>>&& headers, int httpStatusCode)
+    ContentSecurityPolicyResponseHeaders(Vector<std::pair<RefPtr<StringImpl>, ContentSecurityPolicyHeaderType>>&& headers, int httpStatusCode)
         : m_headers(WTF::move(headers))
         , m_httpStatusCode(httpStatusCode)
     { }
@@ -55,8 +55,8 @@ public:
 
     void addPolicyHeadersTo(ResourceResponse&) const;
 
-    const Vector<std::pair<String, ContentSecurityPolicyHeaderType>>& headers() const LIFETIME_BOUND { return m_headers; }
-    void setHeaders(Vector<std::pair<String, ContentSecurityPolicyHeaderType>>&& headers) { m_headers = WTF::move(headers); }
+    const Vector<std::pair<RefPtr<StringImpl>, ContentSecurityPolicyHeaderType>>& headers() const LIFETIME_BOUND { return m_headers; }
+    void setHeaders(Vector<std::pair<RefPtr<StringImpl>, ContentSecurityPolicyHeaderType>>&& headers) { m_headers = WTF::move(headers); }
     int httpStatusCode() const { return m_httpStatusCode; }
     void setHTTPStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
 
@@ -68,14 +68,14 @@ private:
         : m_emptyForMarkable(true)
     { }
 
-    Vector<std::pair<String, ContentSecurityPolicyHeaderType>> m_headers;
+    Vector<std::pair<RefPtr<StringImpl>, ContentSecurityPolicyHeaderType>> m_headers;
     int m_httpStatusCode { 0 };
     bool m_emptyForMarkable { false };
 };
 
 inline bool operator==(const ContentSecurityPolicyResponseHeaders&a, const ContentSecurityPolicyResponseHeaders&b)
 {
-    return a.m_headers == b.m_headers;
+    return contentEquals(a.m_headers, b.m_headers);
 }
 
 } // namespace WebCore

@@ -47,7 +47,7 @@
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->name().createNSString().autorelease();
+    return createNSString(IMPL->name()).autorelease();
 }
 
 - (BOOL)specified
@@ -59,13 +59,13 @@
 - (NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->value().createNSString().autorelease();
+    return createNSString(IMPL->value()).autorelease();
 }
 
 - (void)setValue:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setValue(newValue);
+    IMPL->setValue(AtomStringImpl::add((__bridge CFStringRef)newValue).get());
 }
 
 - (DOMElement *)ownerElement

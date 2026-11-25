@@ -195,7 +195,7 @@ public:
     void debugPosition(ASCIILiteral msg = ""_s) const;
 
 #if ENABLE(TREE_DEBUGGING)
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
     void showAnchorTypeAndOffset() const;
     void showTreeForThis() const;
 #endif

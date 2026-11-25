@@ -57,14 +57,14 @@ CSSPageDescriptors& CSSPageRule::style()
     return *m_propertiesCSSOMWrapper;
 }
 
-String CSSPageRule::selectorText() const
+RefPtr<StringImpl> CSSPageRule::selectorText() const
 {
-    if (auto& selector = m_pageRule->selector(); !selector.selectorText().isEmpty())
+    if (auto& selector = m_pageRule->selector(); !isEmpty(selector.selectorText()))
         return selector.selectorText();
     return emptyString();
 }
 
-void CSSPageRule::setSelectorText(const String& selectorText)
+void CSSPageRule::setSelectorText(StringImpl* selectorText)
 {
     RefPtr sheet = parentStyleSheet();
     RefPtr sheetContents = sheet ? &sheet->contents() : nullptr;
@@ -77,11 +77,11 @@ void CSSPageRule::setSelectorText(const String& selectorText)
     protect(m_pageRule)->wrapperAdoptSelectorList(WTF::move(*selectorList));
 }
 
-String CSSPageRule::cssText() const
+RefPtr<StringImpl> CSSPageRule::cssText() const
 {
     auto selector = selectorText();
-    auto optionalSpace = selector.isEmpty() ? ""_s : " "_s;
-    if (auto declarations = protect(protect(m_pageRule)->properties())->asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
+    auto optionalSpace = isEmpty(selector) ? ""_s : " "_s;
+    if (auto declarations = protect(protect(m_pageRule)->properties())->asText(CSS::defaultSerializationContext()); !isEmpty(declarations))
         return makeString("@page"_s, optionalSpace, selector, " { "_s, declarations, " }"_s);
     return makeString("@page"_s, optionalSpace, selector, " { }"_s);
 }

@@ -67,7 +67,7 @@ bool ContentRuleListAction::modifiedHeaders() const
     return m_result.modifiedHeaders;
 }
 
-const Vector<WTF::String>& ContentRuleListAction::notifications() const
+const Vector<RefPtr<StringImpl>>& ContentRuleListAction::notifications() const
 {
     return m_result.notifications;
 }

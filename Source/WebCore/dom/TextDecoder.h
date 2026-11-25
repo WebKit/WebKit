@@ -44,16 +44,16 @@ public:
         bool fatal { false };
         bool ignoreBOM { false };
     };
-    static ExceptionOr<Ref<TextDecoder>> create(const String& label, Options);
+    static ExceptionOr<Ref<TextDecoder>> create(StringImpl* label, Options);
 
-    String encoding() const;
+    RefPtr<StringImpl> encoding() const;
     bool fatal() const { return m_options.fatal; }
     bool ignoreBOM() const { return m_options.ignoreBOM; }
 
     struct DecodeOptions {
         bool stream { false };
     };
-    ExceptionOr<String> decode(std::optional<BufferSource>, DecodeOptions);
+    ExceptionOr<RefPtr<StringImpl>> decode(std::optional<BufferSource>, DecodeOptions);
 
 private:
     TextDecoder(StringView, Options);

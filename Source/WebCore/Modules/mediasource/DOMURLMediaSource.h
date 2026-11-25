@@ -41,7 +41,7 @@ class ScriptExecutionContext;
 
 class DOMURLMediaSource {
 public:
-    static String createObjectURL(ScriptExecutionContext&, MediaSource&);
+    static RefPtr<StringImpl> createObjectURL(ScriptExecutionContext&, MediaSource&);
 };
 
 } // namespace WebCore

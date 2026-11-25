@@ -45,13 +45,13 @@ public:
 
     // Call writeString to write a string value.
     // A single shared object will be used for each string in the serialized list.
-    virtual void writeString(const String&) = 0;
+    virtual void writeString(StringImpl*) = 0;
 
     // Call writeUniqueString instead of writeString when it's unlikely the
     // string will be written twice in the same property list; this saves hash
     // table overhead for such strings. A separate object will be used for each
     // of these strings in the serialized list.
-    virtual void writeUniqueString(const String&) = 0;
+    virtual void writeUniqueString(StringImpl*) = 0;
     virtual void writeUniqueString(const char*) = 0;
 
     // Call writeIntegerArray instead of writeArrayStart/writeArrayEnd for

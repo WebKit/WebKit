@@ -35,10 +35,10 @@ namespace WebCore {
 Ref<JSON::Object> GPUStencilFaceState::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("compare"_s, convertEnumerationToString(compare));
-    json->setString("failOp"_s, convertEnumerationToString(failOp));
-    json->setString("depthFailOp"_s, convertEnumerationToString(depthFailOp));
-    json->setString("passOp"_s, convertEnumerationToString(passOp));
+    json->setString("compare"_si, convertEnumerationToString(compare));
+    json->setString("failOp"_si, convertEnumerationToString(failOp));
+    json->setString("depthFailOp"_si, convertEnumerationToString(depthFailOp));
+    json->setString("passOp"_si, convertEnumerationToString(passOp));
     return json;
 }
 

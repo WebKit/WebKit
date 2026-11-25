@@ -134,13 +134,13 @@
 namespace WebCore {
 using namespace JSC;
 
-String convertEnumerationToString(TestObj::EnumType enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumType enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
         emptyString(),
-        MAKE_STATIC_STRING_IMPL("enumValue1"),
-        MAKE_STATIC_STRING_IMPL("EnumValue2"),
-        MAKE_STATIC_STRING_IMPL("EnumValue3"),
+        "enumValue1"_si,
+        "EnumValue2"_si,
+        "EnumValue3"_si,
     };
     static_assert(static_cast<size_t>(TestObj::EnumType::EmptyString) == 0, "TestObj::EnumType::EmptyString is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::EnumType::EnumValue1) == 1, "TestObj::EnumType::EnumValue1 is not 1 as expected");
@@ -155,9 +155,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumType enumeratio
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumType> parseEnumerationFromString<TestObj::EnumType>(const String& stringValue)
+template<> std::optional<TestObj::EnumType> parseEnumerationFromString<TestObj::EnumType>(StringImpl* stringValue)
 {
-    if (stringValue.isEmpty())
+    if (isEmpty(stringValue))
         return TestObj::EnumType::EmptyString;
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumType>>({
         { "EnumValue2"_s, TestObj::EnumType::EnumValue2 },
@@ -179,11 +179,11 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumType>()
     return "\"\", \"enumValue1\", \"EnumValue2\", \"EnumValue3\""_s;
 }
 
-String convertEnumerationToString(TestObj::EnumTrailingComma enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumTrailingComma enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
-        MAKE_STATIC_STRING_IMPL("enumValue1"),
-        MAKE_STATIC_STRING_IMPL("enumValue2"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
+        "enumValue1"_si,
+        "enumValue2"_si,
     };
     static_assert(static_cast<size_t>(TestObj::EnumTrailingComma::EnumValue1) == 0, "TestObj::EnumTrailingComma::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::EnumTrailingComma::EnumValue2) == 1, "TestObj::EnumTrailingComma::EnumValue2 is not 1 as expected");
@@ -196,7 +196,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumTrailingComma e
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumTrailingComma> parseEnumerationFromString<TestObj::EnumTrailingComma>(const String& stringValue)
+template<> std::optional<TestObj::EnumTrailingComma> parseEnumerationFromString<TestObj::EnumTrailingComma>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumTrailingComma>>({
         { "enumValue1"_s, TestObj::EnumTrailingComma::EnumValue1 },
@@ -217,13 +217,13 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumTrailingComma>()
     return "\"enumValue1\", \"enumValue2\""_s;
 }
 
-String convertEnumerationToString(TestObj::Optional enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::Optional enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
         emptyString(),
-        MAKE_STATIC_STRING_IMPL("OptionalValue1"),
-        MAKE_STATIC_STRING_IMPL("OptionalValue2"),
-        MAKE_STATIC_STRING_IMPL("OptionalValue3"),
+        "OptionalValue1"_si,
+        "OptionalValue2"_si,
+        "OptionalValue3"_si,
     };
     static_assert(static_cast<size_t>(TestObj::Optional::EmptyString) == 0, "TestObj::Optional::EmptyString is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Optional::OptionalValue1) == 1, "TestObj::Optional::OptionalValue1 is not 1 as expected");
@@ -238,9 +238,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::Optional enumeratio
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::Optional> parseEnumerationFromString<TestObj::Optional>(const String& stringValue)
+template<> std::optional<TestObj::Optional> parseEnumerationFromString<TestObj::Optional>(StringImpl* stringValue)
 {
-    if (stringValue.isEmpty())
+    if (isEmpty(stringValue))
         return TestObj::Optional::EmptyString;
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::Optional>>({
         { "OptionalValue1"_s, TestObj::Optional::OptionalValue1 },
@@ -262,11 +262,11 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::Optional>()
     return "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\""_s;
 }
 
-String convertEnumerationToString(AlternateEnumName enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(AlternateEnumName enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
-        MAKE_STATIC_STRING_IMPL("enumValue1"),
-        MAKE_STATIC_STRING_IMPL("EnumValue2"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
+        "enumValue1"_si,
+        "EnumValue2"_si,
     };
     static_assert(static_cast<size_t>(AlternateEnumName::EnumValue1) == 0, "AlternateEnumName::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(AlternateEnumName::EnumValue2) == 1, "AlternateEnumName::EnumValue2 is not 1 as expected");
@@ -279,7 +279,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, AlternateEnumName enumeratio
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<AlternateEnumName> parseEnumerationFromString<AlternateEnumName>(const String& stringValue)
+template<> std::optional<AlternateEnumName> parseEnumerationFromString<AlternateEnumName>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, AlternateEnumName>>({
         { "EnumValue2"_s, AlternateEnumName::EnumValue2 },
@@ -302,10 +302,10 @@ template<> ASCIILiteral expectedEnumerationValues<AlternateEnumName>()
 
 #if ENABLE(Condition1)
 
-String convertEnumerationToString(TestObj::EnumA enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumA enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 1> values {
-        MAKE_STATIC_STRING_IMPL("A"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 1> values {
+        "A"_si,
     };
     static_assert(static_cast<size_t>(TestObj::EnumA::A) == 0, "TestObj::EnumA::A is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
@@ -317,7 +317,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumA enumerationVa
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumA> parseEnumerationFromString<TestObj::EnumA>(const String& stringValue)
+template<> std::optional<TestObj::EnumA> parseEnumerationFromString<TestObj::EnumA>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumA>>({
         { "A"_s, TestObj::EnumA::A },
@@ -341,10 +341,10 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumA>()
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
 
-String convertEnumerationToString(TestObj::EnumB enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumB enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 1> values {
-        MAKE_STATIC_STRING_IMPL("B"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 1> values {
+        "B"_si,
     };
     static_assert(static_cast<size_t>(TestObj::EnumB::B) == 0, "TestObj::EnumB::B is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
@@ -356,7 +356,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumB enumerationVa
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumB> parseEnumerationFromString<TestObj::EnumB>(const String& stringValue)
+template<> std::optional<TestObj::EnumB> parseEnumerationFromString<TestObj::EnumB>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumB>>({
         { "B"_s, TestObj::EnumB::B },
@@ -380,10 +380,10 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumB>()
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
-String convertEnumerationToString(TestObj::EnumC enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumC enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 1> values {
-        MAKE_STATIC_STRING_IMPL("C"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 1> values {
+        "C"_si,
     };
     static_assert(static_cast<size_t>(TestObj::EnumC::C) == 0, "TestObj::EnumC::C is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
@@ -395,7 +395,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumC enumerationVa
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumC> parseEnumerationFromString<TestObj::EnumC>(const String& stringValue)
+template<> std::optional<TestObj::EnumC> parseEnumerationFromString<TestObj::EnumC>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumC>>({
         { "C"_s, TestObj::EnumC::C },
@@ -417,11 +417,11 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumC>()
 
 #endif
 
-String convertEnumerationToString(TestObj::Kind enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::Kind enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
-        MAKE_STATIC_STRING_IMPL("quick"),
-        MAKE_STATIC_STRING_IMPL("dead"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
+        "quick"_si,
+        "dead"_si,
     };
     static_assert(static_cast<size_t>(TestObj::Kind::Quick) == 0, "TestObj::Kind::Quick is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Kind::Dead) == 1, "TestObj::Kind::Dead is not 1 as expected");
@@ -434,7 +434,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::Kind enumerationVal
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::Kind> parseEnumerationFromString<TestObj::Kind>(const String& stringValue)
+template<> std::optional<TestObj::Kind> parseEnumerationFromString<TestObj::Kind>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::Kind>>({
         { "dead"_s, TestObj::Kind::Dead },
@@ -455,11 +455,11 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::Kind>()
     return "\"quick\", \"dead\""_s;
 }
 
-String convertEnumerationToString(TestObj::Size enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::Size enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
-        MAKE_STATIC_STRING_IMPL("small"),
-        MAKE_STATIC_STRING_IMPL("much-much-larger"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
+        "small"_si,
+        "much-much-larger"_si,
     };
     static_assert(static_cast<size_t>(TestObj::Size::Small) == 0, "TestObj::Size::Small is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Size::MuchMuchLarger) == 1, "TestObj::Size::MuchMuchLarger is not 1 as expected");
@@ -472,7 +472,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::Size enumerationVal
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::Size> parseEnumerationFromString<TestObj::Size>(const String& stringValue)
+template<> std::optional<TestObj::Size> parseEnumerationFromString<TestObj::Size>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::Size>>({
         { "much-much-larger"_s, TestObj::Size::MuchMuchLarger },
@@ -493,11 +493,11 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::Size>()
     return "\"small\", \"much-much-larger\""_s;
 }
 
-String convertEnumerationToString(TestObj::Confidence enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::Confidence enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
-        MAKE_STATIC_STRING_IMPL("high"),
-        MAKE_STATIC_STRING_IMPL("kinda-low"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
+        "high"_si,
+        "kinda-low"_si,
     };
     static_assert(static_cast<size_t>(TestObj::Confidence::High) == 0, "TestObj::Confidence::High is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Confidence::KindaLow) == 1, "TestObj::Confidence::KindaLow is not 1 as expected");
@@ -510,7 +510,7 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::Confidence enumerat
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::Confidence> parseEnumerationFromString<TestObj::Confidence>(const String& stringValue)
+template<> std::optional<TestObj::Confidence> parseEnumerationFromString<TestObj::Confidence>(StringImpl* stringValue)
 {
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::Confidence>>({
         { "high"_s, TestObj::Confidence::High },
@@ -531,12 +531,12 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::Confidence>()
     return "\"high\", \"kinda-low\""_s;
 }
 
-String convertEnumerationToString(TestObj::EnumWithMissingValueDefault enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingValueDefault enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
-        MAKE_STATIC_STRING_IMPL("value1"),
-        MAKE_STATIC_STRING_IMPL("value2"),
-        MAKE_STATIC_STRING_IMPL("value3"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
+        "value1"_si,
+        "value2"_si,
+        "value3"_si,
         emptyString(),
     };
     static_assert(static_cast<size_t>(TestObj::EnumWithMissingValueDefault::Value1) == 0, "TestObj::EnumWithMissingValueDefault::Value1 is not 0 as expected");
@@ -552,9 +552,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumWithMissingValu
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumWithMissingValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(const String& stringValue)
+template<> std::optional<TestObj::EnumWithMissingValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(StringImpl* stringValue)
 {
-    if (stringValue.isEmpty())
+    if (isEmpty(stringValue))
         return TestObj::EnumWithMissingValueDefault::EmptyString;
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumWithMissingValueDefault>>({
         { "value1"_s, TestObj::EnumWithMissingValueDefault::Value1 },
@@ -576,12 +576,12 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueD
     return "\"value1\", \"value2\", \"value3\", \"\""_s;
 }
 
-String convertEnumerationToString(TestObj::EnumWithInvalidValueDefault enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithInvalidValueDefault enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
-        MAKE_STATIC_STRING_IMPL("value1"),
-        MAKE_STATIC_STRING_IMPL("value2"),
-        MAKE_STATIC_STRING_IMPL("value3"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
+        "value1"_si,
+        "value2"_si,
+        "value3"_si,
         emptyString(),
     };
     static_assert(static_cast<size_t>(TestObj::EnumWithInvalidValueDefault::Value1) == 0, "TestObj::EnumWithInvalidValueDefault::Value1 is not 0 as expected");
@@ -597,9 +597,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumWithInvalidValu
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumWithInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(const String& stringValue)
+template<> std::optional<TestObj::EnumWithInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(StringImpl* stringValue)
 {
-    if (stringValue.isEmpty())
+    if (isEmpty(stringValue))
         return TestObj::EnumWithInvalidValueDefault::EmptyString;
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumWithInvalidValueDefault>>({
         { "value1"_s, TestObj::EnumWithInvalidValueDefault::Value1 },
@@ -621,12 +621,12 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithInvalidValueD
     return "\"value1\", \"value2\", \"value3\", \"\""_s;
 }
 
-String convertEnumerationToString(TestObj::EnumWithMissingAndInvalidValueDefault enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingAndInvalidValueDefault enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
-        MAKE_STATIC_STRING_IMPL("value1"),
-        MAKE_STATIC_STRING_IMPL("value2"),
-        MAKE_STATIC_STRING_IMPL("value3"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
+        "value1"_si,
+        "value2"_si,
+        "value3"_si,
         emptyString(),
     };
     static_assert(static_cast<size_t>(TestObj::EnumWithMissingAndInvalidValueDefault::Value1) == 0, "TestObj::EnumWithMissingAndInvalidValueDefault::Value1 is not 0 as expected");
@@ -642,9 +642,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumWithMissingAndI
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumWithMissingAndInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(const String& stringValue)
+template<> std::optional<TestObj::EnumWithMissingAndInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(StringImpl* stringValue)
 {
-    if (stringValue.isEmpty())
+    if (isEmpty(stringValue))
         return TestObj::EnumWithMissingAndInvalidValueDefault::EmptyString;
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumWithMissingAndInvalidValueDefault>>({
         { "value1"_s, TestObj::EnumWithMissingAndInvalidValueDefault::Value1 },
@@ -666,12 +666,12 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingAndInv
     return "\"value1\", \"value2\", \"value3\", \"\""_s;
 }
 
-String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNoQuotes enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNoQuotes enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
-        MAKE_STATIC_STRING_IMPL("value1"),
-        MAKE_STATIC_STRING_IMPL("value2"),
-        MAKE_STATIC_STRING_IMPL("value3"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
+        "value1"_si,
+        "value2"_si,
+        "value3"_si,
         emptyString(),
     };
     static_assert(static_cast<size_t>(TestObj::EnumWithMissingValueDefaultNoQuotes::Value1) == 0, "TestObj::EnumWithMissingValueDefaultNoQuotes::Value1 is not 0 as expected");
@@ -687,9 +687,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumWithMissingValu
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumWithMissingValueDefaultNoQuotes> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(const String& stringValue)
+template<> std::optional<TestObj::EnumWithMissingValueDefaultNoQuotes> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(StringImpl* stringValue)
 {
-    if (stringValue.isEmpty())
+    if (isEmpty(stringValue))
         return TestObj::EnumWithMissingValueDefaultNoQuotes::EmptyString;
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumWithMissingValueDefaultNoQuotes>>({
         { "value1"_s, TestObj::EnumWithMissingValueDefaultNoQuotes::Value1 },
@@ -711,12 +711,12 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueD
     return "\"value1\", \"value2\", \"value3\", \"\""_s;
 }
 
-String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultAsEmptyValue enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingValueDefaultAsEmptyValue enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
-        MAKE_STATIC_STRING_IMPL("value1"),
-        MAKE_STATIC_STRING_IMPL("value2"),
-        MAKE_STATIC_STRING_IMPL("value3"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
+        "value1"_si,
+        "value2"_si,
+        "value3"_si,
         emptyString(),
     };
     static_assert(static_cast<size_t>(TestObj::EnumWithMissingValueDefaultAsEmptyValue::Value1) == 0, "TestObj::EnumWithMissingValueDefaultAsEmptyValue::Value1 is not 0 as expected");
@@ -732,9 +732,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumWithMissingValu
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumWithMissingValueDefaultAsEmptyValue> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(const String& stringValue)
+template<> std::optional<TestObj::EnumWithMissingValueDefaultAsEmptyValue> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(StringImpl* stringValue)
 {
-    if (stringValue.isEmpty())
+    if (isEmpty(stringValue))
         return TestObj::EnumWithMissingValueDefaultAsEmptyValue::EmptyString;
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumWithMissingValueDefaultAsEmptyValue>>({
         { "value1"_s, TestObj::EnumWithMissingValueDefaultAsEmptyValue::Value1 },
@@ -756,12 +756,12 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueD
     return "\"value1\", \"value2\", \"value3\", \"\""_s;
 }
 
-String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNotInEnumValues enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNotInEnumValues enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
-        MAKE_STATIC_STRING_IMPL("value1"),
-        MAKE_STATIC_STRING_IMPL("value2"),
-        MAKE_STATIC_STRING_IMPL("value3"),
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 4> values {
+        "value1"_si,
+        "value2"_si,
+        "value3"_si,
         emptyString(),
     };
     static_assert(static_cast<size_t>(TestObj::EnumWithMissingValueDefaultNotInEnumValues::Value1) == 0, "TestObj::EnumWithMissingValueDefaultNotInEnumValues::Value1 is not 0 as expected");
@@ -777,9 +777,9 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestObj::EnumWithMissingValu
     return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
-template<> std::optional<TestObj::EnumWithMissingValueDefaultNotInEnumValues> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(const String& stringValue)
+template<> std::optional<TestObj::EnumWithMissingValueDefaultNotInEnumValues> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(StringImpl* stringValue)
 {
-    if (stringValue.isEmpty())
+    if (isEmpty(stringValue))
         return TestObj::EnumWithMissingValueDefaultNotInEnumValues::EmptyString;
     static constexpr SortedArrayMap enumerationMapping { WTF::toArray<std::pair<ComparableASCIILiteral, TestObj::EnumWithMissingValueDefaultNotInEnumValues>>({
         { "value1"_s, TestObj::EnumWithMissingValueDefaultNotInEnumValues::Value1 },
@@ -1216,7 +1216,7 @@ template<> ConversionResult<IDLDictionary<TestObj::Dictionary>> convertDictionar
         nullableStringWithDefaultValue = WebCore::get(object, &lexicalGlobalObject, Identifier::fromString(vm, "nullableStringWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto nullableStringWithDefaultConversionResult = convertOptionalWithDefault<IDLNullable<IDLDOMString>>(lexicalGlobalObject, nullableStringWithDefaultValue, [&] -> ConversionResult<IDLNullable<IDLDOMString>> { return typename Converter<IDLNullable<IDLDOMString>>::ReturnType { String() }; });
+    auto nullableStringWithDefaultConversionResult = convertOptionalWithDefault<IDLNullable<IDLDOMString>>(lexicalGlobalObject, nullableStringWithDefaultValue, [&] -> ConversionResult<IDLNullable<IDLDOMString>> { return typename Converter<IDLNullable<IDLDOMString>>::ReturnType { nullptr }; });
     if (nullableStringWithDefaultConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue nullableUnionMemberValue;
@@ -1384,7 +1384,7 @@ template<> ConversionResult<IDLDictionary<TestObj::Dictionary>> convertDictionar
         stringWithDefaultValue = WebCore::get(object, &lexicalGlobalObject, Identifier::fromString(vm, "stringWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto stringWithDefaultConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, stringWithDefaultValue, [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { "defaultString"_s }; });
+    auto stringWithDefaultConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, stringWithDefaultValue, [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { "defaultString"_si }; });
     if (stringWithDefaultConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue stringWithoutDefaultValue;
@@ -2992,7 +2992,7 @@ template<> JSValue JSTestObjDOMConstructor::prototypeForStructure(JSC::VM& vm, c
 template<> void JSTestObjDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->length, jsNumber(2), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    JSString* nameString = jsNontrivialString(vm, "TestObject"_s);
+    JSString* nameString = jsNontrivialString(vm, "TestObject"_si);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->prototype, JSTestObj::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
@@ -3493,8 +3493,8 @@ void JSTestObjPrototype::finishCreation(VM& vm)
     }
     if (hasDisabledRuntimeProperties && structure()->isDictionary())
         flattenDictionaryObject(vm);
-    putDirect(vm, builtinNames(vm).privateMethodPrivateName(), JSFunction::create(vm, realm(), 0, String(), jsTestObjPrototypeFunction_privateMethod, ImplementationVisibility::Public), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, builtinNames(vm).publicAndPrivateMethodPrivateName(), JSFunction::create(vm, realm(), 0, String(), jsTestObjPrototypeFunction_publicAndPrivateMethod, ImplementationVisibility::Public), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, builtinNames(vm).privateMethodPrivateName(), JSFunction::create(vm, realm(), 0, nullptr, jsTestObjPrototypeFunction_privateMethod, ImplementationVisibility::Public), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, builtinNames(vm).publicAndPrivateMethodPrivateName(), JSFunction::create(vm, realm(), 0, nullptr, jsTestObjPrototypeFunction_publicAndPrivateMethod, ImplementationVisibility::Public), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->iteratorSymbol, WebCore::getDirect(realm()->arrayPrototype(), vm, vm.propertyNames->builtinNames().valuesPrivateName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     addValueIterableMethods(*realm(), *this);
     JSObject& unscopables = *WebCore::constructEmptyObject(realm(), realm()->nullPrototypeObjectStructure());
@@ -5015,12 +5015,12 @@ static inline JSValue jsTestObj_reflectedEnumWithMissingValueDefaultStringAttrGe
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithMissingValueDefaultStringAttrAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("value1"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithMissingValueDefaultStringAttrAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "value1"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
         { }
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, result)));
@@ -5056,14 +5056,14 @@ static inline JSValue jsTestObj_reflectedEnumWithInvalidValueDefaultStringAttrGe
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithInvalidValueDefaultStringAttrAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithInvalidValueDefaultStringAttrAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
         { }
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
-        result = AtomString("value2"_s);
+        result = "value2"_atom;
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, result)));
 }
 
@@ -5097,14 +5097,14 @@ static inline JSValue jsTestObj_reflectedEnumWithInvalidAndMissingValueDefaultSt
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithInvalidAndMissingValueDefaultStringAttrAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("value1"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithInvalidAndMissingValueDefaultStringAttrAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "value1"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
-        result = AtomString("value2"_s);
+        result = "value2"_atom;
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, result)));
 }
 
@@ -5138,12 +5138,12 @@ static inline JSValue jsTestObj_reflectedEnumWithMissingValueDefaultNoQuotesStri
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithMissingValueDefaultNoQuotesStringAttrAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("value1"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithMissingValueDefaultNoQuotesStringAttrAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "value1"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
         { }
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, result)));
@@ -5245,12 +5245,12 @@ static inline JSValue jsTestObj_reflectedEnumWithMissingValueDefaultAsEmptyValue
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithMissingValueDefaultAsEmptyValueAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithMissingValueDefaultAsEmptyValueAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
         { }
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
         { }
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, result)));
@@ -5286,12 +5286,12 @@ static inline JSValue jsTestObj_reflectedEnumWithMissingValueDefaultNotInEnumVal
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithMissingValueDefaultNotInEnumValuesAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("foo"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedEnumWithMissingValueDefaultNotInEnumValuesAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "foo"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
         { }
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, result)));
@@ -5789,12 +5789,12 @@ static inline JSValue jsTestObj_reflectedNullableEnumWithMissingValueDefaultStri
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedNullableEnumWithMissingValueDefaultStringAttrAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("value1"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedNullableEnumWithMissingValueDefaultStringAttrAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "value1"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
         { }
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLAtomStringAdaptor<IDLDOMString>>>(lexicalGlobalObject, throwScope, result)));
@@ -5830,14 +5830,14 @@ static inline JSValue jsTestObj_reflectedNullableEnumWithInvalidValueDefaultStri
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedNullableEnumWithInvalidValueDefaultStringAttrAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedNullableEnumWithInvalidValueDefaultStringAttrAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
         { }
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
-        result = AtomString("value2"_s);
+        result = "value2"_atom;
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLAtomStringAdaptor<IDLDOMString>>>(lexicalGlobalObject, throwScope, result)));
 }
 
@@ -5871,14 +5871,14 @@ static inline JSValue jsTestObj_reflectedNullableEnumWithInvalidAndMissingValueD
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedNullableEnumWithInvalidAndMissingValueDefaultStringAttrAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("value1"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedNullableEnumWithInvalidAndMissingValueDefaultStringAttrAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "value1"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
-        result = AtomString("value2"_s);
+        result = "value2"_atom;
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLAtomStringAdaptor<IDLDOMString>>>(lexicalGlobalObject, throwScope, result)));
 }
 
@@ -5912,12 +5912,12 @@ static inline JSValue jsTestObj_reflectedNullableEnumWithMissingValueDefaultNoQu
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedNullableEnumWithMissingValueDefaultNoQuotesStringAttrAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("value1"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedNullableEnumWithMissingValueDefaultNoQuotesStringAttrAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "value1"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
         { }
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLAtomStringAdaptor<IDLDOMString>>>(lexicalGlobalObject, throwScope, result)));
@@ -5953,14 +5953,14 @@ static inline JSValue jsTestObj_reflectedNullableStringAttrIsSpecifiedWithQuotes
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::contentattributeAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("value1"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::contentattributeAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "value1"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
-        result = AtomString("value2"_s);
+        result = "value2"_atom;
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLAtomStringAdaptor<IDLDOMString>>>(lexicalGlobalObject, throwScope, result)));
 }
 
@@ -5994,14 +5994,14 @@ static inline JSValue jsTestObj_reflectedNullableStringHyphenatedAttrIsSpecified
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
-    const AtomString& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::content_attributeAttr);
-    AtomString result;
-    if (contentAttributeValue.isNull())
-        result = AtomString("value1"_s);
-    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(contentAttributeValue.convertToASCIILowercase()); value) [[likely]]
-        result = AtomString(convertEnumerationToString(*value));
+    const RefPtr<AtomStringImpl>& contentAttributeValue = impl.attributeWithoutSynchronization(WebCore::HTMLNames::content_attributeAttr);
+    RefPtr<AtomStringImpl> result;
+    if (!contentAttributeValue)
+        result = "value1"_atom;
+    else if (auto value = parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(convertToASCIILowercase(contentAttributeValue)); value) [[likely]]
+        result = AtomStringImpl::add(convertEnumerationToString(*value));
     else
-        result = AtomString("value2"_s);
+        result = "value2"_atom;
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLAtomStringAdaptor<IDLDOMString>>>(lexicalGlobalObject, throwScope, result)));
 }
 
@@ -8958,7 +8958,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithOptionalS
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto strConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
+    auto strConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { nullptr }; });
     if (strConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.methodWithOptionalString(strConversionResult.releaseReturnValue()); })));
@@ -8977,7 +8977,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithOptionalU
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto strConversionResult = convertOptionalWithDefault<IDLUSVString>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLUSVString> { return typename Converter<IDLUSVString>::ReturnType { String() }; });
+    auto strConversionResult = convertOptionalWithDefault<IDLUSVString>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLUSVString> { return typename Converter<IDLUSVString>::ReturnType { nullptr }; });
     if (strConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.methodWithOptionalUSVString(strConversionResult.releaseReturnValue()); })));
@@ -9015,7 +9015,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithOptionalS
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto strConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { "foo"_s }; });
+    auto strConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { "foo"_si }; });
     if (strConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.methodWithOptionalStringAndDefaultValue(strConversionResult.releaseReturnValue()); })));
@@ -9034,7 +9034,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithOptionalA
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto strConversionResult = convertOptionalWithDefault<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLAtomStringAdaptor<IDLDOMString>> { return Converter<IDLAtomStringAdaptor<IDLDOMString>>::ReturnType { AtomString("foo"_s) }; });
+    auto strConversionResult = convertOptionalWithDefault<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLAtomStringAdaptor<IDLDOMString>> { return Converter<IDLAtomStringAdaptor<IDLDOMString>>::ReturnType { "foo"_atom }; });
     if (strConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.methodWithOptionalAtomStringAndDefaultValue(strConversionResult.releaseReturnValue()); })));
@@ -9053,7 +9053,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithOptionalS
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto strConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
+    auto strConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { nullptr }; });
     if (strConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.methodWithOptionalStringIsNull(strConversionResult.releaseReturnValue()); })));

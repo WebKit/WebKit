@@ -73,7 +73,7 @@ ExceptionOr<void> Crypto::getRandomValues(ArrayBufferView& array)
     return { };
 }
 
-String Crypto::randomUUID() const
+RefPtr<StringImpl> Crypto::randomUUID() const
 {
     return createVersion4UUIDString();
 }

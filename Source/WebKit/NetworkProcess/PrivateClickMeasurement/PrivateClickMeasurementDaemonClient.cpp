@@ -35,7 +35,7 @@ namespace WebKit::PCM {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DaemonClient);
 
-void DaemonClient::broadcastConsoleMessage(JSC::MessageLevel level, const String& message)
+void DaemonClient::broadcastConsoleMessage(JSC::MessageLevel level, StringImpl* message)
 {
 #if PLATFORM(COCOA)
     DaemonConnectionSet::singleton().broadcastConsoleMessage(level, message);

@@ -32,7 +32,7 @@
 namespace WebKit {
 
 struct PlatformCAAnimationRemoteProperties {
-    String keyPath;
+    RefPtr<StringImpl> keyPath;
     WebCore::PlatformCAAnimation::AnimationType animationType { WebCore::PlatformCAAnimation::AnimationType::Basic };
 
     CFTimeInterval beginTime { 0 };

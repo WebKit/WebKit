@@ -45,7 +45,7 @@ struct TextOverflow {
 
     TextOverflow(String&& string)
         : m_type { Type::String }
-        , m_string { WTF::move(string.value) }
+        , m_string { AtomStringImpl::add(WTF::move(string.value)) }
     {
     }
 
@@ -74,7 +74,7 @@ private:
     enum class Type : uint8_t { Clip, Ellipsis, String };
 
     Type m_type { Type::Clip };
-    AtomString m_string { nullAtom() };
+    RefPtr<AtomStringImpl> m_string { nullAtom() };
 };
 
 // MARK: - Conversion

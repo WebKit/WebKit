@@ -40,26 +40,26 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_libwebrtc_incoming_video_debug);
 #define GST_CAT_DEFAULT webkit_libwebrtc_incoming_video_debug
 
-Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
+Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, RefPtr<StringImpl>&& trackId)
 {
     auto source = RealtimeIncomingVideoSourceLibWebRTC::create(WTF::move(videoTrack), WTF::move(trackId));
     source->start();
     return source;
 }
 
-Ref<RealtimeIncomingVideoSourceLibWebRTC> RealtimeIncomingVideoSourceLibWebRTC::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
+Ref<RealtimeIncomingVideoSourceLibWebRTC> RealtimeIncomingVideoSourceLibWebRTC::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, RefPtr<StringImpl>&& trackId)
 {
     return adoptRef(*new RealtimeIncomingVideoSourceLibWebRTC(WTF::move(videoTrack), WTF::move(trackId)));
 }
 
-RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
+RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(Ref<webrtc::VideoTrackInterface>&& videoTrack, RefPtr<StringImpl>&& videoTrackId)
     : RealtimeIncomingVideoSource(WTF::move(videoTrack), WTF::move(videoTrackId))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_incoming_video_debug, "webkitlibwebrtcvideoincoming", 0, "WebKit LibWebRTC incoming video source");
     });
-    GST_DEBUG("Created incoming video source with ID: %s", persistentID().utf8());
+    GST_DEBUG("Created incoming video source with ID: %s", utf8(persistentID()));
 }
 
 RealtimeIncomingVideoSourceLibWebRTC::~RealtimeIncomingVideoSourceLibWebRTC()
@@ -73,7 +73,7 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
         return;
 
 #if GST_CHECK_VERSION(1, 22, 0)
-    GST_TRACE_ID(persistentID().utf8(), "Handling incoming video frame");
+    GST_TRACE_ID(utf8(persistentID()), "Handling incoming video frame");
 #else
     GST_TRACE("Handling incoming video frame");
 #endif

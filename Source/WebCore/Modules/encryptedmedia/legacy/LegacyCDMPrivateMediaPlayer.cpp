@@ -42,17 +42,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivateMediaPlayer);
 
-bool CDMPrivateMediaPlayer::supportsKeySystem(const String& keySystem)
+bool CDMPrivateMediaPlayer::supportsKeySystem(StringImpl* keySystem)
 {
     return MediaPlayer::supportsKeySystem(keySystem, emptyString());
 }
 
-bool CDMPrivateMediaPlayer::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+bool CDMPrivateMediaPlayer::supportsKeySystemAndMimeType(StringImpl* keySystem, StringImpl* mimeType)
 {
     return MediaPlayer::supportsKeySystem(keySystem, mimeType);
 }
 
-bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType) const
+bool CDMPrivateMediaPlayer::supportsMIMEType(StringImpl* mimeType) const
 {
     return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
 }

@@ -61,7 +61,7 @@ bool WebExtensionAPIExtension::parseViewFilters(NSDictionary *filter, std::optio
         else if ([typeString isEqualToString:tabKey])
             viewType = ViewType::Tab;
         else {
-            *outExceptionString = toErrorString(nullString(), typeKey, @"it must specify either 'popup' or 'tab'").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(typeKey).get(), StringImpl::create(@"it must specify either 'popup' or 'tab'").get())).autorelease();
             return false;
         }
     }
@@ -99,7 +99,7 @@ NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **outEx
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/getURL
 
-    return URL { extensionContext().baseURL(), resourcePath }.createNSURL().autorelease();
+    return URL { extensionContext().baseURL(), StringImpl::create(resourcePath).get() }.createNSURL().autorelease();
 }
 
 JSValue *WebExtensionAPIExtension::getBackgroundPage(JSContextRef context)

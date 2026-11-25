@@ -52,10 +52,10 @@ public:
 
     void invalidatePendingRequests();
 
-    void createRequestForFrame(WebCore::MediaKeySystemRequestIdentifier, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& mediaKeyRequestOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem, CompletionHandler<void(Ref<MediaKeySystemPermissionRequestProxy>&&)>&&);
+    void createRequestForFrame(WebCore::MediaKeySystemRequestIdentifier, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& mediaKeyRequestOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, StringImpl* keySystem, CompletionHandler<void(Ref<MediaKeySystemPermissionRequestProxy>&&)>&&);
 
     void grantRequest(MediaKeySystemPermissionRequestProxy&);
-    void denyRequest(MediaKeySystemPermissionRequestProxy&, const String& message = { });
+    void denyRequest(MediaKeySystemPermissionRequestProxy&, StringImpl* message = nullptr);
 
     NODELETE void ref() const;
     void deref() const;
@@ -69,7 +69,7 @@ private:
     WeakRef<WebPageProxy> m_page;
 
     HashMap<WebCore::MediaKeySystemRequestIdentifier, Ref<MediaKeySystemPermissionRequestProxy>> m_pendingRequests;
-    HashSet<String> m_validAuthorizationTokens;
+    HashSet<RefPtr<StringImpl>> m_validAuthorizationTokens;
 
 #if !RELEASE_LOG_DISABLED
     const uint64_t m_logIdentifier;

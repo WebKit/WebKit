@@ -69,7 +69,7 @@ gboolean webkitWebViewAuthenticate(WebKitWebView* webView, WebKitAuthenticationR
 
 gboolean webkitWebViewScriptDialog(WebKitWebView* webView, WebKitScriptDialog* scriptDialog)
 {
-    auto title = makeString("JavaScript - "_s, webkitWebViewGetPage(webView).pageLoadState().url().string()).utf8();
+    auto title = utf8(makeString("JavaScript - "_s, webkitWebViewGetPage(webView).pageLoadState().url().string()));
     // Limit script dialog size to 80% of the web view size.
     GtkRequisition maxSize = { static_cast<int>(gtk_widget_get_allocated_width(GTK_WIDGET(webView)) * 0.80), static_cast<int>(gtk_widget_get_allocated_height(GTK_WIDGET(webView)) * 0.80) };
     webkitWebViewBaseAddDialog(WEBKIT_WEB_VIEW_BASE(webView), webkitScriptDialogImplNew(scriptDialog, title.legacyCStringPointer(), &maxSize));

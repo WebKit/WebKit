@@ -66,10 +66,10 @@ final class CocoaPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
         let phoneNumberSuffixHint = request.pointee.phoneNumberSuffixHint
         do {
             let response = try await platformManager.request(
-                relyingPartyIdentifier: request.pointee.relyingPartyIdentifier.description,
+                relyingPartyIdentifier: String(request.pointee.relyingPartyIdentifier.get()),
                 challenge: phoneNumberPossessionChallenge(request),
                 includesPhoneNumber: request.pointee.desiredResponseType == .PossessionIdentifierAndPhoneNumber,
-                phoneNumberSuffixHint: phoneNumberSuffixHint.isNull() ? nil : phoneNumberSuffixHint.description,
+                phoneNumberSuffixHint: phoneNumberSuffixHint.get() == nil ? nil : String(phoneNumberSuffixHint.get()),
                 presentationAnchor: presentationAnchor
             )
             try Task.checkCancellation()

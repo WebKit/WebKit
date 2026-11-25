@@ -44,7 +44,7 @@ public:
         return adoptRef(*new CSSFreeformGradientValue(WTF::move(gradient)));
     }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSFreeformGradientValue&) const;
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 

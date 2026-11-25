@@ -65,7 +65,7 @@ struct CSSCustomPropertySyntax {
     struct Component {
         Type type;
         Multiplier multiplier { Multiplier::Single };
-        AtomString ident { };
+        RefPtr<AtomStringImpl> ident { };
 
         bool operator==(const Component&) const = default;
     };

@@ -65,7 +65,7 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue
 
     constexpr auto message = "Expect an integer argument in the range: [0, 2^32 - 1]"_s;
     if (errorType == ErrorType::RangeError)
-        throwRangeError(globalObject, throwScope, message);
+        throwRangeError(globalObject, throwScope, StringImpl::create(message).ptr());
     else
         throwTypeError(globalObject, throwScope, message);
     return { };
@@ -84,7 +84,7 @@ ALWAYS_INLINE uint64_t toNonWrappingUint64(JSGlobalObject* globalObject, JSValue
 
     constexpr auto message = "Expect an integer argument in the range: [0, 2^64 - 1]"_s;
     if (errorType == ErrorType::RangeError)
-        throwRangeError(globalObject, throwScope, message);
+        throwRangeError(globalObject, throwScope, StringImpl::create(message).ptr());
     else
         throwTypeError(globalObject, throwScope, message);
     return { };
@@ -106,7 +106,7 @@ ALWAYS_INLINE JSValue addressValueFromUint64(JSGlobalObject* globalObject, uint6
 
 ALWAYS_INLINE JSString* addressTypeString(VM& vm, Wasm::AddressType addressType)
 {
-    return addressType.is64Bit() ? jsNontrivialString(vm, "i64"_s) : jsNontrivialString(vm, "i32"_s);
+    return addressType.is64Bit() ? jsNontrivialString(vm, "i64"_si) : jsNontrivialString(vm, "i32"_si);
 }
 
 ALWAYS_INLINE std::span<const uint8_t> getWasmBufferFromValue(JSGlobalObject* globalObject, JSValue value, const SourceProviderBufferGuard&)
@@ -124,7 +124,7 @@ ALWAYS_INLINE std::span<const uint8_t> getWasmBufferFromValue(JSGlobalObject* gl
     JSArrayBufferView* arrayBufferView = value.getObject() ? dynamicDowncast<JSArrayBufferView>(value.getObject()) : nullptr;
     if (!(arrayBuffer || arrayBufferView)) {
         throwException(globalObject, throwScope, createTypeError(globalObject,
-            "first argument must be an ArrayBufferView or an ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(value)));
+            "first argument must be an ArrayBufferView or an ArrayBuffer"_si, defaultSourceAppender, runtimeTypeForValue(value)));
         return { };
     }
 

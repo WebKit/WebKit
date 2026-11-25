@@ -88,7 +88,7 @@ public:
 
     virtual void serviceAnimation(MonotonicTime) = 0;
 
-    virtual String debugDescription() const = 0;
+    virtual RefPtr<StringImpl> debugDescription() const = 0;
 
 protected:
     void didStart(MonotonicTime currentTime)

@@ -419,7 +419,7 @@ std::optional<ExceptionData> SWServerRegistration::disableNavigationPreload()
 }
 
 // https://w3c.github.io/ServiceWorker/#dom-navigationpreloadmanager-setheadervalue, steps run in parallel.
-std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderValue(String&& headerValue)
+std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderValue(RefPtr<StringImpl>&& headerValue)
 {
     if (!isValidHTTPHeaderValue(headerValue))
         return ExceptionData { ExceptionCode::TypeError, "Invalid header value"_s };

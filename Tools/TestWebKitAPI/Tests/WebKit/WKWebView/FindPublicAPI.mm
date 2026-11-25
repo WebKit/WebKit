@@ -54,7 +54,7 @@ INSTANTIATE_TEST_SUITE_P(FindInPage, FindPublicAPI, testing::Values(SiteIsolatio
 
 TEST_P(FindPublicAPI, FoundAndNotFound)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     PublicFindAPITester find { page.webView() };
 
     EXPECT_TRUE(find.findString(@"hello"));
@@ -66,7 +66,7 @@ TEST_P(FindPublicAPI, FoundAndNotFound)
 
 TEST_P(FindPublicAPI, WrapAndNoWrap)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_si), GetParam() };
     PublicFindAPITester find { page.webView() };
 
     RetainPtr noWrap = configuration(false, false, false);
@@ -83,7 +83,7 @@ TEST_P(FindPublicAPI, WrapAndNoWrap)
 
 TEST_P(FindPublicAPI, Backwards)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_si), GetParam() };
     PublicFindAPITester find { page.webView() };
 
     EXPECT_TRUE(find.findString(@"hello", configuration(true, true, false).get()));
@@ -92,7 +92,7 @@ TEST_P(FindPublicAPI, Backwards)
 
 TEST_P(FindPublicAPI, CaseSensitive)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>Hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>Hello</p>"_si), GetParam() };
     PublicFindAPITester find { page.webView() };
 
     EXPECT_FALSE(find.findString(@"hello", configuration(false, true, true).get()));

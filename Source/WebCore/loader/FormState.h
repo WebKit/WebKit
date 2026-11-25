@@ -41,7 +41,7 @@ class HTMLFormElement;
 
 enum FormSubmissionTrigger { SubmittedByJavaScript, NotSubmittedByJavaScript };
 
-using StringPairVector = Vector<std::pair<String, String>>;
+using StringPairVector = Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>;
 
 class FormState : public RefCounted<FormState>, public FrameDestructionObserver {
 public:

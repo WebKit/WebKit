@@ -97,7 +97,7 @@ GstElement* GStreamerQuirkRialto::createAudioSink()
 
 GstElement* /* transfer floating */ GStreamerQuirkRialto::createWebAudioSink()
 {
-    if (GstElement* sink = webkitAudioSinkNew("webaudio"_s))
+    if (GstElement* sink = webkitAudioSinkNew("webaudio"_si))
         return sink;
 
     auto sink = makeGStreamerElement("rialtowebaudiosink"_s);

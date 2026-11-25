@@ -53,7 +53,7 @@ namespace WebKit {
 class AudioMediaStreamTrackRendererInternalUnitManagerProxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioMediaStreamTrackRendererInternalUnitManagerProxy>, public Identified<AudioMediaStreamTrackRendererInternalUnitIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRendererInternalUnitManagerProxy);
 public:
-    static Ref<AudioMediaStreamTrackRendererInternalUnitManagerProxy> create(const String& deviceID, Client& client)
+    static Ref<AudioMediaStreamTrackRendererInternalUnitManagerProxy> create(StringImpl* deviceID, Client& client)
     {
         return adoptRef(*new AudioMediaStreamTrackRendererInternalUnitManagerProxy(deviceID, client));
     }
@@ -67,7 +67,7 @@ public:
     void reset(IsClosed);
 
 private:
-    explicit AudioMediaStreamTrackRendererInternalUnitManagerProxy(const String&, Client&);
+    explicit AudioMediaStreamTrackRendererInternalUnitManagerProxy(StringImpl*, Client&);
 
     // AudioMediaStreamTrackRendererUnit::InternalUnit API.
     void start() final;
@@ -75,7 +75,7 @@ private:
     void close() { stopThread(); }
 
     void retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&&) final;
-    void setLastDeviceUsed(const String&) final;
+    void setLastDeviceUsed(StringImpl*) final;
     void deleteUnitForTesting() final;
 
     void initialize(const WebCore::CAAudioStreamDescription&, size_t frameChunkSize);
@@ -85,7 +85,7 @@ private:
     void startThread();
     void createRemoteUnit();
 
-    String m_deviceID;
+    RefPtr<StringImpl> m_deviceID;
     ThreadSafeWeakPtr<Client> m_client;
 
     Deque<CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>> m_descriptionCallbacks;
@@ -117,7 +117,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::remove(AudioMediaStreamTr
     m_proxies.remove(proxy.identifier());
 }
 
-Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(const String& deviceID, WebCore::AudioMediaStreamTrackRendererInternalUnit::Client& client)
+Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(StringImpl* deviceID, WebCore::AudioMediaStreamTrackRendererInternalUnit::Client& client)
 {
     return AudioMediaStreamTrackRendererInternalUnitManagerProxy::create(deviceID, client);
 }
@@ -140,7 +140,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::restartAllUnits()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRendererInternalUnitManagerProxy);
 
-AudioMediaStreamTrackRendererInternalUnitManagerProxy::AudioMediaStreamTrackRendererInternalUnitManagerProxy(const String& deviceID, Client& client)
+AudioMediaStreamTrackRendererInternalUnitManagerProxy::AudioMediaStreamTrackRendererInternalUnitManagerProxy(StringImpl* deviceID, Client& client)
     : m_deviceID(deviceID)
     , m_client(client)
 {
@@ -227,7 +227,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::retrieveFormatDescri
     callback(m_description);
 }
 
-void AudioMediaStreamTrackRendererInternalUnitManagerProxy::setLastDeviceUsed(const String& deviceID)
+void AudioMediaStreamTrackRendererInternalUnitManagerProxy::setLastDeviceUsed(StringImpl* deviceID)
 {
     protect(WebProcess::singleton().ensureGPUProcessConnection().connection())->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetLastDeviceUsed { deviceID }, 0);
 }

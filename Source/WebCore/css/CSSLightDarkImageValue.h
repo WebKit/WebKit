@@ -39,7 +39,7 @@ public:
     NODELETE static Ref<CSSLightDarkImageValue> create(Ref<CSSValue>&& lightValue, Ref<CSSValue>&& darkValue);
     ~CSSLightDarkImageValue();
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSLightDarkImageValue&) const;
 
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;

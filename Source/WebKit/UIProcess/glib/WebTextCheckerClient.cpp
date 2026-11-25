@@ -91,7 +91,7 @@ void WebTextCheckerClient::closeSpellDocumentWithTag(uint64_t tag)
     m_client.closeSpellDocumentWithTag(tag, m_client.base.clientInfo);
 }
 
-void WebTextCheckerClient::checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength)
+void WebTextCheckerClient::checkSpellingOfString(uint64_t tag, StringImpl* text, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
     misspellingLocation = -1;
     misspellingLength = 0;
@@ -102,7 +102,7 @@ void WebTextCheckerClient::checkSpellingOfString(uint64_t tag, const String& tex
     m_client.checkSpellingOfString(tag, toAPI(text), &misspellingLocation, &misspellingLength, m_client.base.clientInfo);
 }
 
-void WebTextCheckerClient::checkGrammarOfString(uint64_t tag, const String& text, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
+void WebTextCheckerClient::checkGrammarOfString(uint64_t tag, StringImpl* text, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
 {
     badGrammarLocation = -1;
     badGrammarLength = 0;
@@ -135,7 +135,7 @@ void WebTextCheckerClient::toggleSpellingUIIsShowing()
     return m_client.toggleSpellingUIIsShowing(m_client.base.clientInfo);
 }
 
-void WebTextCheckerClient::updateSpellingUIWithMisspelledWord(uint64_t tag, const String& misspelledWord)
+void WebTextCheckerClient::updateSpellingUIWithMisspelledWord(uint64_t tag, StringImpl* misspelledWord)
 {
     if (!m_client.updateSpellingUIWithMisspelledWord)
         return;
@@ -143,7 +143,7 @@ void WebTextCheckerClient::updateSpellingUIWithMisspelledWord(uint64_t tag, cons
     m_client.updateSpellingUIWithMisspelledWord(tag, toAPI(misspelledWord), m_client.base.clientInfo);
 }
 
-void WebTextCheckerClient::updateSpellingUIWithGrammarString(uint64_t tag, const String& badGrammarPhrase, const WebCore::GrammarDetail& grammarDetail)
+void WebTextCheckerClient::updateSpellingUIWithGrammarString(uint64_t tag, StringImpl* badGrammarPhrase, const WebCore::GrammarDetail& grammarDetail)
 {
     if (!m_client.updateSpellingUIWithGrammarString)
         return;
@@ -151,7 +151,7 @@ void WebTextCheckerClient::updateSpellingUIWithGrammarString(uint64_t tag, const
     m_client.updateSpellingUIWithGrammarString(tag, toAPI(badGrammarPhrase), toAPI(grammarDetail), m_client.base.clientInfo);
 }
 
-void WebTextCheckerClient::guessesForWord(uint64_t tag, const String& word, Vector<String>& guesses)
+void WebTextCheckerClient::guessesForWord(uint64_t tag, StringImpl* word, Vector<RefPtr<StringImpl>>& guesses)
 {
     if (!m_client.guessesForWord)
         return;
@@ -162,7 +162,7 @@ void WebTextCheckerClient::guessesForWord(uint64_t tag, const String& word, Vect
         guesses.append(wkGuesses->at<API::String>(i)->string());
 }
 
-void WebTextCheckerClient::learnWord(uint64_t tag, const String& word)
+void WebTextCheckerClient::learnWord(uint64_t tag, StringImpl* word)
 {
     if (!m_client.learnWord)
         return;
@@ -170,7 +170,7 @@ void WebTextCheckerClient::learnWord(uint64_t tag, const String& word)
     m_client.learnWord(tag, toAPI(word), m_client.base.clientInfo);
 }
 
-void WebTextCheckerClient::ignoreWord(uint64_t tag, const String& word)
+void WebTextCheckerClient::ignoreWord(uint64_t tag, StringImpl* word)
 {
     if (!m_client.ignoreWord)
         return;

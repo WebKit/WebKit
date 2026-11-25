@@ -34,10 +34,10 @@ namespace WebCore {
 Ref<JSON::Object> GPUColorTargetState::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("format"_s, convertEnumerationToString(format));
+    json->setString("format"_si, convertEnumerationToString(format));
     if (blend)
-        json->setObject("blend"_s, blend->toJSON());
-    json->setDouble("writeMask"_s, writeMask);
+        json->setObject("blend"_si, blend->toJSON());
+    json->setDouble("writeMask"_si, writeMask);
     return json;
 }
 

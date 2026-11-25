@@ -46,7 +46,7 @@ XPathResult::XPathResult(Document& document, const XPath::Value& value)
         [&](double) {
             m_resultType = NUMBER_TYPE;
         },
-        [&](const String&) {
+        [&](StringImpl*) {
             m_resultType = STRING_TYPE;
         },
         [&](const XPath::NodeSet& nodeSet) {
@@ -134,7 +134,7 @@ ExceptionOr<double> XPathResult::numberValue() const
     return m_value.toNumber();
 }
 
-ExceptionOr<String> XPathResult::stringValue() const
+ExceptionOr<RefPtr<StringImpl>> XPathResult::stringValue() const
 {
     if (resultType() != STRING_TYPE)
         return Exception { ExceptionCode::TypeError };

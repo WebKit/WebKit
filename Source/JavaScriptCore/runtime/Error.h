@@ -38,34 +38,34 @@ class JSObject;
 class SourceCode;
 class Structure;
 
-JSObject* createError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createEvalError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createRangeError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createReferenceError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createSyntaxError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-JSObject* createTypeError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender, RuntimeType);
+JSObject* createError(JSGlobalObject*, StringImpl*, ErrorInstance::SourceAppender);
+JSObject* createEvalError(JSGlobalObject*, StringImpl*, ErrorInstance::SourceAppender);
+JSObject* createRangeError(JSGlobalObject*, StringImpl*, ErrorInstance::SourceAppender);
+JSObject* createReferenceError(JSGlobalObject*, StringImpl*, ErrorInstance::SourceAppender);
+JSObject* createSyntaxError(JSGlobalObject*, StringImpl*, ErrorInstance::SourceAppender);
+JSObject* createTypeError(JSGlobalObject*, StringImpl*, ErrorInstance::SourceAppender, RuntimeType);
 JSObject* createNotEnoughArgumentsError(JSGlobalObject*, ErrorInstance::SourceAppender);
-JSObject* createURIError(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
+JSObject* createURIError(JSGlobalObject*, StringImpl*, ErrorInstance::SourceAppender);
 
-JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createEvalError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createRangeError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createReferenceError(JSGlobalObject*, const String&);
-JS_EXPORT_PRIVATE JSObject* createSyntaxError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, StringImpl*);
+JS_EXPORT_PRIVATE JSObject* createEvalError(JSGlobalObject*, StringImpl*);
+JS_EXPORT_PRIVATE JSObject* createRangeError(JSGlobalObject*, StringImpl*);
+JS_EXPORT_PRIVATE JSObject* createReferenceError(JSGlobalObject*, StringImpl*);
+JS_EXPORT_PRIVATE JSObject* createSyntaxError(JSGlobalObject*, StringImpl*);
 JS_EXPORT_PRIVATE JSObject* createSyntaxError(JSGlobalObject*);
 JS_EXPORT_PRIVATE JSObject* createTypeError(JSGlobalObject*);
-JS_EXPORT_PRIVATE JSObject* createTypeError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE JSObject* createTypeError(JSGlobalObject*, StringImpl*);
 JS_EXPORT_PRIVATE JSObject* createNotEnoughArgumentsError(JSGlobalObject*);
-JS_EXPORT_PRIVATE JSObject* createURIError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE JSObject* createURIError(JSGlobalObject*, StringImpl*);
 JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*);
-JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*, StringImpl*);
 
-JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorType, const String&);
-JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorTypeWithExtension, const String&);
+JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorType, StringImpl*);
+JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorTypeWithExtension, StringImpl*);
 
 std::unique_ptr<Vector<StackFrame>> getStackTrace(VM&, JSObject*, bool useCurrentFrame, JSCell* ownerOfCallLinkInfo = nullptr, CallLinkInfo* = nullptr, JSCell* subclassCaller = nullptr);
 std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM&, CallFrame*);
-bool getLineColumnAndSource(VM&, Vector<StackFrame>* stackTrace, LineColumn&, String& sourceURL);
+bool getLineColumnAndSource(VM&, Vector<StackFrame>* stackTrace, LineColumn&, RefPtr<StringImpl>& sourceURL);
 bool addErrorInfo(VM&, Vector<StackFrame>*, JSObject*);
 JS_EXPORT_PRIVATE void addErrorInfo(JSGlobalObject*, JSObject*, bool);
 JSObject* addErrorInfo(VM&, JSObject* error, int line, const SourceCode&);
@@ -81,14 +81,14 @@ JSObject* createTypeErrorCopy(JSGlobalObject*, JSValue error);
 JS_EXPORT_PRIVATE Exception* throwConstructorCannotBeCalledAsFunctionTypeError(JSGlobalObject*, ThrowScope&, ASCIILiteral constructorName);
 JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&);
 JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&, ASCIILiteral errorMessage);
-JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&, const String& errorMessage);
+JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&, StringImpl* errorMessage);
 JS_EXPORT_PRIVATE Exception* throwSyntaxError(JSGlobalObject*, ThrowScope&);
-JS_EXPORT_PRIVATE Exception* throwSyntaxError(JSGlobalObject*, ThrowScope&, const String& errorMessage);
-inline Exception* throwRangeError(JSGlobalObject* globalObject, ThrowScope& scope, const String& errorMessage) { return throwException(globalObject, scope, createRangeError(globalObject, errorMessage)); }
-inline Exception* throwError(JSGlobalObject* globalObject, ThrowScope& scope, ErrorType errorType, const String& errorMessage) { return throwException(globalObject, scope, createError(globalObject, errorType, errorMessage)); }
+JS_EXPORT_PRIVATE Exception* throwSyntaxError(JSGlobalObject*, ThrowScope&, StringImpl* errorMessage);
+inline Exception* throwRangeError(JSGlobalObject* globalObject, ThrowScope& scope, StringImpl* errorMessage) { return throwException(globalObject, scope, createRangeError(globalObject, errorMessage)); }
+inline Exception* throwError(JSGlobalObject* globalObject, ThrowScope& scope, ErrorType errorType, StringImpl* errorMessage) { return throwException(globalObject, scope, createError(globalObject, errorType, errorMessage)); }
 
-JS_EXPORT_PRIVATE String makeDOMAttributeGetterTypeErrorMessage(StringView interfaceName, const String& attributeName);
-JS_EXPORT_PRIVATE String makeDOMAttributeSetterTypeErrorMessage(StringView interfaceName, const String& attributeName);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> makeDOMAttributeGetterTypeErrorMessage(StringView interfaceName, StringImpl* attributeName);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> makeDOMAttributeSetterTypeErrorMessage(StringView interfaceName, StringImpl* attributeName);
 
 JS_EXPORT_PRIVATE JSValue throwDOMAttributeGetterTypeError(JSGlobalObject*, ThrowScope&, const ClassInfo*, PropertyName);
 JS_EXPORT_PRIVATE JSValue throwDOMAttributeSetterTypeError(JSGlobalObject*, ThrowScope&, const ClassInfo*, PropertyName);
@@ -96,11 +96,11 @@ JS_EXPORT_PRIVATE JSValue throwDOMAttributeSetterTypeError(JSGlobalObject*, Thro
 // Convenience wrappers, wrap result as an EncodedJSValue.
 inline void throwVMError(JSGlobalObject* globalObject, ThrowScope& scope, Exception* exception) { throwException(globalObject, scope, exception); }
 inline EncodedJSValue throwVMError(JSGlobalObject* globalObject, ThrowScope& scope, JSValue error) { return JSValue::encode(throwException(globalObject, scope, error)); }
-inline EncodedJSValue throwVMError(JSGlobalObject* globalObject, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwException(globalObject, scope, createError(globalObject, errorMessage))); }
+inline EncodedJSValue throwVMError(JSGlobalObject* globalObject, ThrowScope& scope, StringImpl* errorMessage) { return JSValue::encode(throwException(globalObject, scope, createError(globalObject, errorMessage))); }
 inline EncodedJSValue throwVMTypeError(JSGlobalObject* globalObject, ThrowScope& scope) { return JSValue::encode(throwTypeError(globalObject, scope)); }
 inline EncodedJSValue throwVMTypeError(JSGlobalObject* globalObject, ThrowScope& scope, ASCIILiteral errorMessage) { return JSValue::encode(throwTypeError(globalObject, scope, errorMessage)); }
-inline EncodedJSValue throwVMTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwTypeError(globalObject, scope, errorMessage)); }
-inline EncodedJSValue throwVMRangeError(JSGlobalObject* globalObject, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwRangeError(globalObject, scope, errorMessage)); }
+inline EncodedJSValue throwVMTypeError(JSGlobalObject* globalObject, ThrowScope& scope, StringImpl* errorMessage) { return JSValue::encode(throwTypeError(globalObject, scope, errorMessage)); }
+inline EncodedJSValue throwVMRangeError(JSGlobalObject* globalObject, ThrowScope& scope, StringImpl* errorMessage) { return JSValue::encode(throwRangeError(globalObject, scope, errorMessage)); }
 inline EncodedJSValue throwVMDOMAttributeGetterTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName) { return JSValue::encode(throwDOMAttributeGetterTypeError(globalObject, scope, classInfo, propertyName)); }
 inline EncodedJSValue throwVMDOMAttributeSetterTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName) { return JSValue::encode(throwDOMAttributeSetterTypeError(globalObject, scope, classInfo, propertyName)); }
 

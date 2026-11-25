@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-static inline void transformTextStringToXHTMLDocumentString(String& text)
+static inline void transformTextStringToXHTMLDocumentString(RefPtr<StringImpl>& text)
 {
     // Modify the output so that it is a well-formed XHTML document with a <pre> tag enclosing the text.
     text = makeStringByReplacingAll(text, '&', "&amp;"_s);
@@ -68,15 +68,15 @@ XSLTProcessor::~XSLTProcessor()
     ASSERT(!m_stylesheetRootNode || !m_stylesheet || m_stylesheet->hasOneRef());
 }
 
-Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
-    const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, LocalFrame* frame)
+Ref<Document> XSLTProcessor::createDocumentFromSource(StringImpl* sourceString,
+    StringImpl* sourceEncoding, StringImpl* sourceMIMEType, Node* sourceNode, LocalFrame* frame)
 {
     Ref<Document> ownerDocument(sourceNode->document());
     bool sourceIsDocument = (sourceNode == &ownerDocument.get());
-    String documentSource = sourceString;
+    RefPtr<StringImpl> documentSource = sourceString;
 
     RefPtr<Document> result;
-    if (sourceMIMEType == textPlainContentTypeAtom()) {
+    if (equal(sourceMIMEType, textPlainContentTypeAtom())) {
         result = XMLDocument::createXHTML(frame, ownerDocument->settings(), sourceIsDocument ? ownerDocument->url() : URL());
         transformTextStringToXHTMLDocumentString(documentSource);
     } else
@@ -108,7 +108,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     }
 
     Ref decoder = TextResourceDecoder::create(TextResourceDecoder::contentTypeForMIMEType(sourceMIMEType));
-    decoder->setEncoding(sourceEncoding.isEmpty() ? PAL::UTF8Encoding() : PAL::TextEncoding(sourceEncoding), TextResourceDecoder::EncodingSource::XMLHeader);
+    decoder->setEncoding(isEmpty(sourceEncoding) ? PAL::UTF8Encoding() : PAL::TextEncoding(sourceEncoding), TextResourceDecoder::EncodingSource::XMLHeader);
     result->setDecoder(WTF::move(decoder));
 
     result->setMarkupUnsafe(documentSource, { ParserContentPolicy::AllowDeclarativeShadowRoots });
@@ -120,9 +120,9 @@ RefPtr<Document> XSLTProcessor::transformToDocument(Document& callerDocument, No
 {
     callerDocument.logXSLTDeprecationWarningIfNeeded();
 
-    String resultMIMEType;
-    String resultString;
-    String resultEncoding;
+    RefPtr<StringImpl> resultMIMEType;
+    RefPtr<StringImpl> resultString;
+    RefPtr<StringImpl> resultEncoding;
     if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
         return nullptr;
     return createDocumentFromSource(resultString, resultEncoding, resultMIMEType, &sourceNode, nullptr);
@@ -132,9 +132,9 @@ RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Document& callerDocu
 {
     callerDocument.logXSLTDeprecationWarningIfNeeded();
 
-    String resultMIMEType;
-    String resultString;
-    String resultEncoding;
+    RefPtr<StringImpl> resultMIMEType;
+    RefPtr<StringImpl> resultString;
+    RefPtr<StringImpl> resultEncoding;
 
     // If the output document is HTML, default to HTML method.
     if (outputDocument.isHTMLDocument())
@@ -145,9 +145,9 @@ RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Document& callerDocu
     return createFragmentForTransformToFragment(outputDocument, WTF::move(resultString), WTF::move(resultMIMEType));
 }
 
-void XSLTProcessor::setParameter(const String& /*namespaceURI*/, const String& localName, const String& value)
+void XSLTProcessor::setParameter(StringImpl* /*namespaceURI*/, StringImpl* localName, StringImpl* value)
 {
-    if (localName.isNull() || value.isNull())
+    if (!localName || !value)
         return;
 
     // FIXME: namespace support?
@@ -155,9 +155,9 @@ void XSLTProcessor::setParameter(const String& /*namespaceURI*/, const String& l
     m_parameters.set(localName, value);
 }
 
-String XSLTProcessor::getParameter(const String& /*namespaceURI*/, const String& localName) const
+RefPtr<StringImpl> XSLTProcessor::getParameter(StringImpl* /*namespaceURI*/, StringImpl* localName) const
 {
-    if (localName.isNull())
+    if (!localName)
         return { };
 
     // FIXME: namespace support?
@@ -165,9 +165,9 @@ String XSLTProcessor::getParameter(const String& /*namespaceURI*/, const String&
     return m_parameters.get(localName);
 }
 
-void XSLTProcessor::removeParameter(const String& /*namespaceURI*/, const String& localName)
+void XSLTProcessor::removeParameter(StringImpl* /*namespaceURI*/, StringImpl* localName)
 {
-    if (localName.isNull())
+    if (!localName)
         return;
 
     // FIXME: namespace support?

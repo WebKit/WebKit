@@ -342,7 +342,7 @@ DEFINE_HELPER(MulInt, \
 
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
-    FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues, DeviceState&& deviceState)
+    FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder, PrepareResult& prepareResult, const HashMap<RefPtr<StringImpl>, ConstantValue>& constantValues, DeviceState&& deviceState)
         : m_helperGenerator(stringBuilder)
         , m_output(stringBuilder)
         , m_shaderModule(shaderModule)
@@ -479,7 +479,7 @@ private:
     HashSet<const AST::Structure*> m_usedPackHelpers;
     HashSet<const AST::Structure*> m_usedUnpackHelpers;
     PrepareResult& m_prepareResult;
-    const HashMap<String, ConstantValue>& m_constantValues;
+    const HashMap<RefPtr<StringImpl>, ConstantValue>& m_constantValues;
     DeviceState m_deviceState;
 };
 
@@ -1252,7 +1252,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
         bool shouldPack = structDecl.role() == AST::StructureRole::PackedResource;
         const auto& addPadding = [&](unsigned paddingSize) {
             ASSERT(shouldPack);
-            m_body.append(m_indent, "uint8_t __padding"_s, ++paddingID, '[', String::number(paddingSize), "]; \n"_s);
+            m_body.append(m_indent, "uint8_t __padding"_s, ++paddingID, '[', makeString(paddingSize), "]; \n"_s);
         };
 
         for (auto& member : structDecl.members()) {
@@ -1456,7 +1456,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
     if (structure.role() != AST::StructureRole::PackedResource || !structure.inferredType()->isConstructible())
         return;
 
-    const String& packedName = structure.name();
+    const RefPtr<StringImpl>& packedName = structure.name();
     auto unpackedName = structure.original()->name();
 
     if (m_usedPackHelpers.contains(&structure)) {
@@ -2215,7 +2215,7 @@ static void emitTextureDimensions(FunctionDefinitionWriter* writer, AST::CallExp
 
     auto size = vector->size;
     ASSERT(size >= 2 && size <= 3);
-    writer->stringBuilder().append("uint"_s, String::number(size), '(');
+    writer->stringBuilder().append("uint"_s, makeString(static_cast<int>(size)), '(');
     get("width"_s);
     writer->stringBuilder().append(", "_s);
     get("height"_s);
@@ -2872,7 +2872,7 @@ static void emitDegrees(FunctionDefinitionWriter* writer, AST::CallExpression& c
     writer->visit(call.inferredType());
     writer->stringBuilder().append(">("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(" * "_s, String::number(180 / std::numbers::pi), ')');
+    writer->stringBuilder().append(" * "_s, makeString(180 / std::numbers::pi), ')');
 }
 
 static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -2951,9 +2951,9 @@ static void emitPack4xU8Clamp(FunctionDefinitionWriter* writer, AST::CallExpress
 static void emitQuantizeToF16(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     auto& argument = call.arguments()[0];
-    String suffix = ""_s;
+    RefPtr<StringImpl> suffix = ""_si;
     if (auto* vectorType = std::get_if<Types::Vector>(argument.inferredType()))
-        suffix = String::number(vectorType->size);
+        suffix = makeString(static_cast<int>(vectorType->size));
     writer->stringBuilder().append("float"_s, suffix, "(half"_s, suffix, '(');
     writer->visit(argument);
     writer->stringBuilder().append("))"_s);
@@ -2965,7 +2965,7 @@ static void emitRadians(FunctionDefinitionWriter* writer, AST::CallExpression& c
     writer->visit(call.inferredType());
     writer->stringBuilder().append(">("_s);
     writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(" * "_s, String::number(std::numbers::pi / 180), ')');
+    writer->stringBuilder().append(" * "_s, makeString(std::numbers::pi / 180), ')');
 }
 
 static void emitUnpack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -2978,7 +2978,7 @@ static void emitUnpack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call.target())) {
-        if (target->base() == "bitcast"_s) {
+        if (equal(target->base(), "bitcast"_s)) {
             emitBitcast(this, call);
             return;
         }
@@ -3164,9 +3164,9 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             m_body.append(mappedName(m_helperGenerator, call));
         else {
             if (!call.arguments().isEmpty()) {
-                if (targetName == "__pack"_s)
+                if (equal(targetName, "__pack"_s))
                     usePackingHelper(PackingHelper::Pack, call.arguments()[0].inferredType());
-                else if (targetName == "__unpack"_s)
+                else if (equal(targetName, "__unpack"_s))
                     usePackingHelper(PackingHelper::Unpack, call.arguments()[0].inferredType());
             }
             m_body.append(targetName);
@@ -3490,7 +3490,7 @@ void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement
     if (auto* call = dynamicDowncast<AST::CallExpression>(*leftExpression)) {
         auto& target = call->target();
         if (auto* identifier = dynamicDowncast<AST::IdentifierExpression>(target)) {
-            if (identifier->identifier() == "__unpack"_s) {
+            if (equal(identifier->identifier(), "__unpack"_s)) {
                 serialized = true;
                 auto& rawExpr = call->arguments()[0];
                 visit(rawExpr);
@@ -3595,7 +3595,7 @@ void FunctionDefinitionWriter::visit(AST::PhonyAssignmentStatement& statement)
     m_body.append(')');
 }
 
-static std::optional<std::pair<String, String>> returnIdentifierForFunction(WGSL::Builtin builtIn, AST::Function* function)
+static std::optional<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> returnIdentifierForFunction(WGSL::Builtin builtIn, AST::Function* function)
 {
     if (!function || function->stage() != ShaderStage::Fragment)
         return std::nullopt;
@@ -3609,11 +3609,11 @@ static std::optional<std::pair<String, String>> returnIdentifierForFunction(WGSL
 
             for (auto& member : returnStruct->structure.members()) {
                 if (member.builtin() == builtIn)
-                    return std::make_pair(returnStruct->structure.name(), member.name());
+                    return std::make_pair(returnStruct->structure.name().id(), member.name().id());
                 for (auto& attribute : member.attributes()) {
                     auto* builtinAttribute = dynamicDowncast<AST::BuiltinAttribute>(attribute);
                     if (builtinAttribute && builtinAttribute->builtin() == builtIn)
-                        return std::make_pair(returnStruct->structure.name(), member.name());
+                        return std::make_pair(returnStruct->structure.name().id(), member.name().id());
                 }
             }
         }
@@ -3943,7 +3943,7 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         });
 }
 
-void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues, DeviceState&& deviceState)
+void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<RefPtr<StringImpl>, ConstantValue>& constantValues, DeviceState&& deviceState)
 {
     FunctionDefinitionWriter functionDefinitionWriter(shaderModule, stringBuilder, prepareResult, constantValues, WTF::move(deviceState));
     functionDefinitionWriter.write();

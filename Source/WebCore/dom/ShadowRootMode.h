@@ -50,10 +50,10 @@ inline std::optional<ShadowRootMode> parseShadowRootMode(StringView value)
     return { };
 }
 
-inline const AtomString& serializeShadowRootMode(ShadowRootMode mode)
+inline const RefPtr<AtomStringImpl>& serializeShadowRootMode(ShadowRootMode mode)
 {
-    static MainThreadNeverDestroyed<const AtomString> open(shadowRootModeOpenLiteral);
-    static MainThreadNeverDestroyed<const AtomString> closed(shadowRootModeClosedLiteral);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> open(shadowRootModeOpenLiteral);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> closed(shadowRootModeClosedLiteral);
     switch (mode) {
     case ShadowRootMode::Open:
         return open;

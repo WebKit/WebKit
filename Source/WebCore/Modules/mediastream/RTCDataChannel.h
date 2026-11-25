@@ -54,8 +54,8 @@ template<typename> class ExceptionOr;
 class RTCDataChannel final : public RefCounted<RTCDataChannel>, public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTarget {
     WTF_MAKE_TZONE_ALLOCATED(RTCDataChannel);
 public:
-    static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState, std::optional<RTCDataChannelIdentifier> identifier = { });
-    static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, String&&, RTCDataChannelInit&&, RTCDataChannelState);
+    static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, RefPtr<StringImpl>&&, RTCDataChannelInit&&, RTCDataChannelState, std::optional<RTCDataChannelIdentifier> identifier = { });
+    static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, RefPtr<StringImpl>&&, RTCDataChannelInit&&, RTCDataChannelState);
     WEBCORE_EXPORT virtual ~RTCDataChannel();
 
     // ContextDestructionObserver.
@@ -66,13 +66,13 @@ public:
     bool ordered() const { return m_options.ordered; }
     std::optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
     std::optional<unsigned short> maxRetransmits() const { return m_options.maxRetransmits; }
-    String protocol() const { return m_options.protocol; }
+    RefPtr<StringImpl> protocol() const { return m_options.protocol; }
     bool negotiated() const { return m_options.negotiated; }
     std::optional<unsigned short> id() const;
     RTCPriorityType priority() const { return m_options.priority; };
     const RTCDataChannelInit& options() const LIFETIME_BOUND { return m_options; }
 
-    const String& label() const LIFETIME_BOUND { return m_label; }
+    const RefPtr<StringImpl>& label() const LIFETIME_BOUND { return m_label; }
     RTCDataChannelState readyState() const {return m_readyState; }
     size_t bufferedAmount() const final { return m_bufferedAmount; }
     size_t bufferedAmountLowThreshold() const { return m_bufferedAmountLowThreshold; }
@@ -82,7 +82,7 @@ public:
     BinaryType binaryType() const { return m_binaryType; }
     NODELETE void setBinaryType(BinaryType);
 
-    ExceptionOr<void> send(const String&);
+    ExceptionOr<void> send(StringImpl*);
     ExceptionOr<void> send(JSC::ArrayBuffer&);
     ExceptionOr<void> send(JSC::ArrayBufferView&);
     ExceptionOr<void> send(Blob&);
@@ -97,7 +97,7 @@ public:
     void fireOpenEventIfNeeded();
 
 private:
-    RTCDataChannel(ScriptExecutionContext&, RTCDataChannelIdentifier, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
+    RTCDataChannel(ScriptExecutionContext&, RTCDataChannelIdentifier, std::unique_ptr<RTCDataChannelHandler>&&, RefPtr<StringImpl>&&, RTCDataChannelInit&&, RTCDataChannelState);
 
     static Ref<NetworkSendQueue> createMessageQueue(ScriptExecutionContext&, RTCDataChannel&);
 
@@ -116,7 +116,7 @@ private:
 
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;
-    void didReceiveStringData(const String&) final;
+    void didReceiveStringData(StringImpl*) final;
     void didReceiveRawData(std::span<const uint8_t>) final;
     void didDetectError(Ref<RTCError>&&) final;
     void bufferedAmountIsDecreasing(size_t) final;
@@ -130,7 +130,7 @@ private:
 
     BinaryType m_binaryType { BinaryType::Arraybuffer };
 
-    String m_label;
+    RefPtr<StringImpl> m_label;
     RTCDataChannelInit m_options;
     size_t m_bufferedAmount { 0 };
     size_t m_bufferedAmountLowThreshold { 0 };

@@ -50,7 +50,7 @@ public:
     RemoteLegacyCDM(RemoteLegacyCDMFactory&, RemoteLegacyCDMIdentifier);
     virtual ~RemoteLegacyCDM();
 
-    bool supportsMIMEType(const String&) const final;
+    bool supportsMIMEType(StringImpl*) const final;
     RefPtr<WebCore::LegacyCDMSession> createSession(WebCore::LegacyCDMSessionClient&) final;
     void setPlayerId(std::optional<WebCore::MediaPlayerIdentifier>);
 

@@ -63,17 +63,17 @@ protected:
 private:
     // DateTimeFieldElement functions:
     void adjustMinInlineSize(Style::ComputedStyle&) const final;
-    ValueOrReference<String> value() const final;
-    String placeholderValue() const final;
+    ValueOrReference<RefPtr<StringImpl>> value() const final;
+    RefPtr<StringImpl> placeholderValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;
     void handleBlurEvent(Event&) final;
 
-    String formatValue(int) const;
+    RefPtr<StringImpl> formatValue(int) const;
     void setValueAsIntegerByStepping(int);
     void setARIAValueAttributesWithInteger(int);
 
     const Range m_range;
-    const String m_placeholder;
+    const RefPtr<StringImpl> m_placeholder;
     int m_placeholderValue { 0 };
     int m_value { 0 };
     bool m_hasValue { false };

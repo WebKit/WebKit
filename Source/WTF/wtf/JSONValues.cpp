@@ -323,7 +323,7 @@ bool decodeString(std::span<const CodeUnit> data, StringBuilder& output)
 }
 
 template<typename CodeUnit>
-bool decodeString(std::span<const CodeUnit> data, String& output)
+bool decodeString(std::span<const CodeUnit> data, RefPtr<StringImpl>& output)
 {
     if (data.empty()) {
         output = emptyString();
@@ -370,7 +370,7 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
         break;
     }
     case Token::String: {
-        String value;
+        RefPtr<StringImpl> value;
         if (tokenEnd.data() - tokenStart.data() < 2)
             return nullptr;
         bool ok = decodeString(tokenStart.subspan(1, std::to_address(tokenEnd.begin()) - std::to_address(tokenStart.begin()) - 2), value);
@@ -417,7 +417,7 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
         while (token != Token::ObjectEnd) {
             if (token != Token::String)
                 return nullptr;
-            String key;
+            RefPtr<StringImpl> key;
             if (tokenEnd.data() - tokenStart.data() < 2)
                 return nullptr;
             if (!decodeString(tokenStart.subspan(1, std::to_address(tokenEnd.begin()) - std::to_address(tokenStart.begin()) - 2), key))
@@ -514,7 +514,7 @@ Ref<Value> Value::create(double value)
     return adoptRef(*new Value(value));
 }
 
-Ref<Value> Value::create(const String& value)
+Ref<Value> Value::create(StringImpl* value)
 {
     return adoptRef(*new Value(value));
 }
@@ -567,7 +567,7 @@ std::optional<Ref<Value>> Value::optionalParseJSON(StringView json)
     return std::nullopt;
 }
 
-String Value::toJSONString() const
+RefPtr<StringImpl> Value::toJSONString() const
 {
     StringBuilder result;
     result.reserveCapacity(512);
@@ -600,9 +600,9 @@ std::optional<int> Value::asInteger() const
     return std::nullopt;
 }
 
-const String& Value::asString() const
+const RefPtr<StringImpl>& Value::asString() const
 {
-    if (auto* string = std::get_if<String>(&m_value))
+    if (auto* string = std::get_if<RefPtr<StringImpl>>(&m_value))
         return *string;
     return nullString();
 }
@@ -620,7 +620,7 @@ void Value::dump(PrintStream& out) const
             out.print(makeString(number));
     }, [&](int number) {
         out.print(makeString(number));
-    }, [&](const String& string) {
+    }, [&](StringImpl* string) {
         StringBuilder builder;
         builder.appendQuotedJSONString(string);
         out.print(builder.toString());
@@ -671,7 +671,7 @@ void Value::writeJSONImpl(StringBuilder& output) const
             output.append(number);
     }, [&](int number) {
         output.append(number);
-    }, [&](const String& string) {
+    }, [&](StringImpl* string) {
         output.appendQuotedJSONString(string);
     }, [&](ObjectTypeTag) {
         ASSERT_NOT_REACHED();
@@ -690,8 +690,8 @@ size_t Value::memoryCost() const
 size_t Value::memoryCostImpl() const
 {
     size_t memoryCost = sizeof(*this);
-    if (auto* string = std::get_if<String>(&m_value))
-        memoryCost += string->sizeInBytes();
+    if (auto* string = std::get_if<RefPtr<StringImpl>>(&m_value))
+        memoryCost += sizeInBytes(*string);
     return memoryCost;
 }
 
@@ -701,11 +701,11 @@ size_t ObjectBase::memoryCostImpl() const
 {
     size_t memoryCost = sizeof(*this);
     for (const auto& entry : m_map)
-        memoryCost += entry.key.sizeInBytes() + Ref { entry.value }->memoryCost();
+        memoryCost += sizeInBytes(entry.key) + Ref { entry.value }->memoryCost();
     return memoryCost;
 }
 
-std::optional<bool> ObjectBase::getBoolean(const String& name) const
+std::optional<bool> ObjectBase::getBoolean(StringImpl* name) const
 {
     auto value = getValue(name);
     if (!value)
@@ -713,7 +713,7 @@ std::optional<bool> ObjectBase::getBoolean(const String& name) const
     return value->asBoolean();
 }
 
-std::optional<double> ObjectBase::getDouble(const String& name) const
+std::optional<double> ObjectBase::getDouble(StringImpl* name) const
 {
     auto value = getValue(name);
     if (!value)
@@ -721,7 +721,7 @@ std::optional<double> ObjectBase::getDouble(const String& name) const
     return value->asDouble();
 }
 
-std::optional<int> ObjectBase::getInteger(const String& name) const
+std::optional<int> ObjectBase::getInteger(StringImpl* name) const
 {
     auto value = getValue(name);
     if (!value)
@@ -729,7 +729,7 @@ std::optional<int> ObjectBase::getInteger(const String& name) const
     return value->asInteger();
 }
 
-String ObjectBase::getString(const String& name) const
+RefPtr<StringImpl> ObjectBase::getString(StringImpl* name) const
 {
     auto value = getValue(name);
     if (!value)
@@ -737,7 +737,7 @@ String ObjectBase::getString(const String& name) const
     return value->asString();
 }
 
-RefPtr<Object> ObjectBase::getObject(const String& name) const
+RefPtr<Object> ObjectBase::getObject(StringImpl* name) const
 {
     auto value = getValue(name);
     if (!value)
@@ -745,7 +745,7 @@ RefPtr<Object> ObjectBase::getObject(const String& name) const
     return value->asObject();
 }
 
-RefPtr<Array> ObjectBase::getArray(const String& name) const
+RefPtr<Array> ObjectBase::getArray(StringImpl* name) const
 {
     auto value = getValue(name);
     if (!value)
@@ -753,7 +753,7 @@ RefPtr<Array> ObjectBase::getArray(const String& name) const
     return value->asArray();
 }
 
-RefPtr<Value> ObjectBase::getValue(const String& name) const
+RefPtr<Value> ObjectBase::getValue(StringImpl* name) const
 {
     auto findResult = m_map.find(name);
     if (findResult == m_map.end())
@@ -761,10 +761,12 @@ RefPtr<Value> ObjectBase::getValue(const String& name) const
     return findResult->value.copyRef();
 }
 
-void ObjectBase::remove(const String& name)
+void ObjectBase::remove(StringImpl* name)
 {
     m_map.remove(name);
-    m_order.removeFirst(name);
+    m_order.removeFirstMatching([&](auto& item) {
+        return equal(item, name);
+    });
 }
 
 void ObjectBase::writeJSONImpl(StringBuilder& output) const
@@ -829,7 +831,7 @@ void ArrayBase::setDouble(size_t index, double value)
     setValue(index, Value::create(value));
 }
 
-void ArrayBase::setString(size_t index, const String& value)
+void ArrayBase::setString(size_t index, StringImpl* value)
 {
     setValue(index, Value::create(value));
 }
@@ -888,7 +890,7 @@ bool Value::asInteger(int& output) const
     return true;
 }
 
-bool Value::asString(String& output) const
+bool Value::asString(RefPtr<StringImpl>& output) const
 {
     auto x = asString();
     if (!x)
@@ -897,7 +899,7 @@ bool Value::asString(String& output) const
     return true;
 }
 
-bool ObjectBase::getBoolean(const String& name, bool& output) const
+bool ObjectBase::getBoolean(StringImpl* name, bool& output) const
 {
     auto x = getBoolean(name);
     if (!x)
@@ -906,7 +908,7 @@ bool ObjectBase::getBoolean(const String& name, bool& output) const
     return true;
 }
 
-bool ObjectBase::getString(const String& name, String& output) const
+bool ObjectBase::getString(StringImpl* name, RefPtr<StringImpl>& output) const
 {
     auto x = getString(name);
     if (!x)
@@ -915,7 +917,7 @@ bool ObjectBase::getString(const String& name, String& output) const
     return true;
 }
 
-bool ObjectBase::getObject(const String& name, RefPtr<Object>& output) const
+bool ObjectBase::getObject(StringImpl* name, RefPtr<Object>& output) const
 {
     auto x = getObject(name);
     if (!x)
@@ -924,7 +926,7 @@ bool ObjectBase::getObject(const String& name, RefPtr<Object>& output) const
     return true;
 }
 
-bool ObjectBase::getArray(const String& name, RefPtr<Array>& output) const
+bool ObjectBase::getArray(StringImpl* name, RefPtr<Array>& output) const
 {
     auto x = getArray(name);
     if (!x)
@@ -933,7 +935,7 @@ bool ObjectBase::getArray(const String& name, RefPtr<Array>& output) const
     return true;
 }
 
-bool ObjectBase::getValue(const String& name, RefPtr<Value>& output) const
+bool ObjectBase::getValue(StringImpl* name, RefPtr<Value>& output) const
 {
     auto x = getValue(name);
     if (!x)

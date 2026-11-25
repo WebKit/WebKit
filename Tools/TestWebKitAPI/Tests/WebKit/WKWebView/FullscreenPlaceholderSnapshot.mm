@@ -137,7 +137,7 @@ static RetainPtr<TestWKWebView> createWebViewForPlaceholderSnapshotTest(Fullscre
     return webView;
 }
 
-static String placeholderColorAtCenter(TestWKWebView *webView)
+static RefPtr<StringImpl> placeholderColorAtCenter(TestWKWebView *webView)
 {
     NSObject *controller = [webView valueForKey:@"fullScreenWindowController"];
     UIView *placeholder = [controller valueForKey:@"webViewPlaceholder"];

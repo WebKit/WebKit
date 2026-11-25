@@ -190,7 +190,7 @@ WebKitDOMElement* webkit_dom_document_fragment_get_element_by_id(WebKitDOMDocume
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT_FRAGMENT(self), 0);
     g_return_val_if_fail(elementId, 0);
     WebCore::DocumentFragment* item = WebKit::core(self);
-    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->getElementById(WTF::AtomString::fromUTF8(elementId)));
+    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->getElementById(AtomStringImpl::fromUTF8(elementId)));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -201,7 +201,7 @@ WebKitDOMElement* webkit_dom_document_fragment_query_selector(WebKitDOMDocumentF
     g_return_val_if_fail(selectors, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::DocumentFragment* item = WebKit::core(self);
-    WTF::String convertedSelectors = WTF::String::fromUTF8(selectors);
+    RefPtr<StringImpl> convertedSelectors = StringImpl::fromUTF8(selectors);
     auto result = item->querySelector(convertedSelectors);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -218,7 +218,7 @@ WebKitDOMNodeList* webkit_dom_document_fragment_query_selector_all(WebKitDOMDocu
     g_return_val_if_fail(selectors, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::DocumentFragment* item = WebKit::core(self);
-    WTF::String convertedSelectors = WTF::String::fromUTF8(selectors);
+    RefPtr<StringImpl> convertedSelectors = StringImpl::fromUTF8(selectors);
     auto result = item->querySelectorAll(convertedSelectors);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());

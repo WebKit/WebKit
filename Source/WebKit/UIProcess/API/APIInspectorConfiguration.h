@@ -36,7 +36,7 @@ class WebURLSchemeHandler;
 
 namespace API {
 
-using URLSchemeHandlerPair = std::pair<Ref<WebKit::WebURLSchemeHandler>, WTF::String>;
+using URLSchemeHandlerPair = std::pair<Ref<WebKit::WebURLSchemeHandler>, RefPtr<StringImpl>>;
 
 class InspectorConfiguration final : public API::ObjectImpl<Object::Type::InspectorConfiguration> {
 public:
@@ -45,7 +45,7 @@ public:
     InspectorConfiguration() = default;
     virtual ~InspectorConfiguration();
 
-    void addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String& urlScheme);
+    void addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&&, StringImpl* urlScheme);
     const Vector<URLSchemeHandlerPair>& urlSchemeHandlers() LIFETIME_BOUND { return m_customURLSchemes; }
     
     NODELETE WebKit::WebProcessPool* processPool();

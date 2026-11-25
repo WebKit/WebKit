@@ -102,8 +102,8 @@ public:
     virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) = 0;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    virtual String spatialTrackingLabel() const { return emptyString(); }
-    virtual void setSpatialTrackingLabel(const String&) { }
+    virtual RefPtr<StringImpl> spatialTrackingLabel() const { return emptyString(); }
+    virtual void setSpatialTrackingLabel(StringImpl*) { }
 #endif
 
     virtual void addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) { }
@@ -134,8 +134,8 @@ public:
     virtual uint64_t legibleMediaSelectedIndex() const = 0;
     virtual bool externalPlaybackEnabled() const = 0;
     virtual ExternalPlaybackTargetType externalPlaybackTargetType() const = 0;
-    virtual String externalPlaybackLocalizedDeviceName() const = 0;
-    virtual String externalPlaybackLocalizedRouteName() const = 0;
+    virtual RefPtr<StringImpl> externalPlaybackLocalizedDeviceName() const = 0;
+    virtual RefPtr<StringImpl> externalPlaybackLocalizedRouteName() const = 0;
     virtual bool wirelessVideoPlaybackDisabled() const = 0;
     virtual bool isMuted() const = 0;
     virtual double volume() const = 0;
@@ -172,7 +172,7 @@ public:
     virtual void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /* options */, uint64_t /* selectedIndex */) { }
     virtual void audioMediaSelectionIndexChanged(uint64_t) { }
     virtual void legibleMediaSelectionIndexChanged(uint64_t) { }
-    virtual void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */, const String& /* localizedRouteName */) { }
+    virtual void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, StringImpl* /* localizedDeviceName */, StringImpl* /* localizedRouteName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
 #if HAVE(PIP_SKIP_PREROLL)
@@ -197,13 +197,13 @@ namespace WTF {
 
 template <>
 struct LogArgument<OptionSet<WebCore::PlaybackSessionModel::PlaybackState>> {
-    static String toString(const OptionSet<WebCore::PlaybackSessionModel::PlaybackState> state)
+    static RefPtr<StringImpl> toString(const OptionSet<WebCore::PlaybackSessionModel::PlaybackState> state)
     {
         if (!state.toRaw())
-            return "Paused"_s;
+            return "Paused"_si;
         if (state.contains(WebCore::PlaybackSessionModel::PlaybackState::Stalled))
-            return "Stalled"_s;
-        return "Playing"_s;
+            return "Stalled"_si;
+        return "Playing"_si;
     }
 };
 

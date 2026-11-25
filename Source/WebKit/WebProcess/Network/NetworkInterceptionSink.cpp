@@ -79,7 +79,7 @@ bool NetworkInterceptionSink::matches(const URL& url, Inspector::NetworkIntercep
     return configuration().matches(url, phase, owner);
 }
 
-static HTTPHeaderMap headerMap(const Vector<std::pair<String, String>>& headers)
+static HTTPHeaderMap headerMap(const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& headers)
 {
     HTTPHeaderMap headerMap;
     for (auto& [name, value] : borrow(headers))
@@ -195,7 +195,7 @@ void NetworkInterceptionSink::resolveInspectorRequest(ResourceLoaderIdentifier i
         ResourceRequest request = loader->request();
         if (resolution.url)
             request.setURL(WTF::move(*resolution.url));
-        if (!resolution.method.isNull())
+        if (resolution.method)
             request.setHTTPMethod(resolution.method);
         if (resolution.headers)
             request.setHTTPHeaderFields(headerMap(*resolution.headers));
@@ -210,11 +210,11 @@ void NetworkInterceptionSink::resolveInspectorRequest(ResourceLoaderIdentifier i
         // going to the network process.
         RefPtr body = resolution.body;
         Ref data = SharedBuffer::create(body ? body->span() : std::span<const uint8_t> { });
-        ResourceResponse response(URL { loader->url() }, String { resolution.mimeType }, data->size(), String());
+        ResourceResponse response(URL { loader->url() }, RefPtr<StringImpl> { resolution.mimeType }, data->size(), nullptr);
         response.setSource(ResourceResponse::Source::InspectorOverride);
         if (resolution.statusCode)
             response.setHTTPStatusCode(*resolution.statusCode);
-        response.setHTTPStatusText(String { resolution.reasonPhrase });
+        response.setHTTPStatusText(RefPtr<StringImpl> { resolution.reasonPhrase });
         if (resolution.headers)
             setResponseHTTPHeaderFields(response, headerMap(*resolution.headers));
         response.setHTTPHeaderField(HTTPHeaderName::ContentType, response.mimeType());
@@ -234,7 +234,7 @@ void NetworkInterceptionSink::resolveInspectorRequest(ResourceLoaderIdentifier i
             if (RefPtr document = frame->document())
                 document->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Info, makeString("Web Inspector blocked "_s, loader->url().string(), " from loading"_s), loader->identifier() ? loader->identifier()->toUInt64() : 0));
         }
-        loader->didFail(ResourceError(errorDomainInspectorNetworkAgent, 0, loader->url(), "Blocked by Web Inspector"_s, resourceErrorType(resolution.errorType)));
+        loader->didFail(ResourceError(StringImpl::create(errorDomainInspectorNetworkAgent).ptr(), 0, loader->url(), "Blocked by Web Inspector"_si, resourceErrorType(resolution.errorType)));
         return;
     }
 }
@@ -263,10 +263,10 @@ void NetworkInterceptionSink::resolveInspectorResponse(ResourceLoaderIdentifier 
     overrideResponse.setSource(ResourceResponse::Source::InspectorOverride);
     if (resolution.statusCode)
         overrideResponse.setHTTPStatusCode(*resolution.statusCode);
-    if (!resolution.reasonPhrase.isNull())
-        overrideResponse.setHTTPStatusText(String { resolution.reasonPhrase });
-    if (!resolution.mimeType.isNull())
-        overrideResponse.setMimeType(String { resolution.mimeType });
+    if (resolution.reasonPhrase)
+        overrideResponse.setHTTPStatusText(RefPtr<StringImpl> { resolution.reasonPhrase });
+    if (resolution.mimeType)
+        overrideResponse.setMimeType(RefPtr<StringImpl> { resolution.mimeType });
     if (resolution.headers) {
         setResponseHTTPHeaderFields(overrideResponse, headerMap(*resolution.headers));
         overrideResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, overrideResponse.mimeType());

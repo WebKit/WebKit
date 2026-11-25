@@ -41,12 +41,12 @@ public:
     virtual ~WebDiagnosticLoggingClient();
 
 private:
-    void logDiagnosticMessage(const String& message, const String& description, WebCore::ShouldSample) override;
-    void logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample) override;
-    void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample) override;
-    void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, WebCore::ShouldSample) override;
-    void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, WebCore::ShouldSample) override;
-    void logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain) override;
+    void logDiagnosticMessage(StringImpl* message, StringImpl* description, WebCore::ShouldSample) override;
+    void logDiagnosticMessageWithResult(StringImpl* message, StringImpl* description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample) override;
+    void logDiagnosticMessageWithValue(StringImpl* message, StringImpl* description, double value, unsigned significantFigures, WebCore::ShouldSample) override;
+    void logDiagnosticMessageWithEnhancedPrivacy(StringImpl* message, StringImpl* description, WebCore::ShouldSample) override;
+    void logDiagnosticMessageWithValueDictionary(StringImpl* message, StringImpl* description, const ValueDictionary&, WebCore::ShouldSample) override;
+    void logDiagnosticMessageWithDomain(StringImpl* message, WebCore::DiagnosticLoggingDomain) override;
 
     WeakPtr<WebPage> m_page;
 };

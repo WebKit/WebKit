@@ -66,7 +66,7 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
     ASSERT(m_promise);
     ASSERT(!m_cachedResource);
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-imported-module-script
-    String integrity;
+    RefPtr<StringImpl> integrity;
     if (m_parameters)
         integrity = m_parameters->integrity();
     else if (auto* globalObject = document.globalObject())
@@ -103,7 +103,7 @@ void CachedModuleScriptLoader::notifyFinished(CachedResource& resource, const Ne
     notifyFinishedInternal(resource);
 }
 
-void CachedModuleScriptLoader::setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet& resource)
+void CachedModuleScriptLoader::setCSSStyleSheet(StringImpl*, const URL&, ASCIILiteral, const CachedCSSStyleSheet& resource)
 {
     notifyFinishedInternal(resource);
 }

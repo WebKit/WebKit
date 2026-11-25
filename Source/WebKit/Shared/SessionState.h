@@ -57,17 +57,17 @@ namespace WebKit {
 struct HTTPBody {
     struct Element {
         struct FileData {
-            String filePath;
+            RefPtr<StringImpl> filePath;
             int64_t fileStart;
             std::optional<int64_t> fileLength;
             std::optional<WallTime> expectedFileModificationTime;
         };
-        using BlobURLString = String;
+        using BlobURLString = RefPtr<StringImpl>;
         using Data = Variant<Vector<uint8_t>, FileData, BlobURLString>;
         Data data;
     };
 
-    String contentType;
+    RefPtr<StringImpl> contentType;
     Vector<Element> elements;
 };
 
@@ -89,16 +89,16 @@ public:
 
     void replacePayloadFrom(Ref<FrameState>&& other);
 
-    const Vector<AtomString>& documentState() const LIFETIME_BOUND { return m_documentState; }
+    const Vector<RefPtr<AtomStringImpl>>& documentState() const LIFETIME_BOUND { return m_documentState; }
     enum class ShouldValidate : bool { No, Yes };
-    void setDocumentState(const Vector<AtomString>&, ShouldValidate = ShouldValidate::No);
-    NODELETE static bool validateDocumentState(const Vector<AtomString>&);
+    void setDocumentState(const Vector<RefPtr<AtomStringImpl>>&, ShouldValidate = ShouldValidate::No);
+    NODELETE static bool validateDocumentState(const Vector<RefPtr<AtomStringImpl>>&);
     void replaceChildFrameState(Ref<FrameState>&&);
 
-    String urlString;
-    String originalURLString;
-    String referrer;
-    AtomString target;
+    RefPtr<StringImpl> urlString;
+    RefPtr<StringImpl> originalURLString;
+    RefPtr<StringImpl> referrer;
+    RefPtr<AtomStringImpl> target;
     std::optional<WebCore::FrameIdentifier> frameID;
 
     std::optional<Vector<uint8_t>> stateObjectData;
@@ -116,7 +116,7 @@ public:
 
     Markable<WebCore::BackForwardItemIdentifier> itemID;
     Markable<WebCore::BackForwardFrameItemIdentifier> frameItemID;
-    String title;
+    RefPtr<StringImpl> title;
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
     bool wasCreatedByJSWithoutUserInteraction { false };
@@ -143,21 +143,21 @@ private:
     // This is used to help debug <rdar://problem/48634553>.
     FrameState();
 
-    FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier>, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, String&& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, std::optional<WebCore::PolicyContainer>&&,
+    FrameState(RefPtr<StringImpl>&& urlString, RefPtr<StringImpl>&& originalURLString, RefPtr<StringImpl>&& referrer, RefPtr<AtomStringImpl>&& target, std::optional<WebCore::FrameIdentifier>, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, RefPtr<StringImpl>&& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, std::optional<WebCore::PolicyContainer>&&,
 #if PLATFORM(IOS_FAMILY)
         WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
-        Vector<Ref<FrameState>>&& children, Vector<AtomString>&& documentState
+        Vector<Ref<FrameState>>&& children, Vector<RefPtr<AtomStringImpl>>&& documentState
     );
 
-    FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier>, const std::optional<Vector<uint8_t>>& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, const String& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, const std::optional<WebCore::PolicyContainer>&, const std::optional<WebCore::Site>& inheritedSite,
+    FrameState(StringImpl* urlString, StringImpl* originalURLString, StringImpl* referrer, AtomStringImpl* target, std::optional<WebCore::FrameIdentifier>, const std::optional<Vector<uint8_t>>& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, StringImpl* title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, const std::optional<WebCore::PolicyContainer>&, const std::optional<WebCore::Site>& inheritedSite,
 #if PLATFORM(IOS_FAMILY)
         WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
-        const Vector<Ref<FrameState>>& children, const Vector<AtomString>& documentState
+        const Vector<Ref<FrameState>>& children, const Vector<RefPtr<AtomStringImpl>>& documentState
     );
 
-    Vector<AtomString> m_documentState;
+    Vector<RefPtr<AtomStringImpl>> m_documentState;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refFrameState, derefFrameState);
 
 // FIXME(rdar://171785683): see if this SWIFT_SELF_CONTAINED can be avoided

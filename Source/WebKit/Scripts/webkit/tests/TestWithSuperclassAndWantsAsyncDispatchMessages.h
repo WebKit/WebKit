@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -43,7 +44,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class LoadURL {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSuperclassAndWantsAsyncDispatch_LoadURL; }
     static constexpr bool isSync = false;
@@ -51,7 +52,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit LoadURL(const String& url)
+    explicit LoadURL(StringView url)
         : m_url(url)
     {
     }
@@ -63,7 +64,7 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class TestSyncMessage {

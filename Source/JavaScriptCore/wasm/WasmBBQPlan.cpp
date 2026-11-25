@@ -116,7 +116,7 @@ void BBQPlan::work()
 
     bool alreadyDumped = dumpDisassembly(context, linkBuffer, signature, functionIndexSpace);
     function->entrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF((!alreadyDumped && shouldDumpDisassemblyFor(CompilationMode::BBQMode)), linkBuffer, JITCompilationPtrTag, nullptr, "BBQ functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", callee->nameWithHash().ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")"),
+        FINALIZE_CODE_IF((!alreadyDumped && shouldDumpDisassemblyFor(CompilationMode::BBQMode)), linkBuffer, JITCompilationPtrTag, nullptr, "BBQ functionIndexSpace:(", functionIndexSpace, "),sig:(", ascii(signature.toString()).data(), "),name:(", ascii(callee->nameWithHash()).data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")"),
         WTF::move(context.wasmEntrypointByproducts));
 
     CodePtr<WasmEntryPtrTag> entrypoint;
@@ -159,7 +159,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(FunctionCodeIndex fun
     const RTT& signature = m_moduleInformation->rtt(typeSignatureIndex);
     FunctionSpaceIndex functionIndexSpace = m_moduleInformation->toSpaceIndex(functionIndex);
     ASSERT_UNUSED(functionIndexSpace, &m_moduleInformation->rtt(functionIndexSpace) == &m_moduleInformation->rtt(typeSignatureIndex));
-    std::expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
+    std::expected<std::unique_ptr<InternalFunction>, RefPtr<StringImpl>> parseAndCompileResult;
 
     beginCompilerSignpost(callee);
     RELEASE_ASSERT(mode() == m_calleeGroup->mode());
@@ -174,7 +174,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(FunctionCodeIndex fun
     return WTF::move(*parseAndCompileResult);
 }
 
-void BBQPlan::fail(String&& errorMessage, CompilationError error)
+void BBQPlan::fail(RefPtr<StringImpl>&& errorMessage, CompilationError error)
 {
     {
         Locker locker { m_lock };

@@ -67,13 +67,13 @@ static TemporalPlainMonthDay* createTemporalMonthDayImpl(JSGlobalObject* globalO
     // Not a step of this AO: ISO8601::PlainDate does not validate month/day, and daysInMonth()
     // indexes a 12-entry table by month - 1 with no bounds check.
     if (!ISO8601::isValidISODate(plainDate.year(), plainDate.month(), plainDate.day())) [[unlikely]] {
-        throwRangeError(globalObject, scope, "PlainMonthDay: invalid date"_s);
+        throwRangeError(globalObject, scope, "PlainMonthDay: invalid date"_si);
         return { };
     }
 
     // Step 1: If ISODateWithinLimits(isoDate) is false, throw RangeError.
     if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "PlainMonthDay: date out of range of ECMAScript representation"_s);
+        throwRangeError(globalObject, scope, "PlainMonthDay: date out of range of ECMAScript representation"_si);
         return { };
     }
 
@@ -122,8 +122,8 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         // Step 4: ParseISODateTime(item, « TemporalMonthDayString »).
         auto dateTime = ISO8601::parseISODateTime(string, ISO8601::TemporalProduction::MonthDay);
         if (!dateTime) [[unlikely]] {
-            String message = tryMakeString("Temporal.PlainMonthDay.from: invalid date string "_s, string);
-            throwRangeError(globalObject, scope, message.isNull() ? "Temporal.PlainMonthDay.from: invalid date string"_s : message);
+            RefPtr<StringImpl> message = tryMakeString("Temporal.PlainMonthDay.from: invalid date string "_s, string);
+            throwRangeError(globalObject, scope, !message ? "Temporal.PlainMonthDay.from: invalid date string"_si : message);
             return { };
         }
         auto [plainDateOpt, plainTimeOptional, timeZoneOptional, calendarOptional, matched, isShortForm] = WTF::move(*dateTime);
@@ -159,7 +159,7 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         //   it's the parsed year.
         int32_t fullYear = plainDate.year();
         if (!ISO8601::isYearWithinLimits(fullYear) || !ISO8601::isDateTimeWithinLimits(fullYear, plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Date is not within ISO date time limits"_s);
+            throwRangeError(globalObject, scope, "Date is not within ISO date time limits"_si);
             return { };
         }
 
@@ -168,7 +168,7 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         if (!looksLikeShortForm && ISO8601::isYearWithinLimits(plainDate.year())) {
             auto resolved = TemporalCore::plainMonthDayFromISODate(calendarId, plainDate, TemporalOverflow::Constrain);
             if (!resolved) [[unlikely]] {
-                throwRangeError(globalObject, scope, String(resolved.error().message));
+                throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
                 return { };
             }
             auto* result = TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), WTF::move(resolved->isoDate));
@@ -176,8 +176,8 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
             return result;
         }
 
-        String message = tryMakeString("Temporal.PlainMonthDay.from: invalid date string "_s, string);
-        throwRangeError(globalObject, scope, message.isNull() ? "Temporal.PlainMonthDay.from: invalid date string"_s : message);
+        RefPtr<StringImpl> message = tryMakeString("Temporal.PlainMonthDay.from: invalid date string "_s, string);
+        throwRangeError(globalObject, scope, !message ? "Temporal.PlainMonthDay.from: invalid date string"_si : message);
         return { };
     }
 
@@ -228,9 +228,9 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         auto resolved = TemporalCore::monthDayFromFields(calendarId, fields, overflow);
         if (!resolved) [[unlikely]] {
             if (resolved.error().kind == TemporalErrorKind::TypeError)
-                throwTypeError(globalObject, scope, String(resolved.error().message));
+                throwTypeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             else
-                throwRangeError(globalObject, scope, String(resolved.error().message));
+                throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             return { };
         }
 

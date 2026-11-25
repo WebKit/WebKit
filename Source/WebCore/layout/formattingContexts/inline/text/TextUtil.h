@@ -110,9 +110,9 @@ public:
     static std::optional<TextDirection> overridingDirection(const InlineTextBox&);
     static std::optional<TextDirection> overridingDirection(const RenderText&);
 
-    static AtomString ellipsisText();
+    static RefPtr<AtomStringImpl> ellipsisText();
     // For the <string> values of text-overflow and block-ellipsis.
-    static AtomString ellipsisStringWithCollapsedForcedLineBreaks(const String&);
+    static RefPtr<AtomStringImpl> ellipsisStringWithCollapsedForcedLineBreaks(StringImpl*);
 
     static InlineLayoutUnit hyphenWidth(const Style::ComputedStyle&);
 
@@ -127,7 +127,7 @@ public:
 
     static bool hasHangablePunctuationEnd(const InlineTextItem&, const Style::ComputedStyle&);
     static float hangablePunctuationEndWidth(const InlineTextItem&, const Style::ComputedStyle&);
-    static float hangablePunctuationEndWidth(const String&, const Style::ComputedStyle&);
+    static float hangablePunctuationEndWidth(StringImpl*, const Style::ComputedStyle&);
 
     static bool hasHangableStopOrCommaEnd(const InlineTextItem&, const Style::ComputedStyle&);
     static float hangableStopOrCommaEndWidth(const InlineTextItem&, const Style::ComputedStyle&);
@@ -136,6 +136,20 @@ public:
     static bool hasPositionDependentContentWidth(StringView);
 
     NODELETE static char32_t lastBaseCharacterFromText(StringView);
+
+    // Indexes text content the way String::operator[] did: a null string or an out-of-range index reads as 0. ICU's U16_*
+    // macros used with line breaking can read one code unit past the range they are given.
+    class CodeUnits {
+    public:
+        explicit CodeUnits(RefPtr<StringImpl> string)
+            : m_string(WTF::move(string))
+        {
+        }
+        char16_t operator[](size_t index) const { return codeUnitAt(m_string, index); }
+
+    private:
+        RefPtr<StringImpl> m_string;
+    };
 };
 
 } // namespace Layout

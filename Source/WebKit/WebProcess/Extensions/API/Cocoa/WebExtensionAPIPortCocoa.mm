@@ -80,7 +80,7 @@ void WebExtensionAPIPort::add()
 
     addResult.iterator->value.add(*this);
 
-    RELEASE_LOG_DEBUG(Extensions, "Added port for channel %{public}llu in %{public}@ world", channelIdentifier().toUInt64(), toDebugString(contentWorldType()).createNSString().get());
+    RELEASE_LOG_DEBUG(Extensions, "Added port for channel %{public}llu in %{public}@ world", channelIdentifier().toUInt64(), createNSString(toDebugString(contentWorldType())).get());
 }
 
 void WebExtensionAPIPort::remove()
@@ -106,7 +106,7 @@ void WebExtensionAPIPort::remove()
 
 NSString *WebExtensionAPIPort::name()
 {
-    return m_name.createNSString().autorelease();
+    return createNSString(m_name).autorelease();
 }
 
 JSValueRef WebExtensionAPIPort::sender(JSContextRef context)
@@ -131,19 +131,19 @@ void WebExtensionAPIPort::postMessage(WebFrame& frame, const WebExtensionMessage
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port#postmessage
 
     if (isDisconnected()) {
-        *outExceptionString = toErrorString(nullString(), nullString(), @"the port is disconnected").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), nullString(), StringImpl::create(@"the port is disconnected").get())).autorelease();
         return;
     }
 
     if (message.length() > webExtensionMaxMessageLength) {
-        *outExceptionString = toErrorString(nullString(), @"message", @"it exceeded the maximum allowed length").createNSString().autorelease();
+        *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"message").get(), StringImpl::create(@"it exceeded the maximum allowed length").get())).autorelease();
         return;
     }
 
     if (isQuarantined())
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Sent port message for channel %{public}llu from %{public}@ world", channelIdentifier().toUInt64(), toDebugString(contentWorldType()).createNSString().get());
+    RELEASE_LOG_DEBUG(Extensions, "Sent port message for channel %{public}llu from %{public}@ world", channelIdentifier().toUInt64(), createNSString(toDebugString(contentWorldType())).get());
 
     bool userGesture = WebCore::UserGestureIndicator::processingUserGesture();
     WebProcess::singleton().send(Messages::WebExtensionContext::PortPostMessage(contentWorldType(), targetContentWorldType(), owningPageProxyIdentifier(), channelIdentifier(), message, userGesture), extensionContext().identifier());
@@ -156,7 +156,7 @@ void WebExtensionAPIPort::disconnect()
     if (isDisconnected())
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Port channel %{public}llu disconnected in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, toDebugString(contentWorldType()).createNSString().get());
+    RELEASE_LOG_DEBUG(Extensions, "Port channel %{public}llu disconnected in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, createNSString(toDebugString(contentWorldType())).get());
 
     m_disconnected = true;
 
@@ -171,7 +171,7 @@ void WebExtensionAPIPort::fireMessageEventIfNeeded(const WebExtensionMessage& me
     if (isDisconnected() || isQuarantined() || !m_onMessage || m_onMessage->listeners().isEmpty())
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Fired port message event for channel %{public}llu in %{public}@ world", channelIdentifier().toUInt64(), toDebugString(contentWorldType()).createNSString().get());
+    RELEASE_LOG_DEBUG(Extensions, "Fired port message event for channel %{public}llu in %{public}@ world", channelIdentifier().toUInt64(), createNSString(toDebugString(contentWorldType())).get());
 
     // Copy the listeners since call() can trigger a mutation of the listeners.
     auto listenersCopy = m_onMessage->listeners();
@@ -203,7 +203,7 @@ void WebExtensionAPIPort::fireDisconnectEventIfNeeded()
     if (!m_onDisconnect || m_onDisconnect->listeners().isEmpty())
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Fired port disconnect event for channel %{public}llu in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, toDebugString(contentWorldType()).createNSString().get());
+    RELEASE_LOG_DEBUG(Extensions, "Fired port disconnect event for channel %{public}llu in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, createNSString(toDebugString(contentWorldType())).get());
 
     // Copy the listeners since call() can trigger a mutation of the listeners.
     auto listenersCopy = m_onDisconnect->listeners();

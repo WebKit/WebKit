@@ -133,7 +133,7 @@ static uint64_t validateAtomicAccess(JSGlobalObject* globalObject, VM& vm, JSArr
     }
 
     if (accessIndex >= length) {
-        throwRangeError(globalObject, scope, "Access index out of bounds for atomic access."_s);
+        throwRangeError(globalObject, scope, "Access index out of bounds for atomic access."_si);
         return 0;
     }
     

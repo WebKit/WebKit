@@ -231,35 +231,35 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
     return tree ? tree->objectForID(*objectID()) : nullptr;
 }
 
-String AXTextMarker::description() const
+RefPtr<StringImpl> AXTextMarker::description() const
 {
     auto separator = ", "_s;
     RefPtr object = this->object();
 
     // Most text markers have the default affinity of downstream — avoid noisy output by only logging anything if
     // the value is the non-default one: upstream.
-    String affinity = m_data.affinity == Affinity::Downstream ? ""_s : makeString(separator, "upstream"_s);
-    String origin = m_data.origin == TextMarkerOrigin::Unknown ? ""_s : makeString(separator, originToString(m_data.origin));
+    RefPtr<StringImpl> affinity = m_data.affinity == Affinity::Downstream ? ""_si : makeString(separator, "upstream"_s);
+    RefPtr<StringImpl> origin = m_data.origin == TextMarkerOrigin::Unknown ? ""_si : makeString(separator, originToString(m_data.origin));
 
     return makeString("{"_s
-        , object ? makeString("role "_s, roleToString(object->role())) : "no object"_s
-        , isRedacted() ? makeString(separator, "redacted"_s) : ""_s
+        , object ? makeString("role "_s, roleToString(object->role())) : "no object"_si
+        , isRedacted() ? makeString(separator, "redacted"_s) : ""_si
         // Anchor type and other fields below are not used for text markers processed off the main-thread.
-        , isMainThread() ? makeString(separator, "anchor "_s, m_data.anchorType) : ""_s
+        , isMainThread() ? makeString(separator, "anchor "_s, m_data.anchorType) : ""_si
         , affinity
         , separator, "offset "_s, m_data.offset
-        , isMainThread() ? makeString(separator, "charStart "_s, m_data.characterStart) : ""_s
-        , isMainThread() ? makeString(separator, "charOffset "_s, m_data.characterOffset) : ""_s
+        , isMainThread() ? makeString(separator, "charStart "_s, m_data.characterStart) : ""_si
+        , isMainThread() ? makeString(separator, "charOffset "_s, m_data.characterOffset) : ""_si
         , origin
         , "}"_s
     );
 }
 
-String AXTextMarker::debugDescription() const
+RefPtr<StringImpl> AXTextMarker::debugDescription() const
 {
-    String description = this->description();
+    RefPtr<StringImpl> description = this->description();
     RefPtr object = this->object();
-    String id = object ? makeString("ID "_s, object->objectID().loggingString()) : String("no object"_s);
+    RefPtr<StringImpl> id = object ? makeString("ID "_s, object->objectID().loggingString()) : "no object"_si;
 
     // Insert the object ID after the opening brace.
     return makeString("{"_s, id, ", "_s, StringView(description).substring(1));
@@ -474,14 +474,14 @@ std::optional<AXTextMarkerRange> AXTextMarkerRange::intersectionWith(const AXTex
     return { AXTextMarkerRange(intersection) };
 }
 
-String AXTextMarkerRange::description() const
+RefPtr<StringImpl> AXTextMarkerRange::description() const
 {
     return makeString("text: '"_s, toString(), "'"_s,
         ", start: {"_s, m_start.description(), '}',
         ", end: {"_s, m_end.description(), '}');
 }
 
-String AXTextMarkerRange::debugDescription() const
+RefPtr<StringImpl> AXTextMarkerRange::debugDescription() const
 {
     return makeString("text: '"_s, toString(), "'"_s,
         ", start: {"_s, m_start.debugDescription(), '}',
@@ -533,7 +533,7 @@ bool AXTextMarkerRange::isConfinedTo(std::optional<AXID> objectID) const
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-String listMarkerTextOnSameLine(const AXTextMarker& marker)
+RefPtr<StringImpl> listMarkerTextOnSameLine(const AXTextMarker& marker)
 {
     RefPtr textMarkerObject = marker.object();
     if (!textMarkerObject)
@@ -580,7 +580,7 @@ void AXTextMarkerRange::forEachTextPiece(IncludeListMarkerText includeListMarker
     };
 
     if (includeListMarkerText == IncludeListMarkerText::Yes) {
-        String listMarkerText = listMarkerTextOnSameLine(start);
+        RefPtr<StringImpl> listMarkerText = listMarkerTextOnSameLine(start);
         emit(listMarkerText);
     }
 
@@ -602,7 +602,7 @@ void AXTextMarkerRange::forEachTextPiece(IncludeListMarkerText includeListMarker
     auto emitAuxiliaryText = [&] (AXIsolatedObject& object, TraversalPoint traversalPoint) {
         if (traversalPoint == TraversalPoint::ReachedInPreOrder && includeImageAltText == IncludeImageAltText::Yes && object.isImage()) {
             // This is an image, so add alt text (if it has any).
-            String description = object.description();
+            RefPtr<StringImpl> description = object.description();
             emit(description);
             return;
         }
@@ -643,7 +643,7 @@ unsigned AXTextMarkerRange::length(IncludeListMarkerText includeListMarkerText) 
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText, IncludeImageAltText includeImageAltText) const
+RefPtr<StringImpl> AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText, IncludeImageAltText includeImageAltText) const
 {
 #if !ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     UNUSED_PARAM(includeListMarkerText);
@@ -688,7 +688,7 @@ String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText, 
                 builder.append(objectReplacementCharacter);
         }
     }
-    return builder.toString().isolatedCopy();
+    return isolatedCopy(builder.toString());
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -1719,17 +1719,17 @@ AXTextMarker AXTextMarker::findWordOrSentence(AXDirection direction, bool findWo
     unsigned offset = this->offset();
     AXTextMarker resultMarker = *this;
 
-    String flattenedRuns = currentRuns->toString();
+    RefPtr<StringImpl> flattenedRuns = currentRuns->toString();
 
     // objectBorder maintains the position in flattenedRuns between the current object's text and the previously scanned object(s)
-    int objectBorder = direction == AXDirection::Next ? 0 : flattenedRuns.length();
+    int objectBorder = direction == AXDirection::Next ? 0 : length(flattenedRuns);
     // Position in flattenedRuns of the boundary the backwards iterators last found, if they found one.
     std::optional<int> backwardsBoundaryIndex;
 
     // Functions to update resultMarker for word and sentence text units.
     auto updateWordResultMarker = [&] () {
         if (direction == AXDirection::Previous && boundary == AXTextUnitBoundary::Start) {
-            TEXT_MARKER_ASSERT_SINGLE(offset <= flattenedRuns.length(), (*this));
+            TEXT_MARKER_ASSERT_SINGLE(offset <= length(flattenedRuns), (*this));
             int previousWordStart = findNextWordFromIndex(flattenedRuns, offset, false);
             backwardsBoundaryIndex = previousWordStart;
             if (previousWordStart <= objectBorder)
@@ -1746,8 +1746,8 @@ AXTextMarker AXTextMarker::findWordOrSentence(AXDirection direction, bool findWo
                 // Sometimes, the end word boundary will just return a whitespace word. For example: "Hello| world", with the text marker after hello, will return a text marker before world ("Hello |world").
                 // If we detect this case, we want to continue searching for the next next-word-end.
                 auto rangeString = AXTextMarkerRange(*this, resultMarker).toString();
-                if (rangeString.containsOnly<isASCIIWhitespace>()) {
-                    findEndWordBoundary(flattenedRuns, offset + rangeString.length(), &nextWordEnd);
+                if (containsOnly<isASCIIWhitespace>(rangeString)) {
+                    findEndWordBoundary(flattenedRuns, offset + length(rangeString), &nextWordEnd);
                     if (nextWordEnd >= objectBorder)
                         resultMarker = AXTextMarker(*currentObject, nextWordEnd - objectBorder, origin);
                 }
@@ -1821,7 +1821,7 @@ AXTextMarker AXTextMarker::findWordOrSentence(AXDirection direction, bool findWo
                 objectBorder = newRunsFlattenedString.length();
             } else {
                 // We don't need to update the offset when moving fowards, since text is being appended to the end of flattenedRuns
-                objectBorder = flattenedRuns.length();
+                objectBorder = length(flattenedRuns);
                 flattenedRuns = makeString(flattenedRuns, newRunsFlattenedString);
             }
         }
@@ -2007,7 +2007,7 @@ AXTextMarkerRange AXTextMarker::sentenceRange(SentenceRangeType type) const
         endMarker = startMarker.nextSentenceEnd();
         auto rangeString = AXTextMarkerRange { startMarker, endMarker }.toString();
         // If the sentence iterator returned a string of all whitespace characters, make the range out of the start marker (to match live tree behavior).
-        if (rangeString.containsOnly<isASCIIWhitespace>())
+        if (containsOnly<isASCIIWhitespace>(rangeString))
             endMarker = startMarker;
     }
 
@@ -2026,7 +2026,7 @@ AXTextMarkerRange AXTextMarker::paragraphRange() const
     AXTextMarker startMarker = findParagraph(AXDirection::Previous, AXTextUnitBoundary::Start);
     AXTextMarker endMarker = findParagraph(AXDirection::Next, AXTextUnitBoundary::End);
     auto rangeString = AXTextMarkerRange { startMarker, endMarker }.toString();
-    if (rangeString.containsOnly<isASCIIWhitespace>())
+    if (containsOnly<isASCIIWhitespace>(rangeString))
         endMarker = startMarker;
 
     return { WTF::move(startMarker), WTF::move(endMarker) };

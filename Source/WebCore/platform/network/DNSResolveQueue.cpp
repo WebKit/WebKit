@@ -92,7 +92,7 @@ bool DNSResolveQueue::isUsingProxy()
     return m_isUsingProxy;
 }
 
-void DNSResolveQueue::add(const String& hostname)
+void DNSResolveQueue::add(StringImpl* hostname)
 {
     // If there are no names queued, and few enough are in flight, resolve immediately (the mouse may be over a link).
     if (!m_names.size()) {
@@ -125,7 +125,7 @@ void DNSResolveQueue::timerFired()
 
     for (; !m_names.isEmpty() && requestsAllowed > 0; --requestsAllowed) {
         ++m_requestsInFlight;
-        HashSet<String>::iterator currentName = m_names.begin();
+        HashSet<RefPtr<StringImpl>>::iterator currentName = m_names.begin();
         platformResolve(*currentName);
         m_names.remove(currentName);
     }

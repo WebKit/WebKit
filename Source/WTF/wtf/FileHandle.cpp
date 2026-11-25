@@ -87,7 +87,7 @@ std::optional<Vector<uint8_t>> FileHandle::readAll()
     return buffer;
 }
 
-bool FileHandle::appendFileContents(const String& path)
+bool FileHandle::appendFileContents(StringImpl* path)
 {
     auto source = openFile(path, FileOpenMode::Read);
     if (!source)

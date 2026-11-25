@@ -55,7 +55,7 @@ void SessionHost::inspectorDisconnected()
 
     // Browser closed or crashed, finish all pending commands with error.
     RefPtr<JSON::Object> errorResponse = JSON::Object::create();
-    errorResponse->setString("message"_s, "Session terminated without a reply"_s);
+    errorResponse->setString("message"_si, "Session terminated without a reply"_si);
     for (auto messageID : copyToVector(m_commandRequests.keys())) {
         auto responseHandler = m_commandRequests.take(messageID);
         responseHandler({ errorResponse , true });
@@ -67,7 +67,7 @@ void SessionHost::inspectorDisconnected()
 #endif
 }
 
-long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&& responseHandler)
+long SessionHost::sendCommandToBackend(StringImpl* command, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&& responseHandler)
 {
     if (!isConnected()) {
         responseHandler({ nullptr, true });
@@ -82,13 +82,13 @@ long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Objec
     if (parameters)
         messageBuilder.append(",\"params\":"_s, parameters->toJSONString());
     messageBuilder.append('}');
-    RELEASE_LOG_INFO(SessionHost, "    SEND inspector #%04ld: Automation.%s (%u bytes)", sequenceID, command.utf8(), messageBuilder.length());
+    RELEASE_LOG_INFO(SessionHost, "    SEND inspector #%04ld: Automation.%s (%u bytes)", sequenceID, utf8(command), messageBuilder.length());
     sendMessageToBackend(messageBuilder.toString());
 
     return sequenceID;
 }
 
-void SessionHost::dispatchMessage(const String& message)
+void SessionHost::dispatchMessage(StringImpl* message)
 {
     LOG_WITH_STREAM(SessionHost, stream << "SessionHost::dispatchMessage: "_s << message);
     auto messageValue = JSON::Value::parseJSON(message);
@@ -99,17 +99,17 @@ void SessionHost::dispatchMessage(const String& message)
     if (!messageObject)
         return;
 
-    auto sequenceID = messageObject->getInteger("id"_s);
+    auto sequenceID = messageObject->getInteger("id"_si);
     if (!sequenceID) {
-        auto method = messageObject->getString("method"_s);
-        if (method == "Automation.browsingContextCleared"_s)
+        auto method = messageObject->getString("method"_si);
+        if (equal(method, "Automation.browsingContextCleared"_s))
             return;
 #if ENABLE(WEBDRIVER_BIDI)
-        if (method != "Automation.bidiMessageSent"_s)
+        if (!equal(method, "Automation.bidiMessageSent"_s))
             return;
         dispatchBidiMessage(WTF::move(messageObject));
 #else
-        RELEASE_LOG_ERROR(SessionHost, "Received from browser message without id: %s", message.utf8());
+        RELEASE_LOG_ERROR(SessionHost, "Received from browser message without id: %s", utf8(message));
 #endif
         return;
     }
@@ -122,10 +122,10 @@ void SessionHost::dispatchMessage(const String& message)
     }
 
     CommandResponse response;
-    if (auto errorObject = messageObject->getObject("error"_s)) {
+    if (auto errorObject = messageObject->getObject("error"_si)) {
         response.responseObject = WTF::move(errorObject);
         response.isError = true;
-    } else if (auto resultObject = messageObject->getObject("result"_s)) {
+    } else if (auto resultObject = messageObject->getObject("result"_si)) {
         if (resultObject->size())
             response.responseObject = WTF::move(resultObject);
     }
@@ -157,7 +157,7 @@ void SessionHost::dispatchBidiMessage(RefPtr<JSON::Object>&& event)
     if (m_bidiHandler)
         m_bidiHandler->dispatchBidiMessage(WTF::move(event));
     else
-        RELEASE_LOG(SessionHost, "No bidi message handler to dispatch message %s", event->toJSONString().utf8());
+        RELEASE_LOG(SessionHost, "No bidi message handler to dispatch message %s", utf8(event->toJSONString()));
 }
 #endif
 

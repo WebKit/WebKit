@@ -71,12 +71,12 @@ public:
 #if PLATFORM(COCOA)
     virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }
 #endif
-    virtual void setPDFDisplayModeForTesting(const String&) { }
-    virtual bool sendEditingCommandToPDFForTesting(const String&, const String&) { return false; }
+    virtual void setPDFDisplayModeForTesting(StringImpl*) { }
+    virtual bool sendEditingCommandToPDFForTesting(StringImpl*, StringImpl*) { return false; }
     virtual Vector<FloatRect> pdfAnnotationRectsForTesting() const { return { }; }
-    virtual void unlockPDFDocumentForTesting(const String&) { }
-    virtual void setPDFTextAnnotationValueForTesting(unsigned /* pageIndex */, unsigned /* annotationIndex */, const String& /* value */) { };
-    virtual Vector<String> pdfContextMenuItemTitlesForTesting(const IntPoint& /* pointInRootView */) const { return { }; }
+    virtual void unlockPDFDocumentForTesting(StringImpl*) { }
+    virtual void setPDFTextAnnotationValueForTesting(unsigned /* pageIndex */, unsigned /* annotationIndex */, StringImpl* /* value */) { };
+    virtual Vector<RefPtr<StringImpl>> pdfContextMenuItemTitlesForTesting(const IntPoint& /* pointInRootView */) const { return { }; }
     virtual IntRect pdfBoundsOnScreenForTesting() const { return { }; }
 
     virtual void releaseMemory() { }

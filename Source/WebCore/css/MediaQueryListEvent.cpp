@@ -32,26 +32,26 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaQueryListEvent);
 
-MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, const String& media, bool matches)
+MediaQueryListEvent::MediaQueryListEvent(AtomStringImpl* type, StringImpl* media, bool matches)
     : Event(EventInterfaceType::MediaQueryListEvent, type, CanBubble::No, IsCancelable::No)
     , m_media(media)
     , m_matches(matches)
 {
 }
 
-MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+MediaQueryListEvent::MediaQueryListEvent(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
     : Event(EventInterfaceType::MediaQueryListEvent, type, WTF::move(init), isTrusted)
     , m_media(WTF::move(init.media))
     , m_matches(init.matches)
 {
 }
 
-Ref<MediaQueryListEvent> MediaQueryListEvent::create(const AtomString& type, const String& media, bool matches)
+Ref<MediaQueryListEvent> MediaQueryListEvent::create(AtomStringImpl* type, StringImpl* media, bool matches)
 {
     return adoptRef(*new MediaQueryListEvent(type, media, matches));
 }
 
-Ref<MediaQueryListEvent> MediaQueryListEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
+Ref<MediaQueryListEvent> MediaQueryListEvent::create(AtomStringImpl* type, Init&& init, IsTrusted isTrusted)
 {
     return adoptRef(*new MediaQueryListEvent(type, WTF::move(init), isTrusted));
 }

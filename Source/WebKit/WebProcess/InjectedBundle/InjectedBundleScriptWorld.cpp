@@ -46,7 +46,7 @@ NODELETE static DOMWrapperWorldMap& allWorlds()
     return map;
 }
 
-static String uniqueWorldName()
+static RefPtr<StringImpl> uniqueWorldName()
 {
     static uint64_t uniqueWorldNameNumber = 0;
     return makeString("UniqueWorld_"_s, uniqueWorldNameNumber++);
@@ -57,7 +57,7 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(ContentWorldIde
     return InjectedBundleScriptWorld::create(identifier, uniqueWorldName(), type);
 }
 
-Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(ContentWorldIdentifier identifier, const String& name, Type type)
+Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(ContentWorldIdentifier identifier, StringImpl* name, Type type)
 {
     return adoptRef(*new InjectedBundleScriptWorld(identifier, ScriptController::createWorld(name, type == Type::User ? ScriptController::WorldType::User : ScriptController::WorldType::Internal), name));
 }
@@ -80,10 +80,10 @@ RefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::get(const WebCore::
     return nullptr;
 }
 
-InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
+InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(StringImpl* name)
 {
     for (auto& world : allWorlds().values()) {
-        if (world->name() == name)
+        if (equal(world->name(), name))
             return world.ptr();
     }
     return nullptr;
@@ -91,11 +91,11 @@ InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
 
 InjectedBundleScriptWorld& InjectedBundleScriptWorld::normalWorldSingleton()
 {
-    static NeverDestroyed<Ref<InjectedBundleScriptWorld>> world = adoptRef(*new InjectedBundleScriptWorld(pageContentWorldIdentifier(), mainThreadNormalWorldSingleton(), String())).leakRef();
+    static NeverDestroyed<Ref<InjectedBundleScriptWorld>> world = adoptRef(*new InjectedBundleScriptWorld(pageContentWorldIdentifier(), mainThreadNormalWorldSingleton(), nullString())).leakRef();
     return world.get();
 }
 
-InjectedBundleScriptWorld::InjectedBundleScriptWorld(ContentWorldIdentifier identifier, DOMWrapperWorld& world, const String& name)
+InjectedBundleScriptWorld::InjectedBundleScriptWorld(ContentWorldIdentifier identifier, DOMWrapperWorld& world, StringImpl* name)
     : m_identifier(identifier)
     , m_world(world)
     , m_name(name)

@@ -98,7 +98,7 @@ public:
 
     static DragImage create(NativeImage&, GraphicsClient* = nullptr, float deviceScaleFactor = 1);
     static DragImage createForColor(const Color&, const FloatRect&, float, Path&);
-    static DragImage createIconForCachedImageFilename(const String&);
+    static DragImage createIconForCachedImageFilename(StringImpl*);
 
     explicit operator bool() const { return !!m_platformImage; }
     const PlatformDragImage& platformImage() const LIFETIME_BOUND { return m_platformImage; }

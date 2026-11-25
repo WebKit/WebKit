@@ -32,7 +32,7 @@
 namespace WebKit {
 
 struct RemoteCDMInstanceConfiguration {
-    String keySystem;
+    RefPtr<StringImpl> keySystem;
 };
 
 } // namespace WebKit

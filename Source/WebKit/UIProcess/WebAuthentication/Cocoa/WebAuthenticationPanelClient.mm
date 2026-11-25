@@ -130,16 +130,16 @@ void WebAuthenticationPanelClient::dismissPanel(WebAuthenticationResult result) 
     [delegate panel:m_panel.get().get() dismissWebAuthenticationPanelWithResult:wkWebAuthenticationResult(result)];
 }
 
-void WebAuthenticationPanelClient::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler) const
+void WebAuthenticationPanelClient::requestPin(uint64_t retries, CompletionHandler<void(StringImpl*)>&& completionHandler) const
 {
     if (!m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler) {
-        completionHandler(String());
+        completionHandler(nullString());
         return;
     }
 
     auto delegate = m_delegate.get();
     if (!delegate) {
-        completionHandler(String());
+        completionHandler(nullString());
         return;
     }
 
@@ -149,21 +149,21 @@ void WebAuthenticationPanelClient::requestPin(uint64_t retries, CompletionHandle
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
-            completionHandler(pin.get());
+            completionHandler(StringImpl::create(pin.get()));
         });
     }).get()];
 }
 
-void WebAuthenticationPanelClient::requestNewPin(uint64_t minLength, CompletionHandler<void(const WTF::String&)>&& completionHandler) const
+void WebAuthenticationPanelClient::requestNewPin(uint64_t minLength, CompletionHandler<void(StringImpl*)>&& completionHandler) const
 {
     if (!m_delegateMethods.panelRequestNewPinWithMinLengthCompletionHandler) {
-        completionHandler(String());
+        completionHandler(nullString());
         return;
     }
 
     auto delegate = m_delegate.get();
     if (!delegate) {
-        completionHandler(String());
+        completionHandler(nullString());
         return;
     }
 
@@ -173,7 +173,7 @@ void WebAuthenticationPanelClient::requestNewPin(uint64_t minLength, CompletionH
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
-            completionHandler(pin.get());
+            completionHandler(StringImpl::create(pin.get()));
         });
     }).get()];
 }

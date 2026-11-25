@@ -71,7 +71,7 @@ public:
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
     void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) { m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy; }
 
-    const AtomString& downloadAttribute() const LIFETIME_BOUND { return m_downloadAttribute; }
+    const RefPtr<AtomStringImpl>& downloadAttribute() const LIFETIME_BOUND { return m_downloadAttribute; }
 
     Element* sourceElement() const { return m_sourceElement.get(); }
     void setSourceElement(Element* sourceElement) { m_sourceElement = sourceElement; }
@@ -104,7 +104,7 @@ protected:
     FrameLoadRequestBase& operator=(FrameLoadRequestBase&&) = default;
     ~FrameLoadRequestBase() = default;
 
-    void setDownloadAttribute(const AtomString& downloadAttribute) { m_downloadAttribute = downloadAttribute; }
+    void setDownloadAttribute(AtomStringImpl* downloadAttribute) { m_downloadAttribute = downloadAttribute; }
     void setInitiatedByMainFrame(InitiatedByMainFrame initiatedByMainFrame) { m_initiatedByMainFrame = initiatedByMainFrame; }
 
 private:
@@ -115,7 +115,7 @@ private:
     RegistrableDomain m_openedByScriptDomain;
     ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL { ReplaceDocumentIfJavaScriptURL };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
-    AtomString m_downloadAttribute;
+    RefPtr<AtomStringImpl> m_downloadAttribute;
     RefPtr<Element> m_sourceElement;
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
     std::optional<BackForwardItemIdentifier> m_targetBackForwardItemIdentifier;
@@ -128,7 +128,7 @@ private:
 
 class FrameLoadRequest : public FrameLoadRequestBase {
 public:
-    WEBCORE_EXPORT FrameLoadRequest(Ref<Document>&&, SecurityOrigin&, ResourceRequest&&, const AtomString& frameName, InitiatedByMainFrame, const AtomString& downloadAttribute = { });
+    WEBCORE_EXPORT FrameLoadRequest(Ref<Document>&&, SecurityOrigin&, ResourceRequest&&, AtomStringImpl* frameName, InitiatedByMainFrame, AtomStringImpl* downloadAttribute = nullptr);
     WEBCORE_EXPORT FrameLoadRequest(LocalFrame&, ResourceRequest&&, SubstituteData&& = SubstituteData());
 
     WEBCORE_EXPORT ~FrameLoadRequest();
@@ -151,8 +151,8 @@ public:
     bool hasOriginalResourceRequest() const { return !!m_originalResourceRequest; }
     ResourceRequest takeOriginalResourceRequest() { return m_originalResourceRequest.value_or(ResourceRequest { }); }
 
-    const AtomString& frameName() const LIFETIME_BOUND { return m_frameName; }
-    void setFrameName(const AtomString& frameName) { m_frameName = frameName; }
+    const RefPtr<AtomStringImpl>& frameName() const LIFETIME_BOUND { return m_frameName; }
+    void setFrameName(AtomStringImpl* frameName) { m_frameName = frameName; }
 
     void setShouldCheckNewWindowPolicy(bool checkPolicy) { m_shouldCheckNewWindowPolicy = checkPolicy; }
     bool shouldCheckNewWindowPolicy() const { return m_shouldCheckNewWindowPolicy; }
@@ -166,8 +166,8 @@ public:
     SubstituteData takeSubstituteData() { return std::exchange(m_substituteData, { }); }
 
 
-    const String& clientRedirectSourceForHistory() const LIFETIME_BOUND { return m_clientRedirectSourceForHistory; }
-    void setClientRedirectSourceForHistory(String&& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = WTF::move(clientRedirectSourceForHistory); }
+    const RefPtr<StringImpl>& clientRedirectSourceForHistory() const LIFETIME_BOUND { return m_clientRedirectSourceForHistory; }
+    void setClientRedirectSourceForHistory(RefPtr<StringImpl>&& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = WTF::move(clientRedirectSourceForHistory); }
 
     ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
     void setReferrerPolicy(const ReferrerPolicy& referrerPolicy) { m_referrerPolicy = referrerPolicy; }
@@ -204,9 +204,9 @@ private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
     ResourceRequest m_resourceRequest;
-    AtomString m_frameName;
+    RefPtr<AtomStringImpl> m_frameName;
     SubstituteData m_substituteData;
-    String m_clientRedirectSourceForHistory;
+    RefPtr<StringImpl> m_clientRedirectSourceForHistory;
     Markable<ResourceRequest> m_originalResourceRequest;
 
     bool m_shouldCheckNewWindowPolicy { false };

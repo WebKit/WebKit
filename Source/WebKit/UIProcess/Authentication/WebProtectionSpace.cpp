@@ -35,7 +35,7 @@ WebProtectionSpace::WebProtectionSpace(const WebCore::ProtectionSpace& coreProte
 {
 }
 
-const String& WebProtectionSpace::host() const
+const RefPtr<StringImpl>& WebProtectionSpace::host() const
 {
     return m_coreProtectionSpace.host();
 }
@@ -45,7 +45,7 @@ int WebProtectionSpace::port() const
     return m_coreProtectionSpace.port();
 }
 
-const String& WebProtectionSpace::realm() const
+const RefPtr<StringImpl>& WebProtectionSpace::realm() const
 {
     return m_coreProtectionSpace.realm();
 }

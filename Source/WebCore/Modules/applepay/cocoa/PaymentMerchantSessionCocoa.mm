@@ -36,14 +36,14 @@
 
 namespace WebCore {
 
-std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, String&)
+std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, RefPtr<StringImpl>&)
 {
     // FIXME: Don't round-trip using NSString.
     auto jsonString = JSONStringify(&lexicalGlobalObject, value, 0);
     if (!jsonString)
         return std::nullopt;
 
-    RetainPtr dictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:retainPtr([jsonString.createNSString().get() dataUsingEncoding:NSUTF8StringEncoding]).get() options:0 error:nil]);
+    RetainPtr dictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:retainPtr([createNSString(jsonString).get() dataUsingEncoding:NSUTF8StringEncoding]).get() options:0 error:nil]);
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]])
         return std::nullopt;
 

@@ -106,8 +106,8 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
 
     auto cueData = InbandGenericCue::create();
     StringBuilder content;
-    String attributedStringValue = CFAttributedStringGetString(attributedString);
-    CFIndex length = attributedStringValue.length();
+    RefPtr<StringImpl> attributedStringValue = StringImpl::create(protect(CFAttributedStringGetString(attributedString)).get());
+    CFIndex length = WTF::length(attributedStringValue);
     if (!length)
         return cueData;
 
@@ -119,7 +119,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             continue;
 
         StringBuilder tagStart;
-        String tagEnd;
+        RefPtr<StringImpl> tagEnd;
         CFIndex attributeCount = CFDictionaryGetCount(attributes.get());
         Vector<const void*> keys(attributeCount);
         Vector<const void*> values(attributeCount);
@@ -265,7 +265,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                     continue;
                 processed |= FontName;
 
-                cueData->setFontName(valueString.get());
+                cueData->setFontName(StringImpl::create(valueString.get()).get());
                 continue;
             }
 
@@ -356,7 +356,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
                 continue;
 
             auto cueData = processCueAttributes(attributedString.get());
-            if (!cueData->content().length())
+            if (!length(cueData->content()))
                 continue;
 
             cueData->setStartTime(time);

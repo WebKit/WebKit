@@ -829,19 +829,19 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& loader)
     firstPageSemaphore.wait();
 
 #if !LOG_DISABLED
-    incrementalLoaderLog("Finished preloading first page"_s);
+    incrementalLoaderLog("Finished preloading first page"_si);
 #endif
 }
 
 #if !LOG_DISABLED
-void PDFIncrementalLoader::incrementalLoaderLog(const String& message)
+void PDFIncrementalLoader::incrementalLoaderLog(StringImpl* message)
 {
     RefPtr plugin = m_plugin.get();
     if (!plugin)
         return;
 
     if (!isMainRunLoop()) {
-        callOnMainRunLoop([protectedPlugin = plugin, message = message.isolatedCopy()] {
+        callOnMainRunLoop([protectedPlugin = plugin, message = isolatedCopy(message)] {
             protectedPlugin->incrementalLoaderLog(message);
         });
         return;

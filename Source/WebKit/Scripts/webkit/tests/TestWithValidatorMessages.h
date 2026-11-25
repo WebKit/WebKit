@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -43,7 +44,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class AlwaysEnabled {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_AlwaysEnabled; }
     static constexpr bool isSync = false;
@@ -51,7 +52,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit AlwaysEnabled(const String& url)
+    explicit AlwaysEnabled(StringView url)
         : m_url(url)
     {
     }
@@ -63,12 +64,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class EnabledIfPassValidation {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_EnabledIfPassValidation; }
     static constexpr bool isSync = false;
@@ -76,7 +77,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit EnabledIfPassValidation(const String& url)
+    explicit EnabledIfPassValidation(StringView url)
         : m_url(url)
     {
     }
@@ -88,12 +89,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class EnabledIfSomeFeatureEnabledAndPassValidation {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation; }
     static constexpr bool isSync = false;
@@ -101,7 +102,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit EnabledIfSomeFeatureEnabledAndPassValidation(const String& url)
+    explicit EnabledIfSomeFeatureEnabledAndPassValidation(StringView url)
         : m_url(url)
     {
     }
@@ -113,12 +114,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class MessageWithReply {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<RefPtr<StringImpl>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_MessageWithReply; }
     static constexpr bool isSync = false;
@@ -128,10 +129,10 @@ public:
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithValidator_MessageWithReplyReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using ReplyArguments = std::tuple<String, double>;
-    using Reply = CompletionHandler<void(String&&, double)>;
-    using Promise = WTF::NativePromise<std::tuple<String, double>, IPC::Error>;
-    explicit MessageWithReply(const String& url)
+    using ReplyArguments = std::tuple<RefPtr<StringImpl>, double>;
+    using Reply = CompletionHandler<void(RefPtr<StringImpl>&&, double)>;
+    using Promise = WTF::NativePromise<std::tuple<RefPtr<StringImpl>, double>, IPC::Error>;
+    explicit MessageWithReply(StringView url)
         : m_url(url)
     {
     }
@@ -143,12 +144,12 @@ public:
     }
 
 private:
-    const String& m_url;
+    StringView m_url;
 };
 
 class MessageWithReplyReply {
 public:
-    using Arguments = std::tuple<String, double>;
+    using Arguments = std::tuple<RefPtr<StringImpl>, double>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithValidator_MessageWithReplyReply; }
     static constexpr bool isSync = false;
@@ -156,7 +157,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    MessageWithReplyReply(const String& reply, double value)
+    MessageWithReplyReply(StringView reply, double value)
         : m_reply(reply)
         , m_value(value)
     {
@@ -170,7 +171,7 @@ public:
     }
 
 private:
-    const String& m_reply;
+    StringView m_reply;
     double m_value;
 };
 

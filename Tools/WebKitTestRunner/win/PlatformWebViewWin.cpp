@@ -174,7 +174,7 @@ void PlatformWebView::removeChromeInputField()
 {
 }
 
-void PlatformWebView::setTextInChromeInputField(const String&)
+void PlatformWebView::setTextInChromeInputField(StringImpl*)
 {
 }
 
@@ -182,7 +182,7 @@ void PlatformWebView::selectChromeInputField()
 {
 }
 
-String PlatformWebView::getSelectedTextInChromeInputField()
+RefPtr<StringImpl> PlatformWebView::getSelectedTextInChromeInputField()
 {
     return { };
 }

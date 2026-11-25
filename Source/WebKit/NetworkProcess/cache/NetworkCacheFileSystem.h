@@ -31,14 +31,14 @@ namespace WebKit {
 namespace NetworkCache {
 
 enum class DirectoryEntryType { Directory, File };
-void traverseDirectory(const String& path, NOESCAPE const Function<void (const String& fileName, DirectoryEntryType)>&);
+void traverseDirectory(StringImpl* path, NOESCAPE const Function<void (StringImpl* fileName, DirectoryEntryType)>&);
 
 struct FileTimes {
     WallTime creation;
     WallTime modification;
 };
-FileTimes fileTimes(const String& path);
-void updateFileModificationTimeIfNeeded(const String& path);
+FileTimes fileTimes(StringImpl* path);
+void updateFileModificationTimeIfNeeded(StringImpl* path);
 
 }
 }

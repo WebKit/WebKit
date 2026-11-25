@@ -80,7 +80,7 @@ JSValue JSJavaScriptCallFrame::evaluateWithScopeExtension(JSGlobalObject* global
 
     NakedPtr<Exception> exception;
     JSObject* scopeExtension = callFrame->argument(1).getObject();
-    JSValue result = impl().evaluateWithScopeExtension(vm, script, scopeExtension, exception);
+    JSValue result = impl().evaluateWithScopeExtension(vm, script->get(), scopeExtension, exception);
     if (exception)
         throwException(globalObject, scope, exception);
 
@@ -115,7 +115,7 @@ static JSValue valueForScopeLocation(JSGlobalObject* globalObject, const Debugge
     ASSERT(location.line && location.column);
     VM& vm = globalObject->vm();
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, String::number(location.sourceID)));
+    result->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, makeString(location.sourceID)));
     result->putDirect(vm, Identifier::fromString(vm, "lineNumber"_s), jsNumber(location.line - 1));
     result->putDirect(vm, Identifier::fromString(vm, "columnNumber"_s), jsNumber(location.column - 1));
     return result;
@@ -216,9 +216,9 @@ JSValue JSJavaScriptCallFrame::type(JSGlobalObject* globalObject) const
     VM& vm = globalObject->vm();
     switch (impl().type(vm)) {
     case DebuggerCallFrame::FunctionType:
-        return jsNontrivialString(vm, "function"_s);
+        return jsNontrivialString(vm, "function"_si);
     case DebuggerCallFrame::ProgramType:
-        return jsNontrivialString(vm, "program"_s);
+        return jsNontrivialString(vm, "program"_si);
     }
 
     ASSERT_NOT_REACHED();

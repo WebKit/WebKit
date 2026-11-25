@@ -40,7 +40,7 @@ WebContextMenuItem::WebContextMenuItem(const WebContextMenuItemData& data)
 {
 }
 
-Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool enabled, API::Array* submenuItems)
+Ref<WebContextMenuItem> WebContextMenuItem::create(StringImpl* title, bool enabled, API::Array* submenuItems)
 {
     size_t size = submenuItems->size();
 
@@ -53,12 +53,12 @@ Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool ena
 
     bool checked = false;
     unsigned indentationLevel = 0;
-    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, WebCore::ContextMenuItemTagNoAction, String { title }, enabled, checked, indentationLevel, WTF::move(submenu))));
+    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, WebCore::ContextMenuItemTagNoAction, RefPtr<StringImpl> { title }, enabled, checked, indentationLevel, WTF::move(submenu))));
 }
 
 WebContextMenuItem* WebContextMenuItem::separatorItem()
 {
-    static NeverDestroyed<Ref<WebContextMenuItem>> separatorItem = adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemType::Separator, WebCore::ContextMenuItemTagNoAction, String(), true, false)));
+    static NeverDestroyed<Ref<WebContextMenuItem>> separatorItem = adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemType::Separator, WebCore::ContextMenuItemTagNoAction, nullptr, true, false)));
     return separatorItem->ptr();
 }
 

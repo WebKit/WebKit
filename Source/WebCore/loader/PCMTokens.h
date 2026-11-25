@@ -43,7 +43,7 @@ struct UnlinkableToken {
     RetainPtr<RSABSSATokenWaitingActivation> waitingToken;
     RetainPtr<RSABSSATokenReady> readyToken;
 #endif
-    String valueBase64URL;
+    RefPtr<StringImpl> valueBase64URL;
     
     UnlinkableToken isolatedCopy() const &;
     UnlinkableToken isolatedCopy() &&;
@@ -60,11 +60,11 @@ struct DestinationUnlinkableToken : UnlinkableToken {
 };
 
 struct SecretToken {
-    String tokenBase64URL;
-    String signatureBase64URL;
-    String keyIDBase64URL;
-    SecretToken isolatedCopy() const & { return { tokenBase64URL.isolatedCopy(), signatureBase64URL.isolatedCopy(), keyIDBase64URL.isolatedCopy() }; }
-    SecretToken isolatedCopy() && { return { WTF::move(tokenBase64URL).isolatedCopy(), WTF::move(signatureBase64URL).isolatedCopy(), WTF::move(keyIDBase64URL).isolatedCopy() }; }
+    RefPtr<StringImpl> tokenBase64URL;
+    RefPtr<StringImpl> signatureBase64URL;
+    RefPtr<StringImpl> keyIDBase64URL;
+    SecretToken isolatedCopy() const & { return { WTF::isolatedCopy(tokenBase64URL), WTF::isolatedCopy(signatureBase64URL), WTF::isolatedCopy(keyIDBase64URL) }; }
+    SecretToken isolatedCopy() && { return { WTF::isolatedCopy(WTF::move(tokenBase64URL)), WTF::isolatedCopy(WTF::move(signatureBase64URL)), WTF::isolatedCopy(WTF::move(keyIDBase64URL)) }; }
     NODELETE bool isValid() const;
 };
 

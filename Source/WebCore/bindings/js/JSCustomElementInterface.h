@@ -65,7 +65,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    Ref<Element> constructElementWithFallback(Document&, CustomElementRegistry&, const AtomString&, ParserConstructElementWithEmptyStack = ParserConstructElementWithEmptyStack::No);
+    Ref<Element> constructElementWithFallback(Document&, CustomElementRegistry&, AtomStringImpl*, ParserConstructElementWithEmptyStack = ParserConstructElementWithEmptyStack::No);
     Ref<Element> constructElementWithFallback(Document&, CustomElementRegistry&, const QualifiedName&);
     Ref<HTMLElement> createElement(Document&);
 
@@ -87,9 +87,9 @@ public:
     bool hasAdoptedCallback() const { return !!m_adoptedCallback; }
     void invokeAdoptedCallback(Element&, Document& oldDocument, Document& newDocument);
 
-    void setAttributeChangedCallback(JSC::JSObject* callback, Vector<AtomString>&& observedAttributes);
-    bool observesAttribute(const AtomString& name) const { return m_observedAttributes.contains(name); }
-    void invokeAttributeChangedCallback(Element&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
+    void setAttributeChangedCallback(JSC::JSObject* callback, Vector<RefPtr<AtomStringImpl>>&& observedAttributes);
+    bool observesAttribute(AtomStringImpl* name) const { return m_observedAttributes.contains(name); }
+    void invokeAttributeChangedCallback(Element&, const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue);
 
     void disableElementInternals() { m_isElementInternalsDisabled = true; }
     bool isElementInternalsDisabled() const { return m_isElementInternalsDisabled; }
@@ -131,7 +131,7 @@ public:
 private:
     JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
 
-    RefPtr<Element> tryToConstructCustomElement(Document&, CustomElementRegistry&, const AtomString&, ParserConstructElementWithEmptyStack);
+    RefPtr<Element> tryToConstructCustomElement(Document&, CustomElementRegistry&, AtomStringImpl*, ParserConstructElementWithEmptyStack);
 
     template<typename Function>
     void invokeCallback(Element&, JSC::JSObject* callback, NOESCAPE const Function& addArguments);
@@ -149,7 +149,7 @@ private:
     JSC::Weak<JSC::JSObject> m_formStateRestoreCallback;
     const Ref<DOMWrapperWorld> m_isolatedWorld;
     Vector<RefPtr<Element>, 1> m_constructionStack;
-    MemoryCompactRobinHoodHashSet<AtomString> m_observedAttributes;
+    MemoryCompactRobinHoodHashSet<RefPtr<AtomStringImpl>> m_observedAttributes;
     bool m_isElementInternalsDisabled : 1;
     bool m_isShadowDisabled : 1;
     bool m_isFormAssociated : 1;

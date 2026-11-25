@@ -47,7 +47,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider, bool shouldAcceptInsecureCertificates) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition, WTF::move(auditData), provider, shouldAcceptInsecureCertificates)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, StringImpl* credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider, bool shouldAcceptInsecureCertificates) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition, WTF::move(auditData), provider, shouldAcceptInsecureCertificates)); }
 
     virtual ~SocketStreamHandleImpl();
 
@@ -61,7 +61,7 @@ private:
     std::optional<size_t> platformSendInternal(std::span<const uint8_t>);
     bool sendPendingData();
 
-    SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, SourceApplicationAuditToken&&, const StorageSessionProvider*, bool shouldAcceptInsecureCertificates);
+    SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, PAL::SessionID, StringImpl* credentialPartition, SourceApplicationAuditToken&&, const StorageSessionProvider*, bool shouldAcceptInsecureCertificates);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
@@ -87,7 +87,7 @@ private:
 
     void reportErrorToClient(CFErrorRef);
 
-    bool getStoredCONNECTProxyCredentials(const ProtectionSpace&, String& login, String& password);
+    bool getStoredCONNECTProxyCredentials(const ProtectionSpace&, RefPtr<StringImpl>& login, RefPtr<StringImpl>& password);
 
     enum ConnectingSubstate { New, ExecutingPACFile, WaitingForCredentials, WaitingForConnect, Connected };
     ConnectingSubstate m_connectingSubstate;
@@ -103,7 +103,7 @@ private:
     RetainPtr<CFWriteStreamRef> m_writeStream;
 
     const RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
-    String m_credentialPartition;
+    RefPtr<StringImpl> m_credentialPartition;
     SourceApplicationAuditToken m_auditData;
     const RefPtr<const StorageSessionProvider> m_storageSessionProvider;
 

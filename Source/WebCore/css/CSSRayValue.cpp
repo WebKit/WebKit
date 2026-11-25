@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-String CSSRayValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSRayValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
     CSS::serializationForCSS(builder, context, m_ray);

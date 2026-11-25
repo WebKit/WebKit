@@ -91,7 +91,7 @@ static void stripTrailingNewline(StringBuilder& result)
 }
 
 // Should stay in sync with innerTextLengthFrom().
-static String innerTextValueFrom(TextControlInnerTextElement& innerText)
+static RefPtr<StringImpl> innerTextValueFrom(TextControlInnerTextElement& innerText)
 {
     StringBuilder result;
     for (RefPtr<Node> node = innerText.firstChild(); node; node = NodeTraversal::next(*node, &innerText)) {
@@ -116,7 +116,7 @@ static unsigned innerTextLengthFrom(TextControlInnerTextElement& innerText)
         } else if (auto* textNode = dynamicDowncast<Text>(*node)) {
             if (unsigned nodeLength = textNode->length()) {
                 length += nodeLength;
-                endsWithNewline = textNode->data()[nodeLength - 1] == newlineCharacter;
+                endsWithNewline = codeUnitAt(textNode->data(), nodeLength - 1) == newlineCharacter;
             }
         }
     }
@@ -147,13 +147,13 @@ Node::NeedsPostConnectionSteps HTMLTextFormControlElement::insertionSteps(Insert
 {
     NeedsPostConnectionSteps NeedsPostConnectionSteps = HTMLFormControlElement::insertionSteps(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
-        String initialValue = value();
-        setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? String(emptyString()) : WTF::move(initialValue));
+        RefPtr<StringImpl> initialValue = value();
+        setTextAsOfLastFormControlChangeEvent(!initialValue ? RefPtr<StringImpl>(emptyString()) : WTF::move(initialValue));
     }
     return NeedsPostConnectionSteps;
 }
 
-static String pointerTypeFromHitTestRequest(HitTestRequest request)
+static RefPtr<StringImpl> pointerTypeFromHitTestRequest(HitTestRequest request)
 {
 #if ENABLE(PENCIL_HOVER)
     if (request.penEvent())
@@ -229,7 +229,7 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 {
     // This function is used by the style resolver to match the :placeholder-shown pseudo class.
     // Since it is used for styling, it must not use any value depending on the style.
-    return supportsPlaceholder() && isEmptyValue() && hasAttributeWithoutSynchronization(placeholderAttr) && m_canShowPlaceholder && !(hovered() && m_pointerType == penPointerEventType());
+    return supportsPlaceholder() && isEmptyValue() && hasAttributeWithoutSynchronization(placeholderAttr) && m_canShowPlaceholder && !(hovered() && equal(m_pointerType, penPointerEventType()));
 }
 
 void HTMLTextFormControlElement::updatePlaceholderVisibility()
@@ -261,7 +261,7 @@ void HTMLTextFormControlElement::setSelectionEnd(unsigned end)
     setSelectionRange(std::min(end, selectionStart()), end, selectionDirection());
 }
 
-void HTMLTextFormControlElement::setSelectionDirection(const String& direction)
+void HTMLTextFormControlElement::setSelectionDirection(StringImpl* direction)
 {
     setSelectionRange(selectionStart(), selectionEnd(), direction);
 }
@@ -274,18 +274,18 @@ void HTMLTextFormControlElement::select(SelectionRevealMode revealMode, const AX
         scheduleSelectEvent();
 }
 
-String HTMLTextFormControlElement::selectedText() const
+RefPtr<StringImpl> HTMLTextFormControlElement::selectedText() const
 {
     if (!isTextField())
-        return String();
-    return value()->substring(selectionStart(), selectionEnd() - selectionStart());
+        return nullptr;
+    return substring(value().get(), selectionStart(), selectionEnd() - selectionStart());
 }
 
 void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
 {
     auto value = this->value();
-    if (m_textAsOfLastFormControlChangeEvent != value.get()) {
-        setTextAsOfLastFormControlChangeEvent(String { value });
+    if (!equal(m_textAsOfLastFormControlChangeEvent, value.get())) {
+        setTextAsOfLastFormControlChangeEvent(RefPtr<StringImpl> { value.get() });
         dispatchChangeEvent();
     }
     setChangedSinceLastFormControlChangeEvent(false);
@@ -294,16 +294,16 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
 
 ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacement)
 {
-    return setRangeText(replacement, selectionStart(), selectionEnd(), String());
+    return setRangeText(replacement, selectionStart(), selectionEnd(), nullString());
 }
 
-ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacement, unsigned start, unsigned end, const String& selectionMode)
+ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacement, unsigned start, unsigned end, StringImpl* selectionMode)
 {
     if (start > end)
         return Exception { ExceptionCode::IndexSizeError };
 
-    String text = innerTextValue();
-    unsigned textLength = text.length();
+    RefPtr<StringImpl> text = innerTextValue();
+    unsigned textLength = WTF::length(text);
     unsigned replacementLength = replacement.length();
     unsigned newSelectionStart = selectionStart();
     unsigned newSelectionEnd = selectionEnd();
@@ -346,12 +346,12 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacemen
     return { };
 }
 
-void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, const String& directionString, const AXTextStateChangeIntent& intent, ForBindings forBindings)
+void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, StringImpl* directionString, const AXTextStateChangeIntent& intent, ForBindings forBindings)
 {
     TextFieldSelectionDirection direction = SelectionHasNoDirection;
-    if (directionString == "forward"_s)
+    if (equal(directionString, "forward"_s))
         direction = SelectionHasForwardDirection;
-    else if (directionString == "backward"_s)
+    else if (equal(directionString, "backward"_s))
         direction = SelectionHasBackwardDirection;
 
     if (setSelectionRange(start, end, direction, SelectionRevealMode::DoNotReveal, intent, forBindings))
@@ -509,10 +509,10 @@ unsigned HTMLTextFormControlElement::computeSelectionEnd() const
     return indexForPosition(frame->selection().selection().end());
 }
 
-static const AtomString& directionString(TextFieldSelectionDirection direction)
+static const RefPtr<AtomStringImpl>& directionString(TextFieldSelectionDirection direction)
 {
-    static MainThreadNeverDestroyed<const AtomString> forward("forward"_s);
-    static MainThreadNeverDestroyed<const AtomString> backward("backward"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> forward("forward"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> backward("backward"_s);
 
     switch (direction) {
     case SelectionHasNoDirection:
@@ -527,7 +527,7 @@ static const AtomString& directionString(TextFieldSelectionDirection direction)
     return noneAtom();
 }
 
-const AtomString& HTMLTextFormControlElement::selectionDirection() const
+const RefPtr<AtomStringImpl>& HTMLTextFormControlElement::selectionDirection() const
 {
     if (!isTextField())
         return directionString(SelectionHasNoDirection);
@@ -656,7 +656,7 @@ void HTMLTextFormControlElement::scheduleSelectEvent()
     scheduleSelectionChangeEvent();
 }
 
-void HTMLTextFormControlElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLTextFormControlElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == placeholderAttr) {
         updatePlaceholderText();
@@ -725,7 +725,7 @@ bool HTMLTextFormControlElement::wasEverChangedByUserEdit() const
     return m_wasEverChangedByUserEdit;
 }
 
-void HTMLTextFormControlElement::setInnerTextValue(String&& value)
+void HTMLTextFormControlElement::setInnerTextValue(RefPtr<StringImpl>&& value)
 {
     LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::PerformanceOptimization);
     auto innerText = innerTextElementCreatingShadowSubtreeIfNeeded();
@@ -733,8 +733,8 @@ void HTMLTextFormControlElement::setInnerTextValue(String&& value)
         return;
 
     ASSERT(isTextField());
-    String previousValue = innerTextValueFrom(*innerText);
-    bool textIsChanged = value != previousValue;
+    RefPtr<StringImpl> previousValue = innerTextValueFrom(*innerText);
+    bool textIsChanged = !equal(value, previousValue);
     if (textIsChanged || !innerText->hasChildNodes()) {
 #if !PLATFORM(COCOA)
         if (textIsChanged && renderer()) {
@@ -757,7 +757,7 @@ void HTMLTextFormControlElement::setInnerTextValue(String&& value)
             // Events dispatched on the inner text element cannot execute arbitrary author scripts.
             ScriptDisallowedScope::EventAllowedScope allowedScope(*protect(userAgentShadowRoot()));
 
-            bool endsWithNewLine = value.endsWith('\n') || value.endsWith('\r');
+            bool endsWithNewLine = endsWith(value, '\n') || endsWith(value, '\r');
             innerText->setInnerText(WTF::move(value));
 
             if (endsWithNewLine)
@@ -775,7 +775,7 @@ void HTMLTextFormControlElement::setInnerTextValue(String&& value)
     setFormControlValueMatchesRenderer(true);
 }
 
-String HTMLTextFormControlElement::innerTextValue() const
+RefPtr<StringImpl> HTMLTextFormControlElement::innerTextValue() const
 {
     auto innerText = innerTextElement();
     return innerText ? innerTextValueFrom(*innerText) : emptyString();
@@ -844,7 +844,7 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
     return index;
 }
 
-String HTMLTextFormControlElement::valueWithHardLineBreaks() const
+RefPtr<StringImpl> HTMLTextFormControlElement::valueWithHardLineBreaks() const
 {
     // FIXME: It's not acceptable to ignore the HardWrap setting when there is no renderer.
     // While we have no evidence this has ever been a practical problem, it would be best to fix it some day.
@@ -852,7 +852,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
         return value();
 
     auto innerText = innerTextElement();
-    if (!innerText || innerText->textContent().isEmpty())
+    if (!innerText || isEmpty(innerText->textContent()))
         return value();
 
     CheckedPtr renderer = innerText->renderer();
@@ -888,8 +888,8 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
         if (is<HTMLBRElement>(*node))
             result.append(newlineCharacter);
         else if (RefPtr textNode = dynamicDowncast<Text>(*node)) {
-            String data = textNode->data();
-            unsigned length = data.length();
+            RefPtr<StringImpl> data = textNode->data();
+            unsigned length = WTF::length(data);
             unsigned position = 0;
             while (breakNode == node && breakOffset <= length) {
                 if (breakOffset > position) {
@@ -921,7 +921,7 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
     return ancestor && ancestor->isTextField() ? downcast<HTMLTextFormControlElement>(ancestor) : nullptr;
 }
 
-String HTMLTextFormControlElement::directionForFormData() const
+RefPtr<StringImpl> HTMLTextFormControlElement::directionForFormData() const
 {
     auto direction = [this] {
         for (Ref element : lineageOfType<HTMLElement>(*this)) {

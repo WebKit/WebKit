@@ -57,7 +57,7 @@ using namespace WebKit;
             if ([rulesetIDsToRuleIDs[rulesetID] containsObject:@(rule.ruleID)]) {
                 totalErrorCount++;
                 ALLOW_NONLITERAL_FORMAT_BEGIN
-                [errorStrings addObject:[NSString stringWithFormat:WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a duplicated rule id").createNSString().get(), rulesetID, @(rule.ruleID)]];
+                [errorStrings addObject:[NSString stringWithFormat:createNSString(WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a duplicated rule id")).get(), rulesetID, @(rule.ruleID)]];
                 ALLOW_NONLITERAL_FORMAT_END
             }
 
@@ -109,7 +109,7 @@ using namespace WebKit;
         if (error) {
             NSString *errorReason = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]) ?: error.localizedDescription;
             ALLOW_NONLITERAL_FORMAT_BEGIN
-            [errors addObject:[NSString stringWithFormat:WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` is invalid. Unable to parse JSON: %@", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a ruleset that is not valid JSON").createNSString().get(), rulesetID, errorReason]];
+            [errors addObject:[NSString stringWithFormat:createNSString(WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` is invalid. Unable to parse JSON: %@", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a ruleset that is not valid JSON")).get(), rulesetID, errorReason]];
             ALLOW_NONLITERAL_FORMAT_END
             continue;
         }
@@ -120,7 +120,7 @@ using namespace WebKit;
         }
 
         ALLOW_NONLITERAL_FORMAT_BEGIN
-        [errors addObject:[NSString stringWithFormat:WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` is invalid. The top level of the ruleset must be an array.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a ruleset that is not an array").createNSString().get(), rulesetID]];
+        [errors addObject:[NSString stringWithFormat:createNSString(WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` is invalid. The top level of the ruleset must be an array.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a ruleset that is not an array")).get(), rulesetID]];
         ALLOW_NONLITERAL_FORMAT_END
     }
 

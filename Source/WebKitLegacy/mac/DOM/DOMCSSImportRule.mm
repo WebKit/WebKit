@@ -46,7 +46,7 @@
 - (NSString *)href
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->href().createNSString().autorelease();
+    return createNSString(IMPL->href()).autorelease();
 }
 
 - (DOMMediaList *)media

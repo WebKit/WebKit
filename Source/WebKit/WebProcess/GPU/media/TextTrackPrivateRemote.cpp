@@ -73,8 +73,8 @@ void TextTrackPrivateRemote::updateConfiguration(TextTrackPrivateRemoteConfigura
         });
     }
 
-    if (configuration.label != m_label) {
-        auto changed = !m_label.isEmpty();
+    if (!equal(configuration.label, m_label)) {
+        auto changed = !isEmpty(m_label);
         m_label = configuration.label;
         if (changed) {
             notifyClients([label = crossThreadCopy(m_label)](auto& client) {
@@ -83,8 +83,8 @@ void TextTrackPrivateRemote::updateConfiguration(TextTrackPrivateRemoteConfigura
         }
     }
 
-    if (configuration.language != m_language) {
-        auto changed = !m_language.isEmpty();
+    if (!equal(configuration.language, m_language)) {
+        auto changed = !isEmpty(m_language);
         m_language = configuration.language;
         if (changed) {
             notifyClients([language = crossThreadCopy(m_language)](auto& client) {
@@ -131,7 +131,7 @@ void TextTrackPrivateRemote::removeGenericCue(Ref<InbandGenericCue> cue)
     });
 }
 
-void TextTrackPrivateRemote::parseWebVTTFileHeader(String&& header)
+void TextTrackPrivateRemote::parseWebVTTFileHeader(RefPtr<StringImpl>&& header)
 {
     assertIsMainRunLoop();
     ASSERT(hasOneClient());
@@ -168,7 +168,7 @@ void TextTrackPrivateRemote::addDataCue(MediaTime&& start, MediaTime&& end, std:
 }
 
 #if ENABLE(DATACUE_VALUE)
-void TextTrackPrivateRemote::addDataCueWithType(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& dataValue, String&& type)
+void TextTrackPrivateRemote::addDataCueWithType(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& dataValue, RefPtr<StringImpl>&& type)
 {
     assertIsMainRunLoop();
     ASSERT(hasOneClient());

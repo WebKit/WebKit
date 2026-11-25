@@ -36,20 +36,20 @@ namespace WebKit {
 
 class AssertionCapability final : public ExtensionCapability {
 public:
-    AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction = nullptr, Function<void()>&& didInvalidateFunction = nullptr);
+    AssertionCapability(RefPtr<StringImpl> environmentIdentifier, RefPtr<StringImpl> domain, RefPtr<StringImpl> name, Function<void()>&& willInvalidateFunction = nullptr, Function<void()>&& didInvalidateFunction = nullptr);
 
-    const String& domain() const LIFETIME_BOUND { return m_domain; }
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& domain() const LIFETIME_BOUND { return m_domain; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
 
     // ExtensionCapability
-    String environmentIdentifier() const final { return m_environmentIdentifier; }
+    RefPtr<StringImpl> environmentIdentifier() const final { return m_environmentIdentifier; }
 
     BlockPtr<void()> didInvalidateBlock() const { return m_didInvalidateBlock; }
 
 private:
-    String m_environmentIdentifier;
-    String m_domain;
-    String m_name;
+    RefPtr<StringImpl> m_environmentIdentifier;
+    RefPtr<StringImpl> m_domain;
+    RefPtr<StringImpl> m_name;
     BlockPtr<void()> m_willInvalidateBlock;
     BlockPtr<void()> m_didInvalidateBlock;
 };

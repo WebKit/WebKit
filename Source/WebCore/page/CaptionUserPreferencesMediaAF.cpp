@@ -86,9 +86,9 @@ NODELETE static std::optional<CaptionUserPreferencesMediaAF::CaptionDisplayMode>
     return captionDisplayMode;
 }
 
-NODELETE static std::optional<Vector<String>>& cachedPreferredLanguages()
+NODELETE static std::optional<Vector<RefPtr<StringImpl>>>& cachedPreferredLanguages()
 {
-    static NeverDestroyed<std::optional<Vector<String>>> preferredLanguages;
+    static NeverDestroyed<std::optional<Vector<RefPtr<StringImpl>>>> preferredLanguages;
     return preferredLanguages;
 }
 
@@ -97,7 +97,7 @@ template<typename... Types> void appendCSS(StringBuilder& builder, CSSPropertyID
     builder.append(nameLiteral(id), ':', values..., important ? " !important;"_s : ";"_s);
 }
 
-static String colorPropertyCSS(CSSPropertyID id, const Color& color, bool important)
+static RefPtr<StringImpl> colorPropertyCSS(CSSPropertyID id, const Color& color, bool important)
 {
     StringBuilder builder;
     // FIXME: Seems like this should be using serializationForCSS instead?
@@ -120,13 +120,13 @@ static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCent
 }
 
 template<std::invocable<> F, typename R = std::invoke_result_t<F>>
-R runWithPreviewProfile(const String& previewProfileID, F&& task)
+R runWithPreviewProfile(StringImpl* previewProfileID, F&& task)
 {
-    if (previewProfileID.isEmpty() || !canLoad_MediaAccessibility_MACaptionAppearanceExecuteBlockForProfileID())
+    if (isEmpty(previewProfileID) || !canLoad_MediaAccessibility_MACaptionAppearanceExecuteBlockForProfileID())
         return task();
 
     __block R returnVal = { };
-    RetainPtr cfPreviewProfileID = previewProfileID.createCFString();
+    RetainPtr cfPreviewProfileID = createCFString(previewProfileID);
     MACaptionAppearanceExecuteBlockForProfileID(cfPreviewProfileID.get(), ^{
         returnVal = task();
     });
@@ -334,7 +334,7 @@ static bool behaviorShouldNotBeOverriden(MACaptionAppearanceBehavior behavior)
     return (behavior == kMACaptionAppearanceBehaviorUseValue) && MACaptionAppearanceIsCustomized(kMACaptionAppearanceDomainUser);
 }
 
-String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionsWindowCSS() const
 {
     return runWithPreviewProfile(m_previewProfileID, [] {
         MACaptionAppearanceBehavior behavior;
@@ -352,7 +352,7 @@ String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
     });
 }
 
-String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 {
     return runWithPreviewProfile(m_previewProfileID, [] {
         // This must match the ::cue background color of WebCore/Modules/modern-media-controls/controls/text-tracks.css
@@ -391,7 +391,7 @@ Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
     });
 }
 
-String CaptionUserPreferencesMediaAF::captionsTextColorCSS() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionsTextColorCSS() const
 {
     bool important;
     auto textColor = captionsTextColor(important);
@@ -400,7 +400,7 @@ String CaptionUserPreferencesMediaAF::captionsTextColorCSS() const
     return colorPropertyCSS(CSSPropertyID::Color, textColor, important);
 }
 
-String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
 {
     return runWithPreviewProfile(m_previewProfileID, [] {
         MACaptionAppearanceBehavior behavior;
@@ -415,14 +415,14 @@ String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
     });
 }
 
-bool CaptionUserPreferencesMediaAF::captionStrokeWidthForFont(float fontSize, const String& language, float& strokeWidth, bool& important) const
+bool CaptionUserPreferencesMediaAF::captionStrokeWidthForFont(float fontSize, StringImpl* language, float& strokeWidth, bool& important) const
 {
     if (!canLoad_MediaAccessibility_MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle())
         return false;
 
-    return runWithPreviewProfile(m_previewProfileID, [fontSize, &language, &strokeWidth, &important] {
+    return runWithPreviewProfile(m_previewProfileID, [fontSize, language = RefPtr { language }, &strokeWidth, &important] {
         MACaptionAppearanceBehavior behavior;
-        auto trackLanguage = language.createCFString();
+        auto trackLanguage = createCFString(language);
         CGFloat strokeWidthPt;
 
         RetainPtr fontDescriptor = adoptCF(MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault, trackLanguage.get(), fontSize, &strokeWidthPt));
@@ -442,7 +442,7 @@ bool CaptionUserPreferencesMediaAF::testingMode() const
     return CaptionUserPreferences::testingMode();
 }
 
-String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 {
     return runWithPreviewProfile(m_previewProfileID, [] {
         MACaptionAppearanceBehavior behavior;
@@ -471,7 +471,7 @@ String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
     });
 }
 
-String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
 {
     return runWithPreviewProfile(m_previewProfileID, [] {
         MACaptionAppearanceBehavior behavior;
@@ -514,7 +514,7 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
     });
 }
 
-String CaptionUserPreferencesMediaAF::captionsFontSizeCSS() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionsFontSizeCSS() const
 {
     bool important = false;
     float fontScale = captionFontSizeScaleAndImportance(important);
@@ -550,12 +550,12 @@ float CaptionUserPreferencesMediaAF::captionFontSizeScaleAndImportance(bool& imp
 #endif
 }
 
-void CaptionUserPreferencesMediaAF::platformSetPreferredLanguage(const String& language)
+void CaptionUserPreferencesMediaAF::platformSetPreferredLanguage(StringImpl* language)
 {
-    MACaptionAppearanceAddSelectedLanguage(kMACaptionAppearanceDomainUser, language.createCFString().get());
+    MACaptionAppearanceAddSelectedLanguage(kMACaptionAppearanceDomainUser, createCFString(language).get());
 }
 
-void CaptionUserPreferencesMediaAF::setPreferredLanguage(const String& language)
+void CaptionUserPreferencesMediaAF::setPreferredLanguage(StringImpl* language)
 {
     if (CaptionUserPreferences::captionDisplayMode() == CaptionDisplayMode::Manual)
         return;
@@ -573,7 +573,7 @@ void CaptionUserPreferencesMediaAF::setPreferredLanguage(const String& language)
     platformSetPreferredLanguage(language);
 }
 
-Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
+Vector<RefPtr<StringImpl>> CaptionUserPreferencesMediaAF::preferredLanguages() const
 {
     auto preferredLanguages = CaptionUserPreferences::preferredLanguages();
     if (testingMode() || !MediaAccessibilityLibrary())
@@ -586,30 +586,30 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
     if (!captionLanguages.size())
         return preferredLanguages;
 
-    Vector<String> captionAndPreferredLanguages(ReserveCapacityTag { }, captionLanguages.size() + preferredLanguages.size());
+    Vector<RefPtr<StringImpl>> captionAndPreferredLanguages(ReserveCapacityTag { }, captionLanguages.size() + preferredLanguages.size());
     captionAndPreferredLanguages.appendVector(WTF::move(captionLanguages));
     captionAndPreferredLanguages.appendVector(WTF::move(preferredLanguages));
     return captionAndPreferredLanguages;
 }
 
-Vector<String> CaptionUserPreferencesMediaAF::platformPreferredLanguages()
+Vector<RefPtr<StringImpl>> CaptionUserPreferencesMediaAF::platformPreferredLanguages()
 {
     RetainPtr captionLanguages = adoptCF(MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
-    return captionLanguages ? makeVector<String>(captionLanguages.get()) : Vector<String> { };
+    return captionLanguages ? makeVector<RefPtr<StringImpl>>(captionLanguages.get()) : Vector<RefPtr<StringImpl>> { };
 }
 
-void CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(const Vector<String>& preferredLanguages)
+void CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(const Vector<RefPtr<StringImpl>>& preferredLanguages)
 {
     cachedPreferredLanguages() = preferredLanguages;
 }
 
-void CaptionUserPreferencesMediaAF::setPreferredAudioCharacteristic(const String& characteristic)
+void CaptionUserPreferencesMediaAF::setPreferredAudioCharacteristic(StringImpl* characteristic)
 {
     if (testingMode() || !MediaAccessibilityLibrary())
         CaptionUserPreferences::setPreferredAudioCharacteristic(characteristic);
 }
 
-Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() const
+Vector<RefPtr<StringImpl>> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() const
 {
     if (testingMode() || !MediaAccessibilityLibrary() || !canLoad_MediaAccessibility_MAAudibleMediaCopyPreferredCharacteristics())
         return CaptionUserPreferences::preferredAudioCharacteristics();
@@ -622,7 +622,7 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() co
     if (!characteristicCount)
         return CaptionUserPreferences::preferredAudioCharacteristics();
 
-    return makeVector<String>(characteristics.get());
+    return makeVector<RefPtr<StringImpl>>(characteristics.get());
 }
 
 bool CaptionUserPreferencesMediaAF::hasNullCaptionProfile() const
@@ -630,12 +630,12 @@ bool CaptionUserPreferencesMediaAF::hasNullCaptionProfile() const
     if (!canLoad_MediaAccessibility_MACaptionAppearanceCopyActiveProfileID())
         return false;
 
-    String captionProfile = adoptCF(MACaptionAppearanceCopyActiveProfileID()).get();
+    RefPtr<StringImpl> captionProfile = StringImpl::create(adoptCF(MACaptionAppearanceCopyActiveProfileID()).get());
 
-    return captionProfile.isEmpty();
+    return isEmpty(captionProfile);
 }
 
-String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
 {
     if (testingMode() || hasNullCaptionProfile())
         return CaptionUserPreferences::captionsStyleSheetOverride();
@@ -645,18 +645,18 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
 
     StringBuilder captionsOverrideStyleSheet;
 
-    String captionsColor = captionsTextColorCSS();
-    String edgeStyle = captionsTextEdgeCSS();
-    String fontName = captionsDefaultFontCSS();
-    String fontSize = captionsFontSizeCSS();
-    String background = captionsBackgroundCSS();
-    if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty() || !fontSize.isEmpty()) {
+    RefPtr<StringImpl> captionsColor = captionsTextColorCSS();
+    RefPtr<StringImpl> edgeStyle = captionsTextEdgeCSS();
+    RefPtr<StringImpl> fontName = captionsDefaultFontCSS();
+    RefPtr<StringImpl> fontSize = captionsFontSizeCSS();
+    RefPtr<StringImpl> background = captionsBackgroundCSS();
+    if (!isEmpty(background) || !isEmpty(captionsColor) || !isEmpty(edgeStyle) || !isEmpty(fontName) || !isEmpty(fontSize)) {
         captionsOverrideStyleSheet.append(" ::"_s, UserAgentParts::cue(), '{', background, captionsColor, edgeStyle, fontName, fontSize, '}');
         captionsOverrideStyleSheet.append(" ::"_s, UserAgentParts::cue(), "(rt) {"_s, background, captionsColor, edgeStyle, fontName, fontSize, '}');
     }
-    String windowColor = captionsWindowCSS();
-    String windowCornerRadius = windowRoundedCornerRadiusCSS();
-    if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty())
+    RefPtr<StringImpl> windowColor = captionsWindowCSS();
+    RefPtr<StringImpl> windowCornerRadius = windowRoundedCornerRadiusCSS();
+    if (!isEmpty(windowColor) || !isEmpty(windowCornerRadius))
         captionsOverrideStyleSheet.append(" ::"_s, UserAgentParts::webkitMediaTextTrackDisplayBackdrop(), '{', windowColor, windowCornerRadius, '}');
 
     LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting style to:\n"_s << captionsOverrideStyleSheet.toString());
@@ -664,27 +664,27 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     return captionsOverrideStyleSheet.toString();
 }
 
-static String languageIdentifier(const String& languageCode)
+static RefPtr<StringImpl> languageIdentifier(StringImpl* languageCode)
 {
-    if (languageCode.isEmpty())
+    if (isEmpty(languageCode))
         return languageCode;
 
-    String lowercaseLanguageCode;
+    RefPtr<StringImpl> lowercaseLanguageCode;
     // Need 2U here to disambiguate String::operator[] from operator(NSString*, int)[] in a production build.
-    if (languageCode.length() >= 3 && (languageCode[2U] == '_' || languageCode[2U] == '-'))
+    if (length(languageCode) >= 3 && (codeUnitAt(languageCode, 2U) == '_' || codeUnitAt(languageCode, 2U) == '-'))
         lowercaseLanguageCode = StringView(languageCode).left(2).convertToASCIILowercase();
     else
-        lowercaseLanguageCode = languageCode.convertToASCIILowercase();
+        lowercaseLanguageCode = convertToASCIILowercase(languageCode);
 
     return lowercaseLanguageCode;
 }
 
-static String addTextTrackKindDisplayNameIfNeeded(const TextTrack& track, const String& text)
+static RefPtr<StringImpl> addTextTrackKindDisplayNameIfNeeded(const TextTrack& track, StringImpl* text)
 {
-    String result;
+    RefPtr<StringImpl> result;
 
     if (track.isClosedCaptions()) {
-        if (!text.contains(textTrackKindClosedCaptionsDisplayName()))
+        if (!contains(text, textTrackKindClosedCaptionsDisplayName()))
             result = addTextTrackKindClosedCaptionsSuffix(text);
     } else {
         switch (track.kind()) {
@@ -694,22 +694,22 @@ static String addTextTrackKindDisplayNameIfNeeded(const TextTrack& track, const 
             break;
 
         case TextTrack::Kind::Captions:
-            if (!text.contains(textTrackKindCaptionsDisplayName()))
+            if (!contains(text, textTrackKindCaptionsDisplayName()))
                 result = addTextTrackKindCaptionsSuffix(text);
             break;
 
         case TextTrack::Kind::Descriptions:
-            if (!text.contains(textTrackKindDescriptionsDisplayName()))
+            if (!contains(text, textTrackKindDescriptionsDisplayName()))
                 result = addTextTrackKindDescriptionsSuffix(text);
             break;
 
         case TextTrack::Kind::Chapters:
-            if (!text.contains(textTrackKindChaptersDisplayName()))
+            if (!contains(text, textTrackKindChaptersDisplayName()))
                 result = addTextTrackKindChaptersSuffix(text);
             break;
 
         case TextTrack::Kind::Metadata:
-            if (!text.contains(textTrackKindMetadataDisplayName()))
+            if (!contains(text, textTrackKindMetadataDisplayName()))
                 result = addTextTrackKindMetadataSuffix(text);
             break;
 
@@ -719,39 +719,39 @@ static String addTextTrackKindDisplayNameIfNeeded(const TextTrack& track, const 
         }
     }
 
-    if (result.isEmpty())
+    if (isEmpty(result))
         result = text;
 
-    if (track.isSDH() && !text.contains(textTrackKindSDHDisplayName()))
+    if (track.isSDH() && !contains(text, textTrackKindSDHDisplayName()))
         result = addTextTrackKindSDHSuffix(result);
 
-    if (track.isEasyToRead() && !text.contains(textTrackKindEasyReaderDisplayName()))
+    if (track.isEasyToRead() && !contains(text, textTrackKindEasyReaderDisplayName()))
         result = addTextTrackKindEasyReaderSuffix(result);
 
-    if ((track.containsOnlyForcedSubtitles() || track.kind() == TextTrack::Kind::Forced) && !text.contains(textTrackKindForcedDisplayName()))
+    if ((track.containsOnlyForcedSubtitles() || track.kind() == TextTrack::Kind::Forced) && !contains(text, textTrackKindForcedDisplayName()))
         result = addTextTrackKindForcedSuffix(result);
 
-    if (track.isMachineGenerated() && !text.contains(textTrackKindGeneratedDisplayName()))
+    if (track.isMachineGenerated() && !contains(text, textTrackKindGeneratedDisplayName()))
         result = addTextTrackKindGeneratedSuffix(result);
 
     return result;
 }
 
-static String addAudioTrackKindDisplayNameIfNeeded(const AudioTrack& track, const String& text)
+static RefPtr<StringImpl> addAudioTrackKindDisplayNameIfNeeded(const AudioTrack& track, StringImpl* text)
 {
     // Audio tracks are only shown in a dedicated "Languages" grouping, meaning it would look odd to
     // add it as a suffix (e.g. "Languages > English Language").
 
-    if ((track.kind() == AudioTrack::descriptionKeyword() || track.kind() == AudioTrack::mainDescKeyword()) && !text.contains(audioTrackKindDescriptionsDisplayName()))
+    if ((track.kind() == AudioTrack::descriptionKeyword() || track.kind() == AudioTrack::mainDescKeyword()) && !contains(text, audioTrackKindDescriptionsDisplayName()))
         return addAudioTrackKindDescriptionsSuffix(text);
 
-    if (track.kind() == commentaryAtom() && !text.contains(audioTrackKindCommentaryDisplayName()))
+    if (track.kind() == commentaryAtom() && !contains(text, audioTrackKindCommentaryDisplayName()))
         return addAudioTrackKindCommentarySuffix(text);
 
     return text;
 }
 
-static String addTrackKindDisplayNameIfNeeded(const TrackBase& track, const String& text)
+static RefPtr<StringImpl> addTrackKindDisplayNameIfNeeded(const TrackBase& track, StringImpl* text)
 {
     switch (track.type()) {
     case TrackBase::Type::TextTrack:
@@ -769,7 +769,7 @@ static String addTrackKindDisplayNameIfNeeded(const TrackBase& track, const Stri
     return text;
 }
 
-static String trackDisplayName(const TrackBase& track, const Vector<String>& preferredLanguages)
+static RefPtr<StringImpl> trackDisplayName(const TrackBase& track, const Vector<RefPtr<StringImpl>>& preferredLanguages)
 {
     if (&track == &TextTrack::captionMenuOffItemSingleton())
         return textTrackOffMenuItemText();
@@ -778,53 +778,53 @@ static String trackDisplayName(const TrackBase& track, const Vector<String>& pre
     if (&track == &TextTrack::captionMenuAutomaticItemSingleton())
         return textTrackAutomaticMenuItemText();
 
-    String result;
+    RefPtr<StringImpl> result;
 
-    String label = track.label().string().trim(isASCIIWhitespace);
-    String trackLanguageIdentifier = track.validBCP47Language();
+    RefPtr<StringImpl> label = trim(track.label(), isASCIIWhitespace);
+    RefPtr<StringImpl> trackLanguageIdentifier = track.validBCP47Language();
 
     auto defaultLanguage = !preferredLanguages.isEmpty() ? preferredLanguages[0] : emptyString(); // This matches `defaultLanguage`.
-    RetainPtr currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage.createCFString().get()));
-    RetainPtr localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
-    String languageDisplayName = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get())).get();
+    RetainPtr currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, createCFString(defaultLanguage).get()));
+    RetainPtr localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, createCFString(trackLanguageIdentifier).get()));
+    RefPtr<StringImpl> languageDisplayName = StringImpl::create(adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get())).get());
 
     bool exactMatch;
     bool matchesDefaultLanguage = !indexOfBestMatchingLanguageInList(trackLanguageIdentifier, { defaultLanguage }, exactMatch);
 
     // Only add the language if the track isn't for the default language or the track's label doesn't already contain the language.
-    if (!label.isEmpty() && (matchesDefaultLanguage || (!languageDisplayName.isEmpty() && label.contains(languageDisplayName))))
+    if (!isEmpty(label) && (matchesDefaultLanguage || (!isEmpty(languageDisplayName) && contains(label, languageDisplayName))))
         result = addTrackKindDisplayNameIfNeeded(track, label);
     else {
-        String languageAndLocale = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, trackLanguageIdentifier.createCFString().get())).get();
-        if (!languageAndLocale.isEmpty())
+        RefPtr<StringImpl> languageAndLocale = StringImpl::create(adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, createCFString(trackLanguageIdentifier).get())).get());
+        if (!isEmpty(languageAndLocale))
             result = languageAndLocale;
-        else if (!languageDisplayName.isEmpty())
+        else if (!isEmpty(languageDisplayName))
             result = languageDisplayName;
         else
-            result = localeIdentifier.get();
+            result = StringImpl::create(localeIdentifier.get());
 
         result = addTrackKindDisplayNameIfNeeded(track, result);
 
-        if (!label.isEmpty()) {
-            if (result.isEmpty())
+        if (!isEmpty(label)) {
+            if (isEmpty(result))
                 result = label;
-            else if (!result.contains(label))
+            else if (!contains(result, label))
                 result = addTrackLabelAsSuffix(result, label);
         }
     }
 
-    if (result.isEmpty())
+    if (isEmpty(result))
         return trackNoLabelText();
 
     return result;
 }
 
-String CaptionUserPreferencesMediaAF::displayNameForTrack(const AudioTrack& track) const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::displayNameForTrack(const AudioTrack& track) const
 {
     return trackDisplayName(track, userPreferredLanguages(ShouldMinimizeLanguages::No));
 }
 
-String CaptionUserPreferencesMediaAF::displayNameForTrack(const TextTrack& track) const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::displayNameForTrack(const TextTrack& track) const
 {
     return trackDisplayName(track, userPreferredLanguages(ShouldMinimizeLanguages::No));
 }
@@ -837,7 +837,7 @@ Vector<Ref<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(Au
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         Ref track = trackList->item(i);
-        String language = displayNameForLanguageLocale(track->validBCP47Language());
+        RefPtr<StringImpl> language = displayNameForLanguageLocale(track->validBCP47Language());
         tracksForMenu.append(WTF::move(track));
     }
 
@@ -860,7 +860,7 @@ Vector<Ref<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(Tex
     ASSERT(trackList);
 
     Vector<Ref<TextTrack>> tracksForMenu;
-    HashSet<String> languagesIncluded;
+    HashSet<RefPtr<StringImpl>> languagesIncluded;
     CaptionDisplayMode displayMode = captionDisplayMode();
     bool prefersAccessibilityTracks = userPrefersCaptions();
     bool filterTrackList = shouldFilterTrackMenu();
@@ -871,71 +871,71 @@ Vector<Ref<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(Tex
         if (!kinds.contains(track->kind()))
             continue;
 
-        String language = displayNameForLanguageLocale(track->validBCP47Language());
+        RefPtr<StringImpl> language = displayNameForLanguageLocale(track->validBCP47Language());
 
         if (displayMode == CaptionDisplayMode::Manual) {
-            LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "' because selection mode is 'manual'"_s);
+            LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword() << "' track with language '"_s << language << "' because selection mode is 'manual'"_s);
             tracksForMenu.append(WTF::move(track));
             continue;
         }
 
         if (requestingCaptionsOrDescriptionsOrSubtitles) {
             if (track->containsOnlyForcedSubtitles()) {
-                LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "' because it contains only forced subtitles"_s);
+                LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '"_s << track->kindKeyword() << "' track with language '"_s << language << "' because it contains only forced subtitles"_s);
                 continue;
             }
 
             if (track->isEasyToRead()) {
-                LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "' because it is 'easy to read'"_s);
-                if (!language.isEmpty())
+                LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword() << "' track with language '"_s << language << "' because it is 'easy to read'"_s);
+                if (!isEmpty(language))
                     languagesIncluded.add(language);
                 tracksForMenu.append(WTF::move(track));
                 continue;
             }
 
             if (track->mode() == TextTrack::Mode::Showing) {
-                LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "' because it is already visible"_s);
-                if (!language.isEmpty())
+                LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword() << "' track with language '"_s << language << "' because it is already visible"_s);
+                if (!isEmpty(language))
                     languagesIncluded.add(language);
                 tracksForMenu.append(WTF::move(track));
                 continue;
             }
 
-            if (!language.isEmpty() && track->isMainProgramContent()) {
+            if (!isEmpty(language) && track->isMainProgramContent()) {
                 bool isAccessibilityTrack = track->kind() == TextTrack::Kind::Captions;
                 if (prefersAccessibilityTracks) {
                     // In the first pass, include only caption tracks if the user prefers accessibility tracks.
                     if (!isAccessibilityTrack && filterTrackList) {
-                        LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "' because it is NOT an accessibility track"_s);
+                        LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '"_s << track->kindKeyword() << "' track with language '"_s << language << "' because it is NOT an accessibility track"_s);
                         continue;
                     }
                 } else {
                     // In the first pass, only include the first non-CC or SDH track with each language if the user prefers translation tracks.
                     if (isAccessibilityTrack && filterTrackList) {
-                        LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "' because it is an accessibility track"_s);
+                        LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '"_s << track->kindKeyword() << "' track with language '"_s << language << "' because it is an accessibility track"_s);
                         continue;
                     }
                     if (languagesIncluded.contains(language) && filterTrackList) {
-                        LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "' because it is not the first with this language"_s);
+                        LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '"_s << track->kindKeyword() << "' track with language '"_s << language << "' because it is not the first with this language"_s);
                         continue;
                     }
                 }
             }
 
-            if (!language.isEmpty())
+            if (!isEmpty(language))
                 languagesIncluded.add(language);
         }
 
         tracksForMenu.append(track);
 
-        LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "', is"_s << (track->isMainProgramContent() ? "" : " NOT") << " main program content"_s);
+        LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword() << "' track with language '"_s << language << "', is"_s << (track->isMainProgramContent() ? "" : " NOT") << " main program content"_s);
     }
 
     if (requestingCaptionsOrDescriptionsOrSubtitles) {
         // Now that we have filtered for the user's accessibility/translation preference, add  all tracks with a unique language without regard to track type.
         for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
             Ref track = *trackList->item(i);
-            String language = displayNameForLanguageLocale(track->language());
+            RefPtr<StringImpl> language = displayNameForLanguageLocale(track->language());
 
             if (tracksForMenu.contains(track.ptr()))
                 continue;
@@ -944,7 +944,7 @@ Vector<Ref<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(Tex
                 continue;
 
             // All candidates with no languge were added the first time through.
-            if (language.isEmpty())
+            if (isEmpty(language))
                 continue;
 
             if (track->containsOnlyForcedSubtitles())
@@ -953,7 +953,7 @@ Vector<Ref<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(Tex
             if (!languagesIncluded.contains(language) && track->isMainProgramContent()) {
                 languagesIncluded.add(language);
                 tracksForMenu.append(track);
-                LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword().string() << "' track with language '"_s << language << "' because it is the only track with this language"_s);
+                LOG_WITH_STREAM(Media, stream << "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '"_s << track->kindKeyword() << "' track with language '"_s << language << "' because it is the only track with this language"_s);
             }
         }
     }
@@ -964,8 +964,8 @@ Vector<Ref<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(Tex
     struct TextTrackData {
         bool exactMatch { false };
         size_t userLanguageIndex { notFound };
-        String displayName;
-        String languageDisplayName;
+        RefPtr<StringImpl> displayName;
+        RefPtr<StringImpl> languageDisplayName;
         bool isMainContent { false };
         bool isCC { false };
         int uniqueId { 0 };
@@ -1021,20 +1021,20 @@ Vector<Ref<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(Tex
     return tracksForMenu;
 }
 
-Vector<String> CaptionUserPreferencesMediaAF::platformProfileIDs()
+Vector<RefPtr<StringImpl>> CaptionUserPreferencesMediaAF::platformProfileIDs()
 {
     if (!canLoad_MediaAccessibility_MACaptionAppearanceCopyProfileIDs())
         return { };
     RetainPtr<CFArrayRef> cfProfileIDs = adoptCF(MACaptionAppearanceCopyProfileIDs());
-    return makeVector<String>(cfProfileIDs.get());
+    return makeVector<RefPtr<StringImpl>>(cfProfileIDs.get());
 }
 
-String CaptionUserPreferencesMediaAF::platformActiveProfileID()
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::platformActiveProfileID()
 {
     if (!canLoad_MediaAccessibility_MACaptionAppearanceCopyActiveProfileID())
         return nullString();
     RetainPtr cfProfileID = adoptCF(MACaptionAppearanceCopyActiveProfileID());
-    return cfProfileID.get();
+    return StringImpl::create(cfProfileID.get());
 }
 
 bool CaptionUserPreferencesMediaAF::canSetActiveProfileID()
@@ -1042,55 +1042,55 @@ bool CaptionUserPreferencesMediaAF::canSetActiveProfileID()
     return canLoad_MediaAccessibility_MACaptionAppearanceSetActiveProfileID();
 }
 
-bool CaptionUserPreferencesMediaAF::setActiveProfileID(const String& profileID)
+bool CaptionUserPreferencesMediaAF::setActiveProfileID(StringImpl* profileID)
 {
     if (!canSetActiveProfileID())
         return false;
 
-    if (profileID == platformActiveProfileID())
+    if (equal(profileID, platformActiveProfileID()))
         return true;
 
-    RetainPtr cfProfileID = profileID.createCFString();
+    RetainPtr cfProfileID = createCFString(profileID);
     MACaptionAppearanceSetActiveProfileID(cfProfileID.get());
     return true;
 }
 
-String CaptionUserPreferencesMediaAF::nameForProfileID(const String& profileID)
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::nameForProfileID(StringImpl* profileID)
 {
     if (!canLoad_MediaAccessibility_MACaptionAppearanceCopyProfileName())
         return nullString();
 
-    RetainPtr cfProfileID = profileID.createCFString();
+    RetainPtr cfProfileID = createCFString(profileID);
     RetainPtr cfProfileName = adoptCF(MACaptionAppearanceCopyProfileName(cfProfileID.get()));
-    return cfProfileName.get();
+    return StringImpl::create(cfProfileName.get());
 }
 
-String CaptionUserPreferencesMediaAF::captionPreviewProfileID() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionPreviewProfileID() const
 {
     return m_previewProfileID;
 }
 
-void CaptionUserPreferencesMediaAF::setCaptionPreviewProfileID(const String& previewProfileID)
+void CaptionUserPreferencesMediaAF::setCaptionPreviewProfileID(StringImpl* previewProfileID)
 {
-    if (m_previewProfileID == previewProfileID)
+    if (equal(m_previewProfileID, previewProfileID))
         return;
 
     m_previewProfileID = previewProfileID;
     captionPreferencesChanged();
 }
 
-String CaptionUserPreferencesMediaAF::captionPreviewTitle() const
+RefPtr<StringImpl> CaptionUserPreferencesMediaAF::captionPreviewTitle() const
 {
     if (testingMode())
         return CaptionUserPreferences::captionPreviewTitle();
 
-    String activeProfileID = platformActiveProfileID();
+    RefPtr<StringImpl> activeProfileID = platformActiveProfileID();
 
     if (canLoad_MediaAccessibility_MACaptionAppearanceCopyPreviewText())
-        return adoptCF(MACaptionAppearanceCopyPreviewText(activeProfileID.createCFString().get(), nullptr)).get();
+        return StringImpl::create(adoptCF(MACaptionAppearanceCopyPreviewText(createCFString(activeProfileID).get(), nullptr)).get());
 
-    String activeProfileName = nameForProfileID(activeProfileID);
-    if (activeProfileName.isEmpty())
+    RefPtr<StringImpl> activeProfileName = nameForProfileID(activeProfileID);
+    if (isEmpty(activeProfileName))
         return CaptionUserPreferences::captionPreviewTitle();
 
     return captionStylePreviewWithProfileName(activeProfileName);

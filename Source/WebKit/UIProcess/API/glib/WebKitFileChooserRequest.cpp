@@ -224,10 +224,10 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
     request->priv->mimeTypes = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (size_t i = 0; i < numOfMimeTypes; ++i) {
         RefPtr webMimeType = downcast<API::String>(mimeTypes->at(i));
-        String mimeTypeString = webMimeType->string();
-        if (mimeTypeString.isEmpty())
+        RefPtr<StringImpl> mimeTypeString = webMimeType->string();
+        if (isEmpty(mimeTypeString))
             continue;
-        g_ptr_array_add(request->priv->mimeTypes.get(), gStrdup(mimeTypeString.utf8()));
+        g_ptr_array_add(request->priv->mimeTypes.get(), gStrdup(utf8(mimeTypeString)));
     }
     g_ptr_array_add(request->priv->mimeTypes.get(), 0);
 
@@ -271,10 +271,10 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
     request->priv->filter = gtk_file_filter_new();
     for (size_t i = 0; i < numOfMimeTypes; ++i) {
         API::String* webMimeType = downcast<API::String>(mimeTypes->at(i));
-        String mimeTypeString = webMimeType->string();
-        if (mimeTypeString.isEmpty())
+        RefPtr<StringImpl> mimeTypeString = webMimeType->string();
+        if (isEmpty(mimeTypeString))
             continue;
-        gtk_file_filter_add_mime_type(request->priv->filter.get(), mimeTypeString.utf8().legacyCStringPointer());
+        gtk_file_filter_add_mime_type(request->priv->filter.get(), utf8(mimeTypeString).legacyCStringPointer());
     }
 
     return request->priv->filter.get();
@@ -315,10 +315,10 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     g_return_if_fail(files);
 
     GRefPtr<GPtrArray> selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
-    Vector<String> chosenFiles;
+    Vector<RefPtr<StringImpl>> chosenFiles;
 
     for (const auto* filePath : span(files)) {
-        chosenFiles.append(PAL::decodeURLEscapeSequences(String::fromUTF8(filePath)));
+        chosenFiles.append(PAL::decodeURLEscapeSequences(StringImpl::fromUTF8(filePath)));
         g_ptr_array_add(selectedFiles.get(), g_strdup(filePath));
     }
 

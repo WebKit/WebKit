@@ -46,9 +46,9 @@ PopupMenu* WebSearchPopupMenu::popupMenu()
     return m_popup.get();
 }
 
-void WebSearchPopupMenu::saveRecentSearches(const AtomString& name, const Vector<RecentSearch>& searchItems)
+void WebSearchPopupMenu::saveRecentSearches(AtomStringImpl* name, const Vector<RecentSearch>& searchItems)
 {
-    if (name.isEmpty())
+    if (isEmpty(name))
         return;
 
     RefPtr page = m_popup->page();
@@ -58,9 +58,9 @@ void WebSearchPopupMenu::saveRecentSearches(const AtomString& name, const Vector
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->identifier());
 }
 
-void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<RecentSearch>& resultItems)
+void WebSearchPopupMenu::loadRecentSearches(AtomStringImpl* name, Vector<RecentSearch>& resultItems)
 {
-    if (name.isEmpty())
+    if (isEmpty(name))
         return;
 
     RefPtr page = m_popup->page();

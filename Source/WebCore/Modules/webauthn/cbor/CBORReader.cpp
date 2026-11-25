@@ -239,7 +239,7 @@ std::optional<CBORValue> CBORReader::readString(uint64_t numBytes)
     }
 
     ASSERT(numBytes <= std::numeric_limits<size_t>::max());
-    String cborString = String::fromUTF8(m_data.subspan(std::distance(m_data.begin(), m_it), numBytes));
+    RefPtr<StringImpl> cborString = StringImpl::fromUTF8(m_data.subspan(std::distance(m_data.begin(), m_it), numBytes));
     m_it += numBytes;
 
     // Invalid UTF8 bytes produce an empty WTFString.
@@ -330,10 +330,10 @@ bool CBORReader::checkDuplicateKey(const CBORValue& newKey, const CBORValue::Map
     return true;
 }
 
-bool CBORReader::hasValidUTF8Format(const String& stringData)
+bool CBORReader::hasValidUTF8Format(StringImpl* stringData)
 {
     // Invalid UTF8 bytes produce an empty WTFString.
-    if (stringData.isEmpty()) {
+    if (isEmpty(stringData)) {
         m_errorCode = DecoderError::InvalidUTF8;
         return false;
     }

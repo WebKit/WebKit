@@ -86,7 +86,7 @@ struct _WebKitDownloadPrivate {
 
     RefPtr<DownloadProxy> download;
 
-    CompletionHandler<void(AllowOverwrite, String)> decideDestinationCallback;
+    CompletionHandler<void(AllowOverwrite, RefPtr<StringImpl>)> decideDestinationCallback;
     GRefPtr<WebKitURIRequest> request;
     GRefPtr<WebKitURIResponse> response;
     GWeakPtr<WebKitWebView> webView;
@@ -144,7 +144,7 @@ static void webkitDownloadGetProperty(GObject* object, guint propId, GValue* val
 static void maybeFinishDecideDestination(WebKitDownload* download)
 {
     if (auto completionHandler = std::exchange(download->priv->decideDestinationCallback, nullptr))
-        completionHandler(download->priv->allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, String::fromUTF8(download->priv->destination.span()));
+        completionHandler(download->priv->allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, StringImpl::fromUTF8(download->priv->destination.span()));
 }
 
 static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const gchar* suggestedFilename)
@@ -414,8 +414,8 @@ void webkitDownloadNotifyProgress(WebKitDownload* download, guint64 bytesReceive
 
 void webkitDownloadFailed(WebKitDownload* download, const ResourceError& resourceError)
 {
-    GUniquePtr<GError> webError(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
-        toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
+    GUniquePtr<GError> webError(g_error_new_literal(gQuarkFromString(utf8(resourceError.domain())),
+        toWebKitError(resourceError.errorCode()), utf8(resourceError.localizedDescription()).legacyCStringPointer()));
     if (download->priv->timer)
         g_timer_stop(download->priv->timer.get());
 
@@ -436,7 +436,7 @@ void webkitDownloadFinished(WebKitDownload* download)
     g_signal_emit(download, signals[FINISHED], 0, nullptr);
 }
 
-void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, UTF8CString&& suggestedFilename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler)
+void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, UTF8CString&& suggestedFilename, CompletionHandler<void(AllowOverwrite, RefPtr<StringImpl>)>&& completionHandler)
 {
     if (download->priv->isCancelled) {
         completionHandler(AllowOverwrite::No, { });
@@ -450,15 +450,15 @@ void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* downlo
         maybeFinishDecideDestination(download);
 }
 
-void webkitDownloadDestinationCreated(WebKitDownload* download, const String& destinationPath)
+void webkitDownloadDestinationCreated(WebKitDownload* download, StringImpl* destinationPath)
 {
     if (download->priv->isCancelled)
         return;
 
 #if ENABLE(2022_GLIB_API)
-    gSignalEmit(download, signals[CREATED_DESTINATION], 0, destinationPath.utf8());
+    gSignalEmit(download, signals[CREATED_DESTINATION], 0, utf8(destinationPath));
 #else
-    GUniquePtr<char> destinationURI(g_filename_to_uri(destinationPath.utf8().legacyCStringPointer(), nullptr, nullptr));
+    GUniquePtr<char> destinationURI(g_filename_to_uri(utf8(destinationPath).legacyCStringPointer(), nullptr, nullptr));
     ASSERT(destinationURI);
     g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationURI.get());
 #endif

@@ -47,7 +47,7 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
     }
 }
 
-void SVGPolyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGPolyElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::pointsAttr) {
         if (!protect(protect(m_points)->baseVal())->parse(newValue))

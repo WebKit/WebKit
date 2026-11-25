@@ -39,7 +39,7 @@
 namespace WTF::FileSystemImpl {
 
 enum class ShouldFollowSymbolicLinks : bool { No, Yes };
-static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(StringImpl* path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     auto fsRep = fileSystemRepresentation(path);
 
@@ -57,7 +57,7 @@ static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String
     return FileType::Regular;
 }
 
-bool moveFile(const String& oldPath, const String& newPath)
+bool moveFile(StringImpl* oldPath, StringImpl* newPath)
 {
     auto oldFilename = fileSystemRepresentation(oldPath);
     if (oldFilename.isNull())
@@ -70,7 +70,7 @@ bool moveFile(const String& oldPath, const String& newPath)
     return posixRename(oldFilename, newFilename) != -1;
 }
 
-std::optional<uint64_t> volumeFreeSpace(const String& path)
+std::optional<uint64_t> volumeFreeSpace(StringImpl* path)
 {
     struct statvfs fileSystemStat;
     if (!posixStatvfs(fileSystemRepresentation(path), &fileSystemStat))
@@ -78,7 +78,7 @@ std::optional<uint64_t> volumeFreeSpace(const String& path)
     return std::nullopt;
 }
 
-std::optional<uint64_t> volumeCapacity(const String& path)
+std::optional<uint64_t> volumeCapacity(StringImpl* path)
 {
     struct statvfs fileSystemStat;
     if (!posixStatvfs(fileSystemRepresentation(path), &fileSystemStat))
@@ -86,9 +86,9 @@ std::optional<uint64_t> volumeCapacity(const String& path)
     return std::nullopt;
 }
 
-Vector<String> listDirectorySub(const String& path, bool fullPath)
+Vector<RefPtr<StringImpl>> listDirectorySub(StringImpl* path, bool fullPath)
 {
-    Vector<String> entries;
+    Vector<RefPtr<StringImpl>> entries;
     auto cpath = fileSystemRepresentation(path);
     DIR* dir = posixOpendir(cpath);
     if (dir) {
@@ -97,7 +97,7 @@ Vector<String> listDirectorySub(const String& path, bool fullPath)
             const char* name = dp->d_name;
             if (!strcmp(name, ".") || !strcmp(name, ".."))
                 continue;
-            String newEntry;
+            RefPtr<StringImpl> newEntry;
             if (fullPath)
                 newEntry = makeString(path, '/', stringFromFileSystemRepresentation(name));
             else
@@ -105,7 +105,7 @@ Vector<String> listDirectorySub(const String& path, bool fullPath)
 
             // Some file system representations cannot be represented as a UTF-16 string,
             // so this newEntry might be null.
-            if (!newEntry.isNull())
+            if (newEntry)
                 entries.append(WTF::move(newEntry));
         }
         closedir(dir);
@@ -113,37 +113,37 @@ Vector<String> listDirectorySub(const String& path, bool fullPath)
     return entries;
 }
 
-Vector<String> listDirectory(const String& path)
+Vector<RefPtr<StringImpl>> listDirectory(StringImpl* path)
 {
     return listDirectorySub(path, false);
 }
 
-void traverseDirectory(const String& path, NOESCAPE const Function<void(const String&, FileType)>& function)
+void traverseDirectory(StringImpl* path, NOESCAPE const Function<void(StringImpl*, FileType)>& function)
 {
     for (auto& fileName : listDirectory(path)) {
-        auto type = fileTypePotentiallyFollowingSymLinks(pathByAppendingComponent(path, fileName), ShouldFollowSymbolicLinks::No).value_or(FileType::Regular);
-        function(fileName, type);
+        auto type = fileTypePotentiallyFollowingSymLinks(pathByAppendingComponent(path, fileName).get(), ShouldFollowSymbolicLinks::No).value_or(FileType::Regular);
+        function(fileName.get(), type);
     }
 }
 
-bool deleteNonEmptyDirectory(const String& path)
+bool deleteNonEmptyDirectory(StringImpl* path)
 {
     auto entries = listDirectorySub(path, true);
     for (auto& entry : entries) {
-        if (fileTypePotentiallyFollowingSymLinks(entry, ShouldFollowSymbolicLinks::No) == FileType::Directory)
-            deleteNonEmptyDirectory(entry);
+        if (fileTypePotentiallyFollowingSymLinks(entry.get(), ShouldFollowSymbolicLinks::No) == FileType::Directory)
+            deleteNonEmptyDirectory(entry.get());
         else
-            deleteFile(entry);
+            deleteFile(entry.get());
     }
     return deleteEmptyDirectory(path);
 }
 
 
-String realPath(const String& filePath)
+RefPtr<StringImpl> realPath(StringImpl* filePath)
 {
     auto fsRep = fileSystemRepresentation(filePath);
     std::unique_ptr<char, decltype(free)*> resolvedPath(posixRealpath(fsRep, nullptr), free);
-    return resolvedPath ? String::fromUTF8(resolvedPath.get()) : filePath;
+    return resolvedPath ? StringImpl::fromUTF8(resolvedPath.get()) : RefPtr { filePath };
 }
 
 

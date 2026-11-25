@@ -86,7 +86,7 @@ public:
     using OverriddenColor = std::pair<unsigned, Color>;
 
     struct CustomPalette {
-        AtomString identifier;
+        RefPtr<AtomStringImpl> identifier;
         std::optional<FontPaletteIndex> basePalette;
         Vector<OverriddenColor> overrideColors;
 
@@ -105,7 +105,7 @@ public:
         return m_customPalettes;
     }
 
-    const CustomPalette* customPalette(const AtomString& identifier) const
+    const CustomPalette* customPalette(AtomStringImpl* identifier) const
     {
         for (auto& palette : m_customPalettes) {
             if (palette.identifier == identifier)

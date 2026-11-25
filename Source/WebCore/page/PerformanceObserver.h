@@ -43,8 +43,8 @@ template<typename> class ExceptionOr;
 class PerformanceObserver : public RefCounted<PerformanceObserver> {
 public:
     struct Init {
-        std::optional<Vector<String>> entryTypes;
-        String type;
+        std::optional<Vector<RefPtr<StringImpl>>> entryTypes;
+        RefPtr<StringImpl> type;
         bool buffered;
         std::optional<DOMHighResTimeStamp> durationThreshold;
     };
@@ -54,7 +54,7 @@ public:
         return adoptRef(*new PerformanceObserver(context, WTF::move(callback)));
     }
 
-    static Vector<String> supportedEntryTypes(ScriptExecutionContext&);
+    static Vector<RefPtr<StringImpl>> supportedEntryTypes(ScriptExecutionContext&);
 
     void disassociate();
 

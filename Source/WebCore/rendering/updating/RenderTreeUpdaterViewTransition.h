@@ -41,7 +41,7 @@ public:
     void updatePseudoElementTree(RenderElement*, Style::DifferenceResult minimalStyleDifference);
 
 private:
-    void buildPseudoElementGroup(RenderBlockFlow& viewTransitionRoot, const AtomString&, RenderElement&, RenderObject* = nullptr);
+    void buildPseudoElementGroup(RenderBlockFlow& viewTransitionRoot, AtomStringImpl*, RenderElement&, RenderObject* = nullptr);
     void updatePseudoElementGroup(const Style::ComputedStyle&, RenderBox&, RenderElement&, Style::DifferenceResult minimalStyleDifference);
     RenderTreeUpdater& m_updater;
 };

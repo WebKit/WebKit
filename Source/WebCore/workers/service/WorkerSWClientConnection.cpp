@@ -65,41 +65,41 @@ WorkerSWClientConnection::~WorkerSWClientConnection()
 
     auto unregisterRequests = WTF::move(m_unregisterRequests);
     for (auto& callback : unregisterRequests.values())
-        callback(Exception { ExceptionCode::TypeError, "context stopped"_s });
+        callback(Exception { ExceptionCode::TypeError, "context stopped"_si });
 
     auto subscribeToPushServiceRequests = WTF::move(m_subscribeToPushServiceRequests);
     for (auto& callback : subscribeToPushServiceRequests.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 
     auto unsubscribeFromPushServiceRequests = WTF::move(m_unsubscribeFromPushServiceRequests);
     for (auto& callback : unsubscribeFromPushServiceRequests.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 
     auto getPushSubscriptionRequests = WTF::move(m_getPushSubscriptionRequests);
     for (auto& callback : getPushSubscriptionRequests.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 
     auto getPushPermissionStateCallbacks = WTF::move(m_getPushPermissionStateCallbacks);
     for (auto& callback : getPushPermissionStateCallbacks.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 
     auto voidCallbacks = WTF::move(m_voidCallbacks);
     for (auto& callback : voidCallbacks.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 
     auto navigationPreloadStateCallbacks = WTF::move(m_navigationPreloadStateCallbacks);
     for (auto& callback : navigationPreloadStateCallbacks.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 
 #if ENABLE(NOTIFICATION_EVENT)
     auto getNotificationsCallbacks = WTF::move(m_getNotificationsCallbacks);
     for (auto& callback : getNotificationsCallbacks.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 #endif
 
     auto backgroundFetchInformationCallbacks = std::exchange(m_backgroundFetchInformationCallbacks, { });
     for (auto& callback : backgroundFetchInformationCallbacks.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 
     auto backgroundFetchIdentifiersCallbacks = std::exchange(m_backgroundFetchIdentifiersCallbacks, { });
     for (auto& callback : backgroundFetchIdentifiersCallbacks.values())
@@ -115,15 +115,15 @@ WorkerSWClientConnection::~WorkerSWClientConnection()
 
     auto retrieveRecordResponseCallbacks = std::exchange(m_retrieveRecordResponseCallbacks, { });
     for (auto& callback : retrieveRecordResponseCallbacks.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 
     auto retrieveRecordResponseBodyCallbacks = std::exchange(m_retrieveRecordResponseBodyCallbacks, { });
     for (auto& callback : retrieveRecordResponseBodyCallbacks.values())
-        callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "context stopped"_s }));
+        callback(makeUnexpected(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, "context stopped"_si }));
 
     auto cookieChangeSubscriptionsCallbacks = std::exchange(m_cookieChangeSubscriptionsCallback, { });
     for (auto& callback : cookieChangeSubscriptionsCallbacks.values())
-        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_si });
 }
 
 void WorkerSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
@@ -232,7 +232,7 @@ bool WorkerSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const Sec
     return true;
 }
 
-void WorkerSWClientConnection::registerServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& identifier, String&& userAgent)
+void WorkerSWClientConnection::registerServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& identifier, RefPtr<StringImpl>&& userAgent)
 {
     callOnMainThread([clientOrigin = clientOrigin.isolatedCopy(), data = crossThreadCopy(WTF::move(data)), identifier, userAgent = crossThreadCopy(WTF::move(userAgent))]() mutable {
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
@@ -350,12 +350,12 @@ void WorkerSWClientConnection::getPushPermissionState(ServiceWorkerRegistrationI
 }
 
 #if ENABLE(NOTIFICATION_EVENT)
-void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistrationURL, const String& tag, GetNotificationsCallback&& callback)
+void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistrationURL, StringImpl* tag, GetNotificationsCallback&& callback)
 {
     auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_getNotificationsCallbacks.add(requestIdentifier, WTF::move(callback));
 
-    callOnMainThread([thread = m_thread, requestIdentifier, serviceWorkerRegistrationURL = serviceWorkerRegistrationURL.isolatedCopy(), tag = tag.isolatedCopy()]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, serviceWorkerRegistrationURL = serviceWorkerRegistrationURL.isolatedCopy(), tag = isolatedCopy(tag)]() mutable {
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->getNotifications(serviceWorkerRegistrationURL, tag, [thread = WTF::move(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTF::move(result))](auto& scope) mutable {
@@ -399,12 +399,12 @@ void WorkerSWClientConnection::disableNavigationPreload(ServiceWorkerRegistratio
     });
 }
 
-void WorkerSWClientConnection::setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier registrationIdentifier, String&& headerValue, ExceptionOrVoidCallback&& callback)
+void WorkerSWClientConnection::setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier registrationIdentifier, RefPtr<StringImpl>&& headerValue, ExceptionOrVoidCallback&& callback)
 {
     auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_voidCallbacks.add(requestIdentifier, WTF::move(callback));
 
-    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, headerValue = WTF::move(headerValue).isolatedCopy()]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, headerValue = isolatedCopy(WTF::move(headerValue))]() mutable {
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->setNavigationPreloadHeaderValue(registrationIdentifier, WTF::move(headerValue), [thread = WTF::move(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTF::move(result))](auto& scope) mutable {
@@ -431,12 +431,12 @@ void WorkerSWClientConnection::getNavigationPreloadState(ServiceWorkerRegistrati
     });
 }
 
-void WorkerSWClientConnection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
+void WorkerSWClientConnection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, StringImpl* backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
     auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_backgroundFetchInformationCallbacks.add(requestIdentifier, WTF::move(callback));
 
-    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = backgroundFetchIdentifier.isolatedCopy(), requests = crossThreadCopy(WTF::move(requests)), options = WTF::move(options).isolatedCopy()]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = isolatedCopy(backgroundFetchIdentifier), requests = crossThreadCopy(WTF::move(requests)), options = WTF::move(options).isolatedCopy()]() mutable {
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->startBackgroundFetch(registrationIdentifier, backgroundFetchIdentifier, WTF::move(requests), WTF::move(options), [thread = WTF::move(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTF::move(result))](auto& scope) mutable {
@@ -447,12 +447,12 @@ void WorkerSWClientConnection::startBackgroundFetch(ServiceWorkerRegistrationIde
     });
 }
 
-void WorkerSWClientConnection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, ExceptionOrBackgroundFetchInformationCallback&& callback)
+void WorkerSWClientConnection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier registrationIdentifier, StringImpl* backgroundFetchIdentifier, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
     auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_backgroundFetchInformationCallbacks.add(requestIdentifier, WTF::move(callback));
 
-    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = backgroundFetchIdentifier.isolatedCopy()]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = isolatedCopy(backgroundFetchIdentifier)]() mutable {
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->backgroundFetchInformation(registrationIdentifier, backgroundFetchIdentifier, [thread = WTF::move(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTF::move(result))](auto& scope) mutable {
@@ -479,12 +479,12 @@ void WorkerSWClientConnection::backgroundFetchIdentifiers(ServiceWorkerRegistrat
     });
 }
 
-void WorkerSWClientConnection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, AbortBackgroundFetchCallback&& callback)
+void WorkerSWClientConnection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, StringImpl* backgroundFetchIdentifier, AbortBackgroundFetchCallback&& callback)
 {
     auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_abortBackgroundFetchCallbacks.add(requestIdentifier, WTF::move(callback));
 
-    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = backgroundFetchIdentifier.isolatedCopy()]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = isolatedCopy(backgroundFetchIdentifier)]() mutable {
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->abortBackgroundFetch(registrationIdentifier, backgroundFetchIdentifier, [thread = WTF::move(thread), requestIdentifier](bool result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result](auto& scope) mutable {
@@ -495,12 +495,12 @@ void WorkerSWClientConnection::abortBackgroundFetch(ServiceWorkerRegistrationIde
     });
 }
 
-void WorkerSWClientConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, RetrieveRecordsOptions&& recordOptions, MatchBackgroundFetchCallback&& callback)
+void WorkerSWClientConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, StringImpl* backgroundFetchIdentifier, RetrieveRecordsOptions&& recordOptions, MatchBackgroundFetchCallback&& callback)
 {
     auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_matchBackgroundFetchCallbacks.add(requestIdentifier, WTF::move(callback));
 
-    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = backgroundFetchIdentifier.isolatedCopy(), recordOptions = WTF::move(recordOptions).isolatedCopy()]() mutable {
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = isolatedCopy(backgroundFetchIdentifier), recordOptions = WTF::move(recordOptions).isolatedCopy()]() mutable {
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->matchBackgroundFetch(registrationIdentifier, backgroundFetchIdentifier, WTF::move(recordOptions), [thread = WTF::move(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTF::move(result))](auto& scope) mutable {

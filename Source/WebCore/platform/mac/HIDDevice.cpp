@@ -70,7 +70,7 @@ HIDDevice::HIDDevice(IOHIDDeviceRef device)
     m_productID = (uint16_t)productID;
 
     RetainPtr cfProductName = checked_cf_cast<CFStringRef>(IOHIDDeviceGetProperty(device, CFSTR(kIOHIDProductKey)));
-    m_productName = cfProductName ? String(cfProductName.get()) : "Unknown"_str;
+    m_productName = cfProductName ? StringImpl::create(cfProductName.get()) : "Unknown"_str;
 }
 
 Vector<HIDElement> HIDDevice::uniqueInputElementsInDeviceTreeOrder() const

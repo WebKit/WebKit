@@ -57,16 +57,16 @@ public:
         , WebCore::IntPoint&& menuLocation
         , Vector<WebContextMenuItemData>&& menuItems
         , std::optional<WebKit::WebHitTestResultData>&&
-        , String&& selectedText
+        , RefPtr<StringImpl>&& selectedText
 #if ENABLE(SERVICE_CONTROLS)
         , std::optional<WebCore::ShareableBitmapHandle>&& controlledImageHandle
         , WebCore::AttributedString&& controlledSelection
-        , Vector<String>&& selectedTelephoneNumbers
+        , Vector<RefPtr<StringImpl>>&& selectedTelephoneNumbers
         , bool selectionIsEditable
         , WebCore::IntRect&& controlledImageBounds
-        , String&& controlledImageAttachmentID
+        , RefPtr<StringImpl>&& controlledImageAttachmentID
         , std::optional<WebCore::ElementContext>&& controlledImageElementContext
-        , String&& controlledImageMIMEType
+        , RefPtr<StringImpl>&& controlledImageMIMEType
 #endif // ENABLE(SERVICE_CONTROLS)
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
         , std::optional<WebCore::ShareableBitmapHandle>&& potentialQRCodeNodeSnapshotImageHandle
@@ -86,14 +86,14 @@ public:
     const Vector<WebKit::WebContextMenuItemData>& menuItems() const LIFETIME_BOUND { return m_menuItems; }
 
     const std::optional<WebHitTestResultData>& webHitTestResultData() const LIFETIME_BOUND { return m_webHitTestResultData; }
-    const String& selectedText() const LIFETIME_BOUND { return m_selectedText; }
+    const RefPtr<StringImpl>& selectedText() const LIFETIME_BOUND { return m_selectedText; }
 
     bool hasEntireImage() const { return m_hasEntireImage; }
     bool allowsFollowingLink() const { return m_allowsFollowingLink; }
     bool allowsFollowingImageURL() const { return m_allowsFollowingImageURL; }
 
 #if ENABLE(SERVICE_CONTROLS)
-    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::AttributedString&& controlledSelection, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::AttributedString&& controlledSelection, const Vector<RefPtr<StringImpl>>& selectedTelephoneNumbers, bool isEditable)
         : m_type(Type::ServicesMenu)
         , m_menuLocation(menuLocation)
         , m_controlledSelection(WTF::move(controlledSelection))
@@ -102,7 +102,7 @@ public:
     {
     }
 
-    ContextMenuContextData(const WebCore::IntPoint& menuLocation, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, const String& sourceImageMIMEType)
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, bool isEditable, const WebCore::IntRect& imageRect, StringImpl* attachmentID, StringImpl* sourceImageMIMEType)
         : m_type(Type::ServicesMenu)
         , m_menuLocation(menuLocation)
         , m_selectionIsEditable(isEditable)
@@ -112,22 +112,22 @@ public:
     {
     }
 
-    ContextMenuContextData(const WebCore::IntPoint& menuLocation, RefPtr<WebCore::ShareableBitmap>&& controlledImage, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<WebCore::ElementContext>&&, const String& sourceImageMIMEType);
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, RefPtr<WebCore::ShareableBitmap>&& controlledImage, bool isEditable, const WebCore::IntRect& imageRect, StringImpl* attachmentID, std::optional<WebCore::ElementContext>&&, StringImpl* sourceImageMIMEType);
 
     WebCore::ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
     std::optional<WebCore::ShareableBitmap::Handle> createControlledImageReadOnlyHandle() const;
 
     const WebCore::AttributedString& controlledSelection() const LIFETIME_BOUND { return m_controlledSelection; }
-    const Vector<String>& selectedTelephoneNumbers() const LIFETIME_BOUND { return m_selectedTelephoneNumbers; }
+    const Vector<RefPtr<StringImpl>>& selectedTelephoneNumbers() const LIFETIME_BOUND { return m_selectedTelephoneNumbers; }
 
     bool selectionIsEditable() const { return m_selectionIsEditable; }
 
     bool isServicesMenu() const { return m_type == ContextMenuContextData::Type::ServicesMenu; }
     NODELETE bool controlledDataIsEditable() const;
     WebCore::IntRect controlledImageBounds() const { return m_controlledImageBounds; };
-    String controlledImageAttachmentID() const { return m_controlledImageAttachmentID; };
+    RefPtr<StringImpl> controlledImageAttachmentID() const { return m_controlledImageAttachmentID; };
     std::optional<WebCore::ElementContext> controlledImageElementContext() const { return m_controlledImageElementContext; }
-    String controlledImageMIMEType() const { return m_controlledImageMIMEType; }
+    RefPtr<StringImpl> controlledImageMIMEType() const { return m_controlledImageMIMEType; }
 #endif // ENABLE(SERVICE_CONTROLS)
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
@@ -136,8 +136,8 @@ public:
     WebCore::ShareableBitmap* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
     std::optional<WebCore::ShareableBitmap::Handle> createPotentialQRCodeViewportSnapshotImageReadOnlyHandle() const;
 
-    const String& qrCodePayloadString() const LIFETIME_BOUND { return m_qrCodePayloadString; }
-    void setQRCodePayloadString(const String& string) { m_qrCodePayloadString = string; }
+    const RefPtr<StringImpl>& qrCodePayloadString() const LIFETIME_BOUND { return m_qrCodePayloadString; }
+    void setQRCodePayloadString(StringImpl* string) { m_qrCodePayloadString = string; }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -156,7 +156,7 @@ private:
     Vector<WebKit::WebContextMenuItemData> m_menuItems;
 
     std::optional<WebHitTestResultData> m_webHitTestResultData;
-    String m_selectedText;
+    RefPtr<StringImpl> m_selectedText;
     bool m_hasEntireImage { false };
     bool m_allowsFollowingLink { false };
     bool m_allowsFollowingImageURL { false };
@@ -164,14 +164,14 @@ private:
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<WebCore::ShareableBitmap> m_controlledImage;
     WebCore::AttributedString m_controlledSelection;
-    Vector<String> m_selectedTelephoneNumbers;
+    Vector<RefPtr<StringImpl>> m_selectedTelephoneNumbers;
     bool m_selectionIsEditable;
     // This is in the coordinates of the main frame's view.
     // FIXME: rename to include the coordinate space.
     WebCore::IntRect m_controlledImageBounds;
-    String m_controlledImageAttachmentID;
+    RefPtr<StringImpl> m_controlledImageAttachmentID;
     std::optional<WebCore::ElementContext> m_controlledImageElementContext;
-    String m_controlledImageMIMEType;
+    RefPtr<StringImpl> m_controlledImageMIMEType;
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
@@ -181,7 +181,7 @@ private:
     RefPtr<WebCore::ShareableBitmap> m_potentialQRCodeNodeSnapshotImage;
     RefPtr<WebCore::ShareableBitmap> m_potentialQRCodeViewportSnapshotImage;
 
-    String m_qrCodePayloadString;
+    RefPtr<StringImpl> m_qrCodePayloadString;
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

@@ -42,20 +42,20 @@ class ServiceWorkerDebuggableProxy final : public Inspector::RemoteInspectionTar
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerDebuggableProxy);
     WTF_MAKE_NONCOPYABLE(ServiceWorkerDebuggableProxy);
 public:
-    static Ref<ServiceWorkerDebuggableProxy> create(const String& url, WebCore::ServiceWorkerIdentifier, WebProcessProxy&);
+    static Ref<ServiceWorkerDebuggableProxy> create(StringImpl* url, WebCore::ServiceWorkerIdentifier, WebProcessProxy&);
 
     Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::ServiceWorker; }
 
-    String name() const final { return "ServiceWorker"_s; }
-    String url() const final { return m_scopeURL; }
+    RefPtr<StringImpl> name() const final { return "ServiceWorker"_si; }
+    RefPtr<StringImpl> url() const final { return m_scopeURL; }
     bool hasLocalDebugger() const final { return false; }
 
-    const String& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
-    void setNameOverride(const String& name) { m_nameOverride = name; }
+    const RefPtr<StringImpl>& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
+    void setNameOverride(StringImpl* name) { m_nameOverride = name; }
 
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) final;
     void disconnect(Inspector::FrontendChannel&) final;
-    void dispatchMessageFromRemote(String&& message) final;
+    void dispatchMessageFromRemote(RefPtr<StringImpl>&& message) final;
 #if ENABLE(REMOTE_INSPECTOR_SERVICE_WORKER_AUTO_INSPECTION)
     bool automaticInspectionAllowed() const final { return true; }
     bool automaticInspectionAllowedInSameProcess() const final { return true; }
@@ -66,10 +66,10 @@ public:
 #endif
 
 private:
-    ServiceWorkerDebuggableProxy(const String& url, WebCore::ServiceWorkerIdentifier, WebProcessProxy&);
+    ServiceWorkerDebuggableProxy(StringImpl* url, WebCore::ServiceWorkerIdentifier, WebProcessProxy&);
 
-    String m_scopeURL;
-    String m_nameOverride;
+    RefPtr<StringImpl> m_scopeURL;
+    RefPtr<StringImpl> m_nameOverride;
     WebCore::ServiceWorkerIdentifier m_identifier;
     WeakPtr<WebProcessProxy> m_webProcessProxy;
 };

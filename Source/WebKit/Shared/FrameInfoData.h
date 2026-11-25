@@ -44,7 +44,7 @@ struct FrameInfoData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FrameInfoData);
 
     WebCore::ResourceRequest request;
-    String frameName;
+    RefPtr<StringImpl> frameName;
     WebCore::FrameIdentifier frameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
     bool isFocused { false };

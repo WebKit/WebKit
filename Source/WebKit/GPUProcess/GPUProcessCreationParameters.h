@@ -61,20 +61,20 @@ struct GPUProcessCreationParameters {
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
-    String containerCachesDirectory;
+    RefPtr<StringImpl> containerCachesDirectory;
 #endif
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     Vector<SandboxExtension::Handle> gpuToolsExtensionHandles;
 #endif
 
-    String applicationVisibleName;
+    RefPtr<StringImpl> applicationVisibleName;
 
 #if USE(GBM)
     WebCore::DRMDevice drmDevice;
 #endif
 
-    Vector<String> overrideLanguages;
+    Vector<RefPtr<StringImpl>> overrideLanguages;
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     std::optional<WebCore::QualifiedMediaSessionIdentifier> nowPlayingFallbackSession;

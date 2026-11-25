@@ -40,7 +40,7 @@ public:
     {
     }
 
-    ResourceResponse(URL&& url, String&& mimeType, long long expectedLength, String&& textEncodingName)
+    ResourceResponse(URL&& url, RefPtr<StringImpl>&& mimeType, long long expectedLength, RefPtr<StringImpl>&& textEncodingName)
         : ResourceResponseBase(WTF::move(url), WTF::move(mimeType), expectedLength, WTF::move(textEncodingName))
     {
     }
@@ -61,9 +61,9 @@ public:
 private:
     friend class ResourceResponseBase;
 
-    String platformSuggestedFilename() const;
+    RefPtr<StringImpl> platformSuggestedFilename() const;
 
-    void appendHTTPHeaderField(const String&);
+    void appendHTTPHeaderField(StringImpl*);
 };
 
 } // namespace WebCore

@@ -53,7 +53,7 @@ public:
 #if PLATFORM(COCOA)
     void updateExternalTexture(CVPixelBufferRef) final;
 #endif
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
 private:

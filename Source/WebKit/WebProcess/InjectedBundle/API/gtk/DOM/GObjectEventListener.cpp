@@ -32,7 +32,7 @@ GObjectEventListener::GObjectEventListener(GObject* target, EventTarget* coreTar
     : EventListener(GObjectEventListenerType)
     , m_target(target)
     , m_coreTarget(coreTarget)
-    , m_eventType(byteCast<Latin1Character>(unsafeSpan(domEventName)))
+    , m_eventType(AtomStringImpl::add(byteCast<Latin1Character>(unsafeSpan(domEventName))))
     , m_handler(handler)
     , m_capture(capture)
 {

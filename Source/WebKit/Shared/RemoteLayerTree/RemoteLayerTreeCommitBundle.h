@@ -58,7 +58,7 @@ struct PageData {
     uint64_t renderTreeSize { 0 };
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
+    RefPtr<StringImpl> description() const;
 #endif
 };
 
@@ -99,7 +99,7 @@ struct MainFrameData {
 #endif
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
+    RefPtr<StringImpl> description() const;
 #endif
 };
 
@@ -119,7 +119,7 @@ struct RemoteLayerTreeCommitBundle {
     Vector<std::pair<WebCore::FrameIdentifier, WebCore::FixedContainerEdges>> fixedContainerEdges;
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
+    RefPtr<StringImpl> description() const;
 #endif
 };
 

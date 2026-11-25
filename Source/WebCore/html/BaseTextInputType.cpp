@@ -44,8 +44,8 @@ bool BaseTextInputType::patternMismatch(StringView value) const
 {
     ASSERT(element());
     Ref element = *this->element();
-    const AtomString& rawPattern = element->attributeWithoutSynchronization(patternAttr);
-    if (rawPattern.isNull() || value.isEmpty())
+    const RefPtr<AtomStringImpl>& rawPattern = element->attributeWithoutSynchronization(patternAttr);
+    if (!rawPattern || value.isEmpty())
         return false;
 
     JSC::Yarr::RegularExpression regex(rawPattern, { JSC::Yarr::Flags::UnicodeSets }, JSC::Yarr::MatchMode::EntireInput);

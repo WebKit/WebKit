@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static String getDatabaseIdentifier(SQLTransaction& transaction)
+static RefPtr<StringImpl> getDatabaseIdentifier(SQLTransaction& transaction)
 {
     return transaction.database().securityOrigin().databaseIdentifier();
 }
@@ -77,7 +77,7 @@ void SQLTransactionCoordinator::acquireLock(SQLTransaction& transaction)
 {
     ASSERT(!m_isShuttingDown);
 
-    String dbIdentifier = getDatabaseIdentifier(transaction);
+    RefPtr<StringImpl> dbIdentifier = getDatabaseIdentifier(transaction);
 
     CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.find(dbIdentifier);
     if (coordinationInfoIterator == m_coordinationInfoMap.end()) {
@@ -95,7 +95,7 @@ void SQLTransactionCoordinator::releaseLock(SQLTransaction& transaction)
     if (m_isShuttingDown)
         return;
 
-    String dbIdentifier = getDatabaseIdentifier(transaction);
+    RefPtr<StringImpl> dbIdentifier = getDatabaseIdentifier(transaction);
 
     CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.find(dbIdentifier);
     ASSERT(coordinationInfoIterator != m_coordinationInfoMap.end());

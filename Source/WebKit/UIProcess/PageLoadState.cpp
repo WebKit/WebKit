@@ -103,8 +103,8 @@ void PageLoadState::commitChanges()
 
     bool canGoBackChanged = m_committedState.canGoBack != m_uncommittedState.canGoBack;
     bool canGoForwardChanged = m_committedState.canGoForward != m_uncommittedState.canGoForward;
-    bool titleChanged = m_committedState.title != m_uncommittedState.title
-        || m_committedState.titleFromBrowsingWarning != m_uncommittedState.titleFromBrowsingWarning;
+    bool titleChanged = !equal(m_committedState.title, m_uncommittedState.title)
+        || !equal(m_committedState.titleFromBrowsingWarning, m_uncommittedState.titleFromBrowsingWarning);
     bool isLoadingChanged = isLoading(m_committedState) != isLoading(m_uncommittedState);
     bool activeURLChanged = activeURL(m_committedState) != activeURL(m_uncommittedState);
     bool hasOnlySecureContentChanged = hasOnlySecureContent(m_committedState) != hasOnlySecureContent(m_uncommittedState);
@@ -187,8 +187,8 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_lastUnreachableURL = { };
     m_uncommittedState.baseURL = { };
 
-    m_uncommittedState.title = String();
-    m_uncommittedState.titleFromBrowsingWarning = { };
+    m_uncommittedState.title = nullptr;
+    m_uncommittedState.titleFromBrowsingWarning = nullptr;
 
     m_uncommittedState.estimatedProgress = 0;
     m_uncommittedState.networkRequestsInProgress = false;
@@ -316,7 +316,7 @@ void PageLoadState::didFailProvisionalLoad(const Transaction::Token& token)
     m_uncommittedState.unreachableURL = m_lastUnreachableURL;
 }
 
-void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore::CertificateInfo& certificateInfo, bool hasInsecureContent, bool usedLegacyTLS, bool wasPrivateRelayed, const String& proxyName, const WebCore::ResourceResponseSource source, const WebCore::SecurityOriginData& origin)
+void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore::CertificateInfo& certificateInfo, bool hasInsecureContent, bool usedLegacyTLS, bool wasPrivateRelayed, StringImpl* proxyName, const WebCore::ResourceResponseSource source, const WebCore::SecurityOriginData& origin)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     // State might be set to Finished in didFailProvisionalLoad with content filter error,
@@ -332,8 +332,8 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore
     m_uncommittedState.wasPrivateRelayed = wasPrivateRelayed;
     m_uncommittedState.origin = origin;
 
-    m_uncommittedState.title = String();
-    m_uncommittedState.titleFromBrowsingWarning = { };
+    m_uncommittedState.title = nullptr;
+    m_uncommittedState.titleFromBrowsingWarning = nullptr;
     m_uncommittedState.proxyName = proxyName;
     m_uncommittedState.source = source;
     m_uncommittedState.qualifiedServerTrust = { };
@@ -379,21 +379,21 @@ void PageLoadState::setBaseURL(const Transaction::Token& token, const URL& baseU
     m_uncommittedState.baseURL = baseURL;
 }
 
-const String& PageLoadState::title() const
+const RefPtr<StringImpl>& PageLoadState::title() const
 {
-    if (!m_committedState.titleFromBrowsingWarning.isNull())
+    if (m_committedState.titleFromBrowsingWarning)
         return m_committedState.titleFromBrowsingWarning;
 
     return m_committedState.title;
 }
 
-void PageLoadState::setTitle(const Transaction::Token& token, String&& title)
+void PageLoadState::setTitle(const Transaction::Token& token, RefPtr<StringImpl>&& title)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     m_uncommittedState.title = WTF::move(title);
 }
 
-void PageLoadState::setTitleFromBrowsingWarning(const Transaction::Token& token, const String& title)
+void PageLoadState::setTitleFromBrowsingWarning(const Transaction::Token& token, StringImpl* title)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     m_uncommittedState.titleFromBrowsingWarning = title;

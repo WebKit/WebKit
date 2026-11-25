@@ -56,12 +56,12 @@ struct DecomposedAttributedText {
         {
         }
 
-        explicit ListMarker(String&& string)
+        explicit ListMarker(RefPtr<StringImpl>&& string)
             : data(string)
         {
         }
 
-        Variant<Type, String> data;
+        Variant<Type, RefPtr<StringImpl>> data;
     };
 
     enum class ListIDTag { };
@@ -72,7 +72,7 @@ struct DecomposedAttributedText {
     using OrderedList = _DecomposedAttributedTextOrderedList;
     using UnorderedList = _DecomposedAttributedTextUnorderedList;
 
-    using Element = Variant<Bold, Italic, OrderedList, UnorderedList, String>;
+    using Element = Variant<Bold, Italic, OrderedList, UnorderedList, RefPtr<StringImpl>>;
 
     Vector<Element> children;
 };

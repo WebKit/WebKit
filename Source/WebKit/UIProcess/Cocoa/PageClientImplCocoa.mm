@@ -176,9 +176,9 @@ bool PageClientImplCocoa::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void PageClientImplCocoa::didInsertAttachment(API::Attachment& attachment, const String& source)
+void PageClientImplCocoa::didInsertAttachment(API::Attachment& attachment, StringImpl* source)
 {
-    [webView() _didInsertAttachment:attachment withSource:source.createNSString().get()];
+    [webView() _didInsertAttachment:attachment withSource:createNSString(source).get()];
 }
 
 void PageClientImplCocoa::didRemoveAttachment(API::Attachment& attachment)
@@ -267,9 +267,9 @@ void PageClientImplCocoa::removeDictationAlternatives(WebCore::DictationContext 
     m_alternativeTextUIController->removeAlternatives(dictationContext);
 }
 
-Vector<String> PageClientImplCocoa::dictationAlternatives(WebCore::DictationContext dictationContext)
+Vector<RefPtr<StringImpl>> PageClientImplCocoa::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
-    return makeVector<String>(retainPtr(RetainPtr { platformDictationAlternatives(dictationContext) }.get().alternativeStrings).get());
+    return makeVector<RefPtr<StringImpl>>(retainPtr(RetainPtr { platformDictationAlternatives(dictationContext) }.get().alternativeStrings).get());
 }
 
 PlatformTextAlternatives *PageClientImplCocoa::platformDictationAlternatives(WebCore::DictationContext dictationContext)
@@ -564,13 +564,13 @@ void PageClientImplCocoa::handleSmartMagnificationInformationForPotentialTap(Web
 
 #endif // ENABLE(TWO_PHASE_CLICKS)
 
-void PageClientImplCocoa::translateAccessibilityAnnouncementStrings(Vector<String>&& strings, String&& targetLocaleIdentifier, CompletionHandler<void(Vector<String>&&)>&& completion)
+void PageClientImplCocoa::translateAccessibilityAnnouncementStrings(Vector<RefPtr<StringImpl>>&& strings, RefPtr<StringImpl>&& targetLocaleIdentifier, CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completion)
 {
     RetainPtr webView = this->webView();
     if (!webView)
         return completion({ });
 
-    [webView _translateAccessibilityAnnouncementStrings:createNSArray(strings).get() targetLocaleIdentifier:targetLocaleIdentifier.createNSString().get() completionHandler:WTF::move(completion)];
+    [webView _translateAccessibilityAnnouncementStrings:createNSArray(strings).get() targetLocaleIdentifier:createNSString(targetLocaleIdentifier).get() completionHandler:WTF::move(completion)];
 }
 
 } // namespace WebKit

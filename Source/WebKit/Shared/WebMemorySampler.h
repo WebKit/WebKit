@@ -66,7 +66,7 @@ namespace WebKit {
 struct SystemMallocStats;
 
 struct WebMemoryStatistics {
-    Vector<String> keys;
+    Vector<RefPtr<StringImpl>> keys;
     Vector<size_t> values;
 };
     
@@ -77,7 +77,7 @@ class WebMemorySampler final : public CanMakeCheckedPtr<WebMemorySampler> {
 public:
     NODELETE static WebMemorySampler* singleton();
     void start(const double interval = 0);
-    void start(SandboxExtension::Handle&&, const String&, const double interval = 0);
+    void start(SandboxExtension::Handle&&, StringImpl*, const double interval = 0);
     void stop();
     bool isRunning() const { return m_isRunning; }
     
@@ -90,7 +90,7 @@ private:
     ~WebMemorySampler();
     
     void initializeTempLogFile();
-    void initializeSandboxedLogFile(SandboxExtension::Handle&&, const String&);
+    void initializeSandboxedLogFile(SandboxExtension::Handle&&, StringImpl*);
     void writeHeaders();
     void initializeTimers(double);
     void sampleTimerFired();
@@ -101,10 +101,10 @@ private:
     SystemMallocStats sampleSystemMalloc() const;
     size_t sampleProcessCommittedBytes() const;
     WebMemoryStatistics sampleWebKit() const;
-    String processName() const;
+    RefPtr<StringImpl> processName() const;
     
     FileSystem::FileHandle m_sampleLogFile;
-    String m_sampleLogFilePath;
+    RefPtr<StringImpl> m_sampleLogFilePath;
     WebCore::Timer m_sampleTimer;
     WebCore::Timer m_stopTimer;
     bool m_isRunning;

@@ -165,13 +165,13 @@ ExceptionOr<CreateInternalTransformStreamResult> createInternalTransformStream(J
     auto resultArray = getInternalBuiltinResultObjects<3>(globalObject, result.returnValue());
     RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
     if (!resultArray) [[unlikely]]
-        return Exception { ExceptionCode::TypeError, "Internal TransformStream creation returned an unexpected result"_s };
+        return Exception { ExceptionCode::TypeError, "Internal TransformStream creation returned an unexpected result"_si };
 
     auto results = *resultArray;
     auto* readable = dynamicDowncast<JSReadableStream>(results[1].get());
     auto* writable = dynamicDowncast<JSWritableStream>(results[2].get());
     if (!readable || !writable) [[unlikely]]
-        return Exception { ExceptionCode::TypeError, "Internal TransformStream creation returned values of unexpected types"_s };
+        return Exception { ExceptionCode::TypeError, "Internal TransformStream creation returned values of unexpected types"_si };
 
     return CreateInternalTransformStreamResult { results[0].get(), readable->wrapped(), writable->wrapped() };
 }

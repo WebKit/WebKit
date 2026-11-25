@@ -119,10 +119,10 @@ LayoutRect AccessibilityMenuListOption::elementRect() const
     return grandparent ? grandparent->elementRect() : boundingBoxRect();
 }
 
-String AccessibilityMenuListOption::stringValue() const
+RefPtr<StringImpl> AccessibilityMenuListOption::stringValue() const
 {
     RefPtr optionElement = this->optionElement();
-    return optionElement ? optionElement->label() : String();
+    return optionElement ? optionElement->label() : nullptr;
 }
 
 } // namespace WebCore

@@ -55,8 +55,8 @@ enum class RenderAsTextFlag : uint16_t {
 
 // You don't need pageWidthInPixels if you don't specify RenderAsTextInPrintingMode.
 WEBCORE_EXPORT TextStream createTextStream(const RenderView&);
-WEBCORE_EXPORT String externalRepresentation(LocalFrame*, OptionSet<RenderAsTextFlag> = { });
-WEBCORE_EXPORT String externalRepresentation(Element*, OptionSet<RenderAsTextFlag> = { });
+WEBCORE_EXPORT RefPtr<StringImpl> externalRepresentation(LocalFrame*, OptionSet<RenderAsTextFlag> = { });
+WEBCORE_EXPORT RefPtr<StringImpl> externalRepresentation(Element*, OptionSet<RenderAsTextFlag> = { });
 WEBCORE_EXPORT void externalRepresentationForLocalFrame(TextStream&, LocalFrame&, OptionSet<RenderAsTextFlag> = { });
 void write(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag> = { });
 void writeDebugInfo(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag> = { });
@@ -70,9 +70,9 @@ public:
 };
 
 // Helper function shared with SVGRenderTreeAsText
-String quoteAndEscapeNonPrintables(StringView);
+RefPtr<StringImpl> quoteAndEscapeNonPrintables(StringView);
 
-WEBCORE_EXPORT String counterValueForElement(Element*);
-WEBCORE_EXPORT String markerTextForListItem(Element*);
+WEBCORE_EXPORT RefPtr<StringImpl> counterValueForElement(Element*);
+WEBCORE_EXPORT RefPtr<StringImpl> markerTextForListItem(Element*);
 
 } // namespace WebCore

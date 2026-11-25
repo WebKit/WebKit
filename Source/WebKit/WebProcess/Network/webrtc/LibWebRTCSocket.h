@@ -76,7 +76,7 @@ private:
     void signalAddressReady(const webrtc::SocketAddress&);
     void signalConnect();
     void signalClose(int);
-    void signalUsedInterface(String&&);
+    void signalUsedInterface(RefPtr<StringImpl>&&);
 
     // AsyncPacketSocket API
     int GetError() const final { return m_error; }

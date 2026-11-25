@@ -155,7 +155,7 @@ private:
 
 class RKModelLoaderUSD final : public WebCore::REModelLoader, public CanMakeWeakPtr<RKModelLoaderUSD> {
 public:
-    static Ref<RKModelLoaderUSD> create(Model& model, const std::optional<String>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient& client)
+    static Ref<RKModelLoaderUSD> create(Model& model, const std::optional<RefPtr<StringImpl>>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient& client)
     {
         return adoptRef(*new RKModelLoaderUSD(model, attributionTaskID, entityMemoryLimit, client));
     }
@@ -167,7 +167,7 @@ public:
     bool isCanceled() const { return m_canceled; }
 
 private:
-    RKModelLoaderUSD(Model& model, const std::optional<String>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient& client)
+    RKModelLoaderUSD(Model& model, const std::optional<RefPtr<StringImpl>>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient& client)
         : m_canceled { false }
         , m_model { model }
         , m_attributionTaskID { attributionTaskID }
@@ -203,15 +203,15 @@ private:
     bool m_canceled { false };
 
     Ref<Model> m_model;
-    std::optional<String> m_attributionTaskID;
+    std::optional<RefPtr<StringImpl>> m_attributionTaskID;
     std::optional<int> m_entityMemoryLimit;
     WeakPtr<REModelLoaderClient> m_client;
 };
 
-static ResourceError toResourceError(String payload, Model& model)
+static ResourceError toResourceError(RefPtr<StringImpl> payload, Model& model)
 {
     return ResourceError { [NSError errorWithDomain:@"RKModelLoaderUSD" code:-1 userInfo:@{
-        NSLocalizedDescriptionKey: payload.createNSString().get(),
+        NSLocalizedDescriptionKey: createNSString(payload).get(),
         NSURLErrorFailingURLErrorKey: model.url().createNSURL().get()
     }] };
 }
@@ -220,7 +220,7 @@ void RKModelLoaderUSD::load(CompletionHandler<void()>&& completionHandler)
 {
     RetainPtr<NSString> attributionID;
     if (m_attributionTaskID.has_value())
-        attributionID = m_attributionTaskID.value().createNSString();
+        attributionID = createNSString(m_attributionTaskID.value());
     [getWKRKEntityClassSingleton() loadFromData:m_model->data()->createNSData().get() withAttributionTaskID:attributionID.get() entityMemoryLimit:(m_entityMemoryLimit ? *m_entityMemoryLimit : 0) completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (WKRKEntity *entity) mutable {
         completionHandler();
 
@@ -242,8 +242,8 @@ public:
     static RKUSDModelLoadScheduler& singleton();
     RKUSDModelLoadScheduler() = default;
 
-    Ref<REModelLoader> scheduleModelLoad(Model&, const std::optional<String>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient&);
-    void scheduleModelConversion(Ref<WebCore::SharedBuffer>&&, const String& mimeType, ThreadSafeWeakPtr<ModelProcessModelPlayerProxy>&&, Function<void(ModelProcessModelPlayerProxy&, RetainPtr<NSData>&&)>&&);
+    Ref<REModelLoader> scheduleModelLoad(Model&, const std::optional<RefPtr<StringImpl>>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient&);
+    void scheduleModelConversion(Ref<WebCore::SharedBuffer>&&, StringImpl* mimeType, ThreadSafeWeakPtr<ModelProcessModelPlayerProxy>&&, Function<void(ModelProcessModelPlayerProxy&, RetainPtr<NSData>&&)>&&);
 
 private:
     void loadNextModel();
@@ -262,7 +262,7 @@ RKUSDModelLoadScheduler& RKUSDModelLoadScheduler::singleton()
     return scheduler;
 }
 
-Ref<REModelLoader> RKUSDModelLoadScheduler::scheduleModelLoad(Model& model, const std::optional<String>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient& client)
+Ref<REModelLoader> RKUSDModelLoadScheduler::scheduleModelLoad(Model& model, const std::optional<RefPtr<StringImpl>>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient& client)
 {
     auto loader = RKModelLoaderUSD::create(model, attributionTaskID, entityMemoryLimit, client);
 
@@ -274,14 +274,14 @@ Ref<REModelLoader> RKUSDModelLoadScheduler::scheduleModelLoad(Model& model, cons
     return loader;
 }
 
-void RKUSDModelLoadScheduler::scheduleModelConversion(Ref<WebCore::SharedBuffer>&& modelData, const String& mimeType, ThreadSafeWeakPtr<ModelProcessModelPlayerProxy>&& player, Function<void(ModelProcessModelPlayerProxy&, RetainPtr<NSData>&&)>&& completion)
+void RKUSDModelLoadScheduler::scheduleModelConversion(Ref<WebCore::SharedBuffer>&& modelData, StringImpl* mimeType, ThreadSafeWeakPtr<ModelProcessModelPlayerProxy>&& player, Function<void(ModelProcessModelPlayerProxy&, RetainPtr<NSData>&&)>&& completion)
 {
-    m_conversionQueue->dispatch([modelData = WTF::move(modelData), mimeType = mimeType.isolatedCopy(), player = WTF::move(player), completion = WTF::move(completion)] mutable {
+    m_conversionQueue->dispatch([modelData = WTF::move(modelData), mimeType = isolatedCopy(mimeType), player = WTF::move(player), completion = WTF::move(completion)] mutable {
         // Skip the copy + conversion if the player is already gone (e.g. its <model> element was unloaded).
         if (!player.get())
             return;
 
-        RetainPtr usdzData = [WKUSDStageConverter convert:modelData->createNSData() mimeType:mimeType.createNSString().get()];
+        RetainPtr usdzData = [WKUSDStageConverter convert:modelData->createNSData() mimeType:createNSString(mimeType).get()];
 
         dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([player = WTF::move(player), completion = WTF::move(completion), usdzData = WTF::move(usdzData)] () mutable {
             if (RefPtr protectedPlayer = player.get())
@@ -321,12 +321,12 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ModelProcessModelPlayerProxy::TrackedModel)
 
 uint64_t ModelProcessModelPlayerProxy::gObjectCountForTesting = 0;
 
-Ref<ModelProcessModelPlayerProxy> ModelProcessModelPlayerProxy::create(ModelProcessModelPlayerManagerProxy& manager, WebCore::ModelPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, const std::optional<String>& attributionTaskID, std::optional<int> debugEntityMemoryLimit, std::optional<int> debugImmersiveEntityMemoryLimit)
+Ref<ModelProcessModelPlayerProxy> ModelProcessModelPlayerProxy::create(ModelProcessModelPlayerManagerProxy& manager, WebCore::ModelPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, const std::optional<RefPtr<StringImpl>>& attributionTaskID, std::optional<int> debugEntityMemoryLimit, std::optional<int> debugImmersiveEntityMemoryLimit)
 {
     return adoptRef(*new ModelProcessModelPlayerProxy(manager, identifier, WTF::move(connection), attributionTaskID, debugEntityMemoryLimit, debugImmersiveEntityMemoryLimit));
 }
 
-ModelProcessModelPlayerProxy::ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy& manager, WebCore::ModelPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, const std::optional<String>& attributionTaskID, std::optional<int> debugEntityMemoryLimit, std::optional<int> debugImmersiveEntityMemoryLimit)
+ModelProcessModelPlayerProxy::ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy& manager, WebCore::ModelPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, const std::optional<RefPtr<StringImpl>>& attributionTaskID, std::optional<int> debugEntityMemoryLimit, std::optional<int> debugImmersiveEntityMemoryLimit)
     : m_id(identifier)
     , m_webProcessConnection(WTF::move(connection))
     , m_manager(manager)
@@ -421,10 +421,10 @@ void ModelProcessModelPlayerProxy::loadModel(WebCore::NodeIdentifier nodeID, Ref
         tracked->animationStateToRestore = std::nullopt;
 
 #if HAVE(CORE_RE)
-    if (model->mimeType() != usdzMIMEType) {
+    if (!equal(model->mimeType(), usdzMIMEType)) {
         Ref<WebCore::SharedBuffer> modelData = model->data();
-        String mimeType = model->mimeType();
-        RKUSDModelLoadScheduler::singleton().scheduleModelConversion(WTF::move(modelData), mimeType, ThreadSafeWeakPtr { *this }, [model = WTF::move(model), layoutSize, isForImmersive, nodeID](ModelProcessModelPlayerProxy& proxy, RetainPtr<NSData>&& usdzData) mutable {
+        RefPtr mimeType = model->mimeType();
+        RKUSDModelLoadScheduler::singleton().scheduleModelConversion(WTF::move(modelData), mimeType.get(), ThreadSafeWeakPtr { *this }, [model = WTF::move(model), layoutSize, isForImmersive, nodeID](ModelProcessModelPlayerProxy& proxy, RetainPtr<NSData>&& usdzData) mutable {
             dispatch_assert_queue(mainDispatchQueueSingleton());
 
             if (usdzData) {
@@ -838,8 +838,8 @@ void ModelProcessModelPlayerProxy::updateAnchorParenting()
         if (isAnchored) {
             desiredParent = [anchor->entity coreEntity];
 
-            if (!tracked->anchorPlacement.isEmpty()) {
-                auto placementName = tracked->anchorPlacement.utf8();
+            if (!isEmpty(tracked->anchorPlacement)) {
+                auto placementName = utf8(tracked->anchorPlacement);
                 if (REEntityRef placement = REEntityFindInHierarchyByName(desiredParent, placementName.legacyCStringPointer()))
                     desiredParent = placement;
                 else
@@ -893,11 +893,11 @@ void ModelProcessModelPlayerProxy::updateAnchorParenting()
     updatePortalChildAnchoring();
 }
 
-void ModelProcessModelPlayerProxy::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+void ModelProcessModelPlayerProxy::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, StringImpl* placement)
 {
     auto& tracked = ensureTrackedModel(nodeID);
 
-    if (tracked.anchorNode == anchorNode && tracked.anchorPlacement == placement)
+    if (tracked.anchorNode == anchorNode && equal(tracked.anchorPlacement, placement))
         return;
 
     tracked.anchorNode = anchorNode;
@@ -1231,7 +1231,7 @@ void ModelProcessModelPlayerProxy::load(WebCore::NodeIdentifier nodeID, WebCore:
             return;
 
         if (!entity) {
-            protectedThis->didFailLoading(loader.get(), WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Failed to load model data"_s });
+            protectedThis->didFailLoading(loader.get(), WebCore::ResourceError { StringImpl::create(WebCore::errorDomainWebKitInternal).ptr(), 0, { }, "Failed to load model data"_si });
             return;
         }
 
@@ -1674,9 +1674,9 @@ void ModelProcessModelPlayerProxy::animateModelToFitPortal(CompletionHandler<voi
 }
 
 #if HAVE(MODEL_MEMORY_ATTRIBUTION)
-static void setIBLAssetOwnership(const String& attributionTaskID, REAssetRef iblAsset)
+static void setIBLAssetOwnership(StringImpl* attributionTaskID, REAssetRef iblAsset)
 {
-    auto attributionIDString = attributionTaskID.utf8();
+    auto attributionIDString = utf8(attributionTaskID);
 
     if (REPtr<REAssetRef> skyboxTexture = REIBLAssetGetSkyboxTexture(iblAsset)) {
         RELEASE_LOG_DEBUG(ModelElement, "Attributing skyboxTexture to task ID: %s", attributionIDString);
@@ -1730,7 +1730,8 @@ void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease(CompletionH
                     return;
 
 #if HAVE(MODEL_MEMORY_ATTRIBUTION)
-                setIBLAssetOwnership(*(protectedThis->m_attributionTaskID), coreEnvironmentResourceAsset);
+                RefPtr attributionTaskID = *protectedThis->m_attributionTaskID;
+                setIBLAssetOwnership(attributionTaskID.get(), coreEnvironmentResourceAsset);
 #endif
             }).get() withCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, completion = WTF::move(completion)] (BOOL succeeded) mutable {
                 completion();
@@ -2073,7 +2074,7 @@ static RetainPtr<CALayer> makeAnchoredPortalChildGroupLayer()
     return layer;
 }
 
-void ModelProcessModelPlayerProxy::setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+void ModelProcessModelPlayerProxy::setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, StringImpl* placement)
 {
     MESSAGE_CHECK_BASE(m_anchoredPortalChildren.size() < maximumPortalHostedLayers || m_anchoredPortalChildren.contains(rootNodeID), m_webProcessConnection.get());
 
@@ -2081,7 +2082,7 @@ void ModelProcessModelPlayerProxy::setPromotedChildAnchor(WebCore::NodeIdentifie
         return;
 
     auto& child = m_anchoredPortalChildren.add(rootNodeID, AnchoredPortalChild { }).iterator->value;
-    if (child.anchorNode == anchorNode && child.placement == placement)
+    if (child.anchorNode == anchorNode && equal(child.placement, placement))
         return;
 
     child.anchorNode = anchorNode;
@@ -2126,8 +2127,8 @@ void ModelProcessModelPlayerProxy::updatePortalChildAnchoring()
         }
 
         REEntityRef placementEntity = [anchorEntity coreEntity];
-        if (!child.placement.isEmpty()) {
-            auto placementName = child.placement.utf8();
+        if (!isEmpty(child.placement)) {
+            auto placementName = utf8(child.placement);
             if (REEntityRef namedEntity = REEntityFindInHierarchyByName(placementEntity, placementName.legacyCStringPointer()))
                 placementEntity = namedEntity;
             else if (!child.isAttached)
@@ -2448,7 +2449,7 @@ static double roundedForSceneGraph(float value)
     return rounded ? rounded : 0;
 }
 
-static String sceneGraphNumbers(std::initializer_list<float> values)
+static RefPtr<StringImpl> sceneGraphNumbers(std::initializer_list<float> values)
 {
     return makeString(interleave(values, [](float value) {
         return FormattedNumber::fixedPrecision(roundedForSceneGraph(value), 10);
@@ -2464,7 +2465,7 @@ static void dumpSceneGraphTransform(TextStream& ts, REEntityRef entity)
     auto srt = RETransformComponentGetLocalSRT(transformComponent);
 
     auto scale = sceneGraphNumbers({ srt.scale.x, srt.scale.y, srt.scale.z });
-    if (scale != "1 1 1"_s)
+    if (!equal(scale, "1 1 1"_s))
         ts << indent << "(scale "_s << scale << ")\n"_s;
 
     auto quaternion = srt.rotation.vector;
@@ -2477,11 +2478,11 @@ static void dumpSceneGraphTransform(TextStream& ts, REEntityRef entity)
         break;
     }
     auto rotation = sceneGraphNumbers({ quaternion.x, quaternion.y, quaternion.z, quaternion.w });
-    if (rotation != "0 0 0 1"_s)
+    if (!equal(rotation, "0 0 0 1"_s))
         ts << indent << "(rotation "_s << rotation << ")\n"_s;
 
     auto translation = sceneGraphNumbers({ srt.translation.x, srt.translation.y, srt.translation.z });
-    if (translation != "0 0 0"_s)
+    if (!equal(translation, "0 0 0"_s))
         ts << indent << "(translation "_s << translation << ")\n"_s;
 }
 
@@ -2498,7 +2499,7 @@ static bool collectEntitiesWithWebKitDescendants(REEntityRef entity, HashSet<REE
     return found;
 }
 
-static void dumpSceneGraphEntity(TextStream& ts, REEntityRef entity, const WebCore::ModelSceneGraphAsTextOptions& options, const HashSet<REEntityRef>& entitiesWithWebKitDescendants, const Vector<std::pair<REEntityRef, String>>& labels)
+static void dumpSceneGraphEntity(TextStream& ts, REEntityRef entity, const WebCore::ModelSceneGraphAsTextOptions& options, const HashSet<REEntityRef>& entitiesWithWebKitDescendants, const Vector<std::pair<REEntityRef, RefPtr<StringImpl>>>& labels)
 {
     auto labelIndex = [&](REEntityRef candidate) {
         return labels.findIf([&](auto& label) {
@@ -2507,8 +2508,8 @@ static void dumpSceneGraphEntity(TextStream& ts, REEntityRef entity, const WebCo
     };
 
     ts << indent << "(entity"_s;
-    auto name = String::fromUTF8(REEntityGetName(entity));
-    if (!name.isEmpty())
+    auto name = StringImpl::fromUTF8(REEntityGetName(entity));
+    if (!isEmpty(name))
         ts << ' ' << name;
     ts << '\n';
 
@@ -2547,7 +2548,7 @@ static void dumpSceneGraphEntity(TextStream& ts, REEntityRef entity, const WebCo
 }
 #endif // HAVE(CORE_RE)
 
-void ModelProcessModelPlayerProxy::sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions& options, CompletionHandler<void(String&&)>&& completionHandler)
+void ModelProcessModelPlayerProxy::sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, RefPtr<StringImpl>>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions& options, CompletionHandler<void(RefPtr<StringImpl>&&)>&& completionHandler)
 {
 #if HAVE(CORE_RE)
     [m_layer layoutIfNeeded];
@@ -2562,7 +2563,7 @@ void ModelProcessModelPlayerProxy::sceneGraphAsTextForTesting(std::optional<WebC
         return;
     }
 
-    Vector<std::pair<REEntityRef, String>> labels;
+    Vector<std::pair<REEntityRef, RefPtr<StringImpl>>> labels;
     for (auto& [nodeID, label] : modelLabels) {
         if (RetainPtr entity = entityForNode(nodeID)) {
             labels.append({ [entity coreEntity], WTF::move(label) });

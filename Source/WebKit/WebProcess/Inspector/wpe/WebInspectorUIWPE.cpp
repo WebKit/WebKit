@@ -63,9 +63,9 @@ bool WebInspectorUI::canPickColorFromScreen()
     return false;
 }
 
-String WebInspectorUI::localizedStringsURL() const
+RefPtr<StringImpl> WebInspectorUI::localizedStringsURL() const
 {
-    return "resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js"_s;
+    return "resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js"_si;
 }
 
 } // namespace WebKit

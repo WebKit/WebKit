@@ -41,7 +41,7 @@ ToggleEvent::ToggleEvent()
 {
 }
 
-ToggleEvent::ToggleEvent(const AtomString& type, const ToggleEvent::Init& initializer, Event::IsCancelable cancelable)
+ToggleEvent::ToggleEvent(AtomStringImpl* type, const ToggleEvent::Init& initializer, Event::IsCancelable cancelable)
     : Event(EventInterfaceType::ToggleEvent, type, Event::CanBubble::No, cancelable, Event::IsComposed::No)
     , m_oldState(initializer.oldState)
     , m_newState(initializer.newState)
@@ -49,7 +49,7 @@ ToggleEvent::ToggleEvent(const AtomString& type, const ToggleEvent::Init& initia
 {
 }
 
-ToggleEvent::ToggleEvent(const AtomString& type, const ToggleEvent::Init& initializer)
+ToggleEvent::ToggleEvent(AtomStringImpl* type, const ToggleEvent::Init& initializer)
     : Event(EventInterfaceType::ToggleEvent, type, initializer, IsTrusted::No)
     , m_oldState(initializer.oldState)
     , m_newState(initializer.newState)
@@ -57,12 +57,12 @@ ToggleEvent::ToggleEvent(const AtomString& type, const ToggleEvent::Init& initia
 {
 }
 
-Ref<ToggleEvent> ToggleEvent::create(const AtomString& eventType, const ToggleEvent::Init& init, Event::IsCancelable cancelable)
+Ref<ToggleEvent> ToggleEvent::create(AtomStringImpl* eventType, const ToggleEvent::Init& init, Event::IsCancelable cancelable)
 {
     return adoptRef(*new ToggleEvent(eventType, init, cancelable));
 }
 
-Ref<ToggleEvent> ToggleEvent::create(const AtomString& eventType, const ToggleEvent::Init& init)
+Ref<ToggleEvent> ToggleEvent::create(AtomStringImpl* eventType, const ToggleEvent::Init& init)
 {
     return adoptRef(*new ToggleEvent(eventType, init));
 }

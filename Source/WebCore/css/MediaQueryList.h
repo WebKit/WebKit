@@ -47,7 +47,7 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    String media() const;
+    RefPtr<StringImpl> media() const;
     bool matches();
 
     void addListener(RefPtr<EventListener>&&);

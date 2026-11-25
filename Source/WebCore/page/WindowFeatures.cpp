@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-typedef HashMap<String, String, ASCIICaseInsensitiveHash> DialogFeaturesMap;
+typedef HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>, ASCIICaseInsensitiveHash> DialogFeaturesMap;
 
 static void setWindowFeature(WindowFeatures&, StringView key, StringView value);
 
@@ -200,27 +200,27 @@ WindowFeatures parseDialogFeatures(StringView dialogFeaturesString, const FloatR
 
 static std::optional<bool> boolFeature(const DialogFeaturesMap& features, ASCIILiteral key)
 {
-    auto it = features.find(key);
+    auto it = features.find(StringImpl::create(key).ptr());
     if (it == features.end())
         return std::nullopt;
 
     auto& value = it->value;
-    return value.isNull()
-        || value == "1"_s
+    return !value
+        || equal(value, "1"_s)
         || equalLettersIgnoringASCIICase(value, "yes"_s)
         || equalLettersIgnoringASCIICase(value, "on"_s);
 }
 
 static std::optional<float> floatFeature(const DialogFeaturesMap& features, ASCIILiteral key, float min, float max)
 {
-    auto it = features.find(key);
+    auto it = features.find(StringImpl::create(key).ptr());
     if (it == features.end())
         return std::nullopt;
 
     // FIXME: The toDouble function does not offer a way to tell "0q" from string with no digits in it: Both
     // return the number 0 and false for ok. But "0q" should yield the minimum rather than the default.
     bool ok;
-    double parsedNumber = it->value.toDouble(&ok);
+    double parsedNumber = toDouble(it->value, &ok);
     if ((!parsedNumber && !ok) || std::isnan(parsedNumber))
         return std::nullopt;
     if (parsedNumber < min || max <= min)
@@ -250,7 +250,7 @@ static DialogFeaturesMap parseDialogFeaturesMap(StringView string)
         auto key = featureString.left(separatorPosition).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>).toString();
 
         // Null string for value indicates key without value.
-        String value;
+        RefPtr<StringImpl> value;
         if (separatorPosition != notFound) {
             auto valueView = featureString.substring(separatorPosition + 1).trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
             value = valueView.left(valueView.find(' ')).toString();

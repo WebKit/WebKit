@@ -177,7 +177,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)_getWebCoreDictationAlternatives:(Vector<WebCore::DictationAlternative>&)alternatives fromTextAlternatives:(const Vector<WebCore::TextAlternativeWithRange>&)alternativesWithRange;
 - (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(WebCore::DictationContext)dictationContext;
 - (void)_removeDictationAlternatives:(WebCore::DictationContext)dictationContext;
-- (Vector<String>)_dictationAlternatives:(WebCore::DictationContext)dictationContext;
+- (Vector<RefPtr<StringImpl>>)_dictationAlternatives:(WebCore::DictationContext)dictationContext;
 
 #if ENABLE(SERVICE_CONTROLS)
 - (WebSelectionServiceController&)_selectionServiceController;
@@ -212,7 +212,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 #ifdef __cplusplus
 - (NakedPtr<WebCore::Page>)page;
-- (WTF::String)_userAgentString;
+- (RefPtr<StringImpl>)_userAgentString;
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

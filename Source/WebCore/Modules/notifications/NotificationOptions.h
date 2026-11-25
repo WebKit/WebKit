@@ -34,13 +34,13 @@ namespace WebCore {
 
 struct NotificationOptions {
     NotificationDirection dir;
-    String lang;
-    String body;
+    RefPtr<StringImpl> lang;
+    RefPtr<StringImpl> body;
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    String navigate;
+    RefPtr<StringImpl> navigate;
 #endif
-    String tag;
-    String icon;
+    RefPtr<StringImpl> tag;
+    RefPtr<StringImpl> icon;
     std::optional<bool> silent;
     JSC::JSValue data;
 };

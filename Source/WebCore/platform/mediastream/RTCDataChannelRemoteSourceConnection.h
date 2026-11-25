@@ -39,9 +39,9 @@ public:
     virtual ~RTCDataChannelRemoteSourceConnection() = default;
 
     virtual void didChangeReadyState(RTCDataChannelIdentifier, RTCDataChannelState) = 0;
-    virtual void didReceiveStringData(RTCDataChannelIdentifier, const String&) = 0;
+    virtual void didReceiveStringData(RTCDataChannelIdentifier, StringImpl*) = 0;
     virtual void didReceiveRawData(RTCDataChannelIdentifier, std::span<const uint8_t>) = 0;
-    virtual void didDetectError(RTCDataChannelIdentifier, RTCErrorDetailType, const String&) = 0;
+    virtual void didDetectError(RTCDataChannelIdentifier, RTCErrorDetailType, StringImpl*) = 0;
     virtual void bufferedAmountIsDecreasing(RTCDataChannelIdentifier, uint64_t) = 0;
 };
 

@@ -692,7 +692,7 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
 
     auto dataSize = data.size();
     if (!validateWriteBuffer(buffer, bufferOffset, dataSize) || !isValidToUseWith(buffer, *this)) {
-        device->generateAValidationError("Validation failure."_s);
+        device->generateAValidationError("Validation failure."_si);
         return;
     }
 
@@ -700,7 +700,7 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
         return;
 
     if (buffer.isDestroyed()) {
-        device->generateAValidationError("GPUQueue.writeBuffer: destination buffer is destroyed"_s);
+        device->generateAValidationError("GPUQueue.writeBuffer: destination buffer is destroyed"_si);
         return;
     }
 
@@ -967,7 +967,7 @@ void Queue::clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo& destination
 
     Ref texture = metal(destination.texture);
     if (texture->isDestroyed()) {
-        device->generateAValidationError("GPUQueue.clearTexture: destination texture is destroyed"_s);
+        device->generateAValidationError("GPUQueue.clearTexture: destination texture is destroyed"_si);
         return;
     }
 
@@ -1001,7 +1001,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
     auto dataByteSize = data.size();
     Ref texture = metal(destination.texture);
     if (texture->isDestroyed()) {
-        device->generateAValidationError("GPUQueue.writeTexture: destination texture is destroyed"_s);
+        device->generateAValidationError("GPUQueue.writeTexture: destination texture is destroyed"_si);
         return;
     }
 
@@ -1009,7 +1009,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
     if (Texture::isDepthOrStencilFormat(textureFormat)) {
         auto aspectSpecificFormat = Texture::aspectSpecificFormat(textureFormat, destination.aspect);
         if (!aspectSpecificFormat) {
-            device->generateAValidationError("Invalid depth-stencil format"_s);
+            device->generateAValidationError("Invalid depth-stencil format"_si);
             return;
         }
         textureFormat = *aspectSpecificFormat;
@@ -1214,7 +1214,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
         auto depthOffset = checkedProduct<uint64_t>(maxZ - 1, bytesPerImage);
         auto maxResult = checkedSum<uint64_t>(verticalOffset.value(), depthOffset.value(), newBytesPerRow);
         if (verticalOffset.hasOverflowed() || depthOffset.hasOverflowed() || maxResult.hasOverflowed()) {
-            device->generateAValidationError("Result overflows uin64_t"_s);
+            device->generateAValidationError("Result overflows uin64_t"_si);
             return;
         }
 
@@ -1985,7 +1985,7 @@ void Queue::copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& sou
 
     Ref texture = metal(destination.texture);
     if (texture->isDestroyed()) {
-        device->generateAValidationError("GPUQueue.copyExternalImageToTexture: destination texture is destroyed"_s);
+        device->generateAValidationError("GPUQueue.copyExternalImageToTexture: destination texture is destroyed"_si);
         return;
     }
 
@@ -1995,7 +1995,7 @@ void Queue::copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& sou
     }
 
     if (!source.source && !source.pixelBuffer) {
-        device->generateAValidationError("GPUQueue.copyExternalImageToTexture: source image is not valid"_s);
+        device->generateAValidationError("GPUQueue.copyExternalImageToTexture: source image is not valid"_si);
         return;
     }
 
@@ -2229,9 +2229,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     finalizeBlitCommandEncoder();
 }
 
-void Queue::setLabel(String&& label)
+void Queue::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_commandQueue.label = label.createNSString().get();
+    m_commandQueue.label = createNSString(label).get();
 }
 
 void Queue::submit(Vector<Ref<WebGPU::CommandBuffer>>&& commands)

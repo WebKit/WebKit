@@ -57,26 +57,26 @@ class WebCoreDecompressionSession;
 class ImageDecoderAVFObjC : public ImageDecoder {
     WTF_MAKE_TZONE_ALLOCATED(ImageDecoderAVFObjC);
 public:
-    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner);
+    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(const FragmentedSharedBuffer&, StringImpl* mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner);
     virtual ~ImageDecoderAVFObjC();
 
     WEBCORE_EXPORT static bool supportsMediaType(MediaType);
-    static bool supportsContainerType(const String&);
+    static bool supportsContainerType(StringImpl*);
 
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
-    WEBCORE_EXPORT static bool canDecodeType(const String& mimeType);
+    WEBCORE_EXPORT static bool canDecodeType(StringImpl* mimeType);
 
-    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_mimeType; }
 
     WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&&) final;
     EncodedDataStatus encodedDataStatus() const final;
     WEBCORE_EXPORT IntSize size() const final;
     WEBCORE_EXPORT size_t frameCount() const final;
     RepetitionCount repetitionCount() const final;
-    String uti() const final;
-    String filenameExtension() const final;
+    RefPtr<StringImpl> uti() const final;
+    RefPtr<StringImpl> filenameExtension() const final;
     std::optional<IntPoint> hotSpot() const final { return std::nullopt; }
-    String accessibilityDescription() const final { return String(); }
+    RefPtr<StringImpl> accessibilityDescription() const final { return nullptr; }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
     bool frameIsCompleteAtIndex(size_t) const final;
@@ -95,7 +95,7 @@ public:
     WEBCORE_EXPORT Vector<ImageDecoder::FrameInfo> frameInfos() const;
 
 private:
-    ImageDecoderAVFObjC(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner);
+    ImageDecoderAVFObjC(const FragmentedSharedBuffer&, StringImpl* mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner);
 
     AVAssetTrack *firstEnabledTrack();
     void readSamples();
@@ -107,8 +107,8 @@ private:
     NODELETE const ImageDecoderAVFObjCSample* sampleAtIndex(size_t) const WTF_REQUIRES_SHARED_LOCK(m_sampleGeneratorLock);
     bool sampleIsComplete(const ImageDecoderAVFObjCSample&) const;
 
-    String m_mimeType;
-    String m_uti;
+    RefPtr<StringImpl> m_mimeType;
+    RefPtr<StringImpl> m_uti;
     const RetainPtr<AVURLAsset> m_asset;
     RetainPtr<AVAssetTrack> m_track;
     const RetainPtr<WebCoreSharedBufferResourceLoaderDelegate> m_loader;

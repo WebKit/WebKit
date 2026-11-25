@@ -45,7 +45,7 @@ RefPtr<CSSOMColorValue> CSSOMColorValue::to(CSSOMKeywordish)
     return nullptr;
 }
 
-std::optional<Variant<Ref<CSSOMColorValue>, Ref<CSSStyleValue>>> CSSOMColorValue::parse(const String&)
+std::optional<Variant<Ref<CSSOMColorValue>, Ref<CSSStyleValue>>> CSSOMColorValue::parse(StringImpl*)
 {
     // FIXME: implement this.
     return std::nullopt;
@@ -61,15 +61,15 @@ ExceptionOr<RectifiedCSSColorPercent> CSSOMColorValue::rectifyCSSColorPercent(CS
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorPercent> {
             if (numericValue->type().matches<CSSNumericBaseType::Percent>())
                 return { WTF::move(numericValue) };
-            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorPercent"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorPercent"_si };
         },
-        [](String&& string) -> ExceptionOr<RectifiedCSSColorPercent> {
+        [](RefPtr<StringImpl>&& string) -> ExceptionOr<RectifiedCSSColorPercent> {
             return { CSSOMKeywordValue::rectifyKeywordish(WTF::move(string)) };
         },
         [](Ref<CSSOMKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorPercent> {
             if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
                 return { WTF::move(keywordValue) };
-            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorPercent"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorPercent"_si };
         }
     );
 }
@@ -84,15 +84,15 @@ ExceptionOr<RectifiedCSSColorAngle> CSSOMColorValue::rectifyCSSColorAngle(CSSCol
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorAngle> {
             if (numericValue->type().matches<CSSNumericBaseType::Angle>())
                 return { WTF::move(numericValue) };
-            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorAngle"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorAngle"_si };
         },
-        [](String&& string) -> ExceptionOr<RectifiedCSSColorAngle> {
+        [](RefPtr<StringImpl>&& string) -> ExceptionOr<RectifiedCSSColorAngle> {
             return { CSSOMKeywordValue::rectifyKeywordish(WTF::move(string)) };
         },
         [](Ref<CSSOMKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorAngle> {
             if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
                 return { WTF::move(keywordValue) };
-            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorAngle"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorAngle"_si };
         }
     );
 }
@@ -107,15 +107,15 @@ ExceptionOr<RectifiedCSSColorNumber> CSSOMColorValue::rectifyCSSColorNumber(CSSC
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorNumber> {
             if (numericValue->type().matchesNumber())
                 return { WTF::move(numericValue) };
-            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorNumber"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorNumber"_si };
         },
-        [](String&& string) -> ExceptionOr<RectifiedCSSColorNumber> {
+        [](RefPtr<StringImpl>&& string) -> ExceptionOr<RectifiedCSSColorNumber> {
             return { CSSOMKeywordValue::rectifyKeywordish(WTF::move(string)) };
         },
         [](Ref<CSSOMKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorNumber> {
             if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
                 return { WTF::move(keywordValue) };
-            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorNumber"_s };
+            return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorNumber"_si };
         }
     );
 }

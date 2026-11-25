@@ -50,7 +50,7 @@ public:
     }
 
     Element* item(unsigned) const final { return nullptr; };
-    Element* namedItem(const AtomString&) const final { return nullptr; };
+    Element* namedItem(AtomStringImpl*) const final { return nullptr; };
     unsigned length() const final { return 0; }
 
 private:

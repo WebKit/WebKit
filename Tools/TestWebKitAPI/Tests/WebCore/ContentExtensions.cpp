@@ -83,7 +83,7 @@ public:
     }
 
 private:
-    void writeSource(String&&) final
+    void writeSource(RefPtr<StringImpl>&&) final
     {
         EXPECT_FALSE(sourceWritten);
         sourceWritten = true;
@@ -138,7 +138,7 @@ private:
 
 class InMemoryCompiledContentExtension : public ContentExtensions::CompiledContentExtension {
 public:
-    static Ref<InMemoryCompiledContentExtension> create(String&& filter)
+    static Ref<InMemoryCompiledContentExtension> create(RefPtr<StringImpl>&& filter)
     {
         CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
@@ -166,10 +166,10 @@ private:
     CompiledContentExtensionData m_data;
 };
 
-static std::pair<Vector<WebCore::ContentExtensions::Action>, Vector<String>> allActionsForResourceLoad(const ContentExtensions::ContentExtensionsBackend& backend, const ResourceLoadInfo& info)
+static std::pair<Vector<WebCore::ContentExtensions::Action>, Vector<RefPtr<StringImpl>>> allActionsForResourceLoad(const ContentExtensions::ContentExtensionsBackend& backend, const ResourceLoadInfo& info)
 {
     Vector<ContentExtensions::Action> actions;
-    Vector<String> identifiersApplyingStylesheets;
+    Vector<RefPtr<StringImpl>> identifiersApplyingStylesheets;
     for (auto&& actionsFromContentRuleList : backend.actionsForResourceLoad(info)) {
         for (auto&& action : WTF::move(actionsFromContentRuleList.actions))
             actions.append(WTF::move(action));
@@ -213,12 +213,12 @@ static ResourceLoadInfo requestInTopAndFrameURLs(ASCIILiteral url, ASCIILiteral 
     return { URL { url }, URL { topURL }, URL { frameURL }, resourceType };
 }
 
-ContentExtensions::ContentExtensionsBackend makeBackend(String&& json)
+ContentExtensions::ContentExtensionsBackend makeBackend(RefPtr<StringImpl>&& json)
 {
     WebCore::initializeCommonAtomStrings();
     auto extension = InMemoryCompiledContentExtension::create(WTF::move(json));
     ContentExtensions::ContentExtensionsBackend backend;
-    backend.addContentExtension("testFilter"_s, WTF::move(extension), { });
+    backend.addContentExtension("testFilter"_si, WTF::move(extension), { });
     return backend;
 }
 
@@ -236,18 +236,18 @@ template <class T> constexpr std::size_t variantIndex = WTF::alternativeIndexV<T
 
 TEST_F(ContentExtensionTest, Basic)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("http://webkit.org/"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
 }
 
 TEST_F(ContentExtensionTest, SingleCharacter)
 {
-    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^z\"}}]"_s);
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^z\"}}]"_si);
     testRequest(matchBackend, mainDocumentRequest("http://webkit.org/"_s), { });
     testRequest(matchBackend, mainDocumentRequest("zttp://webkit.org/"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
 
-    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"y\"}}]"_s);
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"y\"}}]"_si);
     testRequest(searchBackend, mainDocumentRequest("http://webkit.org/"_s), { });
     testRequest(searchBackend, mainDocumentRequest("http://webkit.org/ywebkit"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
 }
@@ -296,7 +296,7 @@ TEST_F(ContentExtensionTest, RangeBasic)
 TEST_F(ContentExtensionTest, RangeExclusionGeneratingUniversalTransition)
 {
     // Transition of the type ([^X]X) effictively transition on every input.
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[^a]+afoobar\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[^a]+afoobar\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("http://w3c.org"_s), { });
 
@@ -314,7 +314,7 @@ TEST_F(ContentExtensionTest, RangeExclusionGeneratingUniversalTransition)
 
 TEST_F(ContentExtensionTest, PatternStartingWithGroup)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(http://whatwg\\\\.org/)?webkit\134\134.org\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(http://whatwg\\\\.org/)?webkit\134\134.org\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("http://whatwg.org/webkit.org/"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend, mainDocumentRequest("http://whatwg.org/webkit.org"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
@@ -325,7 +325,7 @@ TEST_F(ContentExtensionTest, PatternStartingWithGroup)
 
 TEST_F(ContentExtensionTest, PatternNestedGroups)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^http://webkit\\\\.org/(foo(bar)*)+\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^http://webkit\\\\.org/(foo(bar)*)+\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("http://webkit.org/foo"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend, mainDocumentRequest("http://webkit.org/foobar"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
@@ -374,7 +374,7 @@ TEST_F(ContentExtensionTest, QuantifiedEmptyGroups)
 
 TEST_F(ContentExtensionTest, MatchPastEndOfString)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".+\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".+\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("http://webkit.org/"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend, mainDocumentRequest("http://webkit.org/foo"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
@@ -388,7 +388,7 @@ TEST_F(ContentExtensionTest, MatchPastEndOfString)
 
 TEST_F(ContentExtensionTest, StartOfLineAssertion)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^foobar\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^foobar\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("foobar://webkit.org/foobar"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend, mainDocumentRequest("foobars:///foobar"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
@@ -402,7 +402,7 @@ TEST_F(ContentExtensionTest, StartOfLineAssertion)
 
 TEST_F(ContentExtensionTest, EndOfLineAssertion)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"foobar$\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"foobar$\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("http://webkit.org/foobar"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend, mainDocumentRequest("file:///foobar"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
@@ -414,7 +414,7 @@ TEST_F(ContentExtensionTest, EndOfLineAssertion)
 
 TEST_F(ContentExtensionTest, EndOfLineAssertionWithInvertedCharacterSet)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[^y]$\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[^y]$\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("http://webkit.org/"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend, mainDocumentRequest("http://webkit.org/a"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
@@ -429,7 +429,7 @@ TEST_F(ContentExtensionTest, EndOfLineAssertionWithInvertedCharacterSet)
 
 TEST_F(ContentExtensionTest, DotDoesNotIncludeEndOfLine)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https://webkit\\\\.org/.\"}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https://webkit\\\\.org/.\"}}]"_si);
 
     testRequest(backend, mainDocumentRequest("https://webkit.org/foobar"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend, mainDocumentRequest("https://webkit.org/"_s), { });
@@ -580,13 +580,13 @@ TEST_F(ContentExtensionTest, SearchSuffixesWithIdenticalActionAreMerged)
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
     DFABytecodeInterpreter interpreter(bytecode.span());
-    compareContents(interpreter.interpret("foo.org"_s, 0), { 0 });
-    compareContents(interpreter.interpret("ba.org"_s, 0), { 0 });
-    compareContents(interpreter.interpret("bar.org"_s, 0), { });
+    compareContents(interpreter.interpret("foo.org"_si, 0), { 0 });
+    compareContents(interpreter.interpret("ba.org"_si, 0), { 0 });
+    compareContents(interpreter.interpret("bar.org"_si, 0), { });
 
-    compareContents(interpreter.interpret("paddingfoo.org"_s, 0), { 0 });
-    compareContents(interpreter.interpret("paddingba.org"_s, 0), { 0 });
-    compareContents(interpreter.interpret("paddingbar.org"_s, 0), { });
+    compareContents(interpreter.interpret("paddingfoo.org"_si, 0), { 0 });
+    compareContents(interpreter.interpret("paddingba.org"_si, 0), { 0 });
+    compareContents(interpreter.interpret("paddingbar.org"_si, 0), { });
 }
 
 TEST_F(ContentExtensionTest, SearchSuffixesWithDistinguishableActionAreNotMerged)
@@ -606,19 +606,19 @@ TEST_F(ContentExtensionTest, SearchSuffixesWithDistinguishableActionAreNotMerged
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
     DFABytecodeInterpreter interpreter(bytecode.span());
-    compareContents(interpreter.interpret("foo.org"_s, 0), { 0 });
-    compareContents(interpreter.interpret("ba.org"_s, 0), { 1 });
-    compareContents(interpreter.interpret("bar.org"_s, 0), { });
+    compareContents(interpreter.interpret("foo.org"_si, 0), { 0 });
+    compareContents(interpreter.interpret("ba.org"_si, 0), { 1 });
+    compareContents(interpreter.interpret("bar.org"_si, 0), { });
 
-    compareContents(interpreter.interpret("paddingfoo.org"_s, 0), { 0 });
-    compareContents(interpreter.interpret("paddingba.org"_s, 0), { 1 });
-    compareContents(interpreter.interpret("paddingba.orgfoo.org"_s, 0), { 1, 0 });
-    compareContents(interpreter.interpret("paddingbar.org"_s, 0), { });
+    compareContents(interpreter.interpret("paddingfoo.org"_si, 0), { 0 });
+    compareContents(interpreter.interpret("paddingba.org"_si, 0), { 1 });
+    compareContents(interpreter.interpret("paddingba.orgfoo.org"_si, 0), { 1, 0 });
+    compareContents(interpreter.interpret("paddingbar.org"_si, 0), { });
 }
 
 TEST_F(ContentExtensionTest, DomainTriggers)
 {
-    auto ifDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"webkit.org\"]}}]"_s);
+    auto ifDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"webkit.org\"]}}]"_si);
     testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.org/test.htm"_s), { });
     testRequest(ifDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"_s), { });
     testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
@@ -629,7 +629,7 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(ifDomainBackend, mainDocumentRequest("http://not_webkit.org/test.html"_s), { });
     testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.organization/test.html"_s), { });
     
-    auto unlessDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"webkit.org\"]}}]"_s);
+    auto unlessDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"webkit.org\"]}}]"_si);
     testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.org/test.htm"_s), { });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"_s), { });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { });
@@ -640,7 +640,7 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(unlessDomainBackend, mainDocumentRequest("http://not_webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.organization/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     
-    auto ifDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"*webkit.org\"]}}]"_s);
+    auto ifDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"*webkit.org\"]}}]"_si);
     testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.org/test.htm"_s), { });
     testRequest(ifDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"_s), { });
     testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
@@ -652,7 +652,7 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.organization/test.html"_s), { });
     testRequest(ifDomainStarBackend, mainDocumentRequest("http://example.com/.webkit.org/in/path/test.html"_s), { });
 
-    auto unlessDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"*webkit.org\"]}}]"_s);
+    auto unlessDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"*webkit.org\"]}}]"_si);
     testRequest(unlessDomainStarBackend, mainDocumentRequest("http://webkit.org/test.htm"_s), { });
     testRequest(unlessDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"_s), { });
     testRequest(unlessDomainStarBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { });
@@ -663,25 +663,25 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(unlessDomainStarBackend, mainDocumentRequest("http://not_webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(unlessDomainStarBackend, mainDocumentRequest("http://webkit.organization/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
 
-    auto ifSubDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"sub1.webkit.org\"]}}]"_s);
+    auto ifSubDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"sub1.webkit.org\"]}}]"_si);
     testRequest(ifSubDomainBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { });
     testRequest(ifSubDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"_s), { });
     testRequest(ifSubDomainBackend, mainDocumentRequest("http://sub1.webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(ifSubDomainBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"_s), { });
 
-    auto ifSubDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"*sub1.webkit.org\"]}}]"_s);
+    auto ifSubDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"*sub1.webkit.org\"]}}]"_si);
     testRequest(ifSubDomainStarBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { });
     testRequest(ifSubDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"_s), { });
     testRequest(ifSubDomainStarBackend, mainDocumentRequest("http://sub1.webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(ifSubDomainStarBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
 
-    auto unlessSubDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"sub1.webkit.org\"]}}]"_s);
+    auto unlessSubDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"sub1.webkit.org\"]}}]"_si);
     testRequest(unlessSubDomainBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(unlessSubDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(unlessSubDomainBackend, mainDocumentRequest("http://sub1.webkit.org/test.html"_s), { });
     testRequest(unlessSubDomainBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     
-    auto unlessSubDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"*sub1.webkit.org\"]}}]"_s);
+    auto unlessSubDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"*sub1.webkit.org\"]}}]"_si);
     testRequest(unlessSubDomainStarBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(unlessSubDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(unlessSubDomainStarBackend, mainDocumentRequest("http://sub1.webkit.org/test.html"_s), { });
@@ -718,30 +718,30 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(combinedBackend2, mainDocumentRequest("http://not_w3c.org/test_block_cookies.html"_s), { variantIndex<ContentExtensions::BlockCookiesAction> });
     testRequest(combinedBackend2, mainDocumentRequest("http://not_w3c.org/test_css.html/test_block_cookies.html"_s), { variantIndex<ContentExtensions::BlockCookiesAction>, variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
 
-    auto ifDomainWithFlagsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\", \"if-domain\":[\"webkit.org\"],\"resource-type\":[\"image\"]}}]"_s);
+    auto ifDomainWithFlagsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\", \"if-domain\":[\"webkit.org\"],\"resource-type\":[\"image\"]}}]"_si);
     testRequest(ifDomainWithFlagsBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { });
     testRequest(ifDomainWithFlagsBackend, mainDocumentRequest("http://webkit.org/test.png"_s, ResourceType::Image), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(ifDomainWithFlagsBackend, mainDocumentRequest("http://not_webkit.org/test.html"_s), { });
     testRequest(ifDomainWithFlagsBackend, mainDocumentRequest("http://not_webkit.org/test.png"_s, ResourceType::Image), { });
 
-    auto unlessDomainWithFlagsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\", \"unless-domain\":[\"webkit.org\"],\"resource-type\":[\"image\"]}}]"_s);
+    auto unlessDomainWithFlagsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\", \"unless-domain\":[\"webkit.org\"],\"resource-type\":[\"image\"]}}]"_si);
     testRequest(unlessDomainWithFlagsBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { });
     testRequest(unlessDomainWithFlagsBackend, mainDocumentRequest("http://webkit.org/test.png"_s, ResourceType::Image), { });
     testRequest(unlessDomainWithFlagsBackend, mainDocumentRequest("http://not_webkit.org/test.html"_s), { });
     testRequest(unlessDomainWithFlagsBackend, mainDocumentRequest("http://not_webkit.org/test.png"_s, ResourceType::Image), { variantIndex<ContentExtensions::BlockLoadAction> });
 
     // Domains should not be interepted as regular expressions.
-    auto domainRegexBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"we?bkit.org\"]}}]"_s);
+    auto domainRegexBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"we?bkit.org\"]}}]"_si);
     testRequest(domainRegexBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { });
     testRequest(domainRegexBackend, mainDocumentRequest("http://wbkit.org/test.html"_s), { });
     
-    auto multipleIfDomainsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"webkit.org\", \"w3c.org\"]}}]"_s);
+    auto multipleIfDomainsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"webkit.org\", \"w3c.org\"]}}]"_si);
     testRequest(multipleIfDomainsBackend, mainDocumentRequest("http://webkit.org/test.htm"_s), { });
     testRequest(multipleIfDomainsBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(multipleIfDomainsBackend, mainDocumentRequest("http://w3c.org/test.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(multipleIfDomainsBackend, mainDocumentRequest("http://whatwg.org/test.html"_s), { });
 
-    auto multipleUnlessDomainsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"webkit.org\", \"w3c.org\"]}}]"_s);
+    auto multipleUnlessDomainsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"webkit.org\", \"w3c.org\"]}}]"_si);
     testRequest(multipleUnlessDomainsBackend, mainDocumentRequest("http://webkit.org/test.htm"_s), { });
     testRequest(multipleUnlessDomainsBackend, mainDocumentRequest("http://webkit.org/test.html"_s), { });
     testRequest(multipleUnlessDomainsBackend, mainDocumentRequest("http://w3c.org/test.html"_s), { });
@@ -800,7 +800,7 @@ TEST_F(ContentExtensionTest, TopURL)
     const Vector<size_t> blockLoad = { variantIndex<ContentExtensions::BlockLoadAction> };
     const Vector<size_t> blockCookies = { variantIndex<ContentExtensions::BlockCookiesAction> };
 
-    auto ifTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org\"]}}]"_s);
+    auto ifTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org\"]}}]"_si);
     testRequest(ifTopURL, mainDocumentRequest("http://webkit.org/test.html"_s), blockLoad);
     testRequest(ifTopURL, mainDocumentRequest("http://webkit.org/test.not_html"_s), { });
     testRequest(ifTopURL, mainDocumentRequest("http://WEBKIT.org/test.html"_s), blockLoad);
@@ -817,7 +817,7 @@ TEST_F(ContentExtensionTest, TopURL)
     testRequest(ifTopURL, subResourceRequest("http://webkit.org/test.html"_s, "http://example.com/#http://webkit.org/test.html"_s), { });
     testRequest(ifTopURL, subResourceRequest("http://example.com/#http://webkit.org/test.html"_s, "http://webkit.org/test.html"_s), blockLoad);
 
-    auto unlessTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"^http://web.*kit.org\"]}}]"_s);
+    auto unlessTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"^http://web.*kit.org\"]}}]"_si);
     testRequest(unlessTopURL, mainDocumentRequest("http://webkit.org/test.html"_s), { });
     testRequest(unlessTopURL, mainDocumentRequest("http://WEBKIT.org/test.html"_s), { });
     testRequest(unlessTopURL, mainDocumentRequest("http://webkit.org/TEST.html"_s), { });
@@ -834,12 +834,12 @@ TEST_F(ContentExtensionTest, TopURL)
     testRequest(unlessTopURL, subResourceRequest("http://webkit.org/test.html"_s, "http://example.com/#http://webkit.org/test.html"_s), blockLoad);
     testRequest(unlessTopURL, subResourceRequest("http://example.com/#http://webkit.org/test.html"_s, "http://webkit.org/test.html"_s), { });
 
-    auto ifTopURLMatchesEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\".*\"]}}]"_s);
+    auto ifTopURLMatchesEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\".*\"]}}]"_si);
     testRequest(ifTopURLMatchesEverything, mainDocumentRequest("http://webkit.org/test.html"_s), blockLoad);
     testRequest(ifTopURLMatchesEverything, mainDocumentRequest("http://webkit.org/test.not_html"_s), { });
     testRequest(ifTopURLMatchesEverything, mainDocumentRequest("http://not_webkit.org/test.html"_s), blockLoad);
     
-    auto unlessTopURLMatchesEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\".*\"]}}]"_s);
+    auto unlessTopURLMatchesEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\".*\"]}}]"_si);
     testRequest(unlessTopURLMatchesEverything, mainDocumentRequest("http://webkit.org/test.html"_s), { });
     testRequest(unlessTopURLMatchesEverything, mainDocumentRequest("http://webkit.org/test.not_html"_s), { });
     testRequest(unlessTopURLMatchesEverything, mainDocumentRequest("http://not_webkit.org/test.html"_s), { });
@@ -851,23 +851,23 @@ TEST_F(ContentExtensionTest, TopURL)
     testRequest(mixedConditions, subResourceRequest("http://webkit.org/test.html"_s, "http://not_webkit.org"_s), blockCookies);
     testRequest(mixedConditions, subResourceRequest("http://webkit.org/test.html"_s, "http://not_webkit.org"_s, ResourceType::Image), { });
 
-    auto caseSensitive = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org/test\"], \"top-url-filter-is-case-sensitive\":true}}]"_s);
+    auto caseSensitive = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org/test\"], \"top-url-filter-is-case-sensitive\":true}}]"_si);
     testRequest(caseSensitive, mainDocumentRequest("http://webkit.org/test.html"_s), blockLoad);
     testRequest(caseSensitive, mainDocumentRequest("http://WEBKIT.org/test.html"_s), blockLoad); // domains are canonicalized before running regexes.
     testRequest(caseSensitive, mainDocumentRequest("http://webkit.org/TEST.html"_s), { });
 
-    auto caseInsensitive = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org/test\"]}}]"_s);
+    auto caseInsensitive = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-top-url\":[\"^http://web.*kit.org/test\"]}}]"_si);
     testRequest(caseInsensitive, mainDocumentRequest("http://webkit.org/test.html"_s), blockLoad);
     testRequest(caseInsensitive, mainDocumentRequest("http://webkit.org/TEST.html"_s), blockLoad);
 }
 
 TEST_F(ContentExtensionTest, MultipleExtensions)
 {
-    auto extension1 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}}]"_s);
-    auto extension2 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}}]"_s);
+    auto extension1 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}}]"_si);
+    auto extension2 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}}]"_si);
     ContentExtensions::ContentExtensionsBackend backend;
-    backend.addContentExtension("testFilter1"_s, WTF::move(extension1), { });
-    backend.addContentExtension("testFilter2"_s, WTF::move(extension2), { });
+    backend.addContentExtension("testFilter1"_si, WTF::move(extension1), { });
+    backend.addContentExtension("testFilter2"_si, WTF::move(extension2), { });
     
     testRequest(backend, mainDocumentRequest("http://webkit.org"_s), { }, 2);
     testRequest(backend, mainDocumentRequest("http://webkit.org/block_load.html"_s), { variantIndex<ContentExtensions::BlockLoadAction> }, 2);
@@ -880,8 +880,8 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     auto ignoreExtension2 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore2\"}}]"_s);
     ContentExtensions::ContentExtensionsBackend backendWithIgnore;
-    backendWithIgnore.addContentExtension("testFilter1"_s, WTF::move(ignoreExtension1), { });
-    backendWithIgnore.addContentExtension("testFilter2"_s, WTF::move(ignoreExtension2), { });
+    backendWithIgnore.addContentExtension("testFilter1"_si, WTF::move(ignoreExtension1), { });
+    backendWithIgnore.addContentExtension("testFilter2"_si, WTF::move(ignoreExtension2), { });
 
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org"_s), { }, 2);
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore1.html"_s), { }, 1);
@@ -891,7 +891,7 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/block_cookies/ignore1/ignore2.html"_s), { }, 0);
 }
 
-static bool actionsEqual(const std::pair<Vector<WebCore::ContentExtensions::Action>, Vector<String>>& actual, Vector<WebCore::ContentExtensions::Action>&& expected, bool ignorePreviousRules = false)
+static bool actionsEqual(const std::pair<Vector<WebCore::ContentExtensions::Action>, Vector<RefPtr<StringImpl>>>& actual, Vector<WebCore::ContentExtensions::Action>&& expected, bool ignorePreviousRules = false)
 {
     if (ignorePreviousRules) {
         if (actual.second.size())
@@ -899,7 +899,7 @@ static bool actionsEqual(const std::pair<Vector<WebCore::ContentExtensions::Acti
     } else {
         if (actual.second.size() != 1)
             return false;
-        if (actual.second[0] != "testFilter"_s)
+        if (!equal(actual.second[0], "testFilter"_s))
             return false;
     }
 
@@ -929,7 +929,7 @@ static constexpr auto jsonWithStringsToCombine = "["
 
 TEST_F(ContentExtensionTest, StringParameters)
 {
-    auto backend1 = makeBackend("[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"matches\"}}]"_s);
+    auto backend1 = makeBackend("[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"matches\"}}]"_si);
     ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend1, mainDocumentRequest("test:///matches"_s)), Vector<Action>::from(Action { ContentExtensions::NotifyAction { { "testnotification"_s } } })));
 
     auto backend2 = makeBackend(jsonWithStringsToCombine);
@@ -1126,13 +1126,13 @@ TEST_F(ContentExtensionTest, UselessTermsMatchingEverythingAreEliminated)
     ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
     compiler.compile();
     DFABytecodeInterpreter interpreter(bytecode.span());
-    compareContents(interpreter.interpret("eb"_s, 0), { });
-    compareContents(interpreter.interpret("we"_s, 0), { });
-    compareContents(interpreter.interpret("weeb"_s, 0), { });
-    compareContents(interpreter.interpret("web"_s, 0), { 0 });
-    compareContents(interpreter.interpret("wweb"_s, 0), { 0 });
-    compareContents(interpreter.interpret("wwebb"_s, 0), { 0 });
-    compareContents(interpreter.interpret("http://theweb.com/"_s, 0), { 0 });
+    compareContents(interpreter.interpret("eb"_si, 0), { });
+    compareContents(interpreter.interpret("we"_si, 0), { });
+    compareContents(interpreter.interpret("weeb"_si, 0), { });
+    compareContents(interpreter.interpret("web"_si, 0), { 0 });
+    compareContents(interpreter.interpret("wweb"_si, 0), { 0 });
+    compareContents(interpreter.interpret("wwebb"_si, 0), { 0 });
+    compareContents(interpreter.interpret("http://theweb.com/"_si, 0), { 0 });
 }
 
 TEST_F(ContentExtensionTest, LoadType)
@@ -1172,53 +1172,53 @@ TEST_F(ContentExtensionTest, ResourceType)
 TEST_F(ContentExtensionTest, RequestMethod)
 {
     // Positive cases
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"get\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Get }, { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"post\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Post }, { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"head\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Head }, { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"options\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Options }, { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"trace\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Trace }, { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"put\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Put }, { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"delete\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Delete }, { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"patch\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Patch }, { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"connect\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Connect }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"get\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Get }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"post\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Post }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"head\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Head }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"options\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Options }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"trace\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Trace }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"put\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Put }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"delete\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Delete }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"patch\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Patch }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"connect\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Connect }, { variantIndex<ContentExtensions::BlockLoadAction> });
 
     // Negative case
-    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"get\"}}]"_s), { URL { "http://block_all_request_methods.org"_s }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Post }, { });
+    testRequest(makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\", \"request-method\": \"get\"}}]"_si), { URL { "http://block_all_request_methods.org"_si }, URL { "http://block_all_request_methods.org"_str }, URL { "http://block_all_request_methods.org"_str }, ResourceType::TopDocument, false, RequestMethod::Post }, { });
 }
 
 TEST_F(ContentExtensionTest, RequestMethodWithConditions)
 {
     auto load = [](ASCIILiteral topURL, RequestMethod method) -> ResourceLoadInfo {
         URL top { topURL };
-        return { URL { "https://cdn.test/tracker.js"_s }, top, top, ResourceType::Script, false, method };
+        return { URL { "https://cdn.test/tracker.js"_si }, top, top, ResourceType::Script, false, method };
     };
 
-    auto ifTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"get\",\"if-top-url\":[\"example\\\\.com\"]}}]"_s);
+    auto ifTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"get\",\"if-top-url\":[\"example\\\\.com\"]}}]"_si);
     testRequest(ifTopURL, load("https://example.com/"_s, RequestMethod::Get), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(ifTopURL, load("https://example.com/"_s, RequestMethod::Post), { });
     testRequest(ifTopURL, load("https://webkit.org/"_s, RequestMethod::Get), { });
 
-    auto unlessTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"get\",\"unless-top-url\":[\"example\\\\.com\"]}}]"_s);
+    auto unlessTopURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"get\",\"unless-top-url\":[\"example\\\\.com\"]}}]"_si);
     testRequest(unlessTopURL, load("https://example.com/"_s, RequestMethod::Get), { });
     testRequest(unlessTopURL, load("https://webkit.org/"_s, RequestMethod::Get), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(unlessTopURL, load("https://webkit.org/"_s, RequestMethod::Post), { });
 
-    auto ifDomain = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"post\",\"if-domain\":[\"example.com\"]}}]"_s);
+    auto ifDomain = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"post\",\"if-domain\":[\"example.com\"]}}]"_si);
     testRequest(ifDomain, load("https://example.com/"_s, RequestMethod::Post), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(ifDomain, load("https://webkit.org/"_s, RequestMethod::Post), { });
 
-    auto ifFrameURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"get\",\"if-frame-url\":[\"example\\\\.com\"]}}]"_s);
+    auto ifFrameURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"get\",\"if-frame-url\":[\"example\\\\.com\"]}}]"_si);
     testRequest(ifFrameURL, load("https://example.com/"_s, RequestMethod::Get), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(ifFrameURL, load("https://webkit.org/"_s, RequestMethod::Get), { });
 
-    auto unlessFrameURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"get\",\"unless-frame-url\":[\"example\\\\.com\"]}}]"_s);
+    auto unlessFrameURL = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"tracker\",\"request-method\":\"get\",\"unless-frame-url\":[\"example\\\\.com\"]}}]"_si);
     testRequest(unlessFrameURL, load("https://example.com/"_s, RequestMethod::Get), { });
     testRequest(unlessFrameURL, load("https://webkit.org/"_s, RequestMethod::Get), { variantIndex<ContentExtensions::BlockLoadAction> });
 }
 
 TEST_F(ContentExtensionTest, ResourceAndLoadType)
 {
-    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"BlockOnlyIfThirdPartyAndScript\",\"resource-type\":[\"script\"],\"load-type\":[\"third-party\"]}}]"_s);
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"BlockOnlyIfThirdPartyAndScript\",\"resource-type\":[\"script\"],\"load-type\":[\"third-party\"]}}]"_si);
     
     testRequest(backend, subResourceRequest("http://webkit.org/BlockOnlyIfThirdPartyAndScript.js"_s, "http://webkit.org"_s, ResourceType::Script), { });
     testRequest(backend, subResourceRequest("http://webkit.org/BlockOnlyIfThirdPartyAndScript.png"_s, "http://not_webkit.org"_s, ResourceType::Image), { });
@@ -1268,7 +1268,7 @@ TEST_F(ContentExtensionTest, WideNFA)
     }
     ruleList.append(']');
     
-    auto backend = makeBackend(String { ruleList.toString() });
+    auto backend = makeBackend(RefPtr<StringImpl> { ruleList.toString() });
 
     testRequest(backend, mainDocumentRequest("http://webkit.org/AAA"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
     testRequest(backend, mainDocumentRequest("http://webkit.org/YAA"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
@@ -1384,14 +1384,14 @@ TEST_F(ContentExtensionTest, LargeJumps)
         }
     }
 
-    compareContents(interpreter.interpret("CAAAAx"_s, 0), {expectedIndex('C', 4), expectedIndex('A', 1)});
-    compareContents(interpreter.interpret("KAAAAx"_s, 0), {expectedIndex('K', 4), expectedIndex('A', 1)});
-    compareContents(interpreter.interpret("AKAAAx"_s, 0), {expectedIndex('K', 3), expectedIndex('K', 4)});
-    compareContents(interpreter.interpret("AKxAAAAx"_s, 0), {expectedIndex('A', 1)});
-    compareContents(interpreter.interpret("AKAxAAAAx"_s, 0), {expectedIndex('A', 1)});
-    compareContents(interpreter.interpret("AKAxZKAxZKZxAAAAx"_s, 0), {expectedIndex('A', 1)});
-    compareContents(interpreter.interpret("ZAAAA"_s, 0), {expectedIndex('Z', 4), expectedIndex('A', 1)});
-    compareContents(interpreter.interpret("ZZxZAAAB"_s, 0), {expectedIndex('Z', 4), expectedIndex('B', 1)});
+    compareContents(interpreter.interpret("CAAAAx"_si, 0), {expectedIndex('C', 4), expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("KAAAAx"_si, 0), {expectedIndex('K', 4), expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("AKAAAx"_si, 0), {expectedIndex('K', 3), expectedIndex('K', 4)});
+    compareContents(interpreter.interpret("AKxAAAAx"_si, 0), {expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("AKAxAAAAx"_si, 0), {expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("AKAxZKAxZKZxAAAAx"_si, 0), {expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("ZAAAA"_si, 0), {expectedIndex('Z', 4), expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("ZZxZAAAB"_si, 0), {expectedIndex('Z', 4), expectedIndex('B', 1)});
 #endif
 }
 
@@ -1426,7 +1426,7 @@ TEST_F(ContentExtensionTest, DeepNFA)
     EXPECT_EQ(1ul, createNFAs(combinedURLFilters).size());
 }
 
-void checkCompilerError(String&& json, std::error_code expectedError)
+void checkCompilerError(RefPtr<StringImpl>&& json, std::error_code expectedError)
 {
     CompiledContentExtensionData extensionData;
     InMemoryContentExtensionCompilationClient client(extensionData);
@@ -1446,35 +1446,35 @@ TEST_F(ContentExtensionTest, MatchesEverything)
     // Only css-display-none rules with triggers that match everything, no domain rules, and no flags
     // should go in the global display:none stylesheet. css-display-none rules with domain rules or flags
     // are applied separately on pages where they apply.
-    auto backend1 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]"_s);
-    EXPECT_TRUE(nullptr != backend1.globalDisplayNoneStyleSheet("testFilter"_s));
+    auto backend1 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]"_si);
+    EXPECT_TRUE(nullptr != backend1.globalDisplayNoneStyleSheet("testFilter"_si));
     testRequest(backend1, mainDocumentRequest("http://webkit.org"_s), { }); // Selector is in global stylesheet.
     
-    auto backend2 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"webkit.org\"]}}]"_s);
-    EXPECT_EQ(nullptr, backend2.globalDisplayNoneStyleSheet("testFilter"_s));
+    auto backend2 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"webkit.org\"]}}]"_si);
+    EXPECT_EQ(nullptr, backend2.globalDisplayNoneStyleSheet("testFilter"_si));
     testRequest(backend2, mainDocumentRequest("http://webkit.org"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
     testRequest(backend2, mainDocumentRequest("http://w3c.org"_s), { });
     
-    auto backend3 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"webkit.org\"]}}]"_s);
-    EXPECT_EQ(nullptr, backend3.globalDisplayNoneStyleSheet("testFilter"_s));
+    auto backend3 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"webkit.org\"]}}]"_si);
+    EXPECT_EQ(nullptr, backend3.globalDisplayNoneStyleSheet("testFilter"_si));
     testRequest(backend3, mainDocumentRequest("http://webkit.org"_s), { });
     testRequest(backend3, mainDocumentRequest("http://w3c.org"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
     
-    auto backend4 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"load-type\":[\"third-party\"]}}]"_s);
-    EXPECT_EQ(nullptr, backend4.globalDisplayNoneStyleSheet("testFilter"_s));
+    auto backend4 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"load-type\":[\"third-party\"]}}]"_si);
+    EXPECT_EQ(nullptr, backend4.globalDisplayNoneStyleSheet("testFilter"_si));
     testRequest(backend4, mainDocumentRequest("http://webkit.org"_s), { });
     testRequest(backend4, subResourceRequest("http://not_webkit.org"_s, "http://webkit.org"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
 
     // css-display-none rules after ignore-previous-rules should not be put in the default stylesheet.
     auto backend5 = makeBackend("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\".*\"}},"
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]"_s);
-    EXPECT_EQ(nullptr, backend5.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend5.globalDisplayNoneStyleSheet("testFilter"_si));
     testRequest(backend5, mainDocumentRequest("http://webkit.org"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> }, 0);
     
     auto backend6 = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"webkit.org\",\"*w3c.org\"],\"resource-type\":[\"document\",\"script\"]}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore\",\"if-domain\":[\"*webkit.org\",\"w3c.org\"]}},"
         "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"webkit.org\",\"whatwg.org\"],\"resource-type\":[\"script\",\"image\"],\"load-type\":[\"third-party\"]}}]"_s);
-    EXPECT_EQ(nullptr, backend6.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend6.globalDisplayNoneStyleSheet("testFilter"_si));
     testRequest(backend6, mainDocumentRequest("http://webkit.org"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend6, mainDocumentRequest("http://w3c.org"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend6, mainDocumentRequest("http://whatwg.org"_s), { });
@@ -1506,158 +1506,158 @@ TEST_F(ContentExtensionTest, MatchesEverything)
 
 TEST_F(ContentExtensionTest, InvalidJSON)
 {
-    checkCompilerError("["_s, ContentExtensionError::JSONInvalid);
-    checkCompilerError("123"_s, ContentExtensionError::JSONTopLevelStructureNotAnArray);
-    checkCompilerError("{}"_s, ContentExtensionError::JSONTopLevelStructureNotAnArray);
-    checkCompilerError("[5]"_s, ContentExtensionError::JSONInvalidRule);
-    checkCompilerError("[]"_s, ContentExtensionError::JSONContainsNoRules);
+    checkCompilerError("["_si, ContentExtensionError::JSONInvalid);
+    checkCompilerError("123"_si, ContentExtensionError::JSONTopLevelStructureNotAnArray);
+    checkCompilerError("{}"_si, ContentExtensionError::JSONTopLevelStructureNotAnArray);
+    checkCompilerError("[5]"_si, ContentExtensionError::JSONInvalidRule);
+    checkCompilerError("[]"_si, ContentExtensionError::JSONContainsNoRules);
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":5}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":5}]"_si,
         ContentExtensionError::JSONInvalidTrigger);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"\"}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"\"}}]"_si,
         ContentExtensionError::JSONInvalidURLFilterInTrigger);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":{}}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":{}}}]"_si,
         ContentExtensionError::JSONInvalidURLFilterInTrigger);
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":{}}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":{}}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[\"invalid\"]}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[\"invalid\"]}}]"_si,
         ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[5]}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[5]}}]"_si,
         ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":5}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":5}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":\"first-party\"}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":\"first-party\"}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":null}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":null}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":false}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":false}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":{}}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":{}}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[\"invalid\"]}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[\"invalid\"]}}]"_si,
         ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[5]}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[5]}}]"_si,
         ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":5}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":5}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":\"document\"}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":\"document\"}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":null}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":null}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":false}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":false}}]"_si,
         ContentExtensionError::JSONInvalidTriggerFlagsArray);
     
-    checkCompilerError("[{\"action\":{\"type\":\"notify\"},\"trigger\":{\"url-filter\":\".*\"}}]"_s, ContentExtensionError::JSONInvalidNotification);
-    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":5},\"trigger\":{\"url-filter\":\".*\"}}]"_s, ContentExtensionError::JSONInvalidNotification);
-    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":[]},\"trigger\":{\"url-filter\":\".*\"}}]"_s, ContentExtensionError::JSONInvalidNotification);
-    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":\"here's my notification\"},\"trigger\":{\"url-filter\":\".*\"}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":\"\\u1234\"},\"trigger\":{\"url-filter\":\".*\"}}]"_s, { });
+    checkCompilerError("[{\"action\":{\"type\":\"notify\"},\"trigger\":{\"url-filter\":\".*\"}}]"_si, ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":5},\"trigger\":{\"url-filter\":\".*\"}}]"_si, ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":[]},\"trigger\":{\"url-filter\":\".*\"}}]"_si, ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":\"here's my notification\"},\"trigger\":{\"url-filter\":\".*\"}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":\"\\u1234\"},\"trigger\":{\"url-filter\":\".*\"}}]"_si, { });
     
     StringBuilder rules;
     rules.append("["_s);
     for (unsigned i = 0; i < 149999; ++i)
         rules.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},"_s);
-    String rules150000 = makeString(rules.toString(), "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]"_s);
-    String rules150001 = makeString(rules.toString(), "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]"_s);
+    RefPtr<StringImpl> rules150000 = makeString(rules.toString(), "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]"_s);
+    RefPtr<StringImpl> rules150001 = makeString(rules.toString(), "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]"_s);
     checkCompilerError(WTF::move(rules150000), { });
     checkCompilerError(WTF::move(rules150001), ContentExtensionError::JSONTooManyRules);
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":\"foo\"}}]"_s, ContentExtensionError::JSONInvalidRequestMethod);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":null}}]"_s, ContentExtensionError::JSONInvalidRequestMethod);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":false}}]"_s, ContentExtensionError::JSONInvalidRequestMethod);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":1}}]"_s, ContentExtensionError::JSONInvalidRequestMethod);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":[]}}]"_s, ContentExtensionError::JSONInvalidRequestMethod);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":{}}}]"_s, ContentExtensionError::JSONInvalidRequestMethod);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":\"foo\"}}]"_si, ContentExtensionError::JSONInvalidRequestMethod);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":null}}]"_si, ContentExtensionError::JSONInvalidRequestMethod);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":false}}]"_si, ContentExtensionError::JSONInvalidRequestMethod);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":1}}]"_si, ContentExtensionError::JSONInvalidRequestMethod);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":[]}}]"_si, ContentExtensionError::JSONInvalidRequestMethod);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"request-method\":{}}}]"_si, ContentExtensionError::JSONInvalidRequestMethod);
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":{}}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[5]}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":\"a\"}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":false}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":null}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":{}}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[5]}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\"]}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":\"a\"}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":null}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":false}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"A\"]}}]"_s, ContentExtensionError::JSONDomainNotLowerCaseASCII);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\\u00DC\"]}}]"_s, ContentExtensionError::JSONDomainNotLowerCaseASCII);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"0\"]}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]"_s, { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":{}}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[5]}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":\"a\"}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":false}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":null}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":{}}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[5]}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\"]}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":\"a\"}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":null}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":false}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"A\"]}}]"_si, ContentExtensionError::JSONDomainNotLowerCaseASCII);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\\u00DC\"]}}]"_si, ContentExtensionError::JSONDomainNotLowerCaseASCII);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"0\"]}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]"_si, { });
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[],\"unless-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[]}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":5}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5,\"unless-domain\":5}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[]}}]"_s, ContentExtensionError::JSONInvalidConditionList);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[]}}]"_s, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[],\"unless-domain\":[\"a\"]}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[]}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":5}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5,\"unless-domain\":5}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[]}}]"_si, ContentExtensionError::JSONInvalidConditionList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[]}}]"_si, ContentExtensionError::JSONMultipleConditions);
 
-    checkCompilerError("[{\"action\":5,\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s,
+    checkCompilerError("[{\"action\":5,\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si,
         ContentExtensionError::JSONInvalidAction);
-    checkCompilerError("[{\"action\":{\"type\":\"invalid\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"invalid\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si,
         ContentExtensionError::JSONInvalidActionType);
-    checkCompilerError("[{\"action\":{\"type\":\"css-display-none\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"css-display-none\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si,
         ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
 
     checkCompilerError("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"webkit.org\"}},"
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"a\"]}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"a\"]}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[\"}}]"_s,
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"a\"]}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"a\"]}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[\"}}]"_si,
         ContentExtensionError::JSONInvalidRegex);
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-frame-url\":[\"a\"],\"unless-frame-url\":[]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-frame-url\":[]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[],\"unless-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-domain\":[\"a\"]}}]"_s, ContentExtensionError::JSONMultipleConditions);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"[\"]}}]"_s, ContentExtensionError::JSONInvalidRegex);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\", \"unexpected-identifier-should-be-ignored\":5}}]"_s, { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]"_si, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[]}}]"_si, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-frame-url\":[\"a\"],\"unless-frame-url\":[]}}]"_si, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-frame-url\":[]}}]"_si, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"unless-top-url\":[\"a\"]}}]"_si, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"if-top-url\":[\"a\"]}}]"_si, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[],\"unless-domain\":[\"a\"]}}]"_si, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"],\"if-domain\":[\"a\"]}}]"_si, ContentExtensionError::JSONMultipleConditions);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-top-url\":[\"a\"]}}, {\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-top-url\":[\"[\"]}}]"_si, ContentExtensionError::JSONInvalidRegex);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\", \"unexpected-identifier-should-be-ignored\":5}}]"_si, { });
 
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectMissing);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectInvalidType);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"remove-parameters\":5}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRemoveParametersNotStringArray);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"remove-parameters\":[5]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRemoveParametersNotStringArray);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":5}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONAddOrReplaceParametersNotArray);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[5]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONAddOrReplaceParametersKeyValueNotADictionary);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{\"key\":5}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{\"key\":\"k\",\"value\":5}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"https://127..1/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectURLInvalid);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"JaVaScRiPt:dostuff\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectToJavaScriptURL);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"not a number\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectInvalidPort);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"65536\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectInvalidPort);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query\":\"no-question-mark\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectInvalidQuery);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"fragment\":\"no-number-sign\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectInvalidFragment);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"65535\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"extension-path\":\"/does/start/with/slash/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, { });
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"!@#$%\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectURLSchemeInvalid);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"JaVaScRiPt\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONRedirectToJavaScriptURL);
-    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"About\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, { });
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectMissing);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectInvalidType);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"remove-parameters\":5}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRemoveParametersNotStringArray);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"remove-parameters\":[5]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRemoveParametersNotStringArray);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":5}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONAddOrReplaceParametersNotArray);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[5]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONAddOrReplaceParametersKeyValueNotADictionary);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{\"key\":5}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query-transform\":{\"add-or-replace-parameters\":[{\"key\":\"k\",\"value\":5}]}}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"https://127..1/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectURLInvalid);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"url\":\"JaVaScRiPt:dostuff\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectToJavaScriptURL);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"not a number\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectInvalidPort);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"65536\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectInvalidPort);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"query\":\"no-question-mark\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectInvalidQuery);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"fragment\":\"no-number-sign\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectInvalidFragment);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"65535\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"port\":\"\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"extension-path\":\"/does/start/with/slash/\"}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, { });
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"!@#$%\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectURLSchemeInvalid);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"JaVaScRiPt\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONRedirectToJavaScriptURL);
+    checkCompilerError("[{\"action\":{\"type\":\"redirect\",\"redirect\":{\"transform\":{\"scheme\":\"About\"}}},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, { });
 
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":5},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersNotArray);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[5]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingOperation);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"remove\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingHeader);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"set\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersMissingValue);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"invalid\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInvalidOperation);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":\"\",\"request-headers\":[{\"operation\":\"remove\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInvalidPriority);
-    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":-1,\"request-headers\":[{\"operation\":\"remove\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_s, ContentExtensionError::JSONModifyHeadersInvalidPriority);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":5},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONModifyHeadersNotArray);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[5]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONModifyHeadersMissingOperation);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"remove\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONModifyHeadersMissingHeader);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"set\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONModifyHeadersMissingValue);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":2,\"request-headers\":[{\"operation\":\"invalid\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONModifyHeadersInvalidOperation);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":\"\",\"request-headers\":[{\"operation\":\"remove\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONModifyHeadersInvalidPriority);
+    checkCompilerError("[{\"action\":{\"type\":\"modify-headers\",\"priority\":-1,\"request-headers\":[{\"operation\":\"remove\",\"header\":\"testheader\"}]},\"trigger\":{\"url-filter\":\"webkit.org\"}}]"_si, ContentExtensionError::JSONModifyHeadersInvalidPriority);
 
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":\"foo\"}]"_s, ContentExtensionError::JSONInvalidRuleIdentifier);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":null}]"_s, ContentExtensionError::JSONInvalidRuleIdentifier);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":false}]"_s, ContentExtensionError::JSONInvalidRuleIdentifier);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":[]}]"_s, ContentExtensionError::JSONInvalidRuleIdentifier);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":{}}]"_s, ContentExtensionError::JSONInvalidRuleIdentifier);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":\"foo\"}]"_si, ContentExtensionError::JSONInvalidRuleIdentifier);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":null}]"_si, ContentExtensionError::JSONInvalidRuleIdentifier);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":false}]"_si, ContentExtensionError::JSONInvalidRuleIdentifier);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":[]}]"_si, ContentExtensionError::JSONInvalidRuleIdentifier);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\"},\"_identifier\":{}}]"_si, ContentExtensionError::JSONInvalidRuleIdentifier);
 }
 
 TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines1)
@@ -1790,13 +1790,13 @@ TEST_F(ContentExtensionTest, SplittingLargeNFAs)
         
         DFABytecodeInterpreter interpreter(combinedBytecode.span());
         
-        EXPECT_EQ(interpreter.interpret("ABBBX"_s, 0).size(), 1ull);
-        EXPECT_EQ(interpreter.interpret("ACCCX"_s, 0).size(), 1ull);
-        EXPECT_EQ(interpreter.interpret("ADDDX"_s, 0).size(), 1ull);
-        EXPECT_EQ(interpreter.interpret("XBBBX"_s, 0).size(), 0ull);
-        EXPECT_EQ(interpreter.interpret("ABBX"_s, 0).size(), 0ull);
-        EXPECT_EQ(interpreter.interpret("ACCX"_s, 0).size(), 0ull);
-        EXPECT_EQ(interpreter.interpret("ADDX"_s, 0).size(), 0ull);
+        EXPECT_EQ(interpreter.interpret("ABBBX"_si, 0).size(), 1ull);
+        EXPECT_EQ(interpreter.interpret("ACCCX"_si, 0).size(), 1ull);
+        EXPECT_EQ(interpreter.interpret("ADDDX"_si, 0).size(), 1ull);
+        EXPECT_EQ(interpreter.interpret("XBBBX"_si, 0).size(), 0ull);
+        EXPECT_EQ(interpreter.interpret("ABBX"_si, 0).size(), 0ull);
+        EXPECT_EQ(interpreter.interpret("ACCX"_si, 0).size(), 0ull);
+        EXPECT_EQ(interpreter.interpret("ADDX"_si, 0).size(), 0ull);
     }
 }
     
@@ -1815,7 +1815,7 @@ TEST_F(ContentExtensionTest, QuantifierInGroup)
     EXPECT_EQ(4ul, createNFAs(combinedURLFilters).size());
 }
 
-static void testPatternStatus(String pattern, ContentExtensions::URLFilterParser::ParseStatus status)
+static void testPatternStatus(RefPtr<StringImpl> pattern, ContentExtensions::URLFilterParser::ParseStatus status)
 {
     ContentExtensions::CombinedURLFilters combinedURLFilters;
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
@@ -1824,98 +1824,98 @@ static void testPatternStatus(String pattern, ContentExtensions::URLFilterParser
     
 TEST_F(ContentExtensionTest, ParsingFailures)
 {
-    testPatternStatus("a*b?.*.?[a-z]?[a-z]*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("a*b?.*.?[a-z]?[a-z]+"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("a*b?.*.?[a-z]?[a-z]"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus(".*?a"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus(".*a"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a*b?.*.?[a-z]?[a-z]*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("a*b?.*.?[a-z]?[a-z]+"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a*b?.*.?[a-z]?[a-z]"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus(".*?a"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus(".*a"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
     
-    testPatternStatus("(?!)"_s, ContentExtensions::URLFilterParser::ParseStatus::Group);
-    testPatternStatus("(?=)"_s, ContentExtensions::URLFilterParser::ParseStatus::Group);
-    testPatternStatus("(?!a)"_s, ContentExtensions::URLFilterParser::ParseStatus::Group);
-    testPatternStatus("(?=a)"_s, ContentExtensions::URLFilterParser::ParseStatus::Group);
-    testPatternStatus("(regex)"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("(regex"_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
-    testPatternStatus("((regex)"_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
-    testPatternStatus("(?:regex)"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("(?:regex"_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
-    testPatternStatus("[^.]+"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("(?!)"_si, ContentExtensions::URLFilterParser::ParseStatus::Group);
+    testPatternStatus("(?=)"_si, ContentExtensions::URLFilterParser::ParseStatus::Group);
+    testPatternStatus("(?!a)"_si, ContentExtensions::URLFilterParser::ParseStatus::Group);
+    testPatternStatus("(?=a)"_si, ContentExtensions::URLFilterParser::ParseStatus::Group);
+    testPatternStatus("(regex)"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("(regex"_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("((regex)"_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("(?:regex)"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("(?:regex"_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("[^.]+"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
     
-    testPatternStatus("a++"_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
-    testPatternStatus("[a]++"_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
-    testPatternStatus("+"_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("a++"_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("[a]++"_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("+"_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
     
-    testPatternStatus("["_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
-    testPatternStatus("[a}"_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("["_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("[a}"_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
     
-    testPatternStatus("a]"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("{"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("{[a]"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("{0"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("{0,"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("{0,1"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("a{0,1"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("a{a,b}"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a]"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{[a]"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{0"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{0,"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("{0,1"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a{0,1"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a{a,b}"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
 
     const char nonASCII[2] = {-1, '\0'};
-    testPatternStatus(String::fromLatin1(nonASCII), ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
-    testPatternStatus("\\xff"_s, ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
+    testPatternStatus(StringImpl::fromLatin1(nonASCII), ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
+    testPatternStatus("\\xff"_si, ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
     
-    testPatternStatus("\\x\\r\\n"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("\\b"_s, ContentExtensions::URLFilterParser::ParseStatus::WordBoundary);
-    testPatternStatus("[\\d]"_s, ContentExtensions::URLFilterParser::ParseStatus::AtomCharacter);
-    testPatternStatus("\\d\\D\\w\\s\\v\\h\\i\\c"_s, ContentExtensions::URLFilterParser::ParseStatus::UnsupportedCharacterClass);
+    testPatternStatus("\\x\\r\\n"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("\\b"_si, ContentExtensions::URLFilterParser::ParseStatus::WordBoundary);
+    testPatternStatus("[\\d]"_si, ContentExtensions::URLFilterParser::ParseStatus::AtomCharacter);
+    testPatternStatus("\\d\\D\\w\\s\\v\\h\\i\\c"_si, ContentExtensions::URLFilterParser::ParseStatus::UnsupportedCharacterClass);
     
-    testPatternStatus("this|that"_s, ContentExtensions::URLFilterParser::ParseStatus::Disjunction);
-    testPatternStatus("a{0,1}b"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
-    testPatternStatus("a{0,2}b"_s, ContentExtensions::URLFilterParser::ParseStatus::InvalidQuantifier);
-    testPatternStatus(""_s, ContentExtensions::URLFilterParser::ParseStatus::EmptyPattern);
-    testPatternStatus("$$"_s, ContentExtensions::URLFilterParser::ParseStatus::MisplacedEndOfLine);
-    testPatternStatus("a^"_s, ContentExtensions::URLFilterParser::ParseStatus::MisplacedStartOfLine);
-    testPatternStatus("(^)"_s, ContentExtensions::URLFilterParser::ParseStatus::MisplacedStartOfLine);
+    testPatternStatus("this|that"_si, ContentExtensions::URLFilterParser::ParseStatus::Disjunction);
+    testPatternStatus("a{0,1}b"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok);
+    testPatternStatus("a{0,2}b"_si, ContentExtensions::URLFilterParser::ParseStatus::InvalidQuantifier);
+    testPatternStatus(""_si, ContentExtensions::URLFilterParser::ParseStatus::EmptyPattern);
+    testPatternStatus("$$"_si, ContentExtensions::URLFilterParser::ParseStatus::MisplacedEndOfLine);
+    testPatternStatus("a^"_si, ContentExtensions::URLFilterParser::ParseStatus::MisplacedStartOfLine);
+    testPatternStatus("(^)"_si, ContentExtensions::URLFilterParser::ParseStatus::MisplacedStartOfLine);
     
-    testPatternStatus("(a)\\1"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Back references are disabled, it parse as octal 1
-    testPatternStatus("(<A>a)\\k<A>"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Named back references aren't handled, it parse as "k<A>"
-    testPatternStatus("(?<A>a)\\k<A>"_s, ContentExtensions::URLFilterParser::ParseStatus::BackReference);
-    testPatternStatus("\\1(a)"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as octal 1
-    testPatternStatus("\\8(a)"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as '8'
-    testPatternStatus("\\9(a)"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as '9'
-    testPatternStatus("\\k<A>(<A>a)"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Named forward references aren't handled, it parse as "k<A>"
-    testPatternStatus("\\k<A>(?<A>a)"_s, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
-    testPatternStatus("\\k<A>(a)"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Unmatched named forward references aren't handled, it parse as "k<A>"
+    testPatternStatus("(a)\\1"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Back references are disabled, it parse as octal 1
+    testPatternStatus("(<A>a)\\k<A>"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Named back references aren't handled, it parse as "k<A>"
+    testPatternStatus("(?<A>a)\\k<A>"_si, ContentExtensions::URLFilterParser::ParseStatus::BackReference);
+    testPatternStatus("\\1(a)"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as octal 1
+    testPatternStatus("\\8(a)"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as '8'
+    testPatternStatus("\\9(a)"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as '9'
+    testPatternStatus("\\k<A>(<A>a)"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Named forward references aren't handled, it parse as "k<A>"
+    testPatternStatus("\\k<A>(?<A>a)"_si, ContentExtensions::URLFilterParser::ParseStatus::YarrError);
+    testPatternStatus("\\k<A>(a)"_si, ContentExtensions::URLFilterParser::ParseStatus::Ok); // Unmatched named forward references aren't handled, it parse as "k<A>"
 }
 
 TEST_F(ContentExtensionTest, PatternMatchingTheEmptyString)
 {
     // Simple atoms.
-    testPatternStatus(".*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("a*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus(".?"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("a?"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus(".*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("a*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus(".?"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("a?"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
 
     // Character sets.
-    testPatternStatus("[a-z]*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("[a-z]?"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("[a-z]*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("[a-z]?"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
 
     // Groups.
-    testPatternStatus("(foobar)*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(foobar)?"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(.*)"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(a*)"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(.?)"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(a?)"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("([a-z]*)"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("([a-z]?)"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(foobar)*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(foobar)?"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.*)"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(a*)"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.?)"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(a?)"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("([a-z]*)"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("([a-z]?)"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
 
-    testPatternStatus("(.)*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(.+)*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(.?)*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(.*)*"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(.+)?"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
-    testPatternStatus("(.?)+"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.)*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.+)*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.?)*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.*)*"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.+)?"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("(.?)+"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
 
     // Nested groups.
-    testPatternStatus("((foo)?((.)*)(bar)*)"_s, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
+    testPatternStatus("((foo)?((.)*)(bar)*)"_si, ContentExtensions::URLFilterParser::ParseStatus::MatchesEverything);
 }
 
 TEST_F(ContentExtensionTest, MinimizingWithMoreFinalStatesThanNonFinalStates)
@@ -3092,7 +3092,7 @@ TEST_F(ContentExtensionTest, CombinedQuantifiedOneOrMoreRangesCase11And13InGroup
 
 TEST_F(ContentExtensionTest, ValidSelector)
 {
-    EXPECT_TRUE(WebCore::ContentExtensions::isValidCSSSelector("a[href*=hsv]"_s));
+    EXPECT_TRUE(WebCore::ContentExtensions::isValidCSSSelector("a[href*=hsv]"_si));
 }
 
 TEST_F(ContentExtensionTest, Serialization)
@@ -3109,7 +3109,7 @@ TEST_F(ContentExtensionTest, Serialization)
     checkRedirectActionSerialization({ { RedirectAction::URLAction { "url"_s } } }, 12);
     checkRedirectActionSerialization({ { RedirectAction::URLAction { "url"_s } }, 7 }, 12);
     checkRedirectActionSerialization({ { RedirectAction::URLTransformAction {
-        String::fromUTF8("frägment"),
+        StringImpl::fromUTF8("frägment"),
         "host"_s,
         "password"_s,
         { /* path */ },
@@ -3120,14 +3120,14 @@ TEST_F(ContentExtensionTest, Serialization)
     } } }, 72);
     checkRedirectActionSerialization({ { RedirectAction::URLTransformAction { { }, { }, { }, { }, { }, { "query"_s }, { }, { } } } }, 24);
     checkRedirectActionSerialization({ { RedirectAction::URLTransformAction { { }, { }, { }, { }, { },
-        { RedirectAction::URLTransformAction::QueryTransform { { { "key1"_s, false, "value1"_s }, { String::fromUTF8("key💩"), false, "value2"_s } }, { "testString1"_s, "testString2"_s } } }, { }, { },
+        { RedirectAction::URLTransformAction::QueryTransform { { { "key1"_s, false, "value1"_s }, { StringImpl::fromUTF8("key💩"), false, "value2"_s } }, { "testString1"_s, "testString2"_s } } }, { }, { },
     } } }, 94);
 
     ModifyHeadersAction modifyHeaders { {
         { { ModifyHeadersAction::ModifyHeaderInfo::AppendOperation { "key1"_s, "value1"_s } } },
         { { ModifyHeadersAction::ModifyHeaderInfo::SetOperation { "key2"_s, "value2"_s } } }
     }, {
-        { { ModifyHeadersAction::ModifyHeaderInfo::RemoveOperation { String::fromUTF8("💩") } } }
+        { { ModifyHeadersAction::ModifyHeaderInfo::RemoveOperation { StringImpl::fromUTF8("💩") } } }
     }, 2 };
     Vector<uint8_t> modifyHeadersBuffer;
     modifyHeaders.serialize(modifyHeadersBuffer);
@@ -3143,23 +3143,23 @@ TEST_F(ContentExtensionTest, QueryTransformActions)
         { "baz"_s }, /* removeParams */
     };
 
-    URL testURL { "https://webkit.org/?foo=garply&baz=test&x+y=z&h%20llo=w%20rld"_s };
+    URL testURL { "https://webkit.org/?foo=garply&baz=test&x+y=z&h%20llo=w%20rld"_si };
     action.applyToURL(testURL);
     EXPECT_EQ("https://webkit.org/?foo=bar&x+y=z&h%20llo=w%20rld&one=two"_s, testURL.string());
 }
 
 TEST_F(ContentExtensionTest, IfFrameURL)
 {
-    auto basic = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"]}}]"_s);
+    auto basic = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"]}}]"_si);
     testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { variantIndex<BlockLoadAction> });
     testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s), { });
 
-    auto caseSensitivity = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"],\"frame-url-filter-is-case-sensitive\":true}}]"_s);
+    auto caseSensitivity = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"],\"frame-url-filter-is-case-sensitive\":true}}]"_si);
     auto caseSensitivityRequest = requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://example.com/wHaTwG"_s);
     testRequest(basic, caseSensitivityRequest, { variantIndex<BlockLoadAction> });
     testRequest(caseSensitivity, caseSensitivityRequest, { });
 
-    auto otherFlags = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"],\"resource-type\":[\"image\"]}}]"_s);
+    auto otherFlags = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\"whatwg\"],\"resource-type\":[\"image\"]}}]"_si);
     testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::TopDocument), { });
     testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::Image), { variantIndex<BlockLoadAction> });
 
@@ -3171,23 +3171,23 @@ TEST_F(ContentExtensionTest, IfFrameURL)
     testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://webkit.org/"_s), { variantIndex<BlockCookiesAction> });
     testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://whatwg.org/"_s), { variantIndex<BlockLoadAction>, variantIndex<BlockCookiesAction> });
     
-    auto matchingEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\".*\"]}}]"_s);
+    auto matchingEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\".*\"]}}]"_si);
     testRequest(matchingEverything, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { variantIndex<BlockLoadAction> });
     testRequest(matchingEverything, requestInTopAndFrameURLs("http://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s), { });
 }
 
 TEST_F(ContentExtensionTest, UnlessFrameURL)
 {
-    auto basic = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"]}}]"_s);
+    auto basic = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"]}}]"_si);
     testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s), { variantIndex<BlockLoadAction> });
     testRequest(basic, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { });
 
-    auto caseSensitivity = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"],\"frame-url-filter-is-case-sensitive\":true}}]"_s);
+    auto caseSensitivity = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"],\"frame-url-filter-is-case-sensitive\":true}}]"_si);
     auto caseSensitivityRequest = requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://example.com/wHaTwG"_s);
     testRequest(basic, caseSensitivityRequest, { });
     testRequest(caseSensitivity, caseSensitivityRequest, { variantIndex<BlockLoadAction> });
 
-    auto otherFlags = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"],\"resource-type\":[\"image\"]}}]"_s);
+    auto otherFlags = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\"whatwg\"],\"resource-type\":[\"image\"]}}]"_si);
     testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::TopDocument), { });
     testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s, ResourceType::Image), { });
     testRequest(otherFlags, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://www.w3.org/"_s, ResourceType::TopDocument), { });
@@ -3202,25 +3202,25 @@ TEST_F(ContentExtensionTest, UnlessFrameURL)
     testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://webkit.org/"_s), { variantIndex<BlockLoadAction>, variantIndex<BlockCookiesAction> });
     testRequest(otherRulesWithConditions, requestInTopAndFrameURLs("https://example.com/"_s, "https://example.com/"_s, "https://whatwg.org/"_s), { variantIndex<BlockCookiesAction> });
 
-    auto matchingNothing = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\".*\"]}}]"_s);
+    auto matchingNothing = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"unless-frame-url\":[\".*\"]}}]"_si);
     testRequest(matchingNothing, requestInTopAndFrameURLs("https://example.com/"_s, "https://webkit.org/"_s, "https://whatwg.org/"_s), { });
     testRequest(matchingNothing, requestInTopAndFrameURLs("http://example.com/"_s, "https://webkit.org/"_s, "https://webkit.org/"_s), { });
 }
 
 TEST_F(ContentExtensionTest, RegexSubstitution)
 {
-    auto transformURL = [] (String&& regexSubstitution, String&& regexFilter, String&& originalURL, ASCIILiteral expectedTransformedURL) {
+    auto transformURL = [] (RefPtr<StringImpl>&& regexSubstitution, RefPtr<StringImpl>&& regexFilter, RefPtr<StringImpl>&& originalURL, ASCIILiteral expectedTransformedURL) {
         WebCore::ContentExtensions::RedirectAction::RegexSubstitutionAction action { WTF::move(regexSubstitution), WTF::move(regexFilter) };
         URL url(WTF::move(originalURL));
         action.applyToURL(url);
         EXPECT_EQ(url.string(), expectedTransformedURL);
     };
-    transformURL("https://\\1.xyz.com/"_s, "^https://www\\.(abc?)\\.xyz\\.com/"_s, "https://www.abc.xyz.com"_s, "https://abc.xyz.com/"_s);
-    transformURL("https://\\1.\\1.xyz.com/"_s, "^https://www\\.(abc?)\\.xyz\\.com/"_s, "https://www.ab.xyz.com"_s, "https://ab.ab.xyz.com/"_s);
-    transformURL("https://\\1.\\1.xyz.com/"_s, "^https://www\\.(abc?)\\.xyz\\.com/"_s, "https://ab.xyz.com"_s, "https://ab.xyz.com/"_s);
-    transformURL("https://example.com/\\0\\1"_s, "^https://www\\.(abc?)\\.xyz\\.com/"_s, "https://www.ab.xyz.com"_s, "https://example.com/https://www.ab.xyz.com/ab"_s);
-    transformURL("https://example.com/\\1\\2\\3\\4\\5\\6\\7\\8\\9\\10\\11\\12\\13\\14"_s, "^https://(e)(x)(a)(m)(p)(l)(e)(w)(e)(b)(s)(i)(t)(e)/"_s, "https://examplewebsite/"_s, "https://example.com/examplewee0e1e2e3e4"_s);
-    transformURL("https://!@#$%^&*invalidURL\\1/"_s, "^https://www\\.(abc?)\\.xyz\\.com/"_s, "https://www.abc.xyz.com"_s, "https://www.abc.xyz.com/"_s);
+    transformURL("https://\\1.xyz.com/"_si, "^https://www\\.(abc?)\\.xyz\\.com/"_si, "https://www.abc.xyz.com"_si, "https://abc.xyz.com/"_s);
+    transformURL("https://\\1.\\1.xyz.com/"_si, "^https://www\\.(abc?)\\.xyz\\.com/"_si, "https://www.ab.xyz.com"_si, "https://ab.ab.xyz.com/"_s);
+    transformURL("https://\\1.\\1.xyz.com/"_si, "^https://www\\.(abc?)\\.xyz\\.com/"_si, "https://ab.xyz.com"_si, "https://ab.xyz.com/"_s);
+    transformURL("https://example.com/\\0\\1"_si, "^https://www\\.(abc?)\\.xyz\\.com/"_si, "https://www.ab.xyz.com"_si, "https://example.com/https://www.ab.xyz.com/ab"_s);
+    transformURL("https://example.com/\\1\\2\\3\\4\\5\\6\\7\\8\\9\\10\\11\\12\\13\\14"_si, "^https://(e)(x)(a)(m)(p)(l)(e)(w)(e)(b)(s)(i)(t)(e)/"_si, "https://examplewebsite/"_si, "https://example.com/examplewee0e1e2e3e4"_s);
+    transformURL("https://!@#$%^&*invalidURL\\1/"_si, "^https://www\\.(abc?)\\.xyz\\.com/"_si, "https://www.abc.xyz.com"_si, "https://www.abc.xyz.com/"_s);
 }
 
 TEST_F(ContentExtensionTest, IgnoreFollowingRules)
@@ -3284,7 +3284,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { variantIndex<ContentExtensions::BlockLoadAction> });
     testRequest(backend, mainDocumentRequest("https://www.example.com/"_s), { variantIndex<ContentExtensions::BlockLoadAction> }, 0);
     testRequest(backend, mainDocumentRequest("https://www.w3.org/"_s), { variantIndex<ContentExtensions::BlockLoadAction>, variantIndex<ContentExtensions::BlockCookiesAction>, variantIndex<ContentExtensions::BlockLoadAction> });
-    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     // ignore-following-rules before ignore-previous-rules
     backend = makeBackend("["_s
@@ -3340,7 +3340,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"ignore-following-rules\"},\"trigger\":{\"url-filter\":\".*\"}},"_s
@@ -3349,7 +3349,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"ignore-following-rules\"},\"trigger\":{\"url-filter\":\"https://www.webkit.org/\"}},"_s
@@ -3358,7 +3358,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
-    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"ignore-following-rules\"},\"trigger\":{\"url-filter\":\".*\"}},"_s
@@ -3367,7 +3367,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     // ignore-following-rules after a css-display-none with specific URL filters
     backend = makeBackend("["_s
@@ -3377,7 +3377,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}},"_s
@@ -3386,7 +3386,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"https://www.webkit.org/\"}},"_s
@@ -3395,7 +3395,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}},"_s
@@ -3404,7 +3404,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     // ignore-following-rules sandwiched in between css-display-none
     backend = makeBackend("["_s
@@ -3415,7 +3415,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
-    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"https://www.webkit.org/\"}},"_s
@@ -3425,7 +3425,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { variantIndex<ContentExtensions::CSSDisplayNoneSelectorAction> });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_EQ(nullptr, backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}},"_s
@@ -3435,7 +3435,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     backend = makeBackend("["_s
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}},"_s
@@ -3445,7 +3445,7 @@ TEST_F(ContentExtensionTest, IgnoreFollowingRules)
 
     testRequest(backend, mainDocumentRequest("https://www.webkit.org/"_s), { });
     testRequest(backend, mainDocumentRequest("https://www.apple.com/"_s), { });
-    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_s));
+    EXPECT_TRUE(nullptr != backend.globalDisplayNoneStyleSheet("testFilter"_si));
 
     // ignore-following-rules stacked together
     backend = makeBackend("["_s
@@ -3469,8 +3469,8 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https://www.example.com/second\"},\"_identifier\":2,\"_rulesetIdentifier\":\"Test Ruleset 2\"}"_s
     "]"_s);
 
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://www.example.com/first"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset 1"_s, 1 } })));
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://www.example.com/second"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset 2"_s, 2 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://www.example.com/first"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset 1"_si, 1 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://www.example.com/second"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset 2"_si, 2 } })));
 
     // Different action types and identifiers
     backend = makeBackend("["_s
@@ -3479,9 +3479,9 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
         "{\"action\":{\"type\":\"notify\",\"notification\":\"test\"},\"trigger\":{\"url-filter\":\"notify\"},\"_identifier\":3,\"_rulesetIdentifier\":\"Test Ruleset\"}"_s
     "]"_s);
 
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/cookies"_s)), Vector<Action>::from(Action { ContentExtensions::BlockCookiesAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 1 } })));
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/css"_s)), Vector<Action>::from(Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } }, Action { ContentExtensions::CSSDisplayNoneSelectorAction { { ".hidden"_s } } })));
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/notify"_s)), Vector<Action>::from(Action { ContentExtensions::NotifyAction { { "test"_s } } }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 3 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/cookies"_s)), Vector<Action>::from(Action { ContentExtensions::BlockCookiesAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 1 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/css"_s)), Vector<Action>::from(Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } }, Action { ContentExtensions::CSSDisplayNoneSelectorAction { { ".hidden"_s } } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/notify"_s)), Vector<Action>::from(Action { ContentExtensions::NotifyAction { { "test"_s } } }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 3 } })));
 
     // With and without identifiers
     backend = makeBackend("["_s
@@ -3489,7 +3489,7 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"without-id\"}}"_s
     "]"_s);
 
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/with-id"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { ""_s, 1 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/with-id"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { ""_si, 1 } })));
     ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/without-id"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() })));
 
     // Multiple matches with one request
@@ -3499,7 +3499,7 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".ad\"},\"trigger\":{\"url-filter\":\"multi\"},\"_identifier\":3,\"_rulesetIdentifier\":\"Test Ruleset\"}"_s
     "]"_s);
 
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/multi-test"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 1 } }, Action { ContentExtensions::BlockCookiesAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 3 } }, Action { ContentExtensions::CSSDisplayNoneSelectorAction { { ".ad"_s } } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/multi-test"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 1 } }, Action { ContentExtensions::BlockCookiesAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 3 } }, Action { ContentExtensions::CSSDisplayNoneSelectorAction { { ".ad"_s } } })));
 
     // With conditions
     backend = makeBackend("["_s
@@ -3508,8 +3508,8 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
     "]"_s);
 
     ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, subResourceRequest("https://cdn.com/ads.js"_s, "https://example.com/"_s)),
-        Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 1 } }, Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } })));
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, subResourceRequest("https://cdn.com/ads.js"_s, "https://other.com/"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } })));
+        Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 1 } }, Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, subResourceRequest("https://cdn.com/ads.js"_s, "https://other.com/"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } })));
     ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, subResourceRequest("https://cdn.com/ads.js"_s, "https://trusted.com/"_s)), Vector<Action>()));
 
     // With resource types
@@ -3518,8 +3518,8 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"track\",\"resource-type\":[\"image\"]},\"_identifier\":2,\"_rulesetIdentifier\":\"Test Ruleset\"}"_s
     "]"_s);
 
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/track.js"_s, ResourceType::Script)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 1 } })));
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/track.png"_s, ResourceType::Image)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/track.js"_s, ResourceType::Script)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 1 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/track.png"_s, ResourceType::Image)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } })));
     ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/track.html"_s)), Vector<Action>()));
 
     // With ignore rules
@@ -3529,9 +3529,9 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block-me\"},\"_identifier\":2,\"_rulesetIdentifier\":\"Test Ruleset\"}"_s
     "]"_s);
 
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/block-me"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 1 } }, Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/block-me"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 1 } }, Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } })));
     ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/ignore-previous-block-me"_s)),
-        Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } }), true));
+        Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } }), true));
 
     // With load types
     backend = makeBackend("["_s
@@ -3539,8 +3539,8 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"analytics\",\"load-type\":[\"first-party\"]},\"_identifier\":2,\"_rulesetIdentifier\":\"Test Ruleset\"}"_s
     "]"_s);
 
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, subResourceRequest("https://analytics.com/track.js"_s, "https://example.com/"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 1 } })));
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/analytics"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, subResourceRequest("https://analytics.com/track.js"_s, "https://example.com/"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 1 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/analytics"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } })));
 
     // With complex regex
     backend = makeBackend("["_s
@@ -3548,8 +3548,8 @@ TEST_F(ContentExtensionTest, ReportIdentifierAction)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"\\\\.jpg\\\\?.*tracking\"},\"_identifier\":2,\"_rulesetIdentifier\":\"Test Ruleset\"}"_s
     "]"_s);
 
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://cdn.ads.com/banner"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 1 } })));
-    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/image.jpg?tracking=123"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_s, 2 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://cdn.ads.com/banner"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 1 } })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend, mainDocumentRequest("https://example.com/image.jpg?tracking=123"_s)), Vector<Action>::from(Action { ContentExtensions::BlockLoadAction() }, Action { ContentExtensions::ReportIdentifierAction { "Test Ruleset"_si, 2 } })));
 }
 
 } // namespace TestWebKitAPI

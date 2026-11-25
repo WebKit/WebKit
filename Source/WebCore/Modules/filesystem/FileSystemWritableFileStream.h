@@ -39,7 +39,7 @@ public:
     static ExceptionOr<Ref<FileSystemWritableFileStream>> create(JSDOMGlobalObject&, Ref<WritableStreamSink>&&);
 
     using WriteCommandType = FileSystemWriteCommandType;
-    using DataVariant = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<Blob>, String>;
+    using DataVariant = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<Blob>, RefPtr<StringImpl>>;
     struct WriteParams {
         WriteCommandType type;
         std::optional<uint64_t> size { };
@@ -47,7 +47,7 @@ public:
         std::optional<std::optional<DataVariant>> data { };
     };
 
-    using ChunkType = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<Blob>, String, WriteParams>;
+    using ChunkType = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<Blob>, RefPtr<StringImpl>, WriteParams>;
     void write(JSC::JSGlobalObject&, const ChunkType&, DOMPromiseDeferred<void>&&);
     void seek(JSC::JSGlobalObject&, uint64_t position, DOMPromiseDeferred<void>&&);
     void truncate(JSC::JSGlobalObject&, uint64_t size, DOMPromiseDeferred<void>&&);

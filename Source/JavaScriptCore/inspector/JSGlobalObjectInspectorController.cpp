@@ -151,7 +151,7 @@ void JSGlobalObjectInspectorController::disconnectFrontend(FrontendChannel& fron
     m_strongVM = nullptr;
 }
 
-void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(const String& message)
+void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(StringImpl* message)
 {
     m_backendDispatcher->dispatch(message);
 }
@@ -170,9 +170,9 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& call
     for (int i = 0; i < size; ++i) {
         auto demangled = StackTraceSymbolResolver::demangle(stack[i]);
         if (demangled)
-            callStack.append(ScriptCallFrame(String::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName()), "[native code]"_s, noSourceID, { }));
+            callStack.append(ScriptCallFrame(StringImpl::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName()), "[native code]"_si, noSourceID, { }));
         else
-            callStack.append(ScriptCallFrame("?"_s, "[native code]"_s, noSourceID, { }));
+            callStack.append(ScriptCallFrame("?"_si, "[native code]"_si, noSourceID, { }));
     }
 }
 
@@ -191,7 +191,7 @@ void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globa
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-    String errorMessage = exception->value().toWTFString(globalObject);
+    RefPtr<StringImpl> errorMessage = exception->value().toWTFString(globalObject);
     scope.clearException();
 
     if (JSGlobalObjectConsoleClient::logToSystemConsole()) {
@@ -199,7 +199,7 @@ void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globa
             const ScriptCallFrame& callFrame = callStack->at(0);
             ConsoleClient::printConsoleMessage(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, callFrame.sourceURL(), callFrame.lineNumber(), callFrame.columnNumber());
         } else
-            ConsoleClient::printConsoleMessage(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, String(), 0, 0);
+            ConsoleClient::printConsoleMessage(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, nullString(), 0, 0);
     }
 
     protect(m_consoleAgent)->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, WTF::move(callStack)));

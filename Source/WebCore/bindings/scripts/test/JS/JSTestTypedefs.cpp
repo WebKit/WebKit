@@ -199,7 +199,7 @@ template<> JSValue JSTestTypedefsDOMConstructor::prototypeForStructure(JSC::VM& 
 template<> void JSTestTypedefsDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->length, jsNumber(3), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    JSString* nameString = jsNontrivialString(vm, "TestTypedefs"_s);
+    JSString* nameString = jsNontrivialString(vm, "TestTypedefs"_si);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
@@ -551,7 +551,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_setShadowBody(
     if (blurConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     EnsureStillAliveScope argument3 = callFrame->argument(3);
-    auto colorConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument3.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
+    auto colorConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument3.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { nullptr }; });
     if (colorConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     EnsureStillAliveScope argument4 = callFrame->argument(4);

@@ -39,7 +39,7 @@ namespace WebKit {
 
 using namespace Inspector;
 
-std::unique_ptr<BidiUserContext> BidiBrowserAgent::platformCreateUserContext(String& error)
+std::unique_ptr<BidiUserContext> BidiBrowserAgent::platformCreateUserContext(RefPtr<StringImpl>& error)
 {
 #if ENABLE(2022_GLIB_API)
     GRefPtr<WebKitNetworkSession> networkSession = adoptGRef(webkit_network_session_new_ephemeral());
@@ -60,7 +60,7 @@ std::unique_ptr<BidiUserContext> BidiBrowserAgent::platformCreateUserContext(Str
 #endif
         nullptr)));
     if (!context) {
-        error = "Failed to create GLib ephemeral context"_s;
+        error = "Failed to create GLib ephemeral context"_si;
         return nullptr;
     }
 

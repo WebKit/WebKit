@@ -36,9 +36,9 @@ enum class IsHrefProperty : bool {
     Yes,
 };
 
-using StringOrTrustedScriptURL = Variant<String, Ref<TrustedScriptURL>>;
+using StringOrTrustedScriptURL = Variant<RefPtr<StringImpl>, Ref<TrustedScriptURL>>;
 
-class SVGAnimatedString : public SVGAnimatedPrimitiveProperty<String> {
+class SVGAnimatedString : public SVGAnimatedPrimitiveProperty<RefPtr<StringImpl>> {
 public:
     static Ref<SVGAnimatedString> create(SVGElement* contextElement, const IsHrefProperty& isHrefProperty = IsHrefProperty::No)
     {
@@ -49,7 +49,7 @@ public:
 
 protected:
     SVGAnimatedString(SVGElement* contextElement, const IsHrefProperty& isHrefProperty = IsHrefProperty::No)
-        : SVGAnimatedPrimitiveProperty<String>(contextElement)
+        : SVGAnimatedPrimitiveProperty<RefPtr<StringImpl>>(contextElement)
         , m_isHrefProperty(isHrefProperty)
     {
 

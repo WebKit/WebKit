@@ -34,23 +34,23 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TestReportBody);
 
-TestReportBody::TestReportBody(String&& message)
+TestReportBody::TestReportBody(RefPtr<StringImpl>&& message)
     : m_bodyMessage(WTF::move(message))
 {
 }
 
-Ref<TestReportBody> TestReportBody::create(String&& message)
+Ref<TestReportBody> TestReportBody::create(RefPtr<StringImpl>&& message)
 {
     return adoptRef(*new TestReportBody(WTF::move(message)));
 }
 
-const String& TestReportBody::type() const
+const RefPtr<StringImpl>& TestReportBody::type() const
 {
-    static NeverDestroyed<const String> testReportType(MAKE_STATIC_STRING_IMPL("test"));
+    static NeverDestroyed<const RefPtr<StringImpl>> testReportType(MAKE_STATIC_STRING_IMPL("test"));
     return testReportType;
 }
 
-const String& TestReportBody::message() const
+const RefPtr<StringImpl>& TestReportBody::message() const
 {
     // https://w3c.github.io/reporting/#generate-test-report-command, Step 7.1.7
     return m_bodyMessage;

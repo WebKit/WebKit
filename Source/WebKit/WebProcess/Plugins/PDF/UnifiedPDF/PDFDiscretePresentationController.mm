@@ -137,7 +137,7 @@ bool PDFDiscretePresentationController::handleKeyboardEventForPageNavigation(con
 
     auto key = event.key();
 
-    if (key == "Home"_s) {
+    if (equal(key, "Home"_s)) {
         if (!m_visibleRowIndex)
             return false;
 
@@ -145,7 +145,7 @@ bool PDFDiscretePresentationController::handleKeyboardEventForPageNavigation(con
         return true;
     }
 
-    if (key == "End"_s) {
+    if (equal(key, "End"_s)) {
         auto lastRowIndex = m_rows.size() - 1;
         if (m_visibleRowIndex == lastRowIndex)
             return false;
@@ -159,8 +159,8 @@ bool PDFDiscretePresentationController::handleKeyboardEventForPageNavigation(con
     bool isHorizontallyScrollable = !!maximumScrollPosition.x();
     bool isVerticallyScrollable = !!maximumScrollPosition.y();
 
-    if (key == "ArrowLeft"_s || key == "ArrowUp"_s || key == "PageUp"_s) {
-        if (key == "ArrowLeft"_s) {
+    if (equal(key, "ArrowLeft"_s) || equal(key, "ArrowUp"_s) || equal(key, "PageUp"_s)) {
+        if (equal(key, "ArrowLeft"_s)) {
             if (isHorizontallyScrollable)
                 return false;
         } else if (isVerticallyScrollable)
@@ -173,8 +173,8 @@ bool PDFDiscretePresentationController::handleKeyboardEventForPageNavigation(con
         return true;
     }
 
-    if (key == "ArrowRight"_s || key == "ArrowDown"_s || key == "PageDown"_s) {
-        if (key == "ArrowRight"_s) {
+    if (equal(key, "ArrowRight"_s) || equal(key, "ArrowDown"_s) || equal(key, "PageDown"_s)) {
+        if (equal(key, "ArrowRight"_s)) {
             if (isHorizontallyScrollable)
                 return false;
         } else if (isVerticallyScrollable)
@@ -541,16 +541,16 @@ void PDFDiscretePresentationController::startTransitionAnimation(PageTransitionS
         moveAnimation->setDuration(transitionDuration.seconds());
         moveAnimation->setTimingFunction(WTF::move(moveTimingFunction));
         Ref animatingRowContainerLayer = *animatingRow.containerLayer;
-        animatingRowContainerLayer->addAnimation(moveFrames, moveAnimation.ptr(), "move"_s, 0);
+        animatingRowContainerLayer->addAnimation(moveFrames, moveAnimation.ptr(), "move"_si, 0);
 
         auto fadeKeyframes = createOpacityKeyframesForAnimation(direction, layerEndOpacities[topLayerIndex]);
         Ref fadeAnimation = GraphicsLayerAnimation::create();
         fadeAnimation->setDuration(transitionDuration.seconds());
         fadeAnimation->setTimingFunction(WTF::move(fadeTimingFunction));
-        animatingRowContainerLayer->addAnimation(fadeKeyframes, fadeAnimation.ptr(), "fade"_s, 0);
+        animatingRowContainerLayer->addAnimation(fadeKeyframes, fadeAnimation.ptr(), "fade"_si, 0);
 
         auto stationaryLayerFadeKeyframes = createOpacityKeyframesForAnimation(direction, layerEndOpacities[bottomLayerIndex]);
-        protect(stationaryRow.containerLayer)->addAnimation(stationaryLayerFadeKeyframes, fadeAnimation.ptr(), "fade"_s, 0);
+        protect(stationaryRow.containerLayer)->addAnimation(stationaryLayerFadeKeyframes, fadeAnimation.ptr(), "fade"_si, 0);
 
         return transitionDuration;
     };
@@ -833,8 +833,8 @@ void PDFDiscretePresentationController::updateLayersForTransitionState()
             Ref rowContainerLayer = *row.containerLayer;
             rowContainerLayer->setPosition(layerPosition);
             rowContainerLayer->setOpacity(1);
-            rowContainerLayer->removeAnimation("move"_s, { });
-            rowContainerLayer->removeAnimation("fade"_s, { });
+            rowContainerLayer->removeAnimation("move"_si, { });
+            rowContainerLayer->removeAnimation("fade"_si, { });
         }
         break;
     }
@@ -1046,7 +1046,7 @@ void PDFDiscretePresentationController::deviceOrPageScaleFactorChanged()
 void PDFDiscretePresentationController::setupLayers(GraphicsLayer& scrolledContentsLayer)
 {
     if (!m_rowsContainerLayer) {
-        Ref rowsContainerLayer = createGraphicsLayer("Rows container"_s, GraphicsLayer::Type::Normal);
+        Ref rowsContainerLayer = createGraphicsLayer("Rows container"_si, GraphicsLayer::Type::Normal);
         m_rowsContainerLayer = rowsContainerLayer.copyRef();
         rowsContainerLayer->setAnchorPoint({ });
         scrolledContentsLayer.addChild(WTF::move(rowsContainerLayer));

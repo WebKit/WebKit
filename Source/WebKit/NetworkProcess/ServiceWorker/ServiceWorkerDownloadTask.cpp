@@ -132,7 +132,7 @@ void ServiceWorkerDownloadTask::invalidateAndCancel()
     cancel();
 }
 
-void ServiceWorkerDownloadTask::setPendingDownloadLocation(const WTF::String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
+void ServiceWorkerDownloadTask::setPendingDownloadLocation(StringImpl* filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
     ASSERT(isMainRunLoop());
 
@@ -150,7 +150,7 @@ void ServiceWorkerDownloadTask::setPendingDownloadLocation(const WTF::String& fi
     if (RefPtr sandboxExtension = m_sandboxExtension)
         sandboxExtension->consume();
 
-    serviceWorkerDownloadTaskQueueSingleton().dispatch([this, protectedThis = Ref { *this }, allowOverwrite, filename = filename.isolatedCopy()]() mutable {
+    serviceWorkerDownloadTaskQueueSingleton().dispatch([this, protectedThis = Ref { *this }, allowOverwrite, filename = isolatedCopy(filename)]() mutable {
         if (allowOverwrite && FileSystem::fileExists(filename)) {
             if (!FileSystem::deleteFile(filename)) {
                 didFailDownload();

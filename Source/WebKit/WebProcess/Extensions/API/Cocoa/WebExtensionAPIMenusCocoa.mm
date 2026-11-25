@@ -57,13 +57,13 @@
 
 namespace WebKit {
 
-static id toMenuIdentifierWebAPI(const String& identifier)
+static id toMenuIdentifierWebAPI(StringImpl* identifier)
 {
     bool validNumber;
-    double number = identifier.toDouble(&validNumber);
+    double number = toDouble(identifier, &validNumber);
     if (validNumber)
         return @(number);
-    return identifier.createNSString().autorelease();
+    return createNSString(identifier).autorelease();
 }
 
 SUPPRESS_NODELETE NSDictionary *WebExtensionAPIMenus::contextType()
@@ -145,13 +145,13 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         else if ([type isEqualToString:separatorKey])
             parameters.type = WebExtensionMenuItemType::Separator;
         else {
-            *outExceptionString = toErrorString(nullString(), @"type", @"it must specify either 'normal', 'checkbox', 'radio', or 'separator'").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(@"type").get(), StringImpl::create(@"it must specify either 'normal', 'checkbox', 'radio', or 'separator'").get())).autorelease();
             return false;
         }
     }
 
     if (NSArray *contexts = properties[contextsKey]) {
-        static NeverDestroyed<HashMap<String, WebExtensionMenuItemContextType>> typeMap = HashMap<String, WebExtensionMenuItemContextType> {
+        static NeverDestroyed<HashMap<RefPtr<StringImpl>, WebExtensionMenuItemContextType>> typeMap = HashMap<RefPtr<StringImpl>, WebExtensionMenuItemContextType> {
             { "action"_s, WebExtensionMenuItemContextType::Action },
             { "audio"_s, WebExtensionMenuItemContextType::Audio },
             { "browser_action"_s, WebExtensionMenuItemContextType::Action },
@@ -174,84 +174,84 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
                 break;
             }
 
-            if (!typeMap.get().contains(context)) {
+            if (!typeMap.get().contains(StringImpl::create(context).get())) {
                 // Don't error on unknown contexts, to allow different values that we don't support from other browsers.
                 continue;
             }
 
             RefPtr extensionContext = this->extensionContext();
             if ([context isEqualToString:@"action"] && !extensionContext->supportsManifestVersion(3)) {
-                *outExceptionString = toErrorString(nullString(), contextsKey, makeString("'"_s, String(context), "' is not a valid context"_s)).createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(contextsKey).get(), makeString("'"_s, StringImpl::create(context), "' is not a valid context"_s))).autorelease();
                 return false;
             }
 
             if (([context isEqualToString:@"browser_action"] || [context isEqualToString:@"page_action"]) && extensionContext->supportsManifestVersion(3)) {
-                *outExceptionString = toErrorString(nullString(), contextsKey, makeString("'"_s, String(context), "' is not a valid context"_s)).createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(contextsKey).get(), makeString("'"_s, StringImpl::create(context), "' is not a valid context"_s))).autorelease();
                 return false;
             }
 
-            parameters.contexts.value().add(typeMap.get().get(context));
+            parameters.contexts.value().add(typeMap.get().get(StringImpl::create(context).get()));
         }
     }
 
     if (NSArray *documentPatterns = properties[documentURLPatternsKey]) {
         for (NSString *patternString in documentPatterns) {
-            auto pattern = WebExtensionMatchPattern::getOrCreate(patternString);
+            auto pattern = WebExtensionMatchPattern::getOrCreate(StringImpl::create(patternString).get());
             if (!pattern || !pattern->isSupported()) {
-                *outExceptionString = toErrorString(nullString(), documentURLPatternsKey, makeString("'"_s, String(patternString), "' is not a valid pattern"_s)).createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(documentURLPatternsKey).get(), makeString("'"_s, StringImpl::create(patternString), "' is not a valid pattern"_s))).autorelease();
                 return false;
             }
         }
 
-        parameters.documentURLPatterns = makeVector<String>(documentPatterns);
+        parameters.documentURLPatterns = makeVector<RefPtr<StringImpl>>(documentPatterns);
     }
 
     if (NSArray *targetPatterns = properties[targetURLPatternsKey]) {
         for (NSString *patternString in targetPatterns) {
-            auto pattern = WebExtensionMatchPattern::getOrCreate(patternString);
+            auto pattern = WebExtensionMatchPattern::getOrCreate(StringImpl::create(patternString).get());
 
             // Any valid pattern is allowed, not just supported schemes.
             if (!pattern || !pattern->isValid()) {
-                *outExceptionString = toErrorString(nullString(), targetURLPatternsKey, makeString("'"_s, String(patternString), "' is not a valid pattern"_s)).createNSString().autorelease();
+                *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(targetURLPatternsKey).get(), makeString("'"_s, StringImpl::create(patternString), "' is not a valid pattern"_s))).autorelease();
                 return false;
             }
         }
 
-        parameters.targetURLPatterns = makeVector<String>(targetPatterns);
+        parameters.targetURLPatterns = makeVector<RefPtr<StringImpl>>(targetPatterns);
     }
 
     if (NSString *identifier = objectForKey<NSString>(properties, idKey, false)) {
         if (!identifier.length) {
-            *outExceptionString = toErrorString(nullString(), idKey, @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(idKey).get(), StringImpl::create(@"it must not be empty").get())).autorelease();
             return false;
         }
 
-        parameters.identifier = identifier;
+        parameters.identifier = StringImpl::create(identifier);
     } else if (NSNumber *identifier = objectForKey<NSNumber>(properties, idKey))
-        parameters.identifier = identifier.stringValue;
+        parameters.identifier = StringImpl::create(identifier.stringValue);
 
     if (NSString *parentIdentifier = objectForKey<NSString>(properties, parentIdKey, false)) {
         if (!parentIdentifier.length) {
-            *outExceptionString = toErrorString(nullString(), parentIdKey, @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(parentIdKey).get(), StringImpl::create(@"it must not be empty").get())).autorelease();
             return false;
         }
 
-        parameters.parentIdentifier = parentIdentifier;
+        parameters.parentIdentifier = StringImpl::create(parentIdentifier);
     } else if (NSNumber *parentIdentifier = objectForKey<NSNumber>(properties, parentIdKey))
-        parameters.parentIdentifier = parentIdentifier.stringValue;
+        parameters.parentIdentifier = StringImpl::create(parentIdentifier.stringValue);
 
     if (NSString *title = properties[titleKey]) {
         if (!title.length && parameters.type != WebExtensionMenuItemType::Separator) {
-            *outExceptionString = toErrorString(nullString(), titleKey, @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(titleKey).get(), StringImpl::create(@"it must not be empty").get())).autorelease();
             return false;
         }
 
-        parameters.title = title;
+        parameters.title = StringImpl::create(title);
     }
 
     if (JSValue *clickCallback = properties[onclickKey]) {
         if (!isFunction(clickCallback.context.JSGlobalContextRef, clickCallback.JSValueRef)) {
-            *outExceptionString = toErrorString(nullString(), onclickKey, @"it must be a function").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(onclickKey).get(), StringImpl::create(@"it must be a function").get())).autorelease();
             return false;
         }
 
@@ -280,7 +280,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     // Icon variants takes precedence over the old icons key, even if empty.
     if (iconVariants || iconDictionary.count)
-        parameters.iconsJSON = encodeJSONString(iconVariants ?: iconDictionary, JSONOptions::FragmentsAllowed);
+        parameters.iconsJSON = StringImpl::create(encodeJSONString(iconVariants ?: iconDictionary, JSONOptions::FragmentsAllowed));
 #else
     if (iconDictionary.count)
         parameters.iconsJSON = encodeJSONString(iconDictionary);
@@ -297,11 +297,11 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     if (NSString *command = properties[commandKey]) {
         if (!command.length) {
-            *outExceptionString = toErrorString(nullString(), commandKey, @"it must not be empty").createNSString().autorelease();
+            *outExceptionString = createNSString(toErrorString(nullString(), StringImpl::create(commandKey).get(), StringImpl::create(@"it must not be empty").get())).autorelease();
             return false;
         }
 
-        parameters.command = command;
+        parameters.command = StringImpl::create(command);
     }
 
     if (NSNumber *checked = properties[checkedKey])
@@ -329,12 +329,12 @@ id WebExtensionAPIMenus::createMenu(WebPage& page, WebFrame& frame, NSDictionary
     if (!parseCreateAndUpdateProperties(ForUpdate::No, properties, frame.url(), parameters, clickCallback, outExceptionString))
         return nil;
 
-    if (parameters.value().identifier.isEmpty())
+    if (isEmpty(parameters.value().identifier))
         parameters.value().identifier = createVersion4UUIDString();
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusCreate(parameters.value()), [this, protectedThis = Ref { *this }, callback = WTF::move(callback), clickCallback = WTF::move(clickCallback), identifier = parameters.value().identifier](std::expected<void, WebExtensionError>&& result) mutable {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -371,16 +371,16 @@ void WebExtensionAPIMenus::update(WebPage& page, WebFrame& frame, id identifier,
     else
         identifierString = dynamic_objc_cast<NSString>(identifier);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusUpdate(identifierString, parameters.value()), [this, protectedThis = Ref { *this }, callback = WTF::move(callback), clickCallback = WTF::move(clickCallback), newIdentifier = parameters.value().identifier, oldIdentifier = String(identifierString)](std::expected<void, WebExtensionError>&& result) mutable {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusUpdate(StringImpl::create(identifierString).get(), parameters.value()), [this, protectedThis = Ref { *this }, callback = WTF::move(callback), clickCallback = WTF::move(clickCallback), newIdentifier = parameters.value().identifier, oldIdentifier = RefPtr<StringImpl>(StringImpl::create(identifierString))](std::expected<void, WebExtensionError>&& result) mutable {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
-        if (newIdentifier.isEmpty())
+        if (isEmpty(newIdentifier))
             newIdentifier = oldIdentifier;
 
-        if (oldIdentifier != newIdentifier || clickCallback) {
+        if (!equal(oldIdentifier, newIdentifier) || clickCallback) {
             if (clickCallback)
                 m_clickHandlerMap.remove(oldIdentifier);
             else
@@ -411,9 +411,9 @@ void WebExtensionAPIMenus::remove(id identifier, Ref<WebExtensionCallbackHandler
     else
         identifierString = dynamic_objc_cast<NSString>(identifier);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemove(identifierString), [this, protectedThis = Ref { *this }, callback = WTF::move(callback), identifier = String(identifierString)](std::expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemove(StringImpl::create(identifierString).get()), [this, protectedThis = Ref { *this }, callback = WTF::move(callback), identifier = RefPtr<StringImpl>(StringImpl::create(identifierString))](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -430,7 +430,7 @@ void WebExtensionAPIMenus::removeAll(Ref<WebExtensionCallbackHandler>&& callback
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::MenusRemoveAll(), [this, protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
-            callback->reportError(result.error().createNSString().get());
+            callback->reportError(result.error().get());
             return;
         }
 
@@ -472,11 +472,11 @@ void WebExtensionContextProxy::dispatchMenusClickedEvent(const WebExtensionMenuI
         info[wasCheckedKey] = @(wasChecked);
     }
 
-    if (!contextParameters.selectionString.isNull())
-        info[selectionTextKey] = contextParameters.selectionString.createNSString().get();
+    if (contextParameters.selectionString)
+        info[selectionTextKey] = createNSString(contextParameters.selectionString).get();
 
     if (!contextParameters.sourceURL.isNull()) {
-        info[srcURLKey] = contextParameters.sourceURL.string().createNSString().get();
+        info[srcURLKey] = createNSString(contextParameters.sourceURL.string()).get();
 
         if (contextParameters.types.contains(WebExtensionMenuItemContextType::Audio))
             info[mediaTypeKey] = audioKey;
@@ -487,19 +487,19 @@ void WebExtensionContextProxy::dispatchMenusClickedEvent(const WebExtensionMenuI
     }
 
     if (!contextParameters.linkURL.isNull())
-        info[linkURLKey] = contextParameters.linkURL.string().createNSString().get();
+        info[linkURLKey] = createNSString(contextParameters.linkURL.string()).get();
 
-    if (!contextParameters.linkText.isNull())
-        info[linkTextKey] = contextParameters.linkText.createNSString().get();
+    if (contextParameters.linkText)
+        info[linkTextKey] = createNSString(contextParameters.linkText).get();
 
     if (contextParameters.frameIdentifier && !contextParameters.frameURL.isNull()) {
         info[editableKey] = @(contextParameters.editable);
         info[frameIDKey] = @(toWebAPI(contextParameters.frameIdentifier.value()));
 
         if (isMainFrame(contextParameters.frameIdentifier))
-            info[pageURLKey] = contextParameters.frameURL.string().createNSString().get();
+            info[pageURLKey] = createNSString(contextParameters.frameURL.string()).get();
         else
-            info[@"frameUrl"] = contextParameters.frameURL.string().createNSString().get();
+            info[@"frameUrl"] = createNSString(contextParameters.frameURL.string()).get();
     }
 
     auto *tab = tabParameters ? toWebAPI(tabParameters.value()) : nil;

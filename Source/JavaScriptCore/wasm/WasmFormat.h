@@ -340,20 +340,20 @@ inline JSString* typeToJSAPIString(VM& vm, Type type)
 {
     switch (type.kind()) {
     case TypeKind::I32:
-        return jsNontrivialString(vm, "i32"_s);
+        return jsNontrivialString(vm, "i32"_si);
     case TypeKind::I64:
-        return jsNontrivialString(vm, "i64"_s);
+        return jsNontrivialString(vm, "i64"_si);
     case TypeKind::F32:
-        return jsNontrivialString(vm, "f32"_s);
+        return jsNontrivialString(vm, "f32"_si);
     case TypeKind::F64:
-        return jsNontrivialString(vm, "f64"_s);
+        return jsNontrivialString(vm, "f64"_si);
     case TypeKind::V128:
-        return jsNontrivialString(vm, "v128"_s);
+        return jsNontrivialString(vm, "v128"_si);
     default: {
         if (isFuncref(type) && type.isNullable())
-            return jsNontrivialString(vm, "funcref"_s);
+            return jsNontrivialString(vm, "funcref"_si);
         if (isExternref(type) && type.isNullable())
-            return jsNontrivialString(vm, "externref"_s);
+            return jsNontrivialString(vm, "externref"_si);
         // Some Wasm reference types are currently unrepresentable for the JS API.
         return nullptr;
     }
@@ -643,7 +643,7 @@ struct Export {
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
 
-String makeString(const Name& characters);
+RefPtr<StringImpl> makeString(const Name& characters);
 
 struct GlobalInformation {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(GlobalInformation);

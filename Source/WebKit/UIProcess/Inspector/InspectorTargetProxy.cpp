@@ -42,7 +42,7 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTargetProxy);
 
-InspectorTargetProxy::InspectorTargetProxy(const String& targetId, Inspector::InspectorTargetType type)
+InspectorTargetProxy::InspectorTargetProxy(StringImpl* targetId, Inspector::InspectorTargetType type)
     : m_identifier(targetId)
     , m_type(type)
 {

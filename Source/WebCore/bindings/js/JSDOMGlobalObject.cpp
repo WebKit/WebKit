@@ -173,7 +173,7 @@ JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObj
     scope.assertNoException();
 
     ExceptionCode code { ExceptionCode::TypeError };
-    if (codeValue == "AbortError"_s)
+    if (equal(codeValue, "AbortError"_s))
         code = ExceptionCode::AbortError;
     auto value = createDOMException(globalObject, code, message);
 
@@ -311,23 +311,23 @@ SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
     auto& builtinNames = WebCore::builtinNames(vm);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.makeThisTypeErrorPrivateName(),
-            JSFunction::create(vm, this, 2, String(), makeThisTypeErrorForBuiltins, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 2, nullString(), makeThisTypeErrorForBuiltins, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.makeGetterTypeErrorPrivateName(),
-            JSFunction::create(vm, this, 2, String(), makeGetterTypeErrorForBuiltins, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 2, nullString(), makeGetterTypeErrorForBuiltins, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.makeDOMExceptionPrivateName(),
-            JSFunction::create(vm, this, 2, String(), makeDOMExceptionForBuiltins, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 2, nullString(), makeDOMExceptionForBuiltins, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.addAbortAlgorithmToSignalPrivateName(),
-            JSFunction::create(vm, this, 2, String(), addAbortAlgorithmToSignal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 2, nullString(), addAbortAlgorithmToSignal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.removeAbortAlgorithmFromSignalPrivateName(),
-            JSFunction::create(vm, this, 2, String(), removeAbortAlgorithmFromSignal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 2, nullString(), removeAbortAlgorithmFromSignal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.signalAbortPrivateName(),
-            JSFunction::create(vm, this, 2, String(), signalAbort, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 2, nullString(), signalAbort, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.createAbortSignalPrivateName(),
-            JSFunction::create(vm, this, 0, String(), createAbortSignal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 0, nullString(), createAbortSignal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.cloneArrayBufferPrivateName(),
-            JSFunction::create(vm, this, 3, String(), cloneArrayBuffer, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 3, nullString(), cloneArrayBuffer, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.structuredCloneForStreamPrivateName(),
-            JSFunction::create(vm, this, 1, String(), structuredCloneForStream, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+            JSFunction::create(vm, this, 1, nullString(), structuredCloneForStream, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(vm.propertyNames->builtinNames().ArrayBufferPrivateName(), arrayBufferConstructor(), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.streamClosedPrivateName(), jsNumber(1), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.streamClosingPrivateName(), jsNumber(2), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
@@ -335,11 +335,11 @@ SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.streamReadablePrivateName(), jsNumber(4), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.streamWaitingPrivateName(), jsNumber(5), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.streamWritablePrivateName(), jsNumber(6), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.isAbortSignalPrivateName(), JSFunction::create(vm, this, 1, String(), isAbortSignal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.getInternalReadableStreamPrivateName(), JSFunction::create(vm, this, 1, String(), getInternalReadableStream, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.getInternalWritableStreamPrivateName(), JSFunction::create(vm, this, 1, String(), getInternalWritableStream, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.getGlobalObjectPrivateName(), JSFunction::create(vm, this, 1, String(), getGlobalObject, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.createWritableStreamFromInternalPrivateName(), JSFunction::create(vm, this, 1, String(), createWritableStreamFromInternal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.isAbortSignalPrivateName(), JSFunction::create(vm, this, 1, nullString(), isAbortSignal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.getInternalReadableStreamPrivateName(), JSFunction::create(vm, this, 1, nullString(), getInternalReadableStream, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.getInternalWritableStreamPrivateName(), JSFunction::create(vm, this, 1, nullString(), getInternalWritableStream, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.getGlobalObjectPrivateName(), JSFunction::create(vm, this, 1, nullString(), getGlobalObject, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.createWritableStreamFromInternalPrivateName(), JSFunction::create(vm, this, 1, nullString(), createWritableStreamFromInternal, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
     };
     addStaticGlobals(staticGlobals);
 
@@ -401,17 +401,17 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
     return nullptr;
 }
 
-String JSDOMGlobalObject::codeForEval(JSGlobalObject* globalObject, JSValue value)
+RefPtr<StringImpl> JSDOMGlobalObject::codeForEval(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
 
-    if (auto* script = JSTrustedScript::toWrapped(vm, value))
+    if (RefPtr script = JSTrustedScript::toWrapped(vm, value))
         return script->toString();
 
-    return String();
+    return nullptr;
 }
 
-bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, const ArgList& args)
+bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, RefPtr<StringImpl> codeString, const ArgList& args)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -569,7 +569,7 @@ JSFunction* JSDOMGlobalObject::createCrossOriginFunction(JSGlobalObject* lexical
     // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
     DeferGC deferGC(vm);
     return m_crossOriginFunctionMap.ensureValue(key, [&] {
-        return JSFunction::create(vm, lexicalGlobalObject, length, propertyName.publicName(), nativeFunction, ImplementationVisibility::Public);
+        return JSFunction::create(vm, lexicalGlobalObject, length, protect(propertyName.publicName()), nativeFunction, ImplementationVisibility::Public);
     });
 }
 
@@ -600,7 +600,7 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
 
     RefPtr inputResponse = JSFetchResponse::toWrapped(vm, source);
     if (!inputResponse) {
-        deferred->reject(ExceptionCode::TypeError, "first argument must be an Response or Promise for Response"_s);
+        deferred->reject(ExceptionCode::TypeError, "first argument must be an Response or Promise for Response"_si);
         return;
     }
 
@@ -612,25 +612,25 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
     // 4. If response is not CORS-same-origin, reject returnValue with a TypeError and abort these substeps.
     // If response is opaque, content-type becomes "".
     if (!inputResponse->isCORSSameOrigin()) {
-        deferred->reject(ExceptionCode::TypeError, "Response is not CORS-same-origin"_s);
+        deferred->reject(ExceptionCode::TypeError, "Response is not CORS-same-origin"_si);
         return;
     }
 
     // 3. If mimeType is not `application/wasm`, reject returnValue with a TypeError and abort these substeps.
     if (!inputResponse->hasWasmMIMEType()) {
-        deferred->reject(ExceptionCode::TypeError, "Unexpected response MIME type. Expected 'application/wasm'"_s);
+        deferred->reject(ExceptionCode::TypeError, "Unexpected response MIME type. Expected 'application/wasm'"_si);
         return;
     }
 
     // 5. If response’s status is not an ok status, reject returnValue with a TypeError and abort these substeps.
     if (!inputResponse->ok()) {
-        deferred->reject(ExceptionCode::TypeError, "Response has not returned OK status"_s);
+        deferred->reject(ExceptionCode::TypeError, "Response has not returned OK status"_si);
         return;
     }
 
     // https://fetch.spec.whatwg.org/#concept-body-consume-body
     if (inputResponse->isDisturbedOrLocked()) {
-        deferred->reject(ExceptionCode::TypeError, "Response is disturbed or locked"_s);
+        deferred->reject(ExceptionCode::TypeError, "Response is disturbed or locked"_si);
         return;
     }
 
@@ -643,10 +643,10 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
         }
     }
 
-    String wasmSourceURL = inputResponse->url();
+    RefPtr<StringImpl> wasmSourceURL = inputResponse->url();
     auto resourceLoaderIdentifier = inputResponse->resourceLoaderIdentifier();
     uint64_t requestIdentifier = resourceLoaderIdentifier ? resourceLoaderIdentifier->toUInt64() : 0;
-    auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), JSC::makeSource("handleResponseOnStreamingAction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted), WTF::move(wasmSourceURL), requestIdentifier);
+    auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), JSC::makeSource("handleResponseOnStreamingAction"_si, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted), WTF::move(wasmSourceURL), requestIdentifier);
 
     if (inputResponse->isBodyReceivedByChunk()) {
         inputResponse->consumeBodyReceivedByChunk([vmPtr = &vm, compiler = WTF::move(compiler)](auto&& result) mutable {
@@ -742,7 +742,7 @@ JSC::Identifier JSDOMGlobalObject::moduleLoaderResolve(JSC::JSGlobalObject* glob
     return { };
 }
 
-JSC::JSPromise* JSDOMGlobalObject::moduleLoaderFetch(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, const String& referrer, RefPtr<JSC::ScriptFetchParameters> parameters, RefPtr<JSC::ScriptFetcher> scriptFetcher)
+JSC::JSPromise* JSDOMGlobalObject::moduleLoaderFetch(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, StringImpl* referrer, RefPtr<JSC::ScriptFetchParameters> parameters, RefPtr<JSC::ScriptFetcher> scriptFetcher)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -793,7 +793,7 @@ JSC::JSObject* JSDOMGlobalObject::readableStreamByteStrategySize()
 {
     if (!m_readableStreamByteStrategySize) {
         Ref vm = this->vm();
-        m_readableStreamByteStrategySize = JSFunction::create(vm, this, 1, "size"_s, byteLengthQueuingStrategySize, ImplementationVisibility::Public);
+        m_readableStreamByteStrategySize = JSFunction::create(vm, this, 1, "size"_si, byteLengthQueuingStrategySize, ImplementationVisibility::Public);
     }
     return m_readableStreamByteStrategySize.get();
 }
@@ -808,7 +808,7 @@ bool JSDOMGlobalObject::hasScriptErrorCallbacks() const
     return !m_scriptErrorCallbacks.isEmpty();
 }
 
-void JSDOMGlobalObject::invokeScriptErrorCallbacks(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) const
+void JSDOMGlobalObject::invokeScriptErrorCallbacks(StringImpl* message, StringImpl* sourceURL, unsigned lineNumber, unsigned columnNumber) const
 {
     for (auto& callback : m_scriptErrorCallbacks)
         callback(message, sourceURL, lineNumber, columnNumber);

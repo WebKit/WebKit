@@ -42,11 +42,11 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     WTF::initializeMainThread();
 
     WGSL::Configuration configuration;
-    auto source = String::fromUTF8WithLatin1Fallback(byteCast<char8_t>(std::span { data, size }));
-    auto checkResult = WGSL::staticCheck(source, std::nullopt, configuration);
+    auto source = StringImpl::fromUTF8WithLatin1Fallback(byteCast<char8_t>(std::span { data, size }));
+    auto checkResult = WGSL::staticCheck(source.get(), std::nullopt, configuration);
     if (auto* successfulCheck = std::get_if<WGSL::SuccessfulCheck>(&checkResult)) {
         auto& shaderModule = successfulCheck->ast;
-        WGSL::prepare(shaderModule, "main"_str, nullptr);
+        WGSL::prepare(shaderModule, "main"_si.get(), nullptr);
     }
 
     return 0;

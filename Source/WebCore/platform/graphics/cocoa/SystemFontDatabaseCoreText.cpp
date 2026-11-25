@@ -83,8 +83,8 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemDesignFont(SystemFo
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createTextStyleFont(const CascadeListParameters& parameters)
 {
-    RetainPtr<CFStringRef> localeString = parameters.locale.isEmpty() ? nullptr : parameters.locale.string().createCFString();
-    auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(parameters.fontName.string().createCFString().get(), protect(contentSizeCategory()).get(), localeString.get()));
+    RetainPtr<CFStringRef> localeString = isEmpty(parameters.locale) ? nullptr : createCFString(parameters.locale);
+    auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(createCFString(parameters.fontName).get(), protect(contentSizeCategory()).get(), localeString.get()));
     // FIXME: Use createFontByApplyingWeightWidthItalicsAndFallbackBehavior().
     CTFontSymbolicTraits traits = (parameters.weight >= kCTFontWeightSemibold ? kCTFontTraitBold : 0)
         | (parameters.width >= kCTFontWidthSemiExpanded ? kCTFontTraitExpanded : 0)
@@ -97,9 +97,9 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createTextStyleFont(const Casca
 
 Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const CascadeListParameters& parameters, SystemFontKind systemFontKind)
 {
-    ASSERT(!parameters.fontName.isNull());
+    ASSERT(parameters.fontName);
     return m_systemFontCache.ensure(parameters, [&] {
-        auto localeString = parameters.locale.string().createCFString();
+        auto localeString = createCFString(parameters.locale);
         RetainPtr<CTFontRef> systemFont;
         switch (systemFontKind) {
         case SystemFontKind::SystemUI:
@@ -230,7 +230,7 @@ NODELETE static CGFloat mapWidth(FontSelectionValue width)
     return piecewisePoints[std::size(piecewisePoints) - 1].output;
 }
 
-SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::systemFontParameters(const FontDescription& description, const AtomString& familyName, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
+SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::systemFontParameters(const FontDescription& description, AtomStringImpl* familyName, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     CascadeListParameters result;
     result.locale = description.usedLocale();
@@ -243,19 +243,19 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
 
     switch (systemFontKind) {
     case SystemFontKind::SystemUI: {
-        result.fontName = AtomString("system-ui"_s);
+        result.fontName = "system-ui"_atom;
         break;
     }
     case SystemFontKind::UISerif: {
-        result.fontName = AtomString("ui-serif"_s);
+        result.fontName = "ui-serif"_atom;
         break;
     }
     case SystemFontKind::UIMonospace: {
-        result.fontName = AtomString("ui-monospace"_s);
+        result.fontName = "ui-monospace"_atom;
         break;
     }
     case SystemFontKind::UIRounded: {
-        result.fontName = AtomString("ui-rounded"_s);
+        result.fontName = "ui-rounded"_atom;
         break;
     }
     case SystemFontKind::TextStyle:
@@ -266,7 +266,7 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
     return result;
 }
 
-std::optional<SystemFontKind> SystemFontDatabaseCoreText::matchSystemFontUse(const AtomString& string)
+std::optional<SystemFontKind> SystemFontDatabaseCoreText::matchSystemFontUse(AtomStringImpl* string)
 {
     if (equalLettersIgnoringASCIICase(string, "-webkit-system-font"_s)
         || equalLettersIgnoringASCIICase(string, "-apple-system"_s)
@@ -282,29 +282,29 @@ std::optional<SystemFontKind> SystemFontDatabaseCoreText::matchSystemFontUse(con
     if (equalLettersIgnoringASCIICase(string, "ui-rounded"_s))
         return SystemFontKind::UIRounded;
 
-    auto compareAsPointer = [](const AtomString& lhs, const AtomString& rhs) {
-        return lhs.impl() < rhs.impl();
+    auto compareAsPointer = [](AtomStringImpl* lhs, AtomStringImpl* rhs) {
+        return lhs < rhs;
     };
 
     if (m_textStyles.isEmpty()) {
         m_textStyles = {
-            kCTUIFontTextStyleHeadline,
-            kCTUIFontTextStyleBody,
-            kCTUIFontTextStyleTitle1,
-            kCTUIFontTextStyleTitle2,
-            kCTUIFontTextStyleTitle3,
-            kCTUIFontTextStyleSubhead,
-            kCTUIFontTextStyleFootnote,
-            kCTUIFontTextStyleCaption1,
-            kCTUIFontTextStyleCaption2,
-            kCTUIFontTextStyleShortHeadline,
-            kCTUIFontTextStyleShortBody,
-            kCTUIFontTextStyleShortSubhead,
-            kCTUIFontTextStyleShortFootnote,
-            kCTUIFontTextStyleShortCaption1,
-            kCTUIFontTextStyleTallBody,
-            kCTUIFontTextStyleTitle0,
-            kCTUIFontTextStyleTitle4,
+            AtomStringImpl::add(kCTUIFontTextStyleHeadline),
+            AtomStringImpl::add(kCTUIFontTextStyleBody),
+            AtomStringImpl::add(kCTUIFontTextStyleTitle1),
+            AtomStringImpl::add(kCTUIFontTextStyleTitle2),
+            AtomStringImpl::add(kCTUIFontTextStyleTitle3),
+            AtomStringImpl::add(kCTUIFontTextStyleSubhead),
+            AtomStringImpl::add(kCTUIFontTextStyleFootnote),
+            AtomStringImpl::add(kCTUIFontTextStyleCaption1),
+            AtomStringImpl::add(kCTUIFontTextStyleCaption2),
+            AtomStringImpl::add(kCTUIFontTextStyleShortHeadline),
+            AtomStringImpl::add(kCTUIFontTextStyleShortBody),
+            AtomStringImpl::add(kCTUIFontTextStyleShortSubhead),
+            AtomStringImpl::add(kCTUIFontTextStyleShortFootnote),
+            AtomStringImpl::add(kCTUIFontTextStyleShortCaption1),
+            AtomStringImpl::add(kCTUIFontTextStyleTallBody),
+            AtomStringImpl::add(kCTUIFontTextStyleTitle0),
+            AtomStringImpl::add(kCTUIFontTextStyleTitle4),
         };
         std::ranges::sort(m_textStyles, compareAsPointer);
     }
@@ -315,41 +315,41 @@ std::optional<SystemFontKind> SystemFontDatabaseCoreText::matchSystemFontUse(con
     return std::nullopt;
 }
 
-Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const FontDescription& description, const AtomString& cssFamily, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
+Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const FontDescription& description, AtomStringImpl* cssFamily, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     return cascadeList(systemFontParameters(description, cssFamily, systemFontKind, allowUserInstalledFonts), systemFontKind);
 }
 
-static String genericFamily(const String& locale, MemoryCompactRobinHoodHashMap<String, String>& map, CFStringRef ctKey)
+static RefPtr<StringImpl> genericFamily(StringImpl* locale, MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& map, CFStringRef ctKey)
 {
     return map.ensure(locale, [&] {
-        auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(ctKey, locale.createCFString().get()));
+        auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(ctKey, createCFString(locale).get()));
         auto value = adoptCF(checked_cf_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute)));
-        return String { value.get() };
+        return StringImpl::create(value.get());
     }).iterator->value;
 }
 
-String SystemFontDatabaseCoreText::serifFamily(const String& locale)
+RefPtr<StringImpl> SystemFontDatabaseCoreText::serifFamily(StringImpl* locale)
 {
     return genericFamily(locale, m_serifFamilies, kCTFontCSSFamilySerif);
 }
 
-String SystemFontDatabaseCoreText::sansSerifFamily(const String& locale)
+RefPtr<StringImpl> SystemFontDatabaseCoreText::sansSerifFamily(StringImpl* locale)
 {
     return genericFamily(locale, m_sansSeriferifFamilies, kCTFontCSSFamilySansSerif);
 }
 
-String SystemFontDatabaseCoreText::cursiveFamily(const String& locale)
+RefPtr<StringImpl> SystemFontDatabaseCoreText::cursiveFamily(StringImpl* locale)
 {
     return genericFamily(locale, m_cursiveFamilies, kCTFontCSSFamilyCursive);
 }
 
-String SystemFontDatabaseCoreText::fantasyFamily(const String& locale)
+RefPtr<StringImpl> SystemFontDatabaseCoreText::fantasyFamily(StringImpl* locale)
 {
     return genericFamily(locale, m_fantasyFamilies, kCTFontCSSFamilyFantasy);
 }
 
-String SystemFontDatabaseCoreText::monospaceFamily(const String& locale)
+RefPtr<StringImpl> SystemFontDatabaseCoreText::monospaceFamily(StringImpl* locale)
 {
     auto result = genericFamily(locale, m_monospaceFamilies, kCTFontCSSFamilyMonospace);
 #if PLATFORM(MAC) && ENABLE(MONOSPACE_FONT_EXCEPTION)
@@ -390,36 +390,36 @@ NODELETE static CTFontTextStylePlatform fontPlatform()
 
 auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShorthand) -> SystemFontShorthandInfo
 {
-    auto interrogateFontDescriptorShorthandItem = [] (CTFontDescriptorRef fontDescriptor, const String& family) {
+    auto interrogateFontDescriptorShorthandItem = [] (CTFontDescriptorRef fontDescriptor, StringImpl* family) {
         auto sizeNumber = adoptCF(static_cast<CFNumberRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontSizeAttribute)));
         float size = 0;
         CFNumberGetValue(sizeNumber.get(), kCFNumberFloatType, &size);
         auto weight = cssWeightOfSystemFontDescriptor(fontDescriptor);
-        return SystemFontShorthandInfo { AtomString(family), size, FontSelectionValue(weight) };
+        return SystemFontShorthandInfo { AtomStringImpl::add(family), size, FontSelectionValue(weight) };
     };
 
     auto interrogateTextStyleShorthandItem = [] (CFStringRef textStyle) {
         CGFloat weight = 0;
         float size = CTFontDescriptorGetTextStyleSize(textStyle, protect(contentSizeCategory()).get(), fontPlatform(), &weight, nullptr);
         auto cssWeight = normalizeCTWeight(weight);
-        return SystemFontShorthandInfo { textStyle, size, FontSelectionValue(cssWeight) };
+        return SystemFontShorthandInfo { AtomStringImpl::add(textStyle), size, FontSelectionValue(cssWeight) };
     };
 
     switch (fontShorthand) {
     case FontShorthand::Caption:
     case FontShorthand::Icon:
     case FontShorthand::MessageBox:
-        return interrogateFontDescriptorShorthandItem(adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, 0, nullptr)).get(), "system-ui"_s);
+        return interrogateFontDescriptorShorthandItem(adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, 0, nullptr)).get(), "system-ui"_si);
     case FontShorthand::Menu:
-        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::menuFontDescriptor().get(), "-apple-menu"_s);
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::menuFontDescriptor().get(), "-apple-menu"_si);
     case FontShorthand::SmallCaption:
-        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::smallCaptionFontDescriptor().get(), "system-ui"_s);
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::smallCaptionFontDescriptor().get(), "system-ui"_si);
     case FontShorthand::WebkitMiniControl:
-        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::miniControlFontDescriptor().get(), "system-ui"_s);
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::miniControlFontDescriptor().get(), "system-ui"_si);
     case FontShorthand::WebkitSmallControl:
-        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::smallControlFontDescriptor().get(), "system-ui"_s);
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::smallControlFontDescriptor().get(), "system-ui"_si);
     case FontShorthand::WebkitControl:
-        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::controlFontDescriptor().get(), "system-ui"_s);
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::controlFontDescriptor().get(), "system-ui"_si);
     case FontShorthand::AppleSystemHeadline:
         return interrogateTextStyleShorthandItem(kCTUIFontTextStyleHeadline);
     case FontShorthand::AppleSystemBody:
@@ -455,7 +455,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShort
     case FontShorthand::AppleSystemTitle4:
         return interrogateTextStyleShorthandItem(kCTUIFontTextStyleTitle4);
     case FontShorthand::StatusBar:
-        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::statusBarFontDescriptor().get(), "-apple-status-bar"_s);
+        return interrogateFontDescriptorShorthandItem(SystemFontDatabaseCoreText::statusBarFontDescriptor().get(), "-apple-status-bar"_si);
     }
 }
 

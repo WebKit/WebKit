@@ -42,7 +42,7 @@ namespace WebCore {
 
 constexpr size_t stringBufferSize = 2048;
 
-typedef unsigned TruncationFunction(const String&, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis);
+typedef unsigned TruncationFunction(StringImpl*, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis);
 
 static inline int textBreakAtOrPreceding(UBreakIterator* it, int offset)
 {
@@ -59,7 +59,7 @@ static inline int boundedTextBreakFollowing(UBreakIterator* it, int offset, int 
     return result == UBRK_DONE ? length : result;
 }
 
-static unsigned centerTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
+static unsigned centerTruncateToBuffer(StringImpl* string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < stringBufferSize);
@@ -75,18 +75,18 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     // it to handle all whitespace, not just "space".
 
     // Strip single character before ellipsis character, when that character is preceded by a space
-    if (omitStart > 1 && string[omitStart - 1] != space && omitStart > 2 && string[omitStart - 2] == space)
+    if (omitStart > 1 && codeUnitAt(string, omitStart - 1) != space && omitStart > 2 && codeUnitAt(string, omitStart - 2) == space)
         --omitStart;
 
     // Strip whitespace before and after the ellipsis character
-    while (omitStart > 1 && string[omitStart - 1] == space)
+    while (omitStart > 1 && codeUnitAt(string, omitStart - 1) == space)
         --omitStart;
 
     // Strip single character after ellipsis character, when that character is followed by a space
-    if ((length - omitEnd) > 1 && string[omitEnd] != space && (length - omitEnd) > 2 && string[omitEnd + 1] == space)
+    if ((length - omitEnd) > 1 && codeUnitAt(string, omitEnd) != space && (length - omitEnd) > 2 && codeUnitAt(string, omitEnd + 1) == space)
         ++omitEnd;
 
-    while ((length - omitEnd) > 1 && string[omitEnd] == space)
+    while ((length - omitEnd) > 1 && codeUnitAt(string, omitEnd) == space)
         ++omitEnd;
 #endif
 
@@ -100,7 +100,7 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     return truncatedLength;
 }
 
-static unsigned rightTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
+static unsigned rightTruncateToBuffer(StringImpl* string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
     ASSERT_WITH_SECURITY_IMPLICATION(keepCount < stringBufferSize);
@@ -111,11 +111,11 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
     // it to handle all whitespace, not just "space".
 
     // Strip single character before ellipsis character, when that character is preceded by a space
-    if (keepCount > 1 && string[keepCount - 1] != space && keepCount > 2 && string[keepCount - 2] == space)
+    if (keepCount > 1 && codeUnitAt(string, keepCount - 1) != space && keepCount > 2 && codeUnitAt(string, keepCount - 2) == space)
         --keepCount;
 
     // Strip whitespace before the ellipsis character
-    while (keepCount > 1 && string[keepCount - 1] == space)
+    while (keepCount > 1 && codeUnitAt(string, keepCount - 1) == space)
         --keepCount;
 #endif
 
@@ -130,7 +130,7 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
     return truncatedLength;
 }
 
-static unsigned rightClipToCharacterBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool)
+static unsigned rightClipToCharacterBuffer(StringImpl* string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool)
 {
     ASSERT(keepCount < length);
     ASSERT(keepCount < stringBufferSize);
@@ -142,7 +142,7 @@ static unsigned rightClipToCharacterBuffer(const String& string, unsigned length
     return keepLength;
 }
 
-static unsigned rightClipToWordBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool)
+static unsigned rightClipToWordBuffer(StringImpl* string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool)
 {
     ASSERT(keepCount < length);
     ASSERT(keepCount < stringBufferSize);
@@ -157,14 +157,14 @@ static unsigned rightClipToWordBuffer(const String& string, unsigned length, uns
     // it to handle all whitespace, not just "space".
 
     // Motivated by <rdar://problem/7439327> truncation should not include a trailing space
-    while (keepLength && string[keepLength - 1] == space)
+    while (keepLength && codeUnitAt(string, keepLength - 1) == space)
         --keepLength;
 #endif
 
     return keepLength;
 }
 
-static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
+static unsigned leftTruncateToBuffer(StringImpl* string, unsigned length, unsigned keepCount, std::span<char16_t> buffer, bool shouldInsertEllipsis)
 {
     ASSERT(keepCount < length);
     ASSERT(keepCount < stringBufferSize);
@@ -176,12 +176,12 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
     boundedTextBreakFollowing(it, startIndex, length - startIndex);
 
     // Strip single character after ellipsis character, when that character is preceded by a space
-    if (adjustedStartIndex < length && string[adjustedStartIndex] != space
-        && adjustedStartIndex < length - 1 && string[adjustedStartIndex + 1] == space)
+    if (adjustedStartIndex < length && codeUnitAt(string, adjustedStartIndex) != space
+        && adjustedStartIndex < length - 1 && codeUnitAt(string, adjustedStartIndex + 1) == space)
         ++adjustedStartIndex;
 
     // Strip whitespace after the ellipsis character
-    while (adjustedStartIndex < length && string[adjustedStartIndex] == space)
+    while (adjustedStartIndex < length && codeUnitAt(string, adjustedStartIndex) == space)
         ++adjustedStartIndex;
 
     if (shouldInsertEllipsis) {
@@ -199,9 +199,9 @@ static float stringWidth(const FontCascade& renderer, std::span<const char16_t> 
     return renderer.width(run);
 }
 
-static String truncateString(const String& string, float maxWidth, const FontCascade& font, TruncationFunction truncateToBuffer, float* resultWidth = nullptr, bool shouldInsertEllipsis = true, float customTruncationElementWidth = 0, bool alwaysTruncate = false)
+static RefPtr<StringImpl> truncateString(StringImpl* string, float maxWidth, const FontCascade& font, TruncationFunction truncateToBuffer, float* resultWidth = nullptr, bool shouldInsertEllipsis = true, float customTruncationElementWidth = 0, bool alwaysTruncate = false)
 {
-    if (string.isEmpty())
+    if (isEmpty(string))
         return string;
 
     if (resultWidth)
@@ -214,7 +214,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
     std::array<char16_t, stringBufferSize> stringBuffer;
     unsigned truncatedLength;
     unsigned keepCount;
-    unsigned length = string.length();
+    unsigned length = WTF::length(string);
 
     if (length > stringBufferSize) {
         if (shouldInsertEllipsis)
@@ -291,45 +291,45 @@ static String truncateString(const String& string, float maxWidth, const FontCas
         truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer, shouldInsertEllipsis);
     }
     
-    return std::span<const char16_t> { stringBuffer }.first(truncatedLength);
+    return StringImpl::create(std::span<const char16_t> { stringBuffer }.first(truncatedLength));
 }
 
-String StringTruncator::centerTruncate(const String& string, float maxWidth, const FontCascade& font)
+RefPtr<StringImpl> StringTruncator::centerTruncate(StringImpl* string, float maxWidth, const FontCascade& font)
 {
     return truncateString(string, maxWidth, font, centerTruncateToBuffer);
 }
 
-String StringTruncator::rightTruncate(const String& string, float maxWidth, const FontCascade& font)
+RefPtr<StringImpl> StringTruncator::rightTruncate(StringImpl* string, float maxWidth, const FontCascade& font)
 {
     return truncateString(string, maxWidth, font, rightTruncateToBuffer);
 }
 
-float StringTruncator::width(const String& string, const FontCascade& font)
+float StringTruncator::width(StringImpl* string, const FontCascade& font)
 {
     return stringWidth(font, StringView(string).upconvertedCharacters());
 }
 
-String StringTruncator::centerTruncate(const String& string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)
+RefPtr<StringImpl> StringTruncator::centerTruncate(StringImpl* string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)
 {
     return truncateString(string, maxWidth, font, centerTruncateToBuffer, &resultWidth, shouldInsertEllipsis, customTruncationElementWidth);
 }
 
-String StringTruncator::rightTruncate(const String& string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)
+RefPtr<StringImpl> StringTruncator::rightTruncate(StringImpl* string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)
 {
     return truncateString(string, maxWidth, font, rightTruncateToBuffer, &resultWidth, shouldInsertEllipsis, customTruncationElementWidth);
 }
 
-String StringTruncator::leftTruncate(const String& string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)
+RefPtr<StringImpl> StringTruncator::leftTruncate(StringImpl* string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)
 {
     return truncateString(string, maxWidth, font, leftTruncateToBuffer, &resultWidth, shouldInsertEllipsis, customTruncationElementWidth);
 }
 
-String StringTruncator::rightClipToCharacter(const String& string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)
+RefPtr<StringImpl> StringTruncator::rightClipToCharacter(StringImpl* string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)
 {
     return truncateString(string, maxWidth, font, rightClipToCharacterBuffer, &resultWidth, shouldInsertEllipsis, customTruncationElementWidth);
 }
 
-String StringTruncator::rightClipToWord(const String& string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis,  float customTruncationElementWidth, bool alwaysTruncate)
+RefPtr<StringImpl> StringTruncator::rightClipToWord(StringImpl* string, float maxWidth, const FontCascade& font, float& resultWidth, bool shouldInsertEllipsis,  float customTruncationElementWidth, bool alwaysTruncate)
 {
     return truncateString(string, maxWidth, font, rightClipToWordBuffer, &resultWidth, shouldInsertEllipsis, customTruncationElementWidth, alwaysTruncate);
 }

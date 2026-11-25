@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct ApplePayAMSUIRequest {
-    String engagementRequest; // required JSON
+    RefPtr<StringImpl> engagementRequest; // required JSON
 };
 
 } // namespace WebCore

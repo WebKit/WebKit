@@ -48,7 +48,7 @@ private:
     void start() final;
     NODELETE FloatRect tailRect() const;
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     void setVisible(bool visible) final { setOpacity(visible ? 1.0 : 0.0); }
 

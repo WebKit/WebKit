@@ -317,10 +317,10 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     ASSERT(shippingMethod);
 
     WebCore::ApplePayShippingMethod result;
-    result.amount = shippingMethod.amount.stringValue;
-    result.detail = shippingMethod.detail;
-    result.identifier = shippingMethod.identifier;
-    result.label = shippingMethod.label;
+    result.amount = StringImpl::create(shippingMethod.amount.stringValue);
+    result.detail = StringImpl::create(shippingMethod.detail);
+    result.identifier = StringImpl::create(shippingMethod.identifier);
+    result.label = StringImpl::create(shippingMethod.label);
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
     if (shippingMethod.dateComponentsRange)
         result.dateComponentsRange = toDateComponentsRange(shippingMethod.dateComponentsRange);
@@ -364,7 +364,7 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     if (!client)
         return [self completeCouponCodeChange:nil];
 
-    client->presenterDidChangeCouponCode(*presenter, couponCode);
+    client->presenterDidChangeCouponCode(*presenter, StringImpl::create(couponCode).get());
 }
 
 #endif // HAVE(PASSKIT_COUPON_CODE)

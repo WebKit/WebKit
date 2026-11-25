@@ -60,10 +60,10 @@ CalendarID calendarIDFromString(StringView identifier)
 // buildICULocale — internal: maps BCP47 calendar ID to ICU locale string
 static UTF8CString buildICULocale(StringView calendarId)
 {
-    String bcp47(calendarId.toString());
+    RefPtr<StringImpl> bcp47(calendarId.toString());
     auto mapped = mapBCP47ToICUCalendarKeyword(bcp47);
     auto icuKeyword = mapped ? *mapped : bcp47;
-    return makeString("und@calendar="_s, icuKeyword).utf8();
+    return utf8(makeString("und@calendar="_s, icuKeyword));
 }
 
 // buildCalendarTemplate — internal: opens ICU UCalendar for the given CalendarID, set to UTC.
@@ -383,7 +383,7 @@ static const JapaneseEra* japaneseEraForDate(const ISO8601::PlainDate& isoDate)
 }
 
 struct EraAndYear {
-    std::optional<String> era;
+    std::optional<RefPtr<StringImpl>> era;
     std::optional<int32_t> eraYear;
 };
 
@@ -391,13 +391,13 @@ static std::optional<EraAndYear> emitEraProleptic(CalendarID calendarId, const I
 {
     if (calendarId == japaneseCalendarID()) {
         if (auto* era = japaneseEraForDate(isoDate))
-            return EraAndYear { String(era->name), isoDate.year() - era->epochYear + 1 };
-        return EraAndYear { isoDate.year() > 0 ? String("ce"_s) : String("bce"_s),
+            return EraAndYear { StringImpl::create(era->name), isoDate.year() - era->epochYear + 1 };
+        return EraAndYear { isoDate.year() > 0 ? "ce"_si : "bce"_si,
             isoDate.year() > 0 ? isoDate.year() : (1 - isoDate.year()) };
     }
     if (calendarId == buddhistCalendarID() || calendarId == rocCalendarID()) {
         auto fields = gregorianArithmeticYearFieldsFor(calendarId, isoDate.year());
-        return EraAndYear { String(fields.era), fields.eraYear };
+        return EraAndYear { StringImpl::create(fields.era), fields.eraYear };
     }
     return std::nullopt;
 }
@@ -409,13 +409,13 @@ static EraAndYear emitEraFromICU(CalendarID calendarId, int32_t icuEra, int32_t 
     // https://tc39.es/proposal-intl-era-monthcode/#table-eras: pre-epoch eras derived from extended year.
     if (extendedYear <= 0) {
         if (calendarIsIslamic(calendarId))
-            return { String("bh"_s), 1 - extendedYear };
+            return { "bh"_si, 1 - extendedYear };
     }
     if (calendarId == ethiopicCalendarID())
-        return { !icuEra ? String("aa"_s) : String("am"_s), ucalYear };
+        return { !icuEra ? "aa"_si : "am"_si, ucalYear };
     // Coptic is proposal single-era "am"; ICU wraps UCAL_YEAR to positive for pre-AM, so use extendedYear.
     if (calendarId == copticCalendarID())
-        return { String("am"_s), extendedYear };
+        return { "am"_si, extendedYear };
     // Gregorian is the only remaining calendar where UCAL_ERA (0=bce, 1=ce) picks between two rows.
     // Single-era calendars (hebrew/indian/persian/ethioaa, plus islamic when extendedYear > 0) return their Epoch row.
     for (const auto& r : eraTable()) {
@@ -423,11 +423,11 @@ static EraAndYear emitEraFromICU(CalendarID calendarId, int32_t icuEra, int32_t 
             continue;
         if (calendarId == gregoryCalendarID()) {
             if (!icuEra && r.kind == EraKind::Negative)
-                return { String(r.era), ucalYear };
+                return { StringImpl::create(r.era), ucalYear };
             if (icuEra && r.kind == EraKind::Epoch)
-                return { String(r.era), ucalYear };
+                return { StringImpl::create(r.era), ucalYear };
         } else if (r.kind == EraKind::Epoch)
-            return { String(r.era), ucalYear };
+            return { StringImpl::create(r.era), ucalYear };
     }
     return { std::nullopt, std::nullopt };
 }
@@ -437,7 +437,7 @@ static EraAndYear emitEraFromICU(CalendarID calendarId, int32_t icuEra, int32_t 
 // https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes
 // icu4x: components/calendar/src/cal/hebrew.rs (Hebrew special case)
 // icu4x: components/calendar/src/cal/chinese_based.rs (Chinese/Dangi IS_LEAP_MONTH)
-static std::optional<String> getMonthCode(UCalendar* cal, CalendarID calendarId, UErrorCode& status)
+static std::optional<RefPtr<StringImpl>> getMonthCode(UCalendar* cal, CalendarID calendarId, UErrorCode& status)
 {
     int32_t ucalMonth = ucal_get(cal, UCAL_MONTH, &status);
     if (U_FAILURE(status)) [[unlikely]]
@@ -452,7 +452,7 @@ static std::optional<String> getMonthCode(UCalendar* cal, CalendarID calendarId,
         }
         if (ucalMonth < 5)
             return makeString("M0"_s, ucalMonth + 1);
-        return String("M05L"_s);
+        return "M05L"_si;
     }
 
     // Chinese/Dangi: IS_LEAP_MONTH distinguishes leap months on the same UCAL_MONTH slot.
@@ -465,7 +465,7 @@ static std::optional<String> getMonthCode(UCalendar* cal, CalendarID calendarId,
     return makeString("M"_s, month < 10 ? "0"_s : ""_s, month);
 }
 
-static std::optional<String> getMonthCode(UCalendar* cal, CalendarID calendarId)
+static std::optional<RefPtr<StringImpl>> getMonthCode(UCalendar* cal, CalendarID calendarId)
 {
     UErrorCode status = U_ZERO_ERROR;
     return getMonthCode(cal, calendarId, status);
@@ -494,7 +494,7 @@ static bool setCalendarToLunisolarYearStart(UCalendar* cal, CalendarID calendarI
         auto monthCode = getMonthCode(cal, calendarId);
         if (!monthCode) [[unlikely]]
             return false;
-        if (*monthCode == "M01"_s)
+        if (equal(*monthCode, "M01"_s))
             return true;
         if (!addUTCCalendarDays(cal, -1, status)) [[unlikely]]
             return false;
@@ -568,7 +568,7 @@ static LunisolarMonthAdvanceResult advanceToNextLunisolarMonth(UCalendar* cal, C
         auto jumpedMonthCode = getMonthCode(cal, calendarId, status);
         if (!jumpedMonthCode) [[unlikely]]
             return LunisolarMonthAdvanceResult::Error;
-        if (*jumpedMonthCode != *currentMonthCode) {
+        if (!equal(*jumpedMonthCode, *currentMonthCode)) {
             // Unreachable while ICU reports 29- or 30-day months; keeps the walk correct if not.
             ucal_setMillis(cal, beforeJumpMs, &status);
             if (U_FAILURE(status)) [[unlikely]]
@@ -582,7 +582,7 @@ static LunisolarMonthAdvanceResult advanceToNextLunisolarMonth(UCalendar* cal, C
         auto adjacentMonthCode = getMonthCode(cal, calendarId, status);
         if (!adjacentMonthCode) [[unlikely]]
             return LunisolarMonthAdvanceResult::Error;
-        if (*adjacentMonthCode != *currentMonthCode)
+        if (!equal(*adjacentMonthCode, *currentMonthCode))
             return LunisolarMonthAdvanceResult::Advanced;
     }
     return LunisolarMonthAdvanceResult::Error;
@@ -598,7 +598,7 @@ struct MonthCodeSearchResult {
     double previousMonthMs { 0 }; // Start of the last month at or before the target.
 };
 
-static std::optional<MonthCodeSearchResult> searchYearForMonthCode(UCalendar* cal, CalendarID calendarId, const String& targetCode)
+static std::optional<MonthCodeSearchResult> searchYearForMonthCode(UCalendar* cal, CalendarID calendarId, StringImpl* targetCode)
 {
     UErrorCode status = U_ZERO_ERROR;
     bool isChineseBased = calendarId == chineseCalendarID() || calendarId == dangiCalendarID();
@@ -622,7 +622,7 @@ static std::optional<MonthCodeSearchResult> searchYearForMonthCode(UCalendar* ca
         result.stoppedMonthMs = ucal_getMillis(cal, &status);
         if (U_FAILURE(status)) [[unlikely]]
             return std::nullopt;
-        if (*curCode == targetCode) {
+        if (equal(*curCode, targetCode)) {
             result.exact = true;
             return result;
         }
@@ -634,10 +634,10 @@ static std::optional<MonthCodeSearchResult> searchYearForMonthCode(UCalendar* ca
         if (advanceToNextLunisolarMonth(cal, calendarId, status) != LunisolarMonthAdvanceResult::Advanced) [[unlikely]]
             return std::nullopt;
         int32_t curYear = isChineseBased ? savedYear : ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-        auto nextCode = isChineseBased ? getMonthCode(cal, calendarId) : std::optional<String> { };
+        auto nextCode = isChineseBased ? getMonthCode(cal, calendarId) : std::optional<RefPtr<StringImpl>> { };
         if (U_FAILURE(status) || (isChineseBased && !nextCode)) [[unlikely]]
             return std::nullopt;
-        if ((isChineseBased && *nextCode == "M01"_s) || (!isChineseBased && curYear != savedYear)) {
+        if ((isChineseBased && equal(*nextCode, "M01"_s)) || (!isChineseBased && curYear != savedYear)) {
             // Left the year. ordinal and previousMonthMs still describe the last month inside it.
             return result;
         }
@@ -880,9 +880,9 @@ static std::optional<uint8_t> computeFieldResolutionOrdinalMonth(UCalendar* cal,
                 auto code = getMonthCode(cal, calendarId);
                 if (!code) [[unlikely]]
                     return std::nullopt;
-                if (*code == "M01"_s)
+                if (equal(*code, "M01"_s))
                     return ordinal + !leapFollows;
-                leapFollows |= code->endsWith("L"_s);
+                leapFollows |= endsWith(*code, "L"_s);
             }
             return std::nullopt;
         }
@@ -893,7 +893,7 @@ static std::optional<uint8_t> computeFieldResolutionOrdinalMonth(UCalendar* cal,
         auto code = getMonthCode(cal, calendarId);
         if (!code) [[unlikely]]
             return std::nullopt;
-        if (*code == *targetCode)
+        if (equal(*code, *targetCode))
             return ordinal;
         if (advanceToNextLunisolarMonth(cal, calendarId, status) != LunisolarMonthAdvanceResult::Advanced) [[unlikely]]
             return std::nullopt;
@@ -1060,7 +1060,7 @@ TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const 
         int32_t ucalYear { 0 };
         int32_t day { 0 };
         std::optional<uint8_t> ordinalMonth;
-        std::optional<String> monthCode;
+        std::optional<RefPtr<StringImpl>> monthCode;
         bool hasEra { false };
     };
 
@@ -1108,7 +1108,7 @@ TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const 
             if (*extraKislev) {
                 raw.day = 30;
                 raw.ordinalMonth = 3;
-                raw.monthCode = String("M03"_s);
+                raw.monthCode = "M03"_si;
             }
         }
         return raw;
@@ -1127,7 +1127,7 @@ TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const 
     fields.monthCode = WTF::move(*raw.monthCode);
 
     // isLeapMonth is re-derived from the month code (avoids needing UCAL_IS_LEAP_MONTH in raw)
-    fields.isLeapMonth = fields.monthCode.endsWith("L"_s);
+    fields.isLeapMonth = endsWith(fields.monthCode, "L"_s);
 
     if (raw.hasEra) {
         auto emitted = emitEraFromICU(calendarId, raw.ucalEra, raw.ucalYear, raw.extendedYear);
@@ -1204,20 +1204,20 @@ TemporalResult<uint8_t> calendarMonth(CalendarID calendarId, const ISO8601::Plai
 // CalendarISOToDate [[MonthCode]] field:
 //   1. (iso8601) Return CreateMonthCode(isoDate.[[Month]], false).
 //   2. (non-ISO) NonISOCalendarISOToDate — implementation-defined.
-TemporalResult<String> calendarMonthCode(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
+TemporalResult<RefPtr<StringImpl>> calendarMonthCode(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
     if (calendarIsGregorianStructured(calendarId))
         return ISO8601::monthCode(isoDate.month());
     if (calendarUsesISOFallbackForExtremeYear(calendarId, isoDate.year()))
         return ISO8601::monthCode(isoDate.month());
-    return withCalendarSetToDate(calendarId, isoDate, [&](UCalendar* cal) -> TemporalResult<String> {
+    return withCalendarSetToDate(calendarId, isoDate, [&](UCalendar* cal) -> TemporalResult<RefPtr<StringImpl>> {
         {
             // ICU4C-WORKAROUND: rdar://182958553 - re-label y0 M04 as monthCode M03.
             auto extraKislev = isHebrewYear0ExtraKislevDay(cal, calendarId);
             if (!extraKislev) [[unlikely]]
                 return makeUnexpected(rangeError(icuReadCalendarFailed));
             if (*extraKislev)
-                return String("M03"_s);
+                return "M03"_si;
         }
         auto code = getMonthCode(cal, calendarId);
         if (!code) [[unlikely]]
@@ -1307,13 +1307,13 @@ TemporalResult<int32_t> calendarDayOfYear(CalendarID calendarId, const ISO8601::
 // CalendarISOToDate [[Era]] field:
 //   1. (iso8601) Return undefined.
 //   2. (non-ISO) NonISOCalendarISOToDate — implementation-defined.
-TemporalResult<std::optional<String>> calendarEra(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
+TemporalResult<std::optional<RefPtr<StringImpl>>> calendarEra(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
     if (!calendarHasEras(calendarId))
-        return std::optional<String>(std::nullopt);
+        return std::optional<RefPtr<StringImpl>>(std::nullopt);
     if (auto proleptic = emitEraProleptic(calendarId, isoDate))
         return proleptic->era;
-    return withCalendarSetToDate(calendarId, isoDate, [&](UCalendar* cal) -> TemporalResult<std::optional<String>> {
+    return withCalendarSetToDate(calendarId, isoDate, [&](UCalendar* cal) -> TemporalResult<std::optional<RefPtr<StringImpl>>> {
         auto icuEra = readICUField(cal, UCAL_ERA);
         if (!icuEra) [[unlikely]]
             return makeUnexpected(icuEra.error());
@@ -1420,10 +1420,10 @@ static TemporalResult<int32_t> walkLunisolarMonthsFromYearStart(UCalendar* cal, 
         if (advanceToNextLunisolarMonth(cal, calendarId, status) != LunisolarMonthAdvanceResult::Advanced) [[unlikely]]
             return makeUnexpected(rangeError(failureMessage));
         int32_t curYear = isChineseBased ? savedYear : ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-        auto monthCode = isChineseBased ? getMonthCode(cal, calendarId) : std::optional<String> { };
+        auto monthCode = isChineseBased ? getMonthCode(cal, calendarId) : std::optional<RefPtr<StringImpl>> { };
         if (U_FAILURE(status) || (isChineseBased && !monthCode)) [[unlikely]]
             return makeUnexpected(rangeError(icuReadCalendarFailed));
-        if ((isChineseBased && *monthCode == "M01"_s) || (!isChineseBased && curYear != savedYear)) {
+        if ((isChineseBased && equal(*monthCode, "M01"_s)) || (!isChineseBased && curYear != savedYear)) {
             reachedNextYear = true;
             break;
         }
@@ -1504,7 +1504,7 @@ TemporalResult<bool> calendarInLeapYear(CalendarID calendarId, const ISO8601::Pl
 // setCalendarToMonthCode — internal: sets ICU calendar to the first day of the month matching monthCode in the current year.
 // icu4x: ArithmeticDate::from_input_year_month_code_day (components/calendar/src/calendar_arithmetic.rs)
 // Returns: 1 = found exact, 0 = constrained (month code doesn't exist in year), -1 = error
-static std::optional<int> setCalendarToMonthCode(UCalendar* cal, CalendarID calendarId, const String& monthCode)
+static std::optional<int> setCalendarToMonthCode(UCalendar* cal, CalendarID calendarId, StringImpl* monthCode)
 {
     auto parsed = ISO8601::parseMonthCode(monthCode);
     if (!parsed)
@@ -1532,12 +1532,12 @@ static std::optional<int> setCalendarToMonthCode(UCalendar* cal, CalendarID cale
 
 // compareSurpassesLexicographic — icu4x: compare_surpasses_lexicographic (components/calendar/src/calendar_arithmetic.rs)
 static bool compareSurpassesLexicographic(
-    int32_t sign, int32_t year, const String& monthCode, int32_t day,
-    int32_t targetYear, const String& targetMonthCode, int32_t targetDay)
+    int32_t sign, int32_t year, StringImpl* monthCode, int32_t day,
+    int32_t targetYear, StringImpl* targetMonthCode, int32_t targetDay)
 {
     if (year != targetYear)
         return sign * (static_cast<int64_t>(year) - targetYear) > 0;
-    if (monthCode != targetMonthCode) {
+    if (!equal(monthCode, targetMonthCode)) {
         auto ordering = codePointCompare(monthCode, targetMonthCode);
         return sign > 0 ? ordering > 0 : ordering < 0;
     }
@@ -1578,7 +1578,7 @@ static bool positionCalendarToYearStart(UCalendar* cal, CalendarID calendarId, i
 }
 
 // resolveMonthCodeToOrdinal — internal: resolves a monthCode to its 1-based ordinal position in the given year
-static std::optional<int32_t> resolveMonthCodeToOrdinal(CalendarID calendarId, const String& monthCode, int32_t year)
+static std::optional<int32_t> resolveMonthCodeToOrdinal(CalendarID calendarId, StringImpl* monthCode, int32_t year)
 {
     return withCalendar(calendarId, [&](UCalendar* cal) -> std::optional<int32_t> {
         if (!cal) [[unlikely]]
@@ -1593,7 +1593,7 @@ static std::optional<int32_t> resolveMonthCodeToOrdinal(CalendarID calendarId, c
             return found->ordinal;
         // Hebrew M05L keeps the stopped-on ordinal (icu4x hebrew.rs ordinal_from_month: -> 6 under
         // Overflow::Constrain). A ran-out stop already sits on the year's last month.
-        if (found->overshot && !(calendarId == hebrewCalendarID() && monthCode == "M05L"_s))
+        if (found->overshot && !(calendarId == hebrewCalendarID() && equal(monthCode, "M05L"_s)))
             return std::max(1, found->ordinal - 1);
         return found->ordinal;
     });
@@ -1633,7 +1633,7 @@ static std::optional<bool> yearContainsMonthCodeInternal(UCalendar* cal, Calenda
     UErrorCode status = U_ZERO_ERROR;
     if (!positionCalendarToYearStart(cal, calendarId, year, status)) [[unlikely]]
         return std::nullopt;
-    String mcStr = makeString("M"_s, monthCode.monthNumber < 10 ? "0"_s : ""_s, monthCode.monthNumber, "L"_s);
+    RefPtr<StringImpl> mcStr = makeString("M"_s, monthCode.monthNumber < 10 ? "0"_s : ""_s, monthCode.monthNumber, "L"_s);
     auto probe = setCalendarToMonthCode(cal, calendarId, mcStr);
     if (!probe) [[unlikely]]
         return std::nullopt;
@@ -1721,11 +1721,11 @@ static std::optional<bool> nonISODateSurpasses(
     int32_t sign,
     int32_t sourceYear,
     int32_t sourceRelatedYear,
-    const String& sourceMonthCode,
+    StringImpl* sourceMonthCode,
     int32_t sourceDay,
     int32_t candidateYears,
     int32_t targetYear,
-    const String& targetMonthCode,
+    StringImpl* targetMonthCode,
     int32_t targetOrdinalMonth,
     int32_t targetDay)
 {
@@ -1940,7 +1940,7 @@ TemporalResult<ISO8601::PlainDate> calendarDateAdd(CalendarID calendarId, const 
         auto origMonthCodeOpt = getMonthCode(cal, calendarId);
         if (!origMonthCodeOpt) [[unlikely]]
             return makeUnexpected(rangeError(icuReadCalendarFailed));
-        String origMonthCode = hebrewY0Kislev ? String("M03"_s) : WTF::move(*origMonthCodeOpt);
+        RefPtr<StringImpl> origMonthCode = hebrewY0Kislev ? "M03"_si : WTF::move(*origMonthCodeOpt);
         int32_t originalDay = hebrewY0Kislev ? 30 : ucal_get(cal, UCAL_DAY_OF_MONTH, &status);
         if (!hebrewY0Kislev && U_FAILURE(status)) [[unlikely]]
             return makeUnexpected(rangeError(icuReadCalendarFailed));
@@ -2015,7 +2015,7 @@ static std::optional<bool> surpassesMonths(
     int32_t sign,
     int32_t sourceDay,
     int32_t targetYear,
-    const String& targetMonthCode,
+    StringImpl* targetMonthCode,
     int32_t targetOrdinalMonth,
     int32_t targetDay)
 {
@@ -2103,7 +2103,7 @@ static TemporalResult<ISO8601::Duration> nonISODateUntil(CalendarID calendarId, 
         // resolveMonthCodeToOrdinal's year domain; differs from year for chinese/dangi. Engaged only
         // where a caller asked for it, so a use outside that path trips rather than reading `year`.
         std::optional<int32_t> relatedYear;
-        String monthCode;
+        RefPtr<StringImpl> monthCode;
         int32_t day { 0 };
         int32_t ordinalMonth { 0 };
     };
@@ -2139,7 +2139,7 @@ static TemporalResult<ISO8601::Duration> nonISODateUntil(CalendarID calendarId, 
                 }
             }
             if (hebrewY0Kislev) {
-                snapshot.monthCode = String("M03"_s);
+                snapshot.monthCode = "M03"_si;
                 snapshot.day = 30;
                 snapshot.ordinalMonth = 3;
                 return snapshot;
@@ -2743,7 +2743,7 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
                     if (!setCalendarToLunisolarYearStart(cal, calendarId, year, status)) [[unlikely]]
                         return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
 
-                    String targetCode = makeString("M"_s, monthCode->monthNumber < 10 ? "0"_s : ""_s,
+                    RefPtr<StringImpl> targetCode = makeString("M"_s, monthCode->monthNumber < 10 ? "0"_s : ""_s,
                         monthCode->monthNumber, monthCode->isLeapMonth ? "L"_s : ""_s);
                     found = searchYearForMonthCode(cal, calendarId, targetCode);
                     if (found && memoUsable) {

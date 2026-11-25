@@ -25,12 +25,12 @@
 #include <wtf/text/WTFString.h>
 
 struct _WebKitConsoleMessage {
-    _WebKitConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+    _WebKitConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, StringImpl* message, unsigned lineNumber, StringImpl* sourceID)
         : source(source)
         , level(level)
-        , message(message.utf8())
+        , message(utf8(message))
         , lineNumber(lineNumber)
-        , sourceID(sourceID.utf8())
+        , sourceID(utf8(sourceID))
     {
     }
 

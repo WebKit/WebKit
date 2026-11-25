@@ -160,7 +160,7 @@ EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
 
     size_t byteLength = byteLengthValue.value();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMRangeError(globalObject, scope, "Out of bounds access"_s);
+        return throwVMRangeError(globalObject, scope, "Out of bounds access"_si);
 
     constexpr unsigned dataSize = sizeof(typename Adaptor::Type);
     std::array<uint8_t, dataSize> rawBytes { };
@@ -208,7 +208,7 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
 
     size_t byteLength = byteLengthValue.value();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMRangeError(globalObject, scope, "Out of bounds access"_s);
+        return throwVMRangeError(globalObject, scope, "Out of bounds access"_si);
 
     uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
 

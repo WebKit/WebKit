@@ -48,7 +48,7 @@ NODELETE constexpr double maximumInstantIncrement(TemporalUnit smallestUnit)
         / static_cast<double>(static_cast<int64_t>(lengthInNanoseconds(smallestUnit)));
 }
 
-JS_EXPORT_PRIVATE WTF::String instantToString(ISO8601::ExactTime, std::optional<int64_t> offsetNs, PrecisionData);
+JS_EXPORT_PRIVATE RefPtr<StringImpl> instantToString(ISO8601::ExactTime, std::optional<int64_t> offsetNs, PrecisionData);
 
 } // namespace TemporalCore
 } // namespace JSC

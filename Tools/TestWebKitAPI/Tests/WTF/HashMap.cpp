@@ -1130,7 +1130,7 @@ TEST(WTF_HashMap, Random_IsEvenlyDistributed)
 
 TEST(WTF_HashMap, ReserveInitialCapacity)
 {
-    HashMap<String, String> map;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> map;
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(0u, map.capacity());
 
@@ -1161,9 +1161,9 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(8u, map.capacity());
 
-    HashMap<String, String> map2;
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> map2;
     map2.reserveInitialCapacity(9999);
-    EXPECT_FALSE(map2.remove("foo1"_s));
+    EXPECT_FALSE(map2.remove("foo1"_si));
 
     for (int i = 0; i < 2000; ++i)
         map2.add(makeString("foo"_s, i), makeString("bar"_s, i));
@@ -1259,7 +1259,7 @@ TEST(WTF_HashMap, Take_Set_Reenter)
 
 TEST(WTF_HashMap, Ensure_Translator)
 {
-    HashMap<String, unsigned> map;
+    HashMap<RefPtr<StringImpl>, unsigned> map;
     auto addResult = map.ensure<StringViewHashTranslator>(StringView { "foo"_s }, [] { return 1u; });
     EXPECT_TRUE(addResult.isNewEntry);
     EXPECT_TRUE(map.contains<StringViewHashTranslator>(StringView { "foo"_s }));
@@ -1358,12 +1358,12 @@ TEST(WTF_HashMap, KeysValuesRangesAllAnyNoneOf)
 
 TEST(WTF_HashMap, fromRangeConstructorBasicTypes)
 {
-    Vector<KeyValuePair<int, String>> pairs {
+    Vector<KeyValuePair<int, RefPtr<StringImpl>>> pairs {
         { 1, "one"_s },
         { 2, "two"_s },
         { 3, "three"_s }
     };
-    HashMap<int, String> wtfMap = pairs | rangeTo<HashMap<int, String>>();
+    HashMap<int, RefPtr<StringImpl>> wtfMap = pairs | rangeTo<HashMap<int, RefPtr<StringImpl>>>();
 
     EXPECT_EQ(3U, wtfMap.size());
     EXPECT_EQ("one"_s, wtfMap.get(1));
@@ -1417,17 +1417,17 @@ TEST(WTF_HashMap, fromRangeConstructorMoveOnlyValues)
 
 TEST(WTF_HashMap, fromRangeConstructorStringKeys)
 {
-    Vector<KeyValuePair<String, double>> stdVec {
+    Vector<KeyValuePair<RefPtr<StringImpl>, double>> stdVec {
         { "pi"_s, 3.14159 },
         { "e"_s, 2.71828 },
         { "sqrt2"_s, 1.41421 }
     };
-    HashMap<String, double> wtfMap(fromRange, stdVec);
+    HashMap<RefPtr<StringImpl>, double> wtfMap(fromRange, stdVec);
 
     EXPECT_EQ(3U, wtfMap.size());
-    EXPECT_DOUBLE_EQ(3.14159, wtfMap.get("pi"_s));
-    EXPECT_DOUBLE_EQ(2.71828, wtfMap.get("e"_s));
-    EXPECT_DOUBLE_EQ(1.41421, wtfMap.get("sqrt2"_s));
+    EXPECT_DOUBLE_EQ(3.14159, wtfMap.get("pi"_si));
+    EXPECT_DOUBLE_EQ(2.71828, wtfMap.get("e"_si));
+    EXPECT_DOUBLE_EQ(1.41421, wtfMap.get("sqrt2"_si));
 }
 
 TEST(WTF_HashMap, fromRangeConstructorCustomHashTraits)
@@ -1451,12 +1451,12 @@ TEST(WTF_HashMap, fromRangeConstructorCustomHashTraits)
 TEST(WTF_HashMap, RangeToBasicUsage)
 {
     // Test the rangeTo range adaptor with HashMap
-    Vector<KeyValuePair<int, String>> stdVec {
+    Vector<KeyValuePair<int, RefPtr<StringImpl>>> stdVec {
         { 1, "one"_s },
         { 2, "two"_s },
         { 3, "three"_s }
     };
-    auto wtfMap = stdVec | rangeTo<HashMap<int, String>>();
+    auto wtfMap = stdVec | rangeTo<HashMap<int, RefPtr<StringImpl>>>();
 
     EXPECT_EQ(3U, wtfMap.size());
     EXPECT_EQ("one"_s, wtfMap.get(1));

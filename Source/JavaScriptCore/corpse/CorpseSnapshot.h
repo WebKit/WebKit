@@ -93,7 +93,7 @@ private:
     unsigned m_id;
 
     std::optional<Vector<Thread>> m_threads;
-    HashMap<String, std::unique_ptr<Symbol>> m_symbols;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<Symbol>> m_symbols;
     Memory m_memory;
 
     Snapshot* m_prev { nullptr }; // Required by DoublyLinkedListNode.

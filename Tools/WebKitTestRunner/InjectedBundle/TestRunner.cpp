@@ -217,10 +217,10 @@ void TestRunner::waitUntilDownloadFinished()
 void TestRunner::waitUntilDone()
 {
     if (!InjectedBundle::singleton().isTestRunning()) {
-        [[maybe_unused]] WTF::String testURL = "(unknown test)"_s;
+        [[maybe_unused]] RefPtr<StringImpl> testURL = "(unknown test)"_si;
         if (WKURLRef url = m_testURL.get())
             testURL = toWTFString(adoptWK(WKURLCopyString(url)));
-        LOG_ERROR("(%s) testRunner.waitUntilDone() called after test has terminated. Possibly an async handler was not awaited.", testURL.utf8());
+        LOG_ERROR("(%s) testRunner.waitUntilDone() called after test has terminated. Possibly an async handler was not awaited.", utf8(testURL));
         return;
     }
 

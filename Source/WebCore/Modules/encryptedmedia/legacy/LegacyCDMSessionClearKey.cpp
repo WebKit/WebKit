@@ -52,7 +52,7 @@ CDMSessionClearKey::CDMSessionClearKey(LegacyCDMSessionClient& client)
 
 CDMSessionClearKey::~CDMSessionClearKey() = default;
 
-RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
     UNUSED_PARAM(mimeType);
     UNUSED_PARAM(destinationURL);
@@ -65,7 +65,7 @@ RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType
     m_initData = initData;
 
     bool sawError = false;
-    String keyID = PAL::UTF8Encoding().decode(initData->span(), true, sawError);
+    RefPtr<StringImpl> keyID = PAL::UTF8Encoding().decode(initData->span(), true, sawError);
     if (sawError) {
         errorCode = WebKitMediaKeyError::MEDIA_KEYERR_CLIENT;
         return nullptr;
@@ -86,8 +86,8 @@ bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8A
     ASSERT(rawKeysData);
 
     do {
-        auto rawKeysString = String::fromUTF8(rawKeysData->span());
-        if (rawKeysString.isEmpty())  {
+        auto rawKeysString = StringImpl::fromUTF8(rawKeysData->span());
+        if (isEmpty(rawKeysString))  {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: empty message", this);
             break;
         }
@@ -99,7 +99,7 @@ bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8A
         }
 
         auto keysDataObject = keysDataValue->asObject();
-        auto keysArray = keysDataObject->getArray("keys"_s);
+        auto keysArray = keysDataObject->getArray("keys"_si);
         if (!keysArray) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
             break;
@@ -120,9 +120,9 @@ bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8A
                 continue;
             }
 
-            auto getStringProperty = [&keyObject](ASCIILiteral name) -> String {
-                String string;
-                if (!keyObject->getString(name, string))
+            auto getStringProperty = [&keyObject](ASCIILiteral name) -> RefPtr<StringImpl> {
+                RefPtr<StringImpl> string;
+                if (!keyObject->getString(StringImpl::create(name).ptr(), string))
                     return { };
                 return string;
             };
@@ -140,13 +140,13 @@ bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8A
             }
 
             auto keyId = getStringProperty("kid"_s);
-            if (keyId.isEmpty()) {
+            if (isEmpty(keyId)) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: keyId missing or empty", this);
                 continue;
             }
 
             auto rawKeyData = getStringProperty("k"_s);
-            if (rawKeyData.isEmpty())  {
+            if (isEmpty(rawKeyData))  {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: key missing or empty", this);
                 continue;
             }
@@ -170,7 +170,7 @@ bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8A
     return false;
 }
 
-RefPtr<JSC::ArrayBuffer> CDMSessionClearKey::cachedKeyForKeyID(const String& keyId) const
+RefPtr<JSC::ArrayBuffer> CDMSessionClearKey::cachedKeyForKeyID(StringImpl* keyId) const
 {
     if (!m_cachedKeys.contains(keyId))
         return nullptr;

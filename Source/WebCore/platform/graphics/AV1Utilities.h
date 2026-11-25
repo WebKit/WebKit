@@ -159,7 +159,7 @@ struct AV1CodecConfigurationRecord {
     static constexpr uint32_t defaultWidth { 0 };
     static constexpr uint32_t defaultHeight { 0 };
 
-    String codecName;
+    RefPtr<StringImpl> codecName;
     AV1ConfigurationProfile profile { defaultProfile };
     AV1ConfigurationLevel level { defaultLevel };
     AV1ConfigurationTier tier { defaultTier };
@@ -178,7 +178,7 @@ struct PlatformMediaCapabilitiesVideoConfiguration;
 class VideoInfo;
 
 WEBCORE_EXPORT std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView codecString);
-WEBCORE_EXPORT String createAV1CodecParametersString(const AV1CodecConfigurationRecord&);
+WEBCORE_EXPORT RefPtr<StringImpl> createAV1CodecParametersString(const AV1CodecConfigurationRecord&);
 
 NODELETE WEBCORE_EXPORT bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord&);
 WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);

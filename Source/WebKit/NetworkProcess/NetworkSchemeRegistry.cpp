@@ -32,9 +32,9 @@ namespace WebKit {
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 
-void NetworkSchemeRegistry::registerURLSchemeAsCORSEnabled(IPC::Connection& connection, String&& scheme)
+void NetworkSchemeRegistry::registerURLSchemeAsCORSEnabled(IPC::Connection& connection, RefPtr<StringImpl>&& scheme)
 {
-    MESSAGE_CHECK(!scheme.isNull(), connection);
+    MESSAGE_CHECK(scheme, connection);
     m_corsEnabledSchemes.add(WTF::move(scheme));
 }
 

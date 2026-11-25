@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT CertificateInfo isolatedCopy() const;
 
     int verificationError() const { return m_verificationError; }
-    WEBCORE_EXPORT String verificationErrorDescription() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> verificationErrorDescription() const;
     const Vector<Certificate>& certificateChain() const LIFETIME_BOUND { return m_certificateChain; }
 
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }

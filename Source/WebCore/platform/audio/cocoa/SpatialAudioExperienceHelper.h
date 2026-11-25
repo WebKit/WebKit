@@ -37,14 +37,14 @@ struct SpatialAudioExperienceOptions {
     bool hasTarget { false };
     bool isVisible { false };
     MediaPlayerSoundStageSize soundStageSize { MediaPlayerSoundStageSize::Auto };
-    String sceneIdentifier;
+    RefPtr<StringImpl> sceneIdentifier;
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    String spatialTrackingLabel;
+    RefPtr<StringImpl> spatialTrackingLabel;
 #endif
 };
 
 WEBCORE_EXPORT RetainPtr<CASpatialAudioExperience> createSpatialAudioExperienceWithOptions(const SpatialAudioExperienceOptions&);
-WEBCORE_EXPORT String spatialAudioExperienceDescription(CASpatialAudioExperience *);
+WEBCORE_EXPORT RefPtr<StringImpl> spatialAudioExperienceDescription(CASpatialAudioExperience *);
 
 }
 #endif

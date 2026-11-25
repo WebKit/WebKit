@@ -34,28 +34,28 @@ namespace API {
 
 class UserContentURLPattern : public API::ObjectImpl<API::Object::Type::UserContentURLPattern> {
 public:
-    static Ref<UserContentURLPattern> create(const WTF::String& pattern)
+    static Ref<UserContentURLPattern> create(StringImpl* pattern)
     {
         return adoptRef(*new UserContentURLPattern(pattern));
     }
 
-    const WTF::String& host() const LIFETIME_BOUND { return m_pattern.host(); }
-    const WTF::String& scheme() const LIFETIME_BOUND { return m_pattern.scheme(); }
+    const RefPtr<StringImpl>& host() const LIFETIME_BOUND { return m_pattern.host(); }
+    const RefPtr<StringImpl>& scheme() const LIFETIME_BOUND { return m_pattern.scheme(); }
     bool isValid() const { return m_pattern.isValid(); };
-    bool matchesURL(const WTF::String& url) const { return m_pattern.matches(WTF::URL({ }, url)); }
+    bool matchesURL(StringImpl* url) const { return m_pattern.matches(WTF::URL({ }, url)); }
     bool matchesSubdomains() const { return m_pattern.matchSubdomains(); }
 
-    const WTF::String& patternString() const LIFETIME_BOUND { return m_patternString; }
+    const RefPtr<StringImpl>& patternString() const LIFETIME_BOUND { return m_patternString; }
 
 private:
-    explicit UserContentURLPattern(const WTF::String& pattern)
+    explicit UserContentURLPattern(StringImpl* pattern)
         : m_pattern(WebCore::UserContentURLPattern(pattern))
         , m_patternString(pattern)
     {
     }
 
     WebCore::UserContentURLPattern m_pattern;
-    WTF::String m_patternString;
+    RefPtr<StringImpl> m_patternString;
 };
 
 }

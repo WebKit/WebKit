@@ -136,9 +136,9 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
 
         auto *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL.createNSURL().get() statusCode:200 HTTPVersion:nil headerFields:@{
             @"Access-Control-Allow-Origin": @"*",
-            @"Content-Security-Policy": extension->contentSecurityPolicy().createNSString().get(),
+            @"Content-Security-Policy": createNSString(extension->contentSecurityPolicy()).get(),
             @"Content-Length": @(resourceData->size()).stringValue,
-            @"Content-Type": mimeType.createNSString().get()
+            @"Content-Type": createNSString(mimeType).get()
         }];
 
         task->didReceiveResponse(urlResponse);

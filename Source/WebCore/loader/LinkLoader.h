@@ -46,14 +46,14 @@ class LinkPreloadResourceClient;
 struct LinkLoadParameters {
     LinkRelAttribute relAttribute;
     URL href;
-    String as;
-    String media;
-    String mimeType;
-    String crossOrigin;
-    String imageSrcSet;
-    String imageSizes;
-    String nonce;
-    String integrity;
+    RefPtr<StringImpl> as;
+    RefPtr<StringImpl> media;
+    RefPtr<StringImpl> mimeType;
+    RefPtr<StringImpl> crossOrigin;
+    RefPtr<StringImpl> imageSrcSet;
+    RefPtr<StringImpl> imageSizes;
+    RefPtr<StringImpl> nonce;
+    RefPtr<StringImpl> integrity;
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     RequestPriority fetchPriority { RequestPriority::Auto };
 };
@@ -67,12 +67,12 @@ public:
     void loadCompressionDictionaryLink(const LinkLoadParameters&, Document&);
     enum class ShouldLog : bool { No, Yes };
     enum class IsModulePreload : bool { No, Yes };
-    static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, Document&, ShouldLog = ShouldLog::No, IsModulePreload = IsModulePreload::No);
+    static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(StringImpl*, Document&, ShouldLog = ShouldLog::No, IsModulePreload = IsModulePreload::No);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };
-    static void loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document&, MediaAttributeCheck);
-    static void loadCompressionDictionariesFromHeader(const String& headerValue, const URL& baseURL, Document&);
-    static bool isSupportedType(CachedResource::Type, const String& mimeType, Document&);
+    static void loadLinksFromHeader(StringImpl* headerValue, const URL& baseURL, Document&, MediaAttributeCheck);
+    static void loadCompressionDictionariesFromHeader(StringImpl* headerValue, const URL& baseURL, Document&);
+    static bool isSupportedType(CachedResource::Type, StringImpl* mimeType, Document&);
 
     void triggerEvents(const CachedResource&);
     void triggerError();

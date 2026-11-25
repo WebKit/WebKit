@@ -140,13 +140,13 @@ class LiteralParser {
 public:
     LiteralParser(JSGlobalObject*, std::span<const CharType> characters, ParserMode, CodeBlock* nullOrCodeBlock = nullptr);
     
-    String getErrorMessage()
+    RefPtr<StringImpl> getErrorMessage()
     { 
-        if (!m_lexer.getErrorMessage().isEmpty())
+        if (!isEmpty(m_lexer.getErrorMessage()))
             return makeString("JSON Parse error: "_s, m_lexer.getErrorMessage());
-        if (!m_parseErrorMessage.isEmpty())
+        if (!isEmpty(m_parseErrorMessage))
             return makeString("JSON Parse error: "_s, m_parseErrorMessage);
-        return "JSON Parse error: Unable to parse JSON string"_s;
+        return "JSON Parse error: Unable to parse JSON string"_si;
     }
     
     JSValue tryLiteralParse()
@@ -271,7 +271,7 @@ private:
         }
 #endif // ASSERT_ENABLED
         
-        String getErrorMessage() { return m_lexErrorMessage; }
+        RefPtr<StringImpl> getErrorMessage() { return m_lexErrorMessage; }
 
         const CharType* ptr() const { return m_ptr; }
         const CharType* start() const { return m_start; }
@@ -301,7 +301,7 @@ private:
         TokenType lexDouble(LiteralParserToken<CharType>&, const CharType* initial, const CharType* start, uint64_t integer);
         TokenType lexNumberError(LiteralParserToken<CharType>&);
 
-        String m_lexErrorMessage;
+        RefPtr<StringImpl> m_lexErrorMessage;
         LiteralParserToken<CharType> m_currentToken;
         ParserMode m_mode;
         const CharType* m_ptr;
@@ -339,7 +339,7 @@ private:
     JSONCache& m_jsonCache;
     Lexer m_lexer;
     const ParserMode m_mode;
-    String m_parseErrorMessage;
+    RefPtr<StringImpl> m_parseErrorMessage;
     HashSet<JSObject*> m_visitedUnderscoreProto;
     MarkedArgumentBuffer m_objectStack;
     MarkedArgumentBuffer m_elementStack;

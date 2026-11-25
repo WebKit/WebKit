@@ -48,27 +48,27 @@ inline WebCore::Exception convertToException(FileSystemStorageError error)
 {
     switch (error) {
     case FileSystemStorageError::AccessHandleActive:
-        return WebCore::Exception { WebCore::ExceptionCode::InvalidStateError, "Some AccessHandle is active"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::InvalidStateError, "Some AccessHandle is active"_si };
     case FileSystemStorageError::BackendNotSupported:
-        return WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Backend does not support this operation"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Backend does not support this operation"_si };
     case FileSystemStorageError::FileNotFound:
         return WebCore::Exception { WebCore::ExceptionCode::NotFoundError };
     case FileSystemStorageError::InvalidDataType:
-        return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Data type is invalid"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Data type is invalid"_si };
     case FileSystemStorageError::InvalidModification:
         return WebCore::Exception { WebCore::ExceptionCode::InvalidModificationError };
     case FileSystemStorageError::InvalidName:
-        return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Name is invalid"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Name is invalid"_si };
     case FileSystemStorageError::InvalidState:
         return WebCore::Exception { WebCore::ExceptionCode::InvalidStateError };
     case FileSystemStorageError::MissingArgument:
-        return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Required argument is missing"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Required argument is missing"_si };
     case FileSystemStorageError::NoModificationAllowed:
         return WebCore::Exception { WebCore::ExceptionCode::NoModificationAllowedError };
     case FileSystemStorageError::TypeMismatch:
-        return WebCore::Exception { WebCore::ExceptionCode::TypeMismatchError, "File type is incompatible with handle type"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::TypeMismatchError, "File type is incompatible with handle type"_si };
     case FileSystemStorageError::QuotaError:
-        return WebCore::Exception { WebCore::ExceptionCode::QuotaExceededError, "Requested space above quota"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::QuotaExceededError, "Requested space above quota"_si };
     case FileSystemStorageError::Unknown:
         break;
     }

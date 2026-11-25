@@ -47,7 +47,7 @@ public:
         protect(property(owner))->detach();
     }
 
-    std::optional<String> synchronize(const OwnerType& owner) const override
+    std::optional<RefPtr<StringImpl>> synchronize(const OwnerType& owner) const override
     {
         return protect(property(owner))->synchronize();
     }

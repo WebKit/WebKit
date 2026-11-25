@@ -41,7 +41,7 @@ public:
     static Ref<WorkerSWClientConnection> create(WorkerGlobalScope& scope) { return adoptRef(*new WorkerSWClientConnection { scope }); }
     ~WorkerSWClientConnection();
 
-    void registerServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent) final;
+    void registerServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, RefPtr<StringImpl>&& userAgent) final;
     void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) final;
 
 private:
@@ -67,19 +67,19 @@ private:
     void getPushSubscription(ServiceWorkerRegistrationIdentifier, GetPushSubscriptionCallback&&) final;
     void getPushPermissionState(ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) final;
 #if ENABLE(NOTIFICATION_EVENT)
-    void getNotifications(const URL&, const String&, GetNotificationsCallback&&) final;
+    void getNotifications(const URL&, StringImpl*, GetNotificationsCallback&&) final;
 #endif
 
     void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
     void disableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
-    void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&) final;
+    void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, RefPtr<StringImpl>&&, ExceptionOrVoidCallback&&) final;
     void getNavigationPreloadState(ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&) final;
 
-    void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) final;
-    void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&&) final;
+    void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, StringImpl*, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) final;
+    void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, StringImpl*, ExceptionOrBackgroundFetchInformationCallback&&) final;
     void backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier, BackgroundFetchIdentifiersCallback&&) final;
-    void abortBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, AbortBackgroundFetchCallback&&) final;
-    void matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) final;
+    void abortBackgroundFetch(ServiceWorkerRegistrationIdentifier, StringImpl*, AbortBackgroundFetchCallback&&) final;
+    void matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, StringImpl*, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) final;
     void retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&) final;
     void retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&) final;
 

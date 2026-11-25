@@ -46,7 +46,7 @@ class IDBConnectionToClient;
 class IDBTransactionInfo {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBTransactionInfo, WEBCORE_EXPORT);
 public:
-    static IDBTransactionInfo clientTransaction(const IDBClient::IDBConnectionProxy&, const Vector<String>& objectStores, IDBTransactionMode, std::optional<IDBTransactionDurability>);
+    static IDBTransactionInfo clientTransaction(const IDBClient::IDBConnectionProxy&, const Vector<RefPtr<StringImpl>>& objectStores, IDBTransactionMode, std::optional<IDBTransactionDurability>);
     static IDBTransactionInfo versionChange(const IDBServer::IDBConnectionToClient&, const IDBDatabaseInfo& originalDatabaseInfo, uint64_t newVersion);
 
     WEBCORE_EXPORT IDBTransactionInfo(const IDBTransactionInfo&);
@@ -64,11 +64,11 @@ public:
     IDBTransactionDurability durability() const { return m_durability; }
     uint64_t newVersion() const { return m_newVersion; }
 
-    const Vector<String>& objectStores() const LIFETIME_BOUND { return m_objectStores; }
+    const Vector<RefPtr<StringImpl>>& objectStores() const LIFETIME_BOUND { return m_objectStores; }
 
     const std::unique_ptr<IDBDatabaseInfo>& originalDatabaseInfo() const LIFETIME_BOUND { return m_originalDatabaseInfo; }
 
-    IDBTransactionInfo(IDBResourceIdentifier identifier, IDBTransactionMode mode, IDBTransactionDurability durability, uint64_t newVersion, Vector<String>&& objectStores, std::unique_ptr<IDBDatabaseInfo> originalDatabaseInfo)
+    IDBTransactionInfo(IDBResourceIdentifier identifier, IDBTransactionMode mode, IDBTransactionDurability durability, uint64_t newVersion, Vector<RefPtr<StringImpl>>&& objectStores, std::unique_ptr<IDBDatabaseInfo> originalDatabaseInfo)
         : m_identifier(identifier)
         , m_mode(mode)
         , m_durability(durability)
@@ -77,7 +77,7 @@ public:
         , m_originalDatabaseInfo(WTF::move(originalDatabaseInfo)) { }
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 
 private:
@@ -90,7 +90,7 @@ private:
     IDBTransactionMode m_mode { IDBTransactionMode::Readonly };
     IDBTransactionDurability m_durability { IDBTransactionDurability::Default };
     uint64_t m_newVersion { 0 };
-    Vector<String> m_objectStores;
+    Vector<RefPtr<StringImpl>> m_objectStores;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 };
 

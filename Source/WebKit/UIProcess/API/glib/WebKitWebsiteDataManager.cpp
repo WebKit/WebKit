@@ -535,7 +535,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
 {
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
     if (!priv->websiteDataStore) {
-        auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(String { priv->baseCacheDirectory }, String { priv->baseDataDirectory });
+        auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(StringImpl::create(priv->baseCacheDirectory.span()).get(), StringImpl::create(priv->baseDataDirectory.span()).get());
 #if !ENABLE(2022_GLIB_API)
         if (!priv->localStorageDirectory.isNull())
             configuration->setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.utf8()));
@@ -701,7 +701,7 @@ const gchar* webkit_website_data_manager_get_local_storage_directory(WebKitWebsi
         return nullptr;
 
     if (priv->localStorageDirectory.isNull())
-        priv->localStorageDirectory = GMallocString { WebKit::WebsiteDataStore::defaultLocalStorageDirectory().utf8() };
+        priv->localStorageDirectory = GMallocString { utf8(WebKit::WebsiteDataStore::defaultLocalStorageDirectory()) };
     return priv->localStorageDirectory.utf8();
 }
 
@@ -772,7 +772,7 @@ const gchar* webkit_website_data_manager_get_indexeddb_directory(WebKitWebsiteDa
         return nullptr;
 
     if (priv->indexedDBDirectory.isNull())
-        priv->indexedDBDirectory = GMallocString { WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory().utf8() };
+        priv->indexedDBDirectory = GMallocString { utf8(WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory()) };
     return priv->indexedDBDirectory.utf8();
 }
 
@@ -797,7 +797,7 @@ const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataM
         return nullptr;
 
     if (priv->webSQLDirectory.isNull())
-        priv->webSQLDirectory = GMallocString { WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory().utf8() };
+        priv->webSQLDirectory = GMallocString { utf8(WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory()) };
     return priv->webSQLDirectory.utf8();
 }
 
@@ -822,7 +822,7 @@ const gchar* webkit_website_data_manager_get_hsts_cache_directory(WebKitWebsiteD
         return nullptr;
 
     if (priv->hstsCacheDirectory.isNull())
-        priv->hstsCacheDirectory = GMallocString { WebKit::WebsiteDataStore::defaultHSTSStorageDirectory().utf8() };
+        priv->hstsCacheDirectory = GMallocString { utf8(WebKit::WebsiteDataStore::defaultHSTSStorageDirectory()) };
     return priv->hstsCacheDirectory.utf8();
 }
 
@@ -847,7 +847,7 @@ const gchar* webkit_website_data_manager_get_itp_directory(WebKitWebsiteDataMana
         return nullptr;
 
     if (priv->itpDirectory.isNull())
-        priv->itpDirectory = GMallocString { WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory().utf8() };
+        priv->itpDirectory = GMallocString { utf8(WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory()) };
     return priv->itpDirectory.utf8();
 }
 
@@ -872,7 +872,7 @@ const gchar* webkit_website_data_manager_get_service_worker_registrations_direct
         return nullptr;
 
     if (priv->swRegistrationsDirectory.isNull())
-        priv->swRegistrationsDirectory = GMallocString { WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory().utf8() };
+        priv->swRegistrationsDirectory = GMallocString { utf8(WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()) };
     return priv->swRegistrationsDirectory.utf8();
 }
 
@@ -897,7 +897,7 @@ const gchar* webkit_website_data_manager_get_dom_cache_directory(WebKitWebsiteDa
         return nullptr;
 
     if (priv->domCacheDirectory.isNull())
-        priv->domCacheDirectory = GMallocString { WebKit::WebsiteDataStore::defaultCacheStorageDirectory().utf8() };
+        priv->domCacheDirectory = GMallocString { utf8(WebKit::WebsiteDataStore::defaultCacheStorageDirectory()) };
     return priv->domCacheDirectory.utf8();
 }
 
@@ -1079,7 +1079,7 @@ void webkit_website_data_manager_set_network_proxy_settings(WebKitWebsiteDataMan
 #endif
 
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
-static String webkitWebsiteDataManagerGetFaviconDatabasePath(WebKitWebsiteDataManager* manager)
+static RefPtr<StringImpl> webkitWebsiteDataManagerGetFaviconDatabasePath(WebKitWebsiteDataManager* manager)
 {
     if (webkit_website_data_manager_is_ephemeral(manager))
         return { };
@@ -1111,7 +1111,7 @@ void webkit_website_data_manager_set_favicons_enabled(WebKitWebsiteDataManager* 
         if (!manager->priv->faviconDatabase)
             manager->priv->faviconDatabase = adoptGRef(webkitFaviconDatabaseCreate());
         auto path = webkitWebsiteDataManagerGetFaviconDatabasePath(manager);
-        webkitFaviconDatabaseOpen(manager->priv->faviconDatabase.get(), path, path.isNull());
+        webkitFaviconDatabaseOpen(manager->priv->faviconDatabase.get(), path, !path);
     } else if (manager->priv->faviconDatabase) {
         webkitFaviconDatabaseClose(manager->priv->faviconDatabase.get());
         manager->priv->faviconDatabase = nullptr;
@@ -1370,7 +1370,7 @@ gboolean webkit_website_data_manager_clear_finish(WebKitWebsiteDataManager* mana
  */
 struct _WebKitITPFirstParty {
     explicit _WebKitITPFirstParty(ITPThirdPartyDataForSpecificFirstParty&& data)
-        : domain(data.firstPartyDomain.string().utf8())
+        : domain(utf8(data.firstPartyDomain.string()))
         , storageAccessGranted(data.storageAccessGranted)
         , lastUpdated(adoptGRef(g_date_time_new_from_unix_utc(data.timeLastUpdated.secondsAs<gint64>())))
     {
@@ -1529,7 +1529,7 @@ GDateTime* webkit_itp_first_party_get_last_update_time(WebKitITPFirstParty* firs
 
 struct _WebKitITPThirdParty {
     explicit _WebKitITPThirdParty(ITPThirdPartyData&& data)
-        : domain(data.thirdPartyDomain.string().utf8())
+        : domain(utf8(data.thirdPartyDomain.string()))
     {
         while (!data.underFirstParties.isEmpty())
             firstParties = g_list_prepend(firstParties, webkitITPFirstPartyCreate(data.underFirstParties.takeLast()));

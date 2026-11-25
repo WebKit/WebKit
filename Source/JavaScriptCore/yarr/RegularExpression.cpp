@@ -171,10 +171,10 @@ int RegularExpression::matchedLength() const
     return d->lastMatchLength;
 }
 
-void replace(String& string, const RegularExpression& target, StringView replacement)
+void replace(RefPtr<StringImpl>& string, const RegularExpression& target, StringView replacement)
 {
     int index = 0;
-    while (index < static_cast<int>(string.length())) {
+    while (index < static_cast<int>(length(string))) {
         int matchLength;
         index = target.match(string, index, &matchLength);
         if (index < 0)

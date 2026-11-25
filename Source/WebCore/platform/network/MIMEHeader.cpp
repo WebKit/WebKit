@@ -43,31 +43,31 @@
 
 namespace WebCore {
 
-typedef HashMap<String, String> KeyValueMap;
+typedef HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> KeyValueMap;
 
 static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffer)
 {
     KeyValueMap keyValuePairs;
-    String line;
-    String key;
+    RefPtr<StringImpl> line;
+    RefPtr<StringImpl> key;
     StringBuilder value;
-    while (!(line = buffer.nextChunkAsUTF8StringWithLatin1Fallback()).isNull()) {
-        if (line.isEmpty())
+    while ((line = buffer.nextChunkAsUTF8StringWithLatin1Fallback())) {
+        if (isEmpty(line))
             break; // Empty line means end of key/value section.
-        if (line[0] == '\t') {
-            ASSERT(!key.isEmpty());
+        if (codeUnitAt(line, 0) == '\t') {
+            ASSERT(!isEmpty(key));
             value.append(StringView(line).substring(1));
             continue;
         }
         // New key/value, store the previous one if any.
-        if (!key.isEmpty()) {
+        if (!isEmpty(key)) {
             if (keyValuePairs.find(key) != keyValuePairs.end())
-                LOG_ERROR("Key duplicate found in MIME header. Key is '%s', previous value replaced.", key.utf8());
-            keyValuePairs.add(key, value.toString().trim(deprecatedIsSpaceOrNewline));
-            key = String();
+                LOG_ERROR("Key duplicate found in MIME header. Key is '%s', previous value replaced.", utf8(key));
+            keyValuePairs.add(key, trim(value.toString(), deprecatedIsSpaceOrNewline));
+            key = nullptr;
             value.clear();
         }
-        size_t semicolonIndex = line.find(':');
+        size_t semicolonIndex = find(line, ':');
         if (semicolonIndex == notFound) {
             // This is not a key value pair, ignore.
             continue;
@@ -76,8 +76,8 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
         value.append(StringView(line).substring(semicolonIndex + 1));
     }
     // Store the last property if there is one.
-    if (!key.isEmpty())
-        keyValuePairs.set(key, value.toString().trim(deprecatedIsSpaceOrNewline));
+    if (!isEmpty(key))
+        keyValuePairs.set(key, trim(value.toString(), deprecatedIsSpaceOrNewline));
     return keyValuePairs;
 }
 
@@ -87,12 +87,12 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
     KeyValueMap keyValuePairs = retrieveKeyValuePairs(buffer);
     KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type"_s);
     if (mimeParametersIterator != keyValuePairs.end()) {
-        String contentType, charset, multipartType, endOfPartBoundary;
+        RefPtr<StringImpl> contentType, charset, multipartType, endOfPartBoundary;
         if (auto parsedContentType = ParsedContentType::create(mimeParametersIterator->value)) {
             contentType = parsedContentType->mimeType();
-            charset = parsedContentType->charset().trim(deprecatedIsSpaceOrNewline);
-            multipartType = parsedContentType->parameterValueForName("type"_s);
-            endOfPartBoundary = parsedContentType->parameterValueForName("boundary"_s);
+            charset = trim(parsedContentType->charset(), deprecatedIsSpaceOrNewline);
+            multipartType = parsedContentType->parameterValueForName("type"_si);
+            endOfPartBoundary = parsedContentType->parameterValueForName("boundary"_si);
         }
         mimeHeader->m_contentType = contentType;
         if (!mimeHeader->isMultipart())
@@ -100,7 +100,7 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
         else {
             mimeHeader->m_multipartType = multipartType;
             mimeHeader->m_endOfPartBoundary = endOfPartBoundary;
-            if (mimeHeader->m_endOfPartBoundary.isNull()) {
+            if (!mimeHeader->m_endOfPartBoundary) {
                 LOG_ERROR("No boundary found in multipart MIME header.");
                 return nullptr;
             }

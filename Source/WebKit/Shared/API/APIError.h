@@ -50,7 +50,7 @@ public:
     enum General {
         Internal = 300
     };
-    static const WTF::String& webKitErrorDomain();
+    static const RefPtr<StringImpl>& webKitErrorDomain();
 
     enum Network {
         Cancelled = 302,
@@ -58,7 +58,7 @@ public:
         HTTPSUpgradeRedirectLoop = WebCore::errorCodeHTTPSUpgradeRedirectLoop,
         HTTPNavigationWithHTTPSOnlyError = 305,
     };
-    static const WTF::String& webKitNetworkErrorDomain();
+    static const RefPtr<StringImpl>& webKitNetworkErrorDomain();
 
     enum Policy {
         CannotShowMIMEType = 100,
@@ -69,7 +69,7 @@ public:
         FrameLoadBlockedByContentFilter = 105,
         FrameLoadBlockedByRestrictions = 106,
     };
-    static const WTF::String& webKitPolicyErrorDomain();
+    static const RefPtr<StringImpl>& webKitPolicyErrorDomain();
 
     enum Plugin {
         CannotFindPlugIn = 200,
@@ -79,7 +79,7 @@ public:
         PlugInWillHandleLoad = 204,
         InsecurePlugInVersion = 205
     };
-    static const WTF::String& webKitPluginErrorDomain();
+    static const RefPtr<StringImpl>& webKitPluginErrorDomain();
 
 #if USE(SOUP)
     enum Download {
@@ -87,7 +87,7 @@ public:
         CancelledByUser = 400,
         Destination = 401
     };
-    static const WTF::String& webKitDownloadErrorDomain();
+    static const RefPtr<StringImpl>& webKitDownloadErrorDomain();
 #endif
 
 #if PLATFORM(GTK)
@@ -96,13 +96,13 @@ public:
         PrinterNotFound = 500,
         InvalidPageRange = 501
     };
-    static const WTF::String& webKitPrintErrorDomain();
+    static const RefPtr<StringImpl>& webKitPrintErrorDomain();
 #endif
 
-    const WTF::String& domain() const LIFETIME_BOUND { return m_platformError.domain(); }
+    const RefPtr<StringImpl>& domain() const LIFETIME_BOUND { return m_platformError.domain(); }
     int errorCode() const { return m_platformError.errorCode(); }
-    const WTF::String& failingURL() const LIFETIME_BOUND { return m_platformError.failingURL().string(); }
-    const WTF::String& localizedDescription() const LIFETIME_BOUND { return m_platformError.localizedDescription(); }
+    const RefPtr<StringImpl>& failingURL() const LIFETIME_BOUND { return m_platformError.failingURL().string(); }
+    const RefPtr<StringImpl>& localizedDescription() const LIFETIME_BOUND { return m_platformError.localizedDescription(); }
 
     const WebCore::ResourceError& platformError() const LIFETIME_BOUND { return m_platformError; }
     const RefPtr<Error> underlyingError() const { return m_underlyingError; }

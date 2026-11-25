@@ -39,7 +39,7 @@ protected:
     inline UniquedStringImpl(CreateSymbolTag, std::span<const char16_t>);
     inline UniquedStringImpl(CreateSymbolTag);
     ~UniquedStringImpl();
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 inline UniquedStringImpl::UniquedStringImpl(CreateSymbolTag, std::span<const Latin1Character> characters)
     : StringImpl(CreateSymbol, characters)

@@ -34,49 +34,49 @@ namespace TestWebKitAPI {
 
 TEST(PlatformPasteboard, IsFilePasteboardTypeExactMatches)
 {
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("public.file-url"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("NSFilenamesPboardType"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("Apple files promise pasteboard type"_s));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("public.file-url"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("NSFilenamesPboardType"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("Apple files promise pasteboard type"_si));
 }
 
 TEST(PlatformPasteboard, IsFilePasteboardTypeCaseVariants)
 {
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("PUBLIC.FILE-URL"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("Public.File-Url"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("public.FILE-url"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("nsfilenamespboardtype"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("NSFILENAMESPBOARDTYPE"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("APPLE FILES PROMISE PASTEBOARD TYPE"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("apple files promise pasteboard type"_s));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("PUBLIC.FILE-URL"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("Public.File-Url"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("public.FILE-url"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("nsfilenamespboardtype"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("NSFILENAMESPBOARDTYPE"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("APPLE FILES PROMISE PASTEBOARD TYPE"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("apple files promise pasteboard type"_si));
 }
 
 TEST(PlatformPasteboard, IsFilePasteboardTypeCorePasteboardFlavor)
 {
     // 'furl' = 0x6675726C = public.file-url
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("CorePasteboardFlavorType 0x6675726C"_s));
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("CorePasteboardFlavorType 0x6675726c"_s));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("CorePasteboardFlavorType 0x6675726C"_si));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("CorePasteboardFlavorType 0x6675726c"_si));
 }
 
 TEST(PlatformPasteboard, IsFilePasteboardTypeDynamicUTI)
 {
     // Dynamic UTI encoding of NSFilenamesPboardType
-    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("dyn.ah62d4rv4gu8y6y4grf0gn5xbrzw1gydcr7u1e3cytf2gn"_s));
+    EXPECT_TRUE(WebCore::PlatformPasteboard::isFilePasteboardType("dyn.ah62d4rv4gu8y6y4grf0gn5xbrzw1gydcr7u1e3cytf2gn"_si));
 }
 
 TEST(PlatformPasteboard, IsFilePasteboardTypeNonFileTypes)
 {
-    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("public.utf8-plain-text"_s));
-    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("public.html"_s));
-    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("public.url"_s));
-    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("public.png"_s));
-    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("com.apple.webarchive"_s));
-    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("Apple URL pasteboard type"_s));
-    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType(""_s));
+    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("public.utf8-plain-text"_si));
+    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("public.html"_si));
+    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("public.url"_si));
+    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("public.png"_si));
+    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("com.apple.webarchive"_si));
+    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType("Apple URL pasteboard type"_si));
+    EXPECT_FALSE(WebCore::PlatformPasteboard::isFilePasteboardType(""_si));
 }
 
 TEST(PlatformPasteboard, SetTypesRejectsFileTypes)
 {
-    WebCore::PlatformPasteboard pasteboard("com.apple.WebKit.test.file-type-blocklist"_s);
+    WebCore::PlatformPasteboard pasteboard("com.apple.WebKit.test.file-type-blocklist"_si);
 
     EXPECT_EQ(0, pasteboard.addTypes({ "PUBLIC.FILE-URL"_s }));
     EXPECT_EQ(0, pasteboard.addTypes({ "CorePasteboardFlavorType 0x6675726C"_s }));
@@ -90,18 +90,18 @@ TEST(PlatformPasteboard, SetTypesRejectsFileTypes)
 
 TEST(PlatformPasteboard, SetStringForTypeRejectsFileURL)
 {
-    WebCore::PlatformPasteboard pasteboard("com.apple.WebKit.test.file-type-setstring"_s);
+    WebCore::PlatformPasteboard pasteboard("com.apple.WebKit.test.file-type-setstring"_si);
 
     // Declare the URL type.
     pasteboard.setTypes({ "Apple URL pasteboard type"_s });
 
     // Writing a file:// URL via NSURLPboardType must NOT place data under UTTypeFileURL.
-    pasteboard.setStringForType("file:///etc/passwd"_s, "Apple URL pasteboard type"_s);
+    pasteboard.setStringForType("file:///etc/passwd"_si, "Apple URL pasteboard type"_si);
 
-    Vector<String> types;
+    Vector<RefPtr<StringImpl>> types;
     pasteboard.getTypes(types);
     for (auto& type : types)
-        EXPECT_FALSE(type == "public.file-url"_s);
+        EXPECT_FALSE(equal(type, "public.file-url"_s));
 }
 
 } // namespace TestWebKitAPI

@@ -77,11 +77,11 @@ std::optional<ProcessID> WasmDebuggerDebuggable::webContentProcessPID() const
     return pid;
 }
 
-String WasmDebuggerDebuggable::name() const
+RefPtr<StringImpl> WasmDebuggerDebuggable::name() const
 {
     RefPtr process = m_process.get();
     if (!process)
-        return "WebAssembly Debugger"_s;
+        return "WebAssembly Debugger"_si;
 
     // When process exists, PID must be valid (see webContentProcessPID() and lifetime_proof.md)
     auto pid = process->processID();
@@ -89,7 +89,7 @@ String WasmDebuggerDebuggable::name() const
     return makeString("WebAssembly Debugger (WebContent PID "_s, pid, ")"_s);
 }
 
-String WasmDebuggerDebuggable::url() const
+RefPtr<StringImpl> WasmDebuggerDebuggable::url() const
 {
     RefPtr process = m_process.get();
     if (!process)
@@ -100,14 +100,14 @@ String WasmDebuggerDebuggable::url() const
     // so joining all unique hostnames gives a more informative entry in `lldb platform process list`.
     // Hostnames are used instead of full URLs because LLDB passes the name field through
     // llvm::sys::path::filename() (equivalent to basename()), which would mangle full URLs.
-    HashSet<String> seenHosts;
+    HashSet<RefPtr<StringImpl>> seenHosts;
     StringBuilder result;
     for (Ref page : process->pages()) {
         auto urlString = page->currentURL();
-        if (urlString.isEmpty())
+        if (isEmpty(urlString))
             continue;
         auto host = URL { urlString }.host().toString();
-        if (host.isEmpty() || !seenHosts.add(host).isNewEntry)
+        if (isEmpty(host) || !seenHosts.add(host).isNewEntry)
             continue;
         if (!result.isEmpty())
             result.append(", "_s);
@@ -153,9 +153,9 @@ void WasmDebuggerDebuggable::disconnect(FrontendChannel& channel)
     });
 }
 
-void WasmDebuggerDebuggable::dispatchMessageFromRemote(String&& message)
+void WasmDebuggerDebuggable::dispatchMessageFromRemote(RefPtr<StringImpl>&& message)
 {
-    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTF::move(message).isolatedCopy()]() mutable {
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = isolatedCopy(WTF::move(message))]() mutable {
         RefPtr process = m_process.get();
         if (!process)
             return;
@@ -177,13 +177,13 @@ void WasmDebuggerDebuggable::setIndicating(bool indicating)
     });
 }
 
-void WasmDebuggerDebuggable::setNameOverride(const String& name)
+void WasmDebuggerDebuggable::setNameOverride(StringImpl* name)
 {
     m_nameOverride = name;
     update();
 }
 
-void WasmDebuggerDebuggable::sendResponseToFrontend(const String& response)
+void WasmDebuggerDebuggable::sendResponseToFrontend(StringImpl* response)
 {
     if (!m_frontendChannel)
         return;

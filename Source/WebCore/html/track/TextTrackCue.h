@@ -96,8 +96,8 @@ public:
 
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
-    const AtomString& id() const LIFETIME_BOUND { return m_id; }
-    void setId(const AtomString&);
+    const RefPtr<AtomStringImpl>& id() const LIFETIME_BOUND { return m_id; }
+    void setId(AtomStringImpl*);
 
     double startTime() const { return startMediaTime().toDouble(); }
     void setStartTime(double);
@@ -136,9 +136,9 @@ public:
     virtual void removeDisplayTree();
 
     virtual RefPtr<DocumentFragment> getCueAsHTML();
-    virtual const String& text() const { return emptyString(); }
+    virtual const RefPtr<StringImpl>& text() const { return emptyString(); }
 
-    String toJSONString() const;
+    RefPtr<StringImpl> toJSONString() const;
 
     virtual void recalculateStyles() { m_displayTreeNeedsUpdate = true; }
     NODELETE virtual void setFontSize(int fontSize, bool important);
@@ -173,7 +173,7 @@ private:
 
     void rebuildDisplayTree();
 
-    AtomString m_id;
+    RefPtr<AtomStringImpl> m_id;
     MediaTime m_startTime;
     MediaTime m_endTime;
     int m_processingCueChanges { 0 };
@@ -206,7 +206,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::TextTrackCue> {
-    static String toString(const WebCore::TextTrackCue& cue) { return cue.toJSONString(); }
+    static RefPtr<StringImpl> toString(const WebCore::TextTrackCue& cue) { return cue.toJSONString(); }
 };
 
 } // namespace WTF

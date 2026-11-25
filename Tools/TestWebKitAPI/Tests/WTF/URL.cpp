@@ -56,23 +56,23 @@ TEST_F(WTF_URL, URLConstructorDefault)
 
 TEST_F(WTF_URL, URLConstructorConstChar)
 {
-    URL kurl("http://username:password@www.example.com:8080/index.html?var=val#fragment"_s);
+    URL kurl("http://username:password@www.example.com:8080/index.html?var=val#fragment"_si);
 
     EXPECT_FALSE(kurl.isEmpty());
     EXPECT_FALSE(kurl.isNull());
     EXPECT_TRUE(kurl.isValid());
 
     EXPECT_TRUE(kurl.protocol() == "http"_s);
-    EXPECT_EQ(String("www.example.com"_s), kurl.host().toString());
+    EXPECT_EQ("www.example.com"_si, kurl.host().toString());
     EXPECT_TRUE(!!kurl.port());
     EXPECT_EQ(8080, kurl.port().value());
-    EXPECT_EQ(String("username"_s), kurl.user());
-    EXPECT_EQ(String("password"_s), kurl.password());
-    EXPECT_EQ(String("/index.html"_s), kurl.path());
-    EXPECT_EQ(String("index.html"_s), kurl.lastPathComponent());
-    EXPECT_EQ(String("var=val"_s), kurl.query());
+    EXPECT_EQ("username"_si, kurl.user());
+    EXPECT_EQ("password"_si, kurl.password());
+    EXPECT_EQ("/index.html"_si, kurl.path());
+    EXPECT_EQ("index.html"_si, kurl.lastPathComponent());
+    EXPECT_EQ("var=val"_si, kurl.query());
     EXPECT_TRUE(kurl.hasFragmentIdentifier());
-    EXPECT_EQ(String("fragment"_s), kurl.fragmentIdentifier());
+    EXPECT_EQ("fragment"_si, kurl.fragmentIdentifier());
 }
 
 static URL createURL(ASCIILiteral urlAsString)
@@ -83,52 +83,52 @@ static URL createURL(ASCIILiteral urlAsString)
 TEST_F(WTF_URL, URLProtocolHostAndPort)
 {
     auto url = createURL("http://username:password@www.example.com:8080/index.html?var=val#fragment"_s);
-    EXPECT_EQ(String("http://www.example.com:8080"_s), url.protocolHostAndPort());
+    EXPECT_EQ("http://www.example.com:8080"_si, url.protocolHostAndPort());
 
     url = createURL("http://username:@www.example.com:8080/index.html?var=val#fragment"_s);
-    EXPECT_EQ(String("http://www.example.com:8080"_s), url.protocolHostAndPort());
+    EXPECT_EQ("http://www.example.com:8080"_si, url.protocolHostAndPort());
 
     url = createURL("http://:password@www.example.com:8080/index.html?var=val#fragment"_s);
-    EXPECT_EQ(String("http://www.example.com:8080"_s), url.protocolHostAndPort());
+    EXPECT_EQ("http://www.example.com:8080"_si, url.protocolHostAndPort());
 
     url = createURL("http://username@www.example.com:8080/index.html?var=val#fragment"_s);
-    EXPECT_EQ(String("http://www.example.com:8080"_s), url.protocolHostAndPort());
+    EXPECT_EQ("http://www.example.com:8080"_si, url.protocolHostAndPort());
 
     url = createURL("http://www.example.com:8080/index.html?var=val#fragment"_s);
-    EXPECT_EQ(String("http://www.example.com:8080"_s), url.protocolHostAndPort());
+    EXPECT_EQ("http://www.example.com:8080"_si, url.protocolHostAndPort());
 
     url = createURL("http://www.example.com:/index.html?var=val#fragment"_s);
-    EXPECT_EQ(String("http://www.example.com"_s), url.protocolHostAndPort());
+    EXPECT_EQ("http://www.example.com"_si, url.protocolHostAndPort());
 
     url = createURL("http://www.example.com/index.html?var=val#fragment"_s);
-    EXPECT_EQ(String("http://www.example.com"_s), url.protocolHostAndPort());
+    EXPECT_EQ("http://www.example.com"_si, url.protocolHostAndPort());
 
     url = createURL("file:///a/b/c"_s);
-    EXPECT_EQ(String("file://"_s), url.protocolHostAndPort());
+    EXPECT_EQ("file://"_si, url.protocolHostAndPort());
 
     url = createURL("file:///a/b"_s);
-    EXPECT_EQ(String("file://"_s), url.protocolHostAndPort());
+    EXPECT_EQ("file://"_si, url.protocolHostAndPort());
 
     url = createURL("file:///a"_s);
-    EXPECT_EQ(String("file://"_s), url.protocolHostAndPort());
+    EXPECT_EQ("file://"_si, url.protocolHostAndPort());
 
     url = createURL("file:///a"_s);
-    EXPECT_EQ(String("file://"_s), url.protocolHostAndPort());
+    EXPECT_EQ("file://"_si, url.protocolHostAndPort());
 
     url = createURL("asdf://username:password@www.example.com:8080/index.html?var=val#fragment"_s);
-    EXPECT_EQ(String("asdf://www.example.com:8080"_s), url.protocolHostAndPort());
+    EXPECT_EQ("asdf://www.example.com:8080"_si, url.protocolHostAndPort());
 
     url = createURL("asdf:///a/b/c"_s);
-    EXPECT_EQ(String("asdf://"_s), url.protocolHostAndPort());
+    EXPECT_EQ("asdf://"_si, url.protocolHostAndPort());
 }
 
 TEST_F(WTF_URL, URLDataURIStringSharing)
 {
-    URL baseURL("http://www.webkit.org/"_s);
-    String threeApples = "data:text/plain;charset=utf-8;base64,76O/76O/76O/"_s;
+    URL baseURL("http://www.webkit.org/"_si);
+    RefPtr<StringImpl> threeApples = "data:text/plain;charset=utf-8;base64,76O/76O/76O/"_si;
 
     URL url(baseURL, threeApples);
-    EXPECT_EQ(threeApples.impl(), url.string().impl());
+    EXPECT_EQ(threeApples.get(), url.string().get());
 }
 
 TEST_F(WTF_URL, URLSetQuery)
@@ -329,7 +329,7 @@ TEST_F(WTF_URL, HostIsMatchingDomain)
 {
     URL url = createURL("http://www.webkit.org"_s);
 
-    EXPECT_TRUE(url.isMatchingDomain(String { }));
+    EXPECT_TRUE(url.isMatchingDomain(nullString()));
     EXPECT_TRUE(url.isMatchingDomain(emptyString()));
     EXPECT_TRUE(url.isMatchingDomain("org"_s));
     EXPECT_TRUE(url.isMatchingDomain("webkit.org"_s));
@@ -342,20 +342,20 @@ TEST_F(WTF_URL, HostIsMatchingDomain)
 
     url = createURL("file:///www.webkit.org"_s);
 
-    EXPECT_TRUE(url.isMatchingDomain(String { }));
+    EXPECT_TRUE(url.isMatchingDomain(nullString()));
     EXPECT_TRUE(url.isMatchingDomain(emptyString()));
     EXPECT_FALSE(url.isMatchingDomain("org"_s));
     EXPECT_FALSE(url.isMatchingDomain("webkit.org"_s));
     EXPECT_FALSE(url.isMatchingDomain("www.webkit.org"_s));
 
     URL emptyURL;
-    EXPECT_FALSE(emptyURL.isMatchingDomain(String { }));
+    EXPECT_FALSE(emptyURL.isMatchingDomain(nullString()));
     EXPECT_FALSE(emptyURL.isMatchingDomain(emptyString()));
 }
 
 TEST_F(WTF_URL, PrintStream)
 {
-    String urlString("http://www.webkit.org/"_s);
+    RefPtr<StringImpl> urlString("http://www.webkit.org/"_si);
     URL url(urlString);
     StringPrintStream out;
     out.print(url);
@@ -366,7 +366,7 @@ TEST_F(WTF_URL, URLDifferingQueryParameters)
 {
     URL url1 = createURL("www.webkit.org/?"_s);
     URL url2 = createURL("http://www.webkit.org/?key1=val1"_s);
-    Vector<KeyValuePair<String, String>> testVector12 { { "key1"_s, "val1"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector12 { { "key1"_s, "val1"_s } };
     EXPECT_EQ(differingQueryParameters(url1, url2), testVector12);
     
     URL url33 = createURL("http://www.webkit.org/?key1=val1"_s);
@@ -375,7 +375,7 @@ TEST_F(WTF_URL, URLDifferingQueryParameters)
     
     URL url35 = createURL(".org/path/?key1=val1"_s);
     URL url36 = createURL("/path/?key1=val1"_s);
-    Vector<KeyValuePair<String, String>> testVector { };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector { };
     EXPECT_EQ(differingQueryParameters(url35, url36), testVector);
     
     URL url = createURL("http://www.webkit.org/?key1=val1"_s);
@@ -391,67 +391,67 @@ TEST_F(WTF_URL, URLDifferingQueryParameters)
     
     URL url3 = createURL("http://www.webkit.org/?"_s);
     URL url4 = createURL("http://www.webkit.org/?key1=val1"_s);
-    Vector<KeyValuePair<String, String>> testVector34 { { "key1"_s, "val1"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector34 { { "key1"_s, "val1"_s } };
     EXPECT_EQ(differingQueryParameters(url3, url4), testVector34);
     
     URL url5 = createURL("http://www.webkit.org/?key1=val1"_s);
     URL url6 = createURL("http://www.webkit.org/?"_s);
-    Vector<KeyValuePair<String, String>> testVector56 { { "key1"_s, "val1"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector56 { { "key1"_s, "val1"_s } };
     EXPECT_EQ(differingQueryParameters(url5, url6), testVector56);
     
     URL url13 = createURL("http://www.webkit.org/?key1=val1&key2=val2"_s);
     URL url14 = createURL("http://www.webkit.org/?key1=val1&key1=val1"_s);
-    Vector<KeyValuePair<String, String>> testVector1314 { { "key1"_s, "val1"_s }, { "key2"_s, "val2"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector1314 { { "key1"_s, "val1"_s }, { "key2"_s, "val2"_s } };
     EXPECT_EQ(differingQueryParameters(url13, url14), testVector1314);
     
     URL url15 = createURL("http://www.webkit.org/?key1=val1"_s);
     URL url16 = createURL("http://www.webkit.org/?key2=val2"_s);
-    Vector<KeyValuePair<String, String>> testVector1516 { { "key1"_s, "val1"_s }, { "key2"_s, "val2"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector1516 { { "key1"_s, "val1"_s }, { "key2"_s, "val2"_s } };
     EXPECT_EQ(differingQueryParameters(url15, url16), testVector1516);
     
     URL url11 = createURL("http://www.webkit.org/?key2=val2&key1=val1"_s);
     URL url12 = createURL("http://www.webkit.org/?key3=val3&key1=val1"_s);
-    Vector<KeyValuePair<String, String>> testVector1112 { { "key2"_s, "val2"_s }, { "key3"_s, "val3"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector1112 { { "key2"_s, "val2"_s }, { "key3"_s, "val3"_s } };
     EXPECT_EQ(differingQueryParameters(url11, url12), testVector1112);
     
     URL url17 = createURL("http://www.webkit.org/?key1=val1&key2=val2"_s);
     URL url18 = createURL("http://www.webkit.org/?key1&key3=val3"_s);
-    Vector<KeyValuePair<String, String>> testVector1718 { {"key1"_s, ""_s }, { "key1"_s, "val1"_s }, { "key2"_s, "val2"_s }, { "key3"_s, "val3"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector1718 { {"key1"_s, ""_s }, { "key1"_s, "val1"_s }, { "key2"_s, "val2"_s }, { "key3"_s, "val3"_s } };
     EXPECT_EQ(differingQueryParameters(url17, url18), testVector1718);
     
     URL url19 = createURL("http://www.webkit.org/?key2=val2&key1=val1&key2=val2"_s);
     URL url20 = createURL("http://www.webkit.org/?key3=val3&key1"_s);
-    Vector<KeyValuePair<String, String>> testVector1920 { { "key1"_s, ""_s }, { "key1"_s, "val1"_s }, { "key2"_s, "val2"_s }, { "key2"_s, "val2"_s }, { "key3"_s, "val3"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector1920 { { "key1"_s, ""_s }, { "key1"_s, "val1"_s }, { "key2"_s, "val2"_s }, { "key2"_s, "val2"_s }, { "key3"_s, "val3"_s } };
     EXPECT_EQ(differingQueryParameters(url19, url20), testVector1920);
     
     URL url21 = createURL("http://www.webkit.org/??"_s);
     URL url22 = createURL("http://www.webkit.org/?/?test=test"_s);
-    Vector<KeyValuePair<String, String>> testVector2122 { { "/?test"_s, "test"_s }, { "?"_s, ""_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector2122 { { "/?test"_s, "test"_s }, { "?"_s, ""_s } };
     EXPECT_EQ(differingQueryParameters(url21, url22), testVector2122);
     
     URL url23 = createURL("http://www.webkit.org/?=test"_s);
     URL url24 = createURL("http://www.webkit.org/?=="_s);
-    Vector<KeyValuePair<String, String>> testVector2324 { { ""_s, "="_s }, { ""_s, "test"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector2324 { { ""_s, "="_s }, { ""_s, "test"_s } };
     EXPECT_EQ(differingQueryParameters(url23, url24), testVector2324);
     
     URL url27 = createURL("http://www.webkit.org??"_s);
     URL url28 = createURL("http://www.webkit.org?/?test=test"_s);
-    Vector<KeyValuePair<String, String>> testVector2728 { { "/?test"_s, "test"_s }, { "?"_s, ""_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector2728 { { "/?test"_s, "test"_s }, { "?"_s, ""_s } };
     EXPECT_EQ(differingQueryParameters(url27, url28), testVector2728);
     
     URL url29 = createURL("http://www.webkit.org?=test"_s);
     URL url30 = createURL("http://www.webkit.org?=="_s);
-    Vector<KeyValuePair<String, String>> testVector2930 { { ""_s, "="_s }, { ""_s, "test"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector2930 { { ""_s, "="_s }, { ""_s, "test"_s } };
     EXPECT_EQ(differingQueryParameters(url29, url30), testVector2930);
     
     URL url31 = createURL("http://www.webkit.org?=?"_s);
     URL url32 = createURL("http://www.webkit.org=?"_s);
-    Vector<KeyValuePair<String, String>> testVector3132 { { ""_s, "?"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector3132 { { ""_s, "?"_s } };
     EXPECT_EQ(differingQueryParameters(url31, url32), testVector3132);
     
     URL url25 = createURL("http://www.webkit.org/?=?"_s);
     URL url26 = createURL("http://www.webkit.org/=?"_s);
-    Vector<KeyValuePair<String, String>> testVector2526 { { ""_s, "?"_s } };
+    Vector<KeyValuePair<RefPtr<StringImpl>, RefPtr<StringImpl>>> testVector2526 { { ""_s, "?"_s } };
     EXPECT_EQ(differingQueryParameters(url25, url26), testVector2526);
 }
 
@@ -536,14 +536,14 @@ TEST_F(WTF_URL, URLRemoveQueryParameters)
     auto url14 = createURL("http://www.webkit.org/?u+v=x+%20y&key1=foo"_s);
     auto url15 = createURL("http://www.webkit.org/?u+v=x+%20y"_s);
 
-    HashSet<String> keyRemovalSet1 { "key"_s };
-    HashSet<String> keyRemovalSet2 { "key1"_s };
-    HashSet<String> keyRemovalSet3 { "key2"_s };
-    HashSet<String> keyRemovalSet4 { "key"_s, "key1"_s };
+    HashSet<RefPtr<StringImpl>> keyRemovalSet1 { "key"_s };
+    HashSet<RefPtr<StringImpl>> keyRemovalSet2 { "key1"_s };
+    HashSet<RefPtr<StringImpl>> keyRemovalSet3 { "key2"_s };
+    HashSet<RefPtr<StringImpl>> keyRemovalSet4 { "key"_s, "key1"_s };
 
-    auto checkRemovedParameters = [](int lineNumber, const Vector<String>& removedParameters, std::initializer_list<String>&& expected) {
-        Vector<String> expectedParameters { WTF::move(expected) };
-        bool areEqual = removedParameters == expectedParameters;
+    auto checkRemovedParameters = [](int lineNumber, const Vector<RefPtr<StringImpl>>& removedParameters, std::initializer_list<RefPtr<StringImpl>>&& expected) {
+        Vector<RefPtr<StringImpl>> expectedParameters { WTF::move(expected) };
+        bool areEqual = contentEquals(removedParameters, expectedParameters);
         EXPECT_TRUE(areEqual);
         if (areEqual)
             return;
@@ -551,10 +551,10 @@ TEST_F(WTF_URL, URLRemoveQueryParameters)
         WTFLogAlways("Test failed at %s:%d", __FILE__, lineNumber);
         WTFLogAlways("- Got %zu parameter(s)", removedParameters.size());
         for (auto& parameter : removedParameters)
-            SAFE_WTFLOGALWAYS("    %s", parameter.utf8());
+            SAFE_WTFLOGALWAYS("    %s", utf8(parameter));
         WTFLogAlways("- Expected %zu parameter(s)", expectedParameters.size());
         for (auto& parameter : expectedParameters)
-            SAFE_WTFLOGALWAYS("    %s", parameter.utf8());
+            SAFE_WTFLOGALWAYS("    %s", utf8(parameter));
     };
 
     auto removedParameters1 = removeQueryParameters(url1, keyRemovalSet2);
@@ -640,17 +640,17 @@ TEST_F(WTF_URL, URLStrippedForUseAsReport)
 TEST_F(WTF_URL, IsolatedCopy)
 {
     URL url1 { "http://www.apple.com"_str };
-    auto* originalStringImpl = url1.string().impl();
+    auto* originalStringImpl = url1.string().get();
     URL url1Copy = url1.isolatedCopy();
     EXPECT_EQ(url1Copy, url1);
-    EXPECT_NE(url1Copy.string().impl(), originalStringImpl); // Should have done a deep copy of the String.
+    EXPECT_NE(url1Copy.string().get(), originalStringImpl); // Should have done a deep copy of the String.
 
     // Tests optimization for URL::isolatedCopy() on a r-value reference.
     URL url2 { "https://www.webkit.org"_str };
-    originalStringImpl = url2.string().impl();
+    originalStringImpl = url2.string().get();
     URL url2Copy = WTF::move(url2).isolatedCopy();
     EXPECT_EQ(url2Copy, URL { "https://www.webkit.org"_str });
-    EXPECT_EQ(url2Copy.string().impl(), originalStringImpl); // Should have adopted the StringImpl of url2.
+    EXPECT_EQ(url2Copy.string().get(), originalStringImpl); // Should have adopted the StringImpl of url2.
 }
 
 TEST_F(WTF_URL, MoveInvalidatesURL)
@@ -670,10 +670,10 @@ TEST_F(WTF_URL, MoveInvalidatesURL)
     EXPECT_FALSE(url3.isValid());
 
     URL url4 { "http://www.webkit.org"_str };
-    static_assert(std::is_same_v<decltype(url4.string()), const String&>);
-    static_assert(std::is_same_v<decltype(WTF::move(url4).string()), String>);
+    static_assert(std::is_same_v<decltype(url4.string()), const RefPtr<StringImpl>&>);
+    static_assert(std::is_same_v<decltype(WTF::move(url4).string()), RefPtr<StringImpl>>);
     EXPECT_TRUE(url4.isValid());
-    String string4 = WTF::move(url4).string();
+    RefPtr<StringImpl> string4 = WTF::move(url4).string();
     SUPPRESS_USE_AFTER_MOVE EXPECT_FALSE(url4.isValid());
 }
 

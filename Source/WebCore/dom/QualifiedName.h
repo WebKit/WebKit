@@ -52,7 +52,7 @@ public:
     class QualifiedNameImpl : public RefCounted<QualifiedNameImpl> {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(QualifiedNameImpl, QualifiedNameQualifiedNameImpl);
     public:
-        static Ref<QualifiedNameImpl> create(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
+        static Ref<QualifiedNameImpl> create(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI)
         {
             return adoptRef(*new QualifiedNameImpl(prefix, localName, namespaceURI));
         }
@@ -64,11 +64,11 @@ public:
         mutable unsigned m_existingHash { 0 };
         Namespace m_namespace;
         NodeName m_nodeName;
-        const AtomString m_prefix;
-        const AtomString m_localName;
-        const AtomString m_namespaceURI;
-        AtomString m_localNameLower;
-        mutable AtomString m_localNameUpper;
+        const RefPtr<AtomStringImpl> m_prefix;
+        const RefPtr<AtomStringImpl> m_localName;
+        const RefPtr<AtomStringImpl> m_namespaceURI;
+        RefPtr<AtomStringImpl> m_localNameLower;
+        mutable RefPtr<AtomStringImpl> m_localNameUpper;
 
         static constexpr ptrdiff_t namespaceMemoryOffset() { return OBJECT_OFFSETOF(QualifiedNameImpl, m_namespace); }
         static constexpr ptrdiff_t nodeNameMemoryOffset() { return OBJECT_OFFSETOF(QualifiedNameImpl, m_nodeName); }
@@ -78,11 +78,11 @@ public:
     private:
         friend class QualifiedName;
 
-        WEBCORE_EXPORT QualifiedNameImpl(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI);
+        WEBCORE_EXPORT QualifiedNameImpl(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI);
     };
 
-    WEBCORE_EXPORT QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI);
-    WEBCORE_EXPORT QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace, NodeName);
+    WEBCORE_EXPORT QualifiedName(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI);
+    WEBCORE_EXPORT QualifiedName(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI, Namespace, NodeName);
     QualifiedName(QualifiedNameImpl& impl) : m_impl(&impl) { }
     explicit QualifiedName(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
@@ -90,22 +90,22 @@ public:
     friend bool operator==(const QualifiedName&, const QualifiedName&) = default;
 
     bool matches(const QualifiedName& other) const { return m_impl == other.m_impl || (localName() == other.localName() && namespaceURI() == other.namespaceURI()); }
-    bool hasLocalName(const AtomString& other) const { return localName() == other; }
+    bool hasLocalName(AtomStringImpl* other) const { return localName() == other; }
 
-    bool hasPrefix() const { return !m_impl->m_prefix.isNull(); }
-    void setPrefix(const AtomString& prefix) { *this = QualifiedName(prefix, localName(), namespaceURI()); }
+    bool hasPrefix() const { return !!m_impl->m_prefix; }
+    void setPrefix(AtomStringImpl* prefix) { *this = QualifiedName(prefix, localName(), namespaceURI()); }
 
-    const AtomString& prefix() const LIFETIME_BOUND { return m_impl->m_prefix; }
-    const AtomString& localName() const LIFETIME_BOUND { return m_impl->m_localName; }
-    const AtomString& namespaceURI() const LIFETIME_BOUND { return m_impl->m_namespaceURI; }
-    const AtomString& localNameLowercase() const LIFETIME_BOUND { return m_impl->m_localNameLower; }
-    const AtomString& localNameUppercase() const LIFETIME_BOUND;
+    const RefPtr<AtomStringImpl>& prefix() const LIFETIME_BOUND { return m_impl->m_prefix; }
+    const RefPtr<AtomStringImpl>& localName() const LIFETIME_BOUND { return m_impl->m_localName; }
+    const RefPtr<AtomStringImpl>& namespaceURI() const LIFETIME_BOUND { return m_impl->m_namespaceURI; }
+    const RefPtr<AtomStringImpl>& localNameLowercase() const LIFETIME_BOUND { return m_impl->m_localNameLower; }
+    const RefPtr<AtomStringImpl>& localNameUppercase() const LIFETIME_BOUND;
 
     NodeName nodeName() const { return m_impl->m_nodeName; }
     Namespace nodeNamespace() const { return m_impl->m_namespace; }
 
-    String toString() const;
-    AtomString toAtomString() const;
+    RefPtr<StringImpl> toString() const;
+    RefPtr<AtomStringImpl> toAtomString() const;
 
     QualifiedNameImpl* impl() const { return m_impl.get(); }
 #if ENABLE(JIT)
@@ -154,15 +154,15 @@ struct QualifiedNameHash {
     static constexpr bool hasHashInValue = true;
 };
 
-inline String QualifiedName::toString() const
+inline RefPtr<StringImpl> QualifiedName::toString() const
 {
     if (!hasPrefix())
         return localName();
 
-    return makeString(prefix().string(), ':', localName().string());
+    return makeString(prefix(), ':', localName());
 }
 
-inline AtomString QualifiedName::toAtomString() const
+inline RefPtr<AtomStringImpl> QualifiedName::toAtomString() const
 {
     if (!hasPrefix())
         return localName();

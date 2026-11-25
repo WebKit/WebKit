@@ -49,8 +49,9 @@ header: <wtf/text/CString.h>
     double secondsSinceEpoch().seconds()
 }
 
+# ArgumentCoder<RefPtr<AtomStringImpl>> is in ArgumentCoders.h. This describes it to the IPC testing API.
 header: <wtf/text/AtomString.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomString {
+[CustomHeader, CustomArgumentCoder] class WTF::AtomString {
     String string()
 }
 

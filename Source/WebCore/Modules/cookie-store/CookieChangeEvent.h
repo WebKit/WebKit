@@ -37,14 +37,14 @@ class CookieChangeEvent final : public Event {
 public:
     using Init = CookieChangeEventInit;
 
-    NODELETE static Ref<CookieChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<CookieChangeEvent> create(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
     ~CookieChangeEvent();
 
     const Vector<CookieListItem>& changed() const LIFETIME_BOUND { return m_changed; }
     const Vector<CookieListItem>& deleted() const LIFETIME_BOUND { return m_deleted; }
 
 private:
-    CookieChangeEvent(const AtomString& type, Init&&, IsTrusted);
+    CookieChangeEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
     Vector<CookieListItem> m_changed;
     Vector<CookieListItem> m_deleted;

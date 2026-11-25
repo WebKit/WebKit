@@ -59,7 +59,7 @@ JSGenericArrayBufferConstructor<sharingMode>::JSGenericArrayBufferConstructor(VM
 template<ArrayBufferSharingMode sharingMode>
 void JSGenericArrayBufferConstructor<sharingMode>::finishCreation(VM& vm, JSArrayBufferPrototype* prototype)
 {
-    Base::finishCreation(vm, 1, arrayBufferSharingModeName(sharingMode), PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 1, StringImpl::create(arrayBufferSharingModeName(sharingMode)).ptr(), PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
     JSGlobalObject* globalObject = this->globalObject();
@@ -96,7 +96,7 @@ EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlo
     RefPtr<ArrayBuffer> buffer;
     if (maxByteLength) {
         if (maxByteLength.value() < length)
-            return throwVMRangeError(globalObject, scope, "ArrayBuffer length exceeds maxByteLength option"_s);
+            return throwVMRangeError(globalObject, scope, "ArrayBuffer length exceeds maxByteLength option"_si);
     }
 
     JSObject* newTarget = asObject(callFrame->newTarget());

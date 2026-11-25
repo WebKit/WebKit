@@ -59,13 +59,13 @@ namespace WebCore {
     struct ThreadableLoaderOptions : ResourceLoaderOptions {
         ThreadableLoaderOptions();
         explicit ThreadableLoaderOptions(FetchOptions&&);
-        ThreadableLoaderOptions(const ResourceLoaderOptions&, ContentSecurityPolicyEnforcement, String&& initiatorType, ResponseFilteringPolicy);
+        ThreadableLoaderOptions(const ResourceLoaderOptions&, ContentSecurityPolicyEnforcement, RefPtr<StringImpl>&& initiatorType, ResponseFilteringPolicy);
         ~ThreadableLoaderOptions();
 
         ThreadableLoaderOptions isolatedCopy() const;
 
         ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
-        String initiatorType; // This cannot be an AtomString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
+        RefPtr<StringImpl> initiatorType; // This cannot be an AtomString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
         ResponseFilteringPolicy filteringPolicy { ResponseFilteringPolicy::Disable };
     };
 
@@ -75,12 +75,12 @@ namespace WebCore {
         WTF_MAKE_NONCOPYABLE(ThreadableLoader);
     public:
         static void loadResourceSynchronously(ScriptExecutionContext&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
-        static RefPtr<ThreadableLoader> create(ScriptExecutionContext&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, String&& referrer = String(), String&& taskMode = { });
+        static RefPtr<ThreadableLoader> create(ScriptExecutionContext&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<StringImpl>&& referrer = nullptr, RefPtr<StringImpl>&& taskMode = { });
 
         virtual void computeIsDone() = 0;
         virtual void cancel() = 0;
 
-        static void logError(ScriptExecutionContext&, const ResourceError&, const String&);
+        static void logError(ScriptExecutionContext&, const ResourceError&, StringImpl*);
 
     protected:
         ThreadableLoader() = default;

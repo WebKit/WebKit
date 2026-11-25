@@ -60,7 +60,7 @@ const EnvironmentVariables::Values& EnvironmentVariables::userAgentDefinedValues
     return *m_values;
 }
 
-RefPtr<const CustomProperty> EnvironmentVariables::valueForName(const AtomString& name, std::span<const unsigned> indices) const
+RefPtr<const CustomProperty> EnvironmentVariables::valueForName(AtomStringImpl* name, std::span<const unsigned> indices) const
 {
     if (indices.empty()) {
         if (auto value = m_linkParameterValues.get(name))
@@ -87,17 +87,17 @@ RefPtr<const CustomProperty> EnvironmentVariables::valueForName(const AtomString
     return variable.values[flatIndex].ptr();
 }
 
-const AtomString& EnvironmentVariables::nameForVariable(UADefinedVariable variable) const
+const RefPtr<AtomStringImpl>& EnvironmentVariables::nameForVariable(UADefinedVariable variable) const
 {
-    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetTopName("safe-area-inset-top"_s);
-    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetRightName("safe-area-inset-right"_s);
-    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetBottomName("safe-area-inset-bottom"_s);
-    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetLeftName("safe-area-inset-left"_s);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetTopName("fullscreen-inset-top"_s);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetLeftName("fullscreen-inset-left"_s);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetBottomName("fullscreen-inset-bottom"_s);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetRightName("fullscreen-inset-right"_s);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenAutoHideDurationName("fullscreen-auto-hide-duration"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> safeAreaInsetTopName("safe-area-inset-top"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> safeAreaInsetRightName("safe-area-inset-right"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> safeAreaInsetBottomName("safe-area-inset-bottom"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> safeAreaInsetLeftName("safe-area-inset-left"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> fullscreenInsetTopName("fullscreen-inset-top"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> fullscreenInsetLeftName("fullscreen-inset-left"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> fullscreenInsetBottomName("fullscreen-inset-bottom"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> fullscreenInsetRightName("fullscreen-inset-right"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> fullscreenAutoHideDurationName("fullscreen-auto-hide-duration"_s);
 
     switch (variable) {
     case UADefinedVariable::SafeAreaInsetTop:
@@ -248,7 +248,7 @@ void EnvironmentVariables::updateViewportSegmentVariables()
     };
 
     for (auto& variable : viewportSegmentVariables)
-        m_values->remove(AtomString { variable.name });
+        m_values->remove(AtomStringImpl::add(variable.name));
 
     if (!m_document->settings().viewportSegmentsAPIEnabled())
         return;
@@ -270,7 +270,7 @@ void EnvironmentVariables::updateViewportSegmentVariables()
     // https://drafts.csswg.org/css-env-1/#viewport-segments
     // The variables are two-dimensional, indexed by column then row, e.g. env(viewport-segment-top 1 0).
     for (auto& [literal, length] : viewportSegmentVariables) {
-        AtomString name { literal };
+        RefPtr<AtomStringImpl> name = AtomStringImpl::add(literal);
         Variable variable { { segments.columns, segments.rows }, { } };
         variable.values.reserveInitialCapacity(segments.segmentRects.size());
         for (unsigned x = 0; x < segments.columns; ++x) {

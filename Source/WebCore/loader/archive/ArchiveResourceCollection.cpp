@@ -41,7 +41,7 @@ void ArchiveResourceCollection::addAllResources(Archive& archive)
     for (auto& subframeArchive : archive.subframeArchives()) {
         ASSERT(subframeArchive->mainResource());
         auto frameName = subframeArchive->mainResource()->frameName();
-        if (frameName.isNull()) {
+        if (!frameName) {
             // In the MHTML case, frames don't have a name, so we use the URL instead.
             frameName = subframeArchive->mainResource()->url().string();
         }
@@ -68,7 +68,7 @@ ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url
     return m_subresources.get(httpURL.string());
 }
 
-RefPtr<Archive> ArchiveResourceCollection::popSubframeArchive(const String& frameName, const URL& url)
+RefPtr<Archive> ArchiveResourceCollection::popSubframeArchive(StringImpl* frameName, const URL& url)
 {
     if (auto archive = m_subframes.take(frameName))
         return archive;

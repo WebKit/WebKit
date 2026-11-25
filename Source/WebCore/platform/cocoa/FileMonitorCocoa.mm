@@ -36,9 +36,9 @@ namespace WebCore {
 constexpr unsigned monitorMask = DISPATCH_VNODE_DELETE | DISPATCH_VNODE_WRITE | DISPATCH_VNODE_RENAME | DISPATCH_VNODE_REVOKE;
 constexpr unsigned fileUnavailableMask = DISPATCH_VNODE_DELETE | DISPATCH_VNODE_RENAME | DISPATCH_VNODE_REVOKE;
 
-FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler)
+FileMonitor::FileMonitor(StringImpl* path, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler)
 {
-    if (path.isEmpty())
+    if (isEmpty(path))
         return;
 
     if (!modificationHandler)
@@ -46,7 +46,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
 
     auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::EventsOnly);
     if (!handle) {
-        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to open statistics file for monitoring: %s", path.utf8());
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to open statistics file for monitoring: %s", utf8(path));
         return;
     }
 

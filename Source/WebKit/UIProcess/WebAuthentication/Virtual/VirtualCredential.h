@@ -35,8 +35,8 @@ namespace WebKit {
 struct VirtualCredential {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VirtualCredential);
     Vector<uint8_t> credentialId;
-    String rpId;
-    String privateKey;
+    RefPtr<StringImpl> rpId;
+    RefPtr<StringImpl> privateKey;
     std::optional<Vector<uint8_t>> userHandle;
     uint64_t signCount;
     bool isResidentCredential;

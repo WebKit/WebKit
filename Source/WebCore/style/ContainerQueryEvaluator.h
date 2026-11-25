@@ -68,7 +68,7 @@ public:
 
     bool evaluate(const CQ::ContainerQuery&) const;
 
-    static RefPtr<const Element> selectContainer(CQ::ContainerRequirements, const WTF::String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const ContainerQueryEvaluationState* = nullptr);
+    static RefPtr<const Element> selectContainer(CQ::ContainerRequirements, StringImpl* name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const ContainerQueryEvaluationState* = nullptr);
     static LayoutSize queryContainerSize(const RenderBox&);
     static LayoutSize queryContainerLogicalSize(const RenderBox&);
 

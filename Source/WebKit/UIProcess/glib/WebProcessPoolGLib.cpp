@@ -213,7 +213,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     if (!parameters.isServiceWorkerProcess && parameters.rendererBufferTransportMode.isEmpty()) {
         parameters.hostClientFileDescriptor = UnixFileDescriptor { wpe_renderer_host_create_client(), UnixFileDescriptor::Adopt };
-        parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(String::fromLatin1(wpe_loader_get_loaded_implementation_library_name()));
+        parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(StringImpl::fromLatin1(wpe_loader_get_loaded_implementation_library_name()));
     }
 #endif
 
@@ -233,8 +233,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.disableFontHintingForTesting = m_configuration->disableFontHintingForTesting();
 
-    parameters.applicationID = String::fromUTF8(WTF::applicationID().span());
-    parameters.applicationName = String::fromLatin1(g_get_application_name());
+    parameters.applicationID = StringImpl::fromUTF8(WTF::applicationID().span());
+    parameters.applicationName = StringImpl::fromLatin1(g_get_application_name());
 
 #if ENABLE(REMOTE_INSPECTOR)
     parameters.inspectorServerAddress = Inspector::RemoteInspector::inspectorServerAddress();
@@ -243,7 +243,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if USE(ATSPI)
     static const char* address = getenv("WEBKIT_A11Y_BUS_ADDRESS");
     if (address)
-        parameters.accessibilityBusAddress = String::fromUTF8(address);
+        parameters.accessibilityBusAddress = StringImpl::fromUTF8(address);
     else
         parameters.accessibilityBusAddress = m_sandboxEnabled && shouldUseBubblewrap() ? sandboxedAccessibilityBusAddress() : accessibilityBusAddress();
 
@@ -311,7 +311,7 @@ void WebProcessPool::setSandboxEnabledInternal(bool enabled, bool ignoreEnvironm
 #endif
         m_sandboxEnabled = false;
 #if USE(ATSPI)
-        m_sandboxedAccessibilityBusAddress = String();
+        m_sandboxedAccessibilityBusAddress = nullptr;
 #endif
         return;
     }
@@ -333,14 +333,14 @@ void WebProcessPool::setSandboxEnabledInternal(bool enabled, bool ignoreEnvironm
     m_sandboxEnabled = true;
 #if USE(ATSPI)
     if (shouldUseBubblewrap())
-        m_sandboxedAccessibilityBusAddress = makeString("unix:path="_s, FileSystem::pathByAppendingComponent(String { sandboxedUserRuntimeDirectory() }, "at-spi-bus"_s));
+        m_sandboxedAccessibilityBusAddress = makeString("unix:path="_s, FileSystem::pathByAppendingComponent(StringImpl::fromUTF8(sandboxedUserRuntimeDirectory().span()), "at-spi-bus"_s));
 #endif
 }
 
 #if USE(ATSPI)
-static const String& queryAccessibilityBusAddress()
+static const RefPtr<StringImpl>& queryAccessibilityBusAddress()
 {
-    static LazyNeverDestroyed<String> address;
+    static LazyNeverDestroyed<RefPtr<StringImpl>> address;
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         GRefPtr<GDBusConnection> sessionBus = adoptGRef(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr));
@@ -357,7 +357,7 @@ static const String& queryAccessibilityBusAddress()
                 } else {
                     GUniqueOutPtr<char> a11yAddress;
                     g_variant_get(g_dbus_message_get_body(reply.get()), "(s)", &a11yAddress.outPtr());
-                    address.construct(String::fromUTF8(a11yAddress.get()));
+                    address.construct(StringImpl::fromUTF8(a11yAddress.get()));
                     return;
                 }
             }
@@ -367,14 +367,14 @@ static const String& queryAccessibilityBusAddress()
     return address.get();
 }
 
-const String& WebProcessPool::accessibilityBusAddress() const
+const RefPtr<StringImpl>& WebProcessPool::accessibilityBusAddress() const
 {
     if (m_accessibilityBusAddress.has_value())
         return m_accessibilityBusAddress.value();
 
     const char* addressEnv = getenv("AT_SPI_BUS_ADDRESS");
     if (addressEnv && *addressEnv) {
-        m_accessibilityBusAddress = String::fromUTF8(addressEnv);
+        m_accessibilityBusAddress = StringImpl::fromUTF8(addressEnv);
         return m_accessibilityBusAddress.value();
     }
 
@@ -382,22 +382,22 @@ const String& WebProcessPool::accessibilityBusAddress() const
     return m_accessibilityBusAddress.value();
 }
 
-const String& WebProcessPool::accessibilityBusName() const
+const RefPtr<StringImpl>& WebProcessPool::accessibilityBusName() const
 {
     RELEASE_ASSERT(m_accessibilityBusName.has_value());
     return m_accessibilityBusName.value();
 }
 
-const String& WebProcessPool::sandboxedAccessibilityBusAddress() const
+const RefPtr<StringImpl>& WebProcessPool::sandboxedAccessibilityBusAddress() const
 {
     return m_sandboxedAccessibilityBusAddress;
 }
 
-const String& WebProcessPool::generateNextAccessibilityBusName()
+const RefPtr<StringImpl>& WebProcessPool::generateNextAccessibilityBusName()
 {
-    m_accessibilityBusName = makeString(String::fromUTF8(WTF::applicationID().span()), ".Sandboxed.WebProcess-"_s, WTF::UUID::createVersion4());
-    RELEASE_ASSERT(g_dbus_is_name(m_accessibilityBusName.value().utf8().legacyCStringPointer()));
-    RELEASE_ASSERT(!g_dbus_is_unique_name(m_accessibilityBusName.value().utf8().legacyCStringPointer()));
+    m_accessibilityBusName = makeString(StringImpl::fromUTF8(WTF::applicationID().span()), ".Sandboxed.WebProcess-"_s, WTF::UUID::createVersion4());
+    RELEASE_ASSERT(g_dbus_is_name(utf8(m_accessibilityBusName.value()).legacyCStringPointer()));
+    RELEASE_ASSERT(!g_dbus_is_unique_name(utf8(m_accessibilityBusName.value()).legacyCStringPointer()));
 
     return accessibilityBusName();
 }

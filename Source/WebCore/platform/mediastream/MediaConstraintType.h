@@ -53,7 +53,7 @@ enum class MediaConstraintType : uint8_t {
 
 #if ENABLE(MEDIA_STREAM)
 
-String convertToString(MediaConstraintType);
+RefPtr<StringImpl> convertToString(MediaConstraintType);
 
 #endif // ENABLE(MEDIA_STREAM)
 

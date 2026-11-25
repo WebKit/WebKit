@@ -46,13 +46,13 @@
 
 namespace WebKit {
 
-std::pair<String, unsigned> WebExtensionAPITest::scriptLocation(JSContextRef context)
+std::pair<RefPtr<StringImpl>, unsigned> WebExtensionAPITest::scriptLocation(JSContextRef context)
 {
     auto callStack = Inspector::createScriptCallStack(toJS(context));
     if (const Inspector::ScriptCallFrame* frame = callStack->firstNonNativeCallFrame()) {
         auto sourceURL = frame->sourceURL();
-        if (sourceURL.isEmpty())
-            sourceURL = "global code"_s;
+        if (isEmpty(sourceURL))
+            sourceURL = "global code"_si;
         return { sourceURL, frame->lineNumber() };
     }
 
@@ -60,7 +60,7 @@ std::pair<String, unsigned> WebExtensionAPITest::scriptLocation(JSContextRef con
 }
 
 template<size_t ArgumentCount>
-JSValueRef WebExtensionAPITest::invokeMethod(JSContextRef context, JSValueRef value, const String& method, std::array<JSValueRef, ArgumentCount>&& arguments, JSValueRef* exception)
+JSValueRef WebExtensionAPITest::invokeMethod(JSContextRef context, JSValueRef value, StringImpl* method, std::array<JSValueRef, ArgumentCount>&& arguments, JSValueRef* exception)
 {
     if (!context || !value)
         return JSValueMakeUndefined(context);
@@ -83,7 +83,7 @@ JSValueRef WebExtensionAPITest::invokeMethod(JSContextRef context, JSValueRef va
     return JSObjectCallAsFunction(context, funcObject, thisObject, ArgumentCount, arguments.data(), exception);
 }
 
-void WebExtensionAPITest::notifyFail(JSContextRef context, const String& message)
+void WebExtensionAPITest::notifyFail(JSContextRef context, StringImpl* message)
 {
     auto location = scriptLocation(context);
 
@@ -98,7 +98,7 @@ void WebExtensionAPITest::notifyFail(JSContextRef context, const String& message
     WebProcess::singleton().send(Messages::WebExtensionController::TestFinished(nullString(), false, message, location.first, location.second), webExtensionControllerProxy->identifier());
 }
 
-void WebExtensionAPITest::notifyPass(JSContextRef context, const String& message)
+void WebExtensionAPITest::notifyPass(JSContextRef context, StringImpl* message)
 {
     auto location = scriptLocation(context);
 
@@ -113,7 +113,7 @@ void WebExtensionAPITest::notifyPass(JSContextRef context, const String& message
     WebProcess::singleton().send(Messages::WebExtensionController::TestFinished(nullString(), true, message, location.first, location.second), webExtensionControllerProxy->identifier());
 }
 
-void WebExtensionAPITest::sendMessage(JSContextRef context, const String& message, JSValueRef argument)
+void WebExtensionAPITest::sendMessage(JSContextRef context, StringImpl* message, JSValueRef argument)
 {
     auto location = scriptLocation(context);
 
@@ -165,14 +165,14 @@ bool WebExtensionAPITest::isProcessingUserGesture()
     return WebCore::UserGestureIndicator::processingUserGesture();
 }
 
-String WebExtensionAPITest::debugString(JSContextRef contextRef, JSValueRef valueRef)
+RefPtr<StringImpl> WebExtensionAPITest::debugString(JSContextRef contextRef, JSValueRef valueRef)
 {
     if (isRegularExpression(contextRef, valueRef) || isFunction(contextRef, valueRef))
         return toString(contextRef, valueRef);
     auto sortedJSON = toSortedJSONString(contextRef, valueRef);
-    if (!sortedJSON.isEmpty())
+    if (!isEmpty(sortedJSON))
         return sortedJSON;
-    return "undefined"_s;
+    return "undefined"_si;
 }
 
 void WebExtensionAPITest::log(JSContextRef context, JSValueRef value)
@@ -190,19 +190,19 @@ void WebExtensionAPITest::log(JSContextRef context, JSValueRef value)
     WebProcess::singleton().send(Messages::WebExtensionController::TestLogMessage(debugString(context, value), location.first, location.second), webExtensionControllerProxy->identifier());
 }
 
-void WebExtensionAPITest::fail(JSContextRef context, const String& message)
+void WebExtensionAPITest::fail(JSContextRef context, StringImpl* message)
 {
-    String empty = nullString();
+    RefPtr<StringImpl> empty = nullString();
     assertTrue(context, false, message, empty);
 }
 
-void WebExtensionAPITest::succeed(JSContextRef context, const String& message)
+void WebExtensionAPITest::succeed(JSContextRef context, StringImpl* message)
 {
-    String empty = nullString();
+    RefPtr<StringImpl> empty = nullString();
     assertTrue(context, true, message, empty);
 }
 
-void WebExtensionAPITest::assertTrue(JSContextRef context, bool actualValue, const String& message, String& outExceptionString)
+void WebExtensionAPITest::assertTrue(JSContextRef context, bool actualValue, StringImpl* message, RefPtr<StringImpl>& outExceptionString)
 {
     auto location = scriptLocation(context);
 
@@ -221,20 +221,20 @@ void WebExtensionAPITest::assertTrue(JSContextRef context, bool actualValue, con
     failRunOutsideTestIfNeeded(webExtensionControllerProxy->identifier(), actualValue, message, location);
 }
 
-void WebExtensionAPITest::assertFalse(JSContextRef context, bool actualValue, const String& message, String& outExceptionString)
+void WebExtensionAPITest::assertFalse(JSContextRef context, bool actualValue, StringImpl* message, RefPtr<StringImpl>& outExceptionString)
 {
     assertTrue(context, !actualValue, message, outExceptionString);
 }
 
-void WebExtensionAPITest::assertDeepEq(JSContextRef context, JSValueRef actualValue, JSValueRef expectedValue, const String& message, String& outExceptionString)
+void WebExtensionAPITest::assertDeepEq(JSContextRef context, JSValueRef actualValue, JSValueRef expectedValue, StringImpl* message, RefPtr<StringImpl>& outExceptionString)
 {
-    String expectedJSONValue = debugString(context, expectedValue);
-    String actualJSONValue = debugString(context, actualValue);
+    RefPtr<StringImpl> expectedJSONValue = debugString(context, expectedValue);
+    RefPtr<StringImpl> actualJSONValue = debugString(context, actualValue);
 
     // FIXME: Comparing JSON is a quick attempt that works, but can still fail due to any non-JSON values.
     // See Firefox's implementation: https://searchfox.org/mozilla-central/source/toolkit/components/extensions/child/ext-test.js#78
     bool strictEqual = JSValueIsStrictEqual(context, expectedValue, actualValue);
-    bool deepEqual = strictEqual || expectedJSONValue == actualJSONValue;
+    bool deepEqual = strictEqual || equal(expectedJSONValue, actualJSONValue);
 
     auto location = scriptLocation(context);
 
@@ -253,19 +253,19 @@ void WebExtensionAPITest::assertDeepEq(JSContextRef context, JSValueRef actualVa
     failRunOutsideTestIfNeeded(webExtensionControllerProxy->identifier(), deepEqual, message, location);
 }
 
-String WebExtensionAPITest::combineMessages(const String& messageOne, const String& messageTwo)
+RefPtr<StringImpl> WebExtensionAPITest::combineMessages(StringImpl* messageOne, StringImpl* messageTwo)
 {
-    if (!messageOne.isEmpty() && !messageTwo.isEmpty()) {
-        const Vector<String> stringList = { messageOne, messageTwo };
-        return makeStringByJoining(stringList, "\n"_s);
+    if (!isEmpty(messageOne) && !isEmpty(messageTwo)) {
+        const Vector<RefPtr<StringImpl>> stringList = { messageOne, messageTwo };
+        return makeStringByJoining(stringList, "\n"_si);
     }
 
-    if (!messageOne.isEmpty() && messageTwo.isEmpty())
+    if (!isEmpty(messageOne) && isEmpty(messageTwo))
         return messageOne;
     return messageTwo;
 }
 
-void WebExtensionAPITest::assertEquals(JSContextRef context, bool result, const String& expectedString, const String& actualString, const String& message, String& outExceptionString)
+void WebExtensionAPITest::assertEquals(JSContextRef context, bool result, StringImpl* expectedString, StringImpl* actualString, StringImpl* message, RefPtr<StringImpl>& outExceptionString)
 {
     auto location = scriptLocation(context);
 
@@ -284,25 +284,25 @@ void WebExtensionAPITest::assertEquals(JSContextRef context, bool result, const 
     failRunOutsideTestIfNeeded(webExtensionControllerProxy->identifier(), result, message, location);
 }
 
-void WebExtensionAPITest::assertEq(JSContextRef context, JSValueRef actualValue, JSValueRef expectedValue, const String& message, String& outExceptionString)
+void WebExtensionAPITest::assertEq(JSContextRef context, JSValueRef actualValue, JSValueRef expectedValue, StringImpl* message, RefPtr<StringImpl>& outExceptionString)
 {
-    String expectedJSONValue = debugString(context, expectedValue);
-    String actualJSONValue = debugString(context, actualValue);
+    RefPtr<StringImpl> expectedJSONValue = debugString(context, expectedValue);
+    RefPtr<StringImpl> actualJSONValue = debugString(context, actualValue);
 
     bool strictEqual = JSValueIsStrictEqual(context, expectedValue, actualValue);
-    if (!strictEqual && expectedJSONValue == actualJSONValue)
+    if (!strictEqual && equal(expectedJSONValue, actualJSONValue))
         actualJSONValue = makeString(actualJSONValue, " (different)"_s);
 
     assertEquals(context, strictEqual, expectedJSONValue, actualJSONValue, message, outExceptionString);
 }
 
-void WebExtensionAPITest::assertThrows(JSContextRef context, JSValueRef function, JSValueRef expectedError, const String& message, String& outExceptionString)
+void WebExtensionAPITest::assertThrows(JSContextRef context, JSValueRef function, JSValueRef expectedError, StringImpl* message, RefPtr<StringImpl>& outExceptionString)
 {
     JSValueRef exceptionValue = nullptr;
     callObjectWithArguments<0>(function, context, { }, &exceptionValue, false);
 
     if (!exceptionValue) {
-        assertEquals(context, false, expectedError ? debugString(context, expectedError) : "(any exception)"_s, "(no exception)"_s, combineMessages(message, "Function did not throw an exception"_s), outExceptionString);
+        assertEquals(context, false, expectedError ? debugString(context, expectedError) : "(any exception)"_si, "(no exception)"_si, combineMessages(message, "Function did not throw an exception"_si), outExceptionString);
         return;
     }
 
@@ -310,34 +310,34 @@ void WebExtensionAPITest::assertThrows(JSContextRef context, JSValueRef function
     if (JSValueIsObject(context, exceptionValue)) {
         JSObjectRef object = JSValueToObject(context, exceptionValue, nullptr);
 
-        if (JSObjectHasProperty(context, object, toJSString("message"_s).get()))
-            exceptionMessageValue = JSObjectGetProperty(context, object, toJSString("message"_s).get(), 0);
+        if (JSObjectHasProperty(context, object, toJSString("message"_si).get()))
+            exceptionMessageValue = JSObjectGetProperty(context, object, toJSString("message"_si).get(), 0);
     }
 
     // Clear the exception since it was caught.
     exceptionValue = nullptr;
 
     if (JSValueIsUndefined(context, expectedError) || !expectedError) {
-        assertEquals(context, true, "(any exception)"_s, debugString(context, exceptionMessageValue), combineMessages(message, "Function threw an exception"_s), outExceptionString);
+        assertEquals(context, true, "(any exception)"_si, debugString(context, exceptionMessageValue), combineMessages(message, "Function threw an exception"_si), outExceptionString);
         return;
     }
 
     if (isRegularExpression(context, expectedError)) {
-        JSValueRef testResult = invokeMethod<1>(context, expectedError, "test"_s, { exceptionMessageValue });
-        assertEquals(context, JSValueToBoolean(context, testResult), debugString(context, expectedError), debugString(context, exceptionMessageValue), combineMessages(message, "Function threw an exception that didn't match the regular expression"_s), outExceptionString);
+        JSValueRef testResult = invokeMethod<1>(context, expectedError, "test"_si, { exceptionMessageValue });
+        assertEquals(context, JSValueToBoolean(context, testResult), debugString(context, expectedError), debugString(context, exceptionMessageValue), combineMessages(message, "Function threw an exception that didn't match the regular expression"_si), outExceptionString);
         return;
     }
 
-    assertEquals(context, JSValueIsEqual(context, expectedError, exceptionMessageValue, nullptr), debugString(context, expectedError), debugString(context, exceptionMessageValue), combineMessages(message, "Function threw an exception that didn't equal"_s), outExceptionString);
+    assertEquals(context, JSValueIsEqual(context, expectedError, exceptionMessageValue, nullptr), debugString(context, expectedError), debugString(context, exceptionMessageValue), combineMessages(message, "Function threw an exception that didn't equal"_si), outExceptionString);
 }
 
-JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef function, const String& message, String& outExceptionString)
+JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef function, StringImpl* message, RefPtr<StringImpl>& outExceptionString)
 {
     JSValueRef exceptionValue = nullptr;
     JSValueRef result = callObjectWithArguments<0>(function, context, { }, &exceptionValue, false);
 
     if (!exceptionValue) {
-        succeed(context, "Function did not throw an exception"_s);
+        succeed(context, "Function did not throw an exception"_si);
         return result;
     }
 
@@ -345,8 +345,8 @@ JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef func
     if (JSValueIsObject(context, exceptionValue)) {
         JSObjectRef object = JSValueToObject(context, exceptionValue, nullptr);
 
-        if (JSObjectHasProperty(context, object, toJSString("message"_s).get()))
-            exceptionMessageValue = JSObjectGetProperty(context, object, toJSString("message"_s).get(), 0);
+        if (JSObjectHasProperty(context, object, toJSString("message"_si).get()))
+            exceptionMessageValue = JSObjectGetProperty(context, object, toJSString("message"_si).get(), 0);
     }
 
     // Clear the exception since it was caught.
@@ -357,7 +357,7 @@ JSValueRef WebExtensionAPITest::assertSafe(JSContextRef context, JSValueRef func
     return JSValueMakeUndefined(context);
 }
 
-JSValueRef WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValueRef function, const String& message, String& outExceptionString)
+JSValueRef WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValueRef function, StringImpl* message, RefPtr<StringImpl>& outExceptionString)
 {
     JSValueRef result = assertSafe(context, function, message, outExceptionString);
     if (!isThenable(context, result))
@@ -368,7 +368,7 @@ JSValueRef WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValueR
 
 JSValueRef WebExtensionAPITest::addTest(JSContextRef context, JSValueRef testFunction)
 {
-    return addTest(context, testFunction, "test.addTest()"_s);
+    return addTest(context, testFunction, "test.addTest()"_si);
 }
 
 JSValueRef WebExtensionAPITest::runTests(JSContextRef context, Vector<Protected<JSValueRef>> testFunctions)
@@ -376,9 +376,9 @@ JSValueRef WebExtensionAPITest::runTests(JSContextRef context, Vector<Protected<
     JSObjectRef testResultPromises = JSObjectMakeArray(context, 0, nullptr, nullptr);
 
     for (Protected<JSValueRef> testFunction : testFunctions)
-        invokeMethod<1>(context, testResultPromises, "push"_s, { addTest(context, testFunction.get(), "test.runTests()"_s) });
+        invokeMethod<1>(context, testResultPromises, "push"_si, { addTest(context, testFunction.get(), "test.runTests()"_si) });
 
-    return invokeMethod<1>(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), toJSString("Promise"_s).get(), nullptr), "all"_s, { testResultPromises });
+    return invokeMethod<1>(context, JSObjectGetProperty(context, JSContextGetGlobalObject(context), toJSString("Promise"_si).get(), nullptr), "all"_si, { testResultPromises });
 }
 
 std::optional<unsigned> WebExtensionAPITest::beginAsyncAssertion()
@@ -406,7 +406,7 @@ void WebExtensionAPITest::settleAsyncAssertion(std::optional<unsigned> generatio
 
     // The test that started this assertion already finished and was reported, so its result must not fail the current test.
     bool hitAssertion = std::exchange(m_hitAssertion, false);
-    auto assertionMessage = std::exchange(m_assertionMessage, String { });
+    auto assertionMessage = std::exchange(m_assertionMessage, nullptr);
 
     recordAssertions();
 
@@ -414,7 +414,7 @@ void WebExtensionAPITest::settleAsyncAssertion(std::optional<unsigned> generatio
     m_assertionMessage = WTF::move(assertionMessage);
 }
 
-void WebExtensionAPITest::failRunOutsideTestIfNeeded(WebExtensionControllerIdentifier identifier, bool result, const String& message, std::pair<String, unsigned> location)
+void WebExtensionAPITest::failRunOutsideTestIfNeeded(WebExtensionControllerIdentifier identifier, bool result, StringImpl* message, std::pair<RefPtr<StringImpl>, unsigned> location)
 {
     if (result || m_runningTest || m_notifiedFailure)
         return;
@@ -425,7 +425,7 @@ void WebExtensionAPITest::failRunOutsideTestIfNeeded(WebExtensionControllerIdent
     WebProcess::singleton().send(Messages::WebExtensionController::TestFinished(nullString(), false, message, location.first, location.second), identifier);
 }
 
-void WebExtensionAPITest::recordAssertionIfNeeded(bool result, const String& message, std::pair<String, unsigned> location, String& outExceptionString)
+void WebExtensionAPITest::recordAssertionIfNeeded(bool result, StringImpl* message, std::pair<RefPtr<StringImpl>, unsigned> location, RefPtr<StringImpl>& outExceptionString)
 {
     if (!m_runningTest || (m_runningTest && result))
         return;
@@ -433,14 +433,14 @@ void WebExtensionAPITest::recordAssertionIfNeeded(bool result, const String& mes
     m_hitAssertion = true;
     m_assertionMessage = message;
 
-    const Vector<String> locationVector = { location.first, String::number(location.second) };
-    auto locationString = makeStringByJoining(locationVector, ":"_s);
-    outExceptionString = message.isNull()
+    const Vector<RefPtr<StringImpl>> locationVector = { location.first, makeString(location.second) };
+    auto locationString = makeStringByJoining(locationVector, ":"_si);
+    outExceptionString = !message
         ? makeString("Assertion Failed: "_s, locationString)
         : makeString("Assertion Failed: "_s, message, ". "_s, locationString);
 }
 
-void WebExtensionContextProxy::dispatchTestMessageEvent(const String& message, const String& argumentJSON, WebExtensionContentWorldType contentWorldType)
+void WebExtensionContextProxy::dispatchTestMessageEvent(StringImpl* message, StringImpl* argumentJSON, WebExtensionContentWorldType contentWorldType)
 {
     if (contentWorldType == WebExtensionContentWorldType::WebPage) {
         enumerateFramesAndWebPageNamespaceObjects([&](auto&, auto& namespaceObject) {
@@ -455,7 +455,7 @@ void WebExtensionContextProxy::dispatchTestMessageEvent(const String& message, c
     }, toDOMWrapperWorld(contentWorldType));
 }
 
-void WebExtensionContextProxy::dispatchTestStartedEvent(const String& argumentJSON, WebExtensionContentWorldType contentWorldType)
+void WebExtensionContextProxy::dispatchTestStartedEvent(StringImpl* argumentJSON, WebExtensionContentWorldType contentWorldType)
 {
     if (contentWorldType == WebExtensionContentWorldType::WebPage) {
         enumerateFramesAndWebPageNamespaceObjects([&](auto&, auto& namespaceObject) {
@@ -470,7 +470,7 @@ void WebExtensionContextProxy::dispatchTestStartedEvent(const String& argumentJS
     }, toDOMWrapperWorld(contentWorldType));
 }
 
-void WebExtensionContextProxy::dispatchTestFinishedEvent(const String& argumentJSON, WebExtensionContentWorldType contentWorldType)
+void WebExtensionContextProxy::dispatchTestFinishedEvent(StringImpl* argumentJSON, WebExtensionContentWorldType contentWorldType)
 {
     if (contentWorldType == WebExtensionContentWorldType::WebPage) {
         enumerateFramesAndWebPageNamespaceObjects([&](auto&, auto& namespaceObject) {

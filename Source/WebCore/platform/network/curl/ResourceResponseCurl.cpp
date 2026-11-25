@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static bool isAppendableHeader(const String &key)
+static bool isAppendableHeader(StringImpl* key)
 {
     static constexpr auto appendableHeaders = WTF::toArray<ASCIILiteral>({
         "access-control-allow-headers"_s,
@@ -113,16 +113,16 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
     setSource(ResourceResponse::Source::Network);
 }
 
-void ResourceResponse::appendHTTPHeaderField(const String& header)
+void ResourceResponse::appendHTTPHeaderField(StringImpl* header)
 {
     if (startsWithLettersIgnoringASCIICase(header, "http/"_s)) {
-        setHTTPStatusText(String { extractReasonPhraseFromHTTPStatusLine(header.trim(deprecatedIsSpaceOrNewline)) });
+        setHTTPStatusText(RefPtr<StringImpl> { extractReasonPhraseFromHTTPStatusLine(trim(header, deprecatedIsSpaceOrNewline)) });
         return;
     }
 
-    if (auto splitPosition = header.find(':'); splitPosition != notFound) {
-        auto key = header.left(splitPosition).trim(deprecatedIsSpaceOrNewline);
-        auto value = header.substring(splitPosition + 1).trim(deprecatedIsSpaceOrNewline);
+    if (auto splitPosition = find(header, ':'); splitPosition != notFound) {
+        auto key = trim(left(header, splitPosition), deprecatedIsSpaceOrNewline);
+        auto value = trim(substring(header, splitPosition + 1), deprecatedIsSpaceOrNewline);
 
         if (isAppendableHeader(key))
             addHTTPHeaderField(key, value);
@@ -131,12 +131,12 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
     }
 }
 
-String ResourceResponse::platformSuggestedFilename() const
+RefPtr<StringImpl> ResourceResponse::platformSuggestedFilename() const
 {
     auto value = httpHeaderField(HTTPHeaderName::ContentDisposition);
     StringView contentDisposition = filenameFromHTTPContentDisposition(value);
     if (contentDisposition.is8Bit())
-        return String::fromUTF8WithLatin1Fallback(contentDisposition.span8());
+        return StringImpl::fromUTF8WithLatin1Fallback(contentDisposition.span8());
     return contentDisposition.toString();
 }
 

@@ -52,7 +52,7 @@ CSSFunctionDescriptors& CSSFunctionDeclarations::style()
     return *m_descriptorsCSSOMWrapper;
 }
 
-String CSSFunctionDeclarations::cssText() const
+RefPtr<StringImpl> CSSFunctionDeclarations::cssText() const
 {
     Ref properties = m_styleRule->properties();
     return properties->asText(CSS::defaultSerializationContext());

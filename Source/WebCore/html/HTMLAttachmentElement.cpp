@@ -93,9 +93,9 @@ constexpr float attachmentIconSize = 52;
 #endif
 
 #define DEFINE_STATIC_ATOM_STRING(name, literal) \
-    static const AtomString& name() \
+    static const RefPtr<AtomStringImpl>& name() \
     { \
-        static MainThreadNeverDestroyed<const AtomString> atom(literal); \
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> atom(literal); \
         return atom; \
     }
 
@@ -216,15 +216,15 @@ DEFINE_STATIC_ATOM_STRING(attachmentSaveButtonGlyphIdentifier, "attachment-save-
 DEFINE_STATIC_ATOM_STRING(attachmentIconSizeProperty, "--icon-size"_s)
 DEFINE_STATIC_ATOM_STRING(saveAtom, "save"_s)
 
-String HTMLAttachmentElement::shadowUserAgentStyleSheetText()
+RefPtr<StringImpl> HTMLAttachmentElement::shadowUserAgentStyleSheetText()
 {
-    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(attachmentElementShadowUserAgentStyleSheet));
+    static MainThreadNeverDestroyed<const RefPtr<StringImpl>> shadowStyle(StringImpl::createWithoutCopying(attachmentElementShadowUserAgentStyleSheet));
     return shadowStyle;
 }
 
-String HTMLAttachmentElement::inlineProgressShadowUserAgentStyleSheetText()
+RefPtr<StringImpl> HTMLAttachmentElement::inlineProgressShadowUserAgentStyleSheetText()
 {
-    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(attachmentElementInlineProgressShadowUserAgentStyleSheet));
+    static MainThreadNeverDestroyed<const RefPtr<StringImpl>> shadowStyle(StringImpl::createWithoutCopying(attachmentElementInlineProgressShadowUserAgentStyleSheet));
     return shadowStyle;
 }
 
@@ -259,11 +259,11 @@ private:
 };
 
 template <typename ElementType>
-static Ref<ElementType> createContainedElement(HTMLElement& container, const AtomString& id, String&& textContent = { })
+static Ref<ElementType> createContainedElement(HTMLElement& container, AtomStringImpl* id, RefPtr<StringImpl>&& textContent = { })
 {
     Ref<ElementType> element = ElementType::create(protect(container.document()));
     element->setIdAttribute(id);
-    if (!textContent.isEmpty())
+    if (!isEmpty(textContent))
         element->setTextContent(WTF::move(textContent));
     container.appendChild(element);
     return element;
@@ -308,16 +308,16 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
     lazyInitialize(m_progressElement, createContainedElement<HTMLDivElement>(previewArea, attachmentProgressIdentifier()));
     if (usesInlineProgress) {
         Ref progressRing = SVGSVGElement::create(document);
-        progressRing->setAttributeWithoutSynchronization(SVGNames::viewBoxAttr, "0 0 101 101"_s);
+        progressRing->setAttributeWithoutSynchronization(SVGNames::viewBoxAttr, "0 0 101 101"_atom);
         progressRing->setAttributeWithoutSynchronization(HTMLNames::aria_hiddenAttr, trueAtom());
         m_progressElement->appendChild(progressRing);
         for (auto& identifier : { attachmentProgressTrackIdentifier(), attachmentProgressBarIdentifier() }) {
             Ref circle = SVGCircleElement::create(SVGNames::circleTag, document);
             circle->setIdAttribute(identifier);
-            circle->setAttributeWithoutSynchronization(SVGNames::cxAttr, "50.5"_s);
-            circle->setAttributeWithoutSynchronization(SVGNames::cyAttr, "50.5"_s);
-            circle->setAttributeWithoutSynchronization(SVGNames::rAttr, "45.5"_s);
-            circle->setAttributeWithoutSynchronization(SVGNames::pathLengthAttr, "100"_s);
+            circle->setAttributeWithoutSynchronization(SVGNames::cxAttr, "50.5"_atom);
+            circle->setAttributeWithoutSynchronization(SVGNames::cyAttr, "50.5"_atom);
+            circle->setAttributeWithoutSynchronization(SVGNames::rAttr, "45.5"_atom);
+            circle->setAttributeWithoutSynchronization(SVGNames::pathLengthAttr, "100"_atom);
             progressRing->appendChild(circle);
         }
     }
@@ -326,7 +326,7 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
 
     lazyInitialize(m_informationBlock, createContainedElement<HTMLDivElement>(informationArea, attachmentInformationBlockIdentifier()));
 
-    lazyInitialize(m_actionTextElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentActionIdentifier(), String { attachmentActionForDisplay() }));
+    lazyInitialize(m_actionTextElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentActionIdentifier(), RefPtr<StringImpl> { attachmentActionForDisplay() }));
     m_actionTextElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     if (usesInlineProgress) {
@@ -336,14 +336,14 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
         createContainedElement<HTMLDivElement>(progressActionEntrance, attachmentProgressActionPulseIdentifier(), attachmentDownloadingText());
     }
 
-    lazyInitialize(m_titleElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentTitleIdentifier(), String { attachmentTitleForDisplay() }));
+    lazyInitialize(m_titleElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentTitleIdentifier(), attachmentTitleForDisplay()));
     m_titleElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
-    lazyInitialize(m_subtitleElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSubtitleIdentifier(), String { attachmentSubtitleForDisplay() }));
+    lazyInitialize(m_subtitleElement, createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSubtitleIdentifier(), RefPtr<StringImpl> { attachmentSubtitleForDisplay() }));
     m_subtitleElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     updateProgress(attributeWithoutSynchronization(progressAttr));
-    updateSaveButton(!attributeWithoutSynchronization(saveAttr).isNull());
+    updateSaveButton(!!attributeWithoutSynchronization(saveAttr));
 }
 
 DEFINE_STATIC_ATOM_STRING(attachmentClassHasSelection, "attachment-has-selection"_s)
@@ -354,7 +354,7 @@ void HTMLAttachmentElement::addSelectionClasses(HighlightState state)
 {
     if (RefPtr container = m_containerElement) {
         Ref classList = container->classList();
-        auto set = [&](bool add, const AtomString& className) {
+        auto set = [&](bool add, AtomStringImpl* className) {
             if (add)
                 classList->add(className);
             else
@@ -423,7 +423,7 @@ DEFINE_STATIC_ATOM_STRING(attachmentClassCanSave, "attachment-can-save"_s)
 struct AttachmentProgress {
     enum class Kind : uint8_t { None, NotStarted, Determinate, Indeterminate };
 
-    static AttachmentProgress parse(const AtomString& attributeValue)
+    static AttachmentProgress parse(AtomStringImpl* attributeValue)
     {
         // "indeterminate" means downloading with unknown progress (only shown by WideInlineProgressLayout).
         if (equalLettersIgnoringASCIICase(attributeValue, "indeterminate"_s))
@@ -431,7 +431,7 @@ struct AttachmentProgress {
 
         // Anything else that isn't a number, including no attribute, means there is nothing to download.
         bool isValid = false;
-        float value = attributeValue.toFloat(&isValid);
+        float value = toFloat(attributeValue, &isValid);
         if (!isValid || !std::isfinite(value))
             return { Kind::None, 0 };
 
@@ -447,7 +447,7 @@ struct AttachmentProgress {
     float value;
 };
 
-void HTMLAttachmentElement::updateProgress(const AtomString& attributeValue)
+void HTMLAttachmentElement::updateProgress(AtomStringImpl* attributeValue)
 {
     if (!m_progressElement)
         return;
@@ -457,7 +457,7 @@ void HTMLAttachmentElement::updateProgress(const AtomString& attributeValue)
 
     if (usesInlineProgress()) {
         // An action (e.g. "Tap to Download") without progress also means the file isn't downloaded yet.
-        if (progress.kind == Kind::None && !m_inlineProgressHasStartedDownload && !attributeWithoutSynchronization(actionAttr).isEmpty())
+        if (progress.kind == Kind::None && !m_inlineProgressHasStartedDownload && !isEmpty(attributeWithoutSynchronization(actionAttr)))
             progress.kind = Kind::NotStarted;
 
         using enum InlineProgressState;
@@ -491,7 +491,7 @@ void HTMLAttachmentElement::updateProgress(const AtomString& attributeValue)
         classList->toggle(attachmentClassWasIndeterminate(), m_inlineProgressWasIndeterminate);
 
         if (progress.kind != Kind::None)
-            m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), String::number(progress.value));
+            m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), makeString(progress.value));
         return;
     }
 
@@ -506,7 +506,7 @@ void HTMLAttachmentElement::updateProgress(const AtomString& attributeValue)
         m_imageElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
         m_placeholderElement->setInlineStyleProperty(CSSPropertyID::Display, CSSValueID::None);
         m_progressElement->removeInlineStyleProperty(CSSPropertyID::Display);
-        m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), String::number(progress.value));
+        m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), makeString(progress.value));
         return;
     case Kind::None:
     case Kind::Indeterminate:
@@ -586,7 +586,7 @@ void HTMLAttachmentElement::invalidateRendering()
     }
 }
 
-String HTMLAttachmentElement::getAttachmentIdentifier(HTMLElement& element)
+RefPtr<StringImpl> HTMLAttachmentElement::getAttachmentIdentifier(HTMLElement& element)
 {
     RefPtr attachmentAssociatedElement = element.asAttachmentAssociatedElement();
     if (!attachmentAssociatedElement)
@@ -611,9 +611,9 @@ void HTMLAttachmentElement::copyNonAttributePropertiesFromElement(const Element&
     HTMLElement::copyNonAttributePropertiesFromElement(source);
 }
 
-URL HTMLAttachmentElement::archiveResourceURL(const String& identifier)
+URL HTMLAttachmentElement::archiveResourceURL(StringImpl* identifier)
 {
-    auto resourceURL = URL({ }, "applewebdata://attachment/"_s);
+    auto resourceURL = URL({ }, "applewebdata://attachment/"_si);
     resourceURL.setPath(identifier);
     return resourceURL;
 }
@@ -625,7 +625,7 @@ File* HTMLAttachmentElement::file() const
 
 URL HTMLAttachmentElement::blobURL() const
 {
-    return { { }, attributeWithoutSynchronization(HTMLNames::webkitattachmentbloburlAttr).string() };
+    return { { }, attributeWithoutSynchronization(HTMLNames::webkitattachmentbloburlAttr) };
 }
 
 void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes updateAttributes)
@@ -634,9 +634,9 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
 
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
-            setAttributeWithoutSynchronization(HTMLNames::titleAttr, AtomString { m_file->name() });
+            setAttributeWithoutSynchronization(HTMLNames::titleAttr, AtomStringImpl::add(m_file->name()).get());
             setAttributeWithoutSynchronization(subtitleAttr, PAL::fileSizeDescription(protect(m_file)->size()));
-            setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { m_file->type() });
+            setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomStringImpl::add(m_file->type()).get());
         } else {
             removeAttribute(HTMLNames::titleAttr);
             removeAttribute(HTMLNames::subtitleAttr);
@@ -653,7 +653,7 @@ class AttachmentEvent {
 public:
     NODELETE uintptr_t attachment() const { return m_attachment; }
     NODELETE uintptr_t document() const { return m_document; }
-    NODELETE String uniqueIdentifier() const { return m_uniqueIdentifier; }
+    NODELETE RefPtr<StringImpl> uniqueIdentifier() const { return m_uniqueIdentifier; }
     NODELETE WTF::MonotonicTime time() const { return m_time; }
     NODELETE StackTrace& stackTrace() const { return *m_stackTrace; }
 
@@ -682,7 +682,7 @@ public:
 private:
     uintptr_t m_attachment { };
     uintptr_t m_document { };
-    String m_uniqueIdentifier;
+    RefPtr<StringImpl> m_uniqueIdentifier;
     WTF::MonotonicTime m_time;
     std::unique_ptr<StackTrace> m_stackTrace;
 };
@@ -729,12 +729,12 @@ Node::NeedsPostConnectionSteps HTMLAttachmentElement::insertionSteps(InsertionTy
         auto now = WTF::MonotonicTime::now();
         if (lastInsertion && lastRemoval && lastRemoval.attachment() != reinterpret_cast<uintptr_t>(this) && lastRemoval.document() == reinterpret_cast<uintptr_t>(document.ptr())) {
             RELEASE_LOG(Editing, "HTMLAttachmentElement - quick insert(A)-remove(A)-insert(B) within %fs of the first document[%p] load, stacks below:", document->monotonicTimestamp(), reinterpret_cast<const void*>(lastRemoval.document()));
-            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - 1st insertion %fms ago:%s", reinterpret_cast<const void*>(lastInsertion.attachment()), lastInsertion.uniqueIdentifier().utf8(), (now - lastInsertion.time()).milliseconds(), compactStackTrace(lastInsertion.stackTrace()));
+            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - 1st insertion %fms ago:%s", reinterpret_cast<const void*>(lastInsertion.attachment()), utf8(lastInsertion.uniqueIdentifier()), (now - lastInsertion.time()).milliseconds(), compactStackTrace(lastInsertion.stackTrace()));
             lastInsertion.reset();
-            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - removal %fms ago:%s", reinterpret_cast<const void*>(lastRemoval.attachment()), lastRemoval.uniqueIdentifier().utf8(), (now - lastRemoval.time()).milliseconds(), compactStackTrace(lastRemoval.stackTrace()));
+            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - removal %fms ago:%s", reinterpret_cast<const void*>(lastRemoval.attachment()), utf8(lastRemoval.uniqueIdentifier()), (now - lastRemoval.time()).milliseconds(), compactStackTrace(lastRemoval.stackTrace()));
             lastRemoval.reset();
             lastInsertion.capture(*this, now);
-            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - 2nd insertion:%s", reinterpret_cast<const void*>(lastInsertion.attachment()), lastInsertion.uniqueIdentifier().utf8(), compactStackTrace(lastInsertion.stackTrace()));
+            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - 2nd insertion:%s", reinterpret_cast<const void*>(lastInsertion.attachment()), utf8(lastInsertion.uniqueIdentifier()), compactStackTrace(lastInsertion.stackTrace()));
         } else {
             lastInsertion.capture(*this, now);
             lastRemoval.reset();
@@ -763,16 +763,16 @@ void HTMLAttachmentElement::removingSteps(RemovalType type, ContainerNode& ances
         document->didRemoveAttachmentElement(*this);
 }
 
-String HTMLAttachmentElement::ensureUniqueIdentifier()
+RefPtr<StringImpl> HTMLAttachmentElement::ensureUniqueIdentifier()
 {
-    if (m_uniqueIdentifier.isEmpty())
+    if (isEmpty(m_uniqueIdentifier))
         m_uniqueIdentifier = createVersion4UUIDString();
     return m_uniqueIdentifier;
 }
 
-void HTMLAttachmentElement::setUniqueIdentifier(const String& uniqueIdentifier)
+void HTMLAttachmentElement::setUniqueIdentifier(StringImpl* uniqueIdentifier)
 {
-    if (m_uniqueIdentifier == uniqueIdentifier)
+    if (equal(m_uniqueIdentifier, uniqueIdentifier))
         return;
 
     m_uniqueIdentifier = uniqueIdentifier;
@@ -796,7 +796,7 @@ AttachmentAssociatedElementType HTMLAttachmentElement::associatedElementType() c
     return AttachmentAssociatedElementType::None;
 }
 
-void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::actionAttr:
@@ -818,7 +818,7 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     switch (name.nodeName()) {
     case AttributeNames::actionAttr:
         if (m_actionTextElement)
-            m_actionTextElement->setTextContent(String(attachmentActionForDisplay()));
+            m_actionTextElement->setTextContent(RefPtr<StringImpl>(attachmentActionForDisplay()));
         if (usesInlineProgress())
             updateProgress(attributeWithoutSynchronization(progressAttr));
         break;
@@ -829,17 +829,17 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
         break;
     case AttributeNames::subtitleAttr:
         if (m_subtitleElement)
-            m_subtitleElement->setTextContent(String(attachmentSubtitleForDisplay()));
+            m_subtitleElement->setTextContent(RefPtr<StringImpl>(attachmentSubtitleForDisplay()));
         break;
     case AttributeNames::progressAttr:
         updateProgress(newValue);
         break;
     case AttributeNames::saveAttr:
-        updateSaveButton(!newValue.isNull());
+        updateSaveButton(!!newValue);
         break;
     case AttributeNames::typeAttr:
 #if ENABLE(SERVICE_CONTROLS)
-        if (attachmentType() == "application/pdf"_s) {
+        if (equal(attachmentType(), "application/pdf"_s)) {
             setImageMenuEnabled(true);
             ImageControlsMac::updateImageControls(*this);
         }
@@ -851,28 +851,30 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     }
 }
 
-String HTMLAttachmentElement::attachmentTitle() const
+RefPtr<StringImpl> HTMLAttachmentElement::attachmentTitle() const
 {
     auto& title = attributeWithoutSynchronization(titleAttr);
-    if (!title.isEmpty())
+    if (!isEmpty(title))
         return title;
-    return m_file ? m_file->name() : String();
+    if (!m_file)
+        return nullptr;
+    return m_file->name();
 }
 
-const AtomString& HTMLAttachmentElement::attachmentSubtitle() const
+const RefPtr<AtomStringImpl>& HTMLAttachmentElement::attachmentSubtitle() const
 {
     return attributeWithoutSynchronization(subtitleAttr);
 }
 
-const AtomString& HTMLAttachmentElement::attachmentActionForDisplay() const
+const RefPtr<AtomStringImpl>& HTMLAttachmentElement::attachmentActionForDisplay() const
 {
     return attributeWithoutSynchronization(actionAttr);
 }
 
-String HTMLAttachmentElement::attachmentTitleForDisplay() const
+RefPtr<StringImpl> HTMLAttachmentElement::attachmentTitleForDisplay() const
 {
     auto title = attachmentTitle();
-    auto indexOfLastDot = title.reverseFind('.');
+    auto indexOfLastDot = reverseFind(title, '.');
     if (indexOfLastDot == notFound)
         return title;
 
@@ -904,28 +906,28 @@ String HTMLAttachmentElement::attachmentTitleForDisplay() const
     );
 }
 
-const AtomString& HTMLAttachmentElement::attachmentSubtitleForDisplay() const
+const RefPtr<AtomStringImpl>& HTMLAttachmentElement::attachmentSubtitleForDisplay() const
 {
     return attachmentSubtitle();
 }
 
-String HTMLAttachmentElement::attachmentType() const
+RefPtr<StringImpl> HTMLAttachmentElement::attachmentType() const
 {
     return attributeWithoutSynchronization(typeAttr);
 }
 
-String HTMLAttachmentElement::attachmentPath() const
+RefPtr<StringImpl> HTMLAttachmentElement::attachmentPath() const
 {
     return attributeWithoutSynchronization(webkitattachmentpathAttr);
 }
 
-void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, const AtomString& newContentType, const AtomString& newFilename)
+void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, AtomStringImpl* newContentType, AtomStringImpl* newFilename)
 {
     RefPtr<HTMLImageElement> enclosingImage;
     if (RefPtr associatedElement = this->associatedElement())
         enclosingImage = dynamicDowncast<HTMLImageElement>(protect(associatedElement->asHTMLElement()));
 
-    if (!newFilename.isNull()) {
+    if (newFilename) {
         if (enclosingImage)
             enclosingImage->setAttributeWithoutSynchronization(HTMLNames::altAttr, newFilename);
         setAttributeWithoutSynchronization(HTMLNames::titleAttr, newFilename);
@@ -935,7 +937,7 @@ void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSi
         removeAttribute(HTMLNames::titleAttr);
     }
 
-    if (!newContentType.isNull())
+    if (newContentType)
         setAttributeWithoutSynchronization(HTMLNames::typeAttr, newContentType);
     else
         removeAttribute(HTMLNames::typeAttr);
@@ -949,12 +951,12 @@ void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSi
     invalidateRendering();
 }
 
-static bool mimeTypeIsSuitableForInlineImageAttachment(const String& mimeType)
+static bool mimeTypeIsSuitableForInlineImageAttachment(StringImpl* mimeType)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isPDFMIMEType(mimeType);
 }
 
-void HTMLAttachmentElement::updateAssociatedElementWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& buffer)
+void HTMLAttachmentElement::updateAssociatedElementWithData(StringImpl* contentType, Ref<FragmentedSharedBuffer>&& buffer)
 {
     if (buffer->isEmpty())
         return;
@@ -963,7 +965,7 @@ void HTMLAttachmentElement::updateAssociatedElementWithData(const String& conten
     if (!associatedElement)
         return;
 
-    String mimeType = contentType;
+    RefPtr<StringImpl> mimeType = contentType;
 #if PLATFORM(COCOA)
     if (isDeclaredUTI(contentType))
         mimeType = MIMETypeFromUTI(contentType);
@@ -974,7 +976,7 @@ void HTMLAttachmentElement::updateAssociatedElementWithData(const String& conten
 
     auto associatedElementType = associatedElement->attachmentAssociatedElementType();
     Ref document = this->document();
-    protect(associatedElement->asHTMLElement())->setAttributeWithoutSynchronization((associatedElementType == AttachmentAssociatedElementType::Source) ? HTMLNames::srcsetAttr : HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), buffer->extractData(), mimeType)) });
+    protect(associatedElement->asHTMLElement())->setAttributeWithoutSynchronization((associatedElementType == AttachmentAssociatedElementType::Source) ? HTMLNames::srcsetAttr : HTMLNames::srcAttr, AtomStringImpl::add(DOMURL::createObjectURL(document, Blob::create(document.ptr(), buffer->extractData(), mimeType))).get());
 }
 
 void HTMLAttachmentElement::updateImage()
@@ -985,7 +987,7 @@ void HTMLAttachmentElement::updateImage()
     if (!m_iconForWideLayout.isEmpty()) {
         dispatchEvent(Event::create(eventNames().loadeddataEvent, Event::CanBubble::No, Event::IsCancelable::No));
         Ref document = this->document();
-        m_imageElement->setAttributeWithoutSynchronization(srcAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), Vector<uint8_t>(m_iconForWideLayout), "image/png"_s)) });
+        m_imageElement->setAttributeWithoutSynchronization(srcAttr, AtomStringImpl::add(DOMURL::createObjectURL(document, Blob::create(document.ptr(), Vector<uint8_t>(m_iconForWideLayout), "image/png"_si))).get());
         return;
     }
 
@@ -1036,7 +1038,7 @@ void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
 
 // FIXME: Remove after rdar://136373445 is fixed.
 #if PLATFORM(MAC)
-    RELEASE_LOG(Editing, "HTMLAttachmentElement[uuid=%s] requestAttachmentIcon with type='%s'", uniqueIdentifier().utf8(), attachmentType().utf8());
+    RELEASE_LOG(Editing, "HTMLAttachmentElement[uuid=%s] requestAttachmentIcon with type='%s'", utf8(uniqueIdentifier()), utf8(attachmentType()));
 #endif
 
     dispatchEvent(Event::create(eventNames().beforeloadEvent, Event::CanBubble::No, Event::IsCancelable::No));

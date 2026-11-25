@@ -47,7 +47,7 @@ public:
     void willDetach() { unregister(); }
 
     virtual void didChangeReadyState(RTCDataChannelState) = 0;
-    virtual void didReceiveStringData(const String&) = 0;
+    virtual void didReceiveStringData(StringImpl*) = 0;
     virtual void didReceiveRawData(std::span<const uint8_t>) = 0;
     virtual void didDetectError(Ref<RTCError>&&) = 0;
     virtual void bufferedAmountIsDecreasing(size_t) = 0;

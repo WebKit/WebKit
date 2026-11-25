@@ -62,7 +62,7 @@ class NetworkSession;
 class NetworkSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public RefCounted<NetworkSocketChannel> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkSocketChannel);
 public:
-    static RefPtr<NetworkSocketChannel> create(NetworkConnectionToWebProcess&, PAL::SessionID, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker);
+    static RefPtr<NetworkSocketChannel> create(NetworkConnectionToWebProcess&, PAL::SessionID, const WebCore::ResourceRequest&, StringImpl* protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker);
     ~NetworkSocketChannel();
 
     void ref() const final { RefCounted::ref(); }
@@ -75,19 +75,19 @@ public:
     friend class WebSocketTask;
 
 private:
-    NetworkSocketChannel(NetworkConnectionToWebProcess&, NetworkSession*, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker);
+    NetworkSocketChannel(NetworkConnectionToWebProcess&, NetworkSession*, const WebCore::ResourceRequest&, StringImpl* protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker);
 
-    void didConnect(const String& subprotocol, const String& extensions);
-    void didReceiveText(const String&);
+    void didConnect(StringImpl* subprotocol, StringImpl* extensions);
+    void didReceiveText(StringImpl*);
     void didReceiveBinaryData(std::span<const uint8_t>);
-    void didClose(unsigned short code, const String& reason);
-    void didReceiveMessageError(String&&);
+    void didClose(unsigned short code, StringImpl* reason);
+    void didReceiveMessageError(RefPtr<StringImpl>&&);
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);
     void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
 
     void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
-    void close(int32_t code, const String& reason);
+    void close(int32_t code, StringImpl* reason);
     void sendDelayedError();
 
     NODELETE NetworkSession* session() const;
@@ -105,8 +105,8 @@ private:
     enum class State { Open, Closing, Closed };
     State m_state { State::Open };
     WebCore::Timer m_errorTimer;
-    String m_errorMessage;
-    std::optional<std::pair<unsigned short, String>> m_closeInfo;
+    RefPtr<StringImpl> m_errorMessage;
+    std::optional<std::pair<unsigned short, RefPtr<StringImpl>>> m_closeInfo;
     WebPageProxyIdentifier m_webPageProxyID;
 };
 

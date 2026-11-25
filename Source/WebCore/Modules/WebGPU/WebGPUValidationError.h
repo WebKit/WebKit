@@ -33,25 +33,25 @@ namespace WebCore {
 
 class WebGPUValidationError final : public RefCounted<WebGPUValidationError> {
 public:
-    static Ref<WebGPUValidationError> create(String&& message)
+    static Ref<WebGPUValidationError> create(RefPtr<StringImpl>&& message)
     {
         return adoptRef(*new WebGPUValidationError(WTF::move(message)));
     }
 
-    static Ref<WebGPUValidationError> create(const String& message)
+    static Ref<WebGPUValidationError> create(StringImpl* message)
     {
         return adoptRef(*new WebGPUValidationError(message));
     }
 
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
 
 private:
-    WebGPUValidationError(String&& message)
+    WebGPUValidationError(RefPtr<StringImpl>&& message)
         : m_message(WTF::move(message))
     {
     }
 
-    WebGPUValidationError(const String& message)
+    WebGPUValidationError(StringImpl* message)
         : m_message(message)
     {
     }
@@ -61,7 +61,7 @@ private:
     WebGPUValidationError& operator=(const WebGPUValidationError&) = delete;
     WebGPUValidationError& operator=(WebGPUValidationError&&) = delete;
 
-    String m_message;
+    RefPtr<StringImpl> m_message;
 };
 
 } // namespace WebCore

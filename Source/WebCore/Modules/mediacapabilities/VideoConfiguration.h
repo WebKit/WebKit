@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct VideoConfiguration {
-    String contentType;
+    RefPtr<StringImpl> contentType;
     uint32_t width { };
     uint32_t height { };
     uint64_t bitrate { };
@@ -51,7 +51,7 @@ struct VideoConfiguration {
 inline VideoConfiguration VideoConfiguration::isolatedCopy() const &
 {
     return {
-        contentType.isolatedCopy(),
+        WTF::isolatedCopy(contentType),
         width,
         height,
         bitrate,
@@ -66,7 +66,7 @@ inline VideoConfiguration VideoConfiguration::isolatedCopy() const &
 inline VideoConfiguration VideoConfiguration::isolatedCopy() &&
 {
     return {
-        WTF::move(contentType).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(contentType)),
         width,
         height,
         bitrate,

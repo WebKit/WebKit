@@ -52,7 +52,7 @@ struct AXTextRunLineID {
     { }
     bool operator==(const AXTextRunLineID&) const = default;
     operator bool() const { return containingBlock; }
-    String debugDescription() const
+    RefPtr<StringImpl> debugDescription() const
     {
         TextStream stream;
         stream << "LineID " << containingBlock << " " << lineIndex;
@@ -116,7 +116,7 @@ struct AXTextRuns {
     WTF_MAKE_TZONE_ALLOCATED(AXTextRuns);
 public:
     // The text for all runs, concatenated into a single string.
-    String text;
+    RefPtr<StringImpl> text;
     // The containing block for the text runs. This is required because based on the structure
     // of the AX tree, text runs for different objects can have the same line index but different
     // containing blocks, meaning they are rendered on different lines.
@@ -126,14 +126,14 @@ public:
     bool containsOnlyASCII { true };
 
     AXTextRuns() = default;
-    AXTextRuns(void* containingBlock, Vector<AXTextRun>&& textRuns, String&& text, bool containsOnlyASCII = true)
+    AXTextRuns(void* containingBlock, Vector<AXTextRun>&& textRuns, RefPtr<StringImpl>&& text, bool containsOnlyASCII = true)
         : text(WTF::move(text))
         , containingBlock(containingBlock)
         , runs(WTF::move(textRuns))
         , containsOnlyASCII(containsOnlyASCII)
     { }
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 
     size_t size() const { return runs.size(); }
     const AXTextRun& at(size_t index) const { return (*this)[index]; }
@@ -157,14 +157,14 @@ public:
 
     NODELETE size_t indexForOffset(unsigned textOffset, Affinity) const;
     AXTextRunLineID lineID(size_t index) const { return { containingBlock, runs[index].lineIndex }; }
-    String toString() const { return text; }
+    RefPtr<StringImpl> toString() const { return text; }
     StringView toStringView() const { return StringView(text); }
     StringView substring(unsigned start, unsigned length = StringImpl::MaxLength) const
     {
         return StringView(text).substring(start, length);
     }
 
-    String runString(size_t runIndex) const { return runStringView(runIndex).toString(); }
+    RefPtr<StringImpl> runString(size_t runIndex) const { return runStringView(runIndex).toString(); }
     StringView runStringView(size_t runIndex) const
     {
         const auto& run = runs[runIndex];
@@ -185,8 +185,8 @@ public:
     Vector<FloatRect> localRectsPerLine(unsigned start, unsigned end, FontOrientation) const;
 
     // Convenience methods for TextUnit movement.
-    bool runStartsWithLineBreak(size_t runIndex) const { return text[runs[runIndex].startIndex] == '\n'; }
-    bool runEndsWithLineBreak(size_t runIndex) const { return text[runs[runIndex].endIndex - 1] == '\n'; }
+    bool runStartsWithLineBreak(size_t runIndex) const { return codeUnitAt(text, runs[runIndex].startIndex) == '\n'; }
+    bool runEndsWithLineBreak(size_t runIndex) const { return codeUnitAt(text, runs[runIndex].endIndex - 1) == '\n'; }
 };
 
 } // namespace WebCore

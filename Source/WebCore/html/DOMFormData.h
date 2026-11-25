@@ -43,10 +43,10 @@ class HTMLFormElement;
 
 class DOMFormData : public RefCounted<DOMFormData>, public ContextDestructionObserver {
 public:
-    using FormDataEntryValue = Variant<Ref<File>, String>;
+    using FormDataEntryValue = Variant<Ref<File>, RefPtr<StringImpl>>;
 
     struct Item {
-        String name;
+        RefPtr<StringImpl> name;
         FormDataEntryValue data;
     };
 
@@ -60,20 +60,20 @@ public:
     const Vector<Item>& items() const LIFETIME_BOUND { return m_items; }
     const PAL::TextEncoding& encoding() const LIFETIME_BOUND { return m_encoding; }
 
-    void append(const String& name, const String& value);
-    void append(const String& name, Blob&, const String& filename = { });
-    void remove(const String& name);
-    std::optional<FormDataEntryValue> get(const String& name);
-    Vector<FormDataEntryValue> getAll(const String& name);
-    NODELETE bool has(const String& name);
-    void set(const String& name, const String& value);
-    void set(const String& name, Blob&, const String& filename = { });
+    void append(StringImpl* name, StringImpl* value);
+    void append(StringImpl* name, Blob&, StringImpl* filename = nullptr);
+    void remove(StringImpl* name);
+    std::optional<FormDataEntryValue> get(StringImpl* name);
+    Vector<FormDataEntryValue> getAll(StringImpl* name);
+    NODELETE bool has(StringImpl* name);
+    void set(StringImpl* name, StringImpl* value);
+    void set(StringImpl* name, Blob&, StringImpl* filename = nullptr);
     Ref<DOMFormData> clone() const;
 
     class Iterator {
     public:
         explicit Iterator(DOMFormData&);
-        std::optional<KeyValuePair<String, FormDataEntryValue>> next();
+        std::optional<KeyValuePair<RefPtr<StringImpl>, FormDataEntryValue>> next();
 
     private:
         const Ref<DOMFormData> m_target;
@@ -84,7 +84,7 @@ public:
 private:
     explicit DOMFormData(ScriptExecutionContext*, const PAL::TextEncoding& = PAL::UTF8Encoding());
 
-    void set(const String& name, Item&&);
+    void set(StringImpl* name, Item&&);
 
     PAL::TextEncoding m_encoding;
     Vector<Item> m_items;
@@ -92,4 +92,4 @@ private:
 
 } // namespace WebCore
 
-extern template class mpark::variant<WTF::Ref<WebCore::File>, WTF::String>;
+extern template class mpark::variant<WTF::Ref<WebCore::File>, RefPtr<StringImpl>>;

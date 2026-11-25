@@ -48,13 +48,13 @@ ExceptionOr<Ref<WebCodecsAudioData>> WebCodecsAudioData::create(ScriptExecutionC
         return result.releaseException();
 
     if (!isValidAudioDataInit(init))
-        return Exception { ExceptionCode::TypeError, "Invalid init data"_s };
+        return Exception { ExceptionCode::TypeError, "Invalid init data"_si };
 
     Ref buffer = transferList.isEmpty() ? SharedBuffer::create(init.data.span()) : transferList.takeData(context.vm(), init.data);
 
     RefPtr data = PlatformRawAudioData::create(WTF::move(buffer), init.format, init.sampleRate, init.timestamp, init.numberOfFrames, init.numberOfChannels);
     if (!data)
-        return Exception { ExceptionCode::NotSupportedError, "AudioData creation failed"_s };
+        return Exception { ExceptionCode::NotSupportedError, "AudioData creation failed"_si };
 
     return adoptRef(*new WebCodecsAudioData(context, WebCodecsAudioInternalData { WTF::move(data) }));
 }
@@ -112,7 +112,7 @@ int64_t WebCodecsAudioData::timestamp() const
 ExceptionOr<size_t> WebCodecsAudioData::allocationSize(const CopyToOptions& options)
 {
     if (isDetached())
-        return Exception { ExceptionCode::InvalidStateError, "AudioData is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioData is detached"_si };
 
     auto copyElementCount = computeCopyElementCount(*this, options);
     if (copyElementCount.hasException())
@@ -127,7 +127,7 @@ ExceptionOr<size_t> WebCodecsAudioData::allocationSize(const CopyToOptions& opti
 ExceptionOr<void> WebCodecsAudioData::copyTo(BufferSource&& source, CopyToOptions&& options)
 {
     if (isDetached())
-        return Exception { ExceptionCode::InvalidStateError, "AudioData is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError, "AudioData is detached"_si };
 
     auto copyElementCount = computeCopyElementCount(*this, options);
     if (copyElementCount.hasException())
@@ -138,10 +138,10 @@ ExceptionOr<void> WebCodecsAudioData::copyTo(BufferSource&& source, CopyToOption
     auto maxCopyElementCount = copyElementCount.releaseReturnValue();
     unsigned long allocationSize;
     if (!WTF::safeMultiply(maxCopyElementCount, bytesPerSample, allocationSize))
-        return Exception { ExceptionCode::RangeError, "Calculated destination buffer size overflows"_s };
+        return Exception { ExceptionCode::RangeError, "Calculated destination buffer size overflows"_si };
 
     if (allocationSize > source.byteLength())
-        return Exception { ExceptionCode::RangeError, "Buffer is too small"_s };
+        return Exception { ExceptionCode::RangeError, "Buffer is too small"_si };
 
     protect(m_data.audioData)->copyTo(source.mutableSpan(), destFormat, options.planeIndex, options.frameOffset, options.frameCount, maxCopyElementCount);
     return { };
@@ -151,7 +151,7 @@ ExceptionOr<void> WebCodecsAudioData::copyTo(BufferSource&& source, CopyToOption
 ExceptionOr<Ref<WebCodecsAudioData>> WebCodecsAudioData::clone(ScriptExecutionContext& context)
 {
     if (isDetached())
-        return Exception { ExceptionCode::InvalidStateError,  "AudioData is detached"_s };
+        return Exception { ExceptionCode::InvalidStateError,  "AudioData is detached"_si };
 
     return adoptRef(*new WebCodecsAudioData(context, WebCodecsAudioInternalData { m_data }));
 }

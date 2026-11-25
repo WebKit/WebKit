@@ -98,7 +98,7 @@ void HTMLOptGroupElement::updateUserAgentShadowTree()
 
     ScriptDisallowedScope::EventAllowedScope labelContainerScope { labelContainer };
 
-    if (auto label = groupLabelText(); labelContainer->textContent() != label)
+    if (auto label = groupLabelText(); !equal(labelContainer->textContent(), label))
         labelContainer->setTextContent(WTF::move(label));
 
     if (showLabel)
@@ -203,9 +203,9 @@ bool HTMLOptGroupElement::isFocusable() const
     return HTMLElement::isFocusable();
 }
 
-const AtomString& HTMLOptGroupElement::formControlType() const
+const RefPtr<AtomStringImpl>& HTMLOptGroupElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> optgroup("optgroup"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> optgroup("optgroup"_s);
     return optgroup;
 }
 
@@ -220,7 +220,7 @@ void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
     HTMLElement::childrenChanged(change);
 }
 
-void HTMLOptGroupElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLOptGroupElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -241,9 +241,9 @@ void HTMLOptGroupElement::legendElementChanged()
     invalidateShadowTree();
 }
 
-void HTMLOptGroupElement::parseDisabledAttribute(const AtomString& value)
+void HTMLOptGroupElement::parseDisabledAttribute(AtomStringImpl* value)
 {
-    bool newDisabled = !value.isNull();
+    bool newDisabled = !!value;
     if (m_isDisabled == newDisabled)
         return;
 
@@ -279,12 +279,12 @@ HTMLLegendElement* HTMLOptGroupElement::legendElement() const
     return dynamicDowncast<HTMLLegendElement>(firstElementChild());
 }
 
-String HTMLOptGroupElement::groupLabelText() const
+RefPtr<StringImpl> HTMLOptGroupElement::groupLabelText() const
 {
     if (RefPtr legend = legendElement())
         return htmlAwareTextContent(*legend, IncludeAltText::Yes);
 
-    return protect(document())->displayStringModifiedByEncoding(attributeWithoutSynchronization(labelAttr)).simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
+    return simplifyWhiteSpace(protect(document())->displayStringModifiedByEncoding(attributeWithoutSynchronization(labelAttr)), deprecatedIsSpaceOrNewline);
 }
 
 HTMLOptGroupElement* HTMLOptGroupElement::optGroupForLabel(const Element& element)

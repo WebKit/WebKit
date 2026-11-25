@@ -47,19 +47,19 @@ auto UIEventWithKeyState::modifiersFromInitializer(const EventModifierInit& init
     return result;
 }
 
-bool UIEventWithKeyState::getModifierState(const String& keyIdentifier) const
+bool UIEventWithKeyState::getModifierState(StringImpl* keyIdentifier) const
 {
-    if (keyIdentifier == "Control"_s)
+    if (equal(keyIdentifier, "Control"_s))
         return ctrlKey();
-    if (keyIdentifier == "Shift"_s)
+    if (equal(keyIdentifier, "Shift"_s))
         return shiftKey();
-    if (keyIdentifier == "Alt"_s)
+    if (equal(keyIdentifier, "Alt"_s))
         return altKey();
-    if (keyIdentifier == "Meta"_s)
+    if (equal(keyIdentifier, "Meta"_s))
         return metaKey();
-    if (keyIdentifier == "CapsLock"_s)
+    if (equal(keyIdentifier, "CapsLock"_s))
         return capsLockKey();
-    if (keyIdentifier == "AltGraph"_s)
+    if (equal(keyIdentifier, "AltGraph"_s))
         return altGraphKey();
     // FIXME: The specification also has Fn, FnLock, Hyper, NumLock, Super, ScrollLock, Symbol, SymbolLock.
     return false;

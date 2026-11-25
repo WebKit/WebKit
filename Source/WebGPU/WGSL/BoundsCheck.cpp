@@ -89,7 +89,7 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
         if (index->inferredType() != shaderModule.types().u32Type()) {
             auto& u32Target = shaderModule.astBuilder().construct<AST::IdentifierExpression>(
                 SourceSpan::empty(),
-                AST::Identifier::make("u32"_s)
+                AST::Identifier::make("u32"_si)
             );
             u32Target.m_inferredType = shaderModule.types().u32Type();
 
@@ -105,7 +105,7 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
 
         auto& minTarget = shaderModule.astBuilder().construct<AST::IdentifierExpression>(
             SourceSpan::empty(),
-            AST::Identifier::make("__wgslMin"_s)
+            AST::Identifier::make("__wgslMin"_si)
         );
         minTarget.m_inferredType = shaderModule.types().u32Type();
 
@@ -186,7 +186,7 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
         [&](std::monostate) {
             auto& target = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
                 SourceSpan::empty(),
-                AST::Identifier::make("arrayLength"_s)
+                AST::Identifier::make("arrayLength"_si)
             );
             target.m_inferredType = m_shaderModule.types().u32Type();
 
@@ -228,10 +228,10 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
             }
 
             if (size && *size < 1) [[unlikely]]
-                return Error("array count must be greater than 0"_s, access.span());
+                return Error("array count must be greater than 0"_si, access.span());
 
             if (index && (index->integerValue() < 0 || (size && index->integerValue() >= *size))) [[unlikely]] {
-                String bounds = size ?  makeString(" [0.."_s, *size - 1, "]"_s) : ""_s;
+                RefPtr<StringImpl> bounds = size ?  makeString(" [0.."_s, *size - 1, "]"_s) : ""_si;
                 return Error(makeString("index "_s, index->integerValue(), " out of bounds"_s, bounds), access.span());
             }
 

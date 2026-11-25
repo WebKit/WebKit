@@ -36,7 +36,7 @@ class ScriptExecutionContext;
 
 class FileSystemDirectoryEntry final : public FileSystemEntry {
 public:
-    static Ref<FileSystemDirectoryEntry> create(ScriptExecutionContext&, DOMFileSystem&, const String&);
+    static Ref<FileSystemDirectoryEntry> create(ScriptExecutionContext&, DOMFileSystem&, StringImpl*);
 
     Ref<FileSystemDirectoryReader> createReader(ScriptExecutionContext&);
 
@@ -45,15 +45,15 @@ public:
         bool exclusive { false };
     };
 
-    void getFile(ScriptExecutionContext&, const String& path, const Flags& options, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
-    void getDirectory(ScriptExecutionContext&, const String& path, const Flags& options, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
+    void getFile(ScriptExecutionContext&, StringImpl* path, const Flags& options, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
+    void getDirectory(ScriptExecutionContext&, StringImpl* path, const Flags& options, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
 
 private:
     bool isDirectory() const final { return true; }
     using EntryMatchingFunction = Function<bool(const FileSystemEntry&)>;
-    void getEntry(ScriptExecutionContext&, const String& path, const Flags& options, EntryMatchingFunction&&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
+    void getEntry(ScriptExecutionContext&, StringImpl* path, const Flags& options, EntryMatchingFunction&&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
 
-    FileSystemDirectoryEntry(ScriptExecutionContext&, DOMFileSystem&, const String& virtualPath);
+    FileSystemDirectoryEntry(ScriptExecutionContext&, DOMFileSystem&, StringImpl* virtualPath);
 };
 static_assert(sizeof(FileSystemDirectoryEntry) == sizeof(FileSystemEntry));
 

@@ -30,9 +30,9 @@
 namespace WebKit {
     
 struct WebSpeechSynthesisVoice {
-    String voiceURI;
-    String name;
-    String lang;
+    RefPtr<StringImpl> voiceURI;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> lang;
     bool localService { false };
     bool defaultLang { false };
 };

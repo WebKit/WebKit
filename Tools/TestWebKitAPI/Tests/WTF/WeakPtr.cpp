@@ -1327,10 +1327,10 @@ TEST(WTF_WeakPtr, WeakHashMapConstObjects)
     }
 
     {
-        WeakHashMap<Base, String> weakHashMap;
+        WeakHashMap<Base, RefPtr<StringImpl>> weakHashMap;
         const Derived object;
         EXPECT_FALSE(weakHashMap.contains(object));
-        EXPECT_TRUE(weakHashMap.get(object).isNull());
+        EXPECT_TRUE(!weakHashMap.get(object));
         EXPECT_EQ(s_baseWeakReferences, 0u);
         EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
         weakHashMap.add(object, "hello"_s);
@@ -1355,7 +1355,7 @@ TEST(WTF_WeakPtr, WeakHashMapConstObjects)
         EXPECT_EQ(s_baseWeakReferences, 1u);
         EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
         EXPECT_FALSE(weakHashMap.contains(object));
-        EXPECT_TRUE(weakHashMap.get(object).isNull());
+        EXPECT_TRUE(!weakHashMap.get(object));
     }
 
     {

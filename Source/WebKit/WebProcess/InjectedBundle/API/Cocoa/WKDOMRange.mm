@@ -120,7 +120,7 @@
 {
     auto range = makeSimpleRange(protect(*_impl));
     protect(range.start.document())->updateLayout();
-    return plainText(range).createNSString().autorelease();
+    return createNSString(plainText(range)).autorelease();
 }
 
 - (BOOL)isCollapsed

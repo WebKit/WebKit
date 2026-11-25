@@ -99,7 +99,7 @@ using namespace WebKit;
     if (!webExtensionController)
         return;
 
-    if (RefPtr context = webExtensionController->extensionContext(uniqueIdentifier))
+    if (RefPtr context = webExtensionController->extensionContext(StringImpl::create(uniqueIdentifier).get()))
         context->invalidateStorage();
 }
 
@@ -131,9 +131,9 @@ void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> data
 
     const Vector uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
     for (auto& uniqueIdentifier : uniqueIdentifiers) {
-        String displayName;
+        RefPtr<StringImpl> displayName;
         if (!WebExtensionContext::readDisplayNameFromState(stateFilePath(uniqueIdentifier), displayName)) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to read extension display name from State.plist for extension: %{private}@", uniqueIdentifier.createNSString().get());
+            RELEASE_LOG_ERROR(Extensions, "Failed to read extension display name from State.plist for extension: %{private}@", createNSString(uniqueIdentifier).get());
             continue;
         }
 
@@ -144,14 +144,14 @@ void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> data
 
             RefPtr storage = sqliteStore(storageDirectory(uniqueIdentifier), dataType, this->extensionContext(uniqueIdentifier));
             if (!storage) {
-                RELEASE_LOG_ERROR(Extensions, "Failed to create sqlite store for extension: %{private}@", uniqueIdentifier.createNSString().get());
+                RELEASE_LOG_ERROR(Extensions, "Failed to create sqlite store for extension: %{private}@", createNSString(uniqueIdentifier).get());
                 record->addError(@"Unable to calculate extension storage", dataType);
                 continue;
             }
 
             calculateStorageSize(*storage, dataType, makeBlockPtr([recordHolder, aggregator, uniqueIdentifier, displayName, dataType, record = Ref { record }](std::expected<size_t, WebExtensionError>&& result) mutable {
                 if (!result)
-                    record->addError(result.error().createNSString().get(), dataType);
+                    record->addError(createNSString(result.error()).get(), dataType);
                 else
                     record->setSizeOfType(dataType, result.value());
             }));
@@ -166,12 +166,12 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> dataT
         return;
     }
 
-    String matchingUniqueIdentifier;
-    String displayName;
+    RefPtr<StringImpl> matchingUniqueIdentifier;
+    RefPtr<StringImpl> displayName;
 
     const Vector uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
     for (auto& uniqueIdentifier : uniqueIdentifiers) {
-        if (uniqueIdentifier == extensionContext.uniqueIdentifier() && WebExtensionContext::readDisplayNameFromState(stateFilePath(uniqueIdentifier), displayName)) {
+        if (equal(uniqueIdentifier, extensionContext.uniqueIdentifier()) && WebExtensionContext::readDisplayNameFromState(stateFilePath(uniqueIdentifier), displayName)) {
             matchingUniqueIdentifier = uniqueIdentifier;
             break;
         }
@@ -194,14 +194,14 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> dataT
 
         RefPtr storage = sqliteStore(storageDirectory(matchingUniqueIdentifier), dataType, this->extensionContext(matchingUniqueIdentifier));
         if (!storage) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to create sqlite store for extension: %{private}@", matchingUniqueIdentifier.createNSString().get());
+            RELEASE_LOG_ERROR(Extensions, "Failed to create sqlite store for extension: %{private}@", createNSString(matchingUniqueIdentifier).get());
             record->addError(@"Unable to calculcate extension storage", dataType);
             continue;
         }
 
         calculateStorageSize(*storage, dataType, makeBlockPtr([recordHolder, aggregator, matchingUniqueIdentifier, displayName, dataType, record = Ref { record }](std::expected<size_t, WebExtensionError>&& result) mutable {
             if (!result)
-                record->addError(result.error().createNSString().get(), dataType);
+                record->addError(createNSString(result.error()).get(), dataType);
             else
                 record->setSizeOfType(dataType, result.value());
         }));
@@ -225,17 +225,17 @@ void WebExtensionController::removeData(OptionSet<WebExtensionDataType> dataType
             RefPtr extensionContext = this->extensionContext(uniqueIdentifier);
             RefPtr storage = sqliteStore(storageDirectory(uniqueIdentifier), dataType, extensionContext);
             if (!storage) {
-                RELEASE_LOG_ERROR(Extensions, "Failed to create sqlite store for extension: %{private}@", uniqueIdentifier.createNSString().get());
+                RELEASE_LOG_ERROR(Extensions, "Failed to create sqlite store for extension: %{private}@", createNSString(uniqueIdentifier).get());
                 record->addError(@"Unable to delete extension storage", dataType);
                 continue;
             }
 
             removeStorage(*storage, dataType, makeBlockPtr([aggregator, uniqueIdentifier, dataType, record = Ref { record }](std::expected<void, WebExtensionError>&& result) mutable {
                 if (!result)
-                    record->addError(result.error().createNSString().get(), dataType);
+                    record->addError(createNSString(result.error()).get(), dataType);
                 else {
                     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-                    [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebExtensionLocalStorageWasDeletedNotification object:nil userInfo:@{ WebExtensionUniqueIdentifierKey: uniqueIdentifier.createNSString().get() }];
+                    [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebExtensionLocalStorageWasDeletedNotification object:nil userInfo:@{ WebExtensionUniqueIdentifierKey: createNSString(uniqueIdentifier).get() }];
                     ALLOW_DEPRECATED_DECLARATIONS_END
                 }
             }));
@@ -243,11 +243,11 @@ void WebExtensionController::removeData(OptionSet<WebExtensionDataType> dataType
     }
 }
 
-bool WebExtensionController::isFeatureEnabled(const String& featureName) const
+bool WebExtensionController::isFeatureEnabled(StringImpl* featureName) const
 {
     WKPreferences *preferences = protect(configuration())->webViewConfiguration().preferences;
 
-    auto *cocoaFeatureName = featureName.createNSString().get();
+    auto *cocoaFeatureName = createNSString(featureName).get();
     for (_WKFeature *feature in WKPreferences._features) {
         if ([feature.key isEqualToString:cocoaFeatureName])
             return [preferences _isEnabledForFeature:feature];
@@ -275,7 +275,7 @@ void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdent
     for (const auto& result : borrow(results.results)) {
         auto contentRuleListIdentifier = result.first;
         for (Ref context : m_extensionContexts) {
-            if (context->uniqueIdentifier() != contentRuleListIdentifier)
+            if (!equal(context->uniqueIdentifier(), contentRuleListIdentifier))
                 continue;
 
             RefPtr tab = context->getTab(pageID);
@@ -337,14 +337,14 @@ void WebExtensionController::updateWebsitePoliciesForNavigation(API::WebsitePoli
     auto actionPatterns = websitePolicies.activeContentRuleListActionPatterns();
 
     for (Ref context : m_extensionContexts) {
-        if (!context->hasPermission(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess))
+        if (!context->hasPermission(StringImpl::create(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess).get()))
             continue;
 
         OptionSet<WebExtensionMatchPattern::Options> expandOptions;
         if (context->hasAccessToFileURLs())
             expandOptions.add(WebExtensionMatchPattern::Options::AllowFileScheme);
 
-        Vector<String> patterns;
+        Vector<RefPtr<StringImpl>> patterns;
         for (Ref pattern : context->currentPermissionMatchPatterns())
             patterns.appendVector(pattern->expandedStrings(expandOptions));
 
@@ -389,7 +389,7 @@ void WebExtensionController::resourceLoadWasBlockedByContentRuleList(WebPageProx
 {
     for (auto& identifier : borrow(info.blockingContentRuleListIdentifiers)) {
         for (Ref context : m_extensionContexts) {
-            if (context->uniqueIdentifier() == identifier) {
+            if (equal(context->uniqueIdentifier(), identifier)) {
                 context->resourceLoadWasBlockedByDeclarativeNetRequest(pageID, info);
                 break;
             }

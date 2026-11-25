@@ -56,7 +56,7 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDeviceProxy);
 
-static ::WebGPU::PipelineError invalidDescriptorError(String&& message)
+static ::WebGPU::PipelineError invalidDescriptorError(RefPtr<StringImpl>&& message)
 {
     return { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(message) };
 }
@@ -108,7 +108,7 @@ RefPtr<::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const ::WebGPU::BufferD
         return nullptr;
 
     auto result = RemoteBufferProxy::create(*this, identifier, descriptor);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
@@ -143,7 +143,7 @@ RefPtr<::WebGPU::Sampler> RemoteDeviceProxy::createSampler(const ::WebGPU::Sampl
         return nullptr;
 
     auto result = RemoteSamplerProxy::create(*this, identifier);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
@@ -298,12 +298,12 @@ void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipeli
     auto convertedDescriptor = serialize(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(makeUnexpected(invalidDescriptorError("GPUDevice.createComputePipelineAsync() descriptor is invalid"_s)));
+        callback(makeUnexpected(invalidDescriptorError("GPUDevice.createComputePipelineAsync() descriptor is invalid"_si)));
         return;
     }
 
     auto identifier = WebGPUComputePipelineIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, RefPtr<StringImpl>&& error) mutable {
         if (!result) {
             callback(makeUnexpected(::WebGPU::PipelineError { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(error) }));
             return;
@@ -320,10 +320,10 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipeline
 {
     auto convertedDescriptor = serialize(descriptor);
     if (!convertedDescriptor)
-        return callback(makeUnexpected(invalidDescriptorError("GPUDevice.createRenderPipelineAsync() descriptor is invalid"_s)));
+        return callback(makeUnexpected(invalidDescriptorError("GPUDevice.createRenderPipelineAsync() descriptor is invalid"_si)));
 
     auto identifier = WebGPURenderPipelineIdentifier::generate();
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, String&& error) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), [identifier, callback = WTF::move(callback), protectedThis = protect(*this), label = WTF::move(convertedDescriptor->label)](auto result, RefPtr<StringImpl>&& error) mutable {
         if (!result) {
             callback(makeUnexpected(::WebGPU::PipelineError { .reason = ::WebGPU::PipelineErrorReason::Validation, .message = WTF::move(error) }));
             return;
@@ -390,7 +390,7 @@ RefPtr<::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(const :
         return nullptr;
 
     auto result = RemoteCommandEncoderProxy::create(protect(root()), identifier);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
@@ -418,7 +418,7 @@ RefPtr<::WebGPU::QuerySet> RemoteDeviceProxy::createQuerySet(const ::WebGPU::Que
         return nullptr;
 
     auto result = RemoteQuerySetProxy::create(*this, identifier, descriptor);
-    result->setLabel(String { descriptor.label });
+    result->setLabel(RefPtr<StringImpl> { descriptor.label });
     return result;
 }
 
@@ -460,7 +460,7 @@ void RemoteDeviceProxy::didGenerateUncapturedError(::WebGPU::Error&& error)
         callback->run(WTF::move(error));
 }
 
-void RemoteDeviceProxy::setLabel(String&& label)
+void RemoteDeviceProxy::setLabel(RefPtr<StringImpl>&& label)
 {
     auto sendResult = send(Messages::RemoteDevice::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
@@ -472,7 +472,7 @@ bool RemoteDeviceProxy::isValid() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&& callback)
+void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, RefPtr<StringImpl>&&)>&& callback)
 {
     if (protect(root())->isLost()) {
         m_isLost = true;
@@ -586,7 +586,7 @@ RefPtr<::WebGPU::QuerySet> RemoteDeviceProxy::createInvalidQuerySet()
     return RemoteQuerySetProxy::createInvalid(*this, identifier);
 }
 
-RefPtr<::WebGPU::RenderBundleEncoder> RemoteDeviceProxy::createInvalidRenderBundleEncoder(String&& error)
+RefPtr<::WebGPU::RenderBundleEncoder> RemoteDeviceProxy::createInvalidRenderBundleEncoder(RefPtr<StringImpl>&& error)
 {
     auto identifier = WebGPURenderBundleEncoderIdentifier::generate();
     auto sendResult = send(Messages::RemoteDevice::CreateInvalidRenderBundleEncoder(WTF::move(error), identifier));
@@ -644,7 +644,7 @@ RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createInvalidTexture()
     });
 }
 
-void RemoteDeviceProxy::generateAValidationError(String&& message)
+void RemoteDeviceProxy::generateAValidationError(RefPtr<StringImpl>&& message)
 {
     auto sendResult = send(Messages::RemoteDevice::GenerateAValidationError(WTF::move(message)));
     UNUSED_PARAM(sendResult);

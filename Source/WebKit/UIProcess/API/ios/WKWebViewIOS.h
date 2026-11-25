@@ -100,8 +100,8 @@ enum class TapHandlingResult : uint8_t;
 - (void)_didBlurFocusedElement;
 - (void)_didFinishScrolling:(UIScrollView *)scrollView;
 
-- (void)_setHasCustomContentView:(BOOL)hasCustomContentView loadedMIMEType:(const WTF::String&)mimeType;
-- (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const WTF::String&)suggestedFilename data:(NSData *)data;
+- (void)_setHasCustomContentView:(BOOL)hasCustomContentView loadedMIMEType:(StringImpl*)mimeType;
+- (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(StringImpl*)suggestedFilename data:(NSData *)data;
 
 - (void)_willInvokeUIScrollViewDelegateCallback;
 - (void)_didInvokeUIScrollViewDelegateCallback;

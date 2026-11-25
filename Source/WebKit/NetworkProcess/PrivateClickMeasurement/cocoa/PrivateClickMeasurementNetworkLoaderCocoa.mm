@@ -63,7 +63,7 @@ static bool trustsServerForLocalTests(NSURLAuthenticationChallenge *challenge)
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    if (WebCore::MIMETypeRegistry::isSupportedJSONMIMEType(response.MIMEType))
+    if (WebCore::MIMETypeRegistry::isSupportedJSONMIMEType(StringImpl::create(response.MIMEType).get()))
         return completionHandler(NSURLSessionResponseAllow);
     completionHandler(NSURLSessionResponseCancel);
 }
@@ -101,9 +101,9 @@ static NSURLSession *statelessSessionWithoutRedirectsSingleton(const Application
         configuration.get()._shouldSkipPreferredClientCertificateLookup = YES;
 
         WTF::switchOn(applicationBundleIdentifier,
-            [&] (const std::pair<String, String>& bundleIdentifiers) {
-                configuration.get()._sourceApplicationBundleIdentifier = bundleIdentifiers.first.createNSString().get();
-                configuration.get()._sourceApplicationSecondaryIdentifier = bundleIdentifiers.second.createNSString().get();
+            [&] (const std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>& bundleIdentifiers) {
+                configuration.get()._sourceApplicationBundleIdentifier = createNSString(bundleIdentifiers.first).get();
+                configuration.get()._sourceApplicationSecondaryIdentifier = createNSString(bundleIdentifiers.second).get();
             }, [&] (const Vector<uint8_t>& auditToken) {
                 Borrow borrowedAuditToken = auditToken;
                 configuration.get()._sourceApplicationAuditTokenData = [NSData dataWithBytes:borrowedAuditToken->span().data() length:borrowedAuditToken->size()];
@@ -125,11 +125,11 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
     // Prevent contacting non-local servers when a test certificate chain is used for 127.0.0.1.
     // FIXME: Use a proxy server to have tests cover the reports sent to the destination, too.
     if (allowedLocalTestServerTrust() && url.host() != "127.0.0.1"_s)
-        return callback({ }, { });
+        return callback(nullptr, { });
 
     auto request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url.createNSURL().get()]);
-    [request setValue:WebCore::HTTPHeaderValues::maxAge0().createNSString().get() forHTTPHeaderField:@"Cache-Control"];
-    [request setValue:WebCore::standardUserAgentWithApplicationName({ }).createNSString().get() forHTTPHeaderField:@"User-Agent"];
+    [request setValue:createNSString(WebCore::HTTPHeaderValues::maxAge0()).get() forHTTPHeaderField:@"Cache-Control"];
+    [request setValue:createNSString(WebCore::standardUserAgentWithApplicationName(nullptr)).get() forHTTPHeaderField:@"User-Agent"];
     RetainPtr crossSiteMainDocument = [NSURLComponents componentsWithURL:request.get().URL resolvingAgainstBaseURL:NO];
     crossSiteMainDocument.get().host = [NSString stringWithFormat:@"not-%@", crossSiteMainDocument.get().host];
     [request setMainDocumentURL:crossSiteMainDocument.get().URL];
@@ -137,8 +137,8 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
 
     if (jsonPayload) {
         request.get().HTTPMethod = @"POST";
-        [request setValue:WebCore::HTTPHeaderValues::applicationJSONContentType().createNSString().get() forHTTPHeaderField:@"Content-Type"];
-        auto body = jsonPayload->toJSONString().utf8();
+        [request setValue:createNSString(WebCore::HTTPHeaderValues::applicationJSONContentType()).get() forHTTPHeaderField:@"Content-Type"];
+        auto body = utf8(jsonPayload->toJSONString());
         request.get().HTTPBody = toNSData(byteCast<uint8_t>(body.span())).get();
     }
 
@@ -148,10 +148,10 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
     RetainPtr task = [statelessSessionWithoutRedirectsSingleton(applicationBundleIdentifier) dataTaskWithRequest:request.get() completionHandler:makeBlockPtr([callback = WTF::move(callback), identifier](NSData *data, NSURLResponse *response, NSError *error) mutable {
         taskMap().remove(identifier);
         if (error)
-            return callback(error.localizedDescription, { });
-        if (auto jsonValue = JSON::Value::parseJSON(String::fromUTF8(span(data))))
-            return callback({ }, jsonValue->asObject());
-        callback({ }, nullptr);
+            return callback(StringImpl::create(error.localizedDescription), { });
+        if (auto jsonValue = JSON::Value::parseJSON(StringImpl::fromUTF8(span(data))))
+            return callback(nullptr, jsonValue->asObject());
+        callback(nullptr, nullptr);
     }).get()];
     [task resume];
     taskMap().add(identifier, task.get());

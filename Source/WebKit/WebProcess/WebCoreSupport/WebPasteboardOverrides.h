@@ -41,20 +41,20 @@ class WebPasteboardOverrides {
 public:
     NODELETE static WebPasteboardOverrides& sharedPasteboardOverrides();
 
-    void addOverride(const String& pasteboardName, const String& type, const Vector<uint8_t>&);
-    void removeOverride(const String& pasteboardName, const String& type);
+    void addOverride(StringImpl* pasteboardName, StringImpl* type, const Vector<uint8_t>&);
+    void removeOverride(StringImpl* pasteboardName, StringImpl* type);
 
-    std::optional<WebCore::PasteboardItemInfo> overriddenInfo(const String& pasteboardName);
-    Vector<String> overriddenTypes(const String& pasteboardName);
+    std::optional<WebCore::PasteboardItemInfo> overriddenInfo(StringImpl* pasteboardName);
+    Vector<RefPtr<StringImpl>> overriddenTypes(StringImpl* pasteboardName);
 
-    bool getDataForOverride(const String& pasteboardName, const String& type, Vector<uint8_t>&) const;
+    bool getDataForOverride(StringImpl* pasteboardName, StringImpl* type, Vector<uint8_t>&) const;
 
 private:
     WebPasteboardOverrides();
 
     // The m_overridesMap maps string pasteboard names to pasteboard entries.
     // Each pasteboard entry is a map of a string type to a data buffer.
-    HashMap<String, HashMap<String, Vector<uint8_t>>> m_overridesMap;
+    HashMap<RefPtr<StringImpl>, HashMap<RefPtr<StringImpl>, Vector<uint8_t>>> m_overridesMap;
 };
 
 } // namespace WebKit

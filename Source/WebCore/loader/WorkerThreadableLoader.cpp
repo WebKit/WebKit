@@ -59,9 +59,9 @@
 
 namespace WebCore {
 
-WorkerThreadableLoader::WorkerThreadableLoader(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
+WorkerThreadableLoader::WorkerThreadableLoader(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope, ThreadableLoaderClient& client, StringImpl* taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, StringImpl* referrer)
     : m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client, options.initiatorType))
-    , m_bridge(MainThreadBridge::create(m_workerClientWrapper.get(), protect(workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy()), workerOrWorkletGlobalScope.identifier(), taskMode, WTF::move(request), options, referrer.isEmpty() ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer().string : referrer, workerOrWorkletGlobalScope))
+    , m_bridge(MainThreadBridge::create(m_workerClientWrapper.get(), protect(workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy()), workerOrWorkletGlobalScope.identifier(), taskMode, WTF::move(request), options, isEmpty(referrer) ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer().string : RefPtr<StringImpl> { referrer }, workerOrWorkletGlobalScope))
 {
 }
 
@@ -78,7 +78,7 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerOrWorkletGlobalScop
     // Create a unique mode just for this synchronous resource load.
     auto mode = makeString("loadResourceSynchronouslyMode"_s, runLoop.createUniqueId());
 
-    Ref loader = WorkerThreadableLoader::create(workerOrWorkletGlobalScope, client, mode, WTF::move(request), options, String());
+    Ref loader = WorkerThreadableLoader::create(workerOrWorkletGlobalScope, client, mode, WTF::move(request), options, nullString());
     bool success = true;
     while (!loader->done() && success)
         success = runLoop.runInMode(&workerOrWorkletGlobalScope, mode);
@@ -100,30 +100,30 @@ void WorkerThreadableLoader::computeIsDone()
 struct LoaderTaskOptions {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LoaderTaskOptions);
 
-    LoaderTaskOptions(const ThreadableLoaderOptions&, const String&, Ref<SecurityOrigin>&&);
+    LoaderTaskOptions(const ThreadableLoaderOptions&, StringImpl*, Ref<SecurityOrigin>&&);
     ThreadableLoaderOptions options;
-    String referrer;
+    RefPtr<StringImpl> referrer;
     Ref<SecurityOrigin> origin;
 };
 
-LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, const String& referrer, Ref<SecurityOrigin>&& origin)
+LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, StringImpl* referrer, Ref<SecurityOrigin>&& origin)
     : options(options.isolatedCopy())
-    , referrer(referrer.isolatedCopy())
+    , referrer(isolatedCopy(referrer))
     , origin(WTF::move(origin))
 {
 }
 
-auto WorkerThreadableLoader::MainThreadBridge::create(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy* loaderProxy, ScriptExecutionContextIdentifier contextIdentifier, const String& taskMode,
-    ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer, WorkerOrWorkletGlobalScope& globalScope) -> Ref<MainThreadBridge>
+auto WorkerThreadableLoader::MainThreadBridge::create(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy* loaderProxy, ScriptExecutionContextIdentifier contextIdentifier, StringImpl* taskMode,
+    ResourceRequest&& request, const ThreadableLoaderOptions& options, StringImpl* outgoingReferrer, WorkerOrWorkletGlobalScope& globalScope) -> Ref<MainThreadBridge>
 {
     return adoptRef(*new MainThreadBridge(workerClientWrapper, loaderProxy, contextIdentifier, taskMode, WTF::move(request), options, outgoingReferrer, globalScope));
 }
 
-WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy* loaderProxy, ScriptExecutionContextIdentifier contextIdentifier, const String& taskMode,
-    ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer, WorkerOrWorkletGlobalScope& globalScope)
+WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy* loaderProxy, ScriptExecutionContextIdentifier contextIdentifier, StringImpl* taskMode,
+    ResourceRequest&& request, const ThreadableLoaderOptions& options, StringImpl* outgoingReferrer, WorkerOrWorkletGlobalScope& globalScope)
     : m_workerClientWrapper(workerClientWrapper)
     , m_loaderProxy(loaderProxy)
-    , m_taskMode(taskMode.isolatedCopy())
+    , m_taskMode(isolatedCopy(taskMode))
     , m_workerRequestIdentifier { ResourceLoaderIdentifier::generate() }
     , m_contextIdentifier(contextIdentifier)
 {
@@ -147,7 +147,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     contentSecurityPolicyIsolatedCopy->copyUpgradeInsecureRequestStateFrom(*contentSecurityPolicy, ContentSecurityPolicy::ShouldMakeIsolatedCopy::Yes);
     auto crossOriginEmbedderPolicyCopy = globalScope.crossOriginEmbedderPolicy().isolatedCopy();
 
-    auto optionsCopy = makeUnique<LoaderTaskOptions>(options, request.httpReferrer().isNull() ? outgoingReferrer : request.httpReferrer(), WTF::move(securityOriginCopy));
+    auto optionsCopy = makeUnique<LoaderTaskOptions>(options, !request.httpReferrer() ? RefPtr<StringImpl> { outgoingReferrer } : request.httpReferrer(), WTF::move(securityOriginCopy));
 
     // All loads start out as Document. Inside WorkerThreadableLoader we upgrade this to a Worker load.
     ASSERT(optionsCopy->options.initiatorContext == InitiatorContext::Document);
@@ -301,7 +301,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishTiming(const ResourceTim
 {
     ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = m_workerClientWrapper, resourceTiming = resourceTiming.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        ASSERT(!resourceTiming.initiatorType().isEmpty());
+        ASSERT(!isEmpty(resourceTiming.initiatorType()));
 
         // No need to notify clients, just add the performance timing entry.
         if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(context))

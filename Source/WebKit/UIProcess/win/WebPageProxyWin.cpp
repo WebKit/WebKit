@@ -39,17 +39,17 @@ void WebPageProxy::platformInitialize()
 {
 }
 
-String WebPageProxy::userAgentForURL(const URL&)
+RefPtr<StringImpl> WebPageProxy::userAgentForURL(const URL&)
 {
     return userAgent();
 }
 
-String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
+RefPtr<StringImpl> WebPageProxy::standardUserAgent(StringImpl* applicationNameForUserAgent)
 {
     return WebCore::standardUserAgent(applicationNameForUserAgent);
 }
 
-void WebPageProxy::saveRecentSearches(IPC::Connection&, const String& name, const Vector<WebCore::RecentSearch>& searchItems)
+void WebPageProxy::saveRecentSearches(IPC::Connection&, StringImpl* name, const Vector<WebCore::RecentSearch>& searchItems)
 {
     if (!name)
         return;
@@ -57,7 +57,7 @@ void WebPageProxy::saveRecentSearches(IPC::Connection&, const String& name, cons
     return WebCore::SearchPopupMenuDB::singleton().saveRecentSearches(name, searchItems);
 }
 
-void WebPageProxy::loadRecentSearches(IPC::Connection&, const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+void WebPageProxy::loadRecentSearches(IPC::Connection&, StringImpl* name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     if (!name)
         return completionHandler({ });

@@ -47,13 +47,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkResourcesData::ResourceData);
 
 using namespace Inspector;
 
-NetworkResourcesData::ResourceData::ResourceData(const String& requestId, const String& loaderId)
+NetworkResourcesData::ResourceData::ResourceData(StringImpl* requestId, StringImpl* loaderId)
     : m_requestId(requestId)
     , m_loaderId(loaderId)
 {
 }
 
-void NetworkResourcesData::ResourceData::setContent(const String& content, bool base64Encoded)
+void NetworkResourcesData::ResourceData::setContent(StringImpl* content, bool base64Encoded)
 {
     ASSERT(!hasData());
     ASSERT(!hasContent());
@@ -72,8 +72,8 @@ unsigned NetworkResourcesData::ResourceData::removeContent()
 
     if (hasContent()) {
         ASSERT(!hasData());
-        result = m_content.sizeInBytes();
-        m_content = String();
+        result = sizeInBytes(m_content);
+        m_content = nullptr;
     }
     return result;
 }
@@ -126,7 +126,7 @@ NetworkResourcesData::~NetworkResourcesData()
     clear();
 }
 
-void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, Inspector::ResourceType type)
+void NetworkResourcesData::resourceCreated(StringImpl* requestId, StringImpl* loaderId, Inspector::ResourceType type)
 {
     ensureNoDataForRequestId(requestId);
 
@@ -135,7 +135,7 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
     m_requestIdToResourceDataMap.set(requestId, WTF::move(resourceData));
 }
 
-void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, CachedResource& cachedResource)
+void NetworkResourcesData::resourceCreated(StringImpl* requestId, StringImpl* loaderId, CachedResource& cachedResource)
 {
     ensureNoDataForRequestId(requestId);
 
@@ -144,7 +144,7 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
     m_requestIdToResourceDataMap.set(requestId, WTF::move(resourceData));
 }
 
-void NetworkResourcesData::responseReceived(const String& requestId, const String& frameId, const ResourceResponse& response, Inspector::ResourceType type, bool forceBufferData)
+void NetworkResourcesData::responseReceived(StringImpl* requestId, StringImpl* frameId, const ResourceResponse& response, Inspector::ResourceType type, bool forceBufferData)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -168,7 +168,7 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
     }
 }
 
-void NetworkResourcesData::setResourceType(const String& requestId, Inspector::ResourceType type)
+void NetworkResourcesData::setResourceType(StringImpl* requestId, Inspector::ResourceType type)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -176,7 +176,7 @@ void NetworkResourcesData::setResourceType(const String& requestId, Inspector::R
     resourceData->setType(type);
 }
 
-Inspector::ResourceType NetworkResourcesData::resourceType(const String& requestId)
+Inspector::ResourceType NetworkResourcesData::resourceType(StringImpl* requestId)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -184,22 +184,22 @@ Inspector::ResourceType NetworkResourcesData::resourceType(const String& request
     return resourceData->type();
 }
 
-void NetworkResourcesData::setResourceContent(const String& requestId, String content, bool base64Encoded)
+void NetworkResourcesData::setResourceContent(StringImpl* requestId, RefPtr<StringImpl> content, bool base64Encoded)
 {
-    if (content.isNull())
+    if (!content)
         return;
 
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
 
-    size_t dataLength = content.sizeInBytes();
+    size_t dataLength = sizeInBytes(content);
     if (dataLength > m_settings.maximumSingleResourceContentSize || dataLength > m_settings.maximumResourcesContentSize)
         return;
     if (resourceData->isContentEvicted())
         return;
 
-    size_t previousDataLength = resourceData->hasData() ? resourceData->dataLength() : resourceData->content().sizeInBytes();
+    size_t previousDataLength = resourceData->hasData() ? resourceData->dataLength() : sizeInBytes(resourceData->content());
     size_t additionalDataLength = dataLength > previousDataLength ? dataLength - previousDataLength : 0;
     if (ensureFreeSpace(additionalDataLength) && !resourceData->isContentEvicted()) {
         // We can not be sure that we didn't try to save this request data while it was loading, so remove it, if any.
@@ -226,7 +226,7 @@ static bool shouldBufferResourceData(const NetworkResourcesData::ResourceData& r
     return false;
 }
 
-NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResourceData(const String& requestId, const SharedBuffer& data)
+NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResourceData(StringImpl* requestId, const SharedBuffer& data)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -249,7 +249,7 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResource
     return resourceData;
 }
 
-void NetworkResourcesData::loadingFinished(const String& requestId)
+void NetworkResourcesData::loadingFinished(StringImpl* requestId)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData || resourceData->loadState() != ResourceData::LoadState::Loading)
@@ -266,7 +266,7 @@ void NetworkResourcesData::loadingFinished(const String& requestId)
     m_contentSize -= byteCount;
 
     resourceData->decodeDataToContent();
-    byteCount = resourceData->content().sizeInBytes();
+    byteCount = sizeInBytes(resourceData->content());
     if (byteCount > m_settings.maximumSingleResourceContentSize) {
         resourceData->evictContent();
         return;
@@ -279,13 +279,13 @@ void NetworkResourcesData::loadingFinished(const String& requestId)
         resourceData->evictContent();
 }
 
-void NetworkResourcesData::loadingFailed(const String& requestId)
+void NetworkResourcesData::loadingFailed(StringImpl* requestId)
 {
     if (auto* resourceData = resourceDataForRequestId(requestId))
         resourceData->setLoadState(ResourceData::LoadState::Failed);
 }
 
-void NetworkResourcesData::addCachedResource(const String& requestId, CachedResource* cachedResource)
+void NetworkResourcesData::addCachedResource(StringImpl* requestId, CachedResource* cachedResource)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -293,7 +293,7 @@ void NetworkResourcesData::addCachedResource(const String& requestId, CachedReso
     resourceData->setCachedResource(cachedResource);
 }
 
-void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName)
+void NetworkResourcesData::addResourceSharedBuffer(StringImpl* requestId, RefPtr<FragmentedSharedBuffer>&& buffer, StringImpl* textEncodingName)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -302,14 +302,14 @@ void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, RefP
     resourceData->setTextEncodingName(textEncodingName);
 }
 
-NetworkResourcesData::ResourceData const* NetworkResourcesData::data(const String& requestId)
+NetworkResourcesData::ResourceData const* NetworkResourcesData::data(StringImpl* requestId)
 {
     return resourceDataForRequestId(requestId);
 }
 
-NetworkResourcesData::ResourceData const* NetworkResourcesData::dataForURL(const String& url)
+NetworkResourcesData::ResourceData const* NetworkResourcesData::dataForURL(StringImpl* url)
 {
-    if (url.isNull())
+    if (!url)
         return nullptr;
     
     NetworkResourcesData::ResourceData* mostRecentResourceData = nullptr;
@@ -319,16 +319,16 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::dataForURL(const
             continue;
 
         // responseTimestamp is checked so that we only grab the most recent response for the URL, instead of potentionally getting a more stale response.
-        if (resourceData->url() == url && resourceData->httpStatusCode() != httpStatus304NotModified && (!mostRecentResourceData || (resourceData->responseTimestamp() > mostRecentResourceData->responseTimestamp())))
+        if (equal(resourceData->url(), url) && resourceData->httpStatusCode() != httpStatus304NotModified && (!mostRecentResourceData || (resourceData->responseTimestamp() > mostRecentResourceData->responseTimestamp())))
             mostRecentResourceData = resourceData;
     }
     
     return mostRecentResourceData;
 }
 
-Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cachedResource)
+Vector<RefPtr<StringImpl>> NetworkResourcesData::removeCachedResource(CachedResource* cachedResource)
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
     for (auto& entry : m_requestIdToResourceDataMap) {
         ResourceData* resourceData = entry.value.get();
         if (resourceData->cachedResource() == cachedResource) {
@@ -340,7 +340,7 @@ Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cached
     return result;
 }
 
-void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
+void NetworkResourcesData::clear(std::optional<RefPtr<StringImpl>> preservedLoaderId)
 {
     if (!preservedLoaderId) {
         m_requestIdToResourceDataMap.clear();
@@ -353,7 +353,7 @@ void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
         auto resourceData = resourceDataForRequestId(requestId);
         if (!resourceData)
             continue;
-        if (resourceData->loaderId() == *preservedLoaderId)
+        if (equal(resourceData->loaderId(), *preservedLoaderId))
             m_requestIdsDeque.add(requestId);
         else {
             m_contentSize -= resourceData->evictContent();
@@ -363,7 +363,7 @@ void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
 
     m_requestIdToResourceDataMap.removeIf([&](auto& entry) {
         auto& resourceData = *entry.value;
-        if (resourceData.loaderId() == *preservedLoaderId)
+        if (equal(resourceData.loaderId(), *preservedLoaderId))
             return false;
         m_contentSize -= resourceData.evictContent();
         return true;
@@ -375,14 +375,14 @@ Vector<NetworkResourcesData::ResourceData*> NetworkResourcesData::resources()
     return WTF::map(m_requestIdToResourceDataMap.values(), [] (const auto& v) { return v.get(); });
 }
 
-NetworkResourcesData::ResourceData* NetworkResourcesData::resourceDataForRequestId(const String& requestId)
+NetworkResourcesData::ResourceData* NetworkResourcesData::resourceDataForRequestId(StringImpl* requestId)
 {
-    if (requestId.isNull())
+    if (!requestId)
         return nullptr;
     return m_requestIdToResourceDataMap.get(requestId);
 }
 
-void NetworkResourcesData::ensureNoDataForRequestId(const String& requestId)
+void NetworkResourcesData::ensureNoDataForRequestId(StringImpl* requestId)
 {
     auto result = m_requestIdToResourceDataMap.take(requestId);
     if (!result)
@@ -400,7 +400,7 @@ bool NetworkResourcesData::ensureFreeSpace(size_t size)
 
     ASSERT(m_settings.maximumResourcesContentSize >= m_contentSize);
     while (size > m_settings.maximumResourcesContentSize - m_contentSize) {
-        String requestId = m_requestIdsDeque.takeFirst();
+        RefPtr<StringImpl> requestId = m_requestIdsDeque.takeFirst();
         ResourceData* resourceData = resourceDataForRequestId(requestId);
         if (resourceData)
             m_contentSize -= resourceData->evictContent();

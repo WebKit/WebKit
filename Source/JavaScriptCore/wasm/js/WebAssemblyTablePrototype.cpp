@@ -68,7 +68,7 @@ static ALWAYS_INLINE JSWebAssemblyTable* getTable(JSGlobalObject* globalObject, 
     JSWebAssemblyTable* result = dynamicDowncast<JSWebAssemblyTable>(v);
     if (!result) {
         throwException(globalObject, throwScope, 
-            createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Table"_s));
+            createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Table"_si));
         return nullptr;
     }
     return result;
@@ -108,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (!didGrow)
-        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow could not grow the table"_s);
+        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow could not grow the table"_si);
 
     RELEASE_AND_RETURN(throwScope, JSValue::encode(addressValueFromUint64(globalObject, oldLength, table->table()->addressType())));
 }
@@ -124,7 +124,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGet, (JSGlobalObject* globalOb
     uint64_t index = addressValueToUint64(globalObject, callFrame->argument(0), table->table()->addressType());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (index >= table->length())
-        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_s);
+        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_si);
 
     RELEASE_AND_RETURN(throwScope, JSValue::encode(table->get(globalObject, index)));
 }
@@ -141,7 +141,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (index >= table->length())
-        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s);
+        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_si);
 
     JSValue value = callFrame->argument(1);
     if (callFrame->argumentCount() < 2) {

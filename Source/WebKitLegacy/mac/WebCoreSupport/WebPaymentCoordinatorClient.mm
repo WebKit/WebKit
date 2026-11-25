@@ -44,7 +44,7 @@ WebPaymentCoordinatorClient::WebPaymentCoordinatorClient() = default;
 
 WebPaymentCoordinatorClient::~WebPaymentCoordinatorClient() = default;
 
-std::optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&) const
+std::optional<RefPtr<StringImpl>> WebPaymentCoordinatorClient::validatedPaymentNetwork(StringImpl*) const
 {
     return std::nullopt;
 }
@@ -54,14 +54,14 @@ bool WebPaymentCoordinatorClient::canMakePayments()
     return false;
 }
 
-void WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&& completionHandler)
 {
     callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(false);
     });
 }
 
-void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorClient::openPaymentSetup(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&& completionHandler)
 {
     callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler(false);

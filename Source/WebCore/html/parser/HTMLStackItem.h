@@ -55,8 +55,8 @@ public:
     Element& element() const { return downcast<Element>(node()); }
     Element* elementOrNull() const { return downcast<Element>(m_node.get()); }
 
-    const AtomString& localName() const LIFETIME_BOUND { return isElement() ? element().localName() : nullAtom(); }
-    const AtomString& namespaceURI() const LIFETIME_BOUND { return isElement() ? element().namespaceURI() : nullAtom(); }
+    const RefPtr<AtomStringImpl>& localName() const LIFETIME_BOUND { return isElement() ? element().localName() : nullAtom(); }
+    const RefPtr<AtomStringImpl>& namespaceURI() const LIFETIME_BOUND { return isElement() ? element().namespaceURI() : nullAtom(); }
 
     ElementName elementName() const { return m_elementName; }
     Namespace nodeNamespace() const { return m_namespace; }
@@ -64,7 +64,7 @@ public:
     const Vector<Attribute>& attributes() const LIFETIME_BOUND;
     const Attribute* findAttribute(const QualifiedName& attributeName) const LIFETIME_BOUND;
 
-    bool matchesHTMLTag(const AtomString&) const;
+    bool matchesHTMLTag(AtomStringImpl*) const;
 
 private:
     ElementName m_elementName = ElementName::Unknown;
@@ -116,7 +116,7 @@ inline const Attribute* HTMLStackItem::findAttribute(const QualifiedName& attrib
     return WebCore::findAttribute(const_cast<Vector<Attribute>&>(attributes()), attributeName);
 }
 
-inline bool HTMLStackItem::matchesHTMLTag(const AtomString& name) const
+inline bool HTMLStackItem::matchesHTMLTag(AtomStringImpl* name) const
 {
     return localName() == name && m_namespace == Namespace::HTML;
 }

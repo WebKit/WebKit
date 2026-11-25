@@ -34,7 +34,7 @@ struct CounterDirectives {
 };
 
 struct CounterDirectiveMap {
-    HashMap<AtomString, CounterDirectives> map;
+    HashMap<RefPtr<AtomStringImpl>, CounterDirectives> map;
 
     bool operator==(const CounterDirectiveMap&) const = default;
 };

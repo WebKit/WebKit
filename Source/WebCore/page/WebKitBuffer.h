@@ -36,8 +36,8 @@ class WEBCORE_EXPORT WebKitBuffer : public RefCounted<WebKitBuffer> {
 public:
     virtual ~WebKitBuffer();
 
-    virtual ExceptionOr<String> asUTF16String() const = 0;
-    virtual String asLatin1String() const = 0;
+    virtual ExceptionOr<RefPtr<StringImpl>> asUTF16String() const = 0;
+    virtual RefPtr<StringImpl> asLatin1String() const = 0;
 
 protected:
     WebKitBuffer();

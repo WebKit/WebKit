@@ -38,15 +38,15 @@ public:
         TIMEOUT = 3
     };
     
-    static Ref<GeolocationPositionError> create(ErrorCode code, const String& message) { return adoptRef(*new GeolocationPositionError(code, message)); }
+    static Ref<GeolocationPositionError> create(ErrorCode code, StringImpl* message) { return adoptRef(*new GeolocationPositionError(code, message)); }
 
     ErrorCode code() const { return m_code; }
-    const String& message() const LIFETIME_BOUND { return m_message; }
+    const RefPtr<StringImpl>& message() const LIFETIME_BOUND { return m_message; }
     void setIsFatal(bool isFatal) { m_isFatal = isFatal; }
     bool isFatal() const { return m_isFatal; }
     
 private:
-    GeolocationPositionError(ErrorCode code, const String& message)
+    GeolocationPositionError(ErrorCode code, StringImpl* message)
         : m_code(code)
         , m_message(message)
         , m_isFatal(false)
@@ -54,7 +54,7 @@ private:
     }
     
     ErrorCode m_code;
-    String m_message;
+    RefPtr<StringImpl> m_message;
     // Whether the error is fatal, such that no request can ever obtain a good
     // position fix in the future.
     bool m_isFatal;

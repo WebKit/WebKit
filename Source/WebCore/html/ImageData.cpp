@@ -104,12 +104,12 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, Predefin
     auto pixelFormat = computePixelFormat(settings);
     auto dataSize = computeDataSize(size, pixelFormat);
     if (dataSize.hasOverflowed())
-        return Exception { ExceptionCode::RangeError, "Cannot allocate a buffer of this size"_s };
+        return Exception { ExceptionCode::RangeError, "Cannot allocate a buffer of this size"_si };
 
     auto array = ImageDataArray::tryCreate(dataSize, pixelFormat, optionalBytes);
     if (!array) {
         // FIXME: Does this need to be a "real" out of memory error with setOutOfMemoryError called on it?
-        return Exception { ExceptionCode::RangeError, "Out of memory"_s };
+        return Exception { ExceptionCode::RangeError, "Out of memory"_si };
     }
 
     auto colorSpace = ImageData::computeColorSpace(settings, defaultColorSpace);
@@ -127,21 +127,21 @@ ExceptionOr<Ref<ImageData>> ImageData::create(Ref<JSC::ArrayBufferView>&& arrayB
 
     auto length = array.length();
     if (!length || length % 4)
-        return Exception { ExceptionCode::InvalidStateError, "Length is not a non-zero multiple of 4"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Length is not a non-zero multiple of 4"_si };
 
     auto pixels = length / 4;
     if (!sw || pixels % sw)
-        return Exception { ExceptionCode::IndexSizeError, "Length is not a multiple of sw"_s };
+        return Exception { ExceptionCode::IndexSizeError, "Length is not a multiple of sw"_si };
 
     Checked<int, RecordOverflow> height = pixels / sw;
     if (height.hasOverflowed())
-        return Exception { ExceptionCode::IndexSizeError, "Computed height is too big"_s };
+        return Exception { ExceptionCode::IndexSizeError, "Computed height is too big"_si };
 
     if (sh && sh.value() != height)
-        return Exception { ExceptionCode::IndexSizeError, "sh value is not equal to height"_s };
+        return Exception { ExceptionCode::IndexSizeError, "sh value is not equal to height"_si };
 
     if (settings && settings->pixelFormat != array.pixelFormat())
-        return Exception { ExceptionCode::InvalidStateError, "Mismatched pixel formats in data and settings"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Mismatched pixel formats in data and settings"_si };
 
     IntSize size(sw, height.value());
     auto dataSize = computeDataSize(size, computePixelFormat(settings));

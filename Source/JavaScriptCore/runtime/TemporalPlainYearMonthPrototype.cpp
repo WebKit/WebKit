@@ -153,7 +153,7 @@ static JSC::EncodedJSValue addDurationToYearMonth(JSGlobalObject* globalObject, 
     // Step 6: durationToAdd = internalDuration.[[Date]] — the (years, months, weeks, days) portion.
     // Step 7: If durationToAdd.[[Weeks]] ≠ 0, or durationToAdd.[[Days]] ≠ 0, or internalDuration.[[Time]] ≠ 0, throw RangeError.
     if (duration.weeks() || duration.days() || duration.hours() || duration.minutes() || duration.seconds() || duration.milliseconds() || duration.microseconds() || duration.nanoseconds()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Duration must not have units below months for PlainYearMonth arithmetic"_s);
+        throwRangeError(globalObject, scope, "Duration must not have units below months for PlainYearMonth arithmetic"_si);
         return { };
     }
 
@@ -162,9 +162,9 @@ static JSC::EncodedJSValue addDurationToYearMonth(JSGlobalObject* globalObject, 
     auto result = TemporalCore::plainYearMonthAdd(yearMonth->calendarID(), yearMonth->plainYearMonth().isoPlainDate(), duration, overflow);
     if (!result) [[unlikely]] {
         if (result.error().kind == TemporalErrorKind::TypeError)
-            throwTypeError(globalObject, scope, String(result.error().message));
+            throwTypeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
         else
-            throwRangeError(globalObject, scope, String(result.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
         return { };
     }
 
@@ -227,9 +227,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncWith, (JSGlobalObjec
     auto result = TemporalCore::plainYearMonthWith(yearMonth->calendarID(), yearMonth->plainYearMonth().isoPlainDate(), partialFields, overflow);
     if (!result) [[unlikely]] {
         if (result.error().kind == TemporalErrorKind::TypeError)
-            throwTypeError(globalObject, scope, String(result.error().message));
+            throwTypeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
         else
-            throwRangeError(globalObject, scope, String(result.error().message));
+            throwRangeError(globalObject, scope, RefPtr<StringImpl>(result.error().message));
         return { };
     }
 
@@ -264,7 +264,7 @@ static JSC::EncodedJSValue differenceTemporalPlainYearMonth(JSGlobalObject* glob
 
     // Step 3: If CalendarEquals(calendar, other.[[Calendar]]) is false, throw RangeError.
     if (calendarId != other->calendarID()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "cannot compute difference between year-months with different calendars"_s);
+        throwRangeError(globalObject, scope, "cannot compute difference between year-months with different calendars"_si);
         return { };
     }
 
@@ -274,11 +274,11 @@ static JSC::EncodedJSValue differenceTemporalPlainYearMonth(JSGlobalObject* glob
     RETURN_IF_EXCEPTION(scope, { });
     // Reject the disallowed «week, day» units from spec's GetDifferenceSettings call above.
     if (largestUnit == TemporalUnit::Week || largestUnit == TemporalUnit::Day) [[unlikely]] {
-        throwRangeError(globalObject, scope, "largestUnit must be one of year, years, month, months"_s);
+        throwRangeError(globalObject, scope, "largestUnit must be one of year, years, month, months"_si);
         return { };
     }
     if (smallestUnit == TemporalUnit::Week || smallestUnit == TemporalUnit::Day) [[unlikely]] {
-        throwRangeError(globalObject, scope, "smallestUnit must be one of year, years, month, months"_s);
+        throwRangeError(globalObject, scope, "smallestUnit must be one of year, years, month, months"_si);
         return { };
     }
 
@@ -293,7 +293,7 @@ static JSC::EncodedJSValue differenceTemporalPlainYearMonth(JSGlobalObject* glob
     // them to calendar arithmetic (icu4x/temporal_rs assume in-range inputs).
     if (!ISO8601::isDateTimeWithinLimits(thisIsoDate.year(), thisIsoDate.month(), thisIsoDate.day(), 12, 0, 0, 0, 0, 0)
         || !ISO8601::isDateTimeWithinLimits(otherIsoDate.year(), otherIsoDate.month(), otherIsoDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "date/time value is outside of supported range"_s);
+        throwRangeError(globalObject, scope, "date/time value is outside of supported range"_si);
         return { };
     }
 
@@ -409,9 +409,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
         double doubleDay = dayProperty.toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(doubleDay)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "day property must be finite"_s);
+            return throwVMRangeError(globalObject, scope, "day property must be finite"_si);
         if (doubleDay <= 0) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "day property must be a positive integer"_s);
+            return throwVMRangeError(globalObject, scope, "day property must be a positive integer"_si);
         itemDay = clampTo<uint8_t>(doubleDay);
     }
     if (!itemDay) [[unlikely]]
@@ -423,9 +423,9 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
         auto resolved = TemporalCore::plainYearMonthToPlainDate(yearMonth->calendarID(), yearMonth->plainYearMonth().isoPlainDate(), itemDay.value());
         if (!resolved) [[unlikely]] {
             if (resolved.error().kind == TemporalErrorKind::TypeError)
-                throwTypeError(globalObject, scope, String(resolved.error().message));
+                throwTypeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             else
-                throwRangeError(globalObject, scope, String(resolved.error().message));
+                throwRangeError(globalObject, scope, RefPtr<StringImpl>(resolved.error().message));
             return { };
         }
         auto calIdCopy = resolved->calendarId;
@@ -436,7 +436,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
     auto thisMonth = yearMonth->month();
     auto plainDateResult = TemporalCore::regulateISODate(thisYear, thisMonth, itemDay.value(), TemporalOverflow::Constrain);
     if (!plainDateResult) [[unlikely]] {
-        throwRangeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toPlainDate: date is invalid"_s);
+        throwRangeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toPlainDate: date is invalid"_si);
         return { };
     }
 

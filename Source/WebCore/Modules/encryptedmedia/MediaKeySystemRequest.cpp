@@ -41,14 +41,14 @@
 
 namespace WebCore {
 
-Ref<MediaKeySystemRequest> MediaKeySystemRequest::create(Document& document, const String& keySystem, RefPtr<DeferredPromise>&& promise)
+Ref<MediaKeySystemRequest> MediaKeySystemRequest::create(Document& document, StringImpl* keySystem, RefPtr<DeferredPromise>&& promise)
 {
     auto result = adoptRef(*new MediaKeySystemRequest(document, keySystem, WTF::move(promise)));
     result->suspendIfNeeded();
     return result;
 }
 
-MediaKeySystemRequest::MediaKeySystemRequest(Document& document, const String& keySystem, RefPtr<DeferredPromise>&& promise)
+MediaKeySystemRequest::MediaKeySystemRequest(Document& document, StringImpl* keySystem, RefPtr<DeferredPromise>&& promise)
     : ActiveDOMObject(document)
     , m_keySystem(keySystem)
     , m_promise(WTF::move(promise))
@@ -85,7 +85,7 @@ void MediaKeySystemRequest::start()
     controller->requestMediaKeySystem(*this);
 }
 
-void MediaKeySystemRequest::allow(String&& mediaKeysHashSalt)
+void MediaKeySystemRequest::allow(RefPtr<StringImpl>&& mediaKeysHashSalt)
 {
     if (!scriptExecutionContext())
         return;
@@ -96,7 +96,7 @@ void MediaKeySystemRequest::allow(String&& mediaKeysHashSalt)
     });
 }
 
-void MediaKeySystemRequest::deny(const String& message)
+void MediaKeySystemRequest::deny(StringImpl* message)
 {
     if (!scriptExecutionContext())
         return;
@@ -106,7 +106,7 @@ void MediaKeySystemRequest::deny(const String& message)
         return;
 
     ExceptionCode code = ExceptionCode::NotSupportedError;
-    if (!message.isEmpty())
+    if (!isEmpty(message))
         promise->reject(code, message);
     else
         promise->reject(code);

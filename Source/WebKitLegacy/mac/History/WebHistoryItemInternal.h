@@ -64,7 +64,7 @@ extern void WKNotifyHistoryItemChanged();
     RefPtr<WebCore::HistoryItem> _historyItem;
 
     NSTimeInterval _lastVisitedTime;
-    std::unique_ptr<Vector<String>> _redirectURLs;
+    std::unique_ptr<Vector<RefPtr<StringImpl>>> _redirectURLs;
 }
 @end
 

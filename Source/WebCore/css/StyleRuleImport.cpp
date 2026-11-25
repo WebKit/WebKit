@@ -71,7 +71,7 @@ StyleRuleImport::~StyleRuleImport()
         protect(m_cachedSheet)->removeClient(protect(m_styleSheetClient));
 }
 
-void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& cachedStyleSheet)
+void StyleRuleImport::setCSSStyleSheet(StringImpl* href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& cachedStyleSheet)
 {
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
@@ -156,14 +156,14 @@ void StyleRuleImport::requestStyleSheet()
         };
         options.loadedFromOpaqueSource = m_parentStyleSheet->loadedFromOpaqueSource();
 
-        CachedResourceRequest request(WTF::move(absURL), options, std::nullopt, String(m_parentStyleSheet->charset()));
+        CachedResourceRequest request(WTF::move(absURL), options, std::nullopt, StringImpl::createOrNull(m_parentStyleSheet->charset()));
         request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
         m_cachedSheet = protect(document->cachedResourceLoader())->requestUserCSSStyleSheet(*page, WTF::move(request));
     } else {
         RefPtr ownerNode = rootSheet->singleOwnerNode();
         auto options = CSS::styleResourceLoaderOptions(ownerNode && ownerNode->isInUserAgentShadowTree());
         auto request = CSS::createStyleResourceRequest(*document, absURL, m_url.modifiers, m_parentStyleSheet->parserContext().provenance(), FetchOptions::Mode::NoCors, options);
-        request.setCharset(m_parentStyleSheet->charset());
+        request.setCharset(StringImpl::createOrNull(m_parentStyleSheet->charset()).get());
         if (auto result = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)))
             m_cachedSheet = WTF::move(result.value());
         else

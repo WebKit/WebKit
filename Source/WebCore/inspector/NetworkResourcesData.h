@@ -53,23 +53,23 @@ public:
     public:
         enum class LoadState : uint8_t { Loading, Finished, Failed };
 
-        NODELETE ResourceData(const String& requestId, const String& loaderId);
+        NODELETE ResourceData(StringImpl* requestId, StringImpl* loaderId);
 
-        const String& requestId() const LIFETIME_BOUND { return m_requestId; }
-        const String& loaderId() const LIFETIME_BOUND { return m_loaderId; }
+        const RefPtr<StringImpl>& requestId() const LIFETIME_BOUND { return m_requestId; }
+        const RefPtr<StringImpl>& loaderId() const LIFETIME_BOUND { return m_loaderId; }
 
         LoadState loadState() const { return m_loadState; }
         void setLoadState(LoadState state) { m_loadState = state; }
 
-        const String& frameId() const LIFETIME_BOUND { return m_frameId; }
-        void setFrameId(const String& frameId) { m_frameId = frameId; }
+        const RefPtr<StringImpl>& frameId() const LIFETIME_BOUND { return m_frameId; }
+        void setFrameId(StringImpl* frameId) { m_frameId = frameId; }
 
-        const String& url() const LIFETIME_BOUND { return m_url; }
-        void setURL(const String& url) { m_url = url; }
+        const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_url; }
+        void setURL(StringImpl* url) { m_url = url; }
 
-        bool hasContent() const { return !m_content.isNull(); }
-        const String& content() const LIFETIME_BOUND { return m_content; }
-        void setContent(const String&, bool base64Encoded);
+        bool hasContent() const { return !!m_content; }
+        const RefPtr<StringImpl>& content() const LIFETIME_BOUND { return m_content; }
+        void setContent(StringImpl*, bool base64Encoded);
 
         bool base64Encoded() const { return m_base64Encoded; }
 
@@ -83,14 +83,14 @@ public:
         int httpStatusCode() const { return m_httpStatusCode; }
         void setHTTPStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
         
-        const String& httpStatusText() const LIFETIME_BOUND { return m_httpStatusText; }
-        void setHTTPStatusText(const String& httpStatusText) { m_httpStatusText = httpStatusText; }
+        const RefPtr<StringImpl>& httpStatusText() const LIFETIME_BOUND { return m_httpStatusText; }
+        void setHTTPStatusText(StringImpl* httpStatusText) { m_httpStatusText = httpStatusText; }
 
-        const String& textEncodingName() const LIFETIME_BOUND { return m_textEncodingName; }
-        void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
+        const RefPtr<StringImpl>& textEncodingName() const LIFETIME_BOUND { return m_textEncodingName; }
+        void setTextEncodingName(StringImpl* textEncodingName) { m_textEncodingName = textEncodingName; }
         
-        const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
-        void setMIMEType(const String& mimeType) { m_mimeType = mimeType; }
+        const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+        void setMIMEType(StringImpl* mimeType) { m_mimeType = mimeType; }
 
         RefPtr<TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
         void setDecoder(RefPtr<TextResourceDecoder>&& decoder) { m_decoder = WTF::move(decoder); }
@@ -118,13 +118,13 @@ public:
         void appendData(const SharedBuffer&);
         void decodeDataToContent();
 
-        String m_requestId;
-        String m_loaderId;
-        String m_frameId;
-        String m_url;
-        String m_content;
-        String m_textEncodingName;
-        String m_mimeType;
+        RefPtr<StringImpl> m_requestId;
+        RefPtr<StringImpl> m_loaderId;
+        RefPtr<StringImpl> m_frameId;
+        RefPtr<StringImpl> m_url;
+        RefPtr<StringImpl> m_content;
+        RefPtr<StringImpl> m_textEncodingName;
+        RefPtr<StringImpl> m_mimeType;
         RefPtr<TextResourceDecoder> m_decoder;
         SharedBufferBuilder m_dataBuffer;
         RefPtr<FragmentedSharedBuffer> m_buffer;
@@ -132,7 +132,7 @@ public:
         WeakPtr<CachedResource> m_cachedResource;
         Inspector::ResourceType m_type { Inspector::ResourceType::Other };
         int m_httpStatusCode { 0 };
-        String m_httpStatusText;
+        RefPtr<StringImpl> m_httpStatusText;
         bool m_isContentEvicted { false };
         bool m_base64Encoded { false };
         bool m_forceBufferData { false };
@@ -153,30 +153,30 @@ public:
     NetworkResourcesData(const Settings&);
     ~NetworkResourcesData();
 
-    void resourceCreated(const String& requestId, const String& loaderId, Inspector::ResourceType);
-    void resourceCreated(const String& requestId, const String& loaderId, CachedResource&);
-    void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&, Inspector::ResourceType, bool forceBufferData);
-    void setResourceType(const String& requestId, Inspector::ResourceType);
-    Inspector::ResourceType resourceType(const String& requestId);
-    void setResourceContent(const String& requestId, String content, bool base64Encoded = false);
-    ResourceData const* maybeAddResourceData(const String& requestId, const SharedBuffer&);
-    void loadingFinished(const String& requestId);
-    void loadingFailed(const String& requestId);
-    void addCachedResource(const String& requestId, CachedResource*);
-    void addResourceSharedBuffer(const String& requestId, RefPtr<FragmentedSharedBuffer>&&, const String& textEncodingName);
-    ResourceData const* data(const String& requestId);
-    ResourceData const* dataForURL(const String& url);
-    Vector<String> removeCachedResource(CachedResource*);
-    void clear(std::optional<String> preservedLoaderId = std::nullopt);
+    void resourceCreated(StringImpl* requestId, StringImpl* loaderId, Inspector::ResourceType);
+    void resourceCreated(StringImpl* requestId, StringImpl* loaderId, CachedResource&);
+    void responseReceived(StringImpl* requestId, StringImpl* frameId, const ResourceResponse&, Inspector::ResourceType, bool forceBufferData);
+    void setResourceType(StringImpl* requestId, Inspector::ResourceType);
+    Inspector::ResourceType resourceType(StringImpl* requestId);
+    void setResourceContent(StringImpl* requestId, RefPtr<StringImpl> content, bool base64Encoded = false);
+    ResourceData const* maybeAddResourceData(StringImpl* requestId, const SharedBuffer&);
+    void loadingFinished(StringImpl* requestId);
+    void loadingFailed(StringImpl* requestId);
+    void addCachedResource(StringImpl* requestId, CachedResource*);
+    void addResourceSharedBuffer(StringImpl* requestId, RefPtr<FragmentedSharedBuffer>&&, StringImpl* textEncodingName);
+    ResourceData const* data(StringImpl* requestId);
+    ResourceData const* dataForURL(StringImpl* url);
+    Vector<RefPtr<StringImpl>> removeCachedResource(CachedResource*);
+    void clear(std::optional<RefPtr<StringImpl>> preservedLoaderId = std::nullopt);
     Vector<ResourceData*> resources();
 
 private:
-    ResourceData* resourceDataForRequestId(const String& requestId);
-    void ensureNoDataForRequestId(const String& requestId);
+    ResourceData* resourceDataForRequestId(StringImpl* requestId);
+    void ensureNoDataForRequestId(StringImpl* requestId);
     bool ensureFreeSpace(size_t);
 
-    ListHashSet<String> m_requestIdsDeque;
-    MemoryCompactRobinHoodHashMap<String, std::unique_ptr<ResourceData>> m_requestIdToResourceDataMap;
+    ListHashSet<RefPtr<StringImpl>> m_requestIdsDeque;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, std::unique_ptr<ResourceData>> m_requestIdToResourceDataMap;
     size_t m_contentSize { 0 };
     Settings m_settings;
 };

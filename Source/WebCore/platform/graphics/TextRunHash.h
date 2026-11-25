@@ -44,7 +44,7 @@ inline void add(Hasher& hasher, const TextRun& textRun)
 
 inline bool TextRun::operator==(const TextRun& other) const
 {
-    return m_text == other.m_text
+    return equal(m_text, other.m_text)
         && m_tabSize == other.m_tabSize
         && m_xpos == other.m_xpos
         && m_horizontalGlyphStretch == other.m_horizontalGlyphStretch

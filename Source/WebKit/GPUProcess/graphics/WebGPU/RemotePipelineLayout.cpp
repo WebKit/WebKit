@@ -60,7 +60,7 @@ void RemotePipelineLayout::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemotePipelineLayout::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemotePipelineLayout::setLabel(String&& label)
+void RemotePipelineLayout::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

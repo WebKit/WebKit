@@ -68,7 +68,7 @@ public:
 
     static ProfilerSupport& singleton();
 
-    static void dumpIonGraphFunction(const String& functionName, ASCIILiteral tier, bool osr, Ref<JSON::Object>&&);
+    static void dumpIonGraphFunction(StringImpl* functionName, ASCIILiteral tier, bool osr, Ref<JSON::Object>&&);
 
     static void barrierSync();
 

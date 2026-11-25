@@ -63,11 +63,11 @@ void reportExceptionIfJSDOMWindow(JSC::JSGlobalObject* globalObject, JSC::JSValu
     reportException(globalObject, exception);
 }
 
-String retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, TopExceptionScope& topExceptionScope)
+RefPtr<StringImpl> retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, TopExceptionScope& topExceptionScope)
 {
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (auto* error = dynamicDowncast<JSDOMException>(exception))
         errorMessage = error->wrapped().message();
     else if (auto* error = dynamicDowncast<ErrorInstance>(exception))
@@ -82,16 +82,16 @@ String retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& 
     return errorMessage;
 }
 
-String retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, TopExceptionScope& topExceptionScope)
+RefPtr<StringImpl> retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, TopExceptionScope& topExceptionScope)
 {
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-    String errorMessage;
+    RefPtr<StringImpl> errorMessage;
     if (auto* domException = dynamicDowncast<JSDOMException>(exception)) {
         auto& wrapped = domException->wrapped();
-        String name = wrapped.name();
-        String message = wrapped.message();
-        errorMessage = makeString(name, name.isEmpty() || message.isEmpty() ? ""_s : ": "_s, message);
+        RefPtr<StringImpl> name = wrapped.name();
+        RefPtr<StringImpl> message = wrapped.message();
+        errorMessage = makeString(name, isEmpty(name) || isEmpty(message) ? ""_s : ": "_s, message);
     } else if (auto* error = dynamicDowncast<ErrorInstance>(exception))
         errorMessage = error->sanitizedToString(&lexicalGlobalObject);
     else
@@ -131,7 +131,7 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
 
     int lineNumber = 0;
     int columnNumber = 0;
-    String exceptionSourceURL;
+    RefPtr<StringImpl> exceptionSourceURL;
     if (auto* callFrame = callStack->firstNonNativeCallFrame()) {
         lineNumber = callFrame->lineNumber();
         columnNumber = callFrame->columnNumber();
@@ -145,7 +145,7 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
         // whose origin is hidden from the page (e.g. extension content scripts in the main world).
         // Use the unmasked URL from the exception's code blocks for internal reporting.
         auto unmaskedSourceURL = exceptionSourceURL;
-        if (auto url = unmaskedSourceURLFromException(*exception, vm); !url.isEmpty())
+        if (auto url = unmaskedSourceURLFromException(*exception, vm); !isEmpty(url))
             unmaskedSourceURL = url;
 
         globalObject->invokeScriptErrorCallbacks(errorMessage, unmaskedSourceURL, lineNumber, columnNumber);
@@ -170,7 +170,7 @@ void reportCurrentException(JSGlobalObject* lexicalGlobalObject)
     reportException(lexicalGlobalObject, exception);
 }
 
-JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec, const String& message)
+JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec, StringImpl* message)
 {
     VM& vm = lexicalGlobalObject->vm();
     if (vm.hasPendingTerminationException()) [[unlikely]]
@@ -182,17 +182,17 @@ JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec
 
     // FIXME: Handle other WebIDL exception types.
     case ExceptionCode::TypeError:
-        if (message.isEmpty())
+        if (isEmpty(message))
             return createTypeError(lexicalGlobalObject);
         return createTypeError(lexicalGlobalObject, message);
 
     case ExceptionCode::RangeError:
-        if (message.isEmpty())
-            return createRangeError(lexicalGlobalObject, "Bad value"_s);
+        if (isEmpty(message))
+            return createRangeError(lexicalGlobalObject, "Bad value"_si);
         return createRangeError(lexicalGlobalObject, message);
 
     case ExceptionCode::JSSyntaxError:
-        if (message.isEmpty())
+        if (isEmpty(message))
             return createSyntaxError(lexicalGlobalObject);
         return createSyntaxError(lexicalGlobalObject, message);
 
@@ -229,12 +229,12 @@ void propagateExceptionSlowPath(JSC::JSGlobalObject& lexicalGlobalObject, JSC::T
     throwException(&lexicalGlobalObject, throwScope, createDOMException(lexicalGlobalObject, WTF::move(exception)));
 }
     
-static EncodedJSValue throwTypeError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, const String& errorMessage)
+static EncodedJSValue throwTypeError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, StringImpl* errorMessage)
 {
     return throwVMTypeError(&lexicalGlobalObject, scope, errorMessage);
 }
 
-template<typename... StringTypes> static String makeArgumentTypeErrorMessage(unsigned argumentIndex, ASCIILiteral argumentName, ASCIILiteral interfaceName, ASCIILiteral functionName, StringTypes ...strings)
+template<typename... StringTypes> static RefPtr<StringImpl> makeArgumentTypeErrorMessage(unsigned argumentIndex, ASCIILiteral argumentName, ASCIILiteral interfaceName, ASCIILiteral functionName, StringTypes ...strings)
 {
     return makeString(
         "Argument "_s, argumentIndex + 1, " ('"_s, argumentName, "') to "_s,
@@ -246,16 +246,16 @@ template<typename... StringTypes> static String makeArgumentTypeErrorMessage(uns
 void throwNotSupportedError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoExceptionExceptTermination();
-    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::NotSupportedError, message));
+    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::NotSupportedError, StringImpl::create(message).ptr()));
 }
 
 void throwInvalidStateError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoExceptionExceptTermination();
-    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::InvalidStateError, message));
+    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::InvalidStateError, StringImpl::create(message).ptr()));
 }
 
-void throwSecurityError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, const String& message)
+void throwSecurityError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, StringImpl* message)
 {
     scope.assertNoExceptionExceptTermination();
     throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::SecurityError, message));
@@ -298,7 +298,7 @@ JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::
 
 void throwSequenceTypeError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope)
 {
-    throwTypeError(lexicalGlobalObject, scope, "Value is not a sequence"_s);
+    throwTypeError(lexicalGlobalObject, scope, "Value is not a sequence"_si);
 }
 
 void throwNonFiniteTypeError(JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope)
@@ -308,15 +308,15 @@ void throwNonFiniteTypeError(JSGlobalObject& lexicalGlobalObject, JSC::ThrowScop
 
 JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::ClassInfo* classInfo, JSC::PropertyName attributeName)
 {
-    return createRejectedPromiseWithTypeError(lexicalGlobalObject, JSC::makeDOMAttributeGetterTypeErrorMessage(classInfo->className, String(attributeName.uid())), RejectedPromiseWithTypeErrorCause::NativeGetter);
+    return createRejectedPromiseWithTypeError(lexicalGlobalObject, JSC::makeDOMAttributeGetterTypeErrorMessage(classInfo->className, RefPtr<StringImpl>(attributeName.uid())), RejectedPromiseWithTypeErrorCause::NativeGetter);
 }
 
-String makeThisTypeErrorMessage(StringView interfaceName, StringView functionName)
+RefPtr<StringImpl> makeThisTypeErrorMessage(StringView interfaceName, StringView functionName)
 {
     return makeString("Can only call "_s, interfaceName, '.', functionName, " on instances of "_s, interfaceName);
 }
 
-String makeUnsupportedIndexedSetterErrorMessage(ASCIILiteral interfaceName)
+RefPtr<StringImpl> makeUnsupportedIndexedSetterErrorMessage(ASCIILiteral interfaceName)
 {
     return makeString("Failed to set an indexed property on "_s, interfaceName, ": Indexed property setter is not supported."_s);
 }
@@ -340,7 +340,7 @@ JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::JSGlobalObject& lexicalG
 void throwDOMSyntaxError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoExceptionExceptTermination();
-    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::SyntaxError, message));
+    throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, ExceptionCode::SyntaxError, StringImpl::create(message).ptr()));
 }
 
 void throwDataCloneError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope)

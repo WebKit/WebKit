@@ -50,13 +50,13 @@ JSGlobalObjectRuntimeAgent::~JSGlobalObjectRuntimeAgent() = default;
 InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (executionContextId) {
-        errorString = "executionContextId is not supported for JSContexts as there is only one execution context"_s;
+        errorString = "executionContextId is not supported for JSContexts as there is only one execution context"_si;
         return InjectedScript();
     }
 
     auto injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
     if (injectedScript.hasNoValue())
-        errorString = "Missing execution context for given executionContextId."_s;
+        errorString = "Missing execution context for given executionContextId."_si;
 
     return injectedScript;
 }

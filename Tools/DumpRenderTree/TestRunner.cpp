@@ -2126,8 +2126,8 @@ void TestRunner::waitToDumpWatchdogTimerFired()
     fputs("FAIL: Timed out waiting for notifyDone to be called\n", testResult);
 
     auto logs = getAndResetAccumulatedLogs();
-    if (!logs.isEmpty())
-        SAFE_FPRINTF(testResult, "Logs accumulated during test run:\n%s\n", logs.utf8());
+    if (!isEmpty(logs))
+        SAFE_FPRINTF(testResult, "Logs accumulated during test run:\n%s\n", utf8(logs));
 
     notifyDone();
 }
@@ -2178,7 +2178,7 @@ void TestRunner::setShouldPaintBrokenImage(bool shouldPaintBrokenImage)
 
 void TestRunner::setAccummulateLogsForChannel(JSStringRef channel)
 {
-    WebCoreTestSupport::setLogChannelToAccumulate(String { utf8CString(channel) });
+    WebCoreTestSupport::setLogChannelToAccumulate(StringImpl::create((utf8CString(channel)).span()).get());
 }
 
 using CallbackMap = WTF::HashMap<unsigned, JSObjectRef>;
@@ -2242,7 +2242,8 @@ void TestRunner::runUIScript(JSContextRef context, JSStringRef script, JSValueRe
     if (!m_UIScriptContext)
         m_UIScriptContext = WTR::UIScriptContext::create(*this, WTR::UIScriptController::create);
 
-    String scriptString({ reinterpret_cast<const char16_t*>(JSStringGetCharactersPtr(script)), JSStringGetLength(script) });
+    std::span<const char16_t> scriptCharacters { reinterpret_cast<const char16_t*>(JSStringGetCharactersPtr(script)), JSStringGetLength(script) };
+    RefPtr<StringImpl> scriptString = scriptCharacters.data() ? RefPtr { StringImpl::create(scriptCharacters) } : nullptr; // A null buffer makes a null string.
     m_UIScriptContext->runUIScript(scriptString, callbackID);
 }
 
@@ -2266,7 +2267,7 @@ void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
 #endif
 }
 
-void TestRunner::uiScriptDidComplete(const String& result, unsigned callbackID)
+void TestRunner::uiScriptDidComplete(StringImpl* result, unsigned callbackID)
 {
     RefPtr stringRef = createJSString(result);
     callUIScriptCallback(callbackID, stringRef.get());

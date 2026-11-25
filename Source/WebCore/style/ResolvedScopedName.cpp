@@ -30,7 +30,7 @@
 
 namespace WebCore::Style {
 
-ResolvedScopedName::ResolvedScopedName(AtomString name, ScopeIdentifier scopeIdentifier)
+ResolvedScopedName::ResolvedScopedName(RefPtr<AtomStringImpl> name, ScopeIdentifier scopeIdentifier)
     : m_name(name)
     , m_scopeIdentifier(scopeIdentifier)
 {

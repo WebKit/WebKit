@@ -36,7 +36,7 @@ class Array;
 
 class Dictionary final : public ObjectImpl<Object::Type::Dictionary> {
 public:
-    using MapType = HashMap<WTF::String, RefPtr<Object>>;
+    using MapType = HashMap<RefPtr<StringImpl>, RefPtr<Object>>;
 
     static Ref<Dictionary> create();
     static Ref<Dictionary> createWithCapacity(size_t);
@@ -45,19 +45,19 @@ public:
     virtual ~Dictionary();
 
     template<typename T>
-    T* get(const WTF::String& key) const
+    T* get(StringImpl* key) const
     {
         return dynamicDowncast<T>(m_map.get(key));
     }
 
-    Object* get(const WTF::String& key) const
+    Object* get(StringImpl* key) const
     {
         return m_map.get(key);
     }
 
-    RefPtr<Object> getProtected(const WTF::String& key) const { return get(key); }
+    RefPtr<Object> getProtected(StringImpl* key) const { return get(key); }
 
-    Object* get(const WTF::String& key, bool& exists) const
+    Object* get(StringImpl* key, bool& exists) const
     {
         auto it = m_map.find(key);
         exists = it != m_map.end();
@@ -69,9 +69,9 @@ public:
 
     Ref<Array> keys() const;
 
-    bool add(const WTF::String& key, RefPtr<Object>&&);
-    bool set(const WTF::String& key, RefPtr<Object>&&);
-    void remove(const WTF::String& key);
+    bool add(StringImpl* key, RefPtr<Object>&&);
+    bool set(StringImpl* key, RefPtr<Object>&&);
+    void remove(StringImpl* key);
 
     size_t size() const { return m_map.size(); }
 

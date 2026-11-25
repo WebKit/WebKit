@@ -144,7 +144,7 @@ static GVariant* handleGetProperty(GDBusConnection*, const char* /* sender */, c
     case MprisProperty::GetPosition:
         return session.getPositionAsGVariant();
     case MprisProperty::Identity:
-        return g_variant_new_string(getApplicationName().ascii().data());
+        return g_variant_new_string(ascii(getApplicationName()).data());
     case MprisProperty::DesktopEntry:
         return g_variant_new_string("");
     case MprisProperty::CanSeek:
@@ -222,7 +222,7 @@ bool MediaSessionGLib::ensureMprisSessionRegistered()
         return false;
 
     const auto& info = nowPlayingInfo();
-    if (!info || info->metadata.title.isEmpty())
+    if (!info || isEmpty(info->metadata.title))
         return false;
 
     if (m_ownerId)
@@ -247,9 +247,9 @@ bool MediaSessionGLib::ensureMprisSessionRegistered()
     }
 
     const auto& applicationID = getApplicationID();
-    m_instanceId = applicationID.isEmpty() ? makeString("org.mpris.MediaPlayer2.webkit.instance"_s, getpid(), '-', m_identifier.toUInt64()) : makeString("org.mpris.MediaPlayer2."_s, applicationID.ascii().span(), ".Sandboxed.instance-"_s, m_identifier.toUInt64());
+    m_instanceId = isEmpty(applicationID) ? makeString("org.mpris.MediaPlayer2.webkit.instance"_s, getpid(), '-', m_identifier.toUInt64()) : makeString("org.mpris.MediaPlayer2."_s, ascii(applicationID).span(), ".Sandboxed.instance-"_s, m_identifier.toUInt64());
 
-    m_ownerId = g_bus_own_name_on_connection(m_connection.get(), m_instanceId.ascii().data(), G_BUS_NAME_OWNER_FLAGS_NONE, nullptr, nullptr, this, nullptr);
+    m_ownerId = g_bus_own_name_on_connection(m_connection.get(), ascii(m_instanceId).data(), G_BUS_NAME_OWNER_FLAGS_NONE, nullptr, nullptr, this, nullptr);
 
     return true;
 }
@@ -314,14 +314,14 @@ GVariant* MediaSessionGLib::getMetadataAsGVariant(std::optional<NowPlayingInfo> 
 
     g_variant_builder_add(&builder, "{sv}", "mpris:trackid", g_variant_new("o", DBUS_MPRIS_TRACK_PATH));
     g_variant_builder_add(&builder, "{sv}", "mpris:length", g_variant_new_int64(info->duration * 1000000));
-    g_variant_builder_add(&builder, "{sv}", "xesam:title", gVariantNewString(info->metadata.title.utf8()));
-    g_variant_builder_add(&builder, "{sv}", "xesam:album", gVariantNewString(info->metadata.album.utf8()));
+    g_variant_builder_add(&builder, "{sv}", "xesam:title", gVariantNewString(utf8(info->metadata.title)));
+    g_variant_builder_add(&builder, "{sv}", "xesam:album", gVariantNewString(utf8(info->metadata.album)));
     if (info->metadata.artwork)
-        g_variant_builder_add(&builder, "{sv}", "mpris:artUrl", gVariantNewString(info->metadata.artwork->src.utf8()));
+        g_variant_builder_add(&builder, "{sv}", "mpris:artUrl", gVariantNewString(utf8(info->metadata.artwork->src)));
 
     GVariantBuilder artistBuilder;
     g_variant_builder_init(&artistBuilder, G_VARIANT_TYPE("as"));
-    gVariantBuilderAdd(&artistBuilder, "s", info->metadata.artist.utf8());
+    gVariantBuilderAdd(&artistBuilder, "s", utf8(info->metadata.artist));
     g_variant_builder_add(&builder, "{sv}", "xesam:artist", g_variant_builder_end(&artistBuilder));
 
     return g_variant_builder_end(&builder);

@@ -91,10 +91,10 @@ namespace WebCore {
 template<typename Data>
 using ElementCache = WeakHashMap<Element, Data, WeakPtrImplWithEventTargetData>;
 
-static String preferredFilenameForElement(const HTMLImageElement& element)
+static RefPtr<StringImpl> preferredFilenameForElement(const HTMLImageElement& element)
 {
     if (RefPtr attachment = element.attachmentElement()) {
-        if (auto title = attachment->attachmentTitle(); !title.isEmpty())
+        if (auto title = attachment->attachmentTitle(); !isEmpty(title))
             return title;
     }
 
@@ -102,11 +102,11 @@ static String preferredFilenameForElement(const HTMLImageElement& element)
 
     auto urlString = element.imageSourceURL();
 
-    auto suggestedName = [&] -> String {
+    auto suggestedName = [&] -> RefPtr<StringImpl> {
         Ref document = element.document();
         RetainPtr url = document->encodingParseURL(urlString).createNSURL();
         if (!url)
-            url = [NSURL _web_URLWithString:[urlString.createNSString() stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
+            url = [NSURL _web_URLWithString:[createNSString(urlString) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
 
         RefPtr frame = document->frame();
         if (frame->loader().frameHasLoaded()) {
@@ -114,20 +114,20 @@ static String preferredFilenameForElement(const HTMLImageElement& element)
             if (RefPtr resource = dataSource->subresource(url.get())) {
                 auto& mimeType = resource->mimeType();
 
-                if (!altText.isEmpty())
-                    return suggestedFilenameWithMIMEType(url.get(), mimeType, altText);
+                if (!isEmpty(altText))
+                    return StringImpl::create(protect(suggestedFilenameWithMIMEType(url.get(), mimeType, altText)).get());
 
-                return suggestedFilenameWithMIMEType(url.get(), mimeType);
+                return StringImpl::create(protect(suggestedFilenameWithMIMEType(url.get(), mimeType)).get());
             }
         }
 
         return { };
     }();
 
-    if (!suggestedName.isEmpty())
+    if (!isEmpty(suggestedName))
         return suggestedName;
 
-    if (!altText.isEmpty())
+    if (!isEmpty(altText))
         return altText;
 
     return copyImageUnknownFileLabel();
@@ -149,7 +149,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLImageElement& el
         return nil;
 
     RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->makeContiguous()->createNSData().get()]);
-    [wrapper setPreferredFilename:preferredFilenameForElement(element).createNSString().get()];
+    [wrapper setPreferredFilename:createNSString(preferredFilenameForElement(element)).get()];
     return wrapper;
 }
 
@@ -157,7 +157,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLAttachmentElemen
 {
     auto identifier = element.uniqueIdentifier();
 
-    RetainPtr data = [identifier.createNSString() dataUsingEncoding:NSUTF8StringEncoding];
+    RetainPtr data = [createNSString(identifier) dataUsingEncoding:NSUTF8StringEncoding];
     if (!data)
         return nil;
 
@@ -165,7 +165,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLAttachmentElemen
     // to an existing HTMLAttachmentElement.
 
     RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
-    [wrapper setPreferredFilename:makeString(WebContentReader::placeholderAttachmentFilenamePrefix, identifier).createNSString().get()];
+    [wrapper setPreferredFilename:createNSString(makeString(WebContentReader::placeholderAttachmentFilenamePrefix, identifier)).get()];
     return wrapper;
 }
 
@@ -213,7 +213,7 @@ static bool elementQualifiesForWritingToolsPreservation(Element* element, const 
     if (isMailBlockquote(*element))
         return true;
 
-    if (element->getIdAttribute() == "AppleMailSignature"_s) [[unlikely]] {
+    if (equal(element->getIdAttribute(), "AppleMailSignature"_s)) [[unlikely]] {
         // FIXME (310312): Remove this special case once Mail adopts `-_addWritingToolsPreservedNodes:`.
         if (auto* page = element->document().page(); page && page->isEditable())
             return true;
@@ -510,7 +510,7 @@ static AttributedString editingAttributedStringInternal(const SimpleRange& range
         if (!replaceNoBreakSpaces)
             text = it.text().createNSStringWithoutCopying();
         else
-            text = makeStringByReplacingAll(it.text(), noBreakSpace, ' ').createNSString();
+            text = createNSString(makeStringByReplacingAll(it.text(), noBreakSpace, ' '));
 
         [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:text.get()];
         [string setAttributes:attributes.get() range:NSMakeRange(stringLength, currentTextLength)];

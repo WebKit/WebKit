@@ -39,7 +39,7 @@ enum class HighlightRequestOriginatedInApp : bool { No, Yes };
 
 struct AppHighlight {
     Ref<WebCore::SharedBuffer> highlight;
-    std::optional<String> text;
+    std::optional<RefPtr<StringImpl>> text;
     CreateNewGroupForHighlight isNewGroup;
     HighlightRequestOriginatedInApp requestOriginatedInApp;
 };

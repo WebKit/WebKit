@@ -104,7 +104,7 @@ LRESULT RemoteWebInspectorUIProxy::onClose()
 
 WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
-    RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
+    RefPtr<WebPreferences> preferences = WebPreferences::create(nullptr, "WebKit2."_si, "WebKit2."_si);
 
 #if ENABLE(DEVELOPER_MODE)
     preferences->setDeveloperExtrasEnabled(true);
@@ -133,7 +133,7 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
     m_webView = WebView::create(r, pageConfiguration, m_frontendHandle);
 
     auto inspectorPage = m_webView->page();
-    inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_s);
+    inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_si);
 
     return inspectorPage;
 }
@@ -148,13 +148,13 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendCl
 
 void RemoteWebInspectorUIProxy::platformResetState() { }
 void RemoteWebInspectorUIProxy::platformBringToFront() { }
-void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
+void RemoteWebInspectorUIProxy::platformLoad(StringImpl*, CompletionHandler<void(StringImpl*)>&& completionHandler) { completionHandler(nullString()); }
 void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) { completionHandler({ }); }
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&) { }
 void RemoteWebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorUIProxy::platformStartWindowDrag() { }
-void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String&) { }
-void RemoteWebInspectorUIProxy::platformRevealFileExternally(const String&) { }
+void RemoteWebInspectorUIProxy::platformOpenURLExternally(StringImpl*) { }
+void RemoteWebInspectorUIProxy::platformRevealFileExternally(StringImpl*) { }
 void RemoteWebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo&) { }
 
 void RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow()

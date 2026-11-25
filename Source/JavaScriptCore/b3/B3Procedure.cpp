@@ -533,11 +533,11 @@ void Procedure::setIonGraphPasses(Ref<JSON::Array>&& array)
 void Procedure::appendIonGraphPass(ASCIILiteral passName)
 {
     auto pass = JSON::Object::create();
-    pass->setString("name"_s, makeString("B3: "_s, passName));
+    pass->setString("name"_si, makeString("B3: "_s, passName));
     {
         auto ionGraph = JSON::Object::create();
         auto ionBlocks = JSON::Array::create();
-        ionGraph->setArray("blocks"_s, ionBlocks);
+        ionGraph->setArray("blocks"_si, ionBlocks);
 
         for (auto* block : *this) {
             if (!block)
@@ -556,7 +556,7 @@ void Procedure::appendIonGraphPass(ASCIILiteral passName)
                 for (auto* child : value->children())
                     inputs->pushInteger(child->index());
 
-                String type;
+                RefPtr<StringImpl> type;
                 {
                     StringPrintStream stream;
                     if (value->type().isTuple())
@@ -587,14 +587,14 @@ void Procedure::appendIonGraphPass(ASCIILiteral passName)
                     value->dumpSuccessors(block, stream);
                 }
 
-                instruction->setInteger("ptr"_s, value->index() + 1);
-                instruction->setInteger("id"_s, value->index());
-                instruction->setString("opcode"_s, stream.toString());
-                instruction->setArray("attributes"_s, JSON::Array::create());
-                instruction->setArray("inputs"_s, WTF::move(inputs));
-                instruction->setArray("uses"_s, JSON::Array::create());
-                instruction->setArray("memInputs"_s, JSON::Array::create());
-                instruction->setString("type"_s, WTF::move(type));
+                instruction->setInteger("ptr"_si, value->index() + 1);
+                instruction->setInteger("id"_si, value->index());
+                instruction->setString("opcode"_si, stream.toString());
+                instruction->setArray("attributes"_si, JSON::Array::create());
+                instruction->setArray("inputs"_si, WTF::move(inputs));
+                instruction->setArray("uses"_si, JSON::Array::create());
+                instruction->setArray("memInputs"_si, JSON::Array::create());
+                instruction->setString("type"_si, WTF::move(type));
 
                 instructions->pushObject(WTF::move(instruction));
             }
@@ -605,22 +605,22 @@ void Procedure::appendIonGraphPass(ASCIILiteral passName)
             for (auto successor : block->successors())
                 successors->pushInteger(successor.block()->index());
 
-            ionBlock->setInteger("ptr"_s, block->index() + 1);
-            ionBlock->setInteger("id"_s, block->index());
-            ionBlock->setInteger("loopDepth"_s, 0);
-            ionBlock->setArray("attributes"_s, JSON::Array::create());
-            ionBlock->setArray("predecessors"_s, WTF::move(predecessors));
-            ionBlock->setArray("successors"_s, WTF::move(successors));
-            ionBlock->setArray("instructions"_s, WTF::move(instructions));
+            ionBlock->setInteger("ptr"_si, block->index() + 1);
+            ionBlock->setInteger("id"_si, block->index());
+            ionBlock->setInteger("loopDepth"_si, 0);
+            ionBlock->setArray("attributes"_si, JSON::Array::create());
+            ionBlock->setArray("predecessors"_si, WTF::move(predecessors));
+            ionBlock->setArray("successors"_si, WTF::move(successors));
+            ionBlock->setArray("instructions"_si, WTF::move(instructions));
             ionBlocks->pushObject(ionBlock);
         }
 
-        pass->setObject("mir"_s, WTF::move(ionGraph)); // MIR stands for SpiderMonkey's middle-level IR.
+        pass->setObject("mir"_si, WTF::move(ionGraph)); // MIR stands for SpiderMonkey's middle-level IR.
     }
     {
         auto ionGraph = JSON::Object::create();
-        ionGraph->setArray("blocks"_s, JSON::Array::create());
-        pass->setObject("lir"_s, WTF::move(ionGraph)); // LIR stands for SpiderMonkey's low-level IR.
+        ionGraph->setArray("blocks"_si, JSON::Array::create());
+        pass->setObject("lir"_si, WTF::move(ionGraph)); // LIR stands for SpiderMonkey's low-level IR.
     }
     m_ionGraphPasses->pushObject(pass);
 }

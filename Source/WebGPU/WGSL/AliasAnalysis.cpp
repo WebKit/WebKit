@@ -123,8 +123,8 @@ public:
         m_string = valueString.toString();
     }
 
-    NODELETE unsigned length() const { return m_string.length(); }
-    NODELETE bool is8Bit() const { return m_string.is8Bit(); }
+    NODELETE unsigned length() const { return WTF::length(m_string); }
+    NODELETE bool is8Bit() const { return WTF::is8Bit(m_string); }
     template<typename CharacterType>
     void writeTo(std::span<CharacterType> destination) const
     {
@@ -133,7 +133,7 @@ public:
     }
 
 private:
-    String m_string;
+    RefPtr<StringImpl> m_string;
 };
 
 } // namespace WTF
@@ -208,7 +208,7 @@ private:
 
     ShaderModule& m_shaderModule;
     HashSet<AST::Function*> m_visitedFunctions;
-    HashMap<String, FunctionInfo> m_functions;
+    HashMap<RefPtr<StringImpl>, FunctionInfo> m_functions;
     FunctionInfo* m_function;
     Vector<MemoryLocation> m_globals;
     unsigned m_globalID { 0 };
@@ -239,7 +239,7 @@ std::optional<Error> AliasAnalysis::run()
     for (auto& declaration : m_shaderModule.declarations()) {
         if (auto* globalVar = dynamicDowncast<AST::Variable>(declaration)) {
             m_globals.append(MemoryLocation::global(m_globalID++));
-            introduceVariable(globalVar->name(), borrow(m_globals)->last());
+            introduceVariable(protect(globalVar->name().id()), borrow(m_globals)->last());
         } else if (auto* function = dynamicDowncast<AST::Function>(declaration)) {
             visit(*function);
             if (hasError()) [[unlikely]]
@@ -264,7 +264,7 @@ void AliasAnalysis::visit(AST::Function& function)
     for (unsigned i = 0; i < parameterCount; ++i) {
         auto& parameter = function.parameters()[i];
         m_function->parameters[i] = MemoryLocation::parameter(m_parameterID++);
-        introduceVariable(parameter.name(), m_function->parameters[i]);
+        introduceVariable(protect(parameter.name().id()), m_function->parameters[i]);
         dataLogLnIf(shouldLogAliasAnalysis, "+ parameter `"_s, function.name(), "` => "_s, RawPointer(&m_function->parameters[i]));
     }
 
@@ -336,7 +336,7 @@ void AliasAnalysis::visit(AST::CallExpression& call)
         bool isParameterRead = function.readParameters.contains(parameter);
         bool isParameterWritten = function.writtenParameters.contains(parameter);
 
-        dataLogLnIf(shouldLogAliasAnalysis, '@', String::number(i), " arg:"_s, *argumentLocation, " param:"_s, parameter);
+        dataLogLnIf(shouldLogAliasAnalysis, '@', makeString(i), " arg:"_s, *argumentLocation, " param:"_s, parameter);
 
         if (isParameterWritten)
             write(*argumentLocation);
@@ -352,7 +352,7 @@ void AliasAnalysis::visit(AST::CallExpression& call)
             : readArguments.contains(*argumentLocation);
 
         if ((isParameterWritten && (alreadyWritten || alreadyRead)) || (isParameterRead && alreadyWritten)) [[unlikely]] {
-            setError({ "invalid aliased pointer argument"_s, argument.span() });
+            setError({ "invalid aliased pointer argument"_si, argument.span() });
             return;
         }
 
@@ -360,7 +360,7 @@ void AliasAnalysis::visit(AST::CallExpression& call)
             bool isGlobalRead = function.readGlobals.contains(*argumentLocation);
             bool isGlobalWritten = function.writtenGlobals.contains(*argumentLocation);
             if ((isGlobalWritten && isParameterWritten) || (isGlobalWritten && isParameterRead) || (isGlobalRead && isParameterWritten)) {
-                setError({ "invalid aliased pointer argument"_s, argument.span() });
+                setError({ "invalid aliased pointer argument"_si, argument.span() });
                 return;
             }
         }
@@ -386,7 +386,7 @@ void AliasAnalysis::visit(AST::AssignmentStatement& statement)
 
 void AliasAnalysis::visit(AST::VariableStatement& statement)
 {
-    introduceVariable(statement.variable().name(), MemoryLocation::local(m_localID++));
+    introduceVariable(protect(statement.variable().name().id()), MemoryLocation::local(m_localID++));
     maybeCheckErrorAndVisit(statement.variable().maybeInitializer());
 }
 

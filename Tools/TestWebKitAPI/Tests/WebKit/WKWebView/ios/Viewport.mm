@@ -47,7 +47,7 @@ namespace TestWebKitAPI {
 
 static inline RetainPtr<NSString> makeViewportMetaTag(unsigned viewportWidth, float initialScale)
 {
-    return makeString("<meta name='viewport' content='width="_s, viewportWidth, ", initial-scale="_s, initialScale, "'>"_s).createNSString();
+    return createNSString(makeString("<meta name='viewport' content='width="_s, viewportWidth, ", initial-scale="_s, initialScale, "'>"_s));
 }
 
 TEST(Viewport, MinimumEffectiveDeviceWidthWithInitialScale)

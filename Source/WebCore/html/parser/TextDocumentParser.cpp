@@ -53,12 +53,12 @@ void TextDocumentParser::insertFakeFormattingElements()
     // sending fake bytes through the front-end of the parser to avoid
     // distrubing the line/column number calculations.
 
-    Attribute nameAttribute(nameAttr, "color-scheme"_s);
-    Attribute contentAttribute(contentAttr, "light dark"_s);
+    Attribute nameAttribute(nameAttr, "color-scheme"_atom);
+    Attribute contentAttribute(contentAttr, "light dark"_atom);
     AtomHTMLToken fakeMeta(HTMLToken::Type::StartTag, TagName::meta, { WTF::move(nameAttribute), WTF::move(contentAttribute) });
     treeBuilder().constructTree(WTF::move(fakeMeta));
 
-    Attribute attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"_s);
+    Attribute attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"_atom);
     AtomHTMLToken fakePre(HTMLToken::Type::StartTag, TagName::pre, { WTF::move(attribute) });
     treeBuilder().constructTree(WTF::move(fakePre));
 

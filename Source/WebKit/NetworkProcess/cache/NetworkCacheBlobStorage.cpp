@@ -55,7 +55,7 @@ BlobStorage::MemoryCache::MemoryCache(unsigned fileLimit)
     : m_limit(fileLimit)
 { }
 
-std::optional<BlobStorage::Blob> BlobStorage::MemoryCache::get(const String& path)
+std::optional<BlobStorage::Blob> BlobStorage::MemoryCache::get(StringImpl* path)
 {
     Locker locker { m_lock };
     auto it = m_cache.find(path);
@@ -66,7 +66,7 @@ std::optional<BlobStorage::Blob> BlobStorage::MemoryCache::get(const String& pat
     return copyBlob(blob);
 }
 
-void BlobStorage::MemoryCache::add(const String& path, const BlobStorage::Blob& blob)
+void BlobStorage::MemoryCache::add(StringImpl* path, const BlobStorage::Blob& blob)
 {
     Locker locker { m_lock };
     m_cache.set(path, copyBlob(blob));
@@ -74,7 +74,7 @@ void BlobStorage::MemoryCache::add(const String& path, const BlobStorage::Blob& 
         m_cache.remove(m_cache.random());
 }
 
-void BlobStorage::MemoryCache::remove(const String& path)
+void BlobStorage::MemoryCache::remove(StringImpl* path)
 {
     Locker locker { m_lock };
     m_cache.remove(path);
@@ -83,7 +83,7 @@ void BlobStorage::MemoryCache::remove(const String& path)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobStorage);
 
-BlobStorage::BlobStorage(const String& blobDirectoryPath, Salt salt, unsigned memoryCacheFileLimit)
+BlobStorage::BlobStorage(StringImpl* blobDirectoryPath, Salt salt, unsigned memoryCacheFileLimit)
     : m_blobDirectoryPath(crossThreadCopy(blobDirectoryPath))
     , m_salt(salt)
 #if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
@@ -95,9 +95,9 @@ BlobStorage::BlobStorage(const String& blobDirectoryPath, Salt salt, unsigned me
 #endif
 }
 
-String BlobStorage::blobDirectoryPathIsolatedCopy() const
+RefPtr<StringImpl> BlobStorage::blobDirectoryPathIsolatedCopy() const
 {
-    return m_blobDirectoryPath.isolatedCopy();
+    return isolatedCopy(m_blobDirectoryPath);
 }
 
 void BlobStorage::synchronize()
@@ -109,7 +109,7 @@ void BlobStorage::synchronize()
 
     m_approximateSize = 0;
     auto blobDirectory = blobDirectoryPath;
-    traverseDirectory(blobDirectory, [this, &blobDirectory](const String& name, DirectoryEntryType type) {
+    traverseDirectory(blobDirectory, [this, &blobDirectory](StringImpl* name, DirectoryEntryType type) {
         if (type != DirectoryEntryType::File)
             return;
         auto path = FileSystem::pathByAppendingComponent(blobDirectory, name);
@@ -130,13 +130,13 @@ void BlobStorage::synchronize()
     LOG(NetworkCacheStorage, "(NetworkProcess) blob synchronization completed approximateSize=%zu", approximateSize());
 }
 
-String BlobStorage::blobPathForHash(const SHA1::Digest& hash) const
+RefPtr<StringImpl> BlobStorage::blobPathForHash(const SHA1::Digest& hash) const
 {
     auto hashAsString = SHA1::hexDigest(hash);
     return FileSystem::pathByAppendingComponent(blobDirectoryPathIsolatedCopy(), hashAsString);
 }
 
-BlobStorage::Blob BlobStorage::add(const String& path, const Data& data, bool addToMemoryCache)
+BlobStorage::Blob BlobStorage::add(StringImpl* path, const Data& data, bool addToMemoryCache)
 {
 #if !ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
     UNUSED_PARAM(addToMemoryCache);
@@ -148,7 +148,7 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data, bool ad
     if (data.isEmpty())
         return { data, hash };
 
-    String blobPath = blobPathForHash(hash);
+    RefPtr<StringImpl> blobPath = blobPathForHash(hash);
     
     FileSystem::deleteFile(path);
 #if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
@@ -162,7 +162,7 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data, bool ad
             auto existingData = mapFile(blobPath);
             if (bytesEqual(existingData, data)) {
                 if (!FileSystem::hardLink(blobPath, path))
-                    SAFE_WTFLOGALWAYS("Failed to create hard link from %s to %s", blobPath.utf8(), path.utf8());
+                    SAFE_WTFLOGALWAYS("Failed to create hard link from %s to %s", utf8(blobPath), utf8(path));
                 BlobStorage::Blob result { existingData, hash };
 #if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
                 if (addToMemoryCache && m_memoryCache)
@@ -179,7 +179,7 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data, bool ad
         return { };
 
     if (!FileSystem::hardLink(blobPath, path))
-        SAFE_WTFLOGALWAYS("Failed to create hard link from %s to %s", blobPath.utf8(), path.utf8());
+        SAFE_WTFLOGALWAYS("Failed to create hard link from %s to %s", utf8(blobPath), utf8(path));
 
     m_approximateSize += mappedData.size();
 
@@ -191,7 +191,7 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data, bool ad
     return result;
 }
 
-BlobStorage::Blob BlobStorage::get(const String& path)
+BlobStorage::Blob BlobStorage::get(StringImpl* path)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -206,7 +206,7 @@ BlobStorage::Blob BlobStorage::get(const String& path)
     return { data, computeSHA1(data, m_salt) };
 }
 
-void BlobStorage::remove(const String& path)
+void BlobStorage::remove(StringImpl* path)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -217,7 +217,7 @@ void BlobStorage::remove(const String& path)
 #endif
 }
 
-unsigned BlobStorage::shareCount(const String& path)
+unsigned BlobStorage::shareCount(StringImpl* path)
 {
     ASSERT(!RunLoop::isMain());
 

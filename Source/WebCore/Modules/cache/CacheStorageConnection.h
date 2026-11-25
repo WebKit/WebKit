@@ -44,7 +44,7 @@ public:
     virtual ~CacheStorageConnection() = default;
 
     using OpenPromise = NativePromise<DOMCacheEngine::CacheIdentifierOperationResult, DOMCacheEngine::Error>;
-    virtual Ref<OpenPromise> open(const ClientOrigin&, const String& cacheName) = 0;
+    virtual Ref<OpenPromise> open(const ClientOrigin&, StringImpl* cacheName) = 0;
     using RemovePromise = NativePromise<bool, DOMCacheEngine::Error>;
     virtual Ref<RemovePromise> remove(DOMCacheIdentifier) = 0;
     using RetrieveCachesPromise = NativePromise<DOMCacheEngine::CacheInfos, DOMCacheEngine::Error>;
@@ -66,7 +66,7 @@ public:
     // Used only for testing purposes.
     using CompletionPromise = NativePromise<void, DOMCacheEngine::Error>;
     virtual Ref<CompletionPromise> clearMemoryRepresentation(const ClientOrigin&) { return CompletionPromise::createAndReject(DOMCacheEngine::Error::NotImplemented); }
-    using EngineRepresentationPromise = NativePromise<String, DOMCacheEngine::Error>;
+    using EngineRepresentationPromise = NativePromise<RefPtr<StringImpl>, DOMCacheEngine::Error>;
     virtual Ref<EngineRepresentationPromise> engineRepresentation() { return EngineRepresentationPromise::createAndReject(DOMCacheEngine::Error::NotImplemented); }
     virtual void updateQuotaBasedOnSpaceUsage(const ClientOrigin&) { }
 

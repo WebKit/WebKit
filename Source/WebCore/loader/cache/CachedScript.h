@@ -51,7 +51,7 @@ public:
 private:
     bool mayTryReplaceEncodedData() const final { return true; }
 
-    void setEncoding(const String&) final;
+    void setEncoding(StringImpl*) final;
     ASCIILiteral encoding() const final WTF_REQUIRES_SHARED_LOCK(m_lock);
     const TextResourceDecoder* textResourceDecoder() const final WTF_REQUIRES_SHARED_LOCK(m_lock) { return m_decoder.get(); }
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) final;
@@ -64,7 +64,7 @@ private:
     // under m_lock and read on other threads by withScriptConcurrently(), which locks; the main
     // thread's own reads use assertIsOwnerThread() instead of locking. m_scriptHash is not read off
     // the main thread, so it needs no guard.
-    String m_script WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<StringImpl> m_script WTF_GUARDED_BY_LOCK(m_lock);
     unsigned m_scriptHash { 0 };
     bool m_wasForceDecodedAsUTF8 WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_requiresPrivacyProtections { false };

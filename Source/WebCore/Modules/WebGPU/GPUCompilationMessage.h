@@ -41,7 +41,7 @@ public:
         return adoptRef(*new GPUCompilationMessage(backing));
     }
 
-    NODELETE const String& message() const LIFETIME_BOUND;
+    NODELETE const RefPtr<StringImpl>& message() const LIFETIME_BOUND;
     NODELETE GPUCompilationMessageType type() const;
     NODELETE uint64_t lineNum() const;
     NODELETE uint64_t linePos() const;

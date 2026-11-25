@@ -161,7 +161,7 @@ static StringView fileExtensionWithoutFullStop(StringView component)
     return extensionWithoutFullStop;
 }
 
-String humanReadableLastPathComponent(const URL& url)
+RefPtr<StringImpl> humanReadableLastPathComponent(const URL& url)
 {
     if (url.protocolIsData() || url.protocolIsBlob() || url.protocolIsJavaScript())
         return { };
@@ -191,14 +191,14 @@ String humanReadableLastPathComponent(const URL& url)
     return humanReadableName.toString();
 }
 
-String lowEntropyLastPathComponent(const URL& url, const String& fallbackName, const String& mimeType)
+RefPtr<StringImpl> lowEntropyLastPathComponent(const URL& url, StringImpl* fallbackName, StringImpl* mimeType)
 {
     if (url.protocolIsData() || url.protocolIsBlob() || url.protocolIsJavaScript())
         return fallbackName;
 
     auto component = url.lastPathComponent();
     auto result = humanReadableLastPathComponent(url);
-    if (result.isNull() && !component.isEmpty()) {
+    if (!result && !component.isEmpty()) {
         if (auto extensionWithoutFullStop = fileExtensionWithoutFullStop(component); !extensionWithoutFullStop.isEmpty())
             result = makeString(fallbackName, '.', extensionWithoutFullStop);
         else

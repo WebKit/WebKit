@@ -89,9 +89,9 @@ auto GroupActivitiesSession::state() const -> State
     return static_cast<State>([m_groupSession state]);
 }
 
-String GroupActivitiesSession::uuid() const
+RefPtr<StringImpl> GroupActivitiesSession::uuid() const
 {
-    return [m_groupSession uuid].UUIDString;
+    return StringImpl::create([m_groupSession uuid].UUIDString);
 }
 
 URL GroupActivitiesSession::fallbackURL() const

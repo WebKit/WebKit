@@ -38,21 +38,21 @@ namespace WebCore {
 
 class Model final : public RefCounted<Model> {
 public:
-    WEBCORE_EXPORT static Ref<Model> create(Ref<SharedBuffer>&&, String&&, URL, bool isConverted = false);
+    WEBCORE_EXPORT static Ref<Model> create(Ref<SharedBuffer>&&, RefPtr<StringImpl>&&, URL, bool isConverted = false);
     WEBCORE_EXPORT ~Model();
 
     // FIXME: data() should return SharedBuffer& and we should have a separate dataForSerialization() that returns a Ref.
     Ref<SharedBuffer> data() const { return m_data; }
-    const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_mimeType; }
     const URL& url() const LIFETIME_BOUND { return m_url; }
     bool isConverted() const { return m_isConverted; }
-    WEBCORE_EXPORT String filename() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> filename() const;
 
 private:
-    Model(Ref<SharedBuffer>&&, String&&, URL, bool isConverted);
+    Model(Ref<SharedBuffer>&&, RefPtr<StringImpl>&&, URL, bool isConverted);
 
     const Ref<SharedBuffer> m_data;
-    String m_mimeType;
+    RefPtr<StringImpl> m_mimeType;
     URL m_url;
     bool m_isConverted { false };
 };

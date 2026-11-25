@@ -65,7 +65,7 @@ template<typename Derived>
 concept StructuredCloneSerializerHandler = requires(Derived& d, JSObject* obj, SerializationReturnCode& code, ArrayBuffer& buffer) {
     { d.dumpDerivedTerminal(obj, code) } -> std::same_as<bool>;
     // Optional hooks with defaults:
-    { d.agentClusterID() } -> std::same_as<String>;
+    { d.agentClusterID() } -> std::same_as<RefPtr<StringImpl>>;
     { d.allowsSharedMemorySerialization() } -> std::same_as<bool>;
     { d.allowsWasmModuleSerialization() } -> std::same_as<bool>;
     { d.toJSArrayBuffer(buffer) } -> std::same_as<JSValue>;
@@ -122,7 +122,7 @@ protected:
     // Derived can override any of these; the defaults below are used when Derived doesn't provide its own.
 
 public:
-    String agentClusterID() { return emptyString(); }
+    RefPtr<StringImpl> agentClusterID() { return emptyString(); }
     bool allowsSharedMemorySerialization() { return true; }
     bool allowsWasmModuleSerialization() { return true; }
     JSValue toJSArrayBuffer(ArrayBuffer& arrayBuffer)
@@ -238,17 +238,16 @@ protected:
         return true; // new object added.
     }
 
-    void write(const AtomString& ident)
+    void write(AtomStringImpl* ident)
     {
-        const String& str = ident.string();
-        StringConstantPool::AddResult addResult = m_constantPool.add(ident.impl(), m_constantPool.size());
+        StringConstantPool::AddResult addResult = m_constantPool.add(ident, m_constantPool.size());
         if (!addResult.isNewEntry) {
             write(StringPoolTag);
             writeStringIndex(addResult.iterator->value);
             return;
         }
 
-        unsigned length = str.length();
+        unsigned length = WTF::length(ident);
 
         // Guard against overflow
         if (length > (std::numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(char16_t)) {
@@ -256,41 +255,41 @@ protected:
             return;
         }
 
-        if (str.is8Bit())
+        if (is8Bit(ident))
             StructuredCloneInternal::writeLittleEndian<uint32_t>(m_buffer, length | StringDataIs8BitFlag);
         else
             StructuredCloneInternal::writeLittleEndian<uint32_t>(m_buffer, length);
 
         if (!length)
             return;
-        if (str.is8Bit()) {
-            if (!StructuredCloneInternal::writeLittleEndian(m_buffer, str.span8()))
+        if (is8Bit(ident)) {
+            if (!StructuredCloneInternal::writeLittleEndian(m_buffer, span8(ident)))
                 fail();
             return;
         }
-        if (!StructuredCloneInternal::writeLittleEndian(m_buffer, str.span16()))
+        if (!StructuredCloneInternal::writeLittleEndian(m_buffer, span16(ident)))
             fail();
     }
 
-    void write(const String& str)
+    void write(StringImpl* str)
     {
-        if (str.isNull())
+        if (!str)
             write(emptyAtom());
         else
-            write(AtomString(str));
+            write(AtomStringImpl::add(str));
     }
 
-    void writeNullableString(const String& str)
+    void writeNullableString(const RefPtr<StringImpl>& str)
     {
-        bool isNull = str.isNull();
+        bool isNull = !str;
         write(isNull);
         if (!isNull)
-            write(AtomString(str));
+            write(AtomStringImpl::add(str));
     }
 
-    void dumpString(const String& string)
+    void dumpString(const RefPtr<StringImpl>& string)
     {
-        if (string.isEmpty())
+        if (isEmpty(string))
             write(EmptyStringTag);
         else {
             write(StringTag);
@@ -298,9 +297,9 @@ protected:
         }
     }
 
-    void dumpStringObject(const String& string)
+    void dumpStringObject(const RefPtr<StringImpl>& string)
     {
-        if (string.isEmpty()) {
+        if (isEmpty(string)) {
             appendObjectPoolTag(EmptyStringObjectTag);
             write(EmptyStringObjectTag);
         } else {
@@ -440,7 +439,7 @@ protected:
         if (value.isString()) {
             auto string = asString(value)->value(m_lexicalGlobalObject);
             RETURN_IF_EXCEPTION(scope, terminalWithException(code));
-            dumpString(string);
+            dumpString(*string);
             return true;
         }
         if (value.isBigInt()) {
@@ -464,7 +463,7 @@ protected:
         if (auto* regExp = dynamicDowncast<RegExpObject>(obj)) {
             write(RegExpTag);
             write(regExp->regExp()->pattern());
-            write(String { JSC::Yarr::flagsString(regExp->regExp()->flags()).span() });
+            write(AtomStringImpl::add(JSC::Yarr::flagsString(regExp->regExp()->flags()).span()));
             return true;
         }
         if (auto* booleanObject = dynamicDowncast<BooleanObject>(obj)) {
@@ -481,7 +480,7 @@ protected:
                 return true;
             auto str = asString(stringObject->internalValue())->value(m_lexicalGlobalObject);
             RETURN_IF_EXCEPTION(scope, terminalWithException(code));
-            dumpStringObject(str);
+            dumpStringObject(*str);
             return true;
         }
         if (auto* numberObject = dynamicDowncast<NumberObject>(obj)) {

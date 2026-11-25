@@ -55,7 +55,7 @@ static ASCIILiteral pasteboardCustomDataType()
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTF::move(context), "CLIPBOARD"_s);
+    return makeUnique<Pasteboard>(WTF::move(context), "CLIPBOARD"_si);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -83,7 +83,7 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, SelectionDa
 }
 #endif
 
-Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const String& name)
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, StringImpl* name)
     : m_context(WTF::move(context))
     , m_name(name)
     , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_name))
@@ -105,22 +105,22 @@ const SelectionData& Pasteboard::selectionData() const
 }
 #endif
 
-static ClipboardDataType selectionDataTypeFromHTMLClipboardType(const String& type)
+static ClipboardDataType selectionDataTypeFromHTMLClipboardType(StringImpl* type)
 {
     // From the Mac port: Ignore any trailing charset - JS strings are
     // Unicode, which encapsulates the charset issue.
-    if (type == textPlainContentTypeAtom())
+    if (equal(type, textPlainContentTypeAtom()))
         return ClipboardDataTypeText;
-    if (type == textHTMLContentTypeAtom())
+    if (equal(type, textHTMLContentTypeAtom()))
         return ClipboardDataTypeMarkup;
-    if (type == "Files"_s || type == "text/uri-list"_s)
+    if (equal(type, "Files"_s) || equal(type, "text/uri-list"_s))
         return ClipboardDataTypeURIList;
 
     // Not a known type, so just default to using the text portion.
     return ClipboardDataTypeUnknown;
 }
 
-void Pasteboard::writeString(const String& type, const String& data)
+void Pasteboard::writeString(StringImpl* type, StringImpl* data)
 {
     ASSERT(m_selectionData);
     switch (selectionDataTypeFromHTMLClipboardType(type)) {
@@ -140,7 +140,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     }
 }
 
-void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
+void Pasteboard::writePlainText(StringImpl* text, SmartReplaceOption smartReplaceOption)
 {
     if (m_selectionData) {
         m_selectionData->clearAll();
@@ -183,7 +183,7 @@ void Pasteboard::write(PasteboardImage&& pasteboardImage)
         m_selectionData->setImage(WTF::move(pasteboardImage.bitmap));
     } else {
         SelectionData data;
-        if (!pasteboardImage.url.markup.isEmpty())
+        if (!isEmpty(pasteboardImage.url.markup))
             data.setMarkup(pasteboardImage.url.markup);
         data.setImage(WTF::move(pasteboardImage.bitmap));
         platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTF::move(data));
@@ -230,7 +230,7 @@ void Pasteboard::clear()
     m_selectionData->clearAllExceptFilenames();
 }
 
-void Pasteboard::clear(const String& type)
+void Pasteboard::clear(StringImpl* type)
 {
     ASSERT(m_selectionData);
     switch (selectionDataTypeFromHTMLClipboardType(type)) {
@@ -300,8 +300,8 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
 
     auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
     if (types.contains("text/html"_s)) {
-        auto text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/html"_s);
-        if (!text.isNull() && reader.readHTML(text))
+        auto text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/html"_si);
+        if (text && reader.readHTML(text))
             return;
     }
 
@@ -310,8 +310,8 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
 
     for (const auto& imageType : imageTypes) {
         if (types.contains(imageType)) {
-            auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, imageType);
-            if (!buffer->isEmpty() && reader.readImage(buffer.releaseNonNull(), imageType))
+            auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, StringImpl::create(imageType).ptr());
+            if (!buffer->isEmpty() && reader.readImage(buffer.releaseNonNull(), StringImpl::create(imageType).ptr()))
                 return;
         }
     }
@@ -323,14 +323,14 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     }
 
     if (types.contains("text/plain"_s)) {
-        auto text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain"_s);
-        if (!text.isNull() && reader.readPlainText(text))
+        auto text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain"_si);
+        if (text && reader.readPlainText(text))
             return;
     }
 
     if (types.contains("text/plain;charset=utf-8"_s)) {
-        auto text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain;charset=utf-8"_s);
-        if (!text.isNull() && reader.readPlainText(text))
+        auto text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, "text/plain;charset=utf-8"_si);
+        if (text && reader.readPlainText(text))
             return;
     }
 }
@@ -351,18 +351,20 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
     }
 
     for (const auto& imageType : imageTypes) {
-        if (!reader.shouldReadBuffer(imageType))
+        RefPtr<StringImpl> type = imageType;
+        if (!reader.shouldReadBuffer(type.get()))
             continue;
-        if (auto buffer = readBuffer(0, imageType)) {
-            reader.readBuffer(imageTypeToFakeFilename(imageType), imageType, buffer.releaseNonNull());
+        if (auto buffer = readBuffer(0, type.get())) {
+            reader.readBuffer(RefPtr<StringImpl> { imageTypeToFakeFilename(imageType) }.get(), type.get(), buffer.releaseNonNull());
             return;
         }
     }
 
     static constexpr auto svgImageType = "image/svg+xml"_s;
-    if (reader.shouldReadBuffer(svgImageType)) {
-        if (auto buffer = readBuffer(0, svgImageType))
-            reader.readBuffer("image.svg"_s, svgImageType, buffer.releaseNonNull());
+    RefPtr<StringImpl> svgType = svgImageType;
+    if (reader.shouldReadBuffer(svgType.get())) {
+        if (auto buffer = readBuffer(0, svgType.get()))
+            reader.readBuffer("image.svg"_si, svgType.get(), buffer.releaseNonNull());
     }
 }
 
@@ -373,13 +375,13 @@ bool Pasteboard::hasData()
     return !platformStrategies()->pasteboardStrategy()->types(m_name).isEmpty();
 }
 
-Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
+Vector<RefPtr<StringImpl>> Pasteboard::typesSafeForBindings(StringImpl* origin)
 {
     if (m_selectionData) {
-        OrderedHashSet<String> types;
+        OrderedHashSet<RefPtr<StringImpl>> types;
         if (auto& buffer = m_selectionData->customData()) {
             auto customData = PasteboardCustomData::fromSharedBuffer(*buffer);
-            if (customData.origin() == origin) {
+            if (equal(customData.origin(), origin)) {
                 for (auto& type : customData.orderedTypes())
                     types.add(type);
             }
@@ -398,12 +400,12 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
     return platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_name, origin, context());
 }
 
-Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
+Vector<RefPtr<StringImpl>> Pasteboard::typesForLegacyUnsafeBindings()
 {
     if (!m_selectionData)
         return platformStrategies()->pasteboardStrategy()->types(m_name);
 
-    Vector<String> types;
+    Vector<RefPtr<StringImpl>> types;
     if (m_selectionData->hasText()) {
         types.append(textPlainContentTypeAtom());
         types.append("Text"_s);
@@ -421,7 +423,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
     return types;
 }
 
-String Pasteboard::readOrigin()
+RefPtr<StringImpl> Pasteboard::readOrigin()
 {
     if (m_selectionData) {
         if (auto& buffer = m_selectionData->customData())
@@ -431,13 +433,13 @@ String Pasteboard::readOrigin()
     }
 
     // FIXME: cache custom data?
-    if (auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, pasteboardCustomDataType()))
+    if (auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, StringImpl::create(pasteboardCustomDataType()).ptr()))
         return PasteboardCustomData::fromSharedBuffer(*buffer).origin();
 
     return { };
 }
 
-String Pasteboard::readString(const String& type)
+RefPtr<StringImpl> Pasteboard::readString(StringImpl* type)
 {
     if (!m_selectionData)
         return platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name, type);
@@ -459,7 +461,7 @@ String Pasteboard::readString(const String& type)
     return { };
 }
 
-String Pasteboard::readStringInCustomData(const String& type)
+RefPtr<StringImpl> Pasteboard::readStringInCustomData(StringImpl* type)
 {
     if (m_selectionData) {
         if (auto& buffer = m_selectionData->customData())
@@ -469,7 +471,7 @@ String Pasteboard::readStringInCustomData(const String& type)
     }
 
     // FIXME: cache custom data?
-    if (auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, pasteboardCustomDataType()))
+    if (auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, StringImpl::create(pasteboardCustomDataType()).ptr()))
         return PasteboardCustomData::fromSharedBuffer(*buffer).readStringInCustomData(type);
 
     return { };
@@ -492,13 +494,13 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
             return FileContentState::MayContainFilePaths;
     }
 
-    auto result = types.findIf([](const String& type) {
+    auto result = types.findIf([](StringImpl* type) {
         return MIMETypeRegistry::isSupportedImageMIMEType(type);
     });
     return result == notFound ? FileContentState::NoFileOrImageData : FileContentState::InMemoryImage;
 }
 
-void Pasteboard::writeMarkup(const String&)
+void Pasteboard::writeMarkup(StringImpl*)
 {
 }
 
@@ -507,10 +509,10 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data, Paste
     if (m_selectionData) {
         if (!data.isEmpty()) {
             const auto& customData = data[0];
-            customData.forEachPlatformString([this] (auto& type, auto& string) {
+            customData.forEachPlatformString([this] (auto* type, auto* string) {
                 writeString(type, string);
             });
-            if (customData.hasSameOriginCustomData() || !customData.origin().isEmpty())
+            if (customData.hasSameOriginCustomData() || !isEmpty(customData.origin()))
                 m_selectionData->setCustomData(customData.createSharedBuffer());
         }
         return;

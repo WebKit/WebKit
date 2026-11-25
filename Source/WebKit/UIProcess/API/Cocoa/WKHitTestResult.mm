@@ -33,12 +33,12 @@
 
 namespace WebKit {
 
-NSURL *URLFromHitTestResultString(const String& urlString)
+NSURL *URLFromHitTestResultString(StringImpl* urlString)
 {
     // Avoid +[NSURL URLWithString:], which re-encodes the path when it contains characters
     // that WebCore's URL parser leaves literal (e.g. '[' and ']'), double-encoding the
     // existing %XX sequences. CFURLCreateAbsoluteURLWithBytes preserves them.
-    if (urlString.isEmpty())
+    if (isEmpty(urlString))
         return nil;
     return WTF::URL { urlString }.createNSURL().autorelease();
 }

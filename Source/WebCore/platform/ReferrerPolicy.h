@@ -52,7 +52,7 @@ enum class ReferrerPolicy : uint8_t {
 
 enum class ReferrerPolicySource : uint8_t { MetaTag, HTTPHeader, ReferrerPolicyAttribute, SpeculationRules };
 std::optional<ReferrerPolicy> parseReferrerPolicy(StringView, ReferrerPolicySource);
-String referrerPolicyToString(const ReferrerPolicy&);
+RefPtr<StringImpl> referrerPolicyToString(const ReferrerPolicy&);
 
 }
 

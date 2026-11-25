@@ -106,9 +106,9 @@ void ValidatedFormListedElement::updateVisibleValidationMessage(Ref<HTMLElement>
     Ref element = asHTMLElement();
     if (!element->document().page() || !element->isConnected())
         return;
-    String message;
+    RefPtr<StringImpl> message;
     if (element->renderer() && willValidate())
-        message = validationMessage().trim(deprecatedIsSpaceOrNewline);
+        message = trim(validationMessage(), deprecatedIsSpaceOrNewline);
     if (!m_validationMessage)
         m_validationMessage = ValidationMessage::create(validationAnchor);
     protect(m_validationMessage)->updateValidationMessage(validationAnchor, message);
@@ -297,7 +297,7 @@ void ValidatedFormListedElement::updateValidity()
     }
 }
 
-void ValidatedFormListedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void ValidatedFormListedElement::parseAttribute(const QualifiedName& name, AtomStringImpl* value)
 {
     if (name == disabledAttr && asHTMLElement().canBeActuallyDisabled())
         parseDisabledAttribute(value);
@@ -307,19 +307,19 @@ void ValidatedFormListedElement::parseAttribute(const QualifiedName& name, const
         FormListedElement::parseAttribute(name, value);
 }
 
-void ValidatedFormListedElement::parseDisabledAttribute(const AtomString& value)
+void ValidatedFormListedElement::parseDisabledAttribute(AtomStringImpl* value)
 {
     ASSERT(asHTMLElement().canBeActuallyDisabled());
 
-    bool newDisabled = !value.isNull();
+    bool newDisabled = !!value;
     setDisabledInternal(newDisabled, m_disabledByAncestorFieldset);
 }
 
-void ValidatedFormListedElement::parseReadOnlyAttribute(const AtomString& value)
+void ValidatedFormListedElement::parseReadOnlyAttribute(AtomStringImpl* value)
 {
     ASSERT(readOnlyBarsFromConstraintValidation());
 
-    bool newHasReadOnlyAttribute = !value.isNull();
+    bool newHasReadOnlyAttribute = !!value;
     if (m_hasReadOnlyAttribute != newHasReadOnlyAttribute) {
         bool newMatchesReadWrite = supportsReadOnly() && !newHasReadOnlyAttribute;
         Ref element = asHTMLElement();
@@ -479,7 +479,7 @@ void ValidatedFormListedElement::postConnectionSteps()
     resetFormOwner();
 }
 
-void ValidatedFormListedElement::setCustomValidity(const String& error)
+void ValidatedFormListedElement::setCustomValidity(StringImpl* error)
 {
     FormListedElement::setCustomValidity(error);
     updateValidity();

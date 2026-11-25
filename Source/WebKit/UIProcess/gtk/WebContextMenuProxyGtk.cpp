@@ -150,7 +150,7 @@ void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGlib& m
     switch (menuItem.type()) {
     case ContextMenuItemType::Action:
     case ContextMenuItemType::CheckableAction: {
-        gMenuItem = adoptGRef(g_menu_item_new(menuItem.title().utf8().legacyCStringPointer(), nullptr));
+        gMenuItem = adoptGRef(g_menu_item_new(utf8(menuItem.title()).legacyCStringPointer(), nullptr));
         GUniquePtr<char> actionName(g_strdup_printf("%s.%s", gContextMenuItemGroup, g_action_get_name(action)));
         g_menu_item_set_action_and_target_value(gMenuItem.get(), actionName.get(), menuItem.gActionTarget());
 
@@ -162,7 +162,7 @@ void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGlib& m
     }
     case ContextMenuItemType::Submenu: {
         GRefPtr<GMenu> submenu = buildMenu(menuItem.submenuItems());
-        gMenuItem = adoptGRef(g_menu_item_new_submenu(menuItem.title().utf8().legacyCStringPointer(), G_MENU_MODEL(submenu.get())));
+        gMenuItem = adoptGRef(g_menu_item_new_submenu(utf8(menuItem.title()).legacyCStringPointer(), G_MENU_MODEL(submenu.get())));
         break;
     }
     case ContextMenuItemType::Separator:

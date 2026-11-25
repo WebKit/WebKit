@@ -175,7 +175,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad, Is
             { "xyz"_s, @"chemical/x-xyz" },
             { "z"_s, @"application/x-compress" },
         }) };
-        type = extensionMap.get(String { extension.get() });
+        type = extensionMap.get(StringImpl::create(extension.get()).get());
         if (!type)
             type = preferredMIMETypeForFileExtensionFromUTType(bridge_cast(extension.get()));
     }

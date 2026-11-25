@@ -45,7 +45,7 @@ public:
     virtual ~ICOImageDecoder();
 
     // ScalableImageDecoder
-    String filenameExtension() const final { return "ico"_s; }
+    RefPtr<StringImpl> filenameExtension() const final { return "ico"_si; }
     void setData(const FragmentedSharedBuffer&, bool allDataReceived) final;
     IntSize size() const final;
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel) const final;

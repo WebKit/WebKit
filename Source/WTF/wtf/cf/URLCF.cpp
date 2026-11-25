@@ -43,13 +43,13 @@ URL::URL(CFURLRef url)
         *this = URLParser(bytesAsString(url)).result();
 }
 
-RetainPtr<CFURLRef> URL::createCFURL(const String& string)
+RetainPtr<CFURLRef> URL::createCFURL(StringImpl* string)
 {
-    if (string.is8Bit() && string.containsOnlyASCII()) [[likely]] {
-        auto characters = string.span8();
+    if (is8Bit(string) && containsOnlyASCII(string)) [[likely]] {
+        auto characters = span8(string);
         return adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(characters.data()), characters.size(), kCFStringEncodingUTF8, nullptr, true));
     }
-    auto utf8 = string.utf8();
+    auto utf8 = WTF::utf8(string);
     auto utf8Span = utf8.span();
     return adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(utf8Span.data()), utf8Span.size(), kCFStringEncodingUTF8, nullptr, true));
 }
@@ -76,13 +76,13 @@ RetainPtr<CFURLRef> URL::createCFURL() const
     return result;
 }
 
-String URL::fileSystemPath() const
+RefPtr<StringImpl> URL::fileSystemPath() const
 {
     auto cfURL = createCFURL();
     if (!cfURL)
-        return String();
+        return nullptr;
 
-    return adoptCF(CFURLCopyFileSystemPath(cfURL.get(), kCFURLPOSIXPathStyle)).get();
+    return StringImpl::create(adoptCF(CFURLCopyFileSystemPath(cfURL.get(), kCFURLPOSIXPathStyle)).get());
 }
 
 }

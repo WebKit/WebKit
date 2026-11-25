@@ -94,19 +94,19 @@ Ref<ImmutableStyleProperties> MutableStyleProperties::immutableDeduplicatedCopy(
     return ImmutableStyleProperties::createDeduplicating(m_propertyVector.span(), cssParserMode());
 }
 
-inline bool MutableStyleProperties::removeShorthandProperty(CSSPropertyID propertyID, String* returnText)
+inline bool MutableStyleProperties::removeShorthandProperty(CSSPropertyID propertyID, RefPtr<StringImpl>* returnText)
 {
     // FIXME: Use serializeShorthandValue here to return the value of the removed shorthand as we do when removing a longhand.
     if (returnText)
-        *returnText = String();
+        *returnText = nullptr;
     return removeProperties(shorthandForProperty(propertyID).properties());
 }
 
-bool MutableStyleProperties::removePropertyAtIndex(int index, String* returnText)
+bool MutableStyleProperties::removePropertyAtIndex(int index, RefPtr<StringImpl>* returnText)
 {
     if (index == -1) {
         if (returnText)
-            *returnText = String();
+            *returnText = nullptr;
         return false;
     }
 
@@ -121,22 +121,22 @@ bool MutableStyleProperties::removePropertyAtIndex(int index, String* returnText
     return true;
 }
 
-inline bool MutableStyleProperties::removeLonghandProperty(CSSPropertyID propertyID, String* returnText)
+inline bool MutableStyleProperties::removeLonghandProperty(CSSPropertyID propertyID, RefPtr<StringImpl>* returnText)
 {
     return removePropertyAtIndex(findPropertyIndex(propertyID), returnText);
 }
 
-bool MutableStyleProperties::removeProperty(CSSPropertyID propertyID, String* returnText)
+bool MutableStyleProperties::removeProperty(CSSPropertyID propertyID, RefPtr<StringImpl>* returnText)
 {
     return isLonghand(propertyID) ? removeLonghandProperty(propertyID, returnText) : removeShorthandProperty(propertyID, returnText);
 }
 
-bool MutableStyleProperties::removeCustomProperty(const String& propertyName, String* returnText)
+bool MutableStyleProperties::removeCustomProperty(StringImpl* propertyName, RefPtr<StringImpl>* returnText)
 {
     return removePropertyAtIndex(findCustomPropertyIndex(propertyName), returnText);
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, CSSParserContext parserContext, IsImportant important, bool* didFailParsing)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, StringImpl* value, CSSParserContext parserContext, IsImportant important, bool* didFailParsing)
 {
     if (!isExposed(propertyID, &parserContext.propertySettings) && !isInternal(propertyID)) {
         // Allow internal properties as we use them to handle certain DOM-exposed values
@@ -146,7 +146,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
 
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
-    if (value.isEmpty())
+    if (WTF::isEmpty(value))
         return removeProperty(propertyID);
 
     // When replacing an existing property value, this moves the property to the end of the list.
@@ -158,23 +158,23 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
     return parseResult == CSSParser::ParseResult::Changed;
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, IsImportant important, bool* didFailParsing)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, StringImpl* value, IsImportant important, bool* didFailParsing)
 {
     CSSParserContext parserContext(cssParserMode());
     return setProperty(propertyID, value, parserContext, important, didFailParsing);
 }
 
-bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, CSSParserContext parserContext, IsImportant important)
+bool MutableStyleProperties::setCustomProperty(StringImpl* propertyName, StringImpl* value, CSSParserContext parserContext, IsImportant important)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
-    if (value.isEmpty())
+    if (WTF::isEmpty(value))
         return removeCustomProperty(propertyName);
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
     parserContext.mode = cssParserMode();
-    return CSSParser::parseCustomPropertyValue(*this, AtomString { propertyName }, value, important, parserContext) == CSSParser::ParseResult::Changed;
+    return CSSParser::parseCustomPropertyValue(*this, AtomStringImpl::add(propertyName).get(), value, important, parserContext) == CSSParser::ParseResult::Changed;
 }
 
 void MutableStyleProperties::setProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, IsImportant important)
@@ -236,7 +236,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSValueID id
     return setProperty(CSSProperty(propertyID, CSSKeywordValue::create(identifier), important));
 }
 
-bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CSSParserContext context)
+bool MutableStyleProperties::parseDeclaration(StringImpl* styleDeclaration, CSSParserContext context)
 {
     auto oldProperties = WTF::move(m_propertyVector);
     m_propertyVector.clear();
@@ -327,7 +327,7 @@ CSSProperty* MutableStyleProperties::findCSSPropertyWithID(CSSPropertyID propert
     return &m_propertyVector.at(foundPropertyIndex);
 }
 
-CSSProperty* MutableStyleProperties::findCustomCSSPropertyWithName(const String& propertyName)
+CSSProperty* MutableStyleProperties::findCustomCSSPropertyWithName(StringImpl* propertyName)
 {
     int foundPropertyIndex = findCustomPropertyIndex(propertyName);
     if (foundPropertyIndex == -1)

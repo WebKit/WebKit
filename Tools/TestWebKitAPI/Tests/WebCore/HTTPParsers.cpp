@@ -109,7 +109,7 @@ TEST(RFC8941, ParseItemStructuredFieldValue)
     EXPECT_TRUE(!!itemString);
     EXPECT_EQ("same-origin-allow-popups"_s, itemString->string());
     EXPECT_EQ(result->second.map().size(), 1U);
-    auto* parameterValueString = result->second.getIf<String>("report-to"_s);
+    auto* parameterValueString = result->second.getIf<RefPtr<StringImpl>>("report-to"_s);
     EXPECT_TRUE(!!parameterValueString);
     EXPECT_EQ("http://example.com"_s, *parameterValueString);
 
@@ -160,7 +160,7 @@ TEST(RFC8941, ParseItemStructuredFieldValue)
     parameterValueBoolean = result->second.getIf<bool>("should-report"_s);
     EXPECT_TRUE(!!parameterValueToken);
     EXPECT_TRUE(*parameterValueBoolean);
-    parameterValueString = result->second.getIf<String>("report-to"_s);
+    parameterValueString = result->second.getIf<RefPtr<StringImpl>>("report-to"_s);
     EXPECT_TRUE(!!parameterValueString);
     EXPECT_EQ("http://example.com"_s, *parameterValueString);
 
@@ -432,7 +432,7 @@ TEST(RFC8941, ParseItemStructuredFieldValue)
     // String with multiple parameters (token and integer values).
     result = RFC8941::parseItemStructuredFieldValue("\"b\"; a=c; c=2"_s);
     EXPECT_TRUE(!!result);
-    auto* stringValue = std::get_if<String>(&result->first);
+    auto* stringValue = std::get_if<RefPtr<StringImpl>>(&result->first);
     EXPECT_TRUE(!!stringValue);
     EXPECT_EQ("b"_s, *stringValue);
     EXPECT_EQ(result->second.map().size(), 2U);
@@ -460,36 +460,36 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     auto result = RFC8941::parseDictionaryStructuredFieldValue("default=\"https://www.example.com/reporting/report.py?reportID=46ecac28-6d27-4763-a692-bcc588054716\""_s);
     EXPECT_TRUE(!!result);
     EXPECT_EQ(result->size(), 1U);
-    EXPECT_TRUE(result->contains("default"_s));
-    auto valueAndParameters = result->get("default"_s);
+    EXPECT_TRUE(result->contains("default"_si));
+    auto valueAndParameters = result->get("default"_si);
     auto* bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
-    auto* endpointURLString = std::get_if<String>(bareItem);
+    auto* endpointURLString = std::get_if<RefPtr<StringImpl>>(bareItem);
     EXPECT_TRUE(!!endpointURLString);
     EXPECT_EQ("https://www.example.com/reporting/report.py?reportID=46ecac28-6d27-4763-a692-bcc588054716"_s, *endpointURLString);
 
     result = RFC8941::parseDictionaryStructuredFieldValue("default=\"https://www.example.com/reporting/report.py?reportID=46ecac28-6d27-4763-a692-bcc588054716\", report-only=\"https://www.example.com/reporting/report.py?reportID=46ecac28-6d27-4763-a692-bcc588054717\""_s);
     EXPECT_TRUE(!!result);
     EXPECT_EQ(result->size(), 2U);
-    EXPECT_TRUE(result->contains("default"_s));
-    valueAndParameters = result->get("default"_s);
+    EXPECT_TRUE(result->contains("default"_si));
+    valueAndParameters = result->get("default"_si);
     bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
-    endpointURLString = std::get_if<String>(bareItem);
+    endpointURLString = std::get_if<RefPtr<StringImpl>>(bareItem);
     EXPECT_TRUE(!!endpointURLString);
     EXPECT_EQ("https://www.example.com/reporting/report.py?reportID=46ecac28-6d27-4763-a692-bcc588054716"_s, *endpointURLString);
-    valueAndParameters = result->get("report-only"_s);
+    valueAndParameters = result->get("report-only"_si);
     bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
-    endpointURLString = std::get_if<String>(bareItem);
+    endpointURLString = std::get_if<RefPtr<StringImpl>>(bareItem);
     EXPECT_TRUE(!!endpointURLString);
     EXPECT_EQ("https://www.example.com/reporting/report.py?reportID=46ecac28-6d27-4763-a692-bcc588054717"_s, *endpointURLString);
 
     result = RFC8941::parseDictionaryStructuredFieldValue("geolocation=(self \"https://example.com\"), camera=()"_s);
     EXPECT_TRUE(!!result);
     EXPECT_EQ(result->size(), 2U);
-    EXPECT_TRUE(result->contains("geolocation"_s));
-    valueAndParameters = result->get("geolocation"_s);
+    EXPECT_TRUE(result->contains("geolocation"_si));
+    valueAndParameters = result->get("geolocation"_si);
     auto* valueList = std::get_if<RFC8941::InnerList>(&valueAndParameters.first);
     EXPECT_TRUE(!!valueList);
     EXPECT_EQ(valueList->size(), 2U);
@@ -498,11 +498,11 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     EXPECT_TRUE(!!token);
     EXPECT_EQ("self"_s, token->string());
     EXPECT_TRUE(valueList->at(1).second.map().isEmpty());
-    auto* urlString = std::get_if<String>(&valueList->at(1).first);
+    auto* urlString = std::get_if<RefPtr<StringImpl>>(&valueList->at(1).first);
     EXPECT_TRUE(!!urlString);
     EXPECT_EQ("https://example.com"_s, *urlString);
-    EXPECT_TRUE(result->contains("camera"_s));
-    valueAndParameters = result->get("camera"_s);
+    EXPECT_TRUE(result->contains("camera"_si));
+    valueAndParameters = result->get("camera"_si);
     valueList = std::get_if<RFC8941::InnerList>(&valueAndParameters.first);
     EXPECT_TRUE(!!valueList);
     EXPECT_TRUE(valueList->isEmpty());
@@ -510,8 +510,8 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     result = RFC8941::parseDictionaryStructuredFieldValue("count=42"_s);
     EXPECT_TRUE(!!result);
     EXPECT_EQ(result->size(), 1U);
-    EXPECT_TRUE(result->contains("count"_s));
-    valueAndParameters = result->get("count"_s);
+    EXPECT_TRUE(result->contains("count"_si));
+    valueAndParameters = result->get("count"_si);
     bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
     auto* intValue = std::get_if<int64_t>(bareItem);
@@ -520,8 +520,8 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
 
     result = RFC8941::parseDictionaryStructuredFieldValue("ratio=1.5"_s);
     EXPECT_TRUE(!!result);
-    EXPECT_TRUE(result->contains("ratio"_s));
-    valueAndParameters = result->get("ratio"_s);
+    EXPECT_TRUE(result->contains("ratio"_si));
+    valueAndParameters = result->get("ratio"_si);
     bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
     auto* decimalValue = std::get_if<double>(bareItem);
@@ -531,22 +531,22 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     result = RFC8941::parseDictionaryStructuredFieldValue("count=42, ratio=1.5, offset=-10"_s);
     EXPECT_TRUE(!!result);
     EXPECT_EQ(result->size(), 3U);
-    EXPECT_TRUE(result->contains("count"_s));
-    valueAndParameters = result->get("count"_s);
+    EXPECT_TRUE(result->contains("count"_si));
+    valueAndParameters = result->get("count"_si);
     bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
     intValue = std::get_if<int64_t>(bareItem);
     EXPECT_TRUE(!!intValue);
     EXPECT_EQ(*intValue, 42);
-    EXPECT_TRUE(result->contains("ratio"_s));
-    valueAndParameters = result->get("ratio"_s);
+    EXPECT_TRUE(result->contains("ratio"_si));
+    valueAndParameters = result->get("ratio"_si);
     bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
     decimalValue = std::get_if<double>(bareItem);
     EXPECT_TRUE(!!decimalValue);
     EXPECT_DOUBLE_EQ(*decimalValue, 1.5);
-    EXPECT_TRUE(result->contains("offset"_s));
-    valueAndParameters = result->get("offset"_s);
+    EXPECT_TRUE(result->contains("offset"_si));
+    valueAndParameters = result->get("offset"_si);
     bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
     intValue = std::get_if<int64_t>(bareItem);
@@ -557,8 +557,8 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     result = RFC8941::parseDictionaryStructuredFieldValue("*foo=1"_s);
     EXPECT_TRUE(!!result);
     EXPECT_EQ(result->size(), 1U);
-    EXPECT_TRUE(result->contains("*foo"_s));
-    valueAndParameters = result->get("*foo"_s);
+    EXPECT_TRUE(result->contains("*foo"_si));
+    valueAndParameters = result->get("*foo"_si);
     bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
     EXPECT_TRUE(!!bareItem);
     intValue = std::get_if<int64_t>(bareItem);
@@ -568,8 +568,8 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     // A "*"-initial parameter key must also be accepted.
     result = RFC8941::parseDictionaryStructuredFieldValue("count=42; *note=?1"_s);
     EXPECT_TRUE(!!result);
-    EXPECT_TRUE(result->contains("count"_s));
-    valueAndParameters = result->get("count"_s);
+    EXPECT_TRUE(result->contains("count"_si));
+    valueAndParameters = result->get("count"_si);
     EXPECT_EQ(valueAndParameters.second.map().size(), 1U);
     auto* paramBoolean = valueAndParameters.second.getIf<bool>("*note"_s);
     EXPECT_TRUE(!!paramBoolean);
@@ -603,34 +603,34 @@ TEST(HTTPParsers, RequestHeaderAppendDelimiter)
     };
 
     for (auto& [name, delimiter] : appendableHeaders) {
-        auto result = requestHeaderAppendDelimiter(String { name });
+        auto result = requestHeaderAppendDelimiter(StringImpl::create(name).ptr());
         EXPECT_TRUE(result.has_value());
         EXPECT_STREQ(result.value_or("missing"_s).characters(), delimiter.characters());
     }
 
-    EXPECT_STREQ(requestHeaderAppendDelimiter("accept-language"_s)->characters(), ", ");
-    EXPECT_STREQ(requestHeaderAppendDelimiter("X-FORWARDED-FOR"_s)->characters(), ", ");
+    EXPECT_STREQ(requestHeaderAppendDelimiter("accept-language"_si)->characters(), ", ");
+    EXPECT_STREQ(requestHeaderAppendDelimiter("X-FORWARDED-FOR"_si)->characters(), ", ");
 
-    EXPECT_FALSE(requestHeaderAppendDelimiter("Content-Type"_s).has_value());
-    EXPECT_FALSE(requestHeaderAppendDelimiter("Authorization"_s).has_value());
-    EXPECT_FALSE(requestHeaderAppendDelimiter("X-Custom"_s).has_value());
-    EXPECT_FALSE(requestHeaderAppendDelimiter(" Accept"_s).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter("Content-Type"_si).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter("Authorization"_si).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter("X-Custom"_si).has_value());
+    EXPECT_FALSE(requestHeaderAppendDelimiter(" Accept"_si).has_value());
     EXPECT_FALSE(requestHeaderAppendDelimiter(emptyString()).has_value());
 }
 
 TEST(HTTPParsers, RequestHeaderUnsafeToModify)
 {
     for (auto name : { "Available-Dictionary"_s, "Content-Length"_s, "Cookie2"_s, "Host"_s, "Keep-Alive"_s, "Set-Cookie"_s, "TE"_s, "Trailer"_s, "Transfer-Encoding"_s, "Upgrade"_s })
-        EXPECT_TRUE(isRequestHeaderUnsafeToModify(String { name }, "1"_s));
+        EXPECT_TRUE(isRequestHeaderUnsafeToModify(StringImpl::create(name).ptr(), "1"_s));
 
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("host"_s, "example.com"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("CONTENT-LENGTH"_s, "0"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Proxy-Authorization"_s, "Basic abc"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("proxy-connection"_s, "close"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Proxy-"_s, "1"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("host"_si, "example.com"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("CONTENT-LENGTH"_si, "0"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Proxy-Authorization"_si, "Basic abc"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("proxy-connection"_si, "close"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Proxy-"_si, "1"_s));
 
     for (auto name : { "Accept"_s, "Authorization"_s, "Cookie"_s, "Origin"_s, "Referer"_s, "User-Agent"_s, "Via"_s, "Sec-GPC"_s, "X-Request-Id"_s, "Proxy"_s, "X-Proxy-Id"_s })
-        EXPECT_FALSE(isRequestHeaderUnsafeToModify(String { name }, "1"_s));
+        EXPECT_FALSE(isRequestHeaderUnsafeToModify(StringImpl::create(name).ptr(), "1"_s));
 
     EXPECT_FALSE(isRequestHeaderUnsafeToModify(emptyString(), "1"_s));
 }
@@ -638,33 +638,33 @@ TEST(HTTPParsers, RequestHeaderUnsafeToModify)
 TEST(HTTPParsers, RequestHeaderUnsafeToModifyValues)
 {
     // Connection only allows close and keep-alive.
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_s, "close"_s));
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_s, "keep-alive"_s));
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("connection"_s, "Close, Keep-Alive"_s));
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_s, ""_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_s, "upgrade"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_s, "close, X-Secret"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_s, "Authorization"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_si, "close"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_si, "keep-alive"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("connection"_si, "Close, Keep-Alive"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Connection"_si, ""_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_si, "upgrade"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_si, "close, X-Secret"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Connection"_si, "Authorization"_s));
 
     // Accept-Encoding can't use shared dictionary encodings or a wildcard.
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "gzip, deflate, br"_s));
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "gzip;q=1.0, identity; q=0.5"_s));
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, ""_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "*"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "identity;q=1, *;q=0"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("accept-encoding"_s, "gzip, DCB"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_s, "dcz;q=0.9, gzip"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_si, "gzip, deflate, br"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_si, "gzip;q=1.0, identity; q=0.5"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept-Encoding"_si, ""_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_si, "*"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_si, "identity;q=1, *;q=0"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("accept-encoding"_si, "gzip, DCB"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("Accept-Encoding"_si, "dcz;q=0.9, gzip"_s));
 
     // Method override headers can't name a forbidden method.
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-HTTP-Method-Override"_s, "PUT"_s));
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-Method-Override"_s, "patch, delete"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("X-HTTP-Method-Override"_s, "TRACE"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("x-http-method"_s, "get, connect"_s));
-    EXPECT_TRUE(isRequestHeaderUnsafeToModify("X-Method-Override"_s, "Track"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-HTTP-Method-Override"_si, "PUT"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-Method-Override"_si, "patch, delete"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("X-HTTP-Method-Override"_si, "TRACE"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("x-http-method"_si, "get, connect"_s));
+    EXPECT_TRUE(isRequestHeaderUnsafeToModify("X-Method-Override"_si, "Track"_s));
 
     // The same values are fine on other headers.
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-Custom"_s, "TRACE"_s));
-    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept"_s, "*"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("X-Custom"_si, "TRACE"_s));
+    EXPECT_FALSE(isRequestHeaderUnsafeToModify("Accept"_si, "*"_s));
 }
 
 } // namespace TestWebKitAPI

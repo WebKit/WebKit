@@ -32,7 +32,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressEvent);
 
-ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, const Init& initializer, IsTrusted isTrusted)
     : Event(eventInterface, type, initializer, isTrusted)
     , m_lengthComputable(initializer.lengthComputable)
     , m_loaded(initializer.loaded)
@@ -40,7 +40,7 @@ ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomS
 {
 }
 
-ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, const AtomString& type, bool lengthComputable, double loaded, double total)
+ProgressEvent::ProgressEvent(enum EventInterfaceType eventInterface, AtomStringImpl* type, bool lengthComputable, double loaded, double total)
     : Event(eventInterface, type, CanBubble::No, IsCancelable::No)
     , m_lengthComputable(lengthComputable)
     , m_loaded(loaded)

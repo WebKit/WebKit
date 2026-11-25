@@ -48,7 +48,7 @@ public:
     static TextExtractionFilter& singleton();
     static TextExtractionFilter* singletonIfCreated();
 
-    void shouldFilter(const String&, CompletionHandler<void(bool)>&&);
+    void shouldFilter(StringImpl*, CompletionHandler<void(bool)>&&);
     void prewarm();
     void resetCache();
 
@@ -58,8 +58,8 @@ private:
     static constexpr auto chunkSize = 120;
 
     void initializeModelIfNeeded();
-    bool shouldFilter(const String&);
-    Vector<RetainPtr<NSString>> segmentText(const String&);
+    bool shouldFilter(StringImpl*);
+    Vector<RetainPtr<NSString>> segmentText(StringImpl*);
 
     const Ref<WorkQueue> m_modelQueue;
     RetainPtr<MLModel> m_model;

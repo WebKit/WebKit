@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT void disableICECandidateFilteringForDocument(Document&);
     WEBCORE_EXPORT void enableICECandidateFiltering();
 
-    using LogCallback = Function<void(String&& logType, String&& logMessage, String&& logLevel, RefPtr<RTCPeerConnection>&&)>;
+    using LogCallback = Function<void(RefPtr<StringImpl>&& logType, RefPtr<StringImpl>&& logMessage, RefPtr<StringImpl>&& logLevel, RefPtr<RTCPeerConnection>&&)>;
     void startGatheringLogs(Document&, LogCallback&&);
     void stopGatheringLogs();
 #endif

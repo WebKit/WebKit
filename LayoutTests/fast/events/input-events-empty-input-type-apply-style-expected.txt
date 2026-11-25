@@ -1,0 +1,26 @@
+Tests the inputType of input events for style changes whose editing action has no input type name (it is the empty string). These go through Editor::applyStyle().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FontSize (testRunner):
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+FontSizeDelta (testRunner):
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+Unscript (testRunner):
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+fontSize (document.execCommand):
+    beforeinput: inputType="" data=null
+    input: inputType="" data=null
+bold (document.execCommand):
+    beforeinput: inputType="formatBold" data=null
+    input: inputType="formatBold" data=null
+
+PASS editable.textContent is "Hello bold world"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello bold world

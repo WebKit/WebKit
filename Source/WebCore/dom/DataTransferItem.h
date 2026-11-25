@@ -50,8 +50,8 @@ class DataTransferItem : public RefCounted<DataTransferItem> {
 public:
     enum class Kind : uint8_t { String, File };
 
-    NODELETE static Ref<DataTransferItem> create(WeakPtr<DataTransferItemList>&&, const String&, Kind);
-    NODELETE static Ref<DataTransferItem> create(WeakPtr<DataTransferItemList>&&, const String&, Ref<File>&&);
+    NODELETE static Ref<DataTransferItem> create(WeakPtr<DataTransferItemList>&&, StringImpl*, Kind);
+    NODELETE static Ref<DataTransferItem> create(WeakPtr<DataTransferItemList>&&, StringImpl*, Ref<File>&&);
 
     ~DataTransferItem();
 
@@ -59,20 +59,20 @@ public:
     NODELETE void clearListAndPutIntoDisabledMode();
 
     NODELETE bool isFile() const;
-    String kind() const;
-    NODELETE String type() const;
+    RefPtr<StringImpl> kind() const;
+    NODELETE RefPtr<StringImpl> type() const;
     void getAsString(Document&, RefPtr<StringCallback>&&) const;
     NODELETE File* getAsFile() const;
     RefPtr<FileSystemEntry> getAsEntry(ScriptExecutionContext&) const;
 
 private:
-    DataTransferItem(WeakPtr<DataTransferItemList>&&, const String& type, Kind);
-    DataTransferItem(WeakPtr<DataTransferItemList>&&, const String&, Ref<File>&&);
+    DataTransferItem(WeakPtr<DataTransferItemList>&&, StringImpl* type, Kind);
+    DataTransferItem(WeakPtr<DataTransferItemList>&&, StringImpl*, Ref<File>&&);
 
     bool isInDisabledMode() const { return !m_list; }
 
     WeakPtr<DataTransferItemList> m_list;
-    const String m_type;
+    const RefPtr<StringImpl> m_type;
     Kind m_kind { Kind::String };
     const RefPtr<File> m_file;
 };

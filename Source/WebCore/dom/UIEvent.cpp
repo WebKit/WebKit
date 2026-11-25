@@ -37,21 +37,21 @@ UIEvent::UIEvent(enum EventInterfaceType eventInterface)
 {
 }
 
-UIEvent::UIEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& viewArg, int detailArg)
+UIEvent::UIEvent(enum EventInterfaceType eventInterface, AtomStringImpl* eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& viewArg, int detailArg)
     : Event(eventInterface, eventType, canBubble, isCancelable, isComposed)
     , m_view(WTF::move(viewArg))
     , m_detail(detailArg)
 {
 }
 
-UIEvent::UIEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg, IsTrusted isTrusted)
+UIEvent::UIEvent(enum EventInterfaceType eventInterface, AtomStringImpl* eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg, IsTrusted isTrusted)
     : Event(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, isTrusted)
     , m_view(WTF::move(viewArg))
     , m_detail(detailArg)
 {
 }
 
-UIEvent::UIEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const UIEventInit& initializer, IsTrusted isTrusted)
+UIEvent::UIEvent(enum EventInterfaceType eventInterface, AtomStringImpl* eventType, const UIEventInit& initializer, IsTrusted isTrusted)
     : Event(eventInterface, eventType, initializer, isTrusted)
     , m_view(initializer.view.get())
     , m_detail(initializer.detail)
@@ -60,7 +60,7 @@ UIEvent::UIEvent(enum EventInterfaceType eventInterface, const AtomString& event
 
 UIEvent::~UIEvent() = default;
 
-void UIEvent::initUIEvent(const AtomString& typeArg, bool canBubbleArg, bool cancelableArg, RefPtr<WindowProxy>&& viewArg, int detailArg)
+void UIEvent::initUIEvent(AtomStringImpl* typeArg, bool canBubbleArg, bool cancelableArg, RefPtr<WindowProxy>&& viewArg, int detailArg)
 {
     if (isBeingDispatched())
         return;

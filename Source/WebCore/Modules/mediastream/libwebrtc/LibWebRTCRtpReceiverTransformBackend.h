@@ -41,7 +41,7 @@ private:
 
     // RTCRtpTransformBackend
     void setTransformableFrameCallback(Callback&&) final;
-    bool requestKeyFrame(const String&) final;
+    bool requestKeyFrame(StringImpl*) final;
     void detachFromOwningBackend() final;
 
     bool m_isRegistered { false };

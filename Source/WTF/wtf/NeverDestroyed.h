@@ -32,6 +32,7 @@
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 // NeverDestroyed is a smart-pointer-like class that ensures that the destructor
 // for the given object is never called, but doesn't use the heap to allocate it.
@@ -92,6 +93,11 @@ public:
 
     const T* operator->() const { return objectPointer(); }
 
+    // Like RefPtr itself, a NeverDestroyed<RefPtr<X>> converts to X*, so that it can be passed to X* parameters
+    // and compared with pointers without a second user-defined conversion.
+    using RawPointerType = typename Detail::RefPtrRawPointer<std::remove_const_t<T>>::Type;
+    operator RawPointerType() const requires Detail::RefPtrRawPointer<std::remove_const_t<T>>::isRefPtr { return objectPointer()->get(); }
+
 private:
     using PointerType = typename std::remove_const<T>::type*;
 
@@ -144,6 +150,11 @@ public:
     const T& get() const { return *objectPointer(); }
 
     const T* operator->() const { return objectPointer(); }
+
+    // Like RefPtr itself, a NeverDestroyed<RefPtr<X>> converts to X*, so that it can be passed to X* parameters
+    // and compared with pointers without a second user-defined conversion.
+    using RawPointerType = typename Detail::RefPtrRawPointer<std::remove_const_t<T>>::Type;
+    operator RawPointerType() const requires Detail::RefPtrRawPointer<std::remove_const_t<T>>::isRefPtr { return objectPointer()->get(); }
 
 #if ASSERT_ENABLED
     bool isConstructed() const { return m_isConstructed; }

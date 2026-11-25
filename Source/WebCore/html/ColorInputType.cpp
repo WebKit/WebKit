@@ -87,7 +87,7 @@ static std::optional<Color> parseColorValue(StringView string, HTMLInputElement&
     return { };
 }
 
-static String serializeColorValue(Color input, HTMLInputElement& context)
+static RefPtr<StringImpl> serializeColorValue(Color input, HTMLInputElement& context)
 {
     auto alpha = context.alpha();
     auto colorSpace = context.colorSpace();
@@ -95,7 +95,7 @@ static String serializeColorValue(Color input, HTMLInputElement& context)
     if (!alpha)
         input = input.opaqueColor();
 
-    if (colorSpace == "limited-srgb"_s) {
+    if (equal(colorSpace, "limited-srgb"_s)) {
         auto inputAsRGBA = input.toColorTypeLossy<SRGBA<uint8_t>>();
         // When the alpha attribute is set the specification requires the modern color() serialization.
         if (alpha)
@@ -103,7 +103,7 @@ static String serializeColorValue(Color input, HTMLInputElement& context)
         else
             input = inputAsRGBA.resolved();
     } else {
-        ASSERT(colorSpace == "display-p3"_s);
+        ASSERT(equal(colorSpace, "display-p3"_s));
         input = input.toColorTypeLossy<ExtendedDisplayP3<float>>().resolved();
     }
 
@@ -139,18 +139,18 @@ void ColorInputType::setPopupIsVisible(bool visible)
     m_popupIsVisible = visible;
 }
 
-const AtomString& ColorInputType::formControlType() const
+const RefPtr<AtomStringImpl>& ColorInputType::formControlType() const
 {
     return InputTypeNames::color();
 }
 
-ValueOrReference<String> ColorInputType::fallbackValue() const
+ValueOrReference<RefPtr<StringImpl>> ColorInputType::fallbackValue() const
 {
     ASSERT(element());
     return serializeColorValue(Color::black, *protect(element()));
 }
 
-ValueOrReference<String> ColorInputType::sanitizeValue(const String& proposedValue LIFETIME_BOUND) const
+ValueOrReference<RefPtr<StringImpl>> ColorInputType::sanitizeValue(StringImpl* proposedValue LIFETIME_BOUND) const
 {
     ASSERT(element());
     Ref input = *element();
@@ -197,7 +197,7 @@ void ColorInputType::createShadowSubtree()
     updateColorSwatch();
 }
 
-void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void ColorInputType::setValue(StringImpl* value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     InputType::setValue(value, valueChanged, eventBehavior, selection);
 
@@ -269,7 +269,7 @@ void ColorInputType::didChooseColor(const Color& color)
         return;
 
     auto serializedColor = serializeColorValue(color, input);
-    if (serializedColor == input->value())
+    if (equal(serializedColor, input->value()))
         return;
 
     EventQueueScope scope;

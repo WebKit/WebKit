@@ -38,24 +38,24 @@
 
 namespace WebCore {
 
-static String getSystemSoftwareName()
+static RefPtr<StringImpl> getSystemSoftwareName()
 {
 #if HAS_GETENV_NP
     char buf[32];
     if (!getenv_np("SYSTEM_SOFTWARE_NAME", buf, sizeof(buf)))
-        return String::fromUTF8(buf);
+        return StringImpl::fromUTF8(buf);
 #endif
-    return "PlayStation"_s;
+    return "PlayStation"_si;
 }
 
-static String getSystemSoftwareVersion()
+static RefPtr<StringImpl> getSystemSoftwareVersion()
 {
 #if HAS_GETENV_NP
     char buf[32];
     if (!getenv_np("SYSTEM_SOFTWARE_VERSION", buf, sizeof(buf)))
-        return String::fromUTF8(buf);
+        return StringImpl::fromUTF8(buf);
 #endif
-    return "0.00"_s;
+    return "0.00"_si;
 }
 
 static constexpr ASCIILiteral versionForUAString()
@@ -64,15 +64,15 @@ static constexpr ASCIILiteral versionForUAString()
     return "605.1.15"_s;
 }
 
-static String standardUserAgentStatic()
+static RefPtr<StringImpl> standardUserAgentStatic()
 {
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-    static NeverDestroyed<String> uaStatic(makeString("Mozilla/5.0 (PlayStation; "_s, getSystemSoftwareName(), '/', getSystemSoftwareVersion(), ") AppleWebKit/"_s, versionForUAString(), " (KHTML, like Gecko) "_s, "Version/17.0 Safari/"_s, versionForUAString()));
+    static NeverDestroyed<RefPtr<StringImpl>> uaStatic(makeString("Mozilla/5.0 (PlayStation; "_s, getSystemSoftwareName(), '/', getSystemSoftwareVersion(), ") AppleWebKit/"_s, versionForUAString(), " (KHTML, like Gecko) "_s, "Version/17.0 Safari/"_s, versionForUAString()));
     return uaStatic;
 }
 
-String standardUserAgent(const String& applicationName, const String& applicationVersion)
+RefPtr<StringImpl> standardUserAgent(StringImpl* applicationName, StringImpl* applicationVersion)
 {
     // Create a default user agent string with a liberal interpretation of
     // https://developer.mozilla.org/en-US/docs/User_Agent_Strings_Reference
@@ -82,13 +82,13 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // browsers that are "Safari" but not running on OS X are the Safari iOS browser. Getting this
     // wrong can cause sites to load the wrong JavaScript, CSS, or custom fonts. In some cases
     // sites won't load resources at all.
-    if (applicationName.isEmpty())
+    if (isEmpty(applicationName))
         return standardUserAgentStatic();
 
-    return makeString(standardUserAgentStatic(), ' ', applicationName, '/', applicationVersion.isEmpty() ? versionForUAString() : applicationVersion);
+    return makeString(standardUserAgentStatic(), ' ', applicationName, '/', isEmpty(applicationVersion) ? StringView { versionForUAString() } : StringView { applicationVersion });
 }
 
-String standardUserAgentForURL(const URL&)
+RefPtr<StringImpl> standardUserAgentForURL(const URL&)
 {
     return standardUserAgentStatic();
 }

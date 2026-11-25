@@ -35,6 +35,6 @@ namespace WebCore {
 // An empty instance is essentially free (just a null HashMap pointer)
 // and this is almost always empty (only populated for stylesheets with prefixed @namespace rules),
 // so copying is preferred over refcounting.
-using CSSNamespacePrefixMap = HashMap<AtomString, AtomString>;
+using CSSNamespacePrefixMap = HashMap<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>;
 
 } // namespace WebCore

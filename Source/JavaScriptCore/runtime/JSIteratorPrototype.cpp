@@ -137,7 +137,7 @@ JSC_DEFINE_CUSTOM_SETTER(iteratorProtoConstructorSetter, (JSGlobalObject* global
 JSC_DEFINE_CUSTOM_GETTER(iteratorProtoToStringTagGetter, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName))
 {
     VM& vm = globalObject->vm();
-    return JSValue::encode(jsNontrivialString(vm, "Iterator"_s));
+    return JSValue::encode(jsNontrivialString(vm, "Iterator"_si));
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-set-iteratorprototype-@@tostringtag
@@ -236,7 +236,7 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIncludes, (JSGlobalObject* globalObjec
             if (skippedAsInt32 < 0) {
                 iteratorClose(globalObject, thisValue);
                 TRY_CLEAR_EXCEPTION(scope, { });
-                return throwVMRangeError(globalObject, scope, errorMessage);
+                return throwVMRangeError(globalObject, scope, StringImpl::create(errorMessage).ptr());
             }
             toSkip = skippedAsInt32;
         } else if (skippedElementsArg.isDouble()) {
@@ -257,7 +257,7 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIncludes, (JSGlobalObject* globalObjec
             } else {
                 iteratorClose(globalObject, thisValue);
                 TRY_CLEAR_EXCEPTION(scope, { });
-                return throwVMRangeError(globalObject, scope, errorMessage);
+                return throwVMRangeError(globalObject, scope, StringImpl::create(errorMessage).ptr());
             }
         } else {
             iteratorClose(globalObject, thisValue);

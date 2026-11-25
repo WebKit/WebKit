@@ -39,7 +39,7 @@ namespace WebKit {
 class WebStorageProvider final : public WebCore::StorageProvider {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebStorageProvider);
 public:
-    WebStorageProvider(WebPageProxyIdentifier webPageProxyID, const String& mediaKeysStorageDirectory, FileSystem::Salt mediaKeysStorageSalt)
+    WebStorageProvider(WebPageProxyIdentifier webPageProxyID, StringImpl* mediaKeysStorageDirectory, FileSystem::Salt mediaKeysStorageSalt)
         : m_webPageProxyID(webPageProxyID)
         , m_mediaKeysStorageDirectory(mediaKeysStorageDirectory)
         , m_mediaKeysStorageSalt(mediaKeysStorageSalt)
@@ -57,9 +57,9 @@ private:
         return *m_connection;
     }
 
-    String ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin) final
+    RefPtr<StringImpl> ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin) final
     {
-        if (m_mediaKeysStorageDirectory.isEmpty())
+        if (isEmpty(m_mediaKeysStorageDirectory))
             return emptyString();
 
         auto originDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(m_mediaKeysStorageSalt, origin);
@@ -68,10 +68,10 @@ private:
         return originDirectory;
     }
 
-    String ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin, std::optional<WebCore::FrameIdentifier> frameID) final
+    RefPtr<StringImpl> ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin, std::optional<WebCore::FrameIdentifier> frameID) final
     {
         RELEASE_LOG(Media, "ensureMediaKeysStorageDirectoryForOrigin %" PRIu64, m_webPageProxyID.toUInt64());
-        if (m_mediaKeysStorageDirectory.isEmpty())
+        if (isEmpty(m_mediaKeysStorageDirectory))
             return emptyString();
         if (!frameID)
             return emptyString();
@@ -83,14 +83,14 @@ private:
         return originDirectory;
     }
 
-    void setMediaKeysStorageDirectory(const String&) final
+    void setMediaKeysStorageDirectory(StringImpl*) final
     {
         RELEASE_ASSERT_NOT_REACHED();
     }
 
     const RefPtr<WebStorageConnection> m_connection;
     WebPageProxyIdentifier m_webPageProxyID;
-    String m_mediaKeysStorageDirectory;
+    RefPtr<StringImpl> m_mediaKeysStorageDirectory;
     FileSystem::Salt m_mediaKeysStorageSalt;
 };
 

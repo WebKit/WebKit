@@ -41,7 +41,7 @@ public:
 private:
     SVGStyleElement(const QualifiedName&, Document&, bool createdByParser);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
     void childrenChanged(const ChildChange&) final;
@@ -55,7 +55,7 @@ private:
     bool sheetLoaded() final { return m_styleSheetOwner.sheetLoaded(*this); }
     void startLoadingDynamicSheet() final { m_styleSheetOwner.startLoadingDynamicSheet(*this); }
 
-    String title() const final;
+    RefPtr<StringImpl> title() const final;
 
     InlineStyleSheetOwner m_styleSheetOwner;
 };

@@ -67,9 +67,9 @@ public:
     {
     }
 
-    void sendMessageToBackend(const String& message) override
+    void sendMessageToBackend(StringImpl* message) override
     {
-        [m_controller.get() sendMessageToBackend:message.createNSString().get()];
+        [m_controller.get() sendMessageToBackend:createNSString(message).get()];
     }
 
     void closeFromFrontend() override
@@ -126,7 +126,7 @@ private:
 
 - (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL
 {
-    m_remoteInspectorProxy->initialize(downcast<API::DebuggableInfo>([debuggableInfo _apiObject]), backendCommandsURL.absoluteString);
+    m_remoteInspectorProxy->initialize(downcast<API::DebuggableInfo>([debuggableInfo _apiObject]), StringImpl::create(backendCommandsURL.absoluteString).get());
 }
 
 - (void)close
@@ -141,7 +141,7 @@ private:
 
 - (void)sendMessageToFrontend:(NSString *)message
 {
-    m_remoteInspectorProxy->sendMessageToFrontend(message);
+    m_remoteInspectorProxy->sendMessageToFrontend(StringImpl::create(message).get());
 }
 
 // MARK: RemoteWebInspectorUIProxyClient methods
@@ -180,13 +180,13 @@ private:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // If this method is called prior to creating a frontend with -loadForDebuggable:backendCommandsURL:, it will not succeed.
     if (!m_remoteInspectorProxy->extensionController()) {
-        completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest).createNSString().get() }]).get(), nil);
+        completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest)).get() }]).get(), nil);
         return;
     }
 
-    protect(m_remoteInspectorProxy->extensionController())->registerExtension(extensionID, extensionBundleIdentifier, displayName, [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (std::expected<Ref<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
+    protect(m_remoteInspectorProxy->extensionController())->registerExtension(StringImpl::create(extensionID).get(), StringImpl::create(extensionBundleIdentifier).get(), StringImpl::create(displayName).get(), [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (std::expected<Ref<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
         if (!result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.error())).get() }]).get(), nil);
             return;
         }
 
@@ -202,12 +202,12 @@ private:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // If this method is called prior to creating a frontend with -loadForDebuggable:backendCommandsURL:, it will not succeed.
     if (!m_remoteInspectorProxy->extensionController()) {
-        completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest).createNSString().get() }]).get());
+        completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest)).get() }]).get());
         return;
     }
-    protect(m_remoteInspectorProxy->extensionController())->unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (std::expected<void, Inspector::ExtensionError> result) mutable {
+    protect(m_remoteInspectorProxy->extensionController())->unregisterExtension(StringImpl::create(extension.extensionID).get(), [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (std::expected<void, Inspector::ExtensionError> result) mutable {
         if (!result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.error())).get() }]).get());
             return;
         }
 
@@ -233,13 +233,13 @@ private:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // It is an error to call this method prior to creating a frontend (i.e., with -connect or -show).
     if (!m_remoteInspectorProxy->extensionController()) {
-        completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest).createNSString().get() }]).get());
+        completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest)).get() }]).get());
         return;
     }
 
-    protect(m_remoteInspectorProxy->extensionController())->showExtensionTab(extensionTabIdentifier, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (std::expected<void, Inspector::ExtensionError>&& result) mutable {
+    protect(m_remoteInspectorProxy->extensionController())->showExtensionTab(StringImpl::create(extensionTabIdentifier).get(), [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (std::expected<void, Inspector::ExtensionError>&& result) mutable {
         if (!result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.error())).get() }]).get());
             return;
         }
 
@@ -253,13 +253,13 @@ private:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // It is an error to call this method prior to creating a frontend (i.e., with -connect or -show).
     if (!m_remoteInspectorProxy->extensionController()) {
-        completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest).createNSString().get() }]).get());
+        completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest)).get() }]).get());
         return;
     }
 
-    protect(m_remoteInspectorProxy->extensionController())->navigateTabForExtension(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (const std::optional<Inspector::ExtensionError> result) mutable {
+    protect(m_remoteInspectorProxy->extensionController())->navigateTabForExtension(StringImpl::create(extensionTabIdentifier).get(), url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (const std::optional<Inspector::ExtensionError> result) mutable {
         if (result) {
-            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.value()).createNSString().get() }]).get());
+            capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: createNSString(Inspector::extensionErrorToString(result.value())).get() }]).get());
             return;
         }
 

@@ -33,7 +33,7 @@
 
 namespace API {
 
-WTF::String ContentRuleListStore::defaultStorePath()
+RefPtr<StringImpl> ContentRuleListStore::defaultStorePath()
 {
     static NeverDestroyed<RetainPtr<NSURL>> contentRuleListStoreURL = [] {
         RetainPtr<NSURL> url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
@@ -56,7 +56,7 @@ WTF::String ContentRuleListStore::defaultStorePath()
     if (![[NSFileManager defaultManager] createDirectoryAtURL:localContentRuleListStoreURL.get() withIntermediateDirectories:YES attributes:nil error:nullptr])
         LOG_ERROR("Failed to create directory %@", contentRuleListStoreURL.get().get());
 
-    return [localContentRuleListStoreURL absoluteURL].path;
+    return StringImpl::create([localContentRuleListStoreURL absoluteURL].path);
 }
 
 } // namespace API

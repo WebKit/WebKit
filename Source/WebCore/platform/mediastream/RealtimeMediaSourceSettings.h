@@ -54,8 +54,8 @@ enum class DisplaySurfaceType : uint8_t {
 
 class RealtimeMediaSourceSettings {
 public:
-    static VideoFacingMode videoFacingModeEnum(const String&);
-    static String displaySurface(DisplaySurfaceType);
+    static VideoFacingMode videoFacingModeEnum(StringImpl*);
+    static RefPtr<StringImpl> displaySurface(DisplaySurfaceType);
 
     enum Flag {
         Width = 1 << 0,
@@ -83,7 +83,7 @@ public:
     NODELETE WEBCORE_EXPORT OptionSet<RealtimeMediaSourceSettings::Flag> difference(const RealtimeMediaSourceSettings&) const;
 
     RealtimeMediaSourceSettings() = default;
-    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, String&& deviceId, String&& groupId, String&& label, DisplaySurfaceType displaySurface, bool logicalSurface, MeteringMode whiteBalanceMode, double zoom, bool torch, bool backgroundBlur, bool powerEfficient, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, RefPtr<StringImpl>&& deviceId, RefPtr<StringImpl>&& groupId, RefPtr<StringImpl>&& label, DisplaySurfaceType displaySurface, bool logicalSurface, MeteringMode whiteBalanceMode, double zoom, bool torch, bool backgroundBlur, bool powerEfficient, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(width)
         , m_height(height)
         , m_frameRate(frameRate)
@@ -141,12 +141,12 @@ public:
     void setEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
 
     bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    const String& deviceId() const LIFETIME_BOUND { return m_deviceId; }
-    void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
+    const RefPtr<StringImpl>& deviceId() const LIFETIME_BOUND { return m_deviceId; }
+    void setDeviceId(StringImpl* deviceId) { m_deviceId = deviceId; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const String& groupId() const LIFETIME_BOUND { return m_groupId; }
-    void setGroupId(const String& groupId) { m_groupId = groupId; }
+    const RefPtr<StringImpl>& groupId() const LIFETIME_BOUND { return m_groupId; }
+    void setGroupId(StringImpl* groupId) { m_groupId = groupId; }
 
     bool supportsDisplaySurface() const { return m_supportedConstraints.supportsDisplaySurface(); }
     DisplaySurfaceType displaySurface() const { return m_displaySurface; }
@@ -179,10 +179,10 @@ public:
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const LIFETIME_BOUND { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& supportedConstraints) { m_supportedConstraints = supportedConstraints; }
 
-    const String& label() const LIFETIME_BOUND { return m_label; }
-    void setLabel(const String& label) { m_label = label; }
+    const RefPtr<StringImpl>& label() const LIFETIME_BOUND { return m_label; }
+    void setLabel(StringImpl* label) { m_label = label; }
 
-    static String convertFlagsToString(const OptionSet<RealtimeMediaSourceSettings::Flag>);
+    static RefPtr<StringImpl> convertFlagsToString(const OptionSet<RealtimeMediaSourceSettings::Flag>);
 
     RealtimeMediaSourceSettings isolatedCopy() const;
 
@@ -196,9 +196,9 @@ private:
     uint32_t m_sampleSize { 0 };
     bool m_echoCancellation { 0 };
 
-    String m_deviceId;
-    String m_groupId;
-    String m_label;
+    RefPtr<StringImpl> m_deviceId;
+    RefPtr<StringImpl> m_groupId;
+    RefPtr<StringImpl> m_label;
 
     DisplaySurfaceType m_displaySurface { DisplaySurfaceType::Invalid };
     bool m_logicalSurface { 0 };
@@ -212,7 +212,7 @@ private:
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };
 
-String convertEnumerationToString(VideoFacingMode);
+RefPtr<StringImpl> convertEnumerationToString(VideoFacingMode);
 
 } // namespace WebCore
 
@@ -223,7 +223,7 @@ struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::VideoFacingMode> {
-    static String toString(const WebCore::VideoFacingMode mode)
+    static RefPtr<StringImpl> toString(const WebCore::VideoFacingMode mode)
     {
         return convertEnumerationToString(mode);
     }
@@ -231,7 +231,7 @@ struct LogArgument<WebCore::VideoFacingMode> {
 
 template <>
 struct LogArgument<OptionSet<WebCore::RealtimeMediaSourceSettings::Flag>> {
-    static String toString(const OptionSet<WebCore::RealtimeMediaSourceSettings::Flag> flags)
+    static RefPtr<StringImpl> toString(const OptionSet<WebCore::RealtimeMediaSourceSettings::Flag> flags)
     {
         return WebCore::RealtimeMediaSourceSettings::convertFlagsToString(flags);
     }

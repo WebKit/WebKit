@@ -241,10 +241,10 @@ TEST(WebKit, LoadMoreThan4GB)
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
         auto request = co_await connection.awaitableReceiveHTTPRequest();
         auto path = HTTPServer::parsePath(request);
-        if (path == "/"_s)
+        if (equal(path, "/"_s))
             co_await connection.awaitableSend(HTTPResponse(html).serialize());
         else {
-            co_await connection.awaitableSend("HTTP/1.1 200 OK\r\nContent-type: application/octet-stream\r\n\r\n"_s);
+            co_await connection.awaitableSend("HTTP/1.1 200 OK\r\nContent-type: application/octet-stream\r\n\r\n"_si);
             for (size_t i = 0; i < 16; ++i)
                 co_await connection.awaitableSend(OSObjectPtr { longData.get() });
             connection.terminate();

@@ -1,0 +1,10 @@
+Tests that WebKitMediaKeys.createSession() keeps its type string alive until the asynchronous permission request completes, even when the JavaScript string is garbage collected in the meantime. The key system string sent to the UI process for the permission request must also outlive the asynchronous request. Run with --guard-malloc to detect use-after-free.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Received a webkitkeymessage event for every session.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

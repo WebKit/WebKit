@@ -49,15 +49,15 @@ class PathCache {
 public:
     NODELETE static PathCache& singleton();
 
-    std::optional<DataRef<SVGPathByteStream::Data>> get(const AtomString& attributeValue) const;
-    void add(const AtomString& attributeValue, DataRef<SVGPathByteStream::Data>);
+    std::optional<DataRef<SVGPathByteStream::Data>> get(AtomStringImpl* attributeValue) const;
+    void add(AtomStringImpl* attributeValue, DataRef<SVGPathByteStream::Data>);
     void clear();
 
 private:
     friend class NeverDestroyed<PathCache, MainThreadAccessTraits>;
     PathCache() = default;
 
-    HashMap<AtomString, DataRef<SVGPathByteStream::Data>> m_cache;
+    HashMap<RefPtr<AtomStringImpl>, DataRef<SVGPathByteStream::Data>> m_cache;
     uint64_t m_sizeInBytes { 0 };
     static constexpr uint64_t maxItemSizeInBytes = 5 * 1024; // 5 Kb.
     static constexpr uint64_t maxCacheSizeInBytes = 150 * 1024; // 150 Kb.
@@ -69,12 +69,12 @@ PathCache& PathCache::singleton()
     return cache;
 }
 
-std::optional<DataRef<SVGPathByteStream::Data>> PathCache::get(const AtomString& attributeValue) const
+std::optional<DataRef<SVGPathByteStream::Data>> PathCache::get(AtomStringImpl* attributeValue) const
 {
     return m_cache.getOptional(attributeValue);
 }
 
-void PathCache::add(const AtomString& attributeValue, DataRef<SVGPathByteStream::Data> data)
+void PathCache::add(AtomStringImpl* attributeValue, DataRef<SVGPathByteStream::Data> data)
 {
     size_t newDataSize = data->size();
     if (newDataSize > maxItemSizeInBytes) [[unlikely]]
@@ -115,12 +115,12 @@ Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGPathElement(tagName, document));
 }
 
-void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGPathElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::dAttr) {
         auto& cache = PathCache::singleton();
         Ref pathBaseVal = protect(m_path)->baseVal();
-        if (newValue.isEmpty())
+        if (isEmpty(newValue))
             pathBaseVal->clearByteStreamData();
         else if (auto data = cache.get(newValue))
             pathBaseVal->updateByteStreamData(WTF::move(data.value()));
@@ -199,7 +199,7 @@ ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) cons
 
     // Spec: If it is not able to compute the total length of path, then throw.
     if (pathByteStream().isEmpty())
-        return Exception { ExceptionCode::InvalidStateError, "The element's path is empty."_s };
+        return Exception { ExceptionCode::InvalidStateError, "The element's path is empty."_si };
 
     // Spec: Clamp distance to [0, length].
     distance = clampTo<float>(distance, 0, getTotalLength());
@@ -273,7 +273,7 @@ Path SVGPathElement::path() const
     return Ref { m_path }->currentPath();
 }
 
-void SVGPathElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void SVGPathElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == SVGNames::dAttr && document().settings().cssDPropertyEnabled())
         collectDPresentationalHint(style);

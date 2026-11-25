@@ -108,7 +108,7 @@ inline std::optional<int32_t> JSValue::tryGetAsInt32()
     return std::nullopt;
 }
 
-template <typename Base> String HandleConverter<Base, Unknown>::getString(JSGlobalObject* globalObject) const
+template <typename Base> RefPtr<StringImpl> HandleConverter<Base, Unknown>::getString(JSGlobalObject* globalObject) const
 {
     return jsValue().getString(globalObject);
 }

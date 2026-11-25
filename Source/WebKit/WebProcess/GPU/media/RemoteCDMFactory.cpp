@@ -74,14 +74,14 @@ GPUProcessConnection& RemoteCDMFactory::gpuProcessConnection()
     return WebProcess::singleton().ensureGPUProcessConnection();
 }
 
-bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)
+bool RemoteCDMFactory::supportsKeySystem(StringImpl* keySystem)
 {
     auto sendResult = protect(gpuProcessConnection().connection())->sendSync(Messages::RemoteCDMFactoryProxy::SupportsKeySystem(keySystem), { });
     auto [supported] = sendResult.takeReplyOr(false);
     return supported;
 }
 
-std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem, const String& mediaKeysHashSalt, const CDMPrivateClient&)
+std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(StringImpl* keySystem, StringImpl* mediaKeysHashSalt, const CDMPrivateClient&)
 {
     auto sendResult = protect(gpuProcessConnection().connection())->sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem, mediaKeysHashSalt), { });
     auto [identifier, configuration] = sendResult.takeReplyOr(std::nullopt, RemoteCDMConfiguration { });

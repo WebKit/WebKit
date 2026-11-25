@@ -128,7 +128,7 @@ void DefaultAudioDestinationNode::createDestination()
         });
 }
 
-void DefaultAudioDestinationNode::setSinkId(const String& persistentDeviceId, bool isSilentSink, CompletionHandler<void(bool)>&& completionHandler)
+void DefaultAudioDestinationNode::setSinkId(StringImpl* persistentDeviceId, bool isSilentSink, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainThread());
 
@@ -141,7 +141,7 @@ void DefaultAudioDestinationNode::setSinkId(const String& persistentDeviceId, bo
 
     // Only commit the stored values on success so a later recreateDestination() keeps the routing
     // that is actually in effect.
-    protect(m_destination)->setSinkId(persistentDeviceId, isSilentSink, [weakThis = WeakPtr { *this }, persistentDeviceId, isSilentSink, completionHandler = WTF::move(completionHandler)](bool success) mutable {
+    protect(m_destination)->setSinkId(persistentDeviceId, isSilentSink, [weakThis = WeakPtr { *this }, persistentDeviceId = RefPtr { persistentDeviceId }, isSilentSink, completionHandler = WTF::move(completionHandler)](bool success) mutable {
         if (success) {
             if (RefPtr protectedThis = weakThis) {
                 protectedThis->m_outputDevicePersistentId = persistentDeviceId;
@@ -163,7 +163,7 @@ void DefaultAudioDestinationNode::recreateDestination()
     }
 }
 
-void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)
+void DefaultAudioDestinationNode::enableInput(StringImpl* inputDeviceId)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -193,10 +193,10 @@ void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
 {
     ASSERT(isInitialized());
     if (!isInitialized())
-        return completionHandler(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
+        return completionHandler(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_si });
 
     auto innerCompletionHandler = [completionHandler = WTF::move(completionHandler)](bool success) mutable {
-        completionHandler(success ? std::nullopt : std::make_optional(Exception { ExceptionCode::InvalidStateError, "Failed to start the audio device"_s }));
+        completionHandler(success ? std::nullopt : std::make_optional(Exception { ExceptionCode::InvalidStateError, "Failed to start the audio device"_si }));
     };
 
     m_wasDestinationStarted = true;
@@ -208,13 +208,13 @@ void DefaultAudioDestinationNode::resume(CompletionHandler<void(std::optional<Ex
     ASSERT(isInitialized());
     if (!isInitialized()) {
         protect(context())->postTask([completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
+            completionHandler(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_si });
         });
         return;
     }
     m_wasDestinationStarted = true;
     protect(m_destination)->start(dispatchToRenderThreadFunction(), [completionHandler = WTF::move(completionHandler)](bool success) mutable {
-        completionHandler(success ? std::nullopt : std::make_optional(Exception { ExceptionCode::InvalidStateError, "Failed to start the audio device"_s }));
+        completionHandler(success ? std::nullopt : std::make_optional(Exception { ExceptionCode::InvalidStateError, "Failed to start the audio device"_si }));
     });
 }
 
@@ -223,14 +223,14 @@ void DefaultAudioDestinationNode::suspend(CompletionHandler<void(std::optional<E
     ASSERT(isInitialized());
     if (!isInitialized()) {
         protect(context())->postTask([completionHandler = WTF::move(completionHandler)]() mutable {
-            completionHandler(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
+            completionHandler(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_si });
         });
         return;
     }
 
     m_wasDestinationStarted = false;
     protect(m_destination)->stop([completionHandler = WTF::move(completionHandler)](bool success) mutable {
-        completionHandler(success ? std::nullopt : std::make_optional(Exception { ExceptionCode::InvalidStateError, "Failed to stop the audio device"_s }));
+        completionHandler(success ? std::nullopt : std::make_optional(Exception { ExceptionCode::InvalidStateError, "Failed to stop the audio device"_si }));
     });
 }
 
@@ -265,7 +265,7 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
     ALWAYS_LOG(LOGIDENTIFIER, channelCount);
 
     if (channelCount > maxChannelCount())
-        return Exception { ExceptionCode::IndexSizeError, "Channel count exceeds maximum limit"_s };
+        return Exception { ExceptionCode::IndexSizeError, "Channel count exceeds maximum limit"_si };
 
     auto oldChannelCount = this->channelCount();
     auto result = AudioNode::setChannelCount(channelCount);
@@ -325,7 +325,7 @@ void DefaultAudioDestinationNode::updateIsEffectivelyPlayingAudio()
 }
 
 #if PLATFORM(IOS_FAMILY)
-void DefaultAudioDestinationNode::setSceneIdentifier(const String& sceneIdentifier)
+void DefaultAudioDestinationNode::setSceneIdentifier(StringImpl* sceneIdentifier)
 {
     if (RefPtr destination = m_destination)
         destination->setSceneIdentifier(sceneIdentifier);

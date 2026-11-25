@@ -51,8 +51,8 @@ public:
     JS_EXPORT_PRIVATE void disconnectFrontend(FrontendChannel&);
     JS_EXPORT_PRIVATE void disconnectAllFrontends();
 
-    JS_EXPORT_PRIVATE void sendEvent(const String& message) const;
-    void sendResponse(const String& message) const;
+    JS_EXPORT_PRIVATE void sendEvent(StringImpl* message) const;
+    void sendResponse(StringImpl* message) const;
 
 private:
     FrontendRouter() = default;

@@ -38,7 +38,7 @@ namespace WebCore {
 
 class ThreadableLoaderClientWrapper : public ThreadSafeRefCounted<ThreadableLoaderClientWrapper> {
 public:
-    static Ref<ThreadableLoaderClientWrapper> create(ThreadableLoaderClient& client, const String& initiator)
+    static Ref<ThreadableLoaderClientWrapper> create(ThreadableLoaderClient& client, StringImpl* initiator)
     {
         return adoptRef(*new ThreadableLoaderClientWrapper(client, initiator));
     }
@@ -92,19 +92,19 @@ public:
             client->didFail(mainContext, error);
     }
 
-    const String& initiator() const LIFETIME_BOUND { return m_initiator; }
+    const RefPtr<StringImpl>& initiator() const LIFETIME_BOUND { return m_initiator; }
 
 protected:
-    explicit ThreadableLoaderClientWrapper(ThreadableLoaderClient&, const String&);
+    explicit ThreadableLoaderClientWrapper(ThreadableLoaderClient&, StringImpl*);
 
     WeakPtr<ThreadableLoaderClient> m_client;
-    String m_initiator;
+    RefPtr<StringImpl> m_initiator;
     bool m_done { false };
 };
 
-inline ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper(ThreadableLoaderClient& client, const String& initiator)
+inline ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper(ThreadableLoaderClient& client, StringImpl* initiator)
     : m_client(client)
-    , m_initiator(initiator.isolatedCopy())
+    , m_initiator(isolatedCopy(initiator))
 {
 }
 

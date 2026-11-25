@@ -334,11 +334,11 @@ TEST(WebTransport, NetworkProcessCrash)
 {
     WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
         auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
-        co_await datagramConnection.awaitableSend(@"abc");
+        co_await datagramConnection.awaitableSend(StringImpl::create(@"abc"));
         auto bidiConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Bidirectional);
-        co_await bidiConnection.awaitableSend(@"abc", false);
+        co_await bidiConnection.awaitableSend(StringImpl::create(@"abc"), false);
         auto uniConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Unidirectional);
-        co_await uniConnection.awaitableSend(@"abc", false);
+        co_await uniConnection.awaitableSend(StringImpl::create(@"abc"), false);
     });
 
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
@@ -541,7 +541,7 @@ TEST(WebTransport, Worker)
 
     HTTPServer loadingServer({
         { "/"_s, { mainHTML } },
-        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, workerJS } }
+        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, StringImpl::create(workerJS) } }
     });
 
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
@@ -590,7 +590,7 @@ TEST(WebTransport, WorkerAfterNetworkProcessCrash)
 
     HTTPServer loadingServer({
         { "/"_s, { mainHTML } },
-        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, workerJS } }
+        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, StringImpl::create(workerJS) } }
     });
 
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
@@ -662,7 +662,7 @@ TEST(WebTransport, ServiceWorker)
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { serviceWorkerMainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, serviceWorkerJS.get() } }
+        { "/sw.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, StringImpl::create(serviceWorkerJS.get()) } }
     });
 
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
@@ -804,8 +804,8 @@ TEST(WebTransport, AllowedNetworkHosts)
         "</script>", transportURL];
 
     HTTPServer loadingServer({
-        { "/"_s, { mainHTML } },
-        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, workerJS } }
+        { "/"_s, { StringImpl::create(mainHTML) } },
+        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, StringImpl::create(workerJS) } }
     });
 
     auto runTest = [&] (NSSet<NSString *> *allowedNetworkHosts) {
@@ -884,7 +884,7 @@ TEST(WebTransport, ServerCertificateHashes)
             "    alert('successfully read ' + new TextDecoder().decode(value));"
             "  } catch (e) { alert('caught ' + e); }"
             "}; test();"
-            "</script>", certificateBytes.toString().utf8().legacyCStringPointer(), echoServer.port()];
+            "</script>", utf8(certificateBytes.toString()).legacyCStringPointer(), echoServer.port()];
 
         RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
         enableWebTransport(configuration.get());
@@ -968,8 +968,8 @@ TEST(WebTransport, BackForwardCache)
         "</script>", echoServer.port()];
 
     HTTPServer loadingServer({
-        { "/"_s, { mainHTML } },
-        { "/other"_s, { @"<script>alert('loaded')</script>" } }
+        { "/"_s, { StringImpl::create(mainHTML) } },
+        { "/other"_s, { "<script>alert('loaded')</script>"_s } }
     });
 
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
@@ -1081,7 +1081,7 @@ TEST(WebTransport, DISABLED_ServerStreamAborts)
 {
     WebTransportServer server([](ConnectionGroup group) -> ConnectionTask {
         auto stream = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Bidirectional);
-        co_await stream.awaitableSend(@"abc", false);
+        co_await stream.awaitableSend(StringImpl::create(@"abc"), false);
         auto echo = co_await stream.awaitableReceiveBytes();
         EXPECT_EQ(echo.size(), 3u);
 

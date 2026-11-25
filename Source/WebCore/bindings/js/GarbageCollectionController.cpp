@@ -128,7 +128,7 @@ void GarbageCollectionController::dumpHeapForVM(VM& vm)
     JSLockHolder lock(vm);
     sanitizeStackForVM(vm);
 
-    String jsonData;
+    RefPtr<StringImpl> jsonData;
     {
         DeferGCForAWhile deferGC(vm); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
 
@@ -138,10 +138,10 @@ void GarbageCollectionController::dumpHeapForVM(VM& vm)
         jsonData = snapshotBuilder.json();
     }
 
-    auto utf8String = jsonData.utf8();
+    auto utf8String = utf8(jsonData);
 
     fileHandle.write(byteCast<uint8_t>(utf8String.span()));
-    SAFE_WTFLOGALWAYS("Dumped GC heap to %s%s", tempFilePath.utf8(), isMainThread() ? ""_s : " for Worker"_s);
+    SAFE_WTFLOGALWAYS("Dumped GC heap to %s%s", utf8(tempFilePath), isMainThread() ? ""_s : " for Worker"_s);
 }
 
 void GarbageCollectionController::dumpHeap()

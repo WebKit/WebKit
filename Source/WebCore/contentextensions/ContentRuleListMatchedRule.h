@@ -9,23 +9,23 @@ namespace WebCore {
 struct ContentRuleListMatchedRule {
     struct MatchedRule {
         double ruleId;
-        String rulesetId;
-        std::optional<String> extensionId;
+        RefPtr<StringImpl> rulesetId;
+        std::optional<RefPtr<StringImpl>> extensionId;
     };
 
     struct Request {
         double frameId;
         double parentFrameId;
-        String method;
-        String requestId;
+        RefPtr<StringImpl> method;
+        RefPtr<StringImpl> requestId;
         double tabId;
-        String type;
-        String url;
-        std::optional<String> initiator;
-        std::optional<String> documentId;
-        std::optional<String> documentLifecycle;
-        std::optional<String> frameType;
-        std::optional<String> parentDocumentId;
+        RefPtr<StringImpl> type;
+        RefPtr<StringImpl> url;
+        std::optional<RefPtr<StringImpl>> initiator;
+        std::optional<RefPtr<StringImpl>> documentId;
+        std::optional<RefPtr<StringImpl>> documentLifecycle;
+        std::optional<RefPtr<StringImpl>> frameType;
+        std::optional<RefPtr<StringImpl>> parentDocumentId;
     };
 
     ContentRuleListMatchedRule(MatchedRule rule, Request request)

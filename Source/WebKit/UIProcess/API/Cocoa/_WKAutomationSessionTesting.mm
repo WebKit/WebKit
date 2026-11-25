@@ -58,10 +58,10 @@ public:
 
     ConnectionType connectionType() const final { return ConnectionType::Local; }
 
-    void sendMessageToFrontend(const String& message) final
+    void sendMessageToFrontend(StringImpl* message) final
     {
         if (m_handler)
-            m_handler(message.createNSString().get());
+            m_handler(createNSString(message).get());
     }
 
 private:
@@ -101,7 +101,7 @@ static void *kAutomationTestChannelKey = &kAutomationTestChannelKey;
     if (!page)
         return nil;
     Ref session = downcast<WebKit::WebAutomationSession>([self _apiObject]);
-    return session->handleForWebPageProxy(*page).createNSString().autorelease();
+    return createNSString(session->handleForWebPageProxy(*page)).autorelease();
 }
 
 - (void)_setMessageToFrontendHandlerForTesting:(void (^)(NSString *))handler
@@ -135,7 +135,7 @@ static void *kAutomationTestChannelKey = &kAutomationTestChannelKey;
 - (void)_dispatchMessageFromRemoteForTesting:(NSString *)message
 {
     Ref session = downcast<WebKit::WebAutomationSession>([self _apiObject]);
-    session->dispatchMessageFromRemote(String(message));
+    session->dispatchMessageFromRemote(StringImpl::create(message));
 }
 
 @end

@@ -41,7 +41,7 @@ public:
     CDMPrivateInterface() = default;
     virtual ~CDMPrivateInterface() = default;
 
-    virtual bool supportsMIMEType(const String&) const = 0;
+    virtual bool supportsMIMEType(StringImpl*) const = 0;
 
     virtual RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) = 0;
 };

@@ -47,30 +47,30 @@ public:
 
     WEBCORE_EXPORT ~Location();
 
-    ExceptionOr<void> setHref(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
-    String href() const;
+    ExceptionOr<void> setHref(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    RefPtr<StringImpl> href() const;
 
-    ExceptionOr<void> assign(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String&);
-    ExceptionOr<void> replace(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String&);
+    ExceptionOr<void> assign(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    ExceptionOr<void> replace(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, StringImpl*);
     void reload(LocalDOMWindow& activeWindow);
 
-    ExceptionOr<void> setProtocol(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
-    String protocol() const;
-    ExceptionOr<void> setHost(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
-    WEBCORE_EXPORT String host() const;
-    ExceptionOr<void> setHostname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
-    String hostname() const;
-    ExceptionOr<void> setPort(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
-    String port() const;
-    ExceptionOr<void> setPathname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
-    String pathname() const;
-    ExceptionOr<void> setSearch(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
-    String search() const;
-    ExceptionOr<void> setHash(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
-    String hash() const;
-    String origin() const;
+    ExceptionOr<void> setProtocol(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    RefPtr<StringImpl> protocol() const;
+    ExceptionOr<void> setHost(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    WEBCORE_EXPORT RefPtr<StringImpl> host() const;
+    ExceptionOr<void> setHostname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    RefPtr<StringImpl> hostname() const;
+    ExceptionOr<void> setPort(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    RefPtr<StringImpl> port() const;
+    ExceptionOr<void> setPathname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    RefPtr<StringImpl> pathname() const;
+    ExceptionOr<void> setSearch(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    RefPtr<StringImpl> search() const;
+    ExceptionOr<void> setHash(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
+    RefPtr<StringImpl> hash() const;
+    RefPtr<StringImpl> origin() const;
 
-    String toString() const { return href(); }
+    RefPtr<StringImpl> toString() const { return href(); }
 
     Ref<DOMStringList> ancestorOrigins() const;
     DOMStringList* cachedAncestorOrigins() const { return m_ancestorOrigins.get(); }
@@ -82,7 +82,7 @@ public:
 private:
     explicit Location(DOMWindow&);
 
-    ExceptionOr<void> setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
+    ExceptionOr<void> setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, StringImpl*);
 
     NODELETE Frame* frame();
     NODELETE const Frame* frame() const;

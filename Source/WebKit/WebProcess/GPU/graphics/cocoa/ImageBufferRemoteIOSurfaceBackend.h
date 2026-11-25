@@ -77,7 +77,7 @@ private:
     void setBackendHandle(ImageBufferBackendHandle&&) final;
     void clearBackendHandle() final;
 
-    String debugDescription() const final;
+    RefPtr<StringImpl> debugDescription() const final;
 
     MachSendRight m_handle;
 

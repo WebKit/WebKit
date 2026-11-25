@@ -93,14 +93,14 @@ template<typename CharacterType> static bool isSourceListNone(StringParsingBuffe
     return buffer.atEnd();
 }
 
-ContentSecurityPolicySourceList::ContentSecurityPolicySourceList(const ContentSecurityPolicy& policy, const String& directiveName)
+ContentSecurityPolicySourceList::ContentSecurityPolicySourceList(const ContentSecurityPolicy& policy, StringImpl* directiveName)
     : m_policy(policy)
     , m_directiveName(directiveName)
     , m_contentSecurityPolicyModeForExtension(policy.contentSecurityPolicyModeForExtension())
 {
 }
 
-void ContentSecurityPolicySourceList::parse(const String& value)
+void ContentSecurityPolicySourceList::parse(StringImpl* value)
 {
     readCharactersForParsing(value, [&](auto buffer) {
         if (isSourceListNone(buffer)) {
@@ -121,9 +121,9 @@ bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) co
     bool isAllowed = url.protocolIsInHTTPFamily() || url.protocolIs("ws"_s) || url.protocolIs("wss"_s) || url.protocolIs(m_policy->selfProtocol());
     // Also not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
     // "img-src *" and either a data URL or blob URL to match "media-src *" for web compatibility.
-    if (m_directiveName == ContentSecurityPolicyDirectiveNames::imgSrc)
+    if (equal(m_directiveName, ContentSecurityPolicyDirectiveNames::imgSrc))
         isAllowed |= url.protocolIsData();
-    else if (m_directiveName == ContentSecurityPolicyDirectiveNames::mediaSrc)
+    else if (equal(m_directiveName, ContentSecurityPolicyDirectiveNames::mediaSrc))
         isAllowed |= url.protocolIsData() || url.protocolIsBlob();
     return isAllowed;
 }
@@ -167,9 +167,9 @@ bool ContentSecurityPolicySourceList::matchesAll(const Vector<ContentSecurityPol
     return true;
 }
 
-bool ContentSecurityPolicySourceList::matches(const String& nonce) const
+bool ContentSecurityPolicySourceList::matches(StringImpl* nonce) const
 {
-    if (nonce.isEmpty())
+    if (isEmpty(nonce))
         return false;
 
     return m_nonces.contains(nonce);
@@ -180,20 +180,20 @@ static bool schemeIsInHttpFamily(StringView scheme)
     return equalLettersIgnoringASCIICase(scheme, "https"_s) || equalLettersIgnoringASCIICase(scheme, "http"_s);
 }
 
-NODELETE static bool isRestrictedDirectiveForMode(const String& directive, ContentSecurityPolicyModeForExtension mode)
+NODELETE static bool isRestrictedDirectiveForMode(StringImpl* directive, ContentSecurityPolicyModeForExtension mode)
 {
     switch (mode) {
     case ContentSecurityPolicyModeForExtension::None:
         return false;
     // FIXME: If the script-src directive is strict enough, we should allow default-src to have more values.
     case ContentSecurityPolicyModeForExtension::ManifestV2:
-        return directive == ContentSecurityPolicyDirectiveNames::scriptSrc
-            || directive == ContentSecurityPolicyDirectiveNames::defaultSrc;
+        return equal(directive, ContentSecurityPolicyDirectiveNames::scriptSrc)
+            || equal(directive, ContentSecurityPolicyDirectiveNames::defaultSrc);
     case ContentSecurityPolicyModeForExtension::ManifestV3:
-        return directive == ContentSecurityPolicyDirectiveNames::scriptSrc
-            || directive == ContentSecurityPolicyDirectiveNames::objectSrc
-            || directive == ContentSecurityPolicyDirectiveNames::workerSrc
-            || directive == ContentSecurityPolicyDirectiveNames::defaultSrc;
+        return equal(directive, ContentSecurityPolicyDirectiveNames::scriptSrc)
+            || equal(directive, ContentSecurityPolicyDirectiveNames::objectSrc)
+            || equal(directive, ContentSecurityPolicyDirectiveNames::workerSrc)
+            || equal(directive, ContentSecurityPolicyDirectiveNames::defaultSrc);
     }
     return false;
 }
@@ -226,7 +226,7 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
     return true;
 }
 
-NODELETE static bool extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeForExtension mode, const String& directiveName)
+NODELETE static bool extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeForExtension mode, StringImpl* directiveName)
 {
     return mode != ContentSecurityPolicyModeForExtension::ManifestV3 || !isRestrictedDirectiveForMode(directiveName, mode);
 }
@@ -256,14 +256,16 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
             // Wildcard hosts and keyword sources ('self', 'unsafe-inline',
             // etc.) aren't stored in m_list, but as attributes on the source
             // list itself.
-            if (source->scheme.isEmpty() && source->host.value.isEmpty() && !source->port.value && source->path.isEmpty())
+            if (source->scheme.isEmpty() && source->host.value.isEmpty() && !source->port.value && isEmpty(source->path))
                 continue;
             if (isCSPDirectiveName(source->host.value))
-                m_policy->reportDirectiveAsSourceExpression(m_directiveName, source->host.value);
+                m_policy->reportDirectiveAsSourceExpression(protect(m_directiveName), source->host.value);
             if (isValidSourceForExtensionMode(source.value()))
                 m_list.append(ContentSecurityPolicySource(m_policy, source->scheme.convertToASCIILowercase(), source->host.value.toString(), source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard, IsSelfSource::No));
-        } else
-            m_policy->reportInvalidSourceExpression(m_directiveName, beginSource.first(buffer.position() - beginSource.data()));
+        } else {
+            Ref<StringImpl> sourceExpression = StringImpl::create(beginSource.first(buffer.position() - beginSource.data()));
+            m_policy->reportInvalidSourceExpression(protect(m_directiveName), sourceExpression.ptr());
+        }
 
         ASSERT(buffer.atEnd() || isASCIIWhitespace(*buffer));
     }
@@ -294,8 +296,8 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
 
     if (equalIgnoringASCIICase(token, "'strict-dynamic'"_s)
         && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)
-        && (m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrc
-            || m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrcElem || m_directiveName == ContentSecurityPolicyDirectiveNames::defaultSrc)) {
+        && (equal(m_directiveName, ContentSecurityPolicyDirectiveNames::scriptSrc)
+            || equal(m_directiveName, ContentSecurityPolicyDirectiveNames::scriptSrcElem) || equal(m_directiveName, ContentSecurityPolicyDirectiveNames::defaultSrc))) {
         m_allowNonParserInsertedScripts = true;
         m_allowSelf = false;
         m_allowInline = false;
@@ -528,7 +530,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     return host;
 }
 
-template<typename CharacterType> String ContentSecurityPolicySourceList::parsePath(std::span<const CharacterType> span)
+template<typename CharacterType> RefPtr<StringImpl> ContentSecurityPolicySourceList::parsePath(std::span<const CharacterType> span)
 {
     StringParsingBuffer buffer { span };
     ASSERT(buffer.position() <= buffer.end());
@@ -537,13 +539,15 @@ template<typename CharacterType> String ContentSecurityPolicySourceList::parsePa
     skipWhile<isPathComponentCharacter>(buffer);
     // path/to/file.js?query=string || path/to/file.js#anchor
     //                ^                               ^
-    if (buffer.hasCharactersRemaining())
-        m_policy->reportInvalidPathCharacter(m_directiveName, begin, *buffer);
+    if (buffer.hasCharactersRemaining()) {
+        Ref<StringImpl> path = StringImpl::create(begin);
+        m_policy->reportInvalidPathCharacter(protect(m_directiveName), path.ptr(), *buffer);
+    }
 
     ASSERT(buffer.position() <= buffer.end());
     ASSERT(buffer.atEnd() || (*buffer == '#' || *buffer == '?'));
 
-    return String(begin.first(buffer.position() - begin.data()));
+    return StringImpl::create(begin.first(buffer.position() - begin.data()));
 }
 
 // port              = ":" ( 1*DIGIT / "*" )
@@ -606,7 +610,7 @@ template<typename CharacterType> bool ContentSecurityPolicySourceList::parseNonc
     if (!skipExactly(buffer, '\'') || !buffer.atEnd())
         return false;
     if (extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName))
-        m_nonces.add(nonceValue);
+        m_nonces.add(StringImpl::create(nonceValue));
     return true;
 }
 

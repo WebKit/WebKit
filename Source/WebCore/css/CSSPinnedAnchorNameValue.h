@@ -42,7 +42,7 @@ public:
     const CSS::CustomIdent& name() const LIFETIME_BOUND { return m_name; }
     const CSS::CustomIdent& attachment() const LIFETIME_BOUND { return m_attachment; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPinnedAnchorNameValue&) const;
     NODELETE bool addDerivedHash(Hasher&) const;
 

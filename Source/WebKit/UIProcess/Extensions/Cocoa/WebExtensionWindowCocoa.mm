@@ -285,14 +285,14 @@ void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHan
     static NSString * const apiName = @"windows.update()";
 
     if (!isValid() || !m_respondsToSetWindowState || !m_respondsToWindowState) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'state'"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented for 'state'").get()));
         return;
     }
 
     [m_delegate setWindowState:toAPI(state) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setWindowState: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
@@ -334,14 +334,14 @@ void WebExtensionWindow::focus(CompletionHandler<void(std::expected<void, WebExt
     static NSString * const apiName = @"windows.update()";
 
     if (!isValid() || !m_respondsToFocus) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'focused'"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented for 'focused'").get()));
         return;
     }
 
     [m_delegate focusForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window focus: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
@@ -397,7 +397,7 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(std::expe
     if (!isValid() || !m_respondsToSetFrame || !m_respondsToFrame)
 #endif
     {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'top', 'left', 'width', and 'height'"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented for 'top', 'left', 'width', and 'height'").get()));
         return;
     }
 
@@ -408,7 +408,7 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(std::expe
     [m_delegate setFrame:frame forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setFrame: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 
@@ -431,14 +431,14 @@ void WebExtensionWindow::close(CompletionHandler<void(std::expected<void, WebExt
     static NSString * const apiName = @"windows.remove()";
 
     if (!isValid() || !m_respondsToClose) {
-        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
+        completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(@"it is not implemented").get()));
         return;
     }
 
     [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window close: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
+            completionHandler(toWebExtensionError(StringImpl::create(apiName).get(), nullString(), StringImpl::create(error.localizedDescription).get()));
             return;
         }
 

@@ -44,7 +44,7 @@ struct RunJavaScriptParameters {
     JSC::SourceTaintedOrigin taintedness;
     URL sourceURL;
     WebCore::RunAsAsyncFunction runAsAsyncFunction;
-    std::optional<Vector<std::pair<String, JavaScriptEvaluationResult>>> arguments;
+    std::optional<Vector<std::pair<RefPtr<StringImpl>, JavaScriptEvaluationResult>>> arguments;
     WebCore::ForceUserGesture forceUserGesture;
     WebCore::RemoveTransientActivation removeTransientActivation;
 };
@@ -53,7 +53,7 @@ struct RunJavaScriptParameters {
 
 namespace WebKit::CxxInteropSupport {
 
-using RunJavaScriptParametersArguments = Vector<std::pair<String, JavaScriptEvaluationResult>>;
+using RunJavaScriptParametersArguments = Vector<std::pair<RefPtr<StringImpl>, JavaScriptEvaluationResult>>;
 using OptionalRunJavaScriptParametersArguments = std::optional<RunJavaScriptParametersArguments>;
 
 // FIXME: Remove this once rdar://186106924 is fixed.

@@ -158,7 +158,7 @@ struct Array {
 
 struct Struct {
     AST::Structure& structure;
-    HashMap<String, const Type*> fields { };
+    HashMap<RefPtr<StringImpl>, const Type*> fields { };
 };
 
 struct PrimitiveStruct {
@@ -209,7 +209,7 @@ public:
         AtomicCompareExchangeResult::map,
     });
 
-    String name;
+    RefPtr<StringImpl> name;
     Kind kind;
     FixedVector<const Type*> values;
 };
@@ -279,7 +279,7 @@ struct Type : public Variant<
         Types::TypeConstructor
         >::variant;
     void dump(PrintStream&) const;
-    String toString() const;
+    RefPtr<StringImpl> toString() const;
     unsigned size() const;
     std::optional<unsigned> maybeSize() const;
     unsigned alignment() const;
@@ -313,8 +313,8 @@ public:
     {
     }
 
-    unsigned length() const { return m_string.length(); }
-    bool is8Bit() const { return m_string.is8Bit(); }
+    unsigned length() const { return WTF::length(m_string); }
+    bool is8Bit() const { return WTF::is8Bit(m_string); }
     template<typename CharacterType>
     void writeTo(std::span<CharacterType> destination) const
     {
@@ -323,7 +323,7 @@ public:
     }
 
 private:
-    String const m_string;
+    RefPtr<StringImpl> const m_string;
 };
 
 } // namespace WTF

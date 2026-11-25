@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static String filePathFromPattern(FcPattern* pattern)
+static RefPtr<StringImpl> filePathFromPattern(FcPattern* pattern)
 {
     FcChar8* filename = nullptr;
     if (FcPatternGetString(pattern, FC_FILE, 0, &filename) != FcResultMatch || !filename)
@@ -44,9 +44,9 @@ static String filePathFromPattern(FcPattern* pattern)
 
     const char* sysroot = reinterpret_cast<const char*>(FcConfigGetSysRoot(nullptr));
     if (!sysroot)
-        return String::fromUTF8(reinterpret_cast<const char*>(filename));
+        return StringImpl::fromUTF8(reinterpret_cast<const char*>(filename));
 
-    return FileSystem::pathByAppendingComponent(String::fromUTF8(sysroot), String::fromUTF8(reinterpret_cast<const char*>(filename)));
+    return FileSystem::pathByAppendingComponent(StringImpl::fromUTF8(sysroot), StringImpl::fromUTF8(reinterpret_cast<const char*>(filename)));
 }
 
 class FontSetCache {
@@ -60,7 +60,7 @@ public:
     }
     ~FontSetCache() = default;
 
-    static std::unique_ptr<FontSetCache> create(const String& locale)
+    static std::unique_ptr<FontSetCache> create(StringImpl* locale)
     {
         auto fontSet = FontSet::create(locale);
         if (!fontSet)
@@ -69,14 +69,14 @@ public:
     }
 
     struct Font {
-        Font(String&& path, int ttcIndex, FcCharSet* charSet)
+        Font(RefPtr<StringImpl>&& path, int ttcIndex, FcCharSet* charSet)
             : path(WTF::move(path))
             , ttcIndex(ttcIndex)
             , charSet(charSet)
         {
         }
 
-        String path;
+        RefPtr<StringImpl> path;
         int ttcIndex { 0 };
         FcCharSet* charSet { nullptr }; // Owned by FcFontSet.
     };
@@ -90,12 +90,12 @@ private:
     class FontSet {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FontSet);
     public:
-        static std::unique_ptr<FontSet> create(const String& locale)
+        static std::unique_ptr<FontSet> create(StringImpl* locale)
         {
             auto* pattern = FcPatternCreate();
-            if (!locale.isNull()) {
+            if (locale) {
                 FcLangSet* langSet = FcLangSetCreate();
-                FcLangSetAdd(langSet, reinterpret_cast<const FcChar8*>(locale.utf8().legacyCStringPointer()));
+                FcLangSetAdd(langSet, reinterpret_cast<const FcChar8*>(utf8(locale).legacyCStringPointer()));
                 FcPatternAddLangSet(pattern, FC_LANG, langSet);
                 FcLangSetDestroy(langSet);
             }
@@ -130,7 +130,7 @@ private:
                     continue;
 
                 auto filepath = filePathFromPattern(pattern);
-                if (filepath.isEmpty() || !FileSystem::fileExists(filepath))
+                if (isEmpty(filepath) || !FileSystem::fileExists(filepath))
                     continue;
 
                 int ttcIndex;
@@ -181,7 +181,7 @@ SkiaSystemFallbackFontCache::SkiaSystemFallbackFontCache() = default;
 
 SkiaSystemFallbackFontCache::~SkiaSystemFallbackFontCache() = default;
 
-sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(const String& locale, StringView stringView)
+sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(StringImpl* locale, StringView stringView)
 {
     FcCharSet* charSet = FcCharSetCreate();
     bool hasNonIgnorableCharacters = false;
@@ -197,7 +197,7 @@ sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(const Str
         return nullptr;
     }
 
-    auto& fontSetCache = m_cache.ensure(locale.isNull() ? emptyString() : locale, [&] {
+    auto& fontSetCache = m_cache.ensure(!locale ? emptyString() : RefPtr<StringImpl> { locale }, [&] {
         return FontSetCache::create(locale);
     }).iterator->value;
 
@@ -210,7 +210,7 @@ sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(const Str
         return nullptr;
 
     return m_typefaceCache.ensure({ font->path, font->ttcIndex }, [font] -> sk_sp<SkTypeface> {
-        return FontCache::forCurrentThread().fontManager().makeFromFile(font->path.utf8().legacyCStringPointer(), font->ttcIndex);
+        return FontCache::forCurrentThread().fontManager().makeFromFile(utf8(font->path).legacyCStringPointer(), font->ttcIndex);
     }).iterator->value;
 }
 

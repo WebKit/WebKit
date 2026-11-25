@@ -37,9 +37,9 @@ class RenderTextFragment final : public RenderText {
     WTF_MAKE_TZONE_ALLOCATED(RenderTextFragment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextFragment);
 public:
-    RenderTextFragment(Text&, const String&, int startOffset, int length);
-    RenderTextFragment(Document&, const String&, int startOffset, int length);
-    RenderTextFragment(Document&, const String&);
+    RenderTextFragment(Text&, StringImpl*, int startOffset, int length);
+    RenderTextFragment(Document&, StringImpl*, int startOffset, int length);
+    RenderTextFragment(Document&, StringImpl*);
 
     virtual ~RenderTextFragment();
 
@@ -53,8 +53,8 @@ public:
     
     CheckedPtr<RenderBlock> blockForAccompanyingFirstLetter();
 
-    void setContentString(const String& text);
-    StringImpl* contentString() const { return m_contentString.impl(); }
+    void setContentString(StringImpl* text);
+    StringImpl* contentString() const { return m_contentString.get(); }
 
     // Which quote mark an open-quote/close-quote shows depends on the quotes before it in document order,
     // so RenderTreeUpdater::GeneratedContent fills in the content string once the tree is built.
@@ -62,15 +62,15 @@ public:
     void setQuoteType(QuoteType quoteType) { m_quoteType = quoteType; }
     // ::first-letter replaces the quote's renderer with the text after the letter. That remaining text keeps the whole
     // quote mark as its content string, which is what tells RenderTreeUpdater::GeneratedContent the mark is unchanged.
-    void setQuoteTypeForRemainingText(QuoteType quoteType, const String& quoteMark)
+    void setQuoteTypeForRemainingText(QuoteType quoteType, StringImpl* quoteMark)
     {
         m_quoteType = quoteType;
         m_contentString = quoteMark;
     }
 
 private:
-    void setTextInternal(const String&, bool force) override;
-    void setTextWithOffset(const String&, unsigned offset) override;
+    void setTextInternal(StringImpl*, bool force) override;
+    void setTextWithOffset(StringImpl*, unsigned offset) override;
     Node* nodeForHitTest() const override;
     char32_t previousCharacter() const override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
@@ -79,7 +79,7 @@ private:
 
     unsigned m_start;
     unsigned m_end;
-    String m_contentString;
+    RefPtr<StringImpl> m_contentString;
     SingleThreadWeakPtr<RenderBoxModelObject> m_firstLetter;
     std::optional<QuoteType> m_quoteType;
 };

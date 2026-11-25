@@ -32,7 +32,7 @@
 namespace WebKit {
 
 struct RemoteAudioSessionConfiguration {
-    String routingContextUID;
+    RefPtr<StringImpl> routingContextUID;
     float sampleRate { 0 };
     uint64_t bufferSize { 0 };
     uint64_t numberOfOutputChannels { 0 };
@@ -40,7 +40,7 @@ struct RemoteAudioSessionConfiguration {
     uint64_t preferredBufferSize { 0 };
     uint64_t outputLatency { 0 };
     bool isMuted { false };
-    String sceneIdentifier;
+    RefPtr<StringImpl> sceneIdentifier;
     WebCore::AudioSessionSoundStageSize soundStageSize { WebCore::AudioSessionSoundStageSize::Automatic };
     WebCore::AudioSessionCategory categoryOverride { WebCore::AudioSession::CategoryType::None };
     bool isActive { false };

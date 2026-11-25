@@ -52,7 +52,7 @@ const MQ::FeatureSchema& style();
 
 // Returns the scroll-state query feature schema for `name`
 // (scrollable/scrolled/stuck/snapped), or nullptr. Used inside scroll-state().
-const MQ::FeatureSchema* scrollState(const AtomString&);
+const MQ::FeatureSchema* scrollState(AtomStringImpl*);
 
 bool isScrollStateFeature(const MQ::FeatureSchema*);
 

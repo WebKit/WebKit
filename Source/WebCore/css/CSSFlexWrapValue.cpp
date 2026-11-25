@@ -57,7 +57,7 @@ CSSFlexWrapValue::CSSFlexWrapValue(CSS::FlexWrap&& flexWrap)
 {
 }
 
-String CSSFlexWrapValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSFlexWrapValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_flexWrap);
 }

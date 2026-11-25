@@ -157,7 +157,7 @@ ExceptionOr<bool> IDBKeyRange::includes(JSC::JSGlobalObject& state, JSC::JSValue
     auto key = scriptValueToIDBKey(state, keyValue);
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || !key->isValid());
     if (!key->isValid())
-        return Exception { ExceptionCode::DataError, "Failed to execute 'includes' on 'IDBKeyRange': The passed-in value is not a valid IndexedDB key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'includes' on 'IDBKeyRange': The passed-in value is not a valid IndexedDB key."_si };
 
     if (m_lower) {
         auto compare = m_lower->compare(key.get());

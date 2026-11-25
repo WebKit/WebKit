@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewTransitionTypeSet);
 
-ViewTransitionTypeSet::ViewTransitionTypeSet(Document& document, Vector<AtomString>&& initialActiveTypes)
+ViewTransitionTypeSet::ViewTransitionTypeSet(Document& document, Vector<RefPtr<AtomStringImpl>>&& initialActiveTypes)
     : m_typeSet()
     , m_document(document)
 {
@@ -64,7 +64,7 @@ void ViewTransitionTypeSet::clearFromSetLike()
     m_typeSet.clear();
 }
 
-void ViewTransitionTypeSet::addToSetLike(const AtomString& type)
+void ViewTransitionTypeSet::addToSetLike(AtomStringImpl* type)
 {
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (!m_document)
@@ -80,7 +80,7 @@ void ViewTransitionTypeSet::addToSetLike(const AtomString& type)
     m_typeSet.add(type);
 }
 
-bool ViewTransitionTypeSet::removeFromSetLike(const AtomString& type)
+bool ViewTransitionTypeSet::removeFromSetLike(AtomStringImpl* type)
 {
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (!m_document)
@@ -96,7 +96,7 @@ bool ViewTransitionTypeSet::removeFromSetLike(const AtomString& type)
     return m_typeSet.remove(type);
 }
 
-bool ViewTransitionTypeSet::hasType(const AtomString& type) const
+bool ViewTransitionTypeSet::hasType(AtomStringImpl* type) const
 {
     return m_typeSet.contains(type);
 }

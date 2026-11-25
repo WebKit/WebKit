@@ -142,9 +142,9 @@ static TemporalInstant* addDurationToInstant(JSGlobalObject* globalObject, Tempo
     // Steps 5-6: ToInternalDurationRecordWith24HourDays + AddInstant (both done by ExactTime::add).
     std::optional<ISO8601::ExactTime> newExactTime = instant->exactTime().add(duration);
     if (!newExactTime) [[unlikely]] {
-        throwRangeError(globalObject, scope, operation == AddInstantOperation::Add
+        throwRangeError(globalObject, scope, StringImpl::create(operation == AddInstantOperation::Add
             ? "Addition is outside of supported range for Temporal.Instant"_s
-            : "Subtraction is outside of supported range for Temporal.Instant"_s);
+            : "Subtraction is outside of supported range for Temporal.Instant"_s).ptr());
         return nullptr;
     }
 
@@ -275,7 +275,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncRound, (JSGlobalObject* glo
         RETURN_IF_EXCEPTION(scope, { });
         smallest = temporalUnitType(string);
         if (!smallest) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
+            return throwVMRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_si);
     } else {
         // Step 5: Else, set roundTo to ? GetOptionsObject(roundTo).
         roundTo = intlGetOptionsObject(globalObject, roundToValue);
@@ -381,7 +381,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToString, (JSGlobalObject* 
 
     // Step 10: If smallestUnit is HOUR, throw a RangeError exception.
     if (smallestUnit == TemporalUnit::Hour) [[unlikely]]
-        return throwVMRangeError(globalObject, scope, "smallestUnit cannot be \"hour\" for Instant.toString"_s);
+        return throwVMRangeError(globalObject, scope, "smallestUnit cannot be \"hour\" for Instant.toString"_si);
 
     // Step 11: If timeZone is not undefined, set timeZone to ? ToTemporalTimeZoneIdentifier(timeZone).
     std::optional<TimeZone> timeZone;

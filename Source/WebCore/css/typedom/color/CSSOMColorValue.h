@@ -33,19 +33,19 @@ namespace WebCore {
 
 class CSSOMKeywordValue;
 
-using CSSOMKeywordish = Variant<String, Ref<CSSOMKeywordValue>>;
-using CSSColorPercent = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
+using CSSOMKeywordish = Variant<RefPtr<StringImpl>, Ref<CSSOMKeywordValue>>;
+using CSSColorPercent = Variant<double, Ref<CSSNumericValue>, RefPtr<StringImpl>, Ref<CSSOMKeywordValue>>;
 using RectifiedCSSColorPercent = Variant<Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>>;
-using CSSColorNumber = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
+using CSSColorNumber = Variant<double, Ref<CSSNumericValue>, RefPtr<StringImpl>, Ref<CSSOMKeywordValue>>;
 using RectifiedCSSColorNumber = Variant<Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>>;
-using CSSColorAngle = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
+using CSSColorAngle = Variant<double, Ref<CSSNumericValue>, RefPtr<StringImpl>, Ref<CSSOMKeywordValue>>;
 using RectifiedCSSColorAngle = Variant<Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>>;
 
 class CSSOMColorValue : public CSSStyleValue {
 public:
     NODELETE RefPtr<CSSOMKeywordValue> colorSpace();
     RefPtr<CSSOMColorValue> to(CSSOMKeywordish);
-    NODELETE static std::optional<Variant<Ref<CSSOMColorValue>, Ref<CSSStyleValue>>> parse(const String&);
+    NODELETE static std::optional<Variant<Ref<CSSOMColorValue>, Ref<CSSStyleValue>>> parse(StringImpl*);
 
     static ExceptionOr<RectifiedCSSColorPercent> rectifyCSSColorPercent(CSSColorPercent&&);
     static ExceptionOr<RectifiedCSSColorAngle> rectifyCSSColorAngle(CSSColorAngle&&);

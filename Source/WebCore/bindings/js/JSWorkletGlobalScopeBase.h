@@ -54,7 +54,7 @@ public:
     NODELETE static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
     NODELETE static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     NODELETE static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-    NODELETE static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
+    NODELETE static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, StringImpl*);
 
 protected:
     JSWorkletGlobalScopeBase(JSC::VM&, JSC::Structure*, Ref<WorkletGlobalScope>&&);

@@ -40,13 +40,13 @@ class GPUDevice;
 
 class GPUExternalTexture : public RefCountedAndCanMakeWeakPtr<GPUExternalTexture> {
 public:
-    static Ref<GPUExternalTexture> create(Ref<::WebGPU::ExternalTexture>&& backing, String&& label, GPUDevice& device)
+    static Ref<GPUExternalTexture> create(Ref<::WebGPU::ExternalTexture>&& backing, RefPtr<StringImpl>&& label, GPUDevice& device)
     {
         return adoptRef(*new GPUExternalTexture(WTF::move(backing), WTF::move(label), device));
     }
 
-    NODELETE String label() const;
-    void setLabel(String&&);
+    NODELETE RefPtr<StringImpl> label() const;
+    void setLabel(RefPtr<StringImpl>&&);
 
     ::WebGPU::ExternalTexture& backing() { return m_backing; }
     const ::WebGPU::ExternalTexture& backing() const { return m_backing; }
@@ -66,10 +66,10 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUExternalTexture(Ref<::WebGPU::ExternalTexture>&&, String&& label, GPUDevice&);
+    GPUExternalTexture(Ref<::WebGPU::ExternalTexture>&&, RefPtr<StringImpl>&& label, GPUDevice&);
 
     const Ref<::WebGPU::ExternalTexture> m_backing;
-    String m_label;
+    RefPtr<StringImpl> m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     bool m_destroyed { false };
     bool m_active { false };

@@ -64,13 +64,13 @@ public:
     
     bool equals(FixedVector<CSSNumberish>&&);
     
-    ExceptionOr<Ref<CSSUnitValue>> to(String&&);
+    ExceptionOr<Ref<CSSUnitValue>> to(RefPtr<StringImpl>&&);
     ExceptionOr<Ref<CSSUnitValue>> to(CSSUnitType);
-    ExceptionOr<Ref<CSSMathSum>> toSum(FixedVector<String>&&);
+    ExceptionOr<Ref<CSSMathSum>> toSum(FixedVector<RefPtr<StringImpl>>&&);
 
     const CSSNumericType& type() const LIFETIME_BOUND { return m_type; }
     
-    static ExceptionOr<Ref<CSSNumericValue>> parse(Document&, String&&);
+    static ExceptionOr<Ref<CSSNumericValue>> parse(Document&, RefPtr<StringImpl>&&);
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
 
     static ExceptionOr<Ref<CSSNumericValue>> reifyValue(Document&, const CSSValue&);

@@ -38,26 +38,26 @@ namespace Inspector {
 enum class NetworkStage { Request, Response };
 
 struct Intercept {
-    String url;
+    RefPtr<StringImpl> url;
     bool caseSensitive { true };
     bool isRegex { false };
     NetworkStage networkStage { NetworkStage::Response };
 
     inline bool operator==(const Intercept& other) const
     {
-        return url == other.url
+        return equal(url, other.url)
             && caseSensitive == other.caseSensitive
             && isRegex == other.isRegex
             && networkStage == other.networkStage;
     }
 
-    bool matches(const String& url, NetworkStage);
+    bool matches(StringImpl* url, NetworkStage);
 
 private:
     std::optional<Inspector::ContentSearchUtilities::Searcher> m_urlSearcher;
 
     // Avoid having to (re)match the searcher each time a URL is requested.
-    HashSet<String> m_knownMatchingURLs;
+    HashSet<RefPtr<StringImpl>> m_knownMatchingURLs;
 };
 
 class PendingInterceptRequest {

@@ -98,11 +98,11 @@ public:
     void setIconVariants(RefPtr<JSON::Array>);
 #endif
 
-    String label(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
-    void setLabel(String);
+    RefPtr<StringImpl> label(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
+    void setLabel(RefPtr<StringImpl>);
 
-    String badgeText() const;
-    void setBadgeText(String);
+    RefPtr<StringImpl> badgeText() const;
+    void setBadgeText(RefPtr<StringImpl>);
 
     bool hasUnreadBadgeText() const;
     void setHasUnreadBadgeText(bool);
@@ -112,14 +112,14 @@ public:
     bool isEnabled() const;
     void setEnabled(std::optional<bool>);
 
-    bool presentsPopup() const { return !popupPath().isEmpty(); }
+    bool presentsPopup() const { return !isEmpty(popupPath()); }
     bool canProgrammaticallyPresentPopup() const;
 
-    String popupPath() const;
-    void setPopupPath(String);
+    RefPtr<StringImpl> popupPath() const;
+    void setPopupPath(RefPtr<StringImpl>);
 
     NSString *popupWebViewInspectionName();
-    void setPopupWebViewInspectionName(const String&);
+    void setPopupWebViewInspectionName(StringImpl*);
 
 #if PLATFORM(IOS_FAMILY)
     UIViewController *popupViewController();
@@ -178,8 +178,8 @@ private:
     RetainPtr<_WKWebExtensionActionWebView> m_popupWebView;
     RetainPtr<_WKWebExtensionActionWebViewDelegate> m_popupWebViewDelegate;
 #endif
-    String m_customPopupPath;
-    String m_popupWebViewInspectionName;
+    RefPtr<StringImpl> m_customPopupPath;
+    RefPtr<StringImpl> m_popupWebViewInspectionName;
 
     RefPtr<WebCore::Icon> m_cachedIcon;
     Vector<double> m_cachedIconScales;
@@ -189,8 +189,8 @@ private:
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     RefPtr<JSON::Array> m_customIconVariants;
 #endif
-    String m_customLabel;
-    String m_customBadgeText;
+    RefPtr<StringImpl> m_customLabel;
+    RefPtr<StringImpl> m_customBadgeText;
     ssize_t m_blockedResourceCount { 0 };
     std::optional<bool> m_customEnabled;
     std::optional<bool> m_hasUnreadBadgeText;

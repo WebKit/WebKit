@@ -39,7 +39,7 @@ public:
     {
     }
 
-    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
+    bool setFromAndByValues(SVGElement& targetElement, StringImpl* from, StringImpl* by) override
     {
         if (!setFromAndToValues(targetElement, from, by))
             return false;
@@ -47,7 +47,7 @@ public:
         return true;
     }
 
-    bool setToAtEndOfDurationValue(SVGElement&, const String&) override
+    bool setToAtEndOfDurationValue(SVGElement&, StringImpl*) override
     {
         ASSERT_NOT_REACHED();
         return false;

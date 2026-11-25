@@ -57,7 +57,7 @@ public:
     
     ~MediaRecorder();
     
-    static bool isTypeSupported(Document&, const String&);
+    static bool isTypeSupported(Document&, StringImpl*);
 
     using Options = MediaRecorderPrivateOptions;
     static ExceptionOr<Ref<MediaRecorder>> create(Document&, Ref<MediaStream>&&, Options&& = { });
@@ -67,7 +67,7 @@ public:
     NODELETE WEBCORE_EXPORT static void setCustomPrivateRecorderCreator(CreatorFunction);
 
     RecordingState state() const { return m_state; }
-    const String& mimeType() const LIFETIME_BOUND { return m_options.mimeType; }
+    const RefPtr<StringImpl>& mimeType() const LIFETIME_BOUND { return m_options.mimeType; }
 
     ExceptionOr<void> startRecording(std::optional<unsigned>);
     void stopRecording();
@@ -105,7 +105,7 @@ private:
     void dispatchError(Exception&&);
 
     enum class TakePrivateRecorder : bool { No, Yes };
-    using FetchDataCallback = Function<void(MediaRecorder&, Ref<FragmentedSharedBuffer>&&, const String& mimeType, double)>;
+    using FetchDataCallback = Function<void(MediaRecorder&, Ref<FragmentedSharedBuffer>&&, StringImpl* mimeType, double)>;
     void fetchData(FetchDataCallback&&, TakePrivateRecorder);
     enum class ReturnDataIfEmpty : bool { No, Yes };
     ExceptionOr<void> requestDataInternal(ReturnDataIfEmpty);

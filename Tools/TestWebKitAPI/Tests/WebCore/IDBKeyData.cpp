@@ -54,18 +54,18 @@ TEST(IDBKeyData, NullAndInvalidAreNotEquivalentInvalidKey)
 
 TEST(IDBKeyData, NullStringAndEmptyStringAreNotEquivalentStringKey)
 {
-    IDBKeyData nullStr(String { });
+    IDBKeyData nullStr(nullString());
     IDBKeyData emptyStr(emptyString());
 
-    EXPECT_TRUE(std::get<String>(nullStr.value()).isNull());
-    EXPECT_FALSE(std::get<String>(emptyStr.value()).isNull());
+    EXPECT_TRUE(!std::get<RefPtr<StringImpl>>(nullStr.value()));
+    EXPECT_FALSE(!std::get<RefPtr<StringImpl>>(emptyStr.value()));
 
     // operator== and operator<=> must agree: these are not equal.
     EXPECT_NE(nullStr, emptyStr);
     EXPECT_TRUE(is_neq(nullStr <=> emptyStr));
 
     // Two null-string keys are equal.
-    IDBKeyData nullStr2(String { });
+    IDBKeyData nullStr2(nullString());
     EXPECT_EQ(nullStr, nullStr2);
 
     // Two empty-string keys are equal.
@@ -86,7 +86,7 @@ TEST(IDBKeyData, SetDistinguishesNullAndInvalid)
 
 TEST(IDBKeyData, SetDistinguishesNullStringAndEmptyString)
 {
-    IDBKeyData nullStr(String { });
+    IDBKeyData nullStr(nullString());
     IDBKeyData emptyStr(emptyString());
 
     IDBKeyDataSet set;

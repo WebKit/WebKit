@@ -31,9 +31,9 @@
 namespace WebCore {
 
 struct ContactInfo {
-    Vector<String> name;
-    Vector<String> email;
-    Vector<String> tel;
+    Vector<RefPtr<StringImpl>> name;
+    Vector<RefPtr<StringImpl>> email;
+    Vector<RefPtr<StringImpl>> tel;
 };
 
 } // namespace WebCore

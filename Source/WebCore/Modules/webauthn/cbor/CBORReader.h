@@ -124,7 +124,7 @@ private:
     NODELETE bool canConsume(uint64_t bytes);
     NODELETE void checkExtraneousData();
     NODELETE bool checkDuplicateKey(const CBORValue& newKey, const CBORValue::MapValue&);
-    NODELETE bool hasValidUTF8Format(const String&);
+    NODELETE bool hasValidUTF8Format(StringImpl*);
     NODELETE bool checkOutOfOrderKey(const CBORValue& newKey, const CBORValue::MapValue&);
     NODELETE bool checkMinimalEncoding(uint8_t additionalBytes, uint64_t uintData);
 

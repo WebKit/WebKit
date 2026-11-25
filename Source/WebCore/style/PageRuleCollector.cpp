@@ -54,7 +54,7 @@ bool PageRuleCollector::isFirstPage(int pageIndex) const
     return (!pageIndex);
 }
 
-WTF::String PageRuleCollector::pageName(int /* pageIndex */) const
+RefPtr<StringImpl> PageRuleCollector::pageName(int /* pageIndex */) const
 {
     // FIXME: Implement page index to page name mapping.
     return emptyString();
@@ -73,7 +73,7 @@ void PageRuleCollector::matchAllPageRules(int pageIndex)
         matchPageRules(protect(&m_ruleSets.authorStyle()), isLeft, isFirst, page);
 }
 
-void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
+void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, StringImpl* pageName)
 {
     if (!rules)
         return;
@@ -90,12 +90,12 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
     });
 }
 
-NODELETE static bool checkPageSelectorComponents(const CSSSelector& selector, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
+NODELETE static bool checkPageSelectorComponents(const CSSSelector& selector, bool isLeftPage, bool isFirstPage, StringImpl* pageName)
 {
     for (const CSSSelector* component = &selector; component; component = component->precedingInComplexSelector()) {
         if (component->match() == CSSSelector::Match::Tag) {
-            const AtomString& localName = component->tagQName().localName();
-            if (localName != starAtom() && localName != pageName)
+            const RefPtr<AtomStringImpl>& localName = component->tagQName().localName();
+            if (localName != starAtom() && !equal(localName, pageName))
                 return false;
         } else if (component->match() == CSSSelector::Match::PagePseudoClass) {
             auto pseudoType = component->pagePseudoClass();
@@ -110,7 +110,7 @@ NODELETE static bool checkPageSelectorComponents(const CSSSelector& selector, bo
     return true;
 }
 
-void PageRuleCollector::matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
+void PageRuleCollector::matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, StringImpl* pageName)
 {
     for (auto& rule : rules) {
         if (!checkPageSelectorComponents(rule->selector(), isLeftPage, isFirstPage, pageName))

@@ -40,7 +40,7 @@ namespace NetworkCache {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Entry);
 
-Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
+Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders)
     : m_key(key)
     , m_timeStamp(WallTime::now())
     , m_response(response)
@@ -48,16 +48,16 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, PrivateR
     , m_buffer(WTF::move(buffer))
     , m_privateRelayed(privateRelayed)
 {
-    ASSERT(m_key.type() == "Resource"_s);
+    ASSERT(equal(m_key.type(), "Resource"_s));
 }
 
-Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, const Vector<std::pair<String, String>>& varyingRequestHeaders)
+Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, const Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>& varyingRequestHeaders)
     : m_key(key)
     , m_timeStamp(WallTime::now())
     , m_response(response)
     , m_varyingRequestHeaders(varyingRequestHeaders)
 {
-    ASSERT(m_key.type() == "Resource"_s);
+    ASSERT(equal(m_key.type(), "Resource"_s));
 
     m_redirectRequest.emplace();
     m_redirectRequest->setAsIsolatedCopy(redirectRequest);
@@ -81,7 +81,7 @@ Entry::Entry(const Storage::Record& storageEntry)
     , m_timeStamp(storageEntry.timeStamp)
     , m_sourceStorageRecord(storageEntry)
 {
-    ASSERT(m_key.type() == "Resource"_s);
+    ASSERT(equal(m_key.type(), "Resource"_s));
 }
 
 Storage::Record Entry::encodeAsStorageRecord() const
@@ -134,7 +134,7 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
         return nullptr;
 
     if (*hasVaryingRequestHeaders) {
-        std::optional<Vector<std::pair<String, String>>> varyingRequestHeaders;
+        std::optional<Vector<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>>> varyingRequestHeaders;
         decoder >> varyingRequestHeaders;
         if (!varyingRequestHeaders)
             return nullptr;

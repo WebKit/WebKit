@@ -54,7 +54,7 @@ ImageInputType::ImageInputType(HTMLInputElement& element)
 {
 }
 
-const AtomString& ImageInputType::formControlType() const
+const RefPtr<AtomStringImpl>& ImageInputType::formControlType() const
 {
     return InputTypeNames::image();
 }
@@ -72,14 +72,14 @@ bool ImageInputType::appendFormData(DOMFormData& formData) const
         return false;
 
     auto& name = element->name();
-    if (name.isEmpty()) {
-        formData.append("x"_s, String::number(m_clickLocation.x()));
-        formData.append("y"_s, String::number(m_clickLocation.y()));
+    if (isEmpty(name)) {
+        formData.append("x"_si, makeString(m_clickLocation.x()));
+        formData.append("y"_si, makeString(m_clickLocation.y()));
         return true;
     }
 
-    formData.append(makeString(name, ".x"_s), String::number(m_clickLocation.x()));
-    formData.append(makeString(name, ".y"_s), String::number(m_clickLocation.y()));
+    formData.append(makeString(name, ".x"_s), makeString(m_clickLocation.x()));
+    formData.append(makeString(name, ".y"_s), makeString(m_clickLocation.y()));
 
     return true;
 }
@@ -220,7 +220,7 @@ unsigned ImageInputType::width() const
     return 0;
 }
 
-String ImageInputType::resultForDialogSubmit() const
+RefPtr<StringImpl> ImageInputType::resultForDialogSubmit() const
 {
     return makeString(m_clickLocation.x(), ',', m_clickLocation.y());
 }

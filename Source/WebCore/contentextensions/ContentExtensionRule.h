@@ -40,12 +40,12 @@ namespace WebCore::ContentExtensions {
 // The action defines what to perform on that content.
 
 struct Trigger {
-    String urlFilter;
+    RefPtr<StringImpl> urlFilter;
     bool urlFilterIsCaseSensitive { false };
     bool topURLFilterIsCaseSensitive { false };
     bool frameURLFilterIsCaseSensitive { false };
     ResourceFlags flags { 0 };
-    Vector<String> conditions;
+    Vector<RefPtr<StringImpl>> conditions;
 
     WEBCORE_EXPORT Trigger isolatedCopy() const &;
     WEBCORE_EXPORT Trigger isolatedCopy() &&;
@@ -62,7 +62,7 @@ struct Trigger {
 
     bool isEmpty() const
     {
-        return urlFilter.isEmpty()
+        return WTF::isEmpty(urlFilter)
             && !urlFilterIsCaseSensitive
             && !topURLFilterIsCaseSensitive
             && !frameURLFilterIsCaseSensitive
@@ -70,7 +70,15 @@ struct Trigger {
             && conditions.isEmpty();
     }
 
-    friend bool operator==(const Trigger&, const Trigger&) = default;
+    friend bool operator==(const Trigger& a, const Trigger& b)
+    {
+        return contentEquals(a.urlFilter, b.urlFilter)
+            && a.urlFilterIsCaseSensitive == b.urlFilterIsCaseSensitive
+            && a.topURLFilterIsCaseSensitive == b.topURLFilterIsCaseSensitive
+            && a.frameURLFilterIsCaseSensitive == b.frameURLFilterIsCaseSensitive
+            && a.flags == b.flags
+            && contentEquals(a.conditions, b.conditions);
+    }
 };
 
 inline void add(Hasher& hasher, const Trigger& trigger)
@@ -84,7 +92,7 @@ struct TriggerHashTraits : public WTF::CustomHashTraits<Trigger> {
 
     static void constructDeletedValue(Trigger& trigger)
     {
-        new (NotNull, std::addressof(trigger.urlFilter)) String(WTF::HashTableDeletedValue);
+        new (NotNull, std::addressof(trigger.urlFilter)) RefPtr<StringImpl>(WTF::HashTableDeletedValue);
     }
 
     static bool isDeletedValue(const Trigger& trigger)

@@ -162,7 +162,7 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
     return Element::attributeContainsJavaScriptURL(attribute);
 }
 
-void SVGAnimationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGAnimationElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     auto parseError = SVGParsingError::ParsingFailed;
 
@@ -172,12 +172,12 @@ void SVGAnimationElement::attributeChanged(const QualifiedName& name, const Atom
         // and white space before and after semicolon separators, is allowed and will be ignored.
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         m_values.clear();
-        newValue.string().splitAllowingEmptyEntries(';', [this](StringView innerValue) {
+        splitAllowingEmptyEntries(newValue, ';', [this](StringView innerValue) {
             m_values.append(innerValue.trim(isASCIIWhitespace<char16_t>).toString());
         });
         // Per the SMIL specification, if the last semicolon separator is followed by
         // just white space or no more characters, ignore the trailing empty value.
-        if (!m_values.isEmpty() && m_values.last().isEmpty())
+        if (!m_values.isEmpty() && isEmpty(m_values.last()))
             m_values.removeLast();
         updateAnimationMode();
         break;
@@ -239,7 +239,7 @@ ExceptionOr<float> SVGAnimationElement::getStartTime() const
 {
     auto intervalBegin = this->intervalBegin();
     if (!intervalBegin.isFinite())
-        return Exception { ExceptionCode::InvalidStateError, "The animation element does not have a current interval."_s };
+        return Exception { ExceptionCode::InvalidStateError, "The animation element does not have a current interval."_si };
     return narrowPrecisionToFloat(intervalBegin.value());
 }
 
@@ -252,7 +252,7 @@ ExceptionOr<float> SVGAnimationElement::getSimpleDuration() const
 {
     auto simpleDuration = this->simpleDuration();
     if (!simpleDuration.isFinite())
-        return Exception { ExceptionCode::NotSupportedError, "The simple duration is not determined on the given element."_s };
+        return Exception { ExceptionCode::NotSupportedError, "The simple duration is not determined on the given element."_si };
     return narrowPrecisionToFloat(simpleDuration.value());
 }    
 
@@ -275,20 +275,20 @@ void SVGAnimationElement::updateAnimationMode()
     // http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncValues
     if (hasAttribute(SVGNames::valuesAttr))
         setAnimationMode(AnimationMode::Values);
-    else if (!toValue().isEmpty())
-        setAnimationMode(fromValue().isEmpty() ? AnimationMode::To : AnimationMode::FromTo);
-    else if (!byValue().isEmpty())
-        setAnimationMode(fromValue().isEmpty() ? AnimationMode::By : AnimationMode::FromBy);
+    else if (!isEmpty(toValue()))
+        setAnimationMode(isEmpty(fromValue()) ? AnimationMode::To : AnimationMode::FromTo);
+    else if (!isEmpty(byValue()))
+        setAnimationMode(isEmpty(fromValue()) ? AnimationMode::By : AnimationMode::FromBy);
     else
         setAnimationMode(AnimationMode::None);
 }
 
-void SVGAnimationElement::setCalcMode(const AtomString& calcMode)
+void SVGAnimationElement::setCalcMode(AtomStringImpl* calcMode)
 {
-    static MainThreadNeverDestroyed<const AtomString> discrete("discrete"_s);
-    static MainThreadNeverDestroyed<const AtomString> linear("linear"_s);
-    static MainThreadNeverDestroyed<const AtomString> paced("paced"_s);
-    static MainThreadNeverDestroyed<const AtomString> spline("spline"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> discrete("discrete"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> linear("linear"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> paced("paced"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> spline("spline"_s);
     if (calcMode == discrete)
         setCalcMode(CalcMode::Discrete);
     else if (calcMode == linear)
@@ -301,10 +301,10 @@ void SVGAnimationElement::setCalcMode(const AtomString& calcMode)
         setCalcMode(hasTagName(SVGNames::animateMotionTag) ? CalcMode::Paced : CalcMode::Linear);
 }
 
-void SVGAnimationElement::setAttributeType(const AtomString& attributeType)
+void SVGAnimationElement::setAttributeType(AtomStringImpl* attributeType)
 {
-    static MainThreadNeverDestroyed<const AtomString> css("CSS"_s);
-    static MainThreadNeverDestroyed<const AtomString> xml("XML"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> css("CSS"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> xml("XML"_s);
     if (attributeType == css)
         m_attributeType = AttributeType::CSS;
     else if (attributeType == xml)
@@ -313,36 +313,36 @@ void SVGAnimationElement::setAttributeType(const AtomString& attributeType)
         m_attributeType = AttributeType::Auto;
 }
 
-String SVGAnimationElement::toValue() const
+RefPtr<StringImpl> SVGAnimationElement::toValue() const
 {    
     return attributeWithoutSynchronization(SVGNames::toAttr);
 }
 
-String SVGAnimationElement::byValue() const
+RefPtr<StringImpl> SVGAnimationElement::byValue() const
 {    
     return attributeWithoutSynchronization(SVGNames::byAttr);
 }
 
-String SVGAnimationElement::fromValue() const
+RefPtr<StringImpl> SVGAnimationElement::fromValue() const
 {    
     return attributeWithoutSynchronization(SVGNames::fromAttr);
 }
 
-static const AtomString& sumAtom()
+static const RefPtr<AtomStringImpl>& sumAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> sum("sum"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> sum("sum"_s);
     return sum;
 }
 
 bool SVGAnimationElement::isAdditive() const
 {
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::additiveAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::additiveAttr);
     return value == sumAtom() || animationMode() == AnimationMode::By;
 }
 
 bool SVGAnimationElement::isAccumulated() const
 {
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::accumulateAttr);
+    const RefPtr<AtomStringImpl>& value = attributeWithoutSynchronization(SVGNames::accumulateAttr);
     return value == sumAtom() && animationMode() != AnimationMode::To;
 }
 
@@ -460,7 +460,7 @@ float SVGAnimationElement::calculatePercentForFromTo(float percent) const
     return percent;
 }
     
-void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const
+void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effectivePercent, RefPtr<StringImpl>& from, RefPtr<StringImpl>& to) const
 {
     ASSERT(!m_keyPoints.isEmpty());
     ASSERT(m_keyPoints.size() == keyTimes().size());
@@ -471,7 +471,7 @@ void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effec
     to = m_values[index + 1];
 }
     
-void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to)
+void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, RefPtr<StringImpl>& from, RefPtr<StringImpl>& to)
 {
     unsigned valuesCount = m_values.size();
     ASSERT(m_animationValid);
@@ -557,9 +557,9 @@ void SVGAnimationElement::startedActiveInterval()
             return;
     }
 
-    String from = fromValue();
-    String to = toValue();
-    String by = byValue();
+    RefPtr<StringImpl> from = fromValue();
+    RefPtr<StringImpl> to = toValue();
+    RefPtr<StringImpl> by = byValue();
     if (animationMode == AnimationMode::None)
         return;
     if ((animationMode == AnimationMode::FromTo || animationMode == AnimationMode::FromBy || animationMode == AnimationMode::To || animationMode == AnimationMode::By)
@@ -598,10 +598,10 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount)
     CalcMode calcMode = this->calcMode();
     AnimationMode animationMode = this->animationMode();
     if (animationMode == AnimationMode::Values) {
-        String from;
-        String to;
+        RefPtr<StringImpl> from;
+        RefPtr<StringImpl> to;
         currentValuesForValuesAnimation(percent, effectivePercent, from, to);
-        if (from != m_lastValuesAnimationFrom || to != m_lastValuesAnimationTo) {
+        if (!equal(from, m_lastValuesAnimationFrom) || !equal(to, m_lastValuesAnimationTo)) {
             m_animationValid = setFromAndToValues(from, to);
             if (!m_animationValid)
                 return;
@@ -622,8 +622,8 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount)
 
 void SVGAnimationElement::resetAnimation()
 {
-    m_lastValuesAnimationFrom = String();
-    m_lastValuesAnimationTo = String();
+    m_lastValuesAnimationFrom = nullptr;
+    m_lastValuesAnimationTo = nullptr;
 }
 
 }

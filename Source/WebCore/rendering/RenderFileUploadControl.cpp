@@ -156,7 +156,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
     auto logicalPaintOffset = isHorizontalWritingMode ? paintOffset : paintOffset.transposedPoint();
 
     if (paintInfo.phase == PaintPhase::Foreground) {
-        const String& displayedFilename = fileTextValue();
+        const RefPtr<StringImpl>& displayedFilename = fileTextValue();
         CheckedRef style = this->style();
         CheckedRef font = style->fontCascade();
         TextRun textRun = constructTextRun(displayedFilename, style, ExpansionBehavior::allowRightOnly(), RespectDirection | RespectDirectionOverride);
@@ -285,14 +285,14 @@ std::pair<LayoutUnit, LayoutUnit> RenderFileUploadControl::computeIntrinsicLogic
     // Figure out how big the filename space needs to be for a given number of characters
     // (using "0" as the nominal character).
     const char16_t character = '0';
-    const String characterAsString = span(character);
+    const RefPtr<StringImpl> characterAsString = StringImpl::create(span(character));
     CheckedRef style = this->style();
     CheckedRef font = style->fontCascade();
     // FIXME: Remove the need for this const_cast by making constructTextRun take a const RenderObject*.
     auto characterTextRun = constructTextRun(characterAsString, style, ExpansionBehavior::allowRightOnly());
     float minDefaultLabelWidth = defaultWidthNumChars * font->width(characterTextRun);
 
-    const String label = theme().fileListDefaultLabel(inputElement().multiple());
+    const RefPtr<StringImpl> label = theme().fileListDefaultLabel(inputElement().multiple());
     auto labelTextRun = constructTextRun(label, style, ExpansionBehavior::allowRightOnly());
     float defaultLabelWidth = font->width(labelTextRun);
     if (RefPtr button = uploadButton()) {
@@ -332,21 +332,21 @@ HTMLInputElement* RenderFileUploadControl::uploadButton() const
     return dynamicDowncast<HTMLInputElement>(inputElement().shadowRoot()->firstChild());
 }
 
-String RenderFileUploadControl::buttonValue()
+RefPtr<StringImpl> RenderFileUploadControl::buttonValue()
 {
     if (RefPtr button = uploadButton())
         return button->value();
     
-    return String();
+    return nullptr;
 }
 
-String RenderFileUploadControl::fileTextValue() const
+RefPtr<StringImpl> RenderFileUploadControl::fileTextValue() const
 {
     Ref input = inputElement();
     if (!input->files())
         return { };
     CheckedRef fontCascade = style().fontCascade();
-    if (input->files()->length() && !input->displayString().isEmpty()) {
+    if (input->files()->length() && !isEmpty(input->displayString())) {
         if (input->files()->length() == 1)
             return StringTruncator::centerTruncate(input->displayString(), maxFilenameLogicalWidth(), fontCascade);
 

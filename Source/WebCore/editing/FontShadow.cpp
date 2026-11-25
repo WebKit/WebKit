@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-String serializationForCSS(const FontShadow& shadow)
+RefPtr<StringImpl> serializationForCSS(const FontShadow& shadow)
 {
     if (shadow.offset.isZero() && !shadow.blurRadius)
         return noneAtom();

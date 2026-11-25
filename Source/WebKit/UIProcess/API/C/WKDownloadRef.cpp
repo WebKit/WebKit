@@ -101,7 +101,7 @@ void WKDownloadSetClient(WKDownloadRef download, WKDownloadClientBase* client)
 
         }
 
-        void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy& download, const WebCore::ResourceResponse& response, const WTF::String& suggestedFilename, CompletionHandler<void(WebKit::AllowOverwrite, WTF::String)>&& completionHandler) override
+        void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy& download, const WebCore::ResourceResponse& response, StringImpl* suggestedFilename, CompletionHandler<void(WebKit::AllowOverwrite, RefPtr<StringImpl>)>&& completionHandler) override
         {
             if (!m_client.decideDestinationWithResponse) {
                 completionHandler(WebKit::AllowOverwrite::No, { });
@@ -131,7 +131,7 @@ void WKDownloadSetClient(WKDownloadRef download, WKDownloadClientBase* client)
 
         void processDidCrash(WebKit::DownloadProxy& download) override
         {
-            didFail(download, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, download.request().url(), "Network process crashed during download"_s }, nullptr);
+            didFail(download, WebCore::ResourceError { StringImpl::create(WebCore::errorDomainWebKitInternal).ptr(), 0, download.request().url(), "Network process crashed during download"_si }, nullptr);
         }
 
         void willSendRequest(WebKit::DownloadProxy& download, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) override

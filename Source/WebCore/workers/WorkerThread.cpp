@@ -65,10 +65,10 @@ WorkerParameters WorkerParameters::isolatedCopy() const
     return {
         scriptURL.isolatedCopy(),
         ownerURL.isolatedCopy(),
-        name.isolatedCopy(),
-        inspectorIdentifier.isolatedCopy(),
-        userAgent.isolatedCopy(),
-        navigatorPlatform.isolatedCopy(),
+        WTF::isolatedCopy(name),
+        WTF::isolatedCopy(inspectorIdentifier),
+        WTF::isolatedCopy(userAgent),
+        WTF::isolatedCopy(navigatorPlatform),
         isOnline,
         contentSecurityPolicyResponseHeaders.isolatedCopy(),
         shouldBypassMainWorldContentSecurityPolicy,
@@ -84,7 +84,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         clientIdentifier,
         advancedPrivacyProtections,
         noiseInjectionHashSalt,
-        agentClusterID.isolatedCopy(),
+        WTF::isolatedCopy(agentClusterID),
         networkLoadPolicy.isolatedCopy(),
         isSecureContext,
         hasUnpartitionedStorageAccess,
@@ -116,7 +116,7 @@ WorkerThreadStartupData::WorkerThreadStartupData(const WorkerParameters& other, 
 }
 
 WorkerThread::WorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerReportingProxy& workerReportingProxy, WorkerBadgeProxy& badgeProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : WorkerOrWorkletThread(params.inspectorIdentifier.isolatedCopy(), params.workerThreadMode)
+    : WorkerOrWorkletThread(isolatedCopy(params.inspectorIdentifier), params.workerThreadMode)
     , m_workerLoaderProxy(&workerLoaderProxy)
     , m_workerDebuggerProxy(&workerDebuggerProxy)
     , m_workerReportingProxy(&workerReportingProxy)
@@ -164,7 +164,7 @@ bool WorkerThread::shouldWaitForWebInspectorOnStartup() const
     return m_startupData->startMode == WorkerThreadStartMode::WaitForInspector;
 }
 
-void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
+void WorkerThread::evaluateScriptIfNecessary(RefPtr<StringImpl>& exceptionMessage)
 {
     SetForScope isInStaticScriptEvaluation(m_isInStaticScriptEvaluation, true);
 
@@ -207,7 +207,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
                 if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
                     exceptionMessage = message->message;
                 else
-                    exceptionMessage = "Importing a module script failed."_s;
+                    exceptionMessage = "Importing a module script failed."_si;
                 globalScope->reportErrorToWorkerObject(exceptionMessage);
             } else if (!scriptFetcher->wasCanceled()) {
                 protect(globalScope->script())->linkAndEvaluateModule(scriptFetcher.get(), sourceCode, &exceptionMessage);

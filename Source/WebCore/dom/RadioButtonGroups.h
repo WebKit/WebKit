@@ -41,13 +41,13 @@ public:
     void updateCheckedState(HTMLInputElement&);
     void requiredStateChanged(HTMLInputElement&);
     void removeButton(HTMLInputElement&);
-    RefPtr<HTMLInputElement> checkedButtonForGroup(const AtomString& groupName) const;
+    RefPtr<HTMLInputElement> checkedButtonForGroup(AtomStringImpl* groupName) const;
     bool hasCheckedButton(const HTMLInputElement&) const;
     bool isInRequiredGroup(HTMLInputElement&) const;
     Vector<Ref<HTMLInputElement>> groupMembers(const HTMLInputElement&) const;
 
 private:
-    typedef HashMap<AtomString, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
+    typedef HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
     NameToGroupMap m_nameToGroupMap;
 };
 

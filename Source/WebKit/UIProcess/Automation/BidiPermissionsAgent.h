@@ -40,7 +40,7 @@ public:
     BidiPermissionsAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
     ~BidiPermissionsAgent() override;
 
-    void setPermission(Ref<JSON::Object>&& descriptor, const String& origin, Inspector::Protocol::BidiPermissions::PermissionState, const String& opt_userContext, Inspector::CommandCallback<void>&&) override;
+    void setPermission(Ref<JSON::Object>&& descriptor, StringImpl* origin, Inspector::Protocol::BidiPermissions::PermissionState, StringImpl* opt_userContext, Inspector::CommandCallback<void>&&) override;
 
 private:
     WeakPtr<WebAutomationSession> m_session;

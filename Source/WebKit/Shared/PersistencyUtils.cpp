@@ -36,7 +36,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<KeyedDecoder> createForFile(const String& path)
+std::unique_ptr<KeyedDecoder> createForFile(StringImpl* path)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -47,7 +47,7 @@ std::unique_ptr<KeyedDecoder> createForFile(const String& path)
     return KeyedDecoder::decoder(buffer->span());
 }
 
-void writeToDisk(std::unique_ptr<KeyedEncoder>&& encoder, String&& path)
+void writeToDisk(std::unique_ptr<KeyedEncoder>&& encoder, RefPtr<StringImpl>&& path)
 {
     ASSERT(!RunLoop::isMain());
 

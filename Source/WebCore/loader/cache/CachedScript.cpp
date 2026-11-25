@@ -41,13 +41,13 @@ namespace WebCore {
 CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, ScriptTrackingPrivacyProtectionsEnabled requiresPrivacyProtections)
     : CachedResource(WTF::move(request), request.options().destination == FetchOptionsDestination::Json ? Type::JSON : request.options().destination == FetchOptionsDestination::Text ? Type::Text : Type::Script, sessionID, cookieJar)
     , m_requiresPrivacyProtections(requiresPrivacyProtections == ScriptTrackingPrivacyProtectionsEnabled::Yes)
-    , m_decoder(TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, request.charset()))
+    , m_decoder(TextResourceDecoder::create(TextResourceDecoder::ContentType::PlainText, request.charset().get()))
 {
 }
 
 CachedScript::~CachedScript() = default;
 
-void CachedScript::setEncoding(const String& chs)
+void CachedScript::setEncoding(StringImpl* chs)
 {
     assertIsOwnerThread();
     protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingSource::HTTPHeader);
@@ -94,7 +94,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
     bool shouldForceRedecoding = m_wasForceDecodedAsUTF8 != (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes);
     if (!m_script || shouldForceRedecoding) {
         ASSERT(contiguousData->span().size() == encodedSize());
-        String result;
+        RefPtr<StringImpl> result;
         if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes)
             result = TextResourceDecoder::textFromUTF8(contiguousData->span());
         else
@@ -102,8 +102,8 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
 
 
         if (m_decodingState == NeverDecoded || shouldForceRedecoding)
-            m_scriptHash = result.hash();
-        ASSERT(!m_scriptHash || m_scriptHash == result.hash());
+            m_scriptHash = hash(result);
+        ASSERT(!m_scriptHash || m_scriptHash == hash(result));
 
         releaseOwnerThreadAssertion();
         {
@@ -113,7 +113,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
             m_wasForceDecodedAsUTF8 = shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes;
         }
         assertIsOwnerThread();
-        setDecodedSize(m_script.sizeInBytes());
+        setDecodedSize(sizeInBytes(m_script));
     }
 
     restartDecodedDataDeletionTimer();
@@ -136,7 +136,7 @@ void CachedScript::withScriptConcurrently(ShouldDecodeAsUTF8Only shouldDecodeAsU
     case DataAndDecodedStringHaveDifferentBytes:
         // destroyDecodedData() drops m_script without changing the state, and m_script may have been
         // decoded for the other mode.
-        if (!m_script.isNull() && m_wasForceDecodedAsUTF8 == (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes)) {
+        if (m_script && m_wasForceDecodedAsUTF8 == (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes)) {
             function(m_script);
             return;
         }
@@ -156,7 +156,7 @@ void CachedScript::withScriptConcurrently(ShouldDecodeAsUTF8Only shouldDecodeAsU
         return;
     }
 
-    String result;
+    RefPtr<StringImpl> result;
     if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes)
         result = TextResourceDecoder::textFromUTF8(contiguousData->span());
     else {
@@ -190,7 +190,7 @@ void CachedScript::destroyDecodedData()
 {
     {
         Locker locker { m_lock };
-        m_script = String();
+        m_script = nullptr;
     }
     setDecodedSize(0);
 }

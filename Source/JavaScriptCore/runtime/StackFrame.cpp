@@ -142,23 +142,23 @@ SourceID StackFrame::sourceID() const
     return noSourceID;
 }
 
-static String processSourceURL(VM& vm, const JSC::StackFrame& frame, const String& sourceURL, AllowURLOverride allowOverride = AllowURLOverride::Yes)
+static RefPtr<StringImpl> processSourceURL(VM& vm, const JSC::StackFrame& frame, StringImpl* sourceURL, AllowURLOverride allowOverride = AllowURLOverride::Yes)
 {
     if (allowOverride == AllowURLOverride::Yes && vm.clientData && (!protocolIsInHTTPFamily(sourceURL) && !protocolIs(sourceURL, "blob"_s))) {
-        String overrideURL = vm.clientData->overrideSourceURL(frame, sourceURL);
-        if (!overrideURL.isNull())
+        RefPtr<StringImpl> overrideURL = vm.clientData->overrideSourceURL(frame, sourceURL);
+        if (overrideURL)
             return overrideURL;
     }
 
-    if (!sourceURL.isNull())
+    if (sourceURL)
         return sourceURL;
     return emptyString();
 }
 
-String StackFrame::sourceURL(VM& vm, AllowURLOverride allowOverride) const
+RefPtr<StringImpl> StackFrame::sourceURL(VM& vm, AllowURLOverride allowOverride) const
 {
     return WTF::switchOn(m_frameData,
-        [&vm, allowOverride, this](const JSFrameData& jsFrame) -> String {
+        [&vm, allowOverride, this](const JSFrameData& jsFrame) -> RefPtr<StringImpl> {
             if (isAsyncFrameWithoutCodeBlock()) {
                 ASSERT(jsFrame.callee);
                 ASSERT(!jsFrame.codeBlock);
@@ -167,10 +167,10 @@ String StackFrame::sourceURL(VM& vm, AllowURLOverride allowOverride) const
             }
 
             if (!jsFrame.codeBlock)
-                return "[native code]"_s;
+                return "[native code]"_si;
             return processSourceURL(vm, *this, jsFrame.codeBlock->ownerExecutable()->sourceURL(), allowOverride);
         },
-        [](const WasmFrameData& wasmFrame) -> String {
+        [](const WasmFrameData& wasmFrame) -> RefPtr<StringImpl> {
             auto moduleName = wasmFrame.functionIndexOrName.moduleName();
             if (moduleName.empty())
                 return makeString("wasm-function["_s, wasmFrame.functionIndex, ']');
@@ -179,10 +179,10 @@ String StackFrame::sourceURL(VM& vm, AllowURLOverride allowOverride) const
     );
 }
 
-String StackFrame::sourceURLStripped(VM& vm) const
+RefPtr<StringImpl> StackFrame::sourceURLStripped(VM& vm) const
 {
     return WTF::switchOn(m_frameData,
-        [&vm, this](const JSFrameData& jsFrame) -> String {
+        [&vm, this](const JSFrameData& jsFrame) -> RefPtr<StringImpl> {
             if (isAsyncFrameWithoutCodeBlock()) {
                 ASSERT(jsFrame.callee);
                 ASSERT(!jsFrame.codeBlock);
@@ -191,10 +191,10 @@ String StackFrame::sourceURLStripped(VM& vm) const
             }
 
             if (!jsFrame.codeBlock)
-                return "[native code]"_s;
+                return "[native code]"_si;
             return processSourceURL(vm, *this, jsFrame.codeBlock->ownerExecutable()->sourceURLStripped());
         },
-        [](const WasmFrameData& wasmFrame) -> String {
+        [](const WasmFrameData& wasmFrame) -> RefPtr<StringImpl> {
             auto moduleName = wasmFrame.functionIndexOrName.moduleName();
             if (moduleName.empty())
                 return makeString("wasm-function["_s, wasmFrame.functionIndex, ']');
@@ -203,31 +203,31 @@ String StackFrame::sourceURLStripped(VM& vm) const
     );
 }
 
-String StackFrame::functionName(VM& vm) const
+RefPtr<StringImpl> StackFrame::functionName(VM& vm) const
 {
     return WTF::switchOn(m_frameData,
-        [&vm](const JSFrameData& jsFrame) -> String {
+        [&vm](const JSFrameData& jsFrame) -> RefPtr<StringImpl> {
             if (jsFrame.codeBlock) {
                 switch (jsFrame.codeBlock->codeType()) {
                 case EvalCode:
-                    return "eval code"_s;
+                    return "eval code"_si;
                 case ModuleCode:
-                    return "module code"_s;
+                    return "module code"_si;
                 case GlobalCode:
-                    return "global code"_s;
+                    return "global code"_si;
                 case FunctionCode:
                     break;
                 }
             }
-            String name;
+            RefPtr<StringImpl> name;
             if (jsFrame.callee && jsFrame.callee->isObject())
-                name = getCalculatedDisplayName(vm, uncheckedDowncast<JSObject>(jsFrame.callee.get())).impl();
+                name = getCalculatedDisplayName(vm, uncheckedDowncast<JSObject>(jsFrame.callee.get())).get();
             else if (jsFrame.codeBlock) {
                 if (auto* executable = dynamicDowncast<FunctionExecutable>(jsFrame.codeBlock->ownerExecutable()))
                     name = executable->ecmaName().impl();
             }
 
-            if (name.isNull())
+            if (!name)
                 return emptyString();
 
             if (jsFrame.m_isAsyncFrame)
@@ -235,9 +235,9 @@ String StackFrame::functionName(VM& vm) const
 
             return name;
         },
-        [](const WasmFrameData& wasmFrame) -> String {
+        [](const WasmFrameData& wasmFrame) -> RefPtr<StringImpl> {
             if (wasmFrame.functionIndexOrName.isEmpty() || !wasmFrame.functionIndexOrName.nameSection())
-                return "wasm-stub"_s;
+                return "wasm-stub"_si;
             if (wasmFrame.functionIndexOrName.isIndex())
                 return WTF::toString(wasmFrame.functionIndexOrName.index());
             return WTF::toString(wasmFrame.functionIndexOrName.name()->span());
@@ -284,9 +284,9 @@ static StringView truncateLongDataURL(StringView sourceURL)
 
 void StackFrame::appendTo(VM& vm, StringBuilder& builder) const
 {
-    String functionName = this->functionName(vm);
+    RefPtr<StringImpl> functionName = this->functionName(vm);
     // sourceURL points into fullSourceURL, so keep fullSourceURL around.
-    String fullSourceURL = this->sourceURLStripped(vm);
+    RefPtr<StringImpl> fullSourceURL = this->sourceURLStripped(vm);
     auto sourceURL = truncateLongDataURL(fullSourceURL);
 
     if (sourceURL.isEmpty() || !hasLineAndColumnInfo()) {

@@ -40,14 +40,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebVTTElement);
 
 static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 {
-    static NeverDestroyed<QualifiedName> cTag(nullAtom(), "c"_s, nullAtom());
-    static NeverDestroyed<QualifiedName> vTag(nullAtom(), "v"_s, nullAtom());
-    static NeverDestroyed<QualifiedName> langTag(nullAtom(), "lang"_s, nullAtom());
-    static NeverDestroyed<QualifiedName> bTag(nullAtom(), "b"_s, nullAtom());
-    static NeverDestroyed<QualifiedName> uTag(nullAtom(), "u"_s, nullAtom());
-    static NeverDestroyed<QualifiedName> iTag(nullAtom(), "i"_s, nullAtom());
-    static NeverDestroyed<QualifiedName> rubyTag(nullAtom(), "ruby"_s, nullAtom());
-    static NeverDestroyed<QualifiedName> rtTag(nullAtom(), "rt"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> cTag(nullAtom(), "c"_atom, nullAtom());
+    static NeverDestroyed<QualifiedName> vTag(nullAtom(), "v"_atom, nullAtom());
+    static NeverDestroyed<QualifiedName> langTag(nullAtom(), "lang"_atom, nullAtom());
+    static NeverDestroyed<QualifiedName> bTag(nullAtom(), "b"_atom, nullAtom());
+    static NeverDestroyed<QualifiedName> uTag(nullAtom(), "u"_atom, nullAtom());
+    static NeverDestroyed<QualifiedName> iTag(nullAtom(), "i"_atom, nullAtom());
+    static NeverDestroyed<QualifiedName> rubyTag(nullAtom(), "ruby"_atom, nullAtom());
+    static NeverDestroyed<QualifiedName> rtTag(nullAtom(), "rt"_atom, nullAtom());
     switch (nodeType) {
     case WebVTTNodeType::Class:
         return cTag;
@@ -72,14 +72,14 @@ static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
     return cTag; // Make the compiler happy.
 }
 
-WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, AtomString language, Document& document)
+WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, RefPtr<AtomStringImpl> language, Document& document)
     : Element(nodeTypeToTagName(nodeType), document, { })
     , m_webVTTNodeType(nodeType)
     , m_language(language)
 {
 }
 
-Ref<Element> WebVTTElement::create(WebVTTNodeType nodeType, AtomString language, Document& document)
+Ref<Element> WebVTTElement::create(WebVTTNodeType nodeType, RefPtr<AtomStringImpl> language, Document& document)
 {
     return adoptRef(*new WebVTTElement(nodeType, language, document));
 }

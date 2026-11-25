@@ -94,7 +94,7 @@ public:
     // mapping, not ArrayBuffers that are detached on unmap.
     std::span<uint8_t> persistentMappedRange(uint64_t offset, std::optional<uint64_t> size) final;
     void unmap() final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
 
     NODELETE bool isValid() const final;
 

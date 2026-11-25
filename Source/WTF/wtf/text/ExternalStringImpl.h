@@ -48,7 +48,7 @@ private:
     inline void freeExternalBuffer(void* buffer, unsigned bufferSize);
 
     ExternalStringImplFreeFunction m_free;
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 ALWAYS_INLINE void ExternalStringImpl::freeExternalBuffer(void* buffer, unsigned bufferSize)
 {

@@ -72,7 +72,7 @@ class ModelConnectionToWebProcess
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ModelConnectionToWebProcess);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ModelConnectionToWebProcess);
 public:
-    static Ref<ModelConnectionToWebProcess> create(ModelProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<String>&);
+    static Ref<ModelConnectionToWebProcess> create(ModelProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<RefPtr<StringImpl>>&);
     virtual ~ModelConnectionToWebProcess();
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
@@ -105,19 +105,19 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
-    const std::optional<String> attributionTaskID() const { return m_attributionTaskID; };
+    const std::optional<RefPtr<StringImpl>> attributionTaskID() const { return m_attributionTaskID; };
     std::optional<int> debugEntityMemoryLimit() const;
     std::optional<int> debugImmersiveEntityMemoryLimit() const;
 
 private:
-    ModelConnectionToWebProcess(ModelProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<String>&);
+    ModelConnectionToWebProcess(ModelProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<RefPtr<StringImpl>>&);
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void createVisibilityPropagationContextForPage(WebPageProxyIdentifier, WebCore::PageIdentifier, bool canShowWhileLocked);
     void destroyVisibilityPropagationContextForPage(WebPageProxyIdentifier, WebCore::PageIdentifier);
 #endif
 
-    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+    void configureLoggingChannel(StringImpl*, WTFLogChannelState, WTFLogLevel);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
@@ -152,7 +152,7 @@ private:
     const Ref<IPCTester> m_ipcTester;
 #endif
 
-    std::optional<String> m_attributionTaskID;
+    std::optional<RefPtr<StringImpl>> m_attributionTaskID;
 
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 };

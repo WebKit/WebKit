@@ -188,7 +188,7 @@ GAction* webkitContextMenuGActionNew(UTF8CString&& name, const WebContextMenuIte
         action->priv->name = WTF::move(name);
     else {
         static uint64_t actionID = 0;
-        action->priv->name = makeString("action-"_s, ++actionID).utf8();
+        action->priv->name = utf8(makeString("action-"_s, ++actionID));
     }
     if (item.type() == WebCore::ContextMenuItemType::CheckableAction)
         action->priv->state = g_variant_new_boolean(item.checked());

@@ -44,7 +44,7 @@ FilterFunction::~FilterFunction()
         observer->willDestroyFilter(renderingResourceIdentifier());
 }
 
-AtomString FilterFunction::filterName(Type filterType)
+RefPtr<AtomStringImpl> FilterFunction::filterName(Type filterType)
 {
     static constexpr SortedArrayMap namesMap { WTF::toArray<std::pair<FilterFunction::Type, ASCIILiteral>>({
         { FilterFunction::Type::CSSFilterRenderer,   "CSSFilterRenderer"_s   },
@@ -73,7 +73,7 @@ AtomString FilterFunction::filterName(Type filterType)
     }) };
     
     ASSERT(namesMap.tryGet(filterType));
-    return namesMap.get(filterType, ""_s);
+    return RefPtr<AtomStringImpl> { namesMap.get(filterType, ""_s) };
 }
 
 TextStream& operator<<(TextStream& ts, const FilterFunction& filterFunction)

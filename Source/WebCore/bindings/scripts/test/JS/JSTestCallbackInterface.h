@@ -88,10 +88,10 @@ inline JSC::JSValue toJS(TestCallbackInterface* impl) { return impl ? toJS(*impl
 template<> struct JSDOMCallbackConverterTraits<JSTestCallbackInterface> {
     using Base = TestCallbackInterface;
 };
-String convertEnumerationToString(TestCallbackInterface::Enum);
+RefPtr<StringImpl> convertEnumerationToString(TestCallbackInterface::Enum);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestCallbackInterface::Enum);
 
-template<> std::optional<TestCallbackInterface::Enum> parseEnumerationFromString<TestCallbackInterface::Enum>(const String&);
+template<> std::optional<TestCallbackInterface::Enum> parseEnumerationFromString<TestCallbackInterface::Enum>(StringImpl*);
 template<> std::optional<TestCallbackInterface::Enum> parseEnumeration<TestCallbackInterface::Enum>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestCallbackInterface::Enum>();
 

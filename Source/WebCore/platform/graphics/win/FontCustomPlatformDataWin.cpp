@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformData::CreationData&& creationData)
+FontCustomPlatformData::FontCustomPlatformData(StringImpl* name, FontPlatformData::CreationData&& creationData)
     : name(name)
     , creationData(WTF::move(creationData))
     , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
@@ -45,19 +45,19 @@ FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformD
 
 FontCustomPlatformData::~FontCustomPlatformData() = default;
 
-static String createUniqueFontName()
+static RefPtr<StringImpl> createUniqueFontName()
 {
     GUID fontUuid;
     CoCreateGuid(&fontUuid);
 
     auto fontName = base64EncodeToString({ reinterpret_cast<const uint8_t*>(&fontUuid), sizeof(fontUuid) });
-    ASSERT(fontName.length() < LF_FACESIZE);
+    ASSERT(length(fontName) < LF_FACESIZE);
     return fontName;
 }
 
-RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, StringImpl* itemInCollection)
 {
-    String fontName = createUniqueFontName();
+    RefPtr<StringImpl> fontName = createUniqueFontName();
     auto fontResource = renameAndActivateFont(buffer, fontName);
 
     if (!fontResource)
@@ -67,12 +67,12 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
     return adoptRef(new FontCustomPlatformData(fontName, WTF::move(creationData)));
 }
 
-RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, StringImpl*)
 {
     return nullptr;
 }
 
-bool FontCustomPlatformData::supportsFormat(const String& format)
+bool FontCustomPlatformData::supportsFormat(StringImpl* format)
 {
     return equalLettersIgnoringASCIICase(format, "truetype"_s)
         || equalLettersIgnoringASCIICase(format, "opentype"_s)

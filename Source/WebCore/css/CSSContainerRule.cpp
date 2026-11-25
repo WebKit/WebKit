@@ -49,7 +49,7 @@ const StyleRuleContainer& CSSContainerRule::styleRuleContainer() const
     return downcast<StyleRuleContainer>(groupRule());
 }
 
-String CSSContainerRule::cssText() const
+RefPtr<StringImpl> CSSContainerRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@container "_s);
@@ -59,33 +59,33 @@ String CSSContainerRule::cssText() const
     return builder.toString();
 }
 
-String CSSContainerRule::conditionText() const
+RefPtr<StringImpl> CSSContainerRule::conditionText() const
 {
     StringBuilder builder;
     CQ::serialize(builder, styleRuleContainer().containerQuery());
     return builder.toString();
 }
 
-String CSSContainerRule::containerName() const
+RefPtr<StringImpl> CSSContainerRule::containerName() const
 {
     const auto& query = styleRuleContainer().containerQuery();
     if (query.size() > 1)
-        return ""_s;
+        return ""_si;
 
     ASSERT(query.size() == 1);
     const auto& onlyCondition = query.first();
 
     StringBuilder builder;
-    if (!onlyCondition.name.isEmpty())
+    if (!isEmpty(onlyCondition.name))
         serializeIdentifier(builder, onlyCondition.name);
     return builder.toString();
 }
 
-String CSSContainerRule::containerQuery() const
+RefPtr<StringImpl> CSSContainerRule::containerQuery() const
 {
     const auto& query = styleRuleContainer().containerQuery();
     if (query.size() > 1)
-        return ""_s;
+        return ""_si;
 
     ASSERT(query.size() == 1);
     const auto& onlyCondition = query.first();

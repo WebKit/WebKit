@@ -33,8 +33,8 @@
 namespace Inspector {
 enum class ExtensionError : uint8_t;
 
-using ExtensionTabID = WTF::String;
-using ExtensionID = WTF::String;
+using ExtensionTabID = RefPtr<StringImpl>;
+using ExtensionID = RefPtr<StringImpl>;
 using ExtensionVoidResult = std::expected<void, ExtensionError>;
 using ExtensionEvaluationResult = std::expected<WebKit::RunJavaScriptResult, ExtensionError>;
 
@@ -51,7 +51,7 @@ enum class ExtensionError : uint8_t {
     NotImplemented,
 };
 
-WTF::String extensionErrorToString(ExtensionError);
+RefPtr<StringImpl> extensionErrorToString(ExtensionError);
 
 } // namespace Inspector
 

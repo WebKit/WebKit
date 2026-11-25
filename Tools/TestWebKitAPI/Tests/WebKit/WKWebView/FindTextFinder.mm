@@ -50,7 +50,7 @@ INSTANTIATE_TEST_SUITE_P(FindInPage, FindTextFinder, testing::Values(SiteIsolati
 
 TEST_P(FindTextFinder, FindAllMatches)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     TextFinderTester find { page.webView() };
 
     auto result = find.findMatches(@"hello", caseInsensitive);
@@ -61,7 +61,7 @@ TEST_P(FindTextFinder, FindAllMatches)
 
 TEST_P(FindTextFinder, FindAllMatchesWithoutPlatformFindUIHasNoRects)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello hello</p>"_si), GetParam() };
     [page.webView() _setUsePlatformFindUI:NO];
     TextFinderTester find { page.webView() };
 
@@ -73,7 +73,7 @@ TEST_P(FindTextFinder, FindAllMatchesWithoutPlatformFindUIHasNoRects)
 
 TEST_P(FindTextFinder, MaxResultsIsCappedAt1000)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'></p><script>p.textContent = 'a '.repeat(1100)</script>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'></p><script>p.textContent = 'a '.repeat(1100)</script>"_si), GetParam() };
     TextFinderTester find { page.webView() };
 
     EXPECT_EQ([find.findMatches(@"a", caseInsensitive, NSUIntegerMax).matches count], 1000u);
@@ -81,7 +81,7 @@ TEST_P(FindTextFinder, MaxResultsIsCappedAt1000)
 
 TEST_P(FindTextFinder, StepReportsWrap)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_si), GetParam() };
     TextFinderTester find { page.webView() };
 
     EXPECT_FALSE(find.findMatches(@"hello", caseInsensitiveWrap, 1).didWrap);
@@ -91,7 +91,7 @@ TEST_P(FindTextFinder, StepReportsWrap)
 
 TEST_P(FindTextFinder, StepWithoutWrapFindsNothingAtEnd)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello</p>"_si), GetParam() };
     TextFinderTester find { page.webView() };
 
     EXPECT_EQ([find.findMatches(@"hello", caseInsensitive, 1).matches count], 1u);
@@ -100,7 +100,7 @@ TEST_P(FindTextFinder, StepWithoutWrapFindsNothingAtEnd)
 
 TEST_P(FindTextFinder, StartsWith)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>hello othello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello othello</p>"_si), GetParam() };
     TextFinderTester find { page.webView() };
 
     EXPECT_EQ([find.findMatches(@"hello", caseInsensitive).matches count], 2u);
@@ -110,7 +110,7 @@ TEST_P(FindTextFinder, StartsWith)
 
 TEST_P(FindTextFinder, SelectMatch)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<p>one hello two hello</p>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<p>one hello two hello</p>"_si), GetParam() };
     TextFinderTester find { page.webView() };
 
     auto result = find.findMatches(@"hello", caseInsensitive);
@@ -174,7 +174,7 @@ TEST_P(FindTextFinder, TextControls)
 
 TEST_P(FindTextFinder, MatchRemovedAfterFindAll)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<div contenteditable><span id='a'>hello</span> <span>hello</span></div>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<div contenteditable><span id='a'>hello</span> <span>hello</span></div>"_si), GetParam() };
     TextFinderTester find { page.webView() };
 
     auto result = find.findMatches(@"hello", caseInsensitive);
@@ -185,7 +185,7 @@ TEST_P(FindTextFinder, MatchRemovedAfterFindAll)
 
 TEST_P(FindTextFinder, EditableRootRemovedAfterFindAll)
 {
-    FindTestPage page { FindTestFixtures::singleFrame("<div id='a' contenteditable>hello</div><div id='b' contenteditable>hello</div>"_s), GetParam() };
+    FindTestPage page { FindTestFixtures::singleFrame("<div id='a' contenteditable>hello</div><div id='b' contenteditable>hello</div>"_si), GetParam() };
     TextFinderTester find { page.webView() };
 
     auto result = find.findMatches(@"hello", caseInsensitive);
@@ -268,7 +268,7 @@ TEST_P(FindTextFinder, ReplaceSelectionInCrossOriginFrame)
 
 TEST_P(FindTextFinder, FindAllInPDF)
 {
-    FindTestPage page { "/test.pdf"_s, GetParam(), configurationForWebViewTestingUnifiedPDF(), FindTestFixtures::pdfResources() };
+    FindTestPage page { "/test.pdf"_si, GetParam(), configurationForWebViewTestingUnifiedPDF(), FindTestFixtures::pdfResources() };
     TextFinderTester find { page.webView() };
 
     // FIXME(326398): findStringMatches only searches DOM text, never a PDF plugin.

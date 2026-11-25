@@ -90,15 +90,15 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->unicodeSets, regExpProtoGetterUnicodeSets, PropertyAttribute::DontEnum | PropertyAttribute::Accessor, RegExpUnicodeSetsIntrinsic);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->source, regExpProtoGetterSource, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->flags, regExpProtoGetterFlags, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSFunction* matchFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.match]"_s, regExpProtoFuncMatch, ImplementationVisibility::Public, RegExpMatchIntrinsic);
+    JSFunction* matchFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.match]"_si, regExpProtoFuncMatch, ImplementationVisibility::Public, RegExpMatchIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->matchSymbol, matchFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSFunction* matchAllFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.matchAll]"_s, regExpProtoFuncMatchAll, ImplementationVisibility::Public);
+    JSFunction* matchAllFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.matchAll]"_si, regExpProtoFuncMatchAll, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->matchAllSymbol, matchAllFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSFunction* replaceFunction = JSFunction::create(vm, globalObject, 2, "[Symbol.replace]"_s, regExpProtoFuncReplace, ImplementationVisibility::Public);
+    JSFunction* replaceFunction = JSFunction::create(vm, globalObject, 2, "[Symbol.replace]"_si, regExpProtoFuncReplace, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->replaceSymbol, replaceFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSFunction* searchFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.search]"_s, regExpProtoFuncSearch, ImplementationVisibility::Public, RegExpSearchIntrinsic);
+    JSFunction* searchFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.search]"_si, regExpProtoFuncSearch, ImplementationVisibility::Public, RegExpSearchIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->searchSymbol, searchFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSFunction* splitFunction = JSFunction::create(vm, globalObject, 2, "[Symbol.split]"_s, regExpProtoFuncSplit, ImplementationVisibility::Public, RegExpSplitIntrinsic);
+    JSFunction* splitFunction = JSFunction::create(vm, globalObject, 2, "[Symbol.split]"_si, regExpProtoFuncSplit, ImplementationVisibility::Public, RegExpSplitIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->splitSymbol, splitFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpProtoFuncTest, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, RegExpTestIntrinsic);
 }
@@ -168,7 +168,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncTest, (JSGlobalObject* globalObject, Cal
             return throwVMTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s);
         auto strValue = str->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        if (!strValue->isNull() && regExp->getLastIndex().isNumber()) [[likely]]
+        if (*strValue && regExp->getLastIndex().isNumber()) [[likely]]
             RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(regExp->test(globalObject, str))));
     }
 
@@ -210,15 +210,15 @@ static JSValue regExpMatchSlow(JSGlobalObject* globalObject, JSObject* thisObjec
     // 4. Let flags be ? ToString(? Get(regexp, "flags")).
     JSValue flagsValue = thisObject->get(globalObject, vm.propertyNames->flags);
     RETURN_IF_EXCEPTION(scope, { });
-    String flags = flagsValue.toWTFString(globalObject);
+    RefPtr<StringImpl> flags = flagsValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // 5. If flags does not contain "g", return ? RegExpExec(regexp, string).
-    if (!flags.contains('g'))
+    if (!contains(flags, 'g'))
         RELEASE_AND_RETURN(scope, regExpExec(globalObject, thisObject, string));
 
     // 6. If flags contains "u" or flags contains "v", let fullUnicode be true; else let fullUnicode be false.
-    bool fullUnicode = flags.contains('u') || flags.contains('v');
+    bool fullUnicode = contains(flags, 'u') || contains(flags, 'v');
 
     // 7. Perform ? Set(regexp, "lastIndex", +0𝔽, true).
     PutPropertySlot lastIndexSlot(thisObject, true);
@@ -333,13 +333,13 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
             return throwVMTypeError(globalObject, scope, "Cannot supply flags when constructing one RegExp from another."_s);
         regExp = regExpObject->regExp();
     } else {
-        String pattern = arg0.isUndefined() ? emptyString() : arg0.toWTFString(globalObject);
+        RefPtr<StringImpl> pattern = arg0.isUndefined() ? emptyString() : arg0.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         auto flags = arg1.isUndefined() ? std::make_optional(OptionSet<Yarr::Flags> { }) : Yarr::parseFlags(arg1.toWTFString(globalObject));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!flags)
-            return throwVMError(globalObject, scope, createSyntaxError(globalObject, "Invalid flags supplied to RegExp constructor."_s));
+            return throwVMError(globalObject, scope, createSyntaxError(globalObject, "Invalid flags supplied to RegExp constructor."_si));
 
         regExp = RegExp::create(vm, pattern, flags.value());
     }
@@ -415,12 +415,12 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncToString, (JSGlobalObject* globalObject,
 
     JSValue sourceValue = thisObject->get(globalObject, vm.propertyNames->source);
     RETURN_IF_EXCEPTION(scope, { });
-    String source = sourceValue.toWTFString(globalObject);
+    RefPtr<StringImpl> source = sourceValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue flagsValue = thisObject->get(globalObject, vm.propertyNames->flags);
     RETURN_IF_EXCEPTION(scope, { });
-    String flags = flagsValue.toWTFString(globalObject);
+    RefPtr<StringImpl> flags = flagsValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, '/', source, '/', flags)));
@@ -566,12 +566,12 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterFlags, (JSGlobalObject* globalObject, 
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.flags getter can only be called on an object"_s);
 
     if (auto* regExpObject = dynamicDowncast<RegExpObject>(thisValue); regExpObject && regExpFlagsWatchpointIsValid(vm, regExpObject)) [[likely]]
-        return JSValue::encode(jsString(vm, String { Yarr::flagsString(regExpObject->regExp()->flags()).span() }));
+        return JSValue::encode(jsString(vm, StringImpl::create(Yarr::flagsString(regExpObject->regExp()->flags()).span())));
 
     auto flags = flagsString(globalObject, asObject(thisValue));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return JSValue::encode(jsString(vm, String { flags.span() }));
+    return JSValue::encode(jsString(vm, StringImpl::create(flags.span())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterSource, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -583,7 +583,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterSource, (JSGlobalObject* globalObject,
     auto* regexp = dynamicDowncast<RegExpObject>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
-            return JSValue::encode(jsNontrivialString(vm, "(?:)"_s));
+            return JSValue::encode(jsNontrivialString(vm, "(?:)"_si));
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.source getter can only be called on a RegExp object"_s);
     }
 
@@ -809,7 +809,7 @@ static NEVER_INLINE JSArray* tryAddToRegExpSplitCache(JSGlobalObject* globalObje
 
     auto subject = inputString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    if (!subject->impl() || !subject->impl()->isAtom())
+    if (!subject->get() || !subject->get()->isAtom())
         return nullptr;
 
     constexpr unsigned atomStringsArrayLimit = 100;
@@ -850,7 +850,7 @@ static NEVER_INLINE JSArray* tryAddToRegExpSplitCache(JSGlobalObject* globalObje
         newButterfly->setStructure(vm, replacementStructure);
     }
 
-    vm.ensureStringSplitCache().setForRegExp(subject, regexp, newButterfly, lastMatch);
+    vm.ensureStringSplitCache().setForRegExp(subject->get(), regexp, newButterfly, lastMatch);
     Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
     return JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
 }
@@ -876,7 +876,7 @@ JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject
         RETURN_IF_EXCEPTION(scope, { });
         MatchResult cachedLastMatch;
         auto* cache = vm.stringSplitCache();
-        if (auto* immutableButterfly = cache ? cache->getForRegExp(subject, regexp, cachedLastMatch) : nullptr) {
+        if (auto* immutableButterfly = cache ? cache->getForRegExp(subject->get(), regexp, cachedLastMatch) : nullptr) {
             // The skipped match loop would have updated the legacy RegExp statics
             // (RegExp.$1, lastMatch, leftContext, ...) via performMatch. Replay its final
             // match so those observable properties match the uncached path.
@@ -1171,17 +1171,17 @@ JSValue regExpSplitSlow(JSGlobalObject* globalObject, JSObject* thisObject, JSSt
     // 5. Let flags be ? ToString(? Get(regexp, "flags")).
     JSValue flagsValue = thisObject->get(globalObject, vm.propertyNames->flags);
     RETURN_IF_EXCEPTION(scope, { });
-    String flags = flagsValue.toWTFString(globalObject);
+    RefPtr<StringImpl> flags = flagsValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // 6. If flags contains "u" or flags contains "v", let unicodeMatching be true.
     // 7. Else, let unicodeMatching be false.
-    bool unicodeMatching = flags.contains('u') || flags.contains('v');
+    bool unicodeMatching = contains(flags, 'u') || contains(flags, 'v');
 
     // 8. If flags contains "y", let newFlags be flags.
     // 9. Else, let newFlags be the string-concatenation of flags and "y".
-    String newFlags = flags.contains('y') ? flags : tryMakeString(flags, 'y');
-    if (newFlags.isNull()) [[unlikely]] {
+    RefPtr<StringImpl> newFlags = contains(flags, 'y') ? flags : tryMakeString(flags, 'y');
+    if (!newFlags) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
@@ -1348,24 +1348,24 @@ JSValue regExpSplitSlow(JSGlobalObject* globalObject, JSObject* thisObject, JSSt
 }
 
 // https://tc39.es/ecma262/#sec-getsubstitution
-static inline String getSubstitution(JSGlobalObject* globalObject, const String& matched, const String& str, unsigned position, const Vector<String, 16>& captures, JSObject* namedCaptures, const String& replacement)
+static inline RefPtr<StringImpl> getSubstitution(JSGlobalObject* globalObject, StringImpl* matched, StringImpl* str, unsigned position, const Vector<RefPtr<StringImpl>, 16>& captures, JSObject* namedCaptures, StringImpl* replacement)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    size_t start = replacement.find('$');
+    size_t start = find(replacement, '$');
     if (start == notFound)
         return replacement;
 
-    size_t matchLength = matched.length();
-    size_t stringLength = str.length();
+    size_t matchLength = length(matched);
+    size_t stringLength = length(str);
     size_t tailPos = position + matchLength;
     size_t nCaptures = captures.size();
-    size_t replacementLength = replacement.length();
+    size_t replacementLength = length(replacement);
     StringBuilder result(OverflowPolicy::RecordOverflow); // overflow should gracefully throw an exception, not crash
     size_t lastStart = 0;
 
-    for (; start != notFound; lastStart = start, start = replacement.find('$', lastStart)) {
+    for (; start != notFound; lastStart = start, start = find(replacement, '$', lastStart)) {
         if (start > lastStart)
             result.append(StringView(replacement).substring(lastStart, start - lastStart));
 
@@ -1376,7 +1376,7 @@ static inline String getSubstitution(JSGlobalObject* globalObject, const String&
             break;
         }
 
-        char16_t ch = replacement[start];
+        char16_t ch = codeUnitAt(replacement, start);
         switch (ch) {
         case '$':
             result.append('$');
@@ -1399,14 +1399,14 @@ static inline String getSubstitution(JSGlobalObject* globalObject, const String&
         case '<': {
             if (namedCaptures) {
                 unsigned groupNameStartIndex = start + 1;
-                size_t groupNameEndIndex = replacement.find('>', groupNameStartIndex);
+                size_t groupNameEndIndex = find(replacement, '>', groupNameStartIndex);
                 if (groupNameEndIndex != notFound) {
-                    String groupName = replacement.substring(groupNameStartIndex, groupNameEndIndex - groupNameStartIndex);
+                    RefPtr<StringImpl> groupName = substring(replacement, groupNameStartIndex, groupNameEndIndex - groupNameStartIndex);
                     JSValue capture = namedCaptures->get(globalObject, Identifier::fromString(vm, groupName));
-                    RETURN_IF_EXCEPTION(scope, String());
+                    RETURN_IF_EXCEPTION(scope, nullptr);
                     if (!capture.isUndefined()) {
-                        String captureString = capture.toWTFString(globalObject);
-                        RETURN_IF_EXCEPTION(scope, String());
+                        RefPtr<StringImpl> captureString = capture.toWTFString(globalObject);
+                        RETURN_IF_EXCEPTION(scope, nullptr);
                         result.append(captureString);
                     }
                     start = groupNameEndIndex + 1;
@@ -1429,7 +1429,7 @@ static inline String getSubstitution(JSGlobalObject* globalObject, const String&
                 }
 
                 if (start < replacementLength) {
-                    char16_t nextCh = replacement[start];
+                    char16_t nextCh = codeUnitAt(replacement, start);
                     if (isASCIIDigit(nextCh)) {
                         unsigned nn = 10 * n + nextCh - '0';
                         if (nn <= nCaptures) {
@@ -1444,8 +1444,8 @@ static inline String getSubstitution(JSGlobalObject* globalObject, const String&
                     break;
                 }
 
-                const String& capture = captures[n - 1];
-                if (!capture.isNull())
+                const RefPtr<StringImpl>& capture = captures[n - 1];
+                if (capture)
                     result.append(capture);
             } else
                 result.append('$');
@@ -1469,10 +1469,10 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String str = string->value(globalObject);
+    RefPtr<StringImpl> str = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    unsigned stringLength = str.length();
+    unsigned stringLength = length(str);
 
     // 4. Let lengthS be the number of code unit elements in S.
     // 5. Let functionalReplace be IsCallable(replaceValue).
@@ -1481,7 +1481,7 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
 
     // 6. If functionalReplace is false, then
     //    a. Set replaceValue to ? ToString(replaceValue).
-    String replacementString;
+    RefPtr<StringImpl> replacementString;
     if (!functionalReplace) {
         replacementString = replaceValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
@@ -1490,18 +1490,18 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
     // 7. Let flags be ? ToString(? Get(rx, "flags")).
     JSValue flagsValue = thisObject->get(globalObject, vm.propertyNames->flags);
     RETURN_IF_EXCEPTION(scope, { });
-    String flags = flagsValue.toWTFString(globalObject);
+    RefPtr<StringImpl> flags = flagsValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // 8. If flags contains "g", let global be true. Else, let global be false.
-    bool global = flags.contains('g');
+    bool global = contains(flags, 'g');
 
     // 9. If global is true, then
     //    a. If flags contains "u" or "v", let fullUnicode be true. Else, let fullUnicode be false.
     //    b. Perform ? Set(rx, "lastIndex", +0F, true).
     bool fullUnicode = false;
     if (global) {
-        fullUnicode = flags.contains('u') || flags.contains('v');
+        fullUnicode = contains(flags, 'u') || contains(flags, 'v');
         PutPropertySlot slot(thisObject, true);
         thisObject->methodTable()->put(thisObject, globalObject, vm.propertyNames->lastIndex, jsNumber(0), slot);
         RETURN_IF_EXCEPTION(scope, { });
@@ -1540,7 +1540,7 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
         JSObject* resultObject = asObject(result);
         JSValue matchValue = resultObject->get(globalObject, static_cast<unsigned>(0));
         RETURN_IF_EXCEPTION(scope, { });
-        String matchStr = matchValue.toWTFString(globalObject);
+        RefPtr<StringImpl> matchStr = matchValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
         //         2. If matchStr is the empty String, then
@@ -1548,7 +1548,7 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
         //            b. If flags contains "u" or flags contains "v", let fullUnicode be true; otherwise let fullUnicode be false.
         //            c. Let nextIndex be AdvanceStringIndex(S, thisIndex, fullUnicode).
         //            d. Perform ? Set(rx, "lastIndex", F(nextIndex), true).
-        if (matchStr.isEmpty()) {
+        if (isEmpty(matchStr)) {
             JSValue lastIndexValue = thisObject->get(globalObject, vm.propertyNames->lastIndex);
             RETURN_IF_EXCEPTION(scope, { });
             uint64_t thisIndex = lastIndexValue.toLength(globalObject);
@@ -1582,9 +1582,9 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
         // c. Let matched be ? ToString(? Get(result, "0")).
         JSValue matchedValue = result->get(globalObject, static_cast<unsigned>(0));
         RETURN_IF_EXCEPTION(scope, { });
-        String matched = matchedValue.toWTFString(globalObject);
+        RefPtr<StringImpl> matched = matchedValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        unsigned matchLength = matched.length();
+        unsigned matchLength = length(matched);
 
         // d. Let matchLength be the number of code units in matched.
         // e. Let position be ? ToIntegerOrInfinity(? Get(result, "index")).
@@ -1597,7 +1597,7 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
         unsigned position = static_cast<unsigned>(std::clamp<double>(positionDouble, 0, stringLength));
 
         // g. Let captures be a new empty List.
-        Vector<String, 16> captures;
+        Vector<RefPtr<StringImpl>, 16> captures;
         if (!captures.tryReserveCapacity(nCaptures)) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
             return { };
@@ -1613,18 +1613,18 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
             // ii. If capN is not undefined, then
             //     1. Set capN to ? ToString(capN).
             if (!capN.isUndefined()) {
-                String capString = capN.toWTFString(globalObject);
+                RefPtr<StringImpl> capString = capN.toWTFString(globalObject);
                 RETURN_IF_EXCEPTION(scope, { });
                 captures.constructAndAppend(WTF::move(capString));
             } else
-                captures.constructAndAppend(String());
+                captures.constructAndAppend(nullString());
         }
 
         // j. Let namedCaptures be ? Get(result, "groups").
         JSValue namedCapturesValue = result->get(globalObject, vm.propertyNames->groups);
         RETURN_IF_EXCEPTION(scope, { });
 
-        String replacement;
+        RefPtr<StringImpl> replacement;
 
         // j. If functionalReplace is true, then
         if (functionalReplace) {
@@ -1632,8 +1632,8 @@ JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject,
             MarkedArgumentBuffer replacerArgs;
             replacerArgs.append(jsString(vm, matched));
             for (unsigned n = 0; n < captures.size(); ++n) {
-                const String& capture = captures[n];
-                if (!capture.isNull())
+                const RefPtr<StringImpl>& capture = captures[n];
+                if (capture)
                     replacerArgs.append(jsString(vm, capture));
                 else
                     replacerArgs.append(jsUndefined());
@@ -1786,7 +1786,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchAll, (JSGlobalObject* globalObject,
 
     JSValue flagsValue = thisObject->get(globalObject, vm.propertyNames->flags);
     RETURN_IF_EXCEPTION(scope, { });
-    String flags = flagsValue.toWTFString(globalObject);
+    RefPtr<StringImpl> flags = flagsValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto constructorArgs = WTF::toArray<EncodedJSValue>({
@@ -1807,8 +1807,8 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchAll, (JSGlobalObject* globalObject,
     matcher->methodTable()->put(matcher, globalObject, vm.propertyNames->lastIndex, jsNumber(lastIndex), slot);
     RETURN_IF_EXCEPTION(scope, { });
 
-    bool global = flags.contains('g');
-    bool fullUnicode = flags.contains('u') || flags.contains('v');
+    bool global = contains(flags, 'g');
+    bool fullUnicode = contains(flags, 'u') || contains(flags, 'v');
     auto* regExpStringIterator = JSRegExpStringIterator::createWithInitialValues(vm, globalObject->regExpStringIteratorStructure());
 
     regExpStringIterator->setRegExp(vm, matcher);

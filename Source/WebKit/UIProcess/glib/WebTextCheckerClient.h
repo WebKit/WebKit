@@ -49,15 +49,15 @@ public:
     void setGrammarCheckingEnabled(bool);
     uint64_t uniqueSpellDocumentTag(WebPageProxy*);
     void closeSpellDocumentWithTag(uint64_t);
-    void checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
-    void checkGrammarOfString(uint64_t tag, const String& text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
+    void checkSpellingOfString(uint64_t tag, StringImpl* text, int32_t& misspellingLocation, int32_t& misspellingLength);
+    void checkGrammarOfString(uint64_t tag, StringImpl* text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
     bool spellingUIIsShowing();
     void toggleSpellingUIIsShowing();
-    void updateSpellingUIWithMisspelledWord(uint64_t tag, const String& misspelledWord);
-    void updateSpellingUIWithGrammarString(uint64_t tag, const String& badGrammarPhrase, const WebCore::GrammarDetail&);
-    void guessesForWord(uint64_t tag, const String& word, Vector<String>& guesses);
-    void learnWord(uint64_t tag, const String& word);
-    void ignoreWord(uint64_t tag, const String& word);
+    void updateSpellingUIWithMisspelledWord(uint64_t tag, StringImpl* misspelledWord);
+    void updateSpellingUIWithGrammarString(uint64_t tag, StringImpl* badGrammarPhrase, const WebCore::GrammarDetail&);
+    void guessesForWord(uint64_t tag, StringImpl* word, Vector<RefPtr<StringImpl>>& guesses);
+    void learnWord(uint64_t tag, StringImpl* word);
+    void ignoreWord(uint64_t tag, StringImpl* word);
 };
 
 } // namespace WebKit

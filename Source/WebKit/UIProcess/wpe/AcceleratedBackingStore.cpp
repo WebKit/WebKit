@@ -209,7 +209,7 @@ void AcceleratedBackingStore::frame(RendererBufferIdentifier bufferID, Rects&& d
         m_fenceMonitor.addFileDescriptor(WTF::move(renderingFenceFD));
 }
 
-static std::expected<SkImageInfo, String> getImageInfoFromBuffer(const  GRefPtr<WPEBuffer>& buffer)
+static std::expected<SkImageInfo, RefPtr<StringImpl>> getImageInfoFromBuffer(const  GRefPtr<WPEBuffer>& buffer)
 {
     auto width = wpe_buffer_get_width(buffer.get());
     auto height = wpe_buffer_get_height(buffer.get());
@@ -229,7 +229,7 @@ static std::expected<SkImageInfo, String> getImageInfoFromBuffer(const  GRefPtr<
     return makeUnexpected("Failed to extract snapshot pixel information"_s);
 }
 
-static std::expected<Ref<ViewSnapshot>, String> saveBufferSnapshot(const GRefPtr<WPEBuffer>& buffer, std::optional<WebCore::IntRect>&& clipRect)
+static std::expected<Ref<ViewSnapshot>, RefPtr<StringImpl>> saveBufferSnapshot(const GRefPtr<WPEBuffer>& buffer, std::optional<WebCore::IntRect>&& clipRect)
 {
     GUniqueOutPtr<GError> error;
     GBytes* pixels = wpe_buffer_import_to_pixels(buffer.get(), &error.outPtr());
@@ -266,7 +266,7 @@ static std::expected<Ref<ViewSnapshot>, String> saveBufferSnapshot(const GRefPtr
     return { ViewSnapshot::create(WTF::move(image)) };
 }
 
-std::expected<Ref<ViewSnapshot>, String> AcceleratedBackingStore::takeSnapshot(std::optional<WebCore::IntRect>&& clipRect)
+std::expected<Ref<ViewSnapshot>, RefPtr<StringImpl>> AcceleratedBackingStore::takeSnapshot(std::optional<WebCore::IntRect>&& clipRect)
 {
     if (!m_committedBuffer && !m_pendingBuffer) [[unlikely]]
         return makeUnexpected("No buffer to create snapshot from"_s);

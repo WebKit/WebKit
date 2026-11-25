@@ -88,7 +88,7 @@ using JSC::JSLockHolder;
 namespace WebCore {
 
 // Create <html><body (style="...")></body></html> doing minimal amount of work.
-void LocalFrame::initWithSimpleHTMLDocument(const AtomString& style, const URL& url)
+void LocalFrame::initWithSimpleHTMLDocument(AtomStringImpl* style, const URL& url)
 {
     m_loader->initForSynthesizedDocument(url);
 
@@ -100,7 +100,7 @@ void LocalFrame::initWithSimpleHTMLDocument(const AtomString& style, const URL& 
     auto rootElement = HTMLHtmlElement::create(document);
 
     auto body = HTMLBodyElement::create(document);
-    if (!style.isEmpty())
+    if (!isEmpty(style))
         body->setAttribute(HTMLNames::styleAttr, style);
 
     rootElement->appendChild(body);
@@ -209,7 +209,7 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
 #if RECT_LOGGING
         CGRect rect = renderer->absoluteBoundingBoxRect(true);
         if (renderer->node())
-            SAFE_PRINTF("%s %f %f %f %f\n", renderer->node()->nodeName().utf8(), rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+            SAFE_PRINTF("%s %f %f %f %f\n", utf8(renderer->node()->nodeName()), rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 #endif
         if (renderer->isRenderBlock() || renderer->isNonReplacedAtomicInlineLevelBox() || renderer->isBlockLevelReplacedOrAtomicInline()) {
             *isReplaced = renderer->isBlockLevelReplacedOrAtomicInline();
@@ -492,13 +492,13 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
 
     // There are no phrases with alternatives, so there is just one interpretation.
     if (markersInRoot.isEmpty())
-        return @[plainText(rangeOfRootContents).createNSString().get()];
+        return @[createNSString(plainText(rangeOfRootContents)).get()];
 
     // The number of interpretations will be i1 * i2 * ... * iN, where iX is the number of interpretations for the Xth phrase with alternatives.
     size_t interpretationsCount = 1;
 
     for (auto& marker : markersInRoot)
-        interpretationsCount *= std::get<Vector<String>>(marker->data()).size() + 1;
+        interpretationsCount *= std::get<Vector<RefPtr<StringImpl>>>(marker->data()).size() + 1;
 
     Vector<Vector<char16_t>> interpretations;
     interpretations.grow(interpretationsCount);
@@ -509,19 +509,19 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
 
     for (Ref node : intersectingNodes(rangeOfRootContents)) {
         for (auto& marker : markers->markersFor(node, DocumentMarkerType::DictationPhraseWithAlternatives)) {
-            auto& alternatives = std::get<Vector<String>>(marker->data());
+            auto& alternatives = std::get<Vector<RefPtr<StringImpl>>>(marker->data());
 
             auto rangeForMarker = makeSimpleRange(node, *marker);
 
             if (auto precedingTextRange = makeSimpleRange(precedingTextStartPosition, rangeForMarker.start)) {
-                String precedingText = plainText(*precedingTextRange);
-                if (!precedingText.isEmpty()) {
+                RefPtr<StringImpl> precedingText = plainText(*precedingTextRange);
+                if (!isEmpty(precedingText)) {
                     for (auto& interpretation : interpretations)
                         append(interpretation, precedingText);
                 }
             }
 
-            String visibleTextForMarker = plainText(rangeForMarker);
+            RefPtr<StringImpl> visibleTextForMarker = plainText(rangeForMarker);
             size_t interpretationsCountForCurrentMarker = alternatives.size() + 1;
             for (size_t i = 0; i < interpretationsCount; ++i) {
                 size_t indexOfInterpretationForCurrentMarker = (i / combinationsSoFar) % interpretationsCountForCurrentMarker;
@@ -539,8 +539,8 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
 
     // Finally, add any text after the last marker.
     if (auto range = makeSimpleRange(precedingTextStartPosition, rangeOfRootContents.end)) {
-        String textAfterLastMarker = plainText(*range);
-        if (!textAfterLastMarker.isEmpty()) {
+        RefPtr<StringImpl> textAfterLastMarker = plainText(*range);
+        if (!isEmpty(textAfterLastMarker)) {
             for (auto& interpretation : interpretations)
                 append(interpretation, textAfterLastMarker);
         }

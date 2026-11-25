@@ -50,12 +50,12 @@
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
 
-static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
+static RetainPtr<NSString> getUTIForUSDMIMEType(StringImpl* mimeType)
 {
     if (!WebCore::MIMETypeRegistry::isUSDMIMEType(mimeType))
         return nil;
 
-    return WebCore::UTIFromMIMEType(mimeType).createNSString();
+    return createNSString(WebCore::UTIFromMIMEType(mimeType));
 }
 
 @interface WKUSDPreviewView () <ASVThumbnailViewDelegate>
@@ -162,7 +162,7 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 
 - (void)_showThumbnailView
 {
-    RetainPtr contentType = getUTIForUSDMIMEType(_mimeType.get());
+    RetainPtr contentType = getUTIForUSDMIMEType(StringImpl::create(_mimeType.get()).get());
 
     _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:contentType.get() previewTitle:_suggestedFilename.get()]);
     [_item setUseLoadingTimeout:NO];
@@ -253,13 +253,13 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 - (void)web_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
     RefPtr<WebKit::WebPageProxy> page = _webView.get()->_page;
-    page->findClient().didCountStringMatches(page.get(), string, 0);
+    page->findClient().didCountStringMatches(page.get(), StringImpl::create(string).get(), 0);
 }
 
 - (void)web_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
     RefPtr<WebKit::WebPageProxy> page = _webView.get()->_page;
-    page->findClient().didFailToFindString(page.get(), string);
+    page->findClient().didFailToFindString(page.get(), StringImpl::create(string).get());
 }
 
 - (void)web_hideFindUI

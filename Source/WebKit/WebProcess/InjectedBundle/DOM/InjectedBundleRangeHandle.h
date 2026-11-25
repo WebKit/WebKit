@@ -55,7 +55,7 @@ public:
 
     WebCore::IntRect boundingRectInWindowCoordinates() const;
     RefPtr<WebImage> renderedImage(SnapshotOptions);
-    String text() const;
+    RefPtr<StringImpl> text() const;
 
     WebCore::Range& coreRange() const { return m_range; }
 

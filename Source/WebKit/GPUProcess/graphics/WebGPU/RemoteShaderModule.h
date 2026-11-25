@@ -79,7 +79,7 @@ private:
 
     void compilationInfo(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&&);
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
     void destruct();
 
     const Ref<::WebGPU::ShaderModule> m_backing;

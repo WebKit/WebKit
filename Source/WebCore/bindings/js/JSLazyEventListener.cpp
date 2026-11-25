@@ -47,17 +47,17 @@ using namespace JSC;
 
 struct JSLazyEventListener::CreationArguments {
     const QualifiedName& attributeName;
-    const AtomString& attributeValue;
+    const RefPtr<AtomStringImpl>& attributeValue;
     Ref<Document> document;
     WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> node;
     JSObject* wrapper;
     bool shouldUseSVGEventName;
 };
 
-static const String& functionParameters(bool shouldUseSVGEventName)
+static const RefPtr<StringImpl>& functionParameters(bool shouldUseSVGEventName)
 {
-    static NeverDestroyed<const String> eventString(MAKE_STATIC_STRING_IMPL("(event)"));
-    static NeverDestroyed<const String> evtString(MAKE_STATIC_STRING_IMPL("(evt)"));
+    static NeverDestroyed<const RefPtr<StringImpl>> eventString(MAKE_STATIC_STRING_IMPL("(event)"));
+    static NeverDestroyed<const RefPtr<StringImpl>> evtString(MAKE_STATIC_STRING_IMPL("(evt)"));
     return shouldUseSVGEventName ? evtString : eventString;
 }
 
@@ -72,7 +72,7 @@ NODELETE static TextPosition convertZeroToOne(const TextPosition& position)
 
 JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const URL& sourceURL, const TextPosition& sourcePosition)
     : JSEventListener(nullptr, arguments.wrapper, true, CreatedFromMarkup::Yes, mainThreadNormalWorldSingleton())
-    , m_functionName(arguments.attributeName.localName().string())
+    , m_functionName(arguments.attributeName.localName())
     , m_functionParameters(functionParameters(arguments.shouldUseSVGEventName))
     , m_code(arguments.attributeValue)
     , m_sourceURL(sourceURL)
@@ -147,9 +147,9 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    static NeverDestroyed<const String> functionPrefix(MAKE_STATIC_STRING_IMPL("function "));
-    int functionConstructorParametersEndPosition = functionPrefix->length() + m_functionName.length() + m_functionParameters.length();
-    String code = makeString(functionPrefix.get(), m_functionName, m_functionParameters, " {\n"_s, m_code, "\n}"_s);
+    static NeverDestroyed<const RefPtr<StringImpl>> functionPrefix(MAKE_STATIC_STRING_IMPL("function "));
+    int functionConstructorParametersEndPosition = length(functionPrefix.get()) + length(m_functionName) + length(m_functionParameters);
+    RefPtr<StringImpl> code = makeString(functionPrefix.get(), m_functionName, m_functionParameters, " {\n"_s, m_code, "\n}"_s);
 
     bool listenerHasEventHandlerScope = is<HTMLElement>(m_originalNode.get());
     LexicallyScopedFeatures lexicallyScopedFeatures = listenerHasEventHandlerScope || globalObject->globalScopeExtension() ? TaintedByWithScopeLexicallyScopedFeature : NoLexicallyScopedFeatures;
@@ -160,7 +160,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
         lexicalGlobalObject, WTF::move(code), lexicallyScopedFeatures, Identifier::fromString(vm, m_functionName),
-        SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document->charset()) },
+        SourceOrigin { m_sourceURL, CachedScriptFetcher::create(RefPtr<AtomStringImpl> { document->charset() }.get()) },
         m_sourceURL.string(), m_sourceTaintedOrigin, m_sourcePosition, overrideLineNumber, functionConstructorParametersEndPosition);
     if (scope.exception()) [[unlikely]] {
         reportCurrentException(lexicalGlobalObject);
@@ -187,7 +187,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& arguments)
 {
-    if (arguments.attributeValue.isNull())
+    if (!arguments.attributeValue)
         return nullptr;
 
     // FIXME: We should be able to provide source information for frameless documents too (e.g. for importing nodes from XMLHttpRequest.responseXML).
@@ -205,19 +205,19 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& argu
     return adoptRef(*new JSLazyEventListener(WTF::move(arguments), sourceURL, position));
 }
 
-RefPtr<JSLazyEventListener> JSLazyEventListener::create(Element& element, const QualifiedName& attributeName, const AtomString& attributeValue)
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(Element& element, const QualifiedName& attributeName, AtomStringImpl* attributeValue)
 {
     return create({ attributeName, attributeValue, element.document(), element, nullptr, element.isSVGElement() });
 }
 
-RefPtr<JSLazyEventListener> JSLazyEventListener::create(Document& document, const QualifiedName& attributeName, const AtomString& attributeValue)
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(Document& document, const QualifiedName& attributeName, AtomStringImpl* attributeValue)
 {
     // FIXME: This always passes false for "shouldUseSVGEventName". Is that correct for events dispatched to SVG documents?
     // This has been this way for a long time, but became more obvious when refactoring to separate the Element and Document code paths.
     return create({ attributeName, attributeValue, document, document, nullptr, false });
 }
 
-RefPtr<JSLazyEventListener> JSLazyEventListener::create(LocalDOMWindow& window, const QualifiedName& attributeName, const AtomString& attributeValue)
+RefPtr<JSLazyEventListener> JSLazyEventListener::create(LocalDOMWindow& window, const QualifiedName& attributeName, AtomStringImpl* attributeValue)
 {
     ASSERT(window.document());
     CheckedRef document = *window.document();

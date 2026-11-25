@@ -43,7 +43,7 @@ Ref<CSSMaskBorderRepeatValue> CSSMaskBorderRepeatValue::create(CSS::MaskBorderRe
     return adoptRef(*new CSSMaskBorderRepeatValue(WTF::move(repeats)));
 }
 
-String CSSMaskBorderRepeatValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSMaskBorderRepeatValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_repeats);
 }

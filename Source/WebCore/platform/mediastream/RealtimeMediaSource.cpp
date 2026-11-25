@@ -116,7 +116,7 @@ RealtimeMediaSource::RealtimeMediaSource(const CaptureDevice& device, MediaDevic
 
 RealtimeMediaSource::~RealtimeMediaSource() = default;
 
-void RealtimeMediaSource::setPersistentId(const String& persistentID)
+void RealtimeMediaSource::setPersistentId(StringImpl* persistentID)
 {
     m_device.setPersistentId(persistentID);
     initializeIds();
@@ -124,7 +124,7 @@ void RealtimeMediaSource::setPersistentId(const String& persistentID)
 
 void RealtimeMediaSource::initializeIds()
 {
-    if (m_device.persistentId().isEmpty())
+    if (isEmpty(m_device.persistentId()))
         m_device.setPersistentId(createVersion4UUIDString());
 
     m_hashedID = RealtimeMediaSourceCenter::hashStringWithSalt(m_device.persistentId(), m_idHashSalts.persistentDeviceSalt);
@@ -736,7 +736,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
         }));
     case MediaConstraintType::DeviceId:
         ASSERT(constraint.isString());
-        ASSERT(!hashedId().isEmpty());
+        ASSERT(!isEmpty(hashedId()));
         return constraint.fitnessDistance(hashedId());
     case MediaConstraintType::GroupId:
         if (!capabilities.supportsDeviceId())
@@ -945,7 +945,7 @@ void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, co
             return;
 
         auto& supportedModes = capabilities.facingMode();
-        auto filter = [supportedModes](const String& modeString) {
+        auto filter = [supportedModes](StringImpl* modeString) {
             auto mode = RealtimeMediaSourceSettings::videoFacingModeEnum(modeString);
             for (auto& supportedMode : supportedModes) {
                 if (mode == supportedMode)
@@ -955,7 +955,7 @@ void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, co
         };
 
         auto modeString = downcast<StringConstraint>(constraint).find(WTF::move(filter));
-        if (!modeString.isEmpty())
+        if (!isEmpty(modeString))
             setFacingMode(RealtimeMediaSourceSettings::videoFacingModeEnum(modeString));
         break;
     }
@@ -967,7 +967,7 @@ void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, co
 
         auto& supportedModes = capabilities.whiteBalanceModes();
         std::optional<MeteringMode> whiteBalanceMode;
-        downcast<StringConstraint>(constraint).find([supportedModes, &whiteBalanceMode](const String& modeString) mutable {
+        downcast<StringConstraint>(constraint).find([supportedModes, &whiteBalanceMode](StringImpl* modeString) mutable {
             auto mode = parseEnumerationFromString<MeteringMode>(modeString);
             if (!mode)
                 return false;
@@ -1514,10 +1514,10 @@ void RealtimeMediaSource::scheduleDeferredTask(Function<void()>&& function)
     });
 }
 
-const String& RealtimeMediaSource::hashedId() const
+const RefPtr<StringImpl>& RealtimeMediaSource::hashedId() const
 {
-    ASSERT(!m_hashedID.isEmpty());
-    ASSERT(!m_ephemeralHashedID.isEmpty());
+    ASSERT(!isEmpty(m_hashedID));
+    ASSERT(!isEmpty(m_ephemeralHashedID));
 
     if (isEphemeral())
         return m_ephemeralHashedID;
@@ -1601,9 +1601,9 @@ WTFLogChannel& RealtimeMediaSource::logChannel() const
 }
 #endif
 
-String convertEnumerationToString(RealtimeMediaSource::Type enumerationValue)
+RefPtr<StringImpl> convertEnumerationToString(RealtimeMediaSource::Type enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 2> values {
+    static const std::array<NeverDestroyed<RefPtr<StringImpl>>, 2> values {
         MAKE_STATIC_STRING_IMPL("Audio"),
         MAKE_STATIC_STRING_IMPL("Video")
     };

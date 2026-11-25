@@ -66,12 +66,12 @@ public:
     Inspector::CommandResult<void> enable() override;
     Inspector::CommandResult<void> disable() override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOMStorage::Item>>> getDOMStorageItems(Ref<JSON::Object>&& storageId) override;
-    Inspector::CommandResult<void> setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value) override;
-    Inspector::CommandResult<void> removeDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key) override;
+    Inspector::CommandResult<void> setDOMStorageItem(Ref<JSON::Object>&& storageId, StringImpl* key, StringImpl* value) override;
+    Inspector::CommandResult<void> removeDOMStorageItem(Ref<JSON::Object>&& storageId, StringImpl* key) override;
     Inspector::CommandResult<void> clearDOMStorageItems(Ref<JSON::Object>&& storageId) override;
 
     // InspectorInstrumentation
-    void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
+    void didDispatchDOMStorageEvent(StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StorageType, const SecurityOrigin&);
 
 private:
     RefPtr<StorageArea> findStorageArea(Inspector::Protocol::ErrorString&, const JSON::Object& storageId, RefPtr<LocalFrame>& targetFrame);

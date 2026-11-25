@@ -41,7 +41,7 @@ public:
     NODELETE static Ref<CanvasPattern> create(SourceImage&&, bool repeatX, bool repeatY, bool originClean);
     ~CanvasPattern();
 
-    static bool parseRepetitionType(const String&, bool& repeatX, bool& repeatY);
+    static bool parseRepetitionType(StringImpl*, bool& repeatX, bool& repeatY);
 
     // An immutable snapshot of the pattern. The same snapshot is returned until setTransform() is called.
     Ref<const Pattern> pattern() const

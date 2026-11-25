@@ -107,7 +107,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
                 if (RefPtr styledBlockNode = dynamicDowncast<StyledElement>(blockNode))
                     style->removeStyleFromRulesAndContext(*styledBlockNode, protect(styledBlockNode->parentNode()));
                 if (!style->isEmpty())
-                    blockNode->setAttribute(styleAttr, AtomString { protect(style->style())->asText(CSS::defaultSerializationContext()) });
+                    blockNode->setAttribute(styleAttr, AtomStringImpl::add(protect(style->style())->asText(CSS::defaultSerializationContext())).get());
             }
         }
     }

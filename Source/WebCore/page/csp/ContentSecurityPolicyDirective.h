@@ -37,7 +37,7 @@ class ContentSecurityPolicyDirectiveList;
 class ContentSecurityPolicyDirective {
     WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicyDirective);
 public:
-    ContentSecurityPolicyDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
+    ContentSecurityPolicyDirective(const ContentSecurityPolicyDirectiveList& directiveList, StringImpl* name, StringImpl* value)
         : m_name(name)
         , m_text(makeString(name, ' ', value))
         , m_directiveList(directiveList)
@@ -46,17 +46,17 @@ public:
 
     virtual ~ContentSecurityPolicyDirective() = 0;
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    const String& text() const LIFETIME_BOUND { return m_text; }
-    virtual const String& nameForReporting() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& text() const LIFETIME_BOUND { return m_text; }
+    virtual const RefPtr<StringImpl>& nameForReporting() const LIFETIME_BOUND { return m_name; }
 
     const ContentSecurityPolicyDirectiveList& directiveList() const LIFETIME_BOUND { return m_directiveList; }
 
     NODELETE bool isDefaultSrc() const;
 
 private:
-    String m_name;
-    String m_text;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_text;
     const ContentSecurityPolicyDirectiveList& m_directiveList;
 };
 

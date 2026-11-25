@@ -79,7 +79,7 @@ std::optional<UTF8CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirect
 
 #if ENABLE(MEDIA_SESSION)
     auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2."_s, WTF::applicationID().span(), ".Sandboxed.*"_s);
-    m_args.append(UTF8CString::fromUTF8(mprisSessionID.ascii().span()));
+    m_args.append(UTF8CString::fromUTF8(ascii(mprisSessionID).span()));
 #endif
 
     if (allowPortals == AllowPortals::Yes)
@@ -92,7 +92,7 @@ std::optional<UTF8CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirect
 }
 
 #if USE(ATSPI)
-std::optional<UTF8CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const String& accessibilityBusAddress, const String& accessibilityBusName)
+std::optional<UTF8CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, StringImpl* accessibilityBusAddress, StringImpl* accessibilityBusName)
 {
     if (!m_accessibilityProxyPath.isNull())
         return m_accessibilityProxyPath;
@@ -104,7 +104,7 @@ std::optional<UTF8CString> XDGDBusProxy::accessibilityProxy(const char* baseDire
     auto webProcessA11yOwnArg = makeString("--own="_s, accessibilityBusName);
 
     m_args.appendList<UTF8CString>({
-        accessibilityBusAddress.utf8(), m_accessibilityProxyPath,
+        utf8(accessibilityBusAddress), m_accessibilityProxyPath,
         "--filter"_s,
         "--sloppy-names"_s,
         "--broadcast=org.a11y.atspi.Registry.EventListenerRegistered=@/org/a11y/atspi/registry"_s,
@@ -116,7 +116,7 @@ std::optional<UTF8CString> XDGDBusProxy::accessibilityProxy(const char* baseDire
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetDeviceEventListeners@/org/a11y/atspi/registry/deviceeventcontroller"_s,
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersSync@/org/a11y/atspi/registry/deviceeventcontroller"_s,
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller"_s,
-        webProcessA11yOwnArg.utf8(),
+        utf8(webProcessA11yOwnArg),
     });
 
     if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"))
@@ -185,7 +185,7 @@ void XDGDBusProxy::launch(const ProcessLaunchOptions& webProcessLaunchOptions)
         g_error("Failed to make syncfds for dbus-proxy: %s", g_strerror(errno));
     setCloseOnExec(syncFds[0]);
 
-    Vector<UTF8CString> proxyArgs = { makeString("--fd="_s, syncFds[1]).utf8() };
+    Vector<UTF8CString> proxyArgs = { utf8(makeString("--fd="_s, syncFds[1])) };
     proxyArgs.appendVector(WTF::move(m_args));
 
     // We have to run xdg-dbus-proxy under bubblewrap because we need /.flatpak-info to exist in
@@ -194,7 +194,7 @@ void XDGDBusProxy::launch(const ProcessLaunchOptions& webProcessLaunchOptions)
     int proxyFd = argumentsToFileDescriptor(proxyArgs, "dbus-proxy");
     Vector<UTF8CString> args = {
         ASCIILiteral { DBUS_PROXY_EXECUTABLE },
-        makeString("--args="_s, proxyFd).utf8(),
+        utf8(makeString("--args="_s, proxyFd)),
     };
     auto argv = args.map([](auto& arg) {
         return const_cast<char*>(arg.legacyCStringPointer());

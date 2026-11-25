@@ -204,7 +204,7 @@ const char* webkit_navigation_action_get_frame_name(WebKitNavigationAction* navi
     g_return_val_if_fail(navigation, nullptr);
     if (!navigation->frameName) {
         if (auto targetFrameName = navigation->action->targetFrameName(); !!targetFrameName)
-            navigation->frameName = targetFrameName.utf8();
+            navigation->frameName = utf8(targetFrameName);
         else
             navigation->frameName = UTF8CString();
     }

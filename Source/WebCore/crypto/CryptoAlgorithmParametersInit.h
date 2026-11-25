@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct CryptoAlgorithmParametersInit {
-    String name;
+    RefPtr<StringImpl> name;
 };
 
 } // namespace WebCore

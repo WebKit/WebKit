@@ -36,7 +36,7 @@
 namespace WebCore {
 
 // FIXME: Move the code to ChromeClient::iconForFiles().
-RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
+RefPtr<Icon> Icon::createIconForFiles(const Vector<RefPtr<StringImpl>>& filenames)
 {
     if (filenames.isEmpty())
         return nullptr;
@@ -46,10 +46,10 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     if (useIconFromFirstFile) {
         // Don't pass relative filenames -- we don't want a result that depends on the current directory.
         // Need 0U here to disambiguate String::operator[] from operator(NSString*, int)[]
-        if (filenames[0].isEmpty() || filenames[0][0U] != '/')
+        if (isEmpty(filenames[0]) || codeUnitAt(filenames[0], 0U) != '/')
             return nullptr;
 
-        RetainPtr image = [[NSWorkspace sharedWorkspace] iconForFile:filenames[0].createNSString().get()];
+        RetainPtr image = [[NSWorkspace sharedWorkspace] iconForFile:createNSString(filenames[0]).get()];
         if (!image)
             return nullptr;
 
@@ -62,10 +62,10 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     return adoptRef(new Icon(image.get()));
 }
 
-RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
+RefPtr<Icon> Icon::createIconForFileExtension(StringImpl* fileExtension)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr image = [[NSWorkspace sharedWorkspace] iconForFileType:retainPtr([@"." stringByAppendingString:fileExtension.createNSString().get()]).get()];
+    RetainPtr image = [[NSWorkspace sharedWorkspace] iconForFileType:retainPtr([@"." stringByAppendingString:createNSString(fileExtension).get()]).get()];
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!image)
         return nullptr;
@@ -73,10 +73,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return adoptRef(new Icon(image.get()));
 }
 
-RefPtr<Icon> Icon::createIconForUTI(const String& uti)
+RefPtr<Icon> Icon::createIconForUTI(StringImpl* uti)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr image = [[NSWorkspace sharedWorkspace] iconForFileType:uti.createNSString().get()];
+    RetainPtr image = [[NSWorkspace sharedWorkspace] iconForFileType:createNSString(uti).get()];
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!image)
         return nullptr;

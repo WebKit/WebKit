@@ -49,7 +49,7 @@ public:
 private:
     SVGClipPathElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;
 

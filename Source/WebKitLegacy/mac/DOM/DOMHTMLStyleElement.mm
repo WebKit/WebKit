@@ -56,25 +56,25 @@
 - (NSString *)media
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::mediaAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::mediaAttr)).autorelease();
 }
 
 - (void)setMedia:(NSString *)newMedia
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::mediaAttr, newMedia);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::mediaAttr, AtomStringImpl::add((__bridge CFStringRef)newMedia).get());
 }
 
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::typeAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::typeAttr)).autorelease();
 }
 
 - (void)setType:(NSString *)newType
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, newType);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, AtomStringImpl::add((__bridge CFStringRef)newType).get());
 }
 
 - (DOMStyleSheet *)sheet
@@ -86,13 +86,13 @@
 - (NSString *)nonce
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::nonceAttr).createNSString().autorelease();
+    return createNSString(IMPL->getAttribute(WebCore::HTMLNames::nonceAttr)).autorelease();
 }
 
 - (void)setNonce:(NSString *)newNonce
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nonceAttr, newNonce);
+    IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::nonceAttr, AtomStringImpl::add((__bridge CFStringRef)newNonce).get());
 }
 
 @end

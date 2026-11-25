@@ -88,7 +88,7 @@ bool SWClientConnection::postTaskForJob(ServiceWorkerJobIdentifier jobIdentifier
 
     auto iterator = m_scheduledJobSources.find(jobIdentifier);
     if (iterator == m_scheduledJobSources.end()) {
-        LOG_ERROR("Job %s was not found", jobIdentifier.loggingString().utf8());
+        LOG_ERROR("Job %s was not found", utf8(jobIdentifier.loggingString()));
         return false;
     }
     auto isPosted = dispatchToContextThreadIfNecessary(iterator->value, [jobIdentifier, task = WTF::move(task)] (ScriptExecutionContext& context) mutable {
@@ -126,7 +126,7 @@ void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jo
         job.startScriptFetch(cachePolicy);
     });
     if (!isPosted)
-        finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, WTF::move(registrationKey), workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope "_s, registrationKey.scope().string()) }));
+        finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, WTF::move(registrationKey), workerFetchError(ResourceError { StringImpl::create(errorDomainWebKitInternal).ptr(), 0, { }, makeString("Failed to fetch script for service worker with scope "_s, registrationKey.scope().string()) }));
 }
 
 static void postMessageToContainer(ScriptExecutionContext& context, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, const SecurityOriginData& sourceOrigin)
@@ -309,7 +309,7 @@ void SWClientConnection::clearPendingJobs()
         dispatchToContextThreadIfNecessary(keyValue.value, [identifier = keyValue.key] (auto& context) {
             if (RefPtr container = context.serviceWorkerContainer()) {
                 if (RefPtr job = container->job(identifier))
-                    job->failedWithException(Exception { ExceptionCode::TypeError, "Internal error"_s });
+                    job->failedWithException(Exception { ExceptionCode::TypeError, "Internal error"_si });
             }
         });
     }

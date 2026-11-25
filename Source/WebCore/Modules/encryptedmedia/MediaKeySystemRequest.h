@@ -48,30 +48,30 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    WEBCORE_EXPORT static Ref<MediaKeySystemRequest> create(Document&, const String& keySystem, RefPtr<DeferredPromise>&&);
+    WEBCORE_EXPORT static Ref<MediaKeySystemRequest> create(Document&, StringImpl* keySystem, RefPtr<DeferredPromise>&&);
     virtual ~MediaKeySystemRequest();
 
-    void setAllowCallback(CompletionHandler<void(String&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&)>&& callback) { m_allowCompletionHandler = WTF::move(callback); }
+    void setAllowCallback(CompletionHandler<void(RefPtr<StringImpl>&& mediaKeysHashSalt, RefPtr<DeferredPromise>&&)>&& callback) { m_allowCompletionHandler = WTF::move(callback); }
     WEBCORE_EXPORT void start();
 
-    WEBCORE_EXPORT void allow(String&& mediaKeysHashSalt);
-    WEBCORE_EXPORT void deny(const String& errorMessage = emptyString());
+    WEBCORE_EXPORT void allow(RefPtr<StringImpl>&& mediaKeysHashSalt);
+    WEBCORE_EXPORT void deny(StringImpl* errorMessage = emptyString());
 
     WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
     NODELETE WEBCORE_EXPORT Document* document() const;
 
-    const String keySystem() const { return m_keySystem; }
+    const RefPtr<StringImpl> keySystem() const { return m_keySystem; }
 
 private:
-    MediaKeySystemRequest(Document&, const String& keySystem, RefPtr<DeferredPromise>&&);
+    MediaKeySystemRequest(Document&, StringImpl* keySystem, RefPtr<DeferredPromise>&&);
 
     // ActiveDOMObject.
     void stop() final;
 
-    String m_keySystem;
+    RefPtr<StringImpl> m_keySystem;
     RefPtr<DeferredPromise> m_promise;
 
-    CompletionHandler<void(String&&, RefPtr<DeferredPromise>&&)> m_allowCompletionHandler;
+    CompletionHandler<void(RefPtr<StringImpl>&&, RefPtr<DeferredPromise>&&)> m_allowCompletionHandler;
 };
 
 } // namespace WebCore

@@ -38,7 +38,7 @@ Ref<InspectorConfiguration> InspectorConfiguration::create()
 
 InspectorConfiguration::~InspectorConfiguration() = default;
 
-void InspectorConfiguration::addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&& urlSchemeHandler, const WTF::String& urlScheme)
+void InspectorConfiguration::addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&& urlSchemeHandler, StringImpl* urlScheme)
 {
     m_customURLSchemes.append(std::make_pair(WTF::move(urlSchemeHandler), urlScheme));
 }

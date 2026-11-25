@@ -35,15 +35,15 @@ class DNSResolveQueueCFNet final : public DNSResolveQueue {
 public:
     DNSResolveQueueCFNet();
     ~DNSResolveQueueCFNet();
-    void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) final;
+    void resolve(StringImpl* hostname, uint64_t identifier, DNSCompletionHandler&&) final;
     void stopResolve(uint64_t identifier) final;
 
     class CompletionHandlerWrapper;
 private:
     void updateIsUsingProxy() final;
-    void platformResolve(const String&) final;
+    void platformResolve(StringImpl*) final;
 
-    void performDNSLookup(const String&, Ref<CompletionHandlerWrapper>&&);
+    void performDNSLookup(StringImpl*, Ref<CompletionHandlerWrapper>&&);
 
     HashMap<uint64_t, Ref<CompletionHandlerWrapper>> m_pendingRequests;
 };

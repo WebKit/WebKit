@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(Function<String(const CSS::SerializationContext&)>&& value, CSSStyleDeclaration& owner)
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(Function<RefPtr<StringImpl>(const CSS::SerializationContext&)>&& value, CSSStyleDeclaration& owner)
 {
     return create(DeprecatedCSSOMPrimitiveValueData { WTF::move(value) }, owner);
 }
@@ -110,16 +110,16 @@ DeprecatedCSSOMPrimitiveValue::DeprecatedCSSOMPrimitiveValue(DeprecatedCSSOMPrim
 
 DeprecatedCSSOMPrimitiveValue::~DeprecatedCSSOMPrimitiveValue() = default;
 
-String DeprecatedCSSOMPrimitiveValue::cssText() const
+RefPtr<StringImpl> DeprecatedCSSOMPrimitiveValue::cssText() const
 {
     return WTF::switchOn(m_data.get(),
-        [](const DeprecatedCSSOMPrimitiveValueData::TypeErasedValue& value) -> String {
+        [](const DeprecatedCSSOMPrimitiveValueData::TypeErasedValue& value) -> RefPtr<StringImpl> {
             return value(CSS::defaultSerializationContext());
         },
-        [](const DeprecatedCSSOMPrimitiveValueData::NumericRaw& raw) -> String {
+        [](const DeprecatedCSSOMPrimitiveValueData::NumericRaw& raw) -> RefPtr<StringImpl> {
             return CSS::serializationForCSS(CSS::defaultSerializationContext(), CSS::SerializableNumber { raw.value, unitTypeString(raw.unit) });
         },
-        [](const auto& value) -> String {
+        [](const auto& value) -> RefPtr<StringImpl> {
             return CSS::serializationForCSS(CSS::defaultSerializationContext(), value);
         }
     );
@@ -324,25 +324,25 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
     return clampTo<float>(convertedValue);
 }
 
-ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
+ExceptionOr<RefPtr<StringImpl>> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 {
     return WTF::switchOn(m_data.get(),
-        [](const CSS::CustomIdent& customIdent) -> ExceptionOr<String> {
-            return String { customIdent.value };
+        [](const CSS::CustomIdent& customIdent) -> ExceptionOr<RefPtr<StringImpl>> {
+            return RefPtr<StringImpl> { customIdent.value };
         },
-        [](const CSS::Keyword& keyword) -> ExceptionOr<String> {
-            return String { nameStringForSerialization(keyword.value) };
+        [](const CSS::Keyword& keyword) -> ExceptionOr<RefPtr<StringImpl>> {
+            return RefPtr<StringImpl> { nameStringForSerialization(keyword.value) };
         },
-        [](const CSS::String& string) -> ExceptionOr<String> {
-            return String { string.value };
+        [](const CSS::String& string) -> ExceptionOr<RefPtr<StringImpl>> {
+            return RefPtr<StringImpl> { string.value };
         },
-        [](const CSS::FontFamilyName& fontFamilyName) -> ExceptionOr<String> {
-            return String { fontFamilyName.value };
+        [](const CSS::FontFamilyName& fontFamilyName) -> ExceptionOr<RefPtr<StringImpl>> {
+            return RefPtr<StringImpl> { fontFamilyName.value };
         },
-        [](const CSS::URL& url) -> ExceptionOr<String> {
-            return String { url.specified };
+        [](const CSS::URL& url) -> ExceptionOr<RefPtr<StringImpl>> {
+            return RefPtr<StringImpl> { url.specified };
         },
-        [](const auto&) -> ExceptionOr<String> {
+        [](const auto&) -> ExceptionOr<RefPtr<StringImpl>> {
             return Exception { ExceptionCode::InvalidAccessError };
         }
     );
@@ -350,15 +350,15 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
-    auto convertStyleToString = [](auto& style) -> String {
+    auto convertStyleToString = [](auto& style) -> RefPtr<StringImpl> {
         return WTF::switchOn(style.identifier,
-            [](const CSS::Keyword& predefinedKeyword) -> String {
+            [](const CSS::Keyword& predefinedKeyword) -> RefPtr<StringImpl> {
                 return nameLiteralForSerialization(predefinedKeyword.value);
             },
-            [](const CSS::CustomIdent& customIdent) -> String {
-                return customIdent.value.string();
+            [](const CSS::CustomIdent& customIdent) -> RefPtr<StringImpl> {
+                return customIdent.value;
             },
-            [](const CSS::SymbolsFunction& symbolsFunction) -> String {
+            [](const CSS::SymbolsFunction& symbolsFunction) -> RefPtr<StringImpl> {
                 return CSS::serializationForCSS(CSS::defaultSerializationContext(), symbolsFunction);
             }
         );

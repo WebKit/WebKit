@@ -50,11 +50,11 @@ public:
     void addAllResources(Archive&);
 
     WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(const URL&);
-    RefPtr<Archive> popSubframeArchive(const String& frameName, const URL&);
+    RefPtr<Archive> popSubframeArchive(StringImpl* frameName, const URL&);
 
 private:
-    HashMap<String, Ref<ArchiveResource>> m_subresources;
-    HashMap<String, Ref<Archive>> m_subframes;
+    HashMap<RefPtr<StringImpl>, Ref<ArchiveResource>> m_subresources;
+    HashMap<RefPtr<StringImpl>, Ref<Archive>> m_subframes;
 };
 
 } // namespace WebCore

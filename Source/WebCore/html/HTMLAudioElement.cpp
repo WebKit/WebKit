@@ -53,7 +53,7 @@ Ref<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Doc
     return element;
 }
 
-Ref<HTMLAudioElement> HTMLAudioElement::createForLegacyFactoryFunction(Document& document, const AtomString& src)
+Ref<HTMLAudioElement> HTMLAudioElement::createForLegacyFactoryFunction(Document& document, AtomStringImpl* src)
 {
     Ref element = create(audioTag, document, false);
     element->setAttributeWithoutSynchronization(preloadAttr, autoAtom());

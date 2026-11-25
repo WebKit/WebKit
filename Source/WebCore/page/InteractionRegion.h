@@ -64,7 +64,7 @@ struct InteractionRegion {
     std::optional<Path> clipPath { std::nullopt };
     bool useContinuousCorners { false };
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
-    String text { };
+    RefPtr<StringImpl> text { };
 #endif
 
     static void clearCache();
@@ -82,7 +82,7 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
         && a.maskedCorners == b.maskedCorners
         && a.clipPath.has_value() == b.clipPath.has_value()
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
-        && a.text == b.text
+        && equal(a.text, b.text)
 #endif
         && (!a.clipPath || &a.clipPath.value() == &b.clipPath.value());
 }

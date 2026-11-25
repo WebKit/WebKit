@@ -37,7 +37,7 @@ public:
     WEBCORE_EXPORT void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
     WEBCORE_EXPORT void stop(CompletionHandler<void(bool)>&&) final;
 
-    void setSinkId(const String& persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&&) final;
+    void setSinkId(StringImpl* persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&&) final;
 
     bool isPlaying() override { return m_isPlaying; }
     unsigned framesPerBuffer() const final;

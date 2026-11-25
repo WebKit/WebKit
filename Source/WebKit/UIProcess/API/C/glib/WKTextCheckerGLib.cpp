@@ -64,9 +64,9 @@ void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word)
 void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages, const size_t length)
 {
 #if ENABLE(SPELLCHECK)
-    Vector<String> spellCheckingLanguages;
+    Vector<RefPtr<StringImpl>> spellCheckingLanguages;
     for (auto language : unsafeMakeSpan(languages, length))
-        spellCheckingLanguages.append(String::fromUTF8(language));
+        spellCheckingLanguages.append(StringImpl::fromUTF8(language));
     WebKit::TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
 }

@@ -50,17 +50,17 @@ NSError *toAPI(WebExtensionMessagePort::Error error)
     switch (error.value().first) {
     case WebKit::WebExtensionMessagePort::ErrorType::Unknown:
         errorCode = WKWebExtensionMessagePortErrorUnknown;
-        message = error.value().second.value_or("An unknown error occurred."_s).createNSString();
+        message = createNSString(error.value().second.value_or("An unknown error occurred."_s));
         break;
 
     case WebKit::WebExtensionMessagePort::ErrorType::NotConnected:
         errorCode = WKWebExtensionMessagePortErrorNotConnected;
-        message = error.value().second.value_or("Message port is not connected and cannot send messages."_s).createNSString().get();
+        message = createNSString(error.value().second.value_or("Message port is not connected and cannot send messages."_s)).get();
         break;
 
     case WebKit::WebExtensionMessagePort::ErrorType::MessageInvalid:
         errorCode = WKWebExtensionMessagePortErrorMessageInvalid;
-        message = error.value().second.value_or("Message is not JSON-serializable."_s).createNSString().get();
+        message = createNSString(error.value().second.value_or("Message is not JSON-serializable."_s)).get();
         break;
     }
 
@@ -71,10 +71,10 @@ WebExtensionMessagePort::Error toWebExtensionMessagePortError(NSError *error)
 {
     if (!error)
         return std::nullopt;
-    return { { WebExtensionMessagePort::ErrorType::Unknown, error.localizedDescription } };
+    return { { WebExtensionMessagePort::ErrorType::Unknown, StringImpl::create(error.localizedDescription) } };
 }
 
-WebExtensionMessagePort::WebExtensionMessagePort(WebExtensionContext& extensionContext, String applicationIdentifier, WebExtensionPortChannelIdentifier channelIdentifier)
+WebExtensionMessagePort::WebExtensionMessagePort(WebExtensionContext& extensionContext, RefPtr<StringImpl> applicationIdentifier, WebExtensionPortChannelIdentifier channelIdentifier)
     : m_extensionContext(extensionContext)
     , m_applicationIdentifier(applicationIdentifier)
     , m_channelIdentifier(channelIdentifier)
@@ -88,7 +88,7 @@ WebExtensionMessagePort::~WebExtensionMessagePort()
 
 bool WebExtensionMessagePort::operator==(const WebExtensionMessagePort& other) const
 {
-    return this == &other || (m_extensionContext == other.m_extensionContext && m_applicationIdentifier == other.m_applicationIdentifier && m_channelIdentifier == other.m_channelIdentifier);
+    return this == &other || (m_extensionContext == other.m_extensionContext && equal(m_applicationIdentifier, other.m_applicationIdentifier) && m_channelIdentifier == other.m_channelIdentifier);
 }
 
 WebExtensionContext* WebExtensionMessagePort::extensionContext() const
@@ -153,7 +153,7 @@ void WebExtensionMessagePort::sendMessage(id message, CompletionHandler<void(Err
         return;
     }
 
-    extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, WebExtensionMessage { String { encodeJSONString(message, JSONOptions::FragmentsAllowed) } }, false);
+    extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, WebExtensionMessage { StringImpl::create(encodeJSONString(message, JSONOptions::FragmentsAllowed)) }, false);
 
     if (completionHandler)
         completionHandler(std::nullopt);

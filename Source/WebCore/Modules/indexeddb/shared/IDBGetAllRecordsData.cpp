@@ -38,7 +38,7 @@ IDBGetAllRecordsData IDBGetAllRecordsData::isolatedCopy() const
 
 #if !LOG_DISABLED
 
-String IDBGetAllRecordsData::loggingString() const
+RefPtr<StringImpl> IDBGetAllRecordsData::loggingString() const
 {
     auto directionString = [&] {
         switch (cursorDirection) {

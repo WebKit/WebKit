@@ -72,7 +72,7 @@ auto JavaScriptEvaluationResult::GLibExtractor::toValue(GVariant* variant) -> Va
             if (!key || !value)
                 continue;
             auto keyID = JSObjectID::generate();
-            m_map.add(keyID, String::fromUTF8(key));
+            m_map.add(keyID, StringImpl::fromUTF8(key));
             auto valueID = JSObjectID::generate();
             m_map.add(valueID, toValue(value.get()));
             objectMap.add(keyID, valueID);
@@ -96,7 +96,7 @@ auto JavaScriptEvaluationResult::GLibExtractor::toValue(GVariant* variant) -> Va
         return static_cast<double>(g_variant_get_double(variant));
 
     if (g_variant_is_of_type(variant, G_VARIANT_TYPE_STRING))
-        return String::fromUTF8(g_variant_get_string(variant, nullptr));
+        return StringImpl::fromUTF8(g_variant_get_string(variant, nullptr));
 
     return EmptyType::Null;
 }

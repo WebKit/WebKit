@@ -122,7 +122,7 @@ std::optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& cl
 
     if (!isAppId)
         return constructU2fSignCommand(produceRpIdHash(request.rpId), clientDataHash, keyHandle, false);
-    ASSERT(request.extensions && !request.extensions->appid.isNull());
+    ASSERT(request.extensions && request.extensions->appid);
     return constructU2fSignCommand(produceRpIdHash(request.extensions->appid), clientDataHash, keyHandle, false);
 }
 

@@ -46,10 +46,10 @@ private:
     NODELETE bool isLeftPage(int pageIndex) const;
     bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
     NODELETE bool isFirstPage(int pageIndex) const;
-    NODELETE WTF::String pageName(int pageIndex) const;
+    NODELETE RefPtr<StringImpl> pageName(int pageIndex) const;
 
-    void matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
-    void matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
+    void matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, StringImpl* pageName);
+    void matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, StringImpl* pageName);
 
     ScopeRuleSets& m_ruleSets;
     WritingMode m_rootWritingMode;

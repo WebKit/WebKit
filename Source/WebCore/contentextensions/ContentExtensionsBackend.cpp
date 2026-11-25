@@ -83,17 +83,17 @@ bool ContentExtensionsBackend::shouldBeMadeSecure(const URL& url)
     return results.summary.madeHTTPS;
 }
 
-void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension, URL&& extensionBaseURL, ContentExtension::ShouldCompileCSS shouldCompileCSS)
+void ContentExtensionsBackend::addContentExtension(StringImpl* identifier, Ref<CompiledContentExtension> compiledContentExtension, URL&& extensionBaseURL, ContentExtension::ShouldCompileCSS shouldCompileCSS)
 {
-    ASSERT(!identifier.isEmpty());
-    if (identifier.isEmpty())
+    ASSERT(!isEmpty(identifier));
+    if (isEmpty(identifier))
         return;
     
     auto contentExtension = ContentExtension::create(identifier, WTF::move(compiledContentExtension), WTF::move(extensionBaseURL), shouldCompileCSS);
     m_contentExtensions.set(identifier, WTF::move(contentExtension));
 }
 
-void ContentExtensionsBackend::removeContentExtension(const String& identifier)
+void ContentExtensionsBackend::removeContentExtension(StringImpl* identifier)
 {
     m_contentExtensions.remove(identifier);
 }
@@ -103,7 +103,7 @@ void ContentExtensionsBackend::removeAllContentExtensions()
     m_contentExtensions.clear();
 }
 
-auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension& contentExtension, const String& urlString, const ResourceLoadInfo& resourceLoadInfo, ResourceFlags flags) const -> ActionsFromContentRuleList
+auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension& contentExtension, StringImpl* urlString, const ResourceLoadInfo& resourceLoadInfo, ResourceFlags flags) const -> ActionsFromContentRuleList
 {
     ActionsFromContentRuleList actionsStruct;
     actionsStruct.contentRuleListIdentifier = contentExtension.identifier();
@@ -177,13 +177,13 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
         || resourceLoadInfo.resourceURL.protocolIsData())
         return { };
 
-    const String& urlString = resourceLoadInfo.resourceURL.string();
-    ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
+    const RefPtr<StringImpl>& urlString = resourceLoadInfo.resourceURL.string();
+    ASSERT_WITH_MESSAGE(containsOnlyASCII(urlString), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
 
     ASSERT(!(resourceLoadInfo.getResourceFlags() & ActionConditionMask));
     const ResourceFlags flags = resourceLoadInfo.getResourceFlags() | ActionConditionMask;
     Vector<ActionsFromContentRuleList> actionsVector = WTF::compactMap(m_contentExtensions, [&](auto& entry) -> std::optional<ActionsFromContentRuleList> {
-        const String identifier = entry.key;
+        const RefPtr<StringImpl> identifier = entry.key;
         Ref contentExtension = entry.value;
         if (ruleListFilter(identifier) == ShouldSkipRuleList::Yes)
             return std::nullopt;
@@ -197,26 +197,26 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
     return actionsVector;
 }
 
-void ContentExtensionsBackend::forEach(NOESCAPE const Function<void(const String&, ContentExtension&)>& apply) const
+void ContentExtensionsBackend::forEach(NOESCAPE const Function<void(StringImpl*, ContentExtension&)>& apply) const
 {
     for (auto& pair : m_contentExtensions)
         apply(pair.key, pair.value);
 }
 
-StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const String& identifier) const
+StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(StringImpl* identifier) const
 {
     const auto& contentExtension = m_contentExtensions.get(identifier);
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
-std::optional<String> customTrackerBlockingMessageForConsole(const ContentRuleListResults& results, const URL& requestURL, const URL& documentURL)
+std::optional<RefPtr<StringImpl>> customTrackerBlockingMessageForConsole(const ContentRuleListResults& results, const URL& requestURL, const URL& documentURL)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     bool blockedKnownTracker = results.results.containsIf([](auto& identifierAndResult) {
         auto& [identifier, result] = identifierAndResult;
         if (!result.blockedLoad)
             return false;
-        return identifier.startsWith("com.apple."_s) && identifier.endsWith(".TrackingResourceRequestContentBlocker"_s);
+        return startsWith(identifier, "com.apple."_s) && endsWith(identifier, ".TrackingResourceRequestContentBlocker"_s);
     });
 
     if (!blockedKnownTracker)
@@ -276,7 +276,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         makeSecureIfNecessary(results, url, redirectFrom);
     results.results.reserveInitialCapacity(actions.size());
     for (const auto& actionsFromContentRuleList : actions) {
-        const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
+        const RefPtr<StringImpl>& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
         ContentRuleListResults::Result result;
         for (const auto& action : actionsFromContentRuleList.actions) {
             WTF::switchOn(action.data(), [&](const BlockLoadAction&) {
@@ -330,9 +330,9 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                     results.summary.redirectActions.append({ redirectAction, WTF::move(extensionBaseURL) });
                 }
             }, [&] (const ReportIdentifierAction& reportIdentifierAction) {
-                std::optional<String> initiator;
-                std::optional<String> documentId;
-                std::optional<String> frameType;
+                std::optional<RefPtr<StringImpl>> initiator;
+                std::optional<RefPtr<StringImpl>> documentId;
+                std::optional<RefPtr<StringImpl>> frameType;
 
                 // FIXME: <rdar://159289161> Include the parentDocumentId parameter once we can make it work with site isolation
                 if (currentDocument && resourceType.containsAny({ ResourceType::TopDocument, ResourceType::ChildDocument }))
@@ -372,12 +372,12 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     if (currentDocument) {
         if (results.summary.madeHTTPS) {
             ASSERT(url.protocolIs("http"_s) || url.protocolIs("ws"_s));
-            String newProtocol = url.protocolIs("http"_s) ? "https"_s : "wss"_s;
+            RefPtr<StringImpl> newProtocol = url.protocolIs("http"_s) ? "https"_s : "wss"_s;
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from "_s, url.string(), " to "_s, newProtocol));
         }
 
         if (results.shouldBlock()) {
-            String consoleMessage;
+            RefPtr<StringImpl> consoleMessage;
             if (auto message = customTrackerBlockingMessageForConsole(results, url, mainDocumentURL))
                 consoleMessage = WTF::move(*message);
             else
@@ -390,7 +390,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 && ((equalLettersIgnoringASCIICase(url.host(), "www.google-analytics.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/analytics.js"_s))
                     || (equalLettersIgnoringASCIICase(url.host(), "www.googletagmanager.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/gtm.js"_s)))) {
                 if (RefPtr frame = currentDocument->frame())
-                    protect(frame->script())->evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s, JSC::SourceTaintedOrigin::Untainted });
+                    protect(frame->script())->evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_si, JSC::SourceTaintedOrigin::Untainted });
             }
         }
     }
@@ -398,7 +398,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     return results;
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL, const URL& frameURL, const String& httpMethod, MainFrameContext mainFrameContext)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL, const URL& frameURL, StringImpl* httpMethod, MainFrameContext mainFrameContext)
 {
     RequestMethod requestMethod = readRequestMethod(httpMethod).value_or(RequestMethod::None);
     ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, ResourceType::Ping, mainFrameContext == MainFrameContext::Yes, requestMethod };
@@ -457,9 +457,9 @@ bool ContentExtensionsBackend::processContentRuleListsForResourceMonitoring(cons
     return shouldBlockLoad({ url, mainDocumentURL, frameURL, resourceType });
 }
 
-const String& ContentExtensionsBackend::displayNoneCSSRule()
+const RefPtr<StringImpl>& ContentExtensionsBackend::displayNoneCSSRule()
 {
-    static NeverDestroyed<const String> rule(MAKE_STATIC_STRING_IMPL("display:none !important;"));
+    static NeverDestroyed<const RefPtr<StringImpl>> rule(MAKE_STATIC_STRING_IMPL("display:none !important;"));
     return rule;
 }
 
@@ -490,7 +490,7 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
 
     std::ranges::sort(results.summary.modifyHeadersActions, std::ranges::greater { }, &ModifyHeadersAction::priority);
 
-    HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType> headerNameToFirstOperationApplied;
+    HashMap<RefPtr<StringImpl>, ModifyHeadersAction::ModifyHeadersOperationType> headerNameToFirstOperationApplied;
     for (auto& action : results.summary.modifyHeadersActions)
         action.applyToRequest(request, headerNameToFirstOperationApplied);
 

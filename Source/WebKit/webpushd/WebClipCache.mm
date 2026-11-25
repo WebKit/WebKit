@@ -40,19 +40,19 @@ namespace WebPushD {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebClipCache);
 
-WebClipCache::WebClipCache(const String& path)
+WebClipCache::WebClipCache(StringImpl* path)
     : m_path(path)
 {
     load();
 }
 
-static bool webClipExists(const String& webClipIdentifier)
+static bool webClipExists(StringImpl* webClipIdentifier)
 {
-    if (webClipIdentifier.isEmpty())
+    if (isEmpty(webClipIdentifier))
         return false;
 
     @autoreleasepool {
-        RetainPtr path = [UIWebClip pathForWebClipWithIdentifier:webClipIdentifier.createNSString().get()];
+        RetainPtr path = [UIWebClip pathForWebClipWithIdentifier:createNSString(webClipIdentifier).get()];
         if (!path)
             return false;
         path = [path stringByAppendingPathComponent:@"Info.plist"];
@@ -60,7 +60,7 @@ static bool webClipExists(const String& webClipIdentifier)
     }
 }
 
-static String webClipIdentifierForOrigin(const String& bundleIdentifier, const WebCore::SecurityOriginData& origin)
+static RefPtr<StringImpl> webClipIdentifierForOrigin(StringImpl* bundleIdentifier, const WebCore::SecurityOriginData& origin)
 {
     RetainPtr<NSString> oldestMatchingIdentifier;
     WallTime oldestMatchingCreationTime = WallTime::infinity();
@@ -77,8 +77,8 @@ static String webClipIdentifierForOrigin(const String& bundleIdentifier, const W
             if (origin != clipOrigin)
                 continue;
 
-            if (bundleIdentifier != "com.apple.SafariViewService"_s && [webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)]) {
-                if (![webClip.get().trustedClientBundleIdentifiers containsObject:bundleIdentifier.createNSString().get()])
+            if (!equal(bundleIdentifier, "com.apple.SafariViewService"_s) && [webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)]) {
+                if (![webClip.get().trustedClientBundleIdentifiers containsObject:createNSString(bundleIdentifier).get()])
                     continue;
             }
 
@@ -86,7 +86,7 @@ static String webClipIdentifierForOrigin(const String& bundleIdentifier, const W
             if (!path)
                 continue;
 
-            auto maybeCreationTime = FileSystem::fileCreationTime(path);
+            auto maybeCreationTime = FileSystem::fileCreationTime(StringImpl::create(path).get());
             if (!maybeCreationTime)
                 continue;
             auto creationTime = *maybeCreationTime;
@@ -98,10 +98,10 @@ static String webClipIdentifierForOrigin(const String& bundleIdentifier, const W
         }
     }
 
-    return oldestMatchingIdentifier.get();
+    return StringImpl::create(oldestMatchingIdentifier.get());
 }
 
-String WebClipCache::preferredWebClipIdentifier(const String& bundleIdentifier, const WebCore::SecurityOriginData& origin)
+RefPtr<StringImpl> WebClipCache::preferredWebClipIdentifier(StringImpl* bundleIdentifier, const WebCore::SecurityOriginData& origin)
 {
     bool dirty = false;
 
@@ -116,7 +116,7 @@ String WebClipCache::preferredWebClipIdentifier(const String& bundleIdentifier, 
     }
 
     auto webClipIdentifier = webClipIdentifierForOrigin(bundleIdentifier, origin);
-    if (!webClipIdentifier.isEmpty()) {
+    if (!isEmpty(webClipIdentifier)) {
         m_preferredWebClipIdentifiers.set(std::make_tuple(bundleIdentifier, origin), webClipIdentifier);
         dirty = true;
     }
@@ -171,7 +171,7 @@ static RetainPtr<NSArray> loadWebClipCachePropertyList(NSString *path)
 
 void WebClipCache::load()
 {
-    RetainPtr entries = loadWebClipCachePropertyList(m_path.createNSString().get());
+    RetainPtr entries = loadWebClipCachePropertyList(createNSString(m_path).get());
     if (!entries)
         return;
 
@@ -185,7 +185,7 @@ void WebClipCache::load()
         if (origin.isNull())
             continue;
 
-        m_preferredWebClipIdentifiers.add(std::make_tuple(String { bundleIdentifier }, origin), String { webClipIdentifier });
+        m_preferredWebClipIdentifiers.add(std::make_tuple(StringImpl::create(bundleIdentifier), origin), StringImpl::create(webClipIdentifier));
     }
 }
 
@@ -194,12 +194,12 @@ void WebClipCache::persist()
     @autoreleasepool {
         RetainPtr<NSMutableArray> entries = adoptNS([[NSMutableArray alloc] init]);
         for (const auto& [bundleIdentifierAndOrigin, webClipIdentifier] : m_preferredWebClipIdentifiers) {
-            RetainPtr bundleIdentifier = std::get<0>(bundleIdentifierAndOrigin).createNSString();
+            RetainPtr bundleIdentifier = createNSString(std::get<0>(bundleIdentifierAndOrigin));
             RetainPtr url = std::get<1>(bundleIdentifierAndOrigin).toURL().createNSURL();
             NSString *securityOriginString = [url absoluteString];
             if (!securityOriginString)
                 continue;
-            [entries addObject:@[bundleIdentifier.get(), securityOriginString, webClipIdentifier.createNSString().get()]];
+            [entries addObject:@[bundleIdentifier.get(), securityOriginString, createNSString(webClipIdentifier).get()]];
         }
 
         NSError *error = nil;
@@ -209,29 +209,29 @@ void WebClipCache::persist()
             return;
         }
 
-        if (![data writeToFile:m_path.createNSString().get() options:NSDataWritingAtomic error:&error]) {
+        if (![data writeToFile:createNSString(m_path).get() options:NSDataWritingAtomic error:&error]) {
             RELEASE_LOG_ERROR(Push, "WebClipCache::persist failed to write to disk: %{public}@", error);
             return;
         }
     }
 }
 
-HashSet<String> WebClipCache::visibleWebClipIdentifiers(const String& bundleIdentifier)
+HashSet<RefPtr<StringImpl>> WebClipCache::visibleWebClipIdentifiers(StringImpl* bundleIdentifier)
 {
-    HashSet<String> result;
+    HashSet<RefPtr<StringImpl>> result;
 
     @autoreleasepool {
         NSArray *webClips = [UIWebClip webClips];
 
-        RetainPtr nsBundleIdentifier = bundleIdentifier.createNSString();
+        RetainPtr nsBundleIdentifier = createNSString(bundleIdentifier);
         for (RetainPtr webClip : makeVector<RetainPtr<UIWebClip>>(webClips)) {
             NSString *identifier = webClip.get().identifier;
             if (!identifier)
                 continue;
 
             // FIXME: Remove -respondsToSelector: check once we finish staging rdar://131961097.
-            if (bundleIdentifier == "com.apple.SafariViewService"_s || ![webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)] || [webClip.get().trustedClientBundleIdentifiers containsObject:nsBundleIdentifier.get()]) {
-                result.add(String { identifier });
+            if (equal(bundleIdentifier, "com.apple.SafariViewService"_s) || ![webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)] || [webClip.get().trustedClientBundleIdentifiers containsObject:nsBundleIdentifier.get()]) {
+                result.add(StringImpl::create(identifier));
                 continue;
             }
         }
@@ -240,19 +240,19 @@ HashSet<String> WebClipCache::visibleWebClipIdentifiers(const String& bundleIden
     return result;
 }
 
-bool WebClipCache::isWebClipVisible(const String& bundleIdentifier, const String& webClipIdentifier)
+bool WebClipCache::isWebClipVisible(StringImpl* bundleIdentifier, StringImpl* webClipIdentifier)
 {
     if (!webClipExists(webClipIdentifier))
         return false;
 
-    if (bundleIdentifier == "com.apple.SafariViewService"_s)
+    if (equal(bundleIdentifier, "com.apple.SafariViewService"_s))
         return true;
 
-    RetainPtr webClip = [UIWebClip webClipWithIdentifier:webClipIdentifier.createNSString().get()];
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:createNSString(webClipIdentifier).get()];
     if (![webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)])
         return true;
 
-    return [webClip.get().trustedClientBundleIdentifiers containsObject:bundleIdentifier.createNSString().get()];
+    return [webClip.get().trustedClientBundleIdentifiers containsObject:createNSString(bundleIdentifier).get()];
 }
 
 } // namespace WebPushD

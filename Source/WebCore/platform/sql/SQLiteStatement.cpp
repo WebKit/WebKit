@@ -105,14 +105,14 @@ int SQLiteStatement::bindBlob(int index, std::span<const uint8_t> blob)
     return sqliteBindBlob(m_statement, index, blob);
 }
 
-int SQLiteStatement::bindBlob(int index, const String& text)
+int SQLiteStatement::bindBlob(int index, StringImpl* text)
 {
     // String::characters() returns 0 for the empty string, which SQLite
     // treats as a null, so we supply a non-null pointer for that case.
     auto upconvertedCharacters = StringView(text).upconvertedCharacters();
     char16_t anyCharacter = 0;
     std::span<const char16_t> characters;
-    if (text.isEmpty() && !text.isNull())
+    if (isEmpty(text) && text)
         characters = unsafeMakeSpan(&anyCharacter, 0);
     else
         characters = upconvertedCharacters.span();
@@ -169,7 +169,7 @@ int SQLiteStatement::bindValue(int index, const SQLValue& value)
 {
     return WTF::switchOn(value,
         [&] (const std::nullptr_t&) { return bindNull(index); },
-        [&] (const String& string) { return bindText(index, string); },
+        [&] (StringImpl* string) { return bindText(index, string); },
         [&] (double number) { return bindDouble(index, number); }
     );
 }
@@ -190,7 +190,7 @@ bool SQLiteStatement::isColumnDeclaredAsBlob(int col)
     return equalLettersIgnoringASCIICase(StringView::fromLatin1(sqlite3_column_decltype(m_statement, col)), "blob"_s);
 }
 
-String SQLiteStatement::columnName(int col)
+RefPtr<StringImpl> SQLiteStatement::columnName(int col)
 {
     ASSERT(col >= 0);
     return sqliteColumnName(m_statement, col);
@@ -224,13 +224,13 @@ SQLValue SQLiteStatement::columnValue(int col)
     return nullptr;
 }
 
-String SQLiteStatement::columnText(int col)
+RefPtr<StringImpl> SQLiteStatement::columnText(int col)
 {
     ASSERT(col >= 0);
     if (!hasStartedStepping() && step() != SQLITE_ROW)
-        return String();
+        return nullptr;
     if (columnCount() <= col)
-        return String();
+        return nullptr;
     return sqliteColumnText(m_statement, col);
 }
     
@@ -264,15 +264,15 @@ int64_t SQLiteStatement::columnInt64(int col)
     return sqlite3_column_int64(m_statement, col);
 }
 
-String SQLiteStatement::columnBlobAsString(int col)
+RefPtr<StringImpl> SQLiteStatement::columnBlobAsString(int col)
 {
     ASSERT(col >= 0);
 
     if (!hasStartedStepping() && step() != SQLITE_ROW)
-        return String();
+        return nullptr;
 
     if (columnCount() <= col)
-        return String();
+        return nullptr;
 
     auto blob = sqliteColumnBlob<char16_t>(m_statement, col);
     if (!blob.data())

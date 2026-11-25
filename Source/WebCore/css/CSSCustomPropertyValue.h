@@ -43,12 +43,12 @@ public:
         CSSWideKeyword
     >;
 
-    static Ref<CSSCustomPropertyValue> createEmpty(const AtomString& name);
-    static Ref<CSSCustomPropertyValue> createUnresolved(const AtomString& name, Ref<CSSSubstitutionValue>&&);
-    static Ref<CSSCustomPropertyValue> createSyntaxAll(const AtomString& name, Ref<CSSVariableData>&&);
-    static Ref<CSSCustomPropertyValue> createWithCSSWideKeyword(const AtomString& name, CSSWideKeyword);
+    static Ref<CSSCustomPropertyValue> createEmpty(AtomStringImpl* name);
+    static Ref<CSSCustomPropertyValue> createUnresolved(AtomStringImpl* name, Ref<CSSSubstitutionValue>&&);
+    static Ref<CSSCustomPropertyValue> createSyntaxAll(AtomStringImpl* name, Ref<CSSVariableData>&&);
+    static Ref<CSSCustomPropertyValue> createWithCSSWideKeyword(AtomStringImpl* name, CSSWideKeyword);
 
-    const AtomString& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<AtomStringImpl>& name() const LIFETIME_BOUND { return m_name; }
     const VariantValue& value() const LIFETIME_BOUND { return m_value; }
 
     Ref<const CSSVariableData> asVariableData() const;
@@ -64,21 +64,21 @@ public:
     // The value's tokens (empty for a CSS-wide keyword).
     const Vector<CSSParserToken>& tokens() const;
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSCustomPropertyValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
-    CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)
+    CSSCustomPropertyValue(AtomStringImpl* name, VariantValue&& value)
         : CSSValue(ClassType::CustomProperty)
         , m_name(name)
         , m_value(WTF::move(value))
     {
     }
 
-    const AtomString m_name;
+    const RefPtr<AtomStringImpl> m_name;
     const VariantValue m_value;
-    mutable String m_cachedCSSText;
+    mutable RefPtr<StringImpl> m_cachedCSSText;
 };
 
 } // namespace WebCore

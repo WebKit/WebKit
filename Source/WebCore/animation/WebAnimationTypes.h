@@ -62,7 +62,7 @@ using AnimationCollection = OrderedHashSet<Ref<WebAnimation>>;
 using AnimationEvents = Vector<Ref<AnimationEventBase>>;
 using CSSAnimationCollection = OrderedHashSet<Ref<CSSAnimation>>;
 
-using AnimatableCSSProperty = Variant<CSSPropertyID, AtomString>;
+using AnimatableCSSProperty = Variant<CSSPropertyID, RefPtr<AtomStringImpl>>;
 using AnimatableCSSPropertyToTransitionMap = HashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
 
 enum class AcceleratedEffectProperty : uint16_t {
@@ -106,8 +106,8 @@ template<> struct DefaultHash<WebCore::AnimatableCSSProperty> {
             [] (WebCore::CSSPropertyID property) {
                 return DefaultHash<WebCore::CSSPropertyID>::hash(property);
             },
-            [] (const AtomString& string) {
-                return DefaultHash<AtomString>::hash(string);
+            [] (AtomStringImpl* string) {
+                return DefaultHash<RefPtr<AtomStringImpl>>::hash(string);
             }
         );
     }
@@ -127,7 +127,7 @@ template<> struct HashTraits<WebCore::AnimatableCSSProperty> : GenericHashTraits
             [] (WebCore::CSSPropertyID property) {
                 return HashTraits<WebCore::CSSPropertyID>::isDeletedValue(property);
             },
-            [] (const AtomString&) {
+            [] (AtomStringImpl*) {
                 return false;
             }
         );

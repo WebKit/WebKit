@@ -31,7 +31,6 @@
 
 namespace WTF {
 
-class String;
 
 } // namespace WTF
 
@@ -48,7 +47,7 @@ class Expression;
 
 class XPathExpression : public RefCounted<XPathExpression> {
 public:
-    static ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
+    static ExceptionOr<Ref<XPathExpression>> createExpression(StringImpl* expression, RefPtr<XPathNSResolver>&&);
     WEBCORE_EXPORT ~XPathExpression();
 
     WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(Node& contextNode, unsigned short type, XPathResult*);

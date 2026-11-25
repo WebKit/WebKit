@@ -38,10 +38,10 @@
 
 namespace WebCore {
 
-static void addAllCodePoints(USet* smartSet, const String& string)
+static void addAllCodePoints(USet* smartSet, StringImpl* string)
 {
-    for (size_t i = 0; i < string.length(); i++)
-        uset_add(smartSet, string[i]);
+    for (size_t i = 0; i < length(string); i++)
+        uset_add(smartSet, codeUnitAt(string, i));
 }
 
 // This is mostly a port of the code in WebCore/editing/SmartReplaceCF.cpp
@@ -54,8 +54,8 @@ static USet* getSmartSet(bool isPreviousCharacter)
     if (!smartSet) {
         // Whitespace and newline (kCFCharacterSetWhitespaceAndNewline)
         UErrorCode ec = U_ZERO_ERROR;
-        String whitespaceAndNewline = "[[:WSpace:] [\\u000A\\u000B\\u000C\\u000D\\u0085]]"_s;
-        smartSet = uset_openPattern(StringView(whitespaceAndNewline).upconvertedCharacters(), whitespaceAndNewline.length(), &ec);
+        RefPtr<StringImpl> whitespaceAndNewline = "[[:WSpace:] [\\u000A\\u000B\\u000C\\u000D\\u0085]]"_si;
+        smartSet = uset_openPattern(StringView(whitespaceAndNewline).upconvertedCharacters(), length(whitespaceAndNewline), &ec);
         ASSERT(U_SUCCESS(ec));
 
         // CJK ranges
@@ -73,16 +73,16 @@ static USet* getSmartSet(bool isPreviousCharacter)
 
         if (isPreviousCharacter) {
             // FIXME: Silly to convert this to a String just to loop through the characters.
-            addAllCodePoints(smartSet, "([\"\'#$/-`{"_s);
+            addAllCodePoints(smartSet, "([\"\'#$/-`{"_si);
             preSmartSet = smartSet;
         } else {
             // FIXME: Silly to convert this to a String just to loop through the characters.
-            addAllCodePoints(smartSet, ")].,;:?\'!\"%*-/}"_s);
+            addAllCodePoints(smartSet, ")].,;:?\'!\"%*-/}"_si);
 
             // Punctuation (kCFCharacterSetPunctuation)
             UErrorCode ec = U_ZERO_ERROR;
-            String punctuationClass = "[:P:]"_s;
-            USet* icuPunct = uset_openPattern(StringView(punctuationClass).upconvertedCharacters(), punctuationClass.length(), &ec);
+            RefPtr<StringImpl> punctuationClass = "[:P:]"_si;
+            USet* icuPunct = uset_openPattern(StringView(punctuationClass).upconvertedCharacters(), length(punctuationClass), &ec);
             ASSERT(U_SUCCESS(ec));
             uset_addAll(smartSet, icuPunct);
             uset_close(icuPunct);

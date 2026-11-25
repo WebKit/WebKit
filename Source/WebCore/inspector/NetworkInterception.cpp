@@ -46,11 +46,11 @@ bool InspectorURLPattern::matches(const URL& requestURL) const
 {
     URL urlWithoutFragment = requestURL;
     urlWithoutFragment.removeFragmentIdentifier();
-    const String& urlString = urlWithoutFragment.string();
-    if (urlString.isEmpty())
+    const RefPtr<StringImpl>& urlString = urlWithoutFragment.string();
+    if (isEmpty(urlString))
         return false;
 
-    if (url.isEmpty())
+    if (isEmpty(url))
         return true;
 
     return ContentSearchUtilities::searcherMatchesText(searcher(), urlString);

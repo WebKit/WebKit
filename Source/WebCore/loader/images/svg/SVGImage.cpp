@@ -432,9 +432,9 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
     return defaultInstancePage() ? EncodedDataStatus::Complete : EncodedDataStatus::Unknown;
 }
 
-String SVGImage::filenameExtension() const
+RefPtr<StringImpl> SVGImage::filenameExtension() const
 {
-    return "svg"_s;
+    return "svg"_si;
 }
 
 bool isInSVGImage(const Element* element)
@@ -478,7 +478,7 @@ bool SVGImage::isDataDecodable(const Settings& settings, std::span<const uint8_t
 {
     Ref document = Document::create(settings, aboutBlankURL());
     Ref domParser = DOMParser::create(document.get());
-    auto parseResult = domParser->parseFromString(String::fromUTF8(data), imageSVGContentTypeAtom());
+    auto parseResult = domParser->parseFromString(StringImpl::fromUTF8(data), imageSVGContentTypeAtom());
     if (parseResult.hasException())
         return false;
 

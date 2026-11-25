@@ -118,7 +118,7 @@ public:
     SVGAnimatedLengthAccessor(const Ref<SVGAnimatedLength> OwnerType::*property, SVGLengthMode lengthMode, SVGLengthNegativeValuesMode negativeValuesMode, ASCIILiteral initialValue)
         : Base(property)
         , m_negativeValuesMode(negativeValuesMode)
-        , m_initialValue(initialValue.isNull() ? SVGLengthValue(lengthMode) : SVGLengthValue(lengthMode, initialValue))
+        , m_initialValue(initialValue.isNull() ? SVGLengthValue(lengthMode) : SVGLengthValue(lengthMode, StringImpl::create(initialValue).ptr()))
     {
     }
 

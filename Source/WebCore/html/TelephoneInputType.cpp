@@ -39,7 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TelephoneInputType);
 
-const AtomString& TelephoneInputType::formControlType() const
+const RefPtr<AtomStringImpl>& TelephoneInputType::formControlType() const
 {
     return InputTypeNames::telephone();
 }

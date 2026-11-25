@@ -46,19 +46,19 @@ static CASoundStageSize toCASoundStageSize(MediaPlayerSoundStageSize size)
 RetainPtr<CASpatialAudioExperience> createSpatialAudioExperienceWithOptions(const SpatialAudioExperienceOptions& options)
 {
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    if (options.isVisible && options.hasTarget && !options.spatialTrackingLabel.isEmpty()) {
+    if (options.isVisible && options.hasTarget && !isEmpty(options.spatialTrackingLabel)) {
         // Automatic anchoring does not yet work with remote video targets, so rely on
         // the spatial tracking label, and use that label to create a CAAudioTether. This
         // tether informs the audio rendering subsystem about the connection between the
         // visual layer and the audio being generated.
-        RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:options.spatialTrackingLabel.createNSString().get()]);
+        RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:createNSString(options.spatialTrackingLabel).get()]);
         RetainPtr tether = adoptNS([[CAAudioTether alloc] initWithType:CAAudioTetherTypeLayer identifier:uuid.get() pid:0]);
         RetainPtr anchoringStrategy = adoptNS([[CAAudioTetherAnchoringStrategy alloc] initWithAudioTether:tether.get()]);
         return adoptNS([[CAHeadTrackedSpatialAudio alloc] initWithSoundStageSize:toCASoundStageSize(options.soundStageSize) anchoringStrategy:anchoringStrategy.get()]);
     }
 #endif
 
-    if ((options.isVisible && options.hasLayer) || options.sceneIdentifier.isEmpty()) {
+    if ((options.isVisible && options.hasLayer) || isEmpty(options.sceneIdentifier)) {
         // If the page is visible, and we have a layer, an automatic anchoring strategy
         // will attach the audio to the location occupied by layer.
         // If the page is not visible, or does not have a layer, and the sceneIdentifier
@@ -73,14 +73,14 @@ RetainPtr<CASpatialAudioExperience> createSpatialAudioExperienceWithOptions(cons
     // If the page is not visible, or we do not have a layer or target, but do
     // have a scene identifier, attach the audio to the UIWindowScene with that
     // identifier.
-    RetainPtr anchoring = adoptNS([[CASceneAnchoringStrategy alloc] initWithSceneIdentifier:options.sceneIdentifier.createNSString().get()]);
+    RetainPtr anchoring = adoptNS([[CASceneAnchoringStrategy alloc] initWithSceneIdentifier:createNSString(options.sceneIdentifier).get()]);
     return adoptNS([[CAHeadTrackedSpatialAudio alloc] initWithSoundStageSize:toCASoundStageSize(options.soundStageSize) anchoringStrategy:anchoring.get()]);
 }
 
-String spatialAudioExperienceDescription(CASpatialAudioExperience *experience)
+RefPtr<StringImpl> spatialAudioExperienceDescription(CASpatialAudioExperience *experience)
 {
     if (!experience)
-        return "nil"_s;
+        return "nil"_si;
 
     StringBuilder builder;
     builder.append('{', NSStringFromClass(experience.class));

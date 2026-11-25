@@ -95,7 +95,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()
     protect(delegate())->repositionScrollingLayers();
 }
 
-String ScrollingTreeOverflowScrollingNodeIOS::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+RefPtr<StringImpl> ScrollingTreeOverflowScrollingNodeIOS::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
 {
     if (RetainPtr scrollView = this->scrollView()) {
         TextStream ts(TextStream::LineMode::MultipleLine);
@@ -104,13 +104,13 @@ String ScrollingTreeOverflowScrollingNodeIOS::scrollbarStateForOrientation(Scrol
         ts << (showsScrollbar ? ""_s : "none"_s);
 #if HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
         if (orientation == ScrollbarOrientation::Horizontal)
-            ts << ([scrollView _horizontalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _horizontalScrollIndicatorColor]).debugDescription() :  ""_s);
+            ts << ([scrollView _horizontalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _horizontalScrollIndicatorColor]).debugDescription() :  ""_si);
         else
-            ts << ([scrollView _verticalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _verticalScrollIndicatorColor]).debugDescription() :  ""_s);
+            ts << ([scrollView _verticalScrollIndicatorColor] ? colorFromCocoaColor([scrollView _verticalScrollIndicatorColor]).debugDescription() :  ""_si);
 #endif
         return ts.release();
     }
-    return ""_s;
+    return ""_si;
 }
 
 } // namespace WebKit

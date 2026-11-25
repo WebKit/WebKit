@@ -123,7 +123,7 @@ void DigitalCredentialsCoordinator::showChooserInUIProcess(std::optional<WebCore
 ExceptionOr<Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>>> DigitalCredentialsCoordinator::validateAndParseDigitalCredentialRequests(const SecurityOrigin& topOrigin, const Document& document, const Vector<UnvalidatedDigitalCredentialRequest>& unvalidatedRequests)
 {
 #if PLATFORM(COCOA)
-    return DigitalCredentials::validateRequests(topOrigin.data(), unvalidatedRequests, [&](const String& message) {
+    return DigitalCredentials::validateRequests(topOrigin.data(), unvalidatedRequests, [&](StringImpl* message) {
         const_cast<Document&>(document).addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
     });
 #else

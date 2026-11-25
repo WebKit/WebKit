@@ -33,17 +33,17 @@
 
 namespace WebCore {
 
-const String& standardGamepadMappingString()
+const RefPtr<StringImpl>& standardGamepadMappingString()
 {
-    static NeverDestroyed<String> standardGamepadMapping = "standard"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> standardGamepadMapping = "standard"_s;
     return standardGamepadMapping;
 }
 
 #if ENABLE(WEBXR)
 // https://immersive-web.github.io/webxr-gamepads-module/#dom-gamepadmappingtype-xr-standard
-const String& xrStandardGamepadMappingString()
+const RefPtr<StringImpl>& xrStandardGamepadMappingString()
 {
-    static NeverDestroyed<String> xrStandardGamepadMapping = "xr-standard"_s;
+    static NeverDestroyed<RefPtr<StringImpl>> xrStandardGamepadMapping = "xr-standard"_si;
     return xrStandardGamepadMapping;
 }
 #endif

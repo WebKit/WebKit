@@ -109,30 +109,30 @@ static constexpr SortedArrayMap fieldNameMap { WTF::toArray<std::pair<Comparable
     { "webauthn"_s, { AutofillFieldName::WebAuthn, AutofillCategory::Credential } },
 }) };
 
-AutofillFieldName toAutofillFieldName(const AtomString& value)
+AutofillFieldName toAutofillFieldName(AtomStringImpl* value)
 {
     return fieldNameMap.get(value).name;
 }
 
-String nonAutofillCredentialTypeString(NonAutofillCredentialType credentialType)
+RefPtr<StringImpl> nonAutofillCredentialTypeString(NonAutofillCredentialType credentialType)
 {
     switch (credentialType) {
     case NonAutofillCredentialType::None:
-        return "none"_s;
+        return "none"_si;
     case NonAutofillCredentialType::WebAuthn:
-        return "webauthn"_s;
+        return "webauthn"_si;
     }
-    return "none"_s;
+    return "none"_si;
 }
 
 
-static inline bool isContactToken(const AtomString& token)
+static inline bool isContactToken(AtomStringImpl* token)
 {
-    static MainThreadNeverDestroyed<const AtomString> home("home"_s);
-    static MainThreadNeverDestroyed<const AtomString> work("work"_s);
-    static MainThreadNeverDestroyed<const AtomString> mobile("mobile"_s);
-    static MainThreadNeverDestroyed<const AtomString> fax("fax"_s);
-    static MainThreadNeverDestroyed<const AtomString> pager("pager"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> home("home"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> work("work"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> mobile("mobile"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> fax("fax"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> pager("pager"_s);
 
     return token == home || token == work || token == mobile || token == fax || token == pager;
 }
@@ -176,10 +176,10 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     };
 
 
-    const AtomString& attributeValue = element.attributeWithoutSynchronization(HTMLNames::autocompleteAttr);
+    const RefPtr<AtomStringImpl>& attributeValue = element.attributeWithoutSynchronization(HTMLNames::autocompleteAttr);
 
     // 1. If the element has no autocomplete attribute, then jump to the step labeled default.
-    if (attributeValue.isNull())
+    if (!attributeValue)
         return defaultLabel();
 
     // 2. Let tokens be the result of splitting the attribute's value on spaces.
@@ -220,13 +220,13 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // autofill hint set be empty, and let its IDL-exposed autofill value be the string "off".
     // Then, abort these steps.
     if (category == AutofillCategory::Off)
-        return { offAtom(), offAtom().string(), NonAutofillCredentialType::None };
+        return { offAtom(), offAtom(), NonAutofillCredentialType::None };
 
     // 8. If category is Automatic, let the element's autofill field name be the string "on",
     // let its autofill hint set be empty, and let its IDL-exposed autofill value be the string
     // "on". Then, abort these steps.
     if (category == AutofillCategory::Automatic)
-        return { onAtom(), onAtom().string(), NonAutofillCredentialType::None };
+        return { onAtom(), onAtom(), NonAutofillCredentialType::None };
 
     // 9. Let scope tokens be an empty list.
     // 10. Let hint tokens be an empty set.
@@ -234,11 +234,11 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // NOTE: We are ignoring these steps as we don't currently make use of scope tokens or hint tokens anywhere.
 
     // 11. Let IDL value have the same value as field.
-    String idlValue = field;
+    RefPtr<StringImpl> idlValue = field;
 
     // If category is Credential and the indexth token in tokens is an ASCII case-insensitive match for "webauthn", then run the substeps that follow:
     NonAutofillCredentialType credentialType { NonAutofillCredentialType::None };
-    if (category == AutofillCategory::Credential && field == "webauthn"_s) {
+    if (category == AutofillCategory::Credential && equal(field, "webauthn"_s)) {
         // 1. Set credential type to "webauthn".
         credentialType = NonAutofillCredentialType::WebAuthn;
         // 2. If the indexth token in tokens is the first entry, then skip to the step labeled done.

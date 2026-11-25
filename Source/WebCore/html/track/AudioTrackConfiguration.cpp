@@ -46,11 +46,11 @@ auto AudioTrackConfiguration::updateState(const AudioTrackConfigurationInit& sta
 Ref<JSON::Object> AudioTrackConfiguration::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setString("codec"_s, codec());
-    json->setInteger("sampleRate"_s, sampleRate());
-    json->setInteger("numberOfChannels"_s, numberOfChannels());
-    json->setInteger("bitrate"_s, bitrate());
-    json->setBoolean("isProtected"_s, isProtected());
+    json->setString("codec"_si, codec());
+    json->setInteger("sampleRate"_si, sampleRate());
+    json->setInteger("numberOfChannels"_si, numberOfChannels());
+    json->setInteger("bitrate"_si, bitrate());
+    json->setBoolean("isProtected"_si, isProtected());
     return json;
 }
 

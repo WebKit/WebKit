@@ -75,8 +75,8 @@ public:
     void beginInterruption();
     void endInterruption(WebCore::AudioSession::MayResume);
 
-    const String& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
-    void setSceneIdentifier(const String&);
+    const RefPtr<StringImpl>& sceneIdentifier() const LIFETIME_BOUND { return m_sceneIdentifier; }
+    void setSceneIdentifier(StringImpl*);
 
     WebCore::AudioSession::SoundStageSize soundStageSize() const { return m_soundStageSize; }
     void setSoundStageSize(WebCore::AudioSession::SoundStageSize);
@@ -89,7 +89,7 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 #if PLATFORM(IOS_FAMILY)
-    void setPreferredSpeakerID(const String&);
+    void setPreferredSpeakerID(StringImpl*);
 #endif
 
 private:
@@ -118,13 +118,13 @@ private:
     WebCore::AudioSession::Mode m_mode { WebCore::AudioSession::Mode::Default };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     WebCore::AudioSession::SoundStageSize m_soundStageSize { WebCore::AudioSession::SoundStageSize::Automatic };
-    String m_sceneIdentifier;
+    RefPtr<StringImpl> m_sceneIdentifier;
     size_t m_preferredBufferSize { 0 };
     bool m_active { false };
     bool m_isInterrupted { false };
     bool m_isPlayingToBluetoothOverrideChanged { false };
 #if PLATFORM(IOS_FAMILY)
-    String m_speakerID;
+    RefPtr<StringImpl> m_speakerID;
 #endif
 };
 

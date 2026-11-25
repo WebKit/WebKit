@@ -40,6 +40,6 @@ public:
     static WebCore::CookieStorageSession* storageSession(PAL::SessionID);
     static WebCore::CookieStorageSession& defaultStorageSession();
     static void switchToNewTestingSession();
-    static void ensureSession(PAL::SessionID, const String& identifierBase = String());
+    static void ensureSession(PAL::SessionID, StringImpl* identifierBase = nullptr);
     static void destroySession(PAL::SessionID);
 };

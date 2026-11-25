@@ -34,19 +34,19 @@
 
 namespace WebKit {
 
-AssertionCapability::AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction, Function<void()>&& didInvalidateFunction)
+AssertionCapability::AssertionCapability(RefPtr<StringImpl> environmentIdentifier, RefPtr<StringImpl> domain, RefPtr<StringImpl> name, Function<void()>&& willInvalidateFunction, Function<void()>&& didInvalidateFunction)
     : m_environmentIdentifier { WTF::move(environmentIdentifier) }
     , m_domain { WTF::move(domain) }
     , m_name { WTF::move(name) }
     , m_willInvalidateBlock { willInvalidateFunction ? makeBlockPtr(WTF::move(willInvalidateFunction)) : nullptr }
     , m_didInvalidateBlock { didInvalidateFunction ? makeBlockPtr(WTF::move(didInvalidateFunction)) : nullptr }
 {
-    RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", m_name.utf8());
-    if (m_name == "Suspended"_s)
+    RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", utf8(m_name));
+    if (equal(m_name, "Suspended"_s))
         setPlatformCapability([BEProcessCapability suspended]);
-    else if (m_name == "Background"_s)
+    else if (equal(m_name, "Background"_s))
         setPlatformCapability([BEProcessCapability background]);
-    else if (m_name == "Foreground"_s)
+    else if (equal(m_name, "Foreground"_s))
         setPlatformCapability([BEProcessCapability foreground]);
 }
 

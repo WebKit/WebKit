@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct CryptoAlgorithmEcKeyParamsInit : CryptoAlgorithmParametersInit {
-    String namedCurve;
+    RefPtr<StringImpl> namedCurve;
 };
 
 } // namespace WebCore

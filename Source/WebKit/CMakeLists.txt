@@ -1353,6 +1353,8 @@ add_custom_command(
     DEPENDS
         ${WEBKIT_DIR}/Scripts/webkit/opaque_ipc_types.py
         ${WEBKIT_DIR}/Scripts/webkit/swift_types.py
+        ${WEBKIT_DIR}/Scripts/webkit/model.py
+        ${WEBKIT_DIR}/Scripts/webkit/untrusted_origins.py
         ${WebKit_SERIALIZATION_DEPENDENCIES}
         ${WebKit_OPAQUE_IPC_TYPES_ADDITIONS_FILES}
         ${_serializers_input_files_rsp}

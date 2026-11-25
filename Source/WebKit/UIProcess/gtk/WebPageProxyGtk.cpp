@@ -59,14 +59,14 @@ GtkWidget* WebPageProxy::viewWidget()
     return pageClient ? static_cast<PageClientImpl&>(*pageClient).viewWidget() : nullptr;
 }
 
-void WebPageProxy::bindAccessibilityTree(const String& plugID)
+void WebPageProxy::bindAccessibilityTree(StringImpl* plugID)
 {
 #if USE(GTK4)
     if (!isInsideFlatpak() || checkFlatpakPortalVersion(7))
         webkitWebViewBaseSetPlugID(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugID);
 #else
     auto* accessible = gtk_widget_get_accessible(viewWidget());
-    atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().legacyCStringPointer()));
+    atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(utf8(plugID).legacyCStringPointer()));
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
 #endif
 }
@@ -86,7 +86,7 @@ void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
     webkitWebViewBaseSetInputMethodState(WEBKIT_WEB_VIEW_BASE(viewWidget()), WTF::move(state));
 }
 
-void WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, CompletionHandler<void(String)>&& completionHandler)
+void WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, CompletionHandler<void(RefPtr<StringImpl>)>&& completionHandler)
 {
     webkitWebViewBaseShowEmojiChooser(WEBKIT_WEB_VIEW_BASE(viewWidget()), caretRect, WTF::move(completionHandler));
 }

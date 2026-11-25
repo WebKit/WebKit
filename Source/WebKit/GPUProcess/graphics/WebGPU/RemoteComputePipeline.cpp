@@ -70,7 +70,7 @@ void RemoteComputePipeline::getBindGroupLayout(uint32_t index, WebGPUBindGroupLa
     objectHeap->addObject(identifier, remoteBindGroupLayout);
 }
 
-void RemoteComputePipeline::setLabel(String&& label)
+void RemoteComputePipeline::setLabel(RefPtr<StringImpl>&& label)
 {
     protect(m_backing)->setLabel(WTF::move(label));
 }

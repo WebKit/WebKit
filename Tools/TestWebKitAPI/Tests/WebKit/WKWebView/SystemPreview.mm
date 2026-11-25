@@ -59,7 +59,7 @@ static bool wasTriggered;
 static bool wasTriggeredByDetachedElement;
 static uint64_t elementID;
 static uint64_t pageID;
-static String documentID;
+static RefPtr<StringImpl> documentID;
 
 static void resetSystemPreviewTriggerState()
 {
@@ -68,7 +68,7 @@ static void resetSystemPreviewTriggerState()
     wasTriggeredByDetachedElement = false;
     elementID = 0;
     pageID = 0;
-    documentID = { };
+    documentID = nullptr;
 }
 
 @interface TestSystemPreviewTriggeredHandler : NSObject <WKScriptMessageHandler>
@@ -80,7 +80,7 @@ static void resetSystemPreviewTriggerState()
 {
     if ([message.body[@"message"] isEqualToString:@"loaded_triggered"]) {
         elementID = [message.body[@"elementID"] unsignedIntValue];
-        documentID = message.body[@"documentID"];
+        documentID = StringImpl::create(message.body[@"documentID"]);
         pageID = [message.body[@"pageID"] unsignedIntValue];
         hasTriggerInfo = true;
     } else if ([message.body[@"message"] isEqualToString:@"triggered"]) {
@@ -100,7 +100,7 @@ static void resetSystemPreviewTriggerState()
 {
     if ([message.body[@"message"] isEqualToString:@"loaded_triggered_detached"]) {
         elementID = [message.body[@"elementID"] unsignedIntValue];
-        documentID = message.body[@"documentID"];
+        documentID = StringImpl::create(message.body[@"documentID"]);
         pageID = [message.body[@"pageID"] unsignedIntValue];
         hasTriggerInfo = true;
     } else if ([message.body[@"message"] isEqualToString:@"triggered_detached"]) {
@@ -303,7 +303,7 @@ TEST(WebKit, SystemPreviewTriggered)
     [webView synchronouslyLoadTestPageNamed:@"system-preview-trigger"];
     Util::run(&hasTriggerInfo);
 
-    [webView _triggerSystemPreviewActionOnElement:elementID document:documentID.createNSString().get() page:pageID];
+    [webView _triggerSystemPreviewActionOnElement:elementID document:createNSString(documentID).get() page:pageID];
     Util::run(&wasTriggered);
 }
 
@@ -320,7 +320,7 @@ TEST(WebKit, SystemPreviewTriggeredOnDetachedElement)
     [webView synchronouslyLoadTestPageNamed:@"system-preview-trigger"];
     Util::run(&hasTriggerInfo);
 
-    [webView _triggerSystemPreviewActionOnElement:elementID document:documentID.createNSString().get() page:pageID];
+    [webView _triggerSystemPreviewActionOnElement:elementID document:createNSString(documentID).get() page:pageID];
     Util::run(&wasTriggeredByDetachedElement);
 }
 

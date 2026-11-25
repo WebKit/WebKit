@@ -49,9 +49,9 @@
 
 namespace WebKit {
 
-void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String>&&, Vector<String>&&)>&& completionHandler)
+void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&, Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
-    Vector<String> permissions, origins;
+    Vector<RefPtr<StringImpl>> permissions, origins;
 
     for (auto& permission : currentPermissions())
         permissions.append(permission);
@@ -86,12 +86,12 @@ void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String
     completionHandler(WTF::move(permissions), WTF::move(origins));
 }
 
-void WebExtensionContext::permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
+void WebExtensionContext::permissionsContains(HashSet<RefPtr<StringImpl>> permissions, HashSet<RefPtr<StringImpl>> origins, CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(hasPermissions(permissions, toPatterns(origins)));
 }
 
-void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
+void WebExtensionContext::permissionsRequest(HashSet<RefPtr<StringImpl>> permissions, HashSet<RefPtr<StringImpl>> origins, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto matchPatterns = toPatterns(origins);
 
@@ -157,7 +157,7 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
     }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
 }
 
-void WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)
+void WebExtensionContext::permissionsRemove(HashSet<RefPtr<StringImpl>> permissions, HashSet<RefPtr<StringImpl>> origins, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto matchPatterns = toPatterns(origins);
     bool removingAllHostsPattern = WebExtensionMatchPattern::patternsMatchAllHosts(matchPatterns);
@@ -174,7 +174,7 @@ void WebExtensionContext::firePermissionsEventListenerIfNecessary(WebExtensionEv
 {
     ASSERT(type == WebExtensionEventListenerType::PermissionsOnAdded || type == WebExtensionEventListenerType::PermissionsOnRemoved);
 
-    HashSet<String> origins = toStrings(matchPatterns);
+    HashSet<RefPtr<StringImpl>> origins = toStrings(matchPatterns);
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPermissionsEvent(type, permissions, origins));

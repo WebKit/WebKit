@@ -53,13 +53,13 @@ static NSString *JavaScriptSnippetToFetchURL(NSURL *url)
 
 - (void)_fetchURLForTesting:(NSURL *)url
 {
-    protect(*_inspector)->evaluateInFrontendForTesting(JavaScriptSnippetToFetchURL(url));
+    protect(*_inspector)->evaluateInFrontendForTesting(StringImpl::create(protect(JavaScriptSnippetToFetchURL(url)).get()).get());
 }
 
 - (void)_openURLExternallyForTesting:(NSURL *)url useFrontendAPI:(BOOL)useFrontendAPI
 {
     if (useFrontendAPI)
-        protect(*_inspector)->evaluateInFrontendForTesting(JavaScriptSnippetToOpenURLExternally(url));
+        protect(*_inspector)->evaluateInFrontendForTesting(StringImpl::create(protect(JavaScriptSnippetToOpenURLExternally(url)).get()).get());
     else {
         // Force the navigation request to be handled naturally through the
         // internal NavigationDelegate of WKInspectorViewController.

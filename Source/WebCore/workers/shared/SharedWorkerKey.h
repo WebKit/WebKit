@@ -32,9 +32,14 @@ namespace WebCore {
 struct SharedWorkerKey {
     ClientOrigin origin;
     URL url;
-    String name;
+    RefPtr<StringImpl> name;
 
-    friend bool operator==(const SharedWorkerKey&, const SharedWorkerKey&) = default;
+    friend bool operator==(const SharedWorkerKey& a, const SharedWorkerKey& b)
+    {
+        return a.origin == b.origin
+            && a.url == b.url
+            && contentEquals(a.name, b.name);
+    }
 };
 
 inline void add(Hasher& hasher, const SharedWorkerKey& key)

@@ -46,7 +46,7 @@ struct ApplePayPaymentRequest : ApplePayRequestBase {
     ApplePayLineItem total;
     std::optional<Vector<ApplePayLineItem>> lineItems;
 
-    String currencyCode;
+    RefPtr<StringImpl> currencyCode;
 
     ShippingType shippingType { ShippingType::Shipping };
     std::optional<Vector<ApplePayShippingMethod>> shippingMethods;

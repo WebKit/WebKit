@@ -61,7 +61,7 @@ class RemoteAudioDestination final
 {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteAudioDestination);
 public:
-    RemoteAudioDestination(GPUConnectionToWebProcess& connection, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
+    RemoteAudioDestination(GPUConnectionToWebProcess& connection, StringImpl* inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_renderSemaphore(WTF::move(renderSemaphore))
 #if !RELEASE_LOG_DISABLED
         , m_logger(connection.logger())
@@ -115,9 +115,9 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void setSceneIdentifier(const String& sceneIdentifier)
+    void setSceneIdentifier(StringImpl* sceneIdentifier)
     {
-        if (m_sceneIdentifier == sceneIdentifier)
+        if (equal(m_sceneIdentifier, sceneIdentifier))
             return;
         m_sceneIdentifier = sceneIdentifier;
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
@@ -272,7 +272,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    String m_sceneIdentifier;
+    RefPtr<StringImpl> m_sceneIdentifier;
 #endif
 
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
@@ -299,7 +299,7 @@ void RemoteAudioDestinationManager::deref() const
     m_gpuConnectionToWebProcess.get()->deref();
 }
 
-void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle, CompletionHandler<void(uint64_t)>&& completionHandler)
+void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, StringImpl* inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection) {
@@ -397,7 +397,7 @@ std::optional<SharedPreferencesForWebProcess> RemoteAudioDestinationManager::sha
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RemoteAudioDestinationManager::setSceneIdentifier(RemoteAudioDestinationIdentifier identifier, String&& sceneIdentifier)
+void RemoteAudioDestinationManager::setSceneIdentifier(RemoteAudioDestinationIdentifier identifier, RefPtr<StringImpl>&& sceneIdentifier)
 {
     if (auto* item = m_audioDestinations.get(identifier))
         item->setSceneIdentifier(sceneIdentifier);

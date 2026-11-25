@@ -40,7 +40,7 @@ Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(::WebEvent *event)
     return adoptRef(*new NativeWebMouseEvent(WebIOSEventFactory::createWebMouseEvent(event), event));
 }
 
-Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier> modifiers, MonotonicTime timestamp, double force, GestureWasCancelled gestureWasCancelled, const String& pointerType)
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier> modifiers, MonotonicTime timestamp, double force, GestureWasCancelled gestureWasCancelled, StringImpl* pointerType)
 {
     return adoptRef(*new NativeWebMouseEvent(WebMouseEventInit {
         { type, modifiers, timestamp },

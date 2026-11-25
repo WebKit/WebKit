@@ -47,7 +47,7 @@ public:
     ~JSGlobalObjectDebuggerAgent() final;
 
     // JSC::Debugger::Observer
-    void breakpointActionLog(JSC::JSGlobalObject*, const String& data) final;
+    void breakpointActionLog(JSC::JSGlobalObject*, StringImpl* data) final;
 
 private:
     InjectedScript injectedScriptForEval(Protocol::ErrorString&, std::optional<Protocol::Runtime::ExecutionContextId>&&) final;

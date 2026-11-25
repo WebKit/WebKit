@@ -647,7 +647,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 - (void)setCallToActionTitle:(NSString *)title
 {
     // FIXME: The AVKit call-to-action API does not exist yet, so nothing is sent to AVKit. Temporarily, pretend the user tapped the call-to-action button as soon as it is set.
-    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, "AVKit call to action API is not available yet, ignoring title ", String(title));
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, "AVKit call to action API is not available yet, ignoring title ", StringImpl::create(title).get());
     if (auto fullscreenInterface = _fullscreenInterface.get(); fullscreenInterface && title) {
         OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, "Simulating a tap on the call to action");
         fullscreenInterface->didTapCallToAction();
@@ -843,8 +843,8 @@ WebAVPlayerLayer *VideoPresentationInterfaceAVKitLegacy::fullscreenPlayerLayer()
 
 void VideoPresentationInterfaceAVKitLegacy::updateRouteSharingPolicy()
 {
-    if (m_playerViewController && !m_routingContextUID.isEmpty())
-        [m_playerViewController setWebKitOverrideRouteSharingPolicy:(NSUInteger)m_routeSharingPolicy routingContextUID:m_routingContextUID.createNSString().get()];
+    if (m_playerViewController && !isEmpty(m_routingContextUID))
+        [m_playerViewController setWebKitOverrideRouteSharingPolicy:(NSUInteger)m_routeSharingPolicy routingContextUID:createNSString(m_routingContextUID).get()];
 }
 
 void VideoPresentationInterfaceAVKitLegacy::hasVideoChanged(bool hasVideo)
@@ -884,8 +884,8 @@ void VideoPresentationInterfaceAVKitLegacy::setupPlayerViewController()
     [m_playerViewController setDelegate:m_playerViewControllerDelegate.get()];
     [m_playerViewController setAllowsPictureInPicturePlayback:m_allowsPictureInPicturePlayback];
     [playerController setAllowsPictureInPicture:m_allowsPictureInPicturePlayback];
-    if (!m_routingContextUID.isEmpty())
-        [m_playerViewController setWebKitOverrideRouteSharingPolicy:(NSUInteger)m_routeSharingPolicy routingContextUID:m_routingContextUID.createNSString().get()];
+    if (!isEmpty(m_routingContextUID))
+        [m_playerViewController setWebKitOverrideRouteSharingPolicy:(NSUInteger)m_routeSharingPolicy routingContextUID:createNSString(m_routingContextUID).get()];
 #if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     callToActionChanged(m_callToActionLabel);
 #endif
@@ -913,7 +913,7 @@ void VideoPresentationInterfaceAVKitLegacy::invalidatePlayerViewController()
 void VideoPresentationInterfaceAVKitLegacy::callToActionChanged(std::optional<CallToActionLabel> label)
 {
     m_callToActionLabel = label;
-    RetainPtr title = label ? callToActionLabelTitle(*label).createNSString() : nil;
+    RetainPtr title = label ? createNSString(callToActionLabelTitle(*label)) : nil;
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "label: ", label);
     [m_playerViewController setCallToActionTitle:title.get()];
 }

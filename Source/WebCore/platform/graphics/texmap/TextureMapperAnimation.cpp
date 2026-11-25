@@ -143,8 +143,8 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     return matrix;
 }
 
-TextureMapperAnimation::TextureMapperAnimation(const String& name, const GraphicsLayerKeyframeValueList& keyframes, const GraphicsLayerAnimation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
-    : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
+TextureMapperAnimation::TextureMapperAnimation(StringImpl* name, const GraphicsLayerKeyframeValueList& keyframes, const GraphicsLayerAnimation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
+    : m_name(isSafeToSendToAnotherThread(name) ? RefPtr<StringImpl> { name } : isolatedCopy(name))
     , m_keyframes(keyframes)
     , m_timingFunction(animation.timingFunction()->clone())
     , m_defaultTimingFunctionForKeyframes(animation.defaultTimingFunctionForKeyframes() ? animation.defaultTimingFunctionForKeyframes()->clone() : RefPtr<TimingFunction> { })
@@ -161,7 +161,7 @@ TextureMapperAnimation::TextureMapperAnimation(const String& name, const Graphic
 }
 
 TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& other)
-    : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
+    : m_name(isSafeToSendToAnotherThread(other.m_name) ? other.m_name : isolatedCopy(other.m_name))
     , m_keyframes(other.m_keyframes)
     , m_timingFunction(other.m_timingFunction->clone())
     , m_defaultTimingFunctionForKeyframes(other.m_defaultTimingFunctionForKeyframes ? other.m_defaultTimingFunctionForKeyframes->clone() : RefPtr<TimingFunction> { })
@@ -179,7 +179,7 @@ TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& oth
 
 TextureMapperAnimation& TextureMapperAnimation::operator=(const TextureMapperAnimation& other)
 {
-    m_name = other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy();
+    m_name = isSafeToSendToAnotherThread(other.m_name) ? other.m_name : isolatedCopy(other.m_name);
     m_keyframes = other.m_keyframes;
     m_timingFunction = other.m_timingFunction->clone();
     m_defaultTimingFunctionForKeyframes = other.m_defaultTimingFunctionForKeyframes ? other.m_defaultTimingFunctionForKeyframes->clone() : RefPtr<TimingFunction> { };
@@ -327,24 +327,24 @@ void TextureMapperAnimations::add(const TextureMapperAnimation& animation)
     m_animations.append(animation);
 }
 
-void TextureMapperAnimations::remove(const String& name)
+void TextureMapperAnimations::remove(StringImpl* name)
 {
     m_animations.removeAllMatching([&name] (const auto& animation) {
-        return animation.name() == name;
+        return equal(animation.name(), name);
     });
 }
 
-void TextureMapperAnimations::remove(const String& name, AnimatedProperty property)
+void TextureMapperAnimations::remove(StringImpl* name, AnimatedProperty property)
 {
     m_animations.removeAllMatching([&name, property] (const auto& animation) {
-        return animation.name() == name && animation.keyframes().property() == property;
+        return equal(animation.name(), name) && animation.keyframes().property() == property;
     });
 }
 
-void TextureMapperAnimations::pause(const String& name, Seconds offset)
+void TextureMapperAnimations::pause(StringImpl* name, Seconds offset)
 {
     for (auto& animation : m_animations) {
-        if (animation.name() == name)
+        if (equal(animation.name(), name))
             animation.pause(offset);
     }
 }

@@ -64,7 +64,7 @@ struct IDLArrayBuffer;
 template<typename> class DOMPromiseDeferred;
 template<typename> class ExceptionOr;
 
-using BlobPartVariant = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<Blob>, String>;
+using BlobPartVariant = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<Blob>, RefPtr<StringImpl>>;
 
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob>, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Blob, WEBCORE_EXPORT);
@@ -86,21 +86,21 @@ public:
         return blob;
     }
 
-    static Ref<Blob> create(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
+    static Ref<Blob> create(ScriptExecutionContext* context, Vector<uint8_t>&& data, StringImpl* contentType)
     {
         Ref blob = adoptRef(*new Blob(context, WTF::move(data), contentType));
         blob->suspendIfNeeded();
         return blob;
     }
 
-    static Ref<Blob> create(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType)
+    static Ref<Blob> create(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer, StringImpl* contentType)
     {
         Ref blob = adoptRef(*new Blob(context, WTF::move(buffer), contentType));
         blob->suspendIfNeeded();
         return blob;
     }
 
-    static Ref<Blob> deserialize(ScriptExecutionContext* context, const URL& srcURL, const String& type, long long size, long long memoryCost, const String& fileBackedPath)
+    static Ref<Blob> deserialize(ScriptExecutionContext* context, const URL& srcURL, StringImpl* type, long long size, long long memoryCost, StringImpl* fileBackedPath)
     {
         ASSERT(Blob::isNormalizedContentType(type));
         Ref blob = adoptRef(*new Blob(deserializationContructor, context, srcURL, type, size, memoryCost, fileBackedPath));
@@ -110,18 +110,18 @@ public:
 
     virtual ~Blob();
 
-    URL url() const { return m_internalURL; }
-    const String& type() const LIFETIME_BOUND { return m_type; }
+    const URL& url() const LIFETIME_BOUND { return m_internalURL; }
+    const RefPtr<StringImpl>& type() const LIFETIME_BOUND { return m_type; }
 
     WEBCORE_EXPORT unsigned long long size() const;
     virtual bool isFile() const { return false; }
 
     // The checks described in the File API spec.
-    NODELETE static bool isValidContentType(const String&);
+    NODELETE static bool isValidContentType(StringImpl*);
     // The normalization procedure described in the File API spec.
-    static String normalizedContentType(const String&);
+    static RefPtr<StringImpl> normalizedContentType(StringImpl*);
 #if ASSERT_ENABLED
-    static bool isNormalizedContentType(const String&);
+    static bool isNormalizedContentType(StringImpl*);
     static bool isNormalizedContentType(const ASCIICString&);
 #endif
 
@@ -129,7 +129,7 @@ public:
     URLRegistry& registry() const final;
     RegistrableType registrableType() const final { return RegistrableType::Blob; }
 
-    Ref<Blob> slice(long long start, long long end, const String& contentType) const;
+    Ref<Blob> slice(long long start, long long end, StringImpl* contentType) const;
 
     void text(Ref<DeferredPromise>&&);
     void arrayBuffer(DOMPromiseDeferred<IDLArrayBuffer>&&);
@@ -145,25 +145,25 @@ public:
 protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);
     Blob(ScriptExecutionContext&, std::optional<Vector<BlobPartVariant>>&&, const BlobPropertyBag&);
-    Blob(ScriptExecutionContext*, Vector<uint8_t>&&, const String& contentType);
-    Blob(ScriptExecutionContext*, Ref<FragmentedSharedBuffer>&&, const String& contentType);
+    Blob(ScriptExecutionContext*, Vector<uint8_t>&&, StringImpl* contentType);
+    Blob(ScriptExecutionContext*, Ref<FragmentedSharedBuffer>&&, StringImpl* contentType);
 
     enum ReferencingExistingBlobConstructor { referencingExistingBlobConstructor };
     Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext*, const Blob&);
 
     enum UninitializedContructor { uninitializedContructor };
-    Blob(UninitializedContructor, ScriptExecutionContext*, URL&&, String&& type);
+    Blob(UninitializedContructor, ScriptExecutionContext*, URL&&, RefPtr<StringImpl>&& type);
 
     enum DeserializationContructor { deserializationContructor };
-    Blob(DeserializationContructor, ScriptExecutionContext*, const URL& srcURL, const String& type, std::optional<unsigned long long> size, unsigned long long memoryCost, const String& fileBackedPath);
+    Blob(DeserializationContructor, ScriptExecutionContext*, const URL& srcURL, StringImpl* type, std::optional<unsigned long long> size, unsigned long long memoryCost, StringImpl* fileBackedPath);
 
     // For slicing.
-    Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, const String& contentType);
+    Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, StringImpl* contentType);
 
 private:
     void loadBlob(FileReaderLoader::ReadType, Function<void(BlobLoader&)>&&);
 
-    String m_type;
+    RefPtr<StringImpl> m_type;
     mutable std::optional<unsigned long long> m_size;
     size_t m_memoryCost { 0 };
 

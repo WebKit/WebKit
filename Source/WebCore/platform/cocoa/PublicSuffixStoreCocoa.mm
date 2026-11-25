@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-static bool isPublicSuffixCF(const String& domain)
+static bool isPublicSuffixCF(StringImpl* domain)
 {
-    RetainPtr host = WTF::decodeHostName(domain.createNSString().get());
+    RetainPtr host = WTF::decodeHostName(createNSString(domain).get());
     return host && _CFHostIsDomainTopLevel(bridge_cast(host.get()));
 }
 
@@ -44,7 +44,7 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     {
         Locker locker { m_publicSuffixCacheLock };
         if (m_publicSuffixCache) {
-            auto publicSuffix = PublicSuffix::fromRawString(String { domainString });
+            auto publicSuffix = PublicSuffix::fromRawString(RefPtr<StringImpl> { domainString });
             if (m_publicSuffixCache->contains(publicSuffix))
                 return true;
         }
@@ -53,7 +53,7 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     return isPublicSuffixCF(domainString);
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView host) const
+RefPtr<StringImpl> PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView host) const
 {
     @autoreleasepool {
         size_t separatorPosition;

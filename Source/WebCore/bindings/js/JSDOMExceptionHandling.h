@@ -44,7 +44,7 @@ void throwDOMSyntaxError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral); 
 void throwInvalidStateError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral);
 WEBCORE_EXPORT void throwNonFiniteTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&);
 void throwNotSupportedError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral);
-void throwSecurityError(JSC::JSGlobalObject&, JSC::ThrowScope&, const String& message);
+void throwSecurityError(JSC::JSGlobalObject&, JSC::ThrowScope&, StringImpl* message);
 WEBCORE_EXPORT void throwSequenceTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&);
 
 WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::JSGlobalObject&, JSC::ThrowScope&, unsigned argumentIndex, ASCIILiteral argumentName, ASCIILiteral functionInterfaceName, ASCIILiteral functionName, ASCIILiteral expectedValues);
@@ -54,8 +54,8 @@ WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentTypeError(JSC::JSGlobalObject&, 
 WEBCORE_EXPORT JSC::EncodedJSValue throwRequiredMemberTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral memberName, ASCIILiteral dictionaryName, ASCIILiteral expectedType);
 JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral interfaceName);
 
-String makeThisTypeErrorMessage(StringView interfaceName, StringView functionName);
-String makeUnsupportedIndexedSetterErrorMessage(ASCIILiteral interfaceName);
+RefPtr<StringImpl> makeThisTypeErrorMessage(StringView interfaceName, StringView functionName);
+RefPtr<StringImpl> makeUnsupportedIndexedSetterErrorMessage(ASCIILiteral interfaceName);
 
 WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral interfaceName, ASCIILiteral functionName);
 
@@ -63,15 +63,15 @@ WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::JSGloba
 WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise&, ASCIILiteral interfaceName, ASCIILiteral operationName);
 WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::JSGlobalObject&, ASCIILiteral interfaceName, ASCIILiteral operationName);
 
-String retrieveErrorMessageWithoutName(JSC::JSGlobalObject&, JSC::VM&, JSC::JSValue exception, JSC::TopExceptionScope&);
-String retrieveErrorMessage(JSC::JSGlobalObject&, JSC::VM&, JSC::JSValue exception, JSC::TopExceptionScope&);
+RefPtr<StringImpl> retrieveErrorMessageWithoutName(JSC::JSGlobalObject&, JSC::VM&, JSC::JSValue exception, JSC::TopExceptionScope&);
+RefPtr<StringImpl> retrieveErrorMessage(JSC::JSGlobalObject&, JSC::VM&, JSC::JSValue exception, JSC::TopExceptionScope&);
 WEBCORE_EXPORT void reportException(JSC::JSGlobalObject*, JSC::JSValue exception, CachedScript* = nullptr, bool = false);
 WEBCORE_EXPORT void reportException(JSC::JSGlobalObject*, JSC::Exception*, CachedScript* = nullptr, bool = false, ExceptionDetails* = nullptr);
 WEBCORE_EXPORT void reportExceptionIfJSDOMWindow(JSC::JSGlobalObject*, JSC::JSValue exception);
 void reportCurrentException(JSC::JSGlobalObject*);
 
 JSC::JSValue createDOMException(JSC::JSGlobalObject&, Exception&&);
-JSC::JSValue createDOMException(JSC::JSGlobalObject*, ExceptionCode, const String& = emptyString());
+JSC::JSValue createDOMException(JSC::JSGlobalObject*, ExceptionCode, StringImpl* = emptyString());
 
 // Convert a DOM implementation exception into a JavaScript exception in the execution lexicalGlobalObject.
 WEBCORE_EXPORT void propagateExceptionSlowPath(JSC::JSGlobalObject&, JSC::ThrowScope&, Exception&&);

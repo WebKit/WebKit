@@ -84,13 +84,13 @@ TEST(WTF_FormattedLogging, MixedArgs)
 
 TEST(WTF_FormattedLogging, URLType)
 {
-    URL url { "https://webkit.org/test"_s };
+    URL url { "https://webkit.org/test"_si };
     EXPECT_EQ(std::format("{}", url), "https://webkit.org/test");
 }
 
 TEST(WTF_FormattedLogging, URLInFormatString)
 {
-    URL url { "https://webkit.org"_s };
+    URL url { "https://webkit.org"_si };
     EXPECT_EQ(std::format("visiting: {}", url), "visiting: https://webkit.org/");
 }
 

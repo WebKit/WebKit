@@ -544,7 +544,7 @@ TEST(WebKit, LocalStorageCorruptedDatabase)
     NSString* content = @"This is a string";
     NSData* data = [content dataUsingEncoding:NSUTF8StringEncoding];
     [fileManager createFileAtPath:localStorageFile.path contents:data attributes: nil];
-    uint64_t fileSize = FileSystem::fileSize(localStorageFile.path).value_or(std::numeric_limits<uint64_t>::max());
+    uint64_t fileSize = FileSystem::fileSize(StringImpl::create(localStorageFile.path).get()).value_or(std::numeric_limits<uint64_t>::max());
     EXPECT_EQ(16U, fileSize);
 
     NSString *htmlString = @"<script> \

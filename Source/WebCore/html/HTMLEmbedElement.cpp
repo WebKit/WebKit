@@ -79,10 +79,10 @@ CheckedPtr<RenderWidget> HTMLEmbedElement::renderWidgetLoadingPlugin() const
     return widget ? widget : CheckedPtr { findWidgetRenderer(this) };
 }
 
-void HTMLEmbedElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLEmbedElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     if (name == hiddenAttr) {
-        ASSERT(!value.isNull());
+        ASSERT(value);
         addPropertyToPresentationalHintStyle(style, CSSPropertyID::Width, 0, CSSUnitType::Px);
         addPropertyToPresentationalHintStyle(style, CSSPropertyID::Height, 0, CSSUnitType::Px);
     } else
@@ -94,12 +94,12 @@ NODELETE static bool hasTypeOrSrc(const HTMLEmbedElement& embed)
     return embed.hasAttributeWithoutSynchronization(typeAttr) || embed.hasAttributeWithoutSynchronization(srcAttr);
 }
 
-void HTMLEmbedElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLEmbedElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLPlugInElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:
-        m_serviceType = newValue.string().left(newValue.find(';')).convertToASCIILowercase();
+        m_serviceType = convertToASCIILowercase(left(newValue, find(newValue, ';')));
         // FIXME: The only difference between this and HTMLObjectElement's corresponding
         // code is that HTMLObjectElement does setNeedsWidgetUpdate(true). Consider moving
         // this up to the HTMLPlugInElement to be shared.
@@ -108,13 +108,13 @@ void HTMLEmbedElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     case AttributeNames::codeAttr:
         // FIXME: trimming whitespace is probably redundant with the URL parser
-        m_url = newValue.string().trim(isASCIIWhitespace);
+        m_url = trim(newValue, isASCIIWhitespace);
         // FIXME: Why no call to updateImageLoaderWithNewURLSoon?
         // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
         break;
     case AttributeNames::srcAttr:
         // FIXME: trimming whitespace is probably redundant with the URL parser
-        m_url = newValue.string().trim(isASCIIWhitespace);
+        m_url = trim(newValue, isASCIIWhitespace);
         updateImageLoaderWithNewURLSoon();
         if (renderer() && !hasTypeOrSrc(*this))
             invalidateStyle();
@@ -127,7 +127,7 @@ void HTMLEmbedElement::attributeChanged(const QualifiedName& name, const AtomStr
     invalidateStyleAndRenderersForSubtree();
 }
 
-void HTMLEmbedElement::parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues)
+void HTMLEmbedElement::parametersForPlugin(Vector<RefPtr<AtomStringImpl>>& paramNames, Vector<RefPtr<AtomStringImpl>>& paramValues)
 {
     if (!hasAttributes())
         return;
@@ -145,7 +145,7 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
     ASSERT(!renderEmbeddedObject()->isPluginUnavailable());
     ASSERT(needsWidgetUpdate());
 
-    if (m_url.isEmpty() && m_serviceType.isEmpty()) {
+    if (isEmpty(m_url) && isEmpty(m_serviceType)) {
         setNeedsWidgetUpdate(false);
         return;
     }
@@ -165,8 +165,8 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
     setNeedsWidgetUpdate(false);
 
     // FIXME: These should be joined into a PluginParameters class.
-    Vector<AtomString> paramNames;
-    Vector<AtomString> paramValues;
+    Vector<RefPtr<AtomStringImpl>> paramNames;
+    Vector<RefPtr<AtomStringImpl>> paramValues;
     parametersForPlugin(paramNames, paramValues);
 
     Ref<HTMLEmbedElement> protectedThis(*this); // Loading the plugin might remove us from the document.
@@ -209,7 +209,7 @@ bool HTMLEmbedElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == srcAttr || HTMLPlugInElement::isURLAttribute(attribute);
 }
 
-String HTMLEmbedElement::imageSourceURL() const
+RefPtr<StringImpl> HTMLEmbedElement::imageSourceURL() const
 {
     return attributeWithoutSynchronization(srcAttr);
 }

@@ -40,7 +40,7 @@ protected:
     SVGAnimateElementBase(const QualifiedName&, Document&);
 
     bool hasValidAttributeType() const override;
-    virtual String animateRangeString(const String& string) const { return string; }
+    virtual RefPtr<StringImpl> animateRangeString(StringImpl* string) const { return string; }
 
 private:
     SVGAttributeAnimator* animator() const;
@@ -50,15 +50,15 @@ private:
     void setAttributeName(const QualifiedName&) override;
     void resetAnimation() override;
 
-    bool setFromAndToValues(const String& fromString, const String& toString) override;
-    bool setFromAndByValues(const String& fromString, const String& byString) override;
-    bool setToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
+    bool setFromAndToValues(StringImpl* fromString, StringImpl* toString) override;
+    bool setFromAndByValues(StringImpl* fromString, StringImpl* byString) override;
+    bool setToAtEndOfDurationValue(StringImpl* toAtEndOfDurationString) override;
 
     void startAnimation() override;
     void calculateAnimatedValue(float progress, unsigned repeatCount) override;
     void applyResultsToTarget() override;
     void stopAnimation(SVGElement* targetElement) override;
-    std::optional<float> calculateDistance(const String& fromString, const String& toString) override;
+    std::optional<float> calculateDistance(StringImpl* fromString, StringImpl* toString) override;
 
     bool hasInvalidCSSAttributeType() const;
 

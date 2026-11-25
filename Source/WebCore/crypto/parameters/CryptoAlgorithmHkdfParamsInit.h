@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct CryptoAlgorithmHkdfParamsInit : CryptoAlgorithmParametersInit {
-    Variant<JSC::Strong<JSC::JSObject>, String> hash;
+    Variant<JSC::Strong<JSC::JSObject>, RefPtr<StringImpl>> hash;
     BufferSource salt;
     BufferSource info;
 };

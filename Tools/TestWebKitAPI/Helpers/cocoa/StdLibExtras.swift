@@ -25,41 +25,33 @@
 
 #if ENABLE_CXX_INTEROP
 
+import CxxStdlib
 import wtf
 
-extension WTF.String: LosslessStringConvertible {
-    // Protocol requirement; no documentation needed.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public init(_ string: Swift.String) {
-        let ns = string as NSString
-        let cf: CFString = ns as CFString
-        self = WTF.String(cf)
-    }
-
-    // Protocol requirement; no documentation needed.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public var description: Swift.String {
-        #if compiler(>=6.4)
-        createNSString().get()
-        #else
-        unsafe createNSString().get()
-        #endif
-    }
-}
-
-extension WTF.String: ExpressibleByStringLiteral {
-    // Protocol requirement; no documentation needed.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public init(stringLiteral: Swift.String) {
-        self.init(stringLiteral)
+// WTF::StringImpl is a Swift shared reference type; get one from a RefPtr<StringImpl> with `.get()`.
+extension WTF.StringImpl {
+    /// Creates a `StringImpl` with the contents of `string`.
+    ///
+    /// Only `nil` if allocation fails; the optional mirrors C++ `RefPtr<StringImpl>`, and passes straight to
+    /// `StringImpl*` parameters.
+    static func create(from string: Swift.String) -> WTF.StringImpl? {
+        // An empty Swift string may have no storage, and fromUTF8() returns null for a null pointer.
+        if string.isEmpty {
+            return WTF.StringImpl.empty()
+        }
+        var string = string
+        return string.withUTF8 { characters in
+            // Safety: `characters` is valid for the duration of the closure, and fromUTF8() copies it.
+            // swift-format-ignore: NeverForceUnwrap
+            unsafe WTF.StringImpl.fromUTF8(WTF.SpanUInt8(characters.baseAddress!, characters.count)).get()
+        }
     }
 }
 
-extension WTF.String: ExpressibleByNilLiteral {
-    // Protocol requirement; no documentation needed.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public init(nilLiteral: ()) {
-        self = unsafe WTF.nullString().pointee
+extension Swift.String {
+    /// Creates a `Swift.String` from a `StringImpl`; `nil` (a null WTF string) becomes the empty string.
+    init(_ string: WTF.StringImpl?) {
+        self.init(WTF.utf8StdString(string))
     }
 }
 

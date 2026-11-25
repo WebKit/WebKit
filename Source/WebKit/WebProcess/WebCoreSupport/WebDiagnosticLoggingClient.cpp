@@ -45,7 +45,7 @@ WebDiagnosticLoggingClient::WebDiagnosticLoggingClient(WebPage& page)
 
 WebDiagnosticLoggingClient::~WebDiagnosticLoggingClient() = default;
 
-void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, const String& description, WebCore::ShouldSample shouldSample)
+void WebDiagnosticLoggingClient::logDiagnosticMessage(StringImpl* message, StringImpl* description, WebCore::ShouldSample shouldSample)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -59,7 +59,7 @@ void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, con
     page->send(Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess(message, description, ShouldSample::No));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType result, WebCore::ShouldSample shouldSample)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(StringImpl* message, StringImpl* description, WebCore::DiagnosticLoggingResultType result, WebCore::ShouldSample shouldSample)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -73,7 +73,7 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& me
     page->send(Messages::WebPageProxy::LogDiagnosticMessageWithResultFromWebProcess(message, description, result, ShouldSample::No));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample shouldSample)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(StringImpl* message, StringImpl* description, double value, unsigned significantFigures, WebCore::ShouldSample shouldSample)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -87,7 +87,7 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& mes
     page->send(Messages::WebPageProxy::LogDiagnosticMessageWithValueFromWebProcess(message, description, value, significantFigures, ShouldSample::No));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, WebCore::ShouldSample shouldSample)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(StringImpl* message, StringImpl* description, WebCore::ShouldSample shouldSample)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -101,7 +101,7 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(const S
     page->send(Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess(message, description, ShouldSample::No));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary& value, ShouldSample shouldSample)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(StringImpl* message, StringImpl* description, const ValueDictionary& value, ShouldSample shouldSample)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -115,7 +115,7 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(const S
     page->send(Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionaryFromWebProcess(message, description, value, ShouldSample::No));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain domain)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithDomain(StringImpl* message, WebCore::DiagnosticLoggingDomain domain)
 {
     RefPtr page = m_page.get();
     if (!page)

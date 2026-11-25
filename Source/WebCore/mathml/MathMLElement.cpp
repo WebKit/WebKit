@@ -85,11 +85,11 @@ unsigned MathMLElement::rowSpan() const
     return clampHTMLNonNegativeIntegerToRange(rowSpanValue, HTMLTableCellElement::minRowspan, HTMLTableCellElement::maxRowspan, HTMLTableCellElement::defaultRowspan);
 }
 
-void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void MathMLElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::hrefAttr:
-        setIsLink(!newValue.isNull() && !shouldProhibitLinks(this) && allowsHref());
+        setIsLink(!!newValue && !shouldProhibitLinks(this) && allowsHref());
         break;
     case AttributeNames::columnspanAttr:
     case AttributeNames::rowspanAttr:
@@ -103,7 +103,7 @@ void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString
             setTabIndexExplicitly(std::nullopt);
         break;
     default:
-        if (auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name); !eventName.isNull()) {
+        if (auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name); eventName) {
             setAttributeEventListener(eventName, name, newValue);
             return;
         }
@@ -136,37 +136,37 @@ bool MathMLElement::hasPresentationalHintsForAttribute(const QualifiedName& name
     return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
-static inline bool isDisallowedMathSizeAttribute(const AtomString& value)
+static inline bool isDisallowedMathSizeAttribute(AtomStringImpl* value)
 {
     // FIXME(https://webkit.org/b/245927): The CSS parser sometimes accept non-zero <number> font-size values on MathML elements, so explicitly disallow them.
     bool ok;
-    value.toDouble(&ok);
-    if (ok && value != "0"_s)
+    toDouble(value, &ok);
+    if (ok && !equal(value, "0"_s))
         return true;
 
     // Keywords from CSS font-size are disallowed.
     return equalIgnoringASCIICase(value, "medium"_s)
-        || value.endsWithIgnoringASCIICase("large"_s)
-        || value.endsWithIgnoringASCIICase("small"_s)
+        || endsWithIgnoringASCIICase(value, "large"_s)
+        || endsWithIgnoringASCIICase(value, "small"_s)
         || equalIgnoringASCIICase(value, "smaller"_s)
         || equalIgnoringASCIICase(value, "larger"_s)
         || equalIgnoringASCIICase(value, "math"_s);
 }
 
-static String convertMathSizeIfNeeded(const AtomString& value)
+static RefPtr<StringImpl> convertMathSizeIfNeeded(AtomStringImpl* value)
 {
-    if (value == "small"_s)
-        return "0.75em"_s;
-    if (value == "normal"_s)
-        return "1em"_s;
-    if (value == "big"_s)
-        return "1.5em"_s;
+    if (equal(value, "small"_s))
+        return "0.75em"_si;
+    if (equal(value, "normal"_s))
+        return "1em"_si;
+    if (equal(value, "big"_s))
+        return "1.5em"_si;
 
     // FIXME: mathsize accepts any MathML length, including named spaces (see parseMathMLLength).
     // FIXME: Might be better to use double than float.
     // FIXME: Might be better to use "shortest" numeric formatting instead of fixed width.
     bool ok = false;
-    float unitlessValue = value.toFloat(&ok);
+    float unitlessValue = toFloat(value, &ok);
     if (!ok)
         return value;
     return makeString(FormattedNumber::fixedWidth(unitlessValue * 100, 3), '%');
@@ -178,7 +178,7 @@ enum class ScriptLevelSyntax : uint8_t {
     AddMinusUnsigned,
 };
 
-void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& name, AtomStringImpl* value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
     case AttributeNames::mathbackgroundAttr:
@@ -208,9 +208,9 @@ void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         StringView view = value;
 
         ScriptLevelSyntax syntax;
-        if (value.startsWith('+'))
+        if (startsWith(value, '+'))
             syntax = ScriptLevelSyntax::AddUnsigned;
-        else if (value.startsWith('-'))
+        else if (startsWith(value, '-'))
             syntax = ScriptLevelSyntax::AddMinusUnsigned;
         else
             syntax = ScriptLevelSyntax::Unsigned;
@@ -308,7 +308,7 @@ void MathMLElement::defaultEventHandler(Event& event)
             const auto& href = attributeWithoutSynchronization(MathMLNames::hrefAttr);
             event.setDefaultHandled();
             if (RefPtr frame = document().frame())
-                frame->loader().changeLocation(protect(document())->encodingParseURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, protect(document())->shouldOpenExternalURLsPolicyToPropagate());
+                frame->loader().changeLocation(protect(document())->encodingParseURL(href), AtomStringImpl::add(selfTargetFrameName()).ptr(), &event, ReferrerPolicy::EmptyString, protect(document())->shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }

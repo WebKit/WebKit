@@ -84,7 +84,7 @@ WebKitBufferNamespace& WebKitNamespace::buffers()
     return m_buffers;
 }
 
-JSC::JSValue WebKitNamespace::evaluateScript(JSC::JSGlobalObject& globalObject, const String& source, const String& url)
+JSC::JSValue WebKitNamespace::evaluateScript(JSC::JSGlobalObject& globalObject, StringImpl* source, StringImpl* url)
 {
     if (!globalObject.inherits<JSDOMGlobalObject>())
         return JSC::jsNull();
@@ -92,7 +92,7 @@ JSC::JSValue WebKitNamespace::evaluateScript(JSC::JSGlobalObject& globalObject, 
     RefPtr frame = this->frame();
     if (!frame)
         return JSC::jsNull();
-    WTFBeginSignpost(this, EvaluateJavaScriptFromBuffer, "evaluateScript(url: %" PRIVATE_LOG_STRING ")", url.utf8());
+    WTFBeginSignpost(this, EvaluateJavaScriptFromBuffer, "evaluateScript(url: %" PRIVATE_LOG_STRING ")", utf8(url));
     auto result = protect(frame->script())->evaluateInWorldIgnoringException(ScriptSourceCode { source, JSC::SourceTaintedOrigin::Untainted, URL { url } }, world);
     WTFEndSignpost(this, EvaluateJavaScriptFromBuffer);
     return result;

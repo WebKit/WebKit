@@ -72,7 +72,7 @@ public:
     void destroyVisibilityPropagationContextForPage(WebPage&);
 #endif
 
-    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+    void configureLoggingChannel(StringImpl*, WTFLogChannelState, WTFLogLevel);
 
     class Client : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
     public:

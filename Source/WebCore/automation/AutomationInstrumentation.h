@@ -52,11 +52,11 @@ class WEBCORE_EXPORT AutomationInstrumentationClient : public AbstractRefCounted
 public:
     virtual ~AutomationInstrumentationClient() = default;
 
-    virtual void addMessageToConsole(FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
+    virtual void addMessageToConsole(FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, StringImpl*, const JSC::MessageType&, const WallTime&) = 0;
     virtual void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&) = 0;
     virtual void scriptRealmDestroyed(FrameIdentifier) = 0;
-    virtual void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData&) = 0;
-    virtual void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier) = 0;
+    virtual void scriptDedicatedWorkerRealmCreated(StringImpl* workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData&) = 0;
+    virtual void scriptDedicatedWorkerRealmDestroyed(StringImpl* workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier) = 0;
 };
 
 
@@ -73,8 +73,8 @@ public:
     static void addMessageToConsole(FrameIdentifier, const std::unique_ptr<Inspector::ConsoleMessage>&);
     static void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&, DOMWrapperWorld&);
     static void scriptRealmDestroyed(FrameIdentifier, DOMWrapperWorld&);
-    static void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData&);
-    static void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier);
+    static void scriptDedicatedWorkerRealmCreated(StringImpl* workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData&);
+    static void scriptDedicatedWorkerRealmDestroyed(StringImpl* workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier);
 };
 
 } // namespace WebCore

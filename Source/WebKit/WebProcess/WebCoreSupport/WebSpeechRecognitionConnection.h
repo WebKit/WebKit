@@ -51,7 +51,7 @@ public:
     void ref() const final { WebCore::SpeechRecognitionConnection::ref(); }
     void deref() const final { WebCore::SpeechRecognitionConnection::deref(); }
 
-    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&, WebCore::FrameIdentifier) final;
+    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, StringImpl* lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&, WebCore::FrameIdentifier) final;
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier) final;
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier) final;
 #if ENABLE(MEDIA_STREAM)

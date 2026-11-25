@@ -28,7 +28,7 @@
 
 const unsigned maximumNumberOfStringsToRecord = 10;
 namespace WebCore {
-bool CanvasActivityRecord::recordWrittenOrMeasuredText(const String& text)
+bool CanvasActivityRecord::recordWrittenOrMeasuredText(StringImpl* text)
 {
     // We limit the size of the textWritten HashSet to save memory and prevent bloating
     // the plist with the resourceLoadStatistics entries. A few strings is often enough

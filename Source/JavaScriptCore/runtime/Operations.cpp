@@ -47,7 +47,7 @@ NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject* globalObject, JSValue v1, JSV
             RETURN_IF_EXCEPTION(scope, { });
             RELEASE_AND_RETURN(scope, jsString(globalObject, asString(p1), p2String));
         }
-        String p2String = p2.toWTFString(globalObject);
+        RefPtr<StringImpl> p2String = p2.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         RELEASE_AND_RETURN(scope, jsString(globalObject, asString(p1), p2String));
     }
@@ -58,7 +58,7 @@ NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject* globalObject, JSValue v1, JSV
             RETURN_IF_EXCEPTION(scope, { });
             RELEASE_AND_RETURN(scope, jsString(globalObject, p1String, asString(p2)));
         }
-        String p1String = p1.toWTFString(globalObject);
+        RefPtr<StringImpl> p1String = p1.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         RELEASE_AND_RETURN(scope, jsString(globalObject, p1String, asString(p2)));
     }

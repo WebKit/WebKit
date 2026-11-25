@@ -69,24 +69,24 @@ inline IdTargetObserverRegistry& TreeScope::idTargetObserverRegistry()
     return ensureIdTargetObserverRegistry();
 }
 
-inline bool TreeScope::hasElementWithId(const AtomString& id) const
+inline bool TreeScope::hasElementWithId(AtomStringImpl* id) const
 {
     return m_elementsById && m_elementsById->contains(id);
 }
 
-inline bool TreeScope::containsMultipleElementsWithId(const AtomString& id) const
+inline bool TreeScope::containsMultipleElementsWithId(AtomStringImpl* id) const
 {
-    return m_elementsById && !id.isEmpty() && m_elementsById->containsMultiple(id);
+    return m_elementsById && !isEmpty(id) && m_elementsById->containsMultiple(id);
 }
 
-inline bool TreeScope::hasElementWithName(const AtomString& id) const
+inline bool TreeScope::hasElementWithName(AtomStringImpl* id) const
 {
     return m_elementsByName && m_elementsByName->contains(id);
 }
 
-inline bool TreeScope::containsMultipleElementsWithName(const AtomString& name) const
+inline bool TreeScope::containsMultipleElementsWithName(AtomStringImpl* name) const
 {
-    return m_elementsByName && !name.isEmpty() && m_elementsByName->containsMultiple(name);
+    return m_elementsByName && !isEmpty(name) && m_elementsByName->containsMultiple(name);
 }
 
 inline void TreeScope::setDocumentScope(Document& document)

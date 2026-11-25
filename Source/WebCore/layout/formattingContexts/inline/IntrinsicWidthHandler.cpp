@@ -395,7 +395,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
         if (CheckedPtr inlineTextBox = dynamicDowncast<InlineTextBox>(*child)) {
             ASSERT(inlineTextBox->style().whiteSpaceCollapse() != WhiteSpaceCollapse::Preserve);
             CheckedRef fontCascade = inlineTextBox->style().fontCascade();
-            auto contentLength = inlineTextBox->content().length();
+            auto contentLength = length(inlineTextBox->content());
             size_t index = 0;
             auto isTreatedAsSpaceCharacter = [&](auto character) {
                 return character == space || character == newlineCharacter || character == tabCharacter;
@@ -403,7 +403,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
             while (index < contentLength) {
                 auto characterLength = TextUtil::firstUserPerceivedCharacterLength(*inlineTextBox, index, contentLength - index);
                 ASSERT(characterLength);
-                auto isCollapsedWhitespace = characterLength == 1 && isTreatedAsSpaceCharacter(inlineTextBox->content()[index]);
+                auto isCollapsedWhitespace = characterLength == 1 && isTreatedAsSpaceCharacter(codeUnitAt(inlineTextBox->content(), index));
                 if (!isCollapsedWhitespace)
                     maximumWidth = std::max(maximumWidth, TextUtil::width(*inlineTextBox, fontCascade, index, index + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
                 index += characterLength;

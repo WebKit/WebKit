@@ -35,7 +35,7 @@ namespace WebCore {
 
 class GPUValidationError final : public GPUError {
 public:
-    static Ref<GPUValidationError> create(String&& message)
+    static Ref<GPUValidationError> create(RefPtr<StringImpl>&& message)
     {
         return adoptRef(*new GPUValidationError(WTF::move(message)));
     }
@@ -48,17 +48,17 @@ public:
     ~GPUValidationError();
 
     Type type() const final { return Type::Validation; }
-    NODELETE const String& message() const LIFETIME_BOUND final;
+    NODELETE const RefPtr<StringImpl>& message() const LIFETIME_BOUND final;
 
     WebGPUValidationError* backing() { return m_backing.get(); }
     const WebGPUValidationError* backing() const { return m_backing.get(); }
-    String stack() const { return "_"_s; }
+    RefPtr<StringImpl> stack() const { return "_"_si; }
 
 private:
-    GPUValidationError(String&& message);
+    GPUValidationError(RefPtr<StringImpl>&& message);
     GPUValidationError(Ref<WebGPUValidationError>&&);
 
-    String m_message;
+    RefPtr<StringImpl> m_message;
     const RefPtr<WebGPUValidationError> m_backing;
 };
 

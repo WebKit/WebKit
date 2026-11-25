@@ -56,19 +56,19 @@ enum class AdvancedPrivacyProtections : uint16_t;
 
 class ServiceWorkerThread final : public WorkerThread {
 public:
-    static Ref<ServiceWorkerThread> create(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, const SettingsValues&, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerBadgeProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>);
+    static Ref<ServiceWorkerThread> create(ServiceWorkerContextData&&, ServiceWorkerData&&, RefPtr<StringImpl>&& userAgent, WorkerThreadMode, const SettingsValues&, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerBadgeProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>);
     virtual ~ServiceWorkerThread();
 
     NODELETE WorkerObjectProxy& workerObjectProxy() const;
 
-    void start(Function<void(const String&, bool)>&&);
+    void start(Function<void(StringImpl*, bool)>&&);
 
     void willPostTaskToFireInstallEvent();
     void willPostTaskToFireActivateEvent();
     void willPostTaskToFireMessageEvent();
     void willPostTaskToFirePushSubscriptionChangeEvent();
 
-    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, String&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, RefPtr<StringImpl>&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, RefPtr<StringImpl>&& clientIdentifier, RefPtr<StringImpl>&& resultingClientIdentifier);
     void queueTaskToPostMessage(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData, CompletionHandlerCallingScope&& messageDispatched);
     void queueTaskToFireInstallEvent();
     void queueTaskToFireActivateEvent();
@@ -101,7 +101,7 @@ protected:
     void runEventLoop() override;
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThread(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, const SettingsValues&, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerBadgeProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>);
+    WEBCORE_EXPORT ServiceWorkerThread(ServiceWorkerContextData&&, ServiceWorkerData&&, RefPtr<StringImpl>&& userAgent, WorkerThreadMode, const SettingsValues&, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerBadgeProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>);
 
     ASCIILiteral threadName() const final { return "WebCore: ServiceWorker"_s; }
     void finishedEvaluatingScript() final;

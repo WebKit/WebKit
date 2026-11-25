@@ -44,14 +44,14 @@ public:
     }
 
     using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(std::expected<std::optional<BackgroundFetchInformation>, ExceptionData>&&)>;
-    void startBackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&);
-    void backgroundFetchInformation(SWServerRegistration&, const String&, ExceptionOrBackgroundFetchInformationCallback&&);
-    using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<String>&&)>;
+    void startBackgroundFetch(SWServerRegistration&, StringImpl*, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&);
+    void backgroundFetchInformation(SWServerRegistration&, StringImpl*, ExceptionOrBackgroundFetchInformationCallback&&);
+    using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>;
     void backgroundFetchIdentifiers(SWServerRegistration&, BackgroundFetchIdentifiersCallback&&);
     using AbortBackgroundFetchCallback = CompletionHandler<void(bool)>;
-    void abortBackgroundFetch(SWServerRegistration&, const String&, AbortBackgroundFetchCallback&&);
+    void abortBackgroundFetch(SWServerRegistration&, StringImpl*, AbortBackgroundFetchCallback&&);
     using MatchBackgroundFetchCallback = CompletionHandler<void(Vector<BackgroundFetchRecordInformation>&&)>;
-    void matchBackgroundFetch(SWServerRegistration&, const String&, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&);
+    void matchBackgroundFetch(SWServerRegistration&, StringImpl*, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&);
     using RetrieveRecordResponseCallback = BackgroundFetch::RetrieveRecordResponseCallback;
     void retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&);
     using RetrieveRecordResponseBodyCallback = BackgroundFetch::RetrieveRecordResponseBodyCallback;
@@ -59,13 +59,13 @@ public:
 
     void remove(SWServerRegistration&);
 
-    WEBCORE_EXPORT WeakPtr<BackgroundFetch> backgroundFetch(const ServiceWorkerRegistrationKey&, const String&) const;
-    WEBCORE_EXPORT void addFetchFromStore(std::span<const uint8_t>, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&&);
+    WEBCORE_EXPORT WeakPtr<BackgroundFetch> backgroundFetch(const ServiceWorkerRegistrationKey&, StringImpl*) const;
+    WEBCORE_EXPORT void addFetchFromStore(std::span<const uint8_t>, CompletionHandler<void(const ServiceWorkerRegistrationKey&, StringImpl*)>&&);
 
-    WEBCORE_EXPORT void abortBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
-    WEBCORE_EXPORT void pauseBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
-    WEBCORE_EXPORT void resumeBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
-    WEBCORE_EXPORT void clickBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
+    WEBCORE_EXPORT void abortBackgroundFetch(const ServiceWorkerRegistrationKey&, StringImpl*);
+    WEBCORE_EXPORT void pauseBackgroundFetch(const ServiceWorkerRegistrationKey&, StringImpl*);
+    WEBCORE_EXPORT void resumeBackgroundFetch(const ServiceWorkerRegistrationKey&, StringImpl*);
+    WEBCORE_EXPORT void clickBackgroundFetch(const ServiceWorkerRegistrationKey&, StringImpl*);
 
 private:
     explicit BackgroundFetchEngine(SWServer&);
@@ -75,7 +75,7 @@ private:
     WeakPtr<SWServer> m_server;
     const Ref<BackgroundFetchStore> m_store;
 
-    using FetchesMap = HashMap<String, Ref<BackgroundFetch>>;
+    using FetchesMap = HashMap<RefPtr<StringImpl>, Ref<BackgroundFetch>>;
     HashMap<ServiceWorkerRegistrationKey, FetchesMap> m_fetches;
 
     HashMap<BackgroundFetchRecordIdentifier, Ref<BackgroundFetch::Record>> m_records;

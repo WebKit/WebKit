@@ -34,8 +34,74 @@
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
+#include <wtf/ValueOrReference.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/SymbolImpl.h>
+#include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
+
+// For the string implementation classes, converting constructors and assignments only exist for pointer-convertible
+// types, so that overload resolution does not see, e.g., RefPtr<AtomStringImpl> as constructible from RefPtr<StringImpl>.
+// (They are not constrained for other types, which may be incomplete.)
+static_assert(std::is_constructible_v<RefPtr<RefLogger>, const RefPtr<DerivedRefLogger>&>);
+static_assert(std::is_constructible_v<RefPtr<RefLogger>, RefPtr<DerivedRefLogger>&&>);
+static_assert(std::is_constructible_v<RefPtr<RefLogger>, Ref<DerivedRefLogger>&&>);
+static_assert(std::is_constructible_v<RefPtr<const RefLogger>, RefPtr<RefLogger>&&>);
+static_assert(std::is_assignable_v<RefPtr<RefLogger>&, RefPtr<DerivedRefLogger>&&>);
+static_assert(std::is_constructible_v<Ref<RefLogger>, const Ref<DerivedRefLogger>&>);
+static_assert(std::is_constructible_v<Ref<RefLogger>, Ref<DerivedRefLogger>&&>);
+static_assert(std::is_constructible_v<RefPtr<StringImpl>, const RefPtr<AtomStringImpl>&>);
+static_assert(std::is_constructible_v<RefPtr<StringImpl>, RefPtr<AtomStringImpl>&&>);
+static_assert(std::is_constructible_v<RefPtr<StringImpl>, Ref<AtomStringImpl>&&>);
+static_assert(std::is_constructible_v<RefPtr<const StringImpl>, RefPtr<StringImpl>&&>);
+static_assert(std::is_assignable_v<RefPtr<StringImpl>&, RefPtr<AtomStringImpl>&&>);
+static_assert(std::is_constructible_v<Ref<StringImpl>, Ref<AtomStringImpl>&&>);
+static_assert(!std::is_constructible_v<RefPtr<AtomStringImpl>, const RefPtr<StringImpl>&>);
+static_assert(!std::is_constructible_v<RefPtr<AtomStringImpl>, RefPtr<StringImpl>&&>);
+static_assert(!std::is_constructible_v<RefPtr<AtomStringImpl>, Ref<StringImpl>&&>);
+static_assert(!std::is_constructible_v<RefPtr<StringImpl>, RefPtr<const StringImpl>&&>);
+static_assert(!std::is_convertible_v<RefPtr<StringImpl>, RefPtr<AtomStringImpl>>);
+static_assert(!std::is_assignable_v<RefPtr<AtomStringImpl>&, const RefPtr<StringImpl>&>);
+static_assert(!std::is_assignable_v<RefPtr<AtomStringImpl>&, RefPtr<StringImpl>&&>);
+static_assert(!std::is_constructible_v<Ref<AtomStringImpl>, const Ref<StringImpl>&>);
+static_assert(!std::is_constructible_v<Ref<AtomStringImpl>, Ref<StringImpl>&&>);
+static_assert(!std::is_constructible_v<Ref<SymbolImpl>, Ref<UniquedStringImpl>&&>);
+
+NODELETE static RefLogger* passThrough(RefLogger* logger)
+{
+    return logger;
+}
+
+NODELETE static StringImpl* passThrough(StringImpl* string)
+{
+    return string;
+}
+
+static_assert(std::is_convertible_v<const ValueOrReference<RefPtr<RefLogger>>&, RefLogger*>);
+static_assert(std::is_convertible_v<const ValueOrReference<RefPtr<StringImpl>>&, StringImpl*>);
+static_assert(!std::is_convertible_v<const ValueOrReference<RefPtr<StringImpl>>&, AtomStringImpl*>);
+static_assert(!std::is_convertible_v<const ValueOrReference<int>&, int*>);
+
+TEST(WTF_RefPtr, ValueOrReferenceConvertsToRawPointer)
+{
+    DerivedRefLogger a("a");
+    {
+        RefPtr<RefLogger> ptr(&a);
+        ValueOrReference<RefPtr<RefLogger>> reference { ptr };
+        EXPECT_EQ(&a, passThrough(reference));
+        ValueOrReference<RefPtr<RefLogger>> value { RefPtr<RefLogger> { &a } };
+        EXPECT_EQ(&a, passThrough(value));
+        ValueOrReference<RefPtr<RefLogger>> null;
+        EXPECT_FALSE(passThrough(null));
+    }
+    EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
+
+    RefPtr<StringImpl> string = StringImpl::create("value or reference"_s);
+    ValueOrReference<RefPtr<StringImpl>> stringReference { string };
+    EXPECT_EQ(string.get(), passThrough(stringReference));
+    EXPECT_TRUE(equal(static_cast<StringImpl*>(stringReference), "value or reference"_s));
+}
 
 TEST(WTF_RefPtr, Basic)
 {

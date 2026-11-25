@@ -101,7 +101,7 @@ std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateK
     return std::pair { credentialId, cosePublicKey };
 }
 
-String base64PrivateKey(RetainPtr<SecKeyRef> privateKey)
+RefPtr<StringImpl> base64PrivateKey(RetainPtr<SecKeyRef> privateKey)
 {
     CFErrorRef rawError = nullptr;
     RetainPtr nsPrivateKeyRep = bridge_cast(adoptCF(SecKeyCopyExternalRepresentation((__bridge SecKeyRef)((id)privateKey.get()), &rawError)));
@@ -110,17 +110,17 @@ String base64PrivateKey(RetainPtr<SecKeyRef> privateKey)
         ASSERT_NOT_REACHED();
         return emptyString();
     }
-    return String([nsPrivateKeyRep base64EncodedStringWithOptions:0]);
+    return StringImpl::create([nsPrivateKeyRep base64EncodedStringWithOptions:0]);
 }
 
-RetainPtr<SecKeyRef> privateKeyFromBase64(const String& base64PrivateKey)
+RetainPtr<SecKeyRef> privateKeyFromBase64(StringImpl* base64PrivateKey)
 {
     NSDictionary* options = @{
         (id)kSecAttrKeyType: (id)kSecAttrKeyTypeECSECPrimeRandom,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrKeySizeInBits: @256,
     };
-    RetainPtr<NSData> privateKey = adoptNS([[NSData alloc] initWithBase64EncodedString:base64PrivateKey.createNSString().get() options:0]);
+    RetainPtr<NSData> privateKey = adoptNS([[NSData alloc] initWithBase64EncodedString:createNSString(base64PrivateKey).get() options:0]);
     RetainPtr<SecKeyRef> key;
     RetainPtr<CFErrorRef> error;
     {

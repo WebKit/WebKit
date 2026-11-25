@@ -135,8 +135,8 @@ struct ImmersiveVideoMetadata {
     bool isImmersive() const { return kind != Kind::Rectilinear && kind != Kind::Unknown; }
 };
 
-WEBCORE_EXPORT String convertImmersiveVideoMetadataToString(const ImmersiveVideoMetadata&);
-WEBCORE_EXPORT String convertEnumerationToString(VideoProjectionMetadataKind);
+WEBCORE_EXPORT RefPtr<StringImpl> convertImmersiveVideoMetadataToString(const ImmersiveVideoMetadata&);
+WEBCORE_EXPORT RefPtr<StringImpl> convertEnumerationToString(VideoProjectionMetadataKind);
 
 } // namespace WebCore
 
@@ -146,7 +146,7 @@ template<typename> struct LogArgument;
 
 template <>
 struct LogArgument<WebCore::ImmersiveVideoMetadata> {
-    static String toString(const WebCore::ImmersiveVideoMetadata& metadata)
+    static RefPtr<StringImpl> toString(const WebCore::ImmersiveVideoMetadata& metadata)
     {
         return convertImmersiveVideoMetadataToString(metadata);
     }

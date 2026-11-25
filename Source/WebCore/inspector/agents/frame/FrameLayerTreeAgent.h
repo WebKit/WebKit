@@ -61,8 +61,8 @@ public:
     Inspector::CommandResult<void> enable() override;
     Inspector::CommandResult<void> disable() override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>> layersForNode(Inspector::Protocol::DOM::NodeId) override;
-    Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> reasonsForCompositingLayer(const Inspector::Protocol::LayerTree::LayerId&) override;
-    Inspector::CommandResult<String> requestContent(const Inspector::Protocol::LayerTree::LayerId&) override;
+    Inspector::CommandResult<Ref<Inspector::Protocol::LayerTree::CompositingReasons>> reasonsForCompositingLayer(StringImpl*) override;
+    Inspector::CommandResult<RefPtr<StringImpl>> requestContent(StringImpl*) override;
 
     // InspectorInstrumentation
     void layerTreeDidChange();

@@ -49,7 +49,7 @@ namespace Inspector {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ConsoleMessage);
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier, WallTime timestamp)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, StringImpl* message, unsigned long requestIdentifier, WallTime timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -60,7 +60,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     m_timestamp = timestamp ? timestamp : WallTime::now();
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier, WallTime timestamp)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, StringImpl* message, StringImpl* url, unsigned line, unsigned column, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier, WallTime timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -74,7 +74,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     autogenerateMetadata(globalObject);
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier, WallTime timestamp)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, StringImpl* message, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier, WallTime timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -92,7 +92,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     }
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier, WallTime timestamp)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, StringImpl* message, Ref<ScriptArguments>&& arguments, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier, WallTime timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -111,7 +111,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     }
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier, WallTime timestamp)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, StringImpl* message, Ref<ScriptArguments>&& arguments, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier, WallTime timestamp)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -257,7 +257,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
     messageObject->setUrl(m_url);
     messageObject->setRepeatCount(static_cast<int>(m_repeatCount));
 
-    if (m_source == MessageSource::Network && !m_requestId.isEmpty())
+    if (m_source == MessageSource::Network && !isEmpty(m_requestId))
         messageObject->setNetworkRequestId(m_requestId);
 
     if (m_timestamp)
@@ -278,16 +278,16 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                     }
                     argumentsObject->addItem(inspectorValue.releaseNonNull());
                     if (m_arguments->argumentCount() > 1) {
-                        if (auto inspectorObject = injectedScript.wrapObject(columns, "console"_s, true))
+                        if (auto inspectorObject = injectedScript.wrapObject(columns, "console"_si, true))
                             argumentsObject->addItem(inspectorObject.releaseNonNull());
                     }
                 } else {
                     for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                        String descriptionHint;
+                        RefPtr<StringImpl> descriptionHint;
                         if (i == 0 && m_messageIsFirstArgument)
-                            descriptionHint = m_message.isNull() ? emptyString() : m_message;
+                            descriptionHint = !m_message ? emptyString() : m_message;
 
-                        auto inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console"_s, generatePreview, descriptionHint);
+                        auto inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console"_si, generatePreview, descriptionHint);
                         if (!inspectorValue) {
                             ASSERT_NOT_REACHED();
                             return;
@@ -300,15 +300,15 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
             if (m_jsonLogValues.size()) {
                 JSC::JSLockHolder lock(globalObject()->vm()); // Necessary for safe jsString() instantiation.
                 for (auto& message : m_jsonLogValues) {
-                    if (message.value.isEmpty())
+                    if (isEmpty(message.value))
                         continue;
                     RefPtr<Protocol::Runtime::RemoteObject> inspectorValue;
                     switch (message.type) {
                     case JSONLogValue::Type::JSON:
-                        inspectorValue = injectedScript.wrapJSONString(message.value, "console"_s, generatePreview);
+                        inspectorValue = injectedScript.wrapJSONString(message.value, "console"_si, generatePreview);
                         break;
                     case JSONLogValue::Type::String:
-                        inspectorValue = injectedScript.wrapObject(JSC::JSValue(JSC::jsString(globalObject()->vm(), message.value)), "console"_s, generatePreview);
+                        inspectorValue = injectedScript.wrapObject(JSC::JSValue(JSC::jsString(globalObject()->vm(), message.value)), "console"_si, generatePreview);
                         break;
                     }
                     if (!inspectorValue)
@@ -329,7 +329,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
     consoleFrontendDispatcher.messageAdded(WTF::move(messageObject));
 }
 
-String ConsoleMessage::toString() const
+RefPtr<StringImpl> ConsoleMessage::toString() const
 {
     if (m_jsonLogValues.isEmpty())
         return m_message;
@@ -388,17 +388,17 @@ bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
     return msg->m_source == m_source
         && msg->m_type == m_type
         && msg->m_level == m_level
-        && msg->m_message == m_message
+        && equal(msg->m_message, m_message)
         && msg->m_line == m_line
         && msg->m_column == m_column
-        && msg->m_url == m_url
-        && msg->m_requestId == m_requestId;
+        && equal(msg->m_url, m_url)
+        && equal(msg->m_requestId, m_requestId);
 }
 
 void ConsoleMessage::clear()
 {
     if (!m_message)
-        m_message = "<message collected>"_s;
+        m_message = "<message collected>"_si;
 
     if (m_arguments)
         m_arguments = nullptr;

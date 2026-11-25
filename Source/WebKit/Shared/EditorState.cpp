@@ -78,9 +78,9 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
             ts.dumpProperty("insideFixedPosition"_s, editorState.postLayoutData->insideFixedPosition);
 #endif // PLATFORM(COCOA)
 #if PLATFORM(IOS_FAMILY)
-        if (editorState.postLayoutData->markedText.length())
+        if (length(editorState.postLayoutData->markedText))
             ts.dumpProperty("markedText"_s, editorState.postLayoutData->markedText);
-        if (editorState.postLayoutData->wordAtSelection.length())
+        if (length(editorState.postLayoutData->wordAtSelection))
             ts.dumpProperty("wordAtSelection"_s, editorState.postLayoutData->wordAtSelection);
         if (editorState.postLayoutData->characterAfterSelection)
             ts.dumpProperty("characterAfterSelection"_s, editorState.postLayoutData->characterAfterSelection);
@@ -104,9 +104,9 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
             ts.dumpProperty("selectionBoundingRect"_s, editorState.postLayoutData->selectionBoundingRect);
         if (editorState.postLayoutData->candidateRequestStartPosition)
             ts.dumpProperty("candidateRequestStartPosition"_s, editorState.postLayoutData->candidateRequestStartPosition);
-        if (editorState.postLayoutData->paragraphContextForCandidateRequest.length())
+        if (length(editorState.postLayoutData->paragraphContextForCandidateRequest))
             ts.dumpProperty("paragraphContextForCandidateRequest"_s, editorState.postLayoutData->paragraphContextForCandidateRequest);
-        if (editorState.postLayoutData->stringForCandidateRequest.length())
+        if (length(editorState.postLayoutData->stringForCandidateRequest))
             ts.dumpProperty("stringForCandidateRequest"_s, editorState.postLayoutData->stringForCandidateRequest);
 #endif
 

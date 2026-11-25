@@ -36,6 +36,7 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -90,7 +91,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class MessageWithoutReply {
 public:
-    using Arguments = std::tuple<uint32_t, String, Vector<uint64_t>>;
+    using Arguments = std::tuple<uint32_t, RefPtr<StringImpl>, Vector<uint64_t>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwiftTypes_MessageWithoutReply; }
     static constexpr bool isSync = false;
@@ -98,7 +99,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    MessageWithoutReply(uint32_t value, const String& name, const Vector<uint64_t>& values)
+    MessageWithoutReply(uint32_t value, StringView name, const Vector<uint64_t>& values)
         : m_value(value)
         , m_name(name)
         , m_values(values)
@@ -115,7 +116,7 @@ public:
 
 private:
     uint32_t m_value;
-    const String& m_name;
+    StringView m_name;
     SUPPRESS_FORWARD_DECL_MEMBER const Vector<uint64_t>& m_values;
 };
 
@@ -176,7 +177,7 @@ private:
 
 class MessageWithMultipleReplies {
 public:
-    using Arguments = std::tuple<Vector<String>, Markable<WebCore::FrameIdentifier>>;
+    using Arguments = std::tuple<Vector<RefPtr<StringImpl>>, Markable<WebCore::FrameIdentifier>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwiftTypes_MessageWithMultipleReplies; }
     static constexpr bool isSync = false;
@@ -186,10 +187,10 @@ public:
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSwiftTypes_MessageWithMultipleRepliesReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using ReplyArguments = std::tuple<bool, Vector<String>, std::optional<double>>;
-    using Reply = CompletionHandler<void(bool, Vector<String>&&, std::optional<double>&&)>;
-    using Promise = WTF::NativePromise<std::tuple<bool, Vector<String>, std::optional<double>>, IPC::Error>;
-    MessageWithMultipleReplies(const Vector<String>& names, const Markable<WebCore::FrameIdentifier>& frameID)
+    using ReplyArguments = std::tuple<bool, Vector<RefPtr<StringImpl>>, std::optional<double>>;
+    using Reply = CompletionHandler<void(bool, Vector<RefPtr<StringImpl>>&&, std::optional<double>&&)>;
+    using Promise = WTF::NativePromise<std::tuple<bool, Vector<RefPtr<StringImpl>>, std::optional<double>>, IPC::Error>;
+    MessageWithMultipleReplies(const Vector<RefPtr<StringImpl>>& names, const Markable<WebCore::FrameIdentifier>& frameID)
         : m_names(names)
         , m_frameID(frameID)
     {
@@ -203,7 +204,7 @@ public:
     }
 
 private:
-    SUPPRESS_FORWARD_DECL_MEMBER const Vector<String>& m_names;
+    SUPPRESS_FORWARD_DECL_MEMBER const Vector<RefPtr<StringImpl>>& m_names;
     SUPPRESS_FORWARD_DECL_MEMBER const Markable<WebCore::FrameIdentifier>& m_frameID;
 };
 
@@ -315,8 +316,8 @@ public:
     static constexpr bool deferSendingIfSuspended = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using ReplyArguments = std::tuple<RefPtr<WebKit::TestSwiftRefCountedClass>, String>;
-    using Reply = CompletionHandler<void(RefPtr<WebKit::TestSwiftRefCountedClass>&&, String&&)>;
+    using ReplyArguments = std::tuple<RefPtr<WebKit::TestSwiftRefCountedClass>, RefPtr<StringImpl>>;
+    using Reply = CompletionHandler<void(RefPtr<WebKit::TestSwiftRefCountedClass>&&, RefPtr<StringImpl>&&)>;
     SynchronousMessageWithoutParameters()
     {
     }
@@ -389,7 +390,7 @@ private:
 
 class MessageWithMultipleRepliesReply {
 public:
-    using Arguments = std::tuple<bool, Vector<String>, std::optional<double>>;
+    using Arguments = std::tuple<bool, Vector<RefPtr<StringImpl>>, std::optional<double>>;
 
     static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSwiftTypes_MessageWithMultipleRepliesReply; }
     static constexpr bool isSync = false;
@@ -397,7 +398,7 @@ public:
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    MessageWithMultipleRepliesReply(bool found, const Vector<String>& matches, const std::optional<double>& score)
+    MessageWithMultipleRepliesReply(bool found, const Vector<RefPtr<StringImpl>>& matches, const std::optional<double>& score)
         : m_found(found)
         , m_matches(matches)
         , m_score(score)
@@ -414,7 +415,7 @@ public:
 
 private:
     bool m_found;
-    SUPPRESS_FORWARD_DECL_MEMBER const Vector<String>& m_matches;
+    SUPPRESS_FORWARD_DECL_MEMBER const Vector<RefPtr<StringImpl>>& m_matches;
     SUPPRESS_FORWARD_DECL_MEMBER const std::optional<double>& m_score;
 };
 

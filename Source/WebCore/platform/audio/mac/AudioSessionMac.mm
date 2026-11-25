@@ -288,7 +288,7 @@ void AudioSessionMac::setCategory(CategoryType category, Mode mode, RouteSharing
 
         protectedThis->m_setupArbitrationOngoing = false;
         if (error != RoutingArbitrationError::None) {
-            RELEASE_LOG_ERROR(Media, "AudioSessionMac::setCategory() - beginArbitrationWithCategory:%s failed with error %s", convertEnumerationToString(protectedThis->m_category).utf8(), convertEnumerationToString(error).utf8());
+            RELEASE_LOG_ERROR(Media, "AudioSessionMac::setCategory() - beginArbitrationWithCategory:%s failed with error %s", utf8(convertEnumerationToString(protectedThis->m_category)), utf8(convertEnumerationToString(error)));
             return;
         }
 
@@ -397,7 +397,7 @@ size_t AudioSessionMac::maximumNumberOfOutputChannels() const
     return channels;
 }
 
-String AudioSessionMac::routingContextUID() const
+RefPtr<StringImpl> AudioSessionMac::routingContextUID() const
 {
     return emptyString();
 }

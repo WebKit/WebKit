@@ -70,15 +70,15 @@ OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifier
 #endif
 
 struct KeyEventData {
-    String text;
+    RefPtr<StringImpl> text;
     int keyCode { 0 };
-    String keyIdentifier;
+    RefPtr<StringImpl> keyIdentifier;
     int virtualKey { 0 };
-    String code;
-    std::optional<std::pair<String, String>> editCommandAndText { };
+    RefPtr<StringImpl> code;
+    std::optional<std::pair<RefPtr<StringImpl>, RefPtr<StringImpl>>> editCommandAndText { };
 };
 
-using KeyToEventDataMap = MemoryCompactLookupOnlyRobinHoodHashMap<String, KeyEventData>;
+using KeyToEventDataMap = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, KeyEventData>;
 static const KeyToEventDataMap& nonAlphaNumericKeys()
 {
     static MainThreadNeverDestroyed<KeyToEventDataMap> table = [&] {
@@ -104,11 +104,11 @@ static const KeyToEventDataMap& nonAlphaNumericKeys()
             { "Meta"_s,         { emptyString(),                                0,      "Meta"_s,       VK_UNKNOWN,     "Meta"_s } },
             { "MetaLeft"_s,     { emptyString(),                                0,      "Meta"_s,       VK_LWIN,        "MetaLeft"_s } },
             { "MetaRight"_s,    { emptyString(),                                0,      "Meta"_s,       VK_APPS,        "MetaRight"_s } },
-            { "ArrowLeft"_s,    { { std::span { &arrowLeftCharacter, 1 } },     63234,  "Left"_s,       VK_LEFT,        "ArrowLeft"_s,        { { "moveLeft"_s, { } } } } },
-            { "ArrowRight"_s,   { { std::span { &arrowRightCharacter, 1 } },    63235,  "Right"_s,      VK_RIGHT,       "ArrowRight"_s,       { { "moveRight"_s, { } } } } },
-            { "ArrowUp"_s,      { { std::span { &arrowUpCharacter, 1 } },       63232,  "Up"_s,         VK_UP,          "ArrowUp"_s,          { { "moveUp"_s, { } } } } },
-            { "ArrowDown"_s,    { { std::span { &arrowDownCharacter, 1 } },     63233,  "Down"_s,       VK_DOWN,        "ArrowDown"_s,        { { "moveDown"_s, { } } } } },
-            { "Delete"_s,       { { std::span { &deleteCharacter, 1 } },        63272,  "U+007F"_s,     VK_DELETE,      "Delete"_s,           { { "deleteForward"_s, { } } } } },
+            { "ArrowLeft"_s,    { StringImpl::create(std::span { &arrowLeftCharacter, 1 }), 63234,  "Left"_s,       VK_LEFT,        "ArrowLeft"_s,        { { "moveLeft"_s, { } } } } },
+            { "ArrowRight"_s,   { StringImpl::create(std::span { &arrowRightCharacter, 1 }), 63235,  "Right"_s,      VK_RIGHT,       "ArrowRight"_s,       { { "moveRight"_s, { } } } } },
+            { "ArrowUp"_s,      { StringImpl::create(std::span { &arrowUpCharacter, 1 }), 63232,  "Up"_s,         VK_UP,          "ArrowUp"_s,          { { "moveUp"_s, { } } } } },
+            { "ArrowDown"_s,    { StringImpl::create(std::span { &arrowDownCharacter, 1 }), 63233,  "Down"_s,       VK_DOWN,        "ArrowDown"_s,        { { "moveDown"_s, { } } } } },
+            { "Delete"_s,       { StringImpl::create(std::span { &deleteCharacter, 1 }), 63272,  "U+007F"_s,     VK_DELETE,      "Delete"_s,           { { "deleteForward"_s, { } } } } },
             { " "_s,            { " "_s,                                        32,     "U+0020"_s,     VK_SPACE,       "Space"_s,            { { "insertText"_s, " "_s } } } },
             { "`"_s,            { "`"_s,                                        96,     "U+0060"_s,     VK_OEM_3,       "Backquote"_s,        { { "insertText"_s, "`"_s } } } },
             { "~"_s,            { "~"_s,                                        126,    "U+007E"_s,     VK_OEM_3,       "Backquote"_s,        { { "insertText"_s, "~"_s } } } },
@@ -157,18 +157,18 @@ static const KeyToEventDataMap& nonAlphaNumericKeys()
     return table.get();
 }
 
-static std::optional<KeyEventData> lookup(const String& key)
+static std::optional<KeyEventData> lookup(StringImpl* key)
 {
-    if (key.isEmpty())
+    if (isEmpty(key))
         return { };
 
     if (auto result = nonAlphaNumericKeys().getOptional(key))
         return result;
 
-    if (key.length() != 1)
+    if (length(key) != 1)
         return { };
 
-    auto character = key.codeUnitAt(0);
+    auto character = codeUnitAt(key, 0);
     if (character >= 'A' && character <= 'Z') {
         return { {
             key,
@@ -187,7 +187,7 @@ static std::optional<KeyEventData> lookup(const String& key)
             static_cast<int>(character),
             makeString("U+00"_s, hex(static_cast<unsigned>(uppercaseCharacter), 2, WTF::Uppercase)),
             static_cast<int>(VK_A + (uppercaseCharacter - 'A')),
-            makeString("Key"_s, key.convertToASCIIUppercase()),
+            makeString("Key"_s, convertToASCIIUppercase(key)),
             { { "insertText"_s, key } },
         } };
     }
@@ -206,7 +206,7 @@ static std::optional<KeyEventData> lookup(const String& key)
     return { };
 }
 
-std::optional<PlatformKeyboardEvent> PlatformKeyboardEvent::syntheticEventFromText(Type type, const String& key)
+std::optional<PlatformKeyboardEvent> PlatformKeyboardEvent::syntheticEventFromText(Type type, StringImpl* key)
 {
     auto info = lookup(key);
     if (!info)
@@ -218,7 +218,7 @@ std::optional<PlatformKeyboardEvent> PlatformKeyboardEvent::syntheticEventFromTe
     if (commandAndText) {
         auto [editCommandName, text] = *commandAndText;
         auto commandName = makeString(editCommandName, ':');
-        if (text.isEmpty())
+        if (isEmpty(text))
             event.m_commands = { KeypressCommand { WTF::move(commandName) } };
         else
             event.m_commands = { { WTF::move(commandName), WTF::move(text) } };

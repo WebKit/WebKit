@@ -38,15 +38,15 @@
 
 namespace WebCore {
 
-bool File::shouldReplaceFile(const String& path)
+bool File::shouldReplaceFile(StringImpl* path)
 {
-    if (path.isEmpty())
+    if (isEmpty(path))
         return false;
 
     NSError *error = nil;
-    RetainPtr pathURL = [NSURL URLByResolvingAliasFileAtURL:[NSURL fileURLWithPath:path.createNSString().get() isDirectory:NO] options:NSURLBookmarkResolutionWithoutUI error:&error];
+    RetainPtr pathURL = [NSURL URLByResolvingAliasFileAtURL:[NSURL fileURLWithPath:createNSString(path).get() isDirectory:NO] options:NSURLBookmarkResolutionWithoutUI error:&error];
     if (!pathURL) {
-        LOG_ERROR("Failed to resolve alias at path %s with error %@.\n", path.utf8(), error);
+        LOG_ERROR("Failed to resolve alias at path %s with error %@.\n", utf8(path), error);
         return false;
     }
 
@@ -59,11 +59,11 @@ bool File::shouldReplaceFile(const String& path)
     return [uti conformsToType:UTTypePackage];
 }
 
-void File::computeNameAndContentTypeForReplacedFile(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType)
+void File::computeNameAndContentTypeForReplacedFile(StringImpl* path, StringImpl* nameOverride, RefPtr<StringImpl>& effectiveName, RefPtr<StringImpl>& effectiveContentType)
 {
-    ASSERT(!FileSystem::pathFileName(path).endsWith('/')); // Expecting to get a path without trailing slash, even for directories.
-    effectiveContentType = "application/zip"_s;
-    effectiveName = makeString((nameOverride.isNull() ? FileSystem::pathFileName(path) : nameOverride), ".zip"_s);
+    ASSERT(!endsWith(FileSystem::pathFileName(path), '/')); // Expecting to get a path without trailing slash, even for directories.
+    effectiveContentType = "application/zip"_si;
+    effectiveName = makeString((!nameOverride ? FileSystem::pathFileName(path) : RefPtr<StringImpl> { nameOverride }), ".zip"_s);
 }
 
 }

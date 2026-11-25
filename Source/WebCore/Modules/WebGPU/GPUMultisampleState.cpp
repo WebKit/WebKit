@@ -33,9 +33,9 @@ namespace WebCore {
 Ref<JSON::Object> GPUMultisampleState::toJSON() const
 {
     Ref json = JSON::Object::create();
-    json->setDouble("count"_s, count);
-    json->setDouble("mask"_s, mask);
-    json->setBoolean("alphaToCoverageEnabled"_s, alphaToCoverageEnabled);
+    json->setDouble("count"_si, count);
+    json->setDouble("mask"_si, mask);
+    json->setBoolean("alphaToCoverageEnabled"_si, alphaToCoverageEnabled);
     return json;
 }
 

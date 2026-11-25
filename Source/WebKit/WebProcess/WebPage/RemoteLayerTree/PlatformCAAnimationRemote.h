@@ -42,7 +42,7 @@ class RemoteLayerTreeHost;
 
 class PlatformCAAnimationRemote final : public WebCore::PlatformCAAnimation {
 public:
-    static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
+    static Ref<PlatformCAAnimation> create(AnimationType, StringImpl* keyPath);
 
     virtual ~PlatformCAAnimationRemote() = default;
 
@@ -50,7 +50,7 @@ public:
 
     Ref<PlatformCAAnimation> copy() const override;
 
-    String keyPath() const override;
+    RefPtr<StringImpl> keyPath() const override;
 
     CFTimeInterval beginTime() const override;
     void setBeginTime(CFTimeInterval) override;
@@ -129,11 +129,11 @@ public:
 
     const Properties& properties() const LIFETIME_BOUND { return m_properties; }
 
-    typedef Vector<std::pair<String, Properties>> AnimationsList;
-    static void updateLayerAnimations(CALayer *, RemoteLayerTreeHost*, const AnimationsList& animationsToAdd, const HashSet<String>& animationsToRemove);
+    typedef Vector<std::pair<RefPtr<StringImpl>, Properties>> AnimationsList;
+    static void updateLayerAnimations(CALayer *, RemoteLayerTreeHost*, const AnimationsList& animationsToAdd, const HashSet<RefPtr<StringImpl>>& animationsToRemove);
 
 private:
-    PlatformCAAnimationRemote(AnimationType, const String& keyPath);
+    PlatformCAAnimationRemote(AnimationType, StringImpl* keyPath);
 
     Properties m_properties;
 };

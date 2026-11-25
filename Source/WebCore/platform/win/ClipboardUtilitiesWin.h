@@ -37,9 +37,9 @@ class DocumentFragment;
 
 UINT customDataClipboardFormat();
 
-HGLOBAL createGlobalData(const String&);
+HGLOBAL createGlobalData(StringImpl*);
 HGLOBAL createGlobalData(const Vector<char>&);
-HGLOBAL createGlobalData(const URL& url, const String& title);
+HGLOBAL createGlobalData(const URL& url, StringImpl* title);
 HGLOBAL createGlobalData(std::span<const uint8_t>);
 
 FORMATETC* urlWFormat();
@@ -54,10 +54,10 @@ FORMATETC* smartPasteFormat();
 FORMATETC* fileDescriptorFormat();
 FORMATETC* fileContentFormatZero();
 
-void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& result);
+void markupToCFHTML(StringImpl* markup, StringImpl* srcURL, Vector<char>& result);
 
-void replaceNewlinesWithWindowsStyleNewlines(String&);
-void replaceNBSPWithSpace(String&);
+void replaceNewlinesWithWindowsStyleNewlines(RefPtr<StringImpl>&);
+void replaceNBSPWithSpace(RefPtr<StringImpl>&);
 
 bool containsFilenames(const IDataObject*);
 bool containsFilenames(const DragDataMap*);
@@ -68,22 +68,22 @@ RefPtr<DocumentFragment> fragmentFromFilenames(Document*, const IDataObject*);
 RefPtr<DocumentFragment> fragmentFromFilenames(Document*, const DragDataMap*);
 RefPtr<DocumentFragment> fragmentFromHTML(Document*, IDataObject*);
 RefPtr<DocumentFragment> fragmentFromHTML(Document*, const DragDataMap*);
-Ref<DocumentFragment> fragmentFromCFHTML(Document*, const String& cfhtml);
+Ref<DocumentFragment> fragmentFromCFHTML(Document*, StringImpl* cfhtml);
 
-String getURL(IDataObject*, DragData::FilenameConversionPolicy, String* title = nullptr);
-String getURL(const DragDataMap*, DragData::FilenameConversionPolicy, String* title = nullptr);
-String getPlainText(IDataObject*);
-String getPlainText(const DragDataMap*);
-String getTextHTML(IDataObject*);
-String getTextHTML(const DragDataMap*);
-String getCFHTML(IDataObject*);
-String getCFHTML(const DragDataMap*);
+RefPtr<StringImpl> getURL(IDataObject*, DragData::FilenameConversionPolicy, RefPtr<StringImpl>* title = nullptr);
+RefPtr<StringImpl> getURL(const DragDataMap*, DragData::FilenameConversionPolicy, RefPtr<StringImpl>* title = nullptr);
+RefPtr<StringImpl> getPlainText(IDataObject*);
+RefPtr<StringImpl> getPlainText(const DragDataMap*);
+RefPtr<StringImpl> getTextHTML(IDataObject*);
+RefPtr<StringImpl> getTextHTML(const DragDataMap*);
+RefPtr<StringImpl> getCFHTML(IDataObject*);
+RefPtr<StringImpl> getCFHTML(const DragDataMap*);
 
-void getClipboardData(IDataObject*, FORMATETC* fetc, Vector<String>& dataStrings);
-void setClipboardData(IDataObject*, UINT format, const Vector<String>& dataStrings);
-void getFileDescriptorData(IDataObject*, int& size, String& pathname);
+void getClipboardData(IDataObject*, FORMATETC* fetc, Vector<RefPtr<StringImpl>>& dataStrings);
+void setClipboardData(IDataObject*, UINT format, const Vector<RefPtr<StringImpl>>& dataStrings);
+void getFileDescriptorData(IDataObject*, int& size, RefPtr<StringImpl>& pathname);
 void getFileContentData(IDataObject*, int size, void* dataBlob);
-void setFileDescriptorData(IDataObject*, int size, const String& pathname);
+void setFileDescriptorData(IDataObject*, int size, StringImpl* pathname);
 void setFileContentData(IDataObject*, int size, void* dataBlob);
 
 } // namespace WebCore

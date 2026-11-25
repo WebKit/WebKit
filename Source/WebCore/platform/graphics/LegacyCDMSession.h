@@ -39,7 +39,7 @@ class LegacyCDMSessionClient : public AbstractRefCountedAndCanMakeWeakPtr<Legacy
     WTF_FORBID_HEAP_ALLOCATION_FOR_ABSTRACT_CLASS(LegacyCDMSessionClient);
 public:
     virtual ~LegacyCDMSessionClient() = default;
-    virtual void sendMessage(Uint8Array*, String destinationURL) = 0;
+    virtual void sendMessage(Uint8Array*, RefPtr<StringImpl> destinationURL) = 0;
 
     enum : uint8_t {
         MediaKeyErrorUnknown = 1,
@@ -52,8 +52,8 @@ public:
     typedef unsigned short MediaKeyErrorCode;
     virtual void sendError(MediaKeyErrorCode, uint32_t systemCode) = 0;
 
-    virtual String mediaKeysStorageDirectory() const = 0;
-    virtual String mediaKeysHashSalt() const = 0;
+    virtual RefPtr<StringImpl> mediaKeysStorageDirectory() const = 0;
+    virtual RefPtr<StringImpl> mediaKeysHashSalt() const = 0;
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
@@ -75,11 +75,11 @@ public:
     virtual void invalidate() { }
 
     virtual LegacyCDMSessionType type() const { return CDMSessionTypeUnknown; }
-    virtual const String& sessionId() const = 0;
-    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) = 0;
+    virtual const RefPtr<StringImpl>& sessionId() const = 0;
+    virtual RefPtr<Uint8Array> generateKeyRequest(StringImpl* mimeType, Uint8Array* initData, RefPtr<StringImpl>& destinationURL, unsigned short& errorCode, uint32_t& systemCode) = 0;
     virtual void releaseKeys() = 0;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) = 0;
-    virtual RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const = 0;
+    virtual RefPtr<ArrayBuffer> cachedKeyForKeyID(StringImpl*) const = 0;
 
     virtual bool isRemoteLegacyCDMSession() const { return false; }
 };

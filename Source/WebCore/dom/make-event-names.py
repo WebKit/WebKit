@@ -141,12 +141,12 @@ public:''')
             conditional = entry.get('conditional', None)
             if conditional:
                 writeln(f'#if {conditional}')
-            writeln(f'    const AtomString {name}Event;')
+            writeln(f'    const RefPtr<AtomStringImpl> {name}Event;')
             if conditional:
                 writeln('#endif')
 
         writeln('''
-    EventTypeInfo typeInfoForEvent(const AtomString&) const;
+    EventTypeInfo typeInfoForEvent(AtomStringImpl*) const;
 
     template<class... Args>
     static std::unique_ptr<EventNames> create(Args&&... args)
@@ -154,7 +154,7 @@ public:''')
         return std::unique_ptr<EventNames>(new EventNames(std::forward<Args>(args)...));
     }
 ''')
-        writeln(f'    std::array<const AtomString, {len(event_names_input)}> allEventNames() const;')
+        writeln(f'    std::array<const RefPtr<AtomStringImpl>, {len(event_names_input)}> allEventNames() const;')
         writeln(f'')
         writeln(f'    static constexpr std::array timedEvents {{')
         for name in category_map['EventTimingEligible']:
@@ -165,12 +165,12 @@ public:''')
             writeln(f'#endif') if conditional else None
         writeln(f'    }};')
         writeln(f'')
-        writeln(f'    const AtomString& eventNameFromEventType(EventType) const;')
+        writeln(f'    const RefPtr<AtomStringImpl>& eventNameFromEventType(EventType) const;')
         writeln('''
 private:
     EventNames();
 
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, EventTypeInfo> m_typeInfoMap;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<AtomStringImpl>, EventTypeInfo> m_typeInfoMap;
 };
 
 const EventNames& eventNames();
@@ -183,7 +183,7 @@ inline const EventNames& eventNames()
     return threadGlobalDataSingleton().eventNames();
 }
 
-inline EventTypeInfo EventNames::typeInfoForEvent(const AtomString& eventType) const
+inline EventTypeInfo EventNames::typeInfoForEvent(AtomStringImpl* eventType) const
 {
     return m_typeInfoMap.inlineGet(eventType);
 }
@@ -240,7 +240,7 @@ namespace WebCore {
             conditional = event_names_input[name].get('conditional', None)
             if conditional:
                 writeln(f'#if {conditional}')
-            writeln(f'    {delimiter} {name}Event({name}Data)')
+            writeln(f'    {delimiter} {name}Event(AtomStringImpl::add({name}Data))')
             delimiter = ','
             if conditional:
                 writeln('#endif')
@@ -252,7 +252,7 @@ namespace WebCore {
             conditional = entry.get('conditional', None)
             if conditional:
                 writeln(f'#if {conditional}')
-            write(f'        {{ \"{name}\"_s, {{ EventType::{name}, {{ ')
+            write(f'        {{ RefPtr {{ {name}Event }}, {{ EventType::{name}, {{ ')
             categories = entry.get('categories', [])
             if categories:
                 for category in categories[:-1]:
@@ -269,7 +269,7 @@ namespace WebCore {
         writeln('    })')
         writeln('{ }')
         writeln('')
-        writeln(f'std::array<const AtomString, {len(event_names_input)}> EventNames::allEventNames() const')
+        writeln(f'std::array<const RefPtr<AtomStringImpl>, {len(event_names_input)}> EventNames::allEventNames() const')
         writeln('{')
         writeln('    return { {')
         for name in sorted(event_names_input.keys()):
@@ -299,7 +299,7 @@ namespace WebCore {
         writeln('    return eventHandlerAttributeNameSet.contains(name);')
         writeln('}')
         writeln('')
-        writeln(f'static constexpr std::array<const AtomString EventNames::*, {len(event_names_input)}> eventStringInEventNames {{')
+        writeln(f'static constexpr std::array<const RefPtr<AtomStringImpl> EventNames::*, {len(event_names_input)}> eventStringInEventNames {{')
         for name in sorted(event_names_input.keys()):
             entry = event_names_input[name]
             conditional = entry.get('conditional', None)
@@ -308,7 +308,7 @@ namespace WebCore {
             writeln(f'#endif') if conditional else None
         writeln('};')
         writeln('''
-const AtomString& EventNames::eventNameFromEventType(EventType type) const {
+const RefPtr<AtomStringImpl>& EventNames::eventNameFromEventType(EventType type) const {
     auto typeAsIndex = static_cast<size_t>(type) - 1;
     return this->*(eventStringInEventNames[typeAsIndex]);
 }

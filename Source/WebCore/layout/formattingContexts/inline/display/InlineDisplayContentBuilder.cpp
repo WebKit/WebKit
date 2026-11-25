@@ -188,7 +188,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
 
     auto inkOverflow = textRunRect;
     auto adjustedContentToRender = [&] {
-        return text.needsHyphen ? makeString(StringView(content).substring(text.start, text.length), style->hyphenString()) : String();
+        return text.needsHyphen ? makeString(StringView(content).substring(text.start, text.length), style->hyphenString()) : nullptr;
     };
     auto shapingBoundary = [&] {
         if (lineRun.isShapingBoundaryStart())

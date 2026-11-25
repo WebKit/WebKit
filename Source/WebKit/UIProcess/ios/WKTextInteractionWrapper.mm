@@ -278,7 +278,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
     // Ensure that the selection highlight is inserted after all `subviewsBeforeSelection`.
     __block std::optional<NSUInteger> indexOfHighlightView;
     __block std::optional<NSUInteger> indexToInsertManagedSelectionViews = 0;
-    RetainPtr tileGridContainerName = WebCore::TileController::tileGridContainerLayerName().createNSString();
+    RetainPtr tileGridContainerName = createNSString(WebCore::TileController::tileGridContainerLayerName());
     [[newContainer subviews] enumerateObjectsUsingBlock:^(UIView *view, NSUInteger index, BOOL*) {
         if (view == highlightView) {
             indexOfHighlightView = index;

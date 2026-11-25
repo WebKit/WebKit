@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-FontChanges::FontChanges(String&& fontName, String&& fontFamily, std::optional<double>&& fontSize, std::optional<double>&& fontSizeDelta, std::optional<bool>&& bold, std::optional<bool>&& italic)
+FontChanges::FontChanges(RefPtr<StringImpl>&& fontName, RefPtr<StringImpl>&& fontFamily, std::optional<double>&& fontSize, std::optional<double>&& fontSizeDelta, std::optional<bool>&& bold, std::optional<bool>&& italic)
     : m_fontName(WTF::move(fontName))
     , m_fontFamily(WTF::move(fontFamily))
     , m_fontSize(WTF::move(fontSize))
@@ -50,7 +50,7 @@ FontChanges::FontChanges(String&& fontName, String&& fontFamily, std::optional<d
 
 #if !PLATFORM(COCOA)
 
-const String& FontChanges::platformFontFamilyNameForCSS() const
+const RefPtr<StringImpl>& FontChanges::platformFontFamilyNameForCSS() const
 {
     return m_fontFamily;
 }
@@ -67,9 +67,9 @@ Ref<MutableStyleProperties> FontChanges::createStyleProperties() const
 {
     auto style = MutableStyleProperties::create();
 
-    if (!m_fontFamily.isNull()) {
-        AtomString familyNameForCSS { platformFontFamilyNameForCSS() };
-        if (!familyNameForCSS.isNull())
+    if (m_fontFamily) {
+        RefPtr<AtomStringImpl> familyNameForCSS { AtomStringImpl::add(platformFontFamilyNameForCSS()) };
+        if (familyNameForCSS)
             style->setProperty(CSSPropertyID::FontFamily, CSSValuePool::singleton().createFontFamilyNameValue(familyNameForCSS));
     }
 

@@ -42,9 +42,9 @@ struct TextAttachmentFileWrapper {
 #if !PLATFORM(IOS_FAMILY)
     bool ignoresOrientation = false;
 #endif
-    String preferredFilename;
+    RefPtr<StringImpl> preferredFilename;
     RetainPtr<CFDataRef> data;
-    String accessibilityLabel;
+    RefPtr<StringImpl> accessibilityLabel;
 };
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -55,10 +55,10 @@ struct MultiRepresentationHEICAttachmentSingleImage {
 };
 
 struct MultiRepresentationHEICAttachmentData {
-    String identifier;
-    String description;
-    String credit;
-    String digitalSourceType;
+    RefPtr<StringImpl> identifier;
+    RefPtr<StringImpl> description;
+    RefPtr<StringImpl> credit;
+    RefPtr<StringImpl> digitalSourceType;
     Vector<MultiRepresentationHEICAttachmentSingleImage> images;
 
     // Not serialized.

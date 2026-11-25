@@ -51,16 +51,16 @@ public:
     Navigation* navigation() { return m_navigation.get(); }
 
     bool canShowMIMEType() const { return m_canShowMIMEType; }
-    const WTF::String& downloadAttribute() const LIFETIME_BOUND { return m_downloadAttribute; }
+    const RefPtr<StringImpl>& downloadAttribute() const LIFETIME_BOUND { return m_downloadAttribute; }
 
 private:
-    NavigationResponse(API::FrameInfo&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, bool canShowMIMEType, WTF::String&& downloadAttribute, Navigation*);
+    NavigationResponse(API::FrameInfo&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, bool canShowMIMEType, RefPtr<StringImpl>&& downloadAttribute, Navigation*);
 
     const Ref<FrameInfo> m_frame;
     WebCore::ResourceRequest m_request;
     WebCore::ResourceResponse m_response;
     bool m_canShowMIMEType;
-    WTF::String m_downloadAttribute;
+    RefPtr<StringImpl> m_downloadAttribute;
     const RefPtr<Navigation> m_navigation;
     RefPtr<FrameInfo> m_sourceFrame;
 };

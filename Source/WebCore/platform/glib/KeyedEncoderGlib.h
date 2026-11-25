@@ -41,28 +41,28 @@ public:
 private:
     RefPtr<WebCore::SharedBuffer> finishEncoding() final;
 
-    void encodeBytes(const String& key, std::span<const uint8_t>) final;
-    void encodeBool(const String& key, bool) final;
-    void encodeUInt32(const String& key, uint32_t) final;
-    void encodeUInt64(const String& key, uint64_t) final;
-    void encodeInt32(const String& key, int32_t) final;
-    void encodeInt64(const String& key, int64_t) final;
-    void encodeFloat(const String& key, float) final;
-    void encodeDouble(const String& key, double) final;
-    void encodeString(const String& key, const String&) final;
+    void encodeBytes(StringImpl* key, std::span<const uint8_t>) final;
+    void encodeBool(StringImpl* key, bool) final;
+    void encodeUInt32(StringImpl* key, uint32_t) final;
+    void encodeUInt64(StringImpl* key, uint64_t) final;
+    void encodeInt32(StringImpl* key, int32_t) final;
+    void encodeInt64(StringImpl* key, int64_t) final;
+    void encodeFloat(StringImpl* key, float) final;
+    void encodeDouble(StringImpl* key, double) final;
+    void encodeString(StringImpl* key, StringImpl*) final;
 
-    void beginObject(const String& key) final;
+    void beginObject(StringImpl* key) final;
     void endObject() final;
 
-    void beginArray(const String& key) final;
+    void beginArray(StringImpl* key) final;
     void beginArrayElement() final;
     void endArrayElement() final;
     void endArray() final;
 
     GVariantBuilder m_variantBuilder;
     Vector<GVariantBuilder*, 16> m_variantBuilderStack;
-    Vector<std::pair<String, GRefPtr<GVariantBuilder>>, 16> m_arrayStack;
-    Vector<std::pair<String, GRefPtr<GVariantBuilder>>, 16> m_objectStack;
+    Vector<std::pair<RefPtr<StringImpl>, GRefPtr<GVariantBuilder>>, 16> m_arrayStack;
+    Vector<std::pair<RefPtr<StringImpl>, GRefPtr<GVariantBuilder>>, 16> m_objectStack;
 };
 
 } // namespace WebCore

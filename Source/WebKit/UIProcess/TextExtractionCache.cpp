@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-void TextExtractionCache::add(const String& url, Vector<TextExtractionLineContent>&& lineContents)
+void TextExtractionCache::add(StringImpl* url, Vector<TextExtractionLineContent>&& lineContents)
 {
     if (lineContents.isEmpty())
         return;
@@ -55,9 +55,9 @@ void TextExtractionCache::add(const String& url, Vector<TextExtractionLineConten
         m_entries.removeAt(0, m_entries.size() - maxEntries);
 }
 
-Vector<String> TextExtractionCache::contextWindowBefore(const Vector<TextExtractionLineContent>& lines, unsigned targetIndex)
+Vector<RefPtr<StringImpl>> TextExtractionCache::contextWindowBefore(const Vector<TextExtractionLineContent>& lines, unsigned targetIndex)
 {
-    Vector<String> window(ReserveCapacityTag { }, contextLineCount);
+    Vector<RefPtr<StringImpl>> window(ReserveCapacityTag { }, contextLineCount);
     for (unsigned offset = contextLineCount; offset >= 1; --offset) {
         if (offset > targetIndex)
             window.append(emptyString());
@@ -67,10 +67,10 @@ Vector<String> TextExtractionCache::contextWindowBefore(const Vector<TextExtract
     return window;
 }
 
-Vector<String> TextExtractionCache::contextWindowAfter(const Vector<TextExtractionLineContent>& lines, unsigned targetIndex)
+Vector<RefPtr<StringImpl>> TextExtractionCache::contextWindowAfter(const Vector<TextExtractionLineContent>& lines, unsigned targetIndex)
 {
     unsigned lineCount = lines.size();
-    Vector<String> window(ReserveCapacityTag { }, contextLineCount);
+    Vector<RefPtr<StringImpl>> window(ReserveCapacityTag { }, contextLineCount);
     for (unsigned offset = 1; offset <= contextLineCount; ++offset) {
         unsigned index = targetIndex + offset;
         if (index >= lineCount)
@@ -81,7 +81,7 @@ Vector<String> TextExtractionCache::contextWindowAfter(const Vector<TextExtracti
     return window;
 }
 
-auto TextExtractionCache::resolve(const String& identifier) const -> ResolvedNode
+auto TextExtractionCache::resolve(StringImpl* identifier) const -> ResolvedNode
 {
     if (m_entries.isEmpty())
         return { { identifier }, NodeResolution::Unknown };
@@ -99,15 +99,15 @@ auto TextExtractionCache::resolve(const String& identifier) const -> ResolvedNod
     if (sourceEntryIndices.isEmpty())
         return { { identifier }, NodeResolution::Unknown };
 
-    Vector<String> candidates;
+    Vector<RefPtr<StringImpl>> candidates;
     Borrow borrowedEntries = m_entries;
     auto& newestURL = borrowedEntries[newestIndex].url;
     for (size_t targetIndex = newestIndex; targetIndex > sourceEntryIndices.first(); --targetIndex) {
         auto& target = borrowedEntries[targetIndex];
-        if (target.url != newestURL)
+        if (!equal(target.url, newestURL))
             continue;
 
-        HashSet<String> remappedIdentifiers;
+        HashSet<RefPtr<StringImpl>> remappedIdentifiers;
         for (auto sourceIndex : sourceEntryIndices) {
             if (sourceIndex >= targetIndex)
                 break;
@@ -119,11 +119,11 @@ auto TextExtractionCache::resolve(const String& identifier) const -> ResolvedNod
             auto sourceContextAfter = contextWindowAfter(source.lines, sourceLineIndex);
 
             for (unsigned candidate = 0; candidate < target.lines.size(); ++candidate) {
-                if (target.lines[candidate].cachedRepresentation != sourceLineContent)
+                if (!equal(target.lines[candidate].cachedRepresentation, sourceLineContent))
                     continue;
 
-                bool contextBeforeMatches = contextWindowBefore(target.lines, candidate) == sourceContextBefore;
-                bool contextAfterMatches = contextWindowAfter(target.lines, candidate) == sourceContextAfter;
+                bool contextBeforeMatches = contentEquals(contextWindowBefore(target.lines, candidate), sourceContextBefore);
+                bool contextAfterMatches = contentEquals(contextWindowAfter(target.lines, candidate), sourceContextAfter);
                 if (!contextBeforeMatches && !contextAfterMatches)
                     continue;
 
@@ -142,7 +142,7 @@ auto TextExtractionCache::resolve(const String& identifier) const -> ResolvedNod
         }
 
         auto& remapped = *remappedIdentifiers.begin();
-        if (!candidates.contains(remapped))
+        if (!candidates.containsIf([&](auto& item) { return equal(item, remapped); }))
             candidates.append(remapped);
 
         if (candidates.size() >= maxRemapCandidates)

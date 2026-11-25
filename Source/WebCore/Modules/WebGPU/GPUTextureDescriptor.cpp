@@ -39,20 +39,20 @@ Ref<JSON::Object> GPUTextureDescriptor::toJSON() const
         auto sizeJSON = JSON::ArrayOf<double>::create();
         for (auto value : size)
             sizeJSON->addItem(value);
-        json->setArray("size"_s, WTF::move(sizeJSON));
+        json->setArray("size"_si, WTF::move(sizeJSON));
     }, [&](const GPUExtent3DDict& size) {
-        json->setObject("size"_s, size.toJSON());
+        json->setObject("size"_si, size.toJSON());
     });
-    json->setDouble("mipLevelCount"_s, mipLevelCount);
-    json->setDouble("sampleCount"_s, sampleCount);
-    json->setString("dimension"_s, convertEnumerationToString(dimension));
-    json->setString("format"_s, convertEnumerationToString(format));
-    json->setDouble("usage"_s, usage);
+    json->setDouble("mipLevelCount"_si, mipLevelCount);
+    json->setDouble("sampleCount"_si, sampleCount);
+    json->setString("dimension"_si, convertEnumerationToString(dimension));
+    json->setString("format"_si, convertEnumerationToString(format));
+    json->setDouble("usage"_si, usage);
 
-    auto viewFormatsJSON = JSON::ArrayOf<String>::create();
+    auto viewFormatsJSON = JSON::ArrayOf<RefPtr<StringImpl>>::create();
     for (auto viewFormat : viewFormats)
         viewFormatsJSON->addItem(convertEnumerationToString(viewFormat));
-    json->setArray("viewFormats"_s, WTF::move(viewFormatsJSON));
+    json->setArray("viewFormats"_si, WTF::move(viewFormatsJSON));
     return json;
 }
 

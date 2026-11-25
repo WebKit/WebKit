@@ -70,11 +70,11 @@ TEST(CustomUserAgent, UpdateCachedNavigatorUserAgent)
 
 namespace TestWebKitAPI {
 
-static String userAgentFromRequest(const Vector<char>& request)
+static RefPtr<StringImpl> userAgentFromRequest(const Vector<char>& request)
 {
-    auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
+    auto headers = split(StringImpl::fromUTF8(request.span()), "\r\n"_s);
     auto index = headers.findIf([](auto& header) {
-        return header.startsWith("User-Agent:"_s);
+        return startsWith(header, "User-Agent:"_s);
     });
     if (index == notFound)
         return { };
@@ -86,13 +86,13 @@ static String userAgentFromRequest(const Vector<char>& request)
 // request must carry the updated User-Agent even when no process swap occurs.
 TEST(CustomUserAgent, PageLevelCustomUserAgentUpdatedInsidePolicyAppliesToRedirectTarget)
 {
-    String receivedUserAgentOnTarget;
+    RefPtr<StringImpl> receivedUserAgentOnTarget;
     bool targetWasRequested = false;
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/redirect"_s) {
+            if (equal(path, "/redirect"_s)) {
                 co_await connection.awaitableSend(makeString(
                     "HTTP/1.1 302 Found\r\n"
                     "Location: /target\r\n"
@@ -100,7 +100,7 @@ TEST(CustomUserAgent, PageLevelCustomUserAgentUpdatedInsidePolicyAppliesToRedire
                     "\r\n"_s));
                 continue;
             }
-            if (path == "/target"_s) {
+            if (equal(path, "/target"_s)) {
                 receivedUserAgentOnTarget = userAgentFromRequest(request);
                 targetWasRequested = true;
                 co_await connection.awaitableSend(
@@ -136,13 +136,13 @@ TEST(CustomUserAgent, PageLevelCustomUserAgentUpdatedInsidePolicyAppliesToRedire
 // via preferences._customUserAgent inside the policy callback for /target.
 TEST(CustomUserAgent, WebpagePreferencesCustomUserAgentAppliesToRedirectTarget)
 {
-    String receivedUserAgentOnTarget;
+    RefPtr<StringImpl> receivedUserAgentOnTarget;
     bool targetWasRequested = false;
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/redirect"_s) {
+            if (equal(path, "/redirect"_s)) {
                 co_await connection.awaitableSend(makeString(
                     "HTTP/1.1 302 Found\r\n"
                     "Location: /target\r\n"
@@ -150,7 +150,7 @@ TEST(CustomUserAgent, WebpagePreferencesCustomUserAgentAppliesToRedirectTarget)
                     "\r\n"_s));
                 continue;
             }
-            if (path == "/target"_s) {
+            if (equal(path, "/target"_s)) {
                 receivedUserAgentOnTarget = userAgentFromRequest(request);
                 targetWasRequested = true;
                 co_await connection.awaitableSend(
@@ -184,13 +184,13 @@ TEST(CustomUserAgent, WebpagePreferencesCustomUserAgentAppliesToRedirectTarget)
 // still receive the default browser User-Agent unmodified by the fix.
 TEST(CustomUserAgent, NoCustomUserAgentRedirectUsesDefault)
 {
-    String receivedUserAgentOnTarget;
+    RefPtr<StringImpl> receivedUserAgentOnTarget;
     bool targetWasRequested = false;
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/redirect"_s) {
+            if (equal(path, "/redirect"_s)) {
                 co_await connection.awaitableSend(makeString(
                     "HTTP/1.1 302 Found\r\n"
                     "Location: /target\r\n"
@@ -198,7 +198,7 @@ TEST(CustomUserAgent, NoCustomUserAgentRedirectUsesDefault)
                     "\r\n"_s));
                 continue;
             }
-            if (path == "/target"_s) {
+            if (equal(path, "/target"_s)) {
                 receivedUserAgentOnTarget = userAgentFromRequest(request);
                 targetWasRequested = true;
                 co_await connection.awaitableSend(
@@ -219,7 +219,7 @@ TEST(CustomUserAgent, NoCustomUserAgentRedirectUsesDefault)
     [navigationDelegate waitForDidFinishNavigation];
 
     EXPECT_TRUE(targetWasRequested);
-    EXPECT_TRUE(receivedUserAgentOnTarget.startsWith("User-Agent: Mozilla/"_s));
+    EXPECT_TRUE(startsWith(receivedUserAgentOnTarget, "User-Agent: Mozilla/"_s));
 }
 
 // Same scenario as PageLevel above, but using the WKWebpagePreferences
@@ -229,13 +229,13 @@ TEST(CustomUserAgent, NoCustomUserAgentRedirectUsesDefault)
 // the plain customUserAgent directly.
 TEST(CustomUserAgent, WebpagePreferencesCustomUserAgentAsSiteSpecificQuirksAppliesToRedirectTarget)
 {
-    String receivedUserAgentOnTarget;
+    RefPtr<StringImpl> receivedUserAgentOnTarget;
     bool targetWasRequested = false;
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = HTTPServer::parsePath(request);
-            if (path == "/redirect"_s) {
+            if (equal(path, "/redirect"_s)) {
                 co_await connection.awaitableSend(makeString(
                     "HTTP/1.1 302 Found\r\n"
                     "Location: /target\r\n"
@@ -243,7 +243,7 @@ TEST(CustomUserAgent, WebpagePreferencesCustomUserAgentAsSiteSpecificQuirksAppli
                     "\r\n"_s));
                 continue;
             }
-            if (path == "/target"_s) {
+            if (equal(path, "/target"_s)) {
                 receivedUserAgentOnTarget = userAgentFromRequest(request);
                 targetWasRequested = true;
                 co_await connection.awaitableSend(

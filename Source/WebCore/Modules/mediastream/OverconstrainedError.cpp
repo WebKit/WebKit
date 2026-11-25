@@ -33,21 +33,21 @@
 
 namespace WebCore {
 
-OverconstrainedError::OverconstrainedError(const String& constraint, const String& message)
-    : DOMException(0, "OverconstrainedError"_s, message, Type::OverconstrainedError)
+OverconstrainedError::OverconstrainedError(StringImpl* constraint, StringImpl* message)
+    : DOMException(0, "OverconstrainedError"_si, message, Type::OverconstrainedError)
     , m_constraint(constraint)
 {
 }
 
-OverconstrainedError::OverconstrainedError(MediaConstraintType invalidConstraint, const String& message)
-    : DOMException(0, "OverconstrainedError"_s, message, Type::OverconstrainedError)
+OverconstrainedError::OverconstrainedError(MediaConstraintType invalidConstraint, StringImpl* message)
+    : DOMException(0, "OverconstrainedError"_si, message, Type::OverconstrainedError)
     , m_invalidConstraint(invalidConstraint)
 {
 }
 
-String OverconstrainedError::constraint() const
+RefPtr<StringImpl> OverconstrainedError::constraint() const
 {
-    if (m_constraint.isNull())
+    if (!m_constraint)
         m_constraint = convertToString(m_invalidConstraint);
     return m_constraint;
 }

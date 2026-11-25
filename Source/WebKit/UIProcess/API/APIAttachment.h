@@ -56,12 +56,12 @@ namespace API {
 
 class Attachment final : public ObjectImpl<Object::Type::Attachment> {
 public:
-    static Ref<Attachment> create(const WTF::String& identifier, WebKit::WebPageProxy&);
+    static Ref<Attachment> create(StringImpl* identifier, WebKit::WebPageProxy&);
     virtual ~Attachment();
 
     enum class InsertionState : uint8_t { NotInserted, Inserted };
 
-    const WTF::String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
     void updateAttributes(CompletionHandler<void()>&&);
 
     void invalidate();
@@ -73,16 +73,16 @@ public:
     void doWithFileWrapper(NOESCAPE const Function<void(NSFileWrapper *)>&) const;
     void setFileWrapper(NSFileWrapper *);
     void setFileWrapperAndUpdateContentType(NSFileWrapper *, NSString *contentType);
-    WTF::String utiType() const;
+    RefPtr<StringImpl> utiType() const;
 #endif
-    WTF::String mimeType() const;
+    RefPtr<StringImpl> mimeType() const;
 
-    const WTF::String& filePath() const LIFETIME_BOUND { return m_filePath; }
-    void setFilePath(const WTF::String& filePath) { m_filePath = filePath; }
-    WTF::String fileName() const;
+    const RefPtr<StringImpl>& filePath() const LIFETIME_BOUND { return m_filePath; }
+    void setFilePath(StringImpl* filePath) { m_filePath = filePath; }
+    RefPtr<StringImpl> fileName() const;
 
-    const WTF::String& contentType() const LIFETIME_BOUND { return m_contentType; }
-    void setContentType(const WTF::String& contentType) { m_contentType = contentType; }
+    const RefPtr<StringImpl>& contentType() const LIFETIME_BOUND { return m_contentType; }
+    void setContentType(StringImpl* contentType) { m_contentType = contentType; }
 
     InsertionState insertionState() const { return m_insertionState; }
     void setInsertionState(InsertionState state) { m_insertionState = state; }
@@ -99,7 +99,7 @@ public:
     WebCore::AttachmentAssociatedElementType associatedElementType() const { return m_associatedElementType; }
 
     RefPtr<WebCore::SharedBuffer> createSerializedRepresentation() const;
-    void updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, const WTF::String& contentType);
+    void updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&, StringImpl* contentType);
 
     // The web process whose document contains the attachment's element. With site isolation, this can be
     // a process other than the main frame's.
@@ -107,15 +107,15 @@ public:
     void setOwningProcess(WebKit::WebProcessProxy&);
 
 private:
-    explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);
+    explicit Attachment(StringImpl* identifier, WebKit::WebPageProxy&);
 
 #if PLATFORM(COCOA)
     mutable Lock m_fileWrapperLock;
     RetainPtr<NSFileWrapper> m_fileWrapper WTF_GUARDED_BY_LOCK(m_fileWrapperLock);
 #endif
-    WTF::String m_identifier;
-    WTF::String m_filePath;
-    WTF::String m_contentType;
+    RefPtr<StringImpl> m_identifier;
+    RefPtr<StringImpl> m_filePath;
+    RefPtr<StringImpl> m_contentType;
     WeakPtr<WebKit::WebPageProxy> m_webPage;
     WeakPtr<WebKit::WebProcessProxy> m_owningProcess;
     InsertionState m_insertionState { InsertionState::NotInserted };

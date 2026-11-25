@@ -123,9 +123,9 @@ TextStream& operator<<(TextStream& stream, const BoundaryPoint& boundaryPoint)
     return stream;
 }
 
-String BoundaryPoint::debugDescription() const
+RefPtr<StringImpl> BoundaryPoint::debugDescription() const
 {
-    return makeString('{', protect(container)->debugDescription().utf8(), ", offset: "_s, offset, '}');
+    return makeString('{', utf8(protect(container)->debugDescription()), ", offset: "_s, offset, '}');
 }
 
 }

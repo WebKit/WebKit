@@ -41,7 +41,7 @@ class DNSResolveQueueGLib final : public DNSResolveQueue {
 public:
     DNSResolveQueueGLib() = default;
 
-    void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) final;
+    void resolve(StringImpl* hostname, uint64_t identifier, DNSCompletionHandler&&) final;
     void stopResolve(uint64_t identifier) final;
 
 private:
@@ -59,7 +59,7 @@ private:
     };
 
     void updateIsUsingProxy() final;
-    void platformResolve(const String&) final;
+    void platformResolve(StringImpl*) final;
 
     HashMap<uint64_t, GRefPtr<GCancellable>> m_requestCancellables;
 };

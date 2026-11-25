@@ -43,7 +43,7 @@ protected:
     NODELETE CtapDriver& driver() const;
     Ref<CtapDriver> releaseDriver();
 
-    String transportForDebugging() const;
+    RefPtr<StringImpl> transportForDebugging() const;
 
 private:
     RefPtr<CtapDriver> m_driver;

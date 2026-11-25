@@ -58,14 +58,14 @@ public:
 
     WorkerScriptLoader& scriptLoader() { return m_scriptLoader.get(); }
 
-    static String taskMode();
+    static RefPtr<StringImpl> taskMode();
     ReferrerPolicy referrerPolicy();
     bool failed() const { return m_failed; }
     bool retrievedFromServiceWorkerCache() const { return m_retrievedFromServiceWorkerCache; }
 
     const ScriptBuffer& script() LIFETIME_BOUND { return m_script; }
     const URL& responseURL() const LIFETIME_BOUND { return m_responseURL; }
-    const String& responseMIMEType() const LIFETIME_BOUND { return m_responseMIMEType; }
+    const RefPtr<StringImpl>& responseMIMEType() const LIFETIME_BOUND { return m_responseMIMEType; }
 
 private:
     WorkerModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
@@ -81,7 +81,7 @@ private:
     URL m_sourceURL;
     ScriptBuffer m_script;
     URL m_responseURL;
-    String m_responseMIMEType;
+    RefPtr<StringImpl> m_responseMIMEType;
     bool m_failed { false };
     bool m_retrievedFromServiceWorkerCache { false };
 };

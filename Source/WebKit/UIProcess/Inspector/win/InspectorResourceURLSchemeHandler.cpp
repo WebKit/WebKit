@@ -45,8 +45,8 @@ void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLS
 {
     auto requestURL = task.request().url();
     auto requestPath = makeStringByReplacingAll(requestURL.path(), '/', '\\');
-    if (requestPath.startsWith("\\"_s))
-        requestPath = requestPath.substring(1);
+    if (startsWith(requestPath, "\\"_s))
+        requestPath = substring(requestPath, 1);
     auto path = WebCore::webKitBundlePath({ "WebInspectorUI"_s, requestPath });
     auto file = FileSystem::mapFile(path, FileSystem::MappedFileMode::Private);
     if (!file) {
@@ -54,7 +54,7 @@ void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLS
         return;
     }
     auto contentType = WebCore::File::contentTypeForFile(path);
-    if (contentType.isEmpty())
+    if (isEmpty(contentType))
         contentType = "application/octet-stream"_s;
     WebCore::ResourceResponse response(WTF::move(requestURL), WTF::move(contentType), file->size(), "UTF-8"_s);
     auto data = WebCore::SharedBuffer::create(file->span());

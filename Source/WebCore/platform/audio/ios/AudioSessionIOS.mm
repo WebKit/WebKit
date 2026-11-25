@@ -268,8 +268,8 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
     bool needDeviceUpdate = false;
 #if ENABLE(MEDIA_STREAM)
     auto preferredMicrophoneID = AVAudioSessionCaptureDeviceManager::singleton().preferredMicrophoneID();
-    if ((newCategory == CategoryType::PlayAndRecord || newCategory == CategoryType::RecordAudio) && !preferredMicrophoneID.isEmpty()) {
-        if (m_lastSetPreferredMicrophoneID != preferredMicrophoneID)
+    if ((newCategory == CategoryType::PlayAndRecord || newCategory == CategoryType::RecordAudio) && !isEmpty(preferredMicrophoneID)) {
+        if (!equal(m_lastSetPreferredMicrophoneID, preferredMicrophoneID))
             needDeviceUpdate = true;
     } else
         m_lastSetPreferredMicrophoneID = emptyString();
@@ -357,10 +357,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return static_cast<RouteSharingPolicy>(policy);
 }
 
-String AudioSessionIOS::routingContextUID() const
+RefPtr<StringImpl> AudioSessionIOS::routingContextUID() const
 {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
-    return [[PAL::getAVAudioSessionClassSingleton() sharedInstance] routingContextUID];
+    return StringImpl::create([[PAL::getAVAudioSessionClassSingleton() sharedInstance] routingContextUID]);
 #else
     return emptyString();
 #endif
@@ -448,11 +448,11 @@ void AudioSessionIOS::updateSpatialExperience()
     }();
     NSError *error = nil;
     AVAudioSession *session = [PAL::getAVAudioSessionClassSingleton() sharedInstance];
-    if (m_sceneIdentifier.length()) {
+    if (length(m_sceneIdentifier)) {
         [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
             @"AVAudioSessionSpatialExperienceOptionSoundStageSize" : @(size),
             @"AVAudioSessionSpatialExperienceOptionAnchoringStrategy" : @(AVAudioSessionAnchoringStrategyScene),
-            @"AVAudioSessionSpatialExperienceOptionSceneIdentifier" : m_sceneIdentifier.createNSString().get()
+            @"AVAudioSessionSpatialExperienceOptionSceneIdentifier" : createNSString(m_sceneIdentifier).get()
         } error:&error];
     } else {
         [session setIntendedSpatialExperience:AVAudioSessionSpatialExperienceHeadTracked options:@{
@@ -466,9 +466,9 @@ void AudioSessionIOS::updateSpatialExperience()
 #endif
 }
 
-void AudioSessionIOS::setSceneIdentifier(const String& sceneIdentifier)
+void AudioSessionIOS::setSceneIdentifier(StringImpl* sceneIdentifier)
 {
-    if (m_sceneIdentifier == sceneIdentifier)
+    if (equal(m_sceneIdentifier, sceneIdentifier))
         return;
     m_sceneIdentifier = sceneIdentifier;
     ALWAYS_LOG(LOGIDENTIFIER, sceneIdentifier);

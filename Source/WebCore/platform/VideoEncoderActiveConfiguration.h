@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct VideoEncoderActiveConfiguration {
-    String codec;
+    RefPtr<StringImpl> codec;
     std::optional<size_t> visibleWidth;
     std::optional<size_t> visibleHeight;
     std::optional<size_t> displayWidth;

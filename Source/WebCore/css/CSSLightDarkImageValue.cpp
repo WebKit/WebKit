@@ -47,7 +47,7 @@ CSSLightDarkImageValue::CSSLightDarkImageValue(Ref<CSSValue>&& lightValue, Ref<C
 
 CSSLightDarkImageValue::~CSSLightDarkImageValue() = default;
 
-String CSSLightDarkImageValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSLightDarkImageValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return makeString("light-dark("_s, m_lightValue->cssText(context), ", "_s, m_darkValue->cssText(context), ')');
 }

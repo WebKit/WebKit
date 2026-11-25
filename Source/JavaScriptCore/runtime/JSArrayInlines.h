@@ -272,7 +272,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
         if (length > MAX_ARRAY_INDEX) [[unlikely]] {
             methodTable()->putByIndex(this, globalObject, length, value, true);
             if (!scope.exception())
-                throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
+                throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr()));
             return;
         }
 
@@ -294,7 +294,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
         if (length > MAX_ARRAY_INDEX) [[unlikely]] {
             methodTable()->putByIndex(this, globalObject, length, value, true);
             if (!scope.exception())
-                throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
+                throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr()));
             return;
         }
 
@@ -330,7 +330,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
         if (length > MAX_ARRAY_INDEX) [[unlikely]] {
             methodTable()->putByIndex(this, globalObject, length, value, true);
             if (!scope.exception())
-                throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
+                throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr()));
             return;
         }
 
@@ -371,7 +371,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
             methodTable()->putByIndex(this, globalObject, storage->length(), value, true);
             // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
             if (!scope.exception())
-                throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
+                throwException(globalObject, scope, createRangeError(globalObject, StringImpl::create(LengthExceededTheMaximumArrayLengthError).ptr()));
             return;
         }
 

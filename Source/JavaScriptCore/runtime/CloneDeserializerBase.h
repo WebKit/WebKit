@@ -72,7 +72,7 @@ concept StructuredCloneDeserializerHandler = requires(Derived& d, SerializationT
     { d.readDerivedTerminal(t) } -> std::same_as<JSValue>;
     { d.isTagExposed(t) } -> std::same_as<bool>;
     // Optional hooks with defaults:
-    { d.agentClusterID() } -> std::same_as<String>;
+    { d.agentClusterID() } -> std::same_as<RefPtr<StringImpl>>;
     { d.toJSArrayBuffer(WTF::move(buffer)) } -> std::same_as<JSValue>;
 };
 
@@ -90,17 +90,17 @@ template<typename T> inline bool readLittleEndian(std::span<const uint8_t>& span
 
 class CachedString {
 public:
-    CachedString(String&& string)
+    CachedString(RefPtr<StringImpl>&& string)
         : m_string(WTF::move(string))
     {
     }
 
     JSValue jsString(CloneBase&);
-    const String& string() const { return m_string; }
-    String takeString() { return WTF::move(m_string); }
+    const RefPtr<StringImpl>& string() const { return m_string; }
+    RefPtr<StringImpl> takeString() { return WTF::move(m_string); }
 
 private:
-    String m_string;
+    RefPtr<StringImpl> m_string;
     JSValue m_jsString;
 };
 
@@ -139,7 +139,7 @@ protected:
     // Derived can override any of these; the defaults below are used when Derived doesn't provide its own.
 
 public:
-    String agentClusterID() { return emptyString(); }
+    RefPtr<StringImpl> agentClusterID() { return emptyString(); }
     JSValue toJSArrayBuffer(Ref<ArrayBuffer>&& arrayBuffer)
     {
         VM& vm = m_lexicalGlobalObject->vm();
@@ -266,7 +266,7 @@ protected:
         return readConstantPoolIndex(m_constantPool);
     }
 
-    static bool readString(std::span<const uint8_t>& span, String& str, unsigned length, bool is8Bit, ShouldAtomize shouldAtomize)
+    static bool readString(std::span<const uint8_t>& span, RefPtr<StringImpl>& str, unsigned length, bool is8Bit, ShouldAtomize shouldAtomize)
     {
         if (length >= std::numeric_limits<int32_t>::max() / sizeof(char16_t))
             return false;
@@ -275,9 +275,9 @@ protected:
             if (span.size() < length)
                 return false;
             if (shouldAtomize == ShouldAtomize::Yes)
-                str = AtomString(byteCast<Latin1Character>(consumeSpan(span, length)));
+                str = AtomStringImpl::add(byteCast<Latin1Character>(consumeSpan(span, length)));
             else
-                str = String(byteCast<Latin1Character>(consumeSpan(span, length)));
+                str = StringImpl::create(byteCast<Latin1Character>(consumeSpan(span, length)));
             return true;
         }
 
@@ -287,9 +287,9 @@ protected:
 
         auto stringSpan = consumeSpan(span, size);
         if (shouldAtomize == ShouldAtomize::Yes)
-            str = AtomString(spanReinterpretCast<const char16_t>(stringSpan));
+            str = AtomStringImpl::add(spanReinterpretCast<const char16_t>(stringSpan));
         else
-            str = String(spanReinterpretCast<const char16_t>(stringSpan));
+            str = StringImpl::create(spanReinterpretCast<const char16_t>(stringSpan));
         return true;
     }
 
@@ -322,7 +322,7 @@ protected:
         }
         bool is8Bit = length & StringDataIs8BitFlag;
         length &= ~StringDataIs8BitFlag;
-        String str;
+        RefPtr<StringImpl> str;
         if (!readString(m_data, str, length, is8Bit, shouldAtomize)) [[unlikely]] {
             SERIALIZE_TRACE("FAIL deserialize");
             fail();
@@ -333,7 +333,7 @@ protected:
         return true;
     }
 
-    bool readNullableString(String& nullableString, ShouldAtomize shouldAtomize = ShouldAtomize::No)
+    bool readNullableString(RefPtr<StringImpl>& nullableString, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         bool isNull;
         if (!read(isNull))
@@ -643,7 +643,7 @@ protected:
                 fail();
                 return JSValue();
             }
-            String message;
+            RefPtr<StringImpl> message;
             if (!readNullableString(message)) [[unlikely]] {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();
@@ -661,19 +661,19 @@ protected:
                 fail();
                 return JSValue();
             }
-            String sourceURL;
+            RefPtr<StringImpl> sourceURL;
             if (!readNullableString(sourceURL)) [[unlikely]] {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();
                 return JSValue();
             }
-            String stackString;
+            RefPtr<StringImpl> stackString;
             if (!readNullableString(stackString)) [[unlikely]] {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();
                 return JSValue();
             }
-            String causeString;
+            RefPtr<StringImpl> causeString;
             if (!readNullableString(causeString)) [[unlikely]] {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();
@@ -686,7 +686,7 @@ protected:
             // https://webassembly.github.io/spec/web-api/index.html#serialization
             CachedStringRef agentClusterID;
             bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
-            if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != static_cast<Derived*>(this)->agentClusterID()) [[unlikely]] {
+            if (!agentClusterIDSuccessfullyRead || !equal(agentClusterID->string(), static_cast<Derived*>(this)->agentClusterID())) [[unlikely]] {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();
                 return JSValue();
@@ -703,7 +703,7 @@ protected:
         case WasmMemoryTag: {
             CachedStringRef agentClusterID;
             bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
-            if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != static_cast<Derived*>(this)->agentClusterID()) [[unlikely]] {
+            if (!agentClusterIDSuccessfullyRead || !equal(agentClusterID->string(), static_cast<Derived*>(this)->agentClusterID())) [[unlikely]] {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();
                 return JSValue();
@@ -801,7 +801,7 @@ protected:
             bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
             uint32_t index = UINT_MAX;
             bool indexSuccessfullyRead = read(index);
-            if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != static_cast<Derived*>(this)->agentClusterID()
+            if (!agentClusterIDSuccessfullyRead || !equal(agentClusterID->string(), static_cast<Derived*>(this)->agentClusterID())
                 || !indexSuccessfullyRead || !m_sideChannels.sharedBuffers || index >= m_sideChannels.sharedBuffers->size()) [[unlikely]] {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();

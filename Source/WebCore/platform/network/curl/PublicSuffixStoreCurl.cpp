@@ -39,22 +39,22 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
 
     const psl_ctx_t* psl = psl_builtin();
     ASSERT(psl);
-    bool ret = psl_is_public_suffix2(psl, domain.toStringWithoutCopying().convertToLowercaseWithoutLocale().utf8().legacyCStringPointer(), PSL_TYPE_ANY | PSL_TYPE_NO_STAR_RULE);
+    bool ret = psl_is_public_suffix2(psl, utf8(convertToLowercaseWithoutLocale(domain.toStringWithoutCopying())).legacyCStringPointer(), PSL_TYPE_ANY | PSL_TYPE_NO_STAR_RULE);
     return ret;
 }
 
-static String topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, UTF8CStringView domain)
+static RefPtr<StringImpl> topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, UTF8CStringView domain)
 {
     // psl_registerable_domain returns a pointer to domain's data or null if there is no private domain
     if (const char* topPrivateDomain = psl_registrable_domain(psl, domain.utf8()))
-        return String::fromLatin1(topPrivateDomain);
-    return String();
+        return StringImpl::fromLatin1(topPrivateDomain);
+    return nullptr;
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain) const
+RefPtr<StringImpl> PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain) const
 {
     if (platformIsPublicSuffix(domain))
-        return String();
+        return nullptr;
 
     // This function is expected to work with the format used by cookies, so skip any leading dots.
     auto domainUTF8 = domain.utf8();
@@ -65,7 +65,7 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
         position++;
 
     if (position == characters.size())
-        return String();
+        return nullptr;
 
     const psl_ctx_t* psl = psl_builtin();
     ASSERT(psl);

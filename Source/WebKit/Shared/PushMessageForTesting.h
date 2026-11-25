@@ -37,10 +37,10 @@ enum class PushMessageDisposition : bool {
 };
 
 struct PushMessageForTesting {
-    String targetAppCodeSigningIdentifier;
-    String pushPartitionString;
+    RefPtr<StringImpl> targetAppCodeSigningIdentifier;
+    RefPtr<StringImpl> pushPartitionString;
     URL registrationURL;
-    String payload;
+    RefPtr<StringImpl> payload;
     PushMessageDisposition disposition;
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     std::optional<WebCore::NotificationPayload> parsedPayload;

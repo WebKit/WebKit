@@ -46,14 +46,14 @@ class DiagnosticLoggingClient {
 public:
     virtual ~DiagnosticLoggingClient() { }
 
-    virtual void logDiagnosticMessage(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description) = 0;
-    virtual void logDiagnosticMessageWithResult(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, WebCore::DiagnosticLoggingResultType) = 0;
-    virtual void logDiagnosticMessageWithValue(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, const WTF::String& value) = 0;
-    virtual void logDiagnosticMessageWithEnhancedPrivacy(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description) = 0;
+    virtual void logDiagnosticMessage(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description) = 0;
+    virtual void logDiagnosticMessageWithResult(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description, WebCore::DiagnosticLoggingResultType) = 0;
+    virtual void logDiagnosticMessageWithValue(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description, StringImpl* value) = 0;
+    virtual void logDiagnosticMessageWithEnhancedPrivacy(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description) = 0;
 
-    virtual void logDiagnosticMessageWithValueDictionary(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, Ref<API::Dictionary>&&) = 0;
+    virtual void logDiagnosticMessageWithValueDictionary(WebKit::WebPageProxy*, StringImpl* message, StringImpl* description, Ref<API::Dictionary>&&) = 0;
 
-    virtual void logDiagnosticMessageWithDomain(WebKit::WebPageProxy*, const WTF::String&, WebCore::DiagnosticLoggingDomain) { }
+    virtual void logDiagnosticMessageWithDomain(WebKit::WebPageProxy*, StringImpl*, WebCore::DiagnosticLoggingDomain) { }
 
     virtual bool isWebKitDiagnosticLoggingClient() const { return false; }
 };

@@ -47,7 +47,7 @@ class CurlSSLHandle {
     friend NeverDestroyed<CurlSSLHandle>;
 
 public:
-    using CACertInfo = Variant<std::monostate, String, CertificateInfo::Certificate>;
+    using CACertInfo = Variant<std::monostate, RefPtr<StringImpl>, CertificateInfo::Certificate>;
 
     CurlSSLHandle();
 
@@ -63,7 +63,7 @@ public:
     WEBCORE_EXPORT void setIgnoreSSLErrors(bool flag) { m_ignoreSSLErrors = flag; }
 
     const CACertInfo& getCACertInfo() const LIFETIME_BOUND { return m_caCertInfo; }
-    WEBCORE_EXPORT void setCACertPath(String&&);
+    WEBCORE_EXPORT void setCACertPath(RefPtr<StringImpl>&&);
     WEBCORE_EXPORT void setCACertData(CertificateInfo::Certificate&&);
     WEBCORE_EXPORT void clearCACertInfo();
 

@@ -78,7 +78,7 @@ void RemoteMesh::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteMesh::setLabel(String&& label)
+void RemoteMesh::setLabel(RefPtr<StringImpl>&& label)
 {
     m_backing->setLabel(WTF::move(label));
 }

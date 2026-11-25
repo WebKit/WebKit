@@ -49,11 +49,11 @@ class CacheStorageManager;
 class CacheStorageCache : public RefCountedAndCanMakeWeakPtr<CacheStorageCache>, public Identified<WebCore::DOMCacheIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(CacheStorageCache);
 public:
-    static Ref<CacheStorageCache> create(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);
+    static Ref<CacheStorageCache> create(CacheStorageManager&, StringImpl* name, StringImpl* uniqueName, StringImpl* path, Ref<WorkQueue>&&);
 
     ~CacheStorageCache();
-    const String& name() const LIFETIME_BOUND { return m_name; }
-    const String& uniqueName() const LIFETIME_BOUND { return m_uniqueName; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& uniqueName() const LIFETIME_BOUND { return m_uniqueName; }
     NODELETE CacheStorageManager* manager();
     std::optional<WebCore::ClientOrigin> origin() const;
 
@@ -69,7 +69,7 @@ public:
     void retrieveRecords(const Vector<CacheStorageRecordInformation>&, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RetrieveRecordsCallback&&);
 
 private:
-    CacheStorageCache(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);
+    CacheStorageCache(CacheStorageManager&, StringImpl* name, StringImpl* uniqueName, StringImpl* path, Ref<WorkQueue>&&);
     CacheStorageRecordInformation* findExistingRecord(const WebCore::ResourceRequest&, std::optional<uint64_t> = std::nullopt);
     void putRecordsAfterQuotaCheck(Vector<CacheStorageRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void putRecordsInStore(Vector<CacheStorageRecord>&&, Vector<std::optional<CacheStorageRecord>>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
@@ -80,14 +80,14 @@ private:
 #endif
     }
 
-    static String computeKeyURL(const URL&);
-    using RecordsMap = HashMap<String, Vector<CacheStorageRecordInformation>>;
+    static RefPtr<StringImpl> computeKeyURL(const URL&);
+    using RecordsMap = HashMap<RefPtr<StringImpl>, Vector<CacheStorageRecordInformation>>;
 
     WeakPtr<CacheStorageManager> m_manager;
     bool m_isInitialized { false };
     Vector<WebCore::DOMCacheEngine::CacheIdentifierCallback> m_pendingInitializationCallbacks;
-    String m_name;
-    String m_uniqueName;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_uniqueName;
     RecordsMap m_records;
 #if ASSERT_ENABLED
     const Ref<WorkQueue> m_queue;

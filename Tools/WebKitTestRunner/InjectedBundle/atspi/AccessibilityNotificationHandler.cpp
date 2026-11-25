@@ -62,7 +62,7 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
 
         RefPtr jsNotificationEventName = adoptRef(JSStringCreateWithUTF8CString(notificationName));
         JSValueRef jsParameter = WTF::switchOn(parameter,
-            [&](String& stringValue) -> JSValueRef {
+            [&](RefPtr<StringImpl>& stringValue) -> JSValueRef {
                 RefPtr jsStringValue = OpaqueJSString::tryCreate(stringValue);
                 return JSValueMakeString(jsContext, jsStringValue.get());
             },

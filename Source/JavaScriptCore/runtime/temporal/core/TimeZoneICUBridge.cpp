@@ -78,7 +78,7 @@ static auto withTimeZone(const TimeZone& timeZone, NOESCAPE const F& fn) -> decl
     ASSERT(entry);
     Locker locker { entry->useLock };
     if (!entry->cal) {
-        String tzStr = timeZone.toICUString();
+        RefPtr<StringImpl> tzStr = timeZone.toICUString();
         StringView view(tzStr);
         auto upconverted = view.upconvertedCharacters();
         UErrorCode status = U_ZERO_ERROR;

@@ -49,47 +49,47 @@ public:
         NoAccessMask = 1 << 2
     };
 
-    static Ref<DatabaseAuthorizer> create(const String& databaseInfoTableName);
+    static Ref<DatabaseAuthorizer> create(StringImpl* databaseInfoTableName);
 
-    NODELETE int createTable(const String& tableName);
-    NODELETE int createTempTable(const String& tableName);
-    NODELETE int dropTable(const String& tableName);
-    NODELETE int dropTempTable(const String& tableName);
-    NODELETE int allowAlterTable(const String& databaseName, const String& tableName);
+    NODELETE int createTable(StringImpl* tableName);
+    NODELETE int createTempTable(StringImpl* tableName);
+    NODELETE int dropTable(StringImpl* tableName);
+    NODELETE int dropTempTable(StringImpl* tableName);
+    NODELETE int allowAlterTable(StringImpl* databaseName, StringImpl* tableName);
 
-    NODELETE int createIndex(const String& indexName, const String& tableName);
-    NODELETE int createTempIndex(const String& indexName, const String& tableName);
-    NODELETE int dropIndex(const String& indexName, const String& tableName);
-    NODELETE int dropTempIndex(const String& indexName, const String& tableName);
+    NODELETE int createIndex(StringImpl* indexName, StringImpl* tableName);
+    NODELETE int createTempIndex(StringImpl* indexName, StringImpl* tableName);
+    NODELETE int dropIndex(StringImpl* indexName, StringImpl* tableName);
+    NODELETE int dropTempIndex(StringImpl* indexName, StringImpl* tableName);
 
-    NODELETE int createTrigger(const String& triggerName, const String& tableName);
-    NODELETE int createTempTrigger(const String& triggerName, const String& tableName);
-    NODELETE int dropTrigger(const String& triggerName, const String& tableName);
-    NODELETE int dropTempTrigger(const String& triggerName, const String& tableName);
+    NODELETE int createTrigger(StringImpl* triggerName, StringImpl* tableName);
+    NODELETE int createTempTrigger(StringImpl* triggerName, StringImpl* tableName);
+    NODELETE int dropTrigger(StringImpl* triggerName, StringImpl* tableName);
+    NODELETE int dropTempTrigger(StringImpl* triggerName, StringImpl* tableName);
 
-    NODELETE int createView(const String& viewName);
-    NODELETE int createTempView(const String& viewName);
-    NODELETE int dropView(const String& viewName);
-    NODELETE int dropTempView(const String& viewName);
+    NODELETE int createView(StringImpl* viewName);
+    NODELETE int createTempView(StringImpl* viewName);
+    NODELETE int dropView(StringImpl* viewName);
+    NODELETE int dropTempView(StringImpl* viewName);
 
-    NODELETE int createVTable(const String& tableName, const String& moduleName);
-    NODELETE int dropVTable(const String& tableName, const String& moduleName);
+    NODELETE int createVTable(StringImpl* tableName, StringImpl* moduleName);
+    NODELETE int dropVTable(StringImpl* tableName, StringImpl* moduleName);
 
-    NODELETE int allowDelete(const String& tableName);
-    NODELETE int allowInsert(const String& tableName);
-    NODELETE int allowUpdate(const String& tableName, const String& columnName);
+    NODELETE int allowDelete(StringImpl* tableName);
+    NODELETE int allowInsert(StringImpl* tableName);
+    NODELETE int allowUpdate(StringImpl* tableName, StringImpl* columnName);
     NODELETE int allowTransaction();
 
     int allowSelect() { return SQLAuthAllow; }
-    NODELETE int allowRead(const String& tableName, const String& columnName);
+    NODELETE int allowRead(StringImpl* tableName, StringImpl* columnName);
 
-    NODELETE int allowReindex(const String& indexName);
-    NODELETE int allowAnalyze(const String& tableName);
-    int allowFunction(const String& functionName);
-    NODELETE int allowPragma(const String& pragmaName, const String& firstArgument);
+    NODELETE int allowReindex(StringImpl* indexName);
+    NODELETE int allowAnalyze(StringImpl* tableName);
+    int allowFunction(StringImpl* functionName);
+    NODELETE int allowPragma(StringImpl* pragmaName, StringImpl* firstArgument);
 
-    NODELETE int allowAttach(const String& filename);
-    NODELETE int allowDetach(const String& databaseName);
+    NODELETE int allowAttach(StringImpl* filename);
+    NODELETE int allowDetach(StringImpl* databaseName);
 
     NODELETE void disable();
     NODELETE void enable();
@@ -103,10 +103,10 @@ public:
     bool hadDeletes() const { return m_hadDeletes; }
 
 private:
-    explicit DatabaseAuthorizer(const String& databaseInfoTableName);
+    explicit DatabaseAuthorizer(StringImpl* databaseInfoTableName);
     void addAllowedFunctions();
-    NODELETE int denyBasedOnTableName(const String&) const;
-    NODELETE int updateDeletesBasedOnTableName(const String&);
+    NODELETE int denyBasedOnTableName(StringImpl*) const;
+    NODELETE int updateDeletesBasedOnTableName(StringImpl*);
     NODELETE bool allowWrite();
 
     int m_permissions;
@@ -115,9 +115,9 @@ private:
     bool m_lastActionChangedDatabase : 1;
     bool m_hadDeletes : 1;
 
-    const String m_databaseInfoTableName;
+    const RefPtr<StringImpl> m_databaseInfoTableName;
 
-    HashSet<String, ASCIICaseInsensitiveHash> m_allowedFunctions;
+    HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash> m_allowedFunctions;
 };
 
 } // namespace WebCore

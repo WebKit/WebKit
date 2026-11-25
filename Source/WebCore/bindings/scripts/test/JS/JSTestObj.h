@@ -115,40 +115,40 @@ template<> struct JSDOMWrapperConverterTraits<TestObj> {
     using WrapperClass = JSTestObj;
     using ToWrappedReturnType = TestObj*;
 };
-String convertEnumerationToString(TestObj::EnumType);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumType);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumType);
 
-template<> std::optional<TestObj::EnumType> parseEnumerationFromString<TestObj::EnumType>(const String&);
+template<> std::optional<TestObj::EnumType> parseEnumerationFromString<TestObj::EnumType>(StringImpl*);
 template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumType>();
 
-String convertEnumerationToString(TestObj::EnumTrailingComma);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumTrailingComma);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumTrailingComma);
 
-template<> std::optional<TestObj::EnumTrailingComma> parseEnumerationFromString<TestObj::EnumTrailingComma>(const String&);
+template<> std::optional<TestObj::EnumTrailingComma> parseEnumerationFromString<TestObj::EnumTrailingComma>(StringImpl*);
 template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumTrailingComma>();
 
-String convertEnumerationToString(TestObj::Optional);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::Optional);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Optional);
 
-template<> std::optional<TestObj::Optional> parseEnumerationFromString<TestObj::Optional>(const String&);
+template<> std::optional<TestObj::Optional> parseEnumerationFromString<TestObj::Optional>(StringImpl*);
 template<> std::optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::Optional>();
 
-String convertEnumerationToString(AlternateEnumName);
+RefPtr<StringImpl> convertEnumerationToString(AlternateEnumName);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, AlternateEnumName);
 
-template<> std::optional<AlternateEnumName> parseEnumerationFromString<AlternateEnumName>(const String&);
+template<> std::optional<AlternateEnumName> parseEnumerationFromString<AlternateEnumName>(StringImpl*);
 template<> std::optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<AlternateEnumName>();
 
 #if ENABLE(Condition1)
 
-String convertEnumerationToString(TestObj::EnumA);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumA);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumA);
 
-template<> std::optional<TestObj::EnumA> parseEnumerationFromString<TestObj::EnumA>(const String&);
+template<> std::optional<TestObj::EnumA> parseEnumerationFromString<TestObj::EnumA>(StringImpl*);
 template<> std::optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumA>();
 
@@ -156,10 +156,10 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumA>();
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
 
-String convertEnumerationToString(TestObj::EnumB);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumB);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumB);
 
-template<> std::optional<TestObj::EnumB> parseEnumerationFromString<TestObj::EnumB>(const String&);
+template<> std::optional<TestObj::EnumB> parseEnumerationFromString<TestObj::EnumB>(StringImpl*);
 template<> std::optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumB>();
 
@@ -167,75 +167,75 @@ template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumB>();
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
-String convertEnumerationToString(TestObj::EnumC);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumC);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumC);
 
-template<> std::optional<TestObj::EnumC> parseEnumerationFromString<TestObj::EnumC>(const String&);
+template<> std::optional<TestObj::EnumC> parseEnumerationFromString<TestObj::EnumC>(StringImpl*);
 template<> std::optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumC>();
 
 #endif
 
-String convertEnumerationToString(TestObj::Kind);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::Kind);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Kind);
 
-template<> std::optional<TestObj::Kind> parseEnumerationFromString<TestObj::Kind>(const String&);
+template<> std::optional<TestObj::Kind> parseEnumerationFromString<TestObj::Kind>(StringImpl*);
 template<> std::optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::Kind>();
 
-String convertEnumerationToString(TestObj::Size);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::Size);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Size);
 
-template<> std::optional<TestObj::Size> parseEnumerationFromString<TestObj::Size>(const String&);
+template<> std::optional<TestObj::Size> parseEnumerationFromString<TestObj::Size>(StringImpl*);
 template<> std::optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::Size>();
 
-String convertEnumerationToString(TestObj::Confidence);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::Confidence);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::Confidence);
 
-template<> std::optional<TestObj::Confidence> parseEnumerationFromString<TestObj::Confidence>(const String&);
+template<> std::optional<TestObj::Confidence> parseEnumerationFromString<TestObj::Confidence>(StringImpl*);
 template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::Confidence>();
 
-String convertEnumerationToString(TestObj::EnumWithMissingValueDefault);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingValueDefault);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingValueDefault);
 
-template<> std::optional<TestObj::EnumWithMissingValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(const String&);
+template<> std::optional<TestObj::EnumWithMissingValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingValueDefault>(StringImpl*);
 template<> std::optional<TestObj::EnumWithMissingValueDefault> parseEnumeration<TestObj::EnumWithMissingValueDefault>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueDefault>();
 
-String convertEnumerationToString(TestObj::EnumWithInvalidValueDefault);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithInvalidValueDefault);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithInvalidValueDefault);
 
-template<> std::optional<TestObj::EnumWithInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(const String&);
+template<> std::optional<TestObj::EnumWithInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithInvalidValueDefault>(StringImpl*);
 template<> std::optional<TestObj::EnumWithInvalidValueDefault> parseEnumeration<TestObj::EnumWithInvalidValueDefault>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithInvalidValueDefault>();
 
-String convertEnumerationToString(TestObj::EnumWithMissingAndInvalidValueDefault);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingAndInvalidValueDefault);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingAndInvalidValueDefault);
 
-template<> std::optional<TestObj::EnumWithMissingAndInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(const String&);
+template<> std::optional<TestObj::EnumWithMissingAndInvalidValueDefault> parseEnumerationFromString<TestObj::EnumWithMissingAndInvalidValueDefault>(StringImpl*);
 template<> std::optional<TestObj::EnumWithMissingAndInvalidValueDefault> parseEnumeration<TestObj::EnumWithMissingAndInvalidValueDefault>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingAndInvalidValueDefault>();
 
-String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNoQuotes);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNoQuotes);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingValueDefaultNoQuotes);
 
-template<> std::optional<TestObj::EnumWithMissingValueDefaultNoQuotes> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(const String&);
+template<> std::optional<TestObj::EnumWithMissingValueDefaultNoQuotes> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNoQuotes>(StringImpl*);
 template<> std::optional<TestObj::EnumWithMissingValueDefaultNoQuotes> parseEnumeration<TestObj::EnumWithMissingValueDefaultNoQuotes>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueDefaultNoQuotes>();
 
-String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultAsEmptyValue);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingValueDefaultAsEmptyValue);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingValueDefaultAsEmptyValue);
 
-template<> std::optional<TestObj::EnumWithMissingValueDefaultAsEmptyValue> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(const String&);
+template<> std::optional<TestObj::EnumWithMissingValueDefaultAsEmptyValue> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(StringImpl*);
 template<> std::optional<TestObj::EnumWithMissingValueDefaultAsEmptyValue> parseEnumeration<TestObj::EnumWithMissingValueDefaultAsEmptyValue>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueDefaultAsEmptyValue>();
 
-String convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNotInEnumValues);
+RefPtr<StringImpl> convertEnumerationToString(TestObj::EnumWithMissingValueDefaultNotInEnumValues);
 template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestObj::EnumWithMissingValueDefaultNotInEnumValues);
 
-template<> std::optional<TestObj::EnumWithMissingValueDefaultNotInEnumValues> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(const String&);
+template<> std::optional<TestObj::EnumWithMissingValueDefaultNotInEnumValues> parseEnumerationFromString<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(StringImpl*);
 template<> std::optional<TestObj::EnumWithMissingValueDefaultNotInEnumValues> parseEnumeration<TestObj::EnumWithMissingValueDefaultNotInEnumValues>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> ASCIILiteral expectedEnumerationValues<TestObj::EnumWithMissingValueDefaultNotInEnumValues>();
 

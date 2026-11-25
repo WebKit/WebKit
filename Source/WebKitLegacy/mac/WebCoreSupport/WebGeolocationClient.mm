@@ -79,7 +79,7 @@ WebGeolocationClient::WebGeolocationClient(WebView *webView)
 {
 }
 
-void WebGeolocationClient::startUpdating(const String& authorizationToken, bool enableHighAccuracy)
+void WebGeolocationClient::startUpdating(StringImpl* authorizationToken, bool enableHighAccuracy)
 {
     UNUSED_PARAM(authorizationToken);
 #if PLATFORM(IOS_FAMILY)
@@ -113,7 +113,7 @@ void WebGeolocationClient::requestPermission(WebCore::Geolocation& geolocation)
 
     SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
     if (![[webView UIDelegate] respondsToSelector:selector]) {
-        geolocation.setIsAllowed(false, { });
+        geolocation.setIsAllowed(false, nullptr);
         return;
     }
 
@@ -121,7 +121,7 @@ void WebGeolocationClient::requestPermission(WebCore::Geolocation& geolocation)
     RefPtr frame = geolocation.frame();
 
     if (!frame) {
-        geolocation.setIsAllowed(false, { });
+        geolocation.setIsAllowed(false, nullptr);
         return;
     }
 
@@ -154,12 +154,12 @@ std::optional<WebCore::GeolocationPositionData> WebGeolocationClient::lastPositi
 
 - (void)allow
 {
-    protect(_geolocation)->setIsAllowed(true, { });
+    protect(_geolocation)->setIsAllowed(true, nullptr);
 }
 
 - (void)deny
 {
-    protect(_geolocation)->setIsAllowed(false, { });
+    protect(_geolocation)->setIsAllowed(false, nullptr);
 }
 
 @end
@@ -179,14 +179,14 @@ std::optional<WebCore::GeolocationPositionData> WebGeolocationClient::lastPositi
 - (void)allow
 {
     WebThreadRun(^{
-        protect(_geolocation)->setIsAllowed(true, { });
+        protect(_geolocation)->setIsAllowed(true, nullptr);
     });
 }
 
 - (void)deny
 {
     WebThreadRun(^{
-        protect(_geolocation)->setIsAllowed(false, { });
+        protect(_geolocation)->setIsAllowed(false, nullptr);
     });
 }
 
@@ -235,7 +235,7 @@ std::optional<WebCore::GeolocationPositionData> WebGeolocationClient::lastPositi
 
 - (void)initializationDeniedWebView:(WebView *)webView
 {
-    protect(m_geolocation)->setIsAllowed(false, { });
+    protect(m_geolocation)->setIsAllowed(false, nullptr);
 }
 @end
 #endif // PLATFORM(IOS_FAMILY)

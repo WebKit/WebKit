@@ -50,18 +50,18 @@ public:
     JS_EXPORT_PRIVATE void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) final;
 
     struct Event {
-        String methodName;
+        RefPtr<StringImpl> methodName;
         ConnectionID clientID { };
         std::optional<ConnectionID> connectionID;
         std::optional<TargetID> targetID;
-        std::optional<String> message;
+        std::optional<RefPtr<StringImpl>> message;
     };
 
     using CallHandler = void (RemoteInspectorConnectionClient::*)(const Event&);
-    virtual HashMap<String, CallHandler>& dispatchMap() = 0;
+    virtual HashMap<RefPtr<StringImpl>, CallHandler>& dispatchMap() = 0;
 
 protected:
-    JS_EXPORT_PRIVATE std::optional<Vector<Ref<JSON::Object>>> parseTargetListJSON(const String&);
+    JS_EXPORT_PRIVATE std::optional<Vector<Ref<JSON::Object>>> parseTargetListJSON(StringImpl*);
 
     static std::optional<Event> extractEvent(ConnectionID, Vector<uint8_t>&&);
 

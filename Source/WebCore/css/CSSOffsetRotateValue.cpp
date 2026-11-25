@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-String CSSOffsetRotateValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSOffsetRotateValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
 

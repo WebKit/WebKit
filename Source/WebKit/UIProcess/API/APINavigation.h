@@ -67,7 +67,7 @@ namespace API {
 struct SubstituteData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SubstituteData);
 
-    SubstituteData(Vector<uint8_t>&& content, const WTF::String& MIMEType, const WTF::String& encoding, const WTF::String& baseURL, API::Object* userData, WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility = WebCore::SubstituteData::SessionHistoryVisibility::Hidden)
+    SubstituteData(Vector<uint8_t>&& content, StringImpl* MIMEType, StringImpl* encoding, StringImpl* baseURL, API::Object* userData, WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility = WebCore::SubstituteData::SessionHistoryVisibility::Hidden)
         : content(WTF::move(content))
         , MIMEType(MIMEType)
         , encoding(encoding)
@@ -79,9 +79,9 @@ struct SubstituteData {
     SubstituteData(Vector<uint8_t>&& content, const WebCore::ResourceResponse&, WebCore::SubstituteData::SessionHistoryVisibility);
 
     Vector<uint8_t> content;
-    WTF::String MIMEType;
-    WTF::String encoding;
-    WTF::String baseURL;
+    RefPtr<StringImpl> MIMEType;
+    RefPtr<StringImpl> encoding;
+    RefPtr<StringImpl> baseURL;
     RefPtr<API::Object> userData;
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Hidden };
 };
@@ -148,7 +148,7 @@ public:
     void markAsFromLoadData() { m_isFromLoadData = true; }
     bool isFromLoadData() const { return m_isFromLoadData; }
 
-    bool shouldPerformDownload() const { return m_lastNavigationAction && !m_lastNavigationAction->downloadAttribute.isNull(); }
+    bool shouldPerformDownload() const { return m_lastNavigationAction && !!m_lastNavigationAction->downloadAttribute; }
 
     bool hasOpenedFrames() const { return m_lastNavigationAction && m_lastNavigationAction->hasOpenedFrames; }
     bool openedByDOMWithOpener() const { return m_lastNavigationAction && m_lastNavigationAction->openedByDOMWithOpener; }
@@ -164,7 +164,7 @@ public:
     WebCore::LockBackForwardList lockBackForwardList() const { return m_lastNavigationAction ? m_lastNavigationAction->lockBackForwardList : WebCore::LockBackForwardList::No; }
     WebCore::NavigationHistoryBehavior navigationHistoryBehavior() const { return m_lastNavigationAction ? m_lastNavigationAction->navigationHistoryBehavior : WebCore::NavigationHistoryBehavior::Auto; }
 
-    WTF::String clientRedirectSourceForHistory() const { return m_lastNavigationAction ? m_lastNavigationAction->clientRedirectSourceForHistory : WTF::String(); }
+    RefPtr<StringImpl> clientRedirectSourceForHistory() const { return m_lastNavigationAction ? m_lastNavigationAction->clientRedirectSourceForHistory : nullptr; }
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy() const { return m_lastNavigationAction ? m_lastNavigationAction->ownerPermissionsPolicy : std::nullopt; }
 
     void setLastNavigationAction(const WebKit::NavigationActionData& navigationAction, RefPtr<JSHandle>&& hitTestJSHandle = nullptr)
@@ -183,7 +183,7 @@ public:
     WebKit::WebContentMode effectiveContentMode() const { return m_effectiveContentMode; }
 
 #if !LOG_DISABLED
-    WTF::String loggingString() const;
+    RefPtr<StringImpl> loggingString() const;
 #endif
 
     const std::unique_ptr<SubstituteData>& substituteData() const LIFETIME_BOUND { return m_substituteData; }

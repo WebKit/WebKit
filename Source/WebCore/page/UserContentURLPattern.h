@@ -64,15 +64,15 @@ public:
         return matchesScheme(test) && matchesHost(test) && matchesPath(test);
     }
 
-    const String& scheme() const LIFETIME_BOUND { return m_scheme; }
-    const String& host() const LIFETIME_BOUND { return m_host; }
-    const String& path() const LIFETIME_BOUND { return m_path; }
+    const RefPtr<StringImpl>& scheme() const LIFETIME_BOUND { return m_scheme; }
+    const RefPtr<StringImpl>& host() const LIFETIME_BOUND { return m_host; }
+    const RefPtr<StringImpl>& path() const LIFETIME_BOUND { return m_path; }
 
-    bool matchAllHosts() const { return m_matchSubdomains && m_host.isEmpty(); }
+    bool matchAllHosts() const { return m_matchSubdomains && isEmpty(m_host); }
     bool matchSubdomains() const { return m_matchSubdomains; }
 
     // The host with the '*' wildcard, if matchSubdomains is true, otherwise same as host().
-    WEBCORE_EXPORT String originalHost() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> originalHost() const;
 
     WEBCORE_EXPORT bool matchesScheme(const URL&) const;
     bool matchesHost(const URL& url) const { return matchesHost(url.host().toStringWithoutCopying()); }
@@ -84,7 +84,7 @@ public:
 
     NODELETE WEBCORE_EXPORT bool operator==(const UserContentURLPattern& other) const;
 
-    static bool matchesPatterns(const URL&, const Vector<String>& allowlist, const Vector<String>& blocklist);
+    static bool matchesPatterns(const URL&, const Vector<RefPtr<StringImpl>>& allowlist, const Vector<RefPtr<StringImpl>>& blocklist);
 
     WEBCORE_EXPORT static std::optional<RegistrableDomain> siteMatchedByPatterns(const Vector<UserContentURLPattern>&);
 
@@ -92,17 +92,17 @@ private:
     WEBCORE_EXPORT Error parse(StringView pattern);
     void normalizeHostAndSetMatchSubdomains();
 
-    NODELETE WEBCORE_EXPORT bool matchesHost(const String&) const;
-    NODELETE WEBCORE_EXPORT bool matchesPath(const String&) const;
+    NODELETE WEBCORE_EXPORT bool matchesHost(StringImpl*) const;
+    NODELETE WEBCORE_EXPORT bool matchesPath(StringImpl*) const;
 
-    String m_scheme;
-    String m_host;
-    String m_path;
+    RefPtr<StringImpl> m_scheme;
+    RefPtr<StringImpl> m_host;
+    RefPtr<StringImpl> m_path;
 
     Error m_error { Error::Invalid };
     bool m_matchSubdomains { false };
 };
 
-NODELETE WEBCORE_EXPORT bool matchesWildcardPattern(const String& pattern, const String& testString);
+NODELETE WEBCORE_EXPORT bool matchesWildcardPattern(StringImpl* pattern, StringImpl* testString);
 
 } // namespace WebCore

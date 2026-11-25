@@ -59,14 +59,14 @@ private:
     const WaveShaperProcessor* waveShaperProcessor() const { return downcast<WaveShaperProcessor>(processor()); }
 };
 
-String convertEnumerationToString(WebCore::OverSampleType); // in JSOverSampleType.cpp
+RefPtr<StringImpl> convertEnumerationToString(WebCore::OverSampleType); // in JSOverSampleType.cpp
 
 } // namespace WebCore
 
 namespace WTF {
     
 template<> struct LogArgument<WebCore::OverSampleType> {
-    static String toString(WebCore::OverSampleType type) { return convertEnumerationToString(type); }
+    static RefPtr<StringImpl> toString(WebCore::OverSampleType type) { return convertEnumerationToString(type); }
 };
     
 } // namespace WTF

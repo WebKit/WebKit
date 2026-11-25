@@ -284,7 +284,7 @@ struct DebugState {
 };
 
 template<typename T>
-inline String toNativeEndianHex(const T& value)
+inline RefPtr<StringImpl> toNativeEndianHex(const T& value)
 {
     static_assert(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8 || sizeof(T) == 16,
         "toNativeEndianHex only supports 1, 2, 4, 8, or 16 byte types");
@@ -296,7 +296,7 @@ inline String toNativeEndianHex(const T& value)
     return hexString.toString();
 }
 
-String stringToHex(StringView);
+RefPtr<StringImpl> stringToHex(StringView);
 
 void logWasmLocalValue(size_t index, const JSC::IPInt::IPIntLocal&, const Wasm::Type&);
 

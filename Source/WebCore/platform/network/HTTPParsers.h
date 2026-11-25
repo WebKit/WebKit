@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-using HTTPHeaderSet = HashSet<String, ASCIICaseInsensitiveHash>;
+using HTTPHeaderSet = HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>;
 
 class ResourceResponse;
 enum class HTTPHeaderName : uint16_t;
@@ -80,21 +80,22 @@ enum class ClearSiteDataValue : uint8_t {
 
 enum class RangeAllowWhitespace : bool { No, Yes };
 
-NODELETE bool isValidReasonPhrase(const String&);
-NODELETE WEBCORE_EXPORT bool isValidHTTPHeaderValue(const String&);
-NODELETE bool isValidAcceptHeaderValue(const String&);
-NODELETE bool isValidLanguageHeaderValue(const String&);
+NODELETE bool isValidReasonPhrase(StringImpl*);
+NODELETE WEBCORE_EXPORT bool isValidHTTPHeaderValue(StringImpl*);
+NODELETE bool isValidAcceptHeaderValue(StringImpl*);
+NODELETE bool isValidLanguageHeaderValue(StringImpl*);
 #if USE(GLIB)
-WEBCORE_EXPORT bool isValidUserAgentHeaderValue(const String&);
+WEBCORE_EXPORT bool isValidUserAgentHeaderValue(StringImpl*);
 #endif
-NODELETE WEBCORE_EXPORT bool isValidHTTPToken(const String&);
+NODELETE WEBCORE_EXPORT bool isValidHTTPToken(StringImpl*);
 NODELETE bool isValidHTTPToken(StringView);
-std::optional<WallTime> parseHTTPDate(const String&);
+inline bool isValidHTTPToken(const RefPtr<StringImpl>& value) { return isValidHTTPToken(value.get()); }
+std::optional<WallTime> parseHTTPDate(StringImpl*);
 StringView filenameFromHTTPContentDisposition(StringView value LIFETIME_BOUND);
-WEBCORE_EXPORT String extractMIMETypeFromMediaType(const String&);
+WEBCORE_EXPORT RefPtr<StringImpl> extractMIMETypeFromMediaType(StringImpl*);
 WEBCORE_EXPORT StringView extractCharsetFromMediaType(StringView mediaType LIFETIME_BOUND);
-XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
-AtomString extractReasonPhraseFromHTTPStatusLine(const String&);
+XSSProtectionDisposition parseXSSProtectionHeader(StringImpl* header, RefPtr<StringImpl>& failureReason, unsigned& failurePosition, RefPtr<StringImpl>& reportURL);
+RefPtr<AtomStringImpl> extractReasonPhraseFromHTTPStatusLine(StringImpl*);
 WEBCORE_EXPORT XFrameOptionsDisposition parseXFrameOptionsHeader(StringView);
 WEBCORE_EXPORT OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse&);
 
@@ -108,38 +109,38 @@ WEBCORE_EXPORT std::optional<HTTPRange> parseRange(StringView, RangeAllowWhitesp
 ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header);
 
 // Parsing Complete HTTP Messages.
-size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, StringView& nameStr, String& valueStr, bool strict = true);
+size_t parseHTTPHeader(std::span<const uint8_t> data, RefPtr<StringImpl>& failureReason, StringView& nameStr, RefPtr<StringImpl>& valueStr, bool strict = true);
 size_t parseHTTPRequestBody(std::span<const uint8_t> data, Vector<uint8_t>& body);
 
 std::optional<uint64_t> parseContentLength(StringView);
 
 // HTTP Header routine as per https://fetch.spec.whatwg.org/#terminology-headers
-WEBCORE_EXPORT bool isForbiddenHeader(const String& name, StringView value);
-bool isForbiddenHeaderName(const String&);
-bool isNoCORSSafelistedRequestHeaderName(const String&);
-bool isPriviledgedNoCORSRequestHeaderName(const String&);
-WEBCORE_EXPORT bool isForbiddenResponseHeaderName(const String&);
+WEBCORE_EXPORT bool isForbiddenHeader(StringImpl* name, StringView value);
+bool isForbiddenHeaderName(StringImpl*);
+bool isNoCORSSafelistedRequestHeaderName(StringImpl*);
+bool isPriviledgedNoCORSRequestHeaderName(StringImpl*);
+WEBCORE_EXPORT bool isForbiddenResponseHeaderName(StringImpl*);
 bool isForbiddenMethod(StringView);
-bool isSimpleHeader(const String& name, const String& value);
+bool isSimpleHeader(StringImpl* name, StringImpl* value);
 bool isCrossOriginSafeHeader(HTTPHeaderName, const HTTPHeaderSet&);
-bool isCrossOriginSafeHeader(const String&, const HTTPHeaderSet&);
-bool isCrossOriginSafeRequestHeader(HTTPHeaderName, const String&);
+bool isCrossOriginSafeHeader(StringImpl*, const HTTPHeaderSet&);
+bool isCrossOriginSafeRequestHeader(HTTPHeaderName, StringImpl*);
 
-String normalizeHTTPMethod(const String&);
-bool isSafeMethod(const String&);
+RefPtr<StringImpl> normalizeHTTPMethod(StringImpl*);
+bool isSafeMethod(StringImpl*);
 
 WEBCORE_EXPORT CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView);
 
 // The delimiter placed between values when appending to a request header, or nullopt if appending isn't supported.
-WEBCORE_EXPORT std::optional<ASCIILiteral> requestHeaderAppendDelimiter(const String& header);
+WEBCORE_EXPORT std::optional<ASCIILiteral> requestHeaderAppendDelimiter(StringImpl* header);
 
 // Request headers, and header values, that an extension can't set or append to, because the network stack manages them.
-WEBCORE_EXPORT bool isRequestHeaderUnsafeToModify(const String& header, StringView value);
+WEBCORE_EXPORT bool isRequestHeaderUnsafeToModify(StringImpl* header, StringView value);
 
 template<class HashType>
-bool addToAccessControlAllowList(const String& string, unsigned start, unsigned end, HashSet<String, HashType>& set)
+bool addToAccessControlAllowList(StringImpl* string, unsigned start, unsigned end, HashSet<RefPtr<StringImpl>, HashType>& set)
 {
-    StringImpl* stringImpl = string.impl();
+    StringImpl* stringImpl = string;
     if (!stringImpl)
         return true;
 
@@ -155,29 +156,29 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
     while (end && isASCIIWhitespaceWithoutFF((*stringImpl)[end]))
         --end;
 
-    auto token = string.substring(start, end - start + 1);
-    if (!isValidHTTPToken(token))
+    auto token = substring(string, start, end - start + 1);
+    if (!isValidHTTPToken(token.get()))
         return false;
 
     set.add(WTF::move(token));
     return true;
 }
 
-template<class HashType = DefaultHash<String>>
-std::optional<HashSet<String, HashType>> parseAccessControlAllowList(const String& string)
+template<class HashType = DefaultHash<RefPtr<StringImpl>>>
+std::optional<HashSet<RefPtr<StringImpl>, HashType>> parseAccessControlAllowList(StringImpl* string)
 {
-    HashSet<String, HashType> set;
+    HashSet<RefPtr<StringImpl>, HashType> set;
     unsigned start = 0;
     size_t end;
-    while ((end = string.find(',', start)) != notFound) {
+    while ((end = find(string, ',', start)) != notFound) {
         if (start != end) {
             if (!addToAccessControlAllowList(string, start, end - 1, set))
                 return { };
         }
         start = end + 1;
     }
-    if (start != string.length()) {
-        if (!addToAccessControlAllowList(string, start, string.length() - 1, set))
+    if (start != length(string)) {
+        if (!addToAccessControlAllowList(string, start, length(string) - 1, set))
             return { };
     }
     return set;

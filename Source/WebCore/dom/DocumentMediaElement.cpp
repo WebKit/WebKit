@@ -101,7 +101,7 @@ bool DocumentMediaElement::setupAndCallCNNQuirkJS(NOESCAPE const JSSetupFunction
 DOMWrapperWorld& DocumentMediaElement::ensureIsolatedWorld()
 {
     if (!m_isolatedWorld) {
-        lazyInitialize(m_isolatedWorld, DOMWrapperWorld::create(Ref { commonVM() }, DOMWrapperWorld::Type::Internal, "Media Controls (Document)"_s));
+        lazyInitialize(m_isolatedWorld, DOMWrapperWorld::create(Ref { commonVM() }, DOMWrapperWorld::Type::Internal, "Media Controls (Document)"_si));
         m_isolatedWorld->setIsMediaControls();
     }
     return *m_isolatedWorld;
@@ -123,7 +123,7 @@ bool DocumentMediaElement::ensureMediaControlsScript()
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         for (auto& mediaControlsScript : mediaControlsScripts) {
-            if (mediaControlsScript.isEmpty())
+            if (isEmpty(mediaControlsScript))
                 continue;
             scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, JSC::SourceTaintedOrigin::Untainted), world);
             RETURN_IF_EXCEPTION(scope, false);
@@ -141,7 +141,7 @@ bool DocumentMediaElement::ensureYouTubeQuirkScript()
 
     Ref document = this->document();
     auto youTubeQuirkScript = RenderTheme::singleton().youTubeQuirkScript();
-    if (youTubeQuirkScript.isEmpty() || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
+    if (isEmpty(youTubeQuirkScript) || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
         return false;
 
     Ref world = mainThreadNormalWorldSingleton();
@@ -164,7 +164,7 @@ bool DocumentMediaElement::ensureCNNQuirkScript()
 
     Ref document = this->document();
     auto cnnQuirkScript = RenderTheme::singleton().cnnQuirkScript();
-    if (cnnQuirkScript.isEmpty() || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
+    if (isEmpty(cnnQuirkScript) || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
         return false;
 
     Ref world = mainThreadNormalWorldSingleton();

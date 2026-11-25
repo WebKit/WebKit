@@ -309,7 +309,7 @@ void webkit_dom_html_button_element_set_button_type(WebKitDOMHTMLButtonElement* 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLButtonElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_button_element_get_name(WebKitDOMHTMLButtonElement* self)
@@ -327,7 +327,7 @@ void webkit_dom_html_button_element_set_name(WebKitDOMHTMLButtonElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLButtonElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_button_element_get_value(WebKitDOMHTMLButtonElement* self)
@@ -345,7 +345,7 @@ void webkit_dom_html_button_element_set_value(WebKitDOMHTMLButtonElement* self, 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BUTTON_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLButtonElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, WTF::AtomString::fromUTF8(value));
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valueAttr, AtomStringImpl::fromUTF8(value));
 }
 
 gboolean webkit_dom_html_button_element_get_will_validate(WebKitDOMHTMLButtonElement* self)

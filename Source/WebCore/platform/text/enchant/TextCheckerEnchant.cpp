@@ -50,25 +50,25 @@ TextCheckerEnchant::TextCheckerEnchant()
 {
 }
 
-void TextCheckerEnchant::ignoreWord(const String& word)
+void TextCheckerEnchant::ignoreWord(StringImpl* word)
 {
-    auto utf8Word = word.utf8();
+    auto utf8Word = utf8(word);
     auto characters = byteCast<char>(utf8Word.span());
     for (auto& dictionary : m_enchantDictionaries)
         enchant_dict_add_to_session(dictionary.get(), characters.data(), characters.size());
 }
 
-void TextCheckerEnchant::learnWord(const String& word)
+void TextCheckerEnchant::learnWord(StringImpl* word)
 {
-    auto utf8Word = word.utf8();
+    auto utf8Word = utf8(word);
     auto characters = byteCast<char>(utf8Word.span());
     for (auto& dictionary : m_enchantDictionaries)
         enchant_dict_add(dictionary.get(), characters.data(), characters.size());
 }
 
-void TextCheckerEnchant::checkSpellingOfWord(const String& word, int start, int end, int& misspellingLocation, int& misspellingLength)
+void TextCheckerEnchant::checkSpellingOfWord(StringImpl* word, int start, int end, int& misspellingLocation, int& misspellingLength)
 {
-    auto string = word.substring(start, end - start).utf8();
+    auto string = utf8(substring(word, start, end - start));
     auto characters = byteCast<char>(string.span());
 
     for (auto& dictionary : m_enchantDictionaries) {
@@ -84,7 +84,7 @@ void TextCheckerEnchant::checkSpellingOfWord(const String& word, int start, int 
     misspellingLength = end - start;
 }
 
-void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspellingLocation, int& misspellingLength)
+void TextCheckerEnchant::checkSpellingOfString(StringImpl* string, int& misspellingLocation, int& misspellingLength)
 {
     // Assume that the words in the string are spelled correctly.
     misspellingLocation = -1;
@@ -109,15 +109,15 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
     }
 }
 
-Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
+Vector<RefPtr<StringImpl>> TextCheckerEnchant::getGuessesForWord(StringImpl* word)
 {
     if (!hasDictionary())
         return { };
 
     static const size_t maximumNumberOfSuggestions = 10;
 
-    Vector<String> guesses;
-    auto utf8Word = word.utf8();
+    Vector<RefPtr<StringImpl>> guesses;
+    auto utf8Word = utf8(word);
     auto characters = byteCast<char>(utf8Word.span());
     for (auto& dictionary : m_enchantDictionaries) {
         size_t numberOfSuggestions;
@@ -130,7 +130,7 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
             numberOfSuggestions = maximumNumberOfSuggestions;
 
         for (const auto suggestion : unsafeMakeSpan(suggestions, numberOfSuggestions))
-            guesses.append(String::fromUTF8(suggestion));
+            guesses.append(StringImpl::fromUTF8(suggestion));
 
         enchant_dict_free_string_list(dictionary.get(), suggestions);
     }
@@ -138,12 +138,12 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
     return guesses;
 }
 
-void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& languages)
+void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<RefPtr<StringImpl>>& languages)
 {
     Vector<UniqueEnchantDict> spellDictionaries;
     if (!languages.isEmpty()) {
         for (auto& language : languages) {
-            auto currentLanguage = language.utf8();
+            auto currentLanguage = utf8(language);
             if (enchant_broker_dict_exists(m_broker, currentLanguage.legacyCStringPointer())) {
                 if (auto* dict = enchant_broker_request_dict(m_broker, currentLanguage.legacyCStringPointer()))
                     spellDictionaries.append(dict);
@@ -151,7 +151,7 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
         }
     } else {
         // Languages are not specified by user, try to get default language.
-        auto language = defaultLanguage().utf8();
+        auto language = utf8(defaultLanguage());
         if (enchant_broker_dict_exists(m_broker, language.legacyCStringPointer())) {
             if (auto* dict = enchant_broker_request_dict(m_broker, language.legacyCStringPointer()))
                 spellDictionaries.append(dict);
@@ -174,27 +174,27 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
     m_enchantDictionaries = WTF::move(spellDictionaries);
 }
 
-Vector<String> TextCheckerEnchant::loadedSpellCheckingLanguages() const
+Vector<RefPtr<StringImpl>> TextCheckerEnchant::loadedSpellCheckingLanguages() const
 {
     if (!hasDictionary())
         return { };
 
-    Vector<String> languages;
+    Vector<RefPtr<StringImpl>> languages;
     for (auto& dictionary : m_enchantDictionaries) {
         enchant_dict_describe(dictionary.get(), [](const char* const languageTag, const char* const, const char* const, const char* const, void* data) {
-            auto* languages = static_cast<Vector<String>*>(data);
-            languages->append(String::fromUTF8(languageTag));
+            auto* languages = static_cast<Vector<RefPtr<StringImpl>>*>(data);
+            languages->append(StringImpl::fromUTF8(languageTag));
         }, &languages);
     }
     return languages;
 }
 
-Vector<String> TextCheckerEnchant::availableSpellCheckingLanguages() const
+Vector<RefPtr<StringImpl>> TextCheckerEnchant::availableSpellCheckingLanguages() const
 {
-    Vector<String> languages;
+    Vector<RefPtr<StringImpl>> languages;
     enchant_broker_list_dicts(m_broker, [](const char* const languageTag, const char* const, const char* const, const char* const, void* data) {
-        auto* languages = static_cast<Vector<String>*>(data);
-        languages->append(String::fromUTF8(languageTag));
+        auto* languages = static_cast<Vector<RefPtr<StringImpl>>*>(data);
+        languages->append(StringImpl::fromUTF8(languageTag));
     }, &languages);
     return languages;
 }

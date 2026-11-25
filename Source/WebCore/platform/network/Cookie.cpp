@@ -39,9 +39,9 @@ namespace WebCore {
 #if !PLATFORM(COCOA)
 bool Cookie::operator==(const Cookie& other) const
 {
-    return name == other.name
-        && domain == other.domain
-        && path == other.path
+    return equal(name, other.name)
+        && equal(domain, other.domain)
+        && equal(path, other.path)
         && secure == other.secure;
 }
     
@@ -53,19 +53,19 @@ unsigned Cookie::hash() const
 
 namespace CookieUtil {
 
-String defaultPathForURL(const URL& url)
+RefPtr<StringImpl> defaultPathForURL(const URL& url)
 {
     // Algorithm to generate the default path is outlined in https://tools.ietf.org/html/rfc6265#section-5.1.4
 
-    String path = url.path().toString();
-    if (path.isEmpty() || !path.startsWith('/'))
-        return "/"_s;
+    RefPtr<StringImpl> path = url.path().toString();
+    if (isEmpty(path) || !startsWith(path, '/'))
+        return "/"_si;
 
-    auto lastSlashPosition = path.reverseFind('/');
+    auto lastSlashPosition = reverseFind(path, '/');
     if (!lastSlashPosition)
-        return "/"_s;
+        return "/"_si;
 
-    return path.left(lastSlashPosition);
+    return left(path, lastSlashPosition);
 }
 
 static bool isMonthNameToken(StringView token)
@@ -79,7 +79,7 @@ static bool isMonthNameToken(StringView token)
     });
 }
 
-std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
+std::optional<RefPtr<StringImpl>> cookieStringWithDayFirstExpires(StringView cookieString)
 {
     auto firstSemicolon = cookieString.find(';');
     if (firstSemicolon == notFound)
@@ -162,18 +162,18 @@ std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
 // The `cookieStringFor...` functions can reinterpret a cookie string heading from DOM to storage
 // or from storage to DOM. Cocoa is the only platform that needs to do this at the moment.
 // These functions are a no-op on other platforms.
-String cookieStringForScript(const String& storedValue)
+RefPtr<StringImpl> cookieStringForScript(StringImpl* storedValue)
 {
-    return cookieStringForScript(String { storedValue });
+    return cookieStringForScript(RefPtr<StringImpl> { storedValue });
 }
 
 #if !PLATFORM(COCOA)
-String cookieStringForScript(String&& storedValue)
+RefPtr<StringImpl> cookieStringForScript(RefPtr<StringImpl>&& storedValue)
 {
     return WTF::move(storedValue);
 }
 
-String cookieStringForStorage(const String& scriptValue)
+RefPtr<StringImpl> cookieStringForStorage(StringImpl* scriptValue)
 {
     return scriptValue;
 }

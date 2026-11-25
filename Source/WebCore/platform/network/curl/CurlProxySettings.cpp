@@ -39,9 +39,9 @@ namespace WebCore {
 
 static constexpr uint16_t SocksProxyPort = 1080;
 
-static std::optional<String> createProxyUrl(const URL&);
+static std::optional<RefPtr<StringImpl>> createProxyUrl(const URL&);
 
-CurlProxySettings::CurlProxySettings(URL&& proxyUrl, String&& ignoreHosts)
+CurlProxySettings::CurlProxySettings(URL&& proxyUrl, RefPtr<StringImpl>&& ignoreHosts)
     : m_mode(Mode::Custom)
     , m_url(WTF::move(proxyUrl))
     , m_ignoreHosts(WTF::move(ignoreHosts))
@@ -58,7 +58,7 @@ void CurlProxySettings::rebuildUrl()
         m_urlSerializedWithPort = WTF::move(*url);
 }
 
-void CurlProxySettings::setUserPass(const String& user, const String& password)
+void CurlProxySettings::setUserPass(StringImpl* user, StringImpl* password)
 {
     m_url.setUser(user);
     m_url.setPassword(password);
@@ -133,7 +133,7 @@ static std::optional<uint16_t> getProxyPort(const URL& url)
     return std::nullopt;
 }
 
-static std::optional<String> createProxyUrl(const URL &url)
+static std::optional<RefPtr<StringImpl>> createProxyUrl(const URL &url)
 {
     if (url.isEmpty() || url.host().isEmpty())
         return std::nullopt;
@@ -145,7 +145,7 @@ static std::optional<String> createProxyUrl(const URL &url)
     if (!port)
         return std::nullopt;
 
-    auto userpass = url.hasCredentials() ? makeString(url.user(), ':', url.password(), '@') : String();
+    auto userpass = url.hasCredentials() ? makeString(url.user(), ':', url.password(), '@') : nullptr;
     return makeString(url.protocol(), "://"_s, userpass, url.host(), ':', *port);
 }
 

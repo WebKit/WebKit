@@ -105,7 +105,7 @@ public:
         return subspaceForImpl(vm);
     }
 
-    static ObjcFallbackObjectImp* create(JSGlobalObject* exec, JSGlobalObject* globalObject, ObjcInstance* instance, const String& propertyName)
+    static ObjcFallbackObjectImp* create(JSGlobalObject* exec, JSGlobalObject* globalObject, ObjcInstance* instance, StringImpl* propertyName)
     {
         VM& vm = globalObject->vm();
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
@@ -117,7 +117,7 @@ public:
 
     DECLARE_INFO;
 
-    const String& propertyName() const LIFETIME_BOUND { return m_item; }
+    const RefPtr<StringImpl>& propertyName() const LIFETIME_BOUND { return m_item; }
 
     static ObjectPrototype* createPrototype(VM&, JSGlobalObject& globalObject)
     {
@@ -134,7 +134,7 @@ public:
     static void destroy(JSCell*);
 
 private:
-    ObjcFallbackObjectImp(JSGlobalObject*, Structure*, ObjcInstance*, const String& propertyName);
+    ObjcFallbackObjectImp(JSGlobalObject*, Structure*, ObjcInstance*, StringImpl* propertyName);
     void finishCreation(JSGlobalObject*);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
@@ -147,7 +147,7 @@ private:
     NODELETE static GCClient::IsoSubspace* subspaceForImpl(VM&);
 
     RefPtr<ObjcInstance> _instance;
-    String m_item;
+    RefPtr<StringImpl> m_item;
 };
 
 } // namespace JSC::Bindings

@@ -118,12 +118,12 @@ NODELETE static inline void writeEpubPrefix(std::span<char>& buffer)
     memcpySpan(consumeSpan(buffer, 6), "-epub-"_span);
 }
 
-static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyName)
+static CSSPropertyID parseJavaScriptCSSPropertyName(AtomStringImpl* propertyName)
 {
-    using CSSPropertyIDMap = HashMap<AtomString, CSSPropertyID>;
+    using CSSPropertyIDMap = HashMap<RefPtr<AtomStringImpl>, CSSPropertyID>;
     static NeverDestroyed<CSSPropertyIDMap> propertyIDCache;
 
-    RefPtr propertyNameString = propertyName.impl();
+    RefPtr propertyNameString = propertyName;
     if (!propertyNameString)
         return CSSPropertyID::Invalid;
 
@@ -191,7 +191,7 @@ static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyNa
 
 }
 
-CSSPropertyID CSSStyleProperties::getCSSPropertyIDFromJavaScriptPropertyName(const AtomString& propertyName)
+CSSPropertyID CSSStyleProperties::getCSSPropertyIDFromJavaScriptPropertyName(AtomStringImpl* propertyName)
 {
     // FIXME: This exposes properties disabled by settings. Pass result of CSSStyleProperties::settings instead of null?
     Settings* settings = nullptr;
@@ -201,9 +201,9 @@ CSSPropertyID CSSStyleProperties::getCSSPropertyIDFromJavaScriptPropertyName(con
 
 enum class CSSPropertyLookupMode { ConvertUsingDashPrefix, ConvertUsingNoDashPrefix, NoConversion };
 
-template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromIDLAttribute(const AtomString& attribute)
+template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromIDLAttribute(AtomStringImpl* attribute)
 {
-    static NeverDestroyed<HashMap<AtomString, CSSPropertyID>> cache;
+    static NeverDestroyed<HashMap<RefPtr<AtomStringImpl>, CSSPropertyID>> cache;
 
     if (auto id = cache.get().get(attribute); id != CSSPropertyID::Invalid)
         return id;
@@ -221,7 +221,7 @@ template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromI
         readCharactersForParsing(attribute, [&](auto buffer) {
             while (buffer.hasCharactersRemaining()) {
                 auto c = *buffer++;
-                ASSERT_WITH_MESSAGE(isASCII(c), "Invalid property name: %s", attribute.string().utf8());
+                ASSERT_WITH_MESSAGE(isASCII(c), "Invalid property name: %s", utf8(attribute));
                 if (isASCIIUpper(c)) {
                     outputBuffer[outputIndex++] = '-';
                     outputBuffer[outputIndex++] = toASCIILowerUnchecked(c);
@@ -233,80 +233,80 @@ template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromI
         readCharactersForParsing(attribute, [&](auto buffer) {
             while (buffer.hasCharactersRemaining()) {
                 auto c = *buffer++;
-                ASSERT_WITH_MESSAGE(c == '-' || isASCIILower(c), "Invalid property name: %s", attribute.string().utf8());
+                ASSERT_WITH_MESSAGE(c == '-' || isASCIILower(c), "Invalid property name: %s", utf8(attribute));
                 outputBuffer[outputIndex++] = c;
             }
         });
     }
 
     auto id = findCSSProperty(outputBuffer.data(), outputIndex);
-    ASSERT_WITH_MESSAGE(id != CSSPropertyID::Invalid, "Invalid property name: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(id != CSSPropertyID::Invalid, "Invalid property name: %s", utf8(attribute));
     cache.get().add(attribute, id);
     return id;
 }
 
-String CSSStyleProperties::propertyValueForCamelCasedIDLAttribute(const AtomString& attribute)
+RefPtr<StringImpl> CSSStyleProperties::propertyValueForCamelCasedIDLAttribute(AtomStringImpl* attribute)
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingNoDashPrefix>(attribute);
-    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", utf8(attribute));
     return getPropertyValueInternal(propertyID);
 }
 
-ExceptionOr<void> CSSStyleProperties::setPropertyValueForCamelCasedIDLAttribute(const AtomString& attribute, const String& value)
+ExceptionOr<void> CSSStyleProperties::setPropertyValueForCamelCasedIDLAttribute(AtomStringImpl* attribute, StringImpl* value)
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingNoDashPrefix>(attribute);
-    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", utf8(attribute));
     return setPropertyInternal(propertyID, value, IsImportant::No);
 }
 
-String CSSStyleProperties::propertyValueForWebKitCasedIDLAttribute(const AtomString& attribute)
+RefPtr<StringImpl> CSSStyleProperties::propertyValueForWebKitCasedIDLAttribute(AtomStringImpl* attribute)
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
-    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", utf8(attribute));
     return getPropertyValueInternal(propertyID);
 }
 
-ExceptionOr<void> CSSStyleProperties::setPropertyValueForWebKitCasedIDLAttribute(const AtomString& attribute, const String& value)
+ExceptionOr<void> CSSStyleProperties::setPropertyValueForWebKitCasedIDLAttribute(AtomStringImpl* attribute, StringImpl* value)
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
-    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", utf8(attribute));
     return setPropertyInternal(propertyID, value, IsImportant::No);
 }
 
-String CSSStyleProperties::propertyValueForDashedIDLAttribute(const AtomString& attribute)
+RefPtr<StringImpl> CSSStyleProperties::propertyValueForDashedIDLAttribute(AtomStringImpl* attribute)
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::NoConversion>(attribute);
-    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", utf8(attribute));
     return getPropertyValueInternal(propertyID);
 }
 
-ExceptionOr<void> CSSStyleProperties::setPropertyValueForDashedIDLAttribute(const AtomString& attribute, const String& value)
+ExceptionOr<void> CSSStyleProperties::setPropertyValueForDashedIDLAttribute(AtomStringImpl* attribute, StringImpl* value)
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::NoConversion>(attribute);
-    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", utf8(attribute));
     return setPropertyInternal(propertyID, value, IsImportant::No);
 }
 
-String CSSStyleProperties::propertyValueForEpubCasedIDLAttribute(const AtomString& attribute)
+RefPtr<StringImpl> CSSStyleProperties::propertyValueForEpubCasedIDLAttribute(AtomStringImpl* attribute)
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
-    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", utf8(attribute));
     return getPropertyValueInternal(propertyID);
 }
 
-ExceptionOr<void> CSSStyleProperties::setPropertyValueForEpubCasedIDLAttribute(const AtomString& attribute, const String& value)
+ExceptionOr<void> CSSStyleProperties::setPropertyValueForEpubCasedIDLAttribute(AtomStringImpl* attribute, StringImpl* value)
 {
     auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
-    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", attribute.string().utf8());
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyID::Invalid, "Invalid attribute: %s", utf8(attribute));
     return setPropertyInternal(propertyID, value, IsImportant::No);
 }
 
-String CSSStyleProperties::cssFloat()
+RefPtr<StringImpl> CSSStyleProperties::cssFloat()
 {
     return getPropertyValueInternal(CSSPropertyID::Float);
 }
 
-ExceptionOr<void> CSSStyleProperties::setCssFloat(const String& value)
+ExceptionOr<void> CSSStyleProperties::setCssFloat(StringImpl* value)
 {
     return setPropertyInternal(CSSPropertyID::Float, value, IsImportant::No);
 }
@@ -333,7 +333,7 @@ unsigned PropertySetCSSStyleProperties::length() const
     return exposed;
 }
 
-String PropertySetCSSStyleProperties::item(unsigned i) const
+RefPtr<StringImpl> PropertySetCSSStyleProperties::item(unsigned i) const
 {
     for (unsigned j = 0; j <= i && j < m_propertySet->propertyCount(); j++) {
         if (!isExposed(m_propertySet->propertyAt(j).id()))
@@ -341,17 +341,17 @@ String PropertySetCSSStyleProperties::item(unsigned i) const
     }
 
     if (i >= m_propertySet->propertyCount())
-        return String();
+        return nullptr;
 
     return m_propertySet->propertyAt(i).cssName();
 }
 
-String PropertySetCSSStyleProperties::cssText() const
+RefPtr<StringImpl> PropertySetCSSStyleProperties::cssText() const
 {
     return protect(m_propertySet)->asText(CSS::defaultSerializationContext());
 }
 
-ExceptionOr<void> PropertySetCSSStyleProperties::setCssText(const String& text)
+ExceptionOr<void> PropertySetCSSStyleProperties::setCssText(StringImpl* text)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
     if (!willMutate())
@@ -364,7 +364,7 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setCssText(const String& text)
     return { };
 }
 
-RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::getPropertyCSSValue(const String& propertyName)
+RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::getPropertyCSSValue(StringImpl* propertyName)
 {
     if (isCustomPropertyName(propertyName)) {
         RefPtr<CSSValue> value = protect(m_propertySet)->getCustomPropertyCSSValue(propertyName);
@@ -379,42 +379,42 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::getPropertyCSSValue(
     return wrapForDeprecatedCSSOM(protect(m_propertySet)->getPropertyCSSValue(propertyID).get());
 }
 
-String PropertySetCSSStyleProperties::getPropertyValue(const String& propertyName)
+RefPtr<StringImpl> PropertySetCSSStyleProperties::getPropertyValue(StringImpl* propertyName)
 {
     if (isCustomPropertyName(propertyName))
         return protect(m_propertySet)->getCustomPropertyValue(propertyName);
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
-        return String();
+        return nullptr;
     return getPropertyValueInternal(propertyID);
 }
 
-String PropertySetCSSStyleProperties::getPropertyPriority(const String& propertyName)
+RefPtr<StringImpl> PropertySetCSSStyleProperties::getPropertyPriority(StringImpl* propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return protect(m_propertySet)->customPropertyIsImportant(propertyName) ? "important"_s : emptyString();
+        return protect(m_propertySet)->customPropertyIsImportant(propertyName) ? "important"_si : emptyString();
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return emptyString();
-    return protect(m_propertySet)->propertyIsImportant(propertyID) ? "important"_s : emptyString();
+    return protect(m_propertySet)->propertyIsImportant(propertyID) ? "important"_si : emptyString();
 }
 
-String PropertySetCSSStyleProperties::getPropertyShorthand(const String& propertyName)
+RefPtr<StringImpl> PropertySetCSSStyleProperties::getPropertyShorthand(StringImpl* propertyName)
 {
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
-        return String();
+        return nullptr;
     return protect(m_propertySet)->getPropertyShorthand(propertyID);
 }
 
-bool PropertySetCSSStyleProperties::isPropertyImplicit(const String& propertyName)
+bool PropertySetCSSStyleProperties::isPropertyImplicit(StringImpl* propertyName)
 {
     return protect(m_propertySet)->isPropertyImplicit(cssPropertyID(propertyName));
 }
 
-ExceptionOr<void> PropertySetCSSStyleProperties::setProperty(const String& propertyName, const String& value, const String& priority)
+ExceptionOr<void> PropertySetCSSStyleProperties::setProperty(StringImpl* propertyName, StringImpl* value, StringImpl* priority)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
 
@@ -429,7 +429,7 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setProperty(const String& prope
         return { };
 
     bool important = equalLettersIgnoringASCIICase(priority, "important"_s);
-    if (!important && !priority.isEmpty())
+    if (!important && !isEmpty(priority))
         return { };
 
     bool changed;
@@ -449,19 +449,19 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setProperty(const String& prope
     return { };
 }
 
-ExceptionOr<String> PropertySetCSSStyleProperties::removeProperty(const String& propertyName)
+ExceptionOr<RefPtr<StringImpl>> PropertySetCSSStyleProperties::removeProperty(StringImpl* propertyName)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (isCustomPropertyName(propertyName))
         propertyID = CSSPropertyID::Custom;
     if (!isExposed(propertyID))
-        return String();
+        return nullptr;
 
     if (!willMutate())
-        return String();
+        return nullptr;
 
-    String result;
+    RefPtr<StringImpl> result;
     bool changed = propertyID != CSSPropertyID::Custom ? protect(m_propertySet)->removeProperty(propertyID, &result) : protect(m_propertySet)->removeCustomProperty(propertyName, &result);
 
     didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
@@ -471,20 +471,20 @@ ExceptionOr<String> PropertySetCSSStyleProperties::removeProperty(const String& 
     return result;
 }
 
-String PropertySetCSSStyleProperties::getPropertyValueInternal(CSSPropertyID propertyID)
+RefPtr<StringImpl> PropertySetCSSStyleProperties::getPropertyValueInternal(CSSPropertyID propertyID)
 {
     if (!isExposed(propertyID))
         return { };
 
     auto value = protect(m_propertySet)->getPropertyValue(propertyID);
 
-    if (!value.isEmpty())
+    if (!isEmpty(value))
         return value;
 
     return { };
 }
 
-ExceptionOr<void> PropertySetCSSStyleProperties::setPropertyInternal(CSSPropertyID propertyID, const String& value, IsImportant important)
+ExceptionOr<void> PropertySetCSSStyleProperties::setPropertyInternal(CSSPropertyID propertyID, StringImpl* value, IsImportant important)
 {
     StyleAttributeMutationScope mutationScope { parentElement() };
     if (!willMutate())

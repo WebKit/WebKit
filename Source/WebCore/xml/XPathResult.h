@@ -56,7 +56,7 @@ public:
     NODELETE WEBCORE_EXPORT unsigned short resultType() const;
 
     WEBCORE_EXPORT ExceptionOr<double> numberValue() const;
-    WEBCORE_EXPORT ExceptionOr<String> stringValue() const;
+    WEBCORE_EXPORT ExceptionOr<RefPtr<StringImpl>> stringValue() const;
     WEBCORE_EXPORT ExceptionOr<bool> booleanValue() const;
     WEBCORE_EXPORT ExceptionOr<Node*> singleNodeValue() const;
 

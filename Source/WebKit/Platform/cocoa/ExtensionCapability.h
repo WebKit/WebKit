@@ -39,7 +39,7 @@ using PlatformCapability = RetainPtr<BEProcessCapability>;
 class ExtensionCapability {
 public:
     virtual ~ExtensionCapability() = default;
-    virtual String environmentIdentifier() const = 0;
+    virtual RefPtr<StringImpl> environmentIdentifier() const = 0;
     const PlatformCapability& platformCapability() const LIFETIME_BOUND { return m_platformCapability; }
 
     bool hasPlatformCapability() const { return platformCapabilityIsValid(m_platformCapability); }

@@ -93,8 +93,8 @@ public:
     void update(const WebExtensionMenuItemParameters&);
 
     WebExtensionMenuItemType type() const { return m_type; }
-    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
-    const String& title() const LIFETIME_BOUND { return m_title; }
+    const RefPtr<StringImpl>& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const RefPtr<StringImpl>& title() const LIFETIME_BOUND { return m_title; }
 
     WebExtensionCommand* command() const { return m_command.get(); }
 
@@ -121,7 +121,7 @@ public:
 private:
     explicit WebExtensionMenuItem(WebExtensionContext&, const WebExtensionMenuItemParameters&);
 
-    static String removeAmpersands(const String&);
+    static RefPtr<StringImpl> removeAmpersands(StringImpl*);
 
     void clearIconCache() const;
 
@@ -131,8 +131,8 @@ private:
     WeakPtr<WebExtensionContext> m_extensionContext;
 
     WebExtensionMenuItemType m_type;
-    String m_identifier;
-    String m_title;
+    RefPtr<StringImpl> m_identifier;
+    RefPtr<StringImpl> m_title;
 
     RefPtr<WebExtensionCommand> m_command;
 

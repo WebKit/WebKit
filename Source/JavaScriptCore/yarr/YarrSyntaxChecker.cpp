@@ -51,13 +51,13 @@ public:
     NODELETE void atomCharacterClassPushNested(bool) { }
     NODELETE void atomCharacterClassPopNested(bool) { }
     NODELETE void atomCharacterClassEnd() { }
-    NODELETE void atomParenthesesSubpatternBegin(bool, std::optional<String> = std::nullopt) { }
+    NODELETE void atomParenthesesSubpatternBegin(bool, std::optional<RefPtr<StringImpl>> = std::nullopt) { }
     NODELETE void atomParentheticalAssertionBegin(bool, MatchDirection) { }
     NODELETE void atomParentheticalModifierBegin(OptionSet<Flags>, OptionSet<Flags>) { }
     NODELETE void atomParenthesesEnd() { }
     NODELETE void atomBackReference(unsigned) { }
-    NODELETE void atomNamedBackReference(const String&) { }
-    NODELETE void atomNamedForwardReference(const String&) { }
+    NODELETE void atomNamedBackReference(StringImpl*) { }
+    NODELETE void atomNamedForwardReference(StringImpl*) { }
     NODELETE void quantifyAtom(unsigned, unsigned, bool) { }
     NODELETE void disjunction(CreateDisjunctionPurpose) { }
     NODELETE void resetForReparsing() { }

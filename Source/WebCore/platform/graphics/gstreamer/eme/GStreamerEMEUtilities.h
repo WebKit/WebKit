@@ -45,18 +45,18 @@ class InitData {
 public:
     InitData() = default;
     // FIXME: We should have an enum for system uuids for better type safety.
-    InitData(const String& systemId, GstBuffer* initData)
+    InitData(StringImpl* systemId, GstBuffer* initData)
         : m_systemId(systemId)
     {
         auto mappedInitData = GstMappedOwnedBuffer::create(initData);
         if (!mappedInitData) {
-            GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_ERROR, nullptr, "cannot map %s protection data", systemId.utf8());
+            GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_ERROR, nullptr, "cannot map %s protection data", utf8(systemId));
             ASSERT_NOT_REACHED();
         }
         m_payload = extractCencIfNeeded(mappedInitData->createSharedBuffer());
     }
 
-    InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
+    InitData(StringImpl* systemId, RefPtr<SharedBuffer>&& payload)
         : m_systemId(systemId)
     {
         if (payload)
@@ -64,17 +64,17 @@ public:
     }
 
     RefPtr<SharedBuffer> payload() const { return m_payload; }
-    const String& systemId() const LIFETIME_BOUND { return m_systemId; }
-    String payloadContainerType() const
+    const RefPtr<StringImpl>& systemId() const LIFETIME_BOUND { return m_systemId; }
+    RefPtr<StringImpl> payloadContainerType() const
     {
-        if (m_systemId == GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s)
+        if (equal(m_systemId, GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s))
             return "webm"_s;
         return "cenc"_s;
     }
 
 private:
     static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<SharedBuffer>&&);
-    String m_systemId;
+    RefPtr<StringImpl> m_systemId;
     RefPtr<SharedBuffer> m_payload;
 };
 
@@ -84,11 +84,11 @@ public:
 
     explicit ProtectionSystemEvents(GstMessage*);
     const EventVector& events() const LIFETIME_BOUND { return m_events; }
-    const Vector<String>& availableSystems() const LIFETIME_BOUND { return m_availableSystems; }
+    const Vector<RefPtr<StringImpl>>& availableSystems() const LIFETIME_BOUND { return m_availableSystems; }
 
 private:
     EventVector m_events;
-    Vector<String> m_availableSystems;
+    Vector<RefPtr<StringImpl>> m_availableSystems;
 };
 
 
@@ -108,7 +108,7 @@ public:
         "audio/x-eac3"_s, "audio/x-ac3"_s, "audio/x-ac4"_s, "audio/x-flac"_s, "audio/x-opus"_s, "video/x-vp9"_s, "video/x-av1"_s };
     static constexpr std::array<ASCIILiteral, 7> s_webmEncryptionMediaTypes = { "video/webm"_s, "audio/webm"_s, "video/x-vp9"_s, "video/x-av1"_s, "audio/x-opus"_s, "audio/x-vorbis"_s, "video/x-vp8"_s };
 
-    static bool isClearKeyKeySystem(const String& keySystem)
+    static bool isClearKeyKeySystem(StringImpl* keySystem)
     {
         return equalIgnoringASCIICase(keySystem, s_ClearKeyKeySystem);
     }
@@ -118,7 +118,7 @@ public:
         return equalIgnoringASCIICase(uuid.span(), s_ClearKeyUUID);
     }
 
-    static bool isWidevineKeySystem(const String& keySystem)
+    static bool isWidevineKeySystem(StringImpl* keySystem)
     {
         return equalIgnoringASCIICase(keySystem, s_WidevineKeySystem);
     }
@@ -128,7 +128,7 @@ public:
         return equalIgnoringASCIICase(uuid.span(), s_WidevineUUID);
     }
 
-    static bool isPlayReadyKeySystem(const String& keySystem)
+    static bool isPlayReadyKeySystem(StringImpl* keySystem)
     {
         return equalIgnoringASCIICase(keySystem, s_PlayReadyKeySystems[0]) || equalIgnoringASCIICase(keySystem, s_PlayReadyKeySystems[1]);
     }
@@ -138,7 +138,7 @@ public:
         return equalIgnoringASCIICase(uuid.span(), s_PlayReadyUUID);
     }
 
-    static bool isUnspecifiedKeySystem(const String& keySystem)
+    static bool isUnspecifiedKeySystem(StringImpl* keySystem)
     {
         return equalIgnoringASCIICase(keySystem, s_unspecifiedKeySystem);
     }
@@ -148,7 +148,7 @@ public:
         return equalIgnoringASCIICase(uuid.span(), s_unspecifiedUUID);
     }
 
-    static ASCIILiteral keySystemToUuid(const String& keySystem)
+    static ASCIILiteral keySystemToUuid(StringImpl* keySystem)
     {
         if (isClearKeyKeySystem(keySystem))
             return s_ClearKeyUUID;

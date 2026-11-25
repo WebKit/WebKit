@@ -1383,7 +1383,7 @@ static bool networkProcessWillCheckBlobFileAccess()
 #endif
 }
 
-void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString, CompletionHandler<void()>&& completionHandler, CreateSandboxExtensionForNetworkingProcess createSandboxExtension)
+void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, StringImpl* urlString, CompletionHandler<void()>&& completionHandler, CreateSandboxExtensionForNetworkingProcess createSandboxExtension)
 {
     URL url { urlString };
     if (!url.protocolIsFile())
@@ -1393,8 +1393,8 @@ void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String
     // Get url's base URL to add to m_localPathsWithAssumedReadAccess.
     auto baseURL = url.truncatedForUseAsBase();
     auto path = baseURL.fileSystemPath();
-    WEBPROCESSPROXY_RELEASE_LOG(Sandbox, "assumeReadAccessToBaseURL(%u): path = %" PRIVATE_LOG_STRING, baseURL.isValid() ? WTF::URLHash::hash(baseURL) : 0, path.utf8());
-    if (path.isNull())
+    WEBPROCESSPROXY_RELEASE_LOG(Sandbox, "assumeReadAccessToBaseURL(%u): path = %" PRIVATE_LOG_STRING, baseURL.isValid() ? WTF::URLHash::hash(baseURL) : 0, utf8(path));
+    if (!path)
         return completionHandler();
 
     RefPtr dataStore = websiteDataStore();
@@ -1431,12 +1431,12 @@ void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String
     networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFileAccessFromWebProcess(coreProcessIdentifier(), path, WTF::move(handle)), WTF::move(afterAllowAccess));
 }
 
-void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vector<String>& urls, CompletionHandler<void()>&& completionHandler)
+void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vector<RefPtr<StringImpl>>& urls, CompletionHandler<void()>&& completionHandler)
 {
     RefPtr dataStore = websiteDataStore();
     if (!dataStore)
         return completionHandler();
-    Vector<String> paths;
+    Vector<RefPtr<StringImpl>> paths;
     for (auto& urlString : borrow(urls)) {
         URL url { urlString };
         if (!url.protocolIsFile())
@@ -1445,7 +1445,7 @@ void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vecto
         // There's a chance that urlString does not point to a directory.
         // Get url's base URL to add to m_localPathsWithAssumedReadAccess.
         auto path = url.truncatedForUseAsBase().fileSystemPath();
-        if (path.isNull())
+        if (!path)
             return completionHandler();
         paths.append(path);
     }
@@ -1481,8 +1481,8 @@ bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const
     auto urlHash = url.isValid() ? WTF::URLHash::hash(url) : 0;
     ASSERT_UNUSED(urlHash, urlHash > 0);
 
-    String path = url.fileSystemPath();
-    auto startsWithURLPath = [&path, protectedThis = RefPtr { this }](const String& assumedAccessPath) {
+    RefPtr<StringImpl> path = url.fileSystemPath();
+    auto startsWithURLPath = [&path, protectedThis = RefPtr { this }](StringImpl* assumedAccessPath) {
         // There are no ".." components, because URL removes those.
         WEBPROCESSPROXY_RELEASE_LOG_WITH_THIS(Sandbox, protectedThis, "hasAssumedReadAccessToURL: checking if url is contained in url(%u) with assumed access", WTF::URLHash::hash(URL::fileURLWithFileSystemPath(assumedAccessPath)));
         return FileSystem::pathIsSameOrDescendantOf(path, assumedAccessPath);
@@ -1503,7 +1503,7 @@ bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const
     return false;
 }
 
-bool WebProcessProxy::checkURLReceivedFromWebProcess(const String& urlString, CheckBackForwardList checkBackForwardList)
+bool WebProcessProxy::checkURLReceivedFromWebProcess(StringImpl* urlString, CheckBackForwardList checkBackForwardList)
 {
     return checkURLReceivedFromWebProcess(URL(URL(), urlString), checkBackForwardList);
 }
@@ -1528,15 +1528,15 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url, CheckBackFo
     // One case where we don't have sandbox extensions for file URLs in b/f list is if the list has been reinstated after a crash or a browser restart.
     // Only consider items belonging to a page hosted by this WebProcessProxy.
     if (checkBackForwardList == CheckBackForwardList::Yes) {
-        String path = url.fileSystemPath();
+        RefPtr<StringImpl> path = url.fileSystemPath();
         for (auto& item : WebBackForwardListItem::allItems().values()) {
             if (!m_pageMap.contains(item->pageID()))
                 continue;
             URL itemURL { item->url() };
-            if (itemURL.protocolIsFile() && itemURL.fileSystemPath() == path)
+            if (itemURL.protocolIsFile() && equal(itemURL.fileSystemPath(), path))
                 return true;
             URL itemOriginalURL { item->originalURL() };
-            if (itemOriginalURL.protocolIsFile() && itemOriginalURL.fileSystemPath() == path)
+            if (itemOriginalURL.protocolIsFile() && equal(itemOriginalURL.fileSystemPath(), path))
                 return true;
         }
     }
@@ -1734,7 +1734,7 @@ void WebProcessProxy::modelProcessExited(ProcessTerminationReason reason)
 }
 
 #if HAVE(TASK_IDENTITY_TOKEN)
-void WebProcessProxy::createMemoryAttributionIDIfNeeded(CompletionHandler<void(const std::optional<String>&)>&& completionHandler)
+void WebProcessProxy::createMemoryAttributionIDIfNeeded(CompletionHandler<void(const std::optional<RefPtr<StringImpl>>&)>&& completionHandler)
 {
     if (m_memoryAttributionID.has_value()) {
         completionHandler(m_memoryAttributionID);
@@ -1742,7 +1742,7 @@ void WebProcessProxy::createMemoryAttributionIDIfNeeded(CompletionHandler<void(c
     }
 
     GPUProcessProxy::getOrCreate()->createMemoryAttributionIDForTask(m_processIdentity, [this, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)]
-    (const std::optional<String>& attributionTaskID) mutable {
+    (const std::optional<RefPtr<StringImpl>>& attributionTaskID) mutable {
         if (!weakThis)
             return;
 
@@ -1959,7 +1959,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     if (pages.size() == 1 && reason == ProcessTerminationReason::Crash) {
         auto& page = pages[0];
         auto domain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(URL({ }, page->currentURL()).host());
-        if (!domain.isEmpty())
+        if (!isEmpty(domain))
             page->logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingCrashKey(), domain, WebCore::ShouldSample::No);
     }
 
@@ -2077,13 +2077,13 @@ void WebProcessProxy::setIgnoreInvalidMessageForTesting()
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-void WebProcessProxy::addAllowedAttachmentFilePath(const String& filePath)
+void WebProcessProxy::addAllowedAttachmentFilePath(StringImpl* filePath)
 {
-    if (!filePath.isEmpty())
+    if (!isEmpty(filePath))
         m_allowedAttachmentFilePaths.add(filePath);
 }
 
-bool WebProcessProxy::isAllowedAttachmentFilePath(const String& filePath) const
+bool WebProcessProxy::isAllowedAttachmentFilePath(StringImpl* filePath) const
 {
     return m_allowedAttachmentFilePaths.contains(filePath);
 }
@@ -2158,7 +2158,7 @@ void WebProcessProxy::addPreviouslyApprovedFileURL(const URL& url)
 {
     ASSERT(url.protocolIsFile());
     auto fileSystemPath = url.fileSystemPath();
-    if (!fileSystemPath.isEmpty())
+    if (!isEmpty(fileSystemPath))
         m_previouslyApprovedFilePaths.add(fileSystemPath);
 }
 
@@ -2178,7 +2178,7 @@ bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
 {
     ASSERT(url.protocolIsFile());
     auto fileSystemPath = url.fileSystemPath();
-    if (fileSystemPath.isEmpty())
+    if (isEmpty(fileSystemPath))
         return false;
     return m_previouslyApprovedFilePaths.contains(fileSystemPath);
 }
@@ -2703,7 +2703,7 @@ void WebProcessProxy::updateAudibleMediaAssertions()
     if (hasAudibleWebPage) {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: Taking MediaPlayback assertion for WebProcess");
         m_audibleMediaActivity = AudibleMediaActivity {
-            ProcessAssertion::create(*this, "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
+            ProcessAssertion::create(*this, "WebKit Media Playback"_si, ProcessAssertionType::MediaPlayback),
             protect(processPool())->webProcessWithAudibleMediaToken()
         };
     } else {
@@ -2800,7 +2800,7 @@ void WebProcessProxy::processTerminated()
     m_backgroundResponsivenessTimer->processTerminated();
 }
 
-void WebProcessProxy::logDiagnosticMessageForResourceLimitTermination(const String& limitKey)
+void WebProcessProxy::logDiagnosticMessageForResourceLimitTermination(StringImpl* limitKey)
 {
     if (pageCount()) {
         if (RefPtr page = pages()[0].ptr())
@@ -2850,23 +2850,23 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(uint64_t footprint)
     if (!dataStore)
         return;
 
-    String domain;
+    RefPtr<StringImpl> domain;
     bool wasPrivateRelayed = false;
     bool hasAllowedToRunInTheBackgroundActivity = false;
 
     for (Ref page : this->pages()) {
         auto pageDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(URL({ }, page->currentURL()).host());
-        if (domain.isEmpty())
+        if (isEmpty(domain))
             domain = WTF::move(pageDomain);
-        else if (domain != pageDomain)
-            domain = "multiple"_s;
+        else if (!equal(domain, pageDomain))
+            domain = "multiple"_si;
 
         wasPrivateRelayed = wasPrivateRelayed || page->pageLoadState().wasPrivateRelayed();
         hasAllowedToRunInTheBackgroundActivity = hasAllowedToRunInTheBackgroundActivity || page->hasAllowedToRunInTheBackgroundActivity();
     }
 
-    if (domain.isEmpty())
-        domain = "unknown"_s;
+    if (isEmpty(domain))
+        domain = "unknown"_si;
 
     auto activeTime = totalForegroundTime() + totalBackgroundTime() + totalSuspendedTime();
     dataStore->client().didExceedMemoryFootprintThreshold(footprint, domain, pageCount(), activeTime, throttler().currentState() == ProcessThrottleState::Foreground, wasPrivateRelayed ? WebCore::WasPrivateRelayed::Yes : WebCore::WasPrivateRelayed::No, hasAllowedToRunInTheBackgroundActivity ? WebsiteDataStoreClient::CanSuspend::No : WebsiteDataStoreClient::CanSuspend::Yes);
@@ -2915,9 +2915,9 @@ void WebProcessProxy::updateBackgroundResponsivenessTimer()
 }
 
 #if !PLATFORM(COCOA)
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
+const MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> platformPathsWithAssumedReadAccess;
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>> platformPathsWithAssumedReadAccess;
     return platformPathsWithAssumedReadAccess;
 }
 #endif
@@ -2945,13 +2945,13 @@ void WebProcessProxy::didObserveFirstPartyUserGesture(IPC::Untrusted<WebCore::Si
         protect(dataStore->isolatedSiteStore())->addSite(site, IsolatedSiteStore::Signal::FirstPartyUserGesture);
 }
 
-void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector<RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebProcess::GetActivePagesOriginsForTesting(), WTF::move(completionHandler));
 }
 
 #if ENABLE(NOTIFY_BLOCKING)
-void WebProcessProxy::getNotifyStateForTesting(const String& name, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+void WebProcessProxy::getNotifyStateForTesting(StringImpl* name, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebProcess::GetNotifyStateForTesting(name), WTF::move(completionHandler));
 }
@@ -3298,7 +3298,7 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
         auto createRealtimeMediaSource = [weakPage = WeakPtr { targetPage }, weakThis = WeakPtr { *this }, identifier](WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier) {
             RefPtr page = weakPage;
             RefPtr protectedThis = weakThis;
-            return page && protectedThis ? page->createRealtimeMediaSourceForSpeechRecognition(*protectedThis, identifier, clientIdentifier) : CaptureSourceOrError { { "Page is invalid"_s, WebCore::MediaAccessDenialReason::InvalidAccess } };
+            return page && protectedThis ? page->createRealtimeMediaSourceForSpeechRecognition(*protectedThis, identifier, clientIdentifier) : CaptureSourceOrError { { "Page is invalid"_si, WebCore::MediaAccessDenialReason::InvalidAccess } };
         };
         Ref speechRecognitionServer = SpeechRecognitionServer::create(*this, identifier, WTF::move(permissionChecker), WTF::move(checkIfMockCaptureDevicesEnabled), WTF::move(createRealtimeMediaSource));
 #else
@@ -3413,7 +3413,7 @@ void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, 
     }, 0);
 }
 
-void WebProcessProxy::setRemoteWorkerUserAgent(const String& userAgent)
+void WebProcessProxy::setRemoteWorkerUserAgent(StringImpl* userAgent)
 {
     if (m_serviceWorkerInformation)
         send(Messages::WebSWContextManagerConnection::SetUserAgent { userAgent }, 0);
@@ -3593,18 +3593,18 @@ void WebProcessProxy::systemBeep()
 }
 #endif
 
-void WebProcessProxy::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
+void WebProcessProxy::getNotifications(const URL& registrationURL, StringImpl* tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
 {
     if (RefPtr websiteDataStore = m_websiteDataStore; websiteDataStore->hasClientGetDisplayedNotifications()) {
-        auto callbackHandlingTags = [tag, callback = WTF::move(callback)] (Vector<NotificationData>&& notifications) mutable {
-            if (tag.isEmpty()) {
+        auto callbackHandlingTags = [tag = RefPtr { tag }, callback = WTF::move(callback)] (Vector<NotificationData>&& notifications) mutable {
+            if (isEmpty(tag)) {
                 callback(WTF::move(notifications));
                 return;
             }
 
             Vector<NotificationData> filteredNotifications;
             for (auto& notification : borrow(notifications)) {
-                if (tag == notification.tag)
+                if (equal(tag, notification.tag))
                     filteredNotifications.append(notification);
             }
 
@@ -3951,16 +3951,16 @@ void WebProcessProxy::setResourceMonitorRuleLists(RefPtr<WebCompiledContentRuleL
 }
 #endif
 
-std::optional<SandboxExtension::Handle> WebProcessProxy::sandboxExtensionForFile(const String& fileName) const
+std::optional<SandboxExtension::Handle> WebProcessProxy::sandboxExtensionForFile(StringImpl* fileName) const
 {
     auto handle = m_fileSandboxExtensions.getOptional(fileName);
-    WEBPROCESSPROXY_RELEASE_LOG(Sandbox, "sandboxExtensionForFile: %" PRIVATE_LOG_STRING ", has cached extension: %d", fileName.utf8(), !!handle);
+    WEBPROCESSPROXY_RELEASE_LOG(Sandbox, "sandboxExtensionForFile: %" PRIVATE_LOG_STRING ", has cached extension: %d", utf8(fileName), !!handle);
     return handle;
 }
 
-void WebProcessProxy::addSandboxExtensionForFile(const String& fileName, SandboxExtension::Handle handle)
+void WebProcessProxy::addSandboxExtensionForFile(StringImpl* fileName, SandboxExtension::Handle handle)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(Sandbox, "addSandboxExtensionForFile: %" PRIVATE_LOG_STRING, fileName.utf8());
+    WEBPROCESSPROXY_RELEASE_LOG(Sandbox, "addSandboxExtensionForFile: %" PRIVATE_LOG_STRING, utf8(fileName));
     m_fileSandboxExtensions.add(fileName, handle);
 }
 
@@ -3969,20 +3969,20 @@ void WebProcessProxy::clearSandboxExtensions()
     m_fileSandboxExtensions.clear();
 }
 
-void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, FrameInfoData&& frameInfo, ScriptMessageHandlerIdentifier handlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+void WebProcessProxy::didPostMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, FrameInfoData&& frameInfo, ScriptMessageHandlerIdentifier handlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     RefPtr page = WebPageProxy::fromIdentifier(pageID);
     if (!page)
-        return completionHandler(makeUnexpected(String()));
+        return completionHandler(makeUnexpected(nullString()));
     if (!isAssociatedWithPage(pageID))
-        return completionHandler(makeUnexpected(String()));
+        return completionHandler(makeUnexpected(nullString()));
     RefPtr controller = WebUserContentControllerProxy::get(identifier);
     if (!controller)
-        return completionHandler(makeUnexpected(String()));
+        return completionHandler(makeUnexpected(nullString()));
     controller->didPostMessage(*page, WTF::move(frameInfo), handlerID, WTF::move(message), WTF::move(completionHandler));
 }
 
-void WebProcessProxy::didPostLegacySynchronousMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, FrameInfoData&& frameInfo, ScriptMessageHandlerIdentifier handlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler)
+void WebProcessProxy::didPostLegacySynchronousMessage(WebPageProxyIdentifier pageID, UserContentControllerIdentifier identifier, FrameInfoData&& frameInfo, ScriptMessageHandlerIdentifier handlerID, JavaScriptEvaluationResult&& message, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, RefPtr<StringImpl>>&&)>&& completionHandler)
 {
     didPostMessage(pageID, identifier, WTF::move(frameInfo), handlerID, WTF::move(message), WTF::move(completionHandler));
 }
@@ -4030,7 +4030,7 @@ void WebProcessProxy::disconnectWasmDebuggerTarget()
     // debug packets - no cleanup or state changes needed in the server.
 }
 
-void WebProcessProxy::dispatchWasmDebuggerMessage(const String& message)
+void WebProcessProxy::dispatchWasmDebuggerMessage(StringImpl* message)
 {
     RefPtr debuggable = m_wasmDebuggerDebuggable;
     if (!debuggable) {
@@ -4065,7 +4065,7 @@ void WebProcessProxy::wasmDebugServerReady()
         createWasmDebuggerTarget();
 }
 
-void WebProcessProxy::sendWasmDebuggerResponse(const String& response)
+void WebProcessProxy::sendWasmDebuggerResponse(StringImpl* response)
 {
     RefPtr debuggable = m_wasmDebuggerDebuggable;
     if (!debuggable) {
@@ -4085,10 +4085,10 @@ void WebProcessProxy::updateWasmDebuggerTarget()
 #endif // ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
 
 #if ENABLE(IPC_TESTING_API)
-void WebProcessProxy::takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&& callback)
+void WebProcessProxy::takeInvalidMessageStringForTesting(CompletionHandler<void(RefPtr<StringImpl>&&)>&& callback)
 {
-    String error = protect(connection())->takeErrorString();
-    if (error.isNull())
+    RefPtr<StringImpl> error = protect(connection())->takeErrorString();
+    if (!error)
         error = emptyString();
     callback(WTF::move(error));
 }
@@ -4352,8 +4352,8 @@ void WebProcessProxy::ensureMediaKeysStorageDirectory(WebCore::FrameIdentifier f
     Ref dataStore = page->websiteDataStore();
     auto mediaKeysStorageSalt = dataStore->mediaKeysStorageSalt();
     auto& resolvedDirectories = dataStore->resolvedDirectories();
-    String mediaKeysStorageDirectory = resolvedDirectories.mediaKeysStorageDirectory;
-    if (mediaKeysStorageDirectory.isEmpty())
+    RefPtr<StringImpl> mediaKeysStorageDirectory = resolvedDirectories.mediaKeysStorageDirectory;
+    if (isEmpty(mediaKeysStorageDirectory))
         return;
     auto origin = frame->documentSecurityOriginData();
 
@@ -4362,14 +4362,14 @@ void WebProcessProxy::ensureMediaKeysStorageDirectory(WebCore::FrameIdentifier f
     WebCore::StorageUtilities::writeOriginToFile(FileSystem::pathByAppendingComponent(originDirectory, "origin"_s), WebCore::ClientOrigin { origin, origin });
 }
 
-WebCore::CertificateInfo WebProcessProxy::certificateInfoForHostAndPort(const String& hostAndPort) const
+WebCore::CertificateInfo WebProcessProxy::certificateInfoForHostAndPort(StringImpl* hostAndPort) const
 {
     return m_hostAndPortToCertificateInfo.get(hostAndPort);
 }
 
-void WebProcessProxy::setCertificateInfoForHostAndPort(String&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
+void WebProcessProxy::setCertificateInfoForHostAndPort(RefPtr<StringImpl>&& hostAndPort, WebCore::CertificateInfo&& certificateInfo)
 {
-    if (hostAndPort.isNull())
+    if (!hostAndPort)
         return;
 
     // FIXME: This has no corresponding remove call. It is bounded by the number of distinct hosts and ports loaded in this process.

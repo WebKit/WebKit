@@ -254,10 +254,10 @@ using WebCore::DigitalCredentialPresentationProtocol;
     auto result = WebKit::responseDataFromPresentment(response, error);
     if (!result && error) {
         if (RefPtr page = _page) {
-            String consoleMessage = result.error().message;
+            RefPtr<StringImpl> consoleMessage = result.error().message;
             RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
             if ([debugDescription length])
-                consoleMessage = makeString(consoleMessage, " ("_s, String(debugDescription.get()), ")"_s);
+                consoleMessage = makeString(consoleMessage, " ("_s, StringImpl::create(debugDescription.get()), ")"_s);
 
             auto targetFrameID = page->focusedFrame() ? page->focusedFrame()->frameID() : page->mainFrame()->frameID();
             page->addConsoleMessage(targetFrameID, MessageSource::Other, MessageLevel::Error, makeString("Digital Credential request failed: "_s, consoleMessage));

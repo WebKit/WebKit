@@ -98,7 +98,7 @@ public:
                 if (isNegativeZero(value))
                     m_value = ASCIICString { "-0"_s };
                 else
-                    m_value = String::number(value).ascii();
+                    m_value = ascii(makeString(value));
                 break;
             }
             case NumberType::NaN:
@@ -182,7 +182,7 @@ public:
 
     enum class Style : uint8_t { Decimal, Percent, Currency, Unit };
 
-    static void formatToPartsInternal(JSGlobalObject*, Style, bool sign, IntlMathematicalValue::NumberType, const String& formatted, IntlFieldIterator&, JSArray*, JSString* sourceType, JSString* unit);
+    static void formatToPartsInternal(JSGlobalObject*, Style, bool sign, IntlMathematicalValue::NumberType, StringImpl* formatted, IntlFieldIterator&, JSArray*, JSString* sourceType, JSString* unit);
     static void formatRangeToPartsInternal(JSGlobalObject*, Style, IntlMathematicalValue&&, IntlMathematicalValue&&, const UFormattedValue*, JSArray*);
 
     template<typename IntlType>
@@ -205,7 +205,7 @@ private:
     IntlNumberFormat(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    static Vector<String> localeData(const String&, RelevantExtensionKey);
+    static Vector<RefPtr<StringImpl>> localeData(StringImpl*, RelevantExtensionKey);
 
     UNumberRangeFormatter* createNumberRangeFormatterIfNecessary(JSGlobalObject*);
 
@@ -225,14 +225,14 @@ private:
     WriteBarrier<JSBoundFunction> m_boundFormat;
     std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter> m_numberFormatter;
     std::unique_ptr<UNumberRangeFormatter, UNumberRangeFormatterDeleter> m_numberRangeFormatter;
-    String m_numberFormatterSkeleton;
+    RefPtr<StringImpl> m_numberFormatterSkeleton;
     ASCIICString m_dataLocaleWithExtensions;
 
-    String m_locale;
-    String m_dataLocale;
-    mutable String m_numberingSystem;
-    String m_currency;
-    String m_unit;
+    RefPtr<StringImpl> m_locale;
+    RefPtr<StringImpl> m_dataLocale;
+    mutable RefPtr<StringImpl> m_numberingSystem;
+    RefPtr<StringImpl> m_currency;
+    RefPtr<StringImpl> m_unit;
     unsigned m_minimumIntegerDigits { 1 };
     unsigned m_minimumFractionDigits { 0 };
     unsigned m_maximumFractionDigits { 3 };

@@ -30,6 +30,7 @@
 
 #include <mutex>
 #include <span>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -130,26 +131,26 @@ static constexpr uint8_t wasmMultiFunctionModuleBytes[] = {
 };
 
 // Helper to convert bytes to JavaScript array string
-static String wasmBytesToJSArray(std::span<const uint8_t> bytes)
+static RefPtr<StringImpl> wasmBytesToJSArray(std::span<const uint8_t> bytes)
 {
     StringBuilder result;
     for (size_t i = 0; i < bytes.size(); ++i) {
         if (i > 0)
             result.append(',');
-        result.append(String::number(bytes[i]));
+        result.append(makeString(static_cast<int>(bytes[i])));
     }
     return result.toString();
 }
 
 // Multi-VM test script: creates 5 VMs (main + 4 workers) all running WASM in infinite loops
 // Each VM runs a different function from the same module.
-String multiVMSameModuleDifferentFunction()
+RefPtr<StringImpl> multiVMSameModuleDifferentFunction()
 {
-    static String* cachedScript = nullptr;
+    static LazyNeverDestroyed<RefPtr<StringImpl>> cachedScript;
     static std::once_flag once;
 
     std::call_once(once, [] {
-        cachedScript = new String(makeString(R"script(
+        cachedScript.construct(makeString(R"script(
             // WASM module with 5 different functions
             const wasm = new Uint8Array([)script"_s,
                 wasmBytesToJSArray(wasmMultiFunctionModuleBytes),
@@ -186,18 +187,18 @@ String multiVMSameModuleDifferentFunction()
         )script"_s));
     });
 
-    return *cachedScript;
+    return cachedScript.get();
 }
 
 // Multi-VM test script: creates 5 VMs (main + 4 workers) all running WASM in infinite loops
 // All VMs run the same function (func1) from the same module.
-String multiVMSameModuleSameFunction()
+RefPtr<StringImpl> multiVMSameModuleSameFunction()
 {
-    static String* cachedScript = nullptr;
+    static LazyNeverDestroyed<RefPtr<StringImpl>> cachedScript;
     static std::once_flag once;
 
     std::call_once(once, [] {
-        cachedScript = new String(makeString(R"script(
+        cachedScript.construct(makeString(R"script(
             // WASM module with 5 functions, but all VMs will run func1
             const wasm = new Uint8Array([)script"_s,
                 wasmBytesToJSArray(wasmMultiFunctionModuleBytes),
@@ -233,18 +234,18 @@ String multiVMSameModuleSameFunction()
         )script"_s));
     });
 
-    return *cachedScript;
+    return cachedScript.get();
 }
 
 // Multi-VM test script: creates 5 VMs (main + 4 workers) all running WASM in infinite loops
 // Each worker holds two live instances of its module, so a module lookup can be ambiguous.
-String multiVMMultipleInstancesPerModule()
+RefPtr<StringImpl> multiVMMultipleInstancesPerModule()
 {
-    static String* cachedScript = nullptr;
+    static LazyNeverDestroyed<RefPtr<StringImpl>> cachedScript;
     static std::once_flag once;
 
     std::call_once(once, [] {
-        cachedScript = new String(makeString(R"script(
+        cachedScript.construct(makeString(R"script(
             const wasm = new Uint8Array([)script"_s,
                 wasmBytesToJSArray(wasmMultiFunctionModuleBytes),
             R"script(]);
@@ -280,7 +281,7 @@ String multiVMMultipleInstancesPerModule()
         )script"_s));
     });
 
-    return *cachedScript;
+    return cachedScript.get();
 }
 
 // ========== Test Script Registry ==========

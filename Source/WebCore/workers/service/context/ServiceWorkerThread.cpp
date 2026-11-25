@@ -87,8 +87,8 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::setDidBeginCheckedPtrDeletion(); }
 
 private:
-    void postExceptionToWorkerObject(const String&, int, int, const String&) final { };
-    void reportErrorToWorkerObject(const String&) final { };
+    void postExceptionToWorkerObject(StringImpl*, int, int, StringImpl*) final { };
+    void reportErrorToWorkerObject(StringImpl*) final { };
     void workerGlobalScopeDestroyed() final { };
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { };
 };
@@ -97,7 +97,7 @@ private:
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use valid runtime flags
 
-static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData& contextData, String&& userAgent, WorkerThreadMode workerThreadMode, const SettingsValues& settingsValues, PAL::SessionID sessionID, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<uint64_t> noiseInjectionHashSalt)
+static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData& contextData, RefPtr<StringImpl>&& userAgent, WorkerThreadMode workerThreadMode, const SettingsValues& settingsValues, PAL::SessionID sessionID, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<uint64_t> noiseInjectionHashSalt)
 {
     return {
         contextData.scriptURL,
@@ -140,12 +140,12 @@ NODELETE static WorkerThreadStartMode threadStartModeFromSettings()
 #endif
 }
 
-Ref<ServiceWorkerThread> ServiceWorkerThread::create(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const SettingsValues& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerBadgeProxy& badgeProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
+Ref<ServiceWorkerThread> ServiceWorkerThread::create(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, RefPtr<StringImpl>&& userAgent, WorkerThreadMode workerThreadMode, const SettingsValues& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerBadgeProxy& badgeProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
     return adoptRef(*new ServiceWorkerThread(WTF::move(contextData), WTF::move(workerData), WTF::move(userAgent), workerThreadMode, settingsValues, loaderProxy, debuggerProxy, badgeProxy, idbConnectionProxy, socketProvider, WTF::move(notificationClient), sessionID, noiseInjectionHashSalt, advancedPrivacyProtections));
 }
 
-ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const SettingsValues& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerBadgeProxy& badgeProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
+ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, RefPtr<StringImpl>&& userAgent, WorkerThreadMode workerThreadMode, const SettingsValues& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerBadgeProxy& badgeProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
     : WorkerThread(generateWorkerParameters(contextData, WTF::move(userAgent), workerThreadMode, settingsValues, sessionID, advancedPrivacyProtections, noiseInjectionHashSalt), contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::singleton(), badgeProxy, threadStartModeFromSettings(), contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
     , m_serviceWorkerIdentifier(contextData.serviceWorkerIdentifier)
     , m_jobDataIdentifier(contextData.jobDataIdentifier)
@@ -184,7 +184,7 @@ void ServiceWorkerThread::queueTaskToFireEvent(Function<void(ServiceWorkerGlobal
     });
 }
 
-void ServiceWorkerThread::queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&& client, ResourceRequest&& request, String&& referrer, FetchOptions&& options, SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
+void ServiceWorkerThread::queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&& client, ResourceRequest&& request, RefPtr<StringImpl>&& referrer, FetchOptions&& options, SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, RefPtr<StringImpl>&& clientIdentifier, RefPtr<StringImpl>&& resultingClientIdentifier)
 {
     queueTaskToFireEvent([client = WTF::move(client), request = WTF::move(request), referrer = WTF::move(referrer), options = WTF::move(options), connectionIdentifier, fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, clientIdentifier = WTF::move(clientIdentifier), resultingClientIdentifier = WTF::move(resultingClientIdentifier)](auto& serviceWorkerGlobalScope) mutable {
         if (client->isCancelled()) {
@@ -203,7 +203,7 @@ static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessage
         return;
 
     auto ports = MessagePort::entanglePorts(scope, WTF::move(message.transferredPorts));
-    auto messageEvent = ExtendableMessageEvent::create(*globalObject, WTF::move(ports), message.message.releaseNonNull(), SecurityOrigin::create(sourceURL), { }, source);
+    auto messageEvent = ExtendableMessageEvent::create(*globalObject, WTF::move(ports), message.message.releaseNonNull(), SecurityOrigin::create(sourceURL), nullptr, source);
     scope.dispatchEvent(messageEvent.event);
     scope.updateExtendedEventsSet(messageEvent.event.ptr());
 }
@@ -229,7 +229,7 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
                         addMismatch("host"_s);
                     if (serviceWorkerGlobalScope.url().port() != sourceClient->url().port())
                         addMismatch("port"_s);
-                    RELEASE_LOG_FAULT(ServiceWorker, "ServiceWorkerThread::queueTaskToPostMessage service worker and client mismatch: %s", mismatchParts.toString().utf8());
+                    RELEASE_LOG_FAULT(ServiceWorker, "ServiceWorkerThread::queueTaskToPostMessage service worker and client mismatch: %s", utf8(mismatchParts.toString()));
                     ASSERT_NOT_REACHED();
                     return ExtendableMessageEventSource { WTF::move(sourceClient) };
                 }
@@ -331,7 +331,7 @@ void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>
             bool showedNotification = !serviceWorkerGlobalScope->hasPendingSilentPushEvent();
             serviceWorkerGlobalScope->setHasPendingSilentPushEvent(false);
             if (!showedNotification)
-                serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, "Push event handling completed without showing any notification via ServiceWorkerRegistration.showNotification(). This may trigger removal of the push subscription."_s, 0);
+                serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, "Push event handling completed without showing any notification via ServiceWorkerRegistration.showNotification(). This may trigger removal of the push subscription."_si, 0);
             bool success = !hasRejectedAnyPromise && showedNotification;
 
             RELEASE_LOG_ERROR_IF(!success, ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent failed to process push event (rejectedPromise = %d, showedNotification = %d)", hasRejectedAnyPromise, showedNotification);
@@ -367,7 +367,7 @@ void ServiceWorkerThread::queueTaskToFireDeclarativePushEvent(NotificationPayloa
             bool showedNotification = !serviceWorkerGlobalScope->hasPendingSilentPushEvent();
             serviceWorkerGlobalScope->setHasPendingSilentPushEvent(false);
             if (!showedNotification)
-                serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, "Push event ended without showing any notification may trigger removal of the push subscription."_s, 0);
+                serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, "Push event ended without showing any notification may trigger removal of the push subscription."_si, 0);
             bool success = !hasRejectedAnyPromise && showedNotification;
 
             RELEASE_LOG_ERROR_IF(!success, ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent failed to process push event (rejectedPromise = %d, showedNotification = %d)", hasRejectedAnyPromise, showedNotification);
@@ -422,7 +422,7 @@ void ServiceWorkerThread::queueTaskToFireNotificationEvent(NotificationData&& da
         RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireNotificationEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
         Ref notification = Notification::create(serviceWorkerGlobalScope, WTF::move(data));
-        AtomString eventName;
+        RefPtr<AtomStringImpl> eventName;
         switch (eventType) {
         case NotificationEventType::Click:
             eventName = eventNames().notificationclickEvent;
@@ -532,14 +532,14 @@ WorkerObjectProxy& ServiceWorkerThread::workerObjectProxy() const
     return m_workerObjectProxy.get();
 }
 
-void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)
+void ServiceWorkerThread::start(Function<void(StringImpl*, bool)>&& callback)
 {
     m_state = State::Starting;
     startHeartBeatTimer();
 
-    WorkerThread::start([callback = WTF::move(callback), weakThis = ThreadSafeWeakPtr { *this }](auto& errorMessage) mutable {
+    WorkerThread::start([callback = WTF::move(callback), weakThis = ThreadSafeWeakPtr { *this }](auto* errorMessage) mutable {
 #ifndef NDEBUG
-        if (!errorMessage.isEmpty())
+        if (!isEmpty(errorMessage))
             LOG_WITH_STREAM(ServiceWorker, stream << "Service worker thread failed to start: "_s << errorMessage);
 #endif
         bool doesHandleFetch = true;
@@ -615,7 +615,7 @@ void ServiceWorkerThread::heartBeatTimerFired()
         connection->didFailHeartBeatCheck(identifier());
         break;
     case State::Starting:
-        connection->serviceWorkerFailedToStart(m_jobDataIdentifier, identifier(), "Service Worker script execution timed out"_s);
+        connection->serviceWorkerFailedToStart(m_jobDataIdentifier, identifier(), "Service Worker script execution timed out"_si);
         break;
     case State::Installing:
         connection->didFinishInstall(m_jobDataIdentifier, identifier(), false);

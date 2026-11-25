@@ -45,12 +45,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCDM);
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteCDM> RemoteCDM::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& identifier, RemoteCDMConfiguration&& configuration, const String& mediaKeysHashSalt)
+std::unique_ptr<RemoteCDM> RemoteCDM::create(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& identifier, RemoteCDMConfiguration&& configuration, StringImpl* mediaKeysHashSalt)
 {
     return std::unique_ptr<RemoteCDM>(new RemoteCDM(WTF::move(factory), WTF::move(identifier), WTF::move(configuration), mediaKeysHashSalt));
 }
 
-RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& identifier, RemoteCDMConfiguration&& configuration, const String& mediaKeysHashSalt)
+RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& identifier, RemoteCDMConfiguration&& configuration, StringImpl* mediaKeysHashSalt)
     : m_factory(WTF::move(factory))
     , m_identifier(WTF::move(identifier))
     , m_configuration(WTF::move(configuration))
@@ -95,7 +95,7 @@ bool RemoteCDM::supportsSessionTypeWithConfiguration(const CDMSessionType&, cons
     return false;
 }
 
-bool RemoteCDM::supportsInitData(const String& type, const SharedBuffer& data) const
+bool RemoteCDM::supportsInitData(StringImpl* type, const SharedBuffer& data) const
 {
     // This check will be done, later, inside RemoteCDMInstanceSessionProxy::requestLicense().
     return true;
@@ -144,7 +144,7 @@ RefPtr<SharedBuffer> RemoteCDM::sanitizeResponse(const SharedBuffer& response) c
     return response.makeContiguous();
 }
 
-std::optional<String> RemoteCDM::sanitizeSessionId(const String& sessionId) const
+std::optional<RefPtr<StringImpl>> RemoteCDM::sanitizeSessionId(StringImpl* sessionId) const
 {
     // This check will be done, later, inside RemoteCDMInstanceSessionProxy::loadSession().
     return sessionId;

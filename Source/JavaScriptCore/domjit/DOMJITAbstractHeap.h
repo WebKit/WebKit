@@ -35,7 +35,7 @@ namespace JSC { namespace DOMJIT {
 
 class AbstractHeap {
 public:
-    AbstractHeap(const String& name)
+    AbstractHeap(StringImpl* name)
         : m_name(name)
     {
     }
@@ -59,7 +59,7 @@ public:
     JS_EXPORT_PRIVATE void deepDump(PrintStream&, unsigned indent = 0) const;
 
 private:
-    String m_name;
+    RefPtr<StringImpl> m_name;
     AbstractHeap* m_parent { nullptr };
     Vector<AbstractHeap*> m_children { };
     HeapRange m_range;

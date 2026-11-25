@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-GPUPipelineLayout::GPUPipelineLayout(Ref<WebGPU::PipelineLayout>&& backing, String&& label, GPUDevice& device)
+GPUPipelineLayout::GPUPipelineLayout(Ref<WebGPU::PipelineLayout>&& backing, RefPtr<StringImpl>&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))
     , m_label(WTF::move(label))
     , m_device(device)
@@ -48,12 +48,12 @@ GPUDevice* GPUPipelineLayout::device() const
     return m_device;
 }
 
-String GPUPipelineLayout::label() const
+RefPtr<StringImpl> GPUPipelineLayout::label() const
 {
     return m_label;
 }
 
-void GPUPipelineLayout::setLabel(String&& label)
+void GPUPipelineLayout::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     m_backing->setLabel(WTF::move(label));

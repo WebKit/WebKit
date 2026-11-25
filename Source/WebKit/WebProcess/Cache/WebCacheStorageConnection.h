@@ -55,7 +55,7 @@ private:
     struct PromiseConverter;
 
     // WebCore::CacheStorageConnection
-    Ref<OpenPromise> open(const WebCore::ClientOrigin&, const String& cacheName) final;
+    Ref<OpenPromise> open(const WebCore::ClientOrigin&, StringImpl* cacheName) final;
     Ref<RemovePromise> remove(WebCore::DOMCacheIdentifier) final;
     Ref<RetrieveCachesPromise> retrieveCaches(const WebCore::ClientOrigin&, uint64_t)  final;
     Ref<RetrieveRecordsPromise> retrieveRecords(WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&)  final;

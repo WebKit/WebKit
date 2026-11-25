@@ -35,12 +35,12 @@ public:
     GstElement* createWebAudioSink() final;
     void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;
-    Vector<String> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
+    Vector<RefPtr<StringImpl>> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
     bool needsCustomInstantRateChange() const final { return true; }
     std::optional<GstState> eosMediaPlayerState() const final { return GST_STATE_PAUSED; }
 
 private:
-    Vector<String> m_disallowedWebAudioDecoders;
+    Vector<RefPtr<StringImpl>> m_disallowedWebAudioDecoders;
 };
 
 } // namespace WebCore

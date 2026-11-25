@@ -161,7 +161,7 @@ void DocumentPictureInPicture::requestWindow(Options&& options, Ref<DeferredProm
         windowFeatures.height = static_cast<float>(std::min<uint64_t>(options.height, std::numeric_limits<int>::max()));
     }
 
-    FrameLoadRequest frameLoadRequest { *document, protect(document->securityOrigin()), ResourceRequest { URL { aboutBlankURL() } }, blankTargetFrameName(), InitiatedByMainFrame::Yes };
+    FrameLoadRequest frameLoadRequest { *document, protect(document->securityOrigin()), ResourceRequest { URL { aboutBlankURL() } }, AtomStringImpl::add(blankTargetFrameName()).ptr(), InitiatedByMainFrame::Yes };
     auto [newFrame, created] = WebCore::createWindow(*frame, WTF::move(frameLoadRequest), WTF::move(windowFeatures));
     RefPtr newLocalFrame = dynamicDowncast<LocalFrame>(newFrame);
     RefPtr newPage = newLocalFrame ? newLocalFrame->page() : nullptr;

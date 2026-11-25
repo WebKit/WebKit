@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#include "Helpers/Test.h"
+
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 
@@ -33,7 +35,7 @@ TEST(WTF, BootSessionUUIDIdentity)
     EXPECT_EQ(bootSessionUUIDString(), bootSessionUUIDString());
 }
 
-static String parseAndStringifyUUID(const String& value)
+static RefPtr<StringImpl> parseAndStringifyUUID(StringImpl* value)
 {
     auto uuid = WTF::UUID::parseVersion4(value);
     if (!uuid)
@@ -64,26 +66,26 @@ TEST(WTF, TestUUIDVersion4Parsing)
     for (size_t cptr = 0; cptr < 10; ++cptr) {
         auto createdUUID = WTF::UUID::createVersion4();
         auto createdString = createdUUID.toString();
-        EXPECT_EQ(createdString.length(), 36u);
-        EXPECT_EQ(createdString[14], '4');
-        EXPECT_TRUE(createdString[19] == '8' || createdString[19] == '9' || createdString[19] == 'a' || createdString[19] == 'b');
+        EXPECT_EQ(length(createdString), 36u);
+        EXPECT_EQ(codeUnitAt(createdString, 14), '4');
+        EXPECT_TRUE(codeUnitAt(createdString, 19) == '8' || codeUnitAt(createdString, 19) == '9' || codeUnitAt(createdString, 19) == 'a' || codeUnitAt(createdString, 19) == 'b');
 
         auto uuid = WTF::UUID::parseVersion4(createdString);
         EXPECT_TRUE(!!uuid);
         EXPECT_EQ(*uuid, createdUUID);
     }
 
-    String testNormal = "12345678-9abc-4de0-89ab-0123456789ab"_s;
+    RefPtr<StringImpl> testNormal = "12345678-9abc-4de0-89ab-0123456789ab"_si;
     EXPECT_EQ(parseAndStringifyUUID(testNormal), testNormal);
 
-    String test8000 = "12345678-9abc-4de0-8000-0123456789ab"_s;
+    RefPtr<StringImpl> test8000 = "12345678-9abc-4de0-8000-0123456789ab"_si;
     EXPECT_EQ(parseAndStringifyUUID(test8000), test8000);
 
-    String testBfff = "12345678-9abc-4de0-Bfff-0123456789ab"_s;
-    EXPECT_EQ(parseAndStringifyUUID(testBfff), testBfff.convertToASCIILowercase());
+    RefPtr<StringImpl> testBfff = "12345678-9abc-4de0-Bfff-0123456789ab"_si;
+    EXPECT_EQ(parseAndStringifyUUID(testBfff), convertToASCIILowercase(testBfff));
 
-    String testAd12 = "6ef944c1-5cb8-48aa-Ad12-C5f823f005c3"_s;
-    EXPECT_EQ(parseAndStringifyUUID(testAd12), testAd12.convertToASCIILowercase());
+    RefPtr<StringImpl> testAd12 = "6ef944c1-5cb8-48aa-Ad12-C5f823f005c3"_si;
+    EXPECT_EQ(parseAndStringifyUUID(testAd12), convertToASCIILowercase(testAd12));
 }
 
 // parseInteger() silently accepts a single leading '+', so UUID::parse() must
@@ -106,7 +108,7 @@ TEST(WTF, UUIDParseRejectsLeadingPlusInEachSegment)
 
 TEST(WTF, TestUUIDVersion4MakeString)
 {
-    String testNormal = "12345678-9abc-4de0-89ab-0123456789ab"_s;
+    RefPtr<StringImpl> testNormal = "12345678-9abc-4de0-89ab-0123456789ab"_si;
     auto uuid = WTF::UUID::parseVersion4(testNormal);
     EXPECT_TRUE(!!uuid);
     EXPECT_EQ(makeString(uuid.value()), testNormal);

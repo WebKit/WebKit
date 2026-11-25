@@ -57,23 +57,23 @@ struct ApplicationManifest {
         };
 
         URL src;
-        Vector<String> sizes;
-        String type;
+        Vector<RefPtr<StringImpl>> sizes;
+        RefPtr<StringImpl> type;
         OptionSet<Purpose> purposes;
     };
 
     struct Shortcut {
-        String name;
+        RefPtr<StringImpl> name;
         URL url;
         Vector<Icon> icons;
     };
 
-    String rawJSON;
+    RefPtr<StringImpl> rawJSON;
     Direction dir;
-    String lang;
-    String name;
-    String shortName;
-    String description;
+    RefPtr<StringImpl> lang;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> shortName;
+    RefPtr<StringImpl> description;
     URL scope;
     bool isDefaultScope { false };
     Display display;
@@ -85,7 +85,7 @@ struct ApplicationManifest {
     Color backgroundColorDark;
     Color themeColor;
     Color themeColorDark;
-    Vector<String> categories;
+    Vector<RefPtr<StringImpl>> categories;
     Vector<Icon> icons;
     Vector<Shortcut> shortcuts;
 };

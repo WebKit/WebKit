@@ -212,12 +212,12 @@ public:
     RefPtr<DeviceOrientationUpdateProvider> deviceOrientationUpdateProvider;
 #endif
     Vector<UserContentURLPattern> corsDisablingPatterns;
-    HashSet<String> maskedURLSchemes;
+    HashSet<RefPtr<StringImpl>> maskedURLSchemes;
     UniqueRef<SpeechRecognitionProvider> speechRecognitionProvider;
 
     // FIXME: These should be all be Settings.
     bool loadsSubresources { true };
-    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts;
+    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>> allowedNetworkHosts;
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool httpsUpgradeEnabled { true };
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
@@ -250,7 +250,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    String presentingApplicationBundleIdentifier;
+    RefPtr<StringImpl> presentingApplicationBundleIdentifier;
 #endif
 
     std::optional<MediaSessionManagerFactory> mediaSessionManagerFactory;
@@ -260,7 +260,7 @@ public:
 #endif
 
     // Non-empty if this page is being created while the user agent is presenting a machine translation.
-    String displayedTranslationLocaleIdentifier;
+    RefPtr<StringImpl> displayedTranslationLocaleIdentifier;
 
 #if ENABLE(WEB_AUTHN)
     Ref<CredentialRequestCoordinatorClient> credentialRequestCoordinatorClient;

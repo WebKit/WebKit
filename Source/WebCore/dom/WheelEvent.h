@@ -53,7 +53,7 @@ public:
         int wheelDeltaY { 0 }; // Deprecated.
     };
 
-    static Ref<WheelEvent> create(const AtomString& type, const Init&);
+    static Ref<WheelEvent> create(AtomStringImpl* type, const Init&);
 
     const std::optional<PlatformWheelEvent>& underlyingPlatformEvent() const LIFETIME_BOUND { return m_underlyingPlatformEvent; }
 
@@ -74,7 +74,7 @@ public:
 
 private:
     WheelEvent();
-    WheelEvent(const AtomString&, const Init&);
+    WheelEvent(AtomStringImpl*, const Init&);
     WheelEvent(const PlatformWheelEvent&, RefPtr<WindowProxy>&&, IsCancelable);
 
     IntPoint m_wheelDelta;

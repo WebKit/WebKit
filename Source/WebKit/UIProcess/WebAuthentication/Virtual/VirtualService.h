@@ -40,19 +40,19 @@ class VirtualAuthenticatorManager;
 class VirtualService final: public AuthenticatorTransportService, public RefCounted<VirtualService> {
     WTF_MAKE_TZONE_ALLOCATED(VirtualService);
 public:
-    static Ref<VirtualService> create(AuthenticatorTransportServiceObserver&, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>&);
+    static Ref<VirtualService> create(AuthenticatorTransportServiceObserver&, Vector<std::pair<RefPtr<StringImpl>, VirtualAuthenticatorConfiguration>>&);
 
-    static Ref<AuthenticatorTransportService> createVirtual(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>&);
+    static Ref<AuthenticatorTransportService> createVirtual(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&, Vector<std::pair<RefPtr<StringImpl>, VirtualAuthenticatorConfiguration>>&);
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:
-    explicit VirtualService(AuthenticatorTransportServiceObserver&, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>&);
+    explicit VirtualService(AuthenticatorTransportServiceObserver&, Vector<std::pair<RefPtr<StringImpl>, VirtualAuthenticatorConfiguration>>&);
 
     void startDiscoveryInternal() final;
 
-    Vector<std::pair<String, VirtualAuthenticatorConfiguration>> m_authenticators;
+    Vector<std::pair<RefPtr<StringImpl>, VirtualAuthenticatorConfiguration>> m_authenticators;
 };
 
 } // namespace WebKit

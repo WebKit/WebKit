@@ -45,7 +45,7 @@ public:
         Vector<Ref<WebXRInputSource>> removed;
     };
 
-    static Ref<XRInputSourcesChangeEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<XRInputSourcesChangeEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRInputSourcesChangeEvent();
 
     const WebXRSession& session() const;
@@ -53,7 +53,7 @@ public:
     const Vector<Ref<WebXRInputSource>>& removed() const;
 
 private:
-    XRInputSourcesChangeEvent(const AtomString&, Init&&, IsTrusted);
+    XRInputSourcesChangeEvent(AtomStringImpl*, Init&&, IsTrusted);
 
     const Ref<WebXRSession> m_session;
     Vector<Ref<WebXRInputSource>> m_added;

@@ -33,23 +33,23 @@ namespace WebCore {
 
 class SpellingCorrectionCommand : public CompositeEditCommand {
 public:
-    static Ref<SpellingCorrectionCommand> create(const SimpleRange& rangeToBeCorrected, const String& correction);
+    static Ref<SpellingCorrectionCommand> create(const SimpleRange& rangeToBeCorrected, StringImpl* correction);
 
 private:
-    SpellingCorrectionCommand(const SimpleRange& rangeToBeCorrected, const String& correction);
+    SpellingCorrectionCommand(const SimpleRange& rangeToBeCorrected, StringImpl* correction);
     bool willApplyCommand() final;
     void doApply() override;
     bool shouldRetainAutocorrectionIndicator() const override;
 
-    String inputEventData() const final;
+    RefPtr<StringImpl> inputEventData() const final;
     Vector<Ref<StaticRange>> targetRanges() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
 
     SimpleRange m_rangeToBeCorrected;
     VisibleSelection m_selectionToBeCorrected;
     const RefPtr<DocumentFragment> m_correctionFragment;
-    String m_corrected;
-    String m_correction;
+    RefPtr<StringImpl> m_corrected;
+    RefPtr<StringImpl> m_correction;
 };
 
 } // namespace WebCore

@@ -82,7 +82,7 @@ static void* openerAppearanceObservationContext = &openerAppearanceObservationCo
     // https://wicg.github.io/document-picture-in-picture/#origin-visibility
     RetainPtr<NSString> title;
     if (auto& openerInfo = configuration.openerInfo())
-        title = openerInfo->securityOrigin.toString().createNSString();
+        title = createNSString(openerInfo->securityOrigin.toString());
 
     _webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, contentSize.width, contentSize.height) configuration:protect(wrapper(configuration)).get()]);
     [_webView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];

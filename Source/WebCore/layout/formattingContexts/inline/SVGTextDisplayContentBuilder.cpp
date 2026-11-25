@@ -141,7 +141,7 @@ std::optional<InlineDisplay::Content> buildSVGTextDisplayContent(const ElementBo
         };
 
         auto& content = inlineTextBox.content();
-        auto contentLength = content.length();
+        auto contentLength = WTF::length(content);
         // RenderSVGInlineText applies the SVG whitespace rules on creation but not on text or text-transform changes.
         auto isCollapsibleWhitespace = [&](auto character) {
             return character == space || character == tabCharacter || character == newlineCharacter;
@@ -154,16 +154,16 @@ std::optional<InlineDisplay::Content> buildSVGTextDisplayContent(const ElementBo
         while (position < contentLength) {
             auto end = position;
             if (*shouldPreserveWhitespace) {
-                if (content[position] == space) {
-                    while (end < contentLength && content[end] == space)
+                if (codeUnitAt(content, position) == space) {
+                    while (end < contentLength && codeUnitAt(content, end) == space)
                         ++end;
                     appendItem(position, end - position, TrailingWhitespace::Preserved);
                     position = end;
                     continue;
                 }
                 // Preserved tabs have position dependent widths and preserved newlines are forced line breaks.
-                for (; end < contentLength && content[end] != space; ++end) {
-                    if (content[end] == tabCharacter || content[end] == newlineCharacter || isUnsupportedCharacter(content[end]))
+                for (; end < contentLength && codeUnitAt(content, end) != space; ++end) {
+                    if (codeUnitAt(content, end) == tabCharacter || codeUnitAt(content, end) == newlineCharacter || isUnsupportedCharacter(codeUnitAt(content, end)))
                         return false;
                 }
                 appendItem(position, end - position, TrailingWhitespace::None);
@@ -171,8 +171,8 @@ std::optional<InlineDisplay::Content> buildSVGTextDisplayContent(const ElementBo
                 continue;
             }
 
-            if (isCollapsibleWhitespace(content[position])) {
-                while (end < contentLength && isCollapsibleWhitespace(content[end]))
+            if (isCollapsibleWhitespace(codeUnitAt(content, position))) {
+                while (end < contentLength && isCollapsibleWhitespace(codeUnitAt(content, end)))
                     ++end;
                 auto collapsesCompletely = !lastTextRunIndex || runs[*lastTextRunIndex].hasCollapsibleTrailingWhitespace();
                 if (!collapsesCompletely)
@@ -180,8 +180,8 @@ std::optional<InlineDisplay::Content> buildSVGTextDisplayContent(const ElementBo
                 position = end;
                 continue;
             }
-            for (; end < contentLength && !isCollapsibleWhitespace(content[end]); ++end) {
-                if (isUnsupportedCharacter(content[end]))
+            for (; end < contentLength && !isCollapsibleWhitespace(codeUnitAt(content, end)); ++end) {
+                if (isUnsupportedCharacter(codeUnitAt(content, end)))
                     return false;
             }
             appendItem(position, end - position, TrailingWhitespace::None);

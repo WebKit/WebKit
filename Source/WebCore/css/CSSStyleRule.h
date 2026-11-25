@@ -42,8 +42,8 @@ public:
 
     virtual ~CSSStyleRule();
 
-    WEBCORE_EXPORT String selectorText() const;
-    WEBCORE_EXPORT void setSelectorText(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> selectorText() const;
+    WEBCORE_EXPORT void setSelectorText(StringImpl*);
 
     WEBCORE_EXPORT CSSStyleProperties& style();
 
@@ -51,7 +51,7 @@ public:
     StyleRule& styleRule() const { return m_styleRule.get(); }
 
     WEBCORE_EXPORT CSSRuleList& cssRules() const;
-    WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
+    WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(StringImpl* rule, unsigned index);
     WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
     unsigned length() const;
     CSSRule* item(unsigned index) const;
@@ -63,13 +63,13 @@ private:
     CSSStyleRule(StyleRuleWithNesting&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Style; }
-    String cssText() const final;
-    String cssText(const CSS::SerializationContext&) const final;
-    String cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;
+    RefPtr<StringImpl> cssText() const final;
+    RefPtr<StringImpl> cssText(const CSS::SerializationContext&) const final;
+    RefPtr<StringImpl> cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;
     void reattach(StyleRuleBase&) final;
     void getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>&) final;
 
-    String generateSelectorText() const;
+    RefPtr<StringImpl> generateSelectorText() const;
     Vector<Ref<StyleRuleBase>> nestedRules() const;
     void cssTextForRules(StringBuilder& rules) const;
     void cssTextForRulesWithReplacementURLs(StringBuilder& rules, const CSS::SerializationContext&) const;

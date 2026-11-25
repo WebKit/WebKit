@@ -61,7 +61,7 @@ TimeInputType::TimeInputType(HTMLInputElement& element)
 {
 }
 
-const AtomString& TimeInputType::formControlType() const
+const RefPtr<AtomStringImpl>& TimeInputType::formControlType() const
 {
     return InputTypeNames::time();
 }
@@ -123,7 +123,7 @@ bool TimeInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> res
     return results.containsAll({ DateTimeFormatValidationResults::HasHour, DateTimeFormatValidationResults::HasMinute, DateTimeFormatValidationResults::HasMeridiem });
 }
 
-String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
+RefPtr<StringImpl> TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& state) const
 {
     if (!state.hour || !state.minute || !state.meridiem)
         return emptyString();
@@ -145,10 +145,10 @@ void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
 
     if (layoutParameters.shouldHaveMillisecondField || shouldHaveSecondField(date)) {
         layoutParameters.dateTimeFormat = layoutParameters.locale->timeFormat();
-        layoutParameters.fallbackDateTimeFormat = "HH:mm:ss"_s;
+        layoutParameters.fallbackDateTimeFormat = "HH:mm:ss"_si;
     } else {
         layoutParameters.dateTimeFormat = layoutParameters.locale->shortTimeFormat();
-        layoutParameters.fallbackDateTimeFormat = "HH:mm"_s;
+        layoutParameters.fallbackDateTimeFormat = "HH:mm"_si;
     }
 }
 

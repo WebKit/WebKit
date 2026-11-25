@@ -138,8 +138,8 @@ public:
     bool processInheritedFromOpener() const { return m_data.processInheritedFromOpener; }
     void setProcessInheritedFromOpener(bool value) { m_data.processInheritedFromOpener = value; }
 
-    NODELETE const WTF::String& openedMainFrameName() const;
-    void setOpenedMainFrameName(const WTF::String&);
+    NODELETE const RefPtr<StringImpl>& openedMainFrameName() const;
+    void setOpenedMainFrameName(StringImpl*);
 
     NODELETE const WebCore::RegistrableDomain& openedByScriptDomain() const;
     void setOpenedByScriptDomain(WebCore::RegistrableDomain&&);
@@ -262,15 +262,15 @@ public:
     bool isControlledByAutomation() const { return m_data.controlledByAutomation; }
     void setControlledByAutomation(bool controlledByAutomation) { m_data.controlledByAutomation = controlledByAutomation; }
 
-    const WTF::String& overrideContentSecurityPolicy() const LIFETIME_BOUND { return m_data.overrideContentSecurityPolicy; }
-    void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_data.overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
+    const RefPtr<StringImpl>& overrideContentSecurityPolicy() const LIFETIME_BOUND { return m_data.overrideContentSecurityPolicy; }
+    void setOverrideContentSecurityPolicy(StringImpl* overrideContentSecurityPolicy) { m_data.overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
 
 #if PLATFORM(COCOA)
     ClassStructPtr attachmentFileWrapperClassSingleton() const { return m_data.attachmentFileWrapperClass.get(); }
     void setAttachmentFileWrapperClass(ClassStructPtr c) { m_data.attachmentFileWrapperClass = c; }
 
-    const std::optional<Vector<WTF::String>>& additionalSupportedImageTypes() const LIFETIME_BOUND { return m_data.additionalSupportedImageTypes; }
-    void setAdditionalSupportedImageTypes(std::optional<Vector<WTF::String>>&& additionalSupportedImageTypes) { m_data.additionalSupportedImageTypes = WTF::move(additionalSupportedImageTypes); }
+    const std::optional<Vector<RefPtr<StringImpl>>>& additionalSupportedImageTypes() const LIFETIME_BOUND { return m_data.additionalSupportedImageTypes; }
+    void setAdditionalSupportedImageTypes(std::optional<Vector<RefPtr<StringImpl>>>&& additionalSupportedImageTypes) { m_data.additionalSupportedImageTypes = WTF::move(additionalSupportedImageTypes); }
 
     bool clientNavigationsRunAtForegroundPriority() const { return m_data.clientNavigationsRunAtForegroundPriority; }
     void setClientNavigationsRunAtForegroundPriority(bool value) { m_data.clientNavigationsRunAtForegroundPriority = value; }
@@ -284,27 +284,27 @@ public:
     void setApplicationManifest(RefPtr<ApplicationManifest>&&);
 #endif
 
-    RefPtr<WebKit::WebURLSchemeHandler> urlSchemeHandlerForURLScheme(const WTF::String&);
-    void setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String&);
-    const HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() LIFETIME_BOUND { return m_data.urlSchemeHandlers; }
+    RefPtr<WebKit::WebURLSchemeHandler> urlSchemeHandlerForURLScheme(StringImpl*);
+    void setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&&, StringImpl*);
+    const HashMap<RefPtr<StringImpl>, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() LIFETIME_BOUND { return m_data.urlSchemeHandlers; }
 
-    const Vector<WTF::String>& corsDisablingPatterns() const LIFETIME_BOUND { return m_data.corsDisablingPatterns; }
-    void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_data.corsDisablingPatterns = WTF::move(patterns); }
+    const Vector<RefPtr<StringImpl>>& corsDisablingPatterns() const LIFETIME_BOUND { return m_data.corsDisablingPatterns; }
+    void setCORSDisablingPatterns(Vector<RefPtr<StringImpl>>&& patterns) { m_data.corsDisablingPatterns = WTF::move(patterns); }
 
-    HashSet<WTF::String> maskedURLSchemes() const;
-    void setMaskedURLSchemes(HashSet<WTF::String>&& schemes) { m_data.maskedURLSchemesWasSet = true; m_data.maskedURLSchemes = WTF::move(schemes); }
+    HashSet<RefPtr<StringImpl>> maskedURLSchemes() const;
+    void setMaskedURLSchemes(HashSet<RefPtr<StringImpl>>&& schemes) { m_data.maskedURLSchemesWasSet = true; m_data.maskedURLSchemes = WTF::move(schemes); }
 
     bool crossOriginAccessControlCheckEnabled() const { return m_data.crossOriginAccessControlCheckEnabled; }
     void setCrossOriginAccessControlCheckEnabled(bool enabled) { m_data.crossOriginAccessControlCheckEnabled = enabled; }
 
-    const WTF::String& processDisplayName() const LIFETIME_BOUND { return m_data.processDisplayName; }
-    void setProcessDisplayName(const WTF::String& name) { m_data.processDisplayName = name; }
+    const RefPtr<StringImpl>& processDisplayName() const LIFETIME_BOUND { return m_data.processDisplayName; }
+    void setProcessDisplayName(StringImpl* name) { m_data.processDisplayName = name; }
 
     bool loadsSubresources() const { return m_data.loadsSubresources; }
     void setLoadsSubresources(bool loads) { m_data.loadsSubresources = loads; }
 
-    const std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>& allowedNetworkHosts() const LIFETIME_BOUND { return m_data.allowedNetworkHosts; }
-    void setAllowedNetworkHosts(std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>&& hosts) { m_data.allowedNetworkHosts = WTF::move(hosts); }
+    const std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>>& allowedNetworkHosts() const LIFETIME_BOUND { return m_data.allowedNetworkHosts; }
+    void setAllowedNetworkHosts(std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>>&& hosts) { m_data.allowedNetworkHosts = WTF::move(hosts); }
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool ignoresAppBoundDomains() const { return m_data.ignoresAppBoundDomains; }
@@ -361,14 +361,14 @@ public:
     void setMultiRepresentationHEICInsertionEnabled(bool enabled) { m_data.multiRepresentationHEICInsertionEnabled = enabled; }
 #endif
 
-    const WTF::String& groupIdentifier() const LIFETIME_BOUND { return m_data.groupIdentifier; }
-    void setGroupIdentifier(WTF::String&& identifier) { m_data.groupIdentifier = WTF::move(identifier); }
+    const RefPtr<StringImpl>& groupIdentifier() const LIFETIME_BOUND { return m_data.groupIdentifier; }
+    void setGroupIdentifier(RefPtr<StringImpl>&& identifier) { m_data.groupIdentifier = WTF::move(identifier); }
 
-    const WTF::String& mediaContentTypesRequiringHardwareSupport() const LIFETIME_BOUND { return m_data.mediaContentTypesRequiringHardwareSupport; }
-    void setMediaContentTypesRequiringHardwareSupport(WTF::String&& types) { m_data.mediaContentTypesRequiringHardwareSupport = WTF::move(types); }
+    const RefPtr<StringImpl>& mediaContentTypesRequiringHardwareSupport() const LIFETIME_BOUND { return m_data.mediaContentTypesRequiringHardwareSupport; }
+    void setMediaContentTypesRequiringHardwareSupport(RefPtr<StringImpl>&& types) { m_data.mediaContentTypesRequiringHardwareSupport = WTF::move(types); }
 
-    const std::optional<WTF::String>& applicationNameForUserAgent() const LIFETIME_BOUND { return m_data.applicationNameForUserAgent; }
-    void setApplicationNameForUserAgent(std::optional<WTF::String>&& name) { m_data.applicationNameForUserAgent = WTF::move(name); }
+    const std::optional<RefPtr<StringImpl>>& applicationNameForUserAgent() const LIFETIME_BOUND { return m_data.applicationNameForUserAgent; }
+    void setApplicationNameForUserAgent(std::optional<RefPtr<StringImpl>>&& name) { m_data.applicationNameForUserAgent = WTF::move(name); }
 
     double sampledPageTopColorMaxDifference() const { return m_data.sampledPageTopColorMaxDifference; }
     void setSampledPageTopColorMaxDifference(double difference) { m_data.sampledPageTopColorMaxDifference = difference; }
@@ -441,8 +441,8 @@ public:
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_data.shouldRelaxThirdPartyCookieBlocking; }
 
-    void setAttributedBundleIdentifier(WTF::String&& identifier) { m_data.attributedBundleIdentifier = WTF::move(identifier); }
-    const WTF::String& attributedBundleIdentifier() const LIFETIME_BOUND { return m_data.attributedBundleIdentifier; }
+    void setAttributedBundleIdentifier(RefPtr<StringImpl>&& identifier) { m_data.attributedBundleIdentifier = WTF::move(identifier); }
+    const RefPtr<StringImpl>& attributedBundleIdentifier() const LIFETIME_BOUND { return m_data.attributedBundleIdentifier; }
 
 #if HAVE(TOUCH_BAR)
     bool requiresUserActionForEditingControlsManager() const { return m_data.requiresUserActionForEditingControlsManager; }
@@ -554,7 +554,7 @@ private:
         Box<std::optional<OpenerInfo>> openerInfo;
         WebCore::Site openedSite;
         bool processInheritedFromOpener { false };
-        WTF::String openedMainFrameName;
+        RefPtr<StringImpl> openedMainFrameName;
         WebCore::RegistrableDomain openedByScriptDomain;
         std::optional<WebCore::WindowFeatures> windowFeatures;
         WebCore::SandboxFlags initialSandboxFlags;
@@ -598,11 +598,11 @@ private:
         std::optional<double> cpuLimit;
         std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
 
-        WTF::String overrideContentSecurityPolicy;
+        RefPtr<StringImpl> overrideContentSecurityPolicy;
 
 #if PLATFORM(COCOA)
         RetainPtr<ClassStructPtr> attachmentFileWrapperClass;
-        std::optional<WTF::Vector<WTF::String>> additionalSupportedImageTypes;
+        std::optional<WTF::Vector<RefPtr<StringImpl>>> additionalSupportedImageTypes;
         bool clientNavigationsRunAtForegroundPriority { true };
         uintptr_t mediaTypesRequiringUserActionForPlayback { defaultMediaTypesRequiringUserActionForPlayback() };
 #endif
@@ -611,14 +611,14 @@ private:
         RefPtr<ApplicationManifest> applicationManifest;
 #endif
 
-        HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers;
-        Vector<WTF::String> corsDisablingPatterns;
-        HashSet<WTF::String> maskedURLSchemes;
+        HashMap<RefPtr<StringImpl>, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers;
+        Vector<RefPtr<StringImpl>> corsDisablingPatterns;
+        HashSet<RefPtr<StringImpl>> maskedURLSchemes;
         bool maskedURLSchemesWasSet { false };
         bool crossOriginAccessControlCheckEnabled { true };
-        WTF::String processDisplayName;
+        RefPtr<StringImpl> processDisplayName;
         bool loadsSubresources { true };
-        std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> allowedNetworkHosts;
+        std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>>> allowedNetworkHosts;
 
 #if ENABLE(APP_BOUND_DOMAINS)
         bool ignoresAppBoundDomains { false };
@@ -647,9 +647,9 @@ private:
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
         bool multiRepresentationHEICInsertionEnabled { false };
 #endif
-        WTF::String groupIdentifier;
-        WTF::String mediaContentTypesRequiringHardwareSupport;
-        std::optional<WTF::String> applicationNameForUserAgent;
+        RefPtr<StringImpl> groupIdentifier;
+        RefPtr<StringImpl> mediaContentTypesRequiringHardwareSupport;
+        std::optional<RefPtr<StringImpl>> applicationNameForUserAgent;
         double sampledPageTopColorMaxDifference { DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference };
         double sampledPageTopColorMinHeight { DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight };
         double incrementalRenderingSuppressionTimeout { 5 };
@@ -697,7 +697,7 @@ private:
 #endif
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
-        WTF::String attributedBundleIdentifier;
+        RefPtr<StringImpl> attributedBundleIdentifier;
 
 #if HAVE(TOUCH_BAR)
         bool requiresUserActionForEditingControlsManager { false };

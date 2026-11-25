@@ -33,7 +33,7 @@ namespace WebCore {
 struct WorkerOptions {
     WorkerType type { WorkerType::Classic };
     FetchRequestCredentials credentials { FetchRequestCredentials::SameOrigin };
-    String name;
+    RefPtr<StringImpl> name;
 };
 
 } // namespace WebCore

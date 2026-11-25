@@ -40,7 +40,7 @@ class OpenSSLHelperTests : public testing::Test {
 
 TEST(OpenSSLHelper, IPv6AddressCompression)
 {
-    String ipv6;
+    RefPtr<StringImpl> ipv6;
     unsigned char ipAddress[] = { 0x2a, 0x00, 0x8a, 0x00, 0xa0, 0x00, 0x11, 0x90, 0x00, 0x00, 0x00, 0x01, 0x00, 0x0, 0x02, 0x52 };
     ipv6 = OpenSSL::canonicalizeIPv6Address(ipAddress);
     EXPECT_EQ("2a00:8a00:a000:1190:0:1:0:252"_s, ipv6);

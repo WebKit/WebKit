@@ -82,27 +82,27 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     std::optional<WebCore::PushSubscriptionSetIdentifier> subscriptionSetIdentifierForOrigin(const WebCore::SecurityOriginData&) const;
-    const String& hostAppCodeSigningIdentifier() const LIFETIME_BOUND { return m_hostAppCodeSigningIdentifier; }
+    const RefPtr<StringImpl>& hostAppCodeSigningIdentifier() const LIFETIME_BOUND { return m_hostAppCodeSigningIdentifier; }
     bool hostAppHasPushInjectEntitlement() const { return m_hostAppHasPushInjectEntitlement; };
     std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
     bool declarativeWebPushEnabled() const { return m_declarativeWebPushEnabled; }
 
     // You almost certainly do not want to use this and should probably use subscriptionSetIdentifierForOrigin instead.
-    const String& pushPartitionIfExists() const LIFETIME_BOUND { return m_pushPartitionString; }
+    const RefPtr<StringImpl>& pushPartitionIfExists() const LIFETIME_BOUND { return m_pushPartitionString; }
 
-    String debugDescription() const;
+    RefPtr<StringImpl> debugDescription() const;
 
     void connectionClosed();
 
     void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
 
 private:
-    PushClientConnection(xpc_connection_t, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier, bool declarativeWebPushEnabled);
+    PushClientConnection(xpc_connection_t, RefPtr<StringImpl>&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, RefPtr<StringImpl>&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier, bool declarativeWebPushEnabled);
 
     // PushClientConnectionMessages
-    void setPushAndNotificationsEnabledForOrigin(const String& originString, bool, CompletionHandler<void()>&& replySender);
-    void injectPushMessageForTesting(PushMessageForTesting&&, CompletionHandler<void(const String&)>&&);
-    void injectEncryptedPushMessageForTesting(const String&, CompletionHandler<void(bool)>&&);
+    void setPushAndNotificationsEnabledForOrigin(StringImpl* originString, bool, CompletionHandler<void()>&& replySender);
+    void injectPushMessageForTesting(PushMessageForTesting&&, CompletionHandler<void(StringImpl*)>&&);
+    void injectEncryptedPushMessageForTesting(StringImpl*, CompletionHandler<void(bool)>&&);
     void getPendingPushMessage(CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& replySender);
     void getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
     void subscribeToPushService(URL&& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
@@ -112,25 +112,25 @@ private:
     void removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&&);
     void removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
     void getAllPushSubscriptionOrigins(CompletionHandler<void(Vector<WebCore::SecurityOriginData>&&)>&&);
-    void setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&&);
+    void setPublicTokenForTesting(StringImpl* publicToken, CompletionHandler<void()>&&);
     void initializeConnection(WebPushDaemonConnectionConfiguration&&);
     void getPushPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void requestPushPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&);
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
-    void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
+    void getPushTopicsForTesting(CompletionHandler<void(Vector<RefPtr<StringImpl>>, Vector<RefPtr<StringImpl>>)>&&);
     void setServiceWorkerIsBeingInspected(URL&& scopeURL, bool isInspected, CompletionHandler<void()>&&);
 
     void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
-    void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
+    void getNotifications(const URL& registrationURL, StringImpl* tag, CompletionHandler<void(std::expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID);
     void setAppBadge(WebCore::SecurityOriginData&&, std::optional<uint64_t>);
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
     void setProtocolVersionForTesting(unsigned, CompletionHandler<void()>&&);
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
-    String m_hostAppCodeSigningIdentifier;
+    RefPtr<StringImpl> m_hostAppCodeSigningIdentifier;
     bool m_hostAppHasPushInjectEntitlement { false };
-    String m_pushPartitionString;
+    RefPtr<StringImpl> m_pushPartitionString;
     Markable<WTF::UUID> m_dataStoreIdentifier;
     bool m_declarativeWebPushEnabled { false };
     HashSet<WebCore::SecurityOriginData> m_inspectedServiceWorkerOrigins;

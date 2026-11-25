@@ -39,18 +39,18 @@ namespace WTF {
 enum class ShouldMinimizeLanguages : bool { No, Yes };
 
 struct LocaleComponents {
-    String languageCode;
-    String scriptCode;
-    String regionCode;
+    RefPtr<StringImpl> languageCode;
+    RefPtr<StringImpl> scriptCode;
+    RefPtr<StringImpl> regionCode;
 };
 
-WTF_EXPORT_PRIVATE String defaultLanguage(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes); // Thread-safe.
-WTF_EXPORT_PRIVATE Vector<String> userPreferredLanguages(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes); // Thread-safe, returns BCP 47 language tags.
-WTF_EXPORT_PRIVATE void overrideUserPreferredLanguages(const Vector<String>&);
-WTF_EXPORT_PRIVATE size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> defaultLanguage(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes); // Thread-safe.
+WTF_EXPORT_PRIVATE Vector<RefPtr<StringImpl>> userPreferredLanguages(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes); // Thread-safe, returns BCP 47 language tags.
+WTF_EXPORT_PRIVATE void overrideUserPreferredLanguages(const Vector<RefPtr<StringImpl>>&);
+WTF_EXPORT_PRIVATE size_t indexOfBestMatchingLanguageInList(StringImpl* language, const Vector<RefPtr<StringImpl>>& languageList, bool& exactMatch);
 WTF_EXPORT_PRIVATE bool userPrefersSimplifiedChinese();
-WTF_EXPORT_PRIVATE String userPreferredChineseLocale(); // Thread-safe.
-WTF_EXPORT_PRIVATE LocaleComponents parseLocale(const String&);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> userPreferredChineseLocale(); // Thread-safe.
+WTF_EXPORT_PRIVATE LocaleComponents parseLocale(StringImpl*);
 
 // Called from platform specific code when the user's preferred language(s) change.
 WTF_EXPORT_PRIVATE void languageDidChange();
@@ -59,9 +59,9 @@ WTF_EXPORT_PRIVATE void languageDidChange();
 typedef void (*LanguageChangeObserverFunction)(void* context);
 WTF_EXPORT_PRIVATE void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
 WTF_EXPORT_PRIVATE void removeLanguageChangeObserver(void* context);
-WTF_EXPORT_PRIVATE String displayNameForLanguageLocale(const String&);
+WTF_EXPORT_PRIVATE RefPtr<StringImpl> displayNameForLanguageLocale(StringImpl*);
 
-Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes);
+Vector<RefPtr<StringImpl>> platformUserPreferredLanguages(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes);
 
 #if PLATFORM(COCOA)
 bool canMinimizeLanguages();

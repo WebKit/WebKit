@@ -41,14 +41,14 @@ class CoreIPCError {
     WTF_MAKE_TZONE_ALLOCATED(CoreIPCError);
 public:
     struct NetworkResolutionReportInterface {
-        String type;
-        String name;
+        RefPtr<StringImpl> type;
+        RefPtr<StringImpl> name;
     };
 
     struct NetworkResolutionReport {
-        String provider;
-        String dnsFailureReason;
-        String extendedDNSErrorExtraText;
+        RefPtr<StringImpl> provider;
+        RefPtr<StringImpl> dnsFailureReason;
+        RefPtr<StringImpl> extendedDNSErrorExtraText;
         Vector<NetworkResolutionReportInterface> interfaces;
     };
 
@@ -56,8 +56,8 @@ public:
     CoreIPCError& operator=(CoreIPCError&&) = default;
 
     CoreIPCError(NSError *);
-    CoreIPCError(String&& domain, int64_t code, std::unique_ptr<CoreIPCError>&& underlyingError, std::optional<Vector<RetainPtr<SecCertificateRef>>>&& clientCertificateChain, std::optional<Vector<RetainPtr<SecCertificateRef>>>&& peerCertificateChain, String&& localizedDescription, String&& localizedFailureReasonError, String&& localizedRecoverySuggestionError, std::optional<Vector<String>>&& localizedRecoveryOptionsError, String&& localizedFailureError, String&& helpAnchorError, String&& debugDescriptionError, RetainPtr<NSNumber>&& stringEncodingError, RetainPtr<SecTrustRef>&& failingURLPeerTrustError, RetainPtr<NSURL>&& urlError, RetainPtr<NSURL>&& failingURLError,
-        String&& filePathError, String&& networkTaskDescription, String&& networkTaskMetricsPrivacyStance, std::optional<NetworkResolutionReport>&& networkResolutionReport, String&& description)
+    CoreIPCError(RefPtr<StringImpl>&& domain, int64_t code, std::unique_ptr<CoreIPCError>&& underlyingError, std::optional<Vector<RetainPtr<SecCertificateRef>>>&& clientCertificateChain, std::optional<Vector<RetainPtr<SecCertificateRef>>>&& peerCertificateChain, RefPtr<StringImpl>&& localizedDescription, RefPtr<StringImpl>&& localizedFailureReasonError, RefPtr<StringImpl>&& localizedRecoverySuggestionError, std::optional<Vector<RefPtr<StringImpl>>>&& localizedRecoveryOptionsError, RefPtr<StringImpl>&& localizedFailureError, RefPtr<StringImpl>&& helpAnchorError, RefPtr<StringImpl>&& debugDescriptionError, RetainPtr<NSNumber>&& stringEncodingError, RetainPtr<SecTrustRef>&& failingURLPeerTrustError, RetainPtr<NSURL>&& urlError, RetainPtr<NSURL>&& failingURLError,
+        RefPtr<StringImpl>&& filePathError, RefPtr<StringImpl>&& networkTaskDescription, RefPtr<StringImpl>&& networkTaskMetricsPrivacyStance, std::optional<NetworkResolutionReport>&& networkResolutionReport, RefPtr<StringImpl>&& description)
         : m_domain(WTF::move(domain))
         , m_code(WTF::move(code))
         , m_underlyingError(WTF::move(underlyingError))
@@ -87,20 +87,20 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCError>;
 
-    String m_domain;
+    RefPtr<StringImpl> m_domain;
     int64_t m_code;
     std::unique_ptr<CoreIPCError> m_underlyingError;
 
     std::optional<Vector<RetainPtr<SecCertificateRef>>> m_clientCertificateChain;
     std::optional<Vector<RetainPtr<SecCertificateRef>>> m_peerCertificateChain;
-    String m_localizedDescription;
-    String m_localizedFailureReasonError;
-    String m_localizedRecoverySuggestionError;
-    std::optional<Vector<String>> m_localizedRecoveryOptionsError;
-    String m_localizedFailureError;
+    RefPtr<StringImpl> m_localizedDescription;
+    RefPtr<StringImpl> m_localizedFailureReasonError;
+    RefPtr<StringImpl> m_localizedRecoverySuggestionError;
+    std::optional<Vector<RefPtr<StringImpl>>> m_localizedRecoveryOptionsError;
+    RefPtr<StringImpl> m_localizedFailureError;
 
-    String m_helpAnchorError;
-    String m_debugDescriptionError;
+    RefPtr<StringImpl> m_helpAnchorError;
+    RefPtr<StringImpl> m_debugDescriptionError;
 
     RetainPtr<NSNumber> m_stringEncodingError;
 
@@ -108,13 +108,13 @@ private:
     RetainPtr<NSURL> m_urlError;
     RetainPtr<NSURL> m_failingURLError;
 
-    String m_filePathError;
+    RefPtr<StringImpl> m_filePathError;
 
-    String m_networkTaskDescription;
-    String m_networkTaskMetricsPrivacyStance;
+    RefPtr<StringImpl> m_networkTaskDescription;
+    RefPtr<StringImpl> m_networkTaskMetricsPrivacyStance;
     std::optional<NetworkResolutionReport> m_networkResolutionReport;
 
-    String m_description;
+    RefPtr<StringImpl> m_description;
 };
 
 }

@@ -42,11 +42,11 @@ public:
     virtual void idTargetChanged(Element&) = 0;
 
 protected:
-    IdTargetObserver(IdTargetObserverRegistry&, const AtomString& id);
+    IdTargetObserver(IdTargetObserverRegistry&, AtomStringImpl* id);
 
 private:
     const CheckedPtr<IdTargetObserverRegistry> m_registry;
-    AtomString m_id;
+    RefPtr<AtomStringImpl> m_id;
 };
 
 } // namespace WebCore

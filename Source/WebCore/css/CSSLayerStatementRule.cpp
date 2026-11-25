@@ -51,7 +51,7 @@ Ref<CSSLayerStatementRule> CSSLayerStatementRule::create(StyleRuleLayer& rule, C
 
 CSSLayerStatementRule::~CSSLayerStatementRule() = default;
 
-String CSSLayerStatementRule::cssText() const
+RefPtr<StringImpl> CSSLayerStatementRule::cssText() const
 {
     StringBuilder result;
 
@@ -68,9 +68,9 @@ String CSSLayerStatementRule::cssText() const
     return result.toString();
 }
 
-Vector<String> CSSLayerStatementRule::nameList() const
+Vector<RefPtr<StringImpl>> CSSLayerStatementRule::nameList() const
 {
-    Vector<String> result;
+    Vector<RefPtr<StringImpl>> result;
 
     for (auto& name : m_layerRule.get().nameList())
         result.append(stringFromCascadeLayerName(name));

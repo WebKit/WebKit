@@ -34,12 +34,12 @@ namespace WebCore {
 struct AuthenticationExtensionsClientOutputsJSON {
     struct LargeBlobOutputsJSON {
         std::optional<bool> supported;
-        String blob;
+        RefPtr<StringImpl> blob;
         std::optional<bool> written;
     };
     struct PRFValuesJSON {
-        String first;
-        String second;
+        RefPtr<StringImpl> first;
+        RefPtr<StringImpl> second;
     };
     struct PRFOutputsJSON {
         std::optional<bool> enabled;

@@ -179,10 +179,10 @@ MediaPermissionPromptCustomization customizationFromConfiguration(_WKMediaCaptur
         return { };
 
     MediaPermissionPromptCustomization customization {
-        .messageText = [configuration messageText],
-        .informativeText = [configuration informativeText],
-        .allowButtonTitle = [configuration allowButtonTitle],
-        .denyButtonTitle = [configuration denyButtonTitle],
+        .messageText = StringImpl::create([configuration messageText]),
+        .informativeText = StringImpl::create([configuration informativeText]),
+        .allowButtonTitle = StringImpl::create([configuration allowButtonTitle]),
+        .denyButtonTitle = StringImpl::create([configuration denyButtonTitle]),
     };
 
     NSArray<_WKMediaCapturePermissionAction *> *actions = [configuration additionalActions];
@@ -195,7 +195,7 @@ MediaPermissionPromptCustomization customizationFromConfiguration(_WKMediaCaptur
     customization.additionalActions = Vector<MediaPermissionPromptAdditionalAction>(count, [&](size_t index) {
         _WKMediaCapturePermissionAction *action = [actions objectAtIndex:index];
         return MediaPermissionPromptAdditionalAction {
-            .title = [action title],
+            .title = StringImpl::create([action title]),
             .decision = [action decision] == _WKMediaCapturePermissionActionDecisionAllow ? MediaPermissionPromptAdditionalAction::Decision::Allow : MediaPermissionPromptAdditionalAction::Decision::Deny,
             .source = action,
         };

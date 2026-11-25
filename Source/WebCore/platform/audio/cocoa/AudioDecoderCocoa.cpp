@@ -75,8 +75,8 @@ public:
     }
     virtual ~InternalAudioDecoderCocoa() = default;
 
-    String initialize(const String& codecName, const AudioDecoder::Config&);
-    String initialize(const AudioInfo&);
+    RefPtr<StringImpl> initialize(StringImpl* codecName, const AudioDecoder::Config&);
+    RefPtr<StringImpl> initialize(const AudioInfo&);
 
     using DecodePromise = AudioDecoder::DecodePromise;
 
@@ -95,7 +95,7 @@ private:
         return *m_converter;
     }
     void processedDecodedOutputs();
-    String createConverter(uint64_t sampleRate, uint64_t numberOfChannels, unsigned preSkip);
+    RefPtr<StringImpl> createConverter(uint64_t sampleRate, uint64_t numberOfChannels, unsigned preSkip);
 
     AudioDecoder::OutputCallback m_outputCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RefPtr<AudioSampleBufferConverter> m_converter WTF_GUARDED_BY_CAPABILITY(queueSingleton());
@@ -112,13 +112,13 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalAudioDecoderCocoa);
 
-Ref<AudioDecoder::CreatePromise> AudioDecoderCocoa::create(const String& codecName, const Config& config, OutputCallback&& outputCallback)
+Ref<AudioDecoder::CreatePromise> AudioDecoderCocoa::create(StringImpl* codecName, const Config& config, OutputCallback&& outputCallback)
 {
     Ref decoder = adoptRef(*new AudioDecoderCocoa(WTF::move(outputCallback)));
-    return invokeAsync(queueSingleton(), [decoder = WTF::move(decoder), codecName = codecName.isolatedCopy(), config]() mutable {
+    return invokeAsync(queueSingleton(), [decoder = WTF::move(decoder), codecName = isolatedCopy(codecName), config]() mutable {
         assertIsCurrent(queueSingleton());
         Ref internalDecoder = decoder->m_internalDecoder;
-        if (auto error = internalDecoder->initialize(codecName, config); !error.isEmpty())
+        if (auto error = internalDecoder->initialize(codecName, config); !isEmpty(error))
             return CreatePromise::createAndReject(makeString("Internal audio decoder failed to configure for codec "_s, codecName, " with error "_s, error));
         return CreatePromise::createAndResolve(WTF::move(decoder));
     });
@@ -130,7 +130,7 @@ Ref<AudioDecoder::CreatePromise> AudioDecoderCocoa::create(const AudioInfo& info
     return invokeAsync(queueSingleton(), [decoder = WTF::move(decoder), info = Ref { info }] mutable {
         assertIsCurrent(queueSingleton());
         Ref internalDecoder = decoder->m_internalDecoder;
-        if (auto error = internalDecoder->initialize(info); !error.isEmpty())
+        if (auto error = internalDecoder->initialize(info); !isEmpty(error))
             return CreatePromise::createAndReject(makeString("Internal audio decoder failed to configure with error "_s, error));
         return CreatePromise::createAndResolve(WTF::move(decoder));
     });
@@ -197,7 +197,7 @@ AudioDecoderCocoa::~AudioDecoderCocoa()
     });
 }
 
-std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> AudioDecoderCocoa::isCodecSupported(const StringView& codecName)
+std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, RefPtr<StringImpl>> AudioDecoderCocoa::isCodecSupported(const StringView& codecName)
 {
     auto codec = [](auto& codecName) -> FourCharCode {
         if (codecName.startsWith("mp4a.40.5"_s))
@@ -234,7 +234,7 @@ std::expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMF
     if (codec != kAudioFormatLinearPCM)
         return std::make_pair(codec, format);
 
-    auto components = codecName.toString().split('-');
+    auto components = split(codecName.toString(), '-');
     if (components.size() != 2)
         return makeUnexpected(makeString("Invalid LPCM codec string:"_s, codecName));
     auto& pcmFormat = components[1];
@@ -299,7 +299,7 @@ InternalAudioDecoderCocoa::InternalAudioDecoderCocoa(AudioDecoder::OutputCallbac
 {
 }
 
-String InternalAudioDecoderCocoa::initialize(const String& codecName, const AudioDecoder::Config& config)
+RefPtr<StringImpl> InternalAudioDecoderCocoa::initialize(StringImpl* codecName, const AudioDecoder::Config& config)
 {
     assertIsCurrent(queueSingleton());
 
@@ -313,17 +313,17 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
     if (!format) {
 #if HAVE(OPUS_DECODE_MULTICHANNEL)
         if (codec == kAudioFormatOpus && config.numberOfChannels > 2 && config.description.isEmpty())
-            return "Opus with more than 2 channels requires config description"_s;
+            return "Opus with more than 2 channels requires config description"_si;
 #else
         if (codec == kAudioFormatOpus && config.numberOfChannels > 2)
             return "Opus with more than 2 channels isn't supported"_s;
 #endif
 
         if (codec == kAudioFormatFLAC && config.description.isEmpty())
-            return "Decoder config description for flac codec is mandatory"_s;
+            return "Decoder config description for flac codec is mandatory"_si;
 
         if (codec == 'vorb' && config.description.isEmpty())
-            return "Decoder config description for vorbis codec is mandatory"_s;
+            return "Decoder config description for vorbis codec is mandatory"_si;
 
         mIsAAC = isAAC(codec);
 
@@ -341,7 +341,7 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
             } else if (codec == kAudioFormatFLAC) {
                 codecDescription = AudioUtilities::createFLACMagicCookie(description);
                 if (codecDescription.isEmpty())
-                    return "Invalid flac description"_s;
+                    return "Invalid flac description"_si;
                 description = codecDescription.span();
             }
 
@@ -369,18 +369,18 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
     return createConverter(config.sampleRate, config.numberOfChannels, preSkip);
 }
 
-String InternalAudioDecoderCocoa::initialize(const AudioInfo& info)
+RefPtr<StringImpl> InternalAudioDecoderCocoa::initialize(const AudioInfo& info)
 {
     assertIsCurrent(queueSingleton());
 
     lazyInitialize(m_inputFormatDescription, createInputFormatDescription(info));
     if (!m_inputFormatDescription)
-        return "Invalid AudioInfo"_s;
+        return "Invalid AudioInfo"_si;
 
     return createConverter(info.rate(), info.channels(), 0);
 }
 
-String InternalAudioDecoderCocoa::createConverter(uint64_t sampleRate, uint64_t numberOfChannels, unsigned preSkip)
+RefPtr<StringImpl> InternalAudioDecoderCocoa::createConverter(uint64_t sampleRate, uint64_t numberOfChannels, unsigned preSkip)
 {
     assertIsCurrent(queueSingleton());
 
@@ -395,7 +395,7 @@ String InternalAudioDecoderCocoa::createConverter(uint64_t sampleRate, uint64_t 
         });
     }, options);
     if (!m_converter)
-        return "Couldn't create AudioSampleBufferConverter"_s;
+        return "Couldn't create AudioSampleBufferConverter"_si;
 
     return { };
 }

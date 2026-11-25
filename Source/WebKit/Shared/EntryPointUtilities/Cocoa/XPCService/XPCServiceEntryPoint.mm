@@ -79,16 +79,16 @@ bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Ide
     return true;
 }
 
-bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier)
+bool XPCServiceInitializerDelegate::getClientIdentifier(RefPtr<StringImpl>& clientIdentifier)
 {
     clientIdentifier = xpcDictionaryGetString(m_initializerMessage.get(), "client-identifier"_s);
-    return !clientIdentifier.isEmpty();
+    return !isEmpty(clientIdentifier);
 }
 
-bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBundleIdentifier)
+bool XPCServiceInitializerDelegate::getClientBundleIdentifier(RefPtr<StringImpl>& clientBundleIdentifier)
 {
     clientBundleIdentifier = xpcDictionaryGetString(m_initializerMessage.get(), "client-bundle-identifier"_s);
-    return !clientBundleIdentifier.isEmpty();
+    return !isEmpty(clientBundleIdentifier);
 }
 
 bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehaviors& behaviors)
@@ -117,49 +117,49 @@ bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::
     return true;
 }
 
-bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
+bool XPCServiceInitializerDelegate::getClientProcessName(RefPtr<StringImpl>& clientProcessName)
 {
     clientProcessName = xpcDictionaryGetString(m_initializerMessage.get(), "ui-process-name"_s);
-    return !clientProcessName.isEmpty();
+    return !isEmpty(clientProcessName);
 }
 
-bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>& extraInitializationData)
+bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& extraInitializationData)
 {
     OSObjectPtr<xpc_object_t> extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage.get(), "extra-initialization-data");
 
     auto inspectorProcess = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "inspector-process"_s);
-    if (!inspectorProcess.isEmpty())
-        extraInitializationData.add("inspector-process"_s, inspectorProcess);
+    if (!isEmpty(inspectorProcess))
+        extraInitializationData.add("inspector-process"_si, inspectorProcess);
 
     auto serviceWorkerProcess = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "service-worker-process"_s);
-    if (!serviceWorkerProcess.isEmpty())
-        extraInitializationData.add("service-worker-process"_s, WTF::move(serviceWorkerProcess));
+    if (!isEmpty(serviceWorkerProcess))
+        extraInitializationData.add("service-worker-process"_si, WTF::move(serviceWorkerProcess));
     auto registrableDomain = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "registrable-domain"_s);
-    if (!registrableDomain.isEmpty())
-        extraInitializationData.add("registrable-domain"_s, WTF::move(registrableDomain));
+    if (!isEmpty(registrableDomain))
+        extraInitializationData.add("registrable-domain"_si, WTF::move(registrableDomain));
 
     auto isPrewarmedProcess = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "is-prewarmed"_s);
-    if (!isPrewarmedProcess.isEmpty())
-        extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
+    if (!isEmpty(isPrewarmedProcess))
+        extraInitializationData.add("is-prewarmed"_si, isPrewarmedProcess);
 
     auto isLockdownModeEnabled = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "enable-lockdown-mode"_s);
-    if (!isLockdownModeEnabled.isEmpty())
-        extraInitializationData.add("enable-lockdown-mode"_s, isLockdownModeEnabled);
+    if (!isEmpty(isLockdownModeEnabled))
+        extraInitializationData.add("enable-lockdown-mode"_si, isLockdownModeEnabled);
     else {
         auto enableEnhancedSecurity = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "enable-enhanced-security"_s);
-        if (!enableEnhancedSecurity.isEmpty())
-            extraInitializationData.add("enable-enhanced-security"_s, enableEnhancedSecurity);
+        if (!isEmpty(enableEnhancedSecurity))
+            extraInitializationData.add("enable-enhanced-security"_si, enableEnhancedSecurity);
     }
 
     if (!isClientSandboxed()) {
         auto userDirectorySuffix = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "user-directory-suffix"_s);
-        if (!userDirectorySuffix.isEmpty())
-            extraInitializationData.add("user-directory-suffix"_s, userDirectorySuffix);
+        if (!isEmpty(userDirectorySuffix))
+            extraInitializationData.add("user-directory-suffix"_si, userDirectorySuffix);
     }
 
     auto alwaysRunsAtBackgroundPriority = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "always-runs-at-background-priority"_s);
-    if (!alwaysRunsAtBackgroundPriority.isEmpty())
-        extraInitializationData.add("always-runs-at-background-priority"_s, alwaysRunsAtBackgroundPriority);
+    if (!isEmpty(alwaysRunsAtBackgroundPriority))
+        extraInitializationData.add("always-runs-at-background-priority"_si, alwaysRunsAtBackgroundPriority);
 
     return true;
 }

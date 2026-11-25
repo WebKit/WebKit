@@ -126,7 +126,7 @@ public:
     StringTypeAdapter(const char16_t* characters)
         : m_characters { unsafeSpan(characters) }
     {
-        RELEASE_ASSERT(m_characters.size() <= String::MaxLength);
+        RELEASE_ASSERT(m_characters.size() <= StringImpl::MaxLength);
     }
 
     unsigned length() const { return m_characters.size(); }
@@ -143,7 +143,7 @@ public:
     StringTypeAdapter(std::span<CharacterType, Extent> span)
         : m_characters { span }
     {
-        RELEASE_ASSERT(m_characters.size() <= String::MaxLength);
+        RELEASE_ASSERT(m_characters.size() <= StringImpl::MaxLength);
     }
 
     unsigned length() const { return m_characters.size(); }
@@ -224,18 +224,29 @@ public:
     }
 };
 
-template<> class StringTypeAdapter<String> : public StringTypeAdapter<StringImpl*> {
+template<> class StringTypeAdapter<const StringImpl*> : public StringTypeAdapter<StringImpl*> {
 public:
-    StringTypeAdapter(const String& string)
-        : StringTypeAdapter<StringImpl*> { string.impl() }
+    StringTypeAdapter(const StringImpl* string)
+        : StringTypeAdapter<StringImpl*> { const_cast<StringImpl*>(string) }
     {
     }
 };
 
-template<> class StringTypeAdapter<AtomString> : public StringTypeAdapter<String> {
+// A null pointer is treated as an empty string.
+template<typename X, typename PtrTraits, typename RefDerefTraits> requires std::is_convertible_v<X*, const StringImpl*>
+class StringTypeAdapter<RefPtr<X, PtrTraits, RefDerefTraits>> : public StringTypeAdapter<StringImpl*> {
 public:
-    StringTypeAdapter(const AtomString& string)
-        : StringTypeAdapter<String> { string.string() }
+    StringTypeAdapter(const RefPtr<X, PtrTraits, RefDerefTraits>& string)
+        : StringTypeAdapter<StringImpl*> { toStringImplPointer(string) }
+    {
+    }
+};
+
+template<typename X, typename PtrTraits, typename RefDerefTraits> requires std::is_convertible_v<X*, const StringImpl*>
+class StringTypeAdapter<Ref<X, PtrTraits, RefDerefTraits>> : public StringTypeAdapter<StringImpl*> {
+public:
+    StringTypeAdapter(const Ref<X, PtrTraits, RefDerefTraits>& string)
+        : StringTypeAdapter<StringImpl*> { toStringImplPointer(string) }
     {
     }
 };
@@ -272,7 +283,7 @@ public:
     StringTypeAdapter(Unicode::CheckedUTF8 characters)
         : m_characters { characters }
     {
-        if (m_characters.lengthUTF16 > String::MaxLength)
+        if (m_characters.lengthUTF16 > StringImpl::MaxLength)
             m_characters.lengthUTF16 = 0;
     }
 
@@ -539,7 +550,7 @@ private:
 //  3. Finally, if the container already contains "string-types", no `each` functor
 //     is required at all.
 //
-//       Vector<String> container = { ... };
+//       Vector<RefPtr<StringImpl>> container = { ... };
 //
 //       ... interleave(
 //              container,

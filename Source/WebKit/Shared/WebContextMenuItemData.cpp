@@ -46,7 +46,7 @@ WebContextMenuItemData::WebContextMenuItemData()
 {
 }
 
-WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuItemType type, WebCore::ContextMenuAction action, String&& title, bool enabled, bool checked, unsigned indentationLevel, Vector<WebContextMenuItemData>&& submenu)
+WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuItemType type, WebCore::ContextMenuAction action, RefPtr<StringImpl>&& title, bool enabled, bool checked, unsigned indentationLevel, Vector<WebContextMenuItemData>&& submenu)
     : m_type(type)
     , m_action(action)
     , m_title(WTF::move(title))

@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject*, VM&, const String&);
+JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject*, VM&, StringImpl*);
 JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject*, VM&, Wasm::ExceptionType);
 
 } // namespace JSC

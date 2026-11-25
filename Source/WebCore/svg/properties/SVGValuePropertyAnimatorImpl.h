@@ -48,7 +48,7 @@ private:
 
     void start(SVGElement& targetElement) override
     {
-        String baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
+        RefPtr<StringImpl> baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
         SVGLengthValue value(SVGLengthMode::Other);
         if (!value.setValueAsString(baseValue).hasException())
             m_property->setValue(value);

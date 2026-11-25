@@ -45,7 +45,7 @@ Ref<CSSBorderImageSourceValue> CSSBorderImageSourceValue::create(CSS::BorderImag
     return adoptRef(*new CSSBorderImageSourceValue(WTF::move(source)));
 }
 
-String CSSBorderImageSourceValue::customCSSText(const CSS::SerializationContext& context) const
+RefPtr<StringImpl> CSSBorderImageSourceValue::customCSSText(const CSS::SerializationContext& context) const
 {
     return CSS::serializationForCSS(context, m_source);
 }

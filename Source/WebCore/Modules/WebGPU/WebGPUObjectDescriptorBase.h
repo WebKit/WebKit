@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct WebGPUObjectDescriptorBase {
-    String label;
+    RefPtr<StringImpl> label;
 };
 
 } // namespace WebCore

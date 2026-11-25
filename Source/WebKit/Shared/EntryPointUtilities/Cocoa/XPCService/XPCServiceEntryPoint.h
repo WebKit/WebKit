@@ -64,11 +64,11 @@ public:
 
     virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier);
     virtual bool getProcessIdentifier(std::optional<WebCore::ProcessIdentifier>&);
-    virtual bool getClientIdentifier(String& clientIdentifier);
-    virtual bool getClientBundleIdentifier(String& clientBundleIdentifier);
-    virtual bool getClientProcessName(String& clientProcessName);
+    virtual bool getClientIdentifier(RefPtr<StringImpl>& clientIdentifier);
+    virtual bool getClientBundleIdentifier(RefPtr<StringImpl>& clientBundleIdentifier);
+    virtual bool getClientProcessName(RefPtr<StringImpl>& clientProcessName);
     virtual bool getClientSDKAlignedBehaviors(SDKAlignedBehaviors&);
-    virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
+    virtual bool getExtraInitializationData(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>>& extraInitializationData);
 
 protected:
     bool hasEntitlement(ASCIILiteral entitlement);
@@ -116,8 +116,8 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     if (isWebContentProcess)
         JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
     if (initializerMessage) {
-        bool enableLockdownMode = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
-        bool enableEnhancedSecurity = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-enhanced-security"_s) == "1"_s;
+        bool enableLockdownMode = equal(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s), "1"_s);
+        bool enableEnhancedSecurity = equal(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-enhanced-security"_s), "1"_s);
         setJSCOptions(initializerMessage, enableLockdownMode ? EnableLockdownMode::Yes : EnableLockdownMode::No, enableEnhancedSecurity ? EnableEnhancedSecurity::Yes : EnableEnhancedSecurity::No, isWebContentProcess);
     }
 
@@ -160,7 +160,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     voucher_replace_default_voucher();
 
 #if HAVE(QOS_CLASSES)
-    if (parameters.extraInitializationData.contains("always-runs-at-background-priority"_s))
+    if (parameters.extraInitializationData.contains("always-runs-at-background-priority"_si))
         Thread::setGlobalMaxQOSClass(QOS_CLASS_UTILITY);
 #endif
 

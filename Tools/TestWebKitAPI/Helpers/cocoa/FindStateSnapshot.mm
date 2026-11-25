@@ -37,7 +37,7 @@ static void captureFrameFindStates(TestWKWebView *webView, _WKFrameTreeNode *nod
     NSDictionary *state = [webView objectByEvaluatingJavaScript:@"({ selectedText: getSelection().toString(), scrollX, scrollY, hasFocus: document.hasFocus() })" inFrame:node.info];
     frames.append({
         .path = path,
-        .selectedText = state[@"selectedText"],
+        .selectedText = StringImpl::create(state[@"selectedText"]),
         .scrollPosition = CGPointMake([state[@"scrollX"] doubleValue], [state[@"scrollY"] doubleValue]),
         .hasFocus = static_cast<bool>([state[@"hasFocus"] boolValue]),
     });
@@ -92,7 +92,7 @@ Vector<Vector<unsigned>> FindStateSnapshot::framesWithSelection() const
 {
     Vector<Vector<unsigned>> result;
     for (auto& frame : frames) {
-        if (!frame.selectedText.isEmpty())
+        if (!isEmpty(frame.selectedText))
             result.append(frame.path);
     }
     return result;

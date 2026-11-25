@@ -58,7 +58,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), chosePlainText, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote);
 }
 
-void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL&, const String&)
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL&, StringImpl*)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
     if (!renderImage)

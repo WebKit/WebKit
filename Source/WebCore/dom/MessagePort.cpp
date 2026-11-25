@@ -211,7 +211,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
 
     if (isDetached() || isDoomed) {
         if (!isDetached())
-            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "MessagePort was posted to itself, causing the communication channel to be lost."_s);
+            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "MessagePort was posted to itself, causing the communication channel to be lost."_si);
         ensureOnMainThread([transferredPorts = WTF::move(transferredPorts)] {
             for (auto& port : transferredPorts)
                 MessagePortChannelProvider::singleton().messagePortClosed(port.first);
@@ -396,7 +396,7 @@ void MessagePort::dispatchMessages()
             }
 
             auto ports = MessagePort::entanglePorts(*context, WTF::move(message.transferredPorts));
-            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
+            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, nullptr, { }, WTF::move(ports));
             if (scope.exception()) [[unlikely]] {
                 // Currently, we assume that the only way we can get here is if we have a termination.
                 RELEASE_ASSERT(vm->hasPendingTerminationException());
@@ -438,7 +438,7 @@ void MessagePort::drainOneLocalMessage()
     }
 
     auto ports = MessagePort::entanglePorts(*context, WTF::move(message.transferredPorts));
-    auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
+    auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, nullptr, { }, WTF::move(ports));
     if (scope.exception()) [[unlikely]] {
         // Currently, we assume that the only way we can get here is if we have a termination.
         RELEASE_ASSERT(vm->hasPendingTerminationException());
@@ -531,7 +531,7 @@ SUPPRESS_NODELETE void MessagePort::entangleLocally(MessagePort& port1, MessageP
     port2.m_localPartner = port1;
 }
 
-bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
+bool MessagePort::addEventListener(AtomStringImpl* eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (eventType == eventNames().messageEvent) {
         if (listener->isAttribute())
@@ -543,7 +543,7 @@ bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListene
     return EventTarget::addEventListener(eventType, WTF::move(listener), options);
 }
 
-bool MessagePort::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
+bool MessagePort::removeEventListener(AtomStringImpl* eventType, EventListener& listener, const EventListenerOptions& options)
 {
     bool result = EventTarget::removeEventListener(eventType, listener, options);
 

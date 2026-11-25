@@ -28,8 +28,8 @@
 namespace WebCore {
 
 struct MarkupExclusionRule {
-    AtomString elementLocalName;
-    Vector<std::pair<AtomString, AtomString>> attributes;
+    RefPtr<AtomStringImpl> elementLocalName;
+    Vector<std::pair<RefPtr<AtomStringImpl>, RefPtr<AtomStringImpl>>> attributes;
 };
 
 } // namespace WebCore

@@ -50,7 +50,7 @@ inline void NodeListsNodeData::adoptDocument(Document& oldDocument, Document& ne
         collection->invalidateCacheForDocument(oldDocument);
 }
 
-void NodeListsNodeData::removeCachedCollection(HTMLCollection* collection, const AtomString& name)
+void NodeListsNodeData::removeCachedCollection(HTMLCollection* collection, AtomStringImpl* name)
 {
     ASSERT(collection == m_cachedCollections.get(namedCollectionKey(collection->type(), name)));
     if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(collection->ownerNode()))

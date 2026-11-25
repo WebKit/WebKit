@@ -271,7 +271,7 @@ void webkit_dom_attr_set_value(WebKitDOMAttr* self, const gchar* value, GError**
     g_return_if_fail(value);
     UNUSED_PARAM(error);
     WebCore::Attr* item = WebKit::core(self);
-    item->setValue(WTF::AtomString::fromUTF8(value));
+    item->setValue(AtomStringImpl::fromUTF8(value));
 }
 
 WebKitDOMElement* webkit_dom_attr_get_owner_element(WebKitDOMAttr* self)

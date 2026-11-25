@@ -62,19 +62,19 @@ using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
     _WebKitSettingsPrivate()
-        : preferences(WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s))
+        : preferences(WebPreferences::create(nullptr, "WebKit2."_si, "WebKit2."_si))
     {
-        defaultFontFamily = preferences->standardFontFamily().utf8();
-        monospaceFontFamily = preferences->fixedFontFamily().utf8();
-        serifFontFamily = preferences->serifFontFamily().utf8();
-        sansSerifFontFamily = preferences->sansSerifFontFamily().utf8();
-        cursiveFontFamily = preferences->cursiveFontFamily().utf8();
-        fantasyFontFamily = preferences->fantasyFontFamily().utf8();
-        pictographFontFamily = preferences->pictographFontFamily().utf8();
-        mathFontFamily = preferences->mathFontFamily().utf8();
-        defaultCharset = preferences->defaultTextEncodingName().utf8();
+        defaultFontFamily = utf8(preferences->standardFontFamily());
+        monospaceFontFamily = utf8(preferences->fixedFontFamily());
+        serifFontFamily = utf8(preferences->serifFontFamily());
+        sansSerifFontFamily = utf8(preferences->sansSerifFontFamily());
+        cursiveFontFamily = utf8(preferences->cursiveFontFamily());
+        fantasyFontFamily = utf8(preferences->fantasyFontFamily());
+        pictographFontFamily = utf8(preferences->pictographFontFamily());
+        mathFontFamily = utf8(preferences->mathFontFamily());
+        defaultCharset = utf8(preferences->defaultTextEncodingName());
 #if ENABLE(WEB_RTC)
-        webrtcUDPPortsRange = preferences->webRTCUDPPortRange().utf8();
+        webrtcUDPPortsRange = utf8(preferences->webRTCUDPPortRange());
 #endif
     }
 
@@ -2230,9 +2230,9 @@ void webkit_settings_set_default_font_family(WebKitSettings* settings, const gch
     if (priv->defaultFontFamily == UTF8CStringView::unsafeFromUTF8(defaultFontFamily))
         return;
 
-    String standardFontFamily = String::fromUTF8(defaultFontFamily);
+    RefPtr<StringImpl> standardFontFamily = StringImpl::fromUTF8(defaultFontFamily);
     priv->preferences->setStandardFontFamily(standardFontFamily);
-    priv->defaultFontFamily = standardFontFamily.utf8();
+    priv->defaultFontFamily = utf8(standardFontFamily);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_DEFAULT_FONT_FAMILY]);
 }
 
@@ -2267,9 +2267,9 @@ void webkit_settings_set_monospace_font_family(WebKitSettings* settings, const g
     if (priv->monospaceFontFamily == UTF8CStringView::unsafeFromUTF8(monospaceFontFamily))
         return;
 
-    String fixedFontFamily = String::fromUTF8(monospaceFontFamily);
+    RefPtr<StringImpl> fixedFontFamily = StringImpl::fromUTF8(monospaceFontFamily);
     priv->preferences->setFixedFontFamily(fixedFontFamily);
-    priv->monospaceFontFamily = fixedFontFamily.utf8();
+    priv->monospaceFontFamily = utf8(fixedFontFamily);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_MONOSPACE_FONT_FAMILY]);
 }
 
@@ -2304,9 +2304,9 @@ void webkit_settings_set_serif_font_family(WebKitSettings* settings, const gchar
     if (priv->serifFontFamily == UTF8CStringView::unsafeFromUTF8(serifFontFamily))
         return;
 
-    String serifFontFamilyString = String::fromUTF8(serifFontFamily);
+    RefPtr<StringImpl> serifFontFamilyString = StringImpl::fromUTF8(serifFontFamily);
     priv->preferences->setSerifFontFamily(serifFontFamilyString);
-    priv->serifFontFamily = serifFontFamilyString.utf8();
+    priv->serifFontFamily = utf8(serifFontFamilyString);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_SERIF_FONT_FAMILY]);
 }
 
@@ -2341,9 +2341,9 @@ void webkit_settings_set_sans_serif_font_family(WebKitSettings* settings, const 
     if (priv->sansSerifFontFamily == UTF8CStringView::unsafeFromUTF8(sansSerifFontFamily))
         return;
 
-    String sansSerifFontFamilyString = String::fromUTF8(sansSerifFontFamily);
+    RefPtr<StringImpl> sansSerifFontFamilyString = StringImpl::fromUTF8(sansSerifFontFamily);
     priv->preferences->setSansSerifFontFamily(sansSerifFontFamilyString);
-    priv->sansSerifFontFamily = sansSerifFontFamilyString.utf8();
+    priv->sansSerifFontFamily = utf8(sansSerifFontFamilyString);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_SANS_SERIF_FONT_FAMILY]);
 }
 
@@ -2378,9 +2378,9 @@ void webkit_settings_set_cursive_font_family(WebKitSettings* settings, const gch
     if (priv->cursiveFontFamily == UTF8CStringView::unsafeFromUTF8(cursiveFontFamily))
         return;
 
-    String cursiveFontFamilyString = String::fromUTF8(cursiveFontFamily);
+    RefPtr<StringImpl> cursiveFontFamilyString = StringImpl::fromUTF8(cursiveFontFamily);
     priv->preferences->setCursiveFontFamily(cursiveFontFamilyString);
-    priv->cursiveFontFamily = cursiveFontFamilyString.utf8();
+    priv->cursiveFontFamily = utf8(cursiveFontFamilyString);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_CURSIVE_FONT_FAMILY]);
 }
 
@@ -2415,9 +2415,9 @@ void webkit_settings_set_fantasy_font_family(WebKitSettings* settings, const gch
     if (priv->fantasyFontFamily == UTF8CStringView::unsafeFromUTF8(fantasyFontFamily))
         return;
 
-    String fantasyFontFamilyString = String::fromUTF8(fantasyFontFamily);
+    RefPtr<StringImpl> fantasyFontFamilyString = StringImpl::fromUTF8(fantasyFontFamily);
     priv->preferences->setFantasyFontFamily(fantasyFontFamilyString);
-    priv->fantasyFontFamily = fantasyFontFamilyString.utf8();
+    priv->fantasyFontFamily = utf8(fantasyFontFamilyString);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_FANTASY_FONT_FAMILY]);
 }
 
@@ -2452,9 +2452,9 @@ void webkit_settings_set_pictograph_font_family(WebKitSettings* settings, const 
     if (priv->pictographFontFamily == UTF8CStringView::unsafeFromUTF8(pictographFontFamily))
         return;
 
-    String pictographFontFamilyString = String::fromUTF8(pictographFontFamily);
+    RefPtr<StringImpl> pictographFontFamilyString = StringImpl::fromUTF8(pictographFontFamily);
     priv->preferences->setPictographFontFamily(pictographFontFamilyString);
-    priv->pictographFontFamily = pictographFontFamilyString.utf8();
+    priv->pictographFontFamily = utf8(pictographFontFamilyString);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_PICTOGRAPH_FONT_FAMILY]);
 }
 
@@ -2499,9 +2499,9 @@ void webkit_settings_set_math_font_family(WebKitSettings* settings, const gchar*
     if (priv->mathFontFamily == UTF8CStringView::unsafeFromUTF8(mathFontFamily))
         return;
 
-    auto mathFontFamilyString = String::fromUTF8(mathFontFamily);
+    auto mathFontFamilyString = StringImpl::fromUTF8(mathFontFamily);
     priv->preferences->setMathFontFamily(mathFontFamilyString);
-    priv->mathFontFamily = mathFontFamilyString.utf8();
+    priv->mathFontFamily = utf8(mathFontFamilyString);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_MATH_FONT_FAMILY]);
 }
 
@@ -2641,9 +2641,9 @@ void webkit_settings_set_default_charset(WebKitSettings* settings, const gchar* 
     if (priv->defaultCharset == UTF8CStringView::unsafeFromUTF8(defaultCharset))
         return;
 
-    String defaultCharsetString = String::fromUTF8(defaultCharset);
+    RefPtr<StringImpl> defaultCharsetString = StringImpl::fromUTF8(defaultCharset);
     priv->preferences->setDefaultTextEncodingName(defaultCharsetString);
-    priv->defaultCharset = defaultCharsetString.utf8();
+    priv->defaultCharset = utf8(defaultCharsetString);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_DEFAULT_CHARSET]);
 }
 
@@ -3311,14 +3311,14 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
 
     WebKitSettingsPrivate* priv = settings->priv;
 
-    String userAgentString;
+    RefPtr<StringImpl> userAgentString;
     if (userAgent && *userAgent) {
-        userAgentString = String::fromUTF8(userAgent);
+        userAgentString = StringImpl::fromUTF8(userAgent);
         g_return_if_fail(WebCore::isValidUserAgentHeaderValue(userAgentString));
     } else
         userAgentString = WebCore::standardUserAgent(emptyString());
 
-    auto newUserAgent = userAgentString.utf8();
+    auto newUserAgent = utf8(userAgentString);
     if (newUserAgent == priv->userAgent)
         return;
 
@@ -3344,7 +3344,7 @@ void webkit_settings_set_user_agent_with_application_details(WebKitSettings* set
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    auto newUserAgent = WebCore::standardUserAgent(String::fromUTF8(applicationName), String::fromUTF8(applicationVersion)).utf8();
+    auto newUserAgent = utf8(WebCore::standardUserAgent(StringImpl::fromUTF8(applicationName), StringImpl::fromUTF8(applicationVersion)));
     webkit_settings_set_user_agent(settings, newUserAgent.legacyCStringPointer());
 }
 
@@ -4174,9 +4174,9 @@ void webkit_settings_set_media_content_types_requiring_hardware_support(WebKitSe
     if (priv->mediaContentTypesRequiringHardwareSupport == UTF8CStringView::unsafeFromUTF8(mediaContentTypesRequiringHardwareSupport))
         return;
 
-    String mediaContentTypesRequiringHardwareSupportString = String::fromUTF8(mediaContentTypesRequiringHardwareSupport);
+    RefPtr<StringImpl> mediaContentTypesRequiringHardwareSupportString = StringImpl::fromUTF8(mediaContentTypesRequiringHardwareSupport);
     priv->preferences->setMediaContentTypesRequiringHardwareSupport(mediaContentTypesRequiringHardwareSupportString);
-    priv->mediaContentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupportString.utf8();
+    priv->mediaContentTypesRequiringHardwareSupport = utf8(mediaContentTypesRequiringHardwareSupportString);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT]);
 }
 
@@ -4477,9 +4477,9 @@ webkit_settings_set_webrtc_udp_ports_range(WebKitSettings* settings, const gchar
     if (priv->webrtcUDPPortsRange == UTF8CStringView::unsafeFromUTF8(udpPortsRange))
         return;
 
-    auto portRange = String::fromLatin1(udpPortsRange);
+    auto portRange = StringImpl::fromLatin1(udpPortsRange);
     priv->preferences->setWebRTCUDPPortRange(portRange);
-    priv->webrtcUDPPortsRange = portRange.utf8();
+    priv->webrtcUDPPortsRange = utf8(portRange);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_WEBRTC_UDP_PORTS_RANGE]);
 #else
     UNUSED_PARAM(udpPortsRange);

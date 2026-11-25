@@ -39,7 +39,7 @@ IDBTransactionInfo::IDBTransactionInfo(const IDBResourceIdentifier& identifier)
 {
 }
 
-IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionProxy& connectionProxy, const Vector<String>& objectStores, IDBTransactionMode mode, std::optional<IDBTransactionDurability> durability)
+IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionProxy& connectionProxy, const Vector<RefPtr<StringImpl>>& objectStores, IDBTransactionMode mode, std::optional<IDBTransactionDurability> durability)
 {
     IDBTransactionInfo result((IDBResourceIdentifier(connectionProxy)));
     result.m_objectStores = objectStores;
@@ -89,7 +89,7 @@ void IDBTransactionInfo::isolatedCopy(const IDBTransactionInfo& source, IDBTrans
     destination.m_newVersion = source.m_newVersion;
 
     destination.m_objectStores = source.m_objectStores.map([](auto& objectStore) {
-        return objectStore.isolatedCopy();
+        return WTF::isolatedCopy(objectStore);
     });
 
     if (source.m_originalDatabaseInfo)
@@ -98,18 +98,18 @@ void IDBTransactionInfo::isolatedCopy(const IDBTransactionInfo& source, IDBTrans
 
 #if !LOG_DISABLED
 
-String IDBTransactionInfo::loggingString() const
+RefPtr<StringImpl> IDBTransactionInfo::loggingString() const
 {
-    String modeString;
+    RefPtr<StringImpl> modeString;
     switch (m_mode) {
     case IDBTransactionMode::Readonly:
-        modeString = "readonly"_s;
+        modeString = "readonly"_si;
         break;
     case IDBTransactionMode::Readwrite:
-        modeString = "readwrite"_s;
+        modeString = "readwrite"_si;
         break;
     case IDBTransactionMode::Versionchange:
-        modeString = "versionchange"_s;
+        modeString = "versionchange"_si;
         break;
     default:
         ASSERT_NOT_REACHED();

@@ -125,6 +125,7 @@ struct FrameIdentifierType;
 namespace WebKit {
 class PlatformClass;
 class CustomEncoded;
+struct StringMembers;
 class LayerProperties;
 #if USE(AVFOUNDATION)
 class CoreIPCAVOutputContext;
@@ -303,6 +304,11 @@ template<> struct ArgumentCoder<WebKit::PlatformClass> {
 template<> struct ArgumentCoder<WebKit::CustomEncoded> {
     static void encode(Encoder&, const WebKit::CustomEncoded&);
     static std::optional<WebKit::CustomEncoded> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::StringMembers> {
+    static void encode(Encoder&, const WebKit::StringMembers&);
+    static std::optional<WebKit::StringMembers> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebKit::LayerProperties> {

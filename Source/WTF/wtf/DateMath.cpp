@@ -995,7 +995,7 @@ double parseDate(std::span<const Latin1Character> dateString)
 }
 
 // See http://tools.ietf.org/html/rfc2822#section-3.3 for more information.
-String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset)
+RefPtr<StringImpl> makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset)
 {
     StringBuilder stringBuilder;
     stringBuilder.append(weekdayName[dayOfWeek], ", "_s, day, ' ', monthName[month], ' ', year, ' ');

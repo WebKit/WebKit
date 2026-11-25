@@ -54,14 +54,14 @@
 
 - (void)addVisitedLinkWithURL:(NSURL *)URL
 {
-    auto linkHash = WebCore::computeSharedStringHash(URL.absoluteString);
+    auto linkHash = WebCore::computeSharedStringHash(StringImpl::create(URL.absoluteString).get());
 
     Ref { *_visitedLinkStore }->addVisitedLinkHash(linkHash);
 }
 
 - (void)addVisitedLinkWithString:(NSString *)string
 {
-    Ref { *_visitedLinkStore }->addVisitedLinkHash(WebCore::computeSharedStringHash(string));
+    Ref { *_visitedLinkStore }->addVisitedLinkHash(WebCore::computeSharedStringHash(StringImpl::create(string).get()));
 }
 
 - (void)removeAll
@@ -71,14 +71,14 @@
 
 - (BOOL)containsVisitedLinkWithURL:(NSURL *)URL
 {
-    auto linkHash = WebCore::computeSharedStringHash(URL.absoluteString);
+    auto linkHash = WebCore::computeSharedStringHash(StringImpl::create(URL.absoluteString).get());
 
     return Ref { *_visitedLinkStore }->containsVisitedLinkHash(linkHash);
 }
 
 - (void)removeVisitedLinkWithURL:(NSURL *)URL
 {
-    auto linkHash = WebCore::computeSharedStringHash(URL.absoluteString);
+    auto linkHash = WebCore::computeSharedStringHash(StringImpl::create(URL.absoluteString).get());
 
     Ref { *_visitedLinkStore }->removeVisitedLinkHash(linkHash);
 }

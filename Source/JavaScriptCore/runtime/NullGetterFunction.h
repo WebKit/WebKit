@@ -37,7 +37,7 @@ public:
     {
         // Since NullGetterFunction is per JSGlobalObject, we use put-without-transition in InternalFunction::finishCreation.
         NullGetterFunction* function = new (NotNull, allocateCell< NullGetterFunction>(vm))  NullGetterFunction(vm, structure);
-        function->finishCreation(vm, 0, String(), PropertyAdditionMode::WithoutStructureTransition);
+        function->finishCreation(vm, 0, nullString(), PropertyAdditionMode::WithoutStructureTransition);
         return function;
     }
 

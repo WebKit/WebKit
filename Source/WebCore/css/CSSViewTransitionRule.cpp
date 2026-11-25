@@ -93,7 +93,7 @@ CSSViewTransitionRule::CSSViewTransitionRule(StyleRuleViewTransition& viewTransi
 
 CSSViewTransitionRule::~CSSViewTransitionRule() = default;
 
-String CSSViewTransitionRule::cssText() const
+RefPtr<StringImpl> CSSViewTransitionRule::cssText() const
 {
     StringBuilder builder;
     builder.append("@view-transition { "_s);
@@ -127,13 +127,13 @@ String CSSViewTransitionRule::cssText() const
     return builder.toString();
 }
 
-AtomString CSSViewTransitionRule::navigation() const
+RefPtr<AtomStringImpl> CSSViewTransitionRule::navigation() const
 {
     if (!m_viewTransitionRule->navigation())
         return emptyAtom();
     if (*m_viewTransitionRule->navigation() == ViewTransitionNavigation::Auto)
-        return "auto"_s;
-    return "none"_s;
+        return "auto"_atom;
+    return "none"_atom;
 }
 
 void CSSViewTransitionRule::reattach(StyleRuleBase& rule)

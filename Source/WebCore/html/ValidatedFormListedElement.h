@@ -62,7 +62,7 @@ public:
     NODELETE WEBCORE_EXPORT bool isFocusingWithValidationMessage() const;
     // This must be called when a validation constraint or control value is changed.
     void updateValidity();
-    WEBCORE_EXPORT void setCustomValidity(const String&) override;
+    WEBCORE_EXPORT void setCustomValidity(StringImpl*) override;
 
     void setDisabledByAncestorFieldset(bool isDisabled);
     virtual void reset() { }
@@ -90,7 +90,7 @@ public:
     virtual bool shouldSaveAndRestoreFormControlState() const { return false; }
     virtual FormControlState saveFormControlState() const;
     virtual void restoreFormControlState(const FormControlState&) { } // Called only if state is not empty.
-    virtual const AtomString& formControlType() const = 0;
+    virtual const RefPtr<AtomStringImpl>& formControlType() const = 0;
 
 protected:
     bool hasDisabledAttribute() const { return m_disabled; }
@@ -104,9 +104,9 @@ protected:
     void insertionSteps(Node::InsertionType, ContainerNode&);
     void postConnectionSteps();
     void removingSteps(Node::RemovalType, ContainerNode&);
-    void parseAttribute(const QualifiedName&, const AtomString&);
-    void parseDisabledAttribute(const AtomString&);
-    void parseReadOnlyAttribute(const AtomString&);
+    void parseAttribute(const QualifiedName&, AtomStringImpl*);
+    void parseDisabledAttribute(AtomStringImpl*);
+    void parseReadOnlyAttribute(AtomStringImpl*);
 
     virtual void disabledStateChanged();
     virtual void readOnlyStateChanged();

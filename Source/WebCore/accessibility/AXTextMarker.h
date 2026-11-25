@@ -33,11 +33,11 @@
 #include <wtf/text/WTFString.h>
 
 #define TEXT_MARKER_ASSERT(assertion) \
-    ASSERT_WITH_MESSAGE(assertion, "Text marker origin: %s", originToString(origin()).utf8())
+    ASSERT_WITH_MESSAGE(assertion, "Text marker origin: %s", WTF::utf8(originToString(origin())))
 #define TEXT_MARKER_ASSERT_SINGLE(assertion, marker) \
-    ASSERT_WITH_MESSAGE(assertion, "Text marker origin: %s", originToString(marker.origin()).utf8())
+    ASSERT_WITH_MESSAGE(assertion, "Text marker origin: %s", WTF::utf8(originToString(marker.origin())))
 #define TEXT_MARKER_ASSERT_DOUBLE(assertion, marker1, marker2) \
-    ASSERT_WITH_MESSAGE(assertion, "Text marker origins: %s, %s", originToString(marker1.origin()).utf8(), originToString(marker2.origin()).utf8())
+    ASSERT_WITH_MESSAGE(assertion, "Text marker origins: %s, %s", WTF::utf8(originToString(marker1.origin())), WTF::utf8(originToString(marker2.origin())))
 
 namespace WebCore {
 
@@ -91,51 +91,51 @@ enum class TextMarkerOrigin : uint16_t {
 
 static_assert(TextMarkerOrigin::Unknown == static_cast<TextMarkerOrigin>(0)); // Needed for AXObjectCache.h default parameters
 
-inline String originToString(TextMarkerOrigin origin)
+inline RefPtr<StringImpl> originToString(TextMarkerOrigin origin)
 {
-    String result;
+    RefPtr<StringImpl> result;
     switch (origin) {
     case TextMarkerOrigin::PreviousLineStart:
-        result = "PreviousLineStart"_s;
+        result = "PreviousLineStart"_si;
         break;
     case TextMarkerOrigin::NextLineEnd:
-        result = "NextLineEnd"_s;
+        result = "NextLineEnd"_si;
         break;
     case TextMarkerOrigin::NextWordStart:
-        result = "NextWordStart"_s;
+        result = "NextWordStart"_si;
         break;
     case TextMarkerOrigin::NextWordEnd:
-        result = "NextWordEnd"_s;
+        result = "NextWordEnd"_si;
         break;
     case TextMarkerOrigin::PreviousWordStart:
-        result = "PreviousWordStart"_s;
+        result = "PreviousWordStart"_si;
         break;
     case TextMarkerOrigin::PreviousWordEnd:
-        result = "PreviousWordEnd"_s;
+        result = "PreviousWordEnd"_si;
         break;
     case TextMarkerOrigin::PreviousSentenceStart:
-        result = "PreviousSentenceStart"_s;
+        result = "PreviousSentenceStart"_si;
         break;
     case TextMarkerOrigin::NextSentenceEnd:
-        result = "NextSentenceEnd"_s;
+        result = "NextSentenceEnd"_si;
         break;
     case TextMarkerOrigin::PreviousParagraphStart:
-        result = "PreviousParagraphStart"_s;
+        result = "PreviousParagraphStart"_si;
         break;
     case TextMarkerOrigin::NextParagraphEnd:
-        result = "NextParagraphEnd"_s;
+        result = "NextParagraphEnd"_si;
         break;
     case TextMarkerOrigin::Position:
-        result = "TextMarkerForPosition"_s;
+        result = "TextMarkerForPosition"_si;
         break;
     case TextMarkerOrigin::StartTextMarkerForBounds:
-        result = "StartTextMarkerForBounds"_s;
+        result = "StartTextMarkerForBounds"_si;
         break;
     case TextMarkerOrigin::EndTextMarkerForBounds:
-        result = "EndTextMarkerForBounds"_s;
+        result = "EndTextMarkerForBounds"_si;
         break;
     default:
-        result = "Unknown"_s;
+        result = "Unknown"_si;
         break;
     }
 
@@ -266,8 +266,8 @@ public:
     bool isDownstream() const { return affinity() == Affinity::Downstream; }
     void setAffinity(Affinity affinity) { m_data.affinity = affinity; }
 
-    String description() const;
-    String debugDescription() const;
+    RefPtr<StringImpl> description() const;
+    RefPtr<StringImpl> debugDescription() const;
     TextMarkerOrigin origin() const { return m_data.origin; }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -416,7 +416,7 @@ public:
     bool isCollapsed() const { return m_start.isEqual(m_end); }
     NODELETE bool isConfinedTo(std::optional<AXID>) const;
     bool isConfined() const;
-    String toString(IncludeListMarkerText = IncludeListMarkerText::Yes, IncludeImageAltText = IncludeImageAltText::No) const;
+    RefPtr<StringImpl> toString(IncludeListMarkerText = IncludeListMarkerText::Yes, IncludeImageAltText = IncludeImageAltText::No) const;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     // The length of what toString returns, computed without building the string. AX-thread only.
@@ -431,8 +431,8 @@ public:
 #endif // PLATFORM(COCOA)
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-    String description() const;
-    String debugDescription() const;
+    RefPtr<StringImpl> description() const;
+    RefPtr<StringImpl> debugDescription() const;
 private:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     // Hands each piece of this range's text to |append| in document order: the text of every run the
@@ -473,7 +473,7 @@ inline bool operator>=(const AXTextMarkerRange& range1, const AXTextMarkerRange&
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-String listMarkerTextOnSameLine(const AXTextMarker&);
+RefPtr<StringImpl> listMarkerTextOnSameLine(const AXTextMarker&);
 
 // The text the AX-thread text walks emit for an object with no text runs of its own, e.g. a newline
 // at a block boundary. See auxiliaryTextForObject, which is the only thing that creates these; the

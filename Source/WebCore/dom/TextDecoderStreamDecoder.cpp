@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-ExceptionOr<Ref<TextDecoderStreamDecoder>> TextDecoderStreamDecoder::create(const String& label, bool fatal, bool ignoreBOM)
+ExceptionOr<Ref<TextDecoderStreamDecoder>> TextDecoderStreamDecoder::create(StringImpl* label, bool fatal, bool ignoreBOM)
 {
     auto textDecoder = TextDecoder::create(label, { fatal, ignoreBOM });
     if (textDecoder.hasException())
@@ -43,12 +43,12 @@ TextDecoderStreamDecoder::TextDecoderStreamDecoder(Ref<TextDecoder>&& textDecode
 {
 }
 
-ExceptionOr<String> TextDecoderStreamDecoder::decode(BufferSource value)
+ExceptionOr<RefPtr<StringImpl>> TextDecoderStreamDecoder::decode(BufferSource value)
 {
     return m_textDecoder->decode(WTF::move(value), { true });
 }
 
-ExceptionOr<String> TextDecoderStreamDecoder::flush()
+ExceptionOr<RefPtr<StringImpl>> TextDecoderStreamDecoder::flush()
 {
     return m_textDecoder->decode({ }, { false });
 }

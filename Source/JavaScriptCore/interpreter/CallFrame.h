@@ -335,7 +335,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         void setReturnPC(void* value) { callerFrameAndPC().returnPC = value; }
 
         JS_EXPORT_PRIVATE static JSGlobalObject* globalObjectOfClosestCodeBlock(VM&, CallFrame*);
-        String friendlyFunctionName();
+        RefPtr<StringImpl> friendlyFunctionName();
 
         void dump(PrintStream&) const;
 

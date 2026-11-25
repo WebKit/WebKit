@@ -66,7 +66,7 @@ public:
     RefPtr<::WebGPU::TextureView> createInvalidView() final;
 
     void destroy() final;
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
     void undestroy() final;
 

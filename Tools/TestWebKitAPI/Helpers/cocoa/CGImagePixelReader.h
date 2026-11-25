@@ -46,7 +46,7 @@ public:
 
     bool isTransparentBlack(unsigned x, unsigned y) const;
     WebCore::Color at(unsigned x, unsigned y) const;
-    String cssColorAt(unsigned x, unsigned y) const;
+    RefPtr<StringImpl> cssColorAt(unsigned x, unsigned y) const;
 
     unsigned width() const { return m_width; }
     unsigned height() const { return m_height; }

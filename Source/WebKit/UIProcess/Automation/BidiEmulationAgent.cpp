@@ -95,9 +95,9 @@ CommandResult<void> BidiEmulationAgent::setScrollbarTypeOverride(Ref<JSON::Value
     std::optional<ScrollbarStyle> scrollbarType;
     if (scrollbarTypeValue->type() != JSON::Value::Type::Null) {
         auto scrollbarTypeString = scrollbarTypeValue->asString();
-        if (scrollbarTypeString == "classic"_s)
+        if (equal(scrollbarTypeString, "classic"_s))
             scrollbarType = ScrollbarStyle::AlwaysVisible;
-        else if (scrollbarTypeString == "overlay"_s)
+        else if (equal(scrollbarTypeString, "overlay"_s))
             scrollbarType = ScrollbarStyle::Overlay;
         else
             SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'scrollbarType' must be \"classic\", \"overlay\" or null."_s);
@@ -115,13 +115,13 @@ CommandResult<void> BidiEmulationAgent::setScrollbarTypeOverride(Ref<JSON::Value
         Vector<Ref<WebPageProxy>> pages;
         for (const auto& contextValue : *optionalContexts) {
             auto context = contextValue->asString();
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(context.isNull(), InvalidParameter, "The parameter 'contexts' must contain strings."_s);
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!context, InvalidParameter, "The parameter 'contexts' must contain strings."_s);
 
             auto handles = session->extractBrowsingContextHandles(context);
             if (!handles)
                 return makeUnexpected(handles.error().toProtocolString());
             auto& [pageHandle, frameHandle] = handles.value();
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!frameHandle.isEmpty(), InvalidParameter, "The parameter 'contexts' must contain top-level browsing contexts."_s);
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!isEmpty(frameHandle), InvalidParameter, "The parameter 'contexts' must contain top-level browsing contexts."_s);
 
             RefPtr page = session->webPageProxyForHandle(pageHandle);
             SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, FrameNotFound);
@@ -141,10 +141,10 @@ CommandResult<void> BidiEmulationAgent::setScrollbarTypeOverride(Ref<JSON::Value
     if (optionalUserContexts) {
         SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!optionalUserContexts->length(), InvalidParameter, "The parameter 'userContexts' cannot be empty."_s);
 
-        HashSet<String> userContexts;
+        HashSet<RefPtr<StringImpl>> userContexts;
         for (const auto& userContextValue : *optionalUserContexts) {
             auto userContext = userContextValue->asString();
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(userContext.isNull(), InvalidParameter, "The parameter 'userContexts' must contain strings."_s);
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!userContext, InvalidParameter, "The parameter 'userContexts' must contain strings."_s);
             SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->isValidUserContext(userContext), NoSuchUserContext);
             userContexts.add(userContext);
         }

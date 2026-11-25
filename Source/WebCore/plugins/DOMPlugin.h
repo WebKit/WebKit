@@ -38,17 +38,17 @@ public:
 
     const PluginInfo& info() const LIFETIME_BOUND { return m_info; }
 
-    NODELETE String name() const;
-    NODELETE String filename() const;
-    NODELETE String description() const;
+    NODELETE const RefPtr<StringImpl>& name() const LIFETIME_BOUND;
+    NODELETE RefPtr<StringImpl> filename() const;
+    NODELETE RefPtr<StringImpl> description() const;
 
     NODELETE unsigned length() const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_mimeTypes.size(); }
     NODELETE RefPtr<DOMMimeType> item(unsigned index);
-    NODELETE RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
-    Vector<AtomString> supportedPropertyNames() const;
-    bool isSupportedPropertyName(const AtomString&) const;
+    NODELETE RefPtr<DOMMimeType> namedItem(AtomStringImpl* propertyName);
+    Vector<RefPtr<AtomStringImpl>> supportedPropertyNames() const;
+    bool isSupportedPropertyName(AtomStringImpl*) const;
 
     const Vector<Ref<DOMMimeType>>& mimeTypes() const LIFETIME_BOUND { return m_mimeTypes; }
 

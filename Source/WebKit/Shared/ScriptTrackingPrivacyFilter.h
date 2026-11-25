@@ -40,7 +40,7 @@ class SecurityOrigin;
 namespace WebKit {
 
 struct ScriptTrackingPrivacyHost {
-    String hostName;
+    RefPtr<StringImpl> hostName;
     WebCore::ScriptTrackingPrivacyFlags allowedCategories;
 };
 
@@ -56,7 +56,7 @@ struct ScriptTrackingPrivacyRules {
     }
 };
 
-using HostToAllowedCategoriesMap = MemoryCompactRobinHoodHashMap<String, WebCore::ScriptTrackingPrivacyFlags>;
+using HostToAllowedCategoriesMap = MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, WebCore::ScriptTrackingPrivacyFlags>;
 
 class ScriptTrackingPrivacyFilter {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ScriptTrackingPrivacyFilter);

@@ -163,7 +163,7 @@ GRefPtr<GstBuffer> webkitGstBufferSetVideoFrameMetadata(GRefPtr<GstBuffer>&& buf
     return modifiedBuffer;
 }
 
-String webkitGstImageOrientationTag(VideoFrame::Rotation rotation, bool isMirrored)
+RefPtr<StringImpl> webkitGstImageOrientationTag(VideoFrame::Rotation rotation, bool isMirrored)
 {
     if (!isMirrored)
         return makeString("rotate-"_s, rotation);

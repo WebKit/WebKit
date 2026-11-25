@@ -2827,7 +2827,7 @@ static void testIsBuiltinCalendar()
         "islamic-civil"_s, "islamic-tbla"_s, "islamic-umalqura"_s,
         "iso8601"_s, "japanese"_s, "persian"_s, "roc"_s };
     for (auto id : calenders)
-        TCHECK_TRUE(JSC::isBuiltinCalendar(id).has_value(), makeString(id, ": canonical accepted"_s).utf8().legacyCStringPointer());
+        TCHECK_TRUE(JSC::isBuiltinCalendar(id).has_value(), utf8(makeString(id, ": canonical accepted"_s)).legacyCStringPointer());
 
     // Legacy CLDR aliases resolve to their canonical CalendarID (both flag states).
     TCHECK_TRUE(JSC::isBuiltinCalendar("islamicc"_s).has_value(), "islamicc alias -> islamic-civil");
@@ -2871,15 +2871,15 @@ static void testCalendarICUNonISO()
     // era string should be "reiwa"
     auto rJE = calendarEra(calendarIDFromString("japanese"_s), { 2020, 5, 1 });
     TCHECK_TRUE(rJE.has_value() && rJE->has_value(), "japanese: era ok");
-    TCHECK_TRUE(*rJE == String("reiwa"_s), "japanese: era=reiwa");
+    TCHECK_TRUE(equal(**rJE, "reiwa"_s), "japanese: era=reiwa");
     // Heisei era: 2019-04-30 (last day of Heisei)
     auto rJHeisei = calendarEra(calendarIDFromString("japanese"_s), { 2019, 4, 30 });
     TCHECK_TRUE(rJHeisei.has_value() && rJHeisei->has_value(), "japanese: heisei ok");
-    TCHECK_TRUE(*rJHeisei == String("heisei"_s), "japanese: era=heisei");
+    TCHECK_TRUE(equal(**rJHeisei, "heisei"_s), "japanese: era=heisei");
     // Gregory: CE/BCE
     auto rGCE = calendarEra(calendarIDFromString("gregory"_s), { 2020, 1, 1 });
     TCHECK_TRUE(rGCE.has_value() && rGCE->has_value(), "gregory: era ce ok");
-    TCHECK_TRUE(*rGCE == String("ce"_s), "gregory: era=ce");
+    TCHECK_TRUE(equal(**rGCE, "ce"_s), "gregory: era=ce");
     // ISO8601 has no eras -> nullopt
     auto rIsoEra = calendarEra(calendarIDFromString("iso8601"_s), { 2020, 1, 1 });
     TCHECK_TRUE(rIsoEra.has_value() && !rIsoEra->has_value(), "iso8601: no era");
@@ -2891,21 +2891,21 @@ static void testCalendarICUNonISO()
     // Month code for Chinese month 1 = "M01"
     auto rCMC = calendarMonthCode(calendarIDFromString("chinese"_s), { 2020, 1, 25 });
     TCHECK_TRUE(rCMC.has_value(), "chinese: monthCode ok");
-    TCHECK_TRUE(*rCMC == String("M01"_s), "chinese: CNY monthCode=M01");
+    TCHECK_TRUE(equal(*rCMC, "M01"_si), "chinese: CNY monthCode=M01");
 
     // Hebrew: Tishri (month 1) = "M01"; Adar I in a leap year = "M05L"
     auto rHMC = calendarMonthCode(calendarIDFromString("hebrew"_s), { 2020, 9, 19 }); // 1 Tishri 5781
     TCHECK_TRUE(rHMC.has_value(), "hebrew: monthCode Tishri ok");
-    TCHECK_TRUE(*rHMC == String("M01"_s), "hebrew: Tishri=M01");
+    TCHECK_TRUE(equal(*rHMC, "M01"_si), "hebrew: Tishri=M01");
     // Hebrew 5782 is a leap year; 2022-02-03 = Adar I (M05L) in Hebrew 5782
     auto rHAdarI = calendarMonthCode(calendarIDFromString("hebrew"_s), { 2022, 2, 3 });
     TCHECK_TRUE(rHAdarI.has_value(), "hebrew: monthCode AdarI ok");
-    TCHECK_TRUE(*rHAdarI == String("M05L"_s), "hebrew: AdarI=M05L");
+    TCHECK_TRUE(equal(*rHAdarI, "M05L"_si), "hebrew: AdarI=M05L");
 
     // ISO8601 month codes: M01-M12
     auto rISOMC = calendarMonthCode(calendarIDFromString("iso8601"_s), { 2020, 6, 15 });
     TCHECK_TRUE(rISOMC.has_value(), "iso8601: monthCode ok");
-    TCHECK_TRUE(*rISOMC == String("M06"_s), "iso8601: June=M06");
+    TCHECK_TRUE(equal(*rISOMC, "M06"_si), "iso8601: June=M06");
 
     // Persian calendar: 2020-03-20 = Nowruz (1 Farvardin 1399)
     auto rPY = calendarYear(calendarIDFromString("persian"_s), { 2020, 3, 20 });

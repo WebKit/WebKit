@@ -438,12 +438,12 @@ TEST(WTF_OrderedHashMap, ManyDeletesAndInserts)
 
 TEST(WTF_OrderedHashMap, StringKeys)
 {
-    OrderedHashMap<String, int> map;
-    map.add("banana"_s, 2);
-    map.add("apple"_s, 1);
-    map.add("cherry"_s, 3);
+    OrderedHashMap<RefPtr<StringImpl>, int> map;
+    map.add("banana"_si, 2);
+    map.add("apple"_si, 1);
+    map.add("cherry"_si, 3);
 
-    Vector<String> keys;
+    Vector<RefPtr<StringImpl>> keys;
     for (auto& pair : map)
         keys.append(pair.key);
 
@@ -617,7 +617,7 @@ TEST(WTF_OrderedHashMap, CompactInPlaceOnLargerTable)
 TEST(WTF_OrderedHashMap, CompactInPlaceWithStringValues)
 {
     // Non-trivial value type exercises move/destroy paths inside compactInPlace.
-    OrderedHashMap<int, String> map;
+    OrderedHashMap<int, RefPtr<StringImpl>> map;
     for (int i = 0; i < 6; ++i)
         map.add(i, makeString("v"_s, i));
     unsigned initialCapacity = map.capacity();
@@ -632,7 +632,7 @@ TEST(WTF_OrderedHashMap, CompactInPlaceWithStringValues)
     EXPECT_EQ(3u, map.size());
 
     Vector<int> keys;
-    Vector<String> values;
+    Vector<RefPtr<StringImpl>> values;
     for (auto& pair : map) {
         keys.append(pair.key);
         values.append(pair.value);
@@ -733,10 +733,10 @@ TEST(WTF_OrderedHashMap, MoveOnlyValueRehash)
 
 TEST(WTF_OrderedHashMap, HashTranslatorFindContainsGet)
 {
-    OrderedHashMap<String, unsigned> map;
-    map.add("alpha"_s, 1u);
-    map.add("beta"_s, 2u);
-    map.add("gamma"_s, 3u);
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> map;
+    map.add("alpha"_si, 1u);
+    map.add("beta"_si, 2u);
+    map.add("gamma"_si, 3u);
 
     auto it = map.find<StringViewHashTranslator>(StringView { "beta"_s });
     EXPECT_TRUE(it != map.end());
@@ -883,15 +883,15 @@ TEST(WTF_OrderedHashMap, EqualIgnoringOrder)
     // order-sensitive vs order-insensitive choice is explicit at the call
     // site. equalIgnoringOrder compares contents, matching HashMap::operator==
     // semantics.
-    OrderedHashMap<String, unsigned> a;
-    a.add("alpha"_s, 1);
-    a.add("beta"_s, 2);
-    a.add("gamma"_s, 3);
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> a;
+    a.add("alpha"_si, 1);
+    a.add("beta"_si, 2);
+    a.add("gamma"_si, 3);
 
-    OrderedHashMap<String, unsigned> b;
-    b.add("gamma"_s, 3);
-    b.add("alpha"_s, 1);
-    b.add("beta"_s, 2);
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> b;
+    b.add("gamma"_si, 3);
+    b.add("alpha"_si, 1);
+    b.add("beta"_si, 2);
 
     EXPECT_TRUE(equalIgnoringOrder(a, b));
     EXPECT_TRUE(equalIgnoringOrder(b, a));
@@ -904,12 +904,12 @@ TEST(WTF_OrderedHashMap, EqualIgnoringOrder)
 
 TEST(WTF_OrderedHashMap, EqualIgnoringOrderDifferentSize)
 {
-    OrderedHashMap<String, unsigned> a;
-    a.add("alpha"_s, 1);
-    a.add("beta"_s, 2);
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> a;
+    a.add("alpha"_si, 1);
+    a.add("beta"_si, 2);
 
-    OrderedHashMap<String, unsigned> b;
-    b.add("alpha"_s, 1);
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> b;
+    b.add("alpha"_si, 1);
 
     EXPECT_FALSE(equalIgnoringOrder(a, b));
     EXPECT_FALSE(equalIgnoringOrder(b, a));
@@ -917,13 +917,13 @@ TEST(WTF_OrderedHashMap, EqualIgnoringOrderDifferentSize)
 
 TEST(WTF_OrderedHashMap, EqualIgnoringOrderDifferentValues)
 {
-    OrderedHashMap<String, unsigned> a;
-    a.add("alpha"_s, 1);
-    a.add("beta"_s, 2);
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> a;
+    a.add("alpha"_si, 1);
+    a.add("beta"_si, 2);
 
-    OrderedHashMap<String, unsigned> b;
-    b.add("alpha"_s, 1);
-    b.add("beta"_s, 99);
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> b;
+    b.add("alpha"_si, 1);
+    b.add("beta"_si, 99);
 
     EXPECT_FALSE(equalIgnoringOrder(a, b));
     EXPECT_FALSE(equalIgnoringOrder(b, a));
@@ -931,11 +931,11 @@ TEST(WTF_OrderedHashMap, EqualIgnoringOrderDifferentValues)
 
 TEST(WTF_OrderedHashMap, EqualIgnoringOrderEmpty)
 {
-    OrderedHashMap<String, unsigned> a;
-    OrderedHashMap<String, unsigned> b;
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> a;
+    OrderedHashMap<RefPtr<StringImpl>, unsigned> b;
     EXPECT_TRUE(equalIgnoringOrder(a, b));
 
-    a.add("key"_s, 0);
+    a.add("key"_si, 0);
     EXPECT_FALSE(equalIgnoringOrder(a, b));
 }
 

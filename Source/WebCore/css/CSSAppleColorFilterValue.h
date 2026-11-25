@@ -35,7 +35,7 @@ public:
 
     const CSS::AppleColorFilter& filter() const LIFETIME_BOUND { return m_filter; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSAppleColorFilterValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 

@@ -37,7 +37,7 @@ ScriptBuffer::ScriptBuffer(RefPtr<const FragmentedSharedBuffer>&& buffer)
         append(*buffer);
 }
 
-ScriptBuffer::ScriptBuffer(const String& string)
+ScriptBuffer::ScriptBuffer(StringImpl* string)
 {
     append(string);
 }
@@ -47,10 +47,10 @@ ScriptBuffer ScriptBuffer::empty()
     return ScriptBuffer { SharedBuffer::create() };
 }
 
-String ScriptBuffer::toString() const
+RefPtr<StringImpl> ScriptBuffer::toString() const
 {
     if (!m_buffer)
-        return String();
+        return nullptr;
 
     StringBuilder builder;
     protect(m_buffer.buffer())->forEachSegment([&](auto segment) {
@@ -64,11 +64,11 @@ bool ScriptBuffer::containsSingleFileMappedSegment() const
     return m_buffer.hasOneSegment() && m_buffer.begin()->segment->containsMappedFileData();
 }
 
-void ScriptBuffer::append(const String& string)
+void ScriptBuffer::append(StringImpl* string)
 {
-    if (string.isEmpty())
+    if (WTF::isEmpty(string))
         return;
-    auto result = string.tryGetUTF8([&](std::span<const char8_t> span) -> bool {
+    auto result = tryGetUTF8(string, [&](std::span<const char8_t> span) -> bool {
         m_buffer.append(span);
         return true;
     });

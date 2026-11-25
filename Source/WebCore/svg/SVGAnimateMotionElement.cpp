@@ -101,7 +101,7 @@ bool SVGAnimateMotionElement::hasValidAttributeName() const
     return true;
 }
 
-void SVGAnimateMotionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGAnimateMotionElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::pathAttr) {
         m_path = buildPathFromString(newValue);
@@ -114,7 +114,7 @@ void SVGAnimateMotionElement::attributeChanged(const QualifiedName& name, const 
 // https://w3c.github.io/svgwg/specs/animations/#RotateAttribute
 Variant<SVGAnimateMotionElement::RotateMode, float> SVGAnimateMotionElement::rotate() const
 {
-    static MainThreadNeverDestroyed<const AtomString> autoReverse("auto-reverse"_s);
+    static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> autoReverse("auto-reverse"_s);
     auto& rotate = getAttribute(SVGNames::rotateAttr);
     if (rotate == autoAtom())
         return RotateMode::Auto;
@@ -163,7 +163,7 @@ void SVGAnimateMotionElement::stopAnimation(SVGElement* targetElement)
     applyResultsToTarget(*target);
 }
 
-bool SVGAnimateMotionElement::setFromAndToValues(const String& fromString, const String& toString)
+bool SVGAnimateMotionElement::setFromAndToValues(StringImpl* fromString, StringImpl* toString)
 {
     m_toPointAtEndOfDuration = std::nullopt;
     m_fromPoint = valueOrDefault(parsePoint(fromString));
@@ -171,7 +171,7 @@ bool SVGAnimateMotionElement::setFromAndToValues(const String& fromString, const
     return true;
 }
     
-bool SVGAnimateMotionElement::setFromAndByValues(const String& fromString, const String& byString)
+bool SVGAnimateMotionElement::setFromAndByValues(StringImpl* fromString, StringImpl* byString)
 {
     m_toPointAtEndOfDuration = std::nullopt;
     if (animationMode() == AnimationMode::By && !isAdditive())
@@ -182,7 +182,7 @@ bool SVGAnimateMotionElement::setFromAndByValues(const String& fromString, const
     return true;
 }
 
-bool SVGAnimateMotionElement::setToAtEndOfDurationValue(const String& toAtEndOfDurationString)
+bool SVGAnimateMotionElement::setToAtEndOfDurationValue(StringImpl* toAtEndOfDurationString)
 {
     m_toPointAtEndOfDuration = valueOrDefault(parsePoint(toAtEndOfDurationString));
     return true;
@@ -289,7 +289,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         applyResultsToTarget(*targetElement);
 }
 
-std::optional<float> SVGAnimateMotionElement::calculateDistance(const String& fromString, const String& toString)
+std::optional<float> SVGAnimateMotionElement::calculateDistance(StringImpl* fromString, StringImpl* toString)
 {
     auto from = parsePoint(fromString);
     if (!from)

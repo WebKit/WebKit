@@ -50,7 +50,7 @@ void FontDatabase::InstalledFontFamily::expand(const InstalledFont& installedFon
     capabilities.expand(installedFont.capabilities);
 }
 
-const FontDatabase::InstalledFontFamily& FontDatabase::collectionForFamily(const String& familyName)
+const FontDatabase::InstalledFontFamily& FontDatabase::collectionForFamily(StringImpl* familyName)
 {
     auto folded = FontCascadeDescription::foldedFamilyName(familyName);
     {
@@ -61,7 +61,7 @@ const FontDatabase::InstalledFontFamily& FontDatabase::collectionForFamily(const
     }
 
     auto installedFontFamily = [&] {
-        auto familyNameString = folded.createCFString();
+        auto familyNameString = createCFString(folded);
         auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFDictionaryAddValue(attributes.get(), kCTFontFamilyNameAttribute, familyNameString.get());
         addAttributesForInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
@@ -78,14 +78,14 @@ const FontDatabase::InstalledFontFamily& FontDatabase::collectionForFamily(const
     }();
 
     Locker locker { m_familyNameToFontDescriptorsLock };
-    return *m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTF::move(installedFontFamily)).iterator->value;
+    return *m_familyNameToFontDescriptors.add(isolatedCopy(folded), WTF::move(installedFontFamily)).iterator->value;
 }
 
-const FontDatabase::InstalledFont& FontDatabase::fontForPostScriptName(const AtomString& postScriptName)
+const FontDatabase::InstalledFont& FontDatabase::fontForPostScriptName(AtomStringImpl* postScriptName)
 {
     const auto& folded = FontCascadeDescription::foldedFamilyName(postScriptName);
     return m_postScriptNameToFontDescriptors.ensure(folded, [&] {
-        auto postScriptNameString = folded.createCFString();
+        auto postScriptNameString = createCFString(folded);
         CFStringRef nameAttribute = kCTFontPostScriptNameAttribute;
         auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFDictionaryAddValue(attributes.get(), kCTFontEnabledAttribute, kCFBooleanTrue);

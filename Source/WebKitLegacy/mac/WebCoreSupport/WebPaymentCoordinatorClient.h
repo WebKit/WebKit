@@ -43,10 +43,10 @@ public:
 private:
     WebPaymentCoordinatorClient();
 
-    std::optional<String> validatedPaymentNetwork(const String&) const override;
+    std::optional<RefPtr<StringImpl>> validatedPaymentNetwork(StringImpl*) const override;
     bool canMakePayments() override;
-    void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) override;
-    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) override;
+    void canMakePaymentsWithActiveCard(StringImpl*, StringImpl*, CompletionHandler<void(bool)>&&) override;
+    void openPaymentSetup(StringImpl* merchantIdentifier, StringImpl* domainName, CompletionHandler<void(bool)>&&) override;
     bool showPaymentUI(const URL&, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&) override;
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&) override;
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&) override;

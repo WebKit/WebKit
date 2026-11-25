@@ -43,29 +43,29 @@ Ref<LegacyWebPageDebuggable> LegacyWebPageDebuggable::create(LegacyWebPageInspec
     return adoptRef(*new LegacyWebPageDebuggable(controller, page));
 }
 
-String LegacyWebPageDebuggable::name() const
+RefPtr<StringImpl> LegacyWebPageDebuggable::name() const
 {
-    String result;
+    RefPtr<StringImpl> result;
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &result] {
         if (RefPtr page = m_page) {
             if (RefPtr document = page->localTopDocument())
-                result = document->title().isolatedCopy();
+                result = isolatedCopy(document->title());
         }
     });
     return result;
 }
 
-String LegacyWebPageDebuggable::url() const
+RefPtr<StringImpl> LegacyWebPageDebuggable::url() const
 {
-    String result;
+    RefPtr<StringImpl> result;
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &result] {
         RefPtr page = m_page;
         if (!page)
             return;
 
-        result = page->mainFrameURL().string().isolatedCopy();
-        if (result.isEmpty())
-            result = "about:blank"_s;
+        result = isolatedCopy(page->mainFrameURL().string());
+        if (isEmpty(result))
+            result = "about:blank"_si;
     });
     return result;
 }
@@ -99,9 +99,9 @@ void LegacyWebPageDebuggable::disconnect(Inspector::FrontendChannel& frontendCha
     });
 }
 
-void LegacyWebPageDebuggable::dispatchMessageFromRemote(String&& message)
+void LegacyWebPageDebuggable::dispatchMessageFromRemote(RefPtr<StringImpl>&& message)
 {
-    callOnMainThreadAndWait([this, protectedThis = Ref { *this }, message = WTF::move(message).isolatedCopy()] mutable {
+    callOnMainThreadAndWait([this, protectedThis = Ref { *this }, message = isolatedCopy(WTF::move(message))] mutable {
         if (RefPtr controller = m_inspectorController)
             controller->dispatchMessageFromFrontend(WTF::move(message));
     });
@@ -115,7 +115,7 @@ void LegacyWebPageDebuggable::setIndicating(bool indicating)
     });
 }
 
-void LegacyWebPageDebuggable::setNameOverride(const String& name)
+void LegacyWebPageDebuggable::setNameOverride(StringImpl* name)
 {
     m_nameOverride = name;
     update();

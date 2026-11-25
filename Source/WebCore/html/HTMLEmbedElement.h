@@ -36,13 +36,13 @@ public:
 private:
     HTMLEmbedElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason) final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, AtomStringImpl*, MutableStyleProperties&) final;
 
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
 
     NODELETE bool isURLAttribute(const Attribute&) const final;
-    String imageSourceURL() const final;
+    RefPtr<StringImpl> imageSourceURL() const final;
 
     bool isInteractiveContent() const final { return true; }
 
@@ -52,7 +52,7 @@ private:
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
 
-    void parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues);
+    void parametersForPlugin(Vector<RefPtr<AtomStringImpl>>& paramNames, Vector<RefPtr<AtomStringImpl>>& paramValues);
 };
 
 } // namespace WebCore

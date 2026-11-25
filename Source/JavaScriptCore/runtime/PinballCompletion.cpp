@@ -115,7 +115,7 @@ extern "C" {
     JSC_DECLARE_HOST_FUNCTION(pinballHandlerRejectFunction);
 }
 
-static JSFunctionWithFields* createHandler(VM& vm, JSGlobalObject* globalObject, PinballCompletion* pinballCompletion, NativeFunction function, const String name)
+static JSFunctionWithFields* createHandler(VM& vm, JSGlobalObject* globalObject, PinballCompletion* pinballCompletion, NativeFunction function, const RefPtr<StringImpl> name)
 {
     constexpr unsigned length = 1;
     NativeExecutable* executable = vm.getHostFunction(function, ImplementationVisibility::Private, NoIntrinsic, callHostFunctionAsConstructor, nullptr, length, name);
@@ -126,12 +126,12 @@ static JSFunctionWithFields* createHandler(VM& vm, JSGlobalObject* globalObject,
 
 JSFunctionWithFields* createPinballCompletionFulfillHandler(VM& vm, JSGlobalObject* globalObject, PinballCompletion* pinballCompletion)
 {
-    return createHandler(vm, globalObject, pinballCompletion, pinballHandlerFulfillFunction, "<pinball fulfill handler>"_s);
+    return createHandler(vm, globalObject, pinballCompletion, pinballHandlerFulfillFunction, "<pinball fulfill handler>"_si);
 }
 
 JSFunctionWithFields* createPinballCompletionRejectHandler(VM& vm, JSGlobalObject* globalObject, PinballCompletion* pinballCompletion)
 {
-    return createHandler(vm, globalObject, pinballCompletion, pinballHandlerRejectFunction, "<pinball reject handler>"_s);
+    return createHandler(vm, globalObject, pinballCompletion, pinballHandlerRejectFunction, "<pinball reject handler>"_si);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

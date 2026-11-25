@@ -85,7 +85,7 @@ static CompilationResult compileImpl(
     dataLogLnIf(logCompilationChanges(mode), "DFG(Driver) compiling ", *codeBlock, " with ", mode, ", instructions size = ", codeBlock->instructionsSize());
     
     if (vm.typeProfiler())
-        vm.typeProfilerLog()->processLogEntries(vm, "Preparing for DFG compilation."_s);
+        vm.typeProfilerLog()->processLogEntries(vm, "Preparing for DFG compilation."_si);
     
     Ref<Plan> plan = adoptRef(*new Plan(codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, WTF::move(mustHandleValues)));
 

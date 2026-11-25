@@ -51,7 +51,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> PushMessageData::arrayBuffer()
 
 Ref<Blob> PushMessageData::blob(ScriptExecutionContext& context)
 {
-    return Blob::create(&context, Vector<uint8_t> { m_data }, { });
+    return Blob::create(&context, Vector<uint8_t> { m_data }, nullptr);
 }
 
 ExceptionOr<Ref<JSC::Uint8Array>> PushMessageData::bytes()
@@ -68,12 +68,12 @@ ExceptionOr<JSC::JSValue> PushMessageData::json(JSDOMGlobalObject& globalObject)
 
     auto value = JSC::JSONParse(&globalObject, text());
     if (!value)
-        return Exception { ExceptionCode::SyntaxError, "JSON parsing failed"_s };
+        return Exception { ExceptionCode::SyntaxError, "JSON parsing failed"_si };
 
     return value;
 }
 
-String PushMessageData::text()
+RefPtr<StringImpl> PushMessageData::text()
 {
     return TextResourceDecoder::textFromUTF8(borrow(m_data)->span());
 }

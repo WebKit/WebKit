@@ -107,7 +107,7 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
     return name;
 }
 
-void AXObjectCache::relayNotification(String&& notificationName, RetainPtr<NSData>&& notificationData)
+void AXObjectCache::relayNotification(RefPtr<StringImpl>&& notificationName, RetainPtr<NSData>&& notificationData)
 {
     if (RefPtr page = document() ? document()->page() : nullptr)
         page->chrome().relayAccessibilityNotification(WTF::move(notificationName), WTF::move(notificationData));
@@ -129,10 +129,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     [wrapper accessibilityPostedNotification:notificationName.get()];
 }
 
-void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
+void AXObjectCache::postPlatformAnnouncementNotification(StringImpl* message)
 {
     auto notificationName = notificationPlatformName(AXNotification::AnnouncementRequested).createNSString();
-    RetainPtr nsMessage = message.createNSString();
+    RetainPtr nsMessage = createNSString(message);
     if (RefPtr root = getOrCreate(protect(m_document->view()))) {
         RetainPtr wrapper = root->wrapper();
         [wrapper accessibilityOverrideProcessNotification:notificationName.get() notificationData:[nsMessage dataUsingEncoding:NSUTF8StringEncoding]];
@@ -152,22 +152,22 @@ void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject&, con
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
         if (RefPtr root = getOrCreate(protect(m_document->view()))) {
             RetainPtr notificationName = notificationPlatformName(AXNotification::AnnouncementRequested).createNSString();
-            RetainPtr message = notificationData.message.createNSString();
+            RetainPtr message = createNSString(notificationData.message);
             RetainPtr announcementString = adoptNS([[NSAttributedString alloc] initWithString:message.get() attributes:@{
                 @"UIAccessibilityARIAPriority": notifyPriorityToAXValueString(notificationData.priority).get(),
                 @"UIAccessibilityARIAInterruptBehavior": interruptBehaviorToAXValueString(notificationData.interrupt).get(),
-                @"UIAccessibilitySpeechAttributeLanguage": notificationData.language.createNSString().get()
+                @"UIAccessibilitySpeechAttributeLanguage": createNSString(notificationData.language).get()
             }]);
             [protect(root->wrapper()) accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : announcementString.get() }];
         }
     }
 }
 
-void AXObjectCache::postCaptionsDisplayedNotification(const Vector<String>& captions)
+void AXObjectCache::postCaptionsDisplayedNotification(const Vector<RefPtr<StringImpl>>& captions)
 {
     // The UI process forwards the captions to MediaAccessibility, which notifies VoiceOver.
     if (RefPtr page = document() ? document()->page() : nullptr)
-        page->chrome().client().didDisplayCaptions(Vector<String> { captions });
+        page->chrome().client().didDisplayCaptions(Vector<RefPtr<StringImpl>> { captions });
 
     // For tests, also call the wrapper's accessibilityPostedNotification.
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
@@ -207,8 +207,8 @@ void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject&, con
 void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(AccessibilityObject& object, const PossibleFormValidationErrorData& formData)
 {
     RetainPtr notificationName = notificationPlatformName(AXNotification::PossibleFormValidationError).createNSString();
-    RetainPtr unannouncedText = createNSArray(formData.unannouncedText, [] (const String& text) {
-        return text.createNSString();
+    RetainPtr unannouncedText = createNSArray(formData.unannouncedText, [] (StringImpl* text) {
+        return createNSString(text);
     });
     NSDictionary *userInfo = @{
         NSAccessibilityFormValidationUnannouncedTextKey: unannouncedText.get(),
@@ -250,19 +250,19 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
         postPlatformNotification(*object, AXNotification::SelectedTextChanged);
 }
 
-void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType, const String&, const VisiblePosition&)
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType, StringImpl*, const VisiblePosition&)
 {
     if (object)
         postPlatformNotification(*object, AXNotification::ValueChanged);
 }
 
-void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&)
+void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType, StringImpl*, AXTextEditType, StringImpl*, const VisiblePosition&)
 {
     if (object)
         postPlatformNotification(*object, AXNotification::ValueChanged);
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String&, const String&)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, StringImpl*, StringImpl*)
 {
     if (object)
         postPlatformNotification(*object, AXNotification::ValueChanged);

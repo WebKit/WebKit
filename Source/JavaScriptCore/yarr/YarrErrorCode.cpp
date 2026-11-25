@@ -122,9 +122,9 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
     case ErrorCode::InvalidRegularExpressionModifier:
     case ErrorCode::TooManyCaptures:
     case ErrorCode::FrameTooLarge:
-        return createSyntaxError(globalObject, errorMessage(error));
+        return createSyntaxError(globalObject, StringImpl::create(errorMessage(error)).ptr());
     case ErrorCode::TooManyDisjunctions:
-        return createOutOfMemoryError(globalObject, errorMessage(error));
+        return createOutOfMemoryError(globalObject, StringImpl::create(errorMessage(error)).ptr());
     }
 
     ASSERT_NOT_REACHED();

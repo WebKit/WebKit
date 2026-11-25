@@ -37,14 +37,14 @@ public:
 
     WEBCORE_EXPORT CSSPageDescriptors& style();
 
-    WEBCORE_EXPORT String selectorText() const;
-    WEBCORE_EXPORT void setSelectorText(const String&);
+    WEBCORE_EXPORT RefPtr<StringImpl> selectorText() const;
+    WEBCORE_EXPORT void setSelectorText(StringImpl*);
 
 private:
     CSSPageRule(StyleRulePage&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Page; }
-    String cssText() const final;
+    RefPtr<StringImpl> cssText() const final;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRulePage> m_pageRule;

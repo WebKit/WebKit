@@ -50,7 +50,7 @@ struct GPUProcessConnectionParameters {
     HashMap<WebCore::PageIdentifier, CoreIPCAuditToken> presentingApplicationAuditTokens;
 #endif
 #if PLATFORM(COCOA)
-    String applicationBundleIdentifier;
+    RefPtr<StringImpl> applicationBundleIdentifier;
 #endif
     std::optional<GPUProcessMediaCodecCapabilities> mediaCodecCapabilities;
 };

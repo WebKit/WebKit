@@ -43,10 +43,10 @@ public:
 
     const CSS::GridTemplateAreas& areas() const LIFETIME_BOUND { return m_areas; }
 
-    String customCSSText(const CSS::SerializationContext&) const;
+    RefPtr<StringImpl> customCSSText(const CSS::SerializationContext&) const;
     NODELETE bool equals(const CSSGridTemplateAreasValue&) const;
 
-    String stringForRow(size_t row) const;
+    RefPtr<StringImpl> stringForRow(size_t row) const;
 
 private:
     explicit CSSGridTemplateAreasValue(CSS::GridTemplateAreas&&);

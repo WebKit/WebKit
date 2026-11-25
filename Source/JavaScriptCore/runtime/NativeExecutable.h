@@ -37,7 +37,7 @@ public:
     typedef ExecutableBase Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static NativeExecutable* create(VM&, Ref<JSC::JITCode>&& callThunk, TaggedNativeFunction, Ref<JSC::JITCode>&& constructThunk, TaggedNativeFunction constructor, ImplementationVisibility, unsigned length, const String& name);
+    static NativeExecutable* create(VM&, Ref<JSC::JITCode>&& callThunk, TaggedNativeFunction, Ref<JSC::JITCode>&& constructThunk, TaggedNativeFunction constructor, ImplementationVisibility, unsigned length, StringImpl* name);
 
     static void destroy(JSCell*);
     
@@ -77,7 +77,7 @@ public:
         
     DECLARE_INFO;
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     JSString* nameJSString(VM&) const;
     unsigned length() const { return m_length; }
 
@@ -96,7 +96,7 @@ public:
     static constexpr ptrdiff_t offsetOfAsString() { return OBJECT_OFFSETOF(NativeExecutable, m_asString); }
 private:
     NativeExecutable(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ImplementationVisibility);
-    void finishCreation(VM&, Ref<JSC::JITCode>&& callThunk, Ref<JSC::JITCode>&& constructThunk, unsigned length, const String& name);
+    void finishCreation(VM&, Ref<JSC::JITCode>&& callThunk, Ref<JSC::JITCode>&& constructThunk, unsigned length, StringImpl* name);
 
     JSString* toStringSlow(JSGlobalObject*);
 
@@ -106,7 +106,7 @@ private:
     unsigned m_implementationVisibility : bitWidthOfImplementationVisibility;
     unsigned m_length { 0 };
 
-    String m_name;
+    RefPtr<StringImpl> m_name;
     WriteBarrier<JSString> m_asString;
 };
 

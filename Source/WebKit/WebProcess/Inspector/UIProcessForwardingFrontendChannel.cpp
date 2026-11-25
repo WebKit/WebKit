@@ -35,14 +35,14 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UIProcessForwardingFrontendChannel);
 
-UIProcessForwardingFrontendChannel::UIProcessForwardingFrontendChannel(WebPage& page, const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
+UIProcessForwardingFrontendChannel::UIProcessForwardingFrontendChannel(WebPage& page, StringImpl* targetId, Inspector::FrontendChannel::ConnectionType connectionType)
     : m_page(page)
     , m_targetId(targetId)
     , m_connectionType(connectionType)
 {
 }
 
-void UIProcessForwardingFrontendChannel::sendMessageToFrontend(const String& message)
+void UIProcessForwardingFrontendChannel::sendMessageToFrontend(StringImpl* message)
 {
     Ref { m_page.get() }->send(Messages::WebPageProxy::SendMessageToInspectorFrontend(m_targetId, message));
 }

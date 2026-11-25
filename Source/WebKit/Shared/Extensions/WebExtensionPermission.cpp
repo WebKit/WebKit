@@ -31,110 +31,110 @@
 
 namespace WebKit {
 
-String WebExtensionPermission::activeTab()
+RefPtr<StringImpl> WebExtensionPermission::activeTab()
 {
-    return "activeTab"_s;
+    return "activeTab"_si;
 }
 
-String WebExtensionPermission::alarms()
+RefPtr<StringImpl> WebExtensionPermission::alarms()
 {
-    return "alarms"_s;
+    return "alarms"_si;
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-String WebExtensionPermission::bookmarks()
+RefPtr<StringImpl> WebExtensionPermission::bookmarks()
 {
-    return "bookmarks"_s;
+    return "bookmarks"_si;
 }
 #endif
 
-String WebExtensionPermission::clipboardWrite()
+RefPtr<StringImpl> WebExtensionPermission::clipboardWrite()
 {
-    return "clipboardWrite"_s;
+    return "clipboardWrite"_si;
 }
 
-String WebExtensionPermission::contextMenus()
+RefPtr<StringImpl> WebExtensionPermission::contextMenus()
 {
-    return "contextMenus"_s;
+    return "contextMenus"_si;
 }
 
-String WebExtensionPermission::cookies()
+RefPtr<StringImpl> WebExtensionPermission::cookies()
 {
-    return "cookies"_s;
+    return "cookies"_si;
 }
 
-String WebExtensionPermission::declarativeNetRequest()
+RefPtr<StringImpl> WebExtensionPermission::declarativeNetRequest()
 {
-    return "declarativeNetRequest"_s;
+    return "declarativeNetRequest"_si;
 }
 
-String WebExtensionPermission::declarativeNetRequestFeedback()
+RefPtr<StringImpl> WebExtensionPermission::declarativeNetRequestFeedback()
 {
-    return "declarativeNetRequestFeedback"_s;
+    return "declarativeNetRequestFeedback"_si;
 }
 
-String WebExtensionPermission::declarativeNetRequestWithHostAccess()
+RefPtr<StringImpl> WebExtensionPermission::declarativeNetRequestWithHostAccess()
 {
-    return "declarativeNetRequestWithHostAccess"_s;
+    return "declarativeNetRequestWithHostAccess"_si;
 }
 
-String WebExtensionPermission::menus()
+RefPtr<StringImpl> WebExtensionPermission::menus()
 {
-    return "menus"_s;
+    return "menus"_si;
 }
 
-String WebExtensionPermission::nativeMessaging()
+RefPtr<StringImpl> WebExtensionPermission::nativeMessaging()
 {
-    return "nativeMessaging"_s;
+    return "nativeMessaging"_si;
 }
 
-String WebExtensionPermission::notifications()
+RefPtr<StringImpl> WebExtensionPermission::notifications()
 {
-    return "notifications"_s;
+    return "notifications"_si;
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-String WebExtensionPermission::offscreen()
+RefPtr<StringImpl> WebExtensionPermission::offscreen()
 {
-    return "offscreen"_s;
+    return "offscreen"_si;
 }
 #endif
 
-String WebExtensionPermission::scripting()
+RefPtr<StringImpl> WebExtensionPermission::scripting()
 {
-    return "scripting"_s;
+    return "scripting"_si;
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-String WebExtensionPermission::sidePanel()
+RefPtr<StringImpl> WebExtensionPermission::sidePanel()
 {
-    return "sidePanel"_s;
+    return "sidePanel"_si;
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
-String WebExtensionPermission::storage()
+RefPtr<StringImpl> WebExtensionPermission::storage()
 {
-    return "storage"_s;
+    return "storage"_si;
 }
 
-String WebExtensionPermission::tabs()
+RefPtr<StringImpl> WebExtensionPermission::tabs()
 {
-    return "tabs"_s;
+    return "tabs"_si;
 }
 
-String WebExtensionPermission::unlimitedStorage()
+RefPtr<StringImpl> WebExtensionPermission::unlimitedStorage()
 {
-    return "unlimitedStorage"_s;
+    return "unlimitedStorage"_si;
 }
 
-String WebExtensionPermission::webNavigation()
+RefPtr<StringImpl> WebExtensionPermission::webNavigation()
 {
-    return "webNavigation"_s;
+    return "webNavigation"_si;
 }
 
-String WebExtensionPermission::webRequest()
+RefPtr<StringImpl> WebExtensionPermission::webRequest()
 {
-    return "webRequest"_s;
+    return "webRequest"_si;
 }
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionPermissionAdditionsImpl.cpp>)

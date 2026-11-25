@@ -40,10 +40,10 @@ namespace WebKit {
 class WebContextMenuItemGlib final : public WebContextMenuItemData {
     WTF_MAKE_TZONE_ALLOCATED(WebContextMenuItemGlib);
 public:
-    WebContextMenuItemGlib(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, const String& title, bool enabled = true, bool checked = false);
+    WebContextMenuItemGlib(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, StringImpl* title, bool enabled = true, bool checked = false);
     WebContextMenuItemGlib(const WebContextMenuItemData&);
     WebContextMenuItemGlib(const WebContextMenuItemGlib&, Vector<WebContextMenuItemGlib>&& submenu);
-    WebContextMenuItemGlib(GAction*, const String& title, GVariant* target = nullptr);
+    WebContextMenuItemGlib(GAction*, StringImpl* title, GVariant* target = nullptr);
 #if PLATFORM(GTK) && !USE(GTK4)
     WebContextMenuItemGlib(GtkAction*);
 #endif

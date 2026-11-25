@@ -55,7 +55,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocaleCocoa);
 
-std::unique_ptr<Locale> Locale::create(const AtomString& locale)
+std::unique_ptr<Locale> Locale::create(AtomStringImpl* locale)
 {
     return makeUnique<LocaleCocoa>(locale);
 }
@@ -71,8 +71,8 @@ static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCa
     return formatter;
 }
 
-LocaleCocoa::LocaleCocoa(const AtomString& locale)
-    : m_locale(adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale.createNSString().get()]))
+LocaleCocoa::LocaleCocoa(AtomStringImpl* locale)
+    : m_locale(adoptNS([[NSLocale alloc] initWithLocaleIdentifier:createNSString(locale).get()]))
     , m_gregorianCalendar(adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]))
     , m_didInitializeNumberData(false)
 {
@@ -80,7 +80,7 @@ LocaleCocoa::LocaleCocoa(const AtomString& locale)
     // NSLocale returns a lower case NSLocaleLanguageCode so we don't have care about case.
     NSString* language = [m_locale objectForKey:NSLocaleLanguageCode];
     if ([availableLanguages indexOfObject:language] == NSNotFound)
-        m_locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage().createNSString().get()]);
+        m_locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:createNSString(defaultLanguage()).get()]);
     [m_gregorianCalendar setLocale:m_locale];
 }
 
@@ -91,7 +91,7 @@ RetainPtr<NSDateFormatter> LocaleCocoa::shortDateFormatter()
     return createDateTimeFormatter(m_locale, m_gregorianCalendar, NSDateFormatterShortStyle, NSDateFormatterNoStyle);
 }
 
-String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatType)
+RefPtr<StringImpl> LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatType)
 {
     double msec = dateComponents.millisecondsSinceEpoch();
     DateComponentsType type = dateComponents.type();
@@ -103,7 +103,7 @@ String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatT
         // NSDateFormatter is not used here because it handles week numbering differently than ISO-8601.
         return inputWeekLabel(dateComponents);
 #else
-        return String();
+        return nullptr;
 #endif
     }
 
@@ -113,16 +113,16 @@ String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatT
 
     // Return a formatted string.
     RetainPtr dateFormatter = localizedDateCache().formatterForDateType(type);
-    return [dateFormatter stringFromDate:date];
+    return StringImpl::create([dateFormatter stringFromDate:date]);
 }
 
-const Vector<String>& LocaleCocoa::monthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleCocoa::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
         return m_monthLabels;
     RetainPtr array = [shortDateFormatter() monthSymbols];
     if ([array count] == 12) {
-        m_monthLabels = makeVector<String>(array.get());
+        m_monthLabels = makeVector<RefPtr<StringImpl>>(array.get());
         return m_monthLabels;
     }
     m_monthLabels = std::span { WTF::monthFullName };
@@ -161,117 +161,117 @@ Locale::WritingDirection LocaleCocoa::defaultWritingDirection() const
     }
 }
 
-String LocaleCocoa::dateFormat()
+RefPtr<StringImpl> LocaleCocoa::dateFormat()
 {
-    if (!m_dateFormat.isNull())
+    if (m_dateFormat)
         return m_dateFormat;
-    m_dateFormat = [shortDateFormatter() dateFormat];
+    m_dateFormat = StringImpl::create([shortDateFormatter() dateFormat]);
     return m_dateFormat;
 }
 
-String LocaleCocoa::monthFormat()
+RefPtr<StringImpl> LocaleCocoa::monthFormat()
 {
-    if (!m_monthFormat.isNull())
+    if (m_monthFormat)
         return m_monthFormat;
     // Gets a format for "MMMM" because Windows API always provides formats for
     // "MMMM" in some locales.
-    m_monthFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyyMMMM" options:0 locale:m_locale];
+    m_monthFormat = StringImpl::create([NSDateFormatter dateFormatFromTemplate:@"yyyyMMMM" options:0 locale:m_locale]);
     return m_monthFormat;
 }
 
-String LocaleCocoa::shortMonthFormat()
+RefPtr<StringImpl> LocaleCocoa::shortMonthFormat()
 {
-    if (!m_shortMonthFormat.isNull())
+    if (m_shortMonthFormat)
         return m_shortMonthFormat;
-    m_shortMonthFormat = [NSDateFormatter dateFormatFromTemplate:@"yM" options:0 locale:m_locale];
+    m_shortMonthFormat = StringImpl::create([NSDateFormatter dateFormatFromTemplate:@"yM" options:0 locale:m_locale]);
     return m_shortMonthFormat;
 }
 
-String LocaleCocoa::timeFormat()
+RefPtr<StringImpl> LocaleCocoa::timeFormat()
 {
-    if (!m_timeFormatWithSeconds.isNull())
+    if (m_timeFormatWithSeconds)
         return m_timeFormatWithSeconds;
-    m_timeFormatWithSeconds = [timeFormatter() dateFormat];
+    m_timeFormatWithSeconds = StringImpl::create([timeFormatter() dateFormat]);
     return m_timeFormatWithSeconds;
 }
 
-String LocaleCocoa::shortTimeFormat()
+RefPtr<StringImpl> LocaleCocoa::shortTimeFormat()
 {
-    if (!m_timeFormatWithoutSeconds.isNull())
+    if (m_timeFormatWithoutSeconds)
         return m_timeFormatWithoutSeconds;
-    m_timeFormatWithoutSeconds = [shortTimeFormatter() dateFormat];
+    m_timeFormatWithoutSeconds = StringImpl::create([shortTimeFormatter() dateFormat]);
     return m_timeFormatWithoutSeconds;
 }
 
-String LocaleCocoa::dateTimeFormatWithSeconds()
+RefPtr<StringImpl> LocaleCocoa::dateTimeFormatWithSeconds()
 {
-    if (!m_dateTimeFormatWithSeconds.isNull())
+    if (m_dateTimeFormatWithSeconds)
         return m_dateTimeFormatWithSeconds;
-    m_dateTimeFormatWithSeconds = [dateTimeFormatterWithSeconds() dateFormat];
+    m_dateTimeFormatWithSeconds = StringImpl::create([dateTimeFormatterWithSeconds() dateFormat]);
     return m_dateTimeFormatWithSeconds;
 }
 
-String LocaleCocoa::dateTimeFormatWithoutSeconds()
+RefPtr<StringImpl> LocaleCocoa::dateTimeFormatWithoutSeconds()
 {
-    if (!m_dateTimeFormatWithoutSeconds.isNull())
+    if (m_dateTimeFormatWithoutSeconds)
         return m_dateTimeFormatWithoutSeconds;
-    m_dateTimeFormatWithoutSeconds = [dateTimeFormatterWithoutSeconds() dateFormat];
+    m_dateTimeFormatWithoutSeconds = StringImpl::create([dateTimeFormatterWithoutSeconds() dateFormat]);
     return m_dateTimeFormatWithoutSeconds;
 }
 
-const Vector<String>& LocaleCocoa::shortMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleCocoa::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
     RetainPtr array = [shortDateFormatter() shortMonthSymbols];
     if ([array count] == 12) {
-        m_shortMonthLabels = makeVector<String>(array.get());
+        m_shortMonthLabels = makeVector<RefPtr<StringImpl>>(array.get());
         return m_shortMonthLabels;
     }
     m_shortMonthLabels = std::span { WTF::monthName };
     return m_shortMonthLabels;
 }
 
-const Vector<String>& LocaleCocoa::standAloneMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleCocoa::standAloneMonthLabels()
 {
     if (!m_standAloneMonthLabels.isEmpty())
         return m_standAloneMonthLabels;
     RetainPtr array = [shortDateFormatter() standaloneMonthSymbols];
     if ([array count] == 12) {
-        m_standAloneMonthLabels = makeVector<String>(array.get());
+        m_standAloneMonthLabels = makeVector<RefPtr<StringImpl>>(array.get());
         return m_standAloneMonthLabels;
     }
     m_standAloneMonthLabels = shortMonthLabels();
     return m_standAloneMonthLabels;
 }
 
-const Vector<String>& LocaleCocoa::shortStandAloneMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleCocoa::shortStandAloneMonthLabels()
 {
     if (!m_shortStandAloneMonthLabels.isEmpty())
         return m_shortStandAloneMonthLabels;
 
     RetainPtr array = [shortDateFormatter() shortStandaloneMonthSymbols];
     if ([array count] == 12) {
-        m_shortStandAloneMonthLabels = makeVector<String>(array.get());
+        m_shortStandAloneMonthLabels = makeVector<RefPtr<StringImpl>>(array.get());
         return m_shortStandAloneMonthLabels;
     }
     m_shortStandAloneMonthLabels = shortMonthLabels();
     return m_shortStandAloneMonthLabels;
 }
 
-const Vector<String>& LocaleCocoa::timeAMPMLabels()
+const Vector<RefPtr<StringImpl>>& LocaleCocoa::timeAMPMLabels()
 {
     if (!m_timeAMPMLabels.isEmpty())
         return m_timeAMPMLabels;
     RetainPtr<NSDateFormatter> formatter = shortTimeFormatter();
-    m_timeAMPMLabels = { String([formatter AMSymbol]), String([formatter PMSymbol]) };
+    m_timeAMPMLabels = { StringImpl::create([formatter AMSymbol]), StringImpl::create([formatter PMSymbol]) };
     return m_timeAMPMLabels;
 }
 
-using CanonicalLocaleMap = HashMap<AtomString, RetainPtr<CFStringRef>>;
+using CanonicalLocaleMap = HashMap<RefPtr<AtomStringImpl>, RetainPtr<CFStringRef>>;
 
 struct LocaleCache {
-    AtomString m_key;
+    RefPtr<AtomStringImpl> m_key;
     RetainPtr<CFStringRef> m_value;
     CanonicalLocaleMap m_map;
 };
@@ -284,24 +284,24 @@ NODELETE static LocaleCache& localeCache()
 }
 
 static Lock nonMainThreadLocaleCacheLock;
-NODELETE static HashMap<String, RetainPtr<CFStringRef>>& nonMainThreadLocaleCache() WTF_REQUIRES_LOCK(nonMainThreadLocaleCacheLock)
+NODELETE static HashMap<RefPtr<StringImpl>, RetainPtr<CFStringRef>>& nonMainThreadLocaleCache() WTF_REQUIRES_LOCK(nonMainThreadLocaleCacheLock)
 {
-    static NeverDestroyed<HashMap<String, RetainPtr<CFStringRef>>> cache;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, RetainPtr<CFStringRef>>> cache;
     return cache.get();
 }
 
-RetainPtr<CFStringRef> LocaleCocoa::canonicalLanguageIdentifierFromString(const AtomString& string)
+RetainPtr<CFStringRef> LocaleCocoa::canonicalLanguageIdentifierFromString(AtomStringImpl* string)
 {
-    if (string.isEmpty())
+    if (isEmpty(string))
         return CFSTR("");
 
     if (!isMainThread()) {
         Locker locker { nonMainThreadLocaleCacheLock };
         auto& cache = nonMainThreadLocaleCache();
-        if (auto iterator = cache.find(string.string()); iterator != cache.end())
+        if (auto iterator = cache.find(string); iterator != cache.end())
             return iterator->value;
-        auto result = bridge_cast([NSLocale canonicalLanguageIdentifierFromString:string.createNSString().get()]);
-        cache.add(string.string().isolatedCopy(), result);
+        auto result = bridge_cast([NSLocale canonicalLanguageIdentifierFromString:createNSString(string).get()]);
+        cache.add(isolatedCopy(string), result);
         return result;
     }
 
@@ -309,7 +309,7 @@ RetainPtr<CFStringRef> LocaleCocoa::canonicalLanguageIdentifierFromString(const 
     if (cache.m_key == string)
         return cache.m_value;
     auto result = cache.m_map.ensure(string, [&] {
-        return bridge_cast([NSLocale canonicalLanguageIdentifierFromString:string.createNSString().get()]);
+        return bridge_cast([NSLocale canonicalLanguageIdentifierFromString:createNSString(string).get()]);
     }).iterator->value;
     cache.m_key = string;
     cache.m_value = result;
@@ -319,7 +319,7 @@ RetainPtr<CFStringRef> LocaleCocoa::canonicalLanguageIdentifierFromString(const 
 void LocaleCocoa::releaseMemory()
 {
     auto& cache = localeCache();
-    cache.m_key = { };
+    cache.m_key = nullptr;
     cache.m_value = { };
     cache.m_map.clear();
 
@@ -339,22 +339,22 @@ void LocaleCocoa::initializeLocaleData()
     [formatter setUsesGroupingSeparator:NO];
 
     RetainPtr<NSNumber> sampleNumber = adoptNS([[NSNumber alloc] initWithDouble:9876543210]);
-    String nineToZero([formatter stringFromNumber:sampleNumber]);
-    if (nineToZero.length() != 10)
+    RefPtr<StringImpl> nineToZero(StringImpl::create([formatter stringFromNumber:sampleNumber]));
+    if (length(nineToZero) != 10)
         return;
-    Vector<String, DecimalSymbolsSize> symbols;
+    Vector<RefPtr<StringImpl>, DecimalSymbolsSize> symbols;
     for (unsigned i = 0; i < 10; ++i)
-        symbols.append(nineToZero.substring(9 - i, 1));
+        symbols.append(substring(nineToZero, 9 - i, 1));
     ASSERT(symbols.size() == DecimalSeparatorIndex);
-    symbols.append([formatter decimalSeparator]);
+    symbols.append(StringImpl::create([formatter decimalSeparator]));
     ASSERT(symbols.size() == GroupSeparatorIndex);
-    symbols.append([formatter groupingSeparator]);
+    symbols.append(StringImpl::create([formatter groupingSeparator]));
     ASSERT(symbols.size() == DecimalSymbolsSize);
 
-    String positivePrefix([formatter positivePrefix]);
-    String positiveSuffix([formatter positiveSuffix]);
-    String negativePrefix([formatter negativePrefix]);
-    String negativeSuffix([formatter negativeSuffix]);
+    RefPtr<StringImpl> positivePrefix(StringImpl::create([formatter positivePrefix]));
+    RefPtr<StringImpl> positiveSuffix(StringImpl::create([formatter positiveSuffix]));
+    RefPtr<StringImpl> negativePrefix(StringImpl::create([formatter negativePrefix]));
+    RefPtr<StringImpl> negativeSuffix(StringImpl::create([formatter negativeSuffix]));
     setLocaleData(symbols, positivePrefix, positiveSuffix, negativePrefix, negativeSuffix);
 }
 

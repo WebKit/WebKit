@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-ExceptionOr<Ref<PerformanceMeasure>> PerformanceMeasure::create(const String& name, double startTime, double endTime, Ref<SerializedScriptValue>&& serializedDetail)
+ExceptionOr<Ref<PerformanceMeasure>> PerformanceMeasure::create(StringImpl* name, double startTime, double endTime, Ref<SerializedScriptValue>&& serializedDetail)
 {
     return adoptRef(*new PerformanceMeasure(name, startTime, endTime, WTF::move(serializedDetail)));
 }
 
-PerformanceMeasure::PerformanceMeasure(const String& name, double startTime, double endTime, Ref<SerializedScriptValue>&& serializedDetail)
+PerformanceMeasure::PerformanceMeasure(StringImpl* name, double startTime, double endTime, Ref<SerializedScriptValue>&& serializedDetail)
     : PerformanceEntry(name, startTime, endTime)
     , m_serializedDetail(WTF::move(serializedDetail))
 {

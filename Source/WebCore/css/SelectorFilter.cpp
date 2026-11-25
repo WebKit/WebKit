@@ -41,22 +41,22 @@ namespace WebCore {
 // Salt to separate otherwise identical string hashes so a class-selector like .article won't match <article> elements.
 enum { TagNameSalt = 13, IdSalt = 17, ClassSalt = 19, AttributeSalt = 23 };
 
-NODELETE static bool isExcludedAttribute(const AtomString& name)
+NODELETE static bool isExcludedAttribute(AtomStringImpl* name)
 {
     return name == HTMLNames::classAttr->localName() || name == HTMLNames::idAttr->localName() || name == HTMLNames::styleAttr->localName();
 }
 
 void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
 {
-    identifierHashes.append(element.localNameLowercase().impl()->existingHash() * TagNameSalt);
+    identifierHashes.append(element.localNameLowercase().get()->existingHash() * TagNameSalt);
 
     auto& id = element.idForStyleResolution();
-    if (!id.isNull())
-        identifierHashes.append(id.impl()->existingHash() * IdSalt);
+    if (id)
+        identifierHashes.append(id.get()->existingHash() * IdSalt);
 
     if (element.hasClass()) {
         identifierHashes.appendContainerWithMapping(element.classNames(), [](auto& className) {
-            return className.impl()->existingHash() * ClassSalt;
+            return className->existingHash() * ClassSalt;
         });
     }
     
@@ -65,7 +65,7 @@ void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vect
             auto& attributeName = attribute.localNameLowercase();
             if (isExcludedAttribute(attributeName))
                 continue;
-            identifierHashes.append(attributeName.impl()->existingHash() * AttributeSalt);
+            identifierHashes.append(attributeName.get()->existingHash() * AttributeSalt);
         }
     }
 }
@@ -136,17 +136,17 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
 {
     switch (selector.match()) {
     case CSSSelector::Match::Id:
-        if (!selector.value().isEmpty())
-            collectedHashes.ids.append(selector.value().impl()->existingHash() * IdSalt);
+        if (!isEmpty(selector.value()))
+            collectedHashes.ids.append(selector.value().get()->existingHash() * IdSalt);
         break;
     case CSSSelector::Match::Class:
-        if (!selector.value().isEmpty())
-            collectedHashes.classes.append(selector.value().impl()->existingHash() * ClassSalt);
+        if (!isEmpty(selector.value()))
+            collectedHashes.classes.append(selector.value().get()->existingHash() * ClassSalt);
         break;
     case CSSSelector::Match::Tag: {
         auto& tagLowercaseLocalName = selector.tagLowercaseLocalName();
         if (tagLowercaseLocalName != starAtom())
-            collectedHashes.tags.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
+            collectedHashes.tags.append(tagLowercaseLocalName.get()->existingHash() * TagNameSalt);
         break;
     }
     case CSSSelector::Match::Exact:
@@ -157,12 +157,12 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
     case CSSSelector::Match::Begin:
     case CSSSelector::Match::End: {
         if (selector.isEquivalentToClassSelector()) {
-            collectedHashes.classes.append(selector.value().impl()->existingHash() * ClassSalt);
+            collectedHashes.classes.append(selector.value().get()->existingHash() * ClassSalt);
             break;
         }
         auto attributeName = selector.attribute().localNameLowercase();
         if (!isExcludedAttribute(attributeName))
-            collectedHashes.attributes.append(attributeName.impl()->existingHash() * AttributeSalt);
+            collectedHashes.attributes.append(attributeName.get()->existingHash() * AttributeSalt);
         break;
     }
     case CSSSelector::Match::PseudoClass:

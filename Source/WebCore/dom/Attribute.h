@@ -35,13 +35,13 @@ namespace WebCore {
 // The actual Attr with its value as a Text child is allocated only if needed.
 class Attribute {
 public:
-    Attribute(const QualifiedName& name, const AtomString& value)
+    Attribute(const QualifiedName& name, AtomStringImpl* value)
         : m_name(name)
         , m_value(value)
     {
     }
 
-    Attribute(QualifiedName&& name, AtomString&& value)
+    Attribute(QualifiedName&& name, RefPtr<AtomStringImpl>&& value)
         : m_name(WTF::move(name))
         , m_value(WTF::move(value))
     {
@@ -50,21 +50,21 @@ public:
     // NOTE: The references returned by these functions are only valid for as long
     // as the Attribute stays in place. For example, calling a function that mutates
     // an Element's internal attribute storage may invalidate them.
-    const AtomString& value() const LIFETIME_BOUND { return m_value; }
+    const RefPtr<AtomStringImpl>& value() const LIFETIME_BOUND { return m_value; }
     static constexpr ptrdiff_t valueMemoryOffset() { return OBJECT_OFFSETOF(Attribute, m_value); }
-    const AtomString& prefix() const LIFETIME_BOUND { return m_name.prefix(); }
-    const AtomString& localName() const LIFETIME_BOUND { return m_name.localName(); }
-    const AtomString& localNameLowercase() const LIFETIME_BOUND { return m_name.localNameLowercase(); }
-    const AtomString& namespaceURI() const LIFETIME_BOUND { return m_name.namespaceURI(); }
+    const RefPtr<AtomStringImpl>& prefix() const LIFETIME_BOUND { return m_name.prefix(); }
+    const RefPtr<AtomStringImpl>& localName() const LIFETIME_BOUND { return m_name.localName(); }
+    const RefPtr<AtomStringImpl>& localNameLowercase() const LIFETIME_BOUND { return m_name.localNameLowercase(); }
+    const RefPtr<AtomStringImpl>& namespaceURI() const LIFETIME_BOUND { return m_name.namespaceURI(); }
 
     const QualifiedName& name() const LIFETIME_BOUND { return m_name; }
     static constexpr ptrdiff_t nameMemoryOffset() { return OBJECT_OFFSETOF(Attribute, m_name); }
 
-    bool isEmpty() const { return m_value.isEmpty(); }
-    static bool nameMatchesFilter(const QualifiedName&, const AtomString& filterPrefix, const AtomString& filterLocalName, const AtomString& filterNamespaceURI);
-    bool matches(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI) const;
+    bool isEmpty() const { return WTF::isEmpty(m_value); }
+    static bool nameMatchesFilter(const QualifiedName&, AtomStringImpl* filterPrefix, AtomStringImpl* filterLocalName, AtomStringImpl* filterNamespaceURI);
+    bool matches(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI) const;
 
-    void setValue(const AtomString& value) { m_value = value; }
+    void setValue(AtomStringImpl* value) { m_value = value; }
 
     // Note: This API is only for HTMLTreeBuilder.  It is not safe to change the
     // name of an attribute once parseAttribute has been called as DOM
@@ -79,7 +79,7 @@ public:
 
 private:
     QualifiedName m_name;
-    AtomString m_value;
+    RefPtr<AtomStringImpl> m_value;
 };
 
 inline void add(Hasher& hasher, const Attribute& attribute)
@@ -87,14 +87,14 @@ inline void add(Hasher& hasher, const Attribute& attribute)
     add(hasher, attribute.name(), attribute.value());
 }
 
-inline bool Attribute::nameMatchesFilter(const QualifiedName& name, const AtomString& filterPrefix, const AtomString& filterLocalName, const AtomString& filterNamespaceURI)
+inline bool Attribute::nameMatchesFilter(const QualifiedName& name, AtomStringImpl* filterPrefix, AtomStringImpl* filterLocalName, AtomStringImpl* filterNamespaceURI)
 {
     if (filterLocalName != name.localName())
         return false;
     return filterPrefix == starAtom() || filterNamespaceURI == name.namespaceURI();
 }
 
-inline bool Attribute::matches(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI) const
+inline bool Attribute::matches(AtomStringImpl* prefix, AtomStringImpl* localName, AtomStringImpl* namespaceURI) const
 {
     return nameMatchesFilter(m_name, prefix, localName, namespaceURI);
 }

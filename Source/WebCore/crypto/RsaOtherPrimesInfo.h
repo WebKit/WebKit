@@ -31,9 +31,9 @@
 namespace WebCore {
 
 struct RsaOtherPrimesInfo {
-    String r;
-    String d;
-    String t;
+    RefPtr<StringImpl> r;
+    RefPtr<StringImpl> d;
+    RefPtr<StringImpl> t;
 
     RsaOtherPrimesInfo isolatedCopy() &&;
 };

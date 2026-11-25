@@ -29,10 +29,10 @@
 
 namespace WebKit {
 
-String executablePathOfWebProcess();
-String executablePathOfNetworkProcess();
+RefPtr<StringImpl> executablePathOfWebProcess();
+RefPtr<StringImpl> executablePathOfNetworkProcess();
 #if ENABLE(GPU_PROCESS)
-String executablePathOfGPUProcess();
+RefPtr<StringImpl> executablePathOfGPUProcess();
 #endif
 
 }

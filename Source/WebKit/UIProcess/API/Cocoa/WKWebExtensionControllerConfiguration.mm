@@ -110,10 +110,10 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
         RELEASE_ASSERT([coder decodeBoolForKey:temporaryCodingKey]);
 
         NSString *temporaryDirectory = [coder decodeObjectOfClass:NSString.class forKey:temporaryDirectoryCodingKey];
-        API::Object::constructInWrapper<WebKit::WebExtensionControllerConfiguration>(self, TemporaryTag::Temporary, temporaryDirectory);
+        API::Object::constructInWrapper<WebKit::WebExtensionControllerConfiguration>(self, TemporaryTag::Temporary, StringImpl::create(temporaryDirectory).get());
 
         // Remake the directories if needed, since they might have been cleaned up since this was last used.
-        FileSystem::makeAllDirectories(temporaryDirectory);
+        FileSystem::makeAllDirectories(StringImpl::create(temporaryDirectory).get());
 
         self.webViewConfiguration = [coder decodeObjectOfClass:WKWebViewConfiguration.class forKey:webViewConfigurationCodingKey];
         self.defaultWebsiteDataStore = [coder decodeObjectOfClass:WKWebsiteDataStore.class forKey:defaultWebsiteDataStoreCodingKey];
@@ -197,14 +197,14 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (NSString *)_storageDirectoryPath
 {
-    if (auto& directory = _webExtensionControllerConfiguration->storageDirectory(); !directory.isEmpty())
-        return directory.createNSString().autorelease();
+    if (auto& directory = _webExtensionControllerConfiguration->storageDirectory(); !isEmpty(directory))
+        return createNSString(directory).autorelease();
     return nil;
 }
 
 - (void)_setStorageDirectoryPath:(NSString *)path
 {
-    protect(*_webExtensionControllerConfiguration)->setStorageDirectory(path);
+    protect(*_webExtensionControllerConfiguration)->setStorageDirectory(StringImpl::create(path).get());
 }
 
 #pragma mark WKObject protocol implementation

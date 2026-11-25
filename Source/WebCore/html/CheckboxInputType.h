@@ -59,8 +59,8 @@ public:
 private:
     explicit CheckboxInputType(HTMLInputElement&);
 
-    const AtomString& formControlType() const final;
-    String valueMissingText() const final;
+    const RefPtr<AtomStringImpl>& formControlType() const final;
+    RefPtr<StringImpl> valueMissingText() const final;
     void createShadowSubtree() final;
     void handleKeyupEvent(KeyboardEvent&) final;
     void handleMouseDownEvent(MouseEvent&) final;

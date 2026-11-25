@@ -36,11 +36,11 @@
 
 namespace WebKit {
 
-WebAutocorrectionData::WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<String>&& fontName, double pointSize, double weight)
+WebAutocorrectionData::WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<RefPtr<StringImpl>>&& fontName, double pointSize, double weight)
 {
     this->textRects = WTF::move(textRects);
     if (fontName.has_value())
-        this->font = [UIFont fontWithName:fontName->createNSString().get() size:pointSize];
+        this->font = [UIFont fontWithName:createNSString(*fontName).get() size:pointSize];
     else
         this->font = [UIFont systemFontOfSize:pointSize weight:weight];
 }
@@ -51,11 +51,11 @@ WebAutocorrectionData::WebAutocorrectionData(const Vector<WebCore::FloatRect>& t
     this->font = font;
 }
 
-std::optional<String> WebAutocorrectionData::fontName() const
+std::optional<RefPtr<StringImpl>> WebAutocorrectionData::fontName() const
 {
     if ([font isSystemFont])
         return std::nullopt;
-    return { { [font fontName] } };
+    return { { StringImpl::create([font fontName]) } };
 }
 
 double WebAutocorrectionData::fontPointSize() const

@@ -61,10 +61,10 @@ Ref<CSSFontFaceSrcResourceValue> SVGFontFaceUriElement::createSrcValue() const
 {
     auto location = CSS::completeURL(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), protect(document())).value_or(CSS::URL::none());
     auto& format = attributeWithoutSynchronization(formatAttr);
-    return CSSFontFaceSrcResourceValue::create(WTF::move(location), format.isEmpty() ? "svg"_s : format.string(), { FontTechnology::ColorSvg });
+    return CSSFontFaceSrcResourceValue::create(WTF::move(location), isEmpty(format) ? "svg"_si : format, { FontTechnology::ColorSvg });
 }
 
-void SVGFontFaceUriElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGFontFaceUriElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::hrefAttr || name == XLinkNames::hrefAttr)
         loadFont();
@@ -92,7 +92,7 @@ Node::NeedsPostConnectionSteps SVGFontFaceUriElement::insertionSteps(InsertionTy
 static bool isSVGFontTarget(const SVGFontFaceUriElement& element)
 {
     auto& format = element.attributeWithoutSynchronization(formatAttr);
-    return format.isEmpty() || equalLettersIgnoringASCIICase(format, "svg"_s);
+    return isEmpty(format) || equalLettersIgnoringASCIICase(format, "svg"_s);
 }
 
 void SVGFontFaceUriElement::loadFont()
@@ -100,8 +100,8 @@ void SVGFontFaceUriElement::loadFont()
     if (RefPtr cachedFont = m_cachedFont)
         cachedFont->removeClient(*this);
 
-    const AtomString& href = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
-    if (!href.isNull()) {
+    const RefPtr<AtomStringImpl>& href = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
+    if (href) {
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.contentSecurityPolicyImposition = isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 

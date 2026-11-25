@@ -110,7 +110,7 @@ RefPtr<WebGPU::CommandEncoder> Device::createCommandEncoder(const WebGPU::Comman
     if (!commandBuffer)
         return CommandEncoder::createInvalid(*this);
 
-    commandBuffer.label = descriptor.label.createNSString().get();
+    commandBuffer.label = createNSString(descriptor.label).get();
 
     auto commandEncoder = CommandEncoder::create(commandBuffer, *this, generateCommandEncoderId());
     m_commandEncoderMap.set(commandEncoder->uniqueId(), commandEncoder.ptr());
@@ -361,14 +361,14 @@ RefPtr<WebGPU::ComputePassEncoder> CommandEncoder::beginComputePass(const std::o
     return beginComputePass(descriptor ? *descriptor : WebGPU::ComputePassDescriptor { });
 }
 
-RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginInvalidRenderPass(String&& error)
+RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginInvalidRenderPass(RefPtr<StringImpl>&& error)
 {
-    return RenderPassEncoder::createInvalid(*this, m_device, error.createNSString().get());
+    return RenderPassEncoder::createInvalid(*this, m_device, createNSString(error).get());
 }
 
-RefPtr<WebGPU::ComputePassEncoder> CommandEncoder::beginInvalidComputePass(String&& error)
+RefPtr<WebGPU::ComputePassEncoder> CommandEncoder::beginInvalidComputePass(RefPtr<StringImpl>&& error)
 {
-    return ComputePassEncoder::createInvalid(*this, m_device, error.createNSString().get());
+    return ComputePassEncoder::createInvalid(*this, m_device, createNSString(error).get());
 }
 
 void CommandEncoder::copyBufferToBuffer(const WebGPU::Buffer& source, uint64_t sourceOffset, WebGPU::Buffer& destination, uint64_t destinationOffset, uint64_t size)
@@ -436,7 +436,7 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WebGPU::ComputePa
 
     id<MTLComputeCommandEncoder> computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
     setExistingEncoder(computeCommandEncoder);
-    computeCommandEncoder.label = descriptor.label.createNSString().get();
+    computeCommandEncoder.label = createNSString(descriptor.label).get();
 
     return ComputePassEncoder::create(computeCommandEncoder, descriptor, *this, m_device);
 }
@@ -1648,9 +1648,9 @@ void CommandEncoder::makeInvalid(NSString* errorString)
         commandBuffer->makeInvalid(errorString);
 }
 
-void CommandEncoder::makeInvalid(String&& error)
+void CommandEncoder::makeInvalid(RefPtr<StringImpl>&& error)
 {
-    makeInvalid(error.createNSString().get());
+    makeInvalid(createNSString(error).get());
 }
 
 void CommandEncoder::addICB(id<MTLIndirectCommandBuffer> icb)
@@ -2255,7 +2255,7 @@ void CommandEncoder::clearBuffer(Buffer& buffer, uint64_t offset, std::optional<
     else {
         auto localSize = checkedDifference<uint64_t>(buffer.initialSize(), offset);
         if (localSize.hasOverflowed()) {
-            protect(m_device)->generateAValidationError("CommandEncoder::clearBuffer(): offset > buffer.size"_s);
+            protect(m_device)->generateAValidationError("CommandEncoder::clearBuffer(): offset > buffer.size"_si);
             return;
         }
         size = localSize.value();
@@ -2331,7 +2331,7 @@ RefPtr<WebGPU::CommandBuffer> CommandEncoder::finish(const WebGPU::CommandBuffer
     m_commandBuffer = nil;
     m_existingCommandEncoder = nil;
 
-    commandBuffer.label = descriptor.label.createNSString().get();
+    commandBuffer.label = createNSString(descriptor.label).get();
     for (auto& priorCommandBuffer : borrow(m_priorCommandBuffers))
         [priorCommandBuffer.get() setLabel:commandBuffer.label];
 
@@ -2361,7 +2361,7 @@ RefPtr<WebGPU::CommandBuffer> CommandEncoder::finish(const WebGPU::CommandBuffer
     return result;
 }
 
-void CommandEncoder::insertDebugMarker(String&& markerLabel)
+void CommandEncoder::insertDebugMarker(RefPtr<StringImpl>&& markerLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
 
@@ -2373,7 +2373,7 @@ void CommandEncoder::insertDebugMarker(String&& markerLabel)
     finalizeBlitCommandEncoder();
 
     // There's no direct way of doing this, so we just push/pop an empty debug group.
-    [m_commandBuffer pushDebugGroup:markerLabel.createNSString().get()];
+    [m_commandBuffer pushDebugGroup:createNSString(markerLabel).get()];
     [m_commandBuffer popDebugGroup];
 }
 
@@ -2405,7 +2405,7 @@ void CommandEncoder::popDebugGroup()
     [m_commandBuffer popDebugGroup];
 }
 
-void CommandEncoder::pushDebugGroup(String&& groupLabel)
+void CommandEncoder::pushDebugGroup(RefPtr<StringImpl>&& groupLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
 
@@ -2417,7 +2417,7 @@ void CommandEncoder::pushDebugGroup(String&& groupLabel)
     finalizeBlitCommandEncoder();
 
     ++m_debugGroupStackSize;
-    [m_commandBuffer pushDebugGroup:groupLabel.createNSString().get()];
+    [m_commandBuffer pushDebugGroup:createNSString(groupLabel).get()];
 }
 
 NODELETE static bool validateResolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset)
@@ -2519,9 +2519,9 @@ void CommandEncoder::writeTimestamp(QuerySet& querySet, uint32_t queryIndex)
     querySet.setCommandEncoder(*this);
 }
 
-void CommandEncoder::setLabel(String&& label)
+void CommandEncoder::setLabel(RefPtr<StringImpl>&& label)
 {
-    m_commandBuffer.label = label.createNSString().get();
+    m_commandBuffer.label = createNSString(label).get();
 }
 
 void CommandEncoder::lock(bool shouldLock)

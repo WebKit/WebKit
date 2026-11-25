@@ -38,16 +38,16 @@
 namespace WebCore {
 
 struct FetchRequestInit {
-    String method;
+    RefPtr<StringImpl> method;
     std::optional<FetchHeaders::Init> headers;
     std::optional<std::optional<FetchBody::Init>> body;
-    String referrer;
+    RefPtr<StringImpl> referrer;
     std::optional<ReferrerPolicy> referrerPolicy;
     std::optional<FetchOptions::Mode> mode;
     std::optional<FetchOptions::Credentials> credentials;
     std::optional<FetchOptions::Cache> cache;
     std::optional<FetchOptions::Redirect> redirect;
-    String integrity;
+    RefPtr<StringImpl> integrity;
     std::optional<bool> keepalive;
     JSC::JSValue signal;
     std::optional<RequestPriority> priority;
@@ -55,7 +55,7 @@ struct FetchRequestInit {
     JSC::JSValue window;
     std::optional<IPAddressSpace> targetAddressSpace;
 
-    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || duplex || !window.isUndefined() || !signal.isUndefined() || (targetAddressSpace && *targetAddressSpace != IPAddressSpace::Public); }
+    bool hasMembers() const { return !isEmpty(method) || headers || body || !isEmpty(referrer) || referrerPolicy || mode || credentials || cache || redirect || !isEmpty(integrity) || keepalive || duplex || !window.isUndefined() || !signal.isUndefined() || (targetAddressSpace && *targetAddressSpace != IPAddressSpace::Public); }
 };
 
 }

@@ -1015,20 +1015,20 @@ TEST(WTF_HashTable, ContainerKeyValidityFollowsTableType)
 {
     EXPECT_TRUE((HashMap<int, int>::isValidKey(0)));
     EXPECT_TRUE((HashMap<int, int>::isValidKey(-1)));
-    EXPECT_TRUE(HashSet<String>::isValidValue("key"_s));
-    EXPECT_FALSE(HashSet<String>::isValidValue(String()));
-    // Destroying a String holding the deleted-value sentinel would deref an invalid pointer.
-    static NeverDestroyed<String> deletedString(WTF::HashTableDeletedValue);
-    EXPECT_FALSE(HashSet<String>::isValidValue(deletedString.get()));
-    EXPECT_FALSE((HashSet<String, ASCIICaseInsensitiveHash>::isValidValue(String())));
-    EXPECT_FALSE((HashMap<String, int>::isValidKey(String())));
-    EXPECT_FALSE(HashCountedSet<String>::isValidValue(String()));
+    EXPECT_TRUE(HashSet<RefPtr<StringImpl>>::isValidValue("key"_si));
+    EXPECT_FALSE(HashSet<RefPtr<StringImpl>>::isValidValue(RefPtr<StringImpl>()));
+    // Destroying a RefPtr<StringImpl> holding the deleted-value sentinel would deref an invalid pointer.
+    static NeverDestroyed<RefPtr<StringImpl>> deletedString(WTF::HashTableDeletedValue);
+    EXPECT_FALSE(HashSet<RefPtr<StringImpl>>::isValidValue(deletedString.get()));
+    EXPECT_FALSE((HashSet<RefPtr<StringImpl>, ASCIICaseInsensitiveHash>::isValidValue(RefPtr<StringImpl>())));
+    EXPECT_FALSE((HashMap<RefPtr<StringImpl>, int>::isValidKey(RefPtr<StringImpl>())));
+    EXPECT_FALSE(HashCountedSet<RefPtr<StringImpl>>::isValidValue(RefPtr<StringImpl>()));
     EXPECT_TRUE(HashCountedSet<unsigned>::isValidValue(0));
     EXPECT_TRUE(HashCountedSet<unsigned>::isValidValue(std::numeric_limits<unsigned>::max()));
 
-    EXPECT_TRUE((MemoryCompactRobinHoodHashMap<String, int>::isValidKey("key"_s)));
-    EXPECT_FALSE((MemoryCompactRobinHoodHashMap<String, int>::isValidKey(String())));
-    EXPECT_FALSE(MemoryCompactRobinHoodHashSet<String>::isValidValue(String()));
+    EXPECT_TRUE((MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, int>::isValidKey("key"_si)));
+    EXPECT_FALSE((MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, int>::isValidKey(RefPtr<StringImpl>())));
+    EXPECT_FALSE(MemoryCompactRobinHoodHashSet<RefPtr<StringImpl>>::isValidValue(RefPtr<StringImpl>()));
 }
 
 } // namespace TestWebKitAPI

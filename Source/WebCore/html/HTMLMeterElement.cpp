@@ -82,7 +82,7 @@ bool HTMLMeterElement::childShouldCreateRenderer(const Node& child) const
     return !is<RenderMeter>(renderer()) && HTMLElement::childShouldCreateRenderer(child);
 }
 
-void HTMLMeterElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLMeterElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::valueAttr:
@@ -181,15 +181,15 @@ static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion ga
 {
     switch (gaugeRegion) {
     case HTMLMeterElement::GaugeRegion::Optimum:
-        element.setAttribute(HTMLNames::classAttr, "optimum"_s);
+        element.setAttribute(HTMLNames::classAttr, "optimum"_atom);
         element.setUserAgentPart(UserAgentParts::webkitMeterOptimumValue());
         return;
     case HTMLMeterElement::GaugeRegion::Suboptimal:
-        element.setAttribute(HTMLNames::classAttr, "suboptimum"_s);
+        element.setAttribute(HTMLNames::classAttr, "suboptimum"_atom);
         element.setUserAgentPart(UserAgentParts::webkitMeterSuboptimumValue());
         return;
     case HTMLMeterElement::GaugeRegion::EvenLessGood:
-        element.setAttribute(HTMLNames::classAttr, "even-less-good"_s);
+        element.setAttribute(HTMLNames::classAttr, "even-less-good"_atom);
         element.setUserAgentPart(UserAgentParts::webkitMeterEvenLessGoodValue());
         return;
     }
@@ -216,32 +216,32 @@ RenderMeter* HTMLMeterElement::renderMeter() const
 
 void HTMLMeterElement::appendShadowTreeForAutoAppearance(ShadowRoot& root)
 {
-    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(meterElementShadowUserAgentStyleSheet));
+    static MainThreadNeverDestroyed<const RefPtr<StringImpl>> shadowStyle(StringImpl::createWithoutCopying(meterElementShadowUserAgentStyleSheet));
 
     Ref document = this->document();
     Ref styleElement = HTMLStyleElement::create(document);
     ScriptDisallowedScope::EventAllowedScope styleScope { styleElement };
-    styleElement->setTextContent(String { shadowStyle });
+    styleElement->setTextContent(RefPtr<StringImpl> { shadowStyle.get() });
     ScriptDisallowedScope::EventAllowedScope rootScope { root };
     root.appendChild(WTF::move(styleElement));
 
     // Pseudos are set to allow author styling.
     Ref innerElement = HTMLDivElement::create(document);
     ScriptDisallowedScope::EventAllowedScope innerScope { innerElement };
-    innerElement->setIdAttribute("inner"_s);
+    innerElement->setIdAttribute("inner"_atom);
     innerElement->setUserAgentPart(UserAgentParts::webkitMeterInnerElement());
-    innerElement->setInlineStyleProperty(CSSPropertyID::Display, "-internal-auto-base(inline-block, none)"_s, IsImportant::Yes);
+    innerElement->setInlineStyleProperty(CSSPropertyID::Display, "-internal-auto-base(inline-block, none)"_si, IsImportant::Yes);
     root.appendChild(innerElement);
 
     Ref barElement = HTMLDivElement::create(document);
     ScriptDisallowedScope::EventAllowedScope barScope { barElement };
-    barElement->setIdAttribute("bar"_s);
+    barElement->setIdAttribute("bar"_atom);
     barElement->setUserAgentPart(UserAgentParts::webkitMeterBar());
     innerElement->appendChild(barElement);
 
     Ref valueElement = HTMLDivElement::create(document);
     ScriptDisallowedScope::EventAllowedScope valueElementScope { valueElement };
-    valueElement->setIdAttribute("value"_s);
+    valueElement->setIdAttribute("value"_atom);
     barElement->appendChild(valueElement);
     m_valueElement = valueElement;
 }
@@ -252,8 +252,8 @@ void HTMLMeterElement::appendShadowTreeForBaseAppearance(ShadowRoot& root)
     Ref trackElement = HTMLDivElement::create(document);
     ScriptDisallowedScope::EventAllowedScope trackScope { trackElement };
     trackElement->setUserAgentPart(UserAgentParts::sliderTrack());
-    trackElement->setInlineStyleProperty(CSSPropertyID::Appearance, "inherit"_s);
-    trackElement->setInlineStyleProperty(CSSPropertyID::Display, "-internal-auto-base(none, inline-block)"_s, IsImportant::Yes);
+    trackElement->setInlineStyleProperty(CSSPropertyID::Appearance, "inherit"_si);
+    trackElement->setInlineStyleProperty(CSSPropertyID::Display, "-internal-auto-base(none, inline-block)"_si, IsImportant::Yes);
     ScriptDisallowedScope::EventAllowedScope rootScope { root };
     root.appendChild(trackElement);
 

@@ -33,51 +33,51 @@ namespace TestWebKitAPI {
 
 TEST(WTF, AtomStringCreationFromLiteral)
 {
-    AtomString stringWithTemplate("Template Literal"_s);
-    ASSERT_EQ(strlen("Template Literal"), stringWithTemplate.length());
-    ASSERT_TRUE(stringWithTemplate == "Template Literal"_s);
-    ASSERT_TRUE(stringWithTemplate.string().is8Bit());
+    RefPtr<AtomStringImpl> stringWithTemplate("Template Literal"_atom);
+    ASSERT_EQ(strlen("Template Literal"), length(stringWithTemplate));
+    ASSERT_TRUE(equal(stringWithTemplate, "Template Literal"_s));
+    ASSERT_TRUE(is8Bit(stringWithTemplate));
 
     ASCIILiteral literal("Source literal");
-    AtomString stringFromLiteral(literal);
-    ASSERT_EQ(strlen("Source literal"), stringFromLiteral.length());
-    ASSERT_TRUE(stringFromLiteral == "Source literal"_s);
-    ASSERT_TRUE(stringFromLiteral.string().is8Bit());
-    ASSERT_TRUE(std::bit_cast<uintptr_t>(stringFromLiteral.impl()->span8().data()) == std::bit_cast<uintptr_t>(literal.span().data()));
+    RefPtr<AtomStringImpl> stringFromLiteral(AtomStringImpl::add(literal));
+    ASSERT_EQ(strlen("Source literal"), length(stringFromLiteral));
+    ASSERT_TRUE(equal(stringFromLiteral, "Source literal"_s));
+    ASSERT_TRUE(is8Bit(stringFromLiteral));
+    ASSERT_TRUE(std::bit_cast<uintptr_t>(stringFromLiteral.get()->span8().data()) == std::bit_cast<uintptr_t>(literal.span().data()));
 }
 
 TEST(WTF, AtomStringCreationFromLiteralUniqueness)
 {
-    AtomString string1("Template Literal"_s);
-    AtomString string2("Template Literal"_s);
-    ASSERT_EQ(string1.impl(), string2.impl());
+    RefPtr<AtomStringImpl> string1("Template Literal"_atom);
+    RefPtr<AtomStringImpl> string2("Template Literal"_atom);
+    ASSERT_EQ(string1.get(), string2.get());
 
-    AtomString string3("Template Literal"_s);
-    ASSERT_EQ(string1.impl(), string3.impl());
+    RefPtr<AtomStringImpl> string3("Template Literal"_atom);
+    ASSERT_EQ(string1.get(), string3.get());
 }
 
 TEST(WTF, AtomStringExistingHash)
 {
-    AtomString string1("Template Literal"_s);
-    ASSERT_EQ(string1.existingHash(), string1.impl()->existingHash());
-    AtomString string2;
-    ASSERT_EQ(string2.existingHash(), 0u);
+    RefPtr<AtomStringImpl> string1("Template Literal"_atom);
+    ASSERT_EQ(existingHash(string1), string1.get()->existingHash());
+    RefPtr<AtomStringImpl> string2;
+    ASSERT_EQ(existingHash(string2), 0u);
 }
 
 static inline UTF8CString testAtomStringNumber(double number)
 {
-    return AtomString::number(number).string().utf8();
+    return utf8(AtomStringImpl::number(number));
 }
 
 TEST(WTF, AtomStringCreationFromNullASCIILiteral)
 {
-    AtomString stringFromNull { ASCIILiteral() };
-    ASSERT_TRUE(stringFromNull.isNull());
-    ASSERT_TRUE(stringFromNull.isEmpty());
+    RefPtr<AtomStringImpl> stringFromNull { ASCIILiteral() };
+    ASSERT_TRUE(!stringFromNull);
+    ASSERT_TRUE(isEmpty(stringFromNull));
 
-    AtomString stringFromEmpty(""_s);
-    ASSERT_FALSE(stringFromEmpty.isNull());
-    ASSERT_TRUE(stringFromEmpty.isEmpty());
+    RefPtr<AtomStringImpl> stringFromEmpty(""_atom);
+    ASSERT_FALSE(!stringFromEmpty);
+    ASSERT_TRUE(isEmpty(stringFromEmpty));
 }
 
 TEST(WTF, AtomStringNumberDouble)
@@ -122,47 +122,47 @@ TEST(WTF, AtomStringNumberDouble)
     EXPECT_EQ("1.1e+30"_s, testAtomStringNumber(1.1e30));
 }
 
-static String string16(std::initializer_list<char16_t> characters)
+static RefPtr<StringImpl> string16(std::initializer_list<char16_t> characters)
 {
-    return String { std::span { characters.begin(), characters.size() } };
+    return StringImpl::createOrNull(std::span { characters.begin(), characters.size() });
 }
 
-static String replace(const String& string)
+static RefPtr<StringImpl> replace(StringImpl* string)
 {
-    return replaceUnpairedSurrogatesWithReplacementCharacter(String { string });
+    return replaceUnpairedSurrogatesWithReplacementCharacter(RefPtr { string });
 }
 
 TEST(WTF, ReplaceUnpairedSurrogatesWithReplacementCharacter)
 {
-    EXPECT_TRUE(replace(String { }).isNull());
+    EXPECT_TRUE(!replace(nullptr));
 
-    String latin1 = "abc"_s;
-    EXPECT_EQ(latin1.impl(), replace(latin1).impl());
+    RefPtr<StringImpl> latin1 = "abc"_si;
+    EXPECT_EQ(latin1.get(), replace(latin1.get()).get());
 
-    String wellFormed = string16({ 'a', 0x4E00, 0xD83D, 0xDE00, 'b' });
-    EXPECT_EQ(wellFormed.impl(), replace(wellFormed).impl());
+    RefPtr<StringImpl> wellFormed = string16({ 'a', 0x4E00, 0xD83D, 0xDE00, 'b' });
+    EXPECT_EQ(wellFormed.get(), replace(wellFormed.get()).get());
 
-    EXPECT_EQ(string16({ 'a', 0xFFFD }), replace(string16({ 'a', 0xD800 })));
-    EXPECT_EQ(string16({ 0xFFFD, 'a' }), replace(string16({ 0xDC00, 'a' })));
-    EXPECT_EQ(string16({ 0xFFFD, 0xFFFD }), replace(string16({ 0xDC00, 0xD800 })));
-    EXPECT_EQ(string16({ 0xFFFD, 0xD800, 0xDC00 }), replace(string16({ 0xD800, 0xD800, 0xDC00 })));
+    EXPECT_TRUE(equal(string16({ 'a', 0xFFFD }), replace(string16({ 'a', 0xD800 }).get())));
+    EXPECT_TRUE(equal(string16({ 0xFFFD, 'a' }), replace(string16({ 0xDC00, 'a' }).get())));
+    EXPECT_TRUE(equal(string16({ 0xFFFD, 0xFFFD }), replace(string16({ 0xDC00, 0xD800 }).get())));
+    EXPECT_TRUE(equal(string16({ 0xFFFD, 0xD800, 0xDC00 }), replace(string16({ 0xD800, 0xD800, 0xDC00 }).get())));
 
     Vector<char16_t> longString(FillWith { }, 100, char16_t('a'));
     longString[0] = 0x4E00;
     longString[70] = 0xDBFF;
     auto expected = longString;
     expected[70] = 0xFFFD;
-    EXPECT_EQ(String { expected.span() }, replace(String { longString.span() }));
+    EXPECT_TRUE(equal(StringImpl::createOrNull(expected.span()), replace(StringImpl::createOrNull(longString.span()).get())));
 }
 
 TEST(WTF, ReplaceUnpairedSurrogatesWithReplacementCharacterAtomString)
 {
-    AtomString wellFormed { string16({ 'a', 0xD83D, 0xDE00 }) };
-    EXPECT_EQ(wellFormed.impl(), replaceUnpairedSurrogatesWithReplacementCharacter(AtomString { wellFormed }).impl());
+    RefPtr<AtomStringImpl> wellFormed = AtomStringImpl::add(string16({ 'a', 0xD83D, 0xDE00 }).get());
+    EXPECT_EQ(wellFormed.get(), replaceUnpairedSurrogatesWithReplacementCharacter(RefPtr { wellFormed }).get());
 
-    auto replaced = replaceUnpairedSurrogatesWithReplacementCharacter(AtomString { string16({ 'a', 0xD800 }) });
-    EXPECT_TRUE(replaced.impl()->isAtom());
-    EXPECT_EQ(AtomString { string16({ 'a', 0xFFFD }) }, replaced);
+    auto replaced = replaceUnpairedSurrogatesWithReplacementCharacter(AtomStringImpl::add(string16({ 'a', 0xD800 }).get()));
+    EXPECT_TRUE(replaced->isAtom());
+    EXPECT_EQ(AtomStringImpl::add(string16({ 'a', 0xFFFD }).get()), replaced);
 }
 
 } // namespace TestWebKitAPI

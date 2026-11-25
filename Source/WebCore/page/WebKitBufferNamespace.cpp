@@ -37,7 +37,7 @@ WebKitBufferNamespace::WebKitBufferNamespace(LocalFrame& frame, UserContentProvi
 
 WebKitBufferNamespace::~WebKitBufferNamespace() = default;
 
-WebKitBuffer* WebKitBufferNamespace::namedItem(DOMWrapperWorld& world, const AtomString& name)
+WebKitBuffer* WebKitBufferNamespace::namedItem(DOMWrapperWorld& world, AtomStringImpl* name)
 {
     RefPtr frame = m_frame.get();
     if (!frame)
@@ -45,16 +45,16 @@ WebKitBuffer* WebKitBufferNamespace::namedItem(DOMWrapperWorld& world, const Ato
     RefPtr provider = frame->userContentProvider();
     if (!provider)
         return nullptr;
-    return provider->buffer(world, String(name));
+    return provider->buffer(world, RefPtr<StringImpl>(name));
 }
 
-Vector<AtomString> WebKitBufferNamespace::supportedPropertyNames() const
+Vector<RefPtr<AtomStringImpl>> WebKitBufferNamespace::supportedPropertyNames() const
 {
     // Prevent JS from iterating available matchers.
     return { };
 }
 
-bool WebKitBufferNamespace::isSupportedPropertyName(const AtomString&)
+bool WebKitBufferNamespace::isSupportedPropertyName(AtomStringImpl*)
 {
     // Prevent JS from iterating available matchers.
     return false;

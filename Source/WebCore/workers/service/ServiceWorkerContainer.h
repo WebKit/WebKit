@@ -73,11 +73,11 @@ public:
     ReadyPromise& ready();
 
     using RegistrationOptions = ServiceWorkerRegistrationOptions;
-    void addRegistration(Variant<Ref<TrustedScriptURL>, String>&&, const RegistrationOptions&, Ref<DeferredPromise>&&);
+    void addRegistration(Variant<Ref<TrustedScriptURL>, RefPtr<StringImpl>>&&, const RegistrationOptions&, Ref<DeferredPromise>&&);
     void unregisterRegistration(ServiceWorkerRegistrationIdentifier, DOMPromiseDeferred<IDLBoolean>&&);
     void updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, Ref<DeferredPromise>&&);
 
-    void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
+    void getRegistration(StringImpl* clientURL, Ref<DeferredPromise>&&);
     void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
     void queueTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
@@ -97,7 +97,7 @@ public:
     void getPushSubscription(ServiceWorkerRegistration&, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);
     void getPushPermissionState(ServiceWorkerRegistrationIdentifier, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 #if ENABLE(NOTIFICATIONS)
-    void getNotifications(const URL&, const String&, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>&&);
+    void getNotifications(const URL&, StringImpl*, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>&&);
 #endif
 
     NODELETE ServiceWorkerJob* job(ServiceWorkerJobIdentifier);
@@ -112,7 +112,7 @@ public:
     using NavigationPreloadStatePromise = DOMPromiseDeferred<IDLDictionary<NavigationPreloadState>>;
     void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, VoidPromise&&);
     void disableNavigationPreload(ServiceWorkerRegistrationIdentifier, VoidPromise&&);
-    void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, String&&, VoidPromise&&);
+    void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, RefPtr<StringImpl>&&, VoidPromise&&);
     void getNavigationPreloadState(ServiceWorkerRegistrationIdentifier, NavigationPreloadStatePromise&&);
 
     void addCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, Vector<CookieChangeSubscription>&&, Ref<DeferredPromise>&&);
@@ -124,7 +124,7 @@ public:
 private:
     ServiceWorkerContainer(ScriptExecutionContext*, NavigatorBase&);
 
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    bool addEventListener(AtomStringImpl* eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
     using EventTarget::addEventListener;
 
     void scheduleJob(Ref<ServiceWorkerJob>&&);

@@ -64,7 +64,7 @@ class EnvironmentVariables {
 public:
     explicit EnvironmentVariables(Document&);
 
-    RefPtr<const CustomProperty> valueForName(const AtomString&, std::span<const unsigned> indices = { }) const;
+    RefPtr<const CustomProperty> valueForName(AtomStringImpl*, std::span<const unsigned> indices = { }) const;
 
     void didChangeSafeAreaInsets();
     void didChangeFullscreenInsets();
@@ -82,13 +82,13 @@ private:
         Vector<Ref<const CustomProperty>, 1> values;
     };
 
-    using Values = HashMap<AtomString, Variable>;
-    using LinkParameterValues = HashMap<AtomString, Ref<const CustomProperty>>;
+    using Values = HashMap<RefPtr<AtomStringImpl>, Variable>;
+    using LinkParameterValues = HashMap<RefPtr<AtomStringImpl>, Ref<const CustomProperty>>;
 
     const Values& userAgentDefinedValues() const LIFETIME_BOUND;
     void buildValues();
 
-    const AtomString& nameForVariable(UADefinedVariable) const;
+    const RefPtr<AtomStringImpl>& nameForVariable(UADefinedVariable) const;
     void setValueForVariable(UADefinedVariable, Ref<CSSVariableData>&&);
 
     void updateSafeAreaInsetVariables();

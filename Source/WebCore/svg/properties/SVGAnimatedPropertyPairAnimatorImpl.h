@@ -49,14 +49,14 @@ public:
 private:
     SVGAnimatorType animatorType() const final { return SVGAnimatorType::AngleOrient; }
 
-    bool setToAtEndOfDurationValue(SVGElement&, const String&) final
+    bool setToAtEndOfDurationValue(SVGElement&, StringImpl*) final
     {
         // SVGAnimationOrientTypeFunction is a discrete function which does not have toAtEndOfDuration
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
+    bool setFromAndToValues(SVGElement& targetElement, StringImpl* from, StringImpl* to) final
     {
         auto pairFrom = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(targetElement, from);
         auto pairTo = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(targetElement, to);
@@ -69,7 +69,7 @@ private:
         return true;
     }
 
-    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) final
+    bool setFromAndByValues(SVGElement& targetElement, StringImpl* from, StringImpl* by) final
     {
         if (!setFromAndToValues(targetElement, from, by))
             return false;
@@ -135,10 +135,10 @@ public:
 private:
     SVGAnimatorType animatorType() const final { return SVGAnimatorType::IntegerPair; }
 
-    bool setFromAndToValues(SVGElement&, const String& from, const String& to) final
+    bool setFromAndToValues(SVGElement&, StringImpl* from, StringImpl* to) final
     {
         // In to-animation mode 'from' is empty; the start value is resolved at runtime.
-        auto pairFrom = !from.isEmpty() ? SVGPropertyTraits<std::pair<int, int>>::parse(from) : std::optional<std::pair<int, int>>(std::in_place);
+        auto pairFrom = !isEmpty(from) ? SVGPropertyTraits<std::pair<int, int>>::parse(from) : std::optional<std::pair<int, int>>(std::in_place);
         auto pairTo = SVGPropertyTraits<std::pair<int, int>>::parse(to);
         if (!pairFrom || !pairTo)
             return false;
@@ -151,9 +151,9 @@ private:
         return true;
     }
 
-    bool setFromAndByValues(SVGElement&, const String& from, const String& by) final
+    bool setFromAndByValues(SVGElement&, StringImpl* from, StringImpl* by) final
     {
-        auto pairFrom = !from.isEmpty() ? SVGPropertyTraits<std::pair<int, int>>::parse(from) : std::optional<std::pair<int, int>>(std::in_place);
+        auto pairFrom = !isEmpty(from) ? SVGPropertyTraits<std::pair<int, int>>::parse(from) : std::optional<std::pair<int, int>>(std::in_place);
         auto pairBy = SVGPropertyTraits<std::pair<int, int>>::parse(by);
         if (!pairFrom || !pairBy)
             return false;
@@ -166,7 +166,7 @@ private:
         return true;
     }
 
-    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) final
+    bool setToAtEndOfDurationValue(SVGElement&, StringImpl* toAtEndOfDuration) final
     {
         auto pair = SVGPropertyTraits<std::pair<int, int>>::parse(toAtEndOfDuration);
         if (!pair)
@@ -191,10 +191,10 @@ public:
 private:
     SVGAnimatorType animatorType() const final { return SVGAnimatorType::NumberPair; }
 
-    bool setFromAndToValues(SVGElement&, const String& from, const String& to) final
+    bool setFromAndToValues(SVGElement&, StringImpl* from, StringImpl* to) final
     {
         // In to-animation mode 'from' is empty; the start value is resolved at runtime.
-        auto pairFrom = !from.isEmpty() ? SVGPropertyTraits<std::pair<float, float>>::parse(from) : std::optional<std::pair<float, float>>(std::in_place);
+        auto pairFrom = !isEmpty(from) ? SVGPropertyTraits<std::pair<float, float>>::parse(from) : std::optional<std::pair<float, float>>(std::in_place);
         auto pairTo = SVGPropertyTraits<std::pair<float, float>>::parse(to);
         if (!pairFrom || !pairTo)
             return false;
@@ -207,9 +207,9 @@ private:
         return true;
     }
 
-    bool setFromAndByValues(SVGElement&, const String& from, const String& by) final
+    bool setFromAndByValues(SVGElement&, StringImpl* from, StringImpl* by) final
     {
-        auto pairFrom = !from.isEmpty() ? SVGPropertyTraits<std::pair<float, float>>::parse(from) : std::optional<std::pair<float, float>>(std::in_place);
+        auto pairFrom = !isEmpty(from) ? SVGPropertyTraits<std::pair<float, float>>::parse(from) : std::optional<std::pair<float, float>>(std::in_place);
         auto pairBy = SVGPropertyTraits<std::pair<float, float>>::parse(by);
         if (!pairFrom || !pairBy)
             return false;
@@ -222,7 +222,7 @@ private:
         return true;
     }
 
-    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) final
+    bool setToAtEndOfDurationValue(SVGElement&, StringImpl* toAtEndOfDuration) final
     {
         auto pair = SVGPropertyTraits<std::pair<float, float>>::parse(toAtEndOfDuration);
         if (!pair)

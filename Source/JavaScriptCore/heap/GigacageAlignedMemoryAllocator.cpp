@@ -35,7 +35,7 @@ namespace JSC {
 GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator(Gigacage::Kind kind)
     : m_kind(kind)
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
-    , m_heap(makeString("GigacageAlignedMemoryAllocator "_s, m_kind).utf8().legacyCStringPointer())
+    , m_heap(utf8(makeString("GigacageAlignedMemoryAllocator "_s, m_kind)).legacyCStringPointer())
 #endif
 {
 }

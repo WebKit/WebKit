@@ -36,19 +36,22 @@ namespace WebKit {
 
 class WebPageNetworkParameters {
 public:
-    WebPageNetworkParameters(const String& attributedBundleIdentifier)
+    WebPageNetworkParameters(StringImpl* attributedBundleIdentifier)
         : m_attributedBundleIdentifier(attributedBundleIdentifier) { }
 
     WebPageNetworkParameters() = default;
     WebPageNetworkParameters(WTF::HashTableDeletedValueType)
         : m_attributedBundleIdentifier(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_attributedBundleIdentifier.isHashTableDeletedValue(); }
-    unsigned hash() const { return m_attributedBundleIdentifier.hash(); }
-    friend bool operator==(const WebPageNetworkParameters&, const WebPageNetworkParameters&) = default;
+    unsigned hash() const { return WTF::hash(m_attributedBundleIdentifier); }
+    friend bool operator==(const WebPageNetworkParameters& a, const WebPageNetworkParameters& b)
+    {
+        return contentEquals(a.m_attributedBundleIdentifier, b.m_attributedBundleIdentifier);
+    }
 
-    const String& attributedBundleIdentifier() const LIFETIME_BOUND { return m_attributedBundleIdentifier; }
+    const RefPtr<StringImpl>& attributedBundleIdentifier() const LIFETIME_BOUND { return m_attributedBundleIdentifier; }
 private:
-    String m_attributedBundleIdentifier;
+    RefPtr<StringImpl> m_attributedBundleIdentifier;
 };
 
 } // namespace WebKit

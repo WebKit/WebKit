@@ -44,26 +44,26 @@ public:
 };
 
 struct ExpectedParts {
-    String protocol;
-    String user;
-    String password;
-    String host;
+    RefPtr<StringImpl> protocol;
+    RefPtr<StringImpl> user;
+    RefPtr<StringImpl> password;
+    RefPtr<StringImpl> host;
     unsigned short port;
-    String path;
-    String query;
-    String fragment;
-    String string;
+    RefPtr<StringImpl> path;
+    RefPtr<StringImpl> query;
+    RefPtr<StringImpl> fragment;
+    RefPtr<StringImpl> string;
 
     bool isInvalid() const
     {
-        return protocol.isEmpty()
-            && user.isEmpty()
-            && password.isEmpty()
-            && host.isEmpty()
+        return isEmpty(protocol)
+            && isEmpty(user)
+            && isEmpty(password)
+            && isEmpty(host)
             && !port
-            && path.isEmpty()
-            && query.isEmpty()
-            && fragment.isEmpty();
+            && isEmpty(path)
+            && isEmpty(query)
+            && isEmpty(fragment);
     }
 };
 
@@ -72,17 +72,17 @@ bool eq(T&& s1, U&& s2)
 {
     // Compared as UTF-8 bytes, matching the returned condition, so that a null String
     // matches an empty one.
-    EXPECT_EQ(s1.utf8(), s2.utf8());
-    return s1.utf8() == s2.utf8();
+    EXPECT_EQ(StringView { s1 }.utf8(), StringView { s2 }.utf8());
+    return StringView { s1 }.utf8() == StringView { s2 }.utf8();
 }
 
-static String insertTabAtLocation(StringView string, size_t location)
+static RefPtr<StringImpl> insertTabAtLocation(StringView string, size_t location)
 {
     ASSERT(location <= string.length());
     return makeString(string.left(location), '\t', string.substring(location));
 }
 
-static ExpectedParts invalidParts(const String& urlStringWithTab)
+static ExpectedParts invalidParts(StringImpl* urlStringWithTab)
 {
     return {emptyString(), emptyString(), emptyString(), emptyString(), 0, emptyString(), emptyString(), emptyString(), urlStringWithTab};
 }
@@ -92,7 +92,7 @@ enum class TestTabs : bool { No, Yes };
 // Inserting tabs between surrogate pairs changes the encoded value instead of being skipped by the URLParser.
 const TestTabs testTabsValueForSurrogatePairs = TestTabs::No;
 
-static void checkURL(const String& urlString, const PAL::TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+static void checkURL(StringImpl* urlString, const PAL::TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
     auto url = URL({ }, urlString, encoding);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
@@ -108,15 +108,15 @@ static void checkURL(const String& urlString, const PAL::TextEncoding* encoding,
     if (testTabs == TestTabs::No)
         return;
     
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
+    for (size_t i = 0; i < length(urlString); ++i) {
+        RefPtr<StringImpl> urlStringWithTab = insertTabAtLocation(urlString, i);
         checkURL(urlStringWithTab, encoding,
             parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
             TestTabs::No);
     }
 }
 
-static void checkURL(const String& urlString, const String& baseURLString, const PAL::TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+static void checkURL(StringImpl* urlString, StringImpl* baseURLString, const PAL::TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
     auto url = URL(URL({ }, baseURLString), urlString, encoding);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
@@ -132,8 +132,8 @@ static void checkURL(const String& urlString, const String& baseURLString, const
     if (testTabs == TestTabs::No)
         return;
     
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
+    for (size_t i = 0; i < length(urlString); ++i) {
+        RefPtr<StringImpl> urlStringWithTab = insertTabAtLocation(urlString, i);
         checkURL(urlStringWithTab, baseURLString, encoding,
             parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
             TestTabs::No);
@@ -145,34 +145,34 @@ TEST_F(URLParserTextEncodingTest, QueryEncoding)
     checkURL(utf16String(u"http://host?ß😍#ß😍"), nullptr, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "%C3%9F%F0%9F%98%8D"_s, "%C3%9F%F0%9F%98%8D"_s, utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D")}, testTabsValueForSurrogatePairs);
 
     PAL::TextEncoding latin1("latin1"_s);
-    checkURL("http://host/?query with%20spaces"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query%20with%20spaces"_s, emptyString(), "http://host/?query%20with%20spaces"_s});
-    checkURL("http://host/?query"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, emptyString(), "http://host/?query"_s});
-    checkURL("http://host/?\tquery"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, emptyString(), "http://host/?query"_s});
-    checkURL("http://host/?q\tuery"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, emptyString(), "http://host/?query"_s});
-    checkURL("http://host/?query with SpAcEs#fragment"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query%20with%20SpAcEs"_s, "fragment"_s, "http://host/?query%20with%20SpAcEs#fragment"_s});
-    checkURL("http://host/?que\rry\t\r\n#fragment"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, "fragment"_s, "http://host/?query#fragment"_s});
+    checkURL("http://host/?query with%20spaces"_si, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query%20with%20spaces"_s, emptyString(), "http://host/?query%20with%20spaces"_s});
+    checkURL("http://host/?query"_si, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, emptyString(), "http://host/?query"_s});
+    checkURL("http://host/?\tquery"_si, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, emptyString(), "http://host/?query"_s});
+    checkURL("http://host/?q\tuery"_si, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, emptyString(), "http://host/?query"_s});
+    checkURL("http://host/?query with SpAcEs#fragment"_si, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query%20with%20SpAcEs"_s, "fragment"_s, "http://host/?query%20with%20SpAcEs#fragment"_s});
+    checkURL("http://host/?que\rry\t\r\n#fragment"_si, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, "fragment"_s, "http://host/?query#fragment"_s});
 
-    PAL::TextEncoding unrecognized(String("unrecognized invalid encoding name"_s));
-    checkURL("http://host/?query"_s, &unrecognized, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, emptyString(), emptyString(), "http://host/?"_s});
-    checkURL("http://host/?"_s, &unrecognized, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, emptyString(), emptyString(), "http://host/?"_s});
+    PAL::TextEncoding unrecognized("unrecognized invalid encoding name"_s);
+    checkURL("http://host/?query"_si, &unrecognized, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, emptyString(), emptyString(), "http://host/?"_s});
+    checkURL("http://host/?"_si, &unrecognized, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, emptyString(), emptyString(), "http://host/?"_s});
 
     PAL::TextEncoding iso88591("ISO-8859-1"_s);
-    String withUmlauts = utf16String<4>({0xDC, 0x430, 0x451, '\0'});
+    RefPtr<StringImpl> withUmlauts = utf16String<4>({0xDC, 0x430, 0x451, '\0'});
     checkURL(makeString("ws://host/path?"_s, withUmlauts), &iso88591, {"ws"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, emptyString(), "ws://host/path?%C3%9C%D0%B0%D1%91"_s});
     checkURL(makeString("wss://host/path?"_s, withUmlauts), &iso88591, {"wss"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, emptyString(), "wss://host/path?%C3%9C%D0%B0%D1%91"_s});
     checkURL(makeString("asdf://host/path?"_s, withUmlauts), &iso88591, {"asdf"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, emptyString(), "asdf://host/path?%C3%9C%D0%B0%D1%91"_s});
     checkURL(makeString("https://host/path?"_s, withUmlauts), &iso88591, {"https"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%DC%26%231072%3B%26%231105%3B"_s, emptyString(), "https://host/path?%DC%26%231072%3B%26%231105%3B"_s});
     checkURL(makeString("gopher://host/path?"_s, withUmlauts), &iso88591, {"gopher"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, emptyString(), "gopher://host/path?%C3%9C%D0%B0%D1%91"_s});
-    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "ws://example.com/"_s, &iso88591, {"ws"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "ws://example.com/path?%C3%9C%D0%B0%D1%91#fragment"_s});
-    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "wss://example.com/"_s, &iso88591, {"wss"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "wss://example.com/path?%C3%9C%D0%B0%D1%91#fragment"_s});
-    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "asdf://example.com/"_s, &iso88591, {"asdf"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "asdf://example.com/path?%C3%9C%D0%B0%D1%91#fragment"_s});
-    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "https://example.com/"_s, &iso88591, {"https"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%DC%26%231072%3B%26%231105%3B"_s, "fragment"_s, "https://example.com/path?%DC%26%231072%3B%26%231105%3B#fragment"_s});
-    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "gopher://example.com/"_s, &iso88591, {"gopher"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "gopher://example.com/path?%C3%9C%D0%B0%D1%91#fragment"_s});
-    checkURL(makeString("gopher://host/path?"_s, withUmlauts, "#fragment"_s), "asdf://example.com/?doesntmatter"_s, &iso88591, {"gopher"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "gopher://host/path?%C3%9C%D0%B0%D1%91#fragment"_s});
-    checkURL(makeString("asdf://host/path?"_s, withUmlauts, "#fragment"_s), "http://example.com/?doesntmatter"_s, &iso88591, {"asdf"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "asdf://host/path?%C3%9C%D0%B0%D1%91#fragment"_s});
+    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "ws://example.com/"_si, &iso88591, {"ws"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "ws://example.com/path?%C3%9C%D0%B0%D1%91#fragment"_s});
+    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "wss://example.com/"_si, &iso88591, {"wss"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "wss://example.com/path?%C3%9C%D0%B0%D1%91#fragment"_s});
+    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "asdf://example.com/"_si, &iso88591, {"asdf"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "asdf://example.com/path?%C3%9C%D0%B0%D1%91#fragment"_s});
+    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "https://example.com/"_si, &iso88591, {"https"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%DC%26%231072%3B%26%231105%3B"_s, "fragment"_s, "https://example.com/path?%DC%26%231072%3B%26%231105%3B#fragment"_s});
+    checkURL(makeString("/path?"_s, withUmlauts, "#fragment"_s), "gopher://example.com/"_si, &iso88591, {"gopher"_s, emptyString(), emptyString(), "example.com"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "gopher://example.com/path?%C3%9C%D0%B0%D1%91#fragment"_s});
+    checkURL(makeString("gopher://host/path?"_s, withUmlauts, "#fragment"_s), "asdf://example.com/?doesntmatter"_si, &iso88591, {"gopher"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "gopher://host/path?%C3%9C%D0%B0%D1%91#fragment"_s});
+    checkURL(makeString("asdf://host/path?"_s, withUmlauts, "#fragment"_s), "http://example.com/?doesntmatter"_si, &iso88591, {"asdf"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, "fragment"_s, "asdf://host/path?%C3%9C%D0%B0%D1%91#fragment"_s});
 
-    checkURL("http://host/pa'th?qu'ery#fr'agment"_s, nullptr, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/pa'th"_s, "qu%27ery"_s, "fr'agment"_s, "http://host/pa'th?qu%27ery#fr'agment"_s});
-    checkURL("asdf://host/pa'th?qu'ery#fr'agment"_s, nullptr, {"asdf"_s, emptyString(), emptyString(), "host"_s, 0, "/pa'th"_s, "qu'ery"_s, "fr'agment"_s, "asdf://host/pa'th?qu'ery#fr'agment"_s});
+    checkURL("http://host/pa'th?qu'ery#fr'agment"_si, nullptr, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/pa'th"_s, "qu%27ery"_s, "fr'agment"_s, "http://host/pa'th?qu%27ery#fr'agment"_s});
+    checkURL("asdf://host/pa'th?qu'ery#fr'agment"_si, nullptr, {"asdf"_s, emptyString(), emptyString(), "host"_s, 0, "/pa'th"_s, "qu'ery"_s, "fr'agment"_s, "asdf://host/pa'th?qu'ery#fr'agment"_s});
     // FIXME: Add more tests with other encodings and things like non-ascii characters, emoji and unmatched surrogate pairs.
 }
 

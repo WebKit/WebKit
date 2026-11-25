@@ -41,7 +41,7 @@ public:
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
     WKBaseScrollView *scrollView() const;
-    String scrollbarStateForOrientation(WebCore::ScrollbarOrientation) const override;
+    RefPtr<StringImpl> scrollbarStateForOrientation(WebCore::ScrollbarOrientation) const override;
 
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);

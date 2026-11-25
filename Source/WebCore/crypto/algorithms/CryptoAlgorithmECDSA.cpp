@@ -109,22 +109,22 @@ void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, con
     case CryptoKeyFormat::Jwk: {
         JsonWebKey key = WTF::move(std::get<JsonWebKey>(data));
 
-        if (usages && ((!key.d.isNull() && (usages ^ CryptoKeyUsageSign)) || (key.d.isNull() && (usages ^ CryptoKeyUsageVerify)))) {
+        if (usages && ((!!key.d && (usages ^ CryptoKeyUsageSign)) || (!key.d && (usages ^ CryptoKeyUsageVerify)))) {
             exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
-        if (usages && !key.use.isNull() && key.use != "sig"_s) {
+        if (usages && !!key.use && !equal(key.use, "sig"_s)) {
             exceptionCallback(ExceptionCode::DataError);
             return;
         }
 
         bool isMatched = false;
-        if (key.crv == CryptoAlgorithmECDSAInternal::P256)
-            isMatched = key.alg.isNull() || key.alg == CryptoAlgorithmECDSAInternal::ALG256;
-        if (key.crv == CryptoAlgorithmECDSAInternal::P384)
-            isMatched = key.alg.isNull() || key.alg == CryptoAlgorithmECDSAInternal::ALG384;
-        if (key.crv == CryptoAlgorithmECDSAInternal::P521)
-            isMatched = key.alg.isNull() || key.alg == CryptoAlgorithmECDSAInternal::ALG512;
+        if (equal(key.crv, CryptoAlgorithmECDSAInternal::P256))
+            isMatched = !key.alg || equal(key.alg, CryptoAlgorithmECDSAInternal::ALG256);
+        if (equal(key.crv, CryptoAlgorithmECDSAInternal::P384))
+            isMatched = !key.alg || equal(key.alg, CryptoAlgorithmECDSAInternal::ALG384);
+        if (equal(key.crv, CryptoAlgorithmECDSAInternal::P521))
+            isMatched = !key.alg || equal(key.alg, CryptoAlgorithmECDSAInternal::ALG512);
         if (!isMatched) {
             exceptionCallback(ExceptionCode::DataError);
             return;

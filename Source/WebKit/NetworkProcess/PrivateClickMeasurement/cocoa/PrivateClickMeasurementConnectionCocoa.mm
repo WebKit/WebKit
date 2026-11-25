@@ -58,7 +58,7 @@ void Connection::connectionReceivedEvent(xpc_object_t request)
 {
     if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
         return;
-    String debugMessage = xpcDictionaryGetString(request, protocolDebugMessageKey);
+    RefPtr<StringImpl> debugMessage = xpcDictionaryGetString(request, protocolDebugMessageKey);
     if (!debugMessage)
         return;
     auto messageLevel = static_cast<JSC::MessageLevel>(xpc_dictionary_get_uint64(request, protocolDebugMessageLevelKey));

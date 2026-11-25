@@ -35,37 +35,37 @@ class Storage;
 class StorageEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(StorageEvent);
 public:
-    NODELETE static Ref<StorageEvent> create(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
+    NODELETE static Ref<StorageEvent> create(AtomStringImpl* type, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* url, Storage* storageArea);
     NODELETE static Ref<StorageEvent> createForBindings();
 
     struct Init : EventInit {
-        String key;
-        String oldValue;
-        String newValue;
-        String url;
+        RefPtr<StringImpl> key;
+        RefPtr<StringImpl> oldValue;
+        RefPtr<StringImpl> newValue;
+        RefPtr<StringImpl> url;
         RefPtr<Storage> storageArea;
     };
 
-    NODELETE static Ref<StorageEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<StorageEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
     virtual ~StorageEvent();
 
-    const String& key() const LIFETIME_BOUND { return m_key; }
-    const String& oldValue() const LIFETIME_BOUND { return m_oldValue; }
-    const String& newValue() const LIFETIME_BOUND { return m_newValue; }
-    const String& url() const LIFETIME_BOUND { return m_url; }
+    const RefPtr<StringImpl>& key() const LIFETIME_BOUND { return m_key; }
+    const RefPtr<StringImpl>& oldValue() const LIFETIME_BOUND { return m_oldValue; }
+    const RefPtr<StringImpl>& newValue() const LIFETIME_BOUND { return m_newValue; }
+    const RefPtr<StringImpl>& url() const LIFETIME_BOUND { return m_url; }
     Storage* storageArea() const { return m_storageArea; }
 
-    void initStorageEvent(const AtomString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
+    void initStorageEvent(AtomStringImpl* type, bool canBubble, bool cancelable, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* url, Storage* storageArea);
 
 private:
     StorageEvent();
-    StorageEvent(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
-    StorageEvent(const AtomString&, Init&&, IsTrusted);
+    StorageEvent(AtomStringImpl* type, StringImpl* key, StringImpl* oldValue, StringImpl* newValue, StringImpl* url, Storage* storageArea);
+    StorageEvent(AtomStringImpl*, Init&&, IsTrusted);
 
-    String m_key;
-    String m_oldValue;
-    String m_newValue;
-    String m_url;
+    RefPtr<StringImpl> m_key;
+    RefPtr<StringImpl> m_oldValue;
+    RefPtr<StringImpl> m_newValue;
+    RefPtr<StringImpl> m_url;
     RefPtr<Storage> m_storageArea;
 };
 

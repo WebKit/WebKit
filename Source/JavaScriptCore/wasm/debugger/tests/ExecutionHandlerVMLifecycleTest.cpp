@@ -189,8 +189,8 @@ static void vmFullLifecycleTask()
         // Execute a trivial script so the VM transitions through active state.
         {
             JSC::JSLockHolder locker(vm);
-            JSC::SourceOrigin origin(URL({ }, "lifecycle-test"_s));
-            JSC::SourceCode sourceCode = JSC::makeSource("(function() { var x = 0; for (var i = 0; i < 100000; ++i) x += i; return x; })()"_s, origin, JSC::SourceTaintedOrigin::Untainted);
+            JSC::SourceOrigin origin(URL({ }, "lifecycle-test"_si));
+            JSC::SourceCode sourceCode = JSC::makeSource("(function() { var x = 0; for (var i = 0; i < 100000; ++i) x += i; return x; })()"_si, origin, JSC::SourceTaintedOrigin::Untainted);
             NakedPtr<JSC::Exception> exception;
             JSC::evaluate(globalObject, sourceCode, JSC::JSValue(), exception);
         }

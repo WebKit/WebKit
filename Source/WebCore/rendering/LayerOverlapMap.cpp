@@ -110,7 +110,7 @@ public:
 
     bool isEmpty() const;
     
-    String dump(unsigned) const;
+    RefPtr<StringImpl> dump(unsigned) const;
 
     NODELETE const RenderLayer& scopeLayer() const { return m_scopeLayer.get(); }
 
@@ -296,7 +296,7 @@ void OverlapMapContainer::recursiveOutputToStream(TextStream& ts, const Clipping
         recursiveOutputToStream(ts, childScope, depth + 1);
 }
 
-String OverlapMapContainer::dump(unsigned indent) const
+RefPtr<StringImpl> OverlapMapContainer::dump(unsigned indent) const
 {
     TextStream multilineStream;
     multilineStream.increaseIndent(indent);

@@ -54,9 +54,9 @@ private:
     }
 
     Kind kind() const final { return Kind::Main; }
-    std::optional<String> trackUID() const { return m_streamTrack->id(); }
-    String label() const final { return m_streamTrack->label(); }
-    String language() const final { return emptyString(); }
+    std::optional<RefPtr<StringImpl>> trackUID() const { return m_streamTrack->id(); }
+    RefPtr<StringImpl> label() const final { return m_streamTrack->label(); }
+    RefPtr<StringImpl> language() const final { return emptyString(); }
     int trackIndex() const final { return m_index; }
 
     const Ref<MediaStreamTrackPrivate> m_streamTrack;

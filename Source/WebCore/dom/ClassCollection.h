@@ -52,20 +52,20 @@ namespace WebCore {
 class ClassCollection final : public CachedHTMLCollection<ClassCollection> {
     WTF_MAKE_TZONE_ALLOCATED(ClassCollection);
 public:
-    static Ref<ClassCollection> create(ContainerNode&, CollectionType, const AtomString& classNames);
+    static Ref<ClassCollection> create(ContainerNode&, CollectionType, AtomStringImpl* classNames);
 
     virtual ~ClassCollection();
 
     bool elementMatches(Element&) const;
 
 private:
-    ClassCollection(ContainerNode& rootNode, CollectionType, const AtomString& classNames);
+    ClassCollection(ContainerNode& rootNode, CollectionType, AtomStringImpl* classNames);
 
     SpaceSplitString m_classNames;
-    AtomString m_originalClassNames;
+    RefPtr<AtomStringImpl> m_originalClassNames;
 };
 
-inline ClassCollection::ClassCollection(ContainerNode& rootNode, CollectionType type, const AtomString& classNames)
+inline ClassCollection::ClassCollection(ContainerNode& rootNode, CollectionType type, AtomStringImpl* classNames)
     : CachedHTMLCollection(rootNode, type)
     , m_classNames(classNames, rootNode.document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No)
     , m_originalClassNames(classNames)

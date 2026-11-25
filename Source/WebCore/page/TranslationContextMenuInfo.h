@@ -37,7 +37,7 @@ enum class TranslationContextMenuMode : bool { NonEditable, Editable };
 enum class TranslationContextMenuSource : bool { Unspecified, Image };
 
 struct TranslationContextMenuInfo {
-    String text;
+    RefPtr<StringImpl> text;
     IntRect selectionBoundsInRootView;
     IntPoint locationInRootView;
     TranslationContextMenuMode mode { TranslationContextMenuMode::NonEditable };

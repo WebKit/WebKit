@@ -76,8 +76,8 @@ void PDFPluginAnnotation::attach(Element* parent)
     lazyInitialize(m_element, element.copyRef());
 
     if (!element->hasClass())
-        element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);
-    element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, "true"_s);
+        element->setAttributeWithoutSynchronization(classAttr, "annotation"_atom);
+    element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, "true"_atom);
     element->addEventListener(eventNames().changeEvent, *m_eventListener);
     element->addEventListener(eventNames().blurEvent, *m_eventListener);
 

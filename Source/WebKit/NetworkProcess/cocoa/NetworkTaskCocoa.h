@@ -79,7 +79,7 @@ protected:
 #endif
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
     static NSString *lastRemoteIPAddress(NSURLSessionTask *);
-    static WebCore::RegistrableDomain lastCNAMEDomain(String);
+    static WebCore::RegistrableDomain lastCNAMEDomain(RefPtr<StringImpl>);
     WebCore::ThirdPartyCookieBlockingDecision requestThirdPartyCookieBlockingDecision(const WebCore::ResourceRequest&) const;
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     bool isOptInCookiePartitioningEnabled() const;

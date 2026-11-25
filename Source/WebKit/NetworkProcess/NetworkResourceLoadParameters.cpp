@@ -40,7 +40,7 @@ void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
     if (!request.url().protocolIsFile())
         return;
 
-    String path = request.url().fileSystemPath();
+    RefPtr<StringImpl> path = request.url().fileSystemPath();
     // Log the file-load sandbox extension mint outcome at release level for diagnosis when it fails.
 #if HAVE(AUDIT_TOKEN)
     if (auto networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken()) {
@@ -48,16 +48,16 @@ void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
         if (handle)
             resourceSandboxExtension = WTF::move(*handle);
         else
-            RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandleForReadByAuditToken(networkProcess) failed for '%" PRIVATE_LOG_STRING "'", path.utf8());
+            RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandleForReadByAuditToken(networkProcess) failed for '%" PRIVATE_LOG_STRING "'", utf8(path));
         return;
     }
-    RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, network process audit token unavailable; falling back to non-targeted read handle for '%" PRIVATE_LOG_STRING "'", path.utf8());
+    RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, network process audit token unavailable; falling back to non-targeted read handle for '%" PRIVATE_LOG_STRING "'", utf8(path));
 #endif
     auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly);
     if (handle)
         resourceSandboxExtension = WTF::move(*handle);
     else
-        RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandle(ReadOnly) failed for '%" PRIVATE_LOG_STRING "'", path.utf8());
+        RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandle(ReadOnly) failed for '%" PRIVATE_LOG_STRING "'", utf8(path));
 }
 
 RefPtr<SecurityOrigin> NetworkResourceLoadParameters::parentOrigin() const

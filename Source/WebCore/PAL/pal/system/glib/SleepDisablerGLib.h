@@ -41,7 +41,7 @@ namespace PAL {
 
 class SleepDisablerGLib final : public SleepDisabler {
 public:
-    SleepDisablerGLib(const String&, Type);
+    SleepDisablerGLib(StringImpl*, Type);
     virtual ~SleepDisablerGLib();
 
 private:
@@ -57,7 +57,7 @@ private:
     unsigned m_screenSaverCookie { 0 };
     GUniqueOutPtr<char> m_inhibitPortalRequestObjectPath;
     GRefPtr<GCancellable> m_cancellable;
-    String m_reason;
+    RefPtr<StringImpl> m_reason;
 };
 
 } // namespace PAL

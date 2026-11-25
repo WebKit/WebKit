@@ -328,7 +328,7 @@ public:
     bool dumpCodeOrigin(PrintStream&, const char* prefix, Node*& previousNode, Node* currentNode, DumpContext*);
 
     void dumpAndReleaseIonGraph();
-    void appendIonGraphPass(const String& passName);
+    void appendIonGraphPass(ASCIILiteral passName);
 
     AddSpeculationMode addSpeculationMode(Node* add, bool leftShouldSpeculateInt32, bool rightShouldSpeculateInt32, PredictionPass pass)
     {
@@ -1464,8 +1464,8 @@ public:
 
     bool isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue&);
 
-    const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
-    const ConcatKeyAtomStringCache* tryAddConcatKeyAtomStringCache(const String&, const String&, ConcatKeyAtomStringCache::Mode);
+    const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(StringImpl*);
+    const ConcatKeyAtomStringCache* tryAddConcatKeyAtomStringCache(StringImpl*, StringImpl*, ConcatKeyAtomStringCache::Mode);
 
     bool afterFixup() { return m_planStage >= PlanStage::AfterFixup; }
 
@@ -1496,7 +1496,7 @@ public:
     Vector<SimpleJumpTable> m_switchJumpTables;
     Vector<const UnlinkedStringJumpTable*> m_unlinkedStringSwitchJumpTables;
     Vector<StringJumpTable> m_stringSwitchJumpTables;
-    HashMap<String, std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
+    HashMap<RefPtr<StringImpl>, std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
     Vector<std::unique_ptr<ConcatKeyAtomStringCache>> m_concatKeyAtomStringCaches;
 
     HashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
@@ -1586,8 +1586,8 @@ public:
     HashMap<unsigned, BytecodeIndex> m_entrypointIndexToCatchBytecodeIndex;
     Vector<CatchEntrypointData> m_catchEntrypoints;
 
-    HashSet<String> m_localStrings;
-    HashSet<String> m_copiedStrings;
+    HashSet<RefPtr<StringImpl>> m_localStrings;
+    HashSet<RefPtr<StringImpl>> m_copiedStrings;
 
     Vector<LinkerIR::Value> m_constantPool;
     HashMap<LinkerIR::Value, LinkerIR::Constant, LinkerIR::ValueHash, LinkerIR::ValueTraits> m_constantPoolMap;

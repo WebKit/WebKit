@@ -1,0 +1,21 @@
+Tests that DOMImplementation.createDocument() picks the document class from the namespace's string content, also when the namespace string is built at runtime.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS svgDocument.contentType is "image/svg+xml"
+PASS svgDocument.documentElement.namespaceURI is "http://www.w3.org/2000/svg"
+PASS svgDocument.documentElement instanceof SVGSVGElement is true
+PASS xhtmlDocument.contentType is "application/xhtml+xml"
+PASS xhtmlDocument.documentElement.namespaceURI is "http://www.w3.org/1999/xhtml"
+PASS xhtmlDocument.documentElement instanceof HTMLHtmlElement is true
+PASS mathmlDocument.contentType is "application/xml"
+PASS otherDocument.contentType is "application/xml"
+PASS upperCaseDocument.contentType is "application/xml"
+PASS nullNamespaceDocument.contentType is "application/xml"
+PASS noRootDocument.contentType is "image/svg+xml"
+PASS noRootDocument.documentElement is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -87,14 +87,14 @@ public:
     ~RuleSet();
 
     typedef Vector<RuleData, 1> RuleDataVector;
-    typedef HashMap<AtomString, std::unique_ptr<RuleDataVector>> AtomRuleMap;
+    typedef HashMap<RefPtr<AtomStringImpl>, std::unique_ptr<RuleDataVector>> AtomRuleMap;
 
     void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex);
     void addPageRule(StyleRulePage&);
     void setViewTransitionRule(StyleRuleViewTransition&);
     NODELETE RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
 
-    void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
+    void addToRuleSet(AtomStringImpl* key, AtomRuleMap&, const RuleData&);
     void shrinkToFit();
 
     bool hasViewportDependentMediaQueries() const { return m_hasViewportDependentMediaQueries; }
@@ -103,13 +103,13 @@ public:
 
     const RuleFeatureSet& features() const LIFETIME_BOUND { return m_features; }
 
-    const RuleDataVector* idRules(const AtomString& key) const LIFETIME_BOUND { return m_idRules.get(key); }
-    const RuleDataVector* classRules(const AtomString& key) const LIFETIME_BOUND { return m_classRules.get(key); }
-    const RuleDataVector* attributeRules(const AtomString& key, bool isHTMLName) const LIFETIME_BOUND;
-    const RuleDataVector* tagRules(const AtomString& key, bool isHTMLName) const LIFETIME_BOUND;
-    const RuleDataVector* userAgentPartRules(const AtomString& key) const LIFETIME_BOUND { return m_userAgentPartRules.get(key); }
+    const RuleDataVector* idRules(AtomStringImpl* key) const LIFETIME_BOUND { return m_idRules.get(key); }
+    const RuleDataVector* classRules(AtomStringImpl* key) const LIFETIME_BOUND { return m_classRules.get(key); }
+    const RuleDataVector* attributeRules(AtomStringImpl* key, bool isHTMLName) const LIFETIME_BOUND;
+    const RuleDataVector* tagRules(AtomStringImpl* key, bool isHTMLName) const LIFETIME_BOUND;
+    const RuleDataVector* userAgentPartRules(AtomStringImpl* key) const LIFETIME_BOUND { return m_userAgentPartRules.get(key); }
     const RuleDataVector& linkPseudoClassRules() const LIFETIME_BOUND { return m_linkPseudoClassRules; }
-    const RuleDataVector* namedPseudoElementRules(const AtomString& key) const LIFETIME_BOUND { return m_namedPseudoElementRules.get(key); }
+    const RuleDataVector* namedPseudoElementRules(AtomStringImpl* key) const LIFETIME_BOUND { return m_namedPseudoElementRules.get(key); }
 #if ENABLE(VIDEO)
     const RuleDataVector& cuePseudoRules() const LIFETIME_BOUND { return m_cuePseudoRules; }
 #endif
@@ -153,13 +153,13 @@ public:
     bool hasScopeRules() const { return !m_scopeRules.isEmpty(); }
     Vector<Ref<const StyleRuleScope>> scopeRulesFor(const RuleData&) const;
 
-    const RefPtr<const StyleRulePositionTry> positionTryRuleForName(const AtomString&) const;
+    const RefPtr<const StyleRulePositionTry> positionTryRuleForName(AtomStringImpl*) const;
 
 #if ENABLE(SPATIAL_PORTAL)
-    NODELETE RefPtr<const StyleRuleEnvironmentMap> environmentMapRuleForName(const AtomString&) const;
+    NODELETE RefPtr<const StyleRuleEnvironmentMap> environmentMapRuleForName(AtomStringImpl*) const;
 #endif
 
-    WTF::String selectorsForDebugging() const;
+    RefPtr<StringImpl> selectorsForDebugging() const;
 
 private:
     friend class RuleSetBuilder;
@@ -271,10 +271,10 @@ private:
     Vector<ScopeRuleIdentifier> m_scopeRuleIdentifierForRulePosition;
 
     // @position-try
-    HashMap<AtomString, Ref<const StyleRulePositionTry>> m_positionTryRules;
+    HashMap<RefPtr<AtomStringImpl>, Ref<const StyleRulePositionTry>> m_positionTryRules;
 
 #if ENABLE(SPATIAL_PORTAL)
-    HashMap<AtomString, Ref<const StyleRuleEnvironmentMap>> m_environmentMapRules;
+    HashMap<RefPtr<AtomStringImpl>, Ref<const StyleRuleEnvironmentMap>> m_environmentMapRules;
 #endif
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
@@ -284,13 +284,13 @@ private:
     bool m_isBuilding { false };
 };
 
-inline const RuleSet::RuleDataVector* RuleSet::attributeRules(const AtomString& key, bool isHTMLName) const
+inline const RuleSet::RuleDataVector* RuleSet::attributeRules(AtomStringImpl* key, bool isHTMLName) const
 {
     auto& rules = isHTMLName ? m_attributeLowercaseLocalNameRules : m_attributeLocalNameRules;
     return rules.get(key);
 }
 
-inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, bool isHTMLName) const
+inline const RuleSet::RuleDataVector* RuleSet::tagRules(AtomStringImpl* key, bool isHTMLName) const
 {
     auto& rules = isHTMLName ? m_tagLowercaseLocalNameRules : m_tagLocalNameRules;
     return rules.get(key);

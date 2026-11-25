@@ -124,7 +124,7 @@ URLRegistry& BlobURLRegistry::registry()
     return instance;
 }
 
-Blob::Blob(UninitializedContructor, ScriptExecutionContext* context, URL&& url, String&& type)
+Blob::Blob(UninitializedContructor, ScriptExecutionContext* context, URL&& url, RefPtr<StringImpl>&& type)
     : ActiveDOMObject(context)
     , m_type(WTF::move(type))
     , m_internalURL(WTF::move(url))
@@ -136,7 +136,7 @@ Blob::Blob(ScriptExecutionContext* context)
     , m_size(0)
     , m_internalURL(BlobURL::createInternalURL())
 {
-    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { }, { });
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { }, nullptr);
 }
 
 static size_t computeMemoryCost(const std::optional<Vector<BlobPartVariant>>& blobPartVariants)
@@ -154,8 +154,8 @@ static size_t computeMemoryCost(const std::optional<Vector<BlobPartVariant>>& bl
                 [&](const Ref<JSC::ArrayBuffer>& array) {
                     memoryCost += array->byteLength();
                 },
-                [&](const String& string) {
-                    memoryCost += string.sizeInBytes();
+                [&](StringImpl* string) {
+                    memoryCost += sizeInBytes(string);
                 }
             );
         }
@@ -187,7 +187,7 @@ Blob::Blob(ScriptExecutionContext& context, std::optional<Vector<BlobPartVariant
     ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, buildBlobData(WTF::move(blobPartVariants), propertyBag), m_type);
 }
 
-Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
+Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, StringImpl* contentType)
     : ActiveDOMObject(context)
     , m_type(contentType)
     , m_size(data.size())
@@ -197,7 +197,7 @@ Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String
     ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { BlobPart(WTF::move(data)) }, contentType);
 }
 
-Blob::Blob(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType)
+Blob::Blob(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer, StringImpl* contentType)
     : ActiveDOMObject(context)
     , m_type(contentType)
     , m_size(buffer->size())
@@ -219,20 +219,20 @@ Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, 
     ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
 
-Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, const String& type, std::optional<unsigned long long> size, unsigned long long memoryCost, const String& fileBackedPath)
+Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, StringImpl* type, std::optional<unsigned long long> size, unsigned long long memoryCost, StringImpl* fileBackedPath)
     : ActiveDOMObject(context)
     , m_type(normalizedContentType(type))
     , m_size(size)
     , m_memoryCost(memoryCost)
     , m_internalURL(BlobURL::createInternalURL())
 {
-    if (fileBackedPath.isEmpty())
+    if (isEmpty(fileBackedPath))
         ThreadableBlobRegistry::registerBlobURL(nullptr, { }, m_internalURL, srcURL, std::nullopt);
     else
         ThreadableBlobRegistry::registerInternalBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }
 
-Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, const String& type)
+Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, StringImpl* type)
     : ActiveDOMObject(context)
     , m_type(normalizedContentType(type))
     , m_memoryCost(memoryCost)
@@ -249,7 +249,7 @@ Blob::~Blob()
         protect(*m_blobLoaders.begin())->cancel();
 }
 
-Ref<Blob> Blob::slice(long long start, long long end, const String& contentType) const
+Ref<Blob> Blob::slice(long long start, long long end, StringImpl* contentType) const
 {
     unsigned long long sliceMemoryCost = 0;
     if (auto totalMemoryCost = memoryCost()) {
@@ -276,22 +276,22 @@ unsigned long long Blob::size() const
     return *m_size;
 }
 
-bool Blob::isValidContentType(const String& contentType)
+bool Blob::isValidContentType(StringImpl* contentType)
 {
     // FIXME: Do we really want to treat the empty string and null string as valid content types?
-    unsigned length = contentType.length();
+    unsigned length = WTF::length(contentType);
     for (unsigned i = 0; i < length; ++i) {
-        if (contentType[i] < 0x20 || contentType[i] > 0x7e)
+        if (codeUnitAt(contentType, i) < 0x20 || codeUnitAt(contentType, i) > 0x7e)
             return false;
     }
     return true;
 }
 
-String Blob::normalizedContentType(const String& contentType)
+RefPtr<StringImpl> Blob::normalizedContentType(StringImpl* contentType)
 {
     if (!isValidContentType(contentType))
         return emptyString();
-    return contentType.convertToASCIILowercase();
+    return convertToASCIILowercase(contentType);
 }
 
 void Blob::loadBlob(FileReaderLoader::ReadType readType, Function<void(BlobLoader&)>&& completionHandler)
@@ -481,7 +481,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
 
             RefPtr buffer = sharedBuffer.tryCreateArrayBuffer();
             if (!buffer) {
-                controller.error(*globalObject, Exception { ExceptionCode::OutOfMemoryError, "Unable to create buffer"_s });
+                controller.error(*globalObject, Exception { ExceptionCode::OutOfMemoryError, "Unable to create buffer"_si });
                 return;
             }
 
@@ -523,14 +523,14 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
 }
 
 #if ASSERT_ENABLED
-bool Blob::isNormalizedContentType(const String& contentType)
+bool Blob::isNormalizedContentType(StringImpl* contentType)
 {
     // FIXME: Do we really want to treat the empty string and null string as valid content types?
-    unsigned length = contentType.length();
+    unsigned length = WTF::length(contentType);
     for (size_t i = 0; i < length; ++i) {
-        if (contentType[i] < 0x20 || contentType[i] > 0x7e)
+        if (codeUnitAt(contentType, i) < 0x20 || codeUnitAt(contentType, i) > 0x7e)
             return false;
-        if (isASCIIUpper(contentType[i]))
+        if (isASCIIUpper(codeUnitAt(contentType, i)))
             return false;
     }
     return true;

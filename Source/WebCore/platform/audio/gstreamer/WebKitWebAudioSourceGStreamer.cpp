@@ -219,9 +219,9 @@ static void webKitWebAudioSrcConstructed(GObject* object)
 
     static Atomic<uint32_t> taskId;
     auto taskName = makeString("webaudioSrcTask"_s, taskId.exchangeAdd(1));
-    gst_object_set_name(GST_OBJECT_CAST(priv->task.get()), taskName.ascii().data());
+    gst_object_set_name(GST_OBJECT_CAST(priv->task.get()), ascii(taskName).data());
 
-    priv->source = makeGStreamerElement("appsrc"_s, "webaudioSrc"_s);
+    priv->source = makeGStreamerElement("appsrc"_s, "webaudioSrc"_si);
 
     // Configure the appsrc for minimal latency.
     g_object_set(priv->source.get(), "block", TRUE, "blocksize", priv->bufferSize, "format", GST_FORMAT_TIME, "is-live", TRUE, nullptr);

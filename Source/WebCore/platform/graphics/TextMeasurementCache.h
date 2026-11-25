@@ -269,8 +269,8 @@ private:
         if (m_hasSeenIdeograph)
             return true;
         const auto& text = textRun.textAsString();
-        for (unsigned index = 0; index < text.length(); ++index) {
-            if (TextSpacing::isIdeograph(text.codeUnitAt(index))) {
+        for (unsigned index = 0; index < length(text); ++index) {
+            if (TextSpacing::isIdeograph(codeUnitAt(text, index))) {
                 m_hasSeenIdeograph = true;
                 clear();
                 return true;
@@ -282,7 +282,7 @@ private:
 
     using Map = HashMap<SmallStringKey, CachedType, DefaultHash<SmallStringKey>, SmallStringKeyHashTraits>;
     using SingleCharMap = HashMap<uint32_t, CachedType, DefaultHash<uint32_t>, HashTraits<uint32_t>>;
-    using OutOfLineMap = HashMap<String, CachedType>;
+    using OutOfLineMap = HashMap<RefPtr<StringImpl>, CachedType>;
 
     int m_interval { InitialInterval };
     int m_countdown { InitialInterval };

@@ -47,14 +47,14 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     WEBCORE_EXPORT unsigned length() const;
     WEBCORE_EXPORT RefPtr<Attr> item(unsigned index) const;
-    WEBCORE_EXPORT RefPtr<Attr> getNamedItem(const AtomString&) const;
-    WEBCORE_EXPORT RefPtr<Attr> getNamedItemNS(const AtomString& namespaceURI, const AtomString& localName) const;
+    WEBCORE_EXPORT RefPtr<Attr> getNamedItem(AtomStringImpl*) const;
+    WEBCORE_EXPORT RefPtr<Attr> getNamedItemNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName) const;
     WEBCORE_EXPORT ExceptionOr<RefPtr<Attr>> setNamedItem(Attr&);
-    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItem(const AtomString& name);
-    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItemNS(const AtomString& namespaceURI, const AtomString& localName);
-    bool isSupportedPropertyName(const AtomString&) const;
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItem(AtomStringImpl* name);
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeNamedItemNS(AtomStringImpl* namespaceURI, AtomStringImpl* localName);
+    bool isSupportedPropertyName(AtomStringImpl*) const;
 
-    Vector<String> supportedPropertyNames() const;
+    Vector<RefPtr<StringImpl>> supportedPropertyNames() const;
 
     NODELETE Element& element() const;
 

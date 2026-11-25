@@ -48,16 +48,16 @@ public:
     }
 
     enum class SourceTextWhereErrorOccurred { FoundExactSource, FoundApproximateSource };
-    typedef String (*SourceAppender) (const String& originalMessage, StringView sourceText, RuntimeType, SourceTextWhereErrorOccurred);
+    typedef RefPtr<StringImpl> (*SourceAppender) (StringImpl* originalMessage, StringView sourceText, RuntimeType, SourceTextWhereErrorOccurred);
 
     DECLARE_EXPORT_INFO;
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static ErrorInstance* create(VM&, Structure*, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true, JSCell* subclassCaller = nullptr);
-    static ErrorInstance* create(VM&, Structure*, const String& message, JSValue cause, ErrorType, JSCell* owner, CallLinkInfo*);
+    static ErrorInstance* create(VM&, Structure*, StringImpl* message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true, JSCell* subclassCaller = nullptr);
+    static ErrorInstance* create(VM&, Structure*, StringImpl* message, JSValue cause, ErrorType, JSCell* owner, CallLinkInfo*);
 
-    JS_EXPORT_PRIVATE static ErrorInstance* create(JSGlobalObject*, String&& message, ErrorType, LineColumn, String&& sourceURL, String&& stackString, String&& cause = { });
+    JS_EXPORT_PRIVATE static ErrorInstance* create(JSGlobalObject*, RefPtr<StringImpl>&& message, ErrorType, LineColumn, RefPtr<StringImpl>&& sourceURL, RefPtr<StringImpl>&& stackString, RefPtr<StringImpl>&& cause = { });
     static ErrorInstance* create(JSGlobalObject*, Structure*, JSValue message, JSValue options, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true, JSCell* subclassCaller = nullptr);
 
     bool hasSourceAppender() const { return !!m_sourceAppender; }
@@ -97,11 +97,11 @@ public:
     bool isCatchableFromWasm() const { return m_catchableFromWasm; }
 #endif
 
-    JS_EXPORT_PRIVATE String sanitizedToString(JSGlobalObject*);
-    JS_EXPORT_PRIVATE String sanitizedMessageString(JSGlobalObject*);
-    JS_EXPORT_PRIVATE String sanitizedNameString(JSGlobalObject*);
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> sanitizedToString(JSGlobalObject*);
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> sanitizedMessageString(JSGlobalObject*);
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> sanitizedNameString(JSGlobalObject*);
     
-    JS_EXPORT_PRIVATE String tryGetMessageForDebugging();
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> tryGetMessageForDebugging();
 
     Vector<StackFrame>* stackTrace() LIFETIME_BOUND { return m_stackTrace.get(); }
 
@@ -111,7 +111,7 @@ public:
     // Replaces the stack trace captured by finishCreationForEmbedderError() with information that
     // came from somewhere else, such as a structured clone of an embedder error. The properties are
     // still materialized lazily, exactly as they are for a captured stack trace.
-    JS_EXPORT_PRIVATE void setErrorInfoForEmbedderError(LineColumn, String&& sourceURL, String&& stackString);
+    JS_EXPORT_PRIVATE void setErrorInfoForEmbedderError(LineColumn, RefPtr<StringImpl>&& sourceURL, RefPtr<StringImpl>&& stackString);
 
     void setStackPropertyProvidedByCapturedStackTrace()
     {
@@ -126,9 +126,9 @@ public:
 protected:
     JS_EXPORT_PRIVATE explicit ErrorInstance(VM&, Structure*, ErrorType);
 
-    void finishCreation(VM&, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true, JSCell* subclassCaller = nullptr);
-    void finishCreation(VM&, const String& message, JSValue cause, JSCell* owner, CallLinkInfo*);
-    void finishCreation(VM&, String&& message, LineColumn, String&& sourceURL, String&& stackString, String&& cause);
+    void finishCreation(VM&, StringImpl* message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true, JSCell* subclassCaller = nullptr);
+    void finishCreation(VM&, StringImpl* message, JSValue cause, JSCell* owner, CallLinkInfo*);
+    void finishCreation(VM&, RefPtr<StringImpl>&& message, LineColumn, RefPtr<StringImpl>&& sourceURL, RefPtr<StringImpl>&& stackString, RefPtr<StringImpl>&& cause);
 
     // For subclasses (e.g. embedder error wrappers like WebCore's DOMException) that should be
     // ErrorInstances but must not gain own "message" / "cause" properties; they expose those by
@@ -152,8 +152,8 @@ protected:
     std::unique_ptr<Vector<StackFrame>> m_capturedStackTrace;
 
     LineColumn m_lineColumn;
-    String m_sourceURL;
-    String m_stackString;
+    RefPtr<StringImpl> m_sourceURL;
+    RefPtr<StringImpl> m_stackString;
     RuntimeType m_runtimeTypeForCause { TypeNothing };
     ErrorType m_errorType { ErrorType::Error };
     bool m_stackOverflowError : 1;
@@ -168,6 +168,6 @@ protected:
 #endif
 };
 
-String appendSourceToErrorMessage(CodeBlock*, BytecodeIndex, const String&, RuntimeType, ErrorInstance::SourceAppender);
+RefPtr<StringImpl> appendSourceToErrorMessage(CodeBlock*, BytecodeIndex, StringImpl*, RuntimeType, ErrorInstance::SourceAppender);
 
 } // namespace JSC

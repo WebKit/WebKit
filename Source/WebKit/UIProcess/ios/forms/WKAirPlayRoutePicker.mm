@@ -87,7 +87,7 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
     [configuration setSortByIsVideoRoute:hasVideo];
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     [configuration setPresentingAppProcessIdentifier:getCurrentProcessID()];
-    [configuration setPresentingAppBundleID:applicationBundleIdentifier().createNSString().get()];
+    [configuration setPresentingAppBundleID:createNSString(applicationBundleIdentifier()).get()];
 #endif
     _actionSheet = adoptNS([allocMPMediaControlsViewControllerInstance() initWithConfiguration:configuration.get()]);
 

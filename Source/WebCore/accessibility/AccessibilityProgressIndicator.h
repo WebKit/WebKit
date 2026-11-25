@@ -44,8 +44,8 @@ private:
 
     AccessibilityRole determineAccessibilityRole() final;
 
-    String valueDescription() const final;
-    String gaugeRegionValueDescription() const;
+    RefPtr<StringImpl> valueDescription() const final;
+    RefPtr<StringImpl> gaugeRegionValueDescription() const;
     float valueForRange() const final;
     float maxValueForRange() const final;
     float minValueForRange() const final;

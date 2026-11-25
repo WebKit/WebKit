@@ -40,10 +40,10 @@ public:
     void ref() const final { XPathNSResolver::ref(); }
     void deref() const final { XPathNSResolver::deref(); }
 
-    virtual CallbackResult<String> lookupNamespaceURIForBindings(const AtomString& prefix) = 0;
-    virtual CallbackResult<String> lookupNamespaceURIForBindingsRethrowingException(const AtomString& prefix) = 0;
+    virtual CallbackResult<RefPtr<StringImpl>> lookupNamespaceURIForBindings(AtomStringImpl* prefix) = 0;
+    virtual CallbackResult<RefPtr<StringImpl>> lookupNamespaceURIForBindingsRethrowingException(AtomStringImpl* prefix) = 0;
 
-    AtomString lookupNamespaceURI(const AtomString& prefix);
+    RefPtr<AtomStringImpl> lookupNamespaceURI(AtomStringImpl* prefix);
 
     virtual bool isJSCustomXPathNSResolver() const { return false; }
 

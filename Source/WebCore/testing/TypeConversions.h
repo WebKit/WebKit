@@ -38,15 +38,15 @@ public:
 
     struct OtherDictionary {
         int longValue;
-        String stringValue;
+        RefPtr<StringImpl> stringValue;
     };
 
     struct Dictionary {
         int longValue;
-        String stringValue;
-        String treatNullAsEmptyStringValue;
-        Vector<String> sequenceValue;
-        Variant<Ref<Node>, Vector<String>, OtherDictionary> unionValue = OtherDictionary { };
+        RefPtr<StringImpl> stringValue;
+        RefPtr<StringImpl> treatNullAsEmptyStringValue;
+        Vector<RefPtr<StringImpl>> sequenceValue;
+        Variant<Ref<Node>, Vector<RefPtr<StringImpl>>, OtherDictionary> unionValue = OtherDictionary { };
         int clampLongValue;
         int enforceRangeLongValue;
     };
@@ -108,23 +108,23 @@ public:
     float testUnrestrictedFloat() const { return m_unrestrictedFloat; }
     void setTestUnrestrictedFloat(float unrestrictedFloat) { m_unrestrictedFloat = unrestrictedFloat; }
 
-    const String& testString() const LIFETIME_BOUND { return m_string; }
-    void setTestString(const String& string) { m_string = string; }
-    const String& testUSVString() const LIFETIME_BOUND { return m_usvstring; }
-    void setTestUSVString(const String& usvstring) { m_usvstring = usvstring; }
-    const String& testByteString() const LIFETIME_BOUND { return m_byteString; }
-    void setTestByteString(const String& byteString) { m_byteString = byteString; }
-    const String& testTreatNullAsEmptyString() const LIFETIME_BOUND { return m_treatNullAsEmptyString; }
-    void setTestTreatNullAsEmptyString(const String& string) { m_treatNullAsEmptyString = string; }
+    const RefPtr<StringImpl>& testString() const LIFETIME_BOUND { return m_string; }
+    void setTestString(StringImpl* string) { m_string = string; }
+    const RefPtr<StringImpl>& testUSVString() const LIFETIME_BOUND { return m_usvstring; }
+    void setTestUSVString(StringImpl* usvstring) { m_usvstring = usvstring; }
+    const RefPtr<StringImpl>& testByteString() const LIFETIME_BOUND { return m_byteString; }
+    void setTestByteString(StringImpl* byteString) { m_byteString = byteString; }
+    const RefPtr<StringImpl>& testTreatNullAsEmptyString() const LIFETIME_BOUND { return m_treatNullAsEmptyString; }
+    void setTestTreatNullAsEmptyString(StringImpl* string) { m_treatNullAsEmptyString = string; }
 
-    const Vector<KeyValuePair<String, int>>& testLongRecord() const LIFETIME_BOUND { return m_longRecord; }
-    void setTestLongRecord(const Vector<KeyValuePair<String, int>>& value) { m_longRecord = value; }
-    const Vector<KeyValuePair<String, Ref<Node>>>& testNodeRecord() const LIFETIME_BOUND { return m_nodeRecord; }
-    void setTestNodeRecord(const Vector<KeyValuePair<String, Ref<Node>>>& value) { m_nodeRecord = value; }
-    const Vector<KeyValuePair<String, Vector<String>>>& testSequenceRecord() const LIFETIME_BOUND { return m_sequenceRecord; }
-    void setTestSequenceRecord(const Vector<KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
+    const Vector<KeyValuePair<RefPtr<StringImpl>, int>>& testLongRecord() const LIFETIME_BOUND { return m_longRecord; }
+    void setTestLongRecord(const Vector<KeyValuePair<RefPtr<StringImpl>, int>>& value) { m_longRecord = value; }
+    const Vector<KeyValuePair<RefPtr<StringImpl>, Ref<Node>>>& testNodeRecord() const LIFETIME_BOUND { return m_nodeRecord; }
+    void setTestNodeRecord(const Vector<KeyValuePair<RefPtr<StringImpl>, Ref<Node>>>& value) { m_nodeRecord = value; }
+    const Vector<KeyValuePair<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>>& testSequenceRecord() const LIFETIME_BOUND { return m_sequenceRecord; }
+    void setTestSequenceRecord(const Vector<KeyValuePair<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>>& value) { m_sequenceRecord = value; }
 
-    using TestUnion = Variant<String, int, bool, Ref<Node>, Vector<int>>;
+    using TestUnion = Variant<RefPtr<StringImpl>, int, bool, Ref<Node>, Vector<int>>;
     const TestUnion& testUnion() const LIFETIME_BOUND { return m_union; }
     void setTestUnion(TestUnion&& value) { m_union = value; }
 
@@ -132,15 +132,15 @@ public:
     void setTestDictionary(Dictionary&& dictionary) { m_testDictionary = dictionary; }
     
 
-    using TestClampUnion = Variant<String, int, Vector<int>>;
+    using TestClampUnion = Variant<RefPtr<StringImpl>, int, Vector<int>>;
     const TestClampUnion& testClampUnion() const LIFETIME_BOUND { return m_clampUnion; }
     void setTestClampUnion(const TestClampUnion& value) { m_clampUnion = value; }
 
-    using TestEnforceRangeUnion = Variant<String, int, Vector<int>>;
+    using TestEnforceRangeUnion = Variant<RefPtr<StringImpl>, int, Vector<int>>;
     const TestEnforceRangeUnion& testEnforceRangeUnion() const LIFETIME_BOUND { return m_enforceRangeUnion; }
     void setTestEnforceRangeUnion(const TestEnforceRangeUnion& value) { m_enforceRangeUnion = value; }
 
-    using TestTreatNullAsEmptyStringUnion = Variant<String, int, Vector<String>>;
+    using TestTreatNullAsEmptyStringUnion = Variant<RefPtr<StringImpl>, int, Vector<RefPtr<StringImpl>>>;
     const TestTreatNullAsEmptyStringUnion& testTreatNullAsEmptyStringUnion() const LIFETIME_BOUND { return m_treatNullAsEmptyStringUnion; }
     void setTestTreatNullAsEmptyStringUnion(const TestTreatNullAsEmptyStringUnion& value) { m_treatNullAsEmptyStringUnion = value; }
 
@@ -162,13 +162,13 @@ private:
     unsigned long long m_unsignedLongLong { 0 };
     float m_float { 0 };
     float m_unrestrictedFloat { 0 };
-    String m_string;
-    String m_usvstring;
-    String m_byteString;
-    String m_treatNullAsEmptyString;
-    Vector<KeyValuePair<String, int>> m_longRecord;
-    Vector<KeyValuePair<String, Ref<Node>>> m_nodeRecord;
-    Vector<KeyValuePair<String, Vector<String>>> m_sequenceRecord;
+    RefPtr<StringImpl> m_string;
+    RefPtr<StringImpl> m_usvstring;
+    RefPtr<StringImpl> m_byteString;
+    RefPtr<StringImpl> m_treatNullAsEmptyString;
+    Vector<KeyValuePair<RefPtr<StringImpl>, int>> m_longRecord;
+    Vector<KeyValuePair<RefPtr<StringImpl>, Ref<Node>>> m_nodeRecord;
+    Vector<KeyValuePair<RefPtr<StringImpl>, Vector<RefPtr<StringImpl>>>> m_sequenceRecord;
 
     Dictionary m_testDictionary;
 

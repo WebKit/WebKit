@@ -39,13 +39,13 @@ public:
         Ref<RTCError> error;
     };
 
-    NODELETE static Ref<RTCErrorEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
-    NODELETE static Ref<RTCErrorEvent> create(const AtomString& type, Ref<RTCError>&&);
+    NODELETE static Ref<RTCErrorEvent> create(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<RTCErrorEvent> create(AtomStringImpl* type, Ref<RTCError>&&);
 
     RTCError& error() const { return m_error.get(); }
 
 private:
-    RTCErrorEvent(const AtomString& type, Init&&, IsTrusted);
+    RTCErrorEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
     const Ref<RTCError> m_error;
 };

@@ -51,9 +51,9 @@ public:
     void ref() const final { MediaTrackBase::ref(); }
     void deref() const final { MediaTrackBase::deref(); }
 
-    static const AtomString& descriptionKeyword();
-    static const AtomString& mainDescKeyword();
-    static const AtomString& translationKeyword();
+    static const RefPtr<AtomStringImpl>& descriptionKeyword();
+    static const RefPtr<AtomStringImpl>& mainDescKeyword();
+    static const RefPtr<AtomStringImpl>& translationKeyword();
 
     bool enabled() const final { return m_enabled; }
     void setEnabled(const bool);
@@ -66,7 +66,7 @@ public:
     const AudioTrackPrivate& privateTrack() const { return m_private; }
     void setPrivate(AudioTrackPrivate&);
 
-    void setLanguage(const AtomString&) final;
+    void setLanguage(AtomStringImpl*) final;
 
     AudioTrackConfiguration& configuration() const { return m_configuration; }
 
@@ -77,7 +77,7 @@ public:
 private:
     AudioTrack(ScriptExecutionContext*, AudioTrackPrivate&);
 
-    bool isValidKind(const AtomString&) const final;
+    bool isValidKind(AtomStringImpl*) const final;
 
     // AudioTrackPrivateClient
     void enabledChanged(bool) final;
@@ -85,8 +85,8 @@ private:
 
     // TrackPrivateBaseClient
     void idChanged(TrackID) final;
-    void labelChanged(const String&) final;
-    void languageChanged(const String&) final;
+    void labelChanged(StringImpl*) final;
+    void languageChanged(StringImpl*) final;
     void willRemove() final;
 
     void updateKindFromPrivate();

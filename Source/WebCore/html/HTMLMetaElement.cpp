@@ -69,13 +69,13 @@ Ref<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Docum
 }
 
 #if ENABLE(DARK_MODE_CSS)
-static bool isNameColorScheme(const AtomString& nameValue)
+static bool isNameColorScheme(AtomStringImpl* nameValue)
 {
     return equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) || equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s);
 }
 #endif
 
-static bool isNameTextScale(const AtomString& nameValue)
+static bool isNameTextScale(AtomStringImpl* nameValue)
 {
     return equalLettersIgnoringASCIICase(nameValue, "text-scale"_s);
 }
@@ -85,11 +85,11 @@ bool HTMLMetaElement::mediaAttributeMatches()
     Ref document = this->document();
 
     if (!m_mediaQueryList) {
-        auto mediaText = attributeWithoutSynchronization(mediaAttr).convertToASCIILowercase();
+        auto mediaText = convertToASCIILowercase(attributeWithoutSynchronization(mediaAttr));
         m_mediaQueryList = MQ::MediaQueryParser::parse(mediaText, document->cssParserContext());
     }
 
-    AtomString mediaType;
+    RefPtr<AtomStringImpl> mediaType;
     if (RefPtr frame = document->frame()) {
         if (RefPtr frameView = frame->view())
             mediaType = frameView->mediaType();
@@ -106,7 +106,7 @@ const Color& HTMLMetaElement::contentColor()
     return *m_contentColor;
 }
 
-void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void HTMLMetaElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
@@ -161,36 +161,36 @@ void HTMLMetaElement::removingSteps(RemovalType removalType, ContainerNode& oldP
         protect(oldParentOfRemovedTree.document())->metaElementTextScaleChanged();
 }
 
-void HTMLMetaElement::process(const AtomString& oldValue)
+void HTMLMetaElement::process(AtomStringImpl* oldValue)
 {
     // Changing a meta tag while it's not in the document tree shouldn't have any effect on the document.
     if (!isInDocumentTree())
         return;
 
-    const AtomString& nameValue = attributeWithoutSynchronization(nameAttr);
+    const RefPtr<AtomStringImpl>& nameValue = attributeWithoutSynchronization(nameAttr);
     Ref document = this->document();
 #if ENABLE(DARK_MODE_CSS)
-    if (isNameColorScheme(nameValue) || (!oldValue.isNull() && isNameColorScheme(oldValue)))
+    if (isNameColorScheme(nameValue) || (!!oldValue && isNameColorScheme(oldValue)))
         document->metaElementColorSchemeChanged();
 #endif
 
-    if (isNameTextScale(nameValue) || (!oldValue.isNull() && isNameTextScale(oldValue)))
+    if (isNameTextScale(nameValue) || (!!oldValue && isNameTextScale(oldValue)))
         document->metaElementTextScaleChanged();
 
     // https://html.spec.whatwg.org/multipage/semantics.html#the-meta-element
     // All below situations require a content attribute (which can be the empty string).
-    const AtomString& contentValue = attributeWithoutSynchronization(contentAttr);
-    if (contentValue.isNull())
+    const RefPtr<AtomStringImpl>& contentValue = attributeWithoutSynchronization(contentAttr);
+    if (!contentValue)
         return;
     
-    const AtomString& httpEquivValue = attributeWithoutSynchronization(http_equivAttr);
+    const RefPtr<AtomStringImpl>& httpEquivValue = attributeWithoutSynchronization(http_equivAttr);
     // Get the document to process the tag, but only if we're actually part of DOM
     // tree (changing a meta tag while it's not in the tree shouldn't have any effect
     // on the document)
-    if (!httpEquivValue.isNull())
+    if (httpEquivValue)
         document->processMetaHttpEquiv(httpEquivValue, contentValue, isDescendantOf(document->head()));
     
-    if (nameValue.isNull())
+    if (!nameValue)
         return;
 
     if (equalLettersIgnoringASCIICase(nameValue, "viewport"_s))
@@ -211,17 +211,17 @@ void HTMLMetaElement::process(const AtomString& oldValue)
         document->quirks().setNeedsToCopyUserSelectNoneQuirk();
 }
 
-const AtomString& HTMLMetaElement::content() const
+const RefPtr<AtomStringImpl>& HTMLMetaElement::content() const
 {
     return attributeWithoutSynchronization(contentAttr);
 }
 
-const AtomString& HTMLMetaElement::httpEquiv() const
+const RefPtr<AtomStringImpl>& HTMLMetaElement::httpEquiv() const
 {
     return attributeWithoutSynchronization(http_equivAttr);
 }
 
-const AtomString& HTMLMetaElement::name() const
+const RefPtr<AtomStringImpl>& HTMLMetaElement::name() const
 {
     return getNameAttribute();
 }

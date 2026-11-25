@@ -73,7 +73,7 @@ bool shouldAllowAutoFillForCellularIdentifiers(const URL& topURL)
     }
 
     auto host = topURL.host().toString();
-    if (host.isEmpty()) {
+    if (isEmpty(host)) {
         if (!std::exchange(hasLogged, true))
             RELEASE_LOG(Telephony, "Skipped cellular AutoFill status check (no registrable domain)");
         return false;
@@ -82,13 +82,13 @@ bool shouldAllowAutoFillForCellularIdentifiers(const URL& topURL)
     static NeverDestroyed cachedClient = adoptNS([[CoreTelephonyClient alloc] initWithQueue:mainDispatchQueueSingleton()]);
     RetainPtr client = cachedClient->get();
 
-    static NeverDestroyed<String> lastQueriedHost;
+    static NeverDestroyed<RefPtr<StringImpl>> lastQueriedHost;
     static bool lastQueriedHostResult = false;
-    if (lastQueriedHost.get() == host)
+    if (equal(lastQueriedHost.get(), host))
         return lastQueriedHostResult;
 
     NSError *error = nil;
-    BOOL result = [client isAutofilleSIMIdAllowedForDomain:host.createNSString().get() error:&error];
+    BOOL result = [client isAutofilleSIMIdAllowedForDomain:createNSString(host).get() error:&error];
     if (error && !std::exchange(hasLogged, true)) {
         RELEASE_LOG_ERROR(Telephony, "Failed to query cellular AutoFill status: %{public}@", error);
         return false;

@@ -492,7 +492,7 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
     if (!document)
         return Exception { ExceptionCode::InvalidStateError };
 
-    String id = emptyString();
+    RefPtr<StringImpl> id = emptyString();
     Variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
 
     auto customEffectOptions = WTF::switchOn(options,

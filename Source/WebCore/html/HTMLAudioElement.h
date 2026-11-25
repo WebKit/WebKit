@@ -39,7 +39,7 @@ class HTMLAudioElement final : public HTMLMediaElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAudioElement);
 public:
     static Ref<HTMLAudioElement> create(const QualifiedName&, Document&, bool);
-    static Ref<HTMLAudioElement> createForLegacyFactoryFunction(Document&, const AtomString& src);
+    static Ref<HTMLAudioElement> createForLegacyFactoryFunction(Document&, AtomStringImpl* src);
 
     ~HTMLAudioElement();
 

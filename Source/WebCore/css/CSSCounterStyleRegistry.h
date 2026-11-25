@@ -40,7 +40,7 @@ struct CounterStyle;
 class StyleRuleCounterStyle;
 enum class CSSValueID : uint16_t;
 
-using NamedCounterStyleMap = HashMap<AtomString, Ref<CSSRegisteredCounterStyle>>;
+using NamedCounterStyleMap = HashMap<RefPtr<AtomStringImpl>, Ref<CSSRegisteredCounterStyle>>;
 using SymbolsFunctionCounterStyleMap = Vector<std::pair<Style::SymbolsFunction, Ref<CSSRegisteredCounterStyle>>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
@@ -73,7 +73,7 @@ private:
     static void resolveExtendsReference(CSSRegisteredCounterStyle&, NamedCounterStyleMap* = nullptr);
     static void resolveExtendsReference(CSSRegisteredCounterStyle&, OrderedHashSet<CSSRegisteredCounterStyle*>&, NamedCounterStyleMap* = nullptr);
 
-    static Ref<CSSRegisteredCounterStyle> counterStyle(const AtomString&, NamedCounterStyleMap* = nullptr);
+    static Ref<CSSRegisteredCounterStyle> counterStyle(AtomStringImpl*, NamedCounterStyleMap* = nullptr);
 
     NODELETE void invalidate();
 

@@ -57,7 +57,7 @@ namespace Inspector {""")
 
     TypeConversionsHeaderStandard = (
     """template<typename ObjCEnumType>
-std::optional<ObjCEnumType> fromProtocolString(const String& value);""")
+std::optional<ObjCEnumType> fromProtocolString(StringImpl* value);""")
 
     BackendDispatcherHeaderPrelude = (
     """${includes}
@@ -114,13 +114,13 @@ private:
     """void ObjCInspector${domainName}BackendDispatcher::${commandName}(${parameters})
 {
     if (!${respondsToSelector}) {
-        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'${domainName}.${commandName}' was not found"_s);
+        backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'${domainName}.${commandName}' was not found"_si);
         backendDispatcher()->sendPendingErrors();
         return;
     }
 
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendErrorResponse(protocol_requestId, BackendDispatcher::ServerError, StringImpl::create(error).get());
     };
 
 ${successCallback}
@@ -143,7 +143,7 @@ ${invocation}
     _${variableNamePrefix}Handler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspector${domainName}BackendDispatcher>(handler);
-    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<${domainName}BackendDispatcher, Alternate${domainName}BackendDispatcher>>("${domainName}"_s, *_controller, WTF::move(alternateDispatcher));
+    auto alternateAgent = makeUniqueRef<AlternateDispatchableAgent<${domainName}BackendDispatcher, Alternate${domainName}BackendDispatcher>>("${domainName}"_si, *_controller, WTF::move(alternateDispatcher));
     _controller->registerAlternateAgent(WTF::move(alternateAgent));
 }
 

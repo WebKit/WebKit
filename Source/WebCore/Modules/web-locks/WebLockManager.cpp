@@ -64,7 +64,7 @@ static std::optional<ClientOrigin> clientOriginFromContext(ScriptExecutionContex
 
 struct WebLockManager::LockRequest {
     Markable<WebLockIdentifier> lockIdentifier;
-    String name;
+    RefPtr<StringImpl> name;
     WebLockMode mode { WebLockMode::Exclusive };
     RefPtr<WebLockGrantedCallback> grantedCallback;
     RefPtr<AbortSignal> signal;
@@ -94,9 +94,9 @@ public:
         return adoptRef(*new MainThreadBridge(*context, *sessionID, WTF::move(*clientOrigin)));
     }
 
-    void requestLock(WebLockIdentifier, const String& name, const Options&, Function<void(bool)>&&, Function<void()>&& lockStolenHandler);
-    void releaseLock(WebLockIdentifier, const String& name);
-    void abortLockRequest(WebLockIdentifier, const String& name, Function<void(bool)>&&);
+    void requestLock(WebLockIdentifier, StringImpl* name, const Options&, Function<void(bool)>&&, Function<void()>&& lockStolenHandler);
+    void releaseLock(WebLockIdentifier, StringImpl* name);
+    void abortLockRequest(WebLockIdentifier, StringImpl* name, Function<void(bool)>&&);
     void query(Function<void(Snapshot&&)>&&);
     void clientIsGoingAway();
 
@@ -115,7 +115,7 @@ WebLockManager::MainThreadBridge::MainThreadBridge(ScriptExecutionContext& conte
 {
 }
 
-void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentifier, const String& name, const Options& options, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
+void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentifier, StringImpl* name, const Options& options, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTF::move(grantedHandler), lockStolenHandler = WTF::move(lockStolenHandler)]() mutable {
         WebLockRegistry::singleton().requestLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, mode, steal, ifAvailable, [clientID = m_clientID, grantedHandler = WTF::move(grantedHandler)] (bool success) mutable {
@@ -130,14 +130,14 @@ void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentif
     });
 }
 
-void WebLockManager::MainThreadBridge::releaseLock(WebLockIdentifier lockIdentifier, const String& name)
+void WebLockManager::MainThreadBridge::releaseLock(WebLockIdentifier lockIdentifier, StringImpl* name)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name)] {
         WebLockRegistry::singleton().releaseLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name);
     });
 }
 
-void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, Function<void(bool)>&& callback)
+void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockIdentifier, StringImpl* name, Function<void(bool)>&& callback)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name), callback = WTF::move(callback)]() mutable {
         WebLockRegistry::singleton().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, [clientID = m_clientID, callback = WTF::move(callback)](bool wasAborted) mutable {
@@ -184,51 +184,51 @@ WebLockManager::~WebLockManager()
     clientIsGoingAway();
 }
 
-void WebLockManager::request(const String& name, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& promise)
+void WebLockManager::request(StringImpl* name, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& promise)
 {
     request(name, { }, WTF::move(grantedCallback), WTF::move(promise));
 }
 
-void WebLockManager::request(const String& name, Options&& options, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& releasePromise)
+void WebLockManager::request(StringImpl* name, Options&& options, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& releasePromise)
 {
     RefPtr context = scriptExecutionContext();
     if (!context) {
-        releasePromise->reject(ExceptionCode::InvalidStateError, "Context is invalid"_s);
+        releasePromise->reject(ExceptionCode::InvalidStateError, "Context is invalid"_si);
         return;
     }
 
     if (RefPtr document = dynamicDowncast<Document>(*context); document && !document->isFullyActive()) {
-        releasePromise->reject(ExceptionCode::InvalidStateError, "Responsible document is not fully active"_s);
+        releasePromise->reject(ExceptionCode::InvalidStateError, "Responsible document is not fully active"_si);
         return;
     }
 
     if (!m_mainThreadBridge) {
-        releasePromise->reject(ExceptionCode::SecurityError, "Context's origin is opaque"_s);
+        releasePromise->reject(ExceptionCode::SecurityError, "Context's origin is opaque"_si);
         return;
     }
 
-    if (name.startsWith('-')) {
-        releasePromise->reject(ExceptionCode::NotSupportedError, "Lock name cannot start with '-'"_s);
+    if (startsWith(name, '-')) {
+        releasePromise->reject(ExceptionCode::NotSupportedError, "Lock name cannot start with '-'"_si);
         return;
     }
 
-    if (name.length() > WebLock::maxNameLength) {
+    if (length(name) > WebLock::maxNameLength) {
         releasePromise->reject(ExceptionCode::NotSupportedError, makeString("Lock name cannot cannot be longer than "_s, WebLock::maxNameLength, " characters"_s));
         return;
     }
 
     if (options.steal && options.ifAvailable) {
-        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal and ifAvailable cannot both be true"_s);
+        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal and ifAvailable cannot both be true"_si);
         return;
     }
 
     if (options.steal && options.mode != WebLockMode::Exclusive) {
-        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal is true but mode is not 'exclusive'"_s);
+        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal is true but mode is not 'exclusive'"_si);
         return;
     }
 
     if (options.signal && (options.steal || options.ifAvailable)) {
-        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal and ifAvailable need to be false when a signal is provided"_s);
+        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal and ifAvailable need to be false when a signal is provided"_si);
         return;
     }
 
@@ -255,7 +255,7 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
             protectedThis->didCompleteLockRequest(lockIdentifier, success);
     }, [weakThis = WeakPtr { *this }, lockIdentifier]() mutable {
         if (RefPtr protectedThis = weakThis)
-            protectedThis->settleReleasePromise(lockIdentifier, Exception { ExceptionCode::AbortError, "Lock was stolen by another request"_s });
+            protectedThis->settleReleasePromise(lockIdentifier, Exception { ExceptionCode::AbortError, "Lock was stolen by another request"_si });
     });
 }
 
@@ -274,7 +274,7 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
                 return;
             }
 
-            Ref lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
+            Ref lock = WebLock::create(*request.lockIdentifier, RefPtr { request.name }.get(), request.mode);
             auto result = protect(request.grantedCallback)->invoke(lock.ptr());
             if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
                 manager.m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
@@ -307,17 +307,17 @@ void WebLockManager::query(Ref<DeferredPromise>&& promise)
 {
     RefPtr context = scriptExecutionContext();
     if (!context) {
-        promise->reject(ExceptionCode::InvalidStateError, "Context is invalid"_s);
+        promise->reject(ExceptionCode::InvalidStateError, "Context is invalid"_si);
         return;
     }
 
     if (RefPtr document = dynamicDowncast<Document>(*context); document && !document->isFullyActive()) {
-        promise->reject(ExceptionCode::InvalidStateError, "Responsible document is not fully active"_s);
+        promise->reject(ExceptionCode::InvalidStateError, "Responsible document is not fully active"_si);
         return;
     }
 
     if (!m_mainThreadBridge) {
-        promise->reject(ExceptionCode::SecurityError, "Context's origin is opaque"_s);
+        promise->reject(ExceptionCode::SecurityError, "Context's origin is opaque"_si);
         return;
     }
 
@@ -384,10 +384,10 @@ void WebLockManager::clientIsGoingAway()
     // Reject all pending promises before clearing.
     auto releasePromises = std::exchange(m_releasePromises, { });
     for (auto& promise : releasePromises.values())
-        protect(promise)->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_s);
+        protect(promise)->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_si);
     auto queryPromises = std::exchange(m_queryPromises, { });
     for (auto& promise : queryPromises.values())
-        protect(promise)->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_s);
+        protect(promise)->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_si);
     m_pendingRequests.clear();
     m_releasePromises.clear();
 

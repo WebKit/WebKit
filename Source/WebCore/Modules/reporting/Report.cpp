@@ -35,12 +35,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Report);
 
-Ref<Report> Report::create(const String& type, const String& url, RefPtr<ReportBody>&& body)
+Ref<Report> Report::create(StringImpl* type, StringImpl* url, RefPtr<ReportBody>&& body)
 {
     return adoptRef(*new Report(type, url, WTF::move(body)));
 }
 
-Report::Report(const String& type, const String& url, RefPtr<ReportBody>&& body)
+Report::Report(StringImpl* type, StringImpl* url, RefPtr<ReportBody>&& body)
     : m_type(type)
     , m_url(url)
     , m_body(WTF::move(body))
@@ -49,36 +49,36 @@ Report::Report(const String& type, const String& url, RefPtr<ReportBody>&& body)
 
 Report::~Report() = default;
 
-const String& Report::type() const
+const RefPtr<StringImpl>& Report::type() const
 {
     return m_type;
 }
 
-const String& Report::url() const
+const RefPtr<StringImpl>& Report::url() const
 {
     return m_url;
 }
 
-Ref<FormData> Report::createReportFormDataForViolation(const String& type, const URL& url, const String& userAgent, const String& destination, NOESCAPE const Function<void(JSON::Object&)>& populateBody)
+Ref<FormData> Report::createReportFormDataForViolation(StringImpl* type, const URL& url, StringImpl* userAgent, StringImpl* destination, NOESCAPE const Function<void(JSON::Object&)>& populateBody)
 {
     auto body = JSON::Object::create();
     populateBody(body);
 
     // https://www.w3.org/TR/reporting-1/#queue-report, step 2.3.1.
     auto reportObject = JSON::Object::create();
-    reportObject->setObject("body"_s, WTF::move(body));
-    reportObject->setString("user_agent"_s, userAgent);
-    reportObject->setString("destination"_s, destination);
-    reportObject->setString("type"_s, type);
-    reportObject->setInteger("age"_s, 0); // We currently do not delay sending the reports.
-    reportObject->setInteger("attempts"_s, 0);
+    reportObject->setObject("body"_si, WTF::move(body));
+    reportObject->setString("user_agent"_si, userAgent);
+    reportObject->setString("destination"_si, destination);
+    reportObject->setString("type"_si, type);
+    reportObject->setInteger("age"_si, 0); // We currently do not delay sending the reports.
+    reportObject->setInteger("attempts"_si, 0);
     if (url.isValid())
-        reportObject->setString("url"_s, url.string());
+        reportObject->setString("url"_si, url.string());
 
     auto reportList = JSON::Array::create();
     reportList->pushObject(reportObject);
 
-    return FormData::create(reportList->toJSONString().utf8().span());
+    return FormData::create(utf8(reportList->toJSONString()).span());
 }
 
 } // namespace WebCore

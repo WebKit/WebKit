@@ -35,7 +35,7 @@ class FontCascade;
 class GraphicsContext;
 class IntPoint;
 
-void WebCoreDrawDoubledTextAtPoint(GraphicsContext&, const String&, const IntPoint&, const FontCascade&, const Color& topColor, const Color& bottomColor, int underlinedIndex = -1);
+void WebCoreDrawDoubledTextAtPoint(GraphicsContext&, StringImpl*, const IntPoint&, const FontCascade&, const Color& topColor, const Color& bottomColor, int underlinedIndex = -1);
 
 } // namespace WebCore
 

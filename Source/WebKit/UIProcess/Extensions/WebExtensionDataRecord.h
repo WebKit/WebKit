@@ -50,12 +50,12 @@ public:
         return adoptRef(*new WebExtensionDataRecord(std::forward<Args>(args)...));
     }
 
-    explicit WebExtensionDataRecord(const String& displayName, const String& uniqueIdentifier);
+    explicit WebExtensionDataRecord(StringImpl* displayName, StringImpl* uniqueIdentifier);
 
     using Type = WebExtensionDataType;
 
-    const String& displayName() const LIFETIME_BOUND { return m_displayName; }
-    const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
+    const RefPtr<StringImpl>& displayName() const LIFETIME_BOUND { return m_displayName; }
+    const RefPtr<StringImpl>& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
 
     NODELETE OptionSet<Type> types() const;
 
@@ -77,8 +77,8 @@ public:
     NODELETE bool operator==(const WebExtensionDataRecord&) const;
 
 private:
-    String m_displayName;
-    String m_uniqueIdentifier;
+    RefPtr<StringImpl> m_displayName;
+    RefPtr<StringImpl> m_uniqueIdentifier;
     HashMap<Type, size_t> m_typeSizes;
 #if PLATFORM(COCOA)
     const RetainPtr<NSMutableArray> m_errors;
@@ -96,7 +96,7 @@ public:
         return adoptRef(*new WebExtensionDataRecordHolder(std::forward<Args>(args)...));
     }
 
-    HashMap<String, Ref<WebExtensionDataRecord>> recordsMap;
+    HashMap<RefPtr<StringImpl>, Ref<WebExtensionDataRecord>> recordsMap;
 
 private:
     WebExtensionDataRecordHolder() = default;

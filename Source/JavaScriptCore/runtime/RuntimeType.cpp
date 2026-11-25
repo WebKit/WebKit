@@ -61,30 +61,30 @@ RuntimeType runtimeTypeForValue(JSValue value)
     return TypeNothing;
 }
 
-String runtimeTypeAsString(RuntimeType type)
+RefPtr<StringImpl> runtimeTypeAsString(RuntimeType type)
 {
     if (type == TypeUndefined)
-        return "Undefined"_s;
+        return "Undefined"_si;
     if (type == TypeNull)
-        return "Null"_s;
+        return "Null"_si;
     if (type == TypeAnyInt)
-        return "Integer"_s;
+        return "Integer"_si;
     if (type == TypeNumber)
-        return "Number"_s;
+        return "Number"_si;
     if (type == TypeString)
-        return "String"_s;
+        return "String"_si;
     if (type == TypeObject)
-        return "Object"_s;
+        return "Object"_si;
     if (type == TypeBoolean)
-        return "Boolean"_s;
+        return "Boolean"_si;
     if (type == TypeFunction)
-        return "Function"_s;
+        return "Function"_si;
     if (type == TypeSymbol)
-        return "Symbol"_s;
+        return "Symbol"_si;
     if (type == TypeBigInt)
-        return "BigInt"_s;
+        return "BigInt"_si;
     if (type == TypeNothing)
-        return "(Nothing)"_s;
+        return "(Nothing)"_si;
 
     RELEASE_ASSERT_NOT_REACHED();
     return emptyString();

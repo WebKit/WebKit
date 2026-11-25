@@ -43,7 +43,7 @@ public:
     virtual ~AVIFImageDecoder();
 
     // ScalableImageDecoder
-    String filenameExtension() const final { return "avif"_s; }
+    RefPtr<StringImpl> filenameExtension() const final { return "avif"_si; }
     size_t decodeIfNeededAndGetFrameCount() const final { return m_frameCount; };
     RepetitionCount repetitionCount() const final;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final WTF_REQUIRES_LOCK(m_lock);

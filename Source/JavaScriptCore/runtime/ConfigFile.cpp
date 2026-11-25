@@ -468,7 +468,7 @@ void ConfigFile::parse()
 
         if (!jscOptionsBuilder.isEmpty()) {
             JSC::Config::enableRestrictedOptions();
-            Options::setOptions(jscOptionsBuilder.toString().utf8().legacyCStringPointer());
+            Options::setOptions(utf8(jscOptionsBuilder.toString()).legacyCStringPointer());
         }
     } else
         WTF::dataLogF("Error in JSC Config file on or near line %u, parsing '%s'\n", scanner.lineNumber(), scanner.currentBuffer());

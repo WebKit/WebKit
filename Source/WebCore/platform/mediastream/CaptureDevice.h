@@ -44,7 +44,7 @@ public:
     };
     static bool isScreenShareType(DeviceType type) { return type == DeviceType::Screen || type == DeviceType::Window || type == DeviceType::SystemAudio; }
 
-    CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString(), bool isEnabled = false, bool isDefault = false, bool isMock = false, bool isEphemeral = false)
+    CaptureDevice(StringImpl* persistentId, DeviceType type, StringImpl* label, StringImpl* groupId = emptyString(), bool isEnabled = false, bool isDefault = false, bool isMock = false, bool isEphemeral = false)
         : m_persistentId(persistentId)
         , m_type(type)
         , m_label(label)
@@ -58,22 +58,22 @@ public:
 
     CaptureDevice() = default;
 
-    void setPersistentId(const String& persistentId) { m_persistentId = persistentId; }
-    const String& persistentId() const LIFETIME_BOUND { return m_persistentId; }
+    void setPersistentId(StringImpl* persistentId) { m_persistentId = persistentId; }
+    const RefPtr<StringImpl>& persistentId() const LIFETIME_BOUND { return m_persistentId; }
 
-    void setLabel(const String& label) { m_label = label; }
-    const String& label() const LIFETIME_BOUND
+    void setLabel(StringImpl* label) { m_label = label; }
+    const RefPtr<StringImpl>& label() const LIFETIME_BOUND
     {
-        static NeverDestroyed<String> airPods(MAKE_STATIC_STRING_IMPL("AirPods"));
+        static NeverDestroyed<RefPtr<StringImpl>> airPods(MAKE_STATIC_STRING_IMPL("AirPods"));
 
-        if ((m_type == DeviceType::Microphone || m_type == DeviceType::Speaker) && m_label.contains(airPods.get()))
+        if ((m_type == DeviceType::Microphone || m_type == DeviceType::Speaker) && contains(m_label, airPods.get()))
             return airPods;
 
         return m_label;
     }
 
-    void setGroupId(const String& groupId) { m_groupId = groupId; }
-    const String& groupId() const LIFETIME_BOUND { return m_groupId.isEmpty() ? m_persistentId : m_groupId; }
+    void setGroupId(StringImpl* groupId) { m_groupId = groupId; }
+    const RefPtr<StringImpl>& groupId() const LIFETIME_BOUND { return isEmpty(m_groupId) ? m_persistentId : m_groupId; }
 
     DeviceType type() const { return m_type; }
 
@@ -104,10 +104,10 @@ public:
     CaptureDevice isolatedCopy() &&;
 
 protected:
-    String m_persistentId;
+    RefPtr<StringImpl> m_persistentId;
     DeviceType m_type { DeviceType::Unknown };
-    String m_label;
-    String m_groupId;
+    RefPtr<StringImpl> m_label;
+    RefPtr<StringImpl> m_groupId;
     bool m_enabled { false };
     bool m_default { false };
     bool m_isMockDevice { false };
@@ -124,7 +124,7 @@ inline bool haveDevicesChanged(const Vector<CaptureDevice>& oldDevices, const Ve
             continue;
 
         auto index = oldDevices.findIf([&newDevice](auto& oldDevice) {
-            return newDevice.persistentId() == oldDevice.persistentId() && newDevice.enabled() != oldDevice.enabled();
+            return equal(newDevice.persistentId(), oldDevice.persistentId()) && newDevice.enabled() != oldDevice.enabled();
         });
 
         if (index == notFound)
@@ -137,10 +137,10 @@ inline bool haveDevicesChanged(const Vector<CaptureDevice>& oldDevices, const Ve
 inline CaptureDevice CaptureDevice::isolatedCopy() &&
 {
     return {
-        WTF::move(m_persistentId).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(m_persistentId)),
         m_type,
-        WTF::move(m_label).isolatedCopy(),
-        WTF::move(m_groupId).isolatedCopy(),
+        WTF::isolatedCopy(WTF::move(m_label)),
+        WTF::isolatedCopy(WTF::move(m_groupId)),
         m_enabled,
         m_default,
         m_isMockDevice,

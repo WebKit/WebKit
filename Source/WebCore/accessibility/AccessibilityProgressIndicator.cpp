@@ -66,11 +66,11 @@ bool AccessibilityProgressIndicator::computeIsIgnored() const
     return isIgnoredByDefault();
 }
 
-String AccessibilityProgressIndicator::valueDescription() const
+RefPtr<StringImpl> AccessibilityProgressIndicator::valueDescription() const
 {
     // If the author has explicitly provided a value through aria-valuetext, use it.
-    String description = AccessibilityRenderObject::valueDescription();
-    if (!description.isEmpty())
+    RefPtr<StringImpl> description = AccessibilityRenderObject::valueDescription();
+    if (!isEmpty(description))
         return description;
 
     RefPtr meter = meterElement();
@@ -82,16 +82,16 @@ String AccessibilityProgressIndicator::valueDescription() const
     if (RefPtr nodeObject = dynamicDowncast<AccessibilityNodeObject>(protect(axObjectCache())->getOrCreate(*meter)))
         description = nodeObject->accessibilityDescriptionForChildren();
 
-    if (description.isEmpty())
+    if (isEmpty(description))
         description = meter->textContent();
 
     // If no textual description is available, use the numeric value.
-    if (description.isEmpty())
-        description = String::number(meter->value());
+    if (isEmpty(description))
+        description = makeString(meter->value());
 
-    String gaugeRegionValue = gaugeRegionValueDescription();
-    if (!gaugeRegionValue.isEmpty())
-        description = description.isEmpty() ? gaugeRegionValue : makeString(description, ", "_s,  gaugeRegionValue);
+    RefPtr<StringImpl> gaugeRegionValue = gaugeRegionValueDescription();
+    if (!isEmpty(gaugeRegionValue))
+        description = isEmpty(description) ? gaugeRegionValue : makeString(description, ", "_s,  gaugeRegionValue);
 
     return description;
 }
@@ -154,16 +154,16 @@ HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
     return dynamicDowncast<HTMLMeterElement>(node());
 }
 
-String AccessibilityProgressIndicator::gaugeRegionValueDescription() const
+RefPtr<StringImpl> AccessibilityProgressIndicator::gaugeRegionValueDescription() const
 {
 #if PLATFORM(COCOA)
     RefPtr meterElement = this->meterElement();
     if (!meterElement)
-        return String();
+        return nullptr;
 
     // Only expose this when the author has explicitly specified the following attributes.
     if (!hasAttribute(lowAttr) && !hasAttribute(highAttr) && !hasAttribute(optimumAttr))
-        return String();
+        return nullptr;
 
     switch (meterElement->gaugeRegion()) {
     case HTMLMeterElement::GaugeRegion::Optimum:
@@ -174,7 +174,7 @@ String AccessibilityProgressIndicator::gaugeRegionValueDescription() const
         return AXMeterGaugeRegionLessGoodText();
     }
 #endif
-    return String();
+    return nullptr;
 }
 
 } // namespace WebCore

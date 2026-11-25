@@ -105,10 +105,10 @@ void ScrollbarsControllerCoordinated::scrollbarColorChanged(std::optional<WebCor
         scrollingCoordinator->setScrollbarColor(protect(scrollableArea()), color);
 }
 
-String ScrollbarsControllerCoordinated::scrollbarStateForTesting(WebCore::Scrollbar* scrollbar) const
+RefPtr<StringImpl> ScrollbarsControllerCoordinated::scrollbarStateForTesting(WebCore::Scrollbar* scrollbar) const
 {
     if (!scrollbar)
-        return "none"_s;
+        return "none"_si;
 
     StringBuilder result;
     result.append(scrollbar->enabled() ? "enabled"_s : "disabled"_s);
@@ -124,12 +124,12 @@ String ScrollbarsControllerCoordinated::scrollbarStateForTesting(WebCore::Scroll
     return result.toString();
 }
 
-String ScrollbarsControllerCoordinated::horizontalScrollbarStateForTesting() const
+RefPtr<StringImpl> ScrollbarsControllerCoordinated::horizontalScrollbarStateForTesting() const
 {
     return scrollbarStateForTesting(protect(protect(scrollableArea())->horizontalScrollbar()).get());
 }
 
-String ScrollbarsControllerCoordinated::verticalScrollbarStateForTesting() const
+RefPtr<StringImpl> ScrollbarsControllerCoordinated::verticalScrollbarStateForTesting() const
 {
     return scrollbarStateForTesting(protect(protect(scrollableArea())->verticalScrollbar()).get());
 }

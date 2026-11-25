@@ -37,12 +37,12 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageManager);
 
-Ref<FileSystemStorageManager> FileSystemStorageManager::create(WorkQueue& queue, String&& path, FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin, QuotaCheckFunction&& quotaCheckFunction)
+Ref<FileSystemStorageManager> FileSystemStorageManager::create(WorkQueue& queue, RefPtr<StringImpl>&& path, FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin, QuotaCheckFunction&& quotaCheckFunction)
 {
     return adoptRef(*new FileSystemStorageManager(queue, WTF::move(path), registry, origin, WTF::move(quotaCheckFunction)));
 }
 
-FileSystemStorageManager::FileSystemStorageManager(WorkQueue& queue, String&& path, FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin, QuotaCheckFunction&& quotaCheckFunction)
+FileSystemStorageManager::FileSystemStorageManager(WorkQueue& queue, RefPtr<StringImpl>&& path, FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin, QuotaCheckFunction&& quotaCheckFunction)
     : m_path(WTF::move(path))
     , m_origin(origin)
     , m_registry(registry)
@@ -76,11 +76,11 @@ uint64_t FileSystemStorageManager::allocatedUnusedCapacity() const
     return result;
 }
 
-std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
+std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name, bool createIfNecessary)
 {
     releaseAssertIsCurrent(m_queue);
 
-    if (path.isEmpty())
+    if (isEmpty(path))
         return makeUnexpected(FileSystemStorageError::Unknown);
 
     auto fileExists = FileSystem::fileExists(path);
@@ -102,7 +102,7 @@ std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::File
         }
     }
 
-    RefPtr newHandle = FileSystemStorageHandle::create(*this, type, String { path }, String { name });
+    RefPtr newHandle = FileSystemStorageHandle::create(*this, type, RefPtr<StringImpl> { path }, RefPtr<StringImpl> { name });
     if (!newHandle)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
@@ -123,7 +123,7 @@ std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::File
     return std::pair { globalIdentifier, newHandleIdentifier };
 }
 
-const String& FileSystemStorageManager::getPath(WebCore::FileSystemHandleIdentifier identifier)
+const RefPtr<StringImpl>& FileSystemStorageManager::getPath(WebCore::FileSystemHandleIdentifier identifier)
 {
     auto handle = m_handles.find(identifier);
     return handle == m_handles.end() ? emptyString() : handle->value->path();
@@ -171,11 +171,11 @@ std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::File
 {
     assertIsCurrent(m_queue);
 
-    return createHandle(connection, FileSystemStorageHandle::Type::Directory, String { m_path }, { }, true);
+    return createHandle(connection, FileSystemStorageHandle::Type::Directory, RefPtr<StringImpl> { m_path }, { }, true);
 }
 
 // https://fs.spec.whatwg.org/#file-entry-lock-take
-bool FileSystemStorageManager::acquireLockForFile(const String& path, LockType lockType)
+bool FileSystemStorageManager::acquireLockForFile(StringImpl* path, LockType lockType)
 {
     auto iterator = m_lockMap.ensure(path, [] {
         return Lock { };
@@ -203,7 +203,7 @@ bool FileSystemStorageManager::acquireLockForFile(const String& path, LockType l
 }
 
 // https://fs.spec.whatwg.org/#file-entry-lock-release
-bool FileSystemStorageManager::releaseLockForFile(const String& path)
+bool FileSystemStorageManager::releaseLockForFile(StringImpl* path)
 {
     auto iterator = m_lockMap.find(path);
     if (iterator == m_lockMap.end())
@@ -218,13 +218,13 @@ bool FileSystemStorageManager::releaseLockForFile(const String& path)
     return true;
 }
 
-bool FileSystemStorageManager::hasActiveLock(const String& path) const
+bool FileSystemStorageManager::hasActiveLock(StringImpl* path) const
 {
     auto prefix = makeString(path, FileSystem::pathSeparator);
     for (auto& [lockedPath, lock] : m_lockMap) {
         if (lock.state == Lock::State::Open)
             continue;
-        if (lockedPath == path || lockedPath.startsWith(prefix))
+        if (equal(lockedPath, path) || startsWith(lockedPath, prefix))
             return true;
     }
     return false;
@@ -301,7 +301,7 @@ std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileS
 
     auto& entry = it->value;
     auto handleType = entry.kind == WebCore::FileSystemHandleKind::Directory ? FileSystemStorageHandle::Type::Directory : FileSystemStorageHandle::Type::File;
-    auto result = createHandle(connection, handleType, String { entry.path }, String { entry.name }, false);
+    auto result = createHandle(connection, handleType, RefPtr<StringImpl> { entry.path }, RefPtr<StringImpl> { entry.name }, false);
     if (!result)
         return makeUnexpected(result.error());
 
@@ -340,7 +340,7 @@ std::optional<Vector<WebCore::FileSystemHandleRecord>> FileSystemStorageManager:
     return records;
 }
 
-void FileSystemStorageManager::registerPersistedHandle(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier, WebCore::FileSystemHandleKind kind, String&& path, String&& name)
+void FileSystemStorageManager::registerPersistedHandle(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier, WebCore::FileSystemHandleKind kind, RefPtr<StringImpl>&& path, RefPtr<StringImpl>&& name)
 {
     releaseAssertIsCurrent(m_queue);
 
@@ -354,7 +354,7 @@ void FileSystemStorageManager::registerPersistedHandlesAndAddReferences(const Ve
     assertIsCurrent(m_queue);
 
     for (auto& record : borrow(records)) {
-        registerPersistedHandle(record.identifier, record.kind, String { record.path }, String { record.name });
+        registerPersistedHandle(record.identifier, record.kind, RefPtr<StringImpl> { record.path }, RefPtr<StringImpl> { record.name });
         addGlobalIdentifierReference(record.identifier);
     }
 }

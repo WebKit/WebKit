@@ -360,7 +360,7 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::bufferedSamplesFor
         assertIsCurrent(m_dispatcher.get());
         auto trackBuffer = m_trackBufferMap.find(trackID);
         if (trackBuffer == m_trackBufferMap.end())
-            return SamplesPromise::createAndResolve(Vector<String> { });
+            return SamplesPromise::createAndResolve(Vector<RefPtr<StringImpl>> { });
 
         return SamplesPromise::createAndResolve(WTF::map(trackBuffer->second->samples().decodeOrder(), [](auto& entry) {
             return toString(entry.second.get());
@@ -370,7 +370,7 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::bufferedSamplesFor
 
 Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::enqueuedSamplesForTrackID(TrackID)
 {
-    return SamplesPromise::createAndResolve(Vector<String> { });
+    return SamplesPromise::createAndResolve(Vector<RefPtr<StringImpl>> { });
 }
 
 MediaTime SourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID(TrackID trackID)
@@ -1522,7 +1522,7 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
                     auto safeDecodeTime = lastSampleBeforeSyncOrBeforeEndRef->decodeTime() + epsilon;
                     if (safeDecodeTime > sample->decodeTime()
                         && safeDecodeTime < (sample->decodeTime() + sample->duration() - 2 * contiguousFrameTolerance)) {
-                        INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", nextSampleInDecodeOrderRef.get(), " to: ", (nextSyncSample == trackBuffer.samples().decodeOrder().end() ? "[end]"_s : toString(nextSyncSample->second.get())),
+                        INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", nextSampleInDecodeOrderRef.get(), " to: ", (nextSyncSample == trackBuffer.samples().decodeOrder().end() ? "[end]"_si : toString(nextSyncSample->second.get())),
                         ", but fixed the ordering by changing sample DTS from ", sample->decodeTime(), " to ", safeDecodeTime);
                         sample->setTimestamps(sample->presentationTime(), safeDecodeTime);
                         break;
@@ -1530,7 +1530,7 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
                 }
             }
 
-            INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", nextSampleInDecodeOrderRef.get(), " to: ", (nextSyncSample == trackBuffer.samples().decodeOrder().end() ? "[end]"_s : toString(nextSyncSample->second.get())));
+            INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", nextSampleInDecodeOrderRef.get(), " to: ", (nextSyncSample == trackBuffer.samples().decodeOrder().end() ? "[end]"_si : toString(nextSyncSample->second.get())));
             erasedSamples.addRange(nextSampleInDecodeOrder, nextSyncSample);
         } while (false);
 

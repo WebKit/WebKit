@@ -123,7 +123,7 @@ static RefPtr<AudioInfo> createAudioInfoForFormat(OSType formatID, Vector<uint8_
     }
     AudioStreamBasicDescription asbd = formatList[itemIndex].mASBD;
 
-    RELEASE_LOG_DEBUG(Media, "createAudioFormatDescriptionForFormat for layout %s", channelLayoutDescription(formatList[itemIndex].mChannelLayoutTag).ascii().span().data());
+    RELEASE_LOG_DEBUG(Media, "createAudioFormatDescriptionForFormat for layout %s", ascii(channelLayoutDescription(formatList[itemIndex].mChannelLayoutTag)).span().data());
 
     return AudioInfo::create({
         {

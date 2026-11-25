@@ -50,7 +50,7 @@ SuppressedErrorConstructor::SuppressedErrorConstructor(VM& vm, Structure* struct
 
 void SuppressedErrorConstructor::finishCreation(VM& vm, SuppressedErrorPrototype* prototype)
 {
-    Base::finishCreation(vm, 3, errorTypeName(ErrorType::SuppressedError), PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 3, StringImpl::create(errorTypeName(ErrorType::SuppressedError)).ptr(), PropertyAdditionMode::WithoutStructureTransition);
     ASSERT(inherits(info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);

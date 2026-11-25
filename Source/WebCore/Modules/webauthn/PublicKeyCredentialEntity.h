@@ -33,8 +33,8 @@
 
 namespace WebCore {
 struct PublicKeyCredentialEntity {
-    String name;
-    String icon;
+    RefPtr<StringImpl> name;
+    RefPtr<StringImpl> icon;
 };
 }
 

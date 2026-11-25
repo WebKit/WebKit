@@ -77,14 +77,14 @@ inline bool JSValue::isObject() const
     return isCell() && asCell()->isObject();
 }
 
-inline bool JSValue::getString(JSGlobalObject* globalObject, String& s) const
+inline bool JSValue::getString(JSGlobalObject* globalObject, RefPtr<StringImpl>& s) const
 {
     return isCell() && asCell()->getString(globalObject, s);
 }
 
-inline String JSValue::getString(JSGlobalObject* globalObject) const
+inline RefPtr<StringImpl> JSValue::getString(JSGlobalObject* globalObject) const
 {
-    return isCell() ? asCell()->getString(globalObject) : String();
+    return isCell() ? asCell()->getString(globalObject) : nullptr;
 }
 
 inline JSObject* JSValue::getObject() const

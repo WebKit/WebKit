@@ -196,7 +196,7 @@ private:
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;
 
-    Vector<String> m_allowedHosts;
+    Vector<RefPtr<StringImpl>> m_allowedHosts;
 
     size_t m_userScriptInjectedCount { 0 };
 

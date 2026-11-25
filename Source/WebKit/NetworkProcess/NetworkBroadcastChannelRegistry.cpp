@@ -70,11 +70,11 @@ NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry()
 
 NetworkBroadcastChannelRegistry::~NetworkBroadcastChannelRegistry() = default;
 
-void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name)
+void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, StringImpl* name)
 {
     auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     MESSAGE_CHECK(isValidClientOrigin(origin), connection);
-    MESSAGE_CHECK(!name.isNull(), connection);
+    MESSAGE_CHECK(name, connection);
     MESSAGE_CHECK(isOriginAllowedForConnection(connection, origin), connection);
 
     auto& channelsForOrigin = m_broadcastChannels.ensure(origin, [] { return NameToConnectionIdentifiersMap { }; }).iterator->value;
@@ -83,11 +83,11 @@ void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connectio
     connectionIdentifiersForName.append(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name)
+void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, StringImpl* name)
 {
     auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     MESSAGE_CHECK(isValidClientOrigin(origin), connection);
-    MESSAGE_CHECK(!name.isNull(), connection);
+    MESSAGE_CHECK(name, connection);
     MESSAGE_CHECK(isOriginAllowedForConnection(connection, origin), connection);
 
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
@@ -103,11 +103,11 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     connectionIdentifiersForNameIterator->value.removeFirst(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, Vector<URL>&& blobURLs, CompletionHandler<void()>&& completionHandler)
+void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, IPC::Untrusted<WebCore::ClientOrigin>&& untrustedOrigin, StringImpl* name, WebCore::MessageWithMessagePorts&& message, Vector<URL>&& blobURLs, CompletionHandler<void()>&& completionHandler)
 {
     auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
-    MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler());
+    MESSAGE_CHECK_COMPLETION(name, connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(isOriginAllowedForConnection(connection, origin), connection, completionHandler());
 
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);

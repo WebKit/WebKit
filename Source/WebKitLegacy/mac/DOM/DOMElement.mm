@@ -73,7 +73,7 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
 - (NSString *)tagName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->tagName().createNSString().autorelease();
+    return createNSString(unwrap(*self)->tagName()).autorelease();
 }
 
 - (DOMCSSStyleDeclaration *)style
@@ -176,37 +176,37 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
 - (NSString *)innerHTML
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->innerHTML().createNSString().autorelease();
+    return createNSString(unwrap(*self)->innerHTML()).autorelease();
 }
 
 - (void)setInnerHTML:(NSString *)newInnerHTML
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self)->setInnerHTML(newInnerHTML));
+    raiseOnDOMError(unwrap(*self)->setInnerHTML(StringImpl::create(newInnerHTML)));
 }
 
 - (NSString *)outerHTML
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->outerHTML().createNSString().autorelease();
+    return createNSString(unwrap(*self)->outerHTML()).autorelease();
 }
 
 - (void)setOuterHTML:(NSString *)newOuterHTML
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self)->setOuterHTML(newOuterHTML));
+    raiseOnDOMError(unwrap(*self)->setOuterHTML(StringImpl::create(newOuterHTML)));
 }
 
 - (NSString *)className
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getAttribute(WebCore::HTMLNames::classAttr).createNSString().autorelease();
+    return createNSString(unwrap(*self)->getAttribute(WebCore::HTMLNames::classAttr)).autorelease();
 }
 
 - (void)setClassName:(NSString *)newClassName
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::classAttr, newClassName);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::classAttr, AtomStringImpl::add((__bridge CFStringRef)newClassName).get());
 }
 
 - (DOMTokenList *)classList
@@ -218,19 +218,19 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
 - (NSString *)innerText
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->innerText().createNSString().autorelease();
+    return createNSString(unwrap(*self)->innerText()).autorelease();
 }
 
 - (NSString *)uiactions
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getAttribute(WebCore::HTMLNames::uiactionsAttr).createNSString().autorelease();
+    return createNSString(unwrap(*self)->getAttribute(WebCore::HTMLNames::uiactionsAttr)).autorelease();
 }
 
 - (void)setUiactions:(NSString *)newUiactions
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::uiactionsAttr, newUiactions);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::uiactionsAttr, AtomStringImpl::add((__bridge CFStringRef)newUiactions).get());
 }
 
 - (DOMElement *)previousElementSibling
@@ -281,25 +281,25 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
 - (NSString *)getAttribute:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getAttribute(name).createNSString().autorelease();
+    return createNSString(unwrap(*self)->getAttribute(AtomStringImpl::add((__bridge CFStringRef)name).get())).autorelease();
 }
 
 - (void)setAttribute:(NSString *)name value:(NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self)->setAttribute(name, AtomString { value }));
+    raiseOnDOMError(unwrap(*self)->setAttribute(AtomStringImpl::add((__bridge CFStringRef)name).get(), AtomStringImpl::add((__bridge CFStringRef)value).get()));
 }
 
 - (void)removeAttribute:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->removeAttribute(name);
+    unwrap(*self)->removeAttribute(AtomStringImpl::add((__bridge CFStringRef)name).get());
 }
 
 - (DOMAttr *)getAttributeNode:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self)->getAttributeNode(name).get());
+    return kit(unwrap(*self)->getAttributeNode(AtomStringImpl::add((__bridge CFStringRef)name).get()).get());
 }
 
 - (DOMAttr *)setAttributeNode:(DOMAttr *)newAttr
@@ -324,26 +324,26 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
         return nullptr;
 
     WebCore::JSMainThreadNullState state;
-    Ref<WebCore::NodeList> result = unwrap(*self)->getElementsByTagName(name);
+    Ref<WebCore::NodeList> result = unwrap(*self)->getElementsByTagName(AtomStringImpl::add((__bridge CFStringRef)name).get());
     return kit(result.ptr());
 }
 
 - (NSString *)getAttributeNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->getAttributeNS(namespaceURI, localName).createNSString().autorelease();
+    return createNSString(unwrap(*self)->getAttributeNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)localName).get())).autorelease();
 }
 
 - (void)setAttributeNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName value:(NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self)->setAttributeNS(namespaceURI, qualifiedName, AtomString { value }));
+    raiseOnDOMError(unwrap(*self)->setAttributeNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)qualifiedName).get(), AtomStringImpl::add((__bridge CFStringRef)value).get()));
 }
 
 - (void)removeAttributeNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self)->removeAttributeNS(namespaceURI, localName);
+    unwrap(*self)->removeAttributeNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)localName).get());
 }
 
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI localName:(NSString *)localName
@@ -352,14 +352,14 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
         return nullptr;
 
     WebCore::JSMainThreadNullState state;
-    Ref<WebCore::NodeList> result = unwrap(*self)->getElementsByTagNameNS(namespaceURI, localName);
+    Ref<WebCore::NodeList> result = unwrap(*self)->getElementsByTagNameNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)localName).get());
     return kit(result.ptr());
 }
 
 - (DOMAttr *)getAttributeNodeNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self)->getAttributeNodeNS(namespaceURI, localName).get());
+    return kit(unwrap(*self)->getAttributeNodeNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)localName).get()).get());
 }
 
 - (DOMAttr *)setAttributeNodeNS:(DOMAttr *)newAttr
@@ -373,13 +373,13 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
 - (BOOL)hasAttribute:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->hasAttribute(name);
+    return unwrap(*self)->hasAttribute(AtomStringImpl::add((__bridge CFStringRef)name).get());
 }
 
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI localName:(NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self)->hasAttributeNS(namespaceURI, localName);
+    return unwrap(*self)->hasAttributeNS(AtomStringImpl::add((__bridge CFStringRef)namespaceURI).get(), AtomStringImpl::add((__bridge CFStringRef)localName).get());
 }
 
 - (void)focus
@@ -409,26 +409,26 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
 - (DOMNodeList *)getElementsByClassName:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    Ref<WebCore::NodeList> result = unwrap(*self)->getElementsByClassName(name);
+    Ref<WebCore::NodeList> result = unwrap(*self)->getElementsByClassName(AtomStringImpl::add((__bridge CFStringRef)name).get());
     return kit(result.ptr());
 }
 
 - (BOOL)matches:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(unwrap(*self)->matches(selectors));
+    return raiseOnDOMError(unwrap(*self)->matches(StringImpl::create(selectors).get()));
 }
 
 - (DOMElement *)closest:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(unwrap(*self)->closest(selectors)));
+    return kit(raiseOnDOMError(unwrap(*self)->closest(StringImpl::create(selectors).get())));
 }
 
 - (BOOL)webkitMatchesSelector:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(unwrap(*self)->matches(selectors));
+    return raiseOnDOMError(unwrap(*self)->matches(StringImpl::create(selectors).get()));
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -456,13 +456,13 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
 - (DOMElement *)querySelector:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(unwrap(*self)->querySelector(selectors)));
+    return kit(raiseOnDOMError(unwrap(*self)->querySelector(StringImpl::create(selectors).get())));
 }
 
 - (DOMNodeList *)querySelectorAll:(NSString *)selectors
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(unwrap(*self)->querySelectorAll(selectors)).ptr());
+    return kit(raiseOnDOMError(unwrap(*self)->querySelectorAll(StringImpl::create(selectors).get())).ptr());
 }
 
 @end

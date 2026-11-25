@@ -47,10 +47,10 @@ void AccessibilityController::resetToConsistentState()
         removeNotificationListener();
 }
 
-static WebCore::AccessibilityObjectAtspi* findAccessibleObjectById(WebCore::AccessibilityObjectAtspi& axObject, const String& elementID)
+static WebCore::AccessibilityObjectAtspi* findAccessibleObjectById(WebCore::AccessibilityObjectAtspi& axObject, StringImpl* elementID)
 {
     axObject.updateBackingStore();
-    if (axObject.id() == elementID)
+    if (equal(axObject.id(), elementID))
         return &axObject;
 
     for (const auto& child : axObject.children()) {
@@ -67,8 +67,8 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
     if (!rootObject)
         return nullptr;
 
-    String elementID = toWTFString(id);
-    if (auto* element = findAccessibleObjectById(*rootObject, elementID))
+    RefPtr<StringImpl> elementID = toWTFString(id);
+    if (auto* element = findAccessibleObjectById(*rootObject, elementID.get()))
         return AccessibilityUIElement::create(element);
     return nullptr;
 }

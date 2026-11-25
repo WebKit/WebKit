@@ -52,19 +52,19 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
         return adoptRef(*new OpaqueJSString(characters));
     }
 
-    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> tryCreate(const String&);
-    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> tryCreate(String&&);
+    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> tryCreate(StringImpl*);
+    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> tryCreate(RefPtr<StringImpl>&&);
 
     JS_EXPORT_PRIVATE ~OpaqueJSString();
 
-    bool is8Bit() { return m_string.is8Bit(); }
-    std::span<const Latin1Character> span8() LIFETIME_BOUND { return m_string.span8(); }
-    std::span<const char16_t> span16() LIFETIME_BOUND { return m_string.span16(); }
-    unsigned length() { return m_string.length(); }
+    bool is8Bit() { return WTF::is8Bit(m_string); }
+    std::span<const Latin1Character> span8() LIFETIME_BOUND { return WTF::span8(m_string); }
+    std::span<const char16_t> span16() LIFETIME_BOUND { return WTF::span16(m_string); }
+    unsigned length() { return WTF::length(m_string); }
 
     const char16_t* characters() LIFETIME_BOUND;
 
-    JS_EXPORT_PRIVATE String string() const;
+    JS_EXPORT_PRIVATE RefPtr<StringImpl> string() const;
     JSC::Identifier identifier(JSC::VM*) const;
 
     static bool equal(const OpaqueJSString*, const OpaqueJSString*);
@@ -77,25 +77,25 @@ private:
     {
     }
 
-    explicit OpaqueJSString(String&& string)
-        : m_string(WTF::move(string).isolatedCopy())
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<char16_t*>(m_string.span16().data()))
+    explicit OpaqueJSString(RefPtr<StringImpl>&& string)
+        : m_string(isolatedCopy(WTF::move(string)))
+        , m_characters(m_string.get() && WTF::is8Bit(m_string) ? nullptr : const_cast<char16_t*>(WTF::span16(m_string).data()))
     {
     }
 
     OpaqueJSString(std::span<const Latin1Character> characters)
-        : m_string(characters)
+        : m_string(characters.data() ? RefPtr { StringImpl::create(characters) } : nullptr) // A null buffer makes a null string.
         , m_characters(nullptr)
     {
     }
 
     OpaqueJSString(std::span<const char16_t> characters)
-        : m_string(characters)
-        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<char16_t*>(m_string.span16().data()))
+        : m_string(characters.data() ? RefPtr { StringImpl::create(characters) } : nullptr) // A null buffer makes a null string.
+        , m_characters(m_string.get() && WTF::is8Bit(m_string) ? nullptr : const_cast<char16_t*>(WTF::span16(m_string).data()))
     {
     }
 
-    String m_string;
+    RefPtr<StringImpl> m_string;
 
     // This will be initialized on demand when characters() is called if the string needs up-conversion.
     std::atomic<char16_t*> m_characters;

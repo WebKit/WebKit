@@ -83,7 +83,7 @@ void WebProcessActivityState::takeTextExtractionAssertion()
     }, m_page);
 
     auto processID = process().processID();
-    Ref assertion = ProcessAssertion::create(protect(process()), "WebKit text extraction"_s, ProcessAssertionType::Background);
+    Ref assertion = ProcessAssertion::create(protect(process()), "WebKit text extraction"_si, ProcessAssertionType::Background);
     m_textExtractionAssertion = assertion.copyRef();
     assertion->setInvalidationHandler([processID, weakPage = page] {
         WTF::visit([processID](auto&& weakPage) {
@@ -118,7 +118,7 @@ void WebProcessActivityState::takeCapturingActivity()
 
 void WebProcessActivityState::takeMutedCaptureAssertion()
 {
-    Ref isMutedCaptureAssertion = ProcessAssertion::create(protect(process()), "WebKit Muted Media Capture"_s, ProcessAssertionType::Background);
+    Ref isMutedCaptureAssertion = ProcessAssertion::create(protect(process()), "WebKit Muted Media Capture"_si, ProcessAssertionType::Background);
     m_isMutedCaptureAssertion = isMutedCaptureAssertion.copyRef();
 
     auto page = WTF::visit([](auto&& weakPageRef) -> Variant<WeakPtr<WebPageProxy>, WeakPtr<RemotePageProxy>> {

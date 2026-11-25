@@ -49,7 +49,7 @@ struct CompressionDictionaryParameters {
     struct Match {
         NetworkCache::Key key;
         std::array<uint8_t, 32> hash;
-        String id;
+        RefPtr<StringImpl> id;
     };
 
     WebCore::FetchOptions::Destination destination { WebCore::FetchOptions::Destination::EmptyString };

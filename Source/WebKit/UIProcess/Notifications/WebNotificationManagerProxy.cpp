@@ -91,7 +91,7 @@ void WebNotificationManagerProxy::processPoolDestroyed()
     m_provider->removeNotificationManager(*this);
 }
 
-HashMap<String, bool> WebNotificationManagerProxy::notificationPermissions()
+HashMap<RefPtr<StringImpl>, bool> WebNotificationManagerProxy::notificationPermissions()
 {
     return m_provider->notificationPermissions();
 }
@@ -309,22 +309,22 @@ static Vector<WebCore::SecurityOriginData> apiArrayToSecurityOrigins(API::Array*
     });
 }
 
-static Vector<String> apiArrayToSecurityOriginStrings(API::Array* origins)
+static Vector<RefPtr<StringImpl>> apiArrayToSecurityOriginStrings(API::Array* origins)
 {
     if (!origins)
         return { };
 
-    return Vector<String>(origins->size(), [origins](size_t i) {
+    return Vector<RefPtr<StringImpl>>(origins->size(), [origins](size_t i) {
         return origins->at<API::SecurityOrigin>(i)->securityOrigin().toString();
     });
 }
 
 void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const API::SecurityOrigin* origin, bool enabled)
 {
-    RELEASE_LOG(Notifications, "Provider did update notification policy for origin %" SENSITIVE_LOG_STRING " to %d", origin->securityOrigin().toString().utf8(), enabled);
+    RELEASE_LOG(Notifications, "Provider did update notification policy for origin %" SENSITIVE_LOG_STRING " to %d", utf8(origin->securityOrigin().toString()), enabled);
 
     auto originString = origin->securityOrigin().toString();
-    if (originString.isEmpty())
+    if (isEmpty(originString))
         return;
 
     if (this == &serviceWorkerManagerSingleton()) {
@@ -353,14 +353,14 @@ void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Arr
         processPool->sendToAllProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(apiArrayToSecurityOriginStrings(origins)));
 }
 
-void WebNotificationManagerProxy::getNotifications(const URL& url, const String& tag, PAL::SessionID sessionID, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
+void WebNotificationManagerProxy::getNotifications(const URL& url, StringImpl* tag, PAL::SessionID sessionID, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
 {
     Vector<Ref<WebNotification>> notifications;
     for (auto& notification : m_notifications.values()) {
         auto& data = notification->data();
         if (data.serviceWorkerRegistrationURL != url || data.sourceSession != sessionID)
             continue;
-        if (!tag.isEmpty() && data.tag != tag)
+        if (!isEmpty(tag) && !equal(data.tag, tag))
             continue;
         notifications.append(notification.copyRef());
     }

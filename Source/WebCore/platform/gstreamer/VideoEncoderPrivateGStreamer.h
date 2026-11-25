@@ -89,13 +89,13 @@ private:
 };
 
 struct CodecConfig {
-    String name;
+    RefPtr<StringImpl> name;
     bool useAnnexB;
 };
 
 } // namespace WebCore
 
-bool videoEncoderSupportsCodec(WebKitVideoEncoder*, const String&);
+bool videoEncoderSupportsCodec(WebKitVideoEncoder*, StringImpl*);
 bool videoEncoderSetCodec(WebKitVideoEncoder*, const WebCore::CodecConfig&, const WebCore::IntSize&, std::optional<double> frameRate = std::nullopt, bool enableVideoFlip = false);
 void videoEncoderSetBitRateAllocation(WebKitVideoEncoder*, RefPtr<WebCore::WebKitVideoEncoderBitRateAllocation>&&);
 void videoEncoderSetFrameRate(WebKitVideoEncoder*, double frameRate);

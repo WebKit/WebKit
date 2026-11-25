@@ -41,8 +41,8 @@ public:
     std::optional<Seconds> scheduledTime() const { return m_scheduledTime; }
 
 protected:
-    AnimationEventBase(enum EventInterfaceType, const AtomString&, WebAnimation*, std::optional<Seconds> scheduledTime);
-    AnimationEventBase(enum EventInterfaceType, const AtomString&, EventInit&&, IsTrusted, RefPtr<WebAnimation>&&);
+    AnimationEventBase(enum EventInterfaceType, AtomStringImpl*, WebAnimation*, std::optional<Seconds> scheduledTime);
+    AnimationEventBase(enum EventInterfaceType, AtomStringImpl*, EventInit&&, IsTrusted, RefPtr<WebAnimation>&&);
 
 private:
     const RefPtr<WebAnimation> m_animation;

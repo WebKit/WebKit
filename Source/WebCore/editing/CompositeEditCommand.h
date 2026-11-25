@@ -60,10 +60,10 @@ public:
 
 private:
     int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>&) const;
-    String textDeletedByUnapply();
-    String textDeletedByReapply();
+    RefPtr<StringImpl> textDeletedByUnapply();
+    RefPtr<StringImpl> textDeletedByReapply();
 
-    String m_replacedText;
+    RefPtr<StringImpl> m_replacedText;
     VisiblePositionIndexRange m_rangeDeletedByUnapply;
     VisiblePositionIndexRange m_rangeDeletedByReapply;
 };
@@ -100,7 +100,7 @@ public:
 private:
     EditCommandComposition(Document&, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction);
 
-    String label() const final;
+    RefPtr<StringImpl> label() const final;
     void didRemoveFromUndoManager() final { }
     NODELETE bool areRootEditabledElementsConnected();
 
@@ -129,9 +129,9 @@ public:
     virtual bool shouldRetainAutocorrectionIndicator() const;
     virtual void setShouldRetainAutocorrectionIndicator(bool);
     virtual bool shouldStopCaretBlinking() const { return false; }
-    virtual AtomString inputEventTypeName() const;
+    virtual RefPtr<AtomStringImpl> inputEventTypeName() const;
     virtual bool isInputMethodComposing() const;
-    virtual String inputEventData() const { return { }; }
+    virtual RefPtr<StringImpl> inputEventData() const { return { }; }
     virtual bool isBeforeInputEventCancelable() const { return true; }
     virtual bool shouldDispatchInputEvents() const { return true; }
     Vector<Ref<StaticRange>> targetRangesForBindings() const;
@@ -159,7 +159,7 @@ protected:
     void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true, bool sanitizeMarkup = true);
     void deleteSelection(const VisibleSelection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true, bool sanitizeMarkup = true);
     virtual void deleteTextFromNode(Text&, unsigned offset, unsigned count);
-    void inputText(const String&, bool selectInsertedText = false);
+    void inputText(StringImpl*, bool selectInsertedText = false);
     bool isRemovableBlock(const Node*);
     void insertNodeAfter(Ref<Node>&&, Node& refChild);
     void insertNodeAt(Ref<Node>&&, const Position&);
@@ -168,7 +168,7 @@ protected:
     void insertParagraphSeparatorAtPosition(const Position&, bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false);
     void insertParagraphSeparator(bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false);
     void insertLineBreak();
-    void insertTextIntoNode(Text&, unsigned offset, const String& text, AllowPasswordEcho = AllowPasswordEcho::Yes);
+    void insertTextIntoNode(Text&, unsigned offset, StringImpl* text, AllowPasswordEcho = AllowPasswordEcho::Yes);
     void mergeIdenticalElements(Element&, Element&);
     void rebalanceWhitespace();
     void rebalanceWhitespaceAt(const Position&);
@@ -176,7 +176,7 @@ protected:
     void prepareWhitespaceAtPositionForSplit(Position&);
     void replaceCollapsibleWhitespaceWithNonBreakingSpaceIfNeeded(const VisiblePosition&);
     RefPtr<Text> textNodeForRebalance(const Position&) const;
-    NODELETE bool shouldRebalanceLeadingWhitespaceFor(const String&) const;
+    NODELETE bool shouldRebalanceLeadingWhitespaceFor(StringImpl*) const;
     void removeNodeAttribute(Element&, const QualifiedName& attribute);
     void removeChildrenInRange(Node&, unsigned from, unsigned to);
     virtual void removeNode(Node&, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
@@ -186,11 +186,11 @@ protected:
     void moveRemainingSiblingsToNewParent(Node*, Node* pastLastNodeToMove, Element& newParent);
     void updatePositionForNodeRemovalPreservingChildren(Position&, Node&);
     void prune(Node*);
-    void replaceTextInNode(Text&, unsigned offset, unsigned count, const String& replacementText, AllowPasswordEcho = AllowPasswordEcho::Yes);
-    Position replaceSelectedTextInNode(const String&);
-    void replaceTextInNodePreservingMarkers(Text&, unsigned offset, unsigned count, const String& replacementText);
+    void replaceTextInNode(Text&, unsigned offset, unsigned count, StringImpl* replacementText, AllowPasswordEcho = AllowPasswordEcho::Yes);
+    Position replaceSelectedTextInNode(StringImpl*);
+    void replaceTextInNodePreservingMarkers(Text&, unsigned offset, unsigned count, StringImpl* replacementText);
     Position positionOutsideTabSpan(const Position&);
-    void setNodeAttribute(Element&, const QualifiedName& attribute, const AtomString& value);
+    void setNodeAttribute(Element&, const QualifiedName& attribute, AtomStringImpl* value);
     void splitElement(Element&, Node& atChild);
     void splitListElement(Element&, Node& atChild);
     void splitTextNode(Text&, unsigned offset);

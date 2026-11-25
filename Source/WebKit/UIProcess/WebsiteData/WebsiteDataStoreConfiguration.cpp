@@ -61,7 +61,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-        setPCMMachServiceName("com.apple.webkit.adattributiond.service"_s);
+        setPCMMachServiceName("com.apple.webkit.adattributiond.service"_si);
 #endif
     }
 }
@@ -79,7 +79,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const WTF::UUID& id
     , m_totalQuotaRatio(WebsiteDataStore::defaultTotalQuotaRatio())
     , m_standardVolumeCapacity(WebsiteDataStore::defaultStandardVolumeCapacity())
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    , m_pcmMachServiceName("com.apple.webkit.adattributiond.service"_s)
+    , m_pcmMachServiceName("com.apple.webkit.adattributiond.service"_si)
 #endif
 {
     ASSERT(m_identifier);
@@ -89,7 +89,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const WTF::UUID& id
 
 #endif
 
-WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory)
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(StringImpl* baseCacheDirectory, StringImpl* baseDataDirectory)
     : m_isPersistent(IsPersistent::Yes)
     , m_unifiedOriginStorageLevel(WebsiteDataStore::defaultUnifiedOriginStorageLevel())
     , m_baseCacheDirectory(baseCacheDirectory)

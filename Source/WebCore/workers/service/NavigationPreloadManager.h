@@ -42,7 +42,7 @@ public:
     using Promise = DOMPromiseDeferred<void>;
     void enable(Promise&&);
     void disable(Promise&&);
-    void setHeaderValue(String&&, Promise&&);
+    void setHeaderValue(RefPtr<StringImpl>&&, Promise&&);
 
     using StatePromise = DOMPromiseDeferred<IDLDictionary<NavigationPreloadState>>;
     void getState(StatePromise&&);

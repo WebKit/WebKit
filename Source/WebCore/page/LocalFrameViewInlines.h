@@ -44,7 +44,7 @@ inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& s
         m_visuallyNonEmptyPixelCount = area;
 }
 
-inline void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText)
+inline void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(StringImpl* inlineText)
 {
     if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold && m_hasReachedSignificantRenderedTextThreshold)
         return;

@@ -39,7 +39,7 @@ public:
 protected:
     using ImageBufferBackend::ImageBufferBackend;
 
-    WEBCORE_EXPORT String debugDescription() const override;
+    WEBCORE_EXPORT RefPtr<StringImpl> debugDescription() const override;
 };
 
 } // namespace WebCore

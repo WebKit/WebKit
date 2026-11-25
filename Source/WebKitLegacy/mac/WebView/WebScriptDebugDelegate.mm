@@ -57,7 +57,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 @interface WebScriptCallFramePrivate : NSObject {
 @public
     __weak WebScriptObject *globalObject; // the global object's proxy (not retained).
-    String functionName;
+    RefPtr<StringImpl> functionName;
     JSC::JSValue exceptionValue;
 }
 @end
@@ -85,7 +85,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @implementation WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj functionName:(String)functionName exceptionValue:(JSC::JSValue)exceptionValue
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj functionName:(RefPtr<StringImpl>)functionName exceptionValue:(JSC::JSValue)exceptionValue
 {
     if ((self = [super init])) {
         _private = adoptNS([[WebScriptCallFramePrivate alloc] init]);
@@ -147,10 +147,10 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (NSString *)functionName
 {
-    if (_private->functionName.isEmpty())
+    if (isEmpty(_private->functionName))
         return nil;
 
-    String functionName = _private->functionName;
+    RefPtr<StringImpl> functionName = _private->functionName;
     return nsStringNilIfEmpty(functionName).autorelease();
 }
 

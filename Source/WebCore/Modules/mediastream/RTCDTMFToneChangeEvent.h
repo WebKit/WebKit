@@ -37,21 +37,21 @@ class RTCDTMFToneChangeEvent final : public Event {
 public:
     virtual ~RTCDTMFToneChangeEvent();
 
-    NODELETE static Ref<RTCDTMFToneChangeEvent> create(const String& tone);
+    NODELETE static Ref<RTCDTMFToneChangeEvent> create(StringImpl* tone);
 
     struct Init : EventInit {
-        String tone;
+        RefPtr<StringImpl> tone;
     };
 
-    NODELETE static Ref<RTCDTMFToneChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    NODELETE static Ref<RTCDTMFToneChangeEvent> create(AtomStringImpl* type, Init&&, IsTrusted = IsTrusted::No);
 
-    NODELETE const String& tone() const;
+    NODELETE const RefPtr<StringImpl>& tone() const;
 
 private:
-    RTCDTMFToneChangeEvent(const String& tone);
-    RTCDTMFToneChangeEvent(const AtomString& type, Init&&, IsTrusted);
+    RTCDTMFToneChangeEvent(StringImpl* tone);
+    RTCDTMFToneChangeEvent(AtomStringImpl* type, Init&&, IsTrusted);
 
-    String m_tone;
+    RefPtr<StringImpl> m_tone;
 };
 
 } // namespace WebCore

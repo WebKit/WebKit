@@ -343,7 +343,7 @@ static char* toStringWithRadixInternal(RadixBuffer& buffer, double originalNumbe
     return startOfResultString;
 }
 
-static String toStringWithRadixInternal(int32_t number, unsigned radix)
+static RefPtr<StringImpl> toStringWithRadixInternal(int32_t number, unsigned radix)
 {
     Latin1Character buf[1 + 32]; // Worst case is radix == 2, which gives us 32 digits + sign.
     Latin1Character* end = std::end(buf);
@@ -367,10 +367,10 @@ static String toStringWithRadixInternal(int32_t number, unsigned radix)
     if (negative)
         *--p = '-';
 
-    return String({ p, end });
+    return StringImpl::create({ p, end });
 }
 
-String toStringWithRadix(double doubleValue, int32_t radix)
+RefPtr<StringImpl> toStringWithRadix(double doubleValue, int32_t radix)
 {
     ASSERT(2 <= radix && radix <= 36);
 
@@ -379,10 +379,10 @@ String toStringWithRadix(double doubleValue, int32_t radix)
         return toStringWithRadixInternal(integerValue, radix);
 
     if (radix == 10 || !std::isfinite(doubleValue))
-        return String::number(doubleValue);
+        return makeString(doubleValue);
 
     RadixBuffer buffer;
-    return String::fromLatin1(toStringWithRadixInternal(buffer, doubleValue, radix));
+    return StringImpl::fromLatin1(toStringWithRadixInternal(buffer, doubleValue, radix));
 }
 
 // toExponential converts a number to a string, always formatting as an exponential.
@@ -405,22 +405,22 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
-        return JSValue::encode(jsNontrivialString(vm, String::number(x)));
+        return JSValue::encode(jsNontrivialString(vm, makeString(x)));
 
     if (decimalPlacesDouble < 0 || decimalPlacesDouble > 100)
-        return throwVMRangeError(globalObject, scope, "toExponential() argument must be between 0 and 100"_s);
+        return throwVMRangeError(globalObject, scope, "toExponential() argument must be between 0 and 100"_si);
     int decimalPlaces = static_cast<int>(decimalPlacesDouble);
 
     // Round if the argument is not undefined, always format as exponential.
     NumberToStringBuffer buffer;
     if (arg.isUndefined())
-        return JSValue::encode(jsString(vm, String::fromLatin1(WTF::numberToShortestExponentialString(x, buffer))));
+        return JSValue::encode(jsString(vm, StringImpl::fromLatin1(WTF::numberToShortestExponentialString(x, buffer))));
 
     DoubleConversionStringBuilder builder { std::span<char> { buffer } };
     builder.Reset();
     const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
     converter.ToExponential(x, decimalPlaces, &builder);
-    return JSValue::encode(jsString(vm, String::fromLatin1(builder.Finalize())));
+    return JSValue::encode(jsString(vm, StringImpl::fromLatin1(builder.Finalize())));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.
@@ -439,20 +439,20 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToFixed, (JSGlobalObject* globalObject, 
     double decimalPlacesDouble = callFrame->argument(0).toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (decimalPlacesDouble < 0 || decimalPlacesDouble > 100)
-        return throwVMRangeError(globalObject, scope, "toFixed() argument must be between 0 and 100"_s);
+        return throwVMRangeError(globalObject, scope, "toFixed() argument must be between 0 and 100"_si);
     int decimalPlaces = static_cast<int>(decimalPlacesDouble);
 
     // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
     // This also covers Ininity, and structure the check so that NaN
     // values are also handled by numberToString
     if (!(std::abs(x) < 1e+21))
-        return JSValue::encode(jsString(vm, String::number(x)));
+        return JSValue::encode(jsString(vm, makeString(x)));
 
     // The check above will return false for NaN or Infinity, these will be
     // handled by numberToString.
     ASSERT(std::isfinite(x));
 
-    return JSValue::encode(jsString(vm, String::numberToStringFixedWidth(x, decimalPlaces)));
+    return JSValue::encode(jsString(vm, StringImpl::numberToStringFixedWidth(x, decimalPlaces)));
 }
 
 // toPrecision converts a number to a string, taking an argument specifying a
@@ -474,7 +474,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
     JSValue arg = callFrame->argument(0);
     // To precision called with no argument is treated as ToString.
     if (arg.isUndefined())
-        return JSValue::encode(jsString(vm, String::number(x)));
+        return JSValue::encode(jsString(vm, makeString(x)));
 
     // Perform ToInteger on the argument before remaining steps.
     double significantFiguresDouble = arg.toIntegerOrInfinity(globalObject);
@@ -482,13 +482,13 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
-        return JSValue::encode(jsNontrivialString(vm, String::number(x)));
+        return JSValue::encode(jsNontrivialString(vm, makeString(x)));
 
     if (significantFiguresDouble < 1 || significantFiguresDouble > 100)
-        return throwVMRangeError(globalObject, scope, "toPrecision() argument must be between 1 and 100"_s);
+        return throwVMRangeError(globalObject, scope, "toPrecision() argument must be between 1 and 100"_si);
     int significantFigures = static_cast<int>(significantFiguresDouble);
 
-    return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, TrailingZerosPolicy::Keep)));
+    return JSValue::encode(jsString(vm, StringImpl::numberToStringFixedPrecision(x, significantFigures, TrailingZerosPolicy::Keep)));
 }
 
 JSString* NumericStrings::addJSString(VM& vm, int i)
@@ -501,9 +501,9 @@ JSString* NumericStrings::addJSString(VM& vm, int i)
         return entry.jsString;
     }
     auto& entry = lookup(i);
-    if (i != entry.key || entry.value.isNull()) {
+    if (i != entry.key || !entry.value) {
         entry.key = i;
-        entry.value = String::number(i);
+        entry.value = makeString(i);
     } else {
         if (entry.jsString)
             return entry.jsString;
@@ -517,9 +517,9 @@ JSString* NumericStrings::addJSString(VM& vm, double value)
     if (!m_doubleCache) [[unlikely]]
         initializeDoubleCache();
     auto& entry = lookup(value);
-    if (value != entry.key || entry.value.isNull()) {
+    if (value != entry.key || !entry.value) {
         entry.key = value;
-        entry.value = String::number(value);
+        entry.value = makeString(value);
     } else {
         if (entry.jsString)
             return entry.jsString;
@@ -569,10 +569,10 @@ static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue
         return vm.numericStrings.addJSString(vm, doubleValue);
 
     if (!std::isfinite(doubleValue))
-        return jsNontrivialString(vm, String::number(doubleValue));
+        return jsNontrivialString(vm, makeString(doubleValue));
 
     RadixBuffer buffer;
-    return jsString(vm, String::fromLatin1(toStringWithRadixInternal(buffer, doubleValue, radix)));
+    return jsString(vm, StringImpl::fromLatin1(toStringWithRadixInternal(buffer, doubleValue, radix)));
 }
 
 JSString* int32ToString(VM& vm, int32_t value, int32_t radix)
@@ -603,7 +603,7 @@ JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
     char* startOfResultString = decimalPoint;
     *decimalPoint = '\0';
 
-    return jsNontrivialString(vm, String::fromLatin1(int52ToStringWithRadix(startOfResultString, value, radix)));
+    return jsNontrivialString(vm, StringImpl::fromLatin1(int52ToStringWithRadix(startOfResultString, value, radix)));
 }
 
 JSString* numberToString(VM& vm, double doubleValue, int32_t radix)
@@ -679,7 +679,7 @@ int32_t extractToStringRadixArgument(JSGlobalObject* globalObject, JSValue radix
             return static_cast<int32_t>(radixDouble);   
     }
 
-    throwRangeError(globalObject, throwScope, "toString() radix argument must be between 2 and 36"_s);
+    throwRangeError(globalObject, throwScope, "toString() radix argument must be between 2 and 36"_si);
     return 0;
 }
 

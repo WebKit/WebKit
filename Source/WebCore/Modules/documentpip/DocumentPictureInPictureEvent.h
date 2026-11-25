@@ -40,13 +40,13 @@ public:
         Ref<WindowProxy> window;
     };
 
-    static Ref<DocumentPictureInPictureEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<DocumentPictureInPictureEvent> create(AtomStringImpl*, Init&&, IsTrusted = IsTrusted::No);
     ~DocumentPictureInPictureEvent();
 
     WindowProxy& window() const { return m_window.get(); }
 
 private:
-    DocumentPictureInPictureEvent(const AtomString&, Init&&, IsTrusted);
+    DocumentPictureInPictureEvent(AtomStringImpl*, Init&&, IsTrusted);
 
     const Ref<WindowProxy> m_window;
 };

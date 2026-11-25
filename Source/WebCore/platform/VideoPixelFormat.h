@@ -131,6 +131,6 @@ inline std::optional<PlanarYUVFormatLayout> planarYUVFormatLayout(VideoPixelForm
     return { };
 }
 
-WEBCORE_EXPORT String convertVideoPixelFormatToString(VideoPixelFormat);
+WEBCORE_EXPORT RefPtr<StringImpl> convertVideoPixelFormatToString(VideoPixelFormat);
 
 } // namespace WebCore

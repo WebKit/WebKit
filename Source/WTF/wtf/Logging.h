@@ -69,7 +69,7 @@ struct LogChannel {
 // See the WTFLogChannel extension in Swift for the idiomatic API.
 
 // Behaves like LOG_WITH_STREAM(channel, stream << message).
-WTF_EXPORT_PRIVATE void logPreformatted(WTFLogChannel&, const String& message);
+WTF_EXPORT_PRIVATE void logPreformatted(WTFLogChannel&, StringImpl* message);
 
 #if USE(OS_LOG) && !RELEASE_LOG_DISABLED
 // RELEASE_LOG is os_log on this handle, so Swift can use os.Logger(osLog(channel)) directly.
@@ -80,7 +80,7 @@ enum class ReleaseLogType : uint8_t { Default, Info, Debug, Error, Fault };
 
 #if !RELEASE_LOG_DISABLED
 // RELEASE_LOG(channel, "%s", message) through the same WTF_RELEASE_LOG_SEND backend, with the location of the Swift caller.
-WTF_EXPORT_PRIVATE void releaseLogPreformatted(WTFLogChannel&, ReleaseLogType, const String& file, unsigned line, const String& function, const String& message);
+WTF_EXPORT_PRIVATE void releaseLogPreformatted(WTFLogChannel&, ReleaseLogType, StringImpl* file, unsigned line, StringImpl* function, StringImpl* message);
 #endif
 #endif
 

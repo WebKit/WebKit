@@ -48,12 +48,12 @@ const Vector<WeakPtr<PlatformGamepad>>& EmptyGamepadProvider::platformGamepads()
     return emptyGamepads;
 }
 
-void EmptyGamepadProvider::playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
+void EmptyGamepadProvider::playEffect(unsigned, StringImpl*, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(false);
 }
 
-void EmptyGamepadProvider::stopEffects(unsigned, const String&, CompletionHandler<void()>&& completionHandler)
+void EmptyGamepadProvider::stopEffects(unsigned, StringImpl*, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }

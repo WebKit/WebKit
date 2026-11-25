@@ -96,7 +96,7 @@
     WebCore::JSMainThreadNullState state;
     auto range = makeSimpleRange(*IMPL);
     protect(range.start.document())->updateLayout();
-    return plainText(range).createNSString().autorelease();
+    return createNSString(plainText(range)).autorelease();
 }
 
 - (void)setStart:(DOMNode *)refNode offset:(int)offset
@@ -220,7 +220,7 @@
 - (NSString *)toString
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->toString().createNSString().autorelease();
+    return createNSString(IMPL->toString()).autorelease();
 }
 
 - (void)detach
@@ -232,7 +232,7 @@
 - (DOMDocumentFragment *)createContextualFragment:(NSString *)html
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->createContextualFragment(html)).ptr());
+    return kit(raiseOnDOMError(IMPL->createContextualFragment(StringImpl::create(html))).ptr());
 }
 
 - (short)compareNode:(DOMNode *)refNode
@@ -270,7 +270,7 @@
 - (void)expand:(NSString *)unit
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(IMPL->expand(unit));
+    raiseOnDOMError(IMPL->expand(StringImpl::create(unit).get()));
 }
 
 @end

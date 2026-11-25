@@ -51,14 +51,14 @@ public:
         // Here, like in GStreamerVideoCaptureSource, we could rely on the DesktopPortal and
         // PipeWireCaptureDeviceManager, but there is no audio desktop portal yet. See
         // https://github.com/flatpak/xdg-desktop-portal/discussions/1142.
-        return GStreamerAudioCaptureSource::create(String { device.persistentId() }, WTF::move(hashSalts), constraints);
+        return GStreamerAudioCaptureSource::create(RefPtr<StringImpl> { device.persistentId() }, WTF::move(hashSalts), constraints);
     }
 private:
     CaptureDeviceManager& audioCaptureDeviceManager() final { return GStreamerAudioCaptureDeviceManager::singleton(); }
     const Vector<CaptureDevice>& speakerDevices() const final { return GStreamerAudioCaptureDeviceManager::singleton().speakerDevices(); }
 };
 
-CaptureSourceOrError GStreamerAudioCaptureSource::create(String&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
+CaptureSourceOrError GStreamerAudioCaptureSource::create(RefPtr<StringImpl>&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints)
 {
     auto device = GStreamerAudioCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
@@ -91,7 +91,7 @@ GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_audio_capture_source_debug, "webkitaudiocapturesource", 0, "WebKit Audio Capture Source.");
     });
-    GST_DEBUG_OBJECT(m_capturer->pipeline(), "Created AudioCaptureSource for device %s", persistentID().utf8());
+    GST_DEBUG_OBJECT(m_capturer->pipeline(), "Created AudioCaptureSource for device %s", utf8(persistentID()));
 
     auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
     singleton.registerCapturer(m_capturer.copyRef());
@@ -99,7 +99,7 @@ GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&
 
 GStreamerAudioCaptureSource::~GStreamerAudioCaptureSource()
 {
-    GST_DEBUG_OBJECT(m_capturer->pipeline(), "Un-registering AudioCaptureSource for device %s", persistentID().utf8());
+    GST_DEBUG_OBJECT(m_capturer->pipeline(), "Un-registering AudioCaptureSource for device %s", utf8(persistentID()));
     auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
     singleton.unregisterCapturer(*m_capturer);
 }
@@ -112,7 +112,7 @@ void GStreamerAudioCaptureSource::captureEnded()
 
 void GStreamerAudioCaptureSource::captureDeviceUpdated(const GStreamerCaptureDevice& device)
 {
-    setName(AtomString { device.label() });
+    setName(AtomStringImpl::add(device.label()));
     setPersistentId(device.persistentId());
     configurationChanged();
 }

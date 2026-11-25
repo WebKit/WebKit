@@ -904,7 +904,7 @@ class UserAgentPartsGenerator():
         for part_name, part_data in user_agent_parts.items():
             if 'conditional' in part_data:
                 writer.write(f'#if {part_data["conditional"]}')
-            writer.write(f'const AtomString& {format_name_for_function(part_name)}();')
+            writer.write(f'const RefPtr<AtomStringImpl>& {format_name_for_function(part_name)}();')
             if 'conditional' in part_data:
                 writer.write('#endif')
         writer.newline()
@@ -925,10 +925,10 @@ class UserAgentPartsGenerator():
             part_function_name = format_name_for_function(part_name)
             if 'conditional' in part_data:
                 writer.write(f'#if {part_data["conditional"]}')
-            writer.write(f'const AtomString& {part_function_name}()')
+            writer.write(f'const RefPtr<AtomStringImpl>& {part_function_name}()')
             writer.write('{')
             with writer.indent():
-                writer.write(f'static MainThreadNeverDestroyed<const AtomString> {part_function_name}("{part_name}"_s);')
+                writer.write(f'static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> {part_function_name}("{part_name}"_atom);')
                 writer.write(f'return {part_function_name};')
             writer.write('}')
             if 'conditional' in part_data:

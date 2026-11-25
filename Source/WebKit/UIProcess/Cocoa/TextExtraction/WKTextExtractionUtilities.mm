@@ -89,8 +89,8 @@ NODELETE static WKTextExtractionEventListenerTypes eventListenerTypes(OptionSet<
 static RetainPtr<WKTextExtractionEditable> createWKEditable(const TextExtraction::Editable& editable)
 {
     return adoptNS([[WKTextExtractionEditable alloc]
-        initWithLabel:editable.label.createNSString().get()
-        placeholder:editable.placeholder.createNSString().get()
+        initWithLabel:createNSString(editable.label).get()
+        placeholder:createNSString(editable.placeholder).get()
         isSecure:static_cast<BOOL>(editable.isSecure)
         isFocused:static_cast<BOOL>(editable.isFocused)]);
 }
@@ -103,10 +103,10 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
     if (item.nodeIdentifier)
         nodeIdentifier = [NSString stringWithFormat:@"%llu", item.nodeIdentifier->toUInt64()];
 
-    RetainPtr accessibilityRole = item.accessibilityRole.createNSString();
+    RetainPtr accessibilityRole = createNSString(item.accessibilityRole);
     RetainPtr ariaAttributes = adoptNS([[NSMutableDictionary alloc] initWithCapacity:item.ariaAttributes.size()]);
     for (auto& [attribute, value] : item.ariaAttributes)
-        [ariaAttributes setObject:value.createNSString().get() forKey:attribute.createNSString().get()];
+        [ariaAttributes setObject:createNSString(value).get() forKey:createNSString(attribute).get()];
 
     return WTF::switchOn(item.data,
         [&](const TextExtraction::TextItemData& data) -> RetainPtr<WKTextExtractionItem> {
@@ -116,13 +116,13 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
 
             auto selectedRange = NSMakeRange(NSNotFound, 0);
             if (auto range = data.selectedRange) {
-                if (range->location + range->length <= data.content.length()) [[likely]]
+                if (range->location + range->length <= length(data.content)) [[likely]]
                     selectedRange = NSMakeRange(range->location, range->length);
             }
 
             auto links = createNSArray(data.links, [&](auto& linkAndRange) -> RetainPtr<WKTextExtractionLink> {
                 auto& [url, range] = linkAndRange;
-                if (range.location + range.length > data.content.length()) [[unlikely]]
+                if (range.location + range.length > length(data.content)) [[unlikely]]
                     return { };
 
                 RetainPtr nsURL = url.createNSURL();
@@ -133,7 +133,7 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
             });
 
             return adoptNS([[WKTextExtractionTextItem alloc]
-                initWithContent:data.content.createNSString().get()
+                initWithContent:createNSString(data.content).get()
                 selectedRange:selectedRange
                 links:links.get()
                 editable:editable.get()
@@ -163,7 +163,7 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
                 accessibilityRole:accessibilityRole.get()
                 nodeIdentifier:nodeIdentifier.get()]);
         }, [&](const TextExtraction::SelectData& data) -> RetainPtr<WKTextExtractionItem> {
-            auto selectedValues = WTF::compactMap(data.options, [](auto& option) -> std::optional<String> {
+            auto selectedValues = WTF::compactMap(data.options, [](auto& option) -> std::optional<RefPtr<StringImpl>> {
                 if (option.isSelected)
                     return { option.value };
                 return { };
@@ -181,7 +181,7 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
             RetainPtr name = [data.completedSource.createNSURL() lastPathComponent] ?: @"";
             return adoptNS([[WKTextExtractionImageItem alloc]
                 initWithName:name.get()
-                altText:data.altText.createNSString().get()
+                altText:createNSString(data.altText).get()
                 rectInWebView:rectInWebView
                 children:children
                 eventListeners:eventListeners
@@ -200,8 +200,8 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
                 nodeIdentifier:nodeIdentifier.get()]);
         }, [&](const TextExtraction::FormData& data) -> RetainPtr<WKTextExtractionItem> {
             return adoptNS([[WKTextExtractionFormItem alloc]
-                initWithAutocomplete:data.autocomplete.createNSString().get()
-                name:data.name.createNSString().get()
+                initWithAutocomplete:createNSString(data.autocomplete).get()
+                name:createNSString(data.name).get()
                 rectInWebView:rectInWebView
                 children:children
                 eventListeners:eventListeners
@@ -211,8 +211,8 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
         }, [&](const TextExtraction::TextFormControlData& data) -> RetainPtr<WKTextExtractionItem> {
             return adoptNS([[WKTextExtractionTextFormControlItem alloc]
                 initWithEditable:createWKEditable(data.editable).get()
-                controlType:data.controlType.createNSString().get()
-                autocomplete:data.autocomplete.createNSString().get()
+                controlType:createNSString(data.controlType).get()
+                autocomplete:createNSString(data.autocomplete).get()
                 isReadonly:data.isReadonly
                 isDisabled:data.isDisabled
                 isChecked:data.isChecked
@@ -224,7 +224,7 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
                 nodeIdentifier:nodeIdentifier.get()]);
         }, [&](const TextExtraction::LinkItemData& data) -> RetainPtr<WKTextExtractionItem> {
             return adoptNS([[WKTextExtractionLinkItem alloc]
-                initWithTarget:data.target.createNSString().get()
+                initWithTarget:createNSString(data.target).get()
                 url:data.completedURL.createNSURL().get()
                 rectInWebView:rectInWebView
                 children:children
@@ -234,7 +234,7 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
                 nodeIdentifier:nodeIdentifier.get()]);
         }, [&](const TextExtraction::IFrameData& data) -> RetainPtr<WKTextExtractionItem> {
             return adoptNS([[WKTextExtractionIFrameItem alloc]
-                initWithOrigin:data.origin.createNSString().get()
+                initWithOrigin:createNSString(data.origin).get()
                 rectInWebView:rectInWebView
                 children:children
                 eventListeners:eventListeners
@@ -291,16 +291,16 @@ void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtra
             return completion({ });
         }
 
-        HashMap<String, TextExtraction::FilterRuleData> allData;
+        HashMap<RefPtr<StringImpl>, TextExtraction::FilterRuleData> allData;
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSString *nsKeyIdentifier : data) {
-            auto keyIdentifier = String { nsKeyIdentifier };
-            auto keyIdentifierComponents = keyIdentifier.split('/');
+            auto keyIdentifier = StringImpl::create(nsKeyIdentifier);
+            auto keyIdentifierComponents = split(keyIdentifier, '/');
             if (keyIdentifierComponents.size() != 2)
                 continue;
 
             auto ruleName = keyIdentifierComponents.first();
-            if (ruleName.isEmpty())
+            if (isEmpty(ruleName))
                 continue;
 
             auto ensureRuleData = [&] -> TextExtraction::FilterRuleData& {
@@ -309,16 +309,16 @@ void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtra
                 }).iterator->value;
             };
 
-            if (keyIdentifierComponents[1] == "filter"_s) {
-                ensureRuleData().scriptSource = makeStringByJoining(makeVector<String>(data[nsKeyIdentifier]), "\n"_s);
+            if (equal(keyIdentifierComponents[1], "filter"_s)) {
+                ensureRuleData().scriptSource = makeStringByJoining(makeVector<RefPtr<StringImpl>>(data[nsKeyIdentifier]), "\n"_si);
                 continue;
             }
 
-            if (keyIdentifierComponents[1] == "domains"_s) {
-                ensureRuleData().urlPatternString = [&] -> String {
-                    auto domainRules = makeVector<String>(data[nsKeyIdentifier]);
+            if (equal(keyIdentifierComponents[1], "domains"_s)) {
+                ensureRuleData().urlPatternString = [&] -> RefPtr<StringImpl> {
+                    auto domainRules = makeVector<RefPtr<StringImpl>>(data[nsKeyIdentifier]);
                     if (domainRules.size() == 1) {
-                        if (domainRules.first() == ".*"_s)
+                        if (equal(domainRules.first(), ".*"_s))
                             return { };
 
                         return domainRules.first();
@@ -326,7 +326,7 @@ void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtra
 
                     return makeStringByJoining(WTF::map(WTF::move(domainRules), [](auto&& group) {
                         return makeString('(', WTF::move(group), ')');
-                    }), "|"_s);
+                    }), "|"_si);
                 }();
                 continue;
             }

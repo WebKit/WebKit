@@ -79,7 +79,7 @@ static gboolean onDidFailNavigation(WebKitWebView *webView, WebKitLoadEvent load
     ASSERT(context);
     ASSERT(error);
 
-    context->didFailNavigation(webView, API::Error::create({ String::fromUTF8(g_quark_to_string(error->domain)), error->code, URL { String::fromUTF8(failingURI) }, String::fromUTF8(error->message) }));
+    context->didFailNavigation(webView, API::Error::create({ StringImpl::fromUTF8(g_quark_to_string(error->domain)), error->code, URL { StringImpl::fromUTF8(failingURI) }, StringImpl::fromUTF8(error->message) }));
 
     return TRUE;
 }
@@ -108,11 +108,11 @@ WebExtensionContext::~WebExtensionContext()
 
 void WebExtensionContext::recordError(Ref<API::Error> error)
 {
-    RELEASE_LOG_ERROR(Extensions, "Error recorded: %s", error->localizedDescription().utf8());
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %s", utf8(error->localizedDescription()));
 
     // Only the first occurrence of each error is recorded in the array. This prevents duplicate errors,
     // such as repeated "resource not found" errors, from being included multiple times.
-    if (m_errors.containsIf([&](auto& existingError) { return existingError->localizedDescription() == error->localizedDescription(); }))
+    if (m_errors.containsIf([&](auto& existingError) { return equal(existingError->localizedDescription(), error->localizedDescription()); }))
         return;
 
     m_errors.append(error);
@@ -134,38 +134,38 @@ GRefPtr<GKeyFile> WebExtensionContext::currentState() const
     return m_state;
 }
 
-GRefPtr<GKeyFile> WebExtensionContext::readStateFromPath(const String& stateFilePath)
+GRefPtr<GKeyFile> WebExtensionContext::readStateFromPath(StringImpl* stateFilePath)
 {
     GRefPtr<GKeyFile> stateFile(adoptGRef(g_key_file_new()));
     GUniqueOutPtr<GError> error;
 
-    g_key_file_load_from_file(stateFile.get(), stateFilePath.utf8().legacyCStringPointer(), G_KEY_FILE_NONE, &error.outPtr());
+    g_key_file_load_from_file(stateFile.get(), utf8(stateFilePath).legacyCStringPointer(), G_KEY_FILE_NONE, &error.outPtr());
     if (error && !g_error_matches(error.get(), g_file_error_quark(), G_FILE_ERROR_NOENT))
         RELEASE_LOG_ERROR(Extensions, "Failed to coordinate reading extension state: %" PUBLIC_LOG_STRING, error->message);
 
     return stateFile;
 }
 
-bool WebExtensionContext::readLastBaseURLFromState(const String& filePath, URL& outLastBaseURL)
+bool WebExtensionContext::readLastBaseURLFromState(StringImpl* filePath, URL& outLastBaseURL)
 {
     GRefPtr<GKeyFile> state(readStateFromPath(filePath));
 
     GUniquePtr<char> baseURL(g_key_file_get_string(state.get(), groupNameStateKey, lastSeenBaseURLStateKey, nullptr));
     if (baseURL)
-        outLastBaseURL = URL { String::fromUTF8(baseURL.get()) };
+        outLastBaseURL = URL { StringImpl::fromUTF8(baseURL.get()) };
 
     return outLastBaseURL.isValid();
 }
 
-bool WebExtensionContext::readDisplayNameFromState(const String& filePath, String& outDisplayName)
+bool WebExtensionContext::readDisplayNameFromState(StringImpl* filePath, RefPtr<StringImpl>& outDisplayName)
 {
     GRefPtr<GKeyFile> state(readStateFromPath(filePath));
 
     GUniquePtr<char> displayName(g_key_file_get_string(state.get(), groupNameStateKey, lastSeenDisplayNameStateKey, nullptr));
     if (displayName)
-        outDisplayName = String::fromUTF8(displayName.get());
+        outDisplayName = StringImpl::fromUTF8(displayName.get());
 
-    return !outDisplayName.isEmpty();
+    return !isEmpty(outDisplayName);
 }
 
 GRefPtr<GKeyFile> WebExtensionContext::readStateFromStorage()
@@ -193,7 +193,7 @@ void WebExtensionContext::writeStateToStorage() const
     if (!currentState())
         return;
 
-    if (!g_key_file_save_to_file(currentState().get(), stateFilePath().utf8().legacyCStringPointer(), &error.outPtr()))
+    if (!g_key_file_save_to_file(currentState().get(), utf8(stateFilePath()).legacyCStringPointer(), &error.outPtr()))
         RELEASE_LOG_ERROR(Extensions, "Unable to save extension state: %" PUBLIC_LOG_STRING, error->message);
 }
 
@@ -335,7 +335,7 @@ void WebExtensionContext::loadBackgroundWebView()
         m_backgroundWebViewActivity = protect(backgroundProcess->throttler())->foregroundActivity(activityName);
 
     if (!protect(extension())->backgroundContentIsServiceWorker()) {
-        GRefPtr<WebKitURIRequest> uriRequest(adoptGRef(webkit_uri_request_new(backgroundContentURL().string().utf8().legacyCStringPointer())));
+        GRefPtr<WebKitURIRequest> uriRequest(adoptGRef(webkit_uri_request_new(utf8(backgroundContentURL().string()).legacyCStringPointer())));
         webkit_web_view_load_request(m_backgroundWebView.get(), uriRequest.get());
         return;
     }
@@ -351,7 +351,7 @@ void WebExtensionContext::loadBackgroundWebView()
     });
 }
 
-void WebExtensionContext::setBackgroundWebViewInspectionName(const String& name)
+void WebExtensionContext::setBackgroundWebViewInspectionName(StringImpl* name)
 {
     m_backgroundWebViewInspectionName = name;
 
@@ -511,7 +511,7 @@ bool WebExtensionContext::decidePolicyForNavigationAction(WebKitWebView *webView
     WebKitNavigationAction* action = webkit_navigation_policy_decision_get_navigation_action(navigationPolicy);
     RefPtr navigationAction = webkitNavigationActionGetAction(action);
 
-    auto url = URL { String::fromUTF8(webkit_uri_request_get_uri(webkit_navigation_action_get_request(action))) };
+    auto url = URL { StringImpl::fromUTF8(webkit_uri_request_get_uri(webkit_navigation_action_get_request(action))) };
     auto targetFrame = navigationAction->targetFrame();
     if ((targetFrame && !targetFrame->isMainFrame()) || isURLForThisExtension(url))
         return true;
@@ -555,7 +555,7 @@ void WebExtensionContext::webViewWebContentProcessDidTerminate(WebKitWebView *we
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (isInspectorBackgroundPage(webView)) {
-        GRefPtr<WebKitURIRequest> uriRequest(adoptGRef(webkit_uri_request_new(inspectorBackgroundPageURL().utf8().legacyCStringPointer())));
+        GRefPtr<WebKitURIRequest> uriRequest(adoptGRef(webkit_uri_request_new(utf8(inspectorBackgroundPageURL()).legacyCStringPointer())));
         webkit_web_view_load_request(webView, uriRequest.get());
         return;
     }
@@ -576,7 +576,7 @@ bool WebExtensionContext::isNotRunningInTestRunner()
 void WebExtensionContext::saveStorageAccessLevelsToStorage()
 {
     for (auto [dataType, accessLevel] : m_storageAccessLevels)
-        g_key_file_set_string(m_state.get(), storageAccessLevelsKey, toAPIString(dataType).utf8().legacyCStringPointer(), toAPIString(accessLevel).utf8().legacyCStringPointer());
+        g_key_file_set_string(m_state.get(), storageAccessLevelsKey, utf8(toAPIString(dataType)).legacyCStringPointer(), utf8(toAPIString(accessLevel)).legacyCStringPointer());
     writeStateToStorage();
 }
 
@@ -586,7 +586,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     completionHandler(false);
 }
 
-std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionController&, String)
+std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionController&, RefPtr<StringImpl>)
 {
     notImplemented();
     return makeUnexpected(createError(Error::Unknown));
@@ -656,7 +656,7 @@ void WebExtensionContext::cookiesDidChange(API::HTTPCookieStore&)
     notImplemented();
 }
 
-String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
+RefPtr<StringImpl> WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
 {
     notImplemented();
     return { };

@@ -122,15 +122,15 @@ static void testIntegerAsStringAtPowersOf10()
         std::array<Latin1Character, 21> latin1 { };
         size_t latin1Length = WTF::writeIntegerToBuffer(value, std::span { latin1 }.first(expected.size()));
         EXPECT_EQ(expected.size(), latin1Length);
-        EXPECT_EQ(String::fromLatin1(expected.c_str()), String(std::span { latin1 }.first(latin1Length)));
+        EXPECT_EQ(StringImpl::fromLatin1(expected.c_str()), StringImpl::createOrNull(std::span { latin1 }.first(latin1Length)));
 
         std::array<char16_t, 21> utf16 { };
         size_t utf16Length = WTF::writeIntegerToBuffer(value, std::span { utf16 }.first(expected.size()));
         EXPECT_EQ(expected.size(), utf16Length);
-        EXPECT_EQ(String::fromLatin1(expected.c_str()), String(std::span { utf16 }.first(utf16Length)));
+        EXPECT_EQ(StringImpl::fromLatin1(expected.c_str()), StringImpl::createOrNull(std::span { utf16 }.first(utf16Length)));
 
-        EXPECT_EQ(String::fromLatin1(expected.c_str()), makeString(value));
-        EXPECT_EQ(String::fromLatin1(expected.c_str()), String::number(value));
+        EXPECT_EQ(StringImpl::fromLatin1(expected.c_str()), makeString(value));
+        EXPECT_EQ(StringImpl::fromLatin1(expected.c_str()), makeString(value));
     };
     check(std::numeric_limits<IntegerType>::min());
     check(std::numeric_limits<IntegerType>::max());
@@ -163,10 +163,10 @@ template<typename UInt128Type>
 static void testUInt128AsString()
 {
     auto toString = [](UInt128Type value) {
-        return String(numberToStringUnsigned<Vector<Latin1Character, 50>>(value).span());
+        return StringImpl::createOrNull(numberToStringUnsigned<Vector<Latin1Character, 50>>(value).span());
     };
     auto expect = [](const std::string& expected) {
-        return String::fromLatin1(expected.c_str());
+        return StringImpl::fromLatin1(expected.c_str());
     };
 
     EXPECT_EQ("0"_s, toString(0));
@@ -298,10 +298,10 @@ TEST(WTF, StringConcatenate_Tuple)
     EXPECT_EQ("hello 42 world"_s, makeString(std::make_tuple("hello"_s, ' ', unsigned(42), ' ', "world"_s)));
 
     char16_t checkmarkCodepoint = 0x2713;
-    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeString("hello"_s, ' ', checkmarkCodepoint, ' ', "world"_s).utf8());
-    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeString("hello"_s, ' ', std::make_tuple(checkmarkCodepoint), ' ', "world"_s).utf8());
-    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeString("hello"_s, ' ', std::make_tuple(checkmarkCodepoint, ' ', "world"_s)).utf8());
-    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeString(std::make_tuple("hello"_s, ' ', checkmarkCodepoint, ' ', "world"_s)).utf8());
+    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, utf8(makeString("hello"_s, ' ', checkmarkCodepoint, ' ', "world"_s)));
+    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, utf8(makeString("hello"_s, ' ', std::make_tuple(checkmarkCodepoint), ' ', "world"_s)));
+    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, utf8(makeString("hello"_s, ' ', std::make_tuple(checkmarkCodepoint, ' ', "world"_s))));
+    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, utf8(makeString(std::make_tuple("hello"_s, ' ', checkmarkCodepoint, ' ', "world"_s))));
 
     const char16_t helloCodepoints[] = { 'h', 'e', 'l', 'l', 'o', '\0' };
     EXPECT_EQ("hello 42 world"_s, makeString(helloCodepoints, ' ', unsigned(42), ' ', "world"_s));
@@ -317,19 +317,19 @@ TEST(WTF, StringConcatenate_Interleave)
     {
         auto result = makeString('[', interleave(strings, [](auto& builder, auto& s) { builder.append(s); }, ", "_s), ']');
 
-        EXPECT_EQ(String("[a, b, c]"_s), result);
+        EXPECT_EQ("[a, b, c]"_si, result);
     }
 
     {
         auto result = makeString('[', interleave(strings, [](auto& s) { return s; }, ", "_s), ']');
 
-        EXPECT_EQ(String("[a, b, c]"_s), result);
+        EXPECT_EQ("[a, b, c]"_si, result);
     }
 
     {
         auto result = makeString('[', interleave(strings, ", "_s), ']');
 
-        EXPECT_EQ(String("[a, b, c]"_s), result);
+        EXPECT_EQ("[a, b, c]"_si, result);
     }
 }
 
@@ -363,7 +363,7 @@ TEST(WTF, StringConcatenate_InterleaveOverload)
     {
         auto result = makeString('[', interleave(as, serializeOverloadBuilder, ", "_s), ']');
 
-        EXPECT_EQ(String("[1, 2, 3]"_s), result);
+        EXPECT_EQ("[1, 2, 3]"_si, result);
     }
 }
 
@@ -374,19 +374,19 @@ TEST(WTF, StringConcatenate_InterleaveNoCopies)
     {
         auto result = makeString('[', interleave(values, [](auto& builder, auto& moveOnly) { builder.append(moveOnly.value()); }, ", "_s), ']');
 
-        EXPECT_EQ(String("[1, 2, 3]"_s), result);
+        EXPECT_EQ("[1, 2, 3]"_si, result);
     }
 
     {
         auto result = makeString('[', interleave(values, [](auto& moveOnly) { return moveOnly.value(); }, ", "_s), ']');
 
-        EXPECT_EQ(String("[1, 2, 3]"_s), result);
+        EXPECT_EQ("[1, 2, 3]"_si, result);
     }
 
     {
         auto result = makeString('[', interleave(values, ", "_s), ']');
 
-        EXPECT_EQ(String("[1, 2, 3]"_s), result);
+        EXPECT_EQ("[1, 2, 3]"_si, result);
     }
 }
 

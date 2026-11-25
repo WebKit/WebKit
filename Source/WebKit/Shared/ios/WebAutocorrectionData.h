@@ -48,10 +48,10 @@ namespace WebKit {
 
 struct WebAutocorrectionData {
     WebAutocorrectionData() = default;
-    WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<String>&& fontName, double pointSize, double weight);
+    WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<RefPtr<StringImpl>>&& fontName, double pointSize, double weight);
     WebAutocorrectionData(const Vector<WebCore::FloatRect>& textRects, const RetainPtr<UIFont>&);
 
-    std::optional<String> fontName() const;
+    std::optional<RefPtr<StringImpl>> fontName() const;
     double fontPointSize() const;
     double fontWeight() const;
 

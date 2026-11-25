@@ -77,32 +77,32 @@ ISO8601::PlainTime TemporalPlainTime::validateAndCreateTimeRecord(JSGlobalObject
     double nanosecond = static_cast<double>(duration.nanoseconds());
     // Step 1: If hour < 0 or hour > 23, return false.
     if (!(hour >= 0 && hour <= 23)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "hour is out of range"_s);
+        throwRangeError(globalObject, scope, "hour is out of range"_si);
         return { };
     }
     // Step 2: If minute < 0 or minute > 59, return false.
     if (!(minute >= 0 && minute <= 59)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "minute is out of range"_s);
+        throwRangeError(globalObject, scope, "minute is out of range"_si);
         return { };
     }
     // Step 3: If second < 0 or second > 59, return false.
     if (!(second >= 0 && second <= 59)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "second is out of range"_s);
+        throwRangeError(globalObject, scope, "second is out of range"_si);
         return { };
     }
     // Step 4: If millisecond < 0 or millisecond > 999, return false.
     if (!(millisecond >= 0 && millisecond <= 999)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "millisecond is out of range"_s);
+        throwRangeError(globalObject, scope, "millisecond is out of range"_si);
         return { };
     }
     // Step 5: If microsecond < 0 or microsecond > 999, return false.
     if (!(microsecond >= 0 && microsecond <= 999)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "microsecond is out of range"_s);
+        throwRangeError(globalObject, scope, "microsecond is out of range"_si);
         return { };
     }
     // Step 6: If nanosecond < 0 or nanosecond > 999, return false.
     if (!(nanosecond >= 0 && nanosecond <= 999)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "nanosecond is out of range"_s);
+        throwRangeError(globalObject, scope, "nanosecond is out of range"_si);
         return { };
     }
     // Step 7: Return true. (Materialize the Time Record from the validated fields.)
@@ -274,13 +274,13 @@ ISO8601::PlainTime TemporalPlainTime::round(JSGlobalObject* globalObject, JSValu
 
         smallest = temporalUnitType(string);
         if (!smallest) [[unlikely]] {
-            throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
+            throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_si);
             return { };
         }
 
         // Step 10 (string path): ValidateTemporalUnitValue(smallestUnit, ~time~) — reject date units.
         if (smallest.value() <= TemporalUnit::Day) [[unlikely]] {
-            throwRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_s);
+            throwRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_si);
             return { };
         }
     } else {
@@ -319,7 +319,7 @@ ISO8601::PlainTime TemporalPlainTime::round(JSGlobalObject* globalObject, JSValu
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaintime.prototype.tostring
-String TemporalPlainTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
+RefPtr<StringImpl> TemporalPlainTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -352,7 +352,7 @@ String TemporalPlainTime::toString(JSGlobalObject* globalObject, JSValue options
     std::optional<TemporalUnit> smallestUnit = std::get<std::optional<TemporalUnit>>(smallestUnitResult);
     // Step 9: If smallestUnit is ~hour~, throw a RangeError exception.
     if (smallestUnit == TemporalUnit::Hour) [[unlikely]] {
-        throwRangeError(globalObject, scope, "smallestUnit cannot be \"hour\" for PlainTime.toString"_s);
+        throwRangeError(globalObject, scope, "smallestUnit cannot be \"hour\" for PlainTime.toString"_si);
         return { };
     }
 
@@ -401,7 +401,7 @@ ISO8601::Duration TemporalPlainTime::toTemporalTimeRecord(JSGlobalObject* global
         double integer = value.toIntegerWithTruncation(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(integer)) [[unlikely]] {
-            throwRangeError(globalObject, scope, "Temporal time properties must be finite"_s);
+            throwRangeError(globalObject, scope, "Temporal time properties must be finite"_si);
             return { };
         }
         duration.setField(unit, integer);
@@ -440,7 +440,7 @@ std::array<std::optional<double>, numberOfTemporalPlainTimeUnits> TemporalPlainT
             double doubleValue = value.toIntegerWithTruncation(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             if (!std::isfinite(doubleValue)) [[unlikely]] {
-                throwRangeError(globalObject, scope, "Temporal time properties must be finite"_s);
+                throwRangeError(globalObject, scope, "Temporal time properties must be finite"_si);
                 return { };
             }
             partialTime[static_cast<unsigned>(unit) - static_cast<unsigned>(TemporalUnit::Hour)] = doubleValue;
@@ -583,7 +583,7 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
     }
 
     // Step 3.b: ParseISODateTime failed → throw RangeError.
-    throwRangeError(globalObject, scope, "invalid time string"_s);
+    throwRangeError(globalObject, scope, "invalid time string"_si);
     return { };
 }
 

@@ -35,9 +35,9 @@ public:
     static Ref<HTMLMetaElement> create(Document&);
     static Ref<HTMLMetaElement> create(const QualifiedName&, Document&);
 
-    NODELETE const AtomString& content() const;
-    NODELETE const AtomString& httpEquiv() const;
-    NODELETE const AtomString& name() const;
+    NODELETE const RefPtr<AtomStringImpl>& content() const;
+    NODELETE const RefPtr<AtomStringImpl>& httpEquiv() const;
+    NODELETE const RefPtr<AtomStringImpl>& name() const;
 
     bool mediaAttributeMatches();
 
@@ -46,12 +46,12 @@ public:
 private:
     HTMLMetaElement(const QualifiedName&, Document&);
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
+    void attributeChanged(const QualifiedName&, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps();
     void removingSteps(RemovalType, ContainerNode&) final;
 
-    void process(const AtomString& oldValue = nullAtom());
+    void process(AtomStringImpl* oldValue = nullAtom());
 
     std::optional<MQ::MediaQueryList> m_mediaQueryList;
 

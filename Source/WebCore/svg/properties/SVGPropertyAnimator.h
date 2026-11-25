@@ -40,17 +40,17 @@ class SVGPropertyAnimator : public SVGAttributeAnimator {
 public:
     bool isDiscrete() const override { return m_function.isDiscrete(); }
 
-    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement& targetElement, StringImpl* from, StringImpl* to) override
     {
         return m_function.setFromAndToValues(targetElement, adjustForInheritance(targetElement, from), adjustForInheritance(targetElement, to));
     }
 
-    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
+    bool setFromAndByValues(SVGElement& targetElement, StringImpl* from, StringImpl* by) override
     {
         return m_function.setFromAndByValues(targetElement, from, by);
     }
 
-    bool setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement& targetElement, StringImpl* toAtEndOfDuration) override
     {
         return m_function.setToAtEndOfDurationValue(targetElement, toAtEndOfDuration);
     }
@@ -68,18 +68,20 @@ protected:
         removeAnimatedStyleProperty(targetElement);
     }
 
-    std::optional<float> calculateDistance(SVGElement& targetElement, const String& from, const String& to) const override
+    std::optional<float> calculateDistance(SVGElement& targetElement, StringImpl* from, StringImpl* to) const override
     {
         return m_function.calculateDistance(targetElement, from, to);
     }
 
-    String adjustForInheritance(SVGElement& targetElement, const String& value) const
+    RefPtr<StringImpl> adjustForInheritance(SVGElement& targetElement, StringImpl* value) const
     {
-        static MainThreadNeverDestroyed<const AtomString> inherit("inherit"_s);
-        return value == inherit ? computeInheritedCSSPropertyValue(targetElement) : value;
+        static MainThreadNeverDestroyed<const RefPtr<AtomStringImpl>> inherit("inherit"_s);
+        if (equal(value, inherit.get()))
+            return computeInheritedCSSPropertyValue(targetElement);
+        return value;
     }
 
-    String computeCSSPropertyValue(SVGElement& targetElement, CSSPropertyID id) const
+    RefPtr<StringImpl> computeCSSPropertyValue(SVGElement& targetElement, CSSPropertyID id) const
     {
         Ref protector = targetElement;
 
@@ -91,7 +93,7 @@ protected:
         return serialization;
     }
 
-    String computeInheritedCSSPropertyValue(SVGElement& targetElement) const
+    RefPtr<StringImpl> computeInheritedCSSPropertyValue(SVGElement& targetElement) const
     {
         RefPtr svgParent = dynamicDowncast<SVGElement>(targetElement.parentElement());
         if (!svgParent)

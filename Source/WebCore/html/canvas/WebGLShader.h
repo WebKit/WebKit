@@ -39,9 +39,9 @@ public:
     virtual ~WebGLShader();
 
     GCGLenum getType() const { return m_type; }
-    const String& getSource() const LIFETIME_BOUND { return m_source; }
+    const RefPtr<StringImpl>& getSource() const LIFETIME_BOUND { return m_source; }
 
-    void setSource(const String& source) { m_source = source; }
+    void setSource(StringImpl* source) { m_source = source; }
 
     bool isUsable() const { return object(); }
     bool isInitialized() const { return true; }
@@ -52,7 +52,7 @@ private:
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) final;
 
     GCGLenum m_type;
-    String m_source;
+    RefPtr<StringImpl> m_source;
 };
 
 } // namespace WebCore

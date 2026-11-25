@@ -39,6 +39,6 @@ namespace WebCore::TextExtraction {
 struct FilterRule;
 
 WEBCORE_EXPORT Ref<Page> createScriptFilteringPage();
-WEBCORE_EXPORT void applyScriptFilteringRules(const String& input, const URL& documentURL, const Vector<FilterRule>& rules, Page& filterPage, CompletionHandler<void(const String&)>&&);
+WEBCORE_EXPORT void applyScriptFilteringRules(StringImpl* input, const URL& documentURL, const Vector<FilterRule>& rules, Page& filterPage, CompletionHandler<void(StringImpl*)>&&);
 
 } // namespace WebCore::TextExtraction

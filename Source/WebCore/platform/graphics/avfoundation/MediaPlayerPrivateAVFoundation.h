@@ -147,7 +147,7 @@ public:
     };
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate);
+    static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, RefPtr<StringImpl>& keyURI, RefPtr<StringImpl>& keyID, RefPtr<Uint8Array>& certificate);
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -167,7 +167,7 @@ protected:
     explicit MediaPlayerPrivateAVFoundation(MediaPlayer&);
 
     // MediaPlayerPrivatePrivateInterface overrides.
-    void load(const String& url) override;
+    void load(StringImpl* url) override;
     void load(const URL&, const LoadOptions&) override;
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
@@ -314,11 +314,11 @@ protected:
     
     NODELETE void invalidateCachedDuration();
 
-    const String& assetURL() const LIFETIME_BOUND { return m_assetURL.string(); }
+    const RefPtr<StringImpl>& assetURL() const LIFETIME_BOUND { return m_assetURL.string(); }
 
     RefPtr<MediaPlayer> player() const { return m_player.get(); }
 
-    String engineDescription() const override { return "AVFoundation"_s; }
+    RefPtr<StringImpl> engineDescription() const override { return "AVFoundation"_si; }
     long platformErrorCode() const override { return assetErrorCode(); }
 
     void trackModeChanged();
@@ -389,7 +389,7 @@ private:
     void resolveSeekPromiseIfNeeded();
 };
 
-String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRenderingMode);
+RefPtr<StringImpl> convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRenderingMode);
 
 } // namespace WebCore
 

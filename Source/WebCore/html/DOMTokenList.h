@@ -44,39 +44,39 @@ public:
 
     unsigned length() const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
-    const AtomString& item(unsigned index) const;
+    const RefPtr<AtomStringImpl>& item(unsigned index) const;
 
-    WEBCORE_EXPORT bool contains(const AtomString&) const;
-    ExceptionOr<void> add(const FixedVector<AtomString>&);
-    ExceptionOr<void> add(const AtomString&);
-    ExceptionOr<void> remove(const FixedVector<AtomString>&);
-    ExceptionOr<void> remove(const AtomString&);
-    WEBCORE_EXPORT ExceptionOr<bool> toggle(const AtomString&, std::optional<bool> force);
-    ExceptionOr<bool> replace(const AtomString& token, const AtomString& newToken);
+    WEBCORE_EXPORT bool contains(AtomStringImpl*) const;
+    ExceptionOr<void> add(const FixedVector<RefPtr<AtomStringImpl>>&);
+    ExceptionOr<void> add(AtomStringImpl*);
+    ExceptionOr<void> remove(const FixedVector<RefPtr<AtomStringImpl>>&);
+    ExceptionOr<void> remove(AtomStringImpl*);
+    WEBCORE_EXPORT ExceptionOr<bool> toggle(AtomStringImpl*, std::optional<bool> force);
+    ExceptionOr<bool> replace(AtomStringImpl* token, AtomStringImpl* newToken);
     ExceptionOr<bool> supports(StringView token);
 
     Element& element() const { return m_element.get(); }
 
-    WEBCORE_EXPORT void setValue(const AtomString&);
-    WEBCORE_EXPORT const AtomString& value() const;
+    WEBCORE_EXPORT void setValue(AtomStringImpl*);
+    WEBCORE_EXPORT const RefPtr<AtomStringImpl>& value() const;
 
 private:
-    void updateTokensFromAttributeValue(const AtomString&);
+    void updateTokensFromAttributeValue(AtomStringImpl*);
     void updateAssociatedAttributeFromTokens();
 
-    WEBCORE_EXPORT Vector<AtomString, 1>& tokens() LIFETIME_BOUND;
-    const Vector<AtomString, 1>& tokens() const LIFETIME_BOUND { return const_cast<DOMTokenList&>(*this).tokens(); }
+    WEBCORE_EXPORT Vector<RefPtr<AtomStringImpl>, 1>& tokens() LIFETIME_BOUND;
+    const Vector<RefPtr<AtomStringImpl>, 1>& tokens() const LIFETIME_BOUND { return const_cast<DOMTokenList&>(*this).tokens(); }
 
     static ExceptionOr<void> validateToken(StringView);
-    static ExceptionOr<void> validateTokens(std::span<const AtomString> tokens);
-    ExceptionOr<void> addInternal(std::span<const AtomString> tokens);
-    ExceptionOr<void> removeInternal(std::span<const AtomString> tokens);
+    static ExceptionOr<void> validateTokens(std::span<const RefPtr<AtomStringImpl>> tokens);
+    ExceptionOr<void> addInternal(std::span<const RefPtr<AtomStringImpl>> tokens);
+    ExceptionOr<void> removeInternal(std::span<const RefPtr<AtomStringImpl>> tokens);
 
     const CheckedRef<Element> m_element;
     const WebCore::QualifiedName& m_attributeName;
     bool m_inUpdateAssociatedAttributeFromTokens { false };
     bool m_tokensNeedUpdating { true };
-    Vector<AtomString, 1> m_tokens;
+    Vector<RefPtr<AtomStringImpl>, 1> m_tokens;
     IsSupportedTokenFunction m_isSupportedToken;
 };
 
@@ -85,7 +85,7 @@ inline unsigned DOMTokenList::length() const
     return tokens().size();
 }
 
-inline const AtomString& DOMTokenList::item(unsigned index) const
+inline const RefPtr<AtomStringImpl>& DOMTokenList::item(unsigned index) const
 {
     auto& tokens = this->tokens();
     return index < tokens.size() ? tokens[index] : nullAtom();

@@ -95,7 +95,7 @@ public:
     void pushErrorScope(::WebGPU::ErrorFilter) final;
     void popErrorScope(CompletionHandler<void(bool, std::optional<::WebGPU::Error>&&)>&&) final;
     void setUncapturedErrorCallback(Function<void(::WebGPU::Error&&)>&&) final;
-    void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, String&&)>&&) final;
+    void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason, RefPtr<StringImpl>&&)>&&) final;
     bool isLost() const final;
     void pauseAllErrorReporting(bool pause) final;
 
@@ -107,14 +107,14 @@ public:
     RefPtr<::WebGPU::ComputePipeline> createInvalidComputePipeline() final;
     RefPtr<::WebGPU::PipelineLayout> createInvalidPipelineLayout() final;
     RefPtr<::WebGPU::QuerySet> createInvalidQuerySet() final;
-    RefPtr<::WebGPU::RenderBundleEncoder> createInvalidRenderBundleEncoder(String&& error) final;
+    RefPtr<::WebGPU::RenderBundleEncoder> createInvalidRenderBundleEncoder(RefPtr<StringImpl>&& error) final;
     RefPtr<::WebGPU::RenderPipeline> createInvalidRenderPipeline() final;
     RefPtr<::WebGPU::Sampler> createInvalidSampler() final;
     RefPtr<::WebGPU::ShaderModule> createInvalidShaderModule() final;
     RefPtr<::WebGPU::Texture> createInvalidTexture() final;
-    void generateAValidationError(String&& message) final;
+    void generateAValidationError(RefPtr<StringImpl>&& message) final;
 
-    void setLabel(String&&) final;
+    void setLabel(RefPtr<StringImpl>&&) final;
     bool isValid() const final;
 
     // Called by RemoteGPUProxy with each uncaptured error that the GPU process sends.

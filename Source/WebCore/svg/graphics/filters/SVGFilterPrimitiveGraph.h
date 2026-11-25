@@ -36,12 +36,12 @@ class SVGFilterPrimitiveGraph final : public SVGFilterGraph<SVGFilterPrimitiveSt
 public:
     SVGFilterPrimitiveGraph() = default;
 
-    void addNamedNode(const AtomString& name, Ref<SVGFilterPrimitiveStandardAttributes>&& node) override;
+    void addNamedNode(AtomStringImpl* name, Ref<SVGFilterPrimitiveStandardAttributes>&& node) override;
 
 private:
-    RefPtr<SVGFilterPrimitiveStandardAttributes> getNamedNode(const AtomString& name) const override
+    RefPtr<SVGFilterPrimitiveStandardAttributes> getNamedNode(AtomStringImpl* name) const override
     {
-        if (name.isEmpty())
+        if (isEmpty(name))
             return m_lastNode;
 
         return m_namedNodes.get(name);

@@ -44,7 +44,7 @@ public:
     ~WorkerDebuggerAgent();
 
     // JSC::Debugger::Observer
-    void breakpointActionLog(JSC::JSGlobalObject*, const String& data);
+    void breakpointActionLog(JSC::JSGlobalObject*, StringImpl* data);
 
 private:
     // We don't need to mute console for workers.

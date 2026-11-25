@@ -70,7 +70,7 @@ namespace B3ValueInternal {
 constexpr bool alwaysDumpConstructionSite = false;
 }
 
-String Value::generateCompilerConstructionSite()
+RefPtr<StringImpl> Value::generateCompilerConstructionSite()
 {
     StringPrintStream s;
     static constexpr int framesToShow = 15;
@@ -88,32 +88,32 @@ String Value::generateCompilerConstructionSite()
     stackTrace.forEach([&] (unsigned, void*, const char* cName) {
         if (printed > 10)
             return;
-        auto name = String::fromUTF8(cName);
-        if (name.contains("JSC::Wasm::OMGIRGenerator::emit"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::add"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::create"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::end"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::set"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::get"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::insert"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::constant("_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::fixup"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::load"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::store"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::atomic"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::trunc"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::sanitize"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::restore"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::connect"_s)
-            || name.contains("JSC::Wasm::OMGIRGenerator::prepare"_s)) {
-            if (name.contains(">::add"_s)
-                || name.contains(">::translate"_s)
-                || name.contains(">::inlineEnsure"_s)
-                || name.contains(">::KeyValuePairTraits"_s))
+        auto name = StringImpl::fromUTF8(cName);
+        if (contains(name, "JSC::Wasm::OMGIRGenerator::emit"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::add"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::create"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::end"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::set"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::get"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::insert"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::constant("_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::fixup"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::load"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::store"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::atomic"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::trunc"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::sanitize"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::restore"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::connect"_s)
+            || contains(name, "JSC::Wasm::OMGIRGenerator::prepare"_s)) {
+            if (contains(name, ">::add"_s)
+                || contains(name, ">::translate"_s)
+                || contains(name, ">::inlineEnsure"_s)
+                || contains(name, ">::KeyValuePairTraits"_s))
                 return;
             if (printed)
                 s.print("|");
-            s.print(name.left(name.find('(')));
+            s.print(left(name, find(name, '(')));
             ++printed;
         }
     });
@@ -294,7 +294,7 @@ void Value::deepDump(const Procedure* proc, PrintStream& out) const
 
 #if ASSERT_ENABLED
     if constexpr (B3ValueInternal::alwaysDumpConstructionSite) {
-        if (!m_compilerConstructionSite.isEmpty())
+        if (!isEmpty(m_compilerConstructionSite))
             out.print(comma, compilerConstructionSite());
     }
 #endif

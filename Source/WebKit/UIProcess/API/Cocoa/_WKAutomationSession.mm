@@ -81,12 +81,12 @@
 
 - (NSString *)sessionIdentifier
 {
-    return _session->sessionIdentifier().createNSString().autorelease();
+    return createNSString(_session->sessionIdentifier()).autorelease();
 }
 
 - (void)setSessionIdentifier:(NSString *)sessionIdentifier
 {
-    protect(*_session)->setSessionIdentifier(sessionIdentifier);
+    protect(*_session)->setSessionIdentifier(StringImpl::create(sessionIdentifier).get());
 }
 
 - (_WKAutomationSessionConfiguration *)configuration

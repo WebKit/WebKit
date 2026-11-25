@@ -45,24 +45,24 @@
 
 namespace WebCore {
 
-static std::optional<Exception> setMethod(ResourceRequest& request, const String& initMethod)
+static std::optional<Exception> setMethod(ResourceRequest& request, StringImpl* initMethod)
 {
     if (!isValidHTTPToken(initMethod))
-        return Exception { ExceptionCode::TypeError, "Method is not a valid HTTP token."_s };
+        return Exception { ExceptionCode::TypeError, "Method is not a valid HTTP token."_si };
     if (isForbiddenMethod(initMethod))
-        return Exception { ExceptionCode::TypeError, "Method is forbidden."_s };
+        return Exception { ExceptionCode::TypeError, "Method is forbidden."_si };
     request.setHTTPMethod(normalizeHTTPMethod(initMethod));
     return std::nullopt;
 }
 
-static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, const String& referrer)
+static ExceptionOr<RefPtr<StringImpl>> computeReferrer(ScriptExecutionContext& context, StringImpl* referrer)
 {
-    if (referrer.isEmpty())
+    if (isEmpty(referrer))
         return "no-referrer"_str;
 
     URL referrerURL = context.parseURL(referrer);
     if (!referrerURL.isValid())
-        return Exception { ExceptionCode::TypeError, "Referrer is not a valid URL."_s };
+        return Exception { ExceptionCode::TypeError, "Referrer is not a valid URL."_si };
 
     if (referrerURL.protocolIsAbout() && referrerURL.path() == "client"_s)
         return "client"_str;
@@ -70,22 +70,22 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     if (!(context.securityOrigin() && protect(context.securityOrigin())->canRequest(referrerURL, OriginAccessPatternsForWebProcess::singleton())))
         return "client"_str;
 
-    return String { referrerURL.string() };
+    return RefPtr<StringImpl> { referrerURL.string() };
 }
 
-static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequest& request, String& referrer, RequestPriority& priority, std::optional<FetchRequestDuplex>& duplex, ScriptExecutionContext& context, const FetchRequest::Init& init)
+static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequest& request, RefPtr<StringImpl>& referrer, RequestPriority& priority, std::optional<FetchRequestDuplex>& duplex, ScriptExecutionContext& context, const FetchRequest::Init& init)
 {
     if (!init.window.isUndefinedOrNull() && !init.window.isEmpty())
-        return Exception { ExceptionCode::TypeError, "Window can only be null."_s };
+        return Exception { ExceptionCode::TypeError, "Window can only be null."_si };
 
     if (init.hasMembers()) {
         if (options.mode == FetchOptions::Mode::Navigate)
             options.mode = FetchOptions::Mode::SameOrigin;
-        referrer = "client"_s;
+        referrer = "client"_si;
         options.referrerPolicy = { };
     }
 
-    if (!init.referrer.isNull()) {
+    if (init.referrer) {
         auto result = computeReferrer(context, init.referrer);
         if (result.hasException())
             return result.releaseException();
@@ -104,7 +104,7 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
     if (init.mode) {
         options.mode = init.mode.value();
         if (options.mode == FetchOptions::Mode::Navigate)
-            return Exception { ExceptionCode::TypeError, "Request constructor does not accept navigate fetch mode."_s };
+            return Exception { ExceptionCode::TypeError, "Request constructor does not accept navigate fetch mode."_si };
     }
 
     if (init.credentials)
@@ -113,18 +113,18 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
     if (init.cache)
         options.cache = init.cache.value();
     if (options.cache == FetchOptions::Cache::OnlyIfCached && options.mode != FetchOptions::Mode::SameOrigin)
-        return Exception { ExceptionCode::TypeError, "only-if-cached cache option requires fetch mode to be same-origin."_s  };
+        return Exception { ExceptionCode::TypeError, "only-if-cached cache option requires fetch mode to be same-origin."_si  };
 
     if (init.redirect)
         options.redirect = init.redirect.value();
 
-    if (!init.integrity.isNull())
+    if (init.integrity)
         options.integrity = init.integrity;
 
     if (init.keepalive && init.keepalive.value())
         options.keepAlive = true;
 
-    if (!init.method.isNull()) {
+    if (init.method) {
         if (auto exception = setMethod(request, init.method))
             return exception;
     }
@@ -134,7 +134,7 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
 
 static bool methodCanHaveBody(const ResourceRequest& request)
 {
-    return request.httpMethod() != "GET"_s && request.httpMethod() != "HEAD"_s;
+    return !equal(request.httpMethod(), "GET"_s) && !equal(request.httpMethod(), "HEAD"_s);
 }
 
 static IPAddressSpace updateTargetAddressSpaceIfNeeded(IPAddressSpace currentAddressSpace, const URL& url)
@@ -153,7 +153,7 @@ static IPAddressSpace updateTargetAddressSpaceIfNeeded(IPAddressSpace currentAdd
     return currentAddressSpace;
 }
 
-inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
+inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, RefPtr<StringImpl>&& referrer)
     : FetchBodyOwner(&context, WTF::move(body), WTF::move(headers))
     , m_request(WTF::move(request))
     , m_requestURL({ m_request.url(), context.topOrigin().data() })
@@ -173,9 +173,9 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
         return WTF::move(exception.value());
 
     if (m_options.mode == FetchOptions::Mode::NoCors) {
-        const String& method = m_request.httpMethod();
-        if (method != "GET"_s && method != "POST"_s && method != "HEAD"_s)
-            return Exception { ExceptionCode::TypeError, "Method must be GET, POST or HEAD in no-cors mode."_s };
+        const RefPtr<StringImpl>& method = m_request.httpMethod();
+        if (!equal(method, "GET"_s) && !equal(method, "POST"_s) && !equal(method, "HEAD"_s))
+            return Exception { ExceptionCode::TypeError, "Method must be GET, POST or HEAD in no-cors mode."_si };
         m_headers->setGuard(FetchHeaders::Guard::RequestNoCors);
     }
     
@@ -185,7 +185,7 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
 static inline std::optional<Exception> processInvalidSignal(ScriptExecutionContext& context)
 {
     ASCIILiteral message { "FetchRequestInit.signal should be undefined, null or an AbortSignal object. This will throw in a future release."_s };
-    context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+    context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, StringImpl::create(message).ptr());
 
     RefPtr document = dynamicDowncast<Document>(context);
     if (document && document->quirks().shouldIgnoreInvalidSignal())
@@ -195,17 +195,17 @@ static inline std::optional<Exception> processInvalidSignal(ScriptExecutionConte
     return Exception { ExceptionCode::TypeError, message };
 }
 
-ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
+ExceptionOr<void> FetchRequest::initializeWith(StringImpl* url, Init&& init)
 {
     Ref context = *scriptExecutionContext();
 
     URL requestURL = context->parseURL(url);
     if (!requestURL.isValid() || requestURL.hasCredentials())
-        return Exception { ExceptionCode::TypeError, "URL is not valid or contains user credentials."_s };
+        return Exception { ExceptionCode::TypeError, "URL is not valid or contains user credentials."_si };
 
     m_options.mode = Mode::Cors;
     m_options.credentials = Credentials::SameOrigin;
-    m_referrer = "client"_s;
+    m_referrer = "client"_si;
     m_request.setURL(WTF::move(requestURL));
     m_requestURL = { m_request.url(), context->topOrigin().data() };
     m_request.setInitiatorIdentifier(context->resourceRequestIdentifier());
@@ -304,17 +304,17 @@ ExceptionOr<void> FetchRequest::setBody(FetchBody::Init&& body)
         return result;
 
     if (isReadableStreamBody() && !m_duplex && shouldCheckDuplex(protect(scriptExecutionContext())))
-        return Exception { ExceptionCode::TypeError, "Request with a ReadableStream body requires the 'duplex' option to be set"_s };
+        return Exception { ExceptionCode::TypeError, "Request with a ReadableStream body requires the 'duplex' option to be set"_si };
 
     if (m_options.keepAlive && hasReadableStreamBody())
-        return Exception { ExceptionCode::TypeError, "Request cannot have a ReadableStream body and keepalive set to true"_s };
+        return Exception { ExceptionCode::TypeError, "Request cannot have a ReadableStream body and keepalive set to true"_si };
     return { };
 }
 
 ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
 {
     if (request.isDisturbedOrLocked())
-        return Exception { ExceptionCode::TypeError, "Request input is disturbed or locked."_s };
+        return Exception { ExceptionCode::TypeError, "Request input is disturbed or locked."_si };
 
     RefPtr context = scriptExecutionContext();
     if (!request.isBodyNull()) {
@@ -327,10 +327,10 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
     }
 
     if (isReadableStreamBody() && !m_duplex && shouldCheckDuplex(context))
-        return Exception { ExceptionCode::TypeError, "Request with a ReadableStream body requires the 'duplex' option to be set"_s };
+        return Exception { ExceptionCode::TypeError, "Request with a ReadableStream body requires the 'duplex' option to be set"_si };
 
     if (m_options.keepAlive && hasReadableStreamBody())
-        return Exception { ExceptionCode::TypeError, "Request cannot have a ReadableStream body and keepalive set to true"_s };
+        return Exception { ExceptionCode::TypeError, "Request cannot have a ReadableStream body and keepalive set to true"_si };
     return { };
 }
 
@@ -339,8 +339,8 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
     auto request = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }, { }, { }));
     request->suspendIfNeeded();
 
-    if (std::holds_alternative<String>(input)) {
-        auto result = request->initializeWith(std::get<String>(input), WTF::move(init));
+    if (std::holds_alternative<RefPtr<StringImpl>>(input)) {
+        auto result = request->initializeWith(std::get<RefPtr<StringImpl>>(input), WTF::move(init));
         if (result.hasException())
             return result.releaseException();
     } else {
@@ -352,23 +352,23 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
     return request;
 }
 
-Ref<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
+Ref<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, RefPtr<StringImpl>&& referrer)
 {
     auto result = adoptRef(*new FetchRequest(context, WTF::move(body), WTF::move(headers), WTF::move(request), WTF::move(options), WTF::move(referrer)));
     result->suspendIfNeeded();
     return result;
 }
 
-String FetchRequest::referrer() const
+RefPtr<StringImpl> FetchRequest::referrer() const
 {
-    if (m_referrer == "no-referrer"_s)
-        return String();
-    if (m_referrer == "client"_s)
-        return "about:client"_s;
+    if (equal(m_referrer, "no-referrer"_s))
+        return nullptr;
+    if (equal(m_referrer, "client"_s))
+        return "about:client"_si;
     return m_referrer;
 }
 
-const String& FetchRequest::urlString() const
+const RefPtr<StringImpl>& FetchRequest::urlString() const
 {
     return m_requestURL.url().string();
 }
@@ -394,11 +394,11 @@ ResourceRequest FetchRequest::resourceRequest() const
 ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(JSDOMGlobalObject& globalObject)
 {
     if (isDisturbedOrLocked())
-        return Exception { ExceptionCode::TypeError, "Body is disturbed or locked"_s };
+        return Exception { ExceptionCode::TypeError, "Body is disturbed or locked"_si };
     RefPtr context = scriptExecutionContext();
     if (!context)
-        return Exception { ExceptionCode::InvalidStateError, "Cannot clone FetchRequest without a valid script execution context"_s };
-    auto clone = adoptRef(*new FetchRequest(*context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
+        return Exception { ExceptionCode::InvalidStateError, "Cannot clone FetchRequest without a valid script execution context"_si };
+    auto clone = adoptRef(*new FetchRequest(*context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, RefPtr<StringImpl> { m_referrer }));
     clone->suspendIfNeeded();
     clone->m_duplex = m_duplex;
     if (auto exception = clone->cloneBody(globalObject, *this))

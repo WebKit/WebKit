@@ -50,7 +50,7 @@ public:
 TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
@@ -96,7 +96,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
@@ -139,7 +139,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
 TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
 {
     FontCascadeDescription description;
-    description.setOneFamily("LucidaGrande"_s);
+    description.setOneFamily("LucidaGrande"_atom);
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
@@ -181,7 +181,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
 {
     FontCascadeDescription description;
-    description.setOneFamily("LucidaGrande"_s);
+    description.setOneFamily("LucidaGrande"_atom);
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
@@ -217,7 +217,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(48);
     FontCascade font(WTF::move(description));
     font.update();
@@ -265,7 +265,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
 TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceCompensatesFollowingMarkInLTR)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
@@ -304,7 +304,7 @@ TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceCompensatesFollowingMar
 TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceDoesNotCompensateInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
@@ -369,7 +369,7 @@ TEST_F(ComplexTextControllerTest, LetterSpacingDoesNotSlideAFollowingMark)
     constexpr float letterSpacing = 10;
 
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.setLetterSpacing(letterSpacing);
@@ -401,7 +401,7 @@ TEST_F(ComplexTextControllerTest, WordSpacingDoesNotSlideAFollowingMark)
     constexpr float wordSpacing = 12;
 
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.setWordSpacing(wordSpacing);
@@ -430,7 +430,7 @@ TEST_F(ComplexTextControllerTest, ExpansionDoesNotSlideAFollowingMark)
     constexpr float expansion = 20;
 
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.update();
@@ -462,7 +462,7 @@ TEST_F(ComplexTextControllerTest, LeftExpansionDoesNotSlideAFollowingMark)
     constexpr float expansion = 20;
 
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.update();
@@ -495,7 +495,7 @@ TEST_F(ComplexTextControllerTest, LeftExpansionDoesNotSlideAFollowingMark)
 TEST_F(ComplexTextControllerTest, SyntheticBoldDoesNotSlideAFollowingMark)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.update();
@@ -527,7 +527,7 @@ TEST_F(ComplexTextControllerTest, SyntheticBoldDoesNotSlideAFollowingMark)
 TEST_F(ComplexTextControllerTest, TabWidthDoesNotSlideAFollowingMark)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.update();
@@ -576,7 +576,7 @@ TEST_F(ComplexTextControllerTest, LetterSpacingDoesNotSlideAMarkInRTL)
     constexpr float letterSpacing = 10;
 
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.setLetterSpacing(letterSpacing);
@@ -606,7 +606,7 @@ TEST_F(ComplexTextControllerTest, WordSpacingDoesNotSlideAMarkInRTL)
     constexpr float wordSpacing = 12;
 
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.setWordSpacing(wordSpacing);
@@ -635,7 +635,7 @@ TEST_F(ComplexTextControllerTest, WordSpacingDoesNotSlideAMarkInRTL)
 TEST_F(ComplexTextControllerTest, TabWidthDoesNotSlideAMarkInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.update();
@@ -667,7 +667,7 @@ TEST_F(ComplexTextControllerTest, TabWidthDoesNotSlideAMarkInRTL)
 TEST_F(ComplexTextControllerTest, SyntheticBoldDoesNotSlideAMarkInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.update();
@@ -698,7 +698,7 @@ TEST_F(ComplexTextControllerTest, SyntheticBoldDoesNotSlideAMarkInRTL)
 TEST_F(ComplexTextControllerTest, LeftExpansion)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(48);
     FontCascade font(WTF::move(description));
     font.update();
@@ -727,7 +727,7 @@ TEST_F(ComplexTextControllerTest, LeftExpansion)
 TEST_F(ComplexTextControllerTest, VerticalAdvances)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(48);
     FontCascade font(WTF::move(description));
     font.update();
@@ -770,7 +770,7 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
 TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times"_atom);
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();

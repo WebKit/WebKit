@@ -50,19 +50,19 @@ public:
 
     // CDMSessionPrivate
     LegacyCDMSessionType type() const final { return CDMSessionTypeClearKey; }
-    const String& sessionId() const LIFETIME_BOUND override { return m_sessionId; }
-    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array*, String&, unsigned short&, uint32_t&) override;
+    const RefPtr<StringImpl>& sessionId() const LIFETIME_BOUND override { return m_sessionId; }
+    RefPtr<Uint8Array> generateKeyRequest(StringImpl* mimeType, Uint8Array*, RefPtr<StringImpl>&, unsigned short&, uint32_t&) override;
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>&, unsigned short&, uint32_t&) override;
-    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
+    RefPtr<ArrayBuffer> cachedKeyForKeyID(StringImpl*) const override;
 
 private:
     CDMSessionClearKey(LegacyCDMSessionClient&);
 
     WeakPtr<LegacyCDMSessionClient> m_client;
     RefPtr<Uint8Array> m_initData;
-    MemoryCompactRobinHoodHashMap<String, Vector<uint8_t>> m_cachedKeys;
-    String m_sessionId;
+    MemoryCompactRobinHoodHashMap<RefPtr<StringImpl>, Vector<uint8_t>> m_cachedKeys;
+    RefPtr<StringImpl> m_sessionId;
 };
 
 } // namespace WebCore

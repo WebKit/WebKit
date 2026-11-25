@@ -56,7 +56,7 @@ public:
 
     using SameEntryCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
     using GetHandleCallback = CompletionHandler<void(ExceptionOr<Ref<FileSystemHandleCloseScope>>&&)>;
-    using ResolveCallback = CompletionHandler<void(ExceptionOr<std::optional<Vector<String>>>&&)>;
+    using ResolveCallback = CompletionHandler<void(ExceptionOr<std::optional<Vector<RefPtr<StringImpl>>>>&&)>;
     struct SyncAccessHandleInfo {
         FileSystemSyncAccessHandleIdentifier identifier;
         FileSystem::FileHandle file;
@@ -66,8 +66,8 @@ public:
     using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<SyncAccessHandleInfo>&&)>;
     using VoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     using EmptyCallback = CompletionHandler<void()>;
-    using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
-    using StringCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
+    using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<RefPtr<StringImpl>>>&&)>;
+    using StringCallback = CompletionHandler<void(ExceptionOr<RefPtr<StringImpl>>&&)>;
     using StreamCallback = CompletionHandler<void(ExceptionOr<FileSystemWritableFileStreamIdentifier>&&)>;
     using RequestCapacityCallback = CompletionHandler<void(std::optional<uint64_t>&&)>;
     using ResolveGlobalIdentifierCallback = CompletionHandler<void(ExceptionOr<FileSystemHandleIdentifier>&&)>;
@@ -75,10 +75,10 @@ public:
     virtual bool isWorker() const { return false; }
     virtual void closeHandle(FileSystemHandleIdentifier) = 0;
     virtual void isSameEntry(FileSystemHandleIdentifier, FileSystemHandleIdentifier, SameEntryCallback&&) = 0;
-    virtual void move(FileSystemHandleIdentifier, FileSystemHandleIdentifier, const String& newName, VoidCallback&&) = 0;
-    virtual void getFileHandle(FileSystemHandleIdentifier, const String& name, bool createIfNecessary, GetHandleCallback&&) = 0;
-    virtual void getDirectoryHandle(FileSystemHandleIdentifier, const String& name, bool createIfNecessary, GetHandleCallback&&) = 0;
-    virtual void removeEntry(FileSystemHandleIdentifier, const String& name, bool deleteRecursively, VoidCallback&&) = 0;
+    virtual void move(FileSystemHandleIdentifier, FileSystemHandleIdentifier, StringImpl* newName, VoidCallback&&) = 0;
+    virtual void getFileHandle(FileSystemHandleIdentifier, StringImpl* name, bool createIfNecessary, GetHandleCallback&&) = 0;
+    virtual void getDirectoryHandle(FileSystemHandleIdentifier, StringImpl* name, bool createIfNecessary, GetHandleCallback&&) = 0;
+    virtual void removeEntry(FileSystemHandleIdentifier, StringImpl* name, bool deleteRecursively, VoidCallback&&) = 0;
     virtual void resolve(FileSystemHandleIdentifier, FileSystemHandleIdentifier, ResolveCallback&&) = 0;
     virtual void getFile(FileSystemHandleIdentifier, StringCallback&&) = 0;
     virtual void createSyncAccessHandle(FileSystemHandleIdentifier, GetAccessHandleCallback&&) = 0;
@@ -91,7 +91,7 @@ public:
     virtual void closeWritable(FileSystemHandleIdentifier, FileSystemWritableFileStreamIdentifier, FileSystemWriteCloseReason, VoidCallback&&) = 0;
     virtual void executeCommandForWritable(FileSystemHandleIdentifier, FileSystemWritableFileStreamIdentifier, FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, VoidCallback&&) = 0;
     virtual void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) = 0;
-    virtual void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleCallback&&) = 0;
+    virtual void getHandle(FileSystemHandleIdentifier, StringImpl* name, GetHandleCallback&&) = 0;
     virtual void addGlobalIdentifierReference(ClientOrigin&&, FileSystemHandleGlobalIdentifier) = 0;
     virtual void removeGlobalIdentifierReferences(ClientOrigin&&, Vector<FileSystemHandleGlobalIdentifier>&&) = 0;
     virtual void resolveGlobalIdentifier(ClientOrigin&&, FileSystemHandleGlobalIdentifier, ResolveGlobalIdentifierCallback&&) = 0;

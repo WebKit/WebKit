@@ -27,8 +27,8 @@
 #import "BackgroundFetchState.h"
 
 namespace WebCore {
-String convertEnumerationToString(BackgroundFetchResult);
-String convertEnumerationToString(BackgroundFetchFailureReason);
+RefPtr<StringImpl> convertEnumerationToString(BackgroundFetchResult);
+RefPtr<StringImpl> convertEnumerationToString(BackgroundFetchFailureReason);
 }
 
 namespace WebKit {
@@ -37,16 +37,16 @@ NSDictionary *BackgroundFetchState::toDictionary() const
 {
     // FIXME: Expose icon URLS.
     return @{
-        @"TopOrigin" : topOrigin.toString().createNSString().get(),
+        @"TopOrigin" : createNSString(topOrigin.toString()).get(),
         @"Scope" : scope.createNSURL().get(),
-        @"WebIdentifier" : identifier.createNSString().get(),
-        @"Title" : options.title.createNSString().get(),
+        @"WebIdentifier" : createNSString(identifier).get(),
+        @"Title" : createNSString(options.title).get(),
         @"DownloadTotal" : @(downloadTotal),
         @"Downloaded" : @(downloaded),
         @"UploadTotal" : @(uploadTotal),
         @"Uploaded" : @(uploaded),
-        @"Result" : convertEnumerationToString(result).createNSString().get(),
-        @"FailureReason" : convertEnumerationToString(failureReason).createNSString().get(),
+        @"Result" : createNSString(convertEnumerationToString(result)).get(),
+        @"FailureReason" : createNSString(convertEnumerationToString(failureReason)).get(),
         @"IsPaused" : @(isPaused),
     };
 }

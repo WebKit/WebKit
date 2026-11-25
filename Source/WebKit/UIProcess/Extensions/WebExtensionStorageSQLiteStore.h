@@ -46,12 +46,12 @@ public:
     }
     virtual ~WebExtensionStorageSQLiteStore() = default;
 
-    void getAllKeys(CompletionHandler<void(Vector<String> keys, const String& errorMessage)>&&);
-    void getValuesForKeys(Vector<String> keys, CompletionHandler<void(HashMap<String, String> results, const String& errorMessage)>&&);
-    void getStorageSizeForKeys(Vector<String> keys, CompletionHandler<void(size_t storageSize, const String& errorMessage)>&&);
-    void getStorageSizeForAllKeys(HashMap<String, String> additionalKeyedData, CompletionHandler<void(size_t storageSize, int numberOfKeysIncludingAdditionalKeyedData, HashMap<String, String> existingKeysAndValues, const String& errorMessage)>&&);
-    void setKeyedData(HashMap<String, String> keyedData, CompletionHandler<void(Vector<String> keysSuccessfullySet, const String& errorMessage)>&&);
-    void deleteValuesForKeys(Vector<String> keys, CompletionHandler<void(const String& errorMessage)>&&);
+    void getAllKeys(CompletionHandler<void(Vector<RefPtr<StringImpl>> keys, StringImpl* errorMessage)>&&);
+    void getValuesForKeys(Vector<RefPtr<StringImpl>> keys, CompletionHandler<void(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> results, StringImpl* errorMessage)>&&);
+    void getStorageSizeForKeys(Vector<RefPtr<StringImpl>> keys, CompletionHandler<void(size_t storageSize, StringImpl* errorMessage)>&&);
+    void getStorageSizeForAllKeys(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> additionalKeyedData, CompletionHandler<void(size_t storageSize, int numberOfKeysIncludingAdditionalKeyedData, HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> existingKeysAndValues, StringImpl* errorMessage)>&&);
+    void setKeyedData(HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> keyedData, CompletionHandler<void(Vector<RefPtr<StringImpl>> keysSuccessfullySet, StringImpl* errorMessage)>&&);
+    void deleteValuesForKeys(Vector<RefPtr<StringImpl>> keys, CompletionHandler<void(StringImpl* errorMessage)>&&);
 
     enum class UsesInMemoryDatabase : bool {
         No = false,
@@ -68,13 +68,13 @@ protected:
     URL databaseURL() override;
 
 private:
-    WebExtensionStorageSQLiteStore(const String& uniqueIdentifier, WebExtensionDataType storageType, const String& directory, UsesInMemoryDatabase useInMemoryDatabase);
+    WebExtensionStorageSQLiteStore(StringImpl* uniqueIdentifier, WebExtensionDataType storageType, StringImpl* directory, UsesInMemoryDatabase useInMemoryDatabase);
 
-    String insertOrUpdateValue(const String& value, const String& key, Ref<WebExtensionSQLiteDatabase>);
-    HashMap<String, String> getValuesForAllKeys(String& errorMessage);
-    HashMap<String, String> getValuesForKeysWithErrorMessage(Vector<String> keys, String& errorMessage);
-    HashMap<String, String> getKeysAndValuesFromRowIterator(Ref<WebExtensionSQLiteRowEnumerator> rows);
-    Vector<String> getAllKeysWithErrorMessage(String& errorMessage);
+    RefPtr<StringImpl> insertOrUpdateValue(StringImpl* value, StringImpl* key, Ref<WebExtensionSQLiteDatabase>);
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> getValuesForAllKeys(RefPtr<StringImpl>& errorMessage);
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> getValuesForKeysWithErrorMessage(Vector<RefPtr<StringImpl>> keys, RefPtr<StringImpl>& errorMessage);
+    HashMap<RefPtr<StringImpl>, RefPtr<StringImpl>> getKeysAndValuesFromRowIterator(Ref<WebExtensionSQLiteRowEnumerator> rows);
+    Vector<RefPtr<StringImpl>> getAllKeysWithErrorMessage(RefPtr<StringImpl>& errorMessage);
 
     WebExtensionDataType m_storageType;
 };

@@ -38,12 +38,12 @@ struct CaptureDeviceWithCapabilities;
 class InputDeviceInfo final : public MediaDeviceInfo {
     WTF_MAKE_TZONE_ALLOCATED(InputDeviceInfo);
 public:
-    static Ref<InputDeviceInfo> create(CaptureDeviceWithCapabilities&& device, String&& saltedDeviceId, String&& saltedGroupId) { return adoptRef(*new InputDeviceInfo(WTF::move(device), WTF::move(saltedDeviceId), WTF::move(saltedGroupId))); }
+    static Ref<InputDeviceInfo> create(CaptureDeviceWithCapabilities&& device, RefPtr<StringImpl>&& saltedDeviceId, RefPtr<StringImpl>&& saltedGroupId) { return adoptRef(*new InputDeviceInfo(WTF::move(device), WTF::move(saltedDeviceId), WTF::move(saltedGroupId))); }
 
     MediaTrackCapabilities getCapabilities() const;
 
 private:
-    InputDeviceInfo(CaptureDeviceWithCapabilities&&, String&& saltedDeviceId, String&& saltedGroupId);
+    InputDeviceInfo(CaptureDeviceWithCapabilities&&, RefPtr<StringImpl>&& saltedDeviceId, RefPtr<StringImpl>&& saltedGroupId);
 
     bool isInputDeviceInfo() const final { return true; }
 

@@ -39,7 +39,7 @@ RevealItemRange::RevealItemRange(NSRange range)
 {
 }
 
-RevealItem::RevealItem(const String& text, RevealItemRange selectedRange)
+RevealItem::RevealItem(StringImpl* text, RevealItemRange selectedRange)
     : m_text(text)
     , m_selectedRange(selectedRange)
 {
@@ -53,7 +53,7 @@ NSRange RevealItem::highlightRange() const
 RVItem *RevealItem::item() const
 {
     if (!m_item)
-        m_item = adoptNS([PAL::allocRVItemInstance() initWithText:m_text.createNSString().get() selectedRange:NSMakeRange(m_selectedRange.location, m_selectedRange.length)]);
+        m_item = adoptNS([PAL::allocRVItemInstance() initWithText:createNSString(m_text).get() selectedRange:NSMakeRange(m_selectedRange.location, m_selectedRange.length)]);
     return m_item.get();
 }
 

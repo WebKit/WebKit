@@ -120,7 +120,7 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
 #endif
     
     if (!document.isFullyActive())
-        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_si };
     
     // FIXME: Figure out where latencyHint should go.
 
@@ -128,7 +128,7 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
         contextOptions.sampleRate = *defaultSampleRateForTesting();
 
     if (contextOptions.sampleRate && !isSupportedSampleRate(*contextOptions.sampleRate))
-        return Exception { ExceptionCode::NotSupportedError, "sampleRate is not in range"_s };
+        return Exception { ExceptionCode::NotSupportedError, "sampleRate is not in range"_si };
 
     // FIXME: When sampleRate is unspecified and sinkId identifies a specific output device, the
     // context should use that device's sample rate (constructor step 10.3), which needs a
@@ -250,7 +250,7 @@ AudioTimestamp AudioContext::getOutputTimestamp()
 void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 {
     if (isStopped() || isClosed()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
         return;
     }
 
@@ -272,7 +272,7 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
     assertIsMainThread();
 
     if (isStopped() || isClosed()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
         return;
     }
 
@@ -280,7 +280,7 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 
     auto doSuspend = [this, protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
         if (isStopped() || isClosed()) {
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+            promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
             return GenericPromise::createAndResolve();
         }
 
@@ -318,7 +318,7 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
     assertIsMainThread();
 
     if (isStopped() || isClosed()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
         return;
     }
 
@@ -342,7 +342,7 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
             }
 
             if (protectedThis->isStopped() || protectedThis->isClosed()) {
-                promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+                promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
                 producer.resolve();
                 return;
             }
@@ -350,7 +350,7 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
             protectedThis->lazyInitialize();
             Ref destination = protectedThis->destination();
             if (!destination->isInitialized()) {
-                promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
+                promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_si });
                 producer.resolve();
                 return;
             }
@@ -387,19 +387,19 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
     });
 }
 
-static bool sinkIdsAreEqual(const Variant<String, Ref<AudioSinkInfo>>& current, const Variant<String, AudioSinkOptions>& requested)
+static bool sinkIdsAreEqual(const Variant<RefPtr<StringImpl>, Ref<AudioSinkInfo>>& current, const Variant<RefPtr<StringImpl>, AudioSinkOptions>& requested)
 {
-    if (std::holds_alternative<String>(current) && std::holds_alternative<String>(requested))
-        return std::get<String>(current) == std::get<String>(requested);
+    if (std::holds_alternative<RefPtr<StringImpl>>(current) && std::holds_alternative<RefPtr<StringImpl>>(requested))
+        return equal(std::get<RefPtr<StringImpl>>(current), std::get<RefPtr<StringImpl>>(requested));
     if (std::holds_alternative<Ref<AudioSinkInfo>>(current) && std::holds_alternative<AudioSinkOptions>(requested))
         return std::get<Ref<AudioSinkInfo>>(current)->type() == std::get<AudioSinkOptions>(requested).type;
     return false;
 }
 
-static bool sinkIdsAreEqual(const Variant<String, Ref<AudioSinkInfo>>& current, const Variant<String, Ref<AudioSinkInfo>>& requested)
+static bool sinkIdsAreEqual(const Variant<RefPtr<StringImpl>, Ref<AudioSinkInfo>>& current, const Variant<RefPtr<StringImpl>, Ref<AudioSinkInfo>>& requested)
 {
-    if (std::holds_alternative<String>(current) && std::holds_alternative<String>(requested))
-        return std::get<String>(current) == std::get<String>(requested);
+    if (std::holds_alternative<RefPtr<StringImpl>>(current) && std::holds_alternative<RefPtr<StringImpl>>(requested))
+        return equal(std::get<RefPtr<StringImpl>>(current), std::get<RefPtr<StringImpl>>(requested));
     if (std::holds_alternative<Ref<AudioSinkInfo>>(current) && std::holds_alternative<Ref<AudioSinkInfo>>(requested))
         return std::get<Ref<AudioSinkInfo>>(current)->type() == std::get<Ref<AudioSinkInfo>>(requested)->type();
     return false;
@@ -415,31 +415,31 @@ static bool isAllowedToUseSpeakerSelection(const Document& document)
 }
 
 // https://webaudio.github.io/web-audio-api/#validating-sink-identifier
-ExceptionOr<AudioContext::ResolvedSinkId> AudioContext::validateSinkId(const Variant<String, AudioSinkOptions>& sinkId)
+ExceptionOr<AudioContext::ResolvedSinkId> AudioContext::validateSinkId(const Variant<RefPtr<StringImpl>, AudioSinkOptions>& sinkId)
 {
     RefPtr document = this->document();
     if (!document || !isAllowedToUseSpeakerSelection(*document))
-        return Exception { ExceptionCode::NotAllowedError, "Speaker selection is not allowed by permissions policy"_s };
+        return Exception { ExceptionCode::NotAllowedError, "Speaker selection is not allowed by permissions policy"_si };
 
     if (std::holds_alternative<AudioSinkOptions>(sinkId))
-        return ResolvedSinkId { AudioSinkInfo::create(std::get<AudioSinkOptions>(sinkId).type), String { }, true };
+        return ResolvedSinkId { AudioSinkInfo::create(std::get<AudioSinkOptions>(sinkId).type), nullString(), true };
 
-    auto deviceId = std::get<String>(sinkId);
-    if (deviceId.isEmpty())
-        return ResolvedSinkId { emptyString(), String { }, false };
+    auto deviceId = std::get<RefPtr<StringImpl>>(sinkId);
+    if (isEmpty(deviceId))
+        return ResolvedSinkId { emptyString(), nullString(), false };
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr window = document->window();
     RefPtr mediaDevices = window ? NavigatorMediaDevices::mediaDevices(protect(window->navigator())) : nullptr;
     if (mediaDevices) {
         auto persistentId = mediaDevices->deviceIdToPersistentId(deviceId);
-        if (!persistentId.isNull())
+        if (!!persistentId)
             return ResolvedSinkId { deviceId, WTF::move(persistentId), false };
     }
 #endif
     // The spec rejects every validation failure with NotAllowedError, but the WPTs and other
     // engines use NotFoundError for an unmatched device id.
-    return Exception { ExceptionCode::NotFoundError, "No audio output device matches the given identifier"_s };
+    return Exception { ExceptionCode::NotFoundError, "No audio output device matches the given identifier"_si };
 }
 
 void AudioContext::applySinkChange(SinkChangeIdentifier identifier, ResolvedSinkId&& resolved, ResumeAfterSinkChange resumeAfterSinkChange)
@@ -466,7 +466,7 @@ void AudioContext::finishSinkChange(SinkChangeIdentifier identifier, ResolvedSin
 
     if (!success) {
         ERROR_LOG(LOGIDENTIFIER, "Failed to acquire the audio output device");
-        promise->reject(Exception { ExceptionCode::InvalidAccessError, "The audio output device could not be acquired"_s });
+        promise->reject(Exception { ExceptionCode::InvalidAccessError, "The audio output device could not be acquired"_si });
         return;
     }
 
@@ -502,18 +502,18 @@ void AudioContext::finishSinkChange(SinkChangeIdentifier identifier, ResolvedSin
 }
 
 // https://webaudio.github.io/web-audio-api/#dom-audiocontext-setsinkid
-void AudioContext::setSinkId(Variant<String, AudioSinkOptions>&& sinkId, DOMPromiseDeferred<void>&& promise)
+void AudioContext::setSinkId(Variant<RefPtr<StringImpl>, AudioSinkOptions>&& sinkId, DOMPromiseDeferred<void>&& promise)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
     RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_si });
         return;
     }
 
     if (isStopped() || isClosed()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
         return;
     }
 
@@ -524,7 +524,7 @@ void AudioContext::setSinkId(Variant<String, AudioSinkOptions>&& sinkId, DOMProm
 
 #if ENABLE(MEDIA_STREAM)
     if (document->settings().speakerSelectionRequiresUserGesture() && !document->processingUserGestureForMedia()) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "A user gesture is required"_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "A user gesture is required"_si });
         return;
     }
 #endif
@@ -551,7 +551,7 @@ void AudioContext::performSinkChange(SinkChangeIdentifier identifier, ResolvedSi
         return;
 
     if (isStopped() || isClosed()) {
-        rejectSinkChangePromise(identifier, Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+        rejectSinkChangePromise(identifier, Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
         return;
     }
 
@@ -577,7 +577,7 @@ void AudioContext::performSinkChange(SinkChangeIdentifier identifier, ResolvedSi
             return;
         }
         if (context.isStopped() || context.isClosed()) {
-            context.rejectSinkChangePromise(identifier, Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+            context.rejectSinkChangePromise(identifier, Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
             return;
         }
         context.setState(State::Suspended);
@@ -595,7 +595,7 @@ void AudioContext::rejectPendingSinkChangePromises()
 {
     auto pending = std::exchange(m_pendingSinkChangePromises, { });
     for (auto& promise : pending.values())
-        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_si });
 }
 
 // https://webaudio.github.io/web-audio-api/#dom-audiocontext-audiocontext (constructor step 10.1)
@@ -967,7 +967,7 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
         mediaSession->updateNowPlayingInfo(nowPlayingInfo);
 #endif
 
-    if (nowPlayingInfo.metadata.title.isEmpty()) {
+    if (isEmpty(nowPlayingInfo.metadata.title)) {
         RegistrableDomain domain { document->securityOrigin().data() };
         if (!domain.isEmpty())
             nowPlayingInfo.metadata.title = domain.string();
@@ -1026,7 +1026,7 @@ void AudioContext::sceneIdentifierDidChange()
     }
 }
 
-const String& AudioContext::sceneIdentifier() const
+const RefPtr<StringImpl>& AudioContext::sceneIdentifier() const
 {
     if (RefPtr document = this->document(); document && document->page())
         return document->page()->sceneIdentifier();

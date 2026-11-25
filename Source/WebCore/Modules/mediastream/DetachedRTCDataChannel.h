@@ -38,9 +38,9 @@ struct DetachedRTCDataChannel {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(DetachedRTCDataChannel, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(DetachedRTCDataChannel);
 public:
-    DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
+    DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, RefPtr<StringImpl>&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
         : identifier(identifier)
-        , label(WTF::move(label).isolatedCopy())
+        , label(isolatedCopy(WTF::move(label)))
         , options(WTF::move(options).isolatedCopy())
         , state(state)
     {
@@ -48,10 +48,10 @@ public:
     DetachedRTCDataChannel(DetachedRTCDataChannel&&) = default;
     DetachedRTCDataChannel& operator=(DetachedRTCDataChannel&&) = default;
 
-    size_t memoryCost() const { return label.sizeInBytes(); }
+    size_t memoryCost() const { return sizeInBytes(label); }
 
     RTCDataChannelIdentifier identifier;
-    String label;
+    RefPtr<StringImpl> label;
     RTCDataChannelInit options;
     RTCDataChannelState state { RTCDataChannelState::Closed };
 };

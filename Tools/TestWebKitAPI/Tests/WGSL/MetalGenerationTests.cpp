@@ -34,7 +34,7 @@
 
 namespace TestWGSLAPI {
 
-inline std::expected<String, WGSL::FailedCheck> translate(const String& wgsl, const String& entryPointName, unsigned appleGPUFamily = 4)
+inline std::expected<RefPtr<StringImpl>, WGSL::FailedCheck> translate(StringImpl* wgsl, StringImpl* entryPointName, unsigned appleGPUFamily = 4)
 {
     auto result = WGSL::staticCheck(wgsl, std::nullopt, { 8 });
     if (auto* maybeError = std::get_if<WGSL::FailedCheck>(&result))
@@ -44,22 +44,22 @@ inline std::expected<String, WGSL::FailedCheck> translate(const String& wgsl, co
     auto prepareResult = WGSL::prepare(ast, entryPointName, { });
     if (auto* maybeError = std::get_if<WGSL::Error>(&prepareResult))
         return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });
-    HashMap<String, WGSL::ConstantValue> constantValues;
+    HashMap<RefPtr<StringImpl>, WGSL::ConstantValue> constantValues;
     auto generationResult = WGSL::generate(ast, std::get<WGSL::PrepareResult>(prepareResult), constantValues, WGSL::DeviceState {
         .appleGPUFamily = appleGPUFamily,
         .shaderValidationEnabled = false
     });
     if (auto* maybeError = std::get_if<WGSL::Error>(&generationResult))
         return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });
-    return { WTF::move(std::get<String>(generationResult)) };
+    return { WTF::move(std::get<RefPtr<StringImpl>>(generationResult)) };
 }
 
 TEST(WGSLMetalGenerationTests, RedFrag)
 {
-    auto mslSource = translate(R"(@fragment
+    auto mslSource = translate(StringImpl::create(R"(@fragment
 fn main() -> @location(0) vec4<f32> {
     return vec4<f32>(1.0, 0.0, 0.0, 1.0);
-})"_s, "main"_s);
+})"_s).ptr(), "main"_si);
 
     EXPECT_TRUE(mslSource.has_value());
     EXPECT_EQ(*mslSource, R"(#include <metal_stdlib>
@@ -98,13 +98,13 @@ struct __function0_FragmentOutput {
 
 TEST(WGSLMetalGenerationTests, BuiltinSampleMask)
 {
-    auto mslSource = translate(R"(@fragment
+    auto mslSource = translate(StringImpl::create(R"(@fragment
 fn main(@builtin(position) position : vec4<f32>,
         @builtin(sample_index) sample_index : u32,
         @builtin(sample_mask) sample_mask : u32) {
     let foo : vec4<f32> = position;
     let bar : u32 = (sample_index + sample_mask);
-})"_s, "main"_s);
+})"_s).ptr(), "main"_si);
 
     EXPECT_TRUE(mslSource.has_value());
     EXPECT_EQ(*mslSource, R"(#include <metal_stdlib>
@@ -147,19 +147,19 @@ fn main() {
 
 TEST(WGSLMetalGenerationTests, ForcesInliningWhenParameterMixesConstantAndRuntimeArguments)
 {
-    auto family9 = translate(mixedArgumentShader, "main"_s, 9);
+    auto family9 = translate(StringImpl::create(mixedArgumentShader).ptr(), "main"_si, 9);
     ASSERT_TRUE(family9.has_value());
-    EXPECT_TRUE(family9->contains("__attribute__((always_inline)) float function0("_s));
-    EXPECT_FALSE(family9->contains("__attribute__((always_inline)) float function1("_s));
+    EXPECT_TRUE(contains(family9->get(), "__attribute__((always_inline)) float function0("_s));
+    EXPECT_FALSE(contains(family9->get(), "__attribute__((always_inline)) float function1("_s));
 
-    auto family8 = translate(mixedArgumentShader, "main"_s, 8);
+    auto family8 = translate(StringImpl::create(mixedArgumentShader).ptr(), "main"_si, 8);
     ASSERT_TRUE(family8.has_value());
-    EXPECT_FALSE(family8->contains("__attribute__((always_inline)) float function"_s));
+    EXPECT_FALSE(contains(family8->get(), "__attribute__((always_inline)) float function"_s));
 }
 
 TEST(WGSLMetalGenerationTests, DoesNotForceInliningWhenArgumentsAreAllConstantOrAllRuntime)
 {
-    auto mslSource = translate(R"(
+    auto mslSource = translate(StringImpl::create(R"(
 fn allConstant(x : f32) -> f32 { return x + 1.0; }
 fn allRuntime(x : f32) -> f32 { return x + 2.0; }
 
@@ -169,40 +169,40 @@ fn allRuntime(x : f32) -> f32 { return x + 2.0; }
 @compute @workgroup_size(1)
 fn main() {
     out[0] = allConstant(1.0) + allConstant(2.0) + allRuntime(inp.x) + allRuntime(inp.y);
-})"_s, "main"_s, 9);
+})"_s).ptr(), "main"_si, 9);
     ASSERT_TRUE(mslSource.has_value());
-    EXPECT_FALSE(mslSource->contains("__attribute__((always_inline)) float function"_s));
+    EXPECT_FALSE(contains(mslSource->get(), "__attribute__((always_inline)) float function"_s));
 }
 
 TEST(WGSLMetalGenerationTests, RepeatedGenerationIsDeterministic)
 {
     // Every pipeline created from a GPUShaderModule prepares and generates from the same AST,
     // so repeated generation must produce the same code for the Metal shader cache to hit.
-    auto result = WGSL::staticCheck(R"(
+    auto result = WGSL::staticCheck(StringImpl::create(R"(
 @vertex
 fn main(@builtin(vertex_index) i: u32) -> @builtin(position) vec4<f32> {
     var positions = array<vec2<f32>, 3>(vec2<f32>(-1.0, -1.0), vec2<f32>(3.0, -1.0), vec2<f32>(-1.0, 3.0));
     return vec4<f32>(positions[i], 0.0, 1.0);
-})"_s, std::nullopt, { 8 });
+})"_s).ptr(), std::nullopt, { 8 });
     ASSERT_TRUE(std::holds_alternative<WGSL::SuccessfulCheck>(result));
     auto& ast = std::get<WGSL::SuccessfulCheck>(result).ast;
 
-    auto generate = [&]() -> String {
-        auto prepareResult = WGSL::prepare(ast, "main"_s, { });
+    auto generate = [&]() -> RefPtr<StringImpl> {
+        auto prepareResult = WGSL::prepare(ast, "main"_si, { });
         if (!std::holds_alternative<WGSL::PrepareResult>(prepareResult))
             return { };
-        HashMap<String, WGSL::ConstantValue> constantValues;
+        HashMap<RefPtr<StringImpl>, WGSL::ConstantValue> constantValues;
         auto generationResult = WGSL::generate(ast, std::get<WGSL::PrepareResult>(prepareResult), constantValues, WGSL::DeviceState {
             .appleGPUFamily = 4,
             .shaderValidationEnabled = false
         });
-        if (!std::holds_alternative<String>(generationResult))
+        if (!std::holds_alternative<RefPtr<StringImpl>>(generationResult))
             return { };
-        return std::get<String>(generationResult);
+        return std::get<RefPtr<StringImpl>>(generationResult);
     };
 
     auto first = generate();
-    EXPECT_FALSE(first.isEmpty());
+    EXPECT_FALSE(isEmpty(first));
     EXPECT_EQ(first, generate());
     EXPECT_EQ(first, generate());
 }

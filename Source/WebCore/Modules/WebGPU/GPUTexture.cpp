@@ -89,12 +89,12 @@ GPUDevice* GPUTexture::device() const
     return m_device.ptr();
 }
 
-String GPUTexture::label() const
+RefPtr<StringImpl> GPUTexture::label() const
 {
     return m_label;
 }
 
-void GPUTexture::setLabel(String&& label)
+void GPUTexture::setLabel(RefPtr<StringImpl>&& label)
 {
     m_label = label;
     m_backing->setLabel(WTF::move(label));
@@ -116,10 +116,10 @@ ExceptionOr<Ref<GPUTextureView>> GPUTexture::createView(const std::optional<GPUT
     }
     auto backingDescriptor = convertToBacking(textureViewDescriptor);
     if (!backingDescriptor)
-        return Exception { ExceptionCode::TypeError, "GPUTexture.createView: swizzle must be four characters, each of which is one of \"rgba01\"."_s };
+        return Exception { ExceptionCode::TypeError, "GPUTexture.createView: swizzle must be four characters, each of which is one of \"rgba01\"."_si };
     RefPtr view = m_backing->createView(backingDescriptor);
     if (!view)
-        return Exception { ExceptionCode::InvalidStateError, "GPUTexture.createView: Unable to create view."_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPUTexture.createView: Unable to create view."_si };
     return GPUTextureView::create(view.releaseNonNull(), WTF::move(backingDescriptor->label), *this);
 }
 

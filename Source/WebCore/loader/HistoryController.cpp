@@ -561,7 +561,7 @@ void HistoryController::updateForReloadOrReplace()
 
 void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
 {
-    LOG(History, "HistoryController %p updateForStandardLoad: Updating History for standard load in frame %p (main frame %d) %s", this, m_frame.ptr(), m_frame->isMainFrame(), m_frame->loader().documentLoader()->url().string().utf8());
+    LOG(History, "HistoryController %p updateForStandardLoad: Updating History for standard load in frame %p (main frame %d) %s", this, m_frame.ptr(), m_frame->isMainFrame(), utf8(m_frame->loader().documentLoader()->url().string()));
 
     Ref frameLoader = m_frame->loader();
 
@@ -830,7 +830,7 @@ void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
 {
     // FIXME: This ignores the title's direction.
     if (RefPtr currentItem = m_currentItem)
-        currentItem->setTitle(String { title.string });
+        currentItem->setTitle(RefPtr<StringImpl> { title.string });
 }
 
 bool HistoryController::currentItemShouldBeReplaced() const
@@ -909,7 +909,7 @@ void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader>
 
 Ref<HistoryItem> HistoryController::createItem(HistoryItemClient& client, BackForwardItemIdentifier itemID)
 {
-    Ref item = HistoryItem::create(client, { }, { }, { }, itemID);
+    Ref item = HistoryItem::create(client, nullptr, nullptr, nullptr, itemID);
     initializeItem(item, protect(m_frame->loader().documentLoader()));
 
     // Set the item for which we will save document state
@@ -1084,7 +1084,7 @@ void HistoryController::updateCurrentItem()
     }
 }
 
-void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, const String& urlString)
+void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, StringImpl* urlString)
 {
     RefPtr currentItem = m_currentItem;
     if (!currentItem)
@@ -1112,7 +1112,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
     currentItem->setURLString(urlString);
     currentItem->setShouldRestoreScrollPosition(shouldRestoreScrollPosition);
 
-    LOG(History, "HistoryController %p pushState: Adding top item %p, setting url of current item %p to %s, scrollRestoration is %s", this, topItem.ptr(), m_currentItem.get(), urlString.utf8(), topItem->shouldRestoreScrollPosition() ? "auto" : "manual");
+    LOG(History, "HistoryController %p pushState: Adding top item %p, setting url of current item %p to %s, scrollRestoration is %s", this, topItem.ptr(), m_currentItem.get(), utf8(urlString), topItem->shouldRestoreScrollPosition() ? "auto" : "manual");
 
     protect(protect(m_frame)->navigationScheduler())->adjustPendingHistoryNavigationForNewBackForwardEntry();
     protect(page->backForward())->addItem(WTF::move(topItem));
@@ -1127,25 +1127,25 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
     protect(frame->loader().client())->updateGlobalHistory();
 }
 
-void HistoryController::updateBackForwardListForReplaceState(RefPtr<SerializedScriptValue>&& stateObject, const String& urlString, WasCreatedByJSWithoutUserInteraction wasCreatedByJSWithoutUserInteraction)
+void HistoryController::updateBackForwardListForReplaceState(RefPtr<SerializedScriptValue>&& stateObject, StringImpl* urlString, WasCreatedByJSWithoutUserInteraction wasCreatedByJSWithoutUserInteraction)
 {
     RefPtr currentItem = m_currentItem;
     if (!currentItem)
         return;
 
-    LOG(History, "HistoryController %p updateBackForwardListForReplaceState: Setting url of current item %p to %s scrollRestoration %s", this, currentItem.get(), urlString.utf8(), currentItem->shouldRestoreScrollPosition() ? "auto" : "manual");
+    LOG(History, "HistoryController %p updateBackForwardListForReplaceState: Setting url of current item %p to %s scrollRestoration %s", this, currentItem.get(), utf8(urlString), currentItem->shouldRestoreScrollPosition() ? "auto" : "manual");
 
-    if (!urlString.isEmpty())
+    if (!isEmpty(urlString))
         currentItem->setURLString(urlString);
     currentItem->setStateObject(WTF::move(stateObject));
     currentItem->setFormData(nullptr);
-    currentItem->setFormContentType(String());
+    currentItem->setFormContentType(nullString());
     if (wasCreatedByJSWithoutUserInteraction)
         currentItem->setWasCreatedByJSWithoutUserInteraction(true);
     currentItem->notifyChanged();
 }
 
-void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject, const String& urlString)
+void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject, StringImpl* urlString)
 {
     RefPtr currentItem = m_currentItem;
     if (!currentItem)

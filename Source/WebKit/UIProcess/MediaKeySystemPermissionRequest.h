@@ -33,7 +33,7 @@ namespace WebKit {
 
 class MediaKeySystemPermissionRequest : public RefCounted<MediaKeySystemPermissionRequest> {
 public:
-    static Ref<MediaKeySystemPermissionRequest> create(const String& keySystem, CompletionHandler<void(bool)>&& completionHandler)
+    static Ref<MediaKeySystemPermissionRequest> create(StringImpl* keySystem, CompletionHandler<void(bool)>&& completionHandler)
     {
         return adoptRef(*new MediaKeySystemPermissionRequest(keySystem, WTF::move(completionHandler)));
     }
@@ -44,15 +44,15 @@ public:
         completionHandler(success);
     }
 
-    const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
+    const RefPtr<StringImpl>& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 
 private:
-    MediaKeySystemPermissionRequest(const String& keySystem, CompletionHandler<void(bool)>&& completionHandler)
+    MediaKeySystemPermissionRequest(StringImpl* keySystem, CompletionHandler<void(bool)>&& completionHandler)
         : m_keySystem(keySystem)
         , m_completionHandler(WTF::move(completionHandler))
     { }
 
-    String m_keySystem;
+    RefPtr<StringImpl> m_keySystem;
     CompletionHandler<void(bool)> m_completionHandler;
 };
 

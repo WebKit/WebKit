@@ -40,13 +40,13 @@ WebPasteboardOverrides& WebPasteboardOverrides::sharedPasteboardOverrides()
 
 WebPasteboardOverrides::WebPasteboardOverrides() = default;
 
-void WebPasteboardOverrides::addOverride(const String& pasteboardName, const String& type, const Vector<uint8_t>& data)
+void WebPasteboardOverrides::addOverride(StringImpl* pasteboardName, StringImpl* type, const Vector<uint8_t>& data)
 {
-    auto& overrides = m_overridesMap.add(pasteboardName, HashMap<String, Vector<uint8_t>>()).iterator->value;
+    auto& overrides = m_overridesMap.add(pasteboardName, HashMap<RefPtr<StringImpl>, Vector<uint8_t>>()).iterator->value;
     overrides.set(type, data);
 }
 
-void WebPasteboardOverrides::removeOverride(const String& pasteboardName, const String& type)
+void WebPasteboardOverrides::removeOverride(StringImpl* pasteboardName, StringImpl* type)
 {
     auto it = m_overridesMap.find(pasteboardName);
     if (it == m_overridesMap.end())
@@ -59,7 +59,7 @@ void WebPasteboardOverrides::removeOverride(const String& pasteboardName, const 
         m_overridesMap.remove(it);
 }
 
-Vector<String> WebPasteboardOverrides::overriddenTypes(const String& pasteboardName)
+Vector<RefPtr<StringImpl>> WebPasteboardOverrides::overriddenTypes(StringImpl* pasteboardName)
 {
     auto it = m_overridesMap.find(pasteboardName);
     if (it == m_overridesMap.end())
@@ -68,7 +68,7 @@ Vector<String> WebPasteboardOverrides::overriddenTypes(const String& pasteboardN
     return copyToVector(it->value.keys());
 }
 
-std::optional<WebCore::PasteboardItemInfo> WebPasteboardOverrides::overriddenInfo(const String& pasteboardName)
+std::optional<WebCore::PasteboardItemInfo> WebPasteboardOverrides::overriddenInfo(StringImpl* pasteboardName)
 {
     auto types = this->overriddenTypes(pasteboardName);
     if (types.isEmpty())
@@ -82,7 +82,7 @@ std::optional<WebCore::PasteboardItemInfo> WebPasteboardOverrides::overriddenInf
     return { WTF::move(item) };
 }
 
-bool WebPasteboardOverrides::getDataForOverride(const String& pasteboardName, const String& type, Vector<uint8_t>& data) const
+bool WebPasteboardOverrides::getDataForOverride(StringImpl* pasteboardName, StringImpl* type, Vector<uint8_t>& data) const
 {
     auto pasteboardIterator = m_overridesMap.find(pasteboardName);
     if (pasteboardIterator == m_overridesMap.end())

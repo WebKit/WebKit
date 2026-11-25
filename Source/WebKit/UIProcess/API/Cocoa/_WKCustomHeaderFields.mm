@@ -56,7 +56,7 @@
     Borrow borrowedVector = _fields->fields();
     NSMutableDictionary<NSString *, NSString *> *dictionary = [NSMutableDictionary dictionaryWithCapacity:borrowedVector->size()];
     for (auto& field : borrowedVector)
-        [dictionary setObject:field.value().createNSString().get() forKey:field.name().createNSString().get()];
+        [dictionary setObject:createNSString(field.value()).get() forKey:createNSString(field.name()).get()];
     return dictionary;
 }
 
@@ -64,7 +64,7 @@
 {
     Vector<WebCore::HTTPHeaderField> vector(ReserveCapacityTag { }, fields.count);
     [fields enumerateKeysAndObjectsUsingBlock:makeBlockPtr([&](id key, id value, BOOL* stop) {
-        if (auto field = WebCore::HTTPHeaderField::create((NSString *)key, (NSString *)value); field && startsWithLettersIgnoringASCIICase(field->name(), "x-"_s))
+        if (auto field = WebCore::HTTPHeaderField::create(StringImpl::create((NSString *)key), StringImpl::create((NSString *)value)); field && startsWithLettersIgnoringASCIICase(field->name(), "x-"_s))
             vector.append(WTF::move(*field));
     }).get()];
     protect(*_fields)->setFields(WTF::move(vector));
@@ -77,7 +77,7 @@
 
 - (void)setThirdPartyDomains:(NSArray<NSString *> *)thirdPartyDomains
 {
-    protect(*_fields)->setThirdPartyDomains(makeVector<String>(thirdPartyDomains));
+    protect(*_fields)->setThirdPartyDomains(makeVector<RefPtr<StringImpl>>(thirdPartyDomains));
 }
 
 - (API::Object&)_apiObject

@@ -76,7 +76,7 @@ WPEView* WebPageProxy::wpeView() const
 }
 #endif
 
-void WebPageProxy::bindAccessibilityTree(const String& plugID)
+void WebPageProxy::bindAccessibilityTree(StringImpl* plugID)
 {
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
@@ -85,14 +85,14 @@ void WebPageProxy::bindAccessibilityTree(const String& plugID)
 #if ENABLE(WPE_PLATFORM)
     if (auto* view = wpeView()) {
         if (auto* accessible = wpe_view_get_accessible(view))
-            wpe_view_accessible_bind(accessible, plugID.utf8().legacyCStringPointer());
+            wpe_view_accessible_bind(accessible, utf8(plugID).legacyCStringPointer());
         return;
     }
 #endif
 
 #if USE(ATK)
     auto* accessible = static_cast<PageClientImpl&>(*pageClient).accessible();
-    atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().legacyCStringPointer()));
+    atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(utf8(plugID).legacyCStringPointer()));
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
 #else
     UNUSED_PARAM(plugID);

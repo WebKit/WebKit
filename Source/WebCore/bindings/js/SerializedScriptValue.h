@@ -93,9 +93,9 @@ public:
 
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, Vector<Ref<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
-    JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, Vector<Ref<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
+    JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, Vector<Ref<MessagePort>>&, const Vector<RefPtr<StringImpl>>& blobURLs, const Vector<RefPtr<StringImpl>>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
 
-    WEBCORE_EXPORT String toString() const;
+    WEBCORE_EXPORT RefPtr<StringImpl> toString() const;
 
     // API implementation helpers. These don't expose special behavior for ArrayBuffers or MessagePorts.
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
@@ -104,7 +104,7 @@ public:
 
     NODELETE WEBCORE_EXPORT bool hasBlobURLs() const;
 
-    WEBCORE_EXPORT Vector<String> blobURLs() const;
+    WEBCORE_EXPORT Vector<RefPtr<StringImpl>> blobURLs() const;
     WEBCORE_EXPORT Vector<URLKeepingBlobAlive> blobHandles() const;
     Vector<FileSystemHandleGlobalIdentifier> fileSystemHandleGlobalIdentifiers() const;
     void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);

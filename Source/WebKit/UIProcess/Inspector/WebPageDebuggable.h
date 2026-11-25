@@ -45,17 +45,17 @@ public:
 
     Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::WebPage; }
 
-    String name() const final;
-    String url() const final;
+    RefPtr<StringImpl> name() const final;
+    RefPtr<StringImpl> url() const final;
     bool hasLocalDebugger() const final;
 
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) final;
     void disconnect(Inspector::FrontendChannel&) final;
-    void dispatchMessageFromRemote(String&& message) final;
+    void dispatchMessageFromRemote(RefPtr<StringImpl>&& message) final;
     void setIndicating(bool) final;
 
-    const String& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
-    void setNameOverride(const String&);
+    const RefPtr<StringImpl>& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
+    void setNameOverride(StringImpl*);
 
     NODELETE void detachFromPage();
 
@@ -63,7 +63,7 @@ private:
     explicit WebPageDebuggable(WebPageProxy&);
 
     WeakPtr<WebPageProxy> m_page;
-    String m_nameOverride;
+    RefPtr<StringImpl> m_nameOverride;
 };
 
 } // namespace WebKit

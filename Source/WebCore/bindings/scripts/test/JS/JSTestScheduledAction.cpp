@@ -101,7 +101,7 @@ template<> JSValue JSTestScheduledActionDOMConstructor::prototypeForStructure(JS
 template<> void JSTestScheduledActionDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    JSString* nameString = jsNontrivialString(vm, "TestScheduledActionReal"_s);
+    JSString* nameString = jsNontrivialString(vm, "TestScheduledActionReal"_si);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->prototype, JSTestScheduledAction::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
@@ -193,7 +193,7 @@ static inline JSC::EncodedJSValue jsTestScheduledActionPrototypeFunction_methodB
     if (callFrame->argumentCount() < 1) [[unlikely]]
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto actionConversionResult = convert<IDLScheduledAction>(*lexicalGlobalObject, argument0.value(), *castedThis->realm(), "TestScheduledActionReal method"_s);
+    auto actionConversionResult = convert<IDLScheduledAction>(*lexicalGlobalObject, argument0.value(), *castedThis->realm(), "TestScheduledActionReal method"_si);
     if (actionConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.method(actionConversionResult.releaseReturnValue()); })));

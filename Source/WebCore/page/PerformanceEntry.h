@@ -42,7 +42,7 @@ class PerformanceEntry : public RefCounted<PerformanceEntry> {
 public:
     virtual ~PerformanceEntry();
 
-    const String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     virtual double startTime() const { return m_startTime; }
     virtual double duration() const { return m_duration; }
 
@@ -62,7 +62,7 @@ public:
     virtual Type performanceEntryType() const = 0;
     virtual ASCIILiteral entryType() const = 0;
 
-    static std::optional<Type> parseEntryTypeString(const String& entryType);
+    static std::optional<Type> parseEntryTypeString(StringImpl* entryType);
 
     static bool startTimeCompareLessThan(const Ref<PerformanceEntry>& a, const Ref<PerformanceEntry>& b)
     {
@@ -70,10 +70,10 @@ public:
     }
 
 protected:
-    PerformanceEntry(const String& name, double startTime, double finishTime);
+    PerformanceEntry(StringImpl* name, double startTime, double finishTime);
 
 private:
-    const String m_name;
+    const RefPtr<StringImpl> m_name;
     const double m_startTime;
     const double m_duration;
 };

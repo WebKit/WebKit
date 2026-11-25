@@ -40,21 +40,21 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NODELETE static HashMap<String, WeakRef<StorageNamespaceImpl>>& localStorageNamespaceMap()
+NODELETE static HashMap<RefPtr<StringImpl>, WeakRef<StorageNamespaceImpl>>& localStorageNamespaceMap()
 {
-    static NeverDestroyed<HashMap<String, WeakRef<StorageNamespaceImpl>>> localStorageNamespaceMap;
+    static NeverDestroyed<HashMap<RefPtr<StringImpl>, WeakRef<StorageNamespaceImpl>>> localStorageNamespaceMap;
 
     return localStorageNamespaceMap;
 }
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(unsigned quota, PAL::SessionID sessionID)
 {
-    return adoptRef(*new StorageNamespaceImpl(StorageType::Session, String(), quota, sessionID));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Session, nullString(), quota, sessionID));
 }
 
-Ref<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota, PAL::SessionID sessionID)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace(StringImpl* databasePath, unsigned quota, PAL::SessionID sessionID)
 {
-    ASSERT(!databasePath.isNull());
+    ASSERT(databasePath);
 
     RefPtr<StorageNamespaceImpl> storageNamespace;
     auto& slot = localStorageNamespaceMap().ensure(databasePath, [&] {
@@ -64,15 +64,15 @@ Ref<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace
     return storageNamespace ? storageNamespace.releaseNonNull() : Ref { slot.get() };
 }
 
-StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota, PAL::SessionID sessionID)
+StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, StringImpl* path, unsigned quota, PAL::SessionID sessionID)
     : m_storageType(storageType)
-    , m_path(path.isolatedCopy())
+    , m_path(isolatedCopy(path))
     , m_syncManager(nullptr)
     , m_quota(quota)
     , m_isShutdown(false)
     , m_sessionID(sessionID)
 {
-    if (isLocalStorage(m_storageType) && !m_path.isEmpty())
+    if (isLocalStorage(m_storageType) && !isEmpty(m_path))
         lazyInitialize(m_syncManager, StorageSyncManager::create(m_path));
 }
 

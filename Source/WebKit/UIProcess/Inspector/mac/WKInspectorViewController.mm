@@ -143,7 +143,7 @@ static void* const safeAreaInsetsKVOContext = (void*)&safeAreaInsetsKVOContext;
     RetainPtr<WKInspectorResourceURLSchemeHandler> inspectorSchemeHandler = adoptNS([WKInspectorResourceURLSchemeHandler new]);
     RetainPtr<NSMutableSet<NSString *>> allowedURLSchemes = adoptNS([[NSMutableSet alloc] initWithObjects:WKInspectorResourceScheme, nil]);
     for (auto& pair : _configuration->_configuration->urlSchemeHandlers())
-        [allowedURLSchemes addObject:pair.second.createNSString().get()];
+        [allowedURLSchemes addObject:createNSString(pair.second).get()];
 
     [inspectorSchemeHandler setAllowedURLSchemesForCSP:allowedURLSchemes.get()];
     [configuration setURLSchemeHandler:inspectorSchemeHandler.get() forURLScheme:WKInspectorResourceScheme];
@@ -207,12 +207,12 @@ static void* const safeAreaInsetsKVOContext = (void*)&safeAreaInsetsKVOContext;
 
     // Ensure that a page group identifier is set. This is for computing inspection levels.
     if (!configuration.get()._groupIdentifier)
-        [configuration _setGroupIdentifier:WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage.get()).createNSString().get()];
+        [configuration _setGroupIdentifier:createNSString(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage.get())).get()];
 
     // Prefer using a custom persistent data store if one exists.
     RetainPtr<WKWebsiteDataStore> targetDataStore;
     WebKit::WebsiteDataStore::forEachWebsiteDataStore([&targetDataStore](WebKit::WebsiteDataStore& dataStore) {
-        if (dataStore.sessionID() != PAL::SessionID::defaultSessionID() && dataStore.resolvedDirectories().resourceLoadStatisticsDirectory == WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory()) {
+        if (dataStore.sessionID() != PAL::SessionID::defaultSessionID() && equal(dataStore.resolvedDirectories().resourceLoadStatisticsDirectory, WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory())) {
             ASSERT(!targetDataStore);
             targetDataStore = WebKit::wrapper(dataStore);
         }

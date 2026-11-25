@@ -46,7 +46,7 @@ enum class LoadableScriptErrorType : uint8_t {
 struct LoadableScriptConsoleMessage {
     JSC::MessageSource source;
     JSC::MessageLevel level;
-    String message;
+    RefPtr<StringImpl> message;
 };
 
 struct LoadableScriptError {

@@ -151,7 +151,7 @@ unsigned CSSSelectorList::size() const
     });
 }
 
-String CSSSelectorList::selectorsText() const
+RefPtr<StringImpl> CSSSelectorList::selectorsText() const
 {
     StringBuilder result;
     buildSelectorsText(result);

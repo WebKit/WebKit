@@ -37,8 +37,8 @@ public:
     virtual ~CachedStyleSheetClient() = default;
     static CachedResourceClientType expectedType() { return StyleSheetType; }
     CachedResourceClientType resourceClientType() const override { return expectedType(); }
-    virtual void setCSSStyleSheet(const String& /* href */, const URL& /* baseURL */, ASCIILiteral /* charset */, const CachedCSSStyleSheet&) { }
-    virtual void setXSLStyleSheet(const String& /* href */, const URL& /* baseURL */, const String& /* sheet */) { }
+    virtual void setCSSStyleSheet(StringImpl* /* href */, const URL& /* baseURL */, ASCIILiteral /* charset */, const CachedCSSStyleSheet&) { }
+    virtual void setXSLStyleSheet(StringImpl* /* href */, const URL& /* baseURL */, StringImpl* /* sheet */) { }
 };
 
 } // namespace WebCore

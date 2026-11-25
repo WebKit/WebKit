@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-String DOMURLMediaSource::createObjectURL(ScriptExecutionContext& scriptExecutionContext, MediaSource& source)
+RefPtr<StringImpl> DOMURLMediaSource::createObjectURL(ScriptExecutionContext& scriptExecutionContext, MediaSource& source)
 {
     if (is<Document>(scriptExecutionContext))
         return DOMURL::createPublicURL(scriptExecutionContext, source);

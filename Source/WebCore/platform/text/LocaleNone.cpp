@@ -36,25 +36,25 @@ public:
 
 private:
     void initializeLocaleData() final;
-    String dateFormat() final;
-    String monthFormat() final;
-    String shortMonthFormat() final;
-    String timeFormat() final;
-    String shortTimeFormat() final;
-    String dateTimeFormatWithSeconds() final;
-    String dateTimeFormatWithoutSeconds() final;
-    const Vector<String>& monthLabels() final;
-    const Vector<String>& shortMonthLabels() final;
-    const Vector<String>& standAloneMonthLabels() final;
-    const Vector<String>& shortStandAloneMonthLabels() final;
-    const Vector<String>& timeAMPMLabels() final;
+    RefPtr<StringImpl> dateFormat() final;
+    RefPtr<StringImpl> monthFormat() final;
+    RefPtr<StringImpl> shortMonthFormat() final;
+    RefPtr<StringImpl> timeFormat() final;
+    RefPtr<StringImpl> shortTimeFormat() final;
+    RefPtr<StringImpl> dateTimeFormatWithSeconds() final;
+    RefPtr<StringImpl> dateTimeFormatWithoutSeconds() final;
+    const Vector<RefPtr<StringImpl>>& monthLabels() final;
+    const Vector<RefPtr<StringImpl>>& shortMonthLabels() final;
+    const Vector<RefPtr<StringImpl>>& standAloneMonthLabels() final;
+    const Vector<RefPtr<StringImpl>>& shortStandAloneMonthLabels() final;
+    const Vector<RefPtr<StringImpl>>& timeAMPMLabels() final;
 
-    Vector<String> m_timeAMPMLabels;
-    Vector<String> m_shortMonthLabels;
-    Vector<String> m_monthLabels;
+    Vector<RefPtr<StringImpl>> m_timeAMPMLabels;
+    Vector<RefPtr<StringImpl>> m_shortMonthLabels;
+    Vector<RefPtr<StringImpl>> m_monthLabels;
 };
 
-std::unique_ptr<Locale> Locale::create(const AtomString&)
+std::unique_ptr<Locale> Locale::create(AtomStringImpl*)
 {
     return makeUnique<LocaleNone>();
 }
@@ -65,7 +65,7 @@ void LocaleNone::initializeLocaleData()
 {
 }
 
-const Vector<String>& LocaleNone::monthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleNone::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
         return m_monthLabels;
@@ -73,42 +73,42 @@ const Vector<String>& LocaleNone::monthLabels()
     return m_monthLabels;
 }
 
-String LocaleNone::dateFormat()
+RefPtr<StringImpl> LocaleNone::dateFormat()
 {
-    return "yyyy-MM-dd"_s;
+    return "yyyy-MM-dd"_si;
 }
 
-String LocaleNone::monthFormat()
+RefPtr<StringImpl> LocaleNone::monthFormat()
 {
-    return "yyyy-MM"_s;
+    return "yyyy-MM"_si;
 }
 
-String LocaleNone::shortMonthFormat()
+RefPtr<StringImpl> LocaleNone::shortMonthFormat()
 {
-    return "yyyy-MM"_s;
+    return "yyyy-MM"_si;
 }
 
-String LocaleNone::timeFormat()
+RefPtr<StringImpl> LocaleNone::timeFormat()
 {
-    return "HH:mm:ss"_s;
+    return "HH:mm:ss"_si;
 }
 
-String LocaleNone::shortTimeFormat()
+RefPtr<StringImpl> LocaleNone::shortTimeFormat()
 {
-    return "HH:mm"_s;
+    return "HH:mm"_si;
 }
 
-String LocaleNone::dateTimeFormatWithSeconds()
+RefPtr<StringImpl> LocaleNone::dateTimeFormatWithSeconds()
 {
-    return "yyyy-MM-dd'T'HH:mm:ss"_s;
+    return "yyyy-MM-dd'T'HH:mm:ss"_si;
 }
 
-String LocaleNone::dateTimeFormatWithoutSeconds()
+RefPtr<StringImpl> LocaleNone::dateTimeFormatWithoutSeconds()
 {
-    return "yyyy-MM-dd'T'HH:mm"_s;
+    return "yyyy-MM-dd'T'HH:mm"_si;
 }
 
-const Vector<String>& LocaleNone::shortMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleNone::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
@@ -116,17 +116,17 @@ const Vector<String>& LocaleNone::shortMonthLabels()
     return m_shortMonthLabels;
 }
 
-const Vector<String>& LocaleNone::shortStandAloneMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleNone::shortStandAloneMonthLabels()
 {
     return shortMonthLabels();
 }
 
-const Vector<String>& LocaleNone::standAloneMonthLabels()
+const Vector<RefPtr<StringImpl>>& LocaleNone::standAloneMonthLabels()
 {
     return monthLabels();
 }
 
-const Vector<String>& LocaleNone::timeAMPMLabels()
+const Vector<RefPtr<StringImpl>>& LocaleNone::timeAMPMLabels()
 {
     if (!m_timeAMPMLabels.isEmpty())
         return m_timeAMPMLabels;

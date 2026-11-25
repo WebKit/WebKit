@@ -74,7 +74,7 @@ IntlPluralRulesConstructor::IntlPluralRulesConstructor(VM& vm, Structure* struct
 
 void IntlPluralRulesConstructor::finishCreation(VM& vm, IntlPluralRulesPrototype* pluralRulesPrototype)
 {
-    Base::finishCreation(vm, 0, "PluralRules"_s, PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 0, "PluralRules"_si, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, pluralRulesPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     pluralRulesPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
@@ -117,7 +117,7 @@ JSC_DEFINE_HOST_FUNCTION(intlPluralRulesConstructorFuncSupportedLocalesOf, (JSGl
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.supportedlocalesof
     const auto& availableLocales = intlPluralRulesAvailableLocales();
 
-    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
+    Vector<RefPtr<StringImpl>> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     RELEASE_AND_RETURN(scope, JSValue::encode(supportedLocales(globalObject, availableLocales, requestedLocales, callFrame->argument(1))));

@@ -66,12 +66,12 @@ void SVGStyleElement::setDisabled(bool setDisabled)
         styleSheet->setDisabled(setDisabled);
 }
 
-String SVGStyleElement::title() const
+RefPtr<StringImpl> SVGStyleElement::title() const
 {
     return attributeWithoutSynchronization(SVGNames::titleAttr);
 }
 
-void SVGStyleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+void SVGStyleElement::attributeChanged(const QualifiedName& name, AtomStringImpl* oldValue, AtomStringImpl* newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
     case AttributeNames::titleAttr:

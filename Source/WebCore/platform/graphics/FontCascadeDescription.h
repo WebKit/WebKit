@@ -44,7 +44,7 @@ namespace WebCore {
 enum class FontFamilyKind : bool { Specified, Generic };
 
 struct FontFamily {
-    AtomString name;
+    RefPtr<AtomStringImpl> name;
     FontFamilyKind kind { FontFamilyKind::Generic };
 
     bool isGeneric() const { return kind == FontFamilyKind::Generic; }
@@ -72,9 +72,9 @@ public:
     const FontFamily& familyAt(unsigned i) const { return m_families.get()[i]; }
     RefCountedFixedVector<FontFamily>& families() const { return m_families.get(); }
 
-    NODELETE static bool familyNamesAreEqual(const AtomString&, const AtomString&);
-    static unsigned familyNameHash(const AtomString&);
-    static String foldedFamilyName(const String&);
+    NODELETE static bool familyNamesAreEqual(AtomStringImpl*, AtomStringImpl*);
+    static unsigned familyNameHash(AtomStringImpl*);
+    static RefPtr<StringImpl> foldedFamilyName(StringImpl*);
 
     unsigned effectiveFamilyCount() const;
     FontFamilySpecification effectiveFamilyAt(unsigned) const;
@@ -109,7 +109,7 @@ public:
 
     void setOneFamily(FontFamily&& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = WTF::move(family); }
     void setOneFamily(const FontFamily& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = family; }
-    void setOneFamily(const AtomString& familyName) { setOneFamily(FontFamily { familyName, FontFamilyKind::Specified }); }
+    void setOneFamily(AtomStringImpl* familyName) { setOneFamily(FontFamily { familyName, FontFamilyKind::Specified }); }
     void setFamilies(const Vector<FontFamily>& families) { m_families = RefCountedFixedVector<FontFamily>::createFromVector(families); }
     void setFamilies(RefCountedFixedVector<FontFamily>& families) { m_families = families; }
     void setFamilies(Ref<RefCountedFixedVector<FontFamily>>&& families) { m_families = WTF::move(families); }

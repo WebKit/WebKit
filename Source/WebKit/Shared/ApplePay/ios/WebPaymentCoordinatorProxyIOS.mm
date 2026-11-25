@@ -58,7 +58,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 #endif
         paymentRequest = platformPaymentRequest(originatingURL, linkIconURLs, request);
 
-    protect(m_client)->getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [webPageProxyID, paymentRequest, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](const String& userAgent) mutable {
+    protect(m_client)->getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [webPageProxyID, paymentRequest, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](StringImpl* userAgent) mutable {
         RefPtr paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)
             return completionHandler(false);
@@ -71,7 +71,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
             return completionHandler(false);
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-        protect(paymentCoordinatorProxy->m_client)->getWindowSceneAndBundleIdentifierForPaymentPresentation(webPageProxyID, [weakThis = WTF::move(weakThis), completionHandler = WTF::move(completionHandler), webPageProxyID](const String& sceneIdentifier, const String& bundleIdentifier) mutable {
+        protect(paymentCoordinatorProxy->m_client)->getWindowSceneAndBundleIdentifierForPaymentPresentation(webPageProxyID, [weakThis = WTF::move(weakThis), completionHandler = WTF::move(completionHandler), webPageProxyID](StringImpl* sceneIdentifier, StringImpl* bundleIdentifier) mutable {
             auto paymentCoordinatorProxy = weakThis.get();
             if (!paymentCoordinatorProxy)
                 return completionHandler(false);

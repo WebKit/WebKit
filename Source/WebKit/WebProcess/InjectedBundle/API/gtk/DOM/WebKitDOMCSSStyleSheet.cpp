@@ -136,7 +136,7 @@ gulong webkit_dom_css_style_sheet_insert_rule(WebKitDOMCSSStyleSheet* self, cons
     g_return_val_if_fail(rule, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::CSSStyleSheet* item = WebKit::core(self);
-    WTF::String convertedRule = WTF::String::fromUTF8(rule);
+    RefPtr<StringImpl> convertedRule = StringImpl::fromUTF8(rule);
     auto result = item->insertRule(convertedRule, index);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
@@ -167,8 +167,8 @@ glong webkit_dom_css_style_sheet_add_rule(WebKitDOMCSSStyleSheet* self, const gc
     g_return_val_if_fail(style, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::CSSStyleSheet* item = WebKit::core(self);
-    WTF::String convertedSelector = WTF::String::fromUTF8(selector);
-    WTF::String convertedStyle = WTF::String::fromUTF8(style);
+    RefPtr<StringImpl> convertedSelector = StringImpl::fromUTF8(selector);
+    RefPtr<StringImpl> convertedStyle = StringImpl::fromUTF8(style);
     auto result = item->addRule(convertedSelector, convertedStyle, index);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());

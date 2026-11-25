@@ -78,7 +78,7 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     if (auto* view = WebKit::toImpl(pageRef)->wpeView()) {
         GRefPtr<WPEEvent> wpeEvent = adoptGRef(wpe_event_keyboard_new(event.type == kWKEventKeyDown ? WPE_EVENT_KEYBOARD_KEY_DOWN : WPE_EVENT_KEYBOARD_KEY_UP,
             view, WPE_INPUT_SOURCE_KEYBOARD, 0, wkEventModifiersToWPE(event.modifiers), event.hardwareKeyCode, event.keyCode));
-        WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent::create(wpeEvent.get(), String::fromUTF8(unsafeMakeSpan(event.text, event.length)), false));
+        WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent::create(wpeEvent.get(), StringImpl::fromUTF8(unsafeMakeSpan(event.text, event.length)), false));
         return;
     }
 #endif
@@ -104,7 +104,7 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     NativeWebKeyboardEvent::HandledByInputMethod handledByInputMethod = NativeWebKeyboardEvent::HandledByInputMethod::No;
     std::optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines;
     std::optional<WebKit::EditingRange> preeditSelectionRange;
-    WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent::create(&wpeEvent, String::fromUTF8(unsafeMakeSpan(event.text, event.length)), false, handledByInputMethod, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange)));
+    WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent::create(&wpeEvent, StringImpl::fromUTF8(unsafeMakeSpan(event.text, event.length)), false, handledByInputMethod, WTF::move(preeditUnderlines), WTF::move(preeditSelectionRange)));
 #endif
 }
 

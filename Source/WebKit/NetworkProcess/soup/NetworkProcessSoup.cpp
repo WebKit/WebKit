@@ -49,7 +49,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static UTF8CString buildAcceptLanguages(const Vector<String>& languages)
+static UTF8CString buildAcceptLanguages(const Vector<RefPtr<StringImpl>>& languages)
 {
     size_t languagesCount = languages.size();
 
@@ -90,18 +90,18 @@ static UTF8CString buildAcceptLanguages(const Vector<String>& languages)
         }
     }
 
-    return builder.toString().utf8();
+    return utf8(builder.toString());
 }
 
-HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID) const
+HashSet<RefPtr<StringImpl>> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID) const
 {
-    HashSet<String> hostNames;
+    HashSet<RefPtr<StringImpl>> hostNames;
     const auto* session = static_cast<NetworkSessionSoup*>(networkSession(sessionID));
     session->soupNetworkSession().getHostNamesWithHSTSCache(hostNames);
     return hostNames;
 }
 
-void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const Vector<String>& hostNames)
+void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const Vector<RefPtr<StringImpl>>& hostNames)
 {
     const auto* session = static_cast<NetworkSessionSoup*>(networkSession(sessionID));
     session->soupNetworkSession().deleteHSTSCacheForHostNames(hostNames);
@@ -113,7 +113,7 @@ void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedS
     session->soupNetworkSession().clearHSTSCache(modifiedSince);
 }
 
-void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languages)
+void NetworkProcess::userPreferredLanguagesChanged(const Vector<RefPtr<StringImpl>>& languages)
 {
     auto acceptLanguages = buildAcceptLanguages(languages);
     SoupNetworkSession::setInitialAcceptLanguages(acceptLanguages);
@@ -162,7 +162,7 @@ void NetworkProcess::setIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLS
         static_cast<NetworkSessionSoup&>(*session).setIgnoreTLSErrors(ignoreTLSErrors);
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(PAL::SessionID sessionID, const CertificateInfo& certificateInfo, const String& host)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(PAL::SessionID sessionID, const CertificateInfo& certificateInfo, StringImpl* host)
 {
     if (auto* session = networkSession(sessionID))
         static_cast<NetworkSessionSoup&>(*session).allowSpecificHTTPSCertificateForHost(certificateInfo, host);

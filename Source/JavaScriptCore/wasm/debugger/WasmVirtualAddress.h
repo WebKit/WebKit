@@ -137,7 +137,7 @@ public:
     Type type() const { return static_cast<Type>((m_value & 0xC000000000000000ULL) >> 62); }
     uint32_t instanceId() const { return static_cast<uint32_t>((m_value & 0x3FFFFFFF00000000ULL) >> 32); }
     uint32_t offset() const { return static_cast<uint32_t>(m_value & 0x00000000FFFFFFFFULL); }
-    String hex() const { return makeString(WTF::hex(m_value, WTF::Lowercase)); }
+    RefPtr<StringImpl> hex() const { return makeString(WTF::hex(m_value, WTF::Lowercase)); }
     uint64_t value() const { return m_value; }
 
     bool isInvalidType() const

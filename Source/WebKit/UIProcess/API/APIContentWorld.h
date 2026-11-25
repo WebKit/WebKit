@@ -42,7 +42,7 @@ class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorl
 public:
     NODELETE static OptionSet<WebKit::ContentWorldOption> defaultOptions();
     static ContentWorld* worldForIdentifier(WebKit::ContentWorldIdentifier);
-    static Ref<ContentWorld> sharedWorldWithName(const WTF::String&, OptionSet<WebKit::ContentWorldOption> = defaultOptions() );
+    static Ref<ContentWorld> sharedWorldWithName(StringImpl*, OptionSet<WebKit::ContentWorldOption> = defaultOptions() );
     static Ref<ContentWorld> createNamelessWorld(OptionSet<WebKit::ContentWorldOption>);
     static ContentWorld& pageContentWorldSingleton();
     static ContentWorld& defaultClientWorldSingleton();
@@ -50,7 +50,7 @@ public:
     virtual ~ContentWorld();
 
     WebKit::ContentWorldIdentifier identifier() const { return m_identifier; }
-    const WTF::String& name() const LIFETIME_BOUND { return m_name; }
+    const RefPtr<StringImpl>& name() const LIFETIME_BOUND { return m_name; }
     WebKit::ContentWorldData worldDataForProcess(WebKit::WebProcessProxy&) const;
 
     bool allowAccessToClosedShadowRoots() const { return m_options.contains(WebKit::ContentWorldOption::AllowAccessToClosedShadowRoots); }
@@ -74,11 +74,11 @@ public:
     void addAssociatedUserContentControllerProxy(WebKit::WebUserContentControllerProxy&);
 
 private:
-    explicit ContentWorld(const WTF::String&, OptionSet<WebKit::ContentWorldOption>);
+    explicit ContentWorld(StringImpl*, OptionSet<WebKit::ContentWorldOption>);
     explicit ContentWorld(WebKit::ContentWorldIdentifier);
 
     const WebKit::ContentWorldIdentifier m_identifier;
-    const WTF::String m_name;
+    const RefPtr<StringImpl> m_name;
     OptionSet<WebKit::ContentWorldOption> m_options;
     mutable WeakHashSet<WebKit::WebProcessProxy> m_processes;
 };

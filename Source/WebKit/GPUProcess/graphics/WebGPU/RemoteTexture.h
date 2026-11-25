@@ -85,7 +85,7 @@ private:
     void undestroy();
     void destruct();
 
-    void setLabel(String&&);
+    void setLabel(RefPtr<StringImpl>&&);
 
     const Ref<::WebGPU::Texture> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;

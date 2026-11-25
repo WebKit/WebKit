@@ -44,10 +44,10 @@ enum class WebExtensionBookmarkFolderType : uint8_t {
 };
 
 struct WebExtensionBookmarkParameters {
-    String identifier;
-    std::optional<String> parentIdentifier;
+    RefPtr<StringImpl> identifier;
+    std::optional<RefPtr<StringImpl>> parentIdentifier;
     std::optional<uint64_t> index;
-    String title;
+    RefPtr<StringImpl> title;
     std::optional<URL> url;
     WebExtensionBookmarkFolderType folderType { WebExtensionBookmarkFolderType::None };
     bool managed { false };

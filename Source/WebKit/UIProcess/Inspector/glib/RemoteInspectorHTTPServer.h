@@ -39,16 +39,16 @@ public:
 
     bool start(GRefPtr<GSocketAddress>&&, unsigned inspectorPort);
     bool isRunning() const { return !!m_server; }
-    const String& inspectorServerAddress() const LIFETIME_BOUND;
+    const RefPtr<StringImpl>& inspectorServerAddress() const LIFETIME_BOUND;
 
-    void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const String& message) const;
+    void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, StringImpl* message) const;
     void targetDidClose(uint64_t connectionID, uint64_t targetID);
 
 private:
     unsigned handleRequest(const char*, SoupMessageHeaders*, SoupMessageBody*) const;
     void handleWebSocket(const char*, SoupWebsocketConnection*);
 
-    void sendMessageToBackend(SoupWebsocketConnection*, const String&) const;
+    void sendMessageToBackend(SoupWebsocketConnection*, StringImpl*) const;
     void didCloseWebSocket(SoupWebsocketConnection*);
 
     void targetListChanged(RemoteInspectorClient&) override { }

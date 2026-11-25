@@ -45,7 +45,7 @@ RenderTreeBuilder::MathML::MathML(RenderTreeBuilder& builder)
 {
 }
 
-RenderPtr<RenderMathMLFencedOperator> RenderTreeBuilder::MathML::createMathMLOperator(RenderMathMLFenced& parent, const String& operatorString,
+RenderPtr<RenderMathMLFencedOperator> RenderTreeBuilder::MathML::createMathMLOperator(RenderMathMLFenced& parent, StringImpl* operatorString,
     MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
 {
     auto style = Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(parent.style()), Style::DisplayType::BlockFlow);

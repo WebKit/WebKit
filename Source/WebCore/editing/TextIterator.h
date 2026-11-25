@@ -52,17 +52,17 @@ BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t, TextI
 WEBCORE_EXPORT SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange, TextIteratorBehaviors = { });
 
 // Text from the text iterator.
-WEBCORE_EXPORT String plainText(const SimpleRange&, TextIteratorBehaviors = { }, bool isDisplayString = false);
+WEBCORE_EXPORT RefPtr<StringImpl> plainText(const SimpleRange&, TextIteratorBehaviors = { }, bool isDisplayString = false);
 
 enum class IgnoreCollapsedRanges : bool { No, Yes };
 WEBCORE_EXPORT bool hasAnyPlainText(const SimpleRange&, TextIteratorBehaviors = { }, IgnoreCollapsedRanges = IgnoreCollapsedRanges::No);
-WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehaviors = { }, bool isDisplayString = false);
+WEBCORE_EXPORT RefPtr<StringImpl> plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehaviors = { }, bool isDisplayString = false);
 
 // Find within the document, based on the text from the text iterator.
-WEBCORE_EXPORT SimpleRange findPlainText(const SimpleRange&, const String&, FindOptions);
-WEBCORE_EXPORT SimpleRange findClosestPlainText(const SimpleRange&, const String&, FindOptions, uint64_t targetCharacterOffset);
-WEBCORE_EXPORT Vector<SimpleRange> findAllPlainText(const SimpleRange&, const String&, FindOptions, unsigned limit);
-WEBCORE_EXPORT bool containsPlainText(const String& document, const String&, FindOptions); // Lets us use the search algorithm on a string.
+WEBCORE_EXPORT SimpleRange findPlainText(const SimpleRange&, StringImpl*, FindOptions);
+WEBCORE_EXPORT SimpleRange findClosestPlainText(const SimpleRange&, StringImpl*, FindOptions, uint64_t targetCharacterOffset);
+WEBCORE_EXPORT Vector<SimpleRange> findAllPlainText(const SimpleRange&, StringImpl*, FindOptions, unsigned limit);
+WEBCORE_EXPORT bool containsPlainText(StringImpl* document, StringImpl*, FindOptions); // Lets us use the search algorithm on a string.
 
 bool isFrameOwnerFullyClipped(HTMLFrameOwnerElement&, TextIteratorBehaviors);
 
@@ -88,13 +88,13 @@ public:
     void appendToStringBuilder(StringBuilder&) const;
 
     void reset();
-    void set(String&&);
-    void set(String&&, unsigned offset, unsigned length);
+    void set(RefPtr<StringImpl>&&);
+    void set(RefPtr<StringImpl>&&, unsigned offset, unsigned length);
     void set(char16_t);
 
 private:
     char16_t m_singleCharacter { 0 };
-    String m_string;
+    RefPtr<StringImpl> m_string;
     unsigned m_offset { 0 };
     unsigned m_length { 0 };
 };
@@ -136,7 +136,7 @@ public:
 #if ENABLE(TREE_DEBUGGING)
     void showTreeForThis() const;
 #endif
-    String rendererTextForBehavior(RenderText& renderer) const { return m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) ? renderer.originalText() : renderer.text(); }
+    RefPtr<StringImpl> rendererTextForBehavior(RenderText& renderer) const { return m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) ? renderer.originalText() : renderer.text(); }
 
 private:
     void init();

@@ -38,7 +38,7 @@ public:
     virtual ~RenderCounter();
 
     static void destroyCounterNodes(RenderElement&);
-    static void destroyCounterNode(RenderElement&, const AtomString& identifier);
+    static void destroyCounterNode(RenderElement&, AtomStringImpl* identifier);
     static void rendererStyleChanged(RenderElement&, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);
 
     void updateCounter();
@@ -49,7 +49,7 @@ private:
     static void rendererStyleChangedSlowCase(RenderElement&, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);
     
     ASCIILiteral renderName() const override;
-    String originalText() const override;
+    RefPtr<StringImpl> originalText() const override;
 
     Ref<CSSRegisteredCounterStyle> counterStyle() const;
 
