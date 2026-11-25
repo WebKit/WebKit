@@ -91,7 +91,7 @@ void FormListedElement::elementRemovedFromAncestor(Element& element, Node::Remov
 
     if (removalType.disconnectedFromDocument && element.hasAttributeWithoutSynchronization(formAttr)) {
         setForm(nullptr);
-        resetFormOwner();
+        resetFormOwner(FallbackToCurrentForm::Yes);
     }
 }
 
@@ -174,14 +174,20 @@ void FormListedElement::formWillBeDestroyed()
     didChangeForm();
 }
 
-void FormListedElement::resetFormOwner()
+void FormListedElement::resetFormOwner(FallbackToCurrentForm fallbackToCurrentForm)
 {
     RefPtr originalForm = form();
     Ref element = asHTMLElement();
-    setForm(findAssociatedForm(element.get(), originalForm.get()));
+    setForm(findAssociatedForm(element.get(), fallbackToCurrentForm == FallbackToCurrentForm::Yes ? originalForm.get() : nullptr));
     RefPtr newForm = form();
     if (newForm && newForm != originalForm && newForm->isConnected())
         protect(element->document())->didAssociateFormControl(element.get());
+}
+
+void FormListedElement::formAttributeTreeScopeChanged()
+{
+    if (m_formAttributeTargetObserver)
+        resetFormAttributeTargetObserver();
 }
 
 void FormListedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -205,7 +211,7 @@ void FormListedElement::parseFormAttribute(const AtomString& value)
             protect(element->document())->didAssociateFormControl(element.get());
         m_formAttributeTargetObserver = nullptr;
     } else {
-        resetFormOwner();
+        resetFormOwner(FallbackToCurrentForm::Yes);
         if (element->isConnected())
             resetFormAttributeTargetObserver();
     }
@@ -291,7 +297,7 @@ void FormListedElement::resetFormAttributeTargetObserver()
 
 void FormListedElement::formAttributeTargetChanged()
 {
-    resetFormOwner();
+    resetFormOwner(FallbackToCurrentForm::Yes);
 }
 
 const AtomString& FormListedElement::name() const

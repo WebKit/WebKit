@@ -88,6 +88,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     void formOwnerRemovedFromTree(const Node& formRoot);
+    void resetFormOwner(FallbackToCurrentForm) final;
 
     WEBCORE_EXPORT unsigned width();
     WEBCORE_EXPORT unsigned height();
@@ -214,7 +215,6 @@ protected:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
 private:
-    void resetFormOwner() final;
     void refFormAssociatedElement() const final { HTMLElement::ref(); }
     void derefFormAssociatedElement() const final { HTMLElement::deref(); }
     void setFormInternal(RefPtr<HTMLFormElement>&&) final;
@@ -262,7 +262,7 @@ private:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void removingSteps(RemovalType, ContainerNode&) override;
-    void movingSteps(MovingType, ContainerNode&) override;
+    void movingSteps(MovingType, ContainerNode&, Node&) override;
 
     NODELETE bool isFormListedElement() const final { return false; }
     NODELETE FormAssociatedElement* asFormAssociatedElement() final { return this; }

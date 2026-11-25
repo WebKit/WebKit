@@ -38,7 +38,7 @@ private:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
-    void movingSteps(MovingType, ContainerNode& oldParent) final;
+    void movingSteps(MovingType, ContainerNode& oldParent, Node& subtreeRoot) final;
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;

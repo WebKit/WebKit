@@ -272,9 +272,9 @@ void HTMLLabelElement::removingSteps(RemovalType removalType, ContainerNode& old
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 
-void HTMLLabelElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+void HTMLLabelElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
 {
-    HTMLElement::movingSteps(movingType, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent, subtreeRoot);
 
     const auto& forValue = attributeWithoutSynchronization(forAttr);
     if (movingType.didRemoveFromOldTreeScope) {
