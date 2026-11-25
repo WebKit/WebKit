@@ -17378,6 +17378,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         .initialSandboxFlags = m_mainFrame ? m_mainFrame->effectiveSandboxFlags() : SandboxFlags { },
         .initialReferrerPolicy = m_mainFrame ? m_mainFrame->effectiveReferrerPolicy() : ReferrerPolicy::EmptyString,
         .shouldSendConsoleLogsToUIProcessForTesting = m_configuration->shouldSendConsoleLogsToUIProcessForTesting(),
+        .shouldDispatchFakeMouseMoveEvents = m_shouldDispatchFakeMouseMoveEvents,
     };
 
     parameters.processDisplayName = m_configuration->processDisplayName();
@@ -20336,7 +20337,10 @@ void WebPageProxy::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSi
 
 void WebPageProxy::setShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
 {
-    send(Messages::WebPage::SetShouldDispatchFakeMouseMoveEvents(shouldDispatchFakeMouseMoveEvents));
+    m_shouldDispatchFakeMouseMoveEvents = shouldDispatchFakeMouseMoveEvents;
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetShouldDispatchFakeMouseMoveEvents(shouldDispatchFakeMouseMoveEvents), pageID);
+    });
 }
 
 void WebPageProxy::handleAutoFillButtonClick(IPC::Connection& connection, const UserData& userData)

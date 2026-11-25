@@ -29,9 +29,11 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
@@ -252,6 +254,105 @@ TEST(ScrollingCoordinatorTests, SetContentOffsetHorizontalRTL)
 
     RetainPtr scrollX = [webView stringByEvaluatingJavaScript:@"window.scrollX"];
     EXPECT_WK_STREQ("-1508", scrollX.get());
+}
+
+static NSString * const mouseMoveCountingPage = @"<body style='height: 2000px'><iframe srcdoc='<body>subframe text</body>'></iframe></body>";
+
+static void scrollPageWithMouseAt(TestWKWebView *webView, NSPoint pointInWindow, int scrollY)
+{
+    [webView wheelEventAtPoint:pointInWindow wheelDelta:CGSizeMake(0, -1) phase:kCGScrollPhaseBegan momentumPhase:kCGMomentumScrollPhaseNone];
+    Util::runFor(0.5_s);
+
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"scrollTo(0, %d); true", scrollY]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == scrollY;
+    }));
+
+    Util::runFor(1_s);
+}
+
+TEST(ScrollingCoordinatorTests, IgnoresNonWheelEventsSetAfterLoadStopsSyntheticMouseMoves)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView setForceWindowToBecomeKey:YES];
+    [[webView window] makeKeyWindow];
+    [webView synchronouslyLoadHTMLString:mouseMoveCountingPage];
+
+    RetainPtr iframe = [webView firstChildFrame];
+    NSString *countMouseMoves = @"window.mouseMoveCount = 0; addEventListener('mousemove', () => { window.mouseMoveCount++; }); true";
+    [webView objectByEvaluatingJavaScript:countMouseMoves];
+    [webView objectByEvaluatingJavaScript:countMouseMoves inFrame:iframe.get()];
+
+    NSPoint pointOverIframe = [webView convertPoint:NSMakePoint(100, 100) toView:nil];
+    NSPoint pointOverMainFrame = [webView convertPoint:NSMakePoint(100, 500) toView:nil];
+
+    scrollPageWithMouseAt(webView.get(), pointOverIframe, 10);
+    scrollPageWithMouseAt(webView.get(), pointOverMainFrame, 20);
+
+    int mainFrameMouseMoveCountBeforeIgnoring = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount"] intValue];
+    int iframeMouseMoveCountBeforeIgnoring = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount" inFrame:iframe.get()] intValue];
+    EXPECT_GT(mainFrameMouseMoveCountBeforeIgnoring, 0);
+    EXPECT_GT(iframeMouseMoveCountBeforeIgnoring, 0);
+
+    [webView _setIgnoresNonWheelEvents:YES];
+
+    scrollPageWithMouseAt(webView.get(), pointOverIframe, 30);
+    scrollPageWithMouseAt(webView.get(), pointOverMainFrame, 40);
+
+    int mainFrameMouseMoveCountAfterIgnoring = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount"] intValue];
+    int iframeMouseMoveCountAfterIgnoring = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount" inFrame:iframe.get()] intValue];
+    EXPECT_EQ(mainFrameMouseMoveCountBeforeIgnoring, mainFrameMouseMoveCountAfterIgnoring);
+    EXPECT_EQ(iframeMouseMoveCountBeforeIgnoring, iframeMouseMoveCountAfterIgnoring);
+}
+
+TEST(ScrollingCoordinatorTests, IgnoresNonWheelEventsSetBeforeFirstLoadStopsSyntheticMouseMoves)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView setForceWindowToBecomeKey:YES];
+    [[webView window] makeKeyWindow];
+    [webView _setIgnoresNonWheelEvents:YES];
+    [webView synchronouslyLoadHTMLString:mouseMoveCountingPage];
+
+    RetainPtr iframe = [webView firstChildFrame];
+    NSString *countMouseMoves = @"window.mouseMoveCount = 0; addEventListener('mousemove', () => { window.mouseMoveCount++; }); true";
+    [webView objectByEvaluatingJavaScript:countMouseMoves];
+    [webView objectByEvaluatingJavaScript:countMouseMoves inFrame:iframe.get()];
+
+    NSPoint pointOverIframe = [webView convertPoint:NSMakePoint(100, 100) toView:nil];
+    NSPoint pointOverMainFrame = [webView convertPoint:NSMakePoint(100, 500) toView:nil];
+
+    scrollPageWithMouseAt(webView.get(), pointOverIframe, 10);
+    scrollPageWithMouseAt(webView.get(), pointOverMainFrame, 20);
+
+    int mainFrameMouseMoveCount = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount"] intValue];
+    int iframeMouseMoveCount = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount" inFrame:iframe.get()] intValue];
+    EXPECT_EQ(0, mainFrameMouseMoveCount);
+    EXPECT_EQ(0, iframeMouseMoveCount);
+}
+
+TEST(ScrollingCoordinatorTests, NotIgnoringNonWheelEventsSetBeforeFirstLoadAllowsSyntheticMouseMoves)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView setForceWindowToBecomeKey:YES];
+    [[webView window] makeKeyWindow];
+    [webView _setIgnoresNonWheelEvents:NO];
+    [webView synchronouslyLoadHTMLString:mouseMoveCountingPage];
+
+    RetainPtr iframe = [webView firstChildFrame];
+    NSString *countMouseMoves = @"window.mouseMoveCount = 0; addEventListener('mousemove', () => { window.mouseMoveCount++; }); true";
+    [webView objectByEvaluatingJavaScript:countMouseMoves];
+    [webView objectByEvaluatingJavaScript:countMouseMoves inFrame:iframe.get()];
+
+    NSPoint pointOverIframe = [webView convertPoint:NSMakePoint(100, 100) toView:nil];
+    NSPoint pointOverMainFrame = [webView convertPoint:NSMakePoint(100, 500) toView:nil];
+
+    scrollPageWithMouseAt(webView.get(), pointOverIframe, 10);
+    scrollPageWithMouseAt(webView.get(), pointOverMainFrame, 20);
+
+    int mainFrameMouseMoveCount = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount"] intValue];
+    int iframeMouseMoveCount = [[webView objectByEvaluatingJavaScript:@"window.mouseMoveCount" inFrame:iframe.get()] intValue];
+    EXPECT_GT(mainFrameMouseMoveCount, 0);
+    EXPECT_GT(iframeMouseMoveCount, 0);
 }
 
 } // namespace TestWebKitAPI

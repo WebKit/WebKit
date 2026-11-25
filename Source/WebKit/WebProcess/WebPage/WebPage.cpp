@@ -1026,6 +1026,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 #endif
     drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
+    m_shouldDispatchFakeMouseMoveEvents = parameters.shouldDispatchFakeMouseMoveEvents;
 
     if (parameters.isProcessSwap)
         freezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
@@ -1845,6 +1846,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     ASSERT(m_drawingArea);
 
     setSize(parameters.viewSize);
+    m_shouldDispatchFakeMouseMoveEvents = parameters.shouldDispatchFakeMouseMoveEvents;
 
     // If the UIProcess created a new DrawingArea, then we need to do the same.
     if (m_drawingArea->identifier() != parameters.drawingAreaIdentifier) {
