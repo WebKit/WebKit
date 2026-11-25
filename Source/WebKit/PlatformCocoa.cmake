@@ -1475,7 +1475,6 @@ webkit_target_add_swift_options(WebKit
     # remain per-target here.
     "-Xcc -DHAVE_CONFIG_H=1"
     "-Xcc -I${CMAKE_BINARY_DIR}"
-    "-Xfrontend -disable-cross-import-overlays"
     # Use WebKit_Private modulemap as an external client; do not pin
     # -fmodule-name=WebKit (that contradicts the loaded modulemap and feeds
     # clang module-loader cycles in the Swift dep scan).
