@@ -667,11 +667,9 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
             auto enclosingAscentDescentForRun = TextUtil::enclosingGlyphBoundsForText(StringView(textBox->content()).substring(textContent.start, textContent.length), style, textBox->shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
 
             auto& parentInlineBox = lineBox.parentInlineBox(run);
-            auto enclosingAscentDescentForInlineBox = inlineBoxBoundsMap.get(&parentInlineBox);
+            auto& enclosingAscentDescentForInlineBox = inlineBoxBoundsMap.add(&parentInlineBox, TextUtil::EnclosingAscentDescent { }).iterator->value;
             enclosingAscentDescentForInlineBox.ascent = std::max(enclosingAscentDescentForInlineBox.ascent, -enclosingAscentDescentForRun.ascent);
             enclosingAscentDescentForInlineBox.descent = std::max(enclosingAscentDescentForInlineBox.descent, enclosingAscentDescentForRun.descent);
-
-            inlineBoxBoundsMap.set(&parentInlineBox, enclosingAscentDescentForInlineBox);
         }
     }
 

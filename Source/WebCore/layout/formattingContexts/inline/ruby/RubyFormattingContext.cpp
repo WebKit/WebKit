@@ -373,8 +373,9 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
                     ASSERT_NOT_REACHED();
                     break;
                 }
-                auto previousDescendantLayoutBounds = descendantRubySet.get(ancestorInlineBox);
-                descendantRubySet.set(ancestorInlineBox, InlineLevelBox::AscentAndDescent { std::max(previousDescendantLayoutBounds.ascent, layoutBounds.ascent), std::max(previousDescendantLayoutBounds.descent, layoutBounds.descent) });
+                auto& descendantLayoutBounds = descendantRubySet.add(ancestorInlineBox, InlineLevelBox::AscentAndDescent { }).iterator->value;
+                descendantLayoutBounds.ascent = std::max(descendantLayoutBounds.ascent, layoutBounds.ascent);
+                descendantLayoutBounds.descent = std::max(descendantLayoutBounds.descent, layoutBounds.descent);
                 break;
             }
         }

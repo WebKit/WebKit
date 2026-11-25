@@ -937,9 +937,11 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 if (!isFirstBox && !isLastBox)
                     continue;
                 if (isFirstBox) {
-                    auto isFirstLastIndexes = isFirstLastIndexesMap.get(layoutBox.ptr());
-                    if (!isFirstLastIndexes.first || isLastBox)
-                        isFirstLastIndexesMap.set(layoutBox.ptr(), IsFirstLastIndex { isFirstLastIndexes.first.value_or(index), isLastBox ? index : isFirstLastIndexes.last });
+                    auto& isFirstLastIndexes = isFirstLastIndexesMap.add(layoutBox.ptr(), IsFirstLastIndex { }).iterator->value;
+                    if (!isFirstLastIndexes.first)
+                        isFirstLastIndexes.first = index;
+                    if (isLastBox)
+                        isFirstLastIndexes.last = index;
                     continue;
                 }
                 if (isLastBox) {
