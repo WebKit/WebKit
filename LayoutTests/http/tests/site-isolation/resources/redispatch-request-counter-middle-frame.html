@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+<script>
+// Embeds a request counter from a third site, so it gets a process of its own.
+const iframe = document.createElement('iframe');
+iframe.style = 'width: 300px; height: 200px; border: none';
+iframe.src = 'https://127.0.0.1:8443/site-isolation/resources/redispatch-request-counter.html' + location.search;
+document.body.appendChild(iframe);
+</script>
+</body>
+</html>
