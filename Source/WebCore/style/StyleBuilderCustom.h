@@ -691,21 +691,23 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
     bool axCustomColorModeActive = protect(builderState.document())->isAXCustomColorModeActive();
 #endif
 
+    CheckedRef parentStyle = builderState.parentStyle();
+
     if (builderState.applyPropertyToRegularStyle()) {
         auto color = toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::No);
-        builderState.style().setColor(color.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        builderState.style().setColor(color.resolveColor(ResolvedColors::fromStyle(parentStyle, StyleColorOptionsPurpose::ComputedStyle)));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         if (axCustomColorModeActive)
-            builderState.style().setOverrideColor(color.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+            builderState.style().setOverrideColor(color.resolveColor(ResolvedColors::fromStyle(parentStyle, StyleColorOptionsPurpose::Rendering)));
 #endif
     }
 
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         auto color = toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::Yes);
-        builderState.style().setVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        builderState.style().setVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(parentStyle, StyleColorOptionsPurpose::ComputedStyle)));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         if (axCustomColorModeActive)
-            builderState.style().setOverrideVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+            builderState.style().setOverrideVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(parentStyle, StyleColorOptionsPurpose::Rendering)));
 #endif
     }
 

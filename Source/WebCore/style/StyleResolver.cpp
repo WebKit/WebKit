@@ -634,19 +634,24 @@ static const Style::ComputedStyle* parentHighlightStyleIgnoringPendingUpdate(con
 
 std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
 {
-    auto parentHighlightStyle = context.parentHighlightStyle;
+    CheckedPtr parentHighlightStyle = context.parentHighlightStyle;
     if (!parentHighlightStyle && isHighlightPseudoElement(pseudoElementRequest.type()))
         parentHighlightStyle = parentHighlightStyleIgnoringPendingUpdate(element, pseudoElementRequest.identifier());
 
-    auto state = State(element, context.parentStyle, context.documentElementStyle, context.treeResolutionState.get(), parentHighlightStyle);
+    auto state = State(element, context.parentStyle, context.documentElementStyle, context.treeResolutionState.get(), parentHighlightStyle.get());
 
-    if (state.parentStyle()) {
-        state.setStyle(Style::ComputedStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
-        state.style()->inheritFrom(*state.parentStyle());
+    if (CheckedPtr existingParentStyle = state.parentStyle()) {
+        auto newStyle = Style::ComputedStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry());
+        newStyle->inheritFrom(*existingParentStyle);
+        state.setStyle(WTF::move(newStyle));
     } else {
-        state.setStyle(defaultStyleForElement(&element));
-        state.setParentStyle(Style::ComputedStyle::clonePtr(protect(*state.style())));
+        auto newStyle = defaultStyleForElement(&element);
+        state.setParentStyle(Style::ComputedStyle::clonePtr(*newStyle));
+        state.setStyle(WTF::move(newStyle));
     }
+
+    CheckedRef style = *state.style();
+    CheckedRef parentStyle = *state.parentStyle();
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
     collector.setPseudoElementRequest(pseudoElementRequest);
@@ -666,14 +671,15 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
     if (collector.matchResult().isEmpty() && !state.parentHighlightStyle())
         return { };
 
-    state.style()->setPseudoElementIdentifier(pseudoElementRequest.identifier());
+    style->setPseudoElementIdentifier(pseudoElementRequest.identifier());
 
-    applyMatchedProperties(state, collector.matchResult(), PropertyCascade::normalProperties());
+    applyMatchedProperties(state, protect(collector.matchResult()), PropertyCascade::normalProperties());
 
-    Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr);
-    adjuster.adjust(*state.style());
+    CheckedPtr parentBoxStyle = context.parentBoxStyle;
+    Adjuster adjuster(protect(document()), parentStyle, parentBoxStyle.get(), nullptr);
+    adjuster.adjust(style);
 
-    Adjuster::adjustVisibilityForPseudoElement(*state.style(), element);
+    Adjuster::adjustVisibilityForPseudoElement(style, element);
 
     return ResolvedStyle { state.takeStyle(), nullptr, collector.releaseMatchResult() };
 }

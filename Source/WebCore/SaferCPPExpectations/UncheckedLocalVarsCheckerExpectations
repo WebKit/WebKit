@@ -35,4 +35,3 @@ style/StyleBuilderStateInlines.h
 style/StyleResolver.cpp
 style/StyleTreeResolver.cpp
 style/Styleable.cpp
-style/computed/StyleComputedStyleBase.cpp

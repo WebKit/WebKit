@@ -39,7 +39,6 @@ rendering/paint/TextDecorationPainter.cpp
 style/ElementRuleCollector.cpp
 style/MatchResultCache.cpp
 style/MatchedDeclarationsCache.cpp
-style/StyleBuilderCustom.h
 style/StyleResolver.cpp
 style/StyleTreeResolver.cpp
 style/computed/StyleComputedStyleBase.cpp
