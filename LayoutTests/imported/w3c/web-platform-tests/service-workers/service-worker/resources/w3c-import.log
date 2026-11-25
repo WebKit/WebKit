@@ -236,6 +236,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-redirect-scope2.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-redirect-to-http-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-redirect-to-http-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-referrer-server.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-timing-worker-extended.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-timing-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/nested-blob-url-worker-created-from-worker.html
