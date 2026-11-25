@@ -113,6 +113,11 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
         exitProcess(EXIT_FAILURE);
 
+#if HAVE(QOS_CLASSES)
+    if (isWebContentProcess && parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("prewarmed-at-utility-qos"_s) == "1"_s)
+        pthread_set_qos_class_self_np(QOS_CLASS_UTILITY, 0);
+#endif
+
     if (isWebContentProcess)
         JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
     if (initializerMessage) {

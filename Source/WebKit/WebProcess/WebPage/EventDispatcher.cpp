@@ -418,6 +418,13 @@ void EventDispatcher::pageScreenDidChange(PageIdentifier pageID, PlatformDisplay
 #endif
 }
 
+#if HAVE(QOS_CLASSES)
+void EventDispatcher::liftPrewarmedUtilityQOS()
+{
+    WebProcess::singleton().liftPrewarmedUtilityQOS();
+}
+#endif
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
 void EventDispatcher::setScrollingAccelerationCurve(PageIdentifier pageID, std::optional<ScrollingAccelerationCurve>&& curve)
 {

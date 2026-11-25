@@ -448,6 +448,20 @@ void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
     m_isLockdownModeEnabled = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
     m_isEnhancedSecurityEnabled = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-enhanced-security"_s) == "1"_s;
 
+#if HAVE(QOS_CLASSES)
+    if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("prewarmed-at-utility-qos"_s) == "1"_s) {
+        if (parameters.extraInitializationData.contains<HashTranslatorASCIILiteral>("always-runs-at-background-priority"_s))
+            m_mainThreadQOSClassAfterPrewarmLift = QOS_CLASS_UTILITY;
+        m_mainPThread = pthread_self();
+        m_isMainThreadDemotedForPrewarm = true;
+        // The main queue drain running this can restore the thread's QoS when it returns.
+        RunLoop::mainSingleton().dispatch([] {
+            if (WebProcess::singleton().m_isMainThreadDemotedForPrewarm)
+                pthread_set_qos_class_self_np(QOS_CLASS_UTILITY, 0);
+        });
+    }
+#endif
+
     WTF::setProcessPrivileges({ });
 
     {
@@ -534,7 +548,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     platformInitializeWebProcess(parameters);
 
     // Match the QoS of the UIProcess and the scrolling thread but use a slightly lower priority.
-    WTF::Thread::setCurrentThreadIsUserInteractive(-1);
+    if (!m_isMainThreadDemotedForPrewarm)
+        WTF::Thread::setCurrentThreadIsUserInteractive(-1);
 
     m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
     if (!m_suppressMemoryPressureHandler) {
@@ -932,6 +947,30 @@ void WebProcess::setIsInProcessCache(bool isInProcessCache, CompletionHandler<vo
 
     completionHandler();
 }
+
+#if HAVE(QOS_CLASSES)
+void WebProcess::liftPrewarmedUtilityQOS()
+{
+    if (!m_isMainThreadDemotedForPrewarm.exchange(false))
+        return;
+
+    pthread_override_t qosOverride = nullptr;
+    if (m_mainThreadQOSClassAfterPrewarmLift > QOS_CLASS_UTILITY)
+        qosOverride = pthread_override_qos_class_start_np(m_mainPThread, m_mainThreadQOSClassAfterPrewarmLift, -1);
+    RELEASE_LOG(Process, "WebProcess::liftPrewarmedUtilityQOS: Lifting the main thread QoS of a process prewarmed at utility QoS");
+
+    RunLoop::mainSingleton().dispatch([qosOverride] {
+        WTF::Thread::setCurrentThreadIsUserInteractive(-1);
+        if (qosOverride)
+            pthread_override_qos_class_end_np(qosOverride);
+    });
+}
+
+void WebProcess::mainThreadQOSClassForTesting(CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(static_cast<uint32_t>(qos_class_self()));
+}
+#endif
 
 void WebProcess::markIsNoLongerPrewarmed()
 {

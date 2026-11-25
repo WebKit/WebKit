@@ -167,6 +167,10 @@ private:
 
     void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
 
+#if HAVE(QOS_CLASSES)
+    void liftPrewarmedUtilityQOS();
+#endif
+
     const CheckedRef<WebProcess> m_process;
     const Ref<WorkQueue> m_queue;
 

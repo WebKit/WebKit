@@ -142,6 +142,10 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
 
+    auto isPrewarmedAtUtilityQOS = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "prewarmed-at-utility-qos"_s);
+    if (!isPrewarmedAtUtilityQOS.isEmpty())
+        extraInitializationData.add("prewarmed-at-utility-qos"_s, isPrewarmedAtUtilityQOS);
+
     auto isLockdownModeEnabled = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "enable-lockdown-mode"_s);
     if (!isLockdownModeEnabled.isEmpty())
         extraInitializationData.add("enable-lockdown-mode"_s, isLockdownModeEnabled);

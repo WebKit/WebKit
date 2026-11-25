@@ -187,7 +187,7 @@ static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, 
     }
 }
 
-enum class UseSharedProcess : uint8_t { No, Yes, YesWithEnhancedSecurity };
+enum class UseSharedProcess : uint8_t { No, Yes, YesWithEnhancedSecurity, YesWithEnhancedSecurityPrewarmUtilityQOS };
 
 static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
     const TestWebKitAPI::HTTPServer* plaintextServer,
@@ -214,7 +214,9 @@ static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
         if ([feature.key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
             [preferences _setEnabled:useSharedProcess != UseSharedProcess::No forFeature:feature];
         if ([feature.key isEqualToString:@"SiteIsolationSharedProcessEnhancedSecurityEnabled"])
-            [preferences _setEnabled:useSharedProcess == UseSharedProcess::YesWithEnhancedSecurity forFeature:feature];
+            [preferences _setEnabled:useSharedProcess == UseSharedProcess::YesWithEnhancedSecurity || useSharedProcess == UseSharedProcess::YesWithEnhancedSecurityPrewarmUtilityQOS forFeature:feature];
+        if ([feature.key isEqualToString:@"SiteIsolationSharedProcessEnhancedSecurityPrewarmUtilityQOSEnabled"])
+            [preferences _setEnabled:useSharedProcess == UseSharedProcess::YesWithEnhancedSecurityPrewarmUtilityQOS forFeature:feature];
         // The platform default would override the heuristics these tests cover.
         if ([feature.key isEqualToString:@"EnhancedSecurityEnabledByDefault"])
             [preferences _setEnabled:NO forFeature:feature];
@@ -1442,6 +1444,8 @@ struct PrewarmedProcessCounts {
     unsigned standard { 0 };
     unsigned enhancedSecurity { 0 };
     unsigned unknown { 0 };
+    pid_t standardPID { 0 };
+    pid_t enhancedSecurityPID { 0 };
 };
 
 static PrewarmedProcessCounts prewarmedProcessCounts(WKProcessPool *processPool)
@@ -1454,11 +1458,13 @@ static PrewarmedProcessCounts prewarmedProcessCounts(WKProcessPool *processPool)
             continue;
         }
         RetainPtr executableName = [@(path) lastPathComponent];
-        if ([executableName hasPrefix:@"com.apple.WebKit.WebContent.EnhancedSecurity"])
+        if ([executableName hasPrefix:@"com.apple.WebKit.WebContent.EnhancedSecurity"]) {
             ++counts.enhancedSecurity;
-        else if ([executableName hasPrefix:@"com.apple.WebKit.WebContent"])
+            counts.enhancedSecurityPID = processIdentifier.intValue;
+        } else if ([executableName hasPrefix:@"com.apple.WebKit.WebContent"]) {
             ++counts.standard;
-        else
+            counts.standardPID = processIdentifier.intValue;
+        } else
             ++counts.unknown;
     }
     return counts;
@@ -1518,6 +1524,113 @@ TEST(EnhancedSecurityPolicies, SharedProcessEnhancedSecurityFlagOffPrewarmsStand
 
     EXPECT_TRUE(waitForPrewarmedProcessCounts(processPool.get(), 2, 0));
 }
+
+#if PLATFORM(MAC)
+
+static qos_class_t mainThreadQOSClass(WKProcessPool *processPool, pid_t processIdentifier)
+{
+    __block bool done = false;
+    __block qos_class_t qosClass = QOS_CLASS_UNSPECIFIED;
+    [processPool _getMainThreadQOSClassForProcessForTesting:processIdentifier completionHandler:^(unsigned result) {
+        qosClass = static_cast<qos_class_t>(result);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return qosClass;
+}
+
+static void expectMainThreadQOSClass(WKProcessPool *processPool, pid_t processIdentifier, qos_class_t expected)
+{
+    if (TestWebKitAPI::Util::waitFor([&] { return mainThreadQOSClass(processPool, processIdentifier) == expected; }))
+        return;
+    EXPECT_EQ(mainThreadQOSClass(processPool, processIdentifier), expected);
+}
+
+TEST(EnhancedSecurityPolicies, SharedProcessEnhancedSecurityPrewarmUtilityQOSLiftsSpareWhenUsed)
+{
+    HTTPServer secureServer({
+        { "/main"_s, { mainPageWithAdFrame } },
+        { "/ad"_s, { "ad"_s } },
+        { "/other"_s, { "<iframe src='https://apple.com/ad'></iframe>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = prewarmingProcessPool();
+    auto [webView, navigationDelegate] = sharedProcessTestWebView(secureServer, UseSharedProcess::YesWithEnhancedSecurityPrewarmUtilityQOS, processPool.get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    ASSERT_TRUE(waitForPrewarmedProcessCounts(processPool.get(), 1, 1));
+    auto counts = prewarmedProcessCounts(processPool.get());
+    pid_t sparePID = counts.enhancedSecurityPID;
+    pid_t standardSparePID = counts.standardPID;
+    ASSERT_NE(sparePID, 0);
+    ASSERT_NE(standardSparePID, 0);
+    expectMainThreadQOSClass(processPool.get(), sparePID, QOS_CLASS_UTILITY);
+    expectMainThreadQOSClass(processPool.get(), standardSparePID, QOS_CLASS_USER_INTERACTIVE);
+
+    auto [secondWebView, secondNavigationDelegate] = sharedProcessTestWebView(secureServer, UseSharedProcess::YesWithEnhancedSecurityPrewarmUtilityQOS, processPool.get());
+    [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.org/other"]]];
+    [secondNavigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr<WKFrameInfo> adFrame = [secondWebView firstChildFrame];
+    EXPECT_EQ(adFrame.get()._processIdentifier, sparePID);
+    EXPECT_WK_STREQ(processVariantForFrame(secondWebView.get(), adFrame.get()), "security");
+    expectMainThreadQOSClass(processPool.get(), sparePID, QOS_CLASS_USER_INTERACTIVE);
+
+    ASSERT_TRUE(waitForPrewarmedProcessCounts(processPool.get(), 1, 1));
+    pid_t replacementSparePID = prewarmedProcessCounts(processPool.get()).enhancedSecurityPID;
+    EXPECT_NE(replacementSparePID, sparePID);
+    expectMainThreadQOSClass(processPool.get(), replacementSparePID, QOS_CLASS_UTILITY);
+}
+
+TEST(EnhancedSecurityPolicies, SharedProcessEnhancedSecurityPrewarmUtilityQOSFlagOffDoesNotLowerSpareQOS)
+{
+    HTTPServer secureServer({
+        { "/main"_s, { mainPageWithAdFrame } },
+        { "/ad"_s, { "ad"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = prewarmingProcessPool();
+    auto [webView, navigationDelegate] = sharedProcessTestWebView(secureServer, UseSharedProcess::YesWithEnhancedSecurity, processPool.get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    ASSERT_TRUE(waitForPrewarmedProcessCounts(processPool.get(), 1, 1));
+    pid_t sparePID = prewarmedProcessCounts(processPool.get()).enhancedSecurityPID;
+    ASSERT_NE(sparePID, 0);
+    expectMainThreadQOSClass(processPool.get(), sparePID, QOS_CLASS_USER_INTERACTIVE);
+}
+
+TEST(EnhancedSecurityPolicies, SharedProcessEnhancedSecurityPrewarmUtilityQOSLiftsSpareUsedForMainFrame)
+{
+    HTTPServer secureServer({
+        { "/main"_s, { mainPageWithAdFrame } },
+        { "/ad"_s, { "ad"_s } },
+        { "/plain"_s, { "plain"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = prewarmingProcessPool();
+    auto [webView, navigationDelegate] = sharedProcessTestWebView(secureServer, UseSharedProcess::YesWithEnhancedSecurityPrewarmUtilityQOS, processPool.get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    ASSERT_TRUE(waitForPrewarmedProcessCounts(processPool.get(), 1, 1));
+    pid_t sparePID = prewarmedProcessCounts(processPool.get()).enhancedSecurityPID;
+    ASSERT_NE(sparePID, 0);
+    expectMainThreadQOSClass(processPool.get(), sparePID, QOS_CLASS_UTILITY);
+
+    auto [secondWebView, secondNavigationDelegate] = sharedProcessTestWebView(secureServer, UseSharedProcess::YesWithEnhancedSecurityPrewarmUtilityQOS, processPool.get());
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    preferences.get().securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.org/plain"]]];
+    [secondNavigationDelegate waitForDidFinishNavigationWithPreferences:preferences.get()];
+
+    EXPECT_EQ([secondWebView mainFrame].info._processIdentifier, sparePID);
+    EXPECT_WK_STREQ(processVariantForFrame(secondWebView.get(), [secondWebView mainFrame].info), "security");
+    expectMainThreadQOSClass(processPool.get(), sparePID, QOS_CLASS_USER_INTERACTIVE);
+}
+
+#endif // PLATFORM(MAC)
 
 // MARK: - HTTPS First Upgrade Tests
 

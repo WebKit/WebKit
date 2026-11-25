@@ -402,6 +402,11 @@ public:
     void isEnhancedSecurityEnabled(CompletionHandler<void(bool)>&&);
     bool enhancedSecurityEnabled() const { return m_isEnhancedSecurityEnabled.value_or(false); }
 
+#if HAVE(QOS_CLASSES)
+    void liftPrewarmedUtilityQOS();
+    void mainThreadQOSClassForTesting(CompletionHandler<void(uint32_t)>&&);
+#endif
+
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
     static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
 
@@ -959,6 +964,12 @@ private:
     bool m_allowExitOnMemoryPressure { true };
     std::optional<bool> m_isLockdownModeEnabled;
     std::optional<bool> m_isEnhancedSecurityEnabled;
+
+#if HAVE(QOS_CLASSES)
+    qos_class_t m_mainThreadQOSClassAfterPrewarmLift { QOS_CLASS_USER_INTERACTIVE };
+    pthread_t m_mainPThread { };
+#endif
+    std::atomic<bool> m_isMainThreadDemotedForPrewarm { false };
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, Ref<SandboxExtension>> m_mediaCaptureSandboxExtensions;

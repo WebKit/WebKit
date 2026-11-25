@@ -34,6 +34,7 @@
 #include "AuxiliaryProcessMessages.h"
 #include "DownloadProxyMap.h"
 #include "DrawingAreaProxy.h"
+#include "EventDispatcherMessages.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessProxy.h"
 #include "GoToBackForwardItemParameters.h"
@@ -432,9 +433,10 @@ void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::Site& site, 
         m_allowedFirstPartiesForCookies.first = LoadedWebArchive::Yes;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, ShouldLaunchProcess shouldLaunchProcess)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, ShouldLaunchProcess shouldLaunchProcess, IsPrewarmedAtUtilityQOS isPrewarmedAtUtilityQOS)
 {
     Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginIsolation, lockdownMode, enhancedSecurity));
+    proxy->m_isPrewarmedAtUtilityQOS = isPrewarmed == IsPrewarmed::Yes && isPrewarmedAtUtilityQOS == IsPrewarmedAtUtilityQOS::Yes;
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     // FIXME(rdar://188839922): disable jetsam boost on prewarmed processes always, not just when SI is enabled.
     if (isPrewarmed == IsPrewarmed::Yes && WebProcessPool::hasAnyProcessPoolUsedSiteIsolation())
@@ -852,6 +854,9 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     if (isPrewarmed())
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("is-prewarmed"_s, "1"_s);
 
+    if (m_isPrewarmedAtUtilityQOS)
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("prewarmed-at-utility-qos"_s, "1"_s);
+
 #if PLATFORM(PLAYSTATION)
     launchOptions.processPath = processPool().webProcessPath();
     launchOptions.userId = processPool().userId();
@@ -1211,6 +1216,15 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
 
     updateRuntimeStatistics();
+}
+
+void WebProcessProxy::liftPrewarmedUtilityQOSIfNeeded()
+{
+    if (!std::exchange(m_isPrewarmedAtUtilityQOS, false))
+        return;
+#if HAVE(QOS_CLASSES)
+    send(Messages::EventDispatcher::LiftPrewarmedUtilityQOS(), 0);
+#endif
 }
 
 void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore endsUsingDataStore)
