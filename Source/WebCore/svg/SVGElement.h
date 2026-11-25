@@ -117,7 +117,6 @@ public:
     virtual AffineTransform* supplementalTransform() const { return nullptr; }
 
     inline void setAnimatedSVGAttributesAreDirty();
-    inline void setPresentationalHintStyleIsDirty();
     void updateSVGRendererForElementChange(Style::SVGRendererUpdateType = Style::SVGRendererUpdateType { });
 
     // The instances of an element are clones made in shadow trees to implement <use>.

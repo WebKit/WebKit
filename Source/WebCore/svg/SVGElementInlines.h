@@ -42,12 +42,6 @@ inline void SVGElement::setAnimatedSVGAttributesAreDirty()
     ensureUniqueElementData().setAnimatedSVGAttributesAreDirty(true);
 }
 
-inline void SVGElement::setPresentationalHintStyleIsDirty()
-{
-    ensureUniqueElementData().setPresentationalHintStyleIsDirty(true);
-    invalidateStyle();
-}
-
 inline AtomString SVGElement::className() const
 {
     return AtomString { m_className->currentValue() };
