@@ -25,6 +25,9 @@
 
 #include "config.h"
 
+// WebGPU has no adapter on the simulator.
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+
 #include <WebGPU/WebGPU.h>
 #include <string>
 #include <thread>
@@ -236,3 +239,5 @@ TEST_F(WebGPUUncapturedErrorCallback, IsOptional)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // !PLATFORM(IOS_FAMILY_SIMULATOR)
