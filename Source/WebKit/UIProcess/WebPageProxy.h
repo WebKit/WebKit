@@ -3013,6 +3013,9 @@ public:
 
     void didDestroyFrame(IPC::Connection&, WebCore::FrameIdentifier);
     void frameWasRemoved(WebCore::FrameIdentifier, WebFrameProxy*, IPC::Connection* sender);
+#if ENABLE(WEBDRIVER_BIDI)
+    void frameWillBeDetached(IPC::Connection&, WebCore::FrameIdentifier);
+#endif
     void disconnectFramesFromPage();
 
     void didCommitLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedReportedOrigin, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, String&& proxyName, const WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);

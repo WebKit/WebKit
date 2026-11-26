@@ -42,4 +42,11 @@ GVariant* webkitWebContextInitializeWebProcessExtensions(WebKitWebContext*);
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext*);
 #if ENABLE(REMOTE_INSPECTOR)
 void webkitWebContextWillCloseAutomationSession(WebKitWebContext*);
+#if ENABLE(2022_GLIB_API)
+void webkitWebContextSetNetworkSessionForPendingAutomationWebView(WebKitWebContext*, WebKitNetworkSession*);
+WebKitNetworkSession* webkitWebContextNetworkSessionForPendingAutomationWebView(WebKitWebContext*);
+#else
+void webkitWebContextSetWebsiteDataManagerForPendingAutomationWebView(WebKitWebContext*, WebKitWebsiteDataManager*);
+WebKitWebsiteDataManager* webkitWebContextWebsiteDataManagerForPendingAutomationWebView(WebKitWebContext*);
+#endif
 #endif
