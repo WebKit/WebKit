@@ -31,25 +31,43 @@
 #include "GridSizeTypes.h"
 #include "PlacedGridItem.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "TrackSizingAlgorithm.h"
 #include "TrackSizingFunctions.h"
 
 namespace WebCore::Layout {
 
+GridItemSizingFunctions::ContentContributionItem::ContentContributionItem(const TrackSizingItem& trackSizingItem)
+    : gridItem(trackSizingItem.gridItem)
+    , oppositeAxisConstraint(trackSizingItem.oppositeAxisConstraint)
+{
+}
+
+GridItemSizingFunctions::UsedMinimumSizeItem::UsedMinimumSizeItem(const TrackSizingItem& trackSizingItem)
+    : gridItem(trackSizingItem.gridItem)
+    , borderAndPadding(trackSizingItem.borderAndPadding)
+    , usedMargins(trackSizingItem.usedMargins)
+    , oppositeAxisConstraint(trackSizingItem.oppositeAxisConstraint)
+    , oppositeAxisGridAreaMaximumSize(trackSizingItem.oppositeAxisGridAreaMaximumSize)
+{
+}
+
 GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils)
 {
     return {
-        [&integrationUtils](const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaBlockSize) {
-            UNUSED_PARAM(gridAreaBlockSize);
-            return GridLayoutUtils::inlineAxisMinContentContribution(gridItem, integrationUtils);
+        [&integrationUtils](const ContentContributionItem& contentContributionItem) {
+            return GridLayoutUtils::inlineAxisMinContentContribution(contentContributionItem.gridItem, integrationUtils);
         },
-        [&integrationUtils](const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaBlockSize) {
-            UNUSED_PARAM(gridAreaBlockSize);
-            return GridLayoutUtils::inlineAxisMaxContentContribution(gridItem, integrationUtils);
+        [&integrationUtils](const ContentContributionItem& contentContributionItem) {
+            return GridLayoutUtils::inlineAxisMaxContentContribution(contentContributionItem.gridItem, integrationUtils);
         },
         // This mirrors GridLayoutUtils::inlineMinimumSize(), but is evaluated while track sizing is in
         // progress: the available space is not yet known, so it is absent for the automatic minimum size
         // and percentage/calc() minimum sizes resolve against a zero containing block size.
-        [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, const UsedMargins& usedMargins, std::optional<LayoutUnit> gridAreaBlockSize, LayoutUnit gapSize, const AxisConstraint& axisConstraint, std::optional<LayoutUnit> gridAreaMaximumBlockSize) {
+        [&integrationUtils](const UsedMinimumSizeItem& usedMinimumSizeItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit gapSize, const AxisConstraint& axisConstraint) {
+            auto& gridItem = usedMinimumSizeItem.gridItem;
+            auto borderAndPadding = usedMinimumSizeItem.borderAndPadding;
+            auto gridAreaBlockSize = usedMinimumSizeItem.oppositeAxisConstraint;
+            auto gridAreaMaximumBlockSize = usedMinimumSizeItem.oppositeAxisGridAreaMaximumSize;
             auto& inlineAxisSizes = gridItem.inlineAxisSizes();
             auto borderBoxSize = WTF::switchOn(inlineAxisSizes.minimumSize,
                 [&](const Style::MinimumSize::Fixed& fixed) {
@@ -72,7 +90,7 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
 
             // "its minimum contribution is the outer size that would result from assuming the item's
             // used minimum size as its preferred size"
-            return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
+            return MarginBoxSize { borderBoxSize, usedMinimumSizeItem.usedMargins.marginStart + usedMinimumSizeItem.usedMargins.marginEnd };
         }
     };
 }
@@ -81,18 +99,24 @@ GridItemSizingFunctions GridItemSizingFunctions::blockAxis(const GridFormattingC
 {
     return {
         // The row pass runs after the columns are sized, so the grid area inline size is always definite.
-        [&formattingContext](const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaInlineSize) {
+        [&formattingContext](const ContentContributionItem& contentContributionItem) {
+            auto gridAreaInlineSize = contentContributionItem.oppositeAxisConstraint;
             ASSERT(gridAreaInlineSize);
-            return GridLayoutUtils::blockAxisMinContentContribution(gridItem, *gridAreaInlineSize, formattingContext);
+            return GridLayoutUtils::blockAxisMinContentContribution(contentContributionItem.gridItem, *gridAreaInlineSize, formattingContext);
         },
-        [&formattingContext](const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaInlineSize) {
+        [&formattingContext](const ContentContributionItem& contentContributionItem) {
+            auto gridAreaInlineSize = contentContributionItem.oppositeAxisConstraint;
             ASSERT(gridAreaInlineSize);
-            return GridLayoutUtils::blockAxisMaxContentContribution(gridItem, *gridAreaInlineSize, formattingContext);
+            return GridLayoutUtils::blockAxisMaxContentContribution(contentContributionItem.gridItem, *gridAreaInlineSize, formattingContext);
         },
         // This mirrors GridLayoutUtils::blockMinimumSize(), but is evaluated while track sizing is in
         // progress: the available space is not yet known, so it is absent for the automatic minimum size
         // and percentage/calc() minimum sizes resolve against a zero containing block size.
-        [&formattingContext](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, const UsedMargins& usedMargins, std::optional<LayoutUnit> gridAreaInlineSize, LayoutUnit gapSize, const AxisConstraint& axisConstraint, std::optional<LayoutUnit> gridAreaMaximumInlineSize) {
+        [&formattingContext](const UsedMinimumSizeItem& usedMinimumSizeItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit gapSize, const AxisConstraint& axisConstraint) {
+            auto& gridItem = usedMinimumSizeItem.gridItem;
+            auto borderAndPadding = usedMinimumSizeItem.borderAndPadding;
+            auto gridAreaInlineSize = usedMinimumSizeItem.oppositeAxisConstraint;
+            auto gridAreaMaximumInlineSize = usedMinimumSizeItem.oppositeAxisGridAreaMaximumSize;
             ASSERT(gridAreaInlineSize);
             auto& blockAxisSizes = gridItem.blockAxisSizes();
             auto borderBoxSize = WTF::switchOn(blockAxisSizes.minimumSize,
@@ -116,7 +140,7 @@ GridItemSizingFunctions GridItemSizingFunctions::blockAxis(const GridFormattingC
 
             // "its minimum contribution is the outer size that would result from assuming the item's
             // used minimum size as its preferred size"
-            return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
+            return MarginBoxSize { borderBoxSize, usedMinimumSizeItem.usedMargins.marginStart + usedMinimumSizeItem.usedMargins.marginEnd };
         }
     };
 }

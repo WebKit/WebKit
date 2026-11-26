@@ -242,7 +242,7 @@ static Vector<LayoutUnit> minContentContributions(const TrackSizingItemList& tra
     const GridItemSizingFunctions& gridItemSizingFunctions)
 {
     return gridItemIndexes.map([&](size_t gridItemIndex) {
-        return gridItemSizingFunctions.minContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint).value;
+        return gridItemSizingFunctions.minContentContribution(trackSizingItems[gridItemIndex]).value;
     });
 }
 
@@ -250,7 +250,7 @@ static Vector<LayoutUnit> maxContentContributions(const TrackSizingItemList& tra
     const GridItemSizingFunctions& gridItemSizingFunctions)
 {
     return gridItemIndexes.map([&](size_t gridItemIndex) {
-        return gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint).value;
+        return gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex]).value;
     });
 }
 
@@ -267,8 +267,8 @@ static LayoutUnit minimumContribution(const TrackSizingItemList& trackSizingItem
     auto& trackSizingItem = trackSizingItems[gridItemIndex];
     auto& preferredSize = trackSizingItem.computedSizes.preferredSize;
     if (GridLayoutUtils::preferredSizeBehavesAsAuto(preferredSize) || GridLayoutUtils::sizeDependsOnContainingBlockSize(preferredSize))
-        return gridItemSizingFunctions.usedMinimumSize(trackSizingItem.gridItem, trackSizingFunctions, trackSizingItem.borderAndPadding, trackSizingItem.usedMargins, trackSizingItem.oppositeAxisConstraint, gapSize, axisConstraint, trackSizingItem.oppositeAxisGridAreaMaximumSize).value;
-    return gridItemSizingFunctions.minContentContribution(trackSizingItem.gridItem, trackSizingItem.oppositeAxisConstraint).value;
+        return gridItemSizingFunctions.usedMinimumSize(trackSizingItem, trackSizingFunctions, gapSize, axisConstraint).value;
+    return gridItemSizingFunctions.minContentContribution(trackSizingItem).value;
 }
 
 static Vector<LayoutUnit> minimumContributions(const TrackSizingItemList& trackSizingItems,
@@ -933,7 +933,7 @@ static double usedFlexFractionForMaxContent(const UnsizedTracks& unsizedTracks, 
         if (!itemCrossesFlexibleTrack(unsizedTracks, gridItemSpan))
             continue;
 
-        auto maxContentContribution = gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint).value;
+        auto maxContentContribution = gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex]).value;
         auto itemTracks = unsizedTracks.subspan(gridItemSpan.begin(), gridItemSpan.distance());
         double candidateFlexFraction = findSizeOfFr(itemTracks, maxContentContribution, { }, gapSize);
 
