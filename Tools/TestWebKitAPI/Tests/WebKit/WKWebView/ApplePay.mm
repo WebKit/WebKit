@@ -25,17 +25,24 @@
 
 #import "config.h"
 
-#if ENABLE(APPLE_PAY_REMOTE_UI)
-
+#import "ClassMethodSwizzler.h"
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WebKit.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
+
+#import <pal/cocoa/PassKitSoftLink.h>
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
 
 static NSString * const userScriptSource = @"window.wkUserScriptInjected = true";
 
@@ -274,3 +281,61 @@ TEST(ApplePay, CanMakePaymentFalseDoesNotBlockUserAgentScripts)
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(APPLE_PAY_REMOTE_UI)
+
+#if PLATFORM(MAC) && HAVE(PASSKIT_DISBURSEMENTS) && HAVE(PASSKIT_DELEGATED_REQUEST)
+
+namespace TestWebKitAPI {
+
+static RetainPtr<PKPaymentRequest>& requestedDisbursementPaymentRequest()
+{
+    static NeverDestroyed<RetainPtr<PKPaymentRequest>> paymentRequest;
+    return paymentRequest.get();
+}
+
+static void requestDisbursementViewControllerOverride(id, SEL, PKPaymentRequest *paymentRequest, void (^completion)(id, NSError *))
+{
+    requestedDisbursementPaymentRequest() = paymentRequest;
+    completion(nil, [NSError errorWithDomain:@"TestWebKitAPI" code:1 userInfo:nil]);
+}
+
+static RetainPtr<PKPaymentRequest> disbursementPaymentRequestFromPage(NSString *script)
+{
+    ClassMethodSwizzler swizzler { PAL::getPKPaymentAuthorizationViewControllerClassSingleton(), @selector(requestViewControllerWithPaymentRequest:completion:), reinterpret_cast<IMP>(requestDisbursementViewControllerOverride) };
+
+    [TestProtocol registerWithScheme:@"https"];
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setApplePayEnabled:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/apple-pay-disbursement.html"]]];
+
+    requestedDisbursementPaymentRequest() = nil;
+    [webView objectByEvaluatingJavaScriptWithUserGesture:script];
+    Util::waitFor([] {
+        return !!requestedDisbursementPaymentRequest();
+    });
+    [TestProtocol unregister];
+
+    RetainPtr paymentRequest = requestedDisbursementPaymentRequest();
+    requestedDisbursementPaymentRequest() = nil;
+    return paymentRequest;
+}
+
+TEST(ApplePay, DelegatedDisbursementRequestIsDelegated)
+{
+    RetainPtr paymentRequest = disbursementPaymentRequestFromPage(@"startDisbursement(true)");
+
+    EXPECT_TRUE([paymentRequest isKindOfClass:PAL::getPKDisbursementPaymentRequestClassSingleton()]);
+    EXPECT_TRUE([paymentRequest isDelegatedRequest]);
+}
+
+TEST(ApplePay, DisbursementRequestIsNotDelegatedByDefault)
+{
+    RetainPtr paymentRequest = disbursementPaymentRequestFromPage(@"startDisbursement(false)");
+
+    EXPECT_TRUE([paymentRequest isKindOfClass:PAL::getPKDisbursementPaymentRequestClassSingleton()]);
+    EXPECT_FALSE([paymentRequest isDelegatedRequest]);
+}
+
+} // namespace TestWebKitAPI
+
+#endif // PLATFORM(MAC) && HAVE(PASSKIT_DISBURSEMENTS) && HAVE(PASSKIT_DELEGATED_REQUEST)

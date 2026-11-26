@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function startDisbursement(isDelegatedRequest)
+{
+    const method = {
+        supportedMethods: "https://apple.com/apple-pay",
+        data: {
+            version: 3,
+            merchantIdentifier: "",
+            countryCode: "US",
+            supportedNetworks: ["visa"],
+            merchantCapabilities: ["supports3DS"],
+            isDelegatedRequest,
+        },
+    };
+    const details = {
+        total: { label: "Disbursement", amount: { currency: "USD", value: "14.85" } },
+        modifiers: [{
+            supportedMethods: "https://apple.com/apple-pay",
+            data: {
+                disbursementRequest: { },
+                additionalLineItems: [
+                    { label: "Total", amount: "15.00" },
+                    { label: "Instant Transfer Fee", amount: "0.15", disbursementLineItemType: "instantFundsOutFee" },
+                    { label: "Total Amount", amount: "14.85", disbursementLineItemType: "disbursement" },
+                ],
+            },
+        }],
+    };
+    new PaymentRequest([method], details).show().catch(() => { });
+}
+</script>
+</head>
+<body></body>
+</html>
