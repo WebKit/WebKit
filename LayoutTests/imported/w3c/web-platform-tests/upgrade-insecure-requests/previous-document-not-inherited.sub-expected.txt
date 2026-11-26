@@ -1,0 +1,4 @@
+
+PASS The next document's requests to the origin of an http page with upgrade-insecure-requests are not upgraded
+PASS The next document's http requests to the host and port of an https page with upgrade-insecure-requests are not upgraded
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A document does not inherit upgrade-insecure-requests from the previous document in its window</title>
+<link rel="help" href="https://w3c.github.io/webappsec-upgrade-insecure-requests/#inheritance">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const corsResource = "/common/blank.html?pipe=header(Access-Control-Allow-Origin,*)";
+
+function nextMessage() {
+  return new Promise(resolve => window.addEventListener("message", event => resolve(event.data), { once: true }));
+}
+
+// Loads a page with upgrade-insecure-requests from upgradingOrigin in a new window, then navigates the window to a
+// page from another origin, which fetches url.
+async function fetchFromNextDocument(t, upgradingOrigin, url) {
+  const w = window.open(upgradingOrigin + "/upgrade-insecure-requests/support/upgrade-insecure-requests-then-notify-opener.html");
+  t.add_cleanup(() => w.close());
+  assert_equals(await nextMessage(), "upgrade-insecure-requests");
+
+  w.location.href = "http://{{domains[www]}}:{{ports[http][0]}}/upgrade-insecure-requests/support/fetch-then-notify-opener.html?url=" + encodeURIComponent(url);
+  return nextMessage();
+}
+
+promise_test(async t => {
+  const url = "http://{{host}}:{{ports[http][0]}}" + corsResource;
+  assert_equals(await fetchFromNextDocument(t, "http://{{host}}:{{ports[http][0]}}", url), "loaded " + url);
+}, "The next document's requests to the origin of an http page with upgrade-insecure-requests are not upgraded");
+
+promise_test(async t => {
+  const url = "http://{{host}}:{{ports[https][0]}}" + corsResource;
+  assert_equals(await fetchFromNextDocument(t, "https://{{host}}:{{ports[https][0]}}", url), "failed", "plain HTTP to the HTTPS port fails");
+}, "The next document's http requests to the host and port of an https page with upgrade-insecure-requests are not upgraded");
+</script>

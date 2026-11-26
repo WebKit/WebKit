@@ -1,0 +1,6 @@
+<!DOCTYPE html>
+<script>
+fetch(new URLSearchParams(location.search).get("url"))
+  .then(response => "loaded " + response.url, () => "failed")
+  .then(result => opener.postMessage(result, "*"));
+</script>

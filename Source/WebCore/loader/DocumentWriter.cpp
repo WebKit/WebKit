@@ -217,7 +217,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
             currentHistoryItem->setPolicyContainer(document->policyContainer());
     }
 
-    if (existingDocument && existingDocument->contentSecurityPolicy() && document->contentSecurityPolicy())
+    if (!ownerDocument && frameLoader->stateMachine().isDisplayingInitialEmptyDocument() && existingDocument && existingDocument->contentSecurityPolicy() && document->contentSecurityPolicy())
         protect(document->contentSecurityPolicy())->setInsecureNavigationRequestsToUpgrade(existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade());
 
     document->initContentSecurityPolicy();
