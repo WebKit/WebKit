@@ -26,11 +26,13 @@
 #include "config.h"
 
 #include "Helpers/Test.h"
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/SharedMemory.h>
 #include <limits>
 
 #if PLATFORM(COCOA)
 #include <mach/mach.h>
+#include <mach/vm_purgable.h>
 #endif
 
 namespace WebCore {
@@ -85,7 +87,7 @@ static void fillTestPattern(std::span<uint8_t> data, size_t seed)
     data[mid] = seed + 99;
 }
 
-static void expectTestPattern(std::span<uint8_t> data, size_t seed)
+static void expectTestPattern(std::span<const uint8_t> data, size_t seed)
 {
     for (size_t i = 0; i < 5 && i < data.size(); ++i)
         EXPECT_EQ(data[i], static_cast<uint8_t>(seed + i));
@@ -332,6 +334,130 @@ TEST_P(SharedMemoryFromMemoryTest, CreateCOWFromMemory)
     }
 }
 #endif // OS(DARWIN)
+
+#if HAVE(SAFE_MEMORY_TRANSFER)
+static constexpr size_t transferSize = 16 * KB;
+
+static std::optional<SharedMemory::Handle> createDonatedHandle(uint8_t seed, int purgeableState = VM_PURGABLE_NONVOLATILE)
+{
+    RefPtr source = SharedMemory::allocate(transferSize);
+    if (!source)
+        return std::nullopt;
+    fillTestPattern(source->mutableSpan(), seed);
+    int state = purgeableState;
+    if (vm_purgable_control(mach_task_self(), reinterpret_cast<vm_address_t>(source->span().data()), VM_PURGABLE_SET_STATE, &state) != KERN_SUCCESS)
+        return std::nullopt;
+    return source->createHandle(SharedMemory::Protection::ReadOnly);
+}
+
+TEST(SharedMemoryTransfer, ExclusiveAfterDonation)
+{
+    auto handle = createDonatedHandle(1);
+    ASSERT_TRUE(handle.has_value());
+
+    RefPtr received = SharedMemory::mapTransfer(WTF::move(*handle));
+    ASSERT_NOT_NULL(received);
+    EXPECT_TRUE(received->isExclusive());
+    expectTestPattern(received->span(), 1);
+
+    Ref buffer = received->createIsolatedSharedBuffer(transferSize);
+    EXPECT_EQ(buffer->span().data(), received->span().data());
+}
+
+TEST(SharedMemoryTransfer, NotExclusiveWhenMappedWithoutTransfer)
+{
+    auto handle = createDonatedHandle(1);
+    ASSERT_TRUE(handle.has_value());
+
+    RefPtr received = SharedMemory::map(WTF::move(*handle), SharedMemory::Protection::ReadOnly);
+    ASSERT_NOT_NULL(received);
+    handle = std::nullopt;
+    EXPECT_FALSE(received->isExclusive());
+}
+
+TEST(SharedMemoryTransfer, NotExclusiveWhenSenderKeepsMapping)
+{
+    RefPtr source = SharedMemory::allocate(transferSize);
+    ASSERT_NOT_NULL(source);
+    fillTestPattern(source->mutableSpan(), 2);
+    auto handle = source->createHandle(SharedMemory::Protection::ReadOnly);
+    ASSERT_TRUE(handle.has_value());
+
+    RefPtr received = SharedMemory::mapTransfer(WTF::move(*handle));
+    ASSERT_NOT_NULL(received);
+    EXPECT_FALSE(received->isExclusive());
+
+    Ref buffer = received->createIsolatedSharedBuffer(transferSize);
+    EXPECT_NE(buffer->span().data(), received->span().data());
+    expectTestPattern(buffer->span(), 2);
+}
+
+TEST(SharedMemoryTransfer, NotExclusiveWhenSenderKeepsSendRight)
+{
+    auto handle = createDonatedHandle(3);
+    ASSERT_TRUE(handle.has_value());
+    SharedMemory::Handle retainedHandle { *handle };
+
+    RefPtr received = SharedMemory::mapTransfer(WTF::move(*handle));
+    ASSERT_NOT_NULL(received);
+    EXPECT_FALSE(received->isExclusive());
+}
+
+TEST(SharedMemoryTransfer, NotExclusiveWhenPurgeable)
+{
+    for (int purgeableState : { VM_PURGABLE_VOLATILE, VM_PURGABLE_EMPTY }) {
+        auto handle = createDonatedHandle(4, purgeableState);
+        ASSERT_TRUE(handle.has_value());
+
+        RefPtr received = SharedMemory::mapTransfer(WTF::move(*handle));
+        ASSERT_NOT_NULL(received);
+        EXPECT_FALSE(received->isExclusive()) << "purgeable state " << purgeableState;
+
+        Ref buffer = received->createIsolatedSharedBuffer(transferSize);
+        EXPECT_NE(buffer->span().data(), received->span().data());
+    }
+}
+
+TEST(SharedMemoryTransfer, SubrangeOfPurgeableObject)
+{
+    for (int purgeableState : { VM_PURGABLE_NONVOLATILE, VM_PURGABLE_VOLATILE }) {
+        std::optional<SharedMemory::Handle> handle;
+        {
+            RefPtr source = SharedMemory::allocate(4 * vm_page_size);
+            ASSERT_NOT_NULL(source);
+            fillTestPattern(source->mutableSpan(), 6);
+            int state = purgeableState;
+            ASSERT_EQ(vm_purgable_control(mach_task_self(), reinterpret_cast<vm_address_t>(source->span().data()), VM_PURGABLE_SET_STATE, &state), KERN_SUCCESS);
+            handle = SharedMemory::Handle::createVMShare(source->span().subspan(vm_page_size, 2 * vm_page_size), SharedMemory::Protection::ReadOnly);
+            ASSERT_TRUE(handle.has_value());
+        }
+
+        RefPtr received = SharedMemory::mapTransfer(WTF::move(*handle));
+        ASSERT_NOT_NULL(received);
+        EXPECT_EQ(received->isExclusive(), purgeableState == VM_PURGABLE_NONVOLATILE) << "purgeable state " << purgeableState;
+    }
+}
+
+TEST(SharedMemoryTransfer, ExclusiveAfterForwarding)
+{
+    auto handle = createDonatedHandle(5);
+    ASSERT_TRUE(handle.has_value());
+
+    RefPtr firstHop = SharedMemory::mapTransfer(WTF::move(*handle));
+    ASSERT_NOT_NULL(firstHop);
+    EXPECT_TRUE(firstHop->isExclusive());
+
+    auto forwardedHandle = firstHop->createHandle(SharedMemory::Protection::ReadOnly);
+    ASSERT_TRUE(forwardedHandle.has_value());
+    EXPECT_FALSE(firstHop->isExclusive());
+    firstHop = nullptr;
+
+    RefPtr secondHop = SharedMemory::mapTransfer(WTF::move(*forwardedHandle));
+    ASSERT_NOT_NULL(secondHop);
+    EXPECT_TRUE(secondHop->isExclusive());
+    expectTestPattern(secondHop->span(), 5);
+}
+#endif // HAVE(SAFE_MEMORY_TRANSFER)
 
 #if PLATFORM(COCOA)
 #define ANY_MEMORY_SOURCE testing::Values(MemorySource::Malloc, MemorySource::SharedMemory, MemorySource::ExplicitMapping)
