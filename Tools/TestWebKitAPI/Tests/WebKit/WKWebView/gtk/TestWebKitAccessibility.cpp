@@ -508,6 +508,10 @@ static void testAccessibleState(AccessibilityTest* test, gconstpointer)
         "</html>",
         nullptr);
     test->waitUntilLoadFinished();
+    test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(
+        "while (document.activeElement?.tagName !== 'TEXTAREA')"
+        "    await new Promise(requestAnimationFrame);",
+        nullptr, nullptr, nullptr);
 
     auto testApp = test->findTestApplication();
     g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
