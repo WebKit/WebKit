@@ -38,12 +38,14 @@
 #include "WebPageInlines.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
+#include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Region.h>
+#include <WebCore/ScrollingTreeCoordinated.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/WindowEventLoop.h>
@@ -199,8 +201,18 @@ void DrawingAreaCoordinatedGraphics::registerScrollingTree()
 void DrawingAreaCoordinatedGraphics::unregisterScrollingTree()
 {
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
-    if (m_supportsAsyncScrolling)
-        WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(m_webPage);
+    if (!m_supportsAsyncScrolling)
+        return;
+
+    Ref webPage = m_webPage;
+    WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(webPage);
+
+    // This is called when the page is closed. The scrolling tree is only invalidated on the scrolling thread once the page
+    // is destroyed, after the LayerTreeHost, the client of its layers, so disallow the scrolling thread from updating them.
+    if (RefPtr scrollingCoordinator = dynamicDowncast<AsyncScrollingCoordinator>(webPage->scrollingCoordinator())) {
+        if (RefPtr scrollingTree = dynamicDowncast<ScrollingTreeCoordinated>(scrollingCoordinator->scrollingTree()))
+            scrollingTree->disallowLayerPositionUpdates();
+    }
 #endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 }
 

@@ -39,6 +39,10 @@ public:
 
     void didCompletePlatformRenderingUpdate();
 
+    // Called on the main thread before the layers of the tree are detached from their client, when the page is closed.
+    // The scrolling thread no longer updates the layers once this returns.
+    void disallowLayerPositionUpdates();
+
 private:
     explicit ScrollingTreeCoordinated(AsyncScrollingCoordinator&);
 
@@ -85,6 +89,8 @@ private:
     };
     TouchEventTracking m_touchEventTracking;
 #endif
+
+    bool m_canApplyLayerPositions WTF_GUARDED_BY_LOCK(m_treeLock) { true };
 };
 
 } // namespace WebCore

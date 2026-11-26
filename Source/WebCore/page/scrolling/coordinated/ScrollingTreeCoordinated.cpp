@@ -80,9 +80,22 @@ Ref<ScrollingTreeNode> ScrollingTreeCoordinated::createScrollingTreeNode(Scrolli
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void ScrollingTreeCoordinated::disallowLayerPositionUpdates()
+{
+    ASSERT(isMainThread());
+
+    // The scrolling thread only updates the layers in applyLayerPositionsInternal(), with m_treeLock held, so once
+    // the flag is cleared, the layers are no longer used by tasks or timers that run on the scrolling thread after this.
+    Locker locker { m_treeLock };
+    m_canApplyLayerPositions = false;
+}
+
 void ScrollingTreeCoordinated::applyLayerPositionsInternal()
 {
     assertIsHeld(m_treeLock);
+    if (!m_canApplyLayerPositions)
+        return;
+
     auto* rootScrollingNode = rootNode();
     if (!rootScrollingNode)
         return;
