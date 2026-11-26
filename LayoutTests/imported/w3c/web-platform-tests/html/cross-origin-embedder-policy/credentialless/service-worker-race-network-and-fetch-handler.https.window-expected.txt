@@ -1,0 +1,5 @@
+
+PASS fetch() of a cross-origin no-cors resource without CORP, credentials "include"
+PASS fetch() of a cross-origin no-cors resource without CORP, credentials "same-origin"
+PASS fetch() of a cross-origin no-cors resource without CORP, credentials "omit"
+

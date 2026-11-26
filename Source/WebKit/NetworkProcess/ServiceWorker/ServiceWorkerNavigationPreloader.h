@@ -96,6 +96,7 @@ private:
 
     NetworkLoadParameters m_parameters;
     WebCore::NavigationPreloadState m_state;
+    const WebCore::IncludesCredentials m_requestIncludesCredentials;
 
     std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;

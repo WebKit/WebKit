@@ -114,6 +114,7 @@ public:
     const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_parameters.request; }
 
     NetworkLoad* networkLoad() const { return m_networkLoad.get(); }
+    NetworkLoadChecker* networkLoadChecker() const { return m_networkLoadChecker.get(); }
 
     void start();
     void abort();

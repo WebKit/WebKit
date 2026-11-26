@@ -14,4 +14,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/iframeTest.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/race-network-and-fetch-handler-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/race-network-and-fetch-handler-frame.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/race-network-and-fetch-handler-sw.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/redirect_none_to_credentialless.py
