@@ -841,8 +841,8 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
 Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
 {
     SUPPRESS_UNCOUNTED_ARG auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
-    if (containerForCurrentNode().usesNullCustomElementRegistry() && element->document().customElementRegistry()) [[unlikely]]
-        element->setUsesNullCustomElementRegistry();
+    Ref treeScope = treeScopeForCurrentNode();
+    setCustomElementRegistry(element, registryForCurrentNode(treeScope).get(), treeScope);
     setAttributes(element, token, m_parserContentPolicy);
     return element;
 }
@@ -868,8 +868,11 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
     return currentNode().document();
 }
 
-static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScope& treeScope)
+RefPtr<CustomElementRegistry> HTMLConstructionSite::registryForCurrentNode(TreeScope& treeScope)
 {
+    if (m_openElements.stackDepth() <= 1)
+        return m_registry;
+    Ref currentNode = this->currentNode();
     if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode)) {
         Ref templateFragmentTreeScope = templateElement->fragmentForInsertion().treeScope();
         if (templateFragmentTreeScope->rootNode().usesNullCustomElementRegistry())
@@ -878,12 +881,20 @@ static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScop
     return CustomElementRegistry::registryForNodeOrTreeScope(currentNode, treeScope);
 }
 
+void HTMLConstructionSite::setCustomElementRegistry(Element& element, CustomElementRegistry* registry, TreeScope& treeScope)
+{
+    if (!registry && element.document().customElementRegistry() && containerForCurrentNode().usesNullCustomElementRegistry()) [[unlikely]]
+        element.setUsesNullCustomElementRegistry();
+    if (registry && registry->isScoped() && registry != treeScope.customElementRegistry()) [[unlikely]]
+        CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
+}
+
 std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token)
 {
     Ref treeScope = treeScopeForCurrentNode();
     Ref ownerDocument = treeScope->documentScope();
     RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, true);
-    RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? RefPtr { registryForCurrentNode(protect(currentNode()), treeScope) } : m_registry;
+    RefPtr registry = registryForCurrentNode(treeScope);
     if (!element) [[unlikely]] {
         RefPtr elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (elementInterface) [[unlikely]] {
@@ -915,10 +926,7 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
         }
     }
     ASSERT(element);
-    if (!registry && ownerDocument->customElementRegistry() && containerForCurrentNode().usesNullCustomElementRegistry())
-        element->setUsesNullCustomElementRegistry();
-    if (registry && registry->isScoped() && registry != treeScope->customElementRegistry()) [[unlikely]]
-        CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
+    setCustomElementRegistry(*element, registry.get(), treeScope);
 
     if (form() && !m_openElements.containsTemplateElement()) {
         if (auto* formAssociated = element->asFormAssociatedElement())

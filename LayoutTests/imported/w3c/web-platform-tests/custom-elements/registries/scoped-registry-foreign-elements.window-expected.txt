@@ -1,0 +1,9 @@
+
+PASS setHTMLUnsafe gives SVG and MathML elements the scoped registry of their parent
+PASS setHTMLUnsafe gives SVG and MathML elements the null registry of their parent
+PASS setHTMLUnsafe gives SVG and MathML elements in a shadow root its scoped registry
+PASS innerHTML gives SVG and MathML elements the scoped registry of their parent
+PASS innerHTML gives SVG and MathML elements the null registry of their parent
+PASS innerHTML gives SVG and MathML elements in a shadow root its scoped registry
+PASS A custom element inside foreignObject is upgraded with the scoped registry of its context
+

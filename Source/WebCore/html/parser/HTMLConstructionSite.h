@@ -213,6 +213,8 @@ private:
     std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> createHTMLElementOrFindCustomElementInterface(AtomHTMLToken&);
     Ref<HTMLElement> createHTMLElement(AtomHTMLToken&);
     Ref<Element> createElement(AtomHTMLToken&, const AtomString& namespaceURI);
+    RefPtr<CustomElementRegistry> registryForCurrentNode(TreeScope&);
+    void setCustomElementRegistry(Element&, CustomElementRegistry*, TreeScope&);
 
     void mergeAttributesFromTokenIntoElement(AtomHTMLToken&&, Element&);
     void dispatchDocumentElementAvailableIfNeeded();
