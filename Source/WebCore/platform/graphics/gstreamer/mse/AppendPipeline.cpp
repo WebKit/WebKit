@@ -267,8 +267,7 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     if (!protectedPlayerPrivate) {
         // Asserts aren't enabled in Release, but it's still helpful to log the failure.
         GST_ERROR("Can't create AppendPipeline (%p) with a null playerPrivate", this);
-        ASSERT(protectedPlayerPrivate);
-        return;
+        RELEASE_ASSERT(protectedPlayerPrivate);
     }
 
     GST_DEBUG_OBJECT(protectedPlayerPrivate->pipeline(), "Creating AppendPipeline (%p)", this);
@@ -426,7 +425,7 @@ void AppendPipeline::removeParserForDemuxerPad(const GRefPtr<GstPad>& pad)
 void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
 {
     auto scopeExit = makeScopeExit([&] {
-        RefPtr<MediaPlayerPrivateGStreamerMSE> protectedPlayerPrivate = playerPrivate();
+        RefPtr protectedPlayerPrivate = playerPrivate();
         if (!protectedPlayerPrivate) {
             GST_ERROR("Can't operate on a null playerPrivate from AppendPipeline (%p)", this);
             ASSERT(protectedPlayerPrivate);
@@ -749,7 +748,7 @@ void AppendPipeline::didReceiveInitializationSegment()
                     // Asserts aren't enabled in Release, but it's still helpful to log the failure.
                     GST_ERROR("Can't operate on a null playerPrivate from AppendPipeline (%p)", this);
                     ASSERT(protectedPlayerPrivate);
-                    return;
+                    break;
                 }
 
                 protectedPlayerPrivate->setInitialVideoSize(track->presentationSize);
@@ -1286,26 +1285,20 @@ void AppendPipeline::linkPadWithTrack(GstPad* demuxerSrcPad, Track& track)
 
 Ref<WebCore::TrackPrivateBase> AppendPipeline::makeWebKitTrack(Track& appendPipelineTrack, int trackIndex, TrackID trackId)
 {
-    RefPtr<MediaPlayerPrivateGStreamerMSE> protectedPlayerPrivate = playerPrivate();
-    if (!protectedPlayerPrivate) {
-        // Asserts aren't enabled in Release, but it's still helpful to log the failure.
-        GST_ERROR("Can't operate on a null playerPrivate from AppendPipeline (%p)", this);
-        RELEASE_ASSERT(protectedPlayerPrivate);
-    }
-
+    RefPtr player = playerPrivate();
     RefPtr<WebCore::TrackPrivateBase> track;
     TrackPrivateBaseGStreamer* gstreamerTrack = nullptr;
     // FIXME: AudioTrackPrivateGStreamer etc. should probably use pads of the playback pipeline rather than the append pipeline.
     GRefPtr<GstPad> pad(appendPipelineTrack.appsinkPad);
     switch (appendPipelineTrack.streamType) {
     case StreamType::Audio: {
-        auto specificTrack = AudioTrackPrivateGStreamer::create(protectedPlayerPrivate, trackIndex, WTF::move(pad), trackId);
+        auto specificTrack = AudioTrackPrivateGStreamer::create(player, trackIndex, WTF::move(pad), trackId);
         gstreamerTrack = specificTrack.ptr();
         track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
     }
     case StreamType::Video: {
-        auto specificTrack = VideoTrackPrivateGStreamer::create(protectedPlayerPrivate, trackIndex, WTF::move(pad), trackId);
+        auto specificTrack = VideoTrackPrivateGStreamer::create(player, trackIndex, WTF::move(pad), trackId);
         gstreamerTrack = specificTrack.ptr();
         track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
