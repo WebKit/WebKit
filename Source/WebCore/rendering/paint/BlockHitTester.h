@@ -54,6 +54,12 @@ private:
         bool checkChildren;
     };
 
+    // A stacking container being hit tested, one walk per action.
+    struct StackingContainer {
+        size_t depth;
+        uint8_t actionIndex { 0 };
+    };
+
     void pushParent(Parent&& parent) { m_parentStack.append(WTF::move(parent)); }
     void popParent() { m_parentStack.removeLast(); }
     const Parent& parent() const LIFETIME_BOUND { return m_parentStack.last(); }
@@ -65,6 +71,7 @@ private:
     const LayoutPoint m_accumulatedOffset;
     const HitTestAction m_action;
     Vector<Parent, 16> m_parentStack;
+    Vector<StackingContainer, 4> m_stackingContainerStack;
 };
 
 } // namespace Paint

@@ -146,12 +146,12 @@ BlockPainter::BlockPainter(RenderBlock& root, PaintInfo& paintInfo, const Layout
 {
 }
 
-void BlockPainter::pushParent(const RenderBlock* parentBlock)
+void BlockPainter::pushParent(const RenderBlock* enclosingBlock)
 {
     std::optional<PaintInfoState> savedPaintInfoState;
-    if (parentBlock) {
+    if (enclosingBlock) {
         savedPaintInfoState = PaintInfoState { m_paintInfo.phase, m_paintInfo.subtreePaintRoot, m_paintInfo.paintBehavior };
-        adjustPaintInfoForBlockChildren(*parentBlock, m_paintInfo);
+        adjustPaintInfoForBlockChildren(*enclosingBlock, m_paintInfo);
     }
     m_parentStack.append({ WTF::move(savedPaintInfoState), m_paintInfo.phase });
 }
@@ -164,6 +164,54 @@ void BlockPainter::popParent()
         m_paintInfo.subtreePaintRoot = state->subtreePaintRoot.get();
         m_paintInfo.paintBehavior = state->paintBehavior;
     }
+}
+
+// A stacking container is painted one phase per walk.
+static constexpr std::array stackingContainerPhases { PaintPhase::BlockBackground, PaintPhase::ChildBlockBackgrounds, PaintPhase::Float, PaintPhase::Foreground, PaintPhase::Outline };
+
+bool BlockPainter::beginStackingContainer(RenderBlock& floatBox, const RenderBlock& enclosingBlock, const LayoutPoint& paintOffset, size_t depth)
+{
+    ASSERT(floatBox.isFloating() && !floatBox.hasSelfPaintingLayer());
+
+    // Floats paint in the float phase of their enclosing block flow. The non-painting traversal phases
+    // walk them once with the phase unchanged.
+    if (!is<RenderBlockFlow>(enclosingBlock))
+        return false;
+    auto preservePhase = isNonPaintingTraversalPhase(m_paintInfo.phase);
+    if (m_paintInfo.phase != PaintPhase::Float && !preservePhase)
+        return false;
+    // Layout skips the floats that line-clamp hides after the clamp point.
+    if (floatBox.isForceHiddenByLineClamp())
+        return false;
+
+    auto stackingContainer = StackingContainer { depth, { m_paintInfo.phase, m_paintInfo.subtreePaintRoot, m_paintInfo.paintBehavior }, { } };
+
+    // The clip rect in the float's own coordinates, moved to where the float's border box paints.
+    if (auto clipRect = LineClampUpdater::blockEndClipRect(floatBox, floatBox)) {
+        clipRect->moveBy(paintOffset);
+        // Like the layer clip rects, this is within the area being painted (and so it is finite, which the conversion to float needs).
+        clipRect->intersect(m_paintInfo.rect);
+        m_paintInfo.context().save();
+        m_paintInfo.context().clip(*clipRect);
+        stackingContainer.savedContext = true;
+    }
+
+    if (!preservePhase) {
+        stackingContainer.phaseIndex = 0;
+        m_paintInfo.phase = stackingContainerPhases[0];
+    }
+    m_stackingContainerStack.append(WTF::move(stackingContainer));
+    return true;
+}
+
+void BlockPainter::endStackingContainer()
+{
+    auto stackingContainer = m_stackingContainerStack.takeLast();
+    m_paintInfo.phase = stackingContainer.savedPaintInfoState.phase;
+    m_paintInfo.subtreePaintRoot = stackingContainer.savedPaintInfoState.subtreePaintRoot.get();
+    m_paintInfo.paintBehavior = stackingContainer.savedPaintInfoState.paintBehavior;
+    if (stackingContainer.savedContext)
+        m_paintInfo.context().restore();
 }
 
 void BlockPainter::paintSubtree()
@@ -180,13 +228,27 @@ void BlockPainter::paintSubtree()
         if (iterator.event() == Event::EnterBlock) {
             ASSERT(m_parentStack.size() == iterator.depth() - 1);
             CheckedPtr enclosingBlock = iterator.enclosingBlock();
-            if (enclosingBlock && isExcludedFromNormalFlowPainting(block)) {
-                iterator.skipBlock();
-                continue;
+            if (iterator.isStackingContainer()) {
+                // On a repeated walk the stacking container's own entry is on top. Nested ones are gone by then.
+                bool isFirstWalk = m_stackingContainerStack.isEmpty() || m_stackingContainerStack.last().depth != iterator.depth();
+                if (isFirstWalk && !beginStackingContainer(block, *enclosingBlock, paintOffset, iterator.depth())) {
+                    iterator.skipBlock();
+                    continue;
+                }
+                // A float gets the paint info of its enclosing block, with the phase of the walk.
+                pushParent(nullptr);
+            } else {
+                if (enclosingBlock && isExcludedFromNormalFlowPainting(block)) {
+                    iterator.skipBlock();
+                    continue;
+                }
+                pushParent(enclosingBlock.get());
             }
-            pushParent(enclosingBlock.get());
             if (isVisualContentClippedOut(block, paintInfo, paintOffset)) {
                 popParent();
+                // Every walk of a float would be clipped out the same way.
+                if (iterator.isStackingContainer())
+                    endStackingContainer();
                 iterator.skipBlock();
                 continue;
             }
@@ -243,10 +305,22 @@ void BlockPainter::paintSubtree()
                 block->popContentsClip(paintInfo, parent().phase, paintOffset);
             paintOverflowControls(block, paintInfo, parent().phase, paintOffset);
             popParent();
+            if (iterator.isStackingContainer()) {
+                ASSERT(m_stackingContainerStack.last().depth == iterator.depth());
+                auto phaseIndex = m_stackingContainerStack.last().phaseIndex;
+                if (phaseIndex && ++*phaseIndex < stackingContainerPhases.size()) {
+                    m_stackingContainerStack.last().phaseIndex = phaseIndex;
+                    paintInfo.phase = stackingContainerPhases[*phaseIndex];
+                    iterator.reenterBlock();
+                    break;
+                }
+                endStackingContainer();
+            }
             break;
         }
     }
     ASSERT(m_parentStack.isEmpty());
+    ASSERT(m_stackingContainerStack.isEmpty());
 }
 
 void BlockPainter::paint(RenderBlock& block, PaintInfo& paintInfo, const LayoutPoint& paintOffset)

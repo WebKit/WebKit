@@ -53,6 +53,9 @@ static HitTestAction actionForChildren(HitTestAction action)
     return action == HitTestAction::ChildBlockBackgrounds ? HitTestAction::ChildBlockBackground : action;
 }
 
+// A stacking container is hit tested one action per walk, in the reverse of the order it paints in.
+static constexpr std::array stackingContainerActions { HitTestAction::Foreground, HitTestAction::Float, HitTestAction::ChildBlockBackgrounds, HitTestAction::BlockBackground };
+
 static bool isBackgroundAction(HitTestAction action)
 {
     return action == HitTestAction::BlockBackground || action == HitTestAction::ChildBlockBackground;
@@ -69,6 +72,12 @@ bool BlockHitTester::hitTest()
     auto updateEnclosingBlocks = [&](size_t count) {
         for (size_t index = count; index--;) {
             CheckedRef block = iterator.blockAt(index);
+            if (index + 1 < iterator.depth() && iterator.isStackingContainerAt(index + 1)) {
+                // A float without a node for the hit leaves it to its enclosing block, with the location relative
+                // to the float. The first update to set a node wins, so this comes before the one below.
+                CheckedRef floatBox = iterator.blockAt(index + 1);
+                block->updateHitTestResult(m_result, m_location.point() - toLayoutSize(iterator.paintOffsetAt(index + 1) - toLayoutSize(floatBox->location())));
+            }
             auto localOffset = toLayoutSize(iterator.paintOffsetAt(index));
             block->updateHitTestResult(m_result, block->physicalToBlockStartRelative(m_location.point() - localOffset));
         }
@@ -85,9 +94,28 @@ bool BlockHitTester::hitTest()
         switch (iterator.event()) {
         case Event::EnterBlock: {
             auto action = m_parentStack.isEmpty() ? m_action : actionForChildren(parent().action);
+            if (iterator.isStackingContainer()) {
+                bool isFirstWalk = m_stackingContainerStack.isEmpty() || m_stackingContainerStack.last().depth != depth;
+                if (isFirstWalk) {
+                    // Floats are hit tested in the float action of their enclosing block flow. Line-clamp hides the ones after the clamp point.
+                    if (action != HitTestAction::Float || !is<RenderBlockFlow>(iterator.enclosingBlock()) || block->isForceHiddenByLineClamp()) {
+                        iterator.skipBlock();
+                        break;
+                    }
+                    m_stackingContainerStack.append({ depth });
+                }
+                action = stackingContainerActions[m_stackingContainerStack.last().actionIndex];
+            }
+
+            auto skipBlock = [&] {
+                // Every walk of a float would be skipped the same way.
+                if (iterator.isStackingContainer())
+                    m_stackingContainerStack.removeLast();
+                iterator.skipBlock();
+            };
 
             if (!block->hitTestVisualOverflow(m_location, accumulatedOffset)) {
-                iterator.skipBlock();
+                skipBlock();
                 break;
             }
 
@@ -101,7 +129,7 @@ bool BlockHitTester::hitTest()
             }
 
             if (!block->hitTestClipPath(m_location, accumulatedOffset)) {
-                iterator.skipBlock();
+                skipBlock();
                 break;
             }
 
@@ -174,6 +202,14 @@ bool BlockHitTester::hitTest()
         }
         case Event::LeaveBlock:
             popParent();
+            if (iterator.isStackingContainer()) {
+                ASSERT(m_stackingContainerStack.last().depth == depth);
+                if (++m_stackingContainerStack.last().actionIndex < stackingContainerActions.size()) {
+                    iterator.reenterBlock();
+                    break;
+                }
+                m_stackingContainerStack.removeLast();
+            }
             break;
         }
     }

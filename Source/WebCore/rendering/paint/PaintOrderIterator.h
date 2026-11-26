@@ -45,9 +45,15 @@ namespace Paint {
 // painting before and after its contents, and the contents themselves: inline content, or the
 // children in paint order. Child blocks painted by the generic code are entered. Anything else
 // (replaced content, tables, children of grid and flex containers) is an opaque item that the
-// consumer paints with the existing per-renderer code. Floats are opaque items in tree order,
-// or after the other children. Excluded children (fieldset legends, outside list markers) and
+// consumer paints with the existing per-renderer code. Floats are reported in tree order, or
+// after the other children. Excluded children (fieldset legends, outside list markers) and
 // skipped content are reported too, and the consumer decides what to do with them.
+//
+// A float paints as a stacking container (css-position-4 "paint a stacking container"): as if it
+// created a stacking context, so all its phases (backgrounds, floats, foreground, outlines) paint
+// before whatever follows it, but its layers belong to the enclosing stacking context. A float
+// painted by the generic code is entered as a stacking container, which the consumer walks once
+// for each of those phases.
 //
 // The iterator only knows the tree and the geometry. Paint state such as PaintInfo belongs to
 // the consumer.
@@ -81,10 +87,15 @@ public:
     // The block whose contents the current block is part of, or null for the root.
     RenderBlock* enclosingBlock() const;
 
+    bool isStackingContainer() const { return parent().isStackingContainer; }
+    // From the LeaveBlock of a stacking container: continue with its EnterBlock instead of leaving it, to walk it again.
+    void reenterBlock();
+
     // The entered blocks, from the root (0) to the current one (depth() - 1).
     size_t depth() const { return m_parentStack.size(); }
     RenderBlock& blockAt(size_t index) const { return m_parentStack[index].block; }
     LayoutPoint paintOffsetAt(size_t index) const { return m_parentStack[index].paintOffset; }
+    bool isStackingContainerAt(size_t index) const { return m_parentStack[index].isStackingContainer; }
 
     // For Event::Child, the child to paint and the offset to paint it at (before adding its location).
     RenderBox& child() const;
@@ -100,7 +111,7 @@ public:
     void skipToLeave();
 
 private:
-    enum class Skip : uint8_t { None, Block, Contents, ToLeave };
+    enum class Skip : uint8_t { None, Block, Contents, ToLeave, Reenter };
 
     struct Parent {
         CheckedRef<RenderBlock> block;
@@ -111,6 +122,7 @@ private:
         // With FloatOrder::AfterOtherChildren, the children are walked twice: once for the floats, once for the rest.
         bool isFloatsPass { false };
         bool hasChildForOtherPass { false };
+        bool isStackingContainer { false };
     };
 
     const Parent& parent() const { return m_parentStack.last(); }

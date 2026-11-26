@@ -95,22 +95,35 @@ private:
         OptionSet<PaintBehavior> paintBehavior;
     };
     struct Parent {
-        // The paint info state of the block's parent, restored by popParent(). Unset for the root.
+        // The paint info state before adjusting it for the enclosing block's children, restored by
+        // popParent(). Unset for the root and for stacking containers, which save it themselves.
         std::optional<PaintInfoState> savedPaintInfoState;
         // pushContentsClip() can change the phase, so remember the one the block started with.
         PaintPhase phase;
         bool pushedClip { false };
     };
 
-    // Adjusts the paint info for the children of the parent block, if there is one.
-    void pushParent(const RenderBlock* parentBlock);
+    // Adjusts the paint info for the children of the enclosing block, if there is one.
+    void pushParent(const RenderBlock* enclosingBlock);
     void popParent();
     Parent& parent() LIFETIME_BOUND { return m_parentStack.last(); }
+
+    // A stacking container being painted, one walk per phase.
+    struct StackingContainer {
+        size_t depth;
+        PaintInfoState savedPaintInfoState;
+        // Unset when the walk keeps the phase it started with.
+        std::optional<uint8_t> phaseIndex;
+        bool savedContext { false };
+    };
+    bool beginStackingContainer(RenderBlock& floatBox, const RenderBlock& enclosingBlock, const LayoutPoint& paintOffset, size_t depth);
+    void endStackingContainer();
 
     const CheckedRef<RenderBlock> m_root;
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;
     Vector<Parent, 16> m_parentStack;
+    Vector<StackingContainer, 4> m_stackingContainerStack;
 };
 
 } // namespace Paint

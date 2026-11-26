@@ -34,7 +34,7 @@ namespace Paint {
 
 static bool isIterableBlockType(const RenderObject& renderer)
 {
-    // Blocks whose paint() and paintObject() are the generic RenderBlock ones.
+    // Blocks that the generic RenderBlock code paints and hit tests.
     switch (renderer.type()) {
     case RenderObject::Type::BlockFlow:
     case RenderObject::Type::FlexibleBox:
@@ -104,6 +104,12 @@ void PaintOrderIterator::skipToLeave()
     parent().skip = Skip::ToLeave;
 }
 
+void PaintOrderIterator::reenterBlock()
+{
+    ASSERT(event() == Event::LeaveBlock && isStackingContainer());
+    parent().skip = Skip::Reenter;
+}
+
 void PaintOrderIterator::beginContents()
 {
     CheckedRef block = parent().block;
@@ -150,9 +156,8 @@ void PaintOrderIterator::advanceToChild(CheckedPtr<RenderBox> candidate)
 
         parent().child = child;
 
-        // Floats paint all their phases at once, so they are never entered.
         CheckedPtr childBlock = dynamicDowncast<RenderBlock>(*child);
-        if (!childBlock || !isIterableBlockType(*childBlock) || child->isFloating()) {
+        if (!childBlock || !isIterableBlockType(*childBlock)) {
             parent().event = Event::Child;
             return;
         }
@@ -161,6 +166,8 @@ void PaintOrderIterator::advanceToChild(CheckedPtr<RenderBox> candidate)
         auto childPaintOffset = block->blockStartRelativeToPhysicalForChild(*child, scrolledOffset()) + toLayoutSize(child->location());
         // May reallocate the parent stack.
         m_parentStack.append({ *childBlock, childPaintOffset });
+        // Floats paint all their phases at once.
+        parent().isStackingContainer = child->isFloating();
         return;
     }
     if (m_floatOrder == FloatOrder::AfterOtherChildren) {
@@ -215,6 +222,7 @@ PaintOrderIterator& PaintOrderIterator::traverseNext()
             parent().event = Event::LeaveBlock;
             break;
         case Skip::Block:
+        case Skip::Reenter:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -233,6 +241,12 @@ PaintOrderIterator& PaintOrderIterator::traverseNext()
         continueAfterChild();
         break;
     case Event::LeaveBlock:
+        if (parent().skip == Skip::Reenter) {
+            auto& reentered = parent();
+            reentered = { reentered.block, reentered.paintOffset };
+            reentered.isStackingContainer = true;
+            break;
+        }
         popParent();
         break;
     case Event::EnterBlock:
