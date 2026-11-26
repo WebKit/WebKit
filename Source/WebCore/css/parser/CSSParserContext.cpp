@@ -63,6 +63,7 @@ NODELETE static void applyUASheetBehaviorsToContext(CSSParserContext& context)
 #endif
     context.cssInternalAutoBaseParsingEnabled = true;
     context.htmlEnhancedSelectEnabled = true;
+    context.propertySettings.scopedViewTransitionsEnabled = true;
     context.openPseudoClassEnabled = true;
 }
 

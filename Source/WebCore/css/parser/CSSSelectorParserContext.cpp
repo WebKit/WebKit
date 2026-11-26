@@ -43,6 +43,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , cssPickerPseudoElementEnabled(context.cssPickerPseudoElementEnabled)
     , htmlEnhancedSelectEnabled(context.htmlEnhancedSelectEnabled)
     , targetTextPseudoElementEnabled(context.targetTextPseudoElementEnabled)
+    , scopedViewTransitionsEnabled(context.propertySettings.scopedViewTransitionsEnabled)
     , cssAppearanceBaseEnabled(context.cssAppearanceBaseEnabled)
     , openPseudoClassEnabled(context.openPseudoClassEnabled)
 {
@@ -58,6 +59,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , cssPickerPseudoElementEnabled(document.settings().cssPickerPseudoElementEnabled())
     , htmlEnhancedSelectEnabled(document.settings().htmlEnhancedSelectEnabled())
     , targetTextPseudoElementEnabled(document.settings().targetTextPseudoElementEnabled())
+    , scopedViewTransitionsEnabled(document.settings().scopedViewTransitionsEnabled())
     , cssAppearanceBaseEnabled(document.settings().cssAppearanceBaseEnabled())
     , openPseudoClassEnabled(document.settings().openPseudoClassEnabled())
 {
@@ -74,6 +76,7 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.cssPickerPseudoElementEnabled,
         context.htmlEnhancedSelectEnabled,
         context.targetTextPseudoElementEnabled,
+        context.scopedViewTransitionsEnabled,
         context.cssAppearanceBaseEnabled,
         context.openPseudoClassEnabled
     );
