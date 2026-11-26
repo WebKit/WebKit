@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT bool writePixelBuffer(CVPixelBufferRef, std::span<uint8_t> data);
 
 #if USE(LIBWEBRTC)
-    WEBCORE_EXPORT static SharedVideoFrameInfo fromVideoFrameBuffer(const webrtc::VideoFrameBuffer&);
+    WEBCORE_EXPORT static SharedVideoFrameInfo fromVideoFrameBuffer(const webrtc::VideoFrameBuffer&, bool isFullRange);
     WEBCORE_EXPORT bool writeVideoFrameBuffer(webrtc::VideoFrameBuffer&, std::span<uint8_t> data);
 #endif
 

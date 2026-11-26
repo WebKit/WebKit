@@ -127,8 +127,11 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(cons
     }
 
 #if USE(LIBWEBRTC)
-    if (auto* webrtcFrame = dynamicDowncast<VideoFrameLibWebRTC>(frame))
-        return writeBuffer(*webrtcFrame->buffer(), newSemaphoreCallback, newMemoryCallback);
+    if (RefPtr webrtcFrame = dynamicDowncast<VideoFrameLibWebRTC>(frame)) {
+        auto buffer = webrtcFrame->buffer();
+        if (buffer->type() == webrtc::VideoFrameBuffer::Type::kI420 || buffer->type() == webrtc::VideoFrameBuffer::Type::kI010)
+            return writeBuffer(*buffer, webrtcFrame->colorSpace().fullRange.value_or(false), newSemaphoreCallback, newMemoryCallback);
+    }
 #endif
 
     return writeBuffer(protect(frame.pixelBuffer()).get(), newSemaphoreCallback, newMemoryCallback);
@@ -177,14 +180,16 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(cons
     if (auto pixelBuffer = adoptCF(webrtc::copyPixelBufferForFrame(frame)))
         return writeBuffer(pixelBuffer.get(), newSemaphoreCallback, newMemoryCallback);
 
-    return writeBuffer(*frame.video_frame_buffer(), newSemaphoreCallback, newMemoryCallback);
+    auto colorSpace = frame.color_space();
+    bool isFullRange = colorSpace && colorSpace->range() == webrtc::ColorSpace::RangeID::kFull;
+    return writeBuffer(*frame.video_frame_buffer(), isFullRange, newSemaphoreCallback, newMemoryCallback);
 }
 
-std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(webrtc::VideoFrameBuffer& frameBuffer, NOESCAPE const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, NOESCAPE const Function<void(SharedMemory::Handle&&)>& newMemoryCallback)
+std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(webrtc::VideoFrameBuffer& frameBuffer, bool isFullRange, NOESCAPE const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, NOESCAPE const Function<void(SharedMemory::Handle&&)>& newMemoryCallback)
 {
     auto scope = makeScopeExit([this] { signalInCaseOfError(); });
 
-    auto info = SharedVideoFrameInfo::fromVideoFrameBuffer(frameBuffer);
+    auto info = SharedVideoFrameInfo::fromVideoFrameBuffer(frameBuffer, isFullRange);
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
         return { };
 

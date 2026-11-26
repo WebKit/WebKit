@@ -26,7 +26,9 @@
 #import "config.h"
 
 #import "Helpers/Utilities.h"
+#import <CoreVideo/CoreVideo.h>
 #import <WebCore/SharedVideoFrameInfo.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 #if USE(LIBWEBRTC)
@@ -64,7 +66,7 @@ TEST(SharedVideoFrame, PlaneAlphaSize)
 #if USE(LIBWEBRTC)
 
 template<typename SampleType, typename Buffer>
-static void testSharedVideoFrameInfoRoundTrip(Buffer& buffer)
+static void testSharedVideoFrameInfoRoundTrip(Buffer& buffer, bool isFullRange = true)
 {
     static_assert(sizeof(SampleType) == 1 || sizeof(SampleType) == 2);
 
@@ -77,6 +79,12 @@ static void testSharedVideoFrameInfoRoundTrip(Buffer& buffer)
     constexpr unsigned valueMask = sizeof(SampleType) == 1 ? 0xFFu : 0x3FFu;
     constexpr unsigned msbShift = sizeof(SampleType) == 1 ? 0u : 6u;
 
+    OSType expectedPixelFormat;
+    if constexpr (sizeof(SampleType) == 1)
+        expectedPixelFormat = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+    else
+        expectedPixelFormat = isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+
     auto fillPlane = [&](std::span<SampleType> plane, int stride, int planeWidth, int planeHeight, unsigned seed) {
         for (int y = 0; y < planeHeight; ++y) {
             auto row = plane.subspan(y * stride, planeWidth);
@@ -88,7 +96,8 @@ static void testSharedVideoFrameInfoRoundTrip(Buffer& buffer)
     fillPlane(unsafeMakeSpan(buffer.MutableDataU(), buffer.StrideU() * chromaHeight), buffer.StrideU(), chromaWidth, chromaHeight, 101);
     fillPlane(unsafeMakeSpan(buffer.MutableDataV(), buffer.StrideV() * chromaHeight), buffer.StrideV(), chromaWidth, chromaHeight, 211);
 
-    auto info = WebCore::SharedVideoFrameInfo::fromVideoFrameBuffer(buffer);
+    auto info = WebCore::SharedVideoFrameInfo::fromVideoFrameBuffer(buffer, isFullRange);
+    EXPECT_EQ(info.bufferType(), expectedPixelFormat);
     EXPECT_GT(info.storageSize(), 0u);
 
     constexpr size_t guardSize = 64;
@@ -136,6 +145,17 @@ static void testSharedVideoFrameInfoRoundTrip(Buffer& buffer)
             EXPECT_EQ(outRow[2 * x + 1], expectedV) << "V mismatch at (" << x << ", " << y << ")";
         }
     }
+
+    // The reader recreates a pixel buffer with the same range.
+    auto decodedInfo = WebCore::SharedVideoFrameInfo::decode(frameBytes);
+    ASSERT_TRUE(decodedInfo);
+    EXPECT_EQ(decodedInfo->bufferType(), expectedPixelFormat);
+
+    RetainPtr pixelBuffer = decodedInfo->createPixelBufferFromMemory(frameBytes.subspan(WebCore::SharedVideoFrameInfoEncodingLength));
+    ASSERT_TRUE(pixelBuffer);
+    EXPECT_EQ(CVPixelBufferGetPixelFormatType(pixelBuffer.get()), expectedPixelFormat);
+    EXPECT_EQ(CVPixelBufferGetWidth(pixelBuffer.get()), static_cast<size_t>(width));
+    EXPECT_EQ(CVPixelBufferGetHeight(pixelBuffer.get()), static_cast<size_t>(height));
 }
 
 TEST(SharedVideoFrame, OddWidthI420)
@@ -178,6 +198,20 @@ TEST(SharedVideoFrame, OddWidthAndHeightI010)
     auto buffer = webrtc::I010Buffer::Create(681, 15);
     ASSERT_TRUE(buffer);
     testSharedVideoFrameInfoRoundTrip<uint16_t>(*buffer);
+}
+
+TEST(SharedVideoFrame, VideoRangeI420)
+{
+    auto buffer = webrtc::I420Buffer::Create(681, 15);
+    ASSERT_TRUE(buffer);
+    testSharedVideoFrameInfoRoundTrip<uint8_t>(*buffer, false);
+}
+
+TEST(SharedVideoFrame, VideoRangeI010)
+{
+    auto buffer = webrtc::I010Buffer::Create(681, 15);
+    ASSERT_TRUE(buffer);
+    testSharedVideoFrameInfoRoundTrip<uint16_t>(*buffer, false);
 }
 
 #endif // USE(LIBWEBRTC)

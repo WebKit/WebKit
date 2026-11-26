@@ -60,18 +60,19 @@ VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirr
     , m_size(m_buffer->width(),  m_buffer->height())
     , m_conversionCallback(WTF::move(conversionCallback))
 {
+    bool isFullRange = this->colorSpace().fullRange.value_or(false);
     switch (m_buffer->type()) {
     case webrtc::VideoFrameBuffer::Type::kI420:
-        m_videoPixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+        m_videoPixelFormat = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
         break;
     case webrtc::VideoFrameBuffer::Type::kI422:
-        m_videoPixelFormat = kCVPixelFormatType_422YpCbCr8BiPlanarFullRange;
+        m_videoPixelFormat = isFullRange ? kCVPixelFormatType_422YpCbCr8BiPlanarFullRange : kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange;
         break;
     case webrtc::VideoFrameBuffer::Type::kI010:
-        m_videoPixelFormat = kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;
+        m_videoPixelFormat = isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
         break;
     case webrtc::VideoFrameBuffer::Type::kI210:
-        m_videoPixelFormat = kCVPixelFormatType_422YpCbCr10BiPlanarFullRange;
+        m_videoPixelFormat = isFullRange ? kCVPixelFormatType_422YpCbCr10BiPlanarFullRange : kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange;
         break;
     default:
         ASSERT_NOT_REACHED();

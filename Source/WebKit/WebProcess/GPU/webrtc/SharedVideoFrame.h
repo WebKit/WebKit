@@ -99,7 +99,7 @@ private:
     bool prepareWriting(const WebCore::SharedVideoFrameInfo&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
 
 #if USE(LIBWEBRTC)
-    std::optional<SharedVideoFrame::Buffer> writeBuffer(webrtc::VideoFrameBuffer&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(webrtc::VideoFrameBuffer&, bool isFullRange, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
 #endif
     void signalInCaseOfError();
 

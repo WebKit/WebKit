@@ -62,6 +62,7 @@ private:
     bool copyToPlanarYUV(std::span<uint8_t>, VideoPixelFormat) final;
     bool copyLumaPlane(std::span<uint8_t>, PlanarImageConverter::SampleFormat) final;
 
+    bool isLibWebRTC() const final { return true; }
     Ref<VideoFrame> clone() final;
 
     const Ref<webrtc::VideoFrameBuffer> m_buffer;

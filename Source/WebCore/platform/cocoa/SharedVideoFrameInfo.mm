@@ -304,7 +304,7 @@ static uint32_t computeHeightUV(const webrtc::VideoFrameBuffer& frame)
     return (height + 1) / 2;
 }
 
-SharedVideoFrameInfo SharedVideoFrameInfo::fromVideoFrameBuffer(const webrtc::VideoFrameBuffer& frame)
+SharedVideoFrameInfo SharedVideoFrameInfo::fromVideoFrameBuffer(const webrtc::VideoFrameBuffer& frame, bool isFullRange)
 {
     if (frame.type() == webrtc::VideoFrameBuffer::Type::kNative)
         return SharedVideoFrameInfo { };
@@ -312,14 +312,14 @@ SharedVideoFrameInfo SharedVideoFrameInfo::fromVideoFrameBuffer(const webrtc::Vi
     auto type = frame.type();
     if (type == webrtc::VideoFrameBuffer::Type::kI420) {
         return {
-            kCVPixelFormatType_420YpCbCr8BiPlanarFullRange,
+            isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
             static_cast<uint32_t>(frame.width()), static_cast<uint32_t>(frame.height()), computeStrideY<uint8_t>(frame),
             computeWidthUV(frame), computeHeightUV(frame), computeStrideUV<uint8_t>(frame)
         };
     }
     if (type == webrtc::VideoFrameBuffer::Type::kI010) {
         return {
-            kCVPixelFormatType_420YpCbCr10BiPlanarFullRange,
+            isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange,
             static_cast<uint32_t>(frame.width()), static_cast<uint32_t>(frame.height()), computeStrideY<uint16_t>(frame),
             computeWidthUV(frame), computeHeightUV(frame), computeStrideUV<uint16_t>(frame)
         };
@@ -329,7 +329,8 @@ SharedVideoFrameInfo SharedVideoFrameInfo::fromVideoFrameBuffer(const webrtc::Vi
 
 bool SharedVideoFrameInfo::writeVideoFrameBuffer(webrtc::VideoFrameBuffer& frameBuffer, std::span<uint8_t> data)
 {
-    ASSERT(m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange);
+    ASSERT(m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+        || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange);
     encode(data);
     return webrtc::copyVideoFrameBuffer(frameBuffer, data.subspan(sizeof(SharedVideoFrameInfo)).data());
 }
