@@ -47,6 +47,8 @@ class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
 
+enum class LoadWillContinueInAnotherProcess : bool;
+
 class ResourceLoadNotifier {
     WTF_MAKE_NONCOPYABLE(ResourceLoadNotifier);
 public:
@@ -58,7 +60,7 @@ public:
     void didReceiveResponse(ResourceLoader&, ResourceLoaderIdentifier, const ResourceResponse&);
     void didReceiveData(ResourceLoader&, ResourceLoaderIdentifier, const SharedBuffer&, int encodedDataLength);
     void didFinishLoad(ResourceLoader&, ResourceLoaderIdentifier, const NetworkLoadMetrics&);
-    void didFailToLoad(ResourceLoader&, ResourceLoaderIdentifier, const ResourceError&);
+    void didFailToLoad(ResourceLoader&, ResourceLoaderIdentifier, const ResourceError&, LoadWillContinueInAnotherProcess);
 
     void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&);
     void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader* = nullptr);

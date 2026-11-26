@@ -48,6 +48,7 @@ class SharedBuffer;
 class WebSocketChannel;
 struct WebSocketFrame;
 using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
+enum class LoadWillContinueInAnotherProcess : bool;
 
 inline constexpr ASCIILiteral errorDomainInspectorNetworkAgent { "InspectorNetworkAgent"_s };
 }
@@ -78,7 +79,7 @@ public:
     virtual void didReceiveResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceResponse&, WebCore::ResourceLoader*) = 0;
     virtual void didReceiveData(WebCore::ResourceLoaderIdentifier, const WebCore::SharedBuffer*, int expectedDataLength, int encodedDataLength) = 0;
     virtual void didFinishLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::NetworkLoadMetrics&, WebCore::ResourceLoader*) = 0;
-    virtual void didFailLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceError&) = 0;
+    virtual void didFailLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceError&, WebCore::LoadWillContinueInAnotherProcess) = 0;
     virtual void didReceiveScriptResponse(WebCore::ResourceLoaderIdentifier) = 0;
     virtual void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, const String& sourceString) = 0;
     virtual void didLoadResourceFromMemoryCache(WebCore::DocumentLoader*, WebCore::CachedResource&, const URL&) = 0;

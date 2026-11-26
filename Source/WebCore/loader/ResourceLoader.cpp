@@ -703,14 +703,14 @@ void ResourceLoader::didFail(const ResourceError& error)
     releaseResources();
 }
 
-void ResourceLoader::cleanupForError(const ResourceError& error)
+void ResourceLoader::cleanupForError(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (m_notifiedLoadComplete)
         return;
     m_notifiedLoadComplete = true;
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks && m_identifier) {
         if (RefPtr frameLoader = this->frameLoader())
-            frameLoader->notifier().didFailToLoad(*this, *m_identifier, error);
+            frameLoader->notifier().didFailToLoad(*this, *m_identifier, error, loadWillContinueInAnotherProcess);
     }
 }
 
@@ -754,7 +754,7 @@ void ResourceLoader::cancel(const ResourceError& error, LoadWillContinueInAnothe
             handle->cancel();
             m_handle = nullptr;
         }
-        cleanupForError(nonNullError);
+        cleanupForError(nonNullError, loadWillContinueInAnotherProcess);
     }
 
     // If cancel() completed from within the call to willCancel() or didFailToLoad(),

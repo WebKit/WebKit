@@ -2579,6 +2579,9 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     if (auto& action = navigation.lastNavigationAction()) {
         loadParameters.hadUserGesture = action->userGestureTokenIdentifier.has_value();
         loadParameters.requester = action->requester;
+        // Web Inspector reports the redirect that made the load continue in this process with the request there.
+        if (m_inspectorController->hasFrontends() && shouldTreatAsContinuingLoad != ShouldTreatAsContinuingLoad::No && !existingNetworkResourceLoadIdentifierToResume)
+            loadParameters.redirectResponseForInspector = action->redirectResponse;
     }
     if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision || shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted) {
         loadParameters.originalRequest = navigation.originalRequest();

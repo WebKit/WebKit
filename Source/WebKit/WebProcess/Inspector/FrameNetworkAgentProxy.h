@@ -92,7 +92,7 @@ public:
     void didReceiveResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceResponse&, WebCore::ResourceLoader*) final;
     void didReceiveData(WebCore::ResourceLoaderIdentifier, const WebCore::SharedBuffer*, int expectedDataLength, int encodedDataLength) final;
     void didFinishLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::NetworkLoadMetrics&, WebCore::ResourceLoader*) final;
-    void didFailLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceError&) final;
+    void didFailLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceError&, WebCore::LoadWillContinueInAnotherProcess) final;
     void didLoadResourceFromMemoryCache(WebCore::DocumentLoader*, WebCore::CachedResource&, const URL&) final;
     void didReceiveThreadableLoaderResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentThreadableLoader&) final;
     void didReceiveScriptResponse(WebCore::ResourceLoaderIdentifier) final;

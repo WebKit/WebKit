@@ -92,7 +92,7 @@ void ResourceLoadNotifier::didFinishLoad(ResourceLoader& loader, ResourceLoaderI
     dispatchDidFinishLoading(protect(loader.documentLoader()), identifier, networkLoadMetrics, &loader);
 }
 
-void ResourceLoadNotifier::didFailToLoad(ResourceLoader& loader, ResourceLoaderIdentifier identifier, const ResourceError& error)
+void ResourceLoadNotifier::didFailToLoad(ResourceLoader& loader, ResourceLoaderIdentifier identifier, const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     RefPtr page = m_frame->page();
     if (!page) // This may be called during the frame's destruction after detaching from parent page.
@@ -105,7 +105,7 @@ void ResourceLoadNotifier::didFailToLoad(ResourceLoader& loader, ResourceLoaderI
     if (!error.isNull())
         frame->loader().client().dispatchDidFailLoading(protect(loader.documentLoader()), identifier, error);
 
-    InspectorInstrumentation::didFailLoading(frame.ptr(), protect(loader.documentLoader()), identifier, error);
+    InspectorInstrumentation::didFailLoading(frame.ptr(), protect(loader.documentLoader()), identifier, error, loadWillContinueInAnotherProcess);
 }
 
 void ResourceLoadNotifier::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceRequest& request)
