@@ -34,9 +34,12 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include <WebCore/RenderingResourceIdentifier.h>
 #include <simd/simd.h>
 #include <wtf/MachSendRight.h>
+#endif
+
+#if ENABLE(GPU_PROCESS_MODEL)
+#include <WebCore/ColorSpace.h>
 #endif
 
 #if ENABLE(SPATIAL_PORTAL) && PLATFORM(COCOA)
@@ -90,6 +93,28 @@ class Mesh : public RefCountedAndCanMakeWeakPtr<Mesh> {
 public:
     virtual ~Mesh() = default;
 
+#if ENABLE(GPU_PROCESS_MODEL)
+    // The GPU process creates the render buffers, and the Web Process reads them through images of
+    // their contents. They have 16-bit float components in the extended linear Display P3 color
+    // space, or 8-bit components in the linear Display P3 color space for the standard dynamic range.
+    static bool renderBuffersHaveFloatComponents(bool standardDynamicRange)
+    {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        return !standardDynamicRange;
+#else
+        UNUSED_PARAM(standardDynamicRange);
+        return false;
+#endif
+    }
+    static const WebCore::ColorSpace& renderBufferColorSpace(bool standardDynamicRange)
+    {
+        return standardDynamicRange ? WebCore::ColorSpace::LinearDisplayP3() : WebCore::ColorSpace::ExtendedLinearDisplayP3();
+    }
+    // The images of the render buffers with float components are opaque, as that format does not tell
+    // whether the contents are.
+    static bool renderBufferImageHasAlpha(bool standardDynamicRange) { return !renderBuffersHaveFloatComponents(standardDynamicRange); }
+#endif
+
     String label() const { return m_label; }
 
     void setLabel(String&& label)
@@ -135,8 +160,8 @@ public:
     virtual std::optional<WebModel::Float4x4> resolvedPortalTransform() const = 0;
 #endif
     virtual Vector<MachSendRight> ioSurfaceHandles() { return { }; }
-    virtual void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t) { }
-    virtual RefPtr<WebCore::NativeImage> getCurrentFrameAsNativeImage(uint32_t) { return nullptr; }
+    // A copy of the contents of the render buffer, as the render buffer is drawn to again.
+    virtual RefPtr<WebCore::NativeImage> copyNativeImage(uint32_t bufferIndex) = 0;
     virtual void updateRenderBuffers(WebModel::ResizeMeshDescriptor&&) { }
     virtual void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback) { callback({ }); }
     virtual std::optional<std::pair<simd_float4, simd_float4>> centerAndExtents(WebCore::NodeIdentifier) const { return std::nullopt; }

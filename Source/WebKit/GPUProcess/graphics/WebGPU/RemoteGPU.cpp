@@ -43,9 +43,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUDescriptorDeserializers.h"
 #include "WebGPUObjectHeap.h"
-#include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
-#include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPU.h>
 #include <WebCore/WebGPUCppAPI.h>
@@ -227,30 +225,6 @@ void RemoteGPU::createCompositorIntegration(WebGPUCompositorIntegrationIdentifie
     objectHeap->addObject(identifier, remoteCompositorIntegration);
 }
 
-static void drawNativeImageToCanvas(WebCore::NativeImage& image, const WebCore::IntSize& canvasSize, WebCore::GraphicsContext& context)
-{
-    WebCore::GraphicsContextStateSaver stateSaver(context);
-    context.setImageInterpolationQuality(WebCore::InterpolationQuality::DoNotInterpolate);
-    context.drawNativeImage(image, WebCore::FloatRect { { }, canvasSize }, WebCore::FloatRect { { }, image.size() }, { WebCore::CompositeOperator::Copy });
-}
-
-void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage, WebCore::RenderingResourceIdentifier imageBufferIdentifier)
-{
-    assertIsCurrent(workQueue());
-    BinarySemaphore semaphore;
-
-    Ref renderingBackend = m_renderingBackend;
-    Ref protectedNativeImage = nativeImage;
-    renderingBackend->dispatch([&]() mutable {
-        if (auto imageBuffer = renderingBackend->imageBuffer(imageBufferIdentifier)) {
-            drawNativeImageToCanvas(protectedNativeImage, imageBuffer->backendSize(), imageBuffer->context());
-            imageBuffer->flushDrawingContext();
-        }
-        semaphore.signal();
-    });
-    semaphore.wait();
-}
-
 Ref<RemoteSharedResourceCache> RemoteGPU::sharedResourceCache()
 {
     return m_renderingBackend->sharedResourceCache();
@@ -309,12 +283,8 @@ Vector<RemoteImageBufferSet::ExternalReadResult> RemoteGPU::fetchPortalContentSu
 #if ENABLE(GPU_PROCESS_MODEL)
 Vector<UniqueRef<WebCore::IOSurface>> RemoteGPU::createRenderBuffers(unsigned width, unsigned height, const WebCore::ProcessIdentity& processIdentity, bool standardDynamicRange)
 {
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-    const auto colorFormat = standardDynamicRange ? WebCore::IOSurface::Format::BGRA : WebCore::IOSurface::Format::RGBA16F;
-#else
-    const auto colorFormat = WebCore::IOSurface::Format::BGRA;
-#endif
-    const auto colorSpace = standardDynamicRange ? WebCore::ColorSpace::LinearDisplayP3() : WebCore::ColorSpace::ExtendedLinearDisplayP3();
+    const auto colorFormat = WebKit::Mesh::renderBuffersHaveFloatComponents(standardDynamicRange) ? WebCore::IOSurface::Format::RGBA16F : WebCore::IOSurface::Format::BGRA;
+    const auto& colorSpace = WebKit::Mesh::renderBufferColorSpace(standardDynamicRange);
 
     Vector<UniqueRef<WebCore::IOSurface>> ioSurfaces;
 
@@ -348,7 +318,7 @@ static RefPtr<WebKit::Mesh> createModelBackingInternal(unsigned width, unsigned 
         .standardDynamicRange = standardDynamicRange
     };
 
-    auto mesh = WebKit::MeshImpl::create(WebMesh::create(backingDescriptor), WTF::move(ioSurfaceVector));
+    auto mesh = WebKit::MeshImpl::create(WebMesh::create(backingDescriptor), WTF::move(ioSurfaceVector), WebCore::IntSize(static_cast<int>(width), static_cast<int>(height)), standardDynamicRange);
     callback(mesh->ioSurfaceHandles());
     return mesh;
 }

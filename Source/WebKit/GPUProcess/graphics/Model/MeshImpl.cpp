@@ -30,9 +30,11 @@
 
 #include "ModelTypes.h"
 #include "WebKitMesh.h"
+#include <WebCore/CVUtilities.h>
 #include <WebCore/IOSurface.h>
 #include <WebCore/NativeImage.h>
-#include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <WebCore/PixelBufferConversion.h>
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -40,9 +42,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MeshImpl);
 
-MeshImpl::MeshImpl(Ref<WebMesh>&& mesh, Vector<UniqueRef<WebCore::IOSurface>>&& renderBuffers)
+MeshImpl::MeshImpl(Ref<WebMesh>&& mesh, Vector<UniqueRef<WebCore::IOSurface>>&& renderBuffers, const WebCore::IntSize& renderBufferSize, bool standardDynamicRange)
     : m_backing(WTF::move(mesh))
     , m_renderBuffers(WTF::move(renderBuffers))
+    , m_renderBufferSize(renderBufferSize)
+    , m_standardDynamicRange(standardDynamicRange)
 {
 }
 
@@ -149,6 +153,7 @@ void MeshImpl::removeEnvironmentMap()
 void MeshImpl::updateContentsHeadroom(float headroom)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY) && PLATFORM(COCOA)
+    m_contentsHeadroom = headroom;
     for (auto& renderBuffer : m_renderBuffers)
         renderBuffer->setContentEDRHeadroom(headroom);
 #else
@@ -167,20 +172,63 @@ Vector<MachSendRight> MeshImpl::ioSurfaceHandles()
 void MeshImpl::updateRenderBuffers(WebModel::ResizeMeshDescriptor&& descriptor)
 {
     m_backing->updateRenderBuffers(descriptor);
+    m_renderBufferSize = { static_cast<int>(descriptor.width), static_cast<int>(descriptor.height) };
     m_renderBuffers = WTF::move(descriptor.renderBuffers);
 }
 
-RefPtr<WebCore::NativeImage> MeshImpl::getCurrentFrameAsNativeImage(uint32_t bufferIndex)
+RefPtr<WebCore::NativeImage> MeshImpl::copyNativeImage(uint32_t bufferIndex)
 {
-    if (bufferIndex >= m_renderBuffers.size())
+    // The render buffer is drawn to again in later frames, so its contents are copied, by the CPU, as
+    // there is no presentation context to blit with. The copy has the format of the render buffers,
+    // which the Web Process knows, and is not drawn to again.
+    auto format = renderBuffersHaveFloatComponents(m_standardDynamicRange) ? WebCore::IOSurface::Format::RGBA16F : WebCore::IOSurface::Format::BGRA;
+    const auto& colorSpace = renderBufferColorSpace(m_standardDynamicRange);
+    auto copy = WebCore::IOSurface::create(nullptr, m_renderBufferSize, colorSpace, WebCore::IOSurface::Name::WebGPU, format);
+    if (!copy)
         return nullptr;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (m_contentsHeadroom)
+        copy->setContentEDRHeadroom(*m_contentsHeadroom);
+#endif
 
-    RefPtr nativeImage { m_renderBuffers[bufferIndex]->createNativeImage() };
-    if (!nativeImage)
+    bool didCopy = false;
+    if (bufferIndex < m_renderBuffers.size()) {
+        Borrow renderBuffers = m_renderBuffers;
+        auto& renderBuffer = renderBuffers[bufferIndex].get();
+        if (renderBuffer.size() == m_renderBufferSize && renderBuffer.hasFormat({ format, WebCore::UseLosslessCompression::No })) {
+            auto source = renderBuffer.lock<WebCore::IOSurface::AccessMode::ReadOnly>();
+            auto destination = copy->lock<WebCore::IOSurface::AccessMode::ReadWrite>();
+            if (source && destination) {
+                auto sourceBytesPerRow = static_cast<unsigned>(renderBuffer.bytesPerRow());
+                auto destinationBytesPerRow = static_cast<unsigned>(copy->bytesPerRow());
+                WebCore::copyRows(sourceBytesPerRow, std::as_const(*source).surfaceSpan(), destinationBytesPerRow, destination->surfaceSpan(), static_cast<unsigned>(m_renderBufferSize.height()), std::min(sourceBytesPerRow, destinationBytesPerRow));
+                didCopy = true;
+            }
+        }
+    }
+    if (!didCopy) {
+        // The image of a render buffer that cannot be read is transparent, as the reader waits for an
+        // image to be published in any case.
+        RetainPtr context = copy->createPlatformContext();
+        if (!context)
+            return nullptr;
+        CGContextClearRect(context.get(), CGRectMake(0, 0, m_renderBufferSize.width(), m_renderBufferSize.height()));
+        CGContextFlush(context.get());
+    }
+
+    // The image holds the copy through a CVPixelBuffer.
+    RetainPtr surface = copy->surface();
+    auto pixelBuffer = WebCore::createCVPixelBuffer(surface.get());
+    if (!pixelBuffer)
         return nullptr;
-
-    CGImageSetCachingFlags(nativeImage->platformImage().get(), kCGImageCachingTransient);
-    return nativeImage;
+    auto alphaInfo = renderBufferImageHasAlpha(m_standardDynamicRange) ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipLast;
+    // The image has the headroom of the contents, as the render buffers do.
+    auto contentHeadroom = WebCore::Headroom::None;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (m_contentsHeadroom)
+        contentHeadroom = WebCore::Headroom { std::max<float>(*m_contentsHeadroom, WebCore::Headroom::None) };
+#endif
+    return WebCore::NativeImage::createTransient(WTF::move(*pixelBuffer), alphaInfo, colorSpace.platformColorSpace(), contentHeadroom);
 }
 #endif
 

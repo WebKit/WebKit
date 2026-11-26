@@ -29,6 +29,7 @@
 
 #include "ModelTypes.h"
 #include "RemoteGPU.h"
+#include "RemoteNativeImageIdentifier.h"
 #include "StreamMessageReceiver.h"
 #include "WebModelIdentifier.h"
 #include <WebCore/NodeIdentifier.h>
@@ -113,7 +114,7 @@ private:
 #endif
     void updateContentsHeadroom(float);
     void updateRenderBuffers(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
-    void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&&);
+    void copyNativeImage(uint32_t bufferIndex, RemoteNativeImageReference);
 
     void render(uint32_t textureIndex, CompletionHandler<void(bool)>&&);
 #if ENABLE(SPATIAL_PORTAL) && HAVE(IOSURFACE)

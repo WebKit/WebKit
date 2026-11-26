@@ -246,7 +246,7 @@ RefPtr<WebKit::Mesh> RemoteGPUProxy::createModelBacking(unsigned width, unsigned
 
     UNUSED_PARAM(sendResult);
 
-    auto result = RemoteMeshProxy::create(root(), m_modelConvertToBackingContext, identifier);
+    auto result = RemoteMeshProxy::create(root(), m_modelConvertToBackingContext, identifier, WebCore::IntSize(static_cast<int>(width), static_cast<int>(height)), standardDynamicRange);
     result->setLabel("Placeholder model label"_s);
     return result;
 #else

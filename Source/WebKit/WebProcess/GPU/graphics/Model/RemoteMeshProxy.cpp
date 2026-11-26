@@ -43,6 +43,9 @@
 #include "Float3.h"
 #include "Float4x4.h"
 #include "ModelTypes.h"
+#include "RemoteNativeImageProxy.h"
+#include "RemoteRenderingBackendProxy.h"
+#include "RemoteSharedResourceCacheProxy.h"
 #endif
 
 namespace WebKit {
@@ -251,11 +254,19 @@ static WebModel::UpdateMeshDescriptor portalChildQuadMeshUpdate(WebCore::NodeIde
 #endif
 #endif
 
-RemoteMeshProxy::RemoteMeshProxy(Ref<RemoteGPUProxy>&& root, ModelConvertToBackingContext& convertToBackingContext, WebModelIdentifier identifier)
+RemoteMeshProxy::RemoteMeshProxy(Ref<RemoteGPUProxy>&& root, ModelConvertToBackingContext& convertToBackingContext, WebModelIdentifier identifier, const WebCore::IntSize& renderBufferSize, bool standardDynamicRange)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_root(WTF::move(root))
+#if ENABLE(GPU_PROCESS_MODEL)
+    , m_renderBufferSize(renderBufferSize)
+    , m_standardDynamicRange(standardDynamicRange)
+#endif
 {
+#if !ENABLE(GPU_PROCESS_MODEL)
+    UNUSED_PARAM(renderBufferSize);
+    UNUSED_PARAM(standardDynamicRange);
+#endif
 }
 
 RemoteMeshProxy::~RemoteMeshProxy()
@@ -443,6 +454,9 @@ void RemoteMeshProxy::removeEnvironmentMap()
 void RemoteMeshProxy::updateContentsHeadroom(float headroom)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    m_contentsHeadroom = headroom;
+#endif
     auto sendResult = send(Messages::RemoteMesh::UpdateContentsHeadroom(headroom));
     UNUSED_PARAM(sendResult);
 #else
@@ -454,6 +468,7 @@ void RemoteMeshProxy::updateContentsHeadroom(float headroom)
 void RemoteMeshProxy::sizeDidChange(unsigned width, unsigned height, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
+    m_renderBufferSize = { static_cast<int>(width), static_cast<int>(height) };
     auto sendResult = sendWithAsyncReply(Messages::RemoteMesh::UpdateRenderBuffers(width, height), WTF::move(callback));
     UNUSED_PARAM(sendResult);
 #else
@@ -463,14 +478,32 @@ void RemoteMeshProxy::sizeDidChange(unsigned width, unsigned height, CompletionH
 #endif
 }
 
-void RemoteMeshProxy::paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex)
+RefPtr<WebCore::NativeImage> RemoteMeshProxy::copyNativeImage(uint32_t bufferIndex)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult { sendSync(Messages::RemoteMesh::PaintCurrentFrameToImageBuffer(imageBufferIdentifier, bufferIndex)) };
-    UNUSED_VARIABLE(sendResult);
+    if (m_renderBufferSize.isEmpty()) [[unlikely]]
+        return nullptr;
+    RefPtr sharedResourceCache = m_root->sharedResourceCache();
+    if (!sharedResourceCache) [[unlikely]]
+        return nullptr;
+    // The image is described by the render buffers that the GPU process created for the size that was
+    // last sent, and has the headroom of the contents.
+    auto headroom = WebCore::Headroom::None;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (m_contentsHeadroom)
+        headroom = WebCore::Headroom { std::max<float>(*m_contentsHeadroom, WebCore::Headroom::None) };
+#endif
+    // The image contents will be published in the shared resource cache by the GPU process. Adopt it
+    // into the rendering backend's cache right away, so that drawing it needs no further set up.
+    Ref nativeImage = RemoteNativeImageProxy::create(m_renderBufferSize, Mesh::renderBufferColorSpace(m_standardDynamicRange).platformColorSpace(), Mesh::renderBufferImageHasAlpha(m_standardDynamicRange), sharedResourceCache.releaseNonNull(), headroom);
+    protect(m_root->renderingBackend())->cacheNativeImageFromSharedNativeImage(nativeImage);
+    auto sendResult = send(Messages::RemoteMesh::CopyNativeImage(bufferIndex, nativeImage->reference()));
+    if (sendResult != IPC::Error::NoError) [[unlikely]]
+        return nullptr;
+    return RefPtr<WebCore::NativeImage> { WTF::move(nativeImage) };
 #else
-    UNUSED_PARAM(imageBufferIdentifier);
     UNUSED_PARAM(bufferIndex);
+    return nullptr;
 #endif
 }
 

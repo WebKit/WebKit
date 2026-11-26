@@ -30,6 +30,7 @@
 #include "Mesh.h"
 #include "RemoteDeviceProxy.h"
 #include "WebModelIdentifier.h"
+#include <WebCore/IntSize.h>
 #include <WebCore/StageModeOperations.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -59,9 +60,9 @@ class ModelConvertToBackingContext;
 class RemoteMeshProxy final : public Mesh {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMeshProxy);
 public:
-    static Ref<RemoteMeshProxy> create(Ref<RemoteGPUProxy>&& root, ModelConvertToBackingContext& convertToBackingContext, WebModelIdentifier identifier)
+    static Ref<RemoteMeshProxy> create(Ref<RemoteGPUProxy>&& root, ModelConvertToBackingContext& convertToBackingContext, WebModelIdentifier identifier, const WebCore::IntSize& renderBufferSize, bool standardDynamicRange)
     {
-        return adoptRef(*new RemoteMeshProxy(WTF::move(root), convertToBackingContext, identifier));
+        return adoptRef(*new RemoteMeshProxy(WTF::move(root), convertToBackingContext, identifier, renderBufferSize, standardDynamicRange));
     }
 
     virtual ~RemoteMeshProxy();
@@ -81,7 +82,7 @@ private:
     };
 #endif
 
-    RemoteMeshProxy(Ref<RemoteGPUProxy>&&, ModelConvertToBackingContext&, WebModelIdentifier);
+    RemoteMeshProxy(Ref<RemoteGPUProxy>&&, ModelConvertToBackingContext&, WebModelIdentifier, const WebCore::IntSize& renderBufferSize, bool standardDynamicRange);
 
     RemoteMeshProxy(const RemoteMeshProxy&) = delete;
     RemoteMeshProxy(RemoteMeshProxy&&) = delete;
@@ -116,7 +117,7 @@ private:
     std::optional<std::pair<simd_float4, simd_float4>> centerAndExtents(WebCore::NodeIdentifier) const final;
     void removeModel(WebCore::NodeIdentifier) final;
     void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
-    void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t bufferIndex) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(uint32_t bufferIndex) final;
 #endif
     void play(bool) final;
 
@@ -163,6 +164,13 @@ private:
     std::optional<WebModel::Float4x4> m_computedTransform;
 #endif
 #if ENABLE(GPU_PROCESS_MODEL)
+    // The GPU process creates the render buffers for the size that was last sent, and the images of
+    // their contents are described up front.
+    WebCore::IntSize m_renderBufferSize;
+    const bool m_standardDynamicRange { false };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    std::optional<float> m_contentsHeadroom;
+#endif
     float m_viewportWidth { 0.f };
     float m_viewportHeight { 0.f };
     WebCore::StageModeOperation m_stageMode { WebCore::StageModeOperation::None };

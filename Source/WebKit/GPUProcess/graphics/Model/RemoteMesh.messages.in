@@ -51,6 +51,6 @@ messages -> RemoteMesh Stream {
 #endif
     void UpdateContentsHeadroom(float headroom)
     void UpdateRenderBuffers(unsigned width, unsigned height) -> (Vector<MachSendRight> renderBuffers) NotStreamEncodableReply
-    void PaintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex) -> () Synchronous
+    void CopyNativeImage(uint32_t bufferIndex, WebKit::RemoteNativeImageReference nativeImageReference)
 }
 #endif

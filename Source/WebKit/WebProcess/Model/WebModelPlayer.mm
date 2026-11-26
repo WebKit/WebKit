@@ -43,6 +43,7 @@
 #import <WebCore/DocumentEventLoop.h>
 #import <WebCore/FloatPoint3D.h>
 #import <WebCore/GPU.h>
+#import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #import <WebCore/HTMLModelElement.h>
@@ -50,6 +51,7 @@
 #import <WebCore/ModelPlayerAnimationState.h>
 #import <WebCore/ModelPlayerGraphicsLayerConfiguration.h>
 #import <WebCore/ModelPlayerTransformState.h>
+#import <WebCore/NativeImage.h>
 #import <WebCore/Navigator.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCALayer.h>
@@ -742,8 +744,14 @@ RefPtr<WebCore::ImageBuffer> WebModelPlayer::snapshotCurrentFrame(const WebCore:
     if (!imageBuffer)
         return nullptr;
 
-    imageBuffer->flushDrawingContext();
-    currentModel->paintCurrentFrameToImageBuffer(imageBuffer->renderingResourceIdentifier(), m_displayTextureIndex);
+    RefPtr image = currentModel->copyNativeImage(m_displayTextureIndex);
+    if (!image)
+        return nullptr;
+
+    auto& context = imageBuffer->context();
+    WebCore::GraphicsContextStateSaver stateSaver(context);
+    context.setImageInterpolationQuality(WebCore::InterpolationQuality::DoNotInterpolate);
+    context.drawNativeImage(*image, WebCore::FloatRect { { }, imageBuffer->logicalSize() }, WebCore::FloatRect { { }, image->size() }, { WebCore::CompositeOperator::Copy });
     return imageBuffer;
 }
 
