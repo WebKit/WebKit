@@ -215,12 +215,13 @@ public:
     // Returns false for a same-document navigation that is not reported because another report follows it, which
     // should then be the one to complete pending navigation commands.
     bool sameDocumentNavigationOccurredForFrame(const WebFrameProxy&, SameDocumentNavigationType, std::optional<WebCore::NavigationIdentifier>, const URL& previousURL);
-    void emitContextCreatedEvent(const WebPageProxy&);
+    void contextCreatedForPage(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
     void clearContextDestroyedStateForFrame(const WebFrameProxy&);
     void webProcessDidTerminate(WebCore::ProcessIdentifier);
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
+    void clearStateForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
     void contextDestroyedForChildFramesOfPreviousDocument(const WebFrameProxy& mainFrame);
     void contextDestroyedForFramesRemovedByProcessTermination(const WebFrameProxy&, const WebProcessProxy&);
@@ -449,7 +450,6 @@ private:
     void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void recursivelyEmitContextCreatedEvent(const FrameTreeNodeData&, std::optional<String>&& parentContext);
     WebPageProxy* getOpenerPage(const WebPageProxy&);
 #endif
 
@@ -537,6 +537,8 @@ private:
     HashSet<WebCore::FrameIdentifier> m_framesReportedDestroyed;
     // Recorded when the page is created, because the opener may be closed before the page is.
     HashMap<WebPageProxyIdentifier, String> m_originalOpenerHandles;
+    // Pages handled by contextCreatedForPage(), with or without a subscriber, so that each is reported at most once.
+    HashSet<WebPageProxyIdentifier> m_pagesReportedCreated;
 
     // A browsingContext.navigate or reload in flight: the id to report, filled in from the API::Navigation for a main frame or
     // from WebCore's first navigationStarted/fragmentNavigated report for a child frame, and whether WebCore reported
