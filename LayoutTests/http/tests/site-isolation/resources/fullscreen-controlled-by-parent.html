@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<style>
+body { margin: 0; height: 100%; }
+</style>
+<script>
+document.addEventListener("fullscreenchange", () => {
+    window.parent.postMessage(document.fullscreenElement ? "entered" : "exited", "*");
+});
+addEventListener("message", event => {
+    if (event.data === "enter") {
+        internals.withUserGesture(() => document.body.requestFullscreen());
+        return;
+    }
+    if (event.data === "exit") {
+        document.exitFullscreen();
+        return;
+    }
+    if (event.data === "query") {
+        window.parent.postMessage("state: fullscreenElement=" + (document.fullscreenElement ? document.fullscreenElement.tagName : "null")
+            + " bodyMatchesFullscreen=" + document.body.matches(":fullscreen"), "*");
+    }
+});
+</script>
+<body>iframe</body>

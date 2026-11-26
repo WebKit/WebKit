@@ -293,8 +293,13 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
         bool descendantHasNonEmptyStack = false;
         for (RefPtr descendant = protectedThis->frame() ? protectedThis->frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(descendant.get());
-            if (!localFrame)
+            if (!localFrame) {
+                if (RefPtr ownerElement = descendant->ownerElement(); ownerElement && ownerElement->hasFullscreenFlag()) {
+                    descendantHasNonEmptyStack = true;
+                    break;
+                }
                 continue;
+            }
             if (protect(protect(localFrame->document())->fullscreen())->fullscreenElement()) {
                 descendantHasNonEmptyStack = true;
                 break;
