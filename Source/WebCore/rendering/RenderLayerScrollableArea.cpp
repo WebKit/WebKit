@@ -1671,6 +1671,12 @@ void RenderLayerScrollableArea::updateSnapOffsets()
     updateSnapOffsetsForScrollableArea(*this, *box, protect(box->style()), box->paddingBoxRect(), box->style().writingMode(), protect(m_layer.renderer().document().focusedElement()).get(), protect(m_layer.renderer().document().cssTarget()).get());
 }
 
+bool RenderLayerScrollableArea::prefersSmoothScrolling() const
+{
+    CheckedPtr box = m_layer.renderBox();
+    return box && useSmoothScrolling(ScrollBehavior::Auto, protect(box->element()));
+}
+
 bool RenderLayerScrollableArea::isScrollSnapInProgress() const
 {
     if (!scrollsOverflow())
