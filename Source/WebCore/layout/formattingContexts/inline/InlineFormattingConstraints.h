@@ -34,6 +34,7 @@ struct ConstraintsForInlineContent : public ConstraintsForInFlowContent {
     ConstraintsForInlineContent(const ConstraintsForInFlowContent&, LayoutUnit visualLeft, LayoutSize formattingRootBorderBoxSize);
 
     LayoutUnit visualLeft() const { return m_visualLeft; }
+    LayoutUnit visualRight() const { return m_visualLeft + horizontal().logicalWidth; }
     LayoutSize formattingRootBorderBoxSize() const { return m_formattingRootBorderBoxSize; }
 
 private:

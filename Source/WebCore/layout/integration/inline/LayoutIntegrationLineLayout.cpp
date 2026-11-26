@@ -581,7 +581,9 @@ void LineLayout::setOutsideMarkerPositions(const OutsideMarkerList& outsideMarke
         return edge;
     }();
 
-    auto contentBoxStartEdge = isLeftToRight ? 0.f : protect(flow())->contentBoxLogicalWidth().toFloat();
+    // Lines are in the border box of the root, so a line no float takes room from starts at the start edge of the content
+    // box, past the border and padding (its right edge when right to left).
+    auto contentBoxStartEdge = (isLeftToRight ? m_inlineContentConstraints->horizontal().logicalLeft : m_inlineContentConstraints->visualRight()).toFloat();
     auto isLineStartConstrainedByFloat = lineStartEdge != contentBoxStartEdge;
     for (auto& listItem : outsideMarkers) {
         CheckedPtr marker = listItem->markerBox();
