@@ -88,6 +88,10 @@
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;
 - (void)_accessibilityDidGetSelectionRects:(NSArray *)selectionRects withGranularity:(UITextGranularity)granularity atOffset:(NSInteger)offset;
 @end
+
+#if ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
+#import "Helpers/cocoa/DragAndDropSimulator.h"
+#endif
 #endif
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -5442,5 +5446,52 @@ TEST(SiteIsolation, PageScaleReachesCrossOriginIframesAfterZooming)
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API) && ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
+
+// DidConcludeDrop clears the drop snapshot state of the process that took the drop, so that an image finishing its load
+// after the drop doesn't send a stray edit drag snapshot. A drop into a cross-site iframe leaves that state in the
+// iframe's process.
+TEST(SiteIsolation, DidConcludeDropReachesCrossOriginIframeProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 100px; width: 300px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'><div id='editor' contenteditable style='width: 300px; height: 100px;'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(ipcTestingConfiguration(server), CGRectMake(0, 0, 400, 400));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE(childFrame.get()._processIdentifier, [webView _webProcessIdentifier]);
+
+    // Look up the message name once: the lookup is slow in debug builds, and the listener sees every message.
+    NSString *countConcludeDrops = @"window.concludeDropCount = 0;"
+        "const didConcludeDrop = IPC.messages.WebPage_DidConcludeDrop.name;"
+        "IPC.addIncomingMessageListener('UI', message => {"
+        "    if (message.name === didConcludeDrop)"
+        "        ++window.concludeDropCount;"
+        "}); true";
+    [webView objectByEvaluatingJavaScript:countConcludeDrops];
+    [webView objectByEvaluatingJavaScript:countConcludeDrops inFrame:childFrame.get()];
+    auto concludeDropCount = [&](WKFrameInfo *frame) {
+        return [[webView objectByEvaluatingJavaScript:@"window.concludeDropCount" inFrame:frame] intValue];
+    };
+
+    RetainPtr itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    [itemProvider registerObject:@"Hello" visibility:NSItemProviderRepresentationVisibilityAll];
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(250, 150) to:CGPointMake(250, 150)];
+    EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"editor.textContent" inFrame:childFrame.get()]);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return concludeDropCount(childFrame.get()) == 1;
+    }));
+    EXPECT_EQ(0, concludeDropCount(nil));
+}
+
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(IPC_TESTING_API) && ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
 
 } // namespace TestWebKitAPI
