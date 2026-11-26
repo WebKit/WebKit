@@ -34,8 +34,11 @@
 #include "LocalFrameView.h"
 #include "ScrollView.h"
 #include "ScrollbarInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityScrollbar);
 
 AccessibilityScrollbar::AccessibilityScrollbar(AXID axID, Scrollbar& scrollbar, AXObjectCache& cache)
     : AccessibilityMockObject(axID, cache)

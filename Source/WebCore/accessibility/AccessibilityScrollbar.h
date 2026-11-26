@@ -29,12 +29,14 @@
 #pragma once
 
 #include "AccessibilityMockObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Scrollbar;
 
 class AccessibilityScrollbar final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityScrollbar);
 public:
     static Ref<AccessibilityScrollbar> create(AXID, Scrollbar&, AXObjectCache&);
 

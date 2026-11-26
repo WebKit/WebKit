@@ -26,8 +26,11 @@
 #include "ExceptionOr.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CryptographicUtilities.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmX25519);
 
 Ref<CryptoAlgorithm> CryptoAlgorithmX25519::create()
 {

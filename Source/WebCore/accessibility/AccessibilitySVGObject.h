@@ -29,11 +29,13 @@
 
 #include "AXLoggerBase.h"
 #include "AccessibilityRenderObject.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class AccessibilitySVGObject : public AccessibilityRenderObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilitySVGObject);
 public:
     NODELETE static Ref<AccessibilitySVGObject> create(AXID, RenderObject&, AXObjectCache&, bool isSVGRoot = false);
     NODELETE static Ref<AccessibilitySVGObject> create(AXID, Element&, AXObjectCache&, bool isSVGRoot = false);

@@ -31,8 +31,11 @@
 #include "ExceptionOr.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmPBKDF2);
 
 Ref<CryptoAlgorithm> CryptoAlgorithmPBKDF2::create()
 {

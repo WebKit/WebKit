@@ -29,9 +29,12 @@
 #include "CryptoAlgorithmRegistry.h"
 #include "ExceptionOr.h"
 #include "JsonWebKey.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoKeyOKP);
 
 static const ASCIILiteral X25519 { "X25519"_s };
 static const ASCIILiteral Ed25519 { "Ed25519"_s };

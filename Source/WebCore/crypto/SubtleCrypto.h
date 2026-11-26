@@ -31,6 +31,7 @@
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
@@ -52,6 +53,7 @@ enum class CryptoAlgorithmIdentifier : uint8_t;
 enum class CryptoKeyUsage : uint8_t;
 
 class SubtleCrypto : public RefCounted<SubtleCrypto>, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(SubtleCrypto);
 public:
     static Ref<SubtleCrypto> create(ScriptExecutionContext* context) { return adoptRef(*new SubtleCrypto(context)); }
     ~SubtleCrypto();

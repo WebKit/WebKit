@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CryptoKeyRSA;
 
 class CryptoAlgorithmRSASSA_PKCS1_v1_5 final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmRSASSA_PKCS1_v1_5);
 public:
     static constexpr ASCIILiteral s_name = "RSASSA-PKCS1-v1_5"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5;

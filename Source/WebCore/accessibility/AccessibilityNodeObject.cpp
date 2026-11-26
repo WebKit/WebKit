@@ -141,11 +141,14 @@
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/ListFormatter.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityNodeObject);
 
 using namespace HTMLNames;
 

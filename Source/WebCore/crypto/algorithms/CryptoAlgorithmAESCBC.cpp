@@ -31,8 +31,11 @@
 #include "CryptoKeyAES.h"
 #include "ExceptionOr.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmAESCBC);
 
 namespace CryptoAlgorithmAESCBCInternal {
 static constexpr auto ALG128 = "A128CBC"_s;

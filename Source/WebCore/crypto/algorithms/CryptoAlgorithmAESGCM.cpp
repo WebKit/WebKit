@@ -34,8 +34,11 @@
 #include <algorithm>
 #include <ranges>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmAESGCM);
 
 namespace CryptoAlgorithmAESGCMInternal {
 static constexpr auto ALG128 = "A128GCM"_s;

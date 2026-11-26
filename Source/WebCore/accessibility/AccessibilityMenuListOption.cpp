@@ -34,8 +34,11 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityMenuListOption);
 
 using namespace HTMLNames;
 

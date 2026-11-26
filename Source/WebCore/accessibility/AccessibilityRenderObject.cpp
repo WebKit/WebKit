@@ -149,6 +149,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -157,6 +158,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityRenderObject);
 
 using namespace HTMLNames;
 

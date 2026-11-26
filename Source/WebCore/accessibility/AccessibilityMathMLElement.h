@@ -35,10 +35,12 @@
 #include "RenderMathMLMath.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMathMLRoot.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AccessibilityMathMLElement : public AccessibilityRenderObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityMathMLElement);
 public:
     static Ref<AccessibilityMathMLElement> create(AXID, RenderObject&, AXObjectCache&, bool isAnonymousOperator);
     virtual ~AccessibilityMathMLElement();

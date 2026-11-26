@@ -21,6 +21,7 @@
 #pragma once
 
 #include "AccessibilityRenderObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,6 +32,7 @@ class HTMLProgressElement;
 class RenderProgress;
 
 class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityProgressIndicator);
 public:
     NODELETE static Ref<AccessibilityProgressIndicator> create(AXID, RenderObject&, AXObjectCache&);
     NODELETE static Ref<AccessibilityProgressIndicator> create(AXID, Element&, AXObjectCache&);

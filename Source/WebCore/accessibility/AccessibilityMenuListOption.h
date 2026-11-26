@@ -27,12 +27,14 @@
 
 #include "AccessibilityNodeObject.h"
 #include "AccessibilityObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class HTMLOptionElement;
 
 class AccessibilityMenuListOption final : public AccessibilityNodeObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityMenuListOption);
 public:
     NODELETE static Ref<AccessibilityMenuListOption> create(AXID, HTMLOptionElement&, AXObjectCache&);
     void setParent(AccessibilityObject* parent) { m_parent = parent; }

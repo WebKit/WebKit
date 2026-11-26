@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,6 +34,7 @@ class CryptoAlgorithmPbkdf2Params;
 class CryptoKeyRaw;
 
 class CryptoAlgorithmPBKDF2 final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmPBKDF2);
 public:
     static constexpr ASCIILiteral s_name = "PBKDF2"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::PBKDF2;

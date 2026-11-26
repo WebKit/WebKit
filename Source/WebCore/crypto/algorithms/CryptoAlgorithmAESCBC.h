@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/CryptoAlgorithm.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,6 +34,7 @@ class CryptoAlgorithmAesCbcCfbParams;
 class CryptoKeyAES;
 
 class CryptoAlgorithmAESCBC final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmAESCBC);
 public:
     enum class Padding : bool { No, Yes };
 

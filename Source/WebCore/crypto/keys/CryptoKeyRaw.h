@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CryptoKey.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CryptoKeyRaw final : public CryptoKey {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoKeyRaw);
 public:
     static Ref<CryptoKeyRaw> create(CryptoAlgorithmIdentifier identifier, Vector<uint8_t>&& keyData, CryptoKeyUsageBitmap usages)
     {
