@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<style>
+  .multicol {
+      columns: 3;
+      column-fill: auto;
+      column-gap: 10px;
+      width: 320px;
+      height: 200px;
+      line-height: 20px;
+  }
+  .ibk {
+      display: inline-block;
+      width: 70px;
+  }
+</style>
+<div class="multicol">
+  <div class="ibk" style="height: 50px; background: black"></div><br>
+  <div class="ibk" style="height: 50px; background: yellow"></div>
+  <div style="break-before: column">
+    <div class="ibk" style="height: 285px; background: cyan"></div>
+  </div>
+</div>
