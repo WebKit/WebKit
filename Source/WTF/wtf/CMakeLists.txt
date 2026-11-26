@@ -796,8 +796,8 @@ endif ()
 set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WTF_DERIVED_SOURCES_DIR}"
-    "${WTF_DIR}"
-    "${WTF_DIR}/wtf"
+    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:${WTF_DIR}>"
+    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:${WTF_DIR}/wtf>"
     "${WTF_DIR}/wtf/dtoa"
     "${WTF_DIR}/wtf/fast_float"
     "${WTF_DIR}/wtf/persistence"
@@ -858,12 +858,16 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     file(WRITE "${WTF_HEADERS_DIR}/ios/WebCoreThread.h" "")
 endif ()
 
-if (SWIFT_REQUIRED AND APPLE)
+if (SWIFT_REQUIRED)
     target_sources(WTF PRIVATE
         ${WTF_DIR}/wtf/WTFCompletionHandler+Extras.swift
         ${WTF_DIR}/wtf/wtf.swift
-        ${WTF_DIR}/wtf/cocoa/SoftLinking.swift
     )
+    if (APPLE)
+        target_sources(WTF PRIVATE
+            ${WTF_DIR}/wtf/cocoa/SoftLinking.swift
+        )
+    endif ()
 
     # WTF's Swift exposes nothing to C++, so there is no interop header to generate.
     set(WTF_SWIFT_TYPECHECK_SOURCES "")
@@ -871,14 +875,32 @@ if (SWIFT_REQUIRED AND APPLE)
         "${WTF_HEADERS_DIR}"
         "WTFSwift-Generated.h")
 
-    # Match the Swift flags WTF.xcconfig sets.
     webkit_target_add_swift_options(WTF
-        "-enable-library-evolution"
-        "-library-level spi"
         "-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${CMAKE_BINARY_DIR}"
     )
+    if (APPLE)
+        # Match the Swift flags WTF.xcconfig sets.
+        webkit_target_add_swift_options(WTF
+            "-enable-library-evolution"
+            "-library-level spi"
+        )
+    else ()
+        # On Apple platforms the interop macro already adds this; elsewhere WTF's
+        # Swift still extends its underlying module and needs it explicitly.
+        webkit_target_add_swift_options(WTF -import-underlying-module)
+    endif ()
+    if (NOT APPLE AND NOT WIN32)
+        string(JSON _wtf_swift_arch GET "${WEBKIT_SWIFT_TARGET_INFO}" "target" "arch")
+        string(JSON _wtf_swift_runtime_dir GET "${WEBKIT_SWIFT_TARGET_INFO}" "paths" "runtimeLibraryPaths" 0)
+        foreach (_wtf_swift_library IN ITEMS swiftCxxStdlib swiftCxx swift_Concurrency swiftCore)
+            find_library(WTF_${_wtf_swift_library}_LIBRARY ${_wtf_swift_library} PATHS "${_wtf_swift_runtime_dir}" NO_DEFAULT_PATH REQUIRED)
+            list(APPEND WTF_LIBRARIES "${WTF_${_wtf_swift_library}_LIBRARY}")
+        endforeach ()
+        find_file(WTF_SWIFTRT_OBJECT swiftrt.o PATHS "${_wtf_swift_runtime_dir}/${_wtf_swift_arch}" NO_DEFAULT_PATH REQUIRED)
+        list(APPEND WTF_LIBRARIES "$<$<NOT:$<LINK_LANGUAGE:Swift>>:${WTF_SWIFTRT_OBJECT}>")
+    endif ()
 endif ()
 
 if (NOT MSVC)

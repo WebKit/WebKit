@@ -960,13 +960,6 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     # set now come from _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS in
     # WebKitMacros.cmake. Only Linux-specific importer flags remain here.
     set(WebKit_SWIFT_CLANG_FLAG_PAIRS
-        # libstdc++ gates coroutine support in <bits/version.h> behind
-        # __glibcxx_want_coroutine.  Swift's Clang 21 compiles <bits/version.h>
-        # as a PCM before that flag is set, so __cpp_lib_coroutine stays
-        # undefined and std::coroutine_handle is not available.  Pre-defining
-        # the flag ensures the PCM gets the right feature-test value.
-        # rdar://175928621
-        "-Xcc -D__glibcxx_want_coroutine=1"
         "-Xcc -fmodule-map-file=${WTF_HEADERS_DIR}/module.modulemap"
     )
     foreach (_dir IN LISTS WebKit_SWIFT_CLANG_INCLUDE_DIRS)
