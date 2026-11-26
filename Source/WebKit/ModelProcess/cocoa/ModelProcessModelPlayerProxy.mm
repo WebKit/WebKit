@@ -45,6 +45,7 @@
 #import <RealitySystemSupport/RealitySystemSupport.h>
 #import <SurfBoardServices/SurfBoardServices.h>
 #endif
+#import <WebCore/CSSUnits.h>
 #import <WebCore/Color.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/LayerHostingContextIdentifier.h>
@@ -496,6 +497,10 @@ void ModelProcessModelPlayerProxy::unloadModelTimerFired()
 
 constexpr float defaultScaleFactor = 0.36f;
 
+#if ENABLE(SPATIAL_PORTAL)
+static constexpr float kCSSPixelsPerMeter = WebCore::CSS::pixelsPerCm * 100.f;
+#endif
+
 static inline simd_float2 makeMeterSizeFromPointSize(CGSize pointSize, CGFloat pointsPerMeter)
 {
     return simd_make_float2(pointSize.width / pointsPerMeter, pointSize.height / pointsPerMeter);
@@ -652,15 +657,18 @@ static RESRT contentTransformedEntitySRT(const simd_float4x4& contentTransform, 
 
 #if ENABLE(SPATIAL_PORTAL)
 // Converts the trailing list's lengths from CSS pixels into the scaled (auto fit) coordinate system.
-simd_float4x4 ModelProcessModelPlayerProxy::contentTransformMatrix() const
+simd_float4x4 ModelProcessModelPlayerProxy::contentTransformMatrix(TranslationUnits translationUnits) const
 {
     auto beforeAuto = static_cast<simd_float4x4>(m_portalTransform.transformBeforeAuto);
     auto afterAuto = static_cast<simd_float4x4>(m_portalTransform.transformAfterAuto);
 
-    simd_float4x4 enclosing = simd_mul(RESRTMatrix(modelStandardizedTransformSRT(m_transformSRT)), beforeAuto);
+    RESRT enclosingSRT = translationUnits == TranslationUnits::Rendering ? m_transformSRT : modelStandardizedTransformSRT(m_transformSRT);
+    float pixelsPerUnit = translationUnits == TranslationUnits::Rendering ? static_cast<float>(effectivePointsPerMeter(m_layer.get())) : 1;
+
+    simd_float4x4 enclosing = simd_mul(RESRTMatrix(enclosingSRT), beforeAuto);
     simd_float3x3 enclosingLinear = simd_matrix(simd_make_float3(enclosing.columns[0]), simd_make_float3(enclosing.columns[1]), simd_make_float3(enclosing.columns[2]));
 
-    simd_float3 translation = simd_mul(simd_inverse(enclosingLinear), simd_make_float3(afterAuto.columns[3]));
+    simd_float3 translation = simd_mul(simd_inverse(enclosingLinear), simd_make_float3(afterAuto.columns[3]) / pixelsPerUnit);
 
     if (std::isfinite(translation.x) && std::isfinite(translation.y) && std::isfinite(translation.z))
         afterAuto.columns[3] = simd_make_float4(translation, afterAuto.columns[3].w);
@@ -764,7 +772,7 @@ void ModelProcessModelPlayerProxy::notifyModelPlayerOfTransformChange()
 
 #if ENABLE(SPATIAL_PORTAL)
     if (m_portalTransform.hasContentTransform())
-        matrix = simd_mul(matrix, contentTransformMatrix());
+        matrix = simd_mul(matrix, contentTransformMatrix(TranslationUnits::Reporting));
 #endif
 
     WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
@@ -806,11 +814,11 @@ RESRT ModelProcessModelPlayerProxy::childEntityTransformSRT(const TrackedModel& 
     }
 
     // The author's `portal-transform` list applies to the whole portal content, so it sits outside of a child's own transform.
-    simd_float4x4 matrix = hasContentTransform ? contentTransformMatrix() : matrix_identity_float4x4;
+    simd_float4x4 matrix = hasContentTransform ? contentTransformMatrix(TranslationUnits::Rendering) : matrix_identity_float4x4;
 
     if (hasChildTransform) {
         RESRT childSRT = REMakeSRTFromMatrix(tracked.childTransform);
-        childSRT.translation /= effectivePointsPerMeter(m_layer.get()) * anchorPlacementScale(tracked);
+        childSRT.translation /= kCSSPixelsPerMeter * anchorPlacementScale(tracked);
         matrix = simd_mul(matrix, RESRTMatrix(childSRT));
     }
 
@@ -941,7 +949,7 @@ void ModelProcessModelPlayerProxy::updateTransform()
     RESRT entitySRT = REMakeSRT(m_transformSRT.scale * reportingModelScale(), m_transformSRT.rotation, m_transformSRT.translation);
 #if ENABLE(SPATIAL_PORTAL)
     if (m_portalTransform.hasContentTransform())
-        entitySRT = REMakeSRTFromMatrix(simd_mul(RESRTMatrix(m_transformSRT), RESRTMatrix(contentTransformedEntitySRT(contentTransformMatrix(), reportingModelScale()))));
+        entitySRT = REMakeSRTFromMatrix(simd_mul(RESRTMatrix(m_transformSRT), RESRTMatrix(contentTransformedEntitySRT(contentTransformMatrix(TranslationUnits::Rendering), reportingModelScale()))));
 #endif
     [reportingEntity setTransform:WKEntityTransform({ entitySRT.scale, entitySRT.rotation, entitySRT.translation })];
 #endif

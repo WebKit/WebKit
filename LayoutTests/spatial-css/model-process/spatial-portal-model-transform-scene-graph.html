@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../model-element/resources/model-utils.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const asset = "2x2x2-center.usdz";
+const cssPixelsPerMeter = 96 / 2.54 * 100;
+const visionOSPointsPerMeter = 1360;
+const tolerance = 0.0005;
+
+const entityOf = (entities, label) => entities.find(entity => entity.element === label);
+const containerOf = entities => entities.find(entity => entity.name === "WebKit:PortalContainer");
+
+const loadedModel = async (test, { portalTransform, style } = {}) => {
+    const portal = createPortal(test, { portalTransform });
+    const model = appendModel(portal, asset);
+    model.id = "model";
+    if (style)
+        model.setAttribute("style", style);
+    await model.ready;
+    return { portal, model };
+};
+
+const settledTranslation = (portal, description) => waitForSceneGraph(portal, entities => {
+    const translation = entityOf(entities, "#model")?.translation;
+    return translation && translation[0];
+}, description);
+
+promise_test(async test => {
+    const { portal } = await loadedModel(test, { style: "translate: 100px 0 0" });
+    const entities = await settledTranslation(portal, "the model's entity is translated");
+
+    assert_approx_equals(entityOf(entities, "#model").translation[0], 100 / cssPixelsPerMeter, tolerance, "100px is converted to meters with the CSS pixels per meter constant");
+}, "A <model>'s CSS translation from WebCore is converted with the CSS pixels per meter constant");
+
+promise_test(async test => {
+    const { portal } = await loadedModel(test, { portalTransform: "auto translateX(100px)" });
+    const entities = await settledTranslation(portal, "the model's entity is translated");
+
+    const containerScale = containerOf(entities).scale[0];
+    assert_approx_equals(entityOf(entities, "#model").translation[0] * containerScale, 100 / visionOSPointsPerMeter, tolerance, "100px moves the rendered content by 100 visionOS points, regardless of the auto fit scale");
+}, "A portal-transform translation after auto is rendered with the visionOS points per meter");
+</script>
+</body>
+</html>

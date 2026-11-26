@@ -262,7 +262,8 @@ private:
     void setGroundingShadowsEnabled(bool);
 #endif
 #if ENABLE(SPATIAL_PORTAL)
-    simd_float4x4 contentTransformMatrix() const;
+    enum class TranslationUnits : bool { Rendering, Reporting };
+    simd_float4x4 contentTransformMatrix(TranslationUnits) const;
 #endif
     using EnvironmentMapKind = WebCore::EnvironmentMapKind;
 
