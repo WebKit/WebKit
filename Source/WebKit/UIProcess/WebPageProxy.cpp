@@ -21365,7 +21365,7 @@ void WebPageProxy::resetSpeechSynthesizer()
 SpeechSynthesisData& WebPageProxy::Internals::speechSynthesisData()
 {
     if (!optionalSpeechSynthesisData)
-        optionalSpeechSynthesisData = { PlatformSpeechSynthesizer::create(*this), nullptr, nullptr, nullptr, nullptr, nullptr };
+        optionalSpeechSynthesisData = { PlatformSpeechSynthesizer::create(*this), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     return *optionalSpeechSynthesisData;
 }
 
@@ -21382,7 +21382,7 @@ void WebPageProxy::speechSynthesisSetFinishedCallback(CompletionHandler<void()>&
     internals().speechSynthesisData().speakingFinishedCompletionHandler = WTF::move(completionHandler);
 }
 
-void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, float volume, float rate, float pitch, MonotonicTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::speechSynthesisSpeak(IPC::Connection& connection, const String& text, const String& lang, float volume, float rate, float pitch, MonotonicTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&& completionHandler)
 {
     auto voice = WebCore::PlatformSpeechSynthesisVoice::create(voiceURI, voiceName, voiceLang, localService, defaultVoice);
     auto utterance = WebCore::PlatformSpeechSynthesisUtterance::create(nullptr);
@@ -21393,6 +21393,7 @@ void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, 
     utterance->setPitch(pitch);
     utterance->setVoice(&voice.get());
 
+    internals().speechSynthesisData().processSpeaking = WebProcessProxy::fromConnection(connection);
     internals().speechSynthesisData().speakingStartedCompletionHandler = WTF::move(completionHandler);
     internals().speechSynthesisData().utterance = WTF::move(utterance);
     protect(internals().speechSynthesisData().synthesizer)->speak(internals().speechSynthesisData().utterance.get());
