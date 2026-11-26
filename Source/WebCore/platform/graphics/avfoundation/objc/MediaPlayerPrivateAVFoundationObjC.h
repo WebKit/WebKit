@@ -192,8 +192,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const final;
-    String accessLog() const final;
-    String errorLog() const final;
     void sceneIdentifierDidChange() final;
 #endif
 

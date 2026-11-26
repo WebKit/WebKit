@@ -1070,20 +1070,6 @@ NSArray* MediaPlayerPrivateRemote::timedMetadata() const
     notImplemented();
     return nullptr;
 }
-
-String MediaPlayerPrivateRemote::accessLog() const
-{
-    auto sendResult = protect(connection())->sendSync(Messages::RemoteMediaPlayerProxy::AccessLog(), m_id);
-    auto [log] = sendResult.takeReplyOr(emptyString());
-    return log;
-}
-
-String MediaPlayerPrivateRemote::errorLog() const
-{
-    auto sendResult = protect(connection())->sendSync(Messages::RemoteMediaPlayerProxy::ErrorLog(), m_id);
-    auto [log] = sendResult.takeReplyOr(emptyString());
-    return log;
-}
 #endif
 
 void MediaPlayerPrivateRemote::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)

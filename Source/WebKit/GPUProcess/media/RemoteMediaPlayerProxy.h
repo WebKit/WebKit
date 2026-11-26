@@ -137,8 +137,6 @@ public:
     void setBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy);
 
 #if PLATFORM(IOS_FAMILY)
-    void accessLog(CompletionHandler<void(String)>&&);
-    void errorLog(CompletionHandler<void(String)>&&);
     void setSceneIdentifier(String&&);
 #endif
 

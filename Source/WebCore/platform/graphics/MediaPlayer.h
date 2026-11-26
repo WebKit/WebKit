@@ -421,8 +421,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const;
-    String accessLog() const;
-    String errorLog() const;
 #endif
 
     FloatSize naturalSize();

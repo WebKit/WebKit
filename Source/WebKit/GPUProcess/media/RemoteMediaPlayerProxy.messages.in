@@ -113,8 +113,6 @@ messages -> RemoteMediaPlayerProxy {
     SetPlatformDynamicRangeLimit(WebCore::PlatformDynamicRangeLimit platformDynamicRangeLimit)
 
 #if PLATFORM(IOS_FAMILY)
-    ErrorLog() -> (String errorLog) Synchronous
-    AccessLog() -> (String accessLog) Synchronous
     SetSceneIdentifier(String sceneIdentifier)
 #endif
 

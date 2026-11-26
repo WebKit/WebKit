@@ -1042,16 +1042,6 @@ NSArray* MediaPlayer::timedMetadata() const
     return protect(m_private)->timedMetadata();
 }
 
-String MediaPlayer::accessLog() const
-{
-    return protect(m_private)->accessLog();
-}
-
-String MediaPlayer::errorLog() const
-{
-    return protect(m_private)->errorLog();
-}
-
 #endif
 
 MediaPlayer::NetworkState MediaPlayer::networkState()

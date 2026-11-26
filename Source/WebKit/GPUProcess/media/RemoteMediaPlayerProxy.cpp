@@ -400,16 +400,6 @@ void RemoteMediaPlayerProxy::setBufferingPolicy(MediaPlayer::BufferingPolicy pol
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RemoteMediaPlayerProxy::accessLog(CompletionHandler<void(String)>&& completionHandler)
-{
-    completionHandler(m_player->accessLog());
-}
-
-void RemoteMediaPlayerProxy::errorLog(CompletionHandler<void(String)>&& completionHandler)
-{
-    completionHandler(m_player->errorLog());
-}
-
 void RemoteMediaPlayerProxy::setSceneIdentifier(String&& identifier)
 {
     m_player->setSceneIdentifier(identifier);

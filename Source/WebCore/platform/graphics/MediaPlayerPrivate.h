@@ -106,8 +106,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     virtual NSArray *timedMetadata() const { return nil; }
-    virtual String accessLog() const { return emptyString(); }
-    virtual String errorLog() const { return emptyString(); }
 #endif
     virtual long platformErrorCode() const { return 0; }
 

@@ -1397,32 +1397,6 @@ NSArray *MediaPlayerPrivateAVFoundationObjC::timedMetadata() const
     return nil;
 }
 
-String MediaPlayerPrivateAVFoundationObjC::accessLog() const
-{
-    if (!m_avPlayerItem)
-        return emptyString();
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    AVPlayerItemAccessLog *log = [m_avPlayerItem accessLog];
-ALLOW_DEPRECATED_DECLARATIONS_END
-    RetainPtr<NSString> logString = adoptNS([[NSString alloc] initWithData:[log extendedLogData] encoding:[log extendedLogDataStringEncoding]]);
-
-    return logString.get();
-}
-
-String MediaPlayerPrivateAVFoundationObjC::errorLog() const
-{
-    if (!m_avPlayerItem)
-        return emptyString();
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    AVPlayerItemErrorLog *log = [m_avPlayerItem errorLog];
-ALLOW_DEPRECATED_DECLARATIONS_END
-    RetainPtr<NSString> logString = adoptNS([[NSString alloc] initWithData:[log extendedLogData] encoding:[log extendedLogDataStringEncoding]]);
-
-    return logString.get();
-}
-
 void MediaPlayerPrivateAVFoundationObjC::sceneIdentifierDidChange()
 {
 #if HAVE(SPATIAL_TRACKING_LABEL)
