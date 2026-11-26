@@ -167,8 +167,10 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
             auto bottomLeftRadius = physicalSizeToLogical(Style::evaluate<FloatSize>(horizontalWritingMode ? inset->radii.bottomLeft() : isBlockLeftToRight ? inset->radii.topRight() : inset->radii.topLeft(), boxSize, zoom), writingMode);
             auto bottomRightRadius = physicalSizeToLogical(Style::evaluate<FloatSize>(horizontalWritingMode ? inset->radii.bottomRight() : isBlockLeftToRight ? inset->radii.bottomRight() : inset->radii.bottomLeft(), boxSize, zoom), writingMode);
             auto cornerRadii = CornerRadii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
-            if (shouldFlipStartAndEndPoints(writingMode))
+            if (shouldFlipStartAndEndPoints(writingMode)) {
                 cornerRadii = { cornerRadii.topRight(), cornerRadii.topLeft(), cornerRadii.bottomRight(), cornerRadii.bottomLeft() };
+                logicalRect.setX(borderBoxLogicalWidth - logicalRect.maxX());
+            }
 
             cornerRadii.scale(calcBorderRadiiConstraintScaleFor(logicalRect, cornerRadii));
             return createInsetShape(FloatRoundedRect { logicalRect, cornerRadii });

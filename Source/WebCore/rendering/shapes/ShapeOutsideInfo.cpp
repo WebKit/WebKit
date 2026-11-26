@@ -338,6 +338,14 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
                 }
             };
             flipForWritingAndInlineDirection();
+            if (LayoutShape::shouldFlipStartAndEndPoints(writingMode)) {
+                // The corners and the contour are mirrored in the box above. Mirror the box in the border box too.
+                auto offset = LayoutSize { borderBoxLogicalWidth - shapeRect.rect().maxX() - shapeRect.rect().x(), 0_lu };
+                shapeRect.move(offset);
+                mapContour([&](FloatPoint point) {
+                    return point + FloatSize { offset };
+                });
+            }
             return LayoutShape::createBoxShape(shapeRect, WTF::move(contour), writingMode, logicalMargin);
         },
         [&](const CSS::Keyword::None&) {
@@ -403,6 +411,12 @@ ShapeOutsideDeltas ShapeOutsideInfo::computeDeltasForContainingBlockLine(const R
         if (protect(computedShape())->lineOverlapsShapeMarginBounds(borderBoxLineTop, lineHeight)) {
             LineSegment segment = protect(computedShape())->getExcludedInterval(borderBoxLineTop, std::min(lineHeight, shapeLogicalBottom() - borderBoxLineTop));
             if (segment.isValid) {
+                // The segment is relative to the inline start edge of the border box (see FloatingContext's computeShapeEdge()),
+                // the deltas to its logical left edge.
+                if (!protect(renderer->containingBlock())->writingMode().isLogicalLeftInlineStart()) {
+                    auto borderBoxLogicalWidth = containingBlock.logicalWidthForChild(renderer);
+                    segment = { borderBoxLogicalWidth - segment.logicalRight, borderBoxLogicalWidth - segment.logicalLeft };
+                }
                 LayoutUnit logicalLeftMargin = containingBlock.writingMode().isLogicalLeftInlineStart() ? containingBlock.marginStartForChild(renderer) : containingBlock.marginEndForChild(renderer);
                 LayoutUnit rawLeftMarginBoxDelta { segment.logicalLeft + logicalLeftMargin };
                 LayoutUnit leftMarginBoxDelta = clampTo<LayoutUnit>(rawLeftMarginBoxDelta, 0_lu, floatMarginBoxWidth);

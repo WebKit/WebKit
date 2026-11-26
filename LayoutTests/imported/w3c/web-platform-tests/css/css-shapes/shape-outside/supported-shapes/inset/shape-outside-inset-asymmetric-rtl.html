@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>CSS Shape Test: lines wrap around an asymmetric inset() or box shape-outside in right-to-left content</title>
+<link rel="help" href="https://drafts.csswg.org/css-shapes-1/#supported-basic-shapes">
+<link rel="help" href="https://drafts.csswg.org/css-shapes-1/#shapes-from-box-values">
+<link rel="match" href="shape-outside-inset-asymmetric-rtl-ref.html">
+<meta name="assert" content="The shape of each right float only covers its right half, so the 140px wide blue box fits on the first line next to it, at the right side of the 150px that the shape leaves.">
+<style>
+.container {
+  direction: rtl;
+  width: 200px;
+  height: 40px;
+  margin-bottom: 10px;
+  line-height: 0;
+  background-color: lightgray;
+}
+
+.float {
+  float: right;
+  height: 40px;
+}
+
+.inset {
+  width: 100px;
+  shape-outside: inset(0 0 0 50%);
+}
+
+.inset-round {
+  width: 100px;
+  shape-outside: inset(0 0 0 50% round 1px);
+}
+
+.content-box {
+  width: 50px;
+  padding-left: 50px;
+  shape-outside: content-box;
+}
+
+.box {
+  display: inline-block;
+  width: 140px;
+  height: 10px;
+  background-color: blue;
+}
+</style>
+<div class="container"><div class="float inset"></div><span class="box"></span></div>
+<div class="container"><div class="float inset-round"></div><span class="box"></span></div>
+<div class="container"><div class="float content-box"></div><span class="box"></span></div>

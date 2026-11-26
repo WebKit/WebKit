@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<title>A box that establishes a new block formatting context avoids the shape-outside (polygon(), inset() or a box) of a float in right-to-left content the way it does in left-to-right content</title>
+<style>
+.container {
+  display: flow-root;
+  width: 200px;
+  height: 20px;
+  margin-bottom: 5px;
+  background-color: lightgray;
+}
+
+.left {
+  float: left;
+  width: 100px;
+  height: 20px;
+}
+
+.right {
+  float: right;
+  width: 100px;
+  height: 20px;
+}
+
+.left-half {
+  shape-outside: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+}
+
+.right-half {
+  shape-outside: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
+}
+
+.inset-left-half {
+  shape-outside: inset(0 50% 0 0);
+}
+
+.inset-right-half {
+  shape-outside: inset(0 0 0 50%);
+}
+
+.content-box-left-half {
+  width: 50px;
+  padding-right: 50px;
+  shape-outside: content-box;
+}
+
+.content-box-right-half {
+  width: 50px;
+  padding-left: 50px;
+  shape-outside: content-box;
+}
+
+.avoider {
+  overflow: hidden;
+  height: 10px;
+  background-color: green;
+}
+</style>
+<div class="container"><div class="left left-half"></div><div class="avoider"></div></div>
+<div class="container" dir="rtl"><div class="left left-half"></div><div class="avoider"></div></div>
+<div class="container"><div class="left right-half"></div><div class="avoider"></div></div>
+<div class="container" dir="rtl"><div class="left right-half"></div><div class="avoider"></div></div>
+<div class="container"><div class="right right-half"></div><div class="avoider"></div></div>
+<div class="container" dir="rtl"><div class="right right-half"></div><div class="avoider"></div></div>
+<div class="container"><div class="right left-half"></div><div class="avoider"></div></div>
+<div class="container" dir="rtl"><div class="right left-half"></div><div class="avoider"></div></div>
+<div class="container"><div class="left inset-left-half"></div><div class="avoider"></div></div>
+<div class="container" dir="rtl"><div class="left inset-left-half"></div><div class="avoider"></div></div>
+<div class="container"><div class="right inset-right-half"></div><div class="avoider"></div></div>
+<div class="container" dir="rtl"><div class="right inset-right-half"></div><div class="avoider"></div></div>
+<div class="container"><div class="left content-box-left-half"></div><div class="avoider"></div></div>
+<div class="container" dir="rtl"><div class="left content-box-left-half"></div><div class="avoider"></div></div>
+<div class="container"><div class="right content-box-right-half"></div><div class="avoider"></div></div>
+<div class="container" dir="rtl"><div class="right content-box-right-half"></div><div class="avoider"></div></div>
