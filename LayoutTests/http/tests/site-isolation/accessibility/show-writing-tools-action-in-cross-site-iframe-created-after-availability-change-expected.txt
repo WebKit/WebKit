@@ -1,0 +1,10 @@
+This test verifies the AXShowWritingTools custom action is exposed on a textarea in a cross-site iframe whose process is created after Writing Tools became available.
+
+PASS: mainTextareaHasShowWritingTools === true
+PASS: iframeTextareaFoundAccessibleElement === true
+PASS: iframeTextareaHasShowWritingTools === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
