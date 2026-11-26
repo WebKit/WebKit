@@ -83,6 +83,7 @@ public:
 #endif
     bool isQualcommVideoFrameBuffer() const;
     static std::optional<Vector<EGLint>> buildEGLImageAttributes(const Attributes&, Attributes::EnableModifiers = Attributes::EnableModifiers::Yes);
+    static Vector<uint32_t, 4> allPlaneFormats(uint32_t fourcc);
 
     bool importIfNeeded();
     sk_sp<SkColorSpace> skiaColorSpace() const;
