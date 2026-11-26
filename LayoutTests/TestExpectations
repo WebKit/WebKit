@@ -8021,11 +8021,7 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-ident-function.ht
 
 fast/canvas/image-buffer-resource-limits.html [ Slow ]
 
-# has-slotted is not implemeneted - https://bugs.webkit.org/show_bug.cgi?id=280608
-imported/w3c/web-platform-tests/css/css-shadow/has-slotted-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shadow/has-slotted-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shadow/has-slotted-flattened-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shadow/has-slotted-flattened-003.html [ ImageOnlyFailure ]
+# The functional :has-slotted() form is not implemented - https://bugs.webkit.org/show_bug.cgi?id=280608
 imported/w3c/web-platform-tests/css/css-shadow/has-slotted-functional-001.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shadow/has-slotted-functional-004.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shadow/has-slotted-functional-006.tentative.html [ ImageOnlyFailure ]

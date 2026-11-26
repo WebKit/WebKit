@@ -41,6 +41,7 @@
 #include "HTMLDocument.h"
 #include "HTMLHeadingElement.h"
 #include "HTMLNames.h"
+#include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
 #include "Namespace.h"
 #include "NodeName.h"
@@ -98,6 +99,7 @@ using PseudoClassesSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::
     v(operationMatchesDisabledPseudoClass) \
     v(operationMatchesEnabledPseudoClass) \
     v(operationIsDefinedElement) \
+    v(operationHasSlottedPseudoClass) \
     v(operationMatchesFocusPseudoClass) \
     v(operationMatchesFocusVisiblePseudoClass) \
     v(operationMatchesFocusWithinPseudoClass) \
@@ -248,6 +250,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesD
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDisabledPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesEnabledPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsDefinedElement, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationHasSlottedPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusVisiblePseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFocusWithinPseudoClass, bool, (const Element&));
@@ -846,6 +849,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsDefinedElement, bool, (const Elemen
     return isDefinedElement(element);
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationHasSlottedPseudoClass, bool, (const Element& element))
+{
+    COUNT_SELECTOR_OPERATION(operationHasSlottedPseudoClass);
+    return matchesHasSlottedPseudoClass(element);
+}
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesFocusPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesFocusPseudoClass);
@@ -1158,6 +1167,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClass::Defined:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsDefinedElement));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClass::HasSlotted:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationHasSlottedPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClass::Focus:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFocusPseudoClass));

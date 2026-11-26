@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SlotAssignment.h"
 
+#include "ChildChangeInvalidation.h"
 #include "ContainerNodeInlines.h"
 #include "ElementInlines.h"
 #include "HTMLSlotElement.h"
@@ -304,6 +305,31 @@ void NamedSlotAssignment::slotFallbackDidChange(HTMLSlotElement& slotElement, Sh
         slotElement.enqueueSlotChangeEvent();
 }
 
+// A slot assigned to another slot changes that slot's flattened nodes too, so follow the
+// chain outwards. Only slots that had :has-slotted evaluated against them can have styles
+// depending on it; sibling and descendant dependencies are re-resolved through the
+// invalidated slot by the usual style relation bits.
+static void invalidateStyleForHasSlotted(HTMLSlotElement& slotElement)
+{
+    // A slot in a disconnected tree has nothing to invalidate; its style is computed anew
+    // when the tree is connected.
+    if (!slotElement.isConnected())
+        return;
+
+    for (RefPtr slot = &slotElement; slot; slot = slot->assignedSlot()) {
+        if (!slot->styleAffectedByHasSlotted())
+            continue;
+        slot->invalidateStyleForSubtree();
+        Style::invalidateForSiblingCombinators(slot.get());
+    }
+}
+
+static void invalidateStyleForHasSlottedInShadowRoot(ShadowRoot& shadowRoot)
+{
+    for (Ref slot : descendantsOfType<HTMLSlotElement>(shadowRoot))
+        invalidateStyleForHasSlotted(slot);
+}
+
 void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& shadowRoot, RenderTreeUpdate renderTreeUpdate)
 {
     auto& slotName = slotNameFromAttributeValue(slotAttrValue);
@@ -329,6 +355,8 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
             slotElement->updateEffectiveTextDirection();
 
         slotElement->updateAccessibilityOnSlotChange();
+
+        invalidateStyleForHasSlotted(*slotElement);
     }
 
     if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
@@ -732,13 +760,18 @@ void ManualSlotAssignment::hostChildElementDidChangeSlotAttribute(Element&, cons
 void ManualSlotAssignment::willRemoveAssignedNode(Node& node, ShadowRoot& shadowRoot)
 {
     ++m_slottableVersion;
-    if (RefPtr slot = node.assignedSlot(); slot && slot->containingShadowRoot() == &shadowRoot && shadowRoot.shouldFireSlotchangeEvent())
+    RefPtr slot = node.assignedSlot();
+    if (!slot || slot->containingShadowRoot() != &shadowRoot)
+        return;
+    invalidateStyleForHasSlotted(*slot);
+    if (shadowRoot.shouldFireSlotchangeEvent())
         slot->enqueueSlotChangeEvent();
 }
 
-void ManualSlotAssignment::didRemoveAllChildrenOfShadowHost(ShadowRoot&)
+void ManualSlotAssignment::didRemoveAllChildrenOfShadowHost(ShadowRoot& shadowRoot)
 {
     ++m_slottableVersion;
+    invalidateStyleForHasSlottedInShadowRoot(shadowRoot);
 }
 
 void ManualSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot&, ContainerNode::ChildChange::Type)

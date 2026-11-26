@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>:has-slotted invalidation when slot assignment changes</title>
+<link rel="help" href="https://drafts.csswg.org/css-scoping/#has-slotted-pseudo">
+<meta name="assert" content=":has-slotted is invalidated by every way a slot's assigned nodes can change.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<style>
+  .host { display: block; }
+</style>
+
+<div id="container"></div>
+
+<script>
+const UNSLOTTED = "rgb(0, 0, 255)";
+const SLOTTED = "rgb(0, 255, 0)";
+
+const SHADOW_STYLE = `
+  <style>
+    slot { color: ${UNSLOTTED}; }
+    :has-slotted { color: ${SLOTTED}; }
+  </style>`;
+
+// Builds a host with an open shadow root. `shadowMarkup` defaults to a single
+// unnamed slot; `hostMarkup` is the host's light DOM.
+function makeHost(shadowMarkup = "<slot></slot>", hostMarkup = "", mode = "open") {
+  const host = document.createElement("div");
+  host.className = "host";
+  host.innerHTML = hostMarkup;
+  container.append(host);
+  const root = host.attachShadow({ mode });
+  root.innerHTML = SHADOW_STYLE + shadowMarkup;
+  return { host, root };
+}
+
+function colorOf(element) {
+  return getComputedStyle(element).color;
+}
+
+function assertSlotted(slot, message) {
+  assert_equals(colorOf(slot), SLOTTED, message);
+}
+
+function assertNotSlotted(slot, message) {
+  assert_equals(colorOf(slot), UNSLOTTED, message);
+}
+
+setup({ explicit_done: false });
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  assertNotSlotted(slot, "initially empty");
+
+  host.appendChild(document.createElement("div"));
+  assertSlotted(slot, "after appendChild");
+
+  host.removeChild(host.firstChild);
+  assertNotSlotted(slot, "after removeChild");
+}, "appendChild and removeChild");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  const first = host.appendChild(document.createElement("div"));
+  assertSlotted(slot, "after appendChild");
+
+  host.insertBefore(document.createElement("span"), first);
+  assertSlotted(slot, "after insertBefore");
+
+  host.replaceChildren();
+  assertNotSlotted(slot, "after replaceChildren()");
+}, "insertBefore");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  const child = host.appendChild(document.createElement("div"));
+  assertSlotted(slot, "after appendChild");
+
+  child.remove();
+  assertNotSlotted(slot, "after child.remove()");
+}, "ChildNode.remove() on the slotted element");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  const child = host.appendChild(document.createElement("div"));
+  assertSlotted(slot, "after appendChild");
+
+  child.replaceWith(document.createTextNode("text"));
+  assertSlotted(slot, "a text node is slottable too");
+
+  child.remove();
+  host.firstChild.remove();
+  assertNotSlotted(slot, "after removing the text node");
+}, "replaceWith, element to text node");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  const text = host.appendChild(document.createTextNode("x"));
+  assertSlotted(slot, "after appending a text node");
+
+  text.data = "";
+  assertSlotted(slot, "an empty text node is still an assigned node");
+}, "text node data becoming empty keeps the slot filled");
+
+test(() => {
+  const { host, root } = makeHost(`<slot name="a"></slot>`, `<div slot="a"></div>`);
+  const slot = root.querySelector("slot");
+  assertSlotted(slot, "named slot starts filled");
+
+  host.firstElementChild.setAttribute("slot", "b");
+  assertNotSlotted(slot, "after the child moves to another slot name");
+
+  host.firstElementChild.setAttribute("slot", "a");
+  assertSlotted(slot, "after the child moves back");
+}, "changing the slot attribute on a light child");
+
+test(() => {
+  const { host, root } = makeHost(`<slot name="a"></slot>`, `<div slot="a"></div>`);
+  const slot = root.querySelector("slot");
+  assertSlotted(slot, "named slot starts filled");
+
+  slot.setAttribute("name", "b");
+  assertNotSlotted(slot, "after the slot is renamed");
+
+  slot.setAttribute("name", "a");
+  assertSlotted(slot, "after the slot is renamed back");
+}, "changing the name attribute on the slot");
+
+test(() => {
+  const { host, root } = makeHost("", "<div></div>");
+  const slot = document.createElement("slot");
+  root.append(slot);
+  assertSlotted(slot, "a slot inserted into a host with children is filled");
+
+  slot.remove();
+  root.append(slot);
+  assertSlotted(slot, "and again after being reinserted");
+}, "inserting the slot after the children exist");
+
+test(() => {
+  const { host, root } = makeHost("<slot><div>fallback</div></slot>");
+  const slot = root.querySelector("slot");
+  // https://drafts.csswg.org/css-shadow-1/#has-slotted-pseudo
+  // "When :has-slotted matches a slot with fallback content, we can conclude
+  // that the fallback content is not being displayed."
+  assertNotSlotted(slot, "a slot rendering its own fallback content does not match");
+
+  host.append(document.createElement("div"));
+  assertSlotted(slot, "matches once real content is slotted");
+
+  host.replaceChildren();
+  assertNotSlotted(slot, "stops matching when it falls back again");
+}, "a slot rendering fallback content does not match");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  const child = document.createElement("div");
+  child.style.display = "none";
+  host.append(child);
+  assertSlotted(slot, "display:none content is still assigned");
+}, "display:none slotted content still counts");
+
+test(() => {
+  const { host: outerHost, root: outerRoot } = makeHost("<slot id='outer'></slot>");
+  const outerSlot = outerRoot.querySelector("slot");
+
+  // Put an inner host inside the outer shadow tree, and slot the outer slot into it.
+  const innerHost = document.createElement("div");
+  const innerRoot = innerHost.attachShadow({ mode: "open" });
+  innerRoot.innerHTML = SHADOW_STYLE + "<slot id='inner'></slot>";
+  const innerSlot = innerRoot.querySelector("slot");
+  innerHost.append(outerSlot);
+  outerRoot.append(innerHost);
+
+  assertNotSlotted(innerSlot, "nothing slotted through either level yet");
+
+  outerHost.append(document.createElement("div"));
+  assertSlotted(innerSlot, "content at the outer level fills the inner slot");
+
+  outerHost.replaceChildren();
+  assertNotSlotted(innerSlot, "and removing it empties the inner slot again");
+}, "flattened assignment through two slots");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  const child = document.createElement("div");
+  host.append(child);
+  assertSlotted(slot, "after append");
+
+  const other = document.createElement("div");
+  container.append(other);
+  other.append(child);
+  assertNotSlotted(slot, "after the child moves to another element");
+}, "moving the slotted child to a different parent");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  host.append(document.createElement("div"));
+  assertSlotted(slot, "after append");
+
+  host.remove();
+  container.append(host);
+  assertSlotted(slot, "still filled after the host is removed and reinserted");
+}, "removing and reinserting the host");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  const a = document.createElement("div");
+  const b = document.createElement("div");
+  host.append(a, b);
+  assertSlotted(slot, "two children");
+
+  a.remove();
+  assertSlotted(slot, "still filled with one child left");
+
+  b.remove();
+  assertNotSlotted(slot, "empty once the last child goes");
+}, "removing children one at a time");
+
+test(() => {
+  const { host, root } = makeHost();
+  const slot = root.querySelector("slot");
+  slot.assign(document.createElement("div"));
+  assertNotSlotted(slot, "assign() has no effect in a named-slot shadow root");
+}, "manual assign() is ignored unless slotAssignment is manual");
+
+test(() => {
+  // A disconnected tree: mutations must not crash, and the state must be correct once
+  // the host is connected. A detached <select> getting options appended is the way the
+  // Web Inspector frontend hits this.
+  const host = document.createElement("div");
+  const root = host.attachShadow({ mode: "open" });
+  root.innerHTML = SHADOW_STYLE + "<slot></slot>";
+  const slot = root.querySelector("slot");
+  host.append(document.createElement("div"));
+  host.replaceChildren();
+  host.append(document.createElement("div"));
+  container.append(host);
+  assertSlotted(slot, "filled while detached, correct once connected");
+
+  host.remove();
+  host.replaceChildren();
+  container.append(host);
+  assertNotSlotted(slot, "emptied while detached, correct once reconnected");
+
+  const select = document.createElement("select");
+  select.appendChild(document.createElement("option"));
+  container.append(select);
+  select.remove();
+}, "mutations in a disconnected tree");
+
+test(() => {
+  const host = document.createElement("div");
+  container.append(host);
+  const root = host.attachShadow({ mode: "open", slotAssignment: "manual" });
+  root.innerHTML = SHADOW_STYLE + "<slot></slot>";
+  const slot = root.querySelector("slot");
+  const child = host.appendChild(document.createElement("div"));
+  assertNotSlotted(slot, "manual assignment means children are not slotted automatically");
+
+  slot.assign(child);
+  assertSlotted(slot, "after assign()");
+
+  slot.assign();
+  assertNotSlotted(slot, "after assign() with no arguments");
+
+  slot.assign(child);
+  assertSlotted(slot, "after assign() again");
+
+  child.remove();
+  assertNotSlotted(slot, "after the assigned node leaves the tree");
+}, "manual slot assignment");
+</script>

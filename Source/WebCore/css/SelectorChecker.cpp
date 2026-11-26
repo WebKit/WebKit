@@ -1347,6 +1347,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         }
         case CSSSelector::PseudoClass::Defined:
             return isDefinedElement(element);
+        case CSSSelector::PseudoClass::HasSlotted:
+            return matchesHasSlottedPseudoClass(element);
         case CSSSelector::PseudoClass::WindowInactive:
             return isWindowInactive(element);
 

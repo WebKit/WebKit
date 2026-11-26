@@ -1,0 +1,19 @@
+
+PASS appendChild and removeChild
+PASS insertBefore
+PASS ChildNode.remove() on the slotted element
+PASS replaceWith, element to text node
+PASS text node data becoming empty keeps the slot filled
+PASS changing the slot attribute on a light child
+PASS changing the name attribute on the slot
+PASS inserting the slot after the children exist
+PASS a slot rendering fallback content does not match
+PASS display:none slotted content still counts
+PASS flattened assignment through two slots
+PASS moving the slotted child to a different parent
+PASS removing and reinserting the host
+PASS removing children one at a time
+PASS manual assign() is ignored unless slotAssignment is manual
+PASS mutations in a disconnected tree
+PASS manual slot assignment
+

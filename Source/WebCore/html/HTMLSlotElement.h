@@ -55,6 +55,10 @@ public:
 
     bool isInInsertedIntoAncestor() const { return m_isInInsertedIntoAncestor; }
 
+    // Sticky, like the NodeStyleFlag bits; set when :has-slotted is evaluated against this slot.
+    bool styleAffectedByHasSlotted() const { return m_styleAffectedByHasSlotted; }
+    void setStyleAffectedByHasSlotted() const { m_styleAffectedByHasSlotted = true; }
+
     void updateAccessibilityOnSlotChange() const;
 private:
     HTMLSlotElement(const QualifiedName&, Document&);
@@ -67,6 +71,7 @@ private:
 
     bool m_inSignalSlotList { false };
     bool m_isInInsertedIntoAncestor { false };
+    mutable bool m_styleAffectedByHasSlotted { false };
     Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> m_manuallyAssignedNodes;
 };
 

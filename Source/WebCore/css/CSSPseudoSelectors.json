@@ -139,6 +139,9 @@
         "has": {
             "argument": "required"
         },
+        "has-slotted": {
+            "comment": "https://drafts.csswg.org/css-scoping/#has-slotted-pseudo"
+        },
         "heading": {
             "argument": "optional"
         },
