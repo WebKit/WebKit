@@ -565,15 +565,16 @@ class WebCore::RealtimeMediaSourceSettings {
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
-[Nested] enum class WebCore::CaptureDevice::DeviceType : uint8_t {
+[Nested] enum class WebCore::CaptureDevice::DeviceType : uint16_t {
     Unknown,
     Microphone,
     Speaker,
     Camera,
     Screen,
     Window,
-    SystemAudio
-    Canvas
+    SystemAudio,
+    Canvas,
+    BrowserTab
 };
 
 class WebCore::CaptureDevice {

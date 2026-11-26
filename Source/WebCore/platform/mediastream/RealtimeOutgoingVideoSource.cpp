@@ -49,7 +49,7 @@ namespace WebCore {
 RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&& videoSource)
     : m_videoSource(WTF::move(videoSource))
     , m_blackFrameTimer(*this, &RealtimeOutgoingVideoSource::sendOneBlackFrame)
-    , m_isScreencast(CaptureDevice::isScreenShareType(m_videoSource->deviceType()))
+    , m_isScreencast(CaptureDevice::isScreenShare(m_videoSource->deviceType()))
 #if !RELEASE_LOG_DISABLED
     , m_logger(protect(m_videoSource)->logger())
     , m_logIdentifier(protect(m_videoSource)->logIdentifier())
@@ -95,7 +95,7 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
     RELEASE_ASSERT(isMainThread());
     ASSERT(!m_videoSource->hasObserver(*this));
 
-    m_isScreencast = CaptureDevice::isScreenShareType(newSource->deviceType());
+    m_isScreencast = CaptureDevice::isScreenShare(newSource->deviceType());
     m_videoSource = WTF::move(newSource);
 
     ALWAYS_LOG(LOGIDENTIFIER, "track ", protect(m_videoSource)->logIdentifier());

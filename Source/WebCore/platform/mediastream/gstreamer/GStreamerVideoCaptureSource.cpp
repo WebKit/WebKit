@@ -172,7 +172,7 @@ void GStreamerVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourc
     GST_DEBUG("Settings changed");
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
         GST_DEBUG("Size changed to %dx%d, intrinsic size: %dx%d", size().width(), size().height(), intrinsicSize().width(), intrinsicSize().height());
-        if (m_deviceType == CaptureDevice::DeviceType::Window || m_deviceType == CaptureDevice::DeviceType::Screen)
+        if (CaptureDevice::isVideoScreenShare(m_deviceType))
             ensureIntrinsicSizeMaintainsAspectRatio();
 
         if (m_capturer->setSize(size()))

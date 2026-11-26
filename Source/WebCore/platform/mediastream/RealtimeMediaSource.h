@@ -471,6 +471,7 @@ struct CaptureSourceOrError {
 };
 
 String convertEnumerationToString(RealtimeMediaSource::Type);
+DisplaySurfaceType toDisplaySurfaceType(CaptureDevice::DeviceType);
 
 inline void RealtimeMediaSource::setName(const String& name)
 {

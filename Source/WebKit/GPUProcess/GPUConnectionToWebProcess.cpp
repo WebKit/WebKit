@@ -222,6 +222,7 @@ private:
         case CaptureDevice::DeviceType::Screen:
             return process->allowsDisplayCapture();
         case CaptureDevice::DeviceType::Window:
+        case CaptureDevice::DeviceType::BrowserTab:
             return process->allowsDisplayCapture();
         }
     }

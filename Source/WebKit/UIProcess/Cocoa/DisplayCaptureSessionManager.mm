@@ -36,6 +36,7 @@
 #import "UserMediaPermissionRequestManagerProxy.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import "WebPageProxyTesting.h"
 #import "WebProcess.h"
 #import "WebProcessPool.h"
 #import <WebCore/CaptureDeviceManager.h>
@@ -282,6 +283,14 @@ NODELETE static WebCore::DisplayCapturePromptType toScreenCaptureKitPromptType(U
 void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionRequestProxy& request, UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType promptType, WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
     if (useMockCaptureDevices()) {
+#if HAVE(WINDOW_CAPTURE)
+        RefPtr pageForTesting = page.pageForTesting();
+        if (RefPtr capturedPage = pageForTesting ? pageForTesting->tabPickedForGetDisplayMediaForTesting() : nullptr) {
+            startTabCapture(request, *capturedPage, WTF::move(completionHandler));
+            return;
+        }
+#endif
+
         if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Window)
             showWindowPicker(origin, WTF::move(completionHandler));
         else

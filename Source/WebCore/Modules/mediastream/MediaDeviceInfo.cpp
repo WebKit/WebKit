@@ -59,6 +59,7 @@ MediaDeviceInfo::Kind toMediaDeviceInfoKind(CaptureDevice::DeviceType type)
     case CaptureDevice::DeviceType::Canvas:
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
+    case CaptureDevice::DeviceType::BrowserTab:
         return MediaDeviceInfo::Kind::Videoinput;
     case CaptureDevice::DeviceType::SystemAudio:
     case CaptureDevice::DeviceType::Unknown:

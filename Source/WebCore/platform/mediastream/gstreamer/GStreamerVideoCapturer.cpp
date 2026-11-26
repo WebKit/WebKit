@@ -90,8 +90,7 @@ void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& 
 
 bool GStreamerVideoCapturer::isCapturingDisplay() const
 {
-    auto deviceType = this->deviceType();
-    return deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window;
+    return CaptureDevice::isVideoScreenShare(deviceType());
 }
 
 void GStreamerVideoCapturer::tearDown(bool disconnectSignals)

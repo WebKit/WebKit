@@ -75,6 +75,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
         return { };
 #endif
     case CaptureDevice::DeviceType::Window:
+    case CaptureDevice::DeviceType::BrowserTab:
 #if HAVE(SCREEN_CAPTURE_KIT)
         if (ScreenCaptureKitCaptureSource::isAvailable()) {
             auto deviceID = ScreenCaptureKitCaptureSource::computeDeviceID(device);
@@ -152,7 +153,7 @@ const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings()
         settings.setDeviceId(hashedId());
         settings.setLabel(name());
 
-        settings.setDisplaySurface(m_capturer->surfaceType());
+        settings.setDisplaySurface(toDisplaySurfaceType(m_capturer->deviceType()));
         settings.setLogicalSurface(false);
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;

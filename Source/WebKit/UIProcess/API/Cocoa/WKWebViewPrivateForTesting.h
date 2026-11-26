@@ -163,6 +163,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(nullable NSNumber *)index;
 - (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt;
+- (void)_setTabPickedForGetDisplayMediaForTesting:(nullable WKWebView *)capturedWebView;
 
 // With @runsPreview, the camera preview and microphone meter are active exactly as they are in a real prompt.
 - (void)_setMediaCapturePermissionPromptHandlerForTesting:(nullable void (^)(_WKMediaCapturePermissionPromptForTesting *prompt))handler runsPreview:(BOOL)runsPreview WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));

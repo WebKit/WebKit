@@ -945,6 +945,19 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
 #endif
 }
 
+- (void)_setTabPickedForGetDisplayMediaForTesting:(WKWebView *)capturedWebView
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!_page)
+        return;
+
+    if (RefPtr pageForTesting = _page->pageForTesting())
+        pageForTesting->setTabPickedForGetDisplayMediaForTesting(capturedWebView ? capturedWebView->_page.get() : nullptr);
+#else
+    UNUSED_PARAM(capturedWebView);
+#endif
+}
+
 - (double)_mediaCaptureReportingDelayForTesting
 {
     return _page->mediaCaptureReportingDelay().value();

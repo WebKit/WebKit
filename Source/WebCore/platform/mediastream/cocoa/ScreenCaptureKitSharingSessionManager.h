@@ -106,7 +106,8 @@ private:
     ScreenCaptureKitSharingSessionManager();
 
     void cleanupAllSessions();
-    void completeDeviceSelection(SCContentFilter*);
+    enum class IsTab : bool { No, Yes };
+    void completeDeviceSelection(SCContentFilter*, IsTab = IsTab::No);
 
     bool promptWithSCContentSharingPicker(DisplayCapturePromptType);
 

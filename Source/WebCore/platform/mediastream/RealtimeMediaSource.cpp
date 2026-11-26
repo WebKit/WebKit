@@ -80,6 +80,27 @@ struct VideoFrameAdaptor {
 #endif
 };
 
+DisplaySurfaceType toDisplaySurfaceType(CaptureDevice::DeviceType type)
+{
+    switch (type) {
+    case CaptureDevice::DeviceType::Screen:
+        return DisplaySurfaceType::Monitor;
+    case CaptureDevice::DeviceType::Window:
+        return DisplaySurfaceType::Window;
+    case CaptureDevice::DeviceType::BrowserTab:
+        return DisplaySurfaceType::Browser;
+    case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::Speaker:
+    case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::SystemAudio:
+    case CaptureDevice::DeviceType::Canvas:
+    case CaptureDevice::DeviceType::Unknown:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return DisplaySurfaceType::Invalid;
+}
+
 NODELETE static RealtimeMediaSource::Type toSourceType(CaptureDevice::DeviceType type)
 {
     switch (type) {
@@ -90,6 +111,7 @@ NODELETE static RealtimeMediaSource::Type toSourceType(CaptureDevice::DeviceType
     case CaptureDevice::DeviceType::Canvas:
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
+    case CaptureDevice::DeviceType::BrowserTab:
         return RealtimeMediaSource::Type::Video;
     case CaptureDevice::DeviceType::Unknown:
     case CaptureDevice::DeviceType::Speaker:

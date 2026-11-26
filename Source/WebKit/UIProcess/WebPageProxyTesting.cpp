@@ -286,6 +286,16 @@ void WebPageProxyTesting::setSystemCanPromptForGetDisplayMediaForTesting(bool ca
 {
     DisplayCaptureSessionManager::singleton().setSystemCanPromptForTesting(canPrompt);
 }
+
+void WebPageProxyTesting::setTabPickedForGetDisplayMediaForTesting(WebPageProxy* capturedPage)
+{
+    m_tabPickedForGetDisplayMediaForTesting = capturedPage;
+}
+
+WebPageProxy* WebPageProxyTesting::tabPickedForGetDisplayMediaForTesting() const
+{
+    return m_tabPickedForGetDisplayMediaForTesting.get();
+}
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)

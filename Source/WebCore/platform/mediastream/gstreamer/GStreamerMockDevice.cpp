@@ -65,6 +65,7 @@ GstDevice* webkitMockDeviceCreate(const CaptureDevice& captureDevice)
     case CaptureDevice::DeviceType::Canvas:
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
+    case CaptureDevice::DeviceType::BrowserTab:
         deviceClass = "Video/Source"_s;
         caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
         break;

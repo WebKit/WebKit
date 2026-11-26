@@ -108,7 +108,7 @@ const RealtimeMediaSourceSettings& MockDisplayCaptureSourceGStreamer::settings()
         settings.setWidth(size.width());
         settings.setHeight(size.height());
         settings.setDeviceId(hashedId());
-        settings.setDisplaySurface(m_source->mockScreen() ? DisplaySurfaceType::Monitor : DisplaySurfaceType::Window);
+        settings.setDisplaySurface(toDisplaySurfaceType(m_source->mockDisplayDeviceType()));
         settings.setLogicalSurface(false);
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;

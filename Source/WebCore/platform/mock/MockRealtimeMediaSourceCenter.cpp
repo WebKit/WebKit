@@ -39,6 +39,7 @@
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceSettings.h"
 #include <math.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
@@ -112,6 +113,9 @@ static inline Vector<MockMediaDevice> defaultDevices()
 
         MockMediaDevice { "WINDOW-1"_s, "Mock window device 1"_s, { }, true, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
         MockMediaDevice { "WINDOW-2"_s, "Mock window device 2"_s, { }, false, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
+
+        MockMediaDevice { "TAB-1"_s, "Mock tab device 1"_s, { }, false, MockDisplayProperties { CaptureDevice::DeviceType::BrowserTab, Color::blue, { 1280, 600 } } },
+        MockMediaDevice { "TAB-2"_s, "Mock tab device 2"_s, { }, false, MockDisplayProperties { CaptureDevice::DeviceType::BrowserTab, Color::red, { 640, 480 } } },
     };
 }
 
@@ -148,9 +152,8 @@ private:
     bool start() final;
     void stop() final;
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
-    DisplaySurfaceType surfaceType() const final { return DisplaySurfaceType::Monitor; }
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
-    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
+    CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
     IntSize intrinsicSize() const final;
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MockDisplayCapturer"_s; }
@@ -164,12 +167,14 @@ private:
     Timer m_readyTimer;
     bool m_isRunning { false };
     CompletionHandler<void(CaptureSourceError&&)> m_whenReadyCallback;
+    const CaptureDevice::DeviceType m_deviceType;
 };
 
 MockDisplayCapturer::MockDisplayCapturer(CapturerObserver& observer, const CaptureDevice& device, std::optional<PageIdentifier> pageIdentifier)
     : DisplayCaptureSourceCocoa::Capturer(observer)
     , m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
     , m_readyTimer(*this, &MockDisplayCapturer::readyTimerFired)
+    , m_deviceType(device.type())
 {
 }
 
@@ -268,7 +273,8 @@ public:
 
         switch (device.type()) {
         case CaptureDevice::DeviceType::Screen:
-        case CaptureDevice::DeviceType::Window: {
+        case CaptureDevice::DeviceType::Window:
+        case CaptureDevice::DeviceType::BrowserTab: {
 #if PLATFORM(COCOA)
             return DisplayCaptureSourceCocoa::create([this, &device, pageIdentifier] (auto& observer) {
                 auto capturer = makeUniqueRefWithoutRefCountedCheck<MockDisplayCapturer>(observer, device, pageIdentifier);
@@ -651,6 +657,15 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
         return displayDevices;
     }();
     return displayDevices;
+}
+
+std::optional<CaptureDevice> MockRealtimeMediaSourceCenter::tabForCapture()
+{
+    auto devices = borrow(displayDevices());
+    auto index = devices->findIf([](auto& device) {
+        return device.type() == CaptureDevice::DeviceType::BrowserTab;
+    });
+    return index != notFound ? std::make_optional(devices.get()[index]) : std::nullopt;
 }
 
 AudioCaptureFactory& MockRealtimeMediaSourceCenter::audioCaptureFactory()

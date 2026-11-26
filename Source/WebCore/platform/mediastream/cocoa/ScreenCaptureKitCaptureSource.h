@@ -92,7 +92,6 @@ private:
     void end() final;
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     CaptureDevice::DeviceType deviceType() const final;
-    DisplaySurfaceType surfaceType() const final;
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
     IntSize intrinsicSize() const final;
     void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;

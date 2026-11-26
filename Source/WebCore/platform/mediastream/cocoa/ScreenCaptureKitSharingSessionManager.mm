@@ -30,6 +30,7 @@
 
 #import "CaptureDevice.h"
 #import "Logging.h"
+#import "MockRealtimeMediaSourceCenter.h"
 #import "PlatformMediaSessionManager.h"
 #import "ScreenCaptureKitCaptureSource.h"
 #import <ScreenCaptureKit/SCContentSharingPicker.h>
@@ -161,6 +162,12 @@ void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t wind
 {
 #if HAVE(WINDOW_CAPTURE)
     ASSERT(isMainThread());
+
+    if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled()) {
+        completionHandler(MockRealtimeMediaSourceCenter::tabForCapture());
+        return;
+    }
+
     ASSERT(isAvailable());
     if (!isAvailable()) {
         completionHandler(std::nullopt);
@@ -203,7 +210,7 @@ void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t wind
                 }
 
                 return adoptNS([PAL::allocSCContentFilterInstance() initWithDesktopIndependentWindow:targetWindow]);
-            }());
+            }(), IsTab::Yes);
         });
     });
 
@@ -245,7 +252,7 @@ void ScreenCaptureKitSharingSessionManager::cancelPicking()
     completionHandler(std::nullopt);
 }
 
-void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFilter* contentFilter)
+void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFilter* contentFilter, IsTab isTab)
 {
     m_watchdogTimer = nullptr;
 
@@ -268,7 +275,8 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
             return;
 
         RetainPtr window = retainPtr(windows.get()[0]);
-        device = CaptureDevice(String::number([window windowID]), CaptureDevice::DeviceType::Window, [window title], emptyString(), true);
+        auto deviceType = isTab == IsTab::Yes ? CaptureDevice::DeviceType::BrowserTab : CaptureDevice::DeviceType::Window;
+        device = CaptureDevice(String::number([window windowID]), deviceType, [window title], emptyString(), true);
         break;
     }
     case SCShareableContentStyleDisplay: {
@@ -443,7 +451,7 @@ static bool operator==(const SCContentFilter* filter, const CaptureDevice& devic
         return displays.get()[0].displayID == deviceID;
     }
 
-    if (device.type() == CaptureDevice::DeviceType::Window) {
+    if (device.type() == CaptureDevice::DeviceType::Window || device.type() == CaptureDevice::DeviceType::BrowserTab) {
         if (filter.style != SCShareableContentStyleWindow)
             return false;
 

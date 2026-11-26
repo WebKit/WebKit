@@ -139,7 +139,7 @@ bool ScreenCaptureKitCaptureSource::isAvailable()
 
 std::expected<uint32_t, CaptureSourceError> ScreenCaptureKitCaptureSource::computeDeviceID(const CaptureDevice& device)
 {
-    ASSERT(device.type() == CaptureDevice::DeviceType::Screen || device.type() == CaptureDevice::DeviceType::Window);
+    ASSERT(CaptureDevice::isVideoScreenShare(device.type()));
 
     auto deviceID = parseInteger<uint32_t>(device.persistentId());
     if (!deviceID)
@@ -650,11 +650,6 @@ dispatch_queue_t ScreenCaptureKitCaptureSource::captureQueue()
 CaptureDevice::DeviceType ScreenCaptureKitCaptureSource::deviceType() const
 {
     return m_captureDevice.type();
-}
-
-DisplaySurfaceType ScreenCaptureKitCaptureSource::surfaceType() const
-{
-    return m_captureDevice.type() == CaptureDevice::DeviceType::Screen ? DisplaySurfaceType::Monitor : DisplaySurfaceType::Window;
 }
 
 std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID(const String& displayIDString)

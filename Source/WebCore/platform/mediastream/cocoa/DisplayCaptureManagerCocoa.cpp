@@ -86,6 +86,7 @@ std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersis
         return windowCaptureDeviceWithPersistentID(id);
         break;
 
+    case CaptureDevice::DeviceType::BrowserTab:
     case CaptureDevice::DeviceType::SystemAudio:
     case CaptureDevice::DeviceType::Camera:
     case CaptureDevice::DeviceType::Canvas:

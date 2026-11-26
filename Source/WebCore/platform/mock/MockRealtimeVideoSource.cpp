@@ -334,7 +334,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     if (mockCamera())
         settings.setFacingMode(facingMode());
     else {
-        settings.setDisplaySurface(mockScreen() ? DisplaySurfaceType::Monitor : DisplaySurfaceType::Window);
+        settings.setDisplaySurface(toDisplaySurfaceType(mockDisplayDeviceType()));
         settings.setLogicalSurface(false);
     }
     settings.setDeviceId(hashedId());

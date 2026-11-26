@@ -482,6 +482,7 @@ MediaProducerMediaStateFlags MediaStreamTrack::captureState(const RealtimeMediaS
             return MediaProducerMediaState::HasActiveScreenCaptureDevice;
         break;
     case CaptureDevice::DeviceType::Window:
+    case CaptureDevice::DeviceType::BrowserTab:
         if (source.muted())
             return MediaProducerMediaState::HasMutedWindowCaptureDevice;
         if (source.interrupted())

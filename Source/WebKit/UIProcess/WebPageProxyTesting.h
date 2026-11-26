@@ -98,6 +98,8 @@ public:
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     NODELETE void setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned>);
     NODELETE void setSystemCanPromptForGetDisplayMediaForTesting(bool);
+    void setTabPickedForGetDisplayMediaForTesting(WebPageProxy*);
+    WebPageProxy* tabPickedForGetDisplayMediaForTesting() const;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -129,6 +131,9 @@ private:
     WeakRef<WebPageProxy> m_page;
     std::optional<unsigned> m_displayNominalFramesPerSecondOverride;
     NavigationResponseProcessSwapReplyHandler m_navigationResponseProcessSwapReplyHandler;
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    WeakPtr<WebPageProxy> m_tabPickedForGetDisplayMediaForTesting;
+#endif
 };
 
 } // namespace WebKit

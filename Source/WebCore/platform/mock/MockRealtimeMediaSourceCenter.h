@@ -60,6 +60,7 @@ public:
     static Vector<CaptureDevice>& speakerDevices();
     static Vector<CaptureDevice>& videoDevices();
     WEBCORE_EXPORT static Vector<CaptureDevice>& displayDevices();
+    static std::optional<CaptureDevice> tabForCapture();
 
     static std::optional<MockMediaDevice> mockDeviceWithPersistentID(const String&);
     static std::optional<MockMediaDevice> mockMicrophoneFromDeviceID(uint32_t);

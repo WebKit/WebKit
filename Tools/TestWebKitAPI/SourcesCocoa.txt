@@ -339,6 +339,7 @@ Tests/WebKit/WKWebView/SwitchInputTests.mm @nonARC
 Tests/WebKit/WKWebView/SystemColors.mm @nonARC
 Tests/WebKit/WKWebView/SystemPreview.mm @nonARC
 Tests/WebKit/WKWebView/TLSDeprecation.mm @nonARC
+Tests/WebKit/WKWebView/TabCapture.mm @nonARC
 Tests/WebKit/WKWebView/TabOutOfWebView.mm @nonARC
 Tests/WebKit/WKWebView/TestAwakener.mm @nonARC
 Tests/WebKit/WKWebView/SOAuthorizationTests.mm @nonARC

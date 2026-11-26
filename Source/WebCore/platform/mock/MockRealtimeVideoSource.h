@@ -117,6 +117,7 @@ private:
     bool mockDisplay() const { return std::holds_alternative<MockDisplayProperties>(m_device.properties); }
     bool mockScreen() const { return mockDisplayType(CaptureDevice::DeviceType::Screen); }
     bool mockWindow() const { return mockDisplayType(CaptureDevice::DeviceType::Window); }
+    CaptureDevice::DeviceType mockDisplayDeviceType() const { return std::get<MockDisplayProperties>(m_device.properties).type; }
     bool mockDisplayType(CaptureDevice::DeviceType) const;
 
     void startApplyingConstraints() final;
@@ -193,7 +194,7 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MockRealtimeVideoSource)
-    static bool isType(const WebCore::RealtimeMediaSource& source) { return source.isCaptureSource() && source.isMockSource() && (source.deviceType() == WebCore::CaptureDevice::DeviceType::Camera || source.deviceType() == WebCore::CaptureDevice::DeviceType::Screen || source.deviceType() == WebCore::CaptureDevice::DeviceType::Window); }
+    static bool isType(const WebCore::RealtimeMediaSource& source) { return source.isCaptureSource() && source.isMockSource() && (source.deviceType() == WebCore::CaptureDevice::DeviceType::Camera || WebCore::CaptureDevice::isVideoScreenShare(source.deviceType())); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_STREAM)
