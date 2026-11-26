@@ -229,7 +229,7 @@ void StyleOriginatedTimelinesController::updateTimelineForTimelineScope(const Re
     for (auto& entry : m_timelineScopeEntries) {
         if (auto entryElement = entry.second.styleable()) {
             Ref protectedEntryElement { entryElement->element };
-            if (timelineElement->isComposedTreeDescendantOf(protectedEntryElement.get()) && (entry.first.type == Style::NameScope::Type::All || entry.first.names.contains(Style::CustomIdent { name })))
+            if (timelineElement->isComposedTreeInclusiveDescendantOf(protectedEntryElement.get()) && (entry.first.type == Style::NameScope::Type::All || entry.first.names.contains(Style::CustomIdent { name })))
                 matchedTimelineScopeElements.appendIfNotContains(*entryElement);
         }
     }
@@ -412,11 +412,10 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
         auto timelineScopeElements = relatedTimelineScopeElements(Style::CustomIdent { timelineName->name });
         if (timelineScopeElements.isEmpty())
             return nullptr;
-        // Find the nearest parent within timelineScopeElements.
-        for (RefPtr currentParent = target->element->parentElementInComposedTree(); currentParent; currentParent = currentParent->parentElementInComposedTree()) {
+        for (RefPtr currentElement = target->element.ptr(); currentElement; currentElement = currentElement->parentElementInComposedTree()) {
             for (auto& timelineScopeElement : timelineScopeElements) {
-                if (currentParent == timelineScopeElement.element())
-                    return currentParent;
+                if (currentElement == timelineScopeElement.element())
+                    return currentElement;
             }
         }
         return nullptr;
@@ -466,16 +465,18 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
 
 void StyleOriginatedTimelinesController::updateTimelinesForTimelineScope(Vector<Ref<ScrollTimeline>> entries, const Styleable& styleable)
 {
+    Ref element { styleable.element };
     for (auto& entry : entries) {
-        if (RefPtr entryElement = originatingElementExcludingTimelineScope(entry)) {
-            Ref element { styleable.element };
-            if (entryElement->isComposedTreeDescendantOf(element)) {
-                entry->setTimelineScopeElement(element);
-                for (Ref animation : copyToVector(entry->relevantAnimations())) {
-                    if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation))
-                        attachAnimation(*cssAnimation, AllowsDeferral::Yes);
-                }
-            }
+        RefPtr entryElement = originatingElement(entry);
+        if (!entryElement || !entryElement->isComposedTreeInclusiveDescendantOf(element))
+            continue;
+        RefPtr currentTimelineScopeElement = entry->timelineScopeDeclaredElement();
+        if (currentTimelineScopeElement == element.ptr() || (currentTimelineScopeElement && !element->isComposedTreeDescendantOf(*currentTimelineScopeElement)))
+            continue;
+        entry->setTimelineScopeElement(element);
+        for (Ref animation : copyToVector(entry->relevantAnimations())) {
+            if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation))
+                attachAnimation(*cssAnimation, AllowsDeferral::Yes);
         }
     }
 }
