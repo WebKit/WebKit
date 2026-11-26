@@ -111,6 +111,10 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
             // Contents of descendants that establish independent formatting contexts are skipped over while counting line boxes.
             if (blockContainer.establishesIndependentFormattingContext())
                 return true;
+            // So are the contents of flex containers (e.g. a <button>) and table cells. A flex container with its own line-clamp is a
+            // line-clamp container (see above), so its flex items still get its line clamp, just not the one of a line-clamp container around it.
+            if (!is<RenderBlockFlow>(blockContainer) || blockContainer.isRenderTableCell())
+                return true;
             // A ruby annotation belongs to the line of its base: it is clamped with that line, not line by line on its own.
             if (blockContainer.style().display() == Style::DisplayType::RubyText)
                 return true;
@@ -231,7 +235,8 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
         size_t fittingLineCount = 0;
         for (CheckedPtr<const RenderObject> descendant = &root; descendant;) {
             CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant);
-            auto isSkippedOver = descendant != &lineClampContainer && (descendant->isFloatingOrOutOfFlowPositioned() || (blockFlow && (blockFlow->establishesIndependentFormattingContext() || blockFlow->style().display() == Style::DisplayType::RubyText)));
+            // As in the constructor, blocks that a flex, grid or table container lays out are not in this block formatting context.
+            auto isSkippedOver = descendant != &lineClampContainer && (descendant->isFloatingOrOutOfFlowPositioned() || (blockFlow && (blockFlow->establishesIndependentFormattingContext() || !is<RenderBlockFlow>(blockFlow->containingBlock()) || blockFlow->style().display() == Style::DisplayType::RubyText)));
             if (isSkippedOver) {
                 descendant = descendant->nextInPreOrderAfterChildren(&root);
                 continue;

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: line-clamp does not count or clamp the lines inside flex items and table cells</title>
+<link rel="author" title="Christian Biesinger" href="mailto:cbiesinger@igalia.com">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#line-clamp">
+<link rel="match" href="reference/line-clamp-051-ref.html">
+<meta name="assert" content="Flex items and table cells establish independent formatting contexts, so their lines are not lines of the line-clamp container: they are neither counted nor clamped.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<style>
+.clamp {
+  line-clamp: 2;
+  font: 20px/1 Ahem;
+  width: 200px;
+  margin-bottom: 20px;
+  background: yellow;
+}
+.flex {
+  display: flex;
+}
+.table {
+  display: table;
+}
+.cell {
+  display: table-cell;
+}
+</style>
+<div class="clamp">
+  AAA
+  <div class="flex"><div>BBB<br>BBB<br>BBB</div></div>
+  CCC<br>
+  DDD
+</div>
+<div class="clamp">
+  AAA
+  <div class="table"><div class="cell">BBB<br>BBB<br>BBB</div></div>
+  CCC<br>
+  DDD
+</div>

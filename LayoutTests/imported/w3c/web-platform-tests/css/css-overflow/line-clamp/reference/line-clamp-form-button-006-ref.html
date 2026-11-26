@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Reference</title>
+<link rel="author" title="Christian Biesinger" href="mailto:cbiesinger@igalia.com">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<style>
+body {
+  font: 25px/1 Ahem;
+}
+button {
+  font: inherit;
+  /* A fixed width, since the intrinsic width does not take the block ellipsis into account. */
+  width: 150px;
+}
+.container {
+  width: 240px;
+  background: yellow;
+}
+.last-line {
+  white-space: nowrap;
+}
+</style>
+
+<div class="container">
+  XX<br>
+  <span class="last-line"><button>XX<br>XX…</button>…</span>
+</div>

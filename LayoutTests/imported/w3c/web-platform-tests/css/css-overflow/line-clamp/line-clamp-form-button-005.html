@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: line-clamp on a button clamps its content</title>
+<link rel="author" title="Christian Biesinger" href="mailto:cbiesinger@igalia.com">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#line-clamp">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#button-layout">
+<link rel="match" href="reference/line-clamp-form-button-005-ref.html">
+<meta name="assert" content="A button behaves as an inline-block, a block container, so line-clamp set on it clamps the lines of its content.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<style>
+body {
+  font: 25px/1 Ahem;
+}
+button {
+  font: inherit;
+  /* A fixed width, since the intrinsic width does not take the block ellipsis into account. */
+  width: 150px;
+}
+.clamp {
+  line-clamp: 2;
+}
+</style>
+
+<div>
+  <button class="clamp">XX<br>XX<br>XX<br>XX</button>
+</div>
