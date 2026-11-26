@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+if (window.internals)
+    internals.setForceUseGlyphDisplayListForTesting(true);
+</script>
+<body onload="run()">
+<style>
+#container { margin: 3em; font: 16px Helvetica; font-kerning: normal; }
+#container > span { position: absolute; padding: 3em; }
+.antialiased { -webkit-font-smoothing: antialiased; }
+#first { color: red; }
+#second { color: blue; top: 50px; }
+#replacement { color: purple; top: 50px; }
+#unsmoothed { -webkit-font-smoothing: none; top: 100px; }
+#scaled { color: gray; top: 150px; transform: scale(2); }
+</style>
+<div id=container>
+    <span id=first class=antialiased>Shaped text reuse</span>
+    <span id=second class=antialiased>Shaped text reuse</span>
+</div>
+<pre id=log></pre>
+<script>
+function displayListFor(element)
+{
+    return internals.cachedGlyphDisplayListsForTextNode(element.firstChild, internals.DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS);
+}
+
+function addSpan(id, className)
+{
+    let span = document.createElement("span");
+    span.id = id;
+    if (className)
+        span.className = className;
+    span.textContent = "Shaped text reuse";
+    container.appendChild(span);
+    return span;
+}
+
+function afterNextPaint(callback)
+{
+    requestAnimationFrame(() => requestAnimationFrame(callback));
+}
+
+let results = [];
+function check(condition, message)
+{
+    results.push((condition ? "PASS: " : "FAIL: ") + message);
+}
+
+function finish()
+{
+    log.textContent = results.join("\n");
+    internals.setForceUseGlyphDisplayListForTesting(false);
+    container.remove();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function run()
+{
+    if (!window.internals) {
+        finish();
+        return;
+    }
+
+    afterNextPaint(() => {
+        let firstList = displayListFor(first);
+        check(firstList.includes("(font-smoothing-mode antialiased)"), "antialiased text is recorded as antialiased.");
+        check(displayListFor(second) == firstList, "text that differs only in color reuses the display list.");
+
+        second.remove();
+        let replacement = addSpan("replacement", "antialiased");
+        afterNextPaint(() => {
+            check(displayListFor(replacement) == firstList, "a new text box reuses the display list.");
+
+            let unsmoothed = addSpan("unsmoothed");
+            let scaled = addSpan("scaled", "antialiased");
+            afterNextPaint(() => {
+                check(displayListFor(unsmoothed).includes("(font-smoothing-mode none)"), "unsmoothed text is recorded as unsmoothed.");
+                check(displayListFor(scaled) != firstList, "text painted at a different scale gets its own display list.");
+                finish();
+            });
+        });
+    });
+}
+</script>

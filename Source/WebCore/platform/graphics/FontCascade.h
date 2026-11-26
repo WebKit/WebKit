@@ -57,6 +57,7 @@ struct GlyphGeometryCacheEntry;
 struct GlyphOverflow;
 struct FloatSegment;
 struct TabSize;
+struct TextShapingResultAndDisplayList;
 
 namespace DisplayList {
 class DisplayList;
@@ -205,6 +206,7 @@ public:
     static constexpr float syntheticObliqueAngle() { return 14; }
 
     RefPtr<const DisplayList::DisplayList> displayListForTextRun(GraphicsContext&, const TextRun&, unsigned from = 0, std::optional<unsigned> to = { }, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
+    RefPtr<const DisplayList::DisplayList> displayListForTextRunReusingShapedText(GraphicsContext&, const TextRun&) const;
     RefPtr<const DisplayList::DisplayList> displayListForGlyphBuffer(GraphicsContext&, const GlyphBuffer&, CustomFontNotReadyAction) const;
 
     unsigned generation() const { return m_generation; }
@@ -214,6 +216,7 @@ public:
 
 private:
 
+    RefPtr<const DisplayList::DisplayList> displayListForShapedText(GraphicsContext&, TextShapingResultAndDisplayList&, CustomFontNotReadyAction) const;
     TextShapingResult layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasis = ForTextEmphasis::No) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
