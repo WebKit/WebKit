@@ -45,7 +45,7 @@ namespace WebKit {
 static constexpr CGFloat scrollViewVisibilityMarginRatio = 0.5;
 #endif
 
-auto RemoteAnimationVisibility::update(CALayer *webViewLayer, const Vector<AnimatedLayer>& animatedLayers, NOESCAPE const AnimationStackForNode& animationStackForNode) -> Vector<AnimatedLayer>
+auto RemoteAnimationVisibility::update(CALayer *rootLayer, const Vector<AnimatedLayer>& animatedLayers, NOESCAPE const AnimationStackForNode& animationStackForNode) -> Vector<AnimatedLayer>
 {
     m_needsUpdate = false;
 
@@ -57,7 +57,7 @@ auto RemoteAnimationVisibility::update(CALayer *webViewLayer, const Vector<Anima
 
     for (auto& animatedLayer : borrow(animatedLayers)) {
         RefPtr node = animatedLayer.node;
-        if (node && !animatedContentMayBeVisible(*node, webViewLayer, visibilityCache, animationStackForNode))
+        if (node && !animatedContentMayBeVisible(*node, rootLayer, visibilityCache, animationStackForNode))
             continue;
 
         layerIDsThatMayBeVisible.add(animatedLayer.layerID);
@@ -78,18 +78,18 @@ auto RemoteAnimationVisibility::update(CALayer *webViewLayer, const Vector<Anima
     return animatedLayersThatBecameVisible;
 }
 
-bool RemoteAnimationVisibility::animatedContentMayBeVisible(const RemoteLayerTreeNode& node, CALayer *webViewLayer, VisibilityCache& visibilityCache, NOESCAPE const AnimationStackForNode& animationStackForNode)
+bool RemoteAnimationVisibility::animatedContentMayBeVisible(const RemoteLayerTreeNode& node, CALayer *rootLayer, VisibilityCache& visibilityCache, NOESCAPE const AnimationStackForNode& animationStackForNode)
 {
     auto iterator = visibilityCache.find(node.layerID());
     if (iterator != visibilityCache.end())
         return iterator->value;
 
-    auto mayBeVisible = computeAnimatedContentMayBeVisible(node, webViewLayer, visibilityCache, animationStackForNode);
+    auto mayBeVisible = computeAnimatedContentMayBeVisible(node, rootLayer, visibilityCache, animationStackForNode);
     visibilityCache.set(node.layerID(), mayBeVisible);
     return mayBeVisible;
 }
 
-bool RemoteAnimationVisibility::computeAnimatedContentMayBeVisible(const RemoteLayerTreeNode& node, CALayer *webViewLayer, VisibilityCache& visibilityCache, NOESCAPE const AnimationStackForNode& animationStackForNode)
+bool RemoteAnimationVisibility::computeAnimatedContentMayBeVisible(const RemoteLayerTreeNode& node, CALayer *rootLayer, VisibilityCache& visibilityCache, NOESCAPE const AnimationStackForNode& animationStackForNode)
 {
     // Without a known extent, the animated content could be anywhere.
     auto& animationExtent = node.animationExtent();
@@ -102,7 +102,7 @@ bool RemoteAnimationVisibility::computeAnimatedContentMayBeVisible(const RemoteL
     if (!ancestor)
         return true;
 
-    if (!webViewLayer)
+    if (!rootLayer)
         return true;
 
     // The extent is in the layer's coordinate space without its transform, which is what time-based animations
@@ -113,8 +113,8 @@ bool RemoteAnimationVisibility::computeAnimatedContentMayBeVisible(const RemoteL
     CGRect rect = CGRectOffset(*animationExtent, position.x - bounds.origin.x - anchorPoint.x * bounds.size.width, position.y - bounds.origin.y - anchorPoint.y * bounds.size.height);
 
     while (true) {
-        // Layers outside of the web view's layer don't affect the visibility of its content.
-        if (ancestor == webViewLayer)
+        // Layers outside of the root view's layer don't affect the visibility of its content.
+        if (ancestor == rootLayer)
             return true;
 
         if ([ancestor isHidden] || ![ancestor opacity])
@@ -135,7 +135,7 @@ bool RemoteAnimationVisibility::computeAnimatedContentMayBeVisible(const RemoteL
         if (RefPtr ancestorNode = RemoteLayerTreeNode::forCALayer(ancestor.get())) {
             RefPtr animationStack = animationStackForNode(*ancestorNode);
             if (animationStack && animationStack->hasTimeBasedAnimations() && animationStack->affectsTransform())
-                return animatedContentMayBeVisible(*ancestorNode, webViewLayer, visibilityCache, animationStackForNode);
+                return animatedContentMayBeVisible(*ancestorNode, rootLayer, visibilityCache, animationStackForNode);
         }
 
         RetainPtr<CALayer> superlayer = [ancestor superlayer];
