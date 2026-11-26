@@ -4035,7 +4035,7 @@ private:
 
     void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, std::optional<WebCore::FrameIdentifier>&&);
 
-    void focusRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier, std::optional<WebCore::UserGestureTokenIdentifier>);
+    void focusRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier, bool allowWindowFocus, std::optional<WebCore::UserGestureTokenIdentifier>);
 #if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
     void setOffscreenCanvasPlaceholderLayer(IPC::Connection&, WebCore::PlaceholderRenderingContextIdentifier, std::optional<WebCore::PlatformLayerIdentifier>);
 #endif
