@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../media/media-file.js"></script>
+</head>
+<body>
+<video id="video"></video>
+<script>
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+promise_test(async (test) => {
+    assert_true(!!window.internals, "Test requires window.internals");
+    internals.settings.setShouldDeactivateAudioSession(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
+    assert_true(internals.audioSessionActive(), "AudioSession must be active once microphone capture starts");
+
+    const video = document.getElementById("video");
+    video.src = findMediaFile("video", "../../media/content/test");
+    await video.play();
+
+    assert_true(internals.audioSessionActive(), "AudioSession remains active while video and capture are both running");
+
+    const activationCountBeforePause = await internals.systemAudioSessionActivationCount();
+
+    const pauseEvent = new Promise(resolve => video.addEventListener("pause", resolve, { once: true }));
+    video.pause();
+    await pauseEvent;
+    await wait(100);
+
+    assert_true(internals.audioSessionActive(), "AudioSession must remain active after pausing the only playing media element because microphone capture is ongoing");
+    assert_equals(await internals.systemAudioSessionActivationCount(), activationCountBeforePause, "AudioSession must not be deactivated and reactivated when pausing the only playing media element during microphone capture");
+
+    await video.play();
+    await wait(100);
+
+    assert_true(internals.audioSessionActive(), "AudioSession must remain active after resuming playback while microphone capture is ongoing");
+    assert_equals(await internals.systemAudioSessionActivationCount(), activationCountBeforePause, "AudioSession must not be deactivated and reactivated when resuming playback during microphone capture");
+
+    video.pause();
+    video.remove();
+}, "Pausing the only playing media element while microphone capture is active must not deactivate AudioSession");
+</script>
+</body>
+</html>
