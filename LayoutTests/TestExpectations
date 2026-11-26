@@ -4319,8 +4319,6 @@ imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-sele
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-textarea-001.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-textarea-002.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-form-textarea-003.tentative.html [ ImageOnlyFailure ]
-# Floats must not make the line-clamp container taller when the content has exactly as many lines as line-clamp allows.
-imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-floats-017.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-013.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-014.html [ ImageOnlyFailure ]

@@ -1018,7 +1018,9 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
             relayoutContent();
             clampAtAutoClampPointIfNeeded();
         } else if (!didClamp && lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
-            lineClampUpdater.resetLineClamp();
+            // Nothing gets clamped, but this is still a line-clamp container (e.g. its floats are clipped to its block-end content
+            // edge), so the content is laid out again with no limit on the number of lines instead of without line-clamp.
+            lineClampUpdater.setMaximumLines(std::numeric_limits<size_t>::max());
             relayoutContent();
         }
         auto lineClamp = layoutState ? layoutState->lineClamp() : std::nullopt;

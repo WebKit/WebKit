@@ -50,7 +50,6 @@ public:
     void setIsStableTextWrap(bool);
     void setMaximumLines(size_t);
     void setClampAfterBox(const RenderBox&);
-    void resetLineClamp();
 
     // Whether content laid out now comes after the clamp point (the line-clamp budget is used up).
     NODELETE static bool isAfterClampPoint(const RenderObject&);

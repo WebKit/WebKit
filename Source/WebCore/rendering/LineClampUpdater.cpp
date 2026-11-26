@@ -191,15 +191,6 @@ void LineClampUpdater::setClampAfterBox(const RenderBox& clampAfterBox)
     layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), shouldDiscardOverflow(m_blockContainer), &clampAfterBox, false, false, hasTextBoxTrimEnd(m_blockContainer) });
 }
 
-void LineClampUpdater::resetLineClamp()
-{
-    ASSERT(m_isLineClampRoot);
-    auto* layoutState = m_blockContainer->view().frameView().layoutContext().layoutState();
-    if (!layoutState)
-        return;
-    layoutState->setLineClamp({ });
-}
-
 // The content bottom of the box in its own coordinates, where its block-end padding (and scrollbar) starts.
 static LayoutUnit contentLogicalBottom(const RenderBox& box)
 {
