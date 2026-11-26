@@ -1,0 +1,19 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>Control: without the discord.com quirk, #slate-toolbar leaves the viewport</title>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Same target page as discord-slate-toolbar-clamp.html with no quirk installed, so the unclamped cases must fail.
+// This shows the checks there are able to fail.
+location.href = "resources/discord-slate-toolbar-clamp-target.html";
+</script>
+</body>
+</html>
