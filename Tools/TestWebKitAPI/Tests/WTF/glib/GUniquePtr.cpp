@@ -87,6 +87,7 @@ namespace WTF {
 template<> struct GPtrDeleter<char> {
     void operator()(char* ptr) const;
 };
+template<> inline constexpr bool hasDeclaredGPtrDeleter<char> = true;
 }
 void WTF::GPtrDeleter<char>::operator()(char* ptr) const
 {
