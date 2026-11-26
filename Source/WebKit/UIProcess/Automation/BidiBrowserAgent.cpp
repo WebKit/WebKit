@@ -184,7 +184,7 @@ void BidiBrowserAgent::removeUserContext(const String& userContextID, CommandCal
 
     auto it = m_userContexts.find(userContextID);
     // https://www.w3.org/TR/webdriver-bidi/#command-browser-removeUserContext step 4.
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(it == m_userContexts.end(), InvalidParameter, "no such user context"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(it == m_userContexts.end(), NoSuchUserContext);
 
     auto userContext = m_userContexts.take(it);
     size_t pageCount = userContext->allPages().size();

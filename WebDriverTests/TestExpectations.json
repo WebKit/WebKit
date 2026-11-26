@@ -2272,14 +2272,20 @@
     "imported/w3c/webdriver/tests/bidi/browser/remove_user_context/invalid.py": {
         "subtests": {
             "test_params_user_context_no_such_user_context": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288108"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/288108"}}
             }
         }
     },
     "imported/w3c/webdriver/tests/bidi/browser/remove_user_context/user_context.py": {
         "subtests": {
             "test_remove_context": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288108", "note": "False PASS. Error on the teardown fixture, given we don't support user contexts."}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/288108", "note": "False PASS. Error on the teardown fixture, given we don't support user contexts."}}
+            },
+            "test_remove_context_skips_beforeunload_prompt[tab]": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_remove_context_skips_beforeunload_prompt[window]": {
+                "expected": {"glib": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288108"}}
@@ -2577,7 +2583,7 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
             },
             "test_params_user_context_removed_context": {
-                "expected": { "all": { "status": ["SKIP"], "note": "Test passes but fixture teardown fails trying to remove already-removed user context"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["SKIP"], "note": "Test passes but fixture teardown fails trying to remove already-removed user context"}}
             }
         }
     },
