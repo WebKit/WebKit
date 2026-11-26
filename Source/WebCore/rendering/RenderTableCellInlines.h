@@ -65,12 +65,35 @@ inline std::pair<Style::PreferredSize, Style::ZoomFactor> RenderTableCell::style
     return { styleWidth, style.usedZoomForLength() };
 }
 
+// The CSS 2 'vertical-align' value a table cell acts on. With 'vertical-align' as the CSS Inline 3 shorthand,
+// 'baseline-shift: top' behaves like 'top', 'bottom' like 'bottom', and otherwise 'alignment-baseline: middle'
+// behaves like 'middle', and the non-standard '-webkit-baseline-middle' like the CSS 2 value of the same name;
+// everything else is baseline-aligned.
+// https://drafts.csswg.org/css-inline-3/#transverse-alignment
+inline Style::VerticalAlign verticalAlignForTableCell(const Style::ComputedStyle& style, const Settings& settings)
+{
+    if (settings.cssVerticalAlignShorthandEnabled()) [[unlikely]] {
+        return style.baselineShift().switchOn(
+            [](const CSS::Keyword::Top& keyword) -> Style::VerticalAlign { return keyword; },
+            [](const CSS::Keyword::Bottom& keyword) -> Style::VerticalAlign { return keyword; },
+            [&](const auto&) -> Style::VerticalAlign {
+                if (style.alignmentBaseline() == AlignmentBaseline::Middle)
+                    return CSS::Keyword::Middle { };
+                if (style.alignmentBaseline() == AlignmentBaseline::WebkitBaselineMiddle)
+                    return CSS::Keyword::WebkitBaselineMiddle { };
+                return CSS::Keyword::Baseline { };
+            }
+        );
+    }
+    return Style::effectiveVerticalAlign(style, settings);
+}
+
 inline bool RenderTableCell::isBaselineAligned() const
 {
     if (auto alignContent = style().alignContent(); !alignContent.isNormal())
         return alignContent.isFirstBaseline();
 
-    auto verticalAlign = Style::effectiveVerticalAlign(style());
+    auto verticalAlign = verticalAlignForTableCell(style(), document().settings());
     return WTF::holdsAlternative<CSS::Keyword::Baseline>(verticalAlign)
         || WTF::holdsAlternative<CSS::Keyword::TextBottom>(verticalAlign)
         || WTF::holdsAlternative<CSS::Keyword::TextTop>(verticalAlign)

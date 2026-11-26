@@ -47,6 +47,7 @@ LayoutState::LayoutState(const Document& document, const ElementBox& rootContain
     : m_type(type)
     , m_isTextShapingAcrossInlineBoxesEnabled(document.settings().textShapingAcrossInlineBoxes())
     , m_isAlignmentBaselineOnInlineBoxesEnabled(document.settings().cssAlignmentBaselineOnInlineBoxesEnabled())
+    , m_isVerticalAlignShorthandEnabled(document.settings().cssVerticalAlignShorthandEnabled())
     , m_rootContainer(rootContainer)
     , m_securityOrigin(document.securityOrigin())
     , m_formattingContextLayoutFunction(WTF::move(formattingContextLayoutFunction))

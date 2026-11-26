@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class Settings;
+
 namespace Layout {
 class Box;
 }
@@ -249,10 +251,11 @@ LineWidth effectiveOutlineWidth(const ComputedStyle&);
 WEBCORE_EXPORT UsedOutlineOffset effectiveOutlineOffset(const ComputedStyle&);
 // How far the outline reaches outside the border box.
 float effectiveOutlineSize(const ComputedStyle&, ZoomFactor, float deviceScaleFactor);
-// The 'vertical-align' value that non-SVG layout, editing and accessibility act on. All of them read it
-// through here, so that it can later be derived from the 'alignment-baseline' and 'baseline-shift'
-// longhands once 'vertical-align' is implemented as a shorthand.
-VerticalAlign effectiveVerticalAlign(const ComputedStyle&);
+// The CSS 2 'vertical-align' value that non-SVG layout, editing and accessibility act on. Only valid when
+// 'vertical-align' is the CSS 2 longhand; when it is the CSS Inline 3 shorthand (CSSVerticalAlignShorthandEnabled),
+// they read its 'alignment-baseline' and 'baseline-shift' longhands directly instead. Goes away when
+// 'vertical-align' becomes a shorthand.
+VerticalAlign effectiveVerticalAlign(const ComputedStyle&, const Settings&);
 
 } // namespace Style
 } // namespace WebCore

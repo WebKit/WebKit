@@ -611,6 +611,8 @@ void InlineFormattingContext::initializeInlineLayoutState(const LayoutState& glo
         inlineLayoutState.setShouldShapeTextAcrossInlineBoxes();
     if (globalLayoutState.isAlignmentBaselineOnInlineBoxesEnabled())
         inlineLayoutState.setShouldUseAlignmentBaseline();
+    if (globalLayoutState.isVerticalAlignShorthandEnabled())
+        inlineLayoutState.setShouldUseVerticalAlignShorthand();
 }
 
 #if ASSERT_ENABLED

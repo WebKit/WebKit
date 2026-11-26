@@ -1,0 +1,85 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSVerticalAlignShorthandEnabled=false ] -->
+<html>
+<head>
+<style>
+.line {
+    font: 20px/40px sans-serif;
+    border: 1px solid black;
+    margin: 4px 0;
+}
+.box {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: green;
+}
+.narrow {
+    width: 240px;
+}
+table {
+    border-collapse: collapse;
+}
+td {
+    height: 60px;
+    border: 1px solid black;
+    font: 20px sans-serif;
+}
+.first-letter::first-letter {
+    vertical-align: 6px;
+}
+</style>
+</head>
+<body>
+<!-- The CSS 2 values of the CSS 2 'vertical-align' longhand. -->
+<div class="line">x<span class="box" style="vertical-align: baseline"></span><span class="box" style="vertical-align: sub"></span><span class="box" style="vertical-align: super"></span><span class="box" style="vertical-align: top"></span><span class="box" style="vertical-align: text-top"></span><span class="box" style="vertical-align: middle"></span><span class="box" style="vertical-align: bottom"></span><span class="box" style="vertical-align: text-bottom"></span><span class="box" style="vertical-align: -webkit-baseline-middle"></span></div>
+<div class="line">x<span class="box" style="vertical-align: 0"></span><span class="box" style="vertical-align: 6px"></span><span class="box" style="vertical-align: -6px"></span><span class="box" style="vertical-align: 25%"></span><span class="box" style="vertical-align: -0.5em"></span><span class="box" style="vertical-align: calc(10% + 2px)"></span></div>
+<div class="line">x<span style="vertical-align: sub">sub</span><span style="vertical-align: super">super</span><span style="vertical-align: top">top</span><span style="vertical-align: middle">middle</span><span style="vertical-align: bottom">bottom</span><span style="vertical-align: 8px">8px</span></div>
+<div class="line">x<sub>sub</sub>x<sup>sup</sup></div>
+<div class="line first-letter">First letter</div>
+<!-- 'vertical-align' applies on each line a span wraps onto. -->
+<div class="line narrow">x <span style="vertical-align: super">super span whose text wraps onto several lines in this narrow container</span></div>
+<div class="line narrow">x <span style="vertical-align: 6px">6px span whose text wraps onto several lines in this narrow container</span></div>
+<!-- Zoom applies to the lengths 'vertical-align' resolves to. -->
+<div class="line" style="zoom: 2">x<span class="box" style="vertical-align: 6px"></span><span class="box" style="vertical-align: 25%"></span></div>
+<!-- 'vertical-align: inherit' inherits the longhands. -->
+<div class="line" style="vertical-align: super">x<span class="box" style="vertical-align: inherit"></span></div>
+<!-- Dynamic changes apply. -->
+<div class="line">x<span class="box" id="dynamic-span" style="vertical-align: 6px"></span></div>
+<table>
+    <tr>
+        <td>default</td>
+        <td style="vertical-align: top">top</td>
+        <td style="vertical-align: middle">middle</td>
+        <td style="vertical-align: bottom">bottom</td>
+        <td style="vertical-align: baseline">baseline</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: sub">sub</td>
+        <td style="vertical-align: text-top">text-top</td>
+        <td style="vertical-align: -webkit-baseline-middle">-webkit-baseline-middle</td>
+    </tr>
+</table>
+<!-- 'vertical-align' on a <tr> is inherited by its cells. -->
+<table>
+    <tr style="vertical-align: top">
+        <td>inherited top</td>
+        <td style="vertical-align: bottom">bottom</td>
+        <td style="vertical-align: middle">middle</td>
+        <td id="dynamic-cell" style="vertical-align: top">dynamic</td>
+    </tr>
+</table>
+<!-- A cell whose 'vertical-align' changes from 'top' to 'baseline' joins the other cell's baseline. -->
+<table>
+    <tr>
+        <td id="dynamic-baseline-cell" style="vertical-align: top">dynamic</td>
+        <td style="font-size: 40px; vertical-align: baseline">big</td>
+    </tr>
+</table>
+<script>
+document.body.offsetHeight;
+document.getElementById("dynamic-span").style.verticalAlign = "sub";
+document.getElementById("dynamic-cell").style.verticalAlign = "bottom";
+document.getElementById("dynamic-baseline-cell").style.verticalAlign = "baseline";
+</script>
+</body>
+</html>

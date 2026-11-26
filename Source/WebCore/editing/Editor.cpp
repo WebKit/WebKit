@@ -4830,18 +4830,28 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
         }
     );
 
-    attributes.subscriptOrSuperscript = WTF::switchOn(Style::effectiveVerticalAlign(*style),
-        [](const CSS::Keyword::Baseline&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::Sub&) { return FontAttributes::SubscriptOrSuperscript::Subscript; },
-        [](const CSS::Keyword::Super&) { return FontAttributes::SubscriptOrSuperscript::Superscript; },
-        [](const CSS::Keyword::Bottom&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::Middle&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::TextBottom&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::TextTop&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::Top&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::WebkitBaselineMiddle&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const Style::VerticalAlign::LengthPercentage&) { return FontAttributes::SubscriptOrSuperscript::None; }
-    );
+    // With 'vertical-align' as the CSS Inline 3 shorthand, sub and super come from 'baseline-shift'.
+    if (document().settings().cssVerticalAlignShorthandEnabled()) [[unlikely]] {
+        if (style->baselineShift().isSub())
+            attributes.subscriptOrSuperscript = FontAttributes::SubscriptOrSuperscript::Subscript;
+        else if (style->baselineShift().isSuper())
+            attributes.subscriptOrSuperscript = FontAttributes::SubscriptOrSuperscript::Superscript;
+        else
+            attributes.subscriptOrSuperscript = FontAttributes::SubscriptOrSuperscript::None;
+    } else {
+        attributes.subscriptOrSuperscript = WTF::switchOn(Style::effectiveVerticalAlign(*style, document().settings()),
+            [](const CSS::Keyword::Baseline&) { return FontAttributes::SubscriptOrSuperscript::None; },
+            [](const CSS::Keyword::Sub&) { return FontAttributes::SubscriptOrSuperscript::Subscript; },
+            [](const CSS::Keyword::Super&) { return FontAttributes::SubscriptOrSuperscript::Superscript; },
+            [](const CSS::Keyword::Bottom&) { return FontAttributes::SubscriptOrSuperscript::None; },
+            [](const CSS::Keyword::Middle&) { return FontAttributes::SubscriptOrSuperscript::None; },
+            [](const CSS::Keyword::TextBottom&) { return FontAttributes::SubscriptOrSuperscript::None; },
+            [](const CSS::Keyword::TextTop&) { return FontAttributes::SubscriptOrSuperscript::None; },
+            [](const CSS::Keyword::Top&) { return FontAttributes::SubscriptOrSuperscript::None; },
+            [](const CSS::Keyword::WebkitBaselineMiddle&) { return FontAttributes::SubscriptOrSuperscript::None; },
+            [](const Style::VerticalAlign::LengthPercentage&) { return FontAttributes::SubscriptOrSuperscript::None; }
+        );
+    }
 
     attributes.textLists = editableTextListsAtPositionInDescendingOrder(document().selection().selection().start());
 

@@ -81,6 +81,9 @@ public:
     void setShouldUseAlignmentBaseline() { m_shouldUseAlignmentBaseline = true; }
     bool shouldUseAlignmentBaseline() const { return m_shouldUseAlignmentBaseline; }
 
+    void setShouldUseVerticalAlignShorthand() { m_shouldUseVerticalAlignShorthand = true; }
+    bool shouldUseVerticalAlignShorthand() const { return m_shouldUseVerticalAlignShorthand; }
+
     // Outside list markers belonging to ancestor list items, which are aligned with this formatting context's first formatted line but are no part of its content.
     using AscentAndDescent = std::pair<InlineLayoutUnit, InlineLayoutUnit>;
     void setOutsideMarkerLayoutBounds(Vector<AscentAndDescent>&& layoutBounds) { m_outsideMarkerLayoutBounds = WTF::move(layoutBounds); }
@@ -112,6 +115,7 @@ private:
     bool m_inQuirksMode { false };
     bool m_shouldShapeTextAcrossInlineBoxes { false };
     bool m_shouldUseAlignmentBaseline { false };
+    bool m_shouldUseVerticalAlignShorthand { false };
 };
 
 inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState)

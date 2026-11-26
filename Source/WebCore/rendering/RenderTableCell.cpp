@@ -270,7 +270,7 @@ bool RenderTableCell::computeIntrinsicPadding(LayoutUnit heightConstraint)
     auto borderBoxLogicalHeightWithoutIntrinsicPadding = borderBoxLogicalHeight - (oldIntrinsicPaddingBefore + oldIntrinsicPaddingAfter);
 
     auto intrinsicPaddingBefore = oldIntrinsicPaddingBefore;
-    auto alignment = Style::effectiveVerticalAlign(style());
+    auto alignment = verticalAlignForTableCell(style(), document().settings());
     if (auto alignContent = style().alignContent(); !alignContent.isNormal()) {
         auto resolveAlignedContent = alignContent.resolve();
         // align-content overrides vertical-align
@@ -653,7 +653,14 @@ void RenderTableCell::styleDidChange(Style::Difference diff, const Style::Comput
 
     // Our intrinsic padding pushes us down to align with the baseline of other cells on the row. If our vertical-align
     // has changed then so will the padding needed to align with other cells - clear it so we can recalculate it from scratch.
-    if (oldStyle && (Style::effectiveVerticalAlign(style()) != Style::effectiveVerticalAlign(*oldStyle) || style().alignContent() != oldStyle->alignContent()))
+    // With 'vertical-align' as the CSS Inline 3 shorthand, what the cell acts on is derived from its longhands.
+    auto verticalAlignChanged = [&] {
+        auto& settings = document().settings();
+        if (settings.cssVerticalAlignShorthandEnabled()) [[unlikely]]
+            return style().alignmentBaseline() != oldStyle->alignmentBaseline() || style().baselineShift() != oldStyle->baselineShift();
+        return Style::effectiveVerticalAlign(style(), settings) != Style::effectiveVerticalAlign(*oldStyle, settings);
+    };
+    if (oldStyle && (verticalAlignChanged() || style().alignContent() != oldStyle->alignContent()))
         clearIntrinsicPadding();
 
     if (CheckedPtr table = this->table(); table && oldStyle) {
@@ -1635,14 +1642,14 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
     LayoutUnit scrollbarHeight = scrollbarLogicalHeight();
     if (!scrollbarHeight)
         return; // Not sure if we should be doing something when a scrollbar goes away or not.
-    
+
     // We only care if the scrollbar that affects our intrinsic padding has been added.
     if ((isHorizontalWritingMode() && !horizontalScrollbarChanged) ||
         (!isHorizontalWritingMode() && !verticalScrollbarChanged))
         return;
 
     // Shrink our intrinsic padding as much as possible to accommodate the scrollbar.
-    if ((WTF::holdsAlternative<CSS::Keyword::Middle>(Style::effectiveVerticalAlign(style())) && style().alignContent().isNormal())
+    if ((WTF::holdsAlternative<CSS::Keyword::Middle>(verticalAlignForTableCell(style(), document().settings())) && style().alignContent().isNormal())
         || style().alignContent().resolve().isCentered()) {
         LayoutUnit totalHeight = logicalHeight();
         LayoutUnit heightWithoutIntrinsicPadding = totalHeight - intrinsicPaddingBefore() - intrinsicPaddingAfter();

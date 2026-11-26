@@ -1708,7 +1708,7 @@ bool KeyframeEffect::isAboutToRunAccelerated() const
     return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop;
 }
 
-static bool isPropertyValidForPseudoElement(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID property)
+static bool isPropertyValidForPseudoElement(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID property, bool verticalAlignShorthandEnabled)
 {
     if (!pseudoElementIdentifier)
         return true;
@@ -1717,9 +1717,11 @@ static bool isPropertyValidForPseudoElement(const std::optional<Style::PseudoEle
     case PseudoElementType::Marker:
         return Style::isValidMarkerStyleProperty(property);
     case PseudoElementType::FirstLetter:
-        return Style::isValidFirstLetterStyleProperty(property);
+        // Animations of 'vertical-align' expand to the longhands of the CSS Inline 3 'vertical-align' shorthand,
+        // which ::first-letter allows in its place while it is that shorthand.
+        return Style::isValidFirstLetterStyleProperty(property) || (verticalAlignShorthandEnabled && Style::isVerticalAlignShorthandLonghand(property));
     case PseudoElementType::FirstLine:
-        return Style::isValidFirstLineStyleProperty(property);
+        return Style::isValidFirstLineStyleProperty(property) || (verticalAlignShorthandEnabled && Style::isVerticalAlignShorthandLonghand(property));
     default:
         return true;
     }
@@ -1733,7 +1735,11 @@ bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accele
     if (!m_blendingKeyframes.properties().contains(property))
         return false;
 
-    if (!isPropertyValidForPseudoElement(m_pseudoElementIdentifier, property))
+    bool verticalAlignShorthandEnabled = false;
+    if (RefPtr document = this->document())
+        verticalAlignShorthandEnabled = document->settings().cssVerticalAlignShorthandEnabled();
+
+    if (!isPropertyValidForPseudoElement(m_pseudoElementIdentifier, property, verticalAlignShorthandEnabled))
         return false;
 
     return m_phaseAtLastApplication == AnimationEffectPhase::Active;
@@ -1773,7 +1779,7 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
         auto& settings = document->settings();
 
         auto isAcceleratedProperty = [&](AnimatableCSSProperty property) {
-            if (std::holds_alternative<CSSPropertyID>(property) && !isPropertyValidForPseudoElement(m_pseudoElementIdentifier, std::get<CSSPropertyID>(property)))
+            if (std::holds_alternative<CSSPropertyID>(property) && !isPropertyValidForPseudoElement(m_pseudoElementIdentifier, std::get<CSSPropertyID>(property), settings.cssVerticalAlignShorthandEnabled()))
                 return false;
             return Style::Interpolation::isAccelerated(property, settings);
         };

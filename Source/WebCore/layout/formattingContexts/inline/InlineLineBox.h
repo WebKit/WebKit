@@ -59,7 +59,7 @@ class RubyFormattingContext;
 class LineBox {
     WTF_MAKE_TZONE_ALLOCATED(LineBox);
 public:
-    LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, bool isFirstFormattedLine, bool hasBlockEllipsisContentOnly, size_t nonSpanningInlineLevelBoxCount);
+    LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, bool isFirstFormattedLine, bool hasBlockEllipsisContentOnly, size_t nonSpanningInlineLevelBoxCount, bool verticalAlignShorthandEnabled);
 
     // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
     bool hasInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::InlineBox); }

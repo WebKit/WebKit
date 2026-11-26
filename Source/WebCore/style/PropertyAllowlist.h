@@ -49,6 +49,8 @@ NODELETE bool isValidHighlightStyleProperty(CSSPropertyID);
 NODELETE bool isValidMarkerStyleProperty(CSSPropertyID);
 NODELETE bool isValidFirstLetterStyleProperty(CSSPropertyID);
 NODELETE bool isValidFirstLineStyleProperty(CSSPropertyID);
+NODELETE bool isVerticalAlignShorthandLonghand(CSSPropertyID);
+NODELETE bool isSetThroughVerticalAlignShorthand(CSSPropertyID shorthandID);
 #if ENABLE(VIDEO)
 NODELETE bool isValidCueStyleProperty(CSSPropertyID);
 NODELETE bool isValidCueSelectorStyleProperty(CSSPropertyID);

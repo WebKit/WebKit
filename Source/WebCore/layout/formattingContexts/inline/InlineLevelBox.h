@@ -47,11 +47,11 @@ class LineBoxVerticalAligner;
 class InlineLevelBox {
 public:
     enum class LineSpanningInlineBox : bool { No, Yes };
-    static inline InlineLevelBox createInlineBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
-    static inline InlineLevelBox createRootInlineBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-    static inline InlineLevelBox createAtomicInlineBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-    static inline InlineLevelBox createLineBreakBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft);
-    static inline InlineLevelBox createGenericInlineLevelBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft);
+    static inline InlineLevelBox createInlineBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox, bool verticalAlignShorthandEnabled);
+    static inline InlineLevelBox createRootInlineBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool verticalAlignShorthandEnabled);
+    static inline InlineLevelBox createAtomicInlineBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool verticalAlignShorthandEnabled);
+    static inline InlineLevelBox createLineBreakBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, bool verticalAlignShorthandEnabled);
+    static inline InlineLevelBox createGenericInlineLevelBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, bool verticalAlignShorthandEnabled);
 
     struct AscentAndDescent {
         InlineLayoutUnit ascent { 0 };
@@ -118,7 +118,7 @@ private:
         First,
         Last
     };
-    InlineLevelBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type, EnumSet<PositionWithinLayoutBox> = { PositionWithinLayoutBox::First, PositionWithinLayoutBox::Last });
+    InlineLevelBox(const Box&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type, bool verticalAlignShorthandEnabled, EnumSet<PositionWithinLayoutBox> = { PositionWithinLayoutBox::First, PositionWithinLayoutBox::Last });
 
     friend class InlineDisplayLineBuilder;
     friend class LineBox;

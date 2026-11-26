@@ -34,52 +34,111 @@
 
 namespace WebCore::Layout {
 
-template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::ComputedStyle& style, NOESCAPE const PreferredLineHeightFunctor& preferredLineHeightFunctor)
+template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::ComputedStyle& style, bool verticalAlignShorthandEnabled, NOESCAPE const PreferredLineHeightFunctor& preferredLineHeightFunctor)
 {
-    return WTF::switchOn(Style::effectiveVerticalAlign(style),
-        [](CSS::SpecificKeyword auto const& keyword) -> InlineLevelBox::VerticalAlignment {
+    // Inline layout cannot reach a Settings (LayoutState copies the feature flags out of the document), so with the
+    // shorthand disabled this reads what effectiveVerticalAlign() returns, the CSS 2 'vertical-align' value.
+    if (!verticalAlignShorthandEnabled) [[likely]] {
+        return WTF::switchOn(style.verticalAlign(),
+            [](CSS::SpecificKeyword auto const& keyword) -> InlineLevelBox::VerticalAlignment {
+                return keyword;
+            },
+            [&](const Style::VerticalAlign::LengthPercentage& value) -> InlineLevelBox::VerticalAlignment {
+                return Style::evaluate<InlineLayoutUnit>(value, preferredLineHeightFunctor, style.usedZoomForLength());
+            }
+        );
+    }
+
+    // 'vertical-align' is the CSS Inline 3 shorthand: build its equivalent CSS 2 value from the longhands.
+    // https://drafts.csswg.org/css-inline-3/#transverse-alignment
+    // The values of 'alignment-baseline' that have a CSS 2 'vertical-align' equivalent. The others, like 'alphabetic', are
+    // applied on top of a baseline-relative value (see LineBoxBuilder::setAlignmentBaselineOffsetIfApplicable), when
+    // CSSAlignmentBaselineOnInlineBoxesEnabled is enabled.
+    auto alignmentBaseline = [&] -> std::optional<InlineLevelBox::VerticalAlignment> {
+        switch (style.alignmentBaseline()) {
+        case AlignmentBaseline::Middle:
+            return CSS::Keyword::Middle { };
+        case AlignmentBaseline::TextTop:
+        case AlignmentBaseline::TextBeforeEdge: // Legacy SVG alias of 'text-top'.
+            return CSS::Keyword::TextTop { };
+        case AlignmentBaseline::TextBottom:
+        case AlignmentBaseline::TextAfterEdge: // Legacy SVG alias of 'text-bottom'.
+            return CSS::Keyword::TextBottom { };
+        case AlignmentBaseline::WebkitBaselineMiddle:
+            return CSS::Keyword::WebkitBaselineMiddle { };
+        default:
+            return std::nullopt;
+        }
+    }();
+
+    // FIXME: CSS 2 can't express a baseline-relative shift together with one of the alignment baselines above, so the shift
+    // is dropped. It can't express the 'center' shift either.
+    auto alignmentBaselineOr = [&](InlineLevelBox::VerticalAlignment&& shift) {
+        return alignmentBaseline ? WTF::move(*alignmentBaseline) : WTF::move(shift);
+    };
+
+    return style.baselineShift().switchOn(
+        [](const CSS::Keyword::Top& keyword) -> InlineLevelBox::VerticalAlignment {
             return keyword;
         },
-        [&](const Style::VerticalAlign::LengthPercentage& value) -> InlineLevelBox::VerticalAlignment {
-            return Style::evaluate<InlineLayoutUnit>(value, preferredLineHeightFunctor, style.usedZoomForLength());
+        [](const CSS::Keyword::Bottom& keyword) -> InlineLevelBox::VerticalAlignment {
+            return keyword;
+        },
+        [&](const CSS::Keyword::Center&) -> InlineLevelBox::VerticalAlignment {
+            return alignmentBaselineOr(CSS::Keyword::Baseline { });
+        },
+        [&](const CSS::Keyword::Baseline&) -> InlineLevelBox::VerticalAlignment {
+            return alignmentBaselineOr(CSS::Keyword::Baseline { });
+        },
+        [&](const CSS::Keyword::Sub& keyword) -> InlineLevelBox::VerticalAlignment {
+            return alignmentBaselineOr(keyword);
+        },
+        [&](const CSS::Keyword::Super& keyword) -> InlineLevelBox::VerticalAlignment {
+            return alignmentBaselineOr(keyword);
+        },
+        [&](const Style::BaselineShift::LengthPercentage& length) -> InlineLevelBox::VerticalAlignment {
+            if (auto fixed = length.tryFixed(); fixed && fixed->isZero())
+                return alignmentBaselineOr(CSS::Keyword::Baseline { });
+            // Lengths and percentages evaluate exactly like the CSS 2 length path, percentages against the preferred line height.
+            return alignmentBaselineOr(Style::evaluate<InlineLayoutUnit>(length, preferredLineHeightFunctor, style.usedZoomForLength()));
         }
     );
 }
 
-inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type, EnumSet<PositionWithinLayoutBox> positionWithinLayoutBox)
+inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type, bool verticalAlignShorthandEnabled, EnumSet<PositionWithinLayoutBox> positionWithinLayoutBox)
     : m_layoutBox(layoutBox)
     , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
     , m_hasContent(layoutBox.isRubyBase() && layoutBox.associatedRubyAnnotationBox()) // Normally we set inline box's has-content state as we come across child content, but ruby annotations are not visible to inline layout.
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ protect(style.fontCascade())->metricsOfPrimaryFont(), style.textAutosizingAdjustedLineHeight(), style.textBoxTrim(), style.textBoxEdge(), style.lineFitEdge(), style.usedZoomForLength(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().usedSize()), toInlineBoxLevelVerticalAlign(style, [this] { return preferredLineHeight(); }), style.alignmentBaseline() })
+    , m_style({ protect(style.fontCascade())->metricsOfPrimaryFont(), style.textAutosizingAdjustedLineHeight(), style.textBoxTrim(), style.textBoxEdge(), style.lineFitEdge(), style.usedZoomForLength(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().usedSize()), toInlineBoxLevelVerticalAlign(style, verticalAlignShorthandEnabled, [this] { return preferredLineHeight(); }), style.alignmentBaseline() })
 {
 }
 
-inline InlineLevelBox InlineLevelBox::createAtomicInlineBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+inline InlineLevelBox InlineLevelBox::createAtomicInlineBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool verticalAlignShorthandEnabled)
 {
-    return { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::AtomicInlineBox };
+    return { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::AtomicInlineBox, verticalAlignShorthandEnabled };
 }
 
-inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft)
+inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, bool verticalAlignShorthandEnabled)
 {
-    return { layoutBox, style, logicalLeft, { }, Type::GenericInlineLevelBox };
+    return { layoutBox, style, logicalLeft, { }, Type::GenericInlineLevelBox, verticalAlignShorthandEnabled };
 }
 
-inline InlineLevelBox InlineLevelBox::createInlineBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox isLineSpanning)
+inline InlineLevelBox InlineLevelBox::createInlineBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox isLineSpanning, bool verticalAlignShorthandEnabled)
 {
-    return { layoutBox, style, logicalLeft, { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox, { } };
+    return { layoutBox, style, logicalLeft, { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox, verticalAlignShorthandEnabled, { } };
 }
 
-inline InlineLevelBox InlineLevelBox::createLineBreakBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft)
+inline InlineLevelBox InlineLevelBox::createLineBreakBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, bool verticalAlignShorthandEnabled)
 {
-    return { layoutBox, style, logicalLeft, { }, Type::LineBreakBox };
+    return { layoutBox, style, logicalLeft, { }, Type::LineBreakBox, verticalAlignShorthandEnabled };
 }
 
-inline InlineLevelBox InlineLevelBox::createRootInlineBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+inline InlineLevelBox InlineLevelBox::createRootInlineBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool verticalAlignShorthandEnabled)
 {
-    return { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::RootInlineBox, { } };
+    return { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::RootInlineBox, verticalAlignShorthandEnabled, { } };
 }
 
 inline bool InlineLevelBox::mayStretchLineBox() const

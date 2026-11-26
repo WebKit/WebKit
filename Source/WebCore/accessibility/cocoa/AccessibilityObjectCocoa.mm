@@ -243,13 +243,25 @@ Color AccessibilityObject::backgroundColor() const
 bool AccessibilityObject::isSubscript() const
 {
     const CheckedPtr style = this->style();
-    return style && WTF::holdsAlternative<CSS::Keyword::Sub>(Style::effectiveVerticalAlign(*style));
+    RefPtr document = this->document();
+    if (!style || !document)
+        return false;
+    // With 'vertical-align' as the CSS Inline 3 shorthand, sub comes from 'baseline-shift'.
+    if (document->settings().cssVerticalAlignShorthandEnabled()) [[unlikely]]
+        return style->baselineShift().isSub();
+    return WTF::holdsAlternative<CSS::Keyword::Sub>(Style::effectiveVerticalAlign(*style, document->settings()));
 }
 
 bool AccessibilityObject::isSuperscript() const
 {
     const CheckedPtr style = this->style();
-    return style && WTF::holdsAlternative<CSS::Keyword::Super>(Style::effectiveVerticalAlign(*style));
+    RefPtr document = this->document();
+    if (!style || !document)
+        return false;
+    // With 'vertical-align' as the CSS Inline 3 shorthand, super comes from 'baseline-shift'.
+    if (document->settings().cssVerticalAlignShorthandEnabled()) [[unlikely]]
+        return style->baselineShift().isSuper();
+    return WTF::holdsAlternative<CSS::Keyword::Super>(Style::effectiveVerticalAlign(*style, document->settings()));
 }
 
 bool AccessibilityObject::hasTextShadow() const
@@ -270,13 +282,26 @@ AttributedStringStyle AccessibilityObject::stylesForAttributedString() const
     if (!style)
         return { };
 
-    auto alignment = Style::effectiveVerticalAlign(*style);
+    // With 'vertical-align' as the CSS Inline 3 shorthand, sub and super come from 'baseline-shift'.
+    bool subscript = false;
+    bool superscript = false;
+    if (RefPtr document = this->document()) {
+        if (document->settings().cssVerticalAlignShorthandEnabled()) [[unlikely]] {
+            subscript = style->baselineShift().isSub();
+            superscript = style->baselineShift().isSuper();
+        } else {
+            auto alignment = Style::effectiveVerticalAlign(*style, document->settings());
+            subscript = WTF::holdsAlternative<CSS::Keyword::Sub>(alignment);
+            superscript = WTF::holdsAlternative<CSS::Keyword::Super>(alignment);
+        }
+    }
+
     return {
         fontFrom(*style),
         textColorFrom(*style),
         backgroundColorFrom(*style),
-        WTF::holdsAlternative<CSS::Keyword::Sub>(alignment),
-        WTF::holdsAlternative<CSS::Keyword::Super>(alignment),
+        subscript,
+        superscript,
         !style->textShadowOutOfLine().isNone(),
         lineDecorationStyle()
     };

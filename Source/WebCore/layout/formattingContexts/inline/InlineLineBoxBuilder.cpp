@@ -60,7 +60,7 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         // For now just include the hanging content in the root inline box as if it was not hanging (this is how legacy line layout works).
         return lineLayoutResult.contentGeometry.logicalWidth;
     };
-    auto lineBox = LineBox { protect(rootBox()), lineLayoutResult.contentGeometry.logicalLeft, contentLogicalWidth(), lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
+    auto lineBox = LineBox { protect(rootBox()), lineLayoutResult.contentGeometry.logicalLeft, contentLogicalWidth(), lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount, layoutState().shouldUseVerticalAlignShorthand() };
     if (lineLayoutResult.isBlockContent())
         constructBlockContent(lineBox);
     else {
@@ -99,7 +99,7 @@ LineBox LineBoxBuilder::buildForRootInlineBoxOnly(size_t lineIndex)
     auto& lineLayoutResult = this->lineLayoutResult();
     ASSERT(lineLayoutResult.hasContentfulInlineContent());
 
-    auto lineBox = LineBox { protect(rootBox()), lineLayoutResult.contentGeometry.logicalLeft, lineLayoutResult.contentGeometry.logicalWidth - lineLayoutResult.hangingContent.logicalWidth, lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
+    auto lineBox = LineBox { protect(rootBox()), lineLayoutResult.contentGeometry.logicalLeft, lineLayoutResult.contentGeometry.logicalWidth - lineLayoutResult.hangingContent.logicalWidth, lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount, layoutState().shouldUseVerticalAlignShorthand() };
     auto& rootInlineBox = lineBox.rootInlineBox();
     setVerticalPropertiesForInlineLevelBox(lineBox, rootInlineBox);
     if (isFirstFormattedLine())
@@ -509,7 +509,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             continue;
         }
         if (run.isHardLineBreak()) {
-            auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, style, logicalLeft);
+            auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, style, logicalLeft, layoutState().shouldUseVerticalAlignShorthand());
             setVerticalPropertiesForInlineLevelBox(lineBox, lineBreakBox);
             lineBox.addInlineLevelBox(WTF::move(lineBreakBox));
 
@@ -520,7 +520,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         if (run.isAtomicInlineBox()) {
             auto& inlineLevelBoxGeometry = formattingContext.geometryForBox(layoutBox);
             logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
-            auto atomicInlineBox = InlineLevelBox::createAtomicInlineBox(layoutBox, style, logicalLeft, inlineLevelBoxGeometry.borderBoxWidth());
+            auto atomicInlineBox = InlineLevelBox::createAtomicInlineBox(layoutBox, style, logicalLeft, inlineLevelBoxGeometry.borderBoxWidth(), layoutState().shouldUseVerticalAlignShorthand());
             setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineBox);
             lineBox.addInlineLevelBox(WTF::move(atomicInlineBox));
             continue;
@@ -539,7 +539,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
                 return logicalWidth;
             }();
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
-            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth, run.isInlineBoxStart() ? InlineLevelBox::LineSpanningInlineBox::No : InlineLevelBox::LineSpanningInlineBox::Yes);
+            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth, run.isInlineBoxStart() ? InlineLevelBox::LineSpanningInlineBox::No : InlineLevelBox::LineSpanningInlineBox::Yes, layoutState().shouldUseVerticalAlignShorthand());
             inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, protect(rootBox())));
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             if (run.isInlineBoxStart()) {
@@ -566,7 +566,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             continue;
         }
         if (run.isWordBreakOpportunity()) {
-            lineBox.addInlineLevelBox(InlineLevelBox::createGenericInlineLevelBox(layoutBox, style, logicalLeft));
+            lineBox.addInlineLevelBox(InlineLevelBox::createGenericInlineLevelBox(layoutBox, style, logicalLeft, layoutState().shouldUseVerticalAlignShorthand()));
             continue;
         }
         ASSERT(run.isOutOfFlow());
@@ -595,7 +595,7 @@ void LineBoxBuilder::constructBlockContent(LineBox& lineBox)
         auto& run = runs[index];
         if (run.isLineSpanningInlineBoxStart()) {
             auto inlineBoxWidth = blockRun.logicalWidth() ? lineLayoutResult.lineGeometry.logicalWidth : 0.f;
-            auto lineSpanningInlineBox = InlineLevelBox::createInlineBox(run.layoutBox(), protect(run.layoutBox().style()), lineLayoutResult.contentGeometry.logicalLeft, inlineBoxWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
+            auto lineSpanningInlineBox = InlineLevelBox::createInlineBox(run.layoutBox(), protect(run.layoutBox().style()), lineLayoutResult.contentGeometry.logicalLeft, inlineBoxWidth, InlineLevelBox::LineSpanningInlineBox::Yes, layoutState().shouldUseVerticalAlignShorthand());
             setVerticalPropertiesForInlineLevelBox(lineBox, lineSpanningInlineBox);
             // An inline level box's logical top is relative to its parent inline box (see LineBox::inlineLevelBoxAbsoluteTop), so only the outermost spanning box may carry the block's offset within the line.
             auto isOutermostInlineBox = &run.layoutBox().parent() == &rootBox();
